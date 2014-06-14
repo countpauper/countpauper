@@ -9,9 +9,8 @@ planet = _space.Planet()
 star.bodies.append(planet)
 
 
-import city as _city
-city = _city.City()
-planet.cities.append(city)
+masterdam = _space.city.City()
+planet.cities.append(masterdam)
 
 import definition as _def
 
@@ -22,7 +21,7 @@ workers = {
 }
 
 for type in workers:
-    city.population.workers.append(_city.WorkForce(city, type, workers[type]))
+    masterdam.population.workers.append(_space.city.WorkForce(masterdam, type, workers[type]))
 
 structures = { 
     _def.Storage(name='store', space=100) : 1,
@@ -32,7 +31,7 @@ structures = {
 }
 
 for type in structures:
-    city.infra.append(_city.Structure(city, type, structures[type]))
+    masterdam.infra.append(_space.city.structure.Structure(masterdam, type, structures[type]))
 
 
 bread= _def.Supply(name='bread', type='food', storage = 'storage', volume=1)

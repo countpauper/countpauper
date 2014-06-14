@@ -15,12 +15,17 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
-    <Compile Include="city.py" />
     <Compile Include="definition.py" />
     <Compile Include="hardcoded_data.py" />
     <Compile Include="main.py" />
-    <Compile Include="space.py" />
+    <Compile Include="space\city\structure.py" />
+    <Compile Include="space\city\__init__.py" />
+    <Compile Include="space\__init__.py" />
+    <Compile Include="structure.py" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="space\" />
+    <Folder Include="space\city\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

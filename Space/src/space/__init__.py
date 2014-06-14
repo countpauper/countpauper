@@ -1,3 +1,5 @@
+import city
+
 class Space(object):
     def __init__(self):
         self.systems = []
