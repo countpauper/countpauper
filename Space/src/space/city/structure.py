@@ -1,12 +1,10 @@
-from specification import Building
-
-
-
 class StorageException(Exception):
     pass
 
 
-class Structure(object):
+# private abstract base classes
+
+class _Structure(object):
     def __init__(self, **kwargs):
         self.location = kwargs['location']
         self.specification = kwargs['specification']
@@ -15,7 +13,7 @@ class Structure(object):
     def store(self, item):
         raise StorageException("Not a container")
 
-class Container(object):
+class _Container(object):
     def __init__(self, **kwargs):
         self.contents = []
 
@@ -25,23 +23,30 @@ class Container(object):
             raise StorageException("Wrong storage type {0} for {1}", self, item)
         if item.volume() > self.space():
             raise StorageException("No room in {0} for {1}", self, item)
-        self.contents.append(item)
-        # TODO: stack 
+        same_item = self.find(item.specification)
+        if same_item:
+            same_item[0].stack(item)
+        else:
+            same_item = item.specification.create(amount=0)
+            self.contents.append(same_item)
+            same_item.stack(item)
+
+    def find(self, product):
+        return [item for item in self.contents if item.specification==product]
 
     def stock(self, product):
-        total = 0
-        for item in self.contents:
-            if item.specification == product:
-                total += item.amount
-        return total
+        return sum([item.amount for item in self.find(product)])
 
     def retrieve(self, product, amount):
-        for item in self.contents:
-           if item.specification == product:
-            self.contents.remove(item)
-            # TODO: unstack/split
-            return item
-        raise StorageException("Item {1} not stored in {0}", self, item)
+        items = self.find(product)
+        for item in items:
+            if item.amount < amount:
+                raise StorageException("Insuffient amount [{1}] of {0} stored", item, amount)
+            retrieved_item = item.split(amount)
+            if not item.amount:
+                self.contents.remove(item) 
+            return retrieved_item
+        raise StorageException("Item {1} not stored in {0}", self, product)
 
     def space(self):
         space = self.specification.space * self.amount
@@ -49,27 +54,33 @@ class Container(object):
             space -= item.volume()
         return space
 
-class Storage(Container, Structure):
+class _Workplace(object):
     def __init__(self, **kwargs):
-        Container.__init__(self, **kwargs)
-        Structure.__init__(self,**kwargs)
+        pass
 
-
-class Home(Structure):
+class _Habitation(object):
     def __init__(self, **kwargs):
-        super(Home, self).__init__(**kwargs)
         self.inhabitants = []
 
-class Workplace(Structure):
+# public structure types
+class Storage(_Container, _Structure):
     def __init__(self, **kwargs):
-        super(Workplace, self).__init__(**kwargs)
+        _Container.__init__(self, **kwargs)
+        _Structure.__init__(self,**kwargs)
 
-class Baker(Workplace):
+class Home(_Habitation, _Structure):
     def __init__(self, **kwargs):
-        super(Baker, self).__init__(**kwargs)
+        _Habitation.__init__(self, **kwargs)
+        _Structure.__init__(self,**kwargs)
 
-class Farm(Workplace):
+class Baker(_Workplace, _Structure):
     def __init__(self, **kwargs):
-        super(Farm, self).__init__(**kwargs)
+        _Workplace.__init__(self, **kwargs)
+        _Structure.__init__(self,**kwargs)
+
+class Farm(_Workplace, _Structure):
+    def __init__(self, **kwargs):
+        _Workplace.__init__(self, **kwargs)
+        _Structure.__init__(self,**kwargs)
 
 
