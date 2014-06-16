@@ -1,7 +1,8 @@
 class StorageException(Exception):
     pass
 
-
+class OccupancyException(Exception):
+    pass
 # private abstract base classes
 
 class _Structure(object):
@@ -9,9 +10,19 @@ class _Structure(object):
         self.location = kwargs['location']
         self.specification = kwargs['specification']
         self.amount = kwargs['amount']
+        self.occupied = 0
 
     def store(self, item):
         raise StorageException("Not a container")
+
+    def available(self):
+        return self.amount - self.occupied
+
+    def hire(self, amount):
+        if amount<=self.available():
+            self.occupied+=amount
+        else:
+            raise OccupancyException("Not enough {0} buildings available", self)
 
 class _Container(object):
     def __init__(self, **kwargs):
