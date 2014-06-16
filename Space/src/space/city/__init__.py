@@ -1,27 +1,21 @@
 import structure 
 
 class WorkForce(object):
-    def __init__(self, city, type, total=0):
+    def __init__(self, city, profession, total=0):
         self.city = city
-        self.type = type
+        self.profession = profession
         self.total = total
         self.busy = 0
+        self.happiness = 0
+        self.money = 0
  
     def tick(self, ticks):
-        print "{} busy {}/{}".format(self.type.name, self.busy, self.total)
+        print "{} busy {}/{}".format(self.profession.name, self.busy, self.total)
 
-class Item(object):
-    def __init__(self, type, amount):
-        self.type = type
-        self.amount = amount
-
-    def volume(self):
-        return self.type.volume * amount
 
 class Population(object):
     def __init__(self):
         self.workers = []
-        self.happiness = 0
 
     def tick(self, ticks):
         for work in self.workers:

@@ -1,10 +1,6 @@
 class Specification(object):
-    def __init__(self, **kwargs):
-        for prop in self.__class__.default:
-            if not prop in kwargs:
-                kwargs[prop] = self.__class__.default[prop]
-        for kw in kwargs:
-            setattr(self,kw,kwargs[kw])
+    def __init__(self):
+        pass
 
     def create(self, **kwargs):
         if not 'amount' in kwargs: # TODO: terrible object default
@@ -15,34 +11,28 @@ class Specification(object):
         return self.create(**kwargs)
 
 class Product(Specification):
-    default = {
-                'name' : 'unknown',
-                'amount' : 1,
-                'storage' : None,
-                'volume' : 1,
-                'quality' : 0,
-    }
-    pass
+    def __init__(self, type, name='unknown', storage=None, volume=1, quality=0):
+        self.type = type
+        self.name = name
+        self.storage = storage
+        self.volume = 1
+        self.quality = 0
 
 class Building(Specification):
-    default = {
-               'name' : 'unknown',
-               'amount' : 1,
-               'space' : 0,
-               }
+    def __init__(self, type, name='unknown',  space=0):
+        self.type = type
+        self.name = name
+        self.space = space
 
 class Profession(Specification):
-    default = {
-               'name' : 'unknown',
-               'home' : None,
-               }
+    def __init__(self, name='unknown', home=None):
+        self.name = name
+        self.home = home
 
 
 class Process(Specification):
-    default = {
-               'power' : 0,
-               'duration' : 0,
-               'workplace' : None
-               }
-
+    def __init__(self, power=0, duration=0, workplace=None):
+        self.power = power
+        self.duration = duration
+        self.workplace = workplace
 
