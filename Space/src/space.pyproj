@@ -6,16 +6,21 @@
     <ProjectGuid>{6c76bb2c-cccc-43e6-8eaf-e8e0044b401c}</ProjectGuid>
     <ProjectHome />
     <StartupFile>main.py</StartupFile>
-    <SearchPath />
+    <SearchPath>.</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments>-v</CommandLineArguments>
+    <InterpreterPath />
+    <InterpreterArguments />
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
-    <Compile Include="definition.py" />
     <Compile Include="hardcoded_data.py" />
     <Compile Include="main.py" />
     <Compile Include="space\city\structure.py" />
@@ -23,7 +28,7 @@
     <Compile Include="space\item.py" />
     <Compile Include="space\test_item.py" />
     <Compile Include="space\__init__.py" />
-    <Compile Include="structure.py" />
+    <Compile Include="specification.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="space\" />
