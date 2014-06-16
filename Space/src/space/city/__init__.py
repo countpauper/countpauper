@@ -50,8 +50,7 @@ class Government(object):
     def tick(self, ticks):
         pass
 
-
-class City(object):
+class Habitation(object):
     def __init__(self):
         self.government = Government()
         self.population = Population()
@@ -65,16 +64,24 @@ class City(object):
             order.tick(ticks)
 
     def store(self, item):
-        for structure in self.infra:
+        for struct in self.infra:
             try:
-                structure.store(item)
+                struct.store(item)
                 return
-            except StorageException:
+            except structure.StorageException:
                 pass
-        raise StorageException("No storage for item", item)
+        raise structure.StorageException("No storage for item", item)
 
     def stock(self, product):
         total = 0
         for structure in self.infra:
             total += structure.stock(product)
 
+class City(Habitation):
+    pass
+
+class Base(Habitation):
+    pass
+
+class Station(Habitation):
+    pass

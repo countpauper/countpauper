@@ -15,7 +15,6 @@ class Main(object):
             if duration<1:
                 time.sleep(1-duration)
         
-
 if __name__== '__main__':
     exit(Main().loop())
 

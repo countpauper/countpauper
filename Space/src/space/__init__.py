@@ -1,4 +1,5 @@
 import city
+import item
 
 class Space(object):
     def __init__(self):

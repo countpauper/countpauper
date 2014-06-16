@@ -20,6 +20,8 @@
     <Compile Include="main.py" />
     <Compile Include="space\city\structure.py" />
     <Compile Include="space\city\__init__.py" />
+    <Compile Include="space\item.py" />
+    <Compile Include="space\test_item.py" />
     <Compile Include="space\__init__.py" />
     <Compile Include="structure.py" />
   </ItemGroup>
