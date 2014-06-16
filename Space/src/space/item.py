@@ -39,22 +39,27 @@ class _Consumable(object):
     def __init__(self, **kwargs):
         pass
 
+# category base classes
 class _Supply(_Item, _Stackable):
     def __init__(self, **kwargs):
-        super(_Supply, self).__init__(**kwargs)
+        _Item.__init__(self, **kwargs)
         _Stackable.__init__(self, **kwargs)
 
 class _Material(_Item, _Stackable):
     def __init__(self, **kwargs):
-        super(_Material, self).__init__(**kwargs)
+        _Item.__init__(self, **kwargs)
         _Stackable.__init__(self, **kwargs)
 
 # Public types, referenced from specification
 class Food(_Supply, _Consumable):
     def __init__(self, **kwargs):
-        super(Food, self).__init__(**kwargs)
+        _Supply.__init__(self,**kwargs)
         _Consumable.__init__(self, **kwargs)
 
 class Grain(_Material):
     def __init__(self, **kwargs):
-        super(Grain, self).__init__(**kwargs)
+        _Material.__init__(self, **kwargs)
+
+class Water(_Material):
+    def __init__(self, **kwargs):
+        _Material.__init__(self, **kwargs)

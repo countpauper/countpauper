@@ -2,7 +2,7 @@ class Specification(object):
     def __init__(self):
         pass
 
-    def create(self, **kwargs):
+    def create(self, **kwargs): # TODO: terrible object properties
         if not 'amount' in kwargs: # TODO: terrible object default
             kwargs['amount'] = 1
         return self.type(specification = self, **kwargs)
@@ -31,8 +31,11 @@ class Profession(Specification):
 
 
 class Process(Specification):
-    def __init__(self, power=0, duration=0, workplace=None):
+    def __init__(self, product={}, materials={}, power=0, duration=0, place=None, professional=None):
+        self.product = product
+        self.materials = materials
         self.power = power
         self.duration = duration
-        self.workplace = workplace
+        self.place = place
+        self.professional = professional    # TODO professionals {} ?
 

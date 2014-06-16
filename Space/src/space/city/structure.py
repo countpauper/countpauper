@@ -68,6 +68,11 @@ class Storage(_Container, _Structure):
         _Container.__init__(self, **kwargs)
         _Structure.__init__(self,**kwargs)
 
+class Tank(_Container, _Structure):
+    def __init__(self, **kwargs):
+        _Container.__init__(self, **kwargs)
+        _Structure.__init__(self,**kwargs)
+
 class Home(_Habitation, _Structure):
     def __init__(self, **kwargs):
         _Habitation.__init__(self, **kwargs)

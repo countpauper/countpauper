@@ -22,8 +22,7 @@ class Population(object):
             work.tick(ticks)
 
 class Order(object):
-    def __init__(self, owner, process, repeat, bulk):
-        self.owner = owner
+    def __init__(self, process, repeat, bulk):
         self.process = process
         self.timer = 0
         self.repeat = 0
@@ -43,6 +42,9 @@ class Order(object):
 class Government(object):
     def tick(self, ticks):
         pass
+
+class ProductionException(Exception):
+    pass
 
 class Habitation(object):
     def __init__(self):
@@ -70,6 +72,13 @@ class Habitation(object):
         total = 0
         for structure in self.infra:
             total += structure.stock(product)
+
+    def order(self, process, amount):
+        order = Order(process, amount)  # TODO split over bulk/repeat based on availability of space/workers
+        for material in process.materials:
+            if self.stock(product.materials)<product.materials[material]:
+                raise ProductionError("Not enough {0} for {1}", material, process)
+        for material in process.materials:
 
 class City(Habitation):
     pass

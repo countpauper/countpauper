@@ -14,10 +14,14 @@ planet.cities.append(masterdam)
 
 import specification as _spec
 
+cook = _spec.Profession(name='cook')
+farmer = _spec.Profession(name='farmer')
+worker = _spec.Profession(name='worker')
+
 workers = { 
-    _spec.Profession(name='cook') : 1,
-    _spec.Profession(name='farmer') : 1,
-    _spec.Profession(name='worker') : 1
+    cook : 1,
+    farmer : 1,
+    worker : 1
 }
 
 for type in workers:
@@ -25,6 +29,7 @@ for type in workers:
 
 structures = { 
     _spec.Building(name='store', type=_space.city.structure.Storage,space=100) : 1,
+    _spec.Building(name='tank', type=_space.city.structure.Tank, space=100) : 1,
     _spec.Building(name='baker', type=_space.city.structure.Baker, space=2) : 1,
     _spec.Building(name='farm', type=_space.city.structure.Farm, space=5) : 1,
     _spec.Building(name='house', type=_space.city.structure.Home, space=4): 1
@@ -33,13 +38,21 @@ structures = {
 for structure in structures:
     masterdam.infra.append(structure.type(location=masterdam, specification=structure, amount=structures[structure]))
 
+bread = _spec.Product(name='bread', type=_space.item.Food, storage=_space.city.structure.Storage, volume=1)
+wheat = _spec.Product(name='wheat', type=_space.item.Grain, storage=_space.city.structure.Storage, volume=1)
+water = _spec.Product(name='H2O', type=_space.item.Water, storage=_space.city.structure.Tank, volume=1)
 stock = {
-    _spec.Product(name='bread', type=_space.item.Food, storage=_space.city.structure.Storage, volume=1) : 10,
-    _spec.Product(name='wheat', type=_space.item.Grain, storage=_space.city.structure.Storage, volume=1) : 10,
+    bread : 10,
+    wheat : 10,
+    water : 10,
 }
   
 for item in stock:
     product = item.type(specification=item, amount=stock[item])
     masterdam.store(product)
 
-baking = _spec.Process()
+baking = _spec.Process(duration=1, materials={_space.item.Grain:1}, product={bread:1}, place=_space.city.structure.Baker, professional=cook)
+farming = _spec.Process(duration=10, materials={_space.item.Water:1}, product={wheat:10}, place=_space.city.structure.Farm, professional=farmer)
+
+masterdam.order(baking, 10)
+masterdam.order(farming, 1)
