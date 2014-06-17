@@ -6,9 +6,9 @@ class Process(Observation):
     def __init__(self, recipe, bulk=1, repeat=1):
         Observation.__init__(self)
         self.recipe = recipe
+        self.repeat = repeat
+        self.bulk = bulk
         self.timer = 0
-        self.repeat = 0
-        self.bulk = 0
         self.materials = []
         self.product = []
 

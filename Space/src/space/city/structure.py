@@ -23,6 +23,12 @@ class _Structure(object):
         else:
             raise OccupancyException("Not enough {0} buildings available", self)
 
+    def release(self, amount):
+        if amount<=self.occupied:
+            self.occupied-=amount
+        else:
+            raise OccupancyException("Not enough {0} buildings rented", self)
+
 class _NotContainer(object):
     def __init__(self, **kwargs):
         pass

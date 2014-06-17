@@ -53,6 +53,12 @@ class Habitation(Observer):
                 return worker.hire(amount) 
         raise EmploymentException("No {1} workers available in {0}", self, profession)
 
+    def fire(self, occupation, amount):
+        for worker in self.population.workers:
+            if worker.occupation == occupation:
+                return worker.fire(amount) 
+        raise EmploymentException("No {1} workers exist in {0}", self, profession)
+
     def rent(self, building, amount):
         for struct in self.infra:
             if isinstance(struct, building):
@@ -60,6 +66,12 @@ class Habitation(Observer):
                 return struct.rent(amount)
         raise OccupancyException("No {1} buildings available in {0}", self, building)
 
+    def release(self, building, amount):
+        for struct in self.infra:
+            if isinstance(struct, building):
+                return struct.release(amount)
+        raise OccupancyException("No {1} buildings exist in {0}", self, building)
+            
     def order(self, recipe, amount):
         # check availability first to prevent partial claims
         materials = recipe.materials
@@ -79,10 +91,13 @@ class Habitation(Observer):
 
     def notify(self, observable, event):
         if isinstance(observable, Process) and event=='done':
-            for item in observable.product:
+            process = observable
+            for item in process.product:
                 self.store(item)
-            observable.unregister(self)
-            self.processing.remove(observable)
+            process.unregister(self)
+            self.processing.remove(process)
+            self.fire(process.recipe.professional, process.bulk)
+            self.release(process.recipe.facilities, process.bulk)
 
 class City(Habitation):
     pass

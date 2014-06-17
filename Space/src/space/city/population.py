@@ -21,6 +21,12 @@ class _Agent(object):
         else:
             raise EmploymentException("Not enough {0} workers available", self )
 
+    def fire(self,amount):
+        if amount<=self.busy:
+            self.busy -= amount
+        else:
+            raise EmploymentException("Not enough {0} workers hired", self )
+
 class Individual(_Agent):
     def __init__(self, city, occupation):
         Agent.__init__(self, city, occupation)
