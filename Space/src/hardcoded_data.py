@@ -25,7 +25,7 @@ workers = {
 }
 
 for type in workers:
-    masterdam.population.workers.append(_space.city.WorkForce(masterdam, type, workers[type]))
+    masterdam.population.workers.append(_space.city.Group(masterdam, type, workers[type]))
 
 structures = { 
     _spec.Building(name='store', type=_space.city.structure.Storage,space=100) : 1,
@@ -51,8 +51,8 @@ for item in stock:
     product = item.type(specification=item, amount=stock[item])
     masterdam.store(product)
 
-baking = _spec.Process(duration=1, materials={_space.item.Grain:1}, product={bread:1}, place=_space.city.structure.Baker, professional=cook)
-farming = _spec.Process(duration=10, materials={_space.item.Water:1}, product={wheat:10}, place=_space.city.structure.Farm, professional=farmer)
+baking = _spec.Recipe(duration=1, materials={_space.item.Grain:1}, product={bread:1}, facilities=_space.city.structure.Baker, professional=cook)
+farming = _spec.Recipe(duration=10, materials={_space.item.Water:1}, product={wheat:10}, facilities=_space.city.structure.Farm, professional=farmer)
 
-masterdam.order(baking, 10)
+masterdam.order(baking, 1)
 masterdam.order(farming, 1)

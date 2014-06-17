@@ -1,3 +1,5 @@
+from specification import Product
+
 class StorageException(Exception):
     pass
 
@@ -12,17 +14,33 @@ class _Structure(object):
         self.amount = kwargs['amount']
         self.occupied = 0
 
-    def store(self, item):
-        raise StorageException("Not a container")
-
     def available(self):
         return self.amount - self.occupied
 
-    def hire(self, amount):
+    def rent(self, amount):
         if amount<=self.available():
             self.occupied+=amount
         else:
             raise OccupancyException("Not enough {0} buildings available", self)
+
+    def release(self, amount):
+        if amount<=self.occupied:
+            self.occupied-=amount
+        else:
+            raise OccupancyException("Not enough {0} buildings rented", self)
+
+class _NotContainer(object):
+    def __init__(self, **kwargs):
+        pass
+
+    def store(self, item):
+        raise StorageException("Not a container")
+
+    def stock(self, product):
+        return 0
+
+    def retrieve(self, product, amount):
+        raise StorageException("Not a container")
 
 class _Container(object):
     def __init__(self, **kwargs):
@@ -43,10 +61,14 @@ class _Container(object):
             same_item.stack(item)
 
     def find(self, product):
-        return [item for item in self.contents if item.specification==product]
+        if isinstance(product,Product):
+            return [item for item in self.contents if item.specification==product]
+        else:
+            return [item for item in self.contents if isinstance(item, product)]
 
     def stock(self, product):
-        return sum([item.amount for item in self.find(product)])
+        items = self.find(product)
+        return sum([item.amount for item in items])
 
     def retrieve(self, product, amount):
         items = self.find(product)
@@ -84,19 +106,22 @@ class Tank(_Container, _Structure):
         _Container.__init__(self, **kwargs)
         _Structure.__init__(self,**kwargs)
 
-class Home(_Habitation, _Structure):
+class Home(_Habitation, _Structure, _NotContainer):
     def __init__(self, **kwargs):
         _Habitation.__init__(self, **kwargs)
         _Structure.__init__(self,**kwargs)
+        _NotContainer.__init__(self, **kwargs)
 
-class Baker(_Workplace, _Structure):
+class Baker(_Workplace, _Structure, _NotContainer):
     def __init__(self, **kwargs):
         _Workplace.__init__(self, **kwargs)
         _Structure.__init__(self,**kwargs)
+        _NotContainer.__init__(self, **kwargs)
 
-class Farm(_Workplace, _Structure):
+class Farm(_Workplace, _Structure, _NotContainer):
     def __init__(self, **kwargs):
         _Workplace.__init__(self, **kwargs)
         _Structure.__init__(self,**kwargs)
+        _NotContainer.__init__(self, **kwargs)
 
 
