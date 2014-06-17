@@ -1,3 +1,6 @@
+from space.item import Food
+from structure import StorageException
+
 class EmploymentException(Exception):
     pass
 
@@ -8,9 +11,13 @@ class _Agent(object):
         self.busy = 0
         self.happiness = 0
         self.money = 0
+        self.hunger = 0 # TODO: just schedule meals in scheduler
 
     def tick(self, ticks):
-        print "{} busy {}/{}".format(self.occupation.name, self.busy, self.total)
+        self.hunger += ticks
+        print "{} busy {}/{} hungry {} happy {}".format(self.occupation.name, self.busy, self.total, self.hunger, self.happiness)
+        if self.hunger>=8:  # TODO: don't hardcode food time, time in Period, not 8 ticks but 8 hours
+            self.eat()
 
     def idle(self):
         return self.total-self.busy
@@ -26,6 +33,13 @@ class _Agent(object):
             self.busy -= amount
         else:
             raise EmploymentException("Not enough {0} workers hired", self )
+
+    def eat(self):
+        try:
+            food = self.city.retrieve(Food, self.total)
+            food.consume(self)
+        except StorageException:
+            self.happiness -= 1  # TODO per tick
 
 class Individual(_Agent):
     def __init__(self, city, occupation):

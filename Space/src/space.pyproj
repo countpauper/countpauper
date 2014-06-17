@@ -31,6 +31,7 @@
     <Compile Include="space\city\__init__.py" />
     <Compile Include="space\item.py" />
     <Compile Include="space\test_item.py" />
+    <Compile Include="space\time.py" />
     <Compile Include="utility\observer.py" />
     <Compile Include="space\__init__.py" />
     <Compile Include="specification.py" />

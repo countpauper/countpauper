@@ -44,7 +44,7 @@ class Habitation(Observer):
                 return struct.retrieve(product, amount)
             except StorageException:
                 pass
-        raise StorageException("Item {1} not stored in {0}", self, item)
+        raise StorageException("Product {1} not stored in {0}", self, product)
 
     def hire(self, occupation, amount):
         for worker in self.population.workers:

@@ -14,6 +14,8 @@ class _Item(object):
     def volume(self):
         return self.amount * self.specification.volume
 
+    def consume(self, _):
+        raise ItemException("Can't consume {}", self)
 
 class _Unique(object):
     def __init__(self,**kwargs):
@@ -39,6 +41,9 @@ class _Consumable(object):
     def __init__(self, **kwargs):
         pass
 
+    def consume(self, _):
+        self.amount = 0
+
 # category base classes
 class _Supply(_Item, _Stackable):
     def __init__(self, **kwargs):
@@ -55,6 +60,10 @@ class Food(_Supply, _Consumable):
     def __init__(self, **kwargs):
         _Supply.__init__(self,**kwargs)
         _Consumable.__init__(self, **kwargs)
+
+    def consume(self, user):
+        user.hunger = 0
+        _Consumable.consume(self, user)
 
 class Grain(_Material):
     def __init__(self, **kwargs):
