@@ -30,12 +30,12 @@ class Profession(Specification):
         self.home = home
 
 
-class Process(Specification):
-    def __init__(self, product={}, materials={}, power=0, duration=0, place=None, professional=None):
+class Recipe(Specification):
+    def __init__(self, product={}, materials={}, power=0, duration=0, facilities=None, professional=None):
         self.product = product
         self.materials = materials
         self.power = power
         self.duration = duration
-        self.place = place
+        self.facilities = facilities
         self.professional = professional    # TODO professionals {} ?
 
