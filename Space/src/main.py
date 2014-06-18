@@ -14,7 +14,7 @@ class Main(object):
             self.space.tick(1)
             duration = time.clock()-start
             if duration<1:
-                time.sleep(1-duration)
+                time.sleep(0.1-duration)
         
 if __name__== '__main__':
     exit(Main().loop())

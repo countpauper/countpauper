@@ -5,7 +5,7 @@ from specification import Recipe
 from utility.observer import Observer
 
 class Government(object):
-    def tick(self, ticks):
+    def tick(self, time, period):
         pass
 
 class Habitation(Observer):
@@ -17,11 +17,11 @@ class Habitation(Observer):
         self.infra = []
 
 
-    def tick(self, ticks):
-        self.government.tick(ticks)
-        self.population.tick(ticks)
+    def tick(self, time, period):
+        self.government.tick(time, period)
+        self.population.tick(time, period)
         for process in self.processing:
-            process.tick(ticks)
+            process.tick(time, period)
 
     def store(self, item):
         for struct in self.infra:

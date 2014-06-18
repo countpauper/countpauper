@@ -1,5 +1,6 @@
 from space.item import Food
 from structure import StorageException
+from space.time import Period
 
 class EmploymentException(Exception):
     pass
@@ -11,12 +12,12 @@ class _Agent(object):
         self.busy = 0
         self.happiness = 0
         self.money = 0
-        self.hunger = 0 # TODO: just schedule meals in scheduler
+        self.hunger = Period(0) # TODO: just schedule meals in scheduler
 
-    def tick(self, ticks):
-        self.hunger += ticks
+    def tick(self, time, period):
+        self.hunger += period
         print "{} busy {}/{} hungry {} happy {}".format(self.occupation.name, self.busy, self.total, self.hunger, self.happiness)
-        if self.hunger>=8:  # TODO: don't hardcode food time, time in Period, not 8 ticks but 8 hours
+        if self.hunger>=Period(8):  # TODO: don't hardcode food time, time in Period, not 8 ticks but 8 hours
             self.eat()
 
     def idle(self):
@@ -55,6 +56,6 @@ class Population(object):
     def __init__(self):
         self.workers = []
 
-    def tick(self, ticks):
+    def tick(self, time, period):
         for work in self.workers:
-            work.tick(ticks)
+            work.tick(time, period)

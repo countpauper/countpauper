@@ -1,4 +1,6 @@
 from utility.observer import Observation
+from space.time import Period
+
 class ProductionException(Exception):
     pass
 
@@ -8,14 +10,14 @@ class Process(Observation):
         self.recipe = recipe
         self.repeat = repeat
         self.bulk = bulk
-        self.timer = 0
+        self.timer = Period()
         self.materials = []
         self.product = []
 
-    def tick(self, ticks):
-        self.timer += ticks
+    def tick(self, time, period):
+        self.timer += period
         print "Process {}/{}".format(self.timer, self.recipe.duration)
-        if self.timer>=self.recipe.duration:    # TODO: repeat
+        if self.timer>=Period(self.recipe.duration):    # TODO: repeat
             self.done()
 
     def done(self):
