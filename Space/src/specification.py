@@ -18,6 +18,9 @@ class Product(Specification):
         self.volume = 1
         self.quality = 0
 
+    def __repr__(self):
+        return self.name
+
 class Building(Specification):
     def __init__(self, type, name='unknown',  space=0):
         self.type = type

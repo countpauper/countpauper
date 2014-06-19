@@ -10,7 +10,7 @@ planet = _space.Planet()
 star.bodies.append(planet)
 
 
-masterdam = _space.city.City()
+masterdam = _space.city.City("Masterdam")
 planet.cities.append(masterdam)
 
 import specification as _spec
@@ -32,7 +32,7 @@ for type in workers:
 
 structures = { 
     _spec.Building(name='store', type=_space.city.structure.Storage,space=1000) : 10,
-    _spec.Building(name='tank', type=_space.city.structure.Tank, space=100) : 1,
+    _spec.Building(name='tank', type=_space.city.structure.Tank, space=10000) : 1,
     _spec.Building(name='baker', type=_space.city.structure.Baker, space=2) : 1,
     _spec.Building(name='farm', type=_space.city.structure.Farm, space=5) : 1,
     _spec.Building(name='house', type=_space.city.structure.Home, space=4): 1,
@@ -46,18 +46,18 @@ bread = _spec.Product(name='bread', type=_space.item.Food, storage=_space.city.s
 wheat = _spec.Product(name='wheat', type=_space.item.Grain, storage=_space.city.structure.Storage, volume=1)
 water = _spec.Product(name='H2O', type=_space.item.Water, storage=_space.city.structure.Tank, volume=1)
 stock = {
-    bread : 10,
-    wheat : 10,
-    water : 10,
+    bread : 4 * 4 * 8,
+    wheat : 0,
+    water : 1000,
 }
   
 for item in stock:
     product = item.type(specification=item, amount=stock[item])
     masterdam.store(product)
 
-baking = _spec.Recipe(duration=Day(1), materials={_space.item.Grain:8}, product={bread:8}, facilities=_space.city.structure.Baker, professional=cook)
-farming = _spec.Recipe(duration=Cycle(1), materials={_space.item.Water:1}, product={wheat:10}, facilities=_space.city.structure.Farm, professional=farmer)
-welling = _spec.Recipe(duration=Day(1), materials={}, product={water:10}, facilities=_space.city.structure.Well, professional=engineer)
+baking = _spec.Recipe(duration=Day(1), materials={_space.item.Grain:10}, product={bread:10}, facilities=_space.city.structure.Baker, professional=cook)
+farming = _spec.Recipe(duration=Cycle(1), materials={_space.item.Water:1000}, product={wheat:100}, facilities=_space.city.structure.Farm, professional=farmer)
+welling = _spec.Recipe(duration=Day(1), materials={}, product={water:200}, facilities=_space.city.structure.Well, professional=engineer)
 
 #masterdam.order(baking, 1)
 #masterdam.order(farming, 1)

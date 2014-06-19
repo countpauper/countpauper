@@ -19,6 +19,9 @@ class _Item(object):
     def consume(self, _):
         raise ItemException("Can't consume {}", self)
 
+    def __repr__(self):
+        return self.specification.name
+
 class _Unique(object):
     def __init__(self,**kwargs):
         self.amount = 1

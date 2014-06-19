@@ -45,7 +45,7 @@ class _Agent(object):
             food = self.city.retrieve(Food, self.total)
             food.consume(self)
         except StorageException:
-            self.happiness -= 1  # TODO per tick
+            pass
 
 class Individual(_Agent):
     def __init__(self, city, occupation):

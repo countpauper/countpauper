@@ -12,6 +12,8 @@ class Government(Organization):
     def rule(self, location, period):
         for process in self.responsibilities:
             amounts = location.availability(process)
-            location.order(process, min(amounts))
+            amount = min(amounts)
+            if amount:
+                location.order(process, amount)
 
 

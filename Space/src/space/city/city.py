@@ -6,13 +6,16 @@ from utility.observer import Observer
 from organization import Government
 
 class Habitation(Observer):
-    def __init__(self):
+    def __init__(self, name):
         Observer.__init__(self)
+        self.name = name
         self.government = Government([self])
         self.population = Population()
         self.processing = []
         self.infra = []
 
+    def __repr__(self):
+        return self.name
 
     def tick(self, time, period):
         self.government.tick(time, period)
