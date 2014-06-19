@@ -32,14 +32,17 @@ class Habitation(Observer):
         self.inventory.data.append(stock)
         self.inventory.write('inventory.csv')
 
+    def reserve(self, building, volume):
+        structs = self._buildings(building)
+        if not structs:
+            raise OccupancyException("No {1} storage available in {0}", self, building)
+        structs[0].reserve(volume)  # TODO: spread over stores
+    
     def store(self, item):
-        for struct in self.infra:
-            try:
-                struct.store(item)
-                return
-            except StorageException:
-                pass
-        raise StorageException("No storage space for item {1} in {0}", self, item)
+        store = self._buildings(item.specification.storage)
+        if not store:
+            raise StorageException("No store for item {1} in {0}", self, item)
+        store[0].store(item)    # TODO: spread over stores
 
     def stock(self, product):
         total = 0
@@ -55,50 +58,59 @@ class Habitation(Observer):
                 pass
         raise StorageException("Product {1} not stored in {0}", self, product)
 
-    def workers(self, occupation):
+    def _workers(self, occupation):
         return [worker for worker in self.population.workers if worker.occupation == occupation]
 
     def hire(self, occupation, amount):
-        workers = self.workers(occupation)
+        workers = self._workers(occupation)
         if not workers:
             raise EmploymentException("No {1} workers available in {0}", self, profession)
         workers[0].hire(amount)  # TODO: count em and hire multiple results
 
     def fire(self, occupation, amount):
-        workers = self.workers(occupation)
+        workers = self._workers(occupation)
         if not workers:
             raise EmploymentException("No {1} workers exist in {0}", self, profession)
         workers[0].fire(amount) # TODO: count em and fire multiple
 
-    def buildings(self, building):
+    def _buildings(self, building):
         return [struct for struct in self.infra if isinstance(struct,building)]
 
+
+
     def rent(self, building, amount):
-        structs = self.buildings(building)
+        structs = self._buildings(building)
         if not structs:
             raise OccupancyException("No {1} buildings available in {0}", self, building)
         structs[0].rent(amount) # TODO: count em and rent multiple?
 
     def release(self, building, amount):
-        structs = self.buildings(building)
+        structs = self._buildings(building)
         if not structs:
             raise OccupancyException("No {1} buildings exist in {0}", self, building)
         structs[0].release(amount) # TODO: count em and weep
             
-    def order(self, recipe, amount):
+    def order(self, recipe, bulk):
         # check availability first to prevent partial claims
         materials = recipe.materials
         for material in materials:
-            if self.stock(material)<materials[material] * amount:
+            if self.stock(material)<materials[material] * bulk:
                 raise ProductionException("Not enough {0} for {1}", material, recipe)
         
-        process = Process(recipe, amount)  # TODO split over bulk/repeat based on availability of space/workers
+        process = Process(recipe, bulk)  # TODO split over bulk/repeat based on availability of space/workers
+        
+        for product,amount in recipe.product.iteritems():
+            if sum([building.space() for building in self._buildings(product.storage)]) <= product.volume * bulk:
+                raise ProductionException("Not enough storage in {0} for {1}", self, product)
 
         # availability checked, claim
-        self.hire(recipe.professional, amount)
-        self.rent(recipe.facilities, amount)
+        for product,amount in recipe.product.iteritems():
+            self.reserve(product.storage, product.volume*amount*bulk)
+       
+        self.hire(recipe.professional, bulk)
+        self.rent(recipe.facilities, bulk)
         for material in materials:
-            process.materials.append(self.retrieve(material,materials[material] * amount))
+            process.materials.append(self.retrieve(material,materials[material] * bulk))
         self.processing.append(process)
         process.register(self)
 
@@ -106,13 +118,15 @@ class Habitation(Observer):
         """Return amounts for availability of: materials, place, professional, power, storage"""
         materials = [self.stock(material) // recipe.materials[material] for material in recipe.materials]
 
-        workers = sum([worker.idle() for worker in self.workers(recipe.professional)])
-        facility = sum([building.available() for building in self.buildings(recipe.facilities)])
+        stores = [(sum([building.space() for building in self._buildings(product.storage)]) // amount * product.volume) 
+                    for product,amount in recipe.product.iteritems()]
+        workers = sum([worker.idle() for worker in self._workers(recipe.professional)])
+        facility = sum([building.available() for building in self._buildings(recipe.facilities)])
 
         if materials:
-            return min(materials), facility, workers # TODO: power/storage
+            return min(materials), min(stores), facility, workers # TODO: power/storage
         else:
-            return facility, workers
+            return min(stores), facility, workers
 
     def notify(self, observable, event):
         if isinstance(observable, Process) and event=='done':

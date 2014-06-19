@@ -31,8 +31,8 @@ for type in workers:
     masterdam.population.workers.append(_space.city.Group(masterdam, type, workers[type]))
 
 structures = { 
-    _spec.Building(name='store', type=_space.city.structure.Storage,space=1000) : 10,
-    _spec.Building(name='tank', type=_space.city.structure.Tank, space=10000) : 1,
+    _spec.Building(name='store', type=_space.city.structure.Storage,space=250) : 2,
+    _spec.Building(name='tank', type=_space.city.structure.Tank, space=2000) : 1,
     _spec.Building(name='baker', type=_space.city.structure.Baker, space=1) : 2,
     _spec.Building(name='farm', type=_space.city.structure.Farm, space=1) : 1,
     _spec.Building(name='house', type=_space.city.structure.Home, space=1): 1,
@@ -51,12 +51,13 @@ stock = {
     water : 1000,
 }
   
-for item in stock:
-    product = item.type(specification=item, amount=stock[item])
+for item, amount in stock.iteritems():
+    product = item.type(specification=item, amount=amount)
+    masterdam.reserve(item.storage, item.volume * amount)
     masterdam.store(product)
 
-baking = _spec.Recipe(duration=Day(1), materials={_space.item.Grain:15}, product={bread:15}, facilities=_space.city.structure.Baker, professional=cook)
-farming = _spec.Recipe(duration=Cycle(1), materials={_space.item.Water:1000}, product={wheat:200}, facilities=_space.city.structure.Farm, professional=farmer)
+baking = _spec.Recipe(duration=Day(1), materials={_space.item.Grain:15}, product={bread:16}, facilities=_space.city.structure.Baker, professional=cook)
+farming = _spec.Recipe(duration=Cycle(1), materials={_space.item.Water:1024}, product={wheat:256}, facilities=_space.city.structure.Farm, professional=farmer)
 welling = _spec.Recipe(duration=Day(1), materials={}, product={water:200}, facilities=_space.city.structure.Well, professional=engineer)
 
 #masterdam.order(baking, 1)

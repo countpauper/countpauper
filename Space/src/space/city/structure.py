@@ -36,7 +36,13 @@ class _NotContainer(object):
     def store(self, item):
         raise StorageException("Not a container")
 
+    def reserve(self, amount):
+        raise StorageException("Not a container")
+
     def stock(self, product):
+        return 0
+
+    def space(self):
         return 0
 
     def retrieve(self, product, amount):
@@ -45,13 +51,20 @@ class _NotContainer(object):
 class _Container(object):
     def __init__(self, **kwargs):
         self.contents = []
+        self.reserved = 0
+
+    def reserve(self, space):
+        if space > self.space():
+            raise StorageException("Not enough space in {0} for reservation", self)
+        self.reserved += space
 
     def store(self, item):
         # TODO: check space, current container
         if not isinstance(self, item.specification.storage):
             raise StorageException("Wrong storage type {0} for {1}", self, item)
-        if item.volume() > self.space():
-            raise StorageException("No room in {0} for {1}", self, item)
+        if item.volume() > self.reserved:
+            raise StorageException("No reservation in {0} for {1}", self, item)
+        self.reserved -= item.volume()      
         same_item = self.find(item.specification)
         if same_item:
             same_item[0].stack(item)
@@ -83,11 +96,13 @@ class _Container(object):
             return retrieved_item
         raise StorageException("Item {1} not stored in {0}", self, product)
 
+    def _used_space(self):
+        return sum([item.volume() for item in self.contents])
+
     def space(self):
         space = self.specification.space * self.amount
-        for item in self.contents:
-            space -= item.volume()
-        return space
+        space -= self._used_space()
+        return space - self.reserved
 
 class _Workplace(object):
     def __init__(self, **kwargs):

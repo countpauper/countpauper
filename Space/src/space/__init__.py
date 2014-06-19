@@ -9,7 +9,7 @@ class Space(object):
 
     def tick(self, ticks):
         period = Period(ticks)
-        # print "Time: {}".format(self.time)
+        print "Time: {}".format(self.time)
         for system in self.systems:
             system.tick(self.time, period)
         self.time += period
