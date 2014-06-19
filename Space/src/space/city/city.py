@@ -15,6 +15,7 @@ class Habitation(Observer):
         self.processing = []
         self.infra = []
         self.inventory = Table(["time","bread","wheat","H2O"])
+        self.inventory.open('inventory.csv')
 
     def __repr__(self):
         return self.name
@@ -29,8 +30,7 @@ class Habitation(Observer):
     def _write_inventory(self, space_time):
         stock = dict([(item,self.stock(item)) for item in self.inventory.header])
         stock["time"] = space_time
-        self.inventory.data.append(stock)
-        self.inventory.write('inventory.csv')
+        self.inventory.append( stock )
 
     def reserve(self, building, volume):
         structs = self._buildings(building)
