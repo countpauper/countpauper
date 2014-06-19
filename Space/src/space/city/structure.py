@@ -63,6 +63,8 @@ class _Container(object):
     def find(self, product):
         if isinstance(product,Product):
             return [item for item in self.contents if item.specification==product]
+        elif isinstance(product,str):
+            return [item for item in self.contents if item.specification.name==product]
         else:
             return [item for item in self.contents if isinstance(item, product)]
 

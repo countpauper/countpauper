@@ -4,6 +4,7 @@ from process import Process, ProductionException
 from specification import Recipe
 from utility.observer import Observer
 from organization import Government
+from utility.table import Table
 
 class Habitation(Observer):
     def __init__(self, name):
@@ -13,15 +14,23 @@ class Habitation(Observer):
         self.population = Population()
         self.processing = []
         self.infra = []
+        self.inventory = Table(["time","bread","wheat","H2O"])
 
     def __repr__(self):
         return self.name
 
-    def tick(self, time, period):
-        self.government.tick(time, period)
-        self.population.tick(time, period)
+    def tick(self, space_time, period):
+        self.government.tick(space_time, period)    # NB: one update is wasted manually repeating orders
+        self.population.tick(space_time, period)
         for process in self.processing:
-            process.tick(time, period)
+            process.tick(space_time, period)
+        self._write_inventory(space_time)
+
+    def _write_inventory(self, space_time):
+        stock = dict([(item,self.stock(item)) for item in self.inventory.header])
+        stock["time"] = space_time
+        self.inventory.data.append(stock)
+        self.inventory.write('inventory.csv')
 
     def store(self, item):
         for struct in self.infra:

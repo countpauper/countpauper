@@ -16,9 +16,12 @@ class _Agent(object):
 
     def tick(self, time, period):
         self.hunger += period.days() * constants.calories_per_day
-        print "{} busy {}/{} hungry {} happy {}".format(self.occupation.name, self.busy, self.total, self.hunger, self.happiness())
         if self.hunger>=constants.calories_per_meal:  # TODO:just schedule meals in scheduler per 8 hours
             self.eat()
+            # print "{} eating {}".format(time, self)
+
+    def __repr__(self):
+        return "{} x {}".format(self.total, self.occupation)
 
     def happiness(self):
         score = 0

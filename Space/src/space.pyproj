@@ -38,6 +38,7 @@
     <Compile Include="utility\observer.py" />
     <Compile Include="space\__init__.py" />
     <Compile Include="specification.py" />
+    <Compile Include="utility\table.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="space\" />

@@ -27,11 +27,16 @@ class Building(Specification):
         self.name = name
         self.space = space
 
+    def __repr__(self):
+        return self.name
+
 class Profession(Specification):
     def __init__(self, name='unknown', home=None):
         self.name = name
         self.home = home
 
+    def __repr__(self):
+        return self.name
 
 class Recipe(Specification):
     def __init__(self, product={}, materials={}, power=0, duration=0, facilities=None, professional=None):
@@ -42,3 +47,5 @@ class Recipe(Specification):
         self.facilities = facilities
         self.professional = professional    # TODO professionals {} ?
 
+    def __repr__(self):
+        return "{} -> {}".format(self.materials, self.product)

@@ -14,16 +14,17 @@ class Process(Observation):
         self.materials = []
         self.product = []
 
+    def __repr__(self):
+        return "{} x {} x {}".format(self.repeat, self.bulk, self. recipe)
+
     def tick(self, time, period):
         self.timer += period
-        print "Process {} {} {}/{}".format(self.bulk, self.recipe.product, self.timer, self.recipe.duration)
         if self.timer>=self.recipe.duration:    # TODO: repeat
             self.done()
 
     def done(self):
-        print "Process done"
         products = self.recipe.product
         for product in products:
-            item = product.create(amount=products[product])
+            item = product.create(amount=products[product] * self.bulk)
             self.product.append(item)
         self.notify('done')
