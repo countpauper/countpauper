@@ -48,11 +48,17 @@ class Test_Period(unittest.TestCase):
     def test_sub(self):
         t = 3, 2
         p = [Period(tick) for tick in t]
-        self.assertEqual(Period(t0)-Period(t1), Period(t[0]-t[1]))
-        self.assertEqual(Period(t1)-Period(t0), Period(t[1]-t[0]))
+        self.assertEqual(Period(t[0])-Period(t[1]), Period(t[0]-t[1]))
+        self.assertEqual(Period(t[1])-Period(t[0]), Period(t[1]-t[0]))
         p01 = p[0]
         p01 -= p[1]
-        self.assertEqual(p01, Period(t0-t1))
+        self.assertEqual(p01, Period(t[0]-t[1]))
+
+    def test_per(self):
+        self.assertEqual(Minute(1).seconds(), 64.0)
+        self.assertEqual(Hour(1).hours(), 1.0)
+        self.assertEqual(Day(1).days(), 1.0)
+        self.assertEqual(Cycle(1).cycles(), 1.0)
 
 if __name__ == '__main__':
     unittest.main()

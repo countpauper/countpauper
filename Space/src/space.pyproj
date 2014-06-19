@@ -29,6 +29,7 @@
     <Compile Include="space\city\structure.py" />
     <Compile Include="space\city\test_structure.py" />
     <Compile Include="space\city\__init__.py" />
+    <Compile Include="space\constants.py" />
     <Compile Include="space\item.py" />
     <Compile Include="space\test_item.py" />
     <Compile Include="space\test_time.py" />

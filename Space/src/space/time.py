@@ -1,9 +1,9 @@
 _seconds_per_tick = 8
 _ticks_per_minute = 8
 _ticks_per_hour = 64 * _ticks_per_minute
-_ticks_per_day = 16 * _ticks_per_hour
+_ticks_per_day = 32 * _ticks_per_hour
 _ticks_per_cycle = 8 * _ticks_per_day
-_ticks_per_year = 64 * _ticks_per_cycle
+_ticks_per_year = 32 * _ticks_per_cycle
 
 class Time(object):
     def __init__(self, tick=0, minute=0, hour=0,day=0,cycle=0,year=0):
@@ -51,6 +51,18 @@ class Time(object):
 class Period(object):
     def __init__(self, ticks=0):
         self._ticks = int(ticks)
+
+    def seconds(self):
+        return self._ticks * _seconds_per_tick
+
+    def hours(self):
+        return self._ticks / float(_ticks_per_hour)
+
+    def days(self):
+        return self._ticks / float(_ticks_per_day)
+
+    def cycles(self):
+        return self._ticks / float(_ticks_per_cycle)
 
     def __add__(self,period):
         return Period(self._ticks + period._ticks)

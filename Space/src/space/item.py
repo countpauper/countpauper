@@ -1,5 +1,6 @@
 # exceptions
 from space.time import Period
+import space.constants as constants
 
 class ItemException(Exception):
     pass
@@ -63,7 +64,7 @@ class Food(_Supply, _Consumable):
         _Consumable.__init__(self, **kwargs)
 
     def consume(self, user):
-        user.hunger = Period(0)
+        user.hunger -= constants.calories_per_meal
         _Consumable.consume(self, user)
 
 class Grain(_Material):
