@@ -85,6 +85,12 @@ class Period(object):
     def __eq__(self, other):
         return self._ticks == other._ticks
 
+    def __ge__(self,other):
+        return self._ticks >= other._ticks
+
+    def __gt__(self, other):
+        return self._ticks > other._ticks
+
 class Minute(Period):
     def __init__(self, minutes):
         super(Minute, self).__init__(minutes*_ticks_per_minute)

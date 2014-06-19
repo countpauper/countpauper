@@ -124,4 +124,10 @@ class Farm(_Workplace, _Structure, _NotContainer):
         _Structure.__init__(self,**kwargs)
         _NotContainer.__init__(self, **kwargs)
 
+class Well(_Workplace, _Structure, _NotContainer):
+    def __init__(self, **kwargs):
+        _Workplace.__init__(self, **kwargs)
+        _Structure.__init__(self,**kwargs)
+        _NotContainer.__init__(self, **kwargs)
+
 

@@ -23,6 +23,7 @@
   <ItemGroup>
     <Compile Include="hardcoded_data.py" />
     <Compile Include="main.py" />
+    <Compile Include="space\city\organization.py" />
     <Compile Include="space\city\population.py" />
     <Compile Include="space\city\city.py" />
     <Compile Include="space\city\process.py" />

@@ -3,15 +3,12 @@ from structure import StorageException
 from process import Process, ProductionException
 from specification import Recipe
 from utility.observer import Observer
-
-class Government(object):
-    def tick(self, time, period):
-        pass
+from organization import Government
 
 class Habitation(Observer):
     def __init__(self):
         Observer.__init__(self)
-        self.government = Government()
+        self.government = Government([self])
         self.population = Population()
         self.processing = []
         self.infra = []
@@ -46,31 +43,35 @@ class Habitation(Observer):
                 pass
         raise StorageException("Product {1} not stored in {0}", self, product)
 
+    def workers(self, occupation):
+        return [worker for worker in self.population.workers if worker.occupation == occupation]
+
     def hire(self, occupation, amount):
-        for worker in self.population.workers:
-            if worker.occupation == occupation:
-                # TODO: check and take money
-                return worker.hire(amount) 
-        raise EmploymentException("No {1} workers available in {0}", self, profession)
+        workers = self.workers(occupation)
+        if not workers:
+            raise EmploymentException("No {1} workers available in {0}", self, profession)
+        workers[0].hire(amount)  # TODO: count em and hire multiple results
 
     def fire(self, occupation, amount):
-        for worker in self.population.workers:
-            if worker.occupation == occupation:
-                return worker.fire(amount) 
-        raise EmploymentException("No {1} workers exist in {0}", self, profession)
+        workers = self.workers(occupation)
+        if not workers:
+            raise EmploymentException("No {1} workers exist in {0}", self, profession)
+        workers[0].fire(amount) # TODO: count em and fire multiple
+
+    def buildings(self, building):
+        return [struct for struct in self.infra if isinstance(struct,building)]
 
     def rent(self, building, amount):
-        for struct in self.infra:
-            if isinstance(struct, building):
-                # TODO: check and take money
-                return struct.rent(amount)
-        raise OccupancyException("No {1} buildings available in {0}", self, building)
+        structs = self.buildings(building)
+        if not structs:
+            raise OccupancyException("No {1} buildings available in {0}", self, building)
+        structs[0].rent(amount) # TODO: count em and rent multiple?
 
     def release(self, building, amount):
-        for struct in self.infra:
-            if isinstance(struct, building):
-                return struct.release(amount)
-        raise OccupancyException("No {1} buildings exist in {0}", self, building)
+        structs = self.buildings(building)
+        if not structs:
+            raise OccupancyException("No {1} buildings exist in {0}", self, building)
+        structs[0].release(amount) # TODO: count em and weep
             
     def order(self, recipe, amount):
         # check availability first to prevent partial claims
@@ -88,6 +89,18 @@ class Habitation(Observer):
             process.materials.append(self.retrieve(material,materials[material] * amount))
         self.processing.append(process)
         process.register(self)
+
+    def availability(self, recipe):
+        """Return amounts for availability of: materials, place, professional, power, storage"""
+        materials = [self.stock(material) // recipe.materials[material] for material in recipe.materials]
+
+        workers = sum([worker.idle() for worker in self.workers(recipe.professional)])
+        facility = sum([building.available() for building in self.buildings(recipe.facilities)])
+
+        if materials:
+            return min(materials), facility, workers # TODO: power/storage
+        else:
+            return facility, workers
 
     def notify(self, observable, event):
         if isinstance(observable, Process) and event=='done':

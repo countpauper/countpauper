@@ -17,7 +17,7 @@ class Process(Observation):
     def tick(self, time, period):
         self.timer += period
         print "Process {}/{}".format(self.timer, self.recipe.duration)
-        if self.timer>=Period(self.recipe.duration):    # TODO: repeat
+        if self.timer>=self.recipe.duration:    # TODO: repeat
             self.done()
 
     def done(self):
