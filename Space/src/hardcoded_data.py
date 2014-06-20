@@ -63,4 +63,7 @@ welling = _spec.Recipe(duration=Day(1), materials={}, product={water:200}, facil
 #masterdam.order(baking, 1)
 #masterdam.order(farming, 1)
 
-masterdam.government.responsibilities = baking, farming, welling
+# masterdam.government.responsibilities = baking, farming, welling
+masterdam.organizations.append(_space.city.organization.Guild(baking))
+masterdam.organizations.append(_space.city.organization.Guild(farming))
+masterdam.organizations.append(_space.city.organization.Guild(welling))
