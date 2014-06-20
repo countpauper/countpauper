@@ -113,6 +113,7 @@ class Habitation(Observer):
             process.materials.append(self.retrieve(material,materials[material] * bulk))
         self.processing.append(process)
         process.register(self)
+        return process
 
     def availability(self, recipe):
         """Return amounts for availability of: materials, place, professional, power, storage"""
