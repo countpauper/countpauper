@@ -2,7 +2,7 @@ from agent import Agent, EmploymentException
 from structure import StorageException
 from utility.observer import Observer
 from utility.table import Table
-from market import GoodsMarket
+from market import GoodsMarket, ItemCarriedException
 
 class Habitation(Observer):
     def __init__(self, name):
@@ -10,6 +10,7 @@ class Habitation(Observer):
         self.name = name
         self.actors = []
         self.infra = []
+        self.markets = [ GoodsMarket() ]
         self.inventory = Table(["time","bread","wheat","H2O"])
         self.inventory.open('inventory.csv')
 
@@ -32,11 +33,21 @@ class Habitation(Observer):
             raise OccupancyException("No {1} storage available in {0}", self, building)
         structs[0].reserve(volume)  # TODO: spread over stores
     
-    def store(self, item):
+    def _store(self, item):
         store = self._buildings(item.specification.storage)
         if not store:
             raise StorageException("No store for item {1} in {0}", self, item)
         store[0].store(item)    # TODO: spread over stores
+
+    def sell(self, item, asking_price):
+        for market in self.markets:
+            try:
+                market.sell(item, asking_price)
+            except ItemCarriedException:
+                pass 
+            self._store(item)
+            return
+        raise ItemCarriedException("No market in {} offers {}", self, item)
 
     def stock(self, product):
         total = 0
@@ -44,13 +55,34 @@ class Habitation(Observer):
             total += structure.stock(product)
         return total
 
-    def retrieve(self, product, amount):
+    def _retrieve(self, item, amount):
+        """Return unstacked item, currently stored in container structures
+        item may be a product specification or the name of a product
+        the result is a new item with the type of the specification of the given item, 
+        but the specified amount and the same owner. The stored item's amount is reduced
+        by the given amount and removed entirely from storage if amount is reduced to 0.
+        If not enough of the specified amount is stored, an exception is raised"""
         for struct in self.infra:
             try:
-                return struct.retrieve(product, amount)
+                return struct.retrieve(item, amount)
             except StorageException:
                 pass
         raise StorageException("Product {1} not stored in {0}", self, product)
+
+    def offer(self, product, amount, price):
+        for market in self.markets:
+            try:
+                offer = market.offer(item, asking_price)
+                market.buy(offer)
+                # TODO: assumes retrieve will succeed, because it's on offer
+                sold = self._retrieve(product, amount)
+                return sold
+            except ItemCarriedException:
+                pass 
+            for item, amount in items: 
+                self._retrieve(item, amount)
+            return
+        raise ItemCarriedException("No market in {} sells {}", self, item)
 
     def _workers(self, occupation):
         # TODO isinstance check requires public Agent, duck type?

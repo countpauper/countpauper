@@ -67,3 +67,4 @@ welling = _spec.Recipe(duration=Day(1), materials={}, product={water:200}, facil
 masterdam.actors.append(_space.city.organization.Guild(baking))
 masterdam.actors.append(_space.city.organization.Guild(farming))
 masterdam.actors.append(_space.city.organization.Guild(welling))
+
