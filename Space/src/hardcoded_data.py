@@ -28,7 +28,7 @@ workers = {
 }
 
 for type in workers:
-    masterdam.population.workers.append(_space.city.Group(masterdam, type, workers[type]))
+    masterdam.actors.append(_space.city.Group(type, workers[type]))
 
 structures = { 
     _spec.Building(name='store', type=_space.city.structure.Storage,space=250) : 2,
@@ -64,6 +64,6 @@ welling = _spec.Recipe(duration=Day(1), materials={}, product={water:200}, facil
 #masterdam.order(farming, 1)
 
 # masterdam.government.responsibilities = baking, farming, welling
-masterdam.organizations.append(_space.city.organization.Guild(baking))
-masterdam.organizations.append(_space.city.organization.Guild(farming))
-masterdam.organizations.append(_space.city.organization.Guild(welling))
+masterdam.actors.append(_space.city.organization.Guild(baking))
+masterdam.actors.append(_space.city.organization.Guild(farming))
+masterdam.actors.append(_space.city.organization.Guild(welling))

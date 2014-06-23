@@ -1,4 +1,4 @@
-from population import Population, EmploymentException
+from agent import Agent, EmploymentException
 from structure import StorageException
 from utility.observer import Observer
 from utility.table import Table
@@ -8,8 +8,7 @@ class Habitation(Observer):
     def __init__(self, name):
         Observer.__init__(self)
         self.name = name
-        self.population = Population()
-        self.organizations = []
+        self.actors = []
         self.infra = []
         self.inventory = Table(["time","bread","wheat","H2O"])
         self.inventory.open('inventory.csv')
@@ -18,9 +17,8 @@ class Habitation(Observer):
         return self.name
 
     def tick(self, time, period):
-        self.population.tick(time, period)
-        for org in self.organizations:
-            org.tick(self, time, period)
+        for actor in self.actors:
+            actor.tick(self, time, period)
         self._write_inventory(time)
 
     def _write_inventory(self, space_time):
@@ -55,7 +53,9 @@ class Habitation(Observer):
         raise StorageException("Product {1} not stored in {0}", self, product)
 
     def _workers(self, occupation):
-        return [worker for worker in self.population.workers if worker.occupation == occupation]
+        # TODO isinstance check requires public Agent, duck type?
+        # This may not be needed if workers are found through market at all 
+        return [worker for worker in self.actors if isinstance(worker, Agent) and worker.occupation == occupation]
 
     def hire(self, occupation, amount):
         workers = self._workers(occupation)

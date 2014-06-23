@@ -6,18 +6,17 @@ import space.constants as constants
 class EmploymentException(Exception):
     pass
 
-class _Agent(object):
-    def __init__(self, city, occupation):
-        self.city = city
+class Agent(object):
+    def __init__(self, occupation):
         self.occupation = occupation
         self.busy = 0
         self.money = 0
         self.hunger = 0 
 
-    def tick(self, time, period):
+    def tick(self, location, time, period):
         self.hunger += period.days() * constants.calories_per_day
         if self.hunger>=constants.calories_per_meal:  # TODO:just schedule meals in scheduler per 8 hours
-            self.eat()
+            self.eat(location)
             # print "{} eating {}".format(time, self)
 
     def __repr__(self):
@@ -43,27 +42,19 @@ class _Agent(object):
         else:
             raise EmploymentException("Not enough {0} workers hired", self )
 
-    def eat(self):
+    def eat(self, location):
         try:
-            food = self.city.retrieve(Food, self.total)
+            food = location.retrieve(Food, self.total)
             food.consume(self)
         except StorageException:
             pass
 
-class Individual(_Agent):
-    def __init__(self, city, occupation):
-        Agent.__init__(self, city, occupation)
+class Individual(Agent):
+    def __init__(self, occupation):
+        Agent.__init__(self, occupation)
         self.total = 1
 
-class Group(_Agent):
-    def __init__(self, city, occupation, total=0):
-        _Agent.__init__(self, city, occupation)
+class Group(Agent):
+    def __init__(self, occupation, total=0):
+        Agent.__init__(self, occupation)
         self.total = total
-
-class Population(object):
-    def __init__(self):
-        self.workers = []
-
-    def tick(self, time, period):
-        for work in self.workers:
-            work.tick(time, period)

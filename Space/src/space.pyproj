@@ -25,7 +25,7 @@
     <Compile Include="main.py" />
     <Compile Include="space\city\market.py" />
     <Compile Include="space\city\organization.py" />
-    <Compile Include="space\city\population.py" />
+    <Compile Include="space\city\agent.py" />
     <Compile Include="space\city\city.py" />
     <Compile Include="space\city\process.py" />
     <Compile Include="space\city\structure.py" />
