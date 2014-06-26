@@ -50,12 +50,18 @@ stock = {
     wheat : 0,
     water : 1000,
 }
-  
-for item, amount in stock.iteritems():
-    product = item.type(specification=item, amount=amount)
-    masterdam.reserve(item.storage, item.volume * amount)
-    masterdam.store(product)
 
+
+organizations = [ _space.city.organization.Guild(baking), _space.city.organization.Guild(farming), _space.city.organization.Guild(welling) ]
+for org in organizations:
+    masterdam.actors.append(org)
+
+  
+for product, amount in stock.iteritems():
+    item = product.type(specification=item, amount=amount)
+#    masterdam.reserve(item.storage, item.volume * amount)
+#    masterdam.store(product)
+    masterdam.sell(organization[0],item, 100) 
 baking = _spec.Recipe(duration=Day(1), materials={_space.item.Grain:15}, product={bread:16}, facilities=_space.city.structure.Baker, professional=cook)
 farming = _spec.Recipe(duration=Cycle(1), materials={_space.item.Water:1024}, product={wheat:256}, facilities=_space.city.structure.Farm, professional=farmer)
 welling = _spec.Recipe(duration=Day(1), materials={}, product={water:200}, facilities=_space.city.structure.Well, professional=engineer)
@@ -63,8 +69,4 @@ welling = _spec.Recipe(duration=Day(1), materials={}, product={water:200}, facil
 #masterdam.order(baking, 1)
 #masterdam.order(farming, 1)
 
-# masterdam.government.responsibilities = baking, farming, welling
-masterdam.actors.append(_space.city.organization.Guild(baking))
-masterdam.actors.append(_space.city.organization.Guild(farming))
-masterdam.actors.append(_space.city.organization.Guild(welling))
 

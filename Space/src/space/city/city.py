@@ -2,7 +2,7 @@ from agent import Agent, EmploymentException
 from structure import StorageException
 from utility.observer import Observer
 from utility.table import Table
-from market import GoodsMarket, ItemCarriedException
+from market import GoodsMarket, TradeException
 
 class Habitation(Observer):
     def __init__(self, name):
@@ -39,15 +39,15 @@ class Habitation(Observer):
             raise StorageException("No store for item {1} in {0}", self, item)
         store[0].store(item)    # TODO: spread over stores
 
-    def sell(self, item, asking_price):
+    def sell(self, vendor, item, asking_price):
         for market in self.markets:
             try:
-                market.sell(item, asking_price)
-            except ItemCarriedException:
+                market.sell(vendor, item, asking_price)
+            except TradeException:
                 pass 
-            self._store(item)
+            # self._store(item)
             return
-        raise ItemCarriedException("No market in {} offers {}", self, item)
+        raise TradeException("No market in {} trades {}", self, item)
 
     def stock(self, product):
         total = 0
@@ -69,20 +69,18 @@ class Habitation(Observer):
                 pass
         raise StorageException("Product {1} not stored in {0}", self, product)
 
-    def offer(self, product, amount, price):
+    def buy(self, buyer, product, amount, price):
         for market in self.markets:
             try:
-                offer = market.offer(item, asking_price)
-                market.buy(offer)
+                deal = market.offer(item, asking_price)
+                sold = market.buy(deal.buyer)
                 # TODO: assumes retrieve will succeed, because it's on offer
-                sold = self._retrieve(product, amount)
+                # sold = self._retrieve(product, amount)
                 return sold
-            except ItemCarriedException:
+            except TradeException:
                 pass 
-            for item, amount in items: 
-                self._retrieve(item, amount)
             return
-        raise ItemCarriedException("No market in {} sells {}", self, item)
+        raise TradeException("No market in {} sells {}", self, item)
 
     def _workers(self, occupation):
         # TODO isinstance check requires public Agent, duck type?

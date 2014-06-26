@@ -50,7 +50,7 @@ class _Consumable(object):
         self.amount = 0
 
 # major category Goods
-class Good(_Item, Stackable):
+class Good(_Item, _Stackable):
     def __init__(self, **kwargs):
         _Item.__init__(self, **kwargs)
         _Stackable.__init__(self, **kwargs)
@@ -58,11 +58,11 @@ class Good(_Item, Stackable):
 # category base classes
 class _Supply(Good):
     def __init__(self, **kwargs):
-        super(self, _Supply).__init__(**kwargs)
+        super(_Supply, self).__init__(**kwargs)
 
 class _Material(Good):
     def __init__(self, **kwargs):
-        super(self, _Material).__init__(**kwargs)
+        super(_Material, self).__init__(**kwargs)
 
 # Public types, referenced from specification
 class Food(_Supply, _Consumable):
