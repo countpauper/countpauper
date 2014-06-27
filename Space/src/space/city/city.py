@@ -72,11 +72,11 @@ class Habitation(Observer):
     def buy(self, buyer, product, amount, price):
         for market in self.markets:
             try:
-                deal = market.offer(item, asking_price)
-                sold = market.buy(deal.buyer)
+                deal = market.offer(product, amount, asking_price)
+                item = deal.accept(buyer)
                 # TODO: assumes retrieve will succeed, because it's on offer
                 # sold = self._retrieve(product, amount)
-                return sold
+                return item
             except TradeException:
                 pass 
             return
