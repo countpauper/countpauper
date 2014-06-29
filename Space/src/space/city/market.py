@@ -1,8 +1,9 @@
 import sys
 from collections import defaultdict
+from utility.format_exception import FormatException
 from space.item import Good
 
-class _MarketException(Exception):
+class _MarketException(FormatException):
     pass
 
 class TradeException(_MarketException):
@@ -24,17 +25,17 @@ class Deal(object):
     def __init__(self, amount, price):
         self.amount = amount
         self.price = price
-        self.offers = dict()
+        self.offers = list()
 
-    def price(self):
+    def total_price(self):
         return self.amount * self.price
 
     def accept(self, buyer):
-        buyer.money -= self.price()
+        buyer.money -= self.total_price()
         # gather items
         remaining_amount = self.amount
         total_item = None
-        for offer in self.offer.iteritems():
+        for offer in self.offers:
             if offer.item.amount<=remaining_amount:
                 sold_item = offer.item.split(offer.item.amount)
                 self._remove_offer(offer)   # sold out
@@ -43,7 +44,7 @@ class Deal(object):
                 sold_item = offer.item.split(remaining_amount)
                 remaining_amount = 0
             # pay the vendor
-            offer.vendor.money += deal.price * sold_item.amount
+            offer.vendor.money += self.price * sold_item.amount
             if not total_item:
                 total_item = sold_item
             else:
@@ -58,15 +59,23 @@ class _Market(object):
         self.offers = defaultdict(lambda:list())
  
     def sell(self, vendor, item, asking_price):
+        """List an item on the market, creating an offer record for it under it's product specification"""
         if not isinstance(item, self.type):
-            raise ItemCarriedException("Market {0} doesn't carry item {1}", self, item)
+            raise TradeException("Market {0} doesn't carry item {1}", self, item)
         offer = Offer(vendor, item, asking_price)
         self.offers[item.specification].append(offer)
         return offer
 
+    def shop(self, item_type):
+        """ Retrieve a product: amount dictionary for all offers for which the product's type is a subtype of item_type
+        eg if item_type is food, return a dict of meal products of different qualities and their quantities"""
+        if not issubclass(item_type, self.type):
+            raise TradeException("Market {0} doesn't carry item {1}", self, item_type)
+        return dict([(product, sum(offer.item.amount for offer in offers)) for product, offers in self.offers.iteritems() if issubclass(product.type, item_type)])
+
     def offer(self, product, amount, price):
         if not issubclass(product.type, self.type):
-            raise ItemCarriedException("Market {0} doesn't carry item {1}", self, item)
+            raise TradeException("Market {0} doesn't carry item {1}", self, item)
         offers = self.offers[product]
         result = Deal(amount, price)
         remaining_amount = amount
@@ -75,7 +84,7 @@ class _Market(object):
             # TODO: find lowest prices
             if offer.asking_price<=price and item.amount>=remaining_amount:
                 remaining_amount -= item.amount
-                result.append(offer)
+                result.offers.append(offer)
         if remaining_amount > 0:
             raise PriceException("Market {0} does not carry {2} x {1} at {3}", self, product, amount, price)
         return result

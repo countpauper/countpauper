@@ -36,6 +36,7 @@
     <Compile Include="space\test_item.py" />
     <Compile Include="space\test_time.py" />
     <Compile Include="space\time.py" />
+    <Compile Include="utility\format_exception.py" />
     <Compile Include="utility\observer.py" />
     <Compile Include="space\__init__.py" />
     <Compile Include="specification.py" />

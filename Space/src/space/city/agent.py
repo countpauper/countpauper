@@ -1,6 +1,7 @@
 from space.item import Food
-from structure import StorageException
 from space.time import Period
+from space.city.market import PriceException
+
 import space.constants as constants
 
 class EmploymentException(Exception):
@@ -43,11 +44,14 @@ class Agent(object):
             raise EmploymentException("Not enough {0} workers hired", self )
 
     def eat(self, location):
-        try:
-            food = location.retrieve(Food, self.total)
-            food.consume(self)
-        except StorageException:
-            pass
+        options = location.shop(Food)
+        for product, amount in options.iteritems():
+            try:
+                if amount >= self.total:    # need enough food for everyone 
+                    food = location.buy(self, product, self.total, self.hunger)
+                    food.consume(self)
+            except PriceException:
+                pass
 
 class Individual(Agent):
     def __init__(self, occupation):

@@ -55,6 +55,7 @@ class Habitation(Observer):
             total += structure.stock(product)
         return total
 
+
     def _retrieve(self, item, amount):
         """Return unstacked item, currently stored in container structures
         item may be a product specification or the name of a product
@@ -69,7 +70,15 @@ class Habitation(Observer):
                 pass
         raise StorageException("Product {1} not stored in {0}", self, product)
 
-    def buy(self, buyer, product, amount, price):
+    def shop(self, item_type):
+        for market in self.markets:
+            try:
+                return market.shop(item_type)
+            except TradeException:
+                pass 
+        raise TradeException("No market in {} trades {}", self, item_type)
+
+    def buy(self, buyer, product, amount, asking_price):
         for market in self.markets:
             try:
                 deal = market.offer(product, amount, asking_price)
