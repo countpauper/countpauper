@@ -55,7 +55,6 @@ class Habitation(Observer):
             total += structure.stock(product)
         return total
 
-
     def _retrieve(self, item, amount):
         """Return unstacked item, currently stored in container structures
         item may be a product specification or the name of a product
@@ -70,26 +69,28 @@ class Habitation(Observer):
                 pass
         raise StorageException("Product {1} not stored in {0}", self, product)
 
-    def shop(self, item_type):
+    def _market(self, product):
+        """Find market that carries product specification or class type"""
         for market in self.markets:
-            try:
-                return market.shop(item_type)
-            except TradeException:
-                pass 
-        raise TradeException("No market in {} trades {}", self, item_type)
+            if market.trades(product):
+                return market
+        raise TradeException("No market in {0} trades {1}", self, product)
+
+    def price(self, product):
+        return self._market(product).price(product)
+
+    def quote(self, product, amount):
+        return self._market(product). quote(product, amount)
+
+    def shop(self, product):
+        return self._market(product).shop(product)
 
     def buy(self, buyer, product, amount, asking_price):
-        for market in self.markets:
-            try:
-                deal = market.offer(product, amount, asking_price)
-                item = deal.accept(buyer)
-                # TODO: assumes retrieve will succeed, because it's on offer
-                # sold = self._retrieve(product, amount)
-                return item
-            except TradeException:
-                pass 
-            return
-        raise TradeException("No market in {} sells {}", self, item)
+        deal = self._market(product).offer(product, amount, asking_price)
+        item = deal.accept(buyer)
+        # TODO: assumes retrieve will succeed, because it's on offer
+        # sold = self._retrieve(product, amount)
+        return item
 
     def _workers(self, occupation):
         # TODO isinstance check requires public Agent, duck type?
@@ -110,8 +111,6 @@ class Habitation(Observer):
 
     def _buildings(self, building):
         return [struct for struct in self.infra if isinstance(struct,building)]
-
-
 
     def rent(self, building, amount):
         structs = self._buildings(building)

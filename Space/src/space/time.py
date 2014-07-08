@@ -1,3 +1,5 @@
+from functools import total_ordering
+
 _seconds_per_tick = 8
 _ticks_per_minute = 8
 _ticks_per_hour = 64 * _ticks_per_minute
@@ -5,6 +7,7 @@ _ticks_per_day = 32 * _ticks_per_hour
 _ticks_per_cycle = 8 * _ticks_per_day
 _ticks_per_year = 32 * _ticks_per_cycle
 
+@total_ordering
 class Time(object):
     def __init__(self, tick=0, minute=0, hour=0,day=0,cycle=0,year=0):
         self._tick = int(tick + 
@@ -33,9 +36,6 @@ class Time(object):
     def __lt__(self, other):
         return self._tick < other._tick
 
-    def __le__(self, other):
-        return self._tick <= other._tick
-
     def __eq__(self, other):
         return self._tick == other._tick
 
@@ -48,6 +48,7 @@ class Time(object):
         second = _seconds_per_tick * (self._tick % _ticks_per_minute)
         return "{:04d}-{:02d}-{:d} {:02d}:{:02d}:{:02d}".format(year,cycle,day,hour,minute,second)
 
+@total_ordering
 class Period(object):
     def __init__(self, ticks=0):
         self._ticks = int(ticks)
@@ -84,12 +85,6 @@ class Period(object):
 
     def __eq__(self, other):
         return self._ticks == other._ticks
-
-    def __ge__(self,other):
-        return self._ticks >= other._ticks
-
-    def __gt__(self, other):
-        return self._ticks > other._ticks
 
 class Minute(Period):
     def __init__(self, minutes):

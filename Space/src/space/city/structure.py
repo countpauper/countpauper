@@ -74,8 +74,8 @@ class _Container(object):
             same_item.stack(item)
 
     def find(self, product):
-        if item in self.contents:
-            return item
+        if product in self.contents:
+            return product
         if isinstance(product,Product):
             return [item for item in self.contents if item.specification==product]
         elif isinstance(product,str):
