@@ -72,23 +72,14 @@ class Business(Organization):
     def __init__(self):
         super(Business,self).__init__()
 
-    def _compute_price(self, products, location):
-        for product, amount in products.iteritems():
-            price = location.price(product)
-            # for now assume at least lowest price, 
-            # TODO use last sold price or better yet optimal sell time considering storage costs 
-            # production time and price development
-            return amount * price
 
     def produce(self, recipe, location):
-        income = self._compute_price(recipe.product, location)
+        # TODO: figure out demand for recipe's product & amount (money to be made, inverse quote)
+        # if there is no demand, don't product (yet)
+        # Else attempt to buy all ingredients, (cancel/collect outstanding offers)
+        # if all are there and demand is there: produce
         # TODO estimate profit potential
-        #amounts = location.availability(self.recipe)
-        #amount = min(amounts)
-
-
-        #if amount:
-        #    self.order(location, self.recipe, amount)
+        pass
 
 class Guild(Business):
     def __init__(self, recipe):

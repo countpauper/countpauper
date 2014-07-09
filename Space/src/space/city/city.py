@@ -76,9 +76,6 @@ class Habitation(Observer):
                 return market
         raise TradeException("No market in {0} trades {1}", self, product)
 
-    def price(self, product):
-        return self._market(product).price(product)
-
     def quote(self, product, amount):
         return self._market(product). quote(product, amount)
 
@@ -86,8 +83,7 @@ class Habitation(Observer):
         return self._market(product).shop(product)
 
     def buy(self, buyer, product, amount, asking_price):
-        deal = self._market(product).offer(product, amount, asking_price)
-        item = deal.accept(buyer)
+        item = self._market(product).buy(buyer, product, amount, asking_price)
         # TODO: assumes retrieve will succeed, because it's on offer
         # sold = self._retrieve(product, amount)
         return item

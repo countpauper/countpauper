@@ -1,6 +1,8 @@
+all = []
+
 class Specification(object):
     def __init__(self):
-        pass
+        allspec.append(self)
 
     def create(self, **kwargs): # TODO: terrible object properties
         if not 'amount' in kwargs: # TODO: terrible object default
