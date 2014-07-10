@@ -29,8 +29,9 @@ class PriceException(DemandException):
 
 
 class Offer(object):
-    def __init__(self, owner, amount, price):
+    def __init__(self, owner, item, amount, price):
         self.price = price
+        self.item = item
         # self.time = time
         # self.expiration = time + period
         self.owner = owner
@@ -39,24 +40,23 @@ class Offer(object):
     def total_price(self):
         return self.amount * self.price
 
-    def __eq__(self, offer):
-        return self.amount == offer.amount and self.price == offer.price
-
     def __lt__(self, offer):
         if self.price < offer.price:
             return true
         if self.price == offer.price:
-            return self.item.amount > offer.item.amount
+            return self.amount() > offer.amount()
         return false
-       
+
+    def amount(self):
+        return self.amount - item.amount
+           
 class Supply(Offer):
     def __init__(self, vendor, item, price):
-        self.item = item
-        super(Supply,self).__init__(vendor, self.item.amount, price)
+        super(Supply,self).__init__(vendor, item, item.amount, price)
 
 class Demand(Offer):
-    def __init__(self, vendor, product, amount, price):
-        super(Demand,self).__init__(vendor, amount, price)
+    def __init__(self, vendor, item, amount, price):
+        super(Demand,self).__init__(vendor, item, amount - item.amount, price)
 
 class Deal(object):
     def __init__(self, amount, price):
@@ -128,43 +128,43 @@ class _Market(object):
         demand = self.demand(item.specification, price)  
         total_amount = sum([offer.item.amount for offer in demand])
 
-        for offer in reversed(demand):   # reverse: highest price first
-            if item.amount>=offer.amount:
-                sold_item = item.split(offer.amount)
+        for offer in demand:  
+            if item.amount>=offer.amount():
+                sold_item = item.split(offer.amount())
                 offer.owner.money -= offer.total_price()
                 vendor.money += offer.total_price()
-                offer.item = sold_item  # for buyer to pick up
-                offer.owner.give(sold_item)  # TODO: signal buyer at end of offer
-                self._remove_offer(offer)
+                offer.item.stack(sold_item)
+            else:
+                total_price= offer.price * item.amount
+                offer.owner.money -= total_price
+                vendor.money += total_price
+                offer.item.stack(item)
         return item
  
     def supply(self, product, price=sys.maxint):
-        """return list of supply offers for at most the given price"""
+        """return list of supply offers for at most the given price
+        sorted from lowest to highest price"""
         return [offer for offer in self.products[product].supply if offer.price<=price]
 
     def demand(self, product, price=-sys.maxint):
-        """return list of demand offers for at least the given price"""
-        return [offer for offer in self.products[product].demand if offer.price>=price]
+        """return list of demand offers for at least the given price
+        sorted from highest to lowest price"""
+        return reversed([offer for offer in self.products[product].demand if offer.price>=price])
 
     def buy(self, buyer, product, amount, price):
+        """Place an order for the given product x amount to be fullfilled at that price"""
         if not issubclass(product.type, self.type):
             raise TradeException("Market {0} doesn't carry item {1}", self, product)
-        try:
-            return self._immediate_buy(buyer, product, amount, price)
-        except SupplyException:
-            offer = Demand(buyer, product, amount, price)
-            self.products[product].demand.append(offer)
-            self.products[product].demand.sort() # TODO optimize 
-            return offer
+        item = self._immediate_buy(buyer, product, amount, price)
+        offer = Demand(buyer, item, amount - item.amount, price)
+        self.products[product].demand.append(offer)
+        self.products[product].demand.sort() # TODO optimize 
+        return offer
 
     def _immediate_buy(self, buyer, product, amount, price):
-        """Return an item made up of offered items whose price is less
-        raises a SupplyException if the complete amount can't be fullfilled"""
+        """Return an item made up of offered items whose price is less"""
         supply = self.supply(product, price)    # supply offers for that price
-        total_amount = sum([offer.item.amount for offer in supply])
-        if total_amount<amount:
-            raise CostException("No {1} x {0} on sale for {2}", product, amount, price)
-        item = None
+        item = product.type(specification=product, amount=0)
         for offer in supply:
             if offer.item.amount>=amount:
                 sold_item = offer.item.split(amount)
@@ -173,10 +173,7 @@ class _Market(object):
             total_price = sold_item.amount * offer.price
             buyer.money -= total_price
             offer.owner.money += total_price
-            if item is None:
-                item = sold_item
-            else:
-                item.stack(sold_item)
+            item.stack(sold_item)
         return item
 
     def trades(self, product):
@@ -187,20 +184,26 @@ class _Market(object):
             return True
         return False
 
+    def _compute_price(self, offers, amount, exc_type):
+        total_price = 0
+        for offer in offers:
+            if offer.amount()>=amount:
+                total_price += offer.asking_price * offer.amount
+                return total_price
+            else:
+                total_price += offer.amount() * offer.price
+                amount -= item.amount
+        raise exc_type("Less than {1} {0} offered", specification, amount)
+
     def quote(self, specification, amount):
         if not issubclass(specification.type, self.type):
             raise TradeException("Market {0} doesn't carry item {1}", self, specification)
         offers = self.supply(specification)
-        total_price = 0
-        for offer in offers:
-            item = offer.item
-            if item.amount>amount:
-                total_price += offer.asking_price * amount
-                return total_price
-            else:
-                total_price += item.amount * offer.asking_price
-                amount -= item.amount
-        raise StockException("Less than {1} {0} on sale", specification, amount)
+        return self._compute_price(offers, amount, SupplyException)
+
+    def turnover(self, specification, amount):
+        offers = self.demand(specification)
+        return self._compute_price(offers, amount, DemandException)
 
     def shop(self, product):
         """ Retrieve a dictionary of specification: total_amount"""

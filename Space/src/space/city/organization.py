@@ -74,6 +74,19 @@ class Business(Organization):
 
 
     def produce(self, recipe, location):
+        try:
+            turnover = sum([location.turnover(product, amount) for product, amount in recipe.product.iteritems()])
+        except DemandException:
+            return # TODO: future demand
+        try:
+            for material in recipe.materials:
+                quote = location.quote(material, amount)
+                offer = location.buy(self, material, amount, quote // amount)    # TODO: problems with average price
+        except SupplyException:
+            return  # TODO: what to do with partial materials 
+
+
+
         # TODO: figure out demand for recipe's product & amount (money to be made, inverse quote)
         # if there is no demand, don't product (yet)
         # Else attempt to buy all ingredients, (cancel/collect outstanding offers)

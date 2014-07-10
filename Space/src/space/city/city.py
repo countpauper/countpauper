@@ -79,6 +79,9 @@ class Habitation(Observer):
     def quote(self, product, amount):
         return self._market(product). quote(product, amount)
 
+    def turnover(self, product, amount):
+        return self._market(product).turnover(product, amount)
+
     def shop(self, product):
         return self._market(product).shop(product)
 

@@ -13,6 +13,7 @@ class Agent(object):
         self.busy = 0
         self.money = 0
         self.hunger = 0 
+        self.food_offer = None
 
     def tick(self, location, time, period):
         self.hunger += period.days() * constants.calories_per_day
@@ -44,12 +45,14 @@ class Agent(object):
             raise EmploymentException("Not enough {0} workers hired", self )
 
     def eat(self, location):
+        if self.food_offer:
+            food = self.food_offer.item
+            food.consume(self) # TODO: clean up or reuse offer
         options = location.shop(Food)
         for product, amount in options.iteritems():
             try:
                 if amount >= self.total:    # need enough food for everyone 
-                    food = location.buy(self, product, self.total, self.hunger)
-                    food.consume(self)
+                    self.food_offer = location.buy(self, product, self.total, self.hunger)
             except PriceException:
                 pass
 
