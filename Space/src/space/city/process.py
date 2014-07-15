@@ -11,16 +11,23 @@ class Process(Observation):
         self.repeat = repeat
         self.bulk = bulk
         self.timer = Period()
-        self.materials = []
+        self.materials = None
         self.product = []
 
     def __repr__(self):
         return "{} x {} x {}".format(self.repeat, self.bulk, self. recipe)
 
     def tick(self, time, period):
+        if self.complete(): # TODO: proper state machine
+            return 
+        if not self.materials.ready():
+            return
         self.timer += period
         if self.timer>=self.recipe.duration:    # TODO: repeat
             self.done()
+
+    def complete(self):
+        return self.product
 
     def done(self):
         products = self.recipe.product

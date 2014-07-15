@@ -1,6 +1,7 @@
 from utility.observer import Observer
 from process import Process, ProductionException
 from specification import Recipe
+from market import Batch
 
 class Organization(Observer):
     def __init__(self):
@@ -13,32 +14,6 @@ class Organization(Observer):
        # NB: one update is wasted placing orders because either the resources aren't freed or the 
        #  new orders aren't ticked, scheduler should solve this TODO
        self.think(location)
-
-    def order(self, location, recipe, bulk):
-        # check availability first to prevent partial claims
-        materials = recipe.materials
-        for material in materials:
-            if location.stock(material)<materials[material] * bulk:
-                raise ProductionException("Not enough {0} for {1}", material, recipe)
-        
-        process = Process(recipe, bulk)  # TODO split over bulk/repeat based on availability of space/workers
-        process.location = location # TODO: location needed to release, instead store individual claims and release them
-
-        for product,amount in recipe.product.iteritems():
-            if sum([building.space() for building in location._buildings(product.storage)]) <= product.volume * bulk:
-                raise ProductionException("Not enough storage in {0} for {1}", self, product)
-
-        # availability checked, claim
-        for product,amount in recipe.product.iteritems():
-            location.reserve(product.storage, product.volume*amount*bulk)
-       
-        process.workers = location.hire(recipe.professional, bulk)   # TODO: fire these workers directly instead of going through city
-        process.buildings = location.rent(recipe.facilities, bulk)  # TODO release this estate
-        for material in materials:
-            process.materials.append(location.retrieve(material,materials[material] * bulk))
-        self.processing.append(process)
-        process.register(self)
-        return process
 
     def notify(self, observable, event):
         if isinstance(observable, Process) and event=='done':
@@ -72,27 +47,20 @@ class Business(Organization):
     def __init__(self):
         super(Business,self).__init__()
 
+    def think(self, location):
+        for process in self.processing:    
+            if process.complete():
+                offers = location.sell(self,process.product,100)
+                self.processing.remove(process)
+            else:
+                pass # TODO adjust prices on offers
 
     def produce(self, recipe, location):
-        try:
-            turnover = sum([location.turnover(product, amount) for product, amount in recipe.product.iteritems()])
-        except DemandException:
-            return # TODO: future demand
-        try:
-            for material in recipe.materials:
-                quote = location.quote(material, amount)
-                offer = location.buy(self, material, amount, quote // amount)    # TODO: problems with average price
-        except SupplyException:
-            return  # TODO: what to do with partial materials 
+        process = Process(recipe)
 
-
-
-        # TODO: figure out demand for recipe's product & amount (money to be made, inverse quote)
-        # if there is no demand, don't product (yet)
-        # Else attempt to buy all ingredients, (cancel/collect outstanding offers)
-        # if all are there and demand is there: produce
-        # TODO estimate profit potential
-        pass
+        batch = Batch(self, recipe.materials, location)
+        process.materials = batch
+        self.processing.append(process)
 
 class Guild(Business):
     def __init__(self, recipe):
@@ -100,7 +68,9 @@ class Guild(Business):
         self.recipe = recipe
 
     def think(self, location):
-        self.produce(self.recipe, location)
+        super(Guild, self).think(location)
+        if not self.processing:
+            self.produce(self.recipe, location)
 
 
 

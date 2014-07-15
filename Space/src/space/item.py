@@ -1,6 +1,7 @@
 # exceptions
 from space.time import Period
 import space.constants as constants
+from specification import Resource
 
 class ItemException(Exception):
     pass
@@ -9,9 +10,9 @@ class StackException(ItemException):
     pass
 
 # private abstract base types
-class _Item(object):
+class _Item(Resource):
     def __init__(self, **kwargs):
-        self.specification = kwargs['specification']
+        super(_Item,self).__init__(kwargs['specification'])
 
     def volume(self):
         return self.amount * self.specification.volume
@@ -20,7 +21,7 @@ class _Item(object):
         raise ItemException("Can't consume {}", self)
 
     def __repr__(self):
-        return self.specification.name
+        return "{} x {}".format(self.amount, self.specification.name)
 
 class _Unique(object):
     def __init__(self,**kwargs):

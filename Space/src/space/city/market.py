@@ -1,8 +1,9 @@
 import sys
+import weakref
 from collections import defaultdict
 from utility.format_exception import FormatException
 from space.item import Good
-from specification import Specification
+from specification import specify, Specification
 
 class _MarketException(FormatException):
     pass
@@ -29,13 +30,14 @@ class PriceException(DemandException):
 
 
 class Offer(object):
-    def __init__(self, owner, item, amount, price):
-        self.price = price
+    def __init__(self, market, owner, item, amount, price):
+        self.market = weakref.ref(market)
+        self.owner = owner
         self.item = item
+        self.requested_amount = amount 
+        self.price = price
         # self.time = time
         # self.expiration = time + period
-        self.owner = owner
-        self.amount = amount 
 
     def total_price(self):
         return self.amount * self.price
@@ -48,48 +50,46 @@ class Offer(object):
         return false
 
     def amount(self):
-        return self.amount - item.amount
+        return self.requested_amount - self.item.amount
            
+    def ready(self):
+        return self.amount()==0
+
+    def claim(self):
+        self.market.cancel(self)
+        return self.item
+
 class Supply(Offer):
-    def __init__(self, vendor, item, price):
-        super(Supply,self).__init__(vendor, item, item.amount, price)
+    """A single item on sale"""
+    def __init__(self, market, vendor, item, price):
+        super(Supply,self).__init__(market, vendor, item, 0, price)
 
 class Demand(Offer):
-    def __init__(self, vendor, item, amount, price):
-        super(Demand,self).__init__(vendor, item, amount - item.amount, price)
+    """A single item being bought"""
+    def __init__(self, market, vendor, item, amount, price):
+        super(Demand,self).__init__(market, vendor, item, amount - item.amount, price)
 
-class Deal(object):
-    def __init__(self, amount, price):
-        self.amount = amount
-        self.price = price
-        self.offers = list()
+class Batch(object):
+    """Multiple items being bought"""
+    def __init__(self, owner, materials, location):
+        self.offers=list()
+        for material, amount in materials.iteritems():
+            specification = specify(type=material)
+            try:
+                quote = location.quote(specification, amount)
+                price = quote // amount  # TODO: problems with average price
+            except SupplyException:
+                price = 1 # TODO what to do if no quote, what to do if no history even?
+            offer = location.buy(owner, specification, amount, price)   
+            self.offers.append(offer)
 
-    def total_price(self):
-        return self.amount * self.price
+    def ready(self):
+        return all([offer.ready() for offer in self.offers])
 
-    def accept(self, buyer):
-        buyer.money -= self.total_price()
-        # gather items
-        remaining_amount = self.amount
-        total_item = None
-        for offer in self.offers:
-            if offer.item.amount<=remaining_amount:
-                sold_item = offer.item.split(offer.item.amount)
-                self._remove_offer(offer)   # sold out
-                remaining_amount -= sold_item.amount
-            else:
-                sold_item = offer.item.split(remaining_amount)
-                remaining_amount = 0
-            # pay the vendor
-            offer.vendor.money += self.price * sold_item.amount
-            if not total_item:
-                total_item = sold_item
-            else:
-                total_item.stack(sold_item)
-        return total_item
-
-    def decline(self):
-        pass
+    def claim():
+        result = [offer.claim() for offer in self.offers]
+        self.offers = None
+        return result
 
 class History(object):
     def __init__(self, amount, price):
@@ -115,10 +115,14 @@ class _Market(object):
 
         remaining_item = self._immediate_sell(vendor, item, price)
         if remaining_item.amount>0:
-            offer = Supply(vendor, remaining_item, price)
+            offer = Supply(self, vendor, remaining_item, price)
             self.products[item.specification].supply.append(offer)
             self.products[item.specification].supply.sort() # TODO optimize by adding sorted
             return offer
+
+    def record(self, item, price):
+        self.products[item.specification].history.append(History(item.amount, price))
+        print "Sold {0} @ ${1}".format(item, price)
 
     def _immediate_sell(self, vendor, item, price):
         """Split item and sell to existing demand, 
@@ -131,13 +135,16 @@ class _Market(object):
         for offer in demand:  
             if item.amount>=offer.amount():
                 sold_item = item.split(offer.amount())
-                offer.owner.money -= offer.total_price()
-                vendor.money += offer.total_price()
+                total_price = offer.total_price()
+                offer.owner.money -= total_price
+                vendor.money += total_price
+                self.record(item, total_price)
                 offer.item.stack(sold_item)
             else:
                 total_price= offer.price * item.amount
                 offer.owner.money -= total_price
                 vendor.money += total_price
+                self.record(item, total_price)
                 offer.item.stack(item)
         return item
  
@@ -156,7 +163,7 @@ class _Market(object):
         if not issubclass(product.type, self.type):
             raise TradeException("Market {0} doesn't carry item {1}", self, product)
         item = self._immediate_buy(buyer, product, amount, price)
-        offer = Demand(buyer, item, amount - item.amount, price)
+        offer = Demand(self, buyer, item, amount - item.amount, price)
         self.products[product].demand.append(offer)
         self.products[product].demand.sort() # TODO optimize 
         return offer
@@ -173,6 +180,7 @@ class _Market(object):
             total_price = sold_item.amount * offer.price
             buyer.money -= total_price
             offer.owner.money += total_price
+            self.record(sold_item, total_price)
             item.stack(sold_item)
         return item
 
@@ -192,13 +200,16 @@ class _Market(object):
                 return total_price
             else:
                 total_price += offer.amount() * offer.price
-                amount -= item.amount
-        raise exc_type("Less than {1} {0} offered", specification, amount)
+                amount -= offer.amount()
+            raise exc_type("Less than {1} {0} offered", offer.item, amount)
+        return total_price
 
     def quote(self, specification, amount):
         if not issubclass(specification.type, self.type):
             raise TradeException("Market {0} doesn't carry item {1}", self, specification)
         offers = self.supply(specification)
+        if not offers:
+            raise SupplyException("No {1} {0} offered", specification, amount)
         return self._compute_price(offers, amount, SupplyException)
 
     def turnover(self, specification, amount):
@@ -217,7 +228,7 @@ class _Market(object):
         if isinstance(offer, Supply):
             self.products[offer.item.specification].supply.remove(offer)
         elif isinstance(offer, Demand):
-            self.products[offer.product].demand.remove(offer)
+            self.products[offer.product].demand1.remove(offer)
 
 class GoodsMarket(_Market):
     def __init__(self):
