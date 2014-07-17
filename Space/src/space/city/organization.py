@@ -1,7 +1,7 @@
 from utility.observer import Observer
 from process import Process, ProductionException
 from specification import Recipe
-from market import Batch
+from market import Batch, SupplyException
 
 class Organization(Observer):
     def __init__(self):
@@ -46,14 +46,27 @@ class Government(Organization):
 class Business(Organization):
     def __init__(self):
         super(Business,self).__init__()
+        self.offers = list()
 
     def think(self, location):
         for process in self.processing:    
             if process.complete():
-                offers = location.sell(self,process.product,100)
+                for item in process.product:
+                    try: # TODO code duplication (see Batch) batch sell?
+                        price = location.quote(item.specification, 1)
+                    except SupplyException:
+                        price = 1000
+                    self.offers.append(location.sell(self,item,price))
                 self.processing.remove(process)
+            elif not process.materials.ready():
+                for offer in process.materials.offers:
+                    offer.adjust(offer.price + 1 + offer.price/10)
+        for offer in self.offers:
+            if offer.ready():
+                _ = offer.claim()
+                self.offers.remove(offer)
             else:
-                pass # TODO adjust prices on offers
+                offer.adjust(offer.price - offer.price/10)
 
     def produce(self, recipe, location):
         process = Process(recipe)

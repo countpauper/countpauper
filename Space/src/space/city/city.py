@@ -39,15 +39,8 @@ class Habitation(Observer):
             raise StorageException("No store for item {1} in {0}", self, item)
         store[0].store(item)    # TODO: spread over stores
 
-    def sell(self, vendor, item, asking_price):
-        for market in self.markets:
-            try:
-                market.sell(vendor, item, asking_price)
-            except TradeException:
-                pass 
-            # self._store(item)
-            return
-        raise TradeException("No market in {} trades {}", self, item)
+    def sell(self, vendor, item, price):
+        return self._market(item.specification).sell(vendor, item, price)
 
     def stock(self, product):
         total = 0
@@ -85,11 +78,8 @@ class Habitation(Observer):
     def shop(self, product):
         return self._market(product).shop(product)
 
-    def buy(self, buyer, product, amount, asking_price):
-        item = self._market(product).buy(buyer, product, amount, asking_price)
-        # TODO: assumes retrieve will succeed, because it's on offer
-        # sold = self._retrieve(product, amount)
-        return item
+    def buy(self, buyer, product, amount, price):
+        return self._market(product).buy(buyer, product, amount, price)
 
     def _workers(self, occupation):
         # TODO isinstance check requires public Agent, duck type?

@@ -3,7 +3,7 @@ import weakref
 from collections import defaultdict
 from utility.format_exception import FormatException
 from space.item import Good
-from specification import specify, Specification
+from specification import specify, Specification, Resource
 
 class _MarketException(FormatException):
     pass
@@ -44,19 +44,21 @@ class Offer(object):
 
     def __lt__(self, offer):
         if self.price < offer.price:
-            return true
+            return True
         if self.price == offer.price:
             return self.amount() > offer.amount()
-        return false
+        return False
 
     def amount(self):
+        """Return difference between target and current
+        NB negative for supply, positive for demand"""
         return self.requested_amount - self.item.amount
            
     def ready(self):
         return self.amount()==0
 
     def claim(self):
-        self.market.cancel(self)
+        self.market().cancel(self)
         return self.item
 
 class Supply(Offer):
@@ -64,10 +66,19 @@ class Supply(Offer):
     def __init__(self, market, vendor, item, price):
         super(Supply,self).__init__(market, vendor, item, 0, price)
 
+    def adjust(self, new_price):
+        self.item = self.market()._immediate_sell(self.owner, self.item, new_price)
+        self.price = new_price
+         
 class Demand(Offer):
     """A single item being bought"""
     def __init__(self, market, vendor, item, amount, price):
         super(Demand,self).__init__(market, vendor, item, amount - item.amount, price)
+
+    def adjust(self, new_price):
+        bought_item = self.market()._immediate_buy(self.owner, self.item.specification, self.amount(), new_price)
+        self.item.stack(bought_item)
+        self.price = new_price
 
 class Batch(object):
     """Multiple items being bought"""
@@ -133,7 +144,7 @@ class _Market(object):
         total_amount = sum([offer.item.amount for offer in demand])
 
         for offer in demand:  
-            if item.amount>=offer.amount():
+            if item.amount>offer.amount():
                 sold_item = item.split(offer.amount())
                 total_price = offer.total_price()
                 offer.owner.money -= total_price
@@ -146,6 +157,7 @@ class _Market(object):
                 vendor.money += total_price
                 self.record(item, total_price)
                 offer.item.stack(item)
+                break
         return item
  
     def supply(self, product, price=sys.maxint):
@@ -181,13 +193,18 @@ class _Market(object):
             buyer.money -= total_price
             offer.owner.money += total_price
             self.record(sold_item, total_price)
+            amount -= sold_item.amount
             item.stack(sold_item)
+            if item.amount==0:
+                break
         return item
 
     def trades(self, product):
         """Return True if this market trades in this specification or type"""
         if isinstance(product, Specification):
-            return product in self.products
+            return issubclass(product.type, self.type) # TODO product in self.products
+        elif isinstance(product, Resource):
+            return isinstance(product.type, self.type)
         elif issubclass(product, self.type):
             return True
         return False
@@ -229,6 +246,9 @@ class _Market(object):
             self.products[offer.item.specification].supply.remove(offer)
         elif isinstance(offer, Demand):
             self.products[offer.product].demand1.remove(offer)
+
+    def cancel(self, offer):
+        self._remove_offer(offer)
 
 class GoodsMarket(_Market):
     def __init__(self):

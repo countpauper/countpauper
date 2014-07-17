@@ -16,9 +16,8 @@ class Main(object):
             start = time.clock()
             self.space.tick(self.ticks_per_rl_second/self.frequency)
             duration = time.clock()-start
-            if duration<1:
-                time.sleep((1.0/self.frequency)-duration)
-        
+            time.sleep(max(0, 1.0/self.frequency - duration))
+
 if __name__== '__main__':
     exit(Main().loop())
 
