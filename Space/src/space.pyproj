@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6c76bb2c-cccc-43e6-8eaf-e8e0044b401c}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>main.py</StartupFile>
+    <StartupFile>space\city\test_building.py</StartupFile>
     <SearchPath>.</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -28,8 +28,8 @@
     <Compile Include="space\city\agent.py" />
     <Compile Include="space\city\city.py" />
     <Compile Include="space\city\process.py" />
-    <Compile Include="space\city\structure.py" />
-    <Compile Include="space\city\test_structure.py" />
+    <Compile Include="space\city\building.py" />
+    <Compile Include="space\city\test_building.py" />
     <Compile Include="space\city\__init__.py" />
     <Compile Include="space\constants.py" />
     <Compile Include="space\item.py" />

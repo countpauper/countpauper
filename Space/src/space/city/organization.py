@@ -2,6 +2,11 @@ from utility.observer import Observer
 from process import Process, ProductionException
 from specification import Recipe
 from market import Batch, SupplyException
+from math import ceil
+
+PROFIT_MARGIN = 2.0
+PRICE_DROP = 0.9
+PRICE_INCREASE = 1.1
 
 class Organization(Observer):
     def __init__(self):
@@ -52,21 +57,23 @@ class Business(Organization):
         for process in self.processing:    
             if process.complete():
                 for item in process.product:
-                    try: # TODO code duplication (see Batch) batch sell?
-                        price = location.quote(item.specification, 1)
-                    except SupplyException:
-                        price = 1000
+                    price = ceil(process.materials.total_price() * PROFIT_MARGIN)
+
+                    #try: # TODO code duplication (see Batch) batch sell?
+                    #    price = location.quote(item.specification, 1)
+                    #except SupplyException:
+                    #    price = 1000
                     self.offers.append(location.sell(self,item,price))
                 self.processing.remove(process)
             elif not process.materials.ready():
                 for offer in process.materials.offers:
-                    offer.adjust(offer.price + 1 + offer.price/10)
+                    offer.adjust(ceil(offer.price * PRICE_INCREASE))
         for offer in self.offers:
             if offer.ready():
                 _ = offer.claim()
                 self.offers.remove(offer)
             else:
-                offer.adjust(offer.price - offer.price/10)
+                offer.adjust(ceil(offer.price*PRICE_DROP))
 
     def produce(self, recipe, location):
         process = Process(recipe)

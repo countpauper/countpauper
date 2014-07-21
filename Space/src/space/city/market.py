@@ -38,6 +38,7 @@ class Offer(object):
         self.price = price
         # self.time = time
         # self.expiration = time + period
+        self.total_money = 0
 
     def total_price(self):
         return self.amount * self.price
@@ -102,6 +103,9 @@ class Batch(object):
         self.offers = None
         return result
 
+    def total_price(self):
+        return sum([offer.total_money for offer in self.offers])
+
 class History(object):
     def __init__(self, amount, price):
         self.time = 0
@@ -143,20 +147,20 @@ class _Market(object):
         demand = self.demand(item.specification, price)  
         total_amount = sum([offer.item.amount for offer in demand])
 
-        for offer in demand:  
+        for offer in demand:
+            if offer.ready():
+                continue  
             if item.amount>offer.amount():
                 sold_item = item.split(offer.amount())
-                total_price = offer.total_price()
-                offer.owner.money -= total_price
-                vendor.money += total_price
-                self.record(item, total_price)
-                offer.item.stack(sold_item)
             else:
-                total_price= offer.price * item.amount
-                offer.owner.money -= total_price
-                vendor.money += total_price
-                self.record(item, total_price)
-                offer.item.stack(item)
+                sold_item = item
+            total_price= offer.price * sold_item.amount
+            offer.owner.money -= total_price
+            vendor.money += total_price
+            self.record(sold_item, total_price)
+            offer.item.stack(item)
+            offer.total_money += total_price
+            if item.amount==0:
                 break
         return item
  
@@ -185,6 +189,8 @@ class _Market(object):
         supply = self.supply(product, price)    # supply offers for that price
         item = product.type(specification=product, amount=0)
         for offer in supply:
+            if offer.ready():
+                continue
             if offer.item.amount>=amount:
                 sold_item = offer.item.split(amount)
             else:
@@ -195,7 +201,8 @@ class _Market(object):
             self.record(sold_item, total_price)
             amount -= sold_item.amount
             item.stack(sold_item)
-            if item.amount==0:
+            offer.total_money += total_price
+            if amount==0:
                 break
         return item
 

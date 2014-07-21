@@ -15,10 +15,10 @@ planet.cities.append(masterdam)
 
 import specification as _spec
 
-cook = _spec.Profession(name='cook')
-farmer = _spec.Profession(name='farmer')
-worker = _spec.Profession(name='worker')
-engineer = _spec.Profession(name='engineer')
+cook = _spec.Profession(_space.city.agent.Population, 'cook')
+farmer = _spec.Profession(_space.city.agent.Population, 'farmer')
+worker = _spec.Profession(_space.city.agent.Population, 'worker')
+engineer = _spec.Profession(_space.city.agent.Population, 'engineer')
 
 workers = { 
     cook : 2,
@@ -27,16 +27,16 @@ workers = {
     engineer : 1,
 }
 
-for type in workers:
-    masterdam.actors.append(_space.city.Group(type, workers[type]))
+for type, amount in workers.iteritems():
+    masterdam.actors.append(type.create(amount))
 
 structures = { 
-    _spec.Building(name='store', type=_space.city.structure.Storage,space=250) : 2,
-    _spec.Building(name='tank', type=_space.city.structure.Tank, space=2000) : 1,
-    _spec.Building(name='baker', type=_space.city.structure.Baker, space=1) : 2,
-    _spec.Building(name='farm', type=_space.city.structure.Farm, space=1) : 1,
-    _spec.Building(name='house', type=_space.city.structure.Home, space=1): 1,
-    _spec.Building(name='well', type=_space.city.structure.Well, space=1): 1,
+    _spec.Structure(name='store', type=_space.city.structure.Storage,space=250) : 2,
+    _spec.Structure(name='tank', type=_space.city.structure.Tank, space=2000) : 1,
+    _spec.Structure(name='baker', type=_space.city.structure.Baker, space=1) : 2,
+    _spec.Structure(name='farm', type=_space.city.structure.Farm, space=1) : 1,
+    _spec.Structure(name='house', type=_space.city.structure.Home, space=1): 1,
+    _spec.Structure(name='well', type=_space.city.structure.Well, space=1): 1,
 }
 
 for structure in structures:
@@ -64,7 +64,7 @@ for product, amount, producer in zip(stock.keys(), stock.values(), organizations
     item = product.type(specification=product, amount=amount)
 #    masterdam.reserve(item.storage, item.volume * amount)
 #    masterdam.store(product)
-    masterdam.sell(producer,item, 100) 
+#    masterdam.sell(producer,item, 100) 
 
 #masterdam.order(baking, 1)
 #masterdam.order(farming, 1)

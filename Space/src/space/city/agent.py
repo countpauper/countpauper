@@ -1,15 +1,16 @@
 from space.item import Food
 from space.time import Period
 from space.city.market import PriceException
+from specification import Resource
 
 import space.constants as constants
 
 class EmploymentException(Exception):
     pass
 
-class Agent(object):
-    def __init__(self, occupation):
-        self.occupation = occupation
+class Agent(Resource):
+    def __init__(self, specification, amount):
+        super(Agent, self).__init__(specification, amount)
         self.busy = 0
         self.money = 0
         self.hunger = 0 
@@ -21,16 +22,13 @@ class Agent(object):
             self.eat(location)
             # print "{} eating {}".format(time, self)
 
-    def __repr__(self):
-        return "{} x {}".format(self.total, self.occupation)
-
     def happiness(self):
         score = 0
         score += min(0,self.hunger) # TODO hunger factor
         return score
 
     def idle(self):
-        return self.total-self.busy
+        return self.amount-self.busy
 
     def hire(self,amount):
         if amount<=self.idle():
@@ -51,17 +49,14 @@ class Agent(object):
         options = location.shop(Food)
         for product, amount in options.iteritems():
             try:
-                if amount >= self.total:    # need enough food for everyone 
-                    self.food_offer = location.buy(self, product, self.total, self.hunger)
+                if amount >= self.amount:    # need enough food for everyone 
+                    self.food_offer = location.buy(self, product, self.amount, self.hunger)
             except PriceException:
                 pass
 
 class Individual(Agent):
-    def __init__(self, occupation):
-        Agent.__init__(self, occupation)
-        self.total = 1
+    def __init__(self, specification):
+        super(Individual, self).__init__(self, specification,1)
 
-class Group(Agent):
-    def __init__(self, occupation, total=0):
-        Agent.__init__(self, occupation)
-        self.total = total
+class Population(Agent):
+    pass

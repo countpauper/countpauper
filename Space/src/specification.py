@@ -1,57 +1,49 @@
 all = list()
 
-
 class Product(object):
     pass
 
 class Specification(object):
-    def __init__(self):
+    def __init__(self, type, name):
+        self.type = type
+        self.name = name
         global all
         all.append(self)
 
-    def create(self, **kwargs): # TODO: terrible object properties
-        if not 'amount' in kwargs: # TODO: terrible object default
-            kwargs['amount'] = 1
-        return self.type(specification = self, **kwargs)
+    def create(self, amount=1, **kwargs):
+        return self.type(specification=self, amount =amount, **kwargs)
 
     def __call__(self,**kwargs):
         return self.create(**kwargs)
 
+    def __repr__(self):
+        return self.name
+
 class Product(Specification):
     def __init__(self, type, name='unknown', storage=None, volume=1, quality=0):
-        super(Product, self).__init__()
-        self.type = type
-        self.name = name
+        super(Product, self).__init__(type, name)
         self.storage = storage
-        self.volume = 1
-        self.quality = 0
+        self.volume = volume
+        self.quality = quality
 
-    def __repr__(self):
-        return self.name
-
-class Building(Specification):
+class Structure(Specification):
     def __init__(self, type, name='unknown',  space=0):
-        super(Building, self).__init__()
-        self.type = type
-        self.name = name
+        super(Structure, self).__init__(type, name)
         self.space = space
 
-    def __repr__(self):
-        return self.name
+
+class Service(Specification):
+    def __init__(self, type, name='unknown'):
+        super(Service, self).__init__(type, name)
 
 class Profession(Specification):
-    def __init__(self, name='unknown', home=None):
-        super(Profession, self).__init__()
-        self.type = type 
-        self.name = name
+    def __init__(self, type, name='unknown', home=None):
+        super(Profession, self).__init__(type, name)
         self.home = home
-
-    def __repr__(self):
-        return self.name
 
 class Recipe(Specification):
     def __init__(self, product={}, materials={}, power=0, duration=0, facilities=None, professional=None):
-        super(Recipe, self).__init__()
+        super(Recipe, self).__init__(None, "recipe")    # TODO: recipe type = Process? never instanced, name? 
         self.product = product
         self.materials = materials
         self.power = power
@@ -62,9 +54,32 @@ class Recipe(Specification):
     def __repr__(self):
         return "{} -> {}".format(self.materials, self.product)
 
+
+class ResourceException(Exception):
+    pass
+
+class StackException(ResourceException):
+    pass
+
 class Resource(object):
-    def __init__(self, specification):
+    def __init__(self, specification, amount):
         self.specification = specification
+        self.amount = amount
+
+    def __repr__(self):
+        return "{} x {}".format(self.amount, self.specification)
+
+    def split(self, amount):
+        if self.amount < amount:
+            raise StackException("Insufficient amount", self, amount)
+        self.amount -= amount
+        return self.specification.create(amount=amount)
+
+    def stack(self, other):
+        if self.specification != other.specification:
+            raise StackException("Incompatible types", self, other)
+        self.amount += other.amount
+        other.amount = 0
 
 def specify(type, **kwargs):
     for specification in all:

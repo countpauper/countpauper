@@ -98,8 +98,8 @@ class Habitation(Observer):
             raise EmploymentException("No {1} workers exist in {0}", self, profession)
         workers[0].fire(amount) # TODO: count em and fire multiple
 
-    def _buildings(self, building):
-        return [struct for struct in self.infra if isinstance(struct,building)]
+    def _buildings(self, structure):
+        return [struct for struct in self.infra if isinstance(struct,structure)]
 
     def rent(self, building, amount):
         structs = self._buildings(building)

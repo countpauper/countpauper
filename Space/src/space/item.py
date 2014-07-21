@@ -1,18 +1,14 @@
-# exceptions
 from space.time import Period
 import space.constants as constants
-from specification import Resource
+from specification import Resource, ResourceException
 
 class ItemException(Exception):
     pass
 
-class StackException(ItemException):
-    pass
-
 # private abstract base types
 class _Item(Resource):
-    def __init__(self, **kwargs):
-        super(_Item,self).__init__(kwargs['specification'])
+    def __init__(self, specification, amount):
+        super(_Item,self).__init__(specification, amount)
 
     def volume(self):
         return self.amount * self.specification.volume
@@ -20,28 +16,13 @@ class _Item(Resource):
     def consume(self, _):
         raise ItemException("Can't consume {}", self)
 
-    def __repr__(self):
-        return "{} x {}".format(self.amount, self.specification.name)
-
 class _Unique(object):
     def __init__(self,**kwargs):
         self.amount = 1
 
 class _Stackable(object):
-    def __init__(self,**kwargs):
-        self.amount = kwargs['amount']
-
-    def split(self, amount):
-        if self.amount < amount:
-            raise StackException("Insufficient amount", self, amount)
-        self.amount -= amount
-        return self.specification.create(amount=amount)
-
-    def stack(self, item):
-        if self.specification != item.specification:
-            raise StackException("Incompatible types", self, item)
-        self.amount += item.amount
-        item.amount = 0
+    def __init__(self, **kwargs):
+        pass
 
 class _Consumable(object):
     def __init__(self, **kwargs):
