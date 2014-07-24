@@ -1,6 +1,6 @@
 from space.item import Food
 from space.time import Period
-from space.city.market import PriceException
+from space.city.market.exception import PriceException
 from specification import Resource
 
 import space.constants as constants
@@ -8,15 +8,31 @@ import space.constants as constants
 class EmploymentException(Exception):
     pass
 
-class Agent(Resource):
+class Agent(Resource):  # TODO own resource, own organization? or org is an agent? (can buy company)
     def __init__(self, specification, amount):
         super(Agent, self).__init__(specification, amount)
         self.busy = 0
         self.money = 0
         self.hunger = 0 
         self.food_offer = None
+        self.job = None
 
     def tick(self, location, time, period):
+        if not self.job:
+            self.job = location.sell(self, self, 100)
+        else:
+            # todo: base price of costs:
+            #   food, unemployment rate
+            #   later: rent, tax, loans, luxury
+            # if price not met, fire people for rate 
+            #  or lower luxury
+            # if unemployment low, train people
+            # if price met, raise luxury level
+            if self.busy < self.amount // 2:
+                self.job.adjust(self.job.price * 0.9)
+            else:
+                self.job.adjust(self.job.price * 1.1)
+
         self.hunger += period.days() * constants.calories_per_day
         if self.hunger>=constants.calories_per_meal:  # TODO:just schedule meals in scheduler per 8 hours
             self.eat(location)
@@ -44,7 +60,7 @@ class Agent(Resource):
 
     def eat(self, location):
         if self.food_offer:
-            food = self.food_offer.item
+            food = self.food_offer.resource
             food.consume(self) # TODO: clean up or reuse offer
         options = location.shop(Food)
         for product, amount in options.iteritems():

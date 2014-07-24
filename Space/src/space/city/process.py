@@ -22,12 +22,18 @@ class Process(Observation):
             return 
         if not self.materials.ready():
             return
+        if not self.job.ready():
+            return
         self.timer += period
         if self.timer>=self.recipe.duration:    # TODO: repeat
             self.done()
+        # TODO: pay wages and rent here instead of in front
 
     def complete(self):
         return self.product
+
+    def total_price(self):
+        return self.materials.total_price() + self.job.total_price()
 
     def done(self):
         products = self.recipe.product

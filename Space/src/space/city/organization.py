@@ -54,20 +54,19 @@ class Business(Organization):
         self.offers = list()
 
     def think(self, location):
+
         for process in self.processing:    
             if process.complete():
                 for item in process.product:
-                    price = ceil(process.materials.total_price() * PROFIT_MARGIN)
-
-                    #try: # TODO code duplication (see Batch) batch sell?
-                    #    price = location.quote(item.specification, 1)
-                    #except SupplyException:
-                    #    price = 1000
+                    price = ceil(process.total_price() * PROFIT_MARGIN)
                     self.offers.append(location.sell(self,item,price))
                 self.processing.remove(process)
             elif not process.materials.ready():
                 for offer in process.materials.offers:
                     offer.adjust(ceil(offer.price * PRICE_INCREASE))
+            if not process.job.ready():
+                process.job.adjust(ceil(process.job.price * PRICE_INCREASE))
+        # TODO: adjust price by looking at market instead of blindly increasing
         for offer in self.offers:
             if offer.ready():
                 _ = offer.claim()
@@ -77,11 +76,13 @@ class Business(Organization):
 
     def produce(self, recipe, location):
         process = Process(recipe)
-
+        # todo: move to process
         batch = Batch(self, recipe.materials, location)
         process.materials = batch
+        # TODO: round down duration to days or weeks
+        process.job = location.buy(self, recipe.professional, recipe.duration,10)
         self.processing.append(process)
-
+       
 class Guild(Business):
     def __init__(self, recipe):
         super(Guild,self).__init__()

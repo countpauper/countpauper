@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6c76bb2c-cccc-43e6-8eaf-e8e0044b401c}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>space\city\test_building.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>.</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -23,7 +23,13 @@
   <ItemGroup>
     <Compile Include="hardcoded_data.py" />
     <Compile Include="main.py" />
-    <Compile Include="space\city\market.py" />
+    <Compile Include="space\city\market\exception.py" />
+    <Compile Include="space\city\market\goods.py" />
+    <Compile Include="space\city\market\jobs.py" />
+    <Compile Include="space\city\market\market.py" />
+    <Compile Include="space\city\market\real_estate.py" />
+    <Compile Include="space\city\market\service.py" />
+    <Compile Include="space\city\market\__init__.py" />
     <Compile Include="space\city\organization.py" />
     <Compile Include="space\city\agent.py" />
     <Compile Include="space\city\city.py" />
@@ -45,6 +51,7 @@
   <ItemGroup>
     <Folder Include="space\" />
     <Folder Include="space\city\" />
+    <Folder Include="space\city\market\" />
     <Folder Include="utility\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

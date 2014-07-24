@@ -2,7 +2,9 @@ from agent import Agent, EmploymentException
 from structure import StorageException
 from utility.observer import Observer
 from utility.table import Table
-from market import GoodsMarket, TradeException
+from market.goods import GoodsMarket
+from market.jobs import JobMarket
+from market import TradeException
 
 class Habitation(Observer):
     def __init__(self, name):
@@ -10,7 +12,7 @@ class Habitation(Observer):
         self.name = name
         self.actors = []
         self.infra = []
-        self.markets = [ GoodsMarket() ]
+        self.markets = [ GoodsMarket(), JobMarket() ]
         self.inventory = Table(["time","bread","wheat","H2O"])
         self.inventory.open('inventory.csv')
 
