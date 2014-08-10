@@ -1,4 +1,4 @@
-from specification import Product
+from specification import Product, Resource
 
 class StorageException(Exception):
     pass

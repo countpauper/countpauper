@@ -1,5 +1,5 @@
 from agent import Agent, EmploymentException
-from structure import StorageException
+from building import StorageException
 from utility.observer import Observer
 from utility.table import Table
 from market.goods import GoodsMarket
