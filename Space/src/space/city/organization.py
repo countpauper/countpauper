@@ -80,7 +80,7 @@ class Business(Organization):
         batch = Batch(self, recipe.materials, location)
         process.materials = batch
         # TODO: round down duration to days or weeks
-        process.job = location.buy(self, recipe.professional, recipe.duration,10)
+        process.job = location.buy(self, recipe.professional, 1, 10)
         self.processing.append(process)
        
 class Guild(Business):

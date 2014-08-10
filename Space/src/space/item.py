@@ -16,6 +16,9 @@ class _Item(Resource):
     def consume(self, _):
         raise ItemException("Can't consume {}", self)
 
+    def purchase(self, amount):
+        return self.split(amount)
+
 class _Unique(object):
     def __init__(self,**kwargs):
         self.amount = 1

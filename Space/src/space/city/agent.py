@@ -14,7 +14,7 @@ class Agent(Resource):  # TODO own resource, own organization? or org is an agen
         self.busy = 0
         self.money = 0
         self.hunger = 0 
-        self.food_offer = None
+        self.groceries = None
         self.job = None
 
     def tick(self, location, time, period):
@@ -28,7 +28,7 @@ class Agent(Resource):  # TODO own resource, own organization? or org is an agen
             #  or lower luxury
             # if unemployment low, train people
             # if price met, raise luxury level
-            if self.busy < self.amount // 2:
+            if self.busy < self.amount:
                 self.job.adjust(self.job.price * 0.9)
             else:
                 self.job.adjust(self.job.price * 1.1)
@@ -46,9 +46,10 @@ class Agent(Resource):  # TODO own resource, own organization? or org is an agen
     def idle(self):
         return self.amount-self.busy
 
-    def hire(self,amount):
+    def purchase(self, amount):
         if amount<=self.idle():
             self.busy += amount
+            return self
         else:
             raise EmploymentException("Not enough {0} workers available", self )
 
@@ -59,14 +60,15 @@ class Agent(Resource):  # TODO own resource, own organization? or org is an agen
             raise EmploymentException("Not enough {0} workers hired", self )
 
     def eat(self, location):
-        if self.food_offer:
-            food = self.food_offer.resource
-            food.consume(self) # TODO: clean up or reuse offer
+        if self.groceries:
+            food = self.groceries.claim()
+            food.consume(self) 
+            self.groceries = None
         options = location.shop(Food)
         for product, amount in options.iteritems():
             try:
                 if amount >= self.amount:    # need enough food for everyone 
-                    self.food_offer = location.buy(self, product, self.amount, self.hunger)
+                    self.groceries = location.buy(self, product, self.amount, self.hunger)
             except PriceException:
                 pass
 

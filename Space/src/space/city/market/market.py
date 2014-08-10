@@ -15,8 +15,16 @@ class Offer(object):
         # self.expiration = time + period
         self.total_money = 0
 
-    def total_price(self):
-        return self.amount * self.price
+    # TODO: extend and complete in rent/hire offers only?
+    def extend(self, duration):
+        extra_money = duration.days() * self.price
+        self.owner.money -= extra_money
+        self.resource.money += extra_money
+        self.total_money += extra_money 
+        
+    def finalize(self):
+        # TODO: only works for jobs
+        self.resource.fire(self.requested_amount)
 
     def __lt__(self, offer):
         if self.price < offer.price:
@@ -55,6 +63,9 @@ class Demand(Offer):
         bought_resource = self.market()._immediate_buy(self.owner, self.resource.specification, self.amount(), new_price)
         self.resource.stack(bought_resource)
         self.price = new_price
+
+    def total_price(self):
+        return self.requested_amount * self.price
 
 class Batch(object):
     """Multiple resources being bought"""
@@ -110,9 +121,9 @@ class Market(object):
             self.products[resource.specification].supply.sort() # TODO optimize by adding sorted
             return offer
 
-    def record(self, resource, price):
-        self.products[resource.specification].history.append(History(resource.amount, price))
-        print "Sold {0} @ ${1}".format(resource, price)
+    def record(self, resource, amount, price):
+        self.products[resource.specification].history.append(History(amount, price))
+        print "Sold {1} / {0} @ ${2}".format(resource, amount, price)
 
     def _immediate_sell(self, vendor, resource, price):
         """Split resource and sell to existing demand, 
@@ -126,13 +137,16 @@ class Market(object):
             if offer.ready():
                 continue  
             if resource.amount>offer.amount():
-                sold_resource = resource.split(offer.amount())
+                sold_amount = offer.amount()
             else:
-                sold_resource = resource
-            total_price= offer.price * sold_resource.amount
+                sold_amount = resource.amount
+            resource = resource.purchase(sold_amount)
+            total_price= offer.price * sold_amount
             offer.owner.money -= total_price
             vendor.money += total_price
-            self.record(sold_resource, total_price)
+            self.record(sold_resource, sold_amount, total_price)
+#TODO can't stack agents, collect contracts dictionary instead, so they can be paid, 
+#contract items when consumed fire the worker, something like that
             offer.resource.stack(resource)
             offer.total_money += total_price
             if resource.amount==0:
@@ -167,14 +181,15 @@ class Market(object):
             if offer.ready():
                 continue
             if offer.resource.amount>=amount:
-                sold_resource = offer.resource.split(amount)
+                sold_amount = amount
             else:
-                sold_resource = offer.resource
-            total_price = sold_resource.amount * offer.price
+                sold_amount = offer.resource.amount
+            sold_resource = offer.resource.purchase(sold_amount)
+            total_price = sold_amount * offer.price
             buyer.money -= total_price
             offer.owner.money += total_price
-            self.record(sold_resource, total_price)
-            amount -= sold_resource.amount
+            self.record(sold_resource, sold_amount, total_price)
+            amount -= sold_amount
             resource.stack(sold_resource)
             offer.total_money += total_price
             if amount==0:

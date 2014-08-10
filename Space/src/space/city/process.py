@@ -20,10 +20,14 @@ class Process(Observation):
     def tick(self, time, period):
         if self.complete(): # TODO: proper state machine
             return 
-        if not self.materials.ready():
-            return
         if not self.job.ready():
             return
+        else:
+            self.job.extend(period)
+
+        if not self.materials.ready():
+            return
+
         self.timer += period
         if self.timer>=self.recipe.duration:    # TODO: repeat
             self.done()
@@ -40,4 +44,7 @@ class Process(Observation):
         for product in products:
             item = product.create(amount=products[product] * self.bulk)
             self.product.append(item)
+        self.job.finalize()
+        for item in [offer.resource for offer in self.materials]:
+            item.consume()
         self.notify('done')
