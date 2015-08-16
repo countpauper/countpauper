@@ -29,12 +29,12 @@ EigenScalar Str2Scalar(std::string str)
 
 template<typename Derived>
 std::istream & operator >>(std::istream & s, Eigen::DenseBase<Derived> & m)
-{	// TODO: support IOFormat
+{	// TODO: support Eigen::IOFormat, meaning parse and discard separators
 	std::string coeffStr;
 	for (Derived::Index i = 0; i < m.rows(); ++i)
 	{
 		for (Derived::Index j = 0; j < m.cols(); ++j)
-		{	// TODO: read string first, check for +-inf/nan
+		{
 			s >> coeffStr;
 			m.coeffRef(i, j) = Str2Scalar<Derived::Scalar>(coeffStr);
 		}
@@ -44,7 +44,6 @@ std::istream & operator >>(std::istream & s, Eigen::DenseBase<Derived> & m)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-
 	Eigen::MatrixXd matrix = matrix.Random(3, 3);
 	
 	matrix.coeffRef(1, 1) = std::numeric_limits<double>::infinity();
