@@ -26,6 +26,10 @@ class Offer(object):
         # TODO: only works for jobs
         self.resource.fire(self.requested_amount)
 
+    def add(self, resource):
+        if isinstance(resource,Item):
+            self.resource.stack(resource)
+
     def __lt__(self, offer):
         if self.price < offer.price:
             return True
