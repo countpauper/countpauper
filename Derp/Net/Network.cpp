@@ -18,9 +18,16 @@ double normal_noise(double mean, double sigma)
   return nd(rng);
 }
 
-Layer::Layer(size_t units) :
-	units(units)
+Layer::Layer() :
+	units(0)
 {
+}
+
+Layer::Layer(size_t units) :
+	units(units),
+	bias(units)
+{
+	bias.setZero();
 }
 
 Layer::~Layer()
@@ -37,11 +44,20 @@ size_t Layer::Size() const
 	return units;
 }
 
+InputLayer::InputLayer()
+{
+}
+
 InputLayer::InputLayer(size_t units) :
 	Layer(units)
 {
 }
 
+
+HiddenLayer::HiddenLayer()
+{
+
+}
 
 HiddenLayer::HiddenLayer(size_t units) :
 	Layer(units)
@@ -49,11 +65,13 @@ HiddenLayer::HiddenLayer(size_t units) :
 }
 
 
-Connection::Connection(const Layer& a, const Layer& b) :
+Connection::Connection(Layer& a, const Layer& b) :
 	a(a),
 	b(b),
-	weights(Eigen::MatrixXd::Zero(a.Size(), b.Size()).unaryExpr(std::ptr_fun(normalized_noise)))
+	weights(a.Size(), b.Size())
 {
+	weights.setZero();
+	a.Connect(*this);
 }
 
 InputLayer& Network::Add(size_t units)
@@ -75,6 +93,7 @@ const Network::Layers& Network::GetLayers() const
 	return layers;  
 }
 
+
 NetworkState Network::Activate(const Sample& sample)
 {
 	NetworkState result(*this);
@@ -82,7 +101,19 @@ NetworkState Network::Activate(const Sample& sample)
 	return result;
 }
 
+LayerState::LayerState(const Layer& layer) :
+	layer(layer),
+	activation(layer.Size())
+{
 
+}
+
+void LayerState::Activate(const Eigen::VectorXd& input)
+{
+	if (input.size() != activation.size())
+		throw std::runtime_error("Layer activated with incompatible state");
+	activation = input;
+}
 NetworkState::NetworkState(const Network& network)
 {
 	for (const auto& layer : network.GetLayers())

@@ -7,25 +7,32 @@ class Connection;
 class Layer
 {
 public:
+	Layer();
 	Layer(size_t units);
 	virtual ~Layer();
 	void Connect(Connection& connection);
 	size_t Size() const;
+	const Eigen::VectorXd& Bias() const { return bias; }
 private:
 	size_t units;
 	std::vector<Connection*> connections;
 	Eigen::VectorXd bias;
+
+	friend std::ostream& operator<< (std::ostream& stream, const Layer& layer);
+	friend std::istream& operator>> (std::istream& stream, Layer& layer);
 };
 
 class InputLayer : public Layer
 {
 public:
+	InputLayer();
 	InputLayer(size_t units);
 };
 
 class HiddenLayer : public Layer
 {
 public:
+	HiddenLayer();
 	HiddenLayer(size_t units);
 
 };
@@ -44,12 +51,17 @@ private:
 class Connection
 {
 public:
-	Connection(const Layer& a, const Layer&  b);
+	Connection(Layer& a, const Layer&  b);
+	const Layer& A() const { return a; }
 	const Layer& B() const { return b; }
+	const Eigen::MatrixXd& Weights() const { return weights; }
 private:
 	const Layer& a;
 	const Layer& b;
 	Eigen::MatrixXd weights;
+
+	friend std::ostream& operator<< (std::ostream& stream, const Connection& connection);
+	friend std::istream& operator>> (std::istream& stream, Connection& connection);
 };
 
 class NetworkState;
@@ -62,12 +74,14 @@ public:
 	typedef std::vector<std::unique_ptr<Connection>> Connections;
 	const Layers& GetLayers() const;
 	NetworkState Activate(const Sample& sample);
-protected:
 	InputLayer& Add(size_t units);
 	HiddenLayer& Add(Layer& layer, size_t units);
 private:
 	Layers layers;
 	Connections connections;
+
+	 friend std::ostream& operator<< (std::ostream& stream, const Network& network);
+	 friend std::istream& operator>> (std::istream& stream, Network& network);
 };
 
 class Sample

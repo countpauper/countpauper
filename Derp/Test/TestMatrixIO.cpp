@@ -1,11 +1,6 @@
 #include "stdafx.h"
-
-#define BOOST_TEST_MODULE example
-#include <boost/test/included/unit_test.hpp>
-#include <strstream>
-
+#include <boost/test/unit_test.hpp>
 #include "../Net/MatrixIO.h"
-#include <Eigen/Dense>
 
 BOOST_AUTO_TEST_SUITE(MatrixIO);
 
