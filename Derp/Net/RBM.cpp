@@ -27,11 +27,9 @@ Layer::~Layer()
 {
 }
 
-Layer& Layer::Connect(std::unique_ptr<Layer> layer)
+void Layer::Connect(Connection& connection)
 {
-	connections.emplace_back(std::move(std::make_unique<Connection>(*this, std::move(layer))));
-	return *connections.back()->Target();
-
+	connections.push_back(&connection);
 }
 
 size_t Layer::Size() const
@@ -51,27 +49,30 @@ HiddenLayer::HiddenLayer(size_t units) :
 }
 
 
-Connection::Connection(const Layer& owner, std::unique_ptr<Layer> target) :
-	owner(owner),
-	target(std::move(target)),
-	weights(Eigen::MatrixXd::Zero(owner.Size(), target->Size()).unaryExpr(std::ptr_fun(normalized_noise)))
+Connection::Connection(const Layer& a, const Layer& b) :
+	a(a),
+	b(b),
+	weights(Eigen::MatrixXd::Zero(a.Size(), b.Size()).unaryExpr(std::ptr_fun(normalized_noise)))
 {
 }
 
 InputLayer& Network::Add(size_t units)
 {
-	inputs.emplace_back(std::make_unique<InputLayer>(units));
-	return *static_cast<InputLayer*>(inputs.back().get());
+	layers.emplace_back(std::make_unique<InputLayer>(units));
+	return *static_cast<InputLayer*>(layers.back().get());
 }
 
 HiddenLayer& Network::Add(Layer& connected, size_t units)
 {
-	return static_cast<HiddenLayer&>(connected.Connect(std::make_unique<HiddenLayer>(units)));
+	layers.emplace_back(std::make_unique<HiddenLayer>(units));
+	connections.emplace_back(std::make_unique<Connection>(connected, *layers.back().get()));
+	connected.Connect(*connections.back().get());
+	return static_cast<HiddenLayer&>(*layers.back().get());
 }
 
-const Network::InputLayers& Network::GetInputs() const 
+const Network::Layers& Network::GetLayers() const 
 { 
-	return inputs;  
+	return layers;  
 }
 
 NetworkState Network::Activate(const Sample& sample)
@@ -84,7 +85,7 @@ NetworkState Network::Activate(const Sample& sample)
 
 NetworkState::NetworkState(const Network& network)
 {
-	for (const auto& layer : network.GetInputs())
+	for (const auto& layer : network.GetLayers())
 	{
 		if (InputLayer* l = dynamic_cast<InputLayer*>(layer.get()))
 			inputLayers.emplace_back(LayerState(*l));

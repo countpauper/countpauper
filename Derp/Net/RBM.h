@@ -10,11 +10,11 @@ class Layer
 public:
 	Layer(size_t units);
 	virtual ~Layer();
-	Layer& Connect(std::unique_ptr<Layer> layer);
+	void Connect(Connection& connection);
 	size_t Size() const;
 private:
 	size_t units;
-	std::vector<std::unique_ptr<Connection>> connections;
+	std::vector<Connection*> connections;
 	Eigen::VectorXd bias;
 };
 
@@ -45,29 +45,30 @@ private:
 class Connection
 {
 public:
-	Connection(const Layer& a, std::unique_ptr<Layer> b);
-	Layer* Target() { return target.get(); }
+	Connection(const Layer& a, const Layer&  b);
+	const Layer& B() const { return b; }
 private:
-	const Layer& owner;
-	std::unique_ptr<Layer> target;
+	const Layer& a;
+	const Layer& b;
 	Eigen::MatrixXd weights;
 };
+
 class NetworkState;
 class Sample;
 
 class Network
 {
 public:
-	typedef std::vector<std::unique_ptr<InputLayer>> InputLayers;
-
-	const InputLayers& GetInputs() const;
-
+	typedef std::vector<std::unique_ptr<Layer>> Layers;
+	typedef std::vector<std::unique_ptr<Connection>> Connections;
+	const Layers& GetLayers() const;
 	NetworkState Activate(const Sample& sample);
 protected:
 	InputLayer& Add(size_t units);
 	HiddenLayer& Add(Layer& layer, size_t units);
 private:
-	InputLayers inputs;
+	Layers layers;
+	Connections connections;
 };
 
 class Sample
