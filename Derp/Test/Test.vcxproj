@@ -57,7 +57,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\mfassaer\countpauper\Derp\Debug;C:\libraries\boost\boost-1.56.0.1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);C:\libraries\boost\boost-1.56.0.1\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>net.lib</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
@@ -111,7 +111,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TestMatrixIO.cpp" />
+    <ClCompile Include="MatrixIO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Net\Net.vcxproj">

@@ -8,11 +8,11 @@ typedef unsigned version;
 const version layer_version = 1;
 const version connection_version = 1;
 const version network_version = 1;
-const char seperator = ' ';
+const char separator = ' ';
 
 std::ostream& operator<< (std::ostream& stream, const Layer& layer)
 {
-	stream << layer_version << seperator;
+	stream << layer_version << separator;
 	stream << layer.units << std::endl;
 	stream << layer.bias.transpose() << std::endl;
 	return stream;
@@ -69,12 +69,12 @@ template<typename T> std::string classname(const T& obj)
 
 std::ostream& operator<< (std::ostream& stream, const Network& network)
 {
-	stream << network_version << seperator;
-	stream << network.layers.size() << seperator << network.connections.size() << std::endl;
+	stream << network_version << separator;
+	stream << network.layers.size() << separator << network.connections.size() << std::endl;
 	for (auto layerIt = network.layers.begin(); layerIt != network.layers.end(); ++layerIt)
 	{
 		const Layer& layer = *layerIt->get();
-		stream << layerIt - network.layers.begin() << seperator << classname(layer) << seperator;
+		stream << layerIt - network.layers.begin() << separator << classname(layer) << separator;
 		stream << layer;
 	}
 	for (auto connectionIt = network.connections.begin(); connectionIt != network.connections.end(); ++connectionIt)
@@ -82,7 +82,7 @@ std::ostream& operator<< (std::ostream& stream, const Network& network)
 		const Connection& connection = *connectionIt->get();
 		unsigned a = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer>& ptr){ return CompareUniquePtr(ptr, connection.A()); }) - network.layers.begin();
 		unsigned b = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer>& ptr){ return CompareUniquePtr(ptr, connection.B()); }) - network.layers.begin();
-		stream << classname(connection) << seperator << a << seperator << b << seperator ;
+		stream << connectionIt - network.connections.begin() << separator << classname(connection) << separator << a << separator << b << separator;
 		stream << connection;
 	}
 	return stream;
@@ -104,17 +104,11 @@ std::istream& operator>> (std::istream& stream, Network& network)
 			stream >> layerIndex >> layerType;
 			// todo: layer factory
 			if (layerType == "InputLayer")
-			{
 				network.layers.emplace_back(std::make_unique<InputLayer>());
-			}
 			else if (layerType == "HiddenLayer")
-			{
 				network.layers.emplace_back(std::make_unique<HiddenLayer>());
-			}
 			else
-			{
-				throw std::ios_base::failure((boost::format("Syntax error,  layer[%d].type = '%s' unknown.") % layerIt % layerType).str());
-			}
+				throw std::domain_error((boost::format("Syntax error,  layer[%d].type = '%s' unknown.") % layerIt % layerType).str());
 			Layer& layer = *network.layers.back().get();
 			stream >> layer;
 		}
@@ -130,13 +124,9 @@ std::istream& operator>> (std::istream& stream, Network& network)
 				throw std::out_of_range((boost::format("Connection [%d].B = %d out of range.") % connectionIndex % bIndex).str());
 
 			if (connectionType == "Connection")
-			{
 				network.connections.emplace_back(std::make_unique<Connection>(*network.layers[aIndex].get(), *network.layers[bIndex].get()));
-			}
 			else
-			{
-				throw std::ios_base::failure((boost::format("Syntax error,  connection[%d].Type = '%s' unknown.") % connectionIndex % connectionType).str());
-			}
+				throw std::domain_error((boost::format("Syntax error,  connection[%d].Type = '%s' unknown.") % connectionIndex % connectionType).str());
 			Connection& connection = *network.connections.back().get();
 			stream >> connection;
 		}
