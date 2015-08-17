@@ -9,7 +9,7 @@
 
 BOOST_AUTO_TEST_SUITE(MatrixIO);
 
-BOOST_AUTO_TEST_CASE(1by1_double)
+BOOST_AUTO_TEST_CASE(one_by_one_double)
 {
 	Eigen::MatrixXd matrix(1, 1);
 	std::stringstream stream;
@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(1by1_double)
 	BOOST_REQUIRE_EQUAL(matrix.coeff(0, 0), 1.5);
 }
 
-BOOST_AUTO_TEST_CASE(2by4_int)
+BOOST_AUTO_TEST_CASE(two_by_four_int)
 {
 	Eigen::MatrixXi matrix(2, 4);
 	std::stringstream stream;
@@ -34,6 +34,17 @@ BOOST_AUTO_TEST_CASE(2by4_int)
 	BOOST_REQUIRE_EQUAL(matrix.coeff(1, 3), 8);
 }
 
+
+BOOST_AUTO_TEST_CASE(vector_float)
+{
+	Eigen::VectorXf vector(2);
+	std::stringstream stream;
+	stream << -0.3f << " " << 0.9f  << std::endl;
+	stream >> vector;
+	BOOST_REQUIRE_EQUAL(vector.size(), 2);
+	BOOST_REQUIRE_EQUAL(vector.coeff(0), -0.3f);
+	BOOST_REQUIRE_EQUAL(vector.coeff(1), 0.9f);
+}
 
 BOOST_AUTO_TEST_CASE(inf)
 {
