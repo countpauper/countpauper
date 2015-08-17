@@ -7,15 +7,17 @@ class Connection;
 class Layer
 {
 public:
+	typedef std::vector<Connection*> Connections;
 	Layer();
 	Layer(size_t units);
 	virtual ~Layer();
 	void Connect(Connection& connection);
 	size_t Size() const;
 	const Eigen::VectorXd& Bias() const { return bias; }
+	const Connections& GetConnections() const { return connections;  }
 private:
 	size_t units;
-	std::vector<Connection*> connections;
+	Connections connections;
 	Eigen::VectorXd bias;
 
 	friend std::ostream& operator<< (std::ostream& stream, const Layer& layer);

@@ -35,7 +35,7 @@ std::istream& operator>> (std::istream& stream, Layer& layer)
 std::ostream& operator<< (std::ostream& stream, const Connection& connection)
 {
 	stream << connection_version << std::endl;
-	stream << connection.weights;
+	stream << connection.weights << std::endl;
 
 	return stream;
 }
