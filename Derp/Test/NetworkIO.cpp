@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(WriteConnection)
 	std::stringstream stream;
 	stream << net;
 	BOOST_REQUIRE(!stream.bad());
-	BOOST_CHECK_EQUAL(stream.str(), "1 2 1\n0 Net::InputLayer 1 3 Net::Boolean\n0 0 0\n1 Net::HiddenLayer 1 2 Net::Sigmoid\n0 0\n0 Net::Connection 0 1 1\n0 0\n0 0\n0 0\n");
+	BOOST_CHECK_EQUAL(stream.str(), "1 2 1\n0 Net::InputLayer 1 3 Net::Boolean\n0 0 0\n1 Net::HiddenLayer 1 2 Net::Sigmoid\n0 0\n0 Net::Connection 0 1 1\n0 0 0\n0 0 0\n");
 }
 
 BOOST_AUTO_TEST_CASE(ReadConnection)

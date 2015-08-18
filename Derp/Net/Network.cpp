@@ -50,9 +50,7 @@ namespace Net
 		bias.setConstant(mean);
 		if (sigma != 0)
 		{
-			Eigen::VectorXd sigmaVector(bias.size());
-			sigmaVector.setConstant(sigma);
-			bias = bias.binaryExpr(sigmaVector, std::ptr_fun(normal_noise));
+			bias = bias.binaryExpr(Eigen::VectorXd::Constant(bias.size(), sigma), std::ptr_fun(normal_noise));
 		}
 	}
 
@@ -80,7 +78,7 @@ namespace Net
 	Connection::Connection(Layer& a, const Layer& b) :
 		a(a),
 		b(b),
-		weights(a.Size(), b.Size())
+		weights(b.Size(), a.Size())
 	{
 		a.Connect(*this);
 	}
@@ -94,9 +92,7 @@ namespace Net
 		weights.setConstant(mean);
 		if (sigma != 0)
 		{
-			Eigen::MatrixXd sigMatrix(weights.rows(), weights.cols());
-			sigMatrix.setConstant(sigma);
-			weights = weights.binaryExpr(sigMatrix, std::ptr_fun(normal_noise));
+			weights = weights.binaryExpr(Eigen::MatrixXd::Constant(weights.rows(), weights.cols(),sigma), std::ptr_fun(normal_noise));
 		}
 	}
 
