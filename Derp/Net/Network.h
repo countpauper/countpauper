@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "Activation.h"
+#include "Function.h"
 
 class Connection;
 class Sample;
@@ -14,16 +15,18 @@ class Layer
 public:
 	typedef std::vector<Connection*> Connections;
 	Layer();
-	Layer(size_t units);
+	Layer(size_t units, std::unique_ptr<Function>&& function);
 	virtual ~Layer();
 	void Connect(Connection& connection);
 	size_t Size() const;
 	const Eigen::VectorXd& Bias() const { return bias; }
 	const Connections& GetConnections() const { return connections;  }
 	void Reset(double mean, double sigma);
+	const Function* GetFunction() const { return function.get(); }
 private:
 	size_t units;
 	Connections connections;
+	std::unique_ptr<Function> function;
 	Eigen::VectorXd bias;
 
 	friend std::ostream& operator<< (std::ostream& stream, const Layer& layer);
@@ -34,14 +37,14 @@ class InputLayer : public Layer
 {
 public:
 	InputLayer();
-	InputLayer(size_t units);
+	InputLayer(size_t units, std::unique_ptr<Function>&& function);
 };
 
 class HiddenLayer : public Layer
 {
 public:
 	HiddenLayer();
-	HiddenLayer(size_t units);
+	HiddenLayer(size_t units, std::unique_ptr<Function>&& function);
 
 };
 
@@ -49,6 +52,7 @@ class Connection
 {
 public:
 	Connection(Layer& a, const Layer&  b);
+	virtual ~Connection();
 	const Layer& A() const { return a; }
 	const Layer& B() const { return b; }
 	const Eigen::MatrixXd& Weights() const { return weights; }
@@ -70,8 +74,8 @@ public:
 	typedef std::vector<std::unique_ptr<Connection>> Connections;
 	const Layers& GetLayers() const;
 	State Activate(const Sample& sample);
-	InputLayer& Add(size_t units);
-	HiddenLayer& Add(Layer& layer, size_t units);
+	InputLayer& Add(size_t units, std::unique_ptr<Function>&& function);
+	HiddenLayer& Add(Layer& layer, size_t units, std::unique_ptr<Function>&& function);
 	void Reset(double mean=0, double sigma=0);
 private:
 	Layers layers;

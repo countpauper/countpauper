@@ -1,1 +1,3 @@
 Network namespace
+Load activation function
+Factories for layer/connection/function/etc types in NetworkIO

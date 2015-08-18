@@ -4,6 +4,28 @@
 #include "NetworkIO.h"
 #include "MatrixIO.h"
 
+template<typename T>
+bool CompareUniquePtr(const std::unique_ptr<T>& ptr, const T& ref)
+{
+	return ptr.get() == &ref;
+}
+
+
+template<typename T> std::string classname(const T& obj)
+{
+	std::string fullName = std::string(typeid(obj).name());
+	assert(fullName.substr(0, 6) == "class ");
+	return fullName.substr(6, std::string::npos);
+}
+
+template<typename T> std::string classname_ptr(const T* obj)
+{
+	if (!obj)
+		return "null";
+	else
+		return classname(*obj);
+}
+
 typedef unsigned version;
 const version layer_version = 1;
 const version connection_version = 1;
@@ -13,9 +35,26 @@ const char separator = ' ';
 std::ostream& operator<< (std::ostream& stream, const Layer& layer)
 {
 	stream << layer_version << separator;
-	stream << layer.units << std::endl;
+	stream << layer.units << " ";
+	stream << classname_ptr(layer.function.get()) << std::endl;
 	stream << layer.bias.transpose() << std::endl;
 	return stream;
+}
+
+std::unique_ptr<Function> FunctionFactory(const std::string& typeName)
+{
+	if (typeName == "null")
+		return nullptr;
+	if (typeName == "Boolean")
+		return std::make_unique<Boolean>();
+	else if (typeName == "Linear")
+		return std::make_unique<Linear>();
+	else if (typeName == "Sigmoid")
+		return std::make_unique<Sigmoid>();
+	else if (typeName == "Stochastic")
+		return std::make_unique<Stochastic>();
+	else 
+		throw std::domain_error((boost::format("Syntax error, unknown activation function = '%s'.") % typeName).str());
 }
 
 std::istream& operator>> (std::istream& stream, Layer& layer)
@@ -24,7 +63,9 @@ std::istream& operator>> (std::istream& stream, Layer& layer)
 	stream >> v;
 	if (v >= 1)
 	{
-		stream >> layer.units;
+		std::string functionName;
+		stream >> layer.units >> functionName;
+		layer.function = std::move(FunctionFactory(functionName));
 		layer.bias = Eigen::VectorXd(layer.Size());
 		stream >> layer.bias;
 	}
@@ -54,18 +95,7 @@ std::istream& operator>> (std::istream& stream, Connection& connection)
 	return stream;
 }
 
-template<typename T>
-bool CompareUniquePtr(const std::unique_ptr<T>& ptr, const T& ref)
-{
-	return ptr.get() == &ref;
-}
 
-template<typename T> std::string classname(const T& obj)
-{
-	std::string fullName = std::string(typeid(obj).name());
-	assert(fullName.substr(0, 6) == "class ");
-	return fullName.substr(6, std::string::npos);
-}
 
 std::ostream& operator<< (std::ostream& stream, const Network& network)
 {

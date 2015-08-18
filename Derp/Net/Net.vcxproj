@@ -77,6 +77,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Activation.h" />
+    <ClInclude Include="Function.h" />
     <ClInclude Include="MatrixIO.h" />
     <ClInclude Include="NetworkIO.h" />
     <ClInclude Include="Network.h" />
@@ -86,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Activation.cpp" />
+    <ClCompile Include="Function.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="NetworkIO.cpp" />
     <ClCompile Include="RBM.cpp" />

@@ -23,9 +23,10 @@ Layer::Layer() :
 {
 }
 
-Layer::Layer(size_t units) :
+Layer::Layer(size_t units, std::unique_ptr<Function>&& function) :
 	units(units),
-	bias(units)
+	bias(units),
+	function(std::move(function))
 {
 }
 
@@ -58,8 +59,8 @@ InputLayer::InputLayer()
 {
 }
 
-InputLayer::InputLayer(size_t units) :
-	Layer(units)
+InputLayer::InputLayer(size_t units, std::unique_ptr<Function>&& function) :
+	Layer(units, std::move(function))
 {
 }
 
@@ -69,8 +70,8 @@ HiddenLayer::HiddenLayer()
 
 }
 
-HiddenLayer::HiddenLayer(size_t units) :
-	Layer(units)
+HiddenLayer::HiddenLayer(size_t units, std::unique_ptr<Function>&& function) :
+	Layer(units, std::move(function))
 {
 }
 
@@ -81,6 +82,10 @@ Connection::Connection(Layer& a, const Layer& b) :
 	weights(a.Size(), b.Size())
 {
 	a.Connect(*this);
+}
+
+Connection::~Connection()
+{
 }
 
 void Connection::Reset(double mean, double sigma)
@@ -94,15 +99,15 @@ void Connection::Reset(double mean, double sigma)
 	}
 }
 
-InputLayer& Network::Add(size_t units)
+InputLayer& Network::Add(size_t units, std::unique_ptr<Function>&& function)
 {
-	layers.emplace_back(std::make_unique<InputLayer>(units));
+	layers.emplace_back(std::make_unique<InputLayer>(units, std::move(function)));
 	return *static_cast<InputLayer*>(layers.back().get());
 }
 
-HiddenLayer& Network::Add(Layer& connected, size_t units)
+HiddenLayer& Network::Add(Layer& connected, size_t units,std::unique_ptr<Function>&& function)
 {
-	layers.emplace_back(std::make_unique<HiddenLayer>(units));
+	layers.emplace_back(std::make_unique<HiddenLayer>(units, std::move(function)));
 	connections.emplace_back(std::make_unique<Connection>(connected, *layers.back().get()));
 	connected.Connect(*connections.back().get());
 	return static_cast<HiddenLayer&>(*layers.back().get());
