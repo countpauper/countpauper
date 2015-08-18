@@ -94,49 +94,10 @@ const Network::Layers& Network::GetLayers() const
 }
 
 
-NetworkState Network::Activate(const Sample& sample)
+State Network::Activate(const Sample& sample)
 {
-	NetworkState result(*this);
+	State result(*this);
 	result.Activate(sample);
 	return result;
 }
 
-LayerState::LayerState(const Layer& layer) :
-	layer(layer),
-	activation(layer.Size())
-{
-
-}
-
-void LayerState::Activate(const Eigen::VectorXd& input)
-{
-	if (input.size() != activation.size())
-		throw std::runtime_error("Layer activated with incompatible state");
-	activation = input;
-}
-NetworkState::NetworkState(const Network& network)
-{
-	for (const auto& layer : network.GetLayers())
-	{
-		if (InputLayer* l = dynamic_cast<InputLayer*>(layer.get()))
-			inputLayers.emplace_back(LayerState(*l));
-	}
-}
-
-//TODO: activation state only exists after activation, only keep reference on creation, start recursively creating activation states on activate
-
-void NetworkState::Activate(const Sample& sample)
-{
-	size_t pos = 0;
-	for (auto& layerState : inputLayers)
-	{
-		const InputLayer& input = *static_cast<const InputLayer*>(&layerState.GetLayer());
-		layerState.Activate(sample.Activation(pos, input.Size()));
-		pos += input.Size();
-	}
-}
-
-Eigen::VectorXd Sample::Activation(size_t from, size_t count) const
-{
-	return activation.segment(from, count);
-}

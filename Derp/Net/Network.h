@@ -1,8 +1,14 @@
+#pragma once
+
 #include <Eigen/Dense>
 #include <vector>
 #include <memory>
 
+#include "Activation.h"
+
 class Connection;
+class Sample;
+
 
 class Layer
 {
@@ -39,16 +45,7 @@ public:
 
 };
 
-class LayerState
-{
-public:
-	LayerState(const Layer& layer);
-	void Activate(const Eigen::VectorXd& activation);
-	const Layer& GetLayer() const { return layer;  }
-private:
-	const Layer& layer;
-	Eigen::VectorXd activation;
-};
+
 
 class Connection
 {
@@ -66,7 +63,6 @@ private:
 	friend std::istream& operator>> (std::istream& stream, Connection& connection);
 };
 
-class NetworkState;
 class Sample;
 
 class Network
@@ -75,7 +71,7 @@ public:
 	typedef std::vector<std::unique_ptr<Layer>> Layers;
 	typedef std::vector<std::unique_ptr<Connection>> Connections;
 	const Layers& GetLayers() const;
-	NetworkState Activate(const Sample& sample);
+	State Activate(const Sample& sample);
 	InputLayer& Add(size_t units);
 	HiddenLayer& Add(Layer& layer, size_t units);
 private:
@@ -86,23 +82,4 @@ private:
 	 friend std::istream& operator>> (std::istream& stream, Network& network);
 };
 
-class Sample
-{
-public:
-	Sample(const Eigen::VectorXd& activation);
-	Eigen::VectorXd Activation(size_t from, size_t count) const;
-protected:
-	Eigen::VectorXd activation;
-};
 
-
-class NetworkState
-{
-public:
-	typedef std::vector<LayerState> Layers;
-
-	NetworkState(const Network& network);
-	void Activate(const Sample& sample);
-private:
-	Layers inputLayers;
-};
