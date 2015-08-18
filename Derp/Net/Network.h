@@ -7,82 +7,98 @@
 #include "Activation.h"
 #include "Function.h"
 
-class Connection;
-class Sample;
-
-class Layer
+namespace Net
 {
-public:
-	typedef std::vector<Connection*> Connections;
-	Layer();
-	Layer(size_t units, std::unique_ptr<Function>&& function);
-	virtual ~Layer();
-	void Connect(Connection& connection);
-	size_t Size() const;
-	const Eigen::VectorXd& Bias() const { return bias; }
-	const Connections& GetConnections() const { return connections;  }
-	void Reset(double mean, double sigma);
-	const Function* GetFunction() const { return function.get(); }
-private:
-	size_t units;
-	Connections connections;
-	std::unique_ptr<Function> function;
-	Eigen::VectorXd bias;
+	class Layer;
+	class Connection;
+	class Network;
+}
 
-	friend std::ostream& operator<< (std::ostream& stream, const Layer& layer);
-	friend std::istream& operator>> (std::istream& stream, Layer& layer);
-};
+std::ostream& operator<<(std::ostream& stream, const Net::Layer& layer);
+std::istream& operator>> (std::istream& stream, Net::Layer& layer);
+std::ostream& operator<<(std::ostream& stream, const Net::Connection& layer);
+std::istream& operator>> (std::istream& stream, Net::Connection& layer);
+std::ostream& operator<<(std::ostream& stream, const Net::Network& layer);
+std::istream& operator>> (std::istream& stream, Net::Network& layer);
 
-class InputLayer : public Layer
+namespace Net
 {
-public:
-	InputLayer();
-	InputLayer(size_t units, std::unique_ptr<Function>&& function);
-};
+	class Sample;
 
-class HiddenLayer : public Layer
-{
-public:
-	HiddenLayer();
-	HiddenLayer(size_t units, std::unique_ptr<Function>&& function);
+	class Layer
+	{
+	public:
+		typedef std::vector<Connection*> Connections;
+		Layer();
+		Layer(size_t units, std::unique_ptr<Function>&& function);
+		virtual ~Layer();
+		void Connect(Connection& connection);
+		size_t Size() const;
+		const Eigen::VectorXd& Bias() const { return bias; }
+		const Connections& GetConnections() const { return connections; }
+		void Reset(double mean, double sigma);
+		const Function* GetFunction() const { return function.get(); }
+	private:
+		size_t units;
+		Connections connections;
+		std::unique_ptr<Function> function;
+		Eigen::VectorXd bias;
 
-};
+		friend std::ostream& (::operator<<) (std::ostream& stream, const Net::Layer& layer);
+		friend std::istream& (::operator>>) (std::istream& stream, Net::Layer& layer);
+	};
 
-class Connection
-{
-public:
-	Connection(Layer& a, const Layer&  b);
-	virtual ~Connection();
-	const Layer& A() const { return a; }
-	const Layer& B() const { return b; }
-	const Eigen::MatrixXd& Weights() const { return weights; }
-	void Reset(double mean, double sigma);
-private:
-	const Layer& a;
-	const Layer& b;
-	Eigen::MatrixXd weights;
+	class InputLayer : public Layer
+	{
+	public:
+		InputLayer();
+		InputLayer(size_t units, std::unique_ptr<Function>&& function);
+	};
 
-	friend std::ostream& operator<< (std::ostream& stream, const Connection& connection);
-	friend std::istream& operator>> (std::istream& stream, Connection& connection);
-};
+	class HiddenLayer : public Layer
+	{
+	public:
+		HiddenLayer();
+		HiddenLayer(size_t units, std::unique_ptr<Function>&& function);
 
+	};
 
-class Network
-{
-public:
-	typedef std::vector<std::unique_ptr<Layer>> Layers;
-	typedef std::vector<std::unique_ptr<Connection>> Connections;
-	const Layers& GetLayers() const;
-	State Activate(const Sample& sample);
-	InputLayer& Add(size_t units, std::unique_ptr<Function>&& function);
-	HiddenLayer& Add(Layer& layer, size_t units, std::unique_ptr<Function>&& function);
-	void Reset(double mean=0, double sigma=0);
-private:
-	Layers layers;
-	Connections connections;
+	class Connection
+	{
+	public:
+		Connection(Layer& a, const Layer&  b);
+		virtual ~Connection();
+		const Layer& A() const { return a; }
+		const Layer& B() const { return b; }
+		const Eigen::MatrixXd& GetWeights() const { return weights; }
+		void Reset(double mean, double sigma);
+	private:
+		const Layer& a;
+		const Layer& b;
+		Eigen::MatrixXd weights;
 
-	 friend std::ostream& operator<< (std::ostream& stream, const Network& network);
-	 friend std::istream& operator>> (std::istream& stream, Network& network);
-};
+		friend std::ostream& (::operator<<) (std::ostream& stream, const Connection& connection);
+		friend std::istream& (::operator>>) (std::istream& stream, Connection& connection);
+	};
 
 
+	class Network
+	{
+	public:
+		typedef std::vector<std::unique_ptr<Layer>> Layers;
+		typedef std::vector<std::unique_ptr<Connection>> Connections;
+		const Layers& GetLayers() const;
+		State Activate(const Sample& sample);
+		InputLayer& Add(size_t units, std::unique_ptr<Function>&& function);
+		HiddenLayer& Add(Layer& layer, size_t units, std::unique_ptr<Function>&& function);
+		void Reset(double mean = 0, double sigma = 0);
+	private:
+		Layers layers;
+		Connections connections;
+
+		friend std::ostream& (::operator<<) (std::ostream& stream, const Network& network);
+		friend std::istream& (::operator>>) (std::istream& stream, Network& network);
+	};
+
+
+}

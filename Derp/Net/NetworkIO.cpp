@@ -32,7 +32,7 @@ const version connection_version = 1;
 const version network_version = 1;
 const char separator = ' ';
 
-std::ostream& operator<< (std::ostream& stream, const Layer& layer)
+std::ostream& operator<< (std::ostream& stream, const Net::Layer& layer)
 {
 	stream << layer_version << separator;
 	stream << layer.units << " ";
@@ -41,23 +41,23 @@ std::ostream& operator<< (std::ostream& stream, const Layer& layer)
 	return stream;
 }
 
-std::unique_ptr<Function> FunctionFactory(const std::string& typeName)
+std::unique_ptr<Net::Function> FunctionFactory(const std::string& typeName)
 {
 	if (typeName == "null")
 		return nullptr;
-	if (typeName == "Boolean")
-		return std::make_unique<Boolean>();
-	else if (typeName == "Linear")
-		return std::make_unique<Linear>();
-	else if (typeName == "Sigmoid")
-		return std::make_unique<Sigmoid>();
-	else if (typeName == "Stochastic")
-		return std::make_unique<Stochastic>();
-	else 
+	if (typeName == "Net::Boolean")
+		return std::make_unique<Net::Boolean>();
+	else if (typeName == "Net::Linear")
+		return std::make_unique<Net::Linear>();
+	else if (typeName == "Net::Sigmoid")
+		return std::make_unique<Net::Sigmoid>();
+	else if (typeName == "Net::Stochastic")
+		return std::make_unique<Net::Stochastic>();
+	else
 		throw std::domain_error((boost::format("Syntax error, unknown activation function = '%s'.") % typeName).str());
 }
 
-std::istream& operator>> (std::istream& stream, Layer& layer)
+std::istream& operator>> (std::istream& stream, Net::Layer& layer)
 {
 	version v;
 	stream >> v;
@@ -73,7 +73,7 @@ std::istream& operator>> (std::istream& stream, Layer& layer)
 	return stream;
 }
 
-std::ostream& operator<< (std::ostream& stream, const Connection& connection)
+std::ostream& operator<< (std::ostream& stream, const Net::Connection& connection)
 {
 	stream << connection_version << std::endl;
 	stream << connection.weights << std::endl;
@@ -82,7 +82,7 @@ std::ostream& operator<< (std::ostream& stream, const Connection& connection)
 }
 
 
-std::istream& operator>> (std::istream& stream, Connection& connection)
+std::istream& operator>> (std::istream& stream, Net::Connection& connection)
 {
 	version v;
 	stream >> v;
@@ -97,21 +97,21 @@ std::istream& operator>> (std::istream& stream, Connection& connection)
 
 
 
-std::ostream& operator<< (std::ostream& stream, const Network& network)
+std::ostream& operator<< (std::ostream& stream, const Net::Network& network)
 {
 	stream << network_version << separator;
 	stream << network.layers.size() << separator << network.connections.size() << std::endl;
 	for (auto layerIt = network.layers.begin(); layerIt != network.layers.end(); ++layerIt)
 	{
-		const Layer& layer = *layerIt->get();
+		const Net::Layer& layer = *layerIt->get();
 		stream << layerIt - network.layers.begin() << separator << classname(layer) << separator;
 		stream << layer;
 	}
 	for (auto connectionIt = network.connections.begin(); connectionIt != network.connections.end(); ++connectionIt)
 	{
-		const Connection& connection = *connectionIt->get();
-		unsigned a = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer>& ptr){ return CompareUniquePtr(ptr, connection.A()); }) - network.layers.begin();
-		unsigned b = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer>& ptr){ return CompareUniquePtr(ptr, connection.B()); }) - network.layers.begin();
+		const Net::Connection& connection = *connectionIt->get();
+		unsigned a = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Net::Layer>& ptr){ return CompareUniquePtr(ptr, connection.A()); }) - network.layers.begin();
+		unsigned b = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Net::Layer>& ptr){ return CompareUniquePtr(ptr, connection.B()); }) - network.layers.begin();
 		stream << connectionIt - network.connections.begin() << separator << classname(connection) << separator << a << separator << b << separator;
 		stream << connection;
 	}
@@ -119,7 +119,7 @@ std::ostream& operator<< (std::ostream& stream, const Network& network)
 }
 
 
-std::istream& operator>> (std::istream& stream, Network& network)
+std::istream& operator>> (std::istream& stream, Net::Network& network)
 {
 	version v;
 	stream >> v;
@@ -133,13 +133,13 @@ std::istream& operator>> (std::istream& stream, Network& network)
 			std::string layerType;
 			stream >> layerIndex >> layerType;
 			// todo: layer factory
-			if (layerType == "InputLayer")
-				network.layers.emplace_back(std::make_unique<InputLayer>());
-			else if (layerType == "HiddenLayer")
-				network.layers.emplace_back(std::make_unique<HiddenLayer>());
+			if (layerType == "Net::InputLayer")
+				network.layers.emplace_back(std::make_unique<Net::InputLayer>());
+			else if (layerType == "Net::HiddenLayer")
+				network.layers.emplace_back(std::make_unique<Net::HiddenLayer>());
 			else
 				throw std::domain_error((boost::format("Syntax error,  layer[%d].type = '%s' unknown.") % layerIt % layerType).str());
-			Layer& layer = *network.layers.back().get();
+			Net::Layer& layer = *network.layers.back().get();
 			stream >> layer;
 		}
 		for (size_t connectionIt = 0; connectionIt < connectionCount; ++connectionIt)
@@ -153,14 +153,13 @@ std::istream& operator>> (std::istream& stream, Network& network)
 			if (bIndex >= layerCount)
 				throw std::out_of_range((boost::format("Connection [%d].B = %d out of range.") % connectionIndex % bIndex).str());
 
-			if (connectionType == "Connection")
-				network.connections.emplace_back(std::make_unique<Connection>(*network.layers[aIndex].get(), *network.layers[bIndex].get()));
+			if (connectionType == "Net::Connection")
+				network.connections.emplace_back(std::make_unique<Net::Connection>(*network.layers[aIndex].get(), *network.layers[bIndex].get()));
 			else
 				throw std::domain_error((boost::format("Syntax error,  connection[%d].Type = '%s' unknown.") % connectionIndex % connectionType).str());
-			Connection& connection = *network.connections.back().get();
+			Net::Connection& connection = *network.connections.back().get();
 			stream >> connection;
 		}
 	}
 	return stream;
 }
-

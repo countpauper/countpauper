@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include <boost/test/unit_test.hpp>
 #include <strstream>
-#include "../Net/NetworkIO.h"
 #include <Eigen/Dense>
+#include "../Net/NetworkIO.h"
 
 BOOST_AUTO_TEST_SUITE(NetworkIO);
 
 BOOST_AUTO_TEST_CASE(WriteEmpty)
 {
-	Network net;
+	Net::Network net;
 	net.Reset();
 
 	std::stringstream stream;
@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(WriteEmpty)
 
 BOOST_AUTO_TEST_CASE(ReadEmpty)
 {
-	Network net;
+	Net::Network net;
 	std::stringstream stream("1 0 0\n");
 	stream >> net;
 	BOOST_REQUIRE(!stream.bad());
@@ -29,21 +29,21 @@ BOOST_AUTO_TEST_CASE(ReadEmpty)
 
 BOOST_AUTO_TEST_CASE(WriteLayer)
 {
-	Network net;
-	net.Add(3, std::make_unique<Linear>());
+	Net::Network net;
+	net.Add(3, std::make_unique<Net::Linear>());
 	net.Reset();
 
 	std::stringstream stream;
 
 	stream << net;
 	BOOST_REQUIRE(!stream.bad());
-	BOOST_CHECK_EQUAL(stream.str(), "1 1 0\n0 InputLayer 1 3 Linear\n0 0 0\n");
+	BOOST_CHECK_EQUAL(stream.str(), "1 1 0\n0 Net::InputLayer 1 3 Net::Linear\n0 0 0\n");
 }
 
 BOOST_AUTO_TEST_CASE(ReadLayer)
 {
-	Network net;
-	std::stringstream stream("1 1 0\n0 InputLayer 1 2 Linear\n0.1 -0.2\n");
+	Net::Network net;
+	std::stringstream stream("1 1 0\n0 Net::InputLayer 1 2 Net::Linear\n0.1 -0.2\n");
 	stream >> net;
 	BOOST_REQUIRE(!stream.bad());
 	BOOST_REQUIRE(!stream.eof());
@@ -52,26 +52,26 @@ BOOST_AUTO_TEST_CASE(ReadLayer)
 	Eigen::Vector2d refBias;
 	refBias << 0.1, -0.2;
 	BOOST_CHECK_EQUAL(net.GetLayers().front()->Bias(), refBias);
-	BOOST_CHECK(dynamic_cast<InputLayer*>(net.GetLayers()[0].get()));
-	BOOST_CHECK(dynamic_cast<const Linear*>(net.GetLayers()[0]->GetFunction()));
+	BOOST_CHECK(dynamic_cast<Net::InputLayer*>(net.GetLayers()[0].get()));
+	BOOST_CHECK(dynamic_cast<const Net::Linear*>(net.GetLayers()[0]->GetFunction()));
 }
 
 BOOST_AUTO_TEST_CASE(WriteConnection)
 {
-	Network net;
-	net.Add(net.Add(3, std::make_unique<Boolean>()), 2, std::make_unique<Sigmoid>());
+	Net::Network net;
+	net.Add(net.Add(3, std::make_unique<Net::Boolean>()), 2, std::make_unique<Net::Sigmoid>());
 	net.Reset();
 
 	std::stringstream stream;
 	stream << net;
 	BOOST_REQUIRE(!stream.bad());
-	BOOST_CHECK_EQUAL(stream.str(), "1 2 1\n0 InputLayer 1 3 Boolean\n0 0 0\n1 HiddenLayer 1 2 Sigmoid\n0 0\n0 Connection 0 1 1\n0 0\n0 0\n0 0\n");
+	BOOST_CHECK_EQUAL(stream.str(), "1 2 1\n0 Net::InputLayer 1 3 Net::Boolean\n0 0 0\n1 Net::HiddenLayer 1 2 Net::Sigmoid\n0 0\n0 Net::Connection 0 1 1\n0 0\n0 0\n0 0\n");
 }
 
 BOOST_AUTO_TEST_CASE(ReadConnection)
 {
-	Network net;
-	std::stringstream stream("1 2 1\n0 InputLayer 1 2 Boolean\n0.2 -0.3\n1 HiddenLayer 1 2 Sigmoid\n-0.5 0.9\n0 Connection 0 1 1\n0 0\n0 0\n");
+	Net::Network net;
+	std::stringstream stream("1 2 1\n0 Net::InputLayer 1 2 Net::Boolean\n0.2 -0.3\n1 Net::HiddenLayer 1 2 Net::Sigmoid\n-0.5 0.9\n0 Net::Connection 0 1 1\n0 0\n0 0\n");
 	stream >> net;
 	BOOST_REQUIRE(!stream.bad());
 	BOOST_REQUIRE(!stream.eof());
@@ -79,43 +79,43 @@ BOOST_AUTO_TEST_CASE(ReadConnection)
 	Eigen::Vector2d refBias;
 	refBias << 0.2, -0.3;
 	BOOST_CHECK_EQUAL(net.GetLayers()[0]->Bias(), refBias);
-	BOOST_CHECK(dynamic_cast<InputLayer*>(net.GetLayers()[0].get()));
-	BOOST_CHECK(dynamic_cast<const Boolean*>(net.GetLayers()[0]->GetFunction()));
+	BOOST_CHECK(dynamic_cast<Net::InputLayer*>(net.GetLayers()[0].get()));
+	BOOST_CHECK(dynamic_cast<const Net::Boolean*>(net.GetLayers()[0]->GetFunction()));
 	refBias << -0.5, 0.9;
 	BOOST_CHECK_EQUAL(net.GetLayers()[1]->Bias(), refBias);
-	BOOST_CHECK(dynamic_cast<HiddenLayer*>(net.GetLayers()[1].get()));
-	BOOST_CHECK(dynamic_cast<const Sigmoid*>(net.GetLayers()[1]->GetFunction()));
-	const auto& weights = net.GetLayers()[0]->GetConnections()[0]->Weights();
+	BOOST_CHECK(dynamic_cast<Net::HiddenLayer*>(net.GetLayers()[1].get()));
+	BOOST_CHECK(dynamic_cast<const Net::Sigmoid*>(net.GetLayers()[1]->GetFunction()));
+	const auto& weights = net.GetLayers()[0]->GetConnections()[0]->GetWeights();
 	BOOST_CHECK_EQUAL(weights, Eigen::Matrix2d().Zero());
 }
 
 BOOST_AUTO_TEST_CASE(ConnectionIndexException)
 {
-	Network net;
-	std::stringstream stream1("1 1 1\n0 InputLayer 1 0 Linear\n\n0 Connection 1 0 1\n\n");
+	Net::Network net;
+	std::stringstream stream1("1 1 1\n0 Net::InputLayer 1 0 Net::Linear\n\n0 Net::Connection 1 0 1\n\n");
 	BOOST_CHECK_THROW(stream1 >> net, std::out_of_range);
-	std::stringstream stream2("1 1 1\n0 InputLayer 1 0 Linear\n\n0 Connection 0 1 1\n\n");
+	std::stringstream stream2("1 1 1\n0 Net::InputLayer 1 0 Net::Linear\n\n0 Net::Connection 0 1 1\n\n");
 	BOOST_CHECK_THROW(stream2 >> net, std::out_of_range);
 }
 
 BOOST_AUTO_TEST_CASE(LayerTypeException)
 {
-	Network net;
+	Net::Network net;
 	std::stringstream stream("1 1 0\n0 Bogus 1 0 Linear\n\n");
 	BOOST_CHECK_THROW(stream >> net, std::domain_error);
 }
 
 BOOST_AUTO_TEST_CASE(ConnectionTypeException)
 {
-	Network net;
-	std::stringstream stream("1 1 1\n0 InputLayer 1 0 Linear\n\n0 Bogus 0 0 0 Linear\n\n");
+	Net::Network net;
+	std::stringstream stream("1 1 1\n0 INet::nputLayer 1 0 Net::Linear\n\n0 Bogus 0 0 0 Net::Linear\n\n");
 	BOOST_CHECK_THROW(stream >> net, std::domain_error);
 }
 
 BOOST_AUTO_TEST_CASE(FunctionTypeException)
 {
-	Network net;
-	std::stringstream stream("1 1 0\n0 InputLayer 1 0 Bogus\n\n");
+	Net::Network net;
+	std::stringstream stream("1 1 0\n0 Net::InputLayer 1 0 Bogus\n\n");
 	BOOST_CHECK_THROW(stream >> net, std::domain_error);
 }
 BOOST_AUTO_TEST_SUITE_END()

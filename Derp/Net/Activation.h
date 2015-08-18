@@ -2,28 +2,36 @@
 #include <Eigen/Dense>
 #include <vector>
 
-class Network;
-class Sample;
-class Layer;
-
-class Activation
+namespace Net
 {
-public:
-	Activation(const Layer& layer);
-	void Activate(const Eigen::VectorXd& activation);
-	const Layer& GetLayer() const { return layer; }
-private:
-	const Layer& layer;
-	Eigen::VectorXd activation;
-};
+	class Network;
+	class Sample;
+	class Layer;
 
-class State
-{
-public:
-	typedef std::vector<Activation> Layers;
 
-	State(const Network& network);
-	void Activate(const Sample& sample);
-private:
-	Layers inputLayers;
-};
+	class Activation
+	{
+	public:
+		typedef unsigned Generation;
+		Activation(Generation generation, const Layer& layer, const Eigen::VectorXd& activation);
+	private:
+		friend class State;	// See TODO in State::Propagate
+		Generation generation;
+		const Layer& layer;
+		Eigen::VectorXd activation;
+	};
+
+	typedef std::vector<Activation> Activity;
+
+	class State
+	{
+	public:
+		State(const Network& network, const Sample& sample);
+	private:
+		void Input(const Sample& sample);
+		void Propagate();
+	private:
+		Activity activity;
+		const Network& network;
+	};
+}
