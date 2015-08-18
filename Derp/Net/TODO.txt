@@ -2,6 +2,6 @@
 * Load activation function
 Factories for layer/connection/function/etc types in NetworkIO
 Move helpers (sigmoid, normal, p) to utils
-operator [] for layers in network
+* operator [] for layers in network
 operator [] for activity in state
 operator () for activation function

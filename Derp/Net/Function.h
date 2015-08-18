@@ -5,6 +5,8 @@ namespace Net
 	{
 	public:
 		virtual ~Function() {}
+		Eigen::VectorXd operator()(const Eigen::VectorXd& excitation) const { return Activate(excitation); }
+	private:
 		virtual Eigen::VectorXd Activate(const Eigen::VectorXd& excitation) const = 0;
 	};
 

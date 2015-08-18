@@ -25,6 +25,8 @@ namespace Net
 		size_t Size() const;
 		const Eigen::VectorXd& Bias() const { return bias; }
 		const Connections& GetConnections() const { return connections; }
+		const Connection& operator[](unsigned index) const { return *connections[index]; }
+		Connection& operator[](unsigned index) { return *connections[index]; }
 		void Reset(double mean, double sigma);
 		const Function* GetFunction() const { return function.get(); }
 	private:
@@ -77,6 +79,8 @@ namespace Net
 		typedef std::vector<std::unique_ptr<Layer>> Layers;
 		typedef std::vector<std::unique_ptr<Connection>> Connections;
 		const Layers& GetLayers() const;
+		const Layer& operator[](unsigned index) const { return *layers[index].get(); }
+		Layer& operator[](unsigned index) { return *layers[index].get(); }
 		State Activate(const Sample& sample);
 		InputLayer& Add(size_t units, std::unique_ptr<Function>&& function);
 		HiddenLayer& Add(Layer& layer, size_t units, std::unique_ptr<Function>&& function);
