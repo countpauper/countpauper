@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(LayerTypeException)
 BOOST_AUTO_TEST_CASE(ConnectionTypeException)
 {
 	Net::Network net;
-	std::stringstream stream("1 1 1\n0 INet::nputLayer 1 0 Net::Linear\n\n0 Bogus 0 0 0 Net::Linear\n\n");
+	std::stringstream stream("1 1 1\n0 Net::InputLayer 1 0 Net::Linear\n\n0 Bogus 0 0 0 Net::Linear\n\n");
 	BOOST_CHECK_THROW(stream >> net, std::domain_error);
 }
 

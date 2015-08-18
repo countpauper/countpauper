@@ -12,17 +12,6 @@ namespace Net
 	class Layer;
 	class Connection;
 	class Network;
-}
-
-std::ostream& operator<<(std::ostream& stream, const Net::Layer& layer);
-std::istream& operator>> (std::istream& stream, Net::Layer& layer);
-std::ostream& operator<<(std::ostream& stream, const Net::Connection& layer);
-std::istream& operator>> (std::istream& stream, Net::Connection& layer);
-std::ostream& operator<<(std::ostream& stream, const Net::Network& layer);
-std::istream& operator>> (std::istream& stream, Net::Network& layer);
-
-namespace Net
-{
 	class Sample;
 
 	class Layer
@@ -44,8 +33,8 @@ namespace Net
 		std::unique_ptr<Function> function;
 		Eigen::VectorXd bias;
 
-		friend std::ostream& (::operator<<) (std::ostream& stream, const Net::Layer& layer);
-		friend std::istream& (::operator>>) (std::istream& stream, Net::Layer& layer);
+		friend std::ostream& operator<< (std::ostream& stream, const Net::Layer& layer);
+		friend std::istream& operator>> (std::istream& stream, Net::Layer& layer);
 	};
 
 	class InputLayer : public Layer
@@ -77,8 +66,8 @@ namespace Net
 		const Layer& b;
 		Eigen::MatrixXd weights;
 
-		friend std::ostream& (::operator<<) (std::ostream& stream, const Connection& connection);
-		friend std::istream& (::operator>>) (std::istream& stream, Connection& connection);
+		friend std::ostream& operator<< (std::ostream& stream, const Connection& connection);
+		friend std::istream& operator>> (std::istream& stream, Connection& connection);
 	};
 
 
@@ -96,8 +85,8 @@ namespace Net
 		Layers layers;
 		Connections connections;
 
-		friend std::ostream& (::operator<<) (std::ostream& stream, const Network& network);
-		friend std::istream& (::operator>>) (std::istream& stream, Network& network);
+		friend std::ostream& operator<< (std::ostream& stream, const Network& network);
+		friend std::istream& operator>> (std::istream& stream, Network& network);
 	};
 
 
