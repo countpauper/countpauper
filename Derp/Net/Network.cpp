@@ -27,7 +27,6 @@ Layer::Layer(size_t units) :
 	units(units),
 	bias(units)
 {
-	bias.setZero();
 }
 
 Layer::~Layer()
@@ -42,6 +41,17 @@ void Layer::Connect(Connection& connection)
 size_t Layer::Size() const
 {
 	return units;
+}
+
+void Layer::Reset(double mean, double sigma)
+{
+	bias.setConstant(mean);
+	if (sigma != 0)
+	{
+		Eigen::VectorXd sigmaVector(bias.size());
+		sigmaVector.setConstant(sigma);
+		bias = bias.binaryExpr(sigmaVector, std::ptr_fun(normal_noise));
+	}
 }
 
 InputLayer::InputLayer()
@@ -70,8 +80,18 @@ Connection::Connection(Layer& a, const Layer& b) :
 	b(b),
 	weights(a.Size(), b.Size())
 {
-	weights.setZero();
 	a.Connect(*this);
+}
+
+void Connection::Reset(double mean, double sigma)
+{
+	weights.setConstant(mean);
+	if (sigma != 0)
+	{
+		Eigen::MatrixXd sigMatrix(weights.rows(), weights.cols());
+		sigMatrix.setConstant(sigma);
+		weights = weights.binaryExpr(sigMatrix, std::ptr_fun(normal_noise));
+	}
 }
 
 InputLayer& Network::Add(size_t units)
@@ -93,6 +113,13 @@ const Network::Layers& Network::GetLayers() const
 	return layers;  
 }
 
+void Network::Reset(double mean, double sigma)
+{
+	for (auto& layer : layers)
+		layer->Reset(mean, sigma);
+	for (auto& connection : connections)
+		connection->Reset(mean, sigma);
+}
 
 State Network::Activate(const Sample& sample)
 {

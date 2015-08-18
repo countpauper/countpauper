@@ -9,7 +9,6 @@
 class Connection;
 class Sample;
 
-
 class Layer
 {
 public:
@@ -21,6 +20,7 @@ public:
 	size_t Size() const;
 	const Eigen::VectorXd& Bias() const { return bias; }
 	const Connections& GetConnections() const { return connections;  }
+	void Reset(double mean, double sigma);
 private:
 	size_t units;
 	Connections connections;
@@ -45,8 +45,6 @@ public:
 
 };
 
-
-
 class Connection
 {
 public:
@@ -54,6 +52,7 @@ public:
 	const Layer& A() const { return a; }
 	const Layer& B() const { return b; }
 	const Eigen::MatrixXd& Weights() const { return weights; }
+	void Reset(double mean, double sigma);
 private:
 	const Layer& a;
 	const Layer& b;
@@ -63,7 +62,6 @@ private:
 	friend std::istream& operator>> (std::istream& stream, Connection& connection);
 };
 
-class Sample;
 
 class Network
 {
@@ -74,6 +72,7 @@ public:
 	State Activate(const Sample& sample);
 	InputLayer& Add(size_t units);
 	HiddenLayer& Add(Layer& layer, size_t units);
+	void Reset(double mean=0, double sigma=0);
 private:
 	Layers layers;
 	Connections connections;

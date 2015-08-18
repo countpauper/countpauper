@@ -9,6 +9,8 @@ BOOST_AUTO_TEST_SUITE(NetworkIO);
 BOOST_AUTO_TEST_CASE(WriteEmpty)
 {
 	Network net;
+	net.Reset();
+
 	std::stringstream stream;
 	stream << net;
 	BOOST_REQUIRE(!stream.bad());
@@ -29,6 +31,7 @@ BOOST_AUTO_TEST_CASE(WriteLayer)
 {
 	Network net;
 	net.Add(3);
+	net.Reset();
 
 	std::stringstream stream;
 
@@ -55,9 +58,9 @@ BOOST_AUTO_TEST_CASE(WriteConnection)
 {
 	Network net;
 	net.Add(net.Add(3), 2);
+	net.Reset();
 
 	std::stringstream stream;
-
 	stream << net;
 	BOOST_REQUIRE(!stream.bad());
 	BOOST_CHECK_EQUAL(stream.str(), "1 2 1\n0 InputLayer 1 3\n0 0 0\n1 HiddenLayer 1 2\n0 0\n0 Connection 0 1 1\n0 0\n0 0\n0 0\n");
