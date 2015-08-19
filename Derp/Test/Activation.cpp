@@ -4,13 +4,14 @@
 #include <Eigen/Dense>
 #include "../Net/NetworkIO.h"
 #include "../Net/Sample.h"
+#include "../Net/Connection.h"
 
 BOOST_AUTO_TEST_SUITE(Activation);
 
 BOOST_AUTO_TEST_CASE(Input)
 {
 	Net::Network net;
-	net.Add(2, Net::Linear());
+	net.Input(2, Net::Linear());
 	net.Reset();
 	Eigen::Vector2d sampleData;
 	sampleData << 1, 2;
@@ -21,12 +22,14 @@ BOOST_AUTO_TEST_CASE(Input)
 BOOST_AUTO_TEST_CASE(Propagate)
 {
 	Net::Network net;
-	net.Add(net.Add(2, Net::Linear()), 1, Net::Linear());
-	net[0][0].Reset(1, 0);
+	Net::Layer& input = net.Input(2, Net::Linear());
+	Net::Layer& hidden = net.Hidden(1, Net::Linear());
+	net.Directed(input, hidden);
+	input[0].Reset(1, 0);
 	Eigen::Vector2d sampleData;
 	sampleData << 1, 2;
 	Net::State output = net.Activate(Net::Sample(sampleData));
-	BOOST_CHECK_EQUAL(output.GetActivation(net[1]), Eigen::VectorXd::Constant(1,3));
+	BOOST_CHECK_EQUAL(output.GetActivation(hidden), Eigen::VectorXd::Constant(1,3));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

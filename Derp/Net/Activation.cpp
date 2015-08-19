@@ -2,6 +2,7 @@
 #include <Eigen/Dense>
 #include "Activation.h"
 #include "Network.h"
+#include "Connection.h"
 #include "Sample.h"
 
 namespace Net
@@ -22,8 +23,6 @@ Activation& Activation::operator=(const Activation& other)
 	activation = other.activation;
 	return *this;
 }
-
-
 
 
 State::State(const Network& network, const Sample& sample) :

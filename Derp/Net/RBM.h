@@ -7,8 +7,6 @@ namespace Net
 	{
 	public:
 		RBM(size_t visible, size_t hidden);
-	private:
-		InputLayer& visible;
 	};
 
 }

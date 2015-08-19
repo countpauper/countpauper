@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "RBM.h"
+#include "Connection.h"
 
 namespace Net
 {
-	RBM::RBM(size_t visible, size_t hidden) :
-		visible(Add(visible, Stochastic()))
+	RBM::RBM(size_t visible, size_t hidden)
 	{
-		Add(this->visible, hidden, Stochastic());
+		Undirected(Input(visible, Stochastic()), Hidden(hidden, Stochastic()));
 	}
 
 }

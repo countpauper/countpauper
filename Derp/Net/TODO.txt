@@ -1,7 +1,18 @@
 * Network namespace
 * Load activation function
 Factories for layer/connection/function/etc types in NetworkIO
-Move helpers (sigmoid, normal, p) to utils
+Reduce namespaces in stream
+* Move helpers (sigmoid, normal, p) to utils
 * operator [] for layers in network
 operator [] for activity in state
 operator () for activation function
+serial creation of networks 
+	? using operators (ie network << input(3) << (undericted() << hidden(3)) << (directed() << output(1)))
+	? restores order of layers in stream
+	? how to implement recurrent connections then (cyclic network graphs)
+*split network in 
+	- layer
+	* connection
+	- network
+	- math
+	- data (sample, set, batch)
