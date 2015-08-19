@@ -10,7 +10,7 @@ BOOST_AUTO_TEST_SUITE(Activation);
 BOOST_AUTO_TEST_CASE(Input)
 {
 	Net::Network net;
-	net.Add(2, nullptr);
+	net.Add(2, Net::Linear());
 	net.Reset();
 	Eigen::Vector2d sampleData;
 	sampleData << 1, 2;
@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(Input)
 BOOST_AUTO_TEST_CASE(Propagate)
 {
 	Net::Network net;
-	net.Add(net.Add(2, nullptr),1,std::make_unique<Net::Linear>());
+	net.Add(net.Add(2, Net::Linear()), 1, Net::Linear());
 	net[0][0].Reset(1, 0);
 	Eigen::Vector2d sampleData;
 	sampleData << 1, 2;

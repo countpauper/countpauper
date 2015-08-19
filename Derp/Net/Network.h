@@ -19,7 +19,7 @@ namespace Net
 	public:
 		typedef std::vector<Connection*> Connections;
 		Layer();
-		Layer(size_t units, std::unique_ptr<Function>&& function);
+		Layer(size_t units, const Function& function);
 		virtual ~Layer();
 		void Connect(Connection& connection);
 		size_t Size() const;
@@ -28,7 +28,7 @@ namespace Net
 		const Connection& operator[](unsigned index) const { return *connections[index]; }
 		Connection& operator[](unsigned index) { return *connections[index]; }
 		void Reset(double mean, double sigma);
-		const Function* GetFunction() const { return function.get(); }
+		const Function& GetFunction() const { return *function.get(); }
 	private:
 		size_t units;
 		Connections connections;
@@ -43,14 +43,14 @@ namespace Net
 	{
 	public:
 		InputLayer();
-		InputLayer(size_t units, std::unique_ptr<Function>&& function);
+		InputLayer(size_t units, const Function& function);
 	};
 
 	class HiddenLayer : public Layer
 	{
 	public:
 		HiddenLayer();
-		HiddenLayer(size_t units, std::unique_ptr<Function>&& function);
+		HiddenLayer(size_t units, const Function& function);
 
 	};
 
@@ -82,8 +82,8 @@ namespace Net
 		const Layer& operator[](unsigned index) const { return *layers[index].get(); }
 		Layer& operator[](unsigned index) { return *layers[index].get(); }
 		State Activate(const Sample& sample);
-		InputLayer& Add(size_t units, std::unique_ptr<Function>&& function);
-		HiddenLayer& Add(Layer& layer, size_t units, std::unique_ptr<Function>&& function);
+		InputLayer& Add(size_t units, const Function& function);
+		HiddenLayer& Add(Layer& layer, size_t units, const Function& function);
 		void Reset(double mean = 0, double sigma = 0);
 	private:
 		Layers layers;

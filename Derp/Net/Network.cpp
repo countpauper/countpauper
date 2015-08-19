@@ -24,10 +24,10 @@ namespace Net
 	{
 	}
 
-	Layer::Layer(size_t units, std::unique_ptr<Function>&& function) :
+	Layer::Layer(size_t units, const Function& function) :
 		units(units),
 		bias(units),
-		function(std::move(function))
+		function(function.Copy())
 	{
 	}
 
@@ -58,8 +58,8 @@ namespace Net
 	{
 	}
 
-	InputLayer::InputLayer(size_t units, std::unique_ptr<Function>&& function) :
-		Layer(units, std::move(function))
+	InputLayer::InputLayer(size_t units, const Function& function) :
+		Layer(units, function)
 	{
 	}
 
@@ -69,8 +69,8 @@ namespace Net
 
 	}
 
-	HiddenLayer::HiddenLayer(size_t units, std::unique_ptr<Function>&& function) :
-		Layer(units, std::move(function))
+	HiddenLayer::HiddenLayer(size_t units, const Function& function) :
+		Layer(units, function)
 	{
 	}
 
@@ -96,13 +96,13 @@ namespace Net
 		}
 	}
 
-	InputLayer& Network::Add(size_t units, std::unique_ptr<Function>&& function)
+	InputLayer& Network::Add(size_t units, const Function& function)
 	{
 		layers.emplace_back(std::make_unique<InputLayer>(units, std::move(function)));
 		return *static_cast<InputLayer*>(layers.back().get());
 	}
 
-	HiddenLayer& Network::Add(Layer& connected, size_t units, std::unique_ptr<Function>&& function)
+	HiddenLayer& Network::Add(Layer& connected, size_t units, const Function& function)
 	{
 		layers.emplace_back(std::make_unique<HiddenLayer>(units, std::move(function)));
 		connections.emplace_back(std::make_unique<Connection>(connected, *layers.back().get()));

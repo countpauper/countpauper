@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(ReadEmpty)
 BOOST_AUTO_TEST_CASE(WriteLayer)
 {
 	Net::Network net;
-	net.Add(3, std::make_unique<Net::Linear>());
+	net.Add(3, Net::Linear());
 	net.Reset();
 
 	std::stringstream stream;
@@ -53,13 +53,13 @@ BOOST_AUTO_TEST_CASE(ReadLayer)
 	refBias << 0.1, -0.2;
 	BOOST_CHECK_EQUAL(net.GetLayers().front()->Bias(), refBias);
 	BOOST_CHECK(dynamic_cast<Net::InputLayer*>(&net[0]));
-	BOOST_CHECK(dynamic_cast<const Net::Linear*>(net[0].GetFunction()));
+	BOOST_CHECK(dynamic_cast<const Net::Linear*>(&net[0].GetFunction()));
 }
 
 BOOST_AUTO_TEST_CASE(WriteConnection)
 {
 	Net::Network net;
-	net.Add(net.Add(3, std::make_unique<Net::Boolean>()), 2, std::make_unique<Net::Sigmoid>());
+	net.Add(net.Add(3, Net::Boolean()), 2, Net::Sigmoid());
 	net.Reset();
 
 	std::stringstream stream;
@@ -80,11 +80,11 @@ BOOST_AUTO_TEST_CASE(ReadConnection)
 	refBias << 0.2, -0.3;
 	BOOST_CHECK_EQUAL(net[0].Bias(), refBias);
 	BOOST_CHECK(dynamic_cast<Net::InputLayer*>(&net[0]));
-	BOOST_CHECK(dynamic_cast<const Net::Boolean*>(net[0].GetFunction()));
+	BOOST_CHECK(dynamic_cast<const Net::Boolean*>(&net[0].GetFunction()));
 	refBias << -0.5, 0.9;
 	BOOST_CHECK_EQUAL(net[1].Bias(), refBias);
 	BOOST_CHECK(dynamic_cast<Net::HiddenLayer*>(&net[1]));
-	BOOST_CHECK(dynamic_cast<const Net::Sigmoid*>(net[1].GetFunction()));
+	BOOST_CHECK(dynamic_cast<const Net::Sigmoid*>(&net[1].GetFunction()));
 	BOOST_CHECK_EQUAL(net[0][0].GetWeights(), Eigen::Matrix2d().Zero());
 }
 

@@ -4,9 +4,9 @@
 namespace Net
 {
 	RBM::RBM(size_t visible, size_t hidden) :
-		visible(Add(visible, std::make_unique<Stochastic>()))
+		visible(Add(visible, Stochastic()))
 	{
-		Add(this->visible, hidden, std::make_unique<Stochastic>());
+		Add(this->visible, hidden, Stochastic());
 	}
 
 }

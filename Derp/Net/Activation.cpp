@@ -57,7 +57,7 @@ void State::Propagate()
 			for (const auto& connection : activation.layer->GetConnections())
 			{
 				Eigen::VectorXd excitation = connection->GetWeights() * activation.activation;
-				Eigen::VectorXd activationVector = (*connection->B().GetFunction())(excitation);
+				Eigen::VectorXd activationVector = connection->B().GetFunction()(excitation);
 				future.emplace_back(Activation(activation.generation + 1, connection->B(), activationVector));
 			}
 			// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
