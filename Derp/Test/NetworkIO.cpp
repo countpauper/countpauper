@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(ReadEmpty)
 BOOST_AUTO_TEST_CASE(WriteLayer)
 {
 	Net::Network net;
-	net.Input(3, Net::Linear());
+	net.Input(3);
 	net.Reset();
 
 	std::stringstream stream;
@@ -60,13 +60,13 @@ BOOST_AUTO_TEST_CASE(ReadLayer)
 BOOST_AUTO_TEST_CASE(WriteConnection)
 {
 	Net::Network net;
-	net.Directed(net.Input(3, Net::Boolean()), net.Hidden(2, Net::Sigmoid()));
+	net.Directed(net.Visible(3, Net::Boolean()), net.Hidden(2, Net::Sigmoid()));
 	net.Reset();
 
 	std::stringstream stream;
 	stream << net;
 	BOOST_REQUIRE(!stream.bad());
-	BOOST_CHECK_EQUAL(stream.str(), "1 2 1\n0 Net::HiddenLayer 1 2 Net::Sigmoid\n0 0\n1 Net::InputLayer 1 3 Net::Boolean\n0 0 0\n0 Net::Connection::Directed 1 0 1\n0 0 0\n0 0 0\n");
+	BOOST_CHECK_EQUAL(stream.str(), "1 2 1\n0 Net::HiddenLayer 1 2 Net::Sigmoid\n0 0\n1 Net::VisibleLayer 1 3 Net::Boolean\n0 0 0\n0 Net::Connection::Directed 1 0 1\n0 0 0\n0 0 0\n");
 }
 
 BOOST_AUTO_TEST_CASE(ReadConnection)

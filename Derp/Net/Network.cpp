@@ -17,10 +17,6 @@ namespace Net
 	{
 	}
 
-	Layer::~Layer()
-	{
-	}
-
 	void Layer::Connect(Connection::Base& connection)
 	{
 		connections.push_back(&connection);
@@ -40,19 +36,19 @@ namespace Net
 		}
 	}
 
-	InputLayer::InputLayer()
+	InputLayer::InputLayer(size_t units) :
+		Layer(units, Net::Linear())
 	{
 	}
 
-	InputLayer::InputLayer(size_t units, const Function& function) :
+	OutputLayer::OutputLayer(size_t units, const Function& function) :
 		Layer(units, function)
 	{
 	}
 
-
-	HiddenLayer::HiddenLayer()
+	VisibleLayer::VisibleLayer(size_t units, const Function& function) :
+		Layer(units, function)
 	{
-
 	}
 
 	HiddenLayer::HiddenLayer(size_t units, const Function& function) :
@@ -60,15 +56,27 @@ namespace Net
 	{
 	}
 
-	InputLayer& Network::Input(size_t units, const Function&function)
+	InputLayer& Network::Input(size_t units)
 	{
-		layers.emplace_back(std::make_unique<InputLayer>(units, std::move(function)));
+		layers.emplace_back(std::make_unique<InputLayer>(units));
 		return *static_cast<InputLayer*>(layers.back().get());
+	}
+
+	OutputLayer& Network::Output(size_t units, const Function& function)
+	{
+		layers.emplace_back(std::make_unique<OutputLayer>(units, function));
+		return static_cast<OutputLayer&>(*layers.back().get());
+	}
+
+	VisibleLayer& Network::Visible(size_t units, const Function& function)
+	{
+		layers.emplace_back(std::make_unique<VisibleLayer>(units, function));
+		return static_cast<VisibleLayer&>(*layers.back().get());
 	}
 
 	HiddenLayer& Network::Hidden(size_t units, const Function& function)
 	{
-		layers.emplace_back(std::make_unique<HiddenLayer>(units, std::move(function)));
+		layers.emplace_back(std::make_unique<HiddenLayer>(units, function));
 		return static_cast<HiddenLayer&>(*layers.back().get());
 	}
 
@@ -97,9 +105,9 @@ namespace Net
 			connection->Reset(mean, sigma);
 	}
 
-	State Network::Activate(const Sample& sample)
+	Eigen::VectorXd Network::Compute(const Sample& sample)
 	{
-		return State(*this, sample);
+		return Computation(*this, sample)();
 	}
 
 }

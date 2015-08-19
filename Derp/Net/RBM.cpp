@@ -6,7 +6,7 @@ namespace Net
 {
 	RBM::RBM(size_t visible, size_t hidden)
 	{
-		Undirected(Input(visible, Stochastic()), Hidden(hidden, Stochastic()));
+		Undirected(Visible(visible, Stochastic()), Hidden(hidden, Stochastic()));
 	}
 
 }
