@@ -1,18 +1,9 @@
 #include "stdafx.h"
 #include "Function.h"
+#include "Math.h"
 
 namespace Net
 {
-	double sigmoid(double e)
-	{
-		return 1.0 / (1.0 + exp(-e));
-	}
-
-	bool p(double chance)
-	{
-		double rnd = double(rand()) / double(RAND_MAX);
-		return chance > rnd;
-	}
 
 	Eigen::VectorXd Boolean::Activate(const Eigen::VectorXd& excitation) const
 	{

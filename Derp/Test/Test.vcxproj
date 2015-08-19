@@ -87,7 +87,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Users\mfassaer\countpauper\Derp\Debug;C:\libraries\boost\boost-1.56.0.1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);C:\libraries\boost\boost-1.56.0.1\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>net.lib</AdditionalDependencies>
     </Link>
     <CustomBuildStep>

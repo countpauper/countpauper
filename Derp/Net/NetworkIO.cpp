@@ -3,6 +3,7 @@
 #include <boost/format.hpp>
 #include "NetworkIO.h"
 #include "MatrixIO.h"
+#include "Connection.h"
 
 namespace Net
 {
@@ -75,28 +76,30 @@ namespace Net
 		return stream;
 	}
 
-	std::ostream& operator<< (std::ostream& stream, const Connection& connection)
+	namespace Connection
 	{
-		stream << connection_version << std::endl;
-		stream << connection.weights << std::endl;
-
-		return stream;
-	}
-
-
-	std::istream& operator>> (std::istream& stream, Connection& connection)
-	{
-		version v;
-		stream >> v;
-		if (v >= 1)
+		std::ostream& operator<< (std::ostream& stream, const Base& connection)
 		{
-			connection.weights.resize(connection.a.Size(), connection.b.Size());
-			stream >> connection.weights;
+			stream << connection_version << std::endl;
+			stream << connection.weights << std::endl;
+
+			return stream;
 		}
 
-		return stream;
-	}
 
+		std::istream& operator>> (std::istream& stream, Base& connection)
+		{
+			version v;
+			stream >> v;
+			if (v >= 1)
+			{
+				connection.weights.resize(connection.a.Size(), connection.b.Size());
+				stream >> connection.weights;
+			}
+
+			return stream;
+		}
+	}
 
 
 	std::ostream& operator<< (std::ostream& stream, const Network& network)
@@ -111,7 +114,7 @@ namespace Net
 		}
 		for (auto connectionIt = network.connections.begin(); connectionIt != network.connections.end(); ++connectionIt)
 		{
-			const Connection& connection = *connectionIt->get();
+			const Connection::Base& connection = *connectionIt->get();
 			unsigned a = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer>& ptr){ return CompareUniquePtr(ptr, connection.A()); }) - network.layers.begin();
 			unsigned b = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer>& ptr){ return CompareUniquePtr(ptr, connection.B()); }) - network.layers.begin();
 			stream << connectionIt - network.connections.begin() << separator << classname(connection) << separator << a << separator << b << separator;
@@ -155,11 +158,13 @@ namespace Net
 				if (bIndex >= layerCount)
 					throw std::out_of_range((boost::format("Connection [%d].B = %d out of range.") % connectionIndex % bIndex).str());
 
-				if (connectionType == "Net::Connection")
-					network.connections.emplace_back(std::make_unique<Connection>(*network.layers[aIndex].get(), *network.layers[bIndex].get()));
+				if (connectionType == "Net::Connection::Directed")
+					network.connections.emplace_back(std::make_unique<Connection::Directed>(*network.layers[aIndex].get(), *network.layers[bIndex].get()));
+				else if (connectionType == "Net::Connection::Undirected")
+					network.connections.emplace_back(std::make_unique<Connection::Undirected>(*network.layers[aIndex].get(), *network.layers[bIndex].get()));
 				else
 					throw std::domain_error((boost::format("Syntax error,  connection[%d].Type = '%s' unknown.") % connectionIndex % connectionType).str());
-				Connection& connection = *network.connections.back().get();
+				Connection::Base& connection = *network.connections.back().get();
 				stream >> connection;
 			}
 		}

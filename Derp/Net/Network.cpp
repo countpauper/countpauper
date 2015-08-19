@@ -1,24 +1,10 @@
 #include "stdafx.h"
 #include "Network.h"
-#include <boost/random.hpp>
-#include <boost/random/normal_distribution.hpp>
+#include "Math.h"
+#include "Connection.h"
 
 namespace Net
 {
-	double normalized_noise(double mean)
-	{
-		static boost::mt19937 rng;
-		static boost::normal_distribution<> nd(mean, 1.0);
-		return nd(rng);
-	}
-
-	double normal_noise(double mean, double sigma)
-	{
-		static boost::mt19937 rng;
-		static boost::normal_distribution<> nd(mean, sigma);
-		return nd(rng);
-	}
-
 	Layer::Layer() :
 		units(0)
 	{
@@ -35,7 +21,7 @@ namespace Net
 	{
 	}
 
-	void Layer::Connect(Connection& connection)
+	void Layer::Connect(Connection::Base& connection)
 	{
 		connections.push_back(&connection);
 	}
@@ -74,40 +60,27 @@ namespace Net
 	{
 	}
 
-
-	Connection::Connection(Layer& a, const Layer& b) :
-		a(a),
-		b(b),
-		weights(b.Size(), a.Size())
-	{
-		a.Connect(*this);
-	}
-
-	Connection::~Connection()
-	{
-	}
-
-	void Connection::Reset(double mean, double sigma)
-	{
-		weights.setConstant(mean);
-		if (sigma != 0)
-		{
-			weights = weights.binaryExpr(Eigen::MatrixXd::Constant(weights.rows(), weights.cols(),sigma), std::ptr_fun(normal_noise));
-		}
-	}
-
-	InputLayer& Network::Add(size_t units, std::unique_ptr<Function>&& function)
+	InputLayer& Network::Input(size_t units, std::unique_ptr<Function>&& function)
 	{
 		layers.emplace_back(std::make_unique<InputLayer>(units, std::move(function)));
 		return *static_cast<InputLayer*>(layers.back().get());
 	}
 
-	HiddenLayer& Network::Add(Layer& connected, size_t units, std::unique_ptr<Function>&& function)
+	HiddenLayer& Network::Hidden(size_t units, std::unique_ptr<Function>&& function)
 	{
 		layers.emplace_back(std::make_unique<HiddenLayer>(units, std::move(function)));
-		connections.emplace_back(std::make_unique<Connection>(connected, *layers.back().get()));
-		connected.Connect(*connections.back().get());
 		return static_cast<HiddenLayer&>(*layers.back().get());
+	}
+
+	Connection::Directed& Network::Directed(Layer& a, Layer& b)
+	{
+		connections.emplace_back(std::make_unique<Connection::Directed>(a, b));
+		return *static_cast<Connection::Directed*>(connections.back().get());
+	}
+	Connection::Undirected& Network::Undirected(Layer& a, Layer& b)
+	{
+		connections.emplace_back(std::make_unique<Connection::Undirected>(a, b));
+		return *static_cast<Connection::Undirected*>(connections.back().get());
 	}
 
 	const Network::Layers& Network::GetLayers() const
