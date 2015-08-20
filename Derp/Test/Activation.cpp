@@ -13,9 +13,11 @@ BOOST_AUTO_TEST_CASE(Input)
 	net.Visible(2, Net::Linear());
 	net.Reset();
 	Eigen::Vector2d sampleData;
-	sampleData << 1, 2;
-	Eigen::VectorXd output = net.Compute(Net::Sample(sampleData));
-	BOOST_CHECK_EQUAL(output, sampleData);
+	sampleData << 1, 2;	// TODO: IO for data
+	Net::Data::Inputs input;
+	input.push_back(Net::Data::Input(0, sampleData));
+	Net::Data::Outputs output = net.Compute(input);
+	BOOST_CHECK_EQUAL(output[0].activation, sampleData);
 }
 
 BOOST_AUTO_TEST_CASE(Compute)
@@ -27,8 +29,10 @@ BOOST_AUTO_TEST_CASE(Compute)
 	input[0].Reset(1, 0);
 	Eigen::Vector2d sampleData;
 	sampleData << 1, 2;
-	Eigen::VectorXd result = net.Compute(Net::Sample(sampleData));
-	BOOST_CHECK_EQUAL(result, Eigen::VectorXd::Constant(1, 3));
+	Net::Data::Inputs inputData;
+	inputData.push_back(Net::Data::Input(0, sampleData));
+	Net::Data::Outputs result = net.Compute(inputData);
+	BOOST_CHECK_EQUAL(result[0].activation, Eigen::VectorXd::Constant(1, 3));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

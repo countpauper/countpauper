@@ -1,14 +1,48 @@
 #pragma once
 #include <Eigen/Dense>
+#include <vector>
 
 namespace Net
 {
-	class Sample
+	namespace Layer { typedef unsigned Id; }
+
+	namespace Data
 	{
-	public:
-		Sample(const Eigen::VectorXd& activation);
-		Eigen::VectorXd Activation(size_t from, size_t count) const;
-	protected:
-		Eigen::VectorXd activation;
-	};
+		// TODO: Inputs/Outputs is std::map<Layer::Id, Eigen::VectorXd> 
+		class Input
+		{
+		public:
+			Input(Layer::Id layer, const Eigen::VectorXd& activation);
+			const Layer::Id layer;
+			const Eigen::VectorXd activation;
+		};
+		typedef std::vector<Input> Inputs;
+
+		class Output
+		{
+		public:
+			Output(Layer::Id layer, const Eigen::VectorXd& activation);
+			const Layer::Id layer;
+			const Eigen::VectorXd activation;
+		};
+		typedef std::vector<Output> Outputs;
+
+		class Sample
+		{
+		public:
+			Sample() = default;
+			Sample(const Inputs& inputs, const Outputs& outputs);
+			const Inputs inputs;
+			const Outputs outputs;
+		};
+
+		typedef std::vector<Sample> Samples;
+
+		class Set
+		{
+		public:
+		private:
+			const Samples data;
+		};
+	}
 }

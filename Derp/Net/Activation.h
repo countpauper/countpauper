@@ -1,13 +1,12 @@
 #pragma once
 #include <Eigen/Dense>
 #include <vector>
+#include "Data.h"
 
 namespace Net
 {
 	class Network;
-	class Sample;
 	namespace Layer { class Base; }
-
 
 	class Activation
 	{
@@ -15,7 +14,6 @@ namespace Net
 		typedef unsigned Generation;
 		Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& activation);
 		Activation& operator=(const Activation& other);
-		Eigen::VectorXd Activation::Output() const;
 	private:
 		friend class State;	// See TODO in State::Propagate
 		Generation generation;
@@ -29,11 +27,12 @@ namespace Net
 	public:
 		State(const Network& network);
 	protected:
-		Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const;
-		void Input(const Sample& sample);
+		void Input(const Data::Inputs& sample);
 		void Propagate();
-		Eigen::VectorXd Output() const;
+		Data::Outputs Output() const;
 	private:
+		Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const;
+		Eigen::VectorXd State::GetHistory(const Layer::Base& layer) const;
 		typedef std::vector<Activation> Activity;
 		Activity activity;
 		Activity history;
@@ -43,7 +42,7 @@ namespace Net
 	class Computation : protected State
 	{
 	public:
-		Computation(const Network& network, const Sample& sample);
-		Eigen::VectorXd operator()() const { return Output(); }
+		Computation(const Network& network, const Data::Inputs& sample);
+		Data::Outputs operator()() const { return Output(); }
 	};
 }

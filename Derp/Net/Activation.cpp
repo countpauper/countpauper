@@ -22,32 +22,16 @@ Activation& Activation::operator=(const Activation& other)
 	return *this;
 }
 
-Eigen::VectorXd Activation::Output() const
-{
-	if (dynamic_cast<const Layer::Output*>(layer) ||
-		dynamic_cast<const Layer::Visible*>(layer))	// TODO dont use dynamic_cast
-		return activation;
-	return Eigen::VectorXd();
-}
-
 State::State(const Network& network) :
 	network(network)
 {
-
 }
 
-void State::Input(const Sample& sample)
+void State::Input(const Data::Inputs& inputs)
 {
 	size_t pos = 0;
-	for (const auto& layer : network.GetLayers())
-	{
-		if (dynamic_cast<Layer::Input*>(layer.get()) ||
-			dynamic_cast<Layer::Visible*>(layer.get()))
-		{
-			activity.emplace_back(Activation(0, *layer.get(), sample.Activation(pos, layer->Size())));
-			pos += layer->Size();
-		}
-	}
+	for (const auto& input : inputs)
+		activity.emplace_back(Activation(0, network[input.layer], input.activation));
 }
 
 void State::Propagate()
@@ -81,23 +65,31 @@ Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const
 	return Eigen::VectorXd::Zero(layer.Size());
 }
 
-Eigen::VectorXd State::Output() const
+Eigen::VectorXd State::GetHistory(const Layer::Base& layer) const
 {
-	Eigen::VectorXd output;
-	for (const auto& activation : history)
+	for (Activity::const_reverse_iterator historyIt = history.crbegin(); historyIt != history.crend(); ++historyIt)
 	{
-		Eigen::VectorXd temp = output;	// TODO: clean this up, maybe know size of output (and input) vector on init
-		Eigen::VectorXd partialOutput = activation.Output();
-		output = Eigen::VectorXd(temp.size() + partialOutput.size());
-		output << temp, partialOutput;
+		if (historyIt->layer == &layer)
+			return historyIt->activation;
+	}
+	return Eigen::VectorXd::Constant(layer.Size(), 0);
+}
+
+
+Data::Outputs State::Output() const
+{
+	Data::Outputs output;
+	for (const auto& outputId : network.GetOutputs())
+	{
+		output.emplace_back(Data::Output(outputId, GetHistory(network[outputId])));
 	}
 	return output;
 }
 
-Computation::Computation(const Network& network, const Sample& sample) :
+Computation::Computation(const Network& network, const Data::Inputs& inputs) :
 	State(network)
 {
-	Input(sample);
+	Input(inputs);
 	Propagate();
 }
 

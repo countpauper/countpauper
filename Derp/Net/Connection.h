@@ -7,6 +7,8 @@ namespace Net
 	
 	namespace Connection
 	{
+		typedef unsigned Id;
+
 		class Base
 		{
 		public:

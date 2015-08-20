@@ -47,6 +47,18 @@ namespace Net
 		return layers;
 	}
 
+	Network::LayerIds Network::GetOutputs() const
+	{
+		LayerIds outputs;
+		for (Layers::const_iterator layerIt = layers.begin(); layerIt != layers.end(); ++layerIt)
+		{
+			if (dynamic_cast<const Layer::Output*>(layerIt->get()) ||
+				dynamic_cast<const Layer::Visible*>(layerIt->get()))
+				outputs.push_back(layerIt - layers.begin());
+		}
+		return outputs;
+	}
+
 	void Network::Reset(double mean, double sigma)
 	{
 		for (auto& layer : layers)
@@ -55,9 +67,9 @@ namespace Net
 			connection->Reset(mean, sigma);
 	}
 
-	Eigen::VectorXd Network::Compute(const Sample& sample)
+	Data::Outputs Network::Compute(const Data::Inputs& inputs) const
 	{
-		return Computation(*this, sample)();
+		return Computation(*this, inputs)();
 	}
 
 }

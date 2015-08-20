@@ -15,6 +15,8 @@ namespace Net
 	}
 	namespace Layer
 	{
+		typedef unsigned Id;
+
 		class Base
 		{
 		public:

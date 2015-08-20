@@ -3,13 +3,22 @@
 
 namespace Net
 {
-	Sample::Sample(const Eigen::VectorXd& activation) :
-		activation(activation)
+	namespace Data
 	{
-	}
-
-	Eigen::VectorXd Sample::Activation(size_t from, size_t count) const
-	{
-		return activation.segment(from, count);
+		Input::Input(Layer::Id layer, const Eigen::VectorXd& activation) :
+			layer(layer),
+			activation(activation)
+		{	
+		}
+		Output::Output(Layer::Id layer, const Eigen::VectorXd& activation) :
+			layer(layer),
+			activation(activation)
+		{	
+		}
+		Sample::Sample(const Inputs& inputs, const Outputs& outputs) :
+			inputs(inputs),
+			outputs(outputs)
+		{
+		}
 	}
 }

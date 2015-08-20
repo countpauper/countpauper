@@ -120,8 +120,8 @@ namespace Net
 		for (auto connectionIt = network.connections.begin(); connectionIt != network.connections.end(); ++connectionIt)
 		{
 			const Connection::Base& connection = *connectionIt->get();
-			unsigned a = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer::Base>& ptr){ return CompareUniquePtr(ptr, connection.A()); }) - network.layers.begin();
-			unsigned b = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer::Base>& ptr){ return CompareUniquePtr(ptr, connection.B()); }) - network.layers.begin();
+			Layer::Id a = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer::Base>& ptr){ return CompareUniquePtr(ptr, connection.A()); }) - network.layers.begin();
+			Layer::Id b = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer::Base>& ptr){ return CompareUniquePtr(ptr, connection.B()); }) - network.layers.begin();
 			stream << connectionIt - network.connections.begin() << separator << classname(connection) << separator << a << separator << b << separator;
 			stream << connection;
 		}
@@ -139,9 +139,9 @@ namespace Net
 			stream >> layerCount >> connectionCount;
 			for (size_t layerIt = 0; layerIt < layerCount; ++layerIt)
 			{
-				unsigned layerIndex;
+				Layer::Id id;
 				std::string layerType;
-				stream >> layerIndex >> layerType;
+				stream >> id >> layerType;
 				// todo: layer factory
 				if (layerType == "Net::Layer::Input")
 					network.layers.emplace_back(std::make_unique<Layer::Input>());
@@ -158,21 +158,22 @@ namespace Net
 			}
 			for (size_t connectionIt = 0; connectionIt < connectionCount; ++connectionIt)
 			{
-				unsigned connectionIndex, aIndex, bIndex;
+				Connection::Id id;
+				Layer::Id a, b;
 				std::string connectionType;
-				stream >> connectionIndex >> connectionType >> aIndex >> bIndex;
-				if (aIndex >= layerCount)
-					throw std::out_of_range((boost::format("Connection [%d].A = %d out of range.") % connectionIndex % aIndex).str());
+				stream >> id >> connectionType >> a >> b;
+				if (a >= layerCount)
+					throw std::out_of_range((boost::format("Connection [%d].A = %d out of range.") % id % a).str());
 
-				if (bIndex >= layerCount)
-					throw std::out_of_range((boost::format("Connection [%d].B = %d out of range.") % connectionIndex % bIndex).str());
+				if (b >= layerCount)
+					throw std::out_of_range((boost::format("Connection [%d].B = %d out of range.") % id % b).str());
 
 				if (connectionType == "Net::Connection::Directed")
-					network.connections.emplace_back(std::make_unique<Connection::Directed>(*network.layers[aIndex].get(), *network.layers[bIndex].get()));
+					network.connections.emplace_back(std::make_unique<Connection::Directed>(*network.layers[a].get(), *network.layers[b].get()));
 				else if (connectionType == "Net::Connection::Undirected")
-					network.connections.emplace_back(std::make_unique<Connection::Undirected>(*network.layers[aIndex].get(), *network.layers[bIndex].get()));
+					network.connections.emplace_back(std::make_unique<Connection::Undirected>(*network.layers[a].get(), *network.layers[b].get()));
 				else
-					throw std::domain_error((boost::format("Syntax error,  connection[%d].Type = '%s' unknown.") % connectionIndex % connectionType).str());
+					throw std::domain_error((boost::format("Syntax error,  connection[%d].Type = '%s' unknown.") % id % connectionType).str());
 				Connection::Base& connection = *network.connections.back().get();
 				stream >> connection;
 			}
