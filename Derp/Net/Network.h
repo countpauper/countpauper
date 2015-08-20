@@ -23,7 +23,8 @@ namespace Net
 		const Layers& GetLayers() const;
 		const Layer::Base& operator[](Layer::Id id) const { return *layers[id].get(); }
 		Layer::Base& operator[](Layer::Id id) { return *layers[id].get(); }
-		Data::Outputs Compute(const Data::Inputs& inputs) const;
+		LayerIds GetOutputs() const;
+
 		Layer::Input& Input(size_t units);
 		Layer::Output& Output(size_t units, const Function& function);
 		Layer::Visible& Visible(size_t units, const Function& function);
@@ -31,7 +32,9 @@ namespace Net
 		Connection::Directed& Directed(Layer::Base& a, Layer::Base &b);
 		Connection::Undirected& Undirected(Layer::Base& a, Layer::Base &b);
 		void Reset(double mean = 0, double sigma = 0);
-		LayerIds GetOutputs() const;
+				Data::Outputs operator()(const Data::Inputs& inputs) const { return Compute(inputs); }
+	protected:
+		Data::Outputs Compute(const Data::Inputs& inputs) const;
 	private:
 		Layers layers;
 		Connections connections;

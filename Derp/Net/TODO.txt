@@ -16,4 +16,4 @@ serial creation of networks
 	* network
 	* math
 	* data (sample, set, batch)
-	- Data namespace
+	* Data namespace

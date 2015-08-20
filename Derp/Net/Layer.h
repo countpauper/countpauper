@@ -30,7 +30,7 @@ namespace Net
 			const Connections& GetConnections() const { return connections; }
 			const Connection::Base& operator[](unsigned index) const { return *connections[index]; }
 			Connection::Base& operator[](unsigned index) { return *connections[index]; }
-			void Reset(double mean, double sigma);
+			void Reset(double mean=0, double sigma=0);
 			const Function& GetFunction() const { return *function.get(); }
 		private:
 			size_t units;
