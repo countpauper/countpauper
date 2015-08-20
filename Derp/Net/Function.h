@@ -1,7 +1,9 @@
+#pragma once
+
 #include <Eigen/Dense>
+
 namespace Net
 {
-
 	class Function
 	{
 	public:

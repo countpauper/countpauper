@@ -3,22 +3,22 @@
 
 namespace Net
 {
-	class Layer;
+	namespace Layer { class Base; }
 	
 	namespace Connection
 	{
 		class Base
 		{
 		public:
-			Base(Layer& a, const Layer&  b);
+			Base(Layer::Base& a, const Layer::Base&  b);
 			virtual ~Base();
-			const Layer& A() const { return a; }
-			const Layer& B() const { return b; }
+			const Layer::Base& A() const { return a; }
+			const Layer::Base& B() const { return b; }
 			const Eigen::MatrixXd& GetWeights() const { return weights; }
 			void Reset(double mean, double sigma);
 		private:
-			const Layer& a;
-			const Layer& b;
+			const Layer::Base& a;
+			const Layer::Base& b;
 			Eigen::MatrixXd weights;
 
 			friend std::ostream& operator<< (std::ostream& stream, const Base& connection);
@@ -28,19 +28,19 @@ namespace Net
 		class Undirected : public Base
 		{
 		public:
-			Undirected(Layer& a, const Layer&  b);
+			Undirected(Layer::Base& a, const Layer::Base&  b);
 		};
 
 		class Directed : public Base
 		{
 		public:
-			Directed(Layer& a, const Layer&  b);
+			Directed(Layer::Base& a, const Layer::Base&  b);
 		};
 
 		class Recurrent : public Base
 		{
 		public:
-			Recurrent(Layer& a, const Layer&  b);
+			Recurrent(Layer::Base& a, const Layer::Base&  b);
 		};
 	}
 }

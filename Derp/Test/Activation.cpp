@@ -2,9 +2,8 @@
 #include <boost/test/unit_test.hpp>
 #include <strstream>
 #include <Eigen/Dense>
-#include "../Net/NetworkIO.h"
-#include "../Net/Sample.h"
-#include "../Net/Connection.h"
+#include "../Net/IO.h"
+#include "../Net/Net.h"
 
 BOOST_AUTO_TEST_SUITE(Activation);
 
@@ -22,8 +21,8 @@ BOOST_AUTO_TEST_CASE(Input)
 BOOST_AUTO_TEST_CASE(Compute)
 {
 	Net::Network net;
-	Net::Layer& input = net.Input(2);
-	Net::Layer& output = net.Output(1, Net::Linear());
+	Net::Layer::Base& input = net.Input(2);
+	Net::Layer::Base& output = net.Output(1, Net::Linear());
 	net.Directed(input, output);
 	input[0].Reset(1, 0);
 	Eigen::Vector2d sampleData;

@@ -6,20 +6,20 @@ namespace Net
 {
 	class Network;
 	class Sample;
-	class Layer;
+	namespace Layer { class Base; }
 
 
 	class Activation
 	{
 	public:
 		typedef unsigned Generation;
-		Activation(Generation generation, const Layer& layer, const Eigen::VectorXd& activation);
+		Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& activation);
 		Activation& operator=(const Activation& other);
 		Eigen::VectorXd Activation::Output() const;
 	private:
 		friend class State;	// See TODO in State::Propagate
 		Generation generation;
-		const Layer* layer;
+		const Layer::Base* layer;
 		Eigen::VectorXd activation;
 	};
 
@@ -29,7 +29,7 @@ namespace Net
 	public:
 		State(const Network& network);
 	protected:
-		Eigen::VectorXd State::GetActivation(const Layer& layer) const;
+		Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const;
 		void Input(const Sample& sample);
 		void Propagate();
 		Eigen::VectorXd Output() const;

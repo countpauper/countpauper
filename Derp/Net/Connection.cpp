@@ -1,13 +1,14 @@
 #include "stdafx.h"
 #include "Connection.h"
 #include "Network.h"
+#include "Layer.h"
 #include "Math.h"
 
 namespace Net
 {	
 	namespace Connection
 	{
-		Base::Base(Layer& a, const Layer& b) :
+		Base::Base(Layer::Base& a, const Layer::Base& b) :
 			a(a),
 			b(b),
 			weights(b.Size(), a.Size())
@@ -28,15 +29,15 @@ namespace Net
 			}
 		}
 
-		Undirected::Undirected(Layer& a, const Layer&  b) : Base(a, b)
+		Undirected::Undirected(Layer::Base& a, const Layer::Base&  b) : Base(a, b)
 		{
 		}
 
-		Directed::Directed(Layer& a, const Layer&  b) : Base(a, b)
+		Directed::Directed(Layer::Base& a, const Layer::Base&  b) : Base(a, b)
 		{
 		}
 
-		Recurrent::Recurrent(Layer& a, const Layer&  b) : Base(a, b)
+		Recurrent::Recurrent(Layer::Base& a, const Layer::Base&  b) : Base(a, b)
 		{
 		}
 	}

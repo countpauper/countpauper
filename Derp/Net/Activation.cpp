@@ -1,19 +1,17 @@
 #include "stdafx.h"
 #include <Eigen/Dense>
 #include "Activation.h"
-#include "Network.h"
-#include "Connection.h"
-#include "Sample.h"
+#include "Net.h"
 
 namespace Net
 {
-Activation::Activation(Generation generation, const Layer& layer, const Eigen::VectorXd& input) :
+Activation::Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& input) :
 	generation(generation),
 	layer(&layer),
 	activation(input)
 {
 	if (input.size() != activation.size())
-		throw std::runtime_error("Layer activated with incompatible state");
+		throw std::runtime_error("Layer::Base activated with incompatible state");
 }
 
 Activation& Activation::operator=(const Activation& other)
@@ -26,8 +24,8 @@ Activation& Activation::operator=(const Activation& other)
 
 Eigen::VectorXd Activation::Output() const
 {
-	if (dynamic_cast<const OutputLayer*>(layer) ||
-		dynamic_cast<const VisibleLayer*>(layer))	// TODO dont use dynamic_cast
+	if (dynamic_cast<const Layer::Output*>(layer) ||
+		dynamic_cast<const Layer::Visible*>(layer))	// TODO dont use dynamic_cast
 		return activation;
 	return Eigen::VectorXd();
 }
@@ -43,8 +41,8 @@ void State::Input(const Sample& sample)
 	size_t pos = 0;
 	for (const auto& layer : network.GetLayers())
 	{
-		if (dynamic_cast<InputLayer*>(layer.get()) ||
-			dynamic_cast<VisibleLayer*>(layer.get()))
+		if (dynamic_cast<Layer::Input*>(layer.get()) ||
+			dynamic_cast<Layer::Visible*>(layer.get()))
 		{
 			activity.emplace_back(Activation(0, *layer.get(), sample.Activation(pos, layer->Size())));
 			pos += layer->Size();
@@ -73,7 +71,7 @@ void State::Propagate()
 	}
 }
 
-Eigen::VectorXd State::GetActivation(const Layer& layer) const
+Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const
 {
 	for (const auto& activation : history)
 	{

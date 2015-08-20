@@ -79,23 +79,26 @@
     <ClInclude Include="Activation.h" />
     <ClInclude Include="Connection.h" />
     <ClInclude Include="Function.h" />
+    <ClInclude Include="Layer.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="MatrixIO.h" />
-    <ClInclude Include="NetworkIO.h" />
+    <ClInclude Include="IO.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="RBM.h" />
-    <ClInclude Include="Sample.h" />
+    <ClInclude Include="Data.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Net.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Activation.cpp" />
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="Function.cpp" />
+    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Network.cpp" />
-    <ClCompile Include="NetworkIO.cpp" />
+    <ClCompile Include="IO.cpp" />
     <ClCompile Include="RBM.cpp" />
-    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="Data.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -1,12 +1,19 @@
 #include "stdafx.h"
 #include <algorithm>
 #include <boost/format.hpp>
-#include "NetworkIO.h"
+#include "IO.h"
 #include "MatrixIO.h"
-#include "Connection.h"
+#include "Net.h"
+
 
 namespace Net
 {
+	typedef unsigned version;
+	const version layer_version = 1;
+	const version connection_version = 1;
+	const version network_version = 1;
+	const char separator = ' ';
+
 	template<typename T>
 	bool CompareUniquePtr(const std::unique_ptr<T>& ptr, const T& ref)
 	{
@@ -29,21 +36,6 @@ namespace Net
 			return classname(*obj);
 	}
 
-	typedef unsigned version;
-	const version layer_version = 1;
-	const version connection_version = 1;
-	const version network_version = 1;
-	const char separator = ' ';
-
-	std::ostream& operator<< (std::ostream& stream, const Layer& layer)
-	{
-		stream << layer_version << separator;
-		stream << layer.units << " ";
-		stream << classname_ptr(layer.function.get()) << std::endl;
-		stream << layer.bias.transpose() << std::endl;
-		return stream;
-	}
-
 	std::unique_ptr<Function> FunctionFactory(const std::string& typeName)
 	{
 		if (typeName == "null")
@@ -60,20 +52,33 @@ namespace Net
 			throw std::domain_error((boost::format("Syntax error, unknown activation function = '%s'.") % typeName).str());
 	}
 
-	std::istream& operator>> (std::istream& stream, Layer& layer)
+	namespace Layer
 	{
-		version v;
-		stream >> v;
-		if (v >= 1)
+		std::ostream& operator<< (std::ostream& stream, const Base& layer)
 		{
-			std::string functionName;
-			stream >> layer.units >> functionName;
-			layer.function = std::move(FunctionFactory(functionName));
-			layer.bias = Eigen::VectorXd(layer.Size());
-			stream >> layer.bias;
+			stream << layer_version << separator;
+			stream << layer.units << " ";
+			stream << classname_ptr(layer.function.get()) << std::endl;
+			stream << layer.bias.transpose() << std::endl;
+			return stream;
 		}
 
-		return stream;
+
+		std::istream& operator>> (std::istream& stream, Base& layer)
+		{
+			version v;
+			stream >> v;
+			if (v >= 1)
+			{
+				std::string functionName;
+				stream >> layer.units >> functionName;
+				layer.function = std::move(FunctionFactory(functionName));
+				layer.bias = Eigen::VectorXd(layer.Size());
+				stream >> layer.bias;
+			}
+
+			return stream;
+		}
 	}
 
 	namespace Connection
@@ -108,15 +113,15 @@ namespace Net
 		stream << network.layers.size() << separator << network.connections.size() << std::endl;
 		for (auto layerIt = network.layers.begin(); layerIt != network.layers.end(); ++layerIt)
 		{
-			const Layer& layer = *layerIt->get();
+			const Layer::Base& layer = *layerIt->get();
 			stream << layerIt - network.layers.begin() << separator << classname(layer) << separator;
 			stream << layer;
 		}
 		for (auto connectionIt = network.connections.begin(); connectionIt != network.connections.end(); ++connectionIt)
 		{
 			const Connection::Base& connection = *connectionIt->get();
-			unsigned a = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer>& ptr){ return CompareUniquePtr(ptr, connection.A()); }) - network.layers.begin();
-			unsigned b = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer>& ptr){ return CompareUniquePtr(ptr, connection.B()); }) - network.layers.begin();
+			unsigned a = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer::Base>& ptr){ return CompareUniquePtr(ptr, connection.A()); }) - network.layers.begin();
+			unsigned b = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer::Base>& ptr){ return CompareUniquePtr(ptr, connection.B()); }) - network.layers.begin();
 			stream << connectionIt - network.connections.begin() << separator << classname(connection) << separator << a << separator << b << separator;
 			stream << connection;
 		}
@@ -138,13 +143,17 @@ namespace Net
 				std::string layerType;
 				stream >> layerIndex >> layerType;
 				// todo: layer factory
-				if (layerType == "Net::InputLayer")
-					network.layers.emplace_back(std::make_unique<InputLayer>());
-				else if (layerType == "Net::HiddenLayer")
-					network.layers.emplace_back(std::make_unique<HiddenLayer>());
+				if (layerType == "Net::Layer::Input")
+					network.layers.emplace_back(std::make_unique<Layer::Input>());
+				else if (layerType == "Net::Layer::Output")
+					network.layers.emplace_back(std::make_unique<Layer::Output>());
+				else if (layerType == "Net::Layer::Visible")
+					network.layers.emplace_back(std::make_unique<Layer::Visible>());
+				else if (layerType == "Net::Layer::Hidden")
+					network.layers.emplace_back(std::make_unique<Layer::Hidden>());
 				else
 					throw std::domain_error((boost::format("Syntax error,  layer[%d].type = '%s' unknown.") % layerIt % layerType).str());
-				Layer& layer = *network.layers.back().get();
+				Layer::Base& layer = *network.layers.back().get();
 				stream >> layer;
 			}
 			for (size_t connectionIt = 0; connectionIt < connectionCount; ++connectionIt)

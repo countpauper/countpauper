@@ -1,12 +1,18 @@
 #pragma once
 
-#include "Network.h"
 #include <iostream>
 
 namespace Net
 {
-	std::ostream& operator<< (std::ostream& stream, const Layer& layer);
-	std::istream& operator>> (std::istream& stream, Layer& layer);
+	namespace Layer{ class Base; }
+	namespace Connection { class Base; }
+	class Network;
+
+	namespace Layer
+	{
+		std::ostream& operator<< (std::ostream& stream, const Base& layer);
+		std::istream& operator>> (std::istream& stream, Base& layer);
+	}
 
 	namespace Connection
 	{

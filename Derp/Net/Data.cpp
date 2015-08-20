@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Sample.h"
+#include "Data.h"
 
 namespace Net
 {

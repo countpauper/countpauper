@@ -2,91 +2,41 @@
 #include "Network.h"
 #include "Math.h"
 #include "Connection.h"
+#include "Layer.h"
 
 namespace Net
 {
-	Layer::Layer() :
-		units(0)
+	Layer::Input& Network::Input(size_t units)
 	{
+		layers.emplace_back(std::make_unique<Layer::Input>(units));
+		return *static_cast<Layer::Input*>(layers.back().get());
 	}
 
-	Layer::Layer(size_t units, const Function& function) :
-		units(units),
-		bias(units),
-		function(function.Copy())
+	Layer::Output& Network::Output(size_t units, const Function& function)
 	{
+		layers.emplace_back(std::make_unique<Layer::Output>(units, function));
+		return static_cast<Layer::Output&>(*layers.back().get());
 	}
 
-	void Layer::Connect(Connection::Base& connection)
+	Layer::Visible& Network::Visible(size_t units, const Function& function)
 	{
-		connections.push_back(&connection);
+		layers.emplace_back(std::make_unique<Layer::Visible>(units, function));
+		return static_cast<Layer::Visible&>(*layers.back().get());
 	}
 
-	size_t Layer::Size() const
+	Layer::Hidden& Network::Hidden(size_t units, const Function& function)
 	{
-		return units;
+		layers.emplace_back(std::make_unique<Layer::Hidden>(units, function));
+		return static_cast<Layer::Hidden&>(*layers.back().get());
 	}
 
-	void Layer::Reset(double mean, double sigma)
-	{
-		bias.setConstant(mean);
-		if (sigma != 0)
-		{
-			bias = bias.binaryExpr(Eigen::VectorXd::Constant(bias.size(), sigma), std::ptr_fun(normal_noise));
-		}
-	}
-
-	InputLayer::InputLayer(size_t units) :
-		Layer(units, Net::Linear())
-	{
-	}
-
-	OutputLayer::OutputLayer(size_t units, const Function& function) :
-		Layer(units, function)
-	{
-	}
-
-	VisibleLayer::VisibleLayer(size_t units, const Function& function) :
-		Layer(units, function)
-	{
-	}
-
-	HiddenLayer::HiddenLayer(size_t units, const Function& function) :
-		Layer(units, function)
-	{
-	}
-
-	InputLayer& Network::Input(size_t units)
-	{
-		layers.emplace_back(std::make_unique<InputLayer>(units));
-		return *static_cast<InputLayer*>(layers.back().get());
-	}
-
-	OutputLayer& Network::Output(size_t units, const Function& function)
-	{
-		layers.emplace_back(std::make_unique<OutputLayer>(units, function));
-		return static_cast<OutputLayer&>(*layers.back().get());
-	}
-
-	VisibleLayer& Network::Visible(size_t units, const Function& function)
-	{
-		layers.emplace_back(std::make_unique<VisibleLayer>(units, function));
-		return static_cast<VisibleLayer&>(*layers.back().get());
-	}
-
-	HiddenLayer& Network::Hidden(size_t units, const Function& function)
-	{
-		layers.emplace_back(std::make_unique<HiddenLayer>(units, function));
-		return static_cast<HiddenLayer&>(*layers.back().get());
-	}
-
-	Connection::Directed& Network::Directed(Layer& a, Layer& b)
+	Connection::Directed& Network::Directed(Layer::Base& a, Layer::Base& b)
 	{
 		connections.emplace_back(std::make_unique<Connection::Directed>(a, b));
 		return *static_cast<Connection::Directed*>(connections.back().get());
 	}
 
-	Connection::Undirected& Network::Undirected(Layer& a, Layer& b)
+	Connection::Undirected& Network::Undirected(Layer::Base& a, Layer::Base& b)
 	{
 		connections.emplace_back(std::make_unique<Connection::Undirected>(a, b));
 		return *static_cast<Connection::Undirected*>(connections.back().get());

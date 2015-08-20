@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "RBM.h"
-#include "Connection.h"
+#include "Net.h"
 
 namespace Net
 {
