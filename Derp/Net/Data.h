@@ -36,13 +36,6 @@ namespace Net
 			const Outputs outputs;
 		};
 
-		typedef std::vector<Sample> Samples;
-
-		class Set
-		{
-		public:
-		private:
-			const Samples data;
-		};
+		typedef std::vector<Sample> Set;
 	}
 }

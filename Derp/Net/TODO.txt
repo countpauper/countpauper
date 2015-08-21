@@ -17,3 +17,6 @@ serial creation of networks
 	* math
 	* data (sample, set, batch)
 	* Data namespace
+- remove precompiled headers
+- Make forward declare include with all Net forward declares (and Eigen, std)
+- Function in namespace Activation (and Activation, state too)

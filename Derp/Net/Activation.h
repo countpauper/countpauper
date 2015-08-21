@@ -26,8 +26,8 @@ namespace Net
 	{
 	public:
 		State(const Network& network);
-	protected:
 		void Input(const Data::Inputs& sample);
+		void Step();
 		void Propagate();
 		Data::Outputs Output() const;
 	private:
@@ -45,4 +45,5 @@ namespace Net
 		Computation(const Network& network, const Data::Inputs& sample);
 		Data::Outputs operator()() const { return Output(); }
 	};
+
 }

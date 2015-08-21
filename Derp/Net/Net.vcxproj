@@ -80,6 +80,7 @@
     <ClInclude Include="Connection.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="Layer.h" />
+    <ClInclude Include="Learning.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="MatrixIO.h" />
     <ClInclude Include="IO.h" />
@@ -94,6 +95,7 @@
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Learning.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="IO.cpp" />

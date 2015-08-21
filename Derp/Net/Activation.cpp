@@ -38,21 +38,26 @@ void State::Propagate()
 {
 	while (!activity.empty())
 	{
-		Activity future;
-		for (const auto& activation : activity)
-		{
-			// TODO: following block should be in Activation, but it can't declare a list of activations to return
-			for (const auto& connection : activation.layer->GetConnections())
-			{
-				Eigen::VectorXd excitation = connection->GetWeights() * activation.activation + connection->B().Bias();
-				Eigen::VectorXd activationVector = connection->B().GetFunction()(excitation);
-				future.emplace_back(Activation(activation.generation + 1, connection->B(), activationVector));
-			}
-			// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
-		}
-		history.insert(history.end(), activity.begin(), activity.end());
-		activity.assign(future.begin(), future.end());
+		Step();
 	}
+}
+
+void State::Step()
+{
+	Activity future;
+	for (const auto& activation : activity)
+	{
+		// TODO: following block should be in Activation, but it can't declare a list of activations to return
+		for (const auto& connection : activation.layer->GetConnections())
+		{
+			Eigen::VectorXd excitation = connection->GetWeights() * activation.activation + connection->B().Bias();
+			Eigen::VectorXd activationVector = connection->B().GetFunction()(excitation);
+			future.emplace_back(Activation(activation.generation + 1, connection->B(), activationVector));
+		}
+		// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
+	}
+	history.insert(history.end(), activity.begin(), activity.end());
+	activity.assign(future.begin(), future.end());
 }
 
 Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const
