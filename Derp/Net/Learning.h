@@ -20,15 +20,5 @@ namespace Net
 			Network& network;
 		};
 
-		class ContrastiveDivergence : public Algorithm
-		{
-		public:
-			ContrastiveDivergence(RBM& network, unsigned n = 1);
-			virtual void Learn(const Data::Sample& samples);
-		protected:
-			unsigned n;
-		};
-
-
 	}
 }

@@ -4,7 +4,7 @@
 #include "IO.h"
 #include "MatrixIO.h"
 #include "Net.h"
-
+#include "Data.h"
 
 namespace Net
 {
@@ -12,6 +12,8 @@ namespace Net
 	const version layer_version = 1;
 	const version connection_version = 1;
 	const version network_version = 1;
+	const version sample_version = 1;
+	const version data_version = 1;
 	const char separator = ' ';
 
 	template<typename T>
@@ -179,5 +181,58 @@ namespace Net
 			}
 		}
 		return stream;
+	}
+
+	namespace Data
+	{
+		std::ostream& operator<< (std::ostream& stream, const Base& data)
+		{
+			stream << data_version << separator << data.layer << separator << data.activation.size() << separator;
+			stream << data.activation << std::endl;
+			return stream;
+		}
+		std::istream& operator>> (std::istream& stream, Base& data)
+		{
+			version v;
+			stream >> v;
+			if (v >= 1)
+			{
+				unsigned id;
+				size_t size;
+				stream >> id >> size;
+				data.layer = Layer::Id(id);
+				data.activation.resize(size);
+				stream >> data.activation;
+			}
+			return stream;
+		}
+		std::ostream& operator<< (std::ostream& stream, const Sample& sample)
+		{
+			stream << sample_version << separator << sample.inputs.size() << separator << sample.outputs.size() << std::endl;
+			for (const auto& input : sample.inputs)
+				stream << input;
+			for (const auto& output : sample.outputs)
+				stream << output;
+			return stream;
+		}
+		std::istream& operator>> (std::istream& stream, Sample& sample)
+		{
+			version v;
+			stream >> v;
+			if (v >= 1)
+			{
+				size_t inputs, outputs;
+				stream >> inputs >> outputs;
+				sample.inputs.resize(inputs);
+				for (auto& input : sample.inputs)
+					stream >> input;
+				sample.outputs.resize(outputs);
+				for (auto& output : sample.outputs)
+					stream >> output;
+			}
+			return stream;
+		}
+
+
 	}
 }

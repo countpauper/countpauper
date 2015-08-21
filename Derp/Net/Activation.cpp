@@ -1,16 +1,18 @@
 #include "stdafx.h"
 #include <Eigen/Dense>
+#include <algorithm>
 #include "Activation.h"
 #include "Net.h"
 
 namespace Net
 {
-Activation::Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& input) :
+Activation::Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& excitation) :
 	generation(generation),
 	layer(&layer),
-	activation(input)
+	excitation(excitation),
+	activation(layer.GetFunction()(excitation))
 {
-	if (input.size() != activation.size())
+	if (excitation.size() != layer.Size())
 		throw std::runtime_error("Layer::Base activated with incompatible state");
 }
 
@@ -22,16 +24,35 @@ Activation& Activation::operator=(const Activation& other)
 	return *this;
 }
 
+Eigen::VectorXd Activity::GetExcitation(const Layer::Base& layer) const
+{
+	const_iterator it = std::find_if(cbegin(), cend(), [layer](const Activation& activation){ return &activation.GetLayer() == &layer;  });
+	if (it == end())
+		return Eigen::VectorXd(layer.Size());
+	else
+		return it->GetExcitation();
+}
+
+Eigen::VectorXd Activity::GetActivation(const Layer::Base& layer) const
+{
+	const_iterator it = std::find_if(cbegin(), cend(), [layer](const Activation& activation){ return &activation.GetLayer() == &layer;  });
+	if (it == end())
+		return Eigen::VectorXd(layer.Size());
+	else
+		return it->GetActivation();
+}
+
 State::State(const Network& network) :
 	network(network)
 {
 }
 
-void State::Input(const Data::Inputs& inputs)
+Net::Activity State::Input(const Data::Inputs& inputs)
 {
 	size_t pos = 0;
 	for (const auto& input : inputs)
 		activity.emplace_back(Activation(0, network[input.layer], input.activation));
+	return activity;
 }
 
 void State::Propagate()
@@ -42,7 +63,7 @@ void State::Propagate()
 	}
 }
 
-void State::Step()
+Net::Activity State::Step()
 {
 	Activity future;
 	for (const auto& activation : activity)
@@ -51,13 +72,13 @@ void State::Step()
 		for (const auto& connection : activation.layer->GetConnections())
 		{
 			Eigen::VectorXd excitation = connection->GetWeights() * activation.activation + connection->B().Bias();
-			Eigen::VectorXd activationVector = connection->B().GetFunction()(excitation);
-			future.emplace_back(Activation(activation.generation + 1, connection->B(), activationVector));
+			future.emplace_back(Activation(activation.generation + 1, connection->B(), excitation));
 		}
 		// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
 	}
 	history.insert(history.end(), activity.begin(), activity.end());
 	activity.assign(future.begin(), future.end());
+	return activity;
 }
 
 Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const

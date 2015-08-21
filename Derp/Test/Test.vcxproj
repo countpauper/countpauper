@@ -106,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Activation.cpp" />
+    <ClCompile Include="Learning.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NetworkIO.cpp" />
     <ClCompile Include="stdafx.cpp">

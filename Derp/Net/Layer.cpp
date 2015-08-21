@@ -19,6 +19,13 @@ namespace Net
 		{
 		}
 
+		Base::Base(const Base& other) :
+			units(other.units),
+			bias(other.bias),
+			function(other.function->Copy()),
+			connections()	// connections not RAII
+		{
+		}
 		void Base::Connect(Connection::Base& connection)
 		{
 			connections.push_back(&connection);

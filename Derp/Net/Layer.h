@@ -23,6 +23,7 @@ namespace Net
 			typedef std::vector<Connection::Base*> Connections;
 			Base();
 			Base(size_t units, const Function& function);
+			Base(const Base& other);
 			virtual ~Base() = default;
 			void Connect(Connection::Base& connection);
 			size_t Size() const;
