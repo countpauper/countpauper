@@ -65,7 +65,7 @@
       </Command>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>$(TargetPath) -log_level=messages -report_level=detailed</Command>
+      <Command>$(TargetPath) --log_level=test_suite --report_level=short</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Running test</Message>
