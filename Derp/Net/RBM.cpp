@@ -4,9 +4,12 @@
 
 namespace Net
 {
-	RBM::RBM(size_t visible, size_t hidden)
+	RBM::RBM(size_t visible, size_t hidden) :
+		visible(Visible(visible, Stochastic())),
+		hidden(Hidden(hidden, Stochastic()))
 	{
-		Undirected(Visible(visible, Stochastic()), Hidden(hidden, Stochastic()));
+
+		Undirected(this->visible, this->hidden );
 	}
 
 }

@@ -6,10 +6,11 @@
 namespace Net
 {
 Activation::Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& input) :
+	// TODO, when merging, passing the excitation is not correct for input activation, still somehow need to remember probabilities
 	generation(generation),
 	layer(&layer),
 	activation(input)
-{
+{	
 	if (input.size() != activation.size())
 		throw std::runtime_error("Layer::Base activated with incompatible state");
 }
@@ -34,13 +35,34 @@ void State::Input(const Data::Inputs& inputs)
 		activity.emplace_back(Activation(0, network[input.layer], input.activation));
 }
 
+bool Activity::CanGoForward() const
+{
+	for (const auto& activation : *this)
+		if (!activation.GetLayer().GetConnections().empty())
+			return true;
+	return false;
+}
+
+bool Activity::CanGoBackward() const
+{
+	for (const auto& activation : *this)
+		if (!activation.GetLayer().GetReverseConnections().empty())
+			return true;
+	return false;
+}
+
 void State::Propagate()
 {
-	while (!activity.empty())
+	while (activity.CanGoForward())
 	{
 		Step();
 	}
+	while (activity.CanGoBackward())
+	{
+		Reconstruct(); // TODO rename
+	}
 }
+
 
 void State::Step()
 {
@@ -56,13 +78,29 @@ void State::Step()
 		}
 		// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
 	}
-	history.insert(history.end(), activity.begin(), activity.end());
+	activity.assign(future.begin(), future.end());
+}
+
+void State::Reconstruct()
+{
+	Activity future;
+	for (const auto& activation : activity)
+	{
+		// TODO: following block should be in Activation, but it can't declare a list of activations to return
+		for (const auto& connection : activation.layer->GetReverseConnections())
+		{
+			Eigen::VectorXd excitation = connection->GetWeights().transpose() * activation.activation + connection->A().Bias();
+			Eigen::VectorXd activationVector = connection->A().GetFunction()(excitation);
+			future.emplace_back(Activation(activation.generation + 1, connection->A(), activationVector));
+		}
+		// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
+	}
 	activity.assign(future.begin(), future.end());
 }
 
 Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const
 {
-	for (const auto& activation : history)
+	for (const auto& activation : activity)
 	{
 		if (activation.layer == &layer)
 			return activation.activation;
@@ -70,23 +108,12 @@ Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const
 	return Eigen::VectorXd::Zero(layer.Size());
 }
 
-Eigen::VectorXd State::GetHistory(const Layer::Base& layer) const
-{
-	for (Activity::const_reverse_iterator historyIt = history.crbegin(); historyIt != history.crend(); ++historyIt)
-	{
-		if (historyIt->layer == &layer)
-			return historyIt->activation;
-	}
-	return Eigen::VectorXd::Constant(layer.Size(), 0);
-}
-
-
 Data::Outputs State::Output() const
 {
 	Data::Outputs output;
 	for (const auto& outputId : network.GetOutputs())
 	{
-		output.emplace_back(Data::Output(outputId, GetHistory(network[outputId])));
+		output.emplace_back(Data::Output(outputId, GetActivation(network[outputId])));
 	}
 	return output;
 }

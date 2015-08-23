@@ -21,7 +21,10 @@ namespace Net
 
 		void Base::Connect(Connection::Base& connection)
 		{
-			connections.push_back(&connection);
+			if (&connection.A() == this)
+				connections.push_back(&connection);
+			else
+				reverse_connections.push_back(&connection);
 		}
 
 		size_t Base::Size() const

@@ -28,13 +28,17 @@ namespace Net
 			size_t Size() const;
 			const Eigen::VectorXd& Bias() const { return bias; }
 			const Connections& GetConnections() const { return connections; }
+			const Connections& GetReverseConnections() const { return reverse_connections; }
 			const Connection::Base& operator[](unsigned index) const { return *connections[index]; }
 			Connection::Base& operator[](unsigned index) { return *connections[index]; }
 			void Reset(double mean=0, double sigma=0);
 			const Function& GetFunction() const { return *function.get(); }
+			virtual bool IsInput() const = 0;
+			virtual bool IsOutput() const = 0;
 		private:
 			size_t units;
 			Connections connections;
+			Connections reverse_connections;
 			std::unique_ptr<Function> function;
 			Eigen::VectorXd bias;
 
@@ -47,6 +51,8 @@ namespace Net
 		public:
 			Input() = default;
 			Input(size_t units);
+			virtual bool IsInput() const { return true; }
+			virtual bool IsOutput() const { return false; }
 		};
 
 		class Output : public Base
@@ -54,6 +60,8 @@ namespace Net
 		public:
 			Output() = default;
 			Output(size_t units, const Function& function);
+			virtual bool IsInput() const { return false; }
+			virtual bool IsOutput() const { return true; }
 		};
 
 		class Visible : public Base
@@ -61,6 +69,8 @@ namespace Net
 		public:
 			Visible() = default;
 			Visible(size_t units, const Function& function);
+			virtual bool IsInput() const { return true; }
+			virtual bool IsOutput() const { return true; }
 		};
 
 		class Hidden : public Base
@@ -68,7 +78,8 @@ namespace Net
 		public:
 			Hidden() = default;
 			Hidden(size_t units, const Function& function);
-
+			virtual bool IsInput() const { return false; }
+			virtual bool IsOutput() const { return false; }
 		};
 	}
 }

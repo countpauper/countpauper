@@ -32,8 +32,8 @@ namespace Net
 		public:
 			Sample() = default;
 			Sample(const Inputs& inputs, const Outputs& outputs);
-			const Inputs inputs;
-			const Outputs outputs;
+			Inputs inputs;
+			Outputs outputs;
 		};
 
 		typedef std::vector<Sample> Set;

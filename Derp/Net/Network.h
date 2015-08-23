@@ -24,6 +24,7 @@ namespace Net
 		const Layer::Base& operator[](Layer::Id id) const { return *layers[id].get(); }
 		Layer::Base& operator[](Layer::Id id) { return *layers[id].get(); }
 		LayerIds GetOutputs() const;
+		LayerIds GetInputs() const;
 
 		Layer::Input& Input(size_t units);
 		Layer::Output& Output(size_t units, const Function& function);
@@ -32,7 +33,7 @@ namespace Net
 		Connection::Directed& Directed(Layer::Base& a, Layer::Base &b);
 		Connection::Undirected& Undirected(Layer::Base& a, Layer::Base &b);
 		void Reset(double mean = 0, double sigma = 0);
-				Data::Outputs operator()(const Data::Inputs& inputs) const { return Compute(inputs); }
+		Data::Outputs operator()(const Data::Inputs& inputs) const { return Compute(inputs); }
 	protected:
 		Data::Outputs Compute(const Data::Inputs& inputs) const;
 	private:

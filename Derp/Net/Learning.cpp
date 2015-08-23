@@ -34,9 +34,10 @@ namespace Net
 		{
 			State state(network);
 			state.Input(sample.inputs);
-			state.Step(); 
 			for (unsigned i = 0; i < n; ++i)
 			{
+				state.Step();
+				state.Reconstruct();
 				// TODO: reconstruct 
 			}
 		}

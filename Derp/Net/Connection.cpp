@@ -8,12 +8,11 @@ namespace Net
 {	
 	namespace Connection
 	{
-		Base::Base(Layer::Base& a, const Layer::Base& b) :
+		Base::Base(const Layer::Base& a, const Layer::Base& b) :
 			a(a),
 			b(b),
 			weights(b.Size(), a.Size())
 		{
-			a.Connect(*this);
 		}
 
 		Base::~Base()
@@ -29,16 +28,20 @@ namespace Net
 			}
 		}
 
-		Undirected::Undirected(Layer::Base& a, const Layer::Base&  b) : Base(a, b)
+		Undirected::Undirected(Layer::Base& a, Layer::Base&  b) : Base(a, b)
 		{
+			a.Connect(*this);
+			b.Connect(*this);
 		}
 
 		Directed::Directed(Layer::Base& a, const Layer::Base&  b) : Base(a, b)
 		{
+			a.Connect(*this);
 		}
 
-		Recurrent::Recurrent(Layer::Base& a, const Layer::Base&  b) : Base(a, b)
+		Recurrent::Recurrent(const Layer::Base& a, Layer::Base&  b) : Base(a, b)
 		{
+			b.Connect(*this);
 		}
 	}
 }
