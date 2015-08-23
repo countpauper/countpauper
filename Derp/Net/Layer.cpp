@@ -41,6 +41,11 @@ namespace Net
 			}
 		}
 
+		const Function& Base::ChangeFunction(const Function& newFunction)
+		{
+			function.reset(newFunction.Copy());
+			return GetFunction();
+		}
 		Input::Input(size_t units) :
 			Base(units, Net::Linear())
 		{

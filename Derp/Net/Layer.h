@@ -33,6 +33,7 @@ namespace Net
 			Connection::Base& operator[](unsigned index) { return *connections[index]; }
 			void Reset(double mean=0, double sigma=0);
 			const Function& GetFunction() const { return *function.get(); }
+			const Function& ChangeFunction(const Function& function);
 			virtual bool IsInput() const = 0;
 			virtual bool IsOutput() const = 0;
 		private:

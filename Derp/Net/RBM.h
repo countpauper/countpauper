@@ -8,6 +8,7 @@ namespace Net
 	public:
 		RBM(size_t visible, size_t hidden);
 		double FreeEnergy(const Data::Input& inputs);
+		void OutputProbability();
 		Layer::Visible& visible;
 		Layer::Hidden& hidden;
 

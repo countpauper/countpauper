@@ -11,5 +11,9 @@ namespace Net
 
 		Undirected(this->visible, this->hidden );
 	}
+	void RBM::OutputProbability()
+	{
+		visible.ChangeFunction(Sigmoid());
+	}
 
 }
