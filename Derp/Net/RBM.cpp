@@ -26,11 +26,10 @@ namespace Net
 			Activity activity = state.Input(sample.inputs);
 			for (unsigned i = 0; i < n; ++i)
 			{	
-				Eigen::VectorXd visibleActivation = activity(rbm.visible);
+				Eigen::VectorXd visibleActivation = activity[rbm.visible];
 				activity = state.Step(); 
-				Eigen::VectorXd hiddenActivation = activity(rbm.hidden);
+				Eigen::VectorXd hiddenActivation = activity[rbm.hidden];
 				Eigen::MatrixXd positiveStatistics = visibleActivation * hiddenActivation;
-
 			}
 		}
 

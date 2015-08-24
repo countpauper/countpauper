@@ -50,11 +50,23 @@ namespace Net
 	Network::LayerIds Network::GetOutputs() const
 	{
 		LayerIds outputs;
-		for (Layers::const_iterator layerIt = layers.begin(); layerIt != layers.end(); ++layerIt)
+		Layers::const_iterator it = layers.begin();
+		while ((it = std::find_if(it, layers.end(), [](const std::unique_ptr<Layer::Base>& layer){ return layer->IsOutput(); }))!=layers.end())
 		{
-			if (dynamic_cast<const Layer::Output*>(layerIt->get()) ||
-				dynamic_cast<const Layer::Visible*>(layerIt->get()))
-				outputs.push_back(layerIt - layers.begin());
+			outputs.push_back(Layer::Id(it - layers.begin()));
+			++it;
+		}
+		return outputs;
+	}
+
+	Network::LayerIds Network::GetInputs() const
+	{
+		LayerIds outputs;
+		Layers::const_iterator it = layers.begin();
+		while ((it = std::find_if(it, layers.end(), [](const std::unique_ptr<Layer::Base>& layer){ return layer->IsInput(); })) != layers.end())
+		{
+			outputs.push_back(Layer::Id(it - layers.begin()));
+			++it;
 		}
 		return outputs;
 	}

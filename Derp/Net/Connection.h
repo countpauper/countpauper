@@ -11,8 +11,9 @@ namespace Net
 
 		class Base
 		{
+		protected:
+			Base(const Layer::Base& a, const Layer::Base&  b);
 		public:
-			Base(Layer::Base& a, const Layer::Base&  b);
 			virtual ~Base();
 			const Layer::Base& A() const { return a; }
 			const Layer::Base& B() const { return b; }
@@ -30,7 +31,7 @@ namespace Net
 		class Undirected : public Base
 		{
 		public:
-			Undirected(Layer::Base& a, const Layer::Base&  b);
+			Undirected(Layer::Base& a, Layer::Base&  b);
 		};
 
 		class Directed : public Base
@@ -42,7 +43,7 @@ namespace Net
 		class Recurrent : public Base
 		{
 		public:
-			Recurrent(Layer::Base& a, const Layer::Base&  b);
+			Recurrent(const Layer::Base& a, Layer::Base&  b);
 		};
 	}
 }

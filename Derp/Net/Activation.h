@@ -16,7 +16,6 @@ namespace Net
 		Activation& operator=(const Activation& other);
 		const Layer::Base& GetLayer() const { return *layer;  }
 		Eigen::VectorXd GetActivation() const { return activation;  }
-		Eigen::VectorXd GetExcitation() const { return excitation;  }
 	private:
 		friend class State;	// See TODO in State::Propagate
 		Generation generation;
@@ -25,13 +24,13 @@ namespace Net
 		Eigen::VectorXd excitation;
 	};
 
-	class Activity : public std::vector < Activation >
+	class Activity : public  std::vector < Activation >
 	{
 	public:
-		Eigen::VectorXd operator[](const Layer::Base& layer) const { return GetExcitation(layer); }
-		Eigen::VectorXd operator()(const Layer::Base& layer) const { return GetActivation(layer); }
+		Eigen::VectorXd operator[](const Layer::Base& layer) const { return GetActivation(layer); }
+		bool CanGoForward() const;
+		bool CanGoBackward() const;
 	private:
-		Eigen::VectorXd GetExcitation(const Layer::Base& layer) const;
 		Eigen::VectorXd GetActivation(const Layer::Base& layer) const;
 	};
 
@@ -39,15 +38,14 @@ namespace Net
 	{
 	public:
 		State(const Network& network);
-		Activity Input(const Data::Inputs& sample);
-		Activity Step();
+		Activity Input(const Data::Inputs& sample) const;
+		Activity Step() const;
+		Activity Reconstruct() const;
 		void Propagate();
 		Data::Outputs Output() const;
-	private:
+	protected:
 		Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const;
-		Eigen::VectorXd State::GetHistory(const Layer::Base& layer) const;
 		Activity activity;
-		Activity history;
 		const Network& network;
 	};
 
