@@ -4,8 +4,9 @@
 
 namespace Net
 {
-	namespace Layer{ class Base; }
+	namespace Layer { class Base; }
 	namespace Connection { class Base; }
+	namespace Data { class Base;  class Sample; class Set; }
 	class Network;
 
 	namespace Layer
@@ -20,6 +21,15 @@ namespace Net
 		std::istream& operator>> (std::istream& stream, Base& connection);
 	}
 
+	namespace Data
+	{
+		std::ostream& operator<< (std::ostream& stream, const Base& data);
+		std::istream& operator>> (std::istream& stream, Base& data);
+		std::ostream& operator<< (std::ostream& stream, const Sample& sample);
+		std::istream& operator>> (std::istream& stream, Sample& sample);
+		std::ostream& operator<< (std::ostream& stream, const Set& sample);
+		std::istream& operator>> (std::istream& stream, Set& sample);
+	}
 	std::ostream& operator<< (std::ostream& stream, const Network& network);
 	std::istream& operator>> (std::istream& stream, Network& network);
 }

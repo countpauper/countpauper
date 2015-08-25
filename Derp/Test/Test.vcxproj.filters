@@ -35,6 +35,9 @@
     <ClCompile Include="Activation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Learning.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="RBM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

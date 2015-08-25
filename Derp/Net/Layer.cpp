@@ -19,6 +19,13 @@ namespace Net
 		{
 		}
 
+		Base::Base(const Base& other) :
+			units(other.units),
+			bias(other.bias),
+			function(other.function->Copy()),
+			connections()	// connections not RAII
+		{
+		}
 		void Base::Connect(Connection::Base& connection)
 		{
 			if (&connection.A() == this)
@@ -39,6 +46,11 @@ namespace Net
 			{
 				bias = bias.binaryExpr(Eigen::VectorXd::Constant(bias.size(), sigma), std::ptr_fun(normal_noise));
 			}
+		}
+
+		void Base::AdjustBias(const Eigen::VectorXd& signal)
+		{
+			bias += signal;
 		}
 
 		const Function& Base::ChangeFunction(const Function& newFunction)

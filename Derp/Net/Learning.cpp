@@ -23,23 +23,5 @@ namespace Net
 				Learn(sample);
 			}
 		}
-
-		ContrastiveDivergence::ContrastiveDivergence(RBM& network, unsigned n) :
-			Algorithm(network),
-			n(n)
-		{
-		}
-		
-		void ContrastiveDivergence::Learn(const Data::Sample& sample)
-		{
-			State state(network);
-			state.Input(sample.inputs);
-			for (unsigned i = 0; i < n; ++i)
-			{
-				state.Step();
-				state.Reconstruct();
-				// TODO: reconstruct 
-			}
-		}
 	}
 }

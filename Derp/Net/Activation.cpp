@@ -1,17 +1,19 @@
 #include "stdafx.h"
 #include <Eigen/Dense>
+#include <algorithm>
 #include "Activation.h"
 #include "Net.h"
 
 namespace Net
 {
-Activation::Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& input) :
+
+Activation::Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& activation) :
 	// TODO, when merging, passing the excitation is not correct for input activation, still somehow need to remember probabilities
 	generation(generation),
 	layer(&layer),
-	activation(input)
+	activation(activation)
 {	
-	if (input.size() != activation.size())
+	if (layer.Size() != activation.size())
 		throw std::runtime_error("Layer::Base activated with incompatible state");
 }
 
@@ -23,16 +25,28 @@ Activation& Activation::operator=(const Activation& other)
 	return *this;
 }
 
+
+Eigen::VectorXd Activity::GetActivation(const Layer::Base& layer) const
+{
+	const_iterator it = std::find_if(cbegin(), cend(), [&layer](const Activation& activation){ return &activation.GetLayer() == &layer;  });
+	if (it == end())
+		throw std::out_of_range("No activity for that layer");
+	else
+		return it->GetActivation();
+}
+
 State::State(const Network& network) :
 	network(network)
 {
 }
 
-void State::Input(const Data::Inputs& inputs)
+Net::Activity State::Input(const Data::Inputs& inputs) const
 {
+	Activity future;
 	size_t pos = 0;
 	for (const auto& input : inputs)
-		activity.emplace_back(Activation(0, network[input.layer], input.activation));
+		future.emplace_back(Activation(0, network[input.layer], input.activation));
+	return future;
 }
 
 bool Activity::CanGoForward() const
@@ -51,20 +65,24 @@ bool Activity::CanGoBackward() const
 	return false;
 }
 
+void State::Apply(const Activity& newActivity)
+{
+	this->activity = newActivity;
+}
+
 void State::Propagate()
 {
 	while (activity.CanGoForward())
 	{
-		Step();
+		activity = Step();
 	}
 	while (activity.CanGoBackward())
 	{
-		Reconstruct(); // TODO rename
+		activity = Reconstruct(); // TODO rename
 	}
 }
 
-
-void State::Step()
+Net::Activity State::Step() const
 {
 	Activity future;
 	for (const auto& activation : activity)
@@ -78,10 +96,10 @@ void State::Step()
 		}
 		// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
 	}
-	activity.assign(future.begin(), future.end());
+	return future;
 }
 
-void State::Reconstruct()
+Net::Activity State::Reconstruct() const
 {
 	Activity future;
 	for (const auto& activation : activity)
@@ -95,7 +113,7 @@ void State::Reconstruct()
 		}
 		// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
 	}
-	activity.assign(future.begin(), future.end());
+	return future;
 }
 
 Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const
@@ -121,7 +139,7 @@ Data::Outputs State::Output() const
 Computation::Computation(const Network& network, const Data::Inputs& inputs) :
 	State(network)
 {
-	Input(inputs);
+	activity = Input(inputs);
 	Propagate();
 }
 

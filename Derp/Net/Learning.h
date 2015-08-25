@@ -6,7 +6,7 @@ namespace Net
 	class Network;
 	class RBM;
 
-	namespace Data { class Sample; typedef std::vector<Sample> Set;  }
+	namespace Data { class Sample; class Set;  }
 
 	namespace Learning
 	{
@@ -19,16 +19,6 @@ namespace Net
 		protected:
 			Network& network;
 		};
-
-		class ContrastiveDivergence : public Algorithm
-		{
-		public:
-			ContrastiveDivergence(RBM& network, unsigned n = 1);
-			virtual void Learn(const Data::Sample& samples);
-		protected:
-			unsigned n;
-		};
-
 
 	}
 }

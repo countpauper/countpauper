@@ -20,3 +20,6 @@ serial creation of networks
 - remove precompiled headers
 - Make forward declare include with all Net forward declares (and Eigen, std)
 - Function in namespace Activation (and Activation, state too)
+- Find out which objects can be default copied, which need custom copies (network+references, unique_ptrs?) and which are non-copyable
+- Find Getters and see if property can't just be public, rely on const for read only
+- move io functions to relevant header files?

@@ -18,7 +18,8 @@ namespace Net
 			const Layer::Base& A() const { return a; }
 			const Layer::Base& B() const { return b; }
 			const Eigen::MatrixXd& GetWeights() const { return weights; }
-			void Reset(double mean=0, double sigma=0);
+			void AdjustWeights(const Eigen::MatrixXd& delta);
+			void Reset(double mean = 0, double sigma = 0);
 		private:
 			const Layer::Base& a;
 			const Layer::Base& b;

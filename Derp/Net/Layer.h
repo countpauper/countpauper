@@ -23,10 +23,12 @@ namespace Net
 			typedef std::vector<Connection::Base*> Connections;
 			Base();
 			Base(size_t units, const Function& function);
+			Base(const Base& other);
 			virtual ~Base() = default;
 			void Connect(Connection::Base& connection);
 			size_t Size() const;
 			const Eigen::VectorXd& Bias() const { return bias; }
+			void AdjustBias(const Eigen::VectorXd& signal);
 			const Connections& GetConnections() const { return connections; }
 			const Connections& GetReverseConnections() const { return reverse_connections; }
 			const Connection::Base& operator[](unsigned index) const { return *connections[index]; }

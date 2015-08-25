@@ -28,6 +28,11 @@ namespace Net
 			}
 		}
 
+		void Base::AdjustWeights(const Eigen::MatrixXd& delta)
+		{
+			weights += delta;
+		}
+
 		Undirected::Undirected(Layer::Base& a, Layer::Base&  b) : Base(a, b)
 		{
 			a.Connect(*this);
