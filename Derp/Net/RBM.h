@@ -8,7 +8,9 @@ namespace Net
 	{
 	public:
 		RBM(size_t visible, size_t hidden);
-		void OutputProbability();
+		void SetProbabilistic();
+		void SetStochastic();
+		Data::Output ComputeProbability(const Data::Input& input) const;
 		double FreeEnergy(const Data::Input& inputs) const;
 		Layer::Visible & visible;
 		Layer::Hidden& hidden;

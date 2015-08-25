@@ -10,9 +10,26 @@ namespace Net
 	{
 		Undirected(this->visible, this->hidden);
 	}
-	void RBM::OutputProbability()
+	void RBM::SetProbabilistic()
 	{
 		visible.ChangeFunction(Sigmoid());
+		hidden.ChangeFunction(Sigmoid());
+	}
+	void RBM::SetStochastic()
+	{
+		visible.ChangeFunction(Stochastic());
+		hidden.ChangeFunction(Stochastic());
+	}
+
+	Data::Output RBM::ComputeProbability(const Data::Input& input) const
+	{
+		assert(dynamic_cast<const Stochastic*>(&visible.GetFunction())!=nullptr);
+		visible.ChangeFunction(Sigmoid());
+		Data::Inputs inputs;
+		inputs.push_back(input);
+		Data::Outputs outputs = Computation(*this, inputs)();
+		visible.ChangeFunction(Stochastic());
+		return outputs[0];
 	}
 
 	namespace Learning
@@ -29,25 +46,41 @@ namespace Net
 		{
 			State state(network);
 			RBM& rbm = static_cast<RBM&>(network);
+
+			// first step: activate hidden with data and compute positive correlation
 			Activity activity = state.Input(sample.inputs);
-			Eigen::VectorXd visibleActivation = activity[rbm.visible];
 			state.Apply(activity);
+			Eigen::VectorXd visibleActivation = activity[rbm.visible];
+
 			activity = state.Step();
-			Eigen::VectorXd hiddenActivation = activity[rbm.hidden];
-			Eigen::MatrixXd positive = visibleActivation.transpose() * hiddenActivation;
-			Eigen::VectorXd reconstructedActivation;
-			for (unsigned i = 0; i < n; ++i)
+			state.Apply(activity);
+			Eigen::VectorXd hiddenInitialActivation = activity[rbm.hidden];
+			Eigen::MatrixXd positive = hiddenInitialActivation * visibleActivation.transpose();
+
+			// Gibs sampling for CDn, n>1
+			for (unsigned i = 0; i < n-1; ++i)
 			{	
-				state.Apply(activity);
 				activity = state.Reconstruct();
-				if (i==n-1)	// TODO, this is ugly, because state is weird
-					reconstructedActivation = activity[rbm.visible];
 				state.Apply(activity);
 				activity = state.Step();
+				state.Apply(activity);
 			}
+			// Last step, hidden and output can both use probability
+			assert(dynamic_cast<const Stochastic*>(&rbm.visible.GetFunction())!=nullptr);
+			assert(dynamic_cast<const Stochastic*>(&rbm.hidden.GetFunction())!=nullptr);
+
+			rbm.SetProbabilistic();
+			activity = state.Reconstruct();
+			state.Apply(activity);
+			Eigen::VectorXd reconstructedActivation = activity[rbm.visible];
+
+			activity = state.Step();
+			state.Apply(activity);
 			Eigen::VectorXd hiddenFinalActivation = activity[rbm.hidden];
 
-			Eigen::MatrixXd negative = reconstructedActivation.transpose() * hiddenFinalActivation;
+			rbm.SetStochastic();
+
+			Eigen::MatrixXd negative = hiddenFinalActivation * reconstructedActivation.transpose();
 			Eigen::MatrixXd learningSignal = positive - negative;
 			learningSignal *= weightRate;
 			rbm.visible[0].AdjustWeights(learningSignal);
@@ -56,7 +89,7 @@ namespace Net
 			visibleBiasSignal *= biasRate;
 			rbm.visible.AdjustBias(visibleBiasSignal);
 
-			Eigen::VectorXd hiddenBiasSignal = hiddenActivation - hiddenFinalActivation;
+			Eigen::VectorXd hiddenBiasSignal = hiddenInitialActivation - hiddenFinalActivation;
 			hiddenBiasSignal *= biasRate;
 			rbm.hidden.AdjustBias(hiddenBiasSignal);
 		}

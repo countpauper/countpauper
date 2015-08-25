@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE(Reconstruct)
 
 	Net::Data::Inputs input;
 	input.push_back(Net::Data::Input(0, Eigen::VectorXd::Constant(1, 1)));
-	rbm.OutputProbability();
+	rbm.SetProbabilistic();
 	// doesnt matter what is put in, with 0 weights nothing comes out of hidden and 0 bias, always p=0.5
 	BOOST_CHECK_EQUAL(rbm(input)[0].activation.coeff(0), 0.5);
 }
