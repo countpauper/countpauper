@@ -84,4 +84,15 @@ namespace Net
 		return Computation(*this, inputs)();
 	}
 
+	double Network::MeanSquaredError(const Data::Set& data) const
+	{
+		double totalE = 0;
+		for (const auto& sample : data)
+		{
+			auto output = Compute(sample.inputs);
+			totalE += output.MeanSquaredError(sample.outputs); 
+		}
+		return totalE;
+	}
+
 }

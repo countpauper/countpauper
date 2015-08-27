@@ -30,16 +30,25 @@ namespace Net
 			Input(Layer::Id layer, const Eigen::VectorXd& activation);
 
 		};
-		typedef std::vector<Input> Inputs;
+		class Inputs : public std::vector <Input>
+		{
+	
+		};
 
 		class Output : public Base
 		{
 		public:
 			Output() = default;
 			Output(Layer::Id layer, const Eigen::VectorXd& activation);
+			double MeanSquaredError(const Output& other) const;
 		};
 
-		typedef std::vector<Output> Outputs;
+		class Outputs : public std::vector <Output>
+		{
+		public:
+			double MeanSquaredError(const Outputs& other) const;
+			const Output& operator[](Layer::Id id) const;
+		};
 
 		class Sample
 		{

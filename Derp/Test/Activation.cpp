@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(Compute)
 	stream >> sample;
 
 	Net::Data::Outputs result = net(sample.inputs);
-	BOOST_CHECK_EQUAL(result[0].activation, sample.outputs[0].activation);
+	BOOST_CHECK_EQUAL(result[1].activation, sample.outputs[1].activation);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

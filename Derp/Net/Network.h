@@ -34,6 +34,7 @@ namespace Net
 		Connection::Undirected& Undirected(Layer::Base& a, Layer::Base &b);
 		void Reset(double mean = 0, double sigma = 0);
 		Data::Outputs operator()(const Data::Inputs& inputs) const { return Compute(inputs); }
+		double MeanSquaredError(const Data::Set& data) const;
 	protected:
 		Data::Outputs Compute(const Data::Inputs& inputs) const;
 	private:

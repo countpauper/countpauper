@@ -32,6 +32,20 @@ namespace Net
 		return outputs[0];
 	}
 
+	double RBM::FreeEnergy(const Data::Input& input) const
+	{
+//		wx_b = T.dot(v_sample, self.W) + self.hbias
+//			vbias_term = T.dot(v_sample, self.vbias)
+//			hidden_term = T.sum(T.log(1 + T.exp(wx_b)), axis = 1)
+//			return -hidden_term - vbias_term;
+
+		// also see https://www.cs.toronto.edu/~hinton/absps/guideTR.pdf (25)
+		Eigen::VectorXd x = visible[0].GetWeights() *  input.activation + hidden.Bias();
+		Eigen::VectorXd::Scalar ViAi = input.activation.dot(visible.Bias());
+		Eigen::VectorXd hidden_term = x.unaryExpr([](const Eigen::VectorXd::Scalar& Xj) { return log(1 + exp(Xj));  });
+		return -hidden_term.sum() - ViAi;
+	}
+
 	namespace Learning
 	{
 		ContrastiveDivergence::ContrastiveDivergence(RBM& network, unsigned n) :
