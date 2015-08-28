@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <boost/test/unit_test.hpp>
 #include <strstream>
 #include <Eigen/Dense>

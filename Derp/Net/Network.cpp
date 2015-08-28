@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Network.h"
 #include "Math.h"
 #include "Connection.h"

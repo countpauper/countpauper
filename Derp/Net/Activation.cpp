@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <Eigen/Dense>
 #include <algorithm>
 #include "Activation.h"

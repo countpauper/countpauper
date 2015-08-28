@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "RBM.h"
 #include "Net.h"
 

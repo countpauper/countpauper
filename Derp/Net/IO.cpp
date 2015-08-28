@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <algorithm>
 #include <boost/format.hpp>
 #include "IO.h"

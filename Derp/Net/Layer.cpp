@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Layer.h"
 #include "Math.h"
 #include "Connection.h"

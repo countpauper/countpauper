@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Function.h"
 #include "Math.h"
 

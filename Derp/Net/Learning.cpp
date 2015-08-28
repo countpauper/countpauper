@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Learning.h"
 #include "Data.h"
 #include "RBM.h"
