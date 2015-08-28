@@ -5,7 +5,7 @@
 namespace Net
 {
 	namespace Layer { class Base; }
-	namespace Connection { class Base; }
+	namespace Connection { class Base;  }
 	namespace Data { class Base;  class Sample; class Set; }
 	class Network;
 

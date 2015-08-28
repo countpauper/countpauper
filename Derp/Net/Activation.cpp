@@ -90,9 +90,9 @@ Net::Activity State::Step() const
 		// TODO: following block should be in Activation, but it can't declare a list of activations to return
 		for (const auto& connection : activation.layer->GetConnections())
 		{
-			Eigen::VectorXd excitation = connection->GetWeights() * activation.activation + connection->B().Bias();
-			Eigen::VectorXd activationVector = connection->B().GetFunction()(excitation);
-			future.emplace_back(Activation(activation.generation + 1, connection->B(), activationVector));
+			Eigen::VectorXd excitation = connection.get().GetWeights() * activation.activation + connection.get().B().Bias();
+			Eigen::VectorXd activationVector = connection.get().B().GetFunction()(excitation);
+			future.emplace_back(Activation(activation.generation + 1, connection.get().B(), activationVector));
 		}
 		// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
 	}
@@ -107,9 +107,9 @@ Net::Activity State::Reconstruct() const
 		// TODO: following block should be in Activation, but it can't declare a list of activations to return
 		for (const auto& connection : activation.layer->GetReverseConnections())
 		{
-			Eigen::VectorXd excitation = connection->GetWeights().transpose() * activation.activation + connection->A().Bias();
-			Eigen::VectorXd activationVector = connection->A().GetFunction()(excitation);
-			future.emplace_back(Activation(activation.generation + 1, connection->A(), activationVector));
+			Eigen::VectorXd excitation = connection.get().GetWeights().transpose() * activation.activation + connection.get().A().Bias();
+			Eigen::VectorXd activationVector = connection.get().A().GetFunction()(excitation);
+			future.emplace_back(Activation(activation.generation + 1, connection.get().A(), activationVector));
 		}
 		// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
 	}

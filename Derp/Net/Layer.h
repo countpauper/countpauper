@@ -20,7 +20,7 @@ namespace Net
 		class Base
 		{
 		public:
-			typedef std::vector<Connection::Base*> Connections;
+			typedef std::vector<std::reference_wrapper<Connection::Base>> Connections;
 			Base();
 			Base(size_t units, const Function& function);
 			Base(const Base& other);
@@ -31,8 +31,8 @@ namespace Net
 			void AdjustBias(const Eigen::VectorXd& signal);
 			const Connections& GetConnections() const { return connections; }
 			const Connections& GetReverseConnections() const { return reverse_connections; }
-			const Connection::Base& operator[](unsigned index) const { return *connections[index]; }
-			Connection::Base& operator[](unsigned index) { return *connections[index]; }
+			const Connection::Base& operator[](unsigned index) const;
+			Connection::Base& operator[](unsigned index);
 			void Reset(double mean=0, double sigma=0);
 			const Function& GetFunction() const { return *function.get(); }
 			const Function& ChangeFunction(const Function& function);

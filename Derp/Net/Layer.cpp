@@ -29,11 +29,19 @@ namespace Net
 		void Base::Connect(Connection::Base& connection)
 		{
 			if (&connection.A() == this)
-				connections.push_back(&connection);
+				connections.push_back(connection);
 			else
-				reverse_connections.push_back(&connection);
+				reverse_connections.push_back(connection);
 		}
-
+		const Connection::Base& Base::operator[](unsigned index) const
+		{ 
+			return connections[index]; 
+		}
+		Connection::Base& Base::operator[](unsigned index)
+		{ 
+			return connections[index]; 
+		}
+		
 		size_t Base::Size() const
 		{
 			return units;
