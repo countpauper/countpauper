@@ -1,9 +1,11 @@
 #include "Layer.h"
 #include "Math.h"
 #include "Connection.h"
+#include "Function.h"
 
 namespace Net
 {
+	namespace Activation { class Function; }
 	namespace Layer
 	{
 		Base::Base() :
@@ -11,7 +13,7 @@ namespace Net
 		{
 		}
 
-		Base::Base(size_t units, const Function& function) :
+		Base::Base(size_t units, const Activation::Function& function) :
 			units(units),
 			bias(units),
 			function(function.Copy())
@@ -23,6 +25,10 @@ namespace Net
 			bias(other.bias),
 			function(other.function->Copy()),
 			connections()	// connections not RAII
+		{
+		}
+
+		Base::~Base()
 		{
 		}
 		void Base::Connect(Connection::Base& connection)
@@ -60,27 +66,27 @@ namespace Net
 			bias += signal;
 		}
 
-		const Function& Base::ChangeFunction(const Function& newFunction)
+		const Activation::Function& Base::ChangeFunction(const Activation::Function& newFunction)
 		{
 			function.reset(newFunction.Copy());
 			return GetFunction();
 		}
 		Input::Input(size_t units) :
-			Base(units, Net::Linear())
+			Base(units, Net::Activation::Linear())
 		{
 		}
 
-		Output::Output(size_t units, const Function& function) :
+		Output::Output(size_t units, const Activation::Function& function) :
 			Base(units, function)
 		{
 		}
 
-		Visible::Visible(size_t units, const Function& function) :
+		Visible::Visible(size_t units, const Activation::Function& function) :
 			Base(units, function)
 		{
 		}
 
-		Hidden::Hidden(size_t units, const Function& function) :
+		Hidden::Hidden(size_t units, const Activation::Function& function) :
 			Base(units, function)
 		{
 		}

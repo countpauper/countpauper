@@ -2,6 +2,8 @@
 #include "Math.h"
 #include "Connection.h"
 #include "Layer.h"
+#include "Activation.h"
+#include "Function.h"
 
 namespace Net
 {
@@ -11,19 +13,19 @@ namespace Net
 		return *static_cast<Layer::Input*>(layers.back().get());
 	}
 
-	Layer::Output& Network::Output(size_t units, const Function& function)
+	Layer::Output& Network::Output(size_t units, const Activation::Function& function)
 	{
 		layers.emplace_back(std::make_unique<Layer::Output>(units, function));
 		return static_cast<Layer::Output&>(*layers.back().get());
 	}
 
-	Layer::Visible& Network::Visible(size_t units, const Function& function)
+	Layer::Visible& Network::Visible(size_t units, const Activation::Function& function)
 	{
 		layers.emplace_back(std::make_unique<Layer::Visible>(units, function));
 		return static_cast<Layer::Visible&>(*layers.back().get());
 	}
 
-	Layer::Hidden& Network::Hidden(size_t units, const Function& function)
+	Layer::Hidden& Network::Hidden(size_t units, const Activation::Function& function)
 	{
 		layers.emplace_back(std::make_unique<Layer::Hidden>(units, function));
 		return static_cast<Layer::Hidden&>(*layers.back().get());
@@ -80,7 +82,7 @@ namespace Net
 
 	Data::Outputs Network::Compute(const Data::Inputs& inputs) const
 	{
-		return Computation(*this, inputs)();
+		return Activation::Computation(*this, inputs)();
 	}
 
 	double Network::MeanSquaredError(const Data::Set& data) const

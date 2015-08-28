@@ -1,13 +1,9 @@
 #pragma once
 #include <vector>
+#include "Net.h"
 
 namespace Net
 {
-	class Network;
-	class RBM;
-
-	namespace Data { class Sample; class Set;  }
-
 	namespace Learning
 	{
 		class Algorithm

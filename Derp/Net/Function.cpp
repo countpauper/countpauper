@@ -3,7 +3,8 @@
 
 namespace Net
 {
-
+namespace Activation
+{
 	Eigen::VectorXd Boolean::Activate(const Eigen::VectorXd& excitation) const
 	{
 		return excitation.unaryExpr([](double e) { return e > 0 ? 1.0 : 0.0; });
@@ -46,4 +47,5 @@ namespace Net
 	{
 		return new Sigmoid(*this);
 	}
+}
 }

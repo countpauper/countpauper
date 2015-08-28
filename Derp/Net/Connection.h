@@ -1,10 +1,10 @@
 #pragma once
 #include <Eigen/Dense>
+#include "Net.h"
 
 namespace Net
 {
-	namespace Layer { class Base; }
-	
+
 	namespace Connection
 	{
 		typedef unsigned Id;

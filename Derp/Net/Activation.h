@@ -1,21 +1,20 @@
 #pragma once
 #include <Eigen/Dense>
 #include <vector>
-#include "Data.h"
+#include "Net.h"
 
 namespace Net
 {
-	class Network;
-	namespace Layer { class Base; }
-
+namespace Activation
+{
 	class Activation
 	{
 	public:
 		typedef unsigned Generation;
 		Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& activation);
 		Activation& operator=(const Activation& other);
-		const Layer::Base& GetLayer() const { return *layer;  }
-		Eigen::VectorXd GetActivation() const { return activation;  }
+		const Layer::Base& GetLayer() const { return *layer; }
+		Eigen::VectorXd GetActivation() const { return activation; }
 	private:
 		friend class State;	// See TODO in State::Propagate
 		Generation generation;
@@ -57,4 +56,5 @@ namespace Net
 		Data::Outputs operator()() const { return Output(); }
 	};
 
+}
 }

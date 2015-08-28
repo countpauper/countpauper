@@ -1,8 +1,10 @@
 #pragma once
-
 #include <Eigen/Dense>
+#include "Net.h"
 
 namespace Net
+{
+namespace Activation
 {
 	class Function
 	{
@@ -41,4 +43,5 @@ namespace Net
 		virtual Eigen::VectorXd Activate(const Eigen::VectorXd& excitation) const;
 		virtual Function* Copy() const;
 	};
+}
 }

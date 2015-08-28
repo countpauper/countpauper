@@ -1,33 +1,35 @@
 #include "RBM.h"
 #include "Net.h"
+#include "Function.h"
+#include "Activation.h"
 
 namespace Net
 {
 	RBM::RBM(size_t visible, size_t hidden) :
-		visible(Visible(visible, Stochastic())),
-		hidden(Hidden(hidden, Stochastic()))
+		visible(Visible(visible, Activation::Stochastic())),
+		hidden(Hidden(hidden, Activation::Stochastic()))
 	{
 		Undirected(this->visible, this->hidden);
 	}
 	void RBM::SetProbabilistic()
 	{
-		visible.ChangeFunction(Sigmoid());
-		hidden.ChangeFunction(Sigmoid());
+		visible.ChangeFunction(Activation::Sigmoid());
+		hidden.ChangeFunction(Activation::Sigmoid());
 	}
 	void RBM::SetStochastic()
 	{
-		visible.ChangeFunction(Stochastic());
-		hidden.ChangeFunction(Stochastic());
+		visible.ChangeFunction(Activation::Stochastic());
+		hidden.ChangeFunction(Activation::Stochastic());
 	}
 
 	Data::Output RBM::ComputeProbability(const Data::Input& input) const
 	{
-		assert(dynamic_cast<const Stochastic*>(&visible.GetFunction())!=nullptr);
-		visible.ChangeFunction(Sigmoid());
+		assert(dynamic_cast<const Activation::Stochastic*>(&visible.GetFunction()) != nullptr);
+		visible.ChangeFunction(Activation::Sigmoid());
 		Data::Inputs inputs;
 		inputs.push_back(input);
-		Data::Outputs outputs = Computation(*this, inputs)();
-		visible.ChangeFunction(Stochastic());
+		Data::Outputs outputs = Activation::Computation(*this, inputs)();
+		visible.ChangeFunction(Activation::Stochastic());
 		return outputs[0];
 	}
 
@@ -57,11 +59,11 @@ namespace Net
 		
 		void ContrastiveDivergence::Learn(const Data::Sample& sample)
 		{
-			State state(network);
+			Activation::State state(network);
 			RBM& rbm = static_cast<RBM&>(network);
 
 			// first step: activate hidden with data and compute positive correlation
-			Activity activity = state.Input(sample.inputs);
+			Activation::Activity activity = state.Input(sample.inputs);
 			state.Apply(activity);
 			Eigen::VectorXd visibleActivation = activity[rbm.visible];
 
@@ -79,8 +81,8 @@ namespace Net
 				state.Apply(activity);
 			}
 			// Last step, hidden and output can both use probability
-			assert(dynamic_cast<const Stochastic*>(&rbm.visible.GetFunction())!=nullptr);
-			assert(dynamic_cast<const Stochastic*>(&rbm.hidden.GetFunction())!=nullptr);
+			assert(dynamic_cast<const Activation::Stochastic*>(&rbm.visible.GetFunction())!=nullptr);
+			assert(dynamic_cast<const Activation::Stochastic*>(&rbm.hidden.GetFunction()) != nullptr);
 
 			rbm.SetProbabilistic();
 			activity = state.Reconstruct();

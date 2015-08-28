@@ -1,11 +1,10 @@
 #pragma once
 #include <Eigen/Dense>
 #include <vector>
+#include "Net.h"
 
 namespace Net
 {
-	namespace Layer { typedef unsigned Id; }
-
 	namespace Data
 	{
 		// TODO: Inputs/Outputs is std::map<Layer::Id, Eigen::VectorXd>

@@ -3,7 +3,6 @@
 #include "IO.h"
 #include "MatrixIO.h"
 #include "Net.h"
-#include "Data.h"
 
 namespace Net
 {
@@ -38,18 +37,18 @@ namespace Net
 			return classname(*obj);
 	}
 
-	std::unique_ptr<Function> FunctionFactory(const std::string& typeName)
+	std::unique_ptr<Activation::Function> FunctionFactory(const std::string& typeName)
 	{
 		if (typeName == "null")
 			return nullptr;
-		if (typeName == "Net::Boolean")
-			return std::make_unique<Boolean>();
-		else if (typeName == "Net::Linear")
-			return std::make_unique<Linear>();
-		else if (typeName == "Net::Sigmoid")
-			return std::make_unique<Sigmoid>();
-		else if (typeName == "Net::Stochastic")
-			return std::make_unique<Stochastic>();
+		if (typeName == "Net::Activation::Boolean")
+			return std::make_unique<Activation::Boolean>();
+		else if (typeName == "Net::Activation::Linear")
+			return std::make_unique<Activation::Linear>();
+		else if (typeName == "Net::Activation::Sigmoid")
+			return std::make_unique<Activation::Sigmoid>();
+		else if (typeName == "Net::Activation::Stochastic")
+			return std::make_unique<Activation::Stochastic>();
 		else
 			throw std::domain_error((boost::format("Syntax error, unknown activation function = '%s'.") % typeName).str());
 	}

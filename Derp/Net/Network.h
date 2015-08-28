@@ -4,15 +4,10 @@
 #include <vector>
 #include <memory>
 
-#include "Data.h"
+#include "Net.h"
 
 namespace Net
 {
-	namespace Layer { class Base; class Input; class Output; class Hidden; class Visible; typedef unsigned Id;  }
-	namespace Connection {class Base;	class Directed;  class Undirected; class Recurrent; }
-	class Network;
-	class Function;
-
 	class Network
 	{
 	public:
@@ -27,9 +22,9 @@ namespace Net
 		LayerIds GetInputs() const;
 
 		Layer::Input& Input(size_t units);
-		Layer::Output& Output(size_t units, const Function& function);
-		Layer::Visible& Visible(size_t units, const Function& function);
-		Layer::Hidden& Hidden(size_t units, const Function& function);
+		Layer::Output& Output(size_t units, const Activation::Function& function);
+		Layer::Visible& Visible(size_t units, const Activation::Function& function);
+		Layer::Hidden& Hidden(size_t units, const Activation::Function& function);
 		Connection::Directed& Directed(Layer::Base& a, Layer::Base &b);
 		Connection::Undirected& Undirected(Layer::Base& a, Layer::Base &b);
 		void Reset(double mean = 0, double sigma = 0);

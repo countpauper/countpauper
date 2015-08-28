@@ -1,18 +1,12 @@
 #pragma once
-
 #include <Eigen/Dense>
 #include <vector>
 #include <memory>
+#include "Net.h"
 
-#include "Activation.h"
-#include "Function.h"
 
 namespace Net
 {
-	namespace Connection
-	{
-		class Base;
-	}
 	namespace Layer
 	{
 		typedef unsigned Id;
@@ -22,9 +16,9 @@ namespace Net
 		public:
 			typedef std::vector<std::reference_wrapper<Connection::Base>> Connections;
 			Base();
-			Base(size_t units, const Function& function);
+			Base(size_t units, const Activation::Function& function);
 			Base(const Base& other);
-			virtual ~Base() = default;
+			virtual ~Base();
 			void Connect(Connection::Base& connection);
 			size_t Size() const;
 			const Eigen::VectorXd& Bias() const { return bias; }
@@ -34,15 +28,15 @@ namespace Net
 			const Connection::Base& operator[](unsigned index) const;
 			Connection::Base& operator[](unsigned index);
 			void Reset(double mean=0, double sigma=0);
-			const Function& GetFunction() const { return *function.get(); }
-			const Function& ChangeFunction(const Function& function);
+			const Activation::Function& GetFunction() const { return *function.get(); }
+			const Activation::Function& ChangeFunction(const Activation::Function& function);
 			virtual bool IsInput() const = 0;
 			virtual bool IsOutput() const = 0;
 		private:
 			size_t units;
 			Connections connections;
 			Connections reverse_connections;
-			std::unique_ptr<Function> function;
+			std::unique_ptr<Activation::Function> function;
 			Eigen::VectorXd bias;
 
 			friend std::ostream& operator<< (std::ostream& stream, const Net::Layer::Base& layer);
@@ -62,7 +56,7 @@ namespace Net
 		{
 		public:
 			Output() = default;
-			Output(size_t units, const Function& function);
+			Output(size_t units, const Activation::Function& function);
 			virtual bool IsInput() const { return false; }
 			virtual bool IsOutput() const { return true; }
 		};
@@ -71,7 +65,7 @@ namespace Net
 		{
 		public:
 			Visible() = default;
-			Visible(size_t units, const Function& function);
+			Visible(size_t units, const Activation::Function& function);
 			virtual bool IsInput() const { return true; }
 			virtual bool IsOutput() const { return true; }
 		};
@@ -80,7 +74,7 @@ namespace Net
 		{
 		public:
 			Hidden() = default;
-			Hidden(size_t units, const Function& function);
+			Hidden(size_t units, const Activation::Function& function);
 			virtual bool IsInput() const { return false; }
 			virtual bool IsOutput() const { return false; }
 		};

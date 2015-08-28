@@ -9,7 +9,7 @@ BOOST_AUTO_TEST_SUITE(Activation);
 BOOST_AUTO_TEST_CASE(Input)
 {
 	Net::Network net;
-	net.Visible(2, Net::Linear());
+	net.Visible(2, Net::Activation::Linear());
 	net.Reset();
 
 	std::stringstream stream("1 1 0 1 0 2 1 2");
@@ -24,17 +24,17 @@ BOOST_AUTO_TEST_CASE(Compute)
 {
 	Net::Network net;
 	Net::Layer::Base& input = net.Input(2);
-	Net::Layer::Base& output = net.Output(1, Net::Linear());
+	Net::Layer::Base& output = net.Output(1, Net::Activation::Linear());
 	net.Directed(input, output);
 	input[0].Reset(1);
 	output.Reset();
 
-	std::stringstream stream("1 1 1 1 0 2 1 2 1 1 1 3");
+	std::stringstream stream("1 1 1\n1 0 2 1 2\n1 1 1 3");
 	Net::Data::Sample sample;
 	stream >> sample;
 
 	Net::Data::Outputs result = net(sample.inputs);
-	BOOST_CHECK_EQUAL(result[0].activation, sample.outputs[0].activation);
+	BOOST_CHECK_EQUAL(result[1].activation, sample.outputs[1].activation);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
