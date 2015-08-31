@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE(CD1)
 	rbm.Reset();
 	Net::Learning::ContrastiveDivergence cd1(rbm);
 	Net::Data::Set data;
-	std::stringstream("1 1\n1 1 1\n1 0 1 1\n1 0 1 1") >> data;
+	std::stringstream("1 1\n1 1 1\n0 1 1 1\n0 1 1 1") >> data;
 	for (unsigned i = 0; i < 1000; ++i)
 	{
 		Eigen::VectorXd p0 = rbm.ComputeProbability(data[0].inputs[0]).activation;
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(CD1_2)
 	rbm.Reset();
 	Net::Learning::ContrastiveDivergence cd1(rbm);
 	Net::Data::Set data;
-	std::stringstream("1 1\n1 1 1\n1 0 2 0 1\n1 0 2 0 1") >> data;
+	std::stringstream("1 1\n1 1 1\n0 1 2 0 1\n0 1 2 0 1") >> data;
 	for (unsigned i = 0; i < 1000; ++i)
 	{
 		Eigen::VectorXd p0 = rbm.ComputeProbability(data[0].inputs[0]).activation;

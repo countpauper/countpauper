@@ -45,7 +45,7 @@ namespace Activation
 		Activity future;
 		size_t pos = 0;
 		for (const auto& input : inputs)
-			future.emplace_back(Activation(0, network[input.layer], input.activation));
+			future.emplace_back(Activation(0, network[input.first], input.second.activation));
 		return future;
 	}
 
@@ -131,7 +131,7 @@ namespace Activation
 		Data::Outputs output;
 		for (const auto& outputId : network.GetOutputs())
 		{
-			output.emplace_back(Data::Output(outputId, GetActivation(network[outputId])));
+			output.insert(std::make_pair(outputId, Data::Output(GetActivation(network[outputId]))));
 		}
 		return output;
 	}

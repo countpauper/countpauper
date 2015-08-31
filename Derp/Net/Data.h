@@ -1,21 +1,19 @@
 #pragma once
 #include <Eigen/Dense>
-#include <vector>
+#include <map>
 #include "Net.h"
 
 namespace Net
 {
 	namespace Data
 	{
-		// TODO: Inputs/Outputs is std::map<Layer::Id, Eigen::VectorXd>
 		class Base
 		{
 		protected:
-			Base(Layer::Id layer, const Eigen::VectorXd& activation);
+			Base(const Eigen::VectorXd& activation);
 			Base() = default;
 		public:
 			virtual ~Base() = default;
-			Layer::Id layer;
 			Eigen::VectorXd activation;
 
 			friend std::ostream& operator<< (std::ostream& stream, const Base& layer);
@@ -26,10 +24,10 @@ namespace Net
 		{
 		public:
 			Input() = default;
-			Input(Layer::Id layer, const Eigen::VectorXd& activation);
+			Input(const Eigen::VectorXd& activation);
 
 		};
-		class Inputs : public std::vector <Input>
+		class Inputs : public std::map<Layer::Id, Input>
 		{
 	
 		};
@@ -38,15 +36,14 @@ namespace Net
 		{
 		public:
 			Output() = default;
-			Output(Layer::Id layer, const Eigen::VectorXd& activation);
+			Output(const Eigen::VectorXd& activation);
 			double MeanSquaredError(const Output& other) const;
 		};
 
-		class Outputs : public std::vector <Output>
+		class Outputs : public std::map<Layer::Id, Output>
 		{
 		public:
 			double MeanSquaredError(const Outputs& other) const;
-			const Output& operator[](Layer::Id id) const;
 		};
 
 		class Sample

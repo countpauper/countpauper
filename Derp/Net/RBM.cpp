@@ -27,7 +27,7 @@ namespace Net
 		assert(dynamic_cast<const Activation::Stochastic*>(&visible.GetFunction()) != nullptr);
 		visible.ChangeFunction(Activation::Sigmoid());
 		Data::Inputs inputs;
-		inputs.push_back(input);
+		inputs.insert(std::make_pair(GetInputs()[0], input));
 		Data::Outputs outputs = Activation::Computation(*this, inputs)();
 		visible.ChangeFunction(Activation::Stochastic());
 		return outputs[0];

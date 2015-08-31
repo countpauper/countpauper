@@ -187,7 +187,7 @@ namespace Net
 	{
 		std::ostream& operator<< (std::ostream& stream, const Base& data)
 		{
-			stream << data_version << separator << data.layer << separator << data.activation.size() << separator;
+			stream << data_version << separator << data.activation.size() << separator;
 			stream << data.activation << std::endl;
 			return stream;
 		}
@@ -197,10 +197,8 @@ namespace Net
 			stream >> v;
 			if (v >= 1)
 			{
-				unsigned id;
 				size_t size;
-				stream >> id >> size;
-				data.layer = Layer::Id(id);
+				stream >> size;
 				data.activation.resize(size);
 				stream >> data.activation;
 			}
@@ -210,9 +208,9 @@ namespace Net
 		{
 			stream << sample_version << separator << sample.inputs.size() << separator << sample.outputs.size() << std::endl;
 			for (const auto& input : sample.inputs)
-				stream << input;
+				stream << input.first << separator << input.second;
 			for (const auto& output : sample.outputs)
-				stream << output;
+				stream << output.first << separator << output.second;
 			return stream;
 		}
 
@@ -224,12 +222,20 @@ namespace Net
 			{
 				size_t inputs, outputs;
 				stream >> inputs >> outputs;
-				sample.inputs.resize(inputs);
-				for (auto& input : sample.inputs)
-					stream >> input;
-				sample.outputs.resize(outputs);
-				for (auto& output : sample.outputs)
-					stream >> output;
+				for (unsigned i = 0; i < inputs; ++i)
+				{
+					Layer::Id id;
+					Input input;
+					stream >> id >> input;
+					sample.inputs.insert(std::make_pair(id, input));
+				}
+				for (unsigned i = 0; i < outputs; ++i)
+				{
+					Layer::Id id;
+					Output output;
+					stream >> id >> output;
+					sample.outputs.insert(std::make_pair(id, output));
+				}
 			}
 			return stream;
 		}

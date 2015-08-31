@@ -5,17 +5,16 @@ namespace Net
 	namespace Data
 	{
 
-		Base::Base(Layer::Id layer, const Eigen::VectorXd& activation) :
-			layer(layer),
+		Base::Base( const Eigen::VectorXd& activation) :
 			activation(activation)
 		{
 		}
-		Input::Input(Layer::Id layer, const Eigen::VectorXd& activation) :
-			Base(layer, activation)
+		Input::Input(const Eigen::VectorXd& activation) :
+			Base(activation)
 		{
 		}
-		Output::Output(Layer::Id layer, const Eigen::VectorXd& activation) :
-			Base(layer, activation)
+		Output::Output(const Eigen::VectorXd& activation) :
+			Base(activation)
 		{
 		}
 
@@ -28,19 +27,9 @@ namespace Net
 		{
 			double totalE = 0;
 			for (const auto& output : *this)
-				totalE += output.MeanSquaredError(other[output.layer]);
+				totalE += output.second.MeanSquaredError(other.at(output.first));
 			return totalE;
 		}
-
-		const Output& Outputs::operator[](Layer::Id id) const
-		{
-			const_iterator it = std::find_if(cbegin(), cend(), [id](const Output& output){ return output.layer == id;  });
-			if (it != end())
-				return *it;
-			else
-				throw std::out_of_range("Output not found");
-		}
-
 
 		Sample::Sample(const Inputs& inputs, const Outputs& outputs) :
 			inputs(inputs),

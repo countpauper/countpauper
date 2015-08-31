@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_CASE(Input)
 	net.Visible(2, Net::Activation::Linear());
 	net.Reset();
 
-	std::stringstream stream("1 1 0 1 0 2 1 2");
+	std::stringstream stream("1 1 0\n0 1 2 1 2");
 	Net::Data::Sample sample;
 	stream >> sample;
 
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(Compute)
 	input[0].Reset(1);
 	output.Reset();
 
-	std::stringstream stream("1 1 1\n1 0 2 1 2\n1 1 1 3");
+	std::stringstream stream("1 1 1\n0 1 2 1 2\n1 1 1 3");
 	Net::Data::Sample sample;
 	stream >> sample;
 
