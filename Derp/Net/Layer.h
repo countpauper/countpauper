@@ -21,10 +21,6 @@ namespace Net
 			virtual ~Base();
 			void Connect(Connection::Base& connection);
 			size_t Size() const;
-			const Eigen::VectorXd& Bias() const { return bias; }
-			void AdjustBias(const Eigen::VectorXd& signal);
-			const Connections& GetConnections() const { return connections; }
-			const Connections& GetReverseConnections() const { return reverse_connections; }
 			const Connection::Base& operator[](unsigned index) const;
 			Connection::Base& operator[](unsigned index);
 			void Reset(double mean=0, double sigma=0);
@@ -32,12 +28,12 @@ namespace Net
 			const Activation::Function& ChangeFunction(const Activation::Function& function);
 			virtual bool IsInput() const = 0;
 			virtual bool IsOutput() const = 0;
-		private:
-			size_t units;
+		public:
+			Eigen::VectorXd bias;
 			Connections connections;
 			Connections reverse_connections;
+		private:
 			std::unique_ptr<Activation::Function> function;
-			Eigen::VectorXd bias;
 
 			friend std::ostream& operator<< (std::ostream& stream, const Net::Layer::Base& layer);
 			friend std::istream& operator>> (std::istream& stream, Net::Layer::Base& layer);

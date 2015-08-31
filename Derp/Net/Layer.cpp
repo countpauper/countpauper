@@ -8,20 +8,17 @@ namespace Net
 	namespace Activation { class Function; }
 	namespace Layer
 	{
-		Base::Base() :
-			units(0)
+		Base::Base()
 		{
 		}
 
 		Base::Base(size_t units, const Activation::Function& function) :
-			units(units),
 			bias(units),
 			function(function.Copy())
 		{
 		}
 
 		Base::Base(const Base& other) :
-			units(other.units),
 			bias(other.bias),
 			function(other.function->Copy()),
 			connections()	// connections not RAII
@@ -31,9 +28,10 @@ namespace Net
 		Base::~Base()
 		{
 		}
+
 		void Base::Connect(Connection::Base& connection)
 		{
-			if (&connection.A() == this)
+			if (&connection.a == this)
 				connections.push_back(connection);
 			else
 				reverse_connections.push_back(connection);
@@ -49,7 +47,7 @@ namespace Net
 		
 		size_t Base::Size() const
 		{
-			return units;
+			return bias.size();
 		}
 
 		void Base::Reset(double mean, double sigma)
@@ -59,11 +57,6 @@ namespace Net
 			{
 				bias = bias.binaryExpr(Eigen::VectorXd::Constant(bias.size(), sigma), std::ptr_fun(normal_noise));
 			}
-		}
-
-		void Base::AdjustBias(const Eigen::VectorXd& signal)
-		{
-			bias += signal;
 		}
 
 		const Activation::Function& Base::ChangeFunction(const Activation::Function& newFunction)

@@ -52,7 +52,7 @@ namespace Activation
 	bool Activity::CanGoForward() const
 	{
 		for (const auto& activation : *this)
-			if (!activation.GetLayer().GetConnections().empty())
+			if (!activation.GetLayer().connections.empty())
 				return true;
 		return false;
 	}
@@ -60,7 +60,7 @@ namespace Activation
 	bool Activity::CanGoBackward() const
 	{
 		for (const auto& activation : *this)
-			if (!activation.GetLayer().GetReverseConnections().empty())
+			if (!activation.GetLayer().reverse_connections.empty())
 				return true;
 		return false;
 	}
@@ -88,11 +88,11 @@ namespace Activation
 		for (const auto& activation : activity)
 		{
 			// TODO: following block should be in Activation, but it can't declare a list of activations to return
-			for (const auto& connection : activation.layer->GetConnections())
+			for (const auto& connection : activation.layer->connections)
 			{
-				Eigen::VectorXd excitation = connection.get().GetWeights() * activation.activation + connection.get().B().Bias();
-				Eigen::VectorXd activationVector = connection.get().B().GetFunction()(excitation);
-				future.emplace_back(Activation(activation.generation + 1, connection.get().B(), activationVector));
+				Eigen::VectorXd excitation = connection.get().weights * activation.activation + connection.get().b.bias;
+				Eigen::VectorXd activationVector = connection.get().b.GetFunction()(excitation);
+				future.emplace_back(Activation(activation.generation + 1, connection.get().b, activationVector));
 			}
 			// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
 		}
@@ -105,11 +105,11 @@ namespace Activation
 		for (const auto& activation : activity)
 		{
 			// TODO: following block should be in Activation, but it can't declare a list of activations to return
-			for (const auto& connection : activation.layer->GetReverseConnections())
+			for (const auto& connection : activation.layer->reverse_connections)
 			{
-				Eigen::VectorXd excitation = connection.get().GetWeights().transpose() * activation.activation + connection.get().A().Bias();
-				Eigen::VectorXd activationVector = connection.get().A().GetFunction()(excitation);
-				future.emplace_back(Activation(activation.generation + 1, connection.get().A(), activationVector));
+				Eigen::VectorXd excitation = connection.get().weights.transpose() * activation.activation + connection.get().a.bias;
+				Eigen::VectorXd activationVector = connection.get().a.GetFunction()(excitation);
+				future.emplace_back(Activation(activation.generation + 1, connection.get().a, activationVector));
 			}
 			// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
 		}

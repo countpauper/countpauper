@@ -58,7 +58,7 @@ namespace Net
 		std::ostream& operator<< (std::ostream& stream, const Base& layer)
 		{
 			stream << layer_version << separator;
-			stream << layer.units << " ";
+			stream << layer.Size() << " ";
 			stream << classname_ptr(layer.function.get()) << std::endl;
 			stream << layer.bias.transpose() << std::endl;
 			return stream;
@@ -72,9 +72,10 @@ namespace Net
 			if (v >= 1)
 			{
 				std::string functionName;
-				stream >> layer.units >> functionName;
+				size_t units;
+				stream >> units >> functionName;
 				layer.function = std::move(FunctionFactory(functionName));
-				layer.bias = Eigen::VectorXd(layer.Size());
+				layer.bias = Eigen::VectorXd(units);
 				stream >> layer.bias;
 			}
 
@@ -121,8 +122,8 @@ namespace Net
 		for (auto connectionIt = network.connections.begin(); connectionIt != network.connections.end(); ++connectionIt)
 		{
 			const Connection::Base& connection = *connectionIt->get();
-			Layer::Id a = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer::Base>& ptr){ return CompareUniquePtr(ptr, connection.A()); }) - network.layers.begin();
-			Layer::Id b = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer::Base>& ptr){ return CompareUniquePtr(ptr, connection.B()); }) - network.layers.begin();
+			Layer::Id a = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer::Base>& ptr){ return CompareUniquePtr(ptr, connection.a); }) - network.layers.begin();
+			Layer::Id b = std::find_if(network.layers.begin(), network.layers.end(), [connection](const std::unique_ptr<Layer::Base>& ptr){ return CompareUniquePtr(ptr, connection.b); }) - network.layers.begin();
 			stream << connectionIt - network.connections.begin() << separator << classname(connection) << separator << a << separator << b << separator;
 			stream << connection;
 		}

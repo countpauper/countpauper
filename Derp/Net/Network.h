@@ -15,12 +15,14 @@ namespace Net
 		typedef std::vector<std::unique_ptr<Connection::Base>> Connections;
 		typedef std::vector<Layer::Id> LayerIds;
 
-		const Layers& GetLayers() const;
+		// Structure
+		size_t Size() const;
 		const Layer::Base& operator[](Layer::Id id) const { return *layers[id].get(); }
 		Layer::Base& operator[](Layer::Id id) { return *layers[id].get(); }
 		LayerIds GetOutputs() const;
 		LayerIds GetInputs() const;
-
+		
+		// Construction, TODO: redesign interface with some operator Network << Layer() << COnnection() << Layer()
 		Layer::Input& Input(size_t units);
 		Layer::Output& Output(size_t units, const Activation::Function& function);
 		Layer::Visible& Visible(size_t units, const Activation::Function& function);
@@ -28,6 +30,8 @@ namespace Net
 		Connection::Directed& Directed(Layer::Base& a, Layer::Base &b);
 		Connection::Undirected& Undirected(Layer::Base& a, Layer::Base &b);
 		void Reset(double mean = 0, double sigma = 0);
+		
+		// Computation 
 		Data::Outputs operator()(const Data::Inputs& inputs) const { return Compute(inputs); }
 		double MeanSquaredError(const Data::Set& data) const;
 	protected:

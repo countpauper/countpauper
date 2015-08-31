@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(ReadEmpty)
 	stream >> net;
 	BOOST_REQUIRE(!stream.bad());
 	BOOST_REQUIRE(!stream.eof());
-	BOOST_CHECK_EQUAL(net.GetLayers().size(), 0);
+	BOOST_CHECK_EQUAL(net.Size(), 0);
 }
 
 BOOST_AUTO_TEST_CASE(WriteLayer)
@@ -47,11 +47,11 @@ BOOST_AUTO_TEST_CASE(ReadLayer)
 	stream >> net;
 	BOOST_REQUIRE(!stream.bad());
 	BOOST_REQUIRE(!stream.eof());
-	BOOST_REQUIRE_EQUAL(net.GetLayers().size(), 1);
-	BOOST_REQUIRE_EQUAL(net.GetLayers().front()->Size(), 2);
+	BOOST_REQUIRE_EQUAL(net.Size(), 1);
+	BOOST_REQUIRE_EQUAL(net[0].Size(), 2);
 	Eigen::Vector2d refBias;
 	refBias << 0.1, -0.2;
-	BOOST_CHECK_EQUAL(net.GetLayers().front()->Bias(), refBias);
+	BOOST_CHECK_EQUAL(net[0].bias, refBias);
 	BOOST_CHECK(dynamic_cast<Net::Layer::Input*>(&net[0]));
 	BOOST_CHECK(dynamic_cast<const Net::Activation::Linear*>(&net[0].GetFunction()));
 }
@@ -75,17 +75,17 @@ BOOST_AUTO_TEST_CASE(ReadConnection)
 	stream >> net;
 	BOOST_REQUIRE(!stream.bad());
 	BOOST_REQUIRE(!stream.eof());
-	BOOST_CHECK_EQUAL(net.GetLayers().size(), 2);
+	BOOST_CHECK_EQUAL(net.Size(), 2);
 	Eigen::Vector2d refBias;
 	refBias << 0.2, -0.3;
-	BOOST_CHECK_EQUAL(net[0].Bias(), refBias);
+	BOOST_CHECK_EQUAL(net[0].bias, refBias);
 	BOOST_CHECK(dynamic_cast<Net::Layer::Input*>(&net[0]));
 	BOOST_CHECK(dynamic_cast<const Net::Activation::Boolean*>(&net[0].GetFunction()));
 	refBias << -0.5, 0.9;
-	BOOST_CHECK_EQUAL(net[1].Bias(), refBias);
+	BOOST_CHECK_EQUAL(net[1].bias, refBias);
 	BOOST_CHECK(dynamic_cast<Net::Layer::Hidden*>(&net[1]));
 	BOOST_CHECK(dynamic_cast<const Net::Activation::Sigmoid*>(&net[1].GetFunction()));
-	BOOST_CHECK_EQUAL(net[0][0].GetWeights(), Eigen::Matrix2d().Zero());
+	BOOST_CHECK_EQUAL(net[0][0].weights, Eigen::Matrix2d().Zero());
 }
 
 BOOST_AUTO_TEST_CASE(ConnectionIndexException)

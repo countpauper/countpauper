@@ -41,8 +41,8 @@ namespace Net
 //			return -hidden_term - vbias_term;
 
 		// also see https://www.cs.toronto.edu/~hinton/absps/guideTR.pdf (25)
-		Eigen::VectorXd x = visible[0].GetWeights() *  input.activation + hidden.Bias();
-		Eigen::VectorXd::Scalar ViAi = input.activation.dot(visible.Bias());
+		Eigen::VectorXd x = visible[0].weights *  input.activation + hidden.bias;
+		Eigen::VectorXd::Scalar ViAi = input.activation.dot(visible.bias);
 		Eigen::VectorXd hidden_term = x.unaryExpr([](const Eigen::VectorXd::Scalar& Xj) { return log(1 + exp(Xj));  });
 		return -hidden_term.sum() - ViAi;
 	}
@@ -98,15 +98,15 @@ namespace Net
 			Eigen::MatrixXd negative = hiddenFinalActivation * reconstructedActivation.transpose();
 			Eigen::MatrixXd learningSignal = positive - negative;
 			learningSignal *= weightRate;
-			rbm.visible[0].AdjustWeights(learningSignal);
+			rbm.visible[0].weights += learningSignal;
 
 			Eigen::VectorXd visibleBiasSignal = visibleActivation - reconstructedActivation;
 			visibleBiasSignal *= biasRate;
-			rbm.visible.AdjustBias(visibleBiasSignal);
+			rbm.visible.bias += visibleBiasSignal;
 
 			Eigen::VectorXd hiddenBiasSignal = hiddenInitialActivation - hiddenFinalActivation;
 			hiddenBiasSignal *= biasRate;
-			rbm.hidden.AdjustBias(hiddenBiasSignal);
+			rbm.hidden.bias += hiddenBiasSignal;
 		}
 	}
 }

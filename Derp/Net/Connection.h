@@ -15,15 +15,12 @@ namespace Net
 			Base(const Layer::Base& a, const Layer::Base&  b);
 		public:
 			virtual ~Base();
-			const Layer::Base& A() const { return a; }
-			const Layer::Base& B() const { return b; }
-			const Eigen::MatrixXd& GetWeights() const { return weights; }
-			void AdjustWeights(const Eigen::MatrixXd& delta);
 			void Reset(double mean = 0, double sigma = 0);
-		private:
+		public:
 			const Layer::Base& a;
 			const Layer::Base& b;
 			Eigen::MatrixXd weights;
+		private:
 
 			friend std::ostream& operator<< (std::ostream& stream, const Base& connection);
 			friend std::istream& operator>> (std::istream& stream, Base& connection);
