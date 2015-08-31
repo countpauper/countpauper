@@ -40,9 +40,11 @@ namespace Net
 		Layers layers;
 		Connections connections;
 
+		static const IO::version version;
 		friend std::ostream& operator<< (std::ostream& stream, const Network& network);
 		friend std::istream& operator>> (std::istream& stream, Network& network);
 	};
 
-
+	std::ostream& operator<< (std::ostream& stream, const Network& network);
+	std::istream& operator>> (std::istream& stream, Network& network);
 }

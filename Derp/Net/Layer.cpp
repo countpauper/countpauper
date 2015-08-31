@@ -1,7 +1,9 @@
+#include <boost/format.hpp>
 #include "Layer.h"
 #include "Math.h"
 #include "Connection.h"
 #include "Function.h"
+#include "IO.h"
 
 namespace Net
 {
@@ -82,6 +84,53 @@ namespace Net
 		Hidden::Hidden(size_t units, const Activation::Function& function) :
 			Base(units, function)
 		{
+		}
+
+
+
+		const IO::version Base::version = 1;
+
+		std::unique_ptr<Activation::Function> FunctionFactory(const std::string& typeName)
+		{
+			if (typeName == "null")
+				return nullptr;
+			if (typeName == "Net::Activation::Boolean")
+				return std::make_unique<Activation::Boolean>();
+			else if (typeName == "Net::Activation::Linear")
+				return std::make_unique<Activation::Linear>();
+			else if (typeName == "Net::Activation::Sigmoid")
+				return std::make_unique<Activation::Sigmoid>();
+			else if (typeName == "Net::Activation::Stochastic")
+				return std::make_unique<Activation::Stochastic>();
+			else
+				throw std::domain_error((boost::format("Syntax error, unknown activation function = '%s'.") % typeName).str());
+		}
+
+		std::ostream& operator<< (std::ostream& stream, const Base& layer)
+		{
+			stream << layer.version << IO::separator;
+			stream << layer.Size() << IO::separator;
+			stream << IO::classname_ptr(layer.function.get()) << std::endl;
+			stream << layer.bias.transpose() << std::endl;
+			return stream;
+		}
+
+
+		std::istream& operator>> (std::istream& stream, Base& layer)
+		{
+			IO::version v;
+			stream >> v;
+			if (v >= 1)
+			{
+				std::string functionName;
+				size_t units;
+				stream >> units >> functionName;
+				layer.function = std::move(FunctionFactory(functionName));
+				layer.bias = Eigen::VectorXd(units);
+				stream >> layer.bias;
+			}
+
+			return stream;
 		}
 	}
 }

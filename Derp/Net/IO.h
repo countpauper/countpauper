@@ -1,32 +1,33 @@
 #pragma once
 #include <iostream>
-#include "Net.h"
+#include "MatrixIO.h"
 
 namespace Net
 {
-	class Network;
-
-	namespace Layer
+	namespace IO
 	{
-		std::ostream& operator<< (std::ostream& stream, const Base& layer);
-		std::istream& operator>> (std::istream& stream, Base& layer);
-	}
+		const char separator = ' ';
 
-	namespace Connection
-	{
-		std::ostream& operator<< (std::ostream& stream, const Base& connection);
-		std::istream& operator>> (std::istream& stream, Base& connection);
-	}
+		template<typename T> std::string classname(const T& obj)
+		{
+			std::string fullName = std::string(typeid(obj).name());
+			assert(fullName.substr(0, 6) == "class ");
+			return fullName.substr(6, std::string::npos);
+		}
 
-	namespace Data
-	{
-		std::ostream& operator<< (std::ostream& stream, const Base& data);
-		std::istream& operator>> (std::istream& stream, Base& data);
-		std::ostream& operator<< (std::ostream& stream, const Sample& sample);
-		std::istream& operator>> (std::istream& stream, Sample& sample);
-		std::ostream& operator<< (std::ostream& stream, const Set& sample);
-		std::istream& operator>> (std::istream& stream, Set& sample);
+		template<typename T> std::string classname_ptr(const T* obj)
+		{
+			if (!obj)
+				return "null";
+			else
+				return classname(*obj);
+		}
+
+		template<typename T>
+		bool CompareUniquePtr(const std::unique_ptr<T>& ptr, const T& ref)
+		{
+			return ptr.get() == &ref;
+		}
+
 	}
-	std::ostream& operator<< (std::ostream& stream, const Network& network);
-	std::istream& operator>> (std::istream& stream, Network& network);
 }

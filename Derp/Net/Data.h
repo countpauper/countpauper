@@ -16,6 +16,8 @@ namespace Net
 			virtual ~Base() = default;
 			Eigen::VectorXd activation;
 
+		private:
+			static const IO::version version;
 			friend std::ostream& operator<< (std::ostream& stream, const Base& layer);
 			friend std::istream& operator>> (std::istream& stream, Base& layer);
 		};
@@ -25,7 +27,6 @@ namespace Net
 		public:
 			Input() = default;
 			Input(const Eigen::VectorXd& activation);
-
 		};
 		class Inputs : public std::map<Layer::Id, Input>
 		{
@@ -54,6 +55,8 @@ namespace Net
 			Inputs inputs;
 			Outputs outputs;
 
+		private:
+			static const IO::version version;
 			friend std::ostream& operator<< (std::ostream& stream, const Sample& layer);
 			friend std::istream& operator>> (std::istream& stream, Sample& layer);
 		};
@@ -61,6 +64,18 @@ namespace Net
 		class Set : public std::vector<Sample>
 		{
 		public:
+		private:
+			static const IO::version version;
+			friend std::ostream& operator<< (std::ostream& stream, const Set& layer);
+			friend std::istream& operator>> (std::istream& stream, Set& layer);
 		};
+
+		std::ostream& operator<< (std::ostream& stream, const Base& data);
+		std::istream& operator>> (std::istream& stream, Base& data);
+		std::ostream& operator<< (std::ostream& stream, const Sample& sample);
+		std::istream& operator>> (std::istream& stream, Sample& sample);
+		std::ostream& operator<< (std::ostream& stream, const Set& sample);
+		std::istream& operator>> (std::istream& stream, Set& sample);
+
 	}
 }

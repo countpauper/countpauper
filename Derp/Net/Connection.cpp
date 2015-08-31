@@ -2,6 +2,7 @@
 #include "Network.h"
 #include "Layer.h"
 #include "Math.h"
+#include "IO.h"
 
 namespace Net
 {	
@@ -41,6 +42,29 @@ namespace Net
 		Recurrent::Recurrent(const Layer::Base& a, Layer::Base&  b) : Base(a, b)
 		{
 			b.Connect(*this);
+		}
+
+		const IO::version Base::version = 1;
+
+		std::ostream& operator<< (std::ostream& stream, const Base& connection)
+		{
+			stream << connection.version << std::endl;
+			stream << connection.weights << std::endl;
+
+			return stream;
+		}
+
+		std::istream& operator>> (std::istream& stream, Base& connection)
+		{
+			IO::version v;
+			stream >> v;
+			if (v >= 1)
+			{
+				connection.weights.resize(connection.a.Size(), connection.b.Size());
+				stream >> connection.weights;
+			}
+
+			return stream;
 		}
 	}
 }

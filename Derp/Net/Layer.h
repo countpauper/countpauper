@@ -35,6 +35,7 @@ namespace Net
 		private:
 			std::unique_ptr<Activation::Function> function;
 
+			static const IO::version version;
 			friend std::ostream& operator<< (std::ostream& stream, const Net::Layer::Base& layer);
 			friend std::istream& operator>> (std::istream& stream, Net::Layer::Base& layer);
 		};
@@ -74,5 +75,8 @@ namespace Net
 			virtual bool IsInput() const { return false; }
 			virtual bool IsOutput() const { return false; }
 		};
+
+		std::ostream& operator<< (std::ostream& stream, const Base& layer);
+		std::istream& operator>> (std::istream& stream, Base& layer);
 	}
 }

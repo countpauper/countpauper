@@ -73,9 +73,6 @@
     <ClCompile Include="Data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Learning.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

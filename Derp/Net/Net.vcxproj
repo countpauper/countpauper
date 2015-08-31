@@ -97,7 +97,6 @@
     <ClCompile Include="Learning.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Network.cpp" />
-    <ClCompile Include="IO.cpp" />
     <ClCompile Include="RBM.cpp" />
     <ClCompile Include="Data.cpp" />
   </ItemGroup>

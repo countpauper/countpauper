@@ -21,7 +21,7 @@ namespace Net
 			const Layer::Base& b;
 			Eigen::MatrixXd weights;
 		private:
-
+			static const IO::version version;
 			friend std::ostream& operator<< (std::ostream& stream, const Base& connection);
 			friend std::istream& operator>> (std::istream& stream, Base& connection);
 		};
@@ -43,5 +43,7 @@ namespace Net
 		public:
 			Recurrent(const Layer::Base& a, Layer::Base&  b);
 		};
+		std::ostream& operator<< (std::ostream& stream, const Base& connection);
+		std::istream& operator>> (std::istream& stream, Base& connection);
 	}
 }
