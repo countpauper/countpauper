@@ -7,19 +7,39 @@ namespace Net
 {
 	namespace Learning
 	{
+
+		Epochs::Epochs(unsigned n) :
+			n(n)
+		{
+		}
+
+		bool Epochs::Done(unsigned epoch) const 
+		{ 
+			return epoch >= n; 
+		}
+
+		Once::Once() : Epochs(1)
+		{
+		}
 		Algorithm::Algorithm(Network& network) :
 			network(network)
 		{
 		}
 
-		void Algorithm::Train(const Data::Set& samples)
+		void Algorithm::Train(const Data::Set& samples, StopCondition& stop)
 		{
-			// TODO: randomly until stop condition
+			// TODO: randomize samples per epoch
+			//	 other & multiple stop condition
 			//	different strategies with a target test Subset score
 			//	and an overfitting Subsset score
-			for (const auto& sample : samples)
+			unsigned epoch = 0;
+			while (!stop(epoch))
 			{
-				Learn(sample);
+				for (const auto& sample : samples)
+				{
+					Learn(sample);
+				}
+				++epoch;
 			}
 		}
 	}
