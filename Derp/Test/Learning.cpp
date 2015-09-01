@@ -9,7 +9,7 @@ BOOST_AUTO_TEST_SUITE(Learning);
 
 BOOST_AUTO_TEST_CASE(CD1)
 {
-	Net::RBM rbm(1, 1);
+	Net::BinaryRBM rbm(1, 1);
 	rbm.Reset();
 	Net::Learning::ContrastiveDivergence cd1(rbm);
 	Net::Data::Set data;
@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(CD1)
 
 BOOST_AUTO_TEST_CASE(CD1_2)
 {
-	Net::RBM rbm(2, 1);
+	Net::BinaryRBM rbm(2, 1);
 	rbm.Reset();
 	Net::Learning::ContrastiveDivergence cd1(rbm);
 	Net::Data::Set data;

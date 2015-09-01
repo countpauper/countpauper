@@ -27,4 +27,4 @@ serial creation of networks
 * Just make activation map. sample becomes input state & output state?
 	* Remove Activation::GetLayer()
 - Make sample type for belief networks, where input = output except for type 
-- rename RBM implementation to binary RBM specialization to make requirement for FreeEnergy and Contrastive Divergence clear
+* rename RBM implementation to binary RBM specialization to make requirement for FreeEnergy and Contrastive Divergence clear
