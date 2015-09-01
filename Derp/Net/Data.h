@@ -2,20 +2,19 @@
 #include <Eigen/Dense>
 #include <map>
 #include "Net.h"
+#include "Activation.h"
 
 namespace Net
 {
 	namespace Data
 	{
-		class Base
+		class Base : public Activation::Activation
 		{
 		protected:
 			Base(const Eigen::VectorXd& activation);
 			Base() = default;
 		public:
 			virtual ~Base() = default;
-			Eigen::VectorXd activation;
-
 		private:
 			static const IO::version version;
 			friend std::ostream& operator<< (std::ostream& stream, const Base& layer);

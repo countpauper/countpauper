@@ -88,6 +88,7 @@
     <ClInclude Include="RBM.h" />
     <ClInclude Include="Data.h" />
     <ClInclude Include="Net.h" />
+    <ClInclude Include="State.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Activation.cpp" />
@@ -99,6 +100,7 @@
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="RBM.cpp" />
     <ClCompile Include="Data.cpp" />
+    <ClCompile Include="State.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />

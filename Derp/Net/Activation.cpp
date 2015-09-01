@@ -8,7 +8,6 @@ namespace Net
 namespace Activation
 {
 	Activation::Activation(const Eigen::VectorXd& activation) :
-		// TODO, when merging, passing the excitation is not correct for input activation, still somehow need to remember probabilities
 		activation(activation)
 	{
 	}
@@ -21,7 +20,7 @@ namespace Activation
 
 	void Activity::Activate(const Layer::Base& layer, const Activation& activation)
 	{
-		if (layer.Size() != activation.GetActivation().size())
+		if (layer.Size() != activation.activation.size())
 			throw std::runtime_error("Layer::Base activated with incompatible state");
 		insert(std::make_pair(&layer, activation));
 
@@ -33,7 +32,7 @@ namespace Activation
 		if (it == end())
 			throw std::out_of_range("No activity for that layer");
 		else
-			return it->second.GetActivation();
+			return it->second.activation;
 	}
 
 	State::State(const Network& network) :

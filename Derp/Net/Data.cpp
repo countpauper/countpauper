@@ -7,9 +7,10 @@ namespace Net
 	{
 
 		Base::Base( const Eigen::VectorXd& activation) :
-			activation(activation)
+			Activation(activation)
 		{
 		}
+
 		Input::Input(const Eigen::VectorXd& activation) :
 			Base(activation)
 		{
