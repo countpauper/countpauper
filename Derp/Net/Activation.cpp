@@ -7,32 +7,33 @@ namespace Net
 {
 namespace Activation
 {
-	Activation::Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& activation) :
+	Activation::Activation(const Eigen::VectorXd& activation) :
 		// TODO, when merging, passing the excitation is not correct for input activation, still somehow need to remember probabilities
-		generation(generation),
-		layer(&layer),
 		activation(activation)
 	{
-		if (layer.Size() != activation.size())
-			throw std::runtime_error("Layer::Base activated with incompatible state");
 	}
 
 	Activation& Activation::operator=(const Activation& other)
 	{
-		generation = other.generation;
-		layer = other.layer;
 		activation = other.activation;
 		return *this;
 	}
 
+	void Activity::Activate(const Layer::Base& layer, const Activation& activation)
+	{
+		if (layer.Size() != activation.GetActivation().size())
+			throw std::runtime_error("Layer::Base activated with incompatible state");
+		insert(std::make_pair(&layer, activation));
+
+	}
 
 	Eigen::VectorXd Activity::GetActivation(const Layer::Base& layer) const
 	{
-		const_iterator it = std::find_if(cbegin(), cend(), [&layer](const Activation& activation){ return &activation.GetLayer() == &layer;  });
+		const_iterator it = std::find_if(cbegin(), cend(), [&layer](const std::pair<const Layer::Base*,Activation>& activation){ return activation.first == &layer;  });
 		if (it == end())
 			throw std::out_of_range("No activity for that layer");
 		else
-			return it->GetActivation();
+			return it->second.GetActivation();
 	}
 
 	State::State(const Network& network) :
@@ -45,24 +46,55 @@ namespace Activation
 		Activity future;
 		size_t pos = 0;
 		for (const auto& input : inputs)
-			future.emplace_back(Activation(0, network[input.first], input.second.activation));
+			future.Activate(network[input.first], Activation(input.second.activation));
 		return future;
 	}
 
 	bool Activity::CanGoForward() const
 	{
 		for (const auto& activation : *this)
-			if (!activation.GetLayer().connections.empty())
+			if (!activation.first->connections.empty())
 				return true;
 		return false;
+	}
+
+
+	Net::Activation::Activity Activity::Step() const
+	{
+		Activity future;
+		for (const auto& activation : *this)
+		{
+			for (const auto& connection : activation.first->connections)
+			{
+				Eigen::VectorXd excitation = connection.get().weights * activation.second.activation + connection.get().b.bias;
+				Eigen::VectorXd activationVector = connection.get().b.GetFunction()(excitation);
+				future.Activate(connection.get().b, Activation(activationVector));
+			}
+		}
+		return future;
 	}
 
 	bool Activity::CanGoBackward() const
 	{
 		for (const auto& activation : *this)
-			if (!activation.GetLayer().reverse_connections.empty())
+			if (!activation.first->reverse_connections.empty())
 				return true;
 		return false;
+	}
+
+	Net::Activation::Activity Activity::Reconstruct() const
+	{
+		Activity future;
+		for (const auto& activation : *this)
+		{
+			for (const auto& connection : activation.first->reverse_connections)
+			{
+				Eigen::VectorXd excitation = connection.get().weights.transpose() * activation.second.activation + connection.get().a.bias;
+				Eigen::VectorXd activationVector = connection.get().a.GetFunction()(excitation);
+				future.Activate(connection.get().a, Activation(activationVector));
+			}
+		}
+		return future;
 	}
 
 	void State::Apply(const Activity& newActivity)
@@ -84,54 +116,21 @@ namespace Activation
 
 	Net::Activation::Activity State::Step() const
 	{
-		Activity future;
-		for (const auto& activation : activity)
-		{
-			// TODO: following block should be in Activation, but it can't declare a list of activations to return
-			for (const auto& connection : activation.layer->connections)
-			{
-				Eigen::VectorXd excitation = connection.get().weights * activation.activation + connection.get().b.bias;
-				Eigen::VectorXd activationVector = connection.get().b.GetFunction()(excitation);
-				future.emplace_back(Activation(activation.generation + 1, connection.get().b, activationVector));
-			}
-			// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
-		}
-		return future;
+		return activity.Step();
 	}
 
 	Net::Activation::Activity State::Reconstruct() const
 	{
-		Activity future;
-		for (const auto& activation : activity)
-		{
-			// TODO: following block should be in Activation, but it can't declare a list of activations to return
-			for (const auto& connection : activation.layer->reverse_connections)
-			{
-				Eigen::VectorXd excitation = connection.get().weights.transpose() * activation.activation + connection.get().a.bias;
-				Eigen::VectorXd activationVector = connection.get().a.GetFunction()(excitation);
-				future.emplace_back(Activation(activation.generation + 1, connection.get().a, activationVector));
-			}
-			// TODO future.insert(future.end(), newActivity.begin(), newActivity.end());
-		}
-		return future;
+		return activity.Reconstruct();
 	}
 
-	Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const
-	{
-		for (const auto& activation : activity)
-		{
-			if (activation.layer == &layer)
-				return activation.activation;
-		}
-		return Eigen::VectorXd::Zero(layer.Size());
-	}
 
 	Data::Outputs State::Output() const
 	{
 		Data::Outputs output;
 		for (const auto& outputId : network.GetOutputs())
 		{
-			output.insert(std::make_pair(outputId, Data::Output(GetActivation(network[outputId]))));
+			output.insert(std::make_pair(outputId, Data::Output(activity[network[outputId]])));
 		}
 		return output;
 	}

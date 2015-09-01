@@ -1,6 +1,6 @@
 #pragma once
 #include <Eigen/Dense>
-#include <vector>
+#include <map>
 #include "Net.h"
 
 namespace Net
@@ -10,25 +10,24 @@ namespace Activation
 	class Activation
 	{
 	public:
-		typedef unsigned Generation;
-		Activation(Generation generation, const Layer::Base& layer, const Eigen::VectorXd& activation);
+		Activation(const Eigen::VectorXd& activation);
 		Activation& operator=(const Activation& other);
-		const Layer::Base& GetLayer() const { return *layer; }
 		Eigen::VectorXd GetActivation() const { return activation; }
 	private:
-		friend class State;	// See TODO in State::Propagate
-		Generation generation;
-		const Layer::Base* layer;
+		friend class Activity;
 		Eigen::VectorXd activation;
 		Eigen::VectorXd excitation;
 	};
 
-	class Activity : public  std::vector < Activation >
+	class Activity : private  std::map < const Layer::Base*, Activation >
 	{
 	public:
 		Eigen::VectorXd operator[](const Layer::Base& layer) const { return GetActivation(layer); }
+		void Activate(const Layer::Base& layer, const Activation& activation);
 		bool CanGoForward() const;
 		bool CanGoBackward() const;
+		Activity Step() const;
+		Activity Reconstruct() const;
 	private:
 		Eigen::VectorXd GetActivation(const Layer::Base& layer) const;
 	};
@@ -44,7 +43,6 @@ namespace Activation
 		Data::Outputs Output() const;
 		void Apply(const Activity& activity);	// TODO: this is getting weird
 	protected:
-		Eigen::VectorXd State::GetActivation(const Layer::Base& layer) const;
 		Activity activity;
 		const Network& network;
 	};
