@@ -30,7 +30,7 @@ namespace Net
 		{
 		public:
 			Algorithm(Network& network);
-			void Train(const Data::Set& samples, StopCondition& stop=Once());
+			void Train(Data::Set& samples, StopCondition& stop=Once());
 			virtual void Learn(const Data::Sample& sample)=0;
 		protected:
 			Network& network;

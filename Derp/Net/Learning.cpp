@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <random>
 #include "Learning.h"
 #include "Data.h"
 #include "RBM.h"
@@ -26,16 +28,17 @@ namespace Net
 		{
 		}
 
-		void Algorithm::Train(const Data::Set& samples, StopCondition& stop)
+		void Algorithm::Train(Data::Set& trainingSet, StopCondition& stop)
 		{
-			// TODO: randomize samples per epoch
+			// TODO: 
 			//	 other & multiple stop condition
 			//	different strategies with a target test Subset score
 			//	and an overfitting Subsset score
 			unsigned epoch = 0;
 			while (!stop(epoch))
 			{
-				for (const auto& sample : samples)
+				std::random_shuffle(trainingSet.begin(), trainingSet.end());
+				for (const auto& sample : trainingSet)
 				{
 					Learn(sample);
 				}
