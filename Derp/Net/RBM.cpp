@@ -5,18 +5,22 @@
 
 namespace Net
 {
-	RBM::RBM(size_t visible, size_t hidden) :
-		visible(Visible(visible, Activation::Stochastic())),
-		hidden(Hidden(hidden, Activation::Stochastic()))
+	RBM::RBM(size_t visible, size_t hidden, const Activation::Function& function) :
+		visible(Visible(visible, function)),
+		hidden(Hidden(hidden, function))
 	{
 		Undirected(this->visible, this->hidden);
 	}
-	void RBM::SetProbabilistic()
+	BinaryRBM::BinaryRBM(size_t visible, size_t hidden) :
+		RBM(visible, hidden, Activation::Stochastic())
+	{
+	}
+	void BinaryRBM::SetProbabilistic()
 	{
 		visible.ChangeFunction(Activation::Sigmoid());
 		hidden.ChangeFunction(Activation::Sigmoid());
 	}
-	void RBM::SetStochastic()
+	void BinaryRBM::SetStochastic()
 	{
 		visible.ChangeFunction(Activation::Stochastic());
 		hidden.ChangeFunction(Activation::Stochastic());
@@ -33,7 +37,7 @@ namespace Net
 		return outputs[0];
 	}
 
-	double RBM::FreeEnergy(const Data::Input& input) const
+	double BinaryRBM::FreeEnergy(const Data::Input& input) const
 	{
 //		wx_b = T.dot(v_sample, self.W) + self.hbias
 //			vbias_term = T.dot(v_sample, self.vbias)
@@ -49,7 +53,7 @@ namespace Net
 
 	namespace Learning
 	{
-		ContrastiveDivergence::ContrastiveDivergence(RBM& network, unsigned n) :
+		ContrastiveDivergence::ContrastiveDivergence(BinaryRBM& network, unsigned n) :
 			Algorithm(network),
 			n(n),
 			weightRate(0.1),
@@ -60,7 +64,7 @@ namespace Net
 		void ContrastiveDivergence::Learn(const Data::Sample& sample)
 		{
 			Activation::State state(network);
-			RBM& rbm = static_cast<RBM&>(network);
+			BinaryRBM& rbm = static_cast<BinaryRBM&>(network);
 
 			// first step: activate hidden with data and compute positive correlation
 			Activation::Activity activity = state.Input(sample.inputs);

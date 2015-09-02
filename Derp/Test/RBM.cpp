@@ -9,7 +9,7 @@ BOOST_AUTO_TEST_SUITE(RBM);
 
 BOOST_AUTO_TEST_CASE(Reconstruct)
 {
-	Net::RBM rbm(1, 1);
+	Net::BinaryRBM rbm(1, 1);
 	rbm.visible[0].Reset(0);
 	rbm.visible.Reset(0);
 	rbm.hidden.Reset(0);
