@@ -103,6 +103,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Activation.cpp" />
+    <ClCompile Include="HexDigitData.cpp" />
     <ClCompile Include="Learning.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NetworkIO.cpp" />

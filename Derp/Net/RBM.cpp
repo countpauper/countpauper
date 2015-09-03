@@ -46,13 +46,13 @@ namespace Net
 		https://www.cs.toronto.edu/~hinton/absps/guideTR.pdf (25)
 		assert(GetInputs().size() == 1);
 		assert(sample.inputs.size() == 1);
-		Eigen::VectorXd inputSignal = sample.inputs[GetInputs()[0]].activation;
+		Eigen::VectorXd inputSignal = sample.inputs.at(GetInputs()[0]).activation;
 		Eigen::VectorXd x = input[0].weights *  inputSignal + hidden.bias;
 		Eigen::VectorXd::Scalar ViAi = inputSignal.dot(input.bias);
 
 		assert(GetOutputs().size() == 1);
 		assert(sample.outputs.size() == 1);
-		Eigen::VectorXd outputSignal = sample.outputs[GetOutputs()[0]].activation
+		Eigen::VectorXd outputSignal = sample.outputs.at(GetOutputs()[0]).activation;
 		x += output[GetOutputs()[0]].weights *  outputSignal + hidden.bias;
 		ViAi += outputSignal.dot(output.bias);
 		Eigen::VectorXd hidden_term = x.unaryExpr([](const Eigen::VectorXd::Scalar& Xj) { return log(1 + exp(Xj));  });
@@ -100,22 +100,22 @@ namespace Net
 			rbm.SetProbabilistic();
 			activity = state.Reconstruct();
 			state.Apply(activity);
-			Eigen::VectorXd reconstructedActivation = activity[rbm.visible];
+			Eigen::VectorXd reconstructedActivation = activity[rbm.input];
 
 			activity = state.Step();
 			state.Apply(activity);
-			Eigen::VectorXd hiddenFinalActivation = activity[rbm.hidden];
+			Eigen::VectorXd hiddenFinalActivation = activity[rbm.input];
 
 			rbm.SetStochastic();
 
 			Eigen::MatrixXd negative = hiddenFinalActivation * reconstructedActivation.transpose();
 			Eigen::MatrixXd learningSignal = positive - negative;
 			learningSignal *= weightRate;
-			rbm.visible[0].weights += learningSignal;
+			rbm.input[0].weights += learningSignal;
 
 			Eigen::VectorXd visibleBiasSignal = visibleActivation - reconstructedActivation;
 			visibleBiasSignal *= biasRate;
-			rbm.visible.bias += visibleBiasSignal;
+			rbm.input.bias += visibleBiasSignal;
 
 			Eigen::VectorXd hiddenBiasSignal = hiddenInitialActivation - hiddenFinalActivation;
 			hiddenBiasSignal *= biasRate;
