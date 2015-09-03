@@ -7,18 +7,19 @@ namespace Net
 	class RBM : public Network
 	{
 	public:
-		RBM(size_t visible, size_t hidden, const Activation::Function& function);
+		RBM(size_t input, size_t output, size_t hidden, const Activation::Function& function);
 		Data::Output ComputeProbability(const Data::Input& input) const;
-		Layer::Visible & visible;
+		Layer::Visible& input;
+		Layer::Visible& output;
 		Layer::Hidden& hidden;
 	};
 	class BinaryRBM : public RBM
 	{
 	public:
-		BinaryRBM(size_t visible, size_t hidden);
+		BinaryRBM(size_t input, size_t output, size_t hidden);
 		void SetProbabilistic();
 		void SetStochastic();
-		double FreeEnergy(const Data::Input& inputs) const;
+		double FreeEnergy(const Data::Sample& inputs) const;
 	};
 	namespace Learning
 	{

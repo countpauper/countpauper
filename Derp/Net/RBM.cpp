@@ -5,48 +5,56 @@
 
 namespace Net
 {
-	RBM::RBM(size_t visible, size_t hidden, const Activation::Function& function) :
-		visible(Visible(visible, function)),
+	RBM::RBM(size_t input, size_t output, size_t hidden, const Activation::Function& function) :
+		input(Visible(input, function)),
+		output(Visible(output, function)),
 		hidden(Hidden(hidden, function))
 	{
-		Undirected(this->visible, this->hidden);
+		Undirected(this->input, this->hidden);
+		Undirected(this->hidden, this->output);
 	}
-	BinaryRBM::BinaryRBM(size_t visible, size_t hidden) :
-		RBM(visible, hidden, Activation::Stochastic())
+	BinaryRBM::BinaryRBM(size_t input, size_t output, size_t hidden) :
+		RBM(input, output, hidden, Activation::Stochastic())
 	{
 	}
 	void BinaryRBM::SetProbabilistic()
 	{
-		visible.ChangeFunction(Activation::Sigmoid());
+		input.ChangeFunction(Activation::Sigmoid());
+		output.ChangeFunction(Activation::Sigmoid());
 		hidden.ChangeFunction(Activation::Sigmoid());
 	}
 	void BinaryRBM::SetStochastic()
 	{
-		visible.ChangeFunction(Activation::Stochastic());
+		input.ChangeFunction(Activation::Stochastic());
+		output.ChangeFunction(Activation::Stochastic());
 		hidden.ChangeFunction(Activation::Stochastic());
 	}
 
-	Data::Output RBM::ComputeProbability(const Data::Input& input) const
+	Data::Output RBM::ComputeProbability(const Data::Input& signal) const
 	{
-		assert(dynamic_cast<const Activation::Stochastic*>(&visible.GetFunction()) != nullptr);
-		visible.ChangeFunction(Activation::Sigmoid());
+		assert(dynamic_cast<const Activation::Stochastic*>(&input.GetFunction()) != nullptr);
+		input.ChangeFunction(Activation::Sigmoid());
 		Data::Inputs inputs;
-		inputs.insert(std::make_pair(GetInputs()[0], input));
+		inputs.insert(std::make_pair(GetInputs()[0], signal));
 		Data::Outputs outputs = Activation::Computation(*this, inputs)();
-		visible.ChangeFunction(Activation::Stochastic());
+		input.ChangeFunction(Activation::Stochastic());
 		return outputs[0];
 	}
 
-	double BinaryRBM::FreeEnergy(const Data::Input& input) const
+	double BinaryRBM::FreeEnergy(const Data::Sample& sample) const
 	{
-//		wx_b = T.dot(v_sample, self.W) + self.hbias
-//			vbias_term = T.dot(v_sample, self.vbias)
-//			hidden_term = T.sum(T.log(1 + T.exp(wx_b)), axis = 1)
-//			return -hidden_term - vbias_term;
+		https://www.cs.toronto.edu/~hinton/absps/guideTR.pdf (25)
+		assert(GetInputs().size() == 1);
+		assert(sample.inputs.size() == 1);
+		Eigen::VectorXd inputSignal = sample.inputs[GetInputs()[0]].activation;
+		Eigen::VectorXd x = input[0].weights *  inputSignal + hidden.bias;
+		Eigen::VectorXd::Scalar ViAi = inputSignal.dot(input.bias);
 
-		// also see https://www.cs.toronto.edu/~hinton/absps/guideTR.pdf (25)
-		Eigen::VectorXd x = visible[0].weights *  input.activation + hidden.bias;
-		Eigen::VectorXd::Scalar ViAi = input.activation.dot(visible.bias);
+		assert(GetOutputs().size() == 1);
+		assert(sample.outputs.size() == 1);
+		Eigen::VectorXd outputSignal = sample.outputs[GetOutputs()[0]].activation
+		x += output[GetOutputs()[0]].weights *  outputSignal + hidden.bias;
+		ViAi += outputSignal.dot(output.bias);
 		Eigen::VectorXd hidden_term = x.unaryExpr([](const Eigen::VectorXd::Scalar& Xj) { return log(1 + exp(Xj));  });
 		return -hidden_term.sum() - ViAi;
 	}
@@ -68,8 +76,9 @@ namespace Net
 
 			// first step: activate hidden with data and compute positive correlation
 			Activation::Activity activity = state.Input(sample.inputs);
+			// TODO state.Clamp(sample.outputs);
 			state.Apply(activity);
-			Eigen::VectorXd visibleActivation = activity[rbm.visible];
+			Eigen::VectorXd visibleActivation = activity[rbm.input];
 
 			activity = state.Step();
 			state.Apply(activity);
@@ -85,7 +94,7 @@ namespace Net
 				state.Apply(activity);
 			}
 			// Last step, hidden and output can both use probability
-			assert(dynamic_cast<const Activation::Stochastic*>(&rbm.visible.GetFunction())!=nullptr);
+			assert(dynamic_cast<const Activation::Stochastic*>(&rbm.input.GetFunction())!=nullptr);
 			assert(dynamic_cast<const Activation::Stochastic*>(&rbm.hidden.GetFunction()) != nullptr);
 
 			rbm.SetProbabilistic();
