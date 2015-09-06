@@ -13,14 +13,12 @@ namespace Activation
 	}
 
 	void State::Input(const Data::Inputs& inputs)
-	{	// TODO: this is just activity += activity
-		size_t pos = 0;
+	{
 		for (const auto& input : inputs)
 			Activate(network[input.first], Activation(input.second.activation));
 	}
 	void State::Clamp(const Data::Outputs& outputs)
 	{
-		size_t pos = 0;
 		for (const auto& output : outputs)
 			Activate(network[output.first], Activation(output.second.activation));
 	}
