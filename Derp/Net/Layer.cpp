@@ -33,10 +33,11 @@ namespace Net
 
 		void Base::Connect(Connection::Base& connection)
 		{
+			connections.push_back(connection);
 			if (&connection.a == this)
-				connections.push_back(connection);
-			else
-				reverse_connections.push_back(connection);
+				connection.b.reverse_connections.push_back(connection);
+			else if (&connection.b == this)
+				connection.a.reverse_connections.push_back(connection);
 		}
 		const Connection::Base& Base::operator[](unsigned index) const
 		{ 
@@ -47,7 +48,7 @@ namespace Net
 			return connections[index]; 
 		}
 		
-		size_t Base::Size() const
+		size_t Base::size() const
 		{
 			return bias.size();
 		}
@@ -109,7 +110,7 @@ namespace Net
 		std::ostream& operator<< (std::ostream& stream, const Base& layer)
 		{
 			stream << layer.version << IO::separator;
-			stream << layer.Size() << IO::separator;
+			stream << layer.size() << IO::separator;
 			stream << IO::classname_ptr(layer.function.get()) << std::endl;
 			stream << layer.bias.transpose() << std::endl;
 			return stream;

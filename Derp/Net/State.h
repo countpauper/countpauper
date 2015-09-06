@@ -7,18 +7,15 @@ namespace Net
 {
 namespace Activation
 {
-	class State
+	class State : public Activity
 	{
 	public:
 		State(const Network& network);
-		Activity Input(const Data::Inputs& sample) const;
-		Activity Step() const;
-		Activity Reconstruct() const;
+		void Input(const Data::Inputs& sample);
+		void Clamp(const Data::Outputs& sample);
 		void Propagate();
 		Data::Outputs Output() const;
-		void Apply(const Activity& activity);	// TODO: this is getting weird
 	protected:
-		Activity activity;
 		const Network& network;
 	};
 

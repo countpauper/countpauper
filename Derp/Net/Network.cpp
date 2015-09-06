@@ -45,7 +45,7 @@ namespace Net
 		return *static_cast<Connection::Undirected*>(connections.back().get());
 	}
 
-	size_t Network::Size() const
+	size_t Network::size() const
 	{
 		return layers.size();
 	}

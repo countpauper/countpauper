@@ -20,7 +20,7 @@ namespace Net
 			Base(const Base& other);
 			virtual ~Base();
 			void Connect(Connection::Base& connection);
-			size_t Size() const;
+			size_t size() const;
 			const Connection::Base& operator[](unsigned index) const;
 			Connection::Base& operator[](unsigned index);
 			void Reset(double mean=0, double sigma=0);

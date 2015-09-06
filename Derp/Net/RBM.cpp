@@ -75,8 +75,13 @@ namespace Net
 			BinaryRBM& rbm = static_cast<BinaryRBM&>(network);
 
 			// first step: activate hidden with data and compute positive correlation
-			Activation::Activity activity = state.Input(sample.inputs);
-			// TODO state.Clamp(sample.outputs);
+			state.Input(sample.inputs);
+			state.Clamp(sample.outputs);
+			state.Propagate();
+			state.Clear(rbm.input);
+			state.Clear(rbm.output);
+			state.Propagate();
+			/*
 			state.Apply(activity);
 			Eigen::VectorXd visibleActivation = activity[rbm.input];
 
@@ -120,6 +125,7 @@ namespace Net
 			Eigen::VectorXd hiddenBiasSignal = hiddenInitialActivation - hiddenFinalActivation;
 			hiddenBiasSignal *= biasRate;
 			rbm.hidden.bias += hiddenBiasSignal;
+			*/
 		}
 	}
 }

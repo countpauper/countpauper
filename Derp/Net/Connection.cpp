@@ -8,10 +8,10 @@ namespace Net
 {	
 	namespace Connection
 	{
-		Base::Base(const Layer::Base& a, const Layer::Base& b) :
+		Base::Base(Layer::Base& a, Layer::Base& b) :
 			a(a),
 			b(b),
-			weights(b.Size(), a.Size())
+			weights(b.size(), a.size())
 		{
 		}
 
@@ -34,12 +34,12 @@ namespace Net
 			b.Connect(*this);
 		}
 
-		Directed::Directed(Layer::Base& a, const Layer::Base&  b) : Base(a, b)
+		Directed::Directed(Layer::Base& a, Layer::Base&  b) : Base(a, b)
 		{
 			a.Connect(*this);
 		}
 
-		Recurrent::Recurrent(const Layer::Base& a, Layer::Base&  b) : Base(a, b)
+		Recurrent::Recurrent(Layer::Base& a, Layer::Base&  b) : Base(a, b)
 		{
 			b.Connect(*this);
 		}
@@ -60,7 +60,7 @@ namespace Net
 			stream >> v;
 			if (v >= 1)
 			{
-				connection.weights.resize(connection.a.Size(), connection.b.Size());
+				connection.weights.resize(connection.a.size(), connection.b.size());
 				stream >> connection.weights;
 			}
 

@@ -10,11 +10,12 @@ BOOST_AUTO_TEST_SUITE(Learning);
 
 BOOST_AUTO_TEST_CASE(CD1)
 {
-	Net::BinaryRBM rbm(1, 0, 1);
+	Net::BinaryRBM rbm(1, 1, 1);
 	rbm.Reset();
 	Net::Learning::ContrastiveDivergence cd1(rbm);
 	Net::Data::Set data;
 	std::stringstream("1 1\n1 1 0\n0 1 1 1") >> data;
+	// TODO: when computing undirected should be directed? ... yeh 
 	Eigen::VectorXd p0 = rbm.ComputeProbability(data[0].inputs[0]).activation;
 	cd1.Train(data, Net::Learning::Epochs(100));
 	Eigen::VectorXd p1 = rbm.ComputeProbability(data[0].inputs[0]).activation;
@@ -26,7 +27,7 @@ BOOST_AUTO_TEST_CASE(CD1)
 
 BOOST_AUTO_TEST_CASE(CD1_2)
 {
-	Net::BinaryRBM rbm(1, 1, 1);
+	Net::BinaryRBM rbm(2, 2, 1);
 	rbm.Reset();
 	Net::Learning::ContrastiveDivergence cd1(rbm);
 	Net::Data::Set data;

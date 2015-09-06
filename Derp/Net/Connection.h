@@ -12,13 +12,13 @@ namespace Net
 		class Base
 		{
 		protected:
-			Base(const Layer::Base& a, const Layer::Base&  b);
+			Base(Layer::Base& a, Layer::Base&  b);
 		public:
 			virtual ~Base();
 			void Reset(double mean = 0, double sigma = 0);
 		public:
-			const Layer::Base& a;
-			const Layer::Base& b;
+			Layer::Base& a;
+			Layer::Base& b;
 			Eigen::MatrixXd weights;
 		private:
 			static const IO::version version;
@@ -35,13 +35,13 @@ namespace Net
 		class Directed : public Base
 		{
 		public:
-			Directed(Layer::Base& a, const Layer::Base&  b);
+			Directed(Layer::Base& a, Layer::Base&  b);
 		};
 
 		class Recurrent : public Base
 		{
 		public:
-			Recurrent(const Layer::Base& a, Layer::Base&  b);
+			Recurrent(Layer::Base& a, Layer::Base&  b);
 		};
 		std::ostream& operator<< (std::ostream& stream, const Base& connection);
 		std::istream& operator>> (std::istream& stream, Base& connection);

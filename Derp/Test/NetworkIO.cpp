@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(ReadEmpty)
 	stream >> net;
 	BOOST_REQUIRE(!stream.bad());
 	BOOST_REQUIRE(!stream.eof());
-	BOOST_CHECK_EQUAL(net.Size(), 0);
+	BOOST_CHECK_EQUAL(net.size(), 0);
 }
 
 BOOST_AUTO_TEST_CASE(WriteLayer)
@@ -47,8 +47,8 @@ BOOST_AUTO_TEST_CASE(ReadLayer)
 	stream >> net;
 	BOOST_REQUIRE(!stream.bad());
 	BOOST_REQUIRE(!stream.eof());
-	BOOST_REQUIRE_EQUAL(net.Size(), 1);
-	BOOST_REQUIRE_EQUAL(net[0].Size(), 2);
+	BOOST_REQUIRE_EQUAL(net.size(), 1);
+	BOOST_REQUIRE_EQUAL(net[0].size(), 2);
 	Eigen::Vector2d refBias;
 	refBias << 0.1, -0.2;
 	BOOST_CHECK_EQUAL(net[0].bias, refBias);
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(ReadConnection)
 	stream >> net;
 	BOOST_REQUIRE(!stream.bad());
 	BOOST_REQUIRE(!stream.eof());
-	BOOST_CHECK_EQUAL(net.Size(), 2);
+	BOOST_CHECK_EQUAL(net.size(), 2);
 	Eigen::Vector2d refBias;
 	refBias << 0.2, -0.3;
 	BOOST_CHECK_EQUAL(net[0].bias, refBias);
