@@ -262,6 +262,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         glViewport(0, 0, LOWORD(lParam), HIWORD(lParam));
         PostMessage(hWnd, WM_PAINT, 0, 0);
     return 0;
+    case WM_KEYDOWN:
+        game->Key(wParam);
+        InvalidateRect(hWnd, nullptr, TRUE);
+        break;
     case WM_CLOSE:
     case WM_DESTROY:
         hdc = GetDC(hWnd);

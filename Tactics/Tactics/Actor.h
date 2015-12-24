@@ -9,6 +9,7 @@ namespace Game
     public:
         virtual ~Object() = default;
         virtual void Render() const = 0;
+        void Move(int dx, int dy);
     protected:
         Position position;
     };

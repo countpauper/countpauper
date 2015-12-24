@@ -4,7 +4,10 @@
 namespace Game
 {
 
-    Game::Game() = default;
+    Game::Game() :
+        player(0)
+    {
+    }
 
     void Game::Render() const
     {
@@ -13,6 +16,25 @@ namespace Game
             object->Render();
     }
 
+    void Game::Key(unsigned short code)
+    {
+        auto& playerObject = *objects.at(player);
+        switch (code)
+        {
+        case VK_LEFT:
+            playerObject.Move(-1, 0);
+            break;
+        case VK_RIGHT:
+            playerObject.Move(1, 0);
+            break;
+        case VK_UP:
+            playerObject.Move(0, 1);
+            break;
+        case VK_DOWN:
+            playerObject.Move(0, -1);
+            break;
+        }
+    }
     std::wistream& operator>>(std::wistream& s, Game& game)
     {
         unsigned objects;
