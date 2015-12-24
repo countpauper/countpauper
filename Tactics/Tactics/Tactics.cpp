@@ -190,7 +190,7 @@ void Render()
     float scale = static_cast<float>(1.0 / tan(angleOfView * 0.5 * M_PI / 180.0));
     float n = 10;
     float f = 0;
-    float z = 1;
+    float x = 2, y = 2, z = -2; // camera position
     GLfloat perspectiveMatrix[16] = 
     {
         scale, 0, 0, 0,
@@ -203,18 +203,12 @@ void Render()
 
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(perspectiveMatrix);
+    glTranslated(-x, -y, -z);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    /* rotate a triangle around */
-    glBegin(GL_TRIANGLES);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex3f(0,  1, z);
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex3f(-1, -1, z);
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex3f(1, -1, z);
-    glEnd();
+    game->Render();
+
     glFlush();
 }
 

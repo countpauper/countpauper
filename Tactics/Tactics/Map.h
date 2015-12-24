@@ -48,6 +48,7 @@ namespace Game
     public:
         Map();
         Square At(const Position& p) const;
+        void Render();
     private:
         friend std::wistream& operator>>(std::wistream& s, Map& map);
         std::wstring name;

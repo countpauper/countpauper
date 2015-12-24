@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Map.h"
+#include <gl/GL.h>
 
 namespace Game
 {
@@ -24,6 +25,61 @@ namespace Game
         assert(p.x < width);
         assert(p.y < height);
         return squares.at(p.x + p.y*width);
+    }
+
+    void Map::Render()
+    {
+        struct RGBA { float r, g, b, a; };
+        RGBA colorTable[] = {
+            { 0.0f, 0.0f, 0.0f, 1.0f },    //None = 0
+            { 0.0f, 1.0f, 0.0f, 1.0f },     //Nature,
+            { 0.3f, 0.3f, 0.3f, 1.0f }, //Earth
+            { 1.0f, 1.0f, 1.0f, 0.1f }, //Air
+            { 0.0f, 0.0f, 1.0f, 0.5f }, //Water
+            { 1.0f, 0.0f, 0.0f, 1.0f }, //  Fire
+        };
+
+        glBegin(GL_TRIANGLES);
+        unsigned i = 0;
+        for (float y = 0; y < height; ++y)
+        {
+            for (float x = 0; x < width; ++x)
+            {
+                const auto& square = squares.at(i++);
+                auto color = colorTable[unsigned(square.floor)];
+                glColor4f(color.r, color.g, color.b, color.a);
+                glVertex3f(x, 0, y);
+                glVertex3f(x+1, 0 ,y+1);
+                glVertex3f(x+1, 0, y);
+
+                glVertex3f(x, 0, y);
+                glVertex3f(x+1, 0, y+1);
+                glVertex3f(x, 0, y+1);
+            }
+        }
+        glEnd();
+
+        glColor3f(0, 0, 0);
+        glBegin(GL_LINES);
+        for (float y = 0; y < height; ++y)
+        {
+            for (float x = 0; x < width; ++x)
+            {
+                glVertex3f(x, 0, y);
+                glVertex3f(x+1, 0, y);
+
+                glVertex3f(x+1, 0, y);
+                glVertex3f(x+1, 0, y+1);
+
+                glVertex3f(x+1, 0, y+1);
+                glVertex3f(x, 0, y+1);
+
+                glVertex3f(x, 0, y+1);
+                glVertex3f(x, 0, y);
+            }
+        }
+        glEnd();
+
     }
 
     std::wistream& operator>>(std::wistream& s, Map& map)
