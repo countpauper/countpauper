@@ -12,10 +12,9 @@
 #include <windows.h>
 
 // C RunTime Header Files
-#include <stdlib.h>
-#include <malloc.h>
-#include <memory.h>
 #include <tchar.h>
+#include <cassert>
+#include <string>
 
 
 // TODO: reference additional headers your program requires here

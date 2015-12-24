@@ -6,6 +6,9 @@
 #include <GL/gl.h>            /* OpenGL header file */
 #include <GL/glu.h>            /* OpenGL utilities header file */
 #include <math.h>
+#include <fstream>
+#include "game.h"
+
 #define M_PI 3.14159265358979323846
 #define MAX_LOADSTRING 100
 
@@ -14,6 +17,7 @@ HINSTANCE hInst;                                // current instance
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 HGLRC hGLRC;
+std::unique_ptr<Game::Game> game;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -129,6 +133,24 @@ BOOL SetPixelFormat(HWND hWnd)
     return TRUE;
 }    
 
+BOOL Start()
+{
+    game = std::make_unique<Game::Game>();
+    std::wifstream fs("Game");
+    if (fs.fail())
+    {
+        MessageBox(NULL, L"Loading Game failed:  ", L"Error", MB_OK);
+        return FALSE;
+    }
+    fs >> *game.get();
+    if (fs.fail())
+    {
+        MessageBox(NULL, L"Reading Game failed:  ", L"Error", MB_OK);
+        return FALSE;
+    }
+
+    return TRUE;
+}
 
 //   FUNCTION: InitInstance(HINSTANCE, int)
 //
@@ -152,15 +174,14 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
       return FALSE;
    }
-
+   if (!Start())
+       return FALSE;
  
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
    return TRUE;
 }
-
-
 
 
 void Render()
