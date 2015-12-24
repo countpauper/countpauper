@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Position.h"
 
 namespace Game
 {
@@ -22,33 +23,21 @@ namespace Game
         Fire
     };
 
-    enum class Object : unsigned short
-    {
-        None = 0,
-        Spawn = 1,
-    };
     struct Square
     {
         Floor floor;
         Wall walls[2];
         unsigned short height[4];
-        Object object;
+        unsigned short reserved;
     };
 
-    struct Position
-    {
-        Position();
-        Position(unsigned x, unsigned y);
-        unsigned x;
-        unsigned y;
-    };
 
     class Map
     {
     public:
         Map();
         Square At(const Position& p) const;
-        void Render();
+        void Render() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Map& map);
         std::wstring name;
