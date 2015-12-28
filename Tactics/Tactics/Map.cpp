@@ -85,8 +85,8 @@ namespace Game
 				glColor4f(color.r, color.g, color.b, color.a);
 				auto z = square.Z();
 				glVertex3f(x,		z[0], y);
-				glVertex3f(x + 1,	z[2], y + 1);
 				glVertex3f(x + 1,	z[1], y);
+				glVertex3f(x + 1,	z[2], y + 1);
 
 				glVertex3f(x,		z[0], y);
 				glVertex3f(x + 1,	z[2], y + 1);
@@ -107,7 +107,7 @@ namespace Game
 					glColor4f(wallColor.r, wallColor.g, wallColor.b, wallColor.a);
 					glVertex3f(x + 1,	z[1],	y);
 					glVertex3f(x + 1,	z[2],	y + 1);
-					glVertex3f(x + 1,	zn0,	y);	//todo: neighbour;
+					glVertex3f(x + 1,	zn0,	y);	
 					
 					glVertex3f(x + 1,	zn0,	y);
 					glVertex3f(x + 1,	zn3,	y + 1);
@@ -127,8 +127,8 @@ namespace Game
 					auto wallColor = colorTable[unsigned(wally)];
 					glColor4f(wallColor.r, wallColor.g, wallColor.b, wallColor.a);
 					glVertex3f(x,		z[0],	y);
+					glVertex3f(x,		zn3,	y);	
 					glVertex3f(x + 1,	z[1],	y);
-					glVertex3f(x,		zn3,	y);	//todo: neighbour z
 
 					glVertex3f(x,		zn3,	y);
 					glVertex3f(x + 1,	zn2,	y);

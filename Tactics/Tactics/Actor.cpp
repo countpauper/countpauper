@@ -43,8 +43,8 @@ namespace Game
             glVertex3f(xb,	z,		yb);
 
             glVertex3f(xa,	z,		ya);
-            glVertex3f(xb,	z,		yb);
             glVertex3f(xa,	z+1,	ya);
+			glVertex3f(xb, z, yb);
 
             glVertex3f(xb,	z,		yb);
             glVertex3f(xa,	z+1,	ya);
