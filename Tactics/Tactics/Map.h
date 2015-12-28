@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
+#include <array>
 #include "Position.h"
+#include "Game.h"
 
 namespace Game
 {
@@ -29,6 +31,8 @@ namespace Game
         Wall walls[2];
         unsigned short height[4];
         unsigned short reserved;
+		std::array<float,4> Z() const;
+		float MiddleZ() const;
     };
 
 
@@ -36,9 +40,11 @@ namespace Game
     {
     public:
         Map();
-        Square At(const Position& p) const;
-        void Render() const;
-    private:
+		Square At(const Position& p) const;
+		const Square* MaybeAt(const Position& p) const;
+		void Render() const;
+		bool CanBe(const Position& position) const;
+	private:
         friend std::wistream& operator>>(std::wistream& s, Map& map);
         std::wstring name;
         unsigned width;
@@ -46,8 +52,9 @@ namespace Game
         std::vector<Square> squares;
     };
 
-    std::wistream& operator>>(std::wistream& s, Game::Map& map);
-    std::wistream& operator>>(std::wistream& s, Game::Square& square);
+
+    std::wistream& operator>>(std::wistream& s, Map& map);
+    std::wistream& operator>>(std::wistream& s, Square& square);
 
 }   // ::Game
 

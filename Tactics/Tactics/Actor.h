@@ -4,12 +4,16 @@
 
 namespace Game
 {
+	class Result;
+	class Actor;
+
     class Object
     {
     public:
         virtual ~Object() = default;
-        virtual void Render() const = 0;
+        virtual void Render(float z) const = 0;
         void Move(int dx, int dy);
+		Position GetPosition() const;
     protected:
         Position position;
     };
@@ -17,12 +21,15 @@ namespace Game
     class Actor : public Object
     {
     public:
-        Actor() = default;
-        void Render() const override;
+        Actor();
+		void Render(float z) const override;
+		unsigned GetActionPoints() const;
+		void Apply(const Result& result);
     private:
-        friend std::wistream& operator>>(std::wistream& s, Game::Actor& actor);
-    };
-    std::wistream& operator>>(std::wistream& s, Game::Actor& actor);
+        friend std::wistream& operator>>(std::wistream& s, Actor& actor);
+		unsigned actionPoints;
+	};
+    std::wistream& operator>>(std::wistream& s, Actor& actor);
 
 }   // ::Game
 

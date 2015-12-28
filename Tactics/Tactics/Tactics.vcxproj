@@ -79,6 +79,7 @@
     <Text Include="Game" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Map.h" />
@@ -89,6 +90,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Action.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Map.cpp" />
