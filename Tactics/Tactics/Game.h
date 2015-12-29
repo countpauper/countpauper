@@ -4,9 +4,11 @@
 #include <istream>
 #include <vector>
 
+#include "Direction.h"
+#include "Map.h"
+
 namespace Game
 {
-	class Map;
 	class Object;
 	struct Position;
 
@@ -18,9 +20,10 @@ namespace Game
         void Render() const;
         void Key(unsigned short code);
 		bool CanBe(const Position& position) const;
+		bool CanGo(const Position& from, Direction direction) const;
     protected:
         friend std::wistream& operator>>(std::wistream& s, Game& game);
-        std::unique_ptr<Map> map;
+        Map map;
         std::vector<std::unique_ptr<Object>> objects;
         unsigned player;
     };

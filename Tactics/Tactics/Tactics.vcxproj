@@ -81,6 +81,8 @@
   <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
+    <ClInclude Include="Color.h" />
+    <ClInclude Include="Direction.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Position.h" />
@@ -92,6 +94,7 @@
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="Direction.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Position.cpp" />

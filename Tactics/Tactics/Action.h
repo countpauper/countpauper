@@ -3,6 +3,7 @@
 #include "Position.h"
 #include <map>
 #include <functional>
+#include "Direction.h"
 
 namespace Game
 {
@@ -31,26 +32,33 @@ namespace Game
 		public Action
 	{
 	public:
+		Move(Direction direction);
+	protected:
+		Direction direction;
 	};
 
 	class North : public Move
 	{
 	public:
+		North();
 		Result Act(const Actor& actor, const Game& game) override;
 	};
 	class East : public Move
 	{
 	public:
+		East();
 		Result Act(const Actor& actor, const Game& game) override;
 	};
 	class South : public Move
 	{
 	public:
+		South();
 		Result Act(const Actor& actor, const Game& game) override;
 	};
 	class West : public Move
 	{
 	public:
+		West();
 		Result Act(const Actor& actor, const Game& game) override;
 	};
 

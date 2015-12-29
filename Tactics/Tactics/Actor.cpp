@@ -2,6 +2,7 @@
 #include <gl/GL.h>
 #include "Actor.h"
 #include "Action.h"
+#include "Color.h"
 
 namespace Game
 {
@@ -16,7 +17,8 @@ namespace Game
 		return position;
 	}
 	Actor::Actor() :
-		actionPoints(10)
+		actionPoints(10),
+		team(0)
 	{
 	}
 
@@ -27,10 +29,17 @@ namespace Game
         float x = static_cast<float>(position.x)+0.5f;
         float y = static_cast<float>(position.y) + 0.5f;
         float r = 0.25;
+
+		RGBA teamColor[] = {
+			{ 255, 0, 0, 255 },
+			{ 0, 255, 0, 255 },
+			{ 0, 0, 255, 255 }
+		};
         glColor3f(1.0f, 0.0f, 0.0f);
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
         {
+			teamColor[team].Render();
             float a = static_cast<float>(i) / sides * 2.0f * static_cast<float>(M_PI);
 			float b = static_cast<float>(i + 1) / sides * 2.0f * static_cast<float>(M_PI);
             float xa = x + cos(a)*r;
@@ -74,6 +83,7 @@ namespace Game
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {
         s >> actor.position.x >> actor.position.y;
+		s >> actor.team;
         return s;
     }
 } // ::Game

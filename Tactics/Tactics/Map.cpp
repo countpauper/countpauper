@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Map.h"
+#include "Color.h"
 #include <gl/GL.h>
 
 namespace Game
@@ -62,16 +63,24 @@ namespace Game
 		return true;
 	}
 
+	bool Map::CanGo(const Position& from, Direction direction) const
+	{
+		auto square = At(from);
+		auto neighbour = MaybeAt(from + direction.Vector());
+		if (!neighbour)
+			return false;
+		return true;
+	}
+
 	void Map::Render() const
     {
-        struct RGBA { float r, g, b, a; };
         RGBA colorTable[] = {
-            { 0.0f, 0.0f, 0.0f, 1.0f }, // None = 0
-            { 0.0f, 1.0f, 0.0f, 1.0f }, // Nature,
-            { 0.3f, 0.3f, 0.3f, 1.0f }, // Earth
-            { 1.0f, 1.0f, 1.0f, 0.1f }, // Air
-            { 0.0f, 0.0f, 1.0f, 0.5f }, // Water
-            { 1.0f, 0.0f, 0.0f, 1.0f }, //  Fire
+            {   0,   0,   0, 255 }, // None = 0
+            {   0, 255,   0, 255 }, // Nature,
+            {  64,  64,  64, 255 }, // Earth
+            { 255, 255, 255,  24 }, // Air
+            {   0,   0, 255, 128 }, // Water
+            { 255,   0,   0, 255 }, //  Fire
         };
 
         glBegin(GL_TRIANGLES);
@@ -82,7 +91,7 @@ namespace Game
 			{
 				const auto& square = squares.at(i++);
 				auto color = colorTable[unsigned(square.floor)];
-				glColor4f(color.r, color.g, color.b, color.a);
+				color.Render();
 				auto z = square.Z();
 				glVertex3f(x,		z[0], y);
 				glVertex3f(x + 1,	z[1], y);
@@ -104,8 +113,8 @@ namespace Game
 						zn3 = neighbourZ[3];
 					}
 					auto wallColor = colorTable[unsigned(wallx)];
-					glColor4f(wallColor.r, wallColor.g, wallColor.b, wallColor.a);
-					glVertex3f(x + 1,	z[1],	y);
+					wallColor.Render();
+					glVertex3f(x + 1, z[1], y);
 					glVertex3f(x + 1,	z[2],	y + 1);
 					glVertex3f(x + 1,	zn0,	y);	
 					
@@ -125,7 +134,7 @@ namespace Game
 						zn3 = neighbourZ[3];
 					}
 					auto wallColor = colorTable[unsigned(wally)];
-					glColor4f(wallColor.r, wallColor.g, wallColor.b, wallColor.a);
+					wallColor.Render();
 					glVertex3f(x,		z[0],	y);
 					glVertex3f(x,		zn3,	y);	
 					glVertex3f(x + 1,	z[1],	y);

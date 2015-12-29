@@ -28,6 +28,7 @@ namespace Game
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
 		unsigned actionPoints;
+		unsigned team;
 	};
     std::wistream& operator>>(std::wistream& s, Actor& actor);
 

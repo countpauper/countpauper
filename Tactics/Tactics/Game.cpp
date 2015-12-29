@@ -17,10 +17,10 @@ namespace Game
 
     void Game::Render() const
     {
-        map->Render();
+        map.Render();
 		for (const auto& object : objects)
 		{
-			auto square = map->At(object->GetPosition());
+			auto square = map.At(object->GetPosition());
 			object->Render(square.MiddleZ());
 		}
     }
@@ -39,7 +39,7 @@ namespace Game
 
 	bool Game::CanBe(const Position& position) const
 	{
-		if (!map->CanBe(position))
+		if (!map.CanBe(position))
 			return false;
 		for (const auto& object : objects)
 			if (object->GetPosition() == position)
@@ -47,7 +47,12 @@ namespace Game
 		return true;
 	}
 
-    std::wistream& operator>>(std::wistream& s, Game& game)
+	bool Game::CanGo(const Position& from, Direction direction) const
+	{
+		return map.CanGo(from, direction);
+	}
+
+	std::wistream& operator>>(std::wistream& s, Game& game)
     {
         unsigned objects;
         s >> objects;
@@ -63,8 +68,7 @@ namespace Game
 
             }
         }
-        game.map = std::make_unique<Map>();
-        s >> *game.map;
+        s >> game.map;
         return s;
     }
 

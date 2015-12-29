@@ -2,7 +2,7 @@
 #include <vector>
 #include <array>
 #include "Position.h"
-#include "Game.h"
+#include "Direction.h"
 
 namespace Game
 {
@@ -44,6 +44,7 @@ namespace Game
 		const Square* MaybeAt(const Position& p) const;
 		void Render() const;
 		bool CanBe(const Position& position) const;
+		bool CanGo(const Position& from, Direction direction) const;
 	private:
         friend std::wistream& operator>>(std::wistream& s, Map& map);
         std::wstring name;
