@@ -2,6 +2,8 @@
 
 #include "Position.h"
 #include <map>
+#include <vector>
+#include <memory>
 #include <functional>
 #include "Direction.h"
 
@@ -10,10 +12,10 @@ namespace Game
 	class Actor;
 	class Game;
 
-	class Result
+	class State
 	{
 	public:
-		Result(const Actor& actor);
+		State(const Actor& actor);
 		bool possible;
 		Position position;
 		unsigned actionPoints;
@@ -22,17 +24,21 @@ namespace Game
 	class Action
 	{
 	public:
-		Action() = default;
-		virtual Result Act(const Actor& actor, const Game& game)=0;
+		Action();
+		virtual State Act(const State& state, const Game& game)=0;
+		virtual void Render(const State& state) const = 0;
 		static std::map<unsigned, std::function<Action*(void)>> keymap;
+	protected:
+		unsigned cost;
 	};
-
 
 	class Move :
 		public Action
 	{
 	public:
 		Move(Direction direction);
+		void Render(const State& state) const override;
+		State Act(const State& state, const Game& game) override;
 	protected:
 		Direction direction;
 	};
@@ -41,26 +47,42 @@ namespace Game
 	{
 	public:
 		North();
-		Result Act(const Actor& actor, const Game& game) override;
 	};
 	class East : public Move
 	{
 	public:
 		East();
-		Result Act(const Actor& actor, const Game& game) override;
 	};
 	class South : public Move
 	{
 	public:
 		South();
-		Result Act(const Actor& actor, const Game& game) override;
 	};
 	class West : public Move
 	{
 	public:
 		West();
-		Result Act(const Actor& actor, const Game& game) override;
 	};
 
+	class Plan
+	{
+	public:
+		Plan(const Actor& actor);
+		void Render() const;
+		void Add(std::unique_ptr<Action> action, const State& state);
+		State Final() const;
+	private:
+		State start;
+		struct Node
+		{
+			Node(std::unique_ptr<Action> action, const State& result);
+			Node(const Node&) = delete;
+			Node(Node&& other);
+			std::unique_ptr<Action> action;
+			State result;
+		};
+
+		std::vector<Node> actions;
+	};
 }   // ::Game
 

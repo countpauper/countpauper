@@ -5,74 +5,111 @@
 #include "Direction.h"
 namespace Game
 {
-	Result::Result(const Actor& actor) :
+	State::State(const Actor& actor) :
 		possible(false),
 		position(actor.GetPosition()),
 		actionPoints(actor.GetActionPoints())
 	{
 	}
 
-	Move::Move(Direction direction) :
-		direction(direction)
+	Action::Action() :
+		cost(0)
 	{
 	}
 
+	Move::Move(Direction direction) :
+		direction(direction)
+	{
+		cost = 2;
+	}
+
+	State Move::Act(const State& state, const Game& game)
+	{
+		State result(state);
+		if (state.actionPoints < cost)
+		{
+			result.possible = false;
+			return result;
+		}
+		result.actionPoints -= cost;
+		result.position += direction.Vector();
+		result.possible = game.CanBe(result.position) &&
+			game.CanGo(state.position, direction);
+
+		return result;
+	}
+
+	void Move::Render(const State& state) const
+	{
+		glColor4ub(255, 255, 255, 255);
+		glPushMatrix();
+		glTranslatef(float(state.position.x), 0.5f, float(state.position.y) + 0.5f);
+		auto v = direction.Vector();
+		glBegin(GL_LINES);
+			glVertex3f(0, 0, 0);
+			glVertex3f(float(v.x), 0, float(v.y));
+		glEnd();
+		glPopMatrix();
+	}
 	North::North() :
 		Move(Direction::Value::North)
 	{
 	}
 	
-	Result North::Act(const Actor& actor, const Game& game)
-	{
-		Result result(actor);
-		result.position += direction.Vector();
-		result.possible = game.CanBe(result.position) &&
-			game.CanGo(actor.GetPosition(), direction);
-
-		return result;
-	}
 
 	East::East() :
 		Move(Direction::Value::East)
 	{
 	}
 
-	Result East::Act(const Actor& actor, const Game& game)
-	{
-		Result result(actor);
-		result.position += direction.Vector();
-		result.possible = game.CanBe(result.position) &&
-			game.CanGo(actor.GetPosition(), direction);
-		return result;
-	}
-
 	South::South() :
 		Move(Direction::Value::South)
 	{
 	}
-
-	Result South::Act(const Actor& actor, const Game& game)
-	{
-		Result result(actor);
-		result.position += direction.Vector();
-		result.possible = game.CanBe(result.position) &&
-			game.CanGo(actor.GetPosition(), direction);
-		return result;
-	}
-
 	West::West() :
 		Move(Direction::Value::West)
 	{
 	}
-	Result West::Act(const Actor& actor, const Game& game)
+
+
+	Plan::Plan(const Actor& actor) :
+		start(actor)
 	{
-		Result result(actor);
-		result.position += direction.Vector();
-		result.possible = game.CanBe(result.position) &&
-			game.CanGo(actor.GetPosition(), direction);
-		return result;
+	}
+	void Plan::Render() const
+	{
+		State state = start;
+		for (const auto& node : actions)
+		{
+			node.action->Render(state);
+			state = node.result;
+		}
 	}
 
+	Plan::Node::Node(std::unique_ptr<Action> action, const State& state) :
+		action(std::move(action)),
+		result(state)
+	{
+	}
+
+	Plan::Node::Node(Node&& other) :
+		action(std::move(other.action)),
+		result(other.result)
+	{
+	}
+
+	void Plan::Add(std::unique_ptr<Action> action, const State& state)
+	{
+		actions.emplace_back(Node(std::move(action), state));
+	}
+
+	State Plan::Final() const
+	{
+		if (actions.empty())
+			return start;
+		else
+			return actions.back().result;
+	}
 
 	std::map<unsigned, std::function<Action*(void)>> Action::keymap = 
 	{

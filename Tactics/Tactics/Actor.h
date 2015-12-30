@@ -4,7 +4,7 @@
 
 namespace Game
 {
-	class Result;
+	class State;
 	class Actor;
 
     class Object
@@ -24,7 +24,8 @@ namespace Game
         Actor();
 		void Render() const override;
 		unsigned GetActionPoints() const;
-		void Apply(const Result& result);
+		void Apply(const State& result);
+		void Turn();
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
 		unsigned actionPoints;

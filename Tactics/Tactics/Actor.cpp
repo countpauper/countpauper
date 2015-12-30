@@ -22,7 +22,6 @@ namespace Game
 	{
 	}
 
-
 	void Actor::Render() const
     {
         unsigned sides = 10;
@@ -70,7 +69,7 @@ namespace Game
 		return actionPoints;
 	}
 
-	void Actor::Apply(const Result& result)
+	void Actor::Apply(const State& result)
 	{
 		if (!result.possible)
 			return;
@@ -78,6 +77,10 @@ namespace Game
 		actionPoints = result.actionPoints;
 	}
 
+	void Actor::Turn()
+	{
+		actionPoints = 10;
+	}
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {
         s >> actor.position.x >> actor.position.y;

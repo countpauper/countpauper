@@ -11,6 +11,7 @@ namespace Game
 {
 	class Object;
 	struct Position;
+	class Plan;
 
     class Game
     {
@@ -26,6 +27,7 @@ namespace Game
         Map map;
         std::vector<std::unique_ptr<Object>> objects;
         unsigned player;
+		std::unique_ptr<Plan> plan;
     };
     std::wistream& operator>>(std::wistream& s, Game& game);
 
