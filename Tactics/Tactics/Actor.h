@@ -11,7 +11,7 @@ namespace Game
     {
     public:
         virtual ~Object() = default;
-        virtual void Render(float z) const = 0;
+        virtual void Render() const = 0;
         void Move(int dx, int dy);
 		Position GetPosition() const;
     protected:
@@ -22,7 +22,7 @@ namespace Game
     {
     public:
         Actor();
-		void Render(float z) const override;
+		void Render() const override;
 		unsigned GetActionPoints() const;
 		void Apply(const Result& result);
     private:

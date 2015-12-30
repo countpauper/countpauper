@@ -6,23 +6,10 @@
 namespace Game
 {
 
-	std::array<float,4> Square::Z() const
+	float Square::Z() const
 	{
-		std::array<float, 4> z = {
-			static_cast<float>(height[0])*0.25f,
-			static_cast<float>(height[1])*0.25f,
-			static_cast<float>(height[2])*0.25f,
-			static_cast<float>(height[3])*0.25f,
-		};
-		return z;
+		return static_cast<float>(height)*0.25f;
 	}
-
-	float Square::MiddleZ() const
-	{
-		auto z = Z();
-		return (z[0] + z[1] + z[2] + z[3]) / 4.0f;
-	}
-
 
     Map::Map() :
         width(0),
@@ -93,55 +80,52 @@ namespace Game
 				auto color = colorTable[unsigned(square.floor)];
 				color.Render();
 				auto z = square.Z();
-				glVertex3f(x,		z[0], y);
-				glVertex3f(x + 1,	z[1], y);
-				glVertex3f(x + 1,	z[2], y + 1);
+				glVertex3f(x,		z, y);
+				glVertex3f(x + 1,	z, y);
+				glVertex3f(x + 1,	z, y + 1);
 
-				glVertex3f(x,		z[0], y);
-				glVertex3f(x + 1,	z[2], y + 1);
-				glVertex3f(x,		z[3], y + 1);
+				glVertex3f(x,		z, y);
+				glVertex3f(x + 1,	z, y + 1);
+				glVertex3f(x,		z, y + 1);
 				
 				auto wallx = square.walls[0];
 				if (wallx != Wall::None)
 				{
-					float zn0 = 0, zn3 = 0;
+					float zn = 0;
 					auto neighbour = MaybeAt(Position(x + 1, y));
 					if (neighbour)
 					{
-						auto neighbourZ = neighbour->Z();
-						zn0 = neighbourZ[0];
-						zn3 = neighbourZ[3];
+						zn = neighbour->Z();
 					}
 					auto wallColor = colorTable[unsigned(wallx)];
 					wallColor.Render();
-					glVertex3f(x + 1, z[1], y);
-					glVertex3f(x + 1,	z[2],	y + 1);
-					glVertex3f(x + 1,	zn0,	y);	
+					glVertex3f(x + 1,   z, y);
+					glVertex3f(x + 1, zn, y);
+					glVertex3f(x + 1, z, y + 1);
 					
-					glVertex3f(x + 1,	zn0,	y);
-					glVertex3f(x + 1,	zn3,	y + 1);
-					glVertex3f(x + 1,	z[2],	y + 1);
+					glVertex3f(x + 1,	zn,	y);
+					glVertex3f(x + 1,	zn,	y + 1);
+					glVertex3f(x + 1,	z,	y + 1);
 				}
+
 				auto wally = square.walls[1];
 				if (wally != Wall::None)
 				{
-					float zn2 = 0, zn3 = 0;
+					float zn = 0;
 					auto neighbour = MaybeAt(Position(x, y-1));
 					if (neighbour)
 					{
-						auto neighbourZ = neighbour->Z();
-						zn2 = neighbourZ[2];
-						zn3 = neighbourZ[3];
+						zn = neighbour->Z();
 					}
 					auto wallColor = colorTable[unsigned(wally)];
 					wallColor.Render();
-					glVertex3f(x,		z[0],	y);
-					glVertex3f(x,		zn3,	y);	
-					glVertex3f(x + 1,	z[1],	y);
+					glVertex3f(x,		z,	y);
+					glVertex3f(x,		zn,	y);	
+					glVertex3f(x + 1,	z,	y);
 
-					glVertex3f(x,		zn3,	y);
-					glVertex3f(x + 1,	zn2,	y);
-					glVertex3f(x + 1,	z[1],	y);
+					glVertex3f(x,		zn,	y);
+					glVertex3f(x + 1,	zn,	y);
+					glVertex3f(x + 1,	z,	y);
 				}
 
 			}
@@ -157,17 +141,17 @@ namespace Game
             {
 				const auto& square = squares.at(i++);
 				auto z = square.Z();
-				glVertex3f(x, z[0], y);
-                glVertex3f(x+1, z[1], y);
+				glVertex3f(x,	z, y);
+                glVertex3f(x+1, z, y);
 
-                glVertex3f(x+1, z[1], y);
-                glVertex3f(x+1, z[2], y+1);
+                glVertex3f(x+1, z, y);
+                glVertex3f(x+1, z, y+1);
 
-                glVertex3f(x+1, z[2], y+1);
-                glVertex3f(x, z[3], y+1);
+                glVertex3f(x+1, z, y+1);
+                glVertex3f(x,	z, y+1);
 
-                glVertex3f(x, z[3], y+1);
-                glVertex3f(x, z[0], y);
+                glVertex3f(x, z, y+1);
+                glVertex3f(x, z, y);
             }
         }
         glEnd();
@@ -189,7 +173,7 @@ namespace Game
         square.floor = Floor(floor);
         square.walls[0] = Wall(wall0);
         square.walls[1] = Wall(wall1);
-        s >> square.height[0] >> square.height[1] >> square.height[2] >> square.height[3];
+		s >> square.height;
         return s;
     }
 

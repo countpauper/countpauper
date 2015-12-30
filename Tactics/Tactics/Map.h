@@ -29,10 +29,9 @@ namespace Game
     {
         Floor floor;
         Wall walls[2];
-        unsigned short height[4];
+        unsigned short height;
         unsigned short reserved;
-		std::array<float,4> Z() const;
-		float MiddleZ() const;
+		float Z() const;
     };
 
 

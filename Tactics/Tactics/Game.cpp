@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <gl/GL.h>
 #include "Game.h"
 #include "Map.h"
 #include "Actor.h"
@@ -20,8 +21,13 @@ namespace Game
         map.Render();
 		for (const auto& object : objects)
 		{
-			auto square = map.At(object->GetPosition());
-			object->Render(square.MiddleZ());
+			glPushMatrix();
+			auto position = object->GetPosition();
+			auto square = map.At(position);
+
+			glTranslated(static_cast<float>(position.x)+0.5, square.Z(), static_cast<float>(position.y)+0.5);
+			object->Render();
+			glPopMatrix();
 		}
     }
 

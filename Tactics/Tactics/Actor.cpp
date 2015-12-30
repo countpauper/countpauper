@@ -23,11 +23,9 @@ namespace Game
 	}
 
 
-	void Actor::Render(float z) const
+	void Actor::Render() const
     {
         unsigned sides = 10;
-        float x = static_cast<float>(position.x)+0.5f;
-        float y = static_cast<float>(position.y) + 0.5f;
         float r = 0.25;
 
 		RGBA teamColor[] = {
@@ -42,26 +40,26 @@ namespace Game
 			teamColor[team].Render();
             float a = static_cast<float>(i) / sides * 2.0f * static_cast<float>(M_PI);
 			float b = static_cast<float>(i + 1) / sides * 2.0f * static_cast<float>(M_PI);
-            float xa = x + cos(a)*r;
-            float ya = y + sin(a) * r;
-            float xb = x + cos(b)*r;
-            float yb = y + sin(b) * r;
+            float xa =  cos(a)*r;
+            float ya =  sin(a) * r;
+            float xb =  cos(b)*r;
+            float yb =  sin(b) * r;
 
-            glVertex3f(x,	z,		y);
-            glVertex3f(xa,	z,		ya);
-            glVertex3f(xb,	z,		yb);
+            glVertex3f(0,	0,	0);
+            glVertex3f(xa,	0,	ya);
+            glVertex3f(xb,	0,	yb);
 
-            glVertex3f(xa,	z,		ya);
-            glVertex3f(xa,	z+1,	ya);
-			glVertex3f(xb, z, yb);
+            glVertex3f(xa,	0,	ya);
+            glVertex3f(xa,	1,	ya);
+			glVertex3f(xb,  0,	yb);
 
-            glVertex3f(xb,	z,		yb);
-            glVertex3f(xa,	z+1,	ya);
-            glVertex3f(xb,	z+1,	yb);
+            glVertex3f(xb,	0,	yb);
+            glVertex3f(xa,	1,	ya);
+            glVertex3f(xb,	1,	yb);
 
-			glVertex3f(x,	z + 1,	y);
-			glVertex3f(xa,	z + 1,	ya);
-            glVertex3f(xb,	z+1,	yb);
+			glVertex3f(0,	1,	0);
+			glVertex3f(xa,	1,	ya);
+            glVertex3f(xb,	1,	yb);
 
         }
         glEnd();
