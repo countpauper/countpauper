@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Map.h"
-#include "Color.h"
 #include <gl/GL.h>
 
 namespace Game
@@ -56,105 +55,114 @@ namespace Game
 		auto neighbour = MaybeAt(from + direction.Vector());
 		if (!neighbour)
 			return false;
+		if (std::abs(int(square.height) - int(neighbour->height)) > 1)
+			return false;
 		return true;
 	}
 
+	std::vector<RGBA> Square::colorTable = {
+		{ 0, 0, 0, 255 }, // None = 0
+		{ 0, 255, 0, 255 }, // Nature,
+		{ 64, 64, 64, 255 }, // Earth
+		{ 255, 255, 255, 24 }, // Air
+		{ 0, 0, 255, 128 }, // Water
+		{ 255, 0, 0, 255 }, //  Fire
+	};
+
+	void Square::RenderFloor() const
+	{
+		auto color = colorTable[unsigned(floor)];
+		color.Render();
+		auto z = Z();
+		glBegin(GL_QUADS);
+			glVertex3f(0.0f, z, 0.0f);
+			glVertex3f(1.0f, z, 0.0f);
+			glVertex3f(1.0f, z, 1.0f);
+			glVertex3f(0.0f, z, 1.0f);
+		glEnd();
+	}
+
+	void Square::RenderXWall(const Square* neighbour) const
+	{
+		auto wallx = walls[0];
+		if (wallx != Wall::None)
+		{
+			float z = Z();
+			float zn = 0;
+			if (neighbour)
+			{
+				zn = neighbour->Z();
+			}
+			auto wallColor = colorTable[unsigned(wallx)];
+			wallColor.Render();
+			glBegin(GL_QUADS);
+				glVertex3f(1.0f, z, 0.0f);
+				glVertex3f(1.0f, zn, 0.0f);
+				glVertex3f(1.0f, zn, 1.0f);
+				glVertex3f(1.0f, z, 1.0f);
+			glEnd();
+		}
+	}
+
+	void Square::RenderYWall(const Square* neighbour) const
+	{
+		auto wally = walls[1];
+		if (wally != Wall::None)
+		{
+			float z = Z();
+			float zn = 0;
+			if (neighbour)
+			{
+				zn = neighbour->Z();
+			}
+			auto wallColor = colorTable[unsigned(wally)];
+			wallColor.Render();
+			glBegin(GL_QUADS);
+				glVertex3f(0.0f, z, 0.0f);
+				glVertex3f(0.0f, zn, 0.0f);
+				glVertex3f(1.0f, zn, 0.0f);
+				glVertex3f(1.0f, z, 0.0f);
+			glEnd();
+		}
+	}
+
+	void Square::RenderOutline() const
+	{
+		auto z = Z();
+		glColor3f(0, 0, 0);
+		glBegin(GL_LINES);
+			glVertex3f(0.0f, z, 0.0f);
+			glVertex3f(1.0f, z, 0.0f);
+
+			glVertex3f(1.0f, z, 0.0f);
+			glVertex3f(1.0f, z, 1.0f);
+
+			glVertex3f(1.0f, z, 1.0f);
+			glVertex3f(0.0f, z, 1.0f);
+
+			glVertex3f(0.0f, z, 1.0f);
+			glVertex3f(0.0f, z, 0.0f);
+		glEnd();
+
+	}
 	void Map::Render() const
     {
-        RGBA colorTable[] = {
-            {   0,   0,   0, 255 }, // None = 0
-            {   0, 255,   0, 255 }, // Nature,
-            {  64,  64,  64, 255 }, // Earth
-            { 255, 255, 255,  24 }, // Air
-            {   0,   0, 255, 128 }, // Water
-            { 255,   0,   0, 255 }, //  Fire
-        };
 
-        glBegin(GL_TRIANGLES);
         unsigned i = 0;
-        for (float y = 0; y < height; ++y)
+        for (unsigned y = 0; y < height; ++y)
         {
-			for (float x = 0; x < width; ++x)
+			for (unsigned x = 0; x < width; ++x)
 			{
+				glPushMatrix();
+				glTranslatef(static_cast<float>(x), 0.0f, static_cast<float>(y));
 				const auto& square = squares.at(i++);
-				auto color = colorTable[unsigned(square.floor)];
-				color.Render();
-				auto z = square.Z();
-				glVertex3f(x,		z, y);
-				glVertex3f(x + 1,	z, y);
-				glVertex3f(x + 1,	z, y + 1);
-
-				glVertex3f(x,		z, y);
-				glVertex3f(x + 1,	z, y + 1);
-				glVertex3f(x,		z, y + 1);
-				
-				auto wallx = square.walls[0];
-				if (wallx != Wall::None)
-				{
-					float zn = 0;
-					auto neighbour = MaybeAt(Position(x + 1, y));
-					if (neighbour)
-					{
-						zn = neighbour->Z();
-					}
-					auto wallColor = colorTable[unsigned(wallx)];
-					wallColor.Render();
-					glVertex3f(x + 1,   z, y);
-					glVertex3f(x + 1, zn, y);
-					glVertex3f(x + 1, z, y + 1);
-					
-					glVertex3f(x + 1,	zn,	y);
-					glVertex3f(x + 1,	zn,	y + 1);
-					glVertex3f(x + 1,	z,	y + 1);
-				}
-
-				auto wally = square.walls[1];
-				if (wally != Wall::None)
-				{
-					float zn = 0;
-					auto neighbour = MaybeAt(Position(x, y-1));
-					if (neighbour)
-					{
-						zn = neighbour->Z();
-					}
-					auto wallColor = colorTable[unsigned(wally)];
-					wallColor.Render();
-					glVertex3f(x,		z,	y);
-					glVertex3f(x,		zn,	y);	
-					glVertex3f(x + 1,	z,	y);
-
-					glVertex3f(x,		zn,	y);
-					glVertex3f(x + 1,	zn,	y);
-					glVertex3f(x + 1,	z,	y);
-				}
-
+				square.RenderFloor();
+				square.RenderXWall(MaybeAt(Position(x + 1, y)));
+				square.RenderYWall(MaybeAt(Position(x, y-1)));
+				square.RenderOutline();
+				glPopMatrix();
 			}
         }
-        glEnd();
-
-        glColor3f(0, 0, 0);
-        glBegin(GL_LINES);
-		i = 0;
-        for (float y = 0; y < height; ++y)
-        {
-            for (float x = 0; x < width; ++x)
-            {
-				const auto& square = squares.at(i++);
-				auto z = square.Z();
-				glVertex3f(x,	z, y);
-                glVertex3f(x+1, z, y);
-
-                glVertex3f(x+1, z, y);
-                glVertex3f(x+1, z, y+1);
-
-                glVertex3f(x+1, z, y+1);
-                glVertex3f(x,	z, y+1);
-
-                glVertex3f(x, z, y+1);
-                glVertex3f(x, z, y);
-            }
-        }
-        glEnd();
     }
 
     std::wistream& operator>>(std::wistream& s, Map& map)

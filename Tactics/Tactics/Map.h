@@ -3,6 +3,7 @@
 #include <array>
 #include "Position.h"
 #include "Direction.h"
+#include "Color.h"
 
 namespace Game
 {
@@ -32,7 +33,12 @@ namespace Game
         unsigned short height;
         unsigned short reserved;
 		float Z() const;
-    };
+		void RenderFloor() const;
+		void RenderOutline() const;
+		void RenderXWall(const Square* neighbour) const;
+		void RenderYWall(const Square* neighbour) const;
+		static std::vector<RGBA> colorTable;
+	};
 
 
     class Map
