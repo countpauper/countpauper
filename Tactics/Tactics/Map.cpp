@@ -147,19 +147,20 @@ namespace Game
 	}
 	void Map::Render() const
     {
-
         unsigned i = 0;
         for (unsigned y = 0; y < height; ++y)
         {
 			for (unsigned x = 0; x < width; ++x)
 			{
 				glPushMatrix();
+				glPushName((y << 16) + x);
 				glTranslatef(static_cast<float>(x), 0.0f, static_cast<float>(y));
 				const auto& square = squares.at(i++);
 				square.RenderFloor();
 				square.RenderXWall(MaybeAt(Position(x + 1, y)));
 				square.RenderYWall(MaybeAt(Position(x, y-1)));
 				square.RenderOutline();
+				glPopName();
 				glPopMatrix();
 			}
         }

@@ -18,6 +18,62 @@ TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 HGLRC hGLRC;
 std::unique_ptr<Game::Game> game;
+struct Input
+{
+	Input() :
+		drag(false)
+	{
+	}
+	bool drag;
+	int x;
+	int y;
+} input;
+
+int width = 0;
+int height = 0;
+
+struct Camera
+{
+	Camera() :
+		fov(90),	// makes cale = 1
+		x(2),
+		y(2),
+		z(-2),
+		zoom(1.0f),
+		dx(0),
+		dz(0)
+	{
+	}
+
+	void Apply()
+	{
+		float scale = static_cast<float>(1.0 / tan(fov* 0.5 * M_PI / 180.0));
+		float n = 10;
+		float f = 0;
+		GLfloat perspectiveMatrix[16] =
+		{
+			scale, 0, 0, 0,
+			0, scale, 0, 0,
+			0, 0, f / (f - n), 1,
+			0, 0, f*n / (f - n), 0
+		};
+		glMultMatrixf(perspectiveMatrix);
+		glTranslatef(dx-x, -y, dz-z);
+		// TODO: instead of zoom, have a view angle. a target position, move backwards and forwards
+		//glScalef(zoom, zoom, zoom);
+	}
+	void FinishDrag()
+	{
+		x += dx;
+		z += dz;
+		dx = 0;
+		dz = 0;
+	}
+	float x, y, z;
+	float dx, dz;
+	float fov;
+	float zoom;
+} camera;	// TODO: own file 
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -183,35 +239,74 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
+struct Hit
+{
+	Hit(unsigned type, unsigned value) :
+		type(type),
+		value(value)
+	{
+	}
+	unsigned type;
+	unsigned value;
+	operator bool() const { return type != 0;  }
+};
+
+Hit Select(int x, int y)
+{
+	GLuint buffer[512];
+	glSelectBuffer(512, buffer);
+	glRenderMode(GL_SELECT);
+	glInitNames();
+
+	GLint viewport[] = { 0, 0, width, height };
+	glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_CULL_FACE);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	// gluPickMatrix
+	glTranslatef((viewport[2] - 2.0 * (x - viewport[0])), (2.0 * (y - viewport[1]) - viewport[3]), 0.0f);
+	glScalef(viewport[2], viewport[3], 1.0);
+	camera.Apply();
+
+	game->Render();
+	GLint hits = glRenderMode(GL_RENDER);
+	GLuint bestType = 0;
+	GLuint bestObject = 0;
+	if (hits > 0)
+	{
+		unsigned index = 0;
+		for (int hit = 0; hit < hits; ++hit)
+		{
+			GLuint names = buffer[index];
+			assert(names == 2 && "Each hit should be a type name + an object name");
+			int type = buffer[index + 3];
+			if (type > bestType)
+			{	// Since z-buffer isn't working, use sorted type for preference, 
+				bestType = type;
+				bestObject = buffer[index + 4];
+			}
+			index += names + 3;
+		}
+	}
+	return Hit( bestType, bestObject );
+}
 
 void Render()
 {
-    float angleOfView = 90; // makes scale = 1
-    float scale = static_cast<float>(1.0 / tan(angleOfView * 0.5 * M_PI / 180.0));
-    float n = 10;
-    float f = 0;
-    float x = 2, y = 2, z = -2; // camera position
-    GLfloat perspectiveMatrix[16] = 
-    {
-        scale, 0, 0, 0,
-        0, scale, 0, 0,
-        0, 0, f / (f - n), 1,
-        0, 0, f*n /(f-n), 0
-    };
-    glClearColor(0, 0, 0, 0);
+	glViewport(0, 0, width, height);
+	glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	//glEnable(GL_BLEND);	TODO: first render non alpha tiles, then alpha tiles with depth test
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(perspectiveMatrix);
-    glTranslated(-x, -y, -z);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
 
-    game->Render();
-
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	camera.Apply();
+	game->Render();
     glFlush();
 }
 
@@ -253,6 +348,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
+	case WM_LBUTTONDOWN:
+		input.x = LOWORD(lParam);
+		input.y = HIWORD(lParam);
+		input.drag = true;
+		SetCapture(hWnd); 
+		InvalidateRect(hWnd, nullptr, TRUE);//todo, just for click test
+		break;
+	case WM_LBUTTONUP:
+		{
+			int dx = LOWORD(lParam) - input.x;
+			int dy = HIWORD(lParam) - input.y;
+			input.drag = false;
+			camera.FinishDrag();
+			if ((std::abs(dx) < 1) && (std::abs(dy) < 1))
+			{
+				auto hit = Select(input.x + dx, input.y + dy);
+				if (hit)
+					game->Click(Game::Game::Selection(hit.type), hit.value);
+			}
+			ReleaseCapture();
+			InvalidateRect(hWnd, nullptr, TRUE);
+	}
+	case WM_MOUSEMOVE:
+		if (input.drag)
+		{
+			int dx = LOWORD(lParam) - input.x;
+			int dy = HIWORD(lParam) - input.y;
+			camera.dx -= (dx / 100.0f);	// TODO: temperary camera state
+			camera.dz += (dy / 100.0f);
+			InvalidateRect(hWnd, nullptr, TRUE);
+		}
+		break;
+	case WM_MOUSEWHEEL:
+		{
+			int delta = int(wParam)>>16;
+			camera.zoom += float(delta) * 1e-3f;
+			InvalidateRect(hWnd, nullptr, TRUE);
+	}
+		break;
     case WM_ERASEBKGND:
         break;
     case WM_PAINT:
@@ -262,7 +396,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         EndPaint(hWnd, &ps);
         break;
     case WM_SIZE:
-        glViewport(0, 0, LOWORD(lParam), HIWORD(lParam));
+		width = LOWORD(lParam);
+		height = HIWORD(lParam);
         PostMessage(hWnd, WM_PAINT, 0, 0);
     return 0;
     case WM_KEYDOWN:

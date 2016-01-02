@@ -16,14 +16,23 @@ namespace Game
     class Game
     {
     public:
+		enum class Selection
+		{
+			None = 0,
+			Map,
+			Object
+		};
         Game();
 		virtual ~Game();
         void Render() const;
         void Key(unsigned short code);
 		bool CanBe(const Position& position) const;
 		bool CanGo(const Position& from, Direction direction) const;
+		void Click(Selection selection, uint32_t value);
     protected:
-        friend std::wistream& operator>>(std::wistream& s, Game& game);
+		Plan* PathPlan(const Position& target) const;
+	protected:
+		friend std::wistream& operator>>(std::wistream& s, Game& game);
         Map map;
         std::vector<std::unique_ptr<Object>> objects;
         unsigned player;

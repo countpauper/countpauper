@@ -18,7 +18,14 @@ namespace Game
 
     void Game::Render() const
     {
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		glPushName(GLuint(Selection::Map));
         map.Render();
+		glPopName();
+		glPushName(GLuint(Selection::Object));
+		unsigned index = 0;
 		for (const auto& object : objects)
 		{
 			glPushMatrix();
@@ -26,9 +33,12 @@ namespace Game
 			auto square = map.At(position);
 
 			glTranslated(static_cast<float>(position.x)+0.5, square.Z(), static_cast<float>(position.y)+0.5);
+			glPushName(index++);
 			object->Render();
+			glPopName();
 			glPopMatrix();
 		}
+		glPopName();
 		if (plan)
 			plan->Render();
     }
@@ -51,16 +61,14 @@ namespace Game
 		}
 		if (Action::keymap.count(code) == 0)
 			return;
+
 		std::unique_ptr<Action> action(Action::keymap[code]());
-		State state(playerActor);
-		if (plan)
-			state = plan->Final();
+		if (!plan)
+			plan = std::make_unique<Plan>(playerActor);
+		State state(plan->Final());
 		auto result = action->Act(state, *this);
 		if (!result.possible)
 			return;
-//		playerActor.Apply(result);
-		if (!plan)
-			plan = std::make_unique<Plan>(playerActor);
 		plan->Add(std::move(action), result);
     }
 
@@ -99,6 +107,19 @@ namespace Game
         return s;
     }
 
+	void Game::Click(Selection selection, uint32_t value)
+	{
+		if (selection == Selection::Map)
+		{
+			Position target(value & 0xFFFF,(value >> 15) & 0xFFFF);
+			plan.reset(PathPlan(target));
+		}
+	}
+
+	Plan* Game::PathPlan(const Position&target) const
+	{
+		return nullptr;
+	}
 }   // ::Game
 
 
