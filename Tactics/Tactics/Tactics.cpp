@@ -40,8 +40,8 @@ struct Camera
 		y(2),
 		z(-2),
 		zoom(1.0f),
-		dx(0),
-		dz(0)
+		dragx(0),
+		dragz(0)
 	{
 	}
 
@@ -58,19 +58,24 @@ struct Camera
 			0, 0, f*n / (f - n), 0
 		};
 		glMultMatrixf(perspectiveMatrix);
-		glTranslatef(dx-x, -y, dz-z);
+		glTranslatef(dragx-x, -y, dragz-z);
 		// TODO: instead of zoom, have a view angle. a target position, move backwards and forwards
 		//glScalef(zoom, zoom, zoom);
 	}
-	void FinishDrag()
+	void Drag(float dx, float dz)
 	{
-		x += dx;
-		z += dz;
-		dx = 0;
-		dz = 0;
+		dragx = dx;
+		dragz = dz;
+	}
+	void FinishDrag(float dx, float dz)
+	{
+		x -= dx;
+		z -= dz;
+		dragx = 0;
+		dragz = 0;
 	}
 	float x, y, z;
-	float dx, dz;
+	float dragx, dragz;
 	float fov;
 	float zoom;
 } camera;	// TODO: own file 
@@ -281,7 +286,7 @@ Hit Select(int x, int y)
 		{
 			GLuint names = buffer[index];
 			assert(names == 2 && "Each hit should be a type name + an object name");
-			int type = buffer[index + 3];
+			GLuint type = buffer[index + 3];
 			if (type > bestType)
 			{	// Since z-buffer isn't working, use sorted type for preference, 
 				bestType = type;
@@ -357,13 +362,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_LBUTTONUP:
 		{
-			int dx = LOWORD(lParam) - input.x;
-			int dy = HIWORD(lParam) - input.y;
+			int x = LOWORD(lParam), y = HIWORD(lParam);
+			int dx = x- input.x, dy = y- input.y;
 			input.drag = false;
-			camera.FinishDrag();
+			camera.FinishDrag(dx/100.0f, dy/-100.0f);
 			if ((std::abs(dx) < 1) && (std::abs(dy) < 1))
 			{
-				auto hit = Select(input.x + dx, input.y + dy);
+				auto hit = Select(x, y);
 				if (hit)
 					game->Click(Game::Game::Selection(hit.type), hit.value);
 			}
@@ -375,8 +380,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			int dx = LOWORD(lParam) - input.x;
 			int dy = HIWORD(lParam) - input.y;
-			camera.dx -= (dx / 100.0f);	// TODO: temperary camera state
-			camera.dz += (dy / 100.0f);
+			camera.Drag(dx / 100.0f, dy / -100.0f);
 			InvalidateRect(hWnd, nullptr, TRUE);
 		}
 		break;
