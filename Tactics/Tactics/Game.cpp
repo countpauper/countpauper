@@ -143,10 +143,10 @@ namespace Game
 			Node* previous;
 			std::unique_ptr<Action> action;
 			State state;
-			int Score(const Position& target, unsigned startActionPoints) const
+			int Score(const Position& target, unsigned startMovePoints) const
 			{
 				return target.Distance(state.position) + 
-					startActionPoints - state.actionPoints;
+					startMovePoints - state.mp;
 			}
 			bool Reached(const Position& target) const
 			{
@@ -161,7 +161,7 @@ namespace Game
 		auto first = std::make_unique<Node>(start);
 		if (first->Reached(target))
 			return nullptr;
-		open.insert(std::make_pair(first->Score(target, start.actionPoints), std::move(first)));
+		open.insert(std::make_pair(first->Score(target, start.mp), std::move(first)));
 		while (!open.empty())
 		{
 			auto best = std::move(open.begin()->second);
@@ -199,7 +199,7 @@ namespace Game
 				}
 				else
 				{
-					open.insert(std::make_pair(newNode->Score(target, start.actionPoints), std::unique_ptr<Node>(newNode)));
+					open.insert(std::make_pair(newNode->Score(target, start.mp), std::unique_ptr<Node>(newNode)));
 				}
 			}
 		}

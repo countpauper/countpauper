@@ -8,7 +8,7 @@ namespace Game
 	State::State(const Actor& actor) :
 		possible(false),
 		position(actor.GetPosition()),
-		actionPoints(actor.GetActionPoints())
+		mp(actor.GetMovePoints())
 	{
 	}
 
@@ -26,12 +26,12 @@ namespace Game
 	State Move::Act(const State& state, const Game& game)
 	{
 		State result(state);
-		if (state.actionPoints < cost)
+		if (state.mp <= cost)
 		{
 			result.possible = false;
 			return result;
 		}
-		result.actionPoints -= cost;
+		result.mp -= cost;
 		result.position += direction.Vector();
 		result.possible = game.CanBe(result.position) &&
 			game.CanGo(state.position, direction);

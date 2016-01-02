@@ -6,6 +6,12 @@
 
 namespace Game
 {
+	Object::Object() :
+		hp(0),
+		maxhp(0)
+	{
+
+	}
     void Object::Move(int dx, int dy)
     {
         position.x = min(max(0,static_cast<int>(position.x) + dx),5);
@@ -17,7 +23,8 @@ namespace Game
 		return position;
 	}
 	Actor::Actor() :
-		actionPoints(10),
+		mp(0),
+		maxmp(0),
 		team(0)
 	{
 	}
@@ -64,9 +71,9 @@ namespace Game
         glEnd();
     }
 
-	unsigned Actor::GetActionPoints() const
+	unsigned Actor::GetMovePoints() const
 	{
-		return actionPoints;
+		return mp;
 	}
 
 	void Actor::Apply(const State& result)
@@ -74,17 +81,19 @@ namespace Game
 		if (!result.possible)
 			return;
 		position = result.position;
-		actionPoints = result.actionPoints;
+		mp = result.mp;
 	}
 
 	void Actor::Turn()
 	{
-		actionPoints = 10;
+		mp = maxmp;
 	}
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {
         s >> actor.position.x >> actor.position.y;
 		s >> actor.team;
-        return s;
+		s >> actor.hp >> actor.maxhp;
+		s >> actor.mp >> actor.maxmp;
+		return s;
     }
 } // ::Game

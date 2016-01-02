@@ -10,12 +10,15 @@ namespace Game
     class Object
     {
     public:
+		Object();
         virtual ~Object() = default;
         virtual void Render() const = 0;
         void Move(int dx, int dy);
 		Position GetPosition() const;
     protected:
         Position position;
+		int hp;
+		unsigned maxhp;
     };
 
     class Actor : public Object
@@ -23,12 +26,13 @@ namespace Game
     public:
         Actor();
 		void Render() const override;
-		unsigned GetActionPoints() const;
+		unsigned GetMovePoints() const;
 		void Apply(const State& result);
 		void Turn();
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
-		unsigned actionPoints;
+		unsigned mp;
+		unsigned maxmp;
 		unsigned team;
 	};
     std::wistream& operator>>(std::wistream& s, Actor& actor);

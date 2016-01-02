@@ -18,7 +18,7 @@ namespace Game
 		State(const Actor& actor);
 		bool possible;
 		Position position;
-		unsigned actionPoints;
+		unsigned mp;
 	};
 
 	class Action
