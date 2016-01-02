@@ -70,6 +70,7 @@ namespace Game
 		Plan(const Actor& actor);
 		void Render() const;
 		void Add(std::unique_ptr<Action> action, const State& state);
+		void AddFront(std::unique_ptr<Action> action, const State& state);
 		State Final() const;
 	private:
 		State start;
@@ -78,6 +79,8 @@ namespace Game
 			Node(std::unique_ptr<Action> action, const State& result);
 			Node(const Node&) = delete;
 			Node(Node&& other);
+			Node& operator= (Node&&);
+
 			std::unique_ptr<Action> action;
 			State result;
 		};

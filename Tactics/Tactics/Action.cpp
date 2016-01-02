@@ -43,7 +43,7 @@ namespace Game
 	{
 		glColor4ub(255, 255, 255, 255);
 		glPushMatrix();
-		glTranslatef(float(state.position.x), 0.5f, float(state.position.y) + 0.5f);
+		glTranslatef(float(state.position.x)+0.5f, 0.5f, float(state.position.y) + 0.5f);
 		auto v = direction.Vector();
 		glBegin(GL_LINES);
 			glVertex3f(0, 0, 0);
@@ -98,9 +98,20 @@ namespace Game
 	{
 	}
 
+	Plan::Node& Plan::Node::operator= (Plan::Node&& other)
+	{
+		action = std::move(other.action);
+		result = other.result;
+		return *this;
+	}
+
 	void Plan::Add(std::unique_ptr<Action> action, const State& state)
 	{
 		actions.emplace_back(Node(std::move(action), state));
+	}
+	void Plan::AddFront(std::unique_ptr<Action> action, const State& state)
+	{
+		actions.emplace(actions.begin(),Node(std::move(action), state));
 	}
 
 	State Plan::Final() const

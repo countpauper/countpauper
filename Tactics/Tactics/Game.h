@@ -12,6 +12,7 @@ namespace Game
 	class Object;
 	struct Position;
 	class Plan;
+	class Actor;
 
     class Game
     {
@@ -30,7 +31,7 @@ namespace Game
 		bool CanGo(const Position& from, Direction direction) const;
 		void Click(Selection selection, uint32_t value);
     protected:
-		Plan* PathPlan(const Position& target) const;
+		Plan* PathPlan(const Actor& actor, const Position& target) const;
 	protected:
 		friend std::wistream& operator>>(std::wistream& s, Game& game);
         Map map;
