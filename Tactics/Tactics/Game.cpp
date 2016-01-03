@@ -3,7 +3,7 @@
 #include "Game.h"
 #include "Map.h"
 #include "Actor.h"
-#include "Action.h"
+#include "Move.h"
 #include "Plan.h"
 
 namespace Game
@@ -62,9 +62,11 @@ namespace Game
 		if (Action::keymap.count(code) == 0)
 			return;
 
-		std::unique_ptr<Action> action(Action::keymap[code]());
 		if (!plan)
 			plan = std::make_unique<Plan>(playerActor);
+		std::unique_ptr<Action> action(Action::keymap[code](plan->Final(), *this));
+		if (!action)
+			return;
 		State state(plan->Final());
 		auto result = action->Act(state, *this);
 		if (!result.possible)
@@ -87,6 +89,18 @@ namespace Game
 		return map.CanGo(from, direction);
 	}
 
+	Actor* Game::FindTarget(const Position& from) const
+	{
+		for (auto& object : objects)
+		{
+			auto actor = dynamic_cast<Actor*>(object.get());
+			if (!actor)
+				continue;
+			if (actor->GetPosition().Distance(from) == 1)	//TODO: more explicitly exclude actor, by team 
+				return actor;
+		}
+		return nullptr;
+	}
 	std::wistream& operator>>(std::wistream& s, Game& game)
     {
         unsigned objects;

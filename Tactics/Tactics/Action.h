@@ -16,43 +16,17 @@ namespace Game
 		Action();
 		virtual State Act(const State& state, const Game& game)=0;
 		virtual void Render(const State& state) const = 0;
-		static std::map<unsigned, std::function<Action*(void)>> keymap;
+		static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
 	protected:
 		unsigned cost;
 	};
-
-	class Move :
-		public Action
+	
+	class TargetedAction : public Action
 	{
 	public:
-		Move(Direction direction);
-		void Render(const State& state) const override;
-		State Act(const State& state, const Game& game) override;
+		TargetedAction(Actor& target);
 	protected:
-		Direction direction;
+		Actor& target;
 	};
-
-	class North : public Move
-	{
-	public:
-		North();
-	};
-	class East : public Move
-	{
-	public:
-		East();
-	};
-	class South : public Move
-	{
-	public:
-		South();
-	};
-	class West : public Move
-	{
-	public:
-		West();
-	};
-
-
 }   // ::Game
 

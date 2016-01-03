@@ -5,7 +5,7 @@
 namespace Game
 {
 	State::State(const Actor& actor) :
-		possible(false),
+		possible(true),
 		position(actor.GetPosition()),
 		mp(actor.GetMovePoints())
 	{

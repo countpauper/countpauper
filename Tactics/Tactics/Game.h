@@ -30,6 +30,7 @@ namespace Game
 		bool CanBe(const Position& position) const;
 		bool CanGo(const Position& from, Direction direction) const;
 		void Click(Selection selection, uint32_t value);
+		Actor* FindTarget(const Position& from) const;
     protected:
 		Plan* PathPlan(const Actor& actor, const Position& target) const;
 	protected:

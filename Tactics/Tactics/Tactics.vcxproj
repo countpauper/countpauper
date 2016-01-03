@@ -81,10 +81,12 @@
   <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
+    <ClInclude Include="Attack.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Move.h" />
     <ClInclude Include="Plan.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Resource.h" />
@@ -96,9 +98,11 @@
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Move.cpp" />
     <ClCompile Include="Plan.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="State.cpp" />

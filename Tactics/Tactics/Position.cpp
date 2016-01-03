@@ -23,10 +23,22 @@ namespace Game
 		y += delta.y;
 		return *this;
 	}
+	Position& Position::operator-=(const Position& delta)
+	{
+		x -= delta.x;
+		y -= delta.y;
+		return *this;
+	}
 	Position operator+(const Position& a, const Position& b)
 	{
 		Position o(a);
 		o += b;
+		return o;
+	}
+	Position operator-(const Position& a, const Position& b)
+	{
+		Position o(a);
+		o -= b;
 		return o;
 	}
 
