@@ -4,6 +4,7 @@
 #include "Map.h"
 #include "Actor.h"
 #include "Action.h"
+#include "Plan.h"
 
 namespace Game
 {
@@ -14,7 +15,6 @@ namespace Game
     }
 	
 	Game::~Game() = default;
-
 
     void Game::Render() const
     {

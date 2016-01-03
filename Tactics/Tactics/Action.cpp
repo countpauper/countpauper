@@ -1,17 +1,10 @@
 #include "stdafx.h"
 #include "Action.h"
-#include "Actor.h"
 #include "Game.h"
 #include "Direction.h"
+
 namespace Game
 {
-	State::State(const Actor& actor) :
-		possible(false),
-		position(actor.GetPosition()),
-		mp(actor.GetMovePoints())
-	{
-	}
-
 	Action::Action() :
 		cost(0)
 	{
@@ -69,57 +62,6 @@ namespace Game
 	West::West() :
 		Move(Direction::Value::West)
 	{
-	}
-
-
-	Plan::Plan(const Actor& actor) :
-		start(actor)
-	{
-	}
-	void Plan::Render() const
-	{
-		State state = start;
-		for (const auto& node : actions)
-		{
-			node.action->Render(state);
-			state = node.result;
-		}
-	}
-
-	Plan::Node::Node(std::unique_ptr<Action> action, const State& state) :
-		action(std::move(action)),
-		result(state)
-	{
-	}
-
-	Plan::Node::Node(Node&& other) :
-		action(std::move(other.action)),
-		result(other.result)
-	{
-	}
-
-	Plan::Node& Plan::Node::operator= (Plan::Node&& other)
-	{
-		action = std::move(other.action);
-		result = other.result;
-		return *this;
-	}
-
-	void Plan::Add(std::unique_ptr<Action> action, const State& state)
-	{
-		actions.emplace_back(Node(std::move(action), state));
-	}
-	void Plan::AddFront(std::unique_ptr<Action> action, const State& state)
-	{
-		actions.emplace(actions.begin(),Node(std::move(action), state));
-	}
-
-	State Plan::Final() const
-	{
-		if (actions.empty())
-			return start;
-		else
-			return actions.back().result;
 	}
 
 	std::map<unsigned, std::function<Action*(void)>> Action::keymap = 
