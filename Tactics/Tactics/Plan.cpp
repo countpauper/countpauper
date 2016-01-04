@@ -54,4 +54,11 @@ namespace Game
 		else
 			return actions.back().result;
 	}
+	void Plan::Execute(Actor& actor) const
+	{
+		for (const auto& action : actions)
+			if (auto targetedAction = dynamic_cast<TargetedAction*>(action.action.get()))
+				targetedAction->React();
+		actor.Apply(Final());
+	}
 }	// ::Game

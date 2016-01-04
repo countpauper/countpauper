@@ -54,7 +54,7 @@ namespace Game
 		if (code == VK_RETURN)
 		{
 			if (plan)
-				playerActor.Apply(plan->Final());
+				plan->Execute(playerActor);
 			playerActor.Turn();
 			plan.reset();
 			return;

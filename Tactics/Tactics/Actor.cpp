@@ -22,6 +22,12 @@ namespace Game
 	{
 		return position;
 	}
+
+	unsigned Object::GetHitPoints() const
+	{
+		return hp;
+	}
+
 	Actor::Actor() :
 		mp(0),
 		maxmp(0),
@@ -82,6 +88,7 @@ namespace Game
 			return;
 		position = result.position;
 		mp = result.mp;
+		hp = result.hp;
 	}
 
 	void Actor::Turn()

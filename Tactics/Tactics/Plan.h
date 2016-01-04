@@ -18,6 +18,7 @@ public:
 	void Add(std::unique_ptr<Action> action, const State& state);
 	void AddFront(std::unique_ptr<Action> action, const State& state);
 	State Final() const;
+	void Execute(Actor& actor) const;
 private:
 	State start;
 	struct Node

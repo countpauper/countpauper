@@ -25,6 +25,14 @@ namespace Game
 		return result;
 	}
 
+	void Attack::React()
+	{
+		State result(target);
+		result.hp -= 1;
+		target.Apply(result);
+	}
+
+
 	void Attack::Render(const State& state) const
 	{
 		glColor4ub(255, 0, 0, 255);

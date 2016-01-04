@@ -25,6 +25,7 @@ namespace Game
 	{
 	public:
 		TargetedAction(Actor& target);
+		virtual void React() = 0;
 	protected:
 		Actor& target;
 	};

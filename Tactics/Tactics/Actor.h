@@ -15,7 +15,8 @@ namespace Game
         virtual void Render() const = 0;
         void Move(int dx, int dy);
 		Position GetPosition() const;
-    protected:
+		unsigned GetHitPoints() const;
+	protected:
         Position position;
 		int hp;
 		unsigned maxhp;
