@@ -32,25 +32,25 @@ namespace Game
         Wall walls[2];
         unsigned short height;
         unsigned short reserved;
-		float Z() const;
-		void RenderFloor() const;
-		void RenderOutline() const;
-		void RenderXWall(const Square* neighbour) const;
-		void RenderYWall(const Square* neighbour) const;
-		static std::vector<RGBA> colorTable;
-	};
+        float Z() const;
+        void RenderFloor() const;
+        void RenderOutline() const;
+        void RenderXWall(const Square* neighbour) const;
+        void RenderYWall(const Square* neighbour) const;
+        static std::vector<RGBA> colorTable;
+    };
 
 
     class Map
     {
     public:
         Map();
-		Square At(const Position& p) const;
-		const Square* MaybeAt(const Position& p) const;
-		void Render() const;
-		bool CanBe(const Position& position) const;
-		bool CanGo(const Position& from, Direction direction) const;
-	private:
+        Square At(const Position& p) const;
+        const Square* MaybeAt(const Position& p) const;
+        void Render() const;
+        bool CanBe(const Position& position) const;
+        bool CanGo(const Position& from, Direction direction) const;
+    private:
         friend std::wistream& operator>>(std::wistream& s, Map& map);
         std::wstring name;
         unsigned width;

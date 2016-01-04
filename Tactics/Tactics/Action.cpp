@@ -6,29 +6,29 @@
 
 namespace Game
 {
-	Action::Action() :
-		cost(0)
-	{
-	}
+    Action::Action() :
+        cost(0)
+    {
+    }
 
-	TargetedAction::TargetedAction(Actor& target) :
-		target(target)
-	{
-	}
+    TargetedAction::TargetedAction(Actor& target) :
+        target(target)
+    {
+    }
 
-	std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> Action::keymap = 
-	{
-		{ VK_UP, [](const State&, const Game&){ return new North(); } },
-		{ VK_RIGHT, [](const State&, const Game&){ return new East(); } },
-		{ VK_DOWN, [](const State&, const Game&){ return new South(); } },
-		{ VK_LEFT, [](const State&, const Game&){ return new West(); } },
-		{ VK_SPACE, [](const State& state, const Game& game)
-		{
-			auto target = game.FindTarget(state.position);
-			if (!target)
-				return (Slash*)nullptr;
-			return new Slash(*target);
-		} },
-	};
+    std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> Action::keymap = 
+    {
+        { VK_UP, [](const State&, const Game&){ return new North(); } },
+        { VK_RIGHT, [](const State&, const Game&){ return new East(); } },
+        { VK_DOWN, [](const State&, const Game&){ return new South(); } },
+        { VK_LEFT, [](const State&, const Game&){ return new West(); } },
+        { VK_SPACE, [](const State& state, const Game& game)
+        {
+            auto target = game.FindTarget(state.position);
+            if (!target)
+                return (Slash*)nullptr;
+            return new Slash(*target);
+        } },
+    };
 
 } // ::Game
