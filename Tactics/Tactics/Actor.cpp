@@ -45,6 +45,9 @@ namespace Game
 			{ 0, 255, 0, 255 },
 			{ 0, 0, 255, 255 }
 		};
+
+		if (hp == 0)
+			glRotatef(90, 1, 0, 0);
         glColor3f(1.0f, 0.0f, 0.0f);
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
@@ -57,20 +60,20 @@ namespace Game
             float xb =  cos(b)*r;
             float yb =  sin(b) * r;
 
-            glVertex3f(0,	0,	0);
-            glVertex3f(xa,	0,	ya);
+			glVertex3f(0, 0, 0);
+			glVertex3f(xa, 0, ya);
             glVertex3f(xb,	0,	yb);
 
-            glVertex3f(xa,	0,	ya);
-            glVertex3f(xa,	1,	ya);
+			glVertex3f(xa, 1, ya);
+			glVertex3f(xa, 0, ya);
 			glVertex3f(xb,  0,	yb);
 
-            glVertex3f(xb,	0,	yb);
-            glVertex3f(xa,	1,	ya);
+			glVertex3f(xa, 1, ya);
+			glVertex3f(xb, 0, yb);
             glVertex3f(xb,	1,	yb);
 
-			glVertex3f(0,	1,	0);
-			glVertex3f(xa,	1,	ya);
+			glVertex3f(0, 1, 0);
+			glVertex3f(xa, 1, ya);
             glVertex3f(xb,	1,	yb);
 
         }
