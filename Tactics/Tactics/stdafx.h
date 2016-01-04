@@ -18,6 +18,6 @@
 #include <cmath>
 #include <algorithm>
 
-#define M_PI 3.14159265358979323846
+#define M_PI 3.14159265358979323846f
 
 // TODO: reference additional headers your program requires here

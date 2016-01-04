@@ -74,6 +74,7 @@ namespace Game
         auto color = colorTable[unsigned(floor)];
         color.Render();
         auto z = Z();
+        glNormal3f(0.0f, 1.0f, 0.0f);
         glBegin(GL_QUADS);
             glVertex3f(0.0f, z, 0.0f);
             glVertex3f(1.0f, z, 0.0f);
@@ -95,6 +96,7 @@ namespace Game
             }
             auto wallColor = colorTable[unsigned(wallx)];
             wallColor.Render();
+            glNormal3f(1.0f, 0.0f, 0.0f);
             glBegin(GL_QUADS);
                 glVertex3f(1.0f, z, 0.0f);
                 glVertex3f(1.0f, zn, 0.0f);
@@ -117,6 +119,7 @@ namespace Game
             }
             auto wallColor = colorTable[unsigned(wally)];
             wallColor.Render();
+            glNormal3f(0.0f, 0.0f, 1.0f);
             glBegin(GL_QUADS);
                 glVertex3f(0.0f, z, 0.0f);
                 glVertex3f(0.0f, zn, 0.0f);

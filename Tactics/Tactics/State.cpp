@@ -7,6 +7,7 @@ namespace Game
     State::State(const Actor& actor) :
         possible(true),
         position(actor.GetPosition()),
+        direction(actor.GetDirection()),
         mp(actor.GetMovePoints()),
         hp(actor.GetHitPoints())
     {

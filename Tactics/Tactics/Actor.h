@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Position.h"
+#include "Direction.h"
 
 namespace Game
 {
@@ -28,6 +29,7 @@ namespace Game
         Actor();
         void Render() const override;
         unsigned GetMovePoints() const;
+        Direction GetDirection() const;
         void Apply(const State& result);
         void Turn();
     private:
@@ -35,6 +37,7 @@ namespace Game
         unsigned mp;
         unsigned maxmp;
         unsigned team;
+        Direction direction;
     };
     std::wistream& operator>>(std::wistream& s, Actor& actor);
 

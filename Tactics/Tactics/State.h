@@ -3,7 +3,7 @@
 #include <map>
 #include <set>
 #include "Position.h"
-
+#include "Direction.h"
 namespace Game
 {
     class Actor;
@@ -15,6 +15,7 @@ namespace Game
         State(const Actor& actor);
         bool possible;
         Position position;
+        Direction direction;
         unsigned mp;
         unsigned hp;
     };

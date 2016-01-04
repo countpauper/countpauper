@@ -15,11 +15,15 @@ namespace Game
             South = 4,
             West = 8,
         };
+        Direction();
         Direction(Value direction);
         Position Vector() const;
+        float Angle() const;
     protected:
         Value value;
         static std::map<Value, Position> vector;
+        static std::map<Value, float> angle;
     };
 
+    float ShortestTurn(float a, float b);
 }    // ::Game
