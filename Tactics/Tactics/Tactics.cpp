@@ -47,7 +47,7 @@ struct Camera
 
     void Apply()
     {
-        float scale = static_cast<float>(1.0 / tan(fov* 0.5 * M_PI / 180.0));
+        float scale = float(1.0 / tan(fov* 0.5f * M_PI / 180.0f));
         float n = 10;
         float f = 0;
         GLfloat perspectiveMatrix[16] =
@@ -271,8 +271,8 @@ Hit Select(int x, int y)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     // gluPickMatrix
-    glTranslatef((viewport[2] - 2.0 * (x - viewport[0])), (2.0 * (y - viewport[1]) - viewport[3]), 0.0f);
-    glScalef(viewport[2], viewport[3], 1.0);
+    glTranslatef((viewport[2] - 2.0f * float(x - viewport[0])), float(2.0f * (y - viewport[1]) - viewport[3]), 0.0f);
+    glScalef(float(viewport[2]), float(viewport[3]), 1.0f);
     camera.Apply();
 
     game->Render();
@@ -307,6 +307,14 @@ void Render()
     glEnable(GL_CULL_FACE);
     //glEnable(GL_BLEND);    TODO: first render non alpha tiles, then alpha tiles with depth test
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    GLfloat lightPos[] = { camera.x, camera.y, camera.z };
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

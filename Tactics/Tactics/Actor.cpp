@@ -51,8 +51,8 @@ namespace Game
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
         {
-            float a = static_cast<float>(i) / sides * 2.0f * M_PI;
-            float b = static_cast<float>(i + 1) / sides * 2.0f * M_PI;
+            float a = float(i) / sides * 2.0f * M_PI;
+            float b = float(i + 1) / sides * 2.0f * M_PI;
             float ra = r;
             float rb = r;
             float da = std::fabs(ShortestTurn(direction.Angle(),a));

@@ -32,7 +32,7 @@ namespace Game
             auto position = object->GetPosition();
             auto square = map.At(position);
 
-            glTranslated(static_cast<float>(position.x)+0.5, square.Z(), static_cast<float>(position.y)+0.5);
+            glTranslatef(float(position.x)+0.5f, square.Z(), float(position.y)+0.5f);
             glPushName(index++);
             object->Render();
             glPopName();

@@ -7,7 +7,7 @@ namespace Game
 
     float Square::Z() const
     {
-        return static_cast<float>(height)*0.25f;
+        return float(height)*0.25f;
     }
 
     Map::Map() :
@@ -157,7 +157,7 @@ namespace Game
             {
                 glPushMatrix();
                 glPushName((y << 16) + x);
-                glTranslatef(static_cast<float>(x), 0.0f, static_cast<float>(y));
+                glTranslatef(float(x), 0.0f, float(y));
                 const auto& square = squares.at(i++);
                 square.RenderFloor();
                 square.RenderXWall(MaybeAt(Position(x + 1, y)));
