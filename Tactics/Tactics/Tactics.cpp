@@ -8,7 +8,7 @@
 #include <math.h>
 #include <fstream>
 #include "game.h"
-
+#include "Light.h"
 
 #define MAX_LOADSTRING 100
 
@@ -18,6 +18,8 @@ TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 HGLRC hGLRC;
 std::unique_ptr<Game::Game> game;
+Engine::Light light; 
+
 struct Input
 {
     Input() :
@@ -308,20 +310,11 @@ void Render()
     //glEnable(GL_BLEND);    TODO: first render non alpha tiles, then alpha tiles with depth test
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    GLfloat lightPos[] = { camera.x, camera.y, camera.z };
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-	GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
-	GLfloat light_diffuse[] = { 10.0, 10.0, 10.0, 1.0 };
-	GLfloat light_specular[] = { 50.0, 50.0, 50.0, 1.0 };
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-
     glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    light.Move(Engine::Coordinate(2, 10, 0));
+    light.Render();
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

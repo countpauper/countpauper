@@ -60,7 +60,7 @@ namespace Game
         return true;
     }
 
-    std::vector<RGBA> Square::colorTable = {
+    std::vector<Engine::RGBA> Square::colorTable = {
         { 0, 0, 0, 255 }, // None = 0
         { 0, 255, 0, 255 }, // Nature,
         { 64, 64, 64, 255 }, // Earth

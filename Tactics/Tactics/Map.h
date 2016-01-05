@@ -37,7 +37,7 @@ namespace Game
         void RenderOutline() const;
         void RenderXWall(const Square* neighbour) const;
         void RenderYWall(const Square* neighbour) const;
-        static std::vector<RGBA> colorTable;
+        static std::vector<Engine::RGBA> colorTable;
     };
 
 

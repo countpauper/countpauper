@@ -40,52 +40,52 @@ namespace Game
         unsigned sides = 16;
         float r = 0.25f;
 
-        RGBA teamColor[] = {
+        Engine::RGBA teamColor[] = {
             { 255, 0, 0, 255 },
             { 0, 255, 0, 255 },
             { 0, 0, 255, 255 }
         };
-		const float HALF_PI = M_PI*0.5f;
-		glPushMatrix();
+        const float HALF_PI = M_PI*0.5f;
+        glPushMatrix();
         if (hp <= 0)
             glRotatef(90, 1, 0, 0);
-		glRotatef(Rad2Deg(direction.Angle()), 0, 1, 0);
+        glRotatef(Rad2Deg(direction.Angle()), 0, 1, 0);
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
         {
             float a = float(i) / sides * 2.0f * M_PI;
             float b = float(i + 1) / sides * 2.0f * M_PI;
-			teamColor[team].Render();
-			
-			float xa = cos(a) * r;
-			float ya = sin(a) * sin(a*0.5) * r;
-			float xb = cos(b) * r;
-            float yb =  sin(b) * sin(b*0.5) * r;
+            teamColor[team].Render();
+            
+            float xa = cos(a) * r;
+            float ya = sin(a) * sin(a*0.5f) * r;
+            float xb = cos(b) * r;
+            float yb =  sin(b) * sin(b*0.5f) * r;
 
             glNormal3f(0.0f, -1.0f, 0.0f);
             glVertex3f(0, 0, 0);
-			glVertex3f(xb, 0, yb);
-			glVertex3f(xa, 0, ya);
+            glVertex3f(xb, 0, yb);
+            glVertex3f(xa, 0, ya);
 
             glNormal3f(cos(a), 0.0f, sin(a));
             glVertex3f(xa, 1, ya);
             glVertex3f(xa, 0, ya);
-			glNormal3f(cos(b), 0.0f, sin(b));
-			glVertex3f(xb, 0, yb);
+            glNormal3f(cos(b), 0.0f, sin(b));
+            glVertex3f(xb, 0, yb);
 
-			glNormal3f(cos(a), 0.0f, sin(a));
-			glVertex3f(xa, 1, ya);
-			glNormal3f(cos(b), 0.0f, sin(b));
-			glVertex3f(xb, 0, yb);
+            glNormal3f(cos(a), 0.0f, sin(a));
+            glVertex3f(xa, 1, ya);
+            glNormal3f(cos(b), 0.0f, sin(b));
+            glVertex3f(xb, 0, yb);
             glVertex3f(xb,    1,    yb);
 
             glNormal3f(0.0f, 1.0f, 0.0f);
             glVertex3f(0, 1, 0);
-			glVertex3f(xa, 1, ya);
-			glVertex3f(xb, 1, yb);
+            glVertex3f(xa, 1, ya);
+            glVertex3f(xb, 1, yb);
         }
         glEnd();
-		glPopMatrix();
+        glPopMatrix();
     }
 
     unsigned Actor::GetMovePoints() const

@@ -24,7 +24,7 @@ namespace Game
         result.position += direction.Vector();
         result.possible = game.CanBe(result.position) &&
             game.CanGo(state.position, direction);
-		result.direction = direction;
+        result.direction = direction;
         return result;
     }
 

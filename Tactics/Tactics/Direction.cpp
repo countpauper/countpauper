@@ -51,9 +51,9 @@ namespace Game
         return result;
     }
 
-	float Rad2Deg(float rad)
-	{
-		return (rad / M_PI)*180.0f;
-	}
+    float Rad2Deg(float rad)
+    {
+        return (rad / M_PI)*180.0f;
+    }
 
 }    // ::Game
