@@ -34,4 +34,22 @@ private:
 
     std::vector<Node> actions;
 };
+
+class PathPlan : public Plan
+{
+public:
+    PathPlan(const Actor& actor, const Position& target);
+private:
+    Position target;
+};
+
+class AttackPlan : public Plan
+{
+public:
+    AttackPlan(const Actor& actor, const Actor& target);    // TODO: action factory 
+private:
+    Actor& target;
+};
+
+
 }   // ::Game
