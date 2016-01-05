@@ -38,7 +38,7 @@ namespace Game
     void Actor::Render() const
     {
         unsigned sides = 16;
-        float r = 0.25;
+        float r = 0.25f;
 
         RGBA teamColor[] = {
             { 255, 0, 0, 255 },
@@ -46,34 +46,21 @@ namespace Game
             { 0, 0, 255, 255 }
         };
 		const float HALF_PI = M_PI*0.5f;
-
-        if (hp == 0)
+		glPushMatrix();
+        if (hp <= 0)
             glRotatef(90, 1, 0, 0);
+		glRotatef(Rad2Deg(direction.Angle()), 0, 1, 0);
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
         {
             float a = float(i) / sides * 2.0f * M_PI;
             float b = float(i + 1) / sides * 2.0f * M_PI;
-            float da = std::fabs(ShortestTurn(direction.Angle(),a));
 			teamColor[team].Render();
-
-			float ra = r;
-			if (da < M_PI*0.5)
-            {
-                ra += 0.25f*(HALF_PI - da)/HALF_PI;
-            }
-            
-			float db = std::fabs(ShortestTurn(direction.Angle(),b));
-			float rb = r;
-			if (db < M_PI*0.5)
-            {
-                rb += 0.25f*(HALF_PI - db)/HALF_PI;
-            }
 			
-			float xa = cos(a)*ra;
-			float ya = sin(a) * ra;
-			float xb = cos(b)*rb;
-            float yb =  sin(b) * rb;
+			float xa = cos(a) * r;
+			float ya = sin(a) * sin(a*0.5) * r;
+			float xb = cos(b) * r;
+            float yb =  sin(b) * sin(b*0.5) * r;
 
             glNormal3f(0.0f, -1.0f, 0.0f);
             glVertex3f(0, 0, 0);
@@ -98,6 +85,7 @@ namespace Game
 			glVertex3f(xb, 1, yb);
         }
         glEnd();
+		glPopMatrix();
     }
 
     unsigned Actor::GetMovePoints() const

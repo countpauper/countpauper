@@ -24,9 +24,9 @@ namespace Game
 
     std::map<Direction::Value, Position> Direction::vector =
     {
-        { Direction::Value::North, Position(0, 1) },
+        { Direction::Value::North, Position(0, -1) },
         { Direction::Value::East, Position(1, 0) },
-        { Direction::Value::South, Position(0, -1) },
+        { Direction::Value::South, Position(0, 1) },
         { Direction::Value::West, Position(-1, 0) },
     };
     std::map<Direction::Value, float> Direction::angle =
@@ -49,7 +49,11 @@ namespace Game
             return 2 * M_PI + result;
         }
         return result;
-
     }
+
+	float Rad2Deg(float rad)
+	{
+		return (rad / M_PI)*180.0f;
+	}
 
 }    // ::Game

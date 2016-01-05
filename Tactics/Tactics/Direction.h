@@ -25,5 +25,6 @@ namespace Game
         static std::map<Value, float> angle;
     };
 
+	float Rad2Deg(float rad); 
     float ShortestTurn(float a, float b);
 }    // ::Game

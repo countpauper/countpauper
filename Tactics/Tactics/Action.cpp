@@ -18,9 +18,9 @@ namespace Game
 
     std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> Action::keymap = 
     {
-        { VK_UP, [](const State&, const Game&){ return new North(); } },
+        { VK_UP, [](const State&, const Game&){ return new South(); } },
         { VK_RIGHT, [](const State&, const Game&){ return new East(); } },
-        { VK_DOWN, [](const State&, const Game&){ return new South(); } },
+        { VK_DOWN, [](const State&, const Game&){ return new North(); } },
         { VK_LEFT, [](const State&, const Game&){ return new West(); } },
         { VK_SPACE, [](const State& state, const Game& game)
         {
