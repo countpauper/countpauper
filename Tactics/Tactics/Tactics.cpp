@@ -310,6 +310,13 @@ void Render()
     
     GLfloat lightPos[] = { camera.x, camera.y, camera.z };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+	GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
+	GLfloat light_diffuse[] = { 10.0, 10.0, 10.0, 1.0 };
+	GLfloat light_specular[] = { 50.0, 50.0, 50.0, 1.0 };
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);

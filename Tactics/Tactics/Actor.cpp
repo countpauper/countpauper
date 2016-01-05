@@ -45,6 +45,7 @@ namespace Game
             { 0, 255, 0, 255 },
             { 0, 0, 255, 255 }
         };
+		const float HALF_PI = M_PI*0.5f;
 
         if (hp == 0)
             glRotatef(90, 1, 0, 0);
@@ -53,46 +54,48 @@ namespace Game
         {
             float a = float(i) / sides * 2.0f * M_PI;
             float b = float(i + 1) / sides * 2.0f * M_PI;
-            float ra = r;
-            float rb = r;
             float da = std::fabs(ShortestTurn(direction.Angle(),a));
-            auto color = teamColor[team] * (1.0f-da / M_PI); // ghetto shading
-            color.Render();
+			teamColor[team].Render();
 
-            const float HALF_PI = M_PI*0.5f;
-            if (da < M_PI*0.5)
+			float ra = r;
+			if (da < M_PI*0.5)
             {
                 ra += 0.25f*(HALF_PI - da)/HALF_PI;
             }
-            float xa =  cos(a)*ra;
-            float ya =  sin(a) * ra;
-            float db = std::fabs(ShortestTurn(direction.Angle(),b));
-            if (db < M_PI*0.5)
+            
+			float db = std::fabs(ShortestTurn(direction.Angle(),b));
+			float rb = r;
+			if (db < M_PI*0.5)
             {
                 rb += 0.25f*(HALF_PI - db)/HALF_PI;
             }
-            float xb =  cos(b)*rb;
+			
+			float xa = cos(a)*ra;
+			float ya = sin(a) * ra;
+			float xb = cos(b)*rb;
             float yb =  sin(b) * rb;
 
             glNormal3f(0.0f, -1.0f, 0.0f);
             glVertex3f(0, 0, 0);
-            glVertex3f(xa, 0, ya);
-            glVertex3f(xb,    0,    yb);
+			glVertex3f(xb, 0, yb);
+			glVertex3f(xa, 0, ya);
 
             glNormal3f(cos(a), 0.0f, sin(a));
             glVertex3f(xa, 1, ya);
             glVertex3f(xa, 0, ya);
-            glVertex3f(xb,  0,    yb);
+			glNormal3f(cos(b), 0.0f, sin(b));
+			glVertex3f(xb, 0, yb);
 
-            glVertex3f(xa, 1, ya);
-            glVertex3f(xb, 0, yb);
+			glNormal3f(cos(a), 0.0f, sin(a));
+			glVertex3f(xa, 1, ya);
+			glNormal3f(cos(b), 0.0f, sin(b));
+			glVertex3f(xb, 0, yb);
             glVertex3f(xb,    1,    yb);
 
             glNormal3f(0.0f, 1.0f, 0.0f);
             glVertex3f(0, 1, 0);
-            glVertex3f(xa, 1, ya);
-            glVertex3f(xb,    1,    yb);
-
+			glVertex3f(xa, 1, ya);
+			glVertex3f(xb, 1, yb);
         }
         glEnd();
     }
