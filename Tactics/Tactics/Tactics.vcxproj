@@ -82,6 +82,7 @@
     <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Attack.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="Direction.h" />
@@ -101,6 +102,7 @@
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Attack.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="Game.cpp" />

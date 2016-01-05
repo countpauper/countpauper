@@ -9,16 +9,22 @@
 #include <fstream>
 #include "game.h"
 #include "Light.h"
+#include "Camera.h"
 
 #define MAX_LOADSTRING 100
 
 // Global Variables:
+// TODO: move to window class
 HINSTANCE hInst;                                // current instance
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 HGLRC hGLRC;
+int width = 0;
+int height = 0;
+
 std::unique_ptr<Game::Game> game;
 Engine::Light light; 
+Engine::Camera camera;
 
 struct Input
 {
@@ -31,56 +37,6 @@ struct Input
     int y;
 } input;
 
-int width = 0;
-int height = 0;
-
-struct Camera
-{
-    Camera() :
-        fov(90),    // makes cale = 1
-        x(2),
-        y(2),
-        z(-2),
-        zoom(1.0f),
-        dragx(0),
-        dragz(0)
-    {
-    }
-
-    void Apply()
-    {
-        float scale = float(1.0 / tan(fov* 0.5f * M_PI / 180.0f));
-        float n = 10;
-        float f = 0;
-        GLfloat perspectiveMatrix[16] =
-        {
-            scale, 0, 0, 0,
-            0, scale, 0, 0,
-            0, 0, f / (f - n), 1,
-            0, 0, f*n / (f - n), 0
-        };
-        glMultMatrixf(perspectiveMatrix);
-        glTranslatef(dragx-x, -y, dragz-z);
-        // TODO: instead of zoom, have a view angle. a target position, move backwards and forwards
-        //glScalef(zoom, zoom, zoom);
-    }
-    void Drag(float dx, float dz)
-    {
-        dragx = dx;
-        dragz = dz;
-    }
-    void FinishDrag(float dx, float dz)
-    {
-        x -= dx;
-        z -= dz;
-        dragx = 0;
-        dragz = 0;
-    }
-    float x, y, z;
-    float dragx, dragz;
-    float fov;
-    float zoom;
-} camera;    // TODO: own file 
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -243,9 +199,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
+   light.Move(Engine::Coordinate(2, 10, 0));
+   camera.Move(Engine::Coordinate(2, 2, -2));
    return TRUE;
 }
 
+// TODO: move to own file(s), with input state
 struct Hit
 {
     Hit(unsigned type, unsigned value) :
@@ -275,7 +234,7 @@ Hit Select(int x, int y)
     // gluPickMatrix
     glTranslatef((viewport[2] - 2.0f * float(x - viewport[0])), float(2.0f * (y - viewport[1]) - viewport[3]), 0.0f);
     glScalef(float(viewport[2]), float(viewport[3]), 1.0f);
-    camera.Apply();
+    camera.Render();
 
     game->Render();
     GLint hits = glRenderMode(GL_RENDER);
@@ -313,12 +272,11 @@ void Render()
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-    light.Move(Engine::Coordinate(2, 10, 0));
     light.Render();
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    camera.Apply();
+    camera.Render();
     game->Render();
     glFlush();
 }
@@ -395,7 +353,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEWHEEL:
         {
             int delta = int(wParam)>>16;
-            camera.zoom += float(delta) * 1e-3f;
+            camera.Zoom(float(delta) * 1e-3f);
             InvalidateRect(hWnd, nullptr, TRUE);
     }
         break;
