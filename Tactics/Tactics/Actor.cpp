@@ -14,8 +14,8 @@ namespace Game
     }
     void Object::Move(int dx, int dy)
     {
-        position.x = min(max(0,static_cast<int>(position.x) + dx),5);
-        position.y = min(max(0,static_cast<int>(position.y) + dy),5);
+        position.x = std::min(std::max(0,static_cast<int>(position.x) + dx),5);
+        position.y = std::min(std::max(0,static_cast<int>(position.y) + dy),5);
     }
 
     Position Object::GetPosition() const

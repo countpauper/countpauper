@@ -19,7 +19,7 @@ namespace Engine
     }
     void Camera::Zoom(float delta)
     {
-        zoom = max(0.0f, zoom + delta);
+        zoom = std::max(0.0f, zoom + delta);
     }
     void Camera::Render() const
     {
