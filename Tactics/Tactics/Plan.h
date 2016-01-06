@@ -13,32 +13,42 @@ namespace Game
 class Plan
 {
 public:
-    Plan(const Actor& actor);
+    Plan(Actor& actor);
     void Render() const;
     void Add(std::unique_ptr<Action> action, const State& state);
-    void AddFront(std::unique_ptr<Action> action, const State& state);
     State Final() const;
     void Execute(Actor& actor) const;
 private:
-    State start;
-    struct Node
-    {
-        Node(std::unique_ptr<Action> action, const State& result);
-        Node(const Node&) = delete;
-        Node(Node&& other);
-        Node& operator= (Node&&);
+	Actor& actor;
+	struct Node
+	{
+		Node(const State& state);
+		Node(std::unique_ptr<Action> action, const State& state);
+		Node(const Node&) = delete;
+		Node(Node&& other);
+		Node& operator= (Node&&);
 
-        std::unique_ptr<Action> action;
-        State result;
-    };
-
-    std::vector<Node> actions;
+		std::unique_ptr<Action> action;
+		State result;
+		int Score(const Position& target, unsigned startMovePoints) const;
+		bool Reached(const Position& target) const;
+	};
+	struct Link : public Node
+	{
+		Link(const State& state);
+		Link(Link& previous, std::unique_ptr<Action> action, const State& state);
+		Link* previous;
+	};
+protected:
+	void Approach(const Position& target, const Game& game);
+	void AddFront(Node& node);
+	std::vector<Node> actions;
 };
 
 class PathPlan : public Plan
 {
 public:
-    PathPlan(const Actor& actor, const Position& target);
+    PathPlan(Actor& actor, const Position& target, const Game& game);
 private:
     Position target;
 };
@@ -46,7 +56,7 @@ private:
 class AttackPlan : public Plan
 {
 public:
-    AttackPlan(const Actor& actor, const Actor& target);    // TODO: action factory 
+	AttackPlan(Actor& actor, const Actor& target, const Game& game);    // TODO: action factory 
 private:
     Actor& target;
 };

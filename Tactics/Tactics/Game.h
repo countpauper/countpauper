@@ -32,8 +32,6 @@ namespace Game
         void Click(Selection selection, uint32_t value);
         Actor* FindTarget(const Position& from) const;
     protected:
-        Plan* PathPlan(const Actor& actor, const Position& target) const;
-    protected:
         friend std::wistream& operator>>(std::wistream& s, Game& game);
         Map map;
         std::vector<std::unique_ptr<Object>> objects;

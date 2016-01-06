@@ -3,7 +3,6 @@
 #include "Game.h"
 #include "Map.h"
 #include "Actor.h"
-#include "Move.h"
 #include "Plan.h"
 
 namespace Game
@@ -127,97 +126,8 @@ namespace Game
         {
             auto& playerActor = *dynamic_cast<Actor*>(objects.at(player).get());
             Position target(value & 0xFFFF, (value >> 16) & 0xFFFF);
-            plan.reset(PathPlan(playerActor, target));
+            plan.reset(new PathPlan(playerActor, target,*this));
         }
-    }
-
-    Plan* Game::PathPlan(const Actor& actor,const Position& target) const
-    {
-        std::vector<std::function<Action*(void)>> actions({
-            [](){ return new North();  },
-            [](){ return new East();  },
-            [](){ return new South();  },
-            [](){ return new West();  },
-        });
-        struct Node
-        {
-            Node(const State& state) :
-                previous(nullptr),
-                state(state)
-            {
-            }
-            Node(Node& previous, Action* action, const State& state) :
-                previous(&previous),
-                action(action),
-                state(state)
-            {
-            }
-
-            
-            Node* previous;
-            std::unique_ptr<Action> action;
-            State state;
-            int Score(const Position& target, unsigned startMovePoints) const
-            {
-                return target.Distance(state.position) + 
-                    startMovePoints - state.mp;
-            }
-            bool Reached(const Position& target) const
-            {
-                return target == state.position;
-            }
-        };
-        typedef std::multimap<int, std::unique_ptr<Node>> OpenTree;
-        OpenTree open;
-        typedef std::vector<std::unique_ptr<Node>> ClosedList;
-        ClosedList closed;
-        State start(actor);
-        auto first = std::make_unique<Node>(start);
-        if (first->Reached(target))
-            return nullptr;
-        open.insert(std::make_pair(first->Score(target, start.mp), std::move(first)));
-        while (!open.empty())
-        {
-            auto best = std::move(open.begin()->second);
-            open.erase(open.begin());
-            Node& bestNode = *best;
-            closed.emplace_back(std::move(best));
-            for (const auto& actionFactory : actions)
-            {
-                auto action = actionFactory();
-                auto newState = action->Act(bestNode.state, *this);
-                if (!newState.possible)
-                    continue;
-                bool alreadyClosed = false;
-                // TODO: make function
-                for (const auto& closedNode : closed)
-                    if (closedNode->state.position == newState.position)
-                    {
-                        alreadyClosed = true;
-                        break;
-                    }
-                if (alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
-                    continue;
-                auto newNode = new Node(bestNode, action, newState);
-                if (newNode->Reached(target))
-                {
-                    Plan* plan = new Plan(actor);
-                    plan->AddFront(std::move(newNode->action), newState);
-                    for (Node* previous = newNode->previous; previous != nullptr; previous = previous->previous)
-                    {
-                        if (previous->action)    // TODO: more gracefull detection of root node
-                            plan->AddFront(std::move(previous->action), previous->state);
-                    }
-                    delete newNode;
-                    return plan;
-                }
-                else
-                {
-                    open.insert(std::make_pair(newNode->Score(target, start.mp), std::unique_ptr<Node>(newNode)));
-                }
-            }
-        }
-        return nullptr;
     }
 }   // ::Game
 
