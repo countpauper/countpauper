@@ -52,14 +52,33 @@ namespace Game
     {
     }
 
-    bool Plan::Branch::operator<(const Plan::Branch& other) const
+    bool Plan::Branch::operator>(const Plan::Branch& other) const
     {
-        if (target.Distance(result.position) > target.Distance(other.result.position))
+        if (target.Distance(result.position) < target.Distance(other.result.position))
             return true;
-        else if (result.mp < other.result.mp)
+        else if (result.mp > other.result.mp)
             return true;
         return false;
     }
+        
+    bool Plan::BranchCompare::operator() (const std::unique_ptr<Branch>& a, const std::unique_ptr<Branch>& b) const
+    {
+        if (*a > *b)
+        {
+            if (*b > *a)
+                return a.get() < b.get();
+            else
+                return true;
+        }
+        else
+        {
+            if (*b > *a)
+                return false;
+            else
+                return a.get() < b.get();
+        }
+    }
+
 
     bool Plan::Branch::Reached() const
     {
@@ -72,19 +91,6 @@ namespace Game
             if (node->result.position == state.position)
                 return true;
         return false;
-    }
-
-    Plan::Branch *Plan::ClosedList::Best(const Position& target, unsigned startMovePoints) const
-    {
-        Plan::Branch* result = nullptr;
-        for (const auto& node : *this)
-        {
-            if (!result)
-                result = node.get();
-            else if (*result < *node)
-                result = node.get();
-        }
-        return result;
     }
 
     Plan::Node& Plan::Node::operator= (Plan::Node&& other)
@@ -118,6 +124,7 @@ namespace Game
         actor.Apply(Final());
     }
 
+
     void Plan::Approach(const Position& target, const Game& game)
     {
         std::vector<std::function<Action*(void)>> actions({
@@ -132,13 +139,13 @@ namespace Game
         auto first = std::make_unique<Branch>(start, target);
         if (first->Reached())
             return;
-        open.emplace_back(std::move(first));    // TODO: sorted
+        open.emplace(std::move(first));
         while (!open.empty())
         {
             auto best = open.begin();
-            open.erase(open.begin());
 
-            closed.emplace_back(std::make_unique<Branch>(*(*best)->previous, std::move((*best)->action), (*best)->result, target));
+            closed.emplace(std::make_unique<Branch>(*(*best)->previous, std::move((*best)->action), (*best)->result, target));
+            open.erase(best);
             auto bestIt = closed.rbegin();    // TODO sorted
             for (const auto& actionFactory : actions)
             {
@@ -162,11 +169,12 @@ namespace Game
                 }
                 else
                 {
-                    open.emplace_back(std::move(newNode));
+                    open.emplace(std::move(newNode));
                 }
             }
         }
-        for (auto link = closed.Best(target, start.mp); link != nullptr; link = link->previous)
+        auto best = closed.begin();
+        for (auto link = (*best)->previous; link != nullptr; link = link->previous)
         {
             if (link->action)
                 AddFront(*link);

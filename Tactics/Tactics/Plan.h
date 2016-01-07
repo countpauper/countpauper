@@ -37,19 +37,23 @@ private:
         Branch(const State& state, const Position& target);
         Branch(Branch& previous, std::unique_ptr<Action> action, const State& state, const Position& target);
         //int Score(const Position& target, unsigned startMovePoints) const;
-        bool operator<(const Branch& other) const;
+        bool operator>(const Branch& other) const;
+        bool operator==(const Branch& other) const;
         bool Reached() const;
     public:
         Branch* previous;
         Position target;
     };
-    typedef std::list<std::unique_ptr<Branch>> OpenTree;
-    class ClosedList : public std::list<std::unique_ptr<Branch>>
+    struct BranchCompare
+    {
+        bool operator() (const std::unique_ptr<Branch>& a, const std::unique_ptr<Branch>& b) const;
+    };
+    typedef std::set<std::unique_ptr<Branch>, BranchCompare> OpenTree;
+    class ClosedList : public std::set<std::unique_ptr<Branch>, BranchCompare>
     {
     public:
         ClosedList() = default;
         bool Contains(const State& state) const;
-        Plan::Branch *Best(const Position& target, unsigned startMovePoints) const;
     };
     friend ClosedList;
 protected:
