@@ -58,27 +58,17 @@ namespace Game
             return true;
         else if (result.mp > other.result.mp)
             return true;
-        return false;
+        return
+            this < &other;
     }
         
     bool Plan::BranchCompare::operator() (const std::unique_ptr<Branch>& a, const std::unique_ptr<Branch>& b) const
     {
         if (*a > *b)
-        {
-            if (*b > *a)
-                return a.get() < b.get();
-            else
-                return true;
-        }
-        else
-        {
-            if (*b > *a)
-                return false;
-            else
-                return a.get() < b.get();
-        }
+            return true;
+        assert(!(*b > *a));
+        return false;
     }
-
 
     bool Plan::Branch::Reached() const
     {
@@ -143,20 +133,19 @@ namespace Game
         while (!open.empty())
         {
             auto best = open.begin();
-
-            closed.emplace(std::make_unique<Branch>(*(*best)->previous, std::move((*best)->action), (*best)->result, target));
+            auto bestIt = closed.emplace(std::make_unique<Branch>(*(*best)->previous, std::move((*best)->action), (*best)->result, target));
+            assert(bestIt.second);
             open.erase(best);
-            auto bestIt = closed.rbegin();    // TODO sorted
             for (const auto& actionFactory : actions)
             {
                 std::unique_ptr<Action> action(actionFactory());
-                auto newState = action->Act((*bestIt)->result, game);
+                auto newState = action->Act((*bestIt.first)->result, game);
                 if (!newState.possible)
                     continue;
                 bool alreadyClosed = closed.Contains(newState);
                 if (alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                     continue;
-                auto newNode = std::make_unique<Branch>(*(*bestIt)->previous, std::move(action), newState, target);
+                auto newNode = std::make_unique<Branch>(*(*bestIt.first), std::move(action), newState, target);
                 if (newNode->Reached())
                 {
                     AddFront(*newNode);
@@ -169,7 +158,8 @@ namespace Game
                 }
                 else
                 {
-                    open.emplace(std::move(newNode));
+                    auto newIt = open.emplace(std::move(newNode));
+                    assert(newIt.second);
                 }
             }
         }
