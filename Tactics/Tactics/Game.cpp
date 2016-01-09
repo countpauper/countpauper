@@ -122,11 +122,19 @@ namespace Game
 
     void Game::Click(Selection selection, uint32_t value)
     {
+        auto& playerActor = *dynamic_cast<Actor*>(objects.at(player).get());
         if (selection == Selection::Map)
         {
-            auto& playerActor = *dynamic_cast<Actor*>(objects.at(player).get());
             Position target(value & 0xFFFF, (value >> 16) & 0xFFFF);
             plan.reset(new PathPlan(playerActor, target,*this));
+        }
+        else if (selection == Selection::Object)
+        {
+            auto object = objects.at(value).get();
+            if (auto target= dynamic_cast<Actor*>(object))
+            {
+                plan.reset(new AttackPlan(playerActor, *target, *this));
+            }
         }
     }
 }   // ::Game

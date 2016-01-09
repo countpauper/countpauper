@@ -62,7 +62,7 @@ private:
     };
     friend ClosedList;
 protected:
-    void Approach(const Position& target, const Game& game);
+    void Approach(const Position& target, const Game& game, std::unique_ptr<Action>&& action);
     void AddFront(Node& node);
     std::vector<Node> actions;
 };
@@ -78,7 +78,7 @@ private:
 class AttackPlan : public Plan
 {
 public:
-    AttackPlan(Actor& actor, const Actor& target, const Game& game);    // TODO: action factory 
+    AttackPlan(Actor& actor, Actor& target, const Game& game);    // TODO: action factory 
 private:
     Actor& target;
 };

@@ -21,6 +21,11 @@ namespace Game
             result.possible = false;
             return result;
         }
+        if (state.position.Distance(target.GetPosition()) > 1)
+        {
+            result.possible = false;
+            return result;
+        }
         result.mp -= cost;
         return result;
     }

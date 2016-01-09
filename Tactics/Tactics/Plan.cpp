@@ -3,6 +3,7 @@
 #include "Action.h"
 #include "Actor.h"
 #include "Move.h"
+#include "Attack.h"
 
 namespace Game
 {
@@ -130,7 +131,7 @@ namespace Game
     }
 
 
-    void Plan::Approach(const Position& target, const Game& game)
+    void Plan::Approach(const Position& target, const Game& game, std::unique_ptr<Action>&& targetAction)
     {
         std::vector<std::function<Action*(void)>> actions({
             [](){ return new North();  },
@@ -161,21 +162,36 @@ namespace Game
                 if (alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                     continue;
                 auto newNode = std::make_unique<Branch>(*(*bestIt.first), std::move(action), newState);
-                if (newNode->Reached(target))
+                if (targetAction)
                 {
-                    AddFront(*newNode);
-                    for (Branch* previous = newNode->previous; previous != nullptr; previous = previous->previous)
+                    auto finalState = targetAction->Act(newState, game);
+                    if (finalState.possible)
                     {
-                        if (previous->action)    // TODO: more gracefull detection of root node
-                            AddFront(*previous);
+                        AddFront(*newNode);
+                        for (Branch* previous = newNode->previous; previous != nullptr; previous = previous->previous)
+                        {
+                            if (previous->action)    // TODO: more gracefull detection of root node
+                                AddFront(*previous);
+                        }
+                        Add(std::move(targetAction), finalState);
                     }
-                    return;
                 }
                 else
                 {
-                    auto newIt = open.emplace(std::move(newNode));
-                    assert(newIt.second);
+                    if (newNode->Reached(target))
+                    {
+                        AddFront(*newNode);
+                        for (Branch* previous = newNode->previous; previous != nullptr; previous = previous->previous)
+                        {
+                            if (previous->action)    // TODO: more gracefull detection of root node
+                                AddFront(*previous);
+                        }
+                        return;
+                    }
                 }
+
+                auto newIt = open.emplace(std::move(newNode));
+                assert(newIt.second);
             }
         }
         auto best = closed.begin();
@@ -194,6 +210,13 @@ namespace Game
         Plan(actor),
         target(target)
     {
-        Approach(target, game);
+        Approach(target, game, nullptr);
     }
-}    // ::Game
+
+    AttackPlan::AttackPlan(Actor& actor, Actor& target, const Game& game) :
+        Plan(actor),
+        target(target)
+    {
+        Approach(target.GetPosition(), game, std::make_unique<Attack>(target));
+    }
+}    // 
