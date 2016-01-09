@@ -16,12 +16,9 @@ namespace Game
     State Attack::Act(const State& state, const Game& game)
     {
         State result(state);
-        if (state.mp <= cost)
-        {
-            result.possible = false;
-            return result;
-        }
-        if (state.position.Distance(target.GetPosition()) > 1)
+        if ((state.mp <= cost) ||
+            (state.position.Distance(target.GetPosition()) > 1) ||
+            (!game.CanGo(state.position, Direction(target.GetPosition()-state.position))))
         {
             result.possible = false;
             return result;

@@ -12,6 +12,30 @@ namespace Game
         value(value)
     {
     }
+
+    Direction::Direction(const Position& desiredVector)
+    {
+        if (desiredVector.x == 0)
+        {
+            if (desiredVector.y > 0)
+                value = Value::South;
+            else if (desiredVector.y < 0)
+                value = Value::North;
+            else
+                assert(false && "Vector has no direction");
+        }
+        else if (desiredVector.y==0)
+        {
+            if (desiredVector.x > 0)
+                value = Value::East;
+            else if (desiredVector.x < 0)
+                value = Value::West;
+            else
+                assert(false && "Vector has no direction");
+        }
+        else
+            assert(false && "Diagonal direciton not supported");
+    }
     
     Position Direction::Vector() const
     {

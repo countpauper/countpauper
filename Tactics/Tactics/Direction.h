@@ -17,6 +17,7 @@ namespace Game
         };
         Direction();
         Direction(Value direction);
+        Direction(const Position& vector);
         Position Vector() const;
         float Angle() const;
     protected:

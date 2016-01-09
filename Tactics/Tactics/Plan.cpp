@@ -112,6 +112,8 @@ namespace Game
     }
     void Plan::AddFront(Node& node)
     {
+        if (!node.action)
+            return; // TODO: better way to not add root node
         actions.emplace(actions.begin(), Node(std::move(node.action), node.result));
     }
 
@@ -149,6 +151,33 @@ namespace Game
         while (!open.empty())
         {
             auto best = open.begin();
+
+            if (targetAction)
+            {
+                auto finalState = targetAction->Act((*best)->result, game);
+                if (finalState.possible)
+                {
+                    AddFront(**best);
+                    for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
+                    {
+                        AddFront(*previous);
+                    }
+                    Add(std::move(targetAction), finalState);
+                }
+            }
+            else
+            {
+                if ((*best)->Reached(target))
+                {
+                    AddFront(**best);
+                    for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
+                    {
+                        AddFront(*previous);
+                    }
+                    return;
+                }
+            }
+
             auto bestIt = closed.emplace(std::make_unique<Branch>(*(*best)->previous, std::move((*best)->action), (*best)->result));
             assert(bestIt.second);
             open.erase(best);
@@ -162,34 +191,6 @@ namespace Game
                 if (alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                     continue;
                 auto newNode = std::make_unique<Branch>(*(*bestIt.first), std::move(action), newState);
-                if (targetAction)
-                {
-                    auto finalState = targetAction->Act(newState, game);
-                    if (finalState.possible)
-                    {
-                        AddFront(*newNode);
-                        for (Branch* previous = newNode->previous; previous != nullptr; previous = previous->previous)
-                        {
-                            if (previous->action)    // TODO: more gracefull detection of root node
-                                AddFront(*previous);
-                        }
-                        Add(std::move(targetAction), finalState);
-                    }
-                }
-                else
-                {
-                    if (newNode->Reached(target))
-                    {
-                        AddFront(*newNode);
-                        for (Branch* previous = newNode->previous; previous != nullptr; previous = previous->previous)
-                        {
-                            if (previous->action)    // TODO: more gracefull detection of root node
-                                AddFront(*previous);
-                        }
-                        return;
-                    }
-                }
-
                 auto newIt = open.emplace(std::move(newNode));
                 assert(newIt.second);
             }
