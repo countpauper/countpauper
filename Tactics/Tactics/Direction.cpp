@@ -34,7 +34,7 @@ namespace Game
                 assert(false && "Vector has no direction");
         }
         else
-            assert(false && "Diagonal direciton not supported");
+            assert(false && "Diagonal direction not supported");
     }
     
     Position Direction::Vector() const

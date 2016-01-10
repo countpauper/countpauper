@@ -6,18 +6,29 @@
 namespace Game
 {
 
+    Attack::Properties::Properties(unsigned cost, float range) :
+        Action::Properties(cost),
+        range(range)
+    {
+    }
+
     Attack::Attack(Actor& target) :
         TargetedAction(target)
     {
-        cost = 4;
     }
 
+    Attack::Properties& Attack::GetAttackProperties()
+    {
+        return static_cast<Attack::Properties&>(GetProperties());
+    }
 
     State Attack::Act(const State& state, const Game& game)
     {
+
         State result(state);
-        if ((state.mp <= cost) ||
-            (state.position.Distance(target.GetPosition()) > 1) ||
+        auto properties = GetAttackProperties();
+        if ((state.mp <= properties.cost) ||
+            (state.position.Distance(target.GetPosition()) > properties.range) ||
             (!game.CanGo(state.position, Direction(target.GetPosition()-state.position))))
         {
             result.possible = false;
@@ -52,5 +63,12 @@ namespace Game
         Attack(target)
     {
     }
+
+    Action::Properties& Slash::GetProperties() const
+    {
+        return properties;
+    }
+    Attack::Properties Slash::properties(4, 1.0f);
+
 
 } // ::Game

@@ -7,6 +7,7 @@ namespace Game
 {
     class Game;
 
+ 
     class Attack :
         public TargetedAction
     {
@@ -15,12 +16,23 @@ namespace Game
         void Render(const State& state) const override;
         State Act(const State& state, const Game& game) override;
         void React() override;
+        struct Properties : public Action::Properties
+        {
+            Properties(unsigned mp, float range);
+            float range;
+        };
+        Properties& GetAttackProperties();
+    private:
+
     };
 
+ 
     class Slash : public Attack
     {
     public:
         Slash(Actor& target);
+        Action::Properties& GetProperties() const override;
+        static Properties properties;
     };
 
 }   // ::Game

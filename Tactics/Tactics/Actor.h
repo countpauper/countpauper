@@ -32,6 +32,7 @@ namespace Game
         Direction GetDirection() const;
         void Apply(const State& result);
         void Turn();
+        unsigned GetTeam() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         unsigned mp;

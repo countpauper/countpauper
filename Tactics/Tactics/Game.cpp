@@ -88,14 +88,16 @@ namespace Game
         return map.CanGo(from, direction);
     }
 
-    Actor* Game::FindTarget(const Position& from) const
+    Actor* Game::FindTarget(const State& from, float range) const
     {
         for (auto& object : objects)
         {
             auto actor = dynamic_cast<Actor*>(object.get());
             if (!actor)
                 continue;
-            if (actor->GetPosition().Distance(from) == 1)    //TODO: more explicitly exclude actor, by team 
+            if (actor->GetTeam() == from.loyalty)
+                continue;
+            if (actor->GetPosition().Distance(from.position) <= range)
                 return actor;
         }
         return nullptr;

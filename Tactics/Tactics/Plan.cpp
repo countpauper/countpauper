@@ -53,9 +53,9 @@ namespace Game
 
     bool Plan::Branch::Compare(const Branch& other, const Position& target) const
     {
-        if (target.Distance(result.position) < target.Distance(other.result.position))
+        if (target.ManDistance(result.position) < target.ManDistance(other.result.position))
             return true;
-        else if (target.Distance(result.position) > target.Distance(other.result.position))
+        else if (target.ManDistance(result.position) > target.ManDistance(other.result.position))
             return false;
         else if (result.mp > other.result.mp)
             return true;
@@ -218,6 +218,6 @@ namespace Game
         Plan(actor),
         target(target)
     {
-        Approach(target.GetPosition(), game, std::make_unique<Attack>(target));
+        Approach(target.GetPosition(), game, std::make_unique<Slash>(target));
     }
 }    // 

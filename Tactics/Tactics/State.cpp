@@ -9,7 +9,8 @@ namespace Game
         position(actor.GetPosition()),
         direction(actor.GetDirection()),
         mp(actor.GetMovePoints()),
-        hp(actor.GetHitPoints())
+        hp(actor.GetHitPoints()),
+        loyalty(actor.GetTeam())
     {
     }
 

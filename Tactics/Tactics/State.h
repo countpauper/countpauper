@@ -18,6 +18,7 @@ namespace Game
         Direction direction;
         unsigned mp;
         unsigned hp;
+        unsigned loyalty;
     };
 
     class GameState
