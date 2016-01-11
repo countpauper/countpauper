@@ -11,6 +11,11 @@ namespace Game
     {
     }
 
+    Action::Properties::Properties(unsigned cost) :
+        cost(cost)
+    {
+    }
+
     TargetedAction::TargetedAction(Actor& target) :
         target(target)
     {
@@ -24,10 +29,10 @@ namespace Game
         { VK_LEFT, [](const State&, const Game&){ return new West(); } },
         { VK_SPACE, [](const State& state, const Game& game)
         {
-            auto target = game.FindTarget(state.position);
+            auto target = game.FindTarget(state, Shoot::properties.range);
             if (!target)
-                return (Slash*)nullptr;
-            return new Slash(*target);
+                return (Shoot*)nullptr;
+            return new Shoot(*target);
         } },
     };
 

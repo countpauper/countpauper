@@ -8,7 +8,8 @@ namespace Game
         Position(int x, int y);
         int x;
         int y;
-        unsigned Distance(const Position& other) const;
+        unsigned ManDistance(const Position& other) const;
+        float Distance(const Position& other) const;
         Position& operator+=(const Position& delta);
         Position& operator-=(const Position& delta);
     };

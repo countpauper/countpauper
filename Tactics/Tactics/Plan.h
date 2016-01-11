@@ -34,30 +34,35 @@ private:
     };
     struct Branch : public Node
     {
-        Branch(const State& state, const Position& target);
-        Branch(Branch& previous, std::unique_ptr<Action> action, const State& state, const Position& target);
+        Branch(const State& state);
+        Branch(Branch& previous, std::unique_ptr<Action> action, const State& state);
         //int Score(const Position& target, unsigned startMovePoints) const;
-        bool operator>(const Branch& other) const;
+        bool Compare(const Branch& other, const Position& target) const;
         bool operator==(const Branch& other) const;
-        bool Reached() const;
+        bool Reached(const Position& target) const;
     public:
         Branch* previous;
-        Position target;
     };
     struct BranchCompare
     {
+        BranchCompare(const Position& target);
         bool operator() (const std::unique_ptr<Branch>& a, const std::unique_ptr<Branch>& b) const;
+        Position target;
     };
-    typedef std::set<std::unique_ptr<Branch>, BranchCompare> OpenTree;
+    class OpenTree : public std::set < std::unique_ptr<Branch>, BranchCompare >
+    {
+    public:
+        OpenTree(const Position& target);
+    };
     class ClosedList : public std::set<std::unique_ptr<Branch>, BranchCompare>
     {
     public:
-        ClosedList() = default;
+        ClosedList(const Position& target);
         bool Contains(const State& state) const;
     };
     friend ClosedList;
 protected:
-    void Approach(const Position& target, const Game& game);
+    void Approach(const Position& target, const Game& game, std::unique_ptr<Action>&& action);
     void AddFront(Node& node);
     std::vector<Node> actions;
 };
@@ -73,7 +78,7 @@ private:
 class AttackPlan : public Plan
 {
 public:
-    AttackPlan(Actor& actor, const Actor& target, const Game& game);    // TODO: action factory 
+    AttackPlan(Actor& actor, Actor& target, const Game& game);    // TODO: action factory 
 private:
     Actor& target;
 };

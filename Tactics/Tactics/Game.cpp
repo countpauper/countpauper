@@ -88,14 +88,68 @@ namespace Game
         return map.CanGo(from, direction);
     }
 
-    Actor* Game::FindTarget(const Position& from) const
+    bool Game::Cover(const Position& from, const Position& to) const
+    {
+        Position delta = to - from;
+        if (std::abs(delta.x) < std::abs(delta.y))
+        {
+            float x = float(from.x);
+            float dx = float(delta.x) / float(delta.y);
+            if (to.y > from.y)
+            {
+                for (int y = from.y; y < to.y; ++y)
+                {
+                    if (!CanGo(Position(std::lroundf(x), y), Direction(Direction::Value::South)))
+                        return true;
+                    x += dx;
+                }
+            }
+            else
+            {
+                for (int y = from.y; y < to.y; --y)
+                {
+                    if (!CanGo(Position(std::lroundf(x), y), Direction(Direction::Value::North)))
+                        return true;
+                    x += dx;
+                }
+            }
+        }
+        else
+        {
+            float y = float(from.y);
+            float dy = float(delta.y) / float(delta.x);
+            if (to.x > from.x)
+            {
+                for (int x = from.x; x < to.x; ++x)
+                {
+                    if (!CanGo(Position(x, std::lroundf(y)), Direction(Direction::Value::East)))
+                        return true;
+                    y += dy;
+                }
+            }
+            else
+            {
+                for (int x = from.x; x < to.x; --x)
+                {
+                    if (!CanGo(Position(x, std::lroundf(y)), Direction(Direction::Value::West)))
+                        return true;
+                    y += dy;
+                }
+            }
+        }
+        return false;
+    }
+
+    Actor* Game::FindTarget(const State& from, float range) const
     {
         for (auto& object : objects)
         {
             auto actor = dynamic_cast<Actor*>(object.get());
             if (!actor)
                 continue;
-            if (actor->GetPosition().Distance(from) == 1)    //TODO: more explicitly exclude actor, by team 
+            if (actor->GetTeam() == from.loyalty)
+                continue;
+            if (actor->GetPosition().Distance(from.position) <= range)
                 return actor;
         }
         return nullptr;
@@ -122,11 +176,19 @@ namespace Game
 
     void Game::Click(Selection selection, uint32_t value)
     {
+        auto& playerActor = *dynamic_cast<Actor*>(objects.at(player).get());
         if (selection == Selection::Map)
         {
-            auto& playerActor = *dynamic_cast<Actor*>(objects.at(player).get());
             Position target(value & 0xFFFF, (value >> 16) & 0xFFFF);
             plan.reset(new PathPlan(playerActor, target,*this));
+        }
+        else if (selection == Selection::Object)
+        {
+            auto object = objects.at(value).get();
+            if (auto target= dynamic_cast<Actor*>(object))
+            {
+                plan.reset(new AttackPlan(playerActor, *target, *this));
+            }
         }
     }
 }   // ::Game

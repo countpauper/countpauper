@@ -11,10 +11,15 @@ namespace Game
     {
     }
 
-    unsigned Position::Distance(const Position& other) const
+    unsigned Position::ManDistance(const Position& other) const
     {
         return std::abs(other.x - x) +
             std::abs(other.y - y);
+    }
+
+    float Position::Distance(const Position& other) const
+    {
+        return std::sqrtf(sqr(float(other.x - x)) + sqr(float(other.y - y)));
     }
 
     Position& Position::operator+=(const Position& delta)

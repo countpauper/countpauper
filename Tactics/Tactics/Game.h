@@ -13,6 +13,7 @@ namespace Game
     struct Position;
     class Plan;
     class Actor;
+    class State;
 
     class Game
     {
@@ -29,8 +30,9 @@ namespace Game
         void Key(unsigned short code);
         bool CanBe(const Position& position) const;
         bool CanGo(const Position& from, Direction direction) const;
+        bool Cover(const Position& from, const Position& to) const;
         void Click(Selection selection, uint32_t value);
-        Actor* FindTarget(const Position& from) const;
+        Actor* FindTarget(const State& from, float range) const;
     protected:
         friend std::wistream& operator>>(std::wistream& s, Game& game);
         Map map;

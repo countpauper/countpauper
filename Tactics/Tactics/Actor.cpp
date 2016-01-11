@@ -93,6 +93,11 @@ namespace Game
         return mp;
     }
 
+    unsigned Actor::GetTeam() const
+    {
+        return team;
+    }
+
     Direction Actor::GetDirection() const
     {
         return direction;

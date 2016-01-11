@@ -6,17 +6,30 @@
 namespace Game
 {
 
+    Attack::Properties::Properties(unsigned cost, float range) :
+        Action::Properties(cost),
+        range(range)
+    {
+    }
+
     Attack::Attack(Actor& target) :
         TargetedAction(target)
     {
-        cost = 4;
     }
 
+    Attack::Properties& Attack::GetAttackProperties()
+    {
+        return static_cast<Attack::Properties&>(GetProperties());
+    }
 
     State Attack::Act(const State& state, const Game& game)
     {
+
         State result(state);
-        if (state.mp <= cost)
+        auto properties = GetAttackProperties();
+        if ((state.mp <= properties.cost) ||
+            (state.position.Distance(target.GetPosition()) > properties.range) ||
+            (game.Cover(state.position, target.GetPosition())))
         {
             result.possible = false;
             return result;
@@ -46,9 +59,27 @@ namespace Game
         glPopMatrix();
     }
 
-    Slash::Slash(Actor& target) : 
+    Slash::Slash(Actor& target) :
         Attack(target)
     {
     }
+
+    Action::Properties& Slash::GetProperties() const
+    {
+        return properties;
+    }
+    Attack::Properties Slash::properties(4, 1.0f);
+
+    Shoot::Shoot(Actor& target) :
+        Attack(target)
+    {
+    }
+
+    Action::Properties& Shoot::GetProperties() const
+    {
+        return properties;
+    }
+    Attack::Properties Shoot::properties(4, 4.0f);
+
 
 } // ::Game
