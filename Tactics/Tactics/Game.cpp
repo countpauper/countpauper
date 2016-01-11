@@ -88,6 +88,58 @@ namespace Game
         return map.CanGo(from, direction);
     }
 
+    bool Game::Cover(const Position& from, const Position& to) const
+    {
+        Position delta = to - from;
+        if (std::abs(delta.x) < std::abs(delta.y))
+        {
+            float x = float(from.x);
+            float dx = float(delta.x) / float(delta.y);
+            if (to.y > from.y)
+            {
+                for (int y = from.y; y < to.y; ++y)
+                {
+                    if (!CanGo(Position(std::lroundf(x), y), Direction(Direction::Value::South)))
+                        return true;
+                    x += dx;
+                }
+            }
+            else
+            {
+                for (int y = from.y; y < to.y; --y)
+                {
+                    if (!CanGo(Position(std::lroundf(x), y), Direction(Direction::Value::North)))
+                        return true;
+                    x += dx;
+                }
+            }
+        }
+        else
+        {
+            float y = float(from.y);
+            float dy = float(delta.y) / float(delta.x);
+            if (to.x > from.x)
+            {
+                for (int x = from.x; x < to.x; ++x)
+                {
+                    if (!CanGo(Position(x, std::lroundf(y)), Direction(Direction::Value::East)))
+                        return true;
+                    y += dy;
+                }
+            }
+            else
+            {
+                for (int x = from.x; x < to.x; --x)
+                {
+                    if (!CanGo(Position(x, std::lroundf(y)), Direction(Direction::Value::West)))
+                        return true;
+                    y += dy;
+                }
+            }
+        }
+        return false;
+    }
+
     Actor* Game::FindTarget(const State& from, float range) const
     {
         for (auto& object : objects)

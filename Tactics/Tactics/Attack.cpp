@@ -29,7 +29,7 @@ namespace Game
         auto properties = GetAttackProperties();
         if ((state.mp <= properties.cost) ||
             (state.position.Distance(target.GetPosition()) > properties.range) ||
-            (!game.CanGo(state.position, Direction(target.GetPosition()-state.position))))
+            (game.Cover(state.position, target.GetPosition())))
         {
             result.possible = false;
             return result;
@@ -59,7 +59,7 @@ namespace Game
         glPopMatrix();
     }
 
-    Slash::Slash(Actor& target) : 
+    Slash::Slash(Actor& target) :
         Attack(target)
     {
     }
@@ -69,6 +69,17 @@ namespace Game
         return properties;
     }
     Attack::Properties Slash::properties(4, 1.0f);
+
+    Shoot::Shoot(Actor& target) :
+        Attack(target)
+    {
+    }
+
+    Action::Properties& Shoot::GetProperties() const
+    {
+        return properties;
+    }
+    Attack::Properties Shoot::properties(4, 4.0f);
 
 
 } // ::Game

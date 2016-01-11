@@ -35,4 +35,12 @@ namespace Game
         static Properties properties;
     };
 
+    class Shoot : public Attack
+    {
+    public:
+        Shoot(Actor& target);
+        Action::Properties& GetProperties() const override;
+        static Properties properties;
+    };
+
 }   // ::Game
