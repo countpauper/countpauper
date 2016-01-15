@@ -34,6 +34,8 @@ namespace Game
         void Apply(const State& result);
         void Turn() override;
         unsigned GetTeam() const;
+        bool CanAct() const;
+        bool Dead() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         unsigned mp;

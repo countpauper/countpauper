@@ -14,8 +14,8 @@ namespace Game
     }
     void Object::Move(int dx, int dy)
     {
-        position.x = std::min(std::max(0,static_cast<int>(position.x) + dx),5);
-        position.y = std::min(std::max(0,static_cast<int>(position.y) + dy),5);
+        position.x = std::min(std::max(0, static_cast<int>(position.x) + dx), 5);
+        position.y = std::min(std::max(0, static_cast<int>(position.y) + dy), 5);
     }
 
     Position Object::GetPosition() const
@@ -47,7 +47,7 @@ namespace Game
         };
         const float HALF_PI = M_PI*0.5f;
         glPushMatrix();
-        if (hp <= 0)
+        if (Dead())
             glRotatef(90, 1, 0, 0);
         glRotatef(Rad2Deg(direction.Angle()), 0, 1, 0);
         glBegin(GL_TRIANGLES);
@@ -56,11 +56,11 @@ namespace Game
             float a = float(i) / sides * 2.0f * M_PI;
             float b = float(i + 1) / sides * 2.0f * M_PI;
             teamColor[team].Render();
-            
+
             float xa = cos(a) * r;
             float ya = sin(a) * sin(a*0.5f) * r;
             float xb = cos(b) * r;
-            float yb =  sin(b) * sin(b*0.5f) * r;
+            float yb = sin(b) * sin(b*0.5f) * r;
 
             glNormal3f(0.0f, -1.0f, 0.0f);
             glVertex3f(0, 0, 0);
@@ -77,7 +77,7 @@ namespace Game
             glVertex3f(xa, 1, ya);
             glNormal3f(cos(b), 0.0f, sin(b));
             glVertex3f(xb, 0, yb);
-            glVertex3f(xb,    1,    yb);
+            glVertex3f(xb, 1, yb);
 
             glNormal3f(0.0f, 1.0f, 0.0f);
             glVertex3f(0, 1, 0);
@@ -115,6 +115,15 @@ namespace Game
     void Actor::Turn()
     {
         mp = maxmp;
+    }
+
+    bool Actor::Dead() const
+    {
+        return hp <= 0;
+    }
+    bool Actor::CanAct() const
+    {
+        return !Dead() && mp > 0;
     }
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {

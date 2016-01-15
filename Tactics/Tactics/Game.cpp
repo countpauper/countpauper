@@ -16,7 +16,9 @@ namespace Game
 
     void Game::Tick()
     {
-        while (!ActiveActor())
+        Actor* actor;
+        while ((actor=ActiveActor()) &&
+            (!actor->CanAct()))
             Next();
     }
 
@@ -172,6 +174,8 @@ namespace Game
             if (!actor)
                 continue;
             if (actor->GetTeam() == from.loyalty)
+                continue;
+            if (actor->Dead())
                 continue;
             if (actor->GetPosition().Distance(from.position) <= range)
                 return actor;
