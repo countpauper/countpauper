@@ -1,0 +1,12 @@
+Name	Type	Range	Area	MP	Follows	Equipment	Prereq	Description
+Slash	Active	1	Body	4		Sword		Simple attack
+Slash2	Active	1	Body	2	Slash	Sword	Slash	Follow up attack
+Slash3	Active	1	Body	2	Slash2	Sword	Slash2	Additional follow up attack
+Parry	Reactive	1	None	1		Sword	Slash	Block an attack with the weapon
+Riposte	Reactive	1	Body	2	Parry	Sword	Parry	Follow up attack after a parry
+Disarm	Reactive	1	None	2	Parry	Arms	Riposte	Follow up attack to the sword hand after a parry
+Hamstring	Active	1	Legs	4		Sword	Slash	Target the legs to disable movement
+Feint	Active	1	None	2		Sword	Parry	Provoke a counter attack
+Reprise	Reactive	1	Body	2		Sword	Riposte	Counter an attack without parrying
+Compound	Active	1	Body	2	Feint	Sword	Feint	Capitalize on a counter attack
+Lunge	Active	2	Body	4		Sword	Slash	Move forward and strike
