@@ -198,6 +198,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
  
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
+   SetTimer(hWnd, 1,  0,(TIMERPROC) NULL);
 
    light.Move(Engine::Coordinate(2, 10, 0));
    camera.Move(Engine::Coordinate(2, 2, -2));
@@ -302,6 +303,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
          SetPixelFormat(hWnd);
 
+        break;
+    case WM_TIMER:
+        game->Tick();
         break;
     case WM_COMMAND:
         wmId    = LOWORD(wParam);

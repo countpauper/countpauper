@@ -13,6 +13,7 @@ namespace Game
     public:
         Object();
         virtual ~Object() = default;
+        virtual void Turn() = 0;
         virtual void Render() const = 0;
         void Move(int dx, int dy);
         Position GetPosition() const;
@@ -31,7 +32,7 @@ namespace Game
         unsigned GetMovePoints() const;
         Direction GetDirection() const;
         void Apply(const State& result);
-        void Turn();
+        void Turn() override;
         unsigned GetTeam() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);

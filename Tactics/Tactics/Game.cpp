@@ -8,12 +8,34 @@
 namespace Game
 {
 
-    Game::Game() :
-        player(0)
+    Game::Game()
     {
     }
     
     Game::~Game() = default;
+
+    void Game::Tick()
+    {
+        while (!ActiveActor())
+            Next();
+    }
+
+    void Game::Next()
+    {
+        if (turn == objects.end())
+            return;
+        (*turn)->Turn();
+        ++turn;
+        if (turn == objects.end())
+            turn = objects.begin();
+    }
+
+    Actor* Game::ActiveActor()
+    {
+        if (turn == objects.end())
+            return nullptr;
+        return dynamic_cast<Actor*>(turn->get());
+    }
 
     void Game::Render() const
     {
@@ -32,7 +54,8 @@ namespace Game
             auto square = map.At(position);
 
             glTranslatef(float(position.x)+0.5f, square.Z(), float(position.y)+0.5f);
-            glPushName(index++);
+            static_assert(sizeof(GLuint) == sizeof(Object*), "Failed to push pointer as name");
+            glPushName(GLuint(object.get()));
             object->Render();
             glPopName();
             glPopMatrix();
@@ -49,12 +72,13 @@ namespace Game
             plan.reset();
             return;
         }
-        auto& playerActor = *dynamic_cast<Actor*>(objects.at(player).get());
+        auto& playerActor = *ActiveActor();
         if (code == VK_RETURN)
         {
             if (plan)
                 plan->Execute(playerActor);
             playerActor.Turn();
+            Next();
             plan.reset();
             return;
         }
@@ -170,13 +194,14 @@ namespace Game
 
             }
         }
+        game.turn = game.objects.begin();
         s >> game.map;
         return s;
     }
 
-    void Game::Click(Selection selection, uint32_t value)
+    void Game::Click(Selection selection, GLuint value)
     {
-        auto& playerActor = *dynamic_cast<Actor*>(objects.at(player).get());
+        auto& playerActor = *ActiveActor();
         if (selection == Selection::Map)
         {
             Position target(value & 0xFFFF, (value >> 16) & 0xFFFF);
@@ -184,7 +209,7 @@ namespace Game
         }
         else if (selection == Selection::Object)
         {
-            auto object = objects.at(value).get();
+            auto object = (Object*)value;
             if (auto target= dynamic_cast<Actor*>(object))
             {
                 plan.reset(new AttackPlan(playerActor, *target, *this));
