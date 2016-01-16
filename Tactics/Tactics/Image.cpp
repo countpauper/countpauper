@@ -1,24 +1,47 @@
 #include "stdafx.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include "Image.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+Image::Image() :
+    w(0),
+    h(0),
+    channels(0),
+    data(nullptr)
+{
+
+}
+
+Image::~Image()
+{
+    free(data);
+}
+
+void Image::Load(const std::string& fn)
+{
+    data = stbi_load(fn.c_str(), &w, &h, &channels, STBI_rgb_alpha);
+}
+
+/*
 #define PNG_DEBUG 3
 #include <png.h>
-#include "Image.h"
-
+#include <stdlib.h>
+#include <stdio.h>
 void Image::Load(const std::string& fn)
 {
     png_byte header[8];    // 8 is the maximum size that can be checked
 
-    /* open file and test for it being a png */
-    FILE *fp = fopen(fn.c_str(), "rb");
-    if (!fp)
+    // open file and test for it being a png 
+    FILE *fp;
+    errno_t err = fopen_s(&fp, fn.c_str(), "rb");
+    if (!fp || err)
         throw std::runtime_error("[read_png_file] File %s could not be opened for reading"+fn);
     fread(header, 1, 8, fp);
     if (png_sig_cmp(header, 0, 8))
         throw std::runtime_error("[read_png_file] File %s is not recognized as a PNG file"+fn);
 
 
-    /* initialize stuff */
+    // initialize stuff 
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
     if (!png_ptr)
@@ -45,7 +68,7 @@ void Image::Load(const std::string& fn)
     png_read_update_info(png_ptr, info_ptr);
 
 
-    /* read file */
+    // read file
     if (setjmp(png_jmpbuf(png_ptr)))
         throw std::runtime_error("[read_png_file] Error during read_image");
 
@@ -58,3 +81,4 @@ void Image::Load(const std::string& fn)
     fclose(fp);
 
 }
+*/

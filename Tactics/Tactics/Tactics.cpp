@@ -10,6 +10,7 @@
 #include "game.h"
 #include "Light.h"
 #include "Camera.h"
+#include "Image.h"
 
 #define MAX_LOADSTRING 100
 
@@ -168,6 +169,8 @@ BOOL Start()
         return FALSE;
     }
 
+    Image test;
+    test.Load("Data/Bow.png");
     return TRUE;
 }
 
