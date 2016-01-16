@@ -1,12 +1,19 @@
 #pragma once
 #include <vector>
 #include <array>
+#include <memory>
 #include "Position.h"
 #include "Direction.h"
 #include "Color.h"
 
+namespace Engine
+{
+    class Image;
+};
+
 namespace Game
 {
+
     enum class Floor : unsigned short
     {
         None = 0,
@@ -33,7 +40,7 @@ namespace Game
         unsigned short height;
         unsigned short reserved;
         float Z() const;
-        void RenderFloor() const;
+        void RenderFloor(int x, int y, int w, int h) const;
         void RenderOutline() const;
         void RenderXWall(const Square* neighbour) const;
         void RenderYWall(const Square* neighbour) const;
@@ -45,6 +52,7 @@ namespace Game
     {
     public:
         Map();
+        ~Map();
         Square At(const Position& p) const;
         const Square* MaybeAt(const Position& p) const;
         void Render() const;
@@ -56,6 +64,7 @@ namespace Game
         unsigned width;
         unsigned height;
         std::vector<Square> squares;
+        std::unique_ptr<Engine::Image> texture;
     };
 
 

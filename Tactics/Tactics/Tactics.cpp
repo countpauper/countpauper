@@ -11,7 +11,6 @@
 #include "Light.h"
 #include "Camera.h"
 #include "Image.h"
-
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -168,9 +167,6 @@ BOOL Start()
         MessageBox(NULL, L"Reading Game failed:  ", L"Error", MB_OK);
         return FALSE;
     }
-
-    Image test;
-    test.Load("Data/Bow.png");
     return TRUE;
 }
 
@@ -271,8 +267,8 @@ void Render()
     //glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     //glEnable(GL_BLEND);    TODO: first render non alpha tiles, then alpha tiles with depth test
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
@@ -280,6 +276,7 @@ void Render()
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    glDisable(GL_TEXTURE_2D);
     camera.Render();
     game->Render();
     glFlush();

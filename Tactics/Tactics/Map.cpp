@@ -1,6 +1,8 @@
 #include "stdafx.h"
-#include "Map.h"
 #include <gl/GL.h>
+#include "Map.h"
+#include "Image.h"
+#include "Error.h"
 
 namespace Game
 {
@@ -16,6 +18,8 @@ namespace Game
     {
 
     }
+    Map::~Map() = default;
+
     Square Map::At(const Position& p) const
     {
         assert(p.x >= 0);
@@ -69,16 +73,26 @@ namespace Game
         { 255, 0, 0, 255 }, //  Fire
     };
 
-    void Square::RenderFloor() const
+    void Square::RenderFloor(int x, int y, int w, int h) const
     {
         auto color = colorTable[unsigned(floor)];
-        color.Render();
+        //color.Render();
+        glColor3f(1.0f, 1.0f, 1.0f);
         auto z = Z();
         glNormal3f(0.0f, 1.0f, 0.0f);
+        float dx = 1.0f / float(w);
+        float dy = 1.0f / float(h);
         glBegin(GL_QUADS);
+            glTexCoord2f(float(x)*dx, float(y)*dy);
             glVertex3f(0.0f, z, 0.0f);
+
+            glTexCoord2f(float(x+1)*dx, float(y)*dy);
             glVertex3f(1.0f, z, 0.0f);
+
+            glTexCoord2f(float(x+1)*dx, float(y+1)*dy);
             glVertex3f(1.0f, z, 1.0f);
+
+            glTexCoord2f(float(x)*dx, float(y+1)*dy);
             glVertex3f(0.0f, z, 1.0f);
         glEnd();
     }
@@ -150,6 +164,8 @@ namespace Game
     }
     void Map::Render() const
     {
+        glEnable(GL_TEXTURE_2D);
+        texture->Bind();
         unsigned i = 0;
         for (unsigned y = 0; y < height; ++y)
         {
@@ -159,7 +175,7 @@ namespace Game
                 glPushName((y << 16) + x);
                 glTranslatef(float(x), 0.0f, float(y));
                 const auto& square = squares.at(i++);
-                square.RenderFloor();
+                square.RenderFloor(x,y,width,height);
                 square.RenderXWall(MaybeAt(Position(x + 1, y)));
                 square.RenderYWall(MaybeAt(Position(x, y-1)));
                 square.RenderOutline();
@@ -167,11 +183,16 @@ namespace Game
                 glPopMatrix();
             }
         }
+        texture->Unbind();
+        glDisable(GL_TEXTURE_2D);
+        Engine::CheckGLError();
     }
 
     std::wistream& operator>>(std::wistream& s, Map& map)
     {
         s >> map.name >> map.width >> map.height;
+        map.texture = std::make_unique<Engine::Image>();
+        map.texture->Load("data/Map.png");
         map.squares.resize(map.width * map.height);
         for (auto& square : map.squares)
             s >> square;
