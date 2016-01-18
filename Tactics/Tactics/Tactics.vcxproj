@@ -93,6 +93,7 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="Game" />
+    <Text Include="Skill" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
