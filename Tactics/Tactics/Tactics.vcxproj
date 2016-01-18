@@ -107,6 +107,7 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     <ClInclude Include="Light.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Move.h" />
+    <ClInclude Include="Panel.h" />
     <ClInclude Include="Plan.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Position.h" />
@@ -128,6 +129,7 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Move.cpp" />
+    <ClCompile Include="Panel.cpp" />
     <ClCompile Include="Plan.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Position.cpp" />

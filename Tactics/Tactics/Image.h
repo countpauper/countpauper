@@ -8,8 +8,8 @@ public:
     Image();
     ~Image();
     void Load(const std::string& fn);
-    void Bind();
-    void Unbind();
+    void Bind() const;
+    void Unbind() const;
 private:
     int w;
     int h;

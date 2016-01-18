@@ -10,7 +10,8 @@
 #include "game.h"
 #include "Light.h"
 #include "Camera.h"
-#include "Image.h"
+#include "Panel.h"
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -23,6 +24,7 @@ int width = 0;
 int height = 0;
 
 std::unique_ptr<Game::Game> game;
+std::unique_ptr<Game::Panel> panel;
 Engine::Light light; 
 Engine::Camera camera;
 
@@ -154,7 +156,9 @@ BOOL SetPixelFormat(HWND hWnd)
 
 BOOL Start()
 {
+    glEnable(GL_TEXTURE_2D);
     game = std::make_unique<Game::Game>();
+    panel = std::make_unique<Game::Panel>(*game, 64);
     std::wifstream fs("Game");
     if (fs.fail())
     {
@@ -192,6 +196,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
       return FALSE;
    }
+
    if (!Start())
        return FALSE;
  
@@ -261,9 +266,12 @@ Hit Select(int x, int y)
 
 void Render()
 {
-    glViewport(0, 0, width, height);
+    int panelHeight = panel->Height();
+    glViewport(0, panelHeight, width, height - panelHeight);
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glEnable(GL_TEXTURE_2D);
     //glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     //glEnable(GL_BLEND);    TODO: first render non alpha tiles, then alpha tiles with depth test
@@ -276,10 +284,15 @@ void Render()
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glDisable(GL_TEXTURE_2D);
     camera.Render();
     game->Render();
-    glFlush();
+   
+    glViewport(0, 0, width, panelHeight);
+    glDisable(GL_LIGHTING);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0,width, 0, panelHeight, 0, 1);
+    panel->Render();
 }
 
 //

@@ -75,7 +75,7 @@ namespace Game
 
     void Square::RenderFloor(int x, int y, int w, int h) const
     {
-        auto color = colorTable[unsigned(floor)];
+        //auto color = colorTable[unsigned(floor)];
         //color.Render();
         glColor3f(1.0f, 1.0f, 1.0f);
         auto z = Z();
@@ -164,7 +164,6 @@ namespace Game
     }
     void Map::Render() const
     {
-        glEnable(GL_TEXTURE_2D);
         texture->Bind();
         unsigned i = 0;
         for (unsigned y = 0; y < height; ++y)
@@ -184,7 +183,6 @@ namespace Game
             }
         }
         texture->Unbind();
-        glDisable(GL_TEXTURE_2D);
         Engine::CheckGLError();
     }
 
@@ -192,7 +190,7 @@ namespace Game
     {
         s >> map.name >> map.width >> map.height;
         map.texture = std::make_unique<Engine::Image>();
-        map.texture->Load("data/Map.png");
+        map.texture->Load("data/map.png");
         map.squares.resize(map.width * map.height);
         for (auto& square : map.squares)
             s >> square;
