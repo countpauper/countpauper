@@ -24,6 +24,19 @@ namespace Game
         unsigned maxhp;
     };
 
+    class Skill
+    {
+    public:
+        Skill();
+        std::unique_ptr<Action> Action() const;
+
+    private:
+        friend std::wistream& operator>>(std::wistream& s, Actor& actor);
+        std::string m_name;
+        unsigned cost;
+        float range;
+    };
+
     class Actor : public Object
     {
     public:
@@ -36,6 +49,11 @@ namespace Game
         unsigned GetTeam() const;
         bool CanAct() const;
         bool Dead() const;
+        struct Skill
+        {
+            Skill* skill;
+            unsigned score;
+        };
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         unsigned mp;
