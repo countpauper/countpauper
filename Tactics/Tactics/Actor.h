@@ -1,12 +1,14 @@
 #pragma once
 
+#include <memory>
 #include "Position.h"
 #include "Direction.h"
 
 namespace Game
 {
     class State;
-    class Actor;
+    class Skill;
+    class Action;
 
     class Object
     {
@@ -23,20 +25,6 @@ namespace Game
         int hp;
         unsigned maxhp;
     };
-
-    class Skill
-    {
-    public:
-        Skill();
-        std::unique_ptr<Action> Action() const;
-
-    private:
-        friend std::wistream& operator>>(std::wistream& s, Actor& actor);
-        std::string m_name;
-        unsigned cost;
-        float range;
-    };
-
     class Actor : public Object
     {
     public:

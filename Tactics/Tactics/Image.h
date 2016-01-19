@@ -6,6 +6,8 @@ class Image
 {
 public:
     Image();
+    Image(const Image&) = delete;
+    Image(Image&& other);
     ~Image();
     void Load(const std::string& fn);
     void Bind() const;

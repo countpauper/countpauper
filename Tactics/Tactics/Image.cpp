@@ -18,9 +18,15 @@ Image::Image() :
     glGenTextures(1, &id);
 }
 
+Image::Image(Image&& other) :
+    id(other.id)
+{
+    other.id = 0;
+}
 Image::~Image()
 {
-    glDeleteTextures(1, &id);
+    if (id==0)
+        glDeleteTextures(1, &id);
 }
 
 void Image::Bind() const
@@ -43,9 +49,6 @@ void Image::Load(const std::string& fn)
     else
         assert(false && "Unsupported image format");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     //glTexParameteri(GL_TEXTURE_MAX_LEVEL, 0);
     Unbind();
     CheckGLError();

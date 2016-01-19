@@ -14,6 +14,7 @@ namespace Game
     class Plan;
     class Actor;
     class State;
+    class Skills;
 
     class Game
     {
@@ -24,7 +25,7 @@ namespace Game
             Map,
             Object
         };
-        Game();
+        Game(std::unique_ptr<Skills> skills);
         virtual ~Game();
         void Tick();
         void Render() const;
@@ -44,6 +45,7 @@ namespace Game
         Objects objects;
         Objects::iterator turn;
         std::unique_ptr<Plan> plan;
+        std::unique_ptr<Skills> skills;
     };
     std::wistream& operator>>(std::wistream& s, Game& game);
 

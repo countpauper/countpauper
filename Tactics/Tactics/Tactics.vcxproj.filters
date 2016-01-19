@@ -82,6 +82,9 @@
     <ClInclude Include="Panel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Skills.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -136,6 +139,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Skills.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

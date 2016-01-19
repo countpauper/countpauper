@@ -11,7 +11,12 @@ namespace Game
     Button::Button(const std::string& name)
     {
         m_texture.Load(std::string("Data/") + name + std::string(".png"));
-//       m_texture.Load(std::string("Data/Bow.png"));
+    }
+
+    Button::Button(Button&& other) :
+        m_texture(std::move(other.m_texture))
+    {
+
     }
 
     void Button::Render() const
@@ -39,8 +44,8 @@ namespace Game
         m_game(game),
         m_height(height)
     {
-        m_buttons.emplace_back(std::make_unique<Button>("Sword"));
-        m_buttons.emplace_back(std::make_unique<Button>("Bow"));
+        m_buttons.emplace_back(Button("Sword"));
+        m_buttons.emplace_back(Button("Bow"));
     }
 
     unsigned Panel::Height() const
@@ -55,7 +60,7 @@ namespace Game
         glScalef(float(m_height), float(m_height), 1.0f);
         for (auto& button : m_buttons)
         {
-            button->Render();
+            button.Render();
             glTranslatef(1.0f, 0.0f, 0.0f);
         }
         Engine::CheckGLError();

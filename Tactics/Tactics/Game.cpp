@@ -4,11 +4,13 @@
 #include "Map.h"
 #include "Actor.h"
 #include "Plan.h"
+#include "Skills.h"
 
 namespace Game
 {
 
-    Game::Game()
+    Game::Game(std::unique_ptr<Skills> skills) :
+        skills(std::move(skills))
     {
     }
     

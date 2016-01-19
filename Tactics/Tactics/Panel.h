@@ -12,6 +12,8 @@ namespace Game
     {
     public:
         Button(const std::string& name);
+        Button(const Button&) = delete;
+        Button(Button&& other);
         void Render() const;
     private:
         Engine::Image m_texture;
@@ -24,7 +26,7 @@ namespace Game
         unsigned Height() const;
     private:
         Game& m_game;
-        std::vector<std::unique_ptr<Button>> m_buttons;
+        std::vector<Button> m_buttons;
         unsigned m_height;
     };
 }
