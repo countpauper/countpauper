@@ -15,8 +15,10 @@ namespace Game
         Button(const Button&) = delete;
         Button(Button&& other);
         void Render() const;
+        void Highlight();
     private:
         Engine::Image m_texture;
+        bool m_highlighted;
     };
     class Panel
     {
@@ -25,8 +27,10 @@ namespace Game
         void Render() const;
         unsigned Height() const;
     private:
+        void Initialize(const Actor* actor);
         Game& m_game;
-        std::vector<Button> m_buttons;
+        std::list<Button> m_buttons;
         unsigned m_height;
+        const Actor* m_actor;
     };
 }

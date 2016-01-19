@@ -10,22 +10,31 @@ namespace Game
 {
 
     
-    Button::Button(const std::wstring& name)
+    Button::Button(const std::wstring& name) :
+        m_highlighted(false)
     {
         m_texture.Load(std::wstring(L"Data/") + name + std::wstring(L".png"));
     }
 
     Button::Button(Button&& other) :
-        m_texture(std::move(other.m_texture))
+        m_texture(std::move(other.m_texture)),
+        m_highlighted(other.m_highlighted)
     {
 
     }
 
+    void Button::Highlight()
+    {
+        m_highlighted = true;
+    }
     void Button::Render() const
     {
 //        m_texture.Load(std::string("Data/Sword.png"));
         m_texture.Bind();
-        glColor3f(1.0f, 1.0f, 1.0f);
+        if (m_highlighted)
+            glColor3f(1.0f, 1.0f, 1.0f);
+        else
+            glColor3f(0.1f, 0.1f, 0.1f);
         glBegin(GL_QUADS);
             glTexCoord2f(0.0f, 0.0f);
             glVertex2f(0.0f, 0.0f);
@@ -44,7 +53,8 @@ namespace Game
     }
     Panel::Panel(Game& game, unsigned height) :
         m_game(game),
-        m_height(height)
+        m_height(height),
+        m_actor(nullptr)
     {
     }
 
@@ -60,16 +70,27 @@ namespace Game
         glScalef(float(m_height), float(m_height), 1.0f);
 
         Actor* actor = m_game.ActiveActor();
-        if (actor)
+        if (actor != m_actor)
+            const_cast<Panel*>(this)->Initialize(actor);    // TODO: get change from game
+        for (auto& button : m_buttons)
         {
-            for (auto skill : actor->GetSkills())
-            {
-                Button button(skill.skill->name);
-                button.Render();
-                glTranslatef(1.0f, 0.0f, 0.0f);
-            }
+            button.Render();
+            glTranslatef(1.0f, 0.0f, 0.0f);
         }
         Engine::CheckGLError();
+    }
 
+    void Panel::Initialize(const Actor* actor)
+    {
+        m_actor = actor;
+        m_buttons.clear();
+        if (m_actor)
+        {
+            for (auto skill : m_actor->GetSkills())
+            {
+                m_buttons.emplace_back(Button(skill.skill->name));
+            }
+            m_buttons.front().Highlight();
+        }
     }
 };
