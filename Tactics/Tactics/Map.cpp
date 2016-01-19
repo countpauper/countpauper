@@ -190,7 +190,7 @@ namespace Game
     {
         s >> map.name >> map.width >> map.height;
         map.texture = std::make_unique<Engine::Image>();
-        map.texture->Load("data/map.png");
+        map.texture->Load(L"data/map.png");
         map.squares.resize(map.width * map.height);
         for (auto& square : map.squares)
             s >> square;

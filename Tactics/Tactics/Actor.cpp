@@ -123,10 +123,17 @@ namespace Game
     {
         return hp <= 0;
     }
+    
     bool Actor::CanAct() const
     {
         return !Dead() && mp > 0;
     }
+
+    const Actor::Skills& Actor::GetSkills() const
+    {
+        return skills;
+    }
+
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {
         Game& game= *static_cast<Game*>(s.pword(1));

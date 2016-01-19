@@ -9,7 +9,7 @@ public:
     Image(const Image&) = delete;
     Image(Image&& other);
     ~Image();
-    void Load(const std::string& fn);
+    void Load(const std::wstring& fn);
     void Bind() const;
     void Unbind() const;
 private:

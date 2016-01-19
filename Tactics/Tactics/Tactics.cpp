@@ -159,7 +159,6 @@ BOOL SetPixelFormat(HWND hWnd)
 BOOL Start()
 {
     glEnable(GL_TEXTURE_2D);
-    panel = std::make_unique<Game::Panel>(*game, 64);
     auto skills = std::make_unique <Game::Skills>();
     {
         std::wifstream fs("Skill");
@@ -191,6 +190,7 @@ BOOL Start()
             return FALSE;
         }
     }
+    panel = std::make_unique<Game::Panel>(*game, 64);
     return TRUE;
 }
 

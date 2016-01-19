@@ -36,9 +36,9 @@ namespace Game
         void Click(Selection selection, GLuint value);
         Actor* FindTarget(const State& from, float range) const;
         std::unique_ptr<const Skills> skills;
+        Actor* ActiveActor();
     protected:
         void Next();
-        Actor* ActiveActor();
 
         friend std::wistream& operator>>(std::wistream& s, Game& game);
         Map map;

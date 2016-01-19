@@ -11,7 +11,7 @@ namespace Game
     class Button
     {
     public:
-        Button(const std::string& name);
+        Button(const std::wstring& name);
         Button(const Button&) = delete;
         Button(Button&& other);
         void Render() const;

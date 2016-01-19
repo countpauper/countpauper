@@ -3,14 +3,16 @@
 #include "Error.h"
 #include "Game.h"
 #include "Panel.h"
+#include "Actor.h"
+#include "Skills.h"
 
 namespace Game
 {
 
     
-    Button::Button(const std::string& name)
+    Button::Button(const std::wstring& name)
     {
-        m_texture.Load(std::string("Data/") + name + std::string(".png"));
+        m_texture.Load(std::wstring(L"Data/") + name + std::wstring(L".png"));
     }
 
     Button::Button(Button&& other) :
@@ -44,8 +46,6 @@ namespace Game
         m_game(game),
         m_height(height)
     {
-        m_buttons.emplace_back(Button("Sword"));
-        m_buttons.emplace_back(Button("Bow"));
     }
 
     unsigned Panel::Height() const
@@ -58,10 +58,16 @@ namespace Game
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glScalef(float(m_height), float(m_height), 1.0f);
-        for (auto& button : m_buttons)
+
+        Actor* actor = m_game.ActiveActor();
+        if (actor)
         {
-            button.Render();
-            glTranslatef(1.0f, 0.0f, 0.0f);
+            for (auto skill : actor->GetSkills())
+            {
+                Button button(skill.skill->name);
+                button.Render();
+                glTranslatef(1.0f, 0.0f, 0.0f);
+            }
         }
         Engine::CheckGLError();
 

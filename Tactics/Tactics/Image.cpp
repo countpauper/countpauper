@@ -38,9 +38,10 @@ void Image::Unbind() const
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Image::Load(const std::string& fn)
+void Image::Load(const std::wstring& fn)
 {
-    unsigned char* data = stbi_load(fn.c_str(), &w, &h, &channels, STBI_default);
+    std::string fns(fn.begin(), fn.end());
+    unsigned char* data = stbi_load(fns.c_str(), &w, &h, &channels, STBI_default);
     Bind();
     if (channels==4)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
