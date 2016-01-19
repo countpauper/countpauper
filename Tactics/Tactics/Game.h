@@ -35,6 +35,7 @@ namespace Game
         bool Cover(const Position& from, const Position& to) const;
         void Click(Selection selection, GLuint value);
         Actor* FindTarget(const State& from, float range) const;
+        std::unique_ptr<const Skills> skills;
     protected:
         void Next();
         Actor* ActiveActor();
@@ -45,7 +46,6 @@ namespace Game
         Objects objects;
         Objects::iterator turn;
         std::unique_ptr<Plan> plan;
-        std::unique_ptr<Skills> skills;
     };
     std::wistream& operator>>(std::wistream& s, Game& game);
 

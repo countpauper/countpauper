@@ -20,6 +20,14 @@ namespace Game
         s >> skill.cost >> skill.range;
         return s;
     }
+
+    const Skill* Skills::Find(const std::wstring& name) const
+    {
+        for (auto& skill : *this)
+            if (skill.name == name)
+                return &skill;
+        return nullptr;
+    }
     std::wistream& operator>>(std::wistream& s, Skills& skills)
     {
         while (!s.eof())

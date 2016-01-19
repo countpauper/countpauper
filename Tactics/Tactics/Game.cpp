@@ -186,6 +186,9 @@ namespace Game
     }
     std::wistream& operator>>(std::wistream& s, Game& game)
     {
+        const int index = 1;
+        s.pword(1) = &game;
+
         unsigned objects;
         s >> objects;
         for (unsigned oi = 0; oi < objects; ++oi)

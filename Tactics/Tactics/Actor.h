@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include "Position.h"
 #include "Direction.h"
 
@@ -39,7 +40,8 @@ namespace Game
         bool Dead() const;
         struct Skill
         {
-            Skill* skill;
+            Skill() : skill(nullptr), score(0) {}
+            const ::Game::Skill* skill;
             unsigned score;
         };
     private:
@@ -48,6 +50,7 @@ namespace Game
         unsigned maxmp;
         unsigned team;
         Direction direction;
+        std::vector<Actor::Skill> skills;
     };
     std::wistream& operator>>(std::wistream& s, Actor& actor);
 

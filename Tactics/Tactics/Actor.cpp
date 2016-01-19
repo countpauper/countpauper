@@ -3,6 +3,8 @@
 #include "Actor.h"
 #include "Action.h"
 #include "Color.h"
+#include "Game.h"
+#include "Skills.h"
 
 namespace Game
 {
@@ -127,10 +129,21 @@ namespace Game
     }
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {
+        Game& game= *static_cast<Game*>(s.pword(1));
         s >> actor.position.x >> actor.position.y;
         s >> actor.team;
         s >> actor.hp >> actor.maxhp;
         s >> actor.mp >> actor.maxmp;
+        unsigned skills;
+        s >> skills;
+        actor.skills.resize(skills);
+        for (auto& skill : actor.skills)
+        {
+            std::wstring skillName;
+            s >> skillName >> skill.score;
+            skill.skill = game.skills->Find(skillName);
+        }
+
         return s;
     }
 } // ::Game

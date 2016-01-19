@@ -10,10 +10,10 @@ namespace Game
     public:
         Skill();
         std::unique_ptr<Action> Action() const;
+        std::wstring name;
 
     private:
         friend std::wistream& operator>>(std::wistream& s, Skill& skill);
-        std::wstring name;
         unsigned cost;
         float range;
     };
@@ -23,6 +23,7 @@ namespace Game
     {
     public:
         Skills()=default;
+        const Skill* Find(const std::wstring& name) const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Skills& skills);
     };
