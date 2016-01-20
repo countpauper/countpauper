@@ -41,19 +41,21 @@ namespace Game
         return dynamic_cast<Actor*>(turn->get());
     }
 
-    std::vector<Actor*> Game::FindTargets(const Actor& actor, const Skill& skill) const
+    std::vector<Actor*> Game::FindTargets(const State& from, const Skill& skill) const
     {
         std::vector<Actor*> result;
         for (auto& object : objects)
         {
-            if (Actor* target = dynamic_cast<Actor*>(object.get()))
-            {
-                if ((target!=&actor) && (!target->Dead()))
-                {
-                    result.push_back(target);
-                }
-
-            }
+             auto actor = dynamic_cast<Actor*>(object.get());
+            if (!actor)
+                continue;
+            if (actor->GetTeam() == from.loyalty)
+                continue;
+            if (actor->Dead())
+                continue;
+            if (actor->GetPosition().Distance(from.position) > skill.range)
+                continue;
+            result.push_back(actor);
         }
         return result;
     }
@@ -194,22 +196,6 @@ namespace Game
         return false;
     }
 
-    Actor* Game::FindTarget(const State& from, float range) const
-    {
-        for (auto& object : objects)
-        {
-            auto actor = dynamic_cast<Actor*>(object.get());
-            if (!actor)
-                continue;
-            if (actor->GetTeam() == from.loyalty)
-                continue;
-            if (actor->Dead())
-                continue;
-            if (actor->GetPosition().Distance(from.position) <= range)
-                return actor;
-        }
-        return nullptr;
-    }
     std::wistream& operator>>(std::wistream& s, Game& game)
     {
         const int index = 1;

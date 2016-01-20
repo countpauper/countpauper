@@ -9,6 +9,8 @@ namespace Game
     Move::Move(Direction direction) :
         direction(direction)
     {
+        cost = 2;
+        range = 1.0;
     }
 
     State Move::Act(const State& state, const Game& game)
@@ -41,13 +43,6 @@ namespace Game
     }
 
     
-    Action::Properties Move::properties(2);
-
-    Action::Properties& Move::GetProperties() const
-    {
-        return properties;
-    }
-
     North::North() :
         Move(Direction::Value::North)
     {

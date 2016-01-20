@@ -220,6 +220,6 @@ namespace Game
         skill(skill),
         target(target)
     {
-        Approach(target.GetPosition(), game, skill.Action());
+        Approach(target.GetPosition(), game, std::unique_ptr<Action>(skill.Action(target)));
     }
 }    // 

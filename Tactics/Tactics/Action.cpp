@@ -3,18 +3,16 @@
 #include "Move.h"
 #include "Attack.h"
 #include "Game.h"
+#include "Skills.h"
 
 namespace Game
 {
     Action::Action() :
-        cost(0)
+        cost(0),
+        range(0.0f)
     {
     }
 
-    Action::Properties::Properties(unsigned cost) :
-        cost(cost)
-    {
-    }
 
     TargetedAction::TargetedAction(Actor& target) :
         target(target)
@@ -29,10 +27,11 @@ namespace Game
         { VK_LEFT, [](const State&, const Game&){ return new West(); } },
         { VK_SPACE, [](const State& state, const Game& game)
         {
-            auto target = game.FindTarget(state, Shoot::properties.range);
-            if (!target)
-                return (Shoot*)nullptr;
-            return new Shoot(*target);
+            auto& skill = game.skills->front();
+            auto targets = game.FindTargets(state, skill);
+            if (targets.empty())
+                return (Action*)nullptr;
+            return skill.Action(*targets.front());
         } },
     };
 

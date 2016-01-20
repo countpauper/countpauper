@@ -2,33 +2,25 @@
 #include "Attack.h"
 #include "Game.h"
 #include "Actor.h"
-
+#include "Skills.h"
 namespace Game
 {
 
-    Attack::Properties::Properties(unsigned cost, float range) :
-        Action::Properties(cost),
-        range(range)
-    {
-    }
 
-    Attack::Attack(Actor& target) :
+    Attack::Attack(Actor& target, const Skill& skill) :
         TargetedAction(target)
     {
-    }
-
-    Attack::Properties& Attack::GetAttackProperties()
-    {
-        return static_cast<Attack::Properties&>(GetProperties());
+        cost = skill.cost;
+        range = skill.range;
     }
 
     State Attack::Act(const State& state, const Game& game)
     {
 
         State result(state);
-        auto properties = GetAttackProperties();
-        if ((state.mp <= properties.cost) ||
-            (state.position.Distance(target.GetPosition()) > properties.range) ||
+
+        if ((state.mp <= cost) ||
+            (state.position.Distance(target.GetPosition()) > range) ||
             (game.Cover(state.position, target.GetPosition())))
         {
             result.possible = false;
@@ -58,28 +50,6 @@ namespace Game
         glEnd();
         glPopMatrix();
     }
-
-    Slash::Slash(Actor& target) :
-        Attack(target)
-    {
-    }
-
-    Action::Properties& Slash::GetProperties() const
-    {
-        return properties;
-    }
-    Attack::Properties Slash::properties(4, 1.0f);
-
-    Shoot::Shoot(Actor& target) :
-        Attack(target)
-    {
-    }
-
-    Action::Properties& Shoot::GetProperties() const
-    {
-        return properties;
-    }
-    Attack::Properties Shoot::properties(4, 4.0f);
 
 
 } // ::Game

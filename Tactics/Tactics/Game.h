@@ -35,13 +35,12 @@ namespace Game
         bool CanGo(const Position& from, Direction direction) const;
         bool Cover(const Position& from, const Position& to) const;
         void Click(Selection selection, GLuint value);
-        Actor* FindTarget(const State& from, float range) const;
+        std::vector<Actor*> FindTargets(const State& from, const Skill& skill) const;
         std::unique_ptr<const Skills> skills;
         Actor* ActiveActor();
         void MakePlan(Actor& actor, const Skill& skill);
     protected:
         void Next();
-        std::vector<Actor*> FindTargets(const Actor& actor, const Skill& skill) const;
 
         friend std::wistream& operator>>(std::wistream& s, Game& game);
         Map map;

@@ -4,16 +4,14 @@
 namespace Game
 {
     class Action;
+    class Actor;
 
     class Skill
     {
     public:
         Skill();
-        std::unique_ptr<Action> Action() const;
+        Action* Action(Actor& target) const;
         std::wstring name;
-
-    private:
-        friend std::wistream& operator>>(std::wistream& s, Skill& skill);
         unsigned cost;
         float range;
     };

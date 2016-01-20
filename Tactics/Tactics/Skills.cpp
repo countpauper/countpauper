@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Skills.h"
-#include "Action.h"
+#include "Attack.h"
 
 namespace Game
 {
@@ -9,9 +9,9 @@ namespace Game
         range(0)
     {
     }
-    std::unique_ptr<Action> Skill::Action() const
+    Action* Skill::Action(Actor& target) const
     {
-        return nullptr;
+        return new Attack(target,*this);
     }
     std::wistream& operator>>(std::wistream& s, Skill& skill)
     {

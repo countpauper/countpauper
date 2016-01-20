@@ -15,8 +15,6 @@ namespace Game
         Move(Direction direction);
         void Render(const State& state) const override;
         State Act(const State& state, const Game& game) override;
-        Action::Properties& GetProperties() const override;
-        static Properties properties;
     protected:
         Direction direction;
     };

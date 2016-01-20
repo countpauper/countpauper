@@ -18,14 +18,9 @@ namespace Game
         virtual State Act(const State& state, const Game& game)=0;
         virtual void Render(const State& state) const = 0;
         static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
-        struct Properties
-        {
-            Properties(unsigned cost);
-            unsigned cost;
-        };
-        virtual Properties& GetProperties() const = 0;
-    protected:
+        static std::map<std::wstring, std::function<Action*(const State& state, const Game& game)>> typemap;
         unsigned cost;
+        float range;
     };
     
     class TargetedAction : public Action
