@@ -41,6 +41,32 @@ namespace Game
         return dynamic_cast<Actor*>(turn->get());
     }
 
+    std::vector<Actor*> Game::FindTargets(const Actor& actor, const Skill& skill) const
+    {
+        std::vector<Actor*> result;
+        for (auto& object : objects)
+        {
+            if (Actor* target = dynamic_cast<Actor*>(object.get()))
+            {
+                if ((target!=&actor) && (!target->Dead()))
+                {
+                    result.push_back(target);
+                }
+
+            }
+        }
+        return result;
+    }
+
+    void Game::MakePlan(Actor& actor, const Skill& skill)
+    {
+        auto targets = FindTargets(actor, skill);
+        if (targets.size()) 
+            plan.reset(new AttackPlan(actor, *targets.front(), *this, skill));
+        // TODO: make plan for each target and select the best (shortest?)
+        // TODO: append to current plan 
+    }
+
     void Game::Render() const
     {
         glMatrixMode(GL_MODELVIEW);
@@ -218,10 +244,19 @@ namespace Game
         }
         else if (selection == Selection::Object)
         {
-            auto object = (Object*)value;
-            if (auto target= dynamic_cast<Actor*>(object))
+            auto currentPlan = dynamic_cast<AttackPlan*>(plan.get());
+            const Skill* skill = nullptr;
+            if (currentPlan)
+                skill = &currentPlan->skill;
+            else
+                skill = playerActor.GetSkills().front().skill;
+            if (skill)
             {
-                plan.reset(new AttackPlan(playerActor, *target, *this));
+                auto object = (Object*)value;
+                if (auto target = dynamic_cast<Actor*>(object))
+                {
+                    plan.reset(new AttackPlan(playerActor, *target, *this, *skill));
+                }
             }
         }
     }

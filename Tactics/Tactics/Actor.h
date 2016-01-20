@@ -45,7 +45,7 @@ namespace Game
             unsigned score;
         };
         typedef std::vector<Actor::Skill> Skills;
-        const Skills& GetSkills() const;
+        const Actor::Skills& GetSkills() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         unsigned mp;

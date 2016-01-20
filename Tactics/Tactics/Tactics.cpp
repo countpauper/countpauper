@@ -242,6 +242,16 @@ struct Hit
     operator bool() const { return type != 0;  }
 };
 
+
+void ZoomToScreenCoord(int x, int y)
+{
+    // gluPickMatrix
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glTranslatef(float(viewport[2] - 2.0f * float(x - viewport[0])), float(viewport[3] - 2 * ((height-y) - viewport[1])), 0.0f);
+    glScalef(float(viewport[2]), float(viewport[3]), 1.0f);
+}
+
 Hit Select(int x, int y)
 {
     GLuint buffer[512];
@@ -249,16 +259,15 @@ Hit Select(int x, int y)
     glRenderMode(GL_SELECT);
     glInitNames();
 
-    GLint viewport[] = { 0, 0, width, height };
-    glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    auto panelHeight = panel->Height();
+    glViewport(0, panelHeight, width, height - panelHeight);
     glEnable(GL_CULL_FACE);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    // gluPickMatrix
-    glTranslatef((viewport[2] - 2.0f * float(x - viewport[0])), float(2.0f * (y - viewport[1]) - viewport[3]), 0.0f);
-    glScalef(float(viewport[2]), float(viewport[3]), 1.0f);
+    ZoomToScreenCoord(x,y);
+
     camera.Render();
 
     game->Render();
@@ -286,11 +295,12 @@ Hit Select(int x, int y)
 
 void Render()
 {
-    int panelHeight = panel->Height();
-    glViewport(0, panelHeight, width, height - panelHeight);
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
+    int panelHeight = panel->Height();
+    glViewport(0, panelHeight, width, height - panelHeight);
+
     glEnable(GL_TEXTURE_2D);
     //glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -304,6 +314,10 @@ void Render()
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    if (input.drag)
+    {
+        ZoomToScreenCoord(input.x, input.y);
+    }
     camera.Render();
     game->Render();
    
@@ -368,7 +382,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             int x = LOWORD(lParam), y = HIWORD(lParam);
             int dx = x- input.x, dy = y- input.y;
             input.drag = false;
-            camera.FinishDrag(dx/100.0f, dy/-100.0f);
+            //camera.FinishDrag(dx/100.0f, dy/-100.0f);
             if ((std::abs(dx) < 1) && (std::abs(dy) < 1))
             {
                 auto hit = Select(x, y);
@@ -383,7 +397,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             int dx = LOWORD(lParam) - input.x;
             int dy = HIWORD(lParam) - input.y;
-            camera.Drag(dx / 100.0f, dy / -100.0f);
+            // camera.Drag(dx / 100.0f, dy / -100.0f);
             InvalidateRect(hWnd, nullptr, TRUE);
         }
         break;
@@ -408,7 +422,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostMessage(hWnd, WM_PAINT, 0, 0);
     return 0;
     case WM_KEYDOWN:
-        game->Key(wParam);
+        panel->Key(wParam);
         InvalidateRect(hWnd, nullptr, TRUE);
         break;
     case WM_CLOSE:

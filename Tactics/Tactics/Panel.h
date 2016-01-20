@@ -6,31 +6,34 @@
 namespace Game
 {
     class Game;
-
+    class Skill;
 
     class Button
     {
     public:
-        Button(const std::wstring& name);
+        Button(const Skill& skill);
         Button(const Button&) = delete;
         Button(Button&& other);
         void Render() const;
         void Highlight();
+        const Skill& skill;
     private:
-        Engine::Image m_texture;
-        bool m_highlighted;
+        Engine::Image texture;
+        bool highlighted;
     };
+
     class Panel
     {
     public:
         Panel(Game& game, unsigned height);
         void Render() const;
         unsigned Height() const;
+        void Key(unsigned short code);
     private:
-        void Initialize(const Actor* actor);
-        Game& m_game;
-        std::list<Button> m_buttons;
-        unsigned m_height;
-        const Actor* m_actor;
+        void Initialize(Actor* actor);
+        Game& game;
+        std::vector<Button> buttons;
+        unsigned height;
+        Actor* actor;
     };
 }

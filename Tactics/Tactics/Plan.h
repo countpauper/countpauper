@@ -10,11 +10,13 @@
 
 namespace Game
 {
+    class Skill;
 
 class Plan
 {
 public:
     Plan(Actor& actor);
+    virtual ~Plan() = default;
     void Render() const;
     void Add(std::unique_ptr<Action> action, const State& state);
     State Final() const;
@@ -78,7 +80,8 @@ private:
 class AttackPlan : public Plan
 {
 public:
-    AttackPlan(Actor& actor, Actor& target, const Game& game);    // TODO: action factory 
+    AttackPlan(Actor& actor, Actor& target, const Game& game, const Skill& skill);
+    const Skill& skill;
 private:
     Actor& target;
 };

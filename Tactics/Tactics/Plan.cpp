@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include "Move.h"
 #include "Attack.h"
+#include "Skills.h"
 
 namespace Game
 {
@@ -214,10 +215,11 @@ namespace Game
         Approach(target, game, nullptr);
     }
 
-    AttackPlan::AttackPlan(Actor& actor, Actor& target, const Game& game) :
+    AttackPlan::AttackPlan(Actor& actor, Actor& target, const Game& game, const Skill& skill) :
         Plan(actor),
+        skill(skill),
         target(target)
     {
-        Approach(target.GetPosition(), game, std::make_unique<Slash>(target));
+        Approach(target.GetPosition(), game, skill.Action());
     }
 }    // 

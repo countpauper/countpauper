@@ -15,6 +15,7 @@ namespace Game
     class Actor;
     class State;
     class Skills;
+    class Skill;
 
     class Game
     {
@@ -37,8 +38,10 @@ namespace Game
         Actor* FindTarget(const State& from, float range) const;
         std::unique_ptr<const Skills> skills;
         Actor* ActiveActor();
+        void MakePlan(Actor& actor, const Skill& skill);
     protected:
         void Next();
+        std::vector<Actor*> FindTargets(const Actor& actor, const Skill& skill) const;
 
         friend std::wistream& operator>>(std::wistream& s, Game& game);
         Map map;

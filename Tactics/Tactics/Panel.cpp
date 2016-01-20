@@ -10,28 +10,30 @@ namespace Game
 {
 
     
-    Button::Button(const std::wstring& name) :
-        m_highlighted(false)
+    Button::Button(const Skill& skill) :
+        highlighted(false),
+        skill(skill)
     {
-        m_texture.Load(std::wstring(L"Data/") + name + std::wstring(L".png"));
+        texture.Load(std::wstring(L"Data/") + skill.name + std::wstring(L".png"));
     }
 
     Button::Button(Button&& other) :
-        m_texture(std::move(other.m_texture)),
-        m_highlighted(other.m_highlighted)
+        skill(other.skill),
+        texture(std::move(other.texture)),
+        highlighted(other.highlighted)
     {
 
     }
 
     void Button::Highlight()
     {
-        m_highlighted = true;
+        highlighted = true;
     }
     void Button::Render() const
     {
-//        m_texture.Load(std::string("Data/Sword.png"));
-        m_texture.Bind();
-        if (m_highlighted)
+//        texture.Load(std::string("Data/Sword.png"));
+        texture.Bind();
+        if (highlighted)
             glColor3f(1.0f, 1.0f, 1.0f);
         else
             glColor3f(0.1f, 0.1f, 0.1f);
@@ -48,31 +50,31 @@ namespace Game
             glTexCoord2f(0.0f, 1.0f);
             glVertex2f(0.0f, 1.0f);
         glEnd();
-        m_texture.Unbind();
-
+        texture.Unbind();
     }
+
     Panel::Panel(Game& game, unsigned height) :
-        m_game(game),
-        m_height(height),
-        m_actor(nullptr)
+        game(game),
+        height(height),
+        actor(nullptr)
     {
     }
 
     unsigned Panel::Height() const
     {
-        return m_height;
+        return height;
     }
 
     void Panel::Render() const
     {
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        glScalef(float(m_height), float(m_height), 1.0f);
+        glScalef(float(height), float(height), 1.0f);
 
-        Actor* actor = m_game.ActiveActor();
-        if (actor != m_actor)
-            const_cast<Panel*>(this)->Initialize(actor);    // TODO: get change from game
-        for (auto& button : m_buttons)
+        Actor* activeActor = game.ActiveActor();
+        if (actor != activeActor)
+            const_cast<Panel*>(this)->Initialize(activeActor);    // TODO: get change from game
+        for (auto& button : buttons)
         {
             button.Render();
             glTranslatef(1.0f, 0.0f, 0.0f);
@@ -80,17 +82,31 @@ namespace Game
         Engine::CheckGLError();
     }
 
-    void Panel::Initialize(const Actor* actor)
+    void Panel::Key(unsigned short code)
     {
-        m_actor = actor;
-        m_buttons.clear();
-        if (m_actor)
+        if ((code >= VK_F1) && (code <= VK_F24))
         {
-            for (auto skill : m_actor->GetSkills())
+            unsigned button = code - VK_F1;
+            if ((actor) && (button < buttons.size()))
             {
-                m_buttons.emplace_back(Button(skill.skill->name));
+                game.MakePlan(*actor, buttons.at(button).skill);
             }
-            m_buttons.front().Highlight();
+        }
+        else
+            game.Key(code);
+    }
+
+    void Panel::Initialize(Actor* newActor)
+    {
+        actor = newActor;
+        buttons.clear();
+        if (actor)
+        {
+            for (auto skill : actor->GetSkills())
+            {
+                buttons.emplace_back(Button(*skill.skill));
+            }
+            buttons.front().Highlight();
         }
     }
 };
