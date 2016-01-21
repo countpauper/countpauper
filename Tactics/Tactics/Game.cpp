@@ -22,8 +22,25 @@ namespace Game
         while ((actor=ActiveActor()) &&
             (!actor->CanAct()))
             Next();
+        if (actor->GetTeam() > 0)
+            AI(actor);
     }
 
+    void Game::AI(Actor* actor)
+    {
+        std::vector<std::unique_ptr<Plan>> plans;
+        for (auto skill : actor->GetSkills())
+        {
+            auto targets = FindTargets(*actor, *skill.skill);
+            for (auto target : targets)
+            {
+                plans.emplace_back(std::make_unique<AttackPlan>(*actor, *target, *this, *skill.skill));
+            }
+        }
+        if (plans.size())
+            plans.front()->Execute(*actor);
+        Next();
+    }
     void Game::Next()
     {
         if (turn == objects.end())

@@ -353,6 +353,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_TIMER:
         game->Tick();
+        InvalidateRect(hWnd, nullptr, TRUE);
         break;
     case WM_COMMAND:
         wmId    = LOWORD(wParam);
@@ -375,7 +376,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         input.y = HIWORD(lParam);
         input.drag = true;
         SetCapture(hWnd); 
-        InvalidateRect(hWnd, nullptr, TRUE);//todo, just for click test
         break;
     case WM_LBUTTONUP:
         {

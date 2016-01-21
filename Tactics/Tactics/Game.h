@@ -41,6 +41,7 @@ namespace Game
         Actor* ActiveActor();
         void MakePlan(Actor& actor, const Skill& skill);
     protected:
+        void AI(Actor* actor);
         void Next();
 
         friend std::wistream& operator>>(std::wistream& s, Game& game);
