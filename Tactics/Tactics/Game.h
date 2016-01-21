@@ -36,6 +36,7 @@ namespace Game
         bool Cover(const Position& from, const Position& to) const;
         void Click(Selection selection, GLuint value);
         std::vector<Actor*> FindTargets(const State& from, const Skill& skill) const;
+        std::vector<Actor*> FindTargetsInRange(const State& from, const Skill& skill) const;
         std::unique_ptr<const Skills> skills;
         Actor* ActiveActor();
         void MakePlan(Actor& actor, const Skill& skill);

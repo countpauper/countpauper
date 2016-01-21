@@ -46,18 +46,27 @@ namespace Game
         std::vector<Actor*> result;
         for (auto& object : objects)
         {
-             auto actor = dynamic_cast<Actor*>(object.get());
+            auto actor = dynamic_cast<Actor*>(object.get());
             if (!actor)
                 continue;
             if (actor->GetTeam() == from.loyalty)
                 continue;
             if (actor->Dead())
                 continue;
-            if (actor->GetPosition().Distance(from.position) > skill.range)
-                continue;
             result.push_back(actor);
         }
         return result;
+    }
+
+    std::vector<Actor*> Game::FindTargetsInRange(const State& from, const Skill& skill) const
+    {
+        auto targets = FindTargets(from, skill);
+        auto it = std::remove_if(targets.begin(), targets.end(), [from, skill](const Actor* actor)
+        {
+            return actor->GetPosition().Distance(from.position) > skill.range;
+        });
+        targets.erase(it, targets.end());
+        return targets;
     }
 
     void Game::MakePlan(Actor& actor, const Skill& skill)
