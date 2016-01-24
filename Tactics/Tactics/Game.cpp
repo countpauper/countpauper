@@ -16,6 +16,18 @@ namespace Game
     
     Game::~Game() = default;
 
+    State Game::Get(const Actor& actor) const
+    {
+        return State(actor);
+    }
+    void Game::Adjust(Actor& actor, const State& state)
+    {
+        actor.Apply(state);
+    }
+    void Game::Apply()
+    {
+
+    }
     void Game::Tick()
     {
         Actor* actor;
@@ -38,7 +50,7 @@ namespace Game
             }
         }
         if (plans.size())
-            plans.front()->Execute(*actor);
+            plans.front()->Execute(*this);
         Next();
     }
     void Game::Next()
@@ -134,7 +146,7 @@ namespace Game
         if (code == VK_RETURN)
         {
             if (plan)
-                plan->Execute(playerActor);
+                plan->Execute(*this);
             playerActor.Turn();
             Next();
             plan.reset();

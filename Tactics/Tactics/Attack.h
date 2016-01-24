@@ -15,7 +15,7 @@ namespace Game
         Attack(Actor& target, const Skill& skill);
         void Render(const State& state) const override;
         State Act(const State& state, const Game& game) override;
-        void React() override;
+        State React(const State& state) const override;
     };
 
     /*

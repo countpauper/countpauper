@@ -5,6 +5,7 @@
 #include "Move.h"
 #include "Attack.h"
 #include "Skills.h"
+#include "Game.h"
 
 namespace Game
 {
@@ -125,16 +126,13 @@ namespace Game
         else
             return actions.back().result;
     }
-    void Plan::Execute(Actor& actor) const
+    void Plan::Execute(Game& game) const
     {
-        for (const auto& action : actions)
-            if (auto targetedAction = dynamic_cast<TargetedAction*>(action.action.get()))
-                targetedAction->React();
-        actor.Apply(Final());
+        result.front().state->Apply();
     }
 
 
-    void Plan::Approach(const Position& target, const Game& game, std::unique_ptr<Action>&& targetAction)
+    void Plan::Approach(const Position& target, Game& game, std::unique_ptr<Action>&& targetAction)
     {
         std::vector<std::function<Action*(void)>> actions({
             [](){ return new North();  },
@@ -158,18 +156,28 @@ namespace Game
                 auto finalState = targetAction->Act((*best)->result, game);
                 if (finalState.possible)
                 {
+                    auto gameState = std::make_unique<GameState>(game);
+                    gameState->Adjust(actor, finalState);
+                    gameState->Act(*targetAction);
+                    result.emplace_back(GameChance(std::move(gameState), 1.0));
+
                     AddFront(**best);
                     for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
                     {
                         AddFront(*previous);
                     }
                     Add(std::move(targetAction), finalState);
+                    return;
                 }
             }
             else
             {
                 if ((*best)->Reached(target))
                 {
+                    auto gameState = std::make_unique<GameState>(game);
+                    gameState->Adjust(actor, (*best)->result);
+                    result.emplace_back(GameChance(std::move(gameState), 1.0));
+
                     AddFront(**best);
                     for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
                     {
@@ -199,6 +207,9 @@ namespace Game
         auto best = closed.begin();
         if ((*best)->action)    // TODO: root node
         {
+            auto gameState = std::make_unique<GameState>(game);
+            gameState->Adjust(actor, (*best)->result);  // TODO: remove code duplication for constructing results
+            result.emplace_back(GameChance(std::move(gameState), 1.0));
             AddFront(**best);
             for (auto link = (*best)->previous; link != nullptr; link = link->previous)
             {
@@ -208,14 +219,14 @@ namespace Game
         }
     }
 
-    PathPlan::PathPlan(Actor& actor, const Position& target, const Game& game) :
+    PathPlan::PathPlan(Actor& actor, const Position& target, Game& game) :
         Plan(actor),
         target(target)
     {
         Approach(target, game, nullptr);
     }
 
-    AttackPlan::AttackPlan(Actor& actor, Actor& target, const Game& game, const Skill& skill) :
+    AttackPlan::AttackPlan(Actor& actor, Actor& target, Game& game, const Skill& skill) :
         Plan(actor),
         skill(skill),
         target(target)

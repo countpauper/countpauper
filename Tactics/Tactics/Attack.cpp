@@ -30,11 +30,11 @@ namespace Game
         return result;
     }
 
-    void Attack::React()
+    State Attack::React(const State& state) const
     {
-        State result(target);
+        State result(state);
         result.hp -= 1;
-        target.Apply(result);
+        return result;
     }
 
 

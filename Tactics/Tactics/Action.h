@@ -27,8 +27,7 @@ namespace Game
     {
     public:
         TargetedAction(Actor& target);
-        virtual void React() = 0;
-    protected:
+        virtual State React(const State& state) const= 0;
         Actor& target;
     };
 }   // ::Game

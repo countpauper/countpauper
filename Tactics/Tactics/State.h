@@ -2,12 +2,17 @@
 
 #include <map>
 #include <set>
+#include <memory>
+
 #include "Position.h"
 #include "Direction.h"
+#include "IGame.h"
+
 namespace Game
 {
     class Actor;
     class Game;
+    class Action;
 
     class State
     {
@@ -21,17 +26,27 @@ namespace Game
         unsigned loyalty;
     };
 
-    class GameState
+    class GameState : public IGame
     {
     public:
         GameState();
-        GameState(const GameState& parent);
-        void Adjust(const Actor& actor, const State& state);
-        void Apply(Game& game) const; 
-        State Get(const Actor& actor) const;
+        GameState(IGame& parent);
+        void Adjust(Actor& actor, const State& state) override;
+        void Apply() override;
+        State Get(const Actor& actor) const override;
+        void Act(const Action& action);
     private:
         void RecursiveApply(Game& game, std::set<const Actor*>& done) const;
-        const GameState* parent;
-        std::map<const Actor*, State> state;
+        IGame& parent;
+        std::map<Actor*, State> state;
     };
+
+    struct GameChance 
+    {
+        GameChance(std::unique_ptr<GameState> state, float chance);
+        GameChance(GameChance&& other);
+        std::unique_ptr<GameState> state;
+        float chance;
+    };
+
 } // ::Game

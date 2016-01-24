@@ -10,7 +10,7 @@
 
 namespace Game
 {
-    class Skill;
+class Skill;
 
 class Plan
 {
@@ -20,7 +20,7 @@ public:
     void Render() const;
     void Add(std::unique_ptr<Action> action, const State& state);
     State Final() const;
-    void Execute(Actor& actor) const;
+    void Execute(Game& game) const;
 private:
     Actor& actor;
     struct Node
@@ -64,15 +64,16 @@ private:
     };
     friend ClosedList;
 protected:
-    void Approach(const Position& target, const Game& game, std::unique_ptr<Action>&& action);
+    void Approach(const Position& target, Game& game, std::unique_ptr<Action>&& action);
     void AddFront(Node& node);
     std::vector<Node> actions;
+    std::vector<GameChance> result;
 };
 
 class PathPlan : public Plan
 {
 public:
-    PathPlan(Actor& actor, const Position& target, const Game& game);
+    PathPlan(Actor& actor, const Position& target, Game& game);
 private:
     Position target;
 };
@@ -80,7 +81,7 @@ private:
 class AttackPlan : public Plan
 {
 public:
-    AttackPlan(Actor& actor, Actor& target, const Game& game, const Skill& skill);
+    AttackPlan(Actor& actor, Actor& target, Game& game, const Skill& skill);
     const Skill& skill;
 private:
     Actor& target;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "State.h"
 #include "Actor.h"
+#include "Action.h"
 
 namespace Game
 {
@@ -14,46 +15,51 @@ namespace Game
     {
     }
 
-    GameState::GameState() :
-        parent(nullptr)
+    GameState::GameState(IGame& parent) :
+        parent(parent)
     {
     }
-
-    GameState::GameState(const GameState& parent) :
-        parent(&parent)
-    {
-    }
-    void GameState::Adjust(const Actor& actor, const State& actorState)
+    void GameState::Adjust(Actor& actor, const State& actorState)
     {
         state.insert(std::make_pair(&actor, actorState));
     }
 
-    void GameState::Apply(Game& game) const
+
+    void GameState::Act(const Action& action)
     {
-        RecursiveApply(game, std::set<const Actor*>());
+        if (auto targetAction = dynamic_cast<const TargetedAction*>(&action))
+        {
+            auto state = Get(targetAction->target);
+            auto newState = targetAction->React(state);
+            Adjust(targetAction->target, newState);
+        }
     }
 
     State GameState::Get(const Actor& actor) const
     {
-        const auto actorIt = state.find(&actor);
+        const auto actorIt = state.find(const_cast<Actor*>(&actor));
         if (actorIt != state.end())
             return actorIt->second;
-        else if (parent)
-            return parent->Get(actor);
-        else return State(actor);
+        return parent.Get(actor);
     }
 
-    void GameState::RecursiveApply(Game& game, std::set<const Actor*>& done) const
+    void GameState::Apply()
     {
-        for (const auto& actorState : state)
+        for (auto& actorState : state)
         {
-            if (done.count(actorState.first))
-                continue;
-            auto actor = const_cast<Actor*>(actorState.first);
-            actor->Apply(actorState.second);
-            done.insert(actorState.first);
+            parent.Adjust(*actorState.first, actorState.second);
         }
-        if (parent)
-            parent->RecursiveApply(game, done);
+        parent.Apply();
+    }
+
+    GameChance::GameChance(std::unique_ptr<GameState> state, float chance) :
+        state(std::move(state)),
+        chance(chance)
+    {
+    }
+    GameChance::GameChance(GameChance&& other) :
+        state(std::move(other.state)),
+        chance(other.chance)
+    {
     }
 } // ::Game

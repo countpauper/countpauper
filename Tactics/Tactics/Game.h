@@ -6,6 +6,7 @@
 
 #include "Direction.h"
 #include "Map.h"
+#include "IGame.h"
 
 namespace Game
 {
@@ -17,7 +18,7 @@ namespace Game
     class Skills;
     class Skill;
 
-    class Game
+    class Game : public IGame
     {
     public:
         enum class Selection
@@ -28,6 +29,12 @@ namespace Game
         };
         Game(std::unique_ptr<Skills> skills);
         virtual ~Game();
+
+        //IGame
+        State Get(const Actor& actor) const override;
+        void Adjust(Actor& actor, const State& state) override;
+        void Apply() override;
+
         void Tick();
         void Render() const;
         void Key(unsigned short code);

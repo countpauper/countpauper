@@ -4,7 +4,7 @@
 #include "Attack.h"
 #include "Game.h"
 #include "Skills.h"
-
+#include "State.h"
 namespace Game
 {
     Action::Action() :
@@ -12,7 +12,6 @@ namespace Game
         range(0.0f)
     {
     }
-
 
     TargetedAction::TargetedAction(Actor& target) :
         target(target)
