@@ -35,6 +35,7 @@ namespace Game
         void Apply() override;
         State Get(const Actor& actor) const override;
         void Act(const Action& action);
+        std::wstring Description() const override;
     private:
         void RecursiveApply(Game& game, std::set<const Actor*>& done) const;
         IGame& parent;

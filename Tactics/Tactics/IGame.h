@@ -11,5 +11,6 @@ namespace Game
         virtual State Get(const Actor& actor) const = 0;
         virtual void Apply() = 0;
         virtual void Adjust(Actor& actor, const State& state) = 0;
+        virtual std::wstring Description() const = 0;
     };
 }

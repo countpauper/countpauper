@@ -234,6 +234,10 @@ namespace Game
         return false;
     }
 
+    std::wstring Game::Description() const
+    {
+        return L"";
+    }
     std::wistream& operator>>(std::wistream& s, Game& game)
     {
         const int index = 1;
@@ -284,6 +288,7 @@ namespace Game
             }
         }
     }
+
 }   // ::Game
 
 

@@ -1,7 +1,4 @@
-﻿Tactics.cpp : Defines the entry point for the application.
-//
-
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Tactics.h"
 #include <GL/gl.h>            /* OpenGL header file */
 #include <GL/glu.h>            /* OpenGL utilities header file */
@@ -20,8 +17,8 @@
 HINSTANCE hInst;                                // current instance
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
-int windowShow;
-HGLRC hGLRC;
+int windowShow;                                 // WIndow state send to ShowWindow
+HGLRC hGLRC;                            
 int width = 0;
 int height = 0;
 std::wstring mapName(L"Game.map");
@@ -83,7 +80,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
     if (!ParseCommandline(lpCmdLine))
         return 1;
-
     // Initialize global strings
     LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadString(hInstance, IDC_TACTICS, szWindowClass, MAX_LOADSTRING);

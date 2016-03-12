@@ -129,8 +129,9 @@ namespace Game
     }
     void Plan::Execute(Game& game) const
     {
-        OutputDebugStringW((Description() + L"\r\n").c_str());
-        result.front().state->Apply();
+        auto& finalState = *result.front().state; // todo: compute chance
+        OutputDebugStringW((Description() + L" = " + finalState.Description() + L"\r\n").c_str());
+        finalState.Apply();
     }
 
 

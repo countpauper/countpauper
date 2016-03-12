@@ -50,6 +50,7 @@ namespace Game
     protected:
         void AI(Actor* actor);
         void Next();
+        std::wstring Description() const override;
 
         friend std::wistream& operator>>(std::wistream& s, Game& game);
         Map map;

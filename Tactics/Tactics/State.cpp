@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <sstream>
 #include "State.h"
 #include "Actor.h"
 #include "Action.h"
@@ -50,6 +51,16 @@ namespace Game
             parent.Adjust(*actorState.first, actorState.second);
         }
         parent.Apply();
+    }
+
+    std::wstring GameState::Description() const
+    {
+        std::wstringstream ss;
+        for (const auto& actorState : state)
+        {
+            ss << actorState.first->name << L": hp " << actorState.second.hp << L", "; // L" @ (" << actorState.second.position.Description() << L"), ";
+        }
+        return ss.str();
     }
 
     GameChance::GameChance(std::unique_ptr<GameState> state, float chance) :
