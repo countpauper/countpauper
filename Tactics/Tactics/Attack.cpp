@@ -8,10 +8,16 @@ namespace Game
 
 
     Attack::Attack(Actor& target, const Skill& skill) :
-        TargetedAction(target)
+        TargetedAction(target),
+        skill(skill)
     {
         cost = skill.cost;
         range = skill.range;
+    }
+
+    std::wstring Attack::Description() const
+    {
+        return skill.name;
     }
 
     State Attack::Act(const State& state, const Game& game)

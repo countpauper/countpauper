@@ -21,8 +21,10 @@ public:
     void Add(std::unique_ptr<Action> action, const State& state);
     State Final() const;
     void Execute(Game& game) const;
-private:
+    virtual std::wstring Description() const = 0;
+protected:
     Actor& actor;
+private:
     struct Node
     {
         Node(const State& state);
@@ -74,6 +76,7 @@ class PathPlan : public Plan
 {
 public:
     PathPlan(Actor& actor, const Position& target, Game& game);
+    std::wstring Description() const override;
 private:
     Position target;
 };
@@ -83,9 +86,16 @@ class AttackPlan : public Plan
 public:
     AttackPlan(Actor& actor, Actor& target, Game& game, const Skill& skill);
     const Skill& skill;
+    std::wstring Description() const override;
 private:
     Actor& target;
 };
 
+class ManualPlan : public Plan
+{
+public:
+    ManualPlan(Actor& actor);
+    std::wstring Description() const override;
+};
 
 }   // ::Game

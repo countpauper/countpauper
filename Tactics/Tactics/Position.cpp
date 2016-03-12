@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <sstream>
 #include "Position.h"
 
 namespace Game
@@ -47,6 +48,12 @@ namespace Game
         return o;
     }
 
+    std::wstring Position::Description() const
+    {
+        std::wstringstream ss;
+        ss << x << L", " << y;
+        return ss.str();
+    }
     bool operator==(const Position& a, const Position& b)
     {
         return a.x == b.x && a.y == b.y;

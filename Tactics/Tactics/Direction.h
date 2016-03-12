@@ -20,10 +20,12 @@ namespace Game
         Direction(const Position& vector);
         Position Vector() const;
         float Angle() const;
+        std::wstring Description() const;
     protected:
         Value value;
         static std::map<Value, Position> vector;
         static std::map<Value, float> angle;
+        static std::map<Value, std::wstring> description;
     };
 
     float Rad2Deg(float rad); 

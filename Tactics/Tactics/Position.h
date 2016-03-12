@@ -12,6 +12,7 @@ namespace Game
         float Distance(const Position& other) const;
         Position& operator+=(const Position& delta);
         Position& operator-=(const Position& delta);
+        std::wstring Description() const;
     };
     bool operator==(const Position& a, const Position& b);
     bool operator!=(const Position& a, const Position& b);

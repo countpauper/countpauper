@@ -17,6 +17,7 @@ namespace Game
         virtual ~Action() = default;
         virtual State Act(const State& state, const Game& game)=0;
         virtual void Render(const State& state) const = 0;
+        virtual std::wstring Description() const = 0;
         static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
         static std::map<std::wstring, std::function<Action*(const State& state, const Game& game)>> typemap;
         unsigned cost;

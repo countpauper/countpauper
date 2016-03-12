@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <iostream>
 #include "Plan.h"
 #include "Action.h"
 #include "Actor.h"
@@ -128,6 +129,7 @@ namespace Game
     }
     void Plan::Execute(Game& game) const
     {
+        OutputDebugStringW((Description() + L"\r\n").c_str());
         result.front().state->Apply();
     }
 
@@ -226,6 +228,11 @@ namespace Game
         Approach(target, game, nullptr);
     }
 
+    std::wstring PathPlan::Description() const
+    {
+        return actor.name + L": " + std::wstring(L"Move to ") + target.Description();
+    }
+
     AttackPlan::AttackPlan(Actor& actor, Actor& target, Game& game, const Skill& skill) :
         Plan(actor),
         skill(skill),
@@ -233,4 +240,31 @@ namespace Game
     {
         Approach(target.GetPosition(), game, std::unique_ptr<Action>(skill.Action(target)));
     }
-}    // 
+
+    std::wstring AttackPlan::Description() const
+    {
+        return actor.name + L": " + skill.name + L" @ " + target.name;
+    }
+
+    ManualPlan::ManualPlan(Actor& actor) :
+        Plan(actor)
+    {
+    }
+    
+    std::wstring ManualPlan::Description() const
+    {
+        if (actions.empty())
+            return actor.name + L": idle";
+        else
+        {
+            std::wstring result(actor.name + L": ");
+            for (const auto& node : actions)
+            {
+                result += node.action->Description() + L", ";
+            }
+            return result;
+        }
+    }
+
+
+}

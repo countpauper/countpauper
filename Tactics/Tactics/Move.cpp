@@ -42,7 +42,11 @@ namespace Game
         glPopMatrix();
     }
 
-    
+    std::wstring Move::Description() const
+    {
+        return direction.Description();
+    }
+
     North::North() :
         Move(Direction::Value::North)
     {

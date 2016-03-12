@@ -21,6 +21,7 @@ namespace Game
         void Move(int dx, int dy);
         Position GetPosition() const;
         unsigned GetHitPoints() const;
+        std::wstring name;
     protected:
         Position position;
         int hp;

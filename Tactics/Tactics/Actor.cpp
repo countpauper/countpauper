@@ -137,6 +137,7 @@ namespace Game
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {
         Game& game= *static_cast<Game*>(s.pword(1));
+        s >> actor.name;
         s >> actor.position.x >> actor.position.y;
         s >> actor.team;
         s >> actor.hp >> actor.maxhp;

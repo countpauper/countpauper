@@ -46,6 +46,11 @@ namespace Game
         return angle.at(value);
     }
 
+    std::wstring Direction::Description() const
+    {
+        return description.at(value);
+    }
+
     std::map<Direction::Value, Position> Direction::vector =
     {
         { Direction::Value::North, Position(0, -1) },
@@ -60,6 +65,14 @@ namespace Game
         { Direction::Value::South, M_PI * -.5f },
         { Direction::Value::West, M_PI },
     };
+    std::map<Direction::Value, std::wstring> Direction::description =
+    {
+        { Direction::Value::North, L"North" },
+        { Direction::Value::East, L"East" },
+        { Direction::Value::South, L"South" } ,
+        { Direction::Value::West, L"West" },
+    };
+
 
     float ShortestTurn(float a, float b)
     {

@@ -156,7 +156,7 @@ namespace Game
             return;
 
         if (!plan)
-            plan = std::make_unique<Plan>(playerActor);
+            plan = std::make_unique<ManualPlan>(playerActor);
         std::unique_ptr<Action> action(Action::keymap[code](plan->Final(), *this));
         if (!action)
             return;

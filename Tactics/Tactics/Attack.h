@@ -16,6 +16,9 @@ namespace Game
         void Render(const State& state) const override;
         State Act(const State& state, const Game& game) override;
         State React(const State& state) const override;
+        std::wstring Description() const override;
+    protected:
+        const Skill& skill;
     };
 
     /*

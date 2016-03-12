@@ -15,6 +15,7 @@ namespace Game
         Move(Direction direction);
         void Render(const State& state) const override;
         State Act(const State& state, const Game& game) override;
+        std::wstring Description() const override;
     protected:
         Direction direction;
     };
