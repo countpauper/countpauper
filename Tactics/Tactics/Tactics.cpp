@@ -60,6 +60,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
     HACCEL hAccelTable;
 
+    std::wstring cmdLine(lpCmdLine);
+    if (cmdLine.find(L"--hide") != std::wstring::npos)
+        nCmdShow = SW_HIDE;
     // Initialize global strings
     LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadString(hInstance, IDC_TACTICS, szWindowClass, MAX_LOADSTRING);
