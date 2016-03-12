@@ -15,8 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Game" />
     <Text Include="Skill" />
+    <Text Include="Game.map" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -160,5 +160,8 @@
     <Image Include="Tactics.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="1on1.map" />
   </ItemGroup>
 </Project>

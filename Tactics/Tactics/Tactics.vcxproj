@@ -92,7 +92,7 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="Game" />
+    <Text Include="Game.map" />
     <Text Include="Skill" />
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +150,9 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
   <ItemGroup>
     <Image Include="small.ico" />
     <Image Include="Tactics.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="1on1.map" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

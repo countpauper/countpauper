@@ -1,4 +1,4 @@
-﻿// Tactics.cpp : Defines the entry point for the application.
+﻿Tactics.cpp : Defines the entry point for the application.
 //
 
 #include "stdafx.h"
@@ -23,7 +23,7 @@ TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 HGLRC hGLRC;
 int width = 0;
 int height = 0;
-
+std::wstring mapName(L"Game.map");
 std::unique_ptr<Game::Game> game;
 std::unique_ptr<Game::Skills> skills;
 std::unique_ptr<Game::Panel> panel;
@@ -63,6 +63,17 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     std::wstring cmdLine(lpCmdLine);
     if (cmdLine.find(L"--hide") != std::wstring::npos)
         nCmdShow = SW_HIDE;
+    static const std::wstring mapOption(L"--map=");
+    auto mappos = cmdLine.find(mapOption);
+    if (mappos != std::wstring::npos)
+    {
+        auto mapStart = mappos + mapOption.size();
+        auto mapEnd = cmdLine.find(L" ", mapStart);
+        if (mapEnd == std::string::npos)
+            mapName = cmdLine.substr(mapStart, mapEnd);
+        else
+            mapName = cmdLine.substr(mapStart, mapEnd - mapStart);
+    }
     // Initialize global strings
     LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadString(hInstance, IDC_TACTICS, szWindowClass, MAX_LOADSTRING);
@@ -180,7 +191,7 @@ BOOL Start()
 
     game = std::make_unique<Game::Game>(std::move(skills));
     {
-        std::wifstream fs("Game");
+        std::wifstream fs(mapName);
         if (fs.fail())
         {
             MessageBox(NULL, L"Loading Game failed:  ", L"Error", MB_OK);

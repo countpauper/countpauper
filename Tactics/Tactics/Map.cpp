@@ -189,8 +189,10 @@ namespace Game
     std::wistream& operator>>(std::wistream& s, Map& map)
     {
         s >> map.name >> map.width >> map.height;
+        std::wstring textureName;
+        s >> textureName;
         map.texture = std::make_unique<Engine::Image>();
-        map.texture->Load(L"data/map.png");
+        map.texture->Load(textureName);
         map.squares.resize(map.width * map.height);
         for (auto& square : map.squares)
             s >> square;
