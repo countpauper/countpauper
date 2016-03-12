@@ -20,6 +20,7 @@
 HINSTANCE hInst;                                // current instance
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+int windowShow;
 HGLRC hGLRC;
 int width = 0;
 int height = 0;
@@ -29,6 +30,24 @@ std::unique_ptr<Game::Skills> skills;
 std::unique_ptr<Game::Panel> panel;
 Engine::Light light; 
 Engine::Camera camera;
+
+bool ParseCommandline(const std::wstring& cmdLine)
+{
+    if (cmdLine.find(L"--hide") != std::wstring::npos)
+        windowShow = SW_HIDE;
+    static const std::wstring mapOption(L"--map=");
+    auto mappos = cmdLine.find(mapOption);
+    if (mappos != std::wstring::npos)
+    {
+        auto mapStart = mappos + mapOption.size();
+        auto mapEnd = cmdLine.find(L" ", mapStart);
+        if (mapEnd == std::string::npos)
+            mapName = cmdLine.substr(mapStart, mapEnd);
+        else
+            mapName = cmdLine.substr(mapStart, mapEnd - mapStart);
+    }
+    return true;
+}
 
 struct Input
 {
@@ -44,7 +63,7 @@ struct Input
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
+BOOL                InitInstance(HINSTANCE);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
@@ -60,27 +79,18 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
     HACCEL hAccelTable;
 
-    std::wstring cmdLine(lpCmdLine);
-    if (cmdLine.find(L"--hide") != std::wstring::npos)
-        nCmdShow = SW_HIDE;
-    static const std::wstring mapOption(L"--map=");
-    auto mappos = cmdLine.find(mapOption);
-    if (mappos != std::wstring::npos)
-    {
-        auto mapStart = mappos + mapOption.size();
-        auto mapEnd = cmdLine.find(L" ", mapStart);
-        if (mapEnd == std::string::npos)
-            mapName = cmdLine.substr(mapStart, mapEnd);
-        else
-            mapName = cmdLine.substr(mapStart, mapEnd - mapStart);
-    }
+    windowShow = nCmdShow;
+
+    if (!ParseCommandline(lpCmdLine))
+        return 1;
+
     // Initialize global strings
     LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadString(hInstance, IDC_TACTICS, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // Perform application initialization:
-    if (!InitInstance (hInstance, nCmdShow))
+    if (!InitInstance (hInstance))
     {
         return FALSE;
     }
@@ -217,7 +227,7 @@ BOOL Start()
 //        In this function, we save the instance handle in a global variable and
 //        create and display the main program window.
 //
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
+BOOL InitInstance(HINSTANCE hInstance)
 {
    HWND hWnd;
 
@@ -234,7 +244,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    if (!Start())
        return FALSE;
  
-   ShowWindow(hWnd, nCmdShow);
+   ShowWindow(hWnd, windowShow);
    UpdateWindow(hWnd);
    SetTimer(hWnd, 1,  0,(TIMERPROC) NULL);
 
