@@ -4,6 +4,7 @@
 #include <vector>
 #include "Position.h"
 #include "Direction.h"
+#include "Health.h"
 
 namespace Game
 {
@@ -22,9 +23,9 @@ namespace Game
         Position GetPosition() const;
         unsigned GetHitPoints() const;
         std::wstring name;
+        Health health;
     protected:
         Position position;
-        int hp;
         unsigned maxhp;
     };
     class Actor : public Object

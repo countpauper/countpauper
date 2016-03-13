@@ -39,7 +39,7 @@ namespace Game
     State Attack::React(const State& state) const
     {
         State result(state);
-        result.hp -= 1;
+        result.health.Cut(Sharp(1));
         return result;
     }
 

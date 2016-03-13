@@ -88,6 +88,9 @@
     <ClInclude Include="IGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Health.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -145,6 +148,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Skills.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Health.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -11,7 +11,7 @@ namespace Game
         position(actor.GetPosition()),
         direction(actor.GetDirection()),
         mp(actor.GetMovePoints()),
-        hp(actor.GetHitPoints()),
+        health(actor.health),
         loyalty(actor.GetTeam())
     {
     }
@@ -58,7 +58,7 @@ namespace Game
         std::wstringstream ss;
         for (const auto& actorState : state)
         {
-            ss << actorState.first->name << L": hp " << actorState.second.hp << L", "; // L" @ (" << actorState.second.position.Description() << L"), ";
+            ss << actorState.first->name << L": health " << actorState.second.health.Description() << L", "; // L" @ (" << actorState.second.position.Description() << L"), ";
         }
         return ss.str();
     }

@@ -119,6 +119,7 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Tactics.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Health.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
@@ -129,6 +130,7 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Health.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Move.cpp" />

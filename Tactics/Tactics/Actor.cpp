@@ -8,9 +8,7 @@
 
 namespace Game
 {
-    Object::Object() :
-        hp(0),
-        maxhp(0)
+    Object::Object()
     {
 
     }
@@ -23,11 +21,6 @@ namespace Game
     Position Object::GetPosition() const
     {
         return position;
-    }
-
-    unsigned Object::GetHitPoints() const
-    {
-        return hp;
     }
 
     Actor::Actor() :
@@ -111,7 +104,7 @@ namespace Game
         position = result.position;
         direction = result.direction;
         mp = result.mp;
-        hp = result.hp;
+        health = result.health;
     }
 
     void Actor::Turn()
@@ -121,7 +114,7 @@ namespace Game
 
     bool Actor::Dead() const
     {
-        return hp <= 0;
+        return health.Dead();
     }
     
     bool Actor::CanAct() const
@@ -140,7 +133,7 @@ namespace Game
         s >> actor.name;
         s >> actor.position.x >> actor.position.y;
         s >> actor.team;
-        s >> actor.hp >> actor.maxhp;
+        s >> actor.health;
         s >> actor.mp >> actor.maxmp;
         unsigned skills;
         s >> skills;
