@@ -20,7 +20,7 @@ namespace Game
         return skill.name;
     }
 
-    State Attack::Act(const State& state, const Game& game)
+    Outcomes Attack::Act(const State& state, const Game& game)
     {
 
         State result(state);
@@ -29,11 +29,10 @@ namespace Game
             (state.position.Distance(target.GetPosition()) > range) ||
             (game.Cover(state.position, target.GetPosition())))
         {
-            result.possible = false;
-            return result;
+            return Outcomes();
         }
         result.mp -= cost;
-        return result;
+        return Outcomes({ Outcome({ result, 1.0 }) });
     }
 
     State Attack::React(const State& state) const

@@ -161,10 +161,10 @@ namespace Game
         if (!action)
             return;
         State state(plan->Final());
-        auto result = action->Act(state, *this);
-        if (!result.possible)
+        auto outcomes = action->Act(state, *this);
+        if (outcomes.size()==0)
             return;
-        plan->Add(std::move(action), result);
+        plan->Add(*this, std::move(action), outcomes);
     }
 
     bool Game::CanBe(const Position& position) const

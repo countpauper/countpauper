@@ -18,6 +18,7 @@ public:
     Plan(Actor& actor);
     virtual ~Plan() = default;
     void Render() const;
+    void Add(Game& game, std::unique_ptr<Action> action, const Outcomes& outcomes);
     void Add(std::unique_ptr<Action> action, const State& state);
     State Final() const;
     void Execute(Game& game) const;
@@ -68,6 +69,8 @@ private:
 protected:
     void Approach(const Position& target, Game& game, std::unique_ptr<Action>&& action);
     void AddFront(Node& node);
+    void AddAlternatives(Game& game, const Outcomes& outcomes);
+
     std::vector<Node> actions;
     std::vector<GameChance> result;
 };

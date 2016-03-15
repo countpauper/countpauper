@@ -7,7 +7,6 @@
 namespace Game
 {
     State::State(const Actor& actor) :
-        possible(true),
         position(actor.GetPosition()),
         direction(actor.GetDirection()),
         mp(actor.GetMovePoints()),
@@ -63,7 +62,7 @@ namespace Game
         return ss.str();
     }
 
-    GameChance::GameChance(std::unique_ptr<GameState> state, float chance) :
+    GameChance::GameChance(std::unique_ptr<GameState> state, double chance) :
         state(std::move(state)),
         chance(chance)
     {

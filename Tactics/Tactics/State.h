@@ -3,7 +3,7 @@
 #include <map>
 #include <set>
 #include <memory>
-
+#include <vector>
 #include "Position.h"
 #include "Direction.h"
 #include "Health.h"
@@ -19,13 +19,21 @@ namespace Game
     {
     public:
         State(const Actor& actor);
-        bool possible;
         Position position;
         Direction direction;
         unsigned mp;
         Health health;
         unsigned loyalty;
     };
+
+    class Outcome
+    {
+    public:
+        State state;
+        double chance;
+        std::wstring description();
+    };
+    using Outcomes = std::vector <Outcome> ;
 
     class GameState : public IGame
     {
@@ -45,10 +53,10 @@ namespace Game
 
     struct GameChance 
     {
-        GameChance(std::unique_ptr<GameState> state, float chance);
+        GameChance(std::unique_ptr<GameState> state, double chance);
         GameChance(GameChance&& other);
         std::unique_ptr<GameState> state;
-        float chance;
+        double chance;
     };
 
 } // ::Game

@@ -13,20 +13,22 @@ namespace Game
         range = 1.0;
     }
 
-    State Move::Act(const State& state, const Game& game)
+    Outcomes Move::Act(const State& state, const Game& game)
     {
         State result(state);
         if (state.mp <= cost)
         {
-            result.possible = false;
-            return result;
+            return Outcomes();
         }
         result.mp -= cost;
         result.position += direction.Vector();
-        result.possible = game.CanBe(result.position) &&
-            game.CanGo(state.position, direction);
         result.direction = direction;
-        return result;
+        bool possible = game.CanBe(result.position) &&
+            game.CanGo(state.position, direction);
+        if (possible)
+            return Outcomes({ Outcome({ result, 1.0 }) });
+        else
+            return Outcomes();
     }
 
     void Move::Render(const State& state) const

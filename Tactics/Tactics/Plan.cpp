@@ -113,11 +113,28 @@ namespace Game
     {
         actions.emplace_back(Node(std::move(action), state));
     }
+
+    void Plan::Add(Game& game, std::unique_ptr<Action> action, const Outcomes& outcomes)
+    {
+        Add(std::move(action), outcomes.front().state);
+        AddAlternatives(game, outcomes);
+    }
     void Plan::AddFront(Node& node)
     {
         if (!node.action)
             return; // TODO: better way to not add root node
         actions.emplace(actions.begin(), Node(std::move(node.action), node.result));
+    }
+
+    void Plan::AddAlternatives(Game& game, const Outcomes& outcomes)
+    {
+        for (auto alternativeIt = outcomes.begin() + 1; alternativeIt != outcomes.end(); ++alternativeIt)
+        {
+            auto gameState = std::make_unique<GameState>(game);
+            gameState->Adjust(actor, alternativeIt->state);
+            result.emplace_back(GameChance(std::move(gameState), alternativeIt->chance));
+        }
+
     }
 
     State Plan::Final() const
@@ -156,20 +173,22 @@ namespace Game
 
             if (targetAction)
             {
-                auto finalState = targetAction->Act((*best)->result, game);
-                if (finalState.possible)
+                auto outcomes = targetAction->Act((*best)->result, game);
+                if (outcomes.size()>0)
                 {
-                    auto gameState = std::make_unique<GameState>(game);
-                    gameState->Adjust(actor, finalState);
-                    gameState->Act(*targetAction);
-                    result.emplace_back(GameChance(std::move(gameState), 1.0));
-
+                    for (const auto& outcome : outcomes)
+                    {
+                        auto gameState = std::make_unique<GameState>(game);
+                        gameState->Adjust(actor, outcome.state);
+                        gameState->Act(*targetAction);
+                        result.emplace_back(GameChance(std::move(gameState), 1.0));
+                    }
                     AddFront(**best);
                     for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
                     {
                         AddFront(*previous);
                     }
-                    Add(std::move(targetAction), finalState);
+                    Add(std::move(targetAction), outcomes.front().state);   // does it matter which outcome's state?
                     return;
                 }
             }
@@ -196,15 +215,17 @@ namespace Game
             for (const auto& actionFactory : actions)
             {
                 std::unique_ptr<Action> action(actionFactory());
-                auto newState = action->Act((*bestIt.first)->result, game);
-                if (!newState.possible)
+                auto outcomes = action->Act((*bestIt.first)->result, game);
+                if (outcomes.size()==0)
                     continue;
+                auto newState = outcomes.front().state;
                 bool alreadyClosed = closed.Contains(newState);
                 if (alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                     continue;
                 auto newNode = std::make_unique<Branch>(*(*bestIt.first), std::move(action), newState);
                 auto newIt = open.emplace(std::move(newNode));
                 assert(newIt.second);
+                AddAlternatives(game, outcomes);
             }
         }
         auto best = closed.begin();

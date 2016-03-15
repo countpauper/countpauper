@@ -99,8 +99,6 @@ namespace Game
     }
     void Actor::Apply(const State& result)
     {
-        if (!result.possible)
-            return;
         position = result.position;
         direction = result.direction;
         mp = result.mp;
