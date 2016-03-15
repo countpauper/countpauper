@@ -32,7 +32,7 @@ namespace Game
             return Outcomes();
         }
         result.mp -= cost;
-        return Outcomes({ Outcome({ result, 1.0 }) });
+        return Outcomes({ Outcome({ result, 1.0, L"Hit" }) });
     }
 
     State Attack::React(const State& state) const

@@ -31,7 +31,7 @@ namespace Game
     public:
         State state;
         double chance;
-        std::wstring description();
+        std::wstring description;
     };
 
     using Outcomes = std::vector <Outcome> ;
@@ -54,10 +54,11 @@ namespace Game
 
     struct GameChance 
     {
-        GameChance(std::unique_ptr<GameState> state, double chance);
+        GameChance(std::unique_ptr<GameState> state, double chance, const std::wstring& description);
         GameChance(GameChance&& other);
         std::unique_ptr<GameState> state;
         double chance;
+        std::wstring description;
     };
 
 } // ::Game

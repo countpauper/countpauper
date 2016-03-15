@@ -62,14 +62,16 @@ namespace Game
         return ss.str();
     }
 
-    GameChance::GameChance(std::unique_ptr<GameState> state, double chance) :
+    GameChance::GameChance(std::unique_ptr<GameState> state, double chance, const std::wstring& description) :
         state(std::move(state)),
-        chance(chance)
+        chance(chance),
+        description(description)
     {
     }
     GameChance::GameChance(GameChance&& other) :
         state(std::move(other.state)),
-        chance(other.chance)
+        chance(other.chance),
+        description(other.description)
     {
     }
 } // ::Game

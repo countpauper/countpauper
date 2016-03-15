@@ -135,7 +135,7 @@ namespace Game
     void Plan::Execute(Game& game) const
     {
         auto& finalState = *result.front().state; // todo: compute chance
-        OutputDebugStringW((Description() + L" = " + finalState.Description() + L"\r\n").c_str());
+        OutputDebugStringW((Description() + L" " + result.front().description+ L" = " + finalState.Description() + L"\r\n").c_str());
         finalState.Apply();
     }
 
@@ -169,7 +169,7 @@ namespace Game
                         auto gameState = std::make_unique<GameState>(game);
                         gameState->Adjust(actor, outcome.state);
                         gameState->Act(*targetAction);
-                        result.emplace_back(GameChance(std::move(gameState), 1.0));
+                        result.emplace_back(GameChance(std::move(gameState), 1.0, outcome.description));
                     }
                     AddFront(**best);
                     for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
@@ -186,7 +186,7 @@ namespace Game
                 {
                     auto gameState = std::make_unique<GameState>(game);
                     gameState->Adjust(actor, (*best)->MainState());
-                    result.emplace_back(GameChance(std::move(gameState), 1.0));
+                    result.emplace_back(GameChance(std::move(gameState), 1.0, L"Move"));
 
                     AddFront(**best);
                     for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
@@ -220,7 +220,7 @@ namespace Game
         {
             auto gameState = std::make_unique<GameState>(game);
             gameState->Adjust(actor, (*best)->MainState());  // TODO: remove code duplication for constructing results
-            result.emplace_back(GameChance(std::move(gameState), 1.0));
+            result.emplace_back(GameChance(std::move(gameState), 1.0, L"Approach"));
             AddFront(**best);
             for (auto link = (*best)->previous; link != nullptr; link = link->previous)
             {
