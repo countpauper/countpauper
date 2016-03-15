@@ -33,6 +33,7 @@ namespace Game
         double chance;
         std::wstring description();
     };
+
     using Outcomes = std::vector <Outcome> ;
 
     class GameState : public IGame

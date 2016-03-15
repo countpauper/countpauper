@@ -21,19 +21,24 @@ namespace Game
         for (const auto& node : actions)
         {
             node.action->Render(state);
-            state = node.result;
+            state = node.MainState();
         }
     }
 
-    Plan::Node::Node(const State& result) :
-        result(result)
+    Plan::Node::Node(const State& result)
+    {
+        this->result.emplace_back(Outcome({ result, 1.0 }));
+    }
+
+    Plan::Node::Node(std::unique_ptr<Action> action, const Outcomes& outcomes) :
+        action(std::move(action)),
+        result(outcomes)
     {
     }
 
-    Plan::Node::Node(std::unique_ptr<Action> action, const State& result) :
-        action(std::move(action)),
-        result(result)
+    const State& Plan::Node::MainState() const
     {
+        return result.front().state;
     }
 
     Plan::Branch::Branch(const State& result) :
@@ -42,8 +47,8 @@ namespace Game
     {
     }
 
-    Plan::Branch::Branch(Branch& previous, std::unique_ptr<Action> action, const State& state) :
-        Node(std::move(action),state),
+    Plan::Branch::Branch(Branch& previous, std::unique_ptr<Action> action, const Outcomes& outcomes) :
+        Node(std::move(action),outcomes),
         previous(&previous)
     {
     }
@@ -56,13 +61,13 @@ namespace Game
 
     bool Plan::Branch::Compare(const Branch& other, const Position& target) const
     {
-        if (target.ManDistance(result.position) < target.ManDistance(other.result.position))
+        if (target.ManDistance(MainState().position) < target.ManDistance(other.MainState().position))
             return true;
-        else if (target.ManDistance(result.position) > target.ManDistance(other.result.position))
+        else if (target.ManDistance(MainState().position) > target.ManDistance(other.MainState().position))
             return false;
-        else if (result.mp > other.result.mp)
+        else if (MainState().mp > other.MainState().mp)
             return true;
-        else if (result.mp < other.result.mp)
+        else if (MainState().mp < other.MainState().mp)
             return false;
         return
             this < &other;
@@ -80,7 +85,7 @@ namespace Game
 
     bool Plan::Branch::Reached(const Position& target) const
     {
-        return target == result.position;
+        return target == MainState().position;
     }
 
     Plan::OpenTree::OpenTree(const Position& target) :
@@ -97,7 +102,7 @@ namespace Game
     bool Plan::ClosedList::Contains(const State& state) const
     {
         for (const auto& node : *this)
-            if (node->result.position == state.position)
+            if (node->MainState().position == state.position)
                 return true;
         return false;
     }
@@ -109,15 +114,9 @@ namespace Game
         return *this;
     }
 
-    void Plan::Add(std::unique_ptr<Action> action, const State& state)
-    {
-        actions.emplace_back(Node(std::move(action), state));
-    }
-
     void Plan::Add(Game& game, std::unique_ptr<Action> action, const Outcomes& outcomes)
     {
-        Add(std::move(action), outcomes.front().state);
-        AddAlternatives(game, outcomes);
+        actions.emplace_back(Node(std::move(action), outcomes));
     }
     void Plan::AddFront(Node& node)
     {
@@ -126,23 +125,12 @@ namespace Game
         actions.emplace(actions.begin(), Node(std::move(node.action), node.result));
     }
 
-    void Plan::AddAlternatives(Game& game, const Outcomes& outcomes)
-    {
-        for (auto alternativeIt = outcomes.begin() + 1; alternativeIt != outcomes.end(); ++alternativeIt)
-        {
-            auto gameState = std::make_unique<GameState>(game);
-            gameState->Adjust(actor, alternativeIt->state);
-            result.emplace_back(GameChance(std::move(gameState), alternativeIt->chance));
-        }
-
-    }
-
     State Plan::Final() const
     {
         if (actions.empty())
             return State(actor);
         else
-            return actions.back().result;
+            return actions.back().result.front().state;
     }
     void Plan::Execute(Game& game) const
     {
@@ -173,7 +161,7 @@ namespace Game
 
             if (targetAction)
             {
-                auto outcomes = targetAction->Act((*best)->result, game);
+                auto outcomes = targetAction->Act((*best)->MainState(), game);
                 if (outcomes.size()>0)
                 {
                     for (const auto& outcome : outcomes)
@@ -188,7 +176,7 @@ namespace Game
                     {
                         AddFront(*previous);
                     }
-                    Add(std::move(targetAction), outcomes.front().state);   // does it matter which outcome's state?
+                    Add(game, std::move(targetAction), outcomes);   // does it matter which outcome's state?
                     return;
                 }
             }
@@ -197,7 +185,7 @@ namespace Game
                 if ((*best)->Reached(target))
                 {
                     auto gameState = std::make_unique<GameState>(game);
-                    gameState->Adjust(actor, (*best)->result);
+                    gameState->Adjust(actor, (*best)->MainState());
                     result.emplace_back(GameChance(std::move(gameState), 1.0));
 
                     AddFront(**best);
@@ -215,24 +203,23 @@ namespace Game
             for (const auto& actionFactory : actions)
             {
                 std::unique_ptr<Action> action(actionFactory());
-                auto outcomes = action->Act((*bestIt.first)->result, game);
+                auto outcomes = action->Act((*bestIt.first)->MainState(), game);
                 if (outcomes.size()==0)
                     continue;
                 auto newState = outcomes.front().state;
                 bool alreadyClosed = closed.Contains(newState);
                 if (alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                     continue;
-                auto newNode = std::make_unique<Branch>(*(*bestIt.first), std::move(action), newState);
+                auto newNode = std::make_unique<Branch>(*(*bestIt.first), std::move(action), outcomes);
                 auto newIt = open.emplace(std::move(newNode));
                 assert(newIt.second);
-                AddAlternatives(game, outcomes);
             }
         }
         auto best = closed.begin();
         if ((*best)->action)    // TODO: root node
         {
             auto gameState = std::make_unique<GameState>(game);
-            gameState->Adjust(actor, (*best)->result);  // TODO: remove code duplication for constructing results
+            gameState->Adjust(actor, (*best)->MainState());  // TODO: remove code duplication for constructing results
             result.emplace_back(GameChance(std::move(gameState), 1.0));
             AddFront(**best);
             for (auto link = (*best)->previous; link != nullptr; link = link->previous)

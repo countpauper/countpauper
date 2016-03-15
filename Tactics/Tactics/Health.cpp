@@ -67,7 +67,8 @@ namespace Game
 
     void Health::Cut(Sharp damage)
     {
-        sharp = Sharp(int(sharp)+ int(damage));
+        if (Pain(sharp)!=ImmunePain)
+            sharp = Sharp(int(sharp)+ int(damage));
     }
     bool Health::Dead() const
     {

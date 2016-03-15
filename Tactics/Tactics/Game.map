@@ -1,8 +1,8 @@
 2
-Actor Foo 2 2 0 10 10 20 20 2
+Actor Foo 2 2 2 0 0 0 0 20 20 2
 Sword 1
 Bow 1
-Actor Bar 3 3 1 3 5 20 20 1
+Actor Bar 3 3 1 0 0 0 0 20 20 1
 Sword 1
 Test 4 4 data/map.png
 4 0 0 0 
