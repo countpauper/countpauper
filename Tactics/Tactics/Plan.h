@@ -27,24 +27,24 @@ protected:
 private:
     struct Node
     {
-        Node(const State& state);
+        Node(const GameChances& state);
         Node(std::unique_ptr<Action> action, const GameChances& outcomes);
         Node(const Node&) = delete;
         Node(Node&& other);
         Node& operator= (Node&&);
 
-        const State& MainState() const;
+        const State& ExpectedState(const Actor& actor) const;
         std::unique_ptr<Action> action;
         GameChances result;
     };
     struct Branch : public Node
     {
-        Branch(const State& state);
+        Branch(const GameChances& state);
         Branch(Branch& previous, std::unique_ptr<Action> action, const GameChances& outcomes);
         //int Score(const Position& target, unsigned startMovePoints) const;
-        bool Compare(const Branch& other, const Position& target) const;
+        bool Compare(const Actor& actor, const Branch& other, const Position& target) const;
         bool operator==(const Branch& other) const;
-        bool Reached(const Position& target) const;
+        bool Reached(const Actor& actor, const Position& target) const;
     public:
         Branch* previous;
     };

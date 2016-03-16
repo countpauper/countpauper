@@ -26,16 +26,6 @@ namespace Game
         unsigned loyalty;
     };
 
-    class Outcome
-    {
-    public:
-        State state;
-        double chance;
-        std::wstring description;
-    };
-
-    using Outcomes = std::vector <Outcome> ;
-
     class GameState : public IGame
     {
     public:
