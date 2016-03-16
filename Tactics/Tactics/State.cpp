@@ -43,7 +43,7 @@ namespace Game
         return parent.Get(actor);
     }
 
-    void GameState::Apply()
+    void GameState::Apply() const
     {
         for (auto& actorState : state)
         {
@@ -52,6 +52,15 @@ namespace Game
         parent.Apply();
     }
 
+    bool GameState::CanGo(const Position& from, Direction direction) const
+    {
+        return parent.CanGo(from, direction);
+    }
+
+    bool GameState::Cover(const Position& from, const Position& to) const
+    {
+        return parent.Cover(from, to);
+    }
     std::wstring GameState::Description() const
     {
         std::wstringstream ss;
@@ -62,16 +71,10 @@ namespace Game
         return ss.str();
     }
 
-    GameChance::GameChance(std::unique_ptr<GameState> state, double chance, const std::wstring& description) :
-        state(std::move(state)),
+    GameChance::GameChance(IGame& parent, double chance, const std::wstring& description) :
+        GameState(parent),
         chance(chance),
         description(description)
-    {
-    }
-    GameChance::GameChance(GameChance&& other) :
-        state(std::move(other.state)),
-        chance(other.chance),
-        description(other.description)
     {
     }
 } // ::Game

@@ -33,14 +33,14 @@ namespace Game
         //IGame
         State Get(const Actor& actor) const override;
         void Adjust(Actor& actor, const State& state) override;
-        void Apply() override;
+        void Apply() const override;
 
         void Tick();
         void Render() const;
         void Key(unsigned short code);
         bool CanBe(const Position& position) const;
-        bool CanGo(const Position& from, Direction direction) const;
-        bool Cover(const Position& from, const Position& to) const;
+        bool CanGo(const Position& from, Direction direction) const override;
+        bool Cover(const Position& from, const Position& to) const override;
         void Click(Selection selection, GLuint value);
         std::vector<Actor*> FindTargets(const State& from, const Skill& skill) const;
         std::vector<Actor*> FindTargetsInRange(const State& from, const Skill& skill) const;

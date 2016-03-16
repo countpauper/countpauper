@@ -20,19 +20,23 @@ namespace Game
         return skill.name;
     }
 
-    Outcomes Attack::Act(const State& state, const Game& game)
+    GameChances Attack::Act(Actor&actor, IGame& game)
     {
 
-        State result(state);
+        State state = game.Get(actor);
 
         if ((state.mp <= cost) ||
             (state.position.Distance(target.GetPosition()) > range) ||
             (game.Cover(state.position, target.GetPosition())))
         {
-            return Outcomes();
+            return GameChances();
         }
-        result.mp -= cost;
-        return Outcomes({ Outcome({ result, 1.0, L"Hit" }) });
+        state.mp -= cost;
+        GameChances ret;
+        ret.emplace_back(GameChance(game, 1.0, L"Hit"));
+        ret.back().Adjust(actor, state);
+        ret.back().Adjust(target, React(game.Get(target)));
+        return ret;
     }
 
     State Attack::React(const State& state) const

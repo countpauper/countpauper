@@ -24,7 +24,7 @@ namespace Game
     {
         actor.Apply(state);
     }
-    void Game::Apply()
+    void Game::Apply() const
     {
 
     }
@@ -179,7 +179,8 @@ namespace Game
 
     bool Game::CanGo(const Position& from, Direction direction) const
     {
-        return map.CanGo(from, direction);
+        auto to = from + direction.Vector();
+        return map.CanGo(from, direction) && CanBe(to);
     }
 
     bool Game::Cover(const Position& from, const Position& to) const

@@ -42,9 +42,11 @@ namespace Game
         GameState();
         GameState(IGame& parent);
         void Adjust(Actor& actor, const State& state) override;
-        void Apply() override;
+        void Apply() const override;
         State Get(const Actor& actor) const override;
         void Act(const Action& action);
+        bool CanGo(const Position& from, Direction direction) const override;
+        bool Cover(const Position& from, const Position& to) const override;
         std::wstring Description() const override;
     private:
         void RecursiveApply(Game& game, std::set<const Actor*>& done) const;
@@ -52,13 +54,13 @@ namespace Game
         std::map<Actor*, State> state;
     };
 
-    struct GameChance 
+    class GameChance : public GameState
     {
-        GameChance(std::unique_ptr<GameState> state, double chance, const std::wstring& description);
-        GameChance(GameChance&& other);
-        std::unique_ptr<GameState> state;
+    public:
+        GameChance(IGame& parent, double chance, const std::wstring& description);
         double chance;
         std::wstring description;
     };
 
+    using GameChances= std::vector < GameChance > ;
 } // ::Game

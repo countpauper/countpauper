@@ -13,22 +13,25 @@ namespace Game
         range = 1.0;
     }
 
-    Outcomes Move::Act(const State& state, const Game& game)
+    GameChances Move::Act(Actor& actor, IGame& game)
     {
-        State result(state);
+        State state(game.Get(actor));
         if (state.mp <= cost)
         {
-            return Outcomes();
+            return GameChances();
         }
-        result.mp -= cost;
-        result.position += direction.Vector();
-        result.direction = direction;
-        bool possible = game.CanBe(result.position) &&
-            game.CanGo(state.position, direction);
-        if (possible)
-            return Outcomes({ Outcome({ result, 1.0 }) });
+        state.mp -= cost;
+        if (game.CanGo(state.position, direction))
+        {
+            state.position += direction.Vector();
+            state.direction = direction;
+            GameChances ret;
+            ret.emplace_back(GameChance(game, 1.0, L"Move"));
+            ret.back().Adjust(actor, state);
+            return ret;
+        }
         else
-            return Outcomes();
+            return GameChances();
     }
 
     void Move::Render(const State& state) const

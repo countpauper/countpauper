@@ -18,7 +18,7 @@ public:
     Plan(Actor& actor);
     virtual ~Plan() = default;
     void Render() const;
-    void Add(Game& game, std::unique_ptr<Action> action, const Outcomes& outcomes);
+    void Add(Game& game, std::unique_ptr<Action> action, const GameChances& outcomes);
     State Final() const;
     void Execute(Game& game) const;
     virtual std::wstring Description() const = 0;
@@ -28,19 +28,19 @@ private:
     struct Node
     {
         Node(const State& state);
-        Node(std::unique_ptr<Action> action, const Outcomes& outcomes);
+        Node(std::unique_ptr<Action> action, const GameChances& outcomes);
         Node(const Node&) = delete;
         Node(Node&& other);
         Node& operator= (Node&&);
 
         const State& MainState() const;
         std::unique_ptr<Action> action;
-        Outcomes result;
+        GameChances result;
     };
     struct Branch : public Node
     {
         Branch(const State& state);
-        Branch(Branch& previous, std::unique_ptr<Action> action, const Outcomes& outcomes);
+        Branch(Branch& previous, std::unique_ptr<Action> action, const GameChances& outcomes);
         //int Score(const Position& target, unsigned startMovePoints) const;
         bool Compare(const Branch& other, const Position& target) const;
         bool operator==(const Branch& other) const;
@@ -71,7 +71,7 @@ protected:
     void AddFront(Node& node);
 
     std::vector<Node> actions;
-    std::vector<GameChance> result;
+    GameChances result;
 };
 
 class PathPlan : public Plan

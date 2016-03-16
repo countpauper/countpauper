@@ -21,7 +21,7 @@ namespace Game
         for (const auto& node : actions)
         {
             node.action->Render(state);
-            state = node.MainState();
+            state = node.MainState(actor);
         }
     }
 
@@ -30,15 +30,15 @@ namespace Game
         this->result.emplace_back(Outcome({ result, 1.0 }));
     }
 
-    Plan::Node::Node(std::unique_ptr<Action> action, const Outcomes& outcomes) :
+    Plan::Node::Node(std::unique_ptr<Action> action, const GameChances& outcomes) :
         action(std::move(action)),
         result(outcomes)
     {
     }
 
-    const State& Plan::Node::MainState() const
+    const State& Plan::Node::MainState(Actor& actor) const
     {
-        return result.front().state;
+        return result.front().Get(actor);
     }
 
     Plan::Branch::Branch(const State& result) :
@@ -47,7 +47,7 @@ namespace Game
     {
     }
 
-    Plan::Branch::Branch(Branch& previous, std::unique_ptr<Action> action, const Outcomes& outcomes) :
+    Plan::Branch::Branch(Branch& previous, std::unique_ptr<Action> action, const GameChances& outcomes) :
         Node(std::move(action),outcomes),
         previous(&previous)
     {
@@ -114,7 +114,7 @@ namespace Game
         return *this;
     }
 
-    void Plan::Add(Game& game, std::unique_ptr<Action> action, const Outcomes& outcomes)
+    void Plan::Add(Game& game, std::unique_ptr<Action> action, const GameChances& outcomes)
     {
         actions.emplace_back(Node(std::move(action), outcomes));
     }
@@ -134,7 +134,7 @@ namespace Game
     }
     void Plan::Execute(Game& game) const
     {
-        auto& finalState = *result.front().state; // todo: compute chance
+        auto& finalState = result.front(); // todo: compute chance
         OutputDebugStringW((Description() + L" " + result.front().description+ L" = " + finalState.Description() + L"\r\n").c_str());
         finalState.Apply();
     }
@@ -164,13 +164,6 @@ namespace Game
                 auto outcomes = targetAction->Act((*best)->MainState(), game);
                 if (outcomes.size()>0)
                 {
-                    for (const auto& outcome : outcomes)
-                    {
-                        auto gameState = std::make_unique<GameState>(game);
-                        gameState->Adjust(actor, outcome.state);
-                        gameState->Act(*targetAction);
-                        result.emplace_back(GameChance(std::move(gameState), 1.0, outcome.description));
-                    }
                     AddFront(**best);
                     for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
                     {
@@ -218,9 +211,7 @@ namespace Game
         auto best = closed.begin();
         if ((*best)->action)    // TODO: root node
         {
-            auto gameState = std::make_unique<GameState>(game);
-            gameState->Adjust(actor, (*best)->MainState());  // TODO: remove code duplication for constructing results
-            result.emplace_back(GameChance(std::move(gameState), 1.0, L"Approach"));
+            result = (*best)->result;
             AddFront(**best);
             for (auto link = (*best)->previous; link != nullptr; link = link->previous)
             {
