@@ -28,7 +28,7 @@ private:
     struct Node
     {
         Node(IGame& state);
-        Node(IGame& state, std::unique_ptr<Action> action);
+        Node(IGame& state, std::unique_ptr<Action>&& action);
         Node(const Node&) = delete;
         Node& operator=(const Node&) = delete;
         Node(Node&& other);
@@ -43,7 +43,9 @@ private:
     struct Branch : public Node
     {
         Branch(IGame& state);
-        Branch(Branch& previous, IGame& state, std::unique_ptr<Action> action);
+        Branch(Branch&& other);
+        Branch(Branch& previous, IGame& state, std::unique_ptr<Action>&& action);
+
         //int Score(const Position& target, unsigned startMovePoints) const;
         bool Compare(const Branch& other, const Position& target) const;
         bool operator==(const Branch& other) const;

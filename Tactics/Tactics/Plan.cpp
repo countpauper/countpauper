@@ -43,12 +43,13 @@ namespace Game
     Plan::Node::Node(IGame& state) :
         state(state)
     {
+        result.emplace_back(GameChance(state, 1.0, L"Root"));
     }
 
-    Plan::Node::Node(IGame& state, std::unique_ptr<Action> action) :
+    Plan::Node::Node(IGame& state, std::unique_ptr<Action>&& action) :
         state(state),
         action(std::move(action)),
-        result(action->Act(state))
+        result(this->action->Act(state))
     {
     }
 
@@ -68,7 +69,12 @@ namespace Game
     {
     }
 
-    Plan::Branch::Branch(Branch& previous, IGame& state, std::unique_ptr<Action> action) :
+    Plan::Branch::Branch(Plan::Branch&& other) :
+        Node(std::move(other)),
+        previous(other.previous)
+    {}
+
+    Plan::Branch::Branch(Plan::Branch& previous, IGame& state, std::unique_ptr<Action>&& action) :
         Node(state, std::move(action)),
         previous(&previous)
     {
@@ -126,7 +132,9 @@ namespace Game
 
     void Plan::Add(IGame& game, std::unique_ptr<Action> action)
     {
-        actions.emplace_back(Node(game, std::move(action)));
+        Node node(game, std::move(action));
+        if (node.result.size())
+            actions.emplace_back(std::move(node));
     }
     void Plan::AddFront(Node& node)
     {
@@ -166,38 +174,38 @@ namespace Game
         open.emplace(std::move(first));
         while (!open.empty())
         {
-            auto best = open.begin();
+            std::unique_ptr<Branch>& best = const_cast<std::unique_ptr<Branch>&>(*open.begin());
 
             if (targetAction)
             {
-                auto outcomes = targetAction->Act((*best)->result.front());
+                auto outcomes = targetAction->Act(best->result.front());
                 if (outcomes.size()>0)
                 {
-                    AddFront(**best);
-                    for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
+                    AddFront(*best);
+                    for (Branch* previous = best->previous; previous != nullptr; previous = previous->previous)
                     {
                         AddFront(*previous);
                     }
-                    Add((*best)->state, std::move(targetAction));   // does it matter which outcome's state?
+                    Add(best->state, std::move(targetAction));   // does it matter which outcome's state?
                     return;
                 }
             }
             else
             {
-                if ((*best)->Reached(target))
+                if (best->Reached(target))
                 {
-                    AddFront(**best);
-                    for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
+                    AddFront(*best);
+                    for (Branch* previous = best->previous; previous != nullptr; previous = previous->previous)
                     {
                         AddFront(*previous);
                     }
                     return;
                 }
             }
-
-            auto bestIt = closed.emplace(std::make_unique<Branch>(*(*best)->previous, (*best)->ExpectedState(), std::move((*best)->action)));
+   
+            auto bestIt = closed.emplace(std::move(best));
             assert(bestIt.second);
-            open.erase(best);
+            open.erase(open.begin());
             for (const auto& actionFactory : actions)
             {
                 std::unique_ptr<Action> action(actionFactory());
@@ -209,8 +217,11 @@ namespace Game
                 if (alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                     continue;
                 auto newNode = std::make_unique<Branch>(**bestIt.first, (*bestIt.first)->ExpectedState(), std::move(action));
-                auto newIt = open.emplace(std::move(newNode));
-                assert(newIt.second);
+                if (newNode->result.size())
+                {
+                    auto newIt = open.emplace(std::move(newNode));
+                    assert(newIt.second);
+                }
             }
         }
         auto best = closed.begin();
