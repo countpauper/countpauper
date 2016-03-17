@@ -13,8 +13,9 @@ namespace Game
         range = 1.0;
     }
 
-    GameChances Move::Act(Actor& actor, IGame& game)
+    GameChances Move::Act(IGame& game)
     {
+        auto& actor = *game.ActiveActor();
         State state(game.Get(actor));
         if (state.mp <= cost)
         {

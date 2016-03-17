@@ -52,6 +52,16 @@ namespace Game
         parent.Apply();
     }
 
+    Actor* GameState::ActiveActor() const
+    {
+        return parent.ActiveActor();
+    }
+
+    State GameState::ActorState() const
+    {
+        return Get(*ActiveActor());
+    }
+
     bool GameState::CanGo(const Position& from, Direction direction) const
     {
         return parent.CanGo(from, direction);

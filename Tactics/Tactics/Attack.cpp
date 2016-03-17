@@ -20,9 +20,9 @@ namespace Game
         return skill.name;
     }
 
-    GameChances Attack::Act(Actor&actor, IGame& game)
+    GameChances Attack::Act(IGame& game)
     {
-
+        auto& actor = *game.ActiveActor();
         State state = game.Get(actor);
 
         if ((state.mp <= cost) ||

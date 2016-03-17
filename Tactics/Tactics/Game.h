@@ -45,7 +45,7 @@ namespace Game
         std::vector<Actor*> FindTargets(const State& from, const Skill& skill) const;
         std::vector<Actor*> FindTargetsInRange(const State& from, const Skill& skill) const;
         std::unique_ptr<const Skills> skills;
-        Actor* ActiveActor();
+        Actor* ActiveActor() const override;
         void MakePlan(Actor& actor, const Skill& skill);
     protected:
         void AI(Actor* actor);

@@ -15,7 +15,7 @@ namespace Game
     }
     
     Game::~Game() = default;
-
+   
     State Game::Get(const Actor& actor) const
     {
         return State(actor);
@@ -63,7 +63,7 @@ namespace Game
             turn = objects.begin();
     }
 
-    Actor* Game::ActiveActor()
+    Actor* Game::ActiveActor() const
     {
         if (turn == objects.end())
             return nullptr;
@@ -160,11 +160,7 @@ namespace Game
         std::unique_ptr<Action> action(Action::keymap[code](plan->Final(), *this));
         if (!action)
             return;
-        State state(plan->Final());
-        auto outcomes = action->Act(state, *this);
-        if (outcomes.size()==0)
-            return;
-        plan->Add(*this, std::move(action), outcomes);
+        plan->Add(*this, std::move(action));
     }
 
     bool Game::CanBe(const Position& position) const

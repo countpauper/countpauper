@@ -14,7 +14,7 @@ namespace Game
     public:
         Move(Direction direction);
         void Render(const State& state) const override;
-        GameChances Act(Actor& actor, IGame& game) override;
+        GameChances Act(IGame& game) override;
         std::wstring Description() const override;
     protected:
         Direction direction;

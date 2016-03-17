@@ -8,6 +8,7 @@ namespace Game
     class IGame
     {
     public:
+        virtual Actor* ActiveActor() const = 0;
         virtual State Get(const Actor& actor) const = 0;
         virtual void Apply() const = 0;
         virtual void Adjust(Actor& actor, const State& state) = 0;

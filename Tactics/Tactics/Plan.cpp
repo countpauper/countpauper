@@ -21,53 +21,62 @@ namespace Game
         for (const auto& node : actions)
         {
             node.action->Render(state);
-            state = node.ExpectedState(actor);
+            state = node.ExpectedState().ActorState();
         }
     }
 
-    Plan::Node::Node(const GameChances& state) :
-        result(state)
-    {
-    }
-
-    Plan::Node::Node(std::unique_ptr<Action> action, const GameChances& outcomes) :
-        action(std::move(action)),
-        result(outcomes)
-    {
-    }
-
-    const State& Plan::Node::ExpectedState(const Actor& actor) const
-    {
-        return result.front().Get(actor);
-    }
-
-    Plan::Branch::Branch(const GameChances& result) :
-        Node(result),
-        previous(nullptr)
-    {
-    }
-
-    Plan::Branch::Branch(Branch& previous, std::unique_ptr<Action> action, const GameChances& outcomes) :
-        Node(std::move(action),outcomes),
-        previous(&previous)
-    {
-    }
-
     Plan::Node::Node(Node&& other) :
+        state(other.state),
         action(std::move(other.action)),
         result(other.result)
     {
     }
 
-    bool Plan::Branch::Compare(const Actor& actor,const Branch& other, const Position& target) const
+    Plan::Node::Node(IGame& state) :
+        state(state)
     {
-        if (target.ManDistance(ExpectedState(actor).position) < target.ManDistance(other.ExpectedState(actor).position))
+    }
+
+    Plan::Node::Node(IGame& state, std::unique_ptr<Action> action) :
+        state(state),
+        action(std::move(action)),
+        result(action->Act(state))
+    {
+    }
+
+    const GameState& Plan::Node::ExpectedState() const
+    {
+        return result.front();
+    }
+
+    GameState& Plan::Node::ExpectedState()
+    {
+        return result.front();
+    }
+
+    Plan::Branch::Branch(IGame& state) :
+        Node(state),
+        previous(nullptr)
+    {
+    }
+
+    Plan::Branch::Branch(Branch& previous, IGame& state, std::unique_ptr<Action> action) :
+        Node(state, std::move(action)),
+        previous(&previous)
+    {
+    }
+
+    bool Plan::Branch::Compare(const Branch& other, const Position& target) const
+    {
+        auto& actorState = ExpectedState().ActorState();
+        auto& otherSate = other.ExpectedState().ActorState();
+        if (target.ManDistance(actorState.position) < target.ManDistance(otherSate.position))
             return true;
-        else if (target.ManDistance(ExpectedState(actor).position) > target.ManDistance(other.ExpectedState(actor).position))
+        else if (target.ManDistance(actorState.position) > target.ManDistance(otherSate.position))
             return false;
-        else if (ExpectedState(actor).mp > other.ExpectedState(actor).mp)
+        else if (actorState.mp > otherSate.mp)
             return true;
-        else if (ExpectedState(actor).mp < other.ExpectedState(actor).mp)
+        else if (actorState.mp < otherSate.mp)
             return false;
         return
             this < &other;
@@ -83,9 +92,9 @@ namespace Game
         return a->Compare(*b, target);
     }
 
-    bool Plan::Branch::Reached(const Actor& actor,const Position& target) const
+    bool Plan::Branch::Reached(const Position& target) const
     {
-        return target == ExpectedState(actor).position;
+        return target == ExpectedState().ActorState().position;
     }
 
     Plan::OpenTree::OpenTree(const Position& target) :
@@ -99,30 +108,30 @@ namespace Game
     }
 
 
-    bool Plan::ClosedList::Contains(const State& state) const
+    bool Plan::ClosedList::Contains(const GameState& findState) const
     {
         for (const auto& node : *this)
-            if (node->ExepctedState(actor).position == state.position)
+            if (node->ExpectedState().ActorState().position == findState.ActorState().position)
                 return true;
         return false;
     }
 
-    Plan::Node& Plan::Node::operator= (Plan::Node&& other)
+    Plan::Node& Plan::Node::operator=(Plan::Node&& other)
     {
         action = std::move(other.action);
         result = other.result;
         return *this;
     }
 
-    void Plan::Add(Game& game, std::unique_ptr<Action> action, const GameChances& outcomes)
+    void Plan::Add(IGame& game, std::unique_ptr<Action> action)
     {
-        actions.emplace_back(Node(std::move(action), outcomes));
+        actions.emplace_back(Node(game, std::move(action)));
     }
     void Plan::AddFront(Node& node)
     {
         if (!node.action)
             return; // TODO: better way to not add root node
-        actions.emplace(actions.begin(), Node(std::move(node.action), node.result));
+        actions.emplace(actions.begin(), std::move(node));
     }
 
     State Plan::Final() const
@@ -130,12 +139,12 @@ namespace Game
         if (actions.empty())
             return State(actor);
         else
-            return actions.back().result.front().state;
+            return actions.back().ExpectedState().ActorState();
     }
     void Plan::Execute(Game& game) const
     {
-        auto& finalState = result.front(); // todo: compute chance
-        OutputDebugStringW((Description() + L" " + result.front().description+ L" = " + finalState.Description() + L"\r\n").c_str());
+        auto& finalState = actions.back().result.front(); // todo: compute chance, flatten all outcomes
+        OutputDebugStringW((Description() + L" " + finalState.description + L" = " + finalState.Description() + L"\r\n").c_str());
         finalState.Apply();
     }
 
@@ -150,9 +159,8 @@ namespace Game
         });
         OpenTree open(target);
         ClosedList closed(target);
-        State start(actor);
-        auto first = std::make_unique<Branch>(start);
-        if (first->Reached(actor, target))
+        auto first = std::make_unique<Branch>(game);
+        if (first->Reached(target))
             return;
         open.emplace(std::move(first));
         while (!open.empty())
@@ -161,7 +169,7 @@ namespace Game
 
             if (targetAction)
             {
-                auto outcomes = targetAction->Act((*best)->ExpectedState(actor), game);
+                auto outcomes = targetAction->Act((*best)->result.front());
                 if (outcomes.size()>0)
                 {
                     AddFront(**best);
@@ -169,18 +177,14 @@ namespace Game
                     {
                         AddFront(*previous);
                     }
-                    Add(game, std::move(targetAction), outcomes);   // does it matter which outcome's state?
+                    Add((*best)->state, std::move(targetAction));   // does it matter which outcome's state?
                     return;
                 }
             }
             else
             {
-                if ((*best)->Reached(actor, target))
+                if ((*best)->Reached(target))
                 {
-                    auto gameState = std::make_unique<GameState>(game);
-                    gameState->Adjust(actor, (*best)->ExpectedState(actor));
-                    result.emplace_back(GameChance(std::move(gameState), 1.0, L"Move"));
-
                     AddFront(**best);
                     for (Branch* previous = (*best)->previous; previous != nullptr; previous = previous->previous)
                     {
@@ -190,20 +194,20 @@ namespace Game
                 }
             }
 
-            auto bestIt = closed.emplace(std::make_unique<Branch>(*(*best)->previous, std::move((*best)->action), (*best)->result));
+            auto bestIt = closed.emplace(std::make_unique<Branch>(*(*best)->previous, (*best)->ExpectedState(), std::move((*best)->action)));
             assert(bestIt.second);
             open.erase(best);
             for (const auto& actionFactory : actions)
             {
                 std::unique_ptr<Action> action(actionFactory());
-                auto outcomes = action->Act((*bestIt.first)->ExpectedState(actor), game);
+                auto outcomes = action->Act((*bestIt.first)->result.front());
                 if (outcomes.size()==0)
                     continue;
-                auto newState = outcomes.front().state;
+                auto newState = outcomes.front();
                 bool alreadyClosed = closed.Contains(newState);
                 if (alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                     continue;
-                auto newNode = std::make_unique<Branch>(*(*bestIt.first), std::move(action), outcomes);
+                auto newNode = std::make_unique<Branch>(**bestIt.first, (*bestIt.first)->ExpectedState(), std::move(action));
                 auto newIt = open.emplace(std::move(newNode));
                 assert(newIt.second);
             }
@@ -211,7 +215,6 @@ namespace Game
         auto best = closed.begin();
         if ((*best)->action)    // TODO: root node
         {
-            result = (*best)->result;
             AddFront(**best);
             for (auto link = (*best)->previous; link != nullptr; link = link->previous)
             {

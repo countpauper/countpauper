@@ -15,7 +15,7 @@ namespace Game
     public:
         Action();
         virtual ~Action() = default;
-        virtual GameChances Act(Actor&actor, IGame& game) = 0;
+        virtual GameChances Act(IGame& game) = 0;
         virtual void Render(const State& state) const = 0;
         virtual std::wstring Description() const = 0;
         static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
