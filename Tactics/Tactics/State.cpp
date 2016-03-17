@@ -87,4 +87,15 @@ namespace Game
         description(description)
     {
     }
+
+    GameChance& GameChance::operator=(const GameChance& other)
+    {
+        chance = other.chance;
+        description = other.description;
+        assert(false && "Should reparent");
+        parent = other.parent;
+        state = other.state;
+        return *this;
+    }
+
 } // ::Game

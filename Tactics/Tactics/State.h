@@ -42,7 +42,7 @@ namespace Game
         std::wstring Description() const override;
 
         State ActorState() const;
-    private:
+    protected:
         void RecursiveApply(Game& game, std::set<const Actor*>& done) const;
         IGame& parent;
         std::map<Actor*, State> state;
@@ -52,6 +52,7 @@ namespace Game
     {
     public:
         GameChance(IGame& parent, double chance, const std::wstring& description);
+        GameChance& operator=(const GameChance& other);
         double chance;
         std::wstring description;
     };

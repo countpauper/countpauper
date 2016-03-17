@@ -29,9 +29,10 @@ private:
     {
         Node(IGame& state);
         Node(IGame& state, std::unique_ptr<Action> action);
-        Node(Node&) = delete;
+        Node(const Node&) = delete;
+        Node& operator=(const Node&) = delete;
         Node(Node&& other);
-        Node& operator= (Node&&);
+        Node& operator=(Node&& other);
 
         const GameState& ExpectedState() const;
         GameState& ExpectedState();

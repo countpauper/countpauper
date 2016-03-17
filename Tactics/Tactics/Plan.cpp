@@ -32,6 +32,14 @@ namespace Game
     {
     }
 
+    Plan::Node& Plan::Node::operator=(Node&& other)
+    {
+        state = other.state;
+        action = std::move(other.action);
+        result = other.result;
+        return *this;
+    }
+
     Plan::Node::Node(IGame& state) :
         state(state)
     {
@@ -116,13 +124,6 @@ namespace Game
         return false;
     }
 
-    Plan::Node& Plan::Node::operator=(Plan::Node&& other)
-    {
-        action = std::move(other.action);
-        result = other.result;
-        return *this;
-    }
-
     void Plan::Add(IGame& game, std::unique_ptr<Action> action)
     {
         actions.emplace_back(Node(game, std::move(action)));
@@ -131,7 +132,7 @@ namespace Game
     {
         if (!node.action)
             return; // TODO: better way to not add root node
-        actions.emplace(actions.begin(), std::move(node));
+        actions.emplace(actions.begin(), std::move(Node(node.state, std::move(node.action))));
     }
 
     State Plan::Final() const
