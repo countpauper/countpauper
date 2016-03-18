@@ -23,8 +23,8 @@ namespace Game
         }
         state.mp -= cost;
         auto newPosition = state.position += direction.Vector();
-        if ((game.CanGo(state.position, direction)) &&
-            (game.CanBe(newPosition)))
+        if ((game.CanBe(newPosition)) && 
+            (game.CanGo(state.position, direction)))
         {
             state.position = newPosition;
             state.direction = direction;

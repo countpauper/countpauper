@@ -1,4 +1,9 @@
-﻿#include "stdafx.h"
+﻿// Command lines: 
+//  --map=1on1.map --hide
+
+
+
+#include "stdafx.h"
 #include "Tactics.h"
 #include <GL/gl.h>            /* OpenGL header file */
 #include <GL/glu.h>            /* OpenGL utilities header file */

@@ -31,12 +31,12 @@ private:
         Node(IGame& state);
         Node(IGame& state, std::unique_ptr<Action>&& action);
         Node(const Node&) = delete;
+        ~Node();
         Node& operator=(const Node&) = delete;
-        Node(Node&& other);
-        Node& operator=(Node&& other);
-
+        bool DeadEnd() const;
         const GameState& ExpectedState() const;
-        GameState& ExpectedState();
+        
+GameState& ExpectedState();
         IGame& state;
         std::unique_ptr<Action> action;
         GameChances result;
@@ -44,7 +44,6 @@ private:
     struct Branch : public Node
     {
         Branch(IGame& state);
-        Branch(Branch&& other);
         Branch(Branch& previous, IGame& state, std::unique_ptr<Action>&& action);
 
         //int Score(const Position& target, unsigned startMovePoints) const;
@@ -70,13 +69,14 @@ private:
     public:
         ClosedList(const Position& target);
         bool Contains(const GameState& state) const;
+        void Move(Plan& plan, Branch* branch);
     };
     friend ClosedList;
 protected:
     void Approach(const Position& target, Game& game, std::unique_ptr<Action>&& action);
-    void AddFront(Node& node);
+    void AddFront(std::unique_ptr<Node> node);
 
-    std::vector<Node> actions;
+    std::vector<std::unique_ptr<Node>> actions;
 };
 
 class PathPlan : public Plan
