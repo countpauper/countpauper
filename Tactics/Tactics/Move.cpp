@@ -22,7 +22,7 @@ namespace Game
             return GameChances();
         }
         state.mp -= cost;
-        auto newPosition = state.position += direction.Vector();
+        auto newPosition = state.position + direction.Vector();
         if ((game.CanBe(newPosition)) && 
             (game.CanGo(state.position, direction)))
         {

@@ -41,42 +41,41 @@ GameState& ExpectedState();
         std::unique_ptr<Action> action;
         GameChances result;
     };
+    // TODO : deprecate branch, just nodes
     struct Branch : public Node
     {
         Branch(IGame& state);
-        Branch(Branch& previous, IGame& state, std::unique_ptr<Action>&& action);
+        Branch(std::shared_ptr<Branch> previous, IGame& state, std::unique_ptr<Action>&& action);
 
         //int Score(const Position& target, unsigned startMovePoints) const;
         bool Compare(const Branch& other, const Position& target) const;
         bool operator==(const Branch& other) const;
         bool Reached(const Position& target) const;
     public:
-        Branch* previous;
+        std::shared_ptr<Branch> previous;
     };
     struct BranchCompare
     {
         BranchCompare(const Position& target);
-        bool operator() (const std::unique_ptr<Branch>& a, const std::unique_ptr<Branch>& b) const;
+        bool operator() (const std::shared_ptr<Branch>& a, const std::shared_ptr<Branch>& b) const;
         Position target;
     };
-    class OpenTree : public std::set < std::unique_ptr<Branch>, BranchCompare >
+    class OpenTree : public std::set < std::shared_ptr<Branch>, BranchCompare >
     {
     public:
         OpenTree(const Position& target);
     };
-    class ClosedList : public std::set<std::unique_ptr<Branch>, BranchCompare>
+    class ClosedList : public std::set<std::shared_ptr<Branch>, BranchCompare>
     {
     public:
         ClosedList(const Position& target);
         bool Contains(const GameState& state) const;
-        void Move(Plan& plan, Branch* branch);
     };
     friend ClosedList;
 protected:
     void Approach(const Position& target, Game& game, std::unique_ptr<Action>&& action);
-    void AddFront(std::unique_ptr<Node> node);
 
-    std::vector<std::unique_ptr<Node>> actions;
+    std::shared_ptr<Branch> m_actions;
 };
 
 class PathPlan : public Plan

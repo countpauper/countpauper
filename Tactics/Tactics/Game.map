@@ -1,5 +1,5 @@
 2
-Actor Foo 2 2 2 0 0 0 0 20 20 2
+Actor Foo 2 2 0 0 0 0 0 20 20 2
 Sword 1
 Bow 1
 Actor Bar 3 3 1 0 0 0 0 20 20 1

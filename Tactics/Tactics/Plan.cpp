@@ -18,10 +18,14 @@ namespace Game
     void Plan::Render() const
     {
         State state(actor);
-        for (const auto& node : actions)
+        auto node = m_actions;
+        // TODO state is the wrong way around for rendering
+        while (node)
         {
-            node->action->Render(state);
+            if (node->action)
+                node->action->Render(state);
             state = node->ExpectedState().ActorState();
+            node = node->previous;
         }
     }
 
@@ -62,9 +66,9 @@ namespace Game
     {
     }
 
-    Plan::Branch::Branch(Plan::Branch& previous, IGame& state, std::unique_ptr<Action>&& action) :
+    Plan::Branch::Branch(std::shared_ptr<Plan::Branch> previous, IGame& state, std::unique_ptr<Action>&& action) :
         Node(state, std::move(action)),
-        previous(&previous)
+        previous(previous)
     {
     }
 
@@ -89,7 +93,7 @@ namespace Game
     {
     }
 
-    bool Plan::BranchCompare::operator() (const std::unique_ptr<Branch>& a, const std::unique_ptr<Branch>& b) const
+    bool Plan::BranchCompare::operator() (const std::shared_ptr<Branch>& a, const std::shared_ptr<Branch>& b) const
     {
         return a->Compare(*b, target);
     }
@@ -100,12 +104,12 @@ namespace Game
     }
 
     Plan::OpenTree::OpenTree(const Position& target) :
-        std::set<std::unique_ptr<Branch>, BranchCompare>(BranchCompare(target))
+        std::set<std::shared_ptr<Branch>, BranchCompare>(BranchCompare(target))
     {
     }
 
     Plan::ClosedList::ClosedList(const Position& target) :
-        std::set<std::unique_ptr<Branch>, BranchCompare>(BranchCompare(target))
+        std::set<std::shared_ptr<Branch>, BranchCompare>(BranchCompare(target))
     {
     }
 
@@ -120,54 +124,29 @@ namespace Game
 
     void Plan::Add(IGame& game, std::unique_ptr<Action> action)
     {
-        auto node = std::make_unique<Node>(game, std::move(action));
+        auto node = std::make_shared<Branch>(m_actions, game, std::move(action));
         if (!node->DeadEnd())
-            actions.emplace_back(std::move(node));
-    }
-    void Plan::AddFront(std::unique_ptr<Node> node)
-    {
-        assert(!node->DeadEnd() && "Should check beforehand to not add dead ends");
-        if (!node->action)
-            return; // TODO: better way to not add root node
-        actions.emplace(actions.begin(), std::move(node));
+            m_actions = node;
     }
 
     bool Plan::Valid() const
     {
-        return !actions.empty();
+        return m_actions.get()!=nullptr;
     }
     State Plan::Final() const
     {
-        if (actions.empty())
+        if (!m_actions)
             return State(actor);
         else
-            return actions.back()->ExpectedState().ActorState();
+            return m_actions->ExpectedState().ActorState();
     }
     void Plan::Execute(Game& game) const
     {
-        auto& finalState = actions.back()->result.front(); // todo: compute chance, flatten all outcomes
+        auto& finalState = m_actions->result.front(); // todo: compute chance, flatten all outcomes
         OutputDebugStringW((Description() + L" " + finalState.description + L" = " + finalState.Description() + L"\r\n").c_str());
         finalState.Apply();
     }
 
-    void Plan::ClosedList::Move(Plan& plan, Branch* branch)
-    {
-        while (branch)
-        {
-            branch = branch->previous;
-            if (branch)
-            {
-                for (auto it = begin(); it != end(); ++it)
-                {
-                    auto& ptr = const_cast<std::unique_ptr<Branch>&>(*it);
-                    if (ptr.get() == branch)
-                        plan.AddFront(std::move(ptr));
-                    erase(it);
-                    break;
-                }
-            }
-        }
-    }
     void Plan::Approach(const Position& target, Game& game, std::unique_ptr<Action>&& targetAction)
     {
         std::vector<std::function<Action*(void)>> actions({
@@ -184,17 +163,17 @@ namespace Game
         open.emplace(std::move(first));
         while (!open.empty())
         {
-            std::unique_ptr<Branch>& best = const_cast<std::unique_ptr<Branch>&>(*open.begin());
+            std::shared_ptr<Branch> best = *open.begin();
+            open.erase(open.begin());
 
             if (targetAction)
             {
-                auto finalNode = std::make_unique<Branch>(*best, best->ExpectedState(), std::move(targetAction));
-                if (!finalNode->DeadEnd())
-                {
-                    AddFront(std::move(finalNode));
-                    Branch* bestBranch = best.get();
-                    AddFront(std::move(best));
-                    closed.Move(*this, bestBranch);
+                auto outcomes = targetAction->Act(best->ExpectedState());
+                if (outcomes.size())
+                {   // TODO find a way to make a branch without moving ownership of the target action
+                    auto finalNode = std::make_shared<Branch>(best, best->ExpectedState(), std::move(targetAction));
+                    assert(!finalNode->DeadEnd());
+                    m_actions = finalNode; 
                     return;
                 }
             }
@@ -202,37 +181,28 @@ namespace Game
             {
                 if (best->Reached(target))
                 {
-                    Branch* bestBranch = best.get();
-                    AddFront(std::move(best));
-                    closed.Move(*this, bestBranch);
+                    m_actions = best;
                     return;
                 }
             }
    
-            auto bestIt = closed.emplace(std::move(best));
+            auto bestIt = closed.emplace(best);
             assert(bestIt.second);
-            open.erase(open.begin());
             for (const auto& actionFactory : actions)
             {
                 std::unique_ptr<Action> action(actionFactory());
-                auto newNode = std::make_unique<Branch>(**bestIt.first, (*bestIt.first)->ExpectedState(), std::move(action));
+                auto newNode = std::make_shared<Branch>(*bestIt.first, (*bestIt.first)->ExpectedState(), std::move(action));
                 if (newNode->DeadEnd())
                     continue;
                 auto newState = newNode->ExpectedState();
                 bool alreadyClosed = closed.Contains(newState);
                 if (alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                     continue;
-                auto newIt = open.emplace(std::move(newNode));
+                auto newIt = open.emplace(newNode);
                 assert(newIt.second);
             }
         }
-        std::unique_ptr<Branch>& best = const_cast<std::unique_ptr<Branch>&>(*closed.begin());
-        if (best->action)    // TODO: root node
-        {
-            Branch* bestBranch = best.get();
-            AddFront(std::move(best));
-            closed.Move(*this, bestBranch);
-        }
+        m_actions = *closed.begin();
     }
 
     PathPlan::PathPlan(Actor& actor, const Position& target, Game& game) :
@@ -267,14 +237,16 @@ namespace Game
     
     std::wstring ManualPlan::Description() const
     {
-        if (actions.empty())
+        if (!m_actions)
             return actor.name + L": idle";
         else
         {
             std::wstring result(actor.name + L": ");
-            for (const auto& node : actions)
+            auto node = m_actions;
+            while (node)
             {
                 result += node->action->Description() + L", ";
+                node = node->previous;
             }
             return result;
         }
