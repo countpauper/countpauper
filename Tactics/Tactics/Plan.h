@@ -20,6 +20,7 @@ public:
     void Render() const;
     void Add(IGame& game, std::unique_ptr<Action> action);
     State Final() const;
+    bool Valid() const;
     void Execute(Game& game) const;
     virtual std::wstring Description() const = 0;
 protected:

@@ -37,6 +37,7 @@ namespace Game
         void Act(const Action& action);
 
         Actor* ActiveActor() const override;
+        bool CanBe(const Position& position) const override;
         bool CanGo(const Position& from, Direction direction) const override;
         bool Cover(const Position& from, const Position& to) const override;
         std::wstring Description() const override;

@@ -62,6 +62,11 @@ namespace Game
         return Get(*ActiveActor());
     }
 
+    bool GameState::CanBe(const Position& position) const
+    {
+        return parent.CanBe(position);
+    }
+
     bool GameState::CanGo(const Position& from, Direction direction) const
     {
         return parent.CanGo(from, direction);

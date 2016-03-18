@@ -38,7 +38,7 @@ namespace Game
         void Tick();
         void Render() const;
         void Key(unsigned short code);
-        bool CanBe(const Position& position) const;
+        bool CanBe(const Position& position) const override;
         bool CanGo(const Position& from, Direction direction) const override;
         bool Cover(const Position& from, const Position& to) const override;
         void Click(Selection selection, GLuint value);

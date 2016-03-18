@@ -46,7 +46,9 @@ namespace Game
             auto targets = FindTargets(*actor, *skill.skill);
             for (auto target : targets)
             {
-                plans.emplace_back(std::make_unique<AttackPlan>(*actor, *target, *this, *skill.skill));
+                auto plan = std::make_unique<AttackPlan>(*actor, *target, *this, *skill.skill);
+                if (plan->Valid())
+                    plans.emplace_back(std::move(plan));
             }
         }
         if (plans.size())
@@ -176,7 +178,7 @@ namespace Game
     bool Game::CanGo(const Position& from, Direction direction) const
     {
         auto to = from + direction.Vector();
-        return map.CanGo(from, direction) && CanBe(to);
+        return map.CanGo(from, direction);
     }
 
     bool Game::Cover(const Position& from, const Position& to) const

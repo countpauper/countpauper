@@ -143,6 +143,10 @@ namespace Game
         actions.emplace(actions.begin(), std::move(Node(node.state, std::move(node.action))));
     }
 
+    bool Plan::Valid() const
+    {
+        return !actions.empty();
+    }
     State Plan::Final() const
     {
         if (actions.empty())
