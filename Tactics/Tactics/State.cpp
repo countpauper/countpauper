@@ -21,7 +21,9 @@ namespace Game
     }
     void GameState::Adjust(Actor& actor, const State& actorState)
     {
-        state.insert(std::make_pair(&actor, actorState));
+        auto insert = state.insert(std::make_pair(&actor, actorState));
+        if (!insert.second)
+            state.at(&actor) = actorState;
     }
 
 
