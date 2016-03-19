@@ -22,6 +22,9 @@ namespace Game
         // TODO state is the wrong way around for rendering
         while (node)
         {
+            State state(actor);
+            if (node->previous)
+                state = node->previous->ExpectedState().ActorState();
             if (node->action)
                 node->action->Render(state);
             state = node->ExpectedState().ActorState();
@@ -35,10 +38,11 @@ namespace Game
         result.emplace_back(GameChance(state, 1.0, L"Root"));
     }
 
-    Plan::Node::Node(IGame& state, std::unique_ptr<Action>&& action) :
+    Plan::Node::Node(std::shared_ptr<Plan::Node> previous, IGame& state, std::unique_ptr<Action>&& action) :
         state(state),
         action(std::move(action)),
-        result(this->action->Act(state))
+        result(this->action->Act(state)),
+        previous(previous)
     {
     }
 
@@ -60,19 +64,7 @@ namespace Game
         return result.front();
     }
 
-    Plan::Branch::Branch(IGame& state) :
-        Node(state),
-        previous(nullptr)
-    {
-    }
-
-    Plan::Branch::Branch(std::shared_ptr<Plan::Branch> previous, IGame& state, std::unique_ptr<Action>&& action) :
-        Node(state, std::move(action)),
-        previous(previous)
-    {
-    }
-
-    bool Plan::Branch::Compare(const Branch& other, const Position& target) const
+    bool Plan::Node::Compare(const Node& other, const Position& target) const
     {
         auto& actorState = ExpectedState().ActorState();
         auto& otherSate = other.ExpectedState().ActorState();
@@ -88,28 +80,28 @@ namespace Game
             this < &other;
     }
         
-    Plan::BranchCompare::BranchCompare(const Position& target) :
+    Plan::NodeCompare::NodeCompare(const Position& target) :
         target(target)
     {
     }
 
-    bool Plan::BranchCompare::operator() (const std::shared_ptr<Branch>& a, const std::shared_ptr<Branch>& b) const
+    bool Plan::NodeCompare::operator() (const std::shared_ptr<Node>& a, const std::shared_ptr<Node>& b) const
     {
         return a->Compare(*b, target);
     }
 
-    bool Plan::Branch::Reached(const Position& target) const
+    bool Plan::Node::Reached(const Position& target) const
     {
         return target == ExpectedState().ActorState().position;
     }
 
     Plan::OpenTree::OpenTree(const Position& target) :
-        std::set<std::shared_ptr<Branch>, BranchCompare>(BranchCompare(target))
+        std::set<std::shared_ptr<Node>, NodeCompare>(NodeCompare(target))
     {
     }
 
     Plan::ClosedList::ClosedList(const Position& target) :
-        std::set<std::shared_ptr<Branch>, BranchCompare>(BranchCompare(target))
+        std::set<std::shared_ptr<Node>, NodeCompare>(NodeCompare(target))
     {
     }
 
@@ -124,7 +116,7 @@ namespace Game
 
     void Plan::Add(IGame& game, std::unique_ptr<Action> action)
     {
-        auto node = std::make_shared<Branch>(m_actions, game, std::move(action));
+        auto node = std::make_shared<Node>(m_actions, game, std::move(action));
         if (!node->DeadEnd())
             m_actions = node;
     }
@@ -140,11 +132,55 @@ namespace Game
         else
             return m_actions->ExpectedState().ActorState();
     }
+
+    Plan::Outcomes Plan::AllOutcomesRecursive(Node& node) const
+    {
+        double alternativeScore = node.result.front().chance;
+        if (!node.previous)
+        {
+            Outcomes firstResult;
+            for (auto resultIt = node.result.begin() + 1; resultIt != node.result.end(); ++resultIt)
+            {
+                firstResult[alternativeScore] = &*resultIt;
+                alternativeScore += resultIt->chance;
+            }
+            firstResult[0.0] = &node.result.front();
+            return firstResult;
+        }
+        else
+        {
+            auto outcomes = AllOutcomesRecursive(*node.previous);
+            double remainingscore = 1.0;
+            if (outcomes.size() > 1)
+            {
+                auto it = outcomes.begin()++;
+                remainingscore = it->first;
+            }
+            for (auto resultIt = node.result.begin() + 1; resultIt != node.result.end(); ++resultIt)
+            {
+                outcomes[alternativeScore * remainingscore] = &*resultIt;
+                alternativeScore += resultIt->chance;
+            }
+            outcomes[0.0] = &node.result.front();
+            return outcomes;
+        }
+    }
+
+    Plan::Outcomes Plan::AllOutcomes() const
+    {
+        return AllOutcomesRecursive(*m_actions);
+    }
+
     void Plan::Execute(Game& game) const
     {
-        auto& finalState = m_actions->result.front(); // todo: compute chance, flatten all outcomes
-        OutputDebugStringW((Description() + L" " + finalState.description + L" = " + finalState.Description() + L"\r\n").c_str());
-        finalState.Apply();
+        auto outcomes = AllOutcomes();
+        double score = rand() / double(RAND_MAX);
+        auto selectIt = outcomes.lower_bound(score);
+        assert(selectIt != outcomes.begin() && "No outcomes");
+        selectIt--;
+        auto select = selectIt->second;
+        OutputDebugStringW((Description() + L" " + select->description + L" = " + select->Description() + L"\r\n").c_str());
+        select->Apply();
     }
 
     void Plan::Approach(const Position& target, Game& game, std::unique_ptr<Action>&& targetAction)
@@ -157,21 +193,21 @@ namespace Game
         });
         OpenTree open(target);
         ClosedList closed(target);
-        auto first = std::make_unique<Branch>(game);
+        auto first = std::make_unique<Node>(game);
         if (first->Reached(target))
             return;
         open.emplace(std::move(first));
         while (!open.empty())
         {
-            std::shared_ptr<Branch> best = *open.begin();
+            std::shared_ptr<Node> best = *open.begin();
             open.erase(open.begin());
 
             if (targetAction)
             {
                 auto outcomes = targetAction->Act(best->ExpectedState());
                 if (outcomes.size())
-                {   // TODO find a way to make a branch without moving ownership of the target action
-                    auto finalNode = std::make_shared<Branch>(best, best->ExpectedState(), std::move(targetAction));
+                {   // TODO find a way to make a Node without moving ownership of the target action
+                    auto finalNode = std::make_shared<Node>(best, best->ExpectedState(), std::move(targetAction));
                     assert(!finalNode->DeadEnd());
                     m_actions = finalNode; 
                     return;
@@ -191,7 +227,7 @@ namespace Game
             for (const auto& actionFactory : actions)
             {
                 std::unique_ptr<Action> action(actionFactory());
-                auto newNode = std::make_shared<Branch>(*bestIt.first, (*bestIt.first)->ExpectedState(), std::move(action));
+                auto newNode = std::make_shared<Node>(*bestIt.first, (*bestIt.first)->ExpectedState(), std::move(action));
                 if (newNode->DeadEnd())
                     continue;
                 auto newState = newNode->ExpectedState();

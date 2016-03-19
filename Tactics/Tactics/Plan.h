@@ -23,49 +23,39 @@ public:
     bool Valid() const;
     void Execute(Game& game) const;
     virtual std::wstring Description() const = 0;
-protected:
-    Actor& actor;
 private:
     struct Node
     {
         Node(IGame& state);
-        Node(IGame& state, std::unique_ptr<Action>&& action);
+        Node(std::shared_ptr<Node> previous, IGame& state, std::unique_ptr<Action>&& action);
         Node(const Node&) = delete;
         ~Node();
         Node& operator=(const Node&) = delete;
         bool DeadEnd() const;
         const GameState& ExpectedState() const;
-        
-GameState& ExpectedState();
+        GameState& ExpectedState();
+        //int Score(const Position& target, unsigned startMovePoints) const;
+        bool Compare(const Node& other, const Position& target) const;
+        bool operator==(const Node& other) const;
+        bool Reached(const Position& target) const;
+
         IGame& state;
         std::unique_ptr<Action> action;
         GameChances result;
+        std::shared_ptr<Node> previous;
     };
-    // TODO : deprecate branch, just nodes
-    struct Branch : public Node
+    struct NodeCompare
     {
-        Branch(IGame& state);
-        Branch(std::shared_ptr<Branch> previous, IGame& state, std::unique_ptr<Action>&& action);
-
-        //int Score(const Position& target, unsigned startMovePoints) const;
-        bool Compare(const Branch& other, const Position& target) const;
-        bool operator==(const Branch& other) const;
-        bool Reached(const Position& target) const;
-    public:
-        std::shared_ptr<Branch> previous;
-    };
-    struct BranchCompare
-    {
-        BranchCompare(const Position& target);
-        bool operator() (const std::shared_ptr<Branch>& a, const std::shared_ptr<Branch>& b) const;
+        NodeCompare(const Position& target);
+        bool operator() (const std::shared_ptr<Node>& a, const std::shared_ptr<Node>& b) const;
         Position target;
     };
-    class OpenTree : public std::set < std::shared_ptr<Branch>, BranchCompare >
+    class OpenTree : public std::set < std::shared_ptr<Node>, NodeCompare >
     {
     public:
         OpenTree(const Position& target);
     };
-    class ClosedList : public std::set<std::shared_ptr<Branch>, BranchCompare>
+    class ClosedList : public std::set<std::shared_ptr<Node>, NodeCompare>
     {
     public:
         ClosedList(const Position& target);
@@ -74,8 +64,13 @@ GameState& ExpectedState();
     friend ClosedList;
 protected:
     void Approach(const Position& target, Game& game, std::unique_ptr<Action>&& action);
+    Actor& actor;
+    std::shared_ptr<Node> m_actions;
+private:
+    using Outcomes = std::map < double, GameChance* > ;
+    Outcomes AllOutcomesRecursive(Node& node) const;
+    Outcomes AllOutcomes() const;
 
-    std::shared_ptr<Branch> m_actions;
 };
 
 class PathPlan : public Plan

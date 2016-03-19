@@ -33,9 +33,12 @@ namespace Game
         }
         state.mp -= cost;
         GameChances ret;
-        ret.emplace_back(GameChance(game, 1.0, L"Hit"));
+        ret.emplace_back(GameChance(game, 0.5, L"Hit"));
         ret.back().Adjust(actor, state);
         ret.back().Adjust(target, React(game.Get(target)));
+
+        ret.emplace_back(GameChance(game, 0.5, L"Miss"));
+        ret.back().Adjust(actor, state);
         return ret;
     }
 
