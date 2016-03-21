@@ -5,6 +5,7 @@
 #include "Position.h"
 #include "Direction.h"
 #include "Health.h"
+#include "Stats.h"
 
 namespace Game
 {
@@ -24,6 +25,7 @@ namespace Game
         unsigned GetHitPoints() const;
         std::wstring name;
         Health health;
+        Stats stats;
     protected:
         Position position;
         unsigned maxhp;
@@ -48,6 +50,7 @@ namespace Game
         };
         typedef std::vector<Actor::Skill> Skills;
         const Actor::Skills& GetSkills() const;
+        unsigned GetSkillScore(const ::Game::Skill& skill) const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         unsigned mp;

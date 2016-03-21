@@ -7,6 +7,7 @@
 #include "Position.h"
 #include "Direction.h"
 #include "Health.h"
+#include "Stats.h"
 #include "IGame.h"
 
 namespace Game
@@ -23,6 +24,7 @@ namespace Game
         Direction direction;
         unsigned mp;
         Health health;
+        Stats stats;
         unsigned loyalty;
     };
 

@@ -1,9 +1,8 @@
 2
-Actor Foo 0 0 2 0 0 0 0 20 20 2
-Sword 1
-Bow 1
-Actor Bar 1 0 1 0 0 0 0 20 20 1
-Sword 1
+Actor Foo 2 0 0 10 10 10 10 0 0 0 0 20 20 1
+Sword 10
+Actor Bar 1 1 0 10 10 10 10 0 0 0 0 20 20 1
+Sword 10
 1on1 2 1 data/1on1.png
 1 0 0 0 
 1 0 0 0 

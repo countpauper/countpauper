@@ -32,12 +32,15 @@ namespace Game
             return GameChances();
         }
         state.mp -= cost;
+
+        int hitBonus = 5 + actor.GetSkillScore(skill) - target.stats.agility;
+        double hitChance = std::min(1.0,std::max(0.0, double(hitBonus)*0.1));
         GameChances ret;
-        ret.emplace_back(GameChance(game, 0.5, L"Hit"));
+        ret.emplace_back(GameChance(game, hitChance, L"Hit"));
         ret.back().Adjust(actor, state);
         ret.back().Adjust(target, React(game.Get(target)));
 
-        ret.emplace_back(GameChance(game, 0.5, L"Miss"));
+        ret.emplace_back(GameChance(game, 1.0-hitChance, L"Miss"));
         ret.back().Adjust(actor, state);
         return ret;
     }

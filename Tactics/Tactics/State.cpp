@@ -11,6 +11,7 @@ namespace Game
         direction(actor.GetDirection()),
         mp(actor.GetMovePoints()),
         health(actor.health),
+        stats(actor.stats),
         loyalty(actor.GetTeam())
     {
     }

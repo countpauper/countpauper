@@ -103,6 +103,7 @@ namespace Game
         direction = result.direction;
         mp = result.mp;
         health = result.health;
+        stats = result.stats;
     }
 
     void Actor::Turn()
@@ -125,12 +126,22 @@ namespace Game
         return skills;
     }
 
+    unsigned Actor::GetSkillScore(const ::Game::Skill& findSkill) const
+    {
+        auto it = std::find_if(skills.begin(), skills.end(), [&findSkill](const Actor::Skill& skill) { return skill.skill == &findSkill; });
+        if (it == skills.end())
+            return 0;
+        else
+            return it->score;
+    }
+
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {
         Game& game= *static_cast<Game*>(s.pword(1));
         s >> actor.name;
-        s >> actor.position.x >> actor.position.y;
         s >> actor.team;
+        s >> actor.position.x >> actor.position.y;
+        s >> actor.stats;
         s >> actor.health;
         s >> actor.mp >> actor.maxmp;
         unsigned skills;
