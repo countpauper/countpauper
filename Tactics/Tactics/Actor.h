@@ -54,7 +54,6 @@ namespace Game
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         unsigned mp;
-        unsigned maxmp;
         unsigned team;
         Direction direction;
         std::vector<Actor::Skill> skills;

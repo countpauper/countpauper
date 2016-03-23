@@ -25,7 +25,6 @@ namespace Game
 
     Actor::Actor() :
         mp(0),
-        maxmp(0),
         team(0)
     {
     }
@@ -108,7 +107,7 @@ namespace Game
 
     void Actor::Turn()
     {
-        mp = maxmp;
+        mp = stats.agility;
     }
 
     bool Actor::Dead() const
@@ -143,7 +142,7 @@ namespace Game
         s >> actor.position.x >> actor.position.y;
         s >> actor.stats;
         s >> actor.health;
-        s >> actor.mp >> actor.maxmp;
+        s >> actor.mp;
         unsigned skills;
         s >> skills;
         actor.skills.resize(skills);
