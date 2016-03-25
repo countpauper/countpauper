@@ -38,12 +38,24 @@ namespace Game
             Requirement requirement;
         };
 
+
         class Material
         {
         public:
-            Material() : rarity(0.0) {}
+            enum Category
+            {
+                None = 0,
+                Cloth = 1,
+                Leather = 2,
+                Metal = 4,
+                Wood = 8,
+                Magic = 16
+            };
+
+            Material() : rarity(0.0), category(None) {}
             std::wstring name;
             double rarity;
+            Category category;
             Requirement requirement;
         };
 
@@ -67,27 +79,29 @@ namespace Game
         public:
             Damage mitigation;
         };
+    
+        enum class Covers
+        {
+            Nothing = 0,
+            Chest = 1,
+            Arms = 2,
+            Legs = 4,
+            Head = 8
+
+            Breast = Chest,
+            Gloves = Arms,
+            Boots = Legs,
+            Helmet = Head,
+            Shirt = Chest + Arms,
+            Body = Chest + Arms + Legs,
+            Full = Chest + Arms + Legs + Head,
+        };
 
         class Armor : public Equipment
         {
-            Damage mitigation;
-        };
-
-        class HelmetMaterial : public Material
-        {
-        public:
-            Damage mitigation;
-        };
-
-        class HelmetBonus : public Bonus
-        {
-        public:
-            Damage mitigation;
-        };
-
-        class Helmet : public Equipment
-        {
-        public:
+            Armor() : cover(Covers::Nothing), material(Material::None) {}
+            Covers cover;
+            Material::Category material;
             Damage mitigation;
         };
 
@@ -105,11 +119,26 @@ namespace Game
         class Weapon: public Equipment
         {
         public:
+            enum Style
+            {
+                Unarmed,
+                Blade,
+                Blunt,
+                Ranged,
+            };
+            Weapon() : style(Unarmed), twohanded(false), material(Material::None) {}
+            Style style;
+            bool twohanded;
             Damage base;
+            Material::Category material;
         };
 
-        using WeaponList = std::vector < Weapon > ;
-
+        using ArmorMaterials = std::vector <ArmorMaterial> ;
+        using ArmorBonuses = std::vector <ArmorBonus> ;
+        using Armors = std::vector <Armor> ;
+        using WeaponMaterials = std::vector <WeaponMaterial> ;
+        using WeaponBonuses = std::vector <WeaponBonus> ;
+        using Weapons = std::vector <Weapon> ;
     }
 
     class Item
@@ -126,12 +155,6 @@ namespace Game
         Type::Armor& type;
         Type::ArmorMaterial &material;
         Type::ArmorBonus &bonus;
-    };
-    class Helmet : public Equipment
-    {
-        Type::Helmet& type;
-        Type::HelmetMaterial &material;
-        Type::HelmetBonus &bonus;
     };
 
     class Weapon : public Equipment

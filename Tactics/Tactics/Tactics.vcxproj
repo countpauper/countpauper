@@ -92,8 +92,12 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="Armor" />
+    <Text Include="ArmorBonus" />
+    <Text Include="ArmorMaterial" />
     <Text Include="Game.map" />
     <Text Include="Skill" />
+    <Text Include="Weapon" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />

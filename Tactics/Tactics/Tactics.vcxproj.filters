@@ -13,10 +13,25 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{5e122401-4466-45fa-91da-3908a9e8e648}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Skill" />
     <Text Include="Game.map" />
+    <Text Include="Armor">
+      <Filter>Data</Filter>
+    </Text>
+    <Text Include="ArmorBonus">
+      <Filter>Data</Filter>
+    </Text>
+    <Text Include="ArmorMaterial">
+      <Filter>Data</Filter>
+    </Text>
+    <Text Include="Weapon">
+      <Filter>Data</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
