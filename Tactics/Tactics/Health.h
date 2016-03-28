@@ -17,7 +17,7 @@ namespace Game
         Severed = MaxPain,
     };
 
-    enum class Blunt : Pain
+    enum class Crush : Pain
     {
         Immune = ImmunePain,
         Healthy = 0,
@@ -51,7 +51,7 @@ namespace Game
     {
         enum class Type
         {
-            Blunt = 0,
+            Crush = 0,
             Sharp,
             Fire,
             Disease,
@@ -67,12 +67,12 @@ namespace Game
     {
     public:
         Sharp sharp;
-        Blunt blunt;
+        Crush crush;
         Fire burn;
         Disease disease;
         
         void Cut(Sharp damage);
-        void Hit(Blunt damage);
+        void Hit(Crush damage);
         void Burn(Fire damage);
         void Inflict(Disease damage);
         std::wstring Description() const;

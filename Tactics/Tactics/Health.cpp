@@ -7,7 +7,7 @@ namespace Game
 {
     const Damage::Table Damage::table = 
     {
-        { Damage::Type::Blunt, {
+        { Damage::Type::Crush, {
             { ImmunePain, { L"Immune", 0 } },
             { 0, { L"Healthy", 0 } },
             { 1, { L"Bruised", -1 } },
@@ -77,7 +77,7 @@ namespace Game
     }
     std::pair<Damage::Type, int> Health::FindWorst() const
     {
-        std::pair<Damage::Type, int> result(Damage::Type::Blunt, int(blunt));
+        std::pair<Damage::Type, int> result(Damage::Type::Crush, int(crush));
         if (int(sharp) > result.second)
             result = std::pair<Damage::Type, int>(Damage::Type::Sharp, int(sharp));
         if (int(burn) > result.second)
@@ -89,12 +89,12 @@ namespace Game
 
     std::wistream& operator>>(std::wistream& s, Health& health)
     {
-        int bluntScore, sharpScore, burnScore, diseaseScore;
-        s >> bluntScore >> sharpScore >> burnScore >> diseaseScore;// int(health.blunt) >> int(health.sharp) >> int(health.burn) >> int(health.disease);
-        health.blunt = Blunt(bluntScore);
-        health.sharp = Sharp(sharpScore);
-        health.burn = Fire(burnScore);
-        health.disease = Disease(diseaseScore);
+        int crushDamage, sharpDamage, burnDamage, diseaseDamage;
+        s >> crushDamage >> sharpDamage >> burnDamage >> diseaseDamage;// int(health.blunt) >> int(health.sharp) >> int(health.burn) >> int(health.disease);
+        health.crush = Crush(crushDamage);
+        health.sharp = Sharp(sharpDamage);
+        health.burn = Fire(burnDamage);
+        health.disease = Disease(diseaseDamage);
         return s;
     }
 }

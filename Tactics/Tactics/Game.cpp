@@ -5,13 +5,16 @@
 #include "Actor.h"
 #include "Plan.h"
 #include "Skills.h"
-
+#include "Item.h"
+#include <fstream>
 namespace Game
 {
 
     Game::Game(std::unique_ptr<Skills> skills) :
         skills(std::move(skills))
     {
+        std::wifstream ifs(L"ArmorMaterial.csv");
+        auto armorMaterials = Type::Armor::Material::Load(ifs);
     }
     
     Game::~Game() = default;

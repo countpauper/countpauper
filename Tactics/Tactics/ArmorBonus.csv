@@ -1,0 +1,21 @@
+#Prefix,Post fix,Freq.,ReqStr,ReqWis,Material   ,Sharp  ,Crush  ,Fire   ,Disease,Skill,Bonus
+Dirty,,0,0,0,Cloth,0,0,0,-1,,
+Ripped,,0,0,0,Cloth,0,0,0,0,,
+Ripped,,0,0,0,Leather,-1,0,0,0,,
+Dented,,0,0,0,Metal,0,-1,0,0,,
+Rusted,,0,0,0,Metal,-1,0,0,0,,
+Padded,,0,+1,0,Cloth,+1,0,0,0,,
+Studded,,0,+1,0,Leather,+1,0,0,0,,
+Hardened,,0,+1,0,Leather,+1,+1,0,0,,
+Reinforced,,0,+1,0,Metal,+1,+1,0,0,,
+Heavy,,0,+2,0,Metal,0,+2,0,0,,
+Blessed,,0,0,+2,Metal,0,0,0,+2,,
+Blessed,,0,0,+2,Leather,0,+1,0,+3,,
+Blessed,,0,0,0,Cloth,+1,+1,0,+3,,
+Hallowed,,0,0,0,Cloth,0,0,+1,+2,Restoration,+2
+Enchanted,,0,0,0,Cloth,0,0,+2,0,,
+Ghostly,,0,-1,+1,Leather,0,0,0,0,,
+Ghostly,,0,-2,+2,Metal,0,0,0,0,,
+Bewitched,,0,0,0,Leather,0,0,0,0,Enchantment,+2
+None,,0,0,0,Cloth,0,0,0,0,,
+None,,0,0,0,Cloth,0,0,0,0,,

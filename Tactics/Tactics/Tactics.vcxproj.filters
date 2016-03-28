@@ -20,16 +20,13 @@
   <ItemGroup>
     <Text Include="Skill" />
     <Text Include="Game.map" />
-    <Text Include="Armor">
+    <Text Include="Weapon.csv">
       <Filter>Data</Filter>
     </Text>
-    <Text Include="ArmorBonus">
+    <Text Include="ArmorBonus.csv">
       <Filter>Data</Filter>
     </Text>
-    <Text Include="ArmorMaterial">
-      <Filter>Data</Filter>
-    </Text>
-    <Text Include="Weapon">
+    <Text Include="Armor.csv">
       <Filter>Data</Filter>
     </Text>
   </ItemGroup>
@@ -112,6 +109,9 @@
     <ClInclude Include="Item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CSV.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -177,6 +177,9 @@
     <ClCompile Include="Stats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tactics.rc">
@@ -193,5 +196,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="1on1.map" />
+    <None Include="ArmorMaterial.csv">
+      <Filter>Data</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -2,6 +2,8 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+#include <iostream>
 
 namespace Game
 {
@@ -10,13 +12,14 @@ namespace Game
         class Item
         {
         public:
-            Item() : rarity(0.0) {}
+            Item() : frequency(0) {}
             std::wstring name;
-            double rarity;  
+            int frequency;  
         };
 
         class Requirement
         {
+        public:
             Requirement() : strength(0), wisdom(0) {}
             int strength;
             int wisdom;
@@ -25,9 +28,9 @@ namespace Game
         class Damage
         {
         public:
-            Damage() : sharp(0), blunt(0), fire(0), disease(0) {}
+            Damage() : sharp(0), crush(0), fire(0), disease(0) {}
             int sharp;
-            int blunt;
+            int crush;
             int fire;
             int disease;
         };
@@ -38,6 +41,15 @@ namespace Game
             Requirement requirement;
         };
 
+        enum class Element
+        {
+            None = 0,
+            Fire,
+            Water,
+            Nature,
+            Stone,
+            Air
+        };
 
         class Material
         {
@@ -45,16 +57,18 @@ namespace Game
             enum Category
             {
                 None = 0,
-                Cloth = 1,
-                Leather = 2,
-                Metal = 4,
-                Wood = 8,
-                Magic = 16
+                Cloth,
+                Leather,
+                Metal,
+                Wood,
+                Precious,
+                Gem
             };
-
-            Material() : rarity(0.0), category(None) {}
+            Material() : frequency(0), category(None) {}
             std::wstring name;
-            double rarity;
+            int frequency;
+            int magic;
+            Element element;
             Category category;
             Requirement requirement;
         };
@@ -62,83 +76,78 @@ namespace Game
         class Bonus
         {
         public:
-            Bonus() : rarity(0.0) {}
+            Bonus() : frequency(0) {}
             std::wstring name;
-            double rarity;
+            int frequency;
             Requirement requirement;
         };
 
-        class ArmorMaterial : public Material
-        {
-        public:
-            Damage mitigation;
-        };
-
-        class ArmorBonus : public Bonus
-        {
-        public:
-            Damage mitigation;
-        };
     
         enum class Covers
         {
             Nothing = 0,
-            Chest = 1,
-            Arms = 2,
-            Legs = 4,
-            Head = 8
+            Belly = 1,
+            Chest = 2,
+            Arms = 4,
+            Legs = 8,
+            Head = 16,
+            Finger = 32,
+            Neck = 64,
 
-            Breast = Chest,
-            Gloves = Arms,
-            Boots = Legs,
-            Helmet = Head,
-            Shirt = Chest + Arms,
-            Body = Chest + Arms + Legs,
-            Full = Chest + Arms + Legs + Head,
+            Trunk = Belly+Chest,
+            Body = Trunk + Arms + Legs,
+            Full = Body + Head,
+
         };
 
         class Armor : public Equipment
         {
-            Armor() : cover(Covers::Nothing), material(Material::None) {}
+        public:
+            class Material : public Type::Material
+            {
+            public:
+                Damage mitigation;
+                static std::vector<Material> Load(std::wistream& fileName);
+            };
+            class Bonus : public Type::Bonus
+            {
+            public:
+                Damage mitigation;
+            };
+            Armor() : cover(Covers::Nothing), material(Type::Material::None) {}
             Covers cover;
-            Material::Category material;
+            Type::Material::Category material;
             Damage mitigation;
         };
 
-        class WeaponBonus : public Bonus
-        {
-        public:
-            Damage bonus;
-        };
-        class WeaponMaterial : public Material
-        {
-        public:
-            Damage bonus;
-        };
+
 
         class Weapon: public Equipment
         {
         public:
+            class Material : public Type::Material
+            {
+            public:
+                Damage bonus;
+            };
+            class Bonus : public Type::Bonus
+            {
+            public:
+                Damage bonus;
+            };            
             enum Style
             {
                 Unarmed,
                 Blade,
-                Blunt,
+                Stave,
                 Ranged,
             };
-            Weapon() : style(Unarmed), twohanded(false), material(Material::None) {}
+            Weapon() : style(Unarmed), twohanded(false), material(Type::Material::None) {}
             Style style;
             bool twohanded;
             Damage base;
-            Material::Category material;
+            Type::Material::Category material;
         };
-
-        using ArmorMaterials = std::vector <ArmorMaterial> ;
-        using ArmorBonuses = std::vector <ArmorBonus> ;
-        using Armors = std::vector <Armor> ;
-        using WeaponMaterials = std::vector <WeaponMaterial> ;
-        using WeaponBonuses = std::vector <WeaponBonus> ;
-        using Weapons = std::vector <Weapon> ;
     }
 
     class Item
@@ -153,15 +162,18 @@ namespace Game
     class Armor : public Equipment
     {
         Type::Armor& type;
-        Type::ArmorMaterial &material;
-        Type::ArmorBonus &bonus;
+        Type::Armor::Material &material;
+        Type::Armor::Bonus &bonus;
+        virtual void Default() = 0;
     };
 
     class Weapon : public Equipment
     {
         Type::Weapon& type;
-        Type::WeaponMaterial &material;
-        Type::WeaponBonus &bonus;
+        Type::Weapon::Material &material;
+        Type::Weapon::Bonus &bonus;
     };
+
+    
 }
 
