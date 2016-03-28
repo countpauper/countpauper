@@ -150,6 +150,8 @@ namespace Engine
             {
                 wchar_t buffer[65536];
                 file.getline(buffer, 65536);
+                if (buffer[0] == 0)
+                    continue;
                 if (buffer[0] == '#')
                     continue;
                 result.push_back(T());

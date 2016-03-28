@@ -5,9 +5,9 @@
 
 namespace Game
 {
-    const Damage::Table Damage::table = 
+    const Wounds::Table Wounds::table = 
     {
-        { Damage::Type::Crush, {
+        { Wounds::Type::Crush, {
             { ImmunePain, { L"Immune", 0 } },
             { 0, { L"Healthy", 0 } },
             { 1, { L"Bruised", -1 } },
@@ -19,7 +19,7 @@ namespace Game
             { 7, { L"Broken", -3 } },
             { 8, { L"Crushed", -4 } }
         }},
-        { Damage::Type::Sharp, {
+        { Wounds::Type::Sharp, {
             { ImmunePain, { L"Immune", 0 } },
             { 0, { L"Health", 0 } },
             { 1, { L"Scratched", -1 } },
@@ -31,7 +31,7 @@ namespace Game
             { 7, { L"Hemorrhaging", -3 } },
             { 8, { L"Severed", -4 } }
         } },        
-        { Damage::Type::Fire, {
+        { Wounds::Type::Fire, {
             { ImmunePain, { L"Immune", 0 } },
             { 0, { L"Health", 0 } },
             { 1, { L"Singed", -1 } },
@@ -43,7 +43,7 @@ namespace Game
             { 7, { L"Burned", -3 } },
             { 8, { L"Charred", -4 } }
         } },
-        { Damage::Type::Disease, {
+        { Wounds::Type::Disease, {
             { ImmunePain, { L"Immune", 0 } },
             { 0, { L"Health", 0 } },
             { 1, { L"Infected", -1 } },
@@ -61,7 +61,7 @@ namespace Game
     {
         auto worst = FindWorst();
         std::wstringstream ss;
-        return Damage::table.at(worst.first).at(worst.second).description;
+        return Wounds::table.at(worst.first).at(worst.second).description;
         return ss.str();
     }
 
@@ -75,15 +75,15 @@ namespace Game
         auto worst = FindWorst();
         return worst.second >= 8;
     }
-    std::pair<Damage::Type, int> Health::FindWorst() const
+    std::pair<Wounds::Type, int> Health::FindWorst() const
     {
-        std::pair<Damage::Type, int> result(Damage::Type::Crush, int(crush));
+        std::pair<Wounds::Type, int> result(Wounds::Type::Crush, int(crush));
         if (int(sharp) > result.second)
-            result = std::pair<Damage::Type, int>(Damage::Type::Sharp, int(sharp));
+            result = std::pair<Wounds::Type, int>(Wounds::Type::Sharp, int(sharp));
         if (int(burn) > result.second)
-            result = std::pair<Damage::Type, int>(Damage::Type::Fire, int(burn));
+            result = std::pair<Wounds::Type, int>(Wounds::Type::Fire, int(burn));
         if (int(disease) > result.second)
-            result = std::pair<Damage::Type, int>(Damage::Type::Disease, int(disease));
+            result = std::pair<Wounds::Type, int>(Wounds::Type::Disease, int(disease));
         return result;
     }
 

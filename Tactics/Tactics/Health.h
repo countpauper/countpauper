@@ -47,7 +47,7 @@ namespace Game
         Necrotic = MaxPain,
     };
 
-    struct Damage
+    struct Wounds
     {
         enum class Type
         {
@@ -59,7 +59,7 @@ namespace Game
         };
         std::wstring description;
         int penalty;
-        typedef std::map<Damage::Type, std::map<Pain, Damage>> Table;
+        typedef std::map<Wounds::Type, std::map<Pain, Wounds>> Table;
         static const Table table;
     };
 
@@ -78,7 +78,7 @@ namespace Game
         std::wstring Description() const;
         bool Dead() const;
     protected:
-        std::pair<Damage::Type, int> FindWorst() const;
+        std::pair<Wounds::Type, int> FindWorst() const;
     };
     std::wistream& operator>>(std::wistream& s, Health& actor);
 

@@ -13,8 +13,26 @@ namespace Game
     Game::Game(std::unique_ptr<Skills> skills) :
         skills(std::move(skills))
     {
-        std::wifstream ifs(L"ArmorMaterial.csv");
-        auto armorMaterials = Type::Armor::Material::Load(ifs);
+        auto armorMaterials = Type::Armor::Material::Load(std::wifstream(L"ArmorMaterial.csv"));
+        auto armors = Type::Armor::Load(std::wifstream(L"Armor.csv"));
+        std::wofstream out(L"Items.csv");
+        out << L"Name, ReqStr, ReqWis, Sharp, Crush, Fire, Disease, Spirit" << std::endl;
+        for (auto& armor : armors)
+        {
+            for (auto& material : armorMaterials)
+            {
+                if (armor.material == material.category)
+                {
+                    Armor item(armor, material);
+                    Damage mitigation(item.Mitigation()); 
+                    Requirement req(item.Required());
+                    out << item.Name();
+                    out << L"," << req.strength << L"," << req.wisdom;
+                    out << L"," << mitigation.sharp << L"," << mitigation.crush << L"," << mitigation.fire << L"," << mitigation.disease << L"," << mitigation.spirit;
+                    out << std::endl;
+                }
+            }
+        }
     }
     
     Game::~Game() = default;

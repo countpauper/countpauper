@@ -1,37 +1,37 @@
-#Name,Freq.,ReqStr,ReqWis,Cover,Material,Sharp,Crush,Fire,Disease
-Slippers,0,0,0,Legs,Cloth,0,0,0,0
-Shoes,0,1,0,Legs,Leather,1,0,0,0
-Boots,0,2,0,Legs,Leather,1,1,0,0
-Sabatons,0,4,0,Legs,Metal,2,1,0,0
-Greaves,0,5,0,Legs,Metal,2,2,0,0
-Mittens,0,1,0,Arms,Cloth,0,0,0,0
-Wrist Bands,0,2,0,Arms,Leather,1,0,0,0
-Gloves,0,2,0,Arms,Leather,1,0,0,0
-Braclets,0,3,0,Arms,Precious,1,1,0,0
-Gauntlets,0,4,0,Arms,Metal,2,1,0,0
-Vambraces,0,5,0,Arms,Metal,2,2,0,0
-Veil,0,0,0,Head,Cloth,0,0,0,0
-Cowl,0,1,0,Head,Cloth,0,0,0,0
-Hood,0,2,0,Head,Leather,1,0,0,0
-Coif,0,3,0,Head,Metal,2,0,0,0
-Cap,0,4,0,Head,Metal,2,1,0,0
-Helmet,0,5,0,Head,Metal,2,2,0,0
-Crown,0,2,0,Head,Precious,1,1,0,0
-Corset,0,1,0,Belly,Cloth,0,0,0,0
-Belt,0,2,0,Belly,Leather,1,0,0,0
-Girdle,0,3,0,Belly,Metal,2,1,0,0
-Brazier,0,1,0,Chest,Cloth,0,0,0,0
-Vest,0,2,0,Trunk,Cloth,0,0,0,0
-Jerkin,0,4,0,Trunk,Leather,1,0,0,0
-Haubergeon,0,6,0,Trunk,Metal,2,1,0,0
-Breast Plate,0,10,0,Trunk,Metal,2,2,0,0
-Blouse,0,3,0,Shirt,Cloth,0,0,0,0
-Jacket,0,6,0,Shirt,Leather,1,0,0,0
-Hauberk,0,9,0,Shirt,Metal,2,1,0,0
-Robe,0,4,0,Body,Cloth,0,0,0,0
-Scale Mail,0,16,0,Body,Metal,2,2,0,0
-Plate Mail,0,25,0,Full,Metal,2,3,0,0
-Ring,0,0,5,Finger,Precious,0,0,0,0
-Necklace,0,0,10,Neck,Precious,0,0,0,0
-Ring,0,0,5,Finger,Gem,0,0,0,0
-Necklace,0,0,10,Neck,Gem,0,0,0,0
+#Name,Freq.,ReqStr,ReqWis,Cover,Material,Sharp,Crush,Fire,Disease,Spirit
+Slippers,0,0,0,Legs,Cloth,0,0,0,0,0
+Shoes,0,1,0,Legs,Leather,1,0,0,0,0
+Boots,0,2,0,Legs,Leather,1,1,0,0,0
+Sabatons,0,4,0,Legs,Metal,2,1,0,0,0
+Greaves,0,5,0,Legs,Metal,2,2,0,0,0
+Mittens,0,1,0,Arms,Cloth,0,0,0,0,0
+Wrist Bands,0,2,0,Arms,Leather,1,0,0,0,0
+Gloves,0,2,0,Arms,Leather,1,0,0,0,0
+Braclets,0,3,0,Arms,Precious,1,1,0,0,0
+Gauntlets,0,4,0,Arms,Metal,2,1,0,0,0
+Vambraces,0,5,0,Arms,Metal,2,2,0,0,0
+Veil,0,0,0,Head,Cloth,0,0,0,0,0
+Cowl,0,1,0,Head,Cloth,0,0,0,0,0
+Hood,0,2,0,Head,Leather,1,0,0,0,0
+Coif,0,3,0,Head,Metal,2,0,0,0,0
+Cap,0,4,0,Head,Metal,2,1,0,0,0
+Helmet,0,5,0,Head,Metal,2,2,0,0,0
+Crown,0,2,0,Head,Precious,1,1,0,0,0
+Corset,0,1,0,Belly,Cloth,0,0,0,0,0
+Belt,0,2,0,Belly,Leather,1,0,0,0,0
+Girdle,0,3,0,Belly,Metal,2,1,0,0,0
+Brazier,0,1,0,Chest,Cloth,0,0,0,0,0
+Vest,0,2,0,Trunk,Cloth,0,0,0,0,0
+Jerkin,0,4,0,Trunk,Leather,1,0,0,0,0
+Haubergeon,0,6,0,Trunk,Metal,2,1,0,0,0
+Breast Plate,0,10,0,Trunk,Metal,2,2,0,0,0
+Blouse,0,3,0,Shirt,Cloth,0,0,0,0,0
+Jacket,0,6,0,Shirt,Leather,1,0,0,0,0
+Hauberk,0,9,0,Shirt,Metal,2,1,0,0,0
+Robe,0,4,0,Body,Cloth,0,0,0,0,0
+Scale Mail,0,16,0,Body,Metal,2,2,0,0,0
+Plate Mail,0,25,0,Full,Metal,2,3,0,0,0
+Ring,0,0,5,Finger,Precious,0,0,0,0,0
+Necklace,0,0,10,Neck,Precious,0,0,0,0,0
+Ring,0,0,5,Finger,Gem,0,0,0,0,0
+Necklace,0,0,10,Neck,Gem,0,0,0,0,0
