@@ -23,7 +23,8 @@ namespace Game
             {
                 if (armor.material == material.category)
                 {
-                    Armor item(armor, material);
+                    Type::Armor::Bonus bonus;
+                    Armor item(armor, material, bonus);
                     Damage mitigation(item.Mitigation()); 
                     Requirement req(item.Required());
                     out << item.Name();

@@ -42,6 +42,15 @@ namespace Game
         Air
     };
 
+    enum class Statistic
+    {
+        None = 0,
+        Strength,
+        Agility,
+        Constitution,
+        Intelligence,
+        Wisdom
+    };
 
     namespace Type
     {
@@ -84,9 +93,10 @@ namespace Game
         class Bonus
         {
         public:
-            Bonus() : frequency(0) {}
+            Bonus() : frequency(0), magic(0) {}
             std::wstring name;
             int frequency;
+            int magic;
             Requirement requirement;
         };
 
@@ -121,7 +131,12 @@ namespace Game
             class Bonus : public Type::Bonus
             {
             public:
+                Material::Category material;
                 Damage mitigation;
+                std::wstring skill;
+                int skillBonus;
+                Statistic stat;
+                int statBonus;
             };
 
             Armor() : cover(Covers::Nothing), material(Type::Material::None) {}
@@ -170,19 +185,19 @@ namespace Game
 
     class Equipment : public Item
     {
-
     };
+
     class Armor : public Equipment
     {
     public:
-        Armor(Type::Armor& type, Type::Armor::Material& material);
+        Armor(Type::Armor& type, Type::Armor::Material& material, Type::Armor::Bonus& bonus);
         std::wstring Name() const;
         Requirement Required() const;
         Damage Mitigation() const;
     private:
         Type::Armor& type;
         Type::Armor::Material &material;
-        Type::Armor::Bonus *bonus;
+        Type::Armor::Bonus &bonus;
     };
 
     class Weapon : public Equipment

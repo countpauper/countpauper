@@ -119,9 +119,10 @@ namespace Game
         return Damage(sharp + other.sharp, crush + other.crush, fire + other.fire, disease + other.disease, spirit+other.spirit);
     }
 
-    Armor::Armor(Type::Armor& type, Type::Armor::Material& material) :
+    Armor::Armor(Type::Armor& type, Type::Armor::Material& material, Type::Armor::Bonus& bonus) :
         type(type),
-        material(material)
+        material(material),
+        bonus(bonus)
     {
     }
 
