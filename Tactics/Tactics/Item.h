@@ -94,7 +94,7 @@ namespace Game
         {
         public:
             Bonus() : frequency(0), magic(0) {}
-            std::wstring name;
+            std::wstring prefix, postfix;
             int frequency;
             int magic;
             Requirement requirement;
@@ -137,6 +137,7 @@ namespace Game
                 int skillBonus;
                 Statistic stat;
                 int statBonus;
+                static std::vector<Bonus> Load(std::wistream& fileName);
             };
 
             Armor() : cover(Covers::Nothing), material(Type::Material::None) {}

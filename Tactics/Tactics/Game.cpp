@@ -15,17 +15,21 @@ namespace Game
     {
         auto armorMaterials = Type::Armor::Material::Load(std::wifstream(L"ArmorMaterial.csv"));
         auto armors = Type::Armor::Load(std::wifstream(L"Armor.csv"));
+        auto armorBoni = Type::Armor::Bonus::Load(std::wifstream(L"ArmorBonus.csv"));
         std::wofstream out(L"Items.csv");
         out << L"Name, ReqStr, ReqWis, Sharp, Crush, Fire, Disease, Spirit" << std::endl;
         for (auto& armor : armors)
         {
             for (auto& material : armorMaterials)
             {
-                if (armor.material == material.category)
+                if (armor.material != material.category)
+                    continue;
+                for (auto& bonus : armorBoni)
                 {
-                    Type::Armor::Bonus bonus;
+                    if (armor.material != bonus.material)
+                        continue;
                     Armor item(armor, material, bonus);
-                    Damage mitigation(item.Mitigation()); 
+                    Damage mitigation(item.Mitigation());
                     Requirement req(item.Required());
                     out << item.Name();
                     out << L"," << req.strength << L"," << req.wisdom;

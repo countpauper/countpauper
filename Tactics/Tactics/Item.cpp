@@ -41,7 +41,17 @@ namespace Game
             { L"Trunk", Covers::Trunk },
             { L"Shirt", Covers::Shirt },
             { L"Body", Covers::Body },
-            { L"Full", Covers::Full},
+            { L"Full", Covers::Full },
+        });
+
+        std::map<std::wstring, Statistic> statisticMap(
+        {
+            { L"", Statistic::None },
+            { L"Strength", Statistic::Strength },
+            { L"Agility", Statistic::Agility },
+            { L"Constitution", Statistic::Constitution },
+            { L"Intelligence", Statistic::Intelligence },
+            { L"Wisdom", Statistic::Wisdom }
         });
 
         Engine::Adapter::Integer<Requirement> reqstr(&Requirement::strength);
@@ -70,16 +80,33 @@ namespace Game
         }
 
 
+        std::vector<Armor::Bonus> Armor::Bonus::Load(std::wistream& file)
+        {
+            Engine::Adapter::String<Armor::Bonus> prefix(&Armor::Bonus::prefix);
+            Engine::Adapter::String<Armor::Bonus> postfix(&Armor::Bonus::postfix);
+            Engine::Adapter::Integer<Armor::Bonus> frequency(&Armor::Bonus::frequency);
+            Engine::Adapter::Integer<Armor::Bonus> magic(&Armor::Bonus::magic);
+            Engine::Adapter::Struct<Armor::Bonus, Requirement> requirement(&Armor::Bonus::requirement, requirementAdapters);
+            Engine::Adapter::Enumeration<Armor::Bonus, Material::Category> material(&Armor::Bonus::material, materialCategoryMap);
+            Engine::Adapter::Struct<Armor::Bonus, Damage> mitigation(&Armor::Bonus::mitigation, damageAdapters);
+            Engine::Adapter::String<Armor::Bonus> skill(&Armor::Bonus::skill);
+            Engine::Adapter::Integer<Armor::Bonus> skillBonus(&Armor::Bonus::skillBonus);
+            Engine::Adapter::Enumeration<Armor::Bonus, Statistic> stat(&Armor::Bonus::stat, statisticMap);
+            Engine::Adapter::Integer<Armor::Bonus> statBonus(&Armor::Bonus::statBonus);
+            Engine::CSV<Armor::Bonus> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &material, &mitigation, &skill, &skillBonus, &stat, &statBonus });
+            return csv.Read();
+        }
+
         std::vector<Armor> Armor::Load(std::wistream& file)
         {
             Engine::Adapter::String<Armor> name(&Armor::name);
             Engine::Adapter::Integer<Armor> frequency(&Armor::frequency);
-            Engine::Adapter::Struct<Armor, Requirement> requirement(&Armor::requirement, { &reqstr, &reqwis });
+            Engine::Adapter::Struct<Armor, Requirement> requirement(&Armor::requirement, requirementAdapters);
             Engine::Adapter::Enumeration<Armor, Covers> covers(&Armor::cover, coverMap);
             Engine::Adapter::Enumeration<Armor, Material::Category> material(&Armor::material, materialCategoryMap);
             Engine::Adapter::Struct<Armor, Damage> mitigation(&Armor::mitigation, damageAdapters);
 
-            Engine::CSV<Armor> csv(file, {&name, &frequency, &requirement, &covers, &material, &mitigation});
+            Engine::CSV<Armor> csv(file, { &name, &frequency, &requirement, &covers, &material, &mitigation });
             return csv.Read();
         }
 
@@ -128,15 +155,23 @@ namespace Game
 
     std::wstring Armor::Name() const
     {
-        return material.name + L" " + type.name;
+        std::wstring name;
+        if (!bonus.prefix.empty())
+            name = bonus.prefix + L" ";
+        if (!material.name.empty())
+            name += material.name + L" ";
+        name += type.name;
+        if (!bonus.postfix.empty())
+            name += L" " + bonus.postfix;
+        return name;
     }
     Requirement Armor::Required() const
     {
-        return type.requirement + material.requirement * type.CoverCount();
+        return type.requirement + bonus.requirement + material.requirement * type.CoverCount();
     }
 
     Damage Armor::Mitigation() const
     {
-        return type.mitigation + material.mitigation;
+        return type.mitigation + material.mitigation + bonus.mitigation;
     }
 }
