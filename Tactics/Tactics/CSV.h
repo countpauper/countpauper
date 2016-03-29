@@ -8,12 +8,6 @@
 
 namespace Engine
 {
-/*    template<typename T, typename U> size_t offsetOf(U T::*member)
-    {
-        return (char*)&((T*)nullptr->*member) - (char*)nullptr;
-    }
-*/
-  
     namespace Adapter
     {
         template<class T>

@@ -132,21 +132,21 @@ namespace Game
 
     }
 
-    Requirement Requirement::operator+(const Requirement& other)
+    Requirement Requirement::operator+(const Requirement& other) const
     {
         return Requirement(strength + other.strength, wisdom + other.wisdom);
     }
 
-    Requirement Requirement::operator*(int multiplier)
+    Requirement Requirement::operator*(int multiplier) const
     {
         return Requirement(strength + multiplier, wisdom * multiplier);
     }
-    Damage Damage::operator+(const Damage& other)
+    Damage Damage::operator+(const Damage& other) const
     {
         return Damage(sharp + other.sharp, crush + other.crush, fire + other.fire, disease + other.disease, spirit+other.spirit);
     }
 
-    Armor::Armor(Type::Armor& type, Type::Armor::Material& material, Type::Armor::Bonus& bonus) :
+    Armor::Armor(const Type::Armor& type, const Type::Armor::Material& material, const Type::Armor::Bonus& bonus) :
         type(type),
         material(material),
         bonus(bonus)

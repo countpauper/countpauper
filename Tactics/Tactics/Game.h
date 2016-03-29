@@ -7,6 +7,7 @@
 #include "Direction.h"
 #include "Map.h"
 #include "IGame.h"
+#include "Item.h"
 
 namespace Game
 {
@@ -51,6 +52,8 @@ namespace Game
         void AI(Actor* actor);
         void Next();
         std::wstring Description() const override;
+        void TestDumpAllItems(std::wostream& out) const;
+
 
         friend std::wistream& operator>>(std::wistream& s, Game& game);
         Map map;
@@ -58,6 +61,11 @@ namespace Game
         Objects objects;
         Objects::iterator turn;
         std::unique_ptr<Plan> plan;
+
+        std::vector<Type::Armor> armors;
+        std::vector<Type::Armor::Material> armorMaterials;
+        std::vector<Type::Armor::Bonus> armorBoni;
+        std::vector<Type::Weapon> weapons;
     };
     std::wistream& operator>>(std::wistream& s, Game& game);
 

@@ -11,37 +11,17 @@ namespace Game
 {
 
     Game::Game(std::unique_ptr<Skills> skills) :
-        skills(std::move(skills))
+        skills(std::move(skills)),
+        armorMaterials(Type::Armor::Material::Load(std::wifstream(L"ArmorMaterial.csv"))),
+        armors(Type::Armor::Load(std::wifstream(L"Armor.csv"))),
+        armorBoni(Type::Armor::Bonus::Load(std::wifstream(L"ArmorBonus.csv")))
     {
-        auto armorMaterials = Type::Armor::Material::Load(std::wifstream(L"ArmorMaterial.csv"));
-        auto armors = Type::Armor::Load(std::wifstream(L"Armor.csv"));
-        auto armorBoni = Type::Armor::Bonus::Load(std::wifstream(L"ArmorBonus.csv"));
-        std::wofstream out(L"Items.csv");
-        out << L"Name, ReqStr, ReqWis, Sharp, Crush, Fire, Disease, Spirit" << std::endl;
-        for (auto& armor : armors)
-        {
-            for (auto& material : armorMaterials)
-            {
-                if (armor.material != material.category)
-                    continue;
-                for (auto& bonus : armorBoni)
-                {
-                    if (armor.material != bonus.material)
-                        continue;
-                    Armor item(armor, material, bonus);
-                    Damage mitigation(item.Mitigation());
-                    Requirement req(item.Required());
-                    out << item.Name();
-                    out << L"," << req.strength << L"," << req.wisdom;
-                    out << L"," << mitigation.sharp << L"," << mitigation.crush << L"," << mitigation.fire << L"," << mitigation.disease << L"," << mitigation.spirit;
-                    out << std::endl;
-                }
-            }
-        }
+        // TestDumpAllItems(std::wofstream(L"Items.csv"));
     }
     
     Game::~Game() = default;
-   
+
+
     State Game::Get(const Actor& actor) const
     {
         return State(actor);
@@ -313,6 +293,32 @@ namespace Game
             }
         }
     }
+
+    void Game::TestDumpAllItems(std::wostream& out) const
+    {
+        out << L"Name, ReqStr, ReqWis, Sharp, Crush, Fire, Disease, Spirit" << std::endl;
+        for (auto& armor : armors)
+        {
+            for (auto& material : armorMaterials)
+            {
+                if (armor.material != material.category)
+                    continue;
+                for (auto& bonus : armorBoni)
+                {
+                    if (armor.material != bonus.material)
+                        continue;
+                    Armor item(armor, material, bonus);
+                    Damage mitigation(item.Mitigation());
+                    Requirement req(item.Required());
+                    out << item.Name();
+                    out << L"," << req.strength << L"," << req.wisdom;
+                    out << L"," << mitigation.sharp << L"," << mitigation.crush << L"," << mitigation.fire << L"," << mitigation.disease << L"," << mitigation.spirit;
+                    out << std::endl;
+                }
+            }
+        }
+    }
+
 
 }   // ::Game
 

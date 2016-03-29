@@ -14,8 +14,8 @@ namespace Game
         Requirement(int strength, int wisdom) : strength(strength), wisdom(wisdom) {}
         int strength;
         int wisdom;
-        Requirement operator+(const Requirement& other);
-        Requirement operator*(int multiplier);
+        Requirement operator+(const Requirement& other) const;
+        Requirement operator*(int multiplier) const;
     };
 
     class Damage
@@ -28,7 +28,7 @@ namespace Game
         int fire;
         int disease;
         int spirit;
-        Damage operator+(const Damage& other);
+        Damage operator+(const Damage& other) const;
     };
 
     
@@ -191,22 +191,22 @@ namespace Game
     class Armor : public Equipment
     {
     public:
-        Armor(Type::Armor& type, Type::Armor::Material& material, Type::Armor::Bonus& bonus);
+        Armor(const Type::Armor& type, const Type::Armor::Material& material, const Type::Armor::Bonus& bonus);
         std::wstring Name() const;
         Requirement Required() const;
         Damage Mitigation() const;
     private:
-        Type::Armor& type;
-        Type::Armor::Material &material;
-        Type::Armor::Bonus &bonus;
+        const Type::Armor& type;
+        const Type::Armor::Material &material;
+        const Type::Armor::Bonus &bonus;
     };
 
     class Weapon : public Equipment
     {
     public:
-        Type::Weapon& type;
-        Type::Weapon::Material &material;
-        Type::Weapon::Bonus *bonus;
+        const Type::Weapon& type;
+        const Type::Weapon::Material &material;
+        const Type::Weapon::Bonus *bonus;
     };
 
     
