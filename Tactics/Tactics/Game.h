@@ -48,6 +48,10 @@ namespace Game
         std::unique_ptr<const Skills> skills;
         Actor* ActiveActor() const override;
         void MakePlan(Actor& actor, const Skill& skill);
+
+        const Type::Armor& FindArmor(const std::wstring& name) const;
+        const Type::Armor::Material&  FindArmorMaterial(const std::wstring& name, Type::Material::Category material) const;
+        const Type::Armor::Bonus& FindArmorBonus(const std::wstring& name, Type::Material::Category material) const;
     protected:
         void AI(Actor* actor);
         void Next();

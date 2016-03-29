@@ -294,6 +294,33 @@ namespace Game
         }
     }
 
+    const Type::Armor& Game::FindArmor(const std::wstring& name) const
+    {
+        for (const auto& armor : armors)
+        {
+            if (armor.name == name)
+                return armor;
+        }
+        throw std::invalid_argument("Unknown armor type");
+    }
+    const Type::Armor::Material&  Game::FindArmorMaterial(const std::wstring& name, Type::Material::Category category) const
+    {
+        for (const auto& material : armorMaterials)
+        {
+            if (material.category == category && material.name == name)
+                return material;
+        }
+        throw std::invalid_argument("Unknown material type");
+    }
+    const Type::Armor::Bonus& Game::FindArmorBonus(const std::wstring& name, Type::Material::Category material) const
+    {
+        for (const auto& bonus : armorBoni)
+        {
+            if (bonus.material == material && bonus.prefix == name)
+                return bonus;
+        }
+        throw std::invalid_argument("Unknown bonus type");
+    }
     void Game::TestDumpAllItems(std::wostream& out) const
     {
         out << L"Name, ReqStr, ReqWis, Sharp, Crush, Fire, Disease, Spirit" << std::endl;

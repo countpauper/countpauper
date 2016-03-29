@@ -6,6 +6,7 @@
 #include "Direction.h"
 #include "Health.h"
 #include "Stats.h"
+#include "Item.h"
 
 namespace Game
 {
@@ -56,6 +57,8 @@ namespace Game
         unsigned mp;
         unsigned team;
         Direction direction;
+        std::vector<Armor> armors;
+        std::vector<Weapon> weapons;
         std::vector<Actor::Skill> skills;
     };
     std::wistream& operator>>(std::wistream& s, Actor& actor);

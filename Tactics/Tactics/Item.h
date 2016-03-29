@@ -7,6 +7,8 @@
 
 namespace Game
 {
+    class Game;
+
     class Requirement
     {
     public:
@@ -191,6 +193,7 @@ namespace Game
     class Armor : public Equipment
     {
     public:
+        Armor(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& bonus);
         Armor(const Type::Armor& type, const Type::Armor::Material& material, const Type::Armor::Bonus& bonus);
         std::wstring Name() const;
         Requirement Required() const;
@@ -206,9 +209,7 @@ namespace Game
     public:
         const Type::Weapon& type;
         const Type::Weapon::Material &material;
-        const Type::Weapon::Bonus *bonus;
+        const Type::Weapon::Bonus &bonus;
     };
-
-    
 }
 

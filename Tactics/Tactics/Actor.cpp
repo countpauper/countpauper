@@ -143,8 +143,15 @@ namespace Game
         s >> actor.stats;
         s >> actor.health;
         s >> actor.mp;
-        unsigned skills;
-        s >> skills;
+        unsigned armors, weapons, skills;
+        s >> armors >> weapons >> skills;
+        actor.armors.reserve(armors);
+        while (actor.armors.size()<armors)
+        {
+            std::wstring typeName, materialName, bonusName;
+            s >> bonusName >> materialName >> typeName;
+            actor.armors.emplace_back(Armor(game, typeName, materialName, bonusName));
+        }
         actor.skills.resize(skills);
         for (auto& skill : actor.skills)
         {

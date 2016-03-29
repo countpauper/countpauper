@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Item.h"
 #include "CSV.h"
-
+#include "Game.h"
 
 namespace Game
 {
@@ -146,6 +146,13 @@ namespace Game
         return Damage(sharp + other.sharp, crush + other.crush, fire + other.fire, disease + other.disease, spirit+other.spirit);
     }
 
+    Armor::Armor(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& bonus) :
+        type(game.FindArmor(type)),
+        material(game.FindArmorMaterial(material, this->type.material)),
+        bonus(game.FindArmorBonus(bonus, this->type.material))
+    {
+
+    }
     Armor::Armor(const Type::Armor& type, const Type::Armor::Material& material, const Type::Armor::Bonus& bonus) :
         type(type),
         material(material),
@@ -174,4 +181,12 @@ namespace Game
     {
         return type.mitigation + material.mitigation + bonus.mitigation;
     }
+
+
+    std::wistream& operator>>(std::wistream& s, Weapon& weapon)
+    {
+        Game& game = *static_cast<Game*>(s.pword(1));
+        return s;
+    }
+
 }
