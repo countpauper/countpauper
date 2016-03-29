@@ -48,7 +48,9 @@ namespace Game
     State Attack::React(const State& state) const
     {
         State result(state);
-        result.health.Cut(Sharp(1));
+        Damage damage(3, 0, 0, 0, 0);
+        damage -= state.mitigation;
+        result.damage += damage;
         return result;
     }
 

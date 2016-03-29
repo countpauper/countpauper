@@ -7,14 +7,13 @@ namespace Game
 {
     namespace Type
     {
-        std::map<std::wstring, Material::Category> materialCategoryMap(
+        std::map<std::wstring, Armor::Category> materialCategoryMap(
         {
-            { L"Cloth", Material::Category::Cloth },
-            { L"Leather", Material::Category::Leather },
-            { L"Metal", Material::Category::Metal },
-            { L"Precious", Material::Category::Precious },
-            { L"Gem", Material::Category::Gem },
-            { L"Wood", Material::Category::Wood },
+            { L"Cloth", Armor::Category::Cloth },
+            { L"Leather", Armor::Category::Leather },
+            { L"Metal", Armor::Category::Metal },
+            { L"Precious", Armor::Category::Precious },
+            { L"Gem", Armor::Category::Gem },
         });
 
         std::map<std::wstring, Element> elementMap(
@@ -60,16 +59,16 @@ namespace Game
 
         Engine::Adapter::Integer<Damage> sharp(&Damage::sharp);
         Engine::Adapter::Integer<Damage> crush(&Damage::crush);
-        Engine::Adapter::Integer<Damage> fire(&Damage::fire);
+        Engine::Adapter::Integer<Damage> burn(&Damage::burn);
         Engine::Adapter::Integer<Damage> disease(&Damage::disease);
         Engine::Adapter::Integer<Damage> spirit(&Damage::spirit);
-        std::vector<Engine::Adapter::Interface<Damage>*> damageAdapters({ &sharp, &crush, &fire, &disease, &spirit });
+        std::vector<Engine::Adapter::Interface<Damage>*> damageAdapters({ &sharp, &crush, &burn, &disease, &spirit });
 
         std::vector<Armor::Material> Armor::Material::Load(std::wistream& file)
         {
             Engine::Adapter::String<Armor::Material> name(&Armor::Material::name);
             Engine::Adapter::Integer<Armor::Material> frequency(&Armor::Material::frequency);
-            Engine::Adapter::Enumeration<Armor::Material, Material::Category> category(&Armor::Material::category, materialCategoryMap);
+            Engine::Adapter::Enumeration<Armor::Material, Armor::Category> category(&Armor::Material::category, materialCategoryMap);
             Engine::Adapter::Integer<Armor::Material> magic(&Armor::Material::magic);
             Engine::Adapter::Enumeration<Armor::Material, Element> element(&Armor::Material::element, elementMap);
             Engine::Adapter::Struct<Armor::Material, Requirement> requirement(&Armor::Material::requirement, requirementAdapters);
@@ -87,7 +86,7 @@ namespace Game
             Engine::Adapter::Integer<Armor::Bonus> frequency(&Armor::Bonus::frequency);
             Engine::Adapter::Integer<Armor::Bonus> magic(&Armor::Bonus::magic);
             Engine::Adapter::Struct<Armor::Bonus, Requirement> requirement(&Armor::Bonus::requirement, requirementAdapters);
-            Engine::Adapter::Enumeration<Armor::Bonus, Material::Category> material(&Armor::Bonus::material, materialCategoryMap);
+            Engine::Adapter::Enumeration<Armor::Bonus, Armor::Category> material(&Armor::Bonus::category, materialCategoryMap);
             Engine::Adapter::Struct<Armor::Bonus, Damage> mitigation(&Armor::Bonus::mitigation, damageAdapters);
             Engine::Adapter::String<Armor::Bonus> skill(&Armor::Bonus::skill);
             Engine::Adapter::Integer<Armor::Bonus> skillBonus(&Armor::Bonus::skillBonus);
@@ -103,7 +102,7 @@ namespace Game
             Engine::Adapter::Integer<Armor> frequency(&Armor::frequency);
             Engine::Adapter::Struct<Armor, Requirement> requirement(&Armor::requirement, requirementAdapters);
             Engine::Adapter::Enumeration<Armor, Covers> covers(&Armor::cover, coverMap);
-            Engine::Adapter::Enumeration<Armor, Material::Category> material(&Armor::material, materialCategoryMap);
+            Engine::Adapter::Enumeration<Armor, Armor::Category> material(&Armor::category, materialCategoryMap);
             Engine::Adapter::Struct<Armor, Damage> mitigation(&Armor::mitigation, damageAdapters);
 
             Engine::CSV<Armor> csv(file, { &name, &frequency, &requirement, &covers, &material, &mitigation });
@@ -141,15 +140,11 @@ namespace Game
     {
         return Requirement(strength + multiplier, wisdom * multiplier);
     }
-    Damage Damage::operator+(const Damage& other) const
-    {
-        return Damage(sharp + other.sharp, crush + other.crush, fire + other.fire, disease + other.disease, spirit+other.spirit);
-    }
 
     Armor::Armor(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& bonus) :
         type(game.FindArmor(type)),
-        material(game.FindArmorMaterial(material, this->type.material)),
-        bonus(game.FindArmorBonus(bonus, this->type.material))
+        material(game.FindArmorMaterial(material, this->type.category)),
+        bonus(game.FindArmorBonus(bonus, this->type.category))
     {
 
     }

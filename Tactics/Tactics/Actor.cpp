@@ -101,7 +101,7 @@ namespace Game
         position = result.position;
         direction = result.direction;
         mp = result.mp;
-        health = result.health;
+        damage = result.damage;
         stats = result.stats;
     }
 
@@ -112,7 +112,7 @@ namespace Game
 
     bool Actor::Dead() const
     {
-        return health.Dead();
+        return damage.Dead();
     }
     
     bool Actor::CanAct() const
@@ -134,6 +134,13 @@ namespace Game
             return it->score;
     }
 
+    Damage Actor::Mitigation() const
+    {
+        if (armors.empty())
+            return Damage();
+        else
+            return armors.front().Mitigation();
+    }
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {
         Game& game= *static_cast<Game*>(s.pword(1));
@@ -141,7 +148,7 @@ namespace Game
         s >> actor.team;
         s >> actor.position.x >> actor.position.y;
         s >> actor.stats;
-        s >> actor.health;
+        s >> actor.damage;
         s >> actor.mp;
         unsigned armors, weapons, skills;
         s >> armors >> weapons >> skills;

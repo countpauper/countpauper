@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include "Health.h"
 
 namespace Game
 {
@@ -18,19 +19,6 @@ namespace Game
         int wisdom;
         Requirement operator+(const Requirement& other) const;
         Requirement operator*(int multiplier) const;
-    };
-
-    class Damage
-    {
-    public:
-        Damage() : sharp(0), crush(0), fire(0), disease(0), spirit(0) {}
-        Damage(int sharp, int crush, int fire, int disease, int spirit) : sharp(sharp), crush(crush), fire(fire), disease(disease), spirit(spirit) {}
-        int sharp;
-        int crush;
-        int fire;
-        int disease;
-        int spirit;
-        Damage operator+(const Damage& other) const;
     };
 
     
@@ -70,25 +58,15 @@ namespace Game
             Requirement requirement;
         };
 
+
         class Material
         {
         public:
-            enum Category
-            {
-                None = 0,
-                Cloth,
-                Leather,
-                Metal,
-                Wood,
-                Precious,
-                Gem
-            };
-            Material() : frequency(0), category(None) {}
+            Material() : frequency(0) {}
             std::wstring name;
             int frequency;
             int magic;
             Element element;
-            Category category;
             Requirement requirement;
         };
 
@@ -124,16 +102,28 @@ namespace Game
         class Armor : public Equipment
         {
         public:
+            enum Category
+            {
+                None = 0,
+                Cloth,
+                Leather,
+                Metal,
+                Precious,
+                Gem
+            };
             class Material : public Type::Material
             {
             public:
+                Material() : category(None) {}
                 Damage mitigation;
+                Armor::Category category;
                 static std::vector<Material> Load(std::wistream& fileName);
             };
             class Bonus : public Type::Bonus
             {
             public:
-                Material::Category material;
+                Bonus() : category(None) {}
+                Armor::Category category;
                 Damage mitigation;
                 std::wstring skill;
                 int skillBonus;
@@ -142,12 +132,12 @@ namespace Game
                 static std::vector<Bonus> Load(std::wistream& fileName);
             };
 
-            Armor() : cover(Covers::Nothing), material(Type::Material::None) {}
+            Armor() : cover(Covers::Nothing), category(None) {}
             static std::vector<Armor> Load(std::wistream& fileName);            
             unsigned CoverCount() const;
 
             Covers cover;
-            Type::Material::Category material;
+            Category category;
             Damage mitigation;
         };
 
@@ -156,14 +146,22 @@ namespace Game
         class Weapon: public Equipment
         {
         public:
+            enum Category
+            {
+                None=0
+            };
             class Material : public Type::Material
             {
             public:
+                Material() : category(None) {}
+                Category category;
                 Damage bonus;
             };
             class Bonus : public Type::Bonus
             {
             public:
+                Bonus() : category(None) {}
+                Category category;
                 Damage bonus;
             };            
             enum Style
@@ -173,11 +171,10 @@ namespace Game
                 Stave,
                 Ranged,
             };
-            Weapon() : style(Unarmed), twohanded(false), material(Type::Material::None) {}
+            Weapon() : style(Unarmed), category(None) {}
             Style style;
-            bool twohanded;
             Damage base;
-            Type::Material::Category material;
+            Category category;
         };
     }
 

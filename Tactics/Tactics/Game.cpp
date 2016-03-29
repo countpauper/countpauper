@@ -303,7 +303,7 @@ namespace Game
         }
         throw std::invalid_argument("Unknown armor type");
     }
-    const Type::Armor::Material&  Game::FindArmorMaterial(const std::wstring& name, Type::Material::Category category) const
+    const Type::Armor::Material&  Game::FindArmorMaterial(const std::wstring& name, Type::Armor::Category category) const
     {
         for (const auto& material : armorMaterials)
         {
@@ -312,34 +312,34 @@ namespace Game
         }
         throw std::invalid_argument("Unknown material type");
     }
-    const Type::Armor::Bonus& Game::FindArmorBonus(const std::wstring& name, Type::Material::Category material) const
+    const Type::Armor::Bonus& Game::FindArmorBonus(const std::wstring& name, Type::Armor::Category category) const
     {
         for (const auto& bonus : armorBoni)
         {
-            if (bonus.material == material && bonus.prefix == name)
+            if (bonus.category == category && bonus.prefix == name)
                 return bonus;
         }
         throw std::invalid_argument("Unknown bonus type");
     }
     void Game::TestDumpAllItems(std::wostream& out) const
     {
-        out << L"Name, ReqStr, ReqWis, Sharp, Crush, Fire, Disease, Spirit" << std::endl;
+        out << L"Name, ReqStr, ReqWis, Sharp, Crush, Burn, Disease, Spirit" << std::endl;
         for (auto& armor : armors)
         {
             for (auto& material : armorMaterials)
             {
-                if (armor.material != material.category)
+                if (armor.category != material.category)
                     continue;
                 for (auto& bonus : armorBoni)
                 {
-                    if (armor.material != bonus.material)
+                    if (armor.category != bonus.category)
                         continue;
                     Armor item(armor, material, bonus);
                     Damage mitigation(item.Mitigation());
                     Requirement req(item.Required());
                     out << item.Name();
                     out << L"," << req.strength << L"," << req.wisdom;
-                    out << L"," << mitigation.sharp << L"," << mitigation.crush << L"," << mitigation.fire << L"," << mitigation.disease << L"," << mitigation.spirit;
+                    out << L"," << mitigation.sharp << L"," << mitigation.crush << L"," << mitigation.burn << L"," << mitigation.disease << L"," << mitigation.spirit;
                     out << std::endl;
                 }
             }

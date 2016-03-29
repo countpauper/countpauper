@@ -7,55 +7,16 @@ namespace Game
     typedef int Pain;
     const Pain MaxPain = 8;
     const Pain ImmunePain = -1;
-    enum class Sharp : Pain
-    {
-        Immune = ImmunePain,
-        Healthy = 0,
-        Scratched = 1,
-        Bleeding = 2,
-        Hemorrhaging = 4,
-        Severed = MaxPain,
-    };
-
-    enum class Crush : Pain
-    {
-        Immune = ImmunePain,
-        Healthy = 0,
-        Bruised = 1,
-        Battered = 2,
-        Broken = 4,
-        Crushed = MaxPain
-    };
-
-    enum class Fire : Pain
-    {
-        Immune = ImmunePain,
-        Healthy = 0,
-        Singed = 1,
-        Scorched = 2,
-        Burned = 4,
-        Charred = MaxPain
-    };
-
-    enum class Disease : Pain
-    {
-        Immune = ImmunePain,
-        Healthy = 0,
-        Infected = 1,
-        Festering = 2,
-        Decaying = 4,
-        Necrotic = MaxPain,
-    };
 
     struct Wounds
     {
         enum class Type
         {
-            Crush = 0,
-            Sharp,
-            Fire,
+            Sharp =0,
+            Crush,
+            Burn,
             Disease,
-            Max
+            Spirit
         };
         std::wstring description;
         int penalty;
@@ -63,23 +24,25 @@ namespace Game
         static const Table table;
     };
 
-    class Health
+
+    class Damage
     {
     public:
-        Sharp sharp;
-        Crush crush;
-        Fire burn;
-        Disease disease;
-        
-        void Cut(Sharp damage);
-        void Hit(Crush damage);
-        void Burn(Fire damage);
-        void Inflict(Disease damage);
+        Damage() : sharp(0), crush(0), burn(0), disease(0), spirit(0) {}
+        Damage(int sharp, int crush, int burn, int disease, int spirit) : sharp(sharp), crush(crush), burn(burn), disease(disease), spirit(spirit) {}
         std::wstring Description() const;
         bool Dead() const;
+
+        int sharp;
+        int crush;
+        int burn;
+        int disease;
+        int spirit;
+        Damage operator+(const Damage& other) const;
+        Damage& operator-=(const Damage& other);
+        Damage& operator+=(const Damage& other);
     protected:
         std::pair<Wounds::Type, int> FindWorst() const;
     };
-    std::wistream& operator>>(std::wistream& s, Health& actor);
-
+    std::wistream& operator>>(std::wistream& s, Damage& actor);
 };

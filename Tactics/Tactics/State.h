@@ -23,7 +23,8 @@ namespace Game
         Position position;
         Direction direction;
         unsigned mp;
-        Health health;
+        Damage damage;
+        Damage mitigation;
         Stats stats;
         unsigned loyalty;
     };

@@ -25,7 +25,7 @@ namespace Game
         Position GetPosition() const;
         unsigned GetHitPoints() const;
         std::wstring name;
-        Health health;
+        Damage damage;
         Stats stats;
     protected:
         Position position;
@@ -52,6 +52,7 @@ namespace Game
         typedef std::vector<Actor::Skill> Skills;
         const Actor::Skills& GetSkills() const;
         unsigned GetSkillScore(const ::Game::Skill& skill) const;
+        Damage Mitigation() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         unsigned mp;
