@@ -16,13 +16,13 @@ Silk,0,Cloth,3,Air,0,0,0,0,0,0,0
 Fairy hair,0,Cloth,5,Water,0,2,0,0,0,2,0
 Ectoplasm,0,Cloth,5,Fire,-1,2,0,0,2,0,2
 Steelwhool,0,Cloth,3,Stone,1,0,1,1,0,0,0
-Bronze,0,Precious,2,Nature,0,0,0,0,0,0,0
-Silver,0,Precious,3,Water,0,1,0,0,0,0,0
-Gold,0,Precious,4,Stone,1,1,0,0,0,0,0
-Platinum,0,Precious,5,Air,0,2,0,0,0,0,0
-Orichalcum,0,Precious,6,Fire,0,3,0,0,0,0,0
-Ruby,0,Gem,5,Fire,0,0,0,0,0,0,0
-Diamond,0,Gem,5,Stone,0,1,0,0,0,0,0
-Pearl,0,Gem,5,Water,0,1,0,0,0,0,0
-Jade,0,Gem,5,Nature,0,2,0,0,0,0,0
-Sapphire,0,Gem,5,Air,0,2,0,0,0,0,0
+Bronze,0,Jewelry,2,Nature,0,0,0,0,0,0,0
+Silver,0,Jewelry,3,Water,0,1,0,0,0,0,0
+Gold,0,Jewelry,4,Stone,1,1,0,0,0,0,0
+Platinum,0,Jewelry,5,Air,0,2,0,0,0,0,0
+Orichalcum,0,Jewelry,6,Fire,0,3,0,0,0,0,0
+Ruby,0,Ring,5,Fire,0,0,0,0,0,0,0
+Diamond,0,Ring,5,Stone,0,1,0,0,0,0,0
+Pearl,0,Jewelry,5,Water,0,1,0,0,0,0,0
+Jade,0,Ring,5,Nature,0,2,0,0,0,0,0
+Sapphire,0,Ring,5,Air,0,2,0,0,0,0,0

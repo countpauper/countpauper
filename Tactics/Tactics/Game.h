@@ -50,8 +50,8 @@ namespace Game
         void MakePlan(Actor& actor, const Skill& skill);
 
         const Type::Armor& FindArmor(const std::wstring& name) const;
-        const Type::Armor::Material&  FindArmorMaterial(const std::wstring& name, Type::Armor::Category material) const;
-        const Type::Armor::Bonus& FindArmorBonus(const std::wstring& name, Type::Armor::Category material) const;
+        const Type::Armor::Material&  FindArmorMaterial(const std::wstring& name, const Type::Armor& armor) const;
+        const Type::Armor::Bonus& FindArmorBonus(const std::wstring& name, const Type::Armor& armor) const;
     protected:
         void AI(Actor* actor);
         void Next();

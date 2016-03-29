@@ -105,11 +105,19 @@ namespace Game
             enum Category
             {
                 None = 0,
-                Cloth,
-                Leather,
-                Metal,
-                Precious,
-                Gem
+                Cloth = 1<<0,
+                Leather = 1<<1,
+                Chain = 1<<2,
+                Scale = 1<<3,
+                Plate = 1<<4,
+                Metal = Chain | Scale | Plate,
+                BodyArmor = Metal | Leather | Cloth,
+                Necklace = 1<<5,
+                Ring = 1<<6,
+                Bracer = 1<<7,
+                Crown = 1<<8,
+                Jewelry = Necklace|Ring|Bracer|Crown,
+                All = Jewelry | BodyArmor,
             };
             class Material : public Type::Material
             {
@@ -135,6 +143,8 @@ namespace Game
             Armor() : cover(Covers::Nothing), category(None) {}
             static std::vector<Armor> Load(std::wistream& fileName);            
             unsigned CoverCount() const;
+            bool Match(const Material& material) const;
+            bool Match(const Bonus& bonus) const;
 
             Covers cover;
             Category category;

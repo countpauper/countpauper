@@ -11,9 +11,17 @@ namespace Game
         {
             { L"Cloth", Armor::Category::Cloth },
             { L"Leather", Armor::Category::Leather },
+            { L"Chain", Armor::Category::Chain },
+            { L"Scale", Armor::Category::Scale },
+            { L"Plate", Armor::Category::Plate },
             { L"Metal", Armor::Category::Metal },
-            { L"Precious", Armor::Category::Precious },
-            { L"Gem", Armor::Category::Gem },
+            { L"Armor", Armor::Category::BodyArmor },
+            { L"Necklace", Armor::Category::Necklace },
+            { L"Ring", Armor::Category::Ring },
+            { L"Bracer", Armor::Category::Bracer },
+            { L"Crown", Armor::Category::Crown },
+            { L"Jewelry", Armor::Category::Jewelry },
+            { L"All", Armor::Category::All }
         });
 
         std::map<std::wstring, Element> elementMap(
@@ -129,6 +137,15 @@ namespace Game
             return result;
         }
 
+        bool Armor::Match(const Material& material) const
+        {
+            return (unsigned(material.category) & unsigned(category)) != 0;
+        }
+        bool Armor::Match(const Bonus& bonus) const
+        {
+            return (unsigned(bonus.category) & unsigned(category)) != 0;
+        }
+
     }
 
     Requirement Requirement::operator+(const Requirement& other) const
@@ -143,8 +160,8 @@ namespace Game
 
     Armor::Armor(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& bonus) :
         type(game.FindArmor(type)),
-        material(game.FindArmorMaterial(material, this->type.category)),
-        bonus(game.FindArmorBonus(bonus, this->type.category))
+        material(game.FindArmorMaterial(material, this->type)),
+        bonus(game.FindArmorBonus(bonus, this->type))
     {
 
     }
@@ -176,7 +193,6 @@ namespace Game
     {
         return type.mitigation + material.mitigation + bonus.mitigation;
     }
-
 
     std::wistream& operator>>(std::wistream& s, Weapon& weapon)
     {

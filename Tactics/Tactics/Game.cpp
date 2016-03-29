@@ -303,20 +303,20 @@ namespace Game
         }
         throw std::invalid_argument("Unknown armor type");
     }
-    const Type::Armor::Material&  Game::FindArmorMaterial(const std::wstring& name, Type::Armor::Category category) const
+    const Type::Armor::Material&  Game::FindArmorMaterial(const std::wstring& name, const Type::Armor& armor) const
     {
         for (const auto& material : armorMaterials)
         {
-            if (material.category == category && material.name == name)
+            if (armor.Match(material) && material.name == name)
                 return material;
         }
         throw std::invalid_argument("Unknown material type");
     }
-    const Type::Armor::Bonus& Game::FindArmorBonus(const std::wstring& name, Type::Armor::Category category) const
+    const Type::Armor::Bonus& Game::FindArmorBonus(const std::wstring& name, const Type::Armor& armor) const
     {
         for (const auto& bonus : armorBoni)
         {
-            if (bonus.category == category && bonus.prefix == name)
+            if (armor.Match(bonus) && bonus.prefix == name)
                 return bonus;
         }
         throw std::invalid_argument("Unknown bonus type");
