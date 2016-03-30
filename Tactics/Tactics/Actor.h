@@ -25,7 +25,7 @@ namespace Game
         Position GetPosition() const;
         unsigned GetHitPoints() const;
         std::wstring name;
-        Damage damage;
+        Body health;    // TODO: different body parts for different objects/creatures
         Stats stats;
     protected:
         Position position;

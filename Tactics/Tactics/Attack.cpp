@@ -50,7 +50,7 @@ namespace Game
         State result(state);
         Damage damage(3, 0, 0, 0, 0);
         damage -= state.mitigation;
-        result.damage += damage;
+        result.health.Hurt(Body::Part::Chest, damage);
         return result;
     }
 

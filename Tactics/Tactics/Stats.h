@@ -13,6 +13,7 @@ namespace Game
         Stat agility;
         Stat constitution;
         Stat intelligence;
+        Stat wisdom;
         std::wstring Description() const;
     };
     std::wistream& operator>>(std::wistream& s, Stats& actor);

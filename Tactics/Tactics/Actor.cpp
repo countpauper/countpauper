@@ -101,7 +101,7 @@ namespace Game
         position = result.position;
         direction = result.direction;
         mp = result.mp;
-        damage = result.damage;
+        health = result.health;
         stats = result.stats;
     }
 
@@ -112,7 +112,7 @@ namespace Game
 
     bool Actor::Dead() const
     {
-        return damage.Dead();
+        return health.Dead();
     }
     
     bool Actor::CanAct() const
@@ -148,8 +148,8 @@ namespace Game
         s >> actor.team;
         s >> actor.position.x >> actor.position.y;
         s >> actor.stats;
-        s >> actor.damage;
         s >> actor.mp;
+        s >> actor.health;
         unsigned armors, weapons, skills;
         s >> armors >> weapons >> skills;
         actor.armors.reserve(armors);

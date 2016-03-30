@@ -1,8 +1,20 @@
 2
-Actor Foo 2 0 0 10 10 10 10 0 0 0 0 0 0 1 0 1
+Actor Foo 2 0 0 10 10 10 10 10 0 31
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+1 0 1
 Normal Leather Jacket
 Sword 10
-Actor Bar 1 1 0 10 10 10 10 0 0 0 0 0 0 1 0 1
+Actor Bar 1 1 0 10 10 10 10 10 0 31
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+1 0 1
 Embroidered Linen Robe
 Sword 10
 1on1 2 1 data/1on1.png
