@@ -194,6 +194,11 @@ namespace Game
         return type.mitigation + material.mitigation + bonus.mitigation;
     }
 
+    Requirement Weapon::Required() const
+    {
+        return type.requirement + bonus.requirement + material.requirement;
+    }
+
     std::wistream& operator>>(std::wistream& s, Weapon& weapon)
     {
         Game& game = *static_cast<Game*>(s.pword(1));

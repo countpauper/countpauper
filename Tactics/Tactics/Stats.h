@@ -7,7 +7,7 @@ namespace Game
     class Stats
     {
     public:
-        using Stat = int;
+        using Stat = unsigned;
         Stats();
         Stat strength;
         Stat agility;

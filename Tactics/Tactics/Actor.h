@@ -53,6 +53,7 @@ namespace Game
         const Actor::Skills& GetSkills() const;
         unsigned GetSkillScore(const ::Game::Skill& skill) const;
         Damage Mitigation() const;
+        unsigned Agility() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         unsigned mp;

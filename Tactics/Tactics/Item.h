@@ -205,6 +205,7 @@ namespace Game
         std::wstring Name() const;
         Requirement Required() const;
         Damage Mitigation() const;
+
     private:
         const Type::Armor& type;
         const Type::Armor::Material &material;
@@ -217,6 +218,7 @@ namespace Game
         const Type::Weapon& type;
         const Type::Weapon::Material &material;
         const Type::Weapon::Bonus &bonus;
+        Requirement Required() const;
     };
 }
 

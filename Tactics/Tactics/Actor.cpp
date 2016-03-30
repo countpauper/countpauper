@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <numeric>
 #include <gl/GL.h>
 #include "Actor.h"
 #include "Action.h"
@@ -105,9 +106,17 @@ namespace Game
         stats = result.stats;
     }
 
+    unsigned Actor::Agility() const
+    {
+        int totalRequiredStrength = std::accumulate(armors.begin(), armors.end(), 0, [](int str, const Armor& armor) -> int { return str+armor.Required().strength; });
+        totalRequiredStrength += std::accumulate(weapons.begin(), weapons.end(), 0, [](int str, const Weapon& weapon) -> int { return str+weapon.Required().strength; });
+        int pentalty = std::max(0, totalRequiredStrength - int(stats.strength));
+        return stats.agility - pentalty;
+    }
     void Actor::Turn()
     {
-        mp = stats.agility;
+        mp = Agility();
+
     }
 
     bool Actor::Dead() const
