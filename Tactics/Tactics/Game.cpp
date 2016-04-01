@@ -12,9 +12,9 @@ namespace Game
 
     Game::Game(std::unique_ptr<Skills> skills) :
         skills(std::move(skills)),
-        armorMaterials(Type::Armor::Material::Load(std::wifstream(L"ArmorMaterial.csv"))),
-        armors(Type::Armor::Load(std::wifstream(L"Armor.csv"))),
-        armorBoni(Type::Armor::Bonus::Load(std::wifstream(L"ArmorBonus.csv")))
+        armorMaterials(Type::Armor::Material::Load(std::wifstream(L"Data/ArmorMaterial.csv"))),
+        armors(Type::Armor::Load(std::wifstream(L"Data/Armor.csv"))),
+        armorBoni(Type::Armor::Bonus::Load(std::wifstream(L"Data/ArmorBonus.csv")))
     {
         // TestDumpAllItems(std::wofstream(L"Items.csv"));
     }
