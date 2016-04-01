@@ -92,11 +92,8 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="Armor.csv" />
-    <Text Include="ArmorBonus.csv" />
     <Text Include="Game.map" />
     <Text Include="Skill" />
-    <Text Include="Weapon.csv" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
@@ -163,7 +160,10 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="1on1.map" />
-    <None Include="ArmorMaterial.csv" />
+    <None Include="Data\Armor.csv" />
+    <None Include="Data\ArmorBonus.csv" />
+    <None Include="Data\ArmorMaterial.csv" />
+    <None Include="Data\Weapon.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

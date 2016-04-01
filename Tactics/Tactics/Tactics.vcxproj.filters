@@ -20,15 +20,6 @@
   <ItemGroup>
     <Text Include="Skill" />
     <Text Include="Game.map" />
-    <Text Include="Weapon.csv">
-      <Filter>Data</Filter>
-    </Text>
-    <Text Include="ArmorBonus.csv">
-      <Filter>Data</Filter>
-    </Text>
-    <Text Include="Armor.csv">
-      <Filter>Data</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -196,7 +187,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="1on1.map" />
-    <None Include="ArmorMaterial.csv">
+    <None Include="Data\Armor.csv">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Data\ArmorBonus.csv">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Data\ArmorMaterial.csv">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Data\Weapon.csv">
       <Filter>Data</Filter>
     </None>
   </ItemGroup>
