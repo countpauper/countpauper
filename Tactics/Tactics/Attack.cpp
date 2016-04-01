@@ -33,7 +33,7 @@ namespace Game
         }
         state.mp -= cost;
 
-        int hitBonus = 5 + actor.GetSkillScore(skill) - target.stats.agility;
+        int hitBonus = 5 + actor.GetSkillScore(skill) - target.Agility();
         double hitChance = std::min(1.0,std::max(0.0, double(hitBonus)*0.1));
         GameChances ret;
         ret.emplace_back(GameChance(game, hitChance, L"Hit"));

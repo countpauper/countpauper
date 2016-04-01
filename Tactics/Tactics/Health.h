@@ -31,7 +31,7 @@ namespace Game
         Damage() : sharp(0), crush(0), burn(0), disease(0), spirit(0) {}
         Damage(int sharp, int crush, int burn, int disease, int spirit) : sharp(sharp), crush(crush), burn(burn), disease(disease), spirit(spirit) {}
         std::wstring Description() const;
-        bool Disabled() const;
+        bool Disabled(unsigned constitution) const;
         bool Hurt() const;
         int sharp;
         int crush;
@@ -73,7 +73,7 @@ namespace Game
         };
         std::map<Part,Damage> health;
         std::wstring Description() const;
-        bool Dead() const;
+        bool Dead(unsigned constitution) const;
         void Hurt(Part::Type location, Damage& damage);
     };
     std::wistream& operator>>(std::wistream& s, Body& body);

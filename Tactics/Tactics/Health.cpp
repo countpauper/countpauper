@@ -66,10 +66,10 @@ namespace Game
         return worst.second > 0;
     }
 
-    bool Damage::Disabled() const
+    bool Damage::Disabled(unsigned constitution) const
     {
         auto worst = FindWorst();
-        return worst.second >= MaxPain;
+        return worst.second >= constitution;
     }
     std::pair<Wounds::Type, int> Damage::FindWorst() const
     {
@@ -172,11 +172,11 @@ namespace Game
         else
             return result;
     }
-    bool Body::Dead() const
+    bool Body::Dead(unsigned constitution) const
     {
         for (auto& part : health)
         {
-            if (part.first.IsVital() && part.second.Disabled())
+            if (part.first.IsVital() && part.second.Disabled(constitution))
                 return true;
         }
         return false;

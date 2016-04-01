@@ -26,10 +26,10 @@ namespace Game
         unsigned GetHitPoints() const;
         std::wstring name;
         Body health;    // TODO: different body parts for different objects/creatures
-        Stats stats;
     protected:
         Position position;
         unsigned maxhp;
+        Stats stats;
     };
     class Actor : public Object
     {
@@ -53,7 +53,12 @@ namespace Game
         const Actor::Skills& GetSkills() const;
         unsigned GetSkillScore(const ::Game::Skill& skill) const;
         Damage Mitigation() const;
-        unsigned Agility() const;
+        Stats::Stat Strength() const;
+        Stats::Stat Agility() const;
+        Stats::Stat Constitution() const;
+        Stats::Stat Intelligence() const;
+        Stats::Stat Wisdom() const;
+        Stats Statistics() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         unsigned mp;

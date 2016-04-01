@@ -12,7 +12,7 @@ namespace Game
         mp(actor.GetMovePoints()),
         health(actor.health),
         mitigation(actor.Mitigation()),
-        stats(actor.stats),
+        stats(actor.Statistics()),
         loyalty(actor.GetTeam())
     {
     }

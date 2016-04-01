@@ -9,6 +9,14 @@ namespace Game
     public:
         using Stat = unsigned;
         Stats();
+        Stats(Stat strength, Stat agility, Stat constitution, Stat intelligence, Stat wisdom) :
+            strength(strength),
+            agility(agility),
+            constitution(constitution),
+            intelligence(intelligence),
+            wisdom(wisdom)
+        {
+        }
         Stat strength;
         Stat agility;
         Stat constitution;
