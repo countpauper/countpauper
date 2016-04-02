@@ -7,7 +7,7 @@ namespace Game
 {
     namespace Type
     {
-        std::map<std::wstring, Armor::Category> materialCategoryMap(
+        std::map<std::wstring, Armor::Category> armorCategories(
         {
             { L"Cloth", Armor::Category::Cloth },
             { L"Leather", Armor::Category::Leather },
@@ -72,11 +72,24 @@ namespace Game
         Engine::Adapter::Integer<Damage> spirit(&Damage::spirit);
         std::vector<Engine::Adapter::Interface<Damage>*> damageAdapters({ &sharp, &crush, &burn, &disease, &spirit });
 
+        std::vector<Armor> Armor::Load(std::wistream& file)
+        {
+            Engine::Adapter::String<Armor> name(&Armor::name);
+            Engine::Adapter::Integer<Armor> frequency(&Armor::frequency);
+            Engine::Adapter::Struct<Armor, Requirement> requirement(&Armor::requirement, requirementAdapters);
+            Engine::Adapter::Enumeration<Armor, Covers> covers(&Armor::cover, coverMap);
+            Engine::Adapter::Enumeration<Armor, Armor::Category> category(&Armor::category, armorCategories);
+            Engine::Adapter::Struct<Armor, Damage> mitigation(&Armor::mitigation, damageAdapters);
+
+            Engine::CSV<Armor> csv(file, { &name, &frequency, &requirement, &covers, &category, &mitigation });
+            return csv.Read();
+        }
+
         std::vector<Armor::Material> Armor::Material::Load(std::wistream& file)
         {
             Engine::Adapter::String<Armor::Material> name(&Armor::Material::name);
             Engine::Adapter::Integer<Armor::Material> frequency(&Armor::Material::frequency);
-            Engine::Adapter::Enumeration<Armor::Material, Armor::Category> category(&Armor::Material::category, materialCategoryMap);
+            Engine::Adapter::Enumeration<Armor::Material, Armor::Category> category(&Armor::Material::category, armorCategories);
             Engine::Adapter::Integer<Armor::Material> magic(&Armor::Material::magic);
             Engine::Adapter::Enumeration<Armor::Material, Element> element(&Armor::Material::element, elementMap);
             Engine::Adapter::Struct<Armor::Material, Requirement> requirement(&Armor::Material::requirement, requirementAdapters);
@@ -94,28 +107,16 @@ namespace Game
             Engine::Adapter::Integer<Armor::Bonus> frequency(&Armor::Bonus::frequency);
             Engine::Adapter::Integer<Armor::Bonus> magic(&Armor::Bonus::magic);
             Engine::Adapter::Struct<Armor::Bonus, Requirement> requirement(&Armor::Bonus::requirement, requirementAdapters);
-            Engine::Adapter::Enumeration<Armor::Bonus, Armor::Category> material(&Armor::Bonus::category, materialCategoryMap);
+            Engine::Adapter::Enumeration<Armor::Bonus, Armor::Category> category(&Armor::Bonus::category, armorCategories);
             Engine::Adapter::Struct<Armor::Bonus, Damage> mitigation(&Armor::Bonus::mitigation, damageAdapters);
             Engine::Adapter::String<Armor::Bonus> skill(&Armor::Bonus::skill);
             Engine::Adapter::Integer<Armor::Bonus> skillBonus(&Armor::Bonus::skillBonus);
             Engine::Adapter::Enumeration<Armor::Bonus, Statistic> stat(&Armor::Bonus::stat, statisticMap);
             Engine::Adapter::Integer<Armor::Bonus> statBonus(&Armor::Bonus::statBonus);
-            Engine::CSV<Armor::Bonus> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &material, &mitigation, &skill, &skillBonus, &stat, &statBonus });
+            Engine::CSV<Armor::Bonus> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &category, &mitigation, &skill, &skillBonus, &stat, &statBonus });
             return csv.Read();
         }
 
-        std::vector<Armor> Armor::Load(std::wistream& file)
-        {
-            Engine::Adapter::String<Armor> name(&Armor::name);
-            Engine::Adapter::Integer<Armor> frequency(&Armor::frequency);
-            Engine::Adapter::Struct<Armor, Requirement> requirement(&Armor::requirement, requirementAdapters);
-            Engine::Adapter::Enumeration<Armor, Covers> covers(&Armor::cover, coverMap);
-            Engine::Adapter::Enumeration<Armor, Armor::Category> material(&Armor::category, materialCategoryMap);
-            Engine::Adapter::Struct<Armor, Damage> mitigation(&Armor::mitigation, damageAdapters);
-
-            Engine::CSV<Armor> csv(file, { &name, &frequency, &requirement, &covers, &material, &mitigation });
-            return csv.Read();
-        }
 
         unsigned Armor::CoverCount() const
         {
@@ -145,6 +146,69 @@ namespace Game
         {
             return (unsigned(bonus.category) & unsigned(category)) != 0;
         }
+
+        std::map<std::wstring, Weapon::Style > weaponStyles(
+        {
+            { L"All", Weapon::Style::All },
+            { L"Unarmed", Weapon::Style::Unarmed },
+            { L"Blade", Weapon::Style::Blade },
+            { L"Blunt", Weapon::Style::Blunt },
+            { L"Axe", Weapon::Style::Axe },
+            { L"Sling", Weapon::Style::Sling },
+            { L"Bow", Weapon::Style::Bow },
+            { L"Crossbow", Weapon::Style::Crossbow },
+            { L"Gun", Weapon::Style::Gun },
+        });
+
+        std::map<std::wstring, Weapon::Material::Category > weaponMaterialCategories(
+        {
+            { L"Metal", Weapon::Material::Metal },
+            { L"Wood", Weapon::Material::Wood },
+            { L"Leather", Weapon::Material::Leather },
+        });
+
+        std::vector<Weapon> Weapon::Load(std::wistream& file)
+        {
+            Engine::Adapter::String<Weapon> name(&Weapon::name);
+            Engine::Adapter::Integer<Weapon> frequency(&Weapon::frequency);
+            Engine::Adapter::Struct<Weapon, Requirement> requirement(&Weapon::requirement, requirementAdapters);
+            Engine::Adapter::Enumeration<Weapon, Weapon::Style> style(&Weapon::style, weaponStyles);
+            Engine::Adapter::Integer<Weapon> hands(&Weapon::hands);
+            Engine::Adapter::Enumeration<Weapon, Weapon::Material::Category> material(&Weapon::material, weaponMaterialCategories);
+            Engine::Adapter::Struct<Weapon, Damage> damage(&Weapon::damage, damageAdapters);
+
+            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &style, &hands, &material, &damage,  });
+            return csv.Read();
+        }
+
+        std::vector<Weapon::Material> Weapon::Material::Load(std::wistream& file)
+        {
+            Engine::Adapter::String<Weapon::Material> name(&Weapon::Material::name);
+            Engine::Adapter::Integer<Weapon::Material> frequency(&Weapon::Material::frequency);
+            Engine::Adapter::Enumeration<Weapon::Material, Weapon::Material::Category> category(&Weapon::Material::category, weaponMaterialCategories);
+            Engine::Adapter::Integer<Weapon::Material> magic(&Weapon::Material::magic);
+            Engine::Adapter::Enumeration<Weapon::Material, Element> element(&Weapon::Material::element, elementMap);
+            Engine::Adapter::Struct<Weapon::Material, Requirement> requirement(&Weapon::Material::requirement, requirementAdapters);
+            Engine::Adapter::Struct<Weapon::Material, Damage> damage(&Weapon::Material::damage, damageAdapters);
+
+            Engine::CSV<Weapon::Material> csv(file, { &name, &frequency, &category, &magic, &element, &requirement, &damage });
+            return csv.Read();
+        }
+
+
+        std::vector<Weapon::Bonus> Weapon::Bonus::Load(std::wistream& file)
+        {
+            Engine::Adapter::String<Weapon::Bonus> prefix(&Weapon::Bonus::prefix);
+            Engine::Adapter::String<Weapon::Bonus> postfix(&Weapon::Bonus::postfix);
+            Engine::Adapter::Integer<Weapon::Bonus> frequency(&Weapon::Bonus::frequency);
+            Engine::Adapter::Integer<Weapon::Bonus> magic(&Weapon::Bonus::magic);
+            Engine::Adapter::Struct<Weapon::Bonus, Requirement> requirement(&Weapon::Bonus::requirement, requirementAdapters);
+            Engine::Adapter::Enumeration<Weapon::Bonus, Weapon::Style> style(&Weapon::Bonus::style, weaponStyles);
+            Engine::Adapter::Struct<Weapon::Bonus, Damage> damage(&Weapon::Bonus::damage, damageAdapters);
+            Engine::CSV<Weapon::Bonus> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &style, &damage });
+            return csv.Read();
+        }
+
 
     }
 

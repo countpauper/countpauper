@@ -7,20 +7,23 @@
 #include "Skills.h"
 #include "Item.h"
 #include <fstream>
+
 namespace Game
 {
 
     Game::Game(std::unique_ptr<Skills> skills) :
         skills(std::move(skills)),
-        armorMaterials(Type::Armor::Material::Load(std::wifstream(L"Data/ArmorMaterial.csv"))),
         armors(Type::Armor::Load(std::wifstream(L"Data/Armor.csv"))),
-        armorBoni(Type::Armor::Bonus::Load(std::wifstream(L"Data/ArmorBonus.csv")))
+        armorMaterials(Type::Armor::Material::Load(std::wifstream(L"Data/ArmorMaterial.csv"))),
+        armorBoni(Type::Armor::Bonus::Load(std::wifstream(L"Data/ArmorBonus.csv"))),
+        weapons(Type::Weapon::Load(std::wifstream(L"Data/Weapon.csv"))),
+        weaponMaterials(Type::Weapon::Material::Load(std::wifstream(L"Data/WeaponMaterial.csv"))),
+        weaponBoni(Type::Weapon::Bonus::Load(std::wifstream(L"Data/WeaponBonus.csv")))
     {
         // TestDumpAllItems(std::wofstream(L"Items.csv"));
     }
     
     Game::~Game() = default;
-
 
     State Game::Get(const Actor& actor) const
     {

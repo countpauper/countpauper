@@ -156,35 +156,48 @@ namespace Game
         class Weapon: public Equipment
         {
         public:
-            enum Category
+            enum Style
             {
-                None=0
+                All = -1,
+                Unarmed = 0,
+                Blade,
+                Blunt,
+                Axe,
+                Sling,
+                Bow,
+                Crossbow,
+                Gun,
             };
             class Material : public Type::Material
             {
             public:
+                enum Category
+                {
+                    None = 0,
+                    Wood,
+                    Metal,
+                    Leather
+                };
                 Material() : category(None) {}
                 Category category;
-                Damage bonus;
+                Damage damage;
+                static std::vector<Material> Load(std::wistream& fileName);
             };
             class Bonus : public Type::Bonus
             {
             public:
-                Bonus() : category(None) {}
-                Category category;
-                Damage bonus;
-            };            
-            enum Style
-            {
-                Unarmed,
-                Blade,
-                Stave,
-                Ranged,
+                Bonus() : style(Weapon::All) {}
+                Weapon::Style style;
+                Damage damage;
+                static std::vector<Bonus> Load(std::wistream& fileName);
             };
-            Weapon() : style(Unarmed), category(None) {}
+            Weapon() : style(Unarmed), material(Material::None) {}
             Style style;
-            Damage base;
-            Category category;
+            int hands;
+            Material::Category material;
+            Damage damage;
+            static std::vector<Weapon> Load(std::wistream& fileName);
+
         };
     }
 
@@ -205,7 +218,6 @@ namespace Game
         std::wstring Name() const;
         Requirement Required() const;
         Damage Mitigation() const;
-
     private:
         const Type::Armor& type;
         const Type::Armor::Material &material;

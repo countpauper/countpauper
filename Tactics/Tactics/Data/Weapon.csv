@@ -1,24 +1,26 @@
 #Name,Rarity,ReqStr,ReqWis,Style,Hands,Material,Sharp,Crush,Fire,Disease,Spirit
-Dagger,,,,Blade,1,,,,,,
-Shortsword,,,,Blade,1,,,,,,
-Broadsword,,,,Blade,1,,,,,,
-Longsword,,,,Blade,1,,,,,,
-Rapier,,,,Blade,1,,,,,,
-Claymore,,,,Blade,2,,,,,,
-Greatsword,,,,Blade,2,,,,,,
-Club,,,,Blunt,1,,,,,,
-Stave,,,,Blunt,2,,,,,,
-Hammer,,,,Blunt,1,,,,,,
-Mace,,,,Blunt,1,,,,,,
-Flail,,,,Blunt,1,,,,,,
-Warhammer,,,,Blunt,2,,,,,,
-Handaxe,,,,,1,,,,,,
-Waraxe,,,,,2,,,,,,
-Sling,,,,Ranged,1,,,,,,
-Bow,,,,Ranged,2,,,,,,
-Longbow,,,,Ranged,2,,,,,,
-Composite Bow,,,,Ranged,2,,,,,,
-Hand Crossbow,,,,Ranged,1,,,,,,
-Crossbow,,,,Ranged,2,,,,,,
-Pistol,,,,Ranged,1,,,,,,
-Rifle,,,,Ranged,2,,,,,,
+Dagger,1,1,0,Blade,1,Metal,2,0,0,0,0
+Shortsword,1,3,0,Blade,1,Metal,3,0,0,0,0
+Broadsword,1,4,0,Blade,1,Metal,4,0,0,0,0
+Longsword,1,5,0,Blade,1,Metal,5,0,0,0,0
+Rapier,1,4,0,Blade,1,Metal,4,0,0,0,0
+Claymore,1,8,0,Blade,2,Metal,7,0,0,0,0
+Greatsword,1,10,0,Blade,2,Metal,8,0,0,0,0
+Club,1,3,0,Blunt,1,Wood,0,4,0,0,0
+Stave,1,4,0,Blunt,2,Wood,0,5,0,0,0
+Hammer,1,5,0,Blunt,1,Metal,0,6,0,0,0
+Mace,1,6,0,Blunt,1,Metal,0,7,0,0,0
+Flail,1,7,0,Blunt,1,Metal,0,8,0,0,0
+Warhammer,1,8,0,Blunt,2,Metal,0,10,0,0,0
+Handaxe,1,3,0,Axe,1,Metal,4,0,0,0,0
+Waraxe,1,5,0,Axe,1,Metal,6,0,0,0,0
+Battle axe,1,8,0,Axe,2,Metal,9,0,0,0,0
+Whip,1,4,0,Axe,1,Leather,4,0,0,0,0
+Sling,1,3,0,Sling,1,Leather,0,3,0,0,0
+Bow,1,5,0,Bow,2,Wood,4,0,0,0,0
+Longbow,1,8,0,Bow,2,Wood,6,0,0,0,0
+Composite Bow,1,10,0,Bow,2,Wood,8,0,0,0,0
+Hand Crossbow,1,4,2,Crossbow,1,Wood,5,0,0,0,0
+Crossbow,1,5,3,Crossbow,2,Wood,8,0,0,0,0
+Pistol,1,1,4,Gun,1,Metal,0,8,0,0,0
+Rifle,1,1,5,Gun,2,Metal,0,10,0,0,0

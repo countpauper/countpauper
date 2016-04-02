@@ -70,6 +70,8 @@ namespace Game
         std::vector<Type::Armor::Material> armorMaterials;
         std::vector<Type::Armor::Bonus> armorBoni;
         std::vector<Type::Weapon> weapons;
+        std::vector<Type::Weapon::Material> weaponMaterials;
+        std::vector<Type::Weapon::Bonus> weaponBoni;
     };
     std::wistream& operator>>(std::wistream& s, Game& game);
 
