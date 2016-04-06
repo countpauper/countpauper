@@ -38,20 +38,16 @@ namespace Game
         GameChances ret;
         ret.emplace_back(GameChance(game, hitChance, L"Hit"));
         ret.back().Adjust(actor, state);
-        ret.back().Adjust(target, React(game.Get(target)));
+
+        State targetResult(game.Get(target));
+        auto damage = state.damage - targetResult.mitigation;
+        targetResult.health.Hurt(Body::Part::Chest, damage);
+
+        ret.back().Adjust(target, targetResult);
 
         ret.emplace_back(GameChance(game, 1.0-hitChance, L"Miss"));
         ret.back().Adjust(actor, state);
         return ret;
-    }
-
-    State Attack::React(const State& state) const
-    {
-        State result(state);
-        Damage damage(3, 0, 0, 0, 0);
-        damage -= state.mitigation;
-        result.health.Hurt(Body::Part::Chest, damage);
-        return result;
     }
 
 

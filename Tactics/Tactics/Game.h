@@ -52,6 +52,9 @@ namespace Game
         const Type::Armor& FindArmor(const std::wstring& name) const;
         const Type::Armor::Material&  FindArmorMaterial(const std::wstring& name, const Type::Armor& armor) const;
         const Type::Armor::Bonus& FindArmorBonus(const std::wstring& name, const Type::Armor& armor) const;
+        const Type::Weapon& FindWeapon(const std::wstring& name) const;
+        const Type::Weapon::Material&  FindWeaponMaterial(const std::wstring& name, const Type::Weapon& armor) const;
+        const Type::Weapon::Bonus& FindWeaponBonus(const std::wstring& name, const Type::Weapon& armor) const;
     protected:
         void AI(Actor* actor);
         void Next();

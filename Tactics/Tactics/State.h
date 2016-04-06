@@ -24,6 +24,7 @@ namespace Game
         Direction direction;
         unsigned mp;
         Body health;
+        Damage damage;
         Damage mitigation;
         Stats stats;
         unsigned loyalty;
@@ -37,7 +38,6 @@ namespace Game
         void Adjust(Actor& actor, const State& state) override;
         void Apply() const override;
         State Get(const Actor& actor) const override;
-        void Act(const Action& action);
 
         Actor* ActiveActor() const override;
         bool CanBe(const Position& position) const override;

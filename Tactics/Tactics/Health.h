@@ -39,6 +39,7 @@ namespace Game
         int disease;
         int spirit;
         Damage operator+(const Damage& other) const;
+        Damage operator-(const Damage& other) const;
         Damage& operator-=(const Damage& other);
         Damage& operator+=(const Damage& other);
     protected:

@@ -11,6 +11,7 @@ namespace Game
         direction(actor.GetDirection()),
         mp(actor.GetMovePoints()),
         health(actor.health),
+        damage(actor.AttackDamage()),
         mitigation(actor.Mitigation()),
         stats(actor.Statistics()),
         loyalty(actor.GetTeam())
@@ -26,17 +27,6 @@ namespace Game
         auto insert = state.insert(std::make_pair(&actor, actorState));
         if (!insert.second)
             state.at(&actor) = actorState;
-    }
-
-
-    void GameState::Act(const Action& action)
-    {
-        if (auto targetAction = dynamic_cast<const TargetedAction*>(&action))
-        {
-            auto state = Get(targetAction->target);
-            auto newState = targetAction->React(state);
-            Adjust(targetAction->target, newState);
-        }
     }
 
     State GameState::Get(const Actor& actor) const

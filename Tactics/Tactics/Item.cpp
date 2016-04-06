@@ -208,6 +208,14 @@ namespace Game
             Engine::CSV<Weapon::Bonus> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &style, &damage });
             return csv.Read();
         }
+        bool Weapon::Match(const Material& material) const
+        {
+            return (unsigned(material.category) & unsigned(this->material)) != 0;
+        }
+        bool Weapon::Match(const Bonus& bonus) const
+        {
+            return bonus.style == All || bonus.style == this->style;
+        }
 
 
     }
@@ -257,16 +265,41 @@ namespace Game
     {
         return type.mitigation + material.mitigation + bonus.mitigation;
     }
+    Weapon::Weapon(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& bonus) :
+        type(game.FindWeapon(type)),
+        material(game.FindWeaponMaterial(material, this->type)),
+        bonus(game.FindWeaponBonus(bonus, this->type))
+    {
+    }
+    Weapon::Weapon(const Type::Weapon& type, const Type::Weapon::Material& material, const Type::Weapon::Bonus& bonus) :
+        type(type),
+        material(material),
+        bonus(bonus)
+    {
+    }
+
+    std::wstring Weapon::Name() const
+    {
+        std::wstring name;
+        if (!bonus.prefix.empty())
+            name = bonus.prefix + L" ";
+        if (!material.name.empty())
+            name += material.name + L" ";
+        name += type.name;
+        if (!bonus.postfix.empty())
+            name += L" " + bonus.postfix;
+        return name;
+    }
+
 
     Requirement Weapon::Required() const
     {
         return type.requirement + bonus.requirement + material.requirement;
     }
 
-    std::wistream& operator>>(std::wistream& s, Weapon& weapon)
+    Damage Weapon::Damage() const
     {
-        Game& game = *static_cast<Game*>(s.pword(1));
-        return s;
+        return type.damage + material.damage + bonus.damage;
     }
 
 }

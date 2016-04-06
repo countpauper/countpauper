@@ -52,6 +52,7 @@ namespace Game
         typedef std::vector<Actor::Skill> Skills;
         const Actor::Skills& GetSkills() const;
         unsigned GetSkillScore(const ::Game::Skill& skill) const;
+        Damage AttackDamage() const;
         Damage Mitigation() const;
         Stats::Stat Strength() const;
         Stats::Stat Agility() const;

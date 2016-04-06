@@ -199,5 +199,11 @@
     <None Include="Data\Weapon.csv">
       <Filter>Data</Filter>
     </None>
+    <None Include="Data\WeaponBonus.csv">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Data\WeaponMaterial.csv">
+      <Filter>Data</Filter>
+    </None>
   </ItemGroup>
 </Project>

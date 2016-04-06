@@ -166,6 +166,14 @@ namespace Game
             return it->score;
     }
 
+    Damage Actor::AttackDamage() const
+    {
+        if (weapons.empty())
+            return Damage(0,2,0,0,0);   // unarmed
+        else
+            return weapons.front().Damage();
+    }
+
     Damage Actor::Mitigation() const
     {
         if (armors.empty())
@@ -190,6 +198,12 @@ namespace Game
             std::wstring typeName, materialName, bonusName;
             s >> bonusName >> materialName >> typeName;
             actor.armors.emplace_back(Armor(game, typeName, materialName, bonusName));
+        }
+        while (actor.weapons.size()<weapons)
+        {
+            std::wstring typeName, materialName, bonusName;
+            s >> bonusName >> materialName >> typeName;
+            actor.weapons.emplace_back(Weapon(game, typeName, materialName, bonusName));
         }
         actor.skills.resize(skills);
         for (auto& skill : actor.skills)

@@ -95,6 +95,12 @@ namespace Game
     {
         return Damage(sharp + other.sharp, crush + other.crush, burn + other.burn, disease + other.disease, spirit+other.spirit);
     }
+    Damage Damage::operator-(const Damage& other) const
+    {
+        Damage result(*this);
+        result -= other;
+        return result;
+    }
 
     Damage& Damage::operator-=(const Damage& other)
     {

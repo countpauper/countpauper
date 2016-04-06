@@ -174,9 +174,9 @@ namespace Game
                 enum Category
                 {
                     None = 0,
-                    Wood,
-                    Metal,
-                    Leather
+                    Wood =1<<0,
+                    Metal = 1<<1,
+                    Leather= 1<<2,
                 };
                 Material() : category(None) {}
                 Category category;
@@ -192,6 +192,9 @@ namespace Game
                 static std::vector<Bonus> Load(std::wistream& fileName);
             };
             Weapon() : style(Unarmed), material(Material::None) {}
+            bool Match(const Material& material) const;
+            bool Match(const Bonus& bonus) const;
+
             Style style;
             int hands;
             Material::Category material;
@@ -227,10 +230,15 @@ namespace Game
     class Weapon : public Equipment
     {
     public:
+        Weapon(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& bonus);
+        Weapon(const Type::Weapon& type, const Type::Weapon::Material& material, const Type::Weapon::Bonus& bonus);
+        std::wstring Name() const;
+        Requirement Required() const;
+        Damage Damage() const;
+    private:
         const Type::Weapon& type;
         const Type::Weapon::Material &material;
         const Type::Weapon::Bonus &bonus;
-        Requirement Required() const;
     };
 }
 

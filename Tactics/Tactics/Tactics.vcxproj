@@ -164,6 +164,8 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     <None Include="Data\ArmorBonus.csv" />
     <None Include="Data\ArmorMaterial.csv" />
     <None Include="Data\Weapon.csv" />
+    <None Include="Data\WeaponBonus.csv" />
+    <None Include="Data\WeaponMaterial.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

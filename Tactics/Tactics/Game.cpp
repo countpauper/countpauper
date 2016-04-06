@@ -306,6 +306,7 @@ namespace Game
         }
         throw std::invalid_argument("Unknown armor type");
     }
+
     const Type::Armor::Material&  Game::FindArmorMaterial(const std::wstring& name, const Type::Armor& armor) const
     {
         for (const auto& material : armorMaterials)
@@ -315,6 +316,7 @@ namespace Game
         }
         throw std::invalid_argument("Unknown material type");
     }
+
     const Type::Armor::Bonus& Game::FindArmorBonus(const std::wstring& name, const Type::Armor& armor) const
     {
         for (const auto& bonus : armorBoni)
@@ -324,6 +326,38 @@ namespace Game
         }
         throw std::invalid_argument("Unknown bonus type");
     }
+
+    const Type::Weapon& Game::FindWeapon(const std::wstring& name) const
+    {
+        for (const auto& weapon : weapons)
+        {
+            if (weapon.name == name)
+                return weapon;
+        }
+        throw std::invalid_argument("Unknown Weapon type");
+    }
+
+    const Type::Weapon::Material&  Game::FindWeaponMaterial(const std::wstring& name, const Type::Weapon& weapon) const
+    {
+        for (const auto& material : weaponMaterials)
+        {
+            if (weapon.Match(material) && material.name == name)
+                return material;
+        }
+        throw std::invalid_argument("Unknown material type");
+    }
+
+    const Type::Weapon::Bonus& Game::FindWeaponBonus(const std::wstring& name, const Type::Weapon& weapon) const
+    {
+        for (const auto& bonus : weaponBoni)
+        {
+            if (weapon.Match(bonus) && bonus.prefix == name)
+                return bonus;
+        }
+        throw std::invalid_argument("Unknown bonus type");
+    }
+
+ 
     void Game::TestDumpAllItems(std::wostream& out) const
     {
         out << L"Name, ReqStr, ReqWis, Sharp, Crush, Burn, Disease, Spirit" << std::endl;

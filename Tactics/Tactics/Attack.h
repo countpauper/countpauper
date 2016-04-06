@@ -15,7 +15,6 @@ namespace Game
         Attack(Actor& target, const Skill& skill);
         void Render(const State& state) const override;
         GameChances Act(IGame& game) override;
-        State React(const State& state) const override;
         std::wstring Description() const override;
     protected:
         const Skill& skill;
