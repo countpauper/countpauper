@@ -49,12 +49,13 @@ namespace Game
         } }
     };
 
-    std::wstring Damage::Description() const
+    std::wstring Damage::Description(unsigned constitution) const
     {
         auto worst = FindWorst();
         std::wstringstream ss;
         auto& table = Wounds::table.at(worst.first);
-        auto& descriptionIt = table.upper_bound(worst.second);
+        unsigned severity = (MaxPain * worst.second) / constitution;
+        auto& descriptionIt = table.upper_bound(severity);
         descriptionIt--;
         return descriptionIt->second.description;
         return ss.str();
@@ -69,7 +70,8 @@ namespace Game
     bool Damage::Disabled(unsigned constitution) const
     {
         auto worst = FindWorst();
-        return worst.second >= constitution;
+        if (worst.second <= 0) return false;
+        return unsigned(worst.second) >= constitution;
     }
     std::pair<Wounds::Type, int> Damage::FindWorst() const
     {
@@ -161,7 +163,7 @@ namespace Game
         };
         return description.at(type);
     }
-    std::wstring Body::Description() const
+    std::wstring Body::Description(unsigned constitution) const
     {
         std::wstring result;
         bool fine = true;
@@ -169,7 +171,7 @@ namespace Game
         {
             if (part.second.Hurt())
             {
-                result += part.first.Description() + L"=" + part.second.Description();
+                result += part.first.Description() + L"=" + part.second.Description(constitution);
                 fine = false;
             }
         }

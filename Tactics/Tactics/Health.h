@@ -30,7 +30,7 @@ namespace Game
     public:
         Damage() : sharp(0), crush(0), burn(0), disease(0), spirit(0) {}
         Damage(int sharp, int crush, int burn, int disease, int spirit) : sharp(sharp), crush(crush), burn(burn), disease(disease), spirit(spirit) {}
-        std::wstring Description() const;
+        std::wstring Description(unsigned constitution) const;
         bool Disabled(unsigned constitution) const;
         bool Hurt() const;
         int sharp;
@@ -73,7 +73,7 @@ namespace Game
             Type type;
         };
         std::map<Part,Damage> health;
-        std::wstring Description() const;
+        std::wstring Description(unsigned constitution) const;
         bool Dead(unsigned constitution) const;
         void Hurt(Part::Type location, Damage& damage);
     };

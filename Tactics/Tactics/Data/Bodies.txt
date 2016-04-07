@@ -1,0 +1,29 @@
+Human 5
+Head	Intelligence	10	0 0 0 0 0	4 4	Top|All
+Arms	Strength	10	0 0 0 0 0	3 3	Side
+Chest	Wisdom	10	0 0 0 0 0	3 3	Front|Back
+Belly	Constitution	10	0 0 0 0 0	2 2	All
+Legs	Agility	10	0 0 0 0 0	0 1	All
+Dwarf 5
+Head	Intelligence	10	0 2 0 0 0	3 3	Top|All
+Arms	Strength	10	0 0 0 0 0	2 2	Side
+Chest	Wisdom	10	0 0 0 0 0	2 2	Front|Back|Bottom
+Belly	Constitution	12	0 0 0 0 0	1 1	All
+Legs	Agility	8	0 0 0 0 0	0 0	All
+Dog 5
+Head	Intelligence	3	0 0 0 0 0	2 2	Front
+Chest	Wisdom	3	0 0 0 0 0	1 1	Front
+Body	Constitution	7	0 0 0 0 0	1 1	Back|Side|Bottom
+FrontPaws	Strength	5	0 0 0 0 0	0 0	Front
+BackPaws	Agility	0 0 0 0 0	15	0 0	Back|Side
+Dragon 5
+Head	Intelligence	20	3 3 5 2 0	6 7	Top|All
+Chest	Wisdom	15	3 3 5 2 0	3 5	Front
+Pantser	Constitution	10	4 4 4 2 0	Sides
+Belly	Constitution	20	1 2 4 0 0	2 2	Bottom
+Wings	FlyAgility	20	Back	
+FrontLegs	GrabStrength	10	2 2 5 2 0	0 1	Front
+BackLegs	Agility	5	2 2 5 2 0	0 1	Sides
+Tail	SwingStrength	Back	10	0 1	Back
+
+
