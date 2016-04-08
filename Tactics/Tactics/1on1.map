@@ -1,5 +1,6 @@
 2
-Actor Foo 2 0 0 10 10 10 10 10 0 31
+Actor Foo 2 0 0 0 31
+10 10 10 10 10
 0 0 0 0 0
 0 0 0 0 0
 0 0 0 0 0
@@ -9,7 +10,8 @@ Actor Foo 2 0 0 10 10 10 10 10 0 31
 Normal Leather Jacket
 Normal Steel Broadsword
 Sword 10
-Actor Bar 1 1 0 10 10 10 10 10 0 31
+Actor Bar 1 1 0 0 31
+10 10 10 10 10
 0 0 0 0 0
 0 0 0 0 0
 0 0 0 0 0

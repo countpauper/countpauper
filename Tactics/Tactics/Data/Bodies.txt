@@ -1,15 +1,19 @@
-Human 5
+Human 7
 Head	Intelligence	10	0 0 0 0 0	4 4	Top|All
-Arms	Strength	10	0 0 0 0 0	3 3	Side
+RightArm	Strength	6	0 0 0 0 0	3 3	Right
+LeftArm	Strength	4	0 0 0 0 0	3 3	Left
 Chest	Wisdom	10	0 0 0 0 0	3 3	Front|Back
 Belly	Constitution	10	0 0 0 0 0	2 2	All
-Legs	Agility	10	0 0 0 0 0	0 1	All
-Dwarf 5
+RightLeg	Agility	5	0 0 0 0 0	0 1	Right?
+LeftLeg	Agility	5	0 0 0 0 0	0 1	Left?
+Dwarf 7
 Head	Intelligence	10	0 2 0 0 0	3 3	Top|All
-Arms	Strength	10	0 0 0 0 0	2 2	Side
+RightArm	Strength	6	0 0 0 0 0	2 2	Right
+LeftArm	Strength	4 0 0 0 0 0	2 2	Left
 Chest	Wisdom	10	0 0 0 0 0	2 2	Front|Back|Bottom
 Belly	Constitution	12	0 0 0 0 0	1 1	All
-Legs	Agility	8	0 0 0 0 0	0 0	All
+RightLeg	Agility	8	0 0 0 0 0	0 0	Right?
+LeftLegs	Agility	8	0 0 0 0 0	0 0	Left?
 Dog 5
 Head	Intelligence	3	0 0 0 0 0	2 2	Front
 Chest	Wisdom	3	0 0 0 0 0	1 1	Front

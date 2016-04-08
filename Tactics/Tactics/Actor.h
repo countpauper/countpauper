@@ -23,13 +23,10 @@ namespace Game
         virtual void Render() const = 0;
         void Move(int dx, int dy);
         Position GetPosition() const;
-        unsigned GetHitPoints() const;
         std::wstring name;
         Body health;    // TODO: different body parts for different objects/creatures
     protected:
         Position position;
-        unsigned maxhp;
-        Stats stats;
     };
     class Actor : public Object
     {

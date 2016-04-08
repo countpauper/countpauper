@@ -203,6 +203,7 @@ namespace Game
     {
         unsigned partMask;
         s >> partMask;
+        s >> body.stats;
         for (unsigned bit = 0; bit < sizeof(partMask) * 8; ++bit)
         {
             if (partMask & (1 << bit))

@@ -103,12 +103,11 @@ namespace Game
         direction = result.direction;
         mp = result.mp;
         health = result.health;
-        stats = result.stats;
     }
 
     Stats::Stat Actor::Strength() const
     {
-        return stats.strength;  // todo: health penalty, equipment boni
+        return health.stats.strength;  // todo: health penalty, equipment boni
     }
 
     Stats::Stat Actor::Agility() const
@@ -116,21 +115,21 @@ namespace Game
         int totalRequiredStrength = std::accumulate(armors.begin(), armors.end(), 0, [](int str, const Armor& armor) -> int { return str+armor.Required().strength; });
         totalRequiredStrength += std::accumulate(weapons.begin(), weapons.end(), 0, [](int str, const Weapon& weapon) -> int { return str+weapon.Required().strength; });
         int reqPentalty = std::max(0, totalRequiredStrength - int(Strength()));
-        return stats.agility - reqPentalty;// todo: health penalty, equipment boni
+        return health.stats.agility - reqPentalty;// todo: health penalty, equipment boni
     }
 
     Stats::Stat Actor::Constitution() const
     {
-        return stats.constitution;  // todo: health penalty, equipment boni
+        return health.stats.constitution;  // todo: health penalty, equipment boni
     }
 
     Stats::Stat Actor::Intelligence() const
     {
-        return stats.intelligence; // todo: health penalty, equipment requirements, equipment boni
+        return health.stats.intelligence; // todo: health penalty, equipment requirements, equipment boni
     }
     Stats::Stat Actor::Wisdom() const
     {
-        return stats.wisdom;  // todo: health penalty, equipment boni
+        return health.stats.wisdom;  // todo: health penalty, equipment boni
     }
 
     Stats Actor::Statistics() const
@@ -187,7 +186,6 @@ namespace Game
         s >> actor.name;
         s >> actor.team;
         s >> actor.position.x >> actor.position.y;
-        s >> actor.stats;
         s >> actor.mp;
         s >> actor.health;
         unsigned armors, weapons, skills;

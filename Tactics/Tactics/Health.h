@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
+#include "Stats.h"
 
 namespace Game
 {
@@ -76,6 +77,7 @@ namespace Game
         std::wstring Description(unsigned constitution) const;
         bool Dead(unsigned constitution) const;
         void Hurt(Part::Type location, Damage& damage);
+        Stats stats;
     };
     std::wistream& operator>>(std::wistream& s, Body& body);
 
