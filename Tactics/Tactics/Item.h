@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
-#include "Health.h"
+#include "Damage.h"
 
 namespace Game
 {

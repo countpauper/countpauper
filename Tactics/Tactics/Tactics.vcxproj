@@ -99,10 +99,12 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Attack.h" />
+    <ClInclude Include="Body.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="CSV.h" />
+    <ClInclude Include="Damage.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Error.h" />
     <ClInclude Include="Game.h" />
@@ -122,11 +124,12 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Tactics.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Health.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="Body.cpp" />
+    <ClCompile Include="Damage.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -134,7 +137,6 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Health.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Move.cpp" />

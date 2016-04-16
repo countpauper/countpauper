@@ -6,7 +6,8 @@
 #include <vector>
 #include "Position.h"
 #include "Direction.h"
-#include "Health.h"
+#include "Damage.h"
+#include "Body.h"
 #include "Stats.h"
 #include "IGame.h"
 

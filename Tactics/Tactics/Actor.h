@@ -4,7 +4,7 @@
 #include <vector>
 #include "Position.h"
 #include "Direction.h"
-#include "Health.h"
+#include "Body.h"
 #include "Stats.h"
 #include "Item.h"
 
