@@ -51,11 +51,11 @@ namespace Game
         unsigned GetSkillScore(const ::Game::Skill& skill) const;
         Damage AttackDamage() const;
         Damage Mitigation() const;
-        Stats::Stat Strength() const;
-        Stats::Stat Agility() const;
-        Stats::Stat Constitution() const;
-        Stats::Stat Intelligence() const;
-        Stats::Stat Wisdom() const;
+        Stats::Score Strength() const;
+        Stats::Score Agility() const;
+        Stats::Score Constitution() const;
+        Stats::Score Intelligence() const;
+        Stats::Score Wisdom() const;
         Stats Statistics() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);

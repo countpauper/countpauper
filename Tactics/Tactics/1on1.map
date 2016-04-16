@@ -1,22 +1,20 @@
 2
-Actor Foo 2 0 0 0 31
-10 10 10 10 10
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
+Actor Foo 2 0 0 0 5
+Legs Legs Agi 10 0 0 0 0 0
+Arms Arms Str 10 0 0 0 0 0
+Belly Belly Con 10 0 0 0 0 0
+Chest Chest Wis 10 0 0 0 0 0
+Head Head Int 10 0 0 0 0 0
 1 1 1
 Normal Leather Jacket
 Normal Steel Broadsword
 Sword 10
-Actor Bar 1 1 0 0 31
-10 10 10 10 10
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
+Actor Bar 1 1 0 0 5
+Legs Legs Agi 10 0 0 0 0 0
+Arms Arms Str 10 0 0 0 0 0
+Belly Belly Con 10 0 0 0 0 0
+Chest Chest Wis 10 0 0 0 0 0
+Head Head Int 10 0 0 0 0 0
 1 1 1
 Embroidered Linen Robe
 Normal Steel Hammer

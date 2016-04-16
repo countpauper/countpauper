@@ -171,10 +171,10 @@
     <ClCompile Include="Item.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Body.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="Damage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Body.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

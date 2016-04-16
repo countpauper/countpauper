@@ -105,31 +105,31 @@ namespace Game
         body = result.body;
     }
 
-    Stats::Stat Actor::Strength() const
+    Stats::Score Actor::Strength() const
     {
-        return body.stats.strength;  // todo: health penalty, equipment boni
+        return body.Strength();  // todo: health penalty, equipment boni
     }
 
-    Stats::Stat Actor::Agility() const
+    Stats::Score Actor::Agility() const
     {
         int totalRequiredStrength = std::accumulate(armors.begin(), armors.end(), 0, [](int str, const Armor& armor) -> int { return str+armor.Required().strength; });
         totalRequiredStrength += std::accumulate(weapons.begin(), weapons.end(), 0, [](int str, const Weapon& weapon) -> int { return str+weapon.Required().strength; });
         int reqPentalty = std::max(0, totalRequiredStrength - int(Strength()));
-        return body.stats.agility - reqPentalty;// todo: health penalty, equipment boni
+        return body.Agility()- reqPentalty;// todo: equipment boni
     }
 
-    Stats::Stat Actor::Constitution() const
+    Stats::Score Actor::Constitution() const
     {
-        return body.stats.constitution;  // todo: health penalty, equipment boni
+        return body.Constitution();  // todo: equipment boni
     }
 
-    Stats::Stat Actor::Intelligence() const
+    Stats::Score Actor::Intelligence() const
     {
-        return body.stats.intelligence; // todo: health penalty, equipment requirements, equipment boni
+        return body.Intelligence(); // todo: equipment requirements, equipment boni
     }
-    Stats::Stat Actor::Wisdom() const
+    Stats::Score Actor::Wisdom() const
     {
-        return body.stats.wisdom;  // todo: health penalty, equipment boni
+        return body.Wisdom();  // todo:equipment boni
     }
 
     Stats Actor::Statistics() const

@@ -41,7 +41,7 @@ namespace Game
 
         State targetResult(game.Get(target));
         auto damage = state.damage - targetResult.mitigation;
-        targetResult.body.Hurt(Body::Part::Chest, damage);
+        targetResult.body.Hurt(AttackVector::Chest, damage);
 
         ret.back().Adjust(target, targetResult);
 
