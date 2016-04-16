@@ -24,7 +24,7 @@ namespace Game
         void Move(int dx, int dy);
         Position GetPosition() const;
         std::wstring name;
-        Body health;    // TODO: different body parts for different objects/creatures
+        Body body;    // TODO: different body parts for different objects/creatures
     protected:
         Position position;
     };

@@ -24,7 +24,7 @@ namespace Game
         Position position;
         Direction direction;
         unsigned mp;
-        Body health;
+        Body body;
         Damage damage;
         Damage mitigation;
         Stats stats;

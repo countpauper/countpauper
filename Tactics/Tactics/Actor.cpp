@@ -102,12 +102,12 @@ namespace Game
         position = result.position;
         direction = result.direction;
         mp = result.mp;
-        health = result.health;
+        body = result.body;
     }
 
     Stats::Stat Actor::Strength() const
     {
-        return health.stats.strength;  // todo: health penalty, equipment boni
+        return body.stats.strength;  // todo: health penalty, equipment boni
     }
 
     Stats::Stat Actor::Agility() const
@@ -115,21 +115,21 @@ namespace Game
         int totalRequiredStrength = std::accumulate(armors.begin(), armors.end(), 0, [](int str, const Armor& armor) -> int { return str+armor.Required().strength; });
         totalRequiredStrength += std::accumulate(weapons.begin(), weapons.end(), 0, [](int str, const Weapon& weapon) -> int { return str+weapon.Required().strength; });
         int reqPentalty = std::max(0, totalRequiredStrength - int(Strength()));
-        return health.stats.agility - reqPentalty;// todo: health penalty, equipment boni
+        return body.stats.agility - reqPentalty;// todo: health penalty, equipment boni
     }
 
     Stats::Stat Actor::Constitution() const
     {
-        return health.stats.constitution;  // todo: health penalty, equipment boni
+        return body.stats.constitution;  // todo: health penalty, equipment boni
     }
 
     Stats::Stat Actor::Intelligence() const
     {
-        return health.stats.intelligence; // todo: health penalty, equipment requirements, equipment boni
+        return body.stats.intelligence; // todo: health penalty, equipment requirements, equipment boni
     }
     Stats::Stat Actor::Wisdom() const
     {
-        return health.stats.wisdom;  // todo: health penalty, equipment boni
+        return body.stats.wisdom;  // todo: health penalty, equipment boni
     }
 
     Stats Actor::Statistics() const
@@ -143,7 +143,7 @@ namespace Game
 
     bool Actor::Dead() const
     {
-        return health.Dead(Constitution());
+        return body.Dead(Constitution());
     }
     
     bool Actor::CanAct() const
@@ -187,7 +187,7 @@ namespace Game
         s >> actor.team;
         s >> actor.position.x >> actor.position.y;
         s >> actor.mp;
-        s >> actor.health;
+        s >> actor.body;
         unsigned armors, weapons, skills;
         s >> armors >> weapons >> skills;
         actor.armors.reserve(armors);

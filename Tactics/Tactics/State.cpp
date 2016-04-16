@@ -10,7 +10,7 @@ namespace Game
         position(actor.GetPosition()),
         direction(actor.GetDirection()),
         mp(actor.GetMovePoints()),
-        health(actor.health),
+        body(actor.body),
         damage(actor.AttackDamage()),
         mitigation(actor.Mitigation()),
         stats(actor.Statistics()),
@@ -75,7 +75,7 @@ namespace Game
         std::wstringstream ss;
         for (const auto& actorState : state)
         {
-            ss << actorState.first->name << L": " << actorState.second.health.Description(actorState.second.stats.constitution) << L", "; // L" @ (" << actorState.second.position.Description() << L"), ";
+            ss << actorState.first->name << L": " << actorState.second.body.Description(actorState.second.stats.constitution) << L", "; // L" @ (" << actorState.second.position.Description() << L"), ";
         }
         return ss.str();
     }
