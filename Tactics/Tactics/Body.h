@@ -3,18 +3,10 @@
 #include <vector>
 #include "Stats.h"
 #include "Damage.h"
+#include "Direction.h"
 
 namespace Game
 {
-
-    enum class AttackVector
-    {
-        Head,
-        Chest,
-        Belly,
-        Arms,
-        Legs,
-    };
     class Body
     {
     public:
@@ -39,7 +31,7 @@ namespace Game
         };
         std::wstring Description(unsigned constitution) const;
         bool Dead(unsigned constitution) const;
-        void Hurt(AttackVector location, Damage& damage);
+        bool Hurt(AttackVector location, Damage& damage);
         Stats::Score Strength() const;
         Stats::Score Agility() const;
         Stats::Score Constitution() const;

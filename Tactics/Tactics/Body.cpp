@@ -9,11 +9,11 @@ namespace Game
 
     bool Body::Part::operator<(const Part& other) const
     {
-        return unsigned(location) < unsigned(other.location);
+        return name < other.name;
     }
     bool Body::Part::Match(AttackVector match) const
     {
-        return location == match;
+        return location.Match(match);
     }
 
     bool Body::Part::Disabled(Stats::Score constitution) const
@@ -73,15 +73,17 @@ namespace Game
         }
         return false;
     }
-    void Body::Hurt(AttackVector location, Damage& damage)
+    bool Body::Hurt(AttackVector location, Damage& damage)
     {
         for (auto& part : parts)
         {
             if (part.Match(location))
             {
-                part.Hurt(damage);
+                part.Hurt(damage); 
+                return true;
             }
         }
+        return false;
     }
 
     Stats::Score Body::Strength() const
@@ -112,24 +114,7 @@ namespace Game
     std::wistream& operator>>(std::wistream& s, Body::Part& part)
     {
         std::wstring attribute, location;
-        s >> part.name >> location >> attribute >> part.score >> part.health;
-        static std::map<std::wstring, Attribute> attribute_map({
-            { L"Str", Attribute::Strength },
-            { L"Agi", Attribute::Agility },
-            { L"Con", Attribute::Constitution },
-            { L"Int", Attribute::Intelligence },
-            { L"Wis", Attribute::Wisdom },
-        });
-        part.attribute = attribute_map.at(attribute);
-        static std::map<std::wstring, AttackVector> location_map({
-            { L"Legs", AttackVector::Legs },
-            { L"Belly", AttackVector::Belly },
-            { L"Chest", AttackVector::Chest },
-            { L"Arms", AttackVector::Arms },
-            { L"Head", AttackVector::Head},
-        });
-
-        part.location = location_map.at(location);
+        s >> part.name >> part.location >> part.attribute >> part.score >> part.health;
         return s;
     }
 

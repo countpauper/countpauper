@@ -5,6 +5,21 @@
 
 namespace Game
 {
+
+    std::wistream& operator>>(std::wistream& s, Attribute& attribute)
+    {
+        std::wstring label;
+        s >> label;
+        const static std::map<std::wstring, Attribute> attributeMap({
+            { L"Str", Attribute::Strength },
+            { L"Agi", Attribute::Agility },
+            { L"Con", Attribute::Constitution },
+            { L"Int", Attribute::Intelligence },
+            { L"Wis", Attribute::Wisdom },
+        });
+        attribute = attributeMap.at(label);
+        return s;
+    }
     Stats::Stats() :
         strength(0),
         agility(0),

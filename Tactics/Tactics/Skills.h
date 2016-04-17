@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include "Direction.h"
+
 namespace Game
 {
     class Action;
@@ -12,6 +14,7 @@ namespace Game
         Skill();
         Action* Action(Actor& target) const;
         std::wstring name;
+        AttackVector vector;
         unsigned cost;
         float range;
     };

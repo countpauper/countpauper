@@ -16,7 +16,7 @@ namespace Game
     std::wistream& operator>>(std::wistream& s, Skill& skill)
     {
         std::wstring type;
-        s >> type >> skill.name;
+        s >> type >> skill.name >> skill.vector;
         s >> skill.cost >> skill.range;
         return s;
     }

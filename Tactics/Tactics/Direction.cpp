@@ -93,4 +93,38 @@ namespace Game
         return (rad / M_PI)*180.0f;
     }
 
+    std::wistream& operator>>(std::wistream& s, Plane& plane)
+    {
+        std::wstring label;
+        const static std::map<std::wstring, Plane> planeMap({
+            { L"Left", Plane::Left },
+            { L"Right", Plane::Right },
+            { L"Coronal", Plane::Coronal },
+            { L"Front", Plane::Front },
+            { L"Back", Plane::Back },
+            { L"Sagital", Plane::Sagital },
+            { L"Around", Plane::Around },
+            { L"Top", Plane::Top },
+            { L"Bottom", Plane::Bottom },
+            { L"Transversal", Plane::Transversal },
+            { L"All", Plane::All }
+        });
+        s >> label;
+        plane = planeMap.at(label);
+        return s;
+    }
+
+    bool AttackVector::Match(const AttackVector other) const
+    {
+        if (height != other.height)
+            return false;
+        if ((unsigned(plane) & unsigned(other.plane)) == 0)
+            return false;
+        return true;
+    }
+    std::wistream& operator>>(std::wistream& s, AttackVector& v)
+    {
+        s >> v.plane >> v.height;
+        return s;
+    }
 }    // ::Game
