@@ -37,13 +37,13 @@ namespace Game
         Left = 1 << 8,
         Right = 1 << 9,
         Coronal = Left + Right, 
-        Front = 1 << 10,  
-        Back = 1 << 11,
-        Sagital = Front + Back,
+        Ventral = 1 << 10,  
+        Dorsal = 1 << 11,
+        Sagittal = Ventral + Dorsal,
         Top = 1 << 12,
         Bottom = 1 << 13,
         Transversal = Top + Bottom,
-        Around = Coronal + Sagital,
+        Around = Coronal + Sagittal,
         All = Around + Transversal
     };
     std::wistream& operator>>(std::wistream& s, Plane& plane);
