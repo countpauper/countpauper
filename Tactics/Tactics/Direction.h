@@ -19,7 +19,7 @@ namespace Game
         Direction(Value direction);
         Direction(const Position& vector);
         Position Vector() const;
-        float Angle() const;
+        double Angle() const;
         std::wstring Description() const;
     protected:
         Value value;

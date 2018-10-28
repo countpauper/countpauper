@@ -162,6 +162,7 @@ namespace Game
         glEnd();
 
     }
+
     void Map::Render() const
     {
         texture->Bind();
@@ -184,6 +185,11 @@ namespace Game
         }
         texture->Unbind();
         Engine::CheckGLError();
+    }
+
+    Engine::Coordinate Map::Coordinate(const Position& p) const
+    {
+        return Engine::Coordinate(static_cast<float>(p.x), static_cast<float>(p.y), static_cast<float>(At(p).height));
     }
 
     std::wistream& operator>>(std::wistream& s, Map& map)

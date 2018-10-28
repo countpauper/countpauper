@@ -41,7 +41,7 @@ namespace Game
     {
         return vector.at(value);
     }
-    float Direction::Angle() const
+    double Direction::Angle() const
     {
         return angle.at(value);
     }
@@ -74,24 +74,6 @@ namespace Game
     };
 
 
-    float ShortestTurn(float a, float b)
-    {
-        float result = a - b;
-        if (result > M_PI)
-        {
-            return -2 * M_PI + result;
-        }
-        else if (result < -M_PI)
-        {
-            return 2 * M_PI + result;
-        }
-        return result;
-    }
-
-    float Rad2Deg(float rad)
-    {
-        return (rad / M_PI)*180.0f;
-    }
 
     std::wistream& operator>>(std::wistream& s, Plane& plane)
     {

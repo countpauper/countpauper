@@ -6,7 +6,7 @@
 #include "Color.h"
 #include "Game.h"
 #include "Skills.h"
-
+#include "Geometry.h"
 namespace Game
 {
     Object::Object()
@@ -44,7 +44,7 @@ namespace Game
         glPushMatrix();
         if (Dead())
             glRotatef(90, 1, 0, 0);
-        glRotatef(Rad2Deg(direction.Angle()), 0, 1, 0);
+        glRotated(Engine::Rad2Deg(direction.Angle()), 0, 1, 0);
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
         {
