@@ -82,13 +82,14 @@ namespace Game
             { L"Left", Plane::Left },
             { L"Right", Plane::Right },
             { L"Coronal", Plane::Coronal },
-            { L"Ventral", Plane::Ventral },
-            { L"Dorsal", Plane::Dorsal },
+            { L"Front", Plane::Front },
+            { L"Back", Plane::Back },
             { L"Sagital", Plane::Sagittal },
             { L"Around", Plane::Around },
             { L"Top", Plane::Top },
             { L"Bottom", Plane::Bottom },
             { L"Transversal", Plane::Transversal },
+            { L"Around", Plane::Around },
             { L"All", Plane::All }
         });
         s >> label;
