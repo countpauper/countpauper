@@ -52,10 +52,15 @@ namespace Game
         Damage AttackDamage() const;
         Damage Mitigation() const;
         Stats::Score Strength() const;
+        int StrengthBonus() const;
         Stats::Score Agility() const;
+        unsigned MovePoints() const;
         Stats::Score Constitution() const;
+        int ConstitutionBonus() const;
         Stats::Score Intelligence() const;
+        int IntelligenceBonus() const;
         Stats::Score Wisdom() const;
+        int WisdomBonus() const;
         Stats Statistics() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);

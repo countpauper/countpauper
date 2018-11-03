@@ -1,19 +1,11 @@
 2
-Actor Foo 0 2 2 0 5
-Legs Around 0 Agi 10 0 0 0 0 0
-Arms Coronal 2 Str 10 0 0 0 0 0
-Belly Around 1 Con 10 0 0 0 0 0
-Chest Sagital 2 Wis 10 0 0 0 0 0
-Head All 3 Int 10 0 0 0 0 0
+Actor Foo 0 2 2 0 1
+Body Around 0 Agi+Str+Con+Wis+Int 10 0 0 0 0 0
 0 0 2
 Sword 10
 Bow 10
-Actor Bar 1 3 3 0 5
-Legs Around 0 Agi 10 0 0 0 0 0
-Arms Coronal 2 Str 10 0 0 0 0 0
-Belly Around 1 Con 10 0 0 0 0 0
-Chest Sagital 2 Wis 10 0 0 0 0 0
-Head All 3 Int 10 0 0 0 0 0
+Actor Bar 1 3 3 0 1
+Body Around 0 All 10 0 0 0 0 0
 0 0 1
 Sword 10
 Test 4 4 data/map.png

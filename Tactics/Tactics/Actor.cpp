@@ -107,7 +107,7 @@ namespace Game
 
     Stats::Score Actor::Strength() const
     {
-        return body.Strength();  // todo: health penalty, equipment boni
+        return body.Strength();  // todo: equipment boni
     }
 
     Stats::Score Actor::Agility() const
@@ -115,6 +115,7 @@ namespace Game
         int totalRequiredStrength = std::accumulate(armors.begin(), armors.end(), 0, [](int str, const Armor& armor) -> int { return str+armor.Required().strength; });
         totalRequiredStrength += std::accumulate(weapons.begin(), weapons.end(), 0, [](int str, const Weapon& weapon) -> int { return str+weapon.Required().strength; });
         int reqPentalty = std::max(0, totalRequiredStrength - int(Strength()));
+        // TODO: carrying capacity penalty
         return body.Agility()- reqPentalty;// todo: equipment boni
     }
 
@@ -132,6 +133,25 @@ namespace Game
         return body.Wisdom();  // todo:equipment boni
     }
 
+    int Actor::ConstitutionBonus() const
+    {
+        return (Constitution() - 11) / 3;
+    }
+
+    int Actor::StrengthBonus() const
+    {
+        return (Strength() - 11) / 3;
+    }
+
+    int Actor::IntelligenceBonus() const
+    {
+        return (Intelligence() - 11) / 3;
+    }
+
+    int Actor::WisdomBonus() const
+    {
+        return (Wisdom() - 11) / 3;
+    }
     Stats Actor::Statistics() const
     {
         return Stats::Stats(Strength(), Agility(), Constitution(), Intelligence(), Wisdom());
@@ -143,7 +163,7 @@ namespace Game
 
     bool Actor::Dead() const
     {
-        return body.Dead(Constitution());
+        return body.Dead();
     }
     
     bool Actor::CanAct() const
@@ -168,17 +188,23 @@ namespace Game
     Damage Actor::AttackDamage() const
     {
         if (weapons.empty())
-            return Damage(0,2,0,0,0);   // unarmed
+            return Damage(0,2+StrengthBonus(),0,0,0);   // unarmed
         else
+        {
+            assert(false); // apply strength bonus to 
             return weapons.front().Damage();
+        }
     }
 
     Damage Actor::Mitigation() const
     {
+        auto constMitigation = std::max(0, ConstitutionBonus());
+        auto wisMitigation = std::max(0, WisdomBonus());
+        Damage base(constMitigation, constMitigation, constMitigation, constMitigation, wisMitigation);
         if (armors.empty())
-            return Damage();
+            return base;
         else
-            return armors.front().Mitigation();
+            return base +armors.front().Mitigation();
     }
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {

@@ -16,9 +16,9 @@ namespace Game
         return location.Match(match);
     }
 
-    bool Body::Part::Disabled(Stats::Score constitution) const
+    bool Body::Part::Disabled() const
     {
-        return health.Disabled(constitution);
+        return health.Disabled();
     }
     void Body::Part::Hurt(const Damage& damage)
     {
@@ -36,8 +36,8 @@ namespace Game
 
     Stats::Score Body::Part::Score(Attribute attribute) const
     {
-        if (attribute == this->attribute)
-            return score;
+        if (attributes.count(attribute) != 0)
+            return score - health.StatPenalty();
         else
             return 0;
     }
@@ -64,11 +64,11 @@ namespace Game
         else
             return result;
     }
-    bool Body::Dead(unsigned constitution) const
+    bool Body::Dead() const
     {
         for (auto& part : parts)
         {
-            if (part.IsVital() && part.Disabled(constitution))
+            if (part.IsVital() && part.Disabled())
                 return true;
         }
         return false;
@@ -113,8 +113,7 @@ namespace Game
 
     std::wistream& operator>>(std::wistream& s, Body::Part& part)
     {
-        std::wstring attribute, location;
-        s >> part.name >> part.location >> part.attribute >> part.score >> part.health;
+        s >> part.name >> part.location >> part.attributes >> part.score >> part.health;
         return s;
     }
 

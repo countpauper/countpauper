@@ -33,8 +33,7 @@ namespace Game
         }
         state.mp -= cost;
 
-        int hitBonus = 5 + actor.GetSkillScore(skill) - target.Agility();
-        double hitChance = std::min(1.0,std::max(0.0, double(hitBonus)*0.1));
+        double hitChance = 1.0; // dodge is reactive
         GameChances ret;
         ret.emplace_back(GameChance(game, hitChance, L"Hit"));
         ret.back().Adjust(actor, state);
@@ -44,9 +43,6 @@ namespace Game
         targetResult.body.Hurt(skill.vector, damage);
 
         ret.back().Adjust(target, targetResult);
-
-        ret.emplace_back(GameChance(game, 1.0-hitChance, L"Miss"));
-        ret.back().Adjust(actor, state);
         return ret;
     }
 

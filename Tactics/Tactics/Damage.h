@@ -6,10 +6,10 @@
 namespace Game
 {
     typedef int Pain;
-    const Pain MaxPain = 8;
+    const Pain MaxPain = 15;
     const Pain ImmunePain = -1;
 
-    struct Wounds
+    struct Wound
     {
         enum class Type
         {
@@ -21,8 +21,9 @@ namespace Game
         };
         std::wstring description;
         int penalty;
-        typedef std::map<Wounds::Type, std::map<Pain, Wounds>> Table;
+        typedef std::map<Wound::Type, std::map<Pain, Wound>> Table;
         static const Table table;
+        static const Wound& find(Type type, Pain value);
     };
 
 
@@ -32,7 +33,8 @@ namespace Game
         Damage() : sharp(0), crush(0), burn(0), disease(0), spirit(0) {}
         Damage(int sharp, int crush, int burn, int disease, int spirit) : sharp(sharp), crush(crush), burn(burn), disease(disease), spirit(spirit) {}
         std::wstring Description(unsigned constitution) const;
-        bool Disabled(unsigned constitution) const;
+        int StatPenalty() const;
+        bool Disabled() const;
         bool Hurt() const;
         int sharp;
         int crush;
@@ -44,7 +46,7 @@ namespace Game
         Damage& operator-=(const Damage& other);
         Damage& operator+=(const Damage& other);
     protected:
-        std::pair<Wounds::Type, int> FindWorst() const;
+        std::pair<Wound::Type, int> FindWorst() const;
     };
     std::wistream& operator>>(std::wistream& s, Damage& damage);
 };
