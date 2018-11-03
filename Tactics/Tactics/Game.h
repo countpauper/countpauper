@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "IGame.h"
 #include "Item.h"
+#include "Coordinate.h"
 
 namespace Game
 {
@@ -55,12 +56,14 @@ namespace Game
         const Type::Weapon& FindWeapon(const std::wstring& name) const;
         const Type::Weapon::Material&  FindWeaponMaterial(const std::wstring& name, const Type::Weapon& armor) const;
         const Type::Weapon::Bonus& FindWeaponBonus(const std::wstring& name, const Type::Weapon& armor) const;
+
+        Engine::Coordinate focus;
     protected:
         void AI(Actor* actor);
         void Next();
+        void FocusActor();
         std::wstring Description() const override;
         void TestDumpAllItems(std::wostream& out) const;
-
 
         friend std::wistream& operator>>(std::wistream& s, Game& game);
         Map map;
@@ -68,6 +71,7 @@ namespace Game
         Objects objects;
         Objects::iterator turn;
         std::unique_ptr<Plan> plan;
+
 
         std::vector<Type::Armor> armors;
         std::vector<Type::Armor::Material> armorMaterials;

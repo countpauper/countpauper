@@ -5,6 +5,7 @@
 #include "Position.h"
 #include "Direction.h"
 #include "Color.h"
+#include "Coordinate.h"
 
 namespace Engine
 {
@@ -58,6 +59,8 @@ namespace Game
         void Render() const;
         bool CanBe(const Position& position) const;
         bool CanGo(const Position& from, Direction direction) const;
+
+        Engine::Coordinate Coordinate(const Position& p) const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Map& map);
         std::wstring name;

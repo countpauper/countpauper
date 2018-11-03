@@ -18,7 +18,8 @@ namespace Game
         armorBoni(Type::Armor::Bonus::Load(std::wifstream(L"Data/ArmorBonus.csv"))),
         weapons(Type::Weapon::Load(std::wifstream(L"Data/Weapon.csv"))),
         weaponMaterials(Type::Weapon::Material::Load(std::wifstream(L"Data/WeaponMaterial.csv"))),
-        weaponBoni(Type::Weapon::Bonus::Load(std::wifstream(L"Data/WeaponBonus.csv")))
+        weaponBoni(Type::Weapon::Bonus::Load(std::wifstream(L"Data/WeaponBonus.csv"))),
+        focus(0,0,0)
     {
         // TestDumpAllItems(std::wofstream(L"Items.csv"));
     }
@@ -72,8 +73,13 @@ namespace Game
         ++turn;
         if (turn == objects.end())
             turn = objects.begin();
+        FocusActor();
     }
 
+    void Game::FocusActor()
+    {
+        focus = map.Coordinate(turn->get()->GetPosition());
+    }
     Actor* Game::ActiveActor() const
     {
         if (turn == objects.end())
@@ -151,6 +157,7 @@ namespace Game
         if (code == VK_ESCAPE)
         {
             plan.reset();
+            FocusActor();
             return;
         }
         auto& playerActor = *ActiveActor();
@@ -266,7 +273,9 @@ namespace Game
             }
         }
         game.turn = game.objects.begin();
+
         s >> game.map;
+        game.FocusActor();
         return s;
     }
 

@@ -31,7 +31,7 @@ std::unique_ptr<Game::Game> game;
 std::unique_ptr<Game::Skills> skills;
 std::unique_ptr<Game::Panel> panel;
 Engine::Light light; 
-Engine::Camera camera;
+Engine::TopCamera camera;
 
 bool ParseCommandline(const std::wstring& cmdLine)
 {
@@ -250,7 +250,7 @@ BOOL InitInstance(HINSTANCE hInstance)
    SetTimer(hWnd, 1,  0,(TIMERPROC) NULL);
 
    light.Move(Engine::Coordinate(2, 10, 0));
-   camera.Move(Engine::Coordinate(2, 2, -2));
+   camera.Move(Engine::Coordinate(2, 5, -5));
    return TRUE;
 }
 
@@ -332,9 +332,10 @@ void Render()
     //glEnable(GL_BLEND);    TODO: first render non alpha tiles, then alpha tiles with depth test
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glEnable(GL_LIGHTING);
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    // Lighting makes it nice but dark
+    //glEnable(GL_LIGHTING);
+    //glEnable(GL_COLOR_MATERIAL);
+    //glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
     light.Render();
 
     glMatrixMode(GL_PROJECTION);
@@ -343,6 +344,7 @@ void Render()
     {
         ZoomToScreenCoord(input.x, input.y);
     }
+    camera.Face(game->focus);
     camera.Render();
     game->Render();
    
