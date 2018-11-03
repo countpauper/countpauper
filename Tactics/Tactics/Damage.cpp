@@ -63,6 +63,23 @@ namespace Game
             return it->second;
     }
 
+    Damage::Damage()
+    {
+        for (auto& d : damage)
+        {
+            d = 0;
+        }
+    }
+
+    Damage::Damage(int sharp, int crush, int burn, int disease, int spirit)
+    {
+        damage[unsigned(Wound::Type::Sharp)] = sharp;
+        damage[unsigned(Wound::Type::Crush)] = crush;
+        damage[unsigned(Wound::Type::Burn)] = burn;
+        damage[unsigned(Wound::Type::Disease)] = disease;
+        damage[unsigned(Wound::Type::Spirit)] = spirit;
+    }
+
 
     std::wstring Damage::StateDescription() const
     {
@@ -98,30 +115,52 @@ namespace Game
         if (worst.second <= 0) return false;
         return unsigned(worst.second) >= MaxPain;
     }
+
     std::pair<Wound::Type, int> Damage::FindWorst() const
     {
-        std::pair<Wound::Type, int> result(Wound::Type::Sharp, int(sharp));
-        if (int(crush) > result.second)
-            result = std::pair<Wound::Type, int>(Wound::Type::Crush, int(crush));
-        if (int(burn) > result.second)
-            result = std::pair<Wound::Type, int>(Wound::Type::Burn, int(burn));
-        if (int(disease) > result.second)
-            result = std::pair<Wound::Type, int>(Wound::Type::Disease, int(disease));
-        if (int(spirit) > result.second)
-            result = std::pair<Wound::Type, int>(Wound::Type::Spirit, int(spirit));
-        return result;
+        Wound::Type worst = Wound::Type(0);
+        int worstPain = damage[0];
+        for (unsigned type = 1; type<damage.size(); ++type)
+        {
+            if (damage[type]>worstPain)
+            {
+                worstPain = damage[type];
+                worst = Wound::Type(type);
+            }
+        }
+        return std::make_pair(worst, worstPain);
     }
 
     std::wistream& operator>>(std::wistream& s, Damage& damage)
     {
-        s >> damage.crush >> damage.sharp >> damage.burn >> damage.disease >> damage.spirit;
+        s >> damage.damage[0];
+        for (unsigned i = 1; i < damage.damage.size();++i)
+        {
+            wchar_t comma;
+            s >> comma;
+            assert(comma == L',');
+            s >> damage.damage[i];
+        }
+        return s;
+    }
+
+    std::wostream& operator<<(std::wostream& s, const Damage& damage)
+    {
+        s << damage.damage[0];
+        for (unsigned i = 1; i < damage.damage.size(); ++i)
+        {
+            s << L"," << damage.damage[i];
+        }
         return s;
     }
 
     Damage Damage::operator+(const Damage& other) const
     {
-        return Damage(sharp + other.sharp, crush + other.crush, burn + other.burn, disease + other.disease, spirit+other.spirit);
+        Damage o(*this);
+        o += other;
+        return o;
     }
+
     Damage Damage::operator-(const Damage& other) const
     {
         Damage result(*this);
@@ -129,37 +168,27 @@ namespace Game
         return result;
     }
 
-    Damage& Damage::operator-=(const Damage& other)
-    {
-        if (sharp < other.sharp)
-            sharp = 0;
-        else
-            sharp -= other.sharp;
-        if (crush < other.crush)
-            crush = 0;
-        else
-            crush -= other.crush;
-        if (burn < other.burn)
-            burn = 0;
-        else
-            burn -= other.burn;
-        if (disease < other.disease)
-            disease = 0;
-        else
-            disease -= other.disease;
-        if (spirit < other.spirit)
-            spirit = 0;
-        else
-            spirit -= other.spirit;
-        return *this;
-    }
     Damage& Damage::operator+=(const Damage& other)
     {
-        sharp += other.sharp;
-        crush += other.crush;
-        burn += other.burn;
-        disease += other.disease;
-        spirit += other.spirit;
+
+        unsigned i = 0;
+        for (auto& d : damage)
+        {
+            d += other.damage[i];
+            ++i;
+        }
+        return *this;
+    }
+
+    Damage& Damage::operator-=(const Damage& other)
+    {
+
+        unsigned i = 0;
+        for (auto& d : damage)
+        {
+            d = std::max(0, d- other.damage[i]);
+            ++i;
+        }
         return *this;
     }
 }

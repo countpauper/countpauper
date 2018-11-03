@@ -385,7 +385,7 @@ namespace Game
                     Requirement req(item.Required());
                     out << item.Name();
                     out << L"," << req.strength << L"," << req.wisdom;
-                    out << L"," << mitigation.sharp << L"," << mitigation.crush << L"," << mitigation.burn << L"," << mitigation.disease << L"," << mitigation.spirit;
+                    out << L"," << mitigation;
                     out << std::endl;
                 }
             }

@@ -119,6 +119,7 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     <ClInclude Include="Image.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Score.h" />
     <ClInclude Include="Skills.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Stats.h" />
@@ -146,6 +147,7 @@ copy ..\zlib\bin\zlib1.dll $(TargetDir)</Command>
     <ClCompile Include="Plan.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Position.cpp" />
+    <ClCompile Include="Score.cpp" />
     <ClCompile Include="Skills.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="State.cpp" />

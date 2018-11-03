@@ -19,6 +19,28 @@ namespace Engine
             virtual unsigned Columns() const = 0;
         };
 
+        template<class C, typename T>
+        class Setter: public Interface <C>
+        {
+        public:
+            using FuncType = void (C::*)(const T&);
+
+            Setter(FuncType fn) :
+                fn(fn)
+            {
+            }
+            void Parse(const std::vector<std::wstring>& str, C& dest) const override
+            {
+                T v;
+                std::wstringstream ss(str.front());
+                ss >> v;
+                (dest.*fn)(v);
+            }
+            unsigned Columns() const override { return 1; }
+        private:
+            FuncType fn;
+        };
+
         template<class T>
         class String : public Interface<T>
         {

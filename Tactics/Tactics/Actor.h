@@ -7,6 +7,7 @@
 #include "Body.h"
 #include "Stats.h"
 #include "Item.h"
+#include "Score.h"
 
 namespace Game
 {
@@ -52,15 +53,15 @@ namespace Game
         Damage AttackDamage() const;
         Damage Mitigation() const;
         Stats::Score Strength() const;
-        int StrengthBonus() const;
+        Bonus StrengthBonus() const;
         Stats::Score Agility() const;
         unsigned MovePoints() const;
         Stats::Score Constitution() const;
-        int ConstitutionBonus() const;
+        Bonus ConstitutionBonus() const;
         Stats::Score Intelligence() const;
-        int IntelligenceBonus() const;
+        Bonus IntelligenceBonus() const;
         Stats::Score Wisdom() const;
-        int WisdomBonus() const;
+        Bonus WisdomBonus() const;
         Stats Statistics() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);

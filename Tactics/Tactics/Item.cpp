@@ -65,11 +65,11 @@ namespace Game
         Engine::Adapter::Integer<Requirement> reqwis(&Requirement::wisdom);
         std::vector<Engine::Adapter::Interface<Requirement>*> requirementAdapters({ &reqstr, &reqwis });
 
-        Engine::Adapter::Integer<Damage> sharp(&Damage::sharp);
-        Engine::Adapter::Integer<Damage> crush(&Damage::crush);
-        Engine::Adapter::Integer<Damage> burn(&Damage::burn);
-        Engine::Adapter::Integer<Damage> disease(&Damage::disease);
-        Engine::Adapter::Integer<Damage> spirit(&Damage::spirit);
+        Engine::Adapter::Setter<Damage, int> sharp(&Damage::SetSharp);
+        Engine::Adapter::Setter<Damage, int> crush(&Damage::SetCrush);
+        Engine::Adapter::Setter<Damage, int> burn(&Damage::SetBurn);
+        Engine::Adapter::Setter<Damage, int> disease(&Damage::SetDisease);
+        Engine::Adapter::Setter<Damage, int> spirit(&Damage::SetSpirit);
         std::vector<Engine::Adapter::Interface<Damage>*> damageAdapters({ &sharp, &crush, &burn, &disease, &spirit });
 
         std::vector<Armor> Armor::Load(std::wistream& file)

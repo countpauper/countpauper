@@ -133,24 +133,24 @@ namespace Game
         return body.Wisdom();  // todo:equipment boni
     }
 
-    int Actor::ConstitutionBonus() const
+    Bonus Actor::ConstitutionBonus() const
     {
-        return (Constitution() - 11) / 3;
+        return Bonus(L"Con", (Constitution() - 11) / 3);
     }
 
-    int Actor::StrengthBonus() const
+    Bonus Actor::StrengthBonus() const
     {
-        return (Strength() - 11) / 3;
+        return Bonus(L"Str",(Strength() - 11) / 3);
     }
 
-    int Actor::IntelligenceBonus() const
+    Bonus Actor::IntelligenceBonus() const
     {
-        return (Intelligence() - 11) / 3;
+        return Bonus(L"Int", (Intelligence() - 11) / 3);
     }
 
-    int Actor::WisdomBonus() const
+    Bonus Actor::WisdomBonus() const
     {
-        return (Wisdom() - 11) / 3;
+        return Bonus(L"Wis", (Wisdom() - 11) / 3);
     }
     Stats Actor::Statistics() const
     {
@@ -188,7 +188,10 @@ namespace Game
     Damage Actor::AttackDamage() const
     {
         if (weapons.empty())
-            return Damage(0,2+StrengthBonus(),0,0,0);   // unarmed
+        {
+            return Damage(0, 2 + StrengthBonus().value, 0, 0, 0);
+
+        }
         else
         {
             assert(false); // apply strength bonus to 
@@ -198,14 +201,14 @@ namespace Game
 
     Damage Actor::Mitigation() const
     {
-        auto constMitigation = std::max(0, ConstitutionBonus());
-        auto wisMitigation = std::max(0, WisdomBonus());
-        Damage base(constMitigation, constMitigation, constMitigation, constMitigation, wisMitigation);
-        if (armors.empty())
-            return base;
-        else
-            return base +armors.front().Mitigation();
+        auto constMitigation = ConstitutionBonus();
+        auto wisMitigation = WisdomBonus();
+        Damage mitigation(constMitigation.value, constMitigation.value, constMitigation.value, constMitigation.value, wisMitigation.value);
+        if (!armors.empty())
+            mitigation += armors.front().Mitigation();
+        return mitigation;
     }
+
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {
         Game& game= *static_cast<Game*>(s.pword(1));

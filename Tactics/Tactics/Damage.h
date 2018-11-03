@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
+#include <array>
 #include "Stats.h"
 
 namespace Game
@@ -17,8 +18,9 @@ namespace Game
             Crush,
             Burn,
             Disease,
-            Spirit
+            Spirit,
         };
+
         std::wstring description;
         std::wstring action;
         int penalty;
@@ -31,24 +33,35 @@ namespace Game
     class Damage
     {
     public:
-        Damage() : sharp(0), crush(0), burn(0), disease(0), spirit(0) {}
-        Damage(int sharp, int crush, int burn, int disease, int spirit) : sharp(sharp), crush(crush), burn(burn), disease(disease), spirit(spirit) {}
+        Damage();
+        Damage(int sharp, int crush, int burn, int disease, int spirit);
         std::wstring StateDescription() const;
         std::wstring ActionDescription() const;
         int StatPenalty() const;
         bool Disabled() const;
         bool Hurt() const;
-        int sharp;
-        int crush;
-        int burn;
-        int disease;
-        int spirit;
+
+        void Set(Wound::Type type, int value) { damage[unsigned(type)] = value; }
+        void SetSharp(const int& v) { Set(Wound::Type::Sharp, v);  }
+        void SetCrush(const int& v)  { Set(Wound::Type::Sharp, v); }
+        void SetBurn(const int& v)  { Set(Wound::Type::Sharp, v); }
+        void SetDisease(const int& v) { Set(Wound::Type::Sharp, v); }
+        void SetSpirit(const int& v)  { Set(Wound::Type::Sharp, v); }
+
+        std::wstring CsvString() const;
+
         Damage operator+(const Damage& other) const;
         Damage operator-(const Damage& other) const;
         Damage& operator-=(const Damage& other);
         Damage& operator+=(const Damage& other);
+
     protected:
+        friend std::wostream& operator<<(std::wostream& s, const Damage& damage);
+        friend std::wistream& operator>>(std::wistream& s, Damage& damage);
+
         std::pair<Wound::Type, int> FindWorst() const;
+        std::array<int, 5> damage;
     };
     std::wistream& operator>>(std::wistream& s, Damage& damage);
+    std::wostream& operator<<(std::wostream& s, const Damage& damage);
 };

@@ -1,20 +1,20 @@
 2
 Actor Foo 2 0 0 0 5
-Legs Around 0 Agi 10 0 0 0 0 0
-Arms Coronal 2 Str 10 0 0 0 0 0
-Belly Around 1 Con 10 0 0 0 0 0
-Chest Sagital 2 Wis 10 0 0 0 0 0
-Head All 3 Int 10 0 0 0 0 0
+Legs Around 0 Agi 10 0,0,0,0,0
+Arms Coronal 2 Str 10 0,0,0,0,0
+Belly Around 1 Con 10 0,0,0,0,0
+Chest Sagital 2 Wis 10 0,0,0,0,0
+Head All 3 Int 10 0,0,0,0,0
 1 1 1
 Normal Leather Jacket
 Normal Steel Broadsword
 Sword 10
 Actor Bar 1 1 0 0 5
-Legs Around 0 Agi 10 0 0 0 0 0
-Arms Coronal 2 Str 10 0 0 0 0 0
-Belly Around 1 Con 10 0 0 0 0 0
-Chest Sagital 2 Wis 10 0 0 0 0 0
-Head All 3 Int 10 0 0 0 0 0
+Legs Around 0 Agi 10 0,0,0,0,0
+Arms Coronal 2 Str 10 0,0,0,0,0
+Belly Around 1 Con 10 0,0,0,0,0
+Chest Sagital 2 Wis 10 0,0,0,0,0
+Head All 3 Int 10 0,0,0,0,0
 1 1 1
 Embroidered Linen Robe
 Normal Steel Hammer
