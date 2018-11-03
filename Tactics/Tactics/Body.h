@@ -15,7 +15,7 @@ namespace Game
         {
         public:
             bool IsVital() const;
-            std::wstring Description(Stats::Score constitution) const;
+            std::wstring Description() const;
             bool operator<(const Part& other) const;
             bool Match(AttackVector target) const;
             Stats::Score Score(Attribute attribute) const;
@@ -30,7 +30,7 @@ namespace Game
             Stats::Score score;
             Damage health;
         };
-        std::wstring Description(unsigned constitution) const;
+        std::wstring Description() const;
         bool Dead() const;
         bool Hurt(AttackVector location, Damage& damage);
         Stats::Score Strength() const;

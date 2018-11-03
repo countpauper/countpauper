@@ -35,11 +35,12 @@ namespace Game
 
         double hitChance = 1.0; // dodge is reactive
         GameChances ret;
-        ret.emplace_back(GameChance(game, hitChance, L"Hit"));
-        ret.back().Adjust(actor, state);
-
         State targetResult(game.Get(target));
         auto damage = state.damage - targetResult.mitigation;
+
+        ret.emplace_back(GameChance(game, hitChance, damage.ActionDescription()));
+        ret.back().Adjust(actor, state);
+
         targetResult.body.Hurt(skill.vector, damage);
 
         ret.back().Adjust(target, targetResult);

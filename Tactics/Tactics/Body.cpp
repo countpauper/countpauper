@@ -29,9 +29,9 @@ namespace Game
         return true;
     }
 
-    std::wstring Body::Part::Description(Stats::Score constitution) const
+    std::wstring Body::Part::Description() const
     {
-        return name + L"= " + health.Description(constitution);
+        return name + L"= " + health.StateDescription();
     }
 
     Stats::Score Body::Part::Score(Attribute attribute) const
@@ -47,7 +47,7 @@ namespace Game
         return health.Hurt();
     }
 
-    std::wstring Body::Description(unsigned constitution) const
+    std::wstring Body::Description() const
     {
         std::wstring result;
         bool fine = true;
@@ -55,7 +55,7 @@ namespace Game
         {
             if (part.IsHurt())
             {
-                result += part.Description(constitution);
+                result += part.Description();
                 fine = false;
             }
         }

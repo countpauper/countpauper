@@ -7,49 +7,49 @@ namespace Game
     const Wound::Table Wound::table = 
     {
         { Wound::Type::Crush, {
-            { ImmunePain, { L"Immune", 0 } },
-            { 0, { L"Healthy", 0 } },
-            { 1, { L"Bruised", 0 } },
-            { 3, { L"Battered", -1 } },
-            { 6, { L"Crushed", -2 } },
-            { 10, { L"Broken", -3 } },
-            { MaxPain, { L"Shattered", -20 } }
+            { ImmunePain, { L"Immune", L"Invulnerable", 0 } },
+            { 0, { L"Healthy", L"Block", 0 } },
+            { 1, { L"Bruised", L"Bruise", 0 } },
+            { 3, { L"Battered", L"Batter", -1 } },
+            { 6, { L"Crushed", L"Crush", -2 } },
+            { 10, { L"Broken", L"Break", -3 } },
+            { MaxPain, { L"Shattered", L"Shatter", -20 } }
         } },
         { Wound::Type::Sharp, {
-            { ImmunePain, { L"Immune", 0 } },
-            { 0, { L"Healthy", 0 } },
-            { 1, { L"Scratched", 0 } },
-            { 3, { L"Cut", -1 } },
-            { 6, { L"Bleeding", -2 } },
-            { 10, { L"Hemorrhaging", -3 } },
-            { MaxPain, { L"Severed", -20 } }
+            { ImmunePain, { L"Immune", L"Invulnerable", 0 } },
+            { 0, { L"Healthy", L"Slip", 0 } },
+            { 1, { L"Scratched", L"Scratch", 0 } },
+            { 3, { L"Grazed", L"Graze", -1 } },
+            { 6, { L"Cut", L"Cut", -2 } },
+            { 10, { L"Hemorrhaging", L"Rent", -3 } },
+            { MaxPain, { L"Severed", L"Sever", -20 } }
         } },        
         { Wound::Type::Burn, {
-            { ImmunePain, { L"Immune", 0 } },
-            { 0, { L"Healthy", 0 } },
-            { 1, { L"Singed", 0 } },
-            { 3, { L"Scorched", -1 } },
-            { 6, { L"Seared", -2 } },
-            { 10, { L"Burned", -3 } },
-            { MaxPain, { L"Charred", -20 } }
+            { ImmunePain, { L"Immune", L"Invulnerable", 0 } },
+            { 0, { L"Healthy", L"Fizzle", 0 } },
+            { 1, { L"Singed", L"Singe", 0 } },
+            { 3, { L"Scorched", L"Scorch", -1 } },
+            { 6, { L"Seared", L"Sear", -2 } },
+            { 10, { L"Burned", L"Burn", -3 } },
+            { MaxPain, { L"Charred", L"Char", -20 } }
         } },
         { Wound::Type::Disease, {
-            { ImmunePain, { L"Immune", 0 } },
-            { 0, { L"Healthy", 0 } },
-            { 1, { L"Infected", -1 } },
-            { 3, { L"Diseased", -2 } },
-            { 6, { L"Festering", -3 } },
-            { 10, { L"Decaying", -4 } },
-            { MaxPain, { L"Necrotic", -20 } }
+            { ImmunePain, { L"Immune", L"Invulnerable", 0 } },
+            { 0, { L"Healthy", L"Resist", 0 } },
+            { 1, { L"Tainted", L"Taint", -1 } },
+            { 3, { L"Infected", L"Infect", -2 } },
+            { 6, { L"Festering", L"Fester", -3 } },
+            { 10, { L"Decaying", L"Decay", -4 } },
+            { MaxPain, { L"Disintegrated", L"Disintegrate", -20 } }
         } },
         { Wound::Type::Spirit, {
-            { ImmunePain, { L"Immune", 0 } },
-            { 0, { L"Normal", 0 } },
-            { 1, { L"Trembling", 0 } },
-            { 3, { L"Shaking", -1 } },
-            { 6, { L"Spasming", -3 } },
-            { 10, { L"Tremoring", -4 } },
-            { MaxPain, { L"Paralyzed", -20 } }
+            { ImmunePain, { L"Immune", L"Invulnerable", 0 } },
+            { 0, { L"Healthy", L"Endure", 0 } },
+            { 1, { L"Frail", L"Enfeeble", -1 } },
+            { 3, { L"Impaired", L"Impairs", -2 } },
+            { 6, { L"Crippled", L"Cripples", -3 } },
+            { 10, { L"Paralyzed", L"Paralyse", -4 } },
+            { MaxPain, { L"Devastated", L"Devastate", -20 } }
         } }
     };
 
@@ -64,12 +64,20 @@ namespace Game
     }
 
 
-    std::wstring Damage::Description(unsigned constitution) const
+    std::wstring Damage::StateDescription() const
     {
         auto worst = FindWorst();
         std::wstringstream ss;
         auto wound = Wound::find(worst.first, worst.second);
         return wound.description;
+    }
+
+    std::wstring Damage::ActionDescription() const
+    {
+        auto worst = FindWorst();
+        std::wstringstream ss;
+        auto wound = Wound::find(worst.first, worst.second);
+        return wound.action;
     }
 
     bool Damage::Hurt() const

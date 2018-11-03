@@ -20,6 +20,7 @@ namespace Game
             Spirit
         };
         std::wstring description;
+        std::wstring action;
         int penalty;
         typedef std::map<Wound::Type, std::map<Pain, Wound>> Table;
         static const Table table;
@@ -32,7 +33,8 @@ namespace Game
     public:
         Damage() : sharp(0), crush(0), burn(0), disease(0), spirit(0) {}
         Damage(int sharp, int crush, int burn, int disease, int spirit) : sharp(sharp), crush(crush), burn(burn), disease(disease), spirit(spirit) {}
-        std::wstring Description(unsigned constitution) const;
+        std::wstring StateDescription() const;
+        std::wstring ActionDescription() const;
         int StatPenalty() const;
         bool Disabled() const;
         bool Hurt() const;
