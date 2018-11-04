@@ -1,12 +1,20 @@
 #include "stdafx.h"
 #include "Score.h"
 #include <sstream>
+#include <numeric>
+
 
 namespace Game
 {
 
 Bonus::Bonus() :
     value(0)
+{
+}
+
+
+Bonus::Bonus( int value) :
+    value(value)
 {
 }
 
@@ -24,38 +32,58 @@ Bonus::Bonus(const Bonus& other) :
 
 
 
-Score::Score() :
-    value(0)
+Score::Score() 
 {
 }
 
 
 Score::Score(const Score& other) :
-    value(other.value),
-    description(other.description)
+    boni(other.boni)
 {
 }
 
 
 unsigned Score::Value() const
 {
-    return value;
+    int totalBonus = std::accumulate(boni.begin(), boni.end(), 0, [](int v, const Bonus& b) { return v+b.value; });
+    if (totalBonus >= 0)
+    {
+        return unsigned(totalBonus);
+    }
+    else
+        return 0;
 }
 
 std::wstring Score::Description() const
 {
-    return std::to_wstring(value)+L"("+description+L")";
+    std::wstring description = std::to_wstring(Value())+L"(";
+    bool first = true;
+    for (const auto& bonus : boni)
+    {
+        if (!bonus)
+            continue;
+        if ((!first) && (bonus.value >= 0))
+            description += L"+";
+        description += std::to_wstring(bonus.value);
+        if (!bonus.description.empty())
+            description += L"(" + bonus.description + L")";
+        first = false;
+    }
+
+    description += L")";
+    return description;
 }
 
 Score& Score::operator += (const Bonus& bonus)
 {
-    if (!bonus)
-        return *this;
+    boni.push_back(bonus);
+    return *this;
+}
 
-    value += bonus.value;
-    if ((!description.empty()) && (bonus.value>=0))
-        description += L"+";
-    description += std::to_wstring(bonus.value) + L"(" + bonus.description + L")";
+Score& Score::operator+=(const Score& other)
+{
+    boni.insert(boni.end(), other.boni.begin(), other.boni.end());
+
     return *this;
 }
 
@@ -66,10 +94,19 @@ Score operator+(const Score& a, const Bonus& b)
     return o;
 }
 
+Score operator+(const Score& a, const Score& b)
+{
+    Score o(a);
+    o += b;
+    return o;
+}
+
 std::wistream& operator>>(std::wistream& s, Score& score)
 {
     // TODO: also store description & boni somehow?
-    s >> score.value;
+    int value;
+    s >> value;
+    score = Score() + Bonus(L"File", value);
     return s;
 }
 }

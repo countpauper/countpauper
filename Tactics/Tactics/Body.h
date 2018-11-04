@@ -5,6 +5,7 @@
 #include "Stats.h"
 #include "Damage.h"
 #include "Direction.h"
+#include "Score.h"
 
 namespace Game
 {
@@ -18,7 +19,7 @@ namespace Game
             std::wstring Description() const;
             bool operator<(const Part& other) const;
             bool Match(AttackVector target) const;
-            Stats::Score Score(Attribute attribute) const;
+            Score Score(Attribute attribute) const;
             bool Disabled() const;
             void Hurt(const Damage& damage);
             bool IsHurt() const;
@@ -33,11 +34,11 @@ namespace Game
         std::wstring Description() const;
         bool Dead() const;
         bool Hurt(AttackVector location, Damage& damage);
-        Stats::Score Strength() const;
-        Stats::Score Agility() const;
-        Stats::Score Constitution() const;
-        Stats::Score Intelligence() const;
-        Stats::Score Wisdom() const;
+        Score Strength() const;
+        Score Agility() const;
+        Score Constitution() const;
+        Score Intelligence() const;
+        Score Wisdom() const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Body& body);
         std::vector<Part> parts;

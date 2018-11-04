@@ -105,69 +105,91 @@ namespace Game
         body = result.body;
     }
 
-    Stats::Score Actor::Strength() const
+    Score Actor::Strength() const
     {
         return body.Strength();  // todo: equipment boni
     }
 
-    Stats::Score Actor::Agility() const
+    Bonus Actor::StrReqPenalty() const
     {
-        int totalRequiredStrength = std::accumulate(armors.begin(), armors.end(), 0, [](int str, const Armor& armor) -> int { return str+armor.Required().strength; });
-        totalRequiredStrength += std::accumulate(weapons.begin(), weapons.end(), 0, [](int str, const Weapon& weapon) -> int { return str+weapon.Required().strength; });
-        int reqPentalty = std::max(0, totalRequiredStrength - int(Strength()));
-        // TODO: carrying capacity penalty
-        return body.Agility()- reqPentalty;// todo: equipment boni
+        int totalRequiredStrength = std::accumulate(armors.begin(), armors.end(), 0, [](int str, const Armor& armor) -> int { return str + armor.Required().strength; });
+        totalRequiredStrength += std::accumulate(weapons.begin(), weapons.end(), 0, [](int str, const Weapon& weapon) -> int { return str + weapon.Required().strength; });
+
+        auto strength = Strength();
+        int reqPentalty = std::max(0, totalRequiredStrength - int(strength.Value()));
+        return Bonus(L"Str(" + strength.Description() + L")-" + std::to_wstring(totalRequiredStrength), -reqPentalty);
+    }
+
+    Score Actor::Agility() const
+    {
+        return body.Agility() + StrReqPenalty();
     }
 
     Bonus Actor::AgilityMoveBonus() const
     {
         auto agility = Agility();
-        if (agility == 0)
-            return Bonus(L"Agi", -100);
+        if (agility.Value() == 0)
+            return Bonus(L"Agi("+agility.Description()+L")", -100);
         else
-            return Bonus(L"Agi", (Agility() - 12) / 2);
+            return Bonus(L"Agi("+agility.Description()+L")", (int(agility.Value()) - 12) / 2);
     }
 
     Score Actor::GetMaxMovePoints() const
     {
+        // TODO: spell effects
         return Score() + Bonus(L"Base", 10) + AgilityMoveBonus();
     }
-    Stats::Score Actor::Constitution() const
+
+    Score Actor::Constitution() const
     {
         return body.Constitution();  // todo: equipment boni
     }
 
-    Stats::Score Actor::Intelligence() const
+    Score Actor::Intelligence() const
     {
         return body.Intelligence(); // todo: equipment requirements, equipment boni
     }
-    Stats::Score Actor::Wisdom() const
+    Score Actor::Wisdom() const
     {
         return body.Wisdom();  // todo:equipment boni
     }
 
     Bonus Actor::ConstitutionBonus() const
     {
-        return Bonus(L"Con", (Constitution() - 11) / 3);
+        auto consitution = Constitution();
+        return Bonus(L"Con (" + consitution.Description() + L")", (int(consitution.Value()) - 11) / 3);
     }
 
     Bonus Actor::StrengthBonus() const
     {
-        return Bonus(L"Str",(Strength() - 11) / 3);
+        auto strength = Strength();
+        return Bonus(L"Str (" + strength.Description() + L")", (int(strength.Value()) - 11) / 3);
     }
 
     Bonus Actor::IntelligenceBonus() const
     {
-        return Bonus(L"Int", (Intelligence() - 11) / 3);
+        auto intelligence = Intelligence();
+        return Bonus(L"Int (" + intelligence.Description() + L")", (int(intelligence.Value()) - 11) / 3);
     }
 
     Bonus Actor::WisdomBonus() const
     {
-        return Bonus(L"Wis", (Wisdom() - 11) / 3);
+        auto wisdom = Wisdom();
+        return Bonus(L"Wis (" + wisdom.Description() + L")", (int(wisdom.Value()) - 11) / 3);
+    }
+
+    Bonus Actor::WisReqPenalty() const
+    {
+        int totalRequiredWisdom = std::accumulate(armors.begin(), armors.end(), 0, [](int str, const Armor& armor) -> int { return str + armor.Required().wisdom; });
+        totalRequiredWisdom += std::accumulate(weapons.begin(), weapons.end(), 0, [](int str, const Weapon& weapon) -> int { return str + weapon.Required().wisdom; });
+
+        auto wisdom = Wisdom();
+        int reqPentalty = std::max(0, totalRequiredWisdom- int(wisdom.Value()));
+        return Bonus(L"Wis("+wisdom.Description() + L")-" + std::to_wstring(totalRequiredWisdom) , -reqPentalty);
     }
     Stats Actor::Statistics() const
     {
-        return Stats::Stats(Strength(), Agility(), Constitution(), Intelligence(), Wisdom());
+        return Stats::Stats(Strength().Value(), Agility().Value(), Constitution().Value(), Intelligence().Value(), Wisdom().Value());
     }
     void Actor::Turn()
     {

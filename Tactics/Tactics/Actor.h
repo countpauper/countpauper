@@ -53,16 +53,18 @@ namespace Game
         Damage AttackDamage() const;
         Damage Mitigation() const;
         // TODO: more OO stats, each with their own boni
-        Stats::Score Strength() const;
+        Score Strength() const;
         Bonus StrengthBonus() const;
-        Stats::Score Agility() const;
+        Bonus StrReqPenalty() const;
+        Score Agility() const;
         int MovePoints() const;
-        Stats::Score Constitution() const;
+        Score Constitution() const;
         Bonus ConstitutionBonus() const;
-        Stats::Score Intelligence() const;
+        Score Intelligence() const;
         Bonus IntelligenceBonus() const;
-        Stats::Score Wisdom() const;
+        Score Wisdom() const;
         Bonus WisdomBonus() const;
+        Bonus Actor::WisReqPenalty() const;
         Stats Statistics() const;
     private:
         Bonus AgilityMoveBonus() const;
