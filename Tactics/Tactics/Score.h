@@ -18,20 +18,17 @@ namespace Game
     {
     public:
         Score();
-        Score(unsigned value);
         Score(const Score& other);
-        unsigned Evaluate() const;
+        unsigned Value() const;
         std::wstring Description() const;
-        unsigned operator()() const { return Evaluate(); }
+        unsigned operator()() const { return Value(); }
         Score& operator+=(const Bonus& other);
-        Score& operator+=(const Score& other);
-        Score& operator-=(const Score& other);
     private:
         friend std::wistream& operator>>(std::wistream& s, Score& score);
-        unsigned base;
-        std::vector<Bonus> boni;
+        unsigned value;
+        std::wstring description;
     };
-    Score operator+(const Score& a, const Score& b);
+    Score operator+(const Score& a, const Bonus& b);
 
     std::wistream& operator>>(std::wistream& s, Score& score);
 

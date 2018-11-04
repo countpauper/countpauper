@@ -215,6 +215,8 @@ BOOL Start()
             return FALSE;
         }
     }
+    game->Start();
+
     panel = std::make_unique<Game::Panel>(*game, 64);
     return TRUE;
 }
@@ -380,6 +382,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_TIMER:
         game->Tick();
+        Sleep(0);
         InvalidateRect(hWnd, nullptr, TRUE);
         break;
     case WM_COMMAND:

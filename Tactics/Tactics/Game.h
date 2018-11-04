@@ -31,6 +31,7 @@ namespace Game
         };
         Game(std::unique_ptr<Skills> skills);
         virtual ~Game();
+        void Start();
 
         //IGame
         State Get(const Actor& actor) const override;

@@ -41,7 +41,7 @@ namespace Game
     void Game::Tick()
     {
         Actor* actor;
-        while ((actor=ActiveActor()) &&
+        while((actor= ActiveActor()) &&
             (!actor->CanAct()))
             Next();
         if (actor->GetTeam() > 0)
@@ -65,14 +65,24 @@ namespace Game
             plans.front()->Execute(*this);
         Next();
     }
+
+    void Game::Start()
+    {
+        turn = objects.begin();
+        if (turn == objects.end())
+            return;
+        (*turn)->Turn();
+        FocusActor();
+    }
+
     void Game::Next()
     {
         if (turn == objects.end())
             return;
-        (*turn)->Turn();
-        ++turn;
+        turn++;
         if (turn == objects.end())
             turn = objects.begin();
+        (*turn)->Turn();
         FocusActor();
     }
 
@@ -165,7 +175,6 @@ namespace Game
         {
             if (plan)
                 plan->Execute(*this);
-            playerActor.Turn();
             Next();
             plan.reset();
             return;

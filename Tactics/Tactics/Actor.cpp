@@ -119,6 +119,19 @@ namespace Game
         return body.Agility()- reqPentalty;// todo: equipment boni
     }
 
+    Bonus Actor::AgilityMoveBonus() const
+    {
+        auto agility = Agility();
+        if (agility == 0)
+            return Bonus(L"Agi", -100);
+        else
+            return Bonus(L"Agi", (Agility() - 12) / 2);
+    }
+
+    Score Actor::GetMaxMovePoints() const
+    {
+        return Score() + Bonus(L"Base", 10) + AgilityMoveBonus();
+    }
     Stats::Score Actor::Constitution() const
     {
         return body.Constitution();  // todo: equipment boni
@@ -158,7 +171,9 @@ namespace Game
     }
     void Actor::Turn()
     {
-        mp = Agility();
+        auto mps = GetMaxMovePoints();
+        mp = mps.Value();
+        OutputDebugStringW((L"Turn " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
     }
 
     bool Actor::Dead() const

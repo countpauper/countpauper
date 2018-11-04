@@ -52,10 +52,11 @@ namespace Game
         unsigned GetSkillScore(const ::Game::Skill& skill) const;
         Damage AttackDamage() const;
         Damage Mitigation() const;
+        // TODO: more OO stats, each with their own boni
         Stats::Score Strength() const;
         Bonus StrengthBonus() const;
         Stats::Score Agility() const;
-        unsigned MovePoints() const;
+        int MovePoints() const;
         Stats::Score Constitution() const;
         Bonus ConstitutionBonus() const;
         Stats::Score Intelligence() const;
@@ -64,6 +65,9 @@ namespace Game
         Bonus WisdomBonus() const;
         Stats Statistics() const;
     private:
+        Bonus AgilityMoveBonus() const;
+        Score GetMaxMovePoints() const;
+
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         unsigned mp;
         unsigned team;
