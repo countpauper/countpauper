@@ -36,6 +36,16 @@ Score::Score()
 {
 }
 
+Score::Score(const std::wstring& description, int value) :
+    Score(Bonus(description, value))
+{
+}
+
+Score::Score(const Bonus& bonus) :
+    boni({ bonus })
+{
+}
+
 
 Score::Score(const Score& other) :
     boni(other.boni)
@@ -84,6 +94,15 @@ Score& Score::operator+=(const Score& other)
 {
     boni.insert(boni.end(), other.boni.begin(), other.boni.end());
 
+    return *this;
+}
+
+Score& Score::operator-=(const Score& other)
+{
+    for (const auto& penalty : other.boni)
+    { 
+        boni.emplace_back(Bonus(penalty.description, -penalty.value));
+    }
     return *this;
 }
 

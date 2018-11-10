@@ -65,19 +65,21 @@ namespace Game
 
     Damage::Damage()
     {
-        for (auto& d : damage)
-        {
-            d = 0;
-        }
+    }
+
+    Damage::Damage(const Score& sharp, const Score& crush, const Score& burn, const Score& disease, const Score& spirit) :
+        damage({ sharp, crush, burn, disease, spirit })
+    {
+
     }
 
     Damage::Damage(int sharp, int crush, int burn, int disease, int spirit)
     {
-        damage[unsigned(Wound::Type::Sharp)] = sharp;
-        damage[unsigned(Wound::Type::Crush)] = crush;
-        damage[unsigned(Wound::Type::Burn)] = burn;
-        damage[unsigned(Wound::Type::Disease)] = disease;
-        damage[unsigned(Wound::Type::Spirit)] = spirit;
+        SetSharp(sharp);
+        SetCrush(crush);
+        SetBurn(burn);
+        SetDisease(disease);
+        SetSpirit(spirit);
     }
 
 
@@ -94,7 +96,7 @@ namespace Game
         auto worst = FindWorst();
         std::wstringstream ss;
         auto wound = Wound::find(worst.first, worst.second);
-        return wound.action;
+        return wound.action + L"(" + damage.at(unsigned(worst.first)).Description()+L")";
     }
 
     bool Damage::Hurt() const
@@ -112,23 +114,33 @@ namespace Game
     bool Damage::Disabled() const
     {
         auto worst = FindWorst();
-        if (worst.second <= 0) return false;
+        if (worst.second == 0) return false;
         return unsigned(worst.second) >= MaxPain;
     }
 
-    std::pair<Wound::Type, int> Damage::FindWorst() const
+    std::pair<Wound::Type, unsigned> Damage::FindWorst() const
     {
         Wound::Type worst = Wound::Type(0);
-        int worstPain = damage[0];
+        unsigned worstPain = damage[0].Value();
         for (unsigned type = 1; type<damage.size(); ++type)
         {
-            if (damage[type]>worstPain)
+            auto pain= damage[type].Value();
+            if (pain>worstPain)
             {
-                worstPain = damage[type];
+                worstPain = pain;
                 worst = Wound::Type(type);
             }
         }
-        return std::make_pair(worst, worstPain);
+        return std::make_pair(worst,worstPain);
+    }
+
+    Damage Damage::Wound(const std::wstring& description) const
+    {
+        return Damage(Score(description, Sharp().Value()),
+            Score(description, Crush().Value()),
+            Score(description, Burn().Value()),
+            Score(description, Disease().Value()),
+            Score(description, Spirit().Value()));
     }
 
     std::wistream& operator>>(std::wistream& s, Damage& damage)
@@ -146,10 +158,10 @@ namespace Game
 
     std::wostream& operator<<(std::wostream& s, const Damage& damage)
     {
-        s << damage.damage[0];
+        s << damage.damage[0].Value();
         for (unsigned i = 1; i < damage.damage.size(); ++i)
         {
-            s << L"," << damage.damage[i];
+            s << L"," << damage.damage[i].Value();
         }
         return s;
     }
@@ -161,12 +173,6 @@ namespace Game
         return o;
     }
 
-    Damage Damage::operator-(const Damage& other) const
-    {
-        Damage result(*this);
-        result -= other;
-        return result;
-    }
 
     Damage& Damage::operator+=(const Damage& other)
     {
@@ -180,15 +186,19 @@ namespace Game
         return *this;
     }
 
-    Damage& Damage::operator-=(const Damage& other)
-    {
-
+    Damage operator-(const Damage& damage, const Damage& mitigation)
+    {   // NB: damage mitigation.
+        Damage result(damage);
         unsigned i = 0;
-        for (auto& d : damage)
+        for (auto& d : result.damage)
         {
-            d = std::max(0, d- other.damage[i]);
-            ++i;
+            // if there is no damage to mitigation, penalties are not applied
+            if (d.Value() > 0)
+            {
+                d -= mitigation.damage[i];
+            }
         }
-        return *this;
+        return result;
     }
+
 }

@@ -37,7 +37,7 @@ namespace Game
     Score Body::Part::Score(Attribute attribute) const
     {
         if (attributes.count(attribute) != 0)
-            return Game::Score() + Bonus(name, score) + Bonus(health.StateDescription(), health.StatPenalty());
+            return Game::Score(name, score) + Bonus(health.StateDescription(), health.StatPenalty());
         else
             return Game::Score();
     }

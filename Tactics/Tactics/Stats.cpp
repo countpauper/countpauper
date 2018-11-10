@@ -22,7 +22,7 @@ namespace Game
         return s;
     }
 
-    const Attributes Attributes::All { Attribute::Strength, Attribute::Agility, Attribute::Constitution, Attribute::Intelligence, Attribute::Intelligence };
+    const Attributes Attributes::All { Attribute::Strength, Attribute::Agility, Attribute::Constitution, Attribute::Intelligence, Attribute::Wisdom };
 
     std::wistream& operator>>(std::wistream& s, Attributes& attributes)
     {

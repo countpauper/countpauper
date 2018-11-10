@@ -137,7 +137,7 @@ namespace Game
     Score Actor::GetMaxMovePoints() const
     {
         // TODO: spell effects
-        return Score() + Bonus(L"Base", 10) + AgilityMoveBonus();
+        return Score() + Bonus(10) + AgilityMoveBonus();
     }
 
     Score Actor::Constitution() const
@@ -226,8 +226,7 @@ namespace Game
     {
         if (weapons.empty())
         {
-            return Damage(0, 2 + StrengthBonus().value, 0, 0, 0);
-
+            return Damage(Score(), Score(L"Unarmed", 2) + StrengthBonus(), Score(), Score(), Score());
         }
         else
         {
@@ -238,10 +237,10 @@ namespace Game
 
     Damage Actor::Mitigation() const
     {
-        auto constMitigation = ConstitutionBonus();
-        auto wisMitigation = WisdomBonus();
-        Damage mitigation(constMitigation.value, constMitigation.value, constMitigation.value, constMitigation.value, wisMitigation.value);
-        if (!armors.empty())
+        Score constMitigation(ConstitutionBonus());
+        Score wisMitigation(WisdomBonus());
+        Damage mitigation(constMitigation, constMitigation, constMitigation, constMitigation, wisMitigation);
+        if (!armors.empty())    // TODO: select right armor for location
             mitigation += armors.front().Mitigation();
         return mitigation;
     }
