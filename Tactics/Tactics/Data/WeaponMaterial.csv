@@ -1,4 +1,4 @@
-# Name,Freq.,Category,Magic,Element,ReqStr,ReqWis,Sharp  ,Crush  ,Fire   ,Disease,Spirit
+# Name,Freq.,Category,Magic,Element,ReqStr,ReqWis,Sharp  ,Blunt,Fire   ,Disease,Spirit
 Steel,100,Metal,1,None,0,0,0,0,0,0,0
 Mithril,0,Metal,2,Air,-1,0,0,0,0,0,0
 Adamantine,0,Metal,3,Stone,1,0,0,0,0,0,0

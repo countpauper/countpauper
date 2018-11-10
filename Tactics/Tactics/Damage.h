@@ -15,7 +15,7 @@ namespace Game
         enum class Type
         {
             Sharp =0,
-            Crush,
+            Blunt,
             Burn,
             Disease,
             Spirit,
@@ -33,24 +33,24 @@ namespace Game
     {
     public:
         Damage();
-        Damage(int sharp, int crush, int burn, int disease, int spirit);
-        Damage(const Score& sharp, const Score& crush, const Score& burn, const Score& disease, const Score& spirit);
+        Damage(int sharp, int blunt, int burn, int disease, int spirit);
+        Damage(const Score& sharp, const Score& blunt, const Score& burn, const Score& disease, const Score& spirit);
         std::wstring StateDescription() const;
         std::wstring ActionDescription() const;
         int StatPenalty() const;
         bool Disabled() const;
         bool Hurt() const;
 
-        void Set(Wound::Type type, int value) { damage[unsigned(type)] = Score(L"",value); }
+        void Set(Wound::Type type, int value) { damage.at(type) = Score(L"",value); }
         void SetSharp(const int& v) { Set(Wound::Type::Sharp, v);  }
-        void SetCrush(const int& v)  { Set(Wound::Type::Crush, v); }
+        void SetBlunt(const int& v)  { Set(Wound::Type::Blunt, v); }
         void SetBurn(const int& v)  { Set(Wound::Type::Burn, v); }
         void SetDisease(const int& v) { Set(Wound::Type::Disease, v); }
         void SetSpirit(const int& v)  { Set(Wound::Type::Spirit, v); }
 
-        Score Get(Wound::Type type) const { return damage[unsigned(type)]; };
+        Score Get(Wound::Type type) const { return damage.at(type); };
         Score Sharp() const { return Get(Wound::Type::Sharp); }
-        Score Crush() const { return Get(Wound::Type::Crush); }
+        Score Blunt() const { return Get(Wound::Type::Blunt); }
         Score Burn() const { return Get(Wound::Type::Burn); }
         Score Disease() const { return Get(Wound::Type::Disease); }
         Score Spirit() const { return Get(Wound::Type::Spirit); }
@@ -67,7 +67,7 @@ namespace Game
         friend Damage operator-(const Damage& damage, const Damage& mitigation);
 
         std::pair<Wound::Type, unsigned> FindWorst() const;
-        std::array<Score, 5> damage;
+        std::map<Wound::Type, Score> damage;
     };
     Damage operator-(const Damage& damage, const Damage& mitigation);
 

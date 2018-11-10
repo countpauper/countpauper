@@ -6,7 +6,7 @@ namespace Game
 {
     const Wound::Table Wound::table = 
     {
-        { Wound::Type::Crush, {
+        { Wound::Type::Blunt, {
             { ImmunePain, { L"Immune", L"Invulnerable", 0 } },
             { 0, { L"Healthy", L"Block", 0 } },
             { 1, { L"Bruised", L"Bruise", 0 } },
@@ -63,20 +63,24 @@ namespace Game
             return it->second;
     }
 
-    Damage::Damage()
+    Damage::Damage() : 
+        Damage(Score(), Score(), Score(), Score(), Score())
     {
     }
 
-    Damage::Damage(const Score& sharp, const Score& crush, const Score& burn, const Score& disease, const Score& spirit) :
-        damage({ sharp, crush, burn, disease, spirit })
+    Damage::Damage(const Score& sharp, const Score& blunt, const Score& burn, const Score& disease, const Score& spirit) :
+        damage({ { Wound::Type::Sharp, sharp },
+        { Wound::Type::Blunt, blunt },
+        { Wound::Type::Burn, burn },
+        { Wound::Type::Disease, disease },
+        { Wound::Type::Spirit, spirit } })
     {
-
     }
 
     Damage::Damage(int sharp, int crush, int burn, int disease, int spirit)
     {
         SetSharp(sharp);
-        SetCrush(crush);
+        SetBlunt(crush);
         SetBurn(burn);
         SetDisease(disease);
         SetSpirit(spirit);
@@ -96,7 +100,7 @@ namespace Game
         auto worst = FindWorst();
         std::wstringstream ss;
         auto wound = Wound::find(worst.first, worst.second);
-        return wound.action + L"(" + damage.at(unsigned(worst.first)).Description()+L")";
+        return wound.action + L"(" + damage.at(worst.first).Description()+L")";
     }
 
     bool Damage::Hurt() const
@@ -120,15 +124,15 @@ namespace Game
 
     std::pair<Wound::Type, unsigned> Damage::FindWorst() const
     {
-        Wound::Type worst = Wound::Type(0);
-        unsigned worstPain = damage[0].Value();
-        for (unsigned type = 1; type<damage.size(); ++type)
+        Wound::Type worst = Wound::Type::Sharp;
+        unsigned worstPain = 0;
+        for (const auto& d: damage)
         {
-            auto pain= damage[type].Value();
-            if (pain>worstPain)
+            auto pain = d.second.Value();
+            if (pain > worstPain)
             {
                 worstPain = pain;
-                worst = Wound::Type(type);
+                worst = d.first;
             }
         }
         return std::make_pair(worst,worstPain);
@@ -137,7 +141,7 @@ namespace Game
     Damage Damage::Wound(const std::wstring& description) const
     {
         return Damage(Score(description, Sharp().Value()),
-            Score(description, Crush().Value()),
+            Score(description, Blunt().Value()),
             Score(description, Burn().Value()),
             Score(description, Disease().Value()),
             Score(description, Spirit().Value()));
@@ -145,24 +149,22 @@ namespace Game
 
     std::wistream& operator>>(std::wistream& s, Damage& damage)
     {
-        s >> damage.damage[0];
-        for (unsigned i = 1; i < damage.damage.size();++i)
-        {
-            wchar_t comma;
-            s >> comma;
-            assert(comma == L',');
-            s >> damage.damage[i];
-        }
+        wchar_t comma;
+        s >> damage.damage[Wound::Type::Sharp] >> comma;
+        s >> damage.damage[Wound::Type::Blunt] >> comma;
+        s >> damage.damage[Wound::Type::Burn] >> comma;
+        s >> damage.damage[Wound::Type::Disease] >> comma;
+        s >> damage.damage[Wound::Type::Spirit];
         return s;
     }
 
     std::wostream& operator<<(std::wostream& s, const Damage& damage)
     {
-        s << damage.damage[0].Value();
-        for (unsigned i = 1; i < damage.damage.size(); ++i)
-        {
-            s << L"," << damage.damage[i].Value();
-        }
+        s << damage.damage.at(Wound::Type::Sharp).Value() << L",";
+        s << damage.damage.at(Wound::Type::Blunt).Value() << L",";
+        s << damage.damage.at(Wound::Type::Burn).Value() << L",";
+        s << damage.damage.at(Wound::Type::Disease).Value() << L",";
+        s << damage.damage.at(Wound::Type::Spirit).Value();
         return s;
     }
 
@@ -177,25 +179,22 @@ namespace Game
     Damage& Damage::operator+=(const Damage& other)
     {
 
-        unsigned i = 0;
         for (auto& d : damage)
         {
-            d += other.damage[i];
-            ++i;
+            d.second += other.damage.at(d.first);
         }
         return *this;
     }
 
     Damage operator-(const Damage& damage, const Damage& mitigation)
-    {   // NB: damage mitigation.
+    {   // NB: damage mitigation only
         Damage result(damage);
-        unsigned i = 0;
         for (auto& d : result.damage)
         {
             // if there is no damage to mitigation, penalties are not applied
-            if (d.Value() > 0)
+            if (d.second.Value() > 0)
             {
-                d -= mitigation.damage[i];
+                d.second -= mitigation.damage.at(d.first);
             }
         }
         return result;

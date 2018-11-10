@@ -1,4 +1,4 @@
-#Prefix,Post fix,Freq.,ReqStr,ReqWis,Magic,Material   ,Sharp  ,Crush  ,Fire   ,Disease,Spirit,Skill,Bonus,Stat,Bonus
+#Prefix,Post fix,Freq.,ReqStr,ReqWis,Magic,Material   ,Sharp  ,Blunt  ,Fire   ,Disease,Spirit,Skill,Bonus,Stat,Bonus
 Normal,,0,0,0,0,All,0,0,0,0,0,,,,
 Dirty,,0,0,0,1,Cloth,0,0,0,-1,0,,,,
 Ripped,,0,0,0,1,Cloth,0,0,0,0,0,,,,

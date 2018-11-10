@@ -66,11 +66,11 @@ namespace Game
         std::vector<Engine::Adapter::Interface<Requirement>*> requirementAdapters({ &reqstr, &reqwis });
 
         Engine::Adapter::Setter<Damage, int> sharp(&Damage::SetSharp);
-        Engine::Adapter::Setter<Damage, int> crush(&Damage::SetCrush);
+        Engine::Adapter::Setter<Damage, int> blunt(&Damage::SetBlunt);
         Engine::Adapter::Setter<Damage, int> burn(&Damage::SetBurn);
         Engine::Adapter::Setter<Damage, int> disease(&Damage::SetDisease);
         Engine::Adapter::Setter<Damage, int> spirit(&Damage::SetSpirit);
-        std::vector<Engine::Adapter::Interface<Damage>*> damageAdapters({ &sharp, &crush, &burn, &disease, &spirit });
+        std::vector<Engine::Adapter::Interface<Damage>*> damageAdapters({ &sharp, &blunt, &burn, &disease, &spirit });
 
         std::vector<Armor> Armor::Load(std::wistream& file)
         {

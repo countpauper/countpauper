@@ -1,4 +1,4 @@
-#Name,Freq.,ReqStr,ReqWis,Cover,Material,Sharp,Crush,Fire,Disease,Spirit
+#Name,Freq.,ReqStr,ReqWis,Cover,Material,Sharp,Blunt,Fire,Disease,Spirit
 Slippers,0,0,0,Legs,Cloth,0,0,0,0,0
 Shoes,0,1,0,Legs,Leather,1,0,0,0,0
 Boots,0,2,0,Legs,Leather,1,1,0,0,0
