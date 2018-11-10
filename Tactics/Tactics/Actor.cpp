@@ -226,7 +226,7 @@ namespace Game
     {
         if (weapons.empty())
         {
-            return Damage(Score(), Score(L"Unarmed", 2) + StrengthBonus(), Score(), Score(), Score());
+            return Damage(Wound::Type::Blunt, Score(L"Unarmed", 2) + StrengthBonus());
         }
         else
         {
@@ -239,7 +239,11 @@ namespace Game
     {
         Score constMitigation(ConstitutionBonus());
         Score wisMitigation(WisdomBonus());
-        Damage mitigation(constMitigation, constMitigation, constMitigation, constMitigation, wisMitigation);
+        Damage mitigation= Damage(Wound::Type::Sharp, constMitigation) +
+            Damage(Wound::Type::Blunt, constMitigation)+
+            Damage(Wound::Type::Burn, constMitigation)+
+            Damage(Wound::Type::Disease, constMitigation)+
+            Damage(Wound::Type::Spirit, wisMitigation);
         if (!armors.empty())    // TODO: select right armor for location
             mitigation += armors.front().Mitigation();
         return mitigation;

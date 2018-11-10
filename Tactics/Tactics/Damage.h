@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
-#include <array>
+#include <set>
 #include "Score.h"
 
 namespace Game
@@ -21,40 +21,41 @@ namespace Game
             Spirit,
         };
 
-        std::wstring description;
-        std::wstring action;
-        int penalty;
         typedef std::map<Wound::Type, std::map<Pain, Wound>> Table;
         static const Table table;
         static const Wound& find(Type type, Pain value);
+
+        std::wstring stateDescription;
+        std::wstring actionDescription;
+        int penalty;
+
+        static const std::set<Type> Types;
     };
 
     class Damage
     {
     public:
         Damage();
-        Damage(int sharp, int blunt, int burn, int disease, int spirit);
-        Damage(const Score& sharp, const Score& blunt, const Score& burn, const Score& disease, const Score& spirit);
+        Damage(Wound::Type type, const Score& pain);
         std::wstring StateDescription() const;
         std::wstring ActionDescription() const;
         int StatPenalty() const;
         bool Disabled() const;
         bool Hurt() const;
 
-        void Set(Wound::Type type, int value) { damage.at(type) = Score(L"",value); }
+        void Set(Wound::Type type, int value) { if (value) damage[type] = Score(L"",value); }
         void SetSharp(const int& v) { Set(Wound::Type::Sharp, v);  }
         void SetBlunt(const int& v)  { Set(Wound::Type::Blunt, v); }
         void SetBurn(const int& v)  { Set(Wound::Type::Burn, v); }
         void SetDisease(const int& v) { Set(Wound::Type::Disease, v); }
         void SetSpirit(const int& v)  { Set(Wound::Type::Spirit, v); }
 
-        Score Get(Wound::Type type) const { return damage.at(type); };
+        Score Get(Wound::Type type) const { return (damage.count(type))?damage.at(type):Score(); };
         Score Sharp() const { return Get(Wound::Type::Sharp); }
         Score Blunt() const { return Get(Wound::Type::Blunt); }
         Score Burn() const { return Get(Wound::Type::Burn); }
         Score Disease() const { return Get(Wound::Type::Disease); }
         Score Spirit() const { return Get(Wound::Type::Spirit); }
-
 
         std::wstring CsvString() const;
 

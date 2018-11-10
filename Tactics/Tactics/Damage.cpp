@@ -53,6 +53,8 @@ namespace Game
         } }
     };
 
+    const std::set<Wound::Type> Wound::Types = { Wound::Type::Sharp, Wound::Type::Blunt, Wound::Type::Burn, Wound::Type::Disease, Wound::Type::Spirit };
+
     const Wound& Wound::find(Wound::Type type, Pain severity)
     {
         const auto& table = Wound::table.at(type);
@@ -63,27 +65,13 @@ namespace Game
             return it->second;
     }
 
-    Damage::Damage() : 
-        Damage(Score(), Score(), Score(), Score(), Score())
+    Damage::Damage() 
     {
     }
 
-    Damage::Damage(const Score& sharp, const Score& blunt, const Score& burn, const Score& disease, const Score& spirit) :
-        damage({ { Wound::Type::Sharp, sharp },
-        { Wound::Type::Blunt, blunt },
-        { Wound::Type::Burn, burn },
-        { Wound::Type::Disease, disease },
-        { Wound::Type::Spirit, spirit } })
+    Damage::Damage(Wound::Type type, const Score& pain)
     {
-    }
-
-    Damage::Damage(int sharp, int crush, int burn, int disease, int spirit)
-    {
-        SetSharp(sharp);
-        SetBlunt(crush);
-        SetBurn(burn);
-        SetDisease(disease);
-        SetSpirit(spirit);
+        damage[type] = pain; 
     }
 
 
@@ -92,7 +80,7 @@ namespace Game
         auto worst = FindWorst();
         std::wstringstream ss;
         auto wound = Wound::find(worst.first, worst.second);
-        return wound.description;
+        return wound.stateDescription;
     }
 
     std::wstring Damage::ActionDescription() const
@@ -100,7 +88,7 @@ namespace Game
         auto worst = FindWorst();
         std::wstringstream ss;
         auto wound = Wound::find(worst.first, worst.second);
-        return wound.action + L"(" + damage.at(worst.first).Description()+L")";
+        return wound.actionDescription + L"(" + damage.at(worst.first).Description()+L")";
     }
 
     bool Damage::Hurt() const
@@ -140,31 +128,41 @@ namespace Game
 
     Damage Damage::Wound(const std::wstring& description) const
     {
-        return Damage(Score(description, Sharp().Value()),
-            Score(description, Blunt().Value()),
-            Score(description, Burn().Value()),
-            Score(description, Disease().Value()),
-            Score(description, Spirit().Value()));
+        // flatten score for wound
+        Damage result;
+        for (const auto& d : damage)
+        {
+            result += Damage(d.first, Score(description, d.second.Value()));
+        }
+        return result;
     }
 
     std::wistream& operator>>(std::wistream& s, Damage& damage)
     {
-        wchar_t comma;
-        s >> damage.damage[Wound::Type::Sharp] >> comma;
-        s >> damage.damage[Wound::Type::Blunt] >> comma;
-        s >> damage.damage[Wound::Type::Burn] >> comma;
-        s >> damage.damage[Wound::Type::Disease] >> comma;
-        s >> damage.damage[Wound::Type::Spirit];
+        for (auto woundType : Wound::Types)
+        {
+            wchar_t buf[64];
+            wchar_t delimiter = woundType == Wound::Type::Spirit ? L'\n' : L',';
+            s.getline(buf, 64, delimiter);
+            if (s.gcount() == 64)
+                throw std::runtime_error("Damage value too long");
+            std::wstringstream strstr(buf);
+            int number = 0;
+            strstr >> number;
+            if (number)
+                damage.damage[woundType] = Score(L"", number);
+        }
         return s;
     }
 
     std::wostream& operator<<(std::wostream& s, const Damage& damage)
     {
-        s << damage.damage.at(Wound::Type::Sharp).Value() << L",";
-        s << damage.damage.at(Wound::Type::Blunt).Value() << L",";
-        s << damage.damage.at(Wound::Type::Burn).Value() << L",";
-        s << damage.damage.at(Wound::Type::Disease).Value() << L",";
-        s << damage.damage.at(Wound::Type::Spirit).Value();
+        for (auto woundType : Wound::Types)
+        {
+            if (damage.damage.count(woundType))
+                s << damage.damage.at(woundType).Value();
+            s << L",";
+        }
         return s;
     }
 
@@ -179,9 +177,12 @@ namespace Game
     Damage& Damage::operator+=(const Damage& other)
     {
 
-        for (auto& d : damage)
+        for (auto& d : other.damage)
         {
-            d.second += other.damage.at(d.first);
+            if (damage.count(d.first))
+                damage[d.first] += d.second;
+            else
+                damage[d.first] = d.second;
         }
         return *this;
     }
