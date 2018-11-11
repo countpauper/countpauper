@@ -18,7 +18,7 @@ public:
     std::wstring name;
     unsigned mp;
     float range;
-    enum class Trigger { Act, React, Defend };
+    enum class Trigger { None=0, Act=1, React=2, Defend=4 };
     Trigger trigger;
     using Label = std::string;
     using Labels = std::set<Label>;

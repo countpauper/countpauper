@@ -5,6 +5,15 @@
 
 namespace Game
 {
+
+std::map<std::wstring, Skill::Trigger> triggerMap(
+{
+    { L"", Skill::Trigger::None },
+    { L"Act", Skill::Trigger::Act },
+    { L"React", Skill::Trigger::React },
+    { L"Defend", Skill::Trigger::Defend },
+});
+
 Skill::Skill() :
     mp(0),
     range(1.0)
@@ -28,8 +37,11 @@ Skills Skills::Load(std::wistream& file)
 {
     Engine::Adapter::String<Skill> name(&Skill::name);
     Engine::Adapter::Unsigned<Skill> mp(&Skill::mp);
+    Engine::Adapter::Enumeration<Skill, Skill::Trigger> trigger(&Skill::trigger, triggerMap);
+    Engine::Adapter::Set<Skill, std::string> label(&Skill::label);
+    Engine::Adapter::Set<Skill, std::string> follows(&Skill::follows);
 
-    Engine::CSV<Skill> csv(file, { &name, &mp });
+    Engine::CSV<Skill> csv(file, { &name, &mp, &trigger, &label, &follows });
     return csv.Read();
 }
 

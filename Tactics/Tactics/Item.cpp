@@ -44,7 +44,6 @@ namespace Game
             { L"Head", Covers::Head },
             { L"Finger", Covers::Finger },
             { L"Neck", Covers::Neck },
-
             { L"Trunk", Covers::Trunk },
             { L"Shirt", Covers::Shirt },
             { L"Body", Covers::Body },
@@ -162,9 +161,11 @@ namespace Game
 
         std::map<std::wstring, Weapon::Material::Category > weaponMaterialCategories(
         {
+            { L"None", Weapon::Material::None},
             { L"Metal", Weapon::Material::Metal },
             { L"Wood", Weapon::Material::Wood },
             { L"Leather", Weapon::Material::Leather },
+            { L"All", Weapon::Material::All},
         });
 
         std::vector<Weapon> Weapon::Load(std::wistream& file)
@@ -203,8 +204,9 @@ namespace Game
             Engine::Adapter::Integer<Weapon::Bonus> magic(&Weapon::Bonus::magic);
             Engine::Adapter::Struct<Weapon::Bonus, Requirement> requirement(&Weapon::Bonus::requirement, requirementAdapters);
             Engine::Adapter::Enumeration<Weapon::Bonus, Weapon::Style> style(&Weapon::Bonus::style, weaponStyles);
+            Engine::Adapter::Enumeration<Weapon::Bonus, Weapon::Material::Category> material(&Weapon::Bonus::material, weaponMaterialCategories);
             Engine::Adapter::Struct<Weapon::Bonus, Damage> damage(&Weapon::Bonus::damage, damageAdapters);
-            Engine::CSV<Weapon::Bonus> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &style, &damage });
+            Engine::CSV<Weapon::Bonus> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &style, &material, &damage });
             return csv.Read();
         }
         bool Weapon::Match(const Material& material) const

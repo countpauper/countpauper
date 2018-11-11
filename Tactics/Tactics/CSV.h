@@ -2,10 +2,11 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
 #include <iostream>
-#include <sstream>
 #include "from_string.h"
+#include "Utils.h"
 
 namespace Engine
 {
@@ -67,7 +68,8 @@ namespace Engine
             }
             void Parse(const std::vector<std::wstring>& str, C& dest) const override
             {
-                (&dest)->*member =  from_string<T>(str.front());
+                if (!str.front().empty())
+                    (&dest)->*member =  from_string<T>(str.front());
             }
             unsigned Columns() const override { return 1; }
         private:
@@ -128,6 +130,32 @@ namespace Engine
             const std::vector<Adapter::Interface<StructT>*> adapters;
         };
 
+        template<class C, class T>
+        class Set : public Interface<C>
+        {
+        public:
+            Set(std::set<T> C::*member) :
+                member(member),
+                elementAdapter(elementAdapter)
+            {
+            }
+            void Parse(const std::vector<std::wstring>& str, C& dest) const override
+            {
+                auto elements = Split(str.front(), L'|');
+                for (auto& elementStr : elements)
+                {
+                    ((&dest)->*member).insert(from_string<T>(elementStr));
+                }
+            }
+            unsigned Columns() const override
+            {
+                return 1;
+            }
+        private:
+            std::set<T> C::*member;
+            const Adapter::Interface<C>* elementAdapter;
+        };
+
         template<class T>
         class Pointer : public Interface<T>
         {
@@ -142,6 +170,8 @@ namespace Engine
             }
             unsigned Columns() const override { return 1; }
         };
+
+
         /*
         class Optional : public Interface
         {
@@ -151,6 +181,8 @@ namespace Engine
         };
         */
     }
+
+
 
     template<class T>
     class CSV
@@ -173,22 +205,19 @@ namespace Engine
                 if (buffer[0] == '#')
                     continue;
                 result.push_back(T());
-                std::wstringstream ss(buffer);
+                std::vector<std::wstring> items = Split(buffer, L',');
                 for (auto column : columns)
                 {
                     unsigned columnReq = column->Columns();
-                    std::vector<std::wstring> items;
-                    for (unsigned i = 0; i < columnReq; ++i)
-                    {
-                        wchar_t itemBuffer[4096];
-                        ss.getline(itemBuffer, 4096, ',');
-                        items.push_back(itemBuffer);
-                    }
+                    if (columnReq > items.size())
+                        throw std::runtime_error("Insufficient columns in CSV");
                     column->Parse(items, result.back());
+                    items.erase(items.begin(), items.begin() + columnReq);
                 }
             }
             return result;
         }
+ 
     private:
         std::wistream& file;
         std::vector<Adapter::Interface<T>*> columns;

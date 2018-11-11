@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Damage.h"
-#include <sstream>
 #include "from_string.h"
+#include "Utils.h"
 
 namespace Game
 {
@@ -138,17 +138,16 @@ namespace Game
 
     std::wistream& operator>>(std::wistream& s, Damage& damage)
     {
+        std::wstring str;
+        s >> str;
+        auto elements = Engine::Split(str, L',');
         for (auto woundType : Wound::Types)
         {
-            wchar_t buf[64];
-            wchar_t delimiter = woundType == Wound::Type::Spirit ? L'\n' : L',';
-            s.getline(buf, 64, delimiter);
-            if (s.gcount() == 64)
-                throw std::runtime_error("Damage value too long");
-            int number = Engine::from_string<int>(buf);
-
-            if (number)
+            if (!elements.front().empty())
+            {
+                int number = Engine::from_string<int>(elements.front());
                 damage.damage[woundType] = Score(L"", number);
+            }
         }
         return s;
     }

@@ -1,3 +1,4 @@
 #Name, MP
-Slash,2
-Dodge,1
+Hack, 2,Act,Melee|1,
+Slash,1,Act,Melee,1
+Dodge, 1,Defend,,Melee

@@ -177,6 +177,7 @@ namespace Game
                     Wood =1<<0,
                     Metal = 1<<1,
                     Leather= 1<<2,
+                    All = Wood | Metal | Leather,
                 };
                 Material() : category(None) {}
                 Category category;
@@ -188,6 +189,7 @@ namespace Game
             public:
                 Bonus() : style(Weapon::All) {}
                 Weapon::Style style;
+                Weapon::Material::Category material;
                 Damage damage;
                 static std::vector<Bonus> Load(std::wistream& fileName);
             };
