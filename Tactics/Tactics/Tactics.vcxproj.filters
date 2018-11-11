@@ -112,6 +112,9 @@
     <ClInclude Include="Score.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="from_string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -227,5 +230,8 @@
       <Filter>Data</Filter>
     </None>
     <None Include="Flat.map" />
+    <None Include="Data\Skill.csv">
+      <Filter>Data</Filter>
+    </None>
   </ItemGroup>
 </Project>

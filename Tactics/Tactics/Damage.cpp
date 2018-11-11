@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Damage.h"
 #include <sstream>
+#include "from_string.h"
 
 namespace Game
 {
@@ -78,7 +79,6 @@ namespace Game
     std::wstring Damage::StateDescription() const
     {
         auto worst = FindWorst();
-        std::wstringstream ss;
         auto wound = Wound::find(worst.first, worst.second);
         return wound.stateDescription;
     }
@@ -86,7 +86,6 @@ namespace Game
     std::wstring Damage::ActionDescription() const
     {
         auto worst = FindWorst();
-        std::wstringstream ss;
         auto wound = Wound::find(worst.first, worst.second);
         return wound.actionDescription + L"(" + damage.at(worst.first).Description()+L")";
     }
@@ -146,9 +145,8 @@ namespace Game
             s.getline(buf, 64, delimiter);
             if (s.gcount() == 64)
                 throw std::runtime_error("Damage value too long");
-            std::wstringstream strstr(buf);
-            int number = 0;
-            strstr >> number;
+            int number = Engine::from_string<int>(buf);
+
             if (number)
                 damage.damage[woundType] = Score(L"", number);
         }

@@ -277,7 +277,7 @@ namespace Game
         {
             std::wstring skillName;
             s >> skillName >> skill.score;
-            skill.skill = game.skills->Find(skillName);
+            skill.skill = game.skills.Find(skillName);
         }
 
         return s;

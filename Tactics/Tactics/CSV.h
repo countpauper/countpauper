@@ -5,6 +5,7 @@
 #include <map>
 #include <iostream>
 #include <sstream>
+#include "from_string.h"
 
 namespace Engine
 {
@@ -31,9 +32,7 @@ namespace Engine
             }
             void Parse(const std::vector<std::wstring>& str, C& dest) const override
             {
-                T v;
-                std::wstringstream ss(str.front());
-                ss >> v;
+                T v = from_string<T>(str.front());
                 (dest.*fn)(v);
             }
             unsigned Columns() const override { return 1; }
@@ -41,39 +40,42 @@ namespace Engine
             FuncType fn;
         };
 
-        template<class T>
-        class String : public Interface<T>
+        template<class C>
+        class String : public Interface<C>
         {
         public:
-            String(std::wstring T::*member) :
+            String(std::wstring C::*member) :
                 member(member)
             {
             }
-            void Parse(const std::vector<std::wstring>& str, T& dest) const override
+            void Parse(const std::vector<std::wstring>& str, C& dest) const override
             {
                 (&dest)->*member = str.front();
             }
             unsigned Columns() const override { return 1; }
         private:
-            std::wstring T::*member;
+            std::wstring C::*member;
         };
 
-        template<class T>
-        class Integer : public Interface<T>
+        template<class C, typename T>
+        class Number : public Interface<C>
         {
         public:
-            Integer(int T::*member) :
+            Number(T C::*member) :
                 member(member)
             {
             }
-            void Parse(const std::vector<std::wstring>& str, T& dest) const override
+            void Parse(const std::vector<std::wstring>& str, C& dest) const override
             {
-                (&dest)->*member =  _wtoi(str.front().data());
+                (&dest)->*member =  from_string<T>(str.front());
             }
             unsigned Columns() const override { return 1; }
         private:
-            int T::*member;
+            T C::*member;
         };
+
+        template<class C> using Integer = Number<C, int>;
+        template<class C> using Unsigned = Number<C, unsigned>;
 
         template<class T, typename EnumT>
         class Enumeration : public Interface<T>
@@ -167,7 +169,7 @@ namespace Engine
                 wchar_t buffer[65536];
                 file.getline(buffer, 65536);
                 if (buffer[0] == 0)
-                    continue;
+                    break;
                 if (buffer[0] == '#')
                     continue;
                 result.push_back(T());

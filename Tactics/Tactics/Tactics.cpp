@@ -10,7 +10,6 @@
 #include <math.h>
 #include <fstream>
 #include "game.h"
-#include "Skills.h"
 #include "Light.h"
 #include "Camera.h"
 #include "Panel.h"
@@ -28,7 +27,6 @@ int width = 0;
 int height = 0;
 std::wstring mapName(L"Game.map");
 std::unique_ptr<Game::Game> game;
-std::unique_ptr<Game::Skills> skills;
 std::unique_ptr<Game::Panel> panel;
 Engine::Light light; 
 Engine::TopCamera camera;
@@ -184,23 +182,7 @@ BOOL SetPixelFormat(HWND hWnd)
 BOOL Start()
 {
     glEnable(GL_TEXTURE_2D);
-    auto skills = std::make_unique <Game::Skills>();
-    {
-        std::wifstream fs("Skill");
-        if (fs.fail())
-        {
-            MessageBox(NULL, L"Loading Skills failed:  ", L"Error", MB_OK);
-            return FALSE;
-        }
-        fs >> *skills;
-        if (fs.fail())
-        {
-            MessageBox(NULL, L"Reading Skills failed:  ", L"Error", MB_OK);
-            return FALSE;
-        }
-    }
-
-    game = std::make_unique<Game::Game>(std::move(skills));
+    game = std::make_unique<Game::Game>();
     {
         std::wifstream fs(mapName);
         if (fs.fail())

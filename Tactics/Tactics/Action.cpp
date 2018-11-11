@@ -26,7 +26,7 @@ namespace Game
         { VK_LEFT, [](const State&, const Game&){ return new West(); } },
         { VK_SPACE, [](const State& state, const Game& game)
         {
-            auto& skill = game.skills->front();
+            auto& skill = game.skills.front();
             auto targets = game.FindTargetsInRange(state, skill);
             if (targets.empty())
                 return (Action*)nullptr;

@@ -61,8 +61,8 @@ namespace Game
             { L"Wisdom", Statistic::Wisdom }
         });
 
-        Engine::Adapter::Integer<Requirement> reqstr(&Requirement::strength);
-        Engine::Adapter::Integer<Requirement> reqwis(&Requirement::wisdom);
+        Engine::Adapter::Unsigned<Requirement> reqstr(&Requirement::strength);
+        Engine::Adapter::Unsigned<Requirement> reqwis(&Requirement::wisdom);
         std::vector<Engine::Adapter::Interface<Requirement>*> requirementAdapters({ &reqstr, &reqwis });
 
         Engine::Adapter::Setter<Damage, int> sharp(&Damage::SetSharp);
@@ -194,7 +194,6 @@ namespace Game
             Engine::CSV<Weapon::Material> csv(file, { &name, &frequency, &category, &magic, &element, &requirement, &damage });
             return csv.Read();
         }
-
 
         std::vector<Weapon::Bonus> Weapon::Bonus::Load(std::wistream& file)
         {

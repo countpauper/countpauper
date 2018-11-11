@@ -11,8 +11,8 @@
 namespace Game
 {
 
-    Game::Game(std::unique_ptr<Skills> skills) :
-        skills(std::move(skills)),
+    Game::Game() :
+        skills(Skills::Load(std::wifstream(L"Data/Skill.csv"))),
         armors(Type::Armor::Load(std::wifstream(L"Data/Armor.csv"))),
         armorMaterials(Type::Armor::Material::Load(std::wifstream(L"Data/ArmorMaterial.csv"))),
         armorBoni(Type::Armor::Bonus::Load(std::wifstream(L"Data/ArmorBonus.csv"))),

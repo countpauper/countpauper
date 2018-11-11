@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "IGame.h"
 #include "Item.h"
+#include "Skills.h"
 #include "Coordinate.h"
 
 namespace Game
@@ -17,8 +18,6 @@ namespace Game
     class Plan;
     class Actor;
     class State;
-    class Skills;
-    class Skill;
 
     class Game : public IGame
     {
@@ -29,7 +28,7 @@ namespace Game
             Map,
             Object
         };
-        Game(std::unique_ptr<Skills> skills);
+        Game();
         virtual ~Game();
         void Start();
 
@@ -47,7 +46,6 @@ namespace Game
         void Click(Selection selection, GLuint value);
         std::vector<Actor*> FindTargets(const State& from, const Skill& skill) const;
         std::vector<Actor*> FindTargetsInRange(const State& from, const Skill& skill) const;
-        std::unique_ptr<const Skills> skills;
         Actor* ActiveActor() const override;
         void MakePlan(Actor& actor, const Skill& skill);
 
@@ -59,6 +57,7 @@ namespace Game
         const Type::Weapon::Bonus& FindWeaponBonus(const std::wstring& name, const Type::Weapon& armor) const;
 
         Engine::Coordinate focus;
+        Skills skills;
     protected:
         void AI(Actor* actor);
         void Next();
@@ -72,7 +71,6 @@ namespace Game
         Objects objects;
         Objects::iterator turn;
         std::unique_ptr<Plan> plan;
-
 
         std::vector<Type::Armor> armors;
         std::vector<Type::Armor::Material> armorMaterials;

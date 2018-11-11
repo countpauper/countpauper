@@ -11,7 +11,7 @@ Attack::Attack(Actor& target, const Skill& skill) :
     TargetedAction(target),
     skill(skill)
 {
-    cost = skill.cost;
+    cost = skill.mp;
     range = skill.range;
 }
 
@@ -41,7 +41,7 @@ GameChances Attack::Act(IGame& game)
     ret.emplace_back(GameChance(game, hitChance, damage.ActionDescription()));
     ret.back().Adjust(actor, state);
 
-    targetResult.body.Hurt(skill.vector, damage.Wound(actor.name));
+    targetResult.body.Hurt(AttackVector({ Plane::All, 0 }), damage.Wound(actor.name));
 
     ret.back().Adjust(target, targetResult);
     return ret;

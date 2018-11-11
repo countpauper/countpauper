@@ -2,13 +2,13 @@
 Actor Foo 0 2 2 0 1
 Body Around 0 Agi+Str+Con+Wis+Int 10 0,0,0,0,0
 0 0 2
-Sword 10
-Bow 10
+Slash 1
+Dodge 1
 Actor Bar 1 3 3 0 1
 Body Around 0 All 10 ,,,,
 0 0 1
-Sword 10
-Test 4 4 data/map.png
+Slash 1
+Flat 4 4 data/map.png
 4 0 0 0 
 4 0 0 0 
 4 0 0 0 
