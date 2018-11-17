@@ -1,4 +1,0 @@
-#Name, MP,Trigger,Labels,Follows
-Hack, 2,Act,Melee|1,
-Slash,1,Act,Melee,1
-Dodge, 1,Defend,,Melee

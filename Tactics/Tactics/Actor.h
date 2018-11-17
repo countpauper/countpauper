@@ -48,6 +48,8 @@ namespace Game
             unsigned score;
         };
         typedef std::vector<Actor::Skill> Skills;
+        const ::Game::Skill* DefaultAttack() const;
+
         const Actor::Skills& GetSkills() const;
         unsigned GetSkillScore(const ::Game::Skill& skill) const;
         Damage AttackDamage() const;

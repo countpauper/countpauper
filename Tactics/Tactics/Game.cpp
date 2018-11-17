@@ -12,7 +12,7 @@ namespace Game
 {
 
     Game::Game() :
-        skills(Skills::Load(std::wifstream(L"Data/Skill.csv"))),
+        skills("Data/Skills.xml"),
         armors(Type::Armor::Load(std::wifstream(L"Data/Armor.csv"))),
         armorMaterials(Type::Armor::Material::Load(std::wifstream(L"Data/ArmorMaterial.csv"))),
         armorBoni(Type::Armor::Bonus::Load(std::wifstream(L"Data/ArmorBonus.csv"))),
@@ -53,12 +53,15 @@ namespace Game
         std::vector<std::unique_ptr<Plan>> plans;
         for (auto skill : actor->GetSkills())
         {
-            auto targets = FindTargets(*actor, *skill.skill);
-            for (auto target : targets)
+            if (skill.skill->IsActive())
             {
-                auto plan = std::make_unique<AttackPlan>(*actor, *target, *this, *skill.skill);
-                if (plan->Valid())
-                    plans.emplace_back(std::move(plan));
+                auto targets = FindTargets(*actor, *skill.skill);
+                for (auto target : targets)
+                {
+                    auto plan = std::make_unique<AttackPlan>(*actor, *target, *this, *skill.skill);
+                    if (plan->Valid())
+                        plans.emplace_back(std::move(plan));
+                }
             }
         }
         if (plans.size())
@@ -303,7 +306,7 @@ namespace Game
             if (currentPlan)
                 skill = &currentPlan->skill;
             else
-                skill = playerActor.GetSkills().front().skill;
+                skill = playerActor.DefaultAttack();
             if (skill)
             {
                 auto object = (Object*)value;

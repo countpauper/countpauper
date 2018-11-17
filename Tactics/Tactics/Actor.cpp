@@ -213,6 +213,16 @@ namespace Game
         return skills;
     }
 
+    const ::Game::Skill* Actor::DefaultAttack() const
+    {
+        for (auto& skill : skills)
+        {
+            if (skill.skill->IsActive())
+                return skill.skill;
+        }
+        return nullptr;
+    }
+
     unsigned Actor::GetSkillScore(const ::Game::Skill& findSkill) const
     {
         auto it = std::find_if(skills.begin(), skills.end(), [&findSkill](const Actor::Skill& skill) { return skill.skill == &findSkill; });
