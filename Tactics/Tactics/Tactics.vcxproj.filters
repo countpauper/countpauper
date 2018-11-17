@@ -243,4 +243,9 @@
       <Filter>Data</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Data\Skills.xml">
+      <Filter>Data</Filter>
+    </Xml>
+  </ItemGroup>
 </Project>

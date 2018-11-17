@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<skills>
+  <skill name="Hack" mp="2" trigger="Act">
+  </skill>
+  <skill name="Slash" mp="1" trigger="Combo">
+  </skill>
+  <skill name="Dodge" mp="1" trigger="Defend">
+  </skill>
+</skills>

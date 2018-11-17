@@ -1,8 +1,6 @@
 ﻿// Command lines: 
 //  --map=1on1.map --hide
 
-
-
 #include "stdafx.h"
 #include "Tactics.h"
 #include <GL/gl.h>            /* OpenGL header file */
@@ -13,6 +11,7 @@
 #include "Light.h"
 #include "Camera.h"
 #include "Panel.h"
+
 
 #define MAX_LOADSTRING 100
 
@@ -60,6 +59,61 @@ struct Input
     int y;
 } input;
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
+static void
+print_element_names(xmlNode * a_node)
+{
+    xmlNode *cur_node = NULL;
+
+    for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
+        if (cur_node->type == XML_ELEMENT_NODE) {
+            std::cout << "node type: Element, name: " << cur_node->name << std::endl;
+        }
+
+        print_element_names(cur_node->children);
+    }
+}
+
+
+/**
+* Simple example to parse a file called "file.xml",
+* walk down the DOM, and print the name of the
+* xml elements nodes.
+*/
+void xmlTest()
+{
+    xmlDoc *doc = NULL;
+    xmlNode *root_element = NULL;
+    /*
+    * this initialize the library and check potential ABI mismatches
+    * between the version it was compiled for and the actual shared
+    * library used.
+    */
+    LIBXML_TEST_VERSION
+
+        /*parse the file and get the DOM */
+        doc = xmlReadFile("Data/skills.xml", NULL, 0);
+
+    if (doc == NULL) {
+        std::cerr << "error: could not parse skills file" << std::endl;
+    }
+
+    /*Get the root element node */
+    root_element = xmlDocGetRootElement(doc);
+
+    print_element_names(root_element);
+
+    /*free the document */
+    xmlFreeDoc(doc);
+
+    /*
+    *Free the global variables that may
+    *have been allocated by the parser.
+    */
+    xmlCleanupParser();
+}
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -79,6 +133,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
     HACCEL hAccelTable;
 
+    xmlTest();
     windowShow = nCmdShow;
 
     if (!ParseCommandline(lpCmdLine))
