@@ -109,7 +109,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="Game.map" />
-    <Text Include="Skill" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
@@ -190,7 +189,6 @@
     <None Include="Data\Armor.csv" />
     <None Include="Data\ArmorBonus.csv" />
     <None Include="Data\ArmorMaterial.csv" />
-    <None Include="Data\Skill.csv" />
     <None Include="Data\Weapon.csv" />
     <None Include="Data\WeaponBonus.csv" />
     <None Include="Data\WeaponMaterial.csv" />

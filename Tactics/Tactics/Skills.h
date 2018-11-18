@@ -31,6 +31,7 @@ public:
 
     enum class Effect { Miss, Interrupt, Disarm, Stuck, Stop };
     using Effects = std::set<Effect>;
+    static const std::map<std::wstring, Effect> effectMap;
 
     class Type
     {
@@ -50,7 +51,7 @@ public:
     class Affect : public Type
     {
     public:
-        std::vector<unsigned> damage;
+        std::vector<float> chance;
         Effects effects;
     };
 

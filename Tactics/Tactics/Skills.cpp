@@ -20,80 +20,88 @@ void xmlTest()
 namespace Game
 {
 
-Skill::Skill() :
-    mp(0),
-    range(1.0),
-    trigger(Trigger::None)
-{
-}
+    Skill::Skill() :
+        mp(0),
+        range(1.0),
+        trigger(Trigger::None)
+    {
+    }
 
-Action* Skill::Action(Actor& target) const
-{
-    return new Attack(target, *this);
-}
+    Action* Skill::Action(Actor& target) const
+    {
+        return new Attack(target, *this);
+    }
 
-bool Skill::IsActive() const
-{
-    return (trigger == Trigger::Act);
-}
+    bool Skill::IsActive() const
+    {
+        return (trigger == Trigger::Act);
+    }
 
-const Skill* Skills::Find(const std::wstring& name) const
-{
-    for (auto& skill : *this)
-        if (skill.name == name)
-            return &skill;
-    return nullptr;
-}
-Skills::Skills(const std::string& fname)
-{
-    Load(fname);
-}
+    const Skill* Skills::Find(const std::wstring& name) const
+    {
+        for (auto& skill : *this)
+            if (skill.name == name)
+                return &skill;
+        return nullptr;
+    }
+    Skills::Skills(const std::string& fname)
+    {
+        Load(fname);
+    }
 
-std::wstring xmlWStr(const xmlChar* xmlString)
-{
-    if (!xmlString)
-        throw std::invalid_argument("Null pointer xml string");
+    std::wstring xmlWStr(const xmlChar* xmlString)
+    {
+        if (!xmlString)
+            throw std::invalid_argument("Null pointer xml string");
 
-    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> conv;
-    return conv.from_bytes((const char*)xmlString);
-}
+        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> conv;
+        return conv.from_bytes((const char*)xmlString);
+    }
 
-std::string xmlStr(const xmlChar* xmlString)
-{
-    return std::string((const char*)xmlString);
-}
+    std::string xmlStr(const xmlChar* xmlString)
+    {
+        return std::string((const char*)xmlString);
+    }
 
-std::wstring xmlText(const xmlNode* node)
-{
-    if (node->type != XML_TEXT_NODE)
-        throw std::runtime_error("Expected a text node");
-    if (node->children != nullptr)
-        throw std::runtime_error("Expected a leaf text node");
-    return xmlWStr(node->content);
-}
+    std::wstring xmlText(const xmlNode* node)
+    {
+        if (node->type != XML_TEXT_NODE)
+            throw std::runtime_error("Expected a text node");
+        if (node->children != nullptr)
+            throw std::runtime_error("Expected a leaf text node");
+        return xmlWStr(node->content);
+    }
 
-bool xmlTagCompare(const xmlChar* name, const char* tag)
-{
-    return xmlStrEqual(name, xmlCharStrdup(tag)) == 1;
-}
+    bool xmlTagCompare(const xmlChar* name, const char* tag)
+    {
+        return xmlStrEqual(name, xmlCharStrdup(tag)) == 1;
+    }
 
-bool xmlTagCompare(const xmlNode* node, const char* tag)
-{
-    return xmlTagCompare(node->name, tag);
-}
+    bool xmlTagCompare(const xmlNode* node, const char* tag)
+    {
+        return xmlTagCompare(node->name, tag);
+    }
 
-bool xmlTagCompare(const xmlAttr* attr, const char* tag)
-{
-    return xmlTagCompare(attr->name, tag);
-}
+    bool xmlTagCompare(const xmlAttr* attr, const char* tag)
+    {
+        return xmlTagCompare(attr->name, tag);
+    }
 
-bool IsEmptyText(const xmlNode* node)
-{
-    if (node->type != XML_TEXT_NODE)
-        return false;
-    auto content = xmlText(node);
-    return (content.find_first_not_of(Engine::whitespace) == std::wstring::npos);
-}
+    bool IsEmptyText(const xmlNode* node)
+    {
+        if (node->type != XML_TEXT_NODE)
+            return false;
+        auto content = xmlText(node);
+        return (content.find_first_not_of(Engine::whitespace) == std::wstring::npos);
+    }
+
+const std::map<std::wstring, Skill::Effect> Skill::effectMap = {
+    { L"miss", Skill::Effect::Miss },
+    { L"interrupt", Skill::Effect::Interrupt },
+    { L"disarm", Skill::Effect::Disarm },
+    { L"stuck", Skill::Effect::Stuck },
+    { L"stop", Skill::Effect::Stop }
+};
 
 void Parse(Skill::Move& o, const xmlNode* node)
 {
@@ -105,20 +113,38 @@ void Parse(Skill::Melee& o, const xmlNode* node)
     {
         if (xmlTagCompare(prop, "damage"))
         {
-            auto dmgStrs = Engine::Split(xmlText(prop->children), L',');
-            o.damage.resize(dmgStrs.size());
-            std::transform(dmgStrs.begin(), dmgStrs.end(), o.damage.begin(), [](const std::wstring& dmgStr)
-            {
-                return Engine::from_string<unsigned>(dmgStr);
-            });
+            o.damage = Engine::from_strings<unsigned>(xmlText(prop->children), L',');
+        }
+        else if (xmlTagCompare(prop, "effect"))
+        {
+            o.effects = Engine::from_strings<Skill::Effect>(xmlText(prop->children), L'|', Skill::effectMap);
         }
         else
             throw std::runtime_error("Unknown Melee skill property");
     }
 }
 
+
 void Parse(Skill::Affect& o, const xmlNode* node)
 {
+    for (auto prop = node->properties; prop; prop = prop->next)
+    {
+        if (xmlTagCompare(prop, "chance"))
+        {
+            o.chance = Engine::from_strings<float>(xmlText(prop->children), L',');
+            std::transform(o.chance.begin(), o.chance.end(), o.chance.begin(), [](const float& v)
+            {
+                return v / 100.0f;
+            });
+        }
+        else if (xmlTagCompare(prop, "effect"))
+        {
+            o.effects = Engine::from_strings<Skill::Effect>(xmlText(prop->children), L'|', Skill::effectMap);
+        }
+        else
+            throw std::runtime_error("Unknown Affect skill property");
+    }
+
 }
 
 
