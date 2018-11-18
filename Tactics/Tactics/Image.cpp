@@ -2,7 +2,7 @@
 #include <gl/GL.h>
 #include "Image.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include <Stb/stb_image.h>
 #include "Error.h"
 
 namespace Engine

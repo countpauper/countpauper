@@ -2,10 +2,10 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <codecvt>
+#include "Engine/CSV.h"
+#include "Engine/from_string.h"
 #include "Skills.h"
-#include "CSV.h"
 #include "Attack.h"
-#include "from_string.h"
 
 /**
 * Simple example to parse a file called "file.xml",

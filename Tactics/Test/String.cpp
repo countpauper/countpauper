@@ -45,12 +45,10 @@ BOOST_AUTO_TEST_CASE(Boolean)
     BOOST_CHECK_THROW(Engine::from_string<bool>(L"cheese"), std::exception);
 }
 
-/* TODO: split off Engine library(and game library)
 BOOST_AUTO_TEST_CASE(String)
 {
     BOOST_CHECK(Engine::from_string<std::wstring>(L"Bla") ==  std::wstring(L"Bla"));
 }
-*/
 
 BOOST_AUTO_TEST_CASE(Enum)
 {
