@@ -12,9 +12,5 @@
 #include <tchar.h>
 #include <cassert>
 #include <string>
-#include <cmath>
 #include <algorithm>
 
-
-
-// TODO: reference additional headers your program requires here

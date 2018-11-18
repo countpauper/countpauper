@@ -58,6 +58,12 @@ namespace Engine
         {
             return x*x + y*y + z*z;
         }
+
+        bool operator==(const Vector& o) const
+        {
+            return x == o.x && y == o.y && z == o.z;
+        }
+
         float x;
         float y;
         float z;

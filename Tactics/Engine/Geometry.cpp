@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "Geometry.h"
-#include "Math.h"
+
 namespace Engine
 {
-    double ShortestTurn(float a, float b)
+    double ShortestTurn(double from, double to)
     {
-        float result = a - b;
+        double result = to - from;
         if (result > PI)
         {
             return -2 * PI + result;

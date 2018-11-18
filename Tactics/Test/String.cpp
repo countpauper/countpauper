@@ -1,5 +1,7 @@
 #include <boost/test/unit_test.hpp>
+#include <math.h>
 #include "from_string.h"
+#include "Utils.h"
 
 BOOST_AUTO_TEST_SUITE(String);
 
@@ -61,6 +63,13 @@ BOOST_AUTO_TEST_CASE(Enum)
     BOOST_CHECK(Engine::from_string<TestEnum>(L"2nd", map) == TestEnum::Second);
     BOOST_CHECK_THROW(Engine::from_string<TestEnum>(L"", map), std::exception);
     BOOST_CHECK_THROW(Engine::from_string<TestEnum>(L"cheese", map), std::exception);
+}
+
+BOOST_AUTO_TEST_CASE(Split)
+{
+    BOOST_CHECK(Engine::Split("1,2", ',') == std::vector<std::string>({ "1", "2" }));
+    BOOST_CHECK(Engine::Split(L"A B C", L' ') == std::vector<std::wstring>({ L"A", L"B", L"C" }));
+    BOOST_CHECK(Engine::SplitSet("c|a|c|b", '|') == std::set<std::string>({ "a", "b", "c" }));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -28,9 +28,6 @@ namespace Game
         static std::map<Value, std::wstring> description;
     };
 
-    float Rad2Deg(float rad); 
-    float ShortestTurn(float a, float b);
-
     enum class Plane
     {
         None = 0,
