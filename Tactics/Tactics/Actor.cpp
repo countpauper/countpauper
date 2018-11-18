@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include <numeric>
 #include <gl/GL.h>
+#include "Engine/Color.h"
+#include "Engine/Geometry.h"
 #include "Actor.h"
 #include "Action.h"
-#include "Color.h"
 #include "Game.h"
 #include "Skills.h"
-#include "Geometry.h"
+
 namespace Game
 {
     Object::Object()
@@ -40,7 +41,7 @@ namespace Game
             { 0, 255, 0, 255 },
             { 0, 0, 255, 255 }
         };
-        const float HALF_PI = M_PI*0.5f;
+        const float HALF_PI = float(Engine::PI)*0.5f;
         glPushMatrix();
         if (Dead())
             glRotatef(90, 1, 0, 0);
@@ -48,8 +49,8 @@ namespace Game
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
         {
-            float a = float(i) / sides * 2.0f * M_PI;
-            float b = float(i + 1) / sides * 2.0f * M_PI;
+            float a = float(i) / sides * 2.0f * float(Engine::PI);
+            float b = float(i + 1) / sides * 2.0f * float(Engine::PI);
             teamColor[team].Render();
 
             float xa = cos(a) * r;

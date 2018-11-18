@@ -47,7 +47,7 @@ namespace Engine
 
     void PerspectiveCamera::Render() const
     {
-        float scale = float(1.0 / tan(fov* 0.5f * M_PI / 180.0f));
+        float scale = float(1.0 / tan(fov* 0.5f * PI / 180.0f));
         float n = scale;
         float f = 0;
 

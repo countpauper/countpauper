@@ -4,8 +4,8 @@
 #include <memory>
 #include "Position.h"
 #include "Direction.h"
-#include "Color.h"
-#include "Coordinate.h"
+#include "Engine/Color.h"
+#include "Engine/Coordinate.h"
 
 namespace Engine
 {

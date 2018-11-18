@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include <gl/GL.h>
+#include "Engine/Image.h"
+#include "Engine/Error.h"
 #include "Map.h"
-#include "Image.h"
-#include "Error.h"
 
 namespace Game
 {

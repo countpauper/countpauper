@@ -7,9 +7,9 @@
 #include <GL/glu.h>            /* OpenGL utilities header file */
 #include <math.h>
 #include <fstream>
+#include "Engine/Light.h"
+#include "Engine/Camera.h"
 #include "game.h"
-#include "Light.h"
-#include "Camera.h"
 #include "Panel.h"
 
 

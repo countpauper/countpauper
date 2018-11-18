@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <sstream>
+#include "Engine/Math.h"
 #include "Position.h"
 
 namespace Game
@@ -20,7 +21,7 @@ namespace Game
 
     float Position::Distance(const Position& other) const
     {
-        return std::sqrtf(sqr(float(other.x - x)) + sqr(float(other.y - y)));
+        return std::sqrtf(Engine::sqr(float(other.x - x)) + Engine::sqr(float(other.y - y)));
     }
 
     Position& Position::operator+=(const Position& delta)

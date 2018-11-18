@@ -1,15 +1,17 @@
 #pragma once
-#include <gl/GL.h>
+#include <cstdint>
 
 namespace Engine
 {
     struct RGBA
     {
-        RGBA(GLubyte r, GLubyte g, GLubyte b, GLubyte a) :
+        using Component = uint8_t;
+
+        RGBA(Component r, Component g, Component b, Component a) :
             r(r), g(g), b(b), a(a)
         {
         }
-        GLubyte r, g, b, a;
+        Component r, g, b, a;
         void Render() const;
         RGBA operator*=(float factor);
     };

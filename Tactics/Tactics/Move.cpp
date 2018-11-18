@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <gl/GL.h>
 #include "Move.h"
 #include "Game.h"
 #include "Direction.h"

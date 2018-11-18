@@ -3,13 +3,13 @@
 #include <memory>
 #include <istream>
 #include <list>
-
+#include "Engine/Coordinate.h"
 #include "Direction.h"
 #include "Map.h"
 #include "IGame.h"
 #include "Item.h"
 #include "Skills.h"
-#include "Coordinate.h"
+
 
 namespace Game
 {
@@ -43,7 +43,7 @@ namespace Game
         bool CanBe(const Position& position) const override;
         bool CanGo(const Position& from, Direction direction) const override;
         bool Cover(const Position& from, const Position& to) const override;
-        void Click(Selection selection, GLuint value);
+        void Click(Selection selection, unsigned value);
         std::vector<Actor*> FindTargets(const State& from, const Skill& skill) const;
         std::vector<Actor*> FindTargetsInRange(const State& from, const Skill& skill) const;
         Actor* ActiveActor() const override;

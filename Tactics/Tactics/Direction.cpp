@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Direction.h"
+#include "Engine/Geometry.h"
 
 namespace Game
 {
@@ -60,10 +61,10 @@ namespace Game
     };
     std::map<Direction::Value, float> Direction::angle =
     {
-        { Direction::Value::North, M_PI * 0.5f },
+        { Direction::Value::North, float(Engine::PI) * 0.5f },
         { Direction::Value::East, 0.0f },
-        { Direction::Value::South, M_PI * -.5f },
-        { Direction::Value::West, M_PI },
+        { Direction::Value::South, float(Engine::PI) * -.5f },
+        { Direction::Value::West, float(Engine::PI) },
     };
     std::map<Direction::Value, std::wstring> Direction::description =
     {
