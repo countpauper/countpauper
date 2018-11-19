@@ -241,8 +241,13 @@ namespace Game
         }
         else
         {
-            assert(false); // apply strength bonus to 
-            return weapons.front().Damage();
+            auto strengthBonus = StrengthBonus();
+            auto wisdomBonus = WisdomBonus();
+            return weapons.front().Damage() ^ (
+                Damage(Wound::Type::Blunt, Score(strengthBonus)) +
+                Damage(Wound::Type::Sharp, Score(strengthBonus)) +
+                Damage(Wound::Type::Disease, Score(wisdomBonus)) +
+                Damage(Wound::Type::Spirit, Score(wisdomBonus)));
         }
     }
 

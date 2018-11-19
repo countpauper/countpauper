@@ -170,6 +170,24 @@ namespace Game
         return o;
     }
 
+    Damage& Damage::operator^=(const Damage& other) 
+    {
+        for (auto& d : damage)
+        {
+            if (d.second.Value()>0)
+                d.second += other.Get(d.first);
+        }
+        return *this;
+    }
+
+
+    Damage Damage::operator^(const Damage& other) const
+    {
+        Damage o(*this);
+        o ^= other;
+        return o;
+    }
+
 
     Damage& Damage::operator+=(const Damage& other)
     {

@@ -64,6 +64,10 @@ namespace Game
         Engine::Adapter::Unsigned<Requirement> reqwis(&Requirement::wisdom);
         std::vector<Engine::Adapter::Interface<Requirement>*> requirementAdapters({ &reqstr, &reqwis });
 
+        // TODO: get the name of the type/bonus or material into the damage score
+        // it has to come from the owner of the damage struct, so either the whole damage struct
+        // has to be some sort of lambda adapter that captures the pointer/name of the owner
+        // or it has to be applied after loading to the set "base" scores
         Engine::Adapter::Setter<Damage, int> sharp(&Damage::SetSharp);
         Engine::Adapter::Setter<Damage, int> blunt(&Damage::SetBlunt);
         Engine::Adapter::Setter<Damage, int> burn(&Damage::SetBurn);

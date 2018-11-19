@@ -60,6 +60,8 @@ namespace Game
         std::wstring CsvString() const;
 
         Damage operator+(const Damage& other) const;
+        Damage operator^(const Damage& other) const;
+        Damage& operator^=(const Damage& other);
         Damage& operator+=(const Damage& other);
         Damage Wound(const std::wstring& description) const;
     protected:

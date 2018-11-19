@@ -7,19 +7,9 @@
 #include "Skills.h"
 #include "Attack.h"
 
-/**
-* Simple example to parse a file called "file.xml",
-* walk down the DOM, and print the name of the
-* xml elements nodes.
-*/
-void xmlTest()
-{
-}
-
 
 namespace Game
 {
-
     Skill::Skill() :
         mp(0),
         range(1.0),

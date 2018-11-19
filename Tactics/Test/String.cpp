@@ -49,7 +49,8 @@ BOOST_AUTO_TEST_CASE(Boolean)
 
 BOOST_AUTO_TEST_CASE(String)
 {
-    BOOST_CHECK(Engine::from_string<std::wstring>(L"Bla") ==  std::wstring(L"Bla"));
+    BOOST_CHECK(Engine::from_string<std::wstring>(L"Bla") == std::wstring(L"Bla"));
+    BOOST_CHECK(Engine::from_string<std::string>(L"Bla") == std::string("Bla"));
 }
 
 BOOST_AUTO_TEST_CASE(Enum)

@@ -11,3 +11,9 @@ Yew,0,Wood,2,Water,-1,0,0,0,0,0,0
 Treant,0,Wood,4,Nature,0,3,0,0,0,0,0
 Obsidian,0,Wood,3,Fire,1,1,0,0,0,0,0
 Yggdrasil,0,Wood,4,Air,1,2,0,0,0,0,0
+Leather,100,Leather,1,None,0,0,0,0,0,0,0
+Elephant,0,Leather,2,Stone,1,1,1,0,0,0,0
+Demon,0,Leather,4,Air,1,3,0,0,0,0,3
+Dragon,0,Leather,4,Fire,0,2,0,0,2,0,0
+Unicorn,0,Leather,3,Nature,0,3,0,0,0,2,0
+Mermaid,0,Leather,2,Water,0,3,0,0,0,0,2
