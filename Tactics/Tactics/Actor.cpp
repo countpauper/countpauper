@@ -113,8 +113,8 @@ namespace Game
 
     Bonus Actor::StrReqPenalty() const
     {
-        int totalRequiredStrength = std::accumulate(armors.begin(), armors.end(), 0, [](int str, const Armor& armor) -> int { return str + armor.Required().strength; });
-        totalRequiredStrength += std::accumulate(weapons.begin(), weapons.end(), 0, [](int str, const Weapon& weapon) -> int { return str + weapon.Required().strength; });
+        int totalRequiredStrength = std::accumulate(worn.begin(), worn.end(), 0, [](int str, const Armor& armor) -> int { return str + armor.Required().strength; });
+        totalRequiredStrength += std::accumulate(wielded.begin(), wielded.end(), 0, [](int str, const Weapon& weapon) -> int { return str + weapon.Required().strength; });
 
         auto strength = Strength();
         int reqPentalty = std::max(0, totalRequiredStrength - int(strength.Value()));
@@ -181,8 +181,8 @@ namespace Game
 
     Bonus Actor::WisReqPenalty() const
     {
-        int totalRequiredWisdom = std::accumulate(armors.begin(), armors.end(), 0, [](int str, const Armor& armor) -> int { return str + armor.Required().wisdom; });
-        totalRequiredWisdom += std::accumulate(weapons.begin(), weapons.end(), 0, [](int str, const Weapon& weapon) -> int { return str + weapon.Required().wisdom; });
+        int totalRequiredWisdom = std::accumulate(worn.begin(), worn.end(), 0, [](int str, const Armor& armor) -> int { return str + armor.Required().wisdom; });
+        totalRequiredWisdom += std::accumulate(wielded.begin(), wielded.end(), 0, [](int str, const Weapon& weapon) -> int { return str + weapon.Required().wisdom; });
 
         auto wisdom = Wisdom();
         int reqPentalty = std::max(0, totalRequiredWisdom- int(wisdom.Value()));
@@ -218,10 +218,24 @@ namespace Game
     {
         for (auto& skill : skills)
         {
-            if (skill.skill->IsActive())
+            if ((skill.skill->IsActive()) && 
+                (IsPossible(*skill.skill)))
                 return skill.skill;
         }
         return nullptr;
+    }
+
+    bool Actor::IsPossible(const ::Game::Skill& skill) const
+    {
+        if ((skill.weapon != Type::Weapon::Style::None) &&
+            (std::none_of(wielded.begin(), wielded.end(), [&skill](const Weapon& weapon)
+        {
+            return weapon.Match(skill.weapon);
+        })))
+        {
+            return false;
+        }
+        return true;
     }
 
     unsigned Actor::GetSkillScore(const ::Game::Skill& findSkill) const
@@ -235,7 +249,7 @@ namespace Game
 
     Damage Actor::AttackDamage() const
     {
-        if (weapons.empty())
+        if (wielded.empty())
         {
             return Damage(Wound::Type::Blunt, Score(L"Unarmed", 2) + StrengthBonus());
         }
@@ -243,7 +257,7 @@ namespace Game
         {
             auto strengthBonus = StrengthBonus();
             auto wisdomBonus = WisdomBonus();
-            return weapons.front().Damage() ^ (
+            return wielded.front().Damage() ^ (
                 Damage(Wound::Type::Blunt, Score(strengthBonus)) +
                 Damage(Wound::Type::Sharp, Score(strengthBonus)) +
                 Damage(Wound::Type::Disease, Score(wisdomBonus)) +
@@ -260,8 +274,11 @@ namespace Game
             Damage(Wound::Type::Burn, constMitigation)+
             Damage(Wound::Type::Disease, constMitigation)+
             Damage(Wound::Type::Spirit, wisMitigation);
-        if (!armors.empty())    // TODO: select right armor for location
-            mitigation += armors.front().Mitigation();
+        if (!worn.empty())
+        {
+            // TODO: select right armor for location
+            mitigation += worn.front().Mitigation();
+        }
         return mitigation;
     }
 
@@ -275,18 +292,18 @@ namespace Game
         s >> actor.body;
         unsigned armors, weapons, skills;
         s >> armors >> weapons >> skills;
-        actor.armors.reserve(armors);
-        while (actor.armors.size()<armors)
+        actor.worn.reserve(armors);
+        while (actor.worn.size()<armors)
         {
             std::wstring typeName, materialName, bonusName;
             s >> bonusName >> materialName >> typeName;
-            actor.armors.emplace_back(Armor(game, typeName, materialName, bonusName));
+            actor.worn.emplace_back(Armor(game, typeName, materialName, bonusName));
         }
-        while (actor.weapons.size()<weapons)
+        while (actor.wielded.size()<weapons)
         {
             std::wstring typeName, materialName, bonusName;
             s >> bonusName >> materialName >> typeName;
-            actor.weapons.emplace_back(Weapon(game, typeName, materialName, bonusName));
+            actor.wielded.emplace_back(Weapon(game, typeName, materialName, bonusName));
         }
         actor.skills.resize(skills);
         for (auto& skill : actor.skills)

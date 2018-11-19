@@ -150,17 +150,19 @@ namespace Game
             return (unsigned(bonus.category) & unsigned(category)) != 0;
         }
 
-        std::map<std::wstring, Weapon::Style > weaponStyles(
+        const std::map<std::wstring, Weapon::Style > Weapon::styleMap(
         {
             { L"All", Weapon::Style::All },
-            { L"Unarmed", Weapon::Style::Unarmed },
+            { L"", Weapon::Style::None },
             { L"Blade", Weapon::Style::Blade },
             { L"Blunt", Weapon::Style::Blunt },
             { L"Axe", Weapon::Style::Axe },
+            { L"Fist", Weapon::Style::Fist },
             { L"Sling", Weapon::Style::Sling },
             { L"Bow", Weapon::Style::Bow },
             { L"Crossbow", Weapon::Style::Crossbow },
             { L"Gun", Weapon::Style::Gun },
+            { L"Throwing", Weapon::Style::Throwing },
         });
 
         std::map<std::wstring, Weapon::Material::Category > weaponMaterialCategories(
@@ -177,7 +179,7 @@ namespace Game
             Engine::Adapter::String<Weapon> name(&Weapon::name);
             Engine::Adapter::Integer<Weapon> frequency(&Weapon::frequency);
             Engine::Adapter::Struct<Weapon, Requirement> requirement(&Weapon::requirement, requirementAdapters);
-            Engine::Adapter::Enumeration<Weapon, Weapon::Style> style(&Weapon::style, weaponStyles);
+            Engine::Adapter::Enumeration<Weapon, Weapon::Style> style(&Weapon::style, styleMap);
             Engine::Adapter::Integer<Weapon> hands(&Weapon::hands);
             Engine::Adapter::Enumeration<Weapon, Weapon::Material::Category> material(&Weapon::material, weaponMaterialCategories);
             Engine::Adapter::Struct<Weapon, Damage> damage(&Weapon::damage, damageAdapters);
@@ -207,7 +209,7 @@ namespace Game
             Engine::Adapter::Integer<Weapon::Bonus> frequency(&Weapon::Bonus::frequency);
             Engine::Adapter::Integer<Weapon::Bonus> magic(&Weapon::Bonus::magic);
             Engine::Adapter::Struct<Weapon::Bonus, Requirement> requirement(&Weapon::Bonus::requirement, requirementAdapters);
-            Engine::Adapter::Enumeration<Weapon::Bonus, Weapon::Style> style(&Weapon::Bonus::style, weaponStyles);
+            Engine::Adapter::Enumeration<Weapon::Bonus, Weapon::Style> style(&Weapon::Bonus::style, Weapon::styleMap);
             Engine::Adapter::Enumeration<Weapon::Bonus, Weapon::Material::Category> material(&Weapon::Bonus::material, weaponMaterialCategories);
             Engine::Adapter::Struct<Weapon::Bonus, Damage> damage(&Weapon::Bonus::damage, damageAdapters);
             Engine::CSV<Weapon::Bonus> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &style, &material, &damage });
@@ -305,6 +307,11 @@ namespace Game
     Damage Weapon::Damage() const
     {
         return type.damage + material.damage + bonus.damage;
+    }
+
+    bool Weapon::Match(Type::Weapon::Style style) const
+    {
+        return (unsigned(style) & unsigned(type.style)) != 0;
     }
 
 }

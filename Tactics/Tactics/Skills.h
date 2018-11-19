@@ -3,6 +3,7 @@
 #include <set>
 #include <vector>
 #include "Direction.h"
+#include "Item.h"
 
 namespace Game
 {
@@ -26,6 +27,7 @@ public:
     using Categories = std::set<Category>;
     Categories categories;
     Categories follows;
+    Type::Weapon::Style weapon;
     using Prerequisite = std::pair<Skill*, unsigned>;
     std::vector<Prerequisite> prerequisites;
 

@@ -10,6 +10,7 @@ Elephant,0,Leather,2,Stone,1,0,2,2,0,0,0
 Demon,0,Leather,4,Air,1,3,1,1,1,0,2
 Dragon,0,Leather,4,Fire,0,2,1,1,2,0,0
 Unicorn,0,Leather,3,Nature,0,3,0,0,0,2,0
+Mermaid,0,Leather,3,Water,0,2,0,2,1,1,1	
 Linen,100,Cloth,2,None,0,0,0,0,0,0,0
 Hemp,0,Cloth,3,Nature,0,1,0,0,0,0,0
 Silk,0,Cloth,3,Air,0,0,0,0,0,0,0

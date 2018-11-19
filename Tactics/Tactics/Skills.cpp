@@ -13,7 +13,8 @@ namespace Game
     Skill::Skill() :
         mp(0),
         range(1.0),
-        trigger(Trigger::None)
+        trigger(Trigger::None),
+        weapon(::Game::Type::Weapon::Style::All)
     {
     }
 
@@ -180,6 +181,11 @@ void Parse(Skill& o, const xmlNode* node)
         {
             auto str = xmlStr(prop->children->content);
             o.follows = Engine::SplitSet(str, '|');
+        }
+        else if (xmlTagCompare(prop, "weapon"))
+        {
+            auto str = xmlWStr(prop->children->content);
+            o.weapon = Engine::from_string<Type::Weapon::Style>(str, Type::Weapon::styleMap);
         }
         else
         {

@@ -159,14 +159,16 @@ namespace Game
             enum Style
             {
                 All = -1,
-                Unarmed = 0,
+                None = 0,
                 Blade,
                 Blunt,
                 Axe,
+                Fist,
                 Sling,
                 Bow,
                 Crossbow,
                 Gun,
+                Throwing
             };
             class Material : public Type::Material
             {
@@ -193,11 +195,12 @@ namespace Game
                 Damage damage;
                 static std::vector<Bonus> Load(std::wistream& fileName);
             };
-            Weapon() : style(Unarmed), material(Material::None) {}
+            Weapon() : style(None), material(Material::None) {}
             bool Match(const Material& material) const;
             bool Match(const Bonus& bonus) const;
 
             Style style;
+            static const std::map<std::wstring, Style> styleMap;
             int hands;
             Material::Category material;
             Damage damage;
@@ -237,6 +240,7 @@ namespace Game
         std::wstring Name() const;
         Requirement Required() const;
         Damage Damage() const;
+        bool Match(Type::Weapon::Style style) const;
     private:
         const Type::Weapon& type;
         const Type::Weapon::Material &material;

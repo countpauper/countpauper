@@ -49,7 +49,7 @@ namespace Game
         };
         typedef std::vector<Actor::Skill> Skills;
         const ::Game::Skill* DefaultAttack() const;
-
+        bool IsPossible(const ::Game::Skill& skill) const;
         const Actor::Skills& GetSkills() const;
         unsigned GetSkillScore(const ::Game::Skill& skill) const;
         Damage AttackDamage() const;
@@ -76,8 +76,8 @@ namespace Game
         unsigned mp;
         unsigned team;
         Direction direction;
-        std::vector<Armor> armors;
-        std::vector<Weapon> weapons;
+        std::vector<Armor> worn;
+        std::vector<Weapon> wielded;
         std::vector<Actor::Skill> skills;
     };
     std::wistream& operator>>(std::wistream& s, Actor& actor);
