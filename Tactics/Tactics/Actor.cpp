@@ -111,14 +111,21 @@ namespace Game
         return body.Strength();  // todo: equipment boni
     }
 
-    Bonus Actor::StrReqPenalty() const
+    Score Actor::StrReqPenalty() const
     {
-        int totalRequiredStrength = std::accumulate(worn.begin(), worn.end(), 0, [](int str, const Armor& armor) -> int { return str + armor.Required().strength; });
-        totalRequiredStrength += std::accumulate(wielded.begin(), wielded.end(), 0, [](int str, const Weapon& weapon) -> int { return str + weapon.Required().strength; });
-
         auto strength = Strength();
-        int reqPentalty = std::max(0, totalRequiredStrength - int(strength.Value()));
-        return Bonus(L"Str(" + strength.Description() + L")-" + std::to_wstring(totalRequiredStrength), -reqPentalty);
+        Score result = std::accumulate(worn.begin(), worn.end(), Score(), [strength](const Score& penalty, const Armor& armor) -> Score
+        { 
+            int req = armor.Required().strength;
+            return penalty + Bonus(std::wstring(L"Req=")+strength.Description()+L"Str-"+armor.Name()+L"("+std::to_wstring(req)+L")", std::min(0, int(strength.Value())-req));
+        });
+        result = std::accumulate(wielded.begin(), wielded.end(), result, [strength](const Score& penalty, const Weapon& weapon) -> Score
+        { 
+            int req = weapon.Required().strength;
+            return penalty + Bonus(std::wstring(L"Req=") + strength.Description() + L"Str-" + weapon.Name() + L"(" + std::to_wstring(req) + L")", std::min(0, int(strength.Value()) - req));
+        });
+
+        return result;
     }
 
     Score Actor::Agility() const
@@ -179,14 +186,21 @@ namespace Game
         return Bonus(L"Wis (" + wisdom.Description() + L")", (int(wisdom.Value()) - 11) / 3);
     }
 
-    Bonus Actor::WisReqPenalty() const
+    Score Actor::WisReqPenalty() const
     {
-        int totalRequiredWisdom = std::accumulate(worn.begin(), worn.end(), 0, [](int str, const Armor& armor) -> int { return str + armor.Required().wisdom; });
-        totalRequiredWisdom += std::accumulate(wielded.begin(), wielded.end(), 0, [](int str, const Weapon& weapon) -> int { return str + weapon.Required().wisdom; });
+        auto wis = Wisdom();
+        Score result = std::accumulate(worn.begin(), worn.end(), Score(), [wis](const Score& penalty, const Armor& armor) -> Score
+        {
+            int req = armor.Required().wisdom;
+            return penalty + Bonus(std::wstring(L"Req=") + wis.Description() + L"Wis-" + armor.Name() + L"(" + std::to_wstring(req) + L")", std::min(0, int(wis.Value()) - req));
+        });
+        result = std::accumulate(wielded.begin(), wielded.end(), result, [wis](const Score& penalty, const Weapon& weapon) -> Score
+        {
+            int req = weapon.Required().wisdom;
+            return penalty + Bonus(std::wstring(L"Req=") + wis.Description() + L"Wis-" + weapon.Name() + L"(" + std::to_wstring(req) + L")", std::min(0, int(wis.Value()) - req));
+        });
 
-        auto wisdom = Wisdom();
-        int reqPentalty = std::max(0, totalRequiredWisdom- int(wisdom.Value()));
-        return Bonus(L"Wis("+wisdom.Description() + L")-" + std::to_wstring(totalRequiredWisdom) , -reqPentalty);
+        return result;
     }
     Stats Actor::Statistics() const
     {

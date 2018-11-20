@@ -57,7 +57,7 @@ namespace Game
         // TODO: more OO stats, each with their own boni
         Score Strength() const;
         Bonus StrengthBonus() const;
-        Bonus StrReqPenalty() const;
+        Score StrReqPenalty() const;
         Score Agility() const;
         int MovePoints() const;
         Score Constitution() const;
@@ -66,7 +66,7 @@ namespace Game
         Bonus IntelligenceBonus() const;
         Score Wisdom() const;
         Bonus WisdomBonus() const;
-        Bonus Actor::WisReqPenalty() const;
+        Score WisReqPenalty() const;
         Stats Statistics() const;
     private:
         Bonus AgilityMoveBonus() const;
