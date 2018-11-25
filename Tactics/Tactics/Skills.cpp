@@ -23,6 +23,16 @@ namespace Game
         return new Attack(target, *this);
     }
 
+    bool Skill::Follows(const Skill& previous) const
+    {
+        for (const auto& follow : follows)
+        {
+            if (previous.categories.count(follow))
+                return true;
+        }
+        return false;
+    }
+
     bool Skill::IsActive() const
     {
         return (trigger == Trigger::Act);

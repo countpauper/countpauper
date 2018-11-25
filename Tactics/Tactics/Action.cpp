@@ -7,9 +7,7 @@
 #include "State.h"
 namespace Game
 {
-    Action::Action() :
-        cost(0),
-        range(0.0f)
+    Action::Action()
     {
     }
 

@@ -9,6 +9,7 @@
 #include "Damage.h"
 #include "Body.h"
 #include "Stats.h"
+#include "Item.h"
 #include "IGame.h"
 
 namespace Game
@@ -16,19 +17,37 @@ namespace Game
     class Actor;
     class Game;
     class Action;
+    class Skill;
 
     class State
     {
     public:
         State(const Actor& actor);
+
+        bool IsPossible(const Skill& skill, const State& target) const;
+
         Position position;
         Direction direction;
         unsigned mp;
         Body body;
-        Damage damage;
-        Damage mitigation;
-        Stats stats;
+        Damage AttackDamage() const;
+        Damage Mitigation() const;
+        Score Strength() const;
+        Score Agility() const;
+        Score Constitution() const;
+        Score Intelligence() const;
+        Score Wisdom() const;
         unsigned loyalty;
+    private:
+        Bonus StrengthBonus() const;
+        Score StrReqPenalty() const;
+        Bonus ConstitutionBonus() const;
+        Bonus IntelligenceBonus() const;
+        Bonus WisdomBonus() const;
+        Score WisReqPenalty() const;
+
+        std::vector<const Armor*> worn;
+        std::vector<const Weapon*> wielded;
     };
 
     class GameState : public IGame

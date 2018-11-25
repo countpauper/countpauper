@@ -12,8 +12,6 @@ Attack::Attack(Actor& target, const Skill& skill) :
     TargetedAction(target),
     skill(skill)
 {
-    cost = skill.mp;
-    range = skill.range;
 }
 
 std::wstring Attack::Description() const
@@ -24,30 +22,65 @@ std::wstring Attack::Description() const
 GameChances Attack::Act(IGame& game)
 {
     auto& actor = *game.ActiveActor();
-    State state = game.Get(actor);
-
-    if ((state.mp <= cost) ||
-        (state.position.Distance(target.GetPosition()) > range) ||
-        (game.Cover(state.position, target.GetPosition())))
-    {
-        return GameChances();
-    }
-    state.mp -= cost;
-
-    double hitChance = 1.0; // dodge is reactive
+    State attacker = game.Get(actor);
+    State victim(game.Get(target));
     GameChances ret;
-    State targetResult(game.Get(target));
-    auto damage = state.damage - targetResult.mitigation;
 
-    ret.emplace_back(GameChance(game, hitChance, damage.ActionDescription()));
-    ret.back().Adjust(actor, state);
+    std::vector<const Skill*> combos = { &skill };
+    while (!combos.empty())
+    {
+        bool anyPossible = false;
+        auto combo = PickCombo(combos, attacker, target);
+        if (combo)
+        {
+            if (ret.empty())
+            {
+                ret.emplace_back(GameChance(game, 1.0, L""));
+            }
+            attacker.mp -= combo->mp;
+            auto damage = attacker.AttackDamage() - victim.Mitigation();
+            target.body.Hurt(AttackVector({ Plane::All, 0 }), damage.Wound(actor.name));
 
-    targetResult.body.Hurt(AttackVector({ Plane::All, 0 }), damage.Wound(actor.name));
+            ret.back().Adjust(actor, attacker);
+            ret.back().Adjust(target, victim);
+            ret.back().description += combo->name + L" : " + damage.ActionDescription() + L", ";
+            combos = Combo(actor, *combo);
+        }
+        else
+        {
+            combos.clear();
+        }
+    }
 
-    ret.back().Adjust(target, targetResult);
     return ret;
 }
 
+const Skill* Attack::PickCombo(const std::vector<const Skill*>& combos, const State& actor, const State& target)
+{
+    for (auto combo : combos)
+    {
+        if (actor.IsPossible(*combo, target))
+        {
+            return combo;
+        }
+    }
+    return nullptr;
+}
+
+
+std::vector<const Skill*> Attack::Combo(const Actor& actor, const Skill& previous)
+{
+    std::vector<const Skill*> possible;
+    for (auto availableSkill : actor.GetSkills())
+    {
+        const auto skill = availableSkill.skill;
+        if ((skill->trigger == Skill::Trigger::Combo) && (skill->Follows(previous)))
+        {
+            possible.push_back(skill);
+        }
+    }
+    return possible;
+}
 
 void Attack::Render(const State& state) const
 {

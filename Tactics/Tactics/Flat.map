@@ -4,13 +4,14 @@ Body Around 0 Agi+Str+Con+Wis+Int 10 0,0,0,0,0
 0 1 3
 Normal Steel Shortsword
 Hack 1
-Dodge 1
+Slash 1
 Unarmed 0
 Actor Bar 1 3 3 0 1
 Body Around 0 All 10 ,,,,
-0 1 2
+0 1 3
 Normal Adamantine Dagger
 Hack 1
+Dodge 1
 Unarmed 0
 Flat 4 4 data/map.png
 4 0 0 0 

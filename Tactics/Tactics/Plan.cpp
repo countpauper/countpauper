@@ -22,7 +22,6 @@ namespace Game
         // TODO state is the wrong way around for rendering
         while (node)
         {
-            State state(actor);
             if (node->previous)
                 state = node->previous->ExpectedState().ActorState();
             if (node->action)

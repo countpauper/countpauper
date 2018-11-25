@@ -15,6 +15,7 @@ class Skill
 public:
     Skill();
     Action* Action(Actor& target) const;
+    bool Follows(const Skill& previous) const;
 
     std::wstring name;
     unsigned mp;

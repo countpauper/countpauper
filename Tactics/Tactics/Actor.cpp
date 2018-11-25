@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include <numeric>
 #include <gl/GL.h>
 #include "Engine/Color.h"
 #include "Engine/Geometry.h"
@@ -106,40 +105,15 @@ namespace Game
         body = result.body;
     }
 
-    Score Actor::Strength() const
-    {
-        return body.Strength();  // todo: equipment boni
-    }
-
-    Score Actor::StrReqPenalty() const
-    {
-        auto strength = Strength();
-        Score result = std::accumulate(worn.begin(), worn.end(), Score(), [strength](const Score& penalty, const Armor& armor) -> Score
-        { 
-            int req = armor.Required().strength;
-            return penalty + Bonus(std::wstring(L"Req=")+strength.Description()+L"Str-"+armor.Name()+L"("+std::to_wstring(req)+L")", std::min(0, int(strength.Value())-req));
-        });
-        result = std::accumulate(wielded.begin(), wielded.end(), result, [strength](const Score& penalty, const Weapon& weapon) -> Score
-        { 
-            int req = weapon.Required().strength;
-            return penalty + Bonus(std::wstring(L"Req=") + strength.Description() + L"Str-" + weapon.Name() + L"(" + std::to_wstring(req) + L")", std::min(0, int(strength.Value()) - req));
-        });
-
-        return result;
-    }
-
-    Score Actor::Agility() const
-    {
-        return body.Agility() + StrReqPenalty();
-    }
 
     Bonus Actor::AgilityMoveBonus() const
     {
-        auto agility = Agility();
+        State state(*this);
+        auto agility = state.Agility();
         if (agility.Value() == 0)
-            return Bonus(L"Agi("+agility.Description()+L")", -100);
+            return Bonus(L"Agi(" + agility.Description() + L")", -100);
         else
-            return Bonus(L"Agi("+agility.Description()+L")", (int(agility.Value()) - 12) / 2);
+            return Bonus(L"Agi(" + agility.Description() + L")", (int(agility.Value()) - 12) / 2);
     }
 
     Score Actor::GetMaxMovePoints() const
@@ -148,64 +122,6 @@ namespace Game
         return Score() + Bonus(10) + AgilityMoveBonus();
     }
 
-    Score Actor::Constitution() const
-    {
-        return body.Constitution();  // todo: equipment boni
-    }
-
-    Score Actor::Intelligence() const
-    {
-        return body.Intelligence(); // todo: equipment requirements, equipment boni
-    }
-    Score Actor::Wisdom() const
-    {
-        return body.Wisdom();  // todo:equipment boni
-    }
-
-    Bonus Actor::ConstitutionBonus() const
-    {
-        auto consitution = Constitution();
-        return Bonus(L"Con (" + consitution.Description() + L")", (int(consitution.Value()) - 11) / 3);
-    }
-
-    Bonus Actor::StrengthBonus() const
-    {
-        auto strength = Strength();
-        return Bonus(L"Str (" + strength.Description() + L")", (int(strength.Value()) - 11) / 3);
-    }
-
-    Bonus Actor::IntelligenceBonus() const
-    {
-        auto intelligence = Intelligence();
-        return Bonus(L"Int (" + intelligence.Description() + L")", (int(intelligence.Value()) - 11) / 3);
-    }
-
-    Bonus Actor::WisdomBonus() const
-    {
-        auto wisdom = Wisdom();
-        return Bonus(L"Wis (" + wisdom.Description() + L")", (int(wisdom.Value()) - 11) / 3);
-    }
-
-    Score Actor::WisReqPenalty() const
-    {
-        auto wis = Wisdom();
-        Score result = std::accumulate(worn.begin(), worn.end(), Score(), [wis](const Score& penalty, const Armor& armor) -> Score
-        {
-            int req = armor.Required().wisdom;
-            return penalty + Bonus(std::wstring(L"Req=") + wis.Description() + L"Wis-" + armor.Name() + L"(" + std::to_wstring(req) + L")", std::min(0, int(wis.Value()) - req));
-        });
-        result = std::accumulate(wielded.begin(), wielded.end(), result, [wis](const Score& penalty, const Weapon& weapon) -> Score
-        {
-            int req = weapon.Required().wisdom;
-            return penalty + Bonus(std::wstring(L"Req=") + wis.Description() + L"Wis-" + weapon.Name() + L"(" + std::to_wstring(req) + L")", std::min(0, int(wis.Value()) - req));
-        });
-
-        return result;
-    }
-    Stats Actor::Statistics() const
-    {
-        return Stats::Stats(Strength().Value(), Agility().Value(), Constitution().Value(), Intelligence().Value(), Wisdom().Value());
-    }
     void Actor::Turn()
     {
         auto mps = GetMaxMovePoints();
@@ -226,6 +142,26 @@ namespace Game
     const Actor::Skills& Actor::GetSkills() const
     {
         return skills;
+    }
+
+    std::vector<const Armor*> Actor::Worn() const
+    {
+        std::vector<const Armor*> result(worn.size());
+        std::transform(worn.begin(), worn.end(), result.begin(), [](const Armor& item)
+        {
+            return &item;
+        });
+        return result;
+    }
+
+    std::vector<const Weapon*> Actor::Wielded() const
+    {
+        std::vector<const Weapon*> result(wielded.size());
+        std::transform(wielded.begin(), wielded.end(), result.begin(), [](const Weapon& item)
+        {
+            return &item;
+        });
+        return result;
     }
 
     const ::Game::Skill* Actor::DefaultAttack() const
@@ -261,40 +197,6 @@ namespace Game
             return it->score;
     }
 
-    Damage Actor::AttackDamage() const
-    {
-        if (wielded.empty())
-        {
-            return Damage(Wound::Type::Blunt, Score(L"Unarmed", 2) + StrengthBonus());
-        }
-        else
-        {
-            auto strengthBonus = StrengthBonus();
-            auto wisdomBonus = WisdomBonus();
-            return wielded.front().Damage() ^ (
-                Damage(Wound::Type::Blunt, Score(strengthBonus)) +
-                Damage(Wound::Type::Sharp, Score(strengthBonus)) +
-                Damage(Wound::Type::Disease, Score(wisdomBonus)) +
-                Damage(Wound::Type::Spirit, Score(wisdomBonus)));
-        }
-    }
-
-    Damage Actor::Mitigation() const
-    {
-        Score constMitigation(ConstitutionBonus());
-        Score wisMitigation(WisdomBonus());
-        Damage mitigation= Damage(Wound::Type::Sharp, constMitigation) +
-            Damage(Wound::Type::Blunt, constMitigation)+
-            Damage(Wound::Type::Burn, constMitigation)+
-            Damage(Wound::Type::Disease, constMitigation)+
-            Damage(Wound::Type::Spirit, wisMitigation);
-        if (!worn.empty())
-        {
-            // TODO: select right armor for location
-            mitigation += worn.front().Mitigation();
-        }
-        return mitigation;
-    }
 
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {

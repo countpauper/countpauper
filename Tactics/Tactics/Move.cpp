@@ -10,15 +10,14 @@ namespace Game
     Move::Move(Direction direction) :
         direction(direction)
     {
-        cost = 2;
-        range = 1.0;
     }
 
     GameChances Move::Act(IGame& game)
     {
+        auto cost = 2;  // TODO move skills
         auto& actor = *game.ActiveActor();
         State state(game.Get(actor));
-        if (state.mp <= cost)
+        if (state.mp <= 2)
         {
             return GameChances();
         }

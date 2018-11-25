@@ -52,22 +52,10 @@ namespace Game
         bool IsPossible(const ::Game::Skill& skill) const;
         const Actor::Skills& GetSkills() const;
         unsigned GetSkillScore(const ::Game::Skill& skill) const;
-        Damage AttackDamage() const;
-        Damage Mitigation() const;
-        // TODO: more OO stats, each with their own boni
-        Score Strength() const;
-        Bonus StrengthBonus() const;
-        Score StrReqPenalty() const;
-        Score Agility() const;
         int MovePoints() const;
-        Score Constitution() const;
-        Bonus ConstitutionBonus() const;
-        Score Intelligence() const;
-        Bonus IntelligenceBonus() const;
-        Score Wisdom() const;
-        Bonus WisdomBonus() const;
-        Score WisReqPenalty() const;
-        Stats Statistics() const;
+
+        std::vector<const Armor*> Worn() const;
+        std::vector<const Weapon*> Wielded() const;
     private:
         Bonus AgilityMoveBonus() const;
         Score GetMaxMovePoints() const;
@@ -76,9 +64,9 @@ namespace Game
         unsigned mp;
         unsigned team;
         Direction direction;
+        std::vector<Actor::Skill> skills;
         std::vector<Armor> worn;
         std::vector<Weapon> wielded;
-        std::vector<Actor::Skill> skills;
     };
     std::wistream& operator>>(std::wistream& s, Actor& actor);
 

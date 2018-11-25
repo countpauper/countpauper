@@ -20,8 +20,6 @@ namespace Game
         virtual std::wstring Description() const = 0;
         static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
         static std::map<std::wstring, std::function<Action*(const State& state, const Game& game)>> typemap;
-        unsigned cost;
-        float range;
     };
     
     class TargetedAction : public Action
