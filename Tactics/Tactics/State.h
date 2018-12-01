@@ -32,6 +32,7 @@ namespace Game
         Body body;
         Damage AttackDamage() const;
         Damage Mitigation() const;
+        Score DefendChance() const;
         Score Strength() const;
         Score Agility() const;
         Score Constitution() const;
@@ -72,14 +73,24 @@ namespace Game
         std::map<Actor*, State> state;
     };
 
-    class GameChance : public GameState
+    class GameChance
     {
     public:
         GameChance(IGame& parent, double chance, const std::wstring& description);
-        GameChance& operator=(const GameChance& other);
+        GameChance(GameChance&& other);
+        GameChance& operator=(GameChance&& other);
+        GameChance(const GameChance& other) = delete;
+        GameChance& operator=(const GameChance& other) = delete;
+        
+        bool operator<(const GameChance& other) const;
+        bool operator>(const GameChance& other) const;
         double chance;
         std::wstring description;
+        GameState* operator->() const;
+        GameState& operator*() const;
+    protected:
+        std::unique_ptr<GameState> state;
     };
 
-    using GameChances= std::vector < GameChance > ;
+    using GameChances= std::vector<GameChance>;
 } // ::Game

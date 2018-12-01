@@ -55,12 +55,12 @@ namespace Game
 
     const GameState& Plan::Node::ExpectedState() const
     {
-        return result.front();
+        return *result.front();
     }
 
     GameState& Plan::Node::ExpectedState()
     {
-        return result.front();
+        return *result.front();
     }
 
     bool Plan::Node::Compare(const Node& other, const Position& target) const
@@ -177,8 +177,8 @@ namespace Game
         auto selectIt = outcomes.lower_bound(score);
         assert(selectIt != outcomes.begin() && "No outcomes");
         selectIt--;
-        auto select = selectIt->second;
-        OutputDebugStringW((Description() + L" " + select->description + L" = " + select->Description() + L"\r\n").c_str());
+        auto& select = *selectIt->second;
+        OutputDebugStringW((Description() + L" " + select.description + L" = " + select->Description() + L"\r\n").c_str());
         select->Apply();
     }
 

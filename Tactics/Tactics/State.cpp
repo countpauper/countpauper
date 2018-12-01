@@ -132,6 +132,13 @@ namespace Game
         }
     }
 
+    Score State::DefendChance() const
+    {
+        auto agility = Agility();
+        Bonus agilityBonus(L"Agi(" + agility.Description() + L")", (int(agility.Value()*2)));
+        return Score(L"", 0)+agilityBonus;
+    }
+
     Damage State::Mitigation() const
     {
         Score constMitigation(ConstitutionBonus());
@@ -213,20 +220,56 @@ namespace Game
     }
 
     GameChance::GameChance(IGame& parent, double chance, const std::wstring& description) :
-        GameState(parent),
+        state(std::make_unique<GameState>(parent)),
         chance(chance),
         description(description)
     {
     }
 
-    GameChance& GameChance::operator=(const GameChance& other)
+
+    GameChance::GameChance(GameChance&& other) :
+        state(std::move(other.state)),
+        chance(other.chance),
+        description(other.description)
+    {
+        other.chance = 0;
+        other.description.clear();
+    }
+
+
+    GameChance& GameChance::operator=(GameChance&& other)
     {
         chance = other.chance;
+        other.chance = 0;
         description = other.description;
-        assert(false && "Should reparent");
-        parent = other.parent;
-        state = other.state;
+        other.description.clear();
+        state = std::move(other.state);
         return *this;
     }
+
+    bool GameChance::operator<(const GameChance& other) const
+    {
+        if (chance < other.chance)
+            return true;
+        if (chance > other.chance)
+            return false;
+        return state.get() < other.state.get();
+
+    }
+    bool GameChance::operator>(const GameChance& other) const
+    {
+        return other.operator<(*this);
+    }
+
+    GameState* GameChance::operator->() const
+    {
+        return state.get();
+    }
+
+    GameState& GameChance::operator*() const
+    {
+        return *state;
+    }
+
 
 } // ::Game

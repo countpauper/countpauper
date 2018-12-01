@@ -30,7 +30,7 @@ namespace Game
             state.direction = direction;
             GameChances ret;
             ret.emplace_back(GameChance(game, 1.0, L"Move"));
-            ret.back().Adjust(actor, state);
+            ret.back()->Adjust(actor, state);
             return ret;
         }
         else
