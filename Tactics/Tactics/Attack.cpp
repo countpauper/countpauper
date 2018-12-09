@@ -19,12 +19,13 @@ std::wstring Attack::Description() const
     return skill.name;
 }
 
-GameChances Attack::Act(IGame& game)
+std::unique_ptr<GameState> Attack::Act(IGame& game)
 {
     auto& actor = *game.ActiveActor();
     State attacker = game.Get(actor);
     State victim(game.Get(target));
-    GameChances ret;
+
+    std::unique_ptr<GameState> ret;
 
     std::vector<const Skill*> combos = { &skill };
     while (!combos.empty())
@@ -33,25 +34,27 @@ GameChances Attack::Act(IGame& game)
         auto combo = Pick(combos, attacker, victim);
         if (combo)
         {
+            /*
             auto reactions = React(target, *combo);
             auto reaction = Pick(reactions, victim, attacker);
+            double remainingChance = 1;
             if (reaction)
             {
                 auto chance = victim.DefendChance().Value()/100.0f;
+                remainingChance -= chance;
+                ret.emplace_back(GameChance(game, chance, reaction->name));
             }
+            */
+            if (!ret)
+                ret = std::make_unique<GameState>(game);
 
-            if (ret.empty())
-            {
-                ret.emplace_back(GameChance(game, 1.0, L""));
-            }
-
-            attacker.mp -= combo->mp;
             auto damage = attacker.AttackDamage() - victim.Mitigation();
-            target.body.Hurt(AttackVector({ Plane::All, 0 }), damage.Wound(actor.name));
+            //ret.emplace_back(GameChance(game, remainingChance, combo->name + L" : " + damage.ActionDescription() + L", "));
+            attacker.mp -= combo->mp;
+            victim.body.Hurt(AttackVector({ Plane::All, 0 }), damage.Wound(actor.name));
 
-            ret.back()->Adjust(actor, attacker);
-            ret.back()->Adjust(target, victim);
-            ret.back().description += combo->name + L" : " + damage.ActionDescription() + L", ";
+            ret->Adjust(actor, attacker);
+            ret->Adjust(target, victim);
             combos = Combo(actor, *combo);
         }
         else
@@ -60,7 +63,7 @@ GameChances Attack::Act(IGame& game)
         }
     }
 
-    return ret;
+    return std::move(ret);
 }
 
 const Skill* Attack::Pick(const std::vector<const Skill*>& options, const State& actor, const State& target)

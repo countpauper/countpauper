@@ -72,11 +72,11 @@ namespace Game
         IGame& parent;
         std::map<Actor*, State> state;
     };
-
+    /*
     class GameChance
     {
     public:
-        GameChance(IGame& parent, double chance, const std::wstring& description);
+        GameChance(IGame& state, double chance, const std::wstring& description);
         GameChance(GameChance&& other);
         GameChance& operator=(GameChance&& other);
         GameChance(const GameChance& other) = delete;
@@ -91,6 +91,6 @@ namespace Game
     protected:
         std::unique_ptr<GameState> state;
     };
-
-    using GameChances= std::vector<GameChance>;
+    */
+    using GameChances= std::vector<std::pair<double, GameState*>>;
 } // ::Game

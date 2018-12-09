@@ -218,7 +218,7 @@ namespace Game
         }
         return ss.str();
     }
-
+    /*
     GameChance::GameChance(IGame& parent, double chance, const std::wstring& description) :
         state(std::make_unique<GameState>(parent)),
         chance(chance),
@@ -270,6 +270,6 @@ namespace Game
     {
         return *state;
     }
-
+    */
 
 } // ::Game

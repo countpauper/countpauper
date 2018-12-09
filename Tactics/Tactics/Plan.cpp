@@ -18,30 +18,28 @@ namespace Game
     void Plan::Render() const
     {
         State state(actor);
-        auto node = m_actions;
+        Node* node = m_root.get();
         // TODO state is the wrong way around for rendering
-        while (node)
+        while (!node->children.empty())
         {
-            if (node->previous)
-                state = node->previous->ExpectedState().ActorState();
-            if (node->action)
-                node->action->Render(state);
-            state = node->ExpectedState().ActorState();
-            node = node->previous;
+            node->Render();
+            node = node->children.front().get();
         }
+        node->Render();
     }
 
     Plan::Node::Node(IGame& state) :
-        state(state)
+        previous(nullptr),
+        state(std::make_unique<GameState>(state)),
+        chance(1.0)
     {
-        result.emplace_back(GameChance(state, 1.0, L"Root"));
     }
 
-    Plan::Node::Node(std::shared_ptr<Plan::Node> previous, IGame& state, std::unique_ptr<Action>&& action) :
-        state(state),
+    Plan::Node::Node(Node& previous, std::unique_ptr<GameState>&& state, std::unique_ptr<Action>&& action) :
+        previous(&previous),
         action(std::move(action)),
-        result(this->action->Act(state)),
-        previous(previous)
+        state(std::move(state)),
+        chance(1.0)
     {
     }
 
@@ -50,30 +48,36 @@ namespace Game
     }
     bool Plan::Node::DeadEnd() const
     {
-        return result.empty();
+        return !state.get();
     }
 
-    const GameState& Plan::Node::ExpectedState() const
+    bool Plan::Node::IsRoot() const
     {
-        return *result.front();
+        return previous == nullptr;
     }
 
-    GameState& Plan::Node::ExpectedState()
+    void Plan::Node::Render() const
     {
-        return *result.front();
+        State actor(state->ActorState());
+        Node* prev = previous;
+        if (prev)
+            actor = prev->state->ActorState();
+        if (action)
+            action->Render(actor);
     }
+ 
 
     bool Plan::Node::Compare(const Node& other, const Position& target) const
     {
-        auto& actorState = ExpectedState().ActorState();
-        auto& otherSate = other.ExpectedState().ActorState();
-        if (target.ManDistance(actorState.position) < target.ManDistance(otherSate.position))
+        auto& actorState = state->ActorState();
+        auto& otherState = other.state->ActorState();
+        if (target.ManDistance(actorState.position) < target.ManDistance(otherState.position))
             return true;
-        else if (target.ManDistance(actorState.position) > target.ManDistance(otherSate.position))
+        else if (target.ManDistance(actorState.position) > target.ManDistance(otherState.position))
             return false;
-        else if (actorState.mp > otherSate.mp)
+        else if (actorState.mp > otherState.mp)
             return true;
-        else if (actorState.mp < otherSate.mp)
+        else if (actorState.mp < otherState.mp)
             return false;
         return
             this < &other;
@@ -84,23 +88,31 @@ namespace Game
     {
     }
 
-    bool Plan::NodeCompare::operator() (const std::shared_ptr<Node>& a, const std::shared_ptr<Node>& b) const
+    bool Plan::NodeCompare::operator() (const std::unique_ptr<Node>& a, const std::unique_ptr<Node>& b) const
     {
         return a->Compare(*b, target);
     }
 
     bool Plan::Node::Reached(const Position& target) const
     {
-        return target == ExpectedState().ActorState().position;
+        return target == state->ActorState().position;
     }
 
     Plan::OpenTree::OpenTree(const Position& target) :
-        std::set<std::shared_ptr<Node>, NodeCompare>(NodeCompare(target))
+        std::set<std::unique_ptr<Node>, NodeCompare>(NodeCompare(target))
     {
     }
 
+    std::unique_ptr<Plan::Node> Plan::OpenTree::Pop()
+    {
+        auto& ptr = const_cast<std::unique_ptr<Node>&>(*begin());
+        auto result = std::move(ptr);
+        erase(begin());
+        return result;
+    }
+
     Plan::ClosedList::ClosedList(const Position& target) :
-        std::set<std::shared_ptr<Node>, NodeCompare>(NodeCompare(target))
+        std::set<std::unique_ptr<Node>, NodeCompare>(NodeCompare(target))
     {
     }
 
@@ -108,78 +120,67 @@ namespace Game
     bool Plan::ClosedList::Contains(const GameState& findState) const
     {
         for (const auto& node : *this)
-            if (node->ExpectedState().ActorState().position == findState.ActorState().position)
+            if (node->state->ActorState().position == findState.ActorState().position)
                 return true;
         return false;
     }
 
-    void Plan::Add(IGame& game, std::unique_ptr<Action> action)
+    std::unique_ptr<Plan::Node> Plan::ClosedList::Extract(Node* node)
     {
-        auto node = std::make_shared<Node>(m_actions, game, std::move(action));
-        if (!node->DeadEnd())
-            m_actions = node;
+        auto it = std::find_if(begin(), end(), [node](const value_type& v)
+        {
+            return v.get() == node;
+        });
+        auto& ptr = const_cast<std::unique_ptr<Node>&>(*it);
+        auto result = std::move(ptr);
+        erase(it);
+        return result;
     }
-
     bool Plan::Valid() const
     {
-        return m_actions.get()!=nullptr;
-    }
-    State Plan::Final() const
-    {
-        if (!m_actions)
-            return State(actor);
-        else
-            return m_actions->ExpectedState().ActorState();
+        return m_root!=nullptr;
     }
 
-    Plan::Outcomes Plan::AllOutcomesRecursive(Node& node) const
+    GameChances Plan::Node::AllOutcomes() const
     {
-        double alternativeScore = node.result.front().chance;
-        if (!node.previous)
+        GameChances ret;
+        if (children.empty())
         {
-            Outcomes firstResult;
-            for (auto resultIt = node.result.begin() + 1; resultIt != node.result.end(); ++resultIt)
+            if (state)
             {
-                firstResult[alternativeScore] = &*resultIt;
-                alternativeScore += resultIt->chance;
+                ret.emplace_back(std::make_pair(chance, state.get()));
             }
-            firstResult[0.0] = &node.result.front();
-            return firstResult;
         }
         else
         {
-            auto outcomes = AllOutcomesRecursive(*node.previous);
-            double remainingscore = 1.0;
-            if (outcomes.size() > 1)
+            for (auto& child : children)
             {
-                auto it = outcomes.begin()++;
-                remainingscore = it->first;
+                auto childOutcomes = child->AllOutcomes();
+                ret.insert(ret.end(), childOutcomes.begin(), childOutcomes.end());
             }
-            for (auto resultIt = node.result.begin() + 1; resultIt != node.result.end(); ++resultIt)
-            {
-                outcomes[alternativeScore * remainingscore] = &*resultIt;
-                alternativeScore += resultIt->chance;
-            }
-            outcomes[0.0] = &node.result.front();
-            return outcomes;
         }
+        return ret;
     }
 
-    Plan::Outcomes Plan::AllOutcomes() const
+    GameChances Plan::AllOutcomes() const
     {
-        return AllOutcomesRecursive(*m_actions);
+        return m_root->AllOutcomes();
     }
 
     void Plan::Execute(Game& game) const
     {
         auto outcomes = AllOutcomes();
         double score = rand() / double(RAND_MAX);
-        auto selectIt = outcomes.lower_bound(score);
-        assert(selectIt != outcomes.begin() && "No outcomes");
-        selectIt--;
-        auto& select = *selectIt->second;
-        OutputDebugStringW((Description() + L" " + select.description + L" = " + select->Description() + L"\r\n").c_str());
-        select->Apply();
+        auto selectIt= outcomes.begin();
+        while (score > selectIt->first)
+        {
+            assert(selectIt != outcomes.end() && "No outcomes");
+            score -= selectIt->first;
+            selectIt++;
+        }
+        auto& select = *selectIt;
+        OutputDebugStringW((Description() + L" " + select.second->Description() + L"\r\n").c_str());
+        select.second->Apply();
     }
 
     void Plan::Approach(const Position& target, Game& game, std::unique_ptr<Action>&& targetAction)
@@ -198,17 +199,22 @@ namespace Game
         open.emplace(std::move(first));
         while (!open.empty())
         {
-            std::shared_ptr<Node> best = *open.begin();
-            open.erase(open.begin());
+            std::unique_ptr<Node> best = open.Pop();
 
             if (targetAction)
             {
-                auto outcomes = targetAction->Act(best->ExpectedState());
-                if (outcomes.size())
-                {   // TODO find a way to make a Node without moving ownership of the target action
-                    auto finalNode = std::make_shared<Node>(best, best->ExpectedState(), std::move(targetAction));
-                    assert(!finalNode->DeadEnd());
-                    m_actions = finalNode; 
+                auto result = targetAction->Act(*best->state);
+                if (result)
+                {
+                    auto newNode = std::make_unique<Node>(*best, std::move(result), std::move(targetAction));
+                    best->children.emplace_back(std::move(newNode));
+                    while (!best->IsRoot())
+                    {
+                        auto previous = best->previous;
+                        best->previous->children.emplace_back(std::move(best));
+                        best = closed.Extract(previous);
+                    }
+                    m_root = std::move(best);
                     return;
                 }
             }
@@ -216,28 +222,29 @@ namespace Game
             {
                 if (best->Reached(target))
                 {
-                    m_actions = best;
                     return;
                 }
             }
    
-            auto bestIt = closed.emplace(best);
+            auto bestIt = closed.emplace(std::move(best));
             assert(bestIt.second);
             for (const auto& actionFactory : actions)
             {
                 std::unique_ptr<Action> action(actionFactory());
-                auto newNode = std::make_shared<Node>(*bestIt.first, (*bestIt.first)->ExpectedState(), std::move(action));
-                if (newNode->DeadEnd())
-                    continue;
-                auto newState = newNode->ExpectedState();
-                bool alreadyClosed = closed.Contains(newState);
-                if (alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
-                    continue;
-                auto newIt = open.emplace(newNode);
-                assert(newIt.second);
+                auto& best = *bestIt.first;
+                auto result = action->Act(*best->state);
+                if (result)
+                {
+                    bool alreadyClosed = closed.Contains(*result);
+                    if (!alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
+                    {
+                        auto newNode = std::make_unique<Node>(*best, std::move(result), std::move(action));
+                        auto newIt = open.emplace(std::move(newNode));
+                        assert(newIt.second);
+                    }
+                }
             }
         }
-        m_actions = *closed.begin();
     }
 
     PathPlan::PathPlan(Actor& actor, const Position& target, Game& game) :
@@ -272,16 +279,17 @@ namespace Game
     
     std::wstring ManualPlan::Description() const
     {
-        if (!m_actions)
+        if (!m_root)
             return actor.name + L": idle";
         else
         {
             std::wstring result(actor.name + L": ");
-            auto node = m_actions;
-            while (node)
+            auto node = m_root.get();
+            result += node->action->Description();
+            while (!node->children.empty())
             {
-                result += node->action->Description() + L", ";
-                node = node->previous;
+                node = node->children.front().get();
+                result += L", " + node->action->Description() ;
             }
             return result;
         }

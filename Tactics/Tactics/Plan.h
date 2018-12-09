@@ -18,8 +18,6 @@ public:
     Plan(Actor& actor);
     virtual ~Plan() = default;
     void Render() const;
-    void Add(IGame& game, std::unique_ptr<Action> action);
-    State Final() const;
     bool Valid() const;
     void Execute(Game& game) const;
     virtual std::wstring Description() const = 0;
@@ -27,49 +25,53 @@ private:
     struct Node
     {
         Node(IGame& state);
-        Node(std::shared_ptr<Node> previous, IGame& state, std::unique_ptr<Action>&& action);
+        Node(Node& previous, std::unique_ptr<GameState>&& state, std::unique_ptr<Action>&& action);
         Node(const Node&) = delete;
         ~Node();
         Node& operator=(const Node&) = delete;
+        bool IsRoot() const;
         bool DeadEnd() const;
-        const GameState& ExpectedState() const;
-        GameState& ExpectedState();
-        //int Score(const Position& target, unsigned startMovePoints) const;
+        void Render() const;
+        GameChances AllOutcomes() const;
+
+         //int Score(const Position& target, unsigned startMovePoints) const;
         bool Compare(const Node& other, const Position& target) const;
         bool operator==(const Node& other) const;
         bool Reached(const Position& target) const;
 
-        IGame& state;
+        Node* previous;
         std::unique_ptr<Action> action;
-        GameChances result;
-        std::shared_ptr<Node> previous;
+        double chance;
+        std::unique_ptr<GameState> state;
+        std::vector<std::unique_ptr<Node>> children;
     };
     struct NodeCompare
     {
         NodeCompare(const Position& target);
-        bool operator() (const std::shared_ptr<Node>& a, const std::shared_ptr<Node>& b) const;
+        bool operator() (const std::unique_ptr<Node>& a, const std::unique_ptr<Node>& b) const;
         Position target;
     };
-    class OpenTree : public std::set < std::shared_ptr<Node>, NodeCompare >
+    class OpenTree : public std::set < std::unique_ptr<Node>, NodeCompare >
     {
     public:
         OpenTree(const Position& target);
+        std::unique_ptr<Node> Pop();
     };
-    class ClosedList : public std::set<std::shared_ptr<Node>, NodeCompare>
+    class ClosedList : public std::set<std::unique_ptr<Node>, NodeCompare>
     {
     public:
         ClosedList(const Position& target);
         bool Contains(const GameState& state) const;
+        std::unique_ptr<Node> Extract(Node* node);
     };
     friend ClosedList;
 protected:
     void Approach(const Position& target, Game& game, std::unique_ptr<Action>&& action);
     Actor& actor;
-    std::shared_ptr<Node> m_actions;
+    std::unique_ptr<Node> m_root;
 private:
-    using Outcomes = std::map < double, GameChance* > ;
-    Outcomes AllOutcomesRecursive(Node& node) const;
-    Outcomes AllOutcomes() const;
+    GameChances AllOutcomesRecursive(Node& node) const;
+    GameChances AllOutcomes() const;
 
 };
 

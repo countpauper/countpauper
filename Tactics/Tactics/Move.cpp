@@ -12,29 +12,28 @@ namespace Game
     {
     }
 
-    GameChances Move::Act(IGame& game)
+    std::unique_ptr<GameState> Move::Act(IGame& game)
     {
         auto cost = 2;  // TODO move skills
         auto& actor = *game.ActiveActor();
         State state(game.Get(actor));
         if (state.mp <= 2)
         {
-            return GameChances();
+            return nullptr;
         }
         state.mp -= cost;
         auto newPosition = state.position + direction.Vector();
-        if ((game.CanBe(newPosition)) && 
+        if ((game.CanBe(newPosition)) &&
             (game.CanGo(state.position, direction)))
         {
             state.position = newPosition;
             state.direction = direction;
-            GameChances ret;
-            ret.emplace_back(GameChance(game, 1.0, L"Move"));
-            ret.back()->Adjust(actor, state);
+            auto ret = std::make_unique<GameState>(game);
+            ret->Adjust(actor, state);
             return ret;
         }
         else
-            return GameChances();
+            return nullptr;
     }
 
     void Move::Render(const State& state) const

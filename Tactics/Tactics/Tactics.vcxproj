@@ -117,6 +117,7 @@
     <ClInclude Include="Body.h" />
     <ClInclude Include="Damage.h" />
     <ClInclude Include="Direction.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="IGame.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Map.h" />

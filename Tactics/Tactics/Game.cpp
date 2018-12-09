@@ -186,12 +186,14 @@ namespace Game
         if (Action::keymap.count(code) == 0)
             return;
 
+        /* TODO: reimplemennt manual plan
         if (!plan)
             plan = std::make_unique<ManualPlan>(playerActor);
         std::unique_ptr<Action> action(Action::keymap[code](plan->Final(), *this));
         if (!action)
             return;
         plan->Add(*this, std::move(action));
+        */
     }
 
     bool Game::CanBe(const Position& position) const

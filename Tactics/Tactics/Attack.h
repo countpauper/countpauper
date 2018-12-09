@@ -13,7 +13,7 @@ class Attack :
 public:
     Attack(Actor& target, const Skill& skill);
     void Render(const State& state) const override;
-    GameChances Act(IGame& game) override;
+    std::unique_ptr<GameState> Act(IGame& game) override;
     std::wstring Description() const override;
 protected:
     // TODO: which object should implement this? not skill, not state really ...
