@@ -17,7 +17,6 @@ public:
     std::unique_ptr<GameState> Act(const IGame& game) const override;
     std::wstring Description() const override;
 protected:
-    const Skill& skill;
 };
 
 }   // ::Game

@@ -3,12 +3,13 @@
 #include "Move.h"
 #include "Game.h"
 #include "Direction.h"
+#include "Actor.h"
 
 namespace Game
 {
 
     Move::Move(const Actor& actor, Direction direction) :
-        Action(actor),
+        Action(*actor.DefaultMove(), actor),
         direction(direction)
     {
     }

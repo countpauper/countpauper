@@ -7,13 +7,14 @@
 #include "State.h"
 namespace Game
 {
-    Action::Action(const Actor& actor) :
+    Action::Action(const Skill& skill, const Actor& actor) :
+        skill(skill),
         actor(actor)
     {
     }
 
-    TargetedAction::TargetedAction(const Actor& actor, const Actor& target) :
-        Action(actor),
+    TargetedAction::TargetedAction(const Skill& skill, const Actor& actor, const Actor& target) :
+        Action(skill, actor),
         target(target)
     {
     }

@@ -8,7 +8,6 @@
 namespace Engine
 {
 
-
 Image::Image() :
     w(0),
     h(0),

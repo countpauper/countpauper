@@ -9,8 +9,7 @@ namespace Game
 {
 
 Affect::Affect(const Actor& actor, const Actor& target, const Skill& skill) :
-    TargetedAction(actor, target),
-    skill(skill)
+    TargetedAction(skill, actor, target)
 {
 }
 

@@ -24,7 +24,9 @@ public:
     float range;
 
     bool IsActive() const;
-    enum class Trigger { None=0, Act, Combo, Prepare, React, Defend};
+    bool IsAttack() const;
+    bool IsMove() const;
+    enum class Trigger { None = 0, Act, Combo, Prepare, React, Defend };
     Trigger trigger;
     using Category = std::string;
     using Categories = std::set<Category>;
@@ -44,6 +46,7 @@ public:
     public:
         virtual ~Type() = default;
         virtual Action* CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const = 0;
+
     };
     class Move : public Type
     {
@@ -65,6 +68,12 @@ public:
     };
 
     std::shared_ptr<Type> type; // todo: unique ptr and copy/clone or move
+private:
+    template<class T>
+    bool IsType() const 
+    { 
+        return dynamic_cast<T*>(type.get()) != nullptr; 
+    }
 };
 
 

@@ -183,7 +183,18 @@ namespace Game
     {
         for (auto& known: knowledge)
         {
-            if ((known.skill->IsActive()) && 
+            if ((known.skill->IsAttack()) && 
+                (IsPossible(*known.skill)))
+                return known.skill;
+        }
+        return nullptr;
+    }
+
+    const Skill* Actor::DefaultMove() const
+    {
+        for (auto& known : knowledge)
+        {
+            if ((known.skill->IsMove()) &&
                 (IsPossible(*known.skill)))
                 return known.skill;
         }

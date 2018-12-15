@@ -49,6 +49,7 @@ namespace Game
         };
         using Knowledge = std::vector<Know> ;
         const Skill* DefaultAttack() const;
+        const Skill* DefaultMove() const;
         std::vector<const Skill*> FollowSkill(const Skill& previous, Skill::Trigger trigger) const;
 
         bool IsPossible(const Skill& skill) const;

@@ -65,6 +65,18 @@ namespace Game
         return (trigger == Trigger::Act);
     }
 
+    bool Skill::IsAttack() const
+    {
+        return ((IsActive()) &&
+            (IsType<Melee>()));
+    }
+
+    bool Skill::IsMove() const
+    {
+        return ((IsActive()) &&
+            (IsType<Move>()));
+    }
+
     const Skill* Skills::Find(const std::wstring& name) const
     {
         for (auto& skill : *this)
@@ -245,7 +257,7 @@ void Parse(Skill& o, const xmlNode* node)
             {
                 o.type = MakeType<Skill::Move>(curNode);
             }
-            if (xmlTagCompare(curNode, "melee"))
+            else if (xmlTagCompare(curNode, "melee"))
             {
                 o.type = MakeType<Skill::Melee>(curNode);
             }
