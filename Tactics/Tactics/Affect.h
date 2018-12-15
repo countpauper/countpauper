@@ -6,13 +6,13 @@
 namespace Game
 {
 class Game;
-class Skill; 
+class Skill;
 
-class Attack :
+class Affect :
     public TargetedAction
 {
 public:
-    Attack(const Actor& actor, const Actor& target, const Skill& skill);
+    Affect(const Actor& actor, const Actor& target, const Skill& skill);
     void Render(const State& state) const override;
     std::unique_ptr<GameState> Act(const IGame& game) const override;
     std::wstring Description() const override;

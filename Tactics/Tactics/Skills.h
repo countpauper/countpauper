@@ -14,7 +14,9 @@ class Skill
 {
 public:
     Skill();
-    Action* Action(const Actor& target) const;
+    Action* CreateAction(const Actor& actor, const Actor& target) const;
+    float GetChance(const Actor& actor) const;
+
     bool Follows(const Skill& previous) const;
 
     std::wstring name;
@@ -31,6 +33,7 @@ public:
     Type::Weapon::Style weapon;
     using Prerequisite = std::pair<Skill*, unsigned>;
     std::vector<Prerequisite> prerequisites;
+    std::vector<float> chance;
 
     enum class Effect { Miss, Interrupt, Disarm, Stuck, Stop };
     using Effects = std::set<Effect>;
@@ -40,22 +43,25 @@ public:
     {
     public:
         virtual ~Type() = default;
+        virtual Action* CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const = 0;
     };
     class Move : public Type
     {
     public:
+        Action* CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const override;
     };
     class Melee : public Type
     {
     public:
         std::vector<unsigned> damage;
         Effects effects;
+        Action* CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const override;
     };
     class Affect : public Type
     {
     public:
-        std::vector<float> chance;
         Effects effects;
+        Action* CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const override;
     };
 
     std::shared_ptr<Type> type; // todo: unique ptr and copy/clone or move

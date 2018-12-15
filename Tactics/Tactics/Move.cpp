@@ -7,7 +7,8 @@
 namespace Game
 {
 
-    Move::Move(Direction direction) :
+    Move::Move(const Actor& actor, Direction direction) :
+        Action(actor),
         direction(direction)
     {
     }
@@ -54,23 +55,23 @@ namespace Game
         return direction.Description();
     }
 
-    North::North() :
-        Move(Direction::Value::North)
+    North::North(const Actor& actor) :
+        Move(actor, Direction::Value::North)
     {
     }
 
 
-    East::East() :
-        Move(Direction::Value::East)
+    East::East(const Actor& actor) :
+        Move(actor, Direction::Value::East)
     {
     }
 
-    South::South() :
-        Move(Direction::Value::South)
+    South::South(const Actor& actor) :
+        Move(actor, Direction::Value::South)
     {
     }
-    West::West() :
-        Move(Direction::Value::West)
+    West::West(const Actor& actor) :
+        Move(actor, Direction::Value::West)
     {
     }
 

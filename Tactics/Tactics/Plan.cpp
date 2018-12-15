@@ -22,7 +22,7 @@ namespace Game
         while (node)
         {
             node->Render();
-            node = node->MostLikelyNext();
+            node = node->Next();
         }
     }
 
@@ -54,12 +54,12 @@ namespace Game
         return previous == nullptr;
     }
 
-    Plan::Node* Plan::Node::MostLikelyNext() const
+    Plan::Node* Plan::Node::Next() const
     {
         if (children.empty())
             return nullptr;
         else
-            return children.front().get();
+            return children.back().get();
     }
 
     void Plan::Node::Render() const
@@ -189,48 +189,52 @@ namespace Game
     void Plan::Execute(Game& game) const
     {
         auto outcomes = AllOutcomes();
-        double score = rand() / double(RAND_MAX);
-        auto selectIt= outcomes.begin();
-        while (score > selectIt->first)
+        for (auto outcome : outcomes)
         {
-            assert(selectIt != outcomes.end() && "No outcomes");
-            score -= selectIt->first;
-            selectIt++;
+            double score = rand() / double(RAND_MAX);
+            if (score < outcome.first)
+            {
+                OutputDebugStringW((Description() + L" " + outcome.second->Description() + L"\r\n").c_str());
+                outcome.second->Apply(game);
+                return;
+            }
         }
-        auto& select = *selectIt;
-        OutputDebugStringW((Description() + L" " + select.second->Description() + L"\r\n").c_str());
-        select.second->Apply(game);
+        OutputDebugStringW((Description() + L" fizzle \r\n").c_str());
     }
 
-    std::unique_ptr<Plan::Node> Plan::PlanAction(Node& parent, const Skill& skill, const Actor& target)
+    bool Plan::PlanAction(Node& parent, const Skill& skill, const Actor& actor, const Actor& target)
     {
-        std::unique_ptr<Action> action(skill.Action(target));
+        std::unique_ptr<Action> action(skill.CreateAction(actor, target));
         auto result = action->Act(*parent.state);
-        if (result)
+        if (!result)
+            return false;
+
+        auto defences = target.FollowSkill(skill, Skill::Trigger::Defend);
+        for (auto defence : defences)
         {
-            auto node = std::make_unique<Node>(parent, std::move(result), std::move(action));
-            auto combos = node->state->ActiveActor()->FollowSkill(skill, ::Game::Skill::Trigger::Combo);
-            for (auto combo : combos)
-            {
-                auto comboNode = PlanAction(*node, *combo, target);
-                if (comboNode)
-                {
-                    node->children.emplace_back(std::move(comboNode));
-                }
-            }
-            return std::move(node);
+            PlanAction(parent, *defence, target, actor);
         }
-        else
-            return nullptr;
+
+        auto node = std::make_unique<Node>(parent, std::move(result), std::move(action));
+        node->chance = skill.GetChance(actor);
+        auto combos = node->state->ActiveActor()->FollowSkill(skill, Skill::Trigger::Combo);
+        for (auto combo : combos)
+        {
+            if (PlanAction(*node, *combo, actor, target))
+                break;
+        }
+        parent.children.emplace_back(std::move(node));
+        return true;
     }
 
     void Plan::Approach(const Actor& target, Game& game, const Skill& skill)
     {
+        const auto& actor = *game.ActiveActor();
         std::vector<std::function<Action*(void)>> actions({
-            [](){ return new North();  },
-            [](){ return new East();  },
-            [](){ return new South();  },
-            [](){ return new West();  },
+            [&actor](){ return new North(actor);  },
+            [&actor](){ return new East(actor);  },
+            [&actor](){ return new South(actor);  },
+            [&actor](){ return new West(actor);  },
         });
         auto targetPosition = target.GetPosition();
         OpenTree open(targetPosition);
@@ -242,10 +246,9 @@ namespace Game
         while (!open.empty())
         {
             std::unique_ptr<Node> best = open.Pop();
-            auto actionPlan = PlanAction(*best, skill, target);
-            if (actionPlan)
+            auto act = PlanAction(*best, skill, *best->state->ActiveActor(), target);
+            if (act)
             {
-                best->children.emplace_back(std::move(actionPlan));
                 m_root = closed.ExtractRoot(std::move(best));
                 return;
             }
@@ -273,11 +276,12 @@ namespace Game
     // TODO: Refactor to avoid code duplication with Approach
     void Plan::Goto(const Position& targetPosition, Game& game)
     {
+        const auto& actor = *game.ActiveActor();
         std::vector<std::function<Action*(void)>> actions({
-            [](){ return new North();  },
-            [](){ return new East();  },
-            [](){ return new South();  },
-            [](){ return new West();  },
+            [&actor](){ return new North(actor);  },
+            [&actor](){ return new East(actor);  },
+            [&actor](){ return new South(actor);  },
+            [&actor](){ return new West(actor);  },
         });
         OpenTree open(targetPosition);
         ClosedList closed(targetPosition);

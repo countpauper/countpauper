@@ -32,7 +32,7 @@ private:
         bool IsRoot() const;
         bool DeadEnd() const;
         void Render() const;
-        Node* MostLikelyNext() const;
+        Node* Next() const;
         GameChances AllOutcomes() const;
 
          //int Score(const Position& target, unsigned startMovePoints) const;
@@ -71,7 +71,7 @@ private:
 protected:
     void Approach(const Actor& target, Game& game, const Skill& skill);
     void Goto(const Position& target, Game& game);
-    std::unique_ptr<Plan::Node> PlanAction(Plan::Node& parent, const Skill& skill, const Actor& target);
+    bool PlanAction(Plan::Node& parent, const Skill& skill, const Actor& actor, const Actor& target);
     static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
     Actor& actor;
     std::unique_ptr<Node> m_root;

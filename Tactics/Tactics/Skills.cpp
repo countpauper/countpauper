@@ -6,7 +6,8 @@
 #include "Engine/from_string.h"
 #include "Skills.h"
 #include "Attack.h"
-
+#include "Affect.h"
+#include "Move.h"
 
 namespace Game
 {
@@ -18,9 +19,35 @@ namespace Game
     {
     }
 
-    Action* Skill::Action(const Actor& target) const
+    Action* Skill::CreateAction(const Actor& actor, const Actor& target) const
     {
-        return new Attack(target, *this);
+        if (type)
+            return type->CreateAction(*this, actor, target);
+        else
+            return nullptr;
+    }
+
+    float Skill::GetChance(const Actor& actor) const
+    {
+        if (chance.empty())
+            return 1;
+        else
+            return chance.front();  // TODO skill level of actor 
+    }
+
+    Action* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const
+    {
+        return new ::Game::Move(actor, Direction::North);
+    }
+
+    Action* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const
+    {
+        return new Attack(actor, target, skill);
+    }
+
+    Action* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const
+    {
+        return new ::Game::Affect(actor, target, skill);
     }
 
     bool Skill::Follows(const Skill& previous) const
@@ -130,15 +157,7 @@ void Parse(Skill::Affect& o, const xmlNode* node)
 {
     for (auto prop = node->properties; prop; prop = prop->next)
     {
-        if (xmlTagCompare(prop, "chance"))
-        {
-            o.chance = Engine::from_strings<float>(xmlText(prop->children), L',');
-            std::transform(o.chance.begin(), o.chance.end(), o.chance.begin(), [](const float& v)
-            {
-                return v / 100.0f;
-            });
-        }
-        else if (xmlTagCompare(prop, "effect"))
+        if (xmlTagCompare(prop, "effect"))
         {
             o.effects = Engine::from_strings<Skill::Effect>(xmlText(prop->children), L'|', Skill::effectMap);
         }
@@ -196,6 +215,14 @@ void Parse(Skill& o, const xmlNode* node)
         {
             auto str = xmlWStr(prop->children->content);
             o.weapon = Engine::from_string<Type::Weapon::Style>(str, Type::Weapon::styleMap);
+        }
+        else if (xmlTagCompare(prop, "chance"))
+        {
+            o.chance = Engine::from_strings<float>(xmlText(prop->children), L',');
+            std::transform(o.chance.begin(), o.chance.end(), o.chance.begin(), [](const float& v)
+            {
+                return v / 100.0f;
+            });
         }
         else
         {
