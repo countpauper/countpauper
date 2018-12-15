@@ -32,6 +32,7 @@ private:
         bool IsRoot() const;
         bool DeadEnd() const;
         void Render() const;
+        Node* MostLikelyNext() const;
         GameChances AllOutcomes() const;
 
          //int Score(const Position& target, unsigned startMovePoints) const;
@@ -62,11 +63,16 @@ private:
     public:
         ClosedList(const Position& target);
         bool Contains(const GameState& state) const;
+        std::unique_ptr<Plan::Node> ExtractRoot(std::unique_ptr<Node>& leaf);
+    private:
         std::unique_ptr<Node> Extract(Node* node);
     };
     friend ClosedList;
 protected:
-    void Approach(const Position& target, Game& game, std::unique_ptr<Action>&& action);
+    void Approach(const Actor& target, Game& game, const Skill& skill);
+    void Goto(const Position& target, Game& game);
+    std::unique_ptr<Plan::Node> PlanAction(Plan::Node& parent, const Skill& skill, const Actor& target);
+    static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
     Actor& actor;
     std::unique_ptr<Node> m_root;
 private:

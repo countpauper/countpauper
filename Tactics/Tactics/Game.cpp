@@ -30,14 +30,16 @@ namespace Game
     {
         return State(actor);
     }
-    void Game::Adjust(Actor& actor, const State& state)
+    void Game::Adjust(const Actor& actor, const State& state)
     {
-        actor.Apply(state);
+        Actor& nonConstActor = const_cast<Actor&>(actor);   // faster than looking up in objects
+        nonConstActor.Apply(state);
     }
-    void Game::Apply() const
+    void Game::Apply(IGame& root) const
     {
+        assert(&root == this);
+    }
 
-    }
     void Game::Tick()
     {
         Actor* actor;

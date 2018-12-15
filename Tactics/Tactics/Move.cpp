@@ -12,7 +12,7 @@ namespace Game
     {
     }
 
-    std::unique_ptr<GameState> Move::Act(IGame& game)
+    std::unique_ptr<GameState> Move::Act(const IGame& game) const
     {
         auto cost = 2;  // TODO move skills
         auto& actor = *game.ActiveActor();

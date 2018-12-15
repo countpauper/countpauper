@@ -139,10 +139,25 @@ namespace Game
         return !Dead() && mp > 0;
     }
 
-    const Actor::Skills& Actor::GetSkills() const
+    const Actor::Knowledge& Actor::GetSkills() const
     {
-        return skills;
+        return knowledge;
     }
+
+    std::vector<const Skill*> Actor::FollowSkill(const Skill& previous, Skill::Trigger trigger) const
+    {
+        std::vector<const Skill*> possible;
+        for (auto known : GetSkills())
+        {
+            const auto skill = known.skill;
+            if ((skill->trigger == trigger) && (skill->Follows(previous)))
+            {
+                possible.push_back(skill);
+            }
+        }
+        return possible;
+    }
+
 
     std::vector<const Armor*> Actor::Worn() const
     {
@@ -164,18 +179,18 @@ namespace Game
         return result;
     }
 
-    const ::Game::Skill* Actor::DefaultAttack() const
+    const Skill* Actor::DefaultAttack() const
     {
-        for (auto& skill : skills)
+        for (auto& known: knowledge)
         {
-            if ((skill.skill->IsActive()) && 
-                (IsPossible(*skill.skill)))
-                return skill.skill;
+            if ((known.skill->IsActive()) && 
+                (IsPossible(*known.skill)))
+                return known.skill;
         }
         return nullptr;
     }
 
-    bool Actor::IsPossible(const ::Game::Skill& skill) const
+    bool Actor::IsPossible(const Skill& skill) const
     {
         if ((skill.weapon != Type::Weapon::Style::None) &&
             (std::none_of(wielded.begin(), wielded.end(), [&skill](const Weapon& weapon)
@@ -188,10 +203,10 @@ namespace Game
         return true;
     }
 
-    unsigned Actor::GetSkillScore(const ::Game::Skill& findSkill) const
+    unsigned Actor::GetSkillScore(const Skill& findSkill) const
     {
-        auto it = std::find_if(skills.begin(), skills.end(), [&findSkill](const Actor::Skill& skill) { return skill.skill == &findSkill; });
-        if (it == skills.end())
+        auto it = std::find_if(knowledge.begin(), knowledge.end(), [&findSkill](const Know& known) { return known.skill == &findSkill; });
+        if (it == knowledge.end())
             return 0;
         else
             return it->score;
@@ -221,12 +236,12 @@ namespace Game
             s >> bonusName >> materialName >> typeName;
             actor.wielded.emplace_back(Weapon(game, typeName, materialName, bonusName));
         }
-        actor.skills.resize(skills);
-        for (auto& skill : actor.skills)
+        actor.knowledge.resize(skills);
+        for (auto& know : actor.knowledge)
         {
             std::wstring skillName;
-            s >> skillName >> skill.score;
-            skill.skill = game.skills.Find(skillName);
+            s >> skillName >> know.score;
+            know.skill = game.skills.Find(skillName);
         }
 
         return s;

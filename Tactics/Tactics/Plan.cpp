@@ -19,13 +19,11 @@ namespace Game
     {
         State state(actor);
         Node* node = m_root.get();
-        // TODO state is the wrong way around for rendering
-        while (!node->children.empty())
+        while (node)
         {
             node->Render();
-            node = node->children.front().get();
+            node = node->MostLikelyNext();
         }
-        node->Render();
     }
 
     Plan::Node::Node(IGame& state) :
@@ -54,6 +52,14 @@ namespace Game
     bool Plan::Node::IsRoot() const
     {
         return previous == nullptr;
+    }
+
+    Plan::Node* Plan::Node::MostLikelyNext() const
+    {
+        if (children.empty())
+            return nullptr;
+        else
+            return children.front().get();
     }
 
     void Plan::Node::Render() const
@@ -136,6 +142,19 @@ namespace Game
         erase(it);
         return result;
     }
+
+    std::unique_ptr<Plan::Node> Plan::ClosedList::ExtractRoot(std::unique_ptr<Node>& leaf)
+    {
+        auto node = std::move(leaf);
+        while (!node->IsRoot())
+        {
+            auto previous = node->previous;
+            node->previous->children.emplace_back(std::move(node));
+            node= Extract(previous);
+        }
+        return std::move(node);
+    }
+
     bool Plan::Valid() const
     {
         return m_root!=nullptr;
@@ -180,10 +199,32 @@ namespace Game
         }
         auto& select = *selectIt;
         OutputDebugStringW((Description() + L" " + select.second->Description() + L"\r\n").c_str());
-        select.second->Apply();
+        select.second->Apply(game);
     }
 
-    void Plan::Approach(const Position& target, Game& game, std::unique_ptr<Action>&& targetAction)
+    std::unique_ptr<Plan::Node> Plan::PlanAction(Node& parent, const Skill& skill, const Actor& target)
+    {
+        std::unique_ptr<Action> action(skill.Action(target));
+        auto result = action->Act(*parent.state);
+        if (result)
+        {
+            auto node = std::make_unique<Node>(parent, std::move(result), std::move(action));
+            auto combos = node->state->ActiveActor()->FollowSkill(skill, ::Game::Skill::Trigger::Combo);
+            for (auto combo : combos)
+            {
+                auto comboNode = PlanAction(*node, *combo, target);
+                if (comboNode)
+                {
+                    node->children.emplace_back(std::move(comboNode));
+                }
+            }
+            return std::move(node);
+        }
+        else
+            return nullptr;
+    }
+
+    void Plan::Approach(const Actor& target, Game& game, const Skill& skill)
     {
         std::vector<std::function<Action*(void)>> actions({
             [](){ return new North();  },
@@ -191,41 +232,23 @@ namespace Game
             [](){ return new South();  },
             [](){ return new West();  },
         });
-        OpenTree open(target);
-        ClosedList closed(target);
+        auto targetPosition = target.GetPosition();
+        OpenTree open(targetPosition);
+        ClosedList closed(targetPosition);
         auto first = std::make_unique<Node>(game);
-        if (first->Reached(target))
+        if (first->Reached(targetPosition))
             return;
         open.emplace(std::move(first));
         while (!open.empty())
         {
             std::unique_ptr<Node> best = open.Pop();
-
-            if (targetAction)
+            auto actionPlan = PlanAction(*best, skill, target);
+            if (actionPlan)
             {
-                auto result = targetAction->Act(*best->state);
-                if (result)
-                {
-                    auto newNode = std::make_unique<Node>(*best, std::move(result), std::move(targetAction));
-                    best->children.emplace_back(std::move(newNode));
-                    while (!best->IsRoot())
-                    {
-                        auto previous = best->previous;
-                        best->previous->children.emplace_back(std::move(best));
-                        best = closed.Extract(previous);
-                    }
-                    m_root = std::move(best);
-                    return;
-                }
+                best->children.emplace_back(std::move(actionPlan));
+                m_root = closed.ExtractRoot(std::move(best));
+                return;
             }
-            else
-            {
-                if (best->Reached(target))
-                {
-                    return;
-                }
-            }
-   
             auto bestIt = closed.emplace(std::move(best));
             assert(bestIt.second);
             for (const auto& actionFactory : actions)
@@ -247,11 +270,54 @@ namespace Game
         }
     }
 
+    // TODO: Refactor to avoid code duplication with Approach
+    void Plan::Goto(const Position& targetPosition, Game& game)
+    {
+        std::vector<std::function<Action*(void)>> actions({
+            [](){ return new North();  },
+            [](){ return new East();  },
+            [](){ return new South();  },
+            [](){ return new West();  },
+        });
+        OpenTree open(targetPosition);
+        ClosedList closed(targetPosition);
+        open.emplace(std::make_unique<Node>(game));
+        while (!open.empty())
+        {
+            std::unique_ptr<Node> best = open.Pop();
+
+            if (best->Reached(targetPosition))
+            {
+                m_root = closed.ExtractRoot(std::move(best));
+                return;
+            }
+            auto bestIt = closed.emplace(std::move(best));
+            assert(bestIt.second);
+            for (const auto& actionFactory : actions)
+            {
+                std::unique_ptr<Action> action(actionFactory());
+                auto& best = *bestIt.first;
+                auto result = action->Act(*best->state);
+                if (result)
+                {
+                    bool alreadyClosed = closed.Contains(*result);
+                    if (!alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
+                    {
+                        auto newNode = std::make_unique<Node>(*best, std::move(result), std::move(action));
+                        auto newIt = open.emplace(std::move(newNode));
+                        assert(newIt.second);
+                    }
+                }
+            }
+        }
+    }
+
+
     PathPlan::PathPlan(Actor& actor, const Position& target, Game& game) :
         Plan(actor),
         target(target)
     {
-        Approach(target, game, nullptr);
+        Goto(target, game);
     }
 
     std::wstring PathPlan::Description() const
@@ -264,7 +330,7 @@ namespace Game
         skill(skill),
         target(target)
     {
-        Approach(target.GetPosition(), game, std::unique_ptr<Action>(skill.Action(target)));
+        Approach(target, game, skill);
     }
 
     std::wstring AttackPlan::Description() const
@@ -294,6 +360,4 @@ namespace Game
             return result;
         }
     }
-
-
 }

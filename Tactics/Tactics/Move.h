@@ -14,7 +14,7 @@ namespace Game
     public:
         Move(Direction direction);
         void Render(const State& state) const override;
-        std::unique_ptr<GameState> Act(IGame& game) override;
+        std::unique_ptr<GameState> Act(const IGame& game) const override;
         std::wstring Description() const override;
     protected:
         Direction direction;

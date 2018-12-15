@@ -157,11 +157,11 @@ namespace Game
     }
 
 
-    GameState::GameState(IGame& parent) :
+    GameState::GameState(const IGame& parent) :
         parent(parent)
     {
     }
-    void GameState::Adjust(Actor& actor, const State& actorState)
+    void GameState::Adjust(const Actor& actor, const State& actorState)
     {
         auto insert = state.insert(std::make_pair(&actor, actorState));
         if (!insert.second)
@@ -176,13 +176,14 @@ namespace Game
         return parent.Get(actor);
     }
 
-    void GameState::Apply() const
+    void GameState::Apply(IGame& root) const
     {
+        parent.Apply(root);
+
         for (auto& actorState : state)
         {
-            parent.Adjust(*actorState.first, actorState.second);
+            root.Adjust(*actorState.first, actorState.second);
         }
-        parent.Apply();
     }
 
     Actor* GameState::ActiveActor() const

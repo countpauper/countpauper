@@ -8,11 +8,11 @@
 #include "Stats.h"
 #include "Item.h"
 #include "Score.h"
+#include "Skills.h"
 
 namespace Game
 {
     class State;
-    class Skill;
     class Action;
 
     class Object
@@ -41,17 +41,19 @@ namespace Game
         unsigned GetTeam() const;
         bool CanAct() const;
         bool Dead() const;
-        struct Skill
+        struct Know
         {
-            Skill() : skill(nullptr), score(0) {}
-            const ::Game::Skill* skill;
+            Know() : skill(nullptr), score(0) {}
+            const Skill* skill;
             unsigned score;
         };
-        typedef std::vector<Actor::Skill> Skills;
-        const ::Game::Skill* DefaultAttack() const;
-        bool IsPossible(const ::Game::Skill& skill) const;
-        const Actor::Skills& GetSkills() const;
-        unsigned GetSkillScore(const ::Game::Skill& skill) const;
+        using Knowledge = std::vector<Know> ;
+        const Skill* DefaultAttack() const;
+        std::vector<const Skill*> FollowSkill(const Skill& previous, Skill::Trigger trigger) const;
+
+        bool IsPossible(const Skill& skill) const;
+        const Knowledge& GetSkills() const;
+        unsigned GetSkillScore(const Skill& skill) const;
         int MovePoints() const;
 
         std::vector<const Armor*> Worn() const;
@@ -64,7 +66,7 @@ namespace Game
         unsigned mp;
         unsigned team;
         Direction direction;
-        std::vector<Actor::Skill> skills;
+        Knowledge knowledge;
         std::vector<Armor> worn;
         std::vector<Weapon> wielded;
     };

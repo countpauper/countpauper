@@ -11,7 +11,7 @@ namespace Game
     {
     }
 
-    TargetedAction::TargetedAction(Actor& target) :
+    TargetedAction::TargetedAction(const Actor& target) :
         target(target)
     {
     }

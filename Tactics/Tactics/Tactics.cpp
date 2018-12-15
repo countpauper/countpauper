@@ -360,6 +360,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
          SetPixelFormat(hWnd);
 
+         hdc = GetDC(hWnd);
+         SelectObject(hdc, GetStockObject(SYSTEM_FONT));
+         wglUseFontBitmaps(hdc, 0, 255, 1000);
+
+         ReleaseDC(hWnd, hdc);
         break;
     case WM_TIMER:
         game->Tick();

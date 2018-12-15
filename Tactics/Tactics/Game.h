@@ -34,8 +34,8 @@ namespace Game
 
         //IGame
         State Get(const Actor& actor) const override;
-        void Adjust(Actor& actor, const State& state) override;
-        void Apply() const override;
+        void Adjust(const Actor& actor, const State& state) override;
+        void Apply(IGame& root) const override;
 
         void Tick();
         void Render() const;

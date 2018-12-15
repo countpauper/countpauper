@@ -18,7 +18,7 @@ namespace Game
     {
     }
 
-    Action* Skill::Action(Actor& target) const
+    Action* Skill::Action(const Actor& target) const
     {
         return new Attack(target, *this);
     }

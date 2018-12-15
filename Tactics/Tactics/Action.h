@@ -15,7 +15,7 @@ namespace Game
     public:
         Action();
         virtual ~Action() = default;
-        virtual std::unique_ptr<GameState> Act(IGame& game) = 0;
+        virtual std::unique_ptr<GameState> Act(const IGame& game) const= 0;
         virtual void Render(const State& state) const = 0;
         virtual std::wstring Description() const = 0;
         static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
@@ -25,8 +25,8 @@ namespace Game
     class TargetedAction : public Action
     {
     public:
-        TargetedAction(Actor& target);
-        Actor& target;
+        TargetedAction(const Actor& target);
+        const Actor& target;
     };
 }   // ::Game
 
