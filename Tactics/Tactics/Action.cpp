@@ -5,6 +5,8 @@
 #include "Game.h"
 #include "Skills.h"
 #include "State.h"
+#include "Actor.h"
+
 namespace Game
 {
     Action::Action(const Skill& skill, const Actor& actor) :

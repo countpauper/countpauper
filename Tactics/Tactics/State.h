@@ -11,6 +11,7 @@
 #include "Stats.h"
 #include "Item.h"
 #include "IGame.h"
+#include "Actor.h"
 
 namespace Game
 {
@@ -30,14 +31,15 @@ namespace Game
         Direction direction;
         unsigned mp;
         Body body;
-        Damage AttackDamage() const;
+        Damage AttackDamage(const Skill& skill) const;
         Damage Mitigation() const;
-        Score DefendChance() const;
+        Score DefendChance(const Skill& skill) const;
         Score Strength() const;
         Score Agility() const;
         Score Constitution() const;
         Score Intelligence() const;
         Score Wisdom() const;
+        Score SkillLevel(const Skill& skill) const;
         unsigned loyalty;
     private:
         Bonus StrengthBonus() const;
@@ -49,6 +51,7 @@ namespace Game
 
         std::vector<const Armor*> worn;
         std::vector<const Weapon*> wielded;
+        std::vector<Actor::Know> knowledge;
     };
 
     class GameState : public IGame

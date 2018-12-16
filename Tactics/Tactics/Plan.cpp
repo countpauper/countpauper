@@ -216,7 +216,8 @@ namespace Game
         }
 
         auto node = std::make_unique<Node>(parent, std::move(result), std::move(action));
-        node->chance = skill.GetChance(actor);
+        const auto& actorState = node->state->Get(actor);
+        node->chance = double(actorState.DefendChance(skill).Value()) / 100.0;
         auto combos = node->state->ActiveActor()->FollowSkill(skill, Skill::Trigger::Combo);
         for (auto combo : combos)
         {

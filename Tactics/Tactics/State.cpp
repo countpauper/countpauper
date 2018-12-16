@@ -15,7 +15,8 @@ namespace Game
         body(actor.body),
         loyalty(actor.GetTeam()),
         worn(actor.Worn()),
-        wielded(actor.Wielded())
+        wielded(actor.Wielded()),
+        knowledge(actor.GetKnowledge())
     {
     }
 
@@ -114,7 +115,7 @@ namespace Game
         return result;
     }
 
-    Damage State::AttackDamage() const
+    Damage State::AttackDamage(const Skill& skill) const
     {
         if (wielded.empty())
         {
@@ -124,19 +125,24 @@ namespace Game
         {
             auto strengthBonus = StrengthBonus();
             auto wisdomBonus = WisdomBonus();
+            auto skillLevel = SkillLevel(skill);
+            auto& attackType = dynamic_cast<Skill::Melee&>(*skill.type);
+            auto skillBonus = Bonus(attackType.DamageBonus(skillLevel));
             return wielded.front()->Damage() ^ (
-                Damage(Wound::Type::Blunt, Score(strengthBonus)) +
-                Damage(Wound::Type::Sharp, Score(strengthBonus)) +
-                Damage(Wound::Type::Disease, Score(wisdomBonus)) +
-                Damage(Wound::Type::Spirit, Score(wisdomBonus)));
+                Damage(Wound::Type::Blunt, Score(strengthBonus) + skillBonus) +
+                Damage(Wound::Type::Sharp, Score(strengthBonus) + skillBonus) +
+                Damage(Wound::Type::Disease, Score(wisdomBonus) + skillBonus) +
+                Damage(Wound::Type::Spirit, Score(wisdomBonus) + skillBonus));
         }
     }
 
-    Score State::DefendChance() const
+    Score State::DefendChance(const Skill& skill) const
     {
         auto agility = Agility();
+        auto skillLevel = SkillLevel(skill);
+        auto skillBonus = skill.GetChance(skillLevel);
         Bonus agilityBonus(L"Agi(" + agility.Description() + L")", (int(agility.Value()*2)));
-        return Score(L"", 0)+agilityBonus;
+        return Score(skillBonus) + agilityBonus;
     }
 
     Damage State::Mitigation() const
@@ -156,6 +162,18 @@ namespace Game
         return mitigation;
     }
 
+    Score State::SkillLevel(const Skill& skill) const
+    {
+        auto it = std::find_if(knowledge.begin(), knowledge.end(),
+            [&skill](const Actor::Knowledge::value_type& known)
+        {
+            return known.skill == &skill;
+        });
+        if (it == knowledge.end())
+            return Score();
+        else
+            return Score(Bonus(skill.name, it->score));
+    }
 
     GameState::GameState(const IGame& parent) :
         parent(parent)

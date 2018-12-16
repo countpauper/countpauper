@@ -180,6 +180,12 @@ namespace Game
         return result;
     }
 
+    std::vector<Actor::Know> Actor::GetKnowledge() const
+    {
+        return knowledge;
+    }
+
+
     const Skill* Actor::DefaultAttack() const
     {
         for (auto& known: knowledge)

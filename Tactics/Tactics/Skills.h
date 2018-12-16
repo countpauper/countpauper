@@ -15,7 +15,7 @@ class Skill
 public:
     Skill();
     Action* CreateAction(const Actor& actor, const Target& target) const;
-    float GetChance(const Actor& actor) const;
+    Bonus GetChance(const Score& level) const;
 
     bool Follows(const Skill& previous) const;
 
@@ -35,7 +35,7 @@ public:
     Type::Weapon::Style weapon;
     using Prerequisite = std::pair<Skill*, unsigned>;
     std::vector<Prerequisite> prerequisites;
-    std::vector<float> chance;
+    std::vector<int> chance;
 
     enum class Effect { Miss, Interrupt, Disarm, Stuck, Stop };
     using Effects = std::set<Effect>;
@@ -58,6 +58,7 @@ public:
     public:
         std::vector<unsigned> damage;
         Effects effects;
+        Bonus DamageBonus(const Score& skillScore);
         Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target) const override;
     };
     class Affect : public Type

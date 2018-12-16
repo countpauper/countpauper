@@ -51,6 +51,7 @@ namespace Game
         using Knowledge = std::vector<Know> ;
         const Skill* DefaultAttack() const;
         std::vector<std::unique_ptr<Action>> AllMoves(const Position& from) const;
+
         std::vector<const Skill*> FollowSkill(const Skill& previous, Skill::Trigger trigger) const;
 
         bool IsPossible(const Skill& skill) const;
@@ -60,6 +61,7 @@ namespace Game
 
         std::vector<const Armor*> Worn() const;
         std::vector<const Weapon*> Wielded() const;
+        std::vector<Know> GetKnowledge() const;
     private:
         Bonus AgilityMoveBonus() const;
         Score GetMaxMovePoints() const;

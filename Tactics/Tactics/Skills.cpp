@@ -29,12 +29,28 @@ namespace Game
             return nullptr;
     }
 
-    float Skill::GetChance(const Actor& actor) const
+
+
+    Bonus Skill::GetChance(const Score& level) const
     {
         if (chance.empty())
-            return 1;
+            return Bonus(100);
         else
-            return chance.front();  // TODO skill level of actor 
+        {
+            auto index = level.Value();
+            if (index == 0)
+            {
+                return Bonus();
+            }
+            else if (index > chance.size())
+            {
+                return Bonus(level.Description(), chance.back());
+            }
+            else
+            {
+                return Bonus(level.Description(), chance.at(index-1));
+            }
+        }
     }
 
     Action* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Target& target) const
@@ -45,6 +61,20 @@ namespace Game
     Action* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Target& target) const
     {
         return new Attack(actor, dynamic_cast<const Actor&>(target), skill);
+    }
+
+    Bonus Skill::Melee::DamageBonus(const Score& skillScore)
+    {
+        if (damage.empty())
+            return Bonus();
+        auto index = skillScore.Value();
+        if (index == 0)
+            return Bonus();
+        else if (index > damage.size())
+            return Bonus(skillScore.Description(), damage.back());
+        else
+            return Bonus(skillScore.Description(), damage.at(index-1));
+
     }
 
     Action* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Target& target) const
@@ -232,11 +262,7 @@ void Parse(Skill& o, const xmlNode* node)
         }
         else if (xmlTagCompare(prop, "chance"))
         {
-            o.chance = Engine::from_strings<float>(xmlText(prop->children), L',');
-            std::transform(o.chance.begin(), o.chance.end(), o.chance.begin(), [](const float& v)
-            {
-                return v / 100.0f;
-            });
+            o.chance = Engine::from_strings<int>(xmlText(prop->children), L',');
         }
         else
         {

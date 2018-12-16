@@ -25,7 +25,7 @@ std::unique_ptr<GameState> Attack::Act(const IGame& game) const
     if (!attacker.IsPossible(skill, victim))
         return nullptr;
     auto ret = std::make_unique<GameState>(game);
-    auto damage = attacker.AttackDamage() - victim.Mitigation();
+    auto damage = attacker.AttackDamage(skill) - victim.Mitigation();
     attacker.mp -= skill.mp;
     victim.body.Hurt(AttackVector({ Plane::All, 0 }), damage.Wound(actor.name));
 
