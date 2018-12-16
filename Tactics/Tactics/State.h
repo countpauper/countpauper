@@ -70,30 +70,12 @@ namespace Game
         std::wstring Description() const override;
 
         State ActorState() const;
+        bool HasParent(const IGame& state) const;
     protected:
         void RecursiveApply(Game& game, std::set<const Actor*>& done) const;
         const IGame& parent;
         std::map<const Actor*, State> state;
     };
-    /*
-    class GameChance
-    {
-    public:
-        GameChance(IGame& state, double chance, const std::wstring& description);
-        GameChance(GameChance&& other);
-        GameChance& operator=(GameChance&& other);
-        GameChance(const GameChance& other) = delete;
-        GameChance& operator=(const GameChance& other) = delete;
-        
-        bool operator<(const GameChance& other) const;
-        bool operator>(const GameChance& other) const;
-        double chance;
-        std::wstring description;
-        GameState* operator->() const;
-        GameState& operator*() const;
-    protected:
-        std::unique_ptr<GameState> state;
-    };
-    */
+
     using GameChances= std::vector<std::pair<double, GameState*>>;
 } // ::Game

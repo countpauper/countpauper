@@ -214,6 +214,21 @@ namespace Game
         return Get(*ActiveActor());
     }
 
+    bool GameState::HasParent(const IGame& state) const
+    {
+        if (&state == this)
+            return true;
+        if (auto parentState = dynamic_cast<const GameState*>(&parent))
+        {
+            return parentState->HasParent(state);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
     bool GameState::CanBe(const Position& position) const
     {
         return parent.CanBe(position);
@@ -237,58 +252,4 @@ namespace Game
         }
         return ss.str();
     }
-    /*
-    GameChance::GameChance(IGame& parent, double chance, const std::wstring& description) :
-        state(std::make_unique<GameState>(parent)),
-        chance(chance),
-        description(description)
-    {
-    }
-
-
-    GameChance::GameChance(GameChance&& other) :
-        state(std::move(other.state)),
-        chance(other.chance),
-        description(other.description)
-    {
-        other.chance = 0;
-        other.description.clear();
-    }
-
-
-    GameChance& GameChance::operator=(GameChance&& other)
-    {
-        chance = other.chance;
-        other.chance = 0;
-        description = other.description;
-        other.description.clear();
-        state = std::move(other.state);
-        return *this;
-    }
-
-    bool GameChance::operator<(const GameChance& other) const
-    {
-        if (chance < other.chance)
-            return true;
-        if (chance > other.chance)
-            return false;
-        return state.get() < other.state.get();
-
-    }
-    bool GameChance::operator>(const GameChance& other) const
-    {
-        return other.operator<(*this);
-    }
-
-    GameState* GameChance::operator->() const
-    {
-        return state.get();
-    }
-
-    GameState& GameChance::operator*() const
-    {
-        return *state;
-    }
-    */
-
 } // ::Game

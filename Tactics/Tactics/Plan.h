@@ -35,6 +35,7 @@ private:
         Node* Next() const;
         GameChances AllOutcomes() const;
 
+
          //int Score(const Position& target, unsigned startMovePoints) const;
         bool Compare(const Node& other, const Position& target) const;
         bool operator==(const Node& other) const;
@@ -78,7 +79,7 @@ protected:
 private:
     GameChances AllOutcomesRecursive(Node& node) const;
     GameChances AllOutcomes() const;
-
+    std::vector<Action*> ActionSequence(GameState& end) const;
 };
 
 class PathPlan : public Plan

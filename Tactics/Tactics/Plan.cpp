@@ -186,6 +186,26 @@ namespace Game
         return m_root->AllOutcomes();
     }
 
+    std::vector<Action*> Plan::ActionSequence(GameState& end) const
+    {
+        std::vector<Action*> sequence;
+        auto node = m_root.get();
+        while (node)
+        {
+            sequence.emplace_back(node->action.get());
+            Node* next = nullptr;
+            for (const auto& child : node->children)
+            {
+                if (!end.HasParent(*child->state))
+                    continue;
+                next = child.get();
+                break;
+            }
+            node = next;
+        }
+        return sequence;
+    }
+
     void Plan::Execute(Game& game) const
     {
         auto outcomes = AllOutcomes();
@@ -194,6 +214,12 @@ namespace Game
             double score = rand() / double(RAND_MAX);
             if (score < outcome.first)
             {
+                auto actionSequence = ActionSequence(*outcome.second);
+                for (auto action : actionSequence)
+                {
+                    if (action)
+                        OutputDebugStringW((action->Description() + L", ").c_str());
+                }
                 OutputDebugStringW((Description() + L" " + outcome.second->Description() + L"\r\n").c_str());
                 outcome.second->Apply(game);
                 return;
