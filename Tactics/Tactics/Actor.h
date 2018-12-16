@@ -9,13 +9,14 @@
 #include "Item.h"
 #include "Score.h"
 #include "Skills.h"
+#include "Target.h"
 
 namespace Game
 {
     class State;
     class Action;
 
-    class Object
+    class Object : public Target
     {
     public:
         Object();
@@ -23,7 +24,7 @@ namespace Game
         virtual void Turn() = 0;
         virtual void Render() const = 0;
         void Move(int dx, int dy);
-        Position GetPosition() const;
+        Position GetPosition() const override;
         std::wstring name;
         Body body;    // TODO: different body parts for different objects/creatures
     protected:
@@ -49,7 +50,7 @@ namespace Game
         };
         using Knowledge = std::vector<Know> ;
         const Skill* DefaultAttack() const;
-        const Skill* DefaultMove() const;
+        std::vector<std::unique_ptr<Action>> AllMoves(const Position& from) const;
         std::vector<const Skill*> FollowSkill(const Skill& previous, Skill::Trigger trigger) const;
 
         bool IsPossible(const Skill& skill) const;

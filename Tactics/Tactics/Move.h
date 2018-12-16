@@ -12,33 +12,12 @@ namespace Game
         public Action
     {
     public:
-        Move(const Actor& actor, Direction direction);
+        Move(const Actor& actor, const Position& destination, const Skill& skill);
         void Render(const State& state) const override;
         std::unique_ptr<GameState> Act(const IGame& game) const override;
         std::wstring Description() const override;
     protected:
-        Direction direction;
-    };
-
-    class North : public Move
-    {
-    public:
-        North(const Actor& actor);
-    };
-    class East : public Move
-    {
-    public:
-        East(const Actor& actor);
-    };
-    class South : public Move
-    {
-    public:
-        South(const Actor& actor);
-    };
-    class West : public Move
-    {
-    public:
-        West(const Actor& actor);
+        Position destination;
     };
 
 }   // ::Game

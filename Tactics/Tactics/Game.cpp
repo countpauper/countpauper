@@ -55,7 +55,7 @@ namespace Game
         std::vector<std::unique_ptr<Plan>> plans;
         for (auto skill : actor->GetSkills())
         {
-            if ((skill.skill->IsActive()) &&
+            if ((skill.skill->IsAttack()) &&
                 (actor->IsPossible(*skill.skill)))
             {
                 auto targets = FindTargets(*actor, *skill.skill);

@@ -8,6 +8,8 @@
 #include "Attack.h"
 #include "Affect.h"
 #include "Move.h"
+#include "Actor.h"
+#include "Target.h"
 
 namespace Game
 {
@@ -19,7 +21,7 @@ namespace Game
     {
     }
 
-    Action* Skill::CreateAction(const Actor& actor, const Actor& target) const
+    Action* Skill::CreateAction(const Actor& actor, const Target& target) const
     {
         if (type)
             return type->CreateAction(*this, actor, target);
@@ -35,19 +37,19 @@ namespace Game
             return chance.front();  // TODO skill level of actor 
     }
 
-    Action* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const
+    Action* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Target& target) const
     {
-        return new ::Game::Move(actor, Direction::North);
+        return new ::Game::Move(actor,target.GetPosition(), skill);
     }
 
-    Action* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const
+    Action* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Target& target) const
     {
-        return new Attack(actor, target, skill);
+        return new Attack(actor, dynamic_cast<const Actor&>(target), skill);
     }
 
-    Action* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const
+    Action* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Target& target) const
     {
-        return new ::Game::Affect(actor, target, skill);
+        return new ::Game::Affect(actor, dynamic_cast<const Actor&>(target), skill);
     }
 
     bool Skill::Follows(const Skill& previous) const

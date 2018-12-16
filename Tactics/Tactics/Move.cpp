@@ -8,23 +8,22 @@
 namespace Game
 {
 
-    Move::Move(const Actor& actor, Direction direction) :
-        Action(*actor.DefaultMove(), actor),
-        direction(direction)
+    Move::Move(const Actor& actor, const Position& destination, const Skill& skill) :
+        Action(skill, actor),
+        destination(destination)
     {
     }
 
     std::unique_ptr<GameState> Move::Act(const IGame& game) const
     {
-        auto cost = 2;  // TODO move skills
-        auto& actor = *game.ActiveActor();
         State state(game.Get(actor));
-        if (state.mp <= 2)
+        if (state.mp <= skill.mp)
         {
             return nullptr;
         }
-        state.mp -= cost;
-        auto newPosition = state.position + direction.Vector();
+        state.mp -= skill.mp;
+        auto newPosition = destination;
+        auto direction = Direction(newPosition - state.position);
         if ((game.CanBe(newPosition)) &&
             (game.CanGo(state.position, direction)))
         {
@@ -43,7 +42,7 @@ namespace Game
         glColor4ub(255, 255, 255, 255);
         glPushMatrix();
         glTranslatef(float(state.position.x) + 0.5f, 0.5f, float(state.position.y) + 0.5f);
-        auto v = direction.Vector();
+        auto v = destination - state.position;
         glBegin(GL_LINES);
         glVertex3f(0, 0, 0);
         glVertex3f(float(v.x), 0, float(v.y));
@@ -53,27 +52,7 @@ namespace Game
 
     std::wstring Move::Description() const
     {
-        return direction.Description();
-    }
-
-    North::North(const Actor& actor) :
-        Move(actor, Direction::Value::North)
-    {
-    }
-
-
-    East::East(const Actor& actor) :
-        Move(actor, Direction::Value::East)
-    {
-    }
-
-    South::South(const Actor& actor) :
-        Move(actor, Direction::Value::South)
-    {
-    }
-    West::West(const Actor& actor) :
-        Move(actor, Direction::Value::West)
-    {
+        return skill.name;
     }
 
 } // ::Game

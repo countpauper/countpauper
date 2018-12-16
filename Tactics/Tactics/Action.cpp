@@ -19,8 +19,9 @@ namespace Game
     {
     }
 
-    std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> Action::keymap = 
-    {
+    std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> Action::keymap =
+    {};
+    /*
         { VK_UP, [](const State&, const Game& game){ return new South(*game.ActiveActor()); } },
         { VK_RIGHT, [](const State&, const Game& game){ return new East(*game.ActiveActor()); } },
         { VK_DOWN, [](const State&, const Game&  game){ return new North(*game.ActiveActor()); } },
@@ -35,5 +36,5 @@ namespace Game
             return skill.CreateAction(actor, *targets.front());
         } },
     };
-
+    */
 } // ::Game

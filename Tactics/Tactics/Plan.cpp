@@ -230,12 +230,7 @@ namespace Game
     void Plan::Approach(const Actor& target, Game& game, const Skill& skill)
     {
         const auto& actor = *game.ActiveActor();
-        std::vector<std::function<Action*(void)>> actions({
-            [&actor](){ return new North(actor);  },
-            [&actor](){ return new East(actor);  },
-            [&actor](){ return new South(actor);  },
-            [&actor](){ return new West(actor);  },
-        });
+
         auto targetPosition = target.GetPosition();
         OpenTree open(targetPosition);
         ClosedList closed(targetPosition);
@@ -254,17 +249,16 @@ namespace Game
             }
             auto bestIt = closed.emplace(std::move(best));
             assert(bestIt.second);
-            for (const auto& actionFactory : actions)
+            auto& bestNode = **bestIt.first;
+            for (auto& action : actor.AllMoves(bestNode.state->ActorState().position))
             {
-                std::unique_ptr<Action> action(actionFactory());
-                auto& best = *bestIt.first;
-                auto result = action->Act(*best->state);
+                auto result = action->Act(*bestNode.state);
                 if (result)
                 {
                     bool alreadyClosed = closed.Contains(*result);
                     if (!alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                     {
-                        auto newNode = std::make_unique<Node>(*best, std::move(result), std::move(action));
+                        auto newNode = std::make_unique<Node>(bestNode, std::move(result), std::move(action));
                         auto newIt = open.emplace(std::move(newNode));
                         assert(newIt.second);
                     }
@@ -277,12 +271,6 @@ namespace Game
     void Plan::Goto(const Position& targetPosition, Game& game)
     {
         const auto& actor = *game.ActiveActor();
-        std::vector<std::function<Action*(void)>> actions({
-            [&actor](){ return new North(actor);  },
-            [&actor](){ return new East(actor);  },
-            [&actor](){ return new South(actor);  },
-            [&actor](){ return new West(actor);  },
-        });
         OpenTree open(targetPosition);
         ClosedList closed(targetPosition);
         open.emplace(std::make_unique<Node>(game));
@@ -297,17 +285,16 @@ namespace Game
             }
             auto bestIt = closed.emplace(std::move(best));
             assert(bestIt.second);
-            for (const auto& actionFactory : actions)
+            auto& bestNode = **bestIt.first;
+            for (auto& action : actor.AllMoves(bestNode.state->ActorState().position))
             {
-                std::unique_ptr<Action> action(actionFactory());
-                auto& best = *bestIt.first;
-                auto result = action->Act(*best->state);
+                auto result = action->Act(*bestNode.state);
                 if (result)
                 {
                     bool alreadyClosed = closed.Contains(*result);
                     if (!alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                     {
-                        auto newNode = std::make_unique<Node>(*best, std::move(result), std::move(action));
+                        auto newNode = std::make_unique<Node>(bestNode, std::move(result), std::move(action));
                         auto newIt = open.emplace(std::move(newNode));
                         assert(newIt.second);
                     }

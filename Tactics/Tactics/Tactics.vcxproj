@@ -133,6 +133,7 @@
     <ClInclude Include="Stats.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Tactics.h" />
+    <ClInclude Include="Target.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>

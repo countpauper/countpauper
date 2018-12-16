@@ -2,19 +2,19 @@
 #include <memory>
 #include <set>
 #include <vector>
-#include "Direction.h"
 #include "Item.h"
 
 namespace Game
 {
 class Action;
 class Actor;
+class Target;
 
 class Skill
 {
 public:
     Skill();
-    Action* CreateAction(const Actor& actor, const Actor& target) const;
+    Action* CreateAction(const Actor& actor, const Target& target) const;
     float GetChance(const Actor& actor) const;
 
     bool Follows(const Skill& previous) const;
@@ -45,26 +45,26 @@ public:
     {
     public:
         virtual ~Type() = default;
-        virtual Action* CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const = 0;
+        virtual Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target) const = 0;
 
     };
     class Move : public Type
     {
     public:
-        Action* CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const override;
+        Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target) const override;
     };
     class Melee : public Type
     {
     public:
         std::vector<unsigned> damage;
         Effects effects;
-        Action* CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const override;
+        Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target) const override;
     };
     class Affect : public Type
     {
     public:
         Effects effects;
-        Action* CreateAction(const Skill& skill, const Actor& actor, const Actor& target) const override;
+        Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target) const override;
     };
 
     std::shared_ptr<Type> type; // todo: unique ptr and copy/clone or move

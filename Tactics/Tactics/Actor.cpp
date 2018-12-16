@@ -6,6 +6,7 @@
 #include "Action.h"
 #include "Game.h"
 #include "Skills.h"
+#include "Engine/Coordinate.h"
 
 namespace Game
 {
@@ -190,15 +191,22 @@ namespace Game
         return nullptr;
     }
 
-    const Skill* Actor::DefaultMove() const
-    {
+    std::vector<std::unique_ptr<Action>> Actor::AllMoves(const Position& from) const
+    { 
+        std::vector<std::unique_ptr<Action>> result;
         for (auto& known : knowledge)
         {
             if ((known.skill->IsMove()) &&
                 (IsPossible(*known.skill)))
-                return known.skill;
+            {
+                // TODO: longer moves. perhaps whole map, let plan sort them out. perhaps skill's range
+                result.emplace_back(known.skill->CreateAction(*this, Destination(from + Position(0, -1))));
+                result.emplace_back(known.skill->CreateAction(*this, Destination(from + Position(0, 1))));
+                result.emplace_back(known.skill->CreateAction(*this, Destination(from + Position(-1, 0))));
+                result.emplace_back(known.skill->CreateAction(*this, Destination(from + Position(1, 0))));
+            }
         }
-        return nullptr;
+        return result;
     }
 
     bool Actor::IsPossible(const Skill& skill) const
