@@ -15,7 +15,7 @@ namespace Game
 {
     Skill::Skill() :
         mp(0),
-        range(1.0),
+        range(1),
         trigger(Trigger::None),
         weapon(::Game::Type::Weapon::Style::All)
     {
@@ -232,6 +232,11 @@ void Parse(Skill& o, const xmlNode* node)
         {
             auto mpStr = xmlText(prop->children);
             o.mp = Engine::from_string<unsigned>(mpStr);
+        }
+        else if (xmlTagCompare(prop, "range"))
+        {
+            auto rangeStr= xmlText(prop->children);
+            o.range = Engine::from_string<unsigned>(rangeStr);
         }
         else if (xmlTagCompare(prop, "trigger"))
         {

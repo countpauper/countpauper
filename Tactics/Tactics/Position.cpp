@@ -19,6 +19,17 @@ namespace Game
             std::abs(other.y - y);
     }
 
+    unsigned Position::ManSize() const
+    {
+        return std::abs(x) + std::abs(y);
+    }
+
+    float Position::Size() const
+    {
+        return std::sqrtf(Engine::sqr(float(x)) + Engine::sqr(float(y)));
+    }
+
+
     float Position::Distance(const Position& other) const
     {
         return std::sqrtf(Engine::sqr(float(other.x - x)) + Engine::sqr(float(other.y - y)));
@@ -36,6 +47,11 @@ namespace Game
         y -= delta.y;
         return *this;
     }
+    Position::operator bool() const
+    {
+        return x != 0 || y!= 0;
+    }
+
     Position operator+(const Position& a, const Position& b)
     {
         Position o(a);

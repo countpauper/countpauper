@@ -202,14 +202,23 @@ namespace Game
         std::vector<std::unique_ptr<Action>> result;
         for (auto& known : knowledge)
         {
-            if ((known.skill->IsMove()) &&
-                (IsPossible(*known.skill)))
+            auto& skill = *known.skill;
+            if ((skill.IsMove()) &&
+                (IsPossible(skill)))
             {
-                // TODO: longer moves. perhaps whole map, let plan sort them out. perhaps skill's range
-                result.emplace_back(known.skill->CreateAction(*this, Destination(from + Position(0, -1))));
-                result.emplace_back(known.skill->CreateAction(*this, Destination(from + Position(0, 1))));
-                result.emplace_back(known.skill->CreateAction(*this, Destination(from + Position(-1, 0))));
-                result.emplace_back(known.skill->CreateAction(*this, Destination(from + Position(1, 0))));
+                int range = skill.range;
+                for (int y = -range; y <= range; ++y)
+                {
+                    for (int x = -range; x <= range; ++x)
+                    { 
+                        Position vector(x, y);
+                        if (vector.ManSize() > skill.range)
+                            continue;
+                        if (!vector)
+                            continue;
+                        result.emplace_back(known.skill->CreateAction(*this, Destination(from + vector)));
+                    }
+                }
             }
         }
         return result;

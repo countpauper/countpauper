@@ -21,7 +21,7 @@ public:
 
     std::wstring name;
     unsigned mp;
-    float range;
+    unsigned range; // manhattan distance
 
     bool IsActive() const;
     bool IsAttack() const;

@@ -20,7 +20,6 @@ std::wstring Affect::Description() const
 
 std::unique_ptr<GameState> Affect::Act(const IGame& game) const
 {
-    auto& actor = *game.ActiveActor();
     State attacker = game.Get(actor);
     State victim(game.Get(target));
     if (!attacker.IsPossible(skill, victim))

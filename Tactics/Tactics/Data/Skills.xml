@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <skills>
-  <skill name="Walk" mp="2" trigger="Act">
+  <skill name="Walk" mp="2" range="1" trigger="Act">
     <move/>
   </skill>
   <skill name="Unarmed" mp="2" trigger="Act" category="melee">
