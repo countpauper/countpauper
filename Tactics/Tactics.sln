@@ -5,9 +5,13 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tactics", "Tactics\Tactics.vcxproj", "{FB3EC404-470D-4FA8-BEF9-066CB283548B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{9F6A1A77-8101-481C-B4FB-02AEE8E12790}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestEngine", "Test\Test.vcxproj", "{9F6A1A77-8101-481C-B4FB-02AEE8E12790}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{1174A98A-127A-4604-863F-B12C97B8547F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{20758639-52EE-4319-886A-9C8101649297}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestGame", "TestGame\TestGame.vcxproj", "{1BD5F7AD-86B6-460C-BB35-9FB024AAA074}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{1174A98A-127A-4604-863F-B12C97B8547F}.Debug|Win32.Build.0 = Debug|Win32
 		{1174A98A-127A-4604-863F-B12C97B8547F}.Release|Win32.ActiveCfg = Release|Win32
 		{1174A98A-127A-4604-863F-B12C97B8547F}.Release|Win32.Build.0 = Release|Win32
+		{20758639-52EE-4319-886A-9C8101649297}.Debug|Win32.ActiveCfg = Debug|Win32
+		{20758639-52EE-4319-886A-9C8101649297}.Debug|Win32.Build.0 = Debug|Win32
+		{20758639-52EE-4319-886A-9C8101649297}.Release|Win32.ActiveCfg = Release|Win32
+		{20758639-52EE-4319-886A-9C8101649297}.Release|Win32.Build.0 = Release|Win32
+		{1BD5F7AD-86B6-460C-BB35-9FB024AAA074}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1BD5F7AD-86B6-460C-BB35-9FB024AAA074}.Debug|Win32.Build.0 = Debug|Win32
+		{1BD5F7AD-86B6-460C-BB35-9FB024AAA074}.Release|Win32.ActiveCfg = Release|Win32
+		{1BD5F7AD-86B6-460C-BB35-9FB024AAA074}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

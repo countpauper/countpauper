@@ -2,7 +2,7 @@
 
 #include <map>
 #include <functional>
-#include "Direction.h"
+#include "Game/Direction.h"
 #include "State.h"
 
 namespace Game

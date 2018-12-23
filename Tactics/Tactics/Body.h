@@ -4,7 +4,7 @@
 #include <set>
 #include "Stats.h"
 #include "Damage.h"
-#include "Direction.h"
+#include "Game/Direction.h"
 #include "Score.h"
 
 namespace Game

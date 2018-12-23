@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <sstream>
 #include "Engine/Geometry.h"
-#include "Position.h"
+#include "Game/Position.h"
 
 namespace Game
 {

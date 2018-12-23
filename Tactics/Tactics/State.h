@@ -4,8 +4,8 @@
 #include <set>
 #include <memory>
 #include <vector>
-#include "Position.h"
-#include "Direction.h"
+#include "Game/Position.h"
+#include "Game/Direction.h"
 #include "Damage.h"
 #include "Body.h"
 #include "Stats.h"

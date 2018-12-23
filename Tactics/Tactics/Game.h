@@ -4,7 +4,7 @@
 #include <istream>
 #include <list>
 #include "Engine/Coordinate.h"
-#include "Direction.h"
+#include "Game/Direction.h"
 #include "Map.h"
 #include "IGame.h"
 #include "Item.h"

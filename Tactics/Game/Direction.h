@@ -10,6 +10,7 @@ namespace Game
     public:
         enum Value
         {
+            None = 0,
             North = 1,
             East = 2,
             South = 4,
@@ -21,8 +22,11 @@ namespace Game
         Position Vector() const;
         double Angle() const;
         std::wstring Description() const;
+        bool operator==(const Direction& other) const;
+        bool operator<(const Direction& other) const;
     protected:
         Value value;
+        static Value From(const Position& vector);
         static std::map<Value, Position> vector;
         static std::map<Value, float> angle;
         static std::map<Value, std::wstring> description;

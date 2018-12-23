@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Direction.h"
+#include "Game/Direction.h"
 #include "Engine/Geometry.h"
 
 namespace Game
@@ -14,26 +14,25 @@ namespace Game
     {
     }
 
-    Direction::Direction(const Position& desiredVector)
+    Direction::Value Direction::From(const Position& vector)
     {
-        if (desiredVector.x > 0)
-        {
-            if (desiredVector.x > desiredVector.y)
-                value = Value::East;
-            else if (desiredVector.x <= -desiredVector.y)
-                value = Value::North;
-            else
-                value = Value::South;
-        }
-        else 
-        {
-            if (desiredVector.y >= -desiredVector.x)
-                value = Value::South;
-            else if (-desiredVector.y >= -desiredVector.x)
-                value = Value::West;
-            else
-                value = Value::North;
-        }
+       auto x = vector.x;
+        auto y = vector.y;
+        if (x>y && x<=-y)
+            return Direction::North;
+        if (x >= y && x > -y)
+            return Direction::East;
+        if (x<y && x>= -y)
+            return Direction::South;
+        if (x <= y && x < -y)
+            return Direction::West;
+        assert(x==0 && y==0);
+        return Direction::None;
+    }
+
+    Direction::Direction(const Position& desiredVector) :
+        value(From(desiredVector))
+    {
     }
     
     Position Direction::Vector() const
@@ -50,6 +49,14 @@ namespace Game
         return description.at(value);
     }
 
+    bool Direction::operator==(const Direction& other) const
+    {
+        return value == other.value;
+    }
+    bool Direction::operator<(const Direction& other) const
+    {
+        return value < other.value;
+    }
     std::map<Direction::Value, Position> Direction::vector =
     {
         { Direction::Value::North, Position(0, -1) },

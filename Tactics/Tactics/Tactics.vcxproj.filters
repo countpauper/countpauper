@@ -39,9 +39,6 @@
     <ClInclude Include="Action.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Direction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="State.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -78,9 +75,6 @@
     <ClInclude Include="Score.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Position.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -107,16 +101,10 @@
     <ClCompile Include="Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Position.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Actor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Action.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Direction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="State.cpp">
