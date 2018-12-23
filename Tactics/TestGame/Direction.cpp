@@ -5,26 +5,32 @@
 
 BOOST_AUTO_TEST_SUITE(Direction);
 
+BOOST_AUTO_TEST_CASE(None)
+{
+    BOOST_CHECK(Game::Direction(Game::Direction::None).IsNone());
+}
+
 BOOST_AUTO_TEST_CASE(CardinalPositions)
 {
-    BOOST_CHECK(Game::Direction(Game::Position(0, 0)) == Game::Direction::None);
-    BOOST_CHECK(Game::Direction(Game::Position(0, -1)) == Game::Direction::North);
-    BOOST_CHECK(Game::Direction(Game::Position(0, 1)) == Game::Direction::South);
-    BOOST_CHECK(Game::Direction(Game::Position(-1,  0)) == Game::Direction::West);
-    BOOST_CHECK(Game::Direction(Game::Position( 1,  0)) == Game::Direction::East);
+    BOOST_CHECK_EQUAL(Game::Direction(Game::Position(0, 0)), Game::Direction::None);
+    BOOST_CHECK_EQUAL(Game::Direction(Game::Position(0, -1)), Game::Direction::North);
+    BOOST_CHECK_EQUAL(Game::Direction(Game::Position(0, 1)), Game::Direction::South);
+    BOOST_CHECK_EQUAL(Game::Direction(Game::Position(-1, 0)), Game::Direction::West);
+    BOOST_CHECK_EQUAL(Game::Direction(Game::Position(1, 0)), Game::Direction::East);
 }
 
 BOOST_AUTO_TEST_CASE(DiagonalPositions)
 {
-    BOOST_CHECK(Game::Direction(Game::Position(-1, -1)) == Game::Direction::West);
-    BOOST_CHECK(Game::Direction(Game::Position( 1, -1)) == Game::Direction::North);
-    BOOST_CHECK(Game::Direction(Game::Position( 1,  1)) == Game::Direction::East);
-    BOOST_CHECK(Game::Direction(Game::Position(-1,  1)) == Game::Direction::South);
+    BOOST_CHECK_EQUAL(Game::Direction(Game::Position(-1, -1)), Game::Direction::West);
+    BOOST_CHECK_EQUAL(Game::Direction(Game::Position(1, -1)), Game::Direction::North);
+    BOOST_CHECK_EQUAL(Game::Direction(Game::Position(1, 1)), Game::Direction::East);
+    BOOST_CHECK_EQUAL(Game::Direction(Game::Position(-1, 1)), Game::Direction::South);
 }
 
 BOOST_AUTO_TEST_CASE(EvenDivision)
 {
     // even division of each direction in a 5x5 map
+    // 4 directions x 6 places + 1 x none = 25 positions
     std::map<Game::Direction, unsigned> count =
     {
         { Game::Direction(Game::Direction::None), 0 },
@@ -49,5 +55,18 @@ BOOST_AUTO_TEST_CASE(EvenDivision)
     BOOST_CHECK(count[Game::Direction::West] == 6);
 }
 
-
+BOOST_AUTO_TEST_CASE(Vector)
+{
+    std::vector<Game::Direction> allDirections = {
+        Game::Direction::None,
+        Game::Direction::North,
+        Game::Direction::East,
+        Game::Direction::South,
+        Game::Direction::West,
+    };
+    for (auto dir : allDirections)
+    {
+        BOOST_CHECK_EQUAL(Game::Direction(dir.Vector()), dir);
+    }
+}
 BOOST_AUTO_TEST_SUITE_END()

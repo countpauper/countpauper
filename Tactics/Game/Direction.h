@@ -18,10 +18,11 @@ namespace Game
         };
         Direction();
         Direction(Value direction);
-        Direction(const Position& vector);
+        explicit Direction(const Position& vector);
         Position Vector() const;
         double Angle() const;
         std::wstring Description() const;
+        bool IsNone() const;    // operator bool leads to implicit conversion confusion with operator==
         bool operator==(const Direction& other) const;
         bool operator<(const Direction& other) const;
     protected:
@@ -32,6 +33,11 @@ namespace Game
         static std::map<Value, std::wstring> description;
     };
 
+    static inline std::ostream& operator<< (std::ostream& os, const Direction& dir)
+    {
+        os << dir.Description().c_str();
+        return os;
+    }
     enum class Plane
     {
         None = 0,

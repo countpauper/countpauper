@@ -55,6 +55,8 @@ namespace Game
 
     bool Map::CanGo(const Position& from, Direction direction) const
     {
+        if (direction.IsNone())
+            return false;   // going nowhere is not going 
         auto square = At(from);
         auto neighbour = MaybeAt(from + direction.Vector());
         if (!neighbour)

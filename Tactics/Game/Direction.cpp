@@ -49,6 +49,11 @@ namespace Game
         return description.at(value);
     }
 
+    bool Direction::IsNone() const
+    {
+        return value == Direction::None;
+    }
+
     bool Direction::operator==(const Direction& other) const
     {
         return value == other.value;
@@ -57,8 +62,10 @@ namespace Game
     {
         return value < other.value;
     }
+
     std::map<Direction::Value, Position> Direction::vector =
     {
+        { Direction::Value::None, Position(0, 0) },
         { Direction::Value::North, Position(0, -1) },
         { Direction::Value::East, Position(1, 0) },
         { Direction::Value::South, Position(0, 1) },
@@ -66,6 +73,7 @@ namespace Game
     };
     std::map<Direction::Value, float> Direction::angle =
     {
+        { Direction::Value::None, std::numeric_limits<float>::quiet_NaN() },
         { Direction::Value::North, float(Engine::PI) * 0.5f },
         { Direction::Value::East, 0.0f },
         { Direction::Value::South, float(Engine::PI) * -.5f },
@@ -73,6 +81,7 @@ namespace Game
     };
     std::map<Direction::Value, std::wstring> Direction::description =
     {
+        { Direction::Value::None, L"" },
         { Direction::Value::North, L"North" },
         { Direction::Value::East, L"East" },
         { Direction::Value::South, L"South" } ,
