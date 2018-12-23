@@ -23,6 +23,7 @@ public:
     unsigned mp;
     unsigned range; // manhattan distance
 
+    unsigned Id() const;
     bool IsActive() const;
     bool IsAttack() const;
     bool IsMove() const;

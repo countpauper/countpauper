@@ -196,9 +196,9 @@ BOOL Start()
             return FALSE;
         }
     }
+    panel = std::make_unique<Game::Panel>(*game, 64);
     game->Start();
 
-    panel = std::make_unique<Game::Panel>(*game, 64);
     return TRUE;
 }
 
@@ -267,18 +267,31 @@ Hit Select(int x, int y)
     glRenderMode(GL_SELECT);
     glInitNames();
 
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    auto panelHeight = panel->Height();
-    glViewport(0, panelHeight, width, height - panelHeight);
-    glEnable(GL_CULL_FACE);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    ZoomToScreenCoord(x,y);
+    int panelHeight = panel->Height();
+    if (y >= panelHeight)
+    {
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(0, panelHeight, width, height - panelHeight);
+        glEnable(GL_CULL_FACE);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        ZoomToScreenCoord(x, y);
 
-    camera.Render();
+        camera.Render();
+        game->Render();
+    }
+    else
+    {
+        glViewport(0, 0, width, panelHeight);
+        glDisable(GL_LIGHTING);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        ZoomToScreenCoord(x, y);
+        panel->Render();
 
-    game->Render();
+    }
+
     GLint hits = glRenderMode(GL_RENDER);
     GLuint bestType = 0;
     GLuint bestObject = 0;
@@ -335,7 +348,10 @@ void Render()
     glDisable(GL_LIGHTING);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0,width, 0, panelHeight, 0, 1);
+    if (input.drag)
+    {
+        ZoomToScreenCoord(input.x, input.y);
+    }
     panel->Render();
 }
 

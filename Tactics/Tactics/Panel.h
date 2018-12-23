@@ -35,5 +35,6 @@ namespace Game
         std::vector<Button> buttons;
         unsigned height;
         Actor* actor;
+        boost::signals2::scoped_connection actorConnection;
     };
 }

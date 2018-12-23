@@ -31,7 +31,6 @@ namespace Game
     }
     void Button::Render() const
     {
-//        texture.Load(std::string("Data/Sword.png"));
         texture.Bind();
         if (highlighted)
             glColor3f(1.0f, 1.0f, 1.0f);
@@ -56,7 +55,11 @@ namespace Game
     Panel::Panel(Game& game, unsigned height) :
         game(game),
         height(height),
-        actor(nullptr)
+        actor(nullptr),
+        actorConnection(game.actorActivated.connect([this](Actor* actor)
+        {
+            Initialize(actor);
+        }))
     {
     }
 
@@ -67,18 +70,24 @@ namespace Game
 
     void Panel::Render() const
     {
+        GLint viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+        glOrtho(0, viewport[2], 0, viewport[3], 0, 1);
+
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glScalef(float(height), float(height), 1.0f);
 
         Actor* activeActor = game.ActiveActor();
-        if (actor != activeActor)
-            const_cast<Panel*>(this)->Initialize(activeActor);    // TODO: get change from game
+        glPushName(GLuint(Game::Selection::Skill));
         for (auto& button : buttons)
         {
+            glPushName(GLuint(button.skill.Id()));
             button.Render();
+            glPopName();
             glTranslatef(1.0f, 0.0f, 0.0f);
         }
+        glPopName();
         Engine::CheckGLError();
     }
 
@@ -104,9 +113,15 @@ namespace Game
         {
             for (auto skill : actor->GetSkills())
             {
-                buttons.emplace_back(Button(*skill.skill));
+                if (skill.skill->IsActive())
+                {
+                    buttons.emplace_back(Button(*skill.skill));
+                }
+                if (skill.skill == actor->DefaultAttack())
+                {
+                    buttons.back().Highlight();
+                }
             }
-            buttons.front().Highlight();
         }
     }
 };

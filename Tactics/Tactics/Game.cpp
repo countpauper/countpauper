@@ -10,7 +10,6 @@
 
 namespace Game
 {
-
     Game::Game() :
         skills("Data/Skills.xml"),
         armors(Type::Armor::Load(std::wifstream(L"Data/Armor.csv"))),
@@ -77,6 +76,7 @@ namespace Game
         turn = objects.begin();
         if (turn == objects.end())
             return;
+        actorActivated(dynamic_cast<Actor*>(turn->get()));
         (*turn)->Turn();
         FocusActor();
     }
@@ -88,6 +88,7 @@ namespace Game
         turn++;
         if (turn == objects.end())
             turn = objects.begin();
+        actorActivated(dynamic_cast<Actor*>(turn->get()));
         (*turn)->Turn();
         FocusActor();
     }
@@ -320,6 +321,11 @@ namespace Game
                     plan.reset(new AttackPlan(playerActor, *target, *this, *skill));
                 }
             }
+        }
+        else if (selection == Selection::Skill)
+        {
+            auto* skill = (Skill*)value;
+            OutputDebugStringW(skill->name.c_str());
         }
     }
 

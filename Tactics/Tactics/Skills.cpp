@@ -92,6 +92,11 @@ namespace Game
         return false;
     }
 
+    unsigned Skill::Id() const
+    {
+        return unsigned(this);
+    }
+
     bool Skill::IsActive() const
     {
         return (trigger == Trigger::Act);

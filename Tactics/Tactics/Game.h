@@ -3,6 +3,7 @@
 #include <memory>
 #include <istream>
 #include <list>
+#include <boost/signals2.hpp>
 #include "Engine/Coordinate.h"
 #include "Game/Direction.h"
 #include "Map.h"
@@ -26,7 +27,8 @@ namespace Game
         {
             None = 0,
             Map,
-            Object
+            Object,
+            Skill
         };
         Game();
         virtual ~Game();
@@ -47,6 +49,7 @@ namespace Game
         std::vector<Actor*> FindTargets(const State& from, const Skill& skill) const;
         std::vector<Actor*> FindTargetsInRange(const State& from, const Skill& skill) const;
         Actor* ActiveActor() const override;
+        boost::signals2::signal<void(Actor*)> actorActivated;
         void MakePlan(Actor& actor, const Skill& skill);
 
         const Type::Armor& FindArmor(const std::wstring& name) const;
