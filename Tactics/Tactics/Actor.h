@@ -23,6 +23,7 @@ namespace Game
         virtual ~Object() = default;
         virtual void Turn() = 0;
         virtual void Render() const = 0;
+        unsigned Id() const;
         void Move(int dx, int dy);
         Position GetPosition() const override;
         std::wstring Description() const override;

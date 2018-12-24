@@ -11,6 +11,7 @@
 #include "Engine/Camera.h"
 #include "game.h"
 #include "Panel.h"
+#include "TurnList.h"
 
 
 #define MAX_LOADSTRING 100
@@ -27,7 +28,8 @@ int height = 0;
 std::wstring mapName(L"Game.map");
 std::unique_ptr<Game::Game> game;
 std::unique_ptr<Game::Panel> panel;
-Engine::Light light; 
+std::unique_ptr<Game::TurnList> list;
+Engine::Light light;
 Engine::TopCamera camera;
 
 bool ParseCommandline(const std::wstring& cmdLine)
@@ -197,6 +199,7 @@ BOOL Start()
         }
     }
     panel = std::make_unique<Game::Panel>(*game, 64);
+    list = std::make_unique<Game::TurnList>(*game, 128);
     game->Start();
 
     return TRUE;
@@ -270,16 +273,28 @@ Hit Select(int x, int y)
     int panelHeight = panel->Height();
     if (y <= height - panelHeight)
     {
-        glClearColor(0, 0, 0, 0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, panelHeight, width, height - panelHeight);
-        glEnable(GL_CULL_FACE);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        ZoomToScreenCoord(x, y);
+        if (x > int(list->Width()))
+        {
+            glViewport(width - list->Width(), panelHeight, list->Width(), height - panelHeight);
+            glDisable(GL_LIGHTING);
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            ZoomToScreenCoord(x, y);
+            list->Render();
+        }
+        else
+        {
+            glClearColor(0, 0, 0, 0);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glViewport(0, panelHeight, width, height - panelHeight);
+            glEnable(GL_CULL_FACE);
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            ZoomToScreenCoord(x, y);
 
-        camera.Render();
-        game->Render();
+            camera.Render();
+            game->Render();
+        }
     }
     else
     {
@@ -289,7 +304,6 @@ Hit Select(int x, int y)
         glLoadIdentity();
         ZoomToScreenCoord(x, y);
         panel->Render();
-
     }
 
     GLint hits = glRenderMode(GL_RENDER);
@@ -334,6 +348,7 @@ void Render()
     //glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
     light.Render();
 
+    // Render game
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     if (input.drag)
@@ -344,8 +359,9 @@ void Render()
     camera.Render();
     game->Render();
    
+
+    // render panel 
     glViewport(0, 0, width, panelHeight);
-    glDisable(GL_LIGHTING);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     if (input.drag)
@@ -353,6 +369,16 @@ void Render()
         ZoomToScreenCoord(input.x, input.y);
     }
     panel->Render();
+    // Render turn list
+    glViewport(width - list->Width(), panelHeight, list->Width(), height - panelHeight);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    if (input.drag)
+    {
+        ZoomToScreenCoord(input.x, input.y);
+    }
+    list->Render();
+
 }
 
 //
@@ -455,6 +481,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
     case WM_KEYDOWN:
         panel->Key(wParam);
+        list->Key(wParam);
+        game->Key(wParam);
         InvalidateRect(hWnd, nullptr, TRUE);
         break;
     case WM_CLOSE:

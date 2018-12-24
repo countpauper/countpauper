@@ -141,6 +141,11 @@ namespace Game
         return result;
     }
 
+    const Game::Objects& Game::GetObjects() const
+    {
+        return objects;
+    }
+
     std::vector<Actor*> Game::FindTargetsInRange(const State& from, const Skill& skill) const
     {
         auto targets = FindTargets(from, skill);
@@ -197,7 +202,7 @@ namespace Game
 
             glTranslatef(float(position.x)+0.5f, square.Z(), float(position.y)+0.5f);
             static_assert(sizeof(GLuint) == sizeof(Object*), "Failed to push pointer as name");
-            glPushName(GLuint(object.get()));
+            glPushName(GLuint(object->Id()));
             object->Render();
             glPopName();
             glPopMatrix();

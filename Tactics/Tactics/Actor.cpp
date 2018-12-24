@@ -20,6 +20,12 @@ namespace Game
         position.y = std::min(std::max(0, static_cast<int>(position.y) + dy), 5);
     }
 
+    unsigned Object::Id() const
+    {
+        return unsigned(this);
+    }
+
+
     Position Object::GetPosition() const
     {
         return position;

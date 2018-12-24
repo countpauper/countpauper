@@ -133,6 +133,7 @@
     <ClInclude Include="Tactics.h" />
     <ClInclude Include="Target.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TurnList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
@@ -156,6 +157,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Tactics.cpp" />
+    <ClCompile Include="TurnList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tactics.rc" />

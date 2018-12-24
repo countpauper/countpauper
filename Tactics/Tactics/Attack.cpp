@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <gl/GL.h>
+#include "Engine/Text.h"
 #include "Attack.h"
 #include "Game.h"
 #include "Actor.h"
@@ -44,12 +45,8 @@ void Attack::Render(const State& state) const
     glVertex3f(0, 0, 0);
     glVertex3f(float(v.x), 0, float(v.y));
     glEnd();
-
-    glRasterPos3i(0, 0, 1); // set start position
-    glListBase(1000);
-    std::string text(skill.name.begin(), skill.name.end());
-    glCallLists(text.size(), GL_UNSIGNED_BYTE, text.c_str());
-
+    Engine::Font::system.Select();
+    Engine::glText(skill.name);
     glPopMatrix();
 }
 

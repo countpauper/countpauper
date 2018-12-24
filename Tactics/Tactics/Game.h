@@ -48,7 +48,10 @@ namespace Game
         void Click(Selection selection, unsigned value);
         std::vector<Actor*> FindTargets(const State& from, const Skill& skill) const;
         std::vector<Actor*> FindTargetsInRange(const State& from, const Skill& skill) const;
-        
+        typedef std::list<std::unique_ptr<Object>> Objects;
+        const Objects& GetObjects() const;
+
+
         Actor* ActiveActor() const override;
         boost::signals2::signal<void(Actor*)> actorActivated;
         const Skill* SelectedSkill() const;
@@ -77,7 +80,6 @@ namespace Game
         
         // State
         Map map;
-        typedef std::list<std::unique_ptr<Object>> Objects;
         Objects objects;
 
         // Plan

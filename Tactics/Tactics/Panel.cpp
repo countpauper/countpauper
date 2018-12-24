@@ -31,6 +31,8 @@ namespace Game
     }
     void Button::Render() const
     {
+        glPushName(GLuint(skill.Id()));
+
         texture.Bind();
         if (highlighted)
             glColor3f(1.0f, 1.0f, 1.0f);
@@ -50,6 +52,7 @@ namespace Game
             glVertex2f(0.0f, 1.0f);
         glEnd();
         texture.Unbind();
+        glPopName();
     }
 
     Panel::Panel(Game& game, unsigned height) :
@@ -74,21 +77,19 @@ namespace Game
 
     void Panel::Render() const
     {
+        glDisable(GL_LIGHTING);
         glMatrixMode(GL_PROJECTION);
         GLint viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
-        glOrtho(0, viewport[2], 0, viewport[3], 0, 1);
+        glOrtho(0, viewport[2], 0, viewport[3], -1, 1);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glScalef(float(height), float(height), 1.0f);
 
-        Actor* activeActor = game.ActiveActor();
         glPushName(GLuint(Game::Selection::Skill));
         for (auto& button : buttons)
         {
-            glPushName(GLuint(button.skill.Id()));
             button.Render();
-            glPopName();
             glTranslatef(1.0f, 0.0f, 0.0f);
         }
         glPopName();
@@ -105,8 +106,6 @@ namespace Game
                 game.SelectSkill(&buttons.at(button).skill);
             }
         }
-        else
-            game.Key(code);
     }
 
     void Panel::UpdateSkills(Actor* newActor)
