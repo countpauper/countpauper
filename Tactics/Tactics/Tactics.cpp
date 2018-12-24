@@ -270,10 +270,11 @@ Hit Select(int x, int y)
     glRenderMode(GL_SELECT);
     glInitNames();
 
+    // TODO: organize panels automatically in a list/tree, click in main "window", split render setup from render (draw)
     int panelHeight = panel->Height();
     if (y <= height - panelHeight)
     {
-        if (x > int(list->Width()))
+        if (x > width - int(list->Width()))
         {
             glViewport(width - list->Width(), panelHeight, list->Width(), height - panelHeight);
             glDisable(GL_LIGHTING);

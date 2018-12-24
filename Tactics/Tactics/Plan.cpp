@@ -183,7 +183,10 @@ namespace Game
 
     GameChances Plan::AllOutcomes() const
     {
-        return m_root->AllOutcomes();
+        if (m_root)
+            return m_root->AllOutcomes();
+        else
+            return GameChances();
     }
 
     std::vector<Action*> Plan::ActionSequence(GameState& end) const

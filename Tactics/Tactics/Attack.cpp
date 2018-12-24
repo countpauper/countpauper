@@ -46,7 +46,7 @@ void Attack::Render(const State& state) const
     glVertex3f(float(v.x), 0, float(v.y));
     glEnd();
     Engine::Font::system.Select();
-    Engine::glText(skill.name);
+    Engine::glText(skill.name + L"@" + target.Description());
     glPopMatrix();
 }
 

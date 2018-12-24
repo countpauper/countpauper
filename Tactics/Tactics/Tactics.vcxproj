@@ -108,9 +108,6 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="Game.map" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Affect.h" />
@@ -167,14 +164,16 @@
     <Image Include="Tactics.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="1on1.map" />
+    <None Include="Data\1on1.map" />
     <None Include="Data\Armor.csv" />
     <None Include="Data\ArmorBonus.csv" />
     <None Include="Data\ArmorMaterial.csv" />
+    <None Include="Data\Flat.map" />
+    <None Include="Data\Game.map" />
+    <None Include="Data\Melee.map" />
     <None Include="Data\Weapon.csv" />
     <None Include="Data\WeaponBonus.csv" />
     <None Include="Data\WeaponMaterial.csv" />
-    <None Include="Flat.map" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Data\Skills.xml" />

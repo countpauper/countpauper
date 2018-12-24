@@ -94,6 +94,7 @@ namespace Game
 
     unsigned Skill::Id() const
     {
+        static_assert(sizeof(unsigned) == sizeof(this), "Failed to use skill pointer as id");
         return unsigned(this);
     }
 

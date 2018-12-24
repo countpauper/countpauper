@@ -22,7 +22,13 @@ namespace Game
 
     unsigned Object::Id() const
     {
+        static_assert(sizeof(unsigned) == sizeof(this), "Failed to use object pointer as id");
         return unsigned(this);
+    }
+
+    bool Object::Prone() const
+    {
+        return true;
     }
 
 
@@ -144,6 +150,11 @@ namespace Game
     bool Actor::Dead() const
     {
         return body.Dead();
+    }
+
+    bool Actor::Prone() const
+    {
+        return Dead();
     }
     
     bool Actor::CanAct() const

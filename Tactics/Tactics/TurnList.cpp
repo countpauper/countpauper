@@ -9,6 +9,14 @@
 namespace Game
 {
 
+    std::vector<Engine::RGBA> TurnList::Item::teamColor =
+    {
+        Engine::RGBA(100, 255, 100, 255),
+        Engine::RGBA(255, 100, 100, 255),
+        Engine::RGBA(100, 100, 255, 255),
+        Engine::RGBA(200, 200, 100, 255)
+    };
+
     TurnList::Item::Item(const Actor& actor) :
         highlighted(false),
         actor(actor)
@@ -39,9 +47,15 @@ namespace Game
             glVertex2f(0.0f, 0.0f);
             glVertex2f(100.0f, 0.0f);
         glEnd();
-        glColor3f(1, 1, 1);
+
+        teamColor.at(actor.GetTeam()).Render();
         Engine::Font::system.Select();
-        Engine::glText(actor.Description());
+        auto text = actor.Description();
+        if (actor.Dead())
+            text += L"+";
+        else if (!actor.CanAct())
+            text += L"-";
+        Engine::glText(text);
         glPopName();
     }
 
@@ -95,6 +109,7 @@ namespace Game
             {
                 items.emplace_back(Item(*actor));
             }
+            items.back().Highlight(actor == game.ActiveActor());
         }
     }
 

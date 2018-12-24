@@ -201,8 +201,7 @@ namespace Game
             auto square = map.At(position);
 
             glTranslatef(float(position.x)+0.5f, square.Z(), float(position.y)+0.5f);
-            static_assert(sizeof(GLuint) == sizeof(Object*), "Failed to push pointer as name");
-            glPushName(GLuint(object->Id()));
+            glPushName(object->Id());
             object->Render();
             glPopName();
             glPopMatrix();
@@ -247,7 +246,7 @@ namespace Game
         if (!map.CanBe(position))
             return false;
         for (const auto& object : objects)
-            if (object->GetPosition() == position)
+            if ((object->GetPosition() == position) && (!object->Prone()))
                 return false;
         return true;
     }

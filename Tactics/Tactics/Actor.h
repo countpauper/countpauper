@@ -24,6 +24,7 @@ namespace Game
         virtual void Turn() = 0;
         virtual void Render() const = 0;
         unsigned Id() const;
+        virtual bool Prone() const;
         void Move(int dx, int dy);
         Position GetPosition() const override;
         std::wstring Description() const override;
@@ -44,6 +45,7 @@ namespace Game
         unsigned GetTeam() const;
         bool CanAct() const;
         bool Dead() const;
+        bool Prone() const override;
         struct Know
         {
             Know() : skill(nullptr), score(0) {}

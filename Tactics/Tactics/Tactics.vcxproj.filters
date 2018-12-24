@@ -18,9 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Game.map" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -164,7 +161,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="1on1.map" />
     <None Include="Data\Armor.csv">
       <Filter>Data</Filter>
     </None>
@@ -183,7 +179,18 @@
     <None Include="Data\WeaponMaterial.csv">
       <Filter>Data</Filter>
     </None>
-    <None Include="Flat.map" />
+    <None Include="Data\1on1.map">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Data\Flat.map">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Data\Game.map">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="Data\Melee.map">
+      <Filter>Data</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Data\Skills.xml">

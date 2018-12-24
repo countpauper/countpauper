@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "Engine/Color.h"
 
 namespace Game
 {
@@ -21,6 +22,7 @@ namespace Game
             const Actor& actor;
         private:
             bool highlighted;
+            static std::vector<Engine::RGBA> teamColor;
         };
 
         TurnList(Game& game, unsigned width);
