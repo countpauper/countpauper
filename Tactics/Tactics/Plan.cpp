@@ -228,19 +228,22 @@ namespace Game
         OutputDebugStringW((Description() + L" fizzle \r\n").c_str());
     }
 
-    bool Plan::PlanAction(Node& parent, const Skill& skill, const Actor& actor, const Actor& target)
+    bool Plan::PlanAction(Node& parent, const Skill& skill, const Actor& actor, const Target& target)
     {
         std::unique_ptr<Action> action(skill.CreateAction(actor, target));
         auto result = action->Act(*parent.state);
         if (!result)
             return false;
 
-        auto defences = target.FollowSkill(skill, Skill::Trigger::Defend);
-        for (auto defence : defences)
+        auto targetActor = dynamic_cast<const Actor*>(&target);
+        if (targetActor)
         {
-            PlanAction(parent, *defence, target, actor);
+            auto defences = targetActor->FollowSkill(skill, Skill::Trigger::Defend);
+            for (auto defence : defences)
+            {
+                PlanAction(parent, *defence, *targetActor, actor);
+            }
         }
-
         auto node = std::make_unique<Node>(parent, std::move(result), std::move(action));
         const auto& actorState = node->state->Get(actor);
         node->chance = double(actorState.DefendChance(skill).Value()) / 100.0;
@@ -254,7 +257,7 @@ namespace Game
         return true;
     }
 
-    void Plan::Approach(const Actor& target, Game& game, const Skill& skill)
+    void Plan::Approach(const Target& target, Game& game, const Skill& skill)
     {
         const auto& actor = *game.ActiveActor();
 
@@ -340,10 +343,10 @@ namespace Game
 
     std::wstring PathPlan::Description() const
     {
-        return actor.name + L": " + std::wstring(L"Move to ") + target.Description();
+        return actor.Description() + L": " + std::wstring(L"Move to ") + target.Description();
     }
 
-    AttackPlan::AttackPlan(Actor& actor, Actor& target, Game& game, const Skill& skill) :
+    AttackPlan::AttackPlan(Actor& actor, Target& target, Game& game, const Skill& skill) :
         Plan(actor),
         skill(skill),
         target(target)
@@ -353,7 +356,7 @@ namespace Game
 
     std::wstring AttackPlan::Description() const
     {
-        return actor.name + L": " + skill.name + L" @ " + target.name;
+        return actor.Description() + L": " + skill.name + L" @ " + target.Description();
     }
 
     ManualPlan::ManualPlan(Actor& actor) :
@@ -364,10 +367,10 @@ namespace Game
     std::wstring ManualPlan::Description() const
     {
         if (!m_root)
-            return actor.name + L": idle";
+            return actor.Description() + L": idle";
         else
         {
-            std::wstring result(actor.name + L": ");
+            std::wstring result(actor.Description() + L": ");
             auto node = m_root.get();
             result += node->action->Description();
             while (!node->children.empty())

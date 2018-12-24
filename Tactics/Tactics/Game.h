@@ -48,9 +48,12 @@ namespace Game
         void Click(Selection selection, unsigned value);
         std::vector<Actor*> FindTargets(const State& from, const Skill& skill) const;
         std::vector<Actor*> FindTargetsInRange(const State& from, const Skill& skill) const;
+        
         Actor* ActiveActor() const override;
         boost::signals2::signal<void(Actor*)> actorActivated;
-        void MakePlan(Actor& actor, const Skill& skill);
+        const Skill* SelectedSkill() const;
+        void SelectSkill(const Skill* skill);
+        boost::signals2::signal<void(const Skill*)> skillSelected;
 
         const Type::Armor& FindArmor(const std::wstring& name) const;
         const Type::Armor::Material&  FindArmorMaterial(const std::wstring& name, const Type::Armor& armor) const;
@@ -64,17 +67,26 @@ namespace Game
     protected:
         void AI(Actor* actor);
         void Next();
-        void FocusActor();
+        void Activate(Object& object);
+        void Focus(Object& object);
+        void SelectPlan();
         std::wstring Description() const override;
         void TestDumpAllItems(std::wostream& out) const;
 
         friend std::wistream& operator>>(std::wistream& s, Game& game);
+        
+        // State
         Map map;
         typedef std::list<std::unique_ptr<Object>> Objects;
         Objects objects;
+
+        // Plan
         Objects::iterator turn;
+        const Skill* selectedSkill;
+        Target* selectedTarget;
         std::unique_ptr<Plan> plan;
 
+        // Definitiion
         std::vector<Type::Armor> armors;
         std::vector<Type::Armor::Material> armorMaterials;
         std::vector<Type::Armor::Bonus> armorBoni;

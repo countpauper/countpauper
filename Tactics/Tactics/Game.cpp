@@ -12,6 +12,8 @@ namespace Game
 {
     Game::Game() :
         skills("Data/Skills.xml"),
+        selectedSkill(nullptr),
+        selectedTarget(nullptr),
         armors(Type::Armor::Load(std::wifstream(L"Data/Armor.csv"))),
         armorMaterials(Type::Armor::Material::Load(std::wifstream(L"Data/ArmorMaterial.csv"))),
         armorBoni(Type::Armor::Bonus::Load(std::wifstream(L"Data/ArmorBonus.csv"))),
@@ -76,9 +78,24 @@ namespace Game
         turn = objects.begin();
         if (turn == objects.end())
             return;
-        actorActivated(dynamic_cast<Actor*>(turn->get()));
-        (*turn)->Turn();
-        FocusActor();
+        Activate(**turn);
+    }
+
+    void Game::Activate(Object& object)
+    {
+        Actor* actor = dynamic_cast<Actor*>(&object);
+        if (actor)
+        {
+            Focus(*actor);
+            actorActivated(actor);
+            SelectSkill(actor->DefaultAttack());
+        }
+        else
+        {
+            actorActivated(nullptr);
+            SelectSkill(nullptr);
+        }
+        object.Turn();
     }
 
     void Game::Next()
@@ -88,20 +105,23 @@ namespace Game
         turn++;
         if (turn == objects.end())
             turn = objects.begin();
-        actorActivated(dynamic_cast<Actor*>(turn->get()));
-        (*turn)->Turn();
-        FocusActor();
+        Activate(**turn);
     }
 
-    void Game::FocusActor()
+    void Game::Focus(Object& object)
     {
-        focus = map.Coordinate(turn->get()->GetPosition());
+        focus = map.Coordinate(object.GetPosition());
     }
     Actor* Game::ActiveActor() const
     {
         if (turn == objects.end())
             return nullptr;
         return dynamic_cast<Actor*>(turn->get());
+    }
+
+    const Skill* Game::SelectedSkill() const
+    {
+        return selectedSkill;
     }
 
     std::vector<Actor*> Game::FindTargets(const State& from, const Skill& skill) const
@@ -132,15 +152,33 @@ namespace Game
         return targets;
     }
 
-    void Game::MakePlan(Actor& actor, const Skill& skill)
+    void Game::SelectSkill(const Skill* skill)
     {
-        auto targets = FindTargets(actor, skill);
-        if (targets.size()) 
-            plan.reset(new AttackPlan(actor, *targets.front(), *this, skill));
-        // TODO: make plan for each target and select the best (shortest?)
-        // TODO: append to current plan 
+        if (skill == selectedSkill)
+            return;
+        selectedSkill = skill;
+        skillSelected(selectedSkill);
+        SelectPlan();
     }
 
+    void Game::SelectPlan()
+    {
+        if (selectedSkill && selectedTarget)
+        {
+            if (selectedSkill->IsAttack())
+            {
+                plan = std::make_unique<AttackPlan>(*ActiveActor(), *selectedTarget, *this, *selectedSkill);
+            }
+            else if (selectedSkill->IsMove())
+            {
+                plan = std::make_unique<PathPlan>(*ActiveActor(), selectedTarget->GetPosition(), *this);
+            }
+        }
+        else
+        {
+            plan.reset();
+        }
+    }
     void Game::Render() const
     {
         glMatrixMode(GL_MODELVIEW);
@@ -174,7 +212,7 @@ namespace Game
         if (code == VK_ESCAPE)
         {
             plan.reset();
-            FocusActor();
+            Focus(*ActiveActor());
             return;
         }
         auto& playerActor = *ActiveActor();
@@ -293,7 +331,7 @@ namespace Game
         game.turn = game.objects.begin();
 
         s >> game.map;
-        game.FocusActor();
+        game.Focus(*game.ActiveActor());
         return s;
     }
 
@@ -307,25 +345,13 @@ namespace Game
         }
         else if (selection == Selection::Object)
         {
-            auto currentPlan = dynamic_cast<AttackPlan*>(plan.get());
-            const Skill* skill = nullptr;
-            if (currentPlan)
-                skill = &currentPlan->skill;
-            else
-                skill = playerActor.DefaultAttack();
-            if (skill)
-            {
-                auto object = (Object*)value;
-                if (auto target = dynamic_cast<Actor*>(object))
-                {
-                    plan.reset(new AttackPlan(playerActor, *target, *this, *skill));
-                }
-            }
+            auto object = (Object*)value;
+            selectedTarget = dynamic_cast<Actor*>(object);
+            SelectPlan();
         }
         else if (selection == Selection::Skill)
         {
-            auto* skill = (Skill*)value;
-            OutputDebugStringW(skill->name.c_str());
+            SelectSkill((Skill*)value);
         }
     }
 

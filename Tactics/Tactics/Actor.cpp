@@ -24,6 +24,11 @@ namespace Game
     {
         return position;
     }
+    std::wstring Object::Description() const
+    {
+        return name;
+    }
+
 
     Actor::Actor() :
         mp(0),

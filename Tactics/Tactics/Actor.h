@@ -25,10 +25,11 @@ namespace Game
         virtual void Render() const = 0;
         void Move(int dx, int dy);
         Position GetPosition() const override;
-        std::wstring name;
+        std::wstring Description() const override;
         Body body;    // TODO: different body parts for different objects/creatures
     protected:
         Position position;
+        std::wstring name;
     };
     class Actor : public Object
     {

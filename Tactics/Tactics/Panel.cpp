@@ -25,9 +25,9 @@ namespace Game
 
     }
 
-    void Button::Highlight()
+    void Button::Highlight(bool on)
     {
-        highlighted = true;
+        highlighted = on;
     }
     void Button::Render() const
     {
@@ -37,16 +37,16 @@ namespace Game
         else
             glColor3f(0.1f, 0.1f, 0.1f);
         glBegin(GL_QUADS);
-            glTexCoord2f(0.0f, 0.0f);
+            glTexCoord2f(0.0f, 1.0f);
             glVertex2f(0.0f, 0.0f);
 
-            glTexCoord2f(1.0f, 0.0f);
+            glTexCoord2f(1.0f, 1.0f);
             glVertex2f(1.0f, 0.0f);
 
-            glTexCoord2f(1.0f, 1.0f);
+            glTexCoord2f(1.0f, 0.0f);
             glVertex2f(1.0f, 1.0f);
 
-            glTexCoord2f(0.0f, 1.0f);
+            glTexCoord2f(0.0f, 0.0f);
             glVertex2f(0.0f, 1.0f);
         glEnd();
         texture.Unbind();
@@ -58,7 +58,11 @@ namespace Game
         actor(nullptr),
         actorConnection(game.actorActivated.connect([this](Actor* actor)
         {
-            Initialize(actor);
+            UpdateSkills(actor);
+        })),
+        skillConnection(game.skillSelected.connect([this](const Skill* skill)
+        {
+            HighlightSkill(skill);
         }))
     {
     }
@@ -70,10 +74,10 @@ namespace Game
 
     void Panel::Render() const
     {
+        glMatrixMode(GL_PROJECTION);
         GLint viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
         glOrtho(0, viewport[2], 0, viewport[3], 0, 1);
-
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glScalef(float(height), float(height), 1.0f);
@@ -98,14 +102,14 @@ namespace Game
             unsigned button = code - VK_F1;
             if ((actor) && (button < buttons.size()))
             {
-                game.MakePlan(*actor, buttons.at(button).skill);
+                game.SelectSkill(&buttons.at(button).skill);
             }
         }
         else
             game.Key(code);
     }
 
-    void Panel::Initialize(Actor* newActor)
+    void Panel::UpdateSkills(Actor* newActor)
     {
         actor = newActor;
         buttons.clear();
@@ -117,10 +121,25 @@ namespace Game
                 {
                     buttons.emplace_back(Button(*skill.skill));
                 }
-                if (skill.skill == actor->DefaultAttack())
+                if (skill.skill == game.SelectedSkill())
                 {
-                    buttons.back().Highlight();
+                    buttons.back().Highlight(true);
                 }
+            }
+        }
+    }
+
+    void Panel::HighlightSkill(const Skill* skill)
+    {
+        for (auto& button : buttons)
+        {
+            if (&button.skill == skill)
+            {
+                button.Highlight(true);
+            }
+            else
+            {
+                button.Highlight(false);
             }
         }
     }

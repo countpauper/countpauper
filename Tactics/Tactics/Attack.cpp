@@ -27,7 +27,7 @@ std::unique_ptr<GameState> Attack::Act(const IGame& game) const
     auto ret = std::make_unique<GameState>(game);
     auto damage = attacker.AttackDamage(skill) - victim.Mitigation();
     attacker.mp -= skill.mp;
-    victim.body.Hurt(AttackVector({ Plane::All, 0 }), damage.Wound(actor.name));
+    victim.body.Hurt(AttackVector({ Plane::All, 0 }), damage.Wound(actor.Description()));
 
     ret->Adjust(actor, attacker);
     ret->Adjust(target, victim);

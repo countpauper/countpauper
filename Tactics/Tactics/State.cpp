@@ -248,7 +248,7 @@ namespace Game
         std::wstringstream ss;
         for (const auto& actorState : state)
         {
-            ss << actorState.first->name << L": " << actorState.second.body.Description() << L", "; // L" @ (" << actorState.second.position.Description() << L"), ";
+            ss << actorState.first->Description() << L": " << actorState.second.body.Description() << L", "; // L" @ (" << actorState.second.position.Description() << L"), ";
         }
         return ss.str();
     }

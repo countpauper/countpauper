@@ -70,9 +70,9 @@ private:
     };
     friend ClosedList;
 protected:
-    void Approach(const Actor& target, Game& game, const Skill& skill);
+    void Approach(const Target& target, Game& game, const Skill& skill);
     void Goto(const Position& target, Game& game);
-    bool PlanAction(Plan::Node& parent, const Skill& skill, const Actor& actor, const Actor& target);
+    bool PlanAction(Plan::Node& parent, const Skill& skill, const Actor& actor, const Target& target);
     static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
     Actor& actor;
     std::unique_ptr<Node> m_root;
@@ -94,11 +94,11 @@ private:
 class AttackPlan : public Plan
 {
 public:
-    AttackPlan(Actor& actor, Actor& target, Game& game, const Skill& skill);
+    AttackPlan(Actor& actor, Target& target, Game& game, const Skill& skill);
     const Skill& skill;
     std::wstring Description() const override;
 private:
-    Actor& target;
+    Target& target;
 };
 
 class ManualPlan : public Plan

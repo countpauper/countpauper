@@ -15,7 +15,7 @@ namespace Game
         Button(const Button&) = delete;
         Button(Button&& other);
         void Render() const;
-        void Highlight();
+        void Highlight(bool on);
         const Skill& skill;
     private:
         Engine::Image texture;
@@ -30,11 +30,13 @@ namespace Game
         unsigned Height() const;
         void Key(unsigned short code);
     private:
-        void Initialize(Actor* actor);
+        void UpdateSkills(Actor* actor);
+        void HighlightSkill(const Skill* skill);
         Game& game;
         std::vector<Button> buttons;
         unsigned height;
         Actor* actor;
         boost::signals2::scoped_connection actorConnection;
+        boost::signals2::scoped_connection skillConnection;
     };
 }
