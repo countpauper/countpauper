@@ -148,6 +148,17 @@ namespace Game
     {
         return std::find(active.begin(), active.end(), &actor) != active.end();
     }
+
+    bool Game::HasPlan(const Actor& actor) const
+    {
+        // TODO: wait plans don't count, it's about state changing plans
+        //  activated list should be order of planning = order of activation
+        //  planning should start at the state of the previously planned team mate 
+        //  this allows targeting active team mates 
+        //  planning should change order/activation
+        return plans.count(&actor) > 0;
+    }
+
     void Game::SelectActor(const Actor& actor)
     {
         selectedActor = &actor;
@@ -174,7 +185,7 @@ namespace Game
     {
         selectedTarget = target;
         const auto actor = dynamic_cast<const Actor*>(target);
-        if ((!selectedSkill) && actor && (IsActive(*actor)))
+        if ((actor) && (IsActive(*actor)) && (!HasPlan(*actor)))
         {
             SelectActor(*actor);
         }
@@ -230,6 +241,7 @@ namespace Game
     {
         if (selectedTarget)
         {
+            std::unique_ptr<Plan> plan;
             if (!selectedSkill)
             {
                 plan = std::make_unique<WaitPlan>(*SelectedActor(), *selectedTarget, *this);
@@ -242,15 +254,21 @@ namespace Game
             {
                 plan = std::make_unique<PathPlan>(*SelectedActor(), selectedTarget->GetPosition(), *this);
             }
-            if (plan && !plan->Valid())
+            if (plan && plan->Valid())
             {
+                OutputDebugStringW((plan->Description() + L" \r\n").c_str());
+                plans[SelectedActor()] = std::move(plan);
+            }
+            else
+            {
+                plans.erase(SelectedActor());
                 OutputDebugStringW((plan->Description() + L" Failed\r\n").c_str());
                 plan.reset();
             }
         }
         else
         {
-            plan.reset();
+            plans.erase(SelectedActor());
         }
     }
     void Game::Render() const
@@ -269,25 +287,29 @@ namespace Game
             auto position = object->GetPosition();
             auto square = map.At(position);
 
-            glTranslatef(float(position.x)+0.5f, square.Z(), float(position.y)+0.5f);
+            glTranslatef(float(position.x) + 0.5f, square.Z(), float(position.y) + 0.5f);
             glPushName(object->Id());
             object->Render();
             glPopName();
             glPopMatrix();
         }
         glPopName();
-        if (plan)
-            plan->Render();
+        for (auto& plan : plans)
+        {
+            plan.second->Render();
+        }
     }
 
     void Game::Key(unsigned short code)
     {
         if (code == VK_RETURN)
         {
-            if (plan)
-                plan->Execute(*this);
+            for (auto& plan : plans)
+            {
+                plan.second->Execute(*this);
+            }
             Next();
-            plan.reset();
+            plans.clear();
             return;
         }
         if (Action::keymap.count(code) == 0)
@@ -400,11 +422,14 @@ namespace Game
 
     void Game::Click(Selection selection, GLuint value)
     {
-        const auto& playerActor = *SelectedActor();
         if (selection == Selection::Map)
         {
-            Position target(value & 0xFFFF, (value >> 16) & 0xFFFF);
-            plan.reset(new PathPlan(playerActor, target,*this));
+            const auto selectedActor = SelectedActor();
+            if (selectedActor)
+            {
+                Position target(value & 0xFFFF, (value >> 16) & 0xFFFF);
+                plans[selectedActor] = std::make_unique<PathPlan>(*selectedActor, target, *this);
+            }
         }
         else if (selection == Selection::Object)
         {

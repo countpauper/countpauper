@@ -176,7 +176,8 @@ namespace Game
     }
 
     GameState::GameState(const IGame& parent) :
-        parent(parent)
+        parent(parent),
+        selectedActor(parent.SelectedActor())
     {
     }
     void GameState::Adjust(const Actor& actor, const State& actorState)
@@ -206,7 +207,7 @@ namespace Game
 
     const Actor* GameState::SelectedActor() const
     {
-        return parent.SelectedActor();
+        return selectedActor;
     }
 
     State GameState::ActorState() const

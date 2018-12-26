@@ -57,7 +57,6 @@ namespace Game
     class GameState : public IGame
     {
     public:
-        GameState();
         GameState(const IGame& parent);
         void Adjust(const Actor& actor, const State& state) override;
         void Apply(IGame& root) const;
@@ -74,6 +73,7 @@ namespace Game
     protected:
         void RecursiveApply(Game& game, std::set<const Actor*>& done) const;
         const IGame& parent;
+        const Actor* selectedActor;
         std::map<const Actor*, State> state;
     };
 

@@ -77,6 +77,7 @@ namespace Game
         void Activate();
         void Deactivate();
         bool IsActive(const Actor& actor) const;
+        bool HasPlan(const Actor& actor) const;
         std::unique_ptr<Object> Extract(const Object& object);
         void SelectActor(const Actor& actor);
         void Focus(const Object& object);
@@ -95,7 +96,7 @@ namespace Game
         // Plan
         const Skill* selectedSkill;
         const Target* selectedTarget;
-        std::unique_ptr<Plan> plan;
+        std::map<const Actor*, std::unique_ptr<Plan>> plans;
 
         // Definitiion
         std::vector<Type::Armor> armors;
