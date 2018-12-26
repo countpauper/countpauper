@@ -79,10 +79,14 @@ namespace Game
     TurnList::TurnList(Game& game, unsigned width) :
         game(game),
         width(width),
-        actorConnection(game.actorActivated.connect([this](Actor* actor)
-    {
-        Update();
-    }))
+        selectedConnection(game.actorSelected.connect([this](const Actor*)
+        {
+            Update();
+        })),
+        activatedConnection(game.actorsActivated.connect([this](const Game::ActorList&)
+        {
+            Update();
+        }))
     {
     }
 
@@ -114,13 +118,16 @@ namespace Game
 
     void TurnList::Key(unsigned short code)
     {
+        const Actor* selectedActor = nullptr;
         for (auto& item : items)
         {
             if (item.HotKey() == code)
             {
-                game.SelectTarget(&item.actor);
+                selectedActor = &item.actor;            
             }
         }
+        if (selectedActor)
+            game.SelectTarget(selectedActor);
 
     }
 
@@ -135,7 +142,7 @@ namespace Game
             {
                 items.emplace_back(Item(*actor, hotkey++));
             }
-            items.back().Highlight(actor == game.ActiveActor());
+            items.back().Highlight(actor == game.SelectedActor());
         }
     }
 

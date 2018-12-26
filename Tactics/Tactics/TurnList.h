@@ -35,6 +35,7 @@ namespace Game
         Game& game;
         std::vector<Item> items;
         unsigned width;
-        boost::signals2::scoped_connection actorConnection;
+        boost::signals2::scoped_connection selectedConnection;
+        boost::signals2::scoped_connection activatedConnection;
     };
 }

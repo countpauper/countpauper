@@ -63,7 +63,7 @@ namespace Game
         void Apply(IGame& root) const;
         State Get(const Actor& actor) const override;
 
-        Actor* ActiveActor() const override;
+        const Actor* SelectedActor() const override;
         bool CanBe(const Position& position) const override;
         bool CanGo(const Position& from, Direction direction) const override;
         bool Cover(const Position& from, const Position& to) const override;

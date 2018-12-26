@@ -204,14 +204,14 @@ namespace Game
         }
     }
 
-    Actor* GameState::ActiveActor() const
+    const Actor* GameState::SelectedActor() const
     {
-        return parent.ActiveActor();
+        return parent.SelectedActor();
     }
 
     State GameState::ActorState() const
     {
-        return Get(*ActiveActor());
+        return Get(*SelectedActor());
     }
 
     bool GameState::HasParent(const IGame& state) const

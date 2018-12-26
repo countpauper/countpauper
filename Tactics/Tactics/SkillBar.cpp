@@ -77,7 +77,7 @@ namespace Game
         game(game),
         height(height),
         actor(nullptr),
-        actorConnection(game.actorActivated.connect([this](Actor* actor)
+        actorConnection(game.actorSelected.connect([this](const Actor* actor)
         {
             UpdateSkills(actor);
         })),
@@ -125,7 +125,7 @@ namespace Game
         }
     }
 
-    void SkillBar::UpdateSkills(Actor* newActor)
+    void SkillBar::UpdateSkills(const Actor* newActor)
     {
         actor = newActor;
         buttons.clear();

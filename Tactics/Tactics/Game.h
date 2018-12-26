@@ -53,9 +53,10 @@ namespace Game
         const Objects& GetObjects() const;
         static std::vector<Engine::RGBA> teamColor;
 
-
-        Actor* ActiveActor() const override;
-        boost::signals2::signal<void(Actor*)> actorActivated;
+        const Actor* SelectedActor() const override;
+        boost::signals2::signal<void(const Actor*)> actorSelected;
+        using ActorList = std::vector<const Actor*>;
+        boost::signals2::signal<void(const ActorList&)> actorsActivated;
         const Skill* SelectedSkill() const;
         void SelectSkill(const Skill* skill);
         boost::signals2::signal<void(const Skill*)> skillSelected;
@@ -71,10 +72,14 @@ namespace Game
         Engine::Coordinate focus;
         Skills skills;
     protected:
-        void AI(Actor* actor);
+        void AI(const Actor* actor);
         void Next();
-        void Activate(Object& object);
-        void Focus(Object& object);
+        void Activate();
+        void Deactivate();
+        bool IsActive(const Actor& actor) const;
+        std::unique_ptr<Object> Extract(const Object& object);
+        void SelectActor(const Actor& actor);
+        void Focus(const Object& object);
         void SelectPlan();
         std::wstring Description() const override;
         void TestDumpAllItems(std::wostream& out) const;
@@ -84,9 +89,10 @@ namespace Game
         // State
         Map map;
         Objects objects;
+        const Actor* selectedActor;
+        ActorList active;
 
         // Plan
-        Objects::iterator turn;
         const Skill* selectedSkill;
         const Target* selectedTarget;
         std::unique_ptr<Plan> plan;

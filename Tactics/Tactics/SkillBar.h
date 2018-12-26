@@ -36,12 +36,12 @@ namespace Game
         };
 
     private:
-        void UpdateSkills(Actor* actor);
+        void UpdateSkills(const Actor* actor);
         void HighlightSkill(const Skill* skill);
         Game& game;
         std::vector<Button> buttons;
         unsigned height;
-        Actor* actor;
+        const Actor* actor;
         boost::signals2::scoped_connection actorConnection;
         boost::signals2::scoped_connection skillConnection;
     };

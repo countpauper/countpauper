@@ -15,7 +15,7 @@ class Skill;
 class Plan
 {
 public:
-    Plan(Actor& actor);
+    Plan(const Actor& actor);
     virtual ~Plan() = default;
     void Render() const;
     bool Valid() const;
@@ -73,7 +73,7 @@ protected:
     void Goto(const Position& target, Game& game);
     bool PlanAction(Plan::Node& parent, const Skill& skill, const Actor& actor, const Target& target);
     static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
-    Actor& actor;
+    const Actor& actor;
     std::unique_ptr<Node> m_root;
 private:
     GameChances AllOutcomesRecursive(Node& node) const;
@@ -84,7 +84,7 @@ private:
 class WaitPlan : public Plan
 {
 public:
-    WaitPlan(Actor& actor, const Target& target, Game& game);
+    WaitPlan(const Actor& actor, const Target& target, Game& game);
     std::wstring Description() const override;
 private:
     const Target& target;
@@ -93,7 +93,7 @@ private:
 class PathPlan : public Plan
 {
 public:
-    PathPlan(Actor& actor, const Position& target, Game& game);
+    PathPlan(const Actor& actor, const Position& target, Game& game);
     std::wstring Description() const override;
 private:
     Position target;
@@ -102,7 +102,7 @@ private:
 class AttackPlan : public Plan
 {
 public:
-    AttackPlan(Actor& actor, const Target& target, Game& game, const Skill& skill);
+    AttackPlan(const Actor& actor, const Target& target, Game& game, const Skill& skill);
     const Skill& skill;
     std::wstring Description() const override;
 private:

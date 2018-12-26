@@ -12,6 +12,7 @@ namespace Game
 {
     Game::Game() :
         skills("Data/Skills.xml"),
+        selectedActor(nullptr),
         selectedSkill(nullptr),
         selectedTarget(nullptr),
         armors(Type::Armor::Load(std::wifstream(L"Data/Armor.csv"))),
@@ -52,15 +53,15 @@ namespace Game
 
     void Game::Tick()
     {
-        Actor* actor;
-        while((actor= ActiveActor()) &&
+        const Actor* actor;
+        while((actor= SelectedActor()) &&
             (!actor->CanAct()))
             Next();
         if (actor->GetTeam() > 0)
             AI(actor);
     }
 
-    void Game::AI(Actor* actor)
+    void Game::AI(const Actor* actor)
     {
         std::vector<std::unique_ptr<Plan>> plans;
         for (auto skill : actor->GetSkills())
@@ -84,48 +85,84 @@ namespace Game
 
     void Game::Start()
     {
-        turn = objects.begin();
-        if (turn == objects.end())
-            return;
-        Activate(**turn);
+        Activate();
     }
 
-    void Game::Activate(Object& object)
+    void Game::Activate()
     {
-        Actor* actor = dynamic_cast<Actor*>(&object);
-        if (actor)
+        assert(active.empty() && "Shouldn't accumulate active actors");
+        selectedActor = dynamic_cast<const Actor*>(objects.front().get());
+        if (selectedActor)
         {
-            Focus(*actor);
-            actorActivated(actor);
-            SelectSkill(actor->DefaultAttack());
+            for (auto& object : objects)
+            {
+                auto actor= dynamic_cast<Actor*>(object.get());
+                assert(actor);    // don't know how to handle non-actors when activating team mates. Move after?
+                if ((actor->GetTeam() != selectedActor->GetTeam()))
+                    break;
+                active.emplace_back(actor);
+                actor->Turn();
+            }
+            SelectActor(*selectedActor);
+            actorsActivated(active);
         }
         else
         {
-            actorActivated(nullptr);
-            SelectSkill(nullptr);
+            objects.front()->Turn();
         }
-        object.Turn();
     }
 
+    void Game::Deactivate()
+    {
+        if (active.empty())
+            return;
+        for (auto actor : active)
+        {
+            auto ptr = Extract(*actor);
+            objects.emplace_back(std::move(ptr));
+        }
+
+        active.clear();
+        actorsActivated(active);
+    }
+
+    std::unique_ptr<Object> Game::Extract(const Object& object)
+    {
+        auto objI= std::find_if(objects.begin(), objects.end(), [&object](const decltype(objects)::value_type& obj)
+        {
+            return obj.get() == &object;
+        });
+        if (objI == objects.end())
+            return nullptr;
+        auto result = std::move(*objI);
+        objects.erase(objI);
+        return result;
+    }
     void Game::Next()
     {
-        if (turn == objects.end())
-            return;
-        turn++;
-        if (turn == objects.end())
-            turn = objects.begin();
-        Activate(**turn);
+        Deactivate();
+        Activate();
     }
 
-    void Game::Focus(Object& object)
+    bool Game::IsActive(const Actor& actor) const
+    {
+        return std::find(active.begin(), active.end(), &actor) != active.end();
+    }
+    void Game::SelectActor(const Actor& actor)
+    {
+        selectedActor = &actor;
+        Focus(actor);
+        actorSelected(selectedActor);
+        SelectSkill(actor.DefaultAttack());
+    }
+
+    void Game::Focus(const Object& object)
     {
         focus = map.Coordinate(object.GetPosition());
     }
-    Actor* Game::ActiveActor() const
+    const Actor* Game::SelectedActor() const
     {
-        if (turn == objects.end())
-            return nullptr;
-        return dynamic_cast<Actor*>(turn->get());
+        return selectedActor;
     }
 
     const Skill* Game::SelectedSkill() const
@@ -136,7 +173,15 @@ namespace Game
     void Game::SelectTarget(const Target* target)
     {
         selectedTarget = target;
-        SelectPlan();
+        const auto actor = dynamic_cast<const Actor*>(target);
+        if ((!selectedSkill) && actor && (IsActive(*actor)))
+        {
+            SelectActor(*actor);
+        }
+        else
+        {
+            SelectPlan();
+        }
     }
 
     std::vector<Actor*> Game::FindTargets(const State& from, const Skill& skill) const
@@ -187,15 +232,15 @@ namespace Game
         {
             if (!selectedSkill)
             {
-                plan = std::make_unique<WaitPlan>(*ActiveActor(), *selectedTarget, *this);
+                plan = std::make_unique<WaitPlan>(*SelectedActor(), *selectedTarget, *this);
             }
             else if (selectedSkill->IsAttack())
             {
-                plan = std::make_unique<AttackPlan>(*ActiveActor(), *selectedTarget, *this, *selectedSkill);
+                plan = std::make_unique<AttackPlan>(*SelectedActor(), *selectedTarget, *this, *selectedSkill);
             }
             else if (selectedSkill->IsMove())
             {
-                plan = std::make_unique<PathPlan>(*ActiveActor(), selectedTarget->GetPosition(), *this);
+                plan = std::make_unique<PathPlan>(*SelectedActor(), selectedTarget->GetPosition(), *this);
             }
             if (plan && !plan->Valid())
             {
@@ -237,13 +282,6 @@ namespace Game
 
     void Game::Key(unsigned short code)
     {
-        if (code == VK_ESCAPE)
-        {
-            plan.reset();
-            Focus(*ActiveActor());
-            return;
-        }
-        auto& playerActor = *ActiveActor();
         if (code == VK_RETURN)
         {
             if (plan)
@@ -356,16 +394,13 @@ namespace Game
 
             }
         }
-        game.turn = game.objects.begin();
-
         s >> game.map;
-        game.Focus(*game.ActiveActor());
         return s;
     }
 
     void Game::Click(Selection selection, GLuint value)
     {
-        auto& playerActor = *ActiveActor();
+        const auto& playerActor = *SelectedActor();
         if (selection == Selection::Map)
         {
             Position target(value & 0xFFFF, (value >> 16) & 0xFFFF);

@@ -10,7 +10,7 @@
 
 namespace Game
 {
-    Plan::Plan(Actor& actor) :
+    Plan::Plan(const Actor& actor) :
         actor(actor)
     {
     }
@@ -262,7 +262,7 @@ namespace Game
 
     void Plan::Approach(const Target& target, Game& game, const Skill& skill)
     {
-        const auto& actor = *game.ActiveActor();
+        const auto& actor = *game.SelectedActor();
 
         auto targetPosition = target.GetPosition();
         OpenTree open(targetPosition);
@@ -303,7 +303,7 @@ namespace Game
     // TODO: Refactor to avoid code duplication with Approach
     void Plan::Goto(const Position& targetPosition, Game& game)
     {
-        const auto& actor = *game.ActiveActor();
+        const auto& actor = *game.SelectedActor();
         OpenTree open(targetPosition);
         ClosedList closed(targetPosition);
         open.emplace(std::make_unique<Node>(game));
@@ -336,7 +336,7 @@ namespace Game
         }
     }
 
-    WaitPlan::WaitPlan(Actor& actor, const Target& target, Game& game) :
+    WaitPlan::WaitPlan(const Actor& actor, const Target& target, Game& game) :
         Plan(actor),
         target(target)
     {
@@ -347,7 +347,7 @@ namespace Game
         return actor.Description() + L": " + std::wstring(L"Wait for ") + target.Description();
     }
 
-    PathPlan::PathPlan(Actor& actor, const Position& target, Game& game) :
+    PathPlan::PathPlan(const Actor& actor, const Position& target, Game& game) :
         Plan(actor),
         target(target)
     {
@@ -359,7 +359,7 @@ namespace Game
         return actor.Description() + L": " + std::wstring(L"Move to ") + target.Description();
     }
 
-    AttackPlan::AttackPlan(Actor& actor, const Target& target, Game& game, const Skill& skill) :
+    AttackPlan::AttackPlan(const Actor& actor, const Target& target, Game& game, const Skill& skill) :
         Plan(actor),
         skill(skill),
         target(target)
