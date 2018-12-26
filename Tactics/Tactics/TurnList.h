@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include "Engine/Color.h"
 
 namespace Game
 {
@@ -14,15 +13,17 @@ namespace Game
         class Item
         {
         public:
-            Item(const Actor& actor);
+            Item(const Actor& actor, unsigned hotKey);
             Item(const Item&) = delete;
             Item(Item&& other);
             void Render() const;
             void Highlight(bool on);
+            unsigned Height() const;
+            unsigned HotKey() const;
             const Actor& actor;
         private:
             bool highlighted;
-            static std::vector<Engine::RGBA> teamColor;
+            unsigned hotKey;
         };
 
         TurnList(Game& game, unsigned width);

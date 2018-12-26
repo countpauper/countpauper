@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <gl/GL.h>
-#include "Engine/Color.h"
+#include "Engine/Text.h"
 #include "Engine/Geometry.h"
 #include "Actor.h"
 #include "Action.h"
@@ -52,23 +52,25 @@ namespace Game
     {
         unsigned sides = 16;
         float r = 0.25f;
-
-        Engine::RGBA teamColor[] = {
-            { 255, 0, 0, 255 },
-            { 0, 255, 0, 255 },
-            { 0, 0, 255, 255 }
-        };
-        const float HALF_PI = float(Engine::PI)*0.5f;
         glPushMatrix();
+        Game::teamColor[team].Render();
         if (Dead())
+        {
             glRotatef(90, 1, 0, 0);
+        }
+        glPushMatrix();
+            glTranslatef(-0.5, 0, -1.5);
+
+            Engine::Font::default.Select();
+            Engine::glText(name);
+        glPopMatrix();
+
         glRotated(Engine::Rad2Deg(direction.Angle()), 0, 1, 0);
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
         {
             float a = float(i) / sides * 2.0f * float(Engine::PI);
             float b = float(i + 1) / sides * 2.0f * float(Engine::PI);
-            teamColor[team].Render();
 
             float xa = cos(a) * r;
             float ya = sin(a) * sin(a*0.5f) * r;

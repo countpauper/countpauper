@@ -336,6 +336,16 @@ namespace Game
         }
     }
 
+    WaitPlan::WaitPlan(Actor& actor, const Target& target, Game& game) :
+        Plan(actor),
+        target(target)
+    {
+    }
+
+    std::wstring WaitPlan::Description() const
+    {
+        return actor.Description() + L": " + std::wstring(L"Wait for ") + target.Description();
+    }
 
     PathPlan::PathPlan(Actor& actor, const Position& target, Game& game) :
         Plan(actor),
@@ -349,7 +359,7 @@ namespace Game
         return actor.Description() + L": " + std::wstring(L"Move to ") + target.Description();
     }
 
-    AttackPlan::AttackPlan(Actor& actor, Target& target, Game& game, const Skill& skill) :
+    AttackPlan::AttackPlan(Actor& actor, const Target& target, Game& game, const Skill& skill) :
         Plan(actor),
         skill(skill),
         target(target)

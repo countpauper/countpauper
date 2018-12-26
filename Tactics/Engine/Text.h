@@ -9,9 +9,11 @@ namespace Engine
     public:
         Font();
         void Select() const;
-        static Font& system;
+        unsigned Height() const;
+        static Font& default;
     private:
         unsigned base;
+        unsigned height;
         static unsigned nextBase;
     };
 

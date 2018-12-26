@@ -27,6 +27,15 @@ namespace Game
     
     Game::~Game() = default;
 
+    std::vector<Engine::RGBA> Game::teamColor =
+    {
+        Engine::RGBA(100, 255, 100, 255),
+        Engine::RGBA(255, 100, 100, 255),
+        Engine::RGBA(100, 100, 255, 255),
+        Engine::RGBA(200, 200, 100, 255)
+    };
+
+
     State Game::Get(const Actor& actor) const
     {
         return State(actor);
@@ -124,6 +133,12 @@ namespace Game
         return selectedSkill;
     }
 
+    void Game::SelectTarget(const Target* target)
+    {
+        selectedTarget = target;
+        SelectPlan();
+    }
+
     std::vector<Actor*> Game::FindTargets(const State& from, const Skill& skill) const
     {
         std::vector<Actor*> result;
@@ -168,15 +183,24 @@ namespace Game
 
     void Game::SelectPlan()
     {
-        if (selectedSkill && selectedTarget)
+        if (selectedTarget)
         {
-            if (selectedSkill->IsAttack())
+            if (!selectedSkill)
+            {
+                plan = std::make_unique<WaitPlan>(*ActiveActor(), *selectedTarget, *this);
+            }
+            else if (selectedSkill->IsAttack())
             {
                 plan = std::make_unique<AttackPlan>(*ActiveActor(), *selectedTarget, *this, *selectedSkill);
             }
             else if (selectedSkill->IsMove())
             {
                 plan = std::make_unique<PathPlan>(*ActiveActor(), selectedTarget->GetPosition(), *this);
+            }
+            if (plan && !plan->Valid())
+            {
+                OutputDebugStringW((plan->Description() + L" Failed\r\n").c_str());
+                plan.reset();
             }
         }
         else
@@ -350,8 +374,7 @@ namespace Game
         else if (selection == Selection::Object)
         {
             auto object = (Object*)value;
-            selectedTarget = dynamic_cast<Actor*>(object);
-            SelectPlan();
+            SelectTarget(object);
         }
         else if (selection == Selection::Skill)
         {

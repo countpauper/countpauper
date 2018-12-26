@@ -9,23 +9,17 @@
 namespace Game
 {
 
-    std::vector<Engine::RGBA> TurnList::Item::teamColor =
-    {
-        Engine::RGBA(100, 255, 100, 255),
-        Engine::RGBA(255, 100, 100, 255),
-        Engine::RGBA(100, 100, 255, 255),
-        Engine::RGBA(200, 200, 100, 255)
-    };
-
-    TurnList::Item::Item(const Actor& actor) :
+    TurnList::Item::Item(const Actor& actor, unsigned hotKey) :
         highlighted(false),
+        hotKey(hotKey),
         actor(actor)
     {
     }
 
     TurnList::Item::Item(TurnList::Item&& other) :
         actor(other.actor),
-        highlighted(other.highlighted)
+        highlighted(other.highlighted),
+        hotKey(other.hotKey)
     {
 
     }
@@ -34,29 +28,52 @@ namespace Game
     {
         highlighted = on;
     }
+
+    unsigned TurnList::Item::Height() const
+    {
+        return 3 + Engine::Font::default.Height();
+    }
+
+    unsigned TurnList::Item::HotKey() const
+    {
+        return hotKey;
+    }
+
     void TurnList::Item::Render() const
     {
+        float height = static_cast<float>(Height());
         glPushName(actor.Id());
+        // background
         if (highlighted)
             glColor3f(1.0f, 1.0f, 1.0f);
         else
             glColor3f(0.3f, 0.3f, 0.3f);
         glBegin(GL_QUADS);
-            glVertex2f(100.0f, -15.0f);
-            glVertex2f(0.0f, -15.0f);
-            glVertex2f(0.0f, 0.0f);
-            glVertex2f(100.0f, 0.0f);
+            glVertex2f(100.0f, 1.0f);
+            glVertex2f(0.0f, 1.0f);
+            glVertex2f(0.0f, height);
+            glVertex2f(100.0f, height);
         glEnd();
-
-        teamColor.at(actor.GetTeam()).Render();
-        Engine::Font::system.Select();
+        glPushMatrix();
+        glTranslatef(2, height-2, 0); // margin
+        Game::teamColor.at(actor.GetTeam()).Render();
+        Engine::Font::default.Select();
         auto text = actor.Description();
+        
         if (actor.Dead())
             text += L"+";
         else if (!actor.CanAct())
             text += L"-";
+        if (hotKey)
+        {
+            wchar_t ch = MapVirtualKeyW(hotKey, MAPVK_VK_TO_CHAR);
+            text += L" : ";
+            text += std::wstring(1, ch);
+        }
         Engine::glText(text);
         glPopName();
+
+        glPopMatrix();
     }
 
     TurnList::TurnList(Game& game, unsigned width) :
@@ -83,13 +100,13 @@ namespace Game
         glOrtho(0, viewport[2], viewport[3], 0, -1, 1);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-
+       
         glPushName(GLuint(Game::Selection::Object));
         glColor3f(1, 1, 1);
         for (auto& item : items)
         {
-            glTranslatef(0.0f, 16.0f, 0.0f);  // TODO: system font height
             item.Render();
+            glTranslatef(0.0f, static_cast<float>(item.Height()), 0.0f);
         }
         glPopName();
         Engine::CheckGLError();
@@ -97,17 +114,26 @@ namespace Game
 
     void TurnList::Key(unsigned short code)
     {
+        for (auto& item : items)
+        {
+            if (item.HotKey() == code)
+            {
+                game.SelectTarget(&item.actor);
+            }
+        }
+
     }
 
     void TurnList::Update()
     {
         items.clear();
+        unsigned hotkey = '0';
         for (auto& objPtr : game.GetObjects())
         {
             const Actor* actor = dynamic_cast<Actor*>(objPtr.get());
             if (actor)
             {
-                items.emplace_back(Item(*actor));
+                items.emplace_back(Item(*actor, hotkey++));
             }
             items.back().Highlight(actor == game.ActiveActor());
         }

@@ -35,7 +35,6 @@ private:
         Node* Next() const;
         GameChances AllOutcomes() const;
 
-
          //int Score(const Position& target, unsigned startMovePoints) const;
         bool Compare(const Node& other, const Position& target) const;
         bool operator==(const Node& other) const;
@@ -82,6 +81,15 @@ private:
     std::vector<Action*> ActionSequence(GameState& end) const;
 };
 
+class WaitPlan : public Plan
+{
+public:
+    WaitPlan(Actor& actor, const Target& target, Game& game);
+    std::wstring Description() const override;
+private:
+    const Target& target;
+};
+
 class PathPlan : public Plan
 {
 public:
@@ -94,11 +102,11 @@ private:
 class AttackPlan : public Plan
 {
 public:
-    AttackPlan(Actor& actor, Target& target, Game& game, const Skill& skill);
+    AttackPlan(Actor& actor, const Target& target, Game& game, const Skill& skill);
     const Skill& skill;
     std::wstring Description() const override;
 private:
-    Target& target;
+    const Target& target;
 };
 
 class ManualPlan : public Plan

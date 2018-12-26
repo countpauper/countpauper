@@ -5,6 +5,7 @@
 #include <list>
 #include <boost/signals2.hpp>
 #include "Engine/Coordinate.h"
+#include "Engine/Color.h"
 #include "Game/Direction.h"
 #include "Map.h"
 #include "IGame.h"
@@ -50,6 +51,7 @@ namespace Game
         std::vector<Actor*> FindTargetsInRange(const State& from, const Skill& skill) const;
         typedef std::list<std::unique_ptr<Object>> Objects;
         const Objects& GetObjects() const;
+        static std::vector<Engine::RGBA> teamColor;
 
 
         Actor* ActiveActor() const override;
@@ -57,6 +59,7 @@ namespace Game
         const Skill* SelectedSkill() const;
         void SelectSkill(const Skill* skill);
         boost::signals2::signal<void(const Skill*)> skillSelected;
+        void SelectTarget(const Target* target);
 
         const Type::Armor& FindArmor(const std::wstring& name) const;
         const Type::Armor::Material&  FindArmorMaterial(const std::wstring& name, const Type::Armor& armor) const;
@@ -85,7 +88,7 @@ namespace Game
         // Plan
         Objects::iterator turn;
         const Skill* selectedSkill;
-        Target* selectedTarget;
+        const Target* selectedTarget;
         std::unique_ptr<Plan> plan;
 
         // Definitiion

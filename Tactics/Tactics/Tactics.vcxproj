@@ -119,10 +119,10 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Move.h" />
-    <ClInclude Include="Panel.h" />
     <ClInclude Include="Plan.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Score.h" />
+    <ClInclude Include="SkillBar.h" />
     <ClInclude Include="Skills.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Stats.h" />
@@ -143,9 +143,9 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Move.cpp" />
-    <ClCompile Include="Panel.cpp" />
     <ClCompile Include="Plan.cpp" />
     <ClCompile Include="Score.cpp" />
+    <ClCompile Include="SkillBar.cpp" />
     <ClCompile Include="Skills.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Stats.cpp" />

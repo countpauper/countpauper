@@ -10,7 +10,7 @@
 #include "Engine/Light.h"
 #include "Engine/Camera.h"
 #include "game.h"
-#include "Panel.h"
+#include "SkillBar.h"
 #include "TurnList.h"
 
 
@@ -22,12 +22,11 @@ HINSTANCE hInst;                                // current instance
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 int windowShow;                                 // WIndow state send to ShowWindow
-HGLRC hGLRC;                            
-int width = 0;
-int height = 0;
+HGLRC hGLRC;
+RECT clientRect;
 std::wstring mapName(L"Game.map");
 std::unique_ptr<Game::Game> game;
-std::unique_ptr<Game::Panel> panel;
+std::unique_ptr<Game::SkillBar> skills;
 std::unique_ptr<Game::TurnList> list;
 Engine::Light light;
 Engine::TopCamera camera;
@@ -198,7 +197,7 @@ BOOL Start()
             return FALSE;
         }
     }
-    panel = std::make_unique<Game::Panel>(*game, 64);
+    skills = std::make_unique<Game::SkillBar>(*game, 64);
     list = std::make_unique<Game::TurnList>(*game, 128);
     game->Start();
 
@@ -259,7 +258,7 @@ void ZoomToScreenCoord(int x, int y)
     // gluPickMatrix
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
-    glTranslatef(float(viewport[2] - 2.0f * float(x - viewport[0])), float(viewport[3] - 2 * ((height-y) - viewport[1])), 0.0f);
+    glTranslatef(float(viewport[2] - 2.0f * float(x - viewport[0])), float(viewport[3] - 2 * ((clientRect.bottom-y) - viewport[1])), 0.0f);
     glScalef(float(viewport[2]), float(viewport[3]), 1.0f);
 }
 
@@ -271,12 +270,12 @@ Hit Select(int x, int y)
     glInitNames();
 
     // TODO: organize panels automatically in a list/tree, click in main "window", split render setup from render (draw)
-    int panelHeight = panel->Height();
-    if (y <= height - panelHeight)
+    int panelHeight = skills->Height();
+    if (y <= clientRect.bottom - panelHeight)
     {
-        if (x > width - int(list->Width()))
+        if (x > clientRect.right- int(list->Width()))
         {
-            glViewport(width - list->Width(), panelHeight, list->Width(), height - panelHeight);
+            glViewport(clientRect.right- list->Width(), panelHeight, list->Width(), clientRect.bottom- panelHeight);
             glDisable(GL_LIGHTING);
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -287,7 +286,7 @@ Hit Select(int x, int y)
         {
             glClearColor(0, 0, 0, 0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glViewport(0, panelHeight, width, height - panelHeight);
+            glViewport(clientRect.top, panelHeight, clientRect.right-clientRect.left, clientRect.bottom- panelHeight);
             glEnable(GL_CULL_FACE);
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -299,12 +298,12 @@ Hit Select(int x, int y)
     }
     else
     {
-        glViewport(0, 0, width, panelHeight);
+        glViewport(clientRect.left, clientRect.top, clientRect.right-clientRect.left, panelHeight);
         glDisable(GL_LIGHTING);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         ZoomToScreenCoord(x, y);
-        panel->Render();
+        skills->Render();
     }
 
     GLint hits = glRenderMode(GL_RENDER);
@@ -334,8 +333,8 @@ void Render()
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    int panelHeight = panel->Height();
-    glViewport(0, panelHeight, width, height - panelHeight);
+    int panelHeight = skills->Height();
+    glViewport(clientRect.left, panelHeight, clientRect.right-clientRect.left, clientRect.bottom- panelHeight);
 
     glEnable(GL_TEXTURE_2D);
     //glEnable(GL_DEPTH_TEST);
@@ -362,16 +361,16 @@ void Render()
    
 
     // render panel 
-    glViewport(0, 0, width, panelHeight);
+    glViewport(clientRect.left, clientRect.top, clientRect.right-clientRect.left, panelHeight);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     if (input.drag)
     {
         ZoomToScreenCoord(input.x, input.y);
     }
-    panel->Render();
+    skills->Render();
     // Render turn list
-    glViewport(width - list->Width(), panelHeight, list->Width(), height - panelHeight);
+    glViewport(clientRect.right- list->Width(), panelHeight, list->Width(), clientRect.bottom- panelHeight);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     if (input.drag)
@@ -476,12 +475,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         EndPaint(hWnd, &ps);
         break;
     case WM_SIZE:
-        width = LOWORD(lParam);
-        height = HIWORD(lParam);
+        clientRect.right = LOWORD(lParam);
+        clientRect.bottom = HIWORD(lParam);
         PostMessage(hWnd, WM_PAINT, 0, 0);
     return 0;
     case WM_KEYDOWN:
-        panel->Key(wParam);
+        skills->Key(wParam);
         list->Key(wParam);
         game->Key(wParam);
         InvalidateRect(hWnd, nullptr, TRUE);

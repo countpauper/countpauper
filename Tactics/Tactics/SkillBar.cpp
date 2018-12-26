@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include <gl/GL.h>
 #include "Engine/Error.h"
+#include "SkillBar.h"
 #include "Game.h"
-#include "Panel.h"
 #include "Actor.h"
 #include "Skills.h"
 
@@ -10,14 +10,23 @@ namespace Game
 {
 
     
-    Button::Button(const Skill& skill) :
+    SkillBar::Button::Button(const Skill* skill, unsigned hotKey) :
+        hotKey(hotKey),
         highlighted(false),
         skill(skill)
     {
-        texture.Load(std::wstring(L"Data/") + skill.name + std::wstring(L".png"));
+        if (skill)
+        {
+            texture.Load(std::wstring(L"Data/") + skill->name + std::wstring(L".png"));
+        }
+        else
+        {
+            texture.Load(L"Data/Wait.png");
+        }
     }
 
-    Button::Button(Button&& other) :
+    SkillBar::Button::Button(Button&& other) :
+        hotKey(other.hotKey),
         skill(other.skill),
         texture(std::move(other.texture)),
         highlighted(other.highlighted)
@@ -25,19 +34,28 @@ namespace Game
 
     }
 
-    void Button::Highlight(bool on)
+    void SkillBar::Button::Highlight(bool on)
     {
         highlighted = on;
     }
-    void Button::Render() const
+
+    unsigned SkillBar::Button::HotKey() const
     {
-        glPushName(GLuint(skill.Id()));
+        return hotKey;
+    }
+
+    void SkillBar::Button::Render() const
+    {
+        if (skill)
+            glPushName(GLuint(skill->Id()));
+        else
+            glPushName(0);
 
         texture.Bind();
         if (highlighted)
             glColor3f(1.0f, 1.0f, 1.0f);
         else
-            glColor3f(0.1f, 0.1f, 0.1f);
+            glColor3f(0.25f, 0.25f, 0.25f);
         glBegin(GL_QUADS);
             glTexCoord2f(0.0f, 1.0f);
             glVertex2f(0.0f, 0.0f);
@@ -55,7 +73,7 @@ namespace Game
         glPopName();
     }
 
-    Panel::Panel(Game& game, unsigned height) :
+    SkillBar::SkillBar(Game& game, unsigned height) :
         game(game),
         height(height),
         actor(nullptr),
@@ -70,12 +88,12 @@ namespace Game
     {
     }
 
-    unsigned Panel::Height() const
+    unsigned SkillBar::Height() const
     {
         return height;
     }
 
-    void Panel::Render() const
+    void SkillBar::Render() const
     {
         glDisable(GL_LIGHTING);
         glMatrixMode(GL_PROJECTION);
@@ -96,29 +114,30 @@ namespace Game
         Engine::CheckGLError();
     }
 
-    void Panel::Key(unsigned short code)
+    void SkillBar::Key(unsigned short code)
     {
-        if ((code >= VK_F1) && (code <= VK_F24))
+        for (auto& button : buttons)
         {
-            unsigned button = code - VK_F1;
-            if ((actor) && (button < buttons.size()))
+            if (button.HotKey() == code)
             {
-                game.SelectSkill(&buttons.at(button).skill);
+                game.SelectSkill(button.skill);
             }
         }
     }
 
-    void Panel::UpdateSkills(Actor* newActor)
+    void SkillBar::UpdateSkills(Actor* newActor)
     {
         actor = newActor;
         buttons.clear();
         if (actor)
         {
+            buttons.emplace_back(Button(nullptr, VK_ESCAPE));
+            auto hotKey = VK_F1;
             for (auto skill : actor->GetSkills())
             {
                 if (skill.skill->IsActive())
                 {
-                    buttons.emplace_back(Button(*skill.skill));
+                    buttons.emplace_back(Button(skill.skill, hotKey++));
                 }
                 if (skill.skill == game.SelectedSkill())
                 {
@@ -128,11 +147,11 @@ namespace Game
         }
     }
 
-    void Panel::HighlightSkill(const Skill* skill)
+    void SkillBar::HighlightSkill(const Skill* skill)
     {
         for (auto& button : buttons)
         {
-            if (&button.skill == skill)
+            if (button.skill == skill)
             {
                 button.Highlight(true);
             }
