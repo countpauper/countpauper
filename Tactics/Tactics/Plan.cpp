@@ -262,8 +262,7 @@ namespace Game
 
     void Plan::Approach(const Target& target, Game& game, const Skill& skill)
     {
-        const auto& actor = *game.SelectedActor();
-
+        assert(game.SelectedActor() == &actor); // Nodes assume the currently selected actor is doing the planning
         auto targetPosition = target.GetPosition();
         OpenTree open(targetPosition);
         ClosedList closed(targetPosition);
@@ -303,7 +302,6 @@ namespace Game
     // TODO: Refactor to avoid code duplication with Approach
     void Plan::Goto(const Position& targetPosition, Game& game)
     {
-        const auto& actor = *game.SelectedActor();
         OpenTree open(targetPosition);
         ClosedList closed(targetPosition);
         open.emplace(std::make_unique<Node>(game));

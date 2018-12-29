@@ -53,34 +53,27 @@ namespace Game
 
     void Game::Tick()
     {
-        const Actor* actor;
-        while((actor= SelectedActor()) &&
-            (!actor->CanAct()))
+        if (!selectedActor)
             Next();
-        if (actor->GetTeam() > 0)
-            AI(actor);
+        else
+        {
+            AI(); 
+        }
     }
 
-    void Game::AI(const Actor* actor)
+    void Game::AI()
     {
-        std::vector<std::unique_ptr<Plan>> plans;
-        for (auto skill : actor->GetSkills())
+        if (selectedActor->GetTeam() > 0)
         {
-            if ((skill.skill->IsAttack()) &&
-                (actor->IsPossible(*skill.skill)))
+            for (auto activeActor : ActiveActors())
             {
-                auto targets = FindTargets(*actor, *skill.skill);
-                for (auto target : targets)
-                {
-                    auto plan = std::make_unique<AttackPlan>(*actor, *target, *this, *skill.skill);
-                    if (plan->Valid())
-                        plans.emplace_back(std::move(plan));
-                }
+                assert(activeActor->GetTeam() == selectedActor->GetTeam());
+                SelectActor(*activeActor);
+                activeActor->AI(*this);
             }
+            Execute();
+            Next();
         }
-        if (plans.size())
-            plans.front()->Execute(*this);
-        Next();
     }
 
     void Game::Start()
@@ -90,40 +83,43 @@ namespace Game
 
     void Game::Activate()
     {
-        assert(active.empty() && "Shouldn't accumulate active actors");
-        selectedActor = dynamic_cast<const Actor*>(objects.front().get());
+        selectedActor = dynamic_cast<Actor*>(objects.front().get());
         if (selectedActor)
         {
+            ActorList active;
+            ActorList skipped;
             for (auto& object : objects)
             {
-                auto actor= dynamic_cast<Actor*>(object.get());
+                auto actor = dynamic_cast<Actor*>(object.get());
                 assert(actor);    // don't know how to handle non-actors when activating team mates. Move after?
                 if ((actor->GetTeam() != selectedActor->GetTeam()))
                     break;
-                active.emplace_back(actor);
-                actor->Turn();
+                actor->Activate(*this);
+                if (actor->CanAct())
+                    active.emplace_back(actor);
+                else
+                    skipped.emplace_back(actor);
             }
-            SelectActor(*selectedActor);
-            actorsActivated(active);
+            for (auto skip : skipped)
+            {
+                objects.emplace_back(Extract(*skip));
+            }
+            if (!active.empty())
+            {
+                selectedActor = active.front();
+                SelectActor(*selectedActor);
+                actorsActivated(active);
+            }
+            else
+            {
+                selectedActor = nullptr;
+            }
+
         }
         else
         {
-            objects.front()->Turn();
+            objects.front()->Activate(*this);
         }
-    }
-
-    void Game::Deactivate()
-    {
-        if (active.empty())
-            return;
-        for (auto actor : active)
-        {
-            auto ptr = Extract(*actor);
-            objects.emplace_back(std::move(ptr));
-        }
-
-        active.clear();
-        actorsActivated(active);
     }
 
     std::unique_ptr<Object> Game::Extract(const Object& object)
@@ -140,13 +136,7 @@ namespace Game
     }
     void Game::Next()
     {
-        Deactivate();
         Activate();
-    }
-
-    bool Game::IsActive(const Actor& actor) const
-    {
-        return std::find(active.begin(), active.end(), &actor) != active.end();
     }
 
     bool Game::HasPlan(const Actor& actor) const
@@ -156,15 +146,27 @@ namespace Game
         //  planning should start at the state of the previously planned team mate 
         //  this allows targeting active team mates 
         //  planning should change order/activation
-        return plans.count(&actor) > 0;
+        return actor.plan != nullptr;
     }
 
     void Game::SelectActor(const Actor& actor)
     {
-        selectedActor = &actor;
+        selectedActor = const_cast<Actor*>(&actor); // quicker than looking up the object
         Focus(actor);
         actorSelected(selectedActor);
         SelectSkill(actor.DefaultAttack());
+    }
+
+    Game::ActorList Game::ActiveActors()
+    {
+        ActorList result;
+        for (auto& object : objects)
+        {
+            if (auto actor = dynamic_cast<Actor*>(object.get()))
+                if (actor->IsActive())
+                    result.emplace_back(actor);
+        }
+        return result;
     }
 
     void Game::Focus(const Object& object)
@@ -185,7 +187,7 @@ namespace Game
     {
         selectedTarget = target;
         const auto actor = dynamic_cast<const Actor*>(target);
-        if ((actor) && (IsActive(*actor)) && (!HasPlan(*actor)))
+        if ((actor) && (actor->IsActive()))
         {
             SelectActor(*actor);
         }
@@ -244,31 +246,30 @@ namespace Game
             std::unique_ptr<Plan> plan;
             if (!selectedSkill)
             {
-                plan = std::make_unique<WaitPlan>(*SelectedActor(), *selectedTarget, *this);
+                plan = std::make_unique<WaitPlan>(*selectedActor, *selectedTarget, *this);
             }
             else if (selectedSkill->IsAttack())
             {
-                plan = std::make_unique<AttackPlan>(*SelectedActor(), *selectedTarget, *this, *selectedSkill);
+                plan = std::make_unique<AttackPlan>(*selectedActor, *selectedTarget, *this, *selectedSkill);
             }
             else if (selectedSkill->IsMove())
             {
-                plan = std::make_unique<PathPlan>(*SelectedActor(), selectedTarget->GetPosition(), *this);
+                plan = std::make_unique<PathPlan>(*selectedActor, selectedTarget->GetPosition(), *this);
             }
             if (plan && plan->Valid())
             {
                 OutputDebugStringW((plan->Description() + L" \r\n").c_str());
-                plans[SelectedActor()] = std::move(plan);
+                selectedActor->plan = std::move(plan);
             }
             else
             {
-                plans.erase(SelectedActor());
-                OutputDebugStringW((plan->Description() + L" Failed\r\n").c_str());
-                plan.reset();
+                 OutputDebugStringW((plan->Description() + L" Failed\r\n").c_str());
+                 selectedActor->plan.reset();
             }
         }
         else
         {
-            plans.erase(SelectedActor());
+            selectedActor->plan.reset();
         }
     }
     void Game::Render() const
@@ -283,20 +284,21 @@ namespace Game
         unsigned index = 0;
         for (const auto& object : objects)
         {
-            glPushMatrix();
-            auto position = object->GetPosition();
-            auto square = map.At(position);
-
-            glTranslatef(float(position.x) + 0.5f, square.Z(), float(position.y) + 0.5f);
             glPushName(object->Id());
             object->Render();
             glPopName();
-            glPopMatrix();
+
         }
-        glPopName();
-        for (auto& plan : plans)
+    }
+
+    void Game::Execute()
+    {
+        while (dynamic_cast<Actor*>(objects.front().get())->IsActive())
         {
-            plan.second->Render();
+            auto actor = dynamic_cast<Actor*>(objects.front().get());
+            actor->Execute(*this);
+            auto ptr = Extract(*objects.front());
+            objects.emplace_back(std::move(ptr));
         }
     }
 
@@ -304,12 +306,8 @@ namespace Game
     {
         if (code == VK_RETURN)
         {
-            for (auto& plan : plans)
-            {
-                plan.second->Execute(*this);
-            }
+            Execute();
             Next();
-            plans.clear();
             return;
         }
         if (Action::keymap.count(code) == 0)
@@ -424,11 +422,10 @@ namespace Game
     {
         if (selection == Selection::Map)
         {
-            const auto selectedActor = SelectedActor();
             if (selectedActor)
             {
                 Position target(value & 0xFFFF, (value >> 16) & 0xFFFF);
-                plans[selectedActor] = std::make_unique<PathPlan>(*selectedActor, target, *this);
+                selectedActor->plan = std::make_unique<PathPlan>(*selectedActor, target, *this);
             }
         }
         else if (selection == Selection::Object)

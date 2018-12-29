@@ -4,6 +4,7 @@
 #include "Engine/Geometry.h"
 #include "Actor.h"
 #include "Action.h"
+#include "Plan.h"
 #include "Game.h"
 #include "Skills.h"
 #include "Engine/Coordinate.h"
@@ -53,6 +54,8 @@ namespace Game
         unsigned sides = 16;
         float r = 0.25f;
         glPushMatrix();
+        glTranslatef(float(position.x) + 0.5f, 0.0, float(position.y) + 0.5f);
+
         Game::teamColor[team].Render();
         if (Dead())
         {
@@ -101,6 +104,8 @@ namespace Game
         }
         glEnd();
         glPopMatrix();
+        if (plan)
+            plan->Render();
     }
 
     unsigned Actor::GetMovePoints() const
@@ -142,12 +147,54 @@ namespace Game
         return Score() + Bonus(10) + AgilityMoveBonus();
     }
 
-    void Actor::Turn()
+    void Actor::Activate(Game& game)
     {
         auto mps = GetMaxMovePoints();
         mp = mps.Value();
-        OutputDebugStringW((L"Turn " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
+        if (CanAct())
+        {
+            plan = std::make_unique<WaitPlan>(*this, *this, game);
+            OutputDebugStringW((L"Turn " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
+        }
+        else
+        {
+            OutputDebugStringW((L"Skip " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
+        }
     }
+
+    bool Actor::IsActive() const
+    {
+        return plan != nullptr;
+    }
+
+
+    void Actor::AI(Game& game)
+    {
+        std::vector<std::unique_ptr<Plan>> plans;
+        for (auto skill : GetSkills())
+        {
+            if ((skill.skill->IsAttack()) &&
+                (IsPossible(*skill.skill)))
+            {
+                auto targets = game.FindTargets(*this, *skill.skill);
+                for (auto target : targets)
+                {
+                    auto option = std::make_unique<AttackPlan>(*this, *target, game, *skill.skill);
+                    if (option->Valid())
+                        plans.emplace_back(std::move(option));
+                }
+            }
+        }
+        if (!plans.empty())
+            plan = std::move(plans.front());
+    }
+
+    void Actor::Execute(Game& game)
+    {
+        plan->Execute(game);
+        plan.reset();
+    }
+
 
     bool Actor::Dead() const
     {

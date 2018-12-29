@@ -55,7 +55,7 @@ namespace Game
 
         const Actor* SelectedActor() const override;
         boost::signals2::signal<void(const Actor*)> actorSelected;
-        using ActorList = std::vector<const Actor*>;
+        using ActorList = std::vector<Actor*>;
         boost::signals2::signal<void(const ActorList&)> actorsActivated;
         const Skill* SelectedSkill() const;
         void SelectSkill(const Skill* skill);
@@ -72,14 +72,15 @@ namespace Game
         Engine::Coordinate focus;
         Skills skills;
     protected:
-        void AI(const Actor* actor);
         void Next();
         void Activate();
-        void Deactivate();
-        bool IsActive(const Actor& actor) const;
+        void AI();
+        void Execute();
         bool HasPlan(const Actor& actor) const;
+
         std::unique_ptr<Object> Extract(const Object& object);
         void SelectActor(const Actor& actor);
+        ActorList ActiveActors();
         void Focus(const Object& object);
         void SelectPlan();
         std::wstring Description() const override;
@@ -90,13 +91,11 @@ namespace Game
         // State
         Map map;
         Objects objects;
-        const Actor* selectedActor;
-        ActorList active;
+        Actor* selectedActor;
 
         // Plan
         const Skill* selectedSkill;
         const Target* selectedTarget;
-        std::map<const Actor*, std::unique_ptr<Plan>> plans;
 
         // Definitiion
         std::vector<Type::Armor> armors;

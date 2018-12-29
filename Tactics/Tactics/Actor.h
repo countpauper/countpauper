@@ -15,13 +15,14 @@ namespace Game
 {
     class State;
     class Action;
+    class Plan;
 
     class Object : public Target
     {
     public:
         Object();
         virtual ~Object() = default;
-        virtual void Turn() = 0;
+        virtual void Activate(Game& game) = 0;
         virtual void Render() const = 0;
         unsigned Id() const;
         virtual bool Prone() const;
@@ -41,7 +42,10 @@ namespace Game
         unsigned GetMovePoints() const;
         Direction GetDirection() const;
         void Apply(const State& result);
-        void Turn() override;
+        void Activate(Game& game) override;
+        bool IsActive() const;
+        void AI(Game& game);
+        void Execute(Game& game);
         unsigned GetTeam() const;
         bool CanAct() const;
         bool Dead() const;
@@ -66,6 +70,7 @@ namespace Game
         std::vector<const Armor*> Worn() const;
         std::vector<const Weapon*> Wielded() const;
         std::vector<Know> GetKnowledge() const;
+        std::unique_ptr<Plan> plan;
     private:
         Bonus AgilityMoveBonus() const;
         Score GetMaxMovePoints() const;
