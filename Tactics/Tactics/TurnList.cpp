@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "TurnList.h"
 #include "Actor.h"
+#include "Plan.h"
 
 namespace Game
 {
@@ -31,7 +32,7 @@ namespace Game
 
     unsigned TurnList::Item::Height() const
     {
-        return 3 + Engine::Font::default.Height();
+        return 3 + 2 * Engine::Font::default.Height();
     }
 
     unsigned TurnList::Item::HotKey() const
@@ -49,13 +50,13 @@ namespace Game
         else
             glColor3f(0.3f, 0.3f, 0.3f);
         glBegin(GL_QUADS);
-            glVertex2f(100.0f, 1.0f);
+            glVertex2f(128.0f, 1.0f);
             glVertex2f(0.0f, 1.0f);
             glVertex2f(0.0f, height);
-            glVertex2f(100.0f, height);
+            glVertex2f(128.0f, height);
         glEnd();
         glPushMatrix();
-        glTranslatef(2, height-2, 0); // margin
+        glTranslatef(2, Engine::Font::default.Height()+1.0f, 0); 
         Game::teamColor.at(actor.GetTeam()).Render();
         Engine::Font::default.Select();
         auto text = actor.Description();
@@ -69,6 +70,15 @@ namespace Game
             wchar_t ch = MapVirtualKeyW(hotKey, MAPVK_VK_TO_CHAR);
             text += L" : ";
             text += std::wstring(1, ch);
+        }
+        Engine::glText(text);
+        glTranslatef(2, Engine::Font::default.Height() + 1.0f, 0);
+
+        text = std::to_wstring(actor.GetMovePoints());
+        if (actor.plan)
+        {
+            text += L" ";
+            text += actor.plan->Description();
         }
         Engine::glText(text);
         glPopName();
@@ -118,17 +128,21 @@ namespace Game
 
     void TurnList::Key(unsigned short code)
     {
-        const Actor* selectedActor = nullptr;
-        for (auto& item : items)
+        if (code == VK_OEM_3)   // `
+            game.SelectTarget(nullptr);
+        else
         {
-            if (item.HotKey() == code)
+            const Actor* selectedActor = nullptr;
+            for (auto& item : items)
             {
-                selectedActor = &item.actor;            
+                if (item.HotKey() == code)
+                {
+                    selectedActor = &item.actor;
+                }
             }
+            if (selectedActor)
+                game.SelectTarget(selectedActor);
         }
-        if (selectedActor)
-            game.SelectTarget(selectedActor);
-
     }
 
     void TurnList::Update()

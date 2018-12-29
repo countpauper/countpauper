@@ -44,6 +44,7 @@ namespace Game
 
 
     Actor::Actor() :
+        active(false),
         mp(0),
         team(0)
     {
@@ -149,11 +150,12 @@ namespace Game
 
     void Actor::Activate(Game& game)
     {
+        assert(!active);
         auto mps = GetMaxMovePoints();
         mp = mps.Value();
+        active = true;
         if (CanAct())
         {
-            plan = std::make_unique<WaitPlan>(*this, *this, game);
             OutputDebugStringW((L"Turn " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
         }
         else
@@ -164,9 +166,18 @@ namespace Game
 
     bool Actor::IsActive() const
     {
-        return plan != nullptr;
+        return active;
     }
 
+    bool Actor::IsIdle() const
+    {
+        return active && !plan;
+    }
+
+    bool Actor::IsEngaged() const
+    {
+        return ((plan) && (plan->Engaging()));
+    }
 
     void Actor::AI(Game& game)
     {
@@ -187,12 +198,21 @@ namespace Game
         }
         if (!plans.empty())
             plan = std::move(plans.front());
+        else
+            plan = std::make_unique<SkipPlan>(*this, game);
     }
 
     void Actor::Execute(Game& game)
     {
-        plan->Execute(game);
-        plan.reset();
+        if (plan && !plan->Anticipating())
+        {
+            if (plan->Execute(game))
+            {
+                if (plan->Engaging())
+                    active = false;
+                plan.reset();
+            }
+        }
     }
 
 

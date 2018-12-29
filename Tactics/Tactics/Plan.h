@@ -15,13 +15,32 @@ class Skill;
 class Plan
 {
 public:
+
+    class Trigger
+    {
+    public:
+        virtual bool Anticipating(const Target& target) const = 0;
+    };
+    class WaitTrigger : public Trigger
+    {
+    public:
+        WaitTrigger(const Actor& target);
+        bool Anticipating(const Target& target) const override;
+    private:
+        const Actor& actor;
+    };
+
     Plan(const Actor& actor);
     virtual ~Plan() = default;
     void Render() const;
+    bool Anticipating() const;
+    bool Anticipating(const Target& target) const;
     bool Valid() const;
-    void Execute(Game& game) const;
+    virtual bool Engaging() const = 0;
+    bool Execute(Game& game) const;
     virtual std::wstring Description() const = 0;
-private:
+  
+protected:
     struct Node
     {
         Node(IGame& state);
@@ -46,6 +65,7 @@ private:
         std::unique_ptr<GameState> state;
         std::vector<std::unique_ptr<Node>> children;
     };
+private:
     struct NodeCompare
     {
         NodeCompare(const Position& target);
@@ -74,7 +94,8 @@ protected:
     bool PlanAction(Plan::Node& parent, const Skill& skill, const Actor& actor, const Target& target);
     static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
     const Actor& actor;
-    std::unique_ptr<Node> m_root;
+    std::unique_ptr<Trigger> trigger;
+    std::unique_ptr<Node> root;
 private:
     GameChances AllOutcomesRecursive(Node& node) const;
     GameChances AllOutcomes() const;
@@ -86,15 +107,24 @@ class WaitPlan : public Plan
 public:
     WaitPlan(const Actor& actor, const Target& target, Game& game);
     std::wstring Description() const override;
+    bool Engaging() const override { return false; }
 private:
     const Target& target;
 };
 
+class SkipPlan : public Plan
+{
+public:
+    SkipPlan(const Actor& actor, Game& game);
+    std::wstring Description() const override;
+    bool Engaging() const override { return true; }
+};
 class PathPlan : public Plan
 {
 public:
     PathPlan(const Actor& actor, const Position& target, Game& game);
     std::wstring Description() const override;
+    bool Engaging() const override { return false; }
 private:
     Position target;
 };
@@ -105,6 +135,7 @@ public:
     AttackPlan(const Actor& actor, const Target& target, Game& game, const Skill& skill);
     const Skill& skill;
     std::wstring Description() const override;
+    bool Engaging() const override { return true; }
 private:
     const Target& target;
 };

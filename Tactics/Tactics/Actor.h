@@ -44,6 +44,8 @@ namespace Game
         void Apply(const State& result);
         void Activate(Game& game) override;
         bool IsActive() const;
+        bool IsIdle() const;    // active, but no plan
+        bool IsEngaged() const; // has an engaging plan
         void AI(Game& game);
         void Execute(Game& game);
         unsigned GetTeam() const;
@@ -76,6 +78,7 @@ namespace Game
         Score GetMaxMovePoints() const;
 
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
+        bool active;
         unsigned mp;
         unsigned team;
         Direction direction;

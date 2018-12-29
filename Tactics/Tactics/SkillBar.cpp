@@ -116,12 +116,17 @@ namespace Game
 
     void SkillBar::Key(unsigned short code)
     {
+        Button * selectedButton = nullptr;
         for (auto& button : buttons)
         {
             if (button.HotKey() == code)
             {
-                game.SelectSkill(button.skill);
+                selectedButton = &button;
             }
+        }
+        if (selectedButton)
+        {
+            game.SelectSkill(selectedButton->skill);
         }
     }
 

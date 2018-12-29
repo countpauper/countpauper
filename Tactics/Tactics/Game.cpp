@@ -136,7 +136,8 @@ namespace Game
     }
     void Game::Next()
     {
-        Activate();
+        if (ActiveActors().empty())
+            Activate();
     }
 
     bool Game::HasPlan(const Actor& actor) const
@@ -152,6 +153,13 @@ namespace Game
     void Game::SelectActor(const Actor& actor)
     {
         selectedActor = const_cast<Actor*>(&actor); // quicker than looking up the object
+        auto ptr = Extract(actor);
+        auto it = std::find_if(objects.begin(), objects.end(), [](const decltype(objects)::value_type& object)
+        {
+            const auto a = dynamic_cast<const Actor*>(object.get());
+            return (a) && (!a->IsEngaged());
+        });
+        objects.insert(it, std::move(ptr));
         Focus(actor);
         actorSelected(selectedActor);
         SelectSkill(actor.DefaultAttack());
@@ -241,9 +249,9 @@ namespace Game
 
     void Game::SelectPlan()
     {
+        std::unique_ptr<Plan> plan;
         if (selectedTarget)
         {
-            std::unique_ptr<Plan> plan;
             if (!selectedSkill)
             {
                 plan = std::make_unique<WaitPlan>(*selectedActor, *selectedTarget, *this);
@@ -256,20 +264,33 @@ namespace Game
             {
                 plan = std::make_unique<PathPlan>(*selectedActor, selectedTarget->GetPosition(), *this);
             }
-            if (plan && plan->Valid())
-            {
-                OutputDebugStringW((plan->Description() + L" \r\n").c_str());
-                selectedActor->plan = std::move(plan);
-            }
-            else
-            {
-                 OutputDebugStringW((plan->Description() + L" Failed\r\n").c_str());
-                 selectedActor->plan.reset();
-            }
         }
         else
         {
-            selectedActor->plan.reset();
+            if (!selectedSkill)
+            {
+                plan = std::make_unique<SkipPlan>(*selectedActor, *this);
+            }
+        }
+        if (plan)
+        {
+            if (plan->Valid())
+            {
+                OutputDebugStringW((plan->Description() + L" \r\n").c_str());
+                selectedActor->plan = std::move(plan);
+                for (auto actor : ActiveActors())
+                {
+                    if (actor->IsIdle())
+                    {
+                        SelectActor(*actor);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                OutputDebugStringW((plan->Description() + L" Failed\r\n").c_str());
+            }
         }
     }
     void Game::Render() const
@@ -287,18 +308,19 @@ namespace Game
             glPushName(object->Id());
             object->Render();
             glPopName();
-
         }
     }
 
     void Game::Execute()
     {
-        while (dynamic_cast<Actor*>(objects.front().get())->IsActive())
+        for (auto actor : ActiveActors())
         {
-            auto actor = dynamic_cast<Actor*>(objects.front().get());
             actor->Execute(*this);
-            auto ptr = Extract(*objects.front());
-            objects.emplace_back(std::move(ptr));
+            if (!actor->IsActive())
+            {
+                auto ptr = Extract(*objects.front());
+                objects.emplace_back(std::move(ptr));
+            }
         }
     }
 

@@ -18,7 +18,7 @@ namespace Game
     void Plan::Render() const
     {
         State state(actor);
-        Node* node = m_root.get();
+        Node* node = root.get();
         while (node)
         {
             node->Render();
@@ -155,9 +155,30 @@ namespace Game
         return std::move(node);
     }
 
+    Plan::WaitTrigger::WaitTrigger(const Actor& target) :
+        actor(target)
+    {
+    }
+    bool Plan::WaitTrigger::Anticipating(const Target& target) const
+    {
+        return &target == &actor;
+    }
+
+
+    bool Plan::Anticipating() const
+    {
+        return trigger != nullptr;
+    }
+    bool Plan::Anticipating(const Target& target) const
+    {
+        if (!trigger)
+            return false;
+        return trigger->Anticipating(target);
+    }
+
     bool Plan::Valid() const
     {
-        return m_root!=nullptr;
+        return root!=nullptr;
     }
 
     GameChances Plan::Node::AllOutcomes() const
@@ -183,8 +204,8 @@ namespace Game
 
     GameChances Plan::AllOutcomes() const
     {
-        if (m_root)
-            return m_root->AllOutcomes();
+        if (root)
+            return root->AllOutcomes();
         else
             return GameChances();
     }
@@ -192,7 +213,7 @@ namespace Game
     std::vector<Action*> Plan::ActionSequence(GameState& end) const
     {
         std::vector<Action*> sequence;
-        auto node = m_root.get();
+        auto node = root.get();
         while (node)
         {
             sequence.emplace_back(node->action.get());
@@ -209,7 +230,7 @@ namespace Game
         return sequence;
     }
 
-    void Plan::Execute(Game& game) const
+    bool Plan::Execute(Game& game) const
     {
         auto outcomes = AllOutcomes();
         for (auto outcome : outcomes)
@@ -225,10 +246,11 @@ namespace Game
                 }
                 OutputDebugStringW((Description() + L" " + outcome.second->Description() + L"\r\n").c_str());
                 outcome.second->Apply(game);
-                return;
+                return true;
             }
         }
         OutputDebugStringW((Description() + L" fizzle \r\n").c_str());
+        return false;
     }
 
     bool Plan::PlanAction(Node& parent, const Skill& skill, const Actor& actor, const Target& target)
@@ -276,7 +298,7 @@ namespace Game
             auto act = PlanAction(*best, skill, actor, target);
             if (act)
             {
-                m_root = closed.ExtractRoot(std::move(best));
+                root = closed.ExtractRoot(std::move(best));
                 return;
             }
             auto bestIt = closed.emplace(std::move(best));
@@ -311,7 +333,7 @@ namespace Game
 
             if (best->Reached(targetPosition))
             {
-                m_root = closed.ExtractRoot(std::move(best));
+                root = closed.ExtractRoot(std::move(best));
                 return;
             }
             auto bestIt = closed.emplace(std::move(best));
@@ -338,12 +360,26 @@ namespace Game
         Plan(actor),
         target(target)
     {
+        root = std::make_unique<Node>(game);
+        trigger = std::make_unique<WaitTrigger>(actor);
     }
 
     std::wstring WaitPlan::Description() const
     {
         return actor.Description() + L": " + std::wstring(L"Wait for ") + target.Description();
     }
+
+    SkipPlan::SkipPlan(const Actor& actor, Game& game) :
+        Plan(actor)
+    {
+        root = std::make_unique<Node>(game);
+    }
+
+    std::wstring SkipPlan::Description() const
+    {
+        return actor.Description() + L": " + std::wstring(L"Wait");
+    }
+
 
     PathPlan::PathPlan(const Actor& actor, const Position& target, Game& game) :
         Plan(actor),
@@ -377,12 +413,12 @@ namespace Game
     
     std::wstring ManualPlan::Description() const
     {
-        if (!m_root)
+        if (!root)
             return actor.Description() + L": idle";
         else
         {
             std::wstring result(actor.Description() + L": ");
-            auto node = m_root.get();
+            auto node = root.get();
             result += node->action->Description();
             while (!node->children.empty())
             {
