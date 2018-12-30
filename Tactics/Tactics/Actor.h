@@ -46,6 +46,8 @@ namespace Game
         bool IsActive() const;
         bool IsIdle() const;    // active, but no plan
         bool IsEngaged() const; // has an engaging plan
+        bool IsAnticipating() const; 
+        
         void AI(Game& game);
         void Execute(Game& game);
         unsigned GetTeam() const;

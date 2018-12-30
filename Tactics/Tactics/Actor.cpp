@@ -179,6 +179,11 @@ namespace Game
         return ((plan) && (plan->Engaging()));
     }
 
+    bool Actor::IsAnticipating() const
+    {
+        return ((plan) && (plan->Anticipating()));
+    }
+
     void Actor::AI(Game& game)
     {
         std::vector<std::unique_ptr<Plan>> plans;
@@ -206,6 +211,7 @@ namespace Game
     {
         if (plan && !plan->Anticipating())
         {
+            plan->Compute(game);
             if (plan->Execute(game))
             {
                 if (plan->Engaging())

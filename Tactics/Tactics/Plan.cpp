@@ -26,7 +26,7 @@ namespace Game
         }
     }
 
-    Plan::Node::Node(IGame& state) :
+    Plan::Node::Node(const IGame& state) :
         previous(nullptr),
         state(std::make_unique<GameState>(state)),
         chance(1.0)
@@ -282,15 +282,14 @@ namespace Game
         return true;
     }
 
-    void Plan::Approach(const Target& target, Game& game, const Skill& skill)
+    std::unique_ptr<Plan::Node> Plan::Approach(const Target& target, const Game& game, const Skill& skill)
     {
         assert(game.SelectedActor() == &actor); // Nodes assume the currently selected actor is doing the planning
         auto targetPosition = target.GetPosition();
         OpenTree open(targetPosition);
         ClosedList closed(targetPosition);
         auto first = std::make_unique<Node>(game);
-        if (first->Reached(targetPosition))
-            return;
+
         open.emplace(std::move(first));
         while (!open.empty())
         {
@@ -298,8 +297,7 @@ namespace Game
             auto act = PlanAction(*best, skill, actor, target);
             if (act)
             {
-                root = closed.ExtractRoot(std::move(best));
-                return;
+                return closed.ExtractRoot(std::move(best));
             }
             auto bestIt = closed.emplace(std::move(best));
             assert(bestIt.second);
@@ -319,10 +317,11 @@ namespace Game
                 }
             }
         }
+        return nullptr;
     }
 
     // TODO: Refactor to avoid code duplication with Approach
-    void Plan::Goto(const Position& targetPosition, Game& game)
+    std::unique_ptr<Plan::Node> Plan::Goto(const Position& targetPosition, const Game& game)
     {
         OpenTree open(targetPosition);
         ClosedList closed(targetPosition);
@@ -333,8 +332,7 @@ namespace Game
 
             if (best->Reached(targetPosition))
             {
-                root = closed.ExtractRoot(std::move(best));
-                return;
+                return closed.ExtractRoot(std::move(best));
             }
             auto bestIt = closed.emplace(std::move(best));
             assert(bestIt.second);
@@ -354,14 +352,20 @@ namespace Game
                 }
             }
         }
+        return nullptr;
     }
 
-    WaitPlan::WaitPlan(const Actor& actor, const Target& target, Game& game) :
+    WaitPlan::WaitPlan(const Actor& actor, const Target& target, const Game& game) :
         Plan(actor),
         target(target)
     {
-        root = std::make_unique<Node>(game);
+        Compute(game);
         trigger = std::make_unique<WaitTrigger>(actor);
+    }
+
+    void WaitPlan::Compute(const Game& game)
+    {
+        root = std::make_unique<Node>(game);
     }
 
     std::wstring WaitPlan::Description() const
@@ -369,10 +373,10 @@ namespace Game
         return actor.Description() + L": " + std::wstring(L"Wait for ") + target.Description();
     }
 
-    SkipPlan::SkipPlan(const Actor& actor, Game& game) :
+    SkipPlan::SkipPlan(const Actor& actor, const Game& game) :
         Plan(actor)
     {
-        root = std::make_unique<Node>(game);
+        Compute(game);
     }
 
     std::wstring SkipPlan::Description() const
@@ -380,12 +384,21 @@ namespace Game
         return actor.Description() + L": " + std::wstring(L"Wait");
     }
 
+    void SkipPlan::Compute(const Game& game)
+    {
+        root = std::make_unique<Node>(game);
+    }
 
-    PathPlan::PathPlan(const Actor& actor, const Position& target, Game& game) :
+    PathPlan::PathPlan(const Actor& actor, const Position& target, const Game& game) :
         Plan(actor),
         target(target)
     {
-        Goto(target, game);
+        Compute(game);
+    }
+
+    void PathPlan::Compute(const Game& game)
+    {
+        root = Goto(target, game);
     }
 
     std::wstring PathPlan::Description() const
@@ -393,12 +406,17 @@ namespace Game
         return actor.Description() + L": " + std::wstring(L"Move to ") + target.Description();
     }
 
-    AttackPlan::AttackPlan(const Actor& actor, const Target& target, Game& game, const Skill& skill) :
+    AttackPlan::AttackPlan(const Actor& actor, const Target& target, const Game& game, const Skill& skill) :
         Plan(actor),
         skill(skill),
         target(target)
     {
-        Approach(target, game, skill);
+        Compute(game);
+    }
+
+    void AttackPlan::Compute(const Game& game)
+    {
+        root = Approach(target, game, skill);
     }
 
     std::wstring AttackPlan::Description() const
@@ -411,6 +429,11 @@ namespace Game
     {
     }
     
+    void ManualPlan::Compute(const Game& game)
+    {   // how? only can check if it's still valid
+        assert(false);
+    }
+
     std::wstring ManualPlan::Description() const
     {
         if (!root)

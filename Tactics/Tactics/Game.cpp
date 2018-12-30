@@ -162,7 +162,9 @@ namespace Game
         objects.insert(it, std::move(ptr));
         Focus(actor);
         actorSelected(selectedActor);
-        SelectSkill(actor.DefaultAttack());
+        selectedTarget = nullptr;
+        selectedSkill = actor.DefaultAttack();
+        skillSelected(selectedSkill);
     }
 
     Game::ActorList Game::ActiveActors()
@@ -315,6 +317,7 @@ namespace Game
     {
         for (auto actor : ActiveActors())
         {
+            selectedActor = actor;
             actor->Execute(*this);
             if (!actor->IsActive())
             {

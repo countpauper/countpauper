@@ -37,13 +37,15 @@ public:
     bool Anticipating(const Target& target) const;
     bool Valid() const;
     virtual bool Engaging() const = 0;
+    virtual void Compute(const Game& game) = 0;
+
     bool Execute(Game& game) const;
     virtual std::wstring Description() const = 0;
   
 protected:
     struct Node
     {
-        Node(IGame& state);
+        Node(const IGame& state);
         Node(Node& previous, std::unique_ptr<GameState>&& state, std::unique_ptr<Action>&& action);
         Node(const Node&) = delete;
         ~Node();
@@ -89,8 +91,8 @@ private:
     };
     friend ClosedList;
 protected:
-    void Approach(const Target& target, Game& game, const Skill& skill);
-    void Goto(const Position& target, Game& game);
+    std::unique_ptr<Node> Approach(const Target& target, const Game& game, const Skill& skill);
+    std::unique_ptr<Node> Goto(const Position& target, const Game& game);
     bool PlanAction(Plan::Node& parent, const Skill& skill, const Actor& actor, const Target& target);
     static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
     const Actor& actor;
@@ -105,9 +107,10 @@ private:
 class WaitPlan : public Plan
 {
 public:
-    WaitPlan(const Actor& actor, const Target& target, Game& game);
+    WaitPlan(const Actor& actor, const Target& target, const Game& game);
     std::wstring Description() const override;
     bool Engaging() const override { return false; }
+    void Compute(const Game& game) override;
 private:
     const Target& target;
 };
@@ -115,16 +118,19 @@ private:
 class SkipPlan : public Plan
 {
 public:
-    SkipPlan(const Actor& actor, Game& game);
+    SkipPlan(const Actor& actor, const Game& game);
     std::wstring Description() const override;
     bool Engaging() const override { return true; }
+    void Compute(const Game& game) override;
 };
+
 class PathPlan : public Plan
 {
 public:
-    PathPlan(const Actor& actor, const Position& target, Game& game);
+    PathPlan(const Actor& actor, const Position& target, const Game& game);
     std::wstring Description() const override;
     bool Engaging() const override { return false; }
+    void Compute(const Game& game) override;
 private:
     Position target;
 };
@@ -132,10 +138,11 @@ private:
 class AttackPlan : public Plan
 {
 public:
-    AttackPlan(const Actor& actor, const Target& target, Game& game, const Skill& skill);
+    AttackPlan(const Actor& actor, const Target& target, const Game& game, const Skill& skill);
     const Skill& skill;
     std::wstring Description() const override;
     bool Engaging() const override { return true; }
+    void Compute(const Game& game) override;
 private:
     const Target& target;
 };
@@ -145,6 +152,7 @@ class ManualPlan : public Plan
 public:
     ManualPlan(Actor& actor);
     std::wstring Description() const override;
+    void Compute(const Game& game) override;
 };
 
 }   // ::Game

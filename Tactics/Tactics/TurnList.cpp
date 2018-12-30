@@ -74,7 +74,18 @@ namespace Game
         Engine::glText(text);
         glTranslatef(2, Engine::Font::default.Height() + 1.0f, 0);
 
-        text = std::to_wstring(actor.GetMovePoints());
+        if (actor.IsEngaged())
+            text = L"#";
+        else if (actor.IsActive())
+            text = L"*";
+        else if (actor.IsAnticipating())
+            text = L"-";
+        else if (actor.IsIdle())
+            text = L".";
+        else
+            text = L"";
+
+        text += std::to_wstring(actor.GetMovePoints());
         if (actor.plan)
         {
             text += L" ";
