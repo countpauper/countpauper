@@ -24,7 +24,7 @@ std::unique_ptr<GameState> Affect::Act(const IGame& game) const
     State victim(game.Get(target));
     if (!attacker.IsPossible(skill, victim))
         return nullptr;
-    auto ret = std::make_unique<GameState>(game);
+    auto ret = std::make_unique<GameState>(game, actor);
     attacker.mp -= skill.mp;
     const auto& parameters= dynamic_cast<Skill::Affect&>(*skill.type);
     for (auto effect : parameters.effects)

@@ -67,9 +67,11 @@ namespace Game
         {
             for (auto activeActor : ActiveActors())
             {
-                assert(activeActor->GetTeam() == selectedActor->GetTeam());
-                SelectActor(*activeActor);
-                activeActor->AI(*this);
+                if (activeActor->IsAlly(*selectedActor))
+                {
+                    SelectActor(*activeActor);
+                    activeActor->AI(*this);
+                }
             }
             Execute();
             Next();
@@ -81,44 +83,87 @@ namespace Game
         Activate();
     }
 
-    void Game::Activate()
+    Game::ActorList Game::NextGroup() const
     {
-        selectedActor = dynamic_cast<Actor*>(objects.front().get());
-        if (selectedActor)
+        auto it = std::find_if(objects.begin(), objects.end(), [](const decltype(objects)::value_type& object)
         {
-            ActorList active;
-            ActorList skipped;
-            for (auto& object : objects)
+            auto actor = dynamic_cast<Actor*>(object.get());
+            return ((actor) && (!actor->IsAnticipating()));
+        });
+        if (it == objects.end())
+            return ActorList();
+        auto first = dynamic_cast<Actor*>(it->get());
+        ActorList group;
+
+        for (it; it != objects.end(); ++it)
+        {
+            auto actor = dynamic_cast<Actor*>(it->get());
+            if (actor && actor->IsAlly(*first))
             {
-                auto actor = dynamic_cast<Actor*>(object.get());
-                assert(actor);    // don't know how to handle non-actors when activating team mates. Move after?
-                if ((actor->GetTeam() != selectedActor->GetTeam()))
-                    break;
-                actor->Activate(*this);
-                if (actor->CanAct())
-                    active.emplace_back(actor);
-                else
-                    skipped.emplace_back(actor);
-            }
-            for (auto skip : skipped)
-            {
-                objects.emplace_back(Extract(*skip));
-            }
-            if (!active.empty())
-            {
-                selectedActor = active.front();
-                SelectActor(*selectedActor);
-                actorsActivated(active);
+                group.emplace_back(actor);
             }
             else
-            {
-                selectedActor = nullptr;
-            }
+                break;
+        }
+        return group;
+    }
 
+    void Game::Trigger(const ActorList& triggers)
+    {
+        assert(selectedActor == nullptr);   // should be open to trigger
+        ActorList triggered;
+        ActorList group;
+        for (auto& object : objects)
+        {
+            auto actor = dynamic_cast<Actor*>(object.get());
+            if ((actor) && 
+                ((group.empty()) || (actor->IsAlly(*group.front()))))
+            {
+                for (auto trigger : triggers)
+                {
+                    if (actor->Trigger(*trigger, *this))
+                    {
+                        if (actor->IsActive())
+                            triggered.emplace_back(actor);
+                    }
+                }
+            }
+        }
+    }
+
+    void Game::Activate()
+    {
+        ActorList group = NextGroup();
+        if (group.empty())
+            return;
+        Activate(group);
+        Trigger(group);
+    }
+
+    void Game::Activate(const Game::ActorList& group)
+    {
+        ActorList active;
+        ActorList skipped;
+        for (auto actor : group)
+        {
+            actor->Activate(*this);
+            if (actor->IsActive())
+                active.emplace_back(actor);
+            else
+                skipped.emplace_back(actor);
+        }
+        for (auto skip : skipped)
+        {
+            objects.emplace_back(Extract(*skip));
+        }
+        if (!active.empty())
+        {
+            actorsActivated(active);
         }
         else
         {
-            objects.front()->Activate(*this);
+            assert(objects.front().get() != selectedActor); // skipped should have been moved
+            Activate();
         }
     }
 
@@ -136,8 +181,11 @@ namespace Game
     }
     void Game::Next()
     {
-        if (ActiveActors().empty())
+        auto& active = ActiveActors();
+        if (active.empty())
             Activate();
+        else
+            SelectActor(*active.front());
     }
 
     bool Game::HasPlan(const Actor& actor) const
@@ -152,7 +200,6 @@ namespace Game
 
     void Game::SelectActor(const Actor& actor)
     {
-        selectedActor = const_cast<Actor*>(&actor); // quicker than looking up the object
         auto ptr = Extract(actor);
         auto it = std::find_if(objects.begin(), objects.end(), [](const decltype(objects)::value_type& object)
         {
@@ -161,7 +208,7 @@ namespace Game
         });
         objects.insert(it, std::move(ptr));
         Focus(actor);
-        actorSelected(selectedActor);
+        SetSelectedActor(&actor);
         selectedTarget = nullptr;
         selectedSkill = actor.DefaultAttack();
         skillSelected(selectedSkill);
@@ -184,6 +231,11 @@ namespace Game
         focus = map.Coordinate(object.GetPosition());
     }
     const Actor* Game::SelectedActor() const
+    {
+        return selectedActor;
+    }
+
+    const Actor* Game::Executor() const
     {
         return selectedActor;
     }
@@ -319,13 +371,21 @@ namespace Game
         {
             selectedActor = actor;
             actor->Execute(*this);
-            if (!actor->IsActive())
+            if ((!actor->IsActive()) && (!actor->IsAnticipating()))
             {
                 auto ptr = Extract(*objects.front());
                 objects.emplace_back(std::move(ptr));
             }
         }
+        SetSelectedActor(nullptr);
     }
+
+    void Game::SetSelectedActor(const Actor* selected)
+    {
+        selectedActor = const_cast<Actor*>(selected);   // faster than looking up in objects
+        actorSelected(selectedActor);
+    }
+
 
     void Game::Key(unsigned short code)
     {

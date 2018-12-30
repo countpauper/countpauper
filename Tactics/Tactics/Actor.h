@@ -22,7 +22,7 @@ namespace Game
     public:
         Object();
         virtual ~Object() = default;
-        virtual void Activate(Game& game) = 0;
+        virtual void Activate(const Game& game) = 0;
         virtual void Render() const = 0;
         unsigned Id() const;
         virtual bool Prone() const;
@@ -42,7 +42,9 @@ namespace Game
         unsigned GetMovePoints() const;
         Direction GetDirection() const;
         void Apply(const State& result);
-        void Activate(Game& game) override;
+        bool IsAlly(const Actor& other) const;
+        void Activate(const Game& game) override;
+        bool Trigger(const Actor& actor, Game& game);
         bool IsActive() const;
         bool IsIdle() const;    // active, but no plan
         bool IsEngaged() const; // has an engaging plan

@@ -53,7 +53,8 @@ namespace Game
         const Objects& GetObjects() const;
         static std::vector<Engine::RGBA> teamColor;
 
-        const Actor* SelectedActor() const override;
+        const Actor* SelectedActor() const;
+        const Actor* Executor() const override;
         boost::signals2::signal<void(const Actor*)> actorSelected;
         using ActorList = std::vector<Actor*>;
         boost::signals2::signal<void(const ActorList&)> actorsActivated;
@@ -74,13 +75,17 @@ namespace Game
     protected:
         void Next();
         void Activate();
+        void Activate(const Game::ActorList& group);
+        void Trigger(const ActorList& triggers);
         void AI();
         void Execute();
         bool HasPlan(const Actor& actor) const;
+        void SetSelectedActor(const Actor* selected);
 
         std::unique_ptr<Object> Extract(const Object& object);
         void SelectActor(const Actor& actor);
         ActorList ActiveActors();
+        ActorList Game::NextGroup() const;
         void Focus(const Object& object);
         void SelectPlan();
         std::wstring Description() const override;

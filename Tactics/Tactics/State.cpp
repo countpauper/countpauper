@@ -176,8 +176,13 @@ namespace Game
     }
 
     GameState::GameState(const IGame& parent) :
+        GameState(parent, *parent.Executor())
+    {
+    }
+
+    GameState::GameState(const IGame& parent, const Actor& executor) :
         parent(parent),
-        selectedActor(parent.SelectedActor())
+        executor(executor)
     {
     }
     void GameState::Adjust(const Actor& actor, const State& actorState)
@@ -205,14 +210,14 @@ namespace Game
         }
     }
 
-    const Actor* GameState::SelectedActor() const
+    const Actor* GameState::Executor() const
     {
-        return selectedActor;
+        return &executor;
     }
 
     State GameState::ActorState() const
     {
-        return Get(*SelectedActor());
+        return Get(executor);
     }
 
     bool GameState::HasParent(const IGame& state) const

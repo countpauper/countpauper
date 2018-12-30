@@ -16,15 +16,15 @@ class Plan
 {
 public:
 
-    class Trigger
+    class Condition
     {
     public:
         virtual bool Anticipating(const Target& target) const = 0;
     };
-    class WaitTrigger : public Trigger
+    class Wait : public Condition
     {
     public:
-        WaitTrigger(const Actor& target);
+        Wait(const Actor& target);
         bool Anticipating(const Target& target) const override;
     private:
         const Actor& actor;
@@ -34,7 +34,7 @@ public:
     virtual ~Plan() = default;
     void Render() const;
     bool Anticipating() const;
-    bool Anticipating(const Target& target) const;
+    bool Trigger(const Target& target);
     bool Valid() const;
     virtual bool Engaging() const = 0;
     virtual void Compute(const Game& game) = 0;
@@ -45,7 +45,7 @@ public:
 protected:
     struct Node
     {
-        Node(const IGame& state);
+        Node(const IGame& state, const Actor& executor);
         Node(Node& previous, std::unique_ptr<GameState>&& state, std::unique_ptr<Action>&& action);
         Node(const Node&) = delete;
         ~Node();
@@ -96,7 +96,7 @@ protected:
     bool PlanAction(Plan::Node& parent, const Skill& skill, const Actor& actor, const Target& target);
     static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
     const Actor& actor;
-    std::unique_ptr<Trigger> trigger;
+    std::unique_ptr<Condition> condition;
     std::unique_ptr<Node> root;
 private:
     GameChances AllOutcomesRecursive(Node& node) const;

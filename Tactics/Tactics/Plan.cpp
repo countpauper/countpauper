@@ -26,9 +26,9 @@ namespace Game
         }
     }
 
-    Plan::Node::Node(const IGame& state) :
+    Plan::Node::Node(const IGame& state, const Actor& executor) :
         previous(nullptr),
-        state(std::make_unique<GameState>(state)),
+        state(std::make_unique<GameState>(state, executor)),
         chance(1.0)
     {
     }
@@ -155,11 +155,11 @@ namespace Game
         return std::move(node);
     }
 
-    Plan::WaitTrigger::WaitTrigger(const Actor& target) :
+    Plan::Wait::Wait(const Actor& target) :
         actor(target)
     {
     }
-    bool Plan::WaitTrigger::Anticipating(const Target& target) const
+    bool Plan::Wait::Anticipating(const Target& target) const
     {
         return &target == &actor;
     }
@@ -167,13 +167,19 @@ namespace Game
 
     bool Plan::Anticipating() const
     {
-        return trigger != nullptr;
+        return condition != nullptr;
     }
-    bool Plan::Anticipating(const Target& target) const
+    bool Plan::Trigger(const Target& target)
     {
-        if (!trigger)
+        if (!condition)
             return false;
-        return trigger->Anticipating(target);
+        if (condition->Anticipating(target))
+        {
+            condition.reset();
+            return true;
+        }
+        else
+            return false;
     }
 
     bool Plan::Valid() const
@@ -284,11 +290,10 @@ namespace Game
 
     std::unique_ptr<Plan::Node> Plan::Approach(const Target& target, const Game& game, const Skill& skill)
     {
-        assert(game.SelectedActor() == &actor); // Nodes assume the currently selected actor is doing the planning
         auto targetPosition = target.GetPosition();
         OpenTree open(targetPosition);
         ClosedList closed(targetPosition);
-        auto first = std::make_unique<Node>(game);
+        auto first = std::make_unique<Node>(game, actor);
 
         open.emplace(std::move(first));
         while (!open.empty())
@@ -325,7 +330,7 @@ namespace Game
     {
         OpenTree open(targetPosition);
         ClosedList closed(targetPosition);
-        open.emplace(std::make_unique<Node>(game));
+        open.emplace(std::make_unique<Node>(game, actor));
         while (!open.empty())
         {
             std::unique_ptr<Node> best = open.Pop();
@@ -360,12 +365,16 @@ namespace Game
         target(target)
     {
         Compute(game);
-        trigger = std::make_unique<WaitTrigger>(actor);
+        const auto targetActor = dynamic_cast<const Actor*>(&target);
+        if (targetActor)
+            condition = std::make_unique<Wait>(*targetActor);
+        else
+            assert(false);  // wait for area/location
     }
 
     void WaitPlan::Compute(const Game& game)
     {
-        root = std::make_unique<Node>(game);
+        root = std::make_unique<Node>(game, actor);
     }
 
     std::wstring WaitPlan::Description() const
@@ -386,7 +395,7 @@ namespace Game
 
     void SkipPlan::Compute(const Game& game)
     {
-        root = std::make_unique<Node>(game);
+        root = std::make_unique<Node>(game, actor);
     }
 
     PathPlan::PathPlan(const Actor& actor, const Position& target, const Game& game) :

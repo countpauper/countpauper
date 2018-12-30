@@ -58,11 +58,12 @@ namespace Game
     {
     public:
         GameState(const IGame& parent);
+        GameState(const IGame& parent, const Actor& executor);
         void Adjust(const Actor& actor, const State& state) override;
         void Apply(IGame& root) const;
         State Get(const Actor& actor) const override;
 
-        const Actor* SelectedActor() const override;
+        const Actor* Executor() const;
         bool CanBe(const Position& position) const override;
         bool CanGo(const Position& from, Direction direction) const override;
         bool Cover(const Position& from, const Position& to) const override;
@@ -73,7 +74,7 @@ namespace Game
     protected:
         void RecursiveApply(Game& game, std::set<const Actor*>& done) const;
         const IGame& parent;
-        const Actor* selectedActor;
+        const Actor& executor;
         std::map<const Actor*, State> state;
     };
 

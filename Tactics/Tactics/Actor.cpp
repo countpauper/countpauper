@@ -148,20 +148,39 @@ namespace Game
         return Score() + Bonus(10) + AgilityMoveBonus();
     }
 
-    void Actor::Activate(Game& game)
+    bool Actor::IsAlly(const Actor& other) const
+    {
+        return GetTeam() == other.GetTeam();
+    }
+
+    void Actor::Activate(const Game& game)
     {
         assert(!active);
         auto mps = GetMaxMovePoints();
         mp = mps.Value();
-        active = true;
         if (CanAct())
         {
+            active = true;
             OutputDebugStringW((L"Turn " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
         }
         else
         {
+            active = false;
             OutputDebugStringW((L"Skip " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
         }
+    }
+
+    bool Actor::Trigger(const Actor& actor, Game& game)
+    {
+        if (!plan)
+            return false;
+        if (plan->Trigger(actor))
+        {
+            active = true;
+            Execute(game);
+            return true;
+        }
+        return false;
     }
 
     bool Actor::IsActive() const
@@ -209,14 +228,19 @@ namespace Game
 
     void Actor::Execute(Game& game)
     {
-        if (plan && !plan->Anticipating())
+        if (plan)
         {
-            plan->Compute(game);
-            if (plan->Execute(game))
+            if (plan->Anticipating())
+                active = false;
+            else
             {
-                if (plan->Engaging())
-                    active = false;
-                plan.reset();
+                plan->Compute(game);
+                if (plan->Execute(game))
+                {
+                    if (plan->Engaging())
+                        active = false;
+                    plan.reset();
+                }
             }
         }
     }

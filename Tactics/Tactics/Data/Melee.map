@@ -7,19 +7,19 @@ Hack 3
 Slash 1
 Unarmed 0
 Walk 0
+Actor Jack 1 3 0 0 1
+Body Around 0 All 10 ,,,,
+0 1 3
+Normal Steel Shortsword
+Hack 1
+Unarmed 0
+Walk 0
 Actor Bar 0 3 3 0 1
 Body Around 0 All 10 ,,,,
 0 1 4
 Normal Adamantine Dagger
 Hack 2
 Dodge 0
-Unarmed 0
-Walk 0
-Actor Jack 1 3 0 0 1
-Body Around 0 All 10 ,,,,
-0 1 3
-Normal Steel Shortsword
-Hack 1
 Unarmed 0
 Walk 0
 Actor Jill 1 2 1 0 1

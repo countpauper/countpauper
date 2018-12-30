@@ -29,7 +29,7 @@ namespace Game
         {
             state.position = newPosition;
             state.direction = direction;
-            auto ret = std::make_unique<GameState>(game);
+            auto ret = std::make_unique<GameState>(game, actor);
             ret->Adjust(actor, state);
             return ret;
         }
