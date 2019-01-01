@@ -3,7 +3,7 @@
   <skill name="Walk" mp="2" range="1" trigger="Act">
     <move/>
   </skill>
-  <skill name="Unarmed" mp="2" trigger="Act" category="melee">
+  <skill name="Unarmed" weapon="None" mp="2" trigger="Act" category="melee">
     <melee damage="2"/>
   </skill>
   <skill name="Hack" weapon="Blade" mp="2" trigger="Act" category="melee|1st">
@@ -11,6 +11,9 @@
   </skill>
   <skill name="Slash" weapon="Blade" mp="1" trigger="Combo" category="melee|2nd" follows="1st">
     <melee damage="2,3,4,5,6,7,8,9,10,11"/>
+  </skill>
+  <skill name="King_Strike" weapon="Blunt" mp="2" trigger="Act" category="melee|1st">
+    <melee damage="4,5,6,7,8,9,10,11,12,13"/>
   </skill>
   <skill name="Dodge" mp="1" trigger="Defend" follows="melee" chance="5,10,15,20,25,30,35,40,45,50">
     <affect effect="miss"/>

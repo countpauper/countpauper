@@ -5,7 +5,7 @@ Adamantine,0,Metal,3,Stone,1,0,0,0,0,0,0
 Obsidian,0,Metal,2,Fire,2,1,0,0,0,0,0
 Ironwood,0,Metal,3,Nature,0,2,0,0,0,0,0
 Electrum,0,Metal,4,Water,1,1,0,0,0,0,0
-Wood,100,Wood,1,None,0,0,0,0,0,0,0
+Wooden,100,Wood,1,None,0,0,0,0,0,0,0
 Oak,0,Wood,1,Stone,1,0,0,0,0,0,0
 Yew,0,Wood,2,Water,-1,0,0,0,0,0,0
 Treant,0,Wood,4,Nature,0,3,0,0,0,0,0

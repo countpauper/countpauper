@@ -47,6 +47,7 @@ void Attack::Render(const State& state) const
     glEnd();
     Engine::Font::default.Select();
     Engine::glText(skill.name + L"@" + target.Description());
+
     glPopMatrix();
 }
 

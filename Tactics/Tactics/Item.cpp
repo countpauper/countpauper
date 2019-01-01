@@ -60,8 +60,8 @@ namespace Game
             { L"Wisdom", Statistic::Wisdom }
         });
 
-        Engine::Adapter::Unsigned<Requirement> reqstr(&Requirement::strength);
-        Engine::Adapter::Unsigned<Requirement> reqwis(&Requirement::wisdom);
+        Engine::Adapter::Integer<Requirement> reqstr(&Requirement::strength);
+        Engine::Adapter::Integer<Requirement> reqwis(&Requirement::wisdom);
         std::vector<Engine::Adapter::Interface<Requirement>*> requirementAdapters({ &reqstr, &reqwis });
 
         // TODO: get the name of the type/bonus or material into the damage score
@@ -154,6 +154,7 @@ namespace Game
         {
             { L"All", Weapon::Style::All },
             { L"", Weapon::Style::None },
+            { L"None", Weapon::Style::None },
             { L"Blade", Weapon::Style::Blade },
             { L"Blunt", Weapon::Style::Blunt },
             { L"Axe", Weapon::Style::Axe },
@@ -234,7 +235,7 @@ namespace Game
 
     Requirement Requirement::operator*(int multiplier) const
     {
-        return Requirement(strength + multiplier, wisdom * multiplier);
+        return Requirement(strength * multiplier, wisdom * multiplier);
     }
 
     Armor::Armor(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& bonus) :

@@ -14,9 +14,9 @@ namespace Game
     {
     public:
         Requirement() : strength(0), wisdom(0) {}
-        Requirement(unsigned strength, unsigned wisdom) : strength(strength), wisdom(wisdom) {}
-        unsigned strength;
-        unsigned wisdom;
+        Requirement(int strength, int wisdom) : strength(strength), wisdom(wisdom) {}
+        int strength;
+        int wisdom;
         Requirement operator+(const Requirement& other) const;
         Requirement operator*(int multiplier) const;
     };
