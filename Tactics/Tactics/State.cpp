@@ -131,6 +131,7 @@ namespace Game
             return wielded.front()->Damage() ^ (
                 Damage(Wound::Type::Blunt, Score(strengthBonus) + skillBonus) +
                 Damage(Wound::Type::Sharp, Score(strengthBonus) + skillBonus) +
+                Damage(Wound::Type::Burn, Score(wisdomBonus) + skillBonus) +
                 Damage(Wound::Type::Disease, Score(wisdomBonus) + skillBonus) +
                 Damage(Wound::Type::Spirit, Score(wisdomBonus) + skillBonus));
         }

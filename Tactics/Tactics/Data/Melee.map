@@ -1,4 +1,12 @@
-5
+6
+Actor Qux 0 0 3 0 1
+Body Around 0 All 12 ,,,,
+1 1 3
+Embroidered Silk Brazier
+Normal Yew Wand
+Zap 2
+Unarmed 0
+Walk 0
 Actor Foo 0 2 3 0 1
 Body Around 0 Agi+Str+Con+Wis+Int 14 0,0,0,0,0
 1 1 4
@@ -27,8 +35,10 @@ Unarmed 0
 Walk 0
 Actor Alice 1 3 0 0 1
 Body Around 0 All 10 ,,,,
-1 0 2
-Embroidered Silk Robe
+1 1 3
+Normal Hemp Robe
+Normal Yew Wand
+Zap 1
 Unarmed 0
 Walk 0
 Actor Carol 1 3 1 0 1

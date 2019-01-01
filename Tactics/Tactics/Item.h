@@ -168,6 +168,7 @@ namespace Game
                 Bow,
                 Crossbow,
                 Gun,
+                Wand,
                 Throwing
             };
             class Material : public Type::Material
@@ -179,7 +180,10 @@ namespace Game
                     Wood =1<<0,
                     Metal = 1<<1,
                     Leather= 1<<2,
-                    All = Wood | Metal | Leather,
+                    Mundane = Wood | Metal | Leather,
+                    Precious = 1 << 3,
+                    Gem = 1<<4,
+                    All = Wood | Metal | Leather | Precious | Gem
                 };
                 Material() : category(None) {}
                 Category category;

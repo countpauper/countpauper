@@ -163,6 +163,7 @@ namespace Game
             { L"Bow", Weapon::Style::Bow },
             { L"Crossbow", Weapon::Style::Crossbow },
             { L"Gun", Weapon::Style::Gun },
+            { L"Wand", Weapon::Style::Wand },
             { L"Throwing", Weapon::Style::Throwing },
         });
 
@@ -172,7 +173,10 @@ namespace Game
             { L"Metal", Weapon::Material::Metal },
             { L"Wood", Weapon::Material::Wood },
             { L"Leather", Weapon::Material::Leather },
-            { L"All", Weapon::Material::All},
+            { L"Mundane", Weapon::Material::Mundane } ,
+            { L"Precious", Weapon::Material::Precious },
+            { L"Gem", Weapon::Material::Gem },
+            { L"All", Weapon::Material::All },
         });
 
         std::vector<Weapon> Weapon::Load(std::wistream& file)
