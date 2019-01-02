@@ -15,7 +15,7 @@ Hood,0,2,0,Head,Leather,1,0,0,0,0
 Coif,0,3,0,Head,Metal,2,0,0,0,0
 Cap,0,4,0,Head,Metal,2,1,0,0,0
 Helmet,0,5,0,Head,Metal,2,2,0,0,0
-Crown,0,2,0,Head,Crown,1,1,0,0,0
+Crown,0,2,0,Head,Precious,1,1,0,0,0
 Corset,0,1,0,Belly,Cloth,0,0,0,0,0
 Belt,0,2,0,Belly,Leather,1,0,0,0,0
 Girdle,0,3,0,Belly,Metal,2,1,0,0,0
@@ -31,6 +31,6 @@ Hauberk,0,9,0,Shirt,Metal,2,1,0,0,0
 Robe,0,4,0,Body,Cloth,0,0,0,0,0
 Scale,0,16,0,Body,Metal,3,2,0,0,0
 Plate,0,25,0,Full,Metal,3,3,0,0,0
-Ring,0,0,5,Finger,Ring,0,0,0,0,0
-Necklace,0,0,10,Neck,Necklace,0,0,0,0,0
-
+Ring,0,0,5,Finger,Gem,0,0,0,0,0
+Necklace,0,0,10,Neck,Precious,0,0,0,0,0
+Pendant,0,0,12,Neck,Gem,0,0,0,0,0

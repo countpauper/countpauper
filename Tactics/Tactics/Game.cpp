@@ -17,10 +17,10 @@ namespace Game
         selectedTarget(nullptr),
         armors(Type::Armor::Load(std::wifstream(L"Data/Armor.csv"))),
         armorMaterials(Type::Armor::Material::Load(std::wifstream(L"Data/ArmorMaterial.csv"))),
-        armorBoni(Type::Armor::Bonus::Load(std::wifstream(L"Data/ArmorBonus.csv"))),
+        armorModifiers(Type::Armor::Modifier::Load(std::wifstream(L"Data/ArmorBonus.csv"))),
         weapons(Type::Weapon::Load(std::wifstream(L"Data/Weapon.csv"))),
         weaponMaterials(Type::Weapon::Material::Load(std::wifstream(L"Data/WeaponMaterial.csv"))),
-        weaponBoni(Type::Weapon::Bonus::Load(std::wifstream(L"Data/WeaponBonus.csv"))),
+        weaponModifiers(Type::Weapon::Modifier::Load(std::wifstream(L"Data/WeaponBonus.csv"))),
         focus(0,0,0)
     {
         // TestDumpAllItems(std::wofstream(L"Items.csv"));
@@ -544,14 +544,14 @@ namespace Game
         throw std::invalid_argument("Unknown material type");
     }
 
-    const Type::Armor::Bonus& Game::FindArmorBonus(const std::wstring& name, const Type::Armor& armor) const
+    const Type::Armor::Modifier& Game::FindArmorModifier(const std::wstring& name, const Type::Armor& armor) const
     {
-        for (const auto& bonus : armorBoni)
+        for (const auto& mod : armorModifiers)
         {
-            if (armor.Match(bonus) && bonus.prefix == name)
-                return bonus;
+            if (armor.Match(mod) && mod.prefix == name)
+                return mod;
         }
-        throw std::invalid_argument("Unknown bonus type");
+        throw std::invalid_argument("Unknown modifier type");
     }
 
     const Type::Weapon& Game::FindWeapon(const std::wstring& name) const
@@ -574,14 +574,14 @@ namespace Game
         throw std::invalid_argument("Unknown material type");
     }
 
-    const Type::Weapon::Bonus& Game::FindWeaponBonus(const std::wstring& name, const Type::Weapon& weapon) const
+    const Type::Weapon::Modifier& Game::FindWeaponModifier(const std::wstring& name, const Type::Weapon& weapon) const
     {
-        for (const auto& bonus : weaponBoni)
+        for (const auto& mod : weaponModifiers)
         {
-            if (weapon.Match(bonus) && bonus.prefix == name)
-                return bonus;
+            if (weapon.Match(mod) && mod.prefix == name)
+                return mod;
         }
-        throw std::invalid_argument("Unknown bonus type");
+        throw std::invalid_argument("Unknown modifier type");
     }
 
  
@@ -594,11 +594,11 @@ namespace Game
             {
                 if (armor.category != material.category)
                     continue;
-                for (auto& bonus : armorBoni)
+                for (auto& mod : armorModifiers)
                 {
-                    if (armor.category != bonus.category)
+                    if (armor.category != mod.category)
                         continue;
-                    Armor item(armor, material, bonus);
+                    Armor item(armor, material, mod);
                     Damage mitigation(item.Mitigation());
                     Requirement req(item.Required());
                     out << item.Name();

@@ -33,13 +33,14 @@ namespace Game
         Body body;
         Damage AttackDamage(const Skill& skill) const;
         Damage Mitigation() const;
-        Score DefendChance(const Skill& skill) const;
+        Score Chance(const Skill& skill) const;
         Score Strength() const;
         Score Agility() const;
         Score Constitution() const;
         Score Intelligence() const;
         Score Wisdom() const;
         Score SkillLevel(const Skill& skill) const;
+        Score Range(const Skill& skill) const;
         unsigned loyalty;
     private:
         Bonus StrengthBonus() const;
@@ -48,6 +49,7 @@ namespace Game
         Bonus IntelligenceBonus() const;
         Bonus WisdomBonus() const;
         Score WisReqPenalty() const;
+        const Weapon* MatchWeapon(const Skill& skill) const;
 
         std::vector<const Armor*> worn;
         std::vector<const Weapon*> wielded;

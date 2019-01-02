@@ -65,10 +65,10 @@ namespace Game
 
         const Type::Armor& FindArmor(const std::wstring& name) const;
         const Type::Armor::Material&  FindArmorMaterial(const std::wstring& name, const Type::Armor& armor) const;
-        const Type::Armor::Bonus& FindArmorBonus(const std::wstring& name, const Type::Armor& armor) const;
+        const Type::Armor::Modifier& FindArmorModifier(const std::wstring& name, const Type::Armor& armor) const;
         const Type::Weapon& FindWeapon(const std::wstring& name) const;
         const Type::Weapon::Material&  FindWeaponMaterial(const std::wstring& name, const Type::Weapon& armor) const;
-        const Type::Weapon::Bonus& FindWeaponBonus(const std::wstring& name, const Type::Weapon& armor) const;
+        const Type::Weapon::Modifier& FindWeaponModifier(const std::wstring& name, const Type::Weapon& armor) const;
 
         Engine::Coordinate focus;
         Skills skills;
@@ -105,10 +105,10 @@ namespace Game
         // Definitiion
         std::vector<Type::Armor> armors;
         std::vector<Type::Armor::Material> armorMaterials;
-        std::vector<Type::Armor::Bonus> armorBoni;
+        std::vector<Type::Armor::Modifier> armorModifiers;
         std::vector<Type::Weapon> weapons;
         std::vector<Type::Weapon::Material> weaponMaterials;
-        std::vector<Type::Weapon::Bonus> weaponBoni;
+        std::vector<Type::Weapon::Modifier> weaponModifiers;
     };
     std::wistream& operator>>(std::wistream& s, Game& game);
 

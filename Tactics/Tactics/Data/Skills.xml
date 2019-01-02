@@ -15,10 +15,13 @@
   <skill name="King_Strike" weapon="Blunt" mp="2" trigger="Act" category="melee|1st">
     <melee damage="4,5,6,7,8,9,10,11,12,13"/>
   </skill>
-  <skill name="Zap" weapon="Wand" mp="2" trigger="Act" range="5" category="ranged">
-    <melee damage="2,3,4,6,7,8,10,11,12,14"/>
+  <skill name="Zap" weapon="Wand" mp="2" trigger="Act" range="4" category="ranged">
+    <melee damage="6,6,7,7,7,8,8,9,9,9"/>
   </skill>
   <skill name="Dodge" mp="1" trigger="Defend" follows="melee" chance="5,10,15,20,25,30,35,40,45,50">
+    <affect effect="miss"/>
+  </skill>
+  <skill name="Block" mp="2" weapon="Shield" trigger="Defend" range="100" follows="melee|ranged" chance="35,40,42,45,47,50,52,55,57,60">
     <affect effect="miss"/>
   </skill>
 </skills>

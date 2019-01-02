@@ -24,7 +24,7 @@ namespace Game
     {
         if (mp <= skill.mp)
             return false;
-        if (position.Distance(target.position) > skill.range)
+        if (position.Distance(target.position) > Range(skill).Value())
             return false;
         // TODO: if weapons.count(skill.weapon)==0 return false
         // TODO if (game.Cover(state.position, target.GetPosition()))
@@ -117,7 +117,9 @@ namespace Game
 
     Damage State::AttackDamage(const Skill& skill) const
     {
-        if (wielded.empty())
+        auto weapon = MatchWeapon(skill);
+
+        if (!weapon)
         {
             return Damage(Wound::Type::Blunt, Score(L"Unarmed", 2) + StrengthBonus());
         }
@@ -128,7 +130,7 @@ namespace Game
             auto skillLevel = SkillLevel(skill);
             auto& attackType = dynamic_cast<Skill::Melee&>(*skill.type);
             auto skillBonus = Bonus(attackType.DamageBonus(skillLevel));
-            return wielded.front()->Damage() ^ (
+            return weapon->Damage() ^ (
                 Damage(Wound::Type::Blunt, Score(strengthBonus) + skillBonus) +
                 Damage(Wound::Type::Sharp, Score(strengthBonus) + skillBonus) +
                 Damage(Wound::Type::Burn, Score(wisdomBonus) + skillBonus) +
@@ -137,13 +139,24 @@ namespace Game
         }
     }
 
-    Score State::DefendChance(const Skill& skill) const
+    Score State::Chance(const Skill& skill) const
     {
-        auto agility = Agility();
         auto skillLevel = SkillLevel(skill);
         auto skillBonus = skill.GetChance(skillLevel);
-        Bonus agilityBonus(L"Agi(" + agility.Description() + L")", (int(agility.Value()*2)));
-        return Score(skillBonus) + agilityBonus;
+        Score chance(skillBonus);
+        if (skill.trigger == Skill::Trigger::Defend)
+        {
+            auto agility = Agility();
+
+            chance += Bonus(L"Agi(" + agility.Description() + L")", (int(agility.Value() * 2)));
+            if (auto weapon = MatchWeapon(skill))
+            {
+                chance += weapon->DefenseBonus();
+            }
+
+            return chance;
+        }
+        return chance;
     }
 
     Damage State::Mitigation() const
@@ -174,6 +187,29 @@ namespace Game
             return Score();
         else
             return Score(Bonus(skill.name, it->score));
+    }
+
+    const Weapon* State::MatchWeapon(const Skill& skill) const
+    {
+        for (auto weapon : wielded)
+        {
+            if (weapon->Match(skill.weapon))
+            {
+                return weapon;
+            }
+        }
+        return nullptr;
+    }
+
+
+    Score State::Range(const Skill& skill) const
+    {
+        Score range(skill.name, skill.range);
+        if (auto weapon = MatchWeapon(skill))
+        {
+            range += weapon->RangeBonus();
+        }
+        return range;
     }
 
     GameState::GameState(const IGame& parent) :

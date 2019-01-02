@@ -347,15 +347,14 @@ namespace Game
 
     bool Actor::IsPossible(const Skill& skill) const
     {
-        if ((skill.weapon != Type::Weapon::Style::None) &&
-            (std::none_of(wielded.begin(), wielded.end(), [&skill](const Weapon& weapon)
+        if (skill.weapon == Type::Weapon::Style::All)
+            return true;
+        if (skill.weapon == Type::Weapon::Style::None)
+            return wielded.empty();
+        return (std::any_of(wielded.begin(), wielded.end(), [&skill](const Weapon& weapon)
         {
             return weapon.Match(skill.weapon);
-        })))
-        {
-            return false;
-        }
-        return true;
+        }));
     }
 
     unsigned Actor::GetSkillScore(const Skill& findSkill) const

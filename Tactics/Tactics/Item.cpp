@@ -2,6 +2,7 @@
 #include "Engine/CSV.h"
 #include "Item.h"
 #include "Game.h"
+#include "Score.h"
 
 namespace Game
 {
@@ -11,15 +12,10 @@ namespace Game
         {
             { L"Cloth", Armor::Category::Cloth },
             { L"Leather", Armor::Category::Leather },
-            { L"Chain", Armor::Category::Chain },
-            { L"Scale", Armor::Category::Scale },
-            { L"Plate", Armor::Category::Plate },
             { L"Metal", Armor::Category::Metal },
             { L"Armor", Armor::Category::BodyArmor },
-            { L"Necklace", Armor::Category::Necklace },
-            { L"Ring", Armor::Category::Ring },
-            { L"Bracer", Armor::Category::Bracer },
-            { L"Crown", Armor::Category::Crown },
+            { L"Precious", Armor::Category::Precious },
+            { L"Gem", Armor::Category::Gem},
             { L"Jewelry", Armor::Category::Jewelry },
             { L"All", Armor::Category::All }
         });
@@ -64,7 +60,7 @@ namespace Game
         Engine::Adapter::Integer<Requirement> reqwis(&Requirement::wisdom);
         std::vector<Engine::Adapter::Interface<Requirement>*> requirementAdapters({ &reqstr, &reqwis });
 
-        // TODO: get the name of the type/bonus or material into the damage score
+        // TODO: get the name of the type/modifier or material into the damage score
         // it has to come from the owner of the damage struct, so either the whole damage struct
         // has to be some sort of lambda adapter that captures the pointer/name of the owner
         // or it has to be applied after loading to the set "base" scores
@@ -103,20 +99,20 @@ namespace Game
         }
 
 
-        std::vector<Armor::Bonus> Armor::Bonus::Load(std::wistream& file)
+        std::vector<Armor::Modifier> Armor::Modifier::Load(std::wistream& file)
         {
-            Engine::Adapter::String<Armor::Bonus> prefix(&Armor::Bonus::prefix);
-            Engine::Adapter::String<Armor::Bonus> postfix(&Armor::Bonus::postfix);
-            Engine::Adapter::Integer<Armor::Bonus> frequency(&Armor::Bonus::frequency);
-            Engine::Adapter::Integer<Armor::Bonus> magic(&Armor::Bonus::magic);
-            Engine::Adapter::Struct<Armor::Bonus, Requirement> requirement(&Armor::Bonus::requirement, requirementAdapters);
-            Engine::Adapter::Enumeration<Armor::Bonus, Armor::Category> category(&Armor::Bonus::category, armorCategories);
-            Engine::Adapter::Struct<Armor::Bonus, Damage> mitigation(&Armor::Bonus::mitigation, damageAdapters);
-            Engine::Adapter::String<Armor::Bonus> skill(&Armor::Bonus::skill);
-            Engine::Adapter::Integer<Armor::Bonus> skillBonus(&Armor::Bonus::skillBonus);
-            Engine::Adapter::Enumeration<Armor::Bonus, Statistic> stat(&Armor::Bonus::stat, statisticMap);
-            Engine::Adapter::Integer<Armor::Bonus> statBonus(&Armor::Bonus::statBonus);
-            Engine::CSV<Armor::Bonus> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &category, &mitigation, &skill, &skillBonus, &stat, &statBonus });
+            Engine::Adapter::String<Armor::Modifier> prefix(&Armor::Modifier::prefix);
+            Engine::Adapter::String<Armor::Modifier> postfix(&Armor::Modifier::postfix);
+            Engine::Adapter::Integer<Armor::Modifier> frequency(&Armor::Modifier::frequency);
+            Engine::Adapter::Integer<Armor::Modifier> magic(&Armor::Modifier::magic);
+            Engine::Adapter::Struct<Armor::Modifier, Requirement> requirement(&Armor::Modifier::requirement, requirementAdapters);
+            Engine::Adapter::Enumeration<Armor::Modifier, Armor::Category> category(&Armor::Modifier::category, armorCategories);
+            Engine::Adapter::Struct<Armor::Modifier, Damage> mitigation(&Armor::Modifier::mitigation, damageAdapters);
+            Engine::Adapter::String<Armor::Modifier> skill(&Armor::Modifier::skill);
+            Engine::Adapter::Integer<Armor::Modifier> skillBonus(&Armor::Modifier::skillBonus);
+            Engine::Adapter::Enumeration<Armor::Modifier, Statistic> stat(&Armor::Modifier::stat, statisticMap);
+            Engine::Adapter::Integer<Armor::Modifier> statBonus(&Armor::Modifier::statBonus);
+            Engine::CSV<Armor::Modifier> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &category, &mitigation, &skill, &skillBonus, &stat, &statBonus });
             return csv.Read();
         }
 
@@ -145,9 +141,9 @@ namespace Game
         {
             return (unsigned(material.category) & unsigned(category)) != 0;
         }
-        bool Armor::Match(const Bonus& bonus) const
+        bool Armor::Match(const Modifier& mod) const
         {
-            return (unsigned(bonus.category) & unsigned(category)) != 0;
+            return (unsigned(mod.category) & unsigned(category)) != 0;
         }
 
         const std::map<std::wstring, Weapon::Style > Weapon::styleMap(
@@ -159,12 +155,12 @@ namespace Game
             { L"Blunt", Weapon::Style::Blunt },
             { L"Axe", Weapon::Style::Axe },
             { L"Fist", Weapon::Style::Fist },
-            { L"Sling", Weapon::Style::Sling },
             { L"Bow", Weapon::Style::Bow },
             { L"Crossbow", Weapon::Style::Crossbow },
             { L"Gun", Weapon::Style::Gun },
             { L"Wand", Weapon::Style::Wand },
             { L"Throwing", Weapon::Style::Throwing },
+            { L"Shield", Weapon::Style::Shield },
         });
 
         std::map<std::wstring, Weapon::Material::Category > weaponMaterialCategories(
@@ -172,11 +168,13 @@ namespace Game
             { L"None", Weapon::Material::None},
             { L"Metal", Weapon::Material::Metal },
             { L"Wood", Weapon::Material::Wood },
+            { L"Wood|Metal", Weapon::Material::Category(Weapon::Material::Wood | Weapon::Material::Metal) },
+            { L"Metal|Wood", Weapon::Material::Category(Weapon::Material::Metal | Weapon::Material::Wood) },
             { L"Leather", Weapon::Material::Leather },
             { L"Mundane", Weapon::Material::Mundane } ,
             { L"Precious", Weapon::Material::Precious },
             { L"Gem", Weapon::Material::Gem },
-            { L"All", Weapon::Material::All },
+            { L"All", Weapon::Material::All }
         });
 
         std::vector<Weapon> Weapon::Load(std::wistream& file)
@@ -188,8 +186,9 @@ namespace Game
             Engine::Adapter::Integer<Weapon> hands(&Weapon::hands);
             Engine::Adapter::Enumeration<Weapon, Weapon::Material::Category> material(&Weapon::material, weaponMaterialCategories);
             Engine::Adapter::Struct<Weapon, Damage> damage(&Weapon::damage, damageAdapters);
-
-            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &style, &hands, &material, &damage,  });
+            Engine::Adapter::Integer<Weapon> range(&Weapon::range);
+            Engine::Adapter::Integer<Weapon> defense(&Weapon::defense);
+            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &style, &hands, &material, &damage, &range, &defense });
             return csv.Read();
         }
 
@@ -207,29 +206,37 @@ namespace Game
             return csv.Read();
         }
 
-        std::vector<Weapon::Bonus> Weapon::Bonus::Load(std::wistream& file)
+        std::vector<Weapon::Modifier> Weapon::Modifier::Load(std::wistream& file)
         {
-            Engine::Adapter::String<Weapon::Bonus> prefix(&Weapon::Bonus::prefix);
-            Engine::Adapter::String<Weapon::Bonus> postfix(&Weapon::Bonus::postfix);
-            Engine::Adapter::Integer<Weapon::Bonus> frequency(&Weapon::Bonus::frequency);
-            Engine::Adapter::Integer<Weapon::Bonus> magic(&Weapon::Bonus::magic);
-            Engine::Adapter::Struct<Weapon::Bonus, Requirement> requirement(&Weapon::Bonus::requirement, requirementAdapters);
-            Engine::Adapter::Enumeration<Weapon::Bonus, Weapon::Style> style(&Weapon::Bonus::style, Weapon::styleMap);
-            Engine::Adapter::Enumeration<Weapon::Bonus, Weapon::Material::Category> material(&Weapon::Bonus::material, weaponMaterialCategories);
-            Engine::Adapter::Struct<Weapon::Bonus, Damage> damage(&Weapon::Bonus::damage, damageAdapters);
-            Engine::CSV<Weapon::Bonus> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &style, &material, &damage });
+            Engine::Adapter::String<Weapon::Modifier> prefix(&Weapon::Modifier::prefix);
+            Engine::Adapter::String<Weapon::Modifier> postfix(&Weapon::Modifier::postfix);
+            Engine::Adapter::Integer<Weapon::Modifier> frequency(&Weapon::Modifier::frequency);
+            Engine::Adapter::Integer<Weapon::Modifier> magic(&Weapon::Modifier::magic);
+            Engine::Adapter::Struct<Weapon::Modifier, Requirement> requirement(&Weapon::Modifier::requirement, requirementAdapters);
+            Engine::Adapter::Enumeration<Weapon::Modifier, Weapon::Style> style(&Weapon::Modifier::style, Weapon::styleMap);
+            Engine::Adapter::Enumeration<Weapon::Modifier, Weapon::Material::Category> material(&Weapon::Modifier::material, weaponMaterialCategories);
+            Engine::Adapter::Struct<Weapon::Modifier, Damage> damage(&Weapon::Modifier::damage, damageAdapters);
+            Engine::CSV<Weapon::Modifier> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &style, &material, &damage });
             return csv.Read();
         }
+
+        Weapon::Weapon() : 
+            style(None), 
+            material(Material::None),
+            range(0),
+            defense(0)
+        {
+        }
+
+       
         bool Weapon::Match(const Material& material) const
         {
             return (unsigned(material.category) & unsigned(this->material)) != 0;
         }
-        bool Weapon::Match(const Bonus& bonus) const
+        bool Weapon::Match(const Modifier& mod) const
         {
-            return bonus.style == All || bonus.style == this->style;
+            return mod.style == All || mod.style == this->style;
         }
-
-
     }
 
     Requirement Requirement::operator+(const Requirement& other) const
@@ -242,81 +249,90 @@ namespace Game
         return Requirement(strength * multiplier, wisdom * multiplier);
     }
 
-    Armor::Armor(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& bonus) :
+    Armor::Armor(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& mod) :
         type(game.FindArmor(type)),
         material(game.FindArmorMaterial(material, this->type)),
-        bonus(game.FindArmorBonus(bonus, this->type))
+        modifier(game.FindArmorModifier(mod, this->type))
     {
 
     }
-    Armor::Armor(const Type::Armor& type, const Type::Armor::Material& material, const Type::Armor::Bonus& bonus) :
+    Armor::Armor(const Type::Armor& type, const Type::Armor::Material& material, const Type::Armor::Modifier& mod) :
         type(type),
         material(material),
-        bonus(bonus)
+        modifier(mod)
     {
     }
 
     std::wstring Armor::Name() const
     {
         std::wstring name;
-        if (!bonus.prefix.empty())
-            name = bonus.prefix + L" ";
+        if (!modifier.prefix.empty())
+            name = modifier.prefix + L" ";
         if (!material.name.empty())
             name += material.name + L" ";
         name += type.name;
-        if (!bonus.postfix.empty())
-            name += L" " + bonus.postfix;
+        if (!modifier.postfix.empty())
+            name += L" " + modifier.postfix;
         return name;
     }
     Requirement Armor::Required() const
     {
-        return type.requirement + bonus.requirement + material.requirement * type.CoverCount();
+        return type.requirement + modifier.requirement + material.requirement * type.CoverCount();
     }
 
     Damage Armor::Mitigation() const
     {
-        return type.mitigation + material.mitigation + bonus.mitigation;
+        return type.mitigation + material.mitigation + modifier.mitigation;
     }
-    Weapon::Weapon(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& bonus) :
+    Weapon::Weapon(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& mod) :
         type(game.FindWeapon(type)),
         material(game.FindWeaponMaterial(material, this->type)),
-        bonus(game.FindWeaponBonus(bonus, this->type))
+        modifier(game.FindWeaponModifier(mod, this->type))
     {
     }
-    Weapon::Weapon(const Type::Weapon& type, const Type::Weapon::Material& material, const Type::Weapon::Bonus& bonus) :
+    Weapon::Weapon(const Type::Weapon& type, const Type::Weapon::Material& material, const Type::Weapon::Modifier& modifier) :
         type(type),
         material(material),
-        bonus(bonus)
+        modifier(modifier)
     {
     }
 
     std::wstring Weapon::Name() const
     {
         std::wstring name;
-        if (!bonus.prefix.empty())
-            name = bonus.prefix + L" ";
+        if (!modifier.prefix.empty())
+            name = modifier.prefix + L" ";
         if (!material.name.empty())
             name += material.name + L" ";
         name += type.name;
-        if (!bonus.postfix.empty())
-            name += L" " + bonus.postfix;
+        if (!modifier.postfix.empty())
+            name += L" " + modifier.postfix;
         return name;
     }
 
 
     Requirement Weapon::Required() const
     {
-        return type.requirement + bonus.requirement + material.requirement;
+        return type.requirement + modifier.requirement + material.requirement;
     }
 
     Damage Weapon::Damage() const
     {
-        return type.damage + material.damage + bonus.damage;
+        return type.damage + material.damage + modifier.damage;
     }
 
     bool Weapon::Match(Type::Weapon::Style style) const
     {
-        return (unsigned(style) & unsigned(type.style)) != 0;
+        return style == type.style; //  (unsigned(style) & unsigned(type.style)) != 0;
     }
 
+    Score Weapon::RangeBonus() const
+    {
+        return Score(type.name, type.range);
+    }
+
+    Score Weapon::DefenseBonus() const
+    {
+        return Score(type.name, type.defense);
+    }
 }

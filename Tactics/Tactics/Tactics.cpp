@@ -95,7 +95,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     }
 
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TACTICS));
-    srand(12345);
+    srand(4321); // 12345);
     // Main message loop:
     while (GetMessage(&msg, NULL, 0, 0))
     {
