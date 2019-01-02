@@ -10,6 +10,7 @@ namespace Game
 {
     class Game;
     class Score;
+    class AttackVector;
 
     class Requirement
     {
@@ -245,6 +246,7 @@ namespace Game
         bool Match(Type::Weapon::Style style) const;
         Score RangeBonus() const;
         Score DefenseBonus() const;
+        bool Reach(const AttackVector& vector) const;
     private:
         const Type::Weapon& type;
         const Type::Weapon::Material &material;

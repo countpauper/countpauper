@@ -23,12 +23,13 @@ std::unique_ptr<GameState> Attack::Act(const IGame& game) const
 {
     State attacker = game.Get(actor);
     State victim(game.Get(target));
+    attacker.direction = Direction(victim.position - attacker.position);
     if (!attacker.IsPossible(skill, victim))
         return nullptr;
     auto ret = std::make_unique<GameState>(game, actor);
     auto damage = attacker.AttackDamage(skill) - victim.Mitigation();
     attacker.mp -= skill.mp;
-    victim.body.Hurt(AttackVector({ Plane::All, 0 }), damage.Wound(actor.Description()));
+    victim.body.Hurt(AttackVector( Plane::All, 0 ), damage.Wound(actor.Description()));
 
     ret->Adjust(actor, attacker);
     ret->Adjust(target, victim);

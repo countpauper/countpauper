@@ -3,6 +3,7 @@
 #include "Item.h"
 #include "Game.h"
 #include "Score.h"
+#include "Game/Direction.h"
 
 namespace Game
 {
@@ -335,4 +336,20 @@ namespace Game
     {
         return Score(type.name, type.defense);
     }
+
+    bool Weapon::Reach(const AttackVector& vector) const
+    {
+        static const std::set<Plane> weaponPlanes = { Plane::Front, Plane::Right, Plane::Top, Plane::Bottom };
+        static const std::set<Plane> shieldPlanes = { Plane::Front, Plane::Left, Plane::Top };
+
+        if (type.style == Type::Weapon::Style::Shield)
+        {
+            return shieldPlanes.count(vector.plane)!=0;
+        }
+        else
+        {
+            return weaponPlanes.count(vector.plane)!=0;
+        }
+    }
+
 }

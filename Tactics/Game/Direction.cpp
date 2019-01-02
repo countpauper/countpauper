@@ -44,6 +44,56 @@ namespace Game
         return angle.at(value);
     }
 
+    bool Direction::Opposite(const Direction& other) const
+    {
+        switch (value)
+        {
+        case North:
+            return other.value == South;
+        case East:
+            return other.value == West;
+        case South:
+            return other.value == North;
+        case West:
+            return other.value == East;
+        default:
+            return false;
+        }
+    }
+    bool Direction::Clockwise(const Direction& other) const
+    {
+        switch (value)
+        {
+        case North:
+            return other.value == West;
+        case East:
+            return other.value == North;
+        case South:
+            return other.value == East;
+        case West:
+            return other.value == South;
+        default:
+            return false;
+        }
+    }
+
+    bool Direction::CounterClockwise(const Direction& other) const
+    {
+        switch (value)
+        {
+        case North:
+            return other.value == East;
+        case East:
+            return other.value == South;
+        case South:
+            return other.value == West;
+        case West:
+            return other.value == North;
+        default:
+            return false;
+        }
+    }
+
     std::wstring Direction::Description() const
     {
         return description.at(value);
@@ -110,6 +160,31 @@ namespace Game
         s >> label;
         plane = planeMap.at(label);
         return s;
+    }
+
+    AttackVector::AttackVector(Plane plane, unsigned height) :
+        plane(plane),
+        height(height)
+    {
+    }
+
+    AttackVector::AttackVector(Direction facing, const Position& vector) :
+        AttackVector(ComputePlane(Direction(vector), facing), 0)
+    {
+    }
+
+    Plane AttackVector::ComputePlane(Direction direction, Direction facing)
+    {
+        if (facing == direction)
+            return Plane::Front;
+        if (facing.Opposite(direction))
+            return Plane::Back;
+        if (facing.Clockwise(direction))
+            return Plane::Right;
+        else if (facing.CounterClockwise(direction))
+            return Plane::Left;
+        else
+            return Plane::None;
     }
 
     bool AttackVector::Match(const AttackVector other) const

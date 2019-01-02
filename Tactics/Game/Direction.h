@@ -21,7 +21,11 @@ namespace Game
         explicit Direction(const Position& vector);
         Position Vector() const;
         double Angle() const;
+        bool Opposite(const Direction& other) const;
+        bool Clockwise(const Direction& other) const;
+        bool CounterClockwise(const Direction& other) const;
         std::wstring Description() const;
+
         bool IsNone() const;    // operator bool leads to implicit conversion confusion with operator==
         bool operator==(const Direction& other) const;
         bool operator<(const Direction& other) const;
@@ -58,9 +62,15 @@ namespace Game
     class AttackVector
     {
     public:
+        AttackVector() = default;
+        AttackVector(Plane plane, unsigned height);
+        AttackVector(Direction facing, const Position& vector);
+
         Plane plane;
         unsigned height;
         bool Match(const AttackVector other) const;
+    private:
+        Plane ComputePlane(Direction direction, Direction facing);
     };
     std::wistream& operator>>(std::wistream& s, AttackVector& v);
 

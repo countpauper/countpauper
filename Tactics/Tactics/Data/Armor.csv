@@ -24,7 +24,7 @@ Vest,0,2,0,Trunk,Cloth,0,0,0,0,0
 Jerkin,0,4,0,Trunk,Leather,1,0,0,0,0
 Brigandine,0,6,0,Trunk,Leather,1,1,0,0,0
 Haubergeon,0,6,0,Trunk,Metal,2,1,0,0,0
-Breast Plate,0,10,0,Trunk,Metal,2,2,0,0,0
+Breast-Plate,0,10,0,Trunk,Metal,2,2,0,0,0
 Blouse,0,3,0,Shirt,Cloth,0,0,0,0,0
 Jacket,0,6,0,Shirt,Leather,1,0,0,0,0
 Hauberk,0,9,0,Shirt,Metal,2,1,0,0,0

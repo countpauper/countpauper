@@ -22,10 +22,17 @@ namespace Game
 
     bool State::IsPossible(const Skill& skill, const State& target) const
     {
-        if (mp <= skill.mp)
+        if (mp < skill.mp)
             return false;
         if (position.Distance(target.position) > Range(skill).Value())
             return false;
+        if (auto weapon = MatchWeapon(skill))
+        {
+            AttackVector vector(direction, target.position - position);
+            if (!weapon->Reach(vector)) // TODO: wield location considered
+                return false;
+        }
+
         // TODO: if weapons.count(skill.weapon)==0 return false
         // TODO if (game.Cover(state.position, target.GetPosition()))
         
