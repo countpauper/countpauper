@@ -6,7 +6,7 @@ Embroidered Silk Brazier
 Normal Yew Wand
 Zap 2
 Unarmed 0
-Dodge 0
+Dodge 1
 Walk 0
 Actor Foo 0 2 3 0 1
 Body Around 0 Agi+Str+Con+Wis+Int 14 0,0,0,0,0
@@ -33,7 +33,7 @@ Body Around 0 All 10 ,,,,
 Sturdy Steel Hauberk
 Normal Adamantine Dagger
 Hack 2
-Dodge 0
+Dodge 1
 Unarmed 0
 Walk 0
 Actor Alice 1 3 0 0 1

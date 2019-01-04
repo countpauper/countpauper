@@ -35,10 +35,10 @@ namespace Game
 
     Plan::Node::Node(Node& previous, std::unique_ptr<GameState>&& state, std::unique_ptr<Action>&& action) :
         previous(&previous),
-        action(std::move(action)),
         state(std::move(state)),
         chance(1.0)
     {
+        actions.emplace_back(std::move(action));
     }
 
     Plan::Node::~Node()
@@ -68,7 +68,7 @@ namespace Game
         Node* prev = previous;
         if (prev)
             actor = prev->state->ActorState();
-        if (action)
+        for(const auto& action : actions)
             action->Render(actor);
     }
  
@@ -203,6 +203,7 @@ namespace Game
             {
                 auto childOutcomes = child->AllOutcomes();
                 ret.insert(ret.end(), childOutcomes.begin(), childOutcomes.end());
+                ret.back().first *= chance;
             }
         }
         return ret;
@@ -222,7 +223,8 @@ namespace Game
         auto node = root.get();
         while (node)
         {
-            sequence.emplace_back(node->action.get());
+            for (const auto& action : node->actions)
+                sequence.emplace_back(action.get());
             Node* next = nullptr;
             for (const auto& child : node->children)
             {
@@ -261,8 +263,16 @@ namespace Game
 
     bool Plan::PlanAction(Node& parent, const Skill& skill, const Actor& actor, const Target& target)
     {
-        std::unique_ptr<Action> action(skill.CreateAction(actor, target));
-        auto result = action->Act(*parent.state);
+        std::unique_ptr<GameState> result;
+        std::unique_ptr<Action> action;
+        for (auto trajectory : skill.trajectory)
+        {
+            action = std::unique_ptr<Action>(skill.CreateAction(actor, target, trajectory));
+            result = action->Act(*parent.state);
+            if (result) // TODO: select prererable trajectory instead of first
+                break;
+        }
+
         if (!result)
             return false;
 
@@ -272,19 +282,80 @@ namespace Game
             auto defences = targetActor->FollowSkill(skill, Skill::Trigger::Defend);
             for (auto defence : defences)
             {
-                PlanAction(parent, *defence, *targetActor, actor);
+                PlanReaction(parent, skill, action->trajectory, *defence, actor, *targetActor);
             }
         }
         auto node = std::make_unique<Node>(parent, std::move(result), std::move(action));
         const auto& actorState = node->state->Get(actor);
         node->chance = double(actorState.Chance(skill).Value()) / 100.0;
+
+        PlanCombo(*node, skill, actor, target);
+        parent.children.emplace_back(std::move(node));
+        return true;
+    }
+
+    void Plan::PlanCombo(Node& parent, const Skill& skill, const Actor& actor, const Target& target)
+    {
         auto combos = actor.FollowSkill(skill, Skill::Trigger::Combo);
         for (auto combo : combos)
         {
-            if (PlanAction(*node, *combo, actor, target))
+            PlanAction(parent, *combo, actor, target);
+        }
+    }
+
+    bool Plan::PlanReaction(Node& parent, const Skill& offense, Trajectory attackTrajectory, const Skill& defense, const Actor& aggressor, const Actor& defender)
+    {
+        std::unique_ptr<Action> reaction;
+        std::unique_ptr<GameState> intermediate;
+        // TODO: select trajectory by opposing attack trajectory
+        for (auto trajectory : defense.trajectory)
+        {
+            reaction = std::unique_ptr<Action>(defense.CreateAction(defender, aggressor, trajectory));
+            intermediate = reaction->Act(*parent.state);
+            if (intermediate)
                 break;
         }
-        parent.children.emplace_back(std::move(node));
+        if (!intermediate)
+            return false;
+        auto node = std::make_unique<Node>(parent, std::move(intermediate), std::move(reaction));
+        const auto& actorState = parent.state->Get(defender);
+        node->chance = double(actorState.Chance(defense).Value()) / 100.0;
+
+        Skill::Effects effects = defense.effects;
+
+        std::unique_ptr<Action> action(offense.CreateAction(aggressor, defender, attackTrajectory));
+        std::unique_ptr<GameState> result;
+        if (effects.count(Skill::Effect::Miss) == 0)
+        {
+            result = action->Act(*node->state);
+        }
+        else
+        {
+            result = action->Fail(*node->state);
+        }
+        if (result)
+        {
+            auto defenseNode = std::move(node);
+            node = std::make_unique<Node>(*defenseNode, std::move(result), std::move(action));
+            const auto& actorState = defenseNode->state->Get(aggressor);
+            node->chance = double(actorState.Chance(offense).Value()) / 100.0;
+            // TODO: counter reaction? reaction combo (ie disarm)?
+            if (effects.count(Skill::Effect::Halt) == 0)
+            {
+                PlanCombo(*node, offense, aggressor, defender);
+            }
+            defenseNode->children.emplace_back(std::move(node));
+            parent.children.emplace_back(std::move(defenseNode));
+        }
+        else
+        {
+            // TODO: counter reaction? reaction combo (ie disarm)?
+            if (effects.count(Skill::Effect::Halt) == 0)
+            {
+                PlanCombo(*node, offense, aggressor, defender);
+            }
+            parent.children.emplace_back(std::move(node));
+        }
         return true;
     }
 
@@ -451,11 +522,11 @@ namespace Game
         {
             std::wstring result(actor.Description() + L": ");
             auto node = root.get();
-            result += node->action->Description();
+            result += node->actions.front()->Description();
             while (!node->children.empty())
             {
                 node = node->children.front().get();
-                result += L", " + node->action->Description() ;
+                result += L", " + node->actions.front()->Description() ;
             }
             return result;
         }

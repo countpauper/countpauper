@@ -3,6 +3,7 @@
 #include <set>
 #include <vector>
 #include "Item.h"
+#include "Game/Direction.h"
 
 namespace Game
 {
@@ -14,14 +15,15 @@ class Skill
 {
 public:
     Skill();
-    Action* CreateAction(const Actor& actor, const Target& target) const;
+
+    Action* CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const;
     Bonus GetChance(const Score& level) const;
 
     bool Follows(const Skill& previous) const;
 
     std::wstring name;
     unsigned mp;
-    unsigned range; // manhattan distance
+    unsigned range;
 
     unsigned Id() const;
     bool IsActive() const;
@@ -37,36 +39,36 @@ public:
     using Prerequisite = std::pair<Skill*, unsigned>;
     std::vector<Prerequisite> prerequisites;
     std::vector<int> chance;
+    std::set<Trajectory> trajectory;
 
-    enum class Effect { Miss, Interrupt, Disarm, Stuck, Stop };
+    enum class Effect { Miss, Halt, Interrupt, Disarm, Stuck, Stop };
     using Effects = std::set<Effect>;
-    static const std::map<std::wstring, Effect> effectMap;
+    Effects effects;
 
     class Type
     {
     public:
         virtual ~Type() = default;
-        virtual Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target) const = 0;
+        virtual Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const = 0;
 
     };
     class Move : public Type
     {
     public:
-        Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target) const override;
+        Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
     };
     class Melee : public Type
     {
     public:
+        Melee();
         std::vector<unsigned> damage;
-        Effects effects;
         Bonus DamageBonus(const Score& skillScore);
-        Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target) const override;
+        Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
     };
     class Affect : public Type
     {
     public:
-        Effects effects;
-        Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target) const override;
+        Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
     };
 
     std::shared_ptr<Type> type; // todo: unique ptr and copy/clone or move
@@ -77,7 +79,6 @@ private:
         return dynamic_cast<T*>(type.get()) != nullptr; 
     }
 };
-
 
 class Skills : public std::vector<Skill>
 {

@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Tactics.h"
+#include <time.h>
 #include <GL/gl.h>            /* OpenGL header file */
 #include <GL/glu.h>            /* OpenGL utilities header file */
 #include <math.h>
@@ -95,7 +96,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     }
 
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TACTICS));
-    srand(4321); // 12345);
+    srand(unsigned(time(0))); // 12345);
     // Main message loop:
     while (GetMessage(&msg, NULL, 0, 0))
     {

@@ -8,8 +8,8 @@
 namespace Game
 {
 
-    Move::Move(const Actor& actor, const Position& destination, const Skill& skill) :
-        Action(skill, actor),
+    Move::Move(const Actor& actor, const Position& destination, const Skill& skill, Trajectory trajectory) :
+        Action(skill, actor, trajectory),
         destination(destination)
     {
     }
@@ -17,7 +17,7 @@ namespace Game
     std::unique_ptr<GameState> Move::Act(const IGame& game) const
     {
         State state(game.Get(actor));
-        if (state.mp <= skill.mp)
+        if (state.mp < skill.mp)
         {
             return nullptr;
         }
@@ -35,6 +35,18 @@ namespace Game
         }
         else
             return nullptr;
+    }
+    std::unique_ptr<GameState> Move::Fail(const IGame& game) const
+    {
+        State state(game.Get(actor));
+        if (state.mp < skill.mp)
+        {
+            return nullptr;
+        }
+        state.mp -= skill.mp;
+        auto ret = std::make_unique<GameState>(game, actor);
+        ret->Adjust(actor, state);
+        return ret;
     }
 
     void Move::Render(const State& state) const

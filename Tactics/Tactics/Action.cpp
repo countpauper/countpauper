@@ -9,17 +9,19 @@
 
 namespace Game
 {
-    Action::Action(const Skill& skill, const Actor& actor) :
+    Action::Action(const Skill& skill, const Actor& actor, Trajectory trajectory) :
         skill(skill),
-        actor(actor)
+        actor(actor),
+        trajectory(trajectory)
     {
     }
 
-    TargetedAction::TargetedAction(const Skill& skill, const Actor& actor, const Actor& target) :
-        Action(skill, actor),
+    TargetedAction::TargetedAction(const Skill& skill, const Actor& actor, const Actor& target, Trajectory trajectory) :
+        Action(skill, actor, trajectory),
         target(target)
     {
     }
+
 
     std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> Action::keymap =
     {};

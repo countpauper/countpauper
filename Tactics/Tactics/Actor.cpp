@@ -337,7 +337,10 @@ namespace Game
                             continue;
                         if (!vector)
                             continue;
-                        result.emplace_back(known.skill->CreateAction(*this, Destination(from + vector)));
+                        for (auto trajectory : skill.trajectory)
+                        {
+                            result.emplace_back(known.skill->CreateAction(*this, Destination(from + vector), trajectory));
+                        }
                     }
                 }
             }

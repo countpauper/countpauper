@@ -62,7 +62,7 @@ protected:
         bool Reached(const Position& target) const;
 
         Node* previous;
-        std::unique_ptr<Action> action;
+        std::vector<std::unique_ptr<Action>> actions;
         double chance;
         std::unique_ptr<GameState> state;
         std::vector<std::unique_ptr<Node>> children;
@@ -94,6 +94,8 @@ protected:
     std::unique_ptr<Node> Approach(const Target& target, const Game& game, const Skill& skill);
     std::unique_ptr<Node> Goto(const Position& target, const Game& game);
     bool PlanAction(Plan::Node& parent, const Skill& skill, const Actor& actor, const Target& target);
+    void PlanCombo(Node& parent, const Skill& skill, const Actor& actor, const Target& target);
+    bool PlanReaction(Plan::Node& parent, const Skill& skill, Trajectory attackTrajectory, const Skill& reaction, const Actor& aggressor, const Actor& defender);
     static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
     const Actor& actor;
     std::unique_ptr<Condition> condition;

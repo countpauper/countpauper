@@ -21,10 +21,10 @@ namespace Game
     {
     }
 
-    Action* Skill::CreateAction(const Actor& actor, const Target& target) const
+    Action* Skill::CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const
     {
         if (type)
-            return type->CreateAction(*this, actor, target);
+            return type->CreateAction(*this, actor, target, trajectory);
         else
             return nullptr;
     }
@@ -53,14 +53,18 @@ namespace Game
         }
     }
 
-    Action* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Target& target) const
+    Action* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
     {
-        return new ::Game::Move(actor,target.GetPosition(), skill);
+        return new ::Game::Move(actor, target.GetPosition(), skill, trajectory);
     }
 
-    Action* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Target& target) const
+    Skill::Melee::Melee() 
     {
-        return new Attack(actor, dynamic_cast<const Actor&>(target), skill);
+    }
+
+    Action* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
+    {
+        return new Attack(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
     }
 
     Bonus Skill::Melee::DamageBonus(const Score& skillScore)
@@ -77,9 +81,9 @@ namespace Game
 
     }
 
-    Action* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Target& target) const
+    Action* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
     {
-        return new ::Game::Affect(actor, dynamic_cast<const Actor&>(target), skill);
+        return new ::Game::Affect(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
     }
 
     bool Skill::Follows(const Skill& previous) const
@@ -173,13 +177,6 @@ namespace Game
         return (content.find_first_not_of(Engine::whitespace) == std::wstring::npos);
     }
 
-const std::map<std::wstring, Skill::Effect> Skill::effectMap = {
-    { L"miss", Skill::Effect::Miss },
-    { L"interrupt", Skill::Effect::Interrupt },
-    { L"disarm", Skill::Effect::Disarm },
-    { L"stuck", Skill::Effect::Stuck },
-    { L"stop", Skill::Effect::Stop }
-};
 
 void Parse(Skill::Move& o, const xmlNode* node)
 {
@@ -193,10 +190,6 @@ void Parse(Skill::Melee& o, const xmlNode* node)
         {
             o.damage = Engine::from_strings<unsigned>(xmlText(prop->children), L',');
         }
-        else if (xmlTagCompare(prop, "effect"))
-        {
-            o.effects = Engine::from_strings<Skill::Effect>(xmlText(prop->children), L'|', Skill::effectMap);
-        }
         else
             throw std::runtime_error("Unknown Melee skill property");
     }
@@ -207,12 +200,7 @@ void Parse(Skill::Affect& o, const xmlNode* node)
 {
     for (auto prop = node->properties; prop; prop = prop->next)
     {
-        if (xmlTagCompare(prop, "effect"))
-        {
-            o.effects = Engine::from_strings<Skill::Effect>(xmlText(prop->children), L'|', Skill::effectMap);
-        }
-        else
-            throw std::runtime_error("Unknown Affect skill property");
+        throw std::runtime_error("Unknown Affect skill property");
     }
 
 }
@@ -244,6 +232,19 @@ void Parse(Skill& o, const xmlNode* node)
             auto rangeStr= xmlText(prop->children);
             o.range = Engine::from_string<unsigned>(rangeStr);
         }
+        else if (xmlTagCompare(prop, "trajectory"))
+        {
+            o.trajectory = Engine::from_strings<Trajectory>(xmlText(prop->children), L'|',
+            {
+                { L"self", Trajectory::Self },
+                { L"straight", Trajectory::Straight },
+                { L"reverse", Trajectory::Reverse },
+                { L"forehand", Trajectory::Forehand },
+                { L"backhand", Trajectory::Backhand },
+                { L"up",Trajectory::Up },
+                { L"down", Trajectory::Down },
+            });
+        }
         else if (xmlTagCompare(prop, "trigger"))
         {
             auto triggerStr = xmlText(prop->children);
@@ -254,6 +255,17 @@ void Parse(Skill& o, const xmlNode* node)
                 { L"Prepare", Skill::Trigger::Prepare },
                 { L"React", Skill::Trigger::React },
                 { L"Defend", Skill::Trigger::Defend }
+            });
+        }
+        else if (xmlTagCompare(prop, "effect"))
+        {
+            o.effects = Engine::from_strings<Skill::Effect>(xmlText(prop->children), L'|', {
+                { L"miss", Skill::Effect::Miss },
+                { L"halt", Skill::Effect::Halt },
+                { L"interrupt", Skill::Effect::Interrupt },
+                { L"disarm", Skill::Effect::Disarm },
+                { L"stuck", Skill::Effect::Stuck },
+                { L"stop", Skill::Effect::Stop }
             });
         }
         else if (xmlTagCompare(prop, "category"))

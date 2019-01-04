@@ -8,8 +8,8 @@
 namespace Game
 {
 
-Affect::Affect(const Actor& actor, const Actor& target, const Skill& skill) :
-    TargetedAction(skill, actor, target)
+Affect::Affect(const Actor& actor, const Actor& target, const Skill& skill, Trajectory trajectory) :
+    TargetedAction(skill, actor, target, trajectory)
 {
 }
 
@@ -26,20 +26,21 @@ std::unique_ptr<GameState> Affect::Act(const IGame& game) const
         return nullptr;
     auto ret = std::make_unique<GameState>(game, actor);
     attacker.mp -= skill.mp;
-    const auto& parameters= dynamic_cast<Skill::Affect&>(*skill.type);
-    for (auto effect : parameters.effects)
-    {
-        switch (effect)
-        {
-            case Skill::Effect::Miss:
-                victim.mp -= 2;
-                break;
-            default:
-                throw std::runtime_error("Unimplemented effect");
-        }
-    }
+    // TODO effect
     ret->Adjust(actor, attacker);
     ret->Adjust(target, victim);
+    return std::move(ret);
+}
+
+std::unique_ptr<GameState> Affect::Fail(const IGame& game) const
+{
+    State attacker = game.Get(actor);
+    State victim(game.Get(target));
+    if (!attacker.IsPossible(skill, victim))
+        return nullptr;
+    auto ret = std::make_unique<GameState>(game, actor);
+    attacker.mp -= skill.mp;
+    ret->Adjust(actor, attacker);
     return std::move(ret);
 }
 

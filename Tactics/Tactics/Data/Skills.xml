@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <skills>
-  <skill name="Walk" mp="2" range="1" trigger="Act">
+  <skill name="Walk" mp="2" range="1" trajectory="straight" trigger="Act">
     <move/>
   </skill>
-  <skill name="Unarmed" weapon="None" mp="2" trigger="Act" category="melee">
+  <skill name="Unarmed" weapon="None" mp="2" trigger="Act" trajectory="straight" category="melee">
     <melee damage="2"/>
   </skill>
-  <skill name="Hack" weapon="Blade" mp="2" trigger="Act" category="melee|1st">
+  <skill name="Hack" weapon="Blade" mp="2" trigger="Act" trajectory="down" category="melee|1st">
     <melee damage="4,5,6,7,8,9,10,11,12,13"/>
   </skill>
-  <skill name="Slash" weapon="Blade" mp="1" trigger="Combo" category="melee|2nd" follows="1st">
+  <skill name="Slash" weapon="Blade" mp="1" trigger="Combo" trajectory="forehand" category="melee|2nd" follows="1st">
     <melee damage="2,3,4,5,6,7,8,9,10,11"/>
   </skill>
-  <skill name="King_Strike" weapon="Blunt" mp="2" trigger="Act" category="melee|1st">
+  <!-- Axe: Hew, Chop, Cleave, (special: fell) Blunt: Strike, Thrust, Sweep, Thrust  Blade: Stab, Slice       Fist: Jab, Punch, Hook, Uppercut,  -->
+  <skill name="Strike" weapon="Blunt" mp="2" trigger="Act" trajectory="down" category="melee|1st">
     <melee damage="4,5,6,7,8,9,10,11,12,13"/>
   </skill>
-  <skill name="Zap" weapon="Wand" mp="2" trigger="Act" range="4" category="ranged">
+  <!-- Advandced wand attacks: seeking (missile), double burst-->
+  <skill name="Zap" weapon="Wand" mp="2" trigger="Act" range="4" trajectory="straight" category="ranged">
     <melee damage="6,6,7,7,7,8,8,9,9,9"/>
   </skill>
-  <skill name="Dodge" mp="1" trigger="Defend" follows="melee" chance="5,10,15,20,25,30,35,40,45,50">
-    <affect effect="miss"/>
+  <skill name="Dodge" mp="1" trigger="Defend" follows="melee" trajectory="self" effect="miss" chance="20">
+    <affect />
   </skill>
-  <skill name="Block" mp="2" weapon="Shield" trigger="Defend" range="100" follows="melee|ranged" chance="35,40,42,45,47,50,52,55,57,60">
-    <affect effect="miss"/>
+  <skill name="Block" mp="2" weapon="Shield" trigger="Defend" trajectory="straight|down|backhand" range="3" follows="melee" effect="miss|halt" chance="35,40,42,45,47,50,52,55,57,60">
+    <melee />
+  </skill>
+  <skill name="Cover" mp="2" weapon="Shield" trigger="Defend" trajectory="straight|down|backhand" range="100" follows="ranged" effect="miss" chance="35,40,42,45,47,50,52,55,57,60">
+    <melee />
+  </skill>
+  <skill name="Parry" mp="2" weapon="Melee" trigger="Defend" trajectory="straight|down|forehand" range="3" follows="melee" effect="miss|halt" chance="5,10,15,20,25,30,35,40,45,50" >
+    <melee />
   </skill>
 </skills>

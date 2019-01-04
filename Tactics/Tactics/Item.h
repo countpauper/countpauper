@@ -157,16 +157,19 @@ namespace Game
             {
                 All = -1,
                 None = 0,
-                Blade,
-                Blunt,
-                Axe,
-                Fist,
-                Bow,
-                Crossbow,
-                Gun,
-                Wand,
-                Throwing,
-                Shield
+                Blade = 1<<0,
+                Blunt = 1<1,
+                Axe = 1<<2,
+                Fist = 1<<3,
+                Melee = Blade|Blunt|Axe|Fist,
+                Bow = 1<<4,
+                Crossbow = 1<<5,
+                Gun = 1<<6,
+                Wand = 1<<7,
+                Throwing = 1<<8,
+                Ranged = Bow|Crossbow|Gun|Wand|Throwing,
+                Shield = 1<<9,
+                Artifact = 1<<10
             };
             class Material : public Type::Material
             {
@@ -246,7 +249,6 @@ namespace Game
         bool Match(Type::Weapon::Style style) const;
         Score RangeBonus() const;
         Score DefenseBonus() const;
-        bool Reach(const AttackVector& vector) const;
     private:
         const Type::Weapon& type;
         const Type::Weapon::Material &material;

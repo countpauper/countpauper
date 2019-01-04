@@ -154,6 +154,7 @@ namespace Game
             { L"Top", Plane::Top },
             { L"Bottom", Plane::Bottom },
             { L"Transversal", Plane::Transversal },
+            { L"Bottom|Top", Plane::Transversal },
             { L"Around", Plane::Around },
             { L"All", Plane::All }
         });
@@ -162,23 +163,36 @@ namespace Game
         return s;
     }
 
-    AttackVector::AttackVector(Plane plane, unsigned height) :
+    AttackVector::AttackVector(Plane plane, int height) :
         plane(plane),
         height(height)
     {
     }
 
-    AttackVector::AttackVector(Direction facing, const Position& vector) :
-        AttackVector(ComputePlane(Direction(vector), facing), 0)
+    // Striking plane of actor
+    AttackVector::AttackVector(Trajectory trajectory, int height) :
+        AttackVector(TrajectoryToPlane(trajectory), height)
     {
     }
 
-    Plane AttackVector::ComputePlane(Direction direction, Direction facing)
+    // facing plane of target
+    AttackVector::AttackVector(Direction facing, Direction target, int height) :
+        AttackVector(ComputePlane(target, facing), height)
+    {
+    }
+
+    // transform planes
+    AttackVector::AttackVector(AttackVector attack, AttackVector target) :
+        AttackVector(Transform(attack.plane, target.plane), target.height - attack.height )
+    {
+    }
+
+    Plane AttackVector::ComputePlane(Direction direction, Direction facing) 
     {
         if (facing == direction)
-            return Plane::Front;
-        if (facing.Opposite(direction))
             return Plane::Back;
+        if (facing.Opposite(direction))
+            return Plane::Front;
         if (facing.Clockwise(direction))
             return Plane::Right;
         else if (facing.CounterClockwise(direction))
@@ -186,6 +200,112 @@ namespace Game
         else
             return Plane::None;
     }
+
+    Plane AttackVector::TrajectoryToPlane(Trajectory trajectory)
+    {
+        switch (trajectory)
+        {
+        case Trajectory::Straight:
+            return Plane::Front;
+        case Trajectory::Reverse:
+            return Plane::Back;
+        case Trajectory::Forehand:
+            return Plane::Right;
+        case Trajectory::Backhand:
+            return Plane::Left;
+        case Trajectory::Down:
+            return Plane::Top;
+        case Trajectory::Up:
+            return Plane::Bottom;
+        default:
+            assert(false);  // don't know how to aim 
+            return Plane::None;
+        }
+    }
+
+    Plane AttackVector::Transform(Plane from, Plane to)
+    {
+        switch (to)
+        {
+        case Plane::Front:
+            return Front(from);
+        case Plane::Back:
+            return Back(from);
+        case Plane::Right:
+            return Right(from);
+        case Plane::Left:
+            return Left(from);
+        case Plane::Top:
+            assert(false); // 3d attack not entirely implemented
+            return Plane::Top;
+        case Plane::Bottom:
+            assert(false); // 3d attack not entirely implemented
+            return Plane::Bottom;
+        default:
+            return Plane::None;
+        }
+    }
+
+
+    Plane AttackVector::Back(Plane from)
+    {
+        switch (from)
+        {
+        case Plane::Front:
+            return Plane::Back;
+        case Plane::Back:
+            return Plane::Front;
+        default:
+            return from;
+        }
+    }
+    Plane AttackVector::Front(Plane from)
+    {
+        switch (from)
+        {
+        case Plane::Left:
+            return Plane::Right;
+        case Plane::Right:
+            return Plane::Left;
+        default:
+            return from;
+        }
+    }
+
+    Plane AttackVector::Left(Plane from)
+    {
+        switch (from)
+        {
+        case Plane::Front:
+            return Plane::Left;
+        case Plane::Back:
+            return Plane::Right;
+        case Plane::Left:
+            return Plane::Front;
+        case Plane::Right:
+            return Plane::Back;
+        default:
+            return from;
+        }
+    }
+
+    Plane AttackVector::Right(Plane from)
+    {
+        switch (from)
+        {
+        case Plane::Front:
+            return Plane::Right;
+        case Plane::Back:
+            return Plane::Left;
+        case Plane::Left:
+            return Plane::Back;
+        case Plane::Right:
+            return Plane::Front;
+        default:
+            return from;
+        }
+    }
+
 
     bool AttackVector::Match(const AttackVector other) const
     {

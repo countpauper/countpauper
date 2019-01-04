@@ -42,6 +42,20 @@ namespace Game
         os << dir.Description().c_str();
         return os;
     }
+
+    enum class Trajectory {
+        Self,        // can  target self 
+        Straight,    // forward relative to direction
+        Reverse,     // backwards relative to direction
+        Forehand,    // right to left, relative to direction
+        Backhand,    // left to right, relative to direction
+        Down,        // up to down
+        Up,          // down to up
+        Aim,         // can target body part at will
+        Seek,        // can go around cover same as teleport?
+        Parabola,    // can go over cover
+    };
+
     enum class Plane
     {
         None = 0,
@@ -63,15 +77,23 @@ namespace Game
     {
     public:
         AttackVector() = default;
-        AttackVector(Plane plane, unsigned height);
-        AttackVector(Direction facing, const Position& vector);
-
+        AttackVector(Plane plane, int height);
+        AttackVector(Trajectory, int height);
+        AttackVector(Direction facing, Direction target, int height);
+        AttackVector(AttackVector attack, AttackVector facing);
         Plane plane;
-        unsigned height;
+        int height;
         bool Match(const AttackVector other) const;
     private:
-        Plane ComputePlane(Direction direction, Direction facing);
-    };
+        static Plane ComputePlane(Direction direction, Direction facing);
+        static Plane TrajectoryToPlane(Trajectory trajectory);
+        static Plane Transform(Plane from, Plane to);
+        static Plane Back(Plane from);
+        static Plane Front(Plane from);
+        static Plane Right(Plane from);
+        static Plane Left(Plane from);
+   };
+
     std::wistream& operator>>(std::wistream& s, AttackVector& v);
 
 }    // ::Game

@@ -156,12 +156,15 @@ namespace Game
             { L"Blunt", Weapon::Style::Blunt },
             { L"Axe", Weapon::Style::Axe },
             { L"Fist", Weapon::Style::Fist },
+            { L"Melee", Weapon::Style::Melee },
             { L"Bow", Weapon::Style::Bow },
             { L"Crossbow", Weapon::Style::Crossbow },
             { L"Gun", Weapon::Style::Gun },
             { L"Wand", Weapon::Style::Wand },
             { L"Throwing", Weapon::Style::Throwing },
+            { L"Ranged", Weapon::Style::Ranged },
             { L"Shield", Weapon::Style::Shield },
+            { L"Artifact", Weapon::Style::Artifact }
         });
 
         std::map<std::wstring, Weapon::Material::Category > weaponMaterialCategories(
@@ -324,7 +327,7 @@ namespace Game
 
     bool Weapon::Match(Type::Weapon::Style style) const
     {
-        return style == type.style; //  (unsigned(style) & unsigned(type.style)) != 0;
+        return (unsigned(style) & unsigned(type.style)) != 0;
     }
 
     Score Weapon::RangeBonus() const
@@ -336,20 +339,4 @@ namespace Game
     {
         return Score(type.name, type.defense);
     }
-
-    bool Weapon::Reach(const AttackVector& vector) const
-    {
-        static const std::set<Plane> weaponPlanes = { Plane::Front, Plane::Right, Plane::Top, Plane::Bottom };
-        static const std::set<Plane> shieldPlanes = { Plane::Front, Plane::Left, Plane::Top };
-
-        if (type.style == Type::Weapon::Style::Shield)
-        {
-            return shieldPlanes.count(vector.plane)!=0;
-        }
-        else
-        {
-            return weaponPlanes.count(vector.plane)!=0;
-        }
-    }
-
 }

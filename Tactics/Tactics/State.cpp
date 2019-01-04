@@ -26,12 +26,7 @@ namespace Game
             return false;
         if (position.Distance(target.position) > Range(skill).Value())
             return false;
-        if (auto weapon = MatchWeapon(skill))
-        {
-            AttackVector vector(direction, target.position - position);
-            if (!weapon->Reach(vector)) // TODO: wield location considered
-                return false;
-        }
+
 
         // TODO: if weapons.count(skill.weapon)==0 return false
         // TODO if (game.Cover(state.position, target.GetPosition()))
@@ -155,7 +150,7 @@ namespace Game
         {
             auto agility = Agility();
 
-            chance += Bonus(L"Agi(" + agility.Description() + L")", (int(agility.Value() * 2)));
+            chance += Bonus(L"Agi(" + agility.Description() + L")", (int(agility.Value() * 3)));
             if (auto weapon = MatchWeapon(skill))
             {
                 chance += weapon->DefenseBonus();
