@@ -161,7 +161,7 @@ namespace Game
         return chance;
     }
 
-    Damage State::Mitigation() const
+    Damage State::Mitigation(const Anatomy& location) const
     {
         Score constMitigation(ConstitutionBonus());
         Score wisMitigation(WisdomBonus());

@@ -27,12 +27,12 @@ std::unique_ptr<GameState> Attack::Act(const IGame& game) const
    
     if (!attacker.IsPossible(skill, victim))
         return nullptr;
-    AttackVector attackVector(trajectory, 0);
-    AttackVector faceVector(attacker.direction, victim.direction, 0);
-    AttackVector hitLocation(attackVector, faceVector);
+    Anatomy origin(trajectory, 0);
+    Anatomy facing(attacker.direction, victim.direction, 0);
+    Anatomy hitLocation(origin, facing);
 
     auto ret = std::make_unique<GameState>(game, actor);
-    auto damage = attacker.AttackDamage(skill) - victim.Mitigation();
+    auto damage = attacker.AttackDamage(skill) - victim.Mitigation(hitLocation);
     attacker.mp -= skill.mp;
     victim.body.Hurt(hitLocation, damage.Wound(actor.Description()));
 

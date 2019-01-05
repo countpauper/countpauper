@@ -3,7 +3,7 @@
 #include <set>
 #include <vector>
 #include "Item.h"
-#include "Game/Direction.h"
+#include "Game/Trajectory.h"
 
 namespace Engine { class Image; }
 namespace Game

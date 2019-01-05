@@ -68,6 +68,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Anatomy.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -76,9 +77,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Anatomy.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Trajectory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

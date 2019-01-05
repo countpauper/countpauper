@@ -19,6 +19,7 @@ namespace Game
     class Game;
     class Action;
     class Skill;
+    class Anatomy;
 
     class State
     {
@@ -32,7 +33,7 @@ namespace Game
         unsigned mp;
         Body body;
         Damage AttackDamage(const Skill& skill) const;
-        Damage Mitigation() const;
+        Damage Mitigation(const Anatomy& location) const;
         Score Chance(const Skill& skill) const;
         Score Strength() const;
         Score Agility() const;

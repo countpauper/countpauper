@@ -11,7 +11,7 @@ namespace Game
     {
         return name < other.name;
     }
-    bool Body::Part::Match(AttackVector match) const
+    bool Body::Part::Match(Anatomy match) const
     {
         return location.Match(match);
     }
@@ -74,7 +74,7 @@ namespace Game
         }
         return false;
     }
-    bool Body::Hurt(AttackVector location, Damage& damage)
+    bool Body::Hurt(Anatomy location, Damage& damage)
     {
         for (auto& part : parts)
         {
