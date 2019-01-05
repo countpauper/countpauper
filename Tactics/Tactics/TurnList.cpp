@@ -42,61 +42,99 @@ namespace Game
 
     void TurnList::Item::Render() const
     {
-        float height = static_cast<float>(Height());
         glPushName(actor.Id());
-        // background
+        RenderBackground();
+        RenderActor();
+        RenderPlan();
+        RenderState();
+        glPopName();
+    }
+
+    void TurnList::Item::RenderBackground() const
+    {
+        float height = static_cast<float>(Height())-2;
         if (highlighted)
             glColor3f(1.0f, 1.0f, 1.0f);
         else
             glColor3f(0.3f, 0.3f, 0.3f);
         glBegin(GL_QUADS);
-            glVertex2f(128.0f, 1.0f);
-            glVertex2f(0.0f, 1.0f);
-            glVertex2f(0.0f, height);
-            glVertex2f(128.0f, height);
+        glVertex2f(128.0f-height, 1.0f);
+        glVertex2f(0.0f, 1.0f);
+        glVertex2f(0.0f, height);
+        glVertex2f(128.0f-height, height);
         glEnd();
+    }
+
+    void TurnList::Item::RenderActor() const
+    {
         glPushMatrix();
-        glTranslatef(2, Engine::Font::default.Height()+1.0f, 0); 
+        glTranslatef(2, 0.0f+Engine::Font::default.Height(), 0);
         Game::teamColor.at(actor.GetTeam()).Render();
         Engine::Font::default.Select();
-        auto text = actor.Description();
-        
-        if (actor.Dead())
-            text += L"+";
-        else if (!actor.CanAct())
-            text += L"-";
+        std::wstring text;
+
         if (hotKey)
         {
             wchar_t ch = MapVirtualKeyW(hotKey, MAPVK_VK_TO_CHAR);
+            text = std::wstring(1, ch);
             text += L" : ";
-            text += std::wstring(1, ch);
         }
-        Engine::glText(text);
-        glTranslatef(2, Engine::Font::default.Height() + 1.0f, 0);
+        text += actor.Description();
 
-        if (actor.IsEngaged())
+        Engine::glText(text);
+        glPopMatrix();
+    }
+
+    void TurnList::Item::RenderPlan() const
+    {
+        if (!actor.plan)
+            return;
+        glPushMatrix();
+        float height = static_cast<float>(Height())-3;
+        glColor3f(1.0f, 1.0f, 1.0f);
+        glTranslatef(128.0f-height, 1.0f, 0.0f);
+        Engine::Image::Bind bind (actor.plan->Icon());
+        glBegin(GL_QUADS);
+            glTexCoord2f(0, 0);
+            glVertex2f(0.0f, 0.0f);
+            glTexCoord2f(0, 1);
+            glVertex2f(0.0f, height);
+            glTexCoord2f(1, 1);
+            glVertex2f(height, height);
+            glTexCoord2f(1, 0);
+            glVertex2f(height, 0.0f);
+        glEnd();
+        glPopMatrix();
+      
+    }
+
+    void TurnList::Item::RenderState() const
+    {
+        glPushMatrix();
+        glTranslatef(2, 2.0f*Engine::Font::default.Height(), 0);
+        Game::teamColor.at(actor.GetTeam()).Render();
+        Engine::Font::default.Select();
+        std::wstring text;
+        if (actor.Dead())
+            text = L" +";
+        else if (!actor.CanAct())
+            text = L" -";
+        else if (actor.IsEngaged())
             text = L"#";
         else if (actor.IsActive())
             text = L"*";
         else if (actor.IsAnticipating())
-            text = L"-";
-        else if (actor.IsIdle())
             text = L".";
+        else if (actor.IsIdle())
+            text = L"_";
         else
-            text = L"";
-
-        text += std::to_wstring(actor.GetMovePoints());
-        if (actor.plan)
-        {
-            text += L" ";
-            text += actor.plan->Description();
-        }
+            text = L" ";
+        text += L" " + std::to_wstring(actor.GetMovePoints());
+        text += L" " + actor.body.Description();
         Engine::glText(text);
-        glPopName();
-
         glPopMatrix();
-    }
 
+    }
     TurnList::TurnList(Game& game, unsigned width) :
         game(game),
         width(width),

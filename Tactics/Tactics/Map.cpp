@@ -167,7 +167,7 @@ namespace Game
 
     void Map::Render() const
     {
-        texture->Bind();
+        Engine::Image::Bind bind(texture);
         unsigned i = 0;
         for (unsigned y = 0; y < height; ++y)
         {
@@ -185,7 +185,6 @@ namespace Game
                 glPopMatrix();
             }
         }
-        texture->Unbind();
         Engine::CheckGLError();
     }
 
@@ -199,8 +198,7 @@ namespace Game
         s >> map.name >> map.width >> map.height;
         std::wstring textureName;
         s >> textureName;
-        map.texture = std::make_unique<Engine::Image>();
-        map.texture->Load(textureName);
+        map.texture.Load(textureName);
         map.squares.resize(map.width * map.height);
         for (auto& square : map.squares)
             s >> square;

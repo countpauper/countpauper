@@ -4,6 +4,7 @@
 #include <codecvt>
 #include "Engine/CSV.h"
 #include "Engine/from_string.h"
+#include "Engine/Image.h"
 #include "Skills.h"
 #include "Attack.h"
 #include "Affect.h"
@@ -20,6 +21,8 @@ namespace Game
         weapon(::Game::Type::Weapon::Style::All)
     {
     }
+
+    Skill::~Skill() = default;
 
     Action* Skill::CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const
     {
@@ -78,7 +81,6 @@ namespace Game
             return Bonus(skillScore.Description(), damage.back());
         else
             return Bonus(skillScore.Description(), damage.at(index-1));
-
     }
 
     Action* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
@@ -102,6 +104,17 @@ namespace Game
         return unsigned(this);
     }
 
+    Engine::Image Skill::Icon() const
+    {
+        return *icon;
+    }
+
+    void Skill::LoadIcon(const std::wstring& fname)
+    {
+        // TODO: unique pointer, but need move constructor for skills then
+        icon = std::make_shared<Engine::Image>(fname);
+    }
+
     bool Skill::IsActive() const
     {
         return (trigger == Trigger::Act);
@@ -117,6 +130,11 @@ namespace Game
     {
         return ((IsActive()) &&
             (IsType<Move>()));
+    }
+
+    bool Skill::IsWait() const
+    {
+        return type == nullptr;
     }
 
     const Skill* Skills::Find(const std::wstring& name) const
@@ -221,6 +239,7 @@ void Parse(Skill& o, const xmlNode* node)
         if (xmlTagCompare(prop, "name"))
         {
             o.name = xmlText(prop->children);
+            o.LoadIcon(std::wstring(L"Data/") + o.name + std::wstring(L".png"));
         }
         else if (xmlTagCompare(prop, "mp"))
         {
@@ -339,7 +358,7 @@ void Parse(Skills& o, xmlNode* node)
         }
         if (curNode->type == XML_ELEMENT_NODE  && xmlTagCompare(curNode, "skill"))
         {
-            o.push_back(Skill());
+            o.emplace_back(Skill());
             Parse(o.back(), curNode);
         }
         else

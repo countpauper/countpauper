@@ -5,6 +5,7 @@
 #include "Item.h"
 #include "Game/Direction.h"
 
+namespace Engine { class Image; }
 namespace Game
 {
 class Action;
@@ -15,6 +16,7 @@ class Skill
 {
 public:
     Skill();
+    ~Skill();
 
     Action* CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const;
     Bonus GetChance(const Score& level) const;
@@ -26,9 +28,13 @@ public:
     unsigned range;
 
     unsigned Id() const;
+    Engine::Image Icon() const;
+    void LoadIcon(const std::wstring& fname);
+
     bool IsActive() const;
     bool IsAttack() const;
     bool IsMove() const;
+    bool IsWait() const;
     enum class Trigger { None = 0, Act, Combo, Prepare, React, Defend };
     Trigger trigger;
     using Category = std::string;
@@ -78,6 +84,7 @@ private:
     { 
         return dynamic_cast<T*>(type.get()) != nullptr; 
     }
+    std::shared_ptr<Engine::Image> icon;
 };
 
 class Skills : public std::vector<Skill>

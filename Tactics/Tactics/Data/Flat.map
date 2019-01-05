@@ -1,9 +1,10 @@
 2
 Actor Foo 0 0 2 0 1
 Body All 0 Agi+Str+Con+Wis+Int 10 0,0,0,0,0
-1 1 4
+1 1 5
 Studded Demon Brigandine
 Normal Steel Dagger
+Wait 0
 Hack 1
 Dodge 1
 Unarmed 0
@@ -14,9 +15,10 @@ Chest Sagital 0 Wis 10 ,,,,
 Belly Sagital 0 Con 10 ,,,,
 Arms Coronal 0 Str 10 ,,,,
 Legs Around 0 Agi 10 ,,,,
-1 1 4
+1 1 5
 Reinforced Adamantine Breast-Plate
 Normal Steel Longsword
+Wait 0
 Hack 1
 Parry 9
 Unarmed 0

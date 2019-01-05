@@ -26,6 +26,12 @@ namespace Game
         }
     }
 
+    Engine::Image Plan::Icon() const
+    {
+        auto skill = GetSkill();
+        return skill->Icon();
+    }
+
     Plan::Node::Node(const IGame& state, const Actor& executor) :
         previous(nullptr),
         state(std::make_unique<GameState>(state, executor)),
@@ -448,6 +454,11 @@ namespace Game
         root = std::make_unique<Node>(game, actor);
     }
 
+    const Skill* WaitPlan ::GetSkill() const
+    {
+        return actor.WaitSkill();
+    }
+
     std::wstring WaitPlan::Description() const
     {
         return actor.Description() + L": " + std::wstring(L"Wait for ") + target.Description();
@@ -469,6 +480,12 @@ namespace Game
         root = std::make_unique<Node>(game, actor);
     }
 
+    const Skill* SkipPlan::GetSkill() const
+    {
+        return actor.WaitSkill();
+    }
+
+
     PathPlan::PathPlan(const Actor& actor, const Position& target, const Game& game) :
         Plan(actor),
         target(target)
@@ -484,6 +501,11 @@ namespace Game
     std::wstring PathPlan::Description() const
     {
         return actor.Description() + L": " + std::wstring(L"Move to ") + target.Description();
+    }
+
+    const Skill* PathPlan::GetSkill() const
+    {
+        return actor.DefaultMove();
     }
 
     AttackPlan::AttackPlan(const Actor& actor, const Target& target, const Game& game, const Skill& skill) :
@@ -502,6 +524,11 @@ namespace Game
     std::wstring AttackPlan::Description() const
     {
         return actor.Description() + L": " + skill.name + L" @ " + target.Description();
+    }
+
+    const Skill* AttackPlan::GetSkill() const
+    {
+        return &skill;
     }
 
     ManualPlan::ManualPlan(Actor& actor) :
@@ -530,5 +557,10 @@ namespace Game
             }
             return result;
         }
+    }
+
+    const Skill* ManualPlan::GetSkill() const
+    {
+        return actor.DefaultAttack();
     }
 }

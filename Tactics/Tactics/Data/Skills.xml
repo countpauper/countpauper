@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <skills>
+  <skill name="Wait" mp="0" trigger="Act">
+  </skill>
   <skill name="Walk" mp="2" range="1" trajectory="straight" trigger="Act">
     <move/>
   </skill>

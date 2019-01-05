@@ -64,6 +64,7 @@ namespace Game
         else
             return result;
     }
+
     bool Body::Dead() const
     {
         for (auto& part : parts)

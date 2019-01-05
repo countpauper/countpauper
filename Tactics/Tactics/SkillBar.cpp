@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <gl/GL.h>
+#include <deque>
 #include "Engine/Error.h"
 #include "SkillBar.h"
 #include "Game.h"
@@ -8,8 +9,6 @@
 
 namespace Game
 {
-
-    
     SkillBar::Button::Button(const Skill* skill, unsigned hotKey) :
         hotKey(hotKey),
         highlighted(false),
@@ -17,18 +16,18 @@ namespace Game
     {
         if (skill)
         {
-            texture.Load(std::wstring(L"Data/") + skill->name + std::wstring(L".png"));
+            icon = skill->Icon();
         }
         else
         {
-            texture.Load(L"Data/Wait.png");
+            icon.Load(L"Data/Wait.png");
         }
     }
 
     SkillBar::Button::Button(Button&& other) :
         hotKey(other.hotKey),
         skill(other.skill),
-        texture(std::move(other.texture)),
+        icon(std::move(other.icon)),
         highlighted(other.highlighted)
     {
 
@@ -51,7 +50,7 @@ namespace Game
         else
             glPushName(0);
 
-        texture.Bind();
+        Engine::Image::Bind bind(icon);
         if (highlighted)
             glColor3f(1.0f, 1.0f, 1.0f);
         else
@@ -69,7 +68,6 @@ namespace Game
             glTexCoord2f(0.0f, 0.0f);
             glVertex2f(0.0f, 1.0f);
         glEnd();
-        texture.Unbind();
         glPopName();
     }
 
@@ -136,13 +134,15 @@ namespace Game
         buttons.clear();
         if (actor)
         {
-            buttons.emplace_back(Button(nullptr, VK_ESCAPE));
-            auto hotKey = VK_F1;
+            std::deque<unsigned> hotkeys = {
+                VK_ESCAPE, VK_F1, VK_F2, VK_F3, VK_F4, VK_F5, VK_F6, VK_F7, VK_F8, VK_F9, VK_F10, VK_F11, VK_F12
+            };
             for (auto skill : actor->GetSkills())
             {
                 if (skill.skill->IsActive())
                 {
-                    buttons.emplace_back(Button(skill.skill, hotKey++));
+                    buttons.emplace_back(Button(skill.skill, hotkeys.front()));
+                    hotkeys.pop_front();
                 }
                 if (skill.skill == game.SelectedSkill())
                 {

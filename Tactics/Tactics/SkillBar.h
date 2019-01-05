@@ -30,7 +30,7 @@ namespace Game
             const Skill* skill;
 
         private:
-            Engine::Image texture;
+            Engine::Image icon;
             unsigned hotKey;
             bool highlighted;
         };

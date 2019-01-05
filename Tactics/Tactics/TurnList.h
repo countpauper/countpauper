@@ -22,6 +22,10 @@ namespace Game
             unsigned HotKey() const;
             const Actor& actor;
         private:
+            void RenderBackground() const;
+            void RenderActor() const;
+            void RenderPlan() const;
+            void RenderState() const;
             bool highlighted;
             unsigned hotKey;
         };

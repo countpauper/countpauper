@@ -2,15 +2,11 @@
 #include <vector>
 #include <array>
 #include <memory>
+#include "Engine/Image.h"
 #include "Game/Position.h"
 #include "Game/Direction.h"
 #include "Engine/Color.h"
 #include "Engine/Coordinate.h"
-
-namespace Engine
-{
-    class Image;
-};
 
 namespace Game
 {
@@ -67,7 +63,7 @@ namespace Game
         unsigned width;
         unsigned height;
         std::vector<Square> squares;
-        std::unique_ptr<Engine::Image> texture;
+        Engine::Image texture;
     };
 
 

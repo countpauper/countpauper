@@ -64,8 +64,24 @@ void Attack::Render(const State& state) const
     glVertex3f(0, 0, 0);
     glVertex3f(float(v.x), 0, float(v.y));
     glEnd();
-    Engine::Font::default.Select();
-    Engine::glText(skill.name + L"@" + target.Description());
+
+    glColor4ub(255, 255, 255, 255);
+
+    // TODO: billboard by setting the projection matrix 3x3 to identity
+    Engine::Image::Bind bind(skill.Icon());
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(0.25f, -1.0f, 0.25f);
+
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(0.75, 1.0f, 0.25f);
+
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(0.75f, 0.75f, 1.0f);
+
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(0.25f, 0.75f, 1.0f);
+    glEnd();
 
     glPopMatrix();
 }

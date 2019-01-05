@@ -38,10 +38,10 @@ public:
     bool Valid() const;
     virtual bool Engaging() const = 0;
     virtual void Compute(const Game& game) = 0;
-
     bool Execute(Game& game) const;
     virtual std::wstring Description() const = 0;
-  
+    Engine::Image Icon() const;
+
 protected:
     struct Node
     {
@@ -97,6 +97,7 @@ protected:
     void PlanCombo(Node& parent, const Skill& skill, const Actor& actor, const Target& target);
     bool PlanReaction(Plan::Node& parent, const Skill& skill, Trajectory attackTrajectory, const Skill& reaction, const Actor& aggressor, const Actor& defender);
     static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
+    virtual const Skill* GetSkill() const = 0;
     const Actor& actor;
     std::unique_ptr<Condition> condition;
     std::unique_ptr<Node> root;
@@ -114,6 +115,7 @@ public:
     bool Engaging() const override { return false; }
     void Compute(const Game& game) override;
 private:
+    const Skill* GetSkill() const override;
     const Target& target;
 };
 
@@ -124,6 +126,8 @@ public:
     std::wstring Description() const override;
     bool Engaging() const override { return true; }
     void Compute(const Game& game) override;
+private:
+    const Skill* GetSkill() const override;
 };
 
 class PathPlan : public Plan
@@ -134,6 +138,7 @@ public:
     bool Engaging() const override { return false; }
     void Compute(const Game& game) override;
 private:
+    const Skill* GetSkill() const override;
     Position target;
 };
 
@@ -146,6 +151,7 @@ public:
     bool Engaging() const override { return true; }
     void Compute(const Game& game) override;
 private:
+    const Skill* GetSkill() const override;
     const Target& target;
 };
 
@@ -155,6 +161,8 @@ public:
     ManualPlan(Actor& actor);
     std::wstring Description() const override;
     void Compute(const Game& game) override;
+private:
+    const Skill* GetSkill() const override;
 };
 
 }   // ::Game

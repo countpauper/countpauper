@@ -318,6 +318,28 @@ namespace Game
         return nullptr;
     }
 
+    const Skill* Actor::DefaultMove() const
+    {
+        for (auto& known : knowledge)
+        {
+            if ((known.skill->IsMove()) &&
+                (IsPossible(*known.skill)))
+                return known.skill;
+        }
+        return nullptr;
+    }
+
+    const Skill* Actor::WaitSkill() const
+    {
+        for (auto& known : knowledge)
+        {
+            if ((known.skill->IsWait()) &&
+                (IsPossible(*known.skill)))
+                return known.skill;
+        }
+        return nullptr;
+    }
+
     std::vector<std::unique_ptr<Action>> Actor::AllMoves(const Position& from) const
     { 
         std::vector<std::unique_ptr<Action>> result;

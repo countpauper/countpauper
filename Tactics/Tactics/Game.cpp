@@ -284,7 +284,7 @@ namespace Game
     std::vector<Actor*> Game::FindTargetsInRange(const State& from, const Skill& skill) const
     {
         auto targets = FindTargets(from, skill);
-        auto it = std::remove_if(targets.begin(), targets.end(), [from, skill](const Actor* actor)
+        auto it = std::remove_if(targets.begin(), targets.end(), [from, &skill](const Actor* actor)
         {
             return actor->GetPosition().Distance(from.position) > skill.range;
         });
@@ -304,26 +304,29 @@ namespace Game
     void Game::SelectPlan()
     {
         std::unique_ptr<Plan> plan;
-        if (selectedTarget)
+        if (selectedSkill)
         {
-            if (!selectedSkill)
+            if (selectedTarget)
             {
-                plan = std::make_unique<WaitPlan>(*selectedActor, *selectedTarget, *this);
+                if (selectedSkill->IsAttack())
+                {
+                    plan = std::make_unique<AttackPlan>(*selectedActor, *selectedTarget, *this, *selectedSkill);
+                }
+                else if (selectedSkill->IsMove())
+                {
+                    plan = std::make_unique<PathPlan>(*selectedActor, selectedTarget->GetPosition(), *this);
+                }
+                else if (selectedSkill->IsWait())
+                {
+                    plan = std::make_unique<WaitPlan>(*selectedActor, *selectedTarget, *this);
+                }
             }
-            else if (selectedSkill->IsAttack())
+            else
             {
-                plan = std::make_unique<AttackPlan>(*selectedActor, *selectedTarget, *this, *selectedSkill);
-            }
-            else if (selectedSkill->IsMove())
-            {
-                plan = std::make_unique<PathPlan>(*selectedActor, selectedTarget->GetPosition(), *this);
-            }
-        }
-        else
-        {
-            if (!selectedSkill)
-            {
-                plan = std::make_unique<SkipPlan>(*selectedActor, *this);
+                if (selectedSkill->IsWait())
+                {
+                    plan = std::make_unique<SkipPlan>(*selectedActor, *this);
+                }
             }
         }
         if (plan)
