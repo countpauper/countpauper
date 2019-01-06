@@ -4,14 +4,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tactics", "Tactics\Tactics.vcxproj", "{FB3EC404-470D-4FA8-BEF9-066CB283548B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{20758639-52EE-4319-886A-9C8101649297} = {20758639-52EE-4319-886A-9C8101649297}
+		{1174A98A-127A-4604-863F-B12C97B8547F} = {1174A98A-127A-4604-863F-B12C97B8547F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestEngine", "Test\Test.vcxproj", "{9F6A1A77-8101-481C-B4FB-02AEE8E12790}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1174A98A-127A-4604-863F-B12C97B8547F} = {1174A98A-127A-4604-863F-B12C97B8547F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{1174A98A-127A-4604-863F-B12C97B8547F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{20758639-52EE-4319-886A-9C8101649297}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1174A98A-127A-4604-863F-B12C97B8547F} = {1174A98A-127A-4604-863F-B12C97B8547F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestGame", "TestGame\TestGame.vcxproj", "{1BD5F7AD-86B6-460C-BB35-9FB024AAA074}"
+	ProjectSection(ProjectDependencies) = postProject
+		{20758639-52EE-4319-886A-9C8101649297} = {20758639-52EE-4319-886A-9C8101649297}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

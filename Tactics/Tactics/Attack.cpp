@@ -27,10 +27,12 @@ Action::Result  Attack::Act(const IGame& game) const
    
     if (!attacker.IsPossible(skill, victim))
         return Result();
-    Anatomy origin(trajectory, 0);
-    Anatomy facing(attacker.direction, victim.direction, 0);
+    Anatomy origin(trajectory, 2,3);  // TODO: attacking body part
+    Anatomy facing(attacker.direction, victim.direction, 0);    // TODO: sensing body part or height difference
     Anatomy hitLocation(origin, facing);
-
+    auto part = victim.body.Get(hitLocation);
+    if (!part)
+        return Result();
     Result ret(game, actor);
     auto damage = attacker.AttackDamage(skill) - victim.Mitigation(hitLocation);
     attacker.mp -= skill.mp;
@@ -40,7 +42,7 @@ Action::Result  Attack::Act(const IGame& game) const
     ret.state->Adjust(target, victim);
     ret.description = actor.Description() + L" "+skill.name;
     if (damage.Hurt())
-        ret.description += L" " + target.Description() + L"'s "+victim.body.Get(hitLocation)->Name()+L":" + damage.ActionDescription();
+        ret.description += L" " + target.Description() + L"'s "+part->Name()+L":" + damage.ActionDescription();
     return std::move(ret);
 }
 

@@ -16,12 +16,7 @@ namespace Game
     }
     bool Body::Part::Match(Anatomy match) const
     {
-        for (auto a : anatomy)
-        {
-            if (a.Match(match))
-                return true;
-        }
-        return false;
+        return anatomy.Contains(match);
     }
 
     bool Body::Part::Disabled() const
@@ -157,9 +152,7 @@ namespace Game
 
     std::wistream& operator>>(std::wistream& s, Body::Part& part)
     {
-        Anatomy location;
-        s >> part.name >> location >> part.slot >> part.attributes >> part.score >> part.health;
-        part.anatomy.insert(location);
+        s >> part.name >> part.anatomy >> part.slot >> part.attributes >> part.score >> part.health;
 
         return s;
     }

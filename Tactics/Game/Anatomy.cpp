@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "Game/Anatomy.h"
+#include <sstream>
+#include "Engine/Utils.h"
+#include "Engine/from_string.h"
 #include "Game/Direction.h"
 
 namespace Game
 {
-std::wistream& operator>>(std::wistream& s, Plane& plane)
-{
-    std::wstring label;
     const static std::map<std::wstring, Plane> planeMap({
         { L"Left", Plane::Left },
         { L"Right", Plane::Right },
@@ -22,49 +22,62 @@ std::wistream& operator>>(std::wistream& s, Plane& plane)
         { L"Around", Plane::Around },
         { L"All", Plane::All }
     });
+
+std::wistream& operator>>(std::wistream& s, Plane& plane)
+{
+    std::wstring label;
     s >> label;
     plane = planeMap.at(label);
     return s;
 }
 
-Anatomy::Anatomy(Plane plane, int height) :
+std::ostream& operator<<(std::ostream& s, const Plane& plane)
+{
+    auto it = std::find_if(planeMap.begin(), planeMap.end(), [plane](const decltype(planeMap)::value_type& plane_pair)
+    {
+        return plane_pair.second == plane;
+    });
+    assert(it!=planeMap.end()); // plane not in map
+    s << Engine::from_string<std::string>(L"test").c_str();
+    return s;
+}
+
+
+Anatomy::Anatomy(Plane plane, unsigned pos, unsigned size) :
     plane(plane),
-    height(height)
+    position(pos),
+    size(size)
 {
 }
 
 // Striking plane of actor
-Anatomy::Anatomy(Trajectory trajectory, int height) :
-Anatomy(ToPlane(trajectory), height)
+Anatomy::Anatomy(Trajectory trajectory, unsigned position, unsigned range) :
+    Anatomy(ToPlane(trajectory), position, range)
 {
 }
 
 // facing plane of target
-Anatomy::Anatomy(const Direction& facing, const Direction& target, int height) :
-    Anatomy(Facing(target, facing), height)
+Anatomy::Anatomy(const Direction& facing, const Direction& target, int position) :
+    Anatomy(Facing(target, facing), position)
 {
 }
 
 // transform planes
 Anatomy::Anatomy(Anatomy attack, Anatomy target) :
-    Anatomy(Transform(attack.plane, target.plane), target.height - attack.height)
+Anatomy(Transform(attack.plane, target.plane), attack.position-target.position, attack.size)
 {
+    assert(target.position == 0);   // height difference not properly implemented, needs clipping
 }
 
-bool Anatomy::Match(const Anatomy& other) const
+bool Anatomy::Contains(const Anatomy& other) const
 {
-    if (height != other.height)
+    if (position >= other.position + other.size)
+        return false;
+    if (position + size <= other.position)
         return false;
     if ((unsigned(plane) & unsigned(other.plane)) == 0)
         return false;
     return true;
-}
-
-bool Anatomy::operator<(const Anatomy& other) const
-{
-    if (height < other.height)
-        return true;
-    return unsigned(plane) < unsigned(other.plane);
 }
 
 Plane ToPlane(Trajectory trajectory)
@@ -188,7 +201,36 @@ Plane Facing(Direction direction, Direction facing)
 
 std::wistream& operator>>(std::wistream& s, Anatomy& v)
 {
-    s >> v.plane >> v.height;
+    std::wstring str;
+    s >> str;
+    
+    auto heightStart= str.find(L'[');
+    if (heightStart == std::wstring::npos)
+        throw std::runtime_error("Missing [ in anatomy");
+    auto planeStr = str.substr(0, heightStart);
+    heightStart += 1;
+    auto heightEnd = str.find(L']');
+    if (heightStart == std::wstring::npos)
+        throw std::runtime_error("Missing ] in anatomy");
+    if (heightStart >= heightEnd)
+        throw std::runtime_error("No height between [] in anatomy");
+    v.plane = planeMap.at(planeStr);
+    auto heightStr = str.substr(heightStart, heightEnd - heightStart);
+    auto rangeDelimiter = heightStr.find(L'-');
+    if (rangeDelimiter == std::wstring::npos)
+    {
+        v.position = Engine::from_string<unsigned>(heightStr);
+        v.size = 1;
+    }
+    else
+    {
+        auto positionStr = heightStr.substr(0, rangeDelimiter);
+        auto sizeStr = heightStr.substr(rangeDelimiter + 1);
+        v.position = Engine::from_string<unsigned>(positionStr);
+        auto end = Engine::from_string<unsigned>(sizeStr);
+        v.size = end+1 - v.position;
+    }
     return s;
 }
+
 }    // ::Game

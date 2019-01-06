@@ -30,7 +30,7 @@ namespace Game
         private:
             friend std::wistream& operator>>(std::wistream& s, Body::Part& part);
             std::wstring name;
-            std::set<Anatomy> anatomy;
+            Anatomy anatomy;
             Slot slot;
             Attributes attributes;
             Stats::Score score;

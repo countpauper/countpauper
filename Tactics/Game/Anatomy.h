@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include "Trajectory.h"
 
 namespace Game
@@ -23,12 +24,13 @@ namespace Game
         All = Around + Transversal
     };
     std::wistream& operator>>(std::wistream& s, Plane& plane);
+    std::ostream& operator<<(std::ostream& s, const Plane& plane);
 
     Plane ToPlane(Trajectory trajectory);
     Plane Back(Plane from);
     Plane Front(Plane from);
     Plane Right(Plane from);
-    Plane Left(Plane from);
+    Plane Left(Plane from); 
     Plane Transform(Plane from, Plane to);
     Plane Facing(Direction direction, Direction facing);
 
@@ -36,14 +38,14 @@ namespace Game
     {
     public:
         Anatomy() = default;
-        Anatomy(Plane plane, int height);
-        Anatomy(Trajectory, int height);
+        Anatomy(Plane plane, unsigned pos, unsigned size = 1);
+        Anatomy(Trajectory, unsigned pos, unsigned range = 1);
         Anatomy(const Direction& facing, const Direction&target, int height);
         Anatomy(Anatomy attack, Anatomy facing);
         Plane plane;
-        int height;
-        bool Match(const Anatomy& other) const;
-        bool operator<(const Anatomy& other) const;
+        unsigned position;
+        unsigned size;
+        bool Contains(const Anatomy& other) const;
     private:
     };
 
