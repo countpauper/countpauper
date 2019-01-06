@@ -42,7 +42,8 @@ namespace Game
         Anatomy(Anatomy attack, Anatomy facing);
         Plane plane;
         int height;
-        bool Match(const Anatomy other) const;
+        bool Match(const Anatomy& other) const;
+        bool operator<(const Anatomy& other) const;
     private:
     };
 

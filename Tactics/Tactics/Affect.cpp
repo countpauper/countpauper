@@ -18,30 +18,33 @@ std::wstring Affect::Description() const
     return skill.name;
 }
 
-std::unique_ptr<GameState> Affect::Act(const IGame& game) const
+Action::Result Affect::Act(const IGame& game) const
 {
     State attacker = game.Get(actor);
     State victim(game.Get(target));
     if (!attacker.IsPossible(skill, victim))
-        return nullptr;
-    auto ret = std::make_unique<GameState>(game, actor);
+        return Result();
+    Result ret(game, actor, skill);
     attacker.mp -= skill.mp;
     // TODO effect
-    ret->Adjust(actor, attacker);
-    ret->Adjust(target, victim);
-    return std::move(ret);
+    ret.state->Adjust(actor, attacker);
+    ret.state->Adjust(target, victim);
+    ret.description = actor.Description()+L" "+skill.name+L" "+target.Description();
+    return ret;
 }
 
-std::unique_ptr<GameState> Affect::Fail(const IGame& game) const
+
+Action::Result Affect::Fail(const IGame& game) const
 {
     State attacker = game.Get(actor);
     State victim(game.Get(target));
     if (!attacker.IsPossible(skill, victim))
-        return nullptr;
-    auto ret = std::make_unique<GameState>(game, actor);
+        return Result();
+    Result ret(game, actor);
     attacker.mp -= skill.mp;
-    ret->Adjust(actor, attacker);
-    return std::move(ret);
+    ret.state->Adjust(actor, attacker);
+    ret.description = actor.Description() + L" " + skill.name + L" miss "+target.Description();
+    return ret;
 }
 
 void Affect::Render(const State& state) const

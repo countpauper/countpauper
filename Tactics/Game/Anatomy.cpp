@@ -51,7 +51,7 @@ Anatomy::Anatomy(Anatomy attack, Anatomy target) :
 {
 }
 
-bool Anatomy::Match(const Anatomy other) const
+bool Anatomy::Match(const Anatomy& other) const
 {
     if (height != other.height)
         return false;
@@ -60,6 +60,12 @@ bool Anatomy::Match(const Anatomy other) const
     return true;
 }
 
+bool Anatomy::operator<(const Anatomy& other) const
+{
+    if (height < other.height)
+        return true;
+    return unsigned(plane) < unsigned(other.plane);
+}
 
 Plane ToPlane(Trajectory trajectory)
 {

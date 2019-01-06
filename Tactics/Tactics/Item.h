@@ -5,6 +5,7 @@
 #include <memory>
 #include <iostream>
 #include "Damage.h"
+#include "Game/Slot.h"
 
 namespace Game
 {
@@ -82,25 +83,6 @@ namespace Game
             Requirement requirement;
         };
 
-    
-        enum class Covers : unsigned
-        {
-            Nothing = 0,
-            Belly = 1,
-            Chest = 2,
-            Arms = 4,
-            Legs = 8,
-            Head = 16,
-            Finger = 32,
-            Neck = 64,
-
-            Trunk = Belly+Chest,
-            Shirt = Trunk +Arms,
-            Body = Trunk + Arms + Legs,
-            Full = Body + Head,
-
-        };
-
         class Armor : public Equipment
         {
         public:
@@ -137,13 +119,13 @@ namespace Game
                 static std::vector<Modifier> Load(std::wistream& fileName);
             };
 
-            Armor() : cover(Covers::Nothing), category(None) {}
+            Armor() : slot(Slot::Nothing), category(None) {}
             static std::vector<Armor> Load(std::wistream& fileName);            
-            unsigned CoverCount() const;
+            unsigned SlotCount() const;
             bool Match(const Material& material) const;
             bool Match(const Modifier& bonus) const;
 
-            Covers cover;
+            Slot slot;
             Category category;
             Damage mitigation;
         };
@@ -231,6 +213,7 @@ namespace Game
         Armor(const Type::Armor& type, const Type::Armor::Material& material, const Type::Armor::Modifier& mod);
         std::wstring Name() const;
         Requirement Required() const;
+        Damage Mitigation(Slot slot) const;
         Damage Mitigation() const;
     private:
         const Type::Armor& type;

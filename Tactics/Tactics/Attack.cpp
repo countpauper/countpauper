@@ -19,38 +19,42 @@ std::wstring Attack::Description() const
     return skill.name;
 }
 
-std::unique_ptr<GameState> Attack::Act(const IGame& game) const
+Action::Result  Attack::Act(const IGame& game) const
 {
     State attacker = game.Get(actor);
     State victim(game.Get(target));
     attacker.direction = Direction(victim.position - attacker.position);
    
     if (!attacker.IsPossible(skill, victim))
-        return nullptr;
+        return Result();
     Anatomy origin(trajectory, 0);
     Anatomy facing(attacker.direction, victim.direction, 0);
     Anatomy hitLocation(origin, facing);
 
-    auto ret = std::make_unique<GameState>(game, actor);
+    Result ret(game, actor);
     auto damage = attacker.AttackDamage(skill) - victim.Mitigation(hitLocation);
     attacker.mp -= skill.mp;
     victim.body.Hurt(hitLocation, damage.Wound(actor.Description()));
 
-    ret->Adjust(actor, attacker);
-    ret->Adjust(target, victim);
+    ret.state->Adjust(actor, attacker);
+    ret.state->Adjust(target, victim);
+    ret.description = actor.Description() + L" "+skill.name;
+    if (damage.Hurt())
+        ret.description += L" " + target.Description() + L"'s "+victim.body.Get(hitLocation)->Name()+L":" + damage.ActionDescription();
     return std::move(ret);
 }
 
-std::unique_ptr<GameState> Attack::Fail(const IGame& game) const
+Action::Result Attack::Fail(const IGame& game) const
 {
     State attacker = game.Get(actor);
     State victim(game.Get(target));
     attacker.direction = Direction(victim.position - attacker.position);
     if (!attacker.IsPossible(skill, victim))
-        return nullptr;
-    auto ret = std::make_unique<GameState>(game, actor);
+        return Result();
+    Result ret(game, actor);
     attacker.mp -= skill.mp;
-    ret->Adjust(actor, attacker);
+    ret.state->Adjust(actor, attacker);
+    ret.description = actor.Description() + L" " + skill.name + L" miss " + target.Description();
     return std::move(ret);
 }
 

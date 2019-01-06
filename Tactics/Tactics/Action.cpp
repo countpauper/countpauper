@@ -9,6 +9,49 @@
 
 namespace Game
 {
+
+    Action::Result::Result() :
+        chance(0.0)
+    {
+    }
+
+    Action::Result::Result(const IGame& parent, const Actor& actor) :
+        state(std::make_unique<GameState>(parent, actor)),
+        chance(1.0)
+    {
+    }
+
+    Action::Result::Result(const IGame& parent, const Actor& actor, const Skill& skill) :
+        state(std::make_unique<GameState>(parent,actor)),
+        chance(1.0)
+    {
+        const auto& actorState = parent.Get(actor);
+        chance = double(actorState.Chance(skill).Value()) / 100.0;
+    }
+
+
+    Action::Result::Result(Action::Result&& other) :
+        state(std::move(other.state)),
+        chance(other.chance),
+        description(other.description)
+    {
+        other.chance = 0.0;
+    }
+
+    Action::Result& Action::Result::operator=(Action::Result&& other)
+    {
+        state = std::move(other.state);
+        chance = other.chance;
+        other.chance = 0.0;
+        description = other.description;
+        return *this;
+    }
+
+    Action::Result::operator bool() const
+    {
+        return state != nullptr;
+    }
+
     Action::Action(const Skill& skill, const Actor& actor, Trajectory trajectory) :
         skill(skill),
         actor(actor),

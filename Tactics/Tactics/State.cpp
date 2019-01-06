@@ -170,10 +170,10 @@ namespace Game
             Damage(Wound::Type::Burn, constMitigation) +
             Damage(Wound::Type::Disease, constMitigation) +
             Damage(Wound::Type::Spirit, wisMitigation);
-        if (!worn.empty())
+        auto slot = body.FindSlot(location);
+        for (auto armor : worn)
         {
-            // TODO: select right armor for location
-            mitigation += worn.front()->Mitigation();
+            mitigation += armor->Mitigation(slot);
         }
         return mitigation;
     }

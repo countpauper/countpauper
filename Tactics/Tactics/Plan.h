@@ -46,7 +46,7 @@ protected:
     struct Node
     {
         Node(const IGame& state, const Actor& executor);
-        Node(Node& previous, std::unique_ptr<GameState>&& state, std::unique_ptr<Action>&& action);
+        Node(Node& previous, Action::Result& result, std::unique_ptr<Action>&& action);
         Node(const Node&) = delete;
         ~Node();
         Node& operator=(const Node&) = delete;
@@ -62,8 +62,9 @@ protected:
         bool Reached(const Position& target) const;
 
         Node* previous;
-        std::vector<std::unique_ptr<Action>> actions;
+        std::unique_ptr<Action> action;
         double chance;
+        std::wstring description;
         std::unique_ptr<GameState> state;
         std::vector<std::unique_ptr<Node>> children;
     };
@@ -104,7 +105,9 @@ protected:
 private:
     GameChances AllOutcomesRecursive(Node& node) const;
     GameChances AllOutcomes() const;
-    std::vector<Action*> ActionSequence(GameState& end) const;
+    std::vector<Action*> ActionSequence(const GameState& end) const;
+    std::vector<std::wstring> Descriptions(const GameState& end) const;
+    void Apply(const GameState& state, Game& game) const;
 };
 
 class WaitPlan : public Plan

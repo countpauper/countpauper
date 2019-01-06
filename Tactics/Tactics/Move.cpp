@@ -14,12 +14,12 @@ namespace Game
     {
     }
 
-    std::unique_ptr<GameState> Move::Act(const IGame& game) const
+    Action::Result  Move::Act(const IGame& game) const
     {
         State state(game.Get(actor));
         if (state.mp < skill.mp)
         {
-            return nullptr;
+            return Result();
         }
         state.mp -= skill.mp;
         auto newPosition = destination;
@@ -29,23 +29,25 @@ namespace Game
         {
             state.position = newPosition;
             state.direction = direction;
-            auto ret = std::make_unique<GameState>(game, actor);
-            ret->Adjust(actor, state);
+            Result ret(game, actor);
+            ret.state->Adjust(actor, state);
+            ret.description = actor.Description() + L" " + skill.name + L" " + direction.Description();
             return ret;
         }
         else
-            return nullptr;
+            return Result();
     }
-    std::unique_ptr<GameState> Move::Fail(const IGame& game) const
+    Action::Result  Move::Fail(const IGame& game) const
     {
         State state(game.Get(actor));
         if (state.mp < skill.mp)
         {
-            return nullptr;
+            return Result();
         }
         state.mp -= skill.mp;
-        auto ret = std::make_unique<GameState>(game, actor);
-        ret->Adjust(actor, state);
+        Result ret(game, actor);
+        ret.state->Adjust(actor, state);
+        ret.description = actor.Description()+L" "+skill.name + L" falter";
         return ret;
     }
 

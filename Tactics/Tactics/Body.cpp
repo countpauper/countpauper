@@ -6,14 +6,22 @@
 
 namespace Game
 {
-
+    Body::Part::Part() :
+        slot(Slot::Nothing)
+    {
+    }
     bool Body::Part::operator<(const Part& other) const
     {
         return name < other.name;
     }
     bool Body::Part::Match(Anatomy match) const
     {
-        return location.Match(match);
+        for (auto a : anatomy)
+        {
+            if (a.Match(match))
+                return true;
+        }
+        return false;
     }
 
     bool Body::Part::Disabled() const
@@ -29,6 +37,10 @@ namespace Game
         return true;
     }
 
+    std::wstring Body::Part::Name() const
+    {
+        return name;
+    }
     std::wstring Body::Part::Description() const
     {
         return name + L"= " + health.StateDescription();
@@ -45,6 +57,11 @@ namespace Game
     bool Body::Part::IsHurt() const
     {
         return health.Hurt();
+    }
+
+    Slot Body::Part::GetSlot() const
+    {
+        return slot;
     }
 
     std::wstring Body::Description() const
@@ -74,7 +91,21 @@ namespace Game
         }
         return false;
     }
-    bool Body::Hurt(Anatomy location, Damage& damage)
+
+    Slot Body::FindSlot(const Anatomy& location) const
+    {
+        for (auto& part : parts)
+        {
+            if (part.Match(location))
+            {
+                return part.GetSlot();
+            }
+        }
+        return Slot::Nothing;
+    }
+
+
+    bool Body::Hurt(const Anatomy& location, const Damage& damage)
     {
         for (auto& part : parts)
         {
@@ -85,6 +116,18 @@ namespace Game
             }
         }
         return false;
+    }
+
+    const Body::Part* Body::Get(const Anatomy& location) const
+    {
+        for (auto& part : parts)
+        {
+            if (part.Match(location))
+            {
+                return &part;
+            }
+        }
+        return nullptr;
     }
 
     Score Body::Strength() const
@@ -114,7 +157,10 @@ namespace Game
 
     std::wistream& operator>>(std::wistream& s, Body::Part& part)
     {
-        s >> part.name >> part.location >> part.attributes >> part.score >> part.health;
+        Anatomy location;
+        s >> part.name >> location >> part.slot >> part.attributes >> part.score >> part.health;
+        part.anatomy.insert(location);
+
         return s;
     }
 

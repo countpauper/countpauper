@@ -26,12 +26,12 @@
     <affect />
   </skill>
   <skill name="Block" mp="2" weapon="Shield" trigger="Defend" trajectory="straight|down|backhand" range="3" follows="melee" effect="miss|halt" chance="35,40,42,45,47,50,52,55,57,60">
-    <melee />
+    <affect />
   </skill>
   <skill name="Cover" mp="2" weapon="Shield" trigger="Defend" trajectory="straight|down|backhand" range="100" follows="ranged" effect="miss" chance="35,40,42,45,47,50,52,55,57,60">
     <melee />
   </skill>
   <skill name="Parry" mp="2" weapon="Melee" trigger="Defend" trajectory="straight|down|forehand" range="3" follows="melee" effect="miss|halt" chance="5,10,15,20,25,30,35,40,45,50" >
-    <melee />
+    <affect />
   </skill>
 </skills>

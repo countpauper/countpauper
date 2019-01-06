@@ -27,6 +27,9 @@
     <ClCompile Include="Anatomy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Slot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Direction.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Trajectory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Slot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -31,21 +31,6 @@ namespace Game
             { L"Nature", Element::Nature },
         });
 
-        std::map<std::wstring, Covers> coverMap(
-        {
-            { L"Nothing", Covers::Nothing },
-            { L"Belly", Covers::Belly },
-            { L"Chest", Covers::Chest },
-            { L"Arms", Covers::Arms },
-            { L"Legs", Covers::Legs },
-            { L"Head", Covers::Head },
-            { L"Finger", Covers::Finger },
-            { L"Neck", Covers::Neck },
-            { L"Trunk", Covers::Trunk },
-            { L"Shirt", Covers::Shirt },
-            { L"Body", Covers::Body },
-            { L"Full", Covers::Full },
-        });
 
         std::map<std::wstring, Statistic> statisticMap(
         {
@@ -77,7 +62,7 @@ namespace Game
             Engine::Adapter::String<Armor> name(&Armor::name);
             Engine::Adapter::Integer<Armor> frequency(&Armor::frequency);
             Engine::Adapter::Struct<Armor, Requirement> requirement(&Armor::requirement, requirementAdapters);
-            Engine::Adapter::Enumeration<Armor, Covers> covers(&Armor::cover, coverMap);
+            Engine::Adapter::Enumeration<Armor, Slot> covers(&Armor::slot, slotMap);
             Engine::Adapter::Enumeration<Armor, Armor::Category> category(&Armor::category, armorCategories);
             Engine::Adapter::Struct<Armor, Damage> mitigation(&Armor::mitigation, damageAdapters);
 
@@ -118,23 +103,14 @@ namespace Game
         }
 
 
-        unsigned Armor::CoverCount() const
+        unsigned Armor::SlotCount() const
         {
             unsigned result = 0;
-            if (unsigned(cover)&unsigned(Covers::Arms))
-                result += 1;
-            if (unsigned(cover)&unsigned(Covers::Belly))
-                result += 1;
-            if (unsigned(cover)&unsigned(Covers::Chest))
-                result += 1;
-            if (unsigned(cover)&unsigned(Covers::Legs))
-                result += 1;
-            if (unsigned(cover)&unsigned(Covers::Head))
-                result += 1;
-            if (unsigned(cover)&unsigned(Covers::Finger))
-                result += 1;
-            if (unsigned(cover)&unsigned(Covers::Neck))
-                result += 1;
+            for (unsigned mask = unsigned(slot); mask != 0; mask <<= 1)
+            {
+                if (mask & 1)
+                    result += 1;
+            }
             return result;
         }
 
@@ -281,13 +257,26 @@ namespace Game
     }
     Requirement Armor::Required() const
     {
-        return type.requirement + modifier.requirement + material.requirement * type.CoverCount();
+        return type.requirement + modifier.requirement + material.requirement * type.SlotCount();
+    }
+
+    Damage Armor::Mitigation(Slot slot) const
+    {
+        if (unsigned(type.slot) & unsigned(slot))
+        {
+            return Mitigation();
+        }
+        else
+        {
+            return Damage();
+        }
     }
 
     Damage Armor::Mitigation() const
     {
         return type.mitigation + material.mitigation + modifier.mitigation;
     }
+
     Weapon::Weapon(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& mod) :
         type(game.FindWeapon(type)),
         material(game.FindWeaponMaterial(material, this->type)),
