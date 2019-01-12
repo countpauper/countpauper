@@ -66,7 +66,7 @@ Anatomy::Anatomy(const Direction& facing, const Direction& target, int position)
 Anatomy::Anatomy(Anatomy attack, Anatomy target) :
 Anatomy(Transform(attack.plane, target.plane), attack.position-target.position, attack.size)
 {
-    assert(target.position == 0);   // height difference not properly implemented, needs clipping
+    assert(target.position == 0);   // height difference not properly implemented, needs clipping or sign
 }
 
 bool Anatomy::Contains(const Anatomy& other) const

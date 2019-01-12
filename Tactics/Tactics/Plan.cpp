@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <iostream>
+#include "Engine/Random.h"
 #include "Plan.h"
 #include "Action.h"
 #include "Actor.h"
@@ -269,7 +270,7 @@ namespace Game
         auto outcomes = AllOutcomes();
         for (auto outcome : outcomes)
         {
-            double score = rand() / double(RAND_MAX);
+            double score = Engine::Random::Chance();
             if (score < outcome.first)
             {
                 Apply(*outcome.second, game);

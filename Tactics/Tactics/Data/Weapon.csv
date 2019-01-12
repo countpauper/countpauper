@@ -1,4 +1,4 @@
-#Name,Rarity,ReqStr,ReqWis,Style,Hands,Material,Sharp,Blunt,Fire,Disease,Spirit,Range,Defense
+#Name,Rarity,ReqStr,ReqWis,Style,Hands,Material,Sharp,Club,Fire,Disease,Spirit,Range,Defense
 Dagger,1,1,0,Blade,1,Metal,2,0,0,0,0,0,-10
 Shortsword,1,4,0,Blade,1,Metal,3,0,0,0,0,0,-5
 Broadsword,1,8,0,Blade,1,Metal,4,0,0,0,0,0,5
@@ -6,12 +6,13 @@ Longsword,1,10,0,Blade,1,Metal,5,0,0,0,0,0,10
 Rapier,1,9,0,Blade,1,Metal,4,0,0,0,0,0,0
 Claymore,1,12,0,Blade,2,Metal,7,0,0,0,0,1,15
 Greatsword,1,16,0,Blade,2,Metal,8,0,0,0,0,1,20
-Club,1,4,0,Blunt,1,Wood,0,4,0,0,0,0,0
-Stave,1,7,0,Blunt,2,Wood,0,5,0,0,0,1,15
-Hammer,1,8,0,Blunt,1,Metal,0,6,0,0,0,0,0
-Mace,1,10,0,Blunt,1,Metal,0,7,0,0,0,0,0
-Flail,1,12,0,Blunt,1,Metal,0,8,0,0,0,0,0
-Warhammer,1,14,0,Blunt,2,Metal,0,10,0,0,0,0,0
+Club,1,4,0,Club,1,Wood,0,4,0,0,0,0,0
+Cudgel,1,5,0,Club,1,Wood,0,4,0,0,0,0,0
+Stave,1,7,0,Club,2,Wood,0,5,0,0,0,1,15
+Hammer,1,8,0,Club,1,Metal,0,6,0,0,0,0,0
+Mace,1,10,0,Club,1,Metal,0,7,0,0,0,0,0
+Flail,1,12,0,Club,1,Metal,0,8,0,0,0,0,0
+Warhammer,1,14,0,Club,2,Metal,0,10,0,0,0,0,0
 Handaxe,1,6,0,Axe,1,Metal,4,0,0,0,0,0,0
 Waraxe,1,8,0,Axe,1,Metal,6,0,0,0,0,0,0
 Battle axe,1,10,0,Axe,2,Metal,9,0,0,0,0,0,0

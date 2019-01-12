@@ -1,10 +1,10 @@
 #Prefix,Post fix,Freq.,ReqStr,ReqWis,Magic,Style,Material   ,Sharp  ,Blunt  ,Fire   ,Disease,Spirit
 Normal,,0,0,0,0,All,All,0,0,0,0,0
-Sharp,,0,0,0,Blade|Axe,Metal,1,0,0,0,0
-Serrated,,0,0,0,Blade|Axe,Metal,2,0,0,0,0
-Poisoned,,0,0,0,Blade|Axe,All,0,0,0,2,0
-Toxic,,0,0,0,Blade|Axe,All,0,0,0,3,0
-Flaming,,0,0,0,Melee,All,0,0,2,0,0
-Spiked,,0,0,0,Blunt|Fist,All,1,0,0,0,0
-Heavy,,1,0,0,Blunt,All,0,1,0,0,0
+Sharp,,0,0,0,0,Sharp,Metal,1,0,0,0,0
+Serrated,,0,0,0,0,Sharp,Metal,2,0,0,0,0
+Poisoned,,0,0,0,0,Sharp,All,0,0,0,2,0
+Toxic,,0,0,0,0,Sharp,All,0,0,0,3,0
+Flaming,,0,0,0,0,Melee,All,0,0,2,0,0
+Spiked,,0,0,0,0,Blunt,All,1,0,0,0,0
+Heavy,,1,0,0,0,Blunt,All,0,1,0,0,0
 
