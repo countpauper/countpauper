@@ -6,11 +6,12 @@ namespace Game
 {
     enum class Attribute
     {
-        Strength = 0,
-        Agility = 1,
-        Constitution = 2,
-        Intelligence = 3,
-        Wisdom = 4,
+        None = 0,
+        Strength = 1,
+        Agility = 2,
+        Constitution = 3,
+        Intelligence = 4,
+        Wisdom = 5,
     }; 
     std::wistream& operator>>(std::wistream& s, Attribute& attribute);
 

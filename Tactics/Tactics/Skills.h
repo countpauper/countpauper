@@ -4,6 +4,7 @@
 #include <vector>
 #include "Item.h"
 #include "Game/Trajectory.h"
+#include "Stats.h"
 
 namespace Engine { class Image; }
 namespace Game
@@ -24,6 +25,7 @@ public:
     bool Follows(const Skill& previous) const;
 
     std::wstring name;
+    std::wstring description;
     unsigned mp;
     unsigned range;
 
@@ -68,6 +70,7 @@ public:
     public:
         Melee();
         std::vector<unsigned> damage;
+        Attribute attribute;
         Bonus DamageBonus(const Score& skillScore);
         Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
     };

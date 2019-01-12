@@ -10,7 +10,7 @@ Ghostly,,0,-1,0,2,Cloth,0,0,0,0,2,,,Wisdom,-2
 Possessed,,0,-1,0,2,Leather,0,0,0,0,2,,,Wisdom,-2
 Haunted,,0,-1,0,2,Metal,0,0,0,0,2,,,Wisdom,-2
 Quilted,,0,0,0,1,Cloth,1,0,0,0,0,,,,
-Padded,,0,1,0,2,Cloth,0,1,0,0,0,,,,
+Padded,,0,1,0,2,Cloth,0,2,0,0,0,,,,
 Studded,,0,1,0,1,Leather,1,0,0,0,0,,,,
 Hardened,,0,1,0,2,Leather,1,1,0,0,0,,,,
 Sturdy,,0,0,0,1,Metal,0,1,0,0,0,,,,

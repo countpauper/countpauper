@@ -45,4 +45,16 @@ std::set<std::string> SplitSet(const std::string& str, char delimiter)
     return std::set<std::string>(splitVector.begin(), splitVector.end());
 }
 
+std::wstring Strip(const std::wstring& str, const std::wstring& trash)
+{
+    auto start = str.find_first_not_of(trash);
+    if (start == std::wstring::npos)
+        return std::wstring();
+    auto end = str.find_last_not_of(trash);
+    if (end == std::wstring::npos)
+        return str.substr(start);
+    else
+        return str.substr(start, 1+end - start);
+}
+
 }

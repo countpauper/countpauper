@@ -4,6 +4,7 @@
 #include <codecvt>
 #include "Engine/CSV.h"
 #include "Engine/from_string.h"
+#include "Engine/utils.h"
 #include "Engine/Image.h"
 #include "Skills.h"
 #include "Attack.h"
@@ -61,7 +62,8 @@ namespace Game
         return new ::Game::Move(actor, target.GetPosition(), skill, trajectory);
     }
 
-    Skill::Melee::Melee() 
+    Skill::Melee::Melee() :
+        attribute(Attribute::Strength)
     {
     }
 
@@ -208,6 +210,10 @@ void Parse(Skill::Melee& o, const xmlNode* node)
         {
             o.damage = Engine::from_strings<unsigned>(xmlText(prop->children), L',');
         }
+        else if (xmlTagCompare(prop, "attribute"))
+        {
+            // TODO
+        }
         else
             throw std::runtime_error("Unknown Melee skill property");
     }
@@ -262,6 +268,7 @@ void Parse(Skill& o, const xmlNode* node)
                 { L"backhand", Trajectory::Backhand },
                 { L"up",Trajectory::Up },
                 { L"down", Trajectory::Down },
+                { L"center", Trajectory::Center },
             });
         }
         else if (xmlTagCompare(prop, "trigger"))
@@ -317,9 +324,11 @@ void Parse(Skill& o, const xmlNode* node)
         {
             continue;
         }
-        else if (IsEmptyText(curNode))
+        else if (curNode->type == XML_TEXT_NODE)
         {
-            continue;
+            auto str = Engine::Strip(xmlText(curNode),L"\r\n\t ");
+            if (!str.empty())
+                o.description = str;
         }
         else if (curNode->type == XML_ELEMENT_NODE)
         {
@@ -334,6 +343,9 @@ void Parse(Skill& o, const xmlNode* node)
             else if (xmlTagCompare(curNode, "affect"))
             {
                 o.type = MakeType<Skill::Affect>(curNode);
+            }
+            else if (xmlTagCompare(curNode, "description"))
+            {
             }
             else
             {

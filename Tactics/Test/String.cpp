@@ -73,4 +73,12 @@ BOOST_AUTO_TEST_CASE(Split)
     BOOST_CHECK(Engine::SplitSet("c|a|c|b", '|') == std::set<std::string>({ "a", "b", "c" }));
 }
 
+BOOST_AUTO_TEST_CASE(Strip)
+{
+    BOOST_CHECK(Engine::Strip(L"123",L" \t\r\n") == std::wstring(L"123"));
+    BOOST_CHECK(Engine::Strip(L"-123-", L"-") == std::wstring(L"123"));
+    BOOST_CHECK(Engine::Strip(L"\t 123\r\n", L" \t\r\n") == std::wstring(L"123"));
+    BOOST_CHECK(Engine::Strip(L"\t1 2\t3\r\n", L" \t\r\n") == std::wstring(L"1 2\t3"));
+    BOOST_CHECK(Engine::Strip(L"123", L"321").empty());
+}
 BOOST_AUTO_TEST_SUITE_END()
