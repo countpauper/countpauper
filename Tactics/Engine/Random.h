@@ -2,18 +2,18 @@
 
 namespace Engine
 {
-    class Random
+    class RandomGenerator
     {
     public:
-        class Generator : public std::mt19937
-        {
-        public:
-            Generator();
-            Generator(unsigned seed);
-        };
-        static double Chance();
-        static double Normal(double sigma);
+        RandomGenerator();
+        RandomGenerator(unsigned seed);
+        double Chance();
+        double Normal(double sigma); 
+        unsigned Seed() const;
+        void SetSeed(unsigned newSeed);
     private:
-        static Generator generator;
+        unsigned seed;
+        std::mt19937 generator;
     };
+    static RandomGenerator Random;
 }
