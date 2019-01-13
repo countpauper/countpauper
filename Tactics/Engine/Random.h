@@ -1,19 +1,23 @@
+#pragma once
 #include <random>
 
 namespace Engine
 {
-    class RandomGenerator
+    class Generator
     {
     public:
-        RandomGenerator();
-        RandomGenerator(unsigned seed);
+        Generator();
+        Generator(unsigned seed);
         double Chance();
         double Normal(double sigma); 
-        unsigned Seed() const;
-        void SetSeed(unsigned newSeed);
+        using Seed = unsigned;
+        Seed GetSeed() const;
+        void SetSeed(Seed newSeed);
+        Seed Store();
+        void Restore(Seed);
     private:
-        unsigned seed;
+        Seed seed;
         std::mt19937 generator;
     };
-    static RandomGenerator Random;
+    Generator& Random();
 }

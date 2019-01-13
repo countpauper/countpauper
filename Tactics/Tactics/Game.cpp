@@ -303,6 +303,7 @@ namespace Game
 
     void Game::SelectPlan()
     {
+        selectedActor->RestoreRandom();
         std::unique_ptr<Plan> plan;
         if (selectedSkill)
         {

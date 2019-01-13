@@ -161,6 +161,7 @@ namespace Game
         if (CanAct())
         {
             active = true;
+            randomState = Engine::Random().Store();
             OutputDebugStringW((L"Turn " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
         }
         else
@@ -226,6 +227,11 @@ namespace Game
             plan = std::make_unique<SkipPlan>(*this, game);
     }
 
+    void Actor::RestoreRandom()
+    {
+        Engine::Random().Restore(randomState);
+    }
+
     void Actor::Execute(Game& game)
     {
         if (plan)
@@ -234,6 +240,7 @@ namespace Game
                 active = false;
             else
             {
+                RestoreRandom();
                 plan->Compute(game);
                 if (plan->Execute(game))
                 {

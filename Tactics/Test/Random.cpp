@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(Chance)
     std::array<double, 100000> values;
     for (auto& v : values)
     {
-        v = Engine::Random.Chance();
+        v = Engine::Random().Chance();
     }
     // tested for 10000 iterations, but random gonna random
     BOOST_CHECK_LE(maximum(values), 1.0);
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(Normal)
     std::array<double, 100000> values;
     for (auto& v : values)
     {
-        v = Engine::Random.Normal(1.5);
+        v = Engine::Random().Normal(1.5);
     }
     // tested for 10000 iterations (and raised tolerances), but random gonna random
     BOOST_CHECK_SMALL(average(values), 0.025);
@@ -74,16 +74,31 @@ BOOST_AUTO_TEST_CASE(Normal)
 
 BOOST_AUTO_TEST_CASE(Seed)
 {
-    Engine::Random.SetSeed(Engine::Random.Seed());
+    Engine::Random().SetSeed(Engine::Random().GetSeed());
     std::array<double, 1000> original;
     for (auto& v : original)
     {
-        v = Engine::Random.Chance();
+        v = Engine::Random().Chance();
     }
-    Engine::Random.SetSeed(Engine::Random.Seed());
+    Engine::Random().SetSeed(Engine::Random().GetSeed());
     for (const auto& v : original)
     {
-        BOOST_CHECK_EQUAL(v, Engine::Random.Chance());
+        BOOST_CHECK_EQUAL(v, Engine::Random().Chance());
+    }
+}
+
+BOOST_AUTO_TEST_CASE(Store)
+{
+    auto state = Engine::Random().Store();
+    std::array<double, 1000> original;
+    for (auto& v : original)
+    {
+        v = Engine::Random().Chance();
+    }
+    Engine::Random().Restore(state);
+    for (const auto& v : original)
+    {
+        BOOST_CHECK_EQUAL(v, Engine::Random().Chance());
     }
 }
 

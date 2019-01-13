@@ -6,39 +6,59 @@
 namespace Engine
 {
 
-RandomGenerator::RandomGenerator() :
-    RandomGenerator(static_cast<unsigned>(time(0)))
+Generator::Generator() :
+    Generator(static_cast<unsigned>(time(0)))
 {
 }
 
-RandomGenerator::RandomGenerator(unsigned seed) :
+Generator::Generator(unsigned seed) :
     generator(seed),
     seed(seed)
 {
     generator.seed(seed);
 }
 
-double RandomGenerator::Chance()
+double Generator::Chance()
 {
     std::uniform_real_distribution<> distribution(0.0, 1.0);
     return distribution(generator);
 }
 
-double RandomGenerator::Normal(double sigma)
+double Generator::Normal(double sigma)
 {
     std::normal_distribution<> distribution(0, sigma);
     return distribution(generator);
 }
 
-unsigned RandomGenerator::Seed() const
+Generator::Seed Generator::GetSeed() const
 {
     return seed;
 }
 
-void RandomGenerator::SetSeed(unsigned newSeed)
+void Generator::SetSeed(Seed newSeed)
 {
     seed = newSeed;
     generator.seed(seed);
+}
+
+Generator::Seed Generator::Store()
+{
+    std::uniform_int_distribution<unsigned> distribution;
+    SetSeed(distribution(generator));
+    return GetSeed();
+}
+
+
+void Generator::Restore(Generator::Seed seed)
+{
+    SetSeed(seed);
+}
+
+
+Generator& Random()
+{
+    static Generator generator;
+    return generator;
 }
 
 }

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include "Engine/Random.h"
 #include "Game/Position.h"
 #include "Game/Direction.h"
 #include "Game/Body.h"
@@ -51,6 +52,7 @@ namespace Game
         bool IsAnticipating() const; 
         
         void AI(Game& game);
+        void RestoreRandom();
         void Execute(Game& game);
         unsigned GetTeam() const;
         bool CanAct() const;
@@ -85,6 +87,7 @@ namespace Game
 
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         bool active;
+        Engine::Generator::Seed randomState;
         unsigned mp;
         unsigned team;
         Direction direction;

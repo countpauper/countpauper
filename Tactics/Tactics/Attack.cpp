@@ -39,7 +39,7 @@ const Body::Part* Hit(const State& attacker, const State& victim, Trajectory tra
     {
         auto height = victim.body.Height();
         double middle = static_cast<double>(height) / 2.0;
-        auto hitHeight = static_cast<int>(std::round(middle + Engine::Random.Normal(1.0)));
+        auto hitHeight = static_cast<int>(std::round(middle + Engine::Random().Normal(1.0)));
         if (hitHeight < 0 || hitHeight >= static_cast<int>(height))
             return nullptr;
         Anatomy hitLocation(attacker.direction, victim.direction, hitHeight);
@@ -60,7 +60,7 @@ Action::Result  Attack::Act(const IGame& game) const
 
     auto part = Hit(attacker, victim, trajectory, skill.target);
     if (!part)
-        return Result();
+        return Fail(game);
     Result ret(game, actor);
     auto damage = attacker.AttackDamage(skill) - victim.Mitigation(*part);
     attacker.mp -= skill.mp;
