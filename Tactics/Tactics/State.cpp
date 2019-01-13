@@ -40,26 +40,28 @@ namespace Game
         return body.Strength();  // todo: equipment boni
     }
 
-    Score State::StrReqPenalty() const
+    Bonus State::Encumberance() const
     {
+       
+        Score encumberance = std::accumulate(worn.begin(), worn.end(), Score(), [](const Score& total, const Armor* armor) -> Score
+        {
+            int weight = armor->Required().weight;
+            return total + Bonus(armor->Name() + L"(" + std::to_wstring(weight) + L"lbs)", weight);
+        });
+        encumberance = std::accumulate(wielded.begin(), wielded.end(), encumberance, [](const Score& total, const Weapon* weapon) -> Score
+        {
+            int weight = weapon->Required().weight;
+            return total + Bonus(weapon->Name() + L"(" + std::to_wstring(weight) + L"lbs)", weight);
+        });
         auto strength = Strength();
-        Score result = std::accumulate(worn.begin(), worn.end(), Score(), [strength](const Score& penalty, const Armor* armor) -> Score
-        {
-            int req = armor->Required().strength;
-            return penalty + Bonus(std::wstring(L"Req=") + strength.Description() + L"Str-" + armor->Name() + L"(" + std::to_wstring(req) + L")", std::min(0, int(strength.Value()) - req));
-        });
-        result = std::accumulate(wielded.begin(), wielded.end(), result, [strength](const Score& penalty, const Weapon* weapon) -> Score
-        {
-            int req = weapon->Required().strength;
-            return penalty + Bonus(std::wstring(L"Req=") + strength.Description() + L"Str-" + weapon->Name() + L"(" + std::to_wstring(req) + L")", std::min(0, int(strength.Value()) - req));
-        });
+        encumberance += Bonus(L"-Strength (" + strength.Description() + L")x5)", strength.Value() * -5);
 
-        return result;
+        return Bonus(L"Encumberance ("+encumberance.Description()+L")/5", -static_cast<int>(encumberance.Value()+4)/5);
     }
 
     Score State::Agility() const
     {
-        return body.Agility() + StrReqPenalty();
+        return body.Agility() + Encumberance();
     }
 
     Score State::Constitution() const

@@ -47,7 +47,7 @@ namespace Game
         void Fall();
     private:
         Bonus StrengthBonus() const;
-        Score StrReqPenalty() const;
+        Bonus Encumberance() const;
         Bonus ConstitutionBonus() const;
         Bonus IntelligenceBonus() const;
         Bonus WisdomBonus() const;

@@ -17,8 +17,9 @@ namespace Game
     class Requirement
     {
     public:
-        Requirement() : strength(0), wisdom(0) {}
-        Requirement(int strength, int wisdom) : strength(strength), wisdom(wisdom) {}
+        Requirement() : strength(0), wisdom(0), weight(0) {}
+        Requirement(int weight, int strength, int wisdom) : weight(weight) , strength(strength), wisdom(wisdom){}
+        int weight;
         int strength;
         int wisdom;
         Requirement operator+(const Requirement& other) const;
