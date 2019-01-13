@@ -4,7 +4,8 @@
 #include <vector>
 #include "Item.h"
 #include "Game/Trajectory.h"
-#include "Stats.h"
+#include "Game/Targeting.h"
+#include "Game/Stats.h"
 
 namespace Engine { class Image; }
 namespace Game
@@ -48,6 +49,7 @@ public:
     std::vector<Prerequisite> prerequisites;
     std::vector<int> chance;
     std::set<Trajectory> trajectory;
+    std::set<Targeting> target;
 
     enum class Effect { Miss, Halt, Interrupt, Disarm, Stuck, Stop };
     using Effects = std::set<Effect>;

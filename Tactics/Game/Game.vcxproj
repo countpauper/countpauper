@@ -69,9 +69,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Anatomy.cpp" />
+    <ClCompile Include="Damage.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="Position.cpp" />
+    <ClCompile Include="Score.cpp" />
     <ClCompile Include="Slot.cpp" />
+    <ClCompile Include="Stats.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -79,10 +82,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Anatomy.h" />
+    <ClInclude Include="Damage.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Position.h" />
+    <ClInclude Include="Score.h" />
     <ClInclude Include="Slot.h" />
+    <ClInclude Include="Stats.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Targeting.h" />
     <ClInclude Include="Trajectory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

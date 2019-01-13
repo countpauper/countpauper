@@ -4,10 +4,10 @@
 #include <vector>
 #include "Game/Position.h"
 #include "Game/Direction.h"
-#include "Body.h"
-#include "Stats.h"
+#include "Game/Body.h"
+#include "Game/Stats.h"
+#include "Game/Score.h"
 #include "Item.h"
-#include "Score.h"
 #include "Skills.h"
 #include "Target.h"
 

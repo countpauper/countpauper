@@ -97,7 +97,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     }
 
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TACTICS));
-    OutputDebugStringW((std::wstring(L"Random=") + std::to_wstring(Engine::Random.Seed())).c_str());
+    OutputDebugStringW((std::wstring(L"Random=") + std::to_wstring(Engine::Random.GetSeed())).c_str());
     // Main message loop:
     while (GetMessage(&msg, NULL, 0, 0))
     {
@@ -330,6 +330,15 @@ Hit Select(int x, int y)
     return Hit( bestType, bestObject );
 }
 
+void ShowClick()
+{   
+    /*
+    if (input.drag)
+    {
+        ZoomToScreenCoord(input.x, input.y);
+    }
+    */
+}
 void Render()
 {
     glClearColor(0, 0, 0, 0);
@@ -353,10 +362,7 @@ void Render()
     // Render game
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    if (input.drag)
-    {
-        ZoomToScreenCoord(input.x, input.y);
-    }
+    ShowClick();
     camera.Face(game->focus);
     camera.Render();
     game->Render();
@@ -366,19 +372,15 @@ void Render()
     glViewport(clientRect.left, clientRect.top, clientRect.right-clientRect.left, panelHeight);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    if (input.drag)
-    {
-        ZoomToScreenCoord(input.x, input.y);
-    }
+    ShowClick();
+
     skills->Render();
     // Render turn list
     glViewport(clientRect.right- list->Width(), panelHeight, list->Width(), clientRect.bottom- panelHeight);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    if (input.drag)
-    {
-        ZoomToScreenCoord(input.x, input.y);
-    }
+    ShowClick();
+
     list->Render();
 
 }

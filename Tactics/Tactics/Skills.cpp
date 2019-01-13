@@ -261,14 +261,25 @@ void Parse(Skill& o, const xmlNode* node)
         {
             o.trajectory = Engine::from_strings<Trajectory>(xmlText(prop->children), L'|',
             {
-                { L"self", Trajectory::Self },
                 { L"straight", Trajectory::Straight },
                 { L"reverse", Trajectory::Reverse },
                 { L"forehand", Trajectory::Forehand },
                 { L"backhand", Trajectory::Backhand },
                 { L"up",Trajectory::Up },
                 { L"down", Trajectory::Down },
-                { L"center", Trajectory::Center },
+            });
+        }
+        else if (xmlTagCompare(prop, "target"))
+        {
+            o.target = Engine::from_strings<Targeting>(xmlText(prop->children), L'|',
+            {
+                { L"self", Targeting::Self },
+                { L"swing", Targeting::Swing },
+                { L"center", Targeting::Center },
+                { L"intercept", Targeting::Intercept },
+                { L"aim", Targeting::Intercept },
+                { L"seek", Targeting::Seek},
+                { L"parabola", Targeting::Intercept },
             });
         }
         else if (xmlTagCompare(prop, "trigger"))

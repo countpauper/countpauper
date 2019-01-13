@@ -58,7 +58,7 @@ namespace Game
         glTranslatef(float(position.x) + 0.5f, 0.0, float(position.y) + 0.5f);
 
         Game::teamColor[team].Render();
-        if (Dead())
+        if (Prone())
         {
             glRotatef(90, 1, 0, 0);
         }
@@ -253,7 +253,7 @@ namespace Game
 
     bool Actor::Prone() const
     {
-        return Dead();
+        return direction.Prone();
     }
     
     bool Actor::CanAct() const

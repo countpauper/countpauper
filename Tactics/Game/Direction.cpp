@@ -37,41 +37,46 @@ Direction::Direction(const Position& desiredVector) :
     
 Position Direction::Vector() const
 {
-    return vector.at(value);
+    return vector.at(HorizontalDirection());
 }
 double Direction::Angle() const
 {
-    return angle.at(value);
+    return angle.at(HorizontalDirection());
+}
+
+Direction::Value Direction::HorizontalDirection() const
+{
+    return Value(unsigned(value)&Horizontal);
 }
 
 bool Direction::Opposite(const Direction& other) const
 {
-    switch (value)
+    switch (HorizontalDirection())
     {
     case North:
-        return other.value == South;
+        return other.HorizontalDirection() == South;
     case East:
-        return other.value == West;
+        return other.HorizontalDirection() == West;
     case South:
-        return other.value == North;
+        return other.HorizontalDirection() == North;
     case West:
-        return other.value == East;
+        return other.HorizontalDirection() == East;
     default:
         return false;
     }
 }
 bool Direction::Clockwise(const Direction& other) const
 {
-    switch (value)
+    switch (HorizontalDirection())
     {
     case North:
-        return other.value == West;
+        return other.HorizontalDirection() == West;
     case East:
-        return other.value == North;
+        return other.HorizontalDirection() == North;
     case South:
-        return other.value == East;
+        return other.HorizontalDirection() == East;
     case West:
-        return other.value == South;
+        return other.HorizontalDirection() == South;
     default:
         return false;
     }
@@ -79,20 +84,31 @@ bool Direction::Clockwise(const Direction& other) const
 
 bool Direction::CounterClockwise(const Direction& other) const
 {
-    switch (value)
+    switch (HorizontalDirection())
     {
     case North:
-        return other.value == East;
+        return other.HorizontalDirection() == East;
     case East:
-        return other.value == South;
+        return other.HorizontalDirection() == South;
     case South:
-        return other.value == West;
+        return other.HorizontalDirection() == West;
     case West:
-        return other.value == North;
+        return other.HorizontalDirection() == North;
     default:
         return false;
     }
 }
+
+bool Direction::Prone() const
+{
+    return (value & Down) || (value&Up);
+}
+
+void Direction::Fall()
+{
+    value = Value(unsigned(value) | Down);
+}
+
 
 std::wstring Direction::Description() const
 {

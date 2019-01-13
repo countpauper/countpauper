@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 #include <set>
-#include "Stats.h"
-#include "Damage.h"
+#include "Game/Stats.h"
+#include "Game/Damage.h"
 #include "Game/Anatomy.h"
 #include "Score.h"
 #include "Game/Slot.h"
@@ -27,6 +27,7 @@ namespace Game
             void Hurt(const Damage& damage);
             bool IsHurt() const;
             Slot GetSlot() const;
+            unsigned Height() const;
         private:
             friend std::wistream& operator>>(std::wistream& s, Body::Part& part);
             std::wstring name;
@@ -38,9 +39,10 @@ namespace Game
         };
         std::wstring Description() const;
         bool Dead() const;
-        bool Hurt(const Anatomy& location, const Damage& damage);
-        Slot FindSlot(const Anatomy& target) const;
+        void Hurt(const Part& part, const Damage& damage);
         const Part* Get(const Anatomy& target) const;
+        unsigned Height() const;
+
         Score Strength() const;
         Score Agility() const;
         Score Constitution() const;

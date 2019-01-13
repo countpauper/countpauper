@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "Engine/CSV.h"
+#include "Game/Score.h"
+#include "Game/Direction.h"
 #include "Item.h"
 #include "Game.h"
-#include "Score.h"
-#include "Game/Direction.h"
 
 namespace Game
 {
@@ -30,7 +30,6 @@ namespace Game
             { L"Air", Element::Air },
             { L"Nature", Element::Nature },
         });
-
 
         std::map<std::wstring, Statistic> statisticMap(
         {

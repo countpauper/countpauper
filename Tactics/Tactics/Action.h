@@ -2,14 +2,18 @@
 
 #include <map>
 #include <functional>
+#include <memory>
 #include "Game/Trajectory.h"
-#include "State.h"
 
 namespace Game
 {
     class Actor;
     class Game;
-    
+    class Skill;
+    class IGame;
+    class GameState;
+    class State;
+
 
     class Action
     {

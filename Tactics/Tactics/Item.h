@@ -4,7 +4,8 @@
 #include <vector>
 #include <memory>
 #include <iostream>
-#include "Damage.h"
+
+#include "Game/Damage.h"
 #include "Game/Slot.h"
 
 namespace Game

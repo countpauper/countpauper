@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <set>
+
 namespace Game
 {
     enum class Attribute

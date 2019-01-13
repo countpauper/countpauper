@@ -6,9 +6,9 @@
 #include <vector>
 #include "Game/Position.h"
 #include "Game/Direction.h"
-#include "Damage.h"
-#include "Body.h"
-#include "Stats.h"
+#include "Game/Damage.h"
+#include "Game/Body.h"
+#include "Game/Stats.h"
 #include "Item.h"
 #include "IGame.h"
 #include "Actor.h"
@@ -33,7 +33,7 @@ namespace Game
         unsigned mp;
         Body body;
         Damage AttackDamage(const Skill& skill) const;
-        Damage Mitigation(const Anatomy& location) const;
+        Damage Mitigation(const Body::Part& location) const;
         Score Chance(const Skill& skill) const;
         Score Strength() const;
         Score Agility() const;
@@ -43,6 +43,8 @@ namespace Game
         Score SkillLevel(const Skill& skill) const;
         Score Range(const Skill& skill) const;
         unsigned loyalty;
+        bool Prone() const;
+        void Fall();
     private:
         Bonus StrengthBonus() const;
         Score StrReqPenalty() const;

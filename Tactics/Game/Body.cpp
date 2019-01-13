@@ -29,7 +29,8 @@ namespace Game
     }
     bool Body::Part::IsVital() const
     {
-        return true;
+        return attributes.count(Attribute::Intelligence) || 
+            attributes.count(Attribute::Wisdom);
     }
 
     std::wstring Body::Part::Name() const
@@ -59,6 +60,11 @@ namespace Game
         return slot;
     }
 
+    unsigned Body::Part::Height() const
+    {
+        return anatomy.position + anatomy.size;
+    }
+
     std::wstring Body::Description() const
     {
         std::wstring result;
@@ -67,6 +73,8 @@ namespace Game
         {
             if (part.IsHurt())
             {
+                if (!fine)
+                    result += L",";
                 result += part.Description();
                 fine = false;
             }
@@ -87,30 +95,10 @@ namespace Game
         return false;
     }
 
-    Slot Body::FindSlot(const Anatomy& location) const
+    void Body::Hurt(const Part& part, const Damage& damage)
     {
-        for (auto& part : parts)
-        {
-            if (part.Match(location))
-            {
-                return part.GetSlot();
-            }
-        }
-        return Slot::Nothing;
-    }
-
-
-    bool Body::Hurt(const Anatomy& location, const Damage& damage)
-    {
-        for (auto& part : parts)
-        {
-            if (part.Match(location))
-            {
-                part.Hurt(damage); 
-                return true;
-            }
-        }
-        return false;
+        auto& ouchiepart = const_cast<Part&>(part);   // quicker than looking up, functionally equivalent
+        ouchiepart.Hurt(damage);
     }
 
     const Body::Part* Body::Get(const Anatomy& location) const
@@ -125,6 +113,13 @@ namespace Game
         return nullptr;
     }
 
+    unsigned Body::Height() const
+    {
+        return std::accumulate(parts.begin(), parts.end(), 0U, [](unsigned max, const decltype(parts)::value_type& part)
+        {
+            return std::max(max, part.Height());
+        });
+    }
     Score Body::Strength() const
     {
         return std::accumulate(parts.begin(), parts.end(), Score(), [](const Score& s, const Part& part) { return s + part.Score(Attribute::Strength); });

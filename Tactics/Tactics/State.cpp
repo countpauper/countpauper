@@ -161,7 +161,7 @@ namespace Game
         return chance;
     }
 
-    Damage State::Mitigation(const Anatomy& location) const
+    Damage State::Mitigation(const Body::Part& location) const
     {
         Score constMitigation(ConstitutionBonus());
         Score wisMitigation(WisdomBonus());
@@ -170,7 +170,7 @@ namespace Game
             Damage(Wound::Type::Burn, constMitigation) +
             Damage(Wound::Type::Disease, constMitigation) +
             Damage(Wound::Type::Spirit, wisMitigation);
-        auto slot = body.FindSlot(location);
+        auto slot = location.GetSlot();
         for (auto armor : worn)
         {
             mitigation += armor->Mitigation(slot);

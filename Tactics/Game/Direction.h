@@ -6,6 +6,7 @@
 namespace Game
 {
 
+// TODO: rename orientation
 class Direction
 {
 public:
@@ -16,6 +17,10 @@ public:
         East = 2,
         South = 4,
         West = 8,
+        Horizontal = North | East | South | West,
+        Down = 16,
+        Up = 32,
+        Vertical = Down|Up,
     };
     Direction();
     Direction(Value direction);
@@ -25,6 +30,9 @@ public:
     bool Opposite(const Direction& other) const;
     bool Clockwise(const Direction& other) const;
     bool CounterClockwise(const Direction& other) const;
+    bool Prone() const;
+    void Fall();
+
     std::wstring Description() const;
 
     bool IsNone() const;    // operator bool leads to implicit conversion confusion with operator==
@@ -32,6 +40,7 @@ public:
     bool operator<(const Direction& other) const;
 protected:
     Value value;
+    Value HorizontalDirection() const;
     static Value From(const Position& vector);
     static std::map<Value, Position> vector;
     static std::map<Value, float> angle;

@@ -1,11 +1,12 @@
 2
 Actor Foo 0 0 2 0 1
 Body All[0-4] Body Agi+Str+Con+Wis+Int 10 0,0,0,0,0
-1 1 5
+1 1 6
 Studded Demon Brigandine
-Normal Steel Dagger
+Normal Yew Wand
 Wait 0
 Hack 1
+Zap 2
 Dodge 1
 Unarmed 0
 Walk 0
