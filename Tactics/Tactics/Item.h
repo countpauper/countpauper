@@ -14,16 +14,25 @@ namespace Game
     class Score;
     class AttackVector;
 
+    class Load
+    {
+    public:
+        Load() : weight(0), enchantment(0) {}
+        Load(unsigned weight, unsigned enchantment) : weight(weight), enchantment(enchantment) {}
+        Load operator+(const Load& other) const;
+        Load operator*(int multiplier) const;
+        int weight;         // libras
+        int enchantment;    // whiz
+    };
+
     class Requirement
     {
     public:
-        Requirement() : strength(0), wisdom(0), weight(0) {}
-        Requirement(int weight, int strength, int wisdom) : weight(weight) , strength(strength), wisdom(wisdom){}
-        int weight;
+        Requirement() : strength(0), intelligence(0) {}
+        Requirement(int strength, int intelligence) : strength(strength), intelligence(intelligence){}
+        Requirement operator+(const Requirement & other) const;
         int strength;
-        int wisdom;
-        Requirement operator+(const Requirement& other) const;
-        Requirement operator*(int multiplier) const;
+        int intelligence;
     };
 
     
@@ -60,7 +69,7 @@ namespace Game
         class Equipment : public Item
         {
         public:
-            Requirement requirement;
+            Load load;
         };
 
 
@@ -72,7 +81,7 @@ namespace Game
             int frequency;
             int magic;
             Element element;
-            Requirement requirement;
+            Load load;
         };
 
         class Modifier
@@ -83,6 +92,7 @@ namespace Game
             int frequency;
             int magic;
             Requirement requirement;
+            Load load;
         };
 
         class Armor : public Equipment
@@ -173,6 +183,7 @@ namespace Game
                 };
                 Material() : category(None) {}
                 Category category;
+                Requirement requirement;
                 Damage damage;
                 static std::vector<Material> Load(std::wistream& fileName);
             };
@@ -181,6 +192,7 @@ namespace Game
             public:
                 Modifier() : style(Weapon::All) {}
                 Weapon::Style style;
+                Requirement requirement;
                 Weapon::Material::Category material;
                 Damage damage;
                 static std::vector<Modifier> Load(std::wistream& fileName);
@@ -190,6 +202,7 @@ namespace Game
             bool Match(const Modifier& mod) const;
 
             Style style;
+            Requirement requirement;
             static const std::map<std::wstring, Style> styleMap;
             int hands;
             Material::Category material;
@@ -216,7 +229,7 @@ namespace Game
         Armor(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& mod);
         Armor(const Type::Armor& type, const Type::Armor::Material& material, const Type::Armor::Modifier& mod);
         std::wstring Name() const;
-        Requirement Required() const;
+        Load GetLoad() const;
         Damage Mitigation(Slot slot) const;
         Damage Mitigation() const;
     private:
@@ -231,6 +244,7 @@ namespace Game
         Weapon(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& mod);
         Weapon(const Type::Weapon& type, const Type::Weapon::Material& material, const Type::Weapon::Modifier& mod);
         std::wstring Name() const;
+        Load GetLoad() const;
         Requirement Required() const;
         Damage Damage() const;
         bool Match(Type::Weapon::Style style) const;

@@ -41,10 +41,12 @@ namespace Game
             { L"Wisdom", Statistic::Wisdom }
         });
 
-        Engine::Adapter::Integer<Requirement> weight(&Requirement::weight);
+        Engine::Adapter::Integer<Load> weight(&Load::weight);
+        Engine::Adapter::Integer<Load> enchantment(&Load::enchantment);
+        std::vector<Engine::Adapter::Interface<Load>*> loadAdapters({ &weight, &enchantment});
         Engine::Adapter::Integer<Requirement> reqstr(&Requirement::strength);
-        Engine::Adapter::Integer<Requirement> reqwis(&Requirement::wisdom);
-        std::vector<Engine::Adapter::Interface<Requirement>*> requirementAdapters({ &weight, &reqstr, &reqwis });
+        Engine::Adapter::Integer<Requirement> reqint(&Requirement::intelligence);
+        std::vector<Engine::Adapter::Interface<Requirement>*> requirementAdapters({ &reqstr, &reqint });
 
         // TODO: get the name of the type/modifier or material into the damage score
         // it has to come from the owner of the damage struct, so either the whole damage struct
@@ -61,12 +63,12 @@ namespace Game
         {
             Engine::Adapter::String<Armor> name(&Armor::name);
             Engine::Adapter::Integer<Armor> frequency(&Armor::frequency);
-            Engine::Adapter::Struct<Armor, Requirement> requirement(&Armor::requirement, requirementAdapters);
+            Engine::Adapter::Struct<Armor,::Game::Load> load(&Armor::load, loadAdapters);
             Engine::Adapter::Enumeration<Armor, Slot> covers(&Armor::slot, slotMap);
             Engine::Adapter::Enumeration<Armor, Armor::Category> category(&Armor::category, armorCategories);
             Engine::Adapter::Struct<Armor, Damage> mitigation(&Armor::mitigation, damageAdapters);
 
-            Engine::CSV<Armor> csv(file, { &name, &frequency, &requirement, &covers, &category, &mitigation });
+            Engine::CSV<Armor> csv(file, { &name, &frequency, &load, &covers, &category, &mitigation });
             return csv.Read();
         }
 
@@ -74,13 +76,12 @@ namespace Game
         {
             Engine::Adapter::String<Armor::Material> name(&Armor::Material::name);
             Engine::Adapter::Integer<Armor::Material> frequency(&Armor::Material::frequency);
-            Engine::Adapter::Struct<Armor::Material, Requirement> requirement(&Armor::Material::requirement, requirementAdapters);
-            Engine::Adapter::Integer<Armor::Material> magic(&Armor::Material::magic);
+            Engine::Adapter::Struct<Armor::Material, ::Game::Load> load(&Armor::Material::load, loadAdapters);
             Engine::Adapter::Enumeration<Armor::Material, Armor::Category> category(&Armor::Material::category, armorCategories);
             Engine::Adapter::Enumeration<Armor::Material, Element> element(&Armor::Material::element, elementMap);
             Engine::Adapter::Struct<Armor::Material, Damage> mitigation(&Armor::Material::mitigation, damageAdapters);
 
-            Engine::CSV<Armor::Material> csv(file, { &name, &frequency, &requirement, &magic, &category, &element, &mitigation });
+            Engine::CSV<Armor::Material> csv(file, { &name, &frequency, &load, &category, &element, &mitigation });
             return csv.Read();
         }
 
@@ -90,15 +91,14 @@ namespace Game
             Engine::Adapter::String<Armor::Modifier> prefix(&Armor::Modifier::prefix);
             Engine::Adapter::String<Armor::Modifier> postfix(&Armor::Modifier::postfix);
             Engine::Adapter::Integer<Armor::Modifier> frequency(&Armor::Modifier::frequency);
-            Engine::Adapter::Struct<Armor::Modifier, Requirement> requirement(&Armor::Modifier::requirement, requirementAdapters);
-            Engine::Adapter::Integer<Armor::Modifier> magic(&Armor::Modifier::magic);
+            Engine::Adapter::Struct<Armor::Modifier, ::Game::Load> load(&Armor::Modifier::load, loadAdapters);
             Engine::Adapter::Enumeration<Armor::Modifier, Armor::Category> category(&Armor::Modifier::category, armorCategories);
             Engine::Adapter::Struct<Armor::Modifier, Damage> mitigation(&Armor::Modifier::mitigation, damageAdapters);
             Engine::Adapter::String<Armor::Modifier> skill(&Armor::Modifier::skill);
             Engine::Adapter::Integer<Armor::Modifier> skillBonus(&Armor::Modifier::skillBonus);
             Engine::Adapter::Enumeration<Armor::Modifier, Statistic> stat(&Armor::Modifier::stat, statisticMap);
             Engine::Adapter::Integer<Armor::Modifier> statBonus(&Armor::Modifier::statBonus);
-            Engine::CSV<Armor::Modifier> csv(file, { &prefix, &postfix, &frequency, &magic, &requirement, &category, &mitigation, &skill, &skillBonus, &stat, &statBonus });
+            Engine::CSV<Armor::Modifier> csv(file, { &prefix, &postfix, &frequency, &load, &category, &mitigation, &skill, &skillBonus, &stat, &statBonus });
             return csv.Read();
         }
 
@@ -164,13 +164,14 @@ namespace Game
             Engine::Adapter::String<Weapon> name(&Weapon::name);
             Engine::Adapter::Integer<Weapon> frequency(&Weapon::frequency);
             Engine::Adapter::Struct<Weapon, Requirement> requirement(&Weapon::requirement, requirementAdapters);
+            Engine::Adapter::Struct<Weapon, ::Game::Load> load(&Weapon::load, loadAdapters);
             Engine::Adapter::Enumeration<Weapon, Weapon::Style> style(&Weapon::style, styleMap);
             Engine::Adapter::Integer<Weapon> hands(&Weapon::hands);
             Engine::Adapter::Enumeration<Weapon, Weapon::Material::Category> material(&Weapon::material, weaponMaterialCategories);
             Engine::Adapter::Struct<Weapon, Damage> damage(&Weapon::damage, damageAdapters);
             Engine::Adapter::Integer<Weapon> range(&Weapon::range);
             Engine::Adapter::Integer<Weapon> defense(&Weapon::defense);
-            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &style, &hands, &material, &damage, &range, &defense });
+            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &load, &style, &hands, &material, &damage, &range, &defense });
             return csv.Read();
         }
 
@@ -179,12 +180,12 @@ namespace Game
             Engine::Adapter::String<Weapon::Material> name(&Weapon::Material::name);
             Engine::Adapter::Integer<Weapon::Material> frequency(&Weapon::Material::frequency);
             Engine::Adapter::Enumeration<Weapon::Material, Weapon::Material::Category> category(&Weapon::Material::category, weaponMaterialCategories);
-            Engine::Adapter::Integer<Weapon::Material> magic(&Weapon::Material::magic);
             Engine::Adapter::Enumeration<Weapon::Material, Element> element(&Weapon::Material::element, elementMap);
             Engine::Adapter::Struct<Weapon::Material, Requirement> requirement(&Weapon::Material::requirement, requirementAdapters);
+            Engine::Adapter::Struct<Weapon::Material, ::Game::Load> load(&Weapon::Material::load, loadAdapters);
             Engine::Adapter::Struct<Weapon::Material, Damage> damage(&Weapon::Material::damage, damageAdapters);
 
-            Engine::CSV<Weapon::Material> csv(file, { &name, &frequency, &requirement, &magic, &category, &element, &damage });
+            Engine::CSV<Weapon::Material> csv(file, { &name, &frequency, &requirement, &load, &category, &element, &damage });
             return csv.Read();
         }
 
@@ -193,12 +194,12 @@ namespace Game
             Engine::Adapter::String<Weapon::Modifier> prefix(&Weapon::Modifier::prefix);
             Engine::Adapter::String<Weapon::Modifier> postfix(&Weapon::Modifier::postfix);
             Engine::Adapter::Integer<Weapon::Modifier> frequency(&Weapon::Modifier::frequency);
-            Engine::Adapter::Integer<Weapon::Modifier> magic(&Weapon::Modifier::magic);
             Engine::Adapter::Struct<Weapon::Modifier, Requirement> requirement(&Weapon::Modifier::requirement, requirementAdapters);
+            Engine::Adapter::Struct<Weapon::Modifier, ::Game::Load> load(&Weapon::Modifier::load, loadAdapters);
             Engine::Adapter::Enumeration<Weapon::Modifier, Weapon::Style> style(&Weapon::Modifier::style, Weapon::styleMap);
             Engine::Adapter::Enumeration<Weapon::Modifier, Weapon::Material::Category> material(&Weapon::Modifier::material, weaponMaterialCategories);
             Engine::Adapter::Struct<Weapon::Modifier, Damage> damage(&Weapon::Modifier::damage, damageAdapters);
-            Engine::CSV<Weapon::Modifier> csv(file, { &prefix, &postfix, &frequency, &requirement, &magic, &style, &material, &damage });
+            Engine::CSV<Weapon::Modifier> csv(file, { &prefix, &postfix, &frequency, &requirement, &load, &style, &material, &damage });
             return csv.Read();
         }
 
@@ -221,14 +222,20 @@ namespace Game
         }
     }
 
-    Requirement Requirement::operator+(const Requirement& other) const
+
+    Load Load::operator+(const Load& other) const
     {
-        return Requirement(weight + other.weight, strength + other.strength, wisdom + other.wisdom);
+        return Load(weight * other.weight, enchantment * other.enchantment);
     }
 
-    Requirement Requirement::operator*(int multiplier) const
+    Load Load::operator*(int multiplier) const
     {
-        return Requirement(weight*multiplier, strength * multiplier, wisdom * multiplier);
+        return Load(weight * multiplier, enchantment * multiplier);
+    }
+
+    Requirement Requirement::operator+(const Requirement& other) const
+    {
+        return Requirement(strength + other.strength, intelligence+ other.intelligence);
     }
 
     Armor::Armor(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& mod) :
@@ -236,8 +243,8 @@ namespace Game
         material(game.FindArmorMaterial(material, this->type)),
         modifier(game.FindArmorModifier(mod, this->type))
     {
-
     }
+
     Armor::Armor(const Type::Armor& type, const Type::Armor::Material& material, const Type::Armor::Modifier& mod) :
         type(type),
         material(material),
@@ -257,10 +264,12 @@ namespace Game
             name += L" " + modifier.postfix;
         return name;
     }
-    Requirement Armor::Required() const
+
+    Load Armor::GetLoad() const
     {
-        return type.requirement + modifier.requirement + material.requirement * type.SlotCount();
+        return type.load + modifier.load + material.load * type.SlotCount();
     }
+
 
     Damage Armor::Mitigation(Slot slot) const
     {
@@ -305,6 +314,10 @@ namespace Game
         return name;
     }
 
+    Load Weapon::GetLoad() const
+    {
+        return type.load + modifier.load+ material.load;
+    }
 
     Requirement Weapon::Required() const
     {

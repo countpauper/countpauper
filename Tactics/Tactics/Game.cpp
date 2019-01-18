@@ -591,7 +591,7 @@ namespace Game
  
     void Game::TestDumpAllItems(std::wostream& out) const
     {
-        out << L"Name, ReqStr, ReqWis, Sharp, Crush, Burn, Disease, Spirit" << std::endl;
+        out << L"Name, Weight, Enchantment, Sharp, Crush, Burn, Disease, Spirit" << std::endl;
         for (auto& armor : armors)
         {
             for (auto& material : armorMaterials)
@@ -604,9 +604,9 @@ namespace Game
                         continue;
                     Armor item(armor, material, mod);
                     Damage mitigation(item.Mitigation());
-                    Requirement req(item.Required());
+                    Load req(item.GetLoad());
                     out << item.Name();
-                    out << L"," << req.strength << L"," << req.wisdom;
+                    out << L"," << req.weight<< L"," << req.enchantment;
                     out << L"," << mitigation;
                     out << std::endl;
                 }

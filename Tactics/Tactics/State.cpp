@@ -42,21 +42,38 @@ namespace Game
 
     Bonus State::Encumberance() const
     {
-       
         Score encumberance = std::accumulate(worn.begin(), worn.end(), Score(), [](const Score& total, const Armor* armor) -> Score
         {
-            int weight = armor->Required().weight;
+            int weight = armor->GetLoad().weight;
             return total + Bonus(armor->Name() + L"(" + std::to_wstring(weight) + L"lbs)", weight);
         });
         encumberance = std::accumulate(wielded.begin(), wielded.end(), encumberance, [](const Score& total, const Weapon* weapon) -> Score
         {
-            int weight = weapon->Required().weight;
+            int weight = weapon->GetLoad().weight;
             return total + Bonus(weapon->Name() + L"(" + std::to_wstring(weight) + L"lbs)", weight);
         });
         auto strength = Strength();
         encumberance += Bonus(L"-Strength (" + strength.Description() + L")x5)", strength.Value() * -5);
 
         return Bonus(L"Encumberance ("+encumberance.Description()+L")/5", -static_cast<int>(encumberance.Value()+4)/5);
+    }
+
+    Bonus State::Charge() const
+    {
+        Score charge = std::accumulate(worn.begin(), worn.end(), Score(), [](const Score& total, const Armor* armor) -> Score
+        {
+            int weight = armor->GetLoad().enchantment;
+            return total + Bonus(armor->Name() + L"(" + std::to_wstring(weight) + L"W)", weight);
+        });
+        charge = std::accumulate(wielded.begin(), wielded.end(), charge , [](const Score& total, const Weapon* weapon) -> Score
+        {
+            int weight = weapon->GetLoad().enchantment;
+            return total + Bonus(weapon->Name() + L"(" + std::to_wstring(weight) + L"W)", weight);
+        });
+        auto wisdom = Wisdom();
+        charge += Bonus(L"-Wisdom(" + wisdom.Description() + L")x5)", wisdom.Value() * -5);
+
+        return Bonus(L"Charge (" + charge.Description() + L")/5", -static_cast<int>(charge.Value() + 4) / 5);
     }
 
     Score State::Agility() const
@@ -71,7 +88,7 @@ namespace Game
 
     Score State::Intelligence() const
     {
-        return body.Intelligence(); // todo: equipment requirements, equipment boni
+        return body.Intelligence() + Charge();
     }
     Score State::Wisdom() const
     {
@@ -100,23 +117,6 @@ namespace Game
     {
         auto wisdom = Wisdom();
         return Bonus(L"Wis (" + wisdom.Description() + L")", (int(wisdom.Value()) - 11) / 3);
-    }
-
-    Score State::WisReqPenalty() const
-    {
-        auto wis = Wisdom();
-        Score result = std::accumulate(worn.begin(), worn.end(), Score(), [wis](const Score& penalty, const Armor* armor) -> Score
-        {
-            int req = armor->Required().wisdom;
-            return penalty + Bonus(std::wstring(L"Req=") + wis.Description() + L"Wis-" + armor->Name() + L"(" + std::to_wstring(req) + L")", std::min(0, int(wis.Value()) - req));
-        });
-        result = std::accumulate(wielded.begin(), wielded.end(), result, [wis](const Score& penalty, const Weapon* weapon) -> Score
-        {
-            int req = weapon->Required().wisdom;
-            return penalty + Bonus(std::wstring(L"Req=") + wis.Description() + L"Wis-" + weapon->Name() + L"(" + std::to_wstring(req) + L")", std::min(0, int(wis.Value()) - req));
-        });
-
-        return result;
     }
 
     Damage State::AttackDamage(const Skill& skill) const
