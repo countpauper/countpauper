@@ -97,7 +97,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     }
 
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TACTICS));
-    OutputDebugStringW((std::wstring(L"Random=") + std::to_wstring(Engine::Random().GetSeed())).c_str());
+    OutputDebugStringW((std::wstring(L"Random=") + std::to_wstring(Engine::Random().GetSeed()) + L"\n").c_str());
     // Main message loop:
     while (GetMessage(&msg, NULL, 0, 0))
     {

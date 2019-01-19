@@ -16,7 +16,7 @@ namespace Game
         loyalty(actor.GetTeam()),
         worn(actor.Worn()),
         wielded(actor.Wielded()),
-        knowledge(actor.GetKnowledge())
+        knowledge(actor.GetSkills())
     {
     }
 
@@ -62,13 +62,13 @@ namespace Game
     {
         Score charge = std::accumulate(worn.begin(), worn.end(), Score(), [](const Score& total, const Armor* armor) -> Score
         {
-            int weight = armor->GetLoad().enchantment;
-            return total + Bonus(armor->Name() + L"(" + std::to_wstring(weight) + L"W)", weight);
+            int enchantment = armor->GetLoad().enchantment;
+            return total + Bonus(armor->Name() + L"(" + std::to_wstring(enchantment) + L"W)", enchantment);
         });
         charge = std::accumulate(wielded.begin(), wielded.end(), charge , [](const Score& total, const Weapon* weapon) -> Score
         {
-            int weight = weapon->GetLoad().enchantment;
-            return total + Bonus(weapon->Name() + L"(" + std::to_wstring(weight) + L"W)", weight);
+            int enchantment = weapon->GetLoad().enchantment;
+            return total + Bonus(weapon->Name() + L"(" + std::to_wstring(enchantment) + L"W)", enchantment);
         });
         auto wisdom = Wisdom();
         charge += Bonus(L"-Wisdom(" + wisdom.Description() + L")x5)", wisdom.Value() * -5);
@@ -95,6 +95,33 @@ namespace Game
         return body.Wisdom();  // todo:equipment boni
     }
 
+    Score State::AttributeScore(Attribute attribute) const
+    {
+        Score attrScore;
+        switch (attribute)
+        {
+        case Attribute::Strength:
+            attrScore = Strength();
+            break;
+        case Attribute::Agility:
+            attrScore = Agility();
+            break;
+        case Attribute::Constitution:
+            attrScore = Constitution();
+            break;
+        case Attribute::Intelligence:
+            attrScore = Intelligence();
+            break;
+        case Attribute::Wisdom:
+            attrScore = Wisdom();
+            break;
+        case Attribute::None:
+        default:
+            return Score();
+        }
+        return Score(ToString(attribute) + L"(" + attrScore.Description() + L")", attrScore.Value());
+    }
+
     Bonus State::ConstitutionBonus() const
     {
         auto consitution = Constitution();
@@ -119,30 +146,28 @@ namespace Game
         return Bonus(L"Wis (" + wisdom.Description() + L")", (int(wisdom.Value()) - 11) / 3);
     }
 
-    Damage State::AttackDamage(const Skill& skill) const
+    Damage State::AttackDamage(const Skill& skill, const Score& skillLevel) const
     {
+        auto& attackType = dynamic_cast<Skill::Melee&>(*skill.type);
+        auto damageBonus = attackType.DamageBonus(skillLevel);
+        auto skillBonus = Bonus(skill.name + L"(" + damageBonus.description + L")", damageBonus.value);
+        assert(skillBonus.value >= 0);  // negative skill bonus will be clipped, need it to use in damage operator ^
         auto weapon = MatchWeapon(skill);
-
-        if (!weapon)
+        Damage skillDamage =
+            Damage(Wound::Type::Blunt, Score(skillBonus)) +
+            Damage(Wound::Type::Sharp, Score(skillBonus)) +
+            Damage(Wound::Type::Burn, Score(skillBonus)) +
+            Damage(Wound::Type::Disease, Score(skillBonus)) +
+            Damage(Wound::Type::Spirit, Score(skillBonus));
+        if (weapon)
         {
-            return Damage(Wound::Type::Blunt, Score(L"Unarmed", 2) + StrengthBonus());
+            return weapon->Damage() ^ skillDamage;
         }
         else
         {
-            auto strengthBonus = StrengthBonus();
-            auto wisdomBonus = WisdomBonus();
-            auto skillLevel = SkillLevel(skill);
-            auto& attackType = dynamic_cast<Skill::Melee&>(*skill.type);
-            auto skillBonus = Bonus(attackType.DamageBonus(skillLevel));
-            return weapon->Damage() ^ (
-                Damage(Wound::Type::Blunt, Score(strengthBonus) + skillBonus) +
-                Damage(Wound::Type::Sharp, Score(strengthBonus) + skillBonus) +
-                Damage(Wound::Type::Burn, Score(wisdomBonus) + skillBonus) +
-                Damage(Wound::Type::Disease, Score(wisdomBonus) + skillBonus) +
-                Damage(Wound::Type::Spirit, Score(wisdomBonus) + skillBonus));
+            return body.InnateDamage()^ skillDamage;
         }
     }
-
     Score State::Chance(const Skill& skill) const
     {
         auto skillLevel = SkillLevel(skill);
@@ -182,15 +207,22 @@ namespace Game
 
     Score State::SkillLevel(const Skill& skill) const
     {
-        auto it = std::find_if(knowledge.begin(), knowledge.end(),
-            [&skill](const Actor::Knowledge::value_type& known)
+        auto weapon = MatchWeapon(skill);
+        if (!weapon)
         {
-            return known.skill == &skill;
-        });
-        if (it == knowledge.end())
-            return Score();
+            return AttributeScore(skill.attribute);
+        }
         else
-            return Score(Bonus(skill.name, it->score));
+        {
+            auto required = weapon->Required();
+            auto strength = Strength(); // TODO: strength of applicable hand
+            Bonus strengthPenalty = Bonus(L"Str(" + strength.Description()+L")-" +weapon->Name() +L"(" + std::to_wstring(required.strength) + L")",
+                std::min(0, static_cast<int>(strength.Value()) - static_cast<int>(required.strength)));
+            auto intelligence = Intelligence();
+            Bonus intPenalty = Bonus(L"Int(" + intelligence.Description() +L")-" +weapon->Name() + L"(" + std::to_wstring(required.intelligence) + L")",
+                std::min(0, static_cast<int>(intelligence.Value()) - static_cast<int>(required.intelligence)));
+            return AttributeScore(skill.attribute) + strengthPenalty + intPenalty;
+        }
     }
 
     const Weapon* State::MatchWeapon(const Skill& skill) const

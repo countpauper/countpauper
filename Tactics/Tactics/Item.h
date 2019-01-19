@@ -7,6 +7,7 @@
 
 #include "Game/Damage.h"
 #include "Game/Slot.h"
+#include "Game/Stats.h"
 
 namespace Game
 {
@@ -44,16 +45,6 @@ namespace Game
         Nature,
         Stone,
         Air
-    };
-
-    enum class Statistic
-    {
-        None = 0,
-        Strength,
-        Agility,
-        Constitution,
-        Intelligence,
-        Wisdom
     };
 
     namespace Type
@@ -126,7 +117,7 @@ namespace Game
                 Damage mitigation;
                 std::wstring skill;
                 int skillBonus;
-                Statistic stat;
+                Attribute attribute;
                 int statBonus;
                 static std::vector<Modifier> Load(std::wistream& fileName);
             };

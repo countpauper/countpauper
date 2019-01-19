@@ -1,22 +1,22 @@
 # Name,Freq.,Weight,Enchantment,Category,Element,Sharp  ,Blunt  ,Fire   ,Disease,Spirit
 Steel,100,0,0,Metal,None,0,0,0,0,0
-Mithril,0,-1,1,Metal,Air,1,1,0,0,0
-Adamantine,0,1,2,Metal,Stone,2,2,0,0,0
-Obsidian,0,2,1,Metal,Fire,0,0,3,0,0
-Ironwood,0,0,2,Metal,Nature,2,0,-1,3,0
-Electrum,0,1,3,Metal,Water,-1,-1,1,1,1
+Mithril,0,-1,1,Metal,Air,2,2,0,0,0
+Adamantine,0,1,2,Metal,Stone,3,3,0,0,0
+Obsidian,0,2,1,Metal,Fire,2,2,6,0,0
+Ironwood,0,0,3,Metal,Nature,4,0,-2,8,0
+Electrum,0,1,3,Metal,Water,-1,-1,2,2,2
 Leather,100,0,0,Leather,None,0,0,0,0,0
-Elephant,0,1,1,Leather,Stone,2,2,0,0,0
-Demon,0,1,3,Leather,Air,1,1,1,0,2
-Dragon,0,0,3,Leather,Fire,1,1,2,0,0
-Unicorn,0,0,2,Leather,Nature,0,0,0,2,0
-Mermaid,0,0,2,Leather,Water,0,2,1,1,1
+Elephant,0,1,1,Leather,Stone,3,3,0,0,0
+Demon,0,1,2,Leather,Air,2,2,2,0,2
+Dragon,0,0,3,Leather,Fire,3,3,5,0,0
+Unicorn,0,0,2,Leather,Nature,2,2,0,8,0
+Mermaid,0,0,2,Leather,Water,0,3,3,3,3
 Linen,100,0,0,Cloth,None,0,0,0,0,0
 Hemp,0,0,1,Cloth,Nature,0,0,0,0,0
 Silk,0,0,1,Cloth,Air,0,0,0,0,0
-Fairy hair,0,0,4,Cloth,Water,0,0,0,2,0
-Ectoplasm,0,-1,3,Cloth,Fire,0,0,2,0,2
-Steelwhool,0,1,0,Cloth,Stone,1,1,0,0,0
+Fairy hair,0,0,4,Cloth,Water,0,0,0,5,0
+Ectoplasm,0,-1,3,Cloth,Fire,0,0,3,0,8
+Steelwhool,0,1,0,Cloth,Stone,2,2,0,0,0
 Bronze,0,0,0,Precious,Nature,0,0,0,0,0
 Silver,0,0,1,Precious,Water,0,0,0,0,0
 Gold,0,1,2,Precious,Stone,0,0,0,0,0

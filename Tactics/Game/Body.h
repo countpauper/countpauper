@@ -43,6 +43,7 @@ namespace Game
         const Part* Get(const Anatomy& target) const;
         unsigned Height() const;
 
+        Damage InnateDamage() const;
         Score Strength() const;
         Score Agility() const;
         Score Constitution() const;

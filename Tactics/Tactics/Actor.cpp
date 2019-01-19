@@ -209,13 +209,13 @@ namespace Game
         std::vector<std::unique_ptr<Plan>> plans;
         for (auto skill : GetSkills())
         {
-            if ((skill.skill->IsAttack()) &&
-                (IsPossible(*skill.skill)))
+            if ((skill->IsAttack()) &&
+                (IsPossible(*skill)))
             {
-                auto targets = game.FindTargets(*this, *skill.skill);
+                auto targets = game.FindTargets(*this, *skill);
                 for (auto target : targets)
                 {
-                    auto option = std::make_unique<AttackPlan>(*this, *target, game, *skill.skill);
+                    auto option = std::make_unique<AttackPlan>(*this, *target, game, *skill);
                     if (option->Valid())
                         plans.emplace_back(std::move(option));
                 }
@@ -276,9 +276,8 @@ namespace Game
     std::vector<const Skill*> Actor::FollowSkill(const Skill& previous, Skill::Trigger trigger) const
     {
         std::vector<const Skill*> possible;
-        for (auto known : GetSkills())
+        for (auto skill : GetSkills())
         {
-            const auto skill = known.skill;
             if ((skill->trigger == trigger) && (skill->Follows(previous)))
             {
                 possible.push_back(skill);
@@ -308,41 +307,35 @@ namespace Game
         return result;
     }
 
-    std::vector<Actor::Know> Actor::GetKnowledge() const
-    {
-        return knowledge;
-    }
-
-
     const Skill* Actor::DefaultAttack() const
     {
-        for (auto& known: knowledge)
+        for (auto skill : knowledge)
         {
-            if ((known.skill->IsAttack()) && 
-                (IsPossible(*known.skill)))
-                return known.skill;
+            if ((skill->IsAttack()) && 
+                (IsPossible(*skill)))
+                return skill;
         }
         return nullptr;
     }
 
     const Skill* Actor::DefaultMove() const
     {
-        for (auto& known : knowledge)
+        for (auto skill : knowledge)
         {
-            if ((known.skill->IsMove()) &&
-                (IsPossible(*known.skill)))
-                return known.skill;
+            if ((skill->IsMove()) &&
+                (IsPossible(*skill)))
+                return skill;
         }
         return nullptr;
     }
 
     const Skill* Actor::WaitSkill() const
     {
-        for (auto& known : knowledge)
+        for (auto skill: knowledge)
         {
-            if ((known.skill->IsWait()) &&
-                (IsPossible(*known.skill)))
-                return known.skill;
+            if ((skill->IsWait()) &&
+                (IsPossible(*skill)))
+                return skill;
         }
         return nullptr;
     }
@@ -350,25 +343,24 @@ namespace Game
     std::vector<std::unique_ptr<Action>> Actor::AllMoves(const Position& from) const
     { 
         std::vector<std::unique_ptr<Action>> result;
-        for (auto& known : knowledge)
+        for (auto skill : knowledge)
         {
-            auto& skill = *known.skill;
-            if ((skill.IsMove()) &&
-                (IsPossible(skill)))
+            if ((skill->IsMove()) &&
+                (IsPossible(*skill)))
             {
-                int range = skill.range;
+                int range = skill->range;
                 for (int y = -range; y <= range; ++y)
                 {
                     for (int x = -range; x <= range; ++x)
                     { 
                         Position vector(x, y);
-                        if (vector.ManSize() > skill.range)
+                        if (vector.ManSize() > skill->range)
                             continue;
                         if (!vector)
                             continue;
-                        for (auto trajectory : skill.trajectory)
+                        for (auto trajectory : skill->trajectory)
                         {
-                            result.emplace_back(known.skill->CreateAction(*this, Destination(from + vector), trajectory));
+                            result.emplace_back(skill->CreateAction(*this, Destination(from + vector), trajectory));
                         }
                     }
                 }
@@ -388,16 +380,6 @@ namespace Game
             return weapon.Match(skill.weapon);
         }));
     }
-
-    unsigned Actor::GetSkillScore(const Skill& findSkill) const
-    {
-        auto it = std::find_if(knowledge.begin(), knowledge.end(), [&findSkill](const Know& known) { return known.skill == &findSkill; });
-        if (it == knowledge.end())
-            return 0;
-        else
-            return it->score;
-    }
-
 
     std::wistream& operator>>(std::wistream& s, Actor& actor)
     {
@@ -423,11 +405,11 @@ namespace Game
             actor.wielded.emplace_back(Weapon(game, typeName, materialName, bonusName));
         }
         actor.knowledge.resize(skills);
-        for (auto& know : actor.knowledge)
+        for (auto& skill : actor.knowledge)
         {
             std::wstring skillName;
-            s >> skillName >> know.score;
-            know.skill = game.skills.Find(skillName);
+            s >> skillName;
+            skill = game.skills.Find(skillName);
         }
 
         return s;

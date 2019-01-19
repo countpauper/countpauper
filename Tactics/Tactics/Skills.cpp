@@ -19,6 +19,7 @@ namespace Game
         mp(0),
         range(1),
         trigger(Trigger::None),
+        attribute(Attribute::None),
         weapon(::Game::Type::Weapon::Style::All)
     {
     }
@@ -32,8 +33,6 @@ namespace Game
         else
             return nullptr;
     }
-
-
 
     Bonus Skill::GetChance(const Score& level) const
     {
@@ -314,6 +313,11 @@ void Parse(Skill& o, const xmlNode* node)
         {
             auto str = xmlStr(prop->children->content);
             o.follows = Engine::SplitSet(str, '|');
+        }
+        else if (xmlTagCompare(prop, "attribute"))
+        {
+            auto str = xmlWStr(prop->children->content);
+            o.attribute = Engine::from_string<Attribute>(str, Attributes::map);
         }
         else if (xmlTagCompare(prop, "weapon"))
         {

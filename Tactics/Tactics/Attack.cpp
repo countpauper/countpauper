@@ -62,7 +62,11 @@ Action::Result  Attack::Act(const IGame& game) const
     if (!part)
         return Fail(game);
     Result ret(game, actor);
-    auto damage = attacker.AttackDamage(skill) - victim.Mitigation(*part);
+
+    auto skillLevel = attacker.SkillLevel(skill);
+    if (skillLevel.Value() == 0)
+        return Fail(game);
+    auto damage = attacker.AttackDamage(skill,  skillLevel) - victim.Mitigation(*part);
     attacker.mp -= skill.mp;
     // TODO victim.Hurt for use in other actions
     victim.body.Hurt(*part, damage.Wound(actor.Description()));

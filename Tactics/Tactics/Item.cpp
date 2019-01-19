@@ -31,16 +31,6 @@ namespace Game
             { L"Nature", Element::Nature },
         });
 
-        std::map<std::wstring, Statistic> statisticMap(
-        {
-            { L"", Statistic::None },
-            { L"Strength", Statistic::Strength },
-            { L"Agility", Statistic::Agility },
-            { L"Constitution", Statistic::Constitution },
-            { L"Intelligence", Statistic::Intelligence },
-            { L"Wisdom", Statistic::Wisdom }
-        });
-
         Engine::Adapter::Integer<Load> weight(&Load::weight);
         Engine::Adapter::Integer<Load> enchantment(&Load::enchantment);
         std::vector<Engine::Adapter::Interface<Load>*> loadAdapters({ &weight, &enchantment});
@@ -96,7 +86,7 @@ namespace Game
             Engine::Adapter::Struct<Armor::Modifier, Damage> mitigation(&Armor::Modifier::mitigation, damageAdapters);
             Engine::Adapter::String<Armor::Modifier> skill(&Armor::Modifier::skill);
             Engine::Adapter::Integer<Armor::Modifier> skillBonus(&Armor::Modifier::skillBonus);
-            Engine::Adapter::Enumeration<Armor::Modifier, Statistic> stat(&Armor::Modifier::stat, statisticMap);
+            Engine::Adapter::Enumeration<Armor::Modifier, Attribute> stat(&Armor::Modifier::attribute, Attributes::map);
             Engine::Adapter::Integer<Armor::Modifier> statBonus(&Armor::Modifier::statBonus);
             Engine::CSV<Armor::Modifier> csv(file, { &prefix, &postfix, &frequency, &load, &category, &mitigation, &skill, &skillBonus, &stat, &statBonus });
             return csv.Read();
@@ -225,7 +215,7 @@ namespace Game
 
     Load Load::operator+(const Load& other) const
     {
-        return Load(weight * other.weight, enchantment * other.enchantment);
+        return Load(weight + other.weight, enchantment + other.enchantment);
     }
 
     Load Load::operator*(int multiplier) const
@@ -285,7 +275,9 @@ namespace Game
 
     Damage Armor::Mitigation() const
     {
-        return type.mitigation + material.mitigation + modifier.mitigation;
+        auto mitigationScore = type.mitigation + material.mitigation + modifier.mitigation;
+        // inject name into scores
+        return mitigationScore.Describe(Name());
     }
 
     Weapon::Weapon(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& mod) :
@@ -326,7 +318,8 @@ namespace Game
 
     Damage Weapon::Damage() const
     {
-        return type.damage + material.damage + modifier.damage;
+        auto damage = type.damage + material.damage + modifier.damage;
+        return damage.Describe(Name());
     }
 
     bool Weapon::Match(Type::Weapon::Style style) const

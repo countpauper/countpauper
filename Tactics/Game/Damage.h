@@ -64,6 +64,7 @@ namespace Game
         Damage& operator^=(const Damage& other);
         Damage& operator+=(const Damage& other);
         Damage Wound(const std::wstring& description) const;
+        Damage Describe(const std::wstring& description) const;
     protected:
         friend std::wostream& operator<<(std::wostream& s, const Damage& damage);
         friend std::wistream& operator>>(std::wistream& s, Damage& damage);

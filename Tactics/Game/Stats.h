@@ -16,6 +16,8 @@ namespace Game
     }; 
     std::wistream& operator>>(std::wistream& s, Attribute& attribute);
 
+    std::wstring ToString(Attribute attribute);
+
     class Attributes : public std::set<Attribute>
     {
     public:
@@ -25,6 +27,7 @@ namespace Game
         {
         }
         static const Attributes All;
+        static const std::map<std::wstring, Attribute> map;
     };
     std::wistream& operator>>(std::wistream& s, Attributes& attribute);
 

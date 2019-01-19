@@ -1,15 +1,15 @@
 2
-Actor Foo 0 0 2 0 1
-Body All[0-4] Body Agi+Str+Con+Wis+Int 10 0,0,0,0,0
-1 1 6
+Actor Foo 0 0 2 0 5
+Head All[4] Head Int 5 ,,,,
+Chest Sagital[3] Chest Wis 6 ,,,,
+Belly Sagital[2] Belly Con 8 ,,,,
+Arms Coronal[2-3] Arms Str 6 ,,,,
+Legs Around[0-1] Legs Agi 7 ,,,,
+2 1 6
+Studded Dragon Hood
 Studded Demon Brigandine
 Normal Yew Wand
-Wait 0
-Hack 1
-Zap 2
-Dodge 1
-Unarmed 0
-Walk 0
+Wait Hack Zap Dodge Unarmed Walk 
 Actor Bar 1 3 3 0 5
 Head All[4] Head Int 10 ,,,,
 Chest Sagital[3] Chest Wis 10 ,,,,
@@ -19,11 +19,7 @@ Legs Around[0-1] Legs Agi 10 ,,,,
 1 1 5
 Reinforced Adamantine Breast-Plate
 Normal Steel Longsword
-Wait 0
-Hack 1
-Parry 9
-Unarmed 0
-Walk 0
+Wait Hack Parry Unarmed Walk 
 Flat 4 4 data/map.png
 4 0 0 0 
 4 0 0 0 

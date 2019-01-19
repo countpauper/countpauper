@@ -120,6 +120,12 @@ namespace Game
             return std::max(max, part.Height());
         });
     }
+
+    Damage Body::InnateDamage() const
+    {
+        // TODO: configure limb used and use its current "strength" for bite/tail attacks  
+        return Damage(Wound::Type::Blunt, Score(L"Innate",1));
+    }
     Score Body::Strength() const
     {
         return std::accumulate(parts.begin(), parts.end(), Score(), [](const Score& s, const Part& part) { return s + part.Score(Attribute::Strength); });

@@ -24,12 +24,6 @@ public:
     Bonus GetChance(const Score& level) const;
 
     bool Follows(const Skill& previous) const;
-
-    std::wstring name;
-    std::wstring description;
-    unsigned mp;
-    unsigned range;
-
     unsigned Id() const;
     Engine::Image Icon() const;
     void LoadIcon(const std::wstring& fname);
@@ -38,12 +32,20 @@ public:
     bool IsAttack() const;
     bool IsMove() const;
     bool IsWait() const;
+
+    std::wstring name;
+    std::wstring description;
+    unsigned mp;
+    unsigned range;
+
     enum class Trigger { None = 0, Act, Combo, Prepare, React, Defend };
+    
     Trigger trigger;
     using Category = std::string;
     using Categories = std::set<Category>;
     Categories categories;
     Categories follows;
+    Attribute attribute;
     Type::Weapon::Style weapon;
     using Prerequisite = std::pair<Skill*, unsigned>;
     std::vector<Prerequisite> prerequisites;

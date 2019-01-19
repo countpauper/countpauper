@@ -139,12 +139,12 @@ namespace Game
             };
             for (auto skill : actor->GetSkills())
             {
-                if (skill.skill->IsActive())
+                if (skill->IsActive())
                 {
-                    buttons.emplace_back(Button(skill.skill, hotkeys.front()));
+                    buttons.emplace_back(Button(skill, hotkeys.front()));
                     hotkeys.pop_front();
                 }
-                if (skill.skill == game.SelectedSkill())
+                if (skill == game.SelectedSkill())
                 {
                     buttons.back().Highlight(true);
                 }

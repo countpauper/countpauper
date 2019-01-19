@@ -58,13 +58,7 @@ namespace Game
         bool CanAct() const;
         bool Dead() const;
         bool Prone() const override;
-        struct Know
-        {
-            Know() : skill(nullptr), score(0) {}
-            const Skill* skill;
-            unsigned score;
-        };
-        using Knowledge = std::vector<Know> ;
+        using Knowledge = std::vector<const Skill*> ;
         const Skill* DefaultAttack() const;
         const Skill* DefaultMove() const;
         const Skill* WaitSkill() const;
@@ -74,12 +68,10 @@ namespace Game
 
         bool IsPossible(const Skill& skill) const;
         const Knowledge& GetSkills() const;
-        unsigned GetSkillScore(const Skill& skill) const;
         int MovePoints() const;
 
         std::vector<const Armor*> Worn() const;
         std::vector<const Weapon*> Wielded() const;
-        std::vector<Know> GetKnowledge() const;
         std::unique_ptr<Plan> plan;
     private:
         Bonus AgilityMoveBonus() const;

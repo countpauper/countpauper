@@ -4,54 +4,38 @@ Body Around 0 All 12 ,,,,
 1 1 4
 Embroidered Silk Brazier
 Normal Yew Wand
-Zap 2
-Unarmed 0
-Dodge 1
-Walk 0
+Zap Unarmed Dodge Walk 
 Actor Foo 0 2 3 0 1
 Body Around 0 Agi+Str+Con+Wis+Int 14 0,0,0,0,0
 1 2 5
 Normal Mithril Scale
 Normal Steel Claymore
 Normal Steel Heater
-Hack 3
-Slash 1
-Unarmed 0
-Block 2
-Walk 0
+Hack Slash Unarmed Block Walk 
 Actor Bob 1 2 1 0 1
 Body Around 0 All 10 ,,,,
 1 1 3
 Normal Leather Jacket
 Normal Steel Shortsword
-Hack 1
-Unarmed 0
-Walk 0
+Hack Unarmed Walk 
 Actor Bar 0 3 3 0 1
 Body Around 0 All 10 ,,,,
 1 1 4
 Sturdy Steel Hauberk
 Normal Adamantine Dagger
-Hack 2
-Dodge 1
-Unarmed 0
-Walk 0
+Hack Dodge Unarmed Walk 
 Actor Alice 1 3 0 0 1
 Body Around 0 All 10 ,,,,
 1 1 3
 Normal Hemp Robe
 Normal Yew Wand
-Zap 1
-Unarmed 0
-Walk 0
+Zap Unarmed Walk 
 Actor Carol 1 3 1 0 1
 Body Around 0 All 10 ,,,,
 1 1 3
 Normal Linen Blouse
 Normal Wooden Stave
-King_Strike 1
-Unarmed 0
-Walk 0 
+King_Strike Unarmed Walk  
 Flat 4 4 data/map.png
 4 0 0 0 
 4 0 0 0 

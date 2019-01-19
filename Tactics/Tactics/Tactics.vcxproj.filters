@@ -161,13 +161,7 @@
     <None Include="Data\WeaponMaterial.csv">
       <Filter>Data</Filter>
     </None>
-    <None Include="Data\1on1.map">
-      <Filter>Data</Filter>
-    </None>
     <None Include="Data\Flat.map">
-      <Filter>Data</Filter>
-    </None>
-    <None Include="Data\Game.map">
       <Filter>Data</Filter>
     </None>
     <None Include="Data\Melee.map">

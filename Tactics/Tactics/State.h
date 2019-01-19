@@ -32,7 +32,7 @@ namespace Game
         Direction direction;
         unsigned mp;
         Body body;
-        Damage AttackDamage(const Skill& skill) const;
+        Damage AttackDamage(const Skill& skill, const Score& skillLevel) const;
         Damage Mitigation(const Body::Part& location) const;
         Score Chance(const Skill& skill) const;
         Score Strength() const;
@@ -40,6 +40,7 @@ namespace Game
         Score Constitution() const;
         Score Intelligence() const;
         Score Wisdom() const;
+        Score AttributeScore(Attribute attribute) const;
         Score SkillLevel(const Skill& skill) const;
         Score Range(const Skill& skill) const;
         unsigned loyalty;
@@ -56,7 +57,7 @@ namespace Game
 
         std::vector<const Armor*> worn;
         std::vector<const Weapon*> wielded;
-        std::vector<Actor::Know> knowledge;
+        Actor::Knowledge knowledge;
     };
 
     class GameState : public IGame

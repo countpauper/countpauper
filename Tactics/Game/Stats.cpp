@@ -2,23 +2,44 @@
 #include "Stats.h"
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 namespace Game
 {
 
+
+    const std::map<std::wstring, Attribute> Attributes::map({
+        { L"", Attribute::None },
+        { L"Str", Attribute::Strength },
+        { L"Strength", Attribute::Strength },
+        { L"Agi", Attribute::Agility },
+        { L"Agility", Attribute::Agility },
+        { L"Con", Attribute::Constitution },
+        { L"Constitution", Attribute::Constitution },
+        { L"Int", Attribute::Intelligence },
+        { L"Intelligence", Attribute::Intelligence },
+        { L"Wis", Attribute::Wisdom },
+        { L"Wisdom", Attribute::Wisdom }
+    });
+
+    std::wstring ToString(Attribute attribute) 
+    {
+        auto it = std::find_if(Attributes::map.begin(), Attributes::map.end(), [attribute](const decltype(Attributes::map)::value_type& pair)
+        {
+            return pair.second == attribute;
+        });
+        if (it == Attributes::map.end())
+            return L"";
+        else
+            return it->first;
+    }
+
     std::wistream& operator>>(std::wistream& s, Attribute& attribute)
     {
-        const static std::map<std::wstring, Attribute> attributeMap({
-            { L"Str", Attribute::Strength },
-            { L"Agi", Attribute::Agility },
-            { L"Con", Attribute::Constitution },
-            { L"Int", Attribute::Intelligence },
-            { L"Wis", Attribute::Wisdom }
-        });
 
         std::wstring text;
         s >> text;
-        attribute = attributeMap.at(text);
+        attribute = Attributes::map.at(text);
         return s;
     }
 

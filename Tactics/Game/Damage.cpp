@@ -136,6 +136,18 @@ namespace Game
         return result;
     }
 
+    Damage Damage::Describe(const std::wstring& description) const
+    {
+        Damage result =
+            Damage(Wound::Type::Sharp, Score(description, Sharp().Value())) +
+            Damage(Wound::Type::Blunt, Score(description, Blunt().Value())) +
+            Damage(Wound::Type::Burn, Score(description, Burn().Value())) +
+            Damage(Wound::Type::Disease, Score(description, Disease().Value())) +
+            Damage(Wound::Type::Spirit, Score(description, Spirit().Value()));
+        return result;
+    }
+
+
     std::wistream& operator>>(std::wistream& s, Damage& damage)
     {
         std::wstring str;
