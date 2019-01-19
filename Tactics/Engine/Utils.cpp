@@ -11,6 +11,8 @@ const wchar_t* whitespace=L" \n\r\t";
 std::vector<std::wstring> Split(const std::wstring& str, wchar_t delimiter)
 {
     std::vector<std::wstring> result;
+    if (str.empty())
+        return result;
     std::wstringstream ss(str);
     while (!ss.eof())
     {
@@ -39,6 +41,13 @@ std::vector<std::string> Split(const std::string& str, char delimiter)
     }
     return result;
 }
+
+std::set<std::wstring> SplitSet(const std::wstring& str, wchar_t delimiter)
+{
+    auto splitVector = Split(str, delimiter);
+    return std::set<std::wstring>(splitVector.begin(), splitVector.end());
+}
+
 std::set<std::string> SplitSet(const std::string& str, char delimiter)
 {
     auto splitVector = Split(str, delimiter);

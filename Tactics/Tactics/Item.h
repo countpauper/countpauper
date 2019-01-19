@@ -14,6 +14,7 @@ namespace Game
     class Game;
     class Score;
     class AttackVector;
+    class Skill;
 
     class Load
     {
@@ -36,7 +37,20 @@ namespace Game
         int intelligence;
     };
 
-    
+    struct SkillBonus
+    {
+        std::wstring tag;
+        int bonus;
+    };
+
+    using SkillBoni=std::vector<SkillBonus>;
+    struct StatBonus
+    {
+        Attribute attribute;
+        int bonus;
+    };
+    using StatBoni = std::vector<StatBonus>;
+
     enum class Element
     {
         None = 0,
@@ -61,6 +75,8 @@ namespace Game
         {
         public:
             Load load;
+            SkillBoni skills;
+            StatBoni stats;
         };
 
 
@@ -84,7 +100,10 @@ namespace Game
             int magic;
             Requirement requirement;
             Load load;
+            SkillBoni skills;
+            StatBoni stats;
         };
+
 
         class Armor : public Equipment
         {
@@ -115,10 +134,6 @@ namespace Game
                 Modifier() : category(None) {}
                 Armor::Category category;
                 Damage mitigation;
-                std::wstring skill;
-                int skillBonus;
-                Attribute attribute;
-                int statBonus;
                 static std::vector<Modifier> Load(std::wistream& fileName);
             };
 
@@ -223,6 +238,8 @@ namespace Game
         Load GetLoad() const;
         Damage Mitigation(Slot slot) const;
         Damage Mitigation() const;
+        Score Bonus(const Skill& skill) const;
+        Score Bonus(Attribute attribute) const;
     private:
         const Type::Armor& type;
         const Type::Armor::Material &material;
@@ -240,7 +257,8 @@ namespace Game
         Damage Damage() const;
         bool Match(Type::Weapon::Style style) const;
         Score RangeBonus() const;
-        Score DefenseBonus() const;
+        Score Bonus(const Skill& skill) const;
+        Score Bonus(Attribute attribute) const;
     private:
         const Type::Weapon& type;
         const Type::Weapon::Material &material;

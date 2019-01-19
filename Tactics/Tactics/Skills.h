@@ -23,6 +23,7 @@ public:
     Action* CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const;
     Bonus GetChance(const Score& level) const;
 
+    bool Match(const std::wstring& category) const;
     bool Follows(const Skill& previous) const;
     unsigned Id() const;
     Engine::Image Icon() const;
@@ -41,7 +42,7 @@ public:
     enum class Trigger { None = 0, Act, Combo, Prepare, React, Defend };
     
     Trigger trigger;
-    using Category = std::string;
+    using Category = std::wstring;
     using Categories = std::set<Category>;
     Categories categories;
     Categories follows;

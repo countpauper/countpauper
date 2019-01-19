@@ -55,6 +55,8 @@ namespace Game
         Bonus WisdomBonus() const;
         Bonus Charge() const;   // excess enchantment
         const Weapon* MatchWeapon(const Skill& skill) const;
+        Score ArmorBonus(const Skill& skill) const;
+        Score EquipmentBonus(Attribute attribute) const;
 
         std::vector<const Armor*> worn;
         std::vector<const Weapon*> wielded;

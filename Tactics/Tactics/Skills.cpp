@@ -91,6 +91,11 @@ namespace Game
         return new ::Game::Affect(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
     }
 
+    bool Skill::Match(const std::wstring& category) const
+    {
+        return categories.count(category) > 0;
+    }
+
     bool Skill::Follows(const Skill& previous) const
     {
         for (const auto& follow : follows)
@@ -308,13 +313,13 @@ void Parse(Skill& o, const xmlNode* node)
         }
         else if (xmlTagCompare(prop, "category"))
         {
-            auto str= xmlStr(prop->children->content);
-            o.categories = Engine::SplitSet(str, '|');
+            auto str= xmlWStr(prop->children->content);
+            o.categories = Engine::SplitSet(str, L'|');
         }
         else if (xmlTagCompare(prop, "follows"))
         {
-            auto str = xmlStr(prop->children->content);
-            o.follows = Engine::SplitSet(str, '|');
+            auto str = xmlWStr(prop->children->content);
+            o.follows = Engine::SplitSet(str, L'|');
         }
         else if (xmlTagCompare(prop, "attribute"))
         {

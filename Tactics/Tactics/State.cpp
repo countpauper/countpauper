@@ -37,7 +37,7 @@ namespace Game
 
     Score State::Strength() const
     {
-        return body.Strength();  // todo: equipment boni
+        return body.Strength() + EquipmentBonus(Attribute::Strength); 
     }
 
     Bonus State::Encumberance() const
@@ -78,21 +78,21 @@ namespace Game
 
     Score State::Agility() const
     {
-        return body.Agility() + Encumberance();
+        return body.Agility() + Encumberance() + EquipmentBonus(Attribute::Agility);
     }
 
     Score State::Constitution() const
     {
-        return body.Constitution();  // todo: equipment boni
+        return body.Constitution() + EquipmentBonus(Attribute::Constitution);
     }
 
     Score State::Intelligence() const
     {
-        return body.Intelligence() + Charge();
+        return body.Intelligence() + Charge() + EquipmentBonus(Attribute::Intelligence);
     }
     Score State::Wisdom() const
     {
-        return body.Wisdom();  // todo:equipment boni
+        return body.Wisdom() + EquipmentBonus(Attribute::Wisdom);  
     }
 
     Score State::AttributeScore(Attribute attribute) const
@@ -212,9 +212,10 @@ namespace Game
         {
             assert(skill.resist == Attribute::None);  // no victim provided for skill with resistance
         }
+        result += ArmorBonus(skill);
         if (!weapon)
         {
-            return result;;
+            return result;
         }
         else
         {
@@ -225,8 +226,29 @@ namespace Game
             auto intelligence = Intelligence();
             Bonus intPenalty = Bonus(L"Int(" + intelligence.Description() +L")-" +weapon->Name() + L"(" + std::to_wstring(required.intelligence) + L")",
                 std::min(0, static_cast<int>(intelligence.Value()) - static_cast<int>(required.intelligence)));
-            return result + strengthPenalty + intPenalty;
+            auto weaponBonus = weapon->Bonus(skill);
+            return result + strengthPenalty + intPenalty + weaponBonus;
         }
+    }
+
+    Score State::ArmorBonus(const Skill& skill) const
+    {
+        return std::accumulate(worn.begin(), worn.end(), Score(), [&skill](const Score& total, const decltype(worn)::value_type& item)
+        {
+            return total + item->Bonus(skill);
+        });
+    }
+
+    Score State::EquipmentBonus(Attribute attribute) const
+    {
+        Score armorBonus = std::accumulate(worn.begin(), worn.end(), Score(), [&attribute](const Score& total, const decltype(worn)::value_type& item)
+        {
+            return total + item->Bonus(attribute);
+        });
+        return std::accumulate(wielded.begin(), wielded.end(), armorBonus, [&attribute](const Score& total, const decltype(wielded)::value_type& item)
+        {
+            return total + item->Bonus(attribute);
+        });
     }
 
     const Weapon* State::MatchWeapon(const Skill& skill) const

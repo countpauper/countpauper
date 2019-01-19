@@ -95,7 +95,7 @@ namespace Engine
             unsigned Columns() const override { return 1; }
         private:
             EnumT T::*member;
-            std::map<std::wstring, EnumT> values;
+            const std::map<std::wstring, EnumT>& values;
         };
 
         template<class T, class StructT>
@@ -156,6 +156,48 @@ namespace Engine
             const Adapter::Interface<C>* elementAdapter;
         };
 
+        template<class C, class StructT>
+        class Sequence : public Interface<C>
+        {
+        public:
+            Sequence(std::vector<StructT> C::*member, const std::vector<Adapter::Interface<StructT>*> adapters) :
+                member(member),
+                adapters(adapters)
+            {
+            }
+            void Parse(const std::vector<std::wstring>& str, C& dest) const override
+            {
+                auto braces = Engine::Strip(str.front(), L" \t\r");
+                if ((braces.front() != L'(') || (braces.back() != L')'))
+                    throw std::runtime_error("Sequences should be braced");
+
+                auto elements = Split(braces.substr(1,braces.size()-2), L'|');
+                ((&dest)->*member).resize(elements.size());
+                auto it = ((&dest)->*member).begin();
+                for (auto& elementStr : elements)
+                {
+                    unsigned index = 0;
+                    auto subItems = Split(elementStr, L':');
+                    StructT& item = *it;
+                    for (auto adapter : adapters)
+                    {
+                        unsigned columns = adapter->Columns();
+                        std::vector<std::wstring> subItems(subItems.begin() + index, subItems.begin() + index + columns);
+                        adapter->Parse(subItems, item);
+                        index += columns;
+                    }
+               }
+            }
+            unsigned Columns() const override
+            {
+                return 1;
+            }
+        private:
+            std::vector<StructT> C::*member;
+            const std::vector<Adapter::Interface<StructT>*> adapters;
+        };
+
+
         template<class T>
         class Pointer : public Interface<T>
         {
@@ -201,6 +243,8 @@ namespace Engine
                 wchar_t buffer[65536];
                 file.getline(buffer, 65536);
                 std::vector<std::wstring> lineAndRemark = Split(buffer, L'#');
+                if (lineAndRemark.empty())
+                    continue;
                 auto line = Strip(lineAndRemark.at(0),L" \t\r");
                 if (line.empty())
                     continue;

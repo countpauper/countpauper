@@ -33,7 +33,15 @@ namespace Game
 
         Engine::Adapter::Integer<Load> weight(&Load::weight);
         Engine::Adapter::Integer<Load> enchantment(&Load::enchantment);
-        std::vector<Engine::Adapter::Interface<Load>*> loadAdapters({ &weight, &enchantment});
+        Engine::Adapter::String<SkillBonus> bonusSkill(&SkillBonus::tag);
+        Engine::Adapter::Integer<SkillBonus> skillBonus(&SkillBonus::bonus);
+        std::vector<Engine::Adapter::Interface<SkillBonus>*> skillBonusAdapters({ &bonusSkill, &skillBonus });
+
+        Engine::Adapter::Enumeration<StatBonus, Attribute> bonusStat(&StatBonus::attribute, Attributes::map);
+        Engine::Adapter::Integer<StatBonus> statBonus(&StatBonus::bonus);
+        std::vector<Engine::Adapter::Interface<StatBonus>*> statBonusAdapters({ &bonusStat, &statBonus });
+
+        std::vector<Engine::Adapter::Interface<Load>*> loadAdapters({ &weight, &enchantment });
         Engine::Adapter::Integer<Requirement> reqstr(&Requirement::strength);
         Engine::Adapter::Integer<Requirement> reqint(&Requirement::intelligence);
         std::vector<Engine::Adapter::Interface<Requirement>*> requirementAdapters({ &reqstr, &reqint });
@@ -57,8 +65,10 @@ namespace Game
             Engine::Adapter::Enumeration<Armor, Slot> covers(&Armor::slot, slotMap);
             Engine::Adapter::Enumeration<Armor, Armor::Category> category(&Armor::category, armorCategories);
             Engine::Adapter::Struct<Armor, Damage> mitigation(&Armor::mitigation, damageAdapters);
+            Engine::Adapter::Sequence<Armor, SkillBonus> skillBoni(&Armor::skills, skillBonusAdapters);
+            Engine::Adapter::Sequence<Armor, StatBonus> statBoni(&Armor::stats, statBonusAdapters);
 
-            Engine::CSV<Armor> csv(file, { &name, &frequency, &load, &covers, &category, &mitigation });
+            Engine::CSV<Armor> csv(file, { &name, &frequency, &load, &covers, &category, &mitigation, &skillBoni, &statBoni });
             return csv.Read();
         }
 
@@ -84,11 +94,9 @@ namespace Game
             Engine::Adapter::Struct<Armor::Modifier, ::Game::Load> load(&Armor::Modifier::load, loadAdapters);
             Engine::Adapter::Enumeration<Armor::Modifier, Armor::Category> category(&Armor::Modifier::category, armorCategories);
             Engine::Adapter::Struct<Armor::Modifier, Damage> mitigation(&Armor::Modifier::mitigation, damageAdapters);
-            Engine::Adapter::String<Armor::Modifier> skill(&Armor::Modifier::skill);
-            Engine::Adapter::Integer<Armor::Modifier> skillBonus(&Armor::Modifier::skillBonus);
-            Engine::Adapter::Enumeration<Armor::Modifier, Attribute> stat(&Armor::Modifier::attribute, Attributes::map);
-            Engine::Adapter::Integer<Armor::Modifier> statBonus(&Armor::Modifier::statBonus);
-            Engine::CSV<Armor::Modifier> csv(file, { &prefix, &postfix, &frequency, &load, &category, &mitigation, &skill, &skillBonus, &stat, &statBonus });
+            Engine::Adapter::Sequence<Armor::Modifier, SkillBonus> skillBoni(&Armor::Modifier::skills, skillBonusAdapters);
+            Engine::Adapter::Sequence<Armor::Modifier, StatBonus> statBoni(&Armor::Modifier::stats, statBonusAdapters);
+            Engine::CSV<Armor::Modifier> csv(file, { &prefix, &postfix, &frequency, &load, &category, &mitigation, &skillBoni, &statBoni });
             return csv.Read();
         }
 
@@ -160,8 +168,9 @@ namespace Game
             Engine::Adapter::Enumeration<Weapon, Weapon::Material::Category> material(&Weapon::material, weaponMaterialCategories);
             Engine::Adapter::Struct<Weapon, Damage> damage(&Weapon::damage, damageAdapters);
             Engine::Adapter::Integer<Weapon> range(&Weapon::range);
-            Engine::Adapter::Integer<Weapon> defense(&Weapon::defense);
-            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &load, &style, &hands, &material, &damage, &range, &defense });
+            Engine::Adapter::Sequence<Weapon, SkillBonus> skillBoni(&Weapon::skills, skillBonusAdapters);
+            Engine::Adapter::Sequence<Weapon, StatBonus> statBoni(&Weapon::stats, statBonusAdapters);
+            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &load, &style, &hands, &material, &damage, &range, &skillBoni, &statBoni });
             return csv.Read();
         }
 
@@ -189,7 +198,9 @@ namespace Game
             Engine::Adapter::Enumeration<Weapon::Modifier, Weapon::Style> style(&Weapon::Modifier::style, Weapon::styleMap);
             Engine::Adapter::Enumeration<Weapon::Modifier, Weapon::Material::Category> material(&Weapon::Modifier::material, weaponMaterialCategories);
             Engine::Adapter::Struct<Weapon::Modifier, Damage> damage(&Weapon::Modifier::damage, damageAdapters);
-            Engine::CSV<Weapon::Modifier> csv(file, { &prefix, &postfix, &frequency, &requirement, &load, &style, &material, &damage });
+            Engine::Adapter::Sequence<Weapon::Modifier, SkillBonus> skillBoni(&Weapon::Modifier::skills, skillBonusAdapters);
+            Engine::Adapter::Sequence<Weapon::Modifier, StatBonus> statBoni(&Weapon::Modifier::stats, statBonusAdapters);
+            Engine::CSV<Weapon::Modifier> csv(file, { &prefix, &postfix, &frequency, &requirement, &load, &style, &material, &damage, &skillBoni, &statBoni });
             return csv.Read();
         }
 
@@ -280,6 +291,32 @@ namespace Game
         return mitigationScore.Describe(Name());
     }
 
+    Score Armor::Bonus(const Skill& skill) const
+    {
+        auto all = type.skills;
+        all.insert(all.end(), modifier.skills.begin(), modifier.skills.end());
+        Score result;
+        for (auto& bonus : all)
+        {
+            if (skill.Match(bonus.tag))
+                result += ::Game::Bonus(Name(), bonus.bonus);
+        }
+        return result;
+    }
+
+    Score Armor::Bonus(Attribute attribute) const
+    {
+        auto all = type.stats;
+        all.insert(all.end(), modifier.stats.begin(), modifier.stats.end());
+        Score result;
+        for (auto& bonus : all)
+        {
+            if (bonus.attribute == attribute)
+                result += ::Game::Bonus(Name(), bonus.bonus);
+        }
+        return result;
+    }
+
     Weapon::Weapon(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& mod) :
         type(game.FindWeapon(type)),
         material(game.FindWeaponMaterial(material, this->type)),
@@ -332,8 +369,29 @@ namespace Game
         return Score(type.name, type.range);
     }
 
-    Score Weapon::DefenseBonus() const
+    Score Weapon::Bonus(const Skill& skill) const
     {
-        return Score(type.name, type.defense);
+        auto all = type.skills;
+        all.insert(all.end(), modifier.skills.begin(), modifier.skills.end());
+        Score result;
+        for (auto& bonus : all)
+        {
+            if (skill.Match(bonus.tag))
+                result += ::Game::Bonus(Name(), bonus.bonus);
+        }
+        return result;
+    }
+
+    Score Weapon::Bonus(Attribute attribute) const
+    {
+        auto all = type.stats ;
+        all.insert(all.end(), modifier.stats.begin(), modifier.stats.end());
+        Score result;
+        for (auto& bonus : all)
+        {
+            if (bonus.attribute == attribute)
+                result += ::Game::Bonus(Name(), bonus.bonus);
+        }
+        return result;
     }
 }
