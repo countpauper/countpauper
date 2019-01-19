@@ -25,7 +25,6 @@ namespace Game
         public:
             Result();
             Result(const IGame& parent, const Actor& actor);
-            Result(const IGame& parent, const Actor& actor, const Skill& skill);
             
             Result(const Result&) = delete;
             Result& operator=(const Result&) = delete;

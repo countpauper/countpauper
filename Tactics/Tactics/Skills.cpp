@@ -20,6 +20,8 @@ namespace Game
         range(1),
         trigger(Trigger::None),
         attribute(Attribute::None),
+        resist(Attribute::None),
+        offset(0),
         weapon(::Game::Type::Weapon::Style::All)
     {
     }
@@ -318,6 +320,16 @@ void Parse(Skill& o, const xmlNode* node)
         {
             auto str = xmlWStr(prop->children->content);
             o.attribute = Engine::from_string<Attribute>(str, Attributes::map);
+        }
+        else if (xmlTagCompare(prop, "resist"))
+        {
+            auto str = xmlWStr(prop->children->content);
+            o.resist = Engine::from_string<Attribute>(str, Attributes::map);
+        }
+        else if (xmlTagCompare(prop, "offset"))
+        {
+            auto str = xmlWStr(prop->children->content);
+            o.offset = Engine::from_string<int>(str);
         }
         else if (xmlTagCompare(prop, "weapon"))
         {

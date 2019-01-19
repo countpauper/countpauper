@@ -34,6 +34,7 @@ namespace Game
         Body body;
         Damage AttackDamage(const Skill& skill, const Score& skillLevel) const;
         Damage Mitigation(const Body::Part& location) const;
+        Score Chance(const Skill& skill, const State& target) const;
         Score Chance(const Skill& skill) const;
         Score Strength() const;
         Score Agility() const;
@@ -41,7 +42,7 @@ namespace Game
         Score Intelligence() const;
         Score Wisdom() const;
         Score AttributeScore(Attribute attribute) const;
-        Score SkillLevel(const Skill& skill) const;
+        Score SkillLevel(const Skill& skill, const State* victim=nullptr) const;
         Score Range(const Skill& skill) const;
         unsigned loyalty;
         bool Prone() const;

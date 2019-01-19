@@ -46,6 +46,8 @@ public:
     Categories categories;
     Categories follows;
     Attribute attribute;
+    Attribute resist;
+    int offset;
     Type::Weapon::Style weapon;
     using Prerequisite = std::pair<Skill*, unsigned>;
     std::vector<Prerequisite> prerequisites;

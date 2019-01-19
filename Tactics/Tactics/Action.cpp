@@ -21,15 +21,6 @@ namespace Game
     {
     }
 
-    Action::Result::Result(const IGame& parent, const Actor& actor, const Skill& skill) :
-        state(std::make_unique<GameState>(parent,actor)),
-        chance(1.0)
-    {
-        const auto& actorState = parent.Get(actor);
-        chance = double(actorState.Chance(skill).Value()) / 100.0;
-    }
-
-
     Action::Result::Result(Action::Result&& other) :
         state(std::move(other.state)),
         chance(other.chance),

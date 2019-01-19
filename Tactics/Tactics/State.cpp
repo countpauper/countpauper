@@ -168,24 +168,18 @@ namespace Game
             return body.InnateDamage()^ skillDamage;
         }
     }
+    Score State::Chance(const Skill& skill, const State& target) const
+    {
+        auto skillLevel = SkillLevel(skill, &target);
+        auto skillBonus = skill.GetChance(skillLevel);
+        return Score(skillBonus);
+    }
+
     Score State::Chance(const Skill& skill) const
     {
         auto skillLevel = SkillLevel(skill);
         auto skillBonus = skill.GetChance(skillLevel);
-        Score chance(skillBonus);
-        if (skill.trigger == Skill::Trigger::Defend)
-        {
-            auto agility = Agility();
-
-            chance += Bonus(L"Agi(" + agility.Description() + L")", (int(agility.Value() * 3)));
-            if (auto weapon = MatchWeapon(skill))
-            {
-                chance += weapon->DefenseBonus();
-            }
-
-            return chance;
-        }
-        return chance;
+        return Score(skillBonus);
     }
 
     Damage State::Mitigation(const Body::Part& location) const
@@ -205,12 +199,22 @@ namespace Game
         return mitigation;
     }
 
-    Score State::SkillLevel(const Skill& skill) const
+    Score State::SkillLevel(const Skill& skill, const State* victim) const
     {
         auto weapon = MatchWeapon(skill);
+        Score result = AttributeScore(skill.attribute) + Bonus(skill.name, skill.offset);
+        if (victim)
+        {
+            auto resist = victim->AttributeScore(skill.resist);
+            result += Bonus(L"Resist("+resist.Description()+L")", -static_cast<int>(resist.Value()));
+        }
+        else
+        {
+            assert(skill.resist == Attribute::None);  // no victim provided for skill with resistance
+        }
         if (!weapon)
         {
-            return AttributeScore(skill.attribute);
+            return result;;
         }
         else
         {
@@ -221,7 +225,7 @@ namespace Game
             auto intelligence = Intelligence();
             Bonus intPenalty = Bonus(L"Int(" + intelligence.Description() +L")-" +weapon->Name() + L"(" + std::to_wstring(required.intelligence) + L")",
                 std::min(0, static_cast<int>(intelligence.Value()) - static_cast<int>(required.intelligence)));
-            return AttributeScore(skill.attribute) + strengthPenalty + intPenalty;
+            return result + strengthPenalty + intPenalty;
         }
     }
 

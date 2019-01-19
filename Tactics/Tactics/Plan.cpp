@@ -348,7 +348,8 @@ namespace Game
             return false;
         auto node = std::make_unique<Node>(parent, intermediate, std::move(reaction));
         const auto& actorState = parent.state->Get(defender);
-        node->chance = double(actorState.Chance(defense).Value()) / 100.0;
+        const auto& targetState = parent.state->Get(aggressor);
+        node->chance = double(actorState.Chance(defense, targetState).Value()) / 100.0;
 
         Skill::Effects effects = defense.effects;
 
@@ -367,7 +368,8 @@ namespace Game
             auto defenseNode = std::move(node);
             node = std::make_unique<Node>(*defenseNode, result, std::move(action));
             const auto& actorState = defenseNode->state->Get(aggressor);
-            node->chance = double(actorState.Chance(offense).Value()) / 100.0;
+            const auto& targetState = defenseNode->state->Get(defender);
+            node->chance = double(actorState.Chance(offense, targetState).Value()) / 100.0;
             // TODO: counter reaction? reaction combo (ie disarm)?
             if (effects.count(Skill::Effect::Halt) == 0)
             {

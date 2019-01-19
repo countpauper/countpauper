@@ -200,12 +200,12 @@ namespace Engine
             {
                 wchar_t buffer[65536];
                 file.getline(buffer, 65536);
-                if (buffer[0] == 0)
-                    break;
-                if (buffer[0] == '#')
+                std::vector<std::wstring> lineAndRemark = Split(buffer, L'#');
+                auto line = Strip(lineAndRemark.at(0),L" \t\r");
+                if (line.empty())
                     continue;
                 result.push_back(T());
-                std::vector<std::wstring> items = Split(buffer, L',');
+                std::vector<std::wstring> items = Split(line, L',');
                 for (auto column : columns)
                 {
                     unsigned columnReq = column->Columns();

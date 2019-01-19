@@ -25,7 +25,9 @@ Action::Result Affect::Act(const IGame& game) const
     State victim(game.Get(target));
     if (!attacker.IsPossible(skill, victim))
         return Result();
-    Result ret(game, actor, skill);
+    Result ret(game, actor);
+    ret.chance = double(attacker.Chance(skill,victim).Value()) / 100.0;
+
     attacker.mp -= skill.mp;
     // TODO effect
     ret.state->Adjust(actor, attacker);
