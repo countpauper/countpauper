@@ -23,14 +23,23 @@ namespace Game
     {
         return health.Disabled();
     }
+
     void Body::Part::Hurt(const Damage& damage)
     {
         health += damage;
     }
+
     bool Body::Part::IsVital() const
     {
-        return attributes.count(Attribute::Intelligence) || 
-            attributes.count(Attribute::Wisdom);
+        // TODO: flag
+        return (attributes.count(Attribute::Intelligence) +
+            attributes.count(Attribute::Wisdom)) != 0;
+    }
+
+    bool Body::Part::Grip() const
+    {
+        // TODO: flag
+        return attributes.count(Attribute::Strength)!=0;
     }
 
     std::wstring Body::Part::Name() const
@@ -64,6 +73,12 @@ namespace Game
     {
         return anatomy.position + anatomy.size;
     }
+
+    unsigned Body::Part::Length() const
+    {
+        return anatomy.size;
+    }
+
 
     std::wstring Body::Description() const
     {
@@ -113,7 +128,30 @@ namespace Game
         return nullptr;
     }
 
-    unsigned Body::Height() const
+    const Body::Part* Body::Get(const std::wstring& name) const
+    {
+        for (auto& part : parts)
+        {
+            if (part.Name() == name)
+            {
+                return &part;
+            }
+        }
+        return nullptr;
+    }
+
+    std::vector<const Body::Part*> Body::Grip() const
+    {
+        std::vector<const Body::Part*> result;
+        for (auto& part : parts)
+        {
+            if (part.Grip())
+                result.push_back(&part);
+        }
+        return result;
+    }
+
+    unsigned Body::Length() const
     {
         return std::accumulate(parts.begin(), parts.end(), 0U, [](unsigned max, const decltype(parts)::value_type& part)
         {

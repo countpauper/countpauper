@@ -26,18 +26,19 @@ Action::Result Affect::Act(const IGame& game) const
     if (!attacker.IsPossible(skill, victim))
         return Result();
     Result ret(game, actor);
-    ret.chance = double(attacker.Chance(skill,victim).Value()) / 100.0;
+    auto chance = attacker.Chance(skill, victim);
+    ret.chance = double(chance.Value()) / 100.0;
 
     attacker.mp -= skill.mp;
     // TODO effect
     ret.state->Adjust(actor, attacker);
     ret.state->Adjust(target, victim);
-    ret.description = actor.Description()+L" "+skill.name+L" "+target.Description();
+    ret.description = actor.Description()+L" "+skill.name+L"("+chance.Description()+L"%) "+target.Description();
     return ret;
 }
 
 
-Action::Result Affect::Fail(const IGame& game) const
+Action::Result Affect::Fail(const IGame& game, const std::wstring& reason) const
 {
     State attacker = game.Get(actor);
     State victim(game.Get(target));
@@ -46,7 +47,7 @@ Action::Result Affect::Fail(const IGame& game) const
     Result ret(game, actor);
     attacker.mp -= skill.mp;
     ret.state->Adjust(actor, attacker);
-    ret.description = actor.Description() + L" " + skill.name + L" miss "+target.Description();
+    ret.description = actor.Description() + L" " + skill.name + L" "+reason + L" "+target.Description();
     return ret;
 }
 

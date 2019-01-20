@@ -297,13 +297,19 @@ namespace Game
         return result;
     }
 
-    std::vector<const Weapon*> Actor::Wielded() const
+    std::map<const Body::Part*, const Weapon*> Actor::Wielded() const
     {
-        std::vector<const Weapon*> result(wielded.size());
-        std::transform(wielded.begin(), wielded.end(), result.begin(), [](const Weapon& item)
+        std::map<const Body::Part*, const Weapon*> result;
+
+        std::transform(wielded.begin(), wielded.end(), std::inserter(result, result.end()), [](const decltype(wielded)::value_type& wield)
         {
-            return &item;
+            return std::make_pair(wield.first, &wield.second);
         });
+        auto hands = body.Grip();
+        for (auto hand : hands)
+        {
+            result.insert(std::pair<const Body::Part*, const Weapon*>(hand, nullptr));
+        }
         return result;
     }
 
@@ -354,7 +360,7 @@ namespace Game
                     for (int x = -range; x <= range; ++x)
                     { 
                         Position vector(x, y);
-                        if (vector.ManSize() > skill->range)
+                        if (vector.SizeEl() > skill->range)
                             continue;
                         if (!vector)
                             continue;
@@ -375,9 +381,9 @@ namespace Game
             return true;
         if (skill.weapon == Type::Weapon::Style::None)
             return wielded.empty();
-        return (std::any_of(wielded.begin(), wielded.end(), [&skill](const Weapon& weapon)
+        return (std::any_of(wielded.begin(), wielded.end(), [&skill](const decltype(wielded)::value_type& pair)
         {
-            return weapon.Match(skill.weapon);
+            return pair.second.Match(skill.weapon);
         }));
     }
 
@@ -400,9 +406,12 @@ namespace Game
         }
         while (actor.wielded.size()<weapons)
         {
-            std::wstring typeName, materialName, bonusName;
-            s >> bonusName >> materialName >> typeName;
-            actor.wielded.emplace_back(Weapon(game, typeName, materialName, bonusName));
+            std::wstring limbName, typeName, materialName, bonusName;
+            s >> limbName >> bonusName >> materialName >> typeName;
+            auto limb = actor.body.Get(limbName);
+            if (!limb)
+                throw std::runtime_error("Wielded limb not found");
+            actor.wielded.emplace(std::make_pair(limb,Weapon(game, typeName, materialName, bonusName)));
         }
         actor.knowledge.resize(skills);
         for (auto& skill : actor.knowledge)

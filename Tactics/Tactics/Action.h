@@ -37,7 +37,7 @@ namespace Game
             std::wstring description;
         };
         virtual Result Act(const IGame& game) const = 0;
-        virtual Result Fail(const IGame& game) const = 0;
+        virtual Result Fail(const IGame& game, const std::wstring& reason) const = 0;
         virtual void Render(const State& state) const = 0;
         virtual std::wstring Description() const = 0;
         static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;

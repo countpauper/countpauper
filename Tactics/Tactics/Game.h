@@ -48,7 +48,6 @@ namespace Game
         bool Cover(const Position& from, const Position& to) const override;
         void Click(Selection selection, unsigned value);
         std::vector<Actor*> FindTargets(const State& from, const Skill& skill) const;
-        std::vector<Actor*> FindTargetsInRange(const State& from, const Skill& skill) const;
         typedef std::list<std::unique_ptr<Object>> Objects;
         const Objects& GetObjects() const;
         static std::vector<Engine::RGBA> teamColor;

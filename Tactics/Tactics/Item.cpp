@@ -167,10 +167,10 @@ namespace Game
             Engine::Adapter::Integer<Weapon> hands(&Weapon::hands);
             Engine::Adapter::Enumeration<Weapon, Weapon::Material::Category> material(&Weapon::material, weaponMaterialCategories);
             Engine::Adapter::Struct<Weapon, Damage> damage(&Weapon::damage, damageAdapters);
-            Engine::Adapter::Integer<Weapon> range(&Weapon::range);
+            Engine::Adapter::Integer<Weapon> length(&Weapon::length);
             Engine::Adapter::Sequence<Weapon, SkillBonus> skillBoni(&Weapon::skills, skillBonusAdapters);
             Engine::Adapter::Sequence<Weapon, StatBonus> statBoni(&Weapon::stats, statBonusAdapters);
-            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &load, &style, &hands, &material, &damage, &range, &skillBoni, &statBoni });
+            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &load, &style, &hands, &material, &damage, &length, &skillBoni, &statBoni });
             return csv.Read();
         }
 
@@ -207,7 +207,7 @@ namespace Game
         Weapon::Weapon() : 
             style(None), 
             material(Material::None),
-            range(0),
+            length(0),
             defense(0)
         {
         }
@@ -364,9 +364,9 @@ namespace Game
         return (unsigned(style) & unsigned(type.style)) != 0;
     }
 
-    Score Weapon::RangeBonus() const
+    unsigned Weapon::Length() const
     {
-        return Score(type.name, type.range);
+        return type.length;
     }
 
     Score Weapon::Bonus(const Skill& skill) const

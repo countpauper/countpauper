@@ -213,7 +213,7 @@ namespace Game
             int hands;
             Material::Category material;
             Damage damage;
-            int range; 
+            int length; 
             int defense;
             static std::vector<Weapon> Load(std::wistream& fileName);
 
@@ -256,7 +256,7 @@ namespace Game
         Requirement Required() const;
         Damage Damage() const;
         bool Match(Type::Weapon::Style style) const;
-        Score RangeBonus() const;
+        unsigned Length() const;
         Score Bonus(const Skill& skill) const;
         Score Bonus(Attribute attribute) const;
     private:

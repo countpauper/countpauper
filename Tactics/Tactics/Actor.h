@@ -71,7 +71,7 @@ namespace Game
         int MovePoints() const;
 
         std::vector<const Armor*> Worn() const;
-        std::vector<const Weapon*> Wielded() const;
+        std::map<const Body::Part*, const Weapon*> Wielded() const;
         std::unique_ptr<Plan> plan;
     private:
         Bonus AgilityMoveBonus() const;
@@ -85,7 +85,7 @@ namespace Game
         Direction direction;
         Knowledge knowledge;
         std::vector<Armor> worn;
-        std::vector<Weapon> wielded;
+        std::map<const Body::Part*, Weapon> wielded;
     };
     std::wistream& operator>>(std::wistream& s, Actor& actor);
 

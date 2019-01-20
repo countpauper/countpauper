@@ -2,6 +2,8 @@
 
 namespace Game
 {
+    static const int HorizontalEl = 3; // 1 square is 3x3l
+
     struct Position
     {
         Position();
@@ -10,7 +12,9 @@ namespace Game
         int y;
         unsigned ManDistance(const Position& other) const;
         float Distance(const Position& other) const;
-        float Size() const;;
+        unsigned DistanceEl(const Position& other) const;
+        float Size() const;
+        unsigned SizeEl() const;
         unsigned ManSize() const;
         Position& operator+=(const Position& delta);
         Position& operator-=(const Position& delta);

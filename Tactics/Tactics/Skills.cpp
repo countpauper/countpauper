@@ -17,7 +17,7 @@ namespace Game
 {
     Skill::Skill() :
         mp(0),
-        range(1),
+        range(0),
         trigger(Trigger::None),
         attribute(Attribute::None),
         resist(Attribute::None),

@@ -361,7 +361,7 @@ namespace Game
         }
         else
         {
-            result = action->Fail(*node->state);
+            result = action->Fail(*node->state, node->action->Description());
         }
         if (result)
         {

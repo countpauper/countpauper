@@ -37,7 +37,7 @@ namespace Game
         else
             return Result();
     }
-    Action::Result  Move::Fail(const IGame& game) const
+    Action::Result  Move::Fail(const IGame& game, const std::wstring& reason) const
     {
         State state(game.Get(actor));
         if (state.mp < skill.mp)
@@ -47,7 +47,7 @@ namespace Game
         state.mp -= skill.mp;
         Result ret(game, actor);
         ret.state->Adjust(actor, state);
-        ret.description = actor.Description()+L" "+skill.name + L" falter";
+        ret.description = actor.Description()+L" "+skill.name + L" "+reason;
         return ret;
     }
 

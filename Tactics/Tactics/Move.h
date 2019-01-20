@@ -15,7 +15,7 @@ namespace Game
         Move(const Actor& actor, const Position& destination, const Skill& skill, Trajectory trajectory);
         void Render(const State& state) const override;
         Result Act(const IGame& game) const override;
-        Result Fail(const IGame& game) const override;
+        Result Fail(const IGame& game, const std::wstring& reason) const override;
         std::wstring Description() const override;
     protected:
         Position destination;

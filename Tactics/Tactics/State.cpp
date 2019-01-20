@@ -24,7 +24,7 @@ namespace Game
     {
         if (mp < skill.mp)
             return false;
-        if (position.Distance(target.position) > Range(skill).Value())
+        if (position.DistanceEl(target.position) > Range(skill).Value())
             return false;
 
 
@@ -40,6 +40,24 @@ namespace Game
         return body.Strength() + EquipmentBonus(Attribute::Strength); 
     }
 
+    Score State::AttributeScore(const Body::Part& limb, Attribute attribute) const
+    {
+        return limb.Score(attribute) + EquipmentBonus(attribute);   // TODO: full bonus of weapon held in part, split armor bonus 
+    }
+
+    Score State::FreeLimbScore(const Weapon& weapon, Attribute attribute) const
+    {
+        Score result;
+        for (auto wield : wielded)
+        {
+            if (!wield.second)
+            {
+                result += AttributeScore(*wield.first, attribute);
+            }
+        }
+        return result;
+    }
+
     Bonus State::Encumberance() const
     {
         Score encumberance = std::accumulate(worn.begin(), worn.end(), Score(), [](const Score& total, const Armor* armor) -> Score
@@ -47,10 +65,16 @@ namespace Game
             int weight = armor->GetLoad().weight;
             return total + Bonus(armor->Name() + L"(" + std::to_wstring(weight) + L"lbs)", weight);
         });
-        encumberance = std::accumulate(wielded.begin(), wielded.end(), encumberance, [](const Score& total, const Weapon* weapon) -> Score
+        encumberance = std::accumulate(wielded.begin(), wielded.end(), encumberance, [](const Score& total, const decltype(wielded)::value_type& wield) -> Score
         {
-            int weight = weapon->GetLoad().weight;
-            return total + Bonus(weapon->Name() + L"(" + std::to_wstring(weight) + L"lbs)", weight);
+            auto weapon = wield.second;
+            if (weapon)
+            {
+                int weight = weapon->GetLoad().weight;
+                return total + Bonus(weapon->Name() + L"(" + std::to_wstring(weight) + L"lbs)", weight);
+            }
+            else
+                return total;
         });
         auto strength = Strength();
         encumberance += Bonus(L"-Strength (" + strength.Description() + L")x5)", strength.Value() * -5);
@@ -65,10 +89,16 @@ namespace Game
             int enchantment = armor->GetLoad().enchantment;
             return total + Bonus(armor->Name() + L"(" + std::to_wstring(enchantment) + L"W)", enchantment);
         });
-        charge = std::accumulate(wielded.begin(), wielded.end(), charge , [](const Score& total, const Weapon* weapon) -> Score
+        charge = std::accumulate(wielded.begin(), wielded.end(), charge , [](const Score& total, const decltype(wielded)::value_type& wield) -> Score
         {
-            int enchantment = weapon->GetLoad().enchantment;
-            return total + Bonus(weapon->Name() + L"(" + std::to_wstring(enchantment) + L"W)", enchantment);
+            auto weapon = wield.second;
+            if (weapon)
+            {
+                int enchantment = weapon->GetLoad().enchantment;
+                return total + Bonus(weapon->Name() + L"(" + std::to_wstring(enchantment) + L"W)", enchantment);
+            }
+            else
+                return total;
         });
         auto wisdom = Wisdom();
         charge += Bonus(L"-Wisdom(" + wisdom.Description() + L")x5)", wisdom.Value() * -5);
@@ -159,9 +189,9 @@ namespace Game
             Damage(Wound::Type::Burn, Score(skillBonus)) +
             Damage(Wound::Type::Disease, Score(skillBonus)) +
             Damage(Wound::Type::Spirit, Score(skillBonus));
-        if (weapon)
+        if (weapon.second)
         {
-            return weapon->Damage() ^ skillDamage;
+            return weapon.second->Damage() ^ skillDamage;
         }
         else
         {
@@ -201,8 +231,18 @@ namespace Game
 
     Score State::SkillLevel(const Skill& skill, const State* victim) const
     {
-        auto weapon = MatchWeapon(skill);
-        Score result = AttributeScore(skill.attribute) + Bonus(skill.name, skill.offset);
+        auto wield = MatchWeapon(skill);
+
+        Score result(Bonus(skill.name, skill.offset));
+        if (wield.first)
+        {
+            result += AttributeScore(*wield.first, skill.attribute);
+            result += FreeLimbScore(*wield.second, skill.attribute);
+        }
+        else
+        {
+            result += AttributeScore(skill.attribute);
+        }
         if (victim)
         {
             auto resist = victim->AttributeScore(skill.resist);
@@ -213,20 +253,22 @@ namespace Game
             assert(skill.resist == Attribute::None);  // no victim provided for skill with resistance
         }
         result += ArmorBonus(skill);
-        if (!weapon)
+        if (!wield.second)
         {
             return result;
         }
         else
         {
-            auto required = weapon->Required();
-            auto strength = Strength(); // TODO: strength of applicable hand
-            Bonus strengthPenalty = Bonus(L"Str(" + strength.Description()+L")-" +weapon->Name() +L"(" + std::to_wstring(required.strength) + L")",
+            auto strength = AttributeScore(*wield.first, Attribute::Strength); 
+            strength += FreeLimbScore(*wield.second, Attribute::Strength);
+            auto& weapon = *wield.second;
+            auto required = weapon.Required();
+            Bonus strengthPenalty = Bonus(L"Str(" + strength.Description() + L")-" + weapon.Name() + L"(" + std::to_wstring(required.strength) + L")",
                 std::min(0, static_cast<int>(strength.Value()) - static_cast<int>(required.strength)));
             auto intelligence = Intelligence();
-            Bonus intPenalty = Bonus(L"Int(" + intelligence.Description() +L")-" +weapon->Name() + L"(" + std::to_wstring(required.intelligence) + L")",
+            Bonus intPenalty = Bonus(L"Int(" + intelligence.Description() +L")-" +weapon.Name() + L"(" + std::to_wstring(required.intelligence) + L")",
                 std::min(0, static_cast<int>(intelligence.Value()) - static_cast<int>(required.intelligence)));
-            auto weaponBonus = weapon->Bonus(skill);
+            auto weaponBonus = weapon.Bonus(skill);
             return result + strengthPenalty + intPenalty + weaponBonus;
         }
     }
@@ -245,31 +287,36 @@ namespace Game
         {
             return total + item->Bonus(attribute);
         });
-        return std::accumulate(wielded.begin(), wielded.end(), armorBonus, [&attribute](const Score& total, const decltype(wielded)::value_type& item)
+        return std::accumulate(wielded.begin(), wielded.end(), armorBonus, [&attribute](const Score& total, const decltype(wielded)::value_type& wield)
         {
-            return total + item->Bonus(attribute);
+            if (wield.second)
+                return total + wield.second->Bonus(attribute);
+            else
+                return Score(total);
         });
     }
 
-    const Weapon* State::MatchWeapon(const Skill& skill) const
+    std::pair<const Body::Part*,const Weapon*> State::MatchWeapon(const Skill& skill) const
     {
-        for (auto weapon : wielded)
+        for (const auto& wield: wielded)
         {
-            if (weapon->Match(skill.weapon))
+            if ((wield.second) && (wield.second->Match(skill.weapon)))
             {
-                return weapon;
+                return wield;
             }
         }
-        return nullptr;
+        return std::pair<const Body::Part*,Weapon*>(nullptr, nullptr);
     }
 
 
     Score State::Range(const Skill& skill) const
     {
         Score range(skill.name, skill.range);
-        if (auto weapon = MatchWeapon(skill))
+        auto wield = MatchWeapon(skill);
+        if (wield.second)
         {
-            range += weapon->RangeBonus();
+            range += Bonus(wield.second->Name(), wield.second->Length());
+            range += Bonus(wield.first->Name(), wield.first->Length());
         }
         return range;
     }

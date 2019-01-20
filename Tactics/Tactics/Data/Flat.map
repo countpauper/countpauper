@@ -1,27 +1,28 @@
 2
-Actor Foo 0 0 2 0 5
+Actor Foo 0 0 2 0 6
 Head All[4] Head Int 5 ,,,,
 Chest Sagital[3] Chest Wis 6 ,,,,
 Belly Sagital[2] Belly Con 8 ,,,,
-Arms Coronal[2-3] Arms Str 10 ,,,,
+RArm Right[2-3] Arms Str 5 ,,,,
+LArm Left[2-3] Arms Str 5 ,,,,
 Legs Around[0-1] Legs Agi 7 ,,,,
-2 2 8
+2 1 8
 Studded Dragon Hood
 Studded Demon Brigandine
-Normal Steel Claymore
-Normal Steel Heater
+RArm Normal Steel Claymore
 Wait Hack Zap Dodge Block Parry Unarmed Walk 
-Actor Bar 1 3 3 0 5
+Actor Bar 1 3 3 0 6
 Head All[4] Head Int 10 ,,,,
 Chest Sagital[3] Chest Wis 10 ,,,,
 Belly Sagital[2] Belly Con 10 ,,,,
-Arms Coronal[2-3] Arms Str 10 ,,,,
+RArm Right[2-3] Arms Str 6 ,,,,
+LArm Left[2-3] Arms Str 4 ,,,,
 Legs Around[0-1] Legs Agi 10 ,,,,
 2 2 6
 Reinforced Adamantine Breast-Plate
 Normal Steel Coif
-Normal Steel Longsword
-Normal Steel Heater
+RArm Normal Steel Longsword
+LArm Normal Steel Targe
 Wait Hack Block Parry Unarmed Walk 
 Flat 4 4 data/map.png
 4 0 0 0 

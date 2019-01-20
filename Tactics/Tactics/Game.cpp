@@ -281,16 +281,6 @@ namespace Game
         return objects;
     }
 
-    std::vector<Actor*> Game::FindTargetsInRange(const State& from, const Skill& skill) const
-    {
-        auto targets = FindTargets(from, skill);
-        auto it = std::remove_if(targets.begin(), targets.end(), [from, &skill](const Actor* actor)
-        {
-            return actor->GetPosition().Distance(from.position) > skill.range;
-        });
-        targets.erase(it, targets.end());
-        return targets;
-    }
 
     void Game::SelectSkill(const Skill* skill)
     {

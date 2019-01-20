@@ -37,7 +37,7 @@ const Body::Part* Hit(const State& attacker, const State& victim, Trajectory tra
     }
     else if (targeting.count(Targeting::Center))
     {
-        auto height = victim.body.Height();
+        auto height = victim.body.Length();
         double middle = static_cast<double>(height) / 2.0;
         auto hitHeight = static_cast<int>(std::round(middle + Engine::Random().Normal(1.0)));
         if (hitHeight < 0 || hitHeight >= static_cast<int>(height))
@@ -60,11 +60,11 @@ Action::Result  Attack::Act(const IGame& game) const
 
     auto part = Hit(attacker, victim, trajectory, skill.target);
     if (!part)
-        return Fail(game);
+        return Fail(game, L"miss");
 
     auto skillLevel = attacker.SkillLevel(skill, &victim);
     if (skillLevel.Value() == 0)
-        return Fail(game);
+        return Fail(game, skillLevel.Description());
     Result ret(game, actor);
     ret.chance = double(attacker.Chance(skill, victim).Value()) / 100.0;
 
@@ -83,7 +83,7 @@ Action::Result  Attack::Act(const IGame& game) const
     return std::move(ret);
 }
 
-Action::Result Attack::Fail(const IGame& game) const
+Action::Result Attack::Fail(const IGame& game, const std::wstring& reason) const
 {
     State attacker = game.Get(actor);
     State victim(game.Get(target));
@@ -93,7 +93,7 @@ Action::Result Attack::Fail(const IGame& game) const
     Result ret(game, actor);
     attacker.mp -= skill.mp;
     ret.state->Adjust(actor, attacker);
-    ret.description = actor.Description() + L" " + skill.name + L" miss " + target.Description();
+    ret.description = actor.Description() + L" " + skill.name + L" "+reason +L" " + target.Description();
     return std::move(ret);
 }
 

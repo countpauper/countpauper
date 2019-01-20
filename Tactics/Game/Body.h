@@ -18,6 +18,7 @@ namespace Game
         public:
             Part();
             bool IsVital() const;
+            bool Grip() const;
             std::wstring Name() const;
             std::wstring Description() const;
             bool operator<(const Part& other) const;
@@ -28,6 +29,7 @@ namespace Game
             bool IsHurt() const;
             Slot GetSlot() const;
             unsigned Height() const;
+            unsigned Length() const;
         private:
             friend std::wistream& operator>>(std::wistream& s, Body::Part& part);
             std::wstring name;
@@ -41,7 +43,9 @@ namespace Game
         bool Dead() const;
         void Hurt(const Part& part, const Damage& damage);
         const Part* Get(const Anatomy& target) const;
-        unsigned Height() const;
+        const Part* Get(const std::wstring& name) const;
+        std::vector<const Part*> Grip() const;
+        unsigned Length() const;
 
         Damage InnateDamage() const;
         Score Strength() const;

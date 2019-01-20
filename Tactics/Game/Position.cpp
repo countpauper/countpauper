@@ -29,10 +29,19 @@ namespace Game
         return std::sqrtf(Engine::sqr(float(x)) + Engine::sqr(float(y)));
     }
 
+    unsigned Position::SizeEl() const
+    {
+        return static_cast<unsigned>(std::round(std::sqrtf(Engine::sqr(float(HorizontalEl*x)) + Engine::sqr(float(HorizontalEl*y)))));
+    }
 
     float Position::Distance(const Position& other) const
     {
         return std::sqrtf(Engine::sqr(float(other.x - x)) + Engine::sqr(float(other.y - y)));
+    }
+
+    unsigned Position::DistanceEl(const Position& other) const
+    {
+        return static_cast<unsigned>(std::round(std::sqrtf(Engine::sqr(float(HorizontalEl*(other.x - x))) + Engine::sqr(HorizontalEl * (other.y - y)))));
     }
 
     Position& Position::operator+=(const Position& delta)
