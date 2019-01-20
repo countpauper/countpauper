@@ -37,12 +37,21 @@ namespace Game
 
     Score State::Strength() const
     {
-        return body.Strength() + EquipmentBonus(Attribute::Strength); 
+        return body.Strength() + AttributeBonus(Attribute::Strength);
     }
 
     Score State::AttributeScore(const Body::Part& limb, Attribute attribute) const
     {
-        return limb.Score(attribute) + EquipmentBonus(attribute);   // TODO: full bonus of weapon held in part, split armor bonus 
+        auto weapon = wielded.at(&limb);
+        auto result = limb.Score(attribute);
+        auto body = FullBodyBonus(attribute);
+        assert(body.Value() % 2 == 0);  // TODO: rounding
+        result += Bonus(body.Description(), body.Value() / wielded.size()); 
+        if (weapon)
+        {
+            result += weapon->Bonus(attribute); 
+        }
+        return result;
     }
 
     Score State::FreeLimbScore(const Weapon& weapon, Attribute attribute) const
@@ -108,21 +117,21 @@ namespace Game
 
     Score State::Agility() const
     {
-        return body.Agility() + Encumberance() + EquipmentBonus(Attribute::Agility);
+        return body.Agility() + Encumberance() + AttributeBonus(Attribute::Agility);
     }
 
     Score State::Constitution() const
     {
-        return body.Constitution() + EquipmentBonus(Attribute::Constitution);
+        return body.Constitution() + AttributeBonus(Attribute::Constitution);
     }
 
     Score State::Intelligence() const
     {
-        return body.Intelligence() + Charge() + EquipmentBonus(Attribute::Intelligence);
+        return body.Intelligence() + Charge() + AttributeBonus(Attribute::Intelligence);
     }
     Score State::Wisdom() const
     {
-        return body.Wisdom() + EquipmentBonus(Attribute::Wisdom);  
+        return body.Wisdom() + AttributeBonus(Attribute::Wisdom);
     }
 
     Score State::AttributeScore(Attribute attribute) const
@@ -183,6 +192,7 @@ namespace Game
         auto skillBonus = Bonus(skill.name + L"(" + damageBonus.description + L")", damageBonus.value);
         assert(skillBonus.value >= 0);  // negative skill bonus will be clipped, need it to use in damage operator ^
         auto weapon = MatchWeapon(skill);
+
         Damage skillDamage =
             Damage(Wound::Type::Blunt, Score(skillBonus)) +
             Damage(Wound::Type::Sharp, Score(skillBonus)) +
@@ -234,13 +244,15 @@ namespace Game
         auto wield = MatchWeapon(skill);
 
         Score result(Bonus(skill.name, skill.offset));
-        if (wield.first)
+        if ((wield.second) && (wield.first->Contributes(skill.attribute)))
         {
             result += AttributeScore(*wield.first, skill.attribute);
             result += FreeLimbScore(*wield.second, skill.attribute);
         }
         else
         {
+            // TODO: unless the attribute is None, find another available limb to use
+ 
             result += AttributeScore(skill.attribute);
         }
         if (victim)
@@ -281,13 +293,20 @@ namespace Game
         });
     }
 
-    Score State::EquipmentBonus(Attribute attribute) const
+    Score State::FullBodyBonus(Attribute attribute) const
     {
         Score armorBonus = std::accumulate(worn.begin(), worn.end(), Score(), [&attribute](const Score& total, const decltype(worn)::value_type& item)
         {
             return total + item->Bonus(attribute);
         });
-        return std::accumulate(wielded.begin(), wielded.end(), armorBonus, [&attribute](const Score& total, const decltype(wielded)::value_type& wield)
+        // TODO: effect bonus
+        return armorBonus;
+    }
+
+    Score State::AttributeBonus(Attribute attribute) const
+    {
+        Score bonus = FullBodyBonus(attribute);
+        return std::accumulate(wielded.begin(), wielded.end(), bonus, [&attribute](const Score& total, const decltype(wielded)::value_type& wield)
         {
             if (wield.second)
                 return total + wield.second->Bonus(attribute);

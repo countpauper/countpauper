@@ -30,6 +30,7 @@ namespace Game
             Slot GetSlot() const;
             unsigned Height() const;
             unsigned Length() const;
+            bool Contributes(Attribute attribute) const;
         private:
             friend std::wistream& operator>>(std::wistream& s, Body::Part& part);
             std::wstring name;

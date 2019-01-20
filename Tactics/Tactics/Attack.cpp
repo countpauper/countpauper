@@ -49,7 +49,7 @@ const Body::Part* Hit(const State& attacker, const State& victim, Trajectory tra
     return nullptr;
 }
 
-Action::Result  Attack::Act(const IGame& game) const
+Action::Result Attack::Act(const IGame& game) const
 {
     State attacker = game.Get(actor);
     State victim(game.Get(target));
@@ -66,7 +66,7 @@ Action::Result  Attack::Act(const IGame& game) const
     if (skillLevel.Value() == 0)
         return Fail(game, skillLevel.Description());
     Result ret(game, actor);
-    ret.chance = double(attacker.Chance(skill, victim).Value()) / 100.0;
+    // TODO: Fail due to miss? ret.chance = double(attacker.Chance(skill, victim).Value()) / 100.0;
 
     auto damage = attacker.AttackDamage(skill, skillLevel) - victim.Mitigation(*part);
     attacker.mp -= skill.mp;

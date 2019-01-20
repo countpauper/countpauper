@@ -39,7 +39,7 @@ namespace Game
     bool Body::Part::Grip() const
     {
         // TODO: flag
-        return attributes.count(Attribute::Strength)!=0;
+        return Contributes(Attribute::Strength);
     }
 
     std::wstring Body::Part::Name() const
@@ -77,6 +77,11 @@ namespace Game
     unsigned Body::Part::Length() const
     {
         return anatomy.size;
+    }
+
+    bool Body::Part::Contributes(Attribute attribute) const
+    {
+        return attributes.count(attribute) != 0;
     }
 
 
