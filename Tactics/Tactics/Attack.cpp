@@ -21,7 +21,7 @@ std::wstring Attack::Description() const
     return skill.name;
 }
 
-const Body::Part* Hit(const State& attacker, const State& victim, Trajectory trajectory, std::set<Targeting> targeting)
+const Body::Part* Hit(const State& attacker, const Body::Part* limb, const State& victim, Trajectory trajectory, std::set<Targeting> targeting)
 {
     assert(!attacker.direction.Prone());  // prone not supported yet here
     if (victim.direction.Prone())
@@ -30,7 +30,9 @@ const Body::Part* Hit(const State& attacker, const State& victim, Trajectory tra
     }
     if (targeting.count(Targeting::Swing))
     {
-        Anatomy origin(trajectory, 2, 3);  // TODO: attacking body part
+        auto height = limb ? limb->Height() : attacker.body.Length() / 2;
+        Anatomy origin(trajectory, height, 3);  // TODO: reach for height
+        // TODO: mirror for left arm/tail
         Anatomy facing(attacker.direction, victim.direction, 0);    // TODO: sensing body part or height difference
         Anatomy hitLocation(origin, facing);
         return victim.body.Get(hitLocation);
@@ -58,7 +60,9 @@ Action::Result Attack::Act(const IGame& game) const
     if (!attacker.IsPossible(skill, victim))
         return Result();
 
-    auto part = Hit(attacker, victim, trajectory, skill.target);
+    auto origin = attacker.SkillOrigin(skill);
+
+    auto part = Hit(attacker, origin, victim, trajectory, skill.target);
     if (!part)
         return Fail(game, L"miss");
 

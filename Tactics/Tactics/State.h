@@ -43,7 +43,7 @@ namespace Game
         Score Wisdom() const;
         Score AttributeScore(Attribute attribute) const;
         Score AttributeScore(const Body::Part& limb, Attribute attribute) const;
-        Score FreeLimbScore(const Weapon& weapon, Attribute attribute) const;
+        const Body::Part* SkillOrigin(const Skill& skill);
         Score SkillLevel(const Skill& skill, const State* victim = nullptr) const;
         Score Range(const Skill& skill) const;
         unsigned loyalty;
@@ -59,6 +59,7 @@ namespace Game
         std::pair<const Body::Part*, const Weapon*> MatchWeapon(const Skill& skill) const;
         Score ArmorBonus(const Skill& skill) const;
         Score FullBodyBonus(Attribute attribute) const;
+        Score FreeLimbScore(const Weapon& weapon, Attribute attribute) const;
         Score AttributeBonus(Attribute attribute) const;
 
         std::vector<const Armor*> worn;

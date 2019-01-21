@@ -239,6 +239,15 @@ namespace Game
         return mitigation;
     }
 
+    const Body::Part* State::SkillOrigin(const Skill& skill)
+    {
+        auto wield = MatchWeapon(skill);
+        if (wield.first)
+            return wield.first;
+        else
+            body.Get()
+    }
+
     Score State::SkillLevel(const Skill& skill, const State* victim) const
     {
         auto wield = MatchWeapon(skill);
@@ -252,7 +261,6 @@ namespace Game
         else
         {
             // TODO: unless the attribute is None, find another available limb to use
- 
             result += AttributeScore(skill.attribute);
         }
         if (victim)
