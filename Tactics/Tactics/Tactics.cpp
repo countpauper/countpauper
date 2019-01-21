@@ -11,7 +11,7 @@
 #include "Engine/Light.h"
 #include "Engine/Camera.h"
 #include "Engine/Random.h"
-#include "game.h"
+#include "Game/Game.h"
 #include "SkillBar.h"
 #include "TurnList.h"
 

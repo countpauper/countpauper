@@ -2,12 +2,12 @@
 #include <gl/GL.h>
 #include "Engine/Text.h"
 #include "Engine/Geometry.h"
+#include "Engine/Coordinate.h"
+#include "Game/Skills.h"
 #include "Actor.h"
 #include "Action.h"
 #include "Plan.h"
 #include "Game.h"
-#include "Skills.h"
-#include "Engine/Coordinate.h"
 
 namespace Game
 {
@@ -26,6 +26,7 @@ namespace Game
         static_assert(sizeof(unsigned) == sizeof(this), "Failed to use object pointer as id");
         return unsigned(this);
     }
+
 
     bool Object::Prone() const
     {
@@ -151,6 +152,11 @@ namespace Game
     bool Actor::IsAlly(const Actor& other) const
     {
         return GetTeam() == other.GetTeam();
+    }
+
+    void Actor::Turn()
+    {
+        body.Disengage();
     }
 
     void Actor::Activate(const Game& game)

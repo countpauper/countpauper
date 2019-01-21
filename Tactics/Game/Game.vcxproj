@@ -43,9 +43,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\iconv\include;..\libxml2\include;C:\libraries\boost\boost-1.62.0.0</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -57,9 +58,10 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\iconv\include;..\libxml2\include;C:\libraries\boost\boost-1.62.0.0</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -68,12 +70,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Action.cpp" />
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="Affect.cpp" />
     <ClCompile Include="Anatomy.cpp" />
+    <ClCompile Include="Attack.cpp" />
+    <ClCompile Include="Body.cpp" />
     <ClCompile Include="Damage.cpp" />
     <ClCompile Include="Direction.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Move.cpp" />
+    <ClCompile Include="Plan.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="Score.cpp" />
+    <ClCompile Include="Skills.cpp" />
     <ClCompile Include="Slot.cpp" />
+    <ClCompile Include="State.cpp" />
     <ClCompile Include="Stats.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -81,14 +95,28 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Action.h" />
+    <ClInclude Include="Actor.h" />
+    <ClInclude Include="Affect.h" />
     <ClInclude Include="Anatomy.h" />
+    <ClInclude Include="Attack.h" />
+    <ClInclude Include="Body.h" />
     <ClInclude Include="Damage.h" />
     <ClInclude Include="Direction.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="IGame.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="Move.h" />
+    <ClInclude Include="Plan.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Score.h" />
+    <ClInclude Include="Skills.h" />
     <ClInclude Include="Slot.h" />
+    <ClInclude Include="State.h" />
     <ClInclude Include="Stats.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Target.h" />
     <ClInclude Include="Targeting.h" />
     <ClInclude Include="Trajectory.h" />
   </ItemGroup>

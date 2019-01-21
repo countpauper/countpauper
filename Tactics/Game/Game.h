@@ -6,11 +6,11 @@
 #include <boost/signals2.hpp>
 #include "Engine/Coordinate.h"
 #include "Engine/Color.h"
-#include "Game/Direction.h"
+#include "Direction.h"
+#include "Skills.h"
 #include "Map.h"
 #include "IGame.h"
 #include "Item.h"
-#include "Skills.h"
 
 
 namespace Game
@@ -73,6 +73,7 @@ namespace Game
         Skills skills;
     protected:
         void Next();
+        void Turn();
         void Activate();
         void Activate(const Game::ActorList& group);
         void Trigger(const ActorList& triggers);

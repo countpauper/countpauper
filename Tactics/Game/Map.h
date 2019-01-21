@@ -3,10 +3,10 @@
 #include <array>
 #include <memory>
 #include "Engine/Image.h"
-#include "Game/Position.h"
-#include "Game/Direction.h"
 #include "Engine/Color.h"
 #include "Engine/Coordinate.h"
+#include "Position.h"
+#include "Direction.h"
 
 namespace Game
 {

@@ -3,9 +3,9 @@
 #include <set>
 #include <vector>
 #include "Item.h"
-#include "Game/Trajectory.h"
-#include "Game/Targeting.h"
-#include "Game/Stats.h"
+#include "Trajectory.h"
+#include "Targeting.h"
+#include "Stats.h"
 
 namespace Engine { class Image; }
 namespace Game

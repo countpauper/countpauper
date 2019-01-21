@@ -5,9 +5,9 @@
 #include <memory>
 #include <iostream>
 
-#include "Game/Damage.h"
-#include "Game/Slot.h"
-#include "Game/Stats.h"
+#include "Damage.h"
+#include "Slot.h"
+#include "Stats.h"
 
 namespace Game
 {

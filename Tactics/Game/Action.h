@@ -3,7 +3,7 @@
 #include <map>
 #include <functional>
 #include <memory>
-#include "Game/Trajectory.h"
+#include "Trajectory.h"
 
 namespace Game
 {

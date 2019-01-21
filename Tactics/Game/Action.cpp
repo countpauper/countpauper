@@ -3,7 +3,7 @@
 #include "Move.h"
 #include "Attack.h"
 #include "Game.h"
-#include "Skills.h"
+#include "Game/Skills.h"
 #include "State.h"
 #include "Actor.h"
 

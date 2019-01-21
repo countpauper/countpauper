@@ -18,7 +18,7 @@ namespace Game
         } },
         { Wound::Type::Sharp, {
             { ImmunePain, { L"Immune", L"Invulnerable", 0 } },
-            { 0, { L"Healthy", L"Slip", 0 } },
+            { 0, { L"Healthy", L"Deflect", 0 } },
             { 1, { L"Scratched", L"Scratch", 0 } },
             { 3, { L"Grazed", L"Graze", -1 } },
             { 6, { L"Cut", L"Cut", -2 } },

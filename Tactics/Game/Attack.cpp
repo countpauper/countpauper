@@ -2,11 +2,11 @@
 #include <gl/GL.h>
 #include "Engine/Text.h"
 #include "Engine/Random.h"
+#include "Engine/Image.h"
+#include "Skills.h"
 #include "Attack.h"
 #include "State.h"
-#include "Game.h"
 #include "Actor.h"
-#include "Skills.h"
 
 namespace Game
 {
@@ -56,7 +56,7 @@ Action::Result Attack::Act(const IGame& game) const
     State attacker = game.Get(actor);
     State victim(game.Get(target));
     attacker.direction = Direction(victim.position - attacker.position);
-   
+
     if (!attacker.IsPossible(skill, victim))
         return Result();
 
@@ -72,6 +72,10 @@ Action::Result Attack::Act(const IGame& game) const
     Result ret(game, actor);
     // TODO: Fail due to miss? ret.chance = double(attacker.Chance(skill, victim).Value()) / 100.0;
 
+    if (origin)
+    {
+        attacker.body.Get(*origin).Engage(skill);
+    }
     auto damage = attacker.AttackDamage(skill, skillLevel) - victim.Mitigation(*part);
     attacker.mp -= skill.mp;
     // TODO victim.Hurt for use in other actions
@@ -82,8 +86,7 @@ Action::Result Attack::Act(const IGame& game) const
     ret.state->Adjust(actor, attacker);
     ret.state->Adjust(target, victim);
     ret.description = actor.Description() + L" "+skill.name;
-    if (damage.Hurt())
-        ret.description += L" " + target.Description() + L"'s "+part->Name()+L":" + damage.ActionDescription();
+    ret.description += L" " + target.Description() + L"'s "+part->Name()+L":" + damage.ActionDescription();
     return std::move(ret);
 }
 

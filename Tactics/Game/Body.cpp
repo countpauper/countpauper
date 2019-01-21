@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "Body.h"
+#include "Score.h"
+#include "Skills.h"
+#include "Body.h"
 #include "Damage.h"
 #include <iostream>
 #include <numeric>
@@ -7,7 +10,10 @@
 namespace Game
 {
     Body::Part::Part() :
-        slot(Slot::Nothing)
+        slot(Slot::Nothing),
+        engagement(nullptr),
+        held(nullptr),
+        control(nullptr)
     {
     }
     bool Body::Part::operator<(const Part& other) const
@@ -51,12 +57,12 @@ namespace Game
         return name + L"= " + health.StateDescription();
     }
 
-    Score Body::Part::Score(Attribute attribute) const
+    Score Body::Part::AttributeScore(Attribute attribute) const
     {
         if (attributes.count(attribute) != 0)
-            return Game::Score(name, score) + Bonus(health.StateDescription(), health.StatPenalty());
+            return Score(name, score) + Bonus(health.StateDescription(), health.StatPenalty());
         else
-            return Game::Score();
+            return Score();
     }
 
     bool Body::Part::IsHurt() const
@@ -84,6 +90,23 @@ namespace Game
         return attributes.count(attribute) != 0;
     }
 
+    void Body::Part::Engage(const Skill& skill)
+    {
+        engagement = &skill;
+    }
+    void Body::Part::Disengage()
+    {
+        engagement = nullptr;
+    }
+
+    bool Body::Part::IsAvailable(const Skill& skill) const
+    {
+        if (control)
+            return false;
+        if ((engagement) && (!skill.Follows(*engagement)))
+            return false;
+        return true;
+    }
 
     std::wstring Body::Description() const
     {
@@ -113,6 +136,14 @@ namespace Game
                 return true;
         }
         return false;
+    }
+
+    void Body::Disengage()
+    {
+        for (auto& part : parts)
+        {
+            part.Disengage();
+        }
     }
 
     void Body::Hurt(const Part& part, const Damage& damage)
@@ -145,12 +176,28 @@ namespace Game
         return nullptr;
     }
 
+    Body::Part& Body::Get(const Part& part)
+    {
+        return const_cast<Part&>(*Get(part.Name()));
+    }
+
     std::vector<const Body::Part*> Body::Grip() const
     {
         std::vector<const Body::Part*> result;
         for (auto& part : parts)
         {
             if (part.Grip())
+                result.push_back(&part);
+        }
+        return result;
+    }
+
+    std::vector<const Body::Part*> Body::FindAvailable(const Skill& skill) const
+    {
+        std::vector<const Body::Part*> result;
+        for (auto& part : parts)
+        {
+            if ((part.IsAvailable(skill)) && (part.Contributes(skill.attribute)))
                 result.push_back(&part);
         }
         return result;
@@ -171,27 +218,27 @@ namespace Game
     }
     Score Body::Strength() const
     {
-        return std::accumulate(parts.begin(), parts.end(), Score(), [](const Score& s, const Part& part) { return s + part.Score(Attribute::Strength); });
+        return std::accumulate(parts.begin(), parts.end(), Score(), [](const Score& s, const Part& part) { return s + part.AttributeScore(Attribute::Strength); });
     }
 
     Score Body::Agility() const
     {
-        return std::accumulate(parts.begin(), parts.end(), Score(), [](const Score& s, const Part& part) { return s + part.Score(Attribute::Agility); });
+        return std::accumulate(parts.begin(), parts.end(), Score(), [](const Score& s, const Part& part) { return s + part.AttributeScore(Attribute::Agility); });
     }
 
     Score Body::Constitution() const
     {
-        return std::accumulate(parts.begin(), parts.end(), Score(), [](const Score& s, const Part& part) { return s + part.Score(Attribute::Constitution); });
+        return std::accumulate(parts.begin(), parts.end(), Score(), [](const Score& s, const Part& part) { return s + part.AttributeScore(Attribute::Constitution); });
     }
     
     Score Body::Intelligence() const
     {
-        return std::accumulate(parts.begin(), parts.end(), Score(), [](const Score& s, const Part& part) { return s + part.Score(Attribute::Intelligence); });
+        return std::accumulate(parts.begin(), parts.end(), Score(), [](const Score& s, const Part& part) { return s + part.AttributeScore(Attribute::Intelligence); });
     }
     
     Score Body::Wisdom() const
     {
-        return std::accumulate(parts.begin(), parts.end(), Score(), [](const  Score& s, const Part& part) { return s + part.Score(Attribute::Wisdom); });
+        return std::accumulate(parts.begin(), parts.end(), Score(), [](const  Score& s, const Part& part) { return s + part.AttributeScore(Attribute::Wisdom); });
     }
 
     std::wistream& operator>>(std::wistream& s, Body::Part& part)

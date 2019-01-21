@@ -3,9 +3,9 @@
 #include <deque>
 #include "Engine/Error.h"
 #include "SkillBar.h"
-#include "Game.h"
-#include "Actor.h"
-#include "Skills.h"
+#include "Game/Game.h"
+#include "Game/Actor.h"
+#include "Game/Skills.h"
 
 namespace Game
 {

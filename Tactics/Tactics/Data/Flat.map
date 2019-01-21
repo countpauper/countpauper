@@ -7,7 +7,7 @@ RArm Right[2-3] Arms Str 5 ,,,,
 LArm Left[2-3] Arms Str 5 ,,,,
 Legs Around[0-1] Legs Agi 7 ,,,,
 2 1 8
-Studded Dragon Hood
+Studded Elephant Hood
 Studded Demon Brigandine
 RArm Normal Yew Wand
 Wait Hack Zap Dodge Block Parry Unarmed Walk 
@@ -18,12 +18,12 @@ Belly Sagital[2] Belly Con 10 ,,,,
 RArm Right[2-3] Arms Str 6 ,,,,
 LArm Left[2-3] Arms Str 4 ,,,,
 Legs Around[0-1] Legs Agi 10 ,,,,
-2 2 6
+2 2 7
 Reinforced Adamantine Breast-Plate
 Normal Steel Coif
 RArm Normal Steel Longsword
 LArm Normal Steel Targe
-Wait Hack Block Parry Unarmed Walk 
+Wait Hack Slash Block Parry Unarmed Walk 
 Flat 4 4 data/map.png
 4 0 0 0 
 4 0 0 0 

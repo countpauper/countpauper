@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include <gl/GL.h>
 #include "Affect.h"
-#include "Game.h"
 #include "State.h"
 #include "Actor.h"
 #include "Skills.h"

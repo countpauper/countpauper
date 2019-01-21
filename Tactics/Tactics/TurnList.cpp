@@ -2,10 +2,10 @@
 #include <gl/GL.h>
 #include "Engine/Error.h"
 #include "Engine/Text.h"
-#include "Game.h"
+#include "Game/Game.h"
+#include "Game/Actor.h"
+#include "Game/Plan.h"
 #include "TurnList.h"
-#include "Actor.h"
-#include "Plan.h"
 
 namespace Game
 {

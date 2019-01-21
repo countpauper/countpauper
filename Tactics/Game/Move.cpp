@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include <gl/GL.h>
 #include "Move.h"
-#include "Game.h"
-#include "Game/Direction.h"
+#include "IGame.h"
+#include "Direction.h"
 #include "Actor.h"
 
 namespace Game

@@ -108,41 +108,14 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Game\Body.h" />
-    <ClInclude Include="Action.h" />
-    <ClInclude Include="Actor.h" />
-    <ClInclude Include="Affect.h" />
-    <ClInclude Include="Attack.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="IGame.h" />
-    <ClInclude Include="Item.h" />
-    <ClInclude Include="Map.h" />
-    <ClInclude Include="Move.h" />
-    <ClInclude Include="Plan.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SkillBar.h" />
-    <ClInclude Include="Skills.h" />
-    <ClInclude Include="State.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Tactics.h" />
-    <ClInclude Include="Target.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TurnList.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Game\Body.cpp" />
-    <ClCompile Include="Action.cpp" />
-    <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="Affect.cpp" />
-    <ClCompile Include="Item.cpp" />
-    <ClCompile Include="Attack.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Map.cpp" />
-    <ClCompile Include="Move.cpp" />
-    <ClCompile Include="Plan.cpp" />
     <ClCompile Include="SkillBar.cpp" />
-    <ClCompile Include="Skills.cpp" />
-    <ClCompile Include="State.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

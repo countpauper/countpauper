@@ -2,14 +2,18 @@
 #include <string>
 #include <vector>
 #include <set>
-#include "Game/Stats.h"
-#include "Game/Damage.h"
-#include "Game/Anatomy.h"
+#include "Stats.h"
+#include "Damage.h"
+#include "Anatomy.h"
 #include "Score.h"
-#include "Game/Slot.h"
+#include "Slot.h"
 
 namespace Game
 {
+    class Actor;
+    class Skill;
+    class Weapon;
+
     class Body
     {
     public:
@@ -23,7 +27,7 @@ namespace Game
             std::wstring Description() const;
             bool operator<(const Part& other) const;
             bool Match(Anatomy target) const;
-            Score Score(Attribute attribute) const;
+            Score AttributeScore(Attribute attribute) const;
             bool Disabled() const;
             void Hurt(const Damage& damage);
             bool IsHurt() const;
@@ -31,6 +35,9 @@ namespace Game
             unsigned Height() const;
             unsigned Length() const;
             bool Contributes(Attribute attribute) const;
+            void Engage(const Skill& skill);
+            void Disengage();
+            bool IsAvailable(const Skill& skill) const;
         private:
             friend std::wistream& operator>>(std::wistream& s, Body::Part& part);
             std::wstring name;
@@ -39,13 +46,19 @@ namespace Game
             Attributes attributes;
             Stats::Score score;
             Damage health;
+            const Skill* engagement;
+            const Weapon* held;
+            const Actor* control;
         };
         std::wstring Description() const;
         bool Dead() const;
         void Hurt(const Part& part, const Damage& damage);
+        void Disengage();
         const Part* Get(const Anatomy& target) const;
         const Part* Get(const std::wstring& name) const;
+        Part& Get(const Part& part);
         std::vector<const Part*> Grip() const;
+        std::vector<const Part*> FindAvailable(const Skill& skill) const;
         unsigned Length() const;
 
         Damage InnateDamage() const;

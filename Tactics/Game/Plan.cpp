@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include "Engine/Random.h"
+#include "Game/Skills.h"
 #include "Plan.h"
 #include "Action.h"
 #include "Actor.h"

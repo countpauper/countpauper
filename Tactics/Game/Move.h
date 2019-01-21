@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Game/Direction.h"
+#include "Direction.h"
 #include "State.h"
 #include "Action.h"
 

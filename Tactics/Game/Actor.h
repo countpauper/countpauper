@@ -3,11 +3,11 @@
 #include <memory>
 #include <vector>
 #include "Engine/Random.h"
-#include "Game/Position.h"
-#include "Game/Direction.h"
-#include "Game/Body.h"
-#include "Game/Stats.h"
-#include "Game/Score.h"
+#include "Position.h"
+#include "Direction.h"
+#include "Body.h"
+#include "Stats.h"
+#include "Score.h"
 #include "Item.h"
 #include "Skills.h"
 #include "Target.h"
@@ -23,6 +23,7 @@ namespace Game
     public:
         Object();
         virtual ~Object() = default;
+        virtual void Turn() = 0;
         virtual void Activate(const Game& game) = 0;
         virtual void Render() const = 0;
         unsigned Id() const;
@@ -44,6 +45,7 @@ namespace Game
         Direction GetDirection() const;
         void Apply(const State& result);
         bool IsAlly(const Actor& other) const;
+        void Turn() override;
         void Activate(const Game& game) override;
         bool Trigger(const Actor& actor, Game& game);
         bool IsActive() const;

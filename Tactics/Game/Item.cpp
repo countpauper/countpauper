@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Engine/CSV.h"
-#include "Game/Score.h"
-#include "Game/Direction.h"
+#include "Score.h"
+#include "Direction.h"
 #include "Item.h"
 #include "Game.h"
 

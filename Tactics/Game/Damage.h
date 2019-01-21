@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 #include <set>
-#include "Game/Score.h"
+#include "Score.h"
 
 namespace Game
 {

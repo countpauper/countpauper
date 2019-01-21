@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include <gl/GL.h>
+#include "Skills.h"
 #include "Game.h"
 #include "Map.h"
 #include "Actor.h"
 #include "Plan.h"
-#include "Skills.h"
 #include "Item.h"
 #include <fstream>
 
@@ -136,10 +136,18 @@ namespace Game
         ActorList group = NextGroup();
         if (group.empty())
             return;
+        Turn();
         Activate(group);
         Trigger(group);
     }
 
+    void Game::Turn()
+    {
+        for (auto& object : objects)
+        {
+            object->Turn();
+        }
+    }
     void Game::Activate(const Game::ActorList& group)
     {
         ActorList active;
