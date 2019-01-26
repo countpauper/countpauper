@@ -162,19 +162,35 @@ namespace Game
     void Actor::Activate(const Game& game)
     {
         assert(!active);
-        auto mps = GetMaxMovePoints();
-        mp = mps.Value();
-        if (CanAct())
+        if (Dead())
         {
-            active = true;
-            randomState = Engine::Random().Store();
-            OutputDebugStringW((L"Turn " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
+            mp = 0;
+            OutputDebugStringW((L"Dead " + name + L"\r\n").c_str());
         }
         else
         {
-            active = false;
-            OutputDebugStringW((L"Skip " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
+            auto mps = GetMaxMovePoints();
+            // carry over at most 1 point from the previous turn, so very slow characters can act every other turn at least
+            mps+=Bonus(L"Carry", std::min(static_cast<int>(mp), 1));
+            mp = mps.Value();
+            if (CanAct())
+            {
+                active = true;
+                randomState = Engine::Random().Store();
+                OutputDebugStringW((L"Turn " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
+            }
+            else
+            {
+                active = false;
+                OutputDebugStringW((L"Skip " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
+            }
         }
+    }
+
+
+    void Actor::Deactivate()
+    {
+        active = false;
     }
 
     bool Actor::Trigger(const Actor& actor, Game& game)
@@ -198,11 +214,6 @@ namespace Game
     bool Actor::IsIdle() const
     {
         return active && !plan;
-    }
-
-    bool Actor::IsEngaged() const
-    {
-        return ((plan) && (plan->Engaging()));
     }
 
     bool Actor::IsAnticipating() const
@@ -243,16 +254,16 @@ namespace Game
         if (plan)
         {
             if (plan->Anticipating())
-                active = false;
+                Deactivate();
             else
             {
                 RestoreRandom();
                 plan->Compute(game);
                 if (plan->Execute(game))
                 {
-                    if (plan->Engaging())
-                        active = false;
                     plan.reset();
+                    if (!CanAct())
+                        Deactivate();
                 }
             }
         }
@@ -271,7 +282,16 @@ namespace Game
     
     bool Actor::CanAct() const
     {
-        return !Dead() && mp > 0;
+        for (auto skill : knowledge)
+        {
+            if (skill->IsWait())
+                continue;
+            if (!skill->IsActive())
+                continue;
+            if (IsPossible(*skill))
+                return true;
+        }
+        return false;
     }
 
     const Actor::Knowledge& Actor::GetSkills() const
@@ -296,27 +316,26 @@ namespace Game
     std::vector<const Armor*> Actor::Worn() const
     {
         std::vector<const Armor*> result(worn.size());
-        std::transform(worn.begin(), worn.end(), result.begin(), [](const Armor& item)
+        std::transform(worn.begin(), worn.end(), result.begin(), [](const decltype(worn)::value_type &item)
         {
-            return &item;
+            return item.get();
+        });
+        return result;
+    }
+
+    std::vector<const Weapon*> Actor::Carried() const
+    {
+        std::vector<const Weapon*> result(carried.size());
+        std::transform(carried.begin(), carried.end(), result.begin(), [](const decltype(carried)::value_type& item)
+        {
+            return item.get();
         });
         return result;
     }
 
     std::map<const Body::Part*, const Weapon*> Actor::Wielded() const
     {
-        std::map<const Body::Part*, const Weapon*> result;
-
-        std::transform(wielded.begin(), wielded.end(), std::inserter(result, result.end()), [](const decltype(wielded)::value_type& wield)
-        {
-            return std::make_pair(wield.first, &wield.second);
-        });
-        auto hands = body.Grip();
-        for (auto hand : hands)
-        {
-            result.insert(std::pair<const Body::Part*, const Weapon*>(hand, nullptr));
-        }
-        return result;
+        return body.Wielded();
     }
 
     const Skill* Actor::DefaultAttack() const
@@ -383,14 +402,13 @@ namespace Game
 
     bool Actor::IsPossible(const Skill& skill) const
     {
-        if (skill.weapon == Type::Weapon::Style::All)
+        if (mp < skill.mp)
+            return false;   // TODO: long casting spells still allowed
+        if (skill.IsWait())
             return true;
-        if (skill.weapon == Type::Weapon::Style::None)
-            return wielded.empty();
-        return (std::any_of(wielded.begin(), wielded.end(), [&skill](const decltype(wielded)::value_type& pair)
-        {
-            return pair.second.Match(skill.weapon);
-        }));
+        if (!body.Ready(skill))
+            return false;   // TODO: should otherwise check Kinetic chain
+        return true;
     }
 
     std::wistream& operator>>(std::wistream& s, Actor& actor)
@@ -408,16 +426,20 @@ namespace Game
         {
             std::wstring typeName, materialName, bonusName;
             s >> bonusName >> materialName >> typeName;
-            actor.worn.emplace_back(Armor(game, typeName, materialName, bonusName));
+            actor.worn.emplace_back(std::make_unique<Armor>(game, typeName, materialName, bonusName));
         }
-        while (actor.wielded.size()<weapons)
+        while (actor.carried.size()<weapons)
         {
             std::wstring limbName, typeName, materialName, bonusName;
             s >> limbName >> bonusName >> materialName >> typeName;
-            auto limb = actor.body.Get(limbName);
-            if (!limb)
-                throw std::runtime_error("Wielded limb not found");
-            actor.wielded.emplace(std::make_pair(limb,Weapon(game, typeName, materialName, bonusName)));
+            actor.carried.emplace_back(std::make_unique<Weapon>(game, typeName, materialName, bonusName));
+            if (limbName != L"None")
+            {
+                auto limb = actor.body.Get(limbName);
+                if (!limb)
+                    throw std::runtime_error("Wielded limb not found");
+                actor.body.Get(*limb).Hold(*actor.carried.back());
+            }
         }
         actor.knowledge.resize(skills);
         for (auto& skill : actor.knowledge)

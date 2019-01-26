@@ -94,9 +94,24 @@ namespace Game
     {
         engagement = &skill;
     }
+
     void Body::Part::Disengage()
     {
         engagement = nullptr;
+    }
+
+    void Body::Part::Hold(const Weapon& item)
+    {
+        held = &item;
+    }
+
+    const Weapon* Body::Part::Held() const
+    {
+        return held;
+    }
+    void Body::Part::Drop()
+    {
+        held = nullptr;
     }
 
     bool Body::Part::IsAvailable(const Skill& skill) const
@@ -105,7 +120,25 @@ namespace Game
             return false;
         if ((engagement) && (!skill.Follows(*engagement)))
             return false;
-        return true;
+        if (Grip())
+        {
+            return skill.Require(held);
+        }
+        else
+            return true;
+    }
+
+    bool Body::Part::IsUsed(const Skill& skill) const
+    {
+        if (Grip())
+        {
+            return skill.Require(held);
+        }
+        else if (skill.weapon == Type::Weapon::None)
+        {
+            return Contributes(skill.attribute);
+        }
+        return false;
     }
 
     std::wstring Body::Description() const
@@ -130,12 +163,7 @@ namespace Game
 
     bool Body::Dead() const
     {
-        for (auto& part : parts)
-        {
-            if (part.IsVital() && part.Disabled())
-                return true;
-        }
-        return false;
+        return (Intelligence().Value() == 0) || (Wisdom().Value() == 0);
     }
 
     void Body::Disengage()
@@ -144,6 +172,17 @@ namespace Game
         {
             part.Disengage();
         }
+    }
+
+    std::map<const Body::Part*, const Weapon*> Body::Wielded() const
+    {
+        std::map<const Body::Part*, const Weapon*> result;
+        for (auto& part : parts)
+        {
+            if (part.Grip())
+                result.emplace(std::make_pair(&part, part.Held()));
+        }
+        return result;
     }
 
     void Body::Hurt(const Part& part, const Damage& damage)
@@ -181,38 +220,73 @@ namespace Game
         return const_cast<Part&>(*Get(part.Name()));
     }
 
-    std::vector<const Body::Part*> Body::Grip() const
+    std::set<const Body::Part*> Body::Grip() const
     {
-        std::vector<const Body::Part*> result;
+        std::set<const Body::Part*> result;
         for (auto& part : parts)
         {
             if (part.Grip())
-                result.push_back(&part);
+                result.emplace(&part);
         }
         return result;
     }
 
-    std::vector<const Body::Part*> Body::FindAvailable(const Skill& skill) const
+    std::set<const Body::Part*> Body::FindAvailable(const Skill& skill) const
     {
-        std::vector<const Body::Part*> result;
+        std::set<const Body::Part*> result;
         for (auto& part : parts)
         {
-            if ((part.IsAvailable(skill)) && (part.Contributes(skill.attribute)))
-                result.push_back(&part);
+            if ((part.IsUsed(skill)) && (part.IsAvailable(skill)))
+                result.emplace(&part);
         }
         return result;
     }
 
-    std::vector<const Body::Part*> Body::KineticChain(const Part& origin) const
+    bool Body::Ready(const Skill& skill) const
+    {
+        auto chain = AvailableKineticChain(skill);
+        return !chain.empty();
+    }
+
+    std::set<const Body::Part*> Body::AvailableKineticChain(const Skill& skill) const
+    {
+        auto available = FindAvailable(skill);
+        for (auto limb : available)
+        {
+            auto chain = KineticChain(*limb);
+            if (std::all_of(chain.begin(), chain.end(), [&skill](const decltype(chain)::value_type& part)
+            {
+                return part->IsAvailable(skill);
+            }))
+            {
+                return chain;
+            }
+        }
+        return std::set<const Body::Part*>();
+    }
+
+
+    void Body::Engage(const Skill& skill)
+    {
+        auto chain = AvailableKineticChain(skill);
+        for (auto link : chain)
+        {
+            Get(*link).Engage(skill);
+        }
+   }
+
+
+    std::set<const Body::Part*> Body::KineticChain(const Part& origin) const
     {
         // Doesn't actually connect the whole chain, just adds a (first) agility body part
-        std::vector<const Body::Part*> result;
+        std::set<const Body::Part*> result;
+        result.emplace(&origin);
         for (auto& part : parts)
         {
             // TODO: depends on position of actor, flying, swimming, standing
             if (part.Contributes(Attribute::Agility))
             {
-                result.push_back(&part);
+                result.emplace(&part);
                 break;
             }
         }

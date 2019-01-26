@@ -49,7 +49,7 @@ namespace Game
         unsigned loyalty;
         bool Prone() const;
         void Fall();
-        void KineticChain(const Skill& skill);
+        void Engage(const Skill& skill);
     private:
         Bonus StrengthBonus() const;
         Bonus Encumberance() const;
@@ -64,7 +64,7 @@ namespace Game
         Score AttributeBonus(Attribute attribute) const;
 
         std::vector<const Armor*> worn;
-        std::map<const Body::Part*, const Weapon*> wielded;
+        std::vector<const Weapon*> carried;
         Actor::Knowledge knowledge;
     };
 

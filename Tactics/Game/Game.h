@@ -79,7 +79,6 @@ namespace Game
         void Trigger(const ActorList& triggers);
         void AI();
         void Execute();
-        bool HasPlan(const Actor& actor) const;
         void SetSelectedActor(const Actor* selected);
 
         std::unique_ptr<Object> Extract(const Object& object);

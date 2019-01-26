@@ -26,12 +26,14 @@ namespace Game
             Button(Button&& other);
             void Render() const;
             unsigned HotKey() const;
+            void Enable(bool on);
             void Highlight(bool on);
             const Skill* skill;
 
         private:
             Engine::Image icon;
             unsigned hotKey;
+            bool enabled;
             bool highlighted;
         };
 

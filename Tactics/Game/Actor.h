@@ -47,10 +47,10 @@ namespace Game
         bool IsAlly(const Actor& other) const;
         void Turn() override;
         void Activate(const Game& game) override;
+        void Deactivate();
         bool Trigger(const Actor& actor, Game& game);
         bool IsActive() const;
         bool IsIdle() const;    // active, but no plan
-        bool IsEngaged() const; // has an engaging plan
         bool IsAnticipating() const; 
         
         void AI(Game& game);
@@ -73,6 +73,7 @@ namespace Game
         int MovePoints() const;
 
         std::vector<const Armor*> Worn() const;
+        std::vector<const Weapon*> Carried() const;
         std::map<const Body::Part*, const Weapon*> Wielded() const;
         std::unique_ptr<Plan> plan;
     private:
@@ -86,8 +87,8 @@ namespace Game
         unsigned team;
         Direction direction;
         Knowledge knowledge;
-        std::vector<Armor> worn;
-        std::map<const Body::Part*, Weapon> wielded;
+        std::vector<std::unique_ptr<Armor>> worn;
+        std::vector<std::unique_ptr<Weapon>> carried;
     };
     std::wistream& operator>>(std::wistream& s, Actor& actor);
 

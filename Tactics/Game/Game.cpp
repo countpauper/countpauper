@@ -196,23 +196,13 @@ namespace Game
             SelectActor(*active.front());
     }
 
-    bool Game::HasPlan(const Actor& actor) const
-    {
-        // TODO: wait plans don't count, it's about state changing plans
-        //  activated list should be order of planning = order of activation
-        //  planning should start at the state of the previously planned team mate 
-        //  this allows targeting active team mates 
-        //  planning should change order/activation
-        return actor.plan != nullptr;
-    }
-
     void Game::SelectActor(const Actor& actor)
     {
         auto ptr = Extract(actor);
         auto it = std::find_if(objects.begin(), objects.end(), [](const decltype(objects)::value_type& object)
         {
             const auto a = dynamic_cast<const Actor*>(object.get());
-            return (a) && (!a->IsEngaged());
+            return (a) && (!a->IsAnticipating());
         });
         objects.insert(it, std::move(ptr));
         Focus(actor);

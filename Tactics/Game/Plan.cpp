@@ -505,6 +505,13 @@ namespace Game
         return actor.WaitSkill();
     }
 
+    bool SkipPlan::Execute(Game& game) const
+    {
+        OutputDebugStringW((Description() + L"\r\n").c_str());
+        const_cast<Actor&>(actor).Deactivate();
+        return true;
+    }
+
 
     PathPlan::PathPlan(const Actor& actor, const Position& target, const Game& game) :
         Plan(actor),

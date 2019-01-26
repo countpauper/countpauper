@@ -15,7 +15,7 @@ namespace Game
         body(actor.body),
         loyalty(actor.GetTeam()),
         worn(actor.Worn()),
-        wielded(actor.Wielded()),
+        carried(actor.Carried()),
         knowledge(actor.GetSkills())
     {
     }
@@ -44,6 +44,7 @@ namespace Game
 
     Score State::AttributeScore(const Body::Part& limb, Attribute attribute) const
     {
+        auto wielded = body.Wielded();
         auto weapon = wielded.at(&limb);
         auto result = limb.AttributeScore(attribute);
         auto body = FullBodyBonus(attribute);
@@ -59,6 +60,7 @@ namespace Game
     Score State::FreeLimbScore(const Weapon& weapon, Attribute attribute) const
     {
         Score result;
+        auto wielded = body.Wielded();
         for (auto wield : wielded)
         {
             if (!wield.second)
@@ -76,9 +78,8 @@ namespace Game
             int weight = armor->GetLoad().weight;
             return total + Bonus(armor->Name() + L"(" + std::to_wstring(weight) + L"lbs)", weight);
         });
-        encumberance = std::accumulate(wielded.begin(), wielded.end(), encumberance, [](const Score& total, const decltype(wielded)::value_type& wield) -> Score
+        encumberance = std::accumulate(carried.begin(), carried.end(), encumberance, [](const Score& total, const decltype(carried)::value_type& weapon) -> Score
         {
-            auto weapon = wield.second;
             if (weapon)
             {
                 int weight = weapon->GetLoad().weight;
@@ -100,9 +101,8 @@ namespace Game
             int enchantment = armor->GetLoad().enchantment;
             return total + Bonus(armor->Name() + L"(" + std::to_wstring(enchantment) + L"W)", enchantment);
         });
-        charge = std::accumulate(wielded.begin(), wielded.end(), charge , [](const Score& total, const decltype(wielded)::value_type& wield) -> Score
+        charge = std::accumulate(carried.begin(), carried.end(), charge , [](const Score& total, const decltype(carried)::value_type& weapon) -> Score
         {
-            auto weapon = wield.second;
             if (weapon)
             {
                 int enchantment = weapon->GetLoad().enchantment;
@@ -255,7 +255,7 @@ namespace Game
             auto available = body.FindAvailable(skill);
             if (available.empty())
                 std::runtime_error("No skill origin because no limb is available"); // should not be possible
-            return available.front();
+            return *available.begin();
         }
     }
 
@@ -325,6 +325,7 @@ namespace Game
     Score State::AttributeBonus(Attribute attribute) const
     {
         Score bonus = FullBodyBonus(attribute);
+        auto wielded = body.Wielded();
         return std::accumulate(wielded.begin(), wielded.end(), bonus, [&attribute](const Score& total, const decltype(wielded)::value_type& wield)
         {
             if (wield.second)
@@ -336,6 +337,7 @@ namespace Game
 
     std::pair<const Body::Part*,const Weapon*> State::MatchWeapon(const Skill& skill) const
     {
+        auto wielded = body.Wielded();
         for (const auto& wield: wielded)
         {
             if ((wield.second) && (wield.second->Match(skill.weapon)))
@@ -359,17 +361,9 @@ namespace Game
         return range;
     }
 
-    void State::KineticChain(const Skill& skill)
+    void State::Engage(const Skill& skill)
     {
-        auto origin = SkillOrigin(skill);
-        if (origin)
-        {
-            body.Get(*origin).Engage(skill);
-            for (auto part : body.KineticChain(*origin))
-            {
-                body.Get(*part).Engage(skill);
-            }
-        }
+        body.Engage(skill);
     }
 
     GameState::GameState(const IGame& parent) :

@@ -24,6 +24,7 @@ public:
     Bonus GetChance(const Score& level) const;
 
     bool Match(const std::wstring& category) const;
+    bool Require(const Weapon* item) const;
     bool Follows(const Skill& previous) const;
     unsigned Id() const;
     Engine::Image Icon() const;

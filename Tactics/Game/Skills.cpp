@@ -12,6 +12,7 @@
 #include "Move.h"
 #include "Actor.h"
 #include "Target.h"
+#include "Item.h"
 
 namespace Game
 {
@@ -94,6 +95,14 @@ namespace Game
     bool Skill::Match(const std::wstring& category) const
     {
         return categories.count(category) > 0;
+    }
+
+    bool Skill::Require(const Weapon* item) const
+    {
+        if (weapon == ::Game::Type::Weapon::Style::None)
+            return item == nullptr;
+        else
+            return item && item->Match(weapon);
     }
 
     bool Skill::Follows(const Skill& previous) const

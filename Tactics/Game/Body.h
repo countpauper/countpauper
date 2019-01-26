@@ -37,7 +37,11 @@ namespace Game
             bool Contributes(Attribute attribute) const;
             void Engage(const Skill& skill);
             void Disengage();
+            void Hold(const Weapon& item);
+            void Drop();
+            const Weapon* Held() const;
             bool IsAvailable(const Skill& skill) const;
+            bool IsUsed(const Skill& skill) const;
         private:
             friend std::wistream& operator>>(std::wistream& s, Body::Part& part);
             std::wstring name;
@@ -54,12 +58,14 @@ namespace Game
         bool Dead() const;
         void Hurt(const Part& part, const Damage& damage);
         void Disengage();
+        std::map<const Part*, const Weapon*> Wielded() const;
         const Part* Get(const Anatomy& target) const;
         const Part* Get(const std::wstring& name) const;
         Part& Get(const Part& part);
-        std::vector<const Part*> Grip() const;
-        std::vector<const Part*> FindAvailable(const Skill& skill) const;
-        std::vector<const Part*> KineticChain(const Part& origin) const;
+        std::set<const Part*> Grip() const;
+        bool Ready(const Skill& skill) const;
+        void Engage(const Skill& skill);
+        std::set<const Part*> FindAvailable(const Skill& skill) const;
         unsigned Length() const;
 
         Damage InnateDamage() const;
@@ -70,6 +76,9 @@ namespace Game
         Score Wisdom() const;
 
     private:
+        std::set<const Part*> Required(const Skill& skill) const;
+        std::set<const Part*> KineticChain(const Part& origin) const;
+        std::set<const Body::Part*> AvailableKineticChain(const Skill& skill) const;
         friend std::wistream& operator>>(std::wistream& s, Body& body);
         std::vector<Part> parts;
     };

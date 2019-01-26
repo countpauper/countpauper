@@ -87,7 +87,7 @@ namespace Game
 
     void TurnList::Item::RenderPlan() const
     {
-        if (!actor.plan)
+        if (!actor.plan || !actor.plan->Valid())
             return;
         glPushMatrix();
         float height = static_cast<float>(Height())-3;
@@ -119,8 +119,6 @@ namespace Game
             text = L" +";
         else if (!actor.CanAct())
             text = L" -";
-        else if (actor.IsEngaged())
-            text = L"#";
         else if (actor.IsActive())
             text = L"*";
         else if (actor.IsAnticipating())

@@ -72,7 +72,7 @@ Action::Result Attack::Act(const IGame& game) const
     Result ret(game, actor);
     // TODO: Fail due to miss? ret.chance = double(attacker.Chance(skill, victim).Value()) / 100.0;
 
-    attacker.KineticChain(skill);
+    attacker.Engage(skill);
 
     auto damage = attacker.AttackDamage(skill, skillLevel) - victim.Mitigation(*part);
     attacker.mp -= skill.mp;
@@ -97,6 +97,7 @@ Action::Result Attack::Fail(const IGame& game, const std::wstring& reason) const
         return Result();
     Result ret(game, actor);
     attacker.mp -= skill.mp;
+    attacker.Engage(skill);
     ret.state->Adjust(actor, attacker);
     ret.description = actor.Description() + L" " + skill.name + L" "+reason +L" " + target.Description();
     return std::move(ret);

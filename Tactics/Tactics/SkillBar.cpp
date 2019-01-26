@@ -11,6 +11,7 @@ namespace Game
 {
     SkillBar::Button::Button(const Skill* skill, unsigned hotKey) :
         hotKey(hotKey),
+        enabled(false),
         highlighted(false),
         skill(skill)
     {
@@ -28,9 +29,14 @@ namespace Game
         hotKey(other.hotKey),
         skill(other.skill),
         icon(std::move(other.icon)),
+        enabled(other.enabled),
         highlighted(other.highlighted)
     {
+    }
 
+    void SkillBar::Button::Enable(bool on)
+    {
+        enabled = on;
     }
 
     void SkillBar::Button::Highlight(bool on)
@@ -40,12 +46,15 @@ namespace Game
 
     unsigned SkillBar::Button::HotKey() const
     {
-        return hotKey;
+        if (enabled)
+            return hotKey;
+        else
+            return 0;
     }
 
     void SkillBar::Button::Render() const
     {
-        if (skill)
+        if ((skill) && (enabled))
             glPushName(GLuint(skill->Id()));
         else
             glPushName(0);
@@ -53,8 +62,10 @@ namespace Game
         Engine::Image::Bind bind(icon);
         if (highlighted)
             glColor3f(1.0f, 1.0f, 1.0f);
+        else if (enabled)
+            glColor3f(0.6f, 0.6f, 0.6f);
         else
-            glColor3f(0.25f, 0.25f, 0.25f);
+            glColor3f(0.2f, 0.2f, 0.2f);
         glBegin(GL_QUADS);
             glTexCoord2f(0.0f, 1.0f);
             glVertex2f(0.0f, 0.0f);
@@ -143,10 +154,11 @@ namespace Game
                 {
                     buttons.emplace_back(Button(skill, hotkeys.front()));
                     hotkeys.pop_front();
-                }
-                if (skill == game.SelectedSkill())
-                {
-                    buttons.back().Highlight(true);
+                    buttons.back().Enable(actor->IsPossible(*skill));
+                    if (skill == game.SelectedSkill())
+                    {
+                        buttons.back().Highlight(true);
+                    }
                 }
             }
         }

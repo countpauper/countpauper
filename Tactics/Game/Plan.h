@@ -36,9 +36,8 @@ public:
     bool Anticipating() const;
     bool Trigger(const Target& target);
     bool Valid() const;
-    virtual bool Engaging() const = 0;
     virtual void Compute(const Game& game) = 0;
-    bool Execute(Game& game) const;
+    virtual bool Execute(Game& game) const;
     virtual std::wstring Description() const = 0;
     Engine::Image Icon() const;
 
@@ -115,7 +114,6 @@ class WaitPlan : public Plan
 public:
     WaitPlan(const Actor& actor, const Target& target, const Game& game);
     std::wstring Description() const override;
-    bool Engaging() const override { return false; }
     void Compute(const Game& game) override;
 private:
     const Skill* GetSkill() const override;
@@ -127,8 +125,8 @@ class SkipPlan : public Plan
 public:
     SkipPlan(const Actor& actor, const Game& game);
     std::wstring Description() const override;
-    bool Engaging() const override { return true; }
     void Compute(const Game& game) override;
+    bool Execute(Game& game) const override;
 private:
     const Skill* GetSkill() const override;
 };
@@ -138,7 +136,6 @@ class PathPlan : public Plan
 public:
     PathPlan(const Actor& actor, const Position& target, const Game& game);
     std::wstring Description() const override;
-    bool Engaging() const override { return false; }
     void Compute(const Game& game) override;
 private:
     const Skill* GetSkill() const override;
@@ -151,7 +148,6 @@ public:
     AttackPlan(const Actor& actor, const Target& target, const Game& game, const Skill& skill);
     const Skill& skill;
     std::wstring Description() const override;
-    bool Engaging() const override { return true; }
     void Compute(const Game& game) override;
 private:
     const Skill* GetSkill() const override;

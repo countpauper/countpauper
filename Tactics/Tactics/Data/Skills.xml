@@ -6,7 +6,7 @@
     <move/>
 Walk over most types of terrains at a moderate pace
   </skill>
-  <skill name="Unarmed" weapon="None" mp="2" trigger="Act" attribute="Str" trajectory="straight" target="swing" category="melee">
+  <skill name="Unarmed" weapon="None" mp="2" trigger="Act" range="1" attribute="Str" trajectory="straight" target="swing" category="melee">
     <melee damage="2"/>
 Unskilled flailing, clawing for the otherwise defenseless
   </skill>
