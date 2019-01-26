@@ -2,14 +2,14 @@
 Steel,100,0,0,0,1,Metal,None,0,0,0,0,0
 Mithril,0,-1,0,-1,2,Metal,Air,2,0,0,0,0
 Adamantine,0,1,0,1,3,Metal,Stone,1,2,0,0,0
-Obsidian,0,0,1,1,2,Metal,Fire,0,0,2,0,0
+Obsidian,0,0,1,1,2,Metal,Fire,2,-1,2,0,0
 Ironwood,0,0,2,0,3,Metal,Nature,0,0,0,2,0
 Electrum,0,1,1,1,4,Metal,Water,0,0,0,0,2
 Wooden,100,0,0,0,1,Wood,None,0,0,0,0,0
 Oak,0,0,0,0,1,Wood,Stone,0,1,0,1,0
 Yew,0,0,0,-1,2,Wood,Water,0,0,0,0,1
 Treant,0,0,3,0,4,Wood,Nature,0,0,0,2,0
-Obsidian,0,0,1,1,3,Wood,Fire,0,0,3,0,0
+Ebony,0,0,1,1,3,Wood,Fire,0,2,2,0,0
 Yggdrasil,0,0,2,1,4,Wood,Air,0,0,0,2,2
 Leather,100,0,0,0,1,Leather,None,0,0,0,0,0
 Elephant,0,0,1,1,2,Leather,Stone,1,1,0,0,0

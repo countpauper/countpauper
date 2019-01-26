@@ -56,7 +56,18 @@ public:
     std::set<Trajectory> trajectory;
     std::set<Targeting> target;
 
-    enum class Effect { Miss, Halt, Interrupt, Disarm, Stuck, Stop };
+    enum class Effect { 
+        None,
+        Miss,       // no effect on actor
+        Interrupt,  // stop action
+        Deflect,    // other target within range
+        Reflect,    // effect attacker
+        Engage,     // control target limb with this skill
+        Disarm,     // remove held item
+        Steal,      // remove targeted item and give to attacker
+        Drop,       // remove targeted item and put it on the floor as an object
+        Control,    // control targeted limb
+    };
     using Effects = std::set<Effect>;
     Effects effects;
 

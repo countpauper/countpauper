@@ -49,6 +49,7 @@ namespace Game
         unsigned loyalty;
         bool Prone() const;
         void Fall();
+        void KineticChain(const Skill& skill);
     private:
         Bonus StrengthBonus() const;
         Bonus Encumberance() const;

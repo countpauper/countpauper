@@ -372,20 +372,14 @@ namespace Game
             const auto& targetState = defenseNode->state->Get(defender);
             node->chance = double(actorState.Chance(offense, targetState).Value()) / 100.0;
             // TODO: counter reaction? reaction combo (ie disarm)?
-            if (effects.count(Skill::Effect::Halt) == 0)
-            {
-                PlanCombo(*node, offense, aggressor, defender);
-            }
+            PlanCombo(*node, offense, aggressor, defender);
             defenseNode->children.emplace_back(std::move(node));
             parent.children.emplace_back(std::move(defenseNode));
         }
         else
         {
             // TODO: counter reaction? reaction combo (ie disarm)?
-            if (effects.count(Skill::Effect::Halt) == 0)
-            {
-                PlanCombo(*node, offense, aggressor, defender);
-            }
+            PlanCombo(*node, offense, aggressor, defender);
             parent.children.emplace_back(std::move(node));
         }
         return true;

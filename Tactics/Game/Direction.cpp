@@ -110,6 +110,8 @@ void Direction::Fall()
 }
 
 
+
+
 std::wstring Direction::Description() const
 {
     return description.at(value);

@@ -203,6 +203,22 @@ namespace Game
         return result;
     }
 
+    std::vector<const Body::Part*> Body::KineticChain(const Part& origin) const
+    {
+        // Doesn't actually connect the whole chain, just adds a (first) agility body part
+        std::vector<const Body::Part*> result;
+        for (auto& part : parts)
+        {
+            // TODO: depends on position of actor, flying, swimming, standing
+            if (part.Contributes(Attribute::Agility))
+            {
+                result.push_back(&part);
+                break;
+            }
+        }
+        return result;
+    }
+
     unsigned Body::Length() const
     {
         return std::accumulate(parts.begin(), parts.end(), 0U, [](unsigned max, const decltype(parts)::value_type& part)

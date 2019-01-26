@@ -59,6 +59,7 @@ namespace Game
         Part& Get(const Part& part);
         std::vector<const Part*> Grip() const;
         std::vector<const Part*> FindAvailable(const Skill& skill) const;
+        std::vector<const Part*> KineticChain(const Part& origin) const;
         unsigned Length() const;
 
         Damage InnateDamage() const;

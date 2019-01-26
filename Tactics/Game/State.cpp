@@ -359,6 +359,19 @@ namespace Game
         return range;
     }
 
+    void State::KineticChain(const Skill& skill)
+    {
+        auto origin = SkillOrigin(skill);
+        if (origin)
+        {
+            body.Get(*origin).Engage(skill);
+            for (auto part : body.KineticChain(*origin))
+            {
+                body.Get(*part).Engage(skill);
+            }
+        }
+    }
+
     GameState::GameState(const IGame& parent) :
         GameState(parent, *parent.Executor())
     {

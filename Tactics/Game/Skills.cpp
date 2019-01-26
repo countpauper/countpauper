@@ -303,12 +303,16 @@ void Parse(Skill& o, const xmlNode* node)
         else if (xmlTagCompare(prop, "effect"))
         {
             o.effects = Engine::from_strings<Skill::Effect>(xmlText(prop->children), L'|', {
+                { L"", Skill::Effect::None },
                 { L"miss", Skill::Effect::Miss },
-                { L"halt", Skill::Effect::Halt },
                 { L"interrupt", Skill::Effect::Interrupt },
+                { L"deflect", Skill::Effect::Deflect },
+                { L"reflect", Skill::Effect::Reflect },
+                { L"engage", Skill::Effect::Engage },
                 { L"disarm", Skill::Effect::Disarm },
-                { L"stuck", Skill::Effect::Stuck },
-                { L"stop", Skill::Effect::Stop }
+                { L"steal", Skill::Effect::Steal },
+                { L"drop", Skill::Effect::Drop },
+                { L"control", Skill::Effect::Control }
             });
         }
         else if (xmlTagCompare(prop, "category"))

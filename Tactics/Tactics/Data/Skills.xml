@@ -34,7 +34,7 @@ Wand attack aimed at the center of mass. Fixed damage, aim improves with intelli
 Quick step or turn to avoid a strike.
   </skill>
   <!-- Block range should be to the hit location of the action, when it's no longer affect but counter -->
-  <skill name="Block" mp="2" range="10" weapon="Shield" trigger="Defend" attribute="" trajectory="straight|down|backhand" target="intercept" category="shield" follows="melee" effect="miss|halt" chance="40,42,45,47,50,52,55,57,60,62,65">
+  <skill name="Block" mp="2" range="10" weapon="Shield" trigger="Defend" attribute="" trajectory="straight|down|backhand" target="intercept" category="shield" follows="melee" effect="miss" chance="40,42,45,47,50,52,55,57,60,62,65">
     <affect />
 Stop an attack on your shield side, front or above. 
   </skill>
@@ -42,7 +42,7 @@ Stop an attack on your shield side, front or above.
     <melee />
 Intercept a projectile with your shield.
   </skill>
-  <skill name="Parry" mp="2" weapon="Melee" trigger="Defend" attribute="Str" resist="Str" offset="5" trajectory="straight|down|forehand" target="intercept" category="parry" follows="melee" effect="miss|halt" chance="20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,55,57,60">
+  <skill name="Parry" mp="2" weapon="Melee" trigger="Defend" attribute="Str" resist="Str" offset="5" trajectory="straight|down|forehand" target="intercept" category="parry" follows="melee" effect="miss" chance="20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,55,57,60">
     <affect />
 Stop an attack with your weapon, on your weapon side, front or above. Requires your hand to be free. 
 Your strength is matched with the incoming strike to avoid impact. Some weapons are more suited for this than others.
