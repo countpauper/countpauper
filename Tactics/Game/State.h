@@ -57,7 +57,8 @@ namespace Game
         Bonus IntelligenceBonus() const;
         Bonus WisdomBonus() const;
         Bonus Charge() const;   // excess enchantment
-        std::pair<const Body::Part*, const Weapon*> MatchWeapon(const Skill& skill) const;
+        std::map<const Body::Part*, const Weapon*> UsedLimbs(const Skill& skill) const;
+        std::pair<const Body::Part*, const Weapon*> UsedWeapon(const Skill& skill) const;
         Score ArmorBonus(const Skill& skill) const;
         Score FullBodyBonus(Attribute attribute) const;
         Score FreeLimbScore(const Weapon& weapon, Attribute attribute) const;

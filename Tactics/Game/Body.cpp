@@ -6,6 +6,7 @@
 #include "Damage.h"
 #include <iostream>
 #include <numeric>
+#include <algorithm>
 
 namespace Game
 {
@@ -122,7 +123,12 @@ namespace Game
             return false;
         if (Grip())
         {
-            return skill.Require(held);
+            if (skill.Require(held))
+                return true;
+            else if (!held)
+                return true;
+            else
+                return false;
         }
         else
             return true;
@@ -132,7 +138,12 @@ namespace Game
     {
         if (Grip())
         {
-            return skill.Require(held);
+            if (skill.Require(held))
+                return true;
+            else if ((held == nullptr) && (Contributes(skill.attribute)))
+                return true;
+            else
+                return false;
         }
         else if (skill.weapon == Type::Weapon::None)
         {
@@ -251,6 +262,7 @@ namespace Game
     std::set<const Body::Part*> Body::AvailableKineticChain(const Skill& skill) const
     {
         auto available = FindAvailable(skill);
+        std::set<const Body::Part*> result;
         for (auto limb : available)
         {
             auto chain = KineticChain(*limb);
@@ -259,10 +271,10 @@ namespace Game
                 return part->IsAvailable(skill);
             }))
             {
-                return chain;
+                result.insert(chain.begin(), chain.end());
             }
         }
-        return std::set<const Body::Part*>();
+        return result;
     }
 
 

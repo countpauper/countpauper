@@ -24,6 +24,9 @@ namespace Game
     {
         if (mp < skill.mp)
             return false;
+        auto available = UsedWeapon(skill);
+        if (!available.first)
+            return false;
         if (position.DistanceEl(target.position) > Range(skill).Value())
             return false;
         auto origin = SkillOrigin(skill);
@@ -53,20 +56,6 @@ namespace Game
         if (weapon)
         {
             result += weapon->Bonus(attribute); 
-        }
-        return result;
-    }
-
-    Score State::FreeLimbScore(const Weapon& weapon, Attribute attribute) const
-    {
-        Score result;
-        auto wielded = body.Wielded();
-        for (auto wield : wielded)
-        {
-            if (!wield.second)
-            {
-                result += AttributeScore(*wield.first, attribute);
-            }
         }
         return result;
     }
@@ -193,7 +182,7 @@ namespace Game
         auto damageBonus = attackType.DamageBonus(skillLevel);
         auto skillBonus = Bonus(skill.name + L"(" + damageBonus.description + L")", damageBonus.value);
         assert(skillBonus.value >= 0);  // negative skill bonus will be clipped, need it to use in damage operator ^
-        auto weapon = MatchWeapon(skill);
+        auto weapon = UsedWeapon(skill).second;
 
         Damage skillDamage =
             Damage(Wound::Type::Blunt, Score(skillBonus)) +
@@ -201,9 +190,9 @@ namespace Game
             Damage(Wound::Type::Burn, Score(skillBonus)) +
             Damage(Wound::Type::Disease, Score(skillBonus)) +
             Damage(Wound::Type::Spirit, Score(skillBonus));
-        if (weapon.second)
+        if (weapon)
         {
-            return weapon.second->Damage() ^ skillDamage;
+            return weapon->Damage() ^ skillDamage;
         }
         else
         {
@@ -243,7 +232,7 @@ namespace Game
 
     const Body::Part* State::SkillOrigin(const Skill& skill) const
     {
-        auto wield = MatchWeapon(skill);
+        auto wield = UsedWeapon(skill);
         if (wield.first)
             return wield.first;
         else if (skill.attribute == Attribute::None)
@@ -261,18 +250,12 @@ namespace Game
 
     Score State::SkillLevel(const Skill& skill, const State* victim) const
     {
-        auto wield = MatchWeapon(skill);
+        auto used = UsedLimbs(skill);
 
         Score result(Bonus(skill.name, skill.offset));
-        if ((wield.second) && (wield.first->Contributes(skill.attribute)))
+        for (auto use : used)
         {
-            result += AttributeScore(*wield.first, skill.attribute);
-            result += FreeLimbScore(*wield.second, skill.attribute);
-        }
-        else
-        {
-            // TODO: unless the attribute is None, find another available limb to use
-            result += AttributeScore(skill.attribute);
+            result += AttributeScore(*use.first, skill.attribute);
         }
         if (victim)
         {
@@ -283,23 +266,27 @@ namespace Game
         {
             assert(skill.resist == Attribute::None);  // no victim provided for skill with resistance
         }
+        
         result += ArmorBonus(skill);
-        if (!wield.second)
+        auto weapon = UsedWeapon(skill).second;
+        if (!weapon)
         {
             return result;
         }
         else
         {
-            auto strength = AttributeScore(*wield.first, Attribute::Strength); 
-            strength += FreeLimbScore(*wield.second, Attribute::Strength);
-            auto& weapon = *wield.second;
-            auto required = weapon.Required();
-            Bonus strengthPenalty = Bonus(L"Str(" + strength.Description() + L")-" + weapon.Name() + L"(" + std::to_wstring(required.strength) + L")",
+            auto strength = Score();
+            for (auto use : used)
+            {
+                strength += AttributeScore(*use.first, Attribute::Strength);
+            }
+            auto required = weapon->Required();
+            Bonus strengthPenalty = Bonus(L"Str(" + strength.Description() + L")-" + weapon->Name() + L"(" + std::to_wstring(required.strength) + L")",
                 std::min(0, static_cast<int>(strength.Value()) - static_cast<int>(required.strength)));
             auto intelligence = Intelligence();
-            Bonus intPenalty = Bonus(L"Int(" + intelligence.Description() +L")-" +weapon.Name() + L"(" + std::to_wstring(required.intelligence) + L")",
+            Bonus intPenalty = Bonus(L"Int(" + intelligence.Description() +L")-" +weapon->Name() + L"(" + std::to_wstring(required.intelligence) + L")",
                 std::min(0, static_cast<int>(intelligence.Value()) - static_cast<int>(required.intelligence)));
-            auto weaponBonus = weapon.Bonus(skill);
+            auto weaponBonus = weapon->Bonus(skill);
             return result + strengthPenalty + intPenalty + weaponBonus;
         }
     }
@@ -335,24 +322,35 @@ namespace Game
         });
     }
 
-    std::pair<const Body::Part*,const Weapon*> State::MatchWeapon(const Skill& skill) const
+    std::map<const Body::Part*,const Weapon*> State::UsedLimbs(const Skill& skill) const
     {
-        auto wielded = body.Wielded();
-        for (const auto& wield: wielded)
+        auto limbs = body.FindAvailable(skill);
+
+        std::map<const Body::Part*, const Weapon*> result;
+        std::transform(limbs.begin(), limbs.end(), std::inserter(result, result.end()), [](const decltype(limbs)::value_type& limb)
         {
-            if ((wield.second) && (wield.second->Match(skill.weapon)))
-            {
-                return wield;
-            }
-        }
-        return std::pair<const Body::Part*,Weapon*>(nullptr, nullptr);
+            return std::make_pair(limb, limb->Held());
+        });
+        return result;
     }
 
+    std::pair<const Body::Part*, const Weapon*> State::UsedWeapon(const Skill& skill) const
+    {
+        auto used = UsedLimbs(skill);
+        if (used.empty())
+            return std::pair<const Body::Part*, const Weapon*>(nullptr, nullptr);
+        for (auto use : used)
+        {
+            if (use.second)
+                return use;
+        }
+        return *used.begin();
+    }
 
     Score State::Range(const Skill& skill) const
     {
         Score range(skill.name, skill.range);
-        auto wield = MatchWeapon(skill);
+        auto wield = UsedWeapon(skill);
         if (wield.second)
         {
             range += Bonus(wield.second->Name(), wield.second->Length());
