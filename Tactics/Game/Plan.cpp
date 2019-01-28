@@ -311,7 +311,7 @@ namespace Game
         auto targetActor = dynamic_cast<const Actor*>(&target);
         if (targetActor)
         {
-            auto defences = targetActor->FollowSkill(skill, Skill::Trigger::Defend);
+            auto defences = targetActor->Counters(skill);
             for (auto defence : defences)
             {
                 PlanReaction(parent, skill, action->trajectory, *defence, actor, *targetActor);
@@ -326,7 +326,7 @@ namespace Game
 
     void Plan::PlanCombo(Node& parent, const Skill& skill, const Actor& actor, const Target& target)
     {
-        auto combos = actor.FollowSkill(skill, Skill::Trigger::Combo);
+        auto combos = actor.Combos(skill);
         for (auto combo : combos)
         {
             PlanAction(parent, *combo, actor, target);

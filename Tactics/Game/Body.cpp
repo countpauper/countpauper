@@ -17,10 +17,25 @@ namespace Game
         control(nullptr)
     {
     }
+
+    Body::Part::Part(std::wstring name, Anatomy anatomy, Slot slot, const Stats& stats, const Damage& health) :
+        name(name),
+        anatomy(anatomy),
+        slot(slot),
+        stats(stats),
+        health(health),
+        engagement(nullptr),
+        held(nullptr),
+        control(nullptr)
+    {
+
+
+    }
     bool Body::Part::operator<(const Part& other) const
     {
         return name < other.name;
     }
+    
     bool Body::Part::Match(Anatomy match) const
     {
         return anatomy.Contains(match);
@@ -39,8 +54,8 @@ namespace Game
     bool Body::Part::IsVital() const
     {
         // TODO: flag
-        return (attributes.count(Attribute::Intelligence) +
-            attributes.count(Attribute::Wisdom)) != 0;
+        return Contributes(Attribute::Intelligence) || 
+            Contributes(Attribute::Wisdom);
     }
 
     bool Body::Part::Grip() const
@@ -55,13 +70,14 @@ namespace Game
     }
     std::wstring Body::Part::Description() const
     {
-        return name + L"= " + health.StateDescription();
+        return name + L"=" + health.StateDescription();
     }
 
     Score Body::Part::AttributeScore(Attribute attribute) const
     {
-        if (attributes.count(attribute) != 0)
-            return Score(name, score) + Bonus(health.StateDescription(), health.StatPenalty());
+        auto value = stats[attribute];
+        if (value != 0)
+            return Score(name, value) + Bonus(health.StateDescription(), health.StatPenalty());
         else
             return Score();
     }
@@ -88,7 +104,7 @@ namespace Game
 
     bool Body::Part::Contributes(Attribute attribute) const
     {
-        return attributes.count(attribute) != 0;
+        return stats[attribute] > 0;
     }
 
     void Body::Part::Engage(const Skill& skill)
@@ -103,6 +119,8 @@ namespace Game
 
     void Body::Part::Hold(const Weapon& item)
     {
+        if (!Grip())
+            throw std::runtime_error("Body part can't grip item");
         held = &item;
     }
 
@@ -119,7 +137,7 @@ namespace Game
     {
         if (control)
             return false;
-        if ((engagement) && (!skill.Follows(*engagement)))
+        if ((engagement) && (!skill.Combo(*engagement)))
             return false;
         if (Grip())
         {
@@ -226,7 +244,19 @@ namespace Game
         return nullptr;
     }
 
-    Body::Part& Body::Get(const Part& part)
+    Body::Part& Body::operator[](const std::wstring& name)
+    {
+        for (auto& part : parts)
+        {
+            if (part.Name() == name)
+            {
+                return part;
+            }
+        }
+        throw std::out_of_range("Unknown body part");
+    }
+
+    Body::Part& Body::operator[](const Part& part)
     {
         return const_cast<Part&>(*Get(part.Name()));
     }
@@ -283,7 +313,7 @@ namespace Game
         auto chain = AvailableKineticChain(skill);
         for (auto link : chain)
         {
-            Get(*link).Engage(skill);
+            (*this)[*link].Engage(skill);
         }
    }
 
@@ -343,9 +373,17 @@ namespace Game
         return std::accumulate(parts.begin(), parts.end(), Score(), [](const  Score& s, const Part& part) { return s + part.AttributeScore(Attribute::Wisdom); });
     }
 
+    void Body::Add(const Part& p)
+    {
+        parts.emplace_back(p);
+    }
+
     std::wistream& operator>>(std::wistream& s, Body::Part& part)
     {
-        s >> part.name >> part.anatomy >> part.slot >> part.attributes >> part.score >> part.health;
+        Attributes attributes;
+        Stats::Score score;
+        s >> part.name >> part.anatomy >> part.slot >> attributes >> score >> part.health;
+        part.stats = Stats(attributes, score);
 
         return s;
     }

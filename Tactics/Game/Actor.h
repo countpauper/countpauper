@@ -66,7 +66,8 @@ namespace Game
         const Skill* WaitSkill() const;
         std::vector<std::unique_ptr<Action>> AllMoves(const Position& from) const;
 
-        std::vector<const Skill*> FollowSkill(const Skill& previous, Skill::Trigger trigger) const;
+        std::vector<const Skill*> Counters(const Skill& previous) const;
+        std::vector<const Skill*> Combos(const Skill& previous) const;
 
         bool IsPossible(const Skill& skill) const;
         const Knowledge& GetSkills() const;

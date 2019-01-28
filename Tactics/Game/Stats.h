@@ -36,19 +36,18 @@ namespace Game
     public:
         using Score = int;
         Stats();
-        Stats(Score strength, Score agility, Score constitution, Score intelligence, Score wisdom) :
-            strength(strength),
-            agility(agility),
-            constitution(constitution),
-            intelligence(intelligence),
-            wisdom(wisdom)
-        {
-        }
+        Stats(Score strength, Score agility, Score constitution, Score intelligence, Score wisdom);
+        Stats(Attribute attribute, Score score);
+        Stats(Attributes attributes, Score allTheSameScore);
+
         Score strength;
         Score agility;
         Score constitution;
         Score intelligence;
         Score wisdom;
+        Score operator[](Attribute attribute) const;
+        Score& operator[](Attribute attribute);
+
         std::wstring Description() const;
     };
     std::wistream& operator>>(std::wistream& s, Stats& actor);

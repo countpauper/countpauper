@@ -23,9 +23,26 @@ namespace Game
         attribute(Attribute::None),
         resist(Attribute::None),
         offset(0),
-        weapon(::Game::Type::Weapon::Style::All)
+        weapon(Type::Weapon::Style::All)
     {
     }
+
+    Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Trajectory singleTrajector, int damage) :
+        mp(2),
+        range(0),
+        trigger(trigger),
+        name(name),
+        attribute(Attribute::Strength),
+        resist(Attribute::None),
+        offset(0),
+        weapon(weapon),
+        type(std::make_shared<Melee>())
+    {
+        static_cast<Melee&>(*type).damage.push_back(damage);
+        trajectory.insert(singleTrajector);
+        target.insert(Targeting::Swing);
+    }
+
 
     Skill::~Skill() = default;
 
@@ -105,6 +122,13 @@ namespace Game
             return item && item->Match(weapon);
     }
 
+    bool Skill::Combo(const Skill& previous) const
+    {
+        if (trigger != Trigger::Combo)
+            return false;
+        return Follows(previous);
+    }
+
     bool Skill::Follows(const Skill& previous) const
     {
         for (const auto& follow : follows)
@@ -113,6 +137,13 @@ namespace Game
                 return true;
         }
         return false;
+    }
+
+    bool Skill::Counter(const Skill& previous) const
+    {
+        if ((trigger != Trigger::Defend) && (trigger != Trigger::React))
+            return false;
+        return Follows(previous);
     }
 
     unsigned Skill::Id() const

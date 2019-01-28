@@ -21,6 +21,7 @@ namespace Game
         {
         public:
             Part();
+            Part(std::wstring name, Anatomy anatomy, Slot slot, const Stats& stats, const Damage& health);
             bool IsVital() const;
             bool Grip() const;
             std::wstring Name() const;
@@ -47,8 +48,7 @@ namespace Game
             std::wstring name;
             Anatomy anatomy;
             Slot slot;
-            Attributes attributes;
-            Stats::Score score;
+            Stats stats;
             Damage health;
             const Skill* engagement;
             const Weapon* held;
@@ -57,16 +57,19 @@ namespace Game
         std::wstring Description() const;
         bool Dead() const;
         void Hurt(const Part& part, const Damage& damage);
-        void Disengage();
-        std::map<const Part*, const Weapon*> Wielded() const;
+        void Add(const Part& p);
         const Part* Get(const Anatomy& target) const;
         const Part* Get(const std::wstring& name) const;
-        Part& Get(const Part& part);
+        Part& operator[](const std::wstring& name);
+        Part& operator[](const Part& part);
+        unsigned Length() const;
         std::set<const Part*> Grip() const;
+        std::map<const Part*, const Weapon*> Wielded() const;
+
         bool Ready(const Skill& skill) const;
         void Engage(const Skill& skill);
+        void Disengage();
         std::set<const Part*> FindAvailable(const Skill& skill) const;
-        unsigned Length() const;
 
         Damage InnateDamage() const;
         Score Strength() const;
@@ -74,7 +77,6 @@ namespace Game
         Score Constitution() const;
         Score Intelligence() const;
         Score Wisdom() const;
-
     private:
         std::set<const Part*> Required(const Skill& skill) const;
         std::set<const Part*> KineticChain(const Part& origin) const;
@@ -84,5 +86,4 @@ namespace Game
     };
     std::wistream& operator>>(std::wistream& s, Body::Part& part);
     std::wistream& operator>>(std::wistream& s, Body& body);
-
 };

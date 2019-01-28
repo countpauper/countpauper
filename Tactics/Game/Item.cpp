@@ -164,13 +164,12 @@ namespace Game
             Engine::Adapter::Struct<Weapon, Requirement> requirement(&Weapon::requirement, requirementAdapters);
             Engine::Adapter::Struct<Weapon, ::Game::Load> load(&Weapon::load, loadAdapters);
             Engine::Adapter::Enumeration<Weapon, Weapon::Style> style(&Weapon::style, styleMap);
-            Engine::Adapter::Integer<Weapon> hands(&Weapon::hands);
             Engine::Adapter::Enumeration<Weapon, Weapon::Material::Category> material(&Weapon::material, weaponMaterialCategories);
             Engine::Adapter::Struct<Weapon, Damage> damage(&Weapon::damage, damageAdapters);
             Engine::Adapter::Integer<Weapon> length(&Weapon::length);
             Engine::Adapter::Sequence<Weapon, SkillBonus> skillBoni(&Weapon::skills, skillBonusAdapters);
             Engine::Adapter::Sequence<Weapon, StatBonus> statBoni(&Weapon::stats, statBonusAdapters);
-            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &load, &style, &hands, &material, &damage, &length, &skillBoni, &statBoni });
+            Engine::CSV<Weapon> csv(file, { &name, &frequency, &requirement, &load, &style, &material, &damage, &length, &skillBoni, &statBoni });
             return csv.Read();
         }
 
@@ -207,8 +206,15 @@ namespace Game
         Weapon::Weapon() : 
             style(None), 
             material(Material::None),
-            length(0),
-            defense(0)
+            length(0)
+        {
+        }
+
+        Weapon::Weapon(Style style, int length, const Damage& damage) :
+            style(style),
+            material(Material::None),
+            length(length),
+            damage(damage)
         {
         }
 

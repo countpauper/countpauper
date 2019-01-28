@@ -59,7 +59,8 @@ namespace Game
     const Wound& Wound::find(Wound::Type type, Pain severity)
     {
         const auto& table = Wound::table.at(type);
-        auto it = table.lower_bound(severity);
+        auto it = table.upper_bound(severity);
+        --it;
         if (it == table.end())
             return table.rbegin()->second;
         else

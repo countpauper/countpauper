@@ -299,19 +299,25 @@ namespace Game
         return knowledge;
     }
 
-    std::vector<const Skill*> Actor::FollowSkill(const Skill& previous, Skill::Trigger trigger) const
+    std::vector<const Skill*> Actor::Counters(const Skill& previous) const
     {
         std::vector<const Skill*> possible;
-        for (auto skill : GetSkills())
+        std::copy_if(knowledge.begin(), knowledge.end(), std::back_inserter(possible), [&previous](const decltype(knowledge)::value_type& skill)
         {
-            if ((skill->trigger == trigger) && (skill->Follows(previous)))
-            {
-                possible.push_back(skill);
-            }
-        }
+            return skill->Counter(previous);
+        });
         return possible;
     }
 
+    std::vector<const Skill*> Actor::Combos(const Skill& previous) const
+    {
+        std::vector<const Skill*> possible;
+        std::copy_if(knowledge.begin(), knowledge.end(), std::back_inserter(possible), [&previous](const decltype(knowledge)::value_type& skill)
+        {
+            return skill->Combo(previous);
+        });
+        return possible;
+    }
 
     std::vector<const Armor*> Actor::Worn() const
     {
@@ -438,7 +444,7 @@ namespace Game
                 auto limb = actor.body.Get(limbName);
                 if (!limb)
                     throw std::runtime_error("Wielded limb not found");
-                actor.body.Get(*limb).Hold(*actor.carried.back());
+                actor.body[*limb].Hold(*actor.carried.back());
             }
         }
         actor.knowledge.resize(skills);

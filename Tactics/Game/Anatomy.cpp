@@ -13,7 +13,7 @@ namespace Game
         { L"Coronal", Plane::Coronal },
         { L"Front", Plane::Front },
         { L"Back", Plane::Back },
-        { L"Sagital", Plane::Sagittal },
+        { L"Sagittal", Plane::Sagittal },
         { L"Around", Plane::Around },
         { L"Top", Plane::Top },
         { L"Bottom", Plane::Bottom },

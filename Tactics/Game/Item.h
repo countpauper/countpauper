@@ -204,17 +204,16 @@ namespace Game
                 static std::vector<Modifier> Load(std::wistream& fileName);
             };
             Weapon();
+            Weapon(Style style, int length, const Damage& damage);
             bool Match(const Material& material) const;
             bool Match(const Modifier& mod) const;
 
             Style style;
             Requirement requirement;
             static const std::map<std::wstring, Style> styleMap;
-            int hands;
             Material::Category material;
             Damage damage;
             int length; 
-            int defense;
             static std::vector<Weapon> Load(std::wistream& fileName);
 
         };

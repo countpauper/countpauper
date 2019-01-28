@@ -13,8 +13,8 @@ RArm Normal Steel Claymore
 Wait Hack Zap Dodge Block Parry Unarmed Walk 
 Actor Bar 1 3 3 0 6
 Head All[4] Head Int 10 ,,,,
-Chest Sagital[3] Chest Wis 10 ,,,,
-Belly Sagital[2] Belly Con 10 ,,,,
+Chest Sagittal[3] Chest Wis 10 ,,,,
+Belly Sagittal[2] Belly Con 10 ,,,,
 RArm Right[2-3] Arms Str 6 ,,,,
 LArm Left[2-3] Arms Str 4 ,,,,
 Legs Around[0-1] Legs Agi 10 ,,,,

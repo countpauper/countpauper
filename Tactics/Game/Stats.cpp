@@ -85,6 +85,66 @@ namespace Game
     {
     }
 
+    Stats::Stats(Score strength, Score agility, Score constitution, Score intelligence, Score wisdom) :
+        strength(strength),
+        agility(agility),
+        constitution(constitution),
+        intelligence(intelligence),
+        wisdom(wisdom)
+    {
+    }
+
+    Stats::Stats(Attribute attribute, Score score) :
+        Stats()
+    {
+        (*this)[attribute] = score;
+    }
+
+    Stats::Stats(Attributes attributes, Stats::Score score) :
+        Stats()
+    {
+        for (auto attr : attributes)
+            (*this)[attr]= score;
+    }
+
+    Stats::Score Stats::operator[](Attribute attribute) const
+    {
+        switch (attribute)
+        {
+        case Attribute::Strength:
+                return strength;
+            case Attribute::Agility:
+                return agility;
+            case Attribute::Constitution:
+                return constitution;
+            case Attribute::Intelligence:
+                return intelligence;
+            case Attribute::Wisdom:
+                return wisdom;
+            default:
+                throw std::runtime_error("Unknown stattribute");
+        }
+    }
+
+    Stats::Score& Stats::operator[](Attribute attribute)
+    {
+        switch (attribute)
+        {
+        case Attribute::Strength:
+            return strength;
+        case Attribute::Agility:
+            return agility;
+        case Attribute::Constitution:
+            return constitution;
+        case Attribute::Intelligence:
+            return intelligence;
+        case Attribute::Wisdom:
+            return wisdom;
+        default:
+            throw std::runtime_error("Unknown stattribute");
+        }
+    }
+
     std::wstring Stats::Description() const
     {
         std::wstringstream ss;

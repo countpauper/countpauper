@@ -18,6 +18,8 @@ class Skill
 {
 public:
     Skill();
+    enum class Trigger { None = 0, Act, Combo, Prepare, React, Defend };
+    Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Trajectory trajectory, int damage);
     ~Skill();
 
     Action* CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const;
@@ -25,7 +27,8 @@ public:
 
     bool Match(const std::wstring& category) const;
     bool Require(const Weapon* item) const;
-    bool Follows(const Skill& previous) const;
+    bool Combo(const Skill& previous) const;
+    bool Counter(const Skill& previous) const;
     unsigned Id() const;
     Engine::Image Icon() const;
     void LoadIcon(const std::wstring& fname);
@@ -40,7 +43,6 @@ public:
     unsigned mp;
     unsigned range;
 
-    enum class Trigger { None = 0, Act, Combo, Prepare, React, Defend };
     
     Trigger trigger;
     using Category = std::wstring;
@@ -72,19 +74,19 @@ public:
     using Effects = std::set<Effect>;
     Effects effects;
 
-    class Type
+    class Act
     {
     public:
-        virtual ~Type() = default;
+        virtual ~Act() = default;
         virtual Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const = 0;
 
     };
-    class Move : public Type
+    class Move : public Act
     {
     public:
         Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
     };
-    class Melee : public Type
+    class Melee : public Act
     {
     public:
         Melee();
@@ -93,19 +95,20 @@ public:
         Bonus DamageBonus(const Score& skillScore);
         Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
     };
-    class Affect : public Type
+    class Affect : public Act
     {
     public:
         Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
     };
 
-    std::shared_ptr<Type> type; // todo: unique ptr and copy/clone or move
+    std::shared_ptr<Act> type; // todo: unique ptr and copy/clone or move
 private:
     template<class T>
     bool IsType() const 
     { 
         return dynamic_cast<T*>(type.get()) != nullptr; 
     }
+    bool Follows(const Skill& previous) const;
     std::shared_ptr<Engine::Image> icon;
 };
 
