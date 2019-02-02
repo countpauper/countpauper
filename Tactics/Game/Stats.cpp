@@ -111,7 +111,9 @@ namespace Game
     {
         switch (attribute)
         {
-        case Attribute::Strength:
+            case Attribute::None:
+                return Score();
+            case Attribute::Strength:
                 return strength;
             case Attribute::Agility:
                 return agility;

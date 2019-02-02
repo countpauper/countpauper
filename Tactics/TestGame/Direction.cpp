@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
-#include "Direction.h"
-#include "Position.h"
+#include "Game/Direction.h"
+#include "Game/Position.h"
 
 namespace Game
 {

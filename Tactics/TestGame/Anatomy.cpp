@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include "Anatomy.h"
+#include "Game/Anatomy.h"
 
 namespace Game
 {
@@ -7,6 +7,13 @@ namespace Test
 {
 
 BOOST_AUTO_TEST_SUITE(AnatomyTest);
+
+
+BOOST_AUTO_TEST_CASE(Null)
+{
+    Anatomy a;
+    BOOST_CHECK(!a);
+}
 
 BOOST_AUTO_TEST_CASE(ContainsPlane)
 {

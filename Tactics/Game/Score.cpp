@@ -2,7 +2,7 @@
 #include "Score.h"
 #include <sstream>
 #include <numeric>
-
+#include "Engine/from_string.h"
 
 namespace Game
 {
@@ -106,6 +106,16 @@ Score& Score::operator-=(const Score& other)
     return *this;
 }
 
+bool Score::operator==(const Score& other) const
+{
+    return Value() == other.Value();
+}
+
+bool Score::operator==(unsigned value) const
+{
+    return Value() == value;
+}
+
 Score operator+(const Score& a, const Bonus& b)
 {
     Score o(a);
@@ -128,4 +138,11 @@ std::wistream& operator>>(std::wistream& s, Score& score)
     score = Score() + Bonus(L"File", value);
     return s;
 }
+
+std::ostream& operator<<(std::ostream& s, const Score& score)
+{
+    s << Engine::from_string<std::string>(score.Description()).c_str();
+    return s;
+}
+
 }

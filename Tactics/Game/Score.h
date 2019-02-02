@@ -29,14 +29,18 @@ namespace Game
         Score& operator+=(const Bonus& bonus);
         Score& operator+=(const Score& other);
         Score& operator-=(const Score& other);
+        bool operator==(const Score& other) const;
+        bool operator==(unsigned value) const;
     private:
         friend std::wistream& operator>>(std::wistream& s, Score& score);
+        friend std::ostream& operator<<(std::ostream& s, const Score& score);
         std::vector<Bonus> boni;
     };
     Score operator+(const Score& a, const Bonus& b);
     Score operator+(const Score& a, const Score& b);
 
     std::wistream& operator>>(std::wistream& s, Score& score);
+    std::ostream& operator<(std::ostream& s, const Score& score);
 
 
 };

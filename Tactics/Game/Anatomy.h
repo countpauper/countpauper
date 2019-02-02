@@ -37,11 +37,13 @@ namespace Game
     class Anatomy
     {
     public:
-        Anatomy() = default;
+        Anatomy();
         Anatomy(Plane plane, unsigned pos, unsigned size = 1);
         Anatomy(Trajectory, unsigned pos, unsigned range = 1);
         Anatomy(const Direction& facing, const Direction&target, int height);
         Anatomy(Anatomy attack, Anatomy facing);
+        operator bool() const;
+
         Plane plane;
         unsigned position;
         unsigned size;

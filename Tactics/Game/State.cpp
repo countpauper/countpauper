@@ -20,6 +20,20 @@ namespace Game
     {
     }
 
+    State::State(const Body& body, Position pos, const Direction dir, unsigned mp,
+        std::vector<const Armor*> armor, std::vector<const Weapon*> weapons, Actor::Knowledge skills) :
+        position(pos),
+        direction(dir),
+        mp(mp),
+        body(body),
+        loyalty(0),
+        worn(armor),
+        carried(weapons),
+        knowledge(skills)
+    {
+    }
+
+
     bool State::IsPossible(const Skill& skill, const State& target) const
     {
         if (mp < skill.mp)
@@ -29,10 +43,8 @@ namespace Game
             return false;
         if (position.DistanceEl(target.position) > Range(skill).Value())
             return false;
-        auto origin = SkillOrigin(skill);
-        if ((origin) && (!origin->IsAvailable(skill)))
+        if (UsedLimbs(skill).empty())
             return false;
-
         // TODO: if weapons.count(skill.weapon)==0 return false
         // TODO if (game.Cover(state.position, target.GetPosition()))
         
@@ -47,6 +59,7 @@ namespace Game
 
     Score State::AttributeScore(const Body::Part& limb, Attribute attribute) const
     {
+        // private, because limb has to be part of the state's body, which is copied
         auto wielded = body.Wielded();
         auto weapon = wielded.at(&limb);
         auto result = limb.AttributeScore(attribute);
@@ -199,6 +212,17 @@ namespace Game
             return body.InnateDamage()^ skillDamage;
         }
     }
+
+    bool State::Hurt(Anatomy location, const Damage& damage)
+    {
+        auto part = body.Get(location);
+        if (!part)
+            return false;
+        Damage pain = damage - Mitigation(*part);
+        body.Hurt(*part, pain);
+        return true;
+    }
+
     Score State::Chance(const Skill& skill, const State& target) const
     {
         auto skillLevel = SkillLevel(skill, &target);
@@ -213,7 +237,7 @@ namespace Game
         return Score(skillBonus);
     }
 
-    Damage State::Mitigation(const Body::Part& location) const
+    Damage State::Mitigation(const Body::Part& part) const
     {
         Score constMitigation(ConstitutionBonus());
         Score wisMitigation(WisdomBonus());
@@ -222,7 +246,7 @@ namespace Game
             Damage(Wound::Type::Burn, constMitigation) +
             Damage(Wound::Type::Disease, constMitigation) +
             Damage(Wound::Type::Spirit, wisMitigation);
-        auto slot = location.GetSlot();
+        auto slot = part.GetSlot();
         for (auto armor : worn)
         {
             mitigation += armor->Mitigation(slot);
@@ -230,21 +254,29 @@ namespace Game
         return mitigation;
     }
 
-    const Body::Part* State::SkillOrigin(const Skill& skill) const
+    Anatomy State::Origin(const Skill& skill, Trajectory trajectory) const
     {
         auto wield = UsedWeapon(skill);
-        if (wield.first)
-            return wield.first;
-        else if (skill.attribute == Attribute::None)
-        {
-            return nullptr;
-        }
-        else
+        auto limb = wield.first;
+        if (!limb)
         {
             auto available = body.FindAvailable(skill);
             if (available.empty())
                 std::runtime_error("No skill origin because no limb is available"); // should not be possible
-            return *available.begin();
+            limb = *available.begin();
+        }
+        if (limb)
+        {
+            auto height = limb->Height();
+            return Anatomy(trajectory, height, 3);  // TODO: reach for height
+        }
+        else if (skill.attribute == Attribute::None)
+        {
+            return Anatomy(Plane::Front, body.Length()/2,1);
+        }
+        else
+        {
+            return Anatomy();
         }
     }
 

@@ -42,6 +42,12 @@ std::ostream& operator<<(std::ostream& s, const Plane& plane)
     return s;
 }
 
+Anatomy::Anatomy() :
+    plane(Plane::None),
+    position(0),
+    size(0)
+{
+}
 
 Anatomy::Anatomy(Plane plane, unsigned pos, unsigned size) :
     plane(plane),
@@ -78,6 +84,11 @@ bool Anatomy::Contains(const Anatomy& other) const
     if ((unsigned(plane) & unsigned(other.plane)) == 0)
         return false;
     return true;
+}
+
+Anatomy::operator bool() const
+{
+    return plane != Plane::None && size > 0;
 }
 
 Plane ToPlane(Trajectory trajectory)

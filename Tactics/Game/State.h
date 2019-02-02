@@ -25,30 +25,31 @@ namespace Game
     {
     public:
         State(const Actor& actor);
-
-        bool IsPossible(const Skill& skill, const State& target) const;
+        State(const Body& body, Position pos=Position(0,0), Direction dir=Direction::North, unsigned mp=10,
+            std::vector<const Armor*> armor = {}, std::vector<const Weapon*> weapons = {}, Actor::Knowledge knowledge = {});
 
         Position position;
         Direction direction;
         unsigned mp;
+        unsigned loyalty;
         Body body;
+
+        bool IsPossible(const Skill& skill, const State& target) const;
         Damage AttackDamage(const Skill& skill, const Score& skillLevel) const;
-        Damage Mitigation(const Body::Part& location) const;
+        bool Hurt(Anatomy location, const Damage& damage);
         Score Chance(const Skill& skill, const State& target) const;
         Score Chance(const Skill& skill) const;
+
         Score Strength() const;
         Score Agility() const;
         Score Constitution() const;
         Score Intelligence() const;
         Score Wisdom() const;
         Score AttributeScore(Attribute attribute) const;
-        Score AttributeScore(const Body::Part& limb, Attribute attribute) const;
-        const Body::Part* SkillOrigin(const Skill& skill) const;
+        Anatomy Origin(const Skill& skill, Trajectory trajectory) const;
+
         Score SkillLevel(const Skill& skill, const State* victim = nullptr) const;
         Score Range(const Skill& skill) const;
-        unsigned loyalty;
-        bool Prone() const;
-        void Fall();
         void Engage(const Skill& skill);
     private:
         Bonus StrengthBonus() const;
@@ -57,6 +58,8 @@ namespace Game
         Bonus IntelligenceBonus() const;
         Bonus WisdomBonus() const;
         Bonus Charge() const;   // excess enchantment
+        Score AttributeScore(const Body::Part& limb, Attribute attribute) const;
+        Damage Mitigation(const Body::Part& location) const;
         std::map<const Body::Part*, const Weapon*> UsedLimbs(const Skill& skill) const;
         std::pair<const Body::Part*, const Weapon*> UsedWeapon(const Skill& skill) const;
         Score ArmorBonus(const Skill& skill) const;

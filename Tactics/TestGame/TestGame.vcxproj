@@ -47,7 +47,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\libraries\boost\boost-1.62.0.0;..\Game</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\libraries\boost\boost-1.62.0.0;..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -71,7 +71,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\libraries\boost\boost-1.62.0.0;..\Game</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\libraries\boost\boost-1.62.0.0;..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -91,8 +91,13 @@
   <ItemGroup>
     <ClCompile Include="Anatomy.cpp" />
     <ClCompile Include="Body.cpp" />
+    <ClCompile Include="Data.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="State.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Data.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

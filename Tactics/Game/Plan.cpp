@@ -337,7 +337,7 @@ namespace Game
     {
         std::unique_ptr<Action> reaction;
         Action::Result intermediate;
-        // TODO: select trajectory by opposing attack trajectory
+        // TODO: select trajectory by opposing attack trajectory. action as argument
         for (auto trajectory : defense.trajectory)
         {
             reaction = std::unique_ptr<Action>(defense.CreateAction(defender, aggressor, trajectory));

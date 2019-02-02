@@ -1,8 +1,8 @@
 2
 Actor Foo 0 0 2 0 6
 Head All[4] Head Int 5 ,,,,
-Chest Sagital[3] Chest Wis 6 ,,,,
-Belly Sagital[2] Belly Con 8 ,,,,
+Chest Sagittal[3] Chest Wis 6 ,,,,
+Belly Sagittal[2] Belly Con 8 ,,,,
 RArm Right[2-3] Arms Str 5 ,,,,
 LArm Left[2-3] Arms Str 5 ,,,,
 Legs Around[0-1] Legs Agi 7 ,,,,
