@@ -299,20 +299,20 @@ namespace Game
         return knowledge;
     }
 
-    std::vector<const Skill*> Actor::Counters(const Skill& previous) const
+    std::set<const Skill*> Actor::Counters(const Skill& previous) const
     {
-        std::vector<const Skill*> possible;
-        std::copy_if(knowledge.begin(), knowledge.end(), std::back_inserter(possible), [&previous](const decltype(knowledge)::value_type& skill)
+        std::set<const Skill*> possible;
+        std::copy_if(knowledge.begin(), knowledge.end(), std::inserter(possible, possible.end()), [&previous](const decltype(knowledge)::value_type& skill)
         {
             return skill->Counter(previous);
         });
         return possible;
     }
 
-    std::vector<const Skill*> Actor::Combos(const Skill& previous) const
+    std::set<const Skill*> Actor::Combos(const Skill& previous) const
     {
-        std::vector<const Skill*> possible;
-        std::copy_if(knowledge.begin(), knowledge.end(), std::back_inserter(possible), [&previous](const decltype(knowledge)::value_type& skill)
+        std::set<const Skill*> possible;
+        std::copy_if(knowledge.begin(), knowledge.end(), std::inserter(possible, possible.end()), [&previous](const decltype(knowledge)::value_type& skill)
         {
             return skill->Combo(previous);
         });
@@ -447,12 +447,14 @@ namespace Game
                 actor.body[*limb].Hold(*actor.carried.back());
             }
         }
-        actor.knowledge.resize(skills);
-        for (auto& skill : actor.knowledge)
+        for (size_t n = 0; n < skills; ++n)
         {
             std::wstring skillName;
             s >> skillName;
-            skill = game.skills.Find(skillName);
+            auto skill = game.skills.Find(skillName);
+            if (!skill)
+                throw std::runtime_error("Unknown actor skill");
+            actor.knowledge.insert(skill);
         }
 
         return s;

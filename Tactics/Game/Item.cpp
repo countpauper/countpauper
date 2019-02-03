@@ -245,6 +245,19 @@ namespace Game
         return Requirement(strength + other.strength, intelligence+ other.intelligence);
     }
 
+    Type::Armor::Armor() :
+        slot(Slot::Nothing), 
+        category(None)
+    {
+
+    }
+    Type::Armor::Armor(Slot slot, Category category, const Damage& mitigation):
+        slot(slot),
+        category(category),
+        mitigation(mitigation)
+    {
+    }
+
     Armor::Armor(const Game& game, const std::wstring& type, const std::wstring& material, const std::wstring& mod) :
         type(game.FindArmor(type)),
         material(game.FindArmorMaterial(material, this->type)),

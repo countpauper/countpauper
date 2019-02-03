@@ -60,14 +60,14 @@ namespace Game
         bool CanAct() const;
         bool Dead() const;
         bool Prone() const override;
-        using Knowledge = std::vector<const Skill*> ;
+        using Knowledge = std::set<const Skill*> ;
         const Skill* DefaultAttack() const;
         const Skill* DefaultMove() const;
         const Skill* WaitSkill() const;
         std::vector<std::unique_ptr<Action>> AllMoves(const Position& from) const;
 
-        std::vector<const Skill*> Counters(const Skill& previous) const;
-        std::vector<const Skill*> Combos(const Skill& previous) const;
+        std::set<const Skill*> Counters(const Skill& previous) const;
+        std::set<const Skill*> Combos(const Skill& previous) const;
 
         bool IsPossible(const Skill& skill) const;
         const Knowledge& GetSkills() const;

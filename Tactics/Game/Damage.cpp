@@ -169,8 +169,19 @@ namespace Game
     {
         for (auto woundType : Wound::Types)
         {
-            if (damage.damage.count(woundType))
-                s << damage.damage.at(woundType).Value();
+            if (damage.Has(woundType))
+                s << damage.Get(woundType).Value();
+            s << L",";
+        }
+        return s;
+    }
+
+    std::ostream& operator<<(std::ostream& s, const Damage& damage)
+    {
+        for (auto woundType : Wound::Types)
+        {
+            if (damage.Has(woundType))
+                s << damage.Get(woundType).Value();
             s << L",";
         }
         return s;
@@ -213,6 +224,15 @@ namespace Game
                 damage[d.first] = d.second;
         }
         return *this;
+    }
+
+    bool Damage::operator==(const Damage& other) const
+    {
+        return ((Sharp() == other.Sharp()) &&
+            (Blunt() == other.Blunt()) &&
+            (Burn() == other.Burn()) &&
+            (Disease() == other.Disease()) &&
+            (Spirit() == other.Spirit()));
     }
 
     Damage operator-(const Damage& damage, const Damage& mitigation)

@@ -67,6 +67,7 @@ namespace Game
         {
         public:
             Item() : frequency(0) {}
+            virtual ~Item() = default;
             std::wstring name;
             int frequency;  
         };
@@ -137,7 +138,9 @@ namespace Game
                 static std::vector<Modifier> Load(std::wistream& fileName);
             };
 
-            Armor() : slot(Slot::Nothing), category(None) {}
+            Armor();
+            Armor(Slot slot, Category category, const Damage& mitigation);
+
             static std::vector<Armor> Load(std::wistream& fileName);            
             unsigned SlotCount() const;
             bool Match(const Material& material) const;

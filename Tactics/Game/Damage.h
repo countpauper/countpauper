@@ -50,7 +50,8 @@ namespace Game
         void SetDisease(const int& v) { Set(Wound::Type::Disease, v); }
         void SetSpirit(const int& v)  { Set(Wound::Type::Spirit, v); }
 
-        Score Get(Wound::Type type) const { return (damage.count(type))?damage.at(type):Score(); };
+        bool Has(Wound::Type type) const { return damage.count(type)>0; }
+        Score Get(Wound::Type type) const { return (Has(type))?damage.at(type):Score(); };
         Score Sharp() const { return Get(Wound::Type::Sharp); }
         Score Blunt() const { return Get(Wound::Type::Blunt); }
         Score Burn() const { return Get(Wound::Type::Burn); }
@@ -63,11 +64,13 @@ namespace Game
         Damage operator^(const Damage& other) const;
         Damage& operator^=(const Damage& other);
         Damage& operator+=(const Damage& other);
+        bool operator==(const Damage& other) const;
         Damage Wound(const std::wstring& description) const;
         Damage Describe(const std::wstring& description) const;
     protected:
         friend std::wostream& operator<<(std::wostream& s, const Damage& damage);
         friend std::wistream& operator>>(std::wistream& s, Damage& damage);
+        friend std::ostream& operator<<(std::ostream& s, const Damage& damage);
         friend Damage operator-(const Damage& damage, const Damage& mitigation);
 
         std::pair<Wound::Type, unsigned> FindWorst() const;
@@ -77,4 +80,6 @@ namespace Game
 
     std::wistream& operator>>(std::wistream& s, Damage& damage);
     std::wostream& operator<<(std::wostream& s, const Damage& damage);
+    std::ostream& operator<(std::ostream& s, const Damage& damage);
+
 };

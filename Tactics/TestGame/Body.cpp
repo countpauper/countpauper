@@ -63,14 +63,21 @@ BOOST_AUTO_TEST_CASE(Dead)
 BOOST_AUTO_TEST_CASE(Weapon)
 {
     Data::Human b;
-    auto arm = b[L"RArm"];
-    BOOST_CHECK(arm.Held() == nullptr);
+    auto& arm = b[L"RArm"];
+    BOOST_CHECK(arm.Held()==nullptr);
     Data::Blade weapon;
     arm.Hold(weapon);
     BOOST_CHECK(arm.Held() == &weapon);
     arm.Drop();
-    BOOST_CHECK(arm.Held() == nullptr);
+    BOOST_CHECK(arm.Held()==nullptr);
     BOOST_CHECK_THROW(b[L"Legs"].Hold(weapon), std::exception);
+    auto& otherArm = b[L"LArm"];
+    otherArm.Hold(weapon);
+    arm.Hold(weapon);
+    BOOST_CHECK(arm.Held()==&weapon);
+    // TODO: how, no ptr back from arm, weapon doesn't keep. pbly should for transfering from another body 
+    // Enable this for disarm/stealing 
+    // BOOST_CHECK(otherArm.Held()==nullptr);
 }
 
 BOOST_AUTO_TEST_CASE(Engage)
@@ -79,13 +86,14 @@ BOOST_AUTO_TEST_CASE(Engage)
     auto arm = b[L"RArm"];
     Data::Blade weapon;
     arm.Hold(weapon);
+    Data::Melee first;
     Data::Combo combo;
-    BOOST_CHECK(b.Ready(combo.first));
-    b.Engage(combo.first);
-    BOOST_CHECK(!b.Ready(combo.first));
-    BOOST_CHECK(b.Ready(combo.second));
+    BOOST_CHECK(b.Ready(first));
+    b.Engage(first);
+    BOOST_CHECK(!b.Ready(first));
+    BOOST_CHECK(b.Ready(combo));
     b.Disengage();
-    BOOST_CHECK(b.Ready(combo.first));
+    BOOST_CHECK(b.Ready(first));
 }
 
 

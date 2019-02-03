@@ -33,10 +33,14 @@ namespace Game
         unsigned mp;
         unsigned loyalty;
         Body body;
+        std::vector<const Armor*> worn;
+        std::vector<const Weapon*> carried;
+        Actor::Knowledge knowledge;
 
         bool IsPossible(const Skill& skill, const State& target) const;
+        Damage AttackDamage(const Skill& skill) const;
         Damage AttackDamage(const Skill& skill, const Score& skillLevel) const;
-        bool Hurt(Anatomy location, const Damage& damage);
+        bool Hurt(Anatomy location, const Damage& damage, const std::wstring& description);
         Score Chance(const Skill& skill, const State& target) const;
         Score Chance(const Skill& skill) const;
 
@@ -66,10 +70,6 @@ namespace Game
         Score FullBodyBonus(Attribute attribute) const;
         Score FreeLimbScore(const Weapon& weapon, Attribute attribute) const;
         Score AttributeBonus(Attribute attribute) const;
-
-        std::vector<const Armor*> worn;
-        std::vector<const Weapon*> carried;
-        Actor::Knowledge knowledge;
     };
 
     class GameState : public IGame

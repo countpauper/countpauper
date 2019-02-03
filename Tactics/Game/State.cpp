@@ -36,6 +36,8 @@ namespace Game
 
     bool State::IsPossible(const Skill& skill, const State& target) const
     {
+        if (knowledge.count(&skill) == 0)
+            return false;
         if (mp < skill.mp)
             return false;
         auto available = UsedWeapon(skill);
@@ -45,7 +47,6 @@ namespace Game
             return false;
         if (UsedLimbs(skill).empty())
             return false;
-        // TODO: if weapons.count(skill.weapon)==0 return false
         // TODO if (game.Cover(state.position, target.GetPosition()))
         
         return true;
@@ -189,6 +190,11 @@ namespace Game
         return Bonus(L"Wis (" + wisdom.Description() + L")", (int(wisdom.Value()) - 11) / 3);
     }
 
+    Damage State::AttackDamage(const Skill& skill) const
+    {
+        return AttackDamage(skill, SkillLevel(skill));
+    }
+
     Damage State::AttackDamage(const Skill& skill, const Score& skillLevel) const
     {
         auto& attackType = dynamic_cast<Skill::Melee&>(*skill.type);
@@ -213,13 +219,17 @@ namespace Game
         }
     }
 
-    bool State::Hurt(Anatomy location, const Damage& damage)
+    bool State::Hurt(Anatomy location, const Damage& damage, const std::wstring& description)
     {
         auto part = body.Get(location);
         if (!part)
             return false;
         Damage pain = damage - Mitigation(*part);
-        body.Hurt(*part, pain);
+    
+        body.Hurt(*part, pain.Wound(description));
+        if (body.Dead())
+            direction.Fall();
+
         return true;
     }
 
@@ -282,6 +292,9 @@ namespace Game
 
     Score State::SkillLevel(const Skill& skill, const State* victim) const
     {
+        if (knowledge.count(&skill) == 0)
+            return Score();
+
         auto used = UsedLimbs(skill);
 
         Score result(Bonus(skill.name, skill.offset));
@@ -369,14 +382,14 @@ namespace Game
     std::pair<const Body::Part*, const Weapon*> State::UsedWeapon(const Skill& skill) const
     {
         auto used = UsedLimbs(skill);
-        if (used.empty())
-            return std::pair<const Body::Part*, const Weapon*>(nullptr, nullptr);
         for (auto use : used)
         {
-            if (use.second)
+            if ((skill.weapon == Type::Weapon::None) && (!use.second))
+                return use;
+            else if ((use.second) && (use.second->Match(skill.weapon)))
                 return use;
         }
-        return *used.begin();
+        return std::pair<const Body::Part*, const Weapon*>(nullptr, nullptr);
     }
 
     Score State::Range(const Skill& skill) const

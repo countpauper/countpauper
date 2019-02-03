@@ -66,12 +66,10 @@ Action::Result Attack::Act(const IGame& game) const
         return Fail(game, skillLevel.Description());
     // TODO: Fail due to miss? ret.chance = double(attacker.Chance(skill, victim).Value()) / 100.0;
     auto damage = attacker.AttackDamage(skill, skillLevel);
-    if (!victim.Hurt(location, damage.Wound(actor.Description())))
+    if (!victim.Hurt(location, damage, actor.Description()))
         return Fail(game, L"missed");
     attacker.mp -= skill.mp;
     attacker.Engage(skill);
-    if (victim.body.Dead())
-        victim.direction.Fall();
 
     Result ret(game, actor);
     ret.state->Adjust(actor, attacker);
