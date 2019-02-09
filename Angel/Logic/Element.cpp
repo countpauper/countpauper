@@ -6,6 +6,10 @@ namespace Angel
 namespace Logic
 {
 
+bool Value::Match(const Value& other) const
+{
+	return operator==(other);
+}
 
 Element::Element(Element&& other) :
 	value(std::move(other.value))
@@ -22,6 +26,11 @@ Element& Element::operator=(Element&& other)
 bool Element::operator==(const Element& other) const
 {
 	return *value == *other.value;
+}
+
+bool Element::Match(const Element& other) const
+{
+	return value->Match(*other.value);
 }
 
 

@@ -18,7 +18,7 @@ void Knowledge::Know(Element&& e)
 
 bool Knowledge::Query(const Element& e) const
 {
-	return root.Query(e);
+	return root.Match(e);
 }
 
 }

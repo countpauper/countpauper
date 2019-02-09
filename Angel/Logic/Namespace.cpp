@@ -16,11 +16,11 @@ void Namespace::Add(Element&& e)
 	contents.emplace_back(std::move(e));
 }
 
-bool Namespace::Query(const Element& e) const
+bool Namespace::Match(const Element& e) const
 {
 	for (auto& c : contents)
 	{
-		if (c == e)
+		if (c.Match(e))
 			return true;
 	}
 	return false;

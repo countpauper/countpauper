@@ -12,12 +12,12 @@ namespace Test
 TEST(TestSolver, Knowledge)
 {
 	Knowledge k;
-
-	EXPECT_FALSE(k.Query(Create<Predicate>(L"Test")));
+	EXPECT_FALSE(k.Query(predicate(L"Test")));
 	k.Know(Create<Predicate>(L"Test"));
-	EXPECT_TRUE(k.Query(Create<Predicate>(L"Test")));
-	EXPECT_FALSE(k.Query(Create<Predicate>(L"Not a Test")));
+	EXPECT_TRUE(k.Query(predicate(L"Test")));
+	EXPECT_FALSE(k.Query(predicate(L"Not a Test")));
 }
+
 
 }
 }

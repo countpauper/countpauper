@@ -13,7 +13,7 @@ class Namespace
 public:
 	explicit Namespace(const Id& id);
 	void Add(Element&& e);
-	bool Query(const Element& e) const;
+	bool Match(const Element& e) const;
 private:
     Id id;
 	std::vector<Element> contents;

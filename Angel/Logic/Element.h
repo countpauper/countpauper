@@ -12,6 +12,7 @@ public:
 	Value() = default;
 	virtual ~Value() = default;
 	virtual bool operator==(const Value& other) const = 0;
+	virtual bool Match(const Value& other) const;
 };
 
 class Element final
@@ -30,6 +31,7 @@ public:
 	Element& operator=(Element&& other);
 
 	bool operator==(const Element& other) const;
+	bool Match(const Element& other) const;
 private:
 	std::unique_ptr<Value> value;
 };

@@ -25,6 +25,10 @@ bool Predicate::operator==(const Value& other) const
 	return false;
 }
 
+Element predicate(const std::wstring& name)
+{
+	return Element(std::make_unique<Predicate>(name));
+}
 
 
 }
