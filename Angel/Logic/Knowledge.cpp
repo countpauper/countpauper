@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Knowledge.h"
+#include "Boolean.h"
 
 namespace Angel
 {
@@ -18,6 +19,8 @@ void Knowledge::Know(Element&& e)
 
 bool Knowledge::Query(const Element& e) const
 {
+	if (boolean(true).Match(e))
+		return true;
 	return root.Match(e);
 }
 

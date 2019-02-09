@@ -72,6 +72,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Boolean.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="Id.h" />
     <ClInclude Include="Knowledge.h" />
@@ -86,6 +87,7 @@
     <ClCompile Include="Knowledge.cpp" />
     <ClCompile Include="Namespace.cpp" />
     <ClCompile Include="Predicate.cpp" />
+    <ClCompile Include="Boolean.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
