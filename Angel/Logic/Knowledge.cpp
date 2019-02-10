@@ -24,5 +24,16 @@ bool Knowledge::Query(const Element& e) const
 	return root.Match(e);
 }
 
+bool Knowledge::Knows(const Element& e) const
+{
+	return root.Contains(e);
+}
+
+
+size_t Knowledge::Clauses() const
+{
+	return root.Clauses();
+}
+
 }
 }

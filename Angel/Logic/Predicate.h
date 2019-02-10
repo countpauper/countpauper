@@ -17,7 +17,7 @@ private:
     Id id;
 };
 
-Element predicate(const std::wstring& name);
+Element predicate(const std::wstring& name, Element&& sequence);
 
 }
 }

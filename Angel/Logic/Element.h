@@ -30,8 +30,10 @@ public:
 	Element(Element&& other);
 	Element& operator=(Element&& other);
 
+	operator bool() const;
 	bool operator==(const Element& other) const;
 	bool Match(const Element& other) const;
+
 private:
 	std::unique_ptr<Value> value;
 };

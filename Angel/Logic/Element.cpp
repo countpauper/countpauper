@@ -22,6 +22,10 @@ Element& Element::operator=(Element&& other)
 	return *this;
 }
 
+Element::operator bool() const
+{
+	return value.get();
+}
 
 bool Element::operator==(const Element& other) const
 {

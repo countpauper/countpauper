@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <algorithm>
 #include "Namespace.h"
 
 namespace Angel
@@ -24,6 +25,17 @@ bool Namespace::Match(const Element& e) const
 			return true;
 	}
 	return false;
+}
+
+bool Namespace::Contains(const Element& e) const
+{
+	return std::find(contents.begin(), contents.end(), e)!=contents.end();
+}
+
+
+size_t Namespace::Clauses() const
+{
+	return contents.size();
 }
 
 }
