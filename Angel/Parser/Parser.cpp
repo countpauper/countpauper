@@ -1,8 +1,11 @@
 #include "stdafx.h"
 #include <sstream>
+#include <optional>
 #include <ctype.h>
 #include "Parser.h"
 #include "Logic/Predicate.h"
+#include "Logic/Boolean.h"
+#include "Logic/Sequence.h"
 
 namespace Angel
 {
@@ -68,7 +71,52 @@ Logic::Element ReadSequence(std::wistream& stream)
 	return result;
 }
 
-std::wistream& operator>>(std::wistream& stream, Logic::Element& e)
+std::optional<bool> ParseBoolean(const std::wstring& tag)
+{
+	if (tag == L"true")
+		return true;
+	else if (tag == L"false")
+		return false;
+	else
+		return std::optional<bool>();
+}
+
+Logic::Element ParseElement(const std::wstring& tag)
+{
+	if (tag.empty())
+	{
+		return Logic::Element();
+	}
+	else if (auto boolean = ParseBoolean(tag))
+	{
+		return Logic::boolean(*boolean);
+	}
+	else
+	{
+		return Logic::id(tag);
+	}
+}
+
+Logic::Element MakeExpression(Logic::Element&& first, Operator op, Logic::Element&& second)
+{
+	auto id = first.Cast<Logic::Id>();
+	auto seq = second.Cast<Logic::Sequence>();
+	if ((id) && (seq) && (op == Operator::SequenceBegin))
+	{
+		return Logic::predicate(*id, std::move(second));
+	}
+	else if (op == Operator::SequenceEnd)
+	{
+		return Logic::sequence();
+	}
+	else
+	{
+		throw std::runtime_error("Unexpected operator");
+	}
+
+}
+
+Logic::Element ParseExpression(std::wistream& stream)
 {
 	SkipWhitespace(stream);
 	auto tag = ReadTag(stream);	// TODO tag type and operator<<
@@ -76,17 +124,12 @@ std::wistream& operator>>(std::wistream& stream, Logic::Element& e)
 	auto op = ReadOperator(stream);	// TODO operator type and operator <<
 	if (op == Operator::None)
 	{
-		if (!tag.empty())
-		{
-			e = Logic::id(tag);
-		}
+		return ParseElement(tag);
 	}
-	else if (op == Operator::SequenceBegin)
+	else 
 	{
-		auto s = ReadSequence(stream);
-		e = Logic::predicate(tag, std::move(s));
+		return MakeExpression(ParseElement(tag), op, ParseExpression(stream));
 	}
-	return stream;
 }
 
 Logic::Knowledge Parse(const std::wstring& text)
@@ -96,8 +139,7 @@ Logic::Knowledge Parse(const std::wstring& text)
 	stream.exceptions(std::wistream::failbit | std::wistream::badbit);
 	while (stream.good())
 	{
-		Logic::Element e;
-		stream >> e;
+		Logic::Element e = ParseExpression(stream);
 		if (e)
 		{
 			result.Know(std::move(e));

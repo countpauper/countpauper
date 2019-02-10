@@ -2,6 +2,7 @@
 #include "Parser/Parser.h"
 #include "Logic/Predicate.h"
 #include "Logic/Sequence.h"
+#include "Logic/Boolean.h"
 
 #pragma warning(disable:4566)	// google test can't represent unicode
 
@@ -19,6 +20,25 @@ TEST(TestParser, Id)
 	EXPECT_EQ(k.Clauses(), 1);
 	EXPECT_TRUE(k.Knows(Logic::id(L"test")));
 	EXPECT_FALSE(k.Knows(Logic::id(L"not_a_test")));
+}
+
+TEST(TestParser, Ids)
+{
+	Logic::Knowledge k = Parse(L"foo bar");
+
+	EXPECT_EQ(k.Clauses(), 2);
+	EXPECT_TRUE(k.Knows(Logic::id(L"foo")));
+	EXPECT_TRUE(k.Knows(Logic::id(L"bar")));
+}
+
+
+TEST(TestParser, Boolean)
+{
+	Logic::Knowledge k = Parse(L"true false");
+
+	EXPECT_EQ(k.Clauses(), 2);
+	EXPECT_TRUE(k.Knows(Logic::boolean(true)));
+	EXPECT_TRUE(k.Knows(Logic::boolean(false)));
 }
 
 TEST(TestParser, Predicate)

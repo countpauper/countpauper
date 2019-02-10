@@ -34,6 +34,8 @@ public:
 	bool operator==(const Element& other) const;
 	bool Match(const Element& other) const;
 
+	template<class C>
+	C* Cast() const { return dynamic_cast<C*>(value.get()); }
 private:
 	std::unique_ptr<Value> value;
 };

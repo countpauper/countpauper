@@ -25,6 +25,11 @@ bool Predicate::operator==(const Value& value) const
 	return false;
 }
 
+Element predicate(const Id& id, Element&& sequence)
+{
+	return Element(std::make_unique<Predicate>(id));
+}
+
 Element predicate(const std::wstring& name, Element&& sequence)
 {
 	return Element(std::make_unique<Predicate>(name));
