@@ -90,6 +90,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Anatomy.cpp" />
+    <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Body.cpp" />
     <ClCompile Include="Data.cpp" />
     <ClCompile Include="Direction.cpp" />
