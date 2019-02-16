@@ -11,7 +11,7 @@ namespace Logic
 class Clause : public Value
 {
 public:
-	explicit Clause(Predicate&& predicate, Sequence&& conditions);
+	explicit Clause(Predicate&& predicate, Sequence&& conditions = Sequence());
 	bool operator==(const Value& other) const override;
 	bool Match(const Value& other, const Knowledge& knowledge) const override;
 private:
@@ -19,7 +19,7 @@ private:
 	Sequence conditions;
 };
 
-Element clause(Predicate&& id, Sequence&& conditions);
+Element clause(Predicate&& id, Sequence&& conditions=Sequence());
 
 }
 }

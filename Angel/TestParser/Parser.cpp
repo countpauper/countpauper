@@ -18,7 +18,7 @@ TEST(TestParser, Whitespace)
 	Logic::Knowledge k = Parse(L"\t  cat(\n )\r\n");
 
 	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"cat", Logic::sequence())));
+	EXPECT_TRUE(k.Knows(Logic::predicate(L"cat")));
 }
 
 TEST(TestParser, UnicodeId)
@@ -26,7 +26,7 @@ TEST(TestParser, UnicodeId)
 	Logic::Knowledge k = Parse(L"Γάτα() 猫");
 
 	EXPECT_EQ(k.Clauses(), 2);
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"Γάτα", Logic::sequence())));
+	EXPECT_TRUE(k.Knows(Logic::predicate(L"Γάτα")));
 	EXPECT_TRUE(k.Knows(Logic::id(L"猫")));
 }
 

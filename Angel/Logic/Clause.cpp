@@ -17,7 +17,8 @@ bool Clause::operator==(const Value& value) const
 {
 	if (auto clause = dynamic_cast<const Clause*>(&value))
 	{
-		return predicate == clause->predicate;
+		return predicate == clause->predicate && 
+			conditions == clause->conditions;
 	}
 	return false;
 }

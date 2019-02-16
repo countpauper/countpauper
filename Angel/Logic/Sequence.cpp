@@ -38,12 +38,11 @@ bool Sequence::operator==(const Value& value) const
 	{
 		if (size() != sequence->size())
 			return false;
-		auto it = sequence->begin();
-		for (const auto& e : *this)
+		auto valueIt = sequence->begin();
+		for (auto it = begin(); it!=end(); ++it, ++valueIt)
 		{
-			if (e.operator!=(*it))
+			if (it->operator!=(*valueIt))
 				return false;
-			++it;	// TODO: zip
 		}
 		return true;	
 	}

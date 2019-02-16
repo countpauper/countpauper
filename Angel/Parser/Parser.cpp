@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include <sstream>
 #include <optional>
+#include <map>
 #include <ctype.h>
 #include "Parser.h"
 #include "Logic/Predicate.h"
 #include "Logic/Boolean.h"
 #include "Logic/Sequence.h"
+#include "Logic/Clause.h"
 
 namespace Angel
 {
@@ -15,15 +17,21 @@ namespace Parser
 static std::wstring operators(L"~!@#$%^&|=+-*/,:()[]{}<>.?!");
 static std::wstring whitespace(L" \t\r\n");
 
-enum class Operator : wchar_t
-{
+enum class Operator 
+{	// in order of precedence low to high
 	None=0,
-	SequenceBegin=L'(',
-	SequenceEnd = L')',
-	Pair = L':'
+	Colon,
+	SequenceBegin,
+	SequenceEnd,
 };
 
-bool IsClosing(Operator o)
+static const std::map<wchar_t, Operator> translateOperator = {
+	{L'(', Operator::SequenceBegin},
+	{L')', Operator::SequenceEnd},
+	{L':', Operator::Colon}
+};
+
+bool IsPostfix(Operator o)
 {
 	return o == Operator::SequenceEnd;
 }
@@ -44,15 +52,15 @@ void SkipWhitespace(std::wistream& s)
 	}
 }
 
-Operator ReadOperator(std::wistream& s)
+Operator PeekOperator(std::wistream& s)
 {
 	if (!s.good())
 		return Operator::None;
 	wchar_t c = s.peek();
 	if (operators.find(c) == std::wstring::npos)
 		return Operator::None;
-	s.ignore();
-	return static_cast<Operator>(c);
+	// TODO: double character operators and ignore() them later
+	return translateOperator.at(c);
 }
 
 std::wstring ReadTag(std::wistream& s)
@@ -64,20 +72,6 @@ std::wstring ReadTag(std::wistream& s)
 		if (!iswalnum(c))
 			return result;
 		result.append(1, wchar_t(s.get()));
-	}
-	return result;
-}
-
-Logic::Element ReadSequence(std::wistream& stream)
-{
-	Logic::Element result;
-	while (stream.good())
-	{
-		SkipWhitespace(stream);
-		auto op = ReadOperator(stream);
-		if (op == Operator::SequenceEnd)
-			return result;
-		stream.ignore();	// TODO: read expressions in sequence
 	}
 	return result;
 }
@@ -113,13 +107,31 @@ Logic::Element ParseElement(const std::wstring& tag)
 Logic::Element MakeExpression(Logic::Element&& first, Operator op, Logic::Element&& second)
 {
 	auto id = first.Cast<Logic::Id>();
+	auto pred0 = first.Cast<Logic::Predicate>();
+	auto pred1 = second.Cast<Logic::Predicate>();
 	auto seq = second.Cast<Logic::Sequence>();
 	if ((id) && (seq) && (op == Operator::SequenceBegin))
-	{
-		return Logic::predicate(*id, std::move(second));
+	{	// predicate = <id> ( <seq> )
+		return Logic::predicate(*id, std::move(*seq));
 	}
-	else if (op == Operator::SequenceEnd)
-	{
+	else if ((pred0) && (seq) && (op == Operator::Colon))
+	{	// clause = <pred> : <seq>
+		return Logic::clause(std::move(*pred0), std::move(*seq));
+	}
+	else if ((pred0) && (pred1) && (op == Operator::Colon))
+	{	// clause = <pred> : <pred>
+		return Logic::clause(std::move(*pred0), Logic::Sequence(std::move(second)));
+	}
+	else if ((op == Operator::SequenceEnd) && (first))
+	{	// sequence = <element> )
+		if (second)
+			throw std::runtime_error("Orphaned element after sequence");
+		return Logic::sequence(std::move(first));
+	}
+	else if ((op == Operator::SequenceEnd) && (!first))
+	{	// null sequence = )
+		if (second)
+			throw std::runtime_error("Orphaned element after empty sequence");
 		return Logic::sequence();
 	}
 	else
@@ -129,24 +141,30 @@ Logic::Element MakeExpression(Logic::Element&& first, Operator op, Logic::Elemen
 
 }
 
-Logic::Element ParseExpression(std::wistream& stream)
+Logic::Element ParseExpression(std::wistream& stream, Operator previousOperator)
 {
 	SkipWhitespace(stream);
 	auto tag = ReadTag(stream);	// TODO tag type and operator<<
-	SkipWhitespace(stream);
-	auto op = ReadOperator(stream);	// TODO operator type and operator <<
-	if (op == Operator::None)
+	auto left = ParseElement(tag);
+	while (stream.good())
 	{
-		return ParseElement(tag);
+		SkipWhitespace(stream);
+		auto op = PeekOperator(stream);	// TODO operator type and operator <<
+		if (op <= previousOperator)
+		{
+			break;
+		}
+		stream.ignore();	// skip operator
+		if (IsPostfix(op))
+		{
+			left = MakeExpression(std::move(left), op, Logic::Element());
+		}
+		else
+		{
+			left =MakeExpression(std::move(left), op, ParseExpression(stream, op));
+		}
 	}
-	else if ((IsClosing(op) || IsUnary(op)))
-	{
-		return MakeExpression(ParseElement(tag), op, Logic::Element());
-	}
-	else 
-	{
-		return MakeExpression(ParseElement(tag), op, ParseExpression(stream));
-	}
+	return left;
 }
 
 Logic::Knowledge Parse(const std::wstring& text)
@@ -156,7 +174,7 @@ Logic::Knowledge Parse(const std::wstring& text)
 	stream.exceptions(std::wistream::failbit | std::wistream::badbit);
 	while (stream.good())
 	{
-		Logic::Element e = ParseExpression(stream);
+		Logic::Element e = ParseExpression(stream, Operator::None);
 		if (e)
 		{
 			result.Know(std::move(e));

@@ -12,9 +12,9 @@ class Sequence : public Value, public std::vector<Element>
 {
 public:
 	Sequence();
-	Sequence(Element&& value);
+	explicit Sequence(Element&& value);
 	template<class ...Args>
-	Sequence(Element&& first, Args... args) :
+	explicit Sequence(Element&& first, Args... args) :
 		Sequence(std::move(first))
 	{
 		Merge(Sequence(std::forward<Args>(args)...));
