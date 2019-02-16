@@ -15,20 +15,20 @@ namespace Test
 
 TEST(TestParser, Id)
 {
-	Logic::Knowledge k = Parse(L"test");
+	Logic::Knowledge k = Parse(L"cat");
 
 	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::id(L"test")));
-	EXPECT_FALSE(k.Knows(Logic::id(L"not_a_test")));
+	EXPECT_TRUE(k.Knows(Logic::id(L"cat")));
+	EXPECT_FALSE(k.Knows(Logic::id(L"dog")));
 }
 
 TEST(TestParser, Ids)
 {
-	Logic::Knowledge k = Parse(L"foo bar");
+	Logic::Knowledge k = Parse(L"max ginny");
 
 	EXPECT_EQ(k.Clauses(), 2);
-	EXPECT_TRUE(k.Knows(Logic::id(L"foo")));
-	EXPECT_TRUE(k.Knows(Logic::id(L"bar")));
+	EXPECT_TRUE(k.Knows(Logic::id(L"max")));
+	EXPECT_TRUE(k.Knows(Logic::id(L"ginny")));
 }
 
 
@@ -43,28 +43,30 @@ TEST(TestParser, Boolean)
 
 TEST(TestParser, Predicate)
 {
-	Logic::Knowledge k = Parse(L"test()");
+	Logic::Knowledge k = Parse(L"cat() ginny");
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"test", Logic::sequence())));
-	EXPECT_FALSE(k.Knows(Logic::predicate(L"not_a_test", Logic::sequence())));
+	EXPECT_EQ(k.Clauses(), 2);
+	EXPECT_TRUE(k.Knows(Logic::predicate(L"cat", Logic::sequence())));
+	EXPECT_TRUE(k.Knows(Logic::id(L"ginny")));
+	EXPECT_FALSE(k.Knows(Logic::predicate(L"dog", Logic::sequence())));
 }
 
 TEST(TestParser, Whitespace)
 {
-	Logic::Knowledge k = Parse(L"\t  test (\n )\r\n");
+	Logic::Knowledge k = Parse(L"\t  cat(\n )\r\n");
 
 	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"test", Logic::sequence())));
+	EXPECT_TRUE(k.Knows(Logic::predicate(L"cat", Logic::sequence())));
 }
 
 TEST(TestParser, UnicodeId)
 {
-	Logic::Knowledge k = Parse(L"βçݝﬣ鳳()");
+	Logic::Knowledge k = Parse(L"Γάτα() 猫");
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"βçݝﬣ鳳", Logic::sequence())));
-} 
+	EXPECT_EQ(k.Clauses(), 2);
+	EXPECT_TRUE(k.Knows(Logic::predicate(L"Γάτα", Logic::sequence())));
+	EXPECT_TRUE(k.Knows(Logic::id(L"猫")));
+}
 
 }
 }

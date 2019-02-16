@@ -19,8 +19,19 @@ enum class Operator : wchar_t
 {
 	None=0,
 	SequenceBegin=L'(',
-	SequenceEnd=L')'
+	SequenceEnd = L')',
+	Pair = L':'
 };
+
+bool IsClosing(Operator o)
+{
+	return o == Operator::SequenceEnd;
+}
+
+bool IsUnary(Operator o)
+{
+	return false;
+}
 
 void SkipWhitespace(std::wistream& s)
 {
@@ -81,6 +92,7 @@ std::optional<bool> ParseBoolean(const std::wstring& tag)
 		return std::optional<bool>();
 }
 
+// TODO: can be constructor of element
 Logic::Element ParseElement(const std::wstring& tag)
 {
 	if (tag.empty())
@@ -97,6 +109,7 @@ Logic::Element ParseElement(const std::wstring& tag)
 	}
 }
 
+// TODO: can be constructor of element
 Logic::Element MakeExpression(Logic::Element&& first, Operator op, Logic::Element&& second)
 {
 	auto id = first.Cast<Logic::Id>();
@@ -125,6 +138,10 @@ Logic::Element ParseExpression(std::wistream& stream)
 	if (op == Operator::None)
 	{
 		return ParseElement(tag);
+	}
+	else if ((IsClosing(op) || IsUnary(op)))
+	{
+		return MakeExpression(ParseElement(tag), op, Logic::Element());
 	}
 	else 
 	{

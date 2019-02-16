@@ -35,6 +35,10 @@ Element predicate(const std::wstring& name, Element&& sequence)
 	return Element(std::make_unique<Predicate>(name));
 }
 
+Element predicate(const std::wstring& name)
+{
+	return Element(std::make_unique<Predicate>(name));
+}
 
 }
 }

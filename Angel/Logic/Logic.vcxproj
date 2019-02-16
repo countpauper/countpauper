@@ -74,6 +74,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Boolean.h" />
+    <ClInclude Include="Clause.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="Id.h" />
     <ClInclude Include="Knowledge.h" />
@@ -84,6 +85,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Clause.cpp" />
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="Id.cpp" />
     <ClCompile Include="Knowledge.cpp" />
