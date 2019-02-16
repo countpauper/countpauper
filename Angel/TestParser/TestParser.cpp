@@ -31,7 +31,6 @@ TEST(TestParser, Ids)
 	EXPECT_TRUE(k.Knows(Logic::id(L"ginny")));
 }
 
-
 TEST(TestParser, Boolean)
 {
 	Logic::Knowledge k = Parse(L"true false");
@@ -43,7 +42,7 @@ TEST(TestParser, Boolean)
 
 TEST(TestParser, Predicate)
 {
-	Logic::Knowledge k = Parse(L"cat() ginny");
+	Logic::Knowledge k = Parse(L"cat(ginny) ginny");
 
 	EXPECT_EQ(k.Clauses(), 2);
 	EXPECT_TRUE(k.Knows(Logic::predicate(L"cat", Logic::sequence())));

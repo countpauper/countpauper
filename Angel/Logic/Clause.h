@@ -13,7 +13,7 @@ class Clause : public Value
 public:
 	explicit Clause(Predicate&& predicate, Sequence&& conditions);
 	bool operator==(const Value& other) const override;
-	bool Match(const Value& other) const override;
+	bool Match(const Value& other, const Knowledge& knowledge) const override;
 private:
 	Predicate predicate;
 	Sequence conditions;

@@ -19,9 +19,9 @@ void Knowledge::Know(Element&& e)
 
 bool Knowledge::Query(const Element& e) const
 {
-	if (boolean(true).Match(e))
+	if (boolean(true).Match(e, *this))
 		return true;
-	return root.Match(e);
+	return root.Match(e, *this);
 }
 
 bool Knowledge::Knows(const Element& e) const

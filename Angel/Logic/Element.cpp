@@ -6,7 +6,7 @@ namespace Angel
 namespace Logic
 {
 
-bool Value::Match(const Value& other) const
+bool Value::Match(const Value& other, const Knowledge&) const
 {
 	return operator==(other);
 }
@@ -32,9 +32,9 @@ bool Element::operator==(const Element& other) const
 	return *value == *other.value;
 }
 
-bool Element::Match(const Element& other) const
+bool Element::Match(const Element& other, const Knowledge& knowledge) const
 {
-	return value->Match(*other.value);
+	return value->Match(*other.value, knowledge);
 }
 
 

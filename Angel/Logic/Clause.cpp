@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Clause.h"
+#include "Knowledge.h"
 
 namespace Angel
 {
@@ -21,14 +22,18 @@ bool Clause::operator==(const Value& value) const
 	return false;
 }
 
-bool Clause::Match(const Value& value) const
+bool Clause::Match(const Value& value, const Knowledge& knowledge) const
 {
 	if (auto query = dynamic_cast<const Predicate*>(&value))
 	{
 		if (this->predicate == *query)
 		{
-			// TODO Match conditions
-			return true;
+			for (const auto& condition : conditions)
+			{
+				if (!knowledge.Query(condition))
+					return false;
+			}
+		return true;
 		}
 	}
 	else if (auto clause = dynamic_cast<const Clause*>(&value))

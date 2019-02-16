@@ -17,11 +17,11 @@ void Namespace::Add(Element&& e)
 	contents.emplace_back(std::move(e));
 }
 
-bool Namespace::Match(const Element& e) const
+bool Namespace::Match(const Element& e, const Knowledge& knowledge) const
 {
 	for (auto& c : contents)
 	{
-		if (c.Match(e))
+		if (c.Match(e, knowledge))
 			return true;
 	}
 	return false;

@@ -8,7 +8,7 @@ namespace Angel
 namespace Logic
 {
 
-class Sequence : public Value
+class Sequence : public Value, public std::vector<Element>
 {
 public:
 	Sequence();
@@ -26,11 +26,9 @@ public:
 	Sequence(Sequence&& other);
 
 	bool operator==(const Value& other) const override;
-	size_t size() const;
+	bool Match(const Value& other, const Knowledge& knowledge) const override;
 	void Append(Element&& value);
 	void Merge(Sequence&& other);
-private:
-	std::vector<Element> contents;
 };
 
 Element sequence();

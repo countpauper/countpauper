@@ -6,13 +6,16 @@ namespace Angel
 namespace Logic
 {
 
+class Knowledge;
+
 class Value
 {
 public:
 	Value() = default;
 	virtual ~Value() = default;
 	virtual bool operator==(const Value& other) const = 0;
-	virtual bool Match(const Value& other) const;
+	bool operator!=(const Value& other) const { return !operator==(other); }
+	virtual bool Match(const Value& other, const Knowledge& knowledge) const;
 };
 
 class Element final
@@ -32,7 +35,8 @@ public:
 
 	operator bool() const;
 	bool operator==(const Element& other) const;
-	bool Match(const Element& other) const;
+	bool operator!=(const Element& other) const { return !operator==(other); }
+	bool Match(const Element& other, const Knowledge& knowledge) const;
 
 	template<class C>
 	C* Cast() const { return dynamic_cast<C*>(value.get()); }
