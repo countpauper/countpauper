@@ -21,11 +21,13 @@ enum class Operator
 {	// in order of precedence low to high
 	None=0,
 	Colon,
+	Comma,
 	SequenceBegin,
 	SequenceEnd,
 };
 
 static const std::map<wchar_t, Operator> translateOperator = {
+	{L',', Operator::Comma},
 	{L'(', Operator::SequenceBegin},
 	{L')', Operator::SequenceEnd},
 	{L':', Operator::Colon}
@@ -106,10 +108,16 @@ Logic::Element ParseElement(const std::wstring& tag)
 // TODO: can be constructor of element
 Logic::Element MakeExpression(Logic::Element&& first, Operator op, Logic::Element&& second)
 {
+	if (op == Operator::Comma)
+	{
+		return Logic::sequence(std::move(first), std::move(second));
+	}
+
 	auto id = first.Cast<Logic::Id>();
 	auto pred0 = first.Cast<Logic::Predicate>();
 	auto pred1 = second.Cast<Logic::Predicate>();
 	auto seq = second.Cast<Logic::Sequence>();
+	
 	if ((id) && (seq) && (op == Operator::SequenceBegin))
 	{	// predicate = <id> ( <seq> )
 		return Logic::predicate(*id, std::move(*seq));
