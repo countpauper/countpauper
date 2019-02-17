@@ -21,7 +21,17 @@ Sequence::Sequence(Array&& array)
 
 Sequence::Sequence(Element&& value)
 {
-	emplace_back(std::move(value));
+	if (auto array = value.Cast<Array>())
+	{
+		for (auto& e : *array)
+		{
+			emplace_back(std::move(e));
+		}
+	}
+	else if (value)
+	{
+		emplace_back(std::move(value));
+	}
 }
 
 

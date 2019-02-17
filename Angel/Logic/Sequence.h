@@ -37,7 +37,13 @@ public:
 Element sequence();
 Element sequence(Array&& array);
 
-template<class ...Args>
+template <bool...> struct bool_pack;
+template <bool... v>
+using all_true = std::is_same<bool_pack<true, v...>, bool_pack<v..., true>>;
+
+template<class ...Args, class = std::enable_if_t <
+	all_true < std::is_convertible<Args, Element>{}... > {}
+>>
 Element sequence(Args... args)
 {
 	return Element(std::make_unique<Sequence>(std::forward<Args>(args)...));

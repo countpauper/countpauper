@@ -22,6 +22,15 @@ TEST(TestSequence, Comma)
 	EXPECT_FALSE(k.Knows(Logic::id(L"dog")));
 }
 
+TEST(TestSequence, MakeArray)
+{
+	Logic::Knowledge k = Parse(L"cat, ");
+
+	EXPECT_EQ(k.Clauses(), 1);
+	EXPECT_TRUE(k.Knows(Logic::array(Logic::id(L"cat"))));
+	EXPECT_FALSE(k.Knows(Logic::id(L"cat")));
+}
+
 TEST(TestSequence, Commas)
 {
 	Logic::Knowledge k = Parse(L"cat, dog, hamster");

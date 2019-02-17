@@ -12,7 +12,7 @@ Array::Array()
 
 Array::Array(Element&& value)
 {
-	emplace_back(std::move(value));
+	Append(std::move(value));
 }
 
 Array::Array(Array&& other) :
@@ -61,7 +61,14 @@ bool Array::Match(const Value& value, const Knowledge& knowledge) const
 
 void Array::Append(Element&& value)
 {
-	emplace_back(std::move(value));
+	if (auto array = value.Cast<Array>())
+	{
+		Merge(std::move(*array));
+	}
+	else if (value)
+	{
+		emplace_back(std::move(value));
+	}
 }
 
 void Array::Merge(Array&& other)

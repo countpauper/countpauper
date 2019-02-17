@@ -99,7 +99,7 @@ std::optional<bool> ParseBoolean(const std::wstring& tag)
 		return std::optional<bool>();
 }
 
-// TODO: can be constructor of element
+// TODO: can be constructor of element after element/collection/expression split
 Logic::Element ParseElement(const std::wstring& tag)
 {
 	if (tag.empty())
@@ -116,43 +116,23 @@ Logic::Element ParseElement(const std::wstring& tag)
 	}
 }
 
+
 // TODO: can be constructor of element
 Logic::Element MakeExpression(Logic::Element&& left, Operator op, Logic::Element&& right)
 {
-	auto seq0 = left.Cast<Logic::Sequence>();
-	auto pred0 = left.Cast<Logic::Predicate>();
-	auto seq1 = right.Cast<Logic::Sequence>();
-	auto array0 = left.Cast<Logic::Array>();
-	auto array1 = right.Cast<Logic::Array>();
 	if (op == Operator::Comma)
 	{
-		if ((array0) && (array1))
-		{
-			return Logic::array(std::move(*array0), std::move(*array1));
-		}
-		else if (array0)
-		{
-			return Logic::array(std::move(*array0), std::move(right));
-		}
-		else if (array1)
-		{
-			return Logic::array(std::move(left), std::move(*array1));
-		}
-		else
-		{
-			return Logic::array(std::move(left), std::move(right));
-		}
+		return Logic::array(std::move(left), std::move(right));
 	}
-
 	auto id0 = left.Cast<Logic::Id>();
 	auto pred1 = right.Cast<Logic::Predicate>();
+	auto seq0 = left.Cast<Logic::Sequence>();
+	auto pred0 = left.Cast<Logic::Predicate>();
+	auto array1 = right.Cast<Logic::Array>();
 
 	if ((id0) && (op == Operator::SequenceBegin))
-	{	// predicate = <id> ( <seq> )
-		if (right)
-			return Logic::predicate(*id0, Logic::Sequence(std::move(right)));
-		else
-			return Logic::predicate(*id0);
+	{	// predicate = <id> ( <seq> ) , also works if right is void
+		return Logic::predicate(*id0, Logic::Sequence(std::move(right)));
 	}
 	else if ((pred0) && (array1) && (op == Operator::Colon))
 	{	// clause = <pred> : <array>
@@ -162,12 +142,8 @@ Logic::Element MakeExpression(Logic::Element&& left, Operator op, Logic::Element
 	{	// clause = <pred> : <whatever>
 		return Logic::clause(std::move(*pred0), Logic::Array(std::move(right)));
 	}
-	else if ((op == Operator::SequenceBegin) && (array1))
-	{
-		return Logic::sequence(std::move(*array1));
-	}
 	else if ((op == Operator::SequenceBegin) && (!left))
-	{
+	{	// also works for right being an array or void
 		return Logic::sequence(std::move(right));
 	}
 	else
