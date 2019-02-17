@@ -7,22 +7,22 @@ namespace Angel
 namespace Logic
 {
 
-Predicate::Predicate(const Id& id, Sequence&& parameters) :
+Predicate::Predicate(const Id& id, Sequence&& arguments) :
 	id(id),
-	parameters(std::move(parameters))
+	arguments(std::move(arguments))
 {
 }
 
-Predicate::Predicate(const std::wstring& tag, Sequence&& parameters) :
+Predicate::Predicate(const std::wstring& tag, Sequence&& arguments) :
 	id(tag),
-	parameters(std::move(parameters))
+	arguments(std::move(arguments))
 {
 }
 bool Predicate::operator==(const Value& value) const
 {
 	if (auto predicate = dynamic_cast<const Predicate*>(&value))
 	{
-		return id == predicate->id && parameters == predicate->parameters;
+		return id == predicate->id && arguments == predicate->arguments;
 	}
 	return false;
 }
@@ -33,26 +33,27 @@ bool Predicate::Match(const Value& value, const Knowledge& knowledge) const
 	{
 		if (id != predicate->id)
 			return false;
-		return parameters.Match(predicate->parameters, knowledge);
+		return arguments.Match(predicate->arguments, knowledge);
 	}
 	return false;
 
 }
 
-
-Element predicate(const Id& id, Sequence&& sequence)
+void Predicate::Argue(Element&& value)
 {
-	return Element(std::make_unique<Predicate>(id, std::move(sequence)));
+	arguments.Append(std::move(value));
 }
 
-Element predicate(const std::wstring& name, Sequence&& sequence)
+
+
+Element predicate(const Id& id, Sequence&& arguments)
 {
-	return Element(std::make_unique<Predicate>(Id(name), std::move(sequence)));
+	return Element(std::make_unique<Predicate>(id, std::move(arguments)));
 }
 
-Element predicate(const std::wstring& name)
+Element predicate(const std::wstring& name, Sequence&& arguments)
 {
-	return Element(std::make_unique<Predicate>(name));
+	return Element(std::make_unique<Predicate>(Id(name), std::move(arguments)));
 }
 
 }

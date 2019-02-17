@@ -7,7 +7,7 @@ namespace Angel
 namespace Logic
 {
 
-Clause::Clause(Predicate&& predicate, Sequence&& conditions) :
+Clause::Clause(Predicate&& predicate, Array&& conditions) :
 	predicate(std::move(predicate)),
 	conditions(std::move(conditions))
 {
@@ -45,9 +45,9 @@ bool Clause::Match(const Value& value, const Knowledge& knowledge) const
 
 }
 
-Element clause(Predicate&& predicate, Sequence&& sequence)
+Element clause(Predicate&& predicate, Array&& conditions)
 {
-	return Element(std::make_unique<Clause>(std::move(predicate), std::move(sequence)));
+	return Element(std::make_unique<Clause>(std::move(predicate), std::move(conditions)));
 }
 
 }

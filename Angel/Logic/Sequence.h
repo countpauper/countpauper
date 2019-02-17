@@ -8,10 +8,13 @@ namespace Angel
 namespace Logic
 {
 
+class Array;
+
 class Sequence : public Value, public std::vector<Element>
 {
 public:
 	Sequence();
+	explicit Sequence(Array&& array);
 	explicit Sequence(Element&& value);
 	template<class ...Args>
 	explicit Sequence(Element&& first, Args... args) :
@@ -32,6 +35,7 @@ public:
 };
 
 Element sequence();
+Element sequence(Array&& array);
 
 template<class ...Args>
 Element sequence(Args... args)

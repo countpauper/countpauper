@@ -26,7 +26,7 @@ TEST(TestClause, Condition)
 	Logic::Knowledge k = Parse(L"cat() : ginny() ginny()");
 
 	EXPECT_EQ(k.Clauses(), 2);
-	EXPECT_TRUE(k.Knows(Logic::clause(Logic::Predicate(L"cat"), Logic::Sequence(Logic::predicate(L"ginny")))));
+	EXPECT_TRUE(k.Knows(Logic::clause(Logic::Predicate(L"cat"), Logic::Array(Logic::predicate(L"ginny")))));
 	EXPECT_FALSE(k.Knows(Logic::clause(Logic::Predicate(L"cat"))));
 	EXPECT_TRUE(k.Knows(Logic::predicate(L"ginny")));
 }
@@ -37,7 +37,7 @@ TEST(TestClause, Conditions)
 
 	EXPECT_EQ(k.Clauses(), 1);
 	EXPECT_TRUE(k.Knows(Logic::clause(Logic::Predicate(L"cat"), 
-						Logic::Sequence(Logic::predicate(L"fuzzy"),
+						Logic::Array(Logic::predicate(L"fuzzy"),
 										Logic::predicate(L"noisy")))));
 }
 

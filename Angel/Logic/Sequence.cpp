@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Sequence.h"
+#include "Array.h"
 
 namespace Angel
 {
@@ -8,6 +9,14 @@ namespace Logic
 
 Sequence::Sequence() 
 {
+}
+
+Sequence::Sequence(Array&& array)
+{
+	for (auto& e : array)
+	{
+		emplace_back(std::move(e));
+	}
 }
 
 Sequence::Sequence(Element&& value)
@@ -84,6 +93,13 @@ Element sequence()
 {
 	return Element(std::make_unique<Sequence>());
 }
+
+
+Element sequence(Array&& array)
+{
+	return Element(std::make_unique<Sequence>(std::move(array)));
+}
+
 /*
 Element sequence(const std::initializer_list<Element&&>& init)
 {

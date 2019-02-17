@@ -73,6 +73,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Array.h" />
     <ClInclude Include="Boolean.h" />
     <ClInclude Include="Clause.h" />
     <ClInclude Include="Element.h" />
@@ -85,6 +86,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Array.cpp" />
     <ClCompile Include="Clause.cpp" />
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="Id.cpp" />

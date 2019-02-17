@@ -7,6 +7,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Boolean.h"
 #include "Logic/Sequence.h"
+#include "Logic/Array.h"
 #include "Logic/Clause.h"
 
 namespace Angel
@@ -22,8 +23,8 @@ enum class Operator
 	None=0,
 	Colon,
 	Comma,
-	SequenceBegin,
-	SequenceEnd,
+	SequenceBegin,	
+	SequenceEnd,	// closing operators return using IsClosing
 };
 
 static const std::map<wchar_t, Operator> translateOperator = {
@@ -33,9 +34,19 @@ static const std::map<wchar_t, Operator> translateOperator = {
 	{L':', Operator::Colon}
 };
 
+// TODO: operator properties should be OO
 bool IsPostfix(Operator o)
 {
 	return o == Operator::SequenceEnd;
+}
+
+bool Opens(Operator op)
+{
+	return (op == Operator::SequenceBegin);
+}
+bool Closes(Operator open, Operator close)
+{
+	return (open == Operator::SequenceBegin) && (close == Operator::SequenceEnd);
 }
 
 bool IsUnary(Operator o)
@@ -106,41 +117,58 @@ Logic::Element ParseElement(const std::wstring& tag)
 }
 
 // TODO: can be constructor of element
-Logic::Element MakeExpression(Logic::Element&& first, Operator op, Logic::Element&& second)
+Logic::Element MakeExpression(Logic::Element&& left, Operator op, Logic::Element&& right)
 {
+	auto seq0 = left.Cast<Logic::Sequence>();
+	auto pred0 = left.Cast<Logic::Predicate>();
+	auto seq1 = right.Cast<Logic::Sequence>();
+	auto array0 = left.Cast<Logic::Array>();
+	auto array1 = right.Cast<Logic::Array>();
 	if (op == Operator::Comma)
 	{
-		return Logic::sequence(std::move(first), std::move(second));
+		if ((array0) && (array1))
+		{
+			return Logic::array(std::move(*array0), std::move(*array1));
+		}
+		else if (array0)
+		{
+			return Logic::array(std::move(*array0), std::move(right));
+		}
+		else if (array1)
+		{
+			return Logic::array(std::move(left), std::move(*array1));
+		}
+		else
+		{
+			return Logic::array(std::move(left), std::move(right));
+		}
 	}
 
-	auto id = first.Cast<Logic::Id>();
-	auto pred0 = first.Cast<Logic::Predicate>();
-	auto pred1 = second.Cast<Logic::Predicate>();
-	auto seq = second.Cast<Logic::Sequence>();
-	
-	if ((id) && (seq) && (op == Operator::SequenceBegin))
+	auto id0 = left.Cast<Logic::Id>();
+	auto pred1 = right.Cast<Logic::Predicate>();
+
+	if ((id0) && (op == Operator::SequenceBegin))
 	{	// predicate = <id> ( <seq> )
-		return Logic::predicate(*id, std::move(*seq));
+		if (right)
+			return Logic::predicate(*id0, Logic::Sequence(std::move(right)));
+		else
+			return Logic::predicate(*id0);
 	}
-	else if ((pred0) && (seq) && (op == Operator::Colon))
-	{	// clause = <pred> : <seq>
-		return Logic::clause(std::move(*pred0), std::move(*seq));
+	else if ((pred0) && (array1) && (op == Operator::Colon))
+	{	// clause = <pred> : <array>
+		return Logic::clause(std::move(*pred0), std::move(*array1));
 	}
-	else if ((pred0) && (pred1) && (op == Operator::Colon))
-	{	// clause = <pred> : <pred>
-		return Logic::clause(std::move(*pred0), Logic::Sequence(std::move(second)));
+	else if ((pred0) && (op == Operator::Colon))
+	{	// clause = <pred> : <whatever>
+		return Logic::clause(std::move(*pred0), Logic::Array(std::move(right)));
 	}
-	else if ((op == Operator::SequenceEnd) && (first))
-	{	// sequence = <element> )
-		if (second)
-			throw std::runtime_error("Orphaned element after sequence");
-		return Logic::sequence(std::move(first));
+	else if ((op == Operator::SequenceBegin) && (array1))
+	{
+		return Logic::sequence(std::move(*array1));
 	}
-	else if ((op == Operator::SequenceEnd) && (!first))
-	{	// null sequence = )
-		if (second)
-			throw std::runtime_error("Orphaned element after empty sequence");
-		return Logic::sequence();
+	else if ((op == Operator::SequenceBegin) && (!left))
+	{
+		return Logic::sequence(std::move(right));
 	}
 	else
 	{
@@ -149,27 +177,40 @@ Logic::Element MakeExpression(Logic::Element&& first, Operator op, Logic::Elemen
 
 }
 
-Logic::Element ParseExpression(std::wistream& stream, Operator previousOperator)
+Logic::Element ParseExpression(std::wistream& stream, Operator openOperator, Operator previousOperator)
 {
 	SkipWhitespace(stream);
-	auto tag = ReadTag(stream);	// TODO tag type and operator<<
+	auto tag = ReadTag(stream);	// TODO Element::operator<< , but sequence & expression not elements
 	auto left = ParseElement(tag);
 	while (stream.good())
 	{
 		SkipWhitespace(stream);
-		auto op = PeekOperator(stream);	// TODO operator type and operator <<
-		if (op <= previousOperator)
+		auto op = PeekOperator(stream);
+		if (op == Operator::None)
 		{
 			break;
 		}
+		else if (op <= previousOperator)
+		{	// equal, because chains of , or other equivalent operators should be iterative
+
+			break;
+		}
 		stream.ignore();	// skip operator
+		if (Closes(openOperator, op))
+		{
+			break;
+		}
 		if (IsPostfix(op))
 		{
 			left = MakeExpression(std::move(left), op, Logic::Element());
 		}
+		else if (Opens(op))
+		{
+			left = MakeExpression(std::move(left), op, ParseExpression(stream, op, Operator::None));
+		}
 		else
 		{
-			left =MakeExpression(std::move(left), op, ParseExpression(stream, op));
+			left = MakeExpression(std::move(left), op, ParseExpression(stream, openOperator, op));
 		}
 	}
 	return left;
@@ -182,7 +223,7 @@ Logic::Knowledge Parse(const std::wstring& text)
 	stream.exceptions(std::wistream::failbit | std::wistream::badbit);
 	while (stream.good())
 	{
-		Logic::Element e = ParseExpression(stream, Operator::None);
+		Logic::Element e = ParseExpression(stream, Operator::None, Operator::None);
 		if (e)
 		{
 			result.Know(std::move(e));

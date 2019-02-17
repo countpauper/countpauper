@@ -1,7 +1,7 @@
 #pragma once
 #include "Element.h"
 #include "Predicate.h"
-#include "Sequence.h"
+#include "Array.h"
 
 namespace Angel
 {
@@ -11,15 +11,15 @@ namespace Logic
 class Clause : public Value
 {
 public:
-	explicit Clause(Predicate&& predicate, Sequence&& conditions = Sequence());
+	explicit Clause(Predicate&& predicate, Array&& conditions = Array());
 	bool operator==(const Value& other) const override;
 	bool Match(const Value& other, const Knowledge& knowledge) const override;
 private:
 	Predicate predicate;
-	Sequence conditions;
+	Array conditions;
 };
 
-Element clause(Predicate&& id, Sequence&& conditions=Sequence());
+Element clause(Predicate&& id, Array&& conditions=Array());
 
 }
 }
