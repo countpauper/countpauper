@@ -46,6 +46,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Sequence.cpp" />
+    <ClCompile Include="Set.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.vcxproj">

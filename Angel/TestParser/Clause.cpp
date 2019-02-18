@@ -2,8 +2,6 @@
 #include "Parser/Parser.h"
 #include "Logic/Clause.h"
 
-#pragma warning(disable:4566)	// google test can't represent unicode
-
 namespace Angel
 {
 namespace Parser

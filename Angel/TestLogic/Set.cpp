@@ -36,6 +36,14 @@ TEST(TestSet, Construction)
 }
 
 
+TEST(TestSet, Array)
+{
+	Array array{ set(id(L"cat")), set(id(L"dog")) };
+	EXPECT_EQ(2, array.size());
+	EXPECT_NE(array, Array(id(L"cat"), id(L"dog")));
+}
+
+
 TEST(TestSet, Compare)
 {
 	Set a(id(L"ginny"));

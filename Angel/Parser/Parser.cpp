@@ -6,8 +6,9 @@
 #include "Parser.h"
 #include "Logic/Predicate.h"
 #include "Logic/Boolean.h"
-#include "Logic/Sequence.h"
 #include "Logic/Array.h"
+#include "Logic/Sequence.h"
+#include "Logic/Set.h"
 #include "Logic/Clause.h"
 
 namespace Angel
@@ -25,28 +26,37 @@ enum class Operator
 	Comma,
 	SequenceBegin,	
 	SequenceEnd,	// closing operators return using IsClosing
+	SetBegin,
+	SetEnd,
 };
 
 static const std::map<wchar_t, Operator> translateOperator = {
 	{L',', Operator::Comma},
 	{L'(', Operator::SequenceBegin},
 	{L')', Operator::SequenceEnd},
+	{L'{', Operator::SetBegin},
+	{L'}', Operator::SetEnd},
 	{L':', Operator::Colon}
 };
 
 // TODO: operator properties should be OO
-bool IsPostfix(Operator o)
-{
-	return o == Operator::SequenceEnd;
-}
 
 bool Opens(Operator op)
 {
-	return (op == Operator::SequenceBegin);
+	return (op == Operator::SequenceBegin) ||
+		   (op == Operator::SetBegin);
 }
+
 bool Closes(Operator open, Operator close)
 {
-	return (open == Operator::SequenceBegin) && (close == Operator::SequenceEnd);
+	return ((open == Operator::SequenceBegin) && (close == Operator::SequenceEnd)) ||
+		((open == Operator::SetBegin) && (close == Operator::SetEnd));
+}
+
+bool ClosesSomethingElse(Operator open, Operator close)
+{
+	return ((open != Operator::SequenceBegin) && (close == Operator::SequenceEnd)) ||
+		((open != Operator::SetBegin) && (close == Operator::SetEnd));
 }
 
 bool IsUnary(Operator o)
@@ -146,6 +156,10 @@ Logic::Element MakeExpression(Logic::Element&& left, Operator op, Logic::Element
 	{	// also works for right being an array or void
 		return Logic::sequence(std::move(right));
 	}
+	else if ((op == Operator::SetBegin) && (!left))
+	{	// also works for right being an array or void
+		return Logic::set(std::move(right));
+	}
 	else
 	{
 		throw std::runtime_error("Unexpected operator");
@@ -171,22 +185,23 @@ Logic::Element ParseExpression(std::wistream& stream, Operator openOperator, Ope
 
 			break;
 		}
+		else if (ClosesSomethingElse(openOperator, op))
+		{
+			break;
+		}
 		stream.ignore();	// skip operator
 		if (Closes(openOperator, op))
 		{
 			break;
 		}
-		if (IsPostfix(op))
-		{
-			left = MakeExpression(std::move(left), op, Logic::Element());
-		}
-		else if (Opens(op))
-		{
+		if (Opens(op))
+		{	
 			left = MakeExpression(std::move(left), op, ParseExpression(stream, op, Operator::None));
 		}
 		else
-		{
-			left = MakeExpression(std::move(left), op, ParseExpression(stream, openOperator, op));
+		{	// TODO: different function altogether, so closes something else can be jus Closes(op)
+			//	or more explicit about complete sack
+			left = MakeExpression(std::move(left), op, ParseExpression(stream, Operator::None, op));
 		}
 	}
 	return left;

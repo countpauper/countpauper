@@ -13,6 +13,16 @@ namespace Parser
 namespace Test
 {
 
+TEST(TestParser, Empty)
+{
+	Logic::Knowledge k = Parse(L"");
+	EXPECT_EQ(k.Clauses(), 0);
+
+	Logic::Knowledge w = Parse(L"  \t   \r\n  ");
+	EXPECT_EQ(w.Clauses(), 0);
+}
+
+
 TEST(TestParser, Whitespace)
 {
 	Logic::Knowledge k = Parse(L"\t  cat(\n )\r\n");

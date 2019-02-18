@@ -3,8 +3,6 @@
 #include "Logic/Sequence.h"
 #include "Logic/Array.h"
 
-#pragma warning(disable:4566)	// google test can't represent unicode
-
 namespace Angel
 {
 namespace Parser
@@ -42,7 +40,16 @@ TEST(TestSequence, Commas)
 		Logic::id(L"hamster"))));
 }
 
-TEST(TestSequence, Braces)
+
+TEST(TestSequence, Empty)
+{
+	Logic::Knowledge k = Parse(L"( )");
+
+	EXPECT_EQ(k.Clauses(), 1);
+	EXPECT_TRUE(k.Knows(Logic::sequence()));
+}
+
+TEST(TestSequence, Single)
 {
 	Logic::Knowledge k = Parse(L"( cat)");
 
@@ -52,7 +59,7 @@ TEST(TestSequence, Braces)
 }
 
 
-TEST(TestSequence, BracesAndComma)
+TEST(TestSequence, Multiple)
 {
 	Logic::Knowledge k = Parse(L"( cat, dog )");
 
@@ -60,6 +67,13 @@ TEST(TestSequence, BracesAndComma)
 	EXPECT_TRUE(k.Knows(Logic::sequence(Logic::id(L"cat"), Logic::id(L"dog"))));
 	EXPECT_FALSE(k.Knows(Logic::id(L"cat")));
 	EXPECT_FALSE(k.Knows(Logic::id(L"dog")));
+}
+
+TEST(TestSequence, DISABLED_Errors)
+{
+	EXPECT_THROW(Parse(L"cat, dog )"), std::runtime_error);
+	EXPECT_THROW(Parse(L"(cat, dog"), std::runtime_error);
+	EXPECT_THROW(Parse(L"(cat, dog}"), std::runtime_error);
 }
 
 TEST(TestSequence, Nested)
