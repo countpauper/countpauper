@@ -37,6 +37,12 @@ bool Element::Match(const Element& other, const Knowledge& knowledge) const
 	return value->Match(*other.value, knowledge);
 }
 
+size_t Element::Hash() const
+{
+	return reinterpret_cast<size_t>(value.get());
+}
+
+
 
 }
 }

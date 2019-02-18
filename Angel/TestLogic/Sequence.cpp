@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "Logic/Knowledge.h"
-#include "Logic/Predicate.h"
 #include "Logic/Sequence.h"
+#include "Logic/Knowledge.h"
+#include "Logic/Id.h"
+#include "Logic/Array.h"
 #include "Logic/Boolean.h"
-#include "Logic/Clause.h"
 
 namespace Angel
 {
@@ -17,23 +17,35 @@ TEST(TestSequence, Construction)
 	Sequence empty;
 	EXPECT_EQ(empty.size(), 0);
 
-	Element voidElement;
-	Sequence voidSequence(std::move(voidElement));
+	Sequence voidSequence((Element()));	// most vexing parse
 	EXPECT_EQ(voidSequence.size(), 0);
 
 
-	Sequence single(predicate(L"ginny"));
+	Sequence single(id(L"ginny"));
 	EXPECT_EQ(single.size(), 1);
 
-	Sequence cats(predicate(L"ginny"), predicate(L"max"));
+	Sequence cats(boolean(L"ginny"), boolean(L"max"));
 	EXPECT_EQ(cats.size(), 2);
 
 	Sequence array(array(id(L"ginny"), id(L"max")));
 	EXPECT_EQ(array.size(), 2);
 
 	Knowledge k;
-	k.Know(sequence(predicate(L"table"), predicate(L"moon"), predicate(L"hope")));
+	k.Know(sequence(id(L"table"), id(L"moon"), id(L"hope")));
 	EXPECT_EQ(k.Clauses(), 1);
+}
+
+
+TEST(TestSequence, Compare)
+{
+
+	Sequence a(id(L"ginny"));
+	Sequence b(id(L"ginny"));
+	EXPECT_EQ(a, b);
+
+	Sequence ab(id(L"ginny"), id(L"max"));
+	Sequence ba(id(L"max"), id(L"ginny"));
+	EXPECT_NE(ab, ba);
 }
 
 }

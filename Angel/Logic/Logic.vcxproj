@@ -73,6 +73,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AllTrue.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="Boolean.h" />
     <ClInclude Include="Clause.h" />
@@ -82,6 +83,7 @@
     <ClInclude Include="Namespace.h" />
     <ClInclude Include="Predicate.h" />
     <ClInclude Include="Sequence.h" />
+    <ClInclude Include="Set.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -95,6 +97,7 @@
     <ClCompile Include="Predicate.cpp" />
     <ClCompile Include="Boolean.cpp" />
     <ClCompile Include="Sequence.cpp" />
+    <ClCompile Include="Set.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -18,6 +18,7 @@ public:
 	virtual bool Match(const Value& other, const Knowledge& knowledge) const;
 };
 
+
 class Element final
 {
 public:
@@ -40,6 +41,7 @@ public:
 
 	template<class C>
 	C* Cast() const { return dynamic_cast<C*>(value.get()); }
+	size_t Hash() const;
 private:
 	std::unique_ptr<Value> value;
 };
@@ -49,7 +51,16 @@ Element Create(Args... args)
 {
 	return Element(std::make_unique<T>(std::forward<Args>(args)...));
 }
-
-
 }
+}
+namespace std
+{
+	template <>
+	struct hash<Angel::Logic::Element>
+	{
+		size_t operator()(const Angel::Logic::Element& e) const
+		{
+			return e.Hash();
+		}
+	};
 }

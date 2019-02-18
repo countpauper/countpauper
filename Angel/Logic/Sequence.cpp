@@ -89,7 +89,8 @@ bool Sequence::Match(const Value& value, const Knowledge& knowledge) const
 
 void Sequence::Append(Element&& value)
 {
-	emplace_back(std::move(value));
+	if (value)
+		emplace_back(std::move(value));
 }
 
 void Sequence::Merge(Sequence&& other)
