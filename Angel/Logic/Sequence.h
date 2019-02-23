@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
-#include "Element.h"
+#include "Collection.h"
+#include "Object.h"
 #include "AllTrue.h"
 
 namespace Angel
@@ -10,17 +11,17 @@ namespace Logic
 
 class Array;
 
-class Sequence : public Value, public std::vector<Element>
+class Sequence : public Collection, public std::vector<Object>
 {
 public:
 	Sequence();
 	explicit Sequence(Array&& array);
-	explicit Sequence(Element&& value);
+	explicit Sequence(Object&& value);
 	
 	template<class ...Args, class = std::enable_if_t<
-		all_true < std::is_convertible<Args, Element>{}... > {}
+		all_true < std::is_convertible<Args, Object>{}... > {}
 	>>
-	explicit Sequence(Element&& first, Args... args) :
+	explicit Sequence(Object&& first, Args... args) :
 		Sequence(std::move(first))
 	{
 		Merge(Sequence(std::forward<Args>(args)...));
@@ -29,21 +30,21 @@ public:
 	Sequence(const Sequence&) = delete;
 	Sequence& operator=(const Sequence&) = delete;
 	Sequence(Sequence&& other);
-	bool operator==(const Value& other) const override;
-	bool Match(const Value& other, const Knowledge& knowledge) const override;
-	void Append(Element&& value);
+	bool operator==(const Item& other) const override;
+	bool Match(const Item& other, const Knowledge& knowledge) const override;
+	void Append(Object&& value);
 	void Merge(Sequence&& other);
 };
 
-Element sequence();
-Element sequence(Array&& array);
+Object sequence();
+Object sequence(Array&& array);
 
 template<class ...Args, class = std::enable_if_t <
-	all_true < std::is_convertible<Args, Element>{}... > {}
+	all_true < std::is_convertible<Args, Object>{}... > {}
 >>
-Element sequence(Args... args)
+Object sequence(Args... args)
 {
-	return Element(std::make_unique<Sequence>(std::forward<Args>(args)...));
+	return Object(std::make_unique<Sequence>(std::forward<Args>(args)...));
 }
 
 }

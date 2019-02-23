@@ -19,7 +19,7 @@ Sequence::Sequence(Array&& array)
 	}
 }
 
-Sequence::Sequence(Element&& value)
+Sequence::Sequence(Object&& value)
 {
 	if (auto array = value.Cast<Array>())
 	{
@@ -36,7 +36,7 @@ Sequence::Sequence(Element&& value)
 
 
 /* 	// Elements have to be copyable or no initializer list ... 
-Sequence::Sequence(const std::initializer_list<Element&&>& init) 
+Sequence::Sequence(const std::initializer_list<Object&&>& init) 
 {
 	for (auto it = init.begin(); it!=init.end(); ++it)
 	{
@@ -46,12 +46,12 @@ Sequence::Sequence(const std::initializer_list<Element&&>& init)
 */
 
 Sequence::Sequence(Sequence&& other) :
-	std::vector<Element>(std::move(other))
+	std::vector<Object>(std::move(other))
 {
 }
 
 
-bool Sequence::operator==(const Value& value) const
+bool Sequence::operator==(const Item& value) const
 {
 	if (auto sequence= dynamic_cast<const Sequence*>(&value))
 	{
@@ -68,7 +68,7 @@ bool Sequence::operator==(const Value& value) const
 	return false;
 }
 
-bool Sequence::Match(const Value& value, const Knowledge& knowledge) const
+bool Sequence::Match(const Item& value, const Knowledge& knowledge) const
 {
 	if (auto sequence = dynamic_cast<const Sequence*>(&value))
 	{
@@ -87,7 +87,7 @@ bool Sequence::Match(const Value& value, const Knowledge& knowledge) const
 }
 
 
-void Sequence::Append(Element&& value)
+void Sequence::Append(Object&& value)
 {
 	if (value)
 		emplace_back(std::move(value));
@@ -100,21 +100,21 @@ void Sequence::Merge(Sequence&& other)
 }
 
 
-Element sequence()
+Object sequence()
 {
-	return Element(std::make_unique<Sequence>());
+	return Object(std::make_unique<Sequence>());
 }
 
 
-Element sequence(Array&& array)
+Object sequence(Array&& array)
 {
-	return Element(std::make_unique<Sequence>(std::move(array)));
+	return Object(std::make_unique<Sequence>(std::move(array)));
 }
 
 /*
-Element sequence(const std::initializer_list<Element&&>& init)
+Object sequence(const std::initializer_list<Object&&>& init)
 {
-	return Element(std::make_unique<Sequence>(init));
+	return Object(std::make_unique<Sequence>(init));
 }
 */
 

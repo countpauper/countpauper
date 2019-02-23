@@ -17,7 +17,7 @@ TEST(TestSequence, Construction)
 	Sequence empty;
 	EXPECT_EQ(empty.size(), 0);
 
-	Sequence voidSequence((Element()));	// most vexing parse
+	Sequence voidSequence((Object()));	// most vexing parse
 	EXPECT_EQ(voidSequence.size(), 0);
 
 

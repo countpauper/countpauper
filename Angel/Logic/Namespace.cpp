@@ -12,12 +12,12 @@ Namespace::Namespace(const Id& id) :
 {
 }
 
-void Namespace::Add(Element&& e)
+void Namespace::Add(Object&& e)
 {
-	contents.emplace_back(std::move(e));
+	contents.insert(std::move(e));
 }
 
-bool Namespace::Match(const Element& e, const Knowledge& knowledge) const
+bool Namespace::Match(const Object& e, const Knowledge& knowledge) const
 {
 	for (auto& c : contents)
 	{
@@ -27,7 +27,7 @@ bool Namespace::Match(const Element& e, const Knowledge& knowledge) const
 	return false;
 }
 
-bool Namespace::Contains(const Element& e) const
+bool Namespace::Contains(const Object& e) const
 {
 	return std::find(contents.begin(), contents.end(), e)!=contents.end();
 }

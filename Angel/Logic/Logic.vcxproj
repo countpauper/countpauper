@@ -77,7 +77,11 @@
     <ClInclude Include="Array.h" />
     <ClInclude Include="Boolean.h" />
     <ClInclude Include="Clause.h" />
+    <ClInclude Include="Collection.h" />
     <ClInclude Include="Element.h" />
+    <ClInclude Include="Expression.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Id.h" />
     <ClInclude Include="Knowledge.h" />
     <ClInclude Include="Namespace.h" />
@@ -90,7 +94,8 @@
   <ItemGroup>
     <ClCompile Include="Array.cpp" />
     <ClCompile Include="Clause.cpp" />
-    <ClCompile Include="Element.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Id.cpp" />
     <ClCompile Include="Knowledge.cpp" />
     <ClCompile Include="Namespace.cpp" />

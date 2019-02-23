@@ -124,11 +124,11 @@ std::optional<bool> ParseBoolean(const std::wstring& tag)
 }
 
 // TODO: can be constructor of element after element/collection/expression split
-Logic::Element MakeElement(const std::wstring& tag)
+Logic::Object MakeElement(const std::wstring& tag)
 {
 	if (tag.empty())
 	{
-		return Logic::Element();
+		return Logic::Object();
 	}
 	else if (auto boolean = ParseBoolean(tag))
 	{
@@ -142,7 +142,7 @@ Logic::Element MakeElement(const std::wstring& tag)
 
 
 // TODO: can be constructor of element
-Logic::Element MakeExpression(Logic::Element&& left, Operator op, Logic::Element&& right)
+Logic::Object MakeExpression(Logic::Object&& left, Operator op, Logic::Object&& right)
 {
 	if (op == Operator::Comma)
 	{
@@ -181,17 +181,17 @@ Logic::Element MakeExpression(Logic::Element&& left, Operator op, Logic::Element
 }
 
 
-Logic::Element ParseElement(std::wistream& stream)
+Logic::Object ParseElement(std::wistream& stream)
 {
-	// TODO Element::operator<< , but sequence & expression not elements
+	// TODO Object::operator<< , but sequence & expression not elements
 	SkipWhitespace(stream);
 	auto tag = ReadTag(stream);	
 	return MakeElement(tag);
 }
 
-Logic::Element ParseExpression(std::wistream& stream, Operator previousOperator, Operator openOperator);
+Logic::Object ParseExpression(std::wistream& stream, Operator previousOperator, Operator openOperator);
 
-Logic::Element ParseCollection(std::wistream& stream, Operator openOperator)
+Logic::Object ParseCollection(std::wistream& stream, Operator openOperator)
 {
 	auto left = ParseElement(stream);
 	while (!stream.bad())
@@ -223,7 +223,7 @@ Logic::Element ParseCollection(std::wistream& stream, Operator openOperator)
 	return left;
 }
 
-Logic::Element ParseExpression(std::wistream& stream, Operator previousOperator, Operator openOperator)
+Logic::Object ParseExpression(std::wistream& stream, Operator previousOperator, Operator openOperator)
 {
 	auto left = ParseElement(stream);
 	while (!stream.bad())
@@ -265,7 +265,7 @@ Logic::Knowledge Parse(const std::wstring& text)
 	stream.exceptions(std::wistream::failbit | std::wistream::badbit);
 	while (stream.good())
 	{
-		Logic::Element e = ParseExpression(stream, Operator::None, Operator::None);
+		Logic::Object e = ParseExpression(stream, Operator::None, Operator::None);
 		if (e)
 		{
 			result.Know(std::move(e));

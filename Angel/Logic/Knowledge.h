@@ -1,6 +1,6 @@
 #pragma once
 #include "Namespace.h"
-#include "Element.h"
+#include "Object.h"
 
 namespace Angel
 {
@@ -11,9 +11,9 @@ class Knowledge
 {
 public:
 	Knowledge();
-	void Know(Element&& e);
-	bool Query(const Element& e) const;
-	bool Knows(const Element& e) const;
+	void Know(Object&& e);
+	bool Query(const Object& e) const;
+	bool Knows(const Object& e) const;
 	size_t Clauses() const;
 private:
 	Namespace root;

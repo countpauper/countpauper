@@ -11,7 +11,7 @@ Boolean::Boolean(bool v) :
 {
 }
 
-bool Boolean::operator==(const Value& other) const
+bool Boolean::operator==(const Item& other) const
 {
 	if (auto boolean = dynamic_cast<const Boolean*>(&other))
 	{
@@ -20,9 +20,9 @@ bool Boolean::operator==(const Value& other) const
 	return false;
 }
 
-Element boolean(bool v)
+Object boolean(bool v)
 {
-	return Element(std::make_unique<Boolean>(v));
+	return Object(std::make_unique<Boolean>(v));
 }
 
 

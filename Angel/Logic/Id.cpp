@@ -16,7 +16,7 @@ bool Id::operator==(const Id& id) const
 	return name == id.name;
 }
 
-bool Id::operator==(const Value& value) const
+bool Id::operator==(const Item& value) const
 {
 	if (auto id = dynamic_cast<const Id*>(&value))
 	{
@@ -25,9 +25,9 @@ bool Id::operator==(const Value& value) const
 	return false;
 }
 
-Element id(const std::wstring& name)
+Object id(const std::wstring& name)
 {
-	return Element(std::make_unique<Id>(name));
+	return Object(std::make_unique<Id>(name));
 }
 
 

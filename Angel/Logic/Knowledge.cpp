@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Knowledge.h"
-#include "Boolean.h"
+#include "Set.h"
 
 namespace Angel
 {
@@ -12,19 +12,19 @@ Knowledge::Knowledge() :
 {
 }
 
-void Knowledge::Know(Element&& e)
+void Knowledge::Know(Object&& e)
 {
 	root.Add(std::move(e));
 }
 
-bool Knowledge::Query(const Element& e) const
+bool Knowledge::Query(const Object& e) const
 {
-	if (boolean(true).Match(e, *this))
+	if (e.Trivial())
 		return true;
 	return root.Match(e, *this);
 }
 
-bool Knowledge::Knows(const Element& e) const
+bool Knowledge::Knows(const Object& e) const
 {
 	return root.Contains(e);
 }

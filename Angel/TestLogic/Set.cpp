@@ -17,7 +17,7 @@ TEST(TestSet, Construction)
 	Set empty;
 	EXPECT_EQ(empty.size(), 0);
 
-	Set voidSet{ Element() };
+	Set voidSet{ Object() };
 	EXPECT_EQ(voidSet.size(), 0);
 
 

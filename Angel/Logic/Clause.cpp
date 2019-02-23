@@ -13,7 +13,7 @@ Clause::Clause(Predicate&& predicate, Array&& conditions) :
 {
 }
 
-bool Clause::operator==(const Value& value) const
+bool Clause::operator==(const Item& value) const
 {
 	if (auto clause = dynamic_cast<const Clause*>(&value))
 	{
@@ -23,7 +23,7 @@ bool Clause::operator==(const Value& value) const
 	return false;
 }
 
-bool Clause::Match(const Value& value, const Knowledge& knowledge) const
+bool Clause::Match(const Item& value, const Knowledge& knowledge) const
 {
 	if (auto query = dynamic_cast<const Predicate*>(&value))
 	{
@@ -45,9 +45,9 @@ bool Clause::Match(const Value& value, const Knowledge& knowledge) const
 
 }
 
-Element clause(Predicate&& predicate, Array&& conditions)
+Object clause(Predicate&& predicate, Array&& conditions)
 {
-	return Element(std::make_unique<Clause>(std::move(predicate), std::move(conditions)));
+	return Object(std::make_unique<Clause>(std::move(predicate), std::move(conditions)));
 }
 
 }

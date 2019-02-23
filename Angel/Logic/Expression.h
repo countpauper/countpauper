@@ -6,7 +6,7 @@ namespace Angel
 namespace Logic
 {
 
-class Element : public Item
+class Expression : public Item
 {
 public:
 };

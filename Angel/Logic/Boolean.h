@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Object.h"
 #include "Element.h"
 
 namespace Angel
@@ -7,15 +8,15 @@ namespace Angel
 namespace Logic
 {
 
-	class Boolean : public Value
+	class Boolean : public Element
 	{
 	public:
 		explicit Boolean(bool v);
-		bool operator==(const Value& other) const override;
+		bool operator==(const Item& other) const override;
 	private:
 		bool truth;
 	};
 
-	Element boolean(bool v);
+	Object boolean(bool v);
 }
 }

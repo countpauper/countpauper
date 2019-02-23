@@ -18,7 +18,7 @@ Predicate::Predicate(const std::wstring& tag, Sequence&& arguments) :
 	arguments(std::move(arguments))
 {
 }
-bool Predicate::operator==(const Value& value) const
+bool Predicate::operator==(const Item& value) const
 {
 	if (auto predicate = dynamic_cast<const Predicate*>(&value))
 	{
@@ -27,7 +27,7 @@ bool Predicate::operator==(const Value& value) const
 	return false;
 }
 
-bool Predicate::Match(const Value& value, const Knowledge& knowledge) const
+bool Predicate::Match(const Item& value, const Knowledge& knowledge) const
 {
 	if (auto predicate = dynamic_cast<const Predicate*>(&value))
 	{
@@ -39,21 +39,21 @@ bool Predicate::Match(const Value& value, const Knowledge& knowledge) const
 
 }
 
-void Predicate::Argue(Element&& value)
+void Predicate::Argue(Object&& value)
 {
 	arguments.Append(std::move(value));
 }
 
 
 
-Element predicate(const Id& id, Sequence&& arguments)
+Object predicate(const Id& id, Sequence&& arguments)
 {
-	return Element(std::make_unique<Predicate>(id, std::move(arguments)));
+	return Object(std::make_unique<Predicate>(id, std::move(arguments)));
 }
 
-Element predicate(const std::wstring& name, Sequence&& arguments)
+Object predicate(const std::wstring& name, Sequence&& arguments)
 {
-	return Element(std::make_unique<Predicate>(Id(name), std::move(arguments)));
+	return Object(std::make_unique<Predicate>(Id(name), std::move(arguments)));
 }
 
 }

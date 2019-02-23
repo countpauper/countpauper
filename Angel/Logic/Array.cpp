@@ -10,18 +10,18 @@ Array::Array()
 {
 }
 
-Array::Array(Element&& value)
+Array::Array(Object&& value)
 {
 	Append(std::move(value));
 }
 
 Array::Array(Array&& other) :
-	std::vector<Element>(std::move(other))
+	std::vector<Object>(std::move(other))
 {
 }
 
 
-bool Array::operator==(const Value& value) const
+bool Array::operator==(const Item& value) const
 {
 	if (auto array = dynamic_cast<const Array*>(&value))
 	{
@@ -40,7 +40,7 @@ bool Array::operator==(const Value& value) const
 	return false;
 }
 
-bool Array::Match(const Value& value, const Knowledge& knowledge) const
+bool Array::Match(const Item& value, const Knowledge& knowledge) const
 {
 	if (auto array = dynamic_cast<const Array*>(&value))
 	{
@@ -59,7 +59,7 @@ bool Array::Match(const Value& value, const Knowledge& knowledge) const
 }
 
 
-void Array::Append(Element&& value)
+void Array::Append(Object&& value)
 {
 	if (auto array = value.Cast<Array>())
 	{
@@ -78,12 +78,12 @@ void Array::Merge(Array&& other)
 }
 
 
-Element array()
+Object array()
 {
-	return Element(std::make_unique<Array>());
+	return Object(std::make_unique<Array>());
 }
 
-Element array(Array&& left, Array&& right)
+Object array(Array&& left, Array&& right)
 {
 	auto result = array();
 	result.Cast<Array>()->Merge(std::move(left));
@@ -91,7 +91,7 @@ Element array(Array&& left, Array&& right)
 	return result;
 }
 
-Element array(Array&& left, Element&& right)
+Object array(Array&& left, Object&& right)
 {
 	auto result = array();
 	result.Cast<Array>()->Merge(std::move(left));
@@ -99,7 +99,7 @@ Element array(Array&& left, Element&& right)
 	return result;
 }
 
-Element array(Element&& left, Array&& right)
+Object array(Object&& left, Array&& right)
 {
 	auto result = array(std::move(left));
 	result.Cast<Array>()->Merge(std::move(right));
