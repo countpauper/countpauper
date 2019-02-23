@@ -41,6 +41,19 @@ static const std::map<wchar_t, Operator> translateOperator = {
 
 // TODO: operator properties should be OO
 
+std::string Description(Operator op)
+{
+	static const std::map<Operator, std::string> description = {
+	{ Operator::Comma, "," },
+	{ Operator::SequenceBegin, "(" },
+	{ Operator::SequenceEnd, "(" },
+	{ Operator::SetBegin, "{" },
+	{ Operator::SetEnd, "}" },
+	{ Operator::Colon, ":" }
+	};
+	return description.at(op);
+}
+
 bool Opens(Operator op)
 {
 	return (op == Operator::SequenceBegin) ||
@@ -75,11 +88,12 @@ void SkipWhitespace(std::wistream& s)
 	}
 }
 
-Operator PeekOperator(std::wistream& s)
+Operator PeekOperator(std::wistream& stream)
 {
-	if (!s.good())
+	SkipWhitespace(stream);
+	if (!stream.good())
 		return Operator::None;
-	wchar_t c = s.peek();
+	wchar_t c = stream.peek();
 	if (operators.find(c) == std::wstring::npos)
 		return Operator::None;
 	// TODO: double character operators and ignore() them later
@@ -110,7 +124,7 @@ std::optional<bool> ParseBoolean(const std::wstring& tag)
 }
 
 // TODO: can be constructor of element after element/collection/expression split
-Logic::Element ParseElement(const std::wstring& tag)
+Logic::Element MakeElement(const std::wstring& tag)
 {
 	if (tag.empty())
 	{
@@ -162,19 +176,58 @@ Logic::Element MakeExpression(Logic::Element&& left, Operator op, Logic::Element
 	}
 	else
 	{
-		throw std::runtime_error("Unexpected operator");
+		throw std::runtime_error((std::string("Unexpected operator ")+Description(op)).c_str());
 	}
-
 }
 
-Logic::Element ParseExpression(std::wistream& stream, Operator openOperator, Operator previousOperator)
+
+Logic::Element ParseElement(std::wistream& stream)
 {
+	// TODO Element::operator<< , but sequence & expression not elements
 	SkipWhitespace(stream);
-	auto tag = ReadTag(stream);	// TODO Element::operator<< , but sequence & expression not elements
-	auto left = ParseElement(tag);
-	while (stream.good())
+	auto tag = ReadTag(stream);	
+	return MakeElement(tag);
+}
+
+Logic::Element ParseExpression(std::wistream& stream, Operator previousOperator, Operator openOperator);
+
+Logic::Element ParseCollection(std::wistream& stream, Operator openOperator)
+{
+	auto left = ParseElement(stream);
+	while (!stream.bad())
 	{
-		SkipWhitespace(stream);
+		auto op = PeekOperator(stream);
+		if (op == Operator::None)
+		{
+			throw std::runtime_error((std::string("Missing closing operator for ")+Description(openOperator)).c_str());
+
+		}
+		else if (ClosesSomethingElse(openOperator, op))
+		{
+			throw std::runtime_error((std::string("Unexpected ") + Description(op)).c_str());
+		}
+		stream.ignore();	// skip operator
+		if (Closes(openOperator, op))
+		{
+			break;
+		}
+		else if (Opens(op))
+		{
+			left = MakeExpression(std::move(left), op, ParseCollection(stream, op));
+		}
+		else
+		{
+			left = MakeExpression(std::move(left), op, ParseExpression(stream, op, openOperator));
+		}
+	}
+	return left;
+}
+
+Logic::Element ParseExpression(std::wistream& stream, Operator previousOperator, Operator openOperator)
+{
+	auto left = ParseElement(stream);
+	while (!stream.bad())
+	{
 		auto op = PeekOperator(stream);
 		if (op == Operator::None)
 		{
@@ -182,26 +235,24 @@ Logic::Element ParseExpression(std::wistream& stream, Operator openOperator, Ope
 		}
 		else if (op <= previousOperator)
 		{	// equal, because chains of , or other equivalent operators should be iterative
-
 			break;
 		}
 		else if (ClosesSomethingElse(openOperator, op))
 		{
+			throw std::runtime_error((std::string("Unexpected ") + Description(op)).c_str());
+		}
+		else if (Closes(openOperator, op))
+		{	// end of collection is end of expression
 			break;
 		}
 		stream.ignore();	// skip operator
-		if (Closes(openOperator, op))
-		{
-			break;
-		}
 		if (Opens(op))
 		{	
-			left = MakeExpression(std::move(left), op, ParseExpression(stream, op, Operator::None));
+			left = MakeExpression(std::move(left), op, ParseCollection(stream, op));
 		}
 		else
-		{	// TODO: different function altogether, so closes something else can be jus Closes(op)
-			//	or more explicit about complete sack
-			left = MakeExpression(std::move(left), op, ParseExpression(stream, Operator::None, op));
+		{	
+			left = MakeExpression(std::move(left), op, ParseExpression(stream, op, openOperator));
 		}
 	}
 	return left;

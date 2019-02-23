@@ -69,9 +69,9 @@ TEST(TestSequence, Multiple)
 	EXPECT_FALSE(k.Knows(Logic::id(L"dog")));
 }
 
-TEST(TestSequence, DISABLED_Errors)
+TEST(TestSequence, Errors)
 {
-	EXPECT_THROW(Parse(L"cat, dog )"), std::runtime_error);
+	EXPECT_THROW(Parse(L"cat, dog)"), std::runtime_error);
 	EXPECT_THROW(Parse(L"(cat, dog"), std::runtime_error);
 	EXPECT_THROW(Parse(L"(cat, dog}"), std::runtime_error);
 }
