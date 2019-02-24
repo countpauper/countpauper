@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 
 namespace Angel
 {
@@ -15,10 +16,10 @@ public:
 	Object() = default;
 
 	Object(std::unique_ptr<Item>&& v) :
-		value(std::move(v))
+		item(std::move(v))
 	{
 	}
-	
+	Object(const std::wstring& tag);
 	Object(const Object& other) = delete;
 	Object& operator=(const Object& other) = delete;
 	Object(Object&& other);
@@ -31,10 +32,10 @@ public:
 	bool Match(const Object& other, const Knowledge& knowledge) const;
 
 	template<class C>
-	C* Cast() const { return dynamic_cast<C*>(value.get()); }
+	C* Cast() const { return dynamic_cast<C*>(item.get()); }
 	size_t Hash() const;
 private:
-	std::unique_ptr<Item> value;
+	std::unique_ptr<Item> item;
 };
 
 template<class T, typename... Args>

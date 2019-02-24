@@ -1,26 +1,48 @@
 #include "stdafx.h"
 #include "Object.h"
 #include "Boolean.h"
+#include "Integer.h"
+#include "Id.h"
 
 namespace Angel
 {
 namespace Logic
 {
 
+Object::Object(const std::wstring& tag)
+{
+	if (tag.empty())
+	{
+		return;
+	}
+	else if (auto boolean = Boolean::Parse(tag))
+	{
+		item = std::make_unique<Boolean>(*boolean);
+	}
+	else if (auto integer = Integer::Parse(tag))
+	{
+		item = std::make_unique<Integer>(*integer);
+	}
+	else
+	{
+		item = std::make_unique<Id>(tag);
+	}
+
+}
 Object::Object(Object&& other) :
-	value(std::move(other.value))
+	item(std::move(other.item))
 {
 }
 
 Object& Object::operator=(Object&& other)
 {
-	value = std::move(other.value);
+	item = std::move(other.item);
 	return *this;
 }
 
 Object::operator bool() const
 {
-	return value.get();
+	return item.get();
 }
 
 bool Object::Trivial() const
@@ -31,17 +53,17 @@ bool Object::Trivial() const
 
 bool Object::operator==(const Object& other) const
 {
-	return *value == *other.value;
+	return *item == *other.item;
 }
 
 bool Object::Match(const Object& other, const Knowledge& knowledge) const
 {
-	return value->Match(*other.value, knowledge);
+	return item->Match(*other.item, knowledge);
 }
 
 size_t Object::Hash() const
 {
-	return reinterpret_cast<size_t>(value.get());
+	return reinterpret_cast<size_t>(item.get());
 }
 
 

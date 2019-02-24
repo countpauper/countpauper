@@ -3,6 +3,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Sequence.h"
 #include "Logic/Boolean.h"
+#include "Logic/Integer.h"
 
 namespace Angel
 {
@@ -19,6 +20,7 @@ TEST(TestElement, Id)
 	EXPECT_TRUE(k.Knows(Logic::id(L"cat")));
 	EXPECT_FALSE(k.Knows(Logic::id(L"dog")));
 }
+
 
 TEST(TestElement, Ids)
 {
@@ -37,6 +39,18 @@ TEST(TestElement, Boolean)
 	EXPECT_TRUE(k.Knows(Logic::boolean(true)));
 	EXPECT_TRUE(k.Knows(Logic::boolean(false)));
 }
+
+TEST(TestElement, Integer)
+{
+	Logic::Knowledge k = Parse(L"-9 23 cat2");
+
+	EXPECT_EQ(k.Clauses(), 3);
+	EXPECT_TRUE(k.Knows(Logic::integer(23)));
+	EXPECT_TRUE(k.Knows(Logic::integer(-9)));
+	EXPECT_TRUE(k.Knows(Logic::id(L"cat2")));
+}
+
+
 
 }
 }

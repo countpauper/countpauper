@@ -10,6 +10,7 @@
 #include "Logic/Sequence.h"
 #include "Logic/Set.h"
 #include "Logic/Clause.h"
+#include "Logic/Object.h"
 
 namespace Angel
 {
@@ -106,40 +107,18 @@ std::wstring ReadTag(std::wistream& s)
 	while (s.good())
 	{
 		wchar_t c = s.peek();
-		if (!iswalnum(c))
+		if (iswalnum(c) ||
+			((c == L'-') && (result.empty())))
+		{
+			result.append(1, wchar_t(s.get()));
+		}
+		else
+		{
 			return result;
-		result.append(1, wchar_t(s.get()));
+		}
 	}
 	return result;
 }
-
-std::optional<bool> ParseBoolean(const std::wstring& tag)
-{
-	if (tag == L"true")
-		return true;
-	else if (tag == L"false")
-		return false;
-	else
-		return std::optional<bool>();
-}
-
-// TODO: can be constructor of element after element/collection/expression split
-Logic::Object MakeElement(const std::wstring& tag)
-{
-	if (tag.empty())
-	{
-		return Logic::Object();
-	}
-	else if (auto boolean = ParseBoolean(tag))
-	{
-		return Logic::boolean(*boolean);
-	}
-	else
-	{
-		return Logic::id(tag);
-	}
-}
-
 
 // TODO: can be constructor of element
 Logic::Object MakeExpression(Logic::Object&& left, Operator op, Logic::Object&& right)
@@ -183,10 +162,10 @@ Logic::Object MakeExpression(Logic::Object&& left, Operator op, Logic::Object&& 
 
 Logic::Object ParseElement(std::wistream& stream)
 {
-	// TODO Object::operator<< , but sequence & expression not elements
+	// TODO Object::operator<< ?
 	SkipWhitespace(stream);
 	auto tag = ReadTag(stream);	
-	return MakeElement(tag);
+	return Logic::Object(tag);
 }
 
 Logic::Object ParseExpression(std::wistream& stream, Operator previousOperator, Operator openOperator);

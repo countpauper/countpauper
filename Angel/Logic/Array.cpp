@@ -21,9 +21,9 @@ Array::Array(Array&& other) :
 }
 
 
-bool Array::operator==(const Item& value) const
+bool Array::operator==(const Item& other) const
 {
-	if (auto array = dynamic_cast<const Array*>(&value))
+	if (auto array = dynamic_cast<const Array*>(&other))
 	{
 		for (const auto& e : *array)
 		{
@@ -40,9 +40,9 @@ bool Array::operator==(const Item& value) const
 	return false;
 }
 
-bool Array::Match(const Item& value, const Knowledge& knowledge) const
+bool Array::Match(const Item& item, const Knowledge& knowledge) const
 {
-	if (auto array = dynamic_cast<const Array*>(&value))
+	if (auto array = dynamic_cast<const Array*>(&item))
 	{
 		if (size() != array->size())
 			return false;

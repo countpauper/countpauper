@@ -51,9 +51,9 @@ Sequence::Sequence(Sequence&& other) :
 }
 
 
-bool Sequence::operator==(const Item& value) const
+bool Sequence::operator==(const Item& other) const
 {
-	if (auto sequence= dynamic_cast<const Sequence*>(&value))
+	if (auto sequence= dynamic_cast<const Sequence*>(&other))
 	{
 		if (size() != sequence->size())
 			return false;
@@ -68,9 +68,9 @@ bool Sequence::operator==(const Item& value) const
 	return false;
 }
 
-bool Sequence::Match(const Item& value, const Knowledge& knowledge) const
+bool Sequence::Match(const Item& item, const Knowledge& knowledge) const
 {
-	if (auto sequence = dynamic_cast<const Sequence*>(&value))
+	if (auto sequence = dynamic_cast<const Sequence*>(&item))
 	{
 		if (size() != sequence->size())
 			return false;

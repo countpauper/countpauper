@@ -18,18 +18,18 @@ Predicate::Predicate(const std::wstring& tag, Sequence&& arguments) :
 	arguments(std::move(arguments))
 {
 }
-bool Predicate::operator==(const Item& value) const
+bool Predicate::operator==(const Item& other) const
 {
-	if (auto predicate = dynamic_cast<const Predicate*>(&value))
+	if (auto predicate = dynamic_cast<const Predicate*>(&other))
 	{
 		return id == predicate->id && arguments == predicate->arguments;
 	}
 	return false;
 }
 
-bool Predicate::Match(const Item& value, const Knowledge& knowledge) const
+bool Predicate::Match(const Item& item, const Knowledge& knowledge) const
 {
-	if (auto predicate = dynamic_cast<const Predicate*>(&value))
+	if (auto predicate = dynamic_cast<const Predicate*>(&item))
 	{
 		if (id != predicate->id)
 			return false;

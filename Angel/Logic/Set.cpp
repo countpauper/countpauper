@@ -39,9 +39,9 @@ Set::Set(Set&& other) :
 }
 
 
-bool Set::operator==(const Item& value) const
+bool Set::operator==(const Item& other) const
 {
-	if (auto set = dynamic_cast<const Set*>(&value))
+	if (auto set = dynamic_cast<const Set*>(&other))
 	{
 		return std::operator==(static_cast<const std::unordered_set<Object>&>(*this),
 			static_cast<const std::unordered_set<Object>&>(*set));
@@ -49,9 +49,9 @@ bool Set::operator==(const Item& value) const
 	return false;
 }
 
-bool Set::Match(const Item& value, const Knowledge& knowledge) const
+bool Set::Match(const Item& item, const Knowledge& knowledge) const
 {
-	if (auto set = dynamic_cast<const Set*>(&value))
+	if (auto set = dynamic_cast<const Set*>(&item))
 	{
 		for (const auto& e : *this)
 		{

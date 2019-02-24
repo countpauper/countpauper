@@ -16,9 +16,9 @@ bool Id::operator==(const Id& id) const
 	return name == id.name;
 }
 
-bool Id::operator==(const Item& value) const
+bool Id::operator==(const Item& other) const
 {
-	if (auto id = dynamic_cast<const Id*>(&value))
+	if (auto id = dynamic_cast<const Id*>(&other))
 	{
 		return name == id->name;
 	}
