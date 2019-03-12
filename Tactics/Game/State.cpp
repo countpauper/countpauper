@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <sstream>
 #include <numeric>
+#include <iterator>
 #include "State.h"
 #include "Actor.h"
 #include "Action.h"

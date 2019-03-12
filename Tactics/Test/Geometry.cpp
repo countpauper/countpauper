@@ -1,4 +1,5 @@
 #include <boost/test/unit_test.hpp>
+
 #include "Geometry.h"
 #include "Coordinate.h"
 
