@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <boost/signals2/connection.hpp>
 
 namespace Game
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <boost/signals2.hpp>
+#include <boost/signals2/connection.hpp>
 #include "Engine/Image.h"
 
 namespace Game
