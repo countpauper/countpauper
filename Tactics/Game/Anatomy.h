@@ -46,7 +46,7 @@ namespace Game
 
         Plane plane;
         unsigned position;
-        unsigned size;
+        unsigned size;	// in el
         bool Contains(const Anatomy& other) const;
     private:
     };

@@ -69,7 +69,7 @@ namespace Game
         std::set<const Skill*> Counters(const Skill& previous) const;
         std::set<const Skill*> Combos(const Skill& previous) const;
 
-        bool IsPossible(const Skill& skill) const;
+        bool IsSelectable(const Skill& skill) const;
         const Knowledge& GetSkills() const;
         int MovePoints() const;
 

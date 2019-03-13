@@ -70,6 +70,8 @@ namespace Game
         void Engage(const Skill& skill);
         void Disengage();
         std::set<const Part*> FindAvailable(const Skill& skill) const;
+		std::map<const Body::Part*, const Weapon*> UsedLimbs(const Skill& skill) const;
+		std::pair<const Body::Part*, const Weapon*> UsedWeapon(const Skill& skill) const;
 
         Damage InnateDamage() const;
         Score Strength() const;

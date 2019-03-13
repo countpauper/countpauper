@@ -7,6 +7,7 @@
 #include <iostream>
 #include <numeric>
 #include <algorithm>
+#include <iterator>
 
 namespace Game
 {
@@ -282,6 +283,32 @@ namespace Game
         }
         return result;
     }
+
+	std::map<const Body::Part*, const Weapon*> Body::UsedLimbs(const Skill& skill) const
+	{
+		auto limbs = FindAvailable(skill);
+
+		std::map<const Body::Part*, const Weapon*> result;
+		std::transform(limbs.begin(), limbs.end(), std::inserter(result, result.end()), [](const decltype(limbs)::value_type& limb)
+		{
+			return std::make_pair(limb, limb->Held());
+		});
+		return result;
+	}
+
+	std::pair<const Body::Part*, const Weapon*> Body::UsedWeapon(const Skill& skill) const
+	{
+		auto used = UsedLimbs(skill);
+		for (auto use : used)
+		{
+			if ((skill.weapon == Type::Weapon::None) && (!use.second))
+				return use;
+			else if ((use.second) && (use.second->Match(skill.weapon)))
+				return use;
+		}
+		return std::pair<const Body::Part*, const Weapon*>(nullptr, nullptr);
+	}
+
 
     bool Body::Ready(const Skill& skill) const
     {

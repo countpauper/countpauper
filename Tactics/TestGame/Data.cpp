@@ -67,7 +67,7 @@ namespace Data
     }
 
     Attacker::Attacker() :
-        State(BaseState::_body, Position(0, 0), Direction(), 10, {}, { &weapon }, { &skill })
+        State(BaseState::_body, Position(0, 0), Direction(), 10, {}, { &weapon }, { &skill, &combo })
     {
         auto& arm = body[L"RArm"];
         arm.Hold(weapon);

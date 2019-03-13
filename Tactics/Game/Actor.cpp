@@ -227,7 +227,7 @@ namespace Game
         for (auto skill : GetSkills())
         {
             if ((skill->IsAttack()) &&
-                (IsPossible(*skill)))
+                (IsSelectable(*skill)))
             {
                 auto targets = game.FindTargets(*this, *skill);
                 for (auto target : targets)
@@ -286,9 +286,7 @@ namespace Game
         {
             if (skill->IsWait())
                 continue;
-            if (!skill->IsActive())
-                continue;
-            if (IsPossible(*skill))
+            if (IsSelectable(*skill))
                 return true;
         }
         return false;
@@ -349,7 +347,7 @@ namespace Game
         for (auto skill : knowledge)
         {
             if ((skill->IsAttack()) && 
-                (IsPossible(*skill)))
+                (IsSelectable(*skill)))
                 return skill;
         }
         return nullptr;
@@ -360,7 +358,7 @@ namespace Game
         for (auto skill : knowledge)
         {
             if ((skill->IsMove()) &&
-                (IsPossible(*skill)))
+                (IsSelectable(*skill)))
                 return skill;
         }
         return nullptr;
@@ -371,7 +369,7 @@ namespace Game
         for (auto skill: knowledge)
         {
             if ((skill->IsWait()) &&
-                (IsPossible(*skill)))
+                (IsSelectable(*skill)))
                 return skill;
         }
         return nullptr;
@@ -383,7 +381,7 @@ namespace Game
         for (auto skill : knowledge)
         {
             if ((skill->IsMove()) &&
-                (IsPossible(*skill)))
+                (IsSelectable(*skill)))
             {
                 int range = skill->range;
                 for (int y = -range; y <= range; ++y)
@@ -406,12 +404,12 @@ namespace Game
         return result;
     }
 
-    bool Actor::IsPossible(const Skill& skill) const
+    bool Actor::IsSelectable(const Skill& skill) const
     {
-        if (mp < skill.mp)
-            return false;   // TODO: long casting spells still allowed
         if (skill.IsWait())
             return true;
+		if (!skill.IsActive())
+			return false;
         if (!body.Ready(skill))
             return false;   // TODO: should otherwise check Kinetic chain
         return true;

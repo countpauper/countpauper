@@ -116,6 +116,47 @@ BOOST_AUTO_TEST_CASE(Vital)
     BOOST_CHECK(!b[L"Legs"].IsVital());
 }
 
+BOOST_AUTO_TEST_CASE(UseDoubleHand)
+{
+	Data::Human b;
+	auto& arm = b[L"RArm"];
+	Data::Blade weapon;
+	arm.Hold(weapon);
+	Data::Melee melee;
+	auto& limbs = b.UsedLimbs(melee);
+	BOOST_CHECK(limbs.count(&arm) == 1);
+	BOOST_CHECK(limbs.count(&b[L"LArm"]) == 1);
+	auto used = b.UsedWeapon(melee);
+	BOOST_CHECK_EQUAL(used.first, &arm);
+	BOOST_CHECK_EQUAL(used.second, &weapon);
+}
+
+BOOST_AUTO_TEST_CASE(UseSingleHand)
+{
+	Data::Human b;
+	auto& armR = b[L"RArm"];
+	auto& armL = b[L"LArm"];
+	Data::Blade weapon;
+	Data::Shield shield;
+	armR.Hold(weapon);
+	armL.Hold(shield);
+	Data::Melee melee;
+	auto& limbs = b.UsedLimbs(melee);
+	BOOST_CHECK(limbs.count(&armR) == 1);
+	BOOST_CHECK(limbs.count(&armL) == 0);
+	
+	auto used = b.UsedWeapon(melee);
+	BOOST_CHECK_EQUAL(used.first, &armR);
+	BOOST_CHECK_EQUAL(used.second, &weapon);
+}
+
+BOOST_AUTO_TEST_CASE(UsedWeapon)
+{
+	Data::Human b;
+	BOOST_CHECK(b[L"RArm"].Grip());
+	BOOST_CHECK(b[L"LArm"].Grip());
+	BOOST_CHECK(!b[L"Legs"].Grip());
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 }}  // Test

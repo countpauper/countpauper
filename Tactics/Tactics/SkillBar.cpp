@@ -154,7 +154,7 @@ namespace Game
                 {
                     buttons.emplace_back(Button(skill, hotkeys.front()));
                     hotkeys.pop_front();
-                    buttons.back().Enable(actor->IsPossible(*skill));
+                    buttons.back().Enable(actor->IsSelectable(*skill));
                     if (skill == game.SelectedSkill())
                     {
                         buttons.back().Highlight(true);

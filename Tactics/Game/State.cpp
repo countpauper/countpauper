@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include <sstream>
 #include <numeric>
-#include <iterator>
 #include "State.h"
 #include "Actor.h"
 #include "Action.h"
@@ -37,16 +36,14 @@ namespace Game
 
     bool State::IsPossible(const Skill& skill, const State& target) const
     {
-        if (knowledge.count(&skill) == 0)
-            return false;
         if (mp < skill.mp)
             return false;
-        auto available = UsedWeapon(skill);
+        auto available = body.UsedWeapon(skill);
         if (!available.first)
             return false;
         if (position.DistanceEl(target.position) > Range(skill).Value())
             return false;
-        if (UsedLimbs(skill).empty())
+        if (body.UsedLimbs(skill).empty())
             return false;
         // TODO if (game.Cover(state.position, target.GetPosition()))
         
@@ -202,7 +199,7 @@ namespace Game
         auto damageBonus = attackType.DamageBonus(skillLevel);
         auto skillBonus = Bonus(skill.name + L"(" + damageBonus.description + L")", damageBonus.value);
         assert(skillBonus.value >= 0);  // negative skill bonus will be clipped, need it to use in damage operator ^
-        auto weapon = UsedWeapon(skill).second;
+        auto weapon = body.UsedWeapon(skill).second;
 
         Damage skillDamage =
             Damage(Wound::Type::Blunt, Score(skillBonus)) +
@@ -220,14 +217,12 @@ namespace Game
         }
     }
 
-    bool State::Hurt(Anatomy location, const Damage& damage, const std::wstring& description)
+    bool State::Hurt(const Body::Part& part, const Damage& damage, const std::wstring& description)
     {
-        auto part = body.Get(location);
-        if (!part)
-            return false;
-        Damage pain = damage - Mitigation(*part);
-    
-        body.Hurt(*part, pain.Wound(description));
+        Damage pain = damage - Mitigation(part);
+		if (!pain.Hurt())
+			return false;
+        body.Hurt(part, pain.Wound(description));
         if (body.Dead())
             direction.Fall();
 
@@ -267,7 +262,7 @@ namespace Game
 
     Anatomy State::Origin(const Skill& skill, Trajectory trajectory) const
     {
-        auto wield = UsedWeapon(skill);
+        auto wield = body.UsedWeapon(skill);
         auto limb = wield.first;
         if (!limb)
         {
@@ -296,7 +291,7 @@ namespace Game
         if (knowledge.count(&skill) == 0)
             return Score();
 
-        auto used = UsedLimbs(skill);
+        auto used = body.UsedLimbs(skill);
 
         Score result(Bonus(skill.name, skill.offset));
         for (auto use : used)
@@ -314,7 +309,7 @@ namespace Game
         }
         
         result += ArmorBonus(skill);
-        auto weapon = UsedWeapon(skill).second;
+        auto weapon = body.UsedWeapon(skill).second;
         if (!weapon)
         {
             return result;
@@ -368,35 +363,10 @@ namespace Game
         });
     }
 
-    std::map<const Body::Part*,const Weapon*> State::UsedLimbs(const Skill& skill) const
-    {
-        auto limbs = body.FindAvailable(skill);
-
-        std::map<const Body::Part*, const Weapon*> result;
-        std::transform(limbs.begin(), limbs.end(), std::inserter(result, result.end()), [](const decltype(limbs)::value_type& limb)
-        {
-            return std::make_pair(limb, limb->Held());
-        });
-        return result;
-    }
-
-    std::pair<const Body::Part*, const Weapon*> State::UsedWeapon(const Skill& skill) const
-    {
-        auto used = UsedLimbs(skill);
-        for (auto use : used)
-        {
-            if ((skill.weapon == Type::Weapon::None) && (!use.second))
-                return use;
-            else if ((use.second) && (use.second->Match(skill.weapon)))
-                return use;
-        }
-        return std::pair<const Body::Part*, const Weapon*>(nullptr, nullptr);
-    }
-
     Score State::Range(const Skill& skill) const
     {
         Score range(skill.name, skill.range);
-        auto wield = UsedWeapon(skill);
+        auto wield = body.UsedWeapon(skill);
         if (wield.second)
         {
             range += Bonus(wield.second->Name(), wield.second->Length());

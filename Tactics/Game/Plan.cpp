@@ -301,7 +301,7 @@ namespace Game
         {
             action = std::unique_ptr<Action>(skill.CreateAction(actor, target, trajectory));
             result = action->Act(*parent.state);
-            if (result) // TODO: select prererable trajectory instead of first
+            if (result) // TODO: select preferable trajectory instead of first
                 break;
         }
 
@@ -309,7 +309,9 @@ namespace Game
             return false;
 
         auto targetActor = dynamic_cast<const Actor*>(&target);
-        if (targetActor)
+
+        if ((targetActor) &&
+			(!targetActor->IsAlly(actor)))	// TODO: target aware of actor and action
         {
             auto defences = targetActor->Counters(skill);
             for (auto defence : defences)

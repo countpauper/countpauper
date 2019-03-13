@@ -60,14 +60,19 @@ Action::Result Attack::Act(const IGame& game) const
 
     auto location = HitLocation(attacker, skill, victim, trajectory);
     if (!location)
-        return Fail(game, L"miss");
-    auto skillLevel = attacker.SkillLevel(skill, &victim);
+		return Result();
+	auto part = victim.body.Get(location);
+	if (!part)
+		return Result();
+
+	auto skillLevel = attacker.SkillLevel(skill, &victim);
     if (skillLevel.Value() == 0)
-        return Fail(game, skillLevel.Description());
+        return Fail(game, std::wstring(L"resist(")+skillLevel.Description()+L")");
     // TODO: Fail due to miss? ret.chance = double(attacker.Chance(skill, victim).Value()) / 100.0;
     auto damage = attacker.AttackDamage(skill, skillLevel);
-    if (!victim.Hurt(location, damage, actor.Description()))
-        return Fail(game, L"missed");
+
+    if (!victim.Hurt(*part, damage, actor.Description()))
+        return Fail(game, L"mitigated");
     attacker.mp -= skill.mp;
     attacker.Engage(skill);
 

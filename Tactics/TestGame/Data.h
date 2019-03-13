@@ -71,6 +71,7 @@ struct Attacker : private BaseState<Human>, public State
     Attacker();
     Data::Blade weapon;
     Data::Melee skill;
+	Data::Combo combo;
 };
 
 struct Victim : private BaseState<Simple>, public State

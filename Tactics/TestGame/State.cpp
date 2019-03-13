@@ -115,13 +115,16 @@ BOOST_AUTO_TEST_CASE(Mitigation)
     s.worn.push_back(&armor);
     BOOST_CHECK_EQUAL(s.Intelligence(), s.body.Intelligence().Value() - 4);
     Anatomy hitLocation(Plane::Front, 3, 1);
-    s.Hurt(hitLocation, Damage(Wound::Type::Sharp, Score(L"", 1)), L"Small wound");
-    BOOST_CHECK(!s.body.Get(hitLocation)->IsHurt());
-    s.Hurt(hitLocation, Damage(Wound::Type::Sharp, Score(L"", 4)), L"Medium wound");
-    BOOST_CHECK(!s.body.Get(hitLocation)->IsHurt());
-    s.Hurt(hitLocation, Damage(Wound::Type::Sharp, Score(L"", 5)), L"Big wound");
-    BOOST_CHECK(s.body.Get(hitLocation)->IsHurt());
-    s.Hurt(hitLocation, Damage(Wound::Type::Sharp, Score(L"", 25)), L"Deadly wound");
+	auto part = s.body.Get(L"Chest");
+	BOOST_REQUIRE(part);
+	BOOST_REQUIRE(part->IsVital());
+    BOOST_CHECK(!s.Hurt(*part, Damage(Wound::Type::Sharp, Score(L"", 1)), L"Small wound"));
+    BOOST_CHECK(!part->IsHurt());
+	BOOST_CHECK(!s.Hurt(*part, Damage(Wound::Type::Sharp, Score(L"", 4)), L"Medium wound"));
+    BOOST_CHECK(!part->IsHurt());
+	BOOST_CHECK(s.Hurt(*part, Damage(Wound::Type::Sharp, Score(L"", 5)), L"Big wound"));
+    BOOST_CHECK(part->IsHurt());
+	BOOST_CHECK(s.Hurt(*part, Damage(Wound::Type::Sharp, Score(L"", 25)), L"Deadly wound"));
     BOOST_CHECK(s.body.Dead());
     BOOST_CHECK(s.direction.Prone());
 }
@@ -138,9 +141,41 @@ BOOST_AUTO_TEST_CASE(Engage)
     Data::Victim v;
     BOOST_REQUIRE(s.IsPossible(s.skill, v));
     s.Engage(s.skill);
-    BOOST_CHECK(!s.IsPossible(s.skill, v));
-
+	BOOST_CHECK(!s.IsPossible(s.skill, v));
+	BOOST_CHECK(s.IsPossible(s.combo, v));
 }
+
+BOOST_AUTO_TEST_CASE(SkillPossibleMP)
+{
+	Data::Attacker s;
+	Data::Victim v;
+	BOOST_REQUIRE(s.IsPossible(s.skill, v));
+	s.mp = s.skill.mp-1;
+	BOOST_CHECK(!s.IsPossible(s.skill, v));
+}
+
+BOOST_AUTO_TEST_CASE(SkillPossibleWielded)
+{
+	Data::Attacker s;
+	Data::Victim v;
+	BOOST_REQUIRE(s.IsPossible(s.skill, v));	
+	s.body[**s.body.Grip().begin()].Drop();
+	BOOST_CHECK(!s.IsPossible(s.skill, v));
+}
+
+BOOST_AUTO_TEST_CASE(SkillPossibleRange)
+{
+	Data::Attacker s;
+	Data::Victim v;
+	BOOST_REQUIRE(s.IsPossible(s.skill, v));
+	// 3 El can hit exactly 1 horizontal/vertical square
+	BOOST_REQUIRE_EQUAL(s.skill.range + s.weapon.Length() + (*s.body.Grip().begin())->Length(), 3);
+	v.position.x = s.position.x + 1;
+	BOOST_CHECK(s.IsPossible(s.skill, v));
+	v.position.y = s.position.y + 1;
+	BOOST_CHECK(!s.IsPossible(s.skill, v));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }
 }  // Game::Test

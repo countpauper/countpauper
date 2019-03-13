@@ -40,7 +40,7 @@ namespace Game
         bool IsPossible(const Skill& skill, const State& target) const;
         Damage AttackDamage(const Skill& skill) const;
         Damage AttackDamage(const Skill& skill, const Score& skillLevel) const;
-        bool Hurt(Anatomy location, const Damage& damage, const std::wstring& description);
+        bool Hurt(const Body::Part& part, const Damage& damage, const std::wstring& description);
         Score Chance(const Skill& skill, const State& target) const;
         Score Chance(const Skill& skill) const;
 
@@ -64,8 +64,6 @@ namespace Game
         Bonus Charge() const;   // excess enchantment
         Score AttributeScore(const Body::Part& limb, Attribute attribute) const;
         Damage Mitigation(const Body::Part& location) const;
-        std::map<const Body::Part*, const Weapon*> UsedLimbs(const Skill& skill) const;
-        std::pair<const Body::Part*, const Weapon*> UsedWeapon(const Skill& skill) const;
         Score ArmorBonus(const Skill& skill) const;
         Score FullBodyBonus(Attribute attribute) const;
         Score FreeLimbScore(const Weapon& weapon, Attribute attribute) const;
