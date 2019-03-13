@@ -170,14 +170,12 @@ namespace Game
 
     bool Skill::IsAttack() const
     {
-        return ((IsActive()) &&
-            (IsType<Melee>()));
+        return IsType<Melee>();
     }
 
     bool Skill::IsMove() const
     {
-        return ((IsActive()) &&
-            (IsType<Move>()));
+        return IsType<Move>();
     }
 
     bool Skill::IsWait() const
@@ -201,9 +199,21 @@ namespace Game
     {
         if (!xmlString)
             throw std::invalid_argument("Null pointer xml string");
+		int len = xmlStrlen(xmlString);
+		if (len == 0)
+			return std::wstring();
 
-        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> conv;
-        return conv.from_bytes((const char*)xmlString);
+		int requiredCharacters = MultiByteToWideChar(CP_UTF8, 0, (LPCCH)xmlString, len, 0, 0);
+		if (requiredCharacters == 0)
+		{
+			int err = GetLastError();
+			throw std::system_error(err, std::generic_category(), "Failed to convert XML string");
+		}
+		std::wstring result(requiredCharacters, L'\x0');
+		int processedCharacters = MultiByteToWideChar(CP_UTF8, 0, (LPCCH)xmlString, len, result.data(), requiredCharacters);
+		if (processedCharacters != requiredCharacters)
+			throw std::runtime_error("Unexpected number of wide characters in XML string");
+		return result;
     }
 
     std::string xmlStr(const xmlChar* xmlString)
