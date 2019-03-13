@@ -107,6 +107,18 @@ BOOST_AUTO_TEST_CASE(HeavyWeapon)
     BOOST_CHECK_EQUAL(s.SkillLevel(s.skill, &v), s.body.Strength().Value() - 3);
 }
 
+BOOST_AUTO_TEST_CASE(ChargedWeapon)
+{
+	Data::Attacker s;
+	s.weapon.mod.requirement.intelligence = s.Intelligence().Value() + 2;
+	s.weapon.mod.prefix = L"Astral";
+	s.weapon.mod.load.enchantment = 75;
+	BOOST_CHECK_EQUAL(s.Intelligence(), s.body.Intelligence().Value() - 5);  // (wis * 5 - 75)/5 = -5
+
+	BOOST_CHECK(s.IsPossible(s.buff, s));
+	BOOST_CHECK_EQUAL(s.SkillLevel(s.buff, nullptr), 5);
+}
+
 BOOST_AUTO_TEST_CASE(Mitigation)
 {
     Data::Harnass armor;

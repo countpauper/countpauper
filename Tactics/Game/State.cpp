@@ -60,7 +60,7 @@ namespace Game
     {
         // private, because limb has to be part of the state's body, which is copied
         auto wielded = body.Wielded();
-        auto weapon = wielded.at(&limb);
+		const auto weapon = wielded[&limb];
         auto result = limb.AttributeScore(attribute);
         auto body = FullBodyBonus(attribute);
         assert(body.Value() % 2 == 0);  // TODO: rounding
@@ -69,6 +69,15 @@ namespace Game
         {
             result += weapon->Bonus(attribute); 
         }
+		// TODO: divide encumberance and charge over unused limbs
+		if (attribute == Attribute::Agility)
+		{
+			result += Encumberance();
+		}
+		else if (attribute == Attribute::Intelligence)
+		{
+			result += Charge();
+		}
         return result;
     }
 
@@ -113,7 +122,7 @@ namespace Game
                 return total;
         });
         auto wisdom = Wisdom();
-        charge += Bonus(L"-Wisdom(" + wisdom.Description() + L")x5)", wisdom.Value() * -5);
+        charge += Bonus(L"-Wisdom(" + wisdom.Description() + L")x5W)", wisdom.Value() * -5);
 
         return Bonus(L"Charge (" + charge.Description() + L")/5", -static_cast<int>(charge.Value() + 4) / 5);
     }

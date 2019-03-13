@@ -157,10 +157,12 @@ namespace Game
     {
         if (Grip())
         {
-            if (skill.Require(held))
-                return true;
-            else if ((held == nullptr) && (Contributes(skill.attribute)))
-                return true;
+			if ((skill.Require(held)) && (Contributes(skill.attribute)))
+				return true;	// main hand
+			else if ((held == nullptr) && (Contributes(skill.attribute)))
+				return true;	// double hand
+			else if ((held != nullptr) && (skill.Require(held)))
+				return true;	// component
             else
                 return false;
         }

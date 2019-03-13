@@ -126,6 +126,7 @@ BOOST_AUTO_TEST_CASE(UseDoubleHand)
 	auto& limbs = b.UsedLimbs(melee);
 	BOOST_CHECK(limbs.count(&arm) == 1);
 	BOOST_CHECK(limbs.count(&b[L"LArm"]) == 1);
+	BOOST_CHECK_EQUAL(limbs.size(), 2);
 	auto used = b.UsedWeapon(melee);
 	BOOST_CHECK_EQUAL(used.first, &arm);
 	BOOST_CHECK_EQUAL(used.second, &weapon);
@@ -144,11 +145,27 @@ BOOST_AUTO_TEST_CASE(UseSingleHand)
 	auto& limbs = b.UsedLimbs(melee);
 	BOOST_CHECK(limbs.count(&armR) == 1);
 	BOOST_CHECK(limbs.count(&armL) == 0);
-	
+	BOOST_CHECK_EQUAL(limbs.size(), 1);
+
 	auto used = b.UsedWeapon(melee);
 	BOOST_CHECK_EQUAL(used.first, &armR);
 	BOOST_CHECK_EQUAL(used.second, &weapon);
 }
+
+BOOST_AUTO_TEST_CASE(UseHead)
+{
+	Data::Human b;
+	auto& head = b[L"Head"];
+	Data::Buff buff;
+	auto& limbs = b.UsedLimbs(buff);
+	BOOST_CHECK(limbs.count(&head) == 1);
+	BOOST_CHECK_EQUAL(limbs.size(), 1);
+
+	auto used = b.UsedWeapon(buff);
+	BOOST_CHECK_EQUAL(used.first, &head);
+	BOOST_CHECK_EQUAL(used.second, nullptr);
+}
+
 
 BOOST_AUTO_TEST_CASE(UsedWeapon)
 {

@@ -58,6 +58,10 @@ struct Combo : Skill
     Combo();
 };
 
+struct Buff : Skill
+{
+	Buff();
+};
 // Base state so body is initialized before actual State
 template<class BodyType>
 class BaseState
@@ -72,6 +76,7 @@ struct Attacker : private BaseState<Human>, public State
     Data::Blade weapon;
     Data::Melee skill;
 	Data::Combo combo;
+	Data::Buff buff;
 };
 
 struct Victim : private BaseState<Simple>, public State

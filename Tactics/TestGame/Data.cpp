@@ -66,8 +66,12 @@ namespace Data
         follows.insert(L"1");
     }
 
+	Buff::Buff() : Skill(L"Buff", Attribute::Intelligence, Targeting::Self)
+	{
+	}
+
     Attacker::Attacker() :
-        State(BaseState::_body, Position(0, 0), Direction(), 10, {}, { &weapon }, { &skill, &combo })
+        State(BaseState::_body, Position(0, 0), Direction(), 10, {}, { &weapon }, { &skill, &combo, &buff })
     {
         auto& arm = body[L"RArm"];
         arm.Hold(weapon);

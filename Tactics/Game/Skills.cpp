@@ -43,7 +43,20 @@ namespace Game
         target.insert(Targeting::Swing);
     }
 
-
+	Skill::Skill(const std::wstring name, Attribute attribute, Targeting targeting) :
+		mp(2),
+		range(0),
+		trigger(Trigger::Act),
+		name(name),
+		attribute(attribute),
+		resist(Attribute::None),
+		offset(0),
+		weapon(Type::Weapon::Style::None),
+		type(std::make_shared<Affect>())
+	{
+		trajectory.insert(Trajectory::Straight);
+		target.insert(targeting);
+	}
     Skill::~Skill() = default;
 
     Action* Skill::CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const

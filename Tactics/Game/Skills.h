@@ -19,8 +19,9 @@ class Skill
 public:
     Skill();
     enum class Trigger { None = 0, Act, Combo, Prepare, React, Defend };
-    Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Trajectory trajectory, int damage);
-    virtual ~Skill();
+	Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Trajectory trajectory, int damage);
+	Skill(const std::wstring name, Attribute attribute, Targeting targeting);
+	virtual ~Skill();
 
     Action* CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const;
     Bonus GetChance(const Score& level) const;
