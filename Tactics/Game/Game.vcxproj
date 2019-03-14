@@ -88,6 +88,7 @@
     <ClCompile Include="Plan.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="Score.cpp" />
+    <ClCompile Include="Skill.cpp" />
     <ClCompile Include="Skills.cpp" />
     <ClCompile Include="Slot.cpp" />
     <ClCompile Include="State.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="Plan.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Score.h" />
+    <ClInclude Include="Skill.h" />
     <ClInclude Include="Skills.h" />
     <ClInclude Include="Slot.h" />
     <ClInclude Include="State.h" />
