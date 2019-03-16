@@ -41,10 +41,11 @@ namespace Game
     {
         return State(actor);
     }
-    void Game::Adjust(const Actor& actor, const State& state)
+	void Game::Adjust(const Actor& actor, const State& state, const std::wstring& description)
     {
         Actor& nonConstActor = const_cast<Actor&>(actor);   // faster than looking up in objects
         nonConstActor.Apply(state);
+		OutputDebugStringW((actor.Description() + L":" + description + L"\n").c_str());
     }
     void Game::Apply(IGame& root) const
     {

@@ -24,6 +24,7 @@ namespace Game
     class State : public Target
     {
     public:
+		State();
         State(const Actor& actor);
         State(const Body& body, Position pos=Position(0,0), Direction dir=Direction::North, unsigned mp=10,
             std::vector<const Armor*> armor = {}, std::vector<const Weapon*> weapons = {}, Actor::Knowledge knowledge = {});
@@ -78,7 +79,7 @@ namespace Game
     public:
         GameState(const IGame& parent);
         GameState(const IGame& parent, const Actor& executor);
-        void Adjust(const Actor& actor, const State& state) override;
+        void Adjust(const Actor& actor, const State& state, const std::wstring& description) override;
         void Apply(IGame& root) const;
         State Get(const Actor& actor) const override;
 
@@ -86,7 +87,8 @@ namespace Game
         bool CanBe(const Position& position) const override;
         bool CanGo(const Position& from, Direction direction) const override;
         bool Cover(const Position& from, const Position& to) const override;
-        std::wstring Description() const override;
+		std::vector<std::unique_ptr<Action>> PossibleMoves() const;
+		std::wstring Description() const override;
 
         State ActorState() const;
         bool HasParent(const IGame& state) const;
@@ -95,6 +97,7 @@ namespace Game
         const IGame& parent;
         const Actor& executor;
         std::map<const Actor*, State> state;
+		std::map<const Actor*, std::wstring> description;
     };
 
     using GameChances= std::vector<std::pair<double, GameState*>>;

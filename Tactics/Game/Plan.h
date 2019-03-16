@@ -45,7 +45,8 @@ protected:
     struct Node
     {
         Node(const IGame& state, const Actor& executor);
-        Node(Node& previous, Action::Result& result, std::unique_ptr<Action>&& action);
+		Node(Node& previous, std::unique_ptr<Action>&& action);
+
         Node(const Node&) = delete;
         ~Node();
         Node& operator=(const Node&) = delete;
@@ -64,7 +65,6 @@ protected:
         std::unique_ptr<Action> action;
 
 		double chance;
-        std::wstring description;
         std::unique_ptr<GameState> state;
         std::vector<std::unique_ptr<Node>> children;
     };

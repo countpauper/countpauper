@@ -368,33 +368,6 @@ namespace Game
         return nullptr;
     }
 
-    std::vector<std::unique_ptr<Action>> Actor::AllMoves(const Position& from) const
-    { 
-        std::vector<std::unique_ptr<Action>> result;
-        for (auto skill : knowledge)
-        {
-            if ((skill->IsMove()) &&
-                (IsSelectable(*skill)))
-            {
-                int range = skill->range;
-                for (int y = -range; y <= range; ++y)
-                {
-                    for (int x = -range; x <= range; ++x)
-                    { 
-                        Position vector(x, y);
-                        if (vector.SizeEl() > skill->range)
-                            continue;
-                        if (!vector)
-                            continue;
-						assert(skill->trajectory.empty());	// "aimed" move (eg jump, teleport() not yet implemented
-                        result.emplace_back(skill->CreateAction(*this, Destination(from + vector), nullptr));
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
     bool Actor::IsSelectable(const Skill& skill) const
     {
         if (skill.IsWait())

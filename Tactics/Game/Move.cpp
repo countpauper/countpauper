@@ -14,28 +14,15 @@ namespace Game
     {
     }
 
-    Action::Result  Move::Act(const IGame& game) const
+    void Move::Act(IGame& game) const
     {
         State state(game.Get(actor));
-        if (state.mp < skill.mp)
-        {
-            return Result();
-        }
         state.Spent(skill.mp);
         auto newPosition = destination.GetPosition();
         auto direction = Direction(newPosition - state.position);
-        if ((game.CanBe(newPosition)) &&
-            (game.CanGo(state.position, direction)))
-        {
-            state.position = newPosition;
-            state.direction = direction;
-            Result ret(game, actor);
-            ret.state->Adjust(actor, state);
-            ret.description = actor.Description() + L" " + skill.name + L" " + direction.Description();
-            return ret;
-        }
-        else
-            return Result();
+        state.position = newPosition;
+        state.direction = direction;
+        game.Adjust(actor, state, skill.name + L" " + direction.Description());
     }
 
 

@@ -14,7 +14,7 @@ namespace Game
     public:
         Move(const Actor& actor, const Position& destination, const Skill& skill);
         void Render(const State& state) const override;
-        Result Act(const IGame& game) const override;
+        void Act(IGame& game) const override;
         std::wstring Description() const override;
     protected:
         Destination destination;

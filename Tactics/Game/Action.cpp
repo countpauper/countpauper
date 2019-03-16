@@ -9,40 +9,6 @@
 
 namespace Game
 {
-
-    Action::Result::Result() :
-        chance(0.0)
-    {
-    }
-
-    Action::Result::Result(const IGame& parent, const Actor& actor) :
-        state(std::make_unique<GameState>(parent, actor)),
-        chance(1.0)
-    {
-    }
-
-    Action::Result::Result(Action::Result&& other) :
-        state(std::move(other.state)),
-        chance(other.chance),
-        description(other.description)
-    {
-        other.chance = 0.0;
-    }
-
-    Action::Result& Action::Result::operator=(Action::Result&& other)
-    {
-        state = std::move(other.state);
-        chance = other.chance;
-        other.chance = 0.0;
-        description = other.description;
-        return *this;
-    }
-
-    Action::Result::operator bool() const
-    {
-        return state != nullptr;
-    }
-
     Action::Action(const Skill& skill, const Actor& actor) :
         skill(skill),
         actor(actor)
@@ -61,15 +27,19 @@ namespace Game
     {
     }
 
-	Action::Result TargetedAction::Fail(const IGame& game, const std::wstring& reason) const
+	Score TargetedAction::Chance(const IGame& game) const
 	{
-		State state = game.Get(actor);
-		Result ret(game, actor);
-		state.Spent(skill.mp);
-		state.Engage(skill);
-		ret.state->Adjust(actor, state);
-		ret.description = actor.Description() + L" " + skill.name + L" " + reason + L" " + target.Description();
-		return std::move(ret);
+		State attacker = game.Get(actor);
+		auto targetActor = dynamic_cast<const Actor*>(&target);
+		if (targetActor)
+		{
+			State victim = game.Get(*targetActor);
+			return attacker.Chance(skill, victim);
+		}
+		else
+		{
+			return attacker.Chance(skill);
+		}
 	}
 
 	Position TargetedAction::GetPosition() const

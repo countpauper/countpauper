@@ -13,7 +13,7 @@ namespace Game
 	public:
 		React(const Actor& actor, const TargetedAction& target, const Skill& skill);
 		void Render(const State& state) const override;
-		Result Act(const IGame& game) const override;
+		void Act(IGame& game) const override;
 	};
 
 }   // ::Game

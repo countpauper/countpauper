@@ -8,7 +8,14 @@
 
 namespace Game
 {
-    State::State(const Actor& actor) :
+	State::State() :
+		mp(0),
+		direction(Direction::None),
+		loyalty(0)
+	{
+	}
+
+	State::State(const Actor& actor) :
         position(actor.GetPosition()),
         direction(actor.GetDirection()),
         mp(actor.GetMovePoints()),
@@ -236,7 +243,7 @@ namespace Game
         }
     }
 
-    bool State::Hurt(const Body::Part& part, const Damage& damage, const std::wstring& description)
+	bool State::Hurt(const Body::Part& part, const Damage& damage, const std::wstring& description)
     {
         Damage pain = damage - Mitigation(part);
 		if (!pain.Hurt())
@@ -329,10 +336,6 @@ namespace Game
             auto resist = victim->AttributeScore(skill.resist);
             result += Bonus(L"Resist("+resist.Description()+L")", -static_cast<int>(resist.Value()));
         }
-        else
-        {
-            assert(skill.resist == Attribute::None);  // no victim provided for skill with resistance
-        }
         
         result += ArmorBonus(skill);
         auto weapon = body.UsedWeapon(skill).second;
@@ -416,11 +419,10 @@ namespace Game
         executor(executor)
     {
     }
-    void GameState::Adjust(const Actor& actor, const State& actorState)
+    void GameState::Adjust(const Actor& actor, const State& actorState, const std::wstring& adjustedDescription)
     {
-        auto insert = state.insert(std::make_pair(&actor, actorState));
-        if (!insert.second)
-            state.emplace(std::make_pair(&actor,actorState));
+		state[&actor] = actorState;
+		description[&actor] += adjustedDescription + L" ";
     }
 
     State GameState::Get(const Actor& actor) const
@@ -437,7 +439,9 @@ namespace Game
 
         for (auto& actorState : state)
         {
-            root.Adjust(*actorState.first, actorState.second);
+			auto describeIt = description.find(actorState.first);
+			auto describe = (describeIt == description.end()) ? L"" : describeIt->second;
+            root.Adjust(*actorState.first, actorState.second, describe);
         }
     }
 
@@ -480,6 +484,41 @@ namespace Game
     {
         return parent.Cover(from, to);
     }
+
+	std::vector<std::unique_ptr<Action>> GameState::PossibleMoves() const
+	{
+		auto& actorState = ActorState();
+
+		std::vector<std::unique_ptr<Action>> result;
+		for (auto skill : actorState.knowledge)
+		{
+			if ((skill->IsMove()) &&
+				(actorState.body.Ready(*skill)))
+			{
+				int range = (2+skill->range)/3;	// convert from El to squares approximately, IsPossible range check will filter
+				for (int y = -range; y <= range; ++y)	
+				{
+					for (int x = -range; x <= range; ++x)
+					{
+						Position vector(x, y);
+						if (!vector)
+							continue;
+						Destination destination(actorState.position + vector);
+						if (!CanBe(destination.GetPosition()))
+							continue;
+						if (actorState.IsPossible(*skill, destination))
+						{
+							assert(skill->trajectory.empty());	// "aimed" move (eg jump, teleport() not yet implemented
+							result.emplace_back(skill->CreateAction(*Executor(), destination, nullptr));
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+
     std::wstring GameState::Description() const
     {
         std::wstringstream ss;

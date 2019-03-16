@@ -63,7 +63,6 @@ namespace Game
         const Skill* DefaultAttack() const;
         const Skill* DefaultMove() const;
         const Skill* WaitSkill() const;
-        std::vector<std::unique_ptr<Action>> AllMoves(const Position& from) const;
 
         std::set<const Skill*> Counters(const Skill& previous) const;
         std::set<const Skill*> Combos(const Skill& previous) const;

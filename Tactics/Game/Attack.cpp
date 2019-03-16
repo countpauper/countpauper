@@ -16,29 +16,42 @@ Attack::Attack(const Actor& actor, const Actor& target, const Skill& skill, cons
 {
 }
 
-Action::Result Attack::Act(const IGame& game) const
+void Attack::Act(IGame& game) const
 {
-    State attacker = game.Get(actor);
-    State victim(game.Get(static_cast<const Actor&>(target)));
+	State attacker = game.Get(actor);
+	auto& targetActor = dynamic_cast<const Actor&>(target);
+	State victim(game.Get(targetActor));
 
-	attacker.direction = Direction(victim.position - attacker.position);
+
 	auto skillLevel = attacker.SkillLevel(skill, &victim);
-    if (skillLevel.Value() == 0)
-        return Fail(game, std::wstring(L"resist(")+skillLevel.Description()+L")");
-    // TODO: Fail due to miss? ret.chance = double(attacker.Chance(skill, victim).Value()) / 100.0;
-    auto damage = attacker.AttackDamage(skill, skillLevel);
+	if (skillLevel.Value() == 0)
+	{
+		attacker.Spent(skill.mp);
+		attacker.Engage(skill);
+		attacker.direction = Direction(victim.position - attacker.position);
+		game.Adjust(actor, attacker, skill.name);
 
-    if (!victim.Hurt(part, damage, actor.Description()))
-        return Fail(game, L"mitigated");
-    attacker.Spent(skill.mp);
-    attacker.Engage(skill);
+		game.Adjust(targetActor, victim, L"Resist " + skill.name + L":" + skillLevel.Description());
+		return;
+	}
+	auto damage = attacker.AttackDamage(skill, skillLevel);
 
-    Result ret(game, actor);
-    ret.state->Adjust(actor, attacker);
-    ret.state->Adjust(static_cast<const Actor&>(target), victim);
-    ret.description = actor.Description() + L" "+skill.name;
-    ret.description += L" " + target.Description() + L":" + damage.ActionDescription();
-    return std::move(ret);
+	if (!victim.Hurt(part, damage, actor.Description()))
+	{
+		attacker.Spent(skill.mp);
+		attacker.Engage(skill);
+		attacker.direction = Direction(victim.position - attacker.position);
+		game.Adjust(actor, attacker, skill.name);
+
+		game.Adjust(targetActor, victim, L"Mitigate " + skill.name + L":" + damage.ActionDescription());
+		return;
+	}
+	// TODO: engage after resist & damage checks or use previous state. Has to be a separate function anyway
+	attacker.Spent(skill.mp);
+	attacker.Engage(skill);
+	attacker.direction = Direction(victim.position - attacker.position);
+	game.Adjust(actor, attacker, skill.name);
+	game.Adjust(targetActor, victim, L"Hit " + skill.name + L":" + damage.ActionDescription());
 }
 
 void Attack::Render(const State& state) const

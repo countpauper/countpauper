@@ -13,7 +13,7 @@ class Attack :
 public:
     Attack(const Actor& actor, const Actor& target, const Skill& skill, const Body::Part& part);
     void Render(const State& state) const override;
-    Result Act(const IGame& game) const override;
+    void Act(IGame& game) const override;
 };
 
 }   // ::Game

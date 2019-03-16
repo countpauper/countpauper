@@ -41,14 +41,14 @@ namespace Game
     {
     }
 
-    Plan::Node::Node(Node& previous, Action::Result& result, std::unique_ptr<Action>&& action) :
-        previous(&previous),
-        state(std::move(result.state)),
-        action(std::move(action)),
-        chance(result.chance),
-        description(result.description)
-    {
-    }
+	Plan::Node::Node(Node& previous, std::unique_ptr<Action>&& _action) :
+		previous(&previous),
+		state(std::make_unique<GameState>(*previous.state)),
+		action(std::move(_action)),
+		chance(double(action->Chance(*previous.state).Value())/100.0)
+	{
+		action->Act(*state);
+	}
 
     Plan::Node::~Node()
     {
@@ -248,26 +248,6 @@ namespace Game
         return sequence;
     }
 
-    std::vector<std::wstring> Plan::Descriptions(const GameState& end) const
-    {
-        std::vector<std::wstring> descriptions;
-        auto node = root.get();
-        while (node)
-        {
-            descriptions.emplace_back(node->description);
-            Node* next = nullptr;
-            for (const auto& child : node->children)
-            {
-                if (!end.HasParent(*child->state))
-                    continue;
-                next = child.get();
-                break;
-            }
-            node = next;
-        }
-        return descriptions;
-    }
-
     bool Plan::Execute(Game& game) const
     {
         auto outcomes = AllOutcomes();
@@ -280,17 +260,12 @@ namespace Game
                 return true;
             }
         }
-        OutputDebugStringW((L"Execute: " + Description() + L" fizzle \r\n").c_str());
+        OutputDebugStringW((L"Execute: " + Description() + L" Fail\r\n").c_str());
         return false;
     }
 
     void Plan::Apply(const GameState& state, Game& game) const
     {
-        auto descriptions = Descriptions(state);
-        for (auto description : descriptions)
-        {
-			OutputDebugStringW((L"Apply: " + description + L"\r\n").c_str());
-        }
         OutputDebugStringW((L"Execute: " + Description() + L" " + state.Description() + L"\r\n").c_str());
         state.Apply(game);
 
@@ -354,12 +329,15 @@ namespace Game
 		if (!state.IsPossible(skill, target))
 			return false;
 
-		auto part = Aim(*parent.state, actor, static_cast<const Actor&>(target), skill);
+		auto part = Aim(*parent.state, actor, dynamic_cast<const Actor&>(target), skill);
 		if (!part && !skill.trajectory.empty())
 			return false;
 
 		std::unique_ptr<TargetedAction> action(skill.CreateAction(actor, target, part));
-        auto result = action->Act(*parent.state);
+		if (!action)
+			return false;
+
+		auto node = std::make_unique<Node>(parent, std::move(action));
 
         auto targetActor = dynamic_cast<const Actor*>(&target);
         if ((targetActor) &&
@@ -368,18 +346,11 @@ namespace Game
             auto defenses = targetActor->Counters(skill);
             for (auto defense : defenses)
             {
-                PlanReaction(parent, *defense, *targetActor, *action);
+                PlanReaction(parent, *defense, *targetActor, dynamic_cast<TargetedAction&>(*node->action));
             }
         }
-        auto node = std::make_unique<Node>(parent, result, std::move(action));
         PlanCombo(*node, skill, actor, target);
         parent.children.emplace_back(std::move(node));
-
-		std::unique_ptr<TargetedAction> failAction(skill.CreateAction(actor, target, part));
-		auto failResult = failAction->Fail(*parent.state, L"Fail");
-		assert(failResult.chance == 1.0);	// remaining chance after adding this child should be 0
-		auto failNode = std::make_unique<Node>(parent, failResult, std::move(failAction));		
-		parent.children.emplace_back(std::move(failNode));
 		return true;
     }
 
@@ -402,8 +373,7 @@ namespace Game
 		if (!part && !skill.trajectory.empty())
 			return false;
 		std::unique_ptr<TargetedAction> reaction(skill.CreateAction(defender, offense, part));
-        auto result = reaction->Act(*parent.state);
-        auto node = std::make_unique<Node>(parent, result, std::move(reaction));
+		auto node = std::make_unique<Node>(parent, std::move(reaction));
 		parent.children.emplace_back(std::move(node));
 		PlanCombo(*node, skill, defender, offense.actor);
         return true;
@@ -428,18 +398,14 @@ namespace Game
             auto bestIt = closed.emplace(std::move(best));
             assert(bestIt.second);
             auto& bestNode = **bestIt.first;
-            for (auto& action : actor.AllMoves(bestNode.state->ActorState().position))
+            for (auto& action : bestNode.state->PossibleMoves())
             {
-                auto result = action->Act(*bestNode.state);
-                if (result)
+				auto newNode = std::make_unique<Node>(bestNode, std::move(action));
+                bool alreadyClosed = closed.Contains(*newNode->state);
+                if (!alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                 {
-                    bool alreadyClosed = closed.Contains(*result.state);
-                    if (!alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
-                    {
-                        auto newNode = std::make_unique<Node>(bestNode, result, std::move(action));
-                        auto newIt = open.emplace(std::move(newNode));
-                        assert(newIt.second);
-                    }
+                    auto newIt = open.emplace(std::move(newNode));
+                    assert(newIt.second);
                 }
             }
         }
@@ -463,18 +429,14 @@ namespace Game
             auto bestIt = closed.emplace(std::move(best));
             assert(bestIt.second);
             auto& bestNode = **bestIt.first;
-            for (auto& action : actor.AllMoves(bestNode.state->ActorState().position))
+            for (auto& action : bestNode.state->PossibleMoves())
             {
-                auto result = action->Act(*bestNode.state);
-                if (result)
+				auto newNode = std::make_unique<Node>(bestNode, std::move(action));
+                bool alreadyClosed = closed.Contains(*newNode->state);
+                if (!alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
                 {
-                    bool alreadyClosed = closed.Contains(*result.state);
-                    if (!alreadyClosed)    // TODO if new score < closed, still allow? is this possible?
-                    {
-                        auto newNode = std::make_unique<Node>(bestNode, result, std::move(action));
-                        auto newIt = open.emplace(std::move(newNode));
-                        assert(newIt.second);
-                    }
+                    auto newIt = open.emplace(std::move(newNode));
+                    assert(newIt.second);
                 }
             }
         }

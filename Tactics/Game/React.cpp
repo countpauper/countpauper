@@ -13,26 +13,22 @@ React::React(const Actor& actor, const TargetedAction& target, const Skill& skil
 {
 }
 
-Action::Result React::Act(const IGame& game) const
+void React::Act(IGame& game) const
 {
+	auto chance = Chance(game);
 	State defender = game.Get(actor);
-	const auto& action = static_cast<const TargetedAction&>(target);
+	const auto& action = dynamic_cast<const TargetedAction&>(target);
 	State attacker(game.Get(action.actor));
-	Result ret(game, actor);
-	auto chance = defender.Chance(skill, attacker);
-	ret.chance = double(chance.Value()) / 100.0;
 
 	defender.Spent(skill.mp);
 	defender.Engage(skill);
-	ret.state->Adjust(actor, defender);
-	// TODO: only supports failing other now, additional effects? 
-	// TODO: doesn't explicitly fail, since act creates a new state. caller should do that if can't be impossible 
-	//		or better, attacker should already have engaged in the state before the reaction   action.Fail(game, Description());
+	game.Adjust(actor, defender, skill.name);
+
 	attacker.Spent(action.skill.mp);
 	attacker.Engage(action.skill);
-	ret.state->Adjust(action.actor, attacker);
-	ret.description = actor.Description() + L" " + skill.name + L"(" + chance.Description() + L"%) " + target.Description();
-	return ret;
+	attacker.direction = Direction(defender.position - attacker.position);
+
+	game.Adjust(action.actor, attacker, actor.Description() + L" " + skill.name + L"(" + chance.Description() + L"%) " + target.Description());
 }
 
 void React::Render(const State& state) const
