@@ -50,14 +50,42 @@ namespace Game
     {
     }
 
-    TargetedAction::TargetedAction(const Skill& skill, const Actor& actor, const Actor& target, Trajectory trajectory) :
+
+	std::wstring Action::Description() const
+	{
+		return skill.name;
+	}
+	
+	TargetedAction::TargetedAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) :
         Action(skill, actor, trajectory),
         target(target)
     {
     }
 
 
-    std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> Action::keymap =
+	Action::Result TargetedAction::Fail(const IGame& game, const std::wstring& reason) const
+	{
+		State state = game.Get(actor);
+		Result ret(game, actor);
+		state.Spent(skill.mp);
+		state.Engage(skill);
+		ret.state->Adjust(actor, state);
+		ret.description = actor.Description() + L" " + skill.name + L" " + reason + L" " + target.Description();
+		return std::move(ret);
+	}
+
+	Position TargetedAction::GetPosition() const
+	{
+		return target.GetPosition();
+	}
+
+	std::wstring TargetedAction::Description() const
+	{
+		return skill.name;
+	}
+
+
+	std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> Action::keymap =
     {};
     /*
         { VK_UP, [](const State&, const Game& game){ return new South(*game.ActiveActor()); } },

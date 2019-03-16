@@ -53,6 +53,7 @@ namespace Game
     Plan::Node::~Node()
     {
     }
+
     bool Plan::Node::DeadEnd() const
     {
         return !state.get();
@@ -70,6 +71,7 @@ namespace Game
         else
             return children.back().get();
     }
+
 
     void Plan::Node::Render() const
     {
@@ -278,7 +280,7 @@ namespace Game
                 return true;
             }
         }
-        OutputDebugStringW((Description() + L" fizzle \r\n").c_str());
+        OutputDebugStringW((L"Execute: " + Description() + L" fizzle \r\n").c_str());
         return false;
     }
 
@@ -287,19 +289,23 @@ namespace Game
         auto descriptions = Descriptions(state);
         for (auto description : descriptions)
         {
-                OutputDebugStringW((description + L"\r\n").c_str());
+			OutputDebugStringW((L"Apply: " + description + L"\r\n").c_str());
         }
-        OutputDebugStringW((Description() + L" " + state.Description() + L"\r\n").c_str());
+        OutputDebugStringW((L"Execute: " + Description() + L" " + state.Description() + L"\r\n").c_str());
         state.Apply(game);
 
     }
     bool Plan::PlanAction(Node& parent, const Skill& skill, const Actor& actor, const Target& target)
     {
+		auto& state = parent.state->Get(actor);
+		if (!state.IsPossible(skill, target))
+			return false;
+
         Action::Result result;
-        std::unique_ptr<Action> action;
+        std::unique_ptr<TargetedAction> action;
         for (auto trajectory : skill.trajectory)
         {
-            action = std::unique_ptr<Action>(skill.CreateAction(actor, target, trajectory));
+            action.reset(skill.CreateAction(actor, target, trajectory));
             result = action->Act(*parent.state);
             if (result) // TODO: select preferable trajectory instead of first
                 break;
@@ -309,21 +315,25 @@ namespace Game
             return false;
 
         auto targetActor = dynamic_cast<const Actor*>(&target);
-
         if ((targetActor) &&
 			(!targetActor->IsAlly(actor)))	// TODO: target aware of actor and action
         {
-            auto defences = targetActor->Counters(skill);
-            for (auto defence : defences)
+            auto defenses = targetActor->Counters(skill);
+            for (auto defense : defenses)
             {
-                PlanReaction(parent, skill, action->trajectory, *defence, actor, *targetActor);
+                PlanReaction(parent, *defense, *targetActor, *action);
             }
         }
         auto node = std::make_unique<Node>(parent, result, std::move(action));
-
         PlanCombo(*node, skill, actor, target);
         parent.children.emplace_back(std::move(node));
-        return true;
+
+		std::unique_ptr<TargetedAction> failAction(skill.CreateAction(actor, target, Trajectory::None));
+		auto failResult = failAction->Fail(*parent.state, L"Fail");
+		assert(failResult.chance == 1.0);	// remaining chance after adding this child should be 0
+		auto failNode = std::make_unique<Node>(parent, failResult, std::move(failAction));		
+		parent.children.emplace_back(std::move(failNode));
+		return true;
     }
 
     void Plan::PlanCombo(Node& parent, const Skill& skill, const Actor& actor, const Target& target)
@@ -335,55 +345,27 @@ namespace Game
         }
     }
 
-    bool Plan::PlanReaction(Node& parent, const Skill& offense, Trajectory attackTrajectory, const Skill& defense, const Actor& aggressor, const Actor& defender)
+    bool Plan::PlanReaction(Node& parent, const Skill& defense, const Actor& defender, const TargetedAction& offense)
     {
-        std::unique_ptr<Action> reaction;
-        Action::Result intermediate;
+		auto state = parent.state->Get(defender);
+		if (!state.IsPossible(defense, offense))
+			return false;
+
+		std::unique_ptr<TargetedAction> reaction;
+        Action::Result result;
         // TODO: select trajectory by opposing attack trajectory. action as argument
         for (auto trajectory : defense.trajectory)
         {
-            reaction = std::unique_ptr<Action>(defense.CreateAction(defender, aggressor, trajectory));
-            intermediate = reaction->Act(*parent.state);
-            if (intermediate)
+            reaction.reset(defense.CreateAction(defender, offense, trajectory));
+            result = reaction->Act(*parent.state);
+            if (result)
                 break;
         }
-        if (!intermediate)
+        if (!result)
             return false;
-        auto node = std::make_unique<Node>(parent, intermediate, std::move(reaction));
-        const auto& actorState = parent.state->Get(defender);
-        const auto& targetState = parent.state->Get(aggressor);
-        node->chance = double(actorState.Chance(defense, targetState).Value()) / 100.0;
-
-        Skill::Effects effects = defense.effects;
-
-        std::unique_ptr<Action> action(offense.CreateAction(aggressor, defender, attackTrajectory));
-        Action::Result result;
-        if (effects.count(Skill::Effect::Miss) == 0)
-        {
-            result = action->Act(*node->state);
-        }
-        else
-        {
-            result = action->Fail(*node->state, node->action->Description());
-        }
-        if (result)
-        {
-            auto defenseNode = std::move(node);
-            node = std::make_unique<Node>(*defenseNode, result, std::move(action));
-            const auto& actorState = defenseNode->state->Get(aggressor);
-            const auto& targetState = defenseNode->state->Get(defender);
-            node->chance = double(actorState.Chance(offense, targetState).Value()) / 100.0;
-            // TODO: counter reaction? reaction combo (ie disarm)?
-            PlanCombo(*node, offense, aggressor, defender);
-            defenseNode->children.emplace_back(std::move(node));
-            parent.children.emplace_back(std::move(defenseNode));
-        }
-        else
-        {
-            // TODO: counter reaction? reaction combo (ie disarm)?
-            PlanCombo(*node, offense, aggressor, defender);
-            parent.children.emplace_back(std::move(node));
-        }
+        auto node = std::make_unique<Node>(parent, result, std::move(reaction));
+		parent.children.emplace_back(std::move(node));
+		PlanCombo(*node, defense, defender, offense.actor);
         return true;
     }
 
@@ -509,7 +491,7 @@ namespace Game
 
     bool SkipPlan::Execute(Game& game) const
     {
-        OutputDebugStringW((Description() + L"\r\n").c_str());
+        OutputDebugStringW((L"Execute: " + Description() + L"\r\n").c_str());
         const_cast<Actor&>(actor).Deactivate();
         return true;
     }

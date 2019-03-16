@@ -166,11 +166,8 @@ namespace Game
             else
                 return false;
         }
-        else if (skill.weapon == Type::Weapon::None)
-        {
-            return Contributes(skill.attribute);
-        }
-        return false;
+        else
+			return Contributes(skill.attribute);
     }
 
     std::wstring Body::Description() const
@@ -303,7 +300,9 @@ namespace Game
 		auto used = UsedLimbs(skill);
 		for (auto use : used)
 		{
-			if ((skill.weapon == Type::Weapon::None) && (!use.second))
+			if (skill.weapon == Type::Weapon::Style::None)
+				return use;
+			if ((skill.weapon == Type::Weapon::Style::Unarmed) && (!use.second))
 				return use;
 			else if ((use.second) && (use.second->Match(skill.weapon)))
 				return use;

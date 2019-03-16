@@ -15,7 +15,7 @@ typedef struct _xmlNode xmlNode;
 namespace Engine { class Image; }
 namespace Game
 {
-class Action;
+class TargetedAction;
 class Actor;
 class Target;
 
@@ -23,12 +23,13 @@ class Skill
 {
 public:
 	Skill();
-	enum class Trigger { None = 0, Act, Combo, Prepare, React, Defend };
+	enum class Trigger { None = 0, Act, Combo, Prepare, Defend, Opportunity };
 	Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Trajectory trajectory, int damage);
 	Skill(const std::wstring name, Attribute attribute, Targeting targeting);
+	Skill(const xmlNode* node);
 	virtual ~Skill();
 
-	Action* CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const;
+	TargetedAction* CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const;
 	Bonus GetChance(const Score& level) const;
 
 	bool Match(const std::wstring& category) const;
@@ -48,7 +49,6 @@ public:
 	std::wstring description;
 	unsigned mp;
 	unsigned range;
-
 
 	Trigger trigger;
 	using Category = std::wstring;
@@ -84,35 +84,41 @@ public:
 	{
 	public:
 		virtual ~Act() = default;
-		virtual Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const = 0;
+		virtual TargetedAction* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const = 0;
 	};
 	class Move : public Act
 	{
 	public:
-		Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
-		void Parse(const xmlNode* node);
+		Move() = default;
+		Move(const xmlNode* node);
+		TargetedAction* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
 	};
 	class Melee : public Act
 	{
 	public:
 		Melee();
+		Melee(const xmlNode* node);
 		std::vector<unsigned> damage;
 		Attribute attribute;
 		Bonus DamageBonus(const Score& skillScore);
-		Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
-		void Parse(const xmlNode* node);
+		TargetedAction* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
 	};
 	class Affect : public Act
 	{
 	public:
-		Action* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
-		void Parse(const xmlNode* node);
+		Affect() = default;
+		Affect(const xmlNode* node);
+		TargetedAction* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
 	};
-
+	class React : public Act
+	{
+	public:
+		React() = default;
+		React(const xmlNode* node);
+		TargetedAction* CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const override;
+	};
 	std::shared_ptr<Act> type; // todo: unique ptr and copy/clone or move
 private:
-	friend class Skills;
-	void Parse(const xmlNode* node);
 
 	template<class T>
 	bool IsType() const

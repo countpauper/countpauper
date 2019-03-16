@@ -7,6 +7,7 @@
 #include "Engine/XML.h"
 #include "Skill.h"
 #include "Attack.h"
+#include "React.h"
 #include "Affect.h"
 #include "Move.h"
 #include "Actor.h"
@@ -22,11 +23,12 @@ Skill::Skill() :
 	attribute(Attribute::None),
 	resist(Attribute::None),
 	offset(0),
-	weapon(Type::Weapon::Style::All)
+	weapon(Type::Weapon::Style::None)
 {
+	trajectory.insert(Trajectory::None);
 }
 
-Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Trajectory singleTrajector, int damage) :
+Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Trajectory singleTrajectory, int damage) :
 	mp(2),
 	range(0),
 	trigger(trigger),
@@ -38,7 +40,7 @@ Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapo
 	type(std::make_shared<Melee>())
 {
 	static_cast<Melee&>(*type).damage = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
-	trajectory.insert(singleTrajector);
+	trajectory.insert(singleTrajectory);
 	target.insert(Targeting::Swing);
 }
 
@@ -53,12 +55,12 @@ Skill::Skill(const std::wstring name, Attribute attribute, Targeting targeting) 
 	weapon(Type::Weapon::Style::None),
 	type(std::make_shared<Affect>())
 {
-	trajectory.insert(Trajectory::Straight);
+	trajectory.insert(Trajectory::None);
 	target.insert(targeting);
 }
 Skill::~Skill() = default;
 
-Action* Skill::CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const
+TargetedAction* Skill::CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const
 {
 	if (type)
 		return type->CreateAction(*this, actor, target, trajectory);
@@ -88,7 +90,7 @@ Bonus Skill::GetChance(const Score& level) const
 	}
 }
 
-Action* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
+TargetedAction* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
 {
 	return new ::Game::Move(actor, target.GetPosition(), skill, trajectory);
 }
@@ -98,7 +100,7 @@ Skill::Melee::Melee() :
 {
 }
 
-Action* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
+TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
 {
 	return new Attack(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
 }
@@ -116,9 +118,32 @@ Bonus Skill::Melee::DamageBonus(const Score& skillScore)
 		return Bonus(skillScore.Description(), damage.at(index - 1));
 }
 
-Action* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
+Skill::Affect::Affect(const xmlNode* node)
 {
-	return new ::Game::Affect(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
+	for (auto prop = node->properties; prop; prop = prop->next)
+	{
+		throw std::runtime_error("Unknown Affect skill property");
+	}
+}
+
+TargetedAction* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
+{
+	assert(false);	// unimplemented
+	// return new ::Game::Affect(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
+	return nullptr;
+}
+
+Skill::React::React(const xmlNode* node)
+{
+	for (auto prop = node->properties; prop; prop = prop->next)
+	{
+		throw std::runtime_error("Unknown Avoid skill property");
+	}
+}
+
+TargetedAction* Skill::React::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
+{
+	return new ::Game::React(actor, dynamic_cast<const TargetedAction&>(target), skill, trajectory);
 }
 
 bool Skill::Match(const std::wstring& category) const
@@ -129,7 +154,9 @@ bool Skill::Match(const std::wstring& category) const
 bool Skill::Require(const Weapon* item) const
 {
 	if (weapon == ::Game::Type::Weapon::Style::None)
-		return item == nullptr;
+		return false;
+	if (weapon == ::Game::Type::Weapon::Style::Unarmed && item == nullptr)
+		return true;
 	else
 		return item && item->Match(weapon);
 }
@@ -153,7 +180,7 @@ bool Skill::Follows(const Skill& previous) const
 
 bool Skill::Counter(const Skill& previous) const
 {
-	if ((trigger != Trigger::Defend) && (trigger != Trigger::React))
+	if (trigger != Trigger::Defend)
 		return false;
 	return Follows(previous);
 }
@@ -196,11 +223,11 @@ bool Skill::IsWait() const
 }
 
 
-void Skill::Move::Parse(const xmlNode* node)
+Skill::Move::Move(const xmlNode* node)
 {
 }
 
-void Skill::Melee::Parse(const xmlNode* node)
+Skill::Melee::Melee(const xmlNode* node)
 {
 	for (auto prop = node->properties; prop; prop = prop->next)
 	{
@@ -218,25 +245,15 @@ void Skill::Melee::Parse(const xmlNode* node)
 }
 
 
-void Skill::Affect::Parse(const xmlNode* node)
-{
-	for (auto prop = node->properties; prop; prop = prop->next)
-	{
-		throw std::runtime_error("Unknown Affect skill property");
-	}
-
-}
-
 
 template<class T>
 std::shared_ptr<T> MakeType(const xmlNode* node)
 {
-	auto o = std::make_shared<T>();
-	o->Parse(node);
-	return o;
+	return std::make_shared<T>(node);
 }
 
-void Skill::Parse(const xmlNode* node)
+Skill::Skill(const xmlNode* node) : 
+	Skill()
 {
 	for (auto prop = node->properties; prop; prop = prop->next)
 	{
@@ -288,8 +305,8 @@ void Skill::Parse(const xmlNode* node)
 				{ L"Act", Skill::Trigger::Act },
 				{ L"Combo", Skill::Trigger::Combo },
 				{ L"Prepare", Skill::Trigger::Prepare },
-				{ L"React", Skill::Trigger::React },
-				{ L"Defend", Skill::Trigger::Defend }
+				{ L"Defend", Skill::Trigger::Defend},
+				{ L"Opportunity", Skill::Trigger::Opportunity }
 				});
 		}
 		else if (Engine::Xml::hasTag(prop, "effect"))
@@ -367,6 +384,10 @@ void Skill::Parse(const xmlNode* node)
 			else if (Engine::Xml::hasTag(curNode, "melee"))
 			{
 				type = MakeType<Skill::Melee>(curNode);
+			}
+			else if (Engine::Xml::hasTag(curNode, "react"))
+			{
+				type = MakeType<Skill::React>(curNode);
 			}
 			else if (Engine::Xml::hasTag(curNode, "affect"))
 			{

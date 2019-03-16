@@ -1,5 +1,5 @@
 #Prefix,Post fix,Freq.,Weight,Enchantment,Material   ,Sharp  ,Blunt  ,Fire   ,Disease,Spirit,(Skills),(Stats)
-Normal,,0,0,0,All,0,0,0,0,0,(),()
+Normal,,0,0,0,Any,0,0,0,0,0,(),()
 Dirty,,0,0,1,Cloth,0,0,0,-1,0,(),()
 Ripped,,0,0,1,Cloth,0,0,0,0,0,(),()
 Sweaty,,0,0,1,Leather,0,0,0,0,-1,(),()

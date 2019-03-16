@@ -21,7 +21,7 @@ namespace Game
     class Skill;
     class Anatomy;
 
-    class State
+    class State : public Target
     {
     public:
         State(const Actor& actor);
@@ -37,12 +37,13 @@ namespace Game
         std::vector<const Weapon*> carried;
         Actor::Knowledge knowledge;
 
-        bool IsPossible(const Skill& skill, const State& target) const;
+        bool IsPossible(const Skill& skill, const Target& target) const;
         Damage AttackDamage(const Skill& skill) const;
         Damage AttackDamage(const Skill& skill, const Score& skillLevel) const;
         bool Hurt(const Body::Part& part, const Damage& damage, const std::wstring& description);
         Score Chance(const Skill& skill, const State& target) const;
         Score Chance(const Skill& skill) const;
+		void Spent(unsigned mp);
 
         Score Strength() const;
         Score Agility() const;
@@ -55,7 +56,9 @@ namespace Game
         Score SkillLevel(const Skill& skill, const State* victim = nullptr) const;
         Score Range(const Skill& skill) const;
         void Engage(const Skill& skill);
-    private:
+		Position GetPosition() const override;
+		std::wstring Description() const override;
+	private:
         Bonus StrengthBonus() const;
         Bonus Encumberance() const;
         Bonus ConstitutionBonus() const;
@@ -68,7 +71,8 @@ namespace Game
         Score FullBodyBonus(Attribute attribute) const;
         Score FreeLimbScore(const Weapon& weapon, Attribute attribute) const;
         Score AttributeBonus(Attribute attribute) const;
-    };
+		const Actor* actor;
+	};
 
     class GameState : public IGame
     {

@@ -16,11 +16,6 @@ Attack::Attack(const Actor& actor, const Actor& target, const Skill& skill, Traj
 {
 }
 
-std::wstring Attack::Description() const
-{
-    return skill.name;
-}
-
 Anatomy HitLocation(const State& attacker, const Skill& skill, const State& victim, Trajectory trajectory)
 {
     assert(!attacker.direction.Prone());  // prone not supported yet here
@@ -40,6 +35,7 @@ Anatomy HitLocation(const State& attacker, const Skill& skill, const State& vict
     {
         auto height = victim.body.Length();
         double middle = static_cast<double>(height) / 2.0;
+		assert(false);	// random state storage is removed, need to reimplement center mass
         auto hitHeight = static_cast<int>(std::round(middle + Engine::Random().Normal(1.0)));
         if (hitHeight < 0 || hitHeight >= static_cast<int>(height))
             return Anatomy();
@@ -52,11 +48,8 @@ Anatomy HitLocation(const State& attacker, const Skill& skill, const State& vict
 Action::Result Attack::Act(const IGame& game) const
 {
     State attacker = game.Get(actor);
-    State victim(game.Get(target));
+    State victim(game.Get(static_cast<const Actor&>(target)));
     attacker.direction = Direction(victim.position - attacker.position);
-
-    if (!attacker.IsPossible(skill, victim))
-        return Result();
 
     auto location = HitLocation(attacker, skill, victim, trajectory);
     if (!location)
@@ -73,29 +66,14 @@ Action::Result Attack::Act(const IGame& game) const
 
     if (!victim.Hurt(*part, damage, actor.Description()))
         return Fail(game, L"mitigated");
-    attacker.mp -= skill.mp;
+    attacker.Spent(skill.mp);
     attacker.Engage(skill);
 
     Result ret(game, actor);
     ret.state->Adjust(actor, attacker);
-    ret.state->Adjust(target, victim);
+    ret.state->Adjust(static_cast<const Actor&>(target), victim);
     ret.description = actor.Description() + L" "+skill.name;
     ret.description += L" " + target.Description() + L":" + damage.ActionDescription();
-    return std::move(ret);
-}
-
-Action::Result Attack::Fail(const IGame& game, const std::wstring& reason) const
-{
-    State attacker = game.Get(actor);
-    State victim(game.Get(target));
-    attacker.direction = Direction(victim.position - attacker.position);
-    if (!attacker.IsPossible(skill, victim))
-        return Result();
-    Result ret(game, actor);
-    attacker.mp -= skill.mp;
-    attacker.Engage(skill);
-    ret.state->Adjust(actor, attacker);
-    ret.description = actor.Description() + L" " + skill.name + L" "+reason +L" " + target.Description();
     return std::move(ret);
 }
 

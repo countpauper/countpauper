@@ -291,7 +291,6 @@ namespace Game
 
     void Game::SelectPlan()
     {
-        selectedActor->RestoreRandom();
         std::unique_ptr<Plan> plan;
         if (selectedSkill)
         {
@@ -322,7 +321,7 @@ namespace Game
         {
             if (plan->Valid())
             {
-                OutputDebugStringW((plan->Description() + L" \r\n").c_str());
+                OutputDebugStringW((L"Plan: " + plan->Description() + L" \r\n").c_str());
                 selectedActor->plan = std::move(plan);
                 for (auto actor : ActiveActors())
                 {
@@ -335,7 +334,7 @@ namespace Game
             }
             else
             {
-                OutputDebugStringW((plan->Description() + L" Failed\r\n").c_str());
+                OutputDebugStringW((L"Plan: " + plan->Description() + L" Failed\r\n").c_str());
             }
         }
     }

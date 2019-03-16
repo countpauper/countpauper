@@ -9,8 +9,8 @@ Legs Around[0-1] Legs Agi 7 ,,,,
 2 1 8
 Studded Elephant Hood
 Studded Demon Brigandine
-RArm Normal Steel Claymore
-Wait Hack Zap Dodge Block Parry Unarmed Walk 
+RArm Normal Steel Dagger
+Wait Hack Zap Dodge Block Parry Scrap Walk 
 Actor Bar 1 3 3 0 6
 Head All[4] Head Int 10 ,,,,
 Chest Sagittal[3] Chest Wis 10 ,,,,
@@ -18,12 +18,12 @@ Belly Sagittal[2] Belly Con 10 ,,,,
 RArm Right[2-3] Arms Str 6 ,,,,
 LArm Left[2-3] Arms Str 4 ,,,,
 Legs Around[0-1] Legs Agi 10 ,,,,
-2 2 7
+2 2 8
 Reinforced Adamantine Breast-Plate
 Normal Steel Coif
-RArm Normal Steel Longsword
+RArm Normal Wooden Club
 LArm Normal Steel Targe
-Wait Hack Slash Block Parry Unarmed Walk 
+Wait Hack Slash Dodge Block Parry Scrap Walk 
 Flat 4 4 data/map.png
 4 0 0 0 
 4 0 0 0 

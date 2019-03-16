@@ -119,12 +119,12 @@ namespace Game
                 Precious = 1<<5,
                 Gem = 1<<6,
                 Jewelry = Precious|Gem,
-                All = Jewelry | BodyArmor,
+                Any= Jewelry | BodyArmor,
             };
             class Material : public Type::Material
             {
             public:
-                Material() : category(None) {}
+                Material() : category(Any) {}
                 Damage mitigation;
                 Armor::Category category;
                 static std::vector<Material> Load(std::wistream& fileName);
@@ -132,7 +132,7 @@ namespace Game
             class Modifier : public Type::Modifier
             {
             public:
-                Modifier() : category(None) {}
+                Modifier() : category(Any) {}
                 Armor::Category category;
                 Damage mitigation;
                 static std::vector<Modifier> Load(std::wistream& fileName);
@@ -156,25 +156,27 @@ namespace Game
         class Weapon: public Equipment
         {
         public:
-            enum Style
+            enum class Style
             {
-                All = -1,
                 None = 0,
-                Blade = 1<<0,
-                Club = 1<1,
-                Axe = 1<<2,
-                Fist = 1<<3,
+                Unarmed = 1<<0,
+				Blade = 1<<1,
+                Club = 1<2,
+                Axe = 1<<3,
+                Fist = 1<<4,
                 Sharp = Blade|Axe,
                 Blunt = Club|Fist,
                 Melee = Blade|Club|Axe|Fist,
-                Bow = 1<<4,
-                Crossbow = 1<<5,
-                Gun = 1<<6,
-                Wand = 1<<7,
-                Throwing = 1<<8,
+                Bow = 1<<5,
+                Crossbow = 1<<6,
+                Gun = 1<<7,
+                Wand = 1<<8,
+                Throwing = 1<<9,
                 Ranged = Bow|Crossbow|Gun|Wand|Throwing,
-                Shield = 1<<9,
-                Artifact = 1<<10
+                Weapon = Ranged | Melee,
+				Shield = 1<<10,
+                Artifact = 1<<11,
+				Any = Weapon | Shield | Artifact,
             };
             class Material : public Type::Material
             {
@@ -188,9 +190,9 @@ namespace Game
                     Mundane = Wood | Metal | Leather,
                     Precious = 1 << 3,
                     Gem = 1<<4,
-                    All = Wood | Metal | Leather | Precious | Gem
+                    Any = Wood | Metal | Leather | Precious | Gem
                 };
-                Material() : category(None) {}
+                Material() : category(Any) {}
                 Category category;
                 Requirement requirement;
                 Damage damage;
@@ -199,7 +201,7 @@ namespace Game
             class Modifier : public Type::Modifier
             {
             public:
-                Modifier() : style(Weapon::All) {}
+                Modifier() : style(Weapon::Style::Any) {}
                 Weapon::Style style;
                 Requirement requirement;
                 Weapon::Material::Category material;

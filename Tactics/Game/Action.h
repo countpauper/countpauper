@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 #include "Trajectory.h"
+#include "Target.h"
 
 namespace Game
 {
@@ -39,7 +40,7 @@ namespace Game
         virtual Result Act(const IGame& game) const = 0;
         virtual Result Fail(const IGame& game, const std::wstring& reason) const = 0;
         virtual void Render(const State& state) const = 0;
-        virtual std::wstring Description() const = 0;
+        virtual std::wstring Description() const  = 0;
         static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
         static std::map<std::wstring, std::function<Action*(const State& state, const Game& game)>> typemap;
         const Actor& actor;
@@ -47,12 +48,16 @@ namespace Game
         const Trajectory trajectory;
     };
     
-    class TargetedAction : public Action
+    class TargetedAction : public Action, public Target
     {
     public:
-        TargetedAction(const Skill& skill, const Actor& actor, const Actor& target, Trajectory trajectory);
-        const Actor& target;
-    };
+        TargetedAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory);
+		virtual Result Fail(const IGame& game, const std::wstring& reason) const;
+	protected:
+        const Target& target;
+		Position GetPosition() const override;
+		std::wstring Description() const override;	// override Target
+	};
 
 }   // ::Game
 

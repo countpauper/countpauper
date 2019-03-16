@@ -54,7 +54,6 @@ namespace Game
         bool IsAnticipating() const; 
         
         void AI(Game& game);
-        void RestoreRandom();
         void Execute(Game& game);
         unsigned GetTeam() const;
         bool CanAct() const;
@@ -83,7 +82,6 @@ namespace Game
 
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         bool active;
-        Engine::Generator::Seed randomState;
         unsigned mp;
         unsigned team;
         Direction direction;

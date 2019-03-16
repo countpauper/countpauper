@@ -6,7 +6,7 @@ namespace Game
 enum class Targeting
 {
     // Targeting
-    Self,        // can target self 
+    Self,        // can target self, trajectory none
     Intercept,   // attempty to counter trajectory of attacker, from used limb
     Swing,       // Adjust -1 to +1 in height from used limb
     Center,      // center mass: gaussian height

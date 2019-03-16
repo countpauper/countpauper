@@ -32,8 +32,7 @@ void Skills::Parse(const xmlNode* node)
 		}
 		if (curNode->type == XML_ELEMENT_NODE && Engine::Xml::hasTag(curNode, "skill"))
 		{
-			emplace_back(Skill());
-			back().Parse(curNode);
+			emplace_back(Skill(curNode));
 		}
 		else
 		{

@@ -53,16 +53,17 @@ protected:
         bool DeadEnd() const;
         void Render() const;
         Node* Next() const;
-        GameChances AllOutcomes() const;
+		GameChances AllOutcomes() const;
 
          //int Score(const Position& target, unsigned startMovePoints) const;
         bool Compare(const Node& other, const Position& target) const;
         bool operator==(const Node& other) const;
         bool Reached(const Position& target) const;
 
-        Node* previous;
+		Node* previous;
         std::unique_ptr<Action> action;
-        double chance;
+
+		double chance;
         std::wstring description;
         std::unique_ptr<GameState> state;
         std::vector<std::unique_ptr<Node>> children;
@@ -95,7 +96,7 @@ protected:
     std::unique_ptr<Node> Goto(const Position& target, const Game& game);
     bool PlanAction(Plan::Node& parent, const Skill& skill, const Actor& actor, const Target& target);
     void PlanCombo(Node& parent, const Skill& skill, const Actor& actor, const Target& target);
-    bool PlanReaction(Plan::Node& parent, const Skill& skill, Trajectory attackTrajectory, const Skill& reaction, const Actor& aggressor, const Actor& defender);
+    bool PlanReaction(Plan::Node& parent, const Skill& skill, const Actor& defender, const TargetedAction& offense);
     static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
     virtual const Skill* GetSkill() const = 0;
     const Actor& actor;

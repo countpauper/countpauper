@@ -9,6 +9,7 @@
 namespace Game
 {
     State::State(const Actor& actor) :
+		actor(&actor),
         position(actor.GetPosition()),
         direction(actor.GetDirection()),
         mp(actor.GetMovePoints()),
@@ -20,9 +21,23 @@ namespace Game
     {
     }
 
+	Position State::GetPosition() const
+	{
+		return position;
+	}
+	
+	std::wstring State::Description() const
+	{
+		if (actor)
+			return actor->Description();
+		else // anonymous name for test
+			return std::wstring(L"Actor [") + std::to_wstring(unsigned(this))+L"]";
+	}
+
     State::State(const Body& body, Position pos, const Direction dir, unsigned mp,
         std::vector<const Armor*> armor, std::vector<const Weapon*> weapons, Actor::Knowledge skills) :
-        position(pos),
+        actor(nullptr),
+		position(pos),
         direction(dir),
         mp(mp),
         body(body),
@@ -34,14 +49,14 @@ namespace Game
     }
 
 
-    bool State::IsPossible(const Skill& skill, const State& target) const
+    bool State::IsPossible(const Skill& skill, const Target& target) const
     {
         if (mp < skill.mp)
             return false;
         auto available = body.UsedWeapon(skill);
         if (!available.first)
             return false;
-        if (position.DistanceEl(target.position) > Range(skill).Value())
+        if (position.DistanceEl(target.GetPosition()) > Range(skill).Value())
             return false;
         if (body.UsedLimbs(skill).empty())
             return false;
@@ -237,6 +252,13 @@ namespace Game
 
         return true;
     }
+
+	void State::Spent(unsigned spentMP)
+	{
+		if (spentMP > mp)
+			throw std::runtime_error("Impossible move cost");
+		mp -= spentMP;
+	}
 
     Score State::Chance(const Skill& skill, const State& target) const
     {

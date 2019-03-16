@@ -18,7 +18,7 @@ namespace Game
             { L"Precious", Armor::Category::Precious },
             { L"Gem", Armor::Category::Gem},
             { L"Jewelry", Armor::Category::Jewelry },
-            { L"All", Armor::Category::All }
+            { L"Any", Armor::Category::Any }
         });
 
         std::map<std::wstring, Element> elementMap(
@@ -123,9 +123,10 @@ namespace Game
 
         const std::map<std::wstring, Weapon::Style > Weapon::styleMap(
         {
-            { L"All", Weapon::Style::All },
+            { L"Any", Weapon::Style::Any },
             { L"", Weapon::Style::None },
             { L"None", Weapon::Style::None },
+			{ L"Unarmed", Weapon::Style::Unarmed },
             { L"Blade", Weapon::Style::Blade },
             { L"Club", Weapon::Style::Club },
             { L"Axe", Weapon::Style::Axe },
@@ -154,7 +155,7 @@ namespace Game
             { L"Mundane", Weapon::Material::Mundane } ,
             { L"Precious", Weapon::Material::Precious },
             { L"Gem", Weapon::Material::Gem },
-            { L"All", Weapon::Material::All }
+            { L"Any", Weapon::Material::Any }
         });
 
         std::vector<Weapon> Weapon::Load(std::wistream& file)
@@ -204,7 +205,7 @@ namespace Game
         }
 
         Weapon::Weapon() : 
-            style(None), 
+            style(Style::None), 
             material(Material::None),
             length(0)
         {
@@ -225,7 +226,7 @@ namespace Game
         }
         bool Weapon::Match(const Modifier& mod) const
         {
-            return mod.style == All || mod.style == this->style;
+            return (unsigned(mod.style) & unsigned(style))!=0;
         }
     }
 
