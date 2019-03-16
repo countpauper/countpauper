@@ -43,10 +43,9 @@ namespace Game
         return state != nullptr;
     }
 
-    Action::Action(const Skill& skill, const Actor& actor, Trajectory trajectory) :
+    Action::Action(const Skill& skill, const Actor& actor) :
         skill(skill),
-        actor(actor),
-        trajectory(trajectory)
+        actor(actor)
     {
     }
 
@@ -56,12 +55,11 @@ namespace Game
 		return skill.name;
 	}
 	
-	TargetedAction::TargetedAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) :
-        Action(skill, actor, trajectory),
+	TargetedAction::TargetedAction(const Skill& skill, const Actor& actor, const Target& target) :
+        Action(skill, actor),
         target(target)
     {
     }
-
 
 	Action::Result TargetedAction::Fail(const IGame& game, const std::wstring& reason) const
 	{
@@ -81,9 +79,15 @@ namespace Game
 
 	std::wstring TargetedAction::Description() const
 	{
-		return skill.name;
+		return skill.name + L"@" +target.Description();
 	}
 
+	AimedAction::AimedAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part& part) :
+		TargetedAction(skill, actor, target),
+		part(part)
+	{
+
+	}
 
 	std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> Action::keymap =
     {};

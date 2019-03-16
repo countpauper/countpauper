@@ -3,8 +3,8 @@
 #include <map>
 #include <functional>
 #include <memory>
-#include "Trajectory.h"
 #include "Target.h"
+#include "Body.h"
 
 namespace Game
 {
@@ -19,8 +19,9 @@ namespace Game
     class Action
     {
     public:
-        Action(const Skill& skill, const Actor& actor, Trajectory trajectory);
+        Action(const Skill& skill, const Actor& actor);
         virtual ~Action() = default;
+
         class Result
         {
         public:
@@ -38,25 +39,31 @@ namespace Game
             std::wstring description;
         };
         virtual Result Act(const IGame& game) const = 0;
-        virtual Result Fail(const IGame& game, const std::wstring& reason) const = 0;
-        virtual void Render(const State& state) const = 0;
+		virtual Result Fail(const IGame& game, const std::wstring& reason) const=0;
+		virtual void Render(const State& state) const = 0;
         virtual std::wstring Description() const  = 0;
         static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
         static std::map<std::wstring, std::function<Action*(const State& state, const Game& game)>> typemap;
         const Actor& actor;
         const Skill& skill;
-        const Trajectory trajectory;
     };
     
-    class TargetedAction : public Action, public Target
-    {
-    public:
-        TargetedAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory);
+	class TargetedAction : public Action, public Target
+	{
+	public:
+		TargetedAction(const Skill& skill, const Actor& actor, const Target& target);
 		virtual Result Fail(const IGame& game, const std::wstring& reason) const;
 	protected:
-        const Target& target;
+		const Target& target;
 		Position GetPosition() const override;
 		std::wstring Description() const override;	// override Target
+	};
+	class AimedAction: public TargetedAction
+	{
+	public:
+		AimedAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part& part);
+	protected:
+		const Body::Part& part;
 	};
 
 }   // ::Game

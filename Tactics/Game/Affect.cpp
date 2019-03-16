@@ -8,8 +8,8 @@
 namespace Game
 {
 
-Affect::Affect(const Actor& actor, const Actor& target, const Skill& skill, Trajectory trajectory) :
-    TargetedAction(skill, actor, target, trajectory)
+Affect::Affect(const Actor& actor, const Actor& target, const Skill& skill, const Body::Part& part) :
+    AimedAction(skill, actor, target, part)
 {
 }
 

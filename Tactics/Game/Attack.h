@@ -8,10 +8,10 @@ class Game;
 class Skill; 
 
 class Attack :
-    public TargetedAction
+    public AimedAction
 {
 public:
-    Attack(const Actor& actor, const Actor& target, const Skill& skill, Trajectory trajectory);
+    Attack(const Actor& actor, const Actor& target, const Skill& skill, const Body::Part& part);
     void Render(const State& state) const override;
     Result Act(const IGame& game) const override;
 };

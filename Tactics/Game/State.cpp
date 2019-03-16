@@ -9,7 +9,6 @@
 namespace Game
 {
     State::State(const Actor& actor) :
-		actor(&actor),
         position(actor.GetPosition()),
         direction(actor.GetDirection()),
         mp(actor.GetMovePoints()),
@@ -28,15 +27,11 @@ namespace Game
 	
 	std::wstring State::Description() const
 	{
-		if (actor)
-			return actor->Description();
-		else // anonymous name for test
-			return std::wstring(L"Actor [") + std::to_wstring(unsigned(this))+L"]";
+		return std::wstring(L"State [") + std::to_wstring(unsigned(this))+L"]";
 	}
 
     State::State(const Body& body, Position pos, const Direction dir, unsigned mp,
         std::vector<const Armor*> armor, std::vector<const Weapon*> weapons, Actor::Knowledge skills) :
-        actor(nullptr),
 		position(pos),
         direction(dir),
         mp(mp),
@@ -299,7 +294,7 @@ namespace Game
         {
             auto available = body.FindAvailable(skill);
             if (available.empty())
-                std::runtime_error("No skill origin because no limb is available"); // should not be possible
+                throw std::runtime_error("No skill origin because no limb is available"); // should not be possible
             limb = *available.begin();
         }
         if (limb)

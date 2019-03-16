@@ -12,7 +12,7 @@ namespace Game
         public TargetedAction
     {
     public:
-        Move(const Actor& actor, const Position& destination, const Skill& skill, Trajectory trajectory);
+        Move(const Actor& actor, const Position& destination, const Skill& skill);
         void Render(const State& state) const override;
         Result Act(const IGame& game) const override;
         std::wstring Description() const override;

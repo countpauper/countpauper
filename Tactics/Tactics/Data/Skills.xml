@@ -2,7 +2,7 @@
 <skills>
   <skill name="Wait" mp="0" trigger="Act">
   </skill>
-  <skill name="Walk" mp="2" range="3" trajectory="straight" trigger="Act" attribute="Agi">
+  <skill name="Walk" mp="2" range="3" trigger="Act" attribute="Agi">
     <move/>
 Walk over most types of terrains at a moderate pace
   </skill>

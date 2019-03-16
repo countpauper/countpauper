@@ -386,10 +386,8 @@ namespace Game
                             continue;
                         if (!vector)
                             continue;
-                        for (auto trajectory : skill->trajectory)
-                        {
-                            result.emplace_back(skill->CreateAction(*this, Destination(from + vector), trajectory));
-                        }
+						assert(skill->trajectory.empty());	// "aimed" move (eg jump, teleport() not yet implemented
+                        result.emplace_back(skill->CreateAction(*this, Destination(from + vector), nullptr));
                     }
                 }
             }

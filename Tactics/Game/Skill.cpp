@@ -25,7 +25,6 @@ Skill::Skill() :
 	offset(0),
 	weapon(Type::Weapon::Style::None)
 {
-	trajectory.insert(Trajectory::None);
 }
 
 Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Trajectory singleTrajectory, int damage) :
@@ -55,15 +54,14 @@ Skill::Skill(const std::wstring name, Attribute attribute, Targeting targeting) 
 	weapon(Type::Weapon::Style::None),
 	type(std::make_shared<Affect>())
 {
-	trajectory.insert(Trajectory::None);
 	target.insert(targeting);
 }
 Skill::~Skill() = default;
 
-TargetedAction* Skill::CreateAction(const Actor& actor, const Target& target, Trajectory trajectory) const
+TargetedAction* Skill::CreateAction(const Actor& actor, const Target& target, const Body::Part* part) const
 {
 	if (type)
-		return type->CreateAction(*this, actor, target, trajectory);
+		return type->CreateAction(*this, actor, target, part);
 	else
 		return nullptr;
 }
@@ -90,9 +88,9 @@ Bonus Skill::GetChance(const Score& level) const
 	}
 }
 
-TargetedAction* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
+TargetedAction* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part*) const
 {
-	return new ::Game::Move(actor, target.GetPosition(), skill, trajectory);
+	return new ::Game::Move(actor, target.GetPosition(), skill);
 }
 
 Skill::Melee::Melee() :
@@ -100,9 +98,11 @@ Skill::Melee::Melee() :
 {
 }
 
-TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
+TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part* part) const
 {
-	return new Attack(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
+	if (!part)
+		return nullptr;
+	return new Attack(actor, dynamic_cast<const Actor&>(target), skill, *part);
 }
 
 Bonus Skill::Melee::DamageBonus(const Score& skillScore)
@@ -126,7 +126,7 @@ Skill::Affect::Affect(const xmlNode* node)
 	}
 }
 
-TargetedAction* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
+TargetedAction* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part* part) const
 {
 	assert(false);	// unimplemented
 	// return new ::Game::Affect(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
@@ -141,9 +141,9 @@ Skill::React::React(const xmlNode* node)
 	}
 }
 
-TargetedAction* Skill::React::CreateAction(const Skill& skill, const Actor& actor, const Target& target, Trajectory trajectory) const
+TargetedAction* Skill::React::CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part*) const
 {
-	return new ::Game::React(actor, dynamic_cast<const TargetedAction&>(target), skill, trajectory);
+	return new ::Game::React(actor, dynamic_cast<const TargetedAction&>(target), skill);
 }
 
 bool Skill::Match(const std::wstring& category) const

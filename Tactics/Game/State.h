@@ -71,7 +71,6 @@ namespace Game
         Score FullBodyBonus(Attribute attribute) const;
         Score FreeLimbScore(const Weapon& weapon, Attribute attribute) const;
         Score AttributeBonus(Attribute attribute) const;
-		const Actor* actor;
 	};
 
     class GameState : public IGame

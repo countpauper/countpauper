@@ -8,8 +8,8 @@
 namespace Game
 {
 
-React::React(const Actor& actor, const TargetedAction& target, const Skill& skill, Trajectory trajectory) :
-	TargetedAction(skill, actor, target, trajectory)
+React::React(const Actor& actor, const TargetedAction& target, const Skill& skill) :
+	TargetedAction(skill, actor, target)
 {
 }
 
@@ -52,8 +52,6 @@ void React::Render(const State& state) const
 	glCallLists(text.size(), GL_UNSIGNED_BYTE, text.c_str());
 
 	glPopMatrix();
-
-
 }
 
 

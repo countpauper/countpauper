@@ -11,60 +11,24 @@
 namespace Game
 {
 
-Attack::Attack(const Actor& actor, const Actor& target, const Skill& skill, Trajectory trajectory) :
-    TargetedAction(skill, actor, target, trajectory)
+Attack::Attack(const Actor& actor, const Actor& target, const Skill& skill, const Body::Part& part) :
+    AimedAction(skill, actor, target, part)
 {
-}
-
-Anatomy HitLocation(const State& attacker, const Skill& skill, const State& victim, Trajectory trajectory)
-{
-    assert(!attacker.direction.Prone());  // prone not supported yet here
-    if (victim.direction.Prone())
-    {
-        return Anatomy();
-    }
-    auto targeting = skill.target;
-    if (targeting.count(Targeting::Swing))
-    {
-        Anatomy origin = attacker.Origin(skill, trajectory);
-        // TODO: mirror for left arm/tail
-        Anatomy facing(attacker.direction, victim.direction, 0);    // TODO: sensing body part or height difference
-        return Anatomy(origin, facing);
-    }
-    else if (targeting.count(Targeting::Center))
-    {
-        auto height = victim.body.Length();
-        double middle = static_cast<double>(height) / 2.0;
-		assert(false);	// random state storage is removed, need to reimplement center mass
-        auto hitHeight = static_cast<int>(std::round(middle + Engine::Random().Normal(1.0)));
-        if (hitHeight < 0 || hitHeight >= static_cast<int>(height))
-            return Anatomy();
-        return Anatomy(attacker.direction, victim.direction, hitHeight);
-    }
-    assert(false);  // unsupported for now
-    return Anatomy();
 }
 
 Action::Result Attack::Act(const IGame& game) const
 {
     State attacker = game.Get(actor);
     State victim(game.Get(static_cast<const Actor&>(target)));
-    attacker.direction = Direction(victim.position - attacker.position);
 
-    auto location = HitLocation(attacker, skill, victim, trajectory);
-    if (!location)
-		return Result();
-	auto part = victim.body.Get(location);
-	if (!part)
-		return Result();
-
+	attacker.direction = Direction(victim.position - attacker.position);
 	auto skillLevel = attacker.SkillLevel(skill, &victim);
     if (skillLevel.Value() == 0)
         return Fail(game, std::wstring(L"resist(")+skillLevel.Description()+L")");
     // TODO: Fail due to miss? ret.chance = double(attacker.Chance(skill, victim).Value()) / 100.0;
     auto damage = attacker.AttackDamage(skill, skillLevel);
 
-    if (!victim.Hurt(*part, damage, actor.Description()))
+    if (!victim.Hurt(part, damage, actor.Description()))
         return Fail(game, L"mitigated");
     attacker.Spent(skill.mp);
     attacker.Engage(skill);

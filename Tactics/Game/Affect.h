@@ -8,10 +8,10 @@ class Game;
 class Skill;
 
 class Affect :
-    public TargetedAction
+    public AimedAction
 {
 public:
-    Affect(const Actor& actor, const Actor& target, const Skill& skill, Trajectory trajectory);
+    Affect(const Actor& actor, const Actor& target, const Skill& skill, const Body::Part& part);
 };
 
 }   // ::Game

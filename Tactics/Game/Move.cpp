@@ -8,8 +8,8 @@
 namespace Game
 {
 
-    Move::Move(const Actor& actor, const Position& target, const Skill& skill, Trajectory trajectory) :
-		TargetedAction(skill, actor, destination, trajectory),
+    Move::Move(const Actor& actor, const Position& target, const Skill& skill) :
+		TargetedAction(skill, actor, destination),
         destination(target)
     {
     }
