@@ -11,7 +11,7 @@ namespace Game
 		public TargetedAction
 	{
 	public:
-		React(const Actor& actor, const TargetedAction& target, const Skill& skill);
+		React(const Identity& actor, const TargetedAction& target, const Skill& skill);
 		void Render(const State& state) const override;
 		void Act(IGame& game) const override;
 	};

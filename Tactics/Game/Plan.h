@@ -7,6 +7,7 @@
 #include "Direction.h"
 #include "State.h"
 #include "Action.h"
+#include "Future.h"
 
 namespace Game
 {
@@ -42,7 +43,9 @@ public:
     Engine::Image Icon() const;
 
 protected:
-    struct Node
+	using Outcomes = std::vector<std::pair<double, Future*>>;
+	
+	struct Node
     {
         Node(const IGame& state, const Actor& executor);
 		Node(Node& previous, std::unique_ptr<Action>&& action);
@@ -54,7 +57,7 @@ protected:
         bool DeadEnd() const;
         void Render() const;
         Node* Next() const;
-		GameChances AllOutcomes() const;
+		Outcomes AllOutcomes() const;
 
          //int Score(const Position& target, unsigned startMovePoints) const;
         bool Compare(const Node& other, const Position& target) const;
@@ -65,7 +68,7 @@ protected:
         std::unique_ptr<Action> action;
 
 		double chance;
-        std::unique_ptr<GameState> state;
+        std::unique_ptr<Future> state;
         std::vector<std::unique_ptr<Node>> children;
     };
 private:
@@ -85,7 +88,7 @@ private:
     {
     public:
         ClosedList(const Position& target);
-        bool Contains(const GameState& state) const;
+        bool Contains(const Future& state) const;
         std::unique_ptr<Plan::Node> ExtractRoot(std::unique_ptr<Node>& leaf);
     private:
         std::unique_ptr<Node> Extract(Node* node);
@@ -103,11 +106,11 @@ protected:
     std::unique_ptr<Condition> condition;
     std::unique_ptr<Node> root;
 private:
-    GameChances AllOutcomesRecursive(Node& node) const;
-    GameChances AllOutcomes() const;
-    std::vector<Action*> ActionSequence(const GameState& end) const;
-    std::vector<std::wstring> Descriptions(const GameState& end) const;
-    void Apply(const GameState& state, Game& game) const;
+	Outcomes AllOutcomesRecursive(Node& node) const;
+	Outcomes AllOutcomes() const;
+    std::vector<Action*> ActionSequence(const Future& end) const;
+    std::vector<std::wstring> Descriptions(const Future& end) const;
+    void Apply(const Future& state, Game& game) const;
 };
 
 class WaitPlan : public Plan

@@ -8,14 +8,14 @@
 namespace Game
 {
 
-    Move::Move(const Actor& actor, const Position& target, const Skill& skill) :
+    Move::Move(const Identity& actor, const Position& target, const Skill& skill) :
 		TargetedAction(skill, actor, destination),
         destination(target)
     {
     }
 
     void Move::Act(IGame& game) const
-    {
+    { 
         State state(game.Get(actor));
         state.Spent(skill.mp);
         auto newPosition = destination.GetPosition();

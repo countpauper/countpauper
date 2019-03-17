@@ -21,7 +21,7 @@ namespace Game
         position.y = std::min(std::max(0, static_cast<int>(position.y) + dy), 5);
     }
 
-    unsigned Object::Id() const
+    unsigned Object::Tag() const
     {
         static_assert(sizeof(unsigned) == sizeof(this), "Failed to use object pointer as id");
         return unsigned(this);
@@ -109,6 +109,11 @@ namespace Game
         if (plan)
             plan->Render();
     }
+
+	std::wstring Actor::Description() const
+	{
+		return Object::Description();
+	}
 
     unsigned Actor::GetMovePoints() const
     {

@@ -11,6 +11,7 @@
 #include "Item.h"
 #include "Skills.h"
 #include "Target.h"
+#include "Identity.h"
 
 namespace Game
 {
@@ -26,7 +27,7 @@ namespace Game
         virtual void Turn() = 0;
         virtual void Activate(const Game& game) = 0;
         virtual void Render() const = 0;
-        unsigned Id() const;
+        unsigned Tag() const;
         virtual bool Prone() const;
         void Move(int dx, int dy);
         Position GetPosition() const override;
@@ -36,12 +37,14 @@ namespace Game
         Position position;
         std::wstring name;
     };
-    class Actor : public Object
+    
+	class Actor : public Object, public Identity
     {
     public:
         Actor();
         void Render() const override;
-        unsigned GetMovePoints() const;
+		std::wstring Description() const;
+		unsigned GetMovePoints() const;
         Direction GetDirection() const;
         void Apply(const State& result);
         bool IsAlly(const Actor& other) const;

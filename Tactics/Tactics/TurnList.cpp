@@ -42,7 +42,7 @@ namespace Game
 
     void TurnList::Item::Render() const
     {
-        glPushName(actor.Id());
+        glPushName(actor.Tag());
         RenderBackground();
         RenderActor();
         RenderPlan();

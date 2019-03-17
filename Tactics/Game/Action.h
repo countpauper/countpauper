@@ -8,18 +8,16 @@
 
 namespace Game
 {
-    class Actor;
+    class Identity;
     class Game;
     class Skill;
     class IGame;
-    class GameState;
     class State;
-
 
     class Action
     {
     public:
-        Action(const Skill& skill, const Actor& actor);
+        Action(const Skill& skill, const Identity& actor);
         virtual ~Action() = default;
 
         virtual void Act(IGame& game) const = 0;
@@ -31,14 +29,14 @@ namespace Game
 		static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
         static std::map<std::wstring, std::function<Action*(const State& state, const Game& game)>> typemap;
         
-		const Actor& actor;
+		const Identity& actor;
         const Skill& skill;
     };
     
 	class TargetedAction : public Action, public Target
 	{
 	public:
-		TargetedAction(const Skill& skill, const Actor& actor, const Target& target);
+		TargetedAction(const Skill& skill, const Identity& actor, const Target& target);
 		Score Chance(const IGame& game) const override;
 	protected:
 		const Target& target;
@@ -48,7 +46,7 @@ namespace Game
 	class AimedAction: public TargetedAction
 	{
 	public:
-		AimedAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part& part);
+		AimedAction(const Skill& skill, const Identity& actor, const Identity& target, const Body::Part& part);
 	protected:
 		const Body::Part& part;
 	};

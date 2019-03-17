@@ -37,13 +37,13 @@ namespace Game
     };
 
 
-    State Game::Get(const Actor& actor) const
+    State Game::Get(const Identity& actor) const
     {
-        return State(actor);
+        return State(dynamic_cast<const Actor&>(actor));
     }
-	void Game::Adjust(const Actor& actor, const State& state, const std::wstring& description)
+	void Game::Adjust(const Identity& actor, const State& state, const std::wstring& description)
     {
-        Actor& nonConstActor = const_cast<Actor&>(actor);   // faster than looking up in objects
+        Actor& nonConstActor = const_cast<Actor&>(dynamic_cast<const Actor&>(actor));   // faster than looking up in objects
         nonConstActor.Apply(state);
 		OutputDebugStringW((actor.Description() + L":" + description + L"\n").c_str());
     }
@@ -234,7 +234,7 @@ namespace Game
         return selectedActor;
     }
 
-    const Actor* Game::Executor() const
+    const Identity* Game::Executor() const
     {
         return selectedActor;
     }
@@ -351,7 +351,7 @@ namespace Game
         unsigned index = 0;
         for (const auto& object : objects)
         {
-            glPushName(object->Id());
+            glPushName(object->Tag());
             object->Render();
             glPopName();
         }

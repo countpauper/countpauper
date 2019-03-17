@@ -58,7 +58,7 @@ Skill::Skill(const std::wstring name, Attribute attribute, Targeting targeting) 
 }
 Skill::~Skill() = default;
 
-TargetedAction* Skill::CreateAction(const Actor& actor, const Target& target, const Body::Part* part) const
+TargetedAction* Skill::CreateAction(const Identity& actor, const Target& target, const Body::Part* part) const
 {
 	if (type)
 		return type->CreateAction(*this, actor, target, part);
@@ -88,7 +88,7 @@ Bonus Skill::GetChance(const Score& level) const
 	}
 }
 
-TargetedAction* Skill::Move::CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part*) const
+TargetedAction* Skill::Move::CreateAction(const Skill& skill, const Identity& actor, const Target& target, const Body::Part*) const
 {
 	return new ::Game::Move(actor, target.GetPosition(), skill);
 }
@@ -98,7 +98,7 @@ Skill::Melee::Melee() :
 {
 }
 
-TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part* part) const
+TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Identity& actor, const Target& target, const Body::Part* part) const
 {
 	if (!part)
 		return nullptr;
@@ -126,7 +126,7 @@ Skill::Affect::Affect(const xmlNode* node)
 	}
 }
 
-TargetedAction* Skill::Affect::CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part* part) const
+TargetedAction* Skill::Affect::CreateAction(const Skill& skill, const Identity& actor, const Target& target, const Body::Part* part) const
 {
 	assert(false);	// unimplemented
 	// return new ::Game::Affect(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
@@ -141,7 +141,7 @@ Skill::React::React(const xmlNode* node)
 	}
 }
 
-TargetedAction* Skill::React::CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part*) const
+TargetedAction* Skill::React::CreateAction(const Skill& skill, const Identity& actor, const Target& target, const Body::Part*) const
 {
 	return new ::Game::React(actor, dynamic_cast<const TargetedAction&>(target), skill);
 }

@@ -81,6 +81,7 @@
     <ClCompile Include="Body.cpp" />
     <ClCompile Include="Damage.cpp" />
     <ClCompile Include="Direction.cpp" />
+    <ClCompile Include="Future.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -108,7 +109,9 @@
     <ClInclude Include="Body.h" />
     <ClInclude Include="Damage.h" />
     <ClInclude Include="Direction.h" />
+    <ClInclude Include="Future.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Identity.h" />
     <ClInclude Include="IGame.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Map.h" />

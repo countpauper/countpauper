@@ -81,6 +81,9 @@
     <ClCompile Include="React.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Future.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Direction.h">
@@ -159,6 +162,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="React.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Future.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Identity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

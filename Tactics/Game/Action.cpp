@@ -9,7 +9,7 @@
 
 namespace Game
 {
-    Action::Action(const Skill& skill, const Actor& actor) :
+    Action::Action(const Skill& skill, const Identity& actor) :
         skill(skill),
         actor(actor)
     {
@@ -21,7 +21,7 @@ namespace Game
 		return skill.name;
 	}
 	
-	TargetedAction::TargetedAction(const Skill& skill, const Actor& actor, const Target& target) :
+	TargetedAction::TargetedAction(const Skill& skill, const Identity& actor, const Target& target) :
         Action(skill, actor),
         target(target)
     {
@@ -30,7 +30,7 @@ namespace Game
 	Score TargetedAction::Chance(const IGame& game) const
 	{
 		State attacker = game.Get(actor);
-		auto targetActor = dynamic_cast<const Actor*>(&target);
+		auto targetActor = dynamic_cast<const Identity*>(&target);
 		if (targetActor)
 		{
 			State victim = game.Get(*targetActor);
@@ -52,8 +52,8 @@ namespace Game
 		return skill.name + L"@" +target.Description();
 	}
 
-	AimedAction::AimedAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part& part) :
-		TargetedAction(skill, actor, target),
+	AimedAction::AimedAction(const Skill& skill, const Identity& actor, const Identity& target, const Body::Part& part) :
+		TargetedAction(skill, actor, dynamic_cast<const Target&>(target)),
 		part(part)
 	{
 

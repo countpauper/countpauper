@@ -17,7 +17,7 @@ namespace Engine { class Image; }
 namespace Game
 {
 class TargetedAction;
-class Actor;
+class Identity	;
 class Target;
 
 class Skill
@@ -30,7 +30,7 @@ public:
 	Skill(const xmlNode* node);
 	virtual ~Skill();
 
-	TargetedAction* CreateAction(const Actor& actor, const Target& target, const Body::Part* part) const;
+	TargetedAction* CreateAction(const Identity& actor, const Target& target, const Body::Part* part) const;
 	Bonus GetChance(const Score& level) const;
 
 	bool Match(const std::wstring& category) const;
@@ -85,14 +85,14 @@ public:
 	{
 	public:
 		virtual ~Act() = default;
-		virtual TargetedAction* CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part* part) const = 0;
+		virtual TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, const Body::Part* part) const = 0;
 	};
 	class Move : public Act
 	{
 	public:
 		Move() = default;
 		Move(const xmlNode* node);
-		TargetedAction* CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part*) const override;
+		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, const Body::Part*) const override;
 	};
 	class Melee : public Act
 	{
@@ -102,21 +102,21 @@ public:
 		std::vector<unsigned> damage;
 		Attribute attribute;
 		Bonus DamageBonus(const Score& skillScore);
-		TargetedAction* CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part* part) const override;
+		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, const Body::Part* part) const override;
 	};
 	class Affect : public Act
 	{
 	public:
 		Affect() = default;
 		Affect(const xmlNode* node);
-		TargetedAction* CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part* part) const override;
+		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, const Body::Part* part) const override;
 	};
 	class React : public Act
 	{
 	public:
 		React() = default;
 		React(const xmlNode* node);
-		TargetedAction* CreateAction(const Skill& skill, const Actor& actor, const Target& target, const Body::Part*) const override;
+		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, const Body::Part*) const override;
 	};
 	std::shared_ptr<Act> type; // todo: unique ptr and copy/clone or move
 private:

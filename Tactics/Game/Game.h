@@ -36,9 +36,10 @@ namespace Game
         void Start();
 
         //IGame
-        State Get(const Actor& actor) const override;
-        void Adjust(const Actor& actor, const State& state, const std::wstring& description) override;
+        State Get(const Identity& actor) const override;
+        void Adjust(const Identity& actor, const State& state, const std::wstring& description) override;
         void Apply(IGame& root) const override;
+		const Identity* Executor() const override;
 
         void Tick();
         void Render() const;
@@ -53,7 +54,6 @@ namespace Game
         static std::vector<Engine::RGBA> teamColor;
 
         const Actor* SelectedActor() const;
-        const Actor* Executor() const override;
         boost::signals2::signal<void(const Actor*)> actorSelected;
         using ActorList = std::vector<Actor*>;
         boost::signals2::signal<void(const ActorList&)> actorsActivated;

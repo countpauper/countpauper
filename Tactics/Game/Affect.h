@@ -11,7 +11,7 @@ class Affect :
     public AimedAction
 {
 public:
-    Affect(const Actor& actor, const Actor& target, const Skill& skill, const Body::Part& part);
+    Affect(const Identity& actor, const Identity& target, const Skill& skill, const Body::Part& part);
 };
 
 }   // ::Game

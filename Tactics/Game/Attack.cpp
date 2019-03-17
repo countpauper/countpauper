@@ -3,15 +3,15 @@
 #include "Engine/Text.h"
 #include "Engine/Random.h"
 #include "Engine/Image.h"
+#include "IGame.h"
 #include "Skills.h"
 #include "Attack.h"
 #include "State.h"
-#include "Actor.h"
 
 namespace Game
 {
 
-Attack::Attack(const Actor& actor, const Actor& target, const Skill& skill, const Body::Part& part) :
+Attack::Attack(const Identity& actor, const Identity& target, const Skill& skill, const Body::Part& part) :
     AimedAction(skill, actor, target, part)
 {
 }
@@ -19,7 +19,7 @@ Attack::Attack(const Actor& actor, const Actor& target, const Skill& skill, cons
 void Attack::Act(IGame& game) const
 {
 	State attacker = game.Get(actor);
-	auto& targetActor = dynamic_cast<const Actor&>(target);
+	auto& targetActor = dynamic_cast<const Identity&>(target);
 	State victim(game.Get(targetActor));
 
 

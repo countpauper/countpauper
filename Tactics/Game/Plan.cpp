@@ -36,14 +36,14 @@ namespace Game
 
     Plan::Node::Node(const IGame& state, const Actor& executor) :
         previous(nullptr),
-        state(std::make_unique<GameState>(state, executor)),
+        state(std::make_unique<Future>(state, executor)),
         chance(1.0)
     {
     }
 
 	Plan::Node::Node(Node& previous, std::unique_ptr<Action>&& _action) :
 		previous(&previous),
-		state(std::make_unique<GameState>(*previous.state)),
+		state(std::make_unique<Future>(*previous.state)),
 		action(std::move(_action)),
 		chance(double(action->Chance(*previous.state).Value())/100.0)
 	{
@@ -134,7 +134,7 @@ namespace Game
     }
 
 
-    bool Plan::ClosedList::Contains(const GameState& findState) const
+    bool Plan::ClosedList::Contains(const Future& findState) const
     {
         for (const auto& node : *this)
             if (node->state->ActorState().position == findState.ActorState().position)
@@ -198,9 +198,9 @@ namespace Game
         return root!=nullptr;
     }
 
-    GameChances Plan::Node::AllOutcomes() const
+	Plan::Outcomes Plan::Node::AllOutcomes() const
     {
-        GameChances ret;
+		Outcomes ret;
         if (children.empty())
         {
             if (state)
@@ -220,15 +220,15 @@ namespace Game
         return ret;
     }
 
-    GameChances Plan::AllOutcomes() const
+	Plan::Outcomes Plan::AllOutcomes() const
     {
         if (root)
             return root->AllOutcomes();
         else
-            return GameChances();
+            return Outcomes();
     }
 
-    std::vector<Action*> Plan::ActionSequence(const GameState& end) const
+    std::vector<Action*> Plan::ActionSequence(const Future& end) const
     {
         std::vector<Action*> sequence;
         auto node = root.get();
@@ -264,11 +264,10 @@ namespace Game
         return false;
     }
 
-    void Plan::Apply(const GameState& state, Game& game) const
+    void Plan::Apply(const Future& state, Game& game) const
     {
         OutputDebugStringW((L"Execute: " + Description() + L" " + state.Description() + L"\r\n").c_str());
         state.Apply(game);
-
     }
 
 	Anatomy HitLocation(const State& attacker, const Skill& skill, const State& victim, Trajectory trajectory)
@@ -307,7 +306,7 @@ namespace Game
 		return Anatomy();
 	}
 
-	const Body::Part* Aim(const IGame& state, const Actor& actor, const Actor& target, const Skill& skill)
+	const Body::Part* Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
 	{
 		State attacker(state.Get(actor));
 		State victim(state.Get(target));
@@ -375,7 +374,7 @@ namespace Game
 		std::unique_ptr<TargetedAction> reaction(skill.CreateAction(defender, offense, part));
 		auto node = std::make_unique<Node>(parent, std::move(reaction));
 		parent.children.emplace_back(std::move(node));
-		PlanCombo(*node, skill, defender, offense.actor);
+		PlanCombo(*node, skill, defender, dynamic_cast<const Target&>(offense.actor));
         return true;
     }
 

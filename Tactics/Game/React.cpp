@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include <gl/GL.h>
 #include "React.h"
+#include "IGame.h"
 #include "State.h"
-#include "Actor.h"
 #include "Skills.h"
 
 namespace Game
 {
 
-React::React(const Actor& actor, const TargetedAction& target, const Skill& skill) :
+React::React(const Identity& actor, const TargetedAction& target, const Skill& skill) :
 	TargetedAction(skill, actor, target)
 {
 }
