@@ -52,7 +52,7 @@ namespace Game
 		return skill.name + L"@" +target.Description();
 	}
 
-	AimedAction::AimedAction(const Skill& skill, const Identity& actor, const Identity& target, const Body::Part& part) :
+	AimedAction::AimedAction(const Skill& skill, const Identity& actor, const Identity& target, const Part& part) :
 		TargetedAction(skill, actor, dynamic_cast<const Target&>(target)),
 		part(part)
 	{

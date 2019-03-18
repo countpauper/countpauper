@@ -11,39 +11,6 @@
 
 namespace Game
 {
-    Object::Object()
-    {
-
-    }
-    void Object::Move(int dx, int dy)
-    {
-        position.x = std::min(std::max(0, static_cast<int>(position.x) + dx), 5);
-        position.y = std::min(std::max(0, static_cast<int>(position.y) + dy), 5);
-    }
-
-    unsigned Object::Tag() const
-    {
-        static_assert(sizeof(unsigned) == sizeof(this), "Failed to use object pointer as id");
-        return unsigned(this);
-    }
-
-
-    bool Object::Prone() const
-    {
-        return true;
-    }
-
-
-    Position Object::GetPosition() const
-    {
-        return position;
-    }
-    std::wstring Object::Description() const
-    {
-        return name;
-    }
-
-
     Actor::Actor() :
         active(false),
         mp(0),
@@ -110,11 +77,6 @@ namespace Game
             plan->Render();
     }
 
-	std::wstring Actor::Description() const
-	{
-		return Object::Description();
-	}
-
     unsigned Actor::GetMovePoints() const
     {
         return mp;
@@ -134,7 +96,7 @@ namespace Game
         position = result.position;
         direction = result.direction;
         mp = result.mp;
-        body = result.body;
+		body = result.body;
     }
 
 
@@ -335,7 +297,7 @@ namespace Game
         return result;
     }
 
-    std::map<const Body::Part*, const Weapon*> Actor::Wielded() const
+    std::map<const Part*, const Weapon*> Actor::Wielded() const
     {
         return body.Wielded();
     }
@@ -391,7 +353,8 @@ namespace Game
         s >> actor.team;
         s >> actor.position.x >> actor.position.y;
         s >> actor.mp;
-        s >> actor.body;
+        s >> actor.anatomy;
+		actor.body = Body(actor.anatomy);
         unsigned armors, weapons, skills;
         s >> armors >> weapons >> skills;
         actor.worn.reserve(armors);
@@ -408,10 +371,7 @@ namespace Game
             actor.carried.emplace_back(std::make_unique<Weapon>(game, typeName, materialName, bonusName));
             if (limbName != L"None")
             {
-                auto limb = actor.body.Get(limbName);
-                if (!limb)
-                    throw std::runtime_error("Wielded limb not found");
-                actor.body[*limb].Hold(*actor.carried.back());
+                actor.body.Grab(actor.anatomy[limbName], *actor.carried.back());
             }
         }
         for (size_t n = 0; n < skills; ++n)

@@ -43,8 +43,8 @@ namespace Game
     }
 	void Game::Adjust(const Identity& actor, const State& state, const std::wstring& description)
     {
-        Actor& nonConstActor = const_cast<Actor&>(dynamic_cast<const Actor&>(actor));   // faster than looking up in objects
-        nonConstActor.Apply(state);
+        Identity& nonConstId = const_cast<Identity&>(actor);   // faster than reverse look up in objects
+        nonConstId.Apply(state);
 		OutputDebugStringW((actor.Description() + L":" + description + L"\n").c_str());
     }
     void Game::Apply(IGame& root) const
@@ -293,7 +293,7 @@ namespace Game
     void Game::SelectPlan()
     {
         std::unique_ptr<Plan> plan;
-        if (selectedSkill)
+        if ((selectedActor) && (selectedSkill))
         {
             if (selectedTarget)
             {

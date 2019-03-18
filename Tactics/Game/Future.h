@@ -16,13 +16,13 @@ namespace Game
 		void Adjust(const Identity& actor, const State& state, const std::wstring& description) override;
 		void Apply(IGame& root) const;
 		State Get(const Identity& actor) const override;
-
 		const Identity* Executor() const;
 		bool CanBe(const Position& position) const override;
 		bool CanGo(const Position& from, Direction direction) const override;
 		bool Cover(const Position& from, const Position& to) const override;
-		std::vector<std::unique_ptr<Action>> PossibleMoves() const;
 		std::wstring Description() const override;
+
+		std::vector<std::unique_ptr<Action>> PossibleMoves() const;
 
 		State ActorState() const;
 		bool HasParent(const IGame& state) const;

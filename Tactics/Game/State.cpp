@@ -37,17 +37,18 @@ namespace Game
 		return std::wstring(L"State [") + std::to_wstring(unsigned(this))+L"]";
 	}
 
-    State::State(const Body& body, Position pos, const Direction dir, unsigned mp,
+    State::State(const Anatomy& anatomy, Position pos, const Direction dir, unsigned mp,
         std::vector<const Armor*> armor, std::vector<const Weapon*> weapons, Actor::Knowledge skills) :
 		position(pos),
         direction(dir),
         mp(mp),
-        body(body),
+        body(anatomy),
         loyalty(0),
         worn(armor),
         carried(weapons),
         knowledge(skills)
     {
+		AutoArm();
     }
 
 
@@ -62,7 +63,9 @@ namespace Game
             return false;
         if (body.UsedLimbs(skill).empty())
             return false;
-        // TODO if (game.Cover(state.position, target.GetPosition()))
+		if (std::find(knowledge.begin(), knowledge.end(), &skill) == knowledge.end())
+			return false;	// should be not selectable, maybe bad for performance
+		// TODO if (game.Cover(state.position, target.GetPosition()))
         
         return true;
     }
@@ -73,7 +76,7 @@ namespace Game
         return body.Strength() + AttributeBonus(Attribute::Strength);
     }
 
-    Score State::AttributeScore(const Body::Part& limb, Attribute attribute) const
+    Score State::AttributeScore(const Part& limb, Attribute attribute) const
     {
         // private, because limb has to be part of the state's body, which is copied
         auto wielded = body.Wielded();
@@ -239,11 +242,11 @@ namespace Game
         }
         else
         {
-            return body.InnateDamage()^ skillDamage;
+            return body.Anatomical().InnateDamage()^ skillDamage;
         }
     }
 
-	bool State::Hurt(const Body::Part& part, const Damage& damage, const std::wstring& description)
+	bool State::Hurt(const Part& part, const Damage& damage, const std::wstring& description)
     {
         Damage pain = damage - Mitigation(part);
 		if (!pain.Hurt())
@@ -276,7 +279,7 @@ namespace Game
         return Score(skillBonus);
     }
 
-    Damage State::Mitigation(const Body::Part& part) const
+    Damage State::Mitigation(const Part& part) const
     {
         Score constMitigation(ConstitutionBonus());
         Score wisMitigation(WisdomBonus());
@@ -293,7 +296,7 @@ namespace Game
         return mitigation;
     }
 
-    Anatomy State::Origin(const Skill& skill, Trajectory trajectory) const
+	Location State::Origin(const Skill& skill, Trajectory trajectory) const
     {
         auto wield = body.UsedWeapon(skill);
         auto limb = wield.first;
@@ -307,15 +310,15 @@ namespace Game
         if (limb)
         {
             auto height = limb->Height();
-            return Anatomy(trajectory, height, 3);  // TODO: reach for height
+            return Location(trajectory, height, 3);  // TODO: reach for height
         }
         else if (skill.attribute == Attribute::None)
         {
-            return Anatomy(Plane::Front, body.Length()/2,1);
+            return Location(Plane::Front, body.Anatomical().Length()/2,1);
         }
         else
         {
-            return Anatomy();
+            return Location();
         }
     }
 
@@ -408,4 +411,17 @@ namespace Game
     {
         body.Engage(skill);
     }
+
+
+	void State::AutoArm()
+	{
+		auto grip = body.Anatomical().Grip();
+		auto gripIt = grip.begin();
+		for (auto item : carried)
+		{
+			if (gripIt == grip.end())
+				break;
+			body.Grab(**gripIt++, *item);
+		}
+	}
 } // ::Game

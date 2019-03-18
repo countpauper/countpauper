@@ -46,9 +46,9 @@ namespace Game
 	class AimedAction: public TargetedAction
 	{
 	public:
-		AimedAction(const Skill& skill, const Identity& actor, const Identity& target, const Body::Part& part);
+		AimedAction(const Skill& skill, const Identity& actor, const Identity& target, const Part& part);
 	protected:
-		const Body::Part& part;
+		const Part& part;
 	};
 
 }   // ::Game

@@ -92,16 +92,20 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Anatomy.cpp" />
+    <ClCompile Include="Location.cpp" />
     <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Body.cpp" />
     <ClCompile Include="Data.cpp" />
     <ClCompile Include="Direction.cpp" />
+    <ClCompile Include="Fantasy.cpp" />
+    <ClCompile Include="Figment.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="State.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Data.h" />
+    <ClInclude Include="Fantasy.h" />
+    <ClInclude Include="Figment.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

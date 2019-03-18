@@ -1,9 +1,10 @@
 #pragma once
 #include <sstream>
+
+#include "Figment.h"
 #include "Game/Body.h"
 #include "Game/Item.h"
-#include "Game/Skills.h"
-#include "Game/State.h"
+#include "Game/Skill.h"
 
 namespace Game
 {
@@ -12,13 +13,13 @@ namespace Test
 
 namespace Data
 {
-struct Simple : Body
+struct Simple : Anatomy
 {
     Simple();
     std::wstringstream stream;
 };
 
-struct Human : Body
+struct Human : Anatomy
 {
     Human();
     std::wstringstream stream;
@@ -63,25 +64,29 @@ struct Buff : Skill
 	Buff();
 };
 // Base state so body is initialized before actual State
-template<class BodyType>
+template<class AnatomyType>
 class BaseState
 {
+public:
+	BaseState()
+	{
+	}
 protected:
-    BodyType _body;
+	AnatomyType anatomy;
 };
 
-struct Attacker : private BaseState<Human>, public State
+struct Knight : private BaseState<Human>, public Figment
 {
-    Attacker();
+	Knight();
     Data::Blade weapon;
     Data::Melee skill;
 	Data::Combo combo;
 	Data::Buff buff;
 };
 
-struct Victim : private BaseState<Simple>, public State
+struct Victim : private BaseState<Simple>, public Figment
 {
-    Victim();
+	Victim();
 };
 
 }

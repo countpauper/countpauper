@@ -76,7 +76,7 @@
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Affect.cpp" />
-    <ClCompile Include="Anatomy.cpp" />
+    <ClCompile Include="Location.cpp" />
     <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Body.cpp" />
     <ClCompile Include="Damage.cpp" />
@@ -86,6 +86,7 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Move.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Plan.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="React.cpp" />
@@ -104,7 +105,7 @@
     <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Affect.h" />
-    <ClInclude Include="Anatomy.h" />
+    <ClInclude Include="Location.h" />
     <ClInclude Include="Attack.h" />
     <ClInclude Include="Body.h" />
     <ClInclude Include="Damage.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Move.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Plan.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="React.h" />

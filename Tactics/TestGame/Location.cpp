@@ -1,47 +1,47 @@
 #include <boost/test/unit_test.hpp>
-#include "Game/Anatomy.h"
+#include "Game/Location.h"
 
 namespace Game
 {
 namespace Test
 {
 
-BOOST_AUTO_TEST_SUITE(AnatomyTest);
+BOOST_AUTO_TEST_SUITE(LocationTest);
 
 
 BOOST_AUTO_TEST_CASE(Null)
 {
-    Anatomy a;
+    Location a;
     BOOST_CHECK(!a);
 }
 
 BOOST_AUTO_TEST_CASE(ContainsPlane)
 {
-    Anatomy a(Plane::All, 0);
-    BOOST_CHECK(a.Contains(Anatomy(Plane::Front, 0)));
-    BOOST_CHECK(a.Contains(Anatomy(Plane::Back, 0)));
-    BOOST_CHECK(a.Contains(Anatomy(Plane::Left, 0)));
-    BOOST_CHECK(a.Contains(Anatomy(Plane::Right, 0)));
-    BOOST_CHECK(a.Contains(Anatomy(Plane::Top, 0)));
-    BOOST_CHECK(a.Contains(Anatomy(Plane::Bottom, 0)));
+    Location a(Plane::All, 0);
+    BOOST_CHECK(a.Contains(Location(Plane::Front, 0)));
+    BOOST_CHECK(a.Contains(Location(Plane::Back, 0)));
+    BOOST_CHECK(a.Contains(Location(Plane::Left, 0)));
+    BOOST_CHECK(a.Contains(Location(Plane::Right, 0)));
+    BOOST_CHECK(a.Contains(Location(Plane::Top, 0)));
+    BOOST_CHECK(a.Contains(Location(Plane::Bottom, 0)));
 }
 
 
 BOOST_AUTO_TEST_CASE(ContainsHeight)
 {
-    Anatomy a(Plane::Front, 1, 2);
-    BOOST_CHECK(!a.Contains(Anatomy(Plane::Front, 0)));
-    BOOST_CHECK(a.Contains(Anatomy(Plane::Front, 1)));
-    BOOST_CHECK(a.Contains(Anatomy(Plane::Front, 2)));
-    BOOST_CHECK(!a.Contains(Anatomy(Plane::Front, 3)));
-    BOOST_CHECK(a.Contains(Anatomy(Plane::Front, 0, 2)));
-    BOOST_CHECK(!a.Contains(Anatomy(Plane::Front, 3, 2)));
+    Location a(Plane::Front, 1, 2);
+    BOOST_CHECK(!a.Contains(Location(Plane::Front, 0)));
+    BOOST_CHECK(a.Contains(Location(Plane::Front, 1)));
+    BOOST_CHECK(a.Contains(Location(Plane::Front, 2)));
+    BOOST_CHECK(!a.Contains(Location(Plane::Front, 3)));
+    BOOST_CHECK(a.Contains(Location(Plane::Front, 0, 2)));
+    BOOST_CHECK(!a.Contains(Location(Plane::Front, 3, 2)));
 }
 
 BOOST_AUTO_TEST_CASE(Serialize)
 {
     std::wstringstream stream(L"Front[1] Around[2-3]");
-    Anatomy a, b;
+    Location a, b;
     stream >> a >> b;
     BOOST_CHECK_EQUAL(a.plane, Plane::Front);
     BOOST_CHECK_EQUAL(a.position, 1);
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(Serialize)
 BOOST_AUTO_TEST_CASE(SerializeFail)
 {
     std::wstringstream stream(L"Front Back][ Left[ Right] None[]");
-    Anatomy f, b, l, r, n;
+    Location f, b, l, r, n;
     BOOST_CHECK_THROW(stream >> f, std::exception);
     BOOST_CHECK_THROW(stream >> b, std::exception);
     BOOST_CHECK_THROW(stream >> l, std::exception);

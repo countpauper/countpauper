@@ -11,7 +11,7 @@
 namespace Game
 {
 
-Attack::Attack(const Identity& actor, const Identity& target, const Skill& skill, const Body::Part& part) :
+Attack::Attack(const Identity& actor, const Identity& target, const Skill& skill, const Part& part) :
     AimedAction(skill, actor, target, part)
 {
 }
@@ -21,7 +21,6 @@ void Attack::Act(IGame& game) const
 	State attacker = game.Get(actor);
 	auto& targetActor = dynamic_cast<const Identity&>(target);
 	State victim(game.Get(targetActor));
-
 
 	auto skillLevel = attacker.SkillLevel(skill, &victim);
 	if (skillLevel.Value() == 0)

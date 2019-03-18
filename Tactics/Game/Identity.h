@@ -14,12 +14,15 @@
 
 namespace Game
 {
+	class State;
+
 	class Identity
 	{	// id to identify actor states or without actor for unit tests
 	public:
 		Identity() = default;
 		virtual ~Identity() = default;
 		virtual std::wstring Description() const=0;
+		virtual void Apply(const State& result) = 0;
 	};
 
 }   // ::Game

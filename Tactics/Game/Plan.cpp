@@ -270,43 +270,43 @@ namespace Game
         state.Apply(game);
     }
 
-	Anatomy HitLocation(const State& attacker, const Skill& skill, const State& victim, Trajectory trajectory)
+	Location HitLocation(const State& attacker, const Skill& skill, const State& victim, Trajectory trajectory)
 	{
 		assert(!attacker.direction.Prone());  // prone not supported yet here
 		if (victim.direction.Prone())
 		{
-			return Anatomy();
+			return Location();
 		}
 		auto targeting = skill.target;
 		if (targeting.count(Targeting::Swing))
 		{
-			Anatomy origin = attacker.Origin(skill, trajectory);
+			Location origin = attacker.Origin(skill, trajectory);
 			// TODO: mirror for left arm/tail
-			Anatomy facing(attacker.direction, victim.direction, 0);    // TODO: sensing body part or height difference
-			return Anatomy(origin, facing);
+			Location facing(attacker.direction, victim.direction, 0);    // TODO: sensing body part or height difference
+			return Location(origin, facing);
 		}
 		else if (targeting.count(Targeting::Center))
 		{
-			auto height = victim.body.Length();
+			auto height = victim.body.Anatomical().Length();
 			double middle = static_cast<double>(height) / 2.0;
 			assert(false);	// random state storage is removed, need to reimplement center mass
 			auto hitHeight = static_cast<int>(std::round(middle + Engine::Random().Normal(1.0)));
 			if (hitHeight < 0 || hitHeight >= static_cast<int>(height))
-				return Anatomy();
-			return Anatomy(attacker.direction, victim.direction, hitHeight);
+				return Location();
+			return Location(attacker.direction, victim.direction, hitHeight);
 		}
 		else if (targeting.count(Targeting::Intercept))
 		{
-			Anatomy origin = attacker.Origin(skill, trajectory);
+			Location origin = attacker.Origin(skill, trajectory);
 			// TODO: mirror for left arm/tail
-			Anatomy facing(attacker.direction, victim.direction, 0);    // TODO: sensing body part or height difference
-			return Anatomy(origin, facing);
+			Location facing(attacker.direction, victim.direction, 0);    // TODO: sensing body part or height difference
+			return Location(origin, facing);
 		}
 		assert(false);  // unsupported for now
-		return Anatomy();
+		return Location();
 	}
 
-	const Body::Part* Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
+	const Part* Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
 	{
 		State attacker(state.Get(actor));
 		State victim(state.Get(target));
@@ -315,7 +315,7 @@ namespace Game
 			auto location = HitLocation(attacker, skill, victim, trajectory);
 			if (!location)
 				continue;
-			auto part = victim.body.Get(location);
+			auto part = victim.body.Anatomical().At(location);
 			if (part)
 				return part;
 		}

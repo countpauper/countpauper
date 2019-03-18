@@ -1,52 +1,28 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 #include "Engine/Random.h"
-#include "Position.h"
-#include "Direction.h"
+#include "Object.h"
 #include "Body.h"
 #include "Stats.h"
 #include "Score.h"
 #include "Item.h"
 #include "Skills.h"
-#include "Target.h"
-#include "Identity.h"
 
 namespace Game
 {
     class State;
     class Action;
     class Plan;
-
-    class Object : public Target
-    {
-    public:
-        Object();
-        virtual ~Object() = default;
-        virtual void Turn() = 0;
-        virtual void Activate(const Game& game) = 0;
-        virtual void Render() const = 0;
-        unsigned Tag() const;
-        virtual bool Prone() const;
-        void Move(int dx, int dy);
-        Position GetPosition() const override;
-        std::wstring Description() const override;
-        Body body;    // TODO: different body parts for different objects/creatures
-    protected:
-        Position position;
-        std::wstring name;
-    };
     
-	class Actor : public Object, public Identity
-    {
+	class Actor : public Object
+	{
     public:
         Actor();
         void Render() const override;
-		std::wstring Description() const;
 		unsigned GetMovePoints() const;
         Direction GetDirection() const;
-        void Apply(const State& result);
+        void Apply(const State& result) override;
         bool IsAlly(const Actor& other) const;
         void Turn() override;
         void Activate(const Game& game) override;
@@ -76,7 +52,7 @@ namespace Game
 
         std::vector<const Armor*> Worn() const;
         std::vector<const Weapon*> Carried() const;
-        std::map<const Body::Part*, const Weapon*> Wielded() const;
+        std::map<const Part*, const Weapon*> Wielded() const;
         std::unique_ptr<Plan> plan;
     private:
         Bonus AgilityMoveBonus() const;
@@ -87,7 +63,8 @@ namespace Game
         unsigned mp;
         unsigned team;
         Direction direction;
-        Knowledge knowledge;
+		Anatomy anatomy;
+		Knowledge knowledge;
         std::vector<std::unique_ptr<Armor>> worn;
         std::vector<std::unique_ptr<Weapon>> carried;
     };
