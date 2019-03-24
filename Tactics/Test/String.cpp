@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(String)
 BOOST_AUTO_TEST_CASE(Enum)
 {
     enum class TestEnum { First, Second };
-    std::map<std::wstring, TestEnum> map({
+    std::map<const std::wstring, TestEnum> map({
         { L"1st", TestEnum::First },
         { L"2nd", TestEnum::Second }
     });

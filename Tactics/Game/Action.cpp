@@ -59,7 +59,7 @@ namespace Game
 
 	}
 
-	DirectedAction::DirectedAction(const Skill& skill, const Identity& actor, const Identity& target, Trajectory trajectory, const Part& part) :
+	DirectedAction::DirectedAction(const Skill& skill, const Identity& actor, const Identity& target, Direction trajectory, const Part& part) :
 		AimedAction(skill, actor, target, part),
 		trajectory(trajectory)
 	{

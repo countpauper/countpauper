@@ -9,7 +9,7 @@ namespace Game
 {
     namespace Type
     {
-        std::map<std::wstring, Armor::Category> armorCategories(
+        std::map<const std::wstring, Armor::Category> armorCategories(
         {
             { L"Cloth", Armor::Category::Cloth },
             { L"Leather", Armor::Category::Leather },
@@ -21,7 +21,7 @@ namespace Game
             { L"Any", Armor::Category::Any }
         });
 
-        std::map<std::wstring, Element> elementMap(
+        std::map<const std::wstring, Element> elementMap(
         {
             { L"None", Element::None },
             { L"Stone", Element::Stone },
@@ -121,7 +121,7 @@ namespace Game
             return (unsigned(mod.category) & unsigned(category)) != 0;
         }
 
-        const std::map<std::wstring, Weapon::Style > Weapon::styleMap(
+        const std::map<const std::wstring, Weapon::Style > Weapon::styleMap(
         {
             { L"Any", Weapon::Style::Any },
             { L"", Weapon::Style::None },
@@ -144,7 +144,7 @@ namespace Game
             { L"Artifact", Weapon::Style::Artifact }
         });
 
-        std::map<std::wstring, Weapon::Material::Category > weaponMaterialCategories(
+        std::map<const std::wstring, Weapon::Material::Category > weaponMaterialCategories(
         {
             { L"None", Weapon::Material::None},
             { L"Metal", Weapon::Material::Metal },

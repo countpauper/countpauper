@@ -27,7 +27,7 @@ namespace Game
         {
         }
         static const Attributes All;
-        static const std::map<std::wstring, Attribute> map;
+        static const std::map<const std::wstring, Attribute> map;
     };
     std::wistream& operator>>(std::wistream& s, Attributes& attribute);
 

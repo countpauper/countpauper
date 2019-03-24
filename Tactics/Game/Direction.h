@@ -35,7 +35,7 @@ public:
 	explicit Direction(const Position& vector);
     Position Vector() const;
     double Angle() const;
-	Direction Mirror(const Direction& other) const;
+	Direction Opposite() const;
     bool IsOpposite(const Direction& other) const;
     bool IsClockwise(const Direction& other) const;
     bool IsCounterClockwise(const Direction& other) const;
@@ -61,25 +61,28 @@ public:
 	static const Direction& right;
 	static const Direction up;
 	static const Direction down;
+	static const std::map<const std::wstring, Direction> map;
 protected:
 	enum Value
 	{
 		None = 0,
 		Negative = 1,
-		EastWest = 2,
-		East = EastWest,
+		East = 2,
 		Forward = East,
-		West = EastWest | Negative,
+		West = East | Negative,
 		Backward = West,
-		NorthSouth = 4,
-		North = NorthSouth,
+		Parallel = (Forward | Backward) & ~Negative,
+
+		North = 4,
 		Left = North,
-		South = NorthSouth | Negative,
+		South = North | Negative,
 		Right = South,
-		Horizontal = NorthSouth | EastWest,
-		Vertical = 8,
-		Up = Vertical,
-		Down = Vertical | Negative,
+		Lateral = (Left | Right) & ~Negative,
+
+		Horizontal = (Parallel | Lateral),
+		Up = 8,
+		Down = Up | Negative,
+		Vertical = (Up|Down) & ~Negative,
 		Plane = Vertical | Horizontal
 	};
 	Direction(Value value);

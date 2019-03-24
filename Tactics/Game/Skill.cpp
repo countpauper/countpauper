@@ -27,7 +27,7 @@ Skill::Skill() :
 {
 }
 
-Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Trajectory singleTrajectory, int damage) :
+Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Direction singleTrajectory, int damage) :
 	mp(2),
 	range(0),
 	trigger(trigger),
@@ -36,11 +36,11 @@ Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapo
 	resist(Attribute::None),
 	offset(0),
 	weapon(weapon),
-	type(std::make_shared<Melee>())
+	type(std::make_shared<Melee>()),
+	targeting({Targeting::Swing, Targeting::Face})
 {
 	static_cast<Melee&>(*type).damage = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
 	trajectory.insert(singleTrajectory);
-	target.insert(Targeting::Swing);
 }
 
 Skill::Skill(const std::wstring name, Attribute attribute, Targeting targeting) :
@@ -52,13 +52,13 @@ Skill::Skill(const std::wstring name, Attribute attribute, Targeting targeting) 
 	resist(Attribute::None),
 	offset(0),
 	weapon(Type::Weapon::Style::None),
-	type(std::make_shared<Affect>())
+	type(std::make_shared<Affect>()),
+	targeting({targeting})
 {
-	target.insert(targeting);
 }
 Skill::~Skill() = default;
 
-TargetedAction* Skill::CreateAction(const Identity& actor, const Target& target, Trajectory trajectory, const Part* part) const
+TargetedAction* Skill::CreateAction(const Identity& actor, const Target& target, Direction trajectory, const Part* part) const
 {
 	if (type)
 		return type->CreateAction(*this, actor, target, trajectory, part);
@@ -88,7 +88,7 @@ Bonus Skill::GetChance(const Score& level) const
 	}
 }
 
-TargetedAction* Skill::Move::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Trajectory trajectory, const Part*) const
+TargetedAction* Skill::Move::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part*) const
 {
 	return new ::Game::Move(actor, target.GetPosition(), skill);
 }
@@ -98,7 +98,7 @@ Skill::Melee::Melee() :
 {
 }
 
-TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Trajectory trajectory, const Part* part) const
+TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part* part) const
 {
 	if (!part)
 		return nullptr;
@@ -126,7 +126,7 @@ Skill::Affect::Affect(const xmlNode* node)
 	}
 }
 
-TargetedAction* Skill::Affect::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Trajectory, const Part* part) const
+TargetedAction* Skill::Affect::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction, const Part* part) const
 {
 	assert(false);	// unimplemented
 	// return new ::Game::Affect(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
@@ -141,7 +141,7 @@ Skill::React::React(const xmlNode* node)
 	}
 }
 
-TargetedAction* Skill::React::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Trajectory, const Part*) const
+TargetedAction* Skill::React::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction, const Part*) const
 {
 	return new ::Game::React(actor, dynamic_cast<const TargetedAction&>(target), skill);
 }
@@ -159,6 +159,11 @@ bool Skill::Require(const Weapon* item) const
 		return true;
 	else
 		return item && item->Match(weapon);
+}
+
+bool Skill::HasTargeting(Targeting check) const
+{
+	return targeting.count(check) != 0;
 }
 
 bool Skill::Combo(const Skill& previous) const
@@ -274,21 +279,14 @@ Skill::Skill(const xmlNode* node) :
 		}
 		else if (Engine::Xml::hasTag(prop, "trajectory"))
 		{
-			trajectory = Engine::from_strings<Trajectory>(Engine::Xml::text(prop->children), L'|',
-				{
-					{ L"forward", Trajectory::Forward },
-					{ L"backward", Trajectory::Backward },
-					{ L"right", Trajectory::Right },
-					{ L"left", Trajectory::Left },
-					{ L"up",Trajectory::Up },
-					{ L"down", Trajectory::Down },
-				});
+			trajectory = Engine::from_strings<Direction>(Engine::Xml::text(prop->children), L'|', Direction::map);
 		}
 		else if (Engine::Xml::hasTag(prop, "target"))
 		{
-			target = Engine::from_strings<Targeting>(Engine::Xml::text(prop->children), L'|',
+			targeting = Engine::from_strings<Targeting>(Engine::Xml::text(prop->children), L'|',
 				{
 					{ L"self", Targeting::Self },
+					{ L"face", Targeting::Face },
 					{ L"swing", Targeting::Swing },
 					{ L"center", Targeting::Center },
 					{ L"intercept", Targeting::Intercept },

@@ -76,6 +76,10 @@ namespace Game
             Contributes(Attribute::Wisdom);
     }
 
+	Location Part::GetLocation() const
+	{
+		return location;
+	}
     bool Part::Grip() const
     {
         // TODO: flag

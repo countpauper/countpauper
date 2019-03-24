@@ -39,14 +39,15 @@ public:
     Score Chance(const Skill& skill, const State& target) const;
     Score Chance(const Skill& skill) const;
 	void Spent(unsigned mp);
-
+	void Face(const Position& target);
+	
     Score Strength() const;
     Score Agility() const;
     Score Constitution() const;
     Score Intelligence() const;
     Score Wisdom() const;
     Score AttributeScore(Attribute attribute) const;
-	Location Origin(const Skill& skill, Trajectory trajectory) const;
+	Location Origin(const Skill& skill) const;
 
     Score SkillLevel(const Skill& skill, const State* victim = nullptr) const;
     Score Range(const Skill& skill) const;

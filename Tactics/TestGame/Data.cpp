@@ -15,7 +15,7 @@ namespace Data
         L"Body All[0-2] Full All 6 ,,,,\n"
         )
     {
-        Add(Part(L"All", Location(Plane::All, 0, 3), Slot::Full, Stats(6, 6, 6, 6, 6)));
+        Add(Part(L"All", Location(Plane::all, 0, 3), Slot::Full, Stats(6, 6, 6, 6, 6)));
     }
 
     Human::Human() :
@@ -29,12 +29,12 @@ namespace Data
         L"Legs Around[0-1] Legs Agi 10\n"
         )
     {
-        Add(Part(L"Head", Location(Plane::All, 4, 1), Slot::Head, Stats(Attribute::Intelligence, 10)));
-        Add(Part(L"Chest", Location(Plane::Sagittal, 3, 1), Slot::Chest, Stats(Attribute::Wisdom, 10)));
-        Add(Part(L"Belly", Location(Plane::Sagittal, 2, 1), Slot::Belly, Stats(Attribute::Constitution, 10)));
-        Add(Part(L"RArm", Location(Plane::Right, 2, 2), Slot::Arms, Stats(Attribute::Strength, 6)));
-        Add(Part(L"LArm", Location(Plane::Left, 2, 2), Slot::Arms, Stats(Attribute::Strength, 4)));
-        Add(Part(L"Legs", Location(Plane::Around, 0, 2), Slot::Legs, Stats(Attribute::Agility, 10)));
+        Add(Part(L"Head", Location(Plane::all, 4, 1), Slot::Head, Stats(Attribute::Intelligence, 10)));
+        Add(Part(L"Chest", Location(Plane::sagittal, 3, 1), Slot::Chest, Stats(Attribute::Wisdom, 10)));
+        Add(Part(L"Belly", Location(Plane::sagittal, 2, 1), Slot::Belly, Stats(Attribute::Constitution, 10)));
+        Add(Part(L"RArm", Location(Plane::right, 2, 2), Slot::Arms, Stats(Attribute::Strength, 6)));
+        Add(Part(L"LArm", Location(Plane::left, 2, 2), Slot::Arms, Stats(Attribute::Strength, 4)));
+        Add(Part(L"Legs", Location(Plane::around, 0, 2), Slot::Legs, Stats(Attribute::Agility, 10)));
     }
 
     Blade::Blade() :
@@ -69,12 +69,12 @@ namespace Data
 
 	}
 
-    Melee::Melee() : Skill(L"Melee", Skill::Trigger::Act, Type::Weapon::Style::Blade, Trajectory::Forward, 1)
+    Melee::Melee() : Skill(L"Melee", Skill::Trigger::Act, Type::Weapon::Style::Blade, Direction::forward, 1)
     {
         categories.insert(L"1");
     }
 
-    Combo::Combo() : Skill(L"Combo", Skill::Trigger::Combo, Type::Weapon::Style::Blade, Trajectory::Forward, 1)
+    Combo::Combo() : Skill(L"Combo", Skill::Trigger::Combo, Type::Weapon::Style::Blade, Direction::forward, 1)
     {
         follows.insert(L"1");
     }

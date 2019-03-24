@@ -83,7 +83,7 @@ namespace Engine
         class Enumeration : public Interface<T>
         {
         public:
-            Enumeration(EnumT T::*member, const std::map<std::wstring, EnumT>& values) :
+            Enumeration(EnumT T::*member, const std::map<const std::wstring, EnumT>& values) :
                 member(member),
                 values(values)
             {
@@ -95,7 +95,7 @@ namespace Engine
             unsigned Columns() const override { return 1; }
         private:
             EnumT T::*member;
-            const std::map<std::wstring, EnumT>& values;
+            const std::map<const std::wstring, EnumT>& values;
         };
 
         template<class T, class StructT>
@@ -202,7 +202,7 @@ namespace Engine
         class Pointer : public Interface<T>
         {
         public:
-            Pointer(unsigned offset, const std::map<std::wstring, T*> values) :
+            Pointer(unsigned offset, const std::map<const std::wstring, T*> values) :
                 Interface(offset)
             {
             }

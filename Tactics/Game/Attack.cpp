@@ -11,7 +11,7 @@
 namespace Game
 {
 
-Attack::Attack(const Identity& actor, const Identity& target, const Skill& skill, Trajectory trajectory, const Part& part) :
+Attack::Attack(const Identity& actor, const Identity& target, const Skill& skill, Direction trajectory, const Part& part) :
     DirectedAction(skill, actor, target, trajectory, part)
 {
 }
@@ -27,7 +27,10 @@ void Attack::Act(IGame& game) const
 	{
 		attacker.Spent(skill.mp);
 		attacker.Engage(skill);
-		attacker.direction = Direction(victim.position - attacker.position);
+		if (skill.HasTargeting(Targeting::Face))
+		{
+			attacker.Face(attacker.position);
+		}
 		game.Adjust(actor, attacker, skill.name);
 
 		game.Adjust(targetActor, victim, L"Resist " + skill.name + L":" + skillLevel.Description());

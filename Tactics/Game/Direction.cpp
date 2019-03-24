@@ -80,6 +80,19 @@ const Direction& Direction::forward = east;
 const Direction& Direction::left = north;
 const Direction& Direction::backward = west;
 const Direction& Direction::right = south;
+const std::map<const std::wstring, Direction> Direction::map(
+{
+	{ L"east", Direction::east },
+	{ L"north", Direction::north },
+	{ L"west", Direction::west },
+	{ L"south", Direction::south },
+	{ L"forward", Direction::forward },
+	{ L"backward", Direction::backward },
+	{ L"right", Direction::right },
+	{ L"left", Direction::left },
+	{ L"up",Direction::up },
+	{ L"down", Direction::down },
+});
 
 Direction::Value Direction::From(const Position& vector, int z)
 {
@@ -96,11 +109,11 @@ Direction::Value Direction::From(const Position& vector, int z)
 	else
 	{
 		if (x > y && x <= -y)
-			return Direction::North;
+			return Direction::South;
 		if (x >= y && x > -y)
 			return Direction::East;
 		if (x < y && x >= -y)
-			return Direction::South;
+			return Direction::North;
 		if (x <= y && x < -y)
 			return Direction::West;
 		assert(x == 0 && y == 0);
@@ -141,6 +154,11 @@ double Direction::Angle() const
 		return std::numeric_limits<float>::quiet_NaN();
 	else
 		return it->second.Angle();
+}
+
+Direction Direction::Opposite() const
+{
+	return Direction(Value(value^Negative));
 }
 
 
@@ -244,9 +262,9 @@ bool Direction::operator<(const Direction& other) const
 std::map<Direction::Value, Position> Direction::vector =
 {
     { Direction::Value::None, Position(0, 0) },
-    { Direction::Value::North, Position(0, -1) },
+    { Direction::Value::North, Position(0, 1) },
     { Direction::Value::East, Position(1, 0) },
-	{ Direction::Value::South, Position(0, 1) },
+	{ Direction::Value::South, Position(0, -1) },
 	{ Direction::Value::West, Position(-1, 0) },
 	{ Direction::Value::Up, Position(0, 0) },
 	{ Direction::Value::Down, Position(0, 0) },

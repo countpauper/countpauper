@@ -7,6 +7,7 @@ enum class Targeting
 {
     // Targeting
     Self,        // can target self, trajectory none
+	Face,		 // automatically turn towards target position
     Intercept,   // attempty to counter trajectory of attacker, from used limb
     Swing,       // Adjust -1 to +1 in height from used limb
     Center,      // center mass: gaussian height

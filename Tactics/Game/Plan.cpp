@@ -270,7 +270,7 @@ namespace Game
         state.Apply(game);
     }
 
-	Location HitLocation(const State& attacker, const Skill& skill, const State& victim, Trajectory trajectory)
+	Location HitLocation(const State& attacker, const Skill& skill, const State& victim, Direction trajectory)
 	{
 		assert(!attacker.direction.IsProne());  // prone not supported yet here
 		if (victim.direction.IsProne())
@@ -278,16 +278,15 @@ namespace Game
 			return Location();
 		}
 
-		//auto relativeDirection = victim.direction.Cross(attacker.direction);
-		//auto relativeTrajectory = trajectory.Rotate(trajectory, relativeDirection);
 
-		auto targeting = skill.target;
+		auto targeting = skill.targeting;
+		Direction absoluteTrajectory = attacker.direction.Turn(trajectory);
+		Direction hitPlane = victim.direction.Turn(absoluteTrajectory.Opposite());
 		if (targeting.count(Targeting::Swing))
 		{
-			Location origin = attacker.Origin(skill, trajectory);
-			// TODO: mirror for left arm/tail
-			Location facing(attacker.direction, victim.direction, 0);    // TODO: sensing body part or height difference
-			return Location(origin, facing);
+			Location origin = attacker.Origin(skill);
+			// TODO: mirror for left arm/tail of origin
+			return Location(Plane({ hitPlane }), origin.position, origin.size);    // TODO: sensing body part or height difference
 		}
 		else if (targeting.count(Targeting::Center))
 		{
@@ -297,23 +296,26 @@ namespace Game
 			auto hitHeight = static_cast<int>(std::round(middle + Engine::Random().Normal(1.0)));
 			if (hitHeight < 0 || hitHeight >= static_cast<int>(height))
 				return Location();
-			return Location(attacker.direction, victim.direction, hitHeight);
+			return Location(Plane({ hitPlane }), hitHeight);
 		}
 		else if (targeting.count(Targeting::Intercept))
 		{
-			Location origin = attacker.Origin(skill, trajectory);
+			Location origin = attacker.Origin(skill);
 			// TODO: mirror for left arm/tail
-			Location facing(attacker.direction, victim.direction, 0);    // TODO: sensing body part or height difference
-			return Location(origin, facing);
+			return Location(Plane({ hitPlane }), 0);
 		}
 		assert(false);  // unsupported for now
 		return Location();
 	}
 
-	std::pair<const Part*,Trajectory> Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
+	std::pair<const Part*,Direction> Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
 	{
 		State attacker(state.Get(actor));
 		State victim(state.Get(target));
+		if (skill.HasTargeting(Targeting::Face))
+		{
+			attacker.Face(victim.position);
+		}
 		for (auto trajectory : skill.trajectory)
 		{
 			auto location = HitLocation(attacker, skill, victim, trajectory);
@@ -323,7 +325,7 @@ namespace Game
 			if (part)
 				return std::make_pair(part, trajectory);
 		}
-		return std::make_pair(nullptr, Trajectory::None);
+		return std::make_pair(nullptr, Direction::none);
 	}
 
 	bool Plan::PlanAction(Node& parent, const Skill& skill, const Actor& actor, const Target& target)

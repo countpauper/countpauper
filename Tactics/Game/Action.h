@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 #include "Target.h"
+#include "Direction.h"
 #include "Body.h"
 
 namespace Game
@@ -27,7 +28,7 @@ namespace Game
 		virtual std::wstring Description() const  = 0;
 
 		static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
-        static std::map<std::wstring, std::function<Action*(const State& state, const Game& game)>> typemap;
+        static std::map<const std::wstring, std::function<Action*(const State& state, const Game& game)>> typemap;
         
 		const Identity& actor;
         const Skill& skill;
@@ -55,9 +56,9 @@ namespace Game
 	class DirectedAction : public AimedAction
 	{
 	public:
-		DirectedAction(const Skill& skill, const Identity& actor, const Identity& target, Trajectory trajectory, const Part& part);
+		DirectedAction(const Skill& skill, const Identity& actor, const Identity& target, Direction trajectory, const Part& part);
 	protected:
-		Trajectory trajectory;
+		Direction trajectory;
 	};
 
 }   // ::Game

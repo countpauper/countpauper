@@ -17,25 +17,38 @@ BOOST_AUTO_TEST_CASE(Null)
 
 BOOST_AUTO_TEST_CASE(ContainsPlane)
 {
-    Location a(Plane::All, 0);
-    BOOST_CHECK(a.Contains(Location(Plane::Front, 0)));
-    BOOST_CHECK(a.Contains(Location(Plane::Back, 0)));
-    BOOST_CHECK(a.Contains(Location(Plane::Left, 0)));
-    BOOST_CHECK(a.Contains(Location(Plane::Right, 0)));
-    BOOST_CHECK(a.Contains(Location(Plane::Top, 0)));
-    BOOST_CHECK(a.Contains(Location(Plane::Bottom, 0)));
+    Location a(Plane::all, 0);
+    BOOST_CHECK(a.Contains(Location(Plane::front, 0)));
+    BOOST_CHECK(a.Contains(Location(Plane::back, 0)));
+    BOOST_CHECK(a.Contains(Location(Plane::left, 0)));
+    BOOST_CHECK(a.Contains(Location(Plane::right, 0)));
+	BOOST_CHECK(a.Contains(Location(Plane::top, 0)));
+	BOOST_CHECK(a.Contains(Location(Plane::bottom, 0)));
+	BOOST_CHECK(a.Contains(Location(Plane::sagittal, 0)));
+	BOOST_CHECK(a.Contains(Location(Plane::coronal, 0)));
+	BOOST_CHECK(a.Contains(Location(Plane::transversal, 0)));
+	Location b(Plane::sagittal, 1);
+	BOOST_CHECK(b.Contains(Location(Plane::front, 1)));
+	BOOST_CHECK(b.Contains(Location(Plane::back, 1)));
+	BOOST_CHECK(b.Contains(Location(Plane::around, 1)));
+	BOOST_CHECK(!b.Contains(Location(Plane::left, 1)));
+	BOOST_CHECK(!b.Contains(Location(Plane::right, 1)));
+	BOOST_CHECK(!b.Contains(Location(Plane::bottom, 1)));
+	BOOST_CHECK(!b.Contains(Location(Plane::top, 1)));
+	BOOST_CHECK(!b.Contains(Location(Plane::coronal, 1)));
+	BOOST_CHECK(!b.Contains(Location(Plane::transversal, 1)));
 }
 
 
 BOOST_AUTO_TEST_CASE(ContainsHeight)
 {
-    Location a(Plane::Front, 1, 2);
-    BOOST_CHECK(!a.Contains(Location(Plane::Front, 0)));
-    BOOST_CHECK(a.Contains(Location(Plane::Front, 1)));
-    BOOST_CHECK(a.Contains(Location(Plane::Front, 2)));
-    BOOST_CHECK(!a.Contains(Location(Plane::Front, 3)));
-    BOOST_CHECK(a.Contains(Location(Plane::Front, 0, 2)));
-    BOOST_CHECK(!a.Contains(Location(Plane::Front, 3, 2)));
+    Location a(Plane::front, 1, 2);
+    BOOST_CHECK(!a.Contains(Location(Plane::front, 0)));
+    BOOST_CHECK(a.Contains(Location(Plane::front, 1)));
+    BOOST_CHECK(a.Contains(Location(Plane::front, 2)));
+    BOOST_CHECK(!a.Contains(Location(Plane::front, 3)));
+    BOOST_CHECK(a.Contains(Location(Plane::front, 0, 2)));
+    BOOST_CHECK(!a.Contains(Location(Plane::front, 3, 2)));
 }
 
 BOOST_AUTO_TEST_CASE(Serialize)
@@ -43,10 +56,10 @@ BOOST_AUTO_TEST_CASE(Serialize)
     std::wstringstream stream(L"Front[1] Around[2-3]");
     Location a, b;
     stream >> a >> b;
-    BOOST_CHECK_EQUAL(a.plane, Plane::Front);
+    BOOST_CHECK_EQUAL(a.plane, Plane::front);
     BOOST_CHECK_EQUAL(a.position, 1);
     BOOST_CHECK_EQUAL(a.size, 1);
-    BOOST_CHECK_EQUAL(b.plane, Plane::Around);
+    BOOST_CHECK_EQUAL(b.plane, Plane::around);
     BOOST_CHECK_EQUAL(b.position, 2);
     BOOST_CHECK_EQUAL(b.size, 2);
 }

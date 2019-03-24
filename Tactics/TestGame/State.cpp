@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(Mitigation)
     Data::Knight s;
     s.Wear(armor);
     BOOST_CHECK_EQUAL(s.Intelligence(), s.body.Intelligence().Value() - 4);
-    Location hitLocation(Plane::Front, 3, 1);
+    Location hitLocation(Plane::front, 3, 1);
 	auto& part = s.body.Anatomical()[L"Chest"];
 	BOOST_REQUIRE(part.IsVital());
     BOOST_CHECK(!s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 1)), L"Small wound"));
@@ -190,6 +190,18 @@ BOOST_AUTO_TEST_CASE(SkillPossibleRange)
 	v.position.y = s.position.y + 1;
 	BOOST_CHECK(!s.IsPossible(s.skill, v));
 }
+
+BOOST_AUTO_TEST_CASE(Face)
+{
+	Data::Knight s;
+	s.Face(s.position + Position(1, 0));
+	BOOST_CHECK_EQUAL(s.direction, Direction::east);
+	s.Face(s.position + Position(0, -1));
+	BOOST_CHECK_EQUAL(s.direction, Direction::south);
+	s.Face(s.position);
+	BOOST_CHECK_EQUAL(s.direction, Direction::south);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
 }

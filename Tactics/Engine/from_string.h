@@ -34,13 +34,13 @@ std::vector<T> from_strings(const std::wstring& str, wchar_t delimiter)
 }
 
 template<typename T>
-T from_string(const std::wstring& str, const std::map<std::wstring, T>& mapping)
+T from_string(const std::wstring& str, const std::map<const std::wstring, T>& mapping)
 {
     return mapping.at(str);
 }
 
 template <typename T>
-std::set<T> from_strings(const std::wstring& str, wchar_t delimiter, const std::map<std::wstring, T>& mapping)
+std::set<T> from_strings(const std::wstring& str, wchar_t delimiter, const std::map<const std::wstring, T>& mapping)
 {
     auto strs = Split(str, delimiter);
     std::set<T> o;

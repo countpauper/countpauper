@@ -58,6 +58,7 @@ namespace Game
     private:
         Bonus AgilityMoveBonus() const;
         Score GetMaxMovePoints() const;
+		void RenderName() const;
 
         friend std::wistream& operator>>(std::wistream& s, Actor& actor);
         bool active;

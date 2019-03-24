@@ -19,8 +19,8 @@ BOOST_AUTO_TEST_CASE(None)
 BOOST_AUTO_TEST_CASE(CardinalPositions)
 {
     BOOST_CHECK_EQUAL(Direction(Position(0, 0)), Direction::none);
-    BOOST_CHECK_EQUAL(Direction(Position(0, -1)), Direction::north);
-    BOOST_CHECK_EQUAL(Direction(Position(0, 1)), Direction::south);
+    BOOST_CHECK_EQUAL(Direction(Position(0, -1)), Direction::south);
+    BOOST_CHECK_EQUAL(Direction(Position(0, 1)), Direction::north);
     BOOST_CHECK_EQUAL(Direction(Position(-1, 0)), Direction::west);
     BOOST_CHECK_EQUAL(Direction(Position(1, 0)), Direction::east);
 }
@@ -29,9 +29,9 @@ BOOST_AUTO_TEST_CASE(CardinalPositions)
 BOOST_AUTO_TEST_CASE(DiagonalPositions)
 {
 	BOOST_CHECK_EQUAL(Direction(Position(-1, -1)), Direction::west);
-	BOOST_CHECK_EQUAL(Direction(Position(1, -1)), Direction::north);
+	BOOST_CHECK_EQUAL(Direction(Position(1, -1)), Direction::south);
 	BOOST_CHECK_EQUAL(Direction(Position(1, 1)), Direction::east);
-	BOOST_CHECK_EQUAL(Direction(Position(-1, 1)), Direction::south);
+	BOOST_CHECK_EQUAL(Direction(Position(-1, 1)), Direction::north);
 }
 
 BOOST_AUTO_TEST_CASE(VerticalPositions)
@@ -40,6 +40,22 @@ BOOST_AUTO_TEST_CASE(VerticalPositions)
 	BOOST_CHECK_EQUAL(Direction(0, 0,-1), Direction::down);
 	BOOST_CHECK_EQUAL(Direction(1, 1,-2), Direction::down);
 	BOOST_CHECK_EQUAL(Direction(1, 0, 1), Direction::east);
+}
+
+
+BOOST_AUTO_TEST_CASE(Opposite)
+{
+	BOOST_CHECK(Direction::east.IsOpposite(Direction::west));
+	BOOST_CHECK(Direction::south.IsOpposite(Direction::north));
+	BOOST_CHECK(Direction::up.IsOpposite(Direction::down));
+	BOOST_CHECK(!Direction::east.IsOpposite(Direction::north));
+	BOOST_CHECK(!Direction::up.IsOpposite(Direction::west));
+	BOOST_CHECK(!Direction::none.IsOpposite(Direction::west));
+	BOOST_CHECK(!Direction::east.IsOpposite(Direction::east));
+
+	BOOST_CHECK(Direction::east.IsOpposite(Direction::east.Opposite()));
+	BOOST_CHECK(Direction::south.IsOpposite(Direction::south.Opposite()));
+	BOOST_CHECK(Direction::down.IsOpposite(Direction::down.Opposite()));
 }
 
 BOOST_AUTO_TEST_CASE(Angles)

@@ -33,6 +33,7 @@ namespace Game
 		Score AttributeScore(Attribute attribute) const;
 		bool Grip() const;
 		bool IsVital() const;
+		Location GetLocation() const;
 	private:
 		friend std::wistream& operator>>(std::wistream& s, Part& part);
 		std::wstring name;

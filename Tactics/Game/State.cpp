@@ -265,6 +265,13 @@ namespace Game
 		mp -= spentMP;
 	}
 
+	void State::Face(const Position& target)
+	{
+		auto v = target - position;
+		if (v)
+			direction = Direction(v);
+	}
+
     Score State::Chance(const Skill& skill, const State& target) const
     {
         auto skillLevel = SkillLevel(skill, &target);
@@ -296,7 +303,7 @@ namespace Game
         return mitigation;
     }
 
-	Location State::Origin(const Skill& skill, Trajectory trajectory) const
+	Location State::Origin(const Skill& skill) const
     {
         auto wield = body.UsedWeapon(skill);
         auto limb = wield.first;
@@ -310,11 +317,11 @@ namespace Game
         if (limb)
         {
             auto height = limb->Height();
-            return Location(trajectory, height, 3);  // TODO: reach for height
+			return Location(limb->GetLocation().plane, height, 3);  // TODO: reach for height
         }
         else if (skill.attribute == Attribute::None)
         {
-            return Location(Plane::Front, body.Anatomical().Length()/2,1);
+            return Location(Plane::front, body.Anatomical().Length()/2,1);
         }
         else
         {

@@ -3,7 +3,7 @@
 #include <set>
 #include <vector>
 #include "Item.h"
-#include "Trajectory.h"
+#include "Direction.h"
 #include "Targeting.h"
 #include "Stats.h"
 
@@ -24,16 +24,17 @@ class Skill
 public:
 	Skill();
 	enum class Trigger { None = 0, Act, Combo, Prepare, Defend, Opportunity };
-	Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Trajectory trajectory, int damage);
+	Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Direction trajectory, int damage);
 	Skill(const std::wstring name, Attribute attribute, Targeting targeting);
 	Skill(const xmlNode* node);
 	virtual ~Skill();
 
-	TargetedAction* CreateAction(const Identity& actor, const Target& target, Trajectory trajectory, const Part* part) const;
+	TargetedAction* CreateAction(const Identity& actor, const Target& target, Direction trajectory, const Part* part) const;
 	Bonus GetChance(const Score& level) const;
 
 	bool Match(const std::wstring& category) const;
 	bool Require(const Weapon* item) const;
+	bool HasTargeting(Targeting check) const;
 	bool Combo(const Skill& previous) const;
 	bool Counter(const Skill& previous) const;
 	unsigned Id() const;
@@ -62,8 +63,8 @@ public:
 	using Prerequisite = std::pair<Skill*, unsigned>;
 	std::vector<Prerequisite> prerequisites;
 	std::vector<int> chance;
-	std::set<Trajectory> trajectory;
-	std::set<Targeting> target;
+	std::set<Direction> trajectory;
+	std::set<Targeting> targeting;
 
 	enum class Effect {
 		None,
@@ -84,14 +85,14 @@ public:
 	{
 	public:
 		virtual ~Act() = default;
-		virtual TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, Trajectory trajectory, const Part* part) const = 0;
+		virtual TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part* part) const = 0;
 	};
 	class Move : public Act
 	{
 	public:
 		Move() = default;
 		Move(const xmlNode* node);
-		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, Trajectory trajectory, const Part*) const override;
+		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part*) const override;
 	};
 	class Melee : public Act
 	{
@@ -101,21 +102,21 @@ public:
 		std::vector<unsigned> damage;
 		Attribute attribute;
 		Bonus DamageBonus(const Score& skillScore);
-		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, Trajectory trajectory, const Part* part) const override;
+		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part* part) const override;
 	};
 	class Affect : public Act
 	{
 	public:
 		Affect() = default;
 		Affect(const xmlNode* node);
-		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, Trajectory trajectory, const Part* part) const override;
+		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part* part) const override;
 	};
 	class React : public Act
 	{
 	public:
 		React() = default;
 		React(const xmlNode* node);
-		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, Trajectory trajectory, const Part*) const override;
+		TargetedAction* CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part*) const override;
 	};
 	std::shared_ptr<Act> type; // todo: unique ptr and copy/clone or move
 private:

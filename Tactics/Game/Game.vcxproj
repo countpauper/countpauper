@@ -88,6 +88,7 @@
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Plan.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="React.cpp" />
     <ClCompile Include="Score.cpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="Move.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Plan.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="React.h" />
     <ClInclude Include="Score.h" />
@@ -130,7 +132,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Target.h" />
     <ClInclude Include="Targeting.h" />
-    <ClInclude Include="Trajectory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

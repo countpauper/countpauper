@@ -27,20 +27,14 @@ namespace Game
         glTranslatef(float(position.x) + 0.5f, 0.0, float(position.y) + 0.5f);
 
         Game::teamColor[team].Render();
-        glPushMatrix();
-            glTranslatef(-0.5, 0, -1.5);
-
-            Engine::Font::default.Select();
-            Engine::glText(name);
-        glPopMatrix();
-
+		RenderName();
 		if (Prone())
 		{
 			glRotatef(90, 1, 0, 0);
 		}
 		else
 		{
-			glRotated(Engine::Rad2Deg(direction.Angle()), 0, 1, 0);
+			glRotated(Engine::Rad2Deg(-direction.Angle()), 0, 1, 0);
 		}
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
@@ -80,6 +74,15 @@ namespace Game
         if (plan)
             plan->Render();
     }
+
+	void Actor::RenderName() const
+	{
+		glPushMatrix();
+		glTranslatef(-0.5, 0, -1.5);
+		Engine::Font::default.Select();
+		Engine::glText(name);
+		glPopMatrix();
+	}
 
     unsigned Actor::GetMovePoints() const
     {

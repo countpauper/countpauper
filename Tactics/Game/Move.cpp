@@ -19,10 +19,16 @@ namespace Game
         State state(game.Get(actor));
         state.Spent(skill.mp);
         auto newPosition = destination.GetPosition();
-        auto direction = Direction(newPosition - state.position);
+		if (skill.HasTargeting(Targeting::Face))
+		{
+			state.Face(newPosition);
+		}
+		else
+		{
+			assert(false); // description assumes move in direction
+		}
         state.position = newPosition;
-        state.direction = direction;
-        game.Adjust(actor, state, skill.name + L" " + direction.AbsoluteDescription());
+        game.Adjust(actor, state, skill.name + L" " + state.direction.AbsoluteDescription());
     }
 
 
