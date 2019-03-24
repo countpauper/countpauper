@@ -109,7 +109,7 @@ std::vector<std::unique_ptr<Action>> Future::PossibleMoves() const
 					if (actorState.IsPossible(*skill, destination))
 					{
 						assert(skill->trajectory.empty());	// "aimed" move (eg jump, teleport() not yet implemented
-						result.emplace_back(skill->CreateAction(*Executor(), destination, nullptr));
+						result.emplace_back(skill->CreateAction(*Executor(), destination, Trajectory::None, nullptr));
 					}
 				}
 			}

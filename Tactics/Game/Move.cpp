@@ -22,7 +22,7 @@ namespace Game
         auto direction = Direction(newPosition - state.position);
         state.position = newPosition;
         state.direction = direction;
-        game.Adjust(actor, state, skill.name + L" " + direction.Description());
+        game.Adjust(actor, state, skill.name + L" " + direction.AbsoluteDescription());
     }
 
 

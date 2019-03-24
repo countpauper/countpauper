@@ -401,6 +401,11 @@ namespace Game
 		return result;
 	}
 
+	const Weapon* Body::Wielded(const Part& hand) const
+	{
+		return Find(hand).Held();
+	}
+
 	void Body::Hurt(const Part& part, const Damage& damage)
 	{
 		auto& ouchiebit = Find(part);   // quicker than looking up, functionally equivalent

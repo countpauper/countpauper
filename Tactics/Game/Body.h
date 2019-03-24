@@ -97,6 +97,7 @@ namespace Game
 		const Anatomy& Anatomical() const;
 		std::wstring Description() const;
 		std::map<const Part*, const Weapon*> Wielded() const;
+		const Weapon* Wielded(const Part& hand) const;
 
 		void Hurt(const Part& part, const Damage& damage);
 		bool IsHurt() const;

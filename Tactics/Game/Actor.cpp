@@ -14,6 +14,7 @@ namespace Game
     Actor::Actor() :
         active(false),
         mp(0),
+		direction(Direction::east),
         team(0)
     {
     }
@@ -26,10 +27,6 @@ namespace Game
         glTranslatef(float(position.x) + 0.5f, 0.0, float(position.y) + 0.5f);
 
         Game::teamColor[team].Render();
-        if (Prone())
-        {
-            glRotatef(90, 1, 0, 0);
-        }
         glPushMatrix();
             glTranslatef(-0.5, 0, -1.5);
 
@@ -37,7 +34,14 @@ namespace Game
             Engine::glText(name);
         glPopMatrix();
 
-        glRotated(Engine::Rad2Deg(direction.Angle()), 0, 1, 0);
+		if (Prone())
+		{
+			glRotatef(90, 1, 0, 0);
+		}
+		else
+		{
+			glRotated(Engine::Rad2Deg(direction.Angle()), 0, 1, 0);
+		}
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
         {
@@ -237,7 +241,7 @@ namespace Game
 
     bool Actor::Prone() const
     {
-        return direction.Prone();
+        return direction.IsProne();
     }
     
     bool Actor::CanAct() const
@@ -277,20 +281,20 @@ namespace Game
         return possible;
     }
 
-    std::vector<const Armor*> Actor::Worn() const
+    std::set<const Armor*> Actor::Worn() const
     {
-        std::vector<const Armor*> result(worn.size());
-        std::transform(worn.begin(), worn.end(), result.begin(), [](const decltype(worn)::value_type &item)
+		std::set<const Armor*> result;
+        std::transform(worn.begin(), worn.end(), std::inserter(result, result.begin()), [](const decltype(worn)::value_type &item)
         {
             return item.get();
         });
         return result;
     }
 
-    std::vector<const Weapon*> Actor::Carried() const
+    std::set<const Weapon*> Actor::Carried() const
     {
-        std::vector<const Weapon*> result(carried.size());
-        std::transform(carried.begin(), carried.end(), result.begin(), [](const decltype(carried)::value_type& item)
+        std::set<const Weapon*> result;
+        std::transform(carried.begin(), carried.end(), std::inserter(result, result.begin()), [](const decltype(carried)::value_type& item)
         {
             return item.get();
         });

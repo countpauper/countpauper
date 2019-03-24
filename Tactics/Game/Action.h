@@ -43,12 +43,21 @@ namespace Game
 		Position GetPosition() const override;
 		std::wstring Description() const override;	// override Target
 	};
+
 	class AimedAction: public TargetedAction
 	{
 	public:
 		AimedAction(const Skill& skill, const Identity& actor, const Identity& target, const Part& part);
 	protected:
 		const Part& part;
+	};
+
+	class DirectedAction : public AimedAction
+	{
+	public:
+		DirectedAction(const Skill& skill, const Identity& actor, const Identity& target, Trajectory trajectory, const Part& part);
+	protected:
+		Trajectory trajectory;
 	};
 
 }   // ::Game

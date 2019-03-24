@@ -32,9 +32,9 @@ const double maxError = 0.001;
 BOOST_AUTO_TEST_CASE(Degrees)
 {
     BOOST_CHECK_EQUAL(Engine::Rad2Deg(0), 0);
-    BOOST_CHECK_CLOSE(Engine::Rad2Deg(Engine::PI), 180, maxError);
-    BOOST_CHECK_CLOSE(Engine::Rad2Deg(-Engine::PI), -180, maxError);
-    BOOST_CHECK_CLOSE(Engine::Rad2Deg(2 * Engine::PI), 360, maxError);
+	BOOST_CHECK_CLOSE(Engine::Rad2Deg(Engine::PI), 180, maxError);
+	BOOST_CHECK_CLOSE(Engine::Rad2Deg(-Engine::PI), -180, maxError);
+	BOOST_CHECK_CLOSE(Engine::Rad2Deg(2 * Engine::PI), 360, maxError);
 }
 
 

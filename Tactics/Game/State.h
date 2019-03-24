@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "Position.h"
 #include "Direction.h"
 #include "Damage.h"
@@ -19,16 +20,16 @@ class State : public Target
 public:
 	State();
     State(const Actor& actor);
-    State(const Anatomy& anatomy, Position pos=Position(0,0), Direction dir=Direction::North, unsigned mp=10,
-        std::vector<const Armor*> armor = {}, std::vector<const Weapon*> weapons = {}, Actor::Knowledge knowledge = {});
+    State(const Anatomy& anatomy, Position pos=Position(0,0), Direction dir=Direction::east, unsigned mp=10,
+        std::set<const Armor*> armor = {}, std::set<const Weapon*> weapons = {}, Actor::Knowledge knowledge = {});
 
     Position position;
     Direction direction;
     unsigned mp;
     unsigned loyalty;
     Body body;
-    std::vector<const Armor*> worn;
-    std::vector<const Weapon*> carried;
+    std::set<const Armor*> worn;
+    std::set<const Weapon*> carried;
     Actor::Knowledge knowledge;
 
     bool IsPossible(const Skill& skill, const Target& target) const;
@@ -50,6 +51,10 @@ public:
     Score SkillLevel(const Skill& skill, const State* victim = nullptr) const;
     Score Range(const Skill& skill) const;
     void Engage(const Skill& skill);
+
+	void Wear(const Armor& armor);
+	void Wield(const Weapon& weapon);
+
 	Position GetPosition() const override;
 	std::wstring Description() const override;
 private:

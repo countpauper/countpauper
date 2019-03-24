@@ -56,13 +56,25 @@ namespace Data
 
     }
 
+	PlotArmor::PlotArmor() :
+		Armor(type, material, mod),
+		type(Slot::Full, Type::Armor::Category::Metal, 
+			::Game::Damage(Wound::Type::Sharp, Score(L"Invincible", 1000)) +
+			::Game::Damage(Wound::Type::Blunt, Score(L"Invincible", 1000)) +
+			::Game::Damage(Wound::Type::Burn, Score(L"Invincible", 1000)) +
+			::Game::Damage(Wound::Type::Disease, Score(L"Invincible", 1000)) +
+			::Game::Damage(Wound::Type::Spirit, Score(L"Invincible", 1000))
+		)
+	{
 
-    Melee::Melee() : Skill(L"Melee", Skill::Trigger::Act, Type::Weapon::Style::Blade, Trajectory::Straight, 1)
+	}
+
+    Melee::Melee() : Skill(L"Melee", Skill::Trigger::Act, Type::Weapon::Style::Blade, Trajectory::Forward, 1)
     {
         categories.insert(L"1");
     }
 
-    Combo::Combo() : Skill(L"Combo", Skill::Trigger::Combo, Type::Weapon::Style::Blade, Trajectory::Straight, 1)
+    Combo::Combo() : Skill(L"Combo", Skill::Trigger::Combo, Type::Weapon::Style::Blade, Trajectory::Forward, 1)
     {
         follows.insert(L"1");
     }
@@ -70,6 +82,7 @@ namespace Data
 	Buff::Buff() : Skill(L"Buff", Attribute::Intelligence, Targeting::Self)
 	{
 	}
+
 
 
 	Knight::Knight() :

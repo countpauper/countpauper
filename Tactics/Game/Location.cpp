@@ -95,13 +95,13 @@ Plane ToPlane(Trajectory trajectory)
 {
     switch (trajectory)
     {
-    case Trajectory::Straight:
+	case Trajectory::Forward:
         return Plane::Front;
-    case Trajectory::Reverse:
+	case Trajectory::Backward:
         return Plane::Back;
-    case Trajectory::Forehand:
+    case Trajectory::Right:
         return Plane::Right;
-    case Trajectory::Backhand:
+    case Trajectory::Left:
         return Plane::Left;
     case Trajectory::Down:
         return Plane::Top;
@@ -200,11 +200,11 @@ Plane Facing(Direction direction, Direction facing)
 {
     if (facing == direction)
         return Plane::Back;
-    if (facing.Opposite(direction))
+    if (facing.IsOpposite(direction))
         return Plane::Front;
-    if (facing.Clockwise(direction))
+    if (facing.IsClockwise(direction))
         return Plane::Right;
-    else if (facing.CounterClockwise(direction))
+    else if (facing.IsCounterClockwise(direction))
         return Plane::Left;
     else
         return Plane::None;

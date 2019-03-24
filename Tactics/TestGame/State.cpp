@@ -82,9 +82,11 @@ BOOST_AUTO_TEST_CASE(SingleHand)
     Data::Blade weapon;
     Data::Shield shield;
     Data::Melee skill;
-    State s(a, Position(), Direction(), 10, {}, { &weapon, &shield }, { &skill });
-	BOOST_REQUIRE_EQUAL(s.body.Wielded()[&a[L"RArm"]], &weapon);
-	BOOST_REQUIRE_EQUAL(s.body.Wielded()[&a[L"LArm"]], &shield);
+    State s(a, Position(), Direction(), 10, {}, { }, { &skill });
+	s.Wield(weapon);
+	s.Wield(shield);
+	BOOST_REQUIRE_EQUAL(s.body.Wielded(a[L"RArm"]), &weapon);
+	BOOST_REQUIRE_EQUAL(s.body.Wielded(a[L"LArm"]), &shield);
 
 	auto rightArmStrength = a[L"RArm"].AttributeScore(Attribute::Strength);
 	Data::Simple vb;
@@ -126,7 +128,7 @@ BOOST_AUTO_TEST_CASE(Mitigation)
     Data::Harnass armor;
     armor.mod.load.enchantment = 70;
     Data::Knight s;
-    s.worn.push_back(&armor);
+    s.Wear(armor);
     BOOST_CHECK_EQUAL(s.Intelligence(), s.body.Intelligence().Value() - 4);
     Location hitLocation(Plane::Front, 3, 1);
 	auto& part = s.body.Anatomical()[L"Chest"];
@@ -139,7 +141,7 @@ BOOST_AUTO_TEST_CASE(Mitigation)
     BOOST_CHECK(s.body.IsHurt());
 	BOOST_CHECK(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 25)), L"Deadly wound"));
     BOOST_CHECK(s.body.Dead());
-    BOOST_CHECK(s.direction.Prone());
+    BOOST_CHECK(s.direction.IsProne());
 }
 
 BOOST_AUTO_TEST_CASE(Range)

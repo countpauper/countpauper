@@ -6,7 +6,7 @@
     <move/>
 Walk over most types of terrains at a moderate pace
   </skill>
-  <skill name="Scrap" weapon="Any" mp="2" trigger="Act" range="1" attribute="Str" trajectory="straight" target="swing" category="melee">
+  <skill name="Scrap" weapon="Any" mp="2" trigger="Act" range="1" attribute="Str" trajectory="forward" target="swing" category="melee">
     <melee damage="2"/>
 Unskilled flailing, clawing for the otherwise defenseless, with whatever you're holding or bare handed
   </skill>
@@ -15,7 +15,7 @@ Unskilled flailing, clawing for the otherwise defenseless, with whatever you're 
 Diagonal opening strike with a bladed weapon. 
 It tests the reaction, creating an opening for a follow up strike.
   </skill>
-  <skill name="Slash" weapon="Blade" mp="1" trigger="Combo" attribute="Str" trajectory="forehand" target="swing" category="melee|2nd" follows="1st">
+  <skill name="Slash" weapon="Blade" mp="1" trigger="Combo" attribute="Str" trajectory="left" target="swing" category="melee|2nd" follows="1st">
     <melee damage="0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6"/>
 Horizontal follow up strike
   </skill>
@@ -25,7 +25,7 @@ Horizontal follow up strike
 Vertical strike through the center line
   </skill>
   <!-- Advandced wand attacks: seeking (missile), double burst-->
-  <skill name="Zap" weapon="Wand" mp="2" trigger="Act" attribute="Int" range="12" trajectory="straight" target="center" category="ranged" chance="50,52,55,57,60,62,65,67,70,72,75,77,80,82,85,87,90,92,95,97,100">
+  <skill name="Zap" weapon="Wand" mp="2" trigger="Act" attribute="Int" range="12" trajectory="forward" target="center" category="ranged" chance="50,52,55,57,60,62,65,67,70,72,75,77,80,82,85,87,90,92,95,97,100">
     <melee damage="6" attribute="none"/>
 Wand attack aimed at the center of mass. Fixed damage, aim improves with intelligence. 
   </skill>
@@ -34,15 +34,15 @@ Wand attack aimed at the center of mass. Fixed damage, aim improves with intelli
 Quick step or turn to avoid a strike.
   </skill>
   <!-- Block range should be to the hit location of the action, when it's no longer affect but counter -->
-  <skill name="Block" mp="2" range="10" weapon="Shield" trigger="Defend" attribute="" trajectory="straight|down|backhand" target="intercept" category="shield" follows="melee" effect="miss" chance="40,42,45,47,50,52,55,57,60,62,65">
+  <skill name="Block" mp="2" range="10" weapon="Shield" trigger="Defend" attribute="" trajectory="forward|down|left" target="intercept" category="shield" follows="melee" effect="miss" chance="40,42,45,47,50,52,55,57,60,62,65">
     <react />
 Stop an attack on your shield side, front or above. 
   </skill>
-  <skill name="Cover" mp="2" weapon="Shield" trigger="Defend" attribute="" trajectory="straight|down|backhand" target="intercept" category="shield" follows="ranged" effect="miss" chance="35,40,42,45,47,50,52,55,57,60">
+  <skill name="Cover" mp="2" weapon="Shield" trigger="Defend" attribute="" trajectory="forward|down|left" target="intercept" category="shield" follows="ranged" effect="miss" chance="35,40,42,45,47,50,52,55,57,60">
     <react />
 Intercept a projectile with your shield.
   </skill>
-  <skill name="Parry" mp="2" weapon="Melee" trigger="Defend" attribute="Str" resist="Str" offset="5" trajectory="straight|down|forehand" target="intercept" category="parry" follows="melee" effect="miss" chance="20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,55,57,60">
+  <skill name="Parry" mp="2" weapon="Melee" trigger="Defend" attribute="Str" resist="Str" offset="5" trajectory="forward|down|right" target="intercept" category="parry" follows="melee" effect="miss" chance="20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,55,57,60">
     <react />
 Stop an attack with your weapon, on your weapon side, front or above. Requires your hand to be free. 
 Your strength is matched with the incoming strike to avoid impact. Some weapons are more suited for this than others.

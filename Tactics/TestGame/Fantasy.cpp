@@ -18,6 +18,7 @@ void Fantasy::Adjust(const Identity& id, const State& state, const std::wstring&
 {
 	assert(std::find(imagination.begin(), imagination.end(), &id) != imagination.end());
 	const_cast<::Game::Identity&>(id).Apply(state);
+	const_cast<Figment&>(dynamic_cast<const Figment&>(id)).Event(description);
 }
 
 void Fantasy::Apply(IGame& root) const

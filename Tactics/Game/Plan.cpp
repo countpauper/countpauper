@@ -272,11 +272,15 @@ namespace Game
 
 	Location HitLocation(const State& attacker, const Skill& skill, const State& victim, Trajectory trajectory)
 	{
-		assert(!attacker.direction.Prone());  // prone not supported yet here
-		if (victim.direction.Prone())
+		assert(!attacker.direction.IsProne());  // prone not supported yet here
+		if (victim.direction.IsProne())
 		{
 			return Location();
 		}
+
+		//auto relativeDirection = victim.direction.Cross(attacker.direction);
+		//auto relativeTrajectory = trajectory.Rotate(trajectory, relativeDirection);
+
 		auto targeting = skill.target;
 		if (targeting.count(Targeting::Swing))
 		{
@@ -306,7 +310,7 @@ namespace Game
 		return Location();
 	}
 
-	const Part* Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
+	std::pair<const Part*,Trajectory> Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
 	{
 		State attacker(state.Get(actor));
 		State victim(state.Get(target));
@@ -317,9 +321,9 @@ namespace Game
 				continue;
 			auto part = victim.body.Anatomical().At(location);
 			if (part)
-				return part;
+				return std::make_pair(part, trajectory);
 		}
-		return nullptr;
+		return std::make_pair(nullptr, Trajectory::None);
 	}
 
 	bool Plan::PlanAction(Node& parent, const Skill& skill, const Actor& actor, const Target& target)
@@ -328,11 +332,11 @@ namespace Game
 		if (!state.IsPossible(skill, target))
 			return false;
 
-		auto part = Aim(*parent.state, actor, dynamic_cast<const Actor&>(target), skill);
-		if (!part && !skill.trajectory.empty())
+		auto aim = Aim(*parent.state, actor, dynamic_cast<const Actor&>(target), skill);
+		if (!aim.first && !skill.trajectory.empty())
 			return false;
 
-		std::unique_ptr<TargetedAction> action(skill.CreateAction(actor, target, part));
+		std::unique_ptr<TargetedAction> action(skill.CreateAction(actor, target, aim.second, aim.first));
 		if (!action)
 			return false;
 
@@ -368,10 +372,10 @@ namespace Game
 		if (!state.IsPossible(skill, offense))
 			return false;
 
-		auto part = Aim(*parent.state, defender, offense.actor, skill);
-		if (!part && !skill.trajectory.empty())
+		auto aim = Aim(*parent.state, defender, offense.actor, skill);
+		if (!aim.first && !skill.trajectory.empty())
 			return false;
-		std::unique_ptr<TargetedAction> reaction(skill.CreateAction(defender, offense, part));
+		std::unique_ptr<TargetedAction> reaction(skill.CreateAction(defender, offense, aim.second, aim.first));
 		auto node = std::make_unique<Node>(parent, std::move(reaction));
 		parent.children.emplace_back(std::move(node));
 		PlanCombo(*node, skill, defender, dynamic_cast<const Target&>(offense.actor));

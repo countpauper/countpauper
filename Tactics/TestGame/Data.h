@@ -49,6 +49,14 @@ struct Harnass : Armor
     Type::Armor::Modifier mod;
 };
 
+struct PlotArmor : Armor
+{
+	PlotArmor();
+	Type::Armor type;
+	Type::Armor::Material material;
+	Type::Armor::Modifier mod;
+};
+
 struct Melee : Skill
 {
     Melee();

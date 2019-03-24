@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 #include "Engine/Random.h"
 #include "Object.h"
 #include "Body.h"
@@ -50,8 +51,8 @@ namespace Game
         const Knowledge& GetSkills() const;
         int MovePoints() const;
 
-        std::vector<const Armor*> Worn() const;
-        std::vector<const Weapon*> Carried() const;
+        std::set<const Armor*> Worn() const;
+        std::set<const Weapon*> Carried() const;
         std::map<const Part*, const Weapon*> Wielded() const;
         std::unique_ptr<Plan> plan;
     private:

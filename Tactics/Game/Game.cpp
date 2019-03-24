@@ -427,7 +427,7 @@ namespace Game
             {
                 for (int y = from.y; y < to.y; ++y)
                 {
-                    if (!CanGo(Position(std::lroundf(x), y), Direction(Direction::Value::South)))
+                    if (!CanGo(Position(std::lroundf(x), y), Direction(0,1)))
                         return true;
                     x += dx;
                 }
@@ -436,7 +436,7 @@ namespace Game
             {
                 for (int y = from.y; y < to.y; --y)
                 {
-                    if (!CanGo(Position(std::lroundf(x), y), Direction(Direction::Value::North)))
+                    if (!CanGo(Position(std::lroundf(x), y), Direction(0,-1)))
                         return true;
                     x += dx;
                 }
@@ -450,7 +450,7 @@ namespace Game
             {
                 for (int x = from.x; x < to.x; ++x)
                 {
-                    if (!CanGo(Position(x, std::lroundf(y)), Direction(Direction::Value::East)))
+                    if (!CanGo(Position(x, std::lroundf(y)), Direction(1,0)))
                         return true;
                     y += dy;
                 }
@@ -459,7 +459,7 @@ namespace Game
             {
                 for (int x = from.x; x < to.x; --x)
                 {
-                    if (!CanGo(Position(x, std::lroundf(y)), Direction(Direction::Value::West)))
+                    if (!CanGo(Position(x, std::lroundf(y)), Direction(-1,0)))
                         return true;
                     y += dy;
                 }

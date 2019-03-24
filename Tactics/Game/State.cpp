@@ -10,7 +10,7 @@ namespace Game
 {
 	State::State() :
 		mp(0),
-		direction(Direction::None),
+		direction(),
 		loyalty(0)
 	{
 	}
@@ -38,7 +38,7 @@ namespace Game
 	}
 
     State::State(const Anatomy& anatomy, Position pos, const Direction dir, unsigned mp,
-        std::vector<const Armor*> armor, std::vector<const Weapon*> weapons, Actor::Knowledge skills) :
+        std::set<const Armor*> armor, std::set<const Weapon*> weapons, Actor::Knowledge skills) :
 		position(pos),
         direction(dir),
         mp(mp),
@@ -412,16 +412,30 @@ namespace Game
         body.Engage(skill);
     }
 
+	void State::Wear(const Armor& armor)
+	{
+		worn.insert(&armor);
+	}
+
+	void State::Wield(const Weapon& weapon)
+	{
+		carried.insert(&weapon);
+		auto grip = body.Anatomical().Grip();
+		for(auto hand : grip)
+		{ 
+			if (body.Wielded(*hand) == nullptr)
+			{
+				body.Grab(*hand, weapon);
+				return;
+			}
+		}
+	}
 
 	void State::AutoArm()
 	{
-		auto grip = body.Anatomical().Grip();
-		auto gripIt = grip.begin();
 		for (auto item : carried)
 		{
-			if (gripIt == grip.end())
-				break;
-			body.Grab(**gripIt++, *item);
+			Wield(*item);
 		}
 	}
 } // ::Game

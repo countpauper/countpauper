@@ -71,17 +71,17 @@ BOOST_AUTO_TEST_CASE(Weapon)
     Data::Human a;
 	Body b(a);
     auto& arm = a[L"RArm"];
-    BOOST_CHECK(b.Wielded()[&arm]==nullptr);
+    BOOST_CHECK(b.Wielded(arm)==nullptr);
     Data::Blade weapon;
     b.Grab(arm, weapon);
-    BOOST_CHECK(b.Wielded()[&arm] == &weapon);
+    BOOST_CHECK(b.Wielded(arm) == &weapon);
     b.Drop(weapon);
-    BOOST_CHECK(b.Wielded()[&arm]==nullptr);
+    BOOST_CHECK(b.Wielded(arm)==nullptr);
     BOOST_CHECK_THROW(b.Grab(a[L"Legs"], weapon), std::exception);
     auto& otherArm = a[L"LArm"];
     b.Grab(otherArm, weapon);
     b.Grab(arm, weapon);
-    BOOST_CHECK(b.Wielded()[&arm]==&weapon);
+    BOOST_CHECK(b.Wielded(arm)==&weapon);
     // TODO: how, no ptr back from arm, weapon doesn't keep. pbly should for transfering from another body 
     // Enable this for disarm/stealing 
     // BOOST_CHECK(otherArm.Held()==nullptr);

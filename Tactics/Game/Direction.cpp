@@ -4,115 +4,225 @@
 
 namespace Game
 {
+
+
+
+HalfPiAngle::HalfPiAngle() = default;
+
+HalfPiAngle::HalfPiAngle(int value) : value(value)
+{
+}
+
+bool HalfPiAngle::operator==(const HalfPiAngle& other) const
+{
+	return value == other.value;
+}
+
+HalfPiAngle& HalfPiAngle::operator+=(const HalfPiAngle& other)
+{
+	value += other.value;
+	return *this;
+}
+
+HalfPiAngle operator+(const HalfPiAngle& a, const HalfPiAngle& b)
+{
+	HalfPiAngle o(a);
+	o += b;
+	return o;
+}
+
+HalfPiAngle& HalfPiAngle::operator-=(const HalfPiAngle& other)
+{
+	value -= other.value;
+	return *this;
+}
+HalfPiAngle operator-(const HalfPiAngle& a, const HalfPiAngle& b)
+{
+	HalfPiAngle o(a);
+	o -= b;
+	return o;
+}
+
+
+double HalfPiAngle::Angle() const
+{
+	return static_cast<double>(value) * 0.5 * Engine::PI;
+}
+
+HalfPiAngle& HalfPiAngle::Normalize()
+{
+	value %= 4;
+	if (value > 2)
+		value -= 4;
+	if (value < -1)
+		value += 4;
+	return *this;
+}
+
 Direction::Direction() :
-    value(Direction::Value::North)
+	value(None)
 {
-
 }
+
 Direction::Direction(Direction::Value value) :
-    value(value)
+	value(value)
 {
 }
 
-Direction::Value Direction::From(const Position& vector)
+const Direction Direction::none;
+const Direction Direction::east(Direction::East);
+const Direction Direction::north(Direction::North);
+const Direction Direction::west(Direction::West);
+const Direction Direction::south(Direction::South);
+const Direction Direction::up(Direction::Up);
+const Direction Direction::down(Direction::Down);
+const Direction& Direction::forward = east;
+const Direction& Direction::left = north;
+const Direction& Direction::backward = west;
+const Direction& Direction::right = south;
+
+Direction::Value Direction::From(const Position& vector, int z)
 {
-    auto x = vector.x;
-    auto y = vector.y;
-    if (x>y && x<=-y)
-        return Direction::North;
-    if (x >= y && x > -y)
-        return Direction::East;
-    if (x<y && x>= -y)
-        return Direction::South;
-    if (x <= y && x < -y)
-        return Direction::West;
-    assert(x==0 && y==0);
-    return Direction::None;
+	auto x = vector.x;
+	auto y = vector.y;
+	if ((z > std::abs(x)) && (z > std::abs(y)))
+	{
+		return Up;
+	}
+	else if ((z < -std::abs(x)) && (z < -std::abs(y)))
+	{
+		return Down;
+	}
+	else
+	{
+		if (x > y && x <= -y)
+			return Direction::North;
+		if (x >= y && x > -y)
+			return Direction::East;
+		if (x < y && x >= -y)
+			return Direction::South;
+		if (x <= y && x < -y)
+			return Direction::West;
+		assert(x == 0 && y == 0);
+		return Direction::None;
+	}
 }
+
+Direction::Value Direction::From(HalfPiAngle angle)
+{
+	angle.Normalize();
+	auto it = std::find_if(half_pi_angle.begin(), half_pi_angle.end(), [angle](const decltype(half_pi_angle)::value_type& kv)
+	{
+		return kv.second == angle;
+	});
+	return it->first;
+}
+
 
 Direction::Direction(const Position& desiredVector) :
-    value(From(desiredVector))
+	value(From(desiredVector))
 {
 }
     
+Direction::Direction(int x, int y, int z) :
+	value(From(Position(x,y),z))
+{
+}
+
 Position Direction::Vector() const
 {
-    return vector.at(HorizontalDirection());
+	return Position(vector[value].x, vector[value].y);
 }
+
 double Direction::Angle() const
 {
-    return angle.at(HorizontalDirection());
+	auto it = half_pi_angle.find(value);
+	if (it == half_pi_angle.end())
+		return std::numeric_limits<float>::quiet_NaN();
+	else
+		return it->second.Angle();
 }
 
-Direction::Value Direction::HorizontalDirection() const
+
+bool Direction::IsOpposite(const Direction& other) const
 {
-    return Value(unsigned(value)&Horizontal);
+	if ((other.value & Plane) != (value & Plane))
+		return false;
+	return (other.value & Negative) != (value & Negative);
 }
 
-bool Direction::Opposite(const Direction& other) const
+bool Direction::IsClockwise(const Direction& other) const
 {
-    switch (HorizontalDirection())
-    {
-    case North:
-        return other.HorizontalDirection() == South;
-    case East:
-        return other.HorizontalDirection() == West;
-    case South:
-        return other.HorizontalDirection() == North;
-    case West:
-        return other.HorizontalDirection() == East;
-    default:
-        return false;
-    }
-}
-bool Direction::Clockwise(const Direction& other) const
-{
-    switch (HorizontalDirection())
-    {
-    case North:
-        return other.HorizontalDirection() == West;
-    case East:
-        return other.HorizontalDirection() == North;
-    case South:
-        return other.HorizontalDirection() == East;
-    case West:
-        return other.HorizontalDirection() == South;
-    default:
-        return false;
-    }
+	if ((!IsHorizontal()) || (!other.IsHorizontal()))
+		return false;
+	return HalfPiDelta(other).Normalize() == HalfPiAngle(-1);
 }
 
-bool Direction::CounterClockwise(const Direction& other) const
+bool Direction::IsCounterClockwise(const Direction& other) const
 {
-    switch (HorizontalDirection())
-    {
-    case North:
-        return other.HorizontalDirection() == East;
-    case East:
-        return other.HorizontalDirection() == South;
-    case South:
-        return other.HorizontalDirection() == West;
-    case West:
-        return other.HorizontalDirection() == North;
-    default:
-        return false;
-    }
+	if ((!IsHorizontal()) || (!other.IsHorizontal()))
+		return false;
+	return HalfPiDelta(other).Normalize() == HalfPiAngle(1);
 }
 
-bool Direction::Prone() const
+HalfPiAngle Direction::HalfPiDelta(const Direction& other) const
 {
-    return (value & Down) || (value&Up);
+	auto it = half_pi_angle.find(value);
+	if (it == half_pi_angle.end())
+		throw std::invalid_argument("Can't turn from vertical or unspecified direction");
+	auto oit = half_pi_angle.find(other.value);
+	if (oit == half_pi_angle.end())
+		throw std::invalid_argument("Can't turn to vertical or unspeficied direction");
+	return (it->second - oit->second);
+}
+
+bool Direction::IsProne() const
+{
+	return IsVertical();
+}
+
+bool Direction::IsVertical() const
+{
+	return 	(value&Vertical);
+}
+
+bool Direction::IsHorizontal() const
+{
+	return (value&Horizontal);
 }
 
 void Direction::Fall()
 {
-    value = Value(unsigned(value) | Down);
+    value = Down;
 }
 
 
+Direction Direction::Turn(const Direction& turn) const
+{
+	if (turn.IsVertical())
+	{
+		return turn;
+	}
+	else if (IsVertical())
+	{
+		return *this;
+	}
+	else if (IsNone())
+	{
+		return turn;
+	}
+	else if (turn.IsNone())
+	{
+		return *this;
+	}
+	else
+	{	// both this and turn are horizontal
+		auto angle = (half_pi_angle.at(value) + half_pi_angle.at(turn.value)).Normalize();
+		return Direction(From(angle));
+	}
+}
 
-
-std::wstring Direction::Description() const
+std::wstring Direction::AbsoluteDescription() const
 {
     return description.at(value);
 }
@@ -136,16 +246,18 @@ std::map<Direction::Value, Position> Direction::vector =
     { Direction::Value::None, Position(0, 0) },
     { Direction::Value::North, Position(0, -1) },
     { Direction::Value::East, Position(1, 0) },
-    { Direction::Value::South, Position(0, 1) },
-    { Direction::Value::West, Position(-1, 0) },
+	{ Direction::Value::South, Position(0, 1) },
+	{ Direction::Value::West, Position(-1, 0) },
+	{ Direction::Value::Up, Position(0, 0) },
+	{ Direction::Value::Down, Position(0, 0) },
 };
-std::map<Direction::Value, float> Direction::angle =
+
+std::map<Direction::Value, HalfPiAngle> Direction::half_pi_angle=
 {
-    { Direction::Value::None, std::numeric_limits<float>::quiet_NaN() },
-    { Direction::Value::North, float(Engine::PI) * 0.5f },
-    { Direction::Value::East, 0.0f },
-    { Direction::Value::South, float(Engine::PI) * -.5f },
-    { Direction::Value::West, float(Engine::PI) },
+	{ Direction::Value::North, HalfPiAngle(1) },
+	{ Direction::Value::East, HalfPiAngle(0) },
+	{ Direction::Value::South, HalfPiAngle(-1) },
+	{ Direction::Value::West, HalfPiAngle(2) }
 };
 
 std::map<Direction::Value, std::wstring> Direction::description =
@@ -153,10 +265,10 @@ std::map<Direction::Value, std::wstring> Direction::description =
     { Direction::Value::None, L"" },
     { Direction::Value::North, L"North" },
     { Direction::Value::East, L"East" },
-    { Direction::Value::South, L"South" } ,
-    { Direction::Value::West, L"West" },
+	{ Direction::Value::South, L"South" } ,
+	{ Direction::Value::West, L"West" },
+	{ Direction::Value::Up, L"Up" } ,
+	{ Direction::Value::Down, L"Down" },
 };
-
-
 
 }    // ::Game

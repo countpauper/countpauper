@@ -6,50 +6,96 @@
 namespace Game
 {
 
+class HalfPiAngle
+{
+public:
+	HalfPiAngle();
+	explicit HalfPiAngle(int value);
+	bool operator==(const HalfPiAngle& other) const;
+	HalfPiAngle& operator+=(const HalfPiAngle& other);
+	HalfPiAngle& operator-=(const HalfPiAngle& other);
+	double Angle() const;
+	HalfPiAngle& Normalize();
+private:
+	int value;
+};
+HalfPiAngle operator+(const HalfPiAngle& a, const HalfPiAngle& b);
+HalfPiAngle operator-(const HalfPiAngle& a, const HalfPiAngle& b);
+
+
 // TODO: rename orientation
+
+
+// Direction represents an integer unit vector, so it's either a cardinal wind direction, up or down 
 class Direction
 {
 public:
-    enum Value
-    {
-        None = 0,
-        North = 1,
-        East = 2,
-        South = 4,
-        West = 8,
-        Horizontal = North | East | South | West,
-        Down = 16,
-        Up = 32,
-        Vertical = Down|Up,
-    };
-    Direction();
-    Direction(Value direction);
-    explicit Direction(const Position& vector);
+	Direction();
+	Direction(int x, int y, int z=0);
+	explicit Direction(const Position& vector);
     Position Vector() const;
     double Angle() const;
-    bool Opposite(const Direction& other) const;
-    bool Clockwise(const Direction& other) const;
-    bool CounterClockwise(const Direction& other) const;
-    bool Prone() const;
-    void Fall();
-
-    std::wstring Description() const;
+	Direction Mirror(const Direction& other) const;
+    bool IsOpposite(const Direction& other) const;
+    bool IsClockwise(const Direction& other) const;
+    bool IsCounterClockwise(const Direction& other) const;
+	bool IsProne() const;
+	bool IsHorizontal() const;
+	bool IsVertical() const;
+	void Fall();
+	Direction Turn(const Direction& turn) const;
+    std::wstring AbsoluteDescription() const;
 
     bool IsNone() const;    // operator bool leads to implicit conversion confusion with operator==
     bool operator==(const Direction& other) const;
     bool operator<(const Direction& other) const;
+
+	static const Direction none;
+	static const Direction east;
+	static const Direction& forward;
+	static const Direction west;
+	static const Direction& backward;
+	static const Direction north;
+	static const Direction& left;
+	static const Direction south;
+	static const Direction& right;
+	static const Direction up;
+	static const Direction down;
 protected:
-    Value value;
-    Value HorizontalDirection() const;
-    static Value From(const Position& vector);
-    static std::map<Value, Position> vector;
-    static std::map<Value, float> angle;
-    static std::map<Value, std::wstring> description;
+	enum Value
+	{
+		None = 0,
+		Negative = 1,
+		EastWest = 2,
+		East = EastWest,
+		Forward = East,
+		West = EastWest | Negative,
+		Backward = West,
+		NorthSouth = 4,
+		North = NorthSouth,
+		Left = North,
+		South = NorthSouth | Negative,
+		Right = South,
+		Horizontal = NorthSouth | EastWest,
+		Vertical = 8,
+		Up = Vertical,
+		Down = Vertical | Negative,
+		Plane = Vertical | Horizontal
+	};
+	Direction(Value value);
+	Value value;
+	HalfPiAngle HalfPiDelta(const Direction& other) const;
+	static Value From(const Position& vector, int z = 0);
+	static Value From(HalfPiAngle angle);
+
+	static std::map<Value, std::wstring> description;
+	static std::map<Value, Position> vector;
+	static std::map<Value, HalfPiAngle> half_pi_angle;
 };
 
 static inline std::ostream& operator<< (std::ostream& os, const Direction& dir)
 {
-    os << dir.Description().c_str();
+    os << dir.AbsoluteDescription().c_str();
     return os;
 }
 
