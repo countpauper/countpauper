@@ -42,23 +42,15 @@ Object integer(long value)
 
 std::optional<long> Integer::Parse(const std::wstring& tag)
 {
-	std::size_t processed(0);
-	long result(0);
-	try
+	wchar_t* end=nullptr;
+	long result = std::wcstol(tag.c_str(), &end,10);
+	if ((*end == L'\x0') && (end!=tag.c_str()))
 	{
-		result = std::stol(tag, &processed);
-	}
-	catch(std::invalid_argument&)
-	{
-		return std::optional<long>();
-	}
-	if (processed != tag.size())
-	{
-		return std::optional<long>();
+		return result;
 	}
 	else
 	{
-		return result;
+		return std::optional<long>();
 	}
 }
 
