@@ -15,7 +15,7 @@ class Location;
 class Item;
 class Part;
 
-class State : public Target
+class State 
 {
 public:
 	State();
@@ -35,7 +35,8 @@ public:
     bool IsPossible(const Skill& skill, const Target& target) const;
     Damage AttackDamage(const Skill& skill) const;
     Damage AttackDamage(const Skill& skill, const Score& skillLevel) const;
-    bool Hurt(const Part& part, const Damage& damage, const std::wstring& description);
+	Damage Mitigation(const Part& location) const;
+	bool Hurt(const Part& part, const Damage& damage, const std::wstring& description);
     Score Chance(const Skill& skill, const State& target) const;
     Score Chance(const Skill& skill) const;
 	void Spent(unsigned mp);
@@ -56,8 +57,6 @@ public:
 	void Wear(const Armor& armor);
 	void Wield(const Weapon& weapon);
 
-	Position GetPosition() const override;
-	std::wstring Description() const override;
 private:
 	void AutoArm();
     Bonus StrengthBonus() const;
@@ -67,7 +66,6 @@ private:
     Bonus WisdomBonus() const;
     Bonus Charge() const;   // excess enchantment
     Score AttributeScore(const Part& limb, Attribute attribute) const;
-    Damage Mitigation(const Part& location) const;
     Score ArmorBonus(const Skill& skill) const;
     Score FullBodyBonus(Attribute attribute) const;
     Score FreeLimbScore(const Weapon& weapon, Attribute attribute) const;

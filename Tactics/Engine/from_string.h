@@ -20,6 +20,7 @@ T from_string(const std::wstring& str)
 }
 template<> std::wstring from_string(const std::wstring& str);
 template<> std::string from_string(const std::wstring &str);
+template<> bool from_string(const std::wstring& str);
 
 template <typename T>
 std::vector<T> from_strings(const std::wstring& str, wchar_t delimiter)

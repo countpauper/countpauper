@@ -15,6 +15,7 @@ BOOST_AUTO_TEST_CASE(Integer)
     BOOST_CHECK_THROW(Engine::from_string<int>(L"12345678901234567890"), std::exception);
 }
 
+
 BOOST_AUTO_TEST_CASE(Unsigned)
 {
     BOOST_CHECK_EQUAL(Engine::from_string<unsigned>(L"0"), 0);
@@ -39,11 +40,11 @@ BOOST_AUTO_TEST_CASE(Boolean)
 {
     BOOST_CHECK_EQUAL(Engine::from_string<bool>(L"0"), false);
     BOOST_CHECK_EQUAL(Engine::from_string<bool>(L" 1"), true);
-    /* // TODO boolean template specialization
-    BOOST_CHECK_EQUAL(Engine::from_string<bool>(L"true"), true);
-    BOOST_CHECK_EQUAL(Engine::from_string<bool>(L"false"), false);
-    */
-    BOOST_CHECK_THROW(Engine::from_string<bool>(L""), std::exception);
+	BOOST_CHECK_EQUAL(Engine::from_string<bool>(L"true"), true);
+	BOOST_CHECK_EQUAL(Engine::from_string<bool>(L"false"), false);
+	BOOST_CHECK_EQUAL(Engine::from_string<bool>(L"yes"), true);
+	BOOST_CHECK_EQUAL(Engine::from_string<bool>(L"no"), false);
+	BOOST_CHECK_THROW(Engine::from_string<bool>(L""), std::exception);
     BOOST_CHECK_THROW(Engine::from_string<bool>(L"cheese"), std::exception);
 }
 

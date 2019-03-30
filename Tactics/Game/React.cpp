@@ -8,8 +8,9 @@
 namespace Game
 {
 
-React::React(const Identity& actor, const TargetedAction& target, const Skill& skill) :
-	TargetedAction(skill, actor, target)
+React::React(const Identity& actor, const Skill& skill, const Action& target, const Direction& trajectory) :
+	TargetedAction(actor, skill, target),
+	DirectedAction(trajectory)
 {
 }
 
@@ -17,17 +18,12 @@ void React::Act(IGame& game) const
 {
 	auto chance = Chance(game);
 	State defender = game.Get(actor);
-	const auto& action = dynamic_cast<const TargetedAction&>(target);
-	State attacker(game.Get(action.actor));
-
-	defender.Spent(skill.mp);
-	defender.Engage(skill);
+	Engage(defender);
 	game.Adjust(actor, defender, skill.name);
 
-	attacker.Spent(action.skill.mp);
-	attacker.Engage(action.skill);
-	attacker.direction = Direction(defender.position - attacker.position);
-
+	const auto& action = dynamic_cast<const Action&>(target);
+	State attacker(game.Get(action.actor));
+	action.Engage(attacker);
 	game.Adjust(action.actor, attacker, actor.Description() + L" " + skill.name + L"(" + chance.Description() + L"%) " + target.Description());
 }
 

@@ -8,7 +8,7 @@
 namespace Game
 {
 
-	class Object : public Target, public Identity
+	class Object : public Identity
 	{
 	public:
 		Object();

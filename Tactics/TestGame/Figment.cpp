@@ -43,6 +43,12 @@ std::wstring Figment::Description() const
 {
 	return description;
 }
+
+Position Figment::GetPosition() const
+{
+	return position;
+}
+
 }
 }
 

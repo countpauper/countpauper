@@ -27,16 +27,6 @@ namespace Game
     {
     }
 
-	Position State::GetPosition() const
-	{
-		return position;
-	}
-	
-	std::wstring State::Description() const
-	{
-		return std::wstring(L"State [") + std::to_wstring(unsigned(this))+L"]";
-	}
-
     State::State(const Anatomy& anatomy, Position pos, const Direction dir, unsigned mp,
         std::set<const Armor*> armor, std::set<const Weapon*> weapons, Actor::Knowledge skills) :
 		position(pos),
@@ -248,14 +238,12 @@ namespace Game
 
 	bool State::Hurt(const Part& part, const Damage& damage, const std::wstring& description)
     {
-        Damage pain = damage - Mitigation(part);
-		if (!pain.Hurt())
+		if (!damage.Hurt())
 			return false;
-        body.Hurt(part, pain.Wound(description));
+        body.Hurt(part, damage.Wound(description));
         if (body.Dead())
             direction.Fall();
-
-        return true;
+		return true;
     }
 
 	void State::Spent(unsigned spentMP)

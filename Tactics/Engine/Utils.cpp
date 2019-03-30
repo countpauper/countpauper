@@ -5,7 +5,7 @@
 namespace Engine
 {
 
-const wchar_t* whitespace=L" \n\r\t";
+const std::wstring_view whitespace(L" \n\r\t");
 
     
 std::vector<std::wstring> Split(const std::wstring& str, wchar_t delimiter)
@@ -54,7 +54,7 @@ std::set<std::string> SplitSet(const std::string& str, char delimiter)
     return std::set<std::string>(splitVector.begin(), splitVector.end());
 }
 
-std::wstring Strip(const std::wstring& str, const std::wstring& trash)
+std::wstring Strip(const std::wstring& str, const std::wstring_view& trash)
 {
     auto start = str.find_first_not_of(trash);
     if (start == std::wstring::npos)

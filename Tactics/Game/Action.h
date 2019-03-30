@@ -15,50 +15,54 @@ namespace Game
     class IGame;
     class State;
 
-    class Action
+    class Action : public Target
     {
     public:
-        Action(const Skill& skill, const Identity& actor);
+        Action(const Identity& actor, const Skill& skill);
         virtual ~Action() = default;
 
         virtual void Act(IGame& game) const = 0;
 		virtual void Render(const State& state) const = 0;
 		virtual Score Chance(const IGame& game) const = 0;
 
-		virtual std::wstring Description() const  = 0;
+		virtual void Engage(State& engager) const;
 
 		static std::map<unsigned, std::function<Action*(const State& state, const Game& game)>> keymap;
         static std::map<const std::wstring, std::function<Action*(const State& state, const Game& game)>> typemap;
         
 		const Identity& actor;
         const Skill& skill;
-    };
-    
-	class TargetedAction : public Action, public Target
-	{
-	public:
-		TargetedAction(const Skill& skill, const Identity& actor, const Target& target);
-		Score Chance(const IGame& game) const override;
-	protected:
-		const Target& target;
+	
 		Position GetPosition() const override;
 		std::wstring Description() const override;	// override Target
 	};
-
-	class AimedAction: public TargetedAction
+    
+	class TargetedAction : public Action
 	{
 	public:
-		AimedAction(const Skill& skill, const Identity& actor, const Identity& target, const Part& part);
+		TargetedAction(const Identity& actor, const Skill& skill, const Target& target);
+		Score Chance(const IGame& game) const override;
+		Position GetPosition() const override;
+		std::wstring Description() const override;	// override Target
+		void Engage(State& actor) const override;
 	protected:
+		const Target& target;
+
+	};
+
+	class AimedAction
+	{
+	public:
+		AimedAction(const Part& part);
 		const Part& part;
 	};
 
-	class DirectedAction : public AimedAction
+	class DirectedAction
+
 	{
 	public:
-		DirectedAction(const Skill& skill, const Identity& actor, const Identity& target, Direction trajectory, const Part& part);
-	protected:
-		Direction trajectory;
+		DirectedAction(Direction trajectory);
+		const Direction trajectory;
 	};
 
 }   // ::Game

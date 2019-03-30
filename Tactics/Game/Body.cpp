@@ -292,7 +292,7 @@ namespace Game
 	{
 		if (control)
 			return false;
-		if ((engagement) && (!skill.Combo(*engagement)))
+		if ((engagement) && (!skill.Follows(*engagement)))
 			return false;
 		if (part.Grip())
 		{
@@ -526,6 +526,9 @@ namespace Game
 
 	void Body::Engage(const Skill& skill)
 	{
+		if (!skill.engaging)
+			return;
+
 		auto chain = AvailableKineticChain(skill);
 		for (auto link : chain)
 		{

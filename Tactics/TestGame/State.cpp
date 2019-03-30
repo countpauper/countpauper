@@ -66,8 +66,7 @@ BOOST_AUTO_TEST_CASE(DoubleHand)
     Data::Blade weapon;
 	Data::Melee skill;
     State s(a, Position(), Direction(), 10, {}, { &weapon }, { &skill });
-    Data::Simple vb;
-    State v(vb);
+    Data::Victim v;
     BOOST_CHECK(s.IsPossible(skill, v));
 
     auto skillLevel = s.SkillLevel(skill, &v);
@@ -89,9 +88,8 @@ BOOST_AUTO_TEST_CASE(SingleHand)
 	BOOST_REQUIRE_EQUAL(s.body.Wielded(a[L"LArm"]), &shield);
 
 	auto rightArmStrength = a[L"RArm"].AttributeScore(Attribute::Strength);
-	Data::Simple vb;
-    State v(vb);
-    BOOST_CHECK(s.IsPossible(skill, v));
+	Data::Victim v;
+	BOOST_CHECK(s.IsPossible(skill, v));
     auto skillLevel = s.SkillLevel(skill, &v);
     BOOST_CHECK_EQUAL(skillLevel, rightArmStrength);
     Damage d = s.AttackDamage(skill, skillLevel);
@@ -133,13 +131,13 @@ BOOST_AUTO_TEST_CASE(Mitigation)
     Location hitLocation(Plane::front, 3, 1);
 	auto& part = s.body.Anatomical()[L"Chest"];
 	BOOST_REQUIRE(part.IsVital());
-    BOOST_CHECK(!s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 1)), L"Small wound"));
+    BOOST_CHECK(!s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 1)) - s.Mitigation(part), L"Small wound"));
     BOOST_CHECK(!s.body.IsHurt());
-	BOOST_CHECK(!s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 4)), L"Medium wound"));
+	BOOST_CHECK(!s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 4)) - s.Mitigation(part), L"Medium wound"));
     BOOST_CHECK(!s.body.IsHurt());
-	BOOST_CHECK(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 5)), L"Big wound"));
+	BOOST_CHECK(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 5)) - s.Mitigation(part), L"Big wound"));
     BOOST_CHECK(s.body.IsHurt());
-	BOOST_CHECK(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 25)), L"Deadly wound"));
+	BOOST_CHECK(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 25)) - s.Mitigation(part), L"Deadly wound"));
     BOOST_CHECK(s.body.Dead());
     BOOST_CHECK(s.direction.IsProne());
 }

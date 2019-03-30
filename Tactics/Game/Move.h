@@ -9,10 +9,11 @@ namespace Game
     class Game;
 
     class Move :
-        public TargetedAction
+        public TargetedAction,
+		public DirectedAction
     {
     public:
-        Move(const Identity& actor, const Position& destination, const Skill& skill);
+        Move(const Identity& actor, const Skill& skill, const Position& destination);
         void Render(const State& state) const override;
         void Act(IGame& game) const override;
         std::wstring Description() const override;

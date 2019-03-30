@@ -8,8 +8,9 @@
 namespace Game
 {
 
-    Move::Move(const Identity& actor, const Position& target, const Skill& skill) :
-		TargetedAction(skill, actor, destination),
+    Move::Move(const Identity& actor, const Skill& skill, const Position& target) :
+		TargetedAction(actor, skill, destination),	// destination is not initialized, but reference is valid
+		DirectedAction(Direction(target-actor.GetPosition())),
         destination(target)
     {
     }
@@ -17,17 +18,8 @@ namespace Game
     void Move::Act(IGame& game) const
     { 
         State state(game.Get(actor));
-        state.Spent(skill.mp);
-        auto newPosition = destination.GetPosition();
-		if (skill.HasTargeting(Targeting::Face))
-		{
-			state.Face(newPosition);
-		}
-		else
-		{
-			assert(false); // description assumes move in direction
-		}
-        state.position = newPosition;
+		Engage(state);
+        state.position = destination.GetPosition();
         game.Adjust(actor, state, skill.name + L" " + state.direction.AbsoluteDescription());
     }
 

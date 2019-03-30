@@ -9,9 +9,9 @@
 
 namespace Game
 {
-    Action::Action(const Skill& skill, const Identity& actor) :
+    Action::Action(const Identity& actor, const Skill& skill) :
         skill(skill),
-        actor(actor)
+		actor(actor)
     {
     }
 
@@ -20,10 +20,23 @@ namespace Game
 	{
 		return skill.name;
 	}
+
+	Position Action::GetPosition() const
+	{
+		return actor.GetPosition();
+	}
+
+	void Action::Engage(State& engager) const
+	{
+		engager.Spent(skill.mp);
+		engager.Engage(skill);
+
+	}
+
 	
-	TargetedAction::TargetedAction(const Skill& skill, const Identity& actor, const Target& target) :
-        Action(skill, actor),
-        target(target)
+	TargetedAction::TargetedAction(const Identity& actor, const Skill& skill, const Target& target) :
+        Action(actor, skill),
+		target(target)
     {
     }
 
@@ -47,20 +60,28 @@ namespace Game
 		return target.GetPosition();
 	}
 
+	void TargetedAction::Engage(State& engager) const
+	{
+		Action::Engage(engager);
+		if (skill.HasTargeting(Targeting::Face))
+		{
+			engager.Face(target.GetPosition());
+		}
+
+	}
+
 	std::wstring TargetedAction::Description() const
 	{
 		return skill.name + L"@" +target.Description();
 	}
 
-	AimedAction::AimedAction(const Skill& skill, const Identity& actor, const Identity& target, const Part& part) :
-		TargetedAction(skill, actor, dynamic_cast<const Target&>(target)),
+	AimedAction::AimedAction(const Part& part) :
 		part(part)
 	{
 
 	}
 
-	DirectedAction::DirectedAction(const Skill& skill, const Identity& actor, const Identity& target, Direction trajectory, const Part& part) :
-		AimedAction(skill, actor, target, part),
+	DirectedAction::DirectedAction(Direction trajectory) :
 		trajectory(trajectory)
 	{
 	}

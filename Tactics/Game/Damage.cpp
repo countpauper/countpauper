@@ -84,12 +84,17 @@ namespace Game
         return wound.stateDescription;
     }
 
-    std::wstring Damage::ActionDescription() const
-    {
-        auto worst = FindWorst();
-        auto wound = Wound::find(worst.first, worst.second);
-        return wound.actionDescription + L"(" + damage.at(worst.first).Description()+L")";
-    }
+	std::wstring Damage::ActionDescription() const
+	{
+		if (!Hurt())
+			return L"Mitigated";
+		else
+		{
+			auto worst = FindWorst();
+			auto wound = Wound::find(worst.first, worst.second);
+			return wound.actionDescription + L"(" + damage.at(worst.first).Description() + L")";
+		}
+	}
 
     bool Damage::Hurt() const
     {

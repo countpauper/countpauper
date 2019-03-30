@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(Succeed)
 	world.Imagine(victim);
 
 	const auto& part = victim.body.Anatomical()[L"All"];
-	Attack attack(attacker, victim, attacker.skill, *attacker.skill.trajectory.begin(), part);
+	Attack attack(attacker, attacker.skill, victim, *attacker.skill.trajectory.begin(), part);
 	attack.Act(world);
 	BOOST_CHECK(victim.body.IsHurt());
 	BOOST_CHECK(victim.HasEvent(L"Hit"));
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(Mitigate)
 	world.Imagine(victim);
 
 	const auto& part = victim.body.Anatomical()[L"All"];
-	Attack attack(attacker, victim, attacker.skill, *attacker.skill.trajectory.begin(), part);
+	Attack attack(attacker, attacker.skill, victim, *attacker.skill.trajectory.begin(), part);
 	attack.Act(world);
 	BOOST_CHECK(!victim.body.IsHurt());
 	BOOST_CHECK(victim.HasEvent(L"Mitigate"));

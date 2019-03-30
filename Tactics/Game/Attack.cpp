@@ -11,8 +11,10 @@
 namespace Game
 {
 
-Attack::Attack(const Identity& actor, const Identity& target, const Skill& skill, Direction trajectory, const Part& part) :
-    DirectedAction(skill, actor, target, trajectory, part)
+Attack::Attack(const Identity& actor, const Skill& skill, const Identity& target, Direction trajectory, const Part& part) :
+	TargetedAction(actor, skill, target),
+	AimedAction(part),
+    DirectedAction(trajectory)
 {
 }
 
@@ -21,39 +23,26 @@ void Attack::Act(IGame& game) const
 	State attacker = game.Get(actor);
 	auto& targetActor = dynamic_cast<const Identity&>(target);
 	State victim(game.Get(targetActor));
-
 	auto skillLevel = attacker.SkillLevel(skill, &victim);
 	if (skillLevel.Value() == 0)
 	{
-		attacker.Spent(skill.mp);
-		attacker.Engage(skill);
-		if (skill.HasTargeting(Targeting::Face))
-		{
-			attacker.Face(attacker.position);
-		}
+		Engage(attacker);
 		game.Adjust(actor, attacker, skill.name);
-
 		game.Adjust(targetActor, victim, L"Resist " + skill.name + L":" + skillLevel.Description());
 		return;
 	}
 	auto damage = attacker.AttackDamage(skill, skillLevel);
-
-	if (!victim.Hurt(part, damage, actor.Description()))
+	Damage pain = damage - victim.Mitigation(part);
+	if (!victim.Hurt(part, pain, actor.Description()+L"'"+skill.description))	
 	{
-		attacker.Spent(skill.mp);
-		attacker.Engage(skill);
-		attacker.direction = Direction(victim.position - attacker.position);
+		Engage(attacker);
 		game.Adjust(actor, attacker, skill.name);
-
-		game.Adjust(targetActor, victim, L"Mitigate " + skill.name + L":" + damage.ActionDescription());
+		game.Adjust(targetActor, victim, L"Mitigate " + skill.name + L"@" + part.Name() + L":" + pain.ActionDescription());
 		return;
 	}
-	// TODO: engage after resist & damage checks or use previous state. Has to be a separate function anyway
-	attacker.Spent(skill.mp);
-	attacker.Engage(skill);
-	attacker.direction = Direction(victim.position - attacker.position);
+	Engage(attacker);
 	game.Adjust(actor, attacker, skill.name);
-	game.Adjust(targetActor, victim, L"Hit " + skill.name + L":" + damage.ActionDescription());
+	game.Adjust(targetActor, victim, L"Hit " + skill.name + L"@" + part.Name() + L":" + pain.ActionDescription());
 }
 
 void Attack::Render(const State& state) const

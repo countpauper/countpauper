@@ -16,6 +16,7 @@ public:
 		std::set<const Armor*> armor = {}, std::set<const Weapon*> weapons = {}, Actor::Knowledge knowledge = {});
 	void Apply(const State& state) override;
 	std::wstring Description() const override;
+	Position GetPosition() const override;
 	void Event(const std::wstring& description);
 	bool HasEvent(const std::wstring& part) const;
 	std::vector<std::wstring> events;

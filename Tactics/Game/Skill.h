@@ -37,6 +37,7 @@ public:
 	bool HasTargeting(Targeting check) const;
 	bool Combo(const Skill& previous) const;
 	bool Counter(const Skill& previous) const;
+	bool Follows(const Skill& previous) const;
 	unsigned Id() const;
 	Engine::Image Icon() const;
 	void LoadIcon(const std::wstring& fname);
@@ -58,6 +59,7 @@ public:
 	Categories follows;
 	Attribute attribute;
 	Attribute resist;
+	bool engaging;
 	int offset;
 	Type::Weapon::Style weapon;
 	using Prerequisite = std::pair<Skill*, unsigned>;
@@ -126,7 +128,6 @@ private:
 	{
 		return dynamic_cast<T*>(type.get()) != nullptr;
 	}
-	bool Follows(const Skill& previous) const;
 	std::shared_ptr<Engine::Image> icon;
 };
 

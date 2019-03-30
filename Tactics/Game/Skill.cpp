@@ -22,6 +22,7 @@ Skill::Skill() :
 	trigger(Trigger::None),
 	attribute(Attribute::None),
 	resist(Attribute::None),
+	engaging(true),
 	offset(0),
 	weapon(Type::Weapon::Style::None)
 {
@@ -34,6 +35,7 @@ Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapo
 	name(name),
 	attribute(Attribute::Strength),
 	resist(Attribute::None),
+	engaging(true),
 	offset(0),
 	weapon(weapon),
 	type(std::make_shared<Melee>()),
@@ -50,6 +52,7 @@ Skill::Skill(const std::wstring name, Attribute attribute, Targeting targeting) 
 	name(name),
 	attribute(attribute),
 	resist(Attribute::None),
+	engaging(true),
 	offset(0),
 	weapon(Type::Weapon::Style::None),
 	type(std::make_shared<Affect>()),
@@ -90,7 +93,7 @@ Bonus Skill::GetChance(const Score& level) const
 
 TargetedAction* Skill::Move::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part*) const
 {
-	return new ::Game::Move(actor, target.GetPosition(), skill);
+	return new ::Game::Move(actor, skill, target.GetPosition());
 }
 
 Skill::Melee::Melee() :
@@ -102,7 +105,7 @@ TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Identity& a
 {
 	if (!part)
 		return nullptr;
-	return new Attack(actor, dynamic_cast<const Actor&>(target), skill, trajectory, *part);
+	return new Attack(actor, skill, dynamic_cast<const Actor&>(target), trajectory, *part);
 }
 
 Bonus Skill::Melee::DamageBonus(const Score& skillScore)
@@ -128,9 +131,9 @@ Skill::Affect::Affect(const xmlNode* node)
 
 TargetedAction* Skill::Affect::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction, const Part* part) const
 {
-	assert(false);	// unimplemented
-	// return new ::Game::Affect(actor, dynamic_cast<const Actor&>(target), skill, trajectory);
+	assert(false);	// not implemented
 	return nullptr;
+	// return new ::Game::Affect(actor, skill, dynamic_cast<const Actor&>(target), *part);
 }
 
 Skill::React::React(const xmlNode* node)
@@ -141,9 +144,9 @@ Skill::React::React(const xmlNode* node)
 	}
 }
 
-TargetedAction* Skill::React::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction, const Part*) const
+TargetedAction* Skill::React::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction direction, const Part*) const
 {
-	return new ::Game::React(actor, dynamic_cast<const TargetedAction&>(target), skill);
+	return new ::Game::React(actor, skill, dynamic_cast<const Action&>(target), direction);
 }
 
 bool Skill::Match(const std::wstring& category) const
@@ -341,6 +344,11 @@ Skill::Skill(const xmlNode* node) :
 		{
 			auto str = Engine::Xml::wstr(prop->children->content);
 			resist = Engine::from_string<Attribute>(str, Attributes::map);
+		}
+		else if (Engine::Xml::hasTag(prop, "engaging"))
+		{
+			auto str = Engine::Xml::wstr(prop->children->content);
+			engaging = Engine::from_string<bool>(str);
 		}
 		else if (Engine::Xml::hasTag(prop, "offset"))
 		{

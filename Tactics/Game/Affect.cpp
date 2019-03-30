@@ -7,8 +7,9 @@
 namespace Game
 {
 
-Affect::Affect(const Identity& actor, const Identity& target, const Skill& skill, const Part& part) :
-    AimedAction(skill, actor, target, part)
+Affect::Affect(const Identity& actor, const Skill& skill, const Identity& target, const Part& part) :
+	TargetedAction(actor, skill, target),
+    AimedAction(part)
 {
 }
 

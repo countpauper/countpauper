@@ -308,7 +308,7 @@ namespace Game
 		return Location();
 	}
 
-	std::pair<const Part*,Direction> Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
+	std::pair<const Part*, Direction> Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
 	{
 		State attacker(state.Get(actor));
 		State victim(state.Get(target));
@@ -326,6 +326,36 @@ namespace Game
 				return std::make_pair(part, trajectory);
 		}
 		return std::make_pair(nullptr, Direction::none);
+	}
+
+	Direction Intercept(const IGame& state, const Identity& actor, const TargetedAction& action, const Skill& skill)
+	{
+		if (skill.trajectory.empty())
+			return Direction();
+
+		if (auto directed = dynamic_cast<const DirectedAction*>(&action))
+		{
+
+			State defender(state.Get(actor));
+			State attacker(state.Get(action.actor));
+			action.Engage(attacker);	
+			if (skill.HasTargeting(Targeting::Face))
+			{
+				defender.Face(attacker.position);
+			}
+			Direction absoluteTrajectory = attacker.direction.Turn(directed->trajectory);
+			Direction hitPlane = defender.direction.Turn(absoluteTrajectory.Opposite());
+			for (auto trajectory : skill.trajectory)
+			{
+				if (trajectory == hitPlane)
+					return trajectory;
+			}
+			return Direction();
+		}
+		else
+		{	// undirected action. Just pick one possible direction
+			return *skill.trajectory.begin();
+		}
 	}
 
 	bool Plan::PlanAction(Node& parent, const Skill& skill, const Actor& actor, const Target& target)
@@ -373,11 +403,15 @@ namespace Game
 		auto state = parent.state->Get(defender);
 		if (!state.IsPossible(skill, offense))
 			return false;
+		Direction trajectory;
+		if (!skill.trajectory.empty())
+		{
+			trajectory = Intercept(*parent.state, defender, offense, skill);
+			if (trajectory.IsNone())
+				return false;
+		}
 
-		auto aim = Aim(*parent.state, defender, offense.actor, skill);
-		if (!aim.first && !skill.trajectory.empty())
-			return false;
-		std::unique_ptr<TargetedAction> reaction(skill.CreateAction(defender, offense, aim.second, aim.first));
+		std::unique_ptr<TargetedAction> reaction(skill.CreateAction(defender, offense, trajectory, nullptr));
 		auto node = std::make_unique<Node>(parent, std::move(reaction));
 		parent.children.emplace_back(std::move(node));
 		PlanCombo(*node, skill, defender, dynamic_cast<const Target&>(offense.actor));
