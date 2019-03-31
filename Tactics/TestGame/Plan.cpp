@@ -68,6 +68,7 @@ BOOST_AUTO_TEST_CASE(SwingLocation)
 	Data::Mage defender;
 	auto hls = Plan::HitLocations(attacker, attacker.melee, defender, Direction::down);
 	BOOST_CHECK_EQUAL(hls.size(), 1);
+	BOOST_CHECK_CLOSE(Sum(hls), 1.0, 0.001);
 	const auto& hl = hls.begin()->first;
 	BOOST_CHECK_EQUAL(hl.plane, Plane({ Direction::up }));
 	BOOST_CHECK_EQUAL(hl.size, 3);
@@ -80,8 +81,39 @@ BOOST_AUTO_TEST_CASE(CenterLocation)
 	Data::Knight defender;
 	auto hls = Plan::HitLocations(attacker, attacker.zap, defender, Direction::forward);
 	BOOST_CHECK_CLOSE(Sum(hls), 1.0, 0.001);
+	BOOST_CHECK_CLOSE(Sum(hls), 1.0, 0.001);
 	BOOST_REQUIRE_EQUAL(defender.body.Anatomical().Length(), 5);
 	BOOST_CHECK_GE(hls.size(), defender.body.Anatomical().Length());
+}
+
+BOOST_AUTO_TEST_CASE(AimSwing)
+{
+	Data::Knight attacker;
+	BOOST_REQUIRE(attacker.melee.HasTargeting(::Game::Targeting::Swing));
+	Data::Mage defender;
+	auto[hits, direction] = Plan::Aim(attacker, defender, attacker.melee);
+	BOOST_CHECK(attacker.melee.trajectory.count(direction));
+	BOOST_CHECK_EQUAL(hits.size(), 1);
+	BOOST_CHECK_CLOSE(Sum(hits), 1.0, 0.001);
+	const auto& hit = *hits.begin();
+	BOOST_CHECK_EQUAL(hit.second, 1.0);
+	BOOST_CHECK_EQUAL(hit.first, &defender.body.Anatomical()[L"Head"]);
+}
+
+BOOST_AUTO_TEST_CASE(AimCenter)
+{
+	Data::Mage attacker;
+	BOOST_REQUIRE(attacker.zap.HasTargeting(::Game::Targeting::Center));
+	Data::Knight defender;
+	auto[hits, direction] = Plan::Aim(attacker, defender, attacker.zap);
+	BOOST_CHECK(attacker.zap.trajectory.count(direction));
+	BOOST_CHECK_EQUAL(hits.size(), 5);
+	BOOST_CHECK_CLOSE(Sum(hits), 1.0, 0.001);
+	BOOST_CHECK(hits.count(&defender.body.Anatomical()[L"Legs"]));
+	BOOST_CHECK(hits.count(&defender.body.Anatomical()[L"Belly"]));
+	BOOST_CHECK(hits.count(&defender.body.Anatomical()[L"Chest"]));
+	BOOST_CHECK(hits.count(&defender.body.Anatomical()[L"Head"]));
+	BOOST_CHECK(hits.count(nullptr));
 }
 
 

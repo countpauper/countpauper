@@ -378,10 +378,8 @@ namespace Game
 		return result;
 	}
 
-	std::tuple<Plan::HitChances,Direction> Plan::Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
+	std::tuple<Plan::HitChances,Direction> Plan::Aim(State attacker, const State& victim, const Skill& skill)
 	{
-		State attacker(state.Get(actor));
-		State victim(state.Get(target));
 		if (skill.HasTargeting(Targeting::Face))
 		{
 			attacker.Face(victim.position);
@@ -442,7 +440,8 @@ namespace Game
 		if (!state.IsPossible(skill, target))
 			return false;
 
-		auto& [hitchances, direction] =  Aim(*parent.state, actor, dynamic_cast<const Identity&>(target), skill);
+		State victim(parent.state->Get(dynamic_cast<const Identity&>(target)));
+		auto& [hitchances, direction] =  Aim(state, victim, skill);
 		if (hitchances.empty() && !skill.trajectory.empty())
 			return false;
 
