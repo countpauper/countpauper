@@ -19,11 +19,11 @@ BOOST_AUTO_TEST_CASE(Succeed)
 	world.Imagine(victim);
 
 	const auto& part = victim.body.Anatomical()[L"All"];
-	Attack attack(attacker, attacker.skill, victim, *attacker.skill.trajectory.begin(), &part);
+	Attack attack(attacker, attacker.melee, victim, *attacker.melee.trajectory.begin(), &part);
 	attack.Act(world);
 	BOOST_CHECK(victim.body.IsHurt());
 	BOOST_CHECK(victim.HasEvent(L"Hit"));
-	BOOST_CHECK(attacker.HasEvent(attacker.skill.name));
+	BOOST_CHECK(attacker.HasEvent(attacker.melee.name));
 }
 
 BOOST_AUTO_TEST_CASE(Mitigate)
@@ -38,11 +38,11 @@ BOOST_AUTO_TEST_CASE(Mitigate)
 	world.Imagine(victim);
 
 	const auto& part = victim.body.Anatomical()[L"All"];
-	Attack attack(attacker, attacker.skill, victim, *attacker.skill.trajectory.begin(), &part);
+	Attack attack(attacker, attacker.melee, victim, *attacker.melee.trajectory.begin(), &part);
 	attack.Act(world);
 	BOOST_CHECK(!victim.body.IsHurt());
 	BOOST_CHECK(victim.HasEvent(L"Mitigate"));
-	BOOST_CHECK(attacker.HasEvent(attacker.skill.name));
+	BOOST_CHECK(attacker.HasEvent(attacker.melee.name));
 }
 
 BOOST_AUTO_TEST_CASE(Miss)
@@ -54,11 +54,11 @@ BOOST_AUTO_TEST_CASE(Miss)
 	world.Imagine(attacker);
 	world.Imagine(victim);
 
-	Attack attack(attacker, attacker.skill, victim, *attacker.skill.trajectory.begin(), nullptr);
+	Attack attack(attacker, attacker.melee, victim, *attacker.melee.trajectory.begin(), nullptr);
 	attack.Act(world);
 	BOOST_CHECK(!victim.body.IsHurt());
 	BOOST_CHECK(victim.HasEvent(L"Miss"));
-	BOOST_CHECK(attacker.HasEvent(attacker.skill.name));
+	BOOST_CHECK(attacker.HasEvent(attacker.melee.name));
 }
 
 

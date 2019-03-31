@@ -42,6 +42,12 @@ public:
     virtual std::wstring Description() const = 0;
     Engine::Image Icon() const;
 
+	// Helper functions that are easy/important to unit test 
+	static std::map<int, double> CenterMass(double center, double sigma = 1.0, double limit = 0.001);
+	static std::map<Location, double> HitLocations(const State& attacker, const Skill& skill, const State& victim, Direction trajectory);
+	using HitChances = std::map<const Part*, double>;
+	static std::tuple<HitChances, Direction> Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill);
+	static Direction Intercept(const IGame& state, const Identity& actor, const TargetedAction& action, const Skill& skill);
 protected:
 	using Outcomes = std::vector<std::pair<double, Future*>>;
 	

@@ -49,7 +49,14 @@ namespace Data
     {
     }
 
-    Harnass::Harnass() :
+	Wand::Wand() :
+		Weapon(weaponType, mat, mod),
+		weaponType(Type::Weapon::Style::Wand, 1, ::Game::Damage(Wound::Type::Burn, Score(L"TestWand", 2)))
+	{
+	}
+
+	
+	Harnass::Harnass() :
         Armor(type, material, mod),
         type(Slot::Body, Type::Armor::Category::Metal, ::Game::Damage(Wound::Type::Sharp, Score(L"TestHarnass", 4)))
     {
@@ -69,12 +76,17 @@ namespace Data
 
 	}
 
-    Melee::Melee() : Skill(L"Melee", Skill::Trigger::Act, Type::Weapon::Style::Blade, Direction::forward, 1)
-    {
-        categories.insert(L"1");
-    }
+	Melee::Melee() : Skill(L"Melee", Skill::Trigger::Act, Type::Weapon::Style::Blade, Direction::forward, 1)
+	{
+		categories.insert(L"1");
+	}
 
-    Combo::Combo() : Skill(L"Combo", Skill::Trigger::Combo, Type::Weapon::Style::Blade, Direction::forward, 1)
+	Zap::Zap() : Skill(L"Zap", Skill::Trigger::Act, Type::Weapon::Style::Wand, Direction::forward, 2)
+	{
+		categories.insert(L"ranged");
+	}
+
+	Combo::Combo() : Skill(L"Combo", Skill::Trigger::Combo, Type::Weapon::Style::Blade, Direction::forward, 1)
     {
         follows.insert(L"1");
     }
@@ -86,12 +98,18 @@ namespace Data
 
 
 	Knight::Knight() :
-        Figment(L"Knight", anatomy, Position(0, 0), Direction(), 10, {}, { &weapon }, { &skill, &combo, &buff })
-    {
-        body.Grab(anatomy[L"RArm"], weapon);
-    }
+		Figment(L"Knight", anatomy, Position(0, 0), Direction(), 10, {}, { &weapon }, { &melee, &combo })
+	{
+		body.Grab(anatomy[L"RArm"], weapon);
+	}
 
-    Victim::Victim() :
+	Mage::Mage() :
+		Figment(L"Mage", anatomy, Position(0, 0), Direction(), 10, {}, { &weapon }, { &zap, &buff })
+	{
+		body.Grab(anatomy[L"RArm"], weapon);
+	}
+
+	Victim::Victim() :
 		Figment(L"Victim", anatomy, Position(1, 0), Direction(), 10, {}, {}, {})
     {
     }

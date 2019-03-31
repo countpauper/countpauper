@@ -27,10 +27,18 @@ struct Human : Anatomy
 
 struct Blade : Weapon
 {
-    Blade();
-    Type::Weapon weaponType;
-    Type::Weapon::Material mat;
-    Type::Weapon::Modifier mod;
+	Blade();
+	Type::Weapon weaponType;
+	Type::Weapon::Material mat;
+	Type::Weapon::Modifier mod;
+};
+
+struct Wand : Weapon
+{
+	Wand();
+	Type::Weapon weaponType;
+	Type::Weapon::Material mat;
+	Type::Weapon::Modifier mod;
 };
 
 struct Shield : Weapon
@@ -67,6 +75,11 @@ struct Combo : Skill
     Combo();
 };
 
+struct Zap : Skill
+{
+	Zap();
+};
+
 struct Buff : Skill
 {
 	Buff();
@@ -87,11 +100,17 @@ struct Knight : private BaseState<Human>, public Figment
 {
 	Knight();
     Data::Blade weapon;
-    Data::Melee skill;
+    Data::Melee melee;
 	Data::Combo combo;
-	Data::Buff buff;
 };
 
+struct Mage : private BaseState<Human>, public Figment
+{
+	Mage();
+	Data::Wand weapon;
+	Data::Zap zap;
+	Data::Buff buff;
+};
 struct Victim : private BaseState<Simple>, public Figment
 {
 	Victim();

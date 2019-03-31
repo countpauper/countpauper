@@ -39,8 +39,16 @@ Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapo
 	offset(0),
 	weapon(weapon),
 	type(std::make_shared<Melee>()),
-	targeting({Targeting::Swing, Targeting::Face})
+	targeting({Targeting::Face})
 {
+	if (unsigned(weapon) & unsigned(Type::Weapon::Style::Melee))
+		targeting.insert(Targeting::Swing);
+	if (unsigned(weapon) & unsigned(Type::Weapon::Style::Ranged))
+		targeting.insert(Targeting::Center);
+	if (unsigned(weapon) & unsigned(Type::Weapon::Style::Shield))
+		targeting.insert(Targeting::Intercept);
+
+
 	static_cast<Melee&>(*type).damage = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
 	trajectory.insert(singleTrajectory);
 }

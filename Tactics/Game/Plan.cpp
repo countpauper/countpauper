@@ -274,20 +274,19 @@ namespace Game
         state.Apply(game);
     }
 
-	double CDF(double value)
+	double CDF(double value, double sigma)
 	{
 		static const double M_SQRT1_2 = 0.70710678118654752440084436210485;
-		return 0.5 * erfc(-value * M_SQRT1_2);
+		return 0.5 * erfc(-value * M_SQRT1_2 / sigma);
 	}
 
-	auto CenterMass(double center, double sigma = 1.0, double limit = 0.001)
+	std::map<int, double> Plan::CenterMass(double center, double sigma, double limit)
 	{
 		std::map<int, double> result;
 		auto floor = std::floor(center);
-		auto floorCDF = CDF(floor-center);
-		auto centerDF = CDF(0.0);	// should be 0.5;
-		auto ceilCDF= CDF(floor+1.0-center);
-
+		auto floorCDF = CDF(floor-center, sigma);
+		auto centerDF = CDF(0.0, sigma);	// should be 0.5;
+		auto ceilCDF= CDF(floor+1.0-center, sigma);
 
 		int i = static_cast<int>(floor);
 		result[i] = ceilCDF - floorCDF;
@@ -296,11 +295,11 @@ namespace Game
 		while(true)
 		{
 			i--;
-			bottomCDF = CDF(static_cast<double>(i) - center);
+			bottomCDF = CDF(static_cast<double>(i) - center, sigma);
 			double chance = topCDF - bottomCDF;
 			if (chance < limit)
 			{
-				result.begin()->second += chance;
+				result.begin()->second += chance + bottomCDF;
 				break;
 			}
 			result[i] = chance;
@@ -311,11 +310,11 @@ namespace Game
 		while (true)
 		{
 			i++;
-			topCDF = CDF(1+static_cast<double>(i)- center);
+			topCDF = CDF(1+static_cast<double>(i)- center, sigma);
 			double chance = topCDF - bottomCDF;
 			if (chance < limit)
 			{
-				result.rbegin()->second += chance;
+				result.rbegin()->second += chance + 1.0-topCDF;
 				break;
 			}
 			result[i] = chance;
@@ -324,7 +323,8 @@ namespace Game
 		return result;
 	}
 
-	std::map<Location, double> HitLocations(const State& attacker, const Skill& skill, const State& victim, Direction trajectory)
+
+	std::map<Location, double> Plan::HitLocations(const State& attacker, const Skill& skill, const State& victim, Direction trajectory)
 	{
 		assert(!attacker.direction.IsProne());  // prone not supported yet here
 		std::map<Location, double> result;
@@ -339,7 +339,7 @@ namespace Game
 		if (targeting.count(Targeting::Swing))
 		{
 			Location origin = attacker.Origin(skill);
-			// TODO: mirror for left arm/tail of origin
+			// TODO: mirror hitplane for mirrored limb origin/dual wield (and reverse block data)
 			result[Location(Plane({ hitPlane }), origin.position, origin.size)] = 1.0;
 			return result;
 		}
@@ -378,8 +378,7 @@ namespace Game
 		return result;
 	}
 
-	using HitChances = std::map<const Part*, double>;
-	std::tuple<HitChances,Direction> Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
+	std::tuple<Plan::HitChances,Direction> Plan::Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
 	{
 		State attacker(state.Get(actor));
 		State victim(state.Get(target));
@@ -407,7 +406,7 @@ namespace Game
 		return std::tie(HitChances(), Direction());
 	}
 
-	Direction Intercept(const IGame& state, const Identity& actor, const TargetedAction& action, const Skill& skill)
+	Direction Plan::Intercept(const IGame& state, const Identity& actor, const TargetedAction& action, const Skill& skill)
 	{
 		if (skill.trajectory.empty())
 			return Direction();
@@ -443,7 +442,7 @@ namespace Game
 		if (!state.IsPossible(skill, target))
 			return false;
 
-		auto& [hitchances, direction] =  Aim(*parent.state, actor, dynamic_cast<const Actor&>(target), skill);
+		auto& [hitchances, direction] =  Aim(*parent.state, actor, dynamic_cast<const Identity&>(target), skill);
 		if (hitchances.empty() && !skill.trajectory.empty())
 			return false;
 

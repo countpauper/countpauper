@@ -105,13 +105,13 @@ BOOST_AUTO_TEST_CASE(HeavyWeapon)
     BOOST_CHECK_EQUAL(s.Agility(), s.body.Agility().Value() - 6);  // (strength * 5 - 80 )/5 = -6
 
     Data::Victim v;
-    BOOST_CHECK(s.IsPossible(s.skill, v));
-    BOOST_CHECK_EQUAL(s.SkillLevel(s.skill, &v), s.body.Strength().Value() - 3);
+    BOOST_CHECK(s.IsPossible(s.melee, v));
+    BOOST_CHECK_EQUAL(s.SkillLevel(s.melee, &v), s.body.Strength().Value() - 3);
 }
 
 BOOST_AUTO_TEST_CASE(ChargedWeapon)
 {
-	Data::Knight s;
+	Data::Mage s;
 	s.weapon.mod.requirement.intelligence = s.Intelligence().Value() + 2;
 	s.weapon.mod.prefix = L"Astral";
 	s.weapon.mod.load.enchantment = 75;
@@ -145,16 +145,16 @@ BOOST_AUTO_TEST_CASE(Mitigation)
 BOOST_AUTO_TEST_CASE(Range)
 {
     Data::Knight s;
-    BOOST_CHECK_EQUAL(s.Range(s.skill), s.skill.range + s.body.Anatomical()[L"RArm"].Length() + s.weapon.Length());
+    BOOST_CHECK_EQUAL(s.Range(s.melee), s.melee.range + s.body.Anatomical()[L"RArm"].Length() + s.weapon.Length());
 }
 
 BOOST_AUTO_TEST_CASE(Engage)
 {
     Data::Knight s;
     Data::Victim v;
-    BOOST_REQUIRE(s.IsPossible(s.skill, v));
-    s.Engage(s.skill);
-	BOOST_CHECK(!s.IsPossible(s.skill, v));
+    BOOST_REQUIRE(s.IsPossible(s.melee, v));
+    s.Engage(s.melee);
+	BOOST_CHECK(!s.IsPossible(s.melee, v));
 	BOOST_CHECK(s.IsPossible(s.combo, v));
 }
 
@@ -162,31 +162,31 @@ BOOST_AUTO_TEST_CASE(SkillPossibleMP)
 {
 	Data::Knight s;
 	Data::Victim v;
-	BOOST_REQUIRE(s.IsPossible(s.skill, v));
-	s.mp = s.skill.mp-1;
-	BOOST_CHECK(!s.IsPossible(s.skill, v));
+	BOOST_REQUIRE(s.IsPossible(s.melee, v));
+	s.mp = s.melee.mp-1;
+	BOOST_CHECK(!s.IsPossible(s.melee, v));
 }
 
 BOOST_AUTO_TEST_CASE(SkillPossibleWielded)
 {
 	Data::Knight s;
 	Data::Victim v;
-	BOOST_REQUIRE(s.IsPossible(s.skill, v));	
+	BOOST_REQUIRE(s.IsPossible(s.melee, v));
 	s.body.Drop(s.weapon);
-	BOOST_CHECK(!s.IsPossible(s.skill, v));
+	BOOST_CHECK(!s.IsPossible(s.melee, v));
 }
 
 BOOST_AUTO_TEST_CASE(SkillPossibleRange)
 {
 	Data::Knight s;
 	Data::Victim v;
-	BOOST_REQUIRE(s.IsPossible(s.skill, v));
+	BOOST_REQUIRE(s.IsPossible(s.melee, v));
 	// 3 El can hit exactly 1 horizontal/vertical square
-	BOOST_REQUIRE_EQUAL(s.skill.range + s.weapon.Length() + (*s.body.Anatomical().Grip().begin())->Length(), 3);
+	BOOST_REQUIRE_EQUAL(s.melee.range + s.weapon.Length() + (*s.body.Anatomical().Grip().begin())->Length(), 3);
 	v.position.x = s.position.x + 1;
-	BOOST_CHECK(s.IsPossible(s.skill, v));
+	BOOST_CHECK(s.IsPossible(s.melee, v));
 	v.position.y = s.position.y + 1;
-	BOOST_CHECK(!s.IsPossible(s.skill, v));
+	BOOST_CHECK(!s.IsPossible(s.melee, v));
 }
 
 BOOST_AUTO_TEST_CASE(Face)

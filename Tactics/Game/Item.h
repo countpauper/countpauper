@@ -156,7 +156,7 @@ namespace Game
         class Weapon: public Equipment
         {
         public:
-            enum class Style
+            enum class Style : unsigned
             {
                 None = 0,
                 Unarmed = 1<<0,
