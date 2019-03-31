@@ -99,7 +99,7 @@ protected:
     std::unique_ptr<Node> Goto(const Position& target, const Game& game);
     bool PlanAction(Plan::Node& parent, const Skill& skill, const Actor& actor, const Target& target);
     void PlanCombo(Node& parent, const Skill& skill, const Actor& actor, const Target& target);
-    bool PlanReaction(Plan::Node& parent, const Skill& skill, const Actor& defender, const TargetedAction& offense);
+    Node* PlanReaction(Plan::Node& parent, const Skill& skill, const Actor& defender, const TargetedAction& offense);
     static std::vector<const Skill*> Combo(const Actor& actor, const Skill& previous);
     virtual const Skill* GetSkill() const = 0;
     const Actor& actor;

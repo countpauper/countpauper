@@ -75,7 +75,7 @@ namespace Game
 		return skill.name + L"@" +target.Description();
 	}
 
-	AimedAction::AimedAction(const Part& part) :
+	AimedAction::AimedAction(const Part* part) :
 		part(part)
 	{
 

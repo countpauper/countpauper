@@ -103,9 +103,7 @@ Skill::Melee::Melee() :
 
 TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part* part) const
 {
-	if (!part)
-		return nullptr;
-	return new Attack(actor, skill, dynamic_cast<const Actor&>(target), trajectory, *part);
+	return new Attack(actor, skill, dynamic_cast<const Actor&>(target), trajectory, part);
 }
 
 Bonus Skill::Melee::DamageBonus(const Score& skillScore)

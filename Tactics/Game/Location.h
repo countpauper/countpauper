@@ -11,6 +11,8 @@ namespace Game
 		Location();
 		Location(const Plane& plane, unsigned pos, unsigned size = 1);
         operator bool() const;
+		bool operator==(const Location& other) const;
+		bool operator<(const Location& other) const;
 
 		Plane plane;	// normal vectors
         unsigned position;

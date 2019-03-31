@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include <gl/GL.h>
 #include "Engine/Text.h"
-#include "Engine/Random.h"
 #include "Engine/Image.h"
 #include "IGame.h"
 #include "Skills.h"
@@ -11,7 +10,7 @@
 namespace Game
 {
 
-Attack::Attack(const Identity& actor, const Skill& skill, const Identity& target, Direction trajectory, const Part& part) :
+Attack::Attack(const Identity& actor, const Skill& skill, const Identity& target, Direction trajectory, const Part* part) :
 	TargetedAction(actor, skill, target),
 	AimedAction(part),
     DirectedAction(trajectory)
@@ -23,6 +22,13 @@ void Attack::Act(IGame& game) const
 	State attacker = game.Get(actor);
 	auto& targetActor = dynamic_cast<const Identity&>(target);
 	State victim(game.Get(targetActor));
+	if (!part)
+	{
+		Engage(attacker);
+		game.Adjust(actor, attacker, skill.name);
+		game.Adjust(targetActor, victim, L"Miss " + skill.name);
+		return;
+	}
 	auto skillLevel = attacker.SkillLevel(skill, &victim);
 	if (skillLevel.Value() == 0)
 	{
@@ -32,17 +38,17 @@ void Attack::Act(IGame& game) const
 		return;
 	}
 	auto damage = attacker.AttackDamage(skill, skillLevel);
-	Damage pain = damage - victim.Mitigation(part);
-	if (!victim.Hurt(part, pain, actor.Description()+L"'"+skill.description))	
+	Damage pain = damage - victim.Mitigation(*part);
+	if (!victim.Hurt(*part, pain, actor.Description()+L"'"+skill.description))	
 	{
 		Engage(attacker);
 		game.Adjust(actor, attacker, skill.name);
-		game.Adjust(targetActor, victim, L"Mitigate " + skill.name + L"@" + part.Name() + L":" + pain.ActionDescription());
+		game.Adjust(targetActor, victim, L"Mitigate " + skill.name + L"@" + part->Name() + L":" + pain.ActionDescription());
 		return;
 	}
 	Engage(attacker);
 	game.Adjust(actor, attacker, skill.name);
-	game.Adjust(targetActor, victim, L"Hit " + skill.name + L"@" + part.Name() + L":" + pain.ActionDescription());
+	game.Adjust(targetActor, victim, L"Hit " + skill.name + L"@" + part->Name() + L":" + pain.ActionDescription());
 }
 
 void Attack::Render(const State& state) const

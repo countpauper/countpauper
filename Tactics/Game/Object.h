@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Position.h"
-#include "Direction.h"
-#include "Target.h"
 #include "Identity.h"
+#include "Body.h"
+#include "Game.h"
 
 namespace Game
 {

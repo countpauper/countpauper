@@ -53,8 +53,8 @@ namespace Game
 	class AimedAction
 	{
 	public:
-		AimedAction(const Part& part);
-		const Part& part;
+		AimedAction(const Part* part);
+		const Part* part;
 	};
 
 	class DirectedAction

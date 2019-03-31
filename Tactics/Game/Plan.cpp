@@ -250,34 +250,88 @@ namespace Game
 
     bool Plan::Execute(Game& game) const
     {
+		// siblings are probabilities that add up to >= 1.0 (typically last one is catch all 1.0) 
+		// children are subsequent probabilities that are multiplied in AllOutComes
+		// that means the result are again parallel probabilities
         auto outcomes = AllOutcomes();
-        for (auto outcome : outcomes)
+		double score = Engine::Random().Chance();
+		for (auto outcome : outcomes)
         {
-            double score = Engine::Random().Chance();
-            if (score < outcome.first)
+			if (score < outcome.first)
             {
-                Apply(*outcome.second, game);
+				OutputDebugStringW((L"Execute: " + Description() + L" " + outcome.second->Description() + L"@" + std::to_wstring(outcome.first* 100) + L"%\r\n").c_str());
+				Apply(*outcome.second, game);
                 return true;
             }
+			score -= outcome.first;
         }
-        OutputDebugStringW((L"Execute: " + Description() + L" Fail\r\n").c_str());
+        OutputDebugStringW((L"Execute: " + Description() + L" Fail >" + std::to_wstring(score*100.0) + L"%\r\n").c_str());
         return false;
     }
 
     void Plan::Apply(const Future& state, Game& game) const
     {
-        OutputDebugStringW((L"Execute: " + Description() + L" " + state.Description() + L"\r\n").c_str());
         state.Apply(game);
     }
 
-	Location HitLocation(const State& attacker, const Skill& skill, const State& victim, Direction trajectory)
+	double CDF(double value)
+	{
+		static const double M_SQRT1_2 = 0.70710678118654752440084436210485;
+		return 0.5 * erfc(-value * M_SQRT1_2);
+	}
+
+	auto CenterMass(double center, double sigma = 1.0, double limit = 0.001)
+	{
+		std::map<int, double> result;
+		auto floor = std::floor(center);
+		auto floorCDF = CDF(floor-center);
+		auto centerDF = CDF(0.0);	// should be 0.5;
+		auto ceilCDF= CDF(floor+1.0-center);
+
+
+		int i = static_cast<int>(floor);
+		result[i] = ceilCDF - floorCDF;
+		auto topCDF = floorCDF;
+		double bottomCDF;
+		while(true)
+		{
+			i--;
+			bottomCDF = CDF(static_cast<double>(i) - center);
+			double chance = topCDF - bottomCDF;
+			if (chance < limit)
+			{
+				result.begin()->second += chance;
+				break;
+			}
+			result[i] = chance;
+			topCDF = bottomCDF;
+		}
+		i = static_cast<int>(floor);
+		bottomCDF = ceilCDF;
+		while (true)
+		{
+			i++;
+			topCDF = CDF(1+static_cast<double>(i)- center);
+			double chance = topCDF - bottomCDF;
+			if (chance < limit)
+			{
+				result.rbegin()->second += chance;
+				break;
+			}
+			result[i] = chance;
+			bottomCDF = topCDF;
+		}
+		return result;
+	}
+
+	std::map<Location, double> HitLocations(const State& attacker, const Skill& skill, const State& victim, Direction trajectory)
 	{
 		assert(!attacker.direction.IsProne());  // prone not supported yet here
+		std::map<Location, double> result;
 		if (victim.direction.IsProne())
 		{
-			return Location();
+			return result;
 		}
-
 
 		auto targeting = skill.targeting;
 		Direction absoluteTrajectory = attacker.direction.Turn(trajectory);
@@ -286,29 +340,46 @@ namespace Game
 		{
 			Location origin = attacker.Origin(skill);
 			// TODO: mirror for left arm/tail of origin
-			return Location(Plane({ hitPlane }), origin.position, origin.size);    // TODO: sensing body part or height difference
+			result[Location(Plane({ hitPlane }), origin.position, origin.size)] = 1.0;
+			return result;
 		}
 		else if (targeting.count(Targeting::Center))
 		{
 			auto height = victim.body.Anatomical().Length();
 			double middle = static_cast<double>(height) / 2.0;
-			assert(false);	// random state storage is removed, need to reimplement center mass
-			auto hitHeight = static_cast<int>(std::round(middle + Engine::Random().Normal(1.0)));
+			auto hitHeight = middle; // static_cast<int>(std::round(middle + Engine::Random().Normal(1.0)));
 			if (hitHeight < 0 || hitHeight >= static_cast<int>(height))
-				return Location();
-			return Location(Plane({ hitPlane }), hitHeight);
+				return result;
+			std::map<int, double> heights = CenterMass(middle);
+			for (const auto& height : heights)
+			{
+				if (height.first < 0)
+				{
+					auto[it, inserted] = result.emplace(std::make_pair(Location(), 0.0));
+					it->second += height.second;
+				}
+				else
+				{
+					result[Location(Plane({ hitPlane }), height.first)] = height.second;
+
+				}
+			}
+
+			return result;
 		}
 		else if (targeting.count(Targeting::Intercept))
 		{
 			Location origin = attacker.Origin(skill);
 			// TODO: mirror for left arm/tail
-			return Location(Plane({ hitPlane }), 0);
+			result[Location(Plane({ hitPlane }), 0)] = 1.0;
+			return result;
 		}
 		assert(false);  // unsupported for now
-		return Location();
+		return result;
 	}
 
-	std::pair<const Part*, Direction> Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
+	using HitChances = std::map<const Part*, double>;
+	std::tuple<HitChances,Direction> Aim(const IGame& state, const Identity& actor, const Identity& target, const Skill& skill)
 	{
 		State attacker(state.Get(actor));
 		State victim(state.Get(target));
@@ -318,14 +389,22 @@ namespace Game
 		}
 		for (auto trajectory : skill.trajectory)
 		{
-			auto location = HitLocation(attacker, skill, victim, trajectory);
-			if (!location)
+			auto locations = HitLocations(attacker, skill, victim, trajectory);
+			if (locations.empty())
 				continue;
-			auto part = victim.body.Anatomical().At(location);
-			if (part)
-				return std::make_pair(part, trajectory);
+			HitChances hitchances;
+			for (const auto& location : locations)
+			{
+				auto part = victim.body.Anatomical().At(location.first);
+				auto [it, inserted ] = hitchances.emplace(std::make_pair(part, location.second));
+				if (!inserted )
+				{
+					it->second += location.second;
+				}
+			}
+			return std::tie(hitchances, trajectory);
 		}
-		return std::make_pair(nullptr, Direction::none);
+		return std::tie(HitChances(), Direction());
 	}
 
 	Direction Intercept(const IGame& state, const Identity& actor, const TargetedAction& action, const Skill& skill)
@@ -364,28 +443,46 @@ namespace Game
 		if (!state.IsPossible(skill, target))
 			return false;
 
-		auto aim = Aim(*parent.state, actor, dynamic_cast<const Actor&>(target), skill);
-		if (!aim.first && !skill.trajectory.empty())
+		auto& [hitchances, direction] =  Aim(*parent.state, actor, dynamic_cast<const Actor&>(target), skill);
+		if (hitchances.empty() && !skill.trajectory.empty())
 			return false;
 
-		std::unique_ptr<TargetedAction> action(skill.CreateAction(actor, target, aim.second, aim.first));
-		if (!action)
-			return false;
+		double remainingChance = 1.0;
+		for (auto hitchance : hitchances)
+		{
+			if (!hitchance.first)
+				continue;
+			std::unique_ptr<TargetedAction> action(skill.CreateAction(actor, target, direction, hitchance.first));
+			auto node = std::make_unique<Node>(parent, std::move(action));
+			node->chance *= hitchance.second;
+			remainingChance -= node->chance;
+			auto targetActor = dynamic_cast<const Actor*>(&target);
+			if ((targetActor) &&
+				(!targetActor->IsAlly(actor)))	// TODO: target aware of actor and action
+			{
+				auto defenses = targetActor->Counters(skill);
+				for (auto defense : defenses)
+				{
+					if (auto reaction = PlanReaction(parent, *defense, *targetActor, dynamic_cast<TargetedAction&>(*node->action)))
+					{
+						reaction->chance *= node->chance;
+						assert(node->chance >= reaction->chance);	// negative chance? no reaction should be that likely
+						node->chance -= reaction->chance;
+					}
+				}
+			}
+			PlanCombo(*node, skill, actor, target);
+			parent.children.emplace_back(std::move(node));
+		}
+		// Add miss
+		if (remainingChance > 0.0)
+		{
+			std::unique_ptr<TargetedAction> action(skill.CreateAction(actor, target, direction, nullptr));
+			auto node = std::make_unique<Node>(parent, std::move(action));
+			node->chance = remainingChance+std::numeric_limits<double>::epsilon();
+			parent.children.emplace_back(std::move(node));
+		}
 
-		auto node = std::make_unique<Node>(parent, std::move(action));
-
-        auto targetActor = dynamic_cast<const Actor*>(&target);
-        if ((targetActor) &&
-			(!targetActor->IsAlly(actor)))	// TODO: target aware of actor and action
-        {
-            auto defenses = targetActor->Counters(skill);
-            for (auto defense : defenses)
-            {
-                PlanReaction(parent, *defense, *targetActor, dynamic_cast<TargetedAction&>(*node->action));
-            }
-        }
-        PlanCombo(*node, skill, actor, target);
-        parent.children.emplace_back(std::move(node));
 		return true;
     }
 
@@ -398,24 +495,25 @@ namespace Game
         }
     }
 
-    bool Plan::PlanReaction(Node& parent, const Skill& skill, const Actor& defender, const TargetedAction& offense)
+    Plan::Node* Plan::PlanReaction(Node& parent, const Skill& skill, const Actor& defender, const TargetedAction& offense)
     {
 		auto state = parent.state->Get(defender);
 		if (!state.IsPossible(skill, offense))
-			return false;
+			return nullptr;
 		Direction trajectory;
 		if (!skill.trajectory.empty())
 		{
 			trajectory = Intercept(*parent.state, defender, offense, skill);
 			if (trajectory.IsNone())
-				return false;
+				return nullptr;
 		}
 
 		std::unique_ptr<TargetedAction> reaction(skill.CreateAction(defender, offense, trajectory, nullptr));
 		auto node = std::make_unique<Node>(parent, std::move(reaction));
+		auto ptr= node.get();
 		parent.children.emplace_back(std::move(node));
 		PlanCombo(*node, skill, defender, dynamic_cast<const Target&>(offense.actor));
-        return true;
+        return ptr;
     }
 
     std::unique_ptr<Plan::Node> Plan::Approach(const Target& target, const Game& game, const Skill& skill)

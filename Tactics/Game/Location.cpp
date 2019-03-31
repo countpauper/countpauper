@@ -36,6 +36,25 @@ Location::operator bool() const
     return !plane.empty() && size > 0;
 }
 
+bool Location::operator==(const Location& other) const
+{
+	return plane == other.plane && position == other.position && size == other.size;
+}
+bool Location::operator<(const Location& other) const
+{
+	if (plane < other.plane)
+		return true;
+	else if (other.plane < plane)
+		return false;
+	else if (position < other.position)
+		return true;
+	else if (position > other.position)
+		return false;
+	else
+		return size < other.size;
+
+}
+
 
 std::wistream& operator>>(std::wistream& s, Location& v)
 {
