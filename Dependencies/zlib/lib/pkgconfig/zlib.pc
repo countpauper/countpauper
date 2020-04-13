@@ -1,0 +1,13 @@
+prefix=/usr/local
+exec_prefix=/usr/local
+libdir=/home/igor/fswsrc/pkg-x86_64/zlib/lib
+sharedlibdir=/home/igor/fswsrc/pkg-x86_64/zlib/lib
+includedir=/home/igor/fswsrc/pkg-x86_64/zlib/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.8
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

@@ -74,7 +74,7 @@ namespace Game
         auto result = limb.AttributeScore(attribute);
         auto body = FullBodyBonus(attribute);
         assert(body.Value() % 2 == 0);  // TODO: rounding
-        result += Bonus(body.Description(), body.Value() / wielded.size()); 
+        result += Bonus(body.Description(), body.Value() / static_cast<unsigned int>(wielded.size())); 
         if (weapon)
         {
             result += weapon->Bonus(attribute); 

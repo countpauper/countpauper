@@ -42,7 +42,7 @@ namespace Game
 
     void TurnList::Item::Render() const
     {
-        glPushName(actor.Tag());
+        glPushName(actor.Id());
         RenderBackground();
         RenderActor();
         RenderPlan();
@@ -173,7 +173,7 @@ namespace Game
         Engine::CheckGLError();
     }
 
-    void TurnList::Key(unsigned short code)
+    void TurnList::Key(unsigned code)
     {
         if (code == VK_OEM_3)   // `
             game.SelectTarget(nullptr);

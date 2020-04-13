@@ -122,8 +122,8 @@ namespace Game
         glPopName();
         Engine::CheckGLError();
     }
-
-    void SkillBar::Key(unsigned short code)
+    
+    void SkillBar::Key(unsigned code)
     {
         Button * selectedButton = nullptr;
         for (auto& button : buttons)

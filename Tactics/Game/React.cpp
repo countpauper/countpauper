@@ -41,7 +41,7 @@ void React::Render(const State& state) const
 	glRasterPos3i(0, 0, 1); // set start position
 	glListBase(1000);
 	std::string text(skill.name.begin(), skill.name.end());
-	glCallLists(text.size(), GL_UNSIGNED_BYTE, text.c_str());
+	glCallLists(static_cast<GLsizei>(std::min(65535ULL,text.size())), GL_UNSIGNED_BYTE, text.c_str());
 
 	glPopMatrix();
 }

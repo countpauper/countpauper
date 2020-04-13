@@ -2,10 +2,12 @@
 #include <memory>
 #include <set>
 #include <vector>
+#include "Engine/Identification.h"
 #include "Item.h"
 #include "Direction.h"
 #include "Targeting.h"
 #include "Stats.h"
+
 
 extern "C" {
 struct _xmlNode;
@@ -19,7 +21,8 @@ class TargetedAction;
 class Identity;
 class Target;
 class Part;
-class Skill
+
+class Skill : public Engine::Identification
 {
 public:
 	Skill();
@@ -38,7 +41,7 @@ public:
 	bool Combo(const Skill& previous) const;
 	bool Counter(const Skill& previous) const;
 	bool Follows(const Skill& previous) const;
-	unsigned Id() const;
+
 	Engine::Image Icon() const;
 	void LoadIcon(const std::wstring& fname);
 

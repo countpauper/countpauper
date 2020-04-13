@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <boost/signals2/connection.hpp>
+#include <connection.h>
 #include "Engine/Image.h"
 
 namespace Game
@@ -16,7 +16,7 @@ namespace Game
         SkillBar(Game& game, unsigned height);
         void Render() const;
         unsigned Height() const;
-        void Key(unsigned short code);
+        void Key(unsigned code);
 
         class Button
         {
@@ -44,7 +44,7 @@ namespace Game
         std::vector<Button> buttons;
         unsigned height;
         const Actor* actor;
-        boost::signals2::scoped_connection actorConnection;
-        boost::signals2::scoped_connection skillConnection;
+        is::signals::scoped_connection actorConnection;
+        is::signals::scoped_connection skillConnection;
     };
 }

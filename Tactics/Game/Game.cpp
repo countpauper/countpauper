@@ -351,7 +351,7 @@ namespace Game
         unsigned index = 0;
         for (const auto& object : objects)
         {
-            glPushName(object->Tag());
+            glPushName(object->Id());
             object->Render();
             glPopName();
         }
@@ -379,7 +379,7 @@ namespace Game
     }
 
 
-    void Game::Key(unsigned short code)
+    void Game::Key(unsigned code)
     {
         if (code == VK_RETURN)
         {
@@ -507,12 +507,12 @@ namespace Game
         }
         else if (selection == Selection::Object)
         {
-            auto object = (Object*)value;
+            auto object = dynamic_cast<Object*>(Object::FindId(value));
             SelectTarget(object);
         }
         else if (selection == Selection::Skill)
         {
-            SelectSkill((Skill*)value);
+            SelectSkill(dynamic_cast<Skill*>(Skill::FindId(value)));
         }
     }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <boost/signals2/connection.hpp>
+#include <connection.h>
 
 namespace Game
 {
@@ -34,13 +34,13 @@ namespace Game
         TurnList(Game& game, unsigned width);
         void Render() const;
         unsigned Width() const;
-        void Key(unsigned short code);
+        void Key(unsigned code);
     private:
         void Update();
         Game& game;
         std::vector<Item> items;
         unsigned width;
-        boost::signals2::scoped_connection selectedConnection;
-        boost::signals2::scoped_connection activatedConnection;
+        is::signals::scoped_connection selectedConnection;
+        is::signals::scoped_connection activatedConnection;
     };
 }

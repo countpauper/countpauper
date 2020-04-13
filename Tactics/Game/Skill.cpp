@@ -199,12 +199,6 @@ bool Skill::Counter(const Skill& previous) const
 	return Follows(previous);
 }
 
-unsigned Skill::Id() const
-{
-	static_assert(sizeof(unsigned) == sizeof(this), "Failed to use skill pointer as id");
-	return unsigned(this);
-}
-
 Engine::Image Skill::Icon() const
 {
 	return *icon;

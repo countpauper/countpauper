@@ -3,7 +3,8 @@
 #include <memory>
 #include <istream>
 #include <list>
-#include <boost/signals2.hpp>
+#include <connection.h>
+#include <signal.h>
 #include "Engine/Coordinate.h"
 #include "Engine/Color.h"
 #include "Direction.h"
@@ -43,7 +44,7 @@ namespace Game
 
         void Tick();
         void Render() const;
-        void Key(unsigned short code);
+        void Key(unsigned code);
         bool CanBe(const Position& position) const override;
         bool CanGo(const Position& from, Direction direction) const override;
         bool Cover(const Position& from, const Position& to) const override;
@@ -54,12 +55,12 @@ namespace Game
         static std::vector<Engine::RGBA> teamColor;
 
         const Actor* SelectedActor() const;
-        boost::signals2::signal<void(const Actor*)> actorSelected;
+        is::signals::signal<void(const Actor*)> actorSelected;
         using ActorList = std::vector<Actor*>;
-        boost::signals2::signal<void(const ActorList&)> actorsActivated;
+        is::signals::signal<void(const ActorList&)> actorsActivated;
         const Skill* SelectedSkill() const;
         void SelectSkill(const Skill* skill);
-        boost::signals2::signal<void(const Skill*)> skillSelected;
+        is::signals::signal<void(const Skill*)> skillSelected;
         void SelectTarget(const Target* target);
 
         const Type::Armor& FindArmor(const std::wstring& name) const;

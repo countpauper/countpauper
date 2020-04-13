@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Engine/Coordinate.h"
+#include "Engine/Utils.h"
 #include "Object.h"
 
 namespace Game
@@ -13,14 +14,7 @@ namespace Game
 		position.y = std::min(std::max(0, static_cast<int>(position.y) + dy), 5);
 	}
 
-	unsigned Object::Tag() const
-	{
-		static_assert(sizeof(unsigned) == sizeof(this), "Failed to use object pointer as id");
-		return unsigned(this);
-	}
-
-
-	bool Object::Prone() const
+    bool Object::Prone() const
 	{
 		return true;
 	}
