@@ -1,4 +1,4 @@
-#include <boost/test/unit_test.hpp>
+#include "pch.h"
 #include "Game/Attack.h"
 #include "Data.h"
 #include "Fantasy.h"
@@ -7,9 +7,7 @@ namespace Game
 {
 namespace Test
 {
-BOOST_AUTO_TEST_SUITE(AttackTest);
-
-BOOST_AUTO_TEST_CASE(Succeed)
+TEST(Attack, Succeed)
 {
 	Fantasy world;
 	Data::Knight attacker;
@@ -21,12 +19,12 @@ BOOST_AUTO_TEST_CASE(Succeed)
 	const auto& part = victim.body.Anatomical()[L"All"];
 	Attack attack(attacker, attacker.melee, victim, *attacker.melee.trajectory.begin(), &part);
 	attack.Act(world);
-	BOOST_CHECK(victim.body.IsHurt());
-	BOOST_CHECK(victim.HasEvent(L"Hit"));
-	BOOST_CHECK(attacker.HasEvent(attacker.melee.name));
+	EXPECT_TRUE(victim.body.IsHurt());
+	EXPECT_TRUE(victim.HasEvent(L"Hit"));
+	EXPECT_TRUE(attacker.HasEvent(attacker.melee.name));
 }
 
-BOOST_AUTO_TEST_CASE(Mitigate)
+TEST(Attack, Mitigate)
 {
 	Fantasy world;
 	Data::Knight attacker;
@@ -40,12 +38,12 @@ BOOST_AUTO_TEST_CASE(Mitigate)
 	const auto& part = victim.body.Anatomical()[L"All"];
 	Attack attack(attacker, attacker.melee, victim, *attacker.melee.trajectory.begin(), &part);
 	attack.Act(world);
-	BOOST_CHECK(!victim.body.IsHurt());
-	BOOST_CHECK(victim.HasEvent(L"Mitigate"));
-	BOOST_CHECK(attacker.HasEvent(attacker.melee.name));
+	EXPECT_FALSE(victim.body.IsHurt());
+	EXPECT_TRUE(victim.HasEvent(L"Mitigate"));
+	EXPECT_TRUE(attacker.HasEvent(attacker.melee.name));
 }
 
-BOOST_AUTO_TEST_CASE(Miss)
+TEST(Attack, Miss)
 {
 	Fantasy world;
 	Data::Knight attacker;
@@ -56,13 +54,11 @@ BOOST_AUTO_TEST_CASE(Miss)
 
 	Attack attack(attacker, attacker.melee, victim, *attacker.melee.trajectory.begin(), nullptr);
 	attack.Act(world);
-	BOOST_CHECK(!victim.body.IsHurt());
-	BOOST_CHECK(victim.HasEvent(L"Miss"));
-	BOOST_CHECK(attacker.HasEvent(attacker.melee.name));
+	EXPECT_FALSE(victim.body.IsHurt());
+	EXPECT_TRUE(victim.HasEvent(L"Miss"));
+	EXPECT_TRUE(attacker.HasEvent(attacker.melee.name));
 }
 
 
-
-BOOST_AUTO_TEST_SUITE_END()
 }
 }  // Game::Test

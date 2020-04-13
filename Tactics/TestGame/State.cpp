@@ -1,4 +1,4 @@
-#include <boost/test/unit_test.hpp>
+#include "pch.h"
 #include "Game/State.h"
 #include "Data.h"
 
@@ -7,46 +7,44 @@ namespace Game
 namespace Test
 {
 
-BOOST_AUTO_TEST_SUITE(StateTest);
-
-BOOST_AUTO_TEST_CASE(BodyStatistics)
+TEST(State, BodyStatistics)
 {
     Data::Simple a;
 	Body b(a);
     State s(a);
-    BOOST_CHECK_EQUAL(s.Strength(), b.Strength());
-    BOOST_CHECK_EQUAL(s.Agility(), b.Agility());
-    BOOST_CHECK_EQUAL(s.Constitution(), b.Constitution());
-    BOOST_CHECK_EQUAL(s.Intelligence(), b.Intelligence());
-    BOOST_CHECK_EQUAL(s.Wisdom(), b.Wisdom());
+    EXPECT_EQ(s.Strength(), b.Strength());
+    EXPECT_EQ(s.Agility(), b.Agility());
+    EXPECT_EQ(s.Constitution(), b.Constitution());
+    EXPECT_EQ(s.Intelligence(), b.Intelligence());
+    EXPECT_EQ(s.Wisdom(), b.Wisdom());
 
-    BOOST_CHECK_EQUAL(s.AttributeScore(Attribute::Wisdom), b.Wisdom());
+    EXPECT_EQ(s.AttributeScore(Attribute::Wisdom), b.Wisdom());
 }
 
-BOOST_AUTO_TEST_CASE(NoSkill)
+TEST(State, NoSkill)
 {
     Data::Simple a;
     Data::Blade weapon;
     Data::Melee skill;
     State s(a, Position(), Direction(), 10, {}, { &weapon }, {});
-    BOOST_CHECK_EQUAL(s.SkillLevel(skill), 0);
+    EXPECT_EQ(s.SkillLevel(skill), 0);
     Data::Victim v;
-    BOOST_CHECK(!s.IsPossible(skill, v));
+    EXPECT_FALSE(s.IsPossible(skill, v));
 }
 
-BOOST_AUTO_TEST_CASE(NoWeapon)
+TEST(State, NoWeapon)
 {
     Data::Simple a;
 	Body b(a);
     Data::Melee skill;
     State s(a, Position(), Direction(), 10, {}, {}, { &skill });
     auto level = s.SkillLevel(skill);
-    BOOST_CHECK_EQUAL(level, b.Strength());
+    EXPECT_EQ(level, b.Strength());
     Data::Victim v;
-    BOOST_CHECK(!s.IsPossible(skill, v));
+    EXPECT_FALSE(s.IsPossible(skill, v));
 }
 
-BOOST_AUTO_TEST_CASE(UseWeapon)
+TEST(State, UseWeapon)
 {
     Data::Simple a;
 	Body b(a);
@@ -54,28 +52,28 @@ BOOST_AUTO_TEST_CASE(UseWeapon)
     Data::Melee skill;
     State s(a, Position(), Direction(), 10, {}, { &weapon }, { &skill });
     Data::Victim v;
-    BOOST_CHECK(s.IsPossible(skill, v));
+    EXPECT_TRUE(s.IsPossible(skill, v));
 
     Damage d = s.AttackDamage(skill);
-    BOOST_CHECK_EQUAL(d.Sharp(), weapon.Damage().Sharp().Value() + static_cast<Skill::Melee&>(*skill.type).DamageBonus(b.Strength()).value);
+    EXPECT_EQ(d.Sharp(), weapon.Damage().Sharp().Value() + static_cast<Skill::Melee&>(*skill.type).DamageBonus(b.Strength()).value);
 }
 
-BOOST_AUTO_TEST_CASE(DoubleHand)
+TEST(State, DoubleHand)
 {
     Data::Human a;
     Data::Blade weapon;
 	Data::Melee skill;
     State s(a, Position(), Direction(), 10, {}, { &weapon }, { &skill });
     Data::Victim v;
-    BOOST_CHECK(s.IsPossible(skill, v));
+    EXPECT_TRUE(s.IsPossible(skill, v));
 
     auto skillLevel = s.SkillLevel(skill, &v);
-    BOOST_CHECK_EQUAL(skillLevel, s.body.Strength());
+    EXPECT_EQ(skillLevel, s.body.Strength());
     Damage d = s.AttackDamage(skill, skillLevel);
-    BOOST_CHECK_EQUAL(d.Sharp(), weapon.Damage().Sharp() + static_cast<Skill::Melee&>(*skill.type).DamageBonus(s.body.Strength()));
+    EXPECT_EQ(d.Sharp(), weapon.Damage().Sharp() + static_cast<Skill::Melee&>(*skill.type).DamageBonus(s.body.Strength()));
 }
 
-BOOST_AUTO_TEST_CASE(SingleHand)
+TEST(State, SingleHand)
 {
     Data::Human a;
     Data::Blade weapon;
@@ -84,123 +82,122 @@ BOOST_AUTO_TEST_CASE(SingleHand)
     State s(a, Position(), Direction(), 10, {}, { }, { &skill });
 	s.Wield(weapon);
 	s.Wield(shield);
-	BOOST_REQUIRE_EQUAL(s.body.Wielded(a[L"RArm"]), &weapon);
-	BOOST_REQUIRE_EQUAL(s.body.Wielded(a[L"LArm"]), &shield);
+	ASSERT_EQ(s.body.Wielded(a[L"RArm"]), &weapon);
+    ASSERT_EQ(s.body.Wielded(a[L"LArm"]), &shield);
 
 	auto rightArmStrength = a[L"RArm"].AttributeScore(Attribute::Strength);
 	Data::Victim v;
-	BOOST_CHECK(s.IsPossible(skill, v));
+	EXPECT_TRUE(s.IsPossible(skill, v));
     auto skillLevel = s.SkillLevel(skill, &v);
-    BOOST_CHECK_EQUAL(skillLevel, rightArmStrength);
+    EXPECT_EQ(skillLevel, rightArmStrength);
     Damage d = s.AttackDamage(skill, skillLevel);
-    BOOST_CHECK_EQUAL(d.Sharp(), weapon.Damage().Sharp() + static_cast<Skill::Melee&>(*skill.type).DamageBonus(rightArmStrength));
+    EXPECT_EQ(d.Sharp(), weapon.Damage().Sharp() + static_cast<Skill::Melee&>(*skill.type).DamageBonus(rightArmStrength));
 }
 
-BOOST_AUTO_TEST_CASE(HeavyWeapon)
+TEST(State, HeavyWeapon)
 {
     Data::Knight s;
     s.weapon.mat.name = L"Led";
     s.weapon.mat.requirement.strength = s.Strength().Value() + 3;
     s.weapon.mat.load.weight = 80;
-    BOOST_CHECK_EQUAL(s.Agility(), s.body.Agility().Value() - 6);  // (strength * 5 - 80 )/5 = -6
+    EXPECT_EQ(s.Agility(), s.body.Agility().Value() - 6);  // (strength * 5 - 80 )/5 = -6
 
     Data::Victim v;
-    BOOST_CHECK(s.IsPossible(s.melee, v));
-    BOOST_CHECK_EQUAL(s.SkillLevel(s.melee, &v), s.body.Strength().Value() - 3);
+    EXPECT_TRUE(s.IsPossible(s.melee, v));
+    EXPECT_EQ(s.SkillLevel(s.melee, &v), s.body.Strength().Value() - 3);
 }
 
-BOOST_AUTO_TEST_CASE(ChargedWeapon)
+TEST(State, ChargedWeapon)
 {
 	Data::Mage s;
 	s.weapon.mod.requirement.intelligence = s.Intelligence().Value() + 2;
 	s.weapon.mod.prefix = L"Astral";
 	s.weapon.mod.load.enchantment = 75;
-	BOOST_CHECK_EQUAL(s.Intelligence(), s.body.Intelligence().Value() - 5);  // (wis * 5 - 75)/5 = -5
+	EXPECT_EQ(s.Intelligence(), s.body.Intelligence().Value() - 5);  // (wis * 5 - 75)/5 = -5
 
-	BOOST_CHECK(s.IsPossible(s.buff, s));
-	BOOST_CHECK_EQUAL(s.SkillLevel(s.buff, nullptr), 5);
+    EXPECT_TRUE(s.IsPossible(s.buff, s));
+	EXPECT_EQ(s.SkillLevel(s.buff, nullptr), 5);
 }
 
-BOOST_AUTO_TEST_CASE(Mitigation)
+TEST(State, Mitigation)
 {
     Data::Harnass armor;
     armor.mod.load.enchantment = 70;
     Data::Knight s;
     s.Wear(armor);
-    BOOST_CHECK_EQUAL(s.Intelligence(), s.body.Intelligence().Value() - 4);
+    EXPECT_EQ(s.Intelligence(), s.body.Intelligence().Value() - 4);
     Location hitLocation(Plane::front, 3, 1);
 	auto& part = s.body.Anatomical()[L"Chest"];
-	BOOST_REQUIRE(part.IsVital());
-    BOOST_CHECK(!s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 1)) - s.Mitigation(part), L"Small wound"));
-    BOOST_CHECK(!s.body.IsHurt());
-	BOOST_CHECK(!s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 4)) - s.Mitigation(part), L"Medium wound"));
-    BOOST_CHECK(!s.body.IsHurt());
-	BOOST_CHECK(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 5)) - s.Mitigation(part), L"Big wound"));
-    BOOST_CHECK(s.body.IsHurt());
-	BOOST_CHECK(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 25)) - s.Mitigation(part), L"Deadly wound"));
-    BOOST_CHECK(s.body.Dead());
-    BOOST_CHECK(s.direction.IsProne());
+	ASSERT_TRUE(part.IsVital());
+    EXPECT_FALSE(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 1)) - s.Mitigation(part), L"Small wound"));
+    EXPECT_FALSE(s.body.IsHurt());
+    EXPECT_FALSE(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 4)) - s.Mitigation(part), L"Medium wound"));
+    EXPECT_FALSE(s.body.IsHurt());
+	EXPECT_TRUE(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 5)) - s.Mitigation(part), L"Big wound"));
+    EXPECT_TRUE(s.body.IsHurt());
+    EXPECT_TRUE(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 25)) - s.Mitigation(part), L"Deadly wound"));
+    EXPECT_TRUE(s.body.Dead());
+    EXPECT_TRUE(s.direction.IsProne());
 }
 
-BOOST_AUTO_TEST_CASE(Range)
+TEST(State, Range)
 {
     Data::Knight s;
-    BOOST_CHECK_EQUAL(s.Range(s.melee), s.melee.range + s.body.Anatomical()[L"RArm"].Length() + s.weapon.Length());
+    EXPECT_EQ(s.Range(s.melee), s.melee.range + s.body.Anatomical()[L"RArm"].Length() + s.weapon.Length());
 }
 
-BOOST_AUTO_TEST_CASE(Engage)
+TEST(State, Engage)
 {
     Data::Knight s;
     Data::Victim v;
-    BOOST_REQUIRE(s.IsPossible(s.melee, v));
+    ASSERT_TRUE(s.IsPossible(s.melee, v));
     s.Engage(s.melee);
-	BOOST_CHECK(!s.IsPossible(s.melee, v));
-	BOOST_CHECK(s.IsPossible(s.combo, v));
+	EXPECT_FALSE(s.IsPossible(s.melee, v));
+    EXPECT_TRUE(s.IsPossible(s.combo, v));
 }
 
-BOOST_AUTO_TEST_CASE(SkillPossibleMP)
+TEST(State, SkillPossibleMP)
 {
 	Data::Knight s;
 	Data::Victim v;
-	BOOST_REQUIRE(s.IsPossible(s.melee, v));
+    ASSERT_TRUE(s.IsPossible(s.melee, v));
 	s.mp = s.melee.mp-1;
-	BOOST_CHECK(!s.IsPossible(s.melee, v));
+    EXPECT_FALSE(s.IsPossible(s.melee, v));
 }
 
-BOOST_AUTO_TEST_CASE(SkillPossibleWielded)
+TEST(State, SkillPossibleWielded)
 {
 	Data::Knight s;
 	Data::Victim v;
-	BOOST_REQUIRE(s.IsPossible(s.melee, v));
+    ASSERT_TRUE(s.IsPossible(s.melee, v));
 	s.body.Drop(s.weapon);
-	BOOST_CHECK(!s.IsPossible(s.melee, v));
+    EXPECT_FALSE(s.IsPossible(s.melee, v));
 }
 
-BOOST_AUTO_TEST_CASE(SkillPossibleRange)
+TEST(State, SkillPossibleRange)
 {
 	Data::Knight s;
 	Data::Victim v;
-	BOOST_REQUIRE(s.IsPossible(s.melee, v));
+    ASSERT_TRUE(s.IsPossible(s.melee, v));
 	// 3 El can hit exactly 1 horizontal/vertical square
-	BOOST_REQUIRE_EQUAL(s.melee.range + s.weapon.Length() + (*s.body.Anatomical().Grip().begin())->Length(), 3);
+	ASSERT_EQ(s.melee.range + s.weapon.Length() + (*s.body.Anatomical().Grip().begin())->Length(), 3);
 	v.position.x = s.position.x + 1;
-	BOOST_CHECK(s.IsPossible(s.melee, v));
+	EXPECT_TRUE(s.IsPossible(s.melee, v));
 	v.position.y = s.position.y + 1;
-	BOOST_CHECK(!s.IsPossible(s.melee, v));
+	EXPECT_FALSE(s.IsPossible(s.melee, v));
 }
 
-BOOST_AUTO_TEST_CASE(Face)
+TEST(State, Face)
 {
 	Data::Knight s;
 	s.Face(s.position + Position(1, 0));
-	BOOST_CHECK_EQUAL(s.direction, Direction::east);
+	EXPECT_EQ(s.direction, Direction::east);
 	s.Face(s.position + Position(0, -1));
-	BOOST_CHECK_EQUAL(s.direction, Direction::south);
+	EXPECT_EQ(s.direction, Direction::south);
 	s.Face(s.position);
-	BOOST_CHECK_EQUAL(s.direction, Direction::south);
+	EXPECT_EQ(s.direction, Direction::south);
 }
 
 
-BOOST_AUTO_TEST_SUITE_END()
 }
 }  // Game::Test

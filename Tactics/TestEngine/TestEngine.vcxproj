@@ -82,7 +82,7 @@
       <Command>$(TargetPath) </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Testing Enginte</Message>
+      <Message>Testing Engine</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -107,7 +107,7 @@
       <Command>$(TargetPath) </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Testing Enginte</Message>
+      <Message>Testing Engine</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -132,7 +132,7 @@
       <Command>$(TargetPath) </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Testing Enginte</Message>
+      <Message>Testing Engine</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -157,7 +157,7 @@
       <Command>$(TargetPath) </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Testing Enginte</Message>
+      <Message>Testing Engine</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

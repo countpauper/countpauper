@@ -11,7 +11,7 @@ TEST(Geometry, Vector)
     Engine::Vector null(0, 0, 0);
     EXPECT_EQ(null.Length(), 0);
     EXPECT_EQ(null.SqrLength(), 0);
-    EXPECT_TRUE(!null);
+    EXPECT_FALSE(null);
 
     Engine::Vector v(1, 0, 0);
     EXPECT_EQ(v.Length(), 1);

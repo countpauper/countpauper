@@ -1,4 +1,4 @@
-#include <boost/test/unit_test.hpp>
+#include "pch.h"
 #include "Game/Direction.h"
 #include "Game/Position.h"
 #include "Engine/Geometry.h"
@@ -8,107 +8,106 @@ namespace Game
 namespace Test
 {
 
-BOOST_AUTO_TEST_SUITE(DirectionTest);
 
-BOOST_AUTO_TEST_CASE(None)
+TEST(DirectionTest, None)
 {
-	BOOST_CHECK(Direction().IsNone());
-	BOOST_CHECK(Direction::none.IsNone());
+    EXPECT_TRUE(Direction().IsNone());
+	EXPECT_TRUE(Direction::none.IsNone());
 }
 
-BOOST_AUTO_TEST_CASE(CardinalPositions)
+TEST(DirectionTest, CardinalPositions)
 {
-    BOOST_CHECK_EQUAL(Direction(Position(0, 0)), Direction::none);
-    BOOST_CHECK_EQUAL(Direction(Position(0, -1)), Direction::south);
-    BOOST_CHECK_EQUAL(Direction(Position(0, 1)), Direction::north);
-    BOOST_CHECK_EQUAL(Direction(Position(-1, 0)), Direction::west);
-    BOOST_CHECK_EQUAL(Direction(Position(1, 0)), Direction::east);
-}
-
-
-BOOST_AUTO_TEST_CASE(DiagonalPositions)
-{
-	BOOST_CHECK_EQUAL(Direction(Position(-1, -1)), Direction::west);
-	BOOST_CHECK_EQUAL(Direction(Position(1, -1)), Direction::south);
-	BOOST_CHECK_EQUAL(Direction(Position(1, 1)), Direction::east);
-	BOOST_CHECK_EQUAL(Direction(Position(-1, 1)), Direction::north);
-}
-
-BOOST_AUTO_TEST_CASE(VerticalPositions)
-{
-	BOOST_CHECK_EQUAL(Direction(0, 0, 1), Direction::up);
-	BOOST_CHECK_EQUAL(Direction(0, 0,-1), Direction::down);
-	BOOST_CHECK_EQUAL(Direction(1, 1,-2), Direction::down);
-	BOOST_CHECK_EQUAL(Direction(1, 0, 1), Direction::east);
+    EXPECT_EQ(Direction(Position(0, 0)), Direction::none);
+    EXPECT_EQ(Direction(Position(0, -1)), Direction::south);
+    EXPECT_EQ(Direction(Position(0, 1)), Direction::north);
+    EXPECT_EQ(Direction(Position(-1, 0)), Direction::west);
+    EXPECT_EQ(Direction(Position(1, 0)), Direction::east);
 }
 
 
-BOOST_AUTO_TEST_CASE(Opposite)
+TEST(DirectionTest, DiagonalPositions)
 {
-	BOOST_CHECK(Direction::east.IsOpposite(Direction::west));
-	BOOST_CHECK(Direction::south.IsOpposite(Direction::north));
-	BOOST_CHECK(Direction::up.IsOpposite(Direction::down));
-	BOOST_CHECK(!Direction::east.IsOpposite(Direction::north));
-	BOOST_CHECK(!Direction::up.IsOpposite(Direction::west));
-	BOOST_CHECK(!Direction::none.IsOpposite(Direction::west));
-	BOOST_CHECK(!Direction::east.IsOpposite(Direction::east));
-
-	BOOST_CHECK(Direction::east.IsOpposite(Direction::east.Opposite()));
-	BOOST_CHECK(Direction::south.IsOpposite(Direction::south.Opposite()));
-	BOOST_CHECK(Direction::down.IsOpposite(Direction::down.Opposite()));
+	EXPECT_EQ(Direction(Position(-1, -1)), Direction::west);
+	EXPECT_EQ(Direction(Position(1, -1)), Direction::south);
+	EXPECT_EQ(Direction(Position(1, 1)), Direction::east);
+	EXPECT_EQ(Direction(Position(-1, 1)), Direction::north);
 }
 
-BOOST_AUTO_TEST_CASE(Angles)
+TEST(DirectionTest, VerticalPositions)
 {
-	BOOST_CHECK(std::isnan(Direction::none.Angle()));
-	BOOST_CHECK_EQUAL(Direction::east.Angle(), 0);
-	BOOST_CHECK_CLOSE(Direction::north.Angle(), 0.5*Engine::PI, 0.001);
-	BOOST_CHECK_CLOSE(Direction::south.Angle(), -0.5*Engine::PI, 0.001);
-	BOOST_CHECK_CLOSE(Direction::west.Angle(), Engine::PI, 0.001);
-	BOOST_CHECK(std::isnan(Direction::up.Angle()));
-	BOOST_CHECK(std::isnan(Direction::down.Angle()));
-}
-
-BOOST_AUTO_TEST_CASE(Clockwise)
-{
-	BOOST_CHECK(Direction::east.IsClockwise(Direction::north));
-	BOOST_CHECK(Direction::south.IsClockwise(Direction::east));
-	BOOST_CHECK(Direction::west.IsClockwise(Direction::south));
-	BOOST_CHECK(Direction::north.IsClockwise(Direction::west));
-
-	BOOST_CHECK(!Direction::west.IsClockwise(Direction::north));
-	BOOST_CHECK(!Direction::north.IsClockwise(Direction::east));
-	BOOST_CHECK(!Direction::east.IsClockwise(Direction::south));
-	BOOST_CHECK(!Direction::south.IsClockwise(Direction::west));
-
-	BOOST_CHECK(!Direction::east.IsClockwise(Direction::west));
-	BOOST_CHECK(!Direction::south.IsClockwise(Direction::north));
-	BOOST_CHECK(!Direction::none.IsClockwise(Direction::west));
-	BOOST_CHECK(!Direction::up.IsClockwise(Direction::down));
-	BOOST_CHECK(!Direction::down.IsClockwise(Direction::north));
+	EXPECT_EQ(Direction(0, 0, 1), Direction::up);
+	EXPECT_EQ(Direction(0, 0,-1), Direction::down);
+	EXPECT_EQ(Direction(1, 1,-2), Direction::down);
+	EXPECT_EQ(Direction(1, 0, 1), Direction::east);
 }
 
 
-BOOST_AUTO_TEST_CASE(CounterClockwise)
+TEST(DirectionTest, Opposite)
 {
-	BOOST_CHECK(Direction::west.IsCounterClockwise(Direction::north));
-	BOOST_CHECK(Direction::north.IsCounterClockwise(Direction::east));
-	BOOST_CHECK(Direction::east.IsCounterClockwise(Direction::south));
-	BOOST_CHECK(Direction::south.IsCounterClockwise(Direction::west));
+    EXPECT_TRUE(Direction::east.IsOpposite(Direction::west));
+    EXPECT_TRUE(Direction::south.IsOpposite(Direction::north));
+    EXPECT_TRUE(Direction::up.IsOpposite(Direction::down));
+	EXPECT_FALSE(Direction::east.IsOpposite(Direction::north));
+	EXPECT_FALSE(Direction::up.IsOpposite(Direction::west));
+	EXPECT_FALSE(Direction::none.IsOpposite(Direction::west));
+	EXPECT_FALSE(Direction::east.IsOpposite(Direction::east));
 
-	BOOST_CHECK(!Direction::east.IsCounterClockwise(Direction::north));
-	BOOST_CHECK(!Direction::south.IsCounterClockwise(Direction::east));
-	BOOST_CHECK(!Direction::west.IsCounterClockwise(Direction::south));
-	BOOST_CHECK(!Direction::north.IsCounterClockwise(Direction::west));
-
-	BOOST_CHECK(!Direction::east.IsCounterClockwise(Direction::west));
-	BOOST_CHECK(!Direction::south.IsCounterClockwise(Direction::north));
-	BOOST_CHECK(!Direction::none.IsCounterClockwise(Direction::west));
-	BOOST_CHECK(!Direction::up.IsCounterClockwise(Direction::down));
-	BOOST_CHECK(!Direction::down.IsCounterClockwise(Direction::north));
+	EXPECT_TRUE(Direction::east.IsOpposite(Direction::east.Opposite()));
+	EXPECT_TRUE(Direction::south.IsOpposite(Direction::south.Opposite()));
+	EXPECT_TRUE(Direction::down.IsOpposite(Direction::down.Opposite()));
 }
 
-BOOST_AUTO_TEST_CASE(EvenDivision)
+TEST(DirectionTest, Angles)
+{
+	EXPECT_TRUE(std::isnan(Direction::none.Angle()));
+	EXPECT_EQ(Direction::east.Angle(), 0);
+	EXPECT_NEAR(Direction::north.Angle(), 0.5*Engine::PI, 0.001);
+	EXPECT_NEAR(Direction::south.Angle(), -0.5*Engine::PI, 0.001);
+	EXPECT_NEAR(Direction::west.Angle(), Engine::PI, 0.001);
+	EXPECT_TRUE(std::isnan(Direction::up.Angle()));
+	EXPECT_TRUE(std::isnan(Direction::down.Angle()));
+}
+
+TEST(DirectionTest, Clockwise)
+{
+	EXPECT_TRUE(Direction::east.IsClockwise(Direction::north));
+	EXPECT_TRUE(Direction::south.IsClockwise(Direction::east));
+	EXPECT_TRUE(Direction::west.IsClockwise(Direction::south));
+	EXPECT_TRUE(Direction::north.IsClockwise(Direction::west));
+
+	EXPECT_FALSE(Direction::west.IsClockwise(Direction::north));
+	EXPECT_FALSE(Direction::north.IsClockwise(Direction::east));
+	EXPECT_FALSE(Direction::east.IsClockwise(Direction::south));
+	EXPECT_FALSE(Direction::south.IsClockwise(Direction::west));
+
+	EXPECT_FALSE(Direction::east.IsClockwise(Direction::west));
+	EXPECT_FALSE(Direction::south.IsClockwise(Direction::north));
+	EXPECT_FALSE(Direction::none.IsClockwise(Direction::west));
+	EXPECT_FALSE(Direction::up.IsClockwise(Direction::down));
+	EXPECT_FALSE(Direction::down.IsClockwise(Direction::north));
+}
+
+
+TEST(DirectionTest, CounterClockwise)
+{
+	EXPECT_TRUE(Direction::west.IsCounterClockwise(Direction::north));
+	EXPECT_TRUE(Direction::north.IsCounterClockwise(Direction::east));
+	EXPECT_TRUE(Direction::east.IsCounterClockwise(Direction::south));
+	EXPECT_TRUE(Direction::south.IsCounterClockwise(Direction::west));
+
+	EXPECT_FALSE(Direction::east.IsCounterClockwise(Direction::north));
+	EXPECT_FALSE(Direction::south.IsCounterClockwise(Direction::east));
+	EXPECT_FALSE(Direction::west.IsCounterClockwise(Direction::south));
+	EXPECT_FALSE(Direction::north.IsCounterClockwise(Direction::west));
+
+	EXPECT_FALSE(Direction::east.IsCounterClockwise(Direction::west));
+	EXPECT_FALSE(Direction::south.IsCounterClockwise(Direction::north));
+	EXPECT_FALSE(Direction::none.IsCounterClockwise(Direction::west));
+	EXPECT_FALSE(Direction::up.IsCounterClockwise(Direction::down));
+	EXPECT_FALSE(Direction::down.IsCounterClockwise(Direction::north));
+}
+
+TEST(DirectionTest, EvenDivision)
 {
     // even division of each direction in a 5x5 map
     // 4 directions x 6 places + 1 x none = 25 positions
@@ -129,14 +128,14 @@ BOOST_AUTO_TEST_CASE(EvenDivision)
             count[dir] += 1;
         }
     }
-    BOOST_CHECK(count[Direction::none] == 1);
-    BOOST_CHECK(count[Direction::north] == 6);
-    BOOST_CHECK(count[Direction::east] == 6);
-    BOOST_CHECK(count[Direction::south] == 6);
-    BOOST_CHECK(count[Direction::west] == 6);
+    EXPECT_TRUE(count[Direction::none] == 1);
+    EXPECT_TRUE(count[Direction::north] == 6);
+    EXPECT_TRUE(count[Direction::east] == 6);
+    EXPECT_TRUE(count[Direction::south] == 6);
+    EXPECT_TRUE(count[Direction::west] == 6);
 }
 
-BOOST_AUTO_TEST_CASE(Vector)
+TEST(DirectionTest, Vector)
 {
 	std::vector<Direction> allHorizontalDirections = {
 		Direction::none,
@@ -147,35 +146,34 @@ BOOST_AUTO_TEST_CASE(Vector)
 	};
 	for (auto dir : allHorizontalDirections)
 	{
-		BOOST_CHECK_EQUAL(Direction(dir.Vector()), dir);
+		EXPECT_EQ(Direction(dir.Vector()), dir);
 	}
-	BOOST_CHECK(!Direction::up.Vector());
-	BOOST_CHECK(!Direction::down.Vector());
+	EXPECT_FALSE(Direction::up.Vector());
+	EXPECT_FALSE(Direction::down.Vector());
 
 }
 
-BOOST_AUTO_TEST_CASE(Prone)
+TEST(DirectionTest, Prone)
 {
-	BOOST_CHECK(Direction::up.IsProne());
-	BOOST_CHECK(Direction::down.IsProne());
-	BOOST_CHECK(!Direction::east.IsProne());
-	BOOST_CHECK(!Direction::north.IsProne());
-	BOOST_CHECK(!Direction::none.IsProne());
+	EXPECT_TRUE(Direction::up.IsProne());
+	EXPECT_TRUE(Direction::down.IsProne());
+	EXPECT_FALSE(Direction::east.IsProne());
+	EXPECT_FALSE(Direction::north.IsProne());
+	EXPECT_FALSE(Direction::none.IsProne());
 }
 
-BOOST_AUTO_TEST_CASE(Turn)
+TEST(DirectionTest, Turn)
 {
-	BOOST_CHECK_EQUAL(Direction::east.Turn(Direction::left), Direction::north);
-	BOOST_CHECK_EQUAL(Direction::north.Turn(Direction::backward), Direction::south);
-	BOOST_CHECK_EQUAL(Direction::south.Turn(Direction::right), Direction::west);
-	BOOST_CHECK_EQUAL(Direction::west.Turn(Direction::forward), Direction::west);
+	EXPECT_EQ(Direction::east.Turn(Direction::left), Direction::north);
+	EXPECT_EQ(Direction::north.Turn(Direction::backward), Direction::south);
+	EXPECT_EQ(Direction::south.Turn(Direction::right), Direction::west);
+	EXPECT_EQ(Direction::west.Turn(Direction::forward), Direction::west);
 
-	BOOST_CHECK_EQUAL(Direction::east.Turn(Direction::up), Direction::up);
-	BOOST_CHECK_EQUAL(Direction::north.Turn(Direction::down), Direction::down);
+	EXPECT_EQ(Direction::east.Turn(Direction::up), Direction::up);
+	EXPECT_EQ(Direction::north.Turn(Direction::down), Direction::down);
 
-	BOOST_CHECK_EQUAL(Direction::down.Turn(Direction::right), Direction::down);
-	BOOST_CHECK_EQUAL(Direction::down.Turn(Direction::up), Direction::up);
+	EXPECT_EQ(Direction::down.Turn(Direction::right), Direction::down);
+	EXPECT_EQ(Direction::down.Turn(Direction::up), Direction::up);
 }
 
-BOOST_AUTO_TEST_SUITE_END()
 }}  // Test

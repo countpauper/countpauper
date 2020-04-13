@@ -1,3 +1,4 @@
+#include "pch.h"
 #include <cassert>
 #include "Fantasy.h"
 #include "Figment.h"

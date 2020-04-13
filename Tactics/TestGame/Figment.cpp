@@ -1,3 +1,4 @@
+#include "pch.h"
 #include <assert.h>
 #include "Figment.h"
 #include "Game/Damage.h"
