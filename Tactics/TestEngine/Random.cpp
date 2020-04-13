@@ -1,10 +1,11 @@
-#include <boost/test/unit_test.hpp>
+#include "pch.h"
 #include <array>
 #include <numeric>
 #include <iostream>
 #include "Random.h"
 
-BOOST_AUTO_TEST_SUITE(Random);
+namespace Engine::Test
+{
 
 template<unsigned N>
 double minimum(std::array<double, N>& values)
@@ -40,13 +41,13 @@ double stddev(std::array<double, N>& values)
     double avg = average(values);
     double dev = std::accumulate(values.begin(), values.end(), 0.0, [avg](double d, double v)
     {
-        return d + (v-avg)*(v-avg);
+        return d + (v - avg)*(v - avg);
     });
     return std::sqrt(dev / static_cast<double>(N));
 }
 
 
-BOOST_AUTO_TEST_CASE(Chance)
+TEST(Random, Chance)
 {
     std::array<double, 100000> values;
     for (auto& v : values)
@@ -54,12 +55,12 @@ BOOST_AUTO_TEST_CASE(Chance)
         v = Engine::Random().Chance();
     }
     // tested for 10000 iterations, but random gonna random
-    BOOST_CHECK_LE(maximum(values), 1.0);
-    BOOST_CHECK_GE(minimum(values), 0.0);
-    BOOST_CHECK_CLOSE(average(values), 0.5, 1);
+    EXPECT_LE(maximum(values), 1.0);
+    EXPECT_GE(minimum(values), 0.0);
+    EXPECT_NEAR(average(values), 0.5, 1);
 }
 
-BOOST_AUTO_TEST_CASE(Normal)
+TEST(Random, Normal)
 {
     std::array<double, 100000> values;
     for (auto& v : values)
@@ -67,12 +68,12 @@ BOOST_AUTO_TEST_CASE(Normal)
         v = Engine::Random().Normal(1.5);
     }
     // tested for 10000 iterations (and raised tolerances), but random gonna random
-    BOOST_CHECK_SMALL(average(values), 0.025);
-    BOOST_CHECK_CLOSE(stddev(values), 1.5, 2);
+    EXPECT_NEAR(average(values), 0, 0.025);
+    EXPECT_NEAR(stddev(values), 1.5, 2);
 }
 
 
-BOOST_AUTO_TEST_CASE(Seed)
+TEST(Random, Seed)
 {
     Engine::Random().SetSeed(Engine::Random().GetSeed());
     std::array<double, 1000> original;
@@ -83,11 +84,11 @@ BOOST_AUTO_TEST_CASE(Seed)
     Engine::Random().SetSeed(Engine::Random().GetSeed());
     for (const auto& v : original)
     {
-        BOOST_CHECK_EQUAL(v, Engine::Random().Chance());
+        EXPECT_EQ(v, Engine::Random().Chance());
     }
 }
 
-BOOST_AUTO_TEST_CASE(Store)
+TEST(Random, Store)
 {
     auto state = Engine::Random().Store();
     std::array<double, 1000> original;
@@ -98,8 +99,9 @@ BOOST_AUTO_TEST_CASE(Store)
     Engine::Random().Restore(state);
     for (const auto& v : original)
     {
-        BOOST_CHECK_EQUAL(v, Engine::Random().Chance());
+        EXPECT_EQ(v, Engine::Random().Chance());
     }
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+}
+
