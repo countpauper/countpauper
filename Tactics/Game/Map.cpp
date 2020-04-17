@@ -12,15 +12,15 @@ namespace Game
         return float(height)*0.25f;
     }
 
-    Map::Map() :
+    FlatMap::FlatMap() :
         width(0),
         height(0)
     {
 
     }
-    Map::~Map() = default;
+    FlatMap::~FlatMap() = default;
 
-    Square Map::At(const Position& p) const
+    Square FlatMap::At(const Position& p) const
     {
         assert(p.x >= 0);
         assert(p.y >= 0);
@@ -29,7 +29,7 @@ namespace Game
         return squares.at(p.x + p.y*width);
     }
 
-    const Square* Map::MaybeAt(const Position& p) const
+    const Square* FlatMap::MaybeAt(const Position& p) const
     {
         if (p.x < 0)
             return nullptr;
@@ -42,7 +42,7 @@ namespace Game
         return &squares.at(p.x + p.y*width);
     }
 
-    bool Map::CanBe(const Position& position) const
+    bool FlatMap::CanBe(const Position& position) const
     {
         if ((position.x < 0 || position.y < 0) ||
             (position.x >= int(width)) || (position.y >= int(height)))
@@ -53,7 +53,7 @@ namespace Game
         return true;
     }
 
-    bool Map::CanGo(const Position& from, Direction direction) const
+    bool FlatMap::CanGo(const Position& from, Direction direction) const
     {
         if (direction.IsNone())
             return false;   // going nowhere is not going 
@@ -165,7 +165,7 @@ namespace Game
 
     }
 
-    void Map::Render() const
+    void FlatMap::Render() const
     {
         Engine::Image::Bind bind(texture);
         unsigned i = 0;
@@ -193,12 +193,13 @@ namespace Game
         return Engine::Coordinate(static_cast<float>(p.x), static_cast<float>(p.y), static_cast<float>(At(p).height));
     }
 
-    std::wistream& operator>>(std::wistream& s, Map& map)
+    std::wistream& operator>>(std::wistream& s, FlatMap& map)
     {
         s >> map.name >> map.width >> map.height;
         std::wstring textureName;
         s >> textureName;
-        map.texture.Load(textureName);
+        if (textureName!=L"Null")    
+            map.texture.Load(textureName);
         map.squares.resize(map.width * map.height);
         for (auto& square : map.squares)
             s >> square;

@@ -48,25 +48,34 @@ namespace Game
     class Map
     {
     public:
-        Map();
-        ~Map();
-        Square At(const Position& p) const;
-        const Square* MaybeAt(const Position& p) const;
-        void Render() const;
-        bool CanBe(const Position& position) const;
-        bool CanGo(const Position& from, Direction direction) const;
+        virtual ~Map()=default;
+        virtual Square At(const Position& p) const=0;
+        virtual const Square* MaybeAt(const Position& p) const=0;
+        virtual void Render() const = 0;
+        virtual bool CanBe(const Position& position) const = 0;
+        virtual bool CanGo(const Position& from, Direction direction) const=0;
 
         Engine::Coordinate Coordinate(const Position& p) const;
+    };
+
+    class FlatMap : public Map
+    {
+    public:
+        FlatMap();
+        ~FlatMap();
+        Square At(const Position& p) const override;
+        const Square* MaybeAt(const Position& p) const override;
+        void Render() const override;
+        bool CanBe(const Position& position) const override;
+        bool CanGo(const Position& from, Direction direction) const override;
     private:
-        friend std::wistream& operator>>(std::wistream& s, Map& map);
+        friend std::wistream& operator>>(std::wistream& s, FlatMap& map);
         std::wstring name;
         unsigned width;
         unsigned height;
         std::vector<Square> squares;
         Engine::Image texture;
     };
-
-
     std::wistream& operator>>(std::wistream& s, Map& map);
     std::wistream& operator>>(std::wistream& s, Square& square);
 

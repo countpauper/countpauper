@@ -2,6 +2,7 @@
 #include "Text.h"
 #include "from_string.h"
 #include <gl/GL.h>
+#include <algorithm>
 
 namespace Engine
 {
@@ -39,7 +40,7 @@ namespace Engine
     void glText(const std::string& text)
     {
         glRasterPos3i(0, 0, 1); // set start position
-        glCallLists(static_cast<GLsizei>(std::min(65535ULL, text.size())), GL_UNSIGNED_BYTE, text.c_str());
+        glCallLists(static_cast<GLsizei>(std::min({ 65535ull, text.size() })), GL_UNSIGNED_BYTE, text.c_str());
     }
 
     void glText(const std::wstring& text)

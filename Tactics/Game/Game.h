@@ -94,7 +94,7 @@ namespace Game
         friend std::wistream& operator>>(std::wistream& s, Game& game);
         
         // State
-        Map map;
+        FlatMap map;
         Objects objects;
         Actor* selectedActor;
 

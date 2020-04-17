@@ -116,6 +116,12 @@ struct Victim : private BaseState<Simple>, public Figment
 	Victim();
 };
 
+struct MiniMap : public FlatMap
+{
+    MiniMap();
+    std::wstringstream stream;
+};
+
 }
 }
 }

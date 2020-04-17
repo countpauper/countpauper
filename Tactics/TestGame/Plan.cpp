@@ -17,7 +17,7 @@ double Sum(const std::map<_KT,double>& histogram)
 	});
 }
 
-TEST(PlanTest, CenterMassDefault)
+TEST(Plan, CenterMassDefault)
 {
 	auto cm = Plan::CenterMass(0);
 	EXPECT_NEAR(cm[-1], cm[0],0.001);
@@ -29,7 +29,7 @@ TEST(PlanTest, CenterMassDefault)
 	EXPECT_NEAR(Sum(cm), 1.0, 0.001);
 }
 
-TEST(PlanTest, CenterMassOffset)
+TEST(Plan, CenterMassOffset)
 {
 	auto cm = Plan::CenterMass(2);
 	EXPECT_NEAR(cm[1], cm[2], 0.001);
@@ -37,21 +37,21 @@ TEST(PlanTest, CenterMassOffset)
 	EXPECT_NEAR(Sum(cm), 1.0, 0.001);
 }
 
-TEST(PlanTest, CenterMassOffsetHalf)
+TEST(Plan, CenterMassOffsetHalf)
 {
 	auto cm = Plan::CenterMass(0.5, 0.5);
 	EXPECT_NEAR(cm[0], 0.6827, 0.01);
 	EXPECT_NEAR(Sum(cm), 1.0, 0.001);
 }
 
-TEST(PlanTest, CenterMassSigma2)
+TEST(Plan, CenterMassSigma2)
 {
 	auto cm = Plan::CenterMass(0,2);
 	EXPECT_NEAR(cm[-2] + cm[-1] + cm[0] + cm[1], 0.6827, 0.01);
 	EXPECT_NEAR(Sum(cm), 1.0, 0.001);
 }
 
-TEST(PlanTest, CenterMassTreshold)
+TEST(Plan, CenterMassTreshold)
 {
 	auto cm = Plan::CenterMass(0,1,0.1);
 
@@ -60,7 +60,7 @@ TEST(PlanTest, CenterMassTreshold)
 	EXPECT_NEAR(Sum(cm), 1.0, 0.001);
 }
 
-TEST(PlanTest, SwingLocation)
+TEST(Plan, SwingLocation)
 {
 	Data::Knight attacker;
 	Data::Mage defender;
@@ -73,7 +73,7 @@ TEST(PlanTest, SwingLocation)
 	EXPECT_EQ(hl.position, 4);
 }
 
-TEST(PlanTest, CenterLocation)
+TEST(Plan, CenterLocation)
 {
 	Data::Mage attacker;
 	Data::Knight defender;
@@ -84,7 +84,7 @@ TEST(PlanTest, CenterLocation)
 	EXPECT_GE(hls.size(), defender.body.Anatomical().Length());
 }
 
-TEST(PlanTest, AimSwing)
+TEST(Plan, AimSwing)
 {
 	Data::Knight attacker;
 	ASSERT_TRUE(attacker.melee.HasTargeting(::Game::Targeting::Swing));
@@ -98,7 +98,7 @@ TEST(PlanTest, AimSwing)
 	EXPECT_EQ(hit.first, &defender.body.Anatomical()[L"Head"]);
 }
 
-TEST(PlanTest, AimCenter)
+TEST(Plan, AimCenter)
 {
 	Data::Mage attacker;
     ASSERT_TRUE(attacker.zap.HasTargeting(::Game::Targeting::Center));

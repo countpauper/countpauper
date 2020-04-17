@@ -3,6 +3,7 @@
 namespace Game
 {
     static const int HorizontalEl = 3; // 1 square is 3x3l
+    static const int VerticalEl = 1; // 1 cube is 3x3x1 l
 
     struct Position 
     {
@@ -10,6 +11,7 @@ namespace Game
         Position(int x, int y);
         int x;
         int y;
+        int z;
         unsigned ManDistance(const Position& other) const;
         float Distance(const Position& other) const;
         unsigned DistanceEl(const Position& other) const;

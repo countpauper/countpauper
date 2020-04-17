@@ -6,59 +6,70 @@
 namespace Game
 {
 
-    Position::Position() : x(0), y(0) 
+    Position::Position() : x(0), y(0), z(0)
     {
     }
-    Position::Position(int x, int y) : x(x), y(y) 
+    Position::Position(int x, int y) : x(x), y(y), z(0)
     {
     }
 
     unsigned Position::ManDistance(const Position& other) const
     {
         return std::abs(other.x - x) +
-            std::abs(other.y - y);
+            std::abs(other.y - y) +
+            std::abs(other.z - z);
     }
 
     unsigned Position::ManSize() const
     {
-        return std::abs(x) + std::abs(y);
+        return std::abs(x) + std::abs(y) + std::abs(z);
     }
 
     float Position::Size() const
     {
-        return std::sqrtf(Engine::sqr(float(x)) + Engine::sqr(float(y)));
+        return std::sqrtf(Engine::sqr(float(x)) + Engine::sqr(float(y))+Engine::sqr(float(z)));
     }
 
     unsigned Position::SizeEl() const
     {
-        return static_cast<unsigned>(std::round(std::sqrtf(Engine::sqr(float(HorizontalEl*x)) + Engine::sqr(float(HorizontalEl*y)))));
+        return static_cast<unsigned>(std::round(std::sqrtf(
+            Engine::sqr(float(HorizontalEl*x)) +
+            Engine::sqr(float(HorizontalEl*y)) +
+            Engine::sqr(float(VerticalEl*z)))
+        ));
     }
 
     float Position::Distance(const Position& other) const
     {
-        return std::sqrtf(Engine::sqr(float(other.x - x)) + Engine::sqr(float(other.y - y)));
+        return std::sqrtf(Engine::sqr(float(other.x - x)) + Engine::sqr(float(other.y - y)) + Engine::sqr(float(other.z -z)));
     }
 
     unsigned Position::DistanceEl(const Position& other) const
     {
-        return static_cast<unsigned>(std::round(std::sqrtf(Engine::sqr(float(HorizontalEl*(other.x - x))) + Engine::sqr(HorizontalEl * (other.y - y)))));
+        return static_cast<unsigned>(std::round(std::sqrtf(
+            Engine::sqr(float(HorizontalEl*(other.x - x))) + 
+            Engine::sqr(HorizontalEl * (other.y - y)) +
+            Engine::sqr(VerticalEl* (other.y - z))
+            )));
     }
 
     Position& Position::operator+=(const Position& delta)
     {
         x += delta.x;
         y += delta.y;
+        z += delta.z;
         return *this;
     }
     Position& Position::operator-=(const Position& delta)
     {
         x -= delta.x;
         y -= delta.y;
+        y -= delta.z;
         return *this;
     }
     Position::operator bool() const
     {
-        return x != 0 || y!= 0;
+        return x != 0 || y != 0 || z != 0;
     }
 
     Position operator+(const Position& a, const Position& b)
@@ -82,7 +93,7 @@ namespace Game
     }
     bool operator==(const Position& a, const Position& b)
     {
-        return a.x == b.x && a.y == b.y;
+        return a.x == b.x && a.y == b.y && a.z == b.z;
     }
     bool operator!=(const Position& a, const Position& b)
     {

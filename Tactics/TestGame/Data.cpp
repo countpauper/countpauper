@@ -115,6 +115,19 @@ namespace Data
     {
     }
 
+    MiniMap::MiniMap() :
+        stream(
+            L"Flat 2 2 Null\n"
+            L"2 0 0 1\n"
+            L"4 0 0 0\n"
+            L"2 0 0 1\n"
+            L"2 0 0 3\n")
+    {
+        stream >> *this;
+    }
+
 }
+
+
 }
 }

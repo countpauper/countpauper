@@ -70,13 +70,15 @@ void Image::Load(const std::wstring& fn)
 
     std::string fns(fn.begin(), fn.end());
     unsigned char* data = stbi_load(fns.c_str(), &w, &h, &channels, STBI_default);
+    if (!data)
+        throw std::runtime_error("Image file not found");
     Bind bind(*this);
     if (channels==4)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     else if (channels == 3)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     else
-        assert(false && "Unsupported image format");
+        throw std::runtime_error("Unsupported image format");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     //glTexParameteri(GL_TEXTURE_MAX_LEVEL, 0);
     CheckGLError();
