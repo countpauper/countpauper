@@ -17,7 +17,6 @@ namespace Game
         unsigned DistanceEl(const Position& other) const;
         float Size() const;
         unsigned SizeEl() const;
-        unsigned ManSize() const;
         Position& operator+=(const Position& delta);
         Position& operator-=(const Position& delta);
         operator bool() const;

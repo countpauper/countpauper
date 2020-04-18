@@ -9,7 +9,7 @@ namespace Game
 namespace Test
 {
 
-TEST(BodyTest, SerializeSimple)
+TEST(Body, SerializeSimple)
 {
     Data::Simple d;
     Anatomy a;
@@ -21,7 +21,7 @@ TEST(BodyTest, SerializeSimple)
     EXPECT_EQ(b.Description(), L"Healthy");
 }
 
-TEST(BodyTest, SerializeHuman)
+TEST(Body, SerializeHuman)
 {
     Data::Human d;
     Anatomy a;
@@ -33,7 +33,7 @@ TEST(BodyTest, SerializeHuman)
     EXPECT_EQ(b.Description(), L"Healthy");
 }
 
-TEST(BodyTest, Copy)
+TEST(Body, Copy)
 {
     Data::Simple anatomy;
 	Body original(anatomy);
@@ -45,7 +45,7 @@ TEST(BodyTest, Copy)
     EXPECT_EQ(b.Description(), L"Healthy");
 }
 
-TEST(BodyTest, Hurt)
+TEST(Body, Hurt)
 {
     Data::Simple a;
 	Body b(a);
@@ -55,7 +55,7 @@ TEST(BodyTest, Hurt)
     EXPECT_EQ(b.Strength(), 5);
 }
 
-TEST(BodyTest, Dead)
+TEST(Body, Dead)
 {
     Data::Simple a;
 	Body b(a);
@@ -65,7 +65,7 @@ TEST(BodyTest, Dead)
     EXPECT_TRUE(b.Dead());
 }
 
-TEST(BodyTest, Weapon)
+TEST(Body, Weapon)
 {
     Data::Human a;
 	Body b(a);
@@ -86,7 +86,7 @@ TEST(BodyTest, Weapon)
     // EXPECT_TRUE(otherArm.Held()==nullptr);
 }
 
-TEST(BodyTest, Engage)
+TEST(Body, Engage)
 {
     Data::Human a;
 	Body b(a);
@@ -104,7 +104,7 @@ TEST(BodyTest, Engage)
 }
 
 
-TEST(BodyTest, Grip)
+TEST(Body, Grip)
 {
     Data::Human a;
     EXPECT_TRUE(a[L"RArm"].Grip());
@@ -112,7 +112,7 @@ TEST(BodyTest, Grip)
     EXPECT_FALSE(a[L"Legs"].Grip());
 }
 
-TEST(BodyTest, Vital)
+TEST(Body, Vital)
 {
 	Data::Human a;
     EXPECT_TRUE(a[L"Head"].IsVital());
@@ -123,7 +123,7 @@ TEST(BodyTest, Vital)
     EXPECT_FALSE(a[L"Legs"].IsVital());
 }
 
-TEST(BodyTest, UseDoubleHand)
+TEST(Body, UseDoubleHand)
 {
 	Data::Human a;
 	Body b(a);
@@ -140,7 +140,7 @@ TEST(BodyTest, UseDoubleHand)
 	EXPECT_EQ(used.second, &weapon);
 }
 
-TEST(BodyTest, UseSingleHand)
+TEST(Body, UseSingleHand)
 {
 	Data::Human a;
 	Body b(a);
@@ -161,7 +161,7 @@ TEST(BodyTest, UseSingleHand)
 	EXPECT_EQ(used.second, &weapon);
 }
 
-TEST(BodyTest, UseHead)
+TEST(Body, UseHead)
 {
 	Data::Human a;
 	Body b(a);
@@ -177,7 +177,7 @@ TEST(BodyTest, UseHead)
 }
 
 
-TEST(BodyTest, UsedWeapon)
+TEST(Body, UsedWeapon)
 {
 	// TODO?
 }

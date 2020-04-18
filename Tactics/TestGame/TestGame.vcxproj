@@ -54,7 +54,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Plan.cpp" />
+    <ClCompile Include="Position.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="VoxelMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Game\Game.vcxproj">

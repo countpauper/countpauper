@@ -496,6 +496,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         wglDeleteContext(hGLRC);
         ReleaseDC(hWnd, hdc);
 
+        game.reset();
+
         PostQuitMessage(0);
         break;
     default:

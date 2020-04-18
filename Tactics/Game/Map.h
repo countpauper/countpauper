@@ -32,6 +32,17 @@ namespace Game
 
     struct Square
     {
+        Square() :
+            floor(Floor::None),
+            walls{ Wall::None,Wall::None },
+            height(0)
+        {
+        }
+
+        operator bool() const
+        {
+            return floor != Floor::None;
+        }
         Floor floor;
         Wall walls[2];
         unsigned short height;
@@ -39,8 +50,8 @@ namespace Game
         float Z() const;
         void RenderFloor(int x, int y, int w, int h) const;
         void RenderOutline() const;
-        void RenderXWall(const Square* neighbour) const;
-        void RenderYWall(const Square* neighbour) const;
+        void RenderXWall(const Square& neighbour) const;
+        void RenderYWall(const Square& neighbour) const;
         static std::vector<Engine::RGBA> colorTable;
     };
 
@@ -50,12 +61,13 @@ namespace Game
     public:
         virtual ~Map()=default;
         virtual Square At(const Position& p) const=0;
-        virtual const Square* MaybeAt(const Position& p) const=0;
         virtual void Render() const = 0;
-        virtual bool CanBe(const Position& position) const = 0;
-        virtual bool CanGo(const Position& from, Direction direction) const=0;
-
+        bool CanBe(const Position& position) const;
+        bool CanGo(const Position& from, Direction direction) const;
         Engine::Coordinate Coordinate(const Position& p) const;
+    protected:
+        virtual unsigned Longitude() const = 0;
+        virtual unsigned Latitude() const = 0;
     };
 
     class FlatMap : public Map
@@ -64,10 +76,10 @@ namespace Game
         FlatMap();
         ~FlatMap();
         Square At(const Position& p) const override;
-        const Square* MaybeAt(const Position& p) const override;
         void Render() const override;
-        bool CanBe(const Position& position) const override;
-        bool CanGo(const Position& from, Direction direction) const override;
+    protected:
+        unsigned Latitude() const override; // Breadth, x
+        unsigned Longitude() const override; // Length, y 
     private:
         friend std::wistream& operator>>(std::wistream& s, FlatMap& map);
         std::wstring name;

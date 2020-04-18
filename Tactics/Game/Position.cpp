@@ -20,11 +20,6 @@ namespace Game
             std::abs(other.z - z);
     }
 
-    unsigned Position::ManSize() const
-    {
-        return std::abs(x) + std::abs(y) + std::abs(z);
-    }
-
     float Position::Size() const
     {
         return std::sqrtf(Engine::sqr(float(x)) + Engine::sqr(float(y))+Engine::sqr(float(z)));
@@ -49,8 +44,8 @@ namespace Game
         return static_cast<unsigned>(std::round(std::sqrtf(
             Engine::sqr(float(HorizontalEl*(other.x - x))) + 
             Engine::sqr(HorizontalEl * (other.y - y)) +
-            Engine::sqr(VerticalEl* (other.y - z))
-            )));
+            Engine::sqr(VerticalEl* (other.z - z)) 
+            )+0.0132)); // special bias so DistanceEl(3,1) > DistanceEl(3,0) 
     }
 
     Position& Position::operator+=(const Position& delta)

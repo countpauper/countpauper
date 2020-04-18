@@ -22,30 +22,21 @@ namespace Game
 
     Square FlatMap::At(const Position& p) const
     {
-        assert(p.x >= 0);
-        assert(p.y >= 0);
-        assert(p.x < int(width));
-        assert(p.y < int(height));
+        if (p.x < 0)
+            return Square();
+        if (p.y < 0)
+            return Square();
+        if (p.x >= int(Longitude()))
+            return Square();
+        if (p.y >= int(Latitude()))
+            return Square();
         return squares.at(p.x + p.y*width);
     }
 
-    const Square* FlatMap::MaybeAt(const Position& p) const
-    {
-        if (p.x < 0)
-            return nullptr;
-        if (p.y < 0)
-            return nullptr;
-        if (p.x >= int(width))
-            return nullptr;
-        if (p.y >= int(height))
-            return nullptr;
-        return &squares.at(p.x + p.y*width);
-    }
-
-    bool FlatMap::CanBe(const Position& position) const
+    bool Map::CanBe(const Position& position) const
     {
         if ((position.x < 0 || position.y < 0) ||
-            (position.x >= int(width)) || (position.y >= int(height)))
+            (position.x >= int(Latitude())) || (position.y >= int(Longitude())))
             return false;
         auto square = At(position);
         if ((square.floor == Floor::Air) || (square.floor == Floor::Water))
@@ -53,19 +44,27 @@ namespace Game
         return true;
     }
 
-    bool FlatMap::CanGo(const Position& from, Direction direction) const
+    bool Map::CanGo(const Position& from, Direction direction) const
     {
         if (direction.IsNone())
             return false;   // going nowhere is not going 
         auto square = At(from);
-        auto neighbour = MaybeAt(from + direction.Vector());
+        auto neighbour = At(from + direction.Vector());
         if (!neighbour)
             return false;
-        if (std::abs(int(square.height) - int(neighbour->height)) > 1)
+        if (std::abs(int(square.height) - int(neighbour.height)) > 1)
             return false;
         return true;
     }
 
+    unsigned FlatMap::Latitude() const
+    {
+        return width;
+    }
+    unsigned FlatMap::Longitude() const
+    {
+        return height;
+    }
     std::vector<Engine::RGBA> Square::colorTable = {
         { 0, 0, 0, 255 }, // None = 0
         { 0, 255, 0, 255 }, // Nature,
@@ -99,7 +98,7 @@ namespace Game
         glEnd();
     }
 
-    void Square::RenderXWall(const Square* neighbour) const
+    void Square::RenderXWall(const Square& neighbour) const
     {
         auto wallx = walls[0];
         if (wallx != Wall::None)
@@ -108,7 +107,7 @@ namespace Game
             float zn = 0;
             if (neighbour)
             {
-                zn = neighbour->Z();
+                zn = neighbour.Z();
             }
             auto wallColor = colorTable[unsigned(wallx)];
             wallColor.Render();
@@ -122,7 +121,7 @@ namespace Game
         }
     }
 
-    void Square::RenderYWall(const Square* neighbour) const
+    void Square::RenderYWall(const Square& neighbour) const
     {
         auto wally = walls[1];
         if (wally != Wall::None)
@@ -131,7 +130,7 @@ namespace Game
             float zn = 0;
             if (neighbour)
             {
-                zn = neighbour->Z();
+                zn = neighbour.Z();
             }
             auto wallColor = colorTable[unsigned(wally)];
             wallColor.Render();
@@ -178,8 +177,8 @@ namespace Game
                 glTranslatef(float(x), 0.0f, float(y));
                 const auto& square = squares.at(i++);
                 square.RenderFloor(x,y,width,height);
-                square.RenderXWall(MaybeAt(Position(x + 1, y)));
-                square.RenderYWall(MaybeAt(Position(x, y-1)));
+                square.RenderXWall(At(Position(x + 1, y)));
+                square.RenderYWall(At(Position(x, y-1)));
                 square.RenderOutline();
                 glPopName();
                 glPopMatrix();
