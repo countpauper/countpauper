@@ -12,9 +12,10 @@ TEST(Map, Space)
 {
     VoxelMap map;
     map.Space(1, 1, 1);
-    EXPECT_FALSE(map.At(Position(0, 0)));
-    EXPECT_FALSE(map.At(Position(1, 0)));
-    EXPECT_FALSE(map.At(Position(0, -1)));
+    EXPECT_FALSE(map.At(Position(0, 0, 0)));
+    EXPECT_FALSE(map.At(Position(1, 0, 0)));
+    EXPECT_FALSE(map.At(Position(0, -1, 0)));
+    EXPECT_FALSE(map.At(Position(0, 0, -1)));
 }
 
 

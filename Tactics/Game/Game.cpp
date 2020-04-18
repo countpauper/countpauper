@@ -2,7 +2,7 @@
 #include <gl/GL.h>
 #include "Skills.h"
 #include "Game.h"
-#include "Map.h"
+#include "VoxelMap.h"
 #include "Actor.h"
 #include "Plan.h"
 #include "Item.h"
@@ -227,7 +227,7 @@ namespace Game
 
     void Game::Focus(const Object& object)
     {
-        focus = map.Coordinate(object.GetPosition());
+        focus = map->Coordinate(object.GetPosition());
     }
     const Actor* Game::SelectedActor() const
     {
@@ -345,7 +345,7 @@ namespace Game
         glLoadIdentity();
 
         glPushName(GLuint(Selection::Map));
-        map.Render();
+        map->Render();
         glPopName();
         glPushName(GLuint(Selection::Object));
         unsigned index = 0;
@@ -402,7 +402,7 @@ namespace Game
 
     bool Game::CanBe(const Position& position) const
     {
-        if (!map.CanBe(position))
+        if (!map->CanBe(position))
             return false;
         for (const auto& object : objects)
             if ((object->GetPosition() == position) && (!object->Prone()))
@@ -413,55 +413,64 @@ namespace Game
     bool Game::CanGo(const Position& from, Direction direction) const
     {
         auto to = from + direction.Vector();
-        return map.CanGo(from, direction);
+        return map->CanGo(from, direction);
     }
 
     bool Game::Cover(const Position& from, const Position& to) const
     {
         Position delta = to - from;
+        float z = float(from.z);
+        float dz = float(delta.z) / float(delta.y);
+
         if (std::abs(delta.x) < std::abs(delta.y))
         {
+            assert(std::abs(delta.z) <= std::abs(delta.y));  // not checking up or down yet
             float x = float(from.x);
             float dx = float(delta.x) / float(delta.y);
             if (to.y > from.y)
             {
                 for (int y = from.y; y < to.y; ++y)
                 {
-                    if (!CanGo(Position(std::lroundf(x), y), Direction(0,1)))
+                    if (!CanGo(Position(std::lroundf(x), y, std::lroundf(z)), Direction(0,1, 0)))
                         return true;
                     x += dx;
+                    z += dz;
                 }
             }
             else
             {
                 for (int y = from.y; y < to.y; --y)
                 {
-                    if (!CanGo(Position(std::lroundf(x), y), Direction(0,-1)))
+                    if (!CanGo(Position(std::lroundf(x), y, std::lroundf(z)), Direction(0,-1, 0)))
                         return true;
                     x += dx;
+                    z += dz;
                 }
             }
         }
         else
         {
+            assert(std::abs(delta.z) <= std::abs(delta.x));  // not checking up or down yet
             float y = float(from.y);
             float dy = float(delta.y) / float(delta.x);
             if (to.x > from.x)
             {
                 for (int x = from.x; x < to.x; ++x)
                 {
-                    if (!CanGo(Position(x, std::lroundf(y)), Direction(1,0)))
+                    if (!CanGo(Position(x, std::lroundf(y), std::lroundf(z)), Direction(1, 0, 0)))
                         return true;
                     y += dy;
+                    z += dz;
                 }
             }
             else
             {
                 for (int x = from.x; x < to.x; --x)
                 {
-                    if (!CanGo(Position(x, std::lroundf(y)), Direction(-1,0)))
+                    if (!CanGo(Position(x, std::lroundf(y), std::lroundf(z)), Direction(-1, 0, 0)))
                         return true;
                     y += dy;
+                    z += dz;
                 }
             }
         }
@@ -491,7 +500,20 @@ namespace Game
 
             }
         }
-        s >> game.map;
+        std::wstring mapType;
+        s >> mapType;
+        if (mapType == L"2D")
+        {
+            auto map = std::make_unique<FlatMap>();
+            s >> *map;
+            game.map = std::move(map);
+        }
+        else if (mapType == L"3D")
+        {
+            auto map = std::make_unique <VoxelMap>();
+            s >> *map;
+            game.map = std::move(map);
+        }
         return s;
     }
 

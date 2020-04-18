@@ -99,19 +99,19 @@ namespace Data
 
 
 	Knight::Knight() :
-		Figment(L"Knight", anatomy, Position(0, 0), Direction(), 10, {}, { &weapon }, { &melee, &combo })
+		Figment(L"Knight", anatomy, Position(0, 0, 0), Direction(), 10, {}, { &weapon }, { &melee, &combo })
 	{
 		body.Grab(anatomy[L"RArm"], weapon);
 	}
 
 	Mage::Mage() :
-		Figment(L"Mage", anatomy, Position(0, 0), Direction(), 10, {}, { &weapon }, { &zap, &buff })
+		Figment(L"Mage", anatomy, Position(0, 0, 0), Direction(), 10, {}, { &weapon }, { &zap, &buff })
 	{
 		body.Grab(anatomy[L"RArm"], weapon);
 	}
 
 	Victim::Victim() :
-		Figment(L"Victim", anatomy, Position(1, 0), Direction(), 10, {}, {}, {})
+		Figment(L"Victim", anatomy, Position(1, 0, 0), Direction(), 10, {}, {}, {})
     {
     }
 

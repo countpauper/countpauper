@@ -100,17 +100,20 @@ std::vector<std::unique_ptr<Action>> Future::PossibleMoves() const
 			{
 				for (int x = -range; x <= range; ++x)
 				{
-					Position vector(x, y);
-					if (!vector)
-						continue;
-					Destination destination(actorState.position + vector);
-					if (!CanBe(destination.GetPosition()))
-						continue;
-					if (actorState.IsPossible(*skill, destination))
-					{
-						assert(skill->trajectory.empty());	// "aimed" move (eg jump, teleport() not yet implemented
-						result.emplace_back(skill->CreateAction(*Executor(), destination, Direction::none, nullptr));
-					}
+                    for (int z = -range;z < range; ++z)
+                    {
+                        Position vector(x, y, z);
+                        if (!vector)
+                            continue;
+                        Destination destination(actorState.position + vector);
+                        if (!CanBe(destination.GetPosition()))
+                            continue;
+                        if (actorState.IsPossible(*skill, destination))
+                        {
+                            assert(skill->trajectory.empty());	// "aimed" move (eg jump, teleport() not yet implemented
+                            result.emplace_back(skill->CreateAction(*Executor(), destination, Direction::none, nullptr));
+                        }
+                    }
 				}
 			}
 		}

@@ -86,7 +86,7 @@
     <None Include="Data\Melee.map">
       <Filter>Data</Filter>
     </None>
-    <None Include="Voxel.map">
+    <None Include="Data\Voxel.map">
       <Filter>Data</Filter>
     </None>
   </ItemGroup>

@@ -141,10 +141,10 @@
     <None Include="Data\ArmorMaterial.csv" />
     <None Include="Data\Flat.map" />
     <None Include="Data\Melee.map" />
+    <None Include="Data\Voxel.map" />
     <None Include="Data\Weapon.csv" />
     <None Include="Data\WeaponBonus.csv" />
     <None Include="Data\WeaponMaterial.csv" />
-    <None Include="Voxel.map" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Data\Skills.xml" />

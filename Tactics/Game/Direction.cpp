@@ -104,11 +104,12 @@ const std::map<const std::wstring, Direction> Direction::map(
 	{ L"down", Direction::down },
 });
 
-Direction::Value Direction::From(const Position& vector, int z)
+Direction::Value Direction::From(const Position& vector)
 {
 	auto x = vector.x;
-	auto y = vector.y;
-	if ((z > std::abs(x)) && (z > std::abs(y)))
+    auto y = vector.y;
+    auto z = vector.z;
+    if ((z > std::abs(x)) && (z > std::abs(y)))
 	{
 		return Up;
 	}
@@ -148,13 +149,13 @@ Direction::Direction(const Position& desiredVector) :
 }
     
 Direction::Direction(int x, int y, int z) :
-	value(From(Position(x,y),z))
+	value(From(Position(x,y,z)))
 {
 }
 
 Position Direction::Vector() const
 {
-	return Position(vector[value].x, vector[value].y);
+	return Position(vector[value].x, vector[value].y, vector[value].z);
 }
 
 double Direction::Angle() const
@@ -271,13 +272,13 @@ bool Direction::operator<(const Direction& other) const
 
 std::map<Direction::Value, Position> Direction::vector =
 {
-    { Direction::Value::None, Position(0, 0) },
-    { Direction::Value::North, Position(0, 1) },
-    { Direction::Value::East, Position(1, 0) },
-	{ Direction::Value::South, Position(0, -1) },
-	{ Direction::Value::West, Position(-1, 0) },
-	{ Direction::Value::Up, Position(0, 0) },
-	{ Direction::Value::Down, Position(0, 0) },
+    { Direction::Value::None, Position(0, 0, 0) },
+    { Direction::Value::North, Position(0, 1, 0) },
+    { Direction::Value::East, Position(1, 0, 0) },
+	{ Direction::Value::South, Position(0, -1, 0) },
+	{ Direction::Value::West, Position(-1, 0, 0) },
+	{ Direction::Value::Up, Position(0, 0, 1) },
+	{ Direction::Value::Down, Position(0, 0,-1) },
 };
 
 std::map<Direction::Value, HalfPiAngle> Direction::half_pi_angle=

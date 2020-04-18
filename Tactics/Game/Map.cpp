@@ -30,7 +30,10 @@ namespace Game
             return Square();
         if (unsigned(p.y) >= Latitude())
             return Square();
-        return squares.at(p.x + p.y*width);
+         const auto& square = squares.at(p.x + p.y*width);
+         if (p.z != square.height)
+             return Square();
+         return square;
     }
 
     bool Map::CanBe(const Position& position) const
@@ -176,8 +179,8 @@ namespace Game
                 glTranslatef(float(x), 0.0f, float(y));
                     const auto& square = squares.at(i++);
                     square.RenderFloor(x,y,width,height);
-                    square.RenderXWall(At(Position(x + 1, y)));
-                    square.RenderYWall(At(Position(x, y-1)));
+                    square.RenderXWall(At(Position(x + 1, y, 0)));
+                    square.RenderYWall(At(Position(x, y-1, 0)));
                     square.RenderOutline();
                 glPopName();
                 glPopMatrix();
@@ -197,7 +200,7 @@ namespace Game
             throw std::range_error("X-Coordinate too large to encode in 9 bits");
         if (y>= 1<<9)
             throw std::range_error("Y-Coordinate too large to encode in 9 bits");
-        if (z >= 1 << 10)
+        if (z >= 1 << 10)   // more bits for z, because vertical El < horizontal El
             throw std::range_error("Z-Coordinate too large to encode in 10 bits");
         auto id = dir.Id();
         if (id>=1<<4)
@@ -207,7 +210,7 @@ namespace Game
     
     Position Map::NamedLocation(uint32_t name)
     {
-        return Position(name & 0x1FF, (name>> 9) & 0x1FF);
+        return Position(name & 0x1FF, (name>> 9) & 0x1FF, (name>>18) & 0x3FF);
     }
 
     std::wistream& operator>>(std::wistream& s, FlatMap& map)

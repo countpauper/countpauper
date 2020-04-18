@@ -31,7 +31,7 @@ class Direction
 {
 public:
 	Direction();
-    Direction(int x, int y, int z = 0);
+    Direction(int x, int y, int z);
     explicit Direction(uint8_t id);
     explicit Direction(const Position& vector);
     Position Vector() const;
@@ -91,7 +91,7 @@ protected:
 	Direction(Value value);
 	Value value;
 	HalfPiAngle HalfPiDelta(const Direction& other) const;
-	static Value From(const Position& vector, int z = 0);
+	static Value From(const Position& vector);
 	static Value From(HalfPiAngle angle);
 
 	static std::map<Value, std::wstring> description;

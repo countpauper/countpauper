@@ -17,20 +17,20 @@ TEST(DirectionTest, None)
 
 TEST(DirectionTest, CardinalPositions)
 {
-    EXPECT_EQ(Direction(Position(0, 0)), Direction::none);
-    EXPECT_EQ(Direction(Position(0, -1)), Direction::south);
-    EXPECT_EQ(Direction(Position(0, 1)), Direction::north);
-    EXPECT_EQ(Direction(Position(-1, 0)), Direction::west);
-    EXPECT_EQ(Direction(Position(1, 0)), Direction::east);
+    EXPECT_EQ(Direction(Position(0, 0, 0)), Direction::none);
+    EXPECT_EQ(Direction(Position(0, -1, 0)), Direction::south);
+    EXPECT_EQ(Direction(Position(0, 1, 0)), Direction::north);
+    EXPECT_EQ(Direction(Position(-1, 0, 0)), Direction::west);
+    EXPECT_EQ(Direction(Position(1, 0, 0)), Direction::east);
 }
 
 
 TEST(DirectionTest, DiagonalPositions)
 {
-	EXPECT_EQ(Direction(Position(-1, -1)), Direction::west);
-	EXPECT_EQ(Direction(Position(1, -1)), Direction::south);
-	EXPECT_EQ(Direction(Position(1, 1)), Direction::east);
-	EXPECT_EQ(Direction(Position(-1, 1)), Direction::north);
+	EXPECT_EQ(Direction(Position(-1, -1, 0)), Direction::west);
+	EXPECT_EQ(Direction(Position(1, -1, 0)), Direction::south);
+	EXPECT_EQ(Direction(Position(1, 1, 0)), Direction::east);
+	EXPECT_EQ(Direction(Position(-1, 1, 0)), Direction::north);
 }
 
 TEST(DirectionTest, VerticalPositions)
@@ -124,7 +124,7 @@ TEST(DirectionTest, EvenDivision)
     {
         for (int x = -2; x <= 2; ++x)
         {
-            Direction dir(Position(x, y));
+            Direction dir(Position(x, y, 0));
             count[dir] += 1;
         }
     }
@@ -137,19 +137,19 @@ TEST(DirectionTest, EvenDivision)
 
 TEST(DirectionTest, Vector)
 {
-	std::vector<Direction> allHorizontalDirections = {
+	std::vector<Direction> allDirections = {
 		Direction::none,
 		Direction::north,
 		Direction::east,
-		Direction::south,
-		Direction::west
-	};
-	for (auto dir : allHorizontalDirections)
+        Direction::south,
+        Direction::west,
+        Direction::up,
+        Direction::down
+    };
+	for (auto dir : allDirections)
 	{
 		EXPECT_EQ(Direction(dir.Vector()), dir);
 	}
-	EXPECT_FALSE(Direction::up.Vector());
-	EXPECT_FALSE(Direction::down.Vector());
 
 }
 

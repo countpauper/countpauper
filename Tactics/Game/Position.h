@@ -10,7 +10,7 @@ namespace Game
     struct Position 
     {
         Position();
-        Position(int x, int y);
+        Position(int x, int y, int z);
         int x;
         int y;
         int z;

@@ -20,7 +20,7 @@ class State
 public:
 	State();
     State(const Actor& actor);
-    State(const Anatomy& anatomy, Position pos=Position(0,0), Direction dir=Direction::east, unsigned mp=10,
+    State(const Anatomy& anatomy, Position pos=Position(0,0,0), Direction dir=Direction::east, unsigned mp=10,
         std::set<const Armor*> armor = {}, std::set<const Weapon*> weapons = {}, Actor::Knowledge knowledge = {});
 
     Position position;

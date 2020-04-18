@@ -190,9 +190,9 @@ TEST(State, SkillPossibleRange)
 TEST(State, Face)
 {
 	Data::Knight s;
-	s.Face(s.position + Position(1, 0));
+	s.Face(s.position + Position(1, 0, 0));
 	EXPECT_EQ(s.direction, Direction::east);
-	s.Face(s.position + Position(0, -1));
+	s.Face(s.position + Position(0, -1, 0));
 	EXPECT_EQ(s.direction, Direction::south);
 	s.Face(s.position);
 	EXPECT_EQ(s.direction, Direction::south);
