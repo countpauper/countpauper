@@ -69,6 +69,16 @@ Direction::Direction(Direction::Value value) :
 {
 }
 
+Direction::Direction(uint8_t id) :
+    Direction(static_cast<Value>(id))
+{
+}
+
+uint8_t Direction::Id() const
+{
+    return static_cast<uint8_t>(value);
+}
+
 const Direction Direction::none;
 const Direction Direction::east(Direction::East);
 const Direction Direction::north(Direction::North);

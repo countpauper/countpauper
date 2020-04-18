@@ -26,9 +26,9 @@ namespace Game
             return Square();
         if (p.y < 0)
             return Square();
-        if (p.x >= int(Longitude()))
+        if (unsigned(p.x) >= Longitude())
             return Square();
-        if (p.y >= int(Latitude()))
+        if (unsigned(p.y) >= Latitude())
             return Square();
         return squares.at(p.x + p.y*width);
     }
@@ -39,8 +39,8 @@ namespace Game
             (position.x >= int(Latitude())) || (position.y >= int(Longitude())))
             return false;
         auto square = At(position);
-        if ((square.floor == Floor::Air) || (square.floor == Floor::Water))
-            return false;
+        if (!square.solid)
+            return false;   
         return true;
     }
 
@@ -101,47 +101,46 @@ namespace Game
     void Square::RenderXWall(const Square& neighbour) const
     {
         auto wallx = walls[0];
-        if (wallx != Wall::None)
+        if (wallx == Element::None)
+            return;
+        float z = Z();
+        float zn = 0;
+        if (neighbour)
         {
-            float z = Z();
-            float zn = 0;
-            if (neighbour)
-            {
-                zn = neighbour.Z();
-            }
-            auto wallColor = colorTable[unsigned(wallx)];
-            wallColor.Render();
-            glNormal3f(1.0f, 0.0f, 0.0f);
-            glBegin(GL_QUADS);
-                glVertex3f(1.0f, z, 0.0f);
-                glVertex3f(1.0f, zn, 0.0f);
-                glVertex3f(1.0f, zn, 1.0f);
-                glVertex3f(1.0f, z, 1.0f);
-            glEnd();
+            zn = neighbour.Z();
         }
+        auto wallColor = colorTable[unsigned(wallx)];
+        wallColor.Render();
+        glNormal3f(1.0f, 0.0f, 0.0f);
+        glBegin(GL_QUADS);
+            glVertex3f(1.0f, z, 0.0f);
+            glVertex3f(1.0f, zn, 0.0f);
+            glVertex3f(1.0f, zn, 1.0f);
+            glVertex3f(1.0f, z, 1.0f);
+        glEnd();
     }
 
     void Square::RenderYWall(const Square& neighbour) const
     {
         auto wally = walls[1];
-        if (wally != Wall::None)
+        if (wally == Element::None)
+            return;
+
+        float z = Z();
+        float zn = 0;
+        if (neighbour)
         {
-            float z = Z();
-            float zn = 0;
-            if (neighbour)
-            {
-                zn = neighbour.Z();
-            }
-            auto wallColor = colorTable[unsigned(wally)];
-            wallColor.Render();
-            glNormal3f(0.0f, 0.0f, 1.0f);
-            glBegin(GL_QUADS);
-                glVertex3f(0.0f, z, 0.0f);
-                glVertex3f(0.0f, zn, 0.0f);
-                glVertex3f(1.0f, zn, 0.0f);
-                glVertex3f(1.0f, z, 0.0f);
-            glEnd();
+            zn = neighbour.Z();
         }
+        auto wallColor = colorTable[unsigned(wally)];
+        wallColor.Render();
+        glNormal3f(0.0f, 0.0f, 1.0f);
+        glBegin(GL_QUADS);
+            glVertex3f(0.0f, z, 0.0f);
+            glVertex3f(0.0f, zn, 0.0f);
+            glVertex3f(1.0f, zn, 0.0f);
+            glVertex3f(1.0f, z, 0.0f);
+        glEnd();
     }
 
     void Square::RenderOutline() const
@@ -173,13 +172,13 @@ namespace Game
             for (unsigned x = 0; x < width; ++x)
             {
                 glPushMatrix();
-                glPushName((y << 16) + x);
+                glPushName(LocationName(x , y, 0, Direction::none));
                 glTranslatef(float(x), 0.0f, float(y));
-                const auto& square = squares.at(i++);
-                square.RenderFloor(x,y,width,height);
-                square.RenderXWall(At(Position(x + 1, y)));
-                square.RenderYWall(At(Position(x, y-1)));
-                square.RenderOutline();
+                    const auto& square = squares.at(i++);
+                    square.RenderFloor(x,y,width,height);
+                    square.RenderXWall(At(Position(x + 1, y)));
+                    square.RenderYWall(At(Position(x, y-1)));
+                    square.RenderOutline();
                 glPopName();
                 glPopMatrix();
             }
@@ -190,6 +189,25 @@ namespace Game
     Engine::Coordinate Map::Coordinate(const Position& p) const
     {
         return Engine::Coordinate(static_cast<float>(p.x), static_cast<float>(p.y), static_cast<float>(At(p).height));
+    }
+
+    uint32_t Map::LocationName(unsigned x, unsigned y, unsigned z, const Direction& dir)
+    {
+        if (x >= 1 << 9)
+            throw std::range_error("X-Coordinate too large to encode in 9 bits");
+        if (y>= 1<<9)
+            throw std::range_error("Y-Coordinate too large to encode in 9 bits");
+        if (z >= 1 << 10)
+            throw std::range_error("Z-Coordinate too large to encode in 10 bits");
+        auto id = dir.Id();
+        if (id>=1<<4)
+            throw std::range_error("Direction too large to encode in 4 bits");
+        return (id<<28) + (z << 18) + (y << 9) + x;
+    }
+    
+    Position Map::NamedLocation(uint32_t name)
+    {
+        return Position(name & 0x1FF, (name>> 9) & 0x1FF);
     }
 
     std::wistream& operator>>(std::wistream& s, FlatMap& map)
@@ -209,10 +227,12 @@ namespace Game
     {
         unsigned short floor, wall0, wall1;
         s >> floor >> wall0 >> wall1;
-        square.floor = Floor(floor);
-        square.walls[0] = Wall(wall0);
-        square.walls[1] = Wall(wall1);
+        square.floor = Element(floor);
+        square.walls[0] = Element(wall0);
+        square.walls[1] = Element(wall1);
         s >> square.height;
+        square.solid = square.floor == Element::Stone || 
+                        square.floor == Element::Nature;
         return s;
     }
 

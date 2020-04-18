@@ -501,7 +501,7 @@ namespace Game
         {
             if (selectedActor)
             {
-                Position target(value & 0xFFFF, (value >> 16) & 0xFFFF);
+                Position target = Map::NamedLocation(value);
                 selectedActor->plan = std::make_unique<PathPlan>(*selectedActor, target, *this);
             }
         }

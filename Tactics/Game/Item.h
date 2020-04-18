@@ -8,6 +8,7 @@
 #include "Damage.h"
 #include "Slot.h"
 #include "Stats.h"
+#include "Element.h"
 
 namespace Game
 {
@@ -51,15 +52,6 @@ namespace Game
     };
     using StatBoni = std::vector<StatBonus>;
 
-    enum class Element
-    {
-        None = 0,
-        Fire,
-        Water,
-        Nature,
-        Stone,
-        Air
-    };
 
     namespace Type
     {

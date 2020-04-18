@@ -350,8 +350,8 @@ void Render()
     glEnable(GL_TEXTURE_2D);
     //glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    //glEnable(GL_BLEND);    TODO: first render non alpha tiles, then alpha tiles with depth test
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);    // TODO: first render non alpha tiles, then alpha tiles with depth test
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Lighting makes it nice but dark
     //glEnable(GL_LIGHTING);
@@ -496,7 +496,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         wglDeleteContext(hGLRC);
         ReleaseDC(hWnd, hdc);
 
-        game.reset();
+        game.reset();   // Explicitly reset game before static identification db, TODO: own it. It's per game instance anyway
 
         PostQuitMessage(0);
         break;

@@ -1,0 +1,27 @@
+2
+Actor Foo 0 0 2 0 6
+Head All[4] Head Int 5
+Chest Sagittal[3] Chest Wis 6
+Belly Sagittal[2] Belly Con 8
+RArm Right[2-3] Arms Str 5
+LArm Left[2-3] Arms Str 5
+Legs Around[0-1] Legs Agi 8
+2 1 8
+Studded Elephant Hood
+Studded Demon Brigandine
+RArm Normal Yew Wand
+Wait Hack Zap Dodge Block Parry Scrap Walk 
+Actor Bar 1 3 3 0 6
+Head All[4] Head Int 10
+Chest Sagittal[3] Chest Wis 10
+Belly Sagittal[2] Belly Con 10
+RArm Right[2-3] Arms Str 6
+LArm Left[2-3] Arms Str 4
+Legs Around[0-1] Legs Agi 7
+2 2 9
+Reinforced Adamantine Breast-Plate
+Normal Steel Coif
+RArm Normal Wooden Club
+LArm Normal Steel Targe
+Wait Hack Duck Slash Dodge Block Parry Scrap Walk 
+Vox 4 4 4 300

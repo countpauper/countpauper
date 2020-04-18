@@ -7,46 +7,41 @@
 #include "Engine/Coordinate.h"
 #include "Position.h"
 #include "Direction.h"
+#include "Element.h"
 
 namespace Game
 {
-
-    enum class Floor : unsigned short
-    {
-        None = 0,
-        Nature,
-        Earth,
-        Air,
-        Water,
-        Fire
-    };
-    enum class Wall : unsigned short
-    {
-        None  =0,
-        Nature,
-        Earth,
-        Air,
-        Water,
-        Fire
-    };
-
     struct Square
     {
         Square() :
-            floor(Floor::None),
-            walls{ Wall::None,Wall::None },
+            floor( Element::None),
+            solid(false),
+            walls{ Element::None, Element::None },
             height(0)
         {
         }
 
+        Square(Element e, int h = 0) :
+            Square(e, e == Element::Stone || e == Element::Nature, h)
+        {
+        }
+
+        Square(Element e, bool s, int h = 0) :
+            floor(e),
+            walls{ e, e },
+            solid(s),
+            height(h)
+        {
+        }
         operator bool() const
         {
-            return floor != Floor::None;
+            return floor != Element::None;
         }
-        Floor floor;
-        Wall walls[2];
+        Element floor;
+        Element walls[2];
         unsigned short height;
         unsigned short reserved;
+        bool solid;
         float Z() const;
         void RenderFloor(int x, int y, int w, int h) const;
         void RenderOutline() const;
@@ -65,7 +60,9 @@ namespace Game
         bool CanBe(const Position& position) const;
         bool CanGo(const Position& from, Direction direction) const;
         Engine::Coordinate Coordinate(const Position& p) const;
+        static Position NamedLocation(uint32_t name);
     protected:
+        static uint32_t LocationName(unsigned x, unsigned y, unsigned z, const Direction& dir);
         virtual unsigned Longitude() const = 0;
         virtual unsigned Latitude() const = 0;
     };
@@ -88,7 +85,7 @@ namespace Game
         std::vector<Square> squares;
         Engine::Image texture;
     };
-    std::wistream& operator>>(std::wistream& s, Map& map);
+    std::wistream& operator>>(std::wistream& s, FlatMap& map);
     std::wistream& operator>>(std::wistream& s, Square& square);
 
 }   // ::Game

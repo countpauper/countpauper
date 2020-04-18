@@ -167,6 +167,7 @@
     <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Affect.h" />
+    <ClInclude Include="Element.h" />
     <ClInclude Include="Location.h" />
     <ClInclude Include="Attack.h" />
     <ClInclude Include="Body.h" />

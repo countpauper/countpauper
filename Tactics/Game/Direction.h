@@ -31,8 +31,9 @@ class Direction
 {
 public:
 	Direction();
-	Direction(int x, int y, int z=0);
-	explicit Direction(const Position& vector);
+    Direction(int x, int y, int z = 0);
+    explicit Direction(uint8_t id);
+    explicit Direction(const Position& vector);
     Position Vector() const;
     double Angle() const;
 	Direction Opposite() const;
@@ -45,6 +46,8 @@ public:
 	void Fall();
 	Direction Turn(const Direction& turn) const;
     std::wstring AbsoluteDescription() const;
+
+    uint8_t Id() const;
 
     bool IsNone() const;    // operator bool leads to implicit conversion confusion with operator==
     bool operator==(const Direction& other) const;

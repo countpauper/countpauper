@@ -9,7 +9,7 @@
 #include "Engine/Color.h"
 #include "Direction.h"
 #include "Skills.h"
-#include "Map.h"
+#include "VoxelMap.h"
 #include "IGame.h"
 #include "Item.h"
 
@@ -94,7 +94,7 @@ namespace Game
         friend std::wistream& operator>>(std::wistream& s, Game& game);
         
         // State
-        FlatMap map;
+        VoxelMap map;
         Objects objects;
         Actor* selectedActor;
 

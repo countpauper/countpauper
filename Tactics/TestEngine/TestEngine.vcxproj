@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Callback.cpp" />
+    <ClCompile Include="Color.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="String.cpp" />
@@ -77,6 +78,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)..\..\lib\native\v140\windesktop\msvcstl\static\rt-dyn\x86\Debug\gtest_main.lib;%(AdditionalDependencies);opengl32.lib;</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>$(TargetPath) </Command>
@@ -102,6 +104,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>%(AdditionalDependencies);opengl32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>$(TargetPath) </Command>
@@ -127,6 +130,7 @@
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)..\..\lib\native\v140\windesktop\msvcstl\static\rt-dyn\x86\Release\gtest_main.lib;%(AdditionalDependencies);opengl32.lib;</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>$(TargetPath) </Command>
@@ -152,6 +156,7 @@
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalDependencies>%(AdditionalDependencies);opengl32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>$(TargetPath) </Command>

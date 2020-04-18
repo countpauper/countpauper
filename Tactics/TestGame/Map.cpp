@@ -11,12 +11,10 @@ namespace Test
 TEST(Map, At)
 {
     Data::MiniMap map;
-    EXPECT_EQ(Floor::Earth, map.At(Position(0, 0)).floor);
+    EXPECT_EQ(Element::Stone, map.At(Position(0, 0)).floor);
     EXPECT_EQ(1, map.At(Position(0, 0)).height);
-    EXPECT_TRUE(map.CanBe(Position(0, 0)));
-    EXPECT_EQ(Floor::Water, map.At(Position(1, 0)).floor);
+    EXPECT_EQ(Element::Water, map.At(Position(1, 0)).floor);
     EXPECT_EQ(0, map.At(Position(1, 0)).height);
-    EXPECT_FALSE(map.CanBe(Position(1, 0)));
 }
 
 TEST(Map, CanBe)
@@ -29,7 +27,7 @@ TEST(Map, CanBe)
 TEST(Map, MaybeAt)
 {
     Data::MiniMap map;
-    EXPECT_EQ(Floor::Earth, map.At(Position(0, 0)).floor);
+    EXPECT_EQ(Element::Stone, map.At(Position(0, 0)).floor);
     EXPECT_EQ(1, map.At(Position(0, 0)).height);
 
     EXPECT_FALSE(map.At(Position(-1, 0)));

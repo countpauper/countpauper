@@ -16,15 +16,32 @@ namespace Engine
         //glMaterialf(GL_FRONT, GL_SHININESS, 50.0);
     }
 
-    RGBA RGBA::operator*=(float factor)
+    RGBA RGBA::operator*=(double factor)
     {
-        r = GLubyte(round(factor* float(r)));
-        g = GLubyte(round(factor* float(g)));
-        b = GLubyte(round(factor* float(b)));
+        if (factor > 0)
+        {
+            r = GLubyte(std::min(255.0, round(factor* double(r))));
+            g = GLubyte(std::min(255.0, round(factor* double(g))));
+            b = GLubyte(std::min(255.0, round(factor* double(b))));
+        }
+        else
+        {
+            r = g = b = 0;
+        }
         return *this;
     }
 
-    RGBA operator*(const RGBA& color, float factor)
+    RGBA RGBA::Translucent(double factor) const
+    {
+        RGBA result(*this);
+        if (factor > 0)
+            result.a = GLubyte(std::min(255.0, round(factor * float(a))));
+        else
+            result.a = 0;
+        return result;
+    }
+
+    RGBA operator*(const RGBA& color, double factor)
     {
         RGBA result(color);
         return result *= factor;
