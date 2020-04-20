@@ -22,7 +22,7 @@ TEST(Map, Air)
 {
     VoxelMap map;
     map.Space(2, 2, 2);
-    map.Air(300);
+    map.Air(300, 20000);
     EXPECT_EQ(Element::Fire, map.At(Position(0, 0, 0)).floor);
     EXPECT_FALSE(map.At(Position(0, 0, 0)).solid);
     EXPECT_EQ(Element::Fire, map.At(Position(1, 1, 1)).floor);
@@ -33,13 +33,13 @@ TEST(Map, Water)
 {
     VoxelMap map;
     map.Space(2, 2, 2);
-    map.Air(300);
+    map.Air(300, 10000);
     map.Water(1, 300);
 
-    EXPECT_EQ(Element::Fire, map.At(Position(0, 0, 0)).floor);
+    EXPECT_EQ(Element::Water, map.At(Position(0, 0, 0)).floor);
     EXPECT_FALSE(map.At(Position(0, 0, 0)).solid);
-    EXPECT_EQ(Element::Fire, map.At(Position(1, 1, 1)).floor);
-    EXPECT_EQ(0, map.At(Position(1, 1, 1)).height);
+    EXPECT_EQ(Element::Water, map.At(Position(1, 1, 1)).floor);
+    EXPECT_EQ(1, map.At(Position(1, 1, 2)).height);
 }
 
 

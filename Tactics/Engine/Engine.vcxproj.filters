@@ -62,7 +62,7 @@
     <ClInclude Include="Identification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Math.h">
+    <ClInclude Include="Maths.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -109,7 +109,7 @@
     <ClCompile Include="Identification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Math.cpp">
+    <ClCompile Include="Maths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,19 +4,19 @@
 #include "Engine/Image.h"
 #include "Engine/Error.h"
 #include "Engine/Coordinate.h"
-#include "Engine/Math.h"
+#include "Engine/Geometry.h"
+#include "Engine/Maths.h"
 #include <string>
 
 namespace Game
 {
 
-//                                                      Name          Element           Color         Melt    Boil    Density Conduct.    Opacity
-const VoxelMap::Material VoxelMap::Material::vacuum   { L"Vacuum",    Element::None,    0xFF000000,   0,      0,      0,      0,          0.0        };
-const VoxelMap::Material VoxelMap::Material::air      { L"Air",       Element::Air,     0xFFA08040,   60,     80,     1.225,  29.2/29.0,  0.01       };    // mix of N2 and O2, 29 g/mol
-const VoxelMap::Material VoxelMap::Material::soil     { L"Soil",      Element::Nature,  0xFF20FF20,   0,      0,      1600,   0.4/42.0,   10         };     // 25% water 25% air, 50% solid = 42 g/mol
-const VoxelMap::Material VoxelMap::Material::stone    { L"Stone",     Element::Stone,   0xFFA0A0A0,   1986,   3220,   2648,   10/60,      10         };     // for now 100% silicon dioxide, 60 g/mol
-const VoxelMap::Material VoxelMap::Material::water    { L"Water",     Element::Water,   0xFFFF6010,   273,    373,    1000,   0.6065/18,  6.9/1000   };     // H2O 18 g/mol
-// redundant for now VoxelMap::Material VoxelMap::Material::clay  { L"Clay",      0,      0,      1700,        2.9,           0.0           };     // 
+//                                                      Name          Element           Color         Melt    Boil    Density Conduct.    Granularity,  Opacity
+const VoxelMap::Material VoxelMap::Material::vacuum   { L"Vacuum",    Element::None,    0xFF000000,   0,      0,      0,      0,          0,            0.0        };
+const VoxelMap::Material VoxelMap::Material::air      { L"Air",       Element::Air,     0xFFA08040,   60,     80,     1.225,  29.2/29.0,  1,            0.01       };     // mix of N2 and O2, 29 g/mol
+const VoxelMap::Material VoxelMap::Material::soil     { L"Soil",      Element::Nature,  0xFF20FF20,   0,      0,      1600,   0.4/65.0,   100,          10         };     // 65g/mol, based on 0% humidity. Part SiO2, N2 and proteins
+const VoxelMap::Material VoxelMap::Material::stone    { L"Stone",     Element::Stone,   0xFFA0A0A0,   1986,   3220,   2648,   10/60,      1,            10         };     // for now 100% silicon dioxide, 60 g/mol
+const VoxelMap::Material VoxelMap::Material::water    { L"Water",     Element::Water,   0xFFFF6010,   273,    373,    1000,   0.6065/18,  1,            6.9/1000   };     // H2O 18 g/mol
 // redundant for now VoxelMap::Material VoxelMap::Material::sand  { L"Sand",      1986,   3220,   2648,        10,            0.0           };     // silicon dioxide, 60 g/mol
 
 bool VoxelMap::Voxel::Solid() const
@@ -31,7 +31,14 @@ bool VoxelMap::Voxel::Gas() const
 
 Square VoxelMap::Voxel::Square() const
 {
-    return Game::Square(material->element, Solid());
+    if (temperature >= 500.0f)
+    {
+        return Game::Square(Element::Fire, Solid());
+    }
+    else
+    {
+        return Game::Square(material->element, Solid());
+    }
 }
 
 double VoxelMap::Voxel::Translucency() const
@@ -69,9 +76,10 @@ VoxelMap::VoxelMap() :
     latitude(0),
     altitude(0),
     gravity(-10.0),
-    airTemperature(0),
-    waterLevel(0)
+    waterLevel(0),
+    planetRadius(6.371e6)  // assume earth sized planet
 {
+    World(planetRadius);
 }
 
 VoxelMap::Voxel::Voxel() :
@@ -91,22 +99,43 @@ void VoxelMap::Space(unsigned x, unsigned y, unsigned z)
     voxels.resize(longitude * latitude * altitude);
 }
 
-void VoxelMap::Air(double temperature)
+void VoxelMap::World(double radius)
 {
-    airTemperature = temperature;
+    planetRadius = radius;
+    lava.material = &Material::stone;
+    lava.temperature = float((lava.material->melt + lava.material->boil) / 2.0);
+    lava.fixed = false;
+    lava.mass = float(Engine::SphereVolume(planetRadius) * 1000.0 * lava.material->normalDensity);    // TODO: density of lava is not the same as stone
+    constexpr double G = 6.67430e-11;
+    gravity = G * lava.mass / (planetRadius*planetRadius);
+}
+
+void VoxelMap::Air(double temperature, double meters)
+{
+    atmosphere.temperature = float(temperature);
+    atmosphere.material = &Material::air;
+    atmosphere.fixed = false;
+    atmosphere.mass = float((Engine::SphereVolume(meters + planetRadius) - Engine::SphereVolume(planetRadius))*
+        1000.0 * atmosphere.material->normalDensity * 0.5);    // TODO: density isn't even over the whole atmosphere. assumed average
+
     for (auto& voxel : voxels)
     {
         if (voxel.material == &Material::vacuum)
         {
             voxel.material = &Material::air;
-            voxel.mass = voxel.material->normalDensity * LiterPerBlock;
-            voxel.temperature = airTemperature;
+            voxel.mass = float(voxel.material->normalDensity * LiterPerBlock);
+            voxel.temperature = atmosphere.temperature;
         }
     }
 }
 
 void VoxelMap::Water(int level, double temperature)
 {
+    water.temperature = float(temperature);
+    water.material = &Material::water;
+    water.fixed = false;
+    water.mass = 50e15f; // roughly the north  sea
+
     waterLevel = level;
     for (auto& voxel : voxels)
     {
@@ -116,8 +145,16 @@ void VoxelMap::Water(int level, double temperature)
             if (voxel.material == &Material::vacuum)
             {
                 voxel.material = &Material::water;
-                voxel.mass = voxel.material->normalDensity * LiterPerBlock;
-                voxel.temperature = temperature;
+                voxel.mass = float(Material::water.normalDensity * LiterPerBlock); // TODO: temperature
+                voxel.temperature = float(temperature);
+                voxel.humidity = voxel.mass;
+            }
+            else if (voxel.Gas())
+            {
+                voxel.material = &Material::water;
+                voxel.mass = float(Material::water.normalDensity * LiterPerBlock); // TODO: temperature
+                voxel.temperature = float(temperature);
+                voxel.humidity = voxel.mass;    // TODO: move gas
             }
         }
     }
@@ -125,6 +162,7 @@ void VoxelMap::Water(int level, double temperature)
 
 void VoxelMap::Hill(float x, float y, float height, float stddev)
 {
+
     Engine::Coordinate center(x, y, 0);
 
     for (unsigned xi = 0; xi < longitude; ++xi)
@@ -138,8 +176,8 @@ void VoxelMap::Hill(float x, float y, float height, float stddev)
                 auto& v = Get(Position(xi, yi, zi));
                 v.material = &Material::stone;
                 v.fixed = true;
-                v.temperature = airTemperature; // Could lower based on distance to surface
-                v.mass = v.material->normalDensity * LiterPerBlock;
+                v.temperature = atmosphere.temperature; // Could lower based on distance to surface
+                v.mass = float(v.material->normalDensity * LiterPerBlock);
             }
         }
     }
@@ -166,6 +204,22 @@ unsigned VoxelMap::VoxelIndex(const Position& p) const
 
 const VoxelMap::Voxel& VoxelMap::Get(const Position& p) const
 {   
+    if (p.z < 0)
+    {
+        if (Get(Position(p.x, p.y, 0)).material == &Material::water)
+            return water;
+        else
+            return lava;
+    }
+    if (unsigned(p.x) >= Altitude())
+        return atmosphere;
+    if (p.x < 0 || p.y < 0 || unsigned(p.x) >= Longitude() || unsigned(p.y) >= Latitude())
+    {
+        if (p.z < waterLevel)
+            return water;
+        else
+            return atmosphere;  // TODO: rock level needs a profile on each edge
+    }
     // TODO: get default air, water or rock, lava depending on which bound it's out and parameters
     return voxels.at(VoxelIndex(p));
 }
@@ -173,6 +227,30 @@ const VoxelMap::Voxel& VoxelMap::Get(const Position& p) const
 VoxelMap::Voxel& VoxelMap::Get(const Position& p)
 {   // can't get outside
     return voxels.at(VoxelIndex(p));
+}
+
+Plane VoxelMap::Visibility(const Position& p) const
+{
+    Plane result;
+    for (const Direction& direction : Direction::all)
+    {
+        if (!Get(p + direction.Vector()).Opaque())
+        {
+            result.insert(direction);
+        }
+    }
+    return result;
+}
+
+void VoxelMap::Compute()
+{
+    Position p;
+    for (auto& voxel : voxels)
+    {
+        voxel.visibility = Visibility(p);
+        Iterate(p);
+    }
+
 }
 
 Position VoxelMap::Stride() const
@@ -214,68 +292,79 @@ Square VoxelMap::At(const Position& p) const
             return s;
         }
     }
-    return Square(Element::Fire, false, 0); // welcome to hell
+    return lava.Square(); // welcome to hell
 }
 
 
-void VoxelMap::Voxel::Render(const Position& p) const
+void VoxelMap::Voxel::Render(const Position& p, const Plane& visibility) const
 {
     auto c = Color();
     c.Render();
     // south
-    glPushName(LocationName(p, Direction::south));
-    glNormal3d(Direction::south.Vector().x, Direction::south.Vector().z, Direction::south.Vector().y);
-    glBegin(GL_QUADS);
-        glVertex3f(0, 0, 0);
-        glVertex3f(0, 1, 0);
-        glVertex3f(1, 1, 0);
-        glVertex3f(1, 0, 0);
-    glEnd();
-    glPopName();
-
+    if (visibility.count(Direction::south))
+    {
+        glPushName(LocationName(p, Direction::south));
+        glNormal3d(0, 0, -1); //  Direction::south.Vector()
+        glBegin(GL_QUADS);
+            glVertex3f(0, 0, 0);
+            glVertex3f(0, 1, 0);
+            glVertex3f(1, 1, 0);
+            glVertex3f(1, 0, 0);
+        glEnd();
+        glPopName();
+    }
     // north
-    glPushName(LocationName(p, Direction::north));
-    glNormal3d(Direction::north.Vector().x, Direction::north.Vector().z, Direction::north.Vector().y);
-    glBegin(GL_QUADS);
-        glVertex3f(0, 0, 1);
-        glVertex3f(1, 0, 1);
-        glVertex3f(1, 1, 1);
-        glVertex3f(0, 1, 1);
-    glEnd();
-    glPopName();
-
+    if (visibility.count(Direction::north))
+    {
+        glPushName(LocationName(p, Direction::north));
+        glNormal3d(0, 0, 1);
+        glBegin(GL_QUADS);
+            glVertex3f(0, 0, 1);
+            glVertex3f(1, 0, 1);
+            glVertex3f(1, 1, 1);
+            glVertex3f(0, 1, 1);
+        glEnd();
+        glPopName();
+    }
     // east
-    glPushName(LocationName(p, Direction::east));
-    glNormal3d(Direction::east.Vector().x, Direction::east.Vector().z, Direction::east.Vector().y);
-    glBegin(GL_QUADS);
-        glVertex3f(1, 0, 0);
-        glVertex3f(1, 1, 0);
-        glVertex3f(1, 1, 1);
-        glVertex3f(1, 0, 1);
-    glEnd();
-    glPopName();
-
+    if (visibility.count(Direction::east))
+    {
+        glPushName(LocationName(p, Direction::east));
+        glNormal3d(1, 0, 0);
+        glBegin(GL_QUADS);
+            glVertex3f(1, 0, 0);
+            glVertex3f(1, 1, 0);
+            glVertex3f(1, 1, 1);
+            glVertex3f(1, 0, 1);
+        glEnd();
+        glPopName();
+    }
     // west
-    glPushName(LocationName(p, Direction::west));
-    glNormal3d(Direction::west.Vector().x, Direction::west.Vector().z, Direction::west.Vector().y);
-    glBegin(GL_QUADS);
-        glVertex3f(0, 0, 0);
-        glVertex3f(0, 0, 1);
-        glVertex3f(0, 1, 1);
-        glVertex3f(0, 1, 0);
-    glEnd();
-    glPopName();
-
+    if (visibility.count(Direction::west))
+    {
+        glPushName(LocationName(p, Direction::west));
+        glNormal3d(-1, 0, 0);
+        glBegin(GL_QUADS);
+            glVertex3f(0, 0, 0);
+            glVertex3f(0, 0, 1);
+            glVertex3f(0, 1, 1);
+            glVertex3f(0, 1, 0);
+        glEnd();
+        glPopName();
+    }
     // top
-    glPushName(LocationName(p, Direction::up));
-    glNormal3d(Direction::up.Vector().x, Direction::up.Vector().z, Direction::up.Vector().y);
-    glBegin(GL_QUADS);
-        glVertex3f(0, 1, 0);
-        glVertex3f(0, 1, 1);
-        glVertex3f(1, 1, 1);
-        glVertex3f(1, 1, 0);
-    glEnd();
-    glPopName();
+    if (visibility.count(Direction::up))
+    {
+        glPushName(LocationName(p, Direction::up));
+        glNormal3d(0, 1, 0);
+        glBegin(GL_QUADS);
+            glVertex3f(0, 1, 0);
+            glVertex3f(0, 1, 1);
+            glVertex3f(1, 1, 1);
+            glVertex3f(1, 1, 0);
+        glEnd();
+        glPopName();
+    }
 }
 
 void VoxelMap::Iterate(Position& p) const
@@ -302,6 +391,7 @@ void VoxelMap::Render() const
     
     // Draw opaque
     glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
     for (auto& v : voxels)
     {
         glPushMatrix();
@@ -309,7 +399,11 @@ void VoxelMap::Render() const
         glTranslatef(float(p.x), float(p.z), float(p.y));
         if (v.Opaque())
         {
-            v.Render(p);
+            auto visibility = v.visibility;
+            if (!visibility.empty())
+            {
+                v.Render(p, visibility);
+            }
         }
         // TODO: separate loop?
         if ((p.z == 0) && (!v.Opaque()))
@@ -328,9 +422,11 @@ void VoxelMap::Render() const
         //glPopName();
         glPopMatrix();
     }
-    glEnable(GL_BLEND);   
     assert(!p); // should be reset to 0,0,0
 
+    // translucent pass
+    glEnable(GL_BLEND);
+    glDisable(GL_LIGHTING);
     for (auto& v : voxels)
     {
         glPushMatrix();
@@ -338,7 +434,11 @@ void VoxelMap::Render() const
         glTranslatef(float(p.x), float(p.z), float(p.y));
         if (!v.Opaque() && !v.Transparent())
         {
-            v.Render(p);
+            auto visibility = v.visibility;
+            if (!visibility.empty())
+            {
+                v.Render(p, visibility);
+            }
         }
         Iterate(p);
         glPopMatrix();
@@ -356,7 +456,7 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
     int waterLevel;
     s >> temperature >> waterLevel;
     map.Water(waterLevel, temperature);
-    map.Air(temperature);
+    map.Air(temperature, 20000);
     unsigned procedures;
     s >> procedures;
     for (unsigned p = 0; p < procedures; ++p)
@@ -374,6 +474,7 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
             throw std::runtime_error("Unknown procedure");
         }
     }
+    map.Compute();
     return s;
 }
 

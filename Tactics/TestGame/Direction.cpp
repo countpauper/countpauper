@@ -137,16 +137,8 @@ TEST(DirectionTest, EvenDivision)
 
 TEST(DirectionTest, Vector)
 {
-	std::vector<Direction> allDirections = {
-		Direction::none,
-		Direction::north,
-		Direction::east,
-        Direction::south,
-        Direction::west,
-        Direction::up,
-        Direction::down
-    };
-	for (auto dir : allDirections)
+
+	for (auto dir : Direction::all)
 	{
 		EXPECT_EQ(Direction(dir.Vector()), dir);
 	}

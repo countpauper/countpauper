@@ -84,7 +84,7 @@
     <ClInclude Include="Identification.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Light.h" />
-    <ClInclude Include="Math.h" />
+    <ClInclude Include="Maths.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -102,7 +102,7 @@
     <ClCompile Include="Identification.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Light.cpp" />
-    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Maths.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

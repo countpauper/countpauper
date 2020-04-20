@@ -66,6 +66,14 @@ namespace Engine
             {
                 Move(Engine::Vector(1, 0, 0));
             }
+            else if (key == VK_ADD)
+            {
+                zoom *= 1.1f;
+            }
+            else if (key == VK_SUBTRACT)
+            {
+                zoom/= 1.1f;
+            }
         }
         else
         {
@@ -109,15 +117,9 @@ namespace Engine
         //float f = 1.0+scale;
         float n = 1.0;
         float f = 10.0;
-
-        glDepthRange(n, f);
-        glClearDepth(f);
-        if (n < f)
-            glDepthFunc(GL_LESS);
-        else
-            glDepthFunc(GL_GREATER);
-        glDepthRange(0, 1);
-        glDepthFunc(GL_LESS);
+        // default glClearDepth(1);
+        // default glDepthRange(0, 1);
+        // default glDepthFunc(GL_LESS);
 
         // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/building-basic-perspective-projection-matrix
 
@@ -129,6 +131,7 @@ namespace Engine
             0, 0,       -f*n / (f - n),  0
         };
         glMultMatrixf(perspectiveMatrix);
+        glScaled(zoom, zoom, zoom);
         glTranslatef(dragx-position.x, -position.y, dragz-position.z);
         glRotated(rotation.y, 0, 1, 0);
         glRotated(rotation.z, 0, 0, 1);

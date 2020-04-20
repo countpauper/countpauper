@@ -1,6 +1,8 @@
 #pragma once
 
 #include <map>
+#include <array>
+
 #include "Position.h"
 
 namespace Game
@@ -65,6 +67,8 @@ public:
 	static const Direction up;
 	static const Direction down;
 	static const std::map<const std::wstring, Direction> map;
+    static std::array<Direction, 4> cardinal;
+    static std::array<Direction, 6> all;
 protected:
 	enum Value
 	{

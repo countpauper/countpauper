@@ -104,6 +104,25 @@ const std::map<const std::wstring, Direction> Direction::map(
 	{ L"down", Direction::down },
 });
 
+
+std::array<Direction, 4> Direction::cardinal
+{
+    Direction::east,
+    Direction::north,
+    Direction::west,
+    Direction::south
+};
+
+std::array<Direction, 6> Direction::all
+{
+    Direction::east,
+    Direction::north,
+    Direction::west,
+    Direction::south,
+    Direction::up,
+    Direction::down
+};
+
 Direction::Value Direction::From(const Position& vector)
 {
 	auto x = vector.x;

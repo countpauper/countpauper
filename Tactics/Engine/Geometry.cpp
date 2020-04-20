@@ -22,5 +22,11 @@ namespace Engine
         return (rad / PI)*180.0f;
     }
 
+    double SphereVolume(double radius)
+    {
+        return pow(radius, 3) * PI * 4.0 / 3.0;
+    }
+
+
 }
 

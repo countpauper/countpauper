@@ -7,11 +7,11 @@ namespace Engine
     Light::Light() :
         on(true),
         position(0,0,0),
-        diffusePower(10.0f),
+        diffusePower(2.0f),
         diffuse(255,255,255,255),
-        ambientPower(0.1f),
+        ambientPower(1.0f),
         ambient(255,255,255,255),
-        specularPower(100.0f),
+        specularPower(10.0f),
         specular(255, 255, 255, 255)
     {
     }
