@@ -11,13 +11,16 @@ namespace Engine
 
         virtual void Render() const = 0;
         void Move(const Coordinate& newPosition);
+        void Move(const Vector& offset);
         void Face(const Coordinate& newPosition);
         void Zoom(float delta);
         void Drag(float dx, float dz);
         void FinishDrag(float dx, float dz);
+        void Key(WPARAM key);
     protected:
         Coordinate position;
         Coordinate target;
+        Coordinate rotation;
         float dragx, dragz;
         float zoom;
     };

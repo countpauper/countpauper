@@ -163,7 +163,6 @@ namespace Game
             glVertex3f(0.0f, z, 1.0f);
             glVertex3f(0.0f, z, 0.0f);
         glEnd();
-
     }
 
     void FlatMap::Render() const
@@ -174,10 +173,10 @@ namespace Game
         {
             for (unsigned x = 0; x < width; ++x)
             {
+                const auto& square = squares.at(i++);
                 glPushMatrix();
-                glPushName(LocationName(x , y, 0, Direction::none));
+                glPushName(LocationName(Position(x,y,square.height), Direction::none));
                 glTranslatef(float(x), 0.0f, float(y));
-                    const auto& square = squares.at(i++);
                     square.RenderFloor(x,y,width,height);
                     square.RenderXWall(At(Position(x + 1, y, 0)));
                     square.RenderYWall(At(Position(x, y-1, 0)));
@@ -194,18 +193,18 @@ namespace Game
         return Engine::Coordinate(static_cast<float>(p.x), static_cast<float>(p.y), static_cast<float>(At(p).height));
     }
 
-    uint32_t Map::LocationName(unsigned x, unsigned y, unsigned z, const Direction& dir)
+    uint32_t Map::LocationName(const Position& p, const Direction& dir)
     {
-        if (x >= 1 << 9)
+        if (p.x >= 1 << 9)
             throw std::range_error("X-Coordinate too large to encode in 9 bits");
-        if (y>= 1<<9)
+        if (p.y>= 1<<9)
             throw std::range_error("Y-Coordinate too large to encode in 9 bits");
-        if (z >= 1 << 10)   // more bits for z, because vertical El < horizontal El
+        if (p.z >= 1 << 10)   // more bits for z, because vertical El < horizontal El
             throw std::range_error("Z-Coordinate too large to encode in 10 bits");
         auto id = dir.Id();
         if (id>=1<<4)
             throw std::range_error("Direction too large to encode in 4 bits");
-        return (id<<28) + (z << 18) + (y << 9) + x;
+        return (id<<28) + (p.z << 18) + (p.y << 9) + p.x;
     }
     
     Position Map::NamedLocation(uint32_t name)

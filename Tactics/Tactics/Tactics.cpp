@@ -11,6 +11,7 @@
 #include "Engine/Light.h"
 #include "Engine/Camera.h"
 #include "Engine/Random.h"
+#include "Engine/Image.h"
 #include "Game/Game.h"
 #include "SkillBar.h"
 #include "TurnList.h"
@@ -31,7 +32,8 @@ std::unique_ptr<Game::Game> game;
 std::unique_ptr<Game::SkillBar> skills;
 std::unique_ptr<Game::TurnList> list;
 Engine::Light light;
-Engine::TopCamera camera;
+Engine::PerspectiveCamera camera;
+bool writeDepthMap = false;
 
 bool ParseCommandline(const std::wstring& cmdLine)
 {
@@ -153,9 +155,9 @@ BOOL SetPixelFormat(HWND hWnd)
     pfd.nVersion     = 1;
     pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
     pfd.iPixelType   = PFD_TYPE_RGBA;
-    //pfd.cColorBits   = 32;
-    //pfd.cStencilBits = 8;
-    //pfd.cDepthBits   = 24;
+    pfd.cColorBits   = 32;
+    pfd.cStencilBits = 8;
+    pfd.cDepthBits   = 24;
 
 
     int pf = ChoosePixelFormat(hDC, &pfd);
@@ -231,13 +233,18 @@ BOOL InitInstance(HINSTANCE hInstance)
 
    if (!Start())
        return FALSE;
- 
+ /* TODO fullscreen option
+   SetWindowLongPtr(hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
+   SetWindowLongPtr(hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+   SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 1920, 1080, SWP_SHOWWINDOW);
+   */
+
    ShowWindow(hWnd, windowShow);
    UpdateWindow(hWnd);
    SetTimer(hWnd, 1,  0,(TIMERPROC) NULL);
 
    light.Move(Engine::Coordinate(2, 10, 0));
-   camera.Move(Engine::Coordinate(2, 5, -5));
+   camera.Move(Engine::Coordinate(-1, 10, 3));
    return TRUE;
 }
 
@@ -289,7 +296,6 @@ Hit Select(int x, int y)
             glClearColor(0, 0, 0, 0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glViewport(clientRect.top, panelHeight, clientRect.right-clientRect.left, clientRect.bottom- panelHeight);
-            glEnable(GL_CULL_FACE);
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             ZoomToScreenCoord(x, y);
@@ -339,6 +345,8 @@ void ShowClick()
     }
     */
 }
+
+
 void Render()
 {
     glClearColor(0, 0, 0, 0);
@@ -348,9 +356,12 @@ void Render()
     glViewport(clientRect.left, panelHeight, clientRect.right-clientRect.left, clientRect.bottom- panelHeight);
 
     glEnable(GL_TEXTURE_2D);
-    //glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
+    GLboolean writeMask = false;
+    glGetBooleanv(GL_DEPTH_WRITEMASK, &writeMask);
+    assert(writeMask);
     glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);    // TODO: first render non alpha tiles, then alpha tiles with depth test
+    //glEnable(GL_BLEND);    // TODO: first render non alpha tiles, then alpha tiles with depth test
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Lighting makes it nice but dark
@@ -366,8 +377,17 @@ void Render()
     camera.Face(game->focus);
     camera.Render();
     game->Render();
-   
 
+    if (writeDepthMap)
+    {
+        // check depth map
+        std::vector<float> depths;
+        depths.resize(clientRect.right * clientRect.bottom);
+        glReadPixels(0, 0, clientRect.right, clientRect.bottom, GL_DEPTH_COMPONENT, GL_FLOAT, depths.data());
+        Engine::Image::Write("DepthMask.png", clientRect.right, clientRect.bottom, depths.data());
+
+        writeDepthMap = false;
+    }
     // render panel 
     glViewport(clientRect.left, clientRect.top, clientRect.right-clientRect.left, panelHeight);
     glMatrixMode(GL_PROJECTION);
@@ -484,6 +504,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostMessage(hWnd, WM_PAINT, 0, 0);
     return 0;
     case WM_KEYDOWN:
+        if (wParam == VK_F2)
+        {
+            writeDepthMap = true;
+            break;
+        }
+        camera.Key(wParam);
         skills->Key(wParam);
         list->Key(wParam);
         game->Key(wParam);

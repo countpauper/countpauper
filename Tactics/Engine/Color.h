@@ -6,6 +6,7 @@ namespace Engine
     struct RGBA
     {
         using Component = uint8_t;
+        RGBA() = default;
 
         RGBA(Component r, Component g, Component b, Component a=255) :
             r(r), g(g), b(b), a(a)

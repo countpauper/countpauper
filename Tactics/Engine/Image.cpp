@@ -3,7 +3,10 @@
 #include "Image.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include <stb_image_write.h>
+#include "Color.h"
 #include "Error.h"
+#include "Utils.h"
 
 namespace Engine
 {
@@ -83,6 +86,33 @@ void Image::Load(const std::wstring& fn)
     //glTexParameteri(GL_TEXTURE_MAX_LEVEL, 0);
     CheckGLError();
     stbi_image_free(data);
+}
+
+
+void Image::Write(const std::string& filename, unsigned width, unsigned height, Engine::RGBA data[])
+{
+    std::string extension = UpperCase(filename.substr(filename.find_last_of('.'), std::string::npos));
+    if (extension == ".PNG")
+    {
+        stbi_write_png(filename.c_str(), width, height, 4, data, width * sizeof(RGBA));
+    }
+    else
+    {
+        throw std::runtime_error("Unsupported image format");
+    }
+}
+
+
+void Image::Write(const std::string& filename, unsigned width, unsigned height, float data[])
+{
+    std::unique_ptr<RGBA[]> recode = std::make_unique<RGBA[]>(width*height);
+    for (unsigned i = 0; i < width*height; ++i)
+    {
+        recode[i].a = 255;
+        recode[i].r = unsigned char(std::min(255.0f, data[i] * 255.0f));
+        recode[i].g = recode[i].b = recode[i].r;
+    }
+    Write(filename, width, height, recode.get());
 }
 
 }

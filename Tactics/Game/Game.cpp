@@ -343,6 +343,16 @@ namespace Game
     {
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+        glColor3d(1, 1, 1);
+        glBegin(GL_QUADS);
+        for (int i = 0; i < 100; i+=1)
+        {
+            glVertex3d(0, 0, i);
+            glVertex3d(1, 0, i);
+            glVertex3d(1, 1, i);
+            glVertex3d(0, 1, i);
+        }
+        glEnd();
 
         glPushName(GLuint(Selection::Map));
         map->Render();

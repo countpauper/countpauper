@@ -2,6 +2,9 @@
 
 namespace Engine
 {
+
+    struct Vector;
+
     struct Coordinate
     {
         Coordinate() = default;
@@ -11,10 +14,14 @@ namespace Engine
             z(z)
         {
         }
+        Coordinate& operator+=(const Vector& v);
+
         float x;
         float y;
         float z;
     };
+
+    std::ostream& operator<<(std::ostream& s, const Coordinate& coordinate);
 
     struct Vector
     {

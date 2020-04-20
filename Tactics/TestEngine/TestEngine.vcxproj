@@ -31,6 +31,7 @@
     <ClCompile Include="Callback.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="String.cpp" />
     <ClCompile Include="pch.cpp">

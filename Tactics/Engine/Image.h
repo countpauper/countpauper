@@ -4,6 +4,9 @@
 #include <memory>
 namespace Engine
 {
+
+struct RGBA;
+
 class Image
 {
 public:
@@ -39,5 +42,8 @@ public:
         Bind(std::shared_ptr<Texture> texture);
         std::shared_ptr<Texture> texture;
     };
+
+    static void Write(const std::string& filename, unsigned width, unsigned height, RGBA data[]);
+    static void Write(const std::string& filename, unsigned width, unsigned height, float data[]);
 };
 }//::Engine

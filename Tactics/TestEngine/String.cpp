@@ -83,4 +83,11 @@ TEST(String, Strip)
     EXPECT_EQ(Engine::Strip(L"\t1 2\t3\r\n", L" \t\r\n"), std::wstring(L"1 2\t3"));
     EXPECT_TRUE(Engine::Strip(L"123", L"321").empty());
 }
+
+
+TEST(String, UpperCase)
+{
+    EXPECT_EQ("UPP3RC4SE", Engine::UpperCase("Upp3rC4se"));
+    EXPECT_EQ("O0O", Engine::UpperCase("o0o"));
+}
 }

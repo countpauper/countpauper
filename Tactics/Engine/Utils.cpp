@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Utils.h"
 #include <sstream>
+#include <ctype.h>
 
 namespace Engine
 {
@@ -53,6 +54,14 @@ std::set<std::string> SplitSet(const std::string& str, char delimiter)
     auto splitVector = Split(str, delimiter);
     return std::set<std::string>(splitVector.begin(), splitVector.end());
 }
+
+std::string UpperCase(const std::string& str)
+{
+    std::string result(str.length(), '\x0');
+    std::transform(str.begin(), str.end(), result.begin(), ::toupper);
+    return result;
+}
+
 
 std::wstring Strip(const std::wstring& str, const std::wstring_view& trash)
 {

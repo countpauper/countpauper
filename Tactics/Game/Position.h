@@ -4,7 +4,7 @@ namespace Game
 {
     static const int HorizontalEl = 3; // 1 square is 3x3l
     static const int VerticalEl = 1; // 1 block is 3x3x1 l
-    static const double MeterPerEl = 1.0/3.0;
+    static const double MeterPerEl = 1.0 / 3.0;
     static const double LiterPerBlock = (HorizontalEl * MeterPerEl) * (HorizontalEl * MeterPerEl)* (VerticalEl * MeterPerEl) * 1000.0;
 
     struct Position 

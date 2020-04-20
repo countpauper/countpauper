@@ -39,10 +39,8 @@ public:
     // Generate
     void Space(unsigned x, unsigned y, unsigned z); // Day 0 there is nothing
     void Air(double temperature);                   // Day 1 the sky
-    void Rock(int min, double stddev, double gravity);                      // Day 3 dry land and plants
-    void Sun(double time);                          // Day 4 Sun, Moon and stars
-    void Water();                                   // Day 5 Animals and sea life
-    void Populate();                                // Day 6 Land animals and people
+    void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
+    void Hill(float x, float y, float height, float stddev);
 
     // Map
     Square At(const Position& p) const override;
@@ -63,22 +61,27 @@ protected:
         bool Opaque() const;
         bool Transparent() const;
         Engine::RGBA Color() const;
-
+        void Render(const Position& p) const;
         const Material* material;
         double temperature;     // Kelvin
         double mass;            // gram, mass determines density and pressure
         Engine::Vector flow;    // meter/second
         bool fixed;
     };
-    const Voxel& Get(unsigned x, unsigned y, unsigned z) const;
-    Voxel& Get(unsigned x, unsigned y, unsigned z);
+    const Voxel& Get(const Position& p) const;
+    Voxel& Get(const Position& p);
+    unsigned VoxelIndex(const Position& p) const;
+    Position Stride() const;
+    Position VoxelMap::GetPosition(const Voxel* pVoxel) const;
+    void Iterate(Position& p) const;
 private:
-
     std::vector<Voxel> voxels;
-    unsigned x, y, z;
+    unsigned longitude, latitude, altitude;
 
-    double airTemperature;
     double gravity;
+    double airTemperature;
+    double waterLevel;
+
 };
 
 std::wistream& operator>>(std::wistream& s, VoxelMap& map);
