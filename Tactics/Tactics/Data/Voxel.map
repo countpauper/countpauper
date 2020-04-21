@@ -26,5 +26,5 @@ LArm Normal Steel Targe
 Wait Hack Duck Slash Dodge Block Parry Scrap Walk 
 3D Vox 25 25 25 300 4
 2
-HILL 20 15 15 20 10 15 5.0 
-HILL 10 8 5 19 5 8 11.0 
+HILL (20,15,15) (20,10,15) 5.0 
+HILL (10,8,5) (19,5,8) 11.0 

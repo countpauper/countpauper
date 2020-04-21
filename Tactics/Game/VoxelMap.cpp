@@ -492,9 +492,11 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
         s >> procedure;
         if (procedure == L"HILL")
         {
-            float x0, y0, height0, x1, y1, height1, stddev;
-            s >> x0 >> y0 >> height0 >> x1 >> y1 >> height1 >> stddev;
-            map.Hill(Engine::Coordinate(x0, y0, height0), Engine::Coordinate(x1, y1, height1), stddev);
+            Engine::Coordinate p0, p1;
+            s >> p0 >> p1;
+            float stddev;
+            s >> stddev;
+            map.Hill(p0, p1, stddev);
         }
         else
         {

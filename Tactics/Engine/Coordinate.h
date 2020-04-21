@@ -28,6 +28,8 @@ namespace Engine
     Coordinate operator-(const Coordinate& c, const Vector& v);
 
     std::ostream& operator<<(std::ostream& s, const Coordinate& coordinate);
+    std::wostream& operator<<(std::wostream& s, const Coordinate& coordinate);
+    std::wistream& operator>>(std::wistream& s, Coordinate& coordinate);
 
     struct Vector
     {
