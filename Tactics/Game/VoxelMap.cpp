@@ -163,7 +163,7 @@ void VoxelMap::Water(int level, double temperature)
     for (auto& voxel : voxels)
     {
         auto z = GetPosition(&voxel).z;
-        if (z <= waterLevel)
+        if (z < waterLevel)
         {
             if (voxel.material == &Material::vacuum)
             {
@@ -315,7 +315,7 @@ Square VoxelMap::At(const Position& p) const
         if (!v.Gas())
         {
             Square s = v.Square();
-            s.height = i;
+            s.height = i+1;
             return s;
         }
     }
