@@ -28,9 +28,9 @@ namespace Engine
     {
         target = newTarget;
     }
-    void Camera::Zoom(float delta)
+    void Camera::Zoom(float factor)
     {
-        zoom = std::max(0.0f, zoom + delta);
+        zoom *= factor;
     }
     void Camera::Drag(float dx, float dz)
     {
@@ -103,20 +103,11 @@ namespace Engine
 
     void PerspectiveCamera::Render() const
     {
-/*        glFrustum(0, 10 , 0, 10, 3, 10.0 );
-        glDepthRange(0, 2);
-        glTranslatef(dragx - position.x, -position.y, dragz - position.z);
-        glRotated(rotation.y, 0, 1, 0);
-        glRotated(rotation.z, 0, 0, 1);
-        glRotated(rotation.x, 1, 0, 0);
-        return;
-*/
-
-        float scale = float(1.0 / tan(fov* 0.5f * PI / 180.0f));
-        //float n = 1.0;    
-        //float f = 1.0+scale;
-        float n = 1.0;
-        float f = 10.0;
+        GLdouble equation[4];
+        glGetClipPlane(GL_CLIP_PLANE1, equation);
+        float scale = zoom * float(1.0 / tan(fov* 0.5f * PI / 180.0f));
+        float n = 10.0;  // 1.0 wastes a lot of depth buffer
+        float f = 100.0; // pretty much how much of the map is visible in grids
         // default glClearDepth(1);
         // default glDepthRange(0, 1);
         // default glDepthFunc(GL_LESS);
@@ -131,7 +122,6 @@ namespace Engine
             0, 0,       -f*n / (f - n),  0
         };
         glMultMatrixf(perspectiveMatrix);
-        glScaled(zoom, zoom, zoom);
         glTranslatef(dragx-position.x, -position.y, dragz-position.z);
         glRotated(rotation.y, 0, 1, 0);
         glRotated(rotation.z, 0, 0, 1);

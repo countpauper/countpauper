@@ -327,12 +327,13 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
 {
     auto c = Color();
     c.Render();
+    unsigned mode = GL_QUADS; //  GL_LINE_LOOP
     // south
     if (visibility[Direction::south])
     {
         glPushName(LocationName(p, Direction::south));
         glNormal3d(0, 0, -1); //  Direction::south.Vector()
-        glBegin(GL_QUADS);
+        glBegin(mode);
             glVertex3f(0, 0, 0);
             glVertex3f(0, 1, 0);
             glVertex3f(1, 1, 0);
@@ -345,7 +346,7 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
     {
         glPushName(LocationName(p, Direction::north));
         glNormal3d(0, 0, 1);
-        glBegin(GL_QUADS);
+        glBegin(mode);
             glVertex3f(0, 0, 1);
             glVertex3f(1, 0, 1);
             glVertex3f(1, 1, 1);
@@ -358,7 +359,7 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
     {
         glPushName(LocationName(p, Direction::east));
         glNormal3d(1, 0, 0);
-        glBegin(GL_QUADS);
+        glBegin(mode);
             glVertex3f(1, 0, 0);
             glVertex3f(1, 1, 0);
             glVertex3f(1, 1, 1);
@@ -371,7 +372,7 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
     {
         glPushName(LocationName(p, Direction::west));
         glNormal3d(-1, 0, 0);
-        glBegin(GL_QUADS);
+        glBegin(mode);
             glVertex3f(0, 0, 0);
             glVertex3f(0, 0, 1);
             glVertex3f(0, 1, 1);
@@ -384,7 +385,7 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
     {
         glPushName(LocationName(p, Direction::up));
         glNormal3d(0, 1, 0);
-        glBegin(GL_QUADS);
+        glBegin(mode);
             glVertex3f(0, 1, 0);
             glVertex3f(0, 1, 1);
             glVertex3f(1, 1, 1);

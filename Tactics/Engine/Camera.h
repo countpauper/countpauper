@@ -13,7 +13,7 @@ namespace Engine
         void Move(const Coordinate& newPosition);
         void Move(const Vector& offset);
         void Face(const Coordinate& newPosition);
-        void Zoom(float delta);
+        void Zoom(float factor);
         void Drag(float dx, float dz);
         void FinishDrag(float dx, float dz);
         void Key(WPARAM key);

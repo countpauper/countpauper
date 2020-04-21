@@ -486,7 +486,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEWHEEL:
         {
             int delta = int(wParam)>>16;
-            camera.Zoom(float(delta) * 1e-3f);
+            camera.Zoom(pow(1.1, float(delta)/100));
             InvalidateRect(hWnd, nullptr, TRUE);
     }
         break;
