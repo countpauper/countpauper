@@ -15,11 +15,17 @@ namespace Engine
         {
         }
         Coordinate& operator+=(const Vector& v);
+        Coordinate& operator-=(const Vector& v);
+        Coordinate& operator*=(float factor);
 
         float x;
         float y;
         float z;
     };
+    Coordinate operator*(const Coordinate& c, float factor);
+    Coordinate operator*(const Coordinate& c, double factor);
+    Coordinate operator+(const Coordinate& c, const Vector& v);
+    Coordinate operator-(const Coordinate& c, const Vector& v);
 
     std::ostream& operator<<(std::ostream& s, const Coordinate& coordinate);
 
@@ -32,12 +38,7 @@ namespace Engine
             z(z)
         {
         }
-        Vector(const Vector& v) :
-            x(v.x),
-            y(v.y),
-            z(v.z)
-        {
-        }
+        Vector(const Vector& v) = default;
 
         Vector(const Coordinate& c) :
             x(c.x),
@@ -46,35 +47,25 @@ namespace Engine
         {
         }
 
-        Vector& operator=(const Vector& o)
-        {
-            x = o.x;
-            y = o.y;
-            z = o.z;
-            return *this;
-        }
-        operator bool() const
-        {
-            return x != 0 || y != 0 || z != 0;
-        }
-        double Length() const
-        {
-            return sqrt(SqrLength());
-        }
-        double SqrLength() const
-        {
-            return x*x + y*y + z*z;
-        }
+        Vector& operator=(const Vector& o);
+        operator bool() const;
+        double Length() const;
+        double LengthSquared() const;
+        bool operator==(const Vector& o) const;
+        Vector& operator*=(float factor);
+        Vector& operator+=(const Vector& v);
+        Vector& operator-=(const Vector& v);
 
-        bool operator==(const Vector& o) const
-        {
-            return x == o.x && y == o.y && z == o.z;
-        }
+        double Dot(const Vector& v) const;
 
         float x;
         float y;
         float z;
     };
-
+    Vector operator*(const Vector& v, float factor);
+    Vector operator*(const Vector& v, double factor);
+    Vector operator+(const Vector& a, const Vector& b);
+    Vector operator-(const Vector& a, const Vector& b);
     Vector operator-(const Coordinate& a, const Coordinate& b);
+
 } // ::Engine

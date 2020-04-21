@@ -1,21 +1,21 @@
 #include "pch.h"
 #include "Geometry.h"
 #include "Coordinate.h"
+#include "Line.h"
 
 namespace Engine::Test
 {
-
 
 TEST(Geometry, Vector)
 {
     Engine::Vector null(0, 0, 0);
     EXPECT_EQ(null.Length(), 0);
-    EXPECT_EQ(null.SqrLength(), 0);
+    EXPECT_EQ(null.LengthSquared(), 0);
     EXPECT_FALSE(null);
 
     Engine::Vector v(1, 0, 0);
     EXPECT_EQ(v.Length(), 1);
-    EXPECT_EQ(v.SqrLength(), 1);
+    EXPECT_EQ(v.LengthSquared(), 1);
     EXPECT_TRUE(v);
 }
 
@@ -50,7 +50,20 @@ TEST(Geometry, Turn)
     EXPECT_NEAR(Engine::ShortestTurn(-0.75*Engine::PI, 0.75*Engine::PI), -halfpi, maxError);
 }
 
+TEST(Line, Length)
+{
+    Engine::Coordinate a(1, 2, 3);
+    Engine::Coordinate b(3, 0, 4);
+    EXPECT_EQ(3.0, Line( a, b ).Length());
+}
 
+TEST(Line, Distance)
+{
+    Engine::Line l(Engine::Coordinate(1, 0, 0), Engine::Coordinate(3, 2, 0));
+    EXPECT_EQ(1.0, Distance(Engine::Coordinate(1, -1, 0), l));
+    EXPECT_EQ(2.0, Distance(Engine::Coordinate(5, 2, 0), l));
+    EXPECT_EQ(3.0, Distance(Engine::Coordinate(0, 3, 1), l));
 
-
+    EXPECT_EQ(1.0, Distance(Engine::Coordinate(1, 0, 0), Line(Engine::Coordinate(1, 1, 0), Engine::Coordinate(1, 1, 0))));
+}
 }

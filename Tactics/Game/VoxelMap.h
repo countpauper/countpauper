@@ -43,7 +43,7 @@ public:
     void World(double radius);
     void Air(double temperature, double meters);     // Day 1 the sky
     void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
-    void Hill(float x, float y, float height, float stddev);
+    void Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, float stddev);
     void Compute();     // At the 7th day god rested
     // Map
     Square At(const Position& p) const override;
@@ -52,6 +52,17 @@ protected:
     unsigned Latitude() const override;
     unsigned Longitude() const override;
     unsigned Altitude() const;
+    class Directions
+    {   
+    public:
+        Directions();
+        Directions& operator|=(const Direction& dir);
+        bool operator[](const Direction& dir) const;
+        bool empty() const;
+    private:
+        uint16_t flags;
+    };
+
     struct Voxel
     {
         Voxel();
@@ -64,22 +75,23 @@ protected:
         bool Opaque() const;
         bool Transparent() const;
         Engine::RGBA Color() const;
-        void Render(const Position& p, const Plane& visibilit) const;
+        void Render(const Position& p, const Directions& visibility) const;
         const Material* material;
         float temperature;      // Kelvin
         float mass;             // gram, mass determines density and pressure
         float humidity;         // Total Water mass (g)
         Engine::Vector flow;    // meter/second
         bool fixed;
-        Plane visibility;
+        Directions visibility;
     };
+
     const Voxel& Get(const Position& p) const;
     Voxel& Get(const Position& p);
     unsigned VoxelIndex(const Position& p) const;
     Position Stride() const;
     Position GetPosition(const Voxel* pVoxel) const;
     void Iterate(Position& p) const;
-    Plane Visibility(const Position& p) const;
+    Directions Visibility(const Position& p) const;
 private:
     std::vector<Voxel> voxels;
     Voxel atmosphere;

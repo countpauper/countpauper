@@ -5,6 +5,7 @@
 #include "Engine/Error.h"
 #include "Engine/Coordinate.h"
 #include "Engine/Geometry.h"
+#include "Engine/Line.h"
 #include "Engine/Maths.h"
 #include <string>
 
@@ -110,6 +111,28 @@ void VoxelMap::World(double radius)
     gravity = G * lava.mass / (planetRadius*planetRadius);
 }
 
+
+VoxelMap::Directions::Directions() :
+    flags(0)
+{
+}
+
+VoxelMap::Directions& VoxelMap::Directions::operator|=(const Direction& dir)
+{
+    flags |= 1<< dir.Id();
+    return *this;
+}
+
+bool VoxelMap::Directions::operator[](const Direction& dir) const
+{
+    return (flags & (1 << dir.Id()))!=0;
+}
+
+bool VoxelMap::Directions::empty() const
+{
+    return flags == 0;
+}
+
 void VoxelMap::Air(double temperature, double meters)
 {
     atmosphere.temperature = float(temperature);
@@ -160,16 +183,20 @@ void VoxelMap::Water(int level, double temperature)
     }
 }
 
-void VoxelMap::Hill(float x, float y, float height, float stddev)
+void VoxelMap::Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, float stddev)
 {
-
-    Engine::Coordinate center(x, y, 0);
+    Engine::Line ridge_line(Engine::Coordinate(p1.x, p1.y, 0),
+                    Engine::Coordinate(p2.x, p2.y, 0));
 
     for (unsigned xi = 0; xi < longitude; ++xi)
     {
         for (unsigned yi = 0; yi < latitude; ++yi)
         {
-            int maxZ = int(std::round( height * Engine::Gaussian((Engine::Coordinate(float(xi), float(yi), 0) - center).Length(), stddev)));
+            Engine::Coordinate c(float(xi), float(yi), 0);
+            double distance = Engine::Distance(c, ridge_line);
+            double interpolation_factor = std::max(0.0,std::min(1.0, ridge_line.Vector().Dot(c - ridge_line.a) / ridge_line.Vector().LengthSquared()));
+            double height = Engine::Lerp(double(p1.z), double(p2.z), interpolation_factor) * Engine::Gaussian(distance, stddev);
+            int maxZ = int(std::round( height ));
             maxZ = std::min(maxZ, int(Altitude()));
             for (int zi = 0; zi < maxZ; ++zi)
             {
@@ -211,7 +238,7 @@ const VoxelMap::Voxel& VoxelMap::Get(const Position& p) const
         else
             return lava;
     }
-    if (unsigned(p.x) >= Altitude())
+    if (unsigned(p.z) >= Altitude())
         return atmosphere;
     if (p.x < 0 || p.y < 0 || unsigned(p.x) >= Longitude() || unsigned(p.y) >= Latitude())
     {
@@ -229,14 +256,14 @@ VoxelMap::Voxel& VoxelMap::Get(const Position& p)
     return voxels.at(VoxelIndex(p));
 }
 
-Plane VoxelMap::Visibility(const Position& p) const
+VoxelMap::Directions VoxelMap::Visibility(const Position& p) const
 {
-    Plane result;
+    Directions result;
     for (const Direction& direction : Direction::all)
     {
         if (!Get(p + direction.Vector()).Opaque())
         {
-            result.insert(direction);
+            result|=direction;
         }
     }
     return result;
@@ -296,12 +323,12 @@ Square VoxelMap::At(const Position& p) const
 }
 
 
-void VoxelMap::Voxel::Render(const Position& p, const Plane& visibility) const
+void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) const
 {
     auto c = Color();
     c.Render();
     // south
-    if (visibility.count(Direction::south))
+    if (visibility[Direction::south])
     {
         glPushName(LocationName(p, Direction::south));
         glNormal3d(0, 0, -1); //  Direction::south.Vector()
@@ -314,7 +341,7 @@ void VoxelMap::Voxel::Render(const Position& p, const Plane& visibility) const
         glPopName();
     }
     // north
-    if (visibility.count(Direction::north))
+    if (visibility[Direction::north])
     {
         glPushName(LocationName(p, Direction::north));
         glNormal3d(0, 0, 1);
@@ -327,7 +354,7 @@ void VoxelMap::Voxel::Render(const Position& p, const Plane& visibility) const
         glPopName();
     }
     // east
-    if (visibility.count(Direction::east))
+    if (visibility[Direction::east])
     {
         glPushName(LocationName(p, Direction::east));
         glNormal3d(1, 0, 0);
@@ -340,7 +367,7 @@ void VoxelMap::Voxel::Render(const Position& p, const Plane& visibility) const
         glPopName();
     }
     // west
-    if (visibility.count(Direction::west))
+    if (visibility[Direction::west])
     {
         glPushName(LocationName(p, Direction::west));
         glNormal3d(-1, 0, 0);
@@ -353,7 +380,7 @@ void VoxelMap::Voxel::Render(const Position& p, const Plane& visibility) const
         glPopName();
     }
     // top
-    if (visibility.count(Direction::up))
+    if (visibility[Direction::up])
     {
         glPushName(LocationName(p, Direction::up));
         glNormal3d(0, 1, 0);
@@ -465,9 +492,9 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
         s >> procedure;
         if (procedure == L"HILL")
         {
-            float x, y, height, stddev;
-            s >> x >> y >> height >> stddev;
-            map.Hill(x, y, height, stddev);
+            float x0, y0, height0, x1, y1, height1, stddev;
+            s >> x0 >> y0 >> height0 >> x1 >> y1 >> height1 >> stddev;
+            map.Hill(Engine::Coordinate(x0, y0, height0), Engine::Coordinate(x1, y1, height1), stddev);
         }
         else
         {

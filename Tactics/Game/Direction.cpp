@@ -289,15 +289,18 @@ bool Direction::operator<(const Direction& other) const
     return value < other.value;
 }
 
-std::map<Direction::Value, Position> Direction::vector =
-{
-    { Direction::Value::None, Position(0, 0, 0) },
-    { Direction::Value::North, Position(0, 1, 0) },
-    { Direction::Value::East, Position(1, 0, 0) },
-	{ Direction::Value::South, Position(0, -1, 0) },
-	{ Direction::Value::West, Position(-1, 0, 0) },
-	{ Direction::Value::Up, Position(0, 0, 1) },
-	{ Direction::Value::Down, Position(0, 0,-1) },
+std::array<Position, 10> Direction::vector =
+{ 
+    Position(0, 0, 0), // None
+    Position(),
+    Position(1, 0, 0), // East
+    Position(-1, 0, 0), // West
+    Position(0, 1, 0), // North
+    Position(0, -1, 0), // South
+    Position(),
+    Position(),
+    Position(0, 0, 1), // Up
+    Position(0, 0,-1) // Down
 };
 
 std::map<Direction::Value, HalfPiAngle> Direction::half_pi_angle=

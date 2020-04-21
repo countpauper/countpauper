@@ -99,7 +99,7 @@ protected:
 	static Value From(HalfPiAngle angle);
 
 	static std::map<Value, std::wstring> description;
-	static std::map<Value, Position> vector;
+    static std::array<Position,10> vector;
 	static std::map<Value, HalfPiAngle> half_pi_angle;
 };
 
