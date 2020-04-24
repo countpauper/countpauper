@@ -58,8 +58,8 @@ void Attack::Render(const State& state) const
     glTranslatef(float(state.position.x) + 0.5f, 0.5f, float(state.position.y) + 0.5f);
     Position v = target.GetPosition() - state.position;
     glBegin(GL_LINES);
-    glVertex3f(0, 0, 0);
-    glVertex3f(float(v.x), 0, float(v.y));
+    glVertex3d(0, 0, 0);
+    glVertex3d(float(v.x), 0, float(v.y));
     glEnd();
 
     glColor4ub(255, 255, 255, 255);
@@ -67,17 +67,17 @@ void Attack::Render(const State& state) const
     // TODO: billboard by setting the projection matrix 3x3 to identity
     Engine::Image::Bind bind(skill.Icon());
     glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex3f(0.25f, -1.0f, 0.25f);
+        glTexCoord2d(0.0, 1.0);
+        glVertex3d(0.25, -1.0, 0.25f);
 
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex3f(0.75, 1.0f, 0.25f);
+        glTexCoord2d(1.0, 1.0);
+        glVertex3d(0.75, 1.0, 0.25f);
 
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(0.75f, 0.75f, 1.0f);
+        glTexCoord2d(1.0, 0.0);
+        glVertex3d(0.75, 0.75, 1.0);
 
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(0.25f, 0.75f, 1.0f);
+        glTexCoord2d(0.0, 0.0);
+        glVertex3d(0.25, 0.75, 1.0);
     glEnd();
 
     glPopMatrix();

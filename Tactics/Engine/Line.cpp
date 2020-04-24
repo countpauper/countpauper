@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Line.h"
 #include "Geometry.h"
+#include "Vector.h"
 
 namespace Engine
 {

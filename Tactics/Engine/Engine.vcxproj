@@ -81,22 +81,27 @@
     <ClInclude Include="Error.h" />
     <ClInclude Include="from_string.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="Drawing.h" />
     <ClInclude Include="Identification.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Maths.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="Vector.h" />
     <ClInclude Include="Xml.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Coordinate.cpp" />
+    <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="from_string.cpp" />
     <ClCompile Include="Geometry.cpp" />
@@ -105,6 +110,8 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Maths.cpp" />
+    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -112,6 +119,7 @@
     </ClCompile>
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Vector.cpp" />
     <ClCompile Include="Xml.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

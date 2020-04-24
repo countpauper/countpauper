@@ -19,7 +19,12 @@ namespace Engine
 
     double Rad2Deg(double rad)
     {
-        return (rad / PI)*180.0f;
+        return (rad / PI)*180.0;
+    }
+
+    double Deg2Rad(double deg)
+    {
+        return (deg / 180.0) * PI;
     }
 
     double SphereVolume(double radius)

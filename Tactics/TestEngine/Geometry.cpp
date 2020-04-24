@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Geometry.h"
 #include "Coordinate.h"
+#include "Vector.h"
 #include "Line.h"
 
 namespace Engine::Test
@@ -17,6 +18,12 @@ TEST(Geometry, Vector)
     EXPECT_EQ(v.Length(), 1);
     EXPECT_EQ(v.LengthSquared(), 1);
     EXPECT_TRUE(v);
+
+    Engine::Vector v123(1, -2, 3);
+    EXPECT_EQ(Vector() - v123, -v123);
+
+    EXPECT_EQ(Vector(2, -4, 0), Vector(1, -2, 0) * 2.0);
+    EXPECT_EQ(Vector(1, -2, 0), Vector(2, -4, 0) / 2.0);
 }
 
 TEST(Geometry, Coordinate)

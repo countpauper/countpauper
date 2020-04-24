@@ -39,35 +39,35 @@ namespace Game
         glBegin(GL_TRIANGLES);
         for (unsigned i = 0; i < sides; ++i)
         {
-            float a = float(i) / sides * 2.0f * float(Engine::PI);
-            float b = float(i + 1) / sides * 2.0f * float(Engine::PI);
+            double a = double(i) / sides * 2.0 * Engine::PI;
+            double b = double(i + 1) / sides * 2.0 * Engine::PI;
 
-            float xa = cos(a) * r;
-            float ya = sin(a) * sin(a*0.5f) * r;
-            float xb = cos(b) * r;
-            float yb = sin(b) * sin(b*0.5f) * r;
+            double xa = cos(a) * r;
+            double ya = sin(a) * sin(a*0.5f) * r;
+            double xb = cos(b) * r;
+            double yb = sin(b) * sin(b*0.5f) * r;
 
-            glNormal3f(0.0f, -1.0f, 0.0f);
-            glVertex3f(0, 0, 0);
-            glVertex3f(xb, 0, yb);
-            glVertex3f(xa, 0, ya);
+            glNormal3d(0.0, -1.0, 0.0);
+            glVertex3d(0, 0, 0);
+            glVertex3d(xb, 0, yb);
+            glVertex3d(xa, 0, ya);
 
-            glNormal3f(cos(a), 0.0f, sin(a));
-            glVertex3f(xa, 1, ya);
-            glVertex3f(xa, 0, ya);
-            glNormal3f(cos(b), 0.0f, sin(b));
-            glVertex3f(xb, 0, yb);
+            glNormal3d(cos(a), 0.0, sin(a));
+            glVertex3d(xa, 1, ya);
+            glVertex3d(xa, 0, ya);
+            glNormal3d(cos(b), 0.0, sin(b));
+            glVertex3d(xb, 0, yb);
 
-            glNormal3f(cos(a), 0.0f, sin(a));
-            glVertex3f(xa, 1, ya);
-            glNormal3f(cos(b), 0.0f, sin(b));
-            glVertex3f(xb, 0, yb);
-            glVertex3f(xb, 1, yb);
+            glNormal3d(cos(a), 0.0, sin(a));
+            glVertex3d(xa, 1, ya);
+            glNormal3d(cos(b), 0.0, sin(b));
+            glVertex3d(xb, 0, yb);
+            glVertex3d(xb, 1, yb);
 
-            glNormal3f(0.0f, 1.0f, 0.0f);
-            glVertex3f(0, 1, 0);
-            glVertex3f(xa, 1, ya);
-            glVertex3f(xb, 1, yb);
+            glNormal3d(0.0, 1.0, 0.0);
+            glVertex3d(0, 1, 0);
+            glVertex3d(xa, 1, ya);
+            glVertex3d(xb, 1, yb);
         }
         glEnd();
         glPopMatrix();

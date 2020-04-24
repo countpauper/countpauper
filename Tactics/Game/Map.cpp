@@ -165,6 +165,10 @@ namespace Game
         glEnd();
     }
 
+    void FlatMap::Tick(double seconds)
+    {
+
+    }
     void FlatMap::Render() const
     {
         Engine::Image::Bind bind(texture);

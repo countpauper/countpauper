@@ -1,6 +1,7 @@
 #pragma once
 #include "Map.h"
 #include "Engine/Color.h"
+#include "Engine/Vector.h"
 #include "Plane.h"
 #include <string>
 
@@ -48,14 +49,19 @@ public:
     // Map
     Square At(const Position& p) const override;
     void Render() const override;
+    void Tick(double seconds) override;
 protected:
     unsigned Latitude() const override;
     unsigned Longitude() const override;
     unsigned Altitude() const;
+    void RenderPretty() const;
+    void RenderAnalysis() const;
     class Directions
     {   
     public:
         Directions();
+        explicit Directions(uint16_t flags);
+
         Directions& operator|=(const Direction& dir);
         bool operator[](const Direction& dir) const;
         bool empty() const;
@@ -75,7 +81,7 @@ protected:
         bool Opaque() const;
         bool Transparent() const;
         Engine::RGBA Color() const;
-        void Render(const Position& p, const Directions& visibility) const;
+        void Render(const Position& p, const Directions& visibility, bool analysis) const;
         const Material* material;
         float temperature;      // Kelvin
         float mass;             // gram, mass determines density and pressure

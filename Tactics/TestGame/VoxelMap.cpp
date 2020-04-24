@@ -48,7 +48,7 @@ TEST(Map, HillPeak)
     VoxelMap map;
     map.Space(3, 3, 3);
     map.Air(300, 10000);
-    map.Hill(Engine::Coordinate(1, 1, 2), Engine::Coordinate(1, 1, 2), 1.0f/ Engine::FullWidthHalfMaximum(1));
+    map.Hill(Engine::Coordinate(1, 1, 2), Engine::Coordinate(1, 1, 2), 1.0f/float(Engine::FullWidthHalfMaximum(1)));
 
     EXPECT_EQ(Element::Stone, map.At(Position(1, 1, 2)).floor);
     EXPECT_EQ(2, map.At(Position(1, 1, 3)).height);

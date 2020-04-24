@@ -89,6 +89,9 @@
     <None Include="Data\Voxel.map">
       <Filter>Data</Filter>
     </None>
+    <None Include="Data\Physics.map">
+      <Filter>Data</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Data\Skills.xml">

@@ -24,7 +24,7 @@ namespace Engine
         else
         {
             glEnable(GL_LIGHT0);
-            GLfloat light_position[] = { position.x, position.y, position.z };
+            GLfloat light_position[] = { GLfloat(position.x), GLfloat(position.y), GLfloat(position.z) };
             glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
             GLfloat light_ambient[] = { ambientPower * float(ambient.r)/255.0f, ambientPower * float(ambient.a)/255.0f, ambientPower * float(ambient.b)/255.0f, float(ambient.a)/255.0f };

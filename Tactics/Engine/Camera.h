@@ -13,16 +13,16 @@ namespace Engine
         void Move(const Coordinate& newPosition);
         void Move(const Vector& offset);
         void Face(const Coordinate& newPosition);
-        void Zoom(float factor);
-        void Drag(float dx, float dz);
-        void FinishDrag(float dx, float dz);
+        void Zoom(double factor);
+        void Drag(double dx, double dz);
+        void FinishDrag(double dx, double dz);
         void Key(WPARAM key);
     protected:
         Coordinate position;
         Coordinate target;
         Coordinate rotation;
-        float dragx, dragz;
-        float zoom;
+        double dragx, dragz;
+        double zoom;
     };
 
 

@@ -7,6 +7,8 @@
 #include "Engine/Geometry.h"
 #include "Engine/Line.h"
 #include "Engine/Maths.h"
+#include "Engine/Random.h"
+#include "Engine/Drawing.h"
 #include <string>
 
 namespace Game
@@ -113,9 +115,15 @@ void VoxelMap::World(double radius)
 
 
 VoxelMap::Directions::Directions() :
-    flags(0)
+    Directions(0)
 {
 }
+
+VoxelMap::Directions::Directions(uint16_t flags) :
+    flags(flags)
+{
+}
+
 
 VoxelMap::Directions& VoxelMap::Directions::operator|=(const Direction& dir)
 {
@@ -281,7 +289,7 @@ void VoxelMap::Compute()
 }
 
 Position VoxelMap::Stride() const
-{   // ordered Z,Y,X, in direction of gravity for best caching
+{   // ordered Z,Y,X, in direction of iy for best caching
     return Position(altitude*latitude, altitude, 1);
 }
 
@@ -323,21 +331,20 @@ Square VoxelMap::At(const Position& p) const
 }
 
 
-void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) const
+void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility, bool analysis) const
 {
     auto c = Color();
     c.Render();
-    unsigned mode = GL_QUADS; //  GL_LINE_LOOP
-    // south
+    unsigned mode = analysis? GL_LINE_LOOP:GL_QUADS; 
     if (visibility[Direction::south])
     {
         glPushName(LocationName(p, Direction::south));
         glNormal3d(0, 0, -1); //  Direction::south.Vector()
         glBegin(mode);
-            glVertex3f(0, 0, 0);
-            glVertex3f(0, 1, 0);
-            glVertex3f(1, 1, 0);
-            glVertex3f(1, 0, 0);
+            glVertex3d(0, 0* MeterPerEl, 0);
+            glVertex3d(0, 1* MeterPerEl, 0);
+            glVertex3d(1, 1* MeterPerEl, 0);
+            glVertex3d(1, 0* MeterPerEl, 0);
         glEnd();
         glPopName();
     }
@@ -347,10 +354,10 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
         glPushName(LocationName(p, Direction::north));
         glNormal3d(0, 0, 1);
         glBegin(mode);
-            glVertex3f(0, 0, 1);
-            glVertex3f(1, 0, 1);
-            glVertex3f(1, 1, 1);
-            glVertex3f(0, 1, 1);
+            glVertex3d(0, 0* MeterPerEl, 1);
+            glVertex3d(1, 0 * MeterPerEl, 1);
+            glVertex3d(1, 1 * MeterPerEl, 1);
+            glVertex3d(0, 1 * MeterPerEl, 1);
         glEnd();
         glPopName();
     }
@@ -360,10 +367,10 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
         glPushName(LocationName(p, Direction::east));
         glNormal3d(1, 0, 0);
         glBegin(mode);
-            glVertex3f(1, 0, 0);
-            glVertex3f(1, 1, 0);
-            glVertex3f(1, 1, 1);
-            glVertex3f(1, 0, 1);
+            glVertex3d(1, 0 * MeterPerEl, 0);
+            glVertex3d(1, 1 * MeterPerEl, 0);
+            glVertex3d(1, 1 * MeterPerEl, 1);
+            glVertex3d(1, 0 * MeterPerEl, 1);
         glEnd();
         glPopName();
     }
@@ -373,10 +380,10 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
         glPushName(LocationName(p, Direction::west));
         glNormal3d(-1, 0, 0);
         glBegin(mode);
-            glVertex3f(0, 0, 0);
-            glVertex3f(0, 0, 1);
-            glVertex3f(0, 1, 1);
-            glVertex3f(0, 1, 0);
+            glVertex3d(0, 0 * MeterPerEl, 0);
+            glVertex3d(0, 0 * MeterPerEl, 1);
+            glVertex3d(0, 1 * MeterPerEl, 1);
+            glVertex3d(0, 1 * MeterPerEl, 0);
         glEnd();
         glPopName();
     }
@@ -384,14 +391,23 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
     if (visibility[Direction::up])
     {
         glPushName(LocationName(p, Direction::up));
-        glNormal3d(0, 1, 0);
+        glNormal3d(0, 1 * MeterPerEl, 0);
         glBegin(mode);
-            glVertex3f(0, 1, 0);
-            glVertex3f(0, 1, 1);
-            glVertex3f(1, 1, 1);
-            glVertex3f(1, 1, 0);
+            glVertex3d(0, 1 * MeterPerEl, 0);
+            glVertex3d(0, 1 * MeterPerEl, 1);
+            glVertex3d(1, 1 * MeterPerEl, 1);
+            glVertex3d(1, 1 * MeterPerEl, 0);
         glEnd();
         glPopName();
+    }
+
+    if (analysis)
+    {
+        glColor3d(1, 0, 0);
+        glPushMatrix();
+            glTranslated(0.25, 0.25* MeterPerEl, 0.25);
+            glDrawArrow(flow);
+        glPopMatrix();
     }
 }
 
@@ -411,26 +427,42 @@ void VoxelMap::Iterate(Position& p) const
     }
 }
 
+void VoxelMap::Tick(double seconds)
+{
+    for (auto& v : voxels)
+    {
+        v.flow = v.flow + Engine::Vector(
+            Engine::Random().Normal(seconds),
+            Engine::Random().Normal(seconds),
+            Engine::Random().Normal(seconds));
+    }
+}
+
 void VoxelMap::Render() const
 {
-    Position p;
+    //RenderPretty();
+    RenderAnalysis();
+}
 
+
+void VoxelMap::RenderPretty() const
+{
     assert(glIsEnabled(GL_DEPTH_TEST));
-    
+
+    Position p;
     // Draw opaque
     glDisable(GL_BLEND);
     glEnable(GL_LIGHTING);
     for (auto& v : voxels)
     {
         glPushMatrix();
-        glScaled(MeterPerEl*HorizontalEl, MeterPerEl*VerticalEl, MeterPerEl*HorizontalEl);
-        glTranslatef(float(p.x), float(p.z), float(p.y));
+        glTranslated(p.x, p.z*MeterPerEl, p.y);
         if (v.Opaque())
         {
             auto visibility = v.visibility;
             if (!visibility.empty())
             {
-                v.Render(p, visibility);
+                v.Render(p, visibility, false);
             }
         }
         // TODO: separate loop?
@@ -439,15 +471,14 @@ void VoxelMap::Render() const
             glPushName(LocationName(p, Direction::up));
             glColor4ub(255, 50, 50, 255);
             glBegin(GL_QUADS);
-                glVertex3f(0, 0, 0);
-                glVertex3f(1, 0, 0);
-                glVertex3f(1, 0, 1);
-                glVertex3f(0, 0, 1);
+                glVertex3f(0, 0 * MeterPerEl, 0);
+                glVertex3f(1, 0 * MeterPerEl, 0);
+                glVertex3f(1, 0 * MeterPerEl, 1);
+                glVertex3f(0, 0 * MeterPerEl, 1);
             glEnd();
             glPopName();
         }
         Iterate(p);
-        //glPopName();
         glPopMatrix();
     }
     assert(!p); // should be reset to 0,0,0
@@ -458,19 +489,39 @@ void VoxelMap::Render() const
     for (auto& v : voxels)
     {
         glPushMatrix();
-        glScaled(MeterPerEl*HorizontalEl, MeterPerEl*VerticalEl, MeterPerEl*HorizontalEl);
         glTranslatef(float(p.x), float(p.z), float(p.y));
         if (!v.Opaque() && !v.Transparent())
         {
             auto visibility = v.visibility;
             if (!visibility.empty())
             {
-                v.Render(p, visibility);
+                v.Render(p, visibility, false);
             }
         }
         Iterate(p);
         glPopMatrix();
     }
+    Engine::CheckGLError();
+}
+
+
+void VoxelMap::RenderAnalysis() const
+{
+    assert(glIsEnabled(GL_DEPTH_TEST));
+
+    Position p;
+    // Draw opaque
+    glEnable(GL_BLEND);
+    glDisable(GL_LIGHTING);
+    for (auto& v : voxels)
+    {
+        glPushMatrix();
+        glTranslated(p.x, p.z*MeterPerEl, p.y);
+        v.Render(p, Directions(0xFFFF), true);
+        Iterate(p);
+        glPopMatrix();
+    }
+    assert(!p); // should be reset to 0,0,0
     Engine::CheckGLError();
 }
 

@@ -54,6 +54,7 @@ namespace Game
 
     void Game::Tick()
     {
+        map->Tick(0.1);
         if (!selectedActor)
             Next();
         else

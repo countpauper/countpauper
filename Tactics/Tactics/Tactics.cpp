@@ -240,11 +240,11 @@ BOOL InitInstance(HINSTANCE hInstance)
    */
 
    ShowWindow(hWnd, windowShow);
+   light.Move(Engine::Coordinate(2, 5, 0));
+   camera.Move(Engine::Coordinate(-1, 10, 3));
    UpdateWindow(hWnd);
    SetTimer(hWnd, 1,  0,(TIMERPROC) NULL);
 
-   light.Move(Engine::Coordinate(2, 10, 0));
-   camera.Move(Engine::Coordinate(-1, 10, 3));
    return TRUE;
 }
 

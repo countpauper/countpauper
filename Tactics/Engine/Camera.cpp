@@ -2,14 +2,18 @@
 #include <gl/GL.h>
 #include "Camera.h"
 #include "Geometry.h"
+#include "Coordinate.h"
+#include "Quaternion.h"
+#include "Vector.h"
 #include <iostream>
+#include "Matrix.h"
 
 namespace Engine
 {
     Camera::Camera() :
         position(0, 0, 0),
         target(0, 0, 0),
-        rotation(-30 ,180, 0),
+        rotation(0 ,180, 0),
         zoom(1.0f),
         dragx(0),
         dragz(0)
@@ -28,16 +32,16 @@ namespace Engine
     {
         target = newTarget;
     }
-    void Camera::Zoom(float factor)
+    void Camera::Zoom(double factor)
     {
         zoom *= factor;
     }
-    void Camera::Drag(float dx, float dz)
+    void Camera::Drag(double dx, double dz)
     {
         dragx = dx;
         dragz = dz;
     }
-    void Camera::FinishDrag(float dx, float dz)
+    void Camera::FinishDrag(double dx, double dz)
     {
         position.x -= dx;
         position.z -= dz;
@@ -79,19 +83,19 @@ namespace Engine
         {
             if (key == VK_UP)
             {
-                rotation.x += 10;
+                rotation.x += 5;
             }
             else if (key == VK_DOWN)
             {
-                rotation.x -= 10;
+                rotation.x -= 5;
             }
             else if (key == VK_LEFT)
             {
-                rotation.y -= 10;
+                rotation.y -= 5;
             }
             else if (key == VK_RIGHT)
             {
-                rotation.y += 10;
+                rotation.y += 5;
             }
         }
     }
@@ -105,27 +109,31 @@ namespace Engine
     {
         GLdouble equation[4];
         glGetClipPlane(GL_CLIP_PLANE1, equation);
-        float scale = zoom * float(1.0 / tan(fov* 0.5f * PI / 180.0f));
-        float n = 10.0;  // 1.0 wastes a lot of depth buffer
-        float f = 100.0; // pretty much how much of the map is visible in grids
+        double scale = zoom * double(1.0 / tan(fov* 0.5f * PI / 180.0f));
+        double n = 10.0;  // 1.0 wastes a lot of depth buffer
+        double f = 100.0; // pretty much how much of the map is visible in grids
         // default glClearDepth(1);
         // default glDepthRange(0, 1);
         // default glDepthFunc(GL_LESS);
 
         // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/building-basic-perspective-projection-matrix
 
-        GLfloat perspectiveMatrix[16] =
+/**/      GLdouble perspectiveMatrix[16] =
         {
             scale, 0,   0,              0,
             0, scale,   0,              0,
             0, 0,       -f / (f - n),   -1,
             0, 0,       -f*n / (f - n),  0
         };
-        glMultMatrixf(perspectiveMatrix);
-        glTranslatef(dragx-position.x, -position.y, dragz-position.z);
+        glMultMatrixd(perspectiveMatrix);
+/** /
+        // ortho projection
+        glScaled(0.1*zoom, 0.1*zoom, 0.01*zoom);
+/**/
+        glTranslated(dragx-position.x, -position.y, dragz-position.z-n);
+        glRotated(rotation.x, 1, 0, 0);
         glRotated(rotation.y, 0, 1, 0);
         glRotated(rotation.z, 0, 0, 1);
-        glRotated(rotation.x, 1, 0, 0);
         /* Facing doesn't work right
         auto vector = target - position;
         if (vector)
@@ -148,9 +156,9 @@ namespace Engine
 
     void TopCamera::Render() const
     {
-        glScalef(zoom, zoom, zoom);
+        glScaled(zoom, zoom, zoom);
         //glTranslatef(dragx - position.x, -position.y, dragz - position.z);
-        glTranslatef(dragx - target.x, -target.y, dragz - 1.0f);
+        glTranslated(dragx - target.x, -target.y, dragz - 1.0f);
         glDepthRange(0, 1);
         glClearDepth(1);
         glDepthFunc(GL_LESS);

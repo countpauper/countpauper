@@ -57,6 +57,7 @@ namespace Game
         virtual ~Map()=default;
         virtual Square At(const Position& p) const=0;
         virtual void Render() const = 0;
+        virtual void Tick(double seconds) = 0;
         bool CanBe(const Position& position) const;
         bool CanGo(const Position& from, Direction direction) const;
         Engine::Coordinate Coordinate(const Position& p) const;
@@ -74,6 +75,7 @@ namespace Game
         ~FlatMap();
         Square At(const Position& p) const override;
         void Render() const override;
+        void Tick(double seconds) override;
     protected:
         unsigned Latitude() const override; // Breadth, x
         unsigned Longitude() const override; // Length, y 
