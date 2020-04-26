@@ -117,15 +117,9 @@ namespace Engine
         // default glDepthFunc(GL_LESS);
 
         // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/building-basic-perspective-projection-matrix
-
-/**/      GLdouble perspectiveMatrix[16] =
-        {
-            scale, 0,   0,              0,
-            0, scale,   0,              0,
-            0, 0,       -f / (f - n),   -1,
-            0, 0,       -f*n / (f - n),  0
-        };
-        glMultMatrixd(perspectiveMatrix);
+        
+        Matrix m = Matrix::Perspective(n, f) * Matrix::Scale(Vector(scale, scale, 1));
+        glMultMatrixd(&m.data());
 /** /
         // ortho projection
         glScaled(0.1*zoom, 0.1*zoom, 0.01*zoom);

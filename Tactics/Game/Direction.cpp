@@ -123,6 +123,13 @@ std::array<Direction, 6> Direction::all
     Direction::down
 };
 
+std::array<Direction, 3> Direction::positive
+{
+    Direction::east,
+    Direction::north,
+    Direction::up,
+};
+
 Direction::Value Direction::From(const Position& vector)
 {
 	auto x = vector.x;
@@ -175,6 +182,24 @@ Direction::Direction(int x, int y, int z) :
 Position Direction::Vector() const
 {
 	return Position(vector[value].x, vector[value].y, vector[value].z);
+}
+
+unsigned Direction::SurfaceEl() const
+{
+    if (IsVertical())
+    {
+        return VerticalEl * VerticalEl;
+    }
+    else
+    {
+        return HorizontalEl * HorizontalEl;
+    }
+
+}
+
+double Direction::Surface() const
+{
+    return double(SurfaceEl()) * MeterPerEl * MeterPerEl;
 }
 
 double Direction::Angle() const

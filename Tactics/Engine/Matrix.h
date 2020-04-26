@@ -17,6 +17,8 @@ struct Matrix
 
     double m[4][4];
 
+    const double& data() const;
+
     const double* operator[](unsigned row) const
     {
         return &m[row][0];

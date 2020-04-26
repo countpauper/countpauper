@@ -25,7 +25,10 @@ public:
         //double combust;
         // texture
         double normalDensity; // g/L at stp  0 °C, ~1000 mbar
-        double conductivity; // J/G-K = J/Mol-K / G/mol
+        double molarMass;   // G/mol
+        double conductivity; // J/Mol-K 
+        double surfaceTension;  // N/meter hardness when liquid https://en.wikipedia.org/wiki/Surface_tension#Data_table
+        double youngsModulus;   // hardness when solid      (Pa) https://en.wikipedia.org/wiki/Young%27s_modulus#Approximate_values
         double granularity;  // parts per g in solid state, determines strength and maximum humidity 
         double opacity;         // mass attenuation coefficient of visible light (400-700nm) absorbed per voxel at 1.0 density
                                 // ulatraviolet (sun light) would be 10-400nm 
@@ -44,7 +47,7 @@ public:
     void World(double radius);
     void Air(double temperature, double meters);     // Day 1 the sky
     void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
-    void Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, float stddev);
+    void Hill(Engine::Coordinate p1, Engine::Coordinate p2, float stddev);
     void Compute();     // At the 7th day god rested
     // Map
     Square At(const Position& p) const override;
@@ -74,19 +77,26 @@ protected:
         Voxel();
         bool Solid() const;
         bool Gas() const;
-        Square Square() const;
+        Square Square(unsigned height) const;
         double Density() const;
+        double Pressure() const;
+        double Volume() const;
+        double Molecules() const;
+        double Harndess() const;
 
         double Translucency() const;    // I(x) = I0 * Translucency() 
         bool Opaque() const;
         bool Transparent() const;
         Engine::RGBA Color() const;
         void Render(const Position& p, const Directions& visibility, bool analysis) const;
+
         const Material* material;
+    
         float temperature;      // Kelvin
         float mass;             // gram, mass determines density and pressure
         float humidity;         // Total Water mass (g)
         Engine::Vector flow;    // meter/second
+        bool boundary;          // boundary voxel is constant when evolving (might be used for water, air & lava flow in or out)
         bool fixed;
         Directions visibility;
     };
@@ -95,19 +105,20 @@ protected:
     Voxel& Get(const Position& p);
     unsigned VoxelIndex(const Position& p) const;
     Position Stride() const;
+    bool IsBoundary(const Position& p) const;
+    bool IsInside(const Position& p) const;
     Position GetPosition(const Voxel* pVoxel) const;
     void Iterate(Position& p) const;
     Directions Visibility(const Position& p) const;
+    double DiffusionRate(const Position& p, const Direction& d) const;
+    void ComputeFlow(double seconds);
+    void Flow(double seconds);
+    void Diffuse(double seconds);
 private:
     std::vector<Voxel> voxels;
-    Voxel atmosphere;
-    Voxel water;
-    Voxel lava;
     unsigned longitude, latitude, altitude;
     double planetRadius;
     double gravity;
-    double waterLevel;
-
 };
 
 std::wistream& operator>>(std::wistream& s, VoxelMap& map);

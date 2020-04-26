@@ -37,6 +37,8 @@ public:
     explicit Direction(uint8_t id);
     explicit Direction(const Position& vector);
     Position Vector() const;
+    unsigned SurfaceEl() const;  
+    double Surface() const;  // in m^2
     double Angle() const;
 	Direction Opposite() const;
     bool IsOpposite(const Direction& other) const;
@@ -69,6 +71,7 @@ public:
 	static const std::map<const std::wstring, Direction> map;
     static std::array<Direction, 4> cardinal;
     static std::array<Direction, 6> all;
+    static std::array<Direction, 3> positive;
 protected:
 	enum Value
 	{

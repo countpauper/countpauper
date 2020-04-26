@@ -254,6 +254,11 @@ Matrix& Matrix::operator*=(const Matrix& o)
     return *this;
 }
 
+const double& Matrix::data() const
+{
+    return m[0][0];
+}
+
 /*
 Vector Matrix::X() const
 {
