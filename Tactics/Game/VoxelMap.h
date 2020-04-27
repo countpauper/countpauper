@@ -51,12 +51,11 @@ public:
     void Compute();     // At the 7th day god rested
     // Map
     Square At(const Position& p) const override;
+    unsigned Latitude() const override;
+    unsigned Longitude() const override;
     void Render() const override;
     void Tick(double seconds) override;
 protected:
-    unsigned Latitude() const override;
-    unsigned Longitude() const override;
-    unsigned Altitude() const;
     void RenderPretty() const;
     void RenderAnalysis() const;
     class Directions
@@ -101,25 +100,105 @@ protected:
         Directions visibility;
     };
 
-    const Voxel& Get(const Position& p) const;
-    Voxel& Get(const Position& p);
-    unsigned VoxelIndex(const Position& p) const;
-    Position Stride() const;
-    bool IsBoundary(const Position& p) const;
-    bool IsInside(const Position& p) const;
-    Position GetPosition(const Voxel* pVoxel) const;
-    void Iterate(Position& p) const;
     Directions Visibility(const Position& p) const;
     double DiffusionRate(const Position& p, const Direction& d) const;
     void ComputeFlow(double seconds);
     void Flow(double seconds);
     void Diffuse(double seconds);
+    bool IsBoundary(const Position& p) const;
 private:
-    std::vector<Voxel> voxels;
-    unsigned longitude, latitude, altitude;
+    class Data
+    {
+    public:
+        Data();
+        Data(unsigned longitude, unsigned latitude, unsigned altitude);
+        Data(const Data&) = default;
+        bool IsInside(const Position& p) const;
+        Position GetPosition(const Voxel* pVoxel) const;
+        const Voxel& operator[](const Position& p) const;
+        Voxel& operator[](const Position& p);
+        unsigned Latitude() const;
+        unsigned Longitude() const;
+        unsigned Altitude() const;
+     
+        template<class T, class ItT>
+        class typed_iterator
+        {
+        public:
+            typed_iterator(typename ItT it, const Position& limit, const Position& position) :
+                it(it),
+                limit(limit),
+                position(position)
+            {
+            }
+            typed_iterator<T, ItT>& operator++()
+            {
+                ++it;
+                if (++position.z == limit.z)
+                {
+                    position.z = 0;
+                    if (++position.y == limit.y)
+                    {
+                        position.y = 0;
+                        if (++position.x == limit.x)
+                        {
+                            position.x = 0;
+                        }
+                    }
+                }
+                return *this;
+            }
+            //iterator operator++(int);
+            bool operator==(const typed_iterator<T, ItT>& other) const
+            {
+                return it == other.it;
+            }
+
+            bool operator!=(const typed_iterator<T, ItT>& other) const { return !(*this == other); }
+            
+            template<typename PairType>
+            struct VoxelPair
+            {
+                const Position& position;
+                PairType& voxel;
+                PairType* operator->() const { return &voxel;  }
+            };
+            VoxelPair<T> operator*()
+            {
+                return VoxelPair<T> { position,*it };
+            }
+            
+            // iterator traits
+            using difference_type = long;
+            using value_type = VoxelPair<T>;
+            using pointer = VoxelPair<T>*;
+            using reference = VoxelPair<T>&;
+            using iterator_category = std::forward_iterator_tag;
+            
+            ItT it;
+            const Position limit;
+            Position position;
+        };
+        using iterator = typed_iterator<Voxel, std::vector<Voxel>::iterator>;
+        using const_iterator = typed_iterator<const Voxel, std::vector<Voxel>::const_iterator>;
+        
+        iterator begin() { return iterator(voxels.begin(), Position(longitude, latitude, altitude), Position(0, 0, 0)); }
+        iterator end() { return iterator(voxels.end(), Position(longitude, latitude, altitude), Position(longitude, latitude, altitude)); }
+        const_iterator begin() const{ return const_iterator(voxels.cbegin(), Position(longitude, latitude, altitude), Position(0, 0, 0)); }
+        const_iterator end() const { return const_iterator(voxels.cend(), Position(longitude, latitude, altitude), Position(longitude, latitude, altitude)); }
+    protected:
+        Position Stride() const;
+        unsigned Index(const Position& p) const;
+    private:
+        std::vector<Voxel> voxels;
+        unsigned longitude, latitude, altitude;
+    };
+    Data voxels;
     double planetRadius;
     double gravity;
 };
+
+constexpr double PascalPerAtmosphere = 101325.0;
 
 std::wistream& operator>>(std::wistream& s, VoxelMap& map);
 
