@@ -15,4 +15,9 @@ namespace Engine
         return fwhm * stddev;
     }
 
+    double Average(double a, double b)
+    {
+        return (a + b)*0.5;
+    }
+
 }

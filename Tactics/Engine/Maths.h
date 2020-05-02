@@ -5,4 +5,5 @@ namespace Engine
 {
     double Gaussian(double x, double stddev);
     double FullWidthHalfMaximum(double stddev);
+    double Average(double a, double b);
 }

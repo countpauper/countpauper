@@ -17,6 +17,7 @@ TEST(Map, Space)
     EXPECT_FALSE(map.At(Position(1, 0, 0)));
     EXPECT_FALSE(map.At(Position(0, -1, 0)));
     EXPECT_FALSE(map.At(Position(0, 0, -1)));    
+    EXPECT_EQ(0, map.Mass());
 }
 
 TEST(Map, Air)
@@ -28,6 +29,8 @@ TEST(Map, Air)
     EXPECT_FALSE(map.At(Position(0, 0, 0)).solid);
     EXPECT_EQ(Element::Air, map.At(Position(1, 1, 1)).floor);
     EXPECT_EQ(0, map.At(Position(1, 1, 1)).height);
+    EXPECT_NEAR(1.17 * map.Volume(), map.Mass(),map.Volume()*0.01);
+    EXPECT_NEAR(300, map.Temperature(VoxelMap::Material::air), 0.01);
 }
 
 TEST(Map, Lava)

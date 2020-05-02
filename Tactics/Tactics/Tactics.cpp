@@ -25,6 +25,7 @@ HINSTANCE hInst;                                // current instance
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 int windowShow;                                 // WIndow state send to ShowWindow
+bool stepMode = false;
 HGLRC hGLRC;
 RECT clientRect;
 std::wstring mapName(L"Game.map");
@@ -39,6 +40,8 @@ bool ParseCommandline(const std::wstring& cmdLine)
 {
     if (cmdLine.find(L"--hide") != std::wstring::npos)
         windowShow = SW_HIDE;
+    if (cmdLine.find(L"--step") != std::wstring::npos)
+        stepMode = true;
     static const std::wstring mapOption(L"--map=");
     auto mappos = cmdLine.find(mapOption);
     if (mappos != std::wstring::npos)
@@ -243,7 +246,8 @@ BOOL InitInstance(HINSTANCE hInstance)
    light.Move(Engine::Coordinate(2, 5, 0));
    camera.Move(Engine::Coordinate(-1, 10, 3));
    UpdateWindow(hWnd);
-   SetTimer(hWnd, 1,  0,(TIMERPROC) NULL);
+   if (!stepMode)
+       SetTimer(hWnd, 1,  0,(TIMERPROC) NULL);
 
    return TRUE;
 }
@@ -420,6 +424,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     int wmId, wmEvent;
     PAINTSTRUCT ps;
     HDC hdc;
+    static bool ticking = false;
 
     switch (message)
     {
@@ -433,9 +438,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
          ReleaseDC(hWnd, hdc);
         break;
     case WM_TIMER:
-        game->Tick();
-        Sleep(0);
-        InvalidateRect(hWnd, nullptr, TRUE);
+        if (!ticking)
+        {
+            ticking = true;
+            game->Tick();
+            ticking = false;
+            InvalidateRect(hWnd, nullptr, TRUE);
+        }
         break;
     case WM_COMMAND:
         wmId    = LOWORD(wParam);
@@ -508,6 +517,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             writeDepthMap = true;
             break;
+        }
+        if (wParam == VK_SPACE)
+        {
+            if (stepMode)
+            {
+                game->Tick();
+            }
+            else
+            {
+                stepMode = true;
+                KillTimer(hWnd, 1);
+            }
         }
         camera.Key(wParam);
         skills->Key(wParam);

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <numeric>
 #include "VoxelMap.h"
 #include <gl/GL.h>
 #include "Engine/Image.h"
@@ -6,19 +7,38 @@
 #include "Engine/Coordinate.h"
 #include "Engine/Geometry.h"
 #include "Engine/Line.h"
+#include "Engine/Timer.h"
 #include "Engine/Maths.h"
 #include "Engine/Random.h"
 #include "Engine/Drawing.h"
 #include "Engine/Text.h"
+#include "Engine/AxisAlignedBoundingBox.h"
 #include <string>
 
 namespace Game
 {
 
+
+double VoxelMap::Material::Mass(double pressure, double temperature, double volume) const
+{
+    if (temperature > boil)
+    {
+        return (molarMass * pressure * volume ) / (temperature * IdealGasConstant);
+    }
+    else
+    {
+        return normalDensity * volume;  // incompressible, also as liquid
+    }
+
+}
+
 VoxelMap::VoxelMap() :
     voxels(),
+    time(0),
     gravity(-10.0),
-    planetRadius(6.371e6)  // assume earth sized planet
+    planetRadius(6.371e6),  // assume earth sized planet
+    atmosphereRadius(2e5),  // assume earth atmosphere
+    atmosphericTemperature(273.15f)
 {
     World(planetRadius);
 }
@@ -28,20 +48,6 @@ VoxelMap::VoxelMap() :
 void VoxelMap::Space(unsigned x, unsigned y, unsigned z)
 {
     voxels = Data(x + 2, y + 2, z + 2);
-
-    for (unsigned x = 0; x < voxels.Longitude(); ++x)
-    {
-        for (unsigned y = 0; y < voxels.Latitude(); ++y)
-        {
-            voxels[Position(x, y, 0)].boundary = true;
-            voxels[Position(x, y, voxels.Altitude() - 1)].boundary = true;
-        }
-        for (unsigned z = 0; z < voxels.Altitude(); ++z)
-        {
-            voxels[Position(x, 0, z)].boundary = true;
-            voxels[Position(x, voxels.Latitude()- 1, z)].boundary = true;
-        }
-    }
 }
 
 void VoxelMap::World(double radius)
@@ -66,45 +72,33 @@ void VoxelMap::World(double radius)
 }
 
 
-VoxelMap::Directions::Directions() :
-    Directions(0)
+
+float VoxelMap::AtmosphericTemperature(int z) const
 {
+    double atmosphericLapse = atmosphericTemperature / atmosphereRadius;
+    return float(atmosphericTemperature + atmosphericLapse * z * VerticalEl * MeterPerEl);
 }
 
-VoxelMap::Directions::Directions(uint16_t flags) :
-    flags(flags)
+float VoxelMap::AtmosphericPressure(int z) const
 {
-}
-
-
-VoxelMap::Directions& VoxelMap::Directions::operator|=(const Direction& dir)
-{
-    flags |= 1<< dir.Id();
-    return *this;
-}
-
-bool VoxelMap::Directions::operator[](const Direction& dir) const
-{
-    return (flags & (1 << dir.Id()))!=0;
-}
-
-bool VoxelMap::Directions::empty() const
-{
-    return flags == 0;
+    return float(PascalPerAtmosphere * (1.0-(z*VerticalEl*MeterPerEl)/ atmosphereRadius));
 }
 
 void VoxelMap::Air(double temperature, double meters)
 {
 //    atmosphere.mass = float((Engine::SphereVolume(meters + planetRadius) - Engine::SphereVolume(planetRadius))*
 //        1000.0 * atmosphere.material->normalDensity * 0.5);    // TODO: density isn't even over the whole atmosphere. assumed average
-
+    atmosphericTemperature = float(temperature);
+    atmosphereRadius = meters;
+    double atmorphericLapse = float(-temperature / atmosphereRadius);
     for (auto& voxel : voxels)
     {
         if (voxel->material == &Material::vacuum)
         {
             voxel->material = &Material::air;
-            voxel->mass = float(voxel->material->normalDensity * LiterPerBlock);
-            voxel->temperature = float(temperature);
+            voxel->temperature = AtmosphericTemperature(voxel.position.z);
+            double pressure = AtmosphericPressure(voxel.position.z);
+            voxel->mass = float(voxel->material->Mass(pressure, voxel->temperature, LiterPerBlock));
             voxel->fixed = false;
         }
     }
@@ -122,14 +116,12 @@ void VoxelMap::Water(int level, double temperature)
                 voxel->material = &Material::water;
                 voxel->mass = float(Material::water.normalDensity * LiterPerBlock); // TODO: temperature
                 voxel->temperature = float(temperature);
-                voxel->humidity = voxel->mass;
             }
             else if (voxel->Gas())
             {
                 voxel->material = &Material::water;
                 voxel->mass = float(Material::water.normalDensity * LiterPerBlock); // TODO: temperature
                 voxel->temperature = float(temperature);
-                voxel->humidity = voxel->mass;    // TODO: move gas
             }
         }
     }
@@ -174,7 +166,7 @@ unsigned VoxelMap::Longitude() const
 }
 
 
-VoxelMap::Directions VoxelMap::Visibility(const Position& p) const
+Directions VoxelMap::Visibility(const Position& p) const
 {
     Directions result;
     for (const Direction& direction : Direction::all)
@@ -199,21 +191,25 @@ void VoxelMap::Compute()
     {
         voxel->visibility = Visibility(voxel.position);
     }
-
 }
 
-bool VoxelMap::IsBoundary(const Position& p) const
+Directions VoxelMap::IsBoundary(const Position& p, const Position& limit) 
 {
-    return p.x == 0 ||
-        p.y == 0 ||
-        p.z == 0 ||
-        p.x == voxels.Longitude() - 1 ||
-        p.y == voxels.Latitude() - 1 ||
-        p.z == voxels.Altitude()- 1;
-
+    Directions result;
+    if (p.x == 0)
+        result |= Direction::west;
+    if (p.x == limit.x-1)
+        result |= Direction::east;
+    if (p.y == 0)
+        result |= Direction::south;
+    if (p.y == limit.y-1)
+        result |= Direction::north;
+    if (p.z == 0)
+        result |= Direction::down;
+    if (p.z == limit.z-1)
+        result |= Direction::up;
+    return result;
 }
-
-
 
 Square VoxelMap::At(const Position& p) const
 {
@@ -238,172 +234,49 @@ Square VoxelMap::At(const Position& p) const
     return voxels[Position(adjusted.x,adjusted.y,0)].Square(0); // welcome to hell
 }
 
-
-void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility, bool analysis) const
-{
-    auto c = Color();
-    c.Render();
-    unsigned mode = analysis? GL_LINE_LOOP:GL_QUADS; 
-    if (visibility[Direction::south])
-    {
-        glPushName(LocationName(p, Direction::south));
-        glNormal3d(0, 0, -1); //  Direction::south.Vector()
-        glBegin(mode);
-            glVertex3d(0, 0* MeterPerEl, 0);
-            glVertex3d(0, 1* MeterPerEl, 0);
-            glVertex3d(1, 1* MeterPerEl, 0);
-            glVertex3d(1, 0* MeterPerEl, 0);
-        glEnd();
-        glPopName();
-    }
-    // north
-    if (visibility[Direction::north])
-    {
-        glPushName(LocationName(p, Direction::north));
-        glNormal3d(0, 0, 1);
-        glBegin(mode);
-            glVertex3d(0, 0* MeterPerEl, 1);
-            glVertex3d(1, 0 * MeterPerEl, 1);
-            glVertex3d(1, 1 * MeterPerEl, 1);
-            glVertex3d(0, 1 * MeterPerEl, 1);
-        glEnd();
-        glPopName();
-    }
-    // east
-    if (visibility[Direction::east])
-    {
-        glPushName(LocationName(p, Direction::east));
-        glNormal3d(1, 0, 0);
-        glBegin(mode);
-            glVertex3d(1, 0 * MeterPerEl, 0);
-            glVertex3d(1, 1 * MeterPerEl, 0);
-            glVertex3d(1, 1 * MeterPerEl, 1);
-            glVertex3d(1, 0 * MeterPerEl, 1);
-        glEnd();
-        glPopName();
-    }
-    // west
-    if (visibility[Direction::west])
-    {
-        glPushName(LocationName(p, Direction::west));
-        glNormal3d(-1, 0, 0);
-        glBegin(mode);
-            glVertex3d(0, 0 * MeterPerEl, 0);
-            glVertex3d(0, 0 * MeterPerEl, 1);
-            glVertex3d(0, 1 * MeterPerEl, 1);
-            glVertex3d(0, 1 * MeterPerEl, 0);
-        glEnd();
-        glPopName();
-    }
-    // top
-    if (visibility[Direction::up])
-    {
-        glPushName(LocationName(p, Direction::up));
-        glNormal3d(0, 1 * MeterPerEl, 0);
-        glBegin(mode);
-            glVertex3d(0, 1 * MeterPerEl, 0);
-            glVertex3d(0, 1 * MeterPerEl, 1);
-            glVertex3d(1, 1 * MeterPerEl, 1);
-            glVertex3d(1, 1 * MeterPerEl, 0);
-        glEnd();
-        glPopName();
-    }
-
-    if (analysis)
-    {
-        glColor3d(1, 0, 0);
-        glPushMatrix();
-            glTranslated(0.25, 0.25* MeterPerEl, 0.25);
-            Engine::glText(std::to_string(Pressure()/PascalPerAtmosphere));
-            glDrawArrow(flow);
-        glPopMatrix();
-    }
-}
-
-
-double VoxelMap::DiffusionRate(const Position& p, const Direction& d) const
-{   //  TODO: physics https://en.wikipedia.org/wiki/Mass_diffusivity;
-    //  especiall when each voxel can contain multiple materials
-    auto neightbourPosition = p + d.Vector();
-    if (!voxels.IsInside(neightbourPosition))
-    {
-        return 0;   // perform diffuction to regain lost mass here too? or just source it
-    }
-    const auto & v = voxels[p];
-    if (v.Solid())
-        return 0;
-    const auto & n = voxels[neightbourPosition];
-    if (n.Solid())
-        return 0;
-    if (v.Gas() && n.Gas())
-        return 0.1;
-    else if (v.material == n.material)
-        return 0.01;
-    else
-        return 0;
-}
-
-void VoxelMap::ComputeFlow(double seconds)
+void VoxelMap::ComputeForces(double seconds)
 {
     // Flow
-    Position p;
     for (auto& v : voxels)
     {
-        if (!IsBoundary(p))
+        if (v.boundary)
         {
+        }
+        else
+        {   // en.wikipedia.org/wiki/Viscosity#Dynamic_and_kinematic_viscosity
+            double viscosity = v->Viscosity() / v->Density();
+            v->flow -= v->flow * viscosity * seconds;
             auto pressure = v->Pressure();
             for (auto d : Direction::all)
             {
-                auto neightbourPosition = p + d.Vector();
-                const auto& n = voxels[neightbourPosition];
-                // presssure (Pa) is kg/
-                double difference = d.Surface() * (pressure - n.Pressure());
-
-                // Pressure difference (Pa) is Kg/(m/s^2) 
-                //  multiplied with time it's the change in velocity
-                v->flow += Engine::Vector(
-                    d.Vector().x,
-                    d.Vector().y,
-                    d.Vector().z
-                ) * (difference * seconds / v->mass);
-                if (d == Direction::down)
-                {
-                    if (!voxels[neightbourPosition].fixed)
+                auto neightbourPosition = v.position + d.Vector();
+                // presssure (Pa) is N/m2
+                auto& neighbour = voxels[neightbourPosition];
+                if (!neighbour.Solid())
+                {   
+                    // Pressure gradient (Pa) is N/m^2. Times surface area is newton
+                    double force = d.Surface() * (pressure - neighbour.Pressure());  // divide over distance?
+                    // Law of motion. Acceleration = Force/mass (kg)
+                    double acceleration = (force / (v->mass*1e-3));
+                    //  multiplied with time it's the change in velocity
+                    acceleration *= seconds;
+                    Engine::Vector dir(d.Vector().x, d.Vector().y, d.Vector().z);
+                    // Not newtonian, spread force over two grids
+                    v->flow += dir * acceleration * 0.5;
+                    double neighbourAcceleration = (force * seconds / neighbour.mass*1e-3);
+                    neighbour.flow += dir * neighbourAcceleration *0.5;
+                    if (d == Direction::down)
                     {
                         v->flow += Engine::Vector(0, 0, -gravity)*seconds;
                     }
                 }
-            }
-        }
-    }
-}
-
-void VoxelMap::Flow(double seconds)
-{   // https://en.wikipedia.org/wiki/Mass_flux
-    for (auto& v : voxels)
-    {
-        if (!IsBoundary(v.position))
-        {
-            for (auto d : Direction::all)
-            {
-                Engine::Vector neighbourDirection(
-                    d.Vector().x,
-                    d.Vector().y,
-                    d.Vector().z*MeterPerEl
-                );
-                auto velocity = v->flow.Dot(neighbourDirection);
-                if (velocity > 0)
-                {
-                    float mass = float(velocity * seconds);
-                    auto neighbourPosition = v.position + d.Vector();
-                    if (neighbourPosition.z >= 0)    // TODO: more subtle bottom of the world
-                    {
-                        v->mass = std::max(0.0f, v->mass - mass);
-                        auto& neighbour = voxels[neighbourPosition];
-                        if (!neighbour.boundary)
-                        {
-                            neighbour.mass += mass;
-                        }
+                else
+                {   // normal force
+                    Engine::Vector normal(-d.Vector().x, -d.Vector().y, -d.Vector().z);
+                    auto dot = normal.Dot(v->flow);
+                    if (dot < 0)
+                    {   // TODO: check the force against the strength of the surface
+                        v->flow -= normal * dot;
                     }
                 }
             }
@@ -413,39 +286,217 @@ void VoxelMap::Flow(double seconds)
 
 void VoxelMap::Diffuse(double seconds)
 {
+    const Data original = voxels;   // TODO can make more efficient partial copy
+    auto it = original.begin();
     for (auto& v : voxels)
     {
-        if (IsBoundary(v.position))
-        {   // crudely diffuse 100% into boundaries
-            // Can add wind and water flows here with 
-            v->mass = float(v->material->normalDensity * LiterPerBlock);
+        if (v.boundary)
+        {   // Complete immediate diffusion 
+            //  TODO: could do it over time and surface of boundary but then this wouldn't be the boundary
+            v->temperature = AtmosphericTemperature(v.position.z);
+            double pressure = AtmosphericPressure(v.position.z);
+            v->mass = float(v->material->Mass(pressure, v->temperature, LiterPerBlock));
         }
         else
         {
-            for (auto d : Direction::positive)
-            {   // propagate in positive direction but symetrical saves a copy of the whole map and assures conservation of mass
-                double rate = DiffusionRate(v.position, d);
-                assert(rate == DiffusionRate(v.position, d.Opposite())); // conservation of mass, but normally need to do both directions 
-                if (rate != 0)
+            for (auto d : Direction::all)
+            {   
+                const auto& old = **it;
+                auto neighbourPosition = v.position + d.Vector();
+                const auto& oldNeighbour = original[neighbourPosition];
+                if (old.material == oldNeighbour.material)
                 {
-                    assert(rate > 0);   // don't know what negative diffusion means
-                    auto& neighbour = voxels[v.position + d.Vector()];
-                    auto delta = float(v->mass - neighbour.mass)*d.Surface()*rate*seconds;
-                    neighbour.mass += delta;
-                    v->mass -= delta;
+                    double coefficient = old.DiffusionCoefficient(oldNeighbour);
+                    if (coefficient != 0)
+                    {   // Simplified Diffusion equation: https://en.wikipedia.org/wiki/Diffusion_equation
+                        // dDensity/dt = DiffusionFactor * density
+                        //  since volume is (currently) equal between each voxel, dMass = DiffusionFactor * mass * dt
+                        auto diffusionFactor = coefficient * seconds * d.Surface();
+                        assert(diffusionFactor > 0);   // don't know what negative diffusion means 
+                        auto deltaMass = float((old.mass - oldNeighbour.mass) * diffusionFactor);
+                        auto deltaTemperature = float((old.temperature - oldNeighbour.temperature) * diffusionFactor);
+
+                        v->mass -= deltaMass;
+                        // Thermal convenction: https://en.wikipedia.org/wiki/Thermal_conduction
+                        v->temperature -= deltaTemperature;
+                        if (!voxels.IsBoundary(neighbourPosition))
+                        {
+                            auto& neighbour = voxels[neighbourPosition];
+                            neighbour.mass += deltaMass;
+                            neighbour.temperature += deltaTemperature;
+                        }
+                    }
+                }
+                else
+                {
+                    // dont diffuse different materials yet
+                    // Always diffuse heat
+                    // https://en.wikipedia.org/wiki/Thermal_conduction#Fourier's_law
+                    auto flux = v->material->conductivity * (old.temperature - oldNeighbour.temperature);
+                    auto deltaJoule = flux * seconds * d.Surface();
+                    auto& neighbour = voxels[neighbourPosition];
+                    v->temperature -= float(deltaJoule / (old.material->heatCapacity*old.mass));
+                    neighbour.temperature += float(deltaJoule / (oldNeighbour.material->heatCapacity*oldNeighbour.mass));
                 }
             }
         }
+        ++it;
     }
-
 }
+
+
+Position VoxelMap::MaxFlow() const
+{
+    double maxSqrFlow = 0;
+    Position maxLocation;
+    for (auto& v : voxels)
+    {
+        double sqr = v->flow.LengthSquared();
+        if (sqr > maxSqrFlow)
+        {
+            maxSqrFlow = sqr;
+            maxLocation = v.position;
+        }
+    }
+    return maxLocation;
+}
+
+unsigned VoxelMap::WindForce() const
+{
+    const auto& voxel = voxels[MaxFlow()];
+    auto speed = voxel.flow.Length();   // m/s
+    constexpr std::array<double, 12> beaufortScale = { 0.2, 1.5, 3.3, 5.4, 7.9, 10.7, 13.8, 17.1, 20.7, 24.4, 28.4, 32.6 };
+    unsigned beaufort = 0;
+    for (auto force : beaufortScale)
+    {
+        if (speed <= force)
+            break;
+        beaufort++;
+    }
+    return beaufort;
+}
+
+double VoxelMap::Volume() const
+{
+    return (voxels.Longitude()-2) * (voxels.Latitude()-2) * (voxels.Altitude()-2) * LiterPerBlock;
+}
+
+double VoxelMap::Mass(const VoxelMap::Material& material) const
+{
+    return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
+    {
+        if (v->material == &material && !v.boundary)
+            return runningTotal + v->mass;
+        else
+            return runningTotal;
+    });
+}
+
+double VoxelMap::Temperature(const Material& material) const
+{
+    auto heat = std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
+    {
+        if (v->material == &material && !v.boundary)
+            return runningTotal + v->mass * v->temperature;
+        else
+            return runningTotal;
+    });
+
+    return heat / Mass(material);
+}
+
+double VoxelMap::Mass() const
+{
+    return Mass(Directions(0xFFFF));
+}
+
+double VoxelMap::Mass(Directions excludeDirections) const
+{
+    return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&excludeDirections](double runningTotal, const decltype(voxels)::value_type& v)
+    {
+        if (!(v.boundary&excludeDirections))
+            return runningTotal + v->mass;
+        else
+            return runningTotal;
+    });
+}
+
+void VoxelMap::Advection(double seconds)
+{
+    const Data original = voxels;   
+    auto it = original.begin();
+    Engine::Vector maxFlow = voxels[MaxFlow()].flow * seconds;
+    // need to divide in steps if advection is larger than grid size
+    assert(maxFlow.x < HorizontalEl*MeterPerEl);    // should be good to 100m/s
+    assert(maxFlow.y < HorizontalEl*MeterPerEl);
+    assert(maxFlow.z < VerticalEl*MeterPerEl);      // this may be a problem with explosions
+
+    for (auto& org : original)
+    {
+        if (org.boundary)
+        {   
+        }
+        else
+        {
+            // Axis aligned bounding box of the destination volume
+            //  relative to the original's position
+            auto displacement = org->flow*seconds;
+            Engine::AABB newBB(Engine::Coordinate(displacement.x, displacement.y, displacement.z),
+                Engine::Vector(1, 1, 1));
+
+            auto& source = voxels[org.position];
+            for (int x = -1; x <= 1; ++x)
+            {
+                for (int y = -1; y <= 1; ++y)
+                {
+                    for (int z = -1; z <= 1; ++z)
+                    {
+                        Position targetPosition(org.position.x + x, org.position.y + y, org.position.z + z);
+                        auto& target = voxels[targetPosition];
+                                
+                        if (target.material == org->material)
+                        {
+                            // Axis aligned bounding box of the target volume, also relative
+                            Engine::AABB volumeBB(Engine::Coordinate(x, y, z), Engine::Vector(1, 1, 1));
+                            Engine::AABB overlap = newBB & volumeBB;
+                            auto overlapVolume = overlap.Volume();
+                            if (overlapVolume > 0)
+                            {
+                                target.mass += float(overlapVolume * org->mass);
+                                target.temperature += float(overlapVolume * org->temperature);
+                                target.flow += org->flow * overlapVolume;
+
+                                source.mass -= float(org->mass * overlapVolume);
+                                source.temperature -= float(org->temperature * overlapVolume);
+                                source.flow -= org->flow * overlapVolume;
+                            }
+                        }
+                    }
+                }
+            }
+       }
+    }
+}
+
 
 void VoxelMap::Tick(double seconds)
 {
     // Fluid dynamics:
     //  https://en.wikipedia.org/wiki/Fluid_dynamics
     //  With incompressible flow, as long as it stays under 111m/s (mach 0.3) is simpler
+ 
+    Engine::Timer start;
     Diffuse(seconds);
+    ComputeForces(seconds);
+    Advection(seconds);
+    time += seconds;
+    double performance = start.Seconds();
+
+    OutputDebugStringW((std::wstring(L"Tick in ") + std::to_wstring(performance*1000.0)+L"ms " 
+        L"Wind=" + std::to_wstring(WindForce()) + L" bft. "+
+        L"Mass=" + std::to_wstring(Mass()) + L"g " +
+        L"Air Temp=" + std::to_wstring(int(Temperature(Material::air)-273.15)) + L"°C "+
+        L"\n").c_str());
 }
 
 void VoxelMap::Render() const
@@ -468,8 +519,7 @@ void VoxelMap::RenderPretty() const
         glTranslated(v.position.x-1, (v.position.z-1)*MeterPerEl, v.position.y-1); // offset by -1,-1,-1 for boundary
         if (v->Opaque())
         {
-            auto visibility = v->visibility;
-            if (!visibility.empty())
+            if (auto visibility = v->visibility)
             {
                 v->Render(v.position, visibility, false);
             }

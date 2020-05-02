@@ -22,18 +22,21 @@ public:
         Engine::RGBA color;
         double melt;    // kelvin
         double boil;    // kelvin
-        //double combust;
+        // double combust;
         // texture
-        double normalDensity; // g/L at stp  0 °C, ~1000 mbar
-        double molarMass;   // G/mol
-        double conductivity; // J/Mol-K 
+        double normalDensity;   // g/L at stp  0 °C, ~1000 mbar
+        double molarMass;       // G/mol
+        double viscosity;       // mu, = N s /m2 = Pa*s t room temperature (25 C) 
+        double conductivity;    // J/Mol-K 
+        double heatCapacity;    // J/g*K    https://en.wikipedia.org/wiki/Table_of_specific_heat_capacities
         double surfaceTension;  // N/meter hardness when liquid https://en.wikipedia.org/wiki/Surface_tension#Data_table
         double youngsModulus;   // hardness when solid      (Pa) https://en.wikipedia.org/wiki/Young%27s_modulus#Approximate_values
-        double granularity;  // parts per g in solid state, determines strength and maximum humidity 
         double opacity;         // mass attenuation coefficient of visible light (400-700nm) absorbed per voxel at 1.0 density
                                 // ulatraviolet (sun light) would be 10-400nm 
-                                
                                 // electric conductivity?
+
+
+        double Mass(double volume, double pressure, double temperature) const;
 
         static const Material vacuum;
         static const Material air;
@@ -49,6 +52,14 @@ public:
     void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
     void Hill(Engine::Coordinate p1, Engine::Coordinate p2, float stddev);
     void Compute();     // At the 7th day god rested
+
+    // Evaluate
+    double Volume() const;
+    double Mass(const Material& material) const;
+    double Temperature(const Material& material) const;
+    double Mass() const;
+    unsigned WindForce() const; // Beaufort
+
     // Map
     Square At(const Position& p) const override;
     unsigned Latitude() const override;
@@ -58,18 +69,6 @@ public:
 protected:
     void RenderPretty() const;
     void RenderAnalysis() const;
-    class Directions
-    {   
-    public:
-        Directions();
-        explicit Directions(uint16_t flags);
-
-        Directions& operator|=(const Direction& dir);
-        bool operator[](const Direction& dir) const;
-        bool empty() const;
-    private:
-        uint16_t flags;
-    };
 
     struct Voxel
     {
@@ -81,7 +80,9 @@ protected:
         double Pressure() const;
         double Volume() const;
         double Molecules() const;
-        double Harndess() const;
+        double Viscosity() const;
+        double Hardness() const;
+        double DiffusionCoefficient(const Voxel& to) const;
 
         double Translucency() const;    // I(x) = I0 * Translucency() 
         bool Opaque() const;
@@ -93,20 +94,21 @@ protected:
     
         float temperature;      // Kelvin
         float mass;             // gram, mass determines density and pressure
-        float humidity;         // Total Water mass (g)
         Engine::Vector flow;    // meter/second
-        bool boundary;          // boundary voxel is constant when evolving (might be used for water, air & lava flow in or out)
         bool fixed;
         Directions visibility;
     };
 
     Directions Visibility(const Position& p) const;
-    double DiffusionRate(const Position& p, const Direction& d) const;
-    void ComputeFlow(double seconds);
-    void Flow(double seconds);
+    void ComputeForces(double seconds);
     void Diffuse(double seconds);
-    bool IsBoundary(const Position& p) const;
-private:
+    Position MaxFlow() const;
+    double Mass(class Directions directions) const;
+    void Advection(double seconds);
+    static Directions IsBoundary(const Position& p, const Position& limit);
+    float AtmosphericTemperature(int z) const;
+    float AtmosphericPressure(int z) const;
+protected:
     class Data
     {
     public:
@@ -120,7 +122,8 @@ private:
         unsigned Latitude() const;
         unsigned Longitude() const;
         unsigned Altitude() const;
-     
+        Directions IsBoundary(const Position& p) const;
+
         template<class T, class ItT>
         class typed_iterator
         {
@@ -156,18 +159,24 @@ private:
 
             bool operator!=(const typed_iterator<T, ItT>& other) const { return !(*this == other); }
             
+            Directions IsBoundary() const 
+            { 
+                return VoxelMap::IsBoundary(position, limit);
+            }
+
             template<typename PairType>
             struct VoxelPair
             {
                 const Position& position;
+                const Directions boundary;
                 PairType& voxel;
-                PairType* operator->() const { return &voxel;  }
+                PairType* operator->() const { return &voxel; }
+                PairType& operator*() const { return voxel; }
             };
-            VoxelPair<T> operator*()
+            VoxelPair<T> operator*() const
             {
-                return VoxelPair<T> { position,*it };
+                return VoxelPair<T> { position, IsBoundary(), *it };
             }
-            
             // iterator traits
             using difference_type = long;
             using value_type = VoxelPair<T>;
@@ -181,6 +190,7 @@ private:
         };
         using iterator = typed_iterator<Voxel, std::vector<Voxel>::iterator>;
         using const_iterator = typed_iterator<const Voxel, std::vector<Voxel>::const_iterator>;
+        using value_type = const_iterator::value_type;
         
         iterator begin() { return iterator(voxels.begin(), Position(longitude, latitude, altitude), Position(0, 0, 0)); }
         iterator end() { return iterator(voxels.end(), Position(longitude, latitude, altitude), Position(longitude, latitude, altitude)); }
@@ -194,13 +204,18 @@ private:
         unsigned longitude, latitude, altitude;
     };
     Data voxels;
-    double planetRadius;
-    double gravity;
+    double time;
+    double planetRadius;    // m
+    double atmosphereRadius; // m
+    double gravity;         // m/s^2
+    float atmosphericTemperature;   // K at 0
 };
 
-constexpr double PascalPerAtmosphere = 101325.0;
+constexpr double PascalPerAtmosphere = 101325.0;        // Pa/Atm
+constexpr double IdealGasConstant = 8.31446261815324e3; // ideal gas constant in L * Pa / K * mol
 
 std::wistream& operator>>(std::wistream& s, VoxelMap& map);
+
 
 }
 

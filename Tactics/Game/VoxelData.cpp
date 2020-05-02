@@ -31,6 +31,10 @@ unsigned VoxelMap::Data::Altitude() const
     return altitude;
 }
 
+Directions VoxelMap::Data::IsBoundary(const Position& p) const
+{
+    return VoxelMap::IsBoundary(p, Position(longitude, latitude, altitude));
+}
 
 unsigned VoxelMap::Data::Index(const Position& p) const
 {

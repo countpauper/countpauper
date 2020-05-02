@@ -106,10 +106,27 @@ protected:
 	static std::map<Value, HalfPiAngle> half_pi_angle;
 };
 
+
 static inline std::ostream& operator<< (std::ostream& os, const Direction& dir)
 {
     os << dir.AbsoluteDescription().c_str();
     return os;
 }
+
+class Directions
+{
+public:
+    Directions();
+    explicit Directions(uint16_t flags);
+
+    Directions& operator|=(const Direction& dir);
+    Directions& operator&=(const Directions& dirs);
+    Directions& operator|=(const Directions& dirs);
+    bool operator[](const Direction& dir) const;
+    bool empty() const;
+    operator bool() const;
+private:
+    uint16_t flags;
+};
 
 }    // ::Game

@@ -347,4 +347,60 @@ std::map<Direction::Value, std::wstring> Direction::description =
 	{ Direction::Value::Down, L"Down" },
 };
 
+
+
+Directions::Directions() :
+    Directions(0)
+{
+}
+
+Directions::Directions(uint16_t flags) :
+    flags(flags)
+{
+}
+
+
+Directions& Directions::operator|=(const Direction& dir)
+{
+    flags |= 1 << dir.Id();
+    return *this;
+}
+
+bool Directions::operator[](const Direction& dir) const
+{
+    return (flags & (1 << dir.Id())) != 0;
+}
+
+bool Directions::empty() const
+{
+    return flags == 0;
+}
+
+Directions::operator bool() const
+{
+    return !empty();
+}
+
+
+Directions& Directions::operator&=(const Directions& dirs)
+{
+    flags &= dirs.flags;
+    return *this;
+}
+
+Directions& Directions::operator|=(const Directions& dirs)
+{
+    flags |= dirs.flags;
+    return *this;
+}
+
+Directions& operator|(const Directions& a, const Directions& b)
+{
+    return Directions(a) |= b;
+}
+Directions& operator&(const Directions& a, const Directions& b)
+{
+    return Directions(a) &= b;
+}
+
 }    // ::Game
