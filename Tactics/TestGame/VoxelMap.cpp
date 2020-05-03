@@ -76,12 +76,12 @@ TEST(Map, HillRidge)
     map.Space(3, 3, 3);
     map.Air(300, 10000);
     map.World(10e6);
-    map.Hill(Engine::Coordinate(2, 0, 0), Engine::Coordinate(0, 2, 2), 1.0 );
+    map.Hill(Engine::Coordinate(3, 0, 0), Engine::Coordinate(0, 3, 3), 1.0 );
 
     EXPECT_EQ(Element::Stone, map.At(Position(2, 0, 3)).floor);
-    EXPECT_EQ(0, map.At(Position(2, 0, 3)).height);
+    EXPECT_EQ(1, map.At(Position(2, 0, 3)).height);
 
-    EXPECT_EQ(1, map.At(Position(1, 1, 3)).height);
+    EXPECT_EQ(2, map.At(Position(1, 1, 3)).height);
     EXPECT_EQ(Element::Stone, map.At(Position(1, 1, 1)).floor);
 
     EXPECT_EQ(Element::Stone, map.At(Position(0, 2, 3)).floor);

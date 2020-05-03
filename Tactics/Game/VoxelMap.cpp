@@ -139,7 +139,7 @@ void VoxelMap::Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, 
             double height = Engine::Lerp(double(p1.z), double(p2.z), interpolation_factor) * Engine::Gaussian(distance, stddev);
             int maxZ = 1+int(std::round( height ));
             maxZ = std::min(maxZ, int(voxels.Altitude()));
-            for (p.z = -1; p.z < maxZ; ++p.z)
+            for (p.z = 0; p.z < maxZ; ++p.z)
             {
                 voxels.Set(p,
                     Material::stone,
@@ -472,8 +472,8 @@ void VoxelMap::Tick(double seconds)
 
 void VoxelMap::Render() const
 {
-    RenderPretty();
-    //RenderAnalysis();
+    //RenderPretty();
+    RenderAnalysis();
 }
 
 
