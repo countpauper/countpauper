@@ -36,7 +36,7 @@ public:
                                 // electric conductivity?
 
 
-        double Mass(double volume, double pressure, double temperature) const;
+        double Density(double pressure, double temperature) const;
 
         static const Material vacuum;
         static const Material air;
@@ -77,6 +77,7 @@ protected:
         bool Gas() const;
         Square Square(unsigned height) const;
         double Density() const;
+        double Mass() const;
         double Pressure() const;
         double Volume() const;
         double Molecules() const;
@@ -91,11 +92,9 @@ protected:
         void Render(const Position& p, const Directions& visibility, bool analysis) const;
 
         const Material* material;
-    
         float temperature;      // Kelvin
-        float mass;             // gram, mass determines density and pressure
+        float density;          // gram/Liters
         Engine::Vector flow;    // meter/second
-        bool fixed;
         Directions visibility;
     };
 

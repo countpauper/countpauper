@@ -19,17 +19,16 @@ namespace Game
 {
 
 
-double VoxelMap::Material::Mass(double pressure, double temperature, double volume) const
+double VoxelMap::Material::Density(double pressure, double temperature) const
 {
     if (temperature > boil)
     {
-        return (molarMass * pressure * volume ) / (temperature * IdealGasConstant);
+        return (molarMass * pressure ) / (temperature * IdealGasConstant);
     }
     else
     {
-        return normalDensity * volume;  // incompressible, also as liquid
+        return normalDensity;  // incompressible, also as liquid
     }
-
 }
 
 VoxelMap::VoxelMap() :
@@ -60,8 +59,7 @@ void VoxelMap::World(double radius)
             auto& lava = voxels[Position(x, y, 0)];
             lava.material = &Material::stone;
             lava.temperature = float((lava.material->melt + lava.material->boil) / 2.0);
-            lava.fixed = true;
-            lava.mass = float(lava.material->normalDensity * LiterPerBlock);
+            lava.density = float(lava.material->Density(PascalPerAtmosphere, lava.temperature));
         }
     }
     constexpr double coreDensity = 5000; // g/L approximate density of earth. liquid iron is 7000 
@@ -98,8 +96,7 @@ void VoxelMap::Air(double temperature, double meters)
             voxel->material = &Material::air;
             voxel->temperature = AtmosphericTemperature(voxel.position.z);
             double pressure = AtmosphericPressure(voxel.position.z);
-            voxel->mass = float(voxel->material->Mass(pressure, voxel->temperature, LiterPerBlock));
-            voxel->fixed = false;
+            voxel->density = float(voxel->material->Density(pressure, voxel->temperature));
         }
     }
 }
@@ -111,17 +108,12 @@ void VoxelMap::Water(int level, double temperature)
         auto z = voxel.position.z;
         if (z < level)
         {
-            if (voxel->material == &Material::vacuum)
+            if (voxel->material == &Material::vacuum || voxel->Gas())
             {
                 voxel->material = &Material::water;
-                voxel->mass = float(Material::water.normalDensity * LiterPerBlock); // TODO: temperature
                 voxel->temperature = float(temperature);
-            }
-            else if (voxel->Gas())
-            {
-                voxel->material = &Material::water;
-                voxel->mass = float(Material::water.normalDensity * LiterPerBlock); // TODO: temperature
-                voxel->temperature = float(temperature);
+                double pressure = AtmosphericPressure(z) + (level - z)*VerticalEl*MeterPerEl * 10.33; // TODO: calculate based on water material
+                voxel->density = float(voxel->material->Density(pressure, voxel->temperature));
             }
         }
     }
@@ -148,9 +140,8 @@ void VoxelMap::Hill(Engine::Coordinate p1, Engine::Coordinate p2, float stddev)
             {
                 auto& v = voxels[Position(xi, yi, zi)];
                 v.material = &Material::stone;
-                v.fixed = true;
-                v.mass = float(v.material->normalDensity * LiterPerBlock);
                 assert(v.temperature > 0);  // hill in a vacuum is cold 
+                v.density = float(v.material->Density(PascalPerAtmosphere, v.temperature));
             }
         }
     }
@@ -180,17 +171,6 @@ Directions VoxelMap::Visibility(const Position& p) const
         }
     }
     return result;
-}
-
-
-
-void VoxelMap::Compute()
-{
-    Position p;
-    for (auto& voxel : voxels)
-    {
-        voxel->visibility = Visibility(voxel.position);
-    }
 }
 
 Directions VoxelMap::IsBoundary(const Position& p, const Position& limit) 
@@ -257,13 +237,13 @@ void VoxelMap::ComputeForces(double seconds)
                     // Pressure gradient (Pa) is N/m^2. Times surface area is newton
                     double force = d.Surface() * (pressure - neighbour.Pressure());  // divide over distance?
                     // Law of motion. Acceleration = Force/mass (kg)
-                    double acceleration = (force / (v->mass*1e-3));
+                    double acceleration = (force / (v->Mass()*1e-3));
                     //  multiplied with time it's the change in velocity
                     acceleration *= seconds;
                     Engine::Vector dir(d.Vector().x, d.Vector().y, d.Vector().z);
                     // Not newtonian, spread force over two grids
                     v->flow += dir * acceleration * 0.5;
-                    double neighbourAcceleration = (force * seconds / neighbour.mass*1e-3);
+                    double neighbourAcceleration = (force * seconds / neighbour.Mass()*1e-3);
                     neighbour.flow += dir * neighbourAcceleration *0.5;
                     if (d == Direction::down)
                     {
@@ -295,7 +275,7 @@ void VoxelMap::Diffuse(double seconds)
             //  TODO: could do it over time and surface of boundary but then this wouldn't be the boundary
             v->temperature = AtmosphericTemperature(v.position.z);
             double pressure = AtmosphericPressure(v.position.z);
-            v->mass = float(v->material->Mass(pressure, v->temperature, LiterPerBlock));
+            v->density = float(v->material->Density(pressure, v->temperature));
         }
         else
         {
@@ -313,16 +293,16 @@ void VoxelMap::Diffuse(double seconds)
                         //  since volume is (currently) equal between each voxel, dMass = DiffusionFactor * mass * dt
                         auto diffusionFactor = coefficient * seconds * d.Surface();
                         assert(diffusionFactor > 0);   // don't know what negative diffusion means 
-                        auto deltaMass = float((old.mass - oldNeighbour.mass) * diffusionFactor);
+                        auto deltaDensity = float((old.density - oldNeighbour.density) * diffusionFactor);
                         auto deltaTemperature = float((old.temperature - oldNeighbour.temperature) * diffusionFactor);
 
-                        v->mass -= deltaMass;
+                        v->density -= deltaDensity;
                         // Thermal convenction: https://en.wikipedia.org/wiki/Thermal_conduction
                         v->temperature -= deltaTemperature;
                         if (!voxels.IsBoundary(neighbourPosition))
                         {
                             auto& neighbour = voxels[neighbourPosition];
-                            neighbour.mass += deltaMass;
+                            neighbour.density += deltaDensity;
                             neighbour.temperature += deltaTemperature;
                         }
                     }
@@ -335,8 +315,8 @@ void VoxelMap::Diffuse(double seconds)
                     auto flux = v->material->conductivity * (old.temperature - oldNeighbour.temperature);
                     auto deltaJoule = flux * seconds * d.Surface();
                     auto& neighbour = voxels[neighbourPosition];
-                    v->temperature -= float(deltaJoule / (old.material->heatCapacity*old.mass));
-                    neighbour.temperature += float(deltaJoule / (oldNeighbour.material->heatCapacity*oldNeighbour.mass));
+                    v->temperature -= float(deltaJoule / (old.material->heatCapacity*old.Mass()));
+                    neighbour.temperature += float(deltaJoule / (oldNeighbour.material->heatCapacity*oldNeighbour.Mass()));
                 }
             }
         }
@@ -386,7 +366,7 @@ double VoxelMap::Mass(const VoxelMap::Material& material) const
     return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
         if (v->material == &material && !v.boundary)
-            return runningTotal + v->mass;
+            return runningTotal + v->Mass();
         else
             return runningTotal;
     });
@@ -397,7 +377,7 @@ double VoxelMap::Temperature(const Material& material) const
     auto heat = std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
         if (v->material == &material && !v.boundary)
-            return runningTotal + v->mass * v->temperature;
+            return runningTotal + v->Mass() * v->temperature;
         else
             return runningTotal;
     });
@@ -415,7 +395,7 @@ double VoxelMap::Mass(Directions excludeDirections) const
     return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&excludeDirections](double runningTotal, const decltype(voxels)::value_type& v)
     {
         if (!(v.boundary&excludeDirections))
-            return runningTotal + v->mass;
+            return runningTotal + v->Mass();
         else
             return runningTotal;
     });
@@ -462,11 +442,11 @@ void VoxelMap::Advection(double seconds)
                             auto overlapVolume = overlap.Volume();
                             if (overlapVolume > 0)
                             {
-                                target.mass += float(overlapVolume * org->mass);
+                                target.density += float(overlapVolume * org->density);
                                 target.temperature += float(overlapVolume * org->temperature);
                                 target.flow += org->flow * overlapVolume;
 
-                                source.mass -= float(org->mass * overlapVolume);
+                                source.density -= float(org->density * overlapVolume);
                                 source.temperature -= float(org->temperature * overlapVolume);
                                 source.flow -= org->flow * overlapVolume;
                             }
@@ -519,7 +499,7 @@ void VoxelMap::RenderPretty() const
         glTranslated(v.position.x-1, (v.position.z-1)*MeterPerEl, v.position.y-1); // offset by -1,-1,-1 for boundary
         if (v->Opaque())
         {
-            if (auto visibility = v->visibility)
+            if (auto visibility = Visibility(v.position))
             {
                 v->Render(v.position, visibility, false);
             }
@@ -536,7 +516,7 @@ void VoxelMap::RenderPretty() const
         glTranslated(v.position.x - 1, (v.position.z - 1)*MeterPerEl, v.position.y - 1); // offset by -1,-1,-1 for boundary
         if (!v->Opaque() && !v->Transparent())
         {
-            auto visibility = v->visibility;
+            auto visibility = Visibility(v.position);
             if (!visibility.empty())
             {
                 v->Render(v.position, visibility, false);
@@ -595,7 +575,6 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
             throw std::runtime_error("Unknown procedure");
         }
     }
-    map.Compute();
     return s;
 }
 

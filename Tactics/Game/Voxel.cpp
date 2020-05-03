@@ -19,9 +19,8 @@ const VoxelMap::Material VoxelMap::Material::water { L"Water",     Element::Wate
 VoxelMap::Voxel::Voxel() :
     material(&VoxelMap::Material::vacuum),
     temperature(0),
-    mass(0),
-    flow(0, 0, 0),
-    fixed(false)
+    density(0),
+    flow(0, 0, 0)
 {
 }
 
@@ -66,12 +65,17 @@ bool VoxelMap::Voxel::Transparent() const
 
 double VoxelMap::Voxel::Density() const
 {
-    return mass / LiterPerBlock;
+    return density;
+}
+
+double VoxelMap::Voxel::Mass() const
+{
+    return density * LiterPerBlock;
 }
 
 double VoxelMap::Voxel::Molecules() const
 {
-    return mass / material->molarMass;
+    return Mass() / material->molarMass;
 }
 
 double VoxelMap::Voxel::Viscosity() const
