@@ -72,7 +72,6 @@ protected:
 
     struct Voxel
     {
-        Voxel();
         bool Solid() const;
         bool Gas() const;
         Square Square(unsigned height) const;
@@ -84,18 +83,19 @@ protected:
         double Viscosity() const;
         double Hardness() const;
         double DiffusionCoefficient(const Voxel& to) const;
-
+        
         double Translucency() const;    // I(x) = I0 * Translucency() 
         bool Opaque() const;
         bool Transparent() const;
         Engine::RGBA Color() const;
         void Render(const Position& p, const Directions& visibility, bool analysis) const;
 
-        const Material* material;
-        float temperature;      // Kelvin
-        float density;          // gram/Liters
-        Engine::Vector flow;    // meter/second
-        Directions visibility;
+        const Material& material;
+        const float temperature;      // Kelvin
+        const float density;          // gram/Liters
+        //const Engine::Vector flow;    // meter/second
+        const Position position;
+        const Directions boundary;
     };
 
     Directions Visibility(const Position& p) const;
@@ -115,91 +115,46 @@ protected:
         Data(unsigned longitude, unsigned latitude, unsigned altitude);
         Data(const Data&) = default;
         bool IsInside(const Position& p) const;
-        Position GetPosition(const Voxel* pVoxel) const;
-        const Voxel& operator[](const Position& p) const;
-        Voxel& operator[](const Position& p);
+        Voxel operator[](const Position& p) const;
+        void Set(const Position& location, const Material& material, double temperature, double pressure);
+
         unsigned Latitude() const;
         unsigned Longitude() const;
         unsigned Altitude() const;
         Directions IsBoundary(const Position& p) const;
 
-        template<class T, class ItT>
-        class typed_iterator
+        class iterator
         {
         public:
-            typed_iterator(typename ItT it, const Position& limit, const Position& position) :
-                it(it),
-                limit(limit),
-                position(position)
-            {
-            }
-            typed_iterator<T, ItT>& operator++()
-            {
-                ++it;
-                if (++position.z == limit.z)
-                {
-                    position.z = 0;
-                    if (++position.y == limit.y)
-                    {
-                        position.y = 0;
-                        if (++position.x == limit.x)
-                        {
-                            position.x = 0;
-                        }
-                    }
-                }
-                return *this;
-            }
+            iterator(const Data& data, const Position& position);
+            iterator& operator++();
             //iterator operator++(int);
-            bool operator==(const typed_iterator<T, ItT>& other) const
-            {
-                return it == other.it;
-            }
+            bool operator==(const iterator& other) const;
+            bool operator!=(const iterator& other) const;
+            using value_type = const Voxel;
+            value_type operator*() const;
 
-            bool operator!=(const typed_iterator<T, ItT>& other) const { return !(*this == other); }
-            
-            Directions IsBoundary() const 
-            { 
-                return VoxelMap::IsBoundary(position, limit);
-            }
-
-            template<typename PairType>
-            struct VoxelPair
-            {
-                const Position& position;
-                const Directions boundary;
-                PairType& voxel;
-                PairType* operator->() const { return &voxel; }
-                PairType& operator*() const { return voxel; }
-            };
-            VoxelPair<T> operator*() const
-            {
-                return VoxelPair<T> { position, IsBoundary(), *it };
-            }
             // iterator traits
-            using difference_type = long;
-            using value_type = VoxelPair<T>;
-            using pointer = VoxelPair<T>*;
-            using reference = VoxelPair<T>&;
+            using difference_type = Position;
+            using pointer = const Voxel*;
+            using reference = const Voxel&&;
             using iterator_category = std::forward_iterator_tag;
             
-            ItT it;
-            const Position limit;
+            const Data& data;
             Position position;
         };
-        using iterator = typed_iterator<Voxel, std::vector<Voxel>::iterator>;
-        using const_iterator = typed_iterator<const Voxel, std::vector<Voxel>::const_iterator>;
-        using value_type = const_iterator::value_type;
+        using value_type = iterator::value_type;
         
-        iterator begin() { return iterator(voxels.begin(), Position(longitude, latitude, altitude), Position(0, 0, 0)); }
-        iterator end() { return iterator(voxels.end(), Position(longitude, latitude, altitude), Position(longitude, latitude, altitude)); }
-        const_iterator begin() const{ return const_iterator(voxels.cbegin(), Position(longitude, latitude, altitude), Position(0, 0, 0)); }
-        const_iterator end() const { return const_iterator(voxels.cend(), Position(longitude, latitude, altitude), Position(longitude, latitude, altitude)); }
+        iterator begin() const { return iterator(*this, Position(0, 0, 0)); }
+        iterator end() const { return iterator(*this, Position(longitude, 0, 0));  }
     protected:
         Position Stride() const;
         unsigned Index(const Position& p) const;
     private:
-        std::vector<Voxel> voxels;
+        std::vector<const Material*> material;
+        std::vector<float> p;           // density
+        std::vector<float> u, v, w;     // flux
+        std::vector<float> t;           // temperature
         unsigned longitude, latitude, altitude;
     };
     Data voxels;

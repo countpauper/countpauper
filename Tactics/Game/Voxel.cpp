@@ -16,22 +16,15 @@ const VoxelMap::Material VoxelMap::Material::soil  { L"Soil",      Element::Natu
 const VoxelMap::Material VoxelMap::Material::stone { L"Stone",     Element::Stone,   0xFFA0A0A0,   1986,   3220,   2648,   60,          10e21,      10,         0.790,      0.8,            1e10,          10           };     // for now 100% silicon dioxide, 60 g/mol
 const VoxelMap::Material VoxelMap::Material::water { L"Water",     Element::Water,   0xFFFF6010,   273,    373,    1000,   18,          8.9e-4,     0.6065,     4.1813,     0.07,           9e9,           6.9 / 1000   };     // H2O 18 g/mol
                                                                                                                                                                                                             // redundant for now VoxelMap::Material VoxelMap::Material::sand  { L"Sand",      1986,   3220,   2648,        10,            0.0           };     // silicon dioxide, 60 g/mol
-VoxelMap::Voxel::Voxel() :
-    material(&VoxelMap::Material::vacuum),
-    temperature(0),
-    density(0),
-    flow(0, 0, 0)
-{
-}
 
 bool VoxelMap::Voxel::Solid() const
 {
-    return temperature < material->melt;
+    return temperature < material.melt;
 }
 
 bool VoxelMap::Voxel::Gas() const
 {
-    return temperature > material->boil;
+    return temperature > material.boil;
 }
 
 Square VoxelMap::Voxel::Square(unsigned height) const
@@ -42,7 +35,7 @@ Square VoxelMap::Voxel::Square(unsigned height) const
     }
     else
     {
-        return Game::Square(material->element, Solid(), height);
+        return Game::Square(material.element, Solid(), height);
     }
 }
 
@@ -50,7 +43,7 @@ double VoxelMap::Voxel::Translucency() const
 {
     // https://en.wikipedia.org/wiki/Opacity_(optics)#Quantitative_definition
     // assume light from straight above (that's why it's vertical el)
-    return exp(-VerticalEl * MeterPerEl * material->opacity * Density());
+    return exp(-VerticalEl * MeterPerEl * material.opacity * Density());
 }
 
 bool VoxelMap::Voxel::Opaque() const
@@ -75,7 +68,7 @@ double VoxelMap::Voxel::Mass() const
 
 double VoxelMap::Voxel::Molecules() const
 {
-    return Mass() / material->molarMass;
+    return Mass() / material.molarMass;
 }
 
 double VoxelMap::Voxel::Viscosity() const
@@ -102,9 +95,9 @@ double VoxelMap::Voxel::Hardness() const
     if (Gas())
         return 0;
     else if (Solid())
-        return material->youngsModulus;
+        return material.youngsModulus;
     else
-        return material->surfaceTension;
+        return material.surfaceTension;
 }
 double VoxelMap::Voxel::Pressure() const
 {   // Pascal = newton /m2 = kg/(m*s^2)  = 1 J/m^3 
@@ -130,7 +123,7 @@ double VoxelMap::Voxel::DiffusionCoefficient(const VoxelMap::Voxel& to) const
         // http://www.thermopedia.com/content/696/
         constexpr double DiffusionConstant = 1.2e-4 * PascalPerAtmosphere;
 
-        return DiffusionConstant * pow(temperature, 1.5) * sqrt(1 / material->molarMass + 1 / to.material->molarMass) / Pressure();
+        return DiffusionConstant * pow(temperature, 1.5) * sqrt(1 / material.molarMass + 1 / to.material.molarMass) / Pressure();
     }
     else 
         return 0.01;
@@ -147,7 +140,7 @@ Engine::RGBA VoxelMap::Voxel::Color() const
 {
     // TODO: why is steam white, water blue, something about particle size and scattering
     // Also solids need to start glowing red when hot 
-    auto color = material->color.Translucent(1.0 - Translucency());
+    auto color = material.color.Translucent(1.0 - Translucency());
 
     return color;
 }
@@ -228,10 +221,10 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility, bo
         glPushMatrix();
         glTranslated(0.25, 0.25* MeterPerEl, 0.25);
         Engine::glText(std::to_string(Pressure() / PascalPerAtmosphere));
-        Engine::Vector flowArrow(flow.x, flow.z, flow.y);
+        // Engine::Vector flowArrow(flow.x, flow.z, flow.y);
         //double length = 0.5 - (0.5 / flowArrow.Length());
         //flowArrow = flowArrow.Normal()*length;
-        glDrawArrow(flowArrow);
+        // glDrawArrow(flowArrow);
         glPopMatrix();
     }
 }

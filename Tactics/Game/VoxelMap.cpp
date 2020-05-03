@@ -56,10 +56,10 @@ void VoxelMap::World(double radius)
     {
         for (unsigned y = 0; y < voxels.Latitude(); ++y)
         {
-            auto& lava = voxels[Position(x, y, 0)];
-            lava.material = &Material::stone;
-            lava.temperature = float((lava.material->melt + lava.material->boil) / 2.0);
-            lava.density = float(lava.material->Density(PascalPerAtmosphere, lava.temperature));
+            voxels.Set(Position(x, y, 0),
+                Material::stone,
+                (Material::stone.melt + Material::stone.boil) / 2.0,
+                PascalPerAtmosphere);
         }
     }
     constexpr double coreDensity = 5000; // g/L approximate density of earth. liquid iron is 7000 
@@ -91,13 +91,9 @@ void VoxelMap::Air(double temperature, double meters)
     double atmorphericLapse = float(-temperature / atmosphereRadius);
     for (auto& voxel : voxels)
     {
-        if (voxel->material == &Material::vacuum)
-        {
-            voxel->material = &Material::air;
-            voxel->temperature = AtmosphericTemperature(voxel.position.z);
-            double pressure = AtmosphericPressure(voxel.position.z);
-            voxel->density = float(voxel->material->Density(pressure, voxel->temperature));
-        }
+        voxels.Set(voxel.position, Material::air,
+            AtmosphericTemperature(voxel.position.z),
+            AtmosphericPressure(voxel.position.z));  
     }
 }
 
@@ -108,13 +104,11 @@ void VoxelMap::Water(int level, double temperature)
         auto z = voxel.position.z;
         if (z < level)
         {
-            if (voxel->material == &Material::vacuum || voxel->Gas())
-            {
-                voxel->material = &Material::water;
-                voxel->temperature = float(temperature);
-                double pressure = AtmosphericPressure(z) + (level - z)*VerticalEl*MeterPerEl * 10.33; // TODO: calculate based on water material
-                voxel->density = float(voxel->material->Density(pressure, voxel->temperature));
-            }
+            double pressure = AtmosphericPressure(z) + (level - z)*VerticalEl*MeterPerEl * 10.33; // TODO: calculate based on water material
+            voxels.Set(voxel.position,
+                Material::water,
+                temperature,
+                pressure);
         }
     }
 }
@@ -138,10 +132,10 @@ void VoxelMap::Hill(Engine::Coordinate p1, Engine::Coordinate p2, float stddev)
             maxZ = std::min(maxZ, int(voxels.Altitude()));
             for (int zi = 0; zi < maxZ; ++zi)
             {
-                auto& v = voxels[Position(xi, yi, zi)];
-                v.material = &Material::stone;
-                assert(v.temperature > 0);  // hill in a vacuum is cold 
-                v.density = float(v.material->Density(PascalPerAtmosphere, v.temperature));
+                voxels.Set(Position(xi, yi, zi),
+                    Material::stone,
+                    atmosphericTemperature, // TODO: decrease from air increase to lava
+                    PascalPerAtmosphere);   // TODO: increase due to stone depth, NB: can be already overlapping stone layer. just dont place those
             }
         }
     }
@@ -216,6 +210,7 @@ Square VoxelMap::At(const Position& p) const
 
 void VoxelMap::ComputeForces(double seconds)
 {
+    /*
     // Flow
     for (auto& v : voxels)
     {
@@ -262,10 +257,12 @@ void VoxelMap::ComputeForces(double seconds)
             }
         }
     }
+    */
 }
 
 void VoxelMap::Diffuse(double seconds)
 {
+    /*
     const Data original = voxels;   // TODO can make more efficient partial copy
     auto it = original.begin();
     for (auto& v : voxels)
@@ -322,6 +319,7 @@ void VoxelMap::Diffuse(double seconds)
         }
         ++it;
     }
+    */
 }
 
 
@@ -329,6 +327,7 @@ Position VoxelMap::MaxFlow() const
 {
     double maxSqrFlow = 0;
     Position maxLocation;
+    /*
     for (auto& v : voxels)
     {
         double sqr = v->flow.LengthSquared();
@@ -338,11 +337,14 @@ Position VoxelMap::MaxFlow() const
             maxLocation = v.position;
         }
     }
+    */
     return maxLocation;
 }
 
 unsigned VoxelMap::WindForce() const
 {
+    return 0;
+    /*
     const auto& voxel = voxels[MaxFlow()];
     auto speed = voxel.flow.Length();   // m/s
     constexpr std::array<double, 12> beaufortScale = { 0.2, 1.5, 3.3, 5.4, 7.9, 10.7, 13.8, 17.1, 20.7, 24.4, 28.4, 32.6 };
@@ -354,6 +356,7 @@ unsigned VoxelMap::WindForce() const
         beaufort++;
     }
     return beaufort;
+    */
 }
 
 double VoxelMap::Volume() const
@@ -365,8 +368,8 @@ double VoxelMap::Mass(const VoxelMap::Material& material) const
 {
     return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
-        if (v->material == &material && !v.boundary)
-            return runningTotal + v->Mass();
+        if (&v.material == &material && !v.boundary)
+            return runningTotal + v.Mass();
         else
             return runningTotal;
     });
@@ -376,8 +379,8 @@ double VoxelMap::Temperature(const Material& material) const
 {
     auto heat = std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
-        if (v->material == &material && !v.boundary)
-            return runningTotal + v->Mass() * v->temperature;
+        if (&v.material == &material && !v.boundary)
+            return runningTotal + v.Mass() * v.temperature;
         else
             return runningTotal;
     });
@@ -395,7 +398,7 @@ double VoxelMap::Mass(Directions excludeDirections) const
     return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&excludeDirections](double runningTotal, const decltype(voxels)::value_type& v)
     {
         if (!(v.boundary&excludeDirections))
-            return runningTotal + v->Mass();
+            return runningTotal + v.Mass();
         else
             return runningTotal;
     });
@@ -403,6 +406,7 @@ double VoxelMap::Mass(Directions excludeDirections) const
 
 void VoxelMap::Advection(double seconds)
 {
+    /*
     const Data original = voxels;   
     auto it = original.begin();
     Engine::Vector maxFlow = voxels[MaxFlow()].flow * seconds;
@@ -454,8 +458,9 @@ void VoxelMap::Advection(double seconds)
                     }
                 }
             }
-       }
+        }
     }
+    */
 }
 
 
@@ -481,8 +486,8 @@ void VoxelMap::Tick(double seconds)
 
 void VoxelMap::Render() const
 {
-    //RenderPretty();
-    RenderAnalysis();
+    RenderPretty();
+    //RenderAnalysis();
 }
 
 
@@ -497,11 +502,11 @@ void VoxelMap::RenderPretty() const
     {
         glPushMatrix();
         glTranslated(v.position.x-1, (v.position.z-1)*MeterPerEl, v.position.y-1); // offset by -1,-1,-1 for boundary
-        if (v->Opaque())
+        if (v.Opaque())
         {
             if (auto visibility = Visibility(v.position))
             {
-                v->Render(v.position, visibility, false);
+                v.Render(v.position, visibility, false);
             }
         }
         glPopMatrix();
@@ -514,12 +519,12 @@ void VoxelMap::RenderPretty() const
     {
         glPushMatrix();
         glTranslated(v.position.x - 1, (v.position.z - 1)*MeterPerEl, v.position.y - 1); // offset by -1,-1,-1 for boundary
-        if (!v->Opaque() && !v->Transparent())
+        if (!v.Opaque() && !v.Transparent())
         {
             auto visibility = Visibility(v.position);
             if (!visibility.empty())
             {
-                v->Render(v.position, visibility, false);
+                v.Render(v.position, visibility, false);
             }
         }
         glPopMatrix();
@@ -539,7 +544,7 @@ void VoxelMap::RenderAnalysis() const
     {
         glPushMatrix();
         glTranslated(v.position.x-1, (v.position.z-1)*MeterPerEl, v.position.y-1);
-        v->Render(v.position, Directions(0xFFFF), true);
+        v.Render(v.position, Directions(0xFFFF), true);
         glPopMatrix();
     }
     Engine::CheckGLError();

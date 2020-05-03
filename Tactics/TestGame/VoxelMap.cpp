@@ -78,7 +78,7 @@ TEST(Map, HillRidge)
     map.World(10e6);
     map.Hill(Engine::Coordinate(2, 0, 0), Engine::Coordinate(0, 2, 2), 1.0 );
 
-    EXPECT_EQ(Element::Fire, map.At(Position(2, 0, 3)).floor);
+    EXPECT_EQ(Element::Stone, map.At(Position(2, 0, 3)).floor);
     EXPECT_EQ(0, map.At(Position(2, 0, 3)).height);
 
     EXPECT_EQ(1, map.At(Position(1, 1, 3)).height);
