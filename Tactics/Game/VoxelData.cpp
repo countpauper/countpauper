@@ -9,6 +9,7 @@ VoxelMap::Data::iterator::iterator(const Data& data, const Position& position) :
     position(position)
 {
 }
+
 VoxelMap::Data::iterator& VoxelMap::Data::iterator::operator++()
 {
     if (++position.z == data.Altitude())
@@ -42,11 +43,9 @@ VoxelMap::Data::iterator::value_type VoxelMap::Data::iterator::operator*() const
     return data[position];
 }
 
-
 VoxelMap::Data::Data() :
     Data(0, 0, 0)
 {
-
 }
 
 VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
@@ -54,10 +53,10 @@ VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
     latitude(latitude),
     altitude(altitude)
 {
-    size_t size = longitude * latitude * altitude;
-    material.resize(size, &Material::vacuum);
-    t.resize(size, 0);
-    p.resize(size, 0);
+    size_t gridSize = (longitude+2) * (latitude+2) * (altitude+2);
+    material.resize(gridSize, &Material::vacuum);
+    t.resize(gridSize, 0);
+    p.resize(gridSize, 0);
 }
 
 unsigned VoxelMap::Data::Latitude() const
@@ -75,13 +74,26 @@ unsigned VoxelMap::Data::Altitude() const
 
 Directions VoxelMap::Data::IsBoundary(const Position& p) const
 {
-    return VoxelMap::IsBoundary(p, Position(longitude, latitude, altitude));
+    Directions result;
+    if (p.x == -1)
+        result |= Direction::west;
+    if (p.x == longitude)
+        result |= Direction::east;
+    if (p.y == -1)
+        result |= Direction::south;
+    if (p.y == latitude)
+        result |= Direction::north;
+    if (p.z == 0)
+        result |= Direction::down;
+    if (p.z == altitude)
+        result |= Direction::up;
+    return result;
 }
 
 unsigned VoxelMap::Data::Index(const Position& p) const
 {
     const auto& stride = Stride();
-    return p.x * stride.x + p.y * stride.y + p.z * stride.z;
+    return (p.x+1) * stride.x + (p.y+1) * stride.y + (p.z+1) * stride.z;
 }
 
 VoxelMap::Voxel VoxelMap::Data::operator[](const Position& position) const
@@ -111,7 +123,7 @@ bool VoxelMap::Data::IsInside(const Position& p) const
 
 Position VoxelMap::Data::Stride() const
 {   // ordered Z,Y,X, in direction of iy for best caching
-    return Position(altitude*latitude, altitude, 1);
+    return Position((altitude+2)*(latitude+2), (altitude+2), 1);
 }
 
 }

@@ -46,7 +46,7 @@ VoxelMap::VoxelMap() :
 
 void VoxelMap::Space(unsigned x, unsigned y, unsigned z)
 {
-    voxels = Data(x + 2, y + 2, z + 2);
+    voxels = Data(x, y, z);
 }
 
 void VoxelMap::World(double radius)
@@ -56,7 +56,7 @@ void VoxelMap::World(double radius)
     {
         for (unsigned y = 0; y < voxels.Latitude(); ++y)
         {
-            voxels.Set(Position(x, y, 0),
+            voxels.Set(Position(x, y, -1),
                 Material::stone,
                 (Material::stone.melt + Material::stone.boil) / 2.0,
                 PascalPerAtmosphere);
@@ -89,50 +89,59 @@ void VoxelMap::Air(double temperature, double meters)
     atmosphericTemperature = float(temperature);
     atmosphereRadius = meters;
     double atmorphericLapse = float(-temperature / atmosphereRadius);
-    for (auto& voxel : voxels)
+    Position p;
+    for (p.x = -1; p.x <= int(voxels.Longitude()); ++p.x)
     {
-        voxels.Set(voxel.position, Material::air,
-            AtmosphericTemperature(voxel.position.z),
-            AtmosphericPressure(voxel.position.z));  
+        for (p.y = -1; p.y <= int(voxels.Latitude()); ++p.y)
+        {
+            for (p.z = -1; p.z < int(voxels.Altitude()); ++p.z)
+            {
+                voxels.Set(p, Material::air,
+                    AtmosphericTemperature(p.z),
+                    AtmosphericPressure(p.z));
+            }
+        }
     }
 }
 
 void VoxelMap::Water(int level, double temperature)
 {
-    for (auto& voxel : voxels)
+    Position p;
+    for (p.x = -1; p.x <= int(voxels.Longitude()); ++p.x)
     {
-        auto z = voxel.position.z;
-        if (z < level)
+        for (p.y= -1; p.y <= int(voxels.Latitude()); ++p.y)
         {
-            double pressure = AtmosphericPressure(z) + (level - z)*VerticalEl*MeterPerEl * 10.33; // TODO: calculate based on water material
-            voxels.Set(voxel.position,
-                Material::water,
-                temperature,
-                pressure);
+            for (p.z = -1; p.z < level; ++p.z)
+            {
+                double pressure = AtmosphericPressure(p.z) + (level - p.z)*VerticalEl*MeterPerEl * 10.33; // TODO: calculate based on water material
+                voxels.Set(p,
+                    Material::water,
+                    temperature,
+                    pressure);
+            }
         }
     }
 }
 
-void VoxelMap::Hill(Engine::Coordinate p1, Engine::Coordinate p2, float stddev)
+void VoxelMap::Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, float stddev)
 {
-    p1 += Engine::Vector(1, 1, 0);  // offset, but z is offset in maxZ for better rounding
-    p2 += Engine::Vector(1, 1, 0);
     Engine::Line ridge_line(Engine::Coordinate(p1.x, p1.y, 0),
                     Engine::Coordinate(p2.x, p2.y, 0));
     // offset the hill for external coordinates excluding boundaries
-    for (unsigned xi = 0; xi < voxels.Longitude(); ++xi)
+    Position p;
+    for (p.x = -1; p.x <= int(voxels.Longitude()); ++p.x)
     {
-        for (unsigned yi = 0; yi < voxels.Latitude(); ++yi)
+        for (p.y = -1; p.y <= int(voxels.Latitude()); ++p.y)
         {
-            Engine::Coordinate c(float(xi), float(yi), 0);
+            Engine::Coordinate c(float(p.x)+0.5f, float(p.y)+0.5f, 0);
             double distance = Engine::Distance(c, ridge_line);
             double interpolation_factor = std::max(0.0,std::min(1.0, ridge_line.Vector().Dot(c - ridge_line.a) / ridge_line.Vector().LengthSquared()));
             double height = Engine::Lerp(double(p1.z), double(p2.z), interpolation_factor) * Engine::Gaussian(distance, stddev);
             int maxZ = 1+int(std::round( height ));
             maxZ = std::min(maxZ, int(voxels.Altitude()));
-            for (int zi = 0; zi < maxZ; ++zi)
+            for (p.z = -1; p.z < maxZ; ++p.z)
             {
-                voxels.Set(Position(xi, yi, zi),
+                voxels.Set(p,
                     Material::stone,
                     atmosphericTemperature, // TODO: decrease from air increase to lava
                     PascalPerAtmosphere);   // TODO: increase due to stone depth, NB: can be already overlapping stone layer. just dont place those
@@ -150,7 +159,6 @@ unsigned VoxelMap::Longitude() const
     return voxels.Longitude();
 }
 
-
 Directions VoxelMap::Visibility(const Position& p) const
 {
     Directions result;
@@ -167,45 +175,26 @@ Directions VoxelMap::Visibility(const Position& p) const
     return result;
 }
 
-Directions VoxelMap::IsBoundary(const Position& p, const Position& limit) 
-{
-    Directions result;
-    if (p.x == 0)
-        result |= Direction::west;
-    if (p.x == limit.x-1)
-        result |= Direction::east;
-    if (p.y == 0)
-        result |= Direction::south;
-    if (p.y == limit.y-1)
-        result |= Direction::north;
-    if (p.z == 0)
-        result |= Direction::down;
-    if (p.z == limit.z-1)
-        result |= Direction::up;
-    return result;
-}
-
 Square VoxelMap::At(const Position& p) const
 {
     if (p.x < 0)
         return Square();
     if (p.y < 0)
         return Square();
-    Position adjusted =  p + Position(1, 1, 1);
-    if (unsigned(adjusted.x) >= Longitude())
+    if (unsigned(p.x) >= Longitude())
         return Square();
-    if (unsigned(adjusted.y) >= Latitude())
+    if (unsigned(p.y) >= Latitude())
         return Square();
-    for (int i = std::min(adjusted.z, int(voxels.Altitude()-1)); i > 0; --i)
+    for (int i = std::min(p.z, int(voxels.Altitude())); i > 0; --i)
     {
-        const auto& v = voxels[Position(adjusted.x, adjusted.y, i)];
+        const auto& v = voxels[Position(p.x, p.y, i)];
         if (v.Solid())
         {
             Square s = v.Square(i);
             return s;
         }
     }
-    return voxels[Position(adjusted.x,adjusted.y,0)].Square(0); // welcome to hell
+    return voxels[Position(p.x,p.y,-1)].Square(0); // welcome to hell
 }
 
 void VoxelMap::ComputeForces(double seconds)
@@ -361,14 +350,14 @@ unsigned VoxelMap::WindForce() const
 
 double VoxelMap::Volume() const
 {
-    return (voxels.Longitude()-2) * (voxels.Latitude()-2) * (voxels.Altitude()-2) * LiterPerBlock;
+    return voxels.Longitude() * voxels.Latitude() * voxels.Altitude() * LiterPerBlock;
 }
 
 double VoxelMap::Mass(const VoxelMap::Material& material) const
 {
     return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
-        if (&v.material == &material && !v.boundary)
+        if (&v.material == &material)
             return runningTotal + v.Mass();
         else
             return runningTotal;
@@ -379,7 +368,7 @@ double VoxelMap::Temperature(const Material& material) const
 {
     auto heat = std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
-        if (&v.material == &material && !v.boundary)
+        if (&v.material == &material)
             return runningTotal + v.Mass() * v.temperature;
         else
             return runningTotal;
@@ -397,10 +386,7 @@ double VoxelMap::Mass(Directions excludeDirections) const
 {
     return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&excludeDirections](double runningTotal, const decltype(voxels)::value_type& v)
     {
-        if (!(v.boundary&excludeDirections))
-            return runningTotal + v.Mass();
-        else
-            return runningTotal;
+        return runningTotal + v.Mass();
     });
 }
 

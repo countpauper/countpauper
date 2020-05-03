@@ -50,8 +50,7 @@ public:
     void World(double radius);
     void Air(double temperature, double meters);     // Day 1 the sky
     void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
-    void Hill(Engine::Coordinate p1, Engine::Coordinate p2, float stddev);
-    void Compute();     // At the 7th day god rested
+    void Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, float stddev);
 
     // Evaluate
     double Volume() const;
@@ -104,7 +103,6 @@ protected:
     Position MaxFlow() const;
     double Mass(class Directions directions) const;
     void Advection(double seconds);
-    static Directions IsBoundary(const Position& p, const Position& limit);
     float AtmosphericTemperature(int z) const;
     float AtmosphericPressure(int z) const;
 protected:
@@ -151,10 +149,10 @@ protected:
         Position Stride() const;
         unsigned Index(const Position& p) const;
     private:
-        std::vector<const Material*> material;
-        std::vector<float> p;           // density
-        std::vector<float> u, v, w;     // flux
-        std::vector<float> t;           // temperature
+        std::vector<const Material*> material;  // longitude+2, latitude+2, altitude+2
+        std::vector<float> p;           // density at the center. long,lat, alt +2 to interpolate at edge
+        std::vector<float> t;           // temperature at the center, to interpolate at edge, stride+2
+        std::vector<float> u, v, w;     // flux (long, lat, alt)+1 in direction
         unsigned longitude, latitude, altitude;
     };
     Data voxels;
