@@ -87,7 +87,7 @@ protected:
         bool Opaque() const;
         bool Transparent() const;
         Engine::RGBA Color() const;
-        void Render(const Position& p, const Directions& visibility, bool analysis) const;
+        void Render(const Position& p, const Directions& visibility, Engine::RGBA analysisColor = Engine::RGBA::transparent) const;
 
         const Material& material;
         const float temperature;      // Kelvin
@@ -97,12 +97,14 @@ protected:
         const Directions boundary;
     };
 
+    void Flow(double seconds);
+    void FluxBoundary();
+    void Continuity(double seconds);
+    void GridBoundary();
+
     Directions Visibility(const Position& p) const;
-    void ComputeForces(double seconds);
-    void Diffuse(double seconds);
     Position MaxFlow() const;
     double Mass(class Directions directions) const;
-    void Advection(double seconds);
     float AtmosphericTemperature(int z) const;
     float AtmosphericPressure(int z) const;
 protected:
@@ -114,17 +116,11 @@ protected:
         Data(const Data&) = default;
         bool IsInside(const Position& p) const;
         Voxel operator[](const Position& p) const;
-        void Set(const Position& location, const Material& material, double temperature, double pressure);
-
-        unsigned Latitude() const;
-        unsigned Longitude() const;
-        unsigned Altitude() const;
-        Directions IsBoundary(const Position& p) const;
-
         class iterator
         {
         public:
             iterator(const Data& data, const Position& position);
+            iterator(const Data& data, const Position& position, const Position& end);
             iterator& operator++();
             //iterator operator++(int);
             bool operator==(const iterator& other) const;
@@ -135,24 +131,109 @@ protected:
             // iterator traits
             using difference_type = Position;
             using pointer = const Voxel*;
-            using reference = const Voxel&&;
+            using reference = const Voxel&;
             using iterator_category = std::forward_iterator_tag;
-            
+
             const Data& data;
+            const Position start;
             Position position;
+            const Position end;
         };
         using value_type = iterator::value_type;
-        
+
         iterator begin() const { return iterator(*this, Position(0, 0, 0)); }
-        iterator end() const { return iterator(*this, Position(longitude, 0, 0));  }
+        iterator end() const { return iterator(*this, Position(longitude, latitude, altitude)); }
+        class Boundary
+        {
+        public:
+            Boundary(const Data& data, const Directions& directions);
+            iterator begin() const;
+            iterator end() const;
+        private:
+            const Data& data;
+            Directions directions;
+        };
+        Boundary BoundaryCondition(const Directions& dirs) const { return Boundary(*this, dirs); }
+
+        void Set(const Position& location, const Material& material, double temperature, double pressure);
+
+        unsigned Latitude() const;
+        unsigned Longitude() const;
+        unsigned Altitude() const;
+        Directions IsBoundary(const Position& p) const;
+        Engine::Vector FluxGradient(const Position& p) const;
+        float Density(const Position& p) const;
+        void SetDensity(const Position& p, float density);
+
+        class Flux
+        {
+        public:
+            Flux(const Position& offset, unsigned longitude, unsigned latitude, unsigned altitude);
+            float operator[](const Position& p) const;
+            float operator()(int x, int y, int z) const { return (*this)[Position(x, y, z)]; }
+            float& operator[](const Position& p);
+            
+            friend class iterator;
+            class iterator
+            {
+            public:
+                iterator(const Flux& data, const Position& start);
+                iterator(const Flux& data, const Position& start, const Position& end);
+
+                iterator& operator++();
+                bool operator==(const iterator& other) const;
+                bool operator!=(const iterator& other) const { return !((*this) == other); }
+                using value_type = std::pair<Position,float>;
+                value_type operator*() const;
+                Directions IsBoundary() const;
+
+                // iterator traits
+                using difference_type = Position;
+                using pointer = const float*;
+                using reference = const float&;
+                using iterator_category = std::forward_iterator_tag;
+
+                const Flux& data;
+                const Position start;
+                Position position;
+                const Position end;
+            };
+            iterator begin() const;
+            iterator end() const;
+            
+            class Boundary
+            {
+            public:
+                Boundary(const Flux& data, const Direction& direction);
+                iterator begin() const;
+                iterator end() const;
+            private:
+                const Flux& data;
+                Direction direction;
+            };
+            Boundary BoundaryCondition(const Direction& dir) const { return Boundary(*this, dir); }
+        private:
+            unsigned Index(const Position& p) const;
+            Directions IsBoundary(const Position& p) const;
+            Position offset;
+            unsigned longitude, latitude, altitude;
+            std::vector<float> flux;
+        };
+        const Flux& U() const { return u; }
+        Flux& U() { return u; }
+        const Flux& V() const { return v; }
+        Flux& V() { return v; }
+        const Flux& W() const { return w; }
+        Flux& W() { return w; }
+
     protected:
         Position Stride() const;
-        unsigned Index(const Position& p) const;
+        unsigned GridIndex(const Position& p) const;
     private:
         std::vector<const Material*> material;  // longitude+2, latitude+2, altitude+2
-        std::vector<float> p;           // density at the center. long,lat, alt +2 to interpolate at edge
-        std::vector<float> t;           // temperature at the center, to interpolate at edge, stride+2
-        std::vector<float> u, v, w;     // flux (long, lat, alt)+1 in direction
+        std::vector<float> density;         // density (g/L) at the center. long,lat, alt +2 to interpolate at edge
+        std::vector<float> temperature;     // temperature (K) at the center, to interpolate at edge, stride+2
+        Flux u, v, w;                       // flux (/s*m2)
         unsigned longitude, latitude, altitude;
     };
     Data voxels;
@@ -161,6 +242,7 @@ protected:
     double atmosphereRadius; // m
     double gravity;         // m/s^2
     float atmosphericTemperature;   // K at 0
+    Engine::Vector wind;
 };
 
 constexpr double PascalPerAtmosphere = 101325.0;        // Pa/Atm

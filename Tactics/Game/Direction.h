@@ -41,6 +41,8 @@ public:
     double Surface() const;  // in m^2
     double Angle() const;
 	Direction Opposite() const;
+    bool IsPosititve() const;
+    bool IsNegative() const;
     bool IsOpposite(const Direction& other) const;
     bool IsClockwise(const Direction& other) const;
     bool IsCounterClockwise(const Direction& other) const;
@@ -117,6 +119,7 @@ class Directions
 {
 public:
     Directions();
+    explicit Directions(Direction dir);
     explicit Directions(uint16_t flags);
 
     Directions& operator|=(const Direction& dir);
@@ -125,8 +128,34 @@ public:
     bool operator[](const Direction& dir) const;
     bool empty() const;
     operator bool() const;
+    static Directions all;
+
+    class iterator
+    {
+    public:
+        iterator(const uint16_t& flags, int bit);
+        iterator& operator++();
+        //iterator operator++(int);
+        bool operator==(const iterator& other) const;
+        bool operator!=(const iterator& other) const;
+        using value_type = const Direction;
+        value_type operator*() const;
+
+        // iterator traits
+        using difference_type = int;
+        using iterator_category = std::forward_iterator_tag;
+        int bit;
+        const uint16_t& flags;
+    };
+    iterator begin() const;
+    iterator end() const;
+
 private:
     uint16_t flags;
 };
+
+Directions operator|(const Direction& a, const Direction& b);
+Directions operator|(Directions dirs, const Direction& b);
+
 
 }    // ::Game

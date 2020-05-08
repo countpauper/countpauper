@@ -21,8 +21,17 @@ namespace Engine
         }
         Component r, g, b, a;
         void Render() const;
+        bool IsVisible() const;
+        operator bool() const { return IsVisible(); }
         RGBA operator*=(double factor);
         RGBA Translucent(double factor) const;
+
+        static RGBA transparent;
+        static RGBA white;
+        static RGBA black;
+        static RGBA red;
+        static RGBA green;
+        static RGBA blue;
     };
 
     RGBA operator*(const RGBA& color, double factor);

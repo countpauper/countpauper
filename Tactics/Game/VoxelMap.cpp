@@ -40,6 +40,7 @@ VoxelMap::VoxelMap() :
     atmosphericTemperature(273.15f)
 {
     World(planetRadius);
+    wind = Engine::Vector(0.3, 0.2, 0.1);
 }
 
 
@@ -94,7 +95,7 @@ void VoxelMap::Air(double temperature, double meters)
     {
         for (p.y = -1; p.y <= int(voxels.Latitude()); ++p.y)
         {
-            for (p.z = -1; p.z < int(voxels.Altitude()); ++p.z)
+            for (p.z = -1; p.z <= int(voxels.Altitude()); ++p.z)
             {
                 voxels.Set(p, Material::air,
                     AtmosphericTemperature(p.z),
@@ -196,10 +197,9 @@ Square VoxelMap::At(const Position& p) const
     }
     return voxels[Position(p.x,p.y,-1)].Square(0); // welcome to hell
 }
-
+/*
 void VoxelMap::ComputeForces(double seconds)
 {
-    /*
     // Flow
     for (auto& v : voxels)
     {
@@ -246,12 +246,13 @@ void VoxelMap::ComputeForces(double seconds)
             }
         }
     }
-    */
 }
+*/
 
+/*
 void VoxelMap::Diffuse(double seconds)
 {
-    /*
+
     const Data original = voxels;   // TODO can make more efficient partial copy
     auto it = original.begin();
     for (auto& v : voxels)
@@ -308,15 +309,15 @@ void VoxelMap::Diffuse(double seconds)
         }
         ++it;
     }
-    */
 }
+*/
 
+/*
 
 Position VoxelMap::MaxFlow() const
 {
     double maxSqrFlow = 0;
     Position maxLocation;
-    /*
     for (auto& v : voxels)
     {
         double sqr = v->flow.LengthSquared();
@@ -326,9 +327,9 @@ Position VoxelMap::MaxFlow() const
             maxLocation = v.position;
         }
     }
-    */
     return maxLocation;
 }
+*/
 
 unsigned VoxelMap::WindForce() const
 {
@@ -382,17 +383,17 @@ double VoxelMap::Mass() const
     return Mass(Directions(0xFFFF));
 }
 
-double VoxelMap::Mass(Directions excludeDirections) const
+double VoxelMap::Mass(Directions boundaries) const
 {
-    return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&excludeDirections](double runningTotal, const decltype(voxels)::value_type& v)
+    return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&boundaries](double runningTotal, const decltype(voxels)::value_type& v)
     {
         return runningTotal + v.Mass();
     });
 }
-
+/*
 void VoxelMap::Advection(double seconds)
 {
-    /*
+
     const Data original = voxels;   
     auto it = original.begin();
     Engine::Vector maxFlow = voxels[MaxFlow()].flow * seconds;
@@ -446,7 +447,79 @@ void VoxelMap::Advection(double seconds)
             }
         }
     }
-    */
+}
+*/
+
+
+void VoxelMap::FluxBoundary()
+{
+    for (auto d : Direction::all)
+    {
+        for (auto u : voxels.U().BoundaryCondition(d))
+        {
+            voxels.U()[u.first] = wind.x;
+        }
+        for (auto v : voxels.V().BoundaryCondition(d))
+        {
+            voxels.V()[v.first] = wind.y;
+        }
+        for (auto w : voxels.W().BoundaryCondition(d))
+        {
+            voxels.W()[w.first] = wind.z;
+        }
+    }
+}
+
+void VoxelMap::GridBoundary()
+{
+
+}
+
+void VoxelMap::Flow(double dt)
+{
+    const Data::Flux oU = voxels.U();
+    const Data::Flux oV = voxels.V();
+    const Data::Flux oW = voxels.W();
+    // U Flow
+    Position p;
+    for (p.x = 1; p.x < int(voxels.Longitude()); ++p.x)
+    {
+        for (p.y = 0; p.y < int(voxels.Latitude()); ++p.y)
+        {
+            for (p.z = 0; p.z < int(voxels.Altitude()); ++p.z)
+            {
+                constexpr double dx = HorizontalEl*MeterPerEl;
+                constexpr double dy = HorizontalEl*MeterPerEl;
+                constexpr double dz = VerticalEl*MeterPerEl;
+
+                double duudx = (Engine::sqr(oU(p.x + 1, p.y, p.z)) - Engine::sqr(oU(p.x - 1, p.y, p.z))) / (2.0*dx);
+                double duvdy = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
+                    - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x+1, p.y-1, p.z) + oV(p.x, p.y-1, p.z)))/dy;
+                double duwdz = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x + 1, p.y, p.z))
+                    - (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x + 1, p.y, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dz;
+                double dpdx = (voxels.Density(p) - voxels.Density(Position(p.x - 1, p.y, p.z)))/dx;
+                double Reynolds = 100.0; 
+                double diff = (1.0/Reynolds) *
+                    ((oU(p.x + 1, p.y, p.z) - 2.0*oU(p.x, p.y, p.z) + oU(p.x - 1, p.y, p.z)) / (dx*dx) +
+                     (oU(p.x, p.y + 1, p.z) + 2.0*oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) / (dy*dy) +
+                     (oU(p.x, p.y, p.z + 1) + 2.0*oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) / (dz*dz));
+                voxels.U()[p] += float(dt * (diff - duudx - duvdy - duwdz - dpdx));
+            }
+        }
+    }
+    FluxBoundary();
+}
+
+void VoxelMap::Continuity(double seconds)
+{   
+    for (auto it = voxels.begin(); it!=voxels.end(); ++it)
+    {
+        auto fluxGradient = voxels.FluxGradient(it.position);
+        auto p = voxels.Density(it.position);
+        auto dP = fluxGradient.x * fluxGradient.y * fluxGradient.z * seconds;
+        voxels.SetDensity(it.position, float(p + dP));
+    }
+    GridBoundary();
 }
 
 
@@ -457,9 +530,9 @@ void VoxelMap::Tick(double seconds)
     //  With incompressible flow, as long as it stays under 111m/s (mach 0.3) is simpler
  
     Engine::Timer start;
-    Diffuse(seconds);
-    ComputeForces(seconds);
-    Advection(seconds);
+    Flow(seconds);
+    Continuity(seconds);
+   
     time += seconds;
     double performance = start.Seconds();
 
@@ -487,12 +560,12 @@ void VoxelMap::RenderPretty() const
     for (auto& v : voxels)
     {
         glPushMatrix();
-        glTranslated(v.position.x-1, (v.position.z-1)*MeterPerEl, v.position.y-1); // offset by -1,-1,-1 for boundary
+        glTranslated(v.position.x, v.position.z*MeterPerEl, v.position.y); // offset by -1,-1,-1 for boundary
         if (v.Opaque())
         {
             if (auto visibility = Visibility(v.position))
             {
-                v.Render(v.position, visibility, false);
+                v.Render(v.position, visibility);
             }
         }
         glPopMatrix();
@@ -504,7 +577,7 @@ void VoxelMap::RenderPretty() const
     for (auto& v : voxels)
     {
         glPushMatrix();
-        glTranslated(v.position.x - 1, (v.position.z - 1)*MeterPerEl, v.position.y - 1); // offset by -1,-1,-1 for boundary
+        glTranslated(v.position.x, v.position.z*MeterPerEl, v.position.y); // offset by -1,-1,-1 for boundary
         if (!v.Opaque() && !v.Transparent())
         {
             auto visibility = Visibility(v.position);
@@ -529,10 +602,73 @@ void VoxelMap::RenderAnalysis() const
     for (auto& v : voxels)
     {
         glPushMatrix();
-        glTranslated(v.position.x-1, (v.position.z-1)*MeterPerEl, v.position.y-1);
-        v.Render(v.position, Directions(0xFFFF), true);
+        glTranslated(v.position.x, v.position.z*MeterPerEl, v.position.y);
+        v.Render(v.position, Directions(0xFFFF), Engine::RGBA::red);
         glPopMatrix();
     }
+
+
+    glColor3d(1, 1, 1);
+    Position p;
+    for (auto u : voxels.U())
+    {
+        glPushMatrix();
+        glTranslated(u.first.x, (u.first.z + 0.5)*MeterPerEl, u.first.y + 0.5);
+        Engine::glDrawArrow(Engine::Vector(u.second, 0, 0));
+        glPopMatrix();
+    }
+    for (auto v : voxels.V())
+    {
+        glPushMatrix();
+        glTranslated(v.first.x + 0.5, (v.first.z + 0.5)*MeterPerEl, v.first.y);
+        Engine::glDrawArrow(Engine::Vector(0, 0, v.second));
+        glPopMatrix();
+    }
+    for (auto w : voxels.W())
+    {
+        glPushMatrix();
+        glTranslated(w.first.x + 0.5, w.first.z*MeterPerEl, w.first.y + 0.5);
+        Engine::glDrawArrow(Engine::Vector(0, w.second, 0));
+        glPopMatrix();
+    }
+    glColor3d(0.5, 0.5, 0.5);
+    for (auto d : Direction::all)
+    {
+        for (auto u : voxels.U().BoundaryCondition(d))
+        {
+            double v = u.first;
+            glPushMatrix();
+            glTranslated(u.first.x, (u.first.z + 0.5)*MeterPerEl, u.first.y + 0.5);
+            Engine::glDrawArrow(Engine::Vector(u.second, 0, 0));
+            glPopMatrix();
+        }
+        for (auto v : voxels.V().BoundaryCondition(d))
+        {
+            glPushMatrix();
+            glTranslated(v.first.x + 0.5, (v.first.z + 0.5)*MeterPerEl, v.first.y);
+            Engine::glDrawArrow(Engine::Vector(0, 0, v.second));
+            glPopMatrix();
+        }
+        for (auto w : voxels.W().BoundaryCondition(d))
+        {
+            glPushMatrix();
+            glTranslated(w.first.x + 0.5, w.first.z*MeterPerEl, w.first.y + 0.5);
+            Engine::glDrawArrow(Engine::Vector(0, w.second, 0));
+            glPopMatrix();
+        }
+    }
+
+    for (auto d : Direction::all)
+    {
+        for (auto v : voxels.BoundaryCondition(Directions(d)))
+        {
+            glPushMatrix();
+            glTranslated(v.position.x, v.position.z*MeterPerEl, v.position.y);
+            v.Render(v.position, Directions(0xFFFF), Engine::RGBA::white);
+            glPopMatrix();
+        }
+    }
+
     Engine::CheckGLError();
 }
 

@@ -59,7 +59,7 @@ namespace Game
     {
         x -= delta.x;
         y -= delta.y;
-        y -= delta.z;
+        z -= delta.z;
         return *this;
     }
     Position::operator bool() const

@@ -13,6 +13,8 @@ TEST(DirectionTest, None)
 {
     EXPECT_TRUE(Direction().IsNone());
 	EXPECT_TRUE(Direction::none.IsNone());
+    EXPECT_FALSE(Direction::none.IsPosititve());
+    EXPECT_FALSE(Direction::none.IsNegative());
 }
 
 TEST(DirectionTest, CardinalPositions)
@@ -56,6 +58,23 @@ TEST(DirectionTest, Opposite)
 	EXPECT_TRUE(Direction::south.IsOpposite(Direction::south.Opposite()));
 	EXPECT_TRUE(Direction::down.IsOpposite(Direction::down.Opposite()));
 }
+
+TEST(DirectionTest, PositiveNegative)
+{
+    EXPECT_TRUE(Direction::east.IsPosititve() ^ Direction::west.IsPosititve());
+    EXPECT_TRUE(Direction::north.IsPosititve() ^ Direction::south.IsPosititve());
+    EXPECT_TRUE(Direction::up.IsPosititve() ^ Direction::down.IsPosititve());
+  
+    EXPECT_TRUE(Direction::east.IsNegative() ^ Direction::west.IsNegative());
+    EXPECT_TRUE(Direction::north.IsNegative() ^ Direction::south.IsNegative());
+    EXPECT_TRUE(Direction::up.IsNegative() ^ Direction::down.IsNegative());
+
+    for (auto dir : Direction::all)
+    {
+        EXPECT_TRUE(dir.IsPosititve() ^ dir.IsNegative()) << dir;
+    }
+}
+
 
 TEST(DirectionTest, Angles)
 {
@@ -168,4 +187,53 @@ TEST(DirectionTest, Turn)
 	EXPECT_EQ(Direction::down.Turn(Direction::up), Direction::up);
 }
 
+
+TEST(Directions, Empty)
+{   // Default initialized directions are empty
+    Directions dirs; 
+    EXPECT_FALSE(dirs);
+    EXPECT_TRUE(dirs.empty());
+    EXPECT_TRUE(dirs.begin() == dirs.end());
+    EXPECT_FALSE(dirs[Direction::none]);
+    EXPECT_FALSE(dirs[Direction::north]);
+}
+
+TEST(Directions, Single)
+{   // Initializing with one directions means it's contained
+    Directions dirs(Direction::north);
+    EXPECT_TRUE(dirs);
+    EXPECT_FALSE(dirs.empty());
+    EXPECT_EQ(Direction::north, *dirs.begin());
+
+    EXPECT_FALSE(dirs[Direction::none]);
+    EXPECT_TRUE(dirs[Direction::north]);
+}
+
+TEST(Directions, None)
+{   // None is a direction and can be represented
+    Directions dirs(Direction::none);
+    EXPECT_TRUE(dirs);
+    EXPECT_FALSE(dirs.empty());
+    EXPECT_EQ(Direction::none, *dirs.begin());
+
+    EXPECT_TRUE(dirs[Direction::none]);
+    EXPECT_FALSE(dirs[Direction::north]);
+}
+
+TEST(Directions, All)
+{   // The Directions::all contains all directions except none
+    EXPECT_TRUE(Directions::all);
+    EXPECT_FALSE(Directions::all.empty());
+
+    EXPECT_FALSE(Directions::all[Direction::none]);
+    EXPECT_TRUE(Directions::all[Direction::north]);
+    EXPECT_TRUE(Directions::all[Direction::down]);
+}
+
+TEST(Directions, Operation)
+{   // The Directions::all contains all directions except none
+    EXPECT_TRUE((Directions() | Direction::north)[Direction::north]);
+    EXPECT_TRUE((Direction::north | Direction::south)[Direction::south] );
+
+}
 }}  // Test

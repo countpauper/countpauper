@@ -145,11 +145,25 @@ Engine::RGBA VoxelMap::Voxel::Color() const
     return color;
 }
 
-void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility, bool analysis) const
+void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility, Engine::RGBA analysisColor) const
 {
+
+    if (analysisColor)
+    {
+        analysisColor.Render();
+        glPushMatrix();
+        glTranslated(0.25, 0.25* MeterPerEl, 0.25);
+        Engine::glText(std::to_string(Pressure() / PascalPerAtmosphere));
+        // Engine::Vector flowArrow(flow.x, flow.z, flow.y);
+        //double length = 0.5 - (0.5 / flowArrow.Length());
+        //flowArrow = flowArrow.Normal()*length;
+        // glDrawArrow(flowArrow);
+        glPopMatrix();
+    }
+
     auto c = Color();
     c.Render();
-    unsigned mode = analysis ? GL_LINE_LOOP : GL_QUADS;
+    unsigned mode = analysisColor ? GL_LINE_LOOP : GL_QUADS;
     if (visibility[Direction::south])
     {
         glPushName(LocationName(p, Direction::south));
@@ -215,18 +229,6 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility, bo
         glPopName();
     }
 
-    if (analysis)
-    {
-        glColor3d(1, 0, 0);
-        glPushMatrix();
-        glTranslated(0.25, 0.25* MeterPerEl, 0.25);
-        Engine::glText(std::to_string(Pressure() / PascalPerAtmosphere));
-        // Engine::Vector flowArrow(flow.x, flow.z, flow.y);
-        //double length = 0.5 - (0.5 / flowArrow.Length());
-        //flowArrow = flowArrow.Normal()*length;
-        // glDrawArrow(flowArrow);
-        glPopMatrix();
-    }
 }
 
 

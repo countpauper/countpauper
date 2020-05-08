@@ -217,6 +217,16 @@ Direction Direction::Opposite() const
 }
 
 
+bool Direction::IsPosititve() const
+{
+    return (value & Negative) == 0 && value != 0;
+}
+
+bool Direction::IsNegative() const
+{
+    return (value & Negative) != 0 && value != 0;
+}
+
 bool Direction::IsOpposite(const Direction& other) const
 {
 	if ((other.value & Plane) != (value & Plane))
@@ -348,17 +358,29 @@ std::map<Direction::Value, std::wstring> Direction::description =
 };
 
 
+Directions Directions::all =
+    Direction::north | 
+    Direction::south | 
+    Direction::east | 
+    Direction::west | 
+    Direction::up | 
+    Direction::down;
 
 Directions::Directions() :
     Directions(0)
 {
 }
 
+Directions::Directions(Direction dir) :
+    Directions()
+{
+    (*this) |= dir;
+}
+
 Directions::Directions(uint16_t flags) :
     flags(flags)
 {
 }
-
 
 Directions& Directions::operator|=(const Direction& dir)
 {
@@ -381,6 +403,47 @@ Directions::operator bool() const
     return !empty();
 }
 
+Directions::iterator::iterator(const uint16_t& flags, int start) : 
+    bit(start -1),
+    flags(flags)
+{
+    operator++();
+}
+
+Directions::iterator& Directions::iterator::operator++()
+{
+    while (++bit < sizeof(flags) * 8)
+    {
+        if (flags & (1<<bit))
+            return *this;
+    }
+    return *this;
+}
+
+bool Directions::iterator::operator==(const Directions::iterator& other) const
+{
+    return bit == other.bit && flags == other.flags;
+}
+
+bool Directions::iterator::operator!=(const Directions::iterator& other) const
+{
+    return !((*this) == other);
+}
+
+Directions::iterator::value_type Directions::iterator::operator*() const
+{
+    return Direction(uint8_t(bit));
+}
+
+Directions::iterator Directions::begin() const
+{
+    return iterator(flags, 0);
+}
+
+Directions::iterator Directions::end() const
+{
+    return iterator(flags, sizeof(flags) * 8);
+}
 
 Directions& Directions::operator&=(const Directions& dirs)
 {
@@ -401,6 +464,17 @@ Directions& operator|(const Directions& a, const Directions& b)
 Directions& operator&(const Directions& a, const Directions& b)
 {
     return Directions(a) &= b;
+}
+
+
+Directions operator|(const Direction& a, const Direction& b) 
+{ 
+    return Directions(a) |= b; 
+}
+
+Directions operator|(Directions dirs, const Direction& b) 
+{ 
+    return dirs |= b; 
 }
 
 }    // ::Game

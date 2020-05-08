@@ -5,20 +5,41 @@
 namespace Engine
 {
 
+template<typename T>
 struct Range
 {
     Range() = default;
-    Range(double begin, double end);
+    Range(T begin, T end) :
+        begin(begin),
+        end(end)
+    {
+    }
 
-    operator bool() const;
-    double Size() const;
+    operator bool() const
+    {
+        return end > begin;
+    }
+    T Size() const
+    {
+        return end - begin;
+    }
 
-    double begin;
-    double end;
+    T begin;
+    T end;
 };
 
-Range operator|(const Range& a, const Range& b);
-Range operator&(const Range& a, const Range& b);
+template<typename T>
+Range<T> operator|(const Range<T>& a, const Range<T>& b)
+{
+    return Range(std::min(a.begin, b.begin), std::max(a.end, b.end));
+}
+
+template<typename T>
+Range<T> operator&(const Range<T>& a, const Range<T>& b)
+{
+    auto begin = std::max(a.begin, b.begin);
+    return Range(begin, std::max(begin, std::min(a.end, b.end)));
+}
 
 
 }

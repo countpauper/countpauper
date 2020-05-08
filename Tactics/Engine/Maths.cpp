@@ -20,4 +20,8 @@ namespace Engine
         return (a + b)*0.5;
     }
 
+    double Sqr(double v) 
+    { 
+        return v * v; 
+    }
 }

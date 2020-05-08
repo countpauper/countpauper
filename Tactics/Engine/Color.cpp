@@ -46,4 +46,17 @@ namespace Engine
         RGBA result(color);
         return result *= factor;
     }
+
+    bool RGBA::IsVisible() const
+    {
+        return a > 0;
+    }
+
+    RGBA RGBA::transparent(0, 0, 0, 0);
+    RGBA RGBA::white(255, 255, 255);
+    RGBA RGBA::black(0, 0, 0);
+    RGBA RGBA::red(255, 0, 0);
+    RGBA RGBA::green(0, 255, 0);
+    RGBA RGBA::blue(0, 0, 255);
+
 }   // ::Engine
