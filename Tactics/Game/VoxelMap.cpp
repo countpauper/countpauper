@@ -43,8 +43,6 @@ VoxelMap::VoxelMap() :
     wind = Engine::Vector(0.2, -0.1, 0.01);
 }
 
-
-
 void VoxelMap::Space(unsigned x, unsigned y, unsigned z)
 {
     voxels = Data(x, y, z);
@@ -334,10 +332,12 @@ Position VoxelMap::MaxFlow() const
 
 unsigned VoxelMap::WindForce() const
 {
-    return 0;
-    /*
-    const auto& voxel = voxels[MaxFlow()];
-    auto speed = voxel.flow.Length();   // m/s
+    double speed = 0;
+    for (auto v : voxels)
+    {
+        auto flow = voxels.Flow(v.position);
+        speed = std::max(speed, flow.Length());
+    }
     constexpr std::array<double, 12> beaufortScale = { 0.2, 1.5, 3.3, 5.4, 7.9, 10.7, 13.8, 17.1, 20.7, 24.4, 28.4, 32.6 };
     unsigned beaufort = 0;
     for (auto force : beaufortScale)
@@ -347,7 +347,6 @@ unsigned VoxelMap::WindForce() const
         beaufort++;
     }
     return beaufort;
-    */
 }
 
 double VoxelMap::Volume() const

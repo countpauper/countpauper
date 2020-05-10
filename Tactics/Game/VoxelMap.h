@@ -158,12 +158,12 @@ protected:
         void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
         void AdjustGrid(const Position& location, double temperature, double density);
 
-
         unsigned Latitude() const;
         unsigned Longitude() const;
         unsigned Altitude() const;
         Directions IsBoundary(const Position& p) const;
-        Engine::Vector FluxGradient(const Position& p) const;
+        Engine::Vector FluxGradient(const Position& p) const;   // in g/m2
+        Engine::Vector Flow(const Position& location) const;  // in meters/second
         float Density(const Position& p) const;
         void SetDensity(const Position& p, float density);
 

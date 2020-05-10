@@ -112,6 +112,29 @@ Directions VoxelMap::Data::IsBoundary(const Position& p) const
     return result;
 }
 
+Engine::Vector VoxelMap::Data::Flow(const Position& p) const
+{
+    // Q = flux (kg/sm2) / density (kg/m3),     https://en.wikipedia.org/wiki/Volumetric_flow_rate
+    Engine::Vector Q(
+        0.5*(u[Position(p.x + 1, p.y, p.z)] + u[p]),
+        0.5*(v[Position(p.x, p.y + 1, p.z)] + v[p]),
+        0.5*(w[Position(p.x, p.y, p.z + 1)] + w[p]));
+    auto gridDensity = density[GridIndex(p)];
+    Q /= gridDensity;
+
+    // v(m/s) = Q/A (Q = volume flow rate (m3/s), A = area(m2)) https://en.wikipedia.org/wiki/Flow_velocity
+    constexpr double uSurface = HorizontalEl * VerticalEl * MeterPerEl * MeterPerEl;
+    constexpr double vSurface = uSurface;
+    constexpr double wSurface = HorizontalEl * HorizontalEl * MeterPerEl * MeterPerEl;
+    Engine::Vector flow_velocity(
+        Q.x / uSurface,
+        Q.y / vSurface,
+        Q.z / wSurface
+    );
+    return flow_velocity;
+}
+
+
 
 Engine::Vector VoxelMap::Data::FluxGradient(const Position& p) const
 {
