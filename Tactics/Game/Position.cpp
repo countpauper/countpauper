@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <sstream>
-#include "Engine/Geometry.h"
+#include "Engine/Maths.h"
 #include "Game/Position.h"
 
 namespace Game
@@ -22,29 +22,29 @@ namespace Game
 
     float Position::Size() const
     {
-        return std::sqrtf(Engine::sqr(float(x)) + Engine::sqr(float(y))+Engine::sqr(float(z)));
+        return std::sqrtf(Engine::Sqr(float(x)) + Engine::Sqr(float(y))+Engine::Sqr(float(z)));
     }
 
     unsigned Position::SizeEl() const
     {
         return static_cast<unsigned>(std::round(std::sqrtf(
-            Engine::sqr(float(HorizontalEl*x)) +
-            Engine::sqr(float(HorizontalEl*y)) +
-            Engine::sqr(float(VerticalEl*z)))
+            Engine::Sqr(float(HorizontalEl*x)) +
+            Engine::Sqr(float(HorizontalEl*y)) +
+            Engine::Sqr(float(VerticalEl*z)))
         ));
     }
 
     float Position::Distance(const Position& other) const
     {
-        return std::sqrtf(Engine::sqr(float(other.x - x)) + Engine::sqr(float(other.y - y)) + Engine::sqr(float(other.z -z)));
+        return std::sqrtf(Engine::Sqr(float(other.x - x)) + Engine::Sqr(float(other.y - y)) + Engine::Sqr(float(other.z -z)));
     }
 
     unsigned Position::DistanceEl(const Position& other) const
     {
         return static_cast<unsigned>(std::round(std::sqrtf(
-            Engine::sqr(float(HorizontalEl*(other.x - x))) + 
-            Engine::sqr(HorizontalEl * (other.y - y)) +
-            Engine::sqr(VerticalEl* (other.z - z)) 
+            Engine::Sqr(float(HorizontalEl*(other.x - x))) +
+            Engine::Sqr(HorizontalEl * (other.y - y)) +
+            Engine::Sqr(VerticalEl* (other.z - z))
             )+0.0132)); // special bias so DistanceEl(3,1) > DistanceEl(3,0) 
     }
 

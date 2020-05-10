@@ -40,7 +40,7 @@ VoxelMap::VoxelMap() :
     atmosphericTemperature(273.15f)
 {
     World(planetRadius);
-    wind = Engine::Vector(0.3, 0.2, 0.1);
+    wind = Engine::Vector(0.2, -0.1, 0.01);
 }
 
 
@@ -57,7 +57,7 @@ void VoxelMap::World(double radius)
     {
         for (unsigned y = 0; y < voxels.Latitude(); ++y)
         {
-            voxels.Set(Position(x, y, -1),
+            voxels.SetPressure(Position(x, y, -1),
                 Material::stone,
                 (Material::stone.melt + Material::stone.boil) / 2.0,
                 PascalPerAtmosphere);
@@ -97,8 +97,9 @@ void VoxelMap::Air(double temperature, double meters)
         {
             for (p.z = -1; p.z <= int(voxels.Altitude()); ++p.z)
             {
-                voxels.Set(p, Material::air,
-                    AtmosphericTemperature(p.z),
+                auto temperature = AtmosphericTemperature(p.z);
+                voxels.SetPressure(p, Material::air,
+                    temperature,
                     AtmosphericPressure(p.z));
             }
         }
@@ -115,7 +116,7 @@ void VoxelMap::Water(int level, double temperature)
             for (p.z = -1; p.z < level; ++p.z)
             {
                 double pressure = AtmosphericPressure(p.z) + (level - p.z)*VerticalEl*MeterPerEl * 10.33; // TODO: calculate based on water material
-                voxels.Set(p,
+                voxels.SetPressure(p,
                     Material::water,
                     temperature,
                     pressure);
@@ -142,7 +143,7 @@ void VoxelMap::Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, 
             maxZ = std::min(maxZ, int(voxels.Altitude()));
             for (p.z = 0; p.z < maxZ; ++p.z)
             {
-                voxels.Set(p,
+                voxels.SetPressure(p,
                     Material::stone,
                     atmosphericTemperature, // TODO: decrease from air increase to lava
                     PascalPerAtmosphere);   // TODO: increase due to stone depth, NB: can be already overlapping stone layer. just dont place those
@@ -472,7 +473,28 @@ void VoxelMap::FluxBoundary()
 
 void VoxelMap::GridBoundary()
 {
+    for (auto d : Direction::all)
+    {
+        for (auto v : voxels.BoundaryCondition(Directions(d)))
+        {
+            if (&v.material == &Material::air)
+            {
+                auto realPosition = v.position - d.Vector();
+                const Voxel realWorld = voxels[realPosition];
+                float boundaryTemperature = AtmosphericTemperature(v.position.z);
+                float boundaryDensity = float(realWorld.material.Density(AtmosphericPressure(v.position.z), boundaryTemperature));
 
+                // extrapolate to set
+                voxels.AdjustGrid(v.position, 
+                    Engine::Lerp(realWorld.temperature, boundaryTemperature, 2.0),
+                    Engine::Lerp(realWorld.density, boundaryDensity, 2.0));
+            }
+            else
+            {
+                assert(false); // TODO: at least water 
+            }
+        }
+    }
 }
 
 void VoxelMap::Flow(double dt)
@@ -492,7 +514,7 @@ void VoxelMap::Flow(double dt)
                 constexpr double dy = HorizontalEl*MeterPerEl;
                 constexpr double dz = VerticalEl*MeterPerEl;
 
-                double duudx = (Engine::sqr(oU(p.x + 1, p.y, p.z)) - Engine::sqr(oU(p.x - 1, p.y, p.z))) / (2.0*dx);
+                double duudx = (Engine::Sqr(oU(p.x + 1, p.y, p.z)) - Engine::Sqr(oU(p.x - 1, p.y, p.z))) / (2.0*dx);
                 double duvdy = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
                     - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x+1, p.y-1, p.z) + oV(p.x, p.y-1, p.z)))/dy;
                 double duwdz = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x + 1, p.y, p.z))
@@ -517,7 +539,7 @@ void VoxelMap::Continuity(double seconds)
         auto fluxGradient = voxels.FluxGradient(it.position);
         auto p = voxels.Density(it.position);
         auto dP = fluxGradient.x * fluxGradient.y * fluxGradient.z * seconds;
-        voxels.SetDensity(it.position, float(p + dP));
+        voxels.SetDensity(it.position, float(p - dP));
     }
     GridBoundary();
 }

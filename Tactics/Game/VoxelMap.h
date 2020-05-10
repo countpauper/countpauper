@@ -155,7 +155,9 @@ protected:
         };
         Boundary BoundaryCondition(const Directions& dirs) const { return Boundary(*this, dirs); }
 
-        void Set(const Position& location, const Material& material, double temperature, double pressure);
+        void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
+        void AdjustGrid(const Position& location, double temperature, double density);
+
 
         unsigned Latitude() const;
         unsigned Longitude() const;

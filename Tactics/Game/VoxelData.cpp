@@ -183,16 +183,16 @@ VoxelMap::Data::iterator VoxelMap::Data::Boundary::begin() const
         {
             if (dir.IsNegative())
             {
-                //                          if axis(==-1): -1 else  ... still -1 (for corner)
-                start.x = std::min(start.x, -1);
-                start.y = std::min(start.y, -1);
-                start.z = std::min(start.z, -1);
+                //                          if axis(==-1): -1 else  ... still -0 (ignore corner)
+                start.x = std::min(start.x, dir.Vector().x);
+                start.y = std::min(start.y, dir.Vector().y);
+                start.z = std::min(start.z, dir.Vector().z);
             }
             else if (dir.IsPosititve())
-            {                               // if axis(==1): long/lat/alt       else  -1 (for corner)
-                start.x = std::min(start.x, dir.Vector().x * int(data.longitude) + dir.Vector().x - 1);
-                start.y = std::min(start.y, dir.Vector().y * int(data.latitude) + dir.Vector().y - 1);
-                start.z = std::min(start.z, dir.Vector().z * int(data.altitude) + dir.Vector().z - 1);
+            {                               // if axis(==1): long/lat/alt       else  0 (no corner)
+                start.x = std::min(start.x, dir.Vector().x * int(data.longitude));
+                start.y = std::min(start.y, dir.Vector().y * int(data.latitude) );
+                start.z = std::min(start.z, dir.Vector().z * int(data.altitude) );
             }
         }
         return iterator(data, start, end().position);
@@ -221,16 +221,16 @@ VoxelMap::Data::iterator VoxelMap::Data::Boundary::end() const
         for (auto dir : directions)
         {
             if (dir.IsNegative())
-            {  //           if axis(==-1): 0, else long/lat/alt + 1 (grid limit) 
-                stop.x = std::max(stop.x, (1 + dir.Vector().x) * (int(data.longitude) + 1));
-                stop.y = std::max(stop.y, (1 + dir.Vector().y) * (int(data.latitude) + 1));
-                stop.z = std::max(stop.z, (1 + dir.Vector().z) * (int(data.altitude) + 1));
+            {  //           if axis(==-1): 0, else long/lat/alt, inside limit
+                stop.x = std::max(stop.x, (1 + dir.Vector().x) * (int(data.longitude)));
+                stop.y = std::max(stop.y, (1 + dir.Vector().y) * (int(data.latitude)));
+                stop.z = std::max(stop.z, (1 + dir.Vector().z) * (int(data.altitude)));
             }
             else if (dir.IsPosititve())
-            {   //          if axis(==1): grid limit else still grid limit
-                stop.x = std::max(stop.x, (int(data.longitude) + 1));
-                stop.y = std::max(stop.y, (int(data.latitude) + 1));
-                stop.z = std::max(stop.z, (int(data.altitude) + 1));
+            {   //          if axis(==1): grid limit = long/alt/lat+1, else inside limit
+                stop.x = std::max(stop.x, dir.Vector().x + (int(data.longitude)));
+                stop.y = std::max(stop.y, dir.Vector().y + (int(data.latitude)));
+                stop.z = std::max(stop.z, dir.Vector().z + (int(data.altitude)));
             }
         }
 
@@ -239,12 +239,19 @@ VoxelMap::Data::iterator VoxelMap::Data::Boundary::end() const
 }
 
 
-void VoxelMap::Data::Set(const Position& position, const Material& material, double temperature, double pressure)
+void VoxelMap::Data::SetPressure(const Position& position, const Material& material, double temperature, double pressure)
 {
     auto index = GridIndex(position);
     this->material[index] = &material;
     this->temperature[index] = float(temperature);
-    density[index] = float(material.Density(pressure, temperature));
+    this->density[index] = float(material.Density(pressure, temperature));
+}
+
+void VoxelMap::Data::AdjustGrid(const Position& position, double temperature, double density)
+{
+    auto index = GridIndex(position);
+    this->temperature[index] = float(temperature);
+    this->density[index] = float(density);
 }
 
 bool VoxelMap::Data::IsInside(const Position& p) const
@@ -390,13 +397,15 @@ VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::Boundary::begin() const
     if (direction.IsPosititve())
     {
         Position start(
-            (data.longitude- 1) * direction.Vector().x + data.offset.x * (1 - direction.Vector()),
-            (data.latitude - 1) * direction.Vector().y + data.offset.y * (1 - direction.Vector()),
-            (data.altitude - 1) * direction.Vector().z + data.offset.z * (1 - direction.Vector()));
+            // if direction(==1) start 1 from end       else       start at (offset-offset)=0
+            direction.Vector().x * (data.longitude - 1) +(direction.Vector().x-1) * data.offset.x,
+            direction.Vector().y * (data.latitude - 1) + (direction.Vector().y-1) * data.offset.y,
+            direction.Vector().z * (data.altitude - 1) + (direction.Vector().z-1) * data.offset.z);
         return Flux::iterator(data, start + data.offset, end().position);
     }
     else if (direction.IsNegative())
     {
+        // Start at 0,0,0 index position always, either for border direction or perpendicular range
         Position start(0, 0, 0);
         return Flux::iterator(data, start + data.offset, end().position);
     }
@@ -409,16 +418,17 @@ VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::Boundary::begin() const
 VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::Boundary::end() const
 {
     if (direction.IsPosititve())
-    {
+    {   // end at long/lat/alt index position always, either for border direction or perpendicular range
         Position stop(data.longitude, data.latitude, data.altitude) ;
         return Flux::iterator(data, stop + data.offset, stop + data.offset);
     }
     else if (direction.IsNegative())
     {
         Position stop(
-            data.longitude* (1+direction.Vector().x) - data.offset - direction.Vector(),
-            data.latitude * (1+direction.Vector().y) - data.offset - direction.Vector(),
-            data.altitude * (1+direction.Vector().z) - data.offset - direction.Vector());
+            //  if direction(==-1): stop at 1+(offset-offset) index, else: stop at end of perpendicular index range
+            direction.Vector().x * (data.offset.x-1) + (1 + direction.Vector().x) * data.longitude,
+            direction.Vector().y * (data.offset.y-1) + (1 + direction.Vector().y) * data.latitude,
+            direction.Vector().z * (data.offset.z-1) + (1 + direction.Vector().z) * data.altitude   );
         return Flux::iterator(data, stop + data.offset, stop + data.offset);
     }
     else
