@@ -49,6 +49,7 @@ public:
     void Space(unsigned x, unsigned y, unsigned z); // Day 0 there is nothing
     void World(double radius);
     void Air(double temperature, double meters);     // Day 1 the sky
+    void Wind(const Engine::Vector& speed);     // direction in meter/second
     void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
     void Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, float stddev);
 
@@ -105,8 +106,9 @@ protected:
     Directions Visibility(const Position& p) const;
     Position MaxFlow() const;
     double Mass(class Directions directions) const;
-    float AtmosphericTemperature(int z) const;
-    float AtmosphericPressure(int z) const;
+    double Elevation(int z) const;
+    float AtmosphericTemperature(double elevation) const;
+    float AtmosphericPressure(double elevation) const;
 protected:
     class Data
     {
@@ -170,11 +172,12 @@ protected:
         class Flux
         {
         public:
-            Flux(const Position& offset, unsigned longitude, unsigned latitude, unsigned altitude);
+            Flux(const Direction direction, unsigned longitude, unsigned latitude, unsigned altitude);
             float operator[](const Position& p) const;
             float operator()(int x, int y, int z) const { return (*this)[Position(x, y, z)]; }
             float& operator[](const Position& p);
-            
+            double Gradient(const Position& p) const;
+
             friend class iterator;
             class iterator
             {
@@ -217,6 +220,8 @@ protected:
         private:
             unsigned Index(const Position& p) const;
             Directions IsBoundary(const Position& p) const;
+
+            Direction direction;
             Position offset;
             unsigned longitude, latitude, altitude;
             std::vector<float> flux;

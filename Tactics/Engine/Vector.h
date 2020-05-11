@@ -45,4 +45,8 @@ Vector operator+(const Vector& a, const Vector& b);
 Vector operator-(const Vector& a, const Vector& b);
 Vector operator-(const Coordinate& a, const Coordinate& b);
 
+std::ostream& operator<<(std::ostream& s, const Vector& vector);
+std::wostream& operator<<(std::wostream& s, const Vector& vector);
+std::wistream& operator>>(std::wistream& s, Vector& vector);
+
 } // ::Engine

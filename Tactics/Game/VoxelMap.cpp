@@ -37,10 +37,10 @@ VoxelMap::VoxelMap() :
     gravity(-10.0),
     planetRadius(6.371e6),  // assume earth sized planet
     atmosphereRadius(2e5),  // assume earth atmosphere
-    atmosphericTemperature(273.15f)
+    atmosphericTemperature(273.15f),
+    wind(0,0,0)
 {
     World(planetRadius);
-    wind = Engine::Vector(0.2, -0.1, 0.01);
 }
 
 void VoxelMap::Space(unsigned x, unsigned y, unsigned z)
@@ -68,17 +68,20 @@ void VoxelMap::World(double radius)
     gravity = G * worldMass / (planetRadius*planetRadius);
 }
 
-
-
-float VoxelMap::AtmosphericTemperature(int z) const
+double VoxelMap::Elevation(int z) const
 {
-    double atmosphericLapse = atmosphericTemperature / atmosphereRadius;
-    return float(atmosphericTemperature + atmosphericLapse * z * VerticalEl * MeterPerEl);
+    return z * VerticalEl * MeterPerEl;
 }
 
-float VoxelMap::AtmosphericPressure(int z) const
+float VoxelMap::AtmosphericTemperature(double elevation) const
 {
-    return float(PascalPerAtmosphere * (1.0-(z*VerticalEl*MeterPerEl)/ atmosphereRadius));
+    double atmosphericLapse = atmosphericTemperature / atmosphereRadius;
+    return float(atmosphericTemperature + atmosphericLapse * elevation);
+}
+
+float VoxelMap::AtmosphericPressure(double elevation) const
+{
+    return float(PascalPerAtmosphere * (1.0- elevation/ atmosphereRadius));
 }
 
 void VoxelMap::Air(double temperature, double meters)
@@ -95,13 +98,19 @@ void VoxelMap::Air(double temperature, double meters)
         {
             for (p.z = -1; p.z <= int(voxels.Altitude()); ++p.z)
             {
-                auto temperature = AtmosphericTemperature(p.z);
+                auto temperature = AtmosphericTemperature(Elevation(p.z));
                 voxels.SetPressure(p, Material::air,
                     temperature,
-                    AtmosphericPressure(p.z));
+                    AtmosphericPressure(Elevation(p.z)));
             }
         }
     }
+}
+
+void VoxelMap::Wind(const Engine::Vector& speed)
+{
+    wind = speed;
+    // TODO: set all air flux and boundary
 }
 
 void VoxelMap::Water(int level, double temperature)
@@ -113,7 +122,7 @@ void VoxelMap::Water(int level, double temperature)
         {
             for (p.z = -1; p.z < level; ++p.z)
             {
-                double pressure = AtmosphericPressure(p.z) + (level - p.z)*VerticalEl*MeterPerEl * 10.33; // TODO: calculate based on water material
+                double pressure = AtmosphericPressure(Elevation(p.z)) + Elevation(level - p.z) * 10.33; // TODO: calculate based on water material
                 voxels.SetPressure(p,
                     Material::water,
                     temperature,
@@ -453,19 +462,29 @@ void VoxelMap::Advection(double seconds)
 
 void VoxelMap::FluxBoundary()
 {
+
+    // too slow to do it for every voxel? 
+    Engine::Vector flowVolume = wind * Material::air.Density(AtmosphericPressure(0), AtmosphericTemperature(0));
+    Engine::Vector massFlux(
+        flowVolume.x / Direction::east.Surface(),
+        flowVolume.y / Direction::north.Surface(),
+        flowVolume.z / Direction::up.Surface()
+    );
     for (auto d : Direction::all)
-    {
+    {   // TODO: for boundary in perpendicular directions, extrapolate
+        // TODO convert wind speed to flux
+
         for (auto u : voxels.U().BoundaryCondition(d))
         {
-            voxels.U()[u.first] = wind.x;
+            voxels.U()[u.first] = massFlux.x;
         }
         for (auto v : voxels.V().BoundaryCondition(d))
         {
-            voxels.V()[v.first] = wind.y;
+            voxels.V()[v.first] = massFlux.y;
         }
         for (auto w : voxels.W().BoundaryCondition(d))
         {
-            voxels.W()[w.first] = wind.z;
+            voxels.W()[w.first] = massFlux.z;
         }
     }
 }
@@ -480,8 +499,8 @@ void VoxelMap::GridBoundary()
             {
                 auto realPosition = v.position - d.Vector();
                 const Voxel realWorld = voxels[realPosition];
-                float boundaryTemperature = AtmosphericTemperature(v.position.z);
-                float boundaryDensity = float(realWorld.material.Density(AtmosphericPressure(v.position.z), boundaryTemperature));
+                float boundaryTemperature = AtmosphericTemperature(Elevation(v.position.z));
+                float boundaryDensity = float(realWorld.material.Density(AtmosphericPressure(Elevation(v.position.z)), boundaryTemperature));
 
                 // extrapolate to set
                 voxels.AdjustGrid(v.position, 
@@ -501,33 +520,67 @@ void VoxelMap::Flow(double dt)
     const Data::Flux oU = voxels.U();
     const Data::Flux oV = voxels.V();
     const Data::Flux oW = voxels.W();
+    constexpr double dx = HorizontalEl * MeterPerEl;
+    constexpr double dy = HorizontalEl * MeterPerEl;
+    constexpr double dz = VerticalEl * MeterPerEl;
     // U Flow
-    Position p;
-    for (p.x = 1; p.x < int(voxels.Longitude()); ++p.x)
+    for (const auto& uit : oU)
     {
-        for (p.y = 0; p.y < int(voxels.Latitude()); ++p.y)
-        {
-            for (p.z = 0; p.z < int(voxels.Altitude()); ++p.z)
-            {
-                constexpr double dx = HorizontalEl*MeterPerEl;
-                constexpr double dy = HorizontalEl*MeterPerEl;
-                constexpr double dz = VerticalEl*MeterPerEl;
-
-                double duudx = (Engine::Sqr(oU(p.x + 1, p.y, p.z)) - Engine::Sqr(oU(p.x - 1, p.y, p.z))) / (2.0*dx);
-                double duvdy = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
-                    - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x+1, p.y-1, p.z) + oV(p.x, p.y-1, p.z)))/dy;
-                double duwdz = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x + 1, p.y, p.z))
-                    - (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x + 1, p.y, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dz;
-                double dpdx = (voxels.Density(p) - voxels.Density(Position(p.x - 1, p.y, p.z)))/dx;
-                double Reynolds = 100.0; 
-                double diff = (1.0/Reynolds) *
-                    ((oU(p.x + 1, p.y, p.z) - 2.0*oU(p.x, p.y, p.z) + oU(p.x - 1, p.y, p.z)) / (dx*dx) +
-                     (oU(p.x, p.y + 1, p.z) + 2.0*oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) / (dy*dy) +
-                     (oU(p.x, p.y, p.z + 1) + 2.0*oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) / (dz*dz));
-                voxels.U()[p] += float(dt * (diff - duudx - duvdy - duwdz - dpdx));
-            }
-        }
+        const Position& p = uit.first;
+        double duudx = (Engine::Sqr(oU(p.x + 1, p.y, p.z)) - Engine::Sqr(oU(p.x - 1, p.y, p.z))) / (2.0*dx);
+        double duvdy = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
+            - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x + 1, p.y - 1, p.z) + oV(p.x, p.y - 1, p.z))) / dy;
+        double duwdz = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x + 1, p.y, p.z))
+            - (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x + 1, p.y, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dz;
+        double dpdx = (voxels.Density(p) - voxels.Density(Position(p.x - 1, p.y, p.z))) / dx;
+        double Reynolds = 100.0;
+        double diff = (1.0 / Reynolds) *
+            ((oU(p.x + 1, p.y, p.z) - 2.0*oU(p.x, p.y, p.z) + oU(p.x - 1, p.y, p.z)) / (dx*dx) +
+            (oU(p.x, p.y + 1, p.z) + 2.0*oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) / (dy*dy) +
+                (oU(p.x, p.y, p.z + 1) + 2.0*oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) / (dz*dz));
+        voxels.U()[p] += float(dt * (diff - duudx - duvdy - duwdz - dpdx));
     }
+    // V Flow
+
+    for (const auto& vit : oV)
+    {
+        const Position& p = vit.first;
+        double dvvdy = (Engine::Sqr(oV(p.x, p.y + 1, p.z)) - Engine::Sqr(oV(p.x, p.y - 1, p.z))) / (2.0*dy);
+        // TODO: except for dx, this is the same as duvdy above, could be optimized or at least code duplication reduced
+        double dvudx = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
+            - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x + 1, p.y - 1, p.z) + oV(p.x, p.y - 1, p.z))) / dx;
+//        double duvdx = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
+//            - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x + 1, p.y - 1, p.z) + oV(p.x, p.y - 1, p.z))) / dx;
+        double dvwdz = 0.25*((oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x, p.y+1, p.z))
+            - (oV(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x, p.y+1, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dz;
+        double dpdy = (voxels.Density(p) - voxels.Density(Position(p.x, p.y-1, p.z))) / dy;
+        double Reynolds = 100.0;
+        // TODO: definite code duplication with u and z flow, move to flux 
+        double diff = (1.0 / Reynolds) *
+            ((oV(p.x + 1, p.y, p.z) - 2.0*oV(p.x, p.y, p.z) + oV(p.x - 1, p.y, p.z)) / (dx*dx) +
+            (oV(p.x, p.y + 1, p.z) + 2.0*oV(p.x, p.y, p.z) + oV(p.x, p.y - 1, p.z)) / (dy*dy) +
+                (oV(p.x, p.y, p.z + 1) + 2.0*oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z - 1)) / (dz*dz));
+        voxels.V()[p] += float(dt * (diff - dvvdy - dvudx - dvwdz - dpdy));
+    }
+    // W Flow
+    for (const auto& uit : oU)
+    {
+        const Position& p = uit.first;
+        double dwwdz = (Engine::Sqr(oW(p.x, p.y, p.z+1)) - Engine::Sqr(oW(p.x, p.y, p.z-1))) / (2.0*dz);
+        double dwvdy = 0.25*((oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x, p.y + 1, p.z))
+            - (oV(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x, p.y + 1, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dy;
+        // TODO ame as duwdz except dx
+        double dwudx = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x + 1, p.y, p.z))
+            - (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x + 1, p.y, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dx;
+        double dpdz = (voxels.Density(p) - voxels.Density(Position(p.x, p.y, p.z-1))) / dz;
+        double Reynolds = 100.0;
+        double diff = (1.0 / Reynolds) *
+            ((oW(p.x + 1, p.y, p.z) - 2.0*oW(p.x, p.y, p.z) + oW(p.x - 1, p.y, p.z)) / (dx*dx) +
+            (oW(p.x, p.y + 1, p.z) + 2.0*oW(p.x, p.y, p.z) + oW(p.x, p.y - 1, p.z)) / (dy*dy) +
+                (oW(p.x, p.y, p.z + 1) + 2.0*oW(p.x, p.y, p.z) + oW(p.x, p.y, p.z - 1)) / (dz*dz));
+        voxels.W()[p] += float(dt * (diff - dwwdz - dwvdy - dwudx - dpdz));
+    }
+
     FluxBoundary();
 }
 
@@ -604,7 +657,7 @@ void VoxelMap::RenderPretty() const
             auto visibility = Visibility(v.position);
             if (!visibility.empty())
             {
-                v.Render(v.position, visibility, false);
+                v.Render(v.position, visibility, Engine::RGBA::transparent);
             }
         }
         glPopMatrix();
@@ -710,7 +763,13 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
     {
         std::wstring procedure;
         s >> procedure;
-        if (procedure == L"HILL")
+        if (procedure == L"WIND")
+        {
+            Engine::Vector wind;
+            s >> wind;
+            map.Wind(wind);
+        }
+        else if (procedure == L"HILL")
         {
             Engine::Coordinate p0, p1;
             s >> p0 >> p1;

@@ -97,6 +97,27 @@ double Vector::Dot(const Vector& v) const
     return x * v.x + y * v.y + z * v.z;
 }
 
+std::ostream& operator<<(std::ostream& s, const Vector& v)
+{
+    Coordinate c(v.x, v.y, v.z);
+    return s << c;
+}
+
+std::wostream& operator<<(std::wostream& s, const Vector& v)
+{
+    Coordinate c(v.x, v.y, v.z);
+    return s << c;
+}
+
+std::wistream& operator>>(std::wistream& s, Vector& v)
+{
+    Coordinate c;
+    s >> c;
+    v = Vector(c.x, c.y, c.z);
+    return s;
+}
+
+
 Vector operator*(const Vector& v, double factor)
 {
     return Vector(v) *= factor;

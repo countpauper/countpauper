@@ -9,12 +9,12 @@
 namespace Game
 
 {
-//                                                  Name,           Element,        Color,         Melt,   Boil, Density, molar mass,   Viscosity,  Conduct,    Capacity    surfaceTensiom, youngModulus,  Opacity,         
-const VoxelMap::Material VoxelMap::Material::vacuum{ L"Vacuum",    Element::None,    0xFF000000,   0,      0,      0,      0,           0,          0,         0,          0,              0,             0.0          };
-const VoxelMap::Material VoxelMap::Material::air   { L"Air",       Element::Air,     0xFFA08040,   60,     80,    1.225,  29,           18e-6,      29.2,       1.012,      10e-3,          1e9,           0.01         };     // 28.964g/mol because n2&o2 diatomic
-const VoxelMap::Material VoxelMap::Material::soil  { L"Soil",      Element::Nature,  0xFF20FF20,   0,      0,     1600,   65,           10e3,       0.4,        2.0,        0.7,            1e7,           10           };     // 65g/mol, based on 0% humidity. Part SiO2, N2 and proteins
-const VoxelMap::Material VoxelMap::Material::stone { L"Stone",     Element::Stone,   0xFFA0A0A0,   1986,   3220,   2648,   60,          10e21,      10,         0.790,      0.8,            1e10,          10           };     // for now 100% silicon dioxide, 60 g/mol
-const VoxelMap::Material VoxelMap::Material::water { L"Water",     Element::Water,   0xFFFF6010,   273,    373,    1000,   18,          8.9e-4,     0.6065,     4.1813,     0.07,           9e9,           6.9 / 1000   };     // H2O 18 g/mol
+//                                                  Name,           Element,        Color,                      Melt,   Boil, Density, molar mass,   Viscosity,  Conduct,    Capacity    surfaceTensiom, youngModulus,  Opacity,         
+const VoxelMap::Material VoxelMap::Material::vacuum{ L"Vacuum",    Element::None,    Engine::RGBA(0xFF000000),   0,      0,      0,      0,           0,          0,         0,          0,              0,             0.0          };
+const VoxelMap::Material VoxelMap::Material::air   { L"Air",       Element::Air,     Engine::RGBA(0xFFA08040),   60,     80,    1.225,  29,           18e-6,      29.2,       1.012,      10e-3,          1e9,           0.01         };     // 28.964g/mol because n2&o2 diatomic
+const VoxelMap::Material VoxelMap::Material::soil  { L"Soil",      Element::Nature,  Engine::RGBA(0xFF20FF20),   0,      0,     1600,   65,           10e3,       0.4,        2.0,        0.7,            1e7,           10           };     // 65g/mol, based on 0% humidity. Part SiO2, N2 and proteins
+const VoxelMap::Material VoxelMap::Material::stone { L"Stone",     Element::Stone,   Engine::RGBA(0xFFA0A0A0),   1986,   3220,   2648,   60,          10e21,      10,         0.790,      0.8,            1e10,          10           };     // for now 100% silicon dioxide, 60 g/mol
+const VoxelMap::Material VoxelMap::Material::water { L"Water",     Element::Water,   Engine::RGBA(0xFFFF6010),   273,    373,    1000,   18,          8.9e-4,     0.6065,     4.1813,     0.07,           9e9,           6.9 / 1000   };     // H2O 18 g/mol
                                                                                                                                                                                                             // redundant for now VoxelMap::Material VoxelMap::Material::sand  { L"Sand",      1986,   3220,   2648,        10,            0.0           };     // silicon dioxide, 60 g/mol
 
 bool VoxelMap::Voxel::Solid() const

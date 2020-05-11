@@ -68,9 +68,9 @@ VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
     altitude(altitude),
     // allocate flux 1 extra size in all directions for boundary conditions on edge
     // allocate 2 extra boundary in all perpendicular directions for boundary conditions at edge +0.5
-    u(Position(0,-1,-1), longitude+1, latitude+2, altitude+2),
-    v(Position(-1,0,-1), longitude+2, latitude+1, altitude+2),
-    w(Position(-1,-1,0), longitude+2, latitude+2, altitude+1)
+    u(Direction::east, longitude+1, latitude+2, altitude+2),
+    v(Direction::north, longitude+2, latitude+1, altitude+2),
+    w(Direction::up, longitude+2, latitude+2, altitude+1)
 {
     // allocate grid with 2 boundary values on each size, for gradient at edge
     // Computed map state ranges from 0 to < long,lat,alt
@@ -138,14 +138,14 @@ Engine::Vector VoxelMap::Data::Flow(const Position& p) const
 
 Engine::Vector VoxelMap::Data::FluxGradient(const Position& p) const
 {
-    auto dU = u[Position(p.x + 1, p.y, p.z)] - u[p];
-    auto dV = v[Position(p.x, p.y + 1, p.z)] - v[p];
-    auto dW = w[Position(p.x, p.y, p.z + 1)] - w[p];
     constexpr double dX = HorizontalEl * MeterPerEl;
     constexpr double dY = HorizontalEl * MeterPerEl;
     constexpr double dZ = VerticalEl * MeterPerEl;
 
-    return Engine::Vector(dU / dX, dV / dY, dW / dZ);
+    return Engine::Vector(
+        u.Gradient(p)/dX, 
+        v.Gradient(p)/dY,
+        w.Gradient(p)/dZ);
 }
 
 float VoxelMap::Data::Density(const Position& position) const
@@ -287,13 +287,15 @@ bool VoxelMap::Data::IsInside(const Position& p) const
         unsigned(p.z) < altitude;
 }
 
-VoxelMap::Data::Flux::Flux(const Position& offset, unsigned longitude, unsigned latitude, unsigned altitude) :
-    offset(offset),
+VoxelMap::Data::Flux::Flux(Direction direction, unsigned longitude, unsigned latitude, unsigned altitude) :
+    direction(direction),
+    offset(Position(-1,-1,-1) + direction.Vector()),
     longitude(longitude),
     latitude(latitude),
     altitude(altitude),
     flux(longitude*latitude*altitude,0)
 {
+    assert(direction.IsPosititve());    // for offset, vector should be positive
 }
 
 float VoxelMap::Data::Flux::operator[](const Position& p) const
@@ -313,6 +315,10 @@ unsigned VoxelMap::Data::Flux::Index(const Position& p) const
 
 }
 
+double VoxelMap::Data::Flux::Gradient(const Position& p) const
+{
+    return (*this)[p + direction.Vector()] - (*this)[p];
+}
 
 VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::begin() const
 {
@@ -321,11 +327,11 @@ VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::begin() const
 
 VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::end() const
 {
-    return iterator(*this, Position(longitude-1, latitude-1, altitude-1));
+    return iterator(*this, Position(longitude-1, latitude-1, altitude-1)+offset);
 }
 
 VoxelMap::Data::Flux::iterator::iterator(const VoxelMap::Data::Flux& data, const Position& start) :
-    iterator(data, start, Position(data.longitude-1, data.latitude-1, data.altitude-1))
+    iterator(data, start, Position(data.longitude-1, data.latitude-1, data.altitude-1)+data.offset)
 {
 
 }

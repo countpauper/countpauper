@@ -1,0 +1,16 @@
+* Explicit wind
+* Atmospheric pressure & temperature per meter, with z to meter
+Explicit Atmosphere and Earth commands
+Render density with false color
+Render temperature 
+Wall command start(xyz) Vector(xyz) Height, width (any 50% overlapping square is stone)
+Stone boundary flux = 0,0,0 (no wind)
+Stone boundary density
+Fix flux boundary extrapolation
+Temperature <-> pressure relation (flux)
+Gravity -> flux
+Explosion command (xyz, force)
+Lake x,y,z   z = level, fill from there, water no flux 
+River xyz dxyz=speed, fill from there 
+Sea level, ?   sinoid flux, variable level or pressure for tide? 
+

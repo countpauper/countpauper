@@ -30,6 +30,7 @@ std::ostream& operator<<(std::ostream& s, const Coordinate& coordinate);
 std::wostream& operator<<(std::wostream& s, const Coordinate& coordinate);
 std::wistream& operator>>(std::wistream& s, Coordinate& coordinate);
 
+
 Vector operator-(const Coordinate& a, const Coordinate& b);
 
 } // ::Engine

@@ -65,13 +65,13 @@ std::wistream& operator>>(std::wistream& s, Coordinate& coordinate)
     std::wstring str;
     s >> str;
     if (str[0] != L'(')
-        throw std::runtime_error("Invalid coordinate format, missing (");
+        throw std::runtime_error("Invalid vector format, missing (");
     if (str[str.size()-1] != L')')
-        throw std::runtime_error("Invalid coordinate format, missing )");
+        throw std::runtime_error("Invalid vector format, missing )");
     str = str.substr(1, str.size() - 2);
     auto value_strings= Split(str, L',');
     if (value_strings.size()>3)
-        throw std::runtime_error("Invalid coordinate format, too many dimensions");
+        throw std::runtime_error("Invalid vector format, too many dimensions");
     if (value_strings.size() >= 1)
         coordinate.x = from_string<double>(value_strings[0]);
     else
@@ -86,6 +86,7 @@ std::wistream& operator>>(std::wistream& s, Coordinate& coordinate)
         coordinate.z = 0;
     return s;
 }
+
 
 }
 

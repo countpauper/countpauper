@@ -12,7 +12,7 @@ namespace Engine
             r(r), g(g), b(b), a(a)
         {
         }
-        RGBA(uint32_t c) :
+        explicit RGBA(uint32_t c) :
             r(c & 0xFF),
             g((c >> 8) & 0xFF),
             b((c >> 16) & 0xFF),
