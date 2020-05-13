@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "Tactics.h"
 #include <time.h>
-#include <GL/gl.h>            /* OpenGL header file */
+#include <GL/glew.h>            /* OpenGL header file */
 #include <GL/glu.h>            /* OpenGL utilities header file */
 #include <math.h>
 #include <fstream>
@@ -188,7 +188,6 @@ BOOL SetPixelFormat(HWND hWnd)
 
 BOOL Start()
 {
-    glEnable(GL_TEXTURE_2D);
     game = std::make_unique<Game::Game>();
     {
         std::wifstream fs(mapName);
@@ -211,6 +210,19 @@ BOOL Start()
     return TRUE;
 }
 
+bool InitializeGL()
+{
+    GLenum glewError = glewInit();
+    if (GLEW_OK != glewError)
+    {
+        std::string error((char*)glewGetErrorString(glewError));
+        MessageBox(NULL, std::wstring(error.begin(), error.end()).c_str(), L"Initializing OpenGL failed", MB_OK);
+        return false;
+    }
+    glEnable(GL_TEXTURE_2D);
+    return true;
+}
+
 //   FUNCTION: InitInstance(HINSTANCE, int)
 //
 //   PURPOSE: Saves instance handle and creates main window
@@ -222,6 +234,8 @@ BOOL Start()
 //
 BOOL InitInstance(HINSTANCE hInstance)
 {
+
+
    HWND hWnd;
 
    hInst = hInstance; // Store instance handle in our global variable
@@ -233,6 +247,10 @@ BOOL InitInstance(HINSTANCE hInstance)
    {
       return FALSE;
    }
+
+   if (!InitializeGL())
+       return FALSE;
+
 
    if (!Start())
        return FALSE;

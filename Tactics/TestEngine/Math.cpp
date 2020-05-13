@@ -50,4 +50,14 @@ TEST(Math, LinearExtrapolation)
     EXPECT_EQ(0.0, Lerp(1.0, 2.0, -1.0));
 }
 
+TEST(Math, Sigmoid)
+{
+    EXPECT_EQ(0.5, Sigmoid(0));
+    EXPECT_LT(Sigmoid(-1.0), 0.5);
+    EXPECT_GT(Sigmoid(1.0), 0.5);
+    EXPECT_EQ(1.0, Sigmoid(std::numeric_limits<double>::infinity()));
+    EXPECT_EQ(0.0, Sigmoid(-std::numeric_limits<double>::infinity()));
+    EXPECT_NEAR(1, Sigmoid(1e6), 1e-12);
+    EXPECT_NEAR(0, Sigmoid(-1e6), 1e-12);
+}
 }

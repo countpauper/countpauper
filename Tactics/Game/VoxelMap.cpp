@@ -657,7 +657,7 @@ void VoxelMap::RenderPretty() const
             auto visibility = Visibility(v.position);
             if (!visibility.empty())
             {
-                v.Render(v.position, visibility, Engine::RGBA::transparent);
+                v.Render(v.position, visibility);
             }
         }
         glPopMatrix();
@@ -671,13 +671,13 @@ void VoxelMap::RenderAnalysis() const
     assert(glIsEnabled(GL_DEPTH_TEST));
 
     // Draw opaque
-    glEnable(GL_BLEND);
+    glDisable(GL_BLEND);
     glDisable(GL_LIGHTING);
-    for (auto& v : voxels)
+    for (const auto v : voxels)
     {
         glPushMatrix();
         glTranslated(v.position.x, v.position.z*MeterPerEl, v.position.y);
-        v.Render(v.position, Directions(0xFFFF), Engine::RGBA::red);
+        v.RenderAnalysis(v.position, Directions::all, voxels.DensityGradient(v.position));
         glPopMatrix();
     }
 
@@ -731,18 +731,18 @@ void VoxelMap::RenderAnalysis() const
             glPopMatrix();
         }
     }
-
+/*
     for (auto d : Direction::all)
     {
         for (auto v : voxels.BoundaryCondition(Directions(d)))
         {
             glPushMatrix();
             glTranslated(v.position.x, v.position.z*MeterPerEl, v.position.y);
-            v.Render(v.position, Directions(0xFFFF), Engine::RGBA::white);
+            v.Render(v.position, Directions(0xFFFF));
             glPopMatrix();
         }
     }
-
+*/
     Engine::CheckGLError();
 }
 

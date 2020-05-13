@@ -4,6 +4,7 @@ namespace Engine
 {
 
 struct Vector;
+struct Coordinate;
 
 struct Matrix
 {
@@ -48,6 +49,6 @@ struct Matrix
 };
 
 Matrix operator*(const Matrix& r, const Matrix& l);
-Vector operator*(const Matrix& m, const Vector& v);
+
 
 } // ::Engine

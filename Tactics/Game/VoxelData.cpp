@@ -134,14 +134,17 @@ Engine::Vector VoxelMap::Data::Flow(const Position& p) const
     return flow_velocity;
 }
 
-
+Engine::Vector VoxelMap::Data::DensityGradient(const Position& position) const
+{
+    return Engine::Vector(
+        (Density(position + Position(1, 0, 0)) - Density(position + Position(-1, 0, 0))) / dX,
+        (Density(position + Position(0, 1, 0)) - Density(position + Position( 0,-1, 0))) / dY,
+        (Density(position + Position(0, 0, 1)) - Density(position + Position(0, 0, -1))) / dZ
+    );
+}
 
 Engine::Vector VoxelMap::Data::FluxGradient(const Position& p) const
 {
-    constexpr double dX = HorizontalEl * MeterPerEl;
-    constexpr double dY = HorizontalEl * MeterPerEl;
-    constexpr double dZ = VerticalEl * MeterPerEl;
-
     return Engine::Vector(
         u.Gradient(p)/dX, 
         v.Gradient(p)/dY,

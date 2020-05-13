@@ -21,9 +21,11 @@ namespace Engine
         Range<double> Y() const;
         Range<double> Z() const;
 
+        AABB& operator|=(const Coordinate& p);
 
-        Coordinate p0;
-        Coordinate p1;
+        Range<double> x;
+        Range<double> y;
+        Range<double> z;
     };
 
 

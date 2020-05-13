@@ -353,15 +353,7 @@ Matrix Matrix::Perspective(double n, double f)
 }
 
 
-Vector operator*(const Matrix& m, const Vector& v)
-{
-    double w = v.x * m[0][3] + v.y * m[1][3] + v.z * m[2][3] + m[3][3];
-    return Vector(
-        v.x * m[0][0] + v.y * m[1][0] + v.z * m[2][0] + m[3][0],
-        v.x * m[0][1] + v.y * m[1][1] + v.z * m[2][1] + m[3][1],
-        v.x * m[0][2] + v.y * m[1][2] + v.z * m[2][2] + m[3][2]
-    ) / w;
-}
+
 
 Matrix operator*(const Matrix& l, const Matrix& r)
 {

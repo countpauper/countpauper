@@ -2,9 +2,11 @@
 
 namespace Engine
 {
-struct Coordinate;
 
-struct Vector
+struct Coordinate;
+struct Matrix;
+
+struct Vector final
 {
     Vector() = default;
     Vector(double x, double y, double z) :
@@ -44,6 +46,7 @@ Vector operator*(const Vector& v, double factor);
 Vector operator+(const Vector& a, const Vector& b);
 Vector operator-(const Vector& a, const Vector& b);
 Vector operator-(const Coordinate& a, const Coordinate& b);
+Vector operator*(const Matrix& m, const Vector& v);
 
 std::ostream& operator<<(std::ostream& s, const Vector& vector);
 std::wostream& operator<<(std::wostream& s, const Vector& vector);

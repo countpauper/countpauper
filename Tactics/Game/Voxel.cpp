@@ -145,9 +145,9 @@ Engine::RGBA VoxelMap::Voxel::Color() const
     return color;
 }
 
-void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility, Engine::RGBA analysisColor) const
+void VoxelMap::Voxel::RenderAnalysis(const Position& p, const Directions& visibility, const Engine::Vector& densityGradient) const
 {
-
+    /*
     if (analysisColor)
     {
         analysisColor.Render();
@@ -160,75 +160,86 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility, En
         // glDrawArrow(flowArrow);
         glPopMatrix();
     }
+    */
+    double offDensity = density - material.normalDensity;
+    double sigmoidDensity = Engine::Sigmoid(offDensity);
+    glColor3d(0, sigmoidDensity, 1 - sigmoidDensity);
+    RenderFaces(p, visibility);
+}
 
+
+void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) const
+{
     auto c = Color();
     c.Render();
-    unsigned mode = analysisColor ? GL_LINE_LOOP : GL_QUADS;
-    if (visibility[Direction::south])
+    RenderFaces(p, visibility);
+}
+
+void VoxelMap::Voxel::RenderFaces(const Position& p, const Directions& visibility) const
+{
+    for (auto direction : visibility)
     {
-        glPushName(LocationName(p, Direction::south));
-        glNormal3d(0, 0, -1); //  Direction::south.Vector()
-        glBegin(mode);
-        glVertex3d(0, 0 * MeterPerEl, 0);
-        glVertex3d(0, 1 * MeterPerEl, 0);
-        glVertex3d(1, 1 * MeterPerEl, 0);
-        glVertex3d(1, 0 * MeterPerEl, 0);
+        RenderFace(p, direction);
+    }
+}
+
+void VoxelMap::Voxel::RenderFace(const Position& p, Direction direction) const
+{
+    glPushName(LocationName(p, direction));
+
+    glNormal3d(direction.Vector().x, direction.Vector().z, direction.Vector().y);
+
+    // TODO vertex buffers
+    if (direction == Direction::south)
+    {
+        glBegin(GL_QUADS);
+            glVertex3d(0, 0 * MeterPerEl, 0);
+            glVertex3d(0, 1 * MeterPerEl, 0);
+            glVertex3d(1, 1 * MeterPerEl, 0);
+            glVertex3d(1, 0 * MeterPerEl, 0);
         glEnd();
-        glPopName();
     }
     // north
-    if (visibility[Direction::north])
+    else if (direction == Direction::north)
     {
-        glPushName(LocationName(p, Direction::north));
-        glNormal3d(0, 0, 1);
-        glBegin(mode);
+        glBegin(GL_QUADS);
         glVertex3d(0, 0 * MeterPerEl, 1);
         glVertex3d(1, 0 * MeterPerEl, 1);
         glVertex3d(1, 1 * MeterPerEl, 1);
         glVertex3d(0, 1 * MeterPerEl, 1);
         glEnd();
-        glPopName();
     }
     // east
-    if (visibility[Direction::east])
+    else if (direction == Direction::east)
     {
-        glPushName(LocationName(p, Direction::east));
-        glNormal3d(1, 0, 0);
-        glBegin(mode);
+        glBegin(GL_QUADS);
         glVertex3d(1, 0 * MeterPerEl, 0);
         glVertex3d(1, 1 * MeterPerEl, 0);
         glVertex3d(1, 1 * MeterPerEl, 1);
         glVertex3d(1, 0 * MeterPerEl, 1);
         glEnd();
-        glPopName();
     }
     // west
-    if (visibility[Direction::west])
+    else if (direction == Direction::west)
     {
-        glPushName(LocationName(p, Direction::west));
-        glNormal3d(-1, 0, 0);
-        glBegin(mode);
+        glBegin(GL_QUADS);
         glVertex3d(0, 0 * MeterPerEl, 0);
         glVertex3d(0, 0 * MeterPerEl, 1);
         glVertex3d(0, 1 * MeterPerEl, 1);
         glVertex3d(0, 1 * MeterPerEl, 0);
         glEnd();
-        glPopName();
     }
     // top
-    if (visibility[Direction::up])
+    if (direction == Direction::up)
     {
-        glPushName(LocationName(p, Direction::up));
-        glNormal3d(0, 1 * MeterPerEl, 0);
-        glBegin(mode);
+        glBegin(GL_QUADS);
         glVertex3d(0, 1 * MeterPerEl, 0);
         glVertex3d(0, 1 * MeterPerEl, 1);
         glVertex3d(1, 1 * MeterPerEl, 1);
         glVertex3d(1, 1 * MeterPerEl, 0);
         glEnd();
-        glPopName();
     }
-
+    glPopName();
 }
 
 

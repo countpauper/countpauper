@@ -24,6 +24,17 @@ struct Range
         return end - begin;
     }
 
+    bool operator[](T v)
+    {   // in
+        return (begin <= v) && (v <= end);
+    }
+
+    Range& operator|=(T v)
+    {
+        begin = std::min(begin, v);
+        end = std::max(end, v);
+        return *this;
+    }
     T begin;
     T end;
 };
@@ -32,6 +43,12 @@ template<typename T>
 Range<T> operator|(const Range<T>& a, const Range<T>& b)
 {
     return Range(std::min(a.begin, b.begin), std::max(a.end, b.end));
+}
+
+template<typename T>
+Range<T> operator|(const Range<T>& a, T v)
+{
+    return Range(a)|=v;
 }
 
 template<typename T>

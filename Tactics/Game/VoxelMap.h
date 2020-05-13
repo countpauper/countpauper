@@ -88,7 +88,8 @@ protected:
         bool Opaque() const;
         bool Transparent() const;
         Engine::RGBA Color() const;
-        void Render(const Position& p, const Directions& visibility, Engine::RGBA analysisColor = Engine::RGBA::transparent) const;
+        void Render(const Position& p, const Directions& visibility) const;
+        void RenderAnalysis(const Position& p, const Directions& visibility, const Engine::Vector& densityGradient) const;
 
         const Material& material;
         const float temperature;      // Kelvin
@@ -96,6 +97,9 @@ protected:
         //const Engine::Vector flow;    // meter/second
         const Position position;
         const Directions boundary;
+    private:
+        void RenderFaces(const Position& p, const Directions& visibility) const;
+        void RenderFace(const Position& p, Direction direction) const;
     };
 
     void Flow(double seconds);
@@ -165,6 +169,7 @@ protected:
         unsigned Altitude() const;
         Directions IsBoundary(const Position& p) const;
         Engine::Vector FluxGradient(const Position& p) const;   // in g/m2
+        Engine::Vector DensityGradient(const Position& p) const;   // in g/m2
         Engine::Vector Flow(const Position& location) const;  // in meters/second
         float Density(const Position& p) const;
         void SetDensity(const Position& p, float density);
@@ -243,6 +248,10 @@ protected:
         Flux u, v, w;                       // flux (/s*m2)
         unsigned longitude, latitude, altitude;
     };
+    static constexpr double dX = HorizontalEl * MeterPerEl;
+    static constexpr double dY = HorizontalEl * MeterPerEl;
+    static constexpr double dZ = VerticalEl * MeterPerEl;
+
     Data voxels;
     double time;
     double planetRadius;    // m

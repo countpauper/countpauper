@@ -24,4 +24,9 @@ namespace Engine
     { 
         return v * v; 
     }
+
+    double Sigmoid(double x)
+    {
+        return 1.0 / (exp(-x)+ 1.0);
+    }
 }

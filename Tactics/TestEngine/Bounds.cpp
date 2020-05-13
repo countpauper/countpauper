@@ -29,6 +29,14 @@ TEST(Range, Intersection)
 }
 
 
+TEST(Range, Inclusion)
+{
+    EXPECT_TRUE((Range<int>() | 2)[2]);
+    EXPECT_TRUE((Range<int>() | -1)[-1]);
+    EXPECT_TRUE((Range<int>() | -1 | 2)[1]);
+    EXPECT_FALSE((Range<int>() | -1)[2]);
+}
+
 TEST(AABB, Size)
 {
     EXPECT_EQ(1, AABB(Coordinate(0, 0, 0), Coordinate(1, 1, 1)).Volume());
