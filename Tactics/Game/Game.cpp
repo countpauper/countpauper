@@ -7,7 +7,6 @@
 #include "Plan.h"
 #include "Item.h"
 #include <fstream>
-#include "Engine/Mesh.h"
 
 namespace Game
 {
@@ -348,8 +347,6 @@ namespace Game
         glPushName(GLuint(Selection::Map));
         map->Render();
         glPopName();
-        Engine::Box box;
-        box.Render();
         glPushName(GLuint(Selection::Object));
         unsigned index = 0;
         for (const auto& object : objects)

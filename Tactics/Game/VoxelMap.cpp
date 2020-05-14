@@ -12,6 +12,8 @@
 #include "Engine/Random.h"
 #include "Engine/Drawing.h"
 #include "Engine/Text.h"
+#include "Engine/Mesh.h"
+#include "Engine/Matrix.h"
 #include "Engine/AxisAlignedBoundingBox.h"
 #include <string>
 
@@ -42,6 +44,8 @@ VoxelMap::VoxelMap() :
 {
     World(planetRadius);
 }
+
+VoxelMap::~VoxelMap() = default;
 
 void VoxelMap::Space(unsigned x, unsigned y, unsigned z)
 {
@@ -476,15 +480,15 @@ void VoxelMap::FluxBoundary()
 
         for (auto u : voxels.U().BoundaryCondition(d))
         {
-            voxels.U()[u.first] = massFlux.x;
+            voxels.U()[u.first] = float(massFlux.x);
         }
         for (auto v : voxels.V().BoundaryCondition(d))
         {
-            voxels.V()[v.first] = massFlux.y;
+            voxels.V()[v.first] = float(massFlux.y);
         }
         for (auto w : voxels.W().BoundaryCondition(d))
         {
-            voxels.W()[w.first] = massFlux.z;
+            voxels.W()[w.first] = float(massFlux.z);
         }
     }
 }
@@ -509,7 +513,7 @@ void VoxelMap::GridBoundary()
             }
             else
             {
-                assert(false); // TODO: at least water 
+                //assert(false); // TODO: at least water 
             }
         }
     }
@@ -599,6 +603,9 @@ void VoxelMap::Continuity(double seconds)
 
 void VoxelMap::Tick(double seconds)
 {
+    if (!mesh)
+        GenerateMesh();
+
     // Fluid dynamics:
     //  https://en.wikipedia.org/wiki/Fluid_dynamics
     //  With incompressible flow, as long as it stays under 111m/s (mach 0.3) is simpler
@@ -619,10 +626,39 @@ void VoxelMap::Tick(double seconds)
 
 void VoxelMap::Render() const
 {
-    //RenderPretty();
-    RenderAnalysis();
+    if (mesh)
+    {
+        glDisable(GL_BLEND);
+        mesh->Render();
+        glEnable(GL_BLEND);
+        mesh->Render();
+    }
+    else
+    {
+        RenderPretty();
+        //RenderAnalysis();
+    }
 }
 
+void VoxelMap::GenerateMesh()
+{
+    mesh = std::make_unique<Engine::Mesh>();
+    for (auto& v : voxels)
+    {
+        auto c = v.Color();
+        if (!c)
+            continue;
+        if (!Visibility(v.position))
+            continue;
+        Engine::Box box(Engine::Vector(dX, dZ, dY));
+        box.SetColor(v.Color());
+        box *= Engine::Matrix::Translation(
+            Engine::Vector((double(v.position.x) + 0.5)*dX,
+            (double(v.position.z) + 0.5)*dZ,
+            (double(v.position.y) + 0.5)*dY));
+        (*mesh) += box;
+    }
+}
 
 void VoxelMap::RenderPretty() const
 {

@@ -5,15 +5,15 @@
 #include "Plane.h"
 #include <string>
 
+namespace Engine { class Mesh; }
 namespace Game
 {
-
-
 
 class VoxelMap : public Map
 {
 public:
     VoxelMap();
+    ~VoxelMap();
 
     struct Material
     {
@@ -67,6 +67,7 @@ public:
     void Render() const override;
     void Tick(double seconds) override;
 protected:
+    void GenerateMesh();
     void RenderPretty() const;
     void RenderAnalysis() const;
 
@@ -252,6 +253,7 @@ protected:
     static constexpr double dZ = VerticalEl * MeterPerEl;
 
     Data voxels;
+    std::unique_ptr<Engine::Mesh> mesh;
     double time;
     double planetRadius;    // m
     double atmosphereRadius; // m

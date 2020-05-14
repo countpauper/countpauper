@@ -18,7 +18,7 @@ public:
 
     struct TextureCoordinate
     {
-        double s, t;
+        double x, y, z;
     };
     struct Vertex
     {
@@ -38,19 +38,24 @@ public:
     Mesh& operator*=(const Matrix& transformation);
 
     std::vector<Vertex> vertices; 
-    std::vector<Triangle> triangles;
-    std::vector<uint32_t> names;    // same size as triangles. not together due to glDrawElements
-    std::vector<uint32_t> opaque;   // opaque triangle indices
-    std::vector<uint32_t> translucent;  // translucent triangle indices
-    void SetName(uint32_t name);
+    std::vector<Triangle> opaqueTriangles;
+    std::vector<Triangle> translucentTriangles;
 
-    bool IsGenerated() const;
+    std::vector<uint32_t> names;    // same size as triangles. not together due to glDrawElements
+    void SetName(uint32_t name);
+    void SetColor(RGBA color);
+
+    Mesh& operator+=(const Mesh& addition);
+
     void Degenerate();
-    void Generate();
+    void Generate() const;
 private:
-    uint32_t vertexBuffer, triangleBuffer;
+    void GenerateVertexBuffer() const;
+    void GenerateIndexBuffer() const;
+
+    mutable uint32_t vertexBuffer, opaqueTriangleBuffer, translucentTriangleBuffer;
     uint32_t* buffer = &vertexBuffer;
-    const unsigned int buffers = unsigned int(1+(&triangleBuffer - &vertexBuffer));
+    const unsigned int buffers = unsigned int(1+(&translucentTriangleBuffer - &vertexBuffer));
 
     void RenderSelection() const;
     void RenderOpaque() const;

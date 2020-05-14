@@ -428,7 +428,7 @@ void Render()
 
     list->Render();
     auto duration = 1000.0*performance.Seconds();
-    OutputDebugStringW((std::wstring(L"Render in ") + std::to_wstring(duration) + L" ms").c_str());
+    OutputDebugStringW((std::wstring(L"Render in ") + std::to_wstring(duration) + L" ms\n").c_str());
 }
 
 //
