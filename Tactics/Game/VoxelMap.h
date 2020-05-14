@@ -108,7 +108,6 @@ protected:
     void GridBoundary();
 
     Directions Visibility(const Position& p) const;
-    Position MaxFlow() const;
     double Mass(class Directions directions) const;
     double Elevation(int z) const;
     float AtmosphericTemperature(double elevation) const;

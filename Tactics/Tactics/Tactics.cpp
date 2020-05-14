@@ -12,6 +12,7 @@
 #include "Engine/Camera.h"
 #include "Engine/Random.h"
 #include "Engine/Image.h"
+#include "Engine/Timer.h"
 #include "Game/Game.h"
 #include "SkillBar.h"
 #include "TurnList.h"
@@ -371,6 +372,8 @@ void ShowClick()
 
 void Render()
 {
+    Engine::Timer performance;
+
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -424,7 +427,8 @@ void Render()
     ShowClick();
 
     list->Render();
-
+    auto duration = 1000.0*performance.Seconds();
+    OutputDebugStringW((std::wstring(L"Render in ") + std::to_wstring(duration) + L" ms").c_str());
 }
 
 //

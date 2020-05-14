@@ -11,6 +11,16 @@
 namespace Engine
 {
 
+Mesh::Mesh()
+{
+        ZeroMemory((void*)buffer, buffers * sizeof(uint32_t));
+}
+
+Mesh::~Mesh()
+{
+    Degenerate();
+}
+
 void Mesh::Render() const
 {
     if (glGet<int>(GL_RENDER_MODE) == GL_SELECT)
@@ -29,11 +39,28 @@ void Mesh::Render() const
 
 void Mesh::RenderOpaque() const
 {
-//        glGenBuffers(2, x);
-//        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-//        glDrawElements(GL_TRIANGLES, opaque.size(), GL_UNSIGNED_INT, opaque.data());
 
-    glBegin(GL_TRIANGLES);
+    glEnableClientState(GL_VERTEX_ARRAY); 
+    glEnableClientState(GL_NORMAL_ARRAY); 
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    assert(3 * sizeof(GLdouble) == sizeof(Vertex::c));
+    glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), &vertices.front().c);
+    glTexCoordPointer(2, GL_DOUBLE, sizeof(Vertex), &vertices.front().t);
+    glNormalPointer(GL_DOUBLE, sizeof(Vertex), &vertices.front().n);
+    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), &vertices.front().color);
+
+    /*assert(sizeof(Triangle) == 3 * sizeof(GLuint));
+    for (int i = 0; i < triangles.size(); ++i)
+    {
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, &triangles.at(i));
+    }
+    */
+    glDrawElements(GL_TRIANGLES, 3*triangles.size(), GL_UNSIGNED_INT, triangles.data());
+
+/*
+glBegin(GL_TRIANGLES);
     for (auto t : triangles)
     {
         for (int i = 0; i < 3; ++i)
@@ -46,6 +73,7 @@ void Mesh::RenderOpaque() const
         }
     }
     glEnd();
+*/
 }
 
 void Mesh::RenderTranslucent() const
@@ -58,21 +86,17 @@ void Mesh::RenderSelection() const
     glPushName(0);
     for (auto t : triangles)
     {
-        if (t.name != 0)
+        assert(names.empty());  // unused
+        glBegin(GL_TRIANGLES);
+        for (int i = 0; i < 3; ++i)
         {
-            glLoadName(t.name);
-            glBegin(GL_TRIANGLES);
-            for (int i = 0; i < 3; ++i)
-            {
-                const auto& v = vertices.at(t.vertex[i]);
-                glVertex3d(v.c.x, v.c.y, v.c.z);
-            }
-            glEnd();
+            const auto& v = vertices.at(t.vertex[i]);
+            glVertex3d(v.c.x, v.c.y, v.c.z);
         }
+        glEnd();
     }
     glPopName();
 }
-
 
 AABB Mesh::GetBoundingBox() const
 {
@@ -87,10 +111,7 @@ AABB Mesh::GetBoundingBox() const
 
 void Mesh::SetName(uint32_t name)
 {
-    for (auto& t : triangles)
-    {
-        t.name = name;
-    }
+    names.resize(triangles.size(), name);
 }
 
 Mesh& Mesh::operator*=(const Matrix& transformation)
@@ -135,19 +156,40 @@ Box::Box()
     {
         Coordinate faceCenter = Coordinate::zero + face.normal;
         Vector diagonal = face.diagonal;
-        triangles[ti++] = Triangle{ vi, vi + 1, vi + 3, 0 };
-        triangles[ti++] = Triangle{ vi + 1, vi + 2, vi + 3, 0 };
+        triangles[ti++] = Triangle{ vi, vi + 1, vi + 3 };
+        triangles[ti++] = Triangle{ vi + 1, vi + 2, vi + 3 };
         double angle = 0;
         for (const auto& t : texCoords)
         {
             vertices[vi].c = faceCenter - Quaternion(face.normal, angle) * diagonal;
             vertices[vi].n = face.normal;
             vertices[vi].color = RGBA::white;
+            // test vertices[vi].color = RGBA(face.normal.x*127+127, face.normal.y*127+127, face.normal.z*127+127);
             vertices[vi].t = t;
             ++vi;
             angle += PI * face.clock; // CCW
         }
     }
+}
+
+bool Mesh::IsGenerated() const
+{
+    return buffer[0] != 0;
+}
+
+void Mesh::Degenerate()
+{
+    if (!IsGenerated())
+        return;
+    glDeleteBuffers(buffers, buffer);
+    ZeroMemory((void*)buffer, buffers*sizeof(uint32_t));
+}
+
+void Mesh::Generate()
+{
+    ZeroMemory((void*)buffer, buffers * sizeof(uint32_t));
+    glGenBuffers(1, &triangleBuffer);
+    glGenBuffers(1, &vertexBuffer);
 }
 
 Box::Box(const Vector& size)

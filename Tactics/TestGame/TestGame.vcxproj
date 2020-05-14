@@ -78,8 +78,8 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>opengl32.lib;libz.dll.a;libxml2.dll.a;Engine.lib;libfastsignalsd-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Debug;..\..\Dependencies\libxml\lib;..\..\Dependencies\zlib\lib;$(TargetDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;Engine.lib;libfastsignalsd-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Debug;..\..\Dependencies\libxml\lib;..\..\Dependencies\zlib\lib;$(TargetDir);..\..\Dependencies\glew\lib\Release\x64</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Message>Testing Game</Message>
@@ -103,8 +103,8 @@
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalDependencies>opengl32.lib;libz.dll.a;libxml2.dll.a;Engine.lib;libfastsignals-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Release;..\..\Dependencies\libxml\lib;..\..\Dependencies\zlib\lib;;$(TargetDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;Engine.lib;libfastsignals-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Dependencies\glew\lib\Release\x64;..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Release</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>$(TargetPath) </Command>

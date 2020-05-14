@@ -13,7 +13,8 @@ struct AABB;
 class Mesh
 {
 public:
-    Mesh() = default;
+    Mesh();
+    virtual ~Mesh();
 
     struct TextureCoordinate
     {
@@ -30,7 +31,6 @@ public:
     struct Triangle
     {
         uint32_t vertex[3];
-        uint32_t name;
     };
 
     void Render() const;
@@ -39,13 +39,18 @@ public:
 
     std::vector<Vertex> vertices; 
     std::vector<Triangle> triangles;
+    std::vector<uint32_t> names;    // same size as triangles. not together due to glDrawElements
     std::vector<uint32_t> opaque;   // opaque triangle indices
     std::vector<uint32_t> translucent;  // translucent triangle indices
     void SetName(uint32_t name);
-private:
-    uint32_t vertex_buffer, triangle_buffer;
-    void Invalidate();
+
+    bool IsGenerated() const;
+    void Degenerate();
     void Generate();
+private:
+    uint32_t vertexBuffer, triangleBuffer;
+    uint32_t* buffer = &vertexBuffer;
+    const unsigned int buffers = unsigned int(1+(&triangleBuffer - &vertexBuffer));
 
     void RenderSelection() const;
     void RenderOpaque() const;
