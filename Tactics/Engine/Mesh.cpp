@@ -11,7 +11,9 @@
 namespace Engine
 {
 
-Mesh::Mesh()
+Mesh::Mesh() :
+    opaqueTrianglesBuffered(0),
+    translucentTrianglesBuffered(0)
 {
     ZeroMemory((void*)buffer, buffers * sizeof(uint32_t));
 }
@@ -41,9 +43,12 @@ void Mesh::Render() const
 
 void Mesh::RenderOpaque() const
 {
+    if (!opaqueTrianglesBuffered)
+        return;
+
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, opaqueTriangleBuffer);
-    glDrawElements(GL_TRIANGLES, 3 * opaqueTriangles.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 3 * opaqueTrianglesBuffered, GL_UNSIGNED_INT, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -101,9 +106,11 @@ glBegin(GL_TRIANGLES);
 
 void Mesh::RenderTranslucent() const
 {
+    if (!translucentTrianglesBuffered)
+        return;
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, translucentTriangleBuffer);
-    glDrawElements(GL_TRIANGLES, 3 * translucentTriangles.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 3 * translucentTrianglesBuffered, GL_UNSIGNED_INT, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -125,7 +132,7 @@ void Mesh::RenderTranslucent() const
 void Mesh::RenderSelection() const
 {
     glPushName(0);
-    for (auto t : opaqueTriangles)
+    for (auto t : triangles)
     {
         assert(names.empty());  // unused
         glBegin(GL_TRIANGLES);
@@ -152,7 +159,7 @@ AABB Mesh::GetBoundingBox() const
 
 void Mesh::SetName(uint32_t name)
 {
-    names.resize(opaqueTriangles.size()+translucentTriangles.size(), name);
+    names.resize(triangles.size(), name);
 }
 
 void Mesh::SetColor(RGBA color)
@@ -162,33 +169,19 @@ void Mesh::SetColor(RGBA color)
     {
         v.color = color;
     }
-    if (color.a < 255)
-    {
-        translucentTriangles.insert(translucentTriangles.end(), opaqueTriangles.begin(), opaqueTriangles.end());
-        opaqueTriangles.clear();
-    }
-    else
-    {
-        opaqueTriangles.insert(opaqueTriangles.end(), translucentTriangles.begin(), translucentTriangles.end());
-        translucentTriangles.clear();
-    }
 }
 
 Mesh& Mesh::operator+=(const Mesh& addition)
 {
     Degenerate();
 
+    uint32_t vertexOffset = vertices.size();
     vertices.insert(vertices.end(), addition.vertices.begin(), addition.vertices.end());
     assert(names.empty() == addition.names.empty()); // no functionality to add unnamed to named
     names.insert(names.end(), addition.names.begin(), addition.names.end());
-    uint32_t vertexOffset = vertices.size();
-    for (const auto& t : addition.opaqueTriangles)
+    for (const auto& t : addition.triangles)
     {
-        opaqueTriangles.push_back(Triangle{ t.vertex[0] + vertexOffset, t.vertex[1] + vertexOffset, t.vertex[2] + vertexOffset });
-    }
-    for (const auto& t : addition.translucentTriangles)
-    {
-        translucentTriangles.push_back(Triangle{ t.vertex[0] + vertexOffset, t.vertex[1] + vertexOffset, t.vertex[2] + vertexOffset });
+        triangles.push_back(Triangle{ t.vertex[0] + vertexOffset, t.vertex[1] + vertexOffset, t.vertex[2] + vertexOffset });
     }
     return *this;
 }
@@ -199,8 +192,112 @@ Mesh& Mesh::operator*=(const Matrix& transformation)
     for (auto& vertex : vertices)
     {
         vertex.c *= transformation;
+        vertex.n *= transformation.Rotation();
     }
     return *this;
+}
+
+
+void Mesh::Degenerate()
+{
+    glDeleteBuffers(buffers, buffer);
+    ZeroMemory((void*)buffer, buffers*sizeof(uint32_t));
+}
+
+template<typename T, typename U> constexpr size_t offsetOf(U T::*member)
+{
+    return (BYTE*)&((T*)nullptr->*member) - (BYTE*)nullptr;
+}
+
+void Mesh::Generate() const
+{
+    if (vertexBuffer)
+        return;
+
+    GenerateVertexBuffer();
+    GenerateIndexBuffer();
+}
+
+void Mesh::GenerateVertexBuffer() const
+{
+    glGenBuffers(1, &vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+  
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    assert(3 * sizeof(GLdouble) == sizeof(Vertex::c));
+    glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::c));
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(3, GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::t));
+
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glNormalPointer(GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::n));
+
+    glEnableClientState(GL_COLOR_ARRAY);
+    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (void*)offsetOf(&Vertex::color));
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Mesh::GenerateIndexBuffer() const
+{
+/*
+    if (!opaqueTriangleBuffer)
+    {
+        glGenBuffers(1, &opaqueTriangleBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, opaqueTriangleBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, triangles.size() * sizeof(Triangle), triangles.data(), GL_STATIC_DRAW);
+        opaqueTrianglesBuffered = triangles.size();
+    }
+*/
+
+    if (!opaqueTriangleBuffer)
+    {
+        std::vector<Triangle> opaqueTriangles;
+        std::vector<Triangle> translucentTriangles;
+
+        for (const auto& t : triangles)
+        {
+            RGBA c0 = vertices.at(t.vertex[0]).color;
+            RGBA c1 = vertices.at(t.vertex[1]).color;
+            RGBA c2 = vertices.at(t.vertex[2]).color;
+
+            if (!c0.IsVisible() && !c1.IsVisible() && !c2.IsVisible())
+                continue;   // transparent
+            if (c0.IsOpaque() && c1.IsOpaque() && c2.IsOpaque())
+            {
+                opaqueTriangles.push_back(t);
+            }
+            else
+            {
+                translucentTriangles.push_back(t);
+            }
+        }
+        opaqueTrianglesBuffered = opaqueTriangles.size();
+        translucentTrianglesBuffered = translucentTriangles.size();
+        
+        glGenBuffers(1, &opaqueTriangleBuffer);
+        glGenBuffers(1, &translucentTriangleBuffer);
+
+        if (!opaqueTriangles.empty())
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, opaqueTriangleBuffer);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, opaqueTriangles.size() * sizeof(Triangle), opaqueTriangles.data(), GL_STATIC_DRAW);
+        }
+
+        if (!translucentTriangles.empty())
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, translucentTriangleBuffer);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, translucentTriangles.size() * sizeof(Triangle), translucentTriangles.data(), GL_STATIC_DRAW);
+        }
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+}
+
+Box::Box(const Vector& size)
+    : Box()
+{
+    (*this) *= Matrix::Scale(size*0.5);
 }
 
 Box::Box()
@@ -229,14 +326,15 @@ Box::Box()
     };
 
     vertices.resize(faces.size() * 4);
-    opaqueTriangles.resize(faces.size() * 2);
+    triangles.resize(faces.size() * 2);
     uint32_t vi = 0, ti = 0;
     for (const auto & face : faces)
     {
+        triangles[ti++] = Triangle{ vi, vi + 1, vi + 3 };
+        triangles[ti++] = Triangle{ vi + 1, vi + 2, vi + 3 };
+
         Coordinate faceCenter = Coordinate::zero + face.normal;
         Vector diagonal = face.diagonal;
-        opaqueTriangles[ti++] = Triangle{ vi, vi + 1, vi + 3 };
-        opaqueTriangles[ti++] = Triangle{ vi + 1, vi + 2, vi + 3 };
         double angle = 0;
         for (const auto& t : texCoords)
         {
@@ -249,70 +347,6 @@ Box::Box()
             angle += PI * face.clock; // CCW
         }
     }
-}
-
-void Mesh::Degenerate()
-{
-    glDeleteBuffers(buffers, buffer);
-    ZeroMemory((void*)buffer, buffers*sizeof(uint32_t));
-}
-
-template<typename T, typename U> constexpr size_t offsetOf(U T::*member)
-{
-    return (BYTE*)&((T*)nullptr->*member) - (BYTE*)nullptr;
-}
-
-void Mesh::Generate() const
-{
-    GenerateVertexBuffer();
-    GenerateIndexBuffer();
-}
-
-void Mesh::GenerateVertexBuffer() const
-{
-    if (vertexBuffer)
-        return;
-
-    glGenBuffers(1, &vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-  
-    glEnableClientState(GL_VERTEX_ARRAY);
-
-    assert(3 * sizeof(GLdouble) == sizeof(Vertex::c));
-    glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::c));
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(3, GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::t));
-
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::n));
-
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (void*)offsetOf(&Vertex::color));
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void Mesh::GenerateIndexBuffer() const
-{
-    if (!opaqueTriangleBuffer)
-    {
-        glGenBuffers(1, &opaqueTriangleBuffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, opaqueTriangleBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, opaqueTriangles.size() * sizeof(Triangle), opaqueTriangles.data(), GL_STATIC_DRAW);
-    }
-    if (!translucentTriangleBuffer)
-    {
-        glGenBuffers(1, &translucentTriangleBuffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, translucentTriangleBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, translucentTriangles.size() * sizeof(Triangle), translucentTriangles.data(), GL_STATIC_DRAW);
-    }
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-}
-Box::Box(const Vector& size)
-    : Box()
-{
-    (*this) *= Matrix::Scale(size*0.5);
 }
 
 }

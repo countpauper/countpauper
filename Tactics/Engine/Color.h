@@ -22,6 +22,7 @@ namespace Engine
         Component r, g, b, a;
         void Render() const;
         bool IsVisible() const;
+        bool IsOpaque() const;
         operator bool() const { return IsVisible(); }
         RGBA operator*=(double factor);
         RGBA Translucent(double factor) const;

@@ -86,6 +86,13 @@ Vector& Vector::operator*=(const Vector& o)
     return *this;
 }
 
+Vector& Vector::operator*=(const Matrix& m)
+{
+    *this = m * *this;
+    return *this;
+}
+
+
 Vector Vector::operator-() const
 {
     return Vector(-x, -y, -z);

@@ -628,8 +628,10 @@ void VoxelMap::Render() const
 {
     if (mesh)
     {
+        glEnable(GL_LIGHTING);
         glDisable(GL_BLEND);
         mesh->Render();
+        glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
         mesh->Render();
     }
@@ -648,10 +650,12 @@ void VoxelMap::GenerateMesh()
         auto c = v.Color();
         if (!c)
             continue;
-        if (!Visibility(v.position))
+        auto visible = Visibility(v.position);
+        if (!visible)
             continue;
         Engine::Box box(Engine::Vector(dX, dZ, dY));
-        box.SetColor(v.Color());
+        box.SetColor(c);
+        
         box *= Engine::Matrix::Translation(
             Engine::Vector((double(v.position.x) + 0.5)*dX,
             (double(v.position.z) + 0.5)*dZ,

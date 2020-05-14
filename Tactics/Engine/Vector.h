@@ -32,6 +32,7 @@ struct Vector final
     Vector& operator-=(const Vector& v);
     Vector operator-() const;
     Vector& operator*=(const Vector& cross);
+    Vector& operator*=(const Matrix& m);
 
     double Dot(const Vector& v) const;
 

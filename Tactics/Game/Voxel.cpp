@@ -172,16 +172,10 @@ void VoxelMap::Voxel::RenderAnalysis(const Position& p, const Directions& visibi
 
 void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) const
 {
-    Engine::Box box(Engine::Vector(dX, dZ, dY));
-    box *= Engine::Matrix::Translation(Engine::Vector(dX*0.5, dZ*0.5, dY*0.5));
-
-    box.SetColor(Color());
-    box.Render();
-/*
     auto c = Color();
     c.Render();
     RenderFaces(p, visibility);
-*/
+
 }
 
 void VoxelMap::Voxel::RenderFaces(const Position& p, const Directions& visibility) const

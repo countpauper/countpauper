@@ -4,6 +4,7 @@
 #include "Coordinate.h"
 #include "Color.h"
 #include <vector>
+#include <set>
 
 namespace Engine
 {
@@ -38,8 +39,7 @@ public:
     Mesh& operator*=(const Matrix& transformation);
 
     std::vector<Vertex> vertices; 
-    std::vector<Triangle> opaqueTriangles;
-    std::vector<Triangle> translucentTriangles;
+    std::vector<Triangle> triangles;
 
     std::vector<uint32_t> names;    // same size as triangles. not together due to glDrawElements
     void SetName(uint32_t name);
@@ -54,6 +54,8 @@ private:
     void GenerateIndexBuffer() const;
 
     mutable uint32_t vertexBuffer, opaqueTriangleBuffer, translucentTriangleBuffer;
+    mutable uint32_t opaqueTrianglesBuffered, translucentTrianglesBuffered;
+
     uint32_t* buffer = &vertexBuffer;
     const unsigned int buffers = unsigned int(1+(&translucentTriangleBuffer - &vertexBuffer));
 

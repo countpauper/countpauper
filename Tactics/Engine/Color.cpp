@@ -52,6 +52,12 @@ namespace Engine
         return a > 0;
     }
 
+    bool RGBA::IsOpaque() const
+    {
+        return a == 255;
+    }
+
+
     RGBA RGBA::transparent(0, 0, 0, 0);
     RGBA RGBA::white(255, 255, 255);
     RGBA RGBA::black(0, 0, 0);
