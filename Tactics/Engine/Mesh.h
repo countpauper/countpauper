@@ -47,17 +47,16 @@ public:
 
     Mesh& operator+=(const Mesh& addition);
 
-    void Degenerate();
-    void Generate() const;
+    void Invalidate();
+    void InvalidateVertices();
+    void InvalidateTriangles();
 private:
+    void Validate() const;
     void GenerateVertexBuffer() const;
     void GenerateIndexBuffer() const;
 
     mutable uint32_t vertexBuffer, opaqueTriangleBuffer, translucentTriangleBuffer;
-    mutable uint32_t opaqueTrianglesBuffered, translucentTrianglesBuffered;
-
-    uint32_t* buffer = &vertexBuffer;
-    const unsigned int buffers = unsigned int(1+(&translucentTriangleBuffer - &vertexBuffer));
+    mutable size_t opaqueTrianglesBuffered, translucentTrianglesBuffered;
 
     void RenderSelection() const;
     void RenderOpaque() const;

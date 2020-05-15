@@ -156,6 +156,25 @@ float VoxelMap::Data::Density(const Position& position) const
     return density[GridIndex(position)];
 }
 
+float VoxelMap::Data::Temperature(const Position& position) const
+{
+    return temperature[GridIndex(position)];
+}
+
+const VoxelMap::Material& VoxelMap::Data::MaterialAt(const Position& position) const
+{
+    return *material[GridIndex(position)];
+}
+double VoxelMap::Data::Density(const Engine::Coordinate& c) const
+{
+    return Density(Grid(c)); // TODO interpolate
+}
+
+double VoxelMap::Data::Temperature(const Engine::Coordinate& c) const
+{
+    return Temperature(Grid(c)); // TODO interpolate
+}
+
 void VoxelMap::Data::SetDensity(const Position& position, float pressure)
 {
     density[GridIndex(position)] = pressure;

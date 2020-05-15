@@ -70,6 +70,7 @@ protected:
     void GenerateMesh();
     void RenderPretty() const;
     void RenderAnalysis() const;
+    void SetDensityToMeshColor();
 
     struct Voxel
     {
@@ -167,12 +168,16 @@ protected:
         unsigned Latitude() const;
         unsigned Longitude() const;
         unsigned Altitude() const;
-        Directions IsBoundary(const Position& p) const;
-        Engine::Vector FluxGradient(const Position& p) const;   // in g/m2
-        Engine::Vector DensityGradient(const Position& p) const;   // in g/m2
-        Engine::Vector Flow(const Position& location) const;  // in meters/second
-        float Density(const Position& p) const;
+        Directions IsBoundary(const Position& position) const;
+        Engine::Vector FluxGradient(const Position& position) const;   // in g/m2
+        Engine::Vector DensityGradient(const Position& position) const;   // in g/m2
+        Engine::Vector Flow(const Position& position) const;  // in meters/second
+        float Density(const Position& position) const;
+        float Temperature(const Position& position) const;
+        const Material& MaterialAt(const Position& position) const;
         void SetDensity(const Position& p, float density);
+        double Density(const Engine::Coordinate& c) const;   // c in meters, density interpolated
+        double Temperature(const Engine::Coordinate& c) const;   // c in meters, temperature interpolated
 
         class Flux
         {
@@ -251,7 +256,8 @@ protected:
     static constexpr double dX = HorizontalEl * MeterPerEl;
     static constexpr double dY = HorizontalEl * MeterPerEl;
     static constexpr double dZ = VerticalEl * MeterPerEl;
-
+    static Position Grid(const Engine::Coordinate& meters);
+    static Engine::Coordinate Meters(const Position& grid);
     Data voxels;
     std::unique_ptr<Engine::Mesh> mesh;
     double time;

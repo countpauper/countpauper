@@ -1,10 +1,10 @@
 * Explicit wind
 * Atmospheric pressure & temperature per meter, with z to meter
 Explicit Atmosphere and Earth commands
-Render map as one mesh with vertex color & normal and separate triangles (don't change). 
-Render triangles as mesh in two passes, opaque and translucent (and not transparent)
-Render density gradient with false color
-Render temperature  with red channel
+* Render map as one mesh with vertex color & normal and separate triangles (don't change). 
+* Render triangles as mesh in two passes, opaque and translucent (and not transparent)
+* Render density gradient with false color
+* Render temperature  with red channel
 Wall command start(xyz) Vector(xyz) Height, width (any 50% overlapping square is stone)
 Stone boundary flux = 0,0,0 (no wind)
 Stone boundary density

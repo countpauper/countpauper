@@ -622,7 +622,47 @@ void VoxelMap::Tick(double seconds)
         L"Mass=" + std::to_wstring(Mass()) + L"g " +
         L"Air Temp=" + std::to_wstring(int(Temperature(Material::air)-273.15)) + L"°C "+
         L"\n").c_str());
+
+    SetDensityToMeshColor();
 }
+
+void VoxelMap::SetDensityToMeshColor()
+{
+    if (!mesh)
+        return;
+    mesh->Invalidate();
+    for (auto& vertex : mesh->vertices)
+    {
+        Engine::Coordinate meters(vertex.c.x, vertex.c.z, vertex.c.y);
+        auto position = VoxelMap::Grid(meters);
+        auto density = voxels.Density(meters);
+        auto temperature = voxels.Temperature(meters);
+        const auto& material = voxels.MaterialAt(position);
+        double sigmoidDensity = Engine::Sigmoid(density - material.normalDensity);
+        double sigmoidTemperature = Engine::Sigmoid(temperature - atmosphericTemperature);
+        vertex.color = Engine::RGBA(BYTE(127 + sigmoidTemperature * 127.0),
+                    BYTE(127 + sigmoidDensity * 127.0),
+                    BYTE(127 - sigmoidDensity * 127.0), 255);
+    }
+}
+
+Position VoxelMap::Grid(const Engine::Coordinate& meters)
+{
+    return Position(
+        int(std::floor(meters.x/dX)),
+        int(std::floor(meters.y/dY)),
+        int(std::floor(meters.z/dZ)));
+}
+
+Engine::Coordinate VoxelMap::Meters(const Position& grid)
+{
+    return Engine::Coordinate(
+        grid.x * dX,
+        grid.y * dY,
+        grid.z * dZ
+    );
+}
+
 
 void VoxelMap::Render() const
 {
