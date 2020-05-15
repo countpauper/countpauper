@@ -10,27 +10,31 @@ OffscreenSurface::OffscreenSurface() :
     m_glRC(0)
 {
     TCHAR szWindowClass[] = L"Offscreen";
-
+    HINSTANCE moduleHandle = GetModuleHandle(NULL);
     WNDCLASSEX wcex;
-    wcex.cbSize = sizeof(WNDCLASSEX);
-    wcex.style = CS_OWNDC;
-    wcex.lpfnWndProc = DefWindowProc;
-    wcex.cbClsExtra = 0;
-    wcex.cbWndExtra = 0;
-    wcex.hInstance = GetModuleHandle(NULL);
-    wcex.hIcon = NULL;
-    wcex.hCursor = NULL;
-    wcex.hbrBackground = NULL;
-    wcex.lpszMenuName = NULL; 
-    wcex.lpszClassName = szWindowClass;
-    wcex.hIconSm = NULL;
-
-    ATOM classRegistration = RegisterClassEx(&wcex);
+    ATOM classRegistration = GetClassInfoEx(moduleHandle, szWindowClass, &wcex);
     if (!classRegistration)
-        throw std::runtime_error("Failed to register offscreen service class");
+    {
+        wcex.cbSize = sizeof(WNDCLASSEX);
+        wcex.style = CS_OWNDC;
+        wcex.lpfnWndProc = DefWindowProc;
+        wcex.cbClsExtra = 0;
+        wcex.cbWndExtra = 0;
+        wcex.hInstance = moduleHandle;
+        wcex.hIcon = NULL;
+        wcex.hCursor = NULL;
+        wcex.hbrBackground = NULL;
+        wcex.lpszMenuName = NULL;
+        wcex.lpszClassName = szWindowClass;
+        wcex.hIconSm = NULL;
+        classRegistration = RegisterClassEx(&wcex);
+        if (!classRegistration)
+            throw std::runtime_error("Failed to register offscreen service class");
+    }
+
 
     HWND hWnd = CreateWindow(szWindowClass, L"Offscreen Surface", WS_DISABLED,
-        0, 1, 0, 1, NULL, NULL, wcex.hInstance, NULL);
+        0, 1, 0, 1, NULL, NULL, moduleHandle, NULL);
     if (!hWnd)
     {
         throw std::runtime_error("Failed to create offscreen window");

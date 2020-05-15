@@ -60,4 +60,32 @@ TEST(Math, Sigmoid)
     EXPECT_NEAR(1, Sigmoid(1e6), 1e-12);
     EXPECT_NEAR(0, Sigmoid(-1e6), 1e-12);
 }
+
+
+TEST(Math, Bilinear)
+{
+    double data[] = { 1.0, 2.0, 3.0, 4.0 };
+    EXPECT_EQ(1.0, BilinearInterpolation<double>(data, 0, 0));
+    EXPECT_EQ(2.0, BilinearInterpolation<double>(data, 0, 1));
+    EXPECT_EQ(3.0, BilinearInterpolation<double>(data, 1, 0));
+    EXPECT_EQ(4.0, BilinearInterpolation<double>(data, 1, 1));
+    EXPECT_EQ(2.5, BilinearInterpolation<double>(data, 0.5, 0.5));
+}
+
+
+TEST(Math, Trilinear)
+{
+    double data[] = { 1.0, -1.0, 2.0, -2.0, 3.0, -3.0, 4.0, -4.0 };
+    EXPECT_EQ(1.0, TrilinearInterpolation<double>(data, Vector(0, 0, 0)));
+    EXPECT_EQ(2.0, TrilinearInterpolation<double>(data, Vector(0, 1, 0)));
+    EXPECT_EQ(3.0, TrilinearInterpolation<double>(data, Vector(1, 0, 0)));
+    EXPECT_EQ(4.0, TrilinearInterpolation<double>(data, Vector(1, 1, 0)));
+    EXPECT_EQ(2.5, TrilinearInterpolation<double>(data, Vector(0.5, 0.5, 0)));
+    EXPECT_EQ(-1.0, TrilinearInterpolation<double>(data, Vector(0, 0, 1)));
+    EXPECT_EQ(-2.0, TrilinearInterpolation<double>(data, Vector(0, 1, 1)));
+    EXPECT_EQ(-3.0, TrilinearInterpolation<double>(data, Vector(1, 0, 1)));
+    EXPECT_EQ(-4.0, TrilinearInterpolation<double>(data, Vector(1, 1, 1)));
+    EXPECT_EQ(-2.5, TrilinearInterpolation<double>(data, Vector(0.5, 0.5, 1)));
+    EXPECT_EQ(0, TrilinearInterpolation<double>(data, Vector(0.5, 0.5, 0.5)));
+}
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Vector.h"
+
 // NB Named maths.h because otherwise the release build gets confused with stdlib math.h
 namespace Engine
 {
@@ -15,10 +17,26 @@ namespace Engine
 
     // linear interpolation if factor : [0..1[
     template<class T>
-    T Lerp(const T& a, const T& b, double factor)
+    T Lerp(const T& a, const T& b, double x)
     {  
-        return static_cast<T>((a * (1 - factor)) +
-            (b * factor));
+        return static_cast<T>((a * (1 - x)) +
+            (b * x));
+    }
+
+    template<class T>
+    T BilinearInterpolation(const T d[4], double x, double y)
+    {   // d is column major, ie (d[0,0], d[0,1], d[1,0], d[1,1])
+        auto d0 = Lerp(d[0], d[1], y);
+        auto d1 = Lerp(d[2], d[3], y);
+        return Lerp(d0, d1, x);
+    }
+
+    template<class T>
+    T TrilinearInterpolation(const T d[8], const Engine::Vector& v)
+    {   // d is column major, ie (d[0,0,0], d[0,0,1], d[0,1,0] ... d[1,1,1])
+        auto x0 = BilinearInterpolation(d, v.y, v.z);
+        auto x1 = BilinearInterpolation(d + 4, v.y, v.z);
+        return Lerp(x0, x1, v.x);
     }
 
     // Logistic sigmoid 0...1 with f(0)=0.5

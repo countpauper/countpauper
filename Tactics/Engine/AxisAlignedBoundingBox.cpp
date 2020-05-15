@@ -29,6 +29,11 @@ Vector AABB::Extent() const
     return Vector(x.Size(), y.Size(), z.Size());
 }
 
+bool AABB::Contains(const Coordinate& p) const
+{
+    return x[p.x] && y[p.y] && z[p.z];
+}
+
 AABB::operator bool() const
 {
     return Volume()!=0;

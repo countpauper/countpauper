@@ -537,7 +537,10 @@ void VoxelMap::Flow(double dt)
         double duwdz = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x + 1, p.y, p.z))
             - (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x + 1, p.y, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dz;
         double dpdx = (voxels.Density(p) - voxels.Density(Position(p.x - 1, p.y, p.z))) / dx;
-        double Reynolds = 100.0;
+        double Reynolds = 100.0;    // TODO: Apparently has to do with viscosity and friction https://en.wikipedia.org/wiki/Reynolds_number
+        // can be computed from visocity and flow speed, but also need to know how far to the nearest surface 
+        // it should be as simply as massflowrate (=flux*area) / diameter * dynamic viscosity of the material
+        // trick will be to compute the diamter in x y and z for each grid
         double diff = (1.0 / Reynolds) *
             ((oU(p.x + 1, p.y, p.z) - 2.0*oU(p.x, p.y, p.z) + oU(p.x - 1, p.y, p.z)) / (dx*dx) +
             (oU(p.x, p.y + 1, p.z) + 2.0*oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) / (dy*dy) +
@@ -654,12 +657,12 @@ Position VoxelMap::Grid(const Engine::Coordinate& meters)
         int(std::floor(meters.z/dZ)));
 }
 
-Engine::Coordinate VoxelMap::Meters(const Position& grid)
+Engine::Coordinate VoxelMap::Center(const Position& grid)
 {
     return Engine::Coordinate(
-        grid.x * dX,
-        grid.y * dY,
-        grid.z * dZ
+        (0.5+grid.x) * dX,
+        (0.5+grid.y) * dY,
+        (0.5+grid.z) * dZ
     );
 }
 

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "VoxelMap.h"
+#include "Engine/Maths.h"
 
 namespace Game
 {
@@ -167,12 +168,48 @@ const VoxelMap::Material& VoxelMap::Data::MaterialAt(const Position& position) c
 }
 double VoxelMap::Data::Density(const Engine::Coordinate& c) const
 {
-    return Density(Grid(c)); // TODO interpolate
+    auto gridPosition = Grid(c - Engine::Vector(0.5*dX, 0.5*dY, 0.5*dZ));
+    double d[8];
+    int i = 0;
+    Position dP;
+    for (dP.x = 0; dP.x <= 1; ++dP.x)
+    {
+        for (dP.y = 0; dP.y <= 1; ++dP.y)
+        {
+            for (dP.z = 0; dP.z <= 1; ++dP.z)
+            {
+                d[i++] = Density(gridPosition + dP);
+            }
+        }
+    }
+    Engine::Vector gridWeight = c - Center(gridPosition);
+    gridWeight.x /= dX;
+    gridWeight.y /= dY;
+    gridWeight.z /= dZ;
+    return TrilinearInterpolation(d, gridWeight);
 }
 
 double VoxelMap::Data::Temperature(const Engine::Coordinate& c) const
 {
-    return Temperature(Grid(c)); // TODO interpolate
+    auto gridPosition = Grid(c - Engine::Vector(0.5*dX, 0.5*dY, 0.5*dZ));
+    double t[8];
+    int i = 0;
+    Position dP;
+    for (dP.x = 0; dP.x <= 1; ++dP.x)
+    {
+        for (dP.y = 0; dP.y <= 1; ++dP.y)
+        {
+            for (dP.z = 0; dP.z <= 1; ++dP.z)
+            {
+                t[i++] = Temperature(gridPosition + dP);
+            }
+        }
+    }
+    Engine::Vector gridWeight = c - Center(gridPosition);
+    gridWeight.x /= dX;
+    gridWeight.y /= dY;
+    gridWeight.z /= dZ;
+    return TrilinearInterpolation(t, gridWeight);
 }
 
 void VoxelMap::Data::SetDensity(const Position& position, float pressure)

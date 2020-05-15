@@ -257,7 +257,7 @@ protected:
     static constexpr double dY = HorizontalEl * MeterPerEl;
     static constexpr double dZ = VerticalEl * MeterPerEl;
     static Position Grid(const Engine::Coordinate& meters);
-    static Engine::Coordinate Meters(const Position& grid);
+    static Engine::Coordinate Center(const Position& grid);
     Data voxels;
     std::unique_ptr<Engine::Mesh> mesh;
     double time;

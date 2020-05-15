@@ -24,7 +24,7 @@ struct Range
         return end - begin;
     }
 
-    bool operator[](T v)
+    bool operator[](T v) const
     {   // in
         return (begin <= v) && (v <= end);
     }

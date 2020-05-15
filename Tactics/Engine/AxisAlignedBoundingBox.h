@@ -20,7 +20,8 @@ namespace Engine
         Range<double> X() const;
         Range<double> Y() const;
         Range<double> Z() const;
-
+        bool Contains(const Coordinate& p) const;
+        bool operator[](const Coordinate& p) const { return Contains(p); }
         AABB& operator|=(const Coordinate& p);
 
         Range<double> x;
