@@ -18,7 +18,7 @@ public:
     double LengthSquared() const;
     double Length() const;
     double Distance(const Coordinate& p) const;
-    Coordinate Nearest(const Coordinate& p) const;
+    Coordinate Project(const Coordinate& p) const;
 };
 
 }

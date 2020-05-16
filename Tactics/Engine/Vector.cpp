@@ -2,6 +2,7 @@
 #include "Vector.h"
 #include "Coordinate.h"
 #include "Line.h"
+#include "Plane.h"
 #include "Matrix.h"
 
 namespace Engine
@@ -17,6 +18,11 @@ Vector::Vector(const Coordinate& c) :
 
 Vector::Vector(const Line& l) : 
     Vector(l.b - l.a)
+{
+}
+
+Vector::Vector(const Plane& p) :
+    Vector(p.normal)
 {
 }
 

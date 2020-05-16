@@ -6,14 +6,19 @@ namespace Engine
 {
 
     struct Vector;
+    struct Line;
+    struct Matrix;
 
     struct AABB
     {
         AABB() = default;
-        AABB(const Coordinate& p0, const Coordinate& p1);
-        AABB(const Coordinate& p0, const Vector& extent);
+        AABB(const Coordinate& begin, const Coordinate& end);
+        AABB(const Coordinate& begin, const Vector& extent);
         AABB(const Range<double>& x, const Range<double>& y, const Range<double>& z);
+        AABB(const Line& line);
 
+        Coordinate Begin() const;
+        Coordinate End() const;
         Vector Extent() const;
         double Volume() const;
         operator bool() const;
@@ -25,6 +30,8 @@ namespace Engine
         AABB& operator|=(const Coordinate& p);
         AABB& Expand(const Engine::Vector& v);
         AABB& Expand(double v);
+        AABB& operator*=(const Matrix& transformation);
+        AABB& operator+=(const Vector& offset);
 
         Range<double> x;
         Range<double> y;

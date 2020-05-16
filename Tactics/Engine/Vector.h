@@ -6,6 +6,7 @@ namespace Engine
 struct Coordinate;
 struct Matrix;
 struct Line;
+struct Plane;
 
 struct Vector final
 {
@@ -20,6 +21,7 @@ struct Vector final
 
     explicit Vector(const Coordinate& c);
     explicit Vector(const Line& l);
+    explicit Vector(const Plane& p);
 
     Vector& operator=(const Vector& o);
     operator bool() const;

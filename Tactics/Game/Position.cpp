@@ -80,10 +80,10 @@ namespace Game
         return o;
     }
 
-    std::wstring Position::Description() const
+    std::wstring Position::to_wstring() const
     {
         std::wstringstream ss;
-        ss << x << L", " << y;
+        ss << L"(" << x << L", " << y << L", " << z << L")";
         return ss.str();
     }
     bool operator==(const Position& a, const Position& b)

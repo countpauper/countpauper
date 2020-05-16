@@ -42,6 +42,14 @@ Coordinate& Coordinate::operator*=(const Matrix& transformation)
     return *this;
 }
 
+bool Coordinate::operator==(const Coordinate& other) const
+{
+    return x == other.x &&
+        y == other.y &&
+        z == other.z;
+}
+
+
 Coordinate operator*(const Coordinate& c, double factor)
 {
     return Coordinate(c) *= factor;

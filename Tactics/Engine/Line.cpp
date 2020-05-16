@@ -16,7 +16,7 @@ double Line::Length() const
     return Vector(*this).Length();
 }
 
-Coordinate Line::Nearest(const Coordinate& p) const
+Coordinate Line::Project(const Coordinate& p) const
 {
     Engine::Vector v = p - a;
     double length_squared = LengthSquared();
@@ -39,8 +39,8 @@ Coordinate Line::Nearest(const Coordinate& p) const
 }
 double Line::Distance(const Coordinate& p) const
 {
-    Coordinate nearest = Nearest(p);
-    return (p - nearest).Length();
+    Coordinate projection = Project(p);
+    return (p - projection).Length();
 }
 
 

@@ -18,6 +18,7 @@ struct Coordinate final
     Coordinate& operator-=(const Vector& v);
     Coordinate& operator*=(double factor);
     Coordinate& operator*=(const Matrix& transformation);
+    bool operator==(const Coordinate& other) const;
 
     double x;
     double y;

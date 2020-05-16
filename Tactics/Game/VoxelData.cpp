@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "VoxelMap.h"
 #include "Engine/Maths.h"
+#include "Engine/AxisAlignedBoundingBox.h"
 
 namespace Game
 {
@@ -320,6 +321,32 @@ VoxelMap::Data::iterator VoxelMap::Data::Boundary::end() const
     }
 }
 
+VoxelMap::Data::Section::Section(const Data& data, const Engine::AABB& meters) :
+    Section(data, Grid(meters.Begin()), Grid(meters.End()))
+{
+}
+
+VoxelMap::Data::Section::Section(const Data& data, const Position& begin, const Position& end) :
+    data(data),
+    _begin(begin),
+    _end(end)
+{
+}
+
+VoxelMap::Data::iterator VoxelMap::Data::Section::begin() const
+{
+    return iterator(data, _begin, _end);
+}
+
+VoxelMap::Data::iterator VoxelMap::Data::Section::end() const
+{
+    return iterator(data, _end, _end);
+}
+
+VoxelMap::Data::Section VoxelMap::Data::In(const Engine::AABB& meters) const
+{
+    return Section(*this, meters);
+}
 
 void VoxelMap::Data::SetPressure(const Position& position, const Material& material, double temperature, double pressure)
 {

@@ -22,7 +22,7 @@ namespace Game
         Position& operator+=(const Position& delta);
         Position& operator-=(const Position& delta);
         operator bool() const;
-        std::wstring Description() const;
+        std::wstring to_wstring() const;
     };
 
 	bool operator==(const Position& a, const Position& b);

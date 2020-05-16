@@ -648,7 +648,7 @@ namespace Game
 
     std::wstring PathPlan::Description() const
     {
-        return actor.Description() + L": " + std::wstring(L"Move to ") + target.Description();
+        return actor.Description() + L": " + std::wstring(L"Move to ") + target.to_wstring();
     }
 
     const Skill* PathPlan::GetSkill() const

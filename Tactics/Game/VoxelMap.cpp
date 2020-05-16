@@ -14,7 +14,7 @@
 #include "Engine/Text.h"
 #include "Engine/Mesh.h"
 #include "Engine/Matrix.h"
-#include "Engine/Line.h"
+#include "Engine/Plane.h"
 #include "Engine/AxisAlignedBoundingBox.h"
 #include <string>
 
@@ -164,21 +164,33 @@ void VoxelMap::Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, 
     }
 }
 
-void VoxelMap::Wall(const Engine::Line& l, float height, float width)
+void VoxelMap::Wall(const Engine::Line& bottomLine, float height, float thickness)
 {
-    /* TODO: faster if iterating only over box locations?
-    Engine::AABB boundingBox(p1, p2);
-    if (height>width)
-        boundingBox.Expand(Engine::Vector(0, 0, height-width));
-    boundingBox.Expand(width);
-    */
+    double halfThickness = thickness * 0.5;
+    Engine::AABB boundingBox(bottomLine);
+    if (height>halfThickness)
+        boundingBox.Expand(Engine::Vector(0, 0, height-thickness));
+    boundingBox.Expand(halfThickness);
+    boundingBox += Engine::Vector(0, 0, halfThickness);
 
-    Engine::Line horizontal(Engine::Coordinate(l.a.x, l.a.y, 0), Engine::Coordinate(l.b.x, l.b.y, 0));
-    for (auto v : voxels)
+    Engine::Plane plane(bottomLine.a, Engine::Vector(bottomLine), Engine::Vector(0, 0, height));
+
+    for (auto v : voxels.In(boundingBox))
     {
         auto c = Center(v.position);
-        auto horizontalDistance = horizontal.Distance(Engine::Coordinate(c.x, c.y, 0));
-
+        auto nearest = plane.Project(c);
+        if ((nearest - c).Length() > halfThickness)
+            continue;
+        auto bottom = bottomLine.Project(nearest);
+        if (nearest.z < bottom.z)
+            continue;
+        if (nearest.z > bottom.z + height)
+            continue;
+        OutputDebugStringW((std::wstring(L"Wall at ") + v.position.to_wstring() + L"\n").c_str());
+        voxels.SetPressure(v.position,
+            Material::stone,
+            atmosphericTemperature, // TODO: decrease from air increase to lava
+            PascalPerAtmosphere);   // TODO: increase due to stone depth, NB: can be already overlapping stone layer. just dont place those
     }
 }
 

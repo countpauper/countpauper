@@ -2,10 +2,11 @@
 #include "Map.h"
 #include "Engine/Color.h"
 #include "Engine/Vector.h"
+#include "Engine/Line.h"
 #include "Plane.h"
 #include <string>
 
-namespace Engine { class Mesh; struct Line;  }
+namespace Engine { class Mesh;  struct AABB; }
 namespace Game
 {
 
@@ -52,7 +53,7 @@ public:
     void Wind(const Engine::Vector& speed);     // direction in meter/second
     void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
     void Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, float stddev);
-    void Wall(const Engine::Line& line, float height, float width);
+    void Wall(const Engine::Line& bottomLine, float height, float thickness);
     // Evaluate
     double Volume() const;
     double Mass(const Material& material) const;
@@ -161,6 +162,21 @@ protected:
             Directions directions;
         };
         Boundary BoundaryCondition(const Directions& dirs) const { return Boundary(*this, dirs); }
+
+        class Section
+        {
+        public:
+            Section(const Data& data, const Engine::AABB& meters);
+            Section(const Data& data, const Position& begin, const Position& end);
+            iterator begin() const;
+            iterator end() const;
+        private:
+            const Data& data;
+            Position _begin;
+            Position _end;
+        };
+        Section In(const Engine::AABB& meters) const;
+
 
         void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
         void AdjustGrid(const Position& location, double temperature, double density);

@@ -3,6 +3,7 @@
 #include "Coordinate.h"
 #include "Vector.h"
 #include "Line.h"
+#include "Plane.h"
 
 namespace Engine::Test
 {
@@ -74,4 +75,74 @@ TEST(Line, Distance)
     Line l2(Engine::Coordinate(1, 1, 0), Engine::Coordinate(1, 1, 0));
     EXPECT_EQ(1.0, l2.Distance(Engine::Coordinate(1, 0, 0)));
 }
+
+TEST(Plane, Null)
+{
+    EXPECT_FALSE(Plane(Vector(0, 0, 0), 1));
+    EXPECT_FALSE(Plane(Vector(0, 0, 0), 1));
+    EXPECT_FALSE(Plane(Coordinate::zero, Coordinate::zero, Coordinate::zero));
+    EXPECT_FALSE(Plane(Coordinate(1, 0, 0), Coordinate(1, 0, 0), Coordinate(1, 0, 0)));
+    EXPECT_EQ(Plane(Vector(0,0,0),0) , Plane(Coordinate(1, 0, 0), Coordinate(1, 0, 0), Coordinate(1, 0, 0)));
+    EXPECT_FALSE(Plane::null);
+    EXPECT_FALSE(Plane::null.Normalized());
+}
+
+TEST(Plane, XY)
+{
+    EXPECT_TRUE(Plane::xy);
+    EXPECT_EQ(Plane::xy, Plane(Coordinate(0, 0, 0), Vector(1, 0, 0), Vector(0, 1, 0)));
+    EXPECT_EQ(0, Plane::xy.Distance(Coordinate::zero));
+    EXPECT_EQ(1, Plane::xy.Distance(Coordinate(0, 0, 1)));
+    EXPECT_EQ(0, Plane::xy.Distance(Coordinate(1, 1, 0)));
+    EXPECT_EQ(Coordinate::zero, Plane::xy.Project(Coordinate(0, 0, 1)));
+    EXPECT_EQ(Coordinate(1, 1, 0), Plane::xy.Project(Coordinate(1, 1, 1)));
+    EXPECT_TRUE(Plane::xy.Above(Coordinate(0, 0, 1)));
+    EXPECT_FALSE(Plane::xy.Above(Coordinate(0, 0, -1)));
+}
+
+
+TEST(Plane, Diagonal)
+{
+    Plane plane(Coordinate(1, 0, 0), Coordinate(0, 1, 0), Coordinate(0, 0, 1));
+    EXPECT_TRUE(plane);
+    // as long as it's clockwise the same, the plane is the same
+    EXPECT_EQ(plane, Plane(Coordinate(0, 0, 1), Coordinate(1, 0, 0), Coordinate(0, 1, 0)));
+    EXPECT_EQ(plane, Plane(Coordinate(0, 1, 0), Coordinate(0, 0, 1), Coordinate(1, 0, 0)));
+    // flipped direction is flipped plane 
+    EXPECT_EQ(-plane, Plane(Coordinate(1, 0, 0), Coordinate(0, 0, 1), Coordinate(0, 1, 0)));
+
+    EXPECT_EQ(0, plane.Distance(Coordinate(1, 0, 0)));
+    EXPECT_EQ(0, plane.Distance(Coordinate(0, 1, 0)));
+    EXPECT_EQ(0, plane.Distance(Coordinate(0, 0, 1)));
+    EXPECT_NEAR(1.0 / sqrt(3), plane.Distance(Coordinate::zero), std::numeric_limits<double>::epsilon());
+
+    EXPECT_NEAR(1.0 / 3.0, plane.Project(Coordinate::zero).x, 1e-12);
+}
+
+TEST(Plane, DoubleXYAt1)
+{
+    Plane xy2(Coordinate(1,1,1), Vector(0, 0, 2));
+    EXPECT_TRUE(xy2.Above(Coordinate(1, 1, 1.1)));
+    EXPECT_FALSE(xy2.Above(Coordinate(0, 0, 0.9)));
+    EXPECT_EQ(1, xy2.Distance(Coordinate::zero));
+    EXPECT_EQ(2, xy2.Distance(Coordinate(1,1,-1)));
+    EXPECT_EQ(Coordinate(0, 0, 1), xy2.Project(Coordinate::zero));
+    EXPECT_EQ(Coordinate(1, 1, 1), xy2.Project(Coordinate(1, 1, 1)));
+    EXPECT_EQ(Coordinate(-2,-3, 1), xy2.Project(Coordinate(-2, -3, -4)));
+}
+
+
+TEST(Plane, NotNormalDiagonal)
+{
+    Plane abnormal(Coordinate(1,0,0), Vector(-2, 2, 0), Vector(0, 2, -2));
+    EXPECT_TRUE(abnormal);
+    EXPECT_EQ(abnormal, abnormal.Normalized());
+    EXPECT_EQ(0, abnormal.Distance(Coordinate(1, 0, 0)));
+    EXPECT_EQ(0, abnormal.Distance(Coordinate(-1, 2, 0)));
+    EXPECT_EQ(0, abnormal.Distance(Coordinate(1, 2, -2)));
+    EXPECT_NEAR(1.0 / 3.0, abnormal.Project(Coordinate::zero).x, 1e-12);
+}
+
+
+
 }

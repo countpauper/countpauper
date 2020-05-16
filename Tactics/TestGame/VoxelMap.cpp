@@ -87,5 +87,24 @@ TEST(Map, HillRidge)
     EXPECT_EQ(Element::Stone, map.At(Position(0, 2, 3)).floor);
     EXPECT_EQ(2, map.At(Position(0, 2, 3)).height);
 }
+
+
+TEST(Map, StraightWall)
+{
+    VoxelMap map;
+    map.Space(3, 3, 3);
+    map.Wall(Engine::Line(Engine::Coordinate(1.5, 0, 0), Engine::Coordinate(1.5, 3, 0)), 0.5, 1.0);
+
+    EXPECT_EQ(Element::Stone, map.At(Position(1, 0, 3)).floor);
+    EXPECT_EQ(1, map.At(Position(1, 0, 3)).height);
+
+    EXPECT_EQ(1, map.At(Position(1, -0.5, 3)).height);
+    EXPECT_EQ(Element::Stone, map.At(Position(1, 1, 1)).floor);
+
+    EXPECT_EQ(Element::None, map.At(Position(0, 0, 3)).floor);
+    EXPECT_EQ(0, map.At(Position(0, 0, 3)).height);
+}
+
+
 }
 }

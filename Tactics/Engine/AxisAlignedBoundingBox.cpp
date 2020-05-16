@@ -2,18 +2,25 @@
 #include "AxisAlignedBoundingBox.h"
 #include "Vector.h"
 #include "Range.h"
+#include "Line.h"
 
 namespace Engine
 {
-AABB::AABB(const Coordinate& p0, const Coordinate& p1) :
-    x(p0.x, p1.x),
-    y(p0.y, p1.y),
-    z(p0.z, p1.z)
+
+AABB::AABB(const Coordinate& begin, const Coordinate& end) :
+    x(begin.x, end.x),
+    y(begin.y, end.y),
+    z(begin.z, end.z)
 {
 }
 
-AABB::AABB(const Coordinate& p0, const Vector& extent) :
-    AABB(p0, p0 + extent)
+AABB::AABB(const Line& line) :
+    AABB(line.a, line.b)
+{
+}
+
+AABB::AABB(const Coordinate& begin, const Vector& extent) :
+    AABB(begin, begin + extent)
 {
 }
 
@@ -24,6 +31,15 @@ AABB::AABB(const Range<double>& x, const Range<double>& y, const Range<double>& 
 {
 }
 
+Coordinate AABB::Begin() const
+{
+    return Coordinate(x.begin, y.begin, z.begin);
+}
+Coordinate AABB::End() const
+{
+    return Coordinate(x.end, y.end, z.end);
+}
+
 Vector AABB::Extent() const
 {
     return Vector(x.Size(), y.Size(), z.Size());
@@ -32,6 +48,23 @@ Vector AABB::Extent() const
 bool AABB::Contains(const Coordinate& p) const
 {
     return x[p.x] && y[p.y] && z[p.z];
+}
+
+AABB& AABB::operator*=(const Matrix& transformation)
+{
+    auto begin = transformation * Begin();
+    auto end = transformation * End();
+    *this = AABB(begin, end);
+
+    return *this;
+}
+
+AABB& AABB::operator+=(const Vector& offset)
+{
+    x += offset.x;
+    y += offset.y;
+    z += offset.z;
+    return *this;
 }
 
 AABB::operator bool() const
