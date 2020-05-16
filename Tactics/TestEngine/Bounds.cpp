@@ -28,6 +28,10 @@ TEST(Range, Intersection)
     EXPECT_FALSE(Range(2, 3) & Range(0, 1));
 }
 
+TEST(Range, Expand)
+{
+    EXPECT_EQ(2, (Range(0, 1) + 1).Size());
+}
 
 TEST(Range, Inclusion)
 {
@@ -47,5 +51,24 @@ TEST(AABB, Size)
     // no expectations yet for size and extent of flipped bounding boxes 
 }
 
+TEST(AABB, Expand)
+{
+    AABB box(Coordinate(0, 0, 0), Coordinate(1, 1, 1));
+    box.Expand(Vector(1, -1, 0));
+    EXPECT_EQ(4, box.Volume()); // 2x2x1
+    EXPECT_EQ(Range(0, 2), box.X());
+    EXPECT_EQ(Range(-1, 1), box.Y());
+
+    box.Expand(1);
+    EXPECT_EQ(48, box.Volume()); // 4x4x3
+    EXPECT_EQ(Range(-1, 2), box.Z());
+}
+
+TEST(AABB, Include)
+{
+    AABB box(Coordinate(0, 0, 0), Coordinate(1, 1, 1));
+    
+    EXPECT_TRUE((box | Coordinate(2, 2, 2))[Coordinate(1.5, 1.5, 1.5)]);
+}
 
 }

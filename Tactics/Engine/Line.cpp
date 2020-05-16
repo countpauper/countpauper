@@ -8,41 +8,39 @@ namespace Engine
 
 double Line::LengthSquared() const
 {
-    return Vector().LengthSquared();
+    return Vector(*this).LengthSquared();
 }
 
 double Line::Length() const
 {
-    return Vector().Length();
+    return Vector(*this).Length();
 }
 
-Engine::Vector Line::Vector() const
+Coordinate Line::Nearest(const Coordinate& p) const
 {
-    return b - a;
-}
-
-double Distance(const Coordinate& p, const Line& l)
-{
-    Vector v = p - l.a;
-    double length_squared = l.LengthSquared();
+    Engine::Vector v = p - a;
+    double length_squared = LengthSquared();
     if (length_squared == 0)
-        return v.Length();
+        return a;
 
-    double interpolation_factor = l.Vector().Dot(v) / length_squared;
-
+    double interpolation_factor = Vector(*this).Dot(v) / length_squared;
     if (interpolation_factor <= 0)
     {
-        return v.Length();
+        return a;
     }
     else if (interpolation_factor >= 1)
     {
-        return (l.b - p).Length();
+        return b;
     }
     else
     {
-        Engine::Vector nearest = Lerp(Vector(l.a), Vector(l.b), interpolation_factor);
-        return (Vector(p)-nearest).Length();
+        return Coordinate::zero+Lerp(Vector(a), Vector(b), interpolation_factor);
     }
+}
+double Line::Distance(const Coordinate& p) const
+{
+    Coordinate nearest = Nearest(p);
+    return (p - nearest).Length();
 }
 
 

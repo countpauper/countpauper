@@ -35,6 +35,16 @@ struct Range
         end = std::max(end, v);
         return *this;
     }
+
+    Range& operator+=(T v)
+    {
+        if (v > 0)
+            end += v;
+        else
+            begin += v;
+        return *this;
+    }
+
     T begin;
     T end;
 };
@@ -49,6 +59,12 @@ template<typename T>
 Range<T> operator|(const Range<T>& a, T v)
 {
     return Range(a)|=v;
+}
+
+template<typename T>
+Range<T> operator+(const Range<T>& a, T v)
+{
+    return Range(a) += v;
 }
 
 template<typename T>

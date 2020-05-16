@@ -68,6 +68,24 @@ AABB& AABB::operator|=(const Coordinate& p)
     return *this;
 }
 
+AABB& AABB::Expand(const Engine::Vector& v)
+{
+    x += v.x;
+    y += v.y;
+    z += v.z;
+    return *this;
+}
+
+AABB& AABB::Expand(double v)
+{
+    x += v;
+    x += -v;
+    y += v;
+    y += -v;
+    z += v;
+    z += -v;
+    return *this;
+}
 
 AABB operator|(const AABB& a, const AABB& b)
 {
@@ -75,6 +93,11 @@ AABB operator|(const AABB& a, const AABB& b)
         a.X() | b.X(),
         a.Y() | b.Y(),
         a.Z() | b.Z());
+}
+
+AABB operator|(const AABB& a, const Coordinate& c)
+{
+    return AABB(a) |= c;
 }
 
 AABB operator&(const AABB& a, const AABB& b)

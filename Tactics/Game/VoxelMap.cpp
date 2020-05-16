@@ -14,6 +14,7 @@
 #include "Engine/Text.h"
 #include "Engine/Mesh.h"
 #include "Engine/Matrix.h"
+#include "Engine/Line.h"
 #include "Engine/AxisAlignedBoundingBox.h"
 #include <string>
 
@@ -147,8 +148,8 @@ void VoxelMap::Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, 
         for (p.y = -1; p.y <= int(voxels.Latitude()); ++p.y)
         {
             Engine::Coordinate c(float(p.x)+0.5f, float(p.y)+0.5f, 0);
-            double distance = Engine::Distance(c, ridge_line);
-            double interpolation_factor = std::max(0.0,std::min(1.0, ridge_line.Vector().Dot(c - ridge_line.a) / ridge_line.Vector().LengthSquared()));
+            double distance = ridge_line.Distance(c);
+            double interpolation_factor = std::max(0.0,std::min(1.0, Engine::Vector(ridge_line).Dot(c - ridge_line.a) / ridge_line.LengthSquared()));
             double height = Engine::Lerp(double(p1.z), double(p2.z), interpolation_factor) * Engine::Gaussian(distance, stddev);
             int maxZ = 1+int(std::round( height ));
             maxZ = std::min(maxZ, int(voxels.Altitude()));
@@ -160,6 +161,24 @@ void VoxelMap::Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, 
                     PascalPerAtmosphere);   // TODO: increase due to stone depth, NB: can be already overlapping stone layer. just dont place those
             }
         }
+    }
+}
+
+void VoxelMap::Wall(const Engine::Line& l, float height, float width)
+{
+    /* TODO: faster if iterating only over box locations?
+    Engine::AABB boundingBox(p1, p2);
+    if (height>width)
+        boundingBox.Expand(Engine::Vector(0, 0, height-width));
+    boundingBox.Expand(width);
+    */
+
+    Engine::Line horizontal(Engine::Coordinate(l.a.x, l.a.y, 0), Engine::Coordinate(l.b.x, l.b.y, 0));
+    for (auto v : voxels)
+    {
+        auto c = Center(v.position);
+        auto horizontalDistance = horizontal.Distance(Engine::Coordinate(c.x, c.y, 0));
+
     }
 }
 
@@ -852,12 +871,18 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
             s >> wind;
             map.Wind(wind);
         }
+        else if (procedure == L"WALL")
+        {
+            Engine::Coordinate p0, p1;
+            float height, width;
+            s >> p0 >> p1 >> height >> width;
+            map.Wall(Engine::Line(p0, p1), height, width);
+        }
         else if (procedure == L"HILL")
         {
             Engine::Coordinate p0, p1;
-            s >> p0 >> p1;
             float stddev;
-            s >> stddev;
+            s >> p0 >> p1 >> stddev;
             map.Hill(p0, p1, stddev);
         }
         else

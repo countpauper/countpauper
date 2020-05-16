@@ -5,6 +5,7 @@ namespace Engine
 
 struct Coordinate;
 struct Matrix;
+struct Line;
 
 struct Vector final
 {
@@ -17,7 +18,8 @@ struct Vector final
     }
     Vector(const Vector& v) = default;
 
-    Vector(const Coordinate& c);
+    explicit Vector(const Coordinate& c);
+    explicit Vector(const Line& l);
 
     Vector& operator=(const Vector& o);
     operator bool() const;

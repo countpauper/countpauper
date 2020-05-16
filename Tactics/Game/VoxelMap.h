@@ -5,7 +5,7 @@
 #include "Plane.h"
 #include <string>
 
-namespace Engine { class Mesh; }
+namespace Engine { class Mesh; struct Line;  }
 namespace Game
 {
 
@@ -52,7 +52,7 @@ public:
     void Wind(const Engine::Vector& speed);     // direction in meter/second
     void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
     void Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, float stddev);
-
+    void Wall(const Engine::Line& line, float height, float width);
     // Evaluate
     double Volume() const;
     double Mass(const Material& material) const;

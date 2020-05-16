@@ -3,7 +3,8 @@
 
 namespace Engine
 {
-class Line
+
+struct  Line
 {
 public:
     Coordinate a;
@@ -16,9 +17,8 @@ public:
     }
     double LengthSquared() const;
     double Length() const;
-    Engine::Vector Vector() const;
+    double Distance(const Coordinate& p) const;
+    Coordinate Nearest(const Coordinate& p) const;
 };
-
-double Distance(const Coordinate& p, const Line& l);
 
 }

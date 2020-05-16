@@ -23,6 +23,8 @@ namespace Engine
         bool Contains(const Coordinate& p) const;
         bool operator[](const Coordinate& p) const { return Contains(p); }
         AABB& operator|=(const Coordinate& p);
+        AABB& Expand(const Engine::Vector& v);
+        AABB& Expand(double v);
 
         Range<double> x;
         Range<double> y;
@@ -31,6 +33,7 @@ namespace Engine
 
 
     AABB operator|(const AABB& a, const AABB& b);
+    AABB operator|(const AABB& a, const Coordinate& c);
     AABB operator&(const AABB& a, const AABB& b);
 
 } // ::Engine

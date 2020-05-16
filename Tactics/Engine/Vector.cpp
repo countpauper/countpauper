@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Vector.h"
 #include "Coordinate.h"
+#include "Line.h"
 #include "Matrix.h"
 
 namespace Engine
@@ -11,6 +12,11 @@ Vector::Vector(const Coordinate& c) :
     x(c.x),
     y(c.y),
     z(c.z)
+{
+}
+
+Vector::Vector(const Line& l) : 
+    Vector(l.b - l.a)
 {
 }
 
