@@ -62,7 +62,7 @@ TEST(Map, HillPeak)
     VoxelMap map;
     map.Space(3, 3, 3);
     map.Air(300, 10000);
-    map.Hill(Engine::Coordinate(1.5, 1.5, 2), Engine::Coordinate(1.5, 1.5, 2), 1.0f/float(Engine::FullWidthHalfMaximum(1)));
+    map.Hill(Engine::Line(Engine::Coordinate(1.5, 1.5, 2), Engine::Coordinate(1.5, 1.5, 2)), 1.0f/float(Engine::FullWidthHalfMaximum(1)));
 
     EXPECT_EQ(Element::Stone, map.At(Position(1, 1, 2)).floor);
     EXPECT_EQ(2, map.At(Position(1, 1, 3)).height);
@@ -76,16 +76,24 @@ TEST(Map, HillRidge)
     map.Space(3, 3, 3);
     map.Air(300, 10000);
     map.World(10e6);
-    map.Hill(Engine::Coordinate(3, 0, 0), Engine::Coordinate(0, 3, 3), 1.0 );
-
+    map.Hill(Engine::Line(Engine::Coordinate(3, 0, 0), Engine::Coordinate(0, 3, 3)), 1.666 );
+    // The line goes straight through the middle of (0,2) (1,1) and (2,0)
+    // but is highest at the first and lowest at the last
     EXPECT_EQ(Element::Stone, map.At(Position(2, 0, 3)).floor);
     EXPECT_EQ(1, map.At(Position(2, 0, 3)).height);
 
-    EXPECT_EQ(2, map.At(Position(1, 1, 3)).height);
+    EXPECT_EQ(2, map.At(Position(1, 1, 2)).height);
     EXPECT_EQ(Element::Stone, map.At(Position(1, 1, 1)).floor);
 
     EXPECT_EQ(Element::Stone, map.At(Position(0, 2, 3)).floor);
-    EXPECT_EQ(2, map.At(Position(0, 2, 3)).height);
+    EXPECT_EQ(3, map.At(Position(0, 2, 3)).height);
+
+    // 0,0 is one diagonal (roughly grid off the middle of the ridge line)
+    //  which is close to full width half maximum of 1.666, so it should be one lower 
+    EXPECT_EQ(Element::Stone, map.At(Position(0, 0, 3)).floor);
+    EXPECT_EQ(1, map.At(Position(0, 0, 3)).height);
+
+
 }
 
 
@@ -93,16 +101,21 @@ TEST(Map, StraightWall)
 {
     VoxelMap map;
     map.Space(3, 3, 3);
-    map.Wall(Engine::Line(Engine::Coordinate(1.5, 0, 0), Engine::Coordinate(1.5, 3, 0)), 0.5, 1.0);
+    map.Wall(Engine::Line(Engine::Coordinate(1.5, -1, 0), Engine::Coordinate(1.5, 4, 0)), 2.0, 1.0);
 
+    // Check along the wall
     EXPECT_EQ(Element::Stone, map.At(Position(1, 0, 3)).floor);
-    EXPECT_EQ(1, map.At(Position(1, 0, 3)).height);
+    EXPECT_EQ(2, map.At(Position(1, 0, 3)).height);
+    EXPECT_EQ(Element::Stone, map.At(Position(1, 1, 3)).floor);
+    EXPECT_EQ(2, map.At(Position(1, 1, 3)).height);
+    EXPECT_EQ(Element::Stone, map.At(Position(1, 2, 3)).floor);
+    EXPECT_EQ(2, map.At(Position(1, 2, 3)).height);
 
-    EXPECT_EQ(1, map.At(Position(1, -0.5, 3)).height);
-    EXPECT_EQ(Element::Stone, map.At(Position(1, 1, 1)).floor);
-
+    // Next to the wall
     EXPECT_EQ(Element::None, map.At(Position(0, 0, 3)).floor);
     EXPECT_EQ(0, map.At(Position(0, 0, 3)).height);
+    EXPECT_EQ(Element::None, map.At(Position(0, 0, 3)).floor);
+    EXPECT_EQ(0, map.At(Position(2, 2, 3)).height);
 }
 
 

@@ -75,4 +75,42 @@ std::wstring Strip(const std::wstring& str, const std::wstring_view& trash)
         return str.substr(start, 1+end - start);
 }
 
+std::wistream& operator>>(std::wistream& s, Skip& skip)
+{
+    while (s.good())
+    {
+        wchar_t nextChar = s.peek();
+        if (skip.characters.find_first_of(nextChar) == std::wstring::npos)
+            return s;
+        s.get();
+    }
+    return s;
+}
+
+
+std::wistream& operator>>(std::wistream& s, ReadChar& c)
+{
+    if (s.peek() != c.character)
+        throw std::runtime_error((std::string("Failed to read '") + (char)c.character + "'").c_str());
+    s.get();
+    return s;
+}
+
+std::wistream& operator>>(std::wistream& s, ReadUntil& read)
+{
+    std::wstring result;
+    while (s.good())
+    {
+        if (read.until == s.peek())
+        {
+            s.get();
+            break;
+       }
+        read.buffer += s.get();
+    }
+    return s;
+
+}
+
+
 }

@@ -5,6 +5,7 @@ namespace Engine
 {
 
 struct Coordinate;
+struct Line;
 
 struct Plane
 {
@@ -25,6 +26,7 @@ struct Plane
     Plane operator-() const;
 
     Coordinate Project(const Coordinate& c) const;
+    Line Project(const Line& l) const;
     bool Above(const Coordinate& c) const;
     double Distance(const Coordinate& c) const;
     bool IsParallel(const Line& line) const;

@@ -85,18 +85,13 @@ std::wostream& operator<<(std::wostream& s, const Coordinate& coordinate)
 {
     s << L"(" << coordinate.x << L"," << coordinate.y << L"," << coordinate.z << L")";
     return s;
-
 }
 
 std::wistream& operator>>(std::wistream& s, Coordinate& coordinate)
 {
     std::wstring str;
-    s >> str;
-    if (str[0] != L'(')
-        throw std::runtime_error("Invalid vector format, missing (");
-    if (str[str.size()-1] != L')')
-        throw std::runtime_error("Invalid vector format, missing )");
-    str = str.substr(1, str.size() - 2);
+    s >> Engine::Skip(Engine::whitespace) >> Engine::ReadChar(L'(') >> Engine::ReadUntil(L')', str);
+
     auto value_strings= Split(str, L',');
     if (value_strings.size()>3)
         throw std::runtime_error("Invalid vector format, too many dimensions");

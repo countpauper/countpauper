@@ -38,6 +38,13 @@ struct Range
 
     Range& operator+=(T v)
     {
+        begin += v;
+        end += v;
+        return *this;
+    }
+
+    Range& Expand(T v)
+    {
         if (v > 0)
             end += v;
         else
@@ -45,6 +52,12 @@ struct Range
         return *this;
     }
 
+    Range& Grow(T v)
+    {
+        end += v;
+        begin -= v;
+        return *this;
+    }
     T begin;
     T end;
 };

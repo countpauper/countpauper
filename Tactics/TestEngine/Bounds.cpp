@@ -28,9 +28,14 @@ TEST(Range, Intersection)
     EXPECT_FALSE(Range(2, 3) & Range(0, 1));
 }
 
+TEST(Range, Move)
+{
+    EXPECT_EQ(1, (Range(0, 1) + 1).Size());
+}
+
 TEST(Range, Expand)
 {
-    EXPECT_EQ(2, (Range(0, 1) + 1).Size());
+    EXPECT_EQ(2, Range(0, 1).Expand(1).Size());
 }
 
 TEST(Range, Inclusion)
@@ -59,7 +64,7 @@ TEST(AABB, Expand)
     EXPECT_EQ(Range(0, 2), box.X());
     EXPECT_EQ(Range(-1, 1), box.Y());
 
-    box.Expand(1);
+    box.Grow(1);
     EXPECT_EQ(48, box.Volume()); // 4x4x3
     EXPECT_EQ(Range(-1, 2), box.Z());
 }

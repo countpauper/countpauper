@@ -17,6 +17,15 @@ VoxelMap::Data::iterator::iterator(const Data& data, const Position& position, c
     position(position),
     end(end)
 {
+    // clip to end
+    if ((position.x >= end.x) ||
+        (position.y >= end.y) ||
+        (position.z >= end.z))
+    {
+        this->position.z = end.z;
+        this->position.y = end.y;
+        this->position.x = end.x;
+    }
 }
 
 VoxelMap::Data::iterator& VoxelMap::Data::iterator::operator++()
@@ -322,7 +331,7 @@ VoxelMap::Data::iterator VoxelMap::Data::Boundary::end() const
 }
 
 VoxelMap::Data::Section::Section(const Data& data, const Engine::AABB& meters) :
-    Section(data, Grid(meters.Begin()), Grid(meters.End()))
+    Section(data, data.Clip(Grid(meters.Begin())), data.Clip(Grid(meters.End())))
 {
 }
 
@@ -347,6 +356,14 @@ VoxelMap::Data::Section VoxelMap::Data::In(const Engine::AABB& meters) const
 {
     return Section(*this, meters);
 }
+
+Position VoxelMap::Data::Clip(const Position& p) const
+{
+    return Position(Engine::Clip(p.x, -1, int(longitude)+1),
+        Engine::Clip(p.y, -1, int(latitude)+1),
+        Engine::Clip(p.z, -1, int(altitude)+1));
+}
+
 
 void VoxelMap::Data::SetPressure(const Position& position, const Material& material, double temperature, double pressure)
 {

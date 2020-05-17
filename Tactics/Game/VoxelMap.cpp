@@ -137,10 +137,9 @@ void VoxelMap::Water(int level, double temperature)
     }
 }
 
-void VoxelMap::Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, float stddev)
+void VoxelMap::Hill(const Engine::Line& ridgeLine, double stddev)
 {
-    Engine::Line ridge_line(Engine::Coordinate(p1.x, p1.y, 0),
-                    Engine::Coordinate(p2.x, p2.y, 0));
+    Engine::Line bottomLine = Engine::Plane::xy.Project(ridgeLine);
     // offset the hill for external coordinates excluding boundaries
     Position p;
     for (p.x = -1; p.x <= int(voxels.Longitude()); ++p.x)
@@ -148,11 +147,21 @@ void VoxelMap::Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, 
         for (p.y = -1; p.y <= int(voxels.Latitude()); ++p.y)
         {
             Engine::Coordinate c(float(p.x)+0.5f, float(p.y)+0.5f, 0);
-            double distance = ridge_line.Distance(c);
-            double interpolation_factor = std::max(0.0,std::min(1.0, Engine::Vector(ridge_line).Dot(c - ridge_line.a) / ridge_line.LengthSquared()));
-            double height = Engine::Lerp(double(p1.z), double(p2.z), interpolation_factor) * Engine::Gaussian(distance, stddev);
-            int maxZ = 1+int(std::round( height ));
+            if (bottomLine.Length()>std::numeric_limits<double>::epsilon())
+            {
+                auto bottomProjection = bottomLine.Project(c);
+                double distance = (bottomProjection - c).Length();
+                double interpolation_factor = std::min(1.0, (c - bottomLine.a).Length() / bottomLine.Length());
+                c.z = Engine::Lerp(double(ridgeLine.a.z), double(ridgeLine.b.z), interpolation_factor) * Engine::Gaussian(distance, stddev);
+            }
+            else
+            {
+                double distance = (bottomLine.a - c).Length();
+                c.z = ridgeLine.a.z * Engine::Gaussian(distance, stddev);
+            }
+            int maxZ = int(std::round( c.z ));
             maxZ = std::min(maxZ, int(voxels.Altitude()));
+            //OutputDebugStringW((std::wstring(L"Hill at ") + Position(p.x, p.y, maxZ).to_wstring() + L"\n").c_str());
             for (p.z = 0; p.z < maxZ; ++p.z)
             {
                 voxels.SetPressure(p,
@@ -164,14 +173,13 @@ void VoxelMap::Hill(const Engine::Coordinate& p1, const Engine::Coordinate& p2, 
     }
 }
 
-void VoxelMap::Wall(const Engine::Line& bottomLine, float height, float thickness)
+void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickness)
 {
     double halfThickness = thickness * 0.5;
+    height *= dZ;   // from grids to meters
     Engine::AABB boundingBox(bottomLine);
-    if (height>halfThickness)
-        boundingBox.Expand(Engine::Vector(0, 0, height-thickness));
-    boundingBox.Expand(halfThickness);
-    boundingBox += Engine::Vector(0, 0, halfThickness);
+    boundingBox.Expand(Engine::Vector(0, 0, height));
+    boundingBox.Grow(Engine::Vector(halfThickness, halfThickness, 0));
 
     Engine::Plane plane(bottomLine.a, Engine::Vector(bottomLine), Engine::Vector(0, 0, height));
 
@@ -186,7 +194,7 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, float height, float thicknes
             continue;
         if (nearest.z > bottom.z + height)
             continue;
-        OutputDebugStringW((std::wstring(L"Wall at ") + v.position.to_wstring() + L"\n").c_str());
+        //OutputDebugStringW((std::wstring(L"Wall at ") + v.position.to_wstring() + L"\n").c_str());
         voxels.SetPressure(v.position,
             Material::stone,
             atmosphericTemperature, // TODO: decrease from air increase to lava
@@ -229,12 +237,12 @@ Square VoxelMap::At(const Position& p) const
         return Square();
     if (unsigned(p.y) >= Latitude())
         return Square();
-    for (int i = std::min(p.z, int(voxels.Altitude())); i > 0; --i)
+    for (int i = std::min(p.z, int(voxels.Altitude())); i >= 0; --i)
     {
         const auto& v = voxels[Position(p.x, p.y, i)];
         if (v.Solid())
         {
-            Square s = v.Square(i);
+            Square s = v.Square(i+1);
             return s;
         }
     }
@@ -895,7 +903,7 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
             Engine::Coordinate p0, p1;
             float stddev;
             s >> p0 >> p1 >> stddev;
-            map.Hill(p0, p1, stddev);
+            map.Hill(Engine::Line(p0, p1), stddev);
         }
         else
         {

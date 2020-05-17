@@ -27,6 +27,11 @@ namespace Engine
         return c - normal * NormalDistance(c) / normal.LengthSquared();
     }
 
+    Line Plane::Project(const Line& l) const
+    {
+        return Line(Project(l.a), Project(l.b));
+    }
+
     double Plane::NormalDistance(const Coordinate& c) const
     {
         return normal.x * c.x + normal.y * c.y + normal.z * c.z + d;

@@ -103,20 +103,22 @@ AABB& AABB::operator|=(const Coordinate& p)
 
 AABB& AABB::Expand(const Engine::Vector& v)
 {
-    x += v.x;
-    y += v.y;
-    z += v.z;
+    x.Expand(v.x);
+    y.Expand(v.y);
+    z.Expand(v.z);
     return *this;
 }
 
-AABB& AABB::Expand(double v)
+AABB& AABB::Grow(double v)
 {
-    x += v;
-    x += -v;
-    y += v;
-    y += -v;
-    z += v;
-    z += -v;
+    return Grow(Vector(v, v, v));
+}
+
+AABB& AABB::Grow(const Engine::Vector& v)
+{
+    x.Grow(v.x);
+    y.Grow(v.y);
+    z.Grow(v.z);
     return *this;
 }
 

@@ -28,4 +28,4 @@ Wait Hack Duck Slash Dodge Block Parry Scrap Walk
 3
 HILL (20,15,15) (20,10,15) 5.0 
 HILL (10,8,5) (19,5,8) 11.0 
-WALL (3,8,0) (46,32,2) 5 1.5
+WALL (3,8,0) (46,32,2) 24 1.5

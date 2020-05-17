@@ -42,6 +42,10 @@ namespace Engine
     // Logistic sigmoid 0...1 with f(0)=0.5
     double Sigmoid(double x);
 
-
+    template<class T>
+    T Clip(T v, T min, T max)
+    {
+        return std::min<T>(std::max<T>(v, min), max);
+    }
 
 }
