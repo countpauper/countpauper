@@ -21,4 +21,6 @@ public:
     Coordinate Project(const Coordinate& p) const;
 };
 
+std::wostream& operator<<(std::wostream& s, const Line& line);
+
 }

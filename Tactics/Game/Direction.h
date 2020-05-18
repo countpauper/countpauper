@@ -46,9 +46,16 @@ public:
     bool IsOpposite(const Direction& other) const;
     bool IsClockwise(const Direction& other) const;
     bool IsCounterClockwise(const Direction& other) const;
-	bool IsProne() const;
+    bool IsPerpendicular(const Direction& other) const;
+    bool IsParallel(const Direction& other) const;
+    bool IsProne() const;
 	bool IsHorizontal() const;
 	bool IsVertical() const;
+    
+    int X() const;
+    int Y() const;
+    int Z() const;
+
 	void Fall();
 	Direction Turn(const Direction& turn) const;
     std::wstring AbsoluteDescription() const;
@@ -79,23 +86,25 @@ protected:
 	{
 		None = 0,
 		Negative = 1,
-		East = 2,
+        XAxis = 2,
+		East = XAxis,
 		Forward = East,
-		West = East | Negative,
+		West = XAxis | Negative,
 		Backward = West,
-		Parallel = (Forward | Backward) & ~Negative,
 
-		North = 4,
+        YAxis = 4,
+		North = YAxis,
 		Left = North,
-		South = North | Negative,
+		South = YAxis | Negative,
 		Right = South,
-		Lateral = (Left | Right) & ~Negative,
 
-		Horizontal = (Parallel | Lateral),
-		Up = 8,
-		Down = Up | Negative,
-		Vertical = (Up|Down) & ~Negative,
-		Plane = Vertical | Horizontal
+		Horizontal = (XAxis | YAxis),
+        ZAxis = 8,
+		Up = ZAxis,
+		Down = ZAxis | Negative,
+		Vertical = ZAxis,
+		Plane = Vertical | Horizontal,
+        Axis = XAxis | YAxis | ZAxis,
 	};
 	Direction(Value value);
 	Value value;

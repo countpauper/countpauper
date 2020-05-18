@@ -15,6 +15,7 @@
 #include "Engine/Mesh.h"
 #include "Engine/Matrix.h"
 #include "Engine/Plane.h"
+#include "Engine/Utils.h"
 #include "Engine/AxisAlignedBoundingBox.h"
 #include <string>
 
@@ -96,19 +97,12 @@ void VoxelMap::Air(double temperature, double meters)
     atmosphericTemperature = float(temperature);
     atmosphereRadius = meters;
     double atmorphericLapse = float(-temperature / atmosphereRadius);
-    Position p;
-    for (p.x = -1; p.x <= int(voxels.Longitude()); ++p.x)
+    for (auto v : voxels.All())
     {
-        for (p.y = -1; p.y <= int(voxels.Latitude()); ++p.y)
-        {
-            for (p.z = -1; p.z <= int(voxels.Altitude()); ++p.z)
-            {
-                auto temperature = AtmosphericTemperature(Elevation(p.z));
-                voxels.SetPressure(p, Material::air,
-                    temperature,
-                    AtmosphericPressure(Elevation(p.z)));
-            }
-        }
+        auto temperature = AtmosphericTemperature(Elevation(v.position));
+        voxels.SetPressure(v.position, Material::air,
+            temperature,
+            AtmosphericPressure(Elevation(v.position.z)));
     }
 }
 
@@ -120,20 +114,13 @@ void VoxelMap::Wind(const Engine::Vector& speed)
 
 void VoxelMap::Water(int level, double temperature)
 {
-    Position p;
-    for (p.x = -1; p.x <= int(voxels.Longitude()); ++p.x)
+    for(auto v : voxels.In(Engine::AABB(Engine::Coordinate(-1,-1,-1), Engine::Coordinate(voxels.Longitude()+1, voxels.Latitude()+1, level*dZ))))
     {
-        for (p.y= -1; p.y <= int(voxels.Latitude()); ++p.y)
-        {
-            for (p.z = -1; p.z < level; ++p.z)
-            {
-                double pressure = AtmosphericPressure(Elevation(p.z)) + Elevation(level - p.z) * 10.33; // TODO: calculate based on water material
-                voxels.SetPressure(p,
-                    Material::water,
-                    temperature,
-                    pressure);
-            }
-        }
+        double pressure = AtmosphericPressure(Elevation(v.position.z)) + Elevation(level - v.position.z) * 10.33; // TODO: calculate based on water material
+        voxels.SetPressure(v.position,
+            Material::water,
+            temperature,
+            pressure);
     }
 }
 
@@ -162,7 +149,7 @@ void VoxelMap::Hill(const Engine::Line& ridgeLine, double stddev)
             int maxZ = int(std::round( c.z ));
             maxZ = std::min(maxZ, int(voxels.Altitude()));
             //OutputDebugStringW((std::wstring(L"Hill at ") + Position(p.x, p.y, maxZ).to_wstring() + L"\n").c_str());
-            for (p.z = 0; p.z < maxZ; ++p.z)
+            for (p.z = -1; p.z < maxZ; ++p.z)
             {
                 voxels.SetPressure(p,
                     Material::stone,
@@ -182,7 +169,7 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickn
     boundingBox.Grow(Engine::Vector(halfThickness, halfThickness, 0));
 
     Engine::Plane plane(bottomLine.a, Engine::Vector(bottomLine), Engine::Vector(0, 0, height));
-
+    unsigned dbgCount=0;
     for (auto v : voxels.In(boundingBox))
     {
         auto c = Center(v.position);
@@ -199,7 +186,10 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickn
             Material::stone,
             atmosphericTemperature, // TODO: decrease from air increase to lava
             PascalPerAtmosphere);   // TODO: increase due to stone depth, NB: can be already overlapping stone layer. just dont place those
+        ++dbgCount;
     }
+    OutputDebugStringW((std::wstring(L"Wall at ") + Engine::ToString(bottomLine) + L"=" + std::to_wstring(dbgCount)+L" blocks\n").c_str());
+
 }
 
 unsigned VoxelMap::Latitude() const
@@ -508,26 +498,40 @@ void VoxelMap::FluxBoundary()
 
     // too slow to do it for every voxel? 
     Engine::Vector flowVolume = wind * Material::air.Density(AtmosphericPressure(0), AtmosphericTemperature(0));
-    Engine::Vector massFlux(
+    Engine::Vector windFlux(
         flowVolume.x / Direction::east.Surface(),
         flowVolume.y / Direction::north.Surface(),
         flowVolume.z / Direction::up.Surface()
     );
     for (auto d : Direction::all)
-    {   // TODO: for boundary in perpendicular directions, extrapolate
-        // TODO convert wind speed to flux
-
+    {
         for (auto u : voxels.U().BoundaryCondition(d))
         {
-            voxels.U()[u.first] = float(massFlux.x);
+            if (&voxels.MaterialAt(u.first) == &Material::stone)
+                voxels.U().SetBoundary(u.first, d, 0);  // TODO: should be any solid and except for deliberate or z=0 lava flows ...
+            else if (&voxels.MaterialAt(u.first) == &Material::air)
+                voxels.U().SetBoundary(u.first, d, windFlux.x);
+            else
+                assert(false);  // water boundary condition has to be defined by rivers and seas
+
         }
         for (auto v : voxels.V().BoundaryCondition(d))
         {
-            voxels.V()[v.first] = float(massFlux.y);
+            if (&voxels.MaterialAt(v.first) == &Material::stone)
+                voxels.V().SetBoundary(v.first, d, 0);
+            else if (&voxels.MaterialAt(v.first) == &Material::air)
+                voxels.V().SetBoundary(v.first, d, windFlux.y);
+            else
+                assert(false);  
         }
         for (auto w : voxels.W().BoundaryCondition(d))
         {
-            voxels.W()[w.first] = float(massFlux.z);
+            if (&voxels.MaterialAt(w.first) == &Material::stone)
+                voxels.W().SetBoundary(w.first, d, 0);
+            else if (&voxels.MaterialAt(w.first) == &Material::air)
+                voxels.W().SetBoundary(w.first, d, windFlux.z);
+            else
+                assert(false);
         }
     }
 }

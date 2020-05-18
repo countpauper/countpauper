@@ -357,6 +357,12 @@ VoxelMap::Data::Section VoxelMap::Data::In(const Engine::AABB& meters) const
     return Section(*this, meters);
 }
 
+VoxelMap::Data::Section VoxelMap::Data::All() const
+{
+    return Section(*this, Position(-1, -1, -1), Position(longitude + 1, latitude + 1, altitude + 1));
+}
+
+
 Position VoxelMap::Data::Clip(const Position& p) const
 {
     return Position(Engine::Clip(p.x, -1, int(longitude)+1),
@@ -418,10 +424,31 @@ unsigned VoxelMap::Data::Flux::Index(const Position& p) const
 
 }
 
+void VoxelMap::Data::Flux::SetBoundary(const Position& p, const Direction& dir, double boundaryFlux)
+{
+    if (dir.IsParallel(direction))
+    {
+        (*this)[p] = float(boundaryFlux);
+    }
+    else
+    {
+        (*this)[p] = Extrapolate(p, dir, boundaryFlux);
+    }
+}
+
 double VoxelMap::Data::Flux::Gradient(const Position& p) const
 {
     return (*this)[p + direction.Vector()] - (*this)[p];
 }
+
+float VoxelMap::Data::Flux::Extrapolate(const Position& outsidePosition, const Direction& dir, double  boundaryFlux) const
+{
+    Position insidePosition = outsidePosition - dir.Vector();
+    auto insideFlux = (*this)[insidePosition];
+    auto outsideFlux = Engine::Lerp(insideFlux, float(boundaryFlux), 2.0);
+    return outsideFlux;
+}
+
 
 VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::begin() const
 {

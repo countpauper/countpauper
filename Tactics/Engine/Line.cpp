@@ -44,4 +44,11 @@ double Line::Distance(const Coordinate& p) const
 }
 
 
+
+std::wostream& operator<<(std::wostream& s, const Line& line)
+{
+    s << line.a << L"-" << line.b;
+    return s;
+}
+
 }

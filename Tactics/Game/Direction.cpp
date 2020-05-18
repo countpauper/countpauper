@@ -90,6 +90,7 @@ const Direction& Direction::forward = east;
 const Direction& Direction::left = north;
 const Direction& Direction::backward = west;
 const Direction& Direction::right = south;
+
 const std::map<const std::wstring, Direction> Direction::map(
 {
 	{ L"east", Direction::east },
@@ -248,6 +249,18 @@ bool Direction::IsCounterClockwise(const Direction& other) const
 	return HalfPiDelta(other).Normalize() == HalfPiAngle(1);
 }
 
+bool Direction::IsPerpendicular(const Direction& other) const
+{
+    return ((!IsNone()) && (!other.IsNone()) &&
+        (value&Value::Axis) != (other.value&Value::Axis));
+}
+
+bool Direction::IsParallel(const Direction& other) const
+{
+    return ((!IsNone()) && (!other.IsNone()) &&
+        (value&Value::Axis) == (other.value&Value::Axis));
+}
+
 HalfPiAngle Direction::HalfPiDelta(const Direction& other) const
 {
 	auto it = half_pi_angle.find(value);
@@ -272,6 +285,21 @@ bool Direction::IsVertical() const
 bool Direction::IsHorizontal() const
 {
 	return (value&Horizontal);
+}
+
+int Direction::X() const
+{
+    return vector[value].x;
+}
+
+int Direction::Y() const
+{
+    return vector[value].y;
+}
+
+int Direction::Z() const
+{
+    return vector[value].z;
 }
 
 void Direction::Fall()

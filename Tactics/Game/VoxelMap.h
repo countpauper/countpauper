@@ -176,6 +176,8 @@ protected:
             Position _end;
         };
         Section In(const Engine::AABB& meters) const;
+        Section All() const;
+
         Position Clip(const Position& p) const;
 
         void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
@@ -203,7 +205,8 @@ protected:
             float operator()(int x, int y, int z) const { return (*this)[Position(x, y, z)]; }
             float& operator[](const Position& p);
             double Gradient(const Position& p) const;
-
+            void SetBoundary(const Position& p, const Direction& dir, double boundaryFlux);
+            float Extrapolate(const Position& outsidePosition, const Direction& dir, double boundaryFlux) const;
             friend class iterator;
             class iterator
             {

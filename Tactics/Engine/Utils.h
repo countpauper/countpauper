@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <sstream>
 
 namespace Engine
 {
@@ -14,6 +15,13 @@ namespace Engine
     std::wstring Strip(const std::wstring& str, const std::wstring_view& trash = whitespace);
     std::string UpperCase(const std::string& str);
 
+    template<class T> 
+    std::wstring ToString(const T& object)
+    {
+        std::wstringstream stream;
+        stream << object;
+        return stream.str();
+    }
 
     struct Skip
     {
