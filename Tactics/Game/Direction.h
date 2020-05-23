@@ -64,6 +64,7 @@ public:
 
     bool IsNone() const;    // operator bool leads to implicit conversion confusion with operator==
     bool operator==(const Direction& other) const;
+    bool operator!=(const Direction& other) const { return !((*this) == other); }
     bool operator<(const Direction& other) const;
 
 	static const Direction none;
@@ -86,21 +87,21 @@ protected:
 	{
 		None = 0,
 		Negative = 1,
-        XAxis = 2,
-		East = XAxis,
+        East = 2,   // defined before xaxis for debugger
+        XAxis = East,
 		Forward = East,
 		West = XAxis | Negative,
 		Backward = West,
 
-        YAxis = 4,
-		North = YAxis,
+        North = 4,
+        YAxis = North,
 		Left = North,
 		South = YAxis | Negative,
 		Right = South,
-
 		Horizontal = (XAxis | YAxis),
-        ZAxis = 8,
-		Up = ZAxis,
+
+        Up = 8,
+        ZAxis = Up,
 		Down = ZAxis | Negative,
 		Vertical = ZAxis,
 		Plane = Vertical | Horizontal,

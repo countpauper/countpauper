@@ -507,9 +507,12 @@ void VoxelMap::FluxBoundary()
     {
         for (auto u : voxels.U().BoundaryCondition(d))
         {
-            if (&voxels.MaterialAt(u.first) == &Material::stone)
+            auto boundaryPosition = u.first;
+            if (!voxels.U().IsOffset(d))
+                boundaryPosition += d.Vector();
+            if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
                 voxels.U().SetBoundary(u.first, d, 0);  // TODO: should be any solid and except for deliberate or z=0 lava flows ...
-            else if (&voxels.MaterialAt(u.first) == &Material::air)
+            else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
                 voxels.U().SetBoundary(u.first, d, windFlux.x);
             else
                 assert(false);  // water boundary condition has to be defined by rivers and seas
@@ -517,18 +520,24 @@ void VoxelMap::FluxBoundary()
         }
         for (auto v : voxels.V().BoundaryCondition(d))
         {
-            if (&voxels.MaterialAt(v.first) == &Material::stone)
+            auto boundaryPosition = v.first;
+            if (!voxels.V().IsOffset(d))
+                boundaryPosition += d.Vector();
+            if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
                 voxels.V().SetBoundary(v.first, d, 0);
-            else if (&voxels.MaterialAt(v.first) == &Material::air)
+            else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
                 voxels.V().SetBoundary(v.first, d, windFlux.y);
             else
                 assert(false);  
         }
         for (auto w : voxels.W().BoundaryCondition(d))
         {
-            if (&voxels.MaterialAt(w.first) == &Material::stone)
+            auto boundaryPosition = w.first;
+            if (!voxels.W().IsOffset(d))
+                boundaryPosition += d.Vector();
+            if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
                 voxels.W().SetBoundary(w.first, d, 0);
-            else if (&voxels.MaterialAt(w.first) == &Material::air)
+            else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
                 voxels.W().SetBoundary(w.first, d, windFlux.z);
             else
                 assert(false);
@@ -542,22 +551,17 @@ void VoxelMap::GridBoundary()
     {
         for (auto v : voxels.BoundaryCondition(Directions(d)))
         {
-            if (&v.material == &Material::air)
-            {
-                auto realPosition = v.position - d.Vector();
-                const Voxel realWorld = voxels[realPosition];
-                float boundaryTemperature = AtmosphericTemperature(Elevation(v.position.z));
-                float boundaryDensity = float(realWorld.material.Density(AtmosphericPressure(Elevation(v.position.z)), boundaryTemperature));
+            // Material of the boundary grid is irrelevant. If it's a different material, the density gradient 
+            //  will be very high at the boundary, but since this is not registered we just extrapolate
+            auto realPosition = v.position - d.Vector();
+            const Voxel realWorld = voxels[realPosition];
+            float boundaryTemperature = AtmosphericTemperature(Elevation(v.position.z));
+            float boundaryDensity = float(realWorld.material.Density(AtmosphericPressure(Elevation(v.position.z)), boundaryTemperature));
 
-                // extrapolate to set
-                voxels.AdjustGrid(v.position, 
-                    Engine::Lerp(realWorld.temperature, boundaryTemperature, 2.0),
-                    Engine::Lerp(realWorld.density, boundaryDensity, 2.0));
-            }
-            else
-            {
-                //assert(false); // TODO: at least water 
-            }
+            // extrapolate to set
+            voxels.AdjustGrid(v.position, 
+                Engine::Lerp(realWorld.temperature, boundaryTemperature, 2.0),
+                Engine::Lerp(realWorld.density, boundaryDensity, 2.0));
         }
     }
 }
@@ -597,6 +601,7 @@ void VoxelMap::Flow(double dt)
         const Position& p = vit.first;
         double dvvdy = (Engine::Sqr(oV(p.x, p.y + 1, p.z)) - Engine::Sqr(oV(p.x, p.y - 1, p.z))) / (2.0*dy);
         // TODO: except for dx, this is the same as duvdy above, could be optimized or at least code duplication reduced
+        //  after unit test!
         double dvudx = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
             - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x + 1, p.y - 1, p.z) + oV(p.x, p.y - 1, p.z))) / dx;
 //        double duvdx = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
@@ -606,6 +611,7 @@ void VoxelMap::Flow(double dt)
         double dpdy = (voxels.Density(p) - voxels.Density(Position(p.x, p.y-1, p.z))) / dy;
         double Reynolds = 100.0;
         // TODO: definite code duplication with u and z flow, move to flux 
+        //  after unit test!
         double diff = (1.0 / Reynolds) *
             ((oV(p.x + 1, p.y, p.z) - 2.0*oV(p.x, p.y, p.z) + oV(p.x - 1, p.y, p.z)) / (dx*dx) +
             (oV(p.x, p.y + 1, p.z) + 2.0*oV(p.x, p.y, p.z) + oV(p.x, p.y - 1, p.z)) / (dy*dy) +
@@ -649,8 +655,8 @@ void VoxelMap::Continuity(double seconds)
 
 void VoxelMap::Tick(double seconds)
 {
-    if (!mesh)
-        GenerateMesh();
+    //if (!mesh)
+    //    GenerateMesh();
 
     // Fluid dynamics:
     //  https://en.wikipedia.org/wiki/Fluid_dynamics
@@ -684,7 +690,7 @@ void VoxelMap::SetDensityToMeshColor()
         auto density = voxels.Density(meters);
         auto temperature = voxels.Temperature(meters);
         const auto& material = voxels.MaterialAt(position);
-        double sigmoidDensity = Engine::Sigmoid(density - material.normalDensity);
+        double sigmoidDensity = Engine::Sigmoid((density - material.normalDensity)/material.normalDensity);
         double sigmoidTemperature = Engine::Sigmoid(temperature - atmosphericTemperature);
         vertex.color = Engine::RGBA(BYTE(127 + sigmoidTemperature * 127.0),
                     BYTE(127 + sigmoidDensity * 127.0),
@@ -709,7 +715,6 @@ Engine::Coordinate VoxelMap::Center(const Position& grid)
     );
 }
 
-
 void VoxelMap::Render() const
 {
     if (mesh)
@@ -723,8 +728,8 @@ void VoxelMap::Render() const
     }
     else
     {
-        RenderPretty();
-        //RenderAnalysis();
+        //RenderPretty();
+        RenderAnalysis();
     }
 }
 

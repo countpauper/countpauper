@@ -424,6 +424,11 @@ unsigned VoxelMap::Data::Flux::Index(const Position& p) const
 
 }
 
+bool VoxelMap::Data::Flux::IsOffset(const Direction& d) const
+{
+    return !direction.IsOpposite(d);
+}
+
 void VoxelMap::Data::Flux::SetBoundary(const Position& p, const Direction& dir, double boundaryFlux)
 {
     if (dir.IsParallel(direction))

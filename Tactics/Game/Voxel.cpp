@@ -149,24 +149,20 @@ Engine::RGBA VoxelMap::Voxel::Color() const
 
 void VoxelMap::Voxel::RenderAnalysis(const Position& p, const Directions& visibility, const Engine::Vector& densityGradient) const
 {
-    /*
-    if (analysisColor)
-    {
-        analysisColor.Render();
-        glPushMatrix();
+    glColor3ub(200, 200, 200);
+    glPushMatrix();
         glTranslated(0.25, 0.25* MeterPerEl, 0.25);
         Engine::glText(std::to_string(Pressure() / PascalPerAtmosphere));
         // Engine::Vector flowArrow(flow.x, flow.z, flow.y);
         //double length = 0.5 - (0.5 / flowArrow.Length());
         //flowArrow = flowArrow.Normal()*length;
         // glDrawArrow(flowArrow);
-        glPopMatrix();
-    }
-    */
+    glPopMatrix();
+
     double offDensity = density - material.normalDensity;
     double sigmoidDensity = Engine::Sigmoid(offDensity);
     glColor3d(0, sigmoidDensity, 1 - sigmoidDensity);
-    RenderFaces(p, visibility);
+    RenderFaces(p, visibility, GL_LINE_LOOP);
 }
 
 
@@ -174,19 +170,19 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
 {
     auto c = Color();
     c.Render();
-    RenderFaces(p, visibility);
+    RenderFaces(p, visibility, GL_QUADS);
 
 }
 
-void VoxelMap::Voxel::RenderFaces(const Position& p, const Directions& visibility) const
+void VoxelMap::Voxel::RenderFaces(const Position& p, const Directions& visibility, unsigned mode) const
 {
     for (auto direction : visibility)
     {
-        RenderFace(p, direction);
+        RenderFace(p, direction, mode);
     }
 }
 
-void VoxelMap::Voxel::RenderFace(const Position& p, Direction direction) const
+void VoxelMap::Voxel::RenderFace(const Position& p, Direction direction, unsigned mode) const
 {
     glPushName(LocationName(p, direction));
 
@@ -195,7 +191,7 @@ void VoxelMap::Voxel::RenderFace(const Position& p, Direction direction) const
     // TODO vertex buffers
     if (direction == Direction::south)
     {
-        glBegin(GL_QUADS);
+        glBegin(mode);
             glVertex3d(0, 0 * MeterPerEl, 0);
             glVertex3d(0, 1 * MeterPerEl, 0);
             glVertex3d(1, 1 * MeterPerEl, 0);
@@ -205,7 +201,7 @@ void VoxelMap::Voxel::RenderFace(const Position& p, Direction direction) const
     // north
     else if (direction == Direction::north)
     {
-        glBegin(GL_QUADS);
+        glBegin(mode);
         glVertex3d(0, 0 * MeterPerEl, 1);
         glVertex3d(1, 0 * MeterPerEl, 1);
         glVertex3d(1, 1 * MeterPerEl, 1);
@@ -215,7 +211,7 @@ void VoxelMap::Voxel::RenderFace(const Position& p, Direction direction) const
     // east
     else if (direction == Direction::east)
     {
-        glBegin(GL_QUADS);
+        glBegin(mode);
         glVertex3d(1, 0 * MeterPerEl, 0);
         glVertex3d(1, 1 * MeterPerEl, 0);
         glVertex3d(1, 1 * MeterPerEl, 1);
@@ -225,7 +221,7 @@ void VoxelMap::Voxel::RenderFace(const Position& p, Direction direction) const
     // west
     else if (direction == Direction::west)
     {
-        glBegin(GL_QUADS);
+        glBegin(mode);
         glVertex3d(0, 0 * MeterPerEl, 0);
         glVertex3d(0, 0 * MeterPerEl, 1);
         glVertex3d(0, 1 * MeterPerEl, 1);
@@ -235,7 +231,7 @@ void VoxelMap::Voxel::RenderFace(const Position& p, Direction direction) const
     // top
     if (direction == Direction::up)
     {
-        glBegin(GL_QUADS);
+        glBegin(mode);
         glVertex3d(0, 1 * MeterPerEl, 0);
         glVertex3d(0, 1 * MeterPerEl, 1);
         glVertex3d(1, 1 * MeterPerEl, 1);

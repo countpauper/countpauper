@@ -101,8 +101,8 @@ protected:
         const Position position;
         const Directions boundary;
     private:
-        void RenderFaces(const Position& p, const Directions& visibility) const;
-        void RenderFace(const Position& p, Direction direction) const;
+        void RenderFaces(const Position& p, const Directions& visibility, unsigned mode) const;
+        void RenderFace(const Position& p, Direction direction, unsigned mode) const;
     };
 
     void Flow(double seconds);
@@ -205,6 +205,7 @@ protected:
             float operator()(int x, int y, int z) const { return (*this)[Position(x, y, z)]; }
             float& operator[](const Position& p);
             double Gradient(const Position& p) const;
+            bool IsOffset(const Direction& d) const;
             void SetBoundary(const Position& p, const Direction& dir, double boundaryFlux);
             float Extrapolate(const Position& outsidePosition, const Direction& dir, double boundaryFlux) const;
             friend class iterator;
