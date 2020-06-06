@@ -2,9 +2,12 @@
 #pragma once
 
 #include "Coordinate.h"
+#include "Maths.h"
+
 namespace Engine
 {
 
+// range [begin, end>
 template<typename T>
 struct Range
 {
@@ -26,13 +29,13 @@ struct Range
 
     bool operator[](T v) const
     {   // in
-        return (begin <= v) && (v <= end);
+        return (begin <= v) && (v < end);
     }
 
     Range& operator|=(T v)
     {
         begin = std::min(begin, v);
-        end = std::max(end, v);
+        end = std::max(end, Engine::ALittleMore<T>(v));
         return *this;
     }
 
@@ -42,6 +45,7 @@ struct Range
         end += v;
         return *this;
     }
+    Range& operator-=(T v) { return operator+=(-v); }
 
     Range& Expand(T v)
     {
@@ -57,6 +61,10 @@ struct Range
         end += v;
         begin -= v;
         return *this;
+    }
+    T Clip(T v) const
+    {
+        return Engine::Clip(v, begin, end);
     }
     T begin;
     T end;
@@ -78,6 +86,11 @@ template<typename T>
 Range<T> operator+(const Range<T>& a, T v)
 {
     return Range(a) += v;
+}
+template<typename T>
+Range<T> operator-(const Range<T>& a, T v)
+{
+    return Range(a) -= -v;
 }
 
 template<typename T>

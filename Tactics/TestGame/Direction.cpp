@@ -15,6 +15,9 @@ TEST(DirectionTest, None)
 	EXPECT_TRUE(Direction::none.IsNone());
     EXPECT_FALSE(Direction::none.IsPosititve());
     EXPECT_FALSE(Direction::none.IsNegative());
+    EXPECT_TRUE(Direction::none.IsValid());
+    EXPECT_FALSE(Direction::none.IsX());
+    EXPECT_FALSE(Direction::none.Vector());
 }
 
 TEST(DirectionTest, CardinalPositions)
@@ -43,6 +46,18 @@ TEST(DirectionTest, VerticalPositions)
 	EXPECT_EQ(Direction(1, 0, 1), Direction::east);
 }
 
+TEST(DirectionTest, Axis)
+{
+    EXPECT_TRUE(Direction::east.Axis().IsX());
+    EXPECT_TRUE(Direction::west.Axis().IsX());
+    EXPECT_EQ(Direction::east.Axis(), Direction::west.Axis());
+    EXPECT_TRUE(Direction::north.Axis().IsY());
+    EXPECT_TRUE(Direction::south.Axis().IsY());
+    EXPECT_EQ(Direction::north.Axis(), Direction::south.Axis());
+    EXPECT_TRUE(Direction::up.Axis().IsZ());
+    EXPECT_TRUE(Direction::down.Axis().IsZ());
+    EXPECT_EQ(Direction::up.Axis(), Direction::down.Axis());
+}
 
 TEST(DirectionTest, Opposite)
 {
@@ -75,6 +90,16 @@ TEST(DirectionTest, PositiveNegative)
     }
 }
 
+TEST(DirectionTest, Perpendiclar)
+{
+    EXPECT_TRUE(Direction::north.Perpendicular(Direction::east).IsPerpendicular(Direction::north));
+    EXPECT_TRUE(Direction::north.Perpendicular(Direction::east).IsPerpendicular(Direction::west));
+    EXPECT_TRUE(Direction::up.Perpendicular(Direction::east).IsPerpendicular(Direction::down));
+    EXPECT_TRUE(Direction::up.Perpendicular(Direction::east).IsPerpendicular(Direction::down));
+    EXPECT_THROW(Direction::up.Perpendicular(Direction::down), std::exception);
+    EXPECT_THROW(Direction::none.Perpendicular(Direction::west), std::exception);
+    EXPECT_THROW(Direction::north.Perpendicular(Direction::none), std::exception);
+}
 
 TEST(DirectionTest, Angles)
 {

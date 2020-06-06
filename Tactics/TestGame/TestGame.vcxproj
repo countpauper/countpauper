@@ -33,6 +33,7 @@
   <ItemGroup>
     <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Body.cpp" />
+    <ClCompile Include="Box.cpp" />
     <ClCompile Include="Data.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="Fantasy.cpp" />

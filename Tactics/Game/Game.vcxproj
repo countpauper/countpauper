@@ -75,6 +75,7 @@
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Affect.cpp" />
+    <ClCompile Include="Box.cpp" />
     <ClCompile Include="Location.cpp" />
     <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Body.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Affect.h" />
+    <ClInclude Include="Box.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="Location.h" />
     <ClInclude Include="Attack.h" />

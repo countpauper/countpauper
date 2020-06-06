@@ -16,9 +16,16 @@ namespace Engine
     std::string UpperCase(const std::string& str);
 
     template<class T> 
-    std::wstring ToString(const T& object)
+    std::wstring ToWString(const T& object)
     {
         std::wstringstream stream;
+        stream << object;
+        return stream.str();
+    }
+    template<class T>
+    std::string ToString(const T& object)
+    {
+        std::stringstream stream;
         stream << object;
         return stream.str();
     }

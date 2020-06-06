@@ -47,14 +47,22 @@ public:
     bool IsClockwise(const Direction& other) const;
     bool IsCounterClockwise(const Direction& other) const;
     bool IsPerpendicular(const Direction& other) const;
+    Direction Perpendicular(const Direction& other) const;
     bool IsParallel(const Direction& other) const;
     bool IsProne() const;
 	bool IsHorizontal() const;
 	bool IsVertical() const;
-    
+
+    Direction Axis() const;
+    bool IsX() const;
+    bool IsY() const;
+    bool IsZ() const;
+    bool IsValid() const;
+
     int X() const;
     int Y() const;
     int Z() const;
+
 
 	void Fall();
 	Direction Turn(const Direction& turn) const;
@@ -105,7 +113,7 @@ protected:
 		Down = ZAxis | Negative,
 		Vertical = ZAxis,
 		Plane = Vertical | Horizontal,
-        Axis = XAxis | YAxis | ZAxis,
+        Axes = XAxis | YAxis | ZAxis,
 	};
 	Direction(Value value);
 	Value value;
@@ -119,7 +127,13 @@ protected:
 };
 
 
-static inline std::ostream& operator<< (std::ostream& os, const Direction& dir)
+static inline std::ostream& operator<<(std::ostream& os, const Direction& dir)
+{
+    os << dir.AbsoluteDescription().c_str();
+    return os;
+}
+
+static inline std::wostream& operator<<(std::wostream& os, const Direction& dir)
 {
     os << dir.AbsoluteDescription().c_str();
     return os;
@@ -135,6 +149,8 @@ public:
     Directions& operator|=(const Direction& dir);
     Directions& operator&=(const Directions& dirs);
     Directions& operator|=(const Directions& dirs);
+    bool operator==(const Directions& other) const;
+    bool operator!=(const Directions& other) const { return !(*this == other); }
     bool operator[](const Direction& dir) const;
     bool empty() const;
     operator bool() const;

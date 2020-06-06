@@ -4,6 +4,7 @@
 #include "Engine/Vector.h"
 #include "Engine/Line.h"
 #include "Plane.h"
+#include "Box.h"
 #include <string>
 
 namespace Engine { class Mesh;  struct AABB; }
@@ -14,7 +15,9 @@ class VoxelMap : public Map
 {
 public:
     VoxelMap();
+    VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude);
     ~VoxelMap();
+
 
     struct Material
     {
@@ -46,33 +49,6 @@ public:
         static const Material water;
     };
 
-    // Generate
-    void Space(unsigned x, unsigned y, unsigned z); // Day 0 there is nothing
-    void World(double radius);
-    void Air(double temperature, double meters);     // Day 1 the sky
-    void Wind(const Engine::Vector& speed);     // direction in meter/second
-    void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
-    void Hill(const Engine::Line& ridgeLine, double stddev);
-    void Wall(const Engine::Line& bottomLine, double height, double thickness);
-    // Evaluate
-    double Volume() const;
-    double Mass(const Material& material) const;
-    double Temperature(const Material& material) const;
-    double Mass() const;
-    unsigned WindForce() const; // Beaufort
-
-    // Map
-    Square At(const Position& p) const override;
-    unsigned Latitude() const override;
-    unsigned Longitude() const override;
-    void Render() const override;
-    void Tick(double seconds) override;
-protected:
-    void GenerateMesh();
-    void RenderPretty() const;
-    void RenderAnalysis() const;
-    void SetDensityToMeshColor();
-
     struct Voxel
     {
         bool Solid() const;
@@ -86,7 +62,7 @@ protected:
         double Viscosity() const;
         double Hardness() const;
         double DiffusionCoefficient(const Voxel& to) const;
-        
+
         double Translucency() const;    // I(x) = I0 * Translucency() 
         bool Opaque() const;
         bool Transparent() const;
@@ -97,7 +73,7 @@ protected:
         const Material& material;
         const float temperature;      // Kelvin
         const float density;          // gram/Liters
-        //const Engine::Vector flow;    // meter/second
+                                      //const Engine::Vector flow;    // meter/second
         const Position position;
         const Directions boundary;
     private:
@@ -105,17 +81,6 @@ protected:
         void RenderFace(const Position& p, Direction direction, unsigned mode) const;
     };
 
-    void Flow(double seconds);
-    void FluxBoundary();
-    void Continuity(double seconds);
-    void GridBoundary();
-
-    Directions Visibility(const Position& p) const;
-    double Mass(class Directions directions) const;
-    double Elevation(int z) const;
-    float AtmosphericTemperature(double elevation) const;
-    float AtmosphericPressure(double elevation) const;
-protected:
     class Data
     {
     public:
@@ -128,7 +93,7 @@ protected:
         {
         public:
             iterator(const Data& data, const Position& position);
-            iterator(const Data& data, const Position& position, const Position& end);
+            iterator(const Data& data, const Box& box);
             iterator& operator++();
             //iterator operator++(int);
             bool operator==(const iterator& other) const;
@@ -143,40 +108,41 @@ protected:
             using iterator_category = std::forward_iterator_tag;
 
             const Data& data;
-            const Position start;
             Position position;
-            const Position end;
+            const Box box;
         };
+
         using value_type = iterator::value_type;
 
         iterator begin() const { return iterator(*this, Position(0, 0, 0)); }
-        iterator end() const { return iterator(*this, Position(longitude, latitude, altitude)); }
+        iterator end() const { return iterator(*this, size); }
+
         class Boundary
         {
         public:
-            Boundary(const Data& data, const Directions& directions);
+            Boundary(const Data& data, const Direction& direction);
             iterator begin() const;
             iterator end() const;
         private:
             const Data& data;
-            Directions directions;
+            Direction direction;
         };
-        Boundary BoundaryCondition(const Directions& dirs) const { return Boundary(*this, dirs); }
+        Boundary BoundaryCondition(const Direction& dir) const { return Boundary(*this, dir); }
 
         class Section
         {
         public:
             Section(const Data& data, const Engine::AABB& meters);
-            Section(const Data& data, const Position& begin, const Position& end);
+            Section(const Data& data, const Box& box);
             iterator begin() const;
             iterator end() const;
         private:
             const Data& data;
-            Position _begin;
-            Position _end;
+            const Box box;
         };
         Section In(const Engine::AABB& meters) const;
         Section All() const;
+        Box Bounds() const;
 
         Position Clip(const Position& p) const;
 
@@ -200,7 +166,7 @@ protected:
         class Flux
         {
         public:
-            Flux(const Direction direction, unsigned longitude, unsigned latitude, unsigned altitude);
+            Flux(const Direction axis, unsigned longitude, unsigned latitude, unsigned altitude);
             float operator[](const Position& p) const;
             float operator()(int x, int y, int z) const { return (*this)[Position(x, y, z)]; }
             float& operator[](const Position& p);
@@ -208,17 +174,20 @@ protected:
             bool IsOffset(const Direction& d) const;
             void SetBoundary(const Position& p, const Direction& dir, double boundaryFlux);
             float Extrapolate(const Position& outsidePosition, const Direction& dir, double boundaryFlux) const;
+            Box Bounds() const;
+            Box Edge(const Direction& dir) const;
+
             friend class iterator;
             class iterator
             {
             public:
                 iterator(const Flux& data, const Position& start);
-                iterator(const Flux& data, const Position& start, const Position& end);
+                iterator(const Flux& data, const Box& box);
 
                 iterator& operator++();
                 bool operator==(const iterator& other) const;
                 bool operator!=(const iterator& other) const { return !((*this) == other); }
-                using value_type = std::pair<Position,float>;
+                using value_type = std::pair<Position, float>;
                 value_type operator*() const;
                 Directions IsBoundary() const;
 
@@ -229,31 +198,44 @@ protected:
                 using iterator_category = std::forward_iterator_tag;
 
                 const Flux& data;
-                const Position start;
+                const Box box;
                 Position position;
-                const Position end;
             };
             iterator begin() const;
             iterator end() const;
-            
-            class Boundary
+
+            class Section
+            {
+            public:
+                Section(const Flux& data, const Box& box);
+                iterator begin() const;
+                iterator end() const;
+                using value_type = iterator::value_type;
+                const Flux& data;
+                const Box box;
+            };
+            class Boundary : public Section
             {
             public:
                 Boundary(const Flux& data, const Direction& direction);
-                iterator begin() const;
-                iterator end() const;
-            private:
-                const Flux& data;
-                Direction direction;
+                static Box Bounds(const Flux& data, const Direction& direction);
             };
+            class Corner : public Section
+            {
+            public:
+                Corner(const Flux& data, const Direction& directionA, const Direction& directionB);
+                static Box Bounds(const Flux& data, const Direction& directionA, const Direction& directionB);
+            };
+
             Boundary BoundaryCondition(const Direction& dir) const { return Boundary(*this, dir); }
         private:
             unsigned Index(const Position& p) const;
             Directions IsBoundary(const Position& p) const;
+            void InitializeCorners();
 
-            Direction direction;
+            Direction axis;
             Position offset;
-            unsigned longitude, latitude, altitude;
+            Size size;
             std::vector<float> flux;
         };
         const Flux& U() const { return u; }
@@ -266,18 +248,59 @@ protected:
     protected:
         Position Stride() const;
         unsigned GridIndex(const Position& p) const;
+        unsigned VoxelMap::Data::UncheckedGridIndex(const Position& p) const;
     private:
         std::vector<const Material*> material;  // longitude+2, latitude+2, altitude+2
         std::vector<float> density;         // density (g/L) at the center. long,lat, alt +2 to interpolate at edge
         std::vector<float> temperature;     // temperature (K) at the center, to interpolate at edge, stride+2
         Flux u, v, w;                       // flux (/s*m2)
-        unsigned longitude, latitude, altitude;
+        Size size;
     };
+    // Generate
+    void Space(unsigned x, unsigned y, unsigned z); // Day 0 there is nothing
+    void World(double radius);
+    void Air(double temperature, double meters);     // Day 1 the sky
+    void Wind(const Engine::Vector& speed);     // direction in meter/second
+    void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
+    void Hill(const Engine::Line& ridgeLine, double stddev);
+    void Wall(const Engine::Line& bottomLine, double height, double thickness);
+    // Evaluate
+    double Volume() const;
+    double Mass(const Material& material) const;
+    double Temperature(const Material& material) const;
+    double Mass() const;
+    unsigned WindForce() const; // Beaufort
+
+    // Map
+    Square At(const Position& p) const override;
+    unsigned Latitude() const override;
+    unsigned Longitude() const override;
+    void Render() const override;
+    void Tick(double seconds) override;
+    static Engine::Coordinate Center(const Position& grid);
+protected:
+    void GenerateMesh();
+    void RenderPretty() const;
+    void RenderAnalysis() const;
+    void SetDensityToMeshColor();
+
+
+    void Flow(double seconds);
+    void FluxBoundary();
+    void Continuity(double seconds);
+    void GridBoundary();
+
+    Directions Visibility(const Position& p) const;
+    double Mass(class Directions directions) const;
+    double Elevation(int z) const;
+    float AtmosphericTemperature(double elevation) const;
+    float AtmosphericPressure(double elevation) const;
+
+protected:
     static constexpr double dX = HorizontalEl * MeterPerEl;
     static constexpr double dY = HorizontalEl * MeterPerEl;
     static constexpr double dZ = VerticalEl * MeterPerEl;
     static Position Grid(const Engine::Coordinate& meters);
-    static Engine::Coordinate Center(const Position& grid);
     Data voxels;
     std::unique_ptr<Engine::Mesh> mesh;
     double time;
@@ -292,7 +315,8 @@ constexpr double PascalPerAtmosphere = 101325.0;        // Pa/Atm
 constexpr double IdealGasConstant = 8.31446261815324e3; // ideal gas constant in L * Pa / K * mol
 
 std::wistream& operator>>(std::wistream& s, VoxelMap& map);
-
+VoxelMap::Data::iterator::difference_type operator-(const VoxelMap::Data::iterator& a, const VoxelMap::Data::iterator& b);
+VoxelMap::Data::Flux::iterator::difference_type operator-(const VoxelMap::Data::Flux::iterator& a, const VoxelMap::Data::Flux::iterator& b);
 
 }
 

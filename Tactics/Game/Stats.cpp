@@ -6,8 +6,6 @@
 
 namespace Game
 {
-
-
     const std::map<const std::wstring, Attribute> Attributes::map({
         { L"", Attribute::None },
         { L"Str", Attribute::Strength },

@@ -88,4 +88,32 @@ TEST(Math, Trilinear)
     EXPECT_EQ(-2.5, TrilinearInterpolation<double>(data, Vector(0.5, 0.5, 1)));
     EXPECT_EQ(0, TrilinearInterpolation<double>(data, Vector(0.5, 0.5, 0.5)));
 }
+
+
+TEST(Math, ALittleMoreInt)
+{
+    EXPECT_GT(ALittleMore<int>(0), 0);
+    EXPECT_LE(ALittleMore<int>(0), 1);
+
+    EXPECT_GT(ALittleMore<int>(100), 100);
+    EXPECT_LE(ALittleMore<int>(100), 101);
+    EXPECT_GT(ALittleMore<int>(-1000), -1000);
+
+    EXPECT_THROW(ALittleMore<int>(std::numeric_limits<int>::max()), std::exception);
+}
+
+
+TEST(Math, ALittleMoreDouble)
+{
+    EXPECT_GT(ALittleMore<double>(0), 0);
+    EXPECT_LE(ALittleMore<double>(0), std::numeric_limits<double>::epsilon());
+
+    EXPECT_GT(ALittleMore<double>(1e6), 1e6);
+    EXPECT_LE(ALittleMore<double>(1e6), 1e6 + 1.0);
+    EXPECT_GT(ALittleMore<double>(-1e3), -1e3);
+
+    EXPECT_THROW(ALittleMore<double>(std::numeric_limits<double>::max()), std::exception);
+    EXPECT_THROW(ALittleMore<double>(std::numeric_limits<double>::infinity()), std::exception);
+}
+
 }

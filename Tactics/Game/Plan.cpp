@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include "Engine/Random.h"
+#include "Engine/Utils.h"
 #include "Game/Skills.h"
 #include "Plan.h"
 #include "Action.h"
@@ -648,7 +649,7 @@ namespace Game
 
     std::wstring PathPlan::Description() const
     {
-        return actor.Description() + L": " + std::wstring(L"Move to ") + target.to_wstring();
+        return actor.Description() + L": " + std::wstring(L"Move to ") + Engine::ToWString(target);
     }
 
     const Skill* PathPlan::GetSkill() const

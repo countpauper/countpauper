@@ -252,13 +252,23 @@ bool Direction::IsCounterClockwise(const Direction& other) const
 bool Direction::IsPerpendicular(const Direction& other) const
 {
     return ((!IsNone()) && (!other.IsNone()) &&
-        (value&Value::Axis) != (other.value&Value::Axis));
+        (value&Value::Axes) != (other.value&Value::Axes));
+}
+
+Direction Direction::Perpendicular(const Direction& other) const
+{
+    if (IsParallel(other))
+        throw std::runtime_error("Can't determine one perpendicular axis to a parallel axis");
+    if ((this->IsNone()) || (other.IsNone()))
+        throw std::runtime_error("Can't determine an axis perpendicular to None");
+    auto perpendicularAxis = Value::Axes & ~ (value | other.value);
+    return Direction(perpendicularAxis);
 }
 
 bool Direction::IsParallel(const Direction& other) const
 {
     return ((!IsNone()) && (!other.IsNone()) &&
-        (value&Value::Axis) == (other.value&Value::Axis));
+        (value&Value::Axes) == (other.value&Value::Axes));
 }
 
 HalfPiAngle Direction::HalfPiDelta(const Direction& other) const
@@ -285,6 +295,39 @@ bool Direction::IsVertical() const
 bool Direction::IsHorizontal() const
 {
 	return (value&Horizontal);
+}
+
+Direction Direction::Axis() const
+{
+    return Direction(value&Value::Axes);
+}
+
+bool Direction::IsX() const
+{
+    return (value & Value::XAxis);
+}
+
+bool Direction::IsY() const
+{
+    return (value & Value::YAxis);
+}
+
+bool Direction::IsZ() const
+{
+    return (value & Value::ZAxis);
+}
+
+bool Direction::IsValid() const
+{
+    auto axis = value & Value::Axes;
+    if (axis == 0)
+    {   // if no axis, then can't be negative
+        return (value & Value::Negative) == 0;
+    }
+    else
+    {   // only one axis
+        return (axis == Value::XAxis || axis == Value::YAxis || axis == Value::ZAxis);
+    }
 }
 
 int Direction::X() const
@@ -414,6 +457,11 @@ Directions& Directions::operator|=(const Direction& dir)
 {
     flags |= 1 << dir.Id();
     return *this;
+}
+
+bool Directions::operator==(const Directions& other) const
+{
+    return flags == other.flags;
 }
 
 bool Directions::operator[](const Direction& dir) const

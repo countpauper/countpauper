@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Vector.h"
-
+#include <type_traits>
 // NB Named maths.h because otherwise the release build gets confused with stdlib math.h
 namespace Engine
 {
@@ -10,7 +10,6 @@ namespace Engine
     double FullWidthHalfMaximum(double stddev);
     
     double Average(double a, double b);
-
 
     template<typename T>
     T Sqr(T v) { return v * v; }
@@ -48,4 +47,20 @@ namespace Engine
         return std::min<T>(std::max<T>(v, min), max);
     }
 
+/**/
+    template<typename T>
+    T ALittleMore(const typename std::enable_if<std::is_integral<T>::value, T>::type v)
+    {
+        if (v >= std::numeric_limits<T>::max())
+            throw std::range_error("Can't compute a little more than max");
+        return v + 1;
+    }
+
+    template<typename T> 
+    T ALittleMore(const typename std::enable_if<std::is_floating_point<T>::value, T>::type v)
+    {
+        if (v >= std::numeric_limits<T>::max())
+            throw std::range_error("Can't compute a little more than max float");
+        return std::nexttoward(v, std::numeric_limits<T>::max());
+    }
 }

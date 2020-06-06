@@ -35,14 +35,19 @@ double VoxelMap::Material::Density(double pressure, double temperature) const
     }
 }
 
-VoxelMap::VoxelMap() :
-    voxels(),
+VoxelMap::VoxelMap() : 
+    VoxelMap(0, 0, 0)
+{
+}
+
+VoxelMap::VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude) :
+    voxels(longitude, latitude, altitude),
     time(0),
     gravity(-10.0),
     planetRadius(6.371e6),  // assume earth sized planet
     atmosphereRadius(2e5),  // assume earth atmosphere
     atmosphericTemperature(273.15f),
-    wind(0,0,0)
+    wind(0, 0, 0)
 {
     World(planetRadius);
 }
@@ -188,7 +193,7 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickn
             PascalPerAtmosphere);   // TODO: increase due to stone depth, NB: can be already overlapping stone layer. just dont place those
         ++dbgCount;
     }
-    OutputDebugStringW((std::wstring(L"Wall at ") + Engine::ToString(bottomLine) + L"=" + std::to_wstring(dbgCount)+L" blocks\n").c_str());
+    OutputDebugStringW((std::wstring(L"Wall at ") + Engine::ToWString(bottomLine) + L"=" + std::to_wstring(dbgCount)+L" blocks\n").c_str());
 
 }
 
@@ -219,24 +224,20 @@ Directions VoxelMap::Visibility(const Position& p) const
 
 Square VoxelMap::At(const Position& p) const
 {
-    if (p.x < 0)
+    auto position = p;
+    auto mapBounds = voxels.Bounds().Grow(Size(-1, -1, 0));
+    if (!mapBounds.Contains(position))
         return Square();
-    if (p.y < 0)
-        return Square();
-    if (unsigned(p.x) >= Longitude())
-        return Square();
-    if (unsigned(p.y) >= Latitude())
-        return Square();
-    for (int i = std::min(p.z, int(voxels.Altitude())); i >= 0; --i)
+    for (int i = position.z; i >= 0; --i)
     {
-        const auto& v = voxels[Position(p.x, p.y, i)];
+        const auto& v = voxels[Position(position.x, position.y, i)];
         if (v.Solid())
         {
             Square s = v.Square(i+1);
             return s;
         }
     }
-    return voxels[Position(p.x,p.y,-1)].Square(0); // welcome to hell
+    return voxels[Position(position.x, position.y,-1)].Square(0); // welcome to hell
 }
 /*
 void VoxelMap::ComputeForces(double seconds)
@@ -549,7 +550,7 @@ void VoxelMap::GridBoundary()
 {
     for (auto d : Direction::all)
     {
-        for (auto v : voxels.BoundaryCondition(Directions(d)))
+        for (auto v : voxels.BoundaryCondition(d))
         {
             // Material of the boundary grid is irrelevant. If it's a different material, the density gradient 
             //  will be very high at the boundary, but since this is not registered we just extrapolate

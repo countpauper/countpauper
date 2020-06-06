@@ -2,51 +2,47 @@
 #include "VoxelMap.h"
 #include "Engine/Maths.h"
 #include "Engine/AxisAlignedBoundingBox.h"
+#include "Engine/Utils.h"
 
 namespace Game
 {
 
 VoxelMap::Data::iterator::iterator(const Data& data, const Position& position) :
-    iterator(data, position, Position(data.longitude, data.latitude, data.altitude))
+    iterator(data, Box(position, data.size))
 {
 }
 
-VoxelMap::Data::iterator::iterator(const Data& data, const Position& position, const Position& end) :
+VoxelMap::Data::iterator::iterator(const Data& data, const Box& box) :
     data(data),
-    start(position),
-    position(position),
-    end(end)
+    box(box),
+    position(box.Start())
 {
     // clip to end
-    if ((position.x >= end.x) ||
-        (position.y >= end.y) ||
-        (position.z >= end.z))
+    if (!box.Contains(position))
     {
-        this->position.z = end.z;
-        this->position.y = end.y;
-        this->position.x = end.x;
+        position = box.End();
     }
 }
 
 VoxelMap::Data::iterator& VoxelMap::Data::iterator::operator++()
 {
-    if (++position.z == end.z)
+    if (++position.z >= box.z.end)
     {
-        if (++position.y == end.y)
+        if (++position.y >= box.y.end)
         {
-            if (++position.x == end.x)
+            if (++position.x >= box.x.end)
             {
                 // end
             }
             else
             {
-                position.y = start.y;
-                position.z = start.z;
+                position.y = box.y.begin;
+                position.z = box.z.begin;
             }
         }
         else
         {
-            position.z = start.z;
+            position.z = box.z.begin;
         }
     }
     return *this;
@@ -74,9 +70,7 @@ VoxelMap::Data::Data() :
 }
 
 VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
-    longitude(longitude),
-    latitude(latitude),
-    altitude(altitude),
+    size(longitude, latitude, altitude),
     // allocate flux 1 extra size in all directions for boundary conditions on edge
     // allocate 2 extra boundary in all perpendicular directions for boundary conditions at edge +0.5
     u(Direction::east, longitude+1, latitude+2, altitude+2),
@@ -92,17 +86,19 @@ VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
     density.resize(gridSize, 0);
 }
 
-unsigned VoxelMap::Data::Latitude() const
-{
-    return latitude;
-}
 unsigned VoxelMap::Data::Longitude() const
 {
-    return longitude;
+    return size.x;
 }
+
+unsigned VoxelMap::Data::Latitude() const
+{
+    return size.y;
+}
+
 unsigned VoxelMap::Data::Altitude() const
 {
-    return altitude;
+    return size.z;
 }
 
 Directions VoxelMap::Data::IsBoundary(const Position& p) const
@@ -110,15 +106,15 @@ Directions VoxelMap::Data::IsBoundary(const Position& p) const
     Directions result;
     if (p.x == -1)
         result |= Direction::west;
-    if (p.x == longitude)
+    if (p.x == size.x)
         result |= Direction::east;
     if (p.y == -1)
         result |= Direction::south;
-    if (p.y == latitude)
+    if (p.y == size.y)
         result |= Direction::north;
-    if (p.z == 0)
+    if (p.z == -1)
         result |= Direction::down;
-    if (p.z == altitude)
+    if (p.z == size.z)
         result |= Direction::up;
     return result;
 }
@@ -229,127 +225,113 @@ void VoxelMap::Data::SetDensity(const Position& position, float pressure)
 
 Position VoxelMap::Data::Stride() const
 {   // ordered Z,Y,X, in direction of iy for best caching
-    return Position((altitude + 2)*(latitude + 2), (altitude + 2), 1);
+    return Position((size.z + 2)*(size.y + 2), (size.z + 2), 1);
 }
 
 unsigned VoxelMap::Data::GridIndex(const Position& p) const
 {
+    if (!Bounds().Contains(p))
+        throw std::out_of_range((std::string("Voxel Position'") + std::to_string(p) + "' out of range").c_str());
+    return UncheckedGridIndex(p);
+}
+
+unsigned VoxelMap::Data::UncheckedGridIndex(const Position& p) const
+{
     const auto& stride = Stride();
-    return (p.x+1) * stride.x + (p.y+1) * stride.y + (p.z+1) * stride.z;
+    return (p.x + 1) * stride.x + (p.y + 1) * stride.y + (p.z + 1) * stride.z;
 }
 
 VoxelMap::Voxel VoxelMap::Data::operator[](const Position& position) const
 {   // can't get outside
     auto index = GridIndex(position);
-    assert(index >= 0);
-    assert(index < density.size());
     return Voxel{ *material.at(index), temperature.at(index), density.at(index), position, IsBoundary(position) };
 }
 
-VoxelMap::Data::Boundary::Boundary(const Data& data, const Directions& directions) :
+VoxelMap::Data::Boundary::Boundary(const Data& data, const Direction& direction) :
     data(data),
-    directions(directions)
+    direction(direction)
 {
 }
 VoxelMap::Data::iterator VoxelMap::Data::Boundary::begin() const
 {
-    if (directions[Direction::none])
+    if (direction.IsNone())
     {
         Position start(0, 0, 0);
-        for (auto dir : directions)
-        {
-            // extend in direction
-            // NB: corners are only added if overlapping directions
-            if (dir.IsNegative())
-            {   
-                start += dir.Vector();
-            }
-        }
-        return iterator(data, start, end().position);
+        // extend in direction
+        // NB: corners are only added if overlapping directions
+        return iterator(data, Box(start, end().position));
     }
     else
     {
-        Position start(data.longitude+1, data.latitude+1, data.altitude+1);
+        Position start(data.size.x+1, data.size.y+1, data.size.z+1);
 
-        for (auto dir : directions)
+        if (direction.IsNegative())
         {
-            if (dir.IsNegative())
-            {
-                //                          if axis(==-1): -1 else  ... still -0 (ignore corner)
-                start.x = std::min(start.x, dir.Vector().x);
-                start.y = std::min(start.y, dir.Vector().y);
-                start.z = std::min(start.z, dir.Vector().z);
-            }
-            else if (dir.IsPosititve())
-            {                               // if axis(==1): long/lat/alt       else  0 (no corner)
-                start.x = std::min(start.x, dir.Vector().x * int(data.longitude));
-                start.y = std::min(start.y, dir.Vector().y * int(data.latitude) );
-                start.z = std::min(start.z, dir.Vector().z * int(data.altitude) );
-            }
+            start = direction.Vector();
         }
-        return iterator(data, start, end().position);
+        else if (direction.IsPosititve())
+        {    // if axis(==1): long/lat/alt       else  0 (no corner)
+            start.x = direction.Vector().x * data.size.x;
+            start.y = direction.Vector().y * data.size.y;
+            start.z = direction.Vector().z * data.size.z;
+        }
+        return iterator(data, Box(start, end().position));
     }
 
 }
 VoxelMap::Data::iterator VoxelMap::Data::Boundary::end() const
 {
-    if (directions[Direction::none])
+    if (direction.IsNone())
     {
-        Position stop(data.longitude, data.latitude, data.altitude);
-        for (auto dir : directions)
-        {
-            // extend in direction
-            // NB: corners are only added if overlapping directions
-            if (dir.IsPosititve())
-            {
-                stop += dir.Vector();
-            }
-        }
-        return iterator(data, stop, stop);
+        Position stop(data.size);
+        return iterator(data, Box(stop, stop));
     }
     else
     {
-        Position stop(-1, -1, -1);
-        for (auto dir : directions)
-        {
-            if (dir.IsNegative())
-            {  //           if axis(==-1): 0, else long/lat/alt, inside limit
-                stop.x = std::max(stop.x, (1 + dir.Vector().x) * (int(data.longitude)));
-                stop.y = std::max(stop.y, (1 + dir.Vector().y) * (int(data.latitude)));
-                stop.z = std::max(stop.z, (1 + dir.Vector().z) * (int(data.altitude)));
-            }
-            else if (dir.IsPosititve())
-            {   //          if axis(==1): grid limit = long/alt/lat+1, else inside limit
-                stop.x = std::max(stop.x, dir.Vector().x + (int(data.longitude)));
-                stop.y = std::max(stop.y, dir.Vector().y + (int(data.latitude)));
-                stop.z = std::max(stop.z, dir.Vector().z + (int(data.altitude)));
-            }
+        Position stop;
+        if (direction.IsNegative())
+        {  //           if axis(==-1): 0, else long/lat/alt, inside limit
+            stop.x = (1 + direction.Vector().x) * data.size.x;
+            stop.y = (1 + direction.Vector().y) * data.size.y;
+            stop.z = (1 + direction.Vector().z) * data.size.z;
         }
-
-        return iterator(data, stop, stop);
+        else if (direction.IsPosititve())
+        {   //          if axis(==1): grid limit = long/alt/lat+1, else inside limit
+            stop = direction.Vector() + data.size;
+        }
+        return iterator(data, Box(stop, stop));
     }
 }
 
+VoxelMap::Data::iterator::difference_type operator-(const VoxelMap::Data::iterator& a, const VoxelMap::Data::iterator& b)
+{
+    return a.position - b.position;
+}
+
+VoxelMap::Data::Flux::iterator::difference_type operator-(const VoxelMap::Data::Flux::iterator& a, const VoxelMap::Data::Flux::iterator& b)
+{
+    return a.position - b.position;
+}
+
 VoxelMap::Data::Section::Section(const Data& data, const Engine::AABB& meters) :
-    Section(data, data.Clip(Grid(meters.Begin())), data.Clip(Grid(meters.End())))
+    Section(data, Box(data.Clip(Grid(meters.Begin())), data.Clip(Grid(meters.End()))))
 {
 }
 
-VoxelMap::Data::Section::Section(const Data& data, const Position& begin, const Position& end) :
+VoxelMap::Data::Section::Section(const Data& data, const Box& box) :
     data(data),
-    _begin(begin),
-    _end(end)
+    box(box)
 {
 }
 
 VoxelMap::Data::iterator VoxelMap::Data::Section::begin() const
 {
-    return iterator(data, _begin, _end);
+    return iterator(data, box);
 }
 
 VoxelMap::Data::iterator VoxelMap::Data::Section::end() const
 {
-    return iterator(data, _end, _end);
+    return iterator(data, Box(box.End(), box.End()));
 }
 
 VoxelMap::Data::Section VoxelMap::Data::In(const Engine::AABB& meters) const
@@ -357,19 +339,20 @@ VoxelMap::Data::Section VoxelMap::Data::In(const Engine::AABB& meters) const
     return Section(*this, meters);
 }
 
-VoxelMap::Data::Section VoxelMap::Data::All() const
+Box VoxelMap::Data::Bounds() const
 {
-    return Section(*this, Position(-1, -1, -1), Position(longitude + 1, latitude + 1, altitude + 1));
+    return Box(Position(0, 0, 0), size).Grow(1);
 }
 
+VoxelMap::Data::Section VoxelMap::Data::All() const
+{
+    return Section(*this, Bounds());
+}
 
 Position VoxelMap::Data::Clip(const Position& p) const
 {
-    return Position(Engine::Clip(p.x, -1, int(longitude)+1),
-        Engine::Clip(p.y, -1, int(latitude)+1),
-        Engine::Clip(p.z, -1, int(altitude)+1));
+    return Bounds().Clip(p);
 }
-
 
 void VoxelMap::Data::SetPressure(const Position& position, const Material& material, double temperature, double pressure)
 {
@@ -388,23 +371,80 @@ void VoxelMap::Data::AdjustGrid(const Position& position, double temperature, do
 
 bool VoxelMap::Data::IsInside(const Position& p) const
 {
-    return p.x >= 0 &&
-        p.y >= 0 &&
-        p.z >= 0 &&
-        unsigned(p.x) < longitude &&
-        unsigned(p.y) < latitude &&
-        unsigned(p.z) < altitude;
+    return Bounds().Grow(-1).Contains(p);
 }
 
-VoxelMap::Data::Flux::Flux(Direction direction, unsigned longitude, unsigned latitude, unsigned altitude) :
-    direction(direction),
-    offset(Position(-1,-1,-1) + direction.Vector()),
-    longitude(longitude),
-    latitude(latitude),
-    altitude(altitude),
-    flux(longitude*latitude*altitude,0)
+VoxelMap::Data::Flux::Flux(Direction axis, unsigned longitude, unsigned latitude, unsigned altitude) :
+    axis(axis),
+    offset(Position(-1, -1, -1) + axis.Vector()),
+    size(longitude, latitude, altitude),
+    flux(size.Volume(), 0)
 {
-    assert(direction.IsPosititve());    // for offset, vector should be positive
+    assert(axis.IsPosititve());    // for offset, vector should be positive
+    InitializeCorners();
+}
+
+
+
+Box VoxelMap::Data::Flux::Bounds() const
+{
+    return Box(offset, offset + size);
+}
+
+Box VoxelMap::Data::Flux::Edge(const Direction& dir) const
+{
+    Box b(Bounds());
+    auto v = dir.Vector();
+    if (dir.IsPosititve())
+    {
+        return Box(
+            Position(
+                b.x.begin + (1 - v.x),
+                b.y.begin + (1 - v.y),
+                b.z.begin + (1 - v.z)),
+            Position(
+                b.x.begin + v.x + (1 - v.x) * (size.x-1),
+                b.y.begin + v.y + (1 - v.y) * (size.y-1),
+                b.z.begin + v.z + (1 - v.z) * (size.z-1))
+        );
+    }
+    else if (dir.IsNegative())
+    {
+        return Box(
+            Position(   // TODO b.End()+v
+                b.x.begin + (1+v.x) + (-v.x * (size.x-1)),
+                b.y.begin + (1+v.y) + (-v.y * (size.y-1)),
+                b.z.begin + (1+v.z) + (-v.z * (size.z-1))),
+            Position(
+                b.x.end - (1+v.x),
+                b.y.end - (1+v.y),
+                b.z.end - (1+v.z))
+            );
+    }
+    else
+    {
+        return b.Grow(-1);
+    }
+}
+
+
+void VoxelMap::Data::Flux::InitializeCorners()
+{
+    for (auto d1 : Direction::all)
+    {
+        for (auto d2 : Direction::all)
+        {
+            if (d1.IsParallel(d2))
+                continue;
+            Corner corner(*this, d1, d2);
+            OutputDebugStringW((std::wstring(L"Corner ")+Engine::ToWString(d1) +L" / " + Engine::ToWString(d2) + L" Volume= " + std::to_wstring(corner.box.Volume())+L"\n").c_str());
+
+            for (auto fluxPair : corner)
+            {
+                (*this)[fluxPair.first] = std::numeric_limits<float>::signaling_NaN();
+            }
+        }
+    }
 }
 
 float VoxelMap::Data::Flux::operator[](const Position& p) const
@@ -419,19 +459,22 @@ float& VoxelMap::Data::Flux::operator[](const Position& p)
 
 unsigned VoxelMap::Data::Flux::Index(const Position& p) const
 {
+    if (!Bounds().Contains(p))
+        throw std::out_of_range((std::string("Flux position '") + Engine::ToString(p) + "' out of range").c_str());
+
     auto indexPosition = p - offset;
-    return (indexPosition.x)*latitude*altitude+ indexPosition.y*altitude + indexPosition.z;
+    return (indexPosition.x)*size.y*size.z+ indexPosition.y*size.z + indexPosition.z;
 
 }
 
 bool VoxelMap::Data::Flux::IsOffset(const Direction& d) const
 {
-    return !direction.IsOpposite(d);
+    return !axis.IsOpposite(d);
 }
 
 void VoxelMap::Data::Flux::SetBoundary(const Position& p, const Direction& dir, double boundaryFlux)
 {
-    if (dir.IsParallel(direction))
+    if (dir.IsParallel(axis))
     {
         (*this)[p] = float(boundaryFlux);
     }
@@ -443,7 +486,7 @@ void VoxelMap::Data::Flux::SetBoundary(const Position& p, const Direction& dir, 
 
 double VoxelMap::Data::Flux::Gradient(const Position& p) const
 {
-    return (*this)[p + direction.Vector()] - (*this)[p];
+    return (*this)[p + axis.Vector()] - (*this)[p];
 }
 
 float VoxelMap::Data::Flux::Extrapolate(const Position& outsidePosition, const Direction& dir, double  boundaryFlux) const
@@ -462,51 +505,44 @@ VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::begin() const
 
 VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::end() const
 {
-    return iterator(*this, Position(longitude-1, latitude-1, altitude-1)+offset);
+    return iterator(*this, Position(size.x-1, size.y-1, size.z-1)+offset);
 }
 
 VoxelMap::Data::Flux::iterator::iterator(const VoxelMap::Data::Flux& data, const Position& start) :
-    iterator(data, start, Position(data.longitude-1, data.latitude-1, data.altitude-1)+data.offset)
+    iterator(data, Box(start, Position(data.size.x-1, data.size.y-1, data.size.z-1)+data.offset))
 {
-
 }
 
-VoxelMap::Data::Flux::iterator::iterator(const VoxelMap::Data::Flux& data, const Position& start, const Position& end) :
+VoxelMap::Data::Flux::iterator::iterator(const VoxelMap::Data::Flux& data, const Box& box) :
     data(data),
-    start(start),
-    position(start),
-    end(end)
+    box(box),
+    position(box.Start())
 {
-    // clip to end
-    if ((position.x >= end.x) || 
-        (position.y >= end.y) || 
-        (position.z >= end.z))
-    {
-        position.z = end.z;
-        position.y = end.y;
-        position.x = end.x;
+    if (!box.Contains(position))
+    {    // clip to end
+        position = box.End();
     }
 }
 
 VoxelMap::Data::Flux::iterator& VoxelMap::Data::Flux::iterator::operator++()
 {
-    if (++position.z == end.z)
+    if (++position.z >= box.z.end)
     {
-        if (++position.y == end.y)
+        if (++position.y >= box.y.end)
         {
-            if (++position.x == end.x)
+            if (++position.x >= box.x.end)
             {
                 // done
             }
             else
             {
-                position.y = start.y;
-                position.z = start.z;
+                position.y = box.y.begin;
+                position.z = box.z.begin;
             }
         }
         else
         {
-            position.z = start.z;
+            position.z = box.z.begin;
         }
     }
     return *this;
@@ -532,73 +568,141 @@ Directions VoxelMap::Data::Flux::IsBoundary(const Position& p) const
 {
     Directions result;
     Position index = p + offset;
-    assert(index.x >= 0 && index.x < int(longitude));
-    assert(index.y >= 0 && index.y < int(latitude));
-    assert(index.z >= 0 && index.z < int(altitude));
+    assert(index.x >= 0 && index.x < size.x);
+    assert(index.y >= 0 && index.y < size.y);
+    assert(index.z >= 0 && index.z < size.z);
     if (index.x == 0)
         result |= Direction::west;
-    if (index.x == longitude-1)
+    if (index.x == size.x - 1)
         result |= Direction::east;
     if (index.y == 0)
         result |= Direction::south;
-    if (index.y == latitude-1)
+    if (index.y == size.y - 1)
         result |= Direction::north;
     if (index.z == 0)
         result |= Direction::down;
-    if (index.y == altitude-1)
+    if (index.y == size.z - 1)
         result |= Direction::up;
     return result;
 }
 
-VoxelMap::Data::Flux::Boundary::Boundary(const Flux& data, const Direction& direction) :
+VoxelMap::Data::Flux::Section::Section(const Flux& data, const Box& box) :
     data(data),
-    direction(direction)
+    box(box)
 {
 }
 
-VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::Boundary::begin() const
+VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::Section::begin() const
+{
+    return Flux::iterator(data, box);
+}
+
+VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::Section::end() const
+{
+    return Flux::iterator(data, Box(box.End(), box.End()));
+}
+
+VoxelMap::Data::Flux::Boundary::Boundary(const Flux& data, const Direction& direction) :
+    Section(data, data.Edge(direction))
+{
+}
+
+/*
+Box VoxelMap::Data::Flux::Boundary::Bounds(const Flux& data, const Direction& direction)
 {
     if (direction.IsPosititve())
     {
-        Position start(
-            // if direction(==1) start 1 from end       else       start at (offset-offset)=0
-            direction.Vector().x * (data.longitude - 1) +(direction.Vector().x-1) * data.offset.x,
-            direction.Vector().y * (data.latitude - 1) + (direction.Vector().y-1) * data.offset.y,
-            direction.Vector().z * (data.altitude - 1) + (direction.Vector().z-1) * data.offset.z);
-        return Flux::iterator(data, start + data.offset, end().position);
+        return Box(
+            Position(
+                // if direction(==1) start 1 from end       else       start at (offset-offset)=0
+                direction.Vector().x * (data.size.x - 1) + (direction.Vector().x - 1) * data.offset.x,
+                direction.Vector().y * (data.size.y - 1) + (direction.Vector().y - 1) * data.offset.y,
+                direction.Vector().z * (data.size.z - 1) + (direction.Vector().z - 1) * data.offset.z),
+            data.offset + data.size);
     }
     else if (direction.IsNegative())
     {
-        // Start at 0,0,0 index position always, either for border direction or perpendicular range
-        Position start(0, 0, 0);
-        return Flux::iterator(data, start + data.offset, end().position);
+        // Start at 1 index position, except start at 0 for direction(==-1)
+        return Box(
+            Position(1, 1, 1) + data.offset + direction.Vector(),
+            data.offset + Position(
+                //  if direction(==-1): stop at 1+(offset-offset) index, else: stop at end of perpendicular index range
+                direction.Vector().x * (data.offset.x - 1) + (1 + direction.Vector().x) * data.size.x,
+                direction.Vector().y * (data.offset.y - 1) + (1 + direction.Vector().y) * data.size.y,
+                direction.Vector().z * (data.offset.z - 1) + (1 + direction.Vector().z) * data.size.z));
     }
     else
     {
-        return data.begin();
+        return data.Bounds();
     }
 }
 
-VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::Boundary::end() const
+Position VoxelMap::Data::Flux::Boundary::To(const Flux& data, const Direction& direction)
 {
     if (direction.IsPosititve())
     {   // end at long/lat/alt index position always, either for border direction or perpendicular range
-        Position stop(data.longitude, data.latitude, data.altitude) ;
-        return Flux::iterator(data, stop + data.offset, stop + data.offset);
     }
     else if (direction.IsNegative())
     {
-        Position stop(
-            //  if direction(==-1): stop at 1+(offset-offset) index, else: stop at end of perpendicular index range
-            direction.Vector().x * (data.offset.x-1) + (1 + direction.Vector().x) * data.longitude,
-            direction.Vector().y * (data.offset.y-1) + (1 + direction.Vector().y) * data.latitude,
-            direction.Vector().z * (data.offset.z-1) + (1 + direction.Vector().z) * data.altitude   );
-        return Flux::iterator(data, stop + data.offset, stop + data.offset);
+        return ;
     }
     else
     {
-        return data.end();
+        return data.end().position;
     }
 }
+*/
+
+VoxelMap::Data::Flux::Corner::Corner(const Flux& data, const Direction& directionA, const Direction& directionB) :
+    Section(data, (data.Edge(directionA) + Size(directionB.Axis().Vector() + directionA.Perpendicular(directionB).Vector()) & 
+        (data.Edge(directionB)+Size(directionA.Axis().Vector() + directionA.Perpendicular(directionB).Vector()))))
+{
+}
+
+/*
+Position VoxelMap::Data::Flux::Corner::From(const Flux& data, const Direction& directionA, const Direction& directionB)
+{
+    return (Edge(directionA) & Edge(direcionB)).Start();
+
+    if (direction.IsPosititve())
+    {
+        return Position(
+            // if direction(==1) start 1 from end       else       start at (offset-offset)=0
+            direction.Vector().x * (data.longitude - 1) + (direction.Vector().x - 1) * data.offset.x,
+            direction.Vector().y * (data.latitude - 1) + (direction.Vector().y - 1) * data.offset.y,
+            direction.Vector().z * (data.altitude - 1) + (direction.Vector().z - 1) * data.offset.z);
+    }
+    else if (direction.IsNegative())
+    {
+        // Start at 1 index position, except start at 0 for direction(==-1)
+        return Position(1, 1, 1) + data.offset + direction.Vector();
+    }
+    else
+    {
+        return data.begin().position;
+    }
+}
+
+Position VoxelMap::Data::Flux::Corner::To(const Flux& data, const Direction& directionA, const Direction& directionB)
+{
+    if (direction.IsPosititve())
+    {   // end at long/lat/alt index position always, either for border direction or perpendicular range
+        return data.offset + Position(data.longitude, data.latitude, data.altitude);
+    }
+    else if (direction.IsNegative())
+    {
+        return data.offset + Position(
+            //  if direction(==-1): stop at 1+(offset-offset) index, else: stop at end of perpendicular index range
+            direction.Vector().x * (data.offset.x - 1) + (1 + direction.Vector().x) * data.longitude,
+            direction.Vector().y * (data.offset.y - 1) + (1 + direction.Vector().y) * data.latitude,
+            direction.Vector().z * (data.offset.z - 1) + (1 + direction.Vector().z) * data.altitude);
+    }
+    else
+    {
+        return data.end().position;
+    }
+}
+*/
+
 
 }
