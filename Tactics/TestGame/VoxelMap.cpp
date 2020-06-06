@@ -167,33 +167,33 @@ TEST(VoxelFlux, Boundary)
     VoxelMap::Data data(3, 2, 1);
     auto west = data.U().BoundaryCondition(Direction::west);
     EXPECT_EQ(Position(1, 2, 1), west.end() - west.begin());
-    EXPECT_EQ(Position(0, 0, 0), west.begin().position);
+    EXPECT_EQ(Position(3, 0, 0), west.begin().position);
     EXPECT_TRUE(std::all_of(west.begin(), west.end(), [](const decltype(west)::value_type& fluxPair)->bool
-    {
-        return fluxPair.first.x == 0 && fluxPair.second == 0.0;
-    }));
-    auto east = data.U().BoundaryCondition(Direction::east);
-    EXPECT_EQ(Position(1, 2, 1), east.end() - east.begin());
-    EXPECT_EQ(Position(3, 0, 0), east.begin().position);
-    EXPECT_TRUE(std::all_of(east.begin(), east.end(), [](const decltype(east)::value_type& fluxPair)->bool
     {
         return fluxPair.first.x == 3 && fluxPair.second == 0.0;
     }));
+    auto east = data.U().BoundaryCondition(Direction::east);
+    EXPECT_EQ(Position(1, 2, 1), east.end() - east.begin());
+    EXPECT_EQ(Position(0, 0, 0), east.begin().position);
+    EXPECT_TRUE(std::all_of(east.begin(), east.end(), [](const decltype(east)::value_type& fluxPair)->bool
+    {
+        return fluxPair.first.x == 0 && fluxPair.second == 0.0;
+    }));
     auto south = data.U().BoundaryCondition(Direction::south);
-    EXPECT_EQ(Position(3, 1, 1), south.end() - south.begin());
-    EXPECT_EQ(Position(0, -1, 0), south.begin().position);
+    EXPECT_EQ(Position(2, 1, 1), south.end() - south.begin());
+    EXPECT_EQ(Position(1, 2, 0), south.begin().position);
     EXPECT_TRUE(std::all_of(south.begin(), south.end(), [](const decltype(south)::value_type& fluxPair)->bool
     {
-        return ((fluxPair.first.y == -1) &&
+        return ((fluxPair.first.y == 2) &&
             (Engine::Range<int>(0, 3)[fluxPair.first.x]) &&
             (Engine::Range<int>(0, 1)[fluxPair.first.z]));
     }));
     auto up = data.U().BoundaryCondition(Direction::up);
-    EXPECT_EQ(Position(3, 2, 1), up.end() - up.begin());
-    EXPECT_EQ(Position(0, 0, 1), up.begin().position);
+    EXPECT_EQ(Position(2, 2, 1), up.end() - up.begin());
+    EXPECT_EQ(Position(1, 0, -1), up.begin().position);
     EXPECT_TRUE(std::all_of(up.begin(), up.end(), [](const decltype(up)::value_type& fluxPair)->bool
     {
-        return fluxPair.first.z == 1 && fluxPair.second == 0.0;
+        return fluxPair.first.z == -1 && fluxPair.second == 0.0;
     }));
 }
 
