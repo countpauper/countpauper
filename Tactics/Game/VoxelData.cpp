@@ -87,7 +87,7 @@ VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
     // Controlled boundary stat is at -1 and long lat alt
     size_t gridSize = (longitude+2) * (latitude+2) * (altitude+2);
     voxels.resize(gridSize, { &VoxelMap::Material::vacuum, 0,0 });
-
+    InvalidateCorners();
 }
 
 unsigned VoxelMap::Data::Longitude() const
@@ -254,10 +254,13 @@ void VoxelMap::Data::InvalidateCorners()
         {
             if (d0.IsParallel(d1))
                 continue;   // not a corner
+            Corner corner(*this, d0, d1);
+            OutputDebugStringW((std::wstring(L"Voxel Corner ") + Engine::ToWString(d0) + L" / " + Engine::ToWString(d1) + L" Volume= " + std::to_wstring(corner.box.Volume()) + L"\n").c_str());
             for (auto v : Corner(*this, d0, d1))
             {
                 SetInvalid(v.first);
             }
+
         }
     }
 }
@@ -297,60 +300,15 @@ VoxelMap::Data::iterator VoxelMap::Data::Section::end() const
 }
 
 VoxelMap::Data::Boundary::Boundary(const Data& data, const Direction& direction) :
-    Section(data, Box(Start(data, direction), End(data, direction))),
+    Section(data, data.Edge(direction)),
     direction(direction)
 {
 }
 
-Position VoxelMap::Data::Boundary::Start(const Data& data, const Direction& direction)
-{
-    if (direction.IsNone())
-    {
-        return data.Insides().Start();
-    }
-    else
-    {
-        if (direction.IsNegative())
-        {
-            return direction.Vector();
-        }
-        else 
-        {    // if axis(==1): long/lat/alt       else  0 (no corner)
-            assert(direction.IsPosititve());
-            return Position(
-                direction.Vector().x * data.size.x,
-                direction.Vector().y * data.size.y,
-                direction.Vector().z * data.size.z);
-        }
-    }
-
-}
-Position VoxelMap::Data::Boundary::End(const Data& data, const Direction& direction)
-{
-    if (direction.IsNone())
-    {
-        return data.Insides().End();
-    }
-    else
-    {
-        if (direction.IsNegative())
-        {  //           if axis(==-1): 0, else long/lat/alt, inside limit
-            return Position(
-                (1 + direction.Vector().x) * data.size.x,
-                (1 + direction.Vector().y) * data.size.y,
-                (1 + direction.Vector().z) * data.size.z);
-        }
-        else 
-        {   
-            assert(direction.IsPosititve());
-            //          if axis(==1): grid limit = long/alt/lat+1, else inside limit
-            return direction.Vector() + data.size;
-        }
-    }
-}
-
 VoxelMap::Data::Corner::Corner(const Data& data, const Direction& directionA, const Direction& directionB) :
-    Section(data, Box(Position(0,0,0), Position(0,0,0)))
+    Section(data,
+        (data.Edge(directionA) + Size(directionB.Axis().Vector() + directionA.Perpendicular(directionB).Vector()) &
+         data.Edge(directionB) + Size(directionA.Axis().Vector() + directionA.Perpendicular(directionB).Vector())))
 {
 }
 
@@ -378,6 +336,38 @@ Box VoxelMap::Data::Insides() const
 Box VoxelMap::Data::Bounds() const
 {
     return Insides().Grow(1);
+}
+
+Box VoxelMap::Data::Edge(const Direction& direction) const
+{
+    if (direction.IsNone())
+    {
+        return Insides();
+    }
+    else
+    {
+        Position v = direction.Vector();
+        if (direction.IsNegative())
+        {
+            return Box(
+                v,
+                Position(
+                    (1 + v.x) * size.x,
+                    (1 + v.y) * size.y,
+                    (1 + v.z) * size.z)
+            );
+        }
+        else
+        {    // if axis(==1): long/lat/alt       else  0 (no corner)
+            assert(direction.IsPosititve());
+            return Box(
+                Position(
+                    v.x * size.x,
+                    v.y * size.y,
+                    v.z * size.z),
+                size + v);
+        }
+    }
 }
 
 VoxelMap::Data::Section VoxelMap::Data::All() const
@@ -471,14 +461,14 @@ Box VoxelMap::Data::Flux::Edge(const Direction& dir) const
 
 void VoxelMap::Data::Flux::InvalidateCorners()
 {
-    for (auto d1 : Direction::all)
+    for (auto d0 : Direction::all)
     {
-        for (auto d2 : Direction::all)
+        for (auto d1 : Direction::all)
         {
-            if (d1.IsParallel(d2))
+            if (d0.IsParallel(d1))
                 continue;
-            Corner corner(*this, d1, d2);
-            //OutputDebugStringW((std::wstring(L"Corner ")+Engine::ToWString(d1) +L" / " + Engine::ToWString(d2) + L" Volume= " + std::to_wstring(corner.box.Volume())+L"\n").c_str());
+            Corner corner(*this, d0, d1);
+            //OutputDebugStringW((std::wstring(L"Flux Corner ")+Engine::ToWString(d0) +L" / " + Engine::ToWString(d1) + L" Volume= " + std::to_wstring(corner.box.Volume())+L"\n").c_str());
 
             for (auto fluxPair : corner)
             {
@@ -695,8 +685,9 @@ Position VoxelMap::Data::Flux::Boundary::To(const Flux& data, const Direction& d
 */
 
 VoxelMap::Data::Flux::Corner::Corner(const Flux& data, const Direction& directionA, const Direction& directionB) :
-    Section(data, (data.Edge(directionA) + Size(directionB.Axis().Vector() + directionA.Perpendicular(directionB).Vector()) & 
-        (data.Edge(directionB)+Size(directionA.Axis().Vector() + directionA.Perpendicular(directionB).Vector()))))
+    Section(data, 
+        (data.Edge(directionA) + Size(directionB.Axis().Vector() + directionA.Perpendicular(directionB).Vector()) & 
+        (data.Edge(directionB) + Size(directionA.Axis().Vector() + directionA.Perpendicular(directionB).Vector()))))
 {
 }
 

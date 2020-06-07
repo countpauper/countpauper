@@ -126,7 +126,6 @@ public:
 
             iterator begin() const;
             iterator end() const;
-        private:
             const Data& data;
             const Box box;
         };
@@ -143,7 +142,6 @@ public:
         {
         public:
             Corner(const Data& data, const Direction& directionA, const Direction& directionB);
-
         };
         Boundary BoundaryCondition(const Direction& dir) const { return Boundary(*this, dir); }
 
@@ -152,6 +150,8 @@ public:
         Section All() const;
         Box Insides() const;
         Box Bounds() const;
+        Box Edge(const Direction& direction) const;
+
 
         Position Clip(const Position& p) const;
         

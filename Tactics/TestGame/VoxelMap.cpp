@@ -34,7 +34,9 @@ TEST(VoxelData, Indexing)
 {
     VoxelMap::Data data(2, 2, 2);
     EXPECT_EQ(&VoxelMap::Material::vacuum, data[Position(1, 0, 1)].material );
-    EXPECT_EQ(0, data[Position(-1, 2, 0)].density);
+    EXPECT_EQ(0, data[Position(1, 1, 1)].density); // inside
+    EXPECT_EQ(0, data[Position(-1, 0, 0)].density); // edge
+    EXPECT_TRUE(std::isnan(data[Position(-1, 2, 0)].density));  // corner
     EXPECT_THROW(data[Position(3, 0, 1)], std::out_of_range);
     EXPECT_THROW(data[Position(1, -2, 0)], std::out_of_range);
 }
