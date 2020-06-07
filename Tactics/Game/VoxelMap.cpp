@@ -104,10 +104,10 @@ void VoxelMap::Air(double temperature, double meters)
     double atmorphericLapse = float(-temperature / atmosphereRadius);
     for (auto v : voxels.All())
     {
-        auto temperature = AtmosphericTemperature(Elevation(v.position));
-        voxels.SetPressure(v.position, Material::air,
+        auto temperature = AtmosphericTemperature(Elevation(v.first));
+        voxels.SetPressure(v.first, Material::air,
             temperature,
-            AtmosphericPressure(Elevation(v.position.z)));
+            AtmosphericPressure(Elevation(v.first.z)));
     }
 }
 
@@ -121,8 +121,8 @@ void VoxelMap::Water(int level, double temperature)
 {
     for(auto v : voxels.In(Engine::AABB(Engine::Coordinate(-1,-1,-1), Engine::Coordinate(voxels.Longitude()+1, voxels.Latitude()+1, level*dZ))))
     {
-        double pressure = AtmosphericPressure(Elevation(v.position.z)) + Elevation(level - v.position.z) * 10.33; // TODO: calculate based on water material
-        voxels.SetPressure(v.position,
+        double pressure = AtmosphericPressure(Elevation(v.first.z)) + Elevation(level - v.first.z) * 10.33; // TODO: calculate based on water material
+        voxels.SetPressure(v.first,
             Material::water,
             temperature,
             pressure);
@@ -177,7 +177,7 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickn
     unsigned dbgCount=0;
     for (auto v : voxels.In(boundingBox))
     {
-        auto c = Center(v.position);
+        auto c = Center(v.first);
         auto nearest = plane.Project(c);
         if ((nearest - c).Length() > halfThickness)
             continue;
@@ -187,7 +187,7 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickn
         if (nearest.z > bottom.z + height)
             continue;
         //OutputDebugStringW((std::wstring(L"Wall at ") + v.position.to_wstring() + L"\n").c_str());
-        voxels.SetPressure(v.position,
+        voxels.SetPressure(v.first,
             Material::stone,
             atmosphericTemperature, // TODO: decrease from air increase to lava
             PascalPerAtmosphere);   // TODO: increase due to stone depth, NB: can be already overlapping stone layer. just dont place those
@@ -378,7 +378,7 @@ unsigned VoxelMap::WindForce() const
     double speed = 0;
     for (auto v : voxels)
     {
-        auto flow = voxels.Flow(v.position);
+        auto flow = voxels.Flow(v.first);
         speed = std::max(speed, flow.Length());
     }
     constexpr std::array<double, 12> beaufortScale = { 0.2, 1.5, 3.3, 5.4, 7.9, 10.7, 13.8, 17.1, 20.7, 24.4, 28.4, 32.6 };
@@ -401,8 +401,8 @@ double VoxelMap::Mass(const VoxelMap::Material& material) const
 {
     return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
-        if (&v.material == &material)
-            return runningTotal + v.Mass();
+        if (v.second.material == &material)
+            return runningTotal + v.second.Mass();
         else
             return runningTotal;
     });
@@ -412,8 +412,8 @@ double VoxelMap::Temperature(const Material& material) const
 {
     auto heat = std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
-        if (&v.material == &material)
-            return runningTotal + v.Mass() * v.temperature;
+        if (v.second.material == &material)
+            return runningTotal + v.second.Mass() * v.second.temperature;
         else
             return runningTotal;
     });
@@ -423,16 +423,12 @@ double VoxelMap::Temperature(const Material& material) const
 
 double VoxelMap::Mass() const
 {
-    return Mass(Directions(0xFFFF));
-}
-
-double VoxelMap::Mass(Directions boundaries) const
-{
-    return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&boundaries](double runningTotal, const decltype(voxels)::value_type& v)
+    return std::accumulate(voxels.begin(), voxels.end(), 0.0, [](double runningTotal, const decltype(voxels)::value_type& v)
     {
-        return runningTotal + v.Mass();
+        return runningTotal + v.second.Mass();
     });
 }
+
 /*
 void VoxelMap::Advection(double seconds)
 {
@@ -554,13 +550,13 @@ void VoxelMap::GridBoundary()
         {
             // Material of the boundary grid is irrelevant. If it's a different material, the density gradient 
             //  will be very high at the boundary, but since this is not registered we just extrapolate
-            auto realPosition = v.position - d.Vector();
+            auto realPosition = v.first - d.Vector();
             const Voxel realWorld = voxels[realPosition];
-            float boundaryTemperature = AtmosphericTemperature(Elevation(v.position.z));
-            float boundaryDensity = float(realWorld.material.Density(AtmosphericPressure(Elevation(v.position.z)), boundaryTemperature));
+            float boundaryTemperature = AtmosphericTemperature(Elevation(v.first.z));
+            float boundaryDensity = float(realWorld.material->Density(AtmosphericPressure(Elevation(v.first.z)), boundaryTemperature));
 
             // extrapolate to set
-            voxels.AdjustGrid(v.position, 
+            voxels.AdjustGrid(v.first, 
                 Engine::Lerp(realWorld.temperature, boundaryTemperature, 2.0),
                 Engine::Lerp(realWorld.density, boundaryDensity, 2.0));
         }
@@ -739,19 +735,19 @@ void VoxelMap::GenerateMesh()
     mesh = std::make_unique<Engine::Mesh>();
     for (auto& v : voxels)
     {
-        auto c = v.Color();
+        auto c = v.second.Color();
         if (!c)
             continue;
-        auto visible = Visibility(v.position);
+        auto visible = Visibility(v.first);
         if (!visible)
             continue;
         Engine::Box box(Engine::Vector(dX, dZ, dY));
         box.SetColor(c);
         
         box *= Engine::Matrix::Translation(
-            Engine::Vector((double(v.position.x) + 0.5)*dX,
-            (double(v.position.z) + 0.5)*dZ,
-            (double(v.position.y) + 0.5)*dY));
+            Engine::Vector((double(v.first.x) + 0.5)*dX,
+            (double(v.first.z) + 0.5)*dZ,
+            (double(v.first.y) + 0.5)*dY));
         (*mesh) += box;
     }
 }
@@ -766,12 +762,12 @@ void VoxelMap::RenderPretty() const
     for (auto& v : voxels)
     {
         glPushMatrix();
-        glTranslated(v.position.x, v.position.z*MeterPerEl, v.position.y); // offset by -1,-1,-1 for boundary
-        if (v.Opaque())
+        glTranslated(v.first.x, v.first.z*MeterPerEl, v.first.y); // offset by -1,-1,-1 for boundary
+        if (v.second.Opaque())
         {
-            if (auto visibility = Visibility(v.position))
+            if (auto visibility = Visibility(v.first))
             {
-                v.Render(v.position, visibility);
+                v.second.Render(v.first, visibility);
             }
         }
         glPopMatrix();
@@ -783,13 +779,13 @@ void VoxelMap::RenderPretty() const
     for (auto& v : voxels)
     {
         glPushMatrix();
-        glTranslated(v.position.x, v.position.z*MeterPerEl, v.position.y); // offset by -1,-1,-1 for boundary
-        if (!v.Opaque() && !v.Transparent())
+        glTranslated(v.first.x, v.first.z*MeterPerEl, v.first.y); // offset by -1,-1,-1 for boundary
+        if (!v.second.Opaque() && !v.second.Transparent())
         {
-            auto visibility = Visibility(v.position);
+            auto visibility = Visibility(v.first);
             if (!visibility.empty())
             {
-                v.Render(v.position, visibility);
+                v.second.Render(v.first, visibility);
             }
         }
         glPopMatrix();
@@ -808,8 +804,8 @@ void VoxelMap::RenderAnalysis() const
     for (const auto v : voxels)
     {
         glPushMatrix();
-        glTranslated(v.position.x, v.position.z*MeterPerEl, v.position.y);
-        v.RenderAnalysis(v.position, Directions::all, voxels.DensityGradient(v.position));
+        glTranslated(v.first.x, v.first.z*MeterPerEl, v.first.y);
+        v.second.RenderAnalysis(v.first, Directions::all, voxels.DensityGradient(v.first));
         glPopMatrix();
     }
 

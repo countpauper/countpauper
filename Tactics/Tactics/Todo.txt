@@ -5,7 +5,10 @@ Explicit Atmosphere and Earth commands
 * Render triangles as mesh in two passes, opaque and translucent (and not transparent)
 * Render density gradient with false color
 * Render temperature  with red channel
-Wall command start(xyz) Vector(xyz) Height, width (any 50% overlapping square is stone)
+* Wall command start(xyz) Vector(xyz) Height, width (any 50% overlapping square is stone)
+* Return Voxel data to voxels with just material, temperature, density
+Get signal nan to signal 
+Nan density
 Stone boundary flux = 0,0,0 (no wind)
 Stone boundary density
 Reynolds number computation (need distance to surface per grid/direction)

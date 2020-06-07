@@ -75,6 +75,7 @@
       <AdditionalIncludeDirectories>..;..\..\Dependencies\fastsignals\libfastsignals\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

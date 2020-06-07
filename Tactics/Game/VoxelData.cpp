@@ -7,20 +7,25 @@
 namespace Game
 {
 
-VoxelMap::Data::iterator::iterator(const Data& data, const Position& position) :
-    iterator(data, Box(position, data.size))
+
+VoxelMap::Data::iterator::iterator(const Data& data) : iterator(data, data.Insides())
 {
 }
 
 VoxelMap::Data::iterator::iterator(const Data& data, const Box& box) :
+    iterator(data, box.Start(), box)
+{
+}
+
+VoxelMap::Data::iterator::iterator(const Data& data, const Position& position, const Box& box) :
     data(data),
-    box(box),
-    position(box.Start())
+    position(position),
+    box(box)
 {
     // clip to end
     if (!box.Contains(position))
     {
-        position = box.End();
+        this->position = box.End();
     }
 }
 
@@ -61,7 +66,7 @@ bool VoxelMap::Data::iterator::operator!=(const iterator& other) const
 
 VoxelMap::Data::iterator::value_type VoxelMap::Data::iterator::operator*() const
 {
-    return data[position];
+    return std::make_pair(position, data[position]);
 }
 
 VoxelMap::Data::Data() :
@@ -81,9 +86,8 @@ VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
     // Computed map state ranges from 0 to < long,lat,alt
     // Controlled boundary stat is at -1 and long lat alt
     size_t gridSize = (longitude+2) * (latitude+2) * (altitude+2);
-    material.resize(gridSize, &Material::vacuum);
-    temperature.resize(gridSize, 0);
-    density.resize(gridSize, 0);
+    voxels.resize(gridSize, { &VoxelMap::Material::vacuum, 0,0 });
+
 }
 
 unsigned VoxelMap::Data::Longitude() const
@@ -126,7 +130,7 @@ Engine::Vector VoxelMap::Data::Flow(const Position& p) const
         0.5*(u[Position(p.x + 1, p.y, p.z)] + u[p]),
         0.5*(v[Position(p.x, p.y + 1, p.z)] + v[p]),
         0.5*(w[Position(p.x, p.y, p.z + 1)] + w[p]));
-    auto gridDensity = density[GridIndex(p)];
+    auto gridDensity = voxels[GridIndex(p)].density;
     Q /= gridDensity;
 
     // v(m/s) = Q/A (Q = volume flow rate (m3/s), A = area(m2)) https://en.wikipedia.org/wiki/Flow_velocity
@@ -160,17 +164,17 @@ Engine::Vector VoxelMap::Data::FluxGradient(const Position& p) const
 
 float VoxelMap::Data::Density(const Position& position) const
 {
-    return density[GridIndex(position)];
+    return voxels[GridIndex(position)].density;
 }
 
 float VoxelMap::Data::Temperature(const Position& position) const
 {
-    return temperature[GridIndex(position)];
+    return voxels[GridIndex(position)].temperature;
 }
 
 const VoxelMap::Material& VoxelMap::Data::MaterialAt(const Position& position) const
 {
-    return *material[GridIndex(position)];
+    return *(voxels[GridIndex(position)].material);
 }
 double VoxelMap::Data::Density(const Engine::Coordinate& c) const
 {
@@ -218,9 +222,10 @@ double VoxelMap::Data::Temperature(const Engine::Coordinate& c) const
     return TrilinearInterpolation(t, gridWeight);
 }
 
-void VoxelMap::Data::SetDensity(const Position& position, float pressure)
+void VoxelMap::Data::SetDensity(const Position& position, float density)
 {
-    density[GridIndex(position)] = pressure;
+    auto& v = voxels[GridIndex(position)];
+    v.density = density;
 }
 
 Position VoxelMap::Data::Stride() const
@@ -241,66 +246,112 @@ unsigned VoxelMap::Data::UncheckedGridIndex(const Position& p) const
     return (p.x + 1) * stride.x + (p.y + 1) * stride.y + (p.z + 1) * stride.z;
 }
 
-VoxelMap::Voxel VoxelMap::Data::operator[](const Position& position) const
-{   // can't get outside
+void VoxelMap::Data::InvalidateCorners()
+{
+    for (auto d0 : Direction::all)
+    {
+        for (auto d1 : Direction::all)
+        {
+            if (d0.IsParallel(d1))
+                continue;   // not a corner
+            for (auto v : Corner(*this, d0, d1))
+            {
+                SetInvalid(v.first);
+            }
+        }
+    }
+}
+
+const VoxelMap::Voxel& VoxelMap::Data::operator[](const Position& position) const
+{ 
     auto index = GridIndex(position);
-    return Voxel{ *material.at(index), temperature.at(index), density.at(index), position, IsBoundary(position) };
+    return voxels.at(index);
+}
+
+VoxelMap::Voxel& VoxelMap::Data::operator[](const Position& position)
+{  
+    auto index = GridIndex(position);
+    return voxels.at(index);
+}
+
+
+VoxelMap::Data::Section::Section(const Data& data, const Box& box) :
+    data(data),
+    box(box)
+{
+}
+
+VoxelMap::Data::Section::Section(const Data& data, const Engine::AABB& meters) :
+    Section(data, Box(data.Clip(Grid(meters.Begin())), data.Clip(Grid(meters.End()))))
+{
+}
+
+VoxelMap::Data::iterator VoxelMap::Data::Section::begin() const
+{
+    return iterator(data, box.Start(), box);
+}
+
+VoxelMap::Data::iterator VoxelMap::Data::Section::end() const
+{
+    return iterator(data, box.End(), box);
 }
 
 VoxelMap::Data::Boundary::Boundary(const Data& data, const Direction& direction) :
-    data(data),
+    Section(data, Box(Start(data, direction), End(data, direction))),
     direction(direction)
 {
 }
-VoxelMap::Data::iterator VoxelMap::Data::Boundary::begin() const
+
+Position VoxelMap::Data::Boundary::Start(const Data& data, const Direction& direction)
 {
     if (direction.IsNone())
     {
-        Position start(0, 0, 0);
-        // extend in direction
-        // NB: corners are only added if overlapping directions
-        return iterator(data, Box(start, end().position));
+        return data.Insides().Start();
     }
     else
     {
-        Position start(data.size.x+1, data.size.y+1, data.size.z+1);
-
         if (direction.IsNegative())
         {
-            start = direction.Vector();
+            return direction.Vector();
         }
-        else if (direction.IsPosititve())
+        else 
         {    // if axis(==1): long/lat/alt       else  0 (no corner)
-            start.x = direction.Vector().x * data.size.x;
-            start.y = direction.Vector().y * data.size.y;
-            start.z = direction.Vector().z * data.size.z;
+            assert(direction.IsPosititve());
+            return Position(
+                direction.Vector().x * data.size.x,
+                direction.Vector().y * data.size.y,
+                direction.Vector().z * data.size.z);
         }
-        return iterator(data, Box(start, end().position));
     }
 
 }
-VoxelMap::Data::iterator VoxelMap::Data::Boundary::end() const
+Position VoxelMap::Data::Boundary::End(const Data& data, const Direction& direction)
 {
     if (direction.IsNone())
     {
-        Position stop(data.size);
-        return iterator(data, Box(stop, stop));
+        return data.Insides().End();
     }
     else
     {
-        Position stop;
         if (direction.IsNegative())
         {  //           if axis(==-1): 0, else long/lat/alt, inside limit
-            stop.x = (1 + direction.Vector().x) * data.size.x;
-            stop.y = (1 + direction.Vector().y) * data.size.y;
-            stop.z = (1 + direction.Vector().z) * data.size.z;
+            return Position(
+                (1 + direction.Vector().x) * data.size.x,
+                (1 + direction.Vector().y) * data.size.y,
+                (1 + direction.Vector().z) * data.size.z);
         }
-        else if (direction.IsPosititve())
-        {   //          if axis(==1): grid limit = long/alt/lat+1, else inside limit
-            stop = direction.Vector() + data.size;
+        else 
+        {   
+            assert(direction.IsPosititve());
+            //          if axis(==1): grid limit = long/alt/lat+1, else inside limit
+            return direction.Vector() + data.size;
         }
-        return iterator(data, Box(stop, stop));
     }
+}
+
+VoxelMap::Data::Corner::Corner(const Data& data, const Direction& directionA, const Direction& directionB) :
+    Section(data, Box(Position(0,0,0), Position(0,0,0)))
+{
 }
 
 VoxelMap::Data::iterator::difference_type operator-(const VoxelMap::Data::iterator& a, const VoxelMap::Data::iterator& b)
@@ -313,35 +364,20 @@ VoxelMap::Data::Flux::iterator::difference_type operator-(const VoxelMap::Data::
     return a.position - b.position;
 }
 
-VoxelMap::Data::Section::Section(const Data& data, const Engine::AABB& meters) :
-    Section(data, Box(data.Clip(Grid(meters.Begin())), data.Clip(Grid(meters.End()))))
-{
-}
-
-VoxelMap::Data::Section::Section(const Data& data, const Box& box) :
-    data(data),
-    box(box)
-{
-}
-
-VoxelMap::Data::iterator VoxelMap::Data::Section::begin() const
-{
-    return iterator(data, box);
-}
-
-VoxelMap::Data::iterator VoxelMap::Data::Section::end() const
-{
-    return iterator(data, Box(box.End(), box.End()));
-}
 
 VoxelMap::Data::Section VoxelMap::Data::In(const Engine::AABB& meters) const
 {
     return Section(*this, meters);
 }
 
+Box VoxelMap::Data::Insides() const
+{
+    return Box(Position(0, 0, 0), size);
+}
+
 Box VoxelMap::Data::Bounds() const
 {
-    return Box(Position(0, 0, 0), size).Grow(1);
+    return Insides().Grow(1);
 }
 
 VoxelMap::Data::Section VoxelMap::Data::All() const
@@ -354,24 +390,29 @@ Position VoxelMap::Data::Clip(const Position& p) const
     return Bounds().Clip(p);
 }
 
+void VoxelMap::Data::SetInvalid(const Position& position)
+{
+    auto index = GridIndex(position);
+    voxels[index] = Voxel{ nullptr, std::numeric_limits<float>::signaling_NaN(),  std::numeric_limits<float>::signaling_NaN() };
+}
+
 void VoxelMap::Data::SetPressure(const Position& position, const Material& material, double temperature, double pressure)
 {
     auto index = GridIndex(position);
-    this->material[index] = &material;
-    this->temperature[index] = float(temperature);
-    this->density[index] = float(material.Density(pressure, temperature));
+    voxels[index] = Voxel{ &material, float(temperature), float(material.Density(pressure, temperature)) };
 }
 
 void VoxelMap::Data::AdjustGrid(const Position& position, double temperature, double density)
 {
     auto index = GridIndex(position);
-    this->temperature[index] = float(temperature);
-    this->density[index] = float(density);
+    auto& v = voxels[index];
+    v.temperature = float(temperature);
+    v.density = float(density);
 }
 
 bool VoxelMap::Data::IsInside(const Position& p) const
 {
-    return Bounds().Grow(-1).Contains(p);
+    return Insides().Contains(p);
 }
 
 VoxelMap::Data::Flux::Flux(Direction axis, unsigned longitude, unsigned latitude, unsigned altitude) :
@@ -381,7 +422,7 @@ VoxelMap::Data::Flux::Flux(Direction axis, unsigned longitude, unsigned latitude
     flux(size.Volume(), 0)
 {
     assert(axis.IsPosititve());    // for offset, vector should be positive
-    InitializeCorners();
+    InvalidateCorners();
 }
 
 
@@ -428,7 +469,7 @@ Box VoxelMap::Data::Flux::Edge(const Direction& dir) const
 }
 
 
-void VoxelMap::Data::Flux::InitializeCorners()
+void VoxelMap::Data::Flux::InvalidateCorners()
 {
     for (auto d1 : Direction::all)
     {
@@ -437,7 +478,7 @@ void VoxelMap::Data::Flux::InitializeCorners()
             if (d1.IsParallel(d2))
                 continue;
             Corner corner(*this, d1, d2);
-            OutputDebugStringW((std::wstring(L"Corner ")+Engine::ToWString(d1) +L" / " + Engine::ToWString(d2) + L" Volume= " + std::to_wstring(corner.box.Volume())+L"\n").c_str());
+            //OutputDebugStringW((std::wstring(L"Corner ")+Engine::ToWString(d1) +L" / " + Engine::ToWString(d2) + L" Volume= " + std::to_wstring(corner.box.Volume())+L"\n").c_str());
 
             for (auto fluxPair : corner)
             {

@@ -21,12 +21,12 @@ const VoxelMap::Material VoxelMap::Material::water { L"Water",     Element::Wate
 
 bool VoxelMap::Voxel::Solid() const
 {
-    return temperature < material.melt;
+    return temperature < material->melt;
 }
 
 bool VoxelMap::Voxel::Gas() const
 {
-    return temperature > material.boil;
+    return temperature > material->boil;
 }
 
 Square VoxelMap::Voxel::Square(unsigned height) const
@@ -37,7 +37,7 @@ Square VoxelMap::Voxel::Square(unsigned height) const
     }
     else
     {
-        return Game::Square(material.element, Solid(), height);
+        return Game::Square(material->element, Solid(), height);
     }
 }
 
@@ -45,7 +45,7 @@ double VoxelMap::Voxel::Translucency() const
 {
     // https://en.wikipedia.org/wiki/Opacity_(optics)#Quantitative_definition
     // assume light from straight above (that's why it's vertical el)
-    return exp(-VerticalEl * MeterPerEl * material.opacity * Density());
+    return exp(-VerticalEl * MeterPerEl * material->opacity * Density());
 }
 
 bool VoxelMap::Voxel::Opaque() const
@@ -70,7 +70,7 @@ double VoxelMap::Voxel::Mass() const
 
 double VoxelMap::Voxel::Molecules() const
 {
-    return Mass() / material.molarMass;
+    return Mass() / material->molarMass;
 }
 
 double VoxelMap::Voxel::Viscosity() const
@@ -97,9 +97,9 @@ double VoxelMap::Voxel::Hardness() const
     if (Gas())
         return 0;
     else if (Solid())
-        return material.youngsModulus;
+        return material->youngsModulus;
     else
-        return material.surfaceTension;
+        return material->surfaceTension;
 }
 double VoxelMap::Voxel::Pressure() const
 {   // Pascal = newton /m2 = kg/(m*s^2)  = 1 J/m^3 
@@ -125,7 +125,7 @@ double VoxelMap::Voxel::DiffusionCoefficient(const VoxelMap::Voxel& to) const
         // http://www.thermopedia.com/content/696/
         constexpr double DiffusionConstant = 1.2e-4 * PascalPerAtmosphere;
 
-        return DiffusionConstant * pow(temperature, 1.5) * sqrt(1 / material.molarMass + 1 / to.material.molarMass) / Pressure();
+        return DiffusionConstant * pow(temperature, 1.5) * sqrt(1 / material->molarMass + 1 / to.material->molarMass) / Pressure();
     }
     else 
         return 0.01;
@@ -142,7 +142,7 @@ Engine::RGBA VoxelMap::Voxel::Color() const
 {
     // TODO: why is steam white, water blue, something about particle size and scattering
     // Also solids need to start glowing red when hot 
-    auto color = material.color.Translucent(1.0 - Translucency());
+    auto color = material->color.Translucent(1.0 - Translucency());
 
     return color;
 }
@@ -159,7 +159,7 @@ void VoxelMap::Voxel::RenderAnalysis(const Position& p, const Directions& visibi
         // glDrawArrow(flowArrow);
     glPopMatrix();
 
-    double offDensity = density - material.normalDensity;
+    double offDensity = density - material->normalDensity;
     double sigmoidDensity = Engine::Sigmoid(offDensity);
     glColor3d(0, sigmoidDensity, 1 - sigmoidDensity);
     RenderFaces(p, visibility, GL_LINE_LOOP);

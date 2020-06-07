@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <numeric>
+#include <cfenv>
 #include "Game/VoxelMap.h"
 #include "Engine/Maths.h"
 #include "Engine/AxisAlignedBoundingBox.h"
@@ -32,8 +33,8 @@ TEST(VoxelData, Construction)
 TEST(VoxelData, Indexing)
 {
     VoxelMap::Data data(2, 2, 2);
-    EXPECT_EQ(Position(1, 0, 1), data[Position(1, 0, 1)].position);
-    EXPECT_EQ(Position(-1, 2, 0), data[Position(-1, 2, 0)].position);
+    EXPECT_EQ(&VoxelMap::Material::vacuum, data[Position(1, 0, 1)].material );
+    EXPECT_EQ(0, data[Position(-1, 2, 0)].density);
     EXPECT_THROW(data[Position(3, 0, 1)], std::out_of_range);
     EXPECT_THROW(data[Position(1, -2, 0)], std::out_of_range);
 }
@@ -56,7 +57,7 @@ TEST(VoxelData, IsInside)
 
     EXPECT_TRUE(std::all_of(data.begin(), data.end(), [&data](const decltype(data)::value_type& v)
     {
-        return data.IsInside(v.position);
+        return data.IsInside(v.first);
     }));
 }
 
@@ -67,7 +68,7 @@ TEST(VoxelData, Section)
     auto section = data.In(bounds);
     EXPECT_TRUE(std::all_of(section.begin(), section.end(), [&bounds](const decltype(data)::value_type& v)
     {
-        return bounds.Contains(VoxelMap::Center(v.position));
+        return bounds.Contains(VoxelMap::Center(v.first));
     }));
 }
 
@@ -77,8 +78,8 @@ TEST(VoxelData, NoBoundary)
     auto middle = data.BoundaryCondition(Direction::none);
     for (const auto& v : middle)
     {
-        EXPECT_TRUE(data.IsInside(v.position));
-        EXPECT_TRUE(v.boundary.empty());
+        EXPECT_TRUE(data.IsInside(v.first));
+        EXPECT_TRUE(data.IsBoundary(v.first).empty());
     }
 }
 
@@ -90,9 +91,9 @@ TEST(VoxelData, Boundary)
         auto boundary = data.BoundaryCondition(dir);
         for (const auto& v : boundary)
         {
-            EXPECT_FALSE(data.IsInside(v.position));
-            EXPECT_EQ(Directions(dir), v.boundary);
-            EXPECT_TRUE(data.IsInside(v.position - dir.Vector()));
+            EXPECT_FALSE(data.IsInside(v.first));
+            EXPECT_EQ(Directions(dir), data.IsBoundary(v.first));
+            EXPECT_TRUE(data.IsInside(v.first - dir.Vector()));
         }
     }
 }
@@ -106,15 +107,15 @@ TEST(VoxelData, Iterator)
     EXPECT_EQ(8, count);
     EXPECT_EQ(Position(2, 2, 2), data.end() - data.begin());
     auto first = *data.begin();
-    EXPECT_EQ(Position(0, 0, 0), first.position);
-    EXPECT_FALSE(first.boundary);
+    EXPECT_EQ(Position(0, 0, 0), first.first);
+    EXPECT_FALSE(data.IsBoundary(first.first));
 }
 
 TEST(VoxelData, BoundaryGrids)
 {
     VoxelMap::Data data(2, 2, 2);
-    EXPECT_EQ(Direction::east | Direction::north | Direction::up, data[Position(2, 2, 2)].boundary);
-    EXPECT_EQ(Direction::west | Direction::south | Direction::down, data[Position(-1, -1, -1)].boundary);
+    EXPECT_EQ(Direction::east | Direction::north | Direction::up, data.IsBoundary(Position(2, 2, 2)));
+    EXPECT_EQ(Direction::west | Direction::south | Direction::down, data.IsBoundary(Position(-1, -1, -1)));
 }
 
 TEST(VoxelFlux, Index)
@@ -139,6 +140,13 @@ TEST(VoxelFlux, Index)
     EXPECT_TRUE(std::isnan(data.U()[Position(3, 2, -1)]));
     EXPECT_TRUE(std::isnan(data.U()[Position(1, -1, -1)]));
     EXPECT_TRUE(std::isnan(data.U()[Position(3, 0, -1)]));
+
+    auto n = std::numeric_limits<double>::signaling_NaN();
+    
+    unsigned int control_word;
+    auto err = _controlfp_s(&control_word, EM_INVALID, MCW_EM);
+    ASSERT_FALSE(err);
+    // TODO: how to get signal nan to signal?
 }
 
 TEST(VoxelFlux, Iterator)
@@ -206,7 +214,7 @@ TEST(VoxelMap, Air)
     EXPECT_FALSE(map.At(Position(0, 0, 0)).solid);
     EXPECT_EQ(Element::Air, map.At(Position(1, 1, 1)).floor);
     EXPECT_EQ(0, map.At(Position(1, 1, 1)).height);
-    EXPECT_NEAR(1.17 * map.Volume(), map.Mass(),map.Volume()*0.01);
+    EXPECT_NEAR(1.17 * map.Volume(), map.Mass(), map.Volume()*0.01);
     EXPECT_NEAR(300, map.Temperature(VoxelMap::Material::air), 0.01);
 }
 

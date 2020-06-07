@@ -70,12 +70,10 @@ public:
         void Render(const Position& p, const Directions& visibility) const;
         void RenderAnalysis(const Position& p, const Directions& visibility, const Engine::Vector& densityGradient) const;
 
-        const Material& material;
-        const float temperature;      // Kelvin
-        const float density;          // gram/Liters
+        const Material* material;
+        float temperature;      // Kelvin
+        float density;          // gram/Liters
                                       //const Engine::Vector flow;    // meter/second
-        const Position position;
-        const Directions boundary;
     private:
         void RenderFaces(const Position& p, const Directions& visibility, unsigned mode) const;
         void RenderFace(const Position& p, Direction direction, unsigned mode) const;
@@ -88,23 +86,26 @@ public:
         Data(unsigned longitude, unsigned latitude, unsigned altitude);
         Data(const Data&) = default;
         bool IsInside(const Position& p) const;
-        Voxel operator[](const Position& p) const;
+        const VoxelMap::Voxel& operator[](const Position& p) const;
+        VoxelMap::Voxel& operator[](const Position& p);
         class iterator
         {
         public:
-            iterator(const Data& data, const Position& position);
+            // iterate over all data
+            explicit iterator(const Data& data);
             iterator(const Data& data, const Box& box);
+            iterator(const Data& data, const Position& position, const Box& box);
             iterator& operator++();
             //iterator operator++(int);
             bool operator==(const iterator& other) const;
             bool operator!=(const iterator& other) const;
-            using value_type = const Voxel;
+            using value_type = std::pair<Position,Voxel>;
             value_type operator*() const;
 
             // iterator traits
             using difference_type = Position;
-            using pointer = const Voxel*;
-            using reference = const Voxel&;
+            using pointer = const value_type*;
+            using reference = const value_type&;
             using iterator_category = std::forward_iterator_tag;
 
             const Data& data;
@@ -114,38 +115,46 @@ public:
 
         using value_type = iterator::value_type;
 
-        iterator begin() const { return iterator(*this, Position(0, 0, 0)); }
-        iterator end() const { return iterator(*this, size); }
-
-        class Boundary
-        {
-        public:
-            Boundary(const Data& data, const Direction& direction);
-            iterator begin() const;
-            iterator end() const;
-        private:
-            const Data& data;
-            Direction direction;
-        };
-        Boundary BoundaryCondition(const Direction& dir) const { return Boundary(*this, dir); }
+        iterator begin() const { return iterator(*this); }
+        iterator end() const { return iterator(*this, Insides().End(), Insides()); }
 
         class Section
         {
         public:
-            Section(const Data& data, const Engine::AABB& meters);
             Section(const Data& data, const Box& box);
+            Section(const Data& data, const Engine::AABB& meters);
+
             iterator begin() const;
             iterator end() const;
         private:
             const Data& data;
             const Box box;
         };
+        class Boundary : public Section
+        {
+        public:
+            Boundary(const Data& data, const Direction& direction);
+            Direction direction;
+        private:
+            static Position Start(const Data& data, const Direction& direction);
+            static Position End(const Data& data, const Direction& direction);
+        };
+        class Corner : public Section
+        {
+        public:
+            Corner(const Data& data, const Direction& directionA, const Direction& directionB);
+
+        };
+        Boundary BoundaryCondition(const Direction& dir) const { return Boundary(*this, dir); }
+
+
         Section In(const Engine::AABB& meters) const;
         Section All() const;
+        Box Insides() const;
         Box Bounds() const;
 
         Position Clip(const Position& p) const;
-
+        
         void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
         void AdjustGrid(const Position& location, double temperature, double density);
 
@@ -231,7 +240,7 @@ public:
         private:
             unsigned Index(const Position& p) const;
             Directions IsBoundary(const Position& p) const;
-            void InitializeCorners();
+            void InvalidateCorners();
 
             Direction axis;
             Position offset;
@@ -248,11 +257,11 @@ public:
     protected:
         Position Stride() const;
         unsigned GridIndex(const Position& p) const;
-        unsigned VoxelMap::Data::UncheckedGridIndex(const Position& p) const;
+        unsigned UncheckedGridIndex(const Position& p) const;
+        void SetInvalid(const Position& position);
+        void InvalidateCorners();
     private:
-        std::vector<const Material*> material;  // longitude+2, latitude+2, altitude+2
-        std::vector<float> density;         // density (g/L) at the center. long,lat, alt +2 to interpolate at edge
-        std::vector<float> temperature;     // temperature (K) at the center, to interpolate at edge, stride+2
+        std::vector<Voxel> voxels;  // longitude+2, latitude+2, altitude+2
         Flux u, v, w;                       // flux (/s*m2)
         Size size;
     };
@@ -291,7 +300,6 @@ protected:
     void GridBoundary();
 
     Directions Visibility(const Position& p) const;
-    double Mass(class Directions directions) const;
     double Elevation(int z) const;
     float AtmosphericTemperature(double elevation) const;
     float AtmosphericPressure(double elevation) const;
