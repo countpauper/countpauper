@@ -2,7 +2,7 @@
 
 #include <map>
 #include <array>
-
+#include "Engine/from_string.h"
 #include "Position.h"
 
 namespace Game
@@ -126,18 +126,8 @@ protected:
 	static std::map<Value, HalfPiAngle> half_pi_angle;
 };
 
-
-static inline std::ostream& operator<<(std::ostream& os, const Direction& dir)
-{
-    os << dir.AbsoluteDescription().c_str();
-    return os;
-}
-
-static inline std::wostream& operator<<(std::wostream& os, const Direction& dir)
-{
-    os << dir.AbsoluteDescription().c_str();
-    return os;
-}
+std::ostream& operator<<(std::ostream& os, const Direction& dir);
+std::wostream& operator<<(std::wostream& os, const Direction& dir);
 
 class Directions
 {

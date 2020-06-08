@@ -87,7 +87,6 @@ VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
     // Controlled boundary stat is at -1 and long lat alt
     size_t gridSize = (longitude+2) * (latitude+2) * (altitude+2);
     voxels.resize(gridSize, { &VoxelMap::Material::vacuum, 0,0 });
-    InvalidateCorners();
 }
 
 unsigned VoxelMap::Data::Longitude() const
@@ -346,6 +345,12 @@ Box VoxelMap::Data::Edge(const Direction& direction) const
     }
     else
     {
+        Size cornerGrowth(0, 0, 0);
+        if (direction.IsZ())
+            cornerGrowth = Size(1, 1, 0);
+        else if (direction.IsY())
+            cornerGrowth = Size(1, 0, 0);
+
         Position v = direction.Vector();
         if (direction.IsNegative())
         {
@@ -355,7 +360,7 @@ Box VoxelMap::Data::Edge(const Direction& direction) const
                     (1 + v.x) * size.x,
                     (1 + v.y) * size.y,
                     (1 + v.z) * size.z)
-            );
+            ).Grow(cornerGrowth);
         }
         else
         {    // if axis(==1): long/lat/alt       else  0 (no corner)
@@ -365,7 +370,7 @@ Box VoxelMap::Data::Edge(const Direction& direction) const
                     v.x * size.x,
                     v.y * size.y,
                     v.z * size.z),
-                size + v);
+                size + v).Grow(cornerGrowth);
         }
     }
 }
@@ -412,10 +417,7 @@ VoxelMap::Data::Flux::Flux(Direction axis, unsigned longitude, unsigned latitude
     flux(size.Volume(), 0)
 {
     assert(axis.IsPosititve());    // for offset, vector should be positive
-    InvalidateCorners();
 }
-
-
 
 Box VoxelMap::Data::Flux::Bounds() const
 {

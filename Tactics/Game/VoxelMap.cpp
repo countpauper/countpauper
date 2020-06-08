@@ -649,7 +649,6 @@ void VoxelMap::Continuity(double seconds)
     GridBoundary();
 }
 
-
 void VoxelMap::Tick(double seconds)
 {
     //if (!mesh)

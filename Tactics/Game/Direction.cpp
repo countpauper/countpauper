@@ -429,6 +429,17 @@ std::map<Direction::Value, std::wstring> Direction::description =
 };
 
 
+std::ostream& operator<<(std::ostream& os, const Direction& dir)
+{
+    os << Engine::from_string<std::string>(dir.AbsoluteDescription()).c_str();
+    return os;
+}
+
+std::wostream& operator<<(std::wostream& os, const Direction& dir)
+{
+    os << dir.AbsoluteDescription().c_str();
+    return os;
+}
 Directions Directions::all =
     Direction::north | 
     Direction::south | 

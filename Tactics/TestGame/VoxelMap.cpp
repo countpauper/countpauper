@@ -36,7 +36,7 @@ TEST(VoxelData, Indexing)
     EXPECT_EQ(&VoxelMap::Material::vacuum, data[Position(1, 0, 1)].material );
     EXPECT_EQ(0, data[Position(1, 1, 1)].density); // inside
     EXPECT_EQ(0, data[Position(-1, 0, 0)].density); // edge
-    EXPECT_TRUE(std::isnan(data[Position(-1, 2, 0)].density));  // corner
+    EXPECT_EQ(0, data[Position(-1, 2, 0)].density);  // corner
     EXPECT_THROW(data[Position(3, 0, 1)], std::out_of_range);
     EXPECT_THROW(data[Position(1, -2, 0)], std::out_of_range);
 }
@@ -93,9 +93,8 @@ TEST(VoxelData, Boundary)
         auto boundary = data.BoundaryCondition(dir);
         for (const auto& v : boundary)
         {
-            EXPECT_FALSE(data.IsInside(v.first));
-            EXPECT_EQ(Directions(dir), data.IsBoundary(v.first));
-            EXPECT_TRUE(data.IsInside(v.first - dir.Vector()));
+            EXPECT_FALSE(data.IsInside(v.first)) << " for " << v.first << " in " << dir;
+            EXPECT_TRUE(data.IsBoundary(v.first)[dir]) << " for " << v.first << " in " << dir;
         }
     }
 }
@@ -132,23 +131,16 @@ TEST(VoxelFlux, Index)
     EXPECT_EQ(0, data.U()[Position(1, 0, -1)]);
     EXPECT_EQ(0, data.U()[Position(1, 2, 0)]);
     EXPECT_EQ(0, data.U()[Position(1, 0, 1)]);
+    // Flux on the boundary corners is initialized to 0 as well 
+    EXPECT_EQ(0, data.U()[Position(0, -1, 1)]);
+    EXPECT_EQ(0, data.U()[Position(0, 2, 1)]);
+    EXPECT_EQ(0, data.U()[Position(3, 2, -1)]);
+    EXPECT_EQ(0, data.U()[Position(1, -1, -1)]);
+    EXPECT_EQ(0, data.U()[Position(3, 0, -1)]);
     // Flux outside of the boundaries throws an out of range 
     EXPECT_THROW(data.U()[Position(-1, 0, 0)], std::out_of_range);
     EXPECT_THROW(data.U()[Position(1, 3, 0)], std::out_of_range);
     EXPECT_THROW(data.U()[Position(1, 0, -2)], std::out_of_range);
-    // Flux on the boundary corners is initialized to nan
-    EXPECT_TRUE(std::isnan(data.U()[Position(0, -1, 1)]));
-    EXPECT_TRUE(std::isnan(data.U()[Position(0, 2, 1)]));
-    EXPECT_TRUE(std::isnan(data.U()[Position(3, 2, -1)]));
-    EXPECT_TRUE(std::isnan(data.U()[Position(1, -1, -1)]));
-    EXPECT_TRUE(std::isnan(data.U()[Position(3, 0, -1)]));
-
-    auto n = std::numeric_limits<double>::signaling_NaN();
-    
-    unsigned int control_word;
-    auto err = _controlfp_s(&control_word, EM_INVALID, MCW_EM);
-    ASSERT_FALSE(err);
-    // TODO: how to get signal nan to signal?
 }
 
 TEST(VoxelFlux, Iterator)

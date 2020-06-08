@@ -134,9 +134,6 @@ public:
         public:
             Boundary(const Data& data, const Direction& direction);
             Direction direction;
-        private:
-            static Position Start(const Data& data, const Direction& direction);
-            static Position End(const Data& data, const Direction& direction);
         };
         class Corner : public Section
         {

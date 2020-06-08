@@ -7,8 +7,10 @@ Explicit Atmosphere and Earth commands
 * Render temperature  with red channel
 * Wall command start(xyz) Vector(xyz) Height, width (any 50% overlapping square is stone)
 * Return Voxel data to voxels with just material, temperature, density
-Get signal nan to signal 
-Nan density
+x Get signal nan to signal 
+* Nan density corners
+Grow edges to include corners: up & down, 
+Fix flux out of bounds, match coordinates on graph paper (no -1?)
 Stone boundary flux = 0,0,0 (no wind)
 Stone boundary density
 Reynolds number computation (need distance to surface per grid/direction)
