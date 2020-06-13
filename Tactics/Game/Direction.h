@@ -143,6 +143,8 @@ public:
     bool operator!=(const Directions& other) const { return !(*this == other); }
     bool operator[](const Direction& dir) const;
     bool empty() const;
+    size_t size() const;
+
     operator bool() const;
     static Directions all;
 

@@ -126,9 +126,9 @@ Engine::Vector VoxelMap::Data::Flow(const Position& p) const
 {
     // Q = flux (kg/sm2) / density (kg/m3),     https://en.wikipedia.org/wiki/Volumetric_flow_rate
     Engine::Vector Q(
-        0.5*(u[Position(p.x + 1, p.y, p.z)] + u[p]),
-        0.5*(v[Position(p.x, p.y + 1, p.z)] + v[p]),
-        0.5*(w[Position(p.x, p.y, p.z + 1)] + w[p]));
+        0.5*(u[Position(p.x - 1, p.y, p.z)] + u[p]),
+        0.5*(v[Position(p.x, p.y - 1, p.z)] + v[p]),
+        0.5*(w[Position(p.x, p.y, p.z - 1)] + w[p]));
     auto gridDensity = voxels[GridIndex(p)].density;
     Q /= gridDensity;
 
@@ -412,7 +412,7 @@ bool VoxelMap::Data::IsInside(const Position& p) const
 
 VoxelMap::Data::Flux::Flux(Direction axis, unsigned longitude, unsigned latitude, unsigned altitude) :
     axis(axis),
-    offset(Position(-1, -1, -1) + axis.Vector()),
+    offset(-1, -1, -1),
     size(longitude, latitude, altitude),
     flux(size.Volume(), 0)
 {
@@ -444,7 +444,7 @@ Box VoxelMap::Data::Flux::Edge(const Direction& dir) const
     else if (dir.IsNegative())
     {
         return Box(
-            Position(   // TODO b.End()+v
+            Position(  
                 b.x.begin + (1+v.x) + (-v.x * (size.x-1)),
                 b.y.begin + (1+v.y) + (-v.y * (size.y-1)),
                 b.z.begin + (1+v.z) + (-v.z * (size.z-1))),
@@ -493,7 +493,7 @@ float& VoxelMap::Data::Flux::operator[](const Position& p)
 unsigned VoxelMap::Data::Flux::Index(const Position& p) const
 {
     if (!Bounds().Contains(p))
-        throw std::out_of_range((std::string("Flux position '") + Engine::ToString(p) + "' out of range").c_str());
+        throw std::out_of_range((std::string("Flux position '") + Engine::ToString(p) + "' out of range " + Engine::ToString(Bounds())).c_str());
 
     auto indexPosition = p - offset;
     return (indexPosition.x)*size.y*size.z+ indexPosition.y*size.z + indexPosition.z;
@@ -519,7 +519,7 @@ void VoxelMap::Data::Flux::SetBoundary(const Position& p, const Direction& dir, 
 
 double VoxelMap::Data::Flux::Gradient(const Position& p) const
 {
-    return (*this)[p + axis.Vector()] - (*this)[p];
+    return (*this)[p] - (*this)[p - axis.Vector()];
 }
 
 float VoxelMap::Data::Flux::Extrapolate(const Position& outsidePosition, const Direction& dir, double  boundaryFlux) const

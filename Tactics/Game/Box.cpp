@@ -104,4 +104,14 @@ Box operator+(const Box& a, const Size& s)
     return Box(a) += s;
 }
 
+std::ostream& operator<<(std::ostream& os, const Box& box)
+{
+    os << box.Start() << "-" << box.End();
+    return os;
+}
+std::wostream& operator<<(std::wostream& os, const Box& box)
+{
+    os << box.Start() << "-" << box.End();
+    return os;
+}
 }

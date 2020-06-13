@@ -485,6 +485,17 @@ bool Directions::empty() const
     return flags == 0;
 }
 
+size_t Directions::size() const
+{
+    size_t count = 0;
+    for (int bit = 0; bit < sizeof(flags) * 8; ++bit)
+    {
+        if (flags&(1 << bit))
+            ++count;
+    }
+    return count;
+}
+
 Directions::operator bool() const
 {
     return !empty();

@@ -505,8 +505,8 @@ void VoxelMap::FluxBoundary()
         for (auto u : voxels.U().BoundaryCondition(d))
         {
             auto boundaryPosition = u.first;
-            if (!voxels.U().IsOffset(d))
-                boundaryPosition += d.Vector();
+            if (voxels.IsBoundary(boundaryPosition).size() > 1)
+                continue; // TODO
             if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
                 voxels.U().SetBoundary(u.first, d, 0);  // TODO: should be any solid and except for deliberate or z=0 lava flows ...
             else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
@@ -518,8 +518,8 @@ void VoxelMap::FluxBoundary()
         for (auto v : voxels.V().BoundaryCondition(d))
         {
             auto boundaryPosition = v.first;
-            if (!voxels.V().IsOffset(d))
-                boundaryPosition += d.Vector();
+            if (voxels.IsBoundary(boundaryPosition).size() > 1)
+                continue; // TODO
             if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
                 voxels.V().SetBoundary(v.first, d, 0);
             else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
@@ -530,8 +530,8 @@ void VoxelMap::FluxBoundary()
         for (auto w : voxels.W().BoundaryCondition(d))
         {
             auto boundaryPosition = w.first;
-            if (!voxels.W().IsOffset(d))
-                boundaryPosition += d.Vector();
+            if (voxels.IsBoundary(boundaryPosition).size() > 1)
+                continue; // TODO
             if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
                 voxels.W().SetBoundary(w.first, d, 0);
             else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
@@ -539,6 +539,7 @@ void VoxelMap::FluxBoundary()
             else
                 assert(false);
         }
+        // TODO: corner condition using trilinear extrapolation? 
     }
 }
 
@@ -572,16 +573,20 @@ void VoxelMap::Flow(double dt)
     constexpr double dy = HorizontalEl * MeterPerEl;
     constexpr double dz = VerticalEl * MeterPerEl;
     // U Flow
+    double Reynolds = 100.0;    // TODO: Apparently has to do with viscosity and friction https://en.wikipedia.org/wiki/Reynolds_number
     for (const auto& uit : oU)
     {
+        // d  ab d something: 
+        //  first line before - : for B values, +1 their coordinate
+        //  second line after - : remove -1 
+        // dpd something: +1 to +0
         const Position& p = uit.first;
         double duudx = (Engine::Sqr(oU(p.x + 1, p.y, p.z)) - Engine::Sqr(oU(p.x - 1, p.y, p.z))) / (2.0*dx);
         double duvdy = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
-            - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x + 1, p.y - 1, p.z) + oV(p.x, p.y - 1, p.z))) / dy;
+            - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x, p.y - 1, p.z) + oV(p.x + 1, p.y - 1, p.z))) / dy;
         double duwdz = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x + 1, p.y, p.z))
-            - (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x + 1, p.y, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dz;
-        double dpdx = (voxels.Density(p) - voxels.Density(Position(p.x - 1, p.y, p.z))) / dx;
-        double Reynolds = 100.0;    // TODO: Apparently has to do with viscosity and friction https://en.wikipedia.org/wiki/Reynolds_number
+            - (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x, p.y, p.z - 1) + oW(p.x + 1, p.y, p.z - 1))) / dz;
+        double dpdx = (voxels.Density(Position(p.x + 1, p.y, p.z)) - voxels.Density(p)) / dx;
         // can be computed from visocity and flow speed, but also need to know how far to the nearest surface 
         // it should be as simply as massflowrate (=flux*area) / diameter * dynamic viscosity of the material
         // trick will be to compute the diamter in x y and z for each grid
@@ -597,17 +602,12 @@ void VoxelMap::Flow(double dt)
     {
         const Position& p = vit.first;
         double dvvdy = (Engine::Sqr(oV(p.x, p.y + 1, p.z)) - Engine::Sqr(oV(p.x, p.y - 1, p.z))) / (2.0*dy);
-        // TODO: except for dx, this is the same as duvdy above, could be optimized or at least code duplication reduced
-        //  after unit test!
-        double dvudx = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
-            - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x + 1, p.y - 1, p.z) + oV(p.x, p.y - 1, p.z))) / dx;
-//        double duvdx = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z))
-//            - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x + 1, p.y - 1, p.z) + oV(p.x, p.y - 1, p.z))) / dx;
-        double dvwdz = 0.25*((oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x, p.y+1, p.z))
-            - (oV(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x, p.y+1, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dz;
-        double dpdy = (voxels.Density(p) - voxels.Density(Position(p.x, p.y-1, p.z))) / dy;
-        double Reynolds = 100.0;
-        // TODO: definite code duplication with u and z flow, move to flux 
+        double dvudx = 0.25*((oV(p.x, p.y, p.z) + oV(p.x + 1, p.y, p.z)) * (oU(p.x, p.y, p.z) + oU(p.x, p.y + 1, p.z))
+            - (oV(p.x, p.y, p.z) + oV(p.x - 1, p.y, p.z)) * (oU(p.x - 1, p.y, p.z) + oU(p.x - 1, p.y + 1, p.z))) / dx;
+        double dvwdz = 0.25*((oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x, p.y + 1, p.z))
+            - (oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z - 1)) * (oW(p.x, p.y, p.z - 1) + oW(p.x, p.y + 1, p.z - 1))) / dz;
+        double dpdy = (voxels.Density(Position(p.x, p.y + 1, p.z)) - voxels.Density(p)) / dy;
+        // TODO: code duplication with u and z flow, move to flux 
         //  after unit test!
         double diff = (1.0 / Reynolds) *
             ((oV(p.x + 1, p.y, p.z) - 2.0*oV(p.x, p.y, p.z) + oV(p.x - 1, p.y, p.z)) / (dx*dx) +
@@ -616,17 +616,15 @@ void VoxelMap::Flow(double dt)
         voxels.V()[p] += float(dt * (diff - dvvdy - dvudx - dvwdz - dpdy));
     }
     // W Flow
-    for (const auto& uit : oU)
+    for (const auto& wit : oW)
     {
-        const Position& p = uit.first;
+        const Position& p = wit.first;
         double dwwdz = (Engine::Sqr(oW(p.x, p.y, p.z+1)) - Engine::Sqr(oW(p.x, p.y, p.z-1))) / (2.0*dz);
-        double dwvdy = 0.25*((oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x, p.y + 1, p.z))
-            - (oV(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x, p.y + 1, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dy;
-        // TODO ame as duwdz except dx
-        double dwudx = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x + 1, p.y, p.z))
-            - (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x + 1, p.y, p.z - 1) + oW(p.x, p.y, p.z - 1))) / dx;
-        double dpdz = (voxels.Density(p) - voxels.Density(Position(p.x, p.y, p.z-1))) / dz;
-        double Reynolds = 100.0;
+        double dwvdy = 0.25*((oW(p.x, p.y, p.z) + oW(p.x, p.y + 1, p.z)) * (oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z + 1))
+            - (oW(p.x, p.y, p.z) + oW(p.x, p.y - 1, p.z)) * (oV(p.x, p.y - 1, p.z) + oV(p.x, p.y - 1, p.z + 1))) / dy;
+        double dwudx = 0.25*((oW(p.x, p.y, p.z) + oW(p.x, p.y, p.z + 1)) * (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1))
+            - (oW(p.x, p.y, p.z) + oW(p.x - 1, p.y, p.z)) * (oU(p.x - 1, p.y, p.z ) + oU(p.x - 1, p.y, p.z + 1))) / dx;
+        double dpdz = (voxels.Density(Position(p.x, p.y, p.z + 1)) - voxels.Density(p)) / dz;
         double diff = (1.0 / Reynolds) *
             ((oW(p.x + 1, p.y, p.z) - 2.0*oW(p.x, p.y, p.z) + oW(p.x - 1, p.y, p.z)) / (dx*dx) +
             (oW(p.x, p.y + 1, p.z) + 2.0*oW(p.x, p.y, p.z) + oW(p.x, p.y - 1, p.z)) / (dy*dy) +
