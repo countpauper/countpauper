@@ -29,6 +29,10 @@ public:
     Engine::Range<int> x;
     Engine::Range<int> y;
     Engine::Range<int> z;
+
+
+    static const Box empty;
+    static const Box all;
 };
 
 Box operator|(const Box& a, const Box& b);

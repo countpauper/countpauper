@@ -4,6 +4,12 @@
 namespace Game
 {
 
+const Box Box::empty(Engine::Range<int>(0,0), Engine::Range<int>(0,0), Engine::Range<int>(0,0));
+const Box Box::all(Engine::Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
+    Engine::Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
+    Engine::Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
+
+
 Box::Box(const Engine::Range<int>& x, const Engine::Range<int>& y, const Engine::Range<int>& z) :
     x(x),
     y(y),

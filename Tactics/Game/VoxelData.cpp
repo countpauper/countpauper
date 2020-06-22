@@ -3,6 +3,7 @@
 #include "Engine/Maths.h"
 #include "Engine/AxisAlignedBoundingBox.h"
 #include "Engine/Utils.h"
+#include <numeric>
 
 namespace Game
 {
@@ -78,9 +79,9 @@ VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
     size(longitude, latitude, altitude),
     // allocate flux 1 extra size in all directions for boundary conditions on edge
     // allocate 2 extra boundary in all perpendicular directions for boundary conditions at edge +0.5
-    u(Direction::east, longitude+1, latitude+2, altitude+2),
-    v(Direction::north, longitude+2, latitude+1, altitude+2),
-    w(Direction::up, longitude+2, latitude+2, altitude+1)
+    u(Direction::x, longitude+1, latitude+2, altitude+2),
+    v(Direction::y, longitude+2, latitude+1, altitude+2),
+    w(Direction::z, longitude+2, latitude+2, altitude+1)
 {
     // allocate grid with 2 boundary values on each size, for gradient at edge
     // Computed map state ranges from 0 to < long,lat,alt
@@ -253,9 +254,9 @@ void VoxelMap::Data::InvalidateCorners()
         {
             if (d0.IsParallel(d1))
                 continue;   // not a corner
-            Corner corner(*this, d0, d1);
+            Corner corner(*this, d0 | d1);
             OutputDebugStringW((std::wstring(L"Voxel Corner ") + Engine::ToWString(d0) + L" / " + Engine::ToWString(d1) + L" Volume= " + std::to_wstring(corner.box.Volume()) + L"\n").c_str());
-            for (auto v : Corner(*this, d0, d1))
+            for (auto v : corner)
             {
                 SetInvalid(v.first);
             }
@@ -304,10 +305,12 @@ VoxelMap::Data::Boundary::Boundary(const Data& data, const Direction& direction)
 {
 }
 
-VoxelMap::Data::Corner::Corner(const Data& data, const Direction& directionA, const Direction& directionB) :
+VoxelMap::Data::Corner::Corner(const Data& data, const Directions& directions) :
     Section(data,
-        (data.Edge(directionA) + Size(directionB.Axis().Vector() + directionA.Perpendicular(directionB).Vector()) &
-         data.Edge(directionB) + Size(directionA.Axis().Vector() + directionA.Perpendicular(directionB).Vector())))
+        std::accumulate(directions.begin(), directions.end(), data.Bounds(), [data](const Box& box, Direction direction)
+        {
+            return box & data.ExtendedEdge(direction);
+        }))
 {
 }
 
@@ -373,6 +376,17 @@ Box VoxelMap::Data::Edge(const Direction& direction) const
                 size + v).Grow(cornerGrowth);
         }
     }
+}
+
+Box VoxelMap::Data::ExtendedEdge(const Direction& direction) const
+{
+    Box edge = Edge(direction);
+    for (auto axis : Directions::axes)
+    {
+        if (!axis.IsParallel(direction))    // double negative for dirtecion::none
+            edge.Grow(axis.Vector());
+    }
+    return edge;
 }
 
 VoxelMap::Data::Section VoxelMap::Data::All() const
@@ -460,6 +474,14 @@ Box VoxelMap::Data::Flux::Edge(const Direction& dir) const
     }
 }
 
+Box VoxelMap::Data::Flux::ExtendedEdge(const Direction& dir) const
+{
+    Box edge = Edge(dir);
+    for (auto axis : Directions::axes)
+        if (!dir.IsParallel(axis))
+            edge.Grow(axis.Vector());
+    return edge;
+}
 
 void VoxelMap::Data::Flux::InvalidateCorners()
 {
@@ -469,7 +491,7 @@ void VoxelMap::Data::Flux::InvalidateCorners()
         {
             if (d0.IsParallel(d1))
                 continue;
-            Corner corner(*this, d0, d1);
+            Corner corner(*this, d0 | d1);
             //OutputDebugStringW((std::wstring(L"Flux Corner ")+Engine::ToWString(d0) +L" / " + Engine::ToWString(d1) + L" Volume= " + std::to_wstring(corner.box.Volume())+L"\n").c_str());
 
             for (auto fluxPair : corner)
@@ -686,10 +708,12 @@ Position VoxelMap::Data::Flux::Boundary::To(const Flux& data, const Direction& d
 }
 */
 
-VoxelMap::Data::Flux::Corner::Corner(const Flux& data, const Direction& directionA, const Direction& directionB) :
-    Section(data, 
-        (data.Edge(directionA) + Size(directionB.Axis().Vector() + directionA.Perpendicular(directionB).Vector()) & 
-        (data.Edge(directionB) + Size(directionA.Axis().Vector() + directionA.Perpendicular(directionB).Vector()))))
+VoxelMap::Data::Flux::Corner::Corner(const Flux& data, const Directions& directions) :
+    Section(data,
+        std::accumulate(directions.begin(), directions.end(), data.Bounds(), [&data](const Box& bounds, const Direction& direction)
+        {
+            return bounds & data.ExtendedEdge(direction);
+        }))
 {
 }
 

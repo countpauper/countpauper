@@ -10,7 +10,7 @@ Explicit Atmosphere and Earth commands
 x Get signal nan to signal 
 x Nan density corners
 * Grow edges to include corners: up & down, 
-Fix flux out of bounds, match coordinates on graph paper (no -1?)
+* Fix flux out of bounds, match coordinates on graph paper (no -1?)
 Corners should take a DirectionS, for edge corners and full corners and to know how to extrapolate boundary (or use IsBoundary), also remove early out in FluxBoundary
 Stone boundary flux = 0,0,0 (no wind)
 Stone boundary density

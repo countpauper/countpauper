@@ -77,15 +77,18 @@ public:
 
 	static const Direction none;
 	static const Direction east;
-	static const Direction& forward;
-	static const Direction west;
+    static const Direction& forward;
+    static const Direction west;
 	static const Direction& backward;
-	static const Direction north;
+    static const Direction& x;
+    static const Direction north;
 	static const Direction& left;
 	static const Direction south;
 	static const Direction& right;
+    static const Direction& y;
 	static const Direction up;
 	static const Direction down;
+    static const Direction& z;
 	static const std::map<const std::wstring, Direction> map;
     static std::array<Direction, 4> cardinal;
     static std::array<Direction, 6> all;
@@ -147,6 +150,7 @@ public:
 
     operator bool() const;
     static Directions all;
+    static Directions axes;
 
     class iterator
     {
@@ -156,12 +160,15 @@ public:
         //iterator operator++(int);
         bool operator==(const iterator& other) const;
         bool operator!=(const iterator& other) const;
-        using value_type = const Direction;
+        using value_type = Direction;
         value_type operator*() const;
 
         // iterator traits
         using difference_type = int;
         using iterator_category = std::forward_iterator_tag;
+        using pointer = const Direction*;   // BS, but needed to use directions in std::algorithms
+        using reference = const Direction&; // BS, but needed to use directions in std::algorithms
+
         int bit;
         const uint16_t& flags;
     };

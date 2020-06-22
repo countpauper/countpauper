@@ -90,6 +90,9 @@ const Direction& Direction::forward = east;
 const Direction& Direction::left = north;
 const Direction& Direction::backward = west;
 const Direction& Direction::right = south;
+const Direction& Direction::x = east;
+const Direction& Direction::y = north;
+const Direction& Direction::z = up;
 
 const std::map<const std::wstring, Direction> Direction::map(
 {
@@ -447,6 +450,11 @@ Directions Directions::all =
     Direction::west | 
     Direction::up | 
     Direction::down;
+
+Directions Directions::axes =
+    Direction::x |
+    Direction::y |
+    Direction::z;
 
 Directions::Directions() :
     Directions(0)

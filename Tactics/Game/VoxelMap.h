@@ -138,7 +138,7 @@ public:
         class Corner : public Section
         {
         public:
-            Corner(const Data& data, const Direction& directionA, const Direction& directionB);
+            Corner(const Data& data, const Directions& directions);
         };
         Boundary BoundaryCondition(const Direction& dir) const { return Boundary(*this, dir); }
 
@@ -148,7 +148,7 @@ public:
         Box Insides() const;
         Box Bounds() const;
         Box Edge(const Direction& direction) const;
-
+        Box ExtendedEdge(const Direction& direction) const;
 
         Position Clip(const Position& p) const;
         
@@ -182,6 +182,7 @@ public:
             float Extrapolate(const Position& outsidePosition, const Direction& dir, double boundaryFlux) const;
             Box Bounds() const;
             Box Edge(const Direction& dir) const;
+            Box ExtendedEdge(const Direction& dir) const;
 
             friend class iterator;
             class iterator
@@ -229,7 +230,7 @@ public:
             class Corner : public Section
             {
             public:
-                Corner(const Flux& data, const Direction& directionA, const Direction& directionB);
+                Corner(const Flux& data, const Directions& directions);
                 static Box Bounds(const Flux& data, const Direction& directionA, const Direction& directionB);
             };
 
