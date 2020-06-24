@@ -479,7 +479,7 @@ Box VoxelMap::Data::Flux::ExtendedEdge(const Direction& dir) const
     Box edge = Edge(dir);
     for (auto axis : Directions::axes)
         if (!dir.IsParallel(axis))
-            edge.Grow(axis.Vector());
+            edge.Grow(Size(axis.Vector()));
     return edge;
 }
 
@@ -527,15 +527,11 @@ bool VoxelMap::Data::Flux::IsOffset(const Direction& d) const
     return !axis.IsOpposite(d);
 }
 
-void VoxelMap::Data::Flux::SetBoundary(const Position& p, const Direction& dir, double boundaryFlux)
+void VoxelMap::Data::Flux::SetBoundary(const Position& p, const Directions& boundary, double boundaryFlux)
 {
-    if (dir.IsParallel(axis))
+    for (auto dir : boundary)
     {
-        (*this)[p] = float(boundaryFlux);
-    }
-    else
-    {
-        (*this)[p] = Extrapolate(p, dir, boundaryFlux);
+        (*this)[p] = Extrapolate(p, boundary, boundaryFlux);
     }
 }
 
@@ -544,9 +540,18 @@ double VoxelMap::Data::Flux::Gradient(const Position& p) const
     return (*this)[p] - (*this)[p - axis.Vector()];
 }
 
-float VoxelMap::Data::Flux::Extrapolate(const Position& outsidePosition, const Direction& dir, double  boundaryFlux) const
+float VoxelMap::Data::Flux::Extrapolate(const Position& outsidePosition, const Directions& boundary, double  boundaryFlux) const
 {
-    Position insidePosition = outsidePosition - dir.Vector();
+    Position insideOffset(0, 0, 0);
+    for (auto direction : boundary)
+    {
+        if (!direction.IsParallel(axis))
+        {
+            insideOffset -= direction.Vector();
+        }
+    }
+    // TODO: trilinear extrapolation ... or bi or linear depending on boundary.size()
+    Position insidePosition = outsidePosition - insideOffset;
     auto insideFlux = (*this)[insidePosition];
     auto outsideFlux = Engine::Lerp(insideFlux, float(boundaryFlux), 2.0);
     return outsideFlux;
@@ -717,50 +722,18 @@ VoxelMap::Data::Flux::Corner::Corner(const Flux& data, const Directions& directi
 {
 }
 
-/*
-Position VoxelMap::Data::Flux::Corner::From(const Flux& data, const Direction& directionA, const Direction& directionB)
-{
-    return (Edge(directionA) & Edge(direcionB)).Start();
 
-    if (direction.IsPosititve())
-    {
-        return Position(
-            // if direction(==1) start 1 from end       else       start at (offset-offset)=0
-            direction.Vector().x * (data.longitude - 1) + (direction.Vector().x - 1) * data.offset.x,
-            direction.Vector().y * (data.latitude - 1) + (direction.Vector().y - 1) * data.offset.y,
-            direction.Vector().z * (data.altitude - 1) + (direction.Vector().z - 1) * data.offset.z);
-    }
-    else if (direction.IsNegative())
-    {
-        // Start at 1 index position, except start at 0 for direction(==-1)
-        return Position(1, 1, 1) + data.offset + direction.Vector();
-    }
-    else
-    {
-        return data.begin().position;
-    }
+VoxelMap::Data::Flux::Section VoxelMap::Data::Flux::BoundaryCondition(const Direction& dir) const 
+{ 
+    return Boundary(*this, dir); 
 }
 
-Position VoxelMap::Data::Flux::Corner::To(const Flux& data, const Direction& directionA, const Direction& directionB)
+VoxelMap::Data::Flux::Section VoxelMap::Data::Flux::BoundaryCondition(const Directions& boundary) const
 {
-    if (direction.IsPosititve())
-    {   // end at long/lat/alt index position always, either for border direction or perpendicular range
-        return data.offset + Position(data.longitude, data.latitude, data.altitude);
-    }
-    else if (direction.IsNegative())
-    {
-        return data.offset + Position(
-            //  if direction(==-1): stop at 1+(offset-offset) index, else: stop at end of perpendicular index range
-            direction.Vector().x * (data.offset.x - 1) + (1 + direction.Vector().x) * data.longitude,
-            direction.Vector().y * (data.offset.y - 1) + (1 + direction.Vector().y) * data.latitude,
-            direction.Vector().z * (data.offset.z - 1) + (1 + direction.Vector().z) * data.altitude);
-    }
+    if (boundary.size() == 1)
+        return Boundary(*this, *boundary.begin());
     else
-    {
-        return data.end().position;
-    }
+        return Corner(*this, boundary);
 }
-*/
-
 
 }

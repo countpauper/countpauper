@@ -200,6 +200,27 @@ TEST(VoxelFlux, Boundary)
     }));
 }
 
+TEST(VoxelFlux, BoundaryEdge)
+{
+    VoxelMap::Data data(3, 2, 1);
+    auto north_west= data.U().BoundaryCondition(Direction::west | Direction::north);
+    EXPECT_EQ(Position(1, 1, 3), north_west.end() - north_west.begin());
+    EXPECT_EQ(Position(2, -1, -1), north_west.begin().position);
+    EXPECT_TRUE(std::all_of(north_west.begin(), north_west.end(), [](const decltype(north_west)::value_type& fluxPair)->bool
+    {
+        return fluxPair.first.x == 2 && fluxPair.first.y == -1 && fluxPair.second == 0.0;
+    }));
+    auto north_west_down = data.U().BoundaryCondition(Direction::west | Direction::north | Direction::down);
+    EXPECT_EQ(Position(1, 1, 1), north_west_down.end() - north_west_down.begin());
+    EXPECT_EQ(Position(2, -1, 1), north_west_down.begin().position);
+    EXPECT_EQ(0.0, (*north_west_down.begin()).second);
+
+    auto east_west_youre_stressed = data.U().BoundaryCondition(Direction::west | Direction::east);
+    EXPECT_EQ(east_west_youre_stressed.end(), east_west_youre_stressed.begin());
+}
+
+
+
 TEST(VoxelMap, Air)
 {
     VoxelMap map;

@@ -493,6 +493,28 @@ void VoxelMap::Advection(double seconds)
 void VoxelMap::FluxBoundary()
 {
 
+    for (auto dir : Direction::all)
+    {
+        FluxBoundary(Directions(dir));
+        for (auto axis : Directions::axes)
+        {
+            if (dir.IsParallel(axis))
+                continue;
+            // edge
+            FluxBoundary(dir | axis);
+            FluxBoundary(dir | axis.Opposite());
+            // corners
+            auto perpendicular = dir.Perpendicular(axis);
+            FluxBoundary(dir | axis | perpendicular);
+            FluxBoundary(dir | axis.Opposite() | perpendicular);
+            FluxBoundary(dir | axis | perpendicular.Opposite());
+            FluxBoundary(dir | axis.Opposite() | perpendicular.Opposite());
+        }
+    }
+}
+
+void VoxelMap::FluxBoundary(Directions boundary)
+{
     // too slow to do it for every voxel? 
     Engine::Vector flowVolume = wind * Material::air.Density(AtmosphericPressure(0), AtmosphericTemperature(0));
     Engine::Vector windFlux(
@@ -500,46 +522,36 @@ void VoxelMap::FluxBoundary()
         flowVolume.y / Direction::north.Surface(),
         flowVolume.z / Direction::up.Surface()
     );
-    for (auto d : Direction::all)
+    for (auto u : voxels.U().BoundaryCondition(boundary))
     {
-        for (auto u : voxels.U().BoundaryCondition(d))
-        {
-            auto boundaryPosition = u.first;
-            if (voxels.IsBoundary(boundaryPosition).size() > 1)
-                continue; // TODO
-            if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
-                voxels.U().SetBoundary(u.first, d, 0);  // TODO: should be any solid and except for deliberate or z=0 lava flows ...
-            else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
-                voxels.U().SetBoundary(u.first, d, windFlux.x);
-            else
-                assert(false);  // water boundary condition has to be defined by rivers and seas
+        auto boundaryPosition = u.first;
+        if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
+            voxels.U().SetBoundary(u.first, boundary, 0);  // TODO: should be any solid and except for deliberate or z=0 lava flows ...
+        else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
+            voxels.U().SetBoundary(u.first, boundary, windFlux.x);
+        else
+            assert(false);  // water boundary condition has to be defined by rivers and seas
 
-        }
-        for (auto v : voxels.V().BoundaryCondition(d))
-        {
-            auto boundaryPosition = v.first;
-            if (voxels.IsBoundary(boundaryPosition).size() > 1)
-                continue; // TODO
-            if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
-                voxels.V().SetBoundary(v.first, d, 0);
-            else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
-                voxels.V().SetBoundary(v.first, d, windFlux.y);
-            else
-                assert(false);  
-        }
-        for (auto w : voxels.W().BoundaryCondition(d))
-        {
-            auto boundaryPosition = w.first;
-            if (voxels.IsBoundary(boundaryPosition).size() > 1)
-                continue; // TODO
-            if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
-                voxels.W().SetBoundary(w.first, d, 0);
-            else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
-                voxels.W().SetBoundary(w.first, d, windFlux.z);
-            else
-                assert(false);
-        }
-        // TODO: corner condition using trilinear extrapolation? 
+    }
+    for (auto v : voxels.V().BoundaryCondition(boundary))
+    {
+        auto boundaryPosition = v.first;
+        if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
+            voxels.V().SetBoundary(v.first, boundary, 0);
+        else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
+            voxels.V().SetBoundary(v.first, boundary, windFlux.y);
+        else
+            assert(false);  
+    }
+    for (auto w : voxels.W().BoundaryCondition(boundary))
+    {
+        auto boundaryPosition = w.first;
+        if (&voxels.MaterialAt(boundaryPosition) == &Material::stone)
+            voxels.W().SetBoundary(w.first, boundary, 0);
+        else if (&voxels.MaterialAt(boundaryPosition) == &Material::air)
+            voxels.W().SetBoundary(w.first, boundary, windFlux.z);
+        else
+            assert(false);
     }
 }
 
@@ -833,7 +845,7 @@ void VoxelMap::RenderAnalysis() const
     glColor3d(0.5, 0.5, 0.5);
     for (auto d : Direction::all)
     {
-        for (auto u : voxels.U().BoundaryCondition(d))
+        for (auto u : voxels.U().BoundaryCondition(Directions(d)))
         {
             double v = u.first;
             glPushMatrix();
@@ -841,14 +853,14 @@ void VoxelMap::RenderAnalysis() const
             Engine::glDrawArrow(Engine::Vector(u.second, 0, 0));
             glPopMatrix();
         }
-        for (auto v : voxels.V().BoundaryCondition(d))
+        for (auto v : voxels.V().BoundaryCondition(Directions(d)))
         {
             glPushMatrix();
             glTranslated(v.first.x + 0.5, (v.first.z + 0.5)*MeterPerEl, v.first.y);
             Engine::glDrawArrow(Engine::Vector(0, 0, v.second));
             glPopMatrix();
         }
-        for (auto w : voxels.W().BoundaryCondition(d))
+        for (auto w : voxels.W().BoundaryCondition(Directions(d)))
         {
             glPushMatrix();
             glTranslated(w.first.x + 0.5, w.first.z*MeterPerEl, w.first.y + 0.5);

@@ -178,8 +178,8 @@ public:
             float& operator[](const Position& p);
             double Gradient(const Position& p) const;
             bool IsOffset(const Direction& d) const;
-            void SetBoundary(const Position& p, const Direction& dir, double boundaryFlux);
-            float Extrapolate(const Position& outsidePosition, const Direction& dir, double boundaryFlux) const;
+            void SetBoundary(const Position& p, const Directions& boundary, double boundaryFlux);
+            float Extrapolate(const Position& outsidePosition, const Directions& boundary, double boundaryFlux) const;
             Box Bounds() const;
             Box Edge(const Direction& dir) const;
             Box ExtendedEdge(const Direction& dir) const;
@@ -225,16 +225,15 @@ public:
             {
             public:
                 Boundary(const Flux& data, const Direction& direction);
-                static Box Bounds(const Flux& data, const Direction& direction);
             };
             class Corner : public Section
             {
             public:
                 Corner(const Flux& data, const Directions& directions);
-                static Box Bounds(const Flux& data, const Direction& directionA, const Direction& directionB);
             };
 
-            Boundary BoundaryCondition(const Direction& dir) const { return Boundary(*this, dir); }
+            Section BoundaryCondition(const Direction& dir) const;
+            Section BoundaryCondition(const Directions& boundary) const;
         private:
             unsigned Index(const Position& p) const;
             Directions IsBoundary(const Position& p) const;
@@ -294,6 +293,7 @@ protected:
 
     void Flow(double seconds);
     void FluxBoundary();
+    void FluxBoundary(const Directions boundary);
     void Continuity(double seconds);
     void GridBoundary();
 
