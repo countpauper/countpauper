@@ -80,7 +80,6 @@ if cost>0:
 			total_needed += [f'{coins_needed} {inv_rates[coin_value]}']
 			cost_remaining -= coins_needed * coin_value
 	bag_var='bags'
-	dbg = ''
 	if exists(bag_var):
 		baglist=load_json(get(bag_var))
 		total_taken=[]
@@ -100,18 +99,14 @@ if cost>0:
 							conversion_rate=rates[coin_name]/rates[spare_coin]
 							conversion_needed=int(ceil((coins_needed-bag_coins)/conversion_rate))
 							converted_coins=min(conversion_needed, spare_amount)
-							dbg+=f'{bag_coins}/{coins_needed} {coin_name} + conv {converted_coins}/{spare_amount}{spare_coin} at {conversion_rate}='
 							bag_coins+=int(converted_coins*conversion_rate)
 							spare_bag[spare_coin] = spare_amount-converted_coins
-							#dbg+=f'{bag_coins}{coin_name}, '
 					if coins_taken:=min(coins_needed, bag_coins):
 						cost-=coins_taken*coin_value
 						b[1][coin_name]=bag_coins-coins_taken
 						total_taken+= [f'{coins_taken} {coin_name}']
 						coins_needed-=coins_taken
-						#dbg+=f'take {coins_taken}/{coins_needed}{coin_name} at {coin_value}, '
 					elif bag_coins:
-						#dbg+=f'spare found {bag_coins}{coin_name} '
 						spare_coins=[(b[1],coin_name)]+spare_coins
 		if cost>0:
 			if not total_taken:
@@ -119,7 +114,6 @@ if cost>0:
 			return f'-title "{name} can\'t afford to train {option} today." -desc "You need {" ".join(total_needed)}, but have {" ".join(total_taken)} in your bags." '
 		else:
 			fields+=f'-f Cost|"{" ".join(total_taken)}"|inline '
-			#fields+=f'-f Debug|"{dbg}" '
 			set_cvar(bag_var,dump_json(baglist))
 	else:
 		fields += f'-f Cost|"{" ".join(total_needed)}"|inline '
