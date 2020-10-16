@@ -2,11 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/bladesong/bladesong_alias.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/bladesong.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/downtime/craft.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/craft.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/downtime/downtime.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/downtime.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/downtime/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/gems.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/gems.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/healing kit.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/healing kit.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,5 +47,11 @@
       <updated>1602832588163</updated>
     </task>
     <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup" timestamp="1602857669145">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1602857669145" />
   </component>
 </project>

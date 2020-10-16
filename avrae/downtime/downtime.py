@@ -1,4 +1,24 @@
 tembed <drac2>
+# TODO data https://www.dndbeyond.com/sources/xgte/downtime-revisited#undefined
+#    - 'default' key for if no result applies (instead of stupid -100)
+# gvar for downtime and craft with user facing skill names
+# besides code, can have 'item' (auto added to bag) and other stuff
+#	- item name added to description automatically like scroll found reading
+#    - quantity for item, can be roll, roll string can contain var identifiers set by {code}
+#	- can also be gp or sp or cp, simply added to coin pouch as item, recognize by name? or 'coin'
+#	- also lose item and coins as bad stuff, if don't have, clip count? no result?
+# tool precondition (fishing: tackle, reading: book, hunting bow or trap, burglary=crowbar, working with tool: tool)
+# exaustion +- as a result option (nb avrae dev !exhaustion alias with cc ties into !lr already, just need to be compatible)
+# "Inspiration" snippet & cc, inspiration as a result option (NB inspiration effect and snippet used for bard)
+# relation added to !relation, need a table for location?(channel)
+# server configuration for downtime parameters (default 1/long rest)
+#   also for train and craft
+#   Automatically created instead of complain
+# image thumb per activity
+# image per result
+
+# and make sure most of that is possible
+
 # parse arguments
 arg="&*&".lower()
 data = load_json(get_gvar(get_svar("downtime","b566982b-c7f8-4ea4-af47-4fd82623b335")))

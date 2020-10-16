@@ -1,4 +1,15 @@
 tembed <drac2>
+#TODO
+# money cost on start
+# option to ignore/override money cost -cost 50gp (argparse(%*%))
+# don't use recipe names, use item names, it's a sorted array
+#	- by preference and if preconditions aren't met (tool, prof, ingredient), another one is tried
+#	- (last precondition fail is reported0
+# image thumb in data per recipe
+# required recipe {Item} recipe (not used)
+
+
+
 data = load_json(get_gvar(get_svar("recipes", "6498daf1-6d03-43ac-822a-2badfd533749")))
 arg = "&*&"
 toolprofs = {pstr.strip().lower(): 1 for pstr in get('pTools', '').split(',') if not pstr.isspace()}

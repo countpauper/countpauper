@@ -1,5 +1,4 @@
 tembed <drac2>
-# retrieve data
 gv = get_svar("training", "2605a178-bff2-4553-8548-6778ce0ba8e2")
 data = {k.lower():v for (k,v) in load_json(get_gvar(gv)).items()}
 
@@ -11,14 +10,23 @@ split_arg=arg.split(maxsplit=1)
 if len(split_arg)>1 and split_arg[0].isdigit():
 	amount=int(split_arg[0])
 	option=split_arg[1].lower()
-if option=='level':
-	option=f'level[{level+1}]'
-training=data.get(option)
+if 'level'.startswith(option):
+	new_level = level+1
+	option=f'level[{new_level}]'
+	training=data.get(option)
+	if not training:
+		return f'-title "{name} doesn\'t feel like training for level {new_level}." -desc "There is no training requirement for that level."'
+else:
+	matches=[k for k in data.keys() if k.startswith(option)]
+	if matches:
+		training=data.get(matches[0])
+	else:
+		training=None
 
 # verify arguments
 if arg == '?' or arg.lower() == 'help' or arg == '' or not training:
 	options=['level'] + [t for t in data.keys() if not t.startswith('level')]
-	return f'-title "{name} doesn\'t know how to traing." -desc "`!train [<time spent>] <training>` where training is one of {", ".join(options)}."'
+	return f'-title "{name} doesn\'t know how to train." -desc "`!train [<time spent>] <training>` where training is one of {", ".join(options)}."'
 
 # check preconditions
 ccn='Downtime'
@@ -39,6 +47,20 @@ if cc is not None and cc.reset_on=='long' and cc.max:
 
 amount = min(amount,effort-progress)
 cost=training.get('cost',0)*amount/effort
+
+goal=option
+if target_level:=training.get('level'):
+	goal=f'level {target_level}'
+elif new_language:=training.get('language'):
+	goal=new_language
+	if new_language in get('languages',''):
+		return f'-title "{name} already knows how to speak {goal}" -desc "You are already proficient with that language."'
+elif new_prof:=training.get('proficiency'):
+	goal=new_prof
+	if new_prof in get('pTools','') or new_prof in get('eTools',''):
+		return f'-title "{name} already knows how to use {goal}" -desc "You are already proficient with that tool."'
+else:
+	err(f"No goal defined for training {option}. Please fix it in `!gvar {gv}`")
 
 desc=''
 fields=''
@@ -115,8 +137,8 @@ else:
 
 grats=':tada: *Congratulations* :tada:'
 # goal determination and completion
-if target_level:=training.get('level'):
-	title = f'{name} spends some downtime training for level {target_level}'
+if target_level:
+	title = f'{name} spends some downtime training for {goal}'
 	if done:
 		urls={
 			"beyond": "https://ddb.ac/characters/",
@@ -130,22 +152,21 @@ if target_level:=training.get('level'):
 		if exists('subclass'):	# depends on !level produced cvar json {"<Class>Level":"SubClass"}
 			level_options=[f'`!level {int(get(clslvl,0))+1} {clslvl[:-5]} {subcls}`' for (clslvl,subcls) in load_json(subclass).items()]
 			desc+=f'\n■ update counters with e.g. {", ".join(level_options)}'
-elif new_language:=training.get('language'):
+elif new_language:
 	title = f'{name} spends some downtime studying {new_language}'
 	if done:
 		desc=training.get('diploma',f'{grats}. You can now proficiently speak {new_language}.')
 		langcv='languages'
 		langlist = [l for l in get(langcv,'').split(',') if l] +[new_language]
 		set_cvar(langcv, ', '.join(langlist))
-elif new_tool:=training.get('proficiency'):
-	title = f'{name} spends some downtime practicing with {new_tool}'
+elif new_prof:
+	title = f'{name} spends some downtime practicing with {new_prof}'
 	if done:
-		desc=training.get('diploma',f'{grats}. You can now proficiently use {new_tool}.')
+		desc=training.get('diploma',f'{grats}. You can now proficiently use {new_prof}.')
 		toolcv='pTools'
-		toollist = [t for t in get(toolcv,'').split(',') if t]+[new_tool]
+		toollist = [t for t in get(toolcv,'').split(',') if t]+[new_prof]
 		set_cvar(toolcv, ', '.join(toollist))
-else:
-	err(f"No goal defined for training {option}. Please fix it in `!gvar {gv}`")
+
 
 # Apply costs
 mod_cc(ccn,-amount,True)

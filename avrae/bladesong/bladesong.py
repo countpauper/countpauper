@@ -1,5 +1,11 @@
 <drac2>
 # Bladesong alias routine
+# TODO
+# simplify reusing !bladesong (with a use) when no arguments and no effect active
+# bladesong defense sub command
+# help removed from command
+# bladesong snippet for advantage or bonus, hopefully after https://github.com/avrae/avrae/issues/1294
+
 arg=@@@
 
 counter_name="Bladesong"
