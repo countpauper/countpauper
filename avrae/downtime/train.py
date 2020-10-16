@@ -31,21 +31,84 @@ amount = min(amount, downtime)
 cvn='Training'
 training_progress = load_json(get(cvn, '{}'))
 progress =training_progress.get(option,0)
+cc = [c for c in character().consumables if c.name==ccn][0]
 
 effort=training.get('effort')
+if cc is not None and cc.reset_on=='long' and cc.max:
+	effort*=cc.max
+
 amount = min(amount,effort-progress)
 cost=training.get('cost',0)*amount/effort
-# TODO: check cost precondition
 
-# Progress reporting
 desc=''
 fields=''
+# check the cost if bags are set up. coins will be taken at the same time, but bag is only updated on succeess
+# get server rates or default phb, but invert from normal definition in price per coin and sort by value
+rates = load_json(get_svar('coins', '{}')).get('rates',{"cp":100,"sp":10,"ep":2,"gp":1,"pp":0.1})
+inv_rates = {(1/r):c for (c,r) in rates.items() }
+if cost>0:
+	# make a list of coins needed for if there are no bags or not enoug coins
+	total_needed = []
+	cost_remaining=cost
+	rev_coin_values = list(inv_rates.keys())
+	rev_coin_values.reverse()
+	for coin_value in rev_coin_values:
+		coins_needed = int((cost_remaining+(0.1*coin_value)) // coin_value)
+		if coins_needed:
+			total_needed += [f'{coins_needed} {inv_rates[coin_value]}']
+			cost_remaining -= coins_needed * coin_value
+	bag_var='bags'
+	dbg = ''
+	if exists(bag_var):
+		baglist=load_json(get(bag_var))
+		total_taken=[]
+		spare_coins = []
+		for coin_value in rev_coin_values:
+			coin_name=inv_rates[coin_value]
+			coins_needed=int((cost+(0.1*coin_value))//coin_value)	# add 0.1*coin for numeric imprecision ie 0.999 cp
+			for b in baglist:
+				if b[0].lower()=='coin pouch':
+					# coins in this bag
+					bag_coins=b[1].get(coin_name,0)
+					# convert spare coins if needed
+					for spare_idx in range(0,len(spare_coins)):
+						if coins_needed>bag_coins:
+							spare_bag,spare_coin=spare_coins[spare_idx]
+							spare_amount=spare_bag[spare_coin]
+							conversion_rate=rates[coin_name]/rates[spare_coin]
+							conversion_needed=int(ceil((coins_needed-bag_coins)/conversion_rate))
+							converted_coins=min(conversion_needed, spare_amount)
+							dbg+=f'{bag_coins}/{coins_needed} {coin_name} + conv {converted_coins}/{spare_amount}{spare_coin} at {conversion_rate}='
+							bag_coins+=int(converted_coins*conversion_rate)
+							spare_bag[spare_coin] = spare_amount-converted_coins
+							#dbg+=f'{bag_coins}{coin_name}, '
+					if coins_taken:=min(coins_needed, bag_coins):
+						cost-=coins_taken*coin_value
+						b[1][coin_name]=bag_coins-coins_taken
+						total_taken+= [f'{coins_taken} {coin_name}']
+						coins_needed-=coins_taken
+						#dbg+=f'take {coins_taken}/{coins_needed}{coin_name} at {coin_value}, '
+					elif bag_coins:
+						#dbg+=f'spare found {bag_coins}{coin_name} '
+						spare_coins=[(b[1],coin_name)]+spare_coins
+		if cost>0:
+			if not total_taken:
+				total_taken=['nothing']
+			return f'-title "{name} can\'t afford to train {option} today." -desc "You need {" ".join(total_needed)}, but have {" ".join(total_taken)} in your bags." '
+		else:
+			fields+=f'-f Cost|"{" ".join(total_taken)}"|inline '
+			#fields+=f'-f Debug|"{dbg}" '
+			set_cvar(bag_var,dump_json(baglist))
+	else:
+		fields += f'-f Cost|"{" ".join(total_needed)}"|inline '
+
+# Progress reporting
 progress+=amount
 done = progress>=effort
-cc = [c for c in character().consumables if c.name==ccn][0]
+
 if done:
 	fields+='-f Progress|Done|inline '
-elif cc is not None and cc.reset_on=='long':
+elif cc is not None and cc.reset_on=='long' and cc.max:
 	fields+=f'-f Remaining|"{(effort-progress)//cc.max} days"|inline '
 else:
 	fields+=f'-f Progress|"{100*progress//effort}%"|inline '
