@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+	<GoogleTest>
+		<ForceListContent>true</ForceListContent>
+	</GoogleTest>
+</RunSettings>
