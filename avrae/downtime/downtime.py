@@ -1,6 +1,12 @@
 tembed <drac2>
 # TODO data https://www.dndbeyond.com/sources/xgte/downtime-revisited#undefined
-#    - 'default' key for if no result applies (instead of stupid -100)
+#   Sub commnd xge to enble, phb for phb downtime nd dmg for dmg downtime stuff set in svar
+# default gvars are demo/home brew,
+# svar downtime={cc_max=1, cc_reset=long, downtime=homebrew,
+# recipes=[srd items https://www.5esrd.com/equipment]
+# training=[same tools&levels is, but easier level curve (lvl & free)]
+# svar keys = [] of gvars, dicts updated together
+# 'default' key for if no result applies (instead of stupid -100)
 # gvar for downtime and craft with user facing skill names
 # besides code, can have 'item' (auto added to bag) and other stuff
 #	- item name added to description automatically like scroll found reading
@@ -18,20 +24,36 @@ tembed <drac2>
 # image per result
 
 # and make sure most of that is possible
+sv = load_json(get_svar('downtime','{}'))
+gv= sv.get('activities',['b566982b-c7f8-4ea4-af47-4fd82623b335'])
+data={}
+for dgv in gv:
+	data.update(load_json(get_gvar(dgv)))
 
 # parse arguments
 arg="&*&".lower()
-data = load_json(get_gvar(get_svar("downtime","b566982b-c7f8-4ea4-af47-4fd82623b335")))
 if arg=='?' or arg.lower()=='help' or arg=='' or not arg in data:
   return f'-title "{name} spends their free time getting help." -desc "`!downtime <activity>` where <activity> is one of {", ".join(data.keys())}."'
 
-# check pre conditiosn
+# recreate downtime consumable with current config, keeping value
+char=character()
+cc_max = sv.get('max',1)
+cc_max = int(cc_max) if str(cc_max).isdigit() else None
+cc_reset=sv.get('reset','long').lower()
+ccn='Downtime'
+if char.cc_exists(ccn):
+    cc_val=char.get_cc(ccn)
+    char.delete_cc(ccn)
+else:
+    cc_val=None
+char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
+if cc_val is not None:
+    char.set_cc(ccn,cc_val)
+
+# check pre conditions
 activity=data[arg]
 particle=activity.get('particle',arg+'ing')
-ccn='Downtime'
-if not cc_exists(ccn):
-  return f'-title "{name} has no time to {arg}" -desc "You need to have a Downtime counter to spend.\nYou can create it with `!cc create Downtime -max 4 -reset long`"'
-downtime=get_cc(ccn)
+downtime=char.get_cc(ccn)
 if not downtime:
   return f'-title "{name} doesn\'t have time to {arg}" -desc "You have no more downtime left." -f Downtime|"{cc_str(ccn)}"|inline'
 
@@ -62,7 +84,7 @@ while node:
         node=None
 
 # Apply the changes to the character
-mod_cc(ccn,-1,True)
+char.mod_cc(ccn,-1,True)
 
 fields+=f'-f Downtime|"{cc_str(ccn)}"|inline '
 if not desc:

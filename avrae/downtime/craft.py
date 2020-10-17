@@ -1,14 +1,17 @@
 tembed <drac2>
 #TODO
-# image thumb in data per recipe
-# advantage/disadvantage
 # required ingredients in bag
 # required recipe {Item} recipe (not used)
 # don't use recipe names, use item names, it's a sorted array
 #	- by preference and if preconditions aren't met (tool, prof, ingredient), another one is tried
 #	- (last precondition fail is reported0
 
-data = load_json(get_gvar(get_svar("recipes", "6498daf1-6d03-43ac-822a-2badfd533749")))
+sv = load_json(get_svar('downtime','{}'))
+gv= sv.get('recipes',['6498daf1-6d03-43ac-822a-2badfd533749'])
+data={}
+for rgv in gv:
+	data.update(load_json(get_gvar(rgv)))
+
 arg = "&*&"
 arg_split=arg.split(" -",maxsplit=1)
 choice=arg_split[0]
@@ -28,6 +31,22 @@ if choice:
 # invalid input or help: show how it works.
 if choice == '?' or choice == 'help' or choice == '' or not matches:
 	return f'-title "{name} doesn\'t know how to craft." -desc "`!craft <recipe>` where recipe is one of {", ".join(data.keys())}."'
+
+# recreate downtime consumable with current config, keeping value
+char=character()
+cc_max = sv.get('max',1)
+cc_max = int(cc_max) if str(cc_max).isdigit() else None
+cc_reset=sv.get('reset','long').lower()
+ccn='Downtime'
+if char.cc_exists(ccn):
+    cc_val=char.get_cc(ccn)
+    char.delete_cc(ccn)
+else:
+    cc_val=None
+char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
+if cc_val is not None:
+    char.set_cc(ccn,cc_val)
+
 # Check precondition: downtime
 recipe_name = matches[0]
 recipe = data[recipe_name]
@@ -37,10 +56,7 @@ plural=''
 amount = recipe.get('amount',1)
 if amount>1:
 	item_d =f'{amount} {item}s'
-ccn = 'Downtime'
-if not cc_exists(ccn):
-	return f'-title "{name} doesn\'t have time to craft {item_d}." -desc "You need to have a Downtime counter to spend.'+ \
-		'\nYou can create it with `!cc create Downtime -max 4 -reset long`."'
+
 downtime = get_cc(ccn)
 ccfield =  f' -f Downtime|"{cc_str(ccn)}"|inline'
 if not downtime:
@@ -60,15 +76,14 @@ skill = recipe.get('skill')
 
 proficient = 0
 if skill:
-	proficient = character().skills[skill.lower()].prof or 0
+	proficient = char.skills[skill.lower()].prof or 0
 elif tool:
 	proficient = toolprofs.get(tool.lower(), 0)
-if character().levels.get('Bard') >= 2:
+if char.levels.get('Bard') >= 2:
 	proficient = max(proficient,0.5)
 
 if recipe.get('proficient', False) and not proficient:
 	return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {tool}.\nUse `!tool pro {tool}` to add your proficiency."'
-
 
 dbg = ''
 fields = ''
@@ -147,7 +162,7 @@ boni += [f'{get(e)}[{e[:3]}]' if e.isidentifier() else e for e in recipe.get('bo
 
 rollstr = ['1d20', '2d20kh1', '2d20kl1'][args.adv()]
 if skill:
-	skilld20 = character().skills[skill].d20(args.adv(False,True))
+	skilld20 = char.skills[skill].d20(args.adv(False,True))
 	r = vroll('+'.join([skilld20] + boni))
 	fields += f'-f "{skill}"|"{r.full}"|inline '
 elif tool:
@@ -210,8 +225,8 @@ if img_url:=recipe.get('img'):
 	fields+=f'-thumb "{img_url}" '
 
 # Apply the modifications to the character variables and counters
-set_cvar(cvn, dump_json(project))
-mod_cc(ccn, -1, True)
+char.set_cvar(cvn, dump_json(project))
+char.mod_cc(ccn, -1, True)
 fields += f'-f Downtime|"{cc_str(ccn)}"|inline '
 
 return f'-title "{title}" -desc "{desc}" ' + fields

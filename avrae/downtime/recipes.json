@@ -1,5 +1,5 @@
 {
-  "healing potion":{ "tool":"Herbalism Kit", "dc":12, "proficient":true, "cost":25, "effort":4, "item":"Healing Potion" },
-  "axe":{ "tool":"Smith's Tools", "bonus":"strengthMod", "dc":12, "proficient":true, "effort":8, "item":"Handaxe" },
+  "healing potion":{ "tool":"Herbalism Kit", "dc":12, "proficient":true, "cost":25, "effort":1, "item":"Healing Potion" },
+  "axe":{ "tool":"Smith's Tools", "bonus":"strengthMod", "dc":12, "proficient":true, "effort":2, "item":"Handaxe" },
   "arrow":{ "tool":"Woodcarver's Tools", "bonus":"dexterityMod", "dc":11, "cost":0.5, "effort":1, "item":"Arrow", "amount":10, "bag":"Quiver", "img":"http://2.bp.blogspot.com/-uU4XLJCvNoE/ViPkayzIjVI/AAAAAAAAGN8/oz8clu7juC8/s1600/arrows_image.jpeg"}
 }

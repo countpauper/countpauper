@@ -1,6 +1,14 @@
 tembed <drac2>
-gv = get_svar("training", "2605a178-bff2-4553-8548-6778ce0ba8e2")
-data = {k.lower():v for (k,v) in load_json(get_gvar(gv)).items()}
+# TODO:
+# skill check or roll with ids (now all defaults to none
+# for xge: effort "roLl" with cvar modifiers (effort-intelligence)
+
+# load all gvars to data
+sv = load_json(get_svar('downtime','{}'))
+gv= sv.get('training',['2605a178-bff2-4553-8548-6778ce0ba8e2'])
+data={}
+for tgv in gv:
+	data.update({k.lower():v for (k,v) in load_json(get_gvar(tgv)).items()})
 
 # parse arguments into amount,options
 arg = "&*&"
@@ -28,10 +36,23 @@ if arg == '?' or arg.lower() == 'help' or arg == '' or not training:
 	options=['level'] + [t for t in data.keys() if not t.startswith('level')]
 	return f'-title "{name} doesn\'t know how to train." -desc "`!train [<time spent>] <training>` where training is one of {", ".join(options)}."'
 
-# check preconditions
+# recreate downtime consumable with current config, keeping value
+char=character()
+cc_max = sv.get('max',1)
+cc_max = int(cc_max) if str(cc_max).isdigit() else None
+cc_reset=sv.get('reset','long').lower()
 ccn='Downtime'
-if not cc_exists(ccn):
-	return f'-title "{name} has no time to train" -desc "You need to have a Downtime counter to spend.\nYou can create it with `!cc create Downtime -max 4 -reset long`"'
+if char.cc_exists(ccn):
+	cc_val=char.get_cc(ccn)
+	char.delete_cc(ccn)
+else:
+	cc_val=None
+char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
+if cc_val is not None:
+	char.set_cc(ccn,cc_val)
+
+
+# check preconditions
 downtime=get_cc(ccn)
 if not downtime:
 	return f'-title "{name} doesn\'t have time to train" -desc "You have no more downtime left." -f Downtime|"{cc_str(ccn)}"|inline'
@@ -39,14 +60,19 @@ amount = min(amount, downtime)
 cvn='Training'
 training_progress = load_json(get(cvn, '{}'))
 progress =training_progress.get(option,0)
-cc = [c for c in character().consumables if c.name==ccn][0]
 
 effort=training.get('effort')
-if cc is not None and cc.reset_on=='long' and cc.max:
-	effort*=cc.max
-
-amount = min(amount,effort-progress)
-cost=training.get('cost',0)*amount/effort
+# effort is in days if downtime reset every day. else in downtime points
+if effort and cc_max and cc_reset=='long':
+	effort*=cc_max
+else:
+	effort=1
+effort=int(effort)
+amount = min(amount,max(0,effort-progress))
+if effort>0:
+	cost=training.get('cost',0)*amount/effort
+else: # 0/0
+	cost=0
 
 goal=option
 if target_level:=training.get('level'):
@@ -108,7 +134,8 @@ if cost>0:
 						coins_needed-=coins_taken
 					elif bag_coins:
 						spare_coins=[(b[1],coin_name)]+spare_coins
-		if cost>0:
+		treshold=list(inv_rates.keys())[0]
+		if cost>treshold:
 			if not total_taken:
 				total_taken=['nothing']
 			return f'-title "{name} can\'t afford to train {option} today." -desc "You need {" ".join(total_needed)}, but have {" ".join(total_taken)} in your bags." '
@@ -163,7 +190,7 @@ elif new_prof:
 
 
 # Apply costs
-mod_cc(ccn,-amount,True)
+char.mod_cc(ccn,-amount,True)
 fields+=f'-f "Downtime [{-amount}]"|"{cc_str(ccn)}"|inline '
 training_progress[option] = progress
 if done:
