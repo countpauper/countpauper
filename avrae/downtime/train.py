@@ -46,15 +46,17 @@ if char.cc_exists(ccn):
 	char.delete_cc(ccn)
 else:
 	cc_val=None
-char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
-if cc_val is not None:
-	char.set_cc(ccn,cc_val)
+if cc_max>0:
+	char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
+	if cc_val is not None:
+		char.set_cc(ccn,cc_val)
 
 # check preconditions
-downtime=get_cc(ccn)
-if not downtime:
-	return f'-title "{name} doesn\'t have time to train" -desc "You have no more downtime left." -f Downtime|"{cc_str(ccn)}"|inline'
-amount = min(amount, downtime)
+if amount>0:
+	downtime=get_cc(ccn)
+	if not downtime:
+		return f'-title "{name} doesn\'t have time to train" -desc "You have no more downtime left." -f Downtime|"{cc_str(ccn)}"|inline'
+	amount = min(amount, downtime)
 
 # effort is in days if downtime reset every day. else in downtime points, minimum is 1
 effort=training.get('effort')
@@ -173,8 +175,9 @@ else:
 
 grats=':tada: *Congratulations* :tada:'
 # goal determination and completion
+spends='spends some downtime' if amount else 'checks their progress in'
 if target_level:
-	title = f'{name} spends some downtime training for {goal}'
+	title = f'{name} {spends} training for {goal}'
 	if done:
 		urls={
 			"beyond": "https://ddb.ac/characters/",
@@ -189,14 +192,14 @@ if target_level:
 			level_options=[f'`!level {int(get(clslvl,0))+1} {clslvl[:-5]} {subcls}`' for (clslvl,subcls) in load_json(subclass).items()]
 			desc+=f'\n■ update counters with e.g. {", ".join(level_options)}'
 elif new_language:
-	title = f'{name} spends some downtime studying {new_language}'
+	title = f'{name} {spends} studying {new_language}'
 	if done:
 		desc=training.get('diploma',f'{grats}. You can now proficiently speak {new_language}.')
 		langcv='languages'
 		langlist = [l for l in get(langcv,'').split(',') if l] +[new_language]
 		set_cvar(langcv, ', '.join(langlist))
 elif new_prof:
-	title = f'{name} spends some downtime practicing with {new_prof}'
+	title = f'{name} {spends} practicing with {new_prof}'
 	if done:
 		desc=training.get('diploma',f'{grats}. You can now proficiently use {new_prof}.')
 		toolcv='pTools'
@@ -204,8 +207,9 @@ elif new_prof:
 		set_cvar(toolcv, ', '.join(toollist))
 
 # Apply costs
-char.mod_cc(ccn,-amount,True)
-fields+=f'-f "Downtime [{-amount}]"|"{cc_str(ccn)}"|inline '
+if amount>0:
+	char.mod_cc(ccn,-amount,True)
+	fields+=f'-f "Downtime [{-amount}]"|"{cc_str(ccn)}"|inline '
 
 if img_url:=training.get('img'):
 	fields+=f'-thumb "{img_url}" '

@@ -1,27 +1,19 @@
 tembed <drac2>
 # TODO data https://www.dndbeyond.com/sources/xgte/downtime-revisited#undefined
 #   Sub commnd xge to enble, phb for phb downtime nd dmg for dmg downtime stuff set in svar
-# default gvars are demo/home brew,
-# svar downtime={cc_max=1, cc_reset=long, downtime=homebrew,
-# recipes=[srd items https://www.5esrd.com/equipment]
-# training=[same tools&levels is, but easier level curve (lvl & free)]
-# svar keys = [] of gvars, dicts updated together
 # 'default' key for if no result applies (instead of stupid -100)
 # gvar for downtime and craft with user facing skill names
 # besides code, can have 'item' (auto added to bag) and other stuff
 #	- item name added to description automatically like scroll found reading
-#    - quantity for item, can be roll, roll string can contain var identifiers set by {code}
-#	- can also be gp or sp or cp, simply added to coin pouch as item, recognize by name? or 'coin'
+#    - quantity for item, can be roll, roll string can contain var identifiers set by {code} and other cvars or quantity:numnber or quantity:str
+#	- can also be gp or sp or cp, simply added to coin pouch as item, recognize by name? or 'coin' or find existing item to increment, else default bag
 #	- also lose item and coins as bad stuff, if don't have, clip count? no result?
+# image thumb per activity
+# image per result (overrides or -image and activity is -thumb or img= and thumb= )
+# exhaustion (or in general consumable +-) as a result option (nb avrae dev !exhaustion alias with cc ties into !lr already, just need to be compatible)
 # tool precondition (fishing: tackle, reading: book, hunting bow or trap, burglary=crowbar, working with tool: tool)
-# exaustion +- as a result option (nb avrae dev !exhaustion alias with cc ties into !lr already, just need to be compatible)
 # "Inspiration" snippet & cc, inspiration as a result option (NB inspiration effect and snippet used for bard)
 # relation added to !relation, need a table for location?(channel)
-# server configuration for downtime parameters (default 1/long rest)
-#   also for train and craft
-#   Automatically created instead of complain
-# image thumb per activity
-# image per result
 
 # and make sure most of that is possible
 sv = load_json(get_svar('downtime','{}'))
@@ -46,9 +38,10 @@ if char.cc_exists(ccn):
     char.delete_cc(ccn)
 else:
     cc_val=None
-char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
-if cc_val is not None:
-    char.set_cc(ccn,cc_val)
+if cc_max>0:
+    char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
+    if cc_val is not None:
+        char.set_cc(ccn,cc_val)
 
 # check pre conditions
 activity=data[arg]
@@ -85,7 +78,6 @@ while node:
 
 # Apply the changes to the character
 char.mod_cc(ccn,-1,True)
-
 fields+=f'-f Downtime|"{cc_str(ccn)}"|inline '
 if not desc:
    desc='Nothing happens.'

@@ -1,4 +1,4 @@
-tembed <drac2>
+embed <drac2>
 #TODO
 # don't use recipe names, use item names, it's a sorted array
 #	- by preference and if preconditions aren't met (tool, prof, ingredient), another one is tried
@@ -37,13 +37,14 @@ cc_max = int(cc_max) if str(cc_max).isdigit() else None
 cc_reset=sv.get('reset','long').lower()
 ccn='Downtime'
 if char.cc_exists(ccn):
-    cc_val=char.get_cc(ccn)
-    char.delete_cc(ccn)
+	cc_val=char.get_cc(ccn)
+	char.delete_cc(ccn)
 else:
-    cc_val=None
-char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
-if cc_val is not None:
-    char.set_cc(ccn,cc_val)
+	cc_val=None
+if cc_max>0:
+	char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
+	if cc_val is not None:
+		char.set_cc(ccn,cc_val)
 
 # Check precondition: downtime
 recipe_name = matches[0]
@@ -55,10 +56,11 @@ amount = recipe.get('amount',1)
 if amount>1:
 	item_d =f'{amount} {recipe.get("plural",item+"s")} '
 
-downtime = get_cc(ccn)
-ccfield =  f' -f Downtime|"{cc_str(ccn)}"|inline'
-if not downtime:
-	return f'-title "{name} doesn\'t have time to craft {item_d}." -desc "You have no more downtime left. Go do something useful."'+ccfield
+effort = recipe.get('effort',1)
+if effort>0:
+	downtime = get_cc(ccn)
+	if not downtime:
+		return f'-title "{name} doesn\'t have time to craft {item_d}." -desc "You have no more downtime left. Go do something useful." -f Downtime|"{cc_str(ccn)}"|inline'
 
 # Check precondition: tool owned
 bag_var='bags'
@@ -229,7 +231,6 @@ else:
 
 # Report the progress
 progress = project[recipe_name]['progress']
-effort = recipe.get('effort',1)
 if progress >= effort:
 	project.pop(recipe_name)
 	desc = f'You have finished crafting.'
@@ -262,11 +263,12 @@ if img_url:=recipe.get('img'):
 
 # Apply the modifications to the character variables and counters
 char.set_cvar(cvn, dump_json(project))
-char.mod_cc(ccn, -1, True)
+if effort>0:
+	char.mod_cc(ccn, -1, True)
+	fields += f'-f Downtime|"{cc_str(ccn)}"|inline '
 if bag_update:	# update bag at end to avoid item loss
 	set_cvar(bag_var, dump_json(bag))
 
-fields += f'-f Downtime|"{cc_str(ccn)}"|inline '
 
 return f'-title "{title}" -desc "{desc}" ' + fields
 </drac2>
