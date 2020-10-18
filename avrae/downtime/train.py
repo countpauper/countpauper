@@ -1,6 +1,6 @@
 tembed <drac2>
 # TODO:
-# skill check or roll with ids (now all defaults to none
+# image thumb per training
 # for xge: effort "roLl" with cvar modifiers (effort-intelligence)
 
 # load all gvars to data
@@ -27,7 +27,8 @@ if 'level'.startswith(option):
 else:
 	matches=[k for k in data.keys() if k.startswith(option)]
 	if matches:
-		training=data.get(matches[0])
+		option=matches[0]
+		training=data.get(option)
 	else:
 		training=None
 
@@ -51,28 +52,20 @@ char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
 if cc_val is not None:
 	char.set_cc(ccn,cc_val)
 
-
 # check preconditions
 downtime=get_cc(ccn)
 if not downtime:
 	return f'-title "{name} doesn\'t have time to train" -desc "You have no more downtime left." -f Downtime|"{cc_str(ccn)}"|inline'
 amount = min(amount, downtime)
-cvn='Training'
-training_progress = load_json(get(cvn, '{}'))
-progress =training_progress.get(option,0)
 
+# effort is in days if downtime reset every day. else in downtime points, minimum is 1
 effort=training.get('effort')
-# effort is in days if downtime reset every day. else in downtime points
-if effort and cc_max and cc_reset=='long':
-	effort*=cc_max
+if effort:
+	if cc_max and cc_reset=='long':
+		effort*=cc_max
 else:
 	effort=1
-effort=int(effort)
-amount = min(amount,max(0,effort-progress))
-if effort>0:
-	cost=training.get('cost',0)*amount/effort
-else: # 0/0
-	cost=0
+effort = max(1, int(effort))
 
 goal=option
 if target_level:=training.get('level'):
@@ -90,6 +83,31 @@ else:
 
 desc=''
 fields=''
+
+# get the current progress
+cvn = 'Training'
+training_progress = load_json(get(cvn, '{}'))
+progress = training_progress.get(option)
+# initial progress set by bonus
+if not progress:
+	talents=training.get('talent','')
+	id_str=talents.replace('-','|').replace('+','|').replace('*','|').replace('/','|')
+	start_vars=[id for id in id_str.split("|") if id.isidentifier()]
+	for start_var in start_vars:
+		talents = talents.replace(start_var,str(get(start_var,start_var)))
+	for (skill_name, skill) in char.skills:
+		if skill_name in start_var:
+			talents = talents.replace(skill_name,str(int(skill.prof*proficiencyBonus)))
+	progress = roll(talents)
+	if cc_max and cc_reset=='long':
+		progress*=cc_max
+	progress=min(progress,effort-1)
+	fields+=f'-f Talent|"{talents} = {progress}" '
+
+# compute the cost and clip the amount to the maximum needed to complete
+amount = min(amount,max(0,effort-progress))
+cost=training.get('cost',0)*amount/effort
+
 # check the cost if bags are set up. coins will be taken at the same time, but bag is only updated on succeess
 # get server rates or default phb, but invert from normal definition in price per coin and sort by value
 rates = load_json(get_svar('coins', '{}')).get('rates',{"cp":100,"sp":10,"ep":2,"gp":1,"pp":0.1})
@@ -138,7 +156,7 @@ if cost>0:
 		if cost>treshold:
 			if not total_taken:
 				total_taken=['nothing']
-			return f'-title "{name} can\'t afford to train {option} today." -desc "You need {" ".join(total_needed)}, but have {" ".join(total_taken)} in your bags." '
+			return f'-title "{name} can\'t afford to train for {goal} today." -desc "You need {" ".join(total_needed)}, but have {" ".join(total_taken)} in your bags." '
 		else:
 			fields+=f'-f Cost|"{" ".join(total_taken)}"|inline '
 			set_cvar(bag_var,dump_json(baglist))
@@ -151,8 +169,8 @@ done = progress>=effort
 
 if done:
 	fields+='-f Progress|Done|inline '
-elif cc is not None and cc.reset_on=='long' and cc.max:
-	fields+=f'-f Remaining|"{(effort-progress)//cc.max} days"|inline '
+elif cc_max and cc_reset=='long':
+	fields+=f'-f Remaining|"{(effort-progress)//cc_max} days"|inline '
 else:
 	fields+=f'-f Progress|"{100*progress//effort}%"|inline '
 
