@@ -1,4 +1,2 @@
 {{cc='DM Inspiration'}}
-{{'adv -phrase "DM Inspiration" ' if character().cc_exists(cc) and character().get_cc(cc)>0 else '' }}
-{{character().mod_cc(cc,-1)}}
-{{f' -f "{cc}"|"{cc_str(cc)}" '}}
+{{f'adv -phrase "DM Inspiration" {character().mod_cc(cc,-1)} -f "{cc}"|"{cc_str(cc)}"' if character().cc_exists(cc) and character().get_cc(cc)>0 else f'-f "{cc}"|"Not Available" ' }}
