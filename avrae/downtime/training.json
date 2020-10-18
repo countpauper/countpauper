@@ -57,7 +57,7 @@
   "Dulcimer":{"effort":15, "talent":"charismaMod+performance", "cost":250, "proficiency":"Dulcimer"},
   "Flute":{"effort":10, "talent":"charismaMod+performance", "cost":150, "proficiency":"Flute"},
   "Lute":{"effort":15, "talent":"charismaMod+performance", "cost":200, "proficiency":"Lute"},
-  "Lyre":{"effort":15, "talent":"charismaMod+performance", "cost":250, "proficiency":"Lyre"},
+  "Lyre":{"effort":15, "talent":"charismaMod+performance", "cost":250, "proficiency":"Lyre","img":"https://luthieros.com/wp-content/uploads/2020/04/1-web-2.jpg"},
   "Horn":{"effort":10, "talent":"charismaMod+performance", "cost":100, "proficiency":"Horn"},
   "Pan flute":{"effort":10, "talent":"charismaMod+performance", "cost":100, "proficiency":"Pan flute"},
   "Shawm":{"effort":20, "talent":"charismaMod+performance", "cost":250, "proficiency":"Shawm"},

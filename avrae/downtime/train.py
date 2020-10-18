@@ -1,7 +1,5 @@
-tembed <drac2>
+embed <drac2>
 # TODO:
-# image thumb per training
-# for xge: effort "roLl" with cvar modifiers (effort-intelligence)
 
 # load all gvars to data
 sv = load_json(get_svar('downtime','{}'))
@@ -102,7 +100,6 @@ if not progress:
 	if cc_max and cc_reset=='long':
 		progress*=cc_max
 	progress=min(progress,effort-1)
-	fields+=f'-f Talent|"{talents} = {progress}" '
 
 # compute the cost and clip the amount to the maximum needed to complete
 amount = min(amount,max(0,effort-progress))
@@ -156,7 +153,7 @@ if cost>0:
 		if cost>treshold:
 			if not total_taken:
 				total_taken=['nothing']
-			return f'-title "{name} can\'t afford to train for {goal} today." -desc "You need {" ".join(total_needed)}, but have {" ".join(total_taken)} in your bags." '
+			return f'-title "{name} can\'t afford to train {goal} today." -desc "You need {" ".join(total_needed)}, but have {" ".join(total_taken)} in your bags." '
 		else:
 			fields+=f'-f Cost|"{" ".join(total_taken)}"|inline '
 			set_cvar(bag_var,dump_json(baglist))
@@ -206,10 +203,13 @@ elif new_prof:
 		toollist = [t for t in get(toolcv,'').split(',') if t]+[new_prof]
 		set_cvar(toolcv, ', '.join(toollist))
 
-
 # Apply costs
 char.mod_cc(ccn,-amount,True)
 fields+=f'-f "Downtime [{-amount}]"|"{cc_str(ccn)}"|inline '
+
+if img_url:=training.get('img'):
+	fields+=f'-thumb "{img_url}" '
+
 training_progress[option] = progress
 if done:
 	training_progress.pop(option)

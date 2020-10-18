@@ -1,7 +1,5 @@
 tembed <drac2>
 #TODO
-# required ingredients in bag
-# required recipe {Item} recipe (not used)
 # don't use recipe names, use item names, it's a sorted array
 #	- by preference and if preconditions aren't met (tool, prof, ingredient), another one is tried
 #	- (last precondition fail is reported0
@@ -55,7 +53,7 @@ item_d = ('an  ' if item[0] in "aeiou" else 'a ') + item
 plural=''
 amount = recipe.get('amount',1)
 if amount>1:
-	item_d =f'{amount} {item}s'
+	item_d =f'{amount} {recipe.get("plural",item+"s")} '
 
 downtime = get_cc(ccn)
 ccfield =  f' -f Downtime|"{cc_str(ccn)}"|inline'
@@ -65,6 +63,7 @@ if not downtime:
 # Check precondition: tool owned
 bag_var='bags'
 bag = load_json(bags) if exists(bag_var) else None
+bag_update=False
 tool = recipe.get('tool')
 
 if bag is not None and tool is not None:
@@ -98,6 +97,7 @@ else:
 	# check and subtract costs in 1) args 2) recipe 3) default free
 	cost = recipe.get('cost',0)
 	rates = load_json(get_svar('coins', '{}')).get('rates', {"cp": 100, "sp": 10, "ep": 2, "gp": 1, "pp": 0.1})
+	# cost override
 	cost_str=args.get('cost',[''])[0].lower()
 	if cost_str:
 		cost=sum([float(cost_str[:-len(coin_name)])/coin_rate for (coin_name,coin_rate) in rates.items() if cost_str.endswith(coin_name)])
@@ -151,10 +151,46 @@ else:
 				return f'-title "{name} can\'t afford the ingredients for {item_d}." -desc "You need {" ".join(total_needed)}, but have {" ".join(total_taken)} in your bags." '
 			else:
 				fields+=f'-f Cost|"{" ".join(total_taken)}"|inline '
-				#fields+=f'-f Debug|"{dbg}" '
-				set_cvar(bag_var,dump_json(bag))
+				bag_update=True
 		else:
 			fields += f'-f Cost|"{" ".join(total_needed)}"|inline '
+	# Take ingredients on start
+	raw_ingredients=recipe.get('ingredients',{})
+	if typeof(raw_ingredients) == 'str':
+		raw_ingredients=[i.strip() for i in raw_ingredients.split(',')]
+	if typeof(raw_ingredients)=='SafeList':
+		ingredients={}
+		for i in raw_ingredients:
+			ingredients[i]=ingredients.get(i,0)+1
+	else:
+		ingredients=raw_ingredients
+
+	if ingredients:
+		ingredient_desc=','.join((f'{q}x{i}' if (q>1) else i) for (i,q) in ingredients.items())
+		if bag:
+			items_missing = ingredients
+			for b in bag:
+				contents=b[1]
+				for i in list(items_missing.keys()):
+					if i in contents:
+						bag_items=contents.get(i,0)
+						missing_items=items_missing[i]
+						items_taken=min(missing_items,bag_items)
+						# NB: this will also check for and remove items for which 0 are required from the missing,
+						#  but not from the bag, this intentionally allows for prerequirements that are not consumed
+						if still_missing:=missing_items-items_taken:
+							items_missing[i]=still_missing
+						else:
+							items_missing.pop(i)
+						if still_left:=bag_items-items_taken:
+							contents[i]=still_left
+						else:
+							contents.pop(i)
+			if len(items_missing):
+				return f'-title "{name} doesn\'t have the ingredients for {item_d}." -desc "You need {", ".join(items_missing)} in your bags." '
+			else:
+				bag_update=True
+		fields+=f'-f Ingredients|"{ingredient_desc}"|inline '
 
 # roll for success
 boni = []
@@ -213,7 +249,7 @@ if progress >= effort:
 		target_bag = pref_bags[0] if pref_bags else 0
 		bag[target_bag][1][item] = bag[target_bag][1].get(item,0)+amount
 		desc+=f'\n{item_d} {"was" if amount==1 else "were"} added to your {bag[target_bag][0].lower()}.'
-		set_cvar('bag_var',dump_json(bag))
+		bag_update=True
 	else:
 		desc+=f' Please add {item_d} to your sheet.\nYou can manage your inventory with `!bag` to have it added automatically next time.'
 else:
@@ -227,6 +263,9 @@ if img_url:=recipe.get('img'):
 # Apply the modifications to the character variables and counters
 char.set_cvar(cvn, dump_json(project))
 char.mod_cc(ccn, -1, True)
+if bag_update:	# update bag at end to avoid item loss
+	set_cvar(bag_var, dump_json(bag))
+
 fields += f'-f Downtime|"{cc_str(ccn)}"|inline '
 
 return f'-title "{title}" -desc "{desc}" ' + fields
