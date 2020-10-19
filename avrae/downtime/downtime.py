@@ -1,8 +1,6 @@
 tembed <drac2>
 # TODO data https://www.dndbeyond.com/sources/xgte/downtime-revisited#undefined
 #   Sub commnd xge to enble, phb for phb downtime nd dmg for dmg downtime stuff set in svar
-# 'default' key for if no result applies (instead of stupid -100)
-# gvar for downtime and craft with user facing skill names
 # besides code, can have 'item' (auto added to bag) and other stuff
 #	- item name added to description automatically like scroll found reading
 #    - quantity for item, can be roll, roll string can contain var identifiers set by {code} and other cvars or quantity:numnber or quantity:str
@@ -11,8 +9,8 @@ tembed <drac2>
 # image thumb per activity
 # image per result (overrides or -image and activity is -thumb or img= and thumb= )
 # exhaustion (or in general consumable +-) as a result option (nb avrae dev !exhaustion alias with cc ties into !lr already, just need to be compatible)
-# tool precondition (fishing: tackle, reading: book, hunting bow or trap, burglary=crowbar, working with tool: tool)
-# "Inspiration" snippet & cc, inspiration as a result option (NB inspiration effect and snippet used for bard)
+# tool/skill/item precondition (tool is both) (ownership and precondition) (fishing: tackle, reading: book, hunting bow or trap, burglary=crowbar, working with tool: tool)
+# "Inspiration" (just a cc?) snippet & cc, inspiration as a result option (NB inspiration effect and snippet used for bard)
 # relation added to !relation, need a table for location?(channel)
 
 # and make sure most of that is possible
@@ -50,7 +48,9 @@ downtime=char.get_cc(ccn)
 if not downtime:
   return f'-title "{name} doesn\'t have time to {arg}" -desc "You have no more downtime left." -f Downtime|"{cc_str(ccn)}"|inline'
 
+
 # Preconditions met, roll for results
+game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
 title=f'{name} spends their free time {particle}. '
 node = activity
 code,desc,fields='','',''
@@ -64,7 +64,7 @@ while node:
             fields += f'-f Roll|"{r.full}"|inline '
         elif skill:=table.get('skill'):
             r = vroll( character().skills[skill].d20())
-            fields += f'-f {skill}|"{r.full}"|inline '
+            fields += f'-f {game_data["skills"][skill]}|"{r.full}"|inline '
         else:
             r = vroll('1d100')
             fields += f'-f Roll|"{r.full}"|inline '
@@ -72,7 +72,7 @@ while node:
         if options:
             node=table[str(max(options))]
         else:
-            node=None
+            node=table.get('default',None)
     else:
         node=None
 

@@ -1,0 +1,72 @@
+{
+  "read":
+  {
+    "table":
+    {
+      "skill":"investigation",
+      "1":{
+        "code":"{{dmg=roll('2d6')}}{{character().modify_hp(-dmg)}}",
+        "text":"You read Bane's manifesto and take {{dmg}}[psychic] damage."
+      },
+      "2":{"text":"You read a treatise on metaepistemology and while satisfying you are exhausted."},
+      "3":{"text":"You find a recipe for a cake and feel hungry."},
+      "5":{"text":"You find a scroll hidden between the pages of a book. ",
+        "table":
+        {
+          "skill":"arcana",
+          "default":{"text":"You just can't figure out which spell it is."},
+          "15":{
+            "table":
+            {
+              "roll":"1d4",
+              "1":{"text":"It's a scroll of charm."},
+              "2":{"text":"It's a scroll of cure wounds."},
+              "3":{"text":"It's a scroll of web."},
+              "4":{"text":"It's a scroll of invisiblity."}
+            }
+          }
+        }
+      }
+    }
+  },
+  "socialize":
+  {
+    "particle":"socializing",
+    "text":"You make a new acquaintance"
+  },
+  "shop":
+  {
+    "particle":"shopping",
+    "text":"You look around, but you can't find anything worthwhile."
+  },
+  "steal":
+  {
+    "text":"You are caught in the act. You have to run away, but the victim saw your face."
+  },
+  "worship":
+  {
+    "particle":"worshipping",
+    "text":"You're not sure your prayers are answered or if anyone is even listening."
+  },
+  "relax":
+  {
+    "text":"You lay around doing nothing and accomplish nothing."
+  },
+  "scavenge":
+  {
+    "particle":"scavenging",
+    "text":"You find a rusty sword"
+  },
+  "hunt":
+  {
+    "text":"You catch a coney. At least you have something to eat."
+  },
+  "work":
+  {
+    "text":"You do an adequate job and make {2d6} silver pieces"
+  },
+  "perform":
+  {
+    "text":"Your performance draws a small crowd and earn {3d4} silver pieces."
+  }
+}

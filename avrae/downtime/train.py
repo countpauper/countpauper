@@ -83,6 +83,7 @@ else:
 
 desc=''
 fields=''
+game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
 
 # get the current progress
 cvn = 'Training'
@@ -90,18 +91,23 @@ training_progress = load_json(get(cvn, '{}'))
 progress = training_progress.get(option)
 # initial progress set by bonus
 if not progress:
-	talents=training.get('talent','')
-	id_str=talents.replace('-','|').replace('+','|').replace('*','|').replace('/','|')
-	start_vars=[id for id in id_str.split("|") if id.isidentifier()]
-	for start_var in start_vars:
-		talents = talents.replace(start_var,str(get(start_var,start_var)))
-	for (skill_name, skill) in char.skills:
-		if skill_name in start_var:
-			talents = talents.replace(skill_name,str(int(skill.prof*proficiencyBonus)))
-	progress = roll(talents)
-	if cc_max and cc_reset=='long':
-		progress*=cc_max
-	progress=min(progress,effort-1)
+	if talents:=training.get('talent',None):
+		id_str=talents.replace('-','|').replace('+','|').replace('*','|').replace('/','|')
+		start_vars=[id for id in id_str.split("|") if id.isidentifier()]
+		for start_var in start_vars:
+			if start_var in game_data['cvar']:
+				talents = talents.replace(start_var,f'{get(start_var,0)}[{game_data["cvar"][start_var]}]')
+		for (skill_name, skill) in char.skills:
+			if skill_name in start_var and not exists(skill_name):
+				talents = talents.replace(skill_name,f'{int(skill.prof*proficiencyBonus)}[{game_data["skills"][skill_name]}]')
+		progress_roll = vroll(talents)
+		fields+=f'-f Talent|"{progress_roll}"|inline '
+		progress = vroll(talents).total
+		if cc_max and cc_reset=='long':
+			progress*=cc_max
+		progress=min(progress,effort-1)
+	else:
+		progress=0
 
 # compute the cost and clip the amount to the maximum needed to complete
 amount = min(amount,max(0,effort-progress))

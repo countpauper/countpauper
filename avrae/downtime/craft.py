@@ -82,7 +82,6 @@ elif tool:
 	proficient = toolprofs.get(tool.lower(), 0)
 if char.levels.get('Bard') >= 2:
 	proficient = max(proficient,0.5)
-
 if recipe.get('proficient', False) and not proficient:
 	return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {tool}.\nUse `!tool pro {tool}` to add your proficiency."'
 
@@ -198,11 +197,12 @@ else:
 boni = []
 boni += [f'{get(e)}[{e[:3]}]' if e.isidentifier() else e for e in recipe.get('bonus', '').split('+') if e]
 
+game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
 rollstr = ['1d20', '2d20kh1', '2d20kl1'][args.adv()]
 if skill:
 	skilld20 = char.skills[skill].d20(args.adv(False,True))
 	r = vroll('+'.join([skilld20] + boni))
-	fields += f'-f "{skill}"|"{r.full}"|inline '
+	fields += f'-f "{game_data["skills"][skill]}"|"{r.full}"|inline '
 elif tool:
 	boni=[f'{int(proficient*proficiencyBonus)}[{tool}]']+boni
 	r = vroll('+'.join([rollstr] + boni))
