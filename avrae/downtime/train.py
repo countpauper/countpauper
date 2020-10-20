@@ -3,10 +3,12 @@ embed <drac2>
 
 # load all gvars to data
 sv = load_json(get_svar('downtime','{}'))
-gv= sv.get('training',['2605a178-bff2-4553-8548-6778ce0ba8e2'])
+gv= sv.get('training','2605a178-bff2-4553-8548-6778ce0ba8e2')
+if typeof(gv)=='str':
+	gv=gv.split(',')
 data={}
 for tgv in gv:
-	data.update({k.lower():v for (k,v) in load_json(get_gvar(tgv)).items()})
+	data.update({k.lower():v for (k,v) in load_json(get_gvar(tgv.strip())).items()})
 
 # parse arguments into amount,options
 arg = "&*&"

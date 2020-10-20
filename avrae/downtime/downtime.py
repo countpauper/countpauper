@@ -17,9 +17,11 @@ tembed <drac2>
 # and make sure most of that is possible
 sv = load_json(get_svar('downtime','{}'))
 gv= sv.get('activities',['b566982b-c7f8-4ea4-af47-4fd82623b335'])
+if typeof(gv)=='str':
+	gv=gv.split(',')
 data={}
 for dgv in gv:
-	data.update(load_json(get_gvar(dgv)))
+	data.update(load_json(get_gvar(dgv.strip())))
 
 # parse arguments
 arg="&*&".lower()
@@ -80,56 +82,14 @@ while node:
 	else:
 		node=None
 
+# the items are added in a separate gvar routine, after the {{code}} is executed, so variables declared in the downtime json
+#  can be used in both the description and the items
+
 # Apply the changes to the character
-bag_var='bags'
-if exists(bag_var):
-	bag=load_json(get(bag_var))
-else:
-	bag=None
-
-#TODO inject code here using {'{'*2 and whatever if possible, to set vars
-items_desc={}
-bag_update=False
-for (item,q_str) in items.items():
-	# split all identifiers, by replacing all operators "+-*/" with spaces and removing all spaces and tabs
-	vars=[v for v in q_str.translate("".maketrans("+-*/","    "," \t\n")).split() if v.isidentifier()]
-	# replace all these identifiers with local variables
-	for var in vars:
-		q_str.replace(var,str(get(var,0)))
-	q = roll(q_str)
-	if q:
-		if bag:
-			# add or remove items that are already owned and find prefered add bag
-			special_bags=game_data.get('special_bags',[])
-			pref_bag=None
-			for b in bag:
-				if item in b[1]:
-					bag_items=b[1][item]
-					item_delta=max(-bag_items,q)
-					q-=item_delta
-					items_desc[item] = items_desc.get(item, 0) + item_delta
-					b[1][item]=bag_items+item_delta
-				if not pref_bag and b[0] not in special_bags:
-					pref_bag=b
-			if q>0:
-				if not pref_bag:
-					bag.append(["Held",{}])
-					pref_bag=bag[-1]
-				pref_bag[1][item] = pref_bag[1].get(item,0)+q
-				items_desc[item] = items_desc.get(item, 0) + q
-
-			bag_update=True
-		else:
-			items_desc[item] = items_desc.get(item,0)+q
-
-items_desc=",".join([f'{q}x{i}' for (i,q) in items_desc.items()])
-#fields+=f'-f Items|"{items_desc}" '
-if bag_update:	# update bag at end to avoid item loss TODO: add to end of code instead and deltas with rolls
-	set_cvar(bag_var, dump_json(bag))
-
 char.mod_cc(ccn,-1,True)
 fields+=f'-f Downtime|"{cc_str(ccn)}"|inline '
 if not desc:
 	desc='Nothing happens.'
 return f'-title "{title}" {code} -desc "{desc}" '+fields
 </drac2>
+{{get_gvar('dda143a1-2586-4d03-8fa6-3ee1e204f87b').replace('@I@',str(items))}}

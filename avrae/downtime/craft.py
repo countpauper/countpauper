@@ -6,9 +6,11 @@ embed <drac2>
 
 sv = load_json(get_svar('downtime','{}'))
 gv= sv.get('recipes',['6498daf1-6d03-43ac-822a-2badfd533749'])
+if typeof(gv)=='str':
+	gv=gv.split(',')
 data={}
 for rgv in gv:
-	data.update(load_json(get_gvar(rgv)))
+	data.update(load_json(get_gvar(rgv.strip())))
 
 arg = "&*&"
 arg_split=arg.split(" -",maxsplit=1)
