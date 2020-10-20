@@ -1,0 +1,2 @@
+{{cc='DM Inspiration'}}
+{{f'game ds adv -phrase "DM Inspiration {character().mod_cc(cc,-1)}{cc_str(cc)}"' if character().cc_exists(cc) and character().get_cc(cc)>0 else 'echo DM Inspiration not available.' }}
