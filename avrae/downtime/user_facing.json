@@ -57,5 +57,6 @@
     "wisdom": "Wisdom",
     "wisdomMod": "Wis Mod",
     "wisdomSave": "Wis Save"
-  }
+  },
+  "special_bags": ["quiver","'worn","case, map","case, scroll","case, crossbow bolt","coin pouch"]
 }

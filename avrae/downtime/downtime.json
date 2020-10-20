@@ -14,15 +14,15 @@
         "table":
         {
           "skill":"arcana",
-          "default":{"text":"You just can't figure out which spell it is."},
+          "default":{"text":"You just can't figure out which spell it is.", "items":{"Unknown Scroll": 1}},
           "15":{
             "table":
             {
               "roll":"1d4",
-              "1":{"text":"It's a scroll of charm."},
-              "2":{"text":"It's a scroll of cure wounds."},
-              "3":{"text":"It's a scroll of web."},
-              "4":{"text":"It's a scroll of invisiblity."}
+              "1":{"text":"It's a scroll of charm.", "items": {"Scroll of Charm":1}},
+              "2":{"text":"It's a scroll of cure wounds.", "items": {"Scroll of Cure Wounds":1}},
+              "3":{"text":"It's a scroll of web.", "items": {"Scroll of Web":1}},
+              "4":{"text":"It's a scroll of invisiblity.", "items": {"Scroll of Invisibility":1}}
             }
           }
         }
@@ -37,7 +37,8 @@
   "shop":
   {
     "particle":"shopping",
-    "text":"You look around, but you can't find anything worthwhile."
+    "text":"You look around, but you can't find anything worthwhile.",
+    "items": {"cp": "-1d6"}
   },
   "steal":
   {
@@ -63,7 +64,9 @@
   },
   "work":
   {
-    "text":"You do an adequate job and make {2d6} silver pieces"
+    "code":"{{wage=roll('2d6')}}",
+    "text":"You do an adequate job and make {wage} silver pieces",
+    "items": {"sp": "wage"}
   },
   "perform":
   {

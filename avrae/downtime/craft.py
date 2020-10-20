@@ -244,7 +244,7 @@ if progress >= effort:
 		if pref_bag:=recipe.get('bag'):
 			pref_bags+=[b for b in  range(0,len(bag)) if pref_bag.lower() in bag[b][0].lower()]
 		# else prefer all bags that are not special purpose
-		special_bags=['quiver','worn','case, map','case, scroll','case, crossbow bolt','coin pouch']
+		special_bags=game_data.get('special_bags',[])
 		pref_bags+=[b for b in range(0,len(bag)) if bag[b][0].lower() not in special_bags]
 		# add the item to the preferred bag
 		target_bag = pref_bags[0] if pref_bags else 0
