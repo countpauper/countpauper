@@ -271,6 +271,5 @@ if effort>0:
 if bag_update:	# update bag at end to avoid item loss
 	set_cvar(bag_var, dump_json(bag))
 
-
 return f'-title "{title}" -desc "{desc}" ' + fields
 </drac2>

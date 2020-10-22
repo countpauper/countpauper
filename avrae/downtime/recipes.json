@@ -1,7 +1,7 @@
 {
   "healing potion":{ "tool":"Herbalism Kit", "dc":12, "proficient":true, "cost":25, "effort":1, "item":"Healing Potion" },
   "axe":{ "tool":"Smith's Tools", "bonus":"strengthMod", "dc":8, "proficient":true, "effort":2, "item":"Handaxe" },
-  "arrow":{ "tool":"Woodcarver's Tools", "bonus":"dexterityMod", "dc":7, "cost":0.5, "effort":1, "item":"Arrow", "amount":10, "bag":"Quiver", "img":"http://2.bp.blogspot.com/-uU4XLJCvNoE/ViPkayzIjVI/AAAAAAAAGN8/oz8clu7juC8/s1600/arrows_image.jpeg"},
+  "arrows":{ "tool":"Woodcarver's Tools", "bonus":"dexterityMod", "dc":7, "cost":0.5, "effort":1, "item":"Arrows", "plural":"Arrows", "amount":10, "bag":"Quiver", "img":"http://2.bp.blogspot.com/-uU4XLJCvNoE/ViPkayzIjVI/AAAAAAAAGN8/oz8clu7juC8/s1600/arrows_image.jpeg"},
   "ankheg plate":{ "tool":"Smith's Tools", "bonus":"strengthMod", "dc":15, "cost":2000, "ingredients":"Ankheg Shell", "proficient":true, "effort": 12, "item":"Ankheg Plate Mail+1" },
   "rations":{ "tool":"Cook's Utensils", "bonus":"wisdomMod+dexterityMod", "dc":5, "cost":1, "ingredients":{"Recipe":0}, "effort": 1, "item":"Rations", "plural":"Rations", "amount":4, "img":"https://i.imgur.com/ijUrS4v.jpg" }
 }
