@@ -2,6 +2,7 @@
 # Bladesong alias routine
 # TODO
 # simplify reusing !bladesong (with a use) when no arguments and no effect active
+# or use bladesing -i convention to 'reuse'
 # bladesong defense sub command
 # help removed from command
 # bladesong snippet for advantage or bonus, hopefully after https://github.com/avrae/avrae/issues/1294

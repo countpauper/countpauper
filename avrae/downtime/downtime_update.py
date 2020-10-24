@@ -1,10 +1,14 @@
 <drac2>
+#Downtime code run after {code} to apply cusomizable updates
 # input
 items=@I@
+consumed=@C@
 game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
 
 #output
 fields =''
+fields += f' -f "{typeof(consumed)}"|"{consumed.items()}" '
+
 bag_update=False
 bag_var='bags'
 if exists(bag_var):
@@ -34,7 +38,7 @@ for (i,q_str) in items.items():
 					q -= item_delta
 					items_log[item] = items_log.get(item, 0) + item_delta
 					b[1][item] = bag_items + item_delta
-				if not pref_bag and b[0] not in special_bags:
+				if not pref_bag and b[0].lower() not in special_bags:
 					pref_bag = b
 			if q > 0:
 				if not pref_bag:
@@ -51,9 +55,22 @@ if items_lost:= ",".join([(f'{-q} x {i}' if q<-1 else i) for (i, q) in items_log
 	fields+=f'-f "Items Lost"|"{items_lost}"|inline '
 if items_gained:= ",".join([(f'{q} x {i}' if q>1 else i) for (i, q) in items_log.items() if q>0]):
 	fields+=f'-f "Items Gained"|"{items_gained}"|inline '
-
 if bag_update:  # update bag at end to avoid one sided item loss
 	set_cvar(bag_var, dump_json(bag))
 
+
+for (cc,q_str) in consumed.items():
+	# same routine as for items, replace identifiers with variables
+	vars = [v for v in q_str.translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+	for var in vars:
+		q_str = q_str.replace(var, str(get(var, 0)))
+	q=roll(q_str)
+	if not character().cc_exists(cc):
+		cc=cc.lower()
+		if not cc_exists(cc):
+			fields += f'-f "{cc}[{-q}]"|"Not Available"|inline '
+			continue
+	character().mod_cc(cc,-q)
+	fields+=f'-f "{cc}[{-q}]"|"{cc_str(cc)}"|inline '
 return fields
 </drac2>

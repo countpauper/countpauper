@@ -1,5 +1,4 @@
 embed <drac2>
-# TODO:
 
 # load all gvars to data
 sv = load_json(get_svar('downtime','{}'))

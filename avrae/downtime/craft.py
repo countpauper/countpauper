@@ -158,15 +158,11 @@ else:
 		else:
 			fields += f'-f Cost|"{" ".join(total_needed)}"|inline '
 	# Take ingredients on start
-	raw_ingredients=recipe.get('ingredients',{})
-	if typeof(raw_ingredients) == 'str':
-		raw_ingredients=[i.strip() for i in raw_ingredients.split(',')]
-	if typeof(raw_ingredients)=='SafeList':
-		ingredients={}
-		for i in raw_ingredients:
-			ingredients[i]=ingredients.get(i,0)+1
-	else:
-		ingredients=raw_ingredients
+	ingredients=recipe.get('ingredients',{})
+	if typeof(ingredients) == 'str':
+		ingredients=[i.strip() for i in ingredients.split(',')]
+	if typeof(ingredients)=='SafeList':
+		ingredients={ ii:ingredients.count(ii) for ii in ingredients }
 
 	if ingredients:
 		ingredient_desc=','.join((f'{q}x{i}' if (q>1) else i) for (i,q) in ingredients.items())

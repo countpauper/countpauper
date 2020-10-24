@@ -1,16 +1,21 @@
 {
   "read":
   {
+    "tool":"Book",
+    "img": "https://images2.imgbox.com/83/9a/XRYtgpU7_o.jpg",
     "table":
     {
       "skill":"investigation",
-      "1":{
+       "1":{
         "code":"{{dmg=roll('2d6')}}{{character().modify_hp(-dmg)}}",
         "text":"You read Bane's manifesto and take {{dmg}}[psychic] damage."
       },
-      "2":{"text":"You read a treatise on metaepistemology and while satisfying you are exhausted."},
-      "3":{"text":"You find a recipe for a cake and feel hungry."},
-      "5":{"text":"You find a scroll hidden between the pages of a book. ",
+      "2":{
+        "text":"You read a treatise on metaepistemology and while satisfying you are exhausted.",
+        "consume":{"Exhaustion":-1}
+      },
+      "3":{"text":"You find a recipe for a cake and feel hungry.", "img": "https://img.delicious.com.au/_cQeN3Po/w759-h506-cfill/del/2020/07/burnt-butter-almond-and-honey-cake-135325-2.jpg"},
+      "20":{"text":"You find a scroll hidden between the pages of a book. ",
         "table":
         {
           "skill":"arcana",
@@ -42,7 +47,9 @@
   },
   "steal":
   {
-    "text":"You are caught in the act. You have to run away, but the victim saw your face."
+    "tool":"Crowbar",
+    "text":"You are caught in the act. You have to pay for bail.",
+    "items": {"gp": "-5d8"}
   },
   "worship":
   {
@@ -51,7 +58,8 @@
   },
   "relax":
   {
-    "text":"You lay around doing nothing and accomplish nothing."
+    "text":"You lay around doing nothing and accomplish nothing.",
+    "consume": "Exhaustion"
   },
   "scavenge":
   {
@@ -60,7 +68,15 @@
   },
   "hunt":
   {
-    "text":"You catch a coney. At least you have something to eat."
+    "text":"You catch a coney. At least you have something to cook.",
+    "items": "Coney",
+    "img": "https://www.peta.org/wp-content/uploads/2013/10/200_2D00_IssuesWildlifeLivingRabbit.jpg"
+  },
+  "fish":
+  {
+    "tool":"Fishing Tackle",
+    "text":"You catch a bass. At least you have something to cook.",
+    "items": "Bass"
   },
   "work":
   {
