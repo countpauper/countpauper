@@ -1,14 +1,18 @@
 !alias time
 <drac2>
+#TODO: if argument is a known channel, set that channel's name instead
+# TODO !time delete channel to remove old channels
+# TODO: better embed
+# TODO: moon phase since time 0
+# TODO survival check to see time for non dms
+
 A=&ARGS&
 cal=load_json(get_gvar("1665221a-908a-40e9-ac8b-24ce938dfe09"))
 envs=load_json(get_gvar("e035815d-80c9-465c-91d4-60d4c6446c23"))
 di=0
 do={}
 d=None
-tv = get_svar("ictime")   TODO default value
-tv = load_json(tv) if tv else {}
-TODO: if argument is a known channel, set that channel's name instead
+tv = load_json(get_svar('ictime','{}'))
 
 cn=ctx.channel.name
 tvc = tv.get(cn,{})

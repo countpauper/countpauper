@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/misc/gem_script.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/gems.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bladesong/bladesong.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/downtime/craft.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/craft.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/downtime/downtime.json" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/downtime.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/downtime/downtime.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/downtime.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/downtime/downtime_update.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/downtime_update.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/downtime/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/gems.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/gems.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/time.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/time.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +33,49 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.gem_script">
+    <configuration name="gem_script" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="avrae" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\edsdl\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/misc" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/gem_script.py" />
+      <option name="PARAMETERS" value="250" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="gems" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="avrae" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\edsdl\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/misc" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/gems.py" />
+      <option name="PARAMETERS" value="250" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="random_shuffle" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -59,6 +99,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.gem_script" />
+        <item itemvalue="Python.gems" />
         <item itemvalue="Python.random_shuffle" />
       </list>
     </recent_temporary>
@@ -77,33 +119,41 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="686" y="182" key="#gem_script" timestamp="1603618135631">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="686" y="182" key="#gem_script/0.0.1920.1080@0.0.1920.1080" timestamp="1603618135631" />
+    <state x="686" y="182" key="#gems" timestamp="1603618074646">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="686" y="182" key="#gems/0.0.1920.1080@0.0.1920.1080" timestamp="1603618074646" />
     <state x="686" y="182" key="#random_shuffle" timestamp="1603451883503">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="686" y="182" key="#random_shuffle/0.0.1920.1080@0.0.1920.1080" timestamp="1603451883503" />
-    <state width="1899" height="295" key="GridCell.Tab.0.bottom" timestamp="1603452395795">
+    <state width="1899" height="295" key="GridCell.Tab.0.bottom" timestamp="1603702178205">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1899" height="295" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1603452395795" />
-    <state width="1899" height="295" key="GridCell.Tab.0.center" timestamp="1603452395795">
+    <state width="1899" height="295" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1603702178205" />
+    <state width="1899" height="295" key="GridCell.Tab.0.center" timestamp="1603702178205">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1899" height="295" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1603452395795" />
-    <state width="1899" height="295" key="GridCell.Tab.0.left" timestamp="1603452395795">
+    <state width="1899" height="295" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1603702178205" />
+    <state width="1899" height="295" key="GridCell.Tab.0.left" timestamp="1603702178205">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1899" height="295" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1603452395795" />
-    <state width="1899" height="295" key="GridCell.Tab.0.right" timestamp="1603452395795">
+    <state width="1899" height="295" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1603702178205" />
+    <state width="1899" height="295" key="GridCell.Tab.0.right" timestamp="1603702178205">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1899" height="295" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1603452395795" />
+    <state width="1899" height="295" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1603702178205" />
     <state x="667" y="174" width="585" height="732" key="find.popup" timestamp="1602861134503">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="667" y="174" width="585" height="732" key="find.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1602861134503" />
-    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup" timestamp="1603107320212">
+    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup" timestamp="1603640966820">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1603107320212" />
+    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1603640966820" />
   </component>
 </project>

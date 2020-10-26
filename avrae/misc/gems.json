@@ -1,0 +1,79 @@
+  {
+  "sizes":
+  {
+    "Tiny {}": 0.01,
+    "Small {}": 0.1,
+    "{}": 1,
+    "Large {}": 10,
+    "Huge {}": 100,
+    "Gargantuan {}": 1000
+  },
+  "qualities":
+  {
+      "Bag of {} dust": 0.05,
+      "Uncut {}": 0.1,
+      "Cracked {}": 0.2,
+      "Chipped {}": 0.5,
+      "{}":1,
+      "Shiny {}":2,
+      "Perfect {}": 5,
+      "Glowing {}": 10
+  },
+  "gems":{
+    "Stone":1,
+    "Bone":1,
+    "Wooden Bead":2,
+
+    "Glass Bead":2,
+    "Silver Bead":2,
+
+    "Marble":5,
+    "Gold Bead": 5,
+
+    "Agate": 20,
+    "Azurite" : 20,
+    "Quartz" : 20,
+    "Hematite" : 20,
+    "Lapis Lazuli" : 20,
+    "Malachite" : 20,
+    "Obsidian" : 20,
+    "Rhodochrosite" : 20,
+    "Tiger's eye" : 20,
+    "Turquoise" : 20,
+    "Freshwater Pearl" : 20,
+
+    "Bloodstone": 50,
+    "Carnelian": 50,
+    "Chrysoprase": 50,
+    "Jasper": 50,
+    "Moonstone": 50,
+    "Onyx": 50,
+    "Peridot": 50,
+    "Sardonyx": 50,
+    "Zircon": 50,
+
+    "Amber": 100,
+    "Amethyst": 100,
+    "Chrysoberyl": 100,
+    "Coral": 100,
+    "Garnet": 100,
+    "Jade": 100,
+    "Pearl": 100,
+    "Tourmaline": 100,
+
+    "Alexandrite": 200,
+    "Aquamarine": 200,
+    "Beryl": 200,
+    "Black Pearl": 200,
+    "Topaz": 200,
+
+    "Emerald": 500,
+    "Opal": 500,
+    "Sapphire": 500,
+
+    "Ruby": 1000,
+    "Diamond": 1000,
+    "Jacinth": 1000
+  }
+
+}
