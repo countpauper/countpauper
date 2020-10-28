@@ -1,7 +1,10 @@
 tembed <drac2>
 # TODO data https://www.dndbeyond.com/sources/xgte/downtime-revisited#undefined
 #   Sub commnd xge to enble, phb for phb downtime nd dmg for dmg downtime stuff set in svar
+# "fail" and "crit" option in table of roll result is fail or crit
 # skill override !downtime perform -with drum,adv,nature|adv... < split to list of tool/skill/die, use up one per nested table until empty.
+# skill override also supports + and - digit bonus option
+# override also supports auto fail and crit option
 # skill & tool proficiency precondition ?(tool is both) (ownership and precondition)
 # temp hp as json/ damage (negative hp)
 # "Inspiration" (just a cc?) snippet & cc, inspiration as a result option (NB inspiration effect and snippet used for bard)

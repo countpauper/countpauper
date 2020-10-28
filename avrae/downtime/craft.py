@@ -1,8 +1,9 @@
 embed <drac2>
 #TODO
-# don't use recipe names, use item names, it's a sorted array
+# -with option, same as downtime (tool/skill override, bonus, advantage, disadvantage, crit and fail)
+# (partially done, just not all checked for prereqs) don't use recipe names, use item names, it's a sorted array
 #	- by preference and if preconditions aren't met (tool, prof, ingredient), another one is tried
-#	- (last precondition fail is reported0
+#	- (last precondition fail is reported
 
 sv = load_json(get_svar('downtime','{}'))
 gv= sv.get('recipes',['6498daf1-6d03-43ac-822a-2badfd533749'])
@@ -20,13 +21,16 @@ toolprofs = {pstr.strip().lower(): 1 for pstr in get('pTools', '').split(',') if
 toolprofs.update({estr.strip().lower(): 2 for estr in get('eTools', '').split(',') if not estr.isspace()})
 
 if choice:
-	matches = [n for n in data.keys() if n.startswith(choice)]
+	matches = [n for (n,r) in data.items() if n.lower() == choice.lower() or r.get('item','').lower() == choice.lower() or r.get('plural','')== choice.lower()]
+	# partial match as backup
+	if not matches:
+		matches = [n for (n,r) in data.items() if n.lower().startswith(choice.lower()) or r.get('item','').lower().startswith(choice.lower()) or r.get('plural','').startswith(choice.lower())]
 	# not a recipe, if it's a category only list those recipes
 	if not matches:
 		idchoise=choice.replace(' ','')
 		recipes = [n for (n,r) in data.items() if r.get('skill','').lower().startswith(idchoise.lower()) or r.get('tool','').lower().startswith(choice)]
 		if recipes:
-			return f'-title "{name} wonders what you can do with {choice}." -desc "You can `!craft <recipe>` where recipe is one of {",".join(recipes)}." '
+			return f'-title "{name} wonders what you can do with {choice}." -desc "You can `!craft <recipe>` where recipe is one of {", ".join(recipes)}." '
 
 # invalid input or help: show how it works.
 if choice == '?' or choice == 'help' or choice == '' or not matches:
@@ -240,14 +244,21 @@ if progress >= effort:
 		pref_bags=[]
 		# if a bag is specified in the recipe, prefer that first
 		if pref_bag:=recipe.get('bag'):
-			pref_bags+=[b for b in  range(0,len(bag)) if pref_bag.lower() in bag[b][0].lower()]
-		# else prefer all bags that are not special purpose
-		special_bags=game_data.get('special_bags',[])
-		pref_bags+=[b for b in range(0,len(bag)) if bag[b][0].lower() not in special_bags]
-		# add the item to the preferred bag
-		target_bag = pref_bags[0] if pref_bags else 0
-		bag[target_bag][1][item] = bag[target_bag][1].get(item,0)+amount
-		desc+=f'\n{item_d} {"was" if amount==1 else "were"} added to your {bag[target_bag][0].lower()}.'
+			if pref_bag is True:
+				pref_bags=bag
+			else:
+				pref_bags+=[b for b in  range(0,len(bag)) if pref_bag.lower() in bag[b][0].lower()]
+		if pref_bags is bag:
+			bag+=[[item,{}]]*amount
+			desc+=f'\n{item_d} {"was" if amount==1 else "were"} added to your bags.'
+		else:
+			# else prefer all bags that are not special purpose
+			special_bags=game_data.get('special_bags',[])
+			pref_bags+=[b for b in range(0,len(bag)) if bag[b][0].lower() not in special_bags]
+			# add the item to the preferred bag
+			target_bag = pref_bags[0] if pref_bags else 0
+			bag[target_bag][1][item] = bag[target_bag][1].get(item,0)+amount
+			desc+=f'\n{item_d} {"was" if amount==1 else "were"} added to your {bag[target_bag][0].lower()}.'
 		bag_update=True
 	else:
 		desc+=f' Please add {item_d} to your sheet.\nYou can manage your inventory with `!bag` to have it added automatically next time.'
