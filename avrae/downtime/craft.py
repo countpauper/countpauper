@@ -14,9 +14,8 @@ for rgv in gv:
 	data.update(load_json(get_gvar(rgv.strip())))
 
 arg = "&*&"
-arg_split=arg.split(" -",maxsplit=1)
-choice=arg_split[0]
-args=argparse('-'+arg_split[1] if len(arg_split)>1 else '')
+choice=arg.split(" -",maxsplit=1)[0]
+args=argparse(arg)
 toolprofs = {pstr.strip().lower(): 1 for pstr in get('pTools', '').split(',') if not pstr.isspace()}
 toolprofs.update({estr.strip().lower(): 2 for estr in get('eTools', '').split(',') if not estr.isspace()})
 
@@ -68,11 +67,20 @@ if effort>0:
 	if not downtime:
 		return f'-title "{name} doesn\'t have time to craft {item_d}." -desc "You have no more downtime left. Go do something useful." -f Downtime|"{cc_str(ccn)}"|inline'
 
+override = args.last('with')
+override = override.lower().split('&') if override else []
+
+game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
+
 # Check precondition: tool owned
 bag_var='bags'
 bag = load_json(bags) if exists(bag_var) else None
 bag_update=False
 tool = recipe.get('tool')
+for o in override:
+	tool_override = [t for t in game_data.get('tools',[]) if t.lower().startswith(o)]
+	if tool_override:
+		tool = tool_override[0]
 
 if bag is not None and tool is not None:
 	if not any([(b[1].get(tool,0)>0) for b in bag]):
@@ -80,6 +88,10 @@ if bag is not None and tool is not None:
 
 # Check precondition: proficiency
 skill = recipe.get('skill')
+for o in override:
+	skill_override = [s for (s,d) in game_data.get('skills',{}).items() if s.lower().startswith(o) or d.lower().startswith(o)]
+	if skill_override:
+		skill = skill_override[0]
 
 proficient = 0
 if skill:
@@ -199,31 +211,53 @@ else:
 boni = []
 boni += [f'{get(e)}[{e[:3]}]' if e.isidentifier() else e for e in recipe.get('bonus', '').split('+') if e]
 
-game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
-rollstr = ['1d20', '2d20kh1', '2d20kl1'][args.adv()]
-if skill:
-	skilld20 = char.skills[skill].d20(args.adv(False,True))
-	r = vroll('+'.join([skilld20] + boni))
-	fields += f'-f "{game_data["skills"][skill]}"|"{r.full}"|inline '
-elif tool:
-	boni=[f'{int(proficient*proficiencyBonus)}[{tool}]']+boni
-	r = vroll('+'.join([rollstr] + boni))
-	fields += f'-f "{tool}"|"{r.full}"|inline '
-elif boni:
-	r = vroll('+'.join([rollstr] + boni))
-	fields += f'-f Roll|"{r.full}"|inline '
-else:
-	r = None
+# add argument override bonuses
+for o in override:
+	if o[0] in '+-':
+		boni += [o]
 
-# Make progress based on roll
-if not r:
-	advance = 1
-elif r.result.crit == 1:
-	advance = 1
-elif r.total >= recipe.get('dc',1):
-	advance = 1
+# check advantage argument
+adv_override=1 if 'adv' in override else -1 if 'dis' in override else 0
+rollstr = ['1d20', '2d20kh1', '2d20kl1'][adv_override]
+
+# decide how to name the field for the roll
+rolldesc='Roll'
+if skill:
+	rolldesc = game_data["skills"][skill]
+elif tool:
+	rolldesc = tool
+
+# check crit or fail override without rolling
+if 'crit' in override:
+	advance=1
+	fields += f'-f "{rolldesc}"|crit|inline '
+elif 'fail' in override:
+	advance=0
+	fields += f'-f "{rolldesc}"|fail|inline '
 else:
-	advance = 0
+	# roll regularly
+	if skill:
+		skilld20 = char.skills[skill].d20(args.adv(False,True))
+		r = vroll('+'.join([skilld20] + boni))
+	elif tool:
+		boni=[f'{int(proficient*proficiencyBonus)}[{tool}]']+boni
+		r = vroll('+'.join([rollstr] + boni))
+	elif boni:
+		r = vroll('+'.join([rollstr] + boni))
+	else:
+		r = None
+	if r:
+		fields += f'-f "{rolldesc}"|"{r.full}"|inline '
+
+	# Make progress based on roll
+	if not r:
+		advance = 1
+	elif r.result.crit == 1:
+		advance = 1
+	elif r.total >= recipe.get('dc',1):
+		advance = 1
+	else:
+		advance = 0
 
 if advance:
 	project[recipe_name]['progress'] += advance
