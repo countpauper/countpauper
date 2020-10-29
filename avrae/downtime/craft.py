@@ -27,7 +27,7 @@ if choice:
 	# not a recipe, if it's a category only list those recipes
 	if not matches:
 		idchoise=choice.replace(' ','')
-		recipes = [n for (n,r) in data.items() if r.get('skill','').lower().startswith(idchoise.lower()) or r.get('tool','').lower().startswith(choice)]
+		recipes = [n for (n,r) in data.items() if r.get('skill','').lower().startswith(idchoise.lower()) or r.get('tool','').lower().startswith(choice.lower())]
 		if recipes:
 			return f'-title "{name} wonders what you can do with {choice}." -desc "You can `!craft <recipe>` where recipe is one of {", ".join(recipes)}." '
 

@@ -5,6 +5,7 @@ tembed <drac2>
 # skill override !downtime perform -with drum,adv,nature|adv... < split to list of tool/skill/die, use up one per nested table until empty.
 # skill override also supports + and - digit bonus option
 # override also supports auto fail and crit option
+# !craft <tool> or <skill> checks gamedata to prevent being confused if a tool has no recipes
 # skill & tool proficiency precondition ?(tool is both) (ownership and precondition)
 # temp hp as json/ damage (negative hp)
 # "Inspiration" (just a cc?) snippet & cc, inspiration as a result option (NB inspiration effect and snippet used for bard)
@@ -22,8 +23,12 @@ for dgv in gv:
 
 # parse arguments
 arg="&*&".lower()
-if arg=='?' or arg.lower()=='help' or arg=='' or not arg in data:
+choice=arg.split(" -",maxsplit=1)[0]
+args=argparse(arg)
+choices = [c for c in data.keys() if c.lower().startswith(choice)]
+if arg=='?' or arg.lower()=='help' or arg=='' or not choices:
 	return f'-title "{name} spends their free time getting help." -desc "`!downtime <activity>` where <activity> is one of {", ".join(data.keys())}."'
+choice = choices[0]
 
 # recreate downtime consumable with current config, keeping value
 char=character()
@@ -42,18 +47,15 @@ if cc_max>0:
 		char.set_cc(ccn,cc_val)
 
 # check pre conditions
-activity=data[arg]
-particle=activity.get('particle',arg+'ing')
+activity=data[choice]
+particle=activity.get('particle',choice+'ing')
 downtime=char.get_cc(ccn)
 if not downtime:
-	return f'-title "{name} doesn\'t have time to {arg}" -desc "You have no more downtime left." -f Downtime|"{cc_str(ccn)}"|inline'
+	return f'-title "{name} doesn\'t have time to {choice}" -desc "You have no more downtime left." -f Downtime|"{cc_str(ccn)}"|inline'
 
 bag_var='bags'
 if exists(bag_var):
 	bag=load_json(get(bag_var))
-	if tool := activity.get('tool'):
-		if not any([b[1].get(tool, 0) > 0 for b in bag]):
-			return f'-title "{name} doesn\'t have the tools to {arg}" -desc "You need a {tool}."'
 else:
 	bag=None
 
@@ -64,12 +66,25 @@ node = activity
 code,desc,fields, img='','','',None
 items={}
 consumed={}
-
+overrides=args.get('with',[])
+override = overrides[0] if overrides else []
+override = [o for o in override.lower().split('&') if o] if override else []
+crit_node,fail_node='crit','fail'
 while node:
 	# simple code and description
 	code+=node.get('code','')
 	desc+=node.get('text','')
 	img=node.get('img',img)
+	# node precondition: tool ownership (not skill related, use same override as table)
+	tool = node.get('tool')
+	for o in override:
+		tool_override = [t for t in game_data.get('tools', []) if t.lower().startswith(o)]
+		if tool_override:
+			tool = tool_override[0]
+	if bag and tool:
+		if not any([b[1].get(tool, 0) > 0 for b in bag]):
+			return f'-title "{name} doesn\'t have the tools to {choice}" -desc "You need a {tool}."'
+
 	# items
 	node_items= node.get('items',{})
 	if typeof(node_items)=='str':
@@ -88,30 +103,86 @@ while node:
 	for (cc,q) in node_ccs.items():
 		consumed[cc]=(f'{consumed[cc]}+' if cc in consumed else '')+str(q)
 
+
 	# check nested table
 	table=node.get('table')
 	if table:
-		if roll_expr:=table.get('roll'):
-			r = vroll('+'.join([str(get(e)) + f"[{e[:3]}]" if e.isidentifier() else e for e in roll_expr.split('+')]))
-			fields += f'-f Roll|"{r.full}"|inline '
-		elif skill:=table.get('skill'):
-			r = vroll( character().skills[skill].d20())
-			fields += f'-f {game_data["skills"][skill]}|"{r.full}"|inline '
-		elif tool := table.get('tool'):
-			prof=0.5 if get('BardLevel',0)>2 else 0
-			prof=1 if tool in get('pTools','') else prof
-			prof=2 if get('eTools','') else prof
-			prof*=proficiency
-			r = vroll(f'1f20+{int(prof)}')
-			fields += f'-f {tool}|"{r.full}"|inline '
+		override = overrides.pop(0) if overrides else None
+		override = [o for o in override.lower().split('&') if o] if override else []
+
+		# get tool with override
+		# get skill with override
+		tool = table.get('tool')
+		skill = table.get('skill')
+		for o in override:
+			tool_override = [t for t in game_data.get('tools', []) if t.lower().startswith(o)]
+			if tool_override:
+				tool = tool_override[0]
+				skill = None	# override also default skill
+		if bag and tool and not any([b[1].get(tool, 0) > 0 for b in bag]):
+			return f'-title "{name} doesn\'t have the tools to {choice}" -desc "You need a {tool}."'
+
+		for o in override:
+			skill_override = [s for (s, d) in game_data.get('skills', {}).items() if
+							  s.lower().startswith(o) or d.lower().startswith(o)]
+			if skill_override:
+				skill = skill_override[0]
+
+		# if fail or critical is oveerriden and defined, don't bother making a roll
+		roll_desc = game_data["skills"][skill] if skill else tool if tool else 'Roll'
+		if crit_node in table and 'crit' in override:
+			node = table[crit_node]
+			fields += f'-f "{roll_desc}"|crit|inline '
+		elif fail_node in table and 'fail' in override:
+			node = table[fail_node]
+			fields += f'-f "{roll_desc}"|fail|inline '
 		else:
-			r = vroll('1d100')
-			fields += f'-f Roll|"{r.full}"|inline '
-		options=[int(k) for k in table.keys() if (k.isdigit() or (k[0]=='-' and k[1:].isdigit())) and int(k) <= r.total]
-		if options:
-			node=table[str(max(options))]
-		else:
-			node=table.get('default',None)
+			# make base roll string for tool and 1d20 rolls
+			adv_override = True if 'adv' in override else False if 'dis' in override else None
+			rollstr = {None: '1d20', True: '2d20kh1', False: '2d20kl1'}[adv_override]
+			# add argument override bonuses
+			boni = []
+			for o in override:
+				if o[0] == '+':
+					boni += [o[1:]]
+				elif o[0] == '-':
+					boni += [o]
+				elif o.isdigit():
+					boni += [o]
+
+			# jank way to force critical/fail and still roll
+			if 'crit' in override:
+				rollstr+='rr<20'
+			elif 'fail' in override:
+				rollstr+='rr>1'
+			if skill:
+				# TODO: skill checks don't support forced 1 or 20
+				r = vroll('+'.join([character().skills[skill].d20(base_adv=adv_override)]+boni))
+			elif tool:
+				prof=0.5 if get('BardLevel',0)>2 else 0
+				prof=1 if tool in get('pTools','') else prof
+				prof=2 if get('eTools','') else prof
+				prof*=proficiencyBonus
+				r = vroll('+'.join([rollstr,str(int(prof))]+boni))
+			elif roll_expr:=table.get('roll'):
+				if roll_expr.lower().startswith('1d20'):
+					roll_expr=rollstr+rollexpr[4:]
+				r = vroll('+'.join([str(get(e)) + f"[{e[:3]}]" if e.isidentifier() else e for e in roll_expr.split('+')]+boni))
+			else:
+				r = vroll('+'.join([rollstr]+boni))
+			if r:
+				fields += f'-f "{roll_desc}"|"{r.full}"|inline '
+
+			if crit_node in table and r.result.crit==1:
+				node=table[crit_node]
+			elif fail_node in table and r.result.crit==2:
+				node=table[fail_node]
+			else:
+				options=[int(k) for k in table.keys() if (k.isdigit() or (k[0]=='-' and k[1:].isdigit())) and int(k) <= r.total]
+				if options:
+					node=table[str(max(options))]
+				else:
+					node=table.get('default',None)
 	else:
 		node=None
 

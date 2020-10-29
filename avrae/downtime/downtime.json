@@ -48,8 +48,24 @@
   "steal":
   {
     "tool":"Crowbar",
-    "text":"You are caught in the act. You have to pay for bail.",
-    "items": {"gp": "-5d8"}
+    "table":{
+      "skill": "stealth",
+      "fail": {  "text":"You are caught in the act. You have to pay for bail.",  "items": {"gp": "-5d8"}},
+      "default": { "text":"You don't find a suitable target and return empty handed." },
+      "6": { "text": "You steal from a house, but the owner is even poorer than you.", "items": {"cp": "1d6"}},
+      "12": { "text": "You empty the till of a store, but the proprietor must have had a bad day.", "items": {"sp": "4d8"}},
+      "18": { "text": "You go through the sock drawer and find someone with a lack of trust in banks.", "items": {"sp": "2d10", "gp": "1d4"}},
+      "24": { "text": "You find a jewelry store with bad security.",
+        "table": {"roll": "1d6",
+          "1":{ "items":{"Carnelian":"3d4"} },
+          "2":{ "items":{"Jasper":"2d8"} },
+          "3":{ "items":{"Garnet":"1d6"} },
+          "4":{ "items":{"Pearl":"2d4"} },
+          "5":{ "items":{"Topaz":"1d4"} },
+          "6":{ "items":{"Emerald":1, "Tourmaline": "1d4"} }
+          }
+        }
+    }
   },
   "worship":
   {

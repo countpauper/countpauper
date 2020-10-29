@@ -146,7 +146,8 @@
   "Wyvern poison":{ "tool":"Poisoner's Kit:", "dc":15, "proficient":true, "cost":300, "effort":1, "ingredients":"Wyvern gland", "item":"Wyvern poison" },
 
   "Perfume":{ "tool":"Herbalism Kit", "dc":13, "proficient":false, "cost":2.5, "effort":1, "item":"Perfume (vial)" },
-  "Healing Potion":{ "tool":"Herbalism Kit", "dc":10, "proficient":true, "cost":25, "effort":1, "item":"Healing Potion" },
+  "Antitoxin":{ "tool":"Herbalism Kit", "dc":10, "proficient":true, "cost":25, "effort":1, "item":"Antitoxin" },
+  "Healing Potion":{ "tool":"Herbalism Kit", "dc":12, "proficient":true, "cost":25, "effort":1, "item":"Healing Potion" },
   "Greater Healing Potion":{ "tool":"Herbalism Kit", "dc":15, "proficient":true, "cost":100, "effort":2, "item":"Greater Healing Potion" },
   "Superior Healing Potion":{ "tool":"Herbalism Kit", "dc":20, "proficient":true, "cost":500, "effort":3, "item":"Superior Healing Potion" },
   "Supreme Healing Potion":{ "tool":"Herbalism Kit", "dc":25, "proficient":true, "cost":2000, "effort":4, "item":"Supreme Healing Potion" },
