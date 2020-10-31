@@ -1,13 +1,9 @@
 tembed <drac2>
 # TODO data https://www.dndbeyond.com/sources/xgte/downtime-revisited#undefined
 #   Sub commnd xge to enble, phb for phb downtime nd dmg for dmg downtime stuff set in svar
-# "fail" and "crit" option in table of roll result is fail or crit
-# skill override !downtime perform -with drum,adv,nature|adv... < split to list of tool/skill/die, use up one per nested table until empty.
-# skill override also supports + and - digit bonus option
-# override also supports auto fail and crit option
-# !craft <tool> or <skill> checks gamedata to prevent being confused if a tool has no recipes
-# skill & tool proficiency precondition ?(tool is both) (ownership and precondition)
-# temp hp as json/ damage (negative hp)
+# Adjust hp and temp hp as json/ damage (negative hp)
+# Tool ability bonus (default in game data? always "add" "roll" bonus to "tool" or "skill=dexterity + tool prof" so can override together
+# track 'ability bonus' for rolls to check if reliable talent applies
 # "Inspiration" (just a cc?) snippet & cc, inspiration as a result option (NB inspiration effect and snippet used for bard)
 # relation added to !relation, need a table for location?(channel)
 # CC find in character consumables to be case insensitive?
@@ -78,7 +74,8 @@ while node:
 	# node precondition: tool ownership (not skill related, use same override as table)
 	tool = node.get('tool')
 	for o in override:
-		tool_override = [t for t in game_data.get('tools', []) if t.lower().startswith(o)]
+		# partial override match with tool, but must be whole word or 'dis' matches with 'disguise kit'
+		tool_override = [t for t in game_data.get('tools', []) if t.lower()==o or o==t.lower().replace("'",' ').split(' ')[0]]
 		if tool_override:
 			tool = tool_override[0]
 	if bag and tool:
@@ -107,15 +104,18 @@ while node:
 	# check nested table
 	table=node.get('table')
 	if table:
-		override = overrides.pop(0) if overrides else None
+		tool = table.get('tool')
+		skill = table.get('skill')
+		override = overrides.pop(0) if overrides else ''
+		if skill:
+			override = '&'.join([override, args.last(skill,'')])
 		override = [o for o in override.lower().split('&') if o] if override else []
 
 		# get tool with override
 		# get skill with override
-		tool = table.get('tool')
-		skill = table.get('skill')
 		for o in override:
-			tool_override = [t for t in game_data.get('tools', []) if t.lower().startswith(o)]
+			# partial override match with tool, but must be whole word or 'dis' matches with 'disguise kit'
+			tool_override = [t for t in game_data.get('tools', []) if t.lower()==o or t.lower()==o.replace("'",' ').split(' ')[0]]
 			if tool_override:
 				tool = tool_override[0]
 				skill = None	# override also default skill
@@ -131,60 +131,88 @@ while node:
 		# if fail or critical is oveerriden and defined, don't bother making a roll
 		roll_desc = game_data["skills"][skill] if skill else tool if tool else 'Roll'
 		if crit_node in table and 'crit' in override:
-			node = table[crit_node]
+			next = table[crit_node]
 			fields += f'-f "{roll_desc}"|crit|inline '
 		elif fail_node in table and 'fail' in override:
-			node = table[fail_node]
+			next = table[fail_node]
 			fields += f'-f "{roll_desc}"|fail|inline '
 		else:
 			# make base roll string for tool and 1d20 rolls
-			adv_override = True if 'adv' in override else False if 'dis' in override else None
-			rollstr = {None: '1d20', True: '2d20kh1', False: '2d20kl1'}[adv_override]
-			# add argument override bonuses
+			rolladv=0
+			rollstr='1d20'
 			boni = []
+			prof = 0
+			# add node's skill and tool boni
+			if skill:
+				s = character().skills[skill]
+				boni=[str(s.value)]+boni
+				prof = s.prof
+				rolladv +=1 if s.adv is True else -1 if s.adv is False else 0
+				# Reliable
+			elif tool:
+				prof=0.5 if get('BardLevel',0)>2 else prof
+				prof=1 if tool in get('pTools','') else prof
+				prof=2 if get('eTools','') else prof
+				prof*=proficiencyBonus
+				boni=[str(int(prof))]+boni
+			elif rollexpr:=table.get('roll'):
+				roll_split = rollexpr.replace('+',' ').replace('-',' ').split()
+				rollstr=roll_split[0]
+				rollexpr=rollexpr[len(rollstr)+1:].strip()
+				if rollexpr:
+					for e in roll_split[1:]:
+						if e.isidentifier():
+							rollexpr = rollexpr.replace(e,f'{get(e)}[{e[:3]}]')
+					boni+=[rollexpr]
+			if prof >= 1 and get('RogueLevel', 0) >= 11 and rollstr[1:4]=='d20':
+				rollstr = rollstr[:4]+'mi10'+rollstr[4:]
+			# halfing luck
+			elif character().race.endswith("Halfling") and rollstr[1:4]=='d20':
+				rollstr=rollstr[:4]+'ro1'+rollstr[4:]
+			# apply overrides
 			for o in override:
 				if o[0] == '+':
 					boni += [o[1:]]
 				elif o[0] == '-':
 					boni += [o]
 				elif o.isdigit():
-					boni += [o]
-
-			# jank way to force critical/fail and still roll
-			if 'crit' in override:
-				rollstr+='rr<20'
-			elif 'fail' in override:
-				rollstr+='rr>1'
-			if skill:
-				# TODO: skill checks don't support forced 1 or 20
-				r = vroll('+'.join([character().skills[skill].d20(base_adv=adv_override)]+boni))
-			elif tool:
-				prof=0.5 if get('BardLevel',0)>2 else 0
-				prof=1 if tool in get('pTools','') else prof
-				prof=2 if get('eTools','') else prof
-				prof*=proficiencyBonus
-				r = vroll('+'.join([rollstr,str(int(prof))]+boni))
-			elif roll_expr:=table.get('roll'):
-				if roll_expr.lower().startswith('1d20'):
-					roll_expr=rollstr+rollexpr[4:]
-				r = vroll('+'.join([str(get(e)) + f"[{e[:3]}]" if e.isidentifier() else e for e in roll_expr.split('+')]+boni))
-			else:
-				r = vroll('+'.join([rollstr]+boni))
-			if r:
-				fields += f'-f "{roll_desc}"|"{r.full}"|inline '
+					rollstr=o
+				elif o == 'fail':
+					rollstr = '1'
+				elif o == 'crit':
+					rollstr = '20'
+				elif o=='adv':
+					rolladv+=1
+				elif o=='dis':
+					rolladv-=1
+			# apply the counted advantage of all overrides and skill
+			if rollstr.startswith('1d'):
+				if rolladv>0:
+					rollstr='2d'+rollstr[2:]+'kh1'
+				elif rolladv<0:
+					rollstr='2d'+rollstr[2:]+'kl1'
+			rollstr='+'.join([rollstr]+boni)
+			r = vroll(rollstr)
+			fields += f'-f "{roll_desc}"|"{r.full}"|inline '
 
 			if crit_node in table and r.result.crit==1:
-				node=table[crit_node]
+				next=table[crit_node]
 			elif fail_node in table and r.result.crit==2:
-				node=table[fail_node]
+				next=table[fail_node]
 			else:
 				options=[int(k) for k in table.keys() if (k.isdigit() or (k[0]=='-' and k[1:].isdigit())) and int(k) <= r.total]
 				if options:
-					node=table[str(max(options))]
+					next=table[str(max(options))]
 				else:
-					node=table.get('default',None)
+					next=table.get('default',None)
 	else:
+		next=None
+	# quick leaf node with only text is added to description
+	if typeof(next)=='str':
+		desc+=next
 		node=None
+	else:
+		node=next
 
 # the items and consumables are modified in a separate gvar routine, after the {{code}} is executed, so variables declared in the downtime json
 # Apply the changes to the character

@@ -1,4 +1,17 @@
 {
+  "test":
+  {
+    "table":
+    {
+      "roll": "1d20+strengthMod-intelligence",
+      "fail": "Bad stuff",
+      "default": "Not great",
+      "10": "It's ok",
+      "15": "Good",
+      "20": "Great",
+      "crit": "Amazing stuff"
+    }
+  },
   "read":
   {
     "tool":"Book",
@@ -15,7 +28,14 @@
         "consume":{"Exhaustion":-1}
       },
       "3":{"text":"You find a recipe for a cake and feel hungry.", "img": "https://img.delicious.com.au/_cQeN3Po/w759-h506-cfill/del/2020/07/burnt-butter-almond-and-honey-cake-135325-2.jpg"},
-      "20":{"text":"You find a scroll hidden between the pages of a book. ",
+      "5":{"text":"You read a romantic passage, but can't put the book down. A complete waste of time.", "consume":"Downtime"},
+      "7":"You read many dusty pages until you have to sneeze. You close the book and hope the pages don't stick together.",
+      "11":"You come across a new system of taxonomy and gain advantage on nature checks for the rest of the day.",
+      "13":"You study the lineage of kings of the realms and have advantage on history checks for the rest of the day. You notice that for a family tree it certainly has a lot of loops",
+      "15":"You read and understand a passage on metaphyiscs and gain +1 on all intelligence checks for the day.",
+      "18":"You find a map containing the location of a hidden library.",
+      "23":"You read a beautiful poem and become inspired. You may roll one check with advantage.",
+      "25":{"text":"You find a scroll hidden between the pages of a book. ",
         "table":
         {
           "skill":"arcana",
@@ -47,10 +67,15 @@
   },
   "steal":
   {
-    "tool":"Crowbar",
     "table":{
-      "skill": "stealth",
-      "fail": {  "text":"You are caught in the act. You have to pay for bail.",  "items": {"gp": "-5d8"}},
+      "tool": "Thieves' Tools",
+      "fail": {"text":"You are caught in the act. ","table":{
+        "skill":"deception",
+        "default":{"text":"You have to pay for bail.", "items": {"gp": "-5d8"}},
+        "10": "You manage to talk your way out of it, but the guards are still suspicious.",
+        "15": "You convince the guards it is all a prank.",
+        "crit": {"text": "You maange to pin the blame on someone else and receive a reward for the tip","items": {"sp": "1d6+3"}}
+      }},
       "default": { "text":"You don't find a suitable target and return empty handed." },
       "6": { "text": "You steal from a house, but the owner is even poorer than you.", "items": {"cp": "1d6"}},
       "12": { "text": "You empty the till of a store, but the proprietor must have had a bad day.", "items": {"sp": "4d8"}},
@@ -91,8 +116,42 @@
   "fish":
   {
     "tool":"Fishing Tackle",
-    "text":"You catch a bass. At least you have something to cook.",
-    "items": "Bass"
+    "table": {
+      "fail": {
+        "text": "Your hook gets stuck on a branch. ",
+        "table": {
+          "skill": "dexterity",
+          "default": { "text": "You break your tackle!", "items": { "Fishing Tackle": -1}},
+          "10": "Luckily you manage to wriggle it free."
+        }
+      },
+      "default": "Nothing bites. You must be in the wrong place",
+      "5": "Your catch gets away",
+      "10": { "text": "You catch a Quipper. It bites you before you manage to subdue it.","items": "Quipper", "hp":-1 },
+      "12": { "text": "You catch a Bass. ","items": "Bass"},
+      "14": { "text": "You catch a Cod. ","items": "Cod"},
+      "16": { "text": "You catch a Knucklehead Trout.","items": "Knucklehead Trout"},
+      "18": { "text": "You catch a juicy salmon.","items": "Bass"},
+      "20": { "text": "You catch a barracuda. When you gut it, something shiny falls out", "table": {
+        "roll":"1d6",
+        "1": {"items": "Shiny Button"},
+        "3": {"items": "sp"},
+        "5": {"items": "gp"},
+        "6": {"text": "It's a ring.","table":
+        {
+          "skill": "arcana",
+          "default": {"items": "ring"},
+          "15":{"table":
+          {
+            "roll": "1d6",
+            "1": {"items":"Golden Ring" },
+            "3": {"items":"Ring of Swimming"},
+            "4": {"items":"Ring of Water Walking" },
+            "6": {"items": "Ring of Protection"}
+          }}
+        }}
+      }}
+    }
   },
   "work":
   {

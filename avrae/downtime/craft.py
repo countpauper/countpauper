@@ -1,6 +1,6 @@
 embed <drac2>
 #TODO
-# -with option, same as downtime (tool/skill override, bonus, advantage, disadvantage, crit and fail)
+# !craft <tool> or <skill> checks gamedata to prevent being confused if a tool has no recipes
 # (partially done, just not all checked for prereqs) don't use recipe names, use item names, it's a sorted array
 #	- by preference and if preconditions aren't met (tool, prof, ingredient), another one is tried
 #	- (last precondition fail is reported
