@@ -1,6 +1,7 @@
 tembed <drac2>
 # TODO data https://www.dndbeyond.com/sources/xgte/downtime-revisited#undefined
 #   Sub commnd xge to enble, phb for phb downtime nd dmg for dmg downtime stuff set in svar
+# tool is prof bonus over ability 'skill' check, fix json for stealing
 # Adjust hp and temp hp as json/ damage (negative hp)
 # Tool ability bonus (default in game data? always "add" "roll" bonus to "tool" or "skill=dexterity + tool prof" so can override together
 # track 'ability bonus' for rolls to check if reliable talent applies

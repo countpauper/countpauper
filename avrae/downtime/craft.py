@@ -1,6 +1,7 @@
 embed <drac2>
 #TODO
-# !craft <tool> or <skill> checks gamedata to prevent being confused if a tool has no recipes
+# -with dis but skill adv should cancel each other
+# halfling luck and reliable talent
 # (partially done, just not all checked for prereqs) don't use recipe names, use item names, it's a sorted array
 #	- by preference and if preconditions aren't met (tool, prof, ingredient), another one is tried
 #	- (last precondition fail is reported
@@ -15,24 +16,28 @@ for rgv in gv:
 
 arg = "&*&"
 choice=arg.split(" -",maxsplit=1)[0]
+lowchoice = choice.lower()
 args=argparse(arg)
-toolprofs = {pstr.strip().lower(): 1 for pstr in get('pTools', '').split(',') if not pstr.isspace()}
-toolprofs.update({estr.strip().lower(): 2 for estr in get('eTools', '').split(',') if not estr.isspace()})
 
+game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
 if choice:
-	matches = [n for (n,r) in data.items() if n.lower() == choice.lower() or r.get('item','').lower() == choice.lower() or r.get('plural','')== choice.lower()]
+	matches = [n for (n,r) in data.items() if n.lower() == lowchoice or r.get('item','').lower() == lowchoice or r.get('plural','')== lowchoice]
 	# partial match as backup
 	if not matches:
-		matches = [n for (n,r) in data.items() if n.lower().startswith(choice.lower()) or r.get('item','').lower().startswith(choice.lower()) or r.get('plural','').startswith(choice.lower())]
+		matches = [n for (n,r) in data.items() if n.lower().startswith(lowchoice) or r.get('item','').lower().startswith(lowchoice) or r.get('plural','').startswith(lowchoice)]
 	# not a recipe, if it's a category only list those recipes
 	if not matches:
-		idchoise=choice.replace(' ','')
-		recipes = [n for (n,r) in data.items() if r.get('skill','').lower().startswith(idchoise.lower()) or r.get('tool','').lower().startswith(choice.lower())]
-		if recipes:
-			return f'-title "{name} wonders what you can do with {choice}." -desc "You can `!craft <recipe>` where recipe is one of {", ".join(recipes)}." '
+		smatches = [s for (s, d) in game_data.get('skills', {}).items() if s.lower().startswith(lowchoice) or d.lower().startswith(lowchoice)]
+		tmatches = [t for t in game_data.get('tools',[]) if t.lower().startswith(lowchoice)]
+		if smatches or tmatches:
+			if recipes := [n for (n, r) in data.items() if r.get('skill', '') in smatches or r.get('tool', '') in tmatches]:
+				desc = f'You can `!craft <recipe>` where recipe is one of {", ".join(recipes)}.'
+			else:
+				desc = f'There are no recipes for that. To learn how to create your own use `!help {ctx.alias}`.'
+			return f'-title "{name} wonders what you can do with {", ".join(smatches+tmatches)}." -desc "{desc}" '
 
 # invalid input or help: show how it works.
-if choice == '?' or choice == 'help' or choice == '' or not matches:
+if choice == '?' or lowchoice == 'help' or choice == '' or not matches:
 	return f'-title "{name} doesn\'t know how to craft." -desc "`!craft <recipe>` where recipe is one of {", ".join(data.keys())}."'
 
 # recreate downtime consumable with current config, keeping value
@@ -70,7 +75,6 @@ if effort>0:
 override = args.last('with')
 override = override.lower().split('&') if override else []
 
-game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
 
 # Check precondition: tool owned
 bag_var='bags'
@@ -92,7 +96,11 @@ for o in override:
 	skill_override = [s for (s,d) in game_data.get('skills',{}).items() if s.lower().startswith(o) or d.lower().startswith(o)]
 	if skill_override:
 		skill = skill_override[0]
+if skill and recipe.get('proficient', False) and not char.skills[skill].prof:
+	return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {game_data["skills"][skill]}."'
 
+toolprofs = {pstr.strip().lower(): 1 for pstr in get('pTools', '').split(',') if not pstr.isspace()}
+toolprofs.update({estr.strip().lower(): 2 for estr in get('eTools', '').split(',') if not estr.isspace()})
 proficient = 0
 if skill:
 	proficient = char.skills[skill.lower()].prof or 0
@@ -209,7 +217,10 @@ else:
 
 # roll for success
 boni = []
-boni += [f'{get(e)}[{e[:3]}]' if e.isidentifier() else e for e in recipe.get('bonus', '').split('+') if e]
+if bonusstr:= recipe.get('bonus'):
+	for id in [id for id in bonusstr.replace('+',' ').replace('-',' ' ).split() if id.isidentifier()]:
+		bonusstr=bonusstr.replace(id,f'{get(id,0)}[{id[:3]}]')
+	boni+=[bonusstr]
 
 # add argument override bonuses
 for o in override:
@@ -222,10 +233,10 @@ rollstr = ['1d20', '2d20kh1', '2d20kl1'][adv_override]
 
 # decide how to name the field for the roll
 rolldesc='Roll'
-if skill:
-	rolldesc = game_data["skills"][skill]
-elif tool:
+if tool:
 	rolldesc = tool
+elif skill:
+	rolldesc = game_data["skills"][skill]
 
 # check crit or fail override without rolling
 if 'crit' in override:
@@ -235,12 +246,10 @@ elif 'fail' in override:
 	advance=0
 	fields += f'-f "{rolldesc}"|fail|inline '
 else:
-	# roll regularly
+	if tool:
+		boni = [f'{int(proficient * proficiencyBonus)}[{tool}]'] + boni
 	if skill:
-		skilld20 = char.skills[skill].d20(args.adv(False,True))
-		r = vroll('+'.join([skilld20] + boni))
-	elif tool:
-		boni=[f'{int(proficient*proficiencyBonus)}[{tool}]']+boni
+		rollstr = char.skills[skill].d20(args.adv(False,True))
 		r = vroll('+'.join([rollstr] + boni))
 	elif boni:
 		r = vroll('+'.join([rollstr] + boni))
