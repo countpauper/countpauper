@@ -1,5 +1,6 @@
 embed <drac2>
 #TODO
+# prevent double prof bonus with skill and otool like downtime
 # -with dis but skill adv should cancel each other
 # halfling luck and reliable talent
 # (partially done, just not all checked for prereqs) don't use recipe names, use item names, it's a sorted array

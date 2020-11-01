@@ -69,6 +69,7 @@
   {
     "table":{
       "tool": "Thieves' Tools",
+      "skill": "dexterity",
       "fail": {"text":"You are caught in the act. ","table":{
         "skill":"deception",
         "default":{"text":"You have to pay for bail.", "items": {"gp": "-5d8"}},

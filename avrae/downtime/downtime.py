@@ -130,7 +130,7 @@ while node:
 				skill = skill_override[0]
 
 		# if fail or critical is oveerriden and defined, don't bother making a roll
-		roll_desc = game_data["skills"][skill] if skill else tool if tool else 'Roll'
+		roll_desc = tool if tool else game_data["skills"][skill] if skill else 'Roll'
 		if crit_node in table and 'crit' in override:
 			next = table[crit_node]
 			fields += f'-f "{roll_desc}"|crit|inline '
@@ -143,19 +143,21 @@ while node:
 			rollstr='1d20'
 			boni = []
 			prof = 0
-			# add node's skill and tool boni
+			# add tool proficiency to boni
+			if tool:
+				prof = 0.5 if get('BardLevel', 0) > 2 else prof
+				prof = 1 if tool in get('pTools', '') else prof
+				prof = 2 if get('eTools', '') else prof
+			# add skill bonus
 			if skill:
 				s = character().skills[skill]
-				boni=[str(s.value)]+boni
-				prof = s.prof
+				if prof==0:
+					boni=[str(s.value)]+boni
+				else:
+					boni=[str(s.value-int(s.prof*proficiencyBonus))]+boni
+					prof = max(s.prof, prof)
 				rolladv +=1 if s.adv is True else -1 if s.adv is False else 0
 				# Reliable
-			elif tool:
-				prof=0.5 if get('BardLevel',0)>2 else prof
-				prof=1 if tool in get('pTools','') else prof
-				prof=2 if get('eTools','') else prof
-				prof*=proficiencyBonus
-				boni=[str(int(prof))]+boni
 			elif rollexpr:=table.get('roll'):
 				roll_split = rollexpr.replace('+',' ').replace('-',' ').split()
 				rollstr=roll_split[0]
@@ -170,6 +172,9 @@ while node:
 			# halfing luck
 			elif character().race.endswith("Halfling") and rollstr[1:4]=='d20':
 				rollstr=rollstr[:4]+'ro1'+rollstr[4:]
+			# apply skill or tool proficiency bonus
+			prof *= proficiencyBonus
+			boni = [str(int(prof))] + boni
 			# apply overrides
 			for o in override:
 				if o[0] == '+':
