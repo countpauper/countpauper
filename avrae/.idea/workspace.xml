@@ -4,7 +4,6 @@
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/downtime/craft.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/craft.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/downtime/downtime.json" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/downtime.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/downtime/downtime.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/downtime.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

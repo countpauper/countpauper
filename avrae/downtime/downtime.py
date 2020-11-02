@@ -1,10 +1,7 @@
 tembed <drac2>
 # TODO data https://www.dndbeyond.com/sources/xgte/downtime-revisited#undefined
 #   Sub commnd xge to enble, phb for phb downtime nd dmg for dmg downtime stuff set in svar
-# tool is prof bonus over ability 'skill' check, fix json for stealing
 # Adjust hp and temp hp as json/ damage (negative hp)
-# Tool ability bonus (default in game data? always "add" "roll" bonus to "tool" or "skill=dexterity + tool prof" so can override together
-# track 'ability bonus' for rolls to check if reliable talent applies
 # "Inspiration" (just a cc?) snippet & cc, inspiration as a result option (NB inspiration effect and snippet used for bard)
 # relation added to !relation, need a table for location?(channel)
 # CC find in character consumables to be case insensitive?
@@ -101,19 +98,18 @@ while node:
 	for (cc,q) in node_ccs.items():
 		consumed[cc]=(f'{consumed[cc]}+' if cc in consumed else '')+str(q)
 
-
 	# check nested table
 	table=node.get('table')
 	if table:
 		tool = table.get('tool')
 		skill = table.get('skill')
+		# get -with and all -<skill> overrides
 		override = overrides.pop(0) if overrides else ''
 		if skill:
-			override = '&'.join([override, args.last(skill,'')])
+			override = '&'.join([override]+args.get(skill,[]))
 		override = [o for o in override.lower().split('&') if o] if override else []
 
 		# get tool with override
-		# get skill with override
 		for o in override:
 			# partial override match with tool, but must be whole word or 'dis' matches with 'disguise kit'
 			tool_override = [t for t in game_data.get('tools', []) if t.lower()==o or t.lower()==o.replace("'",' ').split(' ')[0]]
@@ -123,13 +119,14 @@ while node:
 		if bag and tool and not any([b[1].get(tool, 0) > 0 for b in bag]):
 			return f'-title "{name} doesn\'t have the tools to {choice}" -desc "You need a {tool}."'
 
+		# get skill with override
 		for o in override:
 			skill_override = [s for (s, d) in game_data.get('skills', {}).items() if
 							  s.lower().startswith(o) or d.lower().startswith(o)]
 			if skill_override:
 				skill = skill_override[0]
 
-		# if fail or critical is oveerriden and defined, don't bother making a roll
+		# if fail or critical is overriden and defined, don't bother making a roll
 		roll_desc = tool if tool else game_data["skills"][skill] if skill else 'Roll'
 		if crit_node in table and 'crit' in override:
 			next = table[crit_node]
@@ -141,23 +138,23 @@ while node:
 			# make base roll string for tool and 1d20 rolls
 			rolladv=0
 			rollstr='1d20'
+			prof = ''
 			boni = []
-			prof = 0
+			s=None
 			# add tool proficiency to boni
 			if tool:
-				prof = 0.5 if get('BardLevel', 0) > 2 else prof
-				prof = 1 if tool in get('pTools', '') else prof
-				prof = 2 if get('eTools', '') else prof
+				prof = f'{proficiencyBonus//2}[jack]' if get('BardLevel', 0) > 2 else prof
+				prof = f'{proficiencyBonus}[{tool}]' if tool in get('pTools', '') else prof
+				prof = f'{2*proficiencyBonus}[{tool}]' if tool in get('eTools','') else prof
 			# add skill bonus
 			if skill:
-				s = character().skills[skill]
-				if prof==0:
-					boni=[str(s.value)]+boni
-				else:
-					boni=[str(s.value-int(s.prof*proficiencyBonus))]+boni
-					prof = max(s.prof, prof)
+				s = char.skills[skill]
+				sname = game_data['skills'][skill]
+				if s.prof*proficiencyBonus>=roll(prof):
+					boni+=[f'{s.value}[{sname}]']
+				else:	# use tool prof, deduct skill prof (eg jack on ability check)
+					boni+=[f'{s.value-int(s.prof*proficiencyBonus)}[{sname}]']
 				rolladv +=1 if s.adv is True else -1 if s.adv is False else 0
-				# Reliable
 			elif rollexpr:=table.get('roll'):
 				roll_split = rollexpr.replace('+',' ').replace('-',' ').split()
 				rollstr=roll_split[0]
@@ -167,14 +164,15 @@ while node:
 						if e.isidentifier():
 							rollexpr = rollexpr.replace(e,f'{get(e)}[{e[:3]}]')
 					boni+=[rollexpr]
-			if prof >= 1 and get('RogueLevel', 0) >= 11 and rollstr[1:4]=='d20':
+			# Reliable talent
+			if rollstr[1:4]=='d20' and (prof or (s and s.prof>=1)) and char.csettings.get('talent',False):
 				rollstr = rollstr[:4]+'mi10'+rollstr[4:]
 			# halfing luck
-			elif character().race.endswith("Halfling") and rollstr[1:4]=='d20':
-				rollstr=rollstr[:4]+'ro1'+rollstr[4:]
+			elif rollstr[1:4]=='d20' and (reroll:=char.csettings.get('reroll',0)):
+				rollstr=rollstr[:4]+f'ro{reroll}'+rollstr[4:]
 			# apply skill or tool proficiency bonus
-			prof *= proficiencyBonus
-			boni = [str(int(prof))] + boni
+			if prof:
+				boni = [prof] + boni
 			# apply overrides
 			for o in override:
 				if o[0] == '+':

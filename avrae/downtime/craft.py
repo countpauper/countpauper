@@ -102,14 +102,17 @@ if skill and recipe.get('proficient', False) and not char.skills[skill].prof:
 
 toolprofs = {pstr.strip().lower(): 1 for pstr in get('pTools', '').split(',') if not pstr.isspace()}
 toolprofs.update({estr.strip().lower(): 2 for estr in get('eTools', '').split(',') if not estr.isspace()})
-proficient = 0
-if skill:
-	proficient = char.skills[skill.lower()].prof or 0
-elif tool:
-	proficient = toolprofs.get(tool.lower(), 0)
+proficient = ''
 if char.levels.get('Bard') >= 2:
-	proficient = max(proficient,0.5)
-if recipe.get('proficient', False) and not proficient:
+	proficient = f'{proficiencyBonus*0.5}[jack]'
+if skill:
+	s = char.skills[skill.lower()]
+else:
+	s = None
+if tool and tool.lower() in toolprofs:
+	proficient = f'{toolprofs[tool.lower()]*proficiencyBonus}[{tool}]'
+
+if recipe.get('proficient', False) and ((not proficient) or (s and s.prof<1)):
 	return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {tool}.\nUse `!tool pro {tool}` to add your proficiency."'
 
 dbg = ''
@@ -218,16 +221,6 @@ else:
 
 # roll for success
 boni = []
-if bonusstr:= recipe.get('bonus'):
-	for id in [id for id in bonusstr.replace('+',' ').replace('-',' ' ).split() if id.isidentifier()]:
-		bonusstr=bonusstr.replace(id,f'{get(id,0)}[{id[:3]}]')
-	boni+=[bonusstr]
-
-# add argument override bonuses
-for o in override:
-	if o[0] in '+-':
-		boni += [o]
-
 # check advantage argument
 adv_override=1 if 'adv' in override else -1 if 'dis' in override else 0
 rollstr = ['1d20', '2d20kh1', '2d20kl1'][adv_override]
@@ -247,8 +240,21 @@ elif 'fail' in override:
 	advance=0
 	fields += f'-f "{rolldesc}"|fail|inline '
 else:
-	if tool:
-		boni = [f'{int(proficient * proficiencyBonus)}[{tool}]'] + boni
+	# add node bonuses
+	if bonusstr := recipe.get('bonus'):
+		for id in [id for id in bonusstr.replace('+', ' ').replace('-', ' ').split() if id.isidentifier()]:
+			bonusstr = bonusstr.replace(id, f'{get(id, 0)}[{id[:3]}]')
+		boni += [bonusstr]
+
+	# add argument override bonuses
+	for o in override:
+		if o[0] in '+-':
+			boni += [o]
+
+	TODO: combine skill and tool proficiency
+
+	if tool and proficient:
+		boni = [proficient] + boni
 	if skill:
 		rollstr = char.skills[skill].d20(args.adv(False,True))
 		r = vroll('+'.join([rollstr] + boni))
@@ -256,6 +262,8 @@ else:
 		r = vroll('+'.join([rollstr] + boni))
 	else:
 		r = None
+
+
 	if r:
 		fields += f'-f "{rolldesc}"|"{r.full}"|inline '
 
