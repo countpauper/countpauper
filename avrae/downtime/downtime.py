@@ -164,12 +164,6 @@ while node:
 						if e.isidentifier():
 							rollexpr = rollexpr.replace(e,f'{get(e)}[{e[:3]}]')
 					boni+=[rollexpr]
-			# Reliable talent
-			if rollstr[1:4]=='d20' and (prof or (s and s.prof>=1)) and char.csettings.get('talent',False):
-				rollstr = rollstr[:4]+'mi10'+rollstr[4:]
-			# halfing luck
-			elif rollstr[1:4]=='d20' and (reroll:=char.csettings.get('reroll',0)):
-				rollstr=rollstr[:4]+f'ro{reroll}'+rollstr[4:]
 			# apply skill or tool proficiency bonus
 			if prof:
 				boni = [prof] + boni
@@ -189,6 +183,13 @@ while node:
 					rolladv+=1
 				elif o=='dis':
 					rolladv-=1
+			# Reliable talent
+			if rollstr[1:4]=='d20' and (roll(prof)>=proficiencyBonus or (s and s.prof>=1)) and char.csettings.get('talent',False):
+				rollstr = rollstr[:4]+'mi10'+rollstr[4:]
+			# halfing luck
+			elif rollstr[1:4]=='d20' and (reroll:=char.csettings.get('reroll',0)):
+				rollstr=rollstr[:4]+f'ro{reroll}'+rollstr[4:]
+
 			# apply the counted advantage of all overrides and skill
 			if rollstr.startswith('1d'):
 				if rolladv>0:

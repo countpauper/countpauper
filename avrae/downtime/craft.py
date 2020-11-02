@@ -1,8 +1,5 @@
 embed <drac2>
 #TODO
-# prevent double prof bonus with skill and otool like downtime
-# -with dis but skill adv should cancel each other
-# halfling luck and reliable talent
 # (partially done, just not all checked for prereqs) don't use recipe names, use item names, it's a sorted array
 #	- by preference and if preconditions aren't met (tool, prof, ingredient), another one is tried
 #	- (last precondition fail is reported
@@ -76,14 +73,13 @@ if effort>0:
 override = args.last('with')
 override = override.lower().split('&') if override else []
 
-
 # Check precondition: tool owned
 bag_var='bags'
 bag = load_json(bags) if exists(bag_var) else None
 bag_update=False
 tool = recipe.get('tool')
 for o in override:
-	tool_override = [t for t in game_data.get('tools',[]) if t.lower().startswith(o)]
+	tool_override = [t for t in game_data.get('tools',[]) if t.replace('\'',' ').split()[0].lower() == o]
 	if tool_override:
 		tool = tool_override[0]
 
@@ -97,23 +93,23 @@ for o in override:
 	skill_override = [s for (s,d) in game_data.get('skills',{}).items() if s.lower().startswith(o) or d.lower().startswith(o)]
 	if skill_override:
 		skill = skill_override[0]
-if skill and recipe.get('proficient', False) and not char.skills[skill].prof:
-	return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {game_data["skills"][skill]}."'
-
-toolprofs = {pstr.strip().lower(): 1 for pstr in get('pTools', '').split(',') if not pstr.isspace()}
-toolprofs.update({estr.strip().lower(): 2 for estr in get('eTools', '').split(',') if not estr.isspace()})
-proficient = ''
-if char.levels.get('Bard') >= 2:
-	proficient = f'{proficiencyBonus*0.5}[jack]'
 if skill:
 	s = char.skills[skill.lower()]
 else:
 	s = None
-if tool and tool.lower() in toolprofs:
-	proficient = f'{toolprofs[tool.lower()]*proficiencyBonus}[{tool}]'
+if skill and recipe.get('proficient', False) and s.prof<1:
+	return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {game_data["skills"][skill]}."'
 
-if recipe.get('proficient', False) and ((not proficient) or (s and s.prof<1)):
-	return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {tool}.\nUse `!tool pro {tool}` to add your proficiency."'
+toolprofs = {pstr.strip().lower(): 1 for pstr in get('pTools', '').split(',') if not pstr.isspace()}
+toolprofs.update({estr.strip().lower(): 2 for estr in get('eTools', '').split(',') if not estr.isspace()})
+prof = ''
+
+if tool and tool.lower() in toolprofs:
+	prof = f'{toolprofs[tool.lower()]*proficiencyBonus}[{tool}]'
+if tool and recipe.get('proficient', False) and not prof:
+	return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {tool}.\nYou can use `!tool pro {tool}` to add your proficiency."'
+if not prof and char.levels.get('Bard') >= 2:
+	prof = f'{proficiencyBonus//2}[jack]'
 
 dbg = ''
 fields = ''
@@ -219,12 +215,6 @@ else:
 				bag_update=True
 		fields+=f'-f Ingredients|"{ingredient_desc}"|inline '
 
-# roll for success
-boni = []
-# check advantage argument
-adv_override=1 if 'adv' in override else -1 if 'dis' in override else 0
-rollstr = ['1d20', '2d20kh1', '2d20kl1'][adv_override]
-
 # decide how to name the field for the roll
 rolldesc='Roll'
 if tool:
@@ -240,32 +230,67 @@ elif 'fail' in override:
 	advance=0
 	fields += f'-f "{rolldesc}"|fail|inline '
 else:
-	# add node bonuses
+	# roll for success
+	rolladv = 0
+	rollstr = None
+	boni = []
+	s = None
+
+	# add recipe bonuses
+	if skill:
+		s = char.skills[skill]
+		sname = game_data['skills'][skill]
+		if s.prof * proficiencyBonus >= roll(prof):
+			boni += [f'{s.value}[{sname}]']
+			prof=''	# use skill proficiency over lesser tool proficiency
+		else:  # use tool prof, deduct skill prof (eg jack on ability check)
+			boni += [f'{s.value - int(s.prof * proficiencyBonus)}[{sname}]']
+		rolladv += 1 if s.adv is True else -1 if s.adv is False else 0
+		rollstr = '1d20'
+	if tool and prof:
+		boni += [prof]
+		rollstr = '1d20'
 	if bonusstr := recipe.get('bonus'):
 		for id in [id for id in bonusstr.replace('+', ' ').replace('-', ' ').split() if id.isidentifier()]:
 			bonusstr = bonusstr.replace(id, f'{get(id, 0)}[{id[:3]}]')
 		boni += [bonusstr]
+		rollstr='1d20'
 
 	# add argument override bonuses
 	for o in override:
-		if o[0] in '+-':
+		if o[0] == '+':
+			boni += [o[1:]]
+		elif o[0] == '-':
 			boni += [o]
+		elif o.lower() == 'adv':
+			rolladv += 1
+		elif o.lower() == 'dis':
+			rolladv -= 1
+		elif o == 'fail':
+			rollstr = '1'
+		elif o == 'crit':
+			rollstr = '20'
+		elif o.isdigit():
+			rollstr = o
 
-	TODO: combine skill and tool proficiency
+	if rollstr:
+		# Reliable talent
+		if rollstr[1:4] == 'd20' and (roll(prof)>=proficiencyBonus or (s and s.prof >= 1)) and char.csettings.get('talent', False):
+			rollstr = rollstr[:4] + 'mi10' + rollstr[4:]
+		# halfing luck
+		elif rollstr[1:4] == 'd20' and (reroll := char.csettings.get('reroll', 0)):
+			rollstr = rollstr[:4] + f'ro{reroll}' + rollstr[4:]
+		# apply the counted advantage of all overrides and skill
+		if rollstr.startswith('1d'):
+			if rolladv > 0:
+				rollstr = '2d' + rollstr[2:] + 'kh1'
+			elif rolladv < 0:
+				rollstr = '2d' + rollstr[2:] + 'kl1'
 
-	if tool and proficient:
-		boni = [proficient] + boni
-	if skill:
-		rollstr = char.skills[skill].d20(args.adv(False,True))
 		r = vroll('+'.join([rollstr] + boni))
-	elif boni:
-		r = vroll('+'.join([rollstr] + boni))
-	else:
-		r = None
-
-
-	if r:
 		fields += f'-f "{rolldesc}"|"{r.full}"|inline '
+	else:	# no tool, bonus, skill or override
+		r = None
 
 	# Make progress based on roll
 	if not r:
