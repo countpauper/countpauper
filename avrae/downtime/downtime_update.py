@@ -1,15 +1,16 @@
 <drac2>
-#Downtime code run after {code} to apply cusomizable updates
+#Downtime code run after {code} to apply customizable updates, with variables set in code blocks from json
 # input
 items=@I@
 consumed=@C@
+modified=@M@
 game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
-
+char = character()
+me = combat().me if combat() else None
 #output
-fields =''
-fields += f' -f "{typeof(consumed)}"|"{consumed.items()}" '
-
+fields =' '
 bag_update=False
+
 bag_var='bags'
 if exists(bag_var):
 	bag=load_json(get(bag_var))
@@ -56,21 +57,56 @@ if items_lost:= ",".join([(f'{-q} x {i}' if q<-1 else i) for (i, q) in items_log
 if items_gained:= ",".join([(f'{q} x {i}' if q>1 else i) for (i, q) in items_log.items() if q>0]):
 	fields+=f'-f "Items Gained"|"{items_gained}"|inline '
 if bag_update:  # update bag at end to avoid one sided item loss
-	set_cvar(bag_var, dump_json(bag))
-
+	char.set_cvar(bag_var, dump_json(bag))
 
 for (cc,q_str) in consumed.items():
-	# same routine as for items, replace identifiers with variables
+	# same routine as for items, replace identifiers with values
 	vars = [v for v in q_str.translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
 	for var in vars:
 		q_str = q_str.replace(var, str(get(var, 0)))
-	q=roll(q_str)
-	if not character().cc_exists(cc):
+	# negate the string, so it shows up right in the field
+	if q_str[0]=='-':
+		q_str=q_str[1:]
+	else:
+		q_str='-'+q_str
+
+	r=vroll(q_str)
+	if not char.cc_exists(cc):
 		cc=cc.lower()
 		if not cc_exists(cc):
-			fields += f'-f "{cc}[{-q}]"|"Not Available"|inline '
+			fields += f'-f "{cc}[{r.dice}]"|"Not Available"|inline '
 			continue
-	character().mod_cc(cc,-q)
-	fields+=f'-f "{cc}[{-q}]"|"{cc_str(cc)}"|inline '
+	char.mod_cc(cc,r.total)
+	fields+=f'-f "{cc}[{r.dice}]"|"{cc_str(cc)}"|inline '
+
+resists=[r.dtype for r in char.resistances.resist]
+immunes=[i.dtype for i in char.resistances.immune]
+vulnerables=[v.dtype for v in char.resistances.vuln]
+
+if me:
+	for e in me.effects:
+		resists+=e.effect.get('resist',[])
+		immunes+=e.effect.get('immune',[])
+		vulnerables+=e.effect.get('vulnerable',[])	#hypothetical effect
+
+dtype_table={"*0":immunes,"//2":resists,"*2":vulnerables}
+
+for (mod, q_str) in modified.items():
+	# again replace identifiers with values
+	vars = [v for v in q_str.translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+	for var in vars:
+		q_str = q_str.replace(var, str(get(var, 0)))
+	if mod=='hp':
+		for (multiplier,dtypes) in dtype_table.items():
+			for dtype in dtypes:
+				q_str = q_str.replace(f'[{dtype}]', f'{multiplier}[{dtype}]')
+		r = vroll(q_str)
+		char.modify_hp(r.total,overflow=False)
+		fields += f'-f "Hitpoints [{r.dice}]|{char.hp_str()}|inline" '
+	elif mod=='thp':
+		r = vroll(q_str)
+		char.set_temp_hp(max(char.temp_hp,r.total,0))
+		fields += f'-f "Temporary HP [{r.dice}]|{char.temp_hp}|inline" '
+
 return fields
 </drac2>

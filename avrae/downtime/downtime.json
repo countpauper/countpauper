@@ -4,7 +4,7 @@
     "table":
     {
       "roll": "1d20+strengthMod-intelligence",
-      "fail": "Bad stuff",
+      "fail":{"text":"Bad stuff", "hp": "-1d6[poison]-(2[fire]-1d4)"},
       "default": "Not great",
       "10": "It's ok",
       "15": "Good",
@@ -20,8 +20,9 @@
     {
       "skill":"investigation",
        "1":{
-        "code":"{{dmg=roll('2d6')}}{{character().modify_hp(-dmg)}}",
-        "text":"You read Bane's manifesto and take {{dmg}}[psychic] damage."
+        "code":"{{dmg='2d6[psychic]'}}",
+        "text":"You read Bane's manifesto and take {{dmg}} damage.",
+         "hp":"-dmg"
       },
       "2":{
         "text":"You read a treatise on metaepistemology and while satisfying you are exhausted.",
@@ -100,8 +101,11 @@
   },
   "relax":
   {
-    "text":"You lay around doing nothing and accomplish nothing.",
-    "consume": "Exhaustion"
+    "table":{
+      "1":"You lay around doing nothing and accomplish nothing.",
+      "10": {"text": "You feel well rested","consume": "Exhaustion" },
+      "15": {"text": "You feel energized","thp": 5}
+    }
   },
   "scavenge":
   {

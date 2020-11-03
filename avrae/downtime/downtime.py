@@ -1,10 +1,11 @@
 tembed <drac2>
 # TODO data https://www.dndbeyond.com/sources/xgte/downtime-revisited#undefined
 #   Sub commnd xge to enble, phb for phb downtime nd dmg for dmg downtime stuff set in svar
-# Adjust hp and temp hp as json/ damage (negative hp)
+# CC find in character consumables to be case insensitive?
+# apply effect (but only in combat and this is !downtime, sooo)
+# neutral resistances and 'applies_to'
 # "Inspiration" (just a cc?) snippet & cc, inspiration as a result option (NB inspiration effect and snippet used for bard)
 # relation added to !relation, need a table for location?(channel)
-# CC find in character consumables to be case insensitive?
 
 # and make sure most of that is possible
 sv = load_json(get_svar('downtime','{}'))
@@ -60,6 +61,8 @@ node = activity
 code,desc,fields, img='','','',None
 items={}
 consumed={}
+modifiable=['hp','thp']	# TODO: xp, gp?
+modified={}
 overrides=args.get('with',[])
 override = overrides[0] if overrides else []
 override = [o for o in override.lower().split('&') if o] if override else []
@@ -98,6 +101,11 @@ while node:
 	for (cc,q) in node_ccs.items():
 		consumed[cc]=(f'{consumed[cc]}+' if cc in consumed else '')+str(q)
 
+	# character modifications
+	for mod in modifiable:
+		if modification:=node.get(mod):
+			modified[mod]=f'{modified[mod]}+{modification}' if mod in modified else str(modification)
+
 	# check nested table
 	table=node.get('table')
 	if table:
@@ -130,10 +138,10 @@ while node:
 		roll_desc = tool if tool else game_data["skills"][skill] if skill else 'Roll'
 		if crit_node in table and 'crit' in override:
 			next = table[crit_node]
-			fields += f'-f "{roll_desc}"|crit|inline '
+			fields += f'-f "{roll_desc}"|Critical|inline '
 		elif fail_node in table and 'fail' in override:
 			next = table[fail_node]
-			fields += f'-f "{roll_desc}"|fail|inline '
+			fields += f'-f "{roll_desc}"|Fail|inline '
 		else:
 			# make base roll string for tool and 1d20 rolls
 			rolladv=0
@@ -225,6 +233,6 @@ char.mod_cc(ccn,-1,True)
 fields+=f'-f Downtime|"{cc_str(ccn)}"|inline '
 if not desc:
 	desc='Nothing happens.'
-update_code= get_gvar('dda143a1-2586-4d03-8fa6-3ee1e204f87b').replace('@I@',str(items)).replace('@C@', str(consumed))
+update_code= get_gvar('dda143a1-2586-4d03-8fa6-3ee1e204f87b').replace('@I@',str(items)).replace('@C@', str(consumed)).replace('@M@',str(modified))
 return f'{code} -title "{title}" -desc "{desc}" {fields} ' + (f'-thumb {img} ' if img else '') + '{{' +update_code +'}} '
 </drac2>
