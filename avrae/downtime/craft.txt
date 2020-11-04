@@ -1,0 +1,24 @@
+`!craft [<skill>/<tool'>]` : List all items you can create with the given skill or tool if provided, with partial name matching. For example `!craft smith` will list all Smith's Tool recipes.
+`!craft <recipe> [-cost <x><coin>]  [-with <skill>/<tool>/adv/dis/fail/crit/+bonus/-penalty[&...]]` : Spend some downtime to work on a creating an item.
+
+When starting the project, basic ingredient cost is due, which can be deducted automatically if set up with the `!coins` alias (not included in this workshop). This cost can be overridden using `-cost`, for instance `-cost 0cp`. Some items may also require specific ingredients, which will automatically be taken from your bag at the start of the project if it is set up with `!bag` (also not in this workshop).
+
+A skill or tool check can be required to make progress. If the `!tool` alias is used, tool proficiency, if required, is automatically checked and tool ownership is also required with `!bag`. The check can be overridden and/or modified  with the optional -with argument, for example `-with "Smith's Tools&adv&-1d4"`. Most items will require multiple days of downtime (consumable) and skill checks to craft.  When the project is finished the item will be put in your bag if it is set up.
+
+Example recipes for SRD items are configured in `!gvar 6498daf1-6d03-43ac-822a-2badfd533749` by default. These can be overridden per server using `!svar downtime {"recipes":["your recipe gvar"]}`  The gvars should contain recipe lists, which are json format. Each recipe should have the the format:
+`"name":{ `
+`  "skill":"<skillName>", `     : Skill used, must be an identifier, like AliasCharacter, for instance sleightOfHand.
+`  "tool":"<tool name>",  `     : Tool profieciency added to the skill check.
+`  "bonus":"<expression>",      : Bonuses added to the skill check, may contain cvars, numbers, operators, dice *+-/ eg `strengthMod+2d4`.
+`  "proficient":true/false,     : If true the item can only be crafted if the character is proficient in either the skill or the tool, default False.
+`  "dc":<dc>, `                 : Difficulty to progress, default 1.
+`  "cost":<gp:float>, `         : Start up cost in gp, unless a different exchange rate is set in the svar `coins`, defined like in the alias eg `{"gp":1, "sp":10 ... }`.
+`  "ingredients":"<item>",` or `["<item>",...],` or `{"<item>":<amount>,...},` : Special ingredients required and taken from `!bag`. If the amount is zero they only need to be owned.
+`  "effort":<effort in downtime>,` : Number of successful checks to complete.
+`  "item":"<item type>",`       : Item type added to the preferred bag on completion.
+`  "amount":<amount of item received>,` : Amount to add (default 1).
+`  "plural":"<irregular plural>",` : Used when crafting an amount for the right description, default=<item>s unless it ends in s
+`  "bag":"<default bag to add this item to>"/true,`   : If given this bag (if owned) will be preferred, for instance to put arrows straight into a quiver. If true is used the craft item is itself considered to be a bag.
+`  "img":"<img url>"} `         : thumbnail added to the embed on each crafting.
+
+Except for item, all elements are optional. Either "tool", "skill"  or both can be used for the check. If both are given a skill or ability check is done, with tool proficiency bonus. If only a bonus is given, the check is 1d20 + the bonuses. These bonuses can contain numbers, cvars or dies, separated by operators +-*/ for instance: "bonus":"strengthMod+1d6-3". If neither skill, tool or bonus is given each crafting session has guaranteed progress.

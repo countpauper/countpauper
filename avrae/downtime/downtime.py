@@ -1,6 +1,5 @@
 tembed <drac2>
-# TODO data https://www.dndbeyond.com/sources/xgte/downtime-revisited#undefined
-#   Sub commnd xge to enble, phb for phb downtime nd dmg for dmg downtime stuff set in svar
+# TODO
 # CC find in character consumables to be case insensitive?
 # apply effect (but only in combat and this is !downtime, sooo)
 # neutral resistances and 'applies_to'
@@ -164,7 +163,7 @@ while node:
 					boni+=[f'{s.value-int(s.prof*proficiencyBonus)}[{sname}]']
 				rolladv +=1 if s.adv is True else -1 if s.adv is False else 0
 			elif rollexpr:=table.get('roll'):
-				roll_split = rollexpr.replace('+',' ').replace('-',' ').split()
+				roll_split = rollexpr.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split()
 				rollstr=roll_split[0]
 				rollexpr=rollexpr[len(rollstr)+1:].strip()
 				if rollexpr:

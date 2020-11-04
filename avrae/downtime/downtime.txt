@@ -1,0 +1,44 @@
+`!downtime` List all available activities
+`!downtime <activity [-with adv/dis/<skill>/<tool>/+<bonus>/-<penalt>/roll/crit/fail[&...][...] [-<skill/tool> adv/dis/<skill>/<tool>/+<bonus>/-<penalt>/roll/crit/fail[&...][...]`
+
+Spend one downtime point to perform an activity. These activities may require one or more checks to determine the result. The checks can be overridden in order using `-with` or per skill or tool using.
+`adv` : give advantage on the roll
+`dis` : disadvantage on the roll. If the skill check would normally be done with advantage, this cancels it out.
+`<skill>` : override the skill used, eg `!downtime perform -with acrobatics`
+`<tool>` : override the tool used eg `!downtime perform -with drum`. This will also override the default skill
+`+<bonus>` / `-<penalty>`: Add a bonus or pentalty. These can contain rolls for instance `-with +1d4` when using guidance.
+`<roll>` : without + or - the roll result is overridden, for instance with a previous numeric result `-with 16`. This can be used to redo a sequence of checks, if the wrong override was used.
+`crit` : guarantee a roll of 20 and getting the critical success result.
+`fail` : guarantee a roll of 1 and getitng the critical failure result if any.
+These overrides can be combined together with `&` for instance `-arcana investigation&dis`.
+
+
+Example activities are used by default in the gvar `b566982b-c7f8-4ea4-af47-4fd82623b335`. These can be overridden per server by setting the svar `!svar downtime {"activities":["<gvar", ...]}`. The gvar should consist of a dictionary of activities, each with the following tree format:
+`"activity name":{`
+`   "particle":"<present particle of the activity verb>"`
+`   [<node properties>]`
+`}`
+
+Node properties can be nested in tables and any result of a node is added to the final result:
+
+`"img":"<url of image shown>"`  : Only the deepest nested image is shown in the embed, overriding others
+`"text":"<description>"`        : Description is added to the text shown in the embed
+`"code":"<draconic>"`           : Draconic code, without braces, is executed before rolling for results.
+`"tool":"<item required>"`,     : If `!bag` is used the tool must be owned.
+`"items":"<item name"> or ["item name", ...] or { "item name":amount/"expression",... }` items gained or lost. Automatically removed from `!bag`.
+`"consume":"<cc name>" or ["cc name", ... ] or { "cc name":amount/"expression", ... }` consumables used or regained.
+`"hp":<amount>/"<expression>"`   : Hp gained or lost
+`"thp":<amount>` : Temporary hitpoints.
+`"table":{`
+`  "skill":"<skill>",      Skill check done for result, the skill name must be an identifier from AliasCharacter.skills e.g. sleightOfHand
+`  "tool":"<tool>",`       Tool proficiency added to the check. The tool must be owned in `!bag`. if no skill is given 1d20 is used.
+`  "roll":"<expression>",` Random table result, useful for loot tables for instances.
+`  "fail":<node>,`         Result on critical fail.
+`  "crit":<node>,`         Result on critical success.
+`  "default":<node>,`      Result if no other entry matches. If there is no default result, the activity ends with nothing else happening.
+`  "<number>":<node>,`     Integer roll total, which is used if the roll is equal to or greater than this result and no higher result or crit or fail applies.
+`}`
+
+Instead of a <node> in a table, also a simple description string may be given as shorthand, for instance ``"5":"You don't find anything"`
+
+If an expression is given for items, consume or hp, or roll it may contain number, cvars, variables from code, dice rolls and operators +-*/. For HP it may also contain [damage type] to apply resistances.

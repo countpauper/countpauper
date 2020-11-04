@@ -1,0 +1,7 @@
+**Collection**: Downtime Activities
+**Link**: todo
+**Who is it for?**: DMs
+**Status**: Beta, please report issues on the github link below.
+**What does it do?** Downtime activities allows the players to perform simple tasks automatically. These could be: training for a proficiency, crafting or simple activities like reading, fishing or even just relaxing. The concept of downtime activities is described in the DMG page 127, but the exact balance between costs and rewards needs to be adjusted for each campaign. This can be done by providing your own tables in a json gvar and selecting them for your campaign in an svar. Or just use the defaults to craft SRD items, discover hidden scrolls in a book or steal a bag of gold pieces.
+Success or failure in crafting or downtime activities is determined by skills checks. These can be overridden by individual players to adjust to circumstances. Want to relax in the Abyss? Probably roll with disadvantage. Want to make money entertaining, but can't perform? Use your drum.
+**Github**: https://github.com/countpauper/countpauper/tree/master/avrae/downtime

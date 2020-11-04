@@ -79,7 +79,7 @@ bag = load_json(bags) if exists(bag_var) else None
 bag_update=False
 tool = recipe.get('tool')
 for o in override:
-	tool_override = [t for t in game_data.get('tools',[]) if t.replace('\'',' ').split()[0].lower() == o]
+	tool_override = [t for t in game_data.get('tools',[]) if t.replace('\'',' ').split()[0].lower() == o or t.lower()==o]
 	if tool_override:
 		tool = tool_override[0]
 
@@ -100,14 +100,17 @@ else:
 if skill and recipe.get('proficient', False) and s.prof<1:
 	return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {game_data["skills"][skill]}."'
 
-toolprofs = {pstr.strip().lower(): 1 for pstr in get('pTools', '').split(',') if not pstr.isspace()}
-toolprofs.update({estr.strip().lower(): 2 for estr in get('eTools', '').split(',') if not estr.isspace()})
 prof = ''
+if exists('pTools') or exists('eTools'):
+	toolprofs = {pstr.strip().lower(): 1 for pstr in get('pTools', '').split(',') if not pstr.isspace()}
+	toolprofs.update({estr.strip().lower(): 2 for estr in get('eTools', '').split(',') if not estr.isspace()})
+	if tool and tool.lower() in toolprofs:
+		prof = f'{toolprofs[tool.lower()]*proficiencyBonus}[{tool}]'
+	if tool and recipe.get('proficient', False) and not prof:
+		return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {tool}.\nYou can use `!tool pro {tool}` to add your proficiency."'
+elif tool and recipe.get('proficient', False):
+	prof = f'{proficiencyBonus}[{tool}]'	# assume proficient if not using !tool, but required to be
 
-if tool and tool.lower() in toolprofs:
-	prof = f'{toolprofs[tool.lower()]*proficiencyBonus}[{tool}]'
-if tool and recipe.get('proficient', False) and not prof:
-	return f'-title "{name} has no clue how to craft {item_d}." -desc "You are not proficient enough in {tool}.\nYou can use `!tool pro {tool}` to add your proficiency."'
 if not prof and char.levels.get('Bard') >= 2:
 	prof = f'{proficiencyBonus//2}[jack]'
 
@@ -251,7 +254,8 @@ else:
 		boni += [prof]
 		rollstr = '1d20'
 	if bonusstr := recipe.get('bonus'):
-		for id in [id for id in bonusstr.replace('+', ' ').replace('-', ' ').split() if id.isidentifier()]:
+		ids = [v for v in bonusstr.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+		for id in ids:
 			bonusstr = bonusstr.replace(id, f'{get(id, 0)}[{id[:3]}]')
 		boni += [bonusstr]
 		rollstr='1d20'

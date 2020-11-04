@@ -1,0 +1,20 @@
+`!train [<time spent>] level` Spend time training to qualify for your next level up.
+`!train [<time spent>] <language>` Train in a language.
+`!train [<time spent>] <tool>` Train in a tool proficiency.
+
+Training usually takes many days, so a number of downtime points can be used at once (default=1 point). This is limited to your available amount and the amount left to complete. A part of the cost is deducted for every training session. This is automatically taken from your bags if set up with the `!coin` alias (not included).
+If `!vsheet` alias is used for the character, new languages and proficiencies will automatically be updated in your rich character sheet. To complete the level up, your sheet has to be `!update`ed by hand.
+
+The proficiencies and costs to train them can be configured in a gvar. The default example is `!gvar 2605a178-bff2-4553-8548-6778ce0ba8e2`. The training options can be overridden with `!svar downtime {"training":["your gvar"]}`. This gvar should be a json with training records in the format:
+`"<training>":{`
+`  "effort":<days or downtime>,` : In downtime points or days if the maximum is set for the downtime cc.
+`  "talent":"<expression>",` : Initial progress in downtime points, may contain numbers, operators +-*/, cvars, dice, skill names as identifiers eg `sleightOfHand`.
+`  "cost":<gp:float>, `      : cost in gp for the total training, unless the exchange rate is set to a different base in the svar coins like `{"cp":100, "sp":1, "gp":0.01}`.
+`  "level":<level>,  `       : Level up unlocked on completion.
+`  "language":"<language>",` : Language added to `!vsheet` on completion.
+`  "proficiency":"<tool>", ` : Tool proficiency added to `!vsheet` on completion and ready to use for `!craft`.
+`  "diploma":"<text>",`      : Custom message on completion.
+`   "img":"<img_url>" `      : Image thumbnail added to the embed for every training.
+`}`
+
+Almost all of these are optional, but one of level, language or or proficiency has to be given as the goal.

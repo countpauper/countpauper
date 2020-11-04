@@ -21,7 +21,7 @@ items_log = {}
 for (i,q_str) in items.items():
 	for (item, q_str) in items.items():
 		# split all identifiers, by replacing all operators "+-*/" with spaces and removing all spaces and tabs
-		vars = [v for v in q_str.translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+		vars = [v for v in q_str.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
 		# replace all these identifiers with local variables
 		for var in vars:
 			q_str = q_str.replace(var, str(get(var, 0)))
@@ -61,7 +61,7 @@ if bag_update:  # update bag at end to avoid one sided item loss
 
 for (cc,q_str) in consumed.items():
 	# same routine as for items, replace identifiers with values
-	vars = [v for v in q_str.translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+	vars = [v for v in q_str.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
 	for var in vars:
 		q_str = q_str.replace(var, str(get(var, 0)))
 	# negate the string, so it shows up right in the field
@@ -93,7 +93,7 @@ dtype_table={"*0":immunes,"//2":resists,"*2":vulnerables}
 
 for (mod, q_str) in modified.items():
 	# again replace identifiers with values
-	vars = [v for v in q_str.translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+	vars = [v for v in q_str.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
 	for var in vars:
 		q_str = q_str.replace(var, str(get(var, 0)))
 	if mod=='hp':

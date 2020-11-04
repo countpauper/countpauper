@@ -93,14 +93,12 @@ progress = training_progress.get(option)
 # initial progress set by bonus
 if not progress:
 	if talents:=training.get('talent',None):
-		id_str=talents.replace('-','|').replace('+','|').replace('*','|').replace('/','|')
-		start_vars=[id for id in id_str.split("|") if id.isidentifier()]
-		for start_var in start_vars:
-			if start_var in game_data['cvar']:
-				talents = talents.replace(start_var,f'{get(start_var,0)}[{game_data["cvar"][start_var]}]')
+		vars = [v for v in talents.replace('//', ' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
 		for (skill_name, skill) in char.skills:
-			if skill_name in start_var and not exists(skill_name):
+			if not exists(skill_name):	# abilities, use abilityMod, not ability skill so +dexterity is full score
 				talents = talents.replace(skill_name,f'{int(skill.prof*proficiencyBonus)}[{game_data["skills"][skill_name]}]')
+		for var in vars:
+			talents = talents.replace(var,f'{get(var,0)}[{var[:3]}]')
 		progress_roll = vroll(talents)
 		fields+=f'-f Talent|"{progress_roll}"|inline '
 		progress = vroll(talents).total
