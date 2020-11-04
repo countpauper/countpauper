@@ -49,8 +49,8 @@ if char.cc_exists(ccn):
 	char.delete_cc(ccn)
 else:
 	cc_val=None
-if cc_max>0:
-	char.create_cc(ccn, maxVal=cc_max, reset=cc_reset)
+if cc_max is None or cc_max>0:
+	char.create_cc(ccn, minVal=0, maxVal=cc_max, reset=cc_reset if cc_max else None, dispType='bubble' if cc_max and cc_max<=5 else None)
 	if cc_val is not None:
 		char.set_cc(ccn,cc_val)
 

@@ -1,0 +1,29 @@
+!svar downtime {"max":false, "activities":["b566982b-c7f8-4ea4-af47-4fd82623b335","b566982b-c7f8-4ea4-af47-4fd82623b335"], "recipes":"6498daf1-6d03-43ac-822a-2badfd533749,c890d965-e9e8-4b6c-91d1-15906457256b", "training":"2605a178-bff2-4553-8548-6778ce0ba8e2"}
+
+c890d965-e9e8-4b6c-91d1-15906457256b
+{
+  "Ankheg Plate":{ "tool":"Smith's Tools", "skill":"strength", "dc":15, "cost":2000, "ingredients":"Ankheg Shell", "proficient":true, "effort": 12, "item":"Ankheg Plate Mail+1" },
+  "test1":{ "tool":"Cook's Utensils", "skill":"wisdom","bonus":"dexterityMod-1d4", "dc":5, "cost":1, "ingredients":{"Recipe":0}, "effort": 1, "item":"Rations", "plural":"Rations", "amount":4, "img":"https://i.imgur.com/ijUrS4v.jpg" },
+  "test2":{ "skill":"nature", "proficient":true, "bonus":"-WizardLevel", "dc":5, "effort": 5, "item":"Rations", "plural":"Rations", "amount":4 },
+  "test3":{ "bonus":"1d12-nonsenseMod", "cost":2, "proficient":true, "dc":20, "effort": 3, "item":"gp", "plural":"Gold Pieces", "amount":2 },
+  "test4":{ "proficient":true, "dc":5, "effort": 10, "item":"cp" }
+}
+
+b566982b-c7f8-4ea4-af47-4fd82623b335
+{
+  "test":
+  {
+    "text":"You spend your downtime testing ``!{ctx.alias}`\n",
+    "tool":"Chalk (1 piece)",
+    "table":
+    {
+      "roll": "1d20+strengthMod-intelligence",
+      "fail":{"text":"Bad stuff. It hurts.", "hp": "-1d6[poison]-(2[fire]-1d4)"},
+      "default": "Nothing great, just text.",
+      "10": "Average. Better do another check [todo].",
+      "15": "Good. Nested table [todo].",
+      "20": {"Great. You win gold.", "items":{"gp":"1d6+level//2"}},
+      "crit": "Amazing stuff [todo]."
+    }
+  }
+}

@@ -26,7 +26,6 @@
   "Saddlebags":{ "tool":"Leatherworker's Tools","skill":"dexterity", "dc":10, "proficient":false, "cost":2, "effort":2, "item":"Saddlebags", "bag":true },
   "Saddle":{ "tool":"Leatherworker's Tools", "skill":"strength", "dc":12, "proficient":true, "cost":5, "effort":2, "item":"Saddle, Riding" },
 
-
   "Torch":{ "tool":"Carpenter's Tools", "dc":3, "proficient":false, "cost":0, "effort":1, "item":"Torch", "amount":5},
   "Barrel":{ "tool":"Carpenter's Tools", "dc":5, "proficient":false, "cost":1, "effort":1, "item":"Barrel" },
   "Ladder":{ "tool":"Carpenter's Tools", "dc":3, "proficient":false, "cost":0.05, "effort":1, "item":"Ladder (10-foot)" },
@@ -39,7 +38,6 @@
   "Silk Rope":{ "tool":"Weaver's Tools","skill":"dexterity", "dc":10, "proficient":false, "cost":5, "effort":1, "item":"Rope, Silk (50 feet)" },
   "Clothes":{ "tool":"Weaver's Tools","skill":"dexterity", "dc":9, "proficient":true, "cost":0.25, "effort":1, "item":"Clothes, Common" },
   "Traveler's Clothes":{ "tool":"Weaver's Tools","skill":"dexterity", "dc":10, "proficient":true, "cost":0.5, "effort":2, "item":"Clothes, traveler's" },
-  "Clothes":{ "tool":"Weaver's Tools","skill":"dexterity", "dc":9, "proficient":true, "cost":0.25, "effort":1, "item":"Clothes, Common" },
   "Cold Weather Clothing":{ "tool":"Weaver's Tools","skill":"dexterity", "dc":12, "proficient":true, "cost":5, "effort":3, "item":"Clothing, cold weather" },
   "Fine Clothes":{ "tool":"Weaver's Tools","skill":"dexterity", "dc":15, "proficient":true, "cost":7.5, "effort":3, "item":"Clothes, Fine" },
 
@@ -150,11 +148,5 @@
   "Healing Potion":{ "tool":"Herbalism Kit", "dc":12, "proficient":true, "cost":25, "effort":1, "item":"Healing Potion" },
   "Greater Healing Potion":{ "tool":"Herbalism Kit", "dc":15, "proficient":true, "cost":100, "effort":2, "item":"Greater Healing Potion" },
   "Superior Healing Potion":{ "tool":"Herbalism Kit", "dc":20, "proficient":true, "cost":500, "effort":3, "item":"Superior Healing Potion" },
-  "Supreme Healing Potion":{ "tool":"Herbalism Kit", "dc":25, "proficient":true, "cost":2000, "effort":4, "item":"Supreme Healing Potion" },
-
-  "Ankheg Plate":{ "tool":"Smith's Tools", "skill":"strength", "dc":15, "cost":2000, "ingredients":"Ankheg Shell", "proficient":true, "effort": 12, "item":"Ankheg Plate Mail+1" },
-  "test1":{ "tool":"Cook's Utensils", "skill":"wisdom","bonus":"dexterityMod-1d4", "dc":5, "cost":1, "ingredients":{"Recipe":0}, "effort": 1, "item":"Rations", "plural":"Rations", "amount":4, "img":"https://i.imgur.com/ijUrS4v.jpg" },
-  "test2":{ "skill":"nature", "proficient":true, "bonus":"-WizardLevel", "dc":5, "effort": 5, "item":"Rations", "plural":"Rations", "amount":4 },
-  "test3":{ "bonus":"1d12-nonsenseMod", "cost":2, "proficient":true, "dc":20, "effort": 3, "item":"gp", "plural":"Gold Pieces", "amount":2 },
-  "test4":{ "proficient":true, "dc":5, "effort": 10, "item":"cp" }
+  "Supreme Healing Potion":{ "tool":"Herbalism Kit", "dc":25, "proficient":true, "cost":2000, "effort":4, "item":"Supreme Healing Potion" }
 }

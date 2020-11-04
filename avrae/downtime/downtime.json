@@ -1,17 +1,4 @@
 {
-  "test":
-  {
-    "table":
-    {
-      "roll": "1d20+strengthMod-intelligence",
-      "fail":{"text":"Bad stuff", "hp": "-1d6[poison]-(2[fire]-1d4)"},
-      "default": "Not great",
-      "10": "It's ok",
-      "15": "Good",
-      "20": "Great",
-      "crit": "Amazing stuff"
-    }
-  },
   "read":
   {
     "tool":"Book",
@@ -30,10 +17,10 @@
       },
       "3":{"text":"You find a recipe for a cake and feel hungry.", "img": "https://img.delicious.com.au/_cQeN3Po/w759-h506-cfill/del/2020/07/burnt-butter-almond-and-honey-cake-135325-2.jpg"},
       "5":{"text":"You read a romantic passage, but can't put the book down. A complete waste of time.", "consume":"Downtime"},
-      "7":"You read many dusty pages until you have to sneeze. You close the book and hope the pages don't stick together.",
-      "11":"You come across a new system of taxonomy and gain advantage on nature checks for the rest of the day.",
-      "13":"You study the lineage of kings of the realms and have advantage on history checks for the rest of the day. You notice that for a family tree it certainly has a lot of loops",
-      "15":"You read and understand a passage on metaphyiscs and gain +1 on all intelligence checks for the day.",
+      "7":"You read many dusty pages until you have to sneeze. You give up and as you close the book you hope the pages won't stick together.",
+      "11":"You come across a new system of taxonomy and gain advantage on nature checks for the rest of the day.\nUse `!c Nature -b 2`",
+      "13":"You study the lineage of kings of the realms and have advantage on history checks for the rest of the day. You notice that for a family tree it certainly has a lot of loops.\nUse `!c History -b 1`",
+      "15":"You read and understand a passage on metaphyiscs and gain +1 on all intelligence checks for the day.\nUse`!c <check> -b 1`",
       "18":"You find a map containing the location of a hidden library.",
       "23":"You read a beautiful poem and become inspired. You may roll one check with advantage.",
       "25":{"text":"You find a scroll hidden between the pages of a book. ",
@@ -42,6 +29,7 @@
           "skill":"arcana",
           "default":{"text":"You just can't figure out which spell it is.", "items":{"Unknown Scroll": 1}},
           "15":{
+            "text": "You immediately recognize it. ",
             "table":
             {
               "roll":"1d4",
@@ -54,11 +42,6 @@
         }
       }
     }
-  },
-  "socialize":
-  {
-    "particle":"socializing",
-    "text":"You make a new acquaintance"
   },
   "shop":
   {
