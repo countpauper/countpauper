@@ -1,5 +1,6 @@
 tembed <drac2>
 # TODO
+# Add "variables" to cvar and use them in formulas. Use one Downtime cvar json and read/replace it?
 # CC find in character consumables to be case insensitive?
 # apply effect (but only in combat and this is !downtime, sooo)
 # neutral resistances and 'applies_to'
@@ -60,6 +61,7 @@ node = activity
 code,desc,fields, img='','','',None
 items={}
 consumed={}
+changedvars={}
 modifiable=['hp','thp']	# TODO: xp, gp?
 modified={}
 overrides=args.get('with',[])
@@ -101,6 +103,14 @@ while node:
 		node_ccs={ncc:node_ccs.count(ncc) for ncc in node_ccs}
 	for (cc,q) in node_ccs.items():
 		consumed[cc]=(f'{consumed[cc]}+' if cc in consumed else '')+str(q)
+
+	# variables set
+	if reset_vars:=node.get('reset'):
+		if typeof(reset_vars)=='str':
+			reset_vars=reset_vars.split(',')
+		reset_vars={rv:None for rv in reset_vars}
+		changedvars.update(reset_vars)
+	changedvars.update(node.get('set',{}))
 
 	# character modifications
 	for mod in modifiable:
@@ -234,6 +244,6 @@ char.mod_cc(ccn,-1,True)
 fields+=f'-f Downtime|"{cc_str(ccn)}"|inline '
 if not desc:
 	desc='Nothing happens.'
-update_code= get_gvar('dda143a1-2586-4d03-8fa6-3ee1e204f87b').replace('@I@',str(items)).replace('@C@', str(consumed)).replace('@M@',str(modified))
+update_code= get_gvar('dda143a1-2586-4d03-8fa6-3ee1e204f87b').replace('@I@',str(items)).replace('@C@', str(consumed)).replace('@M@',str(modified)).replace('@V@',str(changedvars))
 return f'{code} -title "{title}" -desc "{desc}" {fields} ' + (f'-thumb {img} ' if img else '') + '{{' +update_code +'}} '
 </drac2>

@@ -1,30 +1,52 @@
 <drac2>
 #Downtime code run after {code} to apply customizable updates, with variables set in code blocks from json
-# input
-items=@I@
-consumed=@C@
-modified=@M@
+
 game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
 char = character()
 me = combat().me if combat() else None
+
 #output
 fields =' '
-bag_update=False
 
+# Update downtime variable store with changedvars
+changedvars=@V@
+update_var=False
+downtime_var='Downtime'
+downtime=load_json(get(downtime_var,'{}'))
+storedvar=downtime.get('var',{})
+for (changed,q) in changedvars.items():
+	if typeof(q)=='str':
+		# split all identifiers, by replacing all operators "+-*/" with spaces and removing all spaces and tabs
+		vars = [v for v in q.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+		# replace all these identifiers with previously stored or local variables
+		for var in vars:
+			q = q.replace(var, str(storedvar.get(var,get(var, 0))))
+		q = roll(q)
+	if q is None:
+		storedvar.pop(changed)
+	else:
+		storedvar[changed] = q
+	update_var = True
+downtime['var'] = storedvar
+if update_var:
+	character().set_cvar(downtime_var,dump_json(downtime))
+
+
+# update bags with items
+items=@I@
+bag_update=False
 bag_var='bags'
 if exists(bag_var):
 	bag=load_json(get(bag_var))
 else:
 	bag=None
-
 items_log = {}
-for (i,q_str) in items.items():
-	for (item, q_str) in items.items():
-		# split all identifiers, by replacing all operators "+-*/" with spaces and removing all spaces and tabs
-		vars = [v for v in q_str.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
-		# replace all these identifiers with local variables
-		for var in vars:
-			q_str = q_str.replace(var, str(get(var, 0)))
+for (item,q_str) in items.items():
+	# split all identifiers, by replacing all operators "+-*/" with spaces and removing all spaces and tabs
+	vars = [v for v in q_str.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+	# replace all these identifiers with set or local variables
+	for var in vars:
+		q_str = q_str.replace(var, str(storedvar.get(var, get(var, 0))))
 	# Compute the quantity formula, with identifiers replaced with values
 	q = roll(q_str)
 	if q:
@@ -59,11 +81,13 @@ if items_gained:= ",".join([(f'{q} x {i}' if q>1 else i) for (i, q) in items_log
 if bag_update:  # update bag at end to avoid one sided item loss
 	char.set_cvar(bag_var, dump_json(bag))
 
+# update consumable counters
+consumed=@C@
 for (cc,q_str) in consumed.items():
 	# same routine as for items, replace identifiers with values
 	vars = [v for v in q_str.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
 	for var in vars:
-		q_str = q_str.replace(var, str(get(var, 0)))
+		q_str = q_str.replace(var, str(storedvar.get(get(var, 0))))
 	# negate the string, so it shows up right in the field
 	if q_str[0]=='-':
 		q_str=q_str[1:]
@@ -79,6 +103,8 @@ for (cc,q_str) in consumed.items():
 	char.mod_cc(cc,r.total)
 	fields+=f'-f "{cc}[{r.dice}]"|"{cc_str(cc)}"|inline '
 
+# update character stats with modified
+modified=@M@
 resists=[r.dtype for r in char.resistances.resist]
 immunes=[i.dtype for i in char.resistances.immune]
 vulnerables=[v.dtype for v in char.resistances.vuln]
@@ -90,12 +116,11 @@ if me:
 		vulnerables+=e.effect.get('vulnerable',[])	#hypothetical effect
 
 dtype_table={"*0":immunes,"//2":resists,"*2":vulnerables}
-
 for (mod, q_str) in modified.items():
 	# again replace identifiers with values
 	vars = [v for v in q_str.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
 	for var in vars:
-		q_str = q_str.replace(var, str(get(var, 0)))
+		q_str = q_str.replace(var, str(storedvar.get(get(var, 0))))
 	if mod=='hp':
 		for (multiplier,dtypes) in dtype_table.items():
 			for dtype in dtypes:

@@ -22,23 +22,26 @@ Example activities are used by default in the gvar `b566982b-c7f8-4ea4-af47-4fd8
 Node properties can be nested in tables and any result of a node is added to the final result:
 
 `"img":"<url of image shown>"`  : Only the deepest nested image is shown in the embed, overriding others
-`"text":"<description>"`        : Description is added to the text shown in the embed
-`"code":"<draconic>"`           : Draconic code, without braces, is executed before rolling for results.
-`"tool":"<item required>"`,     : If `!bag` is used the tool must be owned.
-`"items":"<item name"> or ["item name", ...] or { "item name":amount/"expression",... }` items gained or lost. Automatically removed from `!bag`.
-`"consume":"<cc name>" or ["cc name", ... ] or { "cc name":amount/"expression", ... }` consumables used or regained.
-`"hp":<amount>/"<expression>"`   : Hp gained or lost
-`"thp":<amount>` : Temporary hitpoints.
+`"text":"<description>",`       : Description is added to the text shown in the embed
+`"code":"<draconic>",`          : Draconic code, without braces, is executed before rolling for results.
+`"tool":"<item required>",`     : If `!bag` is used the tool must be owned.
+`"item":"<item name>",`         : Receive a single item. Automatically removed from `!bag`.
+`"items":"<item name>, ..."> or ["item name", ...] or { "item name":amount/"expression",... },` items gained or lost.
+`"consume":"<cc name>" or ["cc name", ... ] or { "cc name":amount/"expression", ... },` consumables used or regained.
+`"set":{"var":"roll"/<value>, ...},` : Remember an integer value, which can be used in other expressions
+`"reset":"var,..." or ["var",...],` : Remove remembered integer values, wich effectively sets them to 0
+`"hp":<amount>/"<expression>",`  : Hp gained or lost
+`"thp":<amount>,` :              Temporary hitpoints.
 `"table":{`
 `  "skill":"<skill>",      Skill check done for result, the skill name must be an identifier from AliasCharacter.skills e.g. sleightOfHand
 `  "tool":"<tool>",`       Tool proficiency added to the check. The tool must be owned in `!bag`. if no skill is given 1d20 is used.
 `  "roll":"<expression>",` Random table result, useful for loot tables for instances.
 `  "fail":<node>,`         Result on critical fail.
 `  "crit":<node>,`         Result on critical success.
-`  "default":<node>,`      Result if no other entry matches. If there is no default result, the activity ends with nothing else happening.
-`  "<number>":<node>,`     Integer roll total, which is used if the roll is equal to or greater than this result and no higher result or crit or fail applies.
+`  "default":<node>,`      Result if no other entry matches. If there is no applicable or default result, the activity ends with nothing else happening.
+`  "<number>":<node>`      Integer roll total, which is used if the roll is equal to or greater than this result and no higher result, crit or fail applies.
 `}`
 
-Instead of a <node> in a table, also a simple description string may be given as shorthand, for instance ``"5":"You don't find anything"`
+Instead of a <node> in a table, also a simple description string may be given as shorthand, for instance `"5":"You don't find anything."`
 
-If an expression is given for items, consume or hp, or roll it may contain number, cvars, variables from code, dice rolls and operators +-*/. For HP it may also contain [damage type] to apply resistances.
+If an expression is given for items, consume or hp, or roll it may contain numbers, dice rolls, set vars, cvars, variables from code  and operators +-*/. For HP it may also contain [damage type] to apply resistances.

@@ -143,9 +143,25 @@
   },
   "work":
   {
-    "code":"{{wage=roll('2d6')}}",
-    "text":"You do an adequate job and make {wage} silver pieces",
-    "items": {"sp": "wage"}
+    "table": {
+      "fail": {"text":"You have a bad day. You make several mistakes in a row and get fired", "reset":"raise",
+        "table": {
+          "skill": "persuasion",
+          "default": " without pay.",
+          "15": {"text":", but at least you get paid for half the day","items":{"sp": "1d8+raise/2"}}
+        }
+      },
+     "default": {"text": "There's a work related accident. ","table":{
+        "skill": "dexterity",
+        "default": {"text":"You are injured","hp": "-2d6"},
+        "12": {"text": "You manage to jump out of the way, but the merchandise is destroyed and its cost deducted from your pay.","items":{"sp": "3d4+raise-1d12"}}
+      }},
+       "2": {"code":"{{wage=roll('3d4+raise')}}","text":"You make {wage} silver pieces","items": {"sp":"wage"}},
+      "8": {"code":"{{wage=roll('3d6+raise')}}","text":"You do an adequate job and make {wage} silver pieces","items": {"sp":"wage"}},
+      "15": {"code":"{{wage=roll('3d8+raise')}}","text":"You do a good job and make {wage} silver pieces","items": {"sp":"wage"}},
+      "21": {"code":"{{bonus=roll('1d8+4')}}","text": "You do a great job and the boss gives you a bonus of {bonus} silver pieces.","items":{"sp":"3d8+bonus+raise"}},
+      "crit": {"code":"{{extra=10}}","text": "You do an awesome job and get a promotion and a raise","set": {"raise": "raise+extra"}, "items": {"sp":"4d4+raise"}}
+    }
   },
   "perform":
   {
