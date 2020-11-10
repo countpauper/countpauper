@@ -1,6 +1,7 @@
 <drac2>
 # Bladesong alias routine
 # TODO
+# For all: map in svar with race or char name bonusses to max (default: elf+1)
 # simplify reusing !bladesong (with a use) when no arguments and no effect active
 # or use bladesing -i convention to 'reuse'
 # bladesong defense sub command

@@ -13,17 +13,23 @@ b566982b-c7f8-4ea4-af47-4fd82623b335
 {
   "test":
   {
-    "text":"You spend your downtime testing ``!{ctx.alias}`\n",
-    "tool":"Chalk (1 piece)",
+    "text":"You spend your downtime testing`\n",
+    "tool":"Chalk",
     "table":
     {
       "roll": "1d20+strengthMod-intelligence",
       "fail":{"text":"Bad stuff. It hurts.", "hp": "-1d6[poison]-(2[fire]-1d4)"},
       "default": "Nothing great, just text.",
-      "10": "Average. Better do another check [todo].",
-      "15": "Good. Nested table [todo].",
-      "20": {"Great. You win gold.", "items":{"gp":"1d6+level//2"}},
-      "crit": "Amazing stuff [todo]."
+      "10": {"text":""Average. Better do another check.","table":{
+        "skill":'insight",
+        "bonus":"1d10//2",
+        "default":"Nope, still boring.",
+        "10":{"item":"Chalk"},
+        "20":{"text":"You feel {goodness} better than before", ""code":"goodness=roll(1d6)", "thp":"3+goodness*2"}
+      }
+      "15": "Good. Nested table.",
+      "20": {"text":"Great. You win gold.", "items":{"gp":"1d6+level//2"}},
+      "crit": "Amazing stuff."
     }
   }
 }

@@ -1,6 +1,6 @@
 **Collection** : **Downtime Activities**
 **Link** : todo
-**Who is it for?** : DMs
+**Who is it for?** : for DMs to set up, for players to use,
 **Status** : Beta, please report issues on the github link below.
 **What does it do?** : Downtime activities allows player to perform simple tasks automatically. These could be: training for a proficiency, crafting or simple activities like reading, fishing or even just relaxing. The concept of downtime activities is described in the DMG page 127, but the content and balance often needs to be adjusted for each campaign. This can be done by providing your own tables in a json gvar and selecting them for your campaign in an svar. Or you can just use the default tables to craft SRD items, discover hidden knowledge in a book or steal a bag of gold.
 Success or failure in crafting or downtime activities is determined by skills checks. These can be overridden by individual players to adjust specific circumstances. Want to relax in the Abyss? Sure, but roll with disadvantage. Want to make some coin entertaining, but can't perform? Use your drum.
