@@ -85,15 +85,75 @@
   "relax":
   {
     "table":{
-      "1":"You lay around doing nothing and accomplish nothing.",
-      "10": {"text": "You feel well rested","consume": "Exhaustion" },
-      "15": {"text": "You feel energized","thp": 5}
+      "default":"You lay around doing nothing and accomplish nothing.",
+      "10": {"text": "You feel energized.","thp": 5},
+      "15": {"text": "You feel well rested.","consume": "Exhaustion" }
     }
   },
   "scavenge":
   {
     "particle":"scavenging",
-    "text":"You find a rusty sword"
+    "table":{
+      "skill": "perception",
+      "default": "You don't find anything useful.",
+      "5": {"text": "You find an arrow.","item": "Arrows"},
+      "6": {"text": "You find some nice round pebbles.","items": {"Sling Bullets":"2d6"}},
+      "7": {"text": "You find some dropped coins that noone bothered to pick up.","items": {"cp": "1d6+2"}},
+      "8": {"text": "You find a big stick.","item": "Club"},
+      "9": {"text": "You find a bucket with only a small hole in it.","item": "Bucket"},
+      "10": {"text": "You find a dagger","item": "Dagger"},
+      "11": {"text": "You find a broken chain, but there are at least 10 usable feet left.","item": "Chain"},
+      "12": {"text": "You find an abandoned cooking site. The pot is still there and there is something in it.", "item": "Pot, Iron"},
+      "13": {"text": "You find a blunt axe, but you also find a whetstone nearby, so you can immediately sharpen it.","items": "Handdaxe,Whetstone"},
+      "14": {"text": "Someone left a ladder just standing there. After you leave with it, you hear someone shouting from up high. What's their problem?","item": "Ladder"},
+      "15": {"text": "You find an empty oil lamp. You rub it. No genie appears.","item": "Lamp"},
+      "16": {"text": "You find a small lost purse.","items": {"sp": "3d4"}},
+      "18": {"text": "You find a book, wrapped in cloth. You unwrap it, curious what it's about. ","item": "Book", "table": {
+        "roll": "1d6",
+        "1": "It's a very boring ledger. Some of the numbers don't seem to add up.",
+        "2": "It's a romance novel about the forbidden love between two people of opposing tribes.",
+        "3": "It's a fantasy novel about a world without magic, where people need to rely on machines to get anything done.",
+        "4": "It's a manual of a simple device. It contains many warnings about possible misuse that you wouldn't even have considered.",
+        "5": "It's filled with songs and poems. You recognize one that your parents used to sing to you.",
+        "6": "It's in a language you don't understand."
+      }},
+      "19": {"text": "You find a discarded weapon with blood on it.", "table": {
+        "roll": "1d8",
+        "1": {"item": "Mace"},
+        "2": {"item": "Longsword"},
+        "3": {"item": "Maul"},
+        "4": {"item": "Rapier"},
+        "5": {"item": "Scimitar"},
+        "6": {"item": "Shortsword"},
+        "7": {"item": "Warhammer"},
+        "8": {"item": "Battleaxe"}
+      }},
+      "21": {"text": "You find a treasure chest hidden away.","items": {"gp": "2d8", "sp": "1d12"}},
+      "23": {"text": "You find a gem.", "table": {
+        "roll": "1d20",
+        "1":{"item":"Eye Agate"},
+        "2":{"item":"Azurite"},
+        "3":{"item":"Quartz"},
+        "4":{"item":"Hematite"},
+        "5":{"item":"Lapis Lazuli"},
+        "6":{"item":"Malachite"},
+        "7":{"item":"Rhodochrosite"},
+        "8":{"item":"Tiger's eye"},
+        "9":{"item":"Turquoise"},
+        "10":{"item":"Freshwater Pearl"},
+        "11":{"item":"Chrysoprase"},
+        "12":{"item":"Jasper"},
+        "13":{"item":"Carnelian"},
+        "14":{"item":"Peridot"},
+        "15":{"item":"Sardonyx"},
+        "16":{"item":"Zircon"},
+        "17":{"item":"Garnet"},
+        "18":{"item":"Amethyst"},
+        "19":{"item":"Chrysoberyl"},
+        "20":{"item":"Pearl"}
+        }},
+        "26": {"text": "You find an empty oil lamp. You rub it. A fat genie appears and offers to grant you any culinary wish for his freedom. You are affected by Heroes Feast for the next 24 hours."}
+    }
   },
   "hunt":
   {
@@ -128,13 +188,13 @@
         "6": {"text": "It's a ring.","table":
         {
           "skill": "arcana",
-          "default": {"items": "ring"},
+          "default": {"items": "Ring"},
           "15":{"table":
           {
             "roll": "1d6",
-            "1": {"items":"Golden Ring" },
-            "3": {"items":"Ring of Swimming"},
-            "4": {"items":"Ring of Water Walking" },
+            "1": {"items": "Golden Ring" },
+            "3": {"items": "Ring of Swimming"},
+            "4": {"items": "Ring of Water Walking" },
             "6": {"items": "Ring of Protection"}
           }}
         }}
@@ -156,11 +216,11 @@
         "default": {"text":"You are injured","hp": "-2d6"},
         "12": {"text": "You manage to jump out of the way, but the merchandise is destroyed and its cost deducted from your pay.","items":{"sp": "3d4+raise-1d12"}}
       }},
-       "2": {"code":"{{wage=roll('3d4+raise')}}","text":"You make {wage} silver pieces","items": {"sp":"wage"}},
-      "8": {"code":"{{wage=roll('3d6+raise')}}","text":"You do an adequate job and make {wage} silver pieces","items": {"sp":"wage"}},
-      "15": {"code":"{{wage=roll('3d8+raise')}}","text":"You do a good job and make {wage} silver pieces","items": {"sp":"wage"}},
-      "21": {"code":"{{bonus=roll('1d8+4')}}","text": "You do a great job and the boss gives you a bonus of {bonus} silver pieces.","items":{"sp":"3d8+bonus+raise"}},
-      "crit": {"code":"{{extra=10}}","text": "You do an awesome job and get a promotion and a raise","set": {"raise": "raise+extra"}, "items": {"sp":"4d4+raise"}}
+       "2": {"text":"You do an adequate job.","items": {"sp":"2d4+raise"}},
+      "8": {"text":"You do an fine job.","items": {"sp":"3d6+raise"}},
+      "15": {"text":"You do a good job.","items": {"sp":"4d8+raise"}},
+      "21": {"code":"{{bonus=roll('1d8+4')}}","text": "You do an great job and the boss gives you a bonus of {bonus} silver pieces.","items":{"sp":"4d8+bonus+raise"}},
+      "crit": {"code":"{{extra=10}}","text": "You do an exceptional job and get a promotion and a raise","set": {"raise": "raise+extra"}, "items": {"sp":"4d4+raise"}}
     }
   },
   "perform":

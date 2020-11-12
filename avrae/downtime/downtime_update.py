@@ -41,14 +41,15 @@ if exists(bag_var):
 else:
 	bag=None
 items_log = {}
-for (item,q_str) in items.items():
-	# split all identifiers, by replacing all operators "+-*/" with spaces and removing all spaces and tabs
-	vars = [v for v in q_str.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
-	# replace all these identifiers with set or local variables
-	for var in vars:
-		q_str = q_str.replace(var, str(storedvar.get(var, get(var, 0))))
-	# Compute the quantity formula, with identifiers replaced with values
-	q = roll(q_str)
+for (item,q) in items.items():
+	if typeof(q)=='str':
+		# split all identifiers, by replacing all operators "+-*/" with spaces and removing all spaces and tabs
+		vars = [v for v in q.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+		# replace all these identifiers with set or local variables
+		for var in vars:
+			q = q.replace(var, str(storedvar.get(var, get(var, 0))))
+		# Compute the quantity formula, with identifiers replaced with values
+		q = roll(q)
 	if q:
 		if bag:
 			# add or remove items that are already owned and find preferred bag to add to
@@ -83,25 +84,29 @@ if bag_update:  # update bag at end to avoid one sided item loss
 
 # update consumable counters
 consumed=@C@
-for (cc,q_str) in consumed.items():
+for (cc,q) in consumed.items():
 	# same routine as for items, replace identifiers with values
-	vars = [v for v in q_str.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
-	for var in vars:
-		q_str = q_str.replace(var, str(storedvar.get(get(var, 0))))
-	# negate the string, so it shows up right in the field
-	if q_str[0]=='-':
-		q_str=q_str[1:]
+	if typeof(q) == 'str':
+		vars = [v for v in q.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+		for var in vars:
+			q = q.replace(var, str(storedvar.get(get(var, 0))))
+		# negate the string, so it shows up right in the field
+		if q[0]=='-':
+			q=q[1:]
+		else:
+			q='-'+q
+		r=vroll(q)
+		q=r.total
 	else:
-		q_str='-'+q_str
+		r=None
 
-	r=vroll(q_str)
 	if not char.cc_exists(cc):
 		cc=cc.lower()
 		if not cc_exists(cc):
-			fields += f'-f "{cc}[{r.dice}]"|"Not Available"|inline '
+			fields += f'-f "{cc}[{r.dice if r else q}]"|"Not Available"|inline '
 			continue
 	char.mod_cc(cc,r.total)
-	fields+=f'-f "{cc}[{r.dice}]"|"{cc_str(cc)}"|inline '
+	fields+=f'-f "{cc}[{r.dice if r else q}]"|"{cc_str(cc)}"|inline '
 
 # update character stats with modified
 modified=@M@
@@ -116,22 +121,25 @@ if me:
 		vulnerables+=e.effect.get('vulnerable',[])	#hypothetical effect
 
 dtype_table={"*0":immunes,"//2":resists,"*2":vulnerables}
-for (mod, q_str) in modified.items():
-	# again replace identifiers with values
-	vars = [v for v in q_str.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
-	for var in vars:
-		q_str = q_str.replace(var, str(storedvar.get(get(var, 0))))
+for (mod, q) in modified.items():
+	if typeof(q)=='str':
+		# again replace identifiers with values
+		vars = [v for v in q.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
+		for var in vars:
+			q = q.replace(var, str(storedvar.get(get(var, 0))))
+		r = vroll(q)
+		q=r.total
+	else:
+		r=None
 	if mod=='hp':
 		for (multiplier,dtypes) in dtype_table.items():
 			for dtype in dtypes:
-				q_str = q_str.replace(f'[{dtype}]', f'{multiplier}[{dtype}]')
-		r = vroll(q_str)
-		char.modify_hp(r.total,overflow=False)
-		fields += f'-f "Hitpoints [{r.dice}]|{char.hp_str()}|inline" '
+				q = q.replace(f'[{dtype}]', f'{multiplier}[{dtype}]')
+		fields += f'-f "Hitpoints [{r.dice if r else q}]|{char.hp_str()}|inline" '
+		char.modify_hp(q,overflow=False)
 	elif mod=='thp':
-		r = vroll(q_str)
+		fields += f'-f "Temporary HP [{r.dice if r else q}]|{char.temp_hp}|inline" '
 		char.set_temp_hp(max(char.temp_hp,r.total,0))
-		fields += f'-f "Temporary HP [{r.dice}]|{char.temp_hp}|inline" '
 
 return fields
 </drac2>

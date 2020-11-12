@@ -1,6 +1,5 @@
 tembed <drac2>
 # TODO
-# Add "variables" to cvar and use them in formulas. Use one Downtime cvar json and read/replace it?
 # CC find in character consumables to be case insensitive?
 # apply effect (but only in combat and this is !downtime, sooo)
 # neutral resistances and 'applies_to'
@@ -91,9 +90,9 @@ while node:
 	if typeof(node_items)=='SafeList':
 		node_items={ ni:node_items.count(ni) for ni in node_items }
 	for (i,q) in node_items.items():
-		items[i]=(f'{items[i]}+' if i in items else '')+str(q)
+		items[i]=f'{items[i]}+{q}' if i in items else q
 	if extra_item:= node.get('item'):
-		items[exta_item] = items.get(extra_item,0)+1
+		items[extra_item] = items.get(extra_item,0)+1
 
 	# consumables
 	node_ccs= node.get('consume',{})
@@ -102,7 +101,7 @@ while node:
 	if typeof(node_ccs)=='SafeList':
 		node_ccs={ncc:node_ccs.count(ncc) for ncc in node_ccs}
 	for (cc,q) in node_ccs.items():
-		consumed[cc]=(f'{consumed[cc]}+' if cc in consumed else '')+str(q)
+		consumed[cc]=f'{consumed[cc]}+{q}' if cc in consumed else q
 
 	# variables set
 	if reset_vars:=node.get('reset'):
@@ -244,6 +243,7 @@ char.mod_cc(ccn,-1,True)
 fields+=f'-f Downtime|"{cc_str(ccn)}"|inline '
 if not desc:
 	desc='Nothing happens.'
+
 update_code= get_gvar('dda143a1-2586-4d03-8fa6-3ee1e204f87b').replace('@I@',str(items)).replace('@C@', str(consumed)).replace('@M@',str(modified)).replace('@V@',str(changedvars))
 return f'{code} -title "{title}" -desc "{desc}" {fields} ' + (f'-thumb {img} ' if img else '') + '{{' +update_code +'}} '
 </drac2>
