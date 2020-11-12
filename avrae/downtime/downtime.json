@@ -80,7 +80,21 @@
   "worship":
   {
     "particle":"worshipping",
-    "text":"You're not sure your prayers are answered or if anyone is even listening."
+    "table":{
+      "skill": "religion",
+      "default":"You're not sure your prayers are answered or if anyone is even listening.",
+      "fail":{"text":"Your lack of faith disturbs your deity of chocie. ","table":{
+        "skill": "dexterity",
+        "default": {"text":"You get struck by lightning.","hp": "-4d6[lightning]"},
+        "15":"You manage to dodge divine retribution. A lightning bolt strikes the place where you were just praying. You pray for forgiveness."
+      }},
+      "8":"You feel a renewed sense of purpose, nothing else.",
+      "15":{"text": "Your god is listening and  favours you.", "thp": "level+2"},
+      "18": {"text": "Your god heals your wounds so you can fight another day.", "hp": "3d8+3"},
+      "20": {"text": "You receive divine inspiration. You can roll one d20 with advantage."},
+      "crit":{"text": "You are blessed by your god for an hour. You can add 1d4 to attack rolls or saving throws using `-b 1d4`."},
+      "25":{"code": "{{ character().spellbook.set_slots(1,character().spellbook.get_max_slots(1)) }},","text": "You are infused with divine energy. All level 1 spell slots are restored."}
+    }
   },
   "relax":
   {

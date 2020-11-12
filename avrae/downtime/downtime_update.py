@@ -126,7 +126,7 @@ for (mod, q) in modified.items():
 		# again replace identifiers with values
 		vars = [v for v in q.replace('//',' ').translate("".maketrans("+-*/", "    ", " \t\n")).split() if v.isidentifier()]
 		for var in vars:
-			q = q.replace(var, str(storedvar.get(get(var, 0))))
+			q = q.replace(var, str(storedvar.get(var, get(var, 0))))
 		r = vroll(q)
 		q=r.total
 	else:
@@ -135,11 +135,11 @@ for (mod, q) in modified.items():
 		for (multiplier,dtypes) in dtype_table.items():
 			for dtype in dtypes:
 				q = q.replace(f'[{dtype}]', f'{multiplier}[{dtype}]')
-		fields += f'-f "Hitpoints [{r.dice if r else q}]|{char.hp_str()}|inline" '
 		char.modify_hp(q,overflow=False)
+		fields += f'-f "Hitpoints [{r.dice if r else q}]|{char.hp_str()}|inline" '
 	elif mod=='thp':
-		fields += f'-f "Temporary HP [{r.dice if r else q}]|{char.temp_hp}|inline" '
 		char.set_temp_hp(max(char.temp_hp,r.total,0))
+		fields += f'-f "Temporary HP [{r.dice if r else q}]|{char.temp_hp}|inline" '
 
 return fields
 </drac2>
