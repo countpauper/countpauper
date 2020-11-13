@@ -1,5 +1,7 @@
 tembed <drac2>
 # TODO
+# Effects, string with arguments, argparse for duration, concentration "name":"effect"
+# For all: map in svar with race or char name bonusses to max (default: elf+1)
 # CC find in character consumables to be case insensitive?
 # apply effect (but only in combat and this is !downtime, sooo)
 # neutral resistances and 'applies_to'
