@@ -10,7 +10,7 @@ if me:
 	song_in_effect=me.get_effect(effect_name)!=None
 else:
 	song_in_effect=False
-title = '-title "Song of Defense\"'
+title = '-title "Song of Defense"'
 fields = ""
 if bladesongs==None:
 	description="This is only available to Bladesingers."
@@ -22,17 +22,17 @@ else:
 	arg = "&*&"
 	slot = int(arg) if arg else 1
 	if slot<1:
-		description="You can not use a cantrip to absorb damage."
+		description='You can not use a cantrip to absorb damage.'
 		dmg_absorbed = None
 	else:
 		max_slots = character().spellbook.get_max_slots(slot)
 		if max_slots<=0:
-			description=f"You do not have level {slot} spell slots to absorb damage."
+			description=f'You do not have level {slot} spell slots to absorb damage.'
 			dmg_absorbed = None
 		else:
 			remaining_slots = character().spellbook.get_slots(slot)
 			if remaining_slots<=0:
-				description=f"You do not have a level {slot} spell slot left to absorb damage."
+				description=f'You do not have a level {slot} spell slot left to absorb damage.'
 				dmg_absorbed = None
 			else:
 				description="You direct your magic to absorb damage while your Bladesong is active. When you take damage, you use your reaction to expend one spell slot and reduce that damage to you by an amount equal to five times the spell slot's level."

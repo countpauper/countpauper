@@ -1,0 +1,34 @@
+This adds an alias to activate or deactivate bladesong.
+It can also be used for Song of Defense. It is accompanied with snippets to use when bladesong is active:
+bladesong gives advantage, to use for acrobatics checks and adds intelligence bonus, to concentration saves if bladesong is activate.
+victory adds Song of Victory damage to an attack.
+bsadv, bsbonus and the bs alias are deprecated
+
+The alias and snippet code is available here.
+https://github.com/countpauper/countpauper/tree/master/avrae/bladesong
+
+If you have any issues, you can post them on github or ping me on the avrae dev server.
+
+
+
+
+
+** Bladesong alias **
+`!bladesong` Uses bladesong effect with 1 minute remaining.
+`!bs <turns>`: Activates bladesong in combat, with a number of <turns> remaining. This can be used if bladesong was used before combat.
+`!bs off|0`: Deactivates bladesong.
+`!bladesong [<turns>] -i: Activates bladesong, without class or uses per rest restriction.
+
+
+
+
+`!bs defense [<level>] [-i]`: use song of defense, expending the given spell slot to reduce damage. It checks if bladesong is active. The default is 1.
+
+
+
+** Related Snippets **
+`!attack <weapon> victory`: add victory damage bonus (int) if bladesong is active or used.
+`!save Con bsbonus`: add your intelligence bonus to a concentration check if bladesong is active or used.
+`!check Acrobatics bsadv`: Advantage on acrobatics check if bladesong is active or used.
+
+The `!bladesong` alias uses the same name as an older server alias, which is not compatible with the snippets. If that causes problems it can be renamed with `!alias autofix` or `!bs` can be used.
