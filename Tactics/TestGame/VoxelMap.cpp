@@ -215,8 +215,8 @@ TEST(VoxelFlux, BoundaryEdge)
     EXPECT_EQ(Position(2, -1, 1), north_west_down.begin().position);
     EXPECT_EQ(0.0, (*north_west_down.begin()).second);
 
-    auto east_west_you_are_stressed = data.U().BoundaryCondition(Direction::west | Direction::east);
-    EXPECT_EQ(east_west_you_are_stressed.end(), east_west_youre_stressed.begin());
+    auto east_west_youre_stressed = data.U().BoundaryCondition(Direction::west | Direction::east);
+    EXPECT_EQ(east_west_youre_stressed.end(), east_west_youre_stressed.begin());
 }
 
 
