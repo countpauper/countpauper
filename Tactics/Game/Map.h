@@ -62,8 +62,8 @@ namespace Game
         bool CanGo(const Position& from, Direction direction) const;
         Engine::Coordinate Coordinate(const Position& p) const;
         static Position NamedLocation(uint32_t name);
-    protected:
         static uint32_t LocationName(const Position& p, const Direction& dir);
+    protected:
         virtual unsigned Longitude() const = 0;
         virtual unsigned Latitude() const = 0;
     };

@@ -24,7 +24,6 @@ TEST(Statics, Fill)
     StaticEnvironment oneEnv(Size(1, 1, 1));
     oneEnv.Fill(Engine::Sphere(Engine::Coordinate(0, 0, 0), 1), Material::water);
     EXPECT_EQ(&Material::water, oneEnv.GetMaterial(Engine::Coordinate(0, 0, 0)));
-
 }
 
 

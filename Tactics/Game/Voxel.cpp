@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "VoxelMap.h"
+#include "Voxel.h"
 #include <gl/GL.h>
 #include "Engine/Maths.h"
 #include "Engine/Drawing.h"
@@ -19,17 +19,17 @@ const Material Material::stone { L"Stone",     Element::Stone,   Engine::RGBA(0x
 const Material Material::water { L"Water",     Element::Water,   Engine::RGBA(0xFFFF6010),   273,    373,    1000,   18,          8.9e-4,     0.6065,     4.1813,     0.07,           9e9,           6.9 / 1000   };     // H2O 18 g/mol
                                                                                                                                                                                                             // redundant for now VoxelMap::Material VoxelMap::Material::sand  { L"Sand",      1986,   3220,   2648,        10,            0.0           };     // silicon dioxide, 60 g/mol
 
-bool VoxelMap::Voxel::Solid() const
+bool Voxel::Solid() const
 {
     return temperature < material->melt;
 }
 
-bool VoxelMap::Voxel::Gas() const
+bool Voxel::Gas() const
 {
     return temperature > material->boil;
 }
 
-Square VoxelMap::Voxel::Square(unsigned height) const
+Square Voxel::Square(unsigned height) const
 {
     if (temperature >= 500.0f)
     {
@@ -41,39 +41,39 @@ Square VoxelMap::Voxel::Square(unsigned height) const
     }
 }
 
-double VoxelMap::Voxel::Translucency() const
+double Voxel::Translucency() const
 {
     // https://en.wikipedia.org/wiki/Opacity_(optics)#Quantitative_definition
     // assume light from straight above (that's why it's vertical el)
     return exp(-VerticalEl * MeterPerEl * material->opacity * Density());
 }
 
-bool VoxelMap::Voxel::Opaque() const
+bool Voxel::Opaque() const
 {
     return Translucency() < 0.01;
 }
 
-bool VoxelMap::Voxel::Transparent() const
+bool Voxel::Transparent() const
 {
     return Translucency() > 0.99;
 }
 
-double VoxelMap::Voxel::Density() const
+double Voxel::Density() const
 {
     return density;
 }
 
-double VoxelMap::Voxel::Mass() const
+double Voxel::Mass() const
 {
     return density * LiterPerBlock;
 }
 
-double VoxelMap::Voxel::Molecules() const
+double Voxel::Molecules() const
 {
     return Mass() / material->molarMass;
 }
 
-double VoxelMap::Voxel::Viscosity() const
+double Voxel::Viscosity() const
 {
     if (Solid())
     {   // TODO: better formula based on difference with melting point and viscosity multiplier 
@@ -92,7 +92,7 @@ double VoxelMap::Voxel::Viscosity() const
     }
 }
 
-double VoxelMap::Voxel::Hardness() const
+double Voxel::Hardness() const
 {
     if (Gas())
         return 0;
@@ -101,13 +101,13 @@ double VoxelMap::Voxel::Hardness() const
     else
         return material->surfaceTension;
 }
-double VoxelMap::Voxel::Pressure() const
+double Voxel::Pressure() const
 {   // Pascal = newton /m2 = kg/(m*s^2)  = 1 J/m^3 
     // ideal gas law (for gas)  https://en.wikipedia.org/wiki/Ideal_gas_law
     return (Molecules() * IdealGasConstant * temperature) / Volume();
 }
 
-double VoxelMap::Voxel::DiffusionCoefficient(const VoxelMap::Voxel& to) const
+double Voxel::DiffusionCoefficient(const Voxel& to) const
 {   //  TODO: physics https://en.wikipedia.org/wiki/Mass_diffusivity;
     //  especially when each voxel can contain multiple materials
     if (Solid())
@@ -130,7 +130,7 @@ double VoxelMap::Voxel::DiffusionCoefficient(const VoxelMap::Voxel& to) const
     else 
         return 0.01;
 }
-double VoxelMap::Voxel::Volume() const
+double Voxel::Volume() const
 {
     return MeterPerEl * HorizontalEl *
         MeterPerEl* HorizontalEl *
@@ -138,7 +138,7 @@ double VoxelMap::Voxel::Volume() const
         1000.0;
 }
 
-Engine::RGBA VoxelMap::Voxel::Color() const
+Engine::RGBA Voxel::Color() const
 {
     // TODO: why is steam white, water blue, something about particle size and scattering
     // Also solids need to start glowing red when hot 
@@ -147,7 +147,7 @@ Engine::RGBA VoxelMap::Voxel::Color() const
     return color;
 }
 
-void VoxelMap::Voxel::RenderAnalysis(const Position& p, const Directions& visibility, const Engine::Vector& densityGradient) const
+void Voxel::RenderAnalysis(const Position& p, const Directions& visibility, const Engine::Vector& densityGradient) const
 {
     glColor3ub(200, 200, 200);
     glPushMatrix();
@@ -166,7 +166,7 @@ void VoxelMap::Voxel::RenderAnalysis(const Position& p, const Directions& visibi
 }
 
 
-void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) const
+void Voxel::Render(const Position& p, const Directions& visibility) const
 {
     auto c = Color();
     c.Render();
@@ -174,7 +174,7 @@ void VoxelMap::Voxel::Render(const Position& p, const Directions& visibility) co
 
 }
 
-void VoxelMap::Voxel::RenderFaces(const Position& p, const Directions& visibility, unsigned mode) const
+void Voxel::RenderFaces(const Position& p, const Directions& visibility, unsigned mode) const
 {
     for (auto direction : visibility)
     {
@@ -182,9 +182,9 @@ void VoxelMap::Voxel::RenderFaces(const Position& p, const Directions& visibilit
     }
 }
 
-void VoxelMap::Voxel::RenderFace(const Position& p, Direction direction, unsigned mode) const
+void Voxel::RenderFace(const Position& p, Direction direction, unsigned mode) const
 {
-    glPushName(LocationName(p, direction));
+    glPushName(Map::LocationName(p, direction));
 
     glNormal3d(direction.Vector().x, direction.Vector().z, direction.Vector().y);
 

@@ -99,4 +99,17 @@ namespace Game
         return !operator==(a, b);
     }
 
+    Size operator+(const Size& a, const Size& b)
+    {
+        Size o = a;
+        o.x += b.x;
+        o.y += b.x;
+        o.z += b.z;
+        return o;
+    }
+
+    Size operator+(const Size& a, int s)
+    {
+        return a + Size(s, s, s);
+    }
 } // ::Game

@@ -1,5 +1,6 @@
 #pragma once
 #include "Map.h"
+#include "VoxelData.h"
 #include "Material.h"
 #include "Engine/Vector.h"
 #include "Engine/Line.h"
@@ -18,124 +19,19 @@ public:
     VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude);
     ~VoxelMap();
 
-    struct Voxel
-    {
-        bool Solid() const;
-        bool Gas() const;
-        Square Square(unsigned height) const;
-        double Density() const;
-        double Mass() const;
-        double Pressure() const;
-        double Volume() const;
-        double Molecules() const;
-        double Viscosity() const;
-        double Hardness() const;
-        double DiffusionCoefficient(const Voxel& to) const;
-
-        double Translucency() const;    // I(x) = I0 * Translucency() 
-        bool Opaque() const;
-        bool Transparent() const;
-        Engine::RGBA Color() const;
-        void Render(const Position& p, const Directions& visibility) const;
-        void RenderAnalysis(const Position& p, const Directions& visibility, const Engine::Vector& densityGradient) const;
-
-        const Material* material;
-        float temperature;      // Kelvin
-        float density;          // gram/Liters
-    private:
-        void RenderFaces(const Position& p, const Directions& visibility, unsigned mode) const;
-        void RenderFace(const Position& p, Direction direction, unsigned mode) const;
-    };
-
-    class Data
+    class Data : public VoxelData
     {
     public:
         Data();
         Data(unsigned longitude, unsigned latitude, unsigned altitude);
         Data(const Data&) = default;
-        bool IsInside(const Position& p) const;
-        const VoxelMap::Voxel& operator[](const Position& p) const;
-        VoxelMap::Voxel& operator[](const Position& p);
-        class iterator
-        {
-        public:
-            // iterate over all data
-            explicit iterator(const Data& data);
-            iterator(const Data& data, const Box& box);
-            iterator(const Data& data, const Position& position, const Box& box);
-            iterator& operator++();
-            //iterator operator++(int);
-            bool operator==(const iterator& other) const;
-            bool operator!=(const iterator& other) const;
-            using value_type = std::pair<Position,Voxel>;
-            value_type operator*() const;
-
-            // iterator traits
-            using difference_type = Position;
-            using pointer = const value_type*;
-            using reference = const value_type&;
-            using iterator_category = std::forward_iterator_tag;
-
-            const Data& data;
-            Position position;
-            const Box box;
-        };
-
-        using value_type = iterator::value_type;
-
-        iterator begin() const { return iterator(*this); }
-        iterator end() const { return iterator(*this, Insides().End(), Insides()); }
-
-        class Section
-        {
-        public:
-            Section(const Data& data, const Box& box);
-            Section(const Data& data, const Engine::AABB& meters);
-
-            iterator begin() const;
-            iterator end() const;
-            const Data& data;
-            const Box box;
-        };
-        class Boundary : public Section
-        {
-        public:
-            Boundary(const Data& data, const Direction& direction);
-            Direction direction;
-        };
-        class Corner : public Section
-        {
-        public:
-            Corner(const Data& data, const Directions& directions);
-        };
-        Boundary BoundaryCondition(const Direction& dir) const { return Boundary(*this, dir); }
-
-
         Section In(const Engine::AABB& meters) const;
-        Section All() const;
-        Box Insides() const;
-        Box Bounds() const;
-        Box Edge(const Direction& direction) const;
-        Box ExtendedEdge(const Direction& direction) const;
 
-        Position Clip(const Position& p) const;
-        
-        void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
-        void AdjustGrid(const Position& location, double temperature, double density);
-
-        unsigned Latitude() const;
-        unsigned Longitude() const;
-        unsigned Altitude() const;
-        Directions IsBoundary(const Position& position) const;
         Engine::Vector FluxGradient(const Position& position) const;   // in g/m2
         Engine::Vector DensityGradient(const Position& position) const;   // in g/m2
         Engine::Vector Flow(const Position& position) const;  // in meters/second
-        float Density(const Position& position) const;
-        float Temperature(const Position& position) const;
-        const Material& MaterialAt(const Position& position) const;
-        void SetDensity(const Position& p, float density);
-        double Density(const Engine::Coordinate& c) const;   // c in meters, density interpolated
-        double Temperature(const Engine::Coordinate& c) const;   // c in meters, temperature interpolated
+        double Density(const Engine::Coordinate& c) const;
+        double Temperature(const Engine::Coordinate& c) const;
 
         class Flux
         {
@@ -220,15 +116,9 @@ public:
         Flux& W() { return w; }
 
     protected:
-        Position Stride() const;
-        unsigned GridIndex(const Position& p) const;
-        unsigned UncheckedGridIndex(const Position& p) const;
-        void SetInvalid(const Position& position);
         void InvalidateCorners();
     private:
-        std::vector<Voxel> voxels;  // longitude+2, latitude+2, altitude+2
         Flux u, v, w;                       // flux (/s*m2)
-        Size size;
     };
     // Generate
     void Space(unsigned x, unsigned y, unsigned z); // Day 0 there is nothing
@@ -269,7 +159,8 @@ protected:
     double Elevation(int z) const;
     float AtmosphericTemperature(double elevation) const;
     float AtmosphericPressure(double elevation) const;
-
+    double Density(const Engine::Coordinate& c) const;   // c in meters, density interpolated
+    double Temperature(const Engine::Coordinate& c) const;   // c in meters, temperature interpolated
 protected:
     static constexpr double dX = HorizontalEl * MeterPerEl;
     static constexpr double dY = HorizontalEl * MeterPerEl;
@@ -286,7 +177,6 @@ protected:
 };
 
 std::wistream& operator>>(std::wistream& s, VoxelMap& map);
-VoxelMap::Data::iterator::difference_type operator-(const VoxelMap::Data::iterator& a, const VoxelMap::Data::iterator& b);
 VoxelMap::Data::Flux::iterator::difference_type operator-(const VoxelMap::Data::Flux::iterator& a, const VoxelMap::Data::Flux::iterator& b);
 
 }

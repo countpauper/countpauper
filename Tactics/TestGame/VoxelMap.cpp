@@ -24,16 +24,24 @@ TEST(VoxelMap, Space)
 
 TEST(VoxelData, Construction)
 {
-    VoxelMap::Data data(1, 2, 3);
-    EXPECT_EQ(1, data.Longitude());
-    EXPECT_EQ(2, data.Latitude());
-    EXPECT_EQ(3, data.Altitude());
+    VoxelData data(Size(1, 2, 3));
+    EXPECT_EQ(Size(1,2,3), data.GetSize());
 }
 
 TEST(VoxelData, Indexing)
 {
-    VoxelMap::Data data(2, 2, 2);
+    VoxelData data(Size(2));
     EXPECT_EQ(&Material::vacuum, data[Position(1, 0, 1)].material );
+    EXPECT_EQ(0, data[Position(1, 1, 1)].density); // inside
+    EXPECT_THROW(data[Position(-1, 0, 0)].density, std::out_of_range); // edge
+    EXPECT_THROW(data[Position(-1, 2, 0)].density, std::out_of_range);  // corner
+}
+
+
+TEST(VoxelData, IndexingWithEdge)
+{
+    VoxelData data(Size(2),1);
+    EXPECT_EQ(&Material::vacuum, data[Position(1, 0, 1)].material);
     EXPECT_EQ(0, data[Position(1, 1, 1)].density); // inside
     EXPECT_EQ(0, data[Position(-1, 0, 0)].density); // edge
     EXPECT_EQ(0, data[Position(-1, 2, 0)].density);  // corner
@@ -41,17 +49,16 @@ TEST(VoxelData, Indexing)
     EXPECT_THROW(data[Position(1, -2, 0)], std::out_of_range);
 }
 
-TEST(VoxelData, All)
+TEST(VoxelData, AllWithEdge)
 {
-    VoxelMap::Data data(3, 2, 1);
+    VoxelData data(Size(3, 2, 1), 1);
     auto all = data.All();
     EXPECT_EQ(Position(5, 4, 3), all.end() - all.begin());
-
 }
 
 TEST(VoxelData, IsInside)
 {
-    VoxelMap::Data data(3, 2, 1);
+    VoxelData data(Size(3, 2, 1));
     EXPECT_TRUE(data.IsInside(Position(0, 0, 0)));
     EXPECT_TRUE(data.IsInside(Position(2, 1, 0)));
     EXPECT_FALSE(data.IsInside(Position(0, -1, 0)));
@@ -63,7 +70,19 @@ TEST(VoxelData, IsInside)
     }));
 }
 
+
 TEST(VoxelData, Section)
+{
+    VoxelData data(Size(3, 2, 1));
+    Box bounds(Position(1, -5, 0), Position(3, 5, 1));
+    auto section = data.In(bounds);
+    EXPECT_TRUE(std::all_of(section.begin(), section.end(), [&bounds](const decltype(data)::value_type& v)
+    {
+        return bounds.Contains(v.first);
+    }));
+}
+
+TEST(VoxelMap, Section)
 {
     VoxelMap::Data data(3, 2, 1);
     Engine::AABB bounds(Engine::Range<double>(1, 3), Engine::Range<double>(-5, 5), Engine::Range<double>(0, 1));
@@ -74,9 +93,9 @@ TEST(VoxelData, Section)
     }));
 }
 
-TEST(VoxelData, NoBoundary)
+TEST(VoxelData, NoneBoundary)
 {
-    VoxelMap::Data data(3, 2, 1);
+    VoxelData data(Size(3, 2, 1), 1);
     auto middle = data.BoundaryCondition(Direction::none);
     for (const auto& v : middle)
     {
@@ -87,7 +106,7 @@ TEST(VoxelData, NoBoundary)
 
 TEST(VoxelData, Boundary)
 {
-    VoxelMap::Data data(3, 2, 1);
+    VoxelData data(Size(3, 2, 1), 1);
     for (auto dir : Direction::all)
     {
         auto boundary = data.BoundaryCondition(dir);
@@ -101,7 +120,7 @@ TEST(VoxelData, Boundary)
 
 TEST(VoxelData, Iterator)
 {
-    VoxelMap::Data data(2, 2, 2);
+    VoxelData data(Size(2));
     unsigned count = 0;
     for (const auto& v : data)
         ++count;
@@ -114,7 +133,7 @@ TEST(VoxelData, Iterator)
 
 TEST(VoxelData, BoundaryGrids)
 {
-    VoxelMap::Data data(2, 2, 2);
+    VoxelData data(Size(2));
     EXPECT_EQ(Direction::east | Direction::north | Direction::up, data.IsBoundary(Position(2, 2, 2)));
     EXPECT_EQ(Direction::west | Direction::south | Direction::down, data.IsBoundary(Position(-1, -1, -1)));
 }

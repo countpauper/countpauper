@@ -76,6 +76,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Affect.cpp" />
     <ClCompile Include="Box.cpp" />
+    <ClCompile Include="FluidData.cpp" />
     <ClCompile Include="FluidDynamics.cpp" />
     <ClCompile Include="Location.cpp" />
     <ClCompile Include="Attack.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="IGame.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="VoxelData.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="Object.h" />
@@ -144,6 +146,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Target.h" />
     <ClInclude Include="Targeting.h" />
+    <ClInclude Include="Voxel.h" />
     <ClInclude Include="VoxelMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

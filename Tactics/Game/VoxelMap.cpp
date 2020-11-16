@@ -49,9 +49,9 @@ void VoxelMap::Space(unsigned x, unsigned y, unsigned z)
 void VoxelMap::World(double radius)
 {
     planetRadius = radius;
-    for (unsigned x = 0; x < voxels.Longitude(); ++x)
+    for (int x = 0; x < voxels.GetSize().x; ++x)
     {
-        for (unsigned y = 0; y < voxels.Latitude(); ++y)
+        for (int y = 0; y < voxels.GetSize().y; ++y)
         {
             voxels.SetPressure(Position(x, y, -1),
                 Material::stone,
@@ -106,7 +106,7 @@ void VoxelMap::Wind(const Engine::Vector& speed)
 
 void VoxelMap::Sea(int level, double temperature)
 {
-    for(auto v : voxels.In(Engine::AABB(Engine::Coordinate(-1,-1,-1), Engine::Coordinate(voxels.Longitude()+1, voxels.Latitude()+1, level*dZ))))
+    for(auto v : voxels.In(Engine::AABB(Engine::Coordinate(-1,-1,-1), Engine::Coordinate(voxels.GetSize().x+1, voxels.GetSize().y+1, level*dZ))))
     {
         double pressure = AtmosphericPressure(Elevation(v.first.z)) + Elevation(level - v.first.z) * 10.33; // TODO: calculate based on water material
         voxels.SetPressure(v.first,
@@ -121,9 +121,9 @@ void VoxelMap::Hill(const Engine::Line& ridgeLine, double stddev)
     Engine::Line bottomLine = Engine::Plane::xy.Project(ridgeLine);
     // offset the hill for external coordinates excluding boundaries
     Position p;
-    for (p.x = -1; p.x <= int(voxels.Longitude()); ++p.x)
+    for (p.x = -1; p.x <= voxels.GetSize().x; ++p.x)
     {
-        for (p.y = -1; p.y <= int(voxels.Latitude()); ++p.y)
+        for (p.y = -1; p.y <= voxels.GetSize().y; ++p.y)
         {
             Engine::Coordinate c(float(p.x)+0.5f, float(p.y)+0.5f, 0);
             if (bottomLine.Length()>std::numeric_limits<double>::epsilon())
@@ -139,7 +139,7 @@ void VoxelMap::Hill(const Engine::Line& ridgeLine, double stddev)
                 c.z = ridgeLine.a.z * Engine::Gaussian(distance, stddev);
             }
             int maxZ = int(std::round( c.z ));
-            maxZ = std::min(maxZ, int(voxels.Altitude()));
+            maxZ = std::min(maxZ, voxels.GetSize().z);
             //OutputDebugStringW((std::wstring(L"Hill at ") + Position(p.x, p.y, maxZ).to_wstring() + L"\n").c_str());
             for (p.z = -1; p.z < maxZ; ++p.z)
             {
@@ -186,11 +186,11 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickn
 
 unsigned VoxelMap::Latitude() const
 {
-    return voxels.Latitude();
+    return voxels.GetSize().x;
 }
 unsigned VoxelMap::Longitude() const
 {
-    return voxels.Longitude();
+    return voxels.GetSize().y;
 }
 
 Directions VoxelMap::Visibility(const Position& p) const
@@ -381,7 +381,7 @@ unsigned VoxelMap::WindForce() const
 
 double VoxelMap::Volume() const
 {
-    return voxels.Longitude() * voxels.Latitude() * voxels.Altitude() * LiterPerBlock;
+    return voxels.GetSize().Volume() * LiterPerBlock;
 }
 
 double VoxelMap::Mass(const Material& material) const
@@ -585,7 +585,7 @@ void VoxelMap::Flow(double dt)
             - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x, p.y - 1, p.z) + oV(p.x + 1, p.y - 1, p.z))) / dy;
         double duwdz = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x + 1, p.y, p.z))
             - (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x, p.y, p.z - 1) + oW(p.x + 1, p.y, p.z - 1))) / dz;
-        double dpdx = (voxels.Density(Position(p.x + 1, p.y, p.z)) - voxels.Density(p)) / dx;
+        double dpdx = (voxels.VoxelData::Density(Position(p.x + 1, p.y, p.z)) - voxels.VoxelData::Density(p)) / dx;
         // can be computed from visocity and flow speed, but also need to know how far to the nearest surface 
         // it should be as simply as massflowrate (=flux*area) / diameter * dynamic viscosity of the material
         // trick will be to compute the diamter in x y and z for each grid
@@ -605,7 +605,7 @@ void VoxelMap::Flow(double dt)
             - (oV(p.x, p.y, p.z) + oV(p.x - 1, p.y, p.z)) * (oU(p.x - 1, p.y, p.z) + oU(p.x - 1, p.y + 1, p.z))) / dx;
         double dvwdz = 0.25*((oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x, p.y + 1, p.z))
             - (oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z - 1)) * (oW(p.x, p.y, p.z - 1) + oW(p.x, p.y + 1, p.z - 1))) / dz;
-        double dpdy = (voxels.Density(Position(p.x, p.y + 1, p.z)) - voxels.Density(p)) / dy;
+        double dpdy = (voxels.VoxelData::Density(Position(p.x, p.y + 1, p.z)) - voxels.VoxelData::Density(p)) / dy;
         // TODO: code duplication with u and z flow, move to flux 
         //  after unit test!
         double diff = (1.0 / Reynolds) *
@@ -623,7 +623,7 @@ void VoxelMap::Flow(double dt)
             - (oW(p.x, p.y, p.z) + oW(p.x, p.y - 1, p.z)) * (oV(p.x, p.y - 1, p.z) + oV(p.x, p.y - 1, p.z + 1))) / dy;
         double dwudx = 0.25*((oW(p.x, p.y, p.z) + oW(p.x, p.y, p.z + 1)) * (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1))
             - (oW(p.x, p.y, p.z) + oW(p.x - 1, p.y, p.z)) * (oU(p.x - 1, p.y, p.z ) + oU(p.x - 1, p.y, p.z + 1))) / dx;
-        double dpdz = (voxels.Density(Position(p.x, p.y, p.z + 1)) - voxels.Density(p)) / dz;
+        double dpdz = (voxels.VoxelData::Density(Position(p.x, p.y, p.z + 1)) - voxels.VoxelData::Density(p)) / dz;
         double diff = (1.0 / Reynolds) *
             ((oW(p.x + 1, p.y, p.z) - 2.0*oW(p.x, p.y, p.z) + oW(p.x - 1, p.y, p.z)) / (dx*dx) +
             (oW(p.x, p.y + 1, p.z) + 2.0*oW(p.x, p.y, p.z) + oW(p.x, p.y - 1, p.z)) / (dy*dy) +
@@ -639,7 +639,7 @@ void VoxelMap::Continuity(double seconds)
     for (auto it = voxels.begin(); it!=voxels.end(); ++it)
     {
         auto fluxGradient = voxels.FluxGradient(it.position);
-        auto p = voxels.Density(it.position);
+        auto p = voxels.VoxelData::Density(it.position);
         auto dP = fluxGradient.x * fluxGradient.y * fluxGradient.z * seconds;
         voxels.SetDensity(it.position, float(p - dP));
     }
