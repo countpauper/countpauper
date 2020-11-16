@@ -23,7 +23,7 @@ namespace Game
 {
 
 
-double VoxelMap::Material::Density(double pressure, double temperature) const
+double Material::Density(double pressure, double temperature) const
 {
     if (temperature > boil)
     {
@@ -117,7 +117,7 @@ void VoxelMap::Wind(const Engine::Vector& speed)
     // TODO: set all air flux and boundary
 }
 
-void VoxelMap::Water(int level, double temperature)
+void VoxelMap::Sea(int level, double temperature)
 {
     for(auto v : voxels.In(Engine::AABB(Engine::Coordinate(-1,-1,-1), Engine::Coordinate(voxels.Longitude()+1, voxels.Latitude()+1, level*dZ))))
     {
@@ -397,7 +397,7 @@ double VoxelMap::Volume() const
     return voxels.Longitude() * voxels.Latitude() * voxels.Altitude() * LiterPerBlock;
 }
 
-double VoxelMap::Mass(const VoxelMap::Material& material) const
+double VoxelMap::Mass(const Material& material) const
 {
     return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
@@ -892,7 +892,7 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
     double temperature;
     int waterLevel;
     s >> temperature >> waterLevel;
-    map.Water(waterLevel, temperature);
+    map.Sea(waterLevel, temperature);
     map.Air(temperature, 20000);
     unsigned procedures;
     s >> procedures;

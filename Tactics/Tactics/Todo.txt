@@ -11,11 +11,16 @@ x Get signal nan to signal
 x Nan density corners
 * Grow edges to include corners: up & down, 
 * Fix flux out of bounds, match coordinates on graph paper (no -1?)
-Corners should take a DirectionS, for edge corners and full corners and to know how to extrapolate boundary (or use IsBoundary), also remove early out in FluxBoundary
-Stone boundary flux = 0,0,0 (no wind)
+* Corners should take a DirectionS, for edge corners and full corners and to know how to extrapolate boundary (or use IsBoundary), also remove early out in FluxBoundary
+Stone boundary flux = 0,0,0 (no wind) <- material interface: assume 100% cohesions/surface tension at first in both directions, later spread somehow
 Stone boundary density
+Unit tests (before or after splitting fluid dynamics)
+Make explicit boundary matrices for the directions, including corners: density, temperature, flux vector
+	Commands: -> voxels and boundaries Evolve = Voxels + boundaries -> Voxels 
+Consider splitting fluid dynamics engine from voxel map for separation of concerns/unit testability to prepare for moving to gpu/eigen 
+
 Reynolds number computation (need distance to surface per grid/direction)
-Fix flux boundary extrapolation
+Fix flux boundary extrapolation 
 Temperature <-> pressure relation (flux)
 Gravity -> flux
 Explosion command (xyz, force)

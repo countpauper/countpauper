@@ -3,6 +3,7 @@
 #include "Vector.h"
 #include "Coordinate.h"
 #include "Color.h"
+#include "Volume.h"
 #include <vector>
 #include <set>
 
@@ -11,7 +12,7 @@ namespace Engine
 struct Matrix;
 struct AABB;
 
-class Mesh
+class Mesh : public IVolume
 {
 public:
     Mesh();
@@ -35,7 +36,7 @@ public:
     };
 
     void Render() const;
-    AABB GetBoundingBox() const;
+    AABB GetBoundingBox() const override;
     Mesh& operator*=(const Matrix& transformation);
 
     std::vector<Vertex> vertices; 
@@ -46,6 +47,7 @@ public:
     void SetColor(RGBA color);
 
     Mesh& operator+=(const Mesh& addition);
+    double Distance(const Coordinate& p) const override;
 
     void Invalidate();
     void InvalidateVertices();

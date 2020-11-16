@@ -1,6 +1,6 @@
 #pragma once
 #include "Map.h"
-#include "Engine/Color.h"
+#include "Material.h"
 #include "Engine/Vector.h"
 #include "Engine/Line.h"
 #include "Plane.h"
@@ -18,36 +18,6 @@ public:
     VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude);
     ~VoxelMap();
 
-
-    struct Material
-    {
-        std::wstring_view name;
-        Element element;
-        Engine::RGBA color;
-        double melt;    // kelvin
-        double boil;    // kelvin
-        // double combust;
-        // texture
-        double normalDensity;   // g/L at stp  0 °C, ~1000 mbar
-        double molarMass;       // G/mol
-        double viscosity;       // mu, = N s /m2 = Pa*s t room temperature (25 C) 
-        double conductivity;    // J/Mol-K 
-        double heatCapacity;    // J/g*K    https://en.wikipedia.org/wiki/Table_of_specific_heat_capacities
-        double surfaceTension;  // N/meter hardness when liquid https://en.wikipedia.org/wiki/Surface_tension#Data_table
-        double youngsModulus;   // hardness when solid      (Pa) https://en.wikipedia.org/wiki/Young%27s_modulus#Approximate_values
-        double opacity;         // mass attenuation coefficient of visible light (400-700nm) absorbed per voxel at 1.0 density
-                                // ulatraviolet (sun light) would be 10-400nm 
-                                // electric conductivity?
-
-
-        double Density(double pressure, double temperature) const;
-
-        static const Material vacuum;
-        static const Material air;
-        static const Material soil;
-        static const Material stone;
-        static const Material water;
-    };
 
     struct Voxel
     {
@@ -267,7 +237,7 @@ public:
     void World(double radius);
     void Air(double temperature, double meters);     // Day 1 the sky
     void Wind(const Engine::Vector& speed);     // direction in meter/second
-    void Water(int level, double temperature);      // Day 2 Separate the water from the sky 
+    void Sea(int level, double temperature);      // Day 2 Separate the water from the sky 
     void Hill(const Engine::Line& ridgeLine, double stddev);
     void Wall(const Engine::Line& bottomLine, double height, double thickness);
     // Evaluate

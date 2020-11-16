@@ -4,6 +4,7 @@
 #include "Matrix.h"
 #include "AxisAlignedBoundingBox.h"
 #include "Quaternion.h"
+#include "Triangle.h"
 #include <GL/glew.h>
 #include "GLutil.h"
 #include <array>
@@ -172,6 +173,22 @@ void Mesh::SetColor(RGBA color)
         v.color = color;
     }
 }
+double Mesh::Distance(const Coordinate& p) const
+{
+    double minDistance = std::numeric_limits<double>::infinity();
+    for (auto& t : triangles)
+    {   // pick the nearest point on the nearest triangle that the point is in front (outside) of
+        //  if the point is behind all faces then take the nearest point from the surface
+        auto distance = Engine::Triangle(vertices[t.vertex[0]].c, vertices[t.vertex[1]].c, vertices[t.vertex[2]].c).Distance(p);
+        if (std::abs(distance) < std::abs(minDistance))
+        {
+            minDistance = distance;
+        }
+    }
+    return minDistance;
+}
+
+
 
 Mesh& Mesh::operator+=(const Mesh& addition)
 {
@@ -208,20 +225,25 @@ void Mesh::Invalidate()
 
 void Mesh::InvalidateVertices()
 {
+    if (!vertexBuffer)
+        return;
     glDeleteBuffers(1, &vertexBuffer);
     vertexBuffer = 0;
 }
 void Mesh::InvalidateTriangles()
 {
-    glDeleteBuffers(1, &opaqueTriangleBuffer);
-    opaqueTriangleBuffer = 0;
-    opaqueTrianglesBuffered = 0;
-
-    glDeleteBuffers(1, &translucentTriangleBuffer);
-    translucentTriangleBuffer = 0;
-    translucentTrianglesBuffered = 0;
-
-
+    if (opaqueTriangleBuffer)
+    {
+        glDeleteBuffers(1, &opaqueTriangleBuffer);
+        opaqueTriangleBuffer = 0;
+        opaqueTrianglesBuffered = 0;
+    }
+    if (translucentTriangleBuffer)
+    {
+        glDeleteBuffers(1, &translucentTriangleBuffer);
+        translucentTriangleBuffer = 0;
+        translucentTrianglesBuffered = 0;
+    }
 }
 template<typename T, typename U> constexpr size_t offsetOf(U T::*member)
 {

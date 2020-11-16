@@ -87,7 +87,7 @@ VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
     // Computed map state ranges from 0 to < long,lat,alt
     // Controlled boundary stat is at -1 and long lat alt
     size_t gridSize = (longitude+2) * (latitude+2) * (altitude+2);
-    voxels.resize(gridSize, { &VoxelMap::Material::vacuum, 0,0 });
+    voxels.resize(gridSize, { &Material::vacuum, 0,0 });
 }
 
 unsigned VoxelMap::Data::Longitude() const
@@ -172,7 +172,7 @@ float VoxelMap::Data::Temperature(const Position& position) const
     return voxels[GridIndex(position)].temperature;
 }
 
-const VoxelMap::Material& VoxelMap::Data::MaterialAt(const Position& position) const
+const Material& VoxelMap::Data::MaterialAt(const Position& position) const
 {
     return *(voxels[GridIndex(position)].material);
 }

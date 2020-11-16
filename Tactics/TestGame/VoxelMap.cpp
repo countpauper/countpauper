@@ -33,7 +33,7 @@ TEST(VoxelData, Construction)
 TEST(VoxelData, Indexing)
 {
     VoxelMap::Data data(2, 2, 2);
-    EXPECT_EQ(&VoxelMap::Material::vacuum, data[Position(1, 0, 1)].material );
+    EXPECT_EQ(&Material::vacuum, data[Position(1, 0, 1)].material );
     EXPECT_EQ(0, data[Position(1, 1, 1)].density); // inside
     EXPECT_EQ(0, data[Position(-1, 0, 0)].density); // edge
     EXPECT_EQ(0, data[Position(-1, 2, 0)].density);  // corner
@@ -219,8 +219,6 @@ TEST(VoxelFlux, BoundaryEdge)
     EXPECT_EQ(east_west_youre_stressed.end(), east_west_youre_stressed.begin());
 }
 
-
-
 TEST(VoxelMap, Air)
 {
     VoxelMap map;
@@ -231,7 +229,7 @@ TEST(VoxelMap, Air)
     EXPECT_EQ(Element::Air, map.At(Position(1, 1, 1)).floor);
     EXPECT_EQ(0, map.At(Position(1, 1, 1)).height);
     EXPECT_NEAR(1.17 * map.Volume(), map.Mass(), map.Volume()*0.01);
-    EXPECT_NEAR(300, map.Temperature(VoxelMap::Material::air), 0.01);
+    EXPECT_NEAR(300, map.Temperature(Material::air), 0.01);
 }
 
 TEST(VoxelMap, Lava)
@@ -246,11 +244,11 @@ TEST(VoxelMap, Lava)
     EXPECT_EQ(0, map.At(Position(1, 1, 1)).height);
 }
 
-TEST(VoxelMap, Water)
+TEST(VoxelMap, Sea)
 {
     VoxelMap map;
     map.Space(2, 2, 2);
-    map.Water(1, 300);
+    map.Sea(1, 300);
 
     EXPECT_EQ(Element::Water, map.At(Position(0, 0, 0)).floor);
     EXPECT_FALSE(map.At(Position(0, 0, 0)).solid);

@@ -100,8 +100,10 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vector.h" />
+    <ClInclude Include="Volume.h" />
     <ClInclude Include="Xml.h" />
   </ItemGroup>
   <ItemGroup>
@@ -131,8 +133,10 @@
     </ClCompile>
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Vector.cpp" />
+    <ClCompile Include="Volume.cpp" />
     <ClCompile Include="Xml.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

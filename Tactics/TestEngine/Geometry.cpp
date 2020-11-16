@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Line.h"
 #include "Plane.h"
+#include "Triangle.h"
 
 namespace Engine::Test
 {
@@ -144,5 +145,50 @@ TEST(Plane, NotNormalDiagonal)
 }
 
 
+TEST(Triangle, Surface)
+{
+    Triangle point(Coordinate(1, 1, 1), Coordinate(1, 1, 1), Coordinate(1, 1, 1));
+    EXPECT_EQ(0, point.Surface());
+
+    Triangle splinter(Coordinate(1, 1, 1), Coordinate(2, 2, 2), Coordinate(3, 3, 3));
+    EXPECT_EQ(0, splinter.Surface());
+
+    Triangle xyTriangle(Coordinate(1, 0, 0), Coordinate(3, 0, 0), Coordinate(1, 4, 0));
+    EXPECT_EQ(4, xyTriangle.Surface());
+
+    Triangle yzTriangle(Coordinate(0, 0, 0), Coordinate(0, 1, 0), Coordinate(0, 0, 2));
+    EXPECT_EQ(1, yzTriangle.Surface());
+
+    Triangle xzTriangle(Coordinate(0, 0, 0), Coordinate(0, 0, 3), Coordinate(0, 2, 1));
+    EXPECT_EQ(3, xzTriangle.Surface());
+}
+
+TEST(Triangle, Distance)
+{
+    Triangle point(Coordinate(1, 1, 1), Coordinate(1, 1, 1), Coordinate(1, 1, 1));
+    EXPECT_EQ(1, point.Distance(Coordinate(0, 1, 1)));
+    EXPECT_EQ(1, point.Distance(Coordinate(1, 1, 2)));
+
+    Triangle splinter(Coordinate(1, 1, 1), Coordinate(2, 2, 2), Coordinate(3, 3, 3));
+    EXPECT_EQ(1, splinter.Distance(Coordinate(0, 1, 1)));
+    EXPECT_EQ(2, splinter.Distance(Coordinate(3, 5, 3)));
+
+    Triangle xyTriangle(Coordinate(1, 0, 0), Coordinate(3, 0, 0), Coordinate(1, 4, 0));
+    EXPECT_EQ(1, xyTriangle.Distance(Coordinate(0, 0, 0))); // near first vertex
+    EXPECT_EQ(3, xyTriangle.Distance(Coordinate(3, 0, 3))); // near second vertex
+    EXPECT_EQ(2, xyTriangle.Distance(Coordinate(1, 6, 0))); // near third vertex
+    EXPECT_EQ(0, xyTriangle.Distance(Coordinate(2, 0, 0))); // on edge
+    EXPECT_EQ(1, xyTriangle.Distance(Coordinate(2, -1, 0))); // near edge
+    EXPECT_EQ(0, xyTriangle.Distance(Coordinate(2, 2, 0))); // in triangle
+    EXPECT_EQ(2, xyTriangle.Distance(Coordinate(2, 2, 2))); // in front of triangle
+    EXPECT_EQ(-2, xyTriangle.Distance(Coordinate(2, 2, -2))); // behind triangle
+
+
+    Triangle xzTriangle(Coordinate(0, 0, 0), Coordinate(0, 0, 3), Coordinate(0, 2, 1));
+    EXPECT_EQ(1, xzTriangle.Distance(Coordinate(0, -1, 0))); // near first vertex
+    EXPECT_EQ(1, xzTriangle.Distance(Coordinate(0, 3, 1))); // near third vertex
+    EXPECT_EQ(0, xzTriangle.Distance(Coordinate(0, 0, 2.5))); // on first edge
+    EXPECT_EQ(2, xzTriangle.Distance(Coordinate(0, -2, 2))); // near first edege
+}
 
 }
