@@ -21,7 +21,7 @@ public:
     virtual double Density(const Engine::IVolume& c) const =0;
     virtual double Temperature(const Engine::IVolume& c) const = 0;
     virtual Engine::Vector Force(const Engine::IVolume& c) const = 0;
-    virtual Material* GetMaterial(const Engine::Coordinate& c) const = 0;
+    virtual const Material* GetMaterial(const Engine::Coordinate& c) const = 0;
 
 };
 }

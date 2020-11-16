@@ -11,12 +11,12 @@ namespace Engine { class Mesh;  struct AABB; }
 namespace Game
 {
 
-class VoxelMap : public Map
+class FluidDynamics : public Map
 {
 public:
-    VoxelMap();
-    VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude);
-    ~VoxelMap();
+    FluidDynamics();
+    FluidDynamics(unsigned longitude, unsigned latitude, unsigned altitude);
+    ~FluidDynamics();
 
     struct Voxel
     {
@@ -42,6 +42,7 @@ public:
         const Material* material;
         float temperature;      // Kelvin
         float density;          // gram/Liters
+                                //const Engine::Vector flow;    // meter/second
     private:
         void RenderFaces(const Position& p, const Directions& visibility, unsigned mode) const;
         void RenderFace(const Position& p, Direction direction, unsigned mode) const;
@@ -54,8 +55,8 @@ public:
         Data(unsigned longitude, unsigned latitude, unsigned altitude);
         Data(const Data&) = default;
         bool IsInside(const Position& p) const;
-        const VoxelMap::Voxel& operator[](const Position& p) const;
-        VoxelMap::Voxel& operator[](const Position& p);
+        const FluidDynamics::Voxel& operator[](const Position& p) const;
+        FluidDynamics::Voxel& operator[](const Position& p);
         class iterator
         {
         public:
@@ -67,7 +68,7 @@ public:
             //iterator operator++(int);
             bool operator==(const iterator& other) const;
             bool operator!=(const iterator& other) const;
-            using value_type = std::pair<Position,Voxel>;
+            using value_type = std::pair<Position, Voxel>;
             value_type operator*() const;
 
             // iterator traits
@@ -119,7 +120,7 @@ public:
         Box ExtendedEdge(const Direction& direction) const;
 
         Position Clip(const Position& p) const;
-        
+
         void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
         void AdjustGrid(const Position& location, double temperature, double density);
 
@@ -245,7 +246,7 @@ public:
     double Mass() const;
     unsigned WindForce() const; // Beaufort
 
-    // Map
+                                // Map
     Square At(const Position& p) const override;
     unsigned Latitude() const override;
     unsigned Longitude() const override;
@@ -285,9 +286,9 @@ protected:
     Engine::Vector wind;
 };
 
-std::wistream& operator>>(std::wistream& s, VoxelMap& map);
-VoxelMap::Data::iterator::difference_type operator-(const VoxelMap::Data::iterator& a, const VoxelMap::Data::iterator& b);
-VoxelMap::Data::Flux::iterator::difference_type operator-(const VoxelMap::Data::Flux::iterator& a, const VoxelMap::Data::Flux::iterator& b);
+std::wistream& operator>>(std::wistream& s, FluidDynamics& map);
+FluidDynamics::Data::iterator::difference_type operator-(const FluidDynamics::Data::iterator& a, const FluidDynamics::Data::iterator& b);
+FluidDynamics::Data::Flux::iterator::difference_type operator-(const FluidDynamics::Data::Flux::iterator& a, const FluidDynamics::Data::Flux::iterator& b);
 
 }
 

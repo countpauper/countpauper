@@ -36,6 +36,7 @@ struct Material
     static const Material water;
 };
 
-
+constexpr double IdealGasConstant = 8.31446261815324e3; // ideal gas constant in L * Pa / K * mol
+constexpr double PascalPerAtmosphere = 101325.0;        // Pa/Atm
 
 }
