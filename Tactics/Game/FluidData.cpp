@@ -9,7 +9,7 @@ namespace Game
 {
 
 VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
-    VoxelData(Size(longitude, latitude, altitude), 1),
+    VoxelData(Size(longitude, latitude, altitude), 1, Engine::Vector(HorizontalEl*MeterPerEl,HorizontalEl*MeterPerEl,VerticalEl*MeterPerEl)),
     // allocate flux 1 extra size in all directions for boundary conditions on edge
     // allocate 2 extra boundary in all perpendicular directions for boundary conditions at edge +0.5
     u(Direction::x, longitude + 1, latitude + 2, altitude + 2),
@@ -43,24 +43,24 @@ Engine::Vector VoxelMap::Data::Flow(const Position& p) const
 Engine::Vector VoxelMap::Data::DensityGradient(const Position& position) const
 {
     return Engine::Vector(
-        (VoxelData::Density(position + Position(1, 0, 0)) - VoxelData::Density(position + Position(-1, 0, 0))) / dX,
-        (VoxelData::Density(position + Position(0, 1, 0)) - VoxelData::Density(position + Position(0, -1, 0))) / dY,
-        (VoxelData::Density(position + Position(0, 0, 1)) - VoxelData::Density(position + Position(0, 0, -1))) / dZ
+        (VoxelData::Density(position + Position(1, 0, 0)) - VoxelData::Density(position + Position(-1, 0, 0))) / grid.x,
+        (VoxelData::Density(position + Position(0, 1, 0)) - VoxelData::Density(position + Position(0, -1, 0))) / grid.y,
+        (VoxelData::Density(position + Position(0, 0, 1)) - VoxelData::Density(position + Position(0, 0, -1))) / grid.z
     );
 }
 
 Engine::Vector VoxelMap::Data::FluxGradient(const Position& p) const
 {
     return Engine::Vector(
-        u.Gradient(p) / dX,
-        v.Gradient(p) / dY,
-        w.Gradient(p) / dZ);
+        u.Gradient(p) / grid.x,
+        v.Gradient(p) / grid.y,
+        w.Gradient(p) / grid.z);
 }
 
 
 double VoxelMap::Data::Density(const Engine::Coordinate& c) const
 {
-    auto gridPosition = Grid(c - Engine::Vector(0.5*dX, 0.5*dY, 0.5*dZ));
+    auto gridPosition = Grid(c - grid*0.5);
     double d[8];
     int i = 0;
     Position dP;
@@ -75,15 +75,15 @@ double VoxelMap::Data::Density(const Engine::Coordinate& c) const
         }
     }
     Engine::Vector gridWeight = c - Center(gridPosition);
-    gridWeight.x /= dX;
-    gridWeight.y /= dY;
-    gridWeight.z /= dZ;
+    gridWeight.x /= grid.x;
+    gridWeight.y /= grid.y;
+    gridWeight.z /= grid.z;
     return TrilinearInterpolation(d, gridWeight);
 }
 
 double VoxelMap::Data::Temperature(const Engine::Coordinate& c) const
 {
-    auto gridPosition = Grid(c - Engine::Vector(0.5*dX, 0.5*dY, 0.5*dZ));
+    auto gridPosition = Grid(c - grid*0.5);
     double t[8];
     int i = 0;
     Position dP;
@@ -98,9 +98,9 @@ double VoxelMap::Data::Temperature(const Engine::Coordinate& c) const
         }
     }
     Engine::Vector gridWeight = c - Center(gridPosition);
-    gridWeight.x /= dX;
-    gridWeight.y /= dY;
-    gridWeight.z /= dZ;
+    gridWeight.x /= grid.x;
+    gridWeight.y /= grid.y;
+    gridWeight.z /= grid.z;
     return TrilinearInterpolation(t, gridWeight);
 }
 
@@ -128,11 +128,6 @@ VoxelMap::Data::Flux::iterator::difference_type operator-(const VoxelMap::Data::
     return a.position - b.position;
 }
 
-
-VoxelMap::Data::Section VoxelMap::Data::In(const Engine::AABB& meters) const
-{
-    return Section(*this, Box(Clip(Grid(meters.Begin())), Clip(Grid(meters.End()))));
-}
 
 VoxelMap::Data::Flux::Flux(Direction axis, unsigned longitude, unsigned latitude, unsigned altitude) :
     axis(axis),

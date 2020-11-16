@@ -68,7 +68,7 @@ void VoxelMap::World(double radius)
 
 double VoxelMap::Elevation(int z) const
 {
-    return z * VerticalEl * MeterPerEl;
+    return voxels.Center(Position(0,0,z)).z;
 }
 
 float VoxelMap::AtmosphericTemperature(double elevation) const
@@ -106,7 +106,7 @@ void VoxelMap::Wind(const Engine::Vector& speed)
 
 void VoxelMap::Sea(int level, double temperature)
 {
-    for(auto v : voxels.In(Engine::AABB(Engine::Coordinate(-1,-1,-1), Engine::Coordinate(voxels.GetSize().x+1, voxels.GetSize().y+1, level*dZ))))
+    for(auto v : voxels.In(Engine::AABB(Engine::Coordinate(-1,-1,-1), Engine::Coordinate(voxels.GetSize().x+1, voxels.GetSize().y+1, Elevation(level)))))
     {
         double pressure = AtmosphericPressure(Elevation(v.first.z)) + Elevation(level - v.first.z) * 10.33; // TODO: calculate based on water material
         voxels.SetPressure(v.first,
@@ -155,7 +155,7 @@ void VoxelMap::Hill(const Engine::Line& ridgeLine, double stddev)
 void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickness)
 {
     double halfThickness = thickness * 0.5;
-    height *= dZ;   // from grids to meters
+    height *= voxels.GridSize().z;   // from grids to meters
     Engine::AABB boundingBox(bottomLine);
     boundingBox.Expand(Engine::Vector(0, 0, height));
     boundingBox.Grow(Engine::Vector(halfThickness, halfThickness, 0));
@@ -164,7 +164,7 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickn
     unsigned dbgCount=0;
     for (auto v : voxels.In(boundingBox))
     {
-        auto c = Center(v.first);
+        auto c = voxels.Center(v.first);
         auto nearest = plane.Project(c);
         if ((nearest - c).Length() > halfThickness)
             continue;
@@ -679,7 +679,7 @@ void VoxelMap::SetDensityToMeshColor()
     for (auto& vertex : mesh->vertices)
     {
         Engine::Coordinate meters(vertex.c.x, vertex.c.z, vertex.c.y);
-        auto position = VoxelMap::Grid(meters);
+        auto position = voxels.Grid(meters);
         auto density = voxels.Density(meters);
         auto temperature = voxels.Temperature(meters);
         const auto& material = voxels.MaterialAt(position);
@@ -691,22 +691,6 @@ void VoxelMap::SetDensityToMeshColor()
     }
 }
 
-Position VoxelMap::Grid(const Engine::Coordinate& meters)
-{
-    return Position(
-        int(std::floor(meters.x/dX)),
-        int(std::floor(meters.y/dY)),
-        int(std::floor(meters.z/dZ)));
-}
-
-Engine::Coordinate VoxelMap::Center(const Position& grid)
-{
-    return Engine::Coordinate(
-        (0.5+grid.x) * dX,
-        (0.5+grid.y) * dY,
-        (0.5+grid.z) * dZ
-    );
-}
 
 void VoxelMap::Render() const
 {
@@ -728,6 +712,7 @@ void VoxelMap::Render() const
 
 void VoxelMap::GenerateMesh()
 {
+    Engine::Vector grid = voxels.GridSize();
     mesh = std::make_unique<Engine::Mesh>();
     for (auto& v : voxels)
     {
@@ -737,13 +722,16 @@ void VoxelMap::GenerateMesh()
         auto visible = Visibility(v.first);
         if (!visible)
             continue;
-        Engine::Box box(Engine::Vector(dX, dZ, dY));
+
+        // TODO: matrix from position to gl, swapping y and z, translation and grid scaling
+
+        Engine::Box box(Engine::Vector(grid.x, grid.z, grid.y));    // nb z<=>y
         box.SetColor(c);
         
         box *= Engine::Matrix::Translation(
-            Engine::Vector((double(v.first.x) + 0.5)*dX,
-            (double(v.first.z) + 0.5)*dZ,
-            (double(v.first.y) + 0.5)*dY));
+            Engine::Vector((double(v.first.x) + 0.5)*grid.x,
+            (double(v.first.z) + 0.5)*grid.z,
+            (double(v.first.y) + 0.5)*grid.y));
         (*mesh) += box;
     }
 }

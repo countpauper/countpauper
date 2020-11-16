@@ -87,9 +87,9 @@ TEST(VoxelMap, Section)
     VoxelMap::Data data(3, 2, 1);
     Engine::AABB bounds(Engine::Range<double>(1, 3), Engine::Range<double>(-5, 5), Engine::Range<double>(0, 1));
     auto section = data.In(bounds);
-    EXPECT_TRUE(std::all_of(section.begin(), section.end(), [&bounds](const decltype(data)::value_type& v)
+    EXPECT_TRUE(std::all_of(section.begin(), section.end(), [&bounds, data](const decltype(data)::value_type& v)
     {
-        return bounds.Contains(VoxelMap::Center(v.first));
+        return bounds.Contains(data.Center(v.first));
     }));
 }
 

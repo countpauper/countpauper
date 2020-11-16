@@ -8,7 +8,7 @@
 #include "Box.h"
 #include <string>
 
-namespace Engine { class Mesh;  struct AABB; }
+namespace Engine { class Mesh;  }
 namespace Game
 {
 
@@ -22,10 +22,8 @@ public:
     class Data : public VoxelData
     {
     public:
-        Data();
         Data(unsigned longitude, unsigned latitude, unsigned altitude);
         Data(const Data&) = default;
-        Section In(const Engine::AABB& meters) const;
 
         Engine::Vector FluxGradient(const Position& position) const;   // in g/m2
         Engine::Vector DensityGradient(const Position& position) const;   // in g/m2
@@ -141,7 +139,6 @@ public:
     unsigned Longitude() const override;
     void Render() const override;
     void Tick(double seconds) override;
-    static Engine::Coordinate Center(const Position& grid);
 protected:
     void GenerateMesh();
     void RenderPretty() const;
@@ -162,10 +159,6 @@ protected:
     double Density(const Engine::Coordinate& c) const;   // c in meters, density interpolated
     double Temperature(const Engine::Coordinate& c) const;   // c in meters, temperature interpolated
 protected:
-    static constexpr double dX = HorizontalEl * MeterPerEl;
-    static constexpr double dY = HorizontalEl * MeterPerEl;
-    static constexpr double dZ = VerticalEl * MeterPerEl;
-    static Position Grid(const Engine::Coordinate& meters);
     Data voxels;
     std::unique_ptr<Engine::Mesh> mesh;
     double time;

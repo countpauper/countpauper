@@ -3,7 +3,9 @@
 #include "Voxel.h"
 #include "Position.h"
 #include "Box.h"
+#include "Engine/Vector.h"
 
+namespace Engine { struct AABB;  }
 namespace Game
 {
 
@@ -11,11 +13,14 @@ class VoxelData
 {
 public:
     VoxelData();
-    VoxelData(const Size& size, int border = 0);
+    VoxelData(const Size& size, int border = 0, const Engine::Vector& grid=Engine::Vector(1,1,1));
     VoxelData(const VoxelData&) = default;
     const Voxel& operator[](const Position& p) const;
     Voxel& operator[](const Position& p);
     Size GetSize() const;
+    Position Grid(const Engine::Coordinate& meters) const;
+    Engine::Vector GridSize() const;
+    Engine::Coordinate Center(const Position& p) const;
 
 protected:
     template<class _D,typename _V>
@@ -128,6 +133,7 @@ public:
     bool IsInside(const Position& p) const;
     Section All() const;
     Section In(const Box& box) const;
+    Section In(const Engine::AABB& meters) const;
     Box Insides() const;
     Box Bounds() const;
     Position Clip(const Position& p) const;
@@ -145,9 +151,10 @@ protected:
     unsigned UncheckedGridIndex(const Position& p) const;
     void SetInvalid(const Position& position); 
 protected:
-    Size edge;
+    Size size;                  // valid grids from 0 to size
+    Size edge;                  // edge grids in all Directions <0 or >=size
+    Engine::Vector grid;        // in meters, TODO: make it a transformation matrix grids to meters
     std::vector<Voxel> voxels;  // longitude+2, latitude+2, altitude+2
-    Size size;
 };
 
 
