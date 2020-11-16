@@ -12,21 +12,22 @@ StaticEnvironment::StaticEnvironment(const Size& size) :
         v.second = { &Material::air, temperature, float(Material::air.Density(PascalPerAtmosphere, temperature)) };
     }
 }
+
 void StaticEnvironment::Fill(const Engine::IVolume& v, const Material& m) 
 {
-/*
+
     auto bb = v.GetBoundingBox();
     Box volBB(Position(int(bb.Begin().x), int(bb.Begin().y), int(bb.Begin().z)),
         Position(int(ceil(bb.End().x)), int(ceil(bb.End().y)), int(ceil(bb.End().z))));
-    auto envBB = GetBoundingBox();
-    auto fillBB = volBB & envBB;
-    for (auto& voxel: Section(fillBB))
+    for (auto& voxel: data.In(volBB))
     {
-        
-        voxel.material = &m;
-        voxel.density = m.Density(m.normalDensity, voxel.temperature);
+        Engine::Coordinate center(voxel.first.x, voxel.first.y, voxel.first.z); // TODO: grid
+        center += Engine::Vector(0.5, 0.5, 0.5);
+        if (v.Distance(center) <= 0)
+        {
+            data[voxel.first] = { &m, voxel.second.temperature, float(m.Density(PascalPerAtmosphere, voxel.second.temperature)) };
+        }
     }
-*/
 }
 
 void StaticEnvironment::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
