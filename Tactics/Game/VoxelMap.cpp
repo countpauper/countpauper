@@ -163,11 +163,13 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickn
     Engine::Vector zAxis(0, 0, 1);
     // translate the box up so the bottomline starts at 0,0,0 first
     box *= Engine::Matrix::Translation(Engine::Vector(bottomMeters.Length()*0.5, 0, height*0.5));
+
     box *= Engine::Matrix(
         xAxis,  // the bottom line was in xAxis, now rotated towards the line
-        xAxis.Cross(zAxis),  // the yAxis is perpendicular to the x and z simply
+        zAxis.Cross(xAxis),  // the yAxis is perpendicular to the x and z simply
         zAxis,  // the zAxis remains aligned with the world to not rotate the wall, but skew it along the line 
-        Engine::Vector(bottomLine.a));   
+        Engine::Vector(bottomLine.a));
+
     auto dbgCount = voxels.Fill(box, Material::stone);
     OutputDebugStringW((std::wstring(L"Wall at ") + Engine::ToWString(bottomLine) + L"=" + std::to_wstring(dbgCount)+L" blocks\n").c_str());
 

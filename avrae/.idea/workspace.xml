@@ -2,10 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/bladesong/bladesong.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Mesh.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Mesh.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Plane.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Plane.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Quaternion.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Quaternion.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Quaternion.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Quaternion.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Triangle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Triangle.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Triangle.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Triangle.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Vector.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Vector.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Vector.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Vector.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Game/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/StaticEnvironment.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Game/VoxelData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/VoxelData.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Game/VoxelData.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/VoxelData.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Tactics/Tactics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Tactics/Tactics.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Geometry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Geometry.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Mesh.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Mesh.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Transformation.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Transformation.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bladesong/bladesong.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bladesong/defense.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/defense.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +46,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
   </component>
-  <component name="RunManager" selected="Python.gems">
+  <component name="RunManager" selected="Python.gem_script">
     <configuration name="gem_script" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -98,8 +112,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.gems" />
         <item itemvalue="Python.gem_script" />
+        <item itemvalue="Python.gems" />
         <item itemvalue="Python.random_shuffle" />
       </list>
     </recent_temporary>
@@ -118,6 +132,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="421" y="199" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1606055498825">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="421" y="199" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1606055498825" />
     <state x="686" y="182" key="#gem_script" timestamp="1603618135631">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
@@ -130,22 +148,22 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="686" y="182" key="#random_shuffle/0.0.1920.1080@0.0.1920.1080" timestamp="1603451883503" />
-    <state width="1899" height="363" key="GridCell.Tab.0.bottom" timestamp="1604218872673">
+    <state width="1882" height="170" key="GridCell.Tab.0.bottom" timestamp="1606120835932">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1899" height="363" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1604218872673" />
-    <state width="1899" height="363" key="GridCell.Tab.0.center" timestamp="1604218872673">
+    <state width="1882" height="170" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
+    <state width="1882" height="170" key="GridCell.Tab.0.center" timestamp="1606120835932">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1899" height="363" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1604218872673" />
-    <state width="1899" height="363" key="GridCell.Tab.0.left" timestamp="1604218872673">
+    <state width="1882" height="170" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
+    <state width="1882" height="170" key="GridCell.Tab.0.left" timestamp="1606120835932">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1899" height="363" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1604218872673" />
-    <state width="1899" height="363" key="GridCell.Tab.0.right" timestamp="1604218872673">
+    <state width="1882" height="170" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
+    <state width="1882" height="170" key="GridCell.Tab.0.right" timestamp="1606120835932">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1899" height="363" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1604218872673" />
+    <state width="1882" height="170" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
     <state width="1899" height="363" key="GridCell.Tab.1.bottom" timestamp="1604218872673">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>

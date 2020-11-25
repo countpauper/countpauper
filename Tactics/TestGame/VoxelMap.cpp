@@ -317,7 +317,7 @@ TEST(VoxelMap, UnitWall)
 {
     VoxelMap map;
     map.Space(2, 2, 2);
-    map.Wall(Engine::Line(Engine::Coordinate(0.5, 0, 0), Engine::Coordinate(0.5, 1, 0)), 1.0, 1.0);
+    map.Wall(Engine::Line(Engine::Coordinate(0, 0.5, 0), Engine::Coordinate(1, 0.5, 0)), 1.0, 1.0);
 
     // Check along the wall
     EXPECT_EQ(Element::Stone, map.At(Position(0, 0, 2)).floor);
