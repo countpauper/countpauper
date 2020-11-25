@@ -8,6 +8,7 @@
 #include <GL/glew.h>
 #include "GLutil.h"
 #include <array>
+#include "Plane.h"
 
 namespace Engine
 {
@@ -345,12 +346,12 @@ Box::Box()
     };
     std::array<Face, 6> faces =
     {
-        Face{ Vector(1, 0, 0), Vector(0,-1, 1), -0.5 },
-        Face{ Vector(0, 1, 0), Vector(1, 0, 1), 0.5 },
-        Face{ Vector(0, 0, 1), Vector(-1,-1,0), 0.5 },
-        Face{ Vector(-1, 0, 0), Vector(0, 1,-1),-0.5 },
-        Face{ Vector(0,-1, 0), Vector(-1, 0,-1), 0.5 },
-        Face{ Vector(0, 0,-1), Vector(1, 1, 0), 0.5 },
+        Face{ Vector( 1, 0, 0), Vector( 0, 1, 1), 0.5 },
+        Face{ Vector( 0, 1, 0), Vector( 1, 0, 1), 0.5 },
+        Face{ Vector( 0, 0, 1), Vector( 1, 1 ,0), 0.5 },
+        Face{ Vector(-1, 0, 0), Vector( 0,-1,-1), 0.5 },
+        Face{ Vector( 0,-1, 0), Vector(-1, 0,-1), 0.5 },
+        Face{ Vector( 0, 0,-1), Vector(-1,-1, 0), 0.5 },
     };
     std::array<TextureCoordinate, 4> texCoords =
     {
@@ -365,15 +366,18 @@ Box::Box()
     uint32_t vi = 0, ti = 0;
     for (const auto & face : faces)
     {
+        // 1-0 
+        // |\| 
+        // 2_3
         triangles[ti++] = Triangle{ vi, vi + 1, vi + 3 };
-        triangles[ti++] = Triangle{ vi + 1, vi + 2, vi + 3 };
+        triangles[ti++] = Triangle{ vi + 2, vi + 3, vi + 1 };
 
         Coordinate faceCenter = Coordinate::zero + face.normal;
         Vector diagonal = face.diagonal;
         double angle = 0;
         for (const auto& t : texCoords)
         {
-            vertices[vi].c = faceCenter - Quaternion(face.normal, angle) * diagonal;
+            vertices[vi].c = faceCenter + Quaternion(face.normal, angle) * diagonal;
             vertices[vi].n = face.normal;
             vertices[vi].color = RGBA::white;
             // test vertices[vi].color = RGBA(face.normal.x*127+127, face.normal.y*127+127, face.normal.z*127+127);
@@ -381,6 +385,10 @@ Box::Box()
             ++vi;
             angle += PI * face.clock; // CCW
         }
+        //  check ccw triangle facing in normal directon
+        //assert(Plane(vertices[triangles[ti - 2].vertex[0]].c, vertices[triangles[ti - 2].vertex[1]].c, vertices[triangles[ti - 2].vertex[2]].c).normal.Dot(face.normal) > 0);
+        //assert(Plane(vertices[triangles[ti - 1].vertex[0]].c, vertices[triangles[ti - 1].vertex[1]].c, vertices[triangles[ti - 1].vertex[2]].c).normal.Dot(face.normal) > 0);
+
     }
 }
 

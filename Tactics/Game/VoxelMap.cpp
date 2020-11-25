@@ -154,32 +154,21 @@ void VoxelMap::Hill(const Engine::Line& ridgeLine, double stddev)
 
 void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickness)
 {
-    double halfThickness = thickness * 0.5;
     height *= voxels.GridSize().z;   // from grids to meters
-    Engine::AABB boundingBox(bottomLine);
-    boundingBox.Expand(Engine::Vector(0, 0, height));
-    boundingBox.Grow(Engine::Vector(halfThickness, halfThickness, 0));
-
-    Engine::Plane plane(bottomLine.a, Engine::Vector(bottomLine), Engine::Vector(0, 0, height));
-    unsigned dbgCount=0;
-    for (auto v : voxels.In(boundingBox))
-    {
-        auto c = voxels.Center(v.first);
-        auto nearest = plane.Project(c);
-        if ((nearest - c).Length() > halfThickness)
-            continue;
-        auto bottom = bottomLine.Project(nearest);
-        if (nearest.z < bottom.z)
-            continue;
-        if (nearest.z > bottom.z + height)
-            continue;
-        //OutputDebugStringW((std::wstring(L"Wall at ") + v.position.to_wstring() + L"\n").c_str());
-        voxels.SetPressure(v.first,
-            Material::stone,
-            atmosphericTemperature, // TODO: decrease from air increase to lava
-            PascalPerAtmosphere);   // TODO: increase due to stone depth, NB: can be already overlapping stone layer. just dont place those
-        ++dbgCount;
-    }
+    Engine::Line bottomMeters = bottomLine;
+    bottomMeters.a.z *= voxels.GridSize().z;
+    bottomMeters.b.z *= voxels.GridSize().z;    // todo in a matrix and you know, better
+    Engine::Box box(Engine::Vector(bottomMeters.Length(), thickness, height));
+    auto xAxis = Engine::Vector(bottomMeters).Normal();
+    Engine::Vector zAxis(0, 0, 1);
+    // translate the box up so the bottomline starts at 0,0,0 first
+    box *= Engine::Matrix::Translation(Engine::Vector(bottomMeters.Length()*0.5, 0, height*0.5));
+    box *= Engine::Matrix(
+        xAxis,  // the bottom line was in xAxis, now rotated towards the line
+        xAxis.Cross(zAxis),  // the yAxis is perpendicular to the x and z simply
+        zAxis,  // the zAxis remains aligned with the world to not rotate the wall, but skew it along the line 
+        Engine::Vector(bottomLine.a));   
+    auto dbgCount = voxels.Fill(box, Material::stone);
     OutputDebugStringW((std::wstring(L"Wall at ") + Engine::ToWString(bottomLine) + L"=" + std::to_wstring(dbgCount)+L" blocks\n").c_str());
 
 }
@@ -694,6 +683,8 @@ void VoxelMap::SetDensityToMeshColor()
 
 void VoxelMap::Render() const
 {
+    if (!mesh)
+        const_cast<VoxelMap*>(this)->GenerateMesh();
     if (mesh)
     {
         glEnable(GL_LIGHTING);

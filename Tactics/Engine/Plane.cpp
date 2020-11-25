@@ -13,12 +13,12 @@ namespace Engine
     {
     }
     Plane::Plane(const Coordinate& origin, const Engine::Vector& span1, const Engine::Vector& span2) : 
-        Plane(origin, span1 * span2)    // cross product
+        Plane(origin, span1.Cross(span2))    // cross product
     {
     }
 
     Plane::Plane(const Coordinate& a, const Coordinate& b, const Coordinate& c) :
-        Plane(a, b-a, c-a)
+        Plane(a, b-a, c-a)  // ccw is front face 
     {
     }
 
@@ -49,17 +49,17 @@ namespace Engine
 
     bool Plane::IsParallel(const Line& line) const
     {
-        double dot = Vector(line)*normal;
+        double dot = Vector(line).Cross(normal);
         return dot == 0;
     }
 
     Coordinate Plane::Intersection(const Line& line) const
     {
-        double dot = Vector(line)*normal;
+        double dot = Vector(line).Cross(normal);
         if (dot < std::numeric_limits<double>::epsilon())
             throw std::runtime_error("Line is parallel to plane");
         Vector lineVector(line);
-        double aDot = (lineVector * normal);
+        double aDot = lineVector.Cross(normal);
         double interpolationFactor = aDot / dot;
         return line.a + lineVector * interpolationFactor;
     }
@@ -86,7 +86,7 @@ namespace Engine
 
     bool Plane::operator==(const Plane& other) const
     {
-        auto dot = normal * other.normal;
+        auto dot = normal.Cross(other.normal);
         if (dot != 0)
             return false;
         if (d == 0 && other.d == 0)

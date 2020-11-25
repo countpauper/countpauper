@@ -312,25 +312,77 @@ TEST(VoxelMap, HillRidge)
     EXPECT_EQ(1, map.At(Position(0, 0, 3)).height);
 }
 
+
+TEST(VoxelMap, UnitWall)
+{
+    VoxelMap map;
+    map.Space(2, 2, 2);
+    map.Wall(Engine::Line(Engine::Coordinate(0.5, 0, 0), Engine::Coordinate(0.5, 1, 0)), 1.0, 1.0);
+
+    // Check along the wall
+    EXPECT_EQ(Element::Stone, map.At(Position(0, 0, 2)).floor);
+    EXPECT_EQ(1, map.At(Position(0, 0, 2)).height);
+    
+    // Next to the wall
+    EXPECT_EQ(Element::None, map.At(Position(1, 0, 2)).floor);
+    EXPECT_EQ(0, map.At(Position(1, 0, 2)).height);
+    EXPECT_EQ(Element::None, map.At(Position(0, 1, 2)).floor);
+    EXPECT_EQ(0, map.At(Position(0, 1, 2)).height);
+    EXPECT_EQ(Element::None, map.At(Position(1, 1, 2)).floor);
+    EXPECT_EQ(0, map.At(Position(1, 1, 2)).height);
+}
+
 TEST(VoxelMap, StraightWall)
 {
     VoxelMap map;
     map.Space(3, 3, 3);
-    map.Wall(Engine::Line(Engine::Coordinate(1.5, -1, 0), Engine::Coordinate(1.5, 4, 0)), 2.0, 1.0);
+    map.Wall(Engine::Line(Engine::Coordinate(1.5, 0, 0), Engine::Coordinate(1.5, 2, 0)), 2.0, 1.0);
 
     // Check along the wall
     EXPECT_EQ(Element::Stone, map.At(Position(1, 0, 3)).floor);
     EXPECT_EQ(2, map.At(Position(1, 0, 3)).height);
     EXPECT_EQ(Element::Stone, map.At(Position(1, 1, 3)).floor);
     EXPECT_EQ(2, map.At(Position(1, 1, 3)).height);
-    EXPECT_EQ(Element::Stone, map.At(Position(1, 2, 3)).floor);
-    EXPECT_EQ(2, map.At(Position(1, 2, 3)).height);
+    EXPECT_EQ(Element::None, map.At(Position(1, 2, 3)).floor);
+    EXPECT_EQ(0, map.At(Position(1, 2, 3)).height);
 
     // Next to the wall
     EXPECT_EQ(Element::None, map.At(Position(0, 0, 3)).floor);
     EXPECT_EQ(0, map.At(Position(0, 0, 3)).height);
-    EXPECT_EQ(Element::None, map.At(Position(0, 0, 3)).floor);
+    EXPECT_EQ(Element::None, map.At(Position(2, 2, 3)).floor);
     EXPECT_EQ(0, map.At(Position(2, 2, 3)).height);
+}
+
+TEST(VoxelMap, DiagonalWall)
+{
+    VoxelMap map;
+    map.Space(3, 3, 3);
+    map.Wall(Engine::Line(Engine::Coordinate(2.5, 0, 0), Engine::Coordinate(0, 1.5, 0)), 2.0, 1.0);
+
+    // Check along the wall
+    EXPECT_EQ(Element::Stone, map.At(Position(2, 0, 3)).floor);
+    EXPECT_EQ(Element::Stone, map.At(Position(1, 0, 3)).floor);
+    EXPECT_EQ(Element::Stone, map.At(Position(0, 1, 3)).floor);
+    // Next to the wall
+    EXPECT_EQ(Element::None, map.At(Position(0, 0, 3)).floor);
+    EXPECT_EQ(Element::None, map.At(Position(1, 1, 3)).floor);
+}
+
+
+TEST(VoxelMap, SlantedWall)
+{
+    VoxelMap map;
+    map.Space(3, 3, 3);
+    map.Wall(Engine::Line(Engine::Coordinate(1.5, 0, 0), Engine::Coordinate(1.5, 3, 2)), 1.0, 1.0);
+
+    // Check along the wall
+    EXPECT_EQ(1, map.At(Position(1, 0, 3)).height); // 1.333
+    EXPECT_EQ(2, map.At(Position(1, 1, 3)).height); // 2.000
+    EXPECT_EQ(3, map.At(Position(1, 2, 3)).height); // 2.666
+    EXPECT_EQ(0, map.At(Position(1, 3, 3)).height); // 0
+
+    // Next to the wall
+    EXPECT_EQ(0, map.At(Position(0, 0, 3)).height);
 }
 
 

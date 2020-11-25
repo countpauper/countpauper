@@ -18,7 +18,6 @@ struct Vector final
     {
     }
     Vector(const Vector& v) = default;
-
     explicit Vector(const Coordinate& c);
     explicit Vector(const Line& l);
     explicit Vector(const Plane& p);
@@ -28,6 +27,7 @@ struct Vector final
     double Length() const;
     double LengthSquared() const;
     Vector Normal() const;
+    Vector Cross(const Vector& o) const;
 
     bool operator==(const Vector& o) const;
     Vector& operator*=(double factor);
@@ -35,7 +35,6 @@ struct Vector final
     Vector& operator+=(const Vector& v);
     Vector& operator-=(const Vector& v);
     Vector operator-() const;
-    Vector& operator*=(const Vector& cross);
     Vector& operator*=(const Matrix& m);
 
     double Dot(const Vector& v) const;
@@ -46,7 +45,6 @@ struct Vector final
 };
 Vector operator*(const Vector& v, double factor);
 Vector operator/(const Vector& v, double factor);
-Vector operator*(const Vector& a, const Vector& b);
 Vector operator*(const Vector& v, double factor);
 Vector operator+(const Vector& a, const Vector& b);
 Vector operator-(const Vector& a, const Vector& b);

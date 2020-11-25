@@ -4,6 +4,7 @@
 #include "Position.h"
 #include "Box.h"
 #include "Engine/Vector.h"
+#include "Engine/Volume.h"
 
 namespace Engine { struct AABB;  }
 namespace Game
@@ -21,7 +22,6 @@ public:
     Position Grid(const Engine::Coordinate& meters) const;
     Engine::Vector GridSize() const;
     Engine::Coordinate Center(const Position& p) const;
-
 protected:
     template<class _D,typename _V>
     class base_iterator
@@ -139,6 +139,7 @@ public:
     Position Clip(const Position& p) const;
 
     // Data getters and setters
+    size_t Fill(const Engine::IVolume& v, const Material& m);
     void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
     void AdjustGrid(const Position& location, double temperature, double density);
     float Density(const Position& position) const;

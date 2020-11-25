@@ -26,8 +26,14 @@ Vector Triangle::Normal() const
     return plane.normal;
 }
 
-Vector Triangle::BaryCentric(const Coordinate& p) const
+Triangle Triangle::Flipped() const
 {
+    return Triangle(a, c, b);
+}
+
+
+Vector Triangle::BaryCentric(const Coordinate& p) const
+{   // https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
     Vector v0 = b - a;
     Vector v1 = c - a;
     Vector vp = p - a;
@@ -36,7 +42,7 @@ Vector Triangle::BaryCentric(const Coordinate& p) const
     auto d11 = v1.Dot(v1);
     double denom = d00 * d11 - d01 * d01;
     if (abs(denom) < std::numeric_limits<double>::epsilon())
-        return Vector();    // not a triangle
+        throw std::runtime_error("Barycentric coordinates of degenerate triangle");
 
     auto dp0 = vp.Dot(v0);
     auto dp1 = vp.Dot(v1);
@@ -49,49 +55,50 @@ Vector Triangle::BaryCentric(const Coordinate& p) const
 
 double Triangle::Distance(const Coordinate& p) const
 {
-    Plane plane(a, b, c);
+    Plane plane(a, b, c);   // counter clockwise
     if (!plane)
     {
         return sqrt(std::min((a - p).LengthSquared(), std::min((b - p).LengthSquared(), (c - p).LengthSquared())));
     }
     Coordinate pp = plane.Project(p);
     Vector barycentric = BaryCentric(pp);
-
     double sign = std::signbit(plane.normal.Dot(p - pp)) ? -1 : 1;
 
     if (barycentric.x < 0)
     {
         if (barycentric.y < 0)
         {
-            return sign * (c - p).Length();
+            return (c - p).Length();
         }
         else if (barycentric.z < 0)
         {
-            return sign * (b - p).Length();
+            return (b - p).Length();
         }
         else
         {
-            return sign * Line(b, c).Distance(p);
+            return Line(b, c).Distance(p);
         }
     }
     else if (barycentric.y < 0)
     {
         if (barycentric.z < 0)
         {
-            return sign * (a - p).Length();
+            return (a - p).Length();
         }
         else
         {
-            return sign * Line(a, c).Distance(p);
+            return Line(a, c).Distance(p);
         }
     }
     else if (barycentric.z < 0)
     {
-        return sign * Line(a, b).Distance(p);
+        return Line(a, b).Distance(p);
     }
     else
     {   // All>0, all should be <=1.0 too
         assert(barycentric.x <= 1.0 && barycentric.y <= 1.0 && barycentric.z <= 1.0);
+        // If it projects into the triangle a negative value is returned if the point is behind the triangle 
+        // this allows at least convex meshes to determine if the point is inside the mesh when all distance<=0
         return sign * (pp - p).Length();
     }
 

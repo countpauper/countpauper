@@ -45,24 +45,7 @@ TEST(Matrix, Multiplication)
     EXPECT_EQ(154, l[1][1]);
 }
 
-TEST(Transformation, RightHandedRotation)
-{
-    Quaternion xrot(Vector(1, 0, 0), float(PI / 2));
-    Quaternion yrot(Vector(0, 1, 0), float(PI / 2));
-    Quaternion zrot(Vector(0, 0, 1), float(PI / 2));
 
-    EXPECT_NEAR(1, (xrot * Vector(0, 0, 1)).y, 1e-6);
-    EXPECT_NEAR(-1, (xrot * Vector(0, 1, 0)).z, 1e-6);
-    EXPECT_NEAR(1, (xrot * Vector(0, 0, 1)).Length(), 1e-6);
-
-    EXPECT_NEAR(1, (yrot * Vector(0, 0, 1)).x, 1e-6);
-    EXPECT_NEAR(-1, (yrot * Vector(1, 0, 0)).z, 1e-6);
-    EXPECT_NEAR(1, (yrot * Vector(1, 0, 0)).Length(), 1e-6);
-
-    EXPECT_NEAR(1, (zrot * Vector(1, 0, 0)).y, 1e-6);
-    EXPECT_NEAR(-1, (zrot * Vector(0, 1, 0)).x, 1e-6);
-    EXPECT_NEAR(1, (zrot * Vector(1, 0, 0)).Length(), 1e-6);
-}
 
 TEST(Matrix, InverseAffine)
 {
@@ -98,6 +81,38 @@ TEST(Matrix, InversePerspective)
     EXPECT_NEAR(inverse.x, 1, 1e-6);
     EXPECT_NEAR(inverse.y, -2, 1e-6);
     EXPECT_NEAR(inverse.z, 0.5, 1e-6);
+}
+
+
+TEST(Quaternion, Unit)
+{
+    EXPECT_TRUE(Quaternion(Vector(0, 0, 0), 0).IsNormalized());
+    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 0).IsNormalized());
+
+    EXPECT_FALSE(Quaternion(Vector(1, -1, 0), 1.0).IsNormalized());
+    EXPECT_TRUE(Quaternion(Vector(1, -1, 0), 1.0).Normalized().IsNormalized());
+
+    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 0).Matrix().IsIdentity());
+    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 1.0).IsNormalized());
+    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 1.0).Matrix().IsAffine());
+}
+
+TEST(Quaternion, RightHandedRotation)
+{
+    Quaternion xrot(Vector(1, 0, 0), float(PI / 2));
+    EXPECT_NEAR( 1, (xrot * Vector(1, 1, 1)).x, 1e-6);
+    EXPECT_NEAR(-1, (xrot * Vector(1, 1, 1)).y, 1e-6);
+    EXPECT_NEAR( 1, (xrot * Vector(1, 1, 1)).z, 1e-6);
+
+    Quaternion yrot(Vector(0, 1, 0), float(PI / 2));
+    EXPECT_NEAR( 1, (yrot * Vector(1, 1, 1)).x, 1e-6);
+    EXPECT_NEAR( 1, (yrot * Vector(1, 1, 1)).y, 1e-6);
+    EXPECT_NEAR(-1, (yrot * Vector(1, 1, 1)).z, 1e-6);
+
+    Quaternion zrot(Vector(0, 0, 1), float(PI / 2));
+    EXPECT_NEAR(-1, (zrot * Vector(1, 1, 1)).x, 1e-6);
+    EXPECT_NEAR( 1, (zrot * Vector(1, 1, 1)).y, 1e-6);
+    EXPECT_NEAR( 1, (zrot * Vector(1, 1, 1)).z, 1e-6);
 }
 
 }

@@ -18,9 +18,9 @@ namespace Engine
         }
         double Surface() const;
         Vector Normal() const;
+        Triangle Flipped() const;
         double Distance(const Coordinate& c) const;
         Vector BaryCentric(const Coordinate& c) const;
-      
     };
 
     std::wostream& operator<<(std::wostream& s, const Triangle& triangle);

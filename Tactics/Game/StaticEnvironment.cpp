@@ -13,21 +13,9 @@ StaticEnvironment::StaticEnvironment(const Size& size) :
     }
 }
 
-void StaticEnvironment::Fill(const Engine::IVolume& v, const Material& m) 
+void StaticEnvironment::Fill(const Engine::IVolume& v, const Material& m)
 {
-
-    auto bb = v.GetBoundingBox();
-    Box volBB(Position(int(bb.Begin().x), int(bb.Begin().y), int(bb.Begin().z)),
-        Position(int(ceil(bb.End().x)), int(ceil(bb.End().y)), int(ceil(bb.End().z))));
-    for (auto& voxel: data.In(volBB))
-    {
-        Engine::Coordinate center(voxel.first.x, voxel.first.y, voxel.first.z); // TODO: grid
-        center += Engine::Vector(0.5, 0.5, 0.5);
-        if (v.Distance(center) <= 0)
-        {
-            data[voxel.first] = { &m, voxel.second.temperature, float(m.Density(PascalPerAtmosphere, voxel.second.temperature)) };
-        }
-    }
+    data.Fill(v, m);
 }
 
 void StaticEnvironment::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}

@@ -55,6 +55,16 @@ Vector Vector::Normal() const
     return Vector(x / l, y / l, z / l);
 }
 
+Vector Vector::Cross(const Vector& o) const
+{
+    return Vector(
+        y*o.z - z * o.y,
+        z*o.x - x * o.z,
+        x*o.y - y * o.x
+    );
+}
+
+
 bool Vector::operator==(const Vector& o) const
 {
     return x == o.x && y == o.y && z == o.z;
@@ -89,12 +99,6 @@ Vector& Vector::operator-=(const Vector& v)
     x -= v.x;
     y -= v.y;
     z -= v.z;
-    return *this;
-}
-
-Vector& Vector::operator*=(const Vector& o)
-{
-    *this = *this * o;
     return *this;
 }
 
@@ -161,14 +165,6 @@ Vector operator-(const Vector& a, const Vector& b)
 Vector operator-(const Coordinate& a, const Coordinate& b)
 {
     return Vector(a.x - b.x, a.y - b.y, a.z - b.z);
-}
-Vector operator*(const Vector& a, const Vector& b)
-{
-    return Vector(
-        a.y * b.z - a.z*b.y,
-        a.z * b.x - a.x*b.z,
-        a.x * b.y - a.y*b.x
-    );
 }
 
 Vector operator*(const Matrix& m, const Vector& v)

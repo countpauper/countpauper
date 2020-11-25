@@ -229,6 +229,25 @@ Position VoxelData::Clip(const Position& p) const
     return Bounds().Clip(p);
 }
 
+size_t VoxelData::Fill(const Engine::IVolume& v, const Material& m)
+{
+    size_t filled = 0;
+    auto bb = v.GetBoundingBox();
+    Box volBB(Grid(bb.Begin()), Grid(bb.End()) + Position(1, 1, 1));
+
+    for (auto& voxel : In(volBB))
+    {
+        auto center = Center(voxel.first);
+        if (v.Distance(center) <= 0)
+        {
+            (*this)[voxel.first] = { &m, voxel.second.temperature, float(m.Density(PascalPerAtmosphere, voxel.second.temperature)) };
+            ++filled;
+        }
+    }
+    return filled;
+}
+
+
 void VoxelData::SetInvalid(const Position& position)
 {
     auto index = GridIndex(position);
