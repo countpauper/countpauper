@@ -336,6 +336,14 @@ Box::Box(const Vector& size)
     (*this) *= Matrix::Scale(size*0.5);
 }
 
+Box::Box(const AABB& bounds) :
+    Box()
+{
+    (*this) *= Matrix::Scale(bounds.Extent()*0.5);
+    (*this) *= Matrix::Translation(Engine::Vector(bounds.Center()));
+}
+
+
 Box::Box()
 {
     struct Face

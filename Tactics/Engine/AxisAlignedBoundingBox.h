@@ -21,6 +21,8 @@ namespace Engine
 
         Coordinate Begin() const;
         Coordinate End() const;
+        Coordinate Center() const;
+
         Vector Extent() const;
         double Volume() const;
         operator bool() const;
@@ -36,7 +38,6 @@ namespace Engine
         AABB& Grow(double v);
         AABB& operator*=(const Matrix& transformation);
         AABB& operator+=(const Vector& offset);
-
 
         Range<double> x;
         Range<double> y;

@@ -6,11 +6,20 @@
 
 namespace Engine::Test
 {
+
 TEST(Range, Size)
 {
     EXPECT_EQ(1, Range(0, 1).Size());
     EXPECT_EQ(0, Range(2, 2).Size());
     EXPECT_FALSE(Range(3, 3));
+}
+
+TEST(Range, Middle)
+{
+    EXPECT_EQ(3, Range<int>(2, 4).Middle());
+    EXPECT_EQ(2, Range<int>(2, 3).Middle());
+    EXPECT_EQ(1.5, Range<double>(1, 2).Middle());
+    EXPECT_EQ(1.5, Range<double>(2, 1).Middle());
 }
 
 TEST(Range, Union)

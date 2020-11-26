@@ -15,7 +15,7 @@ StaticEnvironment::StaticEnvironment(const Size& size) :
 
 void StaticEnvironment::Fill(const Engine::IVolume& v, const Material& m)
 {
-    data.Fill(v, m);
+    data.Fill(v, m, 0);
 }
 
 void StaticEnvironment::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}

@@ -65,7 +65,7 @@ double Voxel::Density() const
 
 double Voxel::Mass() const
 {
-    return density * LiterPerBlock;
+    return density * LiterPerVoxel;
 }
 
 double Voxel::Molecules() const

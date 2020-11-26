@@ -46,6 +46,12 @@ struct Range
         return *this;
     }
     Range& operator-=(T v) { return operator+=(-v); }
+    Range& operator*=(T v) 
+    {
+        begin *= v;
+        end *= v;
+        return *this;
+    }
 
     Range& Expand(T v)
     {
@@ -66,6 +72,12 @@ struct Range
     {
         return Engine::Clip(v, begin, ALittleLess<T>(end));
     }
+
+    T Middle() const
+    {
+        return (begin + end) / 2;
+    }
+
     T begin;
     T end;
 
@@ -102,6 +114,12 @@ template<typename T>
 Range<T> operator-(const Range<T>& a, T v)
 {
     return Range(a) -= -v;
+}
+
+template<typename T>
+Range<T> operator*(const Range<T>& a, T v)
+{
+    return Range(a) *= v;
 }
 
 template<typename T>

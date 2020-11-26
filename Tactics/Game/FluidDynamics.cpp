@@ -381,7 +381,7 @@ namespace Game
 
     double FluidDynamics::Volume() const
     {
-        return voxels.Longitude() * voxels.Latitude() * voxels.Altitude() * LiterPerBlock;
+        return voxels.Longitude() * voxels.Latitude() * voxels.Altitude() * LiterPerVoxel;
     }
 
     double FluidDynamics::Mass(const Material& material) const

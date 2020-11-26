@@ -89,13 +89,19 @@ void VoxelMap::Air(double temperature, double meters)
     atmosphericTemperature = float(temperature);
     atmosphereRadius = meters;
     double atmorphericLapse = float(-temperature / atmosphereRadius);
-    for (auto v : voxels.All())
+    auto bounds = voxels.Bounds();
+    auto gs = voxels.GridSize();
+    size_t dbgCount = 0;
+    for(int y=bounds.z.begin; y<bounds.z.end;++y)
     {
-        auto temperature = AtmosphericTemperature(Elevation(v.first));
-        voxels.SetPressure(v.first, Material::air,
-            temperature,
-            AtmosphericPressure(Elevation(v.first.z)));
+        Engine::Box layer(Engine::AABB(
+            Engine::Range<double>(bounds.x.begin, bounds.x.end)*gs.x,
+            Engine::Range<double>(bounds.y.begin, bounds.y.end)*gs.y,
+            Engine::Range<double>(y, y+1)*gs.z));
+        auto temperature = AtmosphericTemperature(Elevation(y));
+        dbgCount += voxels.Fill(layer, Material::air, temperature);
     }
+    OutputDebugStringW(std::wstring(L"Air =" + std::to_wstring(dbgCount) + L" voxels\n").c_str());
 }
 
 void VoxelMap::Wind(const Engine::Vector& speed)
@@ -106,14 +112,14 @@ void VoxelMap::Wind(const Engine::Vector& speed)
 
 void VoxelMap::Sea(int level, double temperature)
 {
-    for(auto v : voxels.In(Engine::AABB(Engine::Coordinate(-1,-1,-1), Engine::Coordinate(voxels.GetSize().x+1, voxels.GetSize().y+1, Elevation(level)))))
-    {
-        double pressure = AtmosphericPressure(Elevation(v.first.z)) + Elevation(level - v.first.z) * 10.33; // TODO: calculate based on water material
-        voxels.SetPressure(v.first,
-            Material::water,
-            temperature,
-            pressure);
-    }
+    auto bounds = voxels.Bounds();
+    auto gs = voxels.GridSize();
+    Engine::Box sea(Engine::AABB(
+        Engine::Range<double>(bounds.x.begin, bounds.x.end)*gs.x, 
+        Engine::Range<double>(bounds.y.begin, bounds.y.end)*gs.y, 
+        Engine::Range<double>(bounds.z.begin, level)*gs.z));
+    auto dbgCount = voxels.Fill(sea, Material::water, temperature);
+    OutputDebugStringW((std::wstring(L"Sea level ") + Engine::ToWString(level) + L"=" + std::to_wstring(dbgCount) + L" voxels\n").c_str());
 }
 
 class Hill : public Engine::IVolume
@@ -174,8 +180,8 @@ void VoxelMap::Hill(const Engine::Line& ridgeLine, double stddev)
 
     Game::Hill hill(ridgeLineMeters, stddev);
 
-    auto dbgCount = voxels.Fill(hill, Material::stone);
-    OutputDebugStringW((std::wstring(L"Hill at ") + Engine::ToWString(ridgeLine) + L"=" + std::to_wstring(dbgCount) + L" blocks\n").c_str());
+    auto dbgCount = voxels.Fill(hill, Material::stone, atmosphericTemperature);
+    OutputDebugStringW((std::wstring(L"Hill at ") + Engine::ToWString(ridgeLine) + L"=" + std::to_wstring(dbgCount) + L" voxels\n").c_str());
 }
 
 void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickness)
@@ -196,8 +202,8 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickn
         zAxis,  // the zAxis remains aligned with the world to not rotate the wall, but skew it along the line 
         Engine::Vector(bottomLine.a));
 
-    auto dbgCount = voxels.Fill(box, Material::stone);
-    OutputDebugStringW((std::wstring(L"Wall at ") + Engine::ToWString(bottomLine) + L"=" + std::to_wstring(dbgCount)+L" blocks\n").c_str());
+    auto dbgCount = voxels.Fill(box, Material::stone, atmosphericTemperature);
+    OutputDebugStringW((std::wstring(L"Wall at ") + Engine::ToWString(bottomLine) + L"=" + std::to_wstring(dbgCount)+L" voxels\n").c_str());
 
 }
 
@@ -398,7 +404,7 @@ unsigned VoxelMap::WindForce() const
 
 double VoxelMap::Volume() const
 {
-    return voxels.GetSize().Volume() * LiterPerBlock;
+    return voxels.GetSize().Volume() * LiterPerVoxel;
 }
 
 double VoxelMap::Mass(const Material& material) const

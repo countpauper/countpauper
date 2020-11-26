@@ -44,6 +44,11 @@ Coordinate AABB::End() const
     return Coordinate(x.end, y.end, z.end);
 }
 
+Coordinate AABB::Center() const
+{
+    return Coordinate(x.Middle(), y.Middle(), z.Middle());
+
+}
 Vector AABB::Extent() const
 {
     return Vector(x.Size(), y.Size(), z.Size());

@@ -69,6 +69,7 @@ class Box: public Mesh
 {
 public:
     Box();
+    Box(const AABB& bounds);
     explicit Box(const double size) :
         Box(Vector(size, size, size))
     {

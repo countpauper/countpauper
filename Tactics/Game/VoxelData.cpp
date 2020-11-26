@@ -239,7 +239,7 @@ Position VoxelData::Clip(const Position& p) const
     return Bounds().Clip(p);
 }
 
-size_t VoxelData::Fill(const Engine::IVolume& v, const Material& m)
+size_t VoxelData::Fill(const Engine::IVolume& v, const Material& m, const double temperature)
 {
     size_t filled = 0;
     auto bb = v.GetBoundingBox();
@@ -250,7 +250,7 @@ size_t VoxelData::Fill(const Engine::IVolume& v, const Material& m)
         auto center = Center(voxel.first);
         if (v.Distance(center) <= 0)
         {
-            (*this)[voxel.first] = { &m, voxel.second.temperature, float(m.Density(PascalPerAtmosphere, voxel.second.temperature)) };
+            (*this)[voxel.first] = { &m, float(temperature), float(m.Density(PascalPerAtmosphere, temperature)) };
             ++filled;
         }
     }
