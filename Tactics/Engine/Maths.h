@@ -6,7 +6,8 @@
 namespace Engine
 {
     double Gaussian(double x, double stddev);
-    
+    double InvGaussian(double y, double stddev);    // always positive
+
     double FullWidthHalfMaximum(double stddev);
     
     double Average(double a, double b);
@@ -56,11 +57,29 @@ namespace Engine
         return v + 1;
     }
 
-    template<typename T> 
+    template<typename T>
+    T ALittleLess(const typename std::enable_if<std::is_integral<T>::value, T>::type v)
+    {
+        if (v <= std::numeric_limits<T>::lowest())
+            throw std::range_error("Can't compute a little less than the minimum integer");
+        return v - 1;
+    }
+
+    template<typename T>
     T ALittleMore(const typename std::enable_if<std::is_floating_point<T>::value, T>::type v)
     {
         if (v >= std::numeric_limits<T>::max())
             throw std::range_error("Can't compute a little more than max float");
         return std::nexttoward(v, std::numeric_limits<T>::max());
     }
+
+    template<typename T>
+    T ALittleLess(const typename std::enable_if<std::is_floating_point<T>::value, T>::type v)
+    {
+        if (v <= std::numeric_limits<T>::lowest())
+            throw std::range_error("Can't compute a little less than the minimum floating point");
+        return std::nexttoward(v, std::numeric_limits<T>::lowest());
+    }
+
+
 }

@@ -64,10 +64,21 @@ struct Range
     }
     T Clip(T v) const
     {
-        return Engine::Clip(v, begin, end);
+        return Engine::Clip(v, begin, ALittleLess<T>(end));
     }
     T begin;
     T end;
+
+   
+    static constexpr Range infinity()
+    {
+        static_assert(std::numeric_limits<T>::has_infinity);
+        return Range(-std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity());
+    }
+    static constexpr Range null()
+    {
+        return Range(0, 0);
+    }
 };
 
 template<typename T>

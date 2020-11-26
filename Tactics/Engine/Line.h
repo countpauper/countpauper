@@ -4,6 +4,8 @@
 namespace Engine
 {
 
+struct AABB;
+
 struct  Line
 {
 public:
@@ -19,6 +21,7 @@ public:
     double Length() const;
     double Distance(const Coordinate& p) const;
     Coordinate Project(const Coordinate& p) const;
+    AABB Bounds() const;
 };
 
 std::wostream& operator<<(std::wostream& s, const Line& line);

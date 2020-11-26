@@ -2,6 +2,7 @@
 #include "Line.h"
 #include "Maths.h"
 #include "Vector.h"
+#include "AxisAlignedBoundingBox.h"
 
 namespace Engine
 {
@@ -44,6 +45,10 @@ double Line::Distance(const Coordinate& p) const
 }
 
 
+AABB Line::Bounds() const
+{
+    return AABB(a, b);
+}
 
 std::wostream& operator<<(std::wostream& s, const Line& line)
 {

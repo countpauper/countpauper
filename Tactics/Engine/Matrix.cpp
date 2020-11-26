@@ -19,13 +19,14 @@ Matrix::Matrix(const std::initializer_list<double>& v)
     }
 }
 
-Matrix::Matrix(const Vector& x, const Vector& y, const Vector& z, const Vector& t)
+Matrix::Matrix(const Vector& x, const Vector& y, const Vector& z, const Vector& t) :
+    Matrix({ x.x, x.y, x.z, 0,
+        y.x, y.y, y.z, 0,
+        z.x, z.y, z.z, 0,
+        t.x, t.y, t.z, 1 })
 {
-    m[0][0] = x.x;  m[1][0] = y.x;  m[2][0] = z.x; m[3][0] = t.x;
-    m[0][1] = x.y;  m[1][1] = y.y;  m[2][1] = z.y; m[3][1] = t.y;
-    m[0][2] = x.z;  m[1][2] = y.z;  m[2][2] = z.z; m[3][2] = t.z;
-    m[0][3] = 0;    m[1][3] = 0;    m[2][3] = 0;   m[3][3] = 1;
 }
+
 
 Matrix Matrix::Rotation() const
 {
@@ -33,12 +34,13 @@ Matrix Matrix::Rotation() const
     auto xl = X().Length();
     auto yl = Y().Length();
     auto zl = Z().Length();
-    result[0][0] = m[0][0] / xl;  result[1][0] = m[1][0] / xl; result[2][0] = m[2][0] / xl; result[3][0] = 0;
-    result[0][1] = m[0][1] / yl;  result[1][1] = m[1][1] / yl; result[2][1] = m[2][1] / yl; result[3][1] = 0;
-    result[0][2] = m[0][2] / zl;  result[1][2] = m[1][2] / zl; result[2][2] = m[2][2] / zl; result[3][2] = 0;
-    result[0][3] = 0;             result[1][3] = 0;            result[2][3] = 0;            result[3][3] = 1;
+    return Matrix{
+        m[0][0] / xl,  m[0][1] / yl, m[0][2] / zl, 0,
+        m[1][0] / xl,  m[1][1] / yl, m[1][2] / zl, 0,
+        m[2][0] / xl,  m[2][1] / yl, m[2][2] / zl, 0,
+        0,             0,            0,            1
+    };
 
-    return result;
 }
 
 bool Matrix::IsAffine() const

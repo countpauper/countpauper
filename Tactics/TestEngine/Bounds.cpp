@@ -38,6 +38,15 @@ TEST(Range, Expand)
     EXPECT_EQ(2, Range(0, 1).Expand(1).Size());
 }
 
+
+TEST(Range, consts)
+{
+    EXPECT_EQ(std::numeric_limits<double>::infinity(), Range<double>::infinity().Size());
+    EXPECT_TRUE(Range<double>::infinity() | -10000.0);
+    EXPECT_EQ(0, Range<double>::null().Size());
+    EXPECT_FALSE(Range<double>::null() | 0);
+}
+
 TEST(Range, Inclusion)
 {
     EXPECT_TRUE((Range<int>() | 2)[2]);
@@ -74,6 +83,15 @@ TEST(AABB, Include)
     AABB box(Coordinate(0, 0, 0), Coordinate(1, 1, 1));
     
     EXPECT_TRUE((box | Coordinate(2, 2, 2))[Coordinate(1.5, 1.5, 1.5)]);
+}
+
+
+TEST(AABB, Clip)
+{
+    AABB box(Coordinate(0, 0, 0), Coordinate(1, 1, 1));
+
+    EXPECT_TRUE(box.Contains(box.Clip(Coordinate(2, -1, 0))));
+    EXPECT_TRUE(box.Contains(box.Clip(Coordinate(-std::numeric_limits<double>::infinity(), 0.5, 10.0))));
 }
 
 }

@@ -23,6 +23,8 @@ TEST(Matrix, Scale)
     auto matrix = Matrix::Scale(Vector(0.5, 1, 2));
     EXPECT_EQ(Vector(0.5, 1, 2), matrix.Scale());
     EXPECT_EQ(Vector(1, 3, 1), matrix*Vector(2, 3, 0.5));
+
+    EXPECT_TRUE(matrix.NormalScale().IsIdentity());
 }
 
 TEST(Matrix, Multiplication)

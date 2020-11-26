@@ -62,6 +62,16 @@ Position VoxelData::Grid(const Engine::Coordinate& meters) const
         int(std::floor(meters.z / grid.z)));
 }
 
+Position VoxelData::ClippedGrid(const Engine::Coordinate& meters) const
+{
+    Box bounds = Bounds();
+    Engine::AABB box(Engine::Coordinate(bounds.Start().x*grid.x, bounds.Start().y*grid.y, bounds.Start().z*grid.z),
+        Engine::Coordinate(bounds.End().x*grid.x, bounds.End().y*grid.y, bounds.End().z*grid.z));
+    return Grid(box.Clip(meters));
+}
+
+
+
 Engine::Vector VoxelData::GridSize() const
 {
     return grid;
@@ -233,7 +243,7 @@ size_t VoxelData::Fill(const Engine::IVolume& v, const Material& m)
 {
     size_t filled = 0;
     auto bb = v.GetBoundingBox();
-    Box volBB(Grid(bb.Begin()), Grid(bb.End()) + Position(1, 1, 1));
+    Box volBB(ClippedGrid(bb.Begin()), ClippedGrid(bb.End()) + Position(1, 1, 1));
 
     for (auto& voxel : In(volBB))
     {

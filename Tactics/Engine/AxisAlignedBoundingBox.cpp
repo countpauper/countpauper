@@ -7,6 +7,10 @@
 namespace Engine
 {
 
+
+const AABB AABB::infinity(Range<double>::infinity(), Range<double>::infinity(), Range<double>::infinity());
+const AABB AABB::empty(Range<double>::null(), Range<double>::null(), Range<double>::null());
+
 AABB::AABB(const Coordinate& begin, const Coordinate& end) :
     x(begin.x, end.x),
     y(begin.y, end.y),
@@ -49,6 +53,12 @@ bool AABB::Contains(const Coordinate& p) const
 {
     return x[p.x] && y[p.y] && z[p.z];
 }
+
+Coordinate AABB::Clip(const Coordinate& p) const
+{
+    return Coordinate(x.Clip(p.x), y.Clip(p.y), z.Clip(p.z));
+}
+
 
 AABB& AABB::operator*=(const Matrix& transformation)
 {

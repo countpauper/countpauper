@@ -116,40 +116,66 @@ void VoxelMap::Sea(int level, double temperature)
     }
 }
 
+class Hill : public Engine::IVolume
+{
+public:
+    Hill(const Engine::Line& line, double stddev) :
+        m_line(line),
+        m_stddev(stddev)
+    {
+    }
+    Engine::AABB GetBoundingBox() const override
+    {
+        constexpr double treshold = 0.1;    // should be grid/z / 2 but don't know what grid
+        double aHorRange=0, bHorRange = 0;
+        if (m_line.a.z >= treshold)
+            aHorRange = Engine::InvGaussian(treshold / m_line.a.z, m_stddev);
+        if (m_line.b.z >= treshold)
+            bHorRange = Engine::InvGaussian(treshold / m_line.b.z, m_stddev);
+        Engine::AABB aBounds(Engine::Range<double>(m_line.a.x - aHorRange, m_line.a.x + aHorRange),
+            Engine::Range<double>(m_line.a.y - aHorRange, m_line.a.y + aHorRange),
+            Engine::Range<double>(0, m_line.a.z));
+
+        Engine::AABB bBounds(Engine::Range<double>(m_line.b.x - bHorRange, m_line.b.x + bHorRange),
+            Engine::Range<double>(m_line.b.y - bHorRange, m_line.b.y + bHorRange),
+            Engine::Range<double>(0, m_line.b.z));
+
+        return aBounds | bBounds;
+    }
+    double Distance(const Engine::Coordinate& p) const
+    {
+        Engine::Line bottomLine = Engine::Plane::xy.Project(m_line);
+        // compute c: the height of the hill at p
+        Engine::Coordinate c(p.x, p.y, 0);
+        if (bottomLine.Length() > std::numeric_limits<double>::epsilon())
+        {
+            auto bottomProjection = bottomLine.Project(c);
+            double distance = (bottomProjection - c).Length();
+            double interpolation_factor = std::min(1.0, (c - bottomLine.a).Length() / bottomLine.Length());
+            c.z = Engine::Lerp(double(m_line.a.z), double(m_line.b.z), interpolation_factor) * Engine::Gaussian(distance, m_stddev);
+        }
+        else
+        {
+            double distance = (bottomLine.a - c).Length();
+            c.z = m_line.a.z * Engine::Gaussian(distance, m_stddev);
+        }
+        return p.z - c.z;
+    }
+private:
+    Engine::Line m_line;
+    double m_stddev;
+
+};
 void VoxelMap::Hill(const Engine::Line& ridgeLine, double stddev)
 {
-    Engine::Line bottomLine = Engine::Plane::xy.Project(ridgeLine);
-    // offset the hill for external coordinates excluding boundaries
-    Position p;
-    for (p.x = -1; p.x <= voxels.GetSize().x; ++p.x)
-    {
-        for (p.y = -1; p.y <= voxels.GetSize().y; ++p.y)
-        {
-            Engine::Coordinate c(float(p.x)+0.5f, float(p.y)+0.5f, 0);
-            if (bottomLine.Length()>std::numeric_limits<double>::epsilon())
-            {
-                auto bottomProjection = bottomLine.Project(c);
-                double distance = (bottomProjection - c).Length();
-                double interpolation_factor = std::min(1.0, (c - bottomLine.a).Length() / bottomLine.Length());
-                c.z = Engine::Lerp(double(ridgeLine.a.z), double(ridgeLine.b.z), interpolation_factor) * Engine::Gaussian(distance, stddev);
-            }
-            else
-            {
-                double distance = (bottomLine.a - c).Length();
-                c.z = ridgeLine.a.z * Engine::Gaussian(distance, stddev);
-            }
-            int maxZ = int(std::round( c.z ));
-            maxZ = std::min(maxZ, voxels.GetSize().z);
-            //OutputDebugStringW((std::wstring(L"Hill at ") + Position(p.x, p.y, maxZ).to_wstring() + L"\n").c_str());
-            for (p.z = -1; p.z < maxZ; ++p.z)
-            {
-                voxels.SetPressure(p,
-                    Material::stone,
-                    atmosphericTemperature, // TODO: decrease from air increase to lava
-                    PascalPerAtmosphere);   // TODO: increase due to stone depth, NB: can be already overlapping stone layer. just dont place those
-            }
-        }
-    }
+    auto ridgeLineMeters = ridgeLine;
+    ridgeLineMeters.a.z *= voxels.GridSize().z;
+    ridgeLineMeters.b.z *= voxels.GridSize().z;
+
+    Game::Hill hill(ridgeLineMeters, stddev);
+
+    auto dbgCount = voxels.Fill(hill, Material::stone);
+    OutputDebugStringW((std::wstring(L"Hill at ") + Engine::ToWString(ridgeLine) + L"=" + std::to_wstring(dbgCount) + L" blocks\n").c_str());
 }
 
 void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickness)

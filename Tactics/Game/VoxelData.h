@@ -20,6 +20,7 @@ public:
     Voxel& operator[](const Position& p);
     Size GetSize() const;
     Position Grid(const Engine::Coordinate& meters) const;
+    Position ClippedGrid(const Engine::Coordinate& meters) const;
     Engine::Vector GridSize() const;
     Engine::Coordinate Center(const Position& p) const;
 protected:

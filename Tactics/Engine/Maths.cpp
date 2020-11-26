@@ -9,6 +9,12 @@ namespace Engine
         return exp((x * x) / (-2.0 * stddev * stddev));
     }
 
+    double InvGaussian(double y, double stddev)
+    {
+        return sqrt((-2.0*stddev *stddev) * log(y));
+    }
+
+
     double FullWidthHalfMaximum(double stddev)
     {
         static const double fwhm = sqrt(2 * log(2));

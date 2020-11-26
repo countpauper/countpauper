@@ -2,6 +2,8 @@
 
 #include "Coordinate.h"
 #include "Range.h"
+
+
 namespace Engine
 {
 
@@ -26,6 +28,7 @@ namespace Engine
         Range<double> Y() const;
         Range<double> Z() const;
         bool Contains(const Coordinate& p) const;
+        Coordinate Clip(const Coordinate& p) const;
         bool operator[](const Coordinate& p) const { return Contains(p); }
         AABB& operator|=(const Coordinate& p);
         AABB& Expand(const Engine::Vector& v);
@@ -34,9 +37,13 @@ namespace Engine
         AABB& operator*=(const Matrix& transformation);
         AABB& operator+=(const Vector& offset);
 
+
         Range<double> x;
         Range<double> y;
         Range<double> z;
+
+        static const AABB infinity; //= AABB(Range<double>::infinity(), Range<double>::infinity(), Range<double>::infinity());
+        static const AABB empty; //= AABB((Range<double>::null(), Range<double>::null(), Range<double>::null());
     };
 
 

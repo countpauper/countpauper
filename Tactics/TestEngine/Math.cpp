@@ -12,6 +12,11 @@ TEST(Math, Gaussian)
     EXPECT_EQ(0.5, Gaussian(HalfWidthHalfMaximum, 1));
     EXPECT_EQ(0.5, Gaussian(-HalfWidthHalfMaximum, 1));
     EXPECT_EQ(0.5, Gaussian(2 * HalfWidthHalfMaximum, 2));
+
+    constexpr double precision = 1e-12;
+    EXPECT_NEAR(2.0, InvGaussian(Gaussian(2.0, 1.0), 1.0), precision);
+    EXPECT_NEAR(1.5, InvGaussian(Gaussian(-1.5, 0.5), 0.5), precision);
+
 }
 
 TEST(Math, Average)
@@ -114,6 +119,31 @@ TEST(Math, ALittleMoreDouble)
 
     EXPECT_THROW(ALittleMore<double>(std::numeric_limits<double>::max()), std::exception);
     EXPECT_THROW(ALittleMore<double>(std::numeric_limits<double>::infinity()), std::exception);
+}
+
+TEST(Math, ALittleLessInt)
+{
+    EXPECT_LT(ALittleLess<short>(0), 0);
+    EXPECT_GE(ALittleLess<short>(0), -1);
+
+    EXPECT_LT(ALittleLess<short>(100), 100);
+    EXPECT_GE(ALittleLess<short>(100), 99);
+    EXPECT_LT(ALittleLess<short>(-1000), -1000);
+
+    EXPECT_THROW(ALittleLess<short>(std::numeric_limits<short>::lowest()), std::exception);
+}
+
+TEST(Math, ALittleLessDouble)
+{
+    EXPECT_LT(ALittleLess<double>(0), 0);
+    EXPECT_GE(ALittleLess<double>(0), -std::numeric_limits<double>::epsilon());
+
+    EXPECT_LT(ALittleLess<double>(1e6), 1e6);
+    EXPECT_GE(ALittleLess<double>(1e6), 1e6 - 1.0);
+    EXPECT_LT(ALittleLess<double>(-1e3), -1e3);
+
+    EXPECT_THROW(ALittleLess<double>(std::numeric_limits<double>::lowest()), std::exception);
+    EXPECT_THROW(ALittleLess<double>(-std::numeric_limits<double>::infinity()), std::exception);
 }
 
 }
