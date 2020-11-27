@@ -8,7 +8,7 @@ namespace Engine
 {
  
     unsigned Font::nextBase = 1000;
-    Font& Font::default = Font();
+    Font& Font::basic = Font();
 
     Font::Font() :
         base(nextBase),

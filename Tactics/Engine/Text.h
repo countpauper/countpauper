@@ -10,7 +10,7 @@ namespace Engine
         Font();
         void Select() const;
         unsigned Height() const;
-        static Font& default;
+        static Font& basic;
     private:
         unsigned base;
         unsigned height;

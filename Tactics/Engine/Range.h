@@ -1,8 +1,8 @@
 #pragma once
-#pragma once
 
 #include "Coordinate.h"
 #include "Maths.h"
+#include <algorithm>
 
 namespace Engine
 {
