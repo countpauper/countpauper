@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Engine/CSV.h"
 #include "Score.h"
-#include "Direction.h"
+#include "Physics/Direction.h"
 #include "Item.h"
 #include "Game.h"
 

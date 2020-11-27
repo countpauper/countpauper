@@ -4,7 +4,7 @@
 #include <vector>
 #include "Engine/Identification.h"
 #include "Item.h"
-#include "Direction.h"
+#include "Physics/Direction.h"
 #include "Targeting.h"
 #include "Stats.h"
 

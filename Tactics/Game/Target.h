@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sstream>
-#include "Game/Position.h"
+#include "Physics/Position.h"
 
 namespace Game
 {

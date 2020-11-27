@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Game/Direction.h"
+#include "Physics/Direction.h"
 #include "Engine/Geometry.h"
 
 namespace Game

@@ -32,7 +32,7 @@ namespace Game
 
     unsigned TurnList::Item::Height() const
     {
-        return 3 + 2 * Engine::Font::default.Height();
+        return 3 + 2 * Engine::Font::basic.Height();
     }
 
     unsigned TurnList::Item::HotKey() const
@@ -68,9 +68,9 @@ namespace Game
     void TurnList::Item::RenderActor() const
     {
         glPushMatrix();
-        glTranslatef(2, 0.0f+Engine::Font::default.Height(), 0);
+        glTranslatef(2, 0.0f+Engine::Font::basic.Height(), 0);
         Game::teamColor.at(actor.GetTeam()).Render();
-        Engine::Font::default.Select();
+        Engine::Font::basic.Select();
         std::wstring text;
 
         if (hotKey)
@@ -111,9 +111,9 @@ namespace Game
     void TurnList::Item::RenderState() const
     {
         glPushMatrix();
-        glTranslatef(2, 2.0f*Engine::Font::default.Height(), 0);
+        glTranslatef(2, 2.0f*Engine::Font::basic.Height(), 0);
         Game::teamColor.at(actor.GetTeam()).Render();
-        Engine::Font::default.Select();
+        Engine::Font::basic.Select();
         std::wstring text;
         if (actor.Dead())
             text = L" +";

@@ -4,7 +4,7 @@
 #include <functional>
 #include <memory>
 #include "Target.h"
-#include "Direction.h"
+#include "Physics/Direction.h"
 #include "Body.h"
 
 namespace Game

@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include <sstream>
+#include <string_view>
 
 namespace Engine
 {

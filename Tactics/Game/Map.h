@@ -5,8 +5,8 @@
 #include "Engine/Image.h"
 #include "Engine/Color.h"
 #include "Engine/Coordinate.h"
-#include "Position.h"
-#include "Direction.h"
+#include "Physics/Position.h"
+#include "Physics/Direction.h"
 #include "Element.h"
 
 namespace Game

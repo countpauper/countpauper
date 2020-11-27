@@ -243,12 +243,26 @@ Square VoxelMap::At(const Position& p) const
         const auto& v = voxels[Position(position.x, position.y, i)];
         if (v.Solid())
         {
-            Square s = v.Square(i+1);
-            return s;
+            if (v.temperature >= 500.0f)
+            {
+                return Square(Element::Fire, true, i + 1);
+            }
+            else
+            {
+                static const std::map<const Material*, Element> elementMap = {
+                    { &Material::vacuum, Element::None },
+                    { &Material::air, Element::Air },
+                    { &Material::soil, Element::Nature},
+                    { &Material::stone, Element::Stone },
+                    { &Material::water, Element::Water }
+                };
+                return Square(elementMap.at(v.material), true, i + 1);
+            }
         }
     }
-    return voxels[Position(position.x, position.y,-1)].Square(0); // welcome to hell
+    return Square(Element::Fire, true, 0);
 }
+
 /*
 void VoxelMap::ComputeForces(double seconds)
 {
@@ -715,6 +729,33 @@ void VoxelMap::SetDensityToMeshColor()
 }
 
 
+
+void VoxelMap::GenerateMesh()
+{
+    Engine::Vector grid = voxels.GridSize();
+    mesh = std::make_unique<Engine::Mesh>();
+    for (auto& v : voxels)
+    {
+        auto c = v.second.Color();
+        if (!c)
+            continue;
+        auto visible = Visibility(v.first);
+        if (!visible)
+            continue;
+
+        // TODO: matrix from position to gl, swapping y and z, translation and grid scaling
+
+        Engine::Box box(Engine::Vector(grid.x, grid.z, grid.y));    // nb z<=>y
+        box.SetColor(c);
+
+        box *= Engine::Matrix::Translation(
+            Engine::Vector((double(v.first.x) + 0.5)*grid.x,
+            (double(v.first.z) + 0.5)*grid.z,
+                (double(v.first.y) + 0.5)*grid.y));
+        (*mesh) += box;
+    }
+}
+
 void VoxelMap::Render() const
 {
     if (!mesh)
@@ -737,6 +778,7 @@ void VoxelMap::Render() const
 
 void VoxelMap::RenderPretty() const
 {
+    /*
     assert(glIsEnabled(GL_DEPTH_TEST));
 
     // Draw opaque
@@ -774,11 +816,13 @@ void VoxelMap::RenderPretty() const
         glPopMatrix();
     }
     Engine::CheckGLError();
+    */
 }
 
 
 void VoxelMap::RenderAnalysis() const
 {
+    /*
     assert(glIsEnabled(GL_DEPTH_TEST));
 
     // Draw opaque

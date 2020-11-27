@@ -1,11 +1,11 @@
 #pragma once
 #include "Map.h"
-#include "VoxelData.h"
-#include "Material.h"
+#include "Physics/VoxelData.h"
+#include "Physics/Material.h"
 #include "Engine/Vector.h"
 #include "Engine/Line.h"
-#include "Plane.h"
-#include "Box.h"
+#include "Physics/Plane.h"
+#include "Physics/Box.h"
 #include <string>
 
 namespace Engine { class Mesh;  }

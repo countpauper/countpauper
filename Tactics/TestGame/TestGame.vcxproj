@@ -35,7 +35,6 @@
     <ClCompile Include="Body.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Data.cpp" />
-    <ClCompile Include="Direction.cpp" />
     <ClCompile Include="Fantasy.cpp" />
     <ClCompile Include="Figment.cpp" />
     <ClCompile Include="Location.cpp" />
@@ -45,14 +44,18 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Plan.cpp" />
-    <ClCompile Include="Position.cpp" />
     <ClCompile Include="State.cpp" />
-    <ClCompile Include="StaticEnvironment.cpp" />
     <ClCompile Include="VoxelMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.vcxproj">
+      <Project>{1174a98a-127a-4604-863f-b12c97b8547f}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Game\Game.vcxproj">
       <Project>{20758639-52ee-4319-886a-9c8101649297}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Physics\Physics.vcxproj">
+      <Project>{a482a77e-d989-4af0-bb7b-50b691140572}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -76,12 +79,13 @@
       <AdditionalIncludeDirectories>..;..\..\Dependencies\fastsignals\libfastsignals\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <ExceptionHandling>Async</ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;Engine.lib;libfastsignalsd-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;libfastsignalsd-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Debug;..\..\Dependencies\libxml\lib;..\..\Dependencies\zlib\lib;$(TargetDir);..\..\Dependencies\glew\lib\Release\x64</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -100,13 +104,14 @@
       <AdditionalIncludeDirectories>..;..\..\Dependencies\fastsignals\libfastsignals\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;Engine.lib;libfastsignals-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;libfastsignals-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\Dependencies\glew\lib\Release\x64;..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Release</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -115,6 +120,9 @@
     <PostBuildEvent>
       <Message>Testing Game</Message>
     </PostBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

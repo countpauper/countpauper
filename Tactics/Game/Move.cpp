@@ -2,7 +2,7 @@
 #include <gl/GL.h>
 #include "Move.h"
 #include "IGame.h"
-#include "Direction.h"
+#include "Physics/Direction.h"
 #include "Actor.h"
 
 namespace Game

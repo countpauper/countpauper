@@ -2,7 +2,7 @@
 
 #include <map>
 #include <set>
-#include "Game/Direction.h"
+#include "Physics/Direction.h"
 
 namespace Game
 {

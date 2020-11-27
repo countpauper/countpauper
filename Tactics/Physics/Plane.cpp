@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "Game/Plane.h"
+#include "Physics/Plane.h"
 #include <sstream>
 #include "Engine/from_string.h"
-#include "Game/Direction.h"
+#include "Physics/Direction.h"
 
 namespace Game
 {

@@ -7,7 +7,7 @@
 #include <signal.h>
 #include "Engine/Coordinate.h"
 #include "Engine/Color.h"
-#include "Direction.h"
+#include "Physics/Direction.h"
 #include "Skills.h"
 #include "Map.h"
 #include "IGame.h"

@@ -21,33 +21,33 @@
 namespace Game
 {
 
-VoxelMap::VoxelMap() : 
-    VoxelMap(0, 0, 0)
+FluidDynamics::FluidDynamics() : 
+    FluidDynamics(0, 0, 0)
 {
 }
 
-VoxelMap::VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude) :
+FluidDynamics::FluidDynamics(unsigned longitude, unsigned latitude, unsigned altitude) :
     voxels(longitude, latitude, altitude)
 {
 }
 
-VoxelMap::~VoxelMap() = default;
+FluidDynamics::~FluidDynamics() = default;
 
 /*
-float VoxelMap::AtmosphericTemperature(double elevation) const
+float FluidDynamics::AtmosphericTemperature(double elevation) const
 {
     double atmosphericLapse = atmosphericTemperature / atmosphereRadius;
     return float(atmosphericTemperature + atmosphericLapse * elevation);
 }
 
-float VoxelMap::AtmosphericPressure(double elevation) const
+float FluidDynamics::AtmosphericPressure(double elevation) const
 {
     return float(PascalPerAtmosphere * (1.0- elevation/ atmosphereRadius));
 }
 
 */
 
-Directions VoxelMap::Visibility(const Position& p) const
+Directions FluidDynamics::Visibility(const Position& p) const
 {
     Directions result;
     for (const Direction& direction : Direction::all)
@@ -64,7 +64,7 @@ Directions VoxelMap::Visibility(const Position& p) const
 }
 
 /*
-void VoxelMap::ComputeForces(double seconds)
+void FluidDynamics::ComputeForces(double seconds)
 {
     // Flow
     for (auto& v : voxels)
@@ -116,7 +116,7 @@ void VoxelMap::ComputeForces(double seconds)
 */
 
 /*
-void VoxelMap::Diffuse(double seconds)
+void FluidDynamics::Diffuse(double seconds)
 {
 
     const Data original = voxels;   // TODO can make more efficient partial copy
@@ -180,7 +180,7 @@ void VoxelMap::Diffuse(double seconds)
 
 /*
 
-Position VoxelMap::MaxFlow() const
+Position FluidDynamics::MaxFlow() const
 {
     double maxSqrFlow = 0;
     Position maxLocation;
@@ -197,7 +197,7 @@ Position VoxelMap::MaxFlow() const
 }
 */
 
-unsigned VoxelMap::WindForce() const
+unsigned FluidDynamics::WindForce() const
 {
     double speed = 0;
     for (auto v : voxels)
@@ -216,12 +216,12 @@ unsigned VoxelMap::WindForce() const
     return beaufort;
 }
 
-double VoxelMap::Volume() const
+double FluidDynamics::Volume() const
 {
     return voxels.GetSize().Volume() * LiterPerVoxel;
 }
 
-double VoxelMap::Mass(const Material& material) const
+double FluidDynamics::Mass(const Material& material) const
 {
     return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
@@ -232,7 +232,7 @@ double VoxelMap::Mass(const Material& material) const
     });
 }
 
-double VoxelMap::Temperature(const Material& material) const
+double FluidDynamics::Temperature(const Material& material) const
 {
     auto heat = std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
     {
@@ -245,7 +245,7 @@ double VoxelMap::Temperature(const Material& material) const
     return heat / Mass(material);
 }
 
-double VoxelMap::Mass() const
+double FluidDynamics::Mass() const
 {
     return std::accumulate(voxels.begin(), voxels.end(), 0.0, [](double runningTotal, const decltype(voxels)::value_type& v)
     {
@@ -254,7 +254,7 @@ double VoxelMap::Mass() const
 }
 
 /*
-void VoxelMap::Advection(double seconds)
+void FluidDynamics::Advection(double seconds)
 {
 
     const Data original = voxels;   
@@ -314,7 +314,7 @@ void VoxelMap::Advection(double seconds)
 */
 
 
-void VoxelMap::FluxBoundary()
+void FluidDynamics::FluxBoundary()
 {
 
     for (auto dir : Direction::all)
@@ -337,7 +337,7 @@ void VoxelMap::FluxBoundary()
     }
 }
 
-void VoxelMap::FluxBoundary(Directions boundary)
+void FluidDynamics::FluxBoundary(Directions boundary)
 {
     // too slow to do it for every voxel? 
     Engine::Vector flowVolume = wind * Material::air.Density(AtmosphericPressure(0), AtmosphericTemperature(0));
@@ -379,7 +379,7 @@ void VoxelMap::FluxBoundary(Directions boundary)
     }
 }
 
-void VoxelMap::GridBoundary()
+void FluidDynamics::GridBoundary()
 {
     for (auto d : Direction::all)
     {
@@ -400,7 +400,7 @@ void VoxelMap::GridBoundary()
     }
 }
 
-void VoxelMap::Flow(double dt)
+void FluidDynamics::Flow(double dt)
 {
     const Data::Flux oU = voxels.U();
     const Data::Flux oV = voxels.V();
@@ -471,7 +471,7 @@ void VoxelMap::Flow(double dt)
     FluxBoundary();
 }
 
-void VoxelMap::Continuity(double seconds)
+void FluidDynamics::Continuity(double seconds)
 {   
     for (auto it = voxels.begin(); it!=voxels.end(); ++it)
     {
@@ -483,7 +483,7 @@ void VoxelMap::Continuity(double seconds)
     GridBoundary();
 }
 
-void VoxelMap::Tick(double seconds)
+void FluidDynamics::Tick(double seconds)
 {
     //if (!mesh)
     //    GenerateMesh();

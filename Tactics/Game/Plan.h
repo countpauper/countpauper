@@ -4,7 +4,7 @@
 #include <list>
 #include <memory>
 #include <functional>
-#include "Direction.h"
+#include "Physics/Direction.h"
 #include "State.h"
 #include "Action.h"
 #include "Future.h"

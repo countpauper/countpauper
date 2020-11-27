@@ -79,7 +79,7 @@ namespace Game
 	{
 		glPushMatrix();
 		glTranslatef(-0.5, 0, -1.5);
-		Engine::Font::default.Select();
+		Engine::Font::basic.Select();
 		Engine::glText(name);
 		glPopMatrix();
 	}

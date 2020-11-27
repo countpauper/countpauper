@@ -49,5 +49,8 @@ const Material* StaticEnvironment::GetMaterial(const Engine::Coordinate& c) cons
         return nullptr;
     return &data.MaterialAt(p);
 }
+void StaticEnvironment::Tick(double seconds)
+{
 
+}
 }

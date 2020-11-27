@@ -43,11 +43,13 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>false</SDLCheck>
+      <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>..;..\..\Dependencies\iconv\include;..\..\Dependencies\libxml\include\libxml2;..\..\Dependencies\fastsignals\libfastsignals\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -59,11 +61,12 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>false</SDLCheck>
+      <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>..;..\..\Dependencies\iconv\include;..\..\Dependencies\libxml\include\libxml2;..\..\Dependencies\FastSignals-master\libfastsignals\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -72,82 +75,73 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Action.cpp" />
-    <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="Affect.cpp" />
-    <ClCompile Include="Box.cpp" />
-    <ClCompile Include="FluidData.cpp" />
-    <ClCompile Include="FluidDynamics.cpp" />
-    <ClCompile Include="Location.cpp" />
-    <ClCompile Include="Attack.cpp" />
-    <ClCompile Include="Body.cpp" />
-    <ClCompile Include="Damage.cpp" />
-    <ClCompile Include="Direction.cpp" />
-    <ClCompile Include="Future.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Item.cpp" />
-    <ClCompile Include="Map.cpp" />
-    <ClCompile Include="Matetrial.cpp" />
-    <ClCompile Include="Move.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="Plan.cpp" />
-    <ClCompile Include="Plane.cpp" />
-    <ClCompile Include="Position.cpp" />
-    <ClCompile Include="React.cpp" />
-    <ClCompile Include="Score.cpp" />
-    <ClCompile Include="Skill.cpp" />
-    <ClCompile Include="Skills.cpp" />
-    <ClCompile Include="Slot.cpp" />
-    <ClCompile Include="State.cpp" />
-    <ClCompile Include="StaticEnvironment.cpp" />
-    <ClCompile Include="Stats.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Voxel.cpp" />
-    <ClCompile Include="VoxelData.cpp" />
-    <ClCompile Include="VoxelMap.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Affect.h" />
-    <ClInclude Include="Box.h" />
     <ClInclude Include="Element.h" />
-    <ClInclude Include="FluidDynamics.h" />
-    <ClInclude Include="IEnvironment.h" />
     <ClInclude Include="Location.h" />
     <ClInclude Include="Attack.h" />
     <ClInclude Include="Body.h" />
     <ClInclude Include="Damage.h" />
-    <ClInclude Include="Direction.h" />
     <ClInclude Include="Future.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Identity.h" />
     <ClInclude Include="IGame.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Map.h" />
-    <ClInclude Include="VoxelData.h" />
-    <ClInclude Include="Material.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Plan.h" />
-    <ClInclude Include="Plane.h" />
-    <ClInclude Include="Position.h" />
     <ClInclude Include="React.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="Skill.h" />
     <ClInclude Include="Skills.h" />
     <ClInclude Include="Slot.h" />
     <ClInclude Include="State.h" />
-    <ClInclude Include="StaticEnvironment.h" />
     <ClInclude Include="Stats.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Target.h" />
     <ClInclude Include="Targeting.h" />
     <ClInclude Include="Voxel.h" />
     <ClInclude Include="VoxelMap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Action.cpp" />
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="Affect.cpp" />
+    <ClCompile Include="Attack.cpp" />
+    <ClCompile Include="Body.cpp" />
+    <ClCompile Include="Box.cpp" />
+    <ClCompile Include="Damage.cpp" />
+    <ClCompile Include="FluidData.cpp" />
+    <ClCompile Include="Future.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Location.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Move.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Plan.cpp" />
+    <ClCompile Include="React.cpp" />
+    <ClCompile Include="Score.cpp" />
+    <ClCompile Include="Skill.cpp" />
+    <ClCompile Include="Skills.cpp" />
+    <ClCompile Include="Slot.cpp" />
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="Stats.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="VoxelMap.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.vcxproj">
+      <Project>{1174a98a-127a-4604-863f-b12c97b8547f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Physics\Physics.vcxproj">
+      <Project>{a482a77e-d989-4af0-bb7b-50b691140572}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

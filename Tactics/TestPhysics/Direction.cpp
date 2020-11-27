@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "Game/Direction.h"
-#include "Game/Position.h"
+#include "Physics/Direction.h"
+#include "Physics/Position.h"
 #include "Engine/Geometry.h"
 
 namespace Game

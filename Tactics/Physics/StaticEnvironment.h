@@ -22,6 +22,8 @@ public:
     double Temperature(const Engine::IVolume& c) const override;
     Engine::Vector Force(const Engine::IVolume& c) const override;
     const Material* GetMaterial(const Engine::Coordinate& c) const override;
+    
+    void Tick(double seconds) override;
 private:
     VoxelData data;
 };

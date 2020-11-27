@@ -57,11 +57,12 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>..;..\iconv\include;..\libxml2\include;..\..\Dependencies\fastsignals\libfastsignals\include;..\Stb;..\..\Dependencies\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;libfastsignalsd-v141-x64.lib;%(AdditionalDependencies);Engine.lib;Game.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;libfastsignalsd-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\Dependencies\libxml\lib;..\..\Dependencies\glew\lib\Release\x64;..\..\Dependencies\zlib\lib;..\libxml2\lib;..\zlib\lib;..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Debug;$(TargetDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -89,13 +90,14 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;zlib.dll.a;libxml2.dll.a;libfastsignals-v141-x64;%(AdditionalDependencies);Engine.lib;Game.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;zlib.dll.a;libfastsignals-v141-x64;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\Dependencies\libxml\lib;..\..\Dependencies\glew\lib\Release\x64;..\..\Dependencies\zlib\lib;..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Release;$(TargetDir);C:\libraries\boost\boost_1_69_0\lib32-msvc-14.1;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -152,6 +154,17 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Todo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.vcxproj">
+      <Project>{1174a98a-127a-4604-863f-b12c97b8547f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Game\Game.vcxproj">
+      <Project>{20758639-52ee-4319-886a-9c8101649297}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Physics\Physics.vcxproj">
+      <Project>{a482a77e-d989-4af0-bb7b-50b691140572}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <set>
-#include "Position.h"
-#include "Direction.h"
+#include "Physics/Position.h"
+#include "Physics/Direction.h"
 #include "Damage.h"
 #include "Stats.h"
 #include "Actor.h"

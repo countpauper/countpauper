@@ -12,12 +12,12 @@ namespace Engine { class Mesh;  }
 namespace Game
 {
 
-class VoxelMap : public IEnvironment
+class FluidDynamics : public IEnvironment
 {
 public:
-    VoxelMap();
-    VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude);
-    ~VoxelMap();
+    FluidDynamics();
+    FluidDynamics(unsigned longitude, unsigned latitude, unsigned altitude);
+    ~FluidDynamics();
 
     class Data : public VoxelData
     {
@@ -149,7 +149,7 @@ protected:
     Engine::Vector wind;    
 };
 
-VoxelMap::Data::Flux::iterator::difference_type operator-(const VoxelMap::Data::Flux::iterator& a, const VoxelMap::Data::Flux::iterator& b);
+FluidDynamics::Data::Flux::iterator::difference_type operator-(const FluidDynamics::Data::Flux::iterator& a, const FluidDynamics::Data::Flux::iterator& b);
 
 }
 

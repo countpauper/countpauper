@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include "Position.h"
-#include "Direction.h"
+#include "Physics/Position.h"
+#include "Physics/Direction.h"
 
 namespace Game
 {
