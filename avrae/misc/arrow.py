@@ -1,11 +1,11 @@
 <drac2>
 # Find the quivers in the bags character variable
-if not bags:
-	err("Arrow counting only works after setting up a Quiver with !bag.")
+if not exists('bags'):
+	err("Arrow counting only works after setting up a Quiver with `!bag $ Quiver`.")
 
-arrow_names=['Arrows','Arrow']
+arrow_names=['Arrows','Arrow','arrows','arrow']
 bag = load_json(bags)
-quivers = [(b[1],sum([b[1].get(n,0) for n in arrow_names])) for b in bag if b[0] == "Quiver"]
+quivers = [(b[1],sum([b[1].get(n,0) for n in arrow_names])) for b in bag if b[0].lower() == "quiver"]
 if not quivers:
 	err("You do not own a quiver. Where are you pulling that arrow from?")
 
