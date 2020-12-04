@@ -1,6 +1,8 @@
 # TODO: target:
 #in comabt	target set to not dying if in combat, also with healer feat can heal to +1 or extra
 #   it needs SimpleCombatant.deathsaves to stabilize targets with a heal kit :https://github.com/avrae/avrae/issues/1279
+# TODO: can heal +1 -1 to 0 to reset?
+# also there is a healer kit alias that uses  !manage feat "healer" in the 'featuring feats' workshop
 
 <drac2>
 # Healing kit alias routine
