@@ -2,6 +2,7 @@
 #include <string>
 #include "Game/Identity.h"
 #include "Game/State.h"
+#include "Physics/Direction.h"
 
 namespace Game
 {
@@ -12,7 +13,7 @@ namespace Test
 class Figment : public State, public Identity
 {
 public:
-	Figment(const std::wstring& description, const Anatomy& anatomy, Position pos = Position(0, 0, 0), Direction dir = Direction::east, unsigned mp = 10,
+	Figment(const std::wstring& description, const Anatomy& anatomy, Position pos = Position(0, 0, 0), Physics::Direction dir = Physics::Direction::east, unsigned mp = 10,
 		std::set<const Armor*> armor = {}, std::set<const Weapon*> weapons = {}, Actor::Knowledge knowledge = {});
 	void Apply(const State& state) override;
 	std::wstring Description() const override;

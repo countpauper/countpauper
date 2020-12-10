@@ -1,11 +1,10 @@
 #include "stdafx.h"
 #include "Physics/Direction.h"
 #include "Engine/Geometry.h"
+#include "Engine/Vector.h"
 
-namespace Game
+namespace Physics
 {
-
-
 
 HalfPiAngle::HalfPiAngle() = default;
 
@@ -188,22 +187,18 @@ Position Direction::Vector() const
 	return Position(vector[value].x, vector[value].y, vector[value].z);
 }
 
-unsigned Direction::SurfaceEl() const
+
+double Direction::Surface(const Engine::Vector& grid) const
 {
     if (IsVertical())
     {
-        return VerticalEl * VerticalEl;
+        assert(grid.x == grid.y);
+        return grid.x * grid.z;
     }
     else
     {
-        return HorizontalEl * HorizontalEl;
+        return grid.x* grid.y;
     }
-
-}
-
-double Direction::Surface() const
-{
-    return double(SurfaceEl()) * MeterPerEl * MeterPerEl;
 }
 
 double Direction::Angle() const
@@ -443,6 +438,9 @@ std::wostream& operator<<(std::wostream& os, const Direction& dir)
     os << dir.AbsoluteDescription().c_str();
     return os;
 }
+
+Directions Directions::none(0);
+
 Directions Directions::all =
     Direction::north | 
     Direction::south | 

@@ -10,7 +10,7 @@
 namespace Game
 {
 
-Attack::Attack(const Identity& actor, const Skill& skill, const Identity& target, Direction trajectory, const Part* part) :
+Attack::Attack(const Identity& actor, const Skill& skill, const Identity& target, Physics::Direction trajectory, const Part* part) :
 	TargetedAction(actor, skill, target),
 	AimedAction(part),
     DirectedAction(trajectory)

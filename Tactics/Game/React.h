@@ -12,7 +12,7 @@ namespace Game
 		public DirectedAction
 	{
 	public:
-		React(const Identity& actor, const Skill& skill, const Action& target, const Direction& trajectory);
+		React(const Identity& actor, const Skill& skill, const Action& target, const Physics::Direction& trajectory);
 		void Render(const State& state) const override;
 		void Act(IGame& game) const override;
 	};

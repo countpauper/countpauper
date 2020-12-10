@@ -14,7 +14,7 @@ namespace Game
     Actor::Actor() :
         active(false),
         mp(0),
-		direction(Direction::east),
+		direction(Physics::Direction::east),
         team(0)
     {
     }
@@ -94,7 +94,7 @@ namespace Game
         return team;
     }
 
-    Direction Actor::GetDirection() const
+    Physics::Direction Actor::GetDirection() const
     {
         return direction;
     }

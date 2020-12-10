@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Voxel.h"
-#include "El.h"
 #include "Engine/Maths.h"
 #include "Engine/Drawing.h"
 #include "Engine/Text.h"
@@ -8,11 +7,10 @@
 #include "Engine/Matrix.h"
 #include <string>
 
-namespace Game
-
+namespace Physics
 {
 //                               Name,          Color,                      Melt,   Boil, Density, molar mass,   Viscosity,  Conduct,    Capacity    surfaceTensiom, youngModulus,  Opacity,         
-const Material Material::vacuum{ L"Vacuum",    Engine::RGBA(0xFF000000),   0,      0,      0,      0,           0,          0,         0,          0,              0,             0.0          };
+const Material Material::vacuum { L"Vacuum",    Engine::RGBA(0xFF000000),   0,      0,      0,      0,           0,          0,         0,          0,              0,             0.0          };
 const Material Material::air   { L"Air",       Engine::RGBA(0xFFA08040),   60,     80,    1.225,  29,           18e-6,      29.2,       1.012,      10e-3,          1e9,           0.01         };     // 28.964g/mol because n2&o2 diatomic
 const Material Material::soil  { L"Soil",      Engine::RGBA(0xFF20FF20),   0,      0,     1600,   65,           10e3,       0.4,        2.0,        0.7,            1e7,           10           };     // 65g/mol, based on 0% humidity. Part SiO2, N2 and proteins
 const Material Material::stone { L"Stone",     Engine::RGBA(0xFFA0A0A0),   1986,   3220,   2648,   60,          10e21,      10,         0.790,      0.8,            1e10,          10           };     // for now 100% silicon dioxide, 60 g/mol
@@ -29,21 +27,21 @@ bool Voxel::Gas() const
     return temperature > material->boil;
 }
 
-double Voxel::Translucency() const
+double Voxel::Translucency(double distance) const
 {
     // https://en.wikipedia.org/wiki/Opacity_(optics)#Quantitative_definition
     // assume light from straight above (that's why it's vertical el)
-    return exp(-VerticalEl * MeterPerEl * material->opacity * Density());
+    return exp(-distance * material->opacity * Density());
 }
 
-bool Voxel::Opaque() const
+bool Voxel::Opaque(double distance) const
 {
-    return Translucency() < 0.01;
+    return Translucency(distance) < 0.01;
 }
 
-bool Voxel::Transparent() const
+bool Voxel::Transparent(double distance) const
 {
-    return Translucency() > 0.99;
+    return Translucency(distance) > 0.99;
 }
 
 double Voxel::Density() const
@@ -51,15 +49,16 @@ double Voxel::Density() const
     return density;
 }
 
-double Voxel::Mass() const
+double Voxel::Mass(double volume) const
 {
-    return density * LiterPerVoxel;
+    return density * volume;
 }
-
-double Voxel::Molecules() const
+/*
+double Voxel::Molecules(double volume) const
 {
-    return Mass() / material->molarMass;
+    return Mass(volume) / material->molarMass;
 }
+*/
 
 double Voxel::Viscosity() const
 {
@@ -92,7 +91,9 @@ double Voxel::Hardness() const
 double Voxel::Pressure() const
 {   // Pascal = newton /m2 = kg/(m*s^2)  = 1 J/m^3 
     // ideal gas law (for gas)  https://en.wikipedia.org/wiki/Ideal_gas_law
-    return (Molecules() * IdealGasConstant * temperature) / Volume();
+    // mass = density * volume and later divided by volume again, can compute without volume from density
+    // return (Molecules(Volume()) * IdealGasConstant * temperature) / Volume();
+    return density / material->molarMass * IdealGasConstant * temperature;
 }
 
 double Voxel::DiffusionCoefficient(const Voxel& to) const
@@ -118,19 +119,12 @@ double Voxel::DiffusionCoefficient(const Voxel& to) const
     else 
         return 0.01;
 }
-double Voxel::Volume() const
-{
-    return MeterPerEl * HorizontalEl *
-        MeterPerEl* HorizontalEl *
-        MeterPerEl * VerticalEl *
-        1000.0;
-}
 
-Engine::RGBA Voxel::Color() const
+Engine::RGBA Voxel::Color(double distance) const
 {
     // TODO: why is steam white, water blue, something about particle size and scattering
     // Also solids need to start glowing red when hot 
-    auto color = material->color.Translucent(1.0 - Translucency());
+    auto color = material->color.Translucent(1.0 - Translucency(distance));
 
     return color;
 }

@@ -410,7 +410,7 @@ namespace Game
         return true;
     }
 
-    bool Game::CanGo(const Position& from, Direction direction) const
+    bool Game::CanGo(const Position& from, Physics::Direction direction) const
     {
         auto to = from + direction.Vector();
         return map->CanGo(from, direction);
@@ -431,7 +431,7 @@ namespace Game
             {
                 for (int y = from.y; y < to.y; ++y)
                 {
-                    if (!CanGo(Position(std::lroundf(x), y, std::lroundf(z)), Direction(0,1, 0)))
+                    if (!CanGo(Position(std::lroundf(x), y, std::lroundf(z)), Physics::Direction(0,1, 0)))
                         return true;
                     x += dx;
                     z += dz;
@@ -441,7 +441,7 @@ namespace Game
             {
                 for (int y = from.y; y < to.y; --y)
                 {
-                    if (!CanGo(Position(std::lroundf(x), y, std::lroundf(z)), Direction(0,-1, 0)))
+                    if (!CanGo(Position(std::lroundf(x), y, std::lroundf(z)), Physics::Direction(0,-1, 0)))
                         return true;
                     x += dx;
                     z += dz;
@@ -457,7 +457,7 @@ namespace Game
             {
                 for (int x = from.x; x < to.x; ++x)
                 {
-                    if (!CanGo(Position(x, std::lroundf(y), std::lroundf(z)), Direction(1, 0, 0)))
+                    if (!CanGo(Position(x, std::lroundf(y), std::lroundf(z)), Physics::Direction(1, 0, 0)))
                         return true;
                     y += dy;
                     z += dz;
@@ -467,7 +467,7 @@ namespace Game
             {
                 for (int x = from.x; x < to.x; --x)
                 {
-                    if (!CanGo(Position(x, std::lroundf(y), std::lroundf(z)), Direction(-1, 0, 0)))
+                    if (!CanGo(Position(x, std::lroundf(y), std::lroundf(z)), Physics::Direction(-1, 0, 0)))
                         return true;
                     y += dy;
                     z += dz;

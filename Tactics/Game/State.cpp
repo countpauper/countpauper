@@ -27,7 +27,7 @@ namespace Game
     {
     }
 
-    State::State(const Anatomy& anatomy, Position pos, const Direction dir, unsigned mp,
+    State::State(const Anatomy& anatomy, Position pos, const Physics::Direction dir, unsigned mp,
         std::set<const Armor*> armor, std::set<const Weapon*> weapons, Actor::Knowledge skills) :
 		position(pos),
         direction(dir),
@@ -257,7 +257,7 @@ namespace Game
 	{
 		auto v = target - position;
 		if (v)
-			direction = Direction(v);
+			direction = Physics::Direction(v);
 	}
 
     Score State::Chance(const Skill& skill, const State& target) const
@@ -309,7 +309,7 @@ namespace Game
         }
         else if (skill.attribute == Attribute::None)
         {
-            return Location(Plane::front, body.Anatomical().Length()/2,1);
+            return Location(Physics::Plane::front, body.Anatomical().Length()/2,1);
         }
         else
         {

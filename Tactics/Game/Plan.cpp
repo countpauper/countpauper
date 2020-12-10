@@ -325,7 +325,7 @@ namespace Game
 	}
 
 
-	std::map<Location, double> Plan::HitLocations(const State& attacker, const Skill& skill, const State& victim, Direction trajectory)
+	std::map<Location, double> Plan::HitLocations(const State& attacker, const Skill& skill, const State& victim, Physics::Direction trajectory)
 	{
 		assert(!attacker.direction.IsProne());  // prone not supported yet here
 		std::map<Location, double> result;
@@ -335,13 +335,13 @@ namespace Game
 		}
 
 		auto targeting = skill.targeting;
-		Direction absoluteTrajectory = attacker.direction.Turn(trajectory);
-		Direction hitPlane = victim.direction.Turn(absoluteTrajectory.Opposite());
+		Physics::Direction absoluteTrajectory = attacker.direction.Turn(trajectory);
+		Physics::Direction hitPlane = victim.direction.Turn(absoluteTrajectory.Opposite());
 		if (targeting.count(Targeting::Swing))
 		{
 			Location origin = attacker.Origin(skill);
 			// TODO: mirror hitplane for mirrored limb origin/dual wield (and reverse block data)
-			result[Location(Plane({ hitPlane }), origin.position, origin.size)] = 1.0;
+			result[Location(Physics::Plane({ hitPlane }), origin.position, origin.size)] = 1.0;
 			return result;
 		}
 		else if (targeting.count(Targeting::Center))
@@ -361,7 +361,7 @@ namespace Game
 				}
 				else
 				{
-					result[Location(Plane({ hitPlane }), height.first)] = height.second;
+					result[Location(Physics::Plane({ hitPlane }), height.first)] = height.second;
 
 				}
 			}
@@ -372,14 +372,14 @@ namespace Game
 		{
 			Location origin = attacker.Origin(skill);
 			// TODO: mirror for left arm/tail
-			result[Location(Plane({ hitPlane }), 0)] = 1.0;
+			result[Location(Physics::Plane({ hitPlane }), 0)] = 1.0;
 			return result;
 		}
 		assert(false);  // unsupported for now
 		return result;
 	}
 
-	std::tuple<Plan::HitChances,Direction> Plan::Aim(State attacker, const State& victim, const Skill& skill)
+	std::tuple<Plan::HitChances,Physics::Direction> Plan::Aim(State attacker, const State& victim, const Skill& skill)
 	{
 		if (skill.HasTargeting(Targeting::Face))
 		{
@@ -402,13 +402,13 @@ namespace Game
 			}
 			return std::tie(hitchances, trajectory);
 		}
-		return std::tie(HitChances(), Direction());
+		return std::tie(HitChances(), Physics::Direction());
 	}
 
-	Direction Plan::Intercept(const IGame& state, const Identity& actor, const TargetedAction& action, const Skill& skill)
+	Physics::Direction Plan::Intercept(const IGame& state, const Identity& actor, const TargetedAction& action, const Skill& skill)
 	{
 		if (skill.trajectory.empty())
-			return Direction();
+			return Physics::Direction();
 
 		if (auto directed = dynamic_cast<const DirectedAction*>(&action))
 		{
@@ -420,14 +420,14 @@ namespace Game
 			{
 				defender.Face(attacker.position);
 			}
-			Direction absoluteTrajectory = attacker.direction.Turn(directed->trajectory);
-			Direction hitPlane = defender.direction.Turn(absoluteTrajectory.Opposite());
+			Physics::Direction absoluteTrajectory = attacker.direction.Turn(directed->trajectory);
+			Physics::Direction hitPlane = defender.direction.Turn(absoluteTrajectory.Opposite());
 			for (auto trajectory : skill.trajectory)
 			{
 				if (trajectory == hitPlane)
 					return trajectory;
 			}
-			return Direction();
+			return Physics::Direction();
 		}
 		else
 		{	// undirected action. Just pick one possible direction
@@ -499,7 +499,7 @@ namespace Game
 		auto state = parent.state->Get(defender);
 		if (!state.IsPossible(skill, offense))
 			return nullptr;
-		Direction trajectory;
+		Physics::Direction trajectory;
 		if (!skill.trajectory.empty())
 		{
 			trajectory = Intercept(*parent.state, defender, offense, skill);

@@ -16,7 +16,7 @@ namespace Data
         L"Body All[0-2] Full All 6 ,,,,\n"
         )
     {
-        Add(Part(L"All", Location(Plane::all, 0, 3), Slot::Full, Stats(6, 6, 6, 6, 6)));
+        Add(Part(L"All", Location(Physics::Plane::all, 0, 3), Slot::Full, Stats(6, 6, 6, 6, 6)));
     }
 
     Human::Human() :
@@ -30,12 +30,12 @@ namespace Data
         L"Legs Around[0-1] Legs Agi 10\n"
         )
     {
-        Add(Part(L"Head", Location(Plane::all, 4, 1), Slot::Head, Stats(Attribute::Intelligence, 10)));
-        Add(Part(L"Chest", Location(Plane::sagittal, 3, 1), Slot::Chest, Stats(Attribute::Wisdom, 10)));
-        Add(Part(L"Belly", Location(Plane::sagittal, 2, 1), Slot::Belly, Stats(Attribute::Constitution, 10)));
-        Add(Part(L"RArm", Location(Plane::right, 2, 2), Slot::Arms, Stats(Attribute::Strength, 6)));
-        Add(Part(L"LArm", Location(Plane::left, 2, 2), Slot::Arms, Stats(Attribute::Strength, 4)));
-        Add(Part(L"Legs", Location(Plane::around, 0, 2), Slot::Legs, Stats(Attribute::Agility, 10)));
+        Add(Part(L"Head", Location(Physics::Plane::all, 4, 1), Slot::Head, Stats(Attribute::Intelligence, 10)));
+        Add(Part(L"Chest", Location(Physics::Plane::sagittal, 3, 1), Slot::Chest, Stats(Attribute::Wisdom, 10)));
+        Add(Part(L"Belly", Location(Physics::Plane::sagittal, 2, 1), Slot::Belly, Stats(Attribute::Constitution, 10)));
+        Add(Part(L"RArm", Location(Physics::Plane::right, 2, 2), Slot::Arms, Stats(Attribute::Strength, 6)));
+        Add(Part(L"LArm", Location(Physics::Plane::left, 2, 2), Slot::Arms, Stats(Attribute::Strength, 4)));
+        Add(Part(L"Legs", Location(Physics::Plane::around, 0, 2), Slot::Legs, Stats(Attribute::Agility, 10)));
     }
 
     Blade::Blade() :
@@ -77,17 +77,17 @@ namespace Data
 
 	}
 
-	Melee::Melee() : Skill(L"Melee", Skill::Trigger::Act, Type::Weapon::Style::Blade, Direction::forward, 1)
+	Melee::Melee() : Skill(L"Melee", Skill::Trigger::Act, Type::Weapon::Style::Blade, Physics::Direction::forward, 1)
 	{
 		categories.insert(L"1");
 	}
 
-	Zap::Zap() : Skill(L"Zap", Skill::Trigger::Act, Type::Weapon::Style::Wand, Direction::forward, 2)
+	Zap::Zap() : Skill(L"Zap", Skill::Trigger::Act, Type::Weapon::Style::Wand, Physics::Direction::forward, 2)
 	{
 		categories.insert(L"ranged");
 	}
 
-	Combo::Combo() : Skill(L"Combo", Skill::Trigger::Combo, Type::Weapon::Style::Blade, Direction::forward, 1)
+	Combo::Combo() : Skill(L"Combo", Skill::Trigger::Combo, Type::Weapon::Style::Blade, Physics::Direction::forward, 1)
     {
         follows.insert(L"1");
     }
@@ -99,19 +99,19 @@ namespace Data
 
 
 	Knight::Knight() :
-		Figment(L"Knight", anatomy, Position(0, 0, 0), Direction(), 10, {}, { &weapon }, { &melee, &combo })
+		Figment(L"Knight", anatomy, Position(0, 0, 0), Physics::Direction(), 10, {}, { &weapon }, { &melee, &combo })
 	{
 		body.Grab(anatomy[L"RArm"], weapon);
 	}
 
 	Mage::Mage() :
-		Figment(L"Mage", anatomy, Position(0, 0, 0), Direction(), 10, {}, { &weapon }, { &zap, &buff })
+		Figment(L"Mage", anatomy, Position(0, 0, 0), Physics::Direction(), 10, {}, { &weapon }, { &zap, &buff })
 	{
 		body.Grab(anatomy[L"RArm"], weapon);
 	}
 
 	Victim::Victim() :
-		Figment(L"Victim", anatomy, Position(1, 0, 0), Direction(), 10, {}, {}, {})
+		Figment(L"Victim", anatomy, Position(1, 0, 0), Physics::Direction(), 10, {}, {}, {})
     {
     }
 

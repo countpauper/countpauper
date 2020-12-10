@@ -8,7 +8,7 @@ namespace Game
 namespace Test
 {
 
-Figment::Figment(const std::wstring& description, const Anatomy& anatomy, Position pos, Direction dir, unsigned mp,
+Figment::Figment(const std::wstring& description, const Anatomy& anatomy, Position pos, Physics::Direction dir, unsigned mp,
 	std::set<const Armor*> armor, std::set<const Weapon*> weapons, Actor::Knowledge knowledge) :
 	State(anatomy, pos, dir, mp, armor, weapons, knowledge),
 	description(description)

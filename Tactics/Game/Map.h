@@ -5,8 +5,9 @@
 #include "Engine/Image.h"
 #include "Engine/Color.h"
 #include "Engine/Coordinate.h"
-#include "Physics/Position.h"
+#include "Game/Position.h"
 #include "Physics/Direction.h"
+#include "Physics/Box.h"
 #include "Element.h"
 
 namespace Game
@@ -55,17 +56,23 @@ namespace Game
     {
     public:
         virtual ~Map()=default;
-        virtual Square At(const Position& p) const=0;
         virtual void Render() const = 0;
         virtual void Tick(double seconds) = 0;
+        virtual Element Get(const Position& p) const = 0;
+        virtual Physics::Box Bounds() const =0;
+
+        unsigned Latitude() const; // Breath, x
+        unsigned Longitude() const; // Length, y 
+
         bool CanBe(const Position& position) const;
-        bool CanGo(const Position& from, Direction direction) const;
+        // TODO: use force of streams and gravity Physics::Direction AtRest(const Position& position, bool aerial=false) const;
+        Square At(const Position& p) const;
+        // TODO: bool CanBreath(const Position& p, bool gills) const; // if air or water at height
+        // TODO: pain Hurts(const Position &p)  fire damage or force damage at very high stream power or pressure or in solid
+        bool CanGo(const Position& from, Physics::Direction direction) const;
         Engine::Coordinate Coordinate(const Position& p) const;
         static Position NamedLocation(uint32_t name);
-        static uint32_t LocationName(const Position& p, const Direction& dir);
-    protected:
-        virtual unsigned Longitude() const = 0;
-        virtual unsigned Latitude() const = 0;
+        static uint32_t LocationName(const Position& p, const Physics::Direction& dir);
     };
 
     class FlatMap : public Map
@@ -73,17 +80,17 @@ namespace Game
     public:
         FlatMap();
         ~FlatMap();
-        Square At(const Position& p) const override;
         void Render() const override;
         void Tick(double seconds) override;
     protected:
-        unsigned Latitude() const override; // Breadth, x
-        unsigned Longitude() const override; // Length, y 
+        Physics::Box Bounds() const override;
+        Element Get(const Position& p) const override;
     private:
         friend std::wistream& operator>>(std::wistream& s, FlatMap& map);
         std::wstring name;
         unsigned width;
         unsigned height;
+        unsigned short highest_square;
         std::vector<Square> squares;
         Engine::Image texture;
     };

@@ -8,7 +8,7 @@
 #include "Engine/Volume.h"
 
 namespace Engine { struct AABB;  }
-namespace Game
+namespace Physics
 {
 
 class VoxelData
@@ -23,6 +23,8 @@ public:
     Position Grid(const Engine::Coordinate& meters) const;
     Position ClippedGrid(const Engine::Coordinate& meters) const;
     Engine::Vector GridSize() const;
+    double VoxelVolume() const; // liter
+
     Engine::Coordinate Center(const Position& p) const;
 protected:
     template<class _D,typename _V>
@@ -138,14 +140,21 @@ public:
     Section In(const Engine::AABB& meters) const;
     Box Insides() const;
     Box Bounds() const;
+    Engine::AABB BoundingBox() const;
+
     Position Clip(const Position& p) const;
 
     // Data getters and setters
     size_t Fill(const Engine::IVolume& v, const Material& m, double temperature);
     void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
     void AdjustGrid(const Position& location, double temperature, double density);
-    float Density(const Position& position) const;
-    float Temperature(const Position& position) const;
+    double Density(const Position& position) const;
+    double Density(const Engine::Coordinate& coordinate) const;
+    double Density(const Engine::IVolume& volume) const;
+    double Temperature(const Position& position) const;
+    double Temperature(const Engine::Coordinate& coordinate) const;
+    double Temperature(const Engine::IVolume& volume) const;
+    Engine::Vector Force(const Engine::IVolume& volume) const;
     const Material& MaterialAt(const Position& position) const;
     void SetDensity(const Position& p, float density);
 protected:

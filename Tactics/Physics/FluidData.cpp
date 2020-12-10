@@ -1,24 +1,24 @@
 #include "stdafx.h"
-#include "VoxelMap.h" 
+#include "FluidDynamics.h" 
 #include "Engine/Maths.h"
 #include "Engine/AxisAlignedBoundingBox.h"
 #include "Engine/Utils.h"
 #include <numeric>
 
-namespace Game
+namespace Physics
 {
 
-VoxelMap::Data::Data(unsigned longitude, unsigned latitude, unsigned altitude) :
-    VoxelData(Size(longitude, latitude, altitude), 1, Engine::Vector(HorizontalEl*MeterPerEl,HorizontalEl*MeterPerEl,VerticalEl*MeterPerEl)),
+FluidDynamics::Data::Data(const Size& size, const Engine::Vector& grid) :
+    VoxelData(size, 1, grid),
     // allocate flux 1 extra size in all directions for boundary conditions on edge
     // allocate 2 extra boundary in all perpendicular directions for boundary conditions at edge +0.5
-    u(Direction::x, longitude + 1, latitude + 2, altitude + 2),
-    v(Direction::y, longitude + 2, latitude + 1, altitude + 2),
-    w(Direction::z, longitude + 2, latitude + 2, altitude + 1)
+    u(Direction::x, size+Size(1,2,2)),
+    v(Direction::y, size+Size(2,1,2)),
+    w(Direction::z, size+Size(2,2,1))
 {
 }
 
-Engine::Vector VoxelMap::Data::Flow(const Position& p) const
+Engine::Vector FluidDynamics::Data::Flow(const Position& p) const
 {
     // Q = flux (kg/sm2) / density (kg/m3),     https://en.wikipedia.org/wiki/Volumetric_flow_rate
     Engine::Vector Q(
@@ -29,9 +29,9 @@ Engine::Vector VoxelMap::Data::Flow(const Position& p) const
     Q /= gridDensity;
 
     // v(m/s) = Q/A (Q = volume flow rate (m3/s), A = area(m2)) https://en.wikipedia.org/wiki/Flow_velocity
-    constexpr double uSurface = HorizontalEl * VerticalEl * MeterPerEl * MeterPerEl;
-    constexpr double vSurface = uSurface;
-    constexpr double wSurface = HorizontalEl * HorizontalEl * MeterPerEl * MeterPerEl;
+    const double uSurface = grid.x*grid.z;
+    const double vSurface = grid.y*grid.z;
+    const double wSurface = grid.x*grid.y;
     Engine::Vector flow_velocity(
         Q.x / uSurface,
         Q.y / vSurface,
@@ -40,7 +40,7 @@ Engine::Vector VoxelMap::Data::Flow(const Position& p) const
     return flow_velocity;
 }
 
-Engine::Vector VoxelMap::Data::DensityGradient(const Position& position) const
+Engine::Vector FluidDynamics::Data::DensityGradient(const Position& position) const
 {
     return Engine::Vector(
         (VoxelData::Density(position + Position(1, 0, 0)) - VoxelData::Density(position + Position(-1, 0, 0))) / grid.x,
@@ -49,7 +49,7 @@ Engine::Vector VoxelMap::Data::DensityGradient(const Position& position) const
     );
 }
 
-Engine::Vector VoxelMap::Data::FluxGradient(const Position& p) const
+Engine::Vector FluidDynamics::Data::FluxGradient(const Position& p) const
 {
     return Engine::Vector(
         u.Gradient(p) / grid.x,
@@ -58,53 +58,8 @@ Engine::Vector VoxelMap::Data::FluxGradient(const Position& p) const
 }
 
 
-double VoxelMap::Data::Density(const Engine::Coordinate& c) const
-{
-    auto gridPosition = Grid(c - grid*0.5);
-    double d[8];
-    int i = 0;
-    Position dP;
-    for (dP.x = 0; dP.x <= 1; ++dP.x)
-    {
-        for (dP.y = 0; dP.y <= 1; ++dP.y)
-        {
-            for (dP.z = 0; dP.z <= 1; ++dP.z)
-            {
-                d[i++] = VoxelData::Density(gridPosition + dP);
-            }
-        }
-    }
-    Engine::Vector gridWeight = c - Center(gridPosition);
-    gridWeight.x /= grid.x;
-    gridWeight.y /= grid.y;
-    gridWeight.z /= grid.z;
-    return TrilinearInterpolation(d, gridWeight);
-}
 
-double VoxelMap::Data::Temperature(const Engine::Coordinate& c) const
-{
-    auto gridPosition = Grid(c - grid*0.5);
-    double t[8];
-    int i = 0;
-    Position dP;
-    for (dP.x = 0; dP.x <= 1; ++dP.x)
-    {
-        for (dP.y = 0; dP.y <= 1; ++dP.y)
-        {
-            for (dP.z = 0; dP.z <= 1; ++dP.z)
-            {
-                t[i++] = VoxelData::Temperature(gridPosition + dP);
-            }
-        }
-    }
-    Engine::Vector gridWeight = c - Center(gridPosition);
-    gridWeight.x /= grid.x;
-    gridWeight.y /= grid.y;
-    gridWeight.z /= grid.z;
-    return TrilinearInterpolation(t, gridWeight);
-}
-
-void VoxelMap::Data::InvalidateCorners()
+void FluidDynamics::Data::InvalidateCorners()
 {
     for (auto d0 : Direction::all)
     {
@@ -113,7 +68,7 @@ void VoxelMap::Data::InvalidateCorners()
             if (d0.IsParallel(d1))
                 continue;   // not a corner
             Corner corner(*this, d0 | d1);
-            OutputDebugStringW((std::wstring(L"Voxel Corner ") + Engine::ToWString(d0) + L" / " + Engine::ToWString(d1) + L" Volume= " + std::to_wstring(corner.box.Volume()) + L"\n").c_str());
+            //OutputDebugStringW((std::wstring(L"Voxel Corner ") + Engine::ToWString(d0) + L" / " + Engine::ToWString(d1) + L" Volume= " + std::to_wstring(corner.box.Volume()) + L"\n").c_str());
             for (auto v : corner)
             {
                 SetInvalid(v.first);
@@ -123,27 +78,27 @@ void VoxelMap::Data::InvalidateCorners()
     }
 }
 
-VoxelMap::Data::Flux::iterator::difference_type operator-(const VoxelMap::Data::Flux::iterator& a, const VoxelMap::Data::Flux::iterator& b)
+FluidDynamics::Data::Flux::iterator::difference_type operator-(const FluidDynamics::Data::Flux::iterator& a, const FluidDynamics::Data::Flux::iterator& b)
 {
     return a.position - b.position;
 }
 
 
-VoxelMap::Data::Flux::Flux(Direction axis, unsigned longitude, unsigned latitude, unsigned altitude) :
+FluidDynamics::Data::Flux::Flux(Direction axis, const Size& size) :
     axis(axis),
     offset(-1, -1, -1),
-    size(longitude, latitude, altitude),
+    size(size),
     flux(size.Volume(), 0)
 {
     assert(axis.IsPosititve());    // for offset, vector should be positive
 }
 
-Box VoxelMap::Data::Flux::Bounds() const
+Box FluidDynamics::Data::Flux::Bounds() const
 {
     return Box(offset, offset + size);
 }
 
-Box VoxelMap::Data::Flux::Edge(const Direction& dir) const
+Box FluidDynamics::Data::Flux::Edge(const Direction& dir) const
 {
     Box b(Bounds());
     auto v = dir.Vector();
@@ -179,7 +134,7 @@ Box VoxelMap::Data::Flux::Edge(const Direction& dir) const
     }
 }
 
-Box VoxelMap::Data::Flux::ExtendedEdge(const Direction& dir) const
+Box FluidDynamics::Data::Flux::ExtendedEdge(const Direction& dir) const
 {
     Box edge = Edge(dir);
     for (auto axis : Directions::axes)
@@ -188,7 +143,7 @@ Box VoxelMap::Data::Flux::ExtendedEdge(const Direction& dir) const
     return edge;
 }
 
-void VoxelMap::Data::Flux::InvalidateCorners()
+void FluidDynamics::Data::Flux::InvalidateCorners()
 {
     for (auto d0 : Direction::all)
     {
@@ -207,17 +162,17 @@ void VoxelMap::Data::Flux::InvalidateCorners()
     }
 }
 
-float VoxelMap::Data::Flux::operator[](const Position& p) const
+float FluidDynamics::Data::Flux::operator[](const Position& p) const
 {
     return flux.at(Index(p));
 }
 
-float& VoxelMap::Data::Flux::operator[](const Position& p)
+float& FluidDynamics::Data::Flux::operator[](const Position& p)
 {
     return flux.at(Index(p));
 }
 
-unsigned VoxelMap::Data::Flux::Index(const Position& p) const
+unsigned FluidDynamics::Data::Flux::Index(const Position& p) const
 {
     if (!Bounds().Contains(p))
         throw std::out_of_range((std::string("Flux position '") + Engine::ToString(p) + "' out of range " + Engine::ToString(Bounds())).c_str());
@@ -227,12 +182,12 @@ unsigned VoxelMap::Data::Flux::Index(const Position& p) const
 
 }
 
-bool VoxelMap::Data::Flux::IsOffset(const Direction& d) const
+bool FluidDynamics::Data::Flux::IsOffset(const Direction& d) const
 {
     return !axis.IsOpposite(d);
 }
 
-void VoxelMap::Data::Flux::SetBoundary(const Position& p, const Directions& boundary, double boundaryFlux)
+void FluidDynamics::Data::Flux::SetBoundary(const Position& p, const Directions& boundary, double boundaryFlux)
 {
     for (auto dir : boundary)
     {
@@ -240,12 +195,12 @@ void VoxelMap::Data::Flux::SetBoundary(const Position& p, const Directions& boun
     }
 }
 
-double VoxelMap::Data::Flux::Gradient(const Position& p) const
+double FluidDynamics::Data::Flux::Gradient(const Position& p) const
 {
     return (*this)[p] - (*this)[p - axis.Vector()];
 }
 
-float VoxelMap::Data::Flux::Extrapolate(const Position& outsidePosition, const Directions& boundary, double  boundaryFlux) const
+float FluidDynamics::Data::Flux::Extrapolate(const Position& outsidePosition, const Directions& boundary, double  boundaryFlux) const
 {
     Position insideOffset(0, 0, 0);
     for (auto direction : boundary)
@@ -263,22 +218,22 @@ float VoxelMap::Data::Flux::Extrapolate(const Position& outsidePosition, const D
 }
 
 
-VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::begin() const
+FluidDynamics::Data::Flux::iterator FluidDynamics::Data::Flux::begin() const
 {
     return iterator(*this, Position(1, 1, 1) + offset);
 }
 
-VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::end() const
+FluidDynamics::Data::Flux::iterator FluidDynamics::Data::Flux::end() const
 {
     return iterator(*this, Position(size.x - 1, size.y - 1, size.z - 1) + offset);
 }
 
-VoxelMap::Data::Flux::iterator::iterator(const VoxelMap::Data::Flux& data, const Position& start) :
+FluidDynamics::Data::Flux::iterator::iterator(const FluidDynamics::Data::Flux& data, const Position& start) :
     iterator(data, Box(start, Position(data.size.x - 1, data.size.y - 1, data.size.z - 1) + data.offset))
 {
 }
 
-VoxelMap::Data::Flux::iterator::iterator(const VoxelMap::Data::Flux& data, const Box& box) :
+FluidDynamics::Data::Flux::iterator::iterator(const FluidDynamics::Data::Flux& data, const Box& box) :
     data(data),
     box(box),
     position(box.Start())
@@ -289,7 +244,7 @@ VoxelMap::Data::Flux::iterator::iterator(const VoxelMap::Data::Flux& data, const
     }
 }
 
-VoxelMap::Data::Flux::iterator& VoxelMap::Data::Flux::iterator::operator++()
+FluidDynamics::Data::Flux::iterator& FluidDynamics::Data::Flux::iterator::operator++()
 {
     if (++position.z >= box.z.end)
     {
@@ -313,23 +268,23 @@ VoxelMap::Data::Flux::iterator& VoxelMap::Data::Flux::iterator::operator++()
     return *this;
 }
 
-bool VoxelMap::Data::Flux::iterator::operator==(const iterator& other) const
+bool FluidDynamics::Data::Flux::iterator::operator==(const iterator& other) const
 {
     return &data == &other.data &&
         position == other.position;
 }
 
-VoxelMap::Data::Flux::iterator::value_type VoxelMap::Data::Flux::iterator::operator*() const
+FluidDynamics::Data::Flux::iterator::value_type FluidDynamics::Data::Flux::iterator::operator*() const
 {
     return std::make_pair(position, data[position]);
 }
 
-Directions VoxelMap::Data::Flux::iterator::IsBoundary() const
+Directions FluidDynamics::Data::Flux::iterator::IsBoundary() const
 {
     return data.IsBoundary(position);
 }
 
-Directions VoxelMap::Data::Flux::IsBoundary(const Position& p) const
+Directions FluidDynamics::Data::Flux::IsBoundary(const Position& p) const
 {
     Directions result;
     Position index = p + offset;
@@ -351,28 +306,28 @@ Directions VoxelMap::Data::Flux::IsBoundary(const Position& p) const
     return result;
 }
 
-VoxelMap::Data::Flux::Section::Section(const Flux& data, const Box& box) :
+FluidDynamics::Data::Flux::Section::Section(const Flux& data, const Box& box) :
     data(data),
     box(box)
 {
 }
 
-VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::Section::begin() const
+FluidDynamics::Data::Flux::iterator FluidDynamics::Data::Flux::Section::begin() const
 {
     return Flux::iterator(data, box);
 }
 
-VoxelMap::Data::Flux::iterator VoxelMap::Data::Flux::Section::end() const
+FluidDynamics::Data::Flux::iterator FluidDynamics::Data::Flux::Section::end() const
 {
     return Flux::iterator(data, Box(box.End(), box.End()));
 }
 
-VoxelMap::Data::Flux::Boundary::Boundary(const Flux& data, const Direction& direction) :
+FluidDynamics::Data::Flux::Boundary::Boundary(const Flux& data, const Direction& direction) :
     Section(data, data.Edge(direction))
 {
 }
 
-VoxelMap::Data::Flux::Corner::Corner(const Flux& data, const Directions& directions) :
+FluidDynamics::Data::Flux::Corner::Corner(const Flux& data, const Directions& directions) :
     Section(data,
         std::accumulate(directions.begin(), directions.end(), data.Bounds(), [&data](const Box& bounds, const Direction& direction)
 {
@@ -382,12 +337,12 @@ VoxelMap::Data::Flux::Corner::Corner(const Flux& data, const Directions& directi
 }
 
 
-VoxelMap::Data::Flux::Section VoxelMap::Data::Flux::BoundaryCondition(const Direction& dir) const
+FluidDynamics::Data::Flux::Section FluidDynamics::Data::Flux::BoundaryCondition(const Direction& dir) const
 {
     return Boundary(*this, dir);
 }
 
-VoxelMap::Data::Flux::Section VoxelMap::Data::Flux::BoundaryCondition(const Directions& boundary) const
+FluidDynamics::Data::Flux::Section FluidDynamics::Data::Flux::BoundaryCondition(const Directions& boundary) const
 {
     if (boundary.size() == 1)
         return Boundary(*this, *boundary.begin());

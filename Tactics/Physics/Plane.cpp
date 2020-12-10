@@ -4,7 +4,7 @@
 #include "Engine/from_string.h"
 #include "Physics/Direction.h"
 
-namespace Game
+namespace Physics
 {
 
 	Plane::Plane(std::initializer_list<Direction> init) :

@@ -10,7 +10,7 @@ namespace Game
 
     Move::Move(const Identity& actor, const Skill& skill, const Position& target) :
 		TargetedAction(actor, skill, destination),	// destination is not initialized, but reference is valid
-		DirectedAction(Direction(target-actor.GetPosition())),
+		DirectedAction(Physics::Direction(target-actor.GetPosition())),
         destination(target)
     {
     }

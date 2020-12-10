@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Box.h"
 
-namespace Game
+namespace Physics
 {
 
 const Box Box::empty(Engine::Range<int>(0,0), Engine::Range<int>(0,0), Engine::Range<int>(0,0));

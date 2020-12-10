@@ -2,7 +2,7 @@
 #include <string>
 #include "Engine/Color.h"
 
-namespace Game
+namespace Physics
 {
 
 struct Material
@@ -26,6 +26,9 @@ struct Material
 
 
     double Density(double pressure, double temperature) const;
+    bool Solid(double temperature) const;
+    bool Fluid(double temperature) const;
+    bool Gas(double temperature) const;
 
     static const Material vacuum;
     static const Material air;

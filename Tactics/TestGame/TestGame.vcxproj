@@ -33,7 +33,6 @@
   <ItemGroup>
     <ClCompile Include="Attack.cpp" />
     <ClCompile Include="Body.cpp" />
-    <ClCompile Include="Box.cpp" />
     <ClCompile Include="Data.cpp" />
     <ClCompile Include="Fantasy.cpp" />
     <ClCompile Include="Figment.cpp" />
@@ -44,6 +43,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Plan.cpp" />
+    <ClCompile Include="Position.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="VoxelMap.cpp" />
   </ItemGroup>

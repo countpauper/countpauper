@@ -3,6 +3,7 @@
 #include "Engine/Image.h"
 #include "Engine/Error.h"
 #include "Map.h"
+#include <algorithm>
 
 namespace Game
 {
@@ -14,28 +15,43 @@ namespace Game
 
     FlatMap::FlatMap() :
         width(0),
-        height(0)
+        height(0),
+        highest_square(0)
     {
 
     }
     FlatMap::~FlatMap() = default;
 
-    Square FlatMap::At(const Position& p) const
+    Square Map::At(const Position& p) const
     {
-        if (p.x < 0)
+        auto bounds = Bounds();
+        if (bounds.Contains(p))
             return Square();
-        if (p.y < 0)
-            return Square();
-        if (unsigned(p.x) >= Longitude())
-            return Square();
-        if (unsigned(p.y) >= Latitude())
-            return Square();
-         const auto& square = squares.at(p.x + p.y*width);
-         if (p.z != square.height)
-             return Square();
-         return square;
+        Position pos = p;
+        for (pos.z = p.z; pos.z >= bounds.Start().z; --pos.z)
+        {
+            Element element = Get(pos);
+            if (element == Element::Air)
+                continue;
+            else return Square(element , pos.z);
+        }
+        return Square(Element::None, pos.z);
     }
 
+    Element FlatMap::Get(const Position& p) const
+    {
+        auto square = squares.at(p.x + p.y*width);
+        if (p.x > square.height)
+            return Element::Air;
+        else
+            return square.floor;
+    }
+
+    Physics::Box FlatMap::Bounds() const
+    {
+        return Physics::Box(Physics::Position(0, 0, 0), Physics::Size(width, height, highest_square+5));
+
+    }
     bool Map::CanBe(const Position& position) const
     {
         if ((position.x < 0 || position.y < 0) ||
@@ -47,7 +63,7 @@ namespace Game
         return true;
     }
 
-    bool Map::CanGo(const Position& from, Direction direction) const
+    bool Map::CanGo(const Position& from, Physics::Direction direction) const
     {
         if (direction.IsNone())
             return false;   // going nowhere is not going 
@@ -60,13 +76,13 @@ namespace Game
         return true;
     }
 
-    unsigned FlatMap::Latitude() const
+    unsigned Map::Latitude() const
     {
-        return width;
+        return Bounds().Extent().x;;
     }
-    unsigned FlatMap::Longitude() const
+    unsigned Map::Longitude() const
     {
-        return height;
+        return Bounds().Extent().y;
     }
     std::vector<Engine::RGBA> Square::colorTable = {
         { 0, 0, 0, 255 }, // None = 0
@@ -179,7 +195,7 @@ namespace Game
             {
                 const auto& square = squares.at(i++);
                 glPushMatrix();
-                glPushName(LocationName(Position(x,y,square.height), Direction::none));
+                glPushName(LocationName(Position(x,y,square.height), Physics::Direction::none));
                 glTranslatef(float(x), 0.0f, float(y));
                     square.RenderFloor(x,y,width,height);
                     square.RenderXWall(At(Position(x + 1, y, 0)));
@@ -197,7 +213,7 @@ namespace Game
         return Engine::Coordinate(static_cast<float>(p.x), static_cast<float>(p.y), static_cast<float>(At(p).height));
     }
 
-    uint32_t Map::LocationName(const Position& p, const Direction& dir)
+    uint32_t Map::LocationName(const Position& p, const Physics::Direction& dir)
     {
         if (p.x >= 1 << 9)
             throw std::range_error("X-Coordinate too large to encode in 9 bits");
@@ -207,7 +223,7 @@ namespace Game
             throw std::range_error("Z-Coordinate too large to encode in 10 bits");
         auto id = dir.Id();
         if (id>=1<<4)
-            throw std::range_error("Direction too large to encode in 4 bits");
+            throw std::range_error("Physics::Direction too large to encode in 4 bits");
         return (id<<28) + (p.z << 18) + (p.y << 9) + p.x;
     }
     
@@ -224,8 +240,12 @@ namespace Game
         if (textureName!=L"Null")    
             map.texture.Load(textureName);
         map.squares.resize(map.width * map.height);
+        map.highest_square = 0;
         for (auto& square : map.squares)
+        {
             s >> square;
+            map.highest_square = std::max(map.highest_square, square.height);
+        }
         return s;
     }
 

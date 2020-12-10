@@ -8,7 +8,7 @@
 namespace Game
 {
 
-React::React(const Identity& actor, const Skill& skill, const Action& target, const Direction& trajectory) :
+React::React(const Identity& actor, const Skill& skill, const Action& target, const Physics::Direction& trajectory) :
 	TargetedAction(actor, skill, target),
 	DirectedAction(trajectory)
 {

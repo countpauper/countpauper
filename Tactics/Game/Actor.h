@@ -22,7 +22,7 @@ namespace Game
         Actor();
         void Render() const override;
 		unsigned GetMovePoints() const;
-        Direction GetDirection() const;
+        Physics::Direction GetDirection() const;
         void Apply(const State& result) override;
         bool IsAlly(const Actor& other) const;
         void Turn() override;
@@ -64,7 +64,7 @@ namespace Game
         bool active;
         unsigned mp;
         unsigned team;
-        Direction direction;
+        Physics::Direction direction;
 		Anatomy anatomy;
 		Knowledge knowledge;
         std::vector<std::unique_ptr<Armor>> worn;

@@ -26,7 +26,7 @@ TEST(State, NoSkill)
     Data::Simple a;
     Data::Blade weapon;
     Data::Melee skill;
-    State s(a, Position(), Direction(), 10, {}, { &weapon }, {});
+    State s(a, Position(), Physics::Direction(), 10, {}, { &weapon }, {});
     EXPECT_EQ(s.SkillLevel(skill), 0);
     Data::Victim v;
     EXPECT_FALSE(s.IsPossible(skill, v));
@@ -37,7 +37,7 @@ TEST(State, NoWeapon)
     Data::Simple a;
 	Body b(a);
     Data::Melee skill;
-    State s(a, Position(), Direction(), 10, {}, {}, { &skill });
+    State s(a, Position(), Physics::Direction(), 10, {}, {}, { &skill });
     auto level = s.SkillLevel(skill);
     EXPECT_EQ(level, b.Strength());
     Data::Victim v;
@@ -50,7 +50,7 @@ TEST(State, UseWeapon)
 	Body b(a);
     Data::Blade weapon;
     Data::Melee skill;
-    State s(a, Position(), Direction(), 10, {}, { &weapon }, { &skill });
+    State s(a, Position(), Physics::Direction(), 10, {}, { &weapon }, { &skill });
     Data::Victim v;
     EXPECT_TRUE(s.IsPossible(skill, v));
 
@@ -63,7 +63,7 @@ TEST(State, DoubleHand)
     Data::Human a;
     Data::Blade weapon;
 	Data::Melee skill;
-    State s(a, Position(), Direction(), 10, {}, { &weapon }, { &skill });
+    State s(a, Position(), Physics::Direction(), 10, {}, { &weapon }, { &skill });
     Data::Victim v;
     EXPECT_TRUE(s.IsPossible(skill, v));
 
@@ -79,7 +79,7 @@ TEST(State, SingleHand)
     Data::Blade weapon;
     Data::Shield shield;
     Data::Melee skill;
-    State s(a, Position(), Direction(), 10, {}, { }, { &skill });
+    State s(a, Position(), Physics::Direction(), 10, {}, { }, { &skill });
 	s.Wield(weapon);
 	s.Wield(shield);
 	ASSERT_EQ(s.body.Wielded(a[L"RArm"]), &weapon);
@@ -126,7 +126,7 @@ TEST(State, Mitigation)
     Data::Knight s;
     s.Wear(armor);
     EXPECT_EQ(s.Intelligence(), s.body.Intelligence().Value() - 4);
-    Location hitLocation(Plane::front, 3, 1);
+    Location hitLocation(Physics::Plane::front, 3, 1);
 	auto& part = s.body.Anatomical()[L"Chest"];
 	ASSERT_TRUE(part.IsVital());
     EXPECT_FALSE(s.Hurt(part, Damage(Wound::Type::Sharp, Score(L"", 1)) - s.Mitigation(part), L"Small wound"));
@@ -191,11 +191,11 @@ TEST(State, Face)
 {
 	Data::Knight s;
 	s.Face(s.position + Position(1, 0, 0));
-	EXPECT_EQ(s.direction, Direction::east);
+	EXPECT_EQ(s.direction, Physics::Direction::east);
 	s.Face(s.position + Position(0, -1, 0));
-	EXPECT_EQ(s.direction, Direction::south);
+	EXPECT_EQ(s.direction, Physics::Direction::south);
 	s.Face(s.position);
-	EXPECT_EQ(s.direction, Direction::south);
+	EXPECT_EQ(s.direction, Physics::Direction::south);
 }
 
 

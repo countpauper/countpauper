@@ -11,7 +11,7 @@ Location::Location() :
 {
 }
 
-Location::Location(const Plane& plane, unsigned pos, unsigned size) :
+Location::Location(const Physics::Plane& plane, unsigned pos, unsigned size) :
     plane(plane),
     position(pos),
     size(size)
@@ -24,7 +24,7 @@ bool Location::Contains(const Location& other) const
         return false;
     if (position + size <= other.position)
         return false;
-	Plane intersection;
+    Physics::Plane intersection;
 	std::set_intersection(plane.begin(), plane.end(), other.plane.begin(), other.plane.end(), std::inserter(intersection, intersection.begin()));
 	if (intersection.empty())
 		return false;
@@ -71,7 +71,7 @@ std::wistream& operator>>(std::wistream& s, Location& v)
         throw std::runtime_error("Missing ] in anatomy");
     if (heightStart >= heightEnd)
         throw std::runtime_error("No height between [] in anatomy");
-    v.plane = Plane::map.at(planeStr);
+    v.plane = Physics::Plane::map.at(planeStr);
     auto heightStr = str.substr(heightStart, heightEnd - heightStart);
     auto rangeDelimiter = heightStr.find(L'-');
     if (rangeDelimiter == std::wstring::npos)

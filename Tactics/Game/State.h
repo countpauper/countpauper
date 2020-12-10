@@ -1,7 +1,7 @@
 #pragma once
 
 #include <set>
-#include "Physics/Position.h"
+#include "Game/Position.h"
 #include "Physics/Direction.h"
 #include "Damage.h"
 #include "Stats.h"
@@ -20,11 +20,11 @@ class State
 public:
 	State();
     State(const Actor& actor);
-    State(const Anatomy& anatomy, Position pos=Position(0,0,0), Direction dir=Direction::east, unsigned mp=10,
+    State(const Anatomy& anatomy, Position pos=Position(0,0,0), Physics::Direction dir=Physics::Direction::east, unsigned mp=10,
         std::set<const Armor*> armor = {}, std::set<const Weapon*> weapons = {}, Actor::Knowledge knowledge = {});
 
     Position position;
-    Direction direction;
+    Physics::Direction direction;
     unsigned mp;
     unsigned loyalty;
     Body body;

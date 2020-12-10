@@ -3,9 +3,8 @@
 #include <numeric>
 #include "Engine/AxisAlignedBoundingBox.h"
 
-namespace Game
+namespace Physics
 {
-
 
 VoxelData::VoxelData() :
     VoxelData(Size(0))
@@ -20,14 +19,98 @@ VoxelData::VoxelData(const Size& size, int edge, const Engine::Vector& grid) :
     voxels.resize((size+edge+edge).Volume(), { &Material::vacuum, 0,0 });
 }
 
-float VoxelData::Density(const Position& position) const
+double VoxelData::Density(const Position& position) const
 {
-    return voxels[GridIndex(position)].density;
+    return static_cast<double>(voxels[GridIndex(position)].density);
 }
 
-float VoxelData::Temperature(const Position& position) const
+double VoxelData::Density(const Engine::Coordinate& c) const
+{
+    auto gridPosition = Grid(c - grid * 0.5);
+    double d[8];
+    int i = 0;
+    Position dP;
+    for (dP.x = 0; dP.x <= 1; ++dP.x)
+    {
+        for (dP.y = 0; dP.y <= 1; ++dP.y)
+        {
+            for (dP.z = 0; dP.z <= 1; ++dP.z)
+            {
+                d[i++] = Density(gridPosition + dP);
+            }
+        }
+    }
+    Engine::Vector gridWeight = c - Center(gridPosition);
+    gridWeight.x /= grid.x;
+    gridWeight.y /= grid.y;
+    gridWeight.z /= grid.z;
+    return TrilinearInterpolation(d, gridWeight);
+}
+
+double VoxelData::Density(const Engine::IVolume& area) const
+{
+    auto bb = area.GetBoundingBox();
+    if (bb.Volume() == 0)
+    {   // point
+        return Density(bb.Begin());
+    }
+    else
+    {
+        bb &= BoundingBox();
+        assert(false); // unimplemented
+        return std::numeric_limits<float>::signaling_NaN();
+    }
+}
+
+double VoxelData::Temperature(const Position& position) const
 {
     return voxels[GridIndex(position)].temperature;
+}
+
+double VoxelData::Temperature(const Engine::Coordinate& c) const
+{
+    auto gridPosition = Grid(c - grid * 0.5);
+    double t[8];
+    int i = 0;
+    Position dP;
+    for (dP.x = 0; dP.x <= 1; ++dP.x)
+    {
+        for (dP.y = 0; dP.y <= 1; ++dP.y)
+        {
+            for (dP.z = 0; dP.z <= 1; ++dP.z)
+            {
+                t[i++] = Temperature(gridPosition + dP);
+            }
+        }
+    }
+    Engine::Vector gridWeight = c - Center(gridPosition);
+    gridWeight.x /= grid.x;
+    gridWeight.y /= grid.y;
+    gridWeight.z /= grid.z;
+    return TrilinearInterpolation(t, gridWeight);
+}
+
+
+double VoxelData::Temperature(const Engine::IVolume& area) const
+{
+    auto bb = area.GetBoundingBox();
+    if (bb.Volume() == 0)
+    {   // point
+        return Temperature(bb.Begin());
+    }
+    else
+    {
+        bb &= BoundingBox();
+        assert(false); // unimplemented
+        return std::numeric_limits<float>::signaling_NaN();
+    }
+}
+
+
+Engine::Vector VoxelData::Force(const Engine::IVolume& volume) const
+{
+    assert(false);
+    return Engine::Vector();
 }
 
 const Material& VoxelData::MaterialAt(const Position& position) const
@@ -77,6 +160,10 @@ Engine::Vector VoxelData::GridSize() const
     return grid;
 }
 
+double VoxelData::VoxelVolume() const
+{
+    return 1000.0 * grid.x * grid.y  * grid.z;
+}
 
 Engine::Coordinate VoxelData::Center(const Position& p) const
 {
@@ -170,6 +257,17 @@ Box VoxelData::Bounds() const
     return Insides().Grow(edge);
 }
 
+Engine::AABB VoxelData::BoundingBox() const
+{
+    auto box = Bounds();
+    return Engine::AABB(
+        Engine::Range<double>(box.x.begin, box.x.end) * grid.x,
+        Engine::Range<double>(box.y.begin, box.y.end) * grid.y,
+        Engine::Range<double>(box.z.begin, box.z.end) * grid.z
+    );
+}
+
+
 Box VoxelData::Edge(const Direction& direction) const
 {
     if (direction.IsNone())
@@ -242,9 +340,8 @@ Position VoxelData::Clip(const Position& p) const
 size_t VoxelData::Fill(const Engine::IVolume& v, const Material& m, const double temperature)
 {
     size_t filled = 0;
-    auto bb = v.GetBoundingBox();
-    Box volBB(ClippedGrid(bb.Begin()), ClippedGrid(bb.End()) + Position(1, 1, 1));
-
+    auto bb = v.GetBoundingBox() & BoundingBox();
+    Box volBB(Grid(bb.Begin()), Grid(bb.End()) + Position(1, 1, 1));
     for (auto& voxel : In(volBB))
     {
         auto center = Center(voxel.first);

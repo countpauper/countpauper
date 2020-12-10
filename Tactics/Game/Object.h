@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Physics/Position.h"
+#include "Game/Position.h"
 #include "Identity.h"
 #include "Engine/Identification.h"
 #include "Body.h"

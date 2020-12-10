@@ -5,7 +5,8 @@
 #include "Engine/from_string.h"
 #include "Position.h"
 
-namespace Game
+namespace Engine { struct Vector;  }
+namespace Physics
 {
 
 class HalfPiAngle
@@ -37,8 +38,7 @@ public:
     explicit Direction(uint8_t id);
     explicit Direction(const Position& vector);
     Position Vector() const;
-    unsigned SurfaceEl() const;  
-    double Surface() const;  // in m^2
+    double Surface(const Engine::Vector& grid) const;  // in m^2
     double Angle() const;
 	Direction Opposite() const;
     bool IsPosititve() const;
@@ -149,6 +149,7 @@ public:
     size_t size() const;
 
     operator bool() const;
+    static Directions none;
     static Directions all;
     static Directions axes;
 

@@ -28,7 +28,7 @@ Skill::Skill() :
 {
 }
 
-Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Direction singleTrajectory, int damage) :
+Skill::Skill(const std::wstring name, Trigger trigger, Type::Weapon::Style weapon, Physics::Direction singleTrajectory, int damage) :
 	mp(2),
 	range(0),
 	trigger(trigger),
@@ -69,7 +69,7 @@ Skill::Skill(const std::wstring name, Attribute attribute, Targeting targeting) 
 }
 Skill::~Skill() = default;
 
-TargetedAction* Skill::CreateAction(const Identity& actor, const Target& target, Direction trajectory, const Part* part) const
+TargetedAction* Skill::CreateAction(const Identity& actor, const Target& target, Physics::Direction trajectory, const Part* part) const
 {
 	if (type)
 		return type->CreateAction(*this, actor, target, trajectory, part);
@@ -99,7 +99,7 @@ Bonus Skill::GetChance(const Score& level) const
 	}
 }
 
-TargetedAction* Skill::Move::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part*) const
+TargetedAction* Skill::Move::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Physics::Direction trajectory, const Part*) const
 {
 	return new ::Game::Move(actor, skill, target.GetPosition());
 }
@@ -109,7 +109,7 @@ Skill::Melee::Melee() :
 {
 }
 
-TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction trajectory, const Part* part) const
+TargetedAction* Skill::Melee::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Physics::Direction trajectory, const Part* part) const
 {
 	return new Attack(actor, skill, dynamic_cast<const Actor&>(target), trajectory, part);
 }
@@ -135,7 +135,7 @@ Skill::Affect::Affect(const xmlNode* node)
 	}
 }
 
-TargetedAction* Skill::Affect::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction, const Part* part) const
+TargetedAction* Skill::Affect::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Physics::Direction, const Part* part) const
 {
 	assert(false);	// not implemented
 	return nullptr;
@@ -150,7 +150,7 @@ Skill::React::React(const xmlNode* node)
 	}
 }
 
-TargetedAction* Skill::React::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Direction direction, const Part*) const
+TargetedAction* Skill::React::CreateAction(const Skill& skill, const Identity& actor, const Target& target, Physics::Direction direction, const Part*) const
 {
 	return new ::Game::React(actor, skill, dynamic_cast<const Action&>(target), direction);
 }
@@ -282,7 +282,7 @@ Skill::Skill(const xmlNode* node) :
 		}
 		else if (Engine::Xml::hasTag(prop, "trajectory"))
 		{
-			trajectory = Engine::from_strings<Direction>(Engine::Xml::text(prop->children), L'|', Direction::map);
+			trajectory = Engine::from_strings<Physics::Direction>(Engine::Xml::text(prop->children), L'|', Physics::Direction::map);
 		}
 		else if (Engine::Xml::hasTag(prop, "target"))
 		{

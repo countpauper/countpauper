@@ -2,7 +2,7 @@
 #include "Position.h"
 #include "Engine/Range.h"
 
-namespace Game
+namespace Physics
 {
 
 class Box

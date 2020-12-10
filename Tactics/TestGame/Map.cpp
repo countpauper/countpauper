@@ -40,14 +40,14 @@ TEST(Map, MaybeAt)
 TEST(Map, CanGo)
 {
     Data::MiniMap map;
-    EXPECT_FALSE(map.CanGo(Position(0, 0, 1), Direction::none));
-    EXPECT_TRUE(map.CanGo(Position(0, 0, 1), Direction::north));
-    EXPECT_FALSE(map.CanGo(Position(0, 0, 1), Direction::south));
-    // undefined if you can go to a square you can't be at EXPECT_FALSE(map.CanGo(Position(0, 0), Direction::east));
-    EXPECT_FALSE(map.CanGo(Position(0, 0, 1), Direction::west));
+    EXPECT_FALSE(map.CanGo(Position(0, 0, 1), Physics::Direction::none));
+    EXPECT_TRUE(map.CanGo(Position(0, 0, 1), Physics::Direction::north));
+    EXPECT_FALSE(map.CanGo(Position(0, 0, 1), Physics::Direction::south));
+    // undefined if you can go to a square you can't be at EXPECT_FALSE(map.CanGo(Position(0, 0), Physics::Direction::east));
+    EXPECT_FALSE(map.CanGo(Position(0, 0, 1), Physics::Direction::west));
 
-    EXPECT_FALSE(map.CanGo(Position(0, 1, 0), Direction::north));
-    EXPECT_FALSE(map.CanGo(Position(0, 1, 0), Direction::east));
+    EXPECT_FALSE(map.CanGo(Position(0, 1, 0), Physics::Direction::north));
+    EXPECT_FALSE(map.CanGo(Position(0, 1, 0), Physics::Direction::east));
 }
 
 }

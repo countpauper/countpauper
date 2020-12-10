@@ -2,7 +2,7 @@
 #include <string>
 #include "Material.h"
 
-namespace Game
+namespace Physics
 {
 
 struct Voxel
@@ -11,18 +11,17 @@ struct Voxel
     bool Gas() const;
 //    Square Square(unsigned height) const;
     double Density() const;
-    double Mass() const;
+    double Mass(double volume) const;   // volume: liter, mass: gram
     double Pressure() const;
-    double Volume() const;
-    double Molecules() const;
+ //   double Molecules(double volume) const;  // volume liters, amount: mole
     double Viscosity() const;
     double Hardness() const;
     double DiffusionCoefficient(const Voxel& to) const;
 
-    double Translucency() const;    // I(x) = I0 * Translucency() 
-    bool Opaque() const;
-    bool Transparent() const;
-    Engine::RGBA Color() const;
+    double Translucency(double distance) const;    // I(x) = I0 * Translucency(), distance in meter
+    bool Opaque(double distance) const; 
+    bool Transparent(double distance) const;
+    Engine::RGBA Color(double distance) const;
 /*
     void Render(const Position& p, const Directions& visibility) const;
     void RenderAnalysis(const Position& p, const Directions& visibility, const Engine::Vector& densityGradient) const;

@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "StaticEnvironment.h"
+#include "Engine/Line.h"
 
-namespace Game
+namespace Physics
 {
     
-StaticEnvironment::StaticEnvironment(const Size& size) :
-    data(size)
+StaticEnvironment::StaticEnvironment(const Engine::Vector& size, const Engine::Vector& grid) :
+    data(Size(int(std::round(size.x / grid.x)), int(std::round(size.y/ grid.y)), int(std::round(size.z / grid.z))), 0, grid)
 {
     for (auto& v : data)
     {
@@ -15,9 +16,9 @@ StaticEnvironment::StaticEnvironment(const Size& size) :
 
 }
 
-void StaticEnvironment::Fill(const Engine::IVolume& v, const Material& m)
+size_t StaticEnvironment::Fill(const Engine::IVolume& v, const Material& m, double temperature)
 {
-    data.Fill(v, m, 0);
+    return data.Fill(v, m, temperature);
 }
 
 void StaticEnvironment::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
@@ -28,27 +29,36 @@ void StaticEnvironment::ConnectChange(ChangeSignal::slot_type slot) {}
 
 double StaticEnvironment::Density(const Engine::IVolume& c) const
 {
-    return 0;
+    return data.Density(c);
 }
 
 double StaticEnvironment::Temperature(const Engine::IVolume& c) const
 {
-    return 0;
+    return data.Temperature(c);
 }
 
 Engine::Vector StaticEnvironment::Force(const Engine::IVolume& c) const
 {
-    return Engine::Vector();
+    return data.Force(c);
 }
 
 const Material* StaticEnvironment::GetMaterial(const Engine::Coordinate& c) const
 {
     // TODO: grid size in the environment or the data
-    Position p(int(c.x), int(c.y), int(c.z));
+    Position p(data.Grid(c));
     if (!data.IsInside(p))
         return nullptr;
     return &data.MaterialAt(p);
 }
+
+Engine::RGBA StaticEnvironment::Color(const Engine::Line& l) const
+{
+    Position p(data.Grid(l.b));
+    if (!data.IsInside(p))
+        return Engine::RGBA::transparent;
+    return data[p].Color(l.Length());
+}
+
 void StaticEnvironment::Tick(double seconds)
 {
 

@@ -75,7 +75,7 @@ bool Future::CanBe(const Position& position) const
 	return parent.CanBe(position);
 }
 
-bool Future::CanGo(const Position& from, Direction direction) const
+bool Future::CanGo(const Position& from, Physics::Direction direction) const
 {
 	return parent.CanGo(from, direction);
 }
@@ -111,7 +111,7 @@ std::vector<std::unique_ptr<Action>> Future::PossibleMoves() const
                         if (actorState.IsPossible(*skill, destination))
                         {
                             assert(skill->trajectory.empty());	// "aimed" move (eg jump, teleport() not yet implemented
-                            result.emplace_back(skill->CreateAction(*Executor(), destination, Direction::none, nullptr));
+                            result.emplace_back(skill->CreateAction(*Executor(), destination, Physics::Direction::none, nullptr));
                         }
                     }
 				}

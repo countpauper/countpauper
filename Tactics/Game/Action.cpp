@@ -81,7 +81,7 @@ namespace Game
 
 	}
 
-	DirectedAction::DirectedAction(Direction trajectory) :
+	DirectedAction::DirectedAction(Physics::Direction trajectory) :
 		trajectory(trajectory)
 	{
 	}

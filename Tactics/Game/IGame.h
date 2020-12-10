@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Physics/Position.h"
+#include "Game/Position.h"
 #include "Physics/Direction.h"
 
 namespace Game
@@ -18,7 +18,7 @@ namespace Game
         virtual void Adjust(const Identity& actor, const State& state, const std::wstring& description) = 0;
         virtual std::wstring Description() const = 0;
         virtual bool CanBe(const Position& position) const = 0;
-        virtual bool CanGo(const Position& from, Direction direction) const = 0;
+        virtual bool CanGo(const Position& from, Physics::Direction direction) const = 0;
         virtual bool Cover(const Position& from, const Position& to) const = 0;
     };
 }

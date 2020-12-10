@@ -9,32 +9,29 @@
 #include <string>
 
 namespace Engine { class Mesh;  }
-namespace Game
+namespace Physics
 {
 
 class FluidDynamics : public IEnvironment
 {
 public:
-    FluidDynamics();
-    FluidDynamics(unsigned longitude, unsigned latitude, unsigned altitude);
+    FluidDynamics(const Engine::Vector& size, const Engine::Vector& grid);
     ~FluidDynamics();
 
     class Data : public VoxelData
     {
     public:
-        Data(unsigned longitude, unsigned latitude, unsigned altitude);
+        Data(const Size& size, const Engine::Vector& grid=Engine::Vector(1,1,1));
         Data(const Data&) = default;
 
         Engine::Vector FluxGradient(const Position& position) const;   // in g/m2
         Engine::Vector DensityGradient(const Position& position) const;   // in g/m2
         Engine::Vector Flow(const Position& position) const;  // in meters/second
-        double Density(const Engine::Coordinate& c) const;
-        double Temperature(const Engine::Coordinate& c) const;
 
         class Flux
         {
         public:
-            Flux(const Direction axis, unsigned longitude, unsigned latitude, unsigned altitude);
+            Flux(const Direction axis, const Size& size);
             float operator[](const Position& p) const;
             float operator()(int x, int y, int z) const { return (*this)[Position(x, y, z)]; }
             float& operator[](const Position& p);

@@ -1,9 +1,9 @@
 #include "pch.h"
 #include <sstream>
-#include "Game/Box.h"
+#include "Physics/Box.h"
 #include "Engine/Range.h"
 
-namespace Game
+namespace Physics
 {
 namespace Test
 {

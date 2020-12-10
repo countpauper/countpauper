@@ -18,7 +18,7 @@ namespace Game
 		State Get(const Identity& actor) const override;
 		const Identity* Executor() const;
 		bool CanBe(const Position& position) const override;
-		bool CanGo(const Position& from, Direction direction) const override;
+		bool CanGo(const Position& from, Physics::Direction direction) const override;
 		bool Cover(const Position& from, const Position& to) const override;
 		std::wstring Description() const override;
 

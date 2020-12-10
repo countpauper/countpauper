@@ -3,7 +3,7 @@
 #include "Engine/Maths.h"
 #include "Physics/Position.h"
 
-namespace Game
+namespace Physics
 {
 
     Position::Position() : x(0), y(0), z(0)
@@ -25,27 +25,9 @@ namespace Game
         return std::sqrtf(Engine::Sqr(float(x)) + Engine::Sqr(float(y))+Engine::Sqr(float(z)));
     }
 
-    unsigned Position::SizeEl() const
-    {
-        return static_cast<unsigned>(std::round(std::sqrtf(
-            Engine::Sqr(float(HorizontalEl*x)) +
-            Engine::Sqr(float(HorizontalEl*y)) +
-            Engine::Sqr(float(VerticalEl*z)))
-        ));
-    }
-
     float Position::Distance(const Position& other) const
     {
         return std::sqrtf(Engine::Sqr(float(other.x - x)) + Engine::Sqr(float(other.y - y)) + Engine::Sqr(float(other.z -z)));
-    }
-
-    unsigned Position::DistanceEl(const Position& other) const
-    {
-        return static_cast<unsigned>(std::round(std::sqrtf(
-            Engine::Sqr(float(HorizontalEl*(other.x - x))) +
-            Engine::Sqr(HorizontalEl * (other.y - y)) +
-            Engine::Sqr(VerticalEl* (other.z - z))
-            )+0.0132)); // special bias so DistanceEl(3,1) > DistanceEl(3,0) 
     }
 
     Position& Position::operator+=(const Position& delta)
@@ -103,7 +85,7 @@ namespace Game
     {
         Size o = a;
         o.x += b.x;
-        o.y += b.x;
+        o.y += b.y;
         o.z += b.z;
         return o;
     }

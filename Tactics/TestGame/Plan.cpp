@@ -64,11 +64,11 @@ TEST(Plan, SwingLocation)
 {
 	Data::Knight attacker;
 	Data::Mage defender;
-	auto hls = Plan::HitLocations(attacker, attacker.melee, defender, Direction::down);
+	auto hls = Plan::HitLocations(attacker, attacker.melee, defender, Physics::Direction::down);
 	EXPECT_EQ(hls.size(), 1);
 	EXPECT_NEAR(Sum(hls), 1.0, 0.001);
 	const auto& hl = hls.begin()->first;
-	EXPECT_EQ(hl.plane, Plane({ Direction::up }));
+	EXPECT_EQ(hl.plane, Physics::Plane({ Physics::Direction::up }));
 	EXPECT_EQ(hl.size, 3);
 	EXPECT_EQ(hl.position, 4);
 }
@@ -77,7 +77,7 @@ TEST(Plan, CenterLocation)
 {
 	Data::Mage attacker;
 	Data::Knight defender;
-	auto hls = Plan::HitLocations(attacker, attacker.zap, defender, Direction::forward);
+	auto hls = Plan::HitLocations(attacker, attacker.zap, defender, Physics::Direction::forward);
 	EXPECT_NEAR(Sum(hls), 1.0, 0.001);
 	EXPECT_NEAR(Sum(hls), 1.0, 0.001);
 	ASSERT_EQ(defender.body.Anatomical().Length(), 5);

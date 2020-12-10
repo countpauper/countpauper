@@ -18,16 +18,11 @@
 #include "Engine/AxisAlignedBoundingBox.h"
 #include <string>
 
-namespace Game
+namespace Physics
 {
 
-FluidDynamics::FluidDynamics() : 
-    FluidDynamics(0, 0, 0)
-{
-}
-
-FluidDynamics::FluidDynamics(unsigned longitude, unsigned latitude, unsigned altitude) :
-    voxels(longitude, latitude, altitude)
+FluidDynamics::FluidDynamics(const Engine::Vector& size, const Engine::Vector& grid) :
+    voxels(Size(int(std::round(size.x / grid.x)), int(std::round(size.y / grid.y)), int(std::round(size.z / grid.z))), grid)
 {
 }
 
@@ -55,7 +50,7 @@ Directions FluidDynamics::Visibility(const Position& p) const
         auto neighbourPosition = p + direction.Vector();
 
         if (!voxels.IsInside(neighbourPosition) || 
-            !voxels[neighbourPosition].Opaque())
+            !voxels[neighbourPosition].Opaque(direction.Vector().Size()))
         {
             result|=direction;
         }
@@ -218,15 +213,17 @@ unsigned FluidDynamics::WindForce() const
 
 double FluidDynamics::Volume() const
 {
-    return voxels.GetSize().Volume() * LiterPerVoxel;
+    auto gs = voxels.GridSize();
+    return voxels.GetSize().Volume() * voxels.VoxelVolume();
 }
 
 double FluidDynamics::Mass(const Material& material) const
 {
-    return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
+    auto vol = voxels.VoxelVolume();
+    return std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material, vol](double runningTotal, const decltype(voxels)::value_type& v)
     {
         if (v.second.material == &material)
-            return runningTotal + v.second.Mass();
+            return runningTotal + v.second.Mass(vol);
         else
             return runningTotal;
     });
@@ -234,10 +231,11 @@ double FluidDynamics::Mass(const Material& material) const
 
 double FluidDynamics::Temperature(const Material& material) const
 {
-    auto heat = std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material](double runningTotal, const decltype(voxels)::value_type& v)
+    auto vol = voxels.VoxelVolume();
+    auto heat = std::accumulate(voxels.begin(), voxels.end(), 0.0, [&material, vol](double runningTotal, const decltype(voxels)::value_type& v)
     {
         if (v.second.material == &material)
-            return runningTotal + v.second.Mass() * v.second.temperature;
+            return runningTotal + v.second.Mass(vol) * v.second.temperature;
         else
             return runningTotal;
     });
@@ -247,9 +245,10 @@ double FluidDynamics::Temperature(const Material& material) const
 
 double FluidDynamics::Mass() const
 {
-    return std::accumulate(voxels.begin(), voxels.end(), 0.0, [](double runningTotal, const decltype(voxels)::value_type& v)
+    double vol = voxels.VoxelVolume();
+    return std::accumulate(voxels.begin(), voxels.end(), 0.0, [vol](double runningTotal, const decltype(voxels)::value_type& v)
     {
-        return runningTotal + v.second.Mass();
+        return runningTotal + v.second.Mass(vol);
     });
 }
 
@@ -342,9 +341,9 @@ void FluidDynamics::FluxBoundary(Directions boundary)
     // too slow to do it for every voxel? 
     Engine::Vector flowVolume = wind * Material::air.Density(AtmosphericPressure(0), AtmosphericTemperature(0));
     Engine::Vector windFlux(
-        flowVolume.x / Direction::east.Surface(),
-        flowVolume.y / Direction::north.Surface(),
-        flowVolume.z / Direction::up.Surface()
+        flowVolume.x / Direction::east.Surface(voxels.GridSize()),
+        flowVolume.y / Direction::north.Surface(voxels.GridSize()),
+        flowVolume.z / Direction::up.Surface(voxels.GridSize())
     );
     for (auto u : voxels.U().BoundaryCondition(boundary))
     {
@@ -405,9 +404,9 @@ void FluidDynamics::Flow(double dt)
     const Data::Flux oU = voxels.U();
     const Data::Flux oV = voxels.V();
     const Data::Flux oW = voxels.W();
-    constexpr double dx = HorizontalEl * MeterPerEl;
-    constexpr double dy = HorizontalEl * MeterPerEl;
-    constexpr double dz = VerticalEl * MeterPerEl;
+    const double dx = voxels.GridSize().x;
+    const double dy = voxels.GridSize().y;
+    const double dz = voxels.GridSize().z;
     // U Flow
     double Reynolds = 100.0;    // TODO: Apparently has to do with viscosity and friction https://en.wikipedia.org/wiki/Reynolds_number
     for (const auto& uit : oU)
@@ -485,8 +484,6 @@ void FluidDynamics::Continuity(double seconds)
 
 void FluidDynamics::Tick(double seconds)
 {
-    //if (!mesh)
-    //    GenerateMesh();
 
     // Fluid dynamics:
     //  https://en.wikipedia.org/wiki/Fluid_dynamics

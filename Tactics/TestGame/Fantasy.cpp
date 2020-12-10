@@ -50,7 +50,7 @@ bool Fantasy::CanBe(const Position& position) const
 	return true;
 }
 
-bool Fantasy::CanGo(const Position& from, Direction direction) const
+bool Fantasy::CanGo(const Position& from, Physics::Direction direction) const
 {
 	return true;
 }

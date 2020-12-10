@@ -4,7 +4,7 @@
 #include <set>
 #include "Physics/Direction.h"
 
-namespace Game
+namespace Physics
 {
 	class Direction;
 

@@ -156,7 +156,6 @@
   <ItemGroup>
     <ClInclude Include="Box.h" />
     <ClInclude Include="Direction.h" />
-    <ClInclude Include="El.h" />
     <ClInclude Include="FluidDynamics.h" />
     <ClInclude Include="IEnvironment.h" />
     <ClInclude Include="Material.h" />
@@ -171,6 +170,7 @@
   <ItemGroup>
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Direction.cpp" />
+    <ClCompile Include="FluidData.cpp" />
     <ClCompile Include="FluidDynamics.cpp" />
     <ClCompile Include="Matetrial.cpp" />
     <ClCompile Include="Plane.cpp" />

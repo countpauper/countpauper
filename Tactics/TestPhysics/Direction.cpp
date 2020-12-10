@@ -3,11 +3,10 @@
 #include "Physics/Position.h"
 #include "Engine/Geometry.h"
 
-namespace Game
+namespace  Physics
 {
 namespace Test
 {
-
 
 TEST(DirectionTest, None)
 {

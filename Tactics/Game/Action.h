@@ -61,8 +61,8 @@ namespace Game
 
 	{
 	public:
-		DirectedAction(Direction trajectory);
-		const Direction trajectory;
+		DirectedAction(Physics::Direction trajectory);
+		const Physics::Direction trajectory;
 	};
 
 }   // ::Game
