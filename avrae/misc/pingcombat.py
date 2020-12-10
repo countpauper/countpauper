@@ -4,3 +4,7 @@
 controllers = {f'<@!{c.controller}>' for c in combat().combatants}
 return ", ".join(controllers)
 </drac2>
+
+# Channels work at least
+
+!test {{ f'<#{ctx.channel.id}>' }}

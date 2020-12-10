@@ -4,24 +4,14 @@ bags=load_json(get('bags','{}'))
 arg_str='&*&'
 args=argparse(arg_str)
 
-# prioritized bags that could contain ranged weapons
-ready_bags=["Equipped","Equipment","Wielded","Held","Worn","Wearing"]
-weapons={	# todo: json svar or default game_data gvar
-	# todo: attack -> ammo (-ammo to override)
-	"Longbow": "Arrow",
-	"Shortbow": "Arrow",
-	"Blowgun": "Blowgun Needle",
-	"Crossbow":"Crossbow Bolt",
-	"Sling": "Sling bullet"
-}
-weapons={weapon.lower():ammo for (weapon,ammo) in weapons.items()}
-
-ammo_containers={
-	"Arrow":"Quiver",
-	"Needle":"Pouch",
-	"Crossbow Bolt":"Case, Crossbow Bolt",
-	"Sling bullets":"Pouch"
-}
+# get configuration in priority order: server, character, global
+var_name='Shoot'
+server_data=load_json(get_svar(var_name,'{}'))
+char_data=load_json(get(var_name,'{}'))
+game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
+ready_bags=server_data.get('equipment',[])+char_data.get('equipment',[])+game_data.get('equipment_bags',[])
+weapons=server_data.get('weapons', char_data.get('weapons', game_data.get('ranged_weapons')))
+ammo_containers=server_data.get('ammo', char_data.get('ammo', game_data.get('ammo_bags')))
 
 # explicit argument attacks
 attack_options=None
@@ -31,22 +21,30 @@ if len(arg_str):
 		attack_options=[a.name for a in c.attacks if first_arg.lower() in a.name.lower()]
 # else all recognized ranged attacks
 if attack_options is None:
-	attack_options = [a.name for a in c.attacks if any([weapon in a.name.lower() for weapon in weapons.keys()])]
+	attack_options = [a.name for a in c.attacks if any([weapon.lower() in a.name.lower() for weapon in weapons.keys()])]
 if not attack_options:
-	return 'echo No ranged attack options. Add some on your sheet and `!update` or on the dashboard or by using `!a add`.'
+	return f"""echo No known ranged attack listed. You can add some on your sheet, dashboard or using `!a add`.
+If the attack name contains one of {", ".join(weapons.keys())} it will be automatically selected. 
+Altenatively you can specify an existing attack as the first argument to throw it."""
 
 original_attacks = attack_options
 # auto resolve attack matching the wielded weapon
+ignore = args.last('i')
 equipment_bags = []
 if bags:
 	# check all ready_bags if they exist
-	for rb in ready_bags:	# ordered so equipment bags are ordered
+	for rb in ready_bags:	# ordered so equipment bags are priotized
 		equipment_bags+=[b for b in bags if b[0].lower()==rb.lower()]
-	if not equipment_bags:
+	if not equipment_bags and not ignore:
 		return f'echo No valid equipped weapon bags. Create a bag using `!bag $ "{ready_bags[0]}"`. Other valid bag names are: {", ".join(ready_bags[1:])}'
 
-	# filter out all attack options matching (case insentive) with items that are equipped
-	attack_options = [ao for ao in attack_options if any([ao.lower() in [ek.lower() for ek in eb[1].keys()] for eb in equipment_bags])]
+	# filter out all attack options matching (partial and case insentive) with items that are equipped
+	if not ignore:
+		equipped_items = []
+		for eb in equipment_bags:
+			equipped_items += eb[1].keys()
+		attack_options = [ao for ao in attack_options if any([ao.lower() in item.lower() for item in equipped_items])]
+
 	equipment_bags = [eb[0] for eb in equipment_bags]
 	if not attack_options:
 		return f'echo No valid attack options. Make sure you equip a matching weapon using `!bag {equipment_bags[0]} + "{original_attacks[0]}"` '
@@ -57,9 +55,11 @@ if len(attack_options)>1:
 attack_name=attack_options[0]
 
 ammo_name = args.last('ammo')
+specific_ammo=True
 if not ammo_name:
 	# partial case insensitive weapon to attack matches, to allow for +1 weapons
-	ammo_matches = [ammo_name for (weapon_name, ammo_name) in weapons.items() if weapon_name in attack_name.lower()]
+	ammo_matches = [weapon.get('ammo') for (weapon_name, weapon) in weapons.items() if weapon_name.lower() in attack_name.lower()]
+	specific_ammo = False
 	if ammo_matches:
 		ammo_name = ammo_matches[0]
 	else:
@@ -72,7 +72,13 @@ ammo_plural = ammo_name+('s' if ammo_name[-1]!='s' and ammo_name[-1:].isalpha() 
 ammo_names = [ammo_name, ammo_plural]
 ammo_names+=[a.lower() for a in ammo_names]
 
-
+ammo_split = ammo_name.split('+',maxsplit=1)
+bonus_str=''
+if len(ammo_split)>1:
+	bonus_postfix = ammo_split[1]
+	if f'+{bonus_postfix}' not in attack_name and bonus_postfix.isdigit():
+		bonus = int(bonus_postfix)
+		bonus_str=f'magical  -b {bonus} -d {bonus}'
 
 ammo_bag_names=[ammo_container for (contained_ammo,ammo_container) in ammo_containers.items() if contained_ammo.lower() in ammo_name.lower()]
 ammo_bag_names+=[eb for eb in equipment_bags]
@@ -81,8 +87,6 @@ ammount =  len(args.get('t'))
 if ammount==0:
 	ammount=1
 ammount *= int(args.last('rr',1))
-
-# TODO: add bonuses of +1-3 ammo automatically
 
 if bags:
 	# collect all existing ammo bags, sorted by preference
@@ -111,7 +115,10 @@ if bags:
 						ammo_items.pop(item)
 				used+=use
 	if used<ammount:
-		return f'echo There are not enough {ammo_plural} left in your {bag_name.lower()}. You can add some using `!bag {bag_name} + {ammount-used} "{ammo_name}"`'
+		if specific_ammo:
+			return f'echo There are not enough {ammo_plural} left in your {bag_name.lower()}. You can add some using `!bag "{bag_name}" + {ammount-used} "{ammo_name}"`.'
+		else:
+			return f'echo There are not enough mundane {ammo_plural} left in your {bag_name.lower()}. You can add some using `!bag "{bag_name}" + {ammount-used} "{ammo_name}"`. To specify magic ammo use the `-ammo "<Item>"` argument.'
 	field = f'-f "{bag_name}|{total-used} [{-used}] {ammo_name.lower()}{"s" if used > 1 else ""}"'
 	# apply the changes
 	character().set_cvar('bags', dump_json(bags))
@@ -122,5 +129,5 @@ else:
 		bag_name='Ammo'
 	field = f'-f "{bag_name}|{-ammount}"'
 
-return f'a {attack_name} {arg_str} {field}'
+return f'a {attack_name} {arg_str} {bonus_str} {field}'
 </drac2>

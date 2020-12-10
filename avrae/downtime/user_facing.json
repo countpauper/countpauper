@@ -110,5 +110,26 @@
     "Navigator's Tools",
     "Thieves' Tools",
     "Poisoner's Kit"
-  ]
+  ],
+  "equipment_bags": ["Equipped","Equipment","Wielded","Held","Worn","Wearing"],
+  "ranged_weapons":{
+	"Longbow": {"ammo": "Arrow"},
+	"Shortbow": {"ammo": "Arrow"},
+	"Blowgun": {"ammo": "Blowgun Needle"},
+	"Crossbow": {"ammo":"Crossbow Bolt"},
+	"Sling": {"ammo": "Sling bullet"},
+    "Handaxe":{"ammo": "Handaxe"},
+    "Spear":{"ammo": "Spear"},
+    "Javelin":{"ammo": "Javelin"},
+    "Light Hammer":{"ammo": "Light Hammer"},
+    "Dart":{"ammo": "Dart"},
+    "Trident":{"ammo": "Trident"},
+    "Net":{"ammo": "Net"}
+  },
+  "ammo_bags":{
+	"Arrow":"Quiver",
+	"Blowgun Needle":"Pouch",
+	"Crossbow Bolt":"Case, Crossbow Bolt",
+	"Sling Bullet":"Pouch"
+  }
 }
