@@ -2,72 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../Tactics/Game/El.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tactics/Physics/FluidData.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/shoot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Action.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Action.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Action.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Action.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Actor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Actor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Actor.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Actor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Attack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Attack.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Attack.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Attack.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Box.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Box.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/FluidData.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Future.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Future.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Future.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Future.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Game.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Game.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Game.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Game.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Game.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Game.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Game.vcxproj.filters" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/IGame.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/IGame.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Location.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Location.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Location.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Location.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bladesong/test_bladsong.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Element.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Element.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Game/Map.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Map.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Map.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Map.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Move.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Move.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Object.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Object.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Plan.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Plan.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Plan.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Plan.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/React.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/React.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/React.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/React.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Skill.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Skill.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Skill.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Skill.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/State.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/State.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/State.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/State.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Target.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Target.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Box.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Box.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Box.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Direction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Direction.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Direction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Direction.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/El.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Material.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Material.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Matetrial.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Matetrial.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Physics.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Physics.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Physics.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Physics.vcxproj.filters" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Plane.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Plane.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Plane.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Plane.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Position.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Position.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Position.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Position.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Voxel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Voxel.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Voxel.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Voxel.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Tactics/Data/Physics.map" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Tactics/Data/Physics.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Tactics/Data/Voxel.map" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Tactics/Data/Voxel.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/TestGame.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/TestGame.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Direction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Direction.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Position.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Position.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/healing kit.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/healing kit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/bladesong.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/bladesong.txt" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/bladesong_snippet.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong_snippet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/bsadv.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bsadv.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/bsbonus.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bsbonus.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/defense.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/defense.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/victory.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/victory.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -250,9 +196,10 @@
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606556646344" />
     <state x="667" y="174" width="585" height="732" key="find.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1602861134503" />
-    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup" timestamp="1605197512750">
-      <screen x="0" y="0" width="1920" height="1080" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1607699329152">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1607699329152" />
     <state x="623" y="235" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1605197512750" />
   </component>
   <component name="XDebuggerManager">

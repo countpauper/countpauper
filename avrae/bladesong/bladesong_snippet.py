@@ -1,7 +1,7 @@
 <drac2>
-n, c = 'Bladesong', combat()
+cc, c = 'Bladesong', combat()
 me = c.me if c else None
-if (me and not me.get_effect(n)) or (not me and get(n,'').lower()!='true'):
+if me and not me.get_effect(cc):
 	return '-f Bladesong|"Not Active" '
 bonus = max(intelligenceMod,1)
 if ctx.alias in ('c','check'):

@@ -9,20 +9,25 @@ https://github.com/countpauper/countpauper/tree/master/avrae/bladesong
 
 If you have any issues, you can post them on github or ping me on the avrae dev server.
 
+** Bladesong alias **
+`!bladesong` Uses bladesong effect with 1 minute remaining.
+`!bladesong <turns>`: Activates bladesong in combat, with a number of <turns> remaining. This can be used if bladesong was used before combat.
+`!bladesong off|0`: Deactivates bladesong.
+`!bladesong [<turns>] -i`: Activates bladesong, without uses or restrictions.
+
+The `!bladesong` alias uses the same name as an older server alias, which is not compatible with the snippets. If that causes problems it can be renamed with `!alias autofix` or `!bs` can be used.
 
 
+!bladesong defense [<level>] [-i]`: use song of defense, expending the given spell slot to reduce damage. It checks if bladesong is active. The default spell slot is 1.
 
 
 ** Bladesong alias **
-`!bladesong` Uses bladesong effect with 1 minute remaining.
+`!bs` Uses bladesong effect with 1 minute remaining.
 `!bs <turns>`: Activates bladesong in combat, with a number of <turns> remaining. This can be used if bladesong was used before combat.
 `!bs off|0`: Deactivates bladesong.
-`!bladesong [<turns>] -i: Activates bladesong, without class or uses per rest restriction.
+`!bs [<turns>] -i`: Activates bladesong, without uses or restrictions.
 
-
-
-
-`!bs defense [<level>] [-i]`: use song of defense, expending the given spell slot to reduce damage. It checks if bladesong is active. The default is 1.
+`!bs defense [<level>] [-i]`: use song of defense, expending the given spell slot to reduce damage. It checks if bladesong is active. The default spell slot is 1.
 
 
 

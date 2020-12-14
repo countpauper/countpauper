@@ -1,0 +1,98 @@
+# help
+!help bladesong
+!bladesong help
+
+# non wizard can still do everything with -i
+!char yue
+!bladesong
+!bs
+!bladesong off
+!bladesong defense
+!bladesong -i
+!i begin
+!i join
+!bladesong 8 -i
+!c acro bladesong
+!s con bladesong
+!bladesong off
+!i end
+!bladesong off -i
+
+# non !level users can still use bladesong
+!char tara
+!cc delete Bladesong
+!cvar delete subclass
+!bladesong
+!bladesong off
+!level wizard 5 evocation
+!bladesong
+!level wizard 5 bladesinger
+#  snippets and defense work while bladesinging
+!bladesong
+!c acro bladesong
+!c acro bsadv
+!s con bladesong
+!s con bsbonus
+!a sword bladesong
+!a sword victory
+!bladesong defense
+# mismatches snippets do not work
+!c acro bsbonus
+!c acro victory
+!s con bsadv
+!s con victory
+!a sword bsadv
+# bsbonus should also work with attacks
+!a sword bsbonus
+
+# snippets work when not bladesinging outside of combat
+!bladesong off
+!c acro bladesong
+!c acro bsadv
+!s con bladesong
+!s con bsbonus
+!a sword bladesong
+!a sword victory
+!bladesong defense
+
+# snippets and defense do not work in combat when not singing and tell to use !bbs
+!i begin
+!i join
+!c acro bladesong
+!c acro bsadv
+!s con bladesong
+!s con bsbonus
+!a sword bladesong
+!a sword victory
+!bladesong defense
+!bs defense
+# defense works with -i
+!bladesong defense -i
+!bladesong defense 2 -i
+
+#snippets and defense work in combat
+!bladesong
+!bs
+!cc
+!c acro bladesong
+!c acro bsadv
+!s con bladesong
+!s con bsbonus
+!a sword bladesong
+!a sword victory
+!bladesong defense
+
+# bladsong defense checks and uses the right slots and tells you what to heal (should suggest !g hp)
+!help bladesong defense
+!bladesong defense help   # TODO
+!bs defense
+!g hp -13
+!bladesong defense
+!g hp +5     # COPY from embed
+!bladesong defense 2
+!g hp max
+!bladesong defense 9
+!bladesong defense 2
+!bs defense 2
+!bs defense 2
+
