@@ -1,7 +1,7 @@
 <drac2>
 arg=&ARGS&
 ch=character()
-WizardLevel=get('WizardLevel',0)
+WizardLevel=int(get('WizardLevel',0))
 c=combat()
 me = c.me if c else None
 ignore = '-i' in arg
