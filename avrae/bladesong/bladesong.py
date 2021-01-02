@@ -10,7 +10,7 @@ if not ignore:
 	if exists('subclass'):
 		subclass = load_json(subclass).get("WizardLevel","").lower()
 		if  subclass not in ["bladesinger","bladesinging"]:
-			return f'echo The Bladesinger subclass is not set. Use `!level Wizard {WizardLevel} Bladesinger`'
+			return f'echo The Bladesinger subclass is not set. Use `!level Wizard {WizardLevel} Bladesinging`'
 
 ch=character()
 bladesongs = 0

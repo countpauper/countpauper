@@ -46,8 +46,14 @@
   "shop":
   {
     "particle":"shopping",
-    "text":"You look around, but you can't find anything worthwhile.",
-    "items": {"cp": "-1d6"}
+    "table":{
+      "skill": "investigation",
+      "default": { "text":"You spend your time shopping, but don't find any deals." },
+      "12": { "text": "You find a general goods store that is overstocked. You can get 20% off of all adventuring gear" },
+      "16": { "text": "The fletcher is having a sale. All ammunition two for the price of one."},
+      "18": { "text": "Times are peaceful. The smith has a large order of weapons canceled. You can get 20% off of all mundane weapons and medium armor."},
+      "23": { "text": "With coffee prices so low, the local wizard has been especially prolific. 20% off of all spell scrolls of 3rd level and lower."}
+    }
   },
   "steal":
   {
