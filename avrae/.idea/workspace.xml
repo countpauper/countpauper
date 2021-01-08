@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Monk/deflect.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Monk/flurry.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Monk/ma.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Monk/patient.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Monk/return.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Monk/slow.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Monk/step.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Monk/stun.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bladesong/help.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
@@ -40,8 +33,6 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bladesong/bladesong.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/downtime/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
