@@ -12,7 +12,7 @@ if not ignore:
 	if not ch.cc_exists(cc):
 		err(f'You don\'t have {cc}, use `!level Monk {MonkLevel}`')
 	if not ch.get_cc(cc):
-		err(f'You don\'t have any {cc} left. you need to rest first.')
+		err(f'You don\'t have any {cc} left. You need to rest first.')
 
 	ch.mod_cc(cc,-1)
 	field+=f'-f "{cc}|{ch.cc_str(cc)}"'

@@ -2,8 +2,8 @@ drac2>
 cc='Ki Points'
 ch=character()
 args=&ARGS&
-ignore=argparse(args).last('i',False)
-if ignore:
+
+if ignore:=argparse(args).last('i',False):
 	args.remove('-i')
 MonkLevel = int(get('MonkLevel', 0))
 dmg = None
@@ -20,7 +20,7 @@ if not ignore:
 	if not ch.cc_exists(cc):
 		err(f'You don\'t have {cc}, use `!level Monk {MonkLevel}`')
 	if not ch.get_cc(cc):
-		err(f'You don\'t have any {cc} left. you need to rest first.')
+		err(f'You don\'t have any {cc} left. You need to rest first.')
 
 	ch.mod_cc(cc,-1)
 	field+=f'-f "{cc}|{ch.cc_str(cc)}"'
