@@ -9,22 +9,22 @@ dc = args.last('dc', 8 + proficiencyBonus + wisdomMod)
 field=f'-desc "When you hit another creature with a melee weapon Attack, you can spend 1 ki point to attempt a Stunning Strike. The target must succeed on a Constitution saving throw [DC {dc}] or be Stunned until the end of your next turn."'
 
 # Counter
+targets=args.get('t')
 if not ignore:
+	ki = max(1, len(targets))
 	if not ch.cc_exists(cc):
 		err(f'You don\'t have {cc}, use `!level Monk {MonkLevel}`')
-	if not ch.get_cc(cc):
-		err(f'You don\'t have any {cc} left. You need to rest first.')
+	if ch.get_cc(cc)<ki:
+		err(f'You don\'t have {ki} {cc} left. You need to rest first.')
 
-	ch.mod_cc(cc,-1)
-	field+=f' -f "{cc}|{ch.cc_str(cc)}"'
+	ch.mod_cc(cc,-ki)
+	field+=f' -f "{cc} [-{ki}]|{ch.cc_str(cc)}"'
 else:
 	field+=f' -f "{cc}|Not used"'
 
 c=combat()
 me = c.me if c else None
-targets=args.get('t')
 if me and targets:
-
 	targets=[t.split('|') for t in targets]
 	targets={t[0]:t[1:] for t in targets if t}
 	combatants={t:c.get_combatant(t) for t in targets.keys()}
