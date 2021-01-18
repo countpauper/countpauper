@@ -19,6 +19,7 @@
 
 # simple maths: http://www.darkshire.net/~jhkim/rpg/systemdesign/torben_rpg_dice.pdf
 # maths: https://stats.stackexchange.com/questions/3614/how-to-easily-determine-the-results-distribution-for-multiple-dice
+# dnd maths: https://stats.stackexchange.com/questions/116792/dungeons-dragons-attack-hit-probability-success-percentage/116913#116913
 # max dice math: https://math.stackexchange.com/questions/1696623/what-is-the-expected-value-of-the-largest-of-the-three-dice-rolls/
 # roller (seem to do it the hard waym but good to compare): http://topps.diku.dk/torbenm/troll.msp
 
@@ -96,6 +97,15 @@ for term in expression:
 		dice_ops=[[dice_part[i],int(dice_part[i+1])] for i in range(0,len(dice_part),2) if dice_part[i+1].isnumeric()]
 		while dice_ops:
 			op=dice_ops.pop()
+			# drop lowest dice is the same as keep highest rest
+			if op[0]=='pl':
+				op[0]='kh'
+				op[1]=dice-op[1]
+			# drop highest is the same as keep lowest rest
+			if op[1]=='ph':
+				op[0]='kl'
+				op[1]=dice-op[1]
+
 			if op[0]=='kh':
 				# kh: reduce die_size and power 1-p to the power of number of dice-op[1]
 				if op[1]!=1:
