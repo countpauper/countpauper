@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/misc/quickbag.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
@@ -32,6 +33,7 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/chance.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/chance_py.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/chance_py.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -189,25 +191,25 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="686" y="182" key="#random_shuffle/0.0.1920.1080@0.0.1920.1080" timestamp="1603451883503" />
-    <state width="1882" height="343" key="GridCell.Tab.0.bottom" timestamp="1610892193480">
+    <state width="1882" height="162" key="GridCell.Tab.0.bottom" timestamp="1610896896892">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1882" height="343" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1610892193480" />
+    <state width="1882" height="162" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1610896896892" />
     <state width="1882" height="170" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
-    <state width="1882" height="343" key="GridCell.Tab.0.center" timestamp="1610892193480">
+    <state width="1882" height="162" key="GridCell.Tab.0.center" timestamp="1610896896892">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1882" height="343" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1610892193480" />
+    <state width="1882" height="162" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1610896896892" />
     <state width="1882" height="170" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
-    <state width="1882" height="343" key="GridCell.Tab.0.left" timestamp="1610892193480">
+    <state width="1882" height="162" key="GridCell.Tab.0.left" timestamp="1610896896892">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1882" height="343" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1610892193480" />
+    <state width="1882" height="162" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1610896896892" />
     <state width="1882" height="170" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
-    <state width="1882" height="343" key="GridCell.Tab.0.right" timestamp="1610892193480">
+    <state width="1882" height="162" key="GridCell.Tab.0.right" timestamp="1610896896892">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1882" height="343" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1610892193480" />
+    <state width="1882" height="162" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1610896896892" />
     <state width="1882" height="170" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
     <state width="1882" height="343" key="GridCell.Tab.1.bottom" timestamp="1610892193480">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -247,10 +249,10 @@
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1609791356024" />
     <state x="667" y="174" width="585" height="732" key="find.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1602861134503" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1610821341445">
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1610988629703">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1610821341445" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1610988629703" />
     <state x="623" y="235" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1605197512750" />
   </component>
   <component name="XDebuggerManager">
@@ -273,7 +275,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/misc/chance_py.py</url>
-          <line>7</line>
+          <line>21</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
