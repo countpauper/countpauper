@@ -1,4 +1,12 @@
+import math
 # reference: https://topps.diku.dk/torbenm/troll.msp
+
+def bnc(n,k):
+	return math.factorial(n)/(math.factorial(k)*math.factorial(n-k))
+
+
+def precompute(dice):
+	return [[int(bnc(die,d)) for d in range(die)] for die in range(0,dice)]
 
 def roll(die):
 	return [1.0/die]*die
@@ -49,30 +57,60 @@ def kh1(dice, p):
 	die=len(p)
 	pkh1=[]
 	for v in range(die):
-		comb=[[],[1],[1,2],[1,3,3],[1,4,6,4],[1,2,7,10,5]]
-		pv = [comb[dice][0]]
+		# comb(dice,die) where d=dice-d-1
+		cb=precompute(dice+1) #[[],[1],[1,2],[1,3,3],[1,4,6,4],[1,5,10,10,5]]
+		np = []
 		for d in range(dice):
-			np=[]
+			#d=id-1
 			# TODO: divide d=2 by d=1  to generalize to any number of dice
-			if d==1:
-				np+=[comb[dice][d]*ip for ip in p[:v]]
-			#for d2 in range(1,d):
-			#	np=[ip1*ip2 for ip1 in np for ip2 in p[:v]]
-			if d==2:
-				np+=[comb[dice][d]*ip0*ip1 for ip0 in p[:v] for ip1 in p[:v]]
-			if d==3:
-				np+=[comb[dice][d]*ip0*ip1*ip2 for ip0 in p[:v] for ip1 in p[:v] for ip2 in p[:v]]
+			#if d==3:
+			#	np+=[comb[dice][d]*ip0*ip1*ip2 * p[v]**(dice-d) for ip0 in p[:v] for ip1 in p[:v] for ip2 in p[:v]]
+			#if d==2:
+			#	np+=[comb[dice][d]*ip0*ip1 * p[v]**(dice-d) for ip0 in p[:v] for ip1 in p[:v]]
+			#if d==1:
+			#	np+=[comb[dice][d]*ip * p[v]**(dice-d) for ip in p[:v]]
+			#if d==0:
+			#	np+=[comb[dice][d] * p[v]**(dice-d)]
 
-			pv+=np
-			pv=[ip*p[v] for ip in pv]
-		pkh1.append(sum(pv))
+			# print(f'comb({dice},{d} = {bnc(dice,dice-d-1)} vs {cb[dice][d]}')
+			# sum to optimize
+			np=[sum([npi * pvi for npi in np for pvi in p[:v]])]
+			np+=[cb[dice][-(d+1)] * p[v]**(d+1)]
+		pkh1.append(sum(np))
 	return pkh1
 
+
+def kl1(dice, p):
+	die=len(p)
+	pkl1=[]
+	for v in range(die):
+		cb=precompute(dice+1) #[[],[1],[1,2],[1,3,3],[1,4,6,4],[1,5,10,10,5]]
+		np = []
+		for d in range(dice):
+			np=[sum([npi * pvi for npi in np for pvi in p[:v]])]
+			np+=[cb[dice][-(d+1)] * p[v]**(d+1)]
+		pkl1.append(sum(np))
+	return pkh1
+
+
+def test(label, result, expected, error=0.001):
+	errors=[abs(r-e) for r,e in zip(result,expected)]
+	fail=any([e>error for e in errors])
+	total=sum(result)
+	if abs(total-1)>error:
+		fail=True
+	if fail:
+		print(f'{label} FAIL {result} = {total:.3f} expected ['+ ','.join([f'{expect} ({e})' for expect,e in zip(expected,errors)])+']')
+	else:
+		print(f'{label} SUCCESS {result}')
+
 if __name__ == "__main__":
-	# lamest unit test ever
-	print(f"2d4kh1: {kh1(2, roll(4))}  should be 0.0625, 0.1875, 0.3125, 0.4375")
-	print(f"3d4kh1: {kh1(3, roll(4))}  {sum(kh1(3, roll(4)))} should be 0.015625, 0.109375, 0.29788, 0.57813" )
-	print(f"4d4kh1: {kh1(4, roll(4))}  {sum(kh1(4, roll(4)))} should be 0.0391, 0.05859, 0.25391, 0.68359" )
-	print(f"1d20roX: {ro(10, roll(20))}  {sum(ro(10, roll(20)))} should be 0.0025, 0.0525...." )
-	print(f"1d4kh1: {kh1(1, roll(4))}  should be all 0.25")
+	print(precompute(10))
+	test('1d4kh1', kh1(1, roll(4)),  [0.25]*4)
+	test('2d4kh1', kh1(2, roll(4)), [0.0625, 0.1875, 0.3125, 0.4375])
+	test('3d4kh1', kh1(3, roll(4)),  [0.015625, 0.109375, 0.296875, 0.578125])
+	test('4d4kh1', kh1(4, roll(4)) , [0.00390625, 0.05859375, 0.25390625, 0.68359375])
+	test('5d4kh1', kh1(5, roll(4)) , [0.000976563, 0.030273438, 0.206054688, 0.762695313])
+	test('1d20roX', ro(1, roll(20)),  [0.0025] + [0.0525]*19)
+	test('3d4kl1', kl1(3, roll(4)),  [0.57812, 0.29687	, 0.10938, 0.01563])
 

@@ -110,16 +110,16 @@ for term in expression:
 				# kh: reduce die_size and power 1-p to the power of number of dice-op[1]
 				if op[1]!=1:
 					err('Query error: `{term}` Keeping more or less than 1 die is not yet supported.')
+				# precomputed binomial coefficient, TODO move to gvar
+				bnc = [[], [1], [1, 2], [1, 3, 3], [1, 4, 6, 4], [1, 5, 10, 10, 5], [1, 6, 15, 20, 15, 6], [1, 7, 21, 35, 35, 21, 7], [1, 8, 28, 56, 70, 56, 28, 8], [1, 9, 36, 84, 126, 126, 84, 36, 9]]
+				pp=p[:]
 				for v in range(die_size):
+					np = []
 					for d in range(dice):
-						pV=1
-						for v in range(die_size):
-							pV*=p[v]
-
-					p[v]=((v+1) ** dice)/(die_size ** dice) - prev_p	# TODO: don't assume even chance it's chance for p multiplied by previous chances or something
-					prev_p=+p[v]
-				#p=[o * (o+(1+dropped_dice)*v/die_size)**dropped_dice for v,o in enumerate(p)]
-				dice=1
+						np = [sum([npi * pvi for npi in np for pvi in pp[:v]])]
+						np += [bnc[dice][-(d + 1)] * pp[v] ** (d + 1)]
+					p[v]=sum(np)
+				dice=op[1]
 			elif op[0]=='kl':
 				# kl: reduce die_size and power p to the power of number of dice-op[1]
 				dropped_dice=dice-op[1]
