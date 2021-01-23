@@ -3,7 +3,8 @@
 #* create a backup and subcommand undo
 # help sub command
 # Add capped removal items back to show in failed
-# Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
+#*  Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
+#*  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
 # with default bag, remove from any bag ? (split up removal from addition?)
 # delta before bag selection doesn't add multiple but select an indexed copy [1 is first -1 is last]
 # $ prefix buys (automatically remove coins), but change?
@@ -29,13 +30,15 @@ config=load_json(sv if sv else get(var_name,get_gvar('71ff40cc-4c5f-4ae5-bdb6-32
 # TODO add to quickbag gvar and add svar override
 purse_names=config.get('purses',[])
 equipped_names=config.get('equipment',[])
-ammo_containers=config.get('ammo',[])  # TODO: these make it impossible to add or remove with partial matching crossbow bolts,['case, crossbow bolt','crossbow bolt case']
+ammo_containers=config.get('ammo',[])
 containers=config.get('containers',[]) + equipped_names + ammo_containers + purse_names
 specific_bags=purse_names + ammo_containers
 sets=config.get('packs',{})
 sets.update(config.get('backgrounds',{}))
 sets={n.lower():c for n,c in sets.items()}
 coins=config.get('coins',[])
+item_list=[i for i in item_table.keys() if i not in sets.keys()]
+
 
 # find the purse bag
 coin_bags = [idx for idx,b in enumerate(bags) if b[0].lower() in purse_names]
@@ -45,11 +48,18 @@ coin_idx = coin_bags[0] if coin_bags else None
 delta=1
 buy=False
 bag_idx=None	# track selection using index for report
+debug_break=1024
+if args[0].startswith('break='):
+	debug_break=int(args.pop(0)[6:])
 debug=[]
 report={}	# list of modified bags: {bagidx:{item_name:[amount deltas]}], could be bag index to resolve reuse
 fail='fail'
 
 while args:
+	# debug break
+	debug_break-=1
+	if debug_break<=0:
+		return f'echo **Debug: *{debug}* arguments remaining `{args}`'
 	# debug.append(str(args))
 	arg=args.pop(0)
 
@@ -60,8 +70,8 @@ while args:
 	elif arg[0]=='-':
 		delta=-delta
 		arg=arg[1:]
-	elif arg[0]=='+':
-		arg=arg[1:]
+	elif arg[0] == '+':
+		arg = arg[1:]
 
 	if delta==1 and arg.isnumeric():
 		delta=int(arg)
@@ -69,6 +79,12 @@ while args:
 	elif delta==-1 and arg.isnumeric():
 		delta=-int(arg)
 		continue
+
+	if arg and arg[0]=='~':
+		partial=True
+		arg=arg[1:]
+	else:
+		partial=False
 
 	if not arg:	# spaces after prefixes are allowed, just continue parsing next argument
 		continue
@@ -81,8 +97,10 @@ while args:
 		continue
 
 	# select to existing bags if the delta is 1 and arg
-	existing_bags = [idx for idx,b in enumerate(bags) if item_name.lower()==b[0].lower()]
-	existing_bags += [idx for idx,b in enumerate(bags) if item_name.lower() in b[0].lower()]
+	if partial:
+		existing_bags = [idx for idx,b in enumerate(bags) if item_name.lower() in b[0].lower()]
+	else:
+		existing_bags = [idx for idx,b in enumerate(bags) if item_name.lower()==b[0].lower()]
 	if delta==1 and existing_bags:
 		bag_idx=existing_bags[0]
 		bag=bags[bag_idx]
@@ -119,7 +137,10 @@ while args:
 
 	## Add: new bags
 	if delta==1:
-		new_bags=[nb for nb in containers if item_name in nb]
+		if partial:
+			new_bags=[nb for nb in containers if item_name in nb]
+		else:
+			new_bags=[nb for nb in containers if item_name==nb]
 		if new_bags:
 			new_bag=new_bags[0].title()
 			bags.append([new_bag,{}])
@@ -136,17 +157,18 @@ while args:
 		default_bags=[b[0] for b in bags if b[0].lower() not in specific_bags]
 		# queue switching to the default bag explicitly and adding the current item. create arg basic one if none found
 		default_bag=default_bags[0] if default_bags else containers[0]
-		args=[default_bag,str(delta),arg]+args
+		args=[default_bag ,str(delta),arg]+args
 		debug.append(f'Default {default_bag}')
 		delta=1
 		continue
 
 	###  ITEMS
 	bag = bags[bag_idx]
-
-	# Modify: find items already in the current bag
-	mod_items=[n for n in bag[1].keys() if item_name==n.lower()]
-	mod_items+=[n for n in bag[1].keys() if item_name in n.lower()]
+	# Modify: find items already in the current bag, always use partial match first
+	if partial:
+		mod_items=[]
+	else:
+		mod_items = [n for n in bag[1].keys() if item_name in n.lower()]
 	if mod_items:
 		mod_item=mod_items[0]
 		current=bag[1].get(mod_item)
@@ -167,10 +189,10 @@ while args:
 		continue
 
 	# NEW known items
-	new_items = [n for n in item_table.keys() if item_name == n]
-	new_items += [n for n in item_table.keys() if item_name in n]
-	# filter out exact sets because Priest's pack and such is both
-	new_items=[n for n in new_items if n not in sets.keys()]
+	if partial:
+		new_items += [n for n in item_list if item_name in n]
+	else:
+		new_items = [n for n in item_list if item_name == n]
 	if delta>0 and new_items:
 		new_item=new_items[0].title().replace("'S","'s")
 		bag[1][new_item]=delta
@@ -184,17 +206,24 @@ while args:
 		continue
 
 	# Sets: add all of a set's contents to the arguments and parse as normal
-	item_set = [n for n in sets.keys() if item_name==n]
-	item_set += [n for n in sets.keys() if item_name in n]
+	if partial:
+		item_set += [n for n in sets.keys() if item_name in n]
+	else:
+		item_set = [n for n in sets.keys() if item_name==n]
 	if delta>0 and item_set:
-		new_items=[]
 		item_set=item_set[0]
 		set_items=sets[item_set]
+		added_args=[]
 		for item_name,q in set_items.items():
-			new_items+=[str(q),item_name]
-		args=new_items * delta + args
+			added_args+=[str(q),item_name]
+		args=added_args * delta + args
 		debug.append(f'Set {item_set}')
 		delta=1
+		continue
+
+	# try again with partial prefix
+	if not partial:
+		args=[f'~{arg}'] + args
 		continue
 
 	# Lowest priority: unrecognized item

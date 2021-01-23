@@ -43,7 +43,7 @@
   },
   "purses":["coin pouch"],
   "equipment": ["equipped","equipment","wearing","worn","held"],
-  "ammo":["quiver","pouch"],
+  "ammo":["quiver","pouch","case, crossbow bolt","crossbow bolt case"],
   "containers":["sack","backpack","chest","basket","scroll case","map case","case, map or scroll","basket"],
   "coins": ["cp","sp","ep","gp","pp"]
 }
