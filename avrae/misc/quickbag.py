@@ -1,22 +1,22 @@
 <drac2>
 # TODO: recognize packs as argument and use the official gvar to add them
 #* create a backup and subcommand undo
-# create coin pouch automatically if needed on coin change, using coins
-# make change up, by attempting to remove some bigger coins and then adding the change
-
-# remove whole bag with delta -1.. this might conflict (syntactically) with bag# negative index. but delta 1 will be add, 2 will be select #2. -1 will be remove -x push -(x-1) back on the queue
-#  removing it from the entire list will mess up the indexing, queue them for removal in the report of separate set
-# help sub command, minimal syntax with doing just !qb
+#* create coin pouch automatically if needed on coin change, using coins
+#* make change up, by attempting to remove some bigger coins and then adding the change
+#* remove whole bag with delta -1.. this might conflict (syntactically) with bag# negative index. but delta 1 will be add, 2 will be select #2. -1 will be remove -x push -(x-1) back on the queue
+#*  removing it from the entire list will mess up the indexing, queue them for removal in the report of separate set
+#* help sub command, minimal syntax with doing just !qb
 # support bag open none one all (current is like one, none is no report, all is add range of bags to report at start)
+# $ prefix buys (automatically remove coins), but change?
 # Add capped removal items back to show in failed
 # *  Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
 # *  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
 # Remove from any/all bags (but selected first) (split up removal from addition?)
-# delta before bag selection doesn't add multiple but select an indexed copy [1 is first -1 is last], add to help
-# $ prefix buys (automatically remove coins), but change?
+# [no] delta before bag selection doesn't add multiple but select an indexed copy [1 is first -1 is last], add to help
 # add recognized class weapons to a worn/equipped bag instead
-# add ammo to ammo bags instead
-# support extra_packs variable like bag
+# add ammo to ammo bags automatically
+# support using coins not in pouch
+# support extra_packs variable used by !bag
 
 args=&ARGS&
 
