@@ -11,6 +11,16 @@ def precompute(dice):
 def roll(die):
 	return [1.0/die]*die
 
+def rolls(dice, p):
+	op=p
+	for _ in range(1,dice):
+		np=[0]*(len(op)+len(p)-1)
+		for v0,p0 in enumerate(p):
+			for v1,p1 in enumerate(op):
+				np[v0+v1]+=p0*p1
+		op=np
+	return op
+
 # Troll: repeat x:=1d20 while x<=5
 def rr(reroll, p):
 	if type(reroll)==int:
@@ -34,7 +44,24 @@ def ro(reroll, p):
 
 
 def kh(dice, keep, p):
-	pass
+	kh1p=kh1(p)
+	sumkh1p=[sum(kh1p[:v]) for v in range(len(kh1p))]
+
+	for _ in range(1,dice):
+		np=[0]*(len(op)+len(p)-1)
+		for v0,p0 in enumerate(p):
+			for v1,p1 in enumerate(op):
+				np[v0+v1]+=p0*p1
+		op=np
+	return op
+
+
+
+	rolld=rolls(keep,p)
+
+	totalp=rolls(keep,p)
+
+	return kh1(dice,p)
 	# other approach: do hk1(p) with dice =1+dice-keep, this is the chance that the dropped dice are < than V
 	# Then enumerate the remaining dice in keep from [1*keep to len(p)*keep]
 	# and make combinations [1,2,3] (preferably unique with a multiplier binomial coefficient for performance)
@@ -79,7 +106,6 @@ def kh1(dice, p):
 		pkh1.append(sum(np))
 	return pkh1
 
-
 def kl1(dice, p):
 	die=len(p)
 	pkl1=[]
@@ -87,11 +113,10 @@ def kl1(dice, p):
 		cb=precompute(dice+1) #[[],[1],[1,2],[1,3,3],[1,4,6,4],[1,5,10,10,5]]
 		np = []
 		for d in range(dice):
-			np=[sum([npi * pvi for npi in np for pvi in p[:v]])]
+			np=[sum([npi * pvi for npi in np for pvi in p[v+1:]])]	# p[v+1:] is the whole difference
 			np+=[cb[dice][-(d+1)] * p[v]**(d+1)]
 		pkl1.append(sum(np))
-	return pkh1
-
+	return pkl1
 
 def test(label, result, expected, error=0.001):
 	errors=[abs(r-e) for r,e in zip(result,expected)]
@@ -106,11 +131,26 @@ def test(label, result, expected, error=0.001):
 
 if __name__ == "__main__":
 	print(precompute(10))
+	# troll: max 3d20
 	test('1d4kh1', kh1(1, roll(4)),  [0.25]*4)
 	test('2d4kh1', kh1(2, roll(4)), [0.0625, 0.1875, 0.3125, 0.4375])
 	test('3d4kh1', kh1(3, roll(4)),  [0.015625, 0.109375, 0.296875, 0.578125])
 	test('4d4kh1', kh1(4, roll(4)) , [0.00390625, 0.05859375, 0.25390625, 0.68359375])
 	test('5d4kh1', kh1(5, roll(4)) , [0.000976563, 0.030273438, 0.206054688, 0.762695313])
+
 	test('1d20roX', ro(1, roll(20)),  [0.0025] + [0.0525]*19)
 	test('3d4kl1', kl1(3, roll(4)),  [0.57812, 0.29687	, 0.10938, 0.01563])
+
+	test('3d6', rolls(3,roll(6)), [0.004630,0.013889,0.027778,0.046296,0.069444,0.097222,0.115741,0.125000,0.125000,0.115741,0.097222,0.069444,0.046296,0.027778,0.013889,0.004630])
+	# x:= 1d4;
+	# y:= if x=1 then 1d4 else x;
+	# u:=1d4;
+	# v:=if u=1 then 1d4 else u;
+	# max { y,v }
+	test('2d4ro1kh1', kh1(2, ro(1,roll(4))),  [0.00391, 0.13672, 0.33203, 0.5273])
+
+	# TODO: 4d6kh3/dl1 Troll: sum largest 3 4d6
+	test('4d6kh3', kh(4, 3, roll(6)),  [0.004630,0.013889, 0.027778, 0.046296, 0.069444, 0.097222, 0.115741, 0.125000, 0.125000, 0.115741, 0.097222,0.069444, 0.046296, 0.027778, 0.013889, 0.004630]) # NB [0] = 3
+
+
 

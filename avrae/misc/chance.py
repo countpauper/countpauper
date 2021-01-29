@@ -94,36 +94,31 @@ for term in expression:
 		p=[1.0/die_size]*die_size
 
 		## handle operators
+		TODO: actually operators are not done in order in the string, but most on the original die and k and d on the set as last
+
+		drop_set={}
+		keep_hi=None
+		keep_lo=None
 		dice_ops=[[dice_part[i],int(dice_part[i+1])] for i in range(0,len(dice_part),2) if dice_part[i+1].isnumeric()]
 		while dice_ops:
 			op=dice_ops.pop()
 			# drop lowest dice is the same as keep highest rest
 			if op[0]=='pl':
-				op[0]='kh'
-				op[1]=dice-op[1]
-			# drop highest is the same as keep lowest rest
-			if op[1]=='ph':
-				op[0]='kl'
-				op[1]=dice-op[1]
-
-			if op[0]=='kh':
-				# kh: reduce die_size and power 1-p to the power of number of dice-op[1]
-				if op[1]!=1:
-					err('Query error: `{term}` Keeping more or less than 1 die is not yet supported.')
-				# precomputed binomial coefficient, TODO move to gvar
-				bnc = [[], [1], [1, 2], [1, 3, 3], [1, 4, 6, 4], [1, 5, 10, 10, 5], [1, 6, 15, 20, 15, 6], [1, 7, 21, 35, 35, 21, 7], [1, 8, 28, 56, 70, 56, 28, 8], [1, 9, 36, 84, 126, 126, 84, 36, 9]]
-				pp=p[:]
-				for v in range(die_size):
-					np = []
-					for d in range(dice):
-						np = [sum([npi * pvi for npi in np for pvi in pp[:v]])]
-						np += [bnc[dice][-(d + 1)] * pp[v] ** (d + 1)]
-					p[v]=sum(np)
-				dice=op[1]
-			elif op[0]=='kl':
-				# kl: reduce die_size and power p to the power of number of dice-op[1]
-				dropped_dice=dice-op[1]
-				dice-=dropped_dice
+				keep_lo=dice-op[1]
+			elif op[1]=='ph':
+				keep_hi=dice-op[1]
+			elif op[0]=='kh':
+				keep_hi=dop[1]
+			elif op[1]=='kl':
+				keeo_lo=op[1]
+			elif op[0]=='k<':
+				TODO drop set all others
+			elif op[0]=='k>':
+				TODO dropset
+			elif op[0]=='k':
+				TODO todo dropset
+			else op[0]=='p':
+				TODO dropset
 			# elif op[0].startsWith('ro'):
 				# ro1 and and ro<die_size> handle as ro<2 or ro>die_size-1, others ... TBD
 				# ro< & ro>, see math
@@ -143,8 +138,28 @@ for term in expression:
 			else:
 				err(f'Dice syntax error: Unsupported operator `{op[0]}` in `{term}`')
 				
-		# rr, same but infinite is ehm ... math
-		# then in the end if die_size still >1 then just ehm ... add multiple copies to terms? 2d6 = 1d6+1d6, but is 3d20kh2 2d20kh1+2d20kh1? pbly not
+		# rr, same but infinite is probably: sum all rerolls and normalize the rest
+
+			if keep_hi is not None:
+				if keep_lo is not None:
+					err('Query error: `{term}` Keeping both high and low dice is not yet supported.)
+				# kh: reduce die_size and power 1-p to the power of number of dice-op[1]
+				if keep_hi!=1:
+					err('Query error: `{term}` Keeping more or less than 1 die is not yet supported.')
+				# precomputed binomial coefficient, TODO move to gvar
+				bnc = [[], [1], [1, 2], [1, 3, 3], [1, 4, 6, 4], [1, 5, 10, 10, 5], [1, 6, 15, 20, 15, 6], [1, 7, 21, 35, 35, 21, 7], [1, 8, 28, 56, 70, 56, 28, 8], [1, 9, 36, 84, 126, 126, 84, 36, 9]]
+				pp=p[:]
+				for v in range(die_size):
+					np = []
+					for d in range(dice):
+						np = [sum([npi * pvi for npi in np for pvi in pp[:v]])]
+						np += [bnc[dice][-(d + 1)] * pp[v] ** (d + 1)]
+					p[v]=sum(np)
+				dice=op[1]
+			elif keep_lo is not None:
+				# kl: reduce die_size and power p to the power of number of dice-op[1]
+				dropped_dice=dice-op[1]
+				dice-=dropped_dice
 
 		if sign<0:
 			p.reverse()

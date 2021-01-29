@@ -35,16 +35,16 @@ if me and targets:
 	en = 'Stunning Strike'
 	parent = me.get_effect(en)
 	if not parent:
-		parent=me.add_effect(en,'',duration=1, end=True,desc='Targets are stunned until the end of your next turn.')
+		parent=me.add_effect(en,'',duration=2, end=True,desc='Targets are stunned until the end of your next turn.')
 	for target, extra in targets.items():
 		target_args=argparse(&ARGS&+extra)
 		combatant = combatants[target]
 		# TODO: to use -b, it would have to manually make the roll string with AliasSaves.get('wisdom').d20(...)+bonus
-		save = combatant.save('wis',target_args.adv(boolwise=True))
+		save = combatant.save('con',target_args.adv(boolwise=True))
 		stunned = False
 		if save.total<dc:
 			stunned = True
-			combatant.add_effect('Stunned','',parent=parent, desc="""A stunned creature is incapacitated (can't act or react), can’t move, and can speak only falteringly.
+			combatant.add_effect('Stunned','', parent=parent, desc="""A stunned creature is incapacitated (can't act or react), can’t move, and can speak only falteringly.
 The creature automatically fails Strength and Dexterity Saving Throws.
 Attack Rolls against the creature have advantage.""")
 		field+=f' -f "{combatant.name}|{save} : {"Failure!" if stunned else "Success!"}|inline"'

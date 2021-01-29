@@ -1,12 +1,18 @@
 <drac2>
-# TODO: regonize packs as argument and use the official gvar to add them
+# TODO: recognize packs as argument and use the official gvar to add them
 #* create a backup and subcommand undo
-# help sub command
+# create coin pouch automatically if needed on coin change, using coins
+# make change up, by attempting to remove some bigger coins and then adding the change
+
+# remove whole bag with delta -1.. this might conflict (syntactically) with bag# negative index. but delta 1 will be add, 2 will be select #2. -1 will be remove -x push -(x-1) back on the queue
+#  removing it from the entire list will mess up the indexing, queue them for removal in the report of separate set
+# help sub command, minimal syntax with doing just !qb
+# support bag open none one all (current is like one, none is no report, all is add range of bags to report at start)
 # Add capped removal items back to show in failed
-#*  Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
-#*  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
-# with default bag, remove from any bag ? (split up removal from addition?)
-# delta before bag selection doesn't add multiple but select an indexed copy [1 is first -1 is last]
+# *  Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
+# *  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
+# Remove from any/all bags (but selected first) (split up removal from addition?)
+# delta before bag selection doesn't add multiple but select an indexed copy [1 is first -1 is last], add to help
 # $ prefix buys (automatically remove coins), but change?
 # add recognized class weapons to a worn/equipped bag instead
 # add ammo to ammo bags instead
@@ -36,7 +42,8 @@ specific_bags=purse_names + ammo_containers
 sets=config.get('packs',{})
 sets.update(config.get('backgrounds',{}))
 sets={n.lower():c for n,c in sets.items()}
-coins=config.get('coins',[])
+coins=config.get('coinRates',{})
+short_words=config.get('forbidden')
 item_list=[i for i in item_table.keys() if i not in sets.keys()]
 
 
@@ -48,7 +55,7 @@ coin_idx = coin_bags[0] if coin_bags else None
 delta=1
 buy=False
 bag_idx=None	# track selection using index for report
-debug_break=1024
+debug_break=None
 if args[0].startswith('break='):
 	debug_break=int(args.pop(0)[6:])
 debug=[]
@@ -57,9 +64,10 @@ fail='fail'
 
 while args:
 	# debug break
-	debug_break-=1
-	if debug_break<=0:
-		return f'echo **Debug: *{debug}* arguments remaining `{args}`'
+	if debug_break:
+		debug_break-=1
+		if debug_break<=0:
+			return f'echo **Debug: *{debug}* arguments remaining `{args}`'
 	# debug.append(str(args))
 	arg=args.pop(0)
 
@@ -89,6 +97,9 @@ while args:
 	if not arg:	# spaces after prefixes are allowed, just continue parsing next argument
 		continue
 
+	if arg in short_words:
+		err(f'`{arg}` is not an item. Use "quotes" for items that consist of more than one word.')
+
 	# TODO: could maybe pop next arg here maybe and remove all the delta=1, buy=False, continue
 
 	# TODO: if 1 is +1 and arg is the name of an existing bag, then select that bag. If it's preceded by $ then add the bag to bags first
@@ -98,7 +109,7 @@ while args:
 
 	# select to existing bags if the delta is 1 and arg
 	if partial:
-		existing_bags = [idx for idx,b in enumerate(bags) if item_name.lower() in b[0].lower()]
+		existing_bags = [idx for idx,b in enumerate(bags) if b[0].lower().startswith(item_name.lower()) or item_name in b[0].lower().split()]
 	else:
 		existing_bags = [idx for idx,b in enumerate(bags) if item_name.lower()==b[0].lower()]
 	if delta==1 and existing_bags:
@@ -113,20 +124,26 @@ while args:
 
 	# TODO: if delta=-1 could delete existing bag and everything in it
 
-	## Coins : if an item is in the coin pouch, change the coins (don't remove)
-	if coin_idx is None:
-		if item_name in coins:
-			err(f'Before adding or removing `{item_name}`, first set your coins using `{ctx.prefix}coins`')
-	else:
-		coins=bags[coin_idx][1]
-		if item_name in coins.keys():
-			current=coins.get(item_name,0)
+	## Create a new purse with all coins if needed
+	if coin_idx is None and item_name in coins.keys() and purse_names:
+		purse_name=purse_names[0]
+		bags.append([purse_name, {coin:0 for coin in coins.keys()}])
+		coin_idx=len(bags)-1
+		# report[coin_idx]={coin:[0] for coin in coins.keys()}
+		report[coin_idx]={purse_name:[1]}
+		debug.append(f'Purse {purse_name}')
+
+	## Coins : if an item is in the coin pouch, change the coins (don't remove the whole entry)
+	if coin_idx is not None:
+		money=bags[coin_idx][1]
+		if item_name in money.keys():
+			current=money.get(item_name,0)
 			if -delta>current:
 				err(f'You don\'t have {-delta} {item_name}.')
-			coins[item_name]=current+delta
+			money[item_name]=current+delta
 
 			# update report
-			diff = report[coin_idx]=report.get(coin_idx,{})
+			diff = report.get(coin_idx,{})
 			diff[item_name]=diff.get(item_name,[])+[current, delta]
 			report[coin_idx]=diff
 
@@ -138,7 +155,7 @@ while args:
 	## Add: new bags
 	if delta==1:
 		if partial:
-			new_bags=[nb for nb in containers if item_name in nb]
+			new_bags=[nb for nb in containers if nb.startswith(item_name) or item_name in nb.lower().split()]
 		else:
 			new_bags=[nb for nb in containers if item_name==nb]
 		if new_bags:
@@ -147,7 +164,7 @@ while args:
 			args=[new_bag]+args	# queue switching to this bag
 
 			# add the bag's name in its report to remember that it's new
-			report[len(bags)-1]={new_bag:1}
+			report[len(bags)-1]={new_bag:[1]}
 			debug.append(f'Bag {new_bag}')
 			delta=1
 			continue
@@ -168,7 +185,7 @@ while args:
 	if partial:
 		mod_items=[]
 	else:
-		mod_items = [n for n in bag[1].keys() if item_name in n.lower()]
+		mod_items = [n for n in bag[1].keys() if n.lower().startswith(item_name) or item_name in n.lower().split()]
 	if mod_items:
 		mod_item=mod_items[0]
 		current=bag[1].get(mod_item)
@@ -190,7 +207,7 @@ while args:
 
 	# NEW known items
 	if partial:
-		new_items += [n for n in item_list if item_name in n]
+		new_items += [n for n in item_list if n.startswith(item_name) or item_name in n.lower().split()]
 	else:
 		new_items = [n for n in item_list if item_name == n]
 	if delta>0 and new_items:
@@ -207,7 +224,7 @@ while args:
 
 	# Sets: add all of a set's contents to the arguments and parse as normal
 	if partial:
-		item_set += [n for n in sets.keys() if item_name in n]
+		item_set += [n for n in sets.keys() if n.startswith(item_name) or item_name in n.lower().split()]
 	else:
 		item_set = [n for n in sets.keys() if item_name==n]
 	if delta>0 and item_set:
@@ -228,10 +245,11 @@ while args:
 
 	# Lowest priority: unrecognized item
 	if delta>0:
-		bag[1][item_name]=delta
-		debug.append(f'Unknown {delta} x {item_name}')
+		new_item=item_name.title().replace("'S","'s")
+		bag[1][new_item]=delta
+		debug.append(f'Unknown {delta} x {new_item}')
 		diff=report.get(bag_idx,{})
-		diff[item_name]=[0,delta]
+		diff[new_item]=[0,delta]
 		report[bag_idx]=diff
 		delta=1
 		continue
@@ -290,8 +308,8 @@ if  report:
 		fields+=f' -f "{bag_name}|{nl.join(items)}|inline"'
 
 
-#if debug:
-#	fields+=f' -f "Debug|{", ".join(debug)}"'
+if debug_break:
+	fields+=f' -f "Debug [{debug_break}]|{", ".join(debug)}"'
 
 #backup
 if backup:
