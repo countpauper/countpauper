@@ -21,7 +21,7 @@
 args=&ARGS&
 
 if not args:
-	return f'help {ctx.alias} -here'
+	return f'echo `{ctx.prefix}{ctx.alias} [<bag>] [+/-][amount] <item> [<background>] [<pack>] ...`'
 
 bv='bags'
 backup=get(bv)
@@ -56,8 +56,11 @@ delta=1
 buy=False
 bag_idx=None	# track selection using index for report
 debug_break=None
-if args[0].startswith('break='):
-	debug_break=int(args.pop(0)[6:])
+dbg=0
+if args[0].startswith('dbg='):
+	debug_break=int(args.pop(0)[4:])
+
+removed_bags=[]
 debug=[]
 report={}	# list of modified bags: {bagidx:{item_name:[amount deltas]}], could be bag index to resolve reuse
 fail='fail'
@@ -65,9 +68,9 @@ fail='fail'
 while args:
 	# debug break
 	if debug_break:
-		debug_break-=1
-		if debug_break<=0:
-			return f'echo **Debug: *{debug}* arguments remaining `{delta}` `{args}`'
+		dbg+=1
+		if dbg>=debug_break:
+			return f'echo **Debug [{dbg}]: *{debug}* arguments remaining `{delta}` `{args}`'
 	# debug.append(str(args))
 	arg=args.pop(0)
 
@@ -109,10 +112,30 @@ while args:
 
 	# select to existing bags if the delta is 1 and arg
 	if partial:
-		existing_bags = [idx for idx,b in enumerate(bags) if b[0].lower().startswith(item_name.lower()) or item_name in b[0].lower().split()]
+		existing_bags = [idx for idx,b in enumerate(bags) if idx not in removed_bags and (b[0].lower().startswith(item_name.lower()) or item_name in b[0].lower().split())]
 	else:
-		existing_bags = [idx for idx,b in enumerate(bags) if item_name.lower()==b[0].lower()]
-	if delta==1 and existing_bags:
+		existing_bags = [idx for idx,b in enumerate(bags) if idx not in removed_bags and (item_name.lower()==b[0].lower())]
+	# TODO: if delta=-1 could delete existing bag and everything in it
+	if delta<0 and existing_bags:
+		removed_bag_idx=existing_bags[0]
+		removed_bag=bags[removed_bag_idx]
+		removed_bags.append(removed_bag_idx)	# don't remove until the end
+		diff = report.get(removed_bag_idx,{})
+		for i,q in removed_bag[1].items():
+			removed_bag[1][i]=0
+			diff[i]=diff.get(i,[q])+[0]
+
+		if removed_bag_idx==bag_idx:
+			bag_idx=None
+		report[removed_bag_idx]=diff
+		debug.append(f'Remove Bag {removed_bag[0]}')
+		delta+=1
+		if delta:	# repeat remove next backpack
+			args=[item_name]+args
+		else:
+			delta=1
+		continue
+	elif delta==1 and existing_bags:
 		bag_idx=existing_bags[0]
 		bag=bags[bag_idx]
 		# TODO: what if it's the same bag? dict? what is it's not? index?
@@ -122,7 +145,6 @@ while args:
 			report[bag_idx]={ }
 		continue
 
-	# TODO: if delta=-1 could delete existing bag and everything in it
 
 	## Create a new purse with all coins if needed
 	if coin_idx is None and item_name in coins.keys() and purse_names:
@@ -184,90 +206,99 @@ while args:
 			delta=1
 			continue
 
-	# Default bag: about to add/remove items from the current bag, if there is no current bag, select one
+	# Default bag: about to add items to  the current bag, if there is no current bag, select one
 	if bag_idx is None:
-		default_bags=[b[0] for b in bags if b[0].lower() not in specific_bags]
+		default_bags=[b[0] for i,b in enumerate(bags) if i not in removed_bags and (b[0].lower() not in specific_bags)]
 		# queue switching to the default bag explicitly and adding the current item. create arg basic one if none found
-		default_bag=default_bags[0] if default_bags else containers[0]
-		args=[default_bag ,str(delta),arg]+args
-		debug.append(f'Default {default_bag}')
-		delta=1
-		continue
-
-	###  ITEMS
-	bag = bags[bag_idx]
-	# Modify: find items already in the current bag, always use partial match first
-	if partial:
-		mod_items=[]
+		if default_bags:
+			default_bag=default_bags[0]
+			args=[default_bag ,str(delta),arg]+args
+			debug.append(f'Default {default_bag}')
+			delta=1
+			continue
+		elif containers and delta>0:
+			default_bag = containers[0]
+			debug.append(f'Default* {default_bag}')
+			args=[default_bag ,str(delta),arg]+args
+			delta=1
+			continue
+		else:	# will fail to remove from no bag
+			pass
 	else:
-		mod_items = [n for n in bag[1].keys() if n.lower().startswith(item_name) or item_name in n.lower().split()]
-	if mod_items:
-		mod_item=mod_items[0]
-		current=bag[1].get(mod_item)
-		amount=max(0,current+delta)
-		if amount:
-			bag[1][mod_item]=amount
-			debug.append(f'Adjust {current}+{delta}={amount} x {mod_item}')
+		###  ITEMS
+		bag = bags[bag_idx]
+		# Modify: find items already in the current bag, always use partial match first
+		if partial:
+			mod_items=[]
 		else:
-			bag[1].pop(mod_item)
-			debug.append(f'Remove {current} x {mod_item}')
+			mod_items = [n for n in bag[1].keys() if n.lower().startswith(item_name) or item_name in n.lower().split()]
+		if mod_items:
+			mod_item=mod_items[0]
+			current=bag[1].get(mod_item)
+			amount=max(0,current+delta)
+			if amount:
+				bag[1][mod_item]=amount
+				debug.append(f'Adjust {current}+{delta}={amount} x {mod_item}')
+			else:
+				bag[1].pop(mod_item)
+				debug.append(f'Remove {current} x {mod_item}')
 
-		# update the item's diff in the report
-		diff=report.get(bag_idx,{})
-		diff[mod_item]=diff.get(mod_item,[current])+[current-amount]
-		report[bag_idx]=diff
+			# update the item's diff in the report
+			diff=report.get(bag_idx,{})
+			diff[mod_item]=diff.get(mod_item,[current])+[current-amount]
+			report[bag_idx]=diff
 
-		delta=1
-		continue
+			delta=1
+			continue
 
-	# NEW known items
-	if partial:
-		new_items += [n for n in item_list if n.startswith(item_name) or item_name in n.lower().split()]
-	else:
-		new_items = [n for n in item_list if item_name == n]
-	if delta>0 and new_items:
-		new_item=new_items[0].title().replace("'S","'s")
-		bag[1][new_item]=delta
-		debug.append(f'Add {delta} x {new_item}')
-		# update the item's diff in the report
-		diff=report.get(bag_idx,{})
-		diff[new_item]=[0,delta]
-		report[bag_idx]=diff
+		# NEW known items
+		if partial:
+			new_items += [n for n in item_list if n.startswith(item_name) or item_name in n.lower().split()]
+		else:
+			new_items = [n for n in item_list if item_name == n]
+		if delta>0 and new_items:
+			new_item=new_items[0].title().replace("'S","'s")
+			bag[1][new_item]=delta
+			debug.append(f'Add {delta} x {new_item}')
+			# update the item's diff in the report
+			diff=report.get(bag_idx,{})
+			diff[new_item]=[0,delta]
+			report[bag_idx]=diff
 
-		delta=1
-		continue
+			delta=1
+			continue
 
-	# Sets: add all of a set's contents to the arguments and parse as normal
-	if partial:
-		item_set += [n for n in sets.keys() if n.startswith(item_name) or item_name in n.lower().split()]
-	else:
-		item_set = [n for n in sets.keys() if item_name==n]
-	if delta>0 and item_set:
-		item_set=item_set[0]
-		set_items=sets[item_set]
-		added_args=[]
-		for item_name,q in set_items.items():
-			added_args+=[str(q),item_name]
-		args=added_args * delta + args
-		debug.append(f'Set {item_set}')
-		delta=1
-		continue
+		# Sets: add all of a set's contents to the arguments and parse as normal
+		if partial:
+			item_set += [n for n in sets.keys() if n.startswith(item_name) or item_name in n.lower().split()]
+		else:
+			item_set = [n for n in sets.keys() if item_name==n]
+		if delta>0 and item_set:
+			item_set=item_set[0]
+			set_items=sets[item_set]
+			added_args=[]
+			for item_name,q in set_items.items():
+				added_args+=[str(q),item_name]
+			args=added_args * delta + args
+			debug.append(f'Set {item_set}')
+			delta=1
+			continue
 
-	# try again with partial prefix
-	if not partial:
-		args=[f'~{arg}'] + args
-		continue
+		# try again with partial prefix
+		if not partial:
+			args=[f'~{arg}'] + args
+			continue
 
-	# Lowest priority: unrecognized item
-	if delta>0:
-		new_item=item_name.title().replace("'S","'s")
-		bag[1][new_item]=delta
-		debug.append(f'Unknown {delta} x {new_item}')
-		diff=report.get(bag_idx,{})
-		diff[new_item]=[0,delta]
-		report[bag_idx]=diff
-		delta=1
-		continue
+		# Lowest priority: unrecognized item
+		if delta>0:
+			new_item=item_name.title().replace("'S","'s")
+			bag[1][new_item]=delta
+			debug.append(f'Unknown {delta} x {new_item}')
+			diff=report.get(bag_idx,{})
+			diff[new_item]=[0,delta]
+			report[bag_idx]=diff
+			delta=1
+			continue
 
 	debug.append('f Missing {-delta} {item_name}')
 	diff=report.get('fail',{})
@@ -290,6 +321,8 @@ if  report:
 		if bag_name in changes:
 			changes.pop(bag_name)
 			bag_name+='+'
+		if idx in removed_bags:
+			bag_name+='-'
 
 		contents=bag[1] if bag else {}
 		items=[]
@@ -324,7 +357,12 @@ if  report:
 
 
 if debug_break:
-	fields+=f' -f "Debug [{debug_break}]|{", ".join(debug)}"'
+	fields+=f' -f "Debug [{dbg}/{debug_break}]|{", ".join(debug)}"'
+
+# remove bags after indices are no longer referenced
+bag_idx=None
+report=[]
+bags=[b for i,b in enumerate(bags) if i not in removed_bags]
 
 #backup
 if backup:

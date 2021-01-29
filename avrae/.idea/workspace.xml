@@ -32,7 +32,6 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/bagdat.json" beforeDir="false" afterPath="$PROJECT_DIR$/misc/bagdat.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/quickbag.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
