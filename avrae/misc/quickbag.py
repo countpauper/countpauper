@@ -67,7 +67,7 @@ while args:
 	if debug_break:
 		debug_break-=1
 		if debug_break<=0:
-			return f'echo **Debug: *{debug}* arguments remaining `{args}`'
+			return f'echo **Debug: *{debug}* arguments remaining `{delta}` `{args}`'
 	# debug.append(str(args))
 	arg=args.pop(0)
 
@@ -139,7 +139,22 @@ while args:
 		if item_name in money.keys():
 			current=money.get(item_name,0)
 			if -delta>current:
-				err(f'You don\'t have {-delta} {item_name}.')
+				# make chance:
+				bigger_coins={c:r for c,r in coins.items() if r<coins[item_name]}
+				if not bigger_coins:
+					err(f'You don\'t have {-delta} {item_name}.')
+				else:
+					next_coin=list(bigger_coins.keys())[0]
+					exchange_rate=int(round(coins[item_name]/coins[next_coin]))
+					next_needed=int(ceil((-delta-current)/exchange_rate))
+					change=next_needed*exchange_rate + delta
+					if change:
+						args=[next_coin, str(change), item_name]+args
+					else:
+						args=[next_coin]+args
+					delta=-next_needed
+					continue
+
 			money[item_name]=current+delta
 
 			# update report

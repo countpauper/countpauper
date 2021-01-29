@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/language.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/vigilant.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
@@ -34,10 +32,7 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Monk/stun.py" beforeDir="false" afterPath="$PROJECT_DIR$/Monk/stun.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/bagdat.json" beforeDir="false" afterPath="$PROJECT_DIR$/misc/bagdat.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/chance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/chance_py.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/chance_py.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/quickbag.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
