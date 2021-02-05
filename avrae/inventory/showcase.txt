@@ -1,0 +1,11 @@
+**Inventory Tools**
+- https://avrae.io/dashboard/workshop/600c00b9a2be999cfcb21a85/
+- This collection is for players to quickly setup and manage their inventory. It is also for DMs who often have to help new characters setup their bag.
+- The !qb (quick bag) alias works in tandem with the well known !bag alias. Where bag is able to show your inventory, track the weight, buy and sell items, rename and reorder bags, quickbag is for quickly adding and removing items
+It is fully case insensitive and does a form of fuzzy string matching.
+It allows for adding and removing multiple items in a single command
+It allows adding all items from all published backgrounds
+Coins are always automatically added to the coin pouch and items are never added to the coin pouch.
+It also allows adding packs (just like bag), but the result is slightly different.
+It can make make change when removing coins
+- TODO

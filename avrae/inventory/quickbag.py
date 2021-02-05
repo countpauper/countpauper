@@ -6,6 +6,7 @@
 #* remove whole bag with delta -1.. this might conflict (syntactically) with bag# negative index. but delta 1 will be add, 2 will be select #2. -1 will be remove -x push -(x-1) back on the queue
 #*  removing it from the entire list will mess up the indexing, queue them for removal in the report of separate set
 #* help sub command, minimal syntax with doing just !qb
+#* solve 'ration' matching problem in the item database but especially in the bag
 # support bag open none one all (current is like one, none is no report, all is add range of bags to report at start)
 # $ prefix buys (automatically remove coins), but change?
 # Add capped removal items back to show in failed
@@ -26,7 +27,7 @@ if not args:
 bv='bags'
 backup=get(bv)
 bags=load_json(get(bv,'[]'))
-item_table=load_json(get_gvar('19753bce-e2c1-42af-8c4f-baf56e2f6749'))
+item_table=load_json(get_gvar('19753bce-e2c1-42af-8c4f-baf56e2f6749'))	 # original !bag items for interop
 
 # load configuration, prioroty: server, char, user, global
 var_name='quickbag'
@@ -106,13 +107,21 @@ while args:
 	# TODO: could maybe pop next arg here maybe and remove all the delta=1, buy=False, continue
 
 	# TODO: if 1 is +1 and arg is the name of an existing bag, then select that bag. If it's preceded by $ then add the bag to bags first
-	item_name=arg.lower()
+
 	if delta==0:
 		continue
 
+	item_name=arg.lower()
+	# jank optimization:
+	#  - just using item_name in string overfits,
+	#  - using item_name in string.split() underfits (ration, clothes, traveler's)
+	#  - extra list comprehension any([a.startsWith(item_name) for a in string.split()]) hits loop limit
+	#  so: string.startsWith(item_name) or space_name in string
+	space_name = f' {item_name}'
+
 	# select to existing bags if the delta is 1 and arg
 	if partial:
-		existing_bags = [idx for idx,b in enumerate(bags) if idx not in removed_bags and (b[0].lower().startswith(item_name.lower()) or item_name in b[0].lower().split())]
+		existing_bags = [idx for idx,b in enumerate(bags) if idx not in removed_bags and (b[0].lower().startswith(item_name.lower()) or space_name in b[0].lower())]
 	else:
 		existing_bags = [idx for idx,b in enumerate(bags) if idx not in removed_bags and (item_name.lower()==b[0].lower())]
 	# TODO: if delta=-1 could delete existing bag and everything in it
@@ -192,7 +201,7 @@ while args:
 	## Add: new bags
 	if delta==1:
 		if partial:
-			new_bags=[nb for nb in containers if nb.startswith(item_name) or item_name in nb.lower().split()]
+			new_bags=[nb for nb in containers if nb.startswith(item_name) or space_name in nb]
 		else:
 			new_bags=[nb for nb in containers if item_name==nb]
 		if new_bags:
@@ -231,7 +240,7 @@ while args:
 		if partial:
 			mod_items=[]
 		else:
-			mod_items = [n for n in bag[1].keys() if n.lower().startswith(item_name) or item_name in n.lower().split()]
+			mod_items = [n for n in bag[1].keys() if n.lower().startswith(item_name) or space_name in n.lower()]
 		if mod_items:
 			mod_item=mod_items[0]
 			current=bag[1].get(mod_item)
@@ -253,7 +262,7 @@ while args:
 
 		# NEW known items
 		if partial:
-			new_items += [n for n in item_list if n.startswith(item_name) or item_name in n.lower().split()]
+			new_items += [n for n in item_list if n.startswith(item_name) or space_name in n.lower()]
 		else:
 			new_items = [n for n in item_list if item_name == n]
 		if delta>0 and new_items:
@@ -270,7 +279,7 @@ while args:
 
 		# Sets: add all of a set's contents to the arguments and parse as normal
 		if partial:
-			item_set += [n for n in sets.keys() if n.startswith(item_name) or item_name in n.lower().split()]
+			item_set += [n for n in sets.keys() if n.startswith(item_name) or space_name in n.lower()]
 		else:
 			item_set = [n for n in sets.keys() if item_name==n]
 		if delta>0 and item_set:
@@ -372,5 +381,5 @@ if backup:
 character().set_cvar(bv,dump_json(bags))
 possessive=f'{name}\'' if name[-1]=='s' else f'{name}\'s'
 
-return f'embed -title "{possessive} bags" -thumb https://i.imgur.com/GT9YkF2.png {fields}'
+return f'embed -title "{possessive} bags" -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png {fields}'
 </drac2>
