@@ -1,11 +1,15 @@
 **Inventory Tools**
-- https://avrae.io/dashboard/workshop/600c00b9a2be999cfcb21a85/
-- This collection is for players to quickly setup and manage their inventory. It is also for DMs who often have to help new characters setup their bag.
-- The !qb (quick bag) alias works in tandem with the well known !bag alias. Where bag is able to show your inventory, track the weight, buy and sell items, rename and reorder bags, quickbag is for quickly adding and removing items
-It is fully case insensitive and does a form of fuzzy string matching.
-It allows for adding and removing multiple items in a single command
-It allows adding all items from all published backgrounds
-Coins are always automatically added to the coin pouch and items are never added to the coin pouch.
-It also allows adding packs (just like bag), but the result is slightly different.
-It can make make change when removing coins
-- TODO
+https://avrae.io/dashboard/workshop/600c00b9a2be999cfcb21a85/
+This collection is for players to quickly setup and modify their inventory. It is also helps DMs who often have to support new characters to organize their bag. The !qb (quick bag) alias works in tandem with the well known !bag alias. Where !bag support complete inventory management and weight tracking,  quickbag is optimized for quickly and painlessly adding and removing items.
+- It is fully case insensitive and performs partial string matching with extra heuristics to prevent mistakes
+- The syntax supports adding and removing multiple different items in a single instruction
+- It has a smart item matching syntax, which for instance automatically adds known containers as bags
+- It allows adding background items by simply specifying the background eg `!qb urchin`
+- If you mess up you can use the `!qb undo` subcommand to rollback and try again
+- Coins are always automatically added to the coin pouch and items are never added to the coin pouch.
+- It also allows adding packs (as does bag) to setup your new character with one command
+- It can make make change when removing coins
+- It shows the result as a concise bag embed
+- The item, pack, container and coin configuration can be overridden as an svar, uvar or cvar (see !help qb)
+Source: https://github.com/countpauper/countpauper/blob/master/avrae/inventory/quickbag.py
+- Planned improvements: buying and selling, automatic bag selection when removing items, weight summary and delta, bag open none|one|all support, automatic bag selection for ammo, equip class items

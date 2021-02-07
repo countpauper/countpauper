@@ -1,5 +1,5 @@
 <drac2>
-# TODO: recognize packs as argument and use the official gvar to add them
+#* recognize packs as argument
 #* create a backup and subcommand undo
 #* create coin pouch automatically if needed on coin change, using coins
 #* make change up, by attempting to remove some bigger coins and then adding the change
@@ -7,17 +7,19 @@
 #*  removing it from the entire list will mess up the indexing, queue them for removal in the report of separate set
 #* help sub command, minimal syntax with doing just !qb
 #* solve 'ration' matching problem in the item database but especially in the bag
-# support bag open none one all (current is like one, none is no report, all is add range of bags to report at start)
-# $ prefix buys (automatically remove coins), but change?
-# Add capped removal items back to show in failed
 # *  Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
 # *  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
+# support bag open none one all (current is like one, none is no report, all is add range of bags to report at start)
+# $ prefix buys (automatically remove coins), but change? and -$ to sell?
+# Weight summary and delta (with support for custom weight configuration from bag)
+# Add capped removal items back to show in failed
 # Remove from any/all bags (but selected first) (split up removal from addition?)
-# [no] delta before bag selection doesn't add multiple but select an indexed copy [1 is first -1 is last], add to help
+# [x] delta before bag selection doesn't add multiple but select an indexed copy [1 is first -1 is last], add to help
 # add recognized class weapons to a worn/equipped bag instead
 # add ammo to ammo bags automatically
 # support using coins not in pouch
 # support extra_packs variable used by !bag
+
 
 args=&ARGS&
 
@@ -157,7 +159,7 @@ while args:
 
 	## Create a new purse with all coins if needed
 	if coin_idx is None and item_name in coins.keys() and purse_names:
-		purse_name=purse_names[0]
+		purse_name=purse_names[0].title()
 		bags.append([purse_name, {coin:0 for coin in coins.keys()}])
 		coin_idx=len(bags)-1
 		# report[coin_idx]={coin:[0] for coin in coins.keys()}
