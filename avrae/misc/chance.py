@@ -67,6 +67,7 @@ for term in expression:
 	if term[0]=='-':
 		sign=-1
 		term=term[1:]
+
 	if term.isnumeric():
 		v=int(term)
 		terms+=[{'term':f'{"-" if sign<0 else ""}{term}','min':sign*v,'max':sign*v}]
@@ -74,7 +75,7 @@ for term in expression:
 		## Parse number of rolled dice
 		dice_exp=term.split('d',maxsplit=1)
 		if not dice_exp[0].isnumeric():
-			err(f'Dice syntax error, number of dice must be positive number: `{term}`')
+			err(f'Dice expression syntax error: number of dice must be positive number: `{term}`')
 		dice=int(dice_exp[0])
 
 		## split in numbers and non numbers
@@ -88,90 +89,114 @@ for term in expression:
 
 		## die size
 		if not dice_part or not dice_part[0].isnumeric():
-			err(f'Dice syntax error: die size must be a positive number: `{term}`')
+			err(f'Dice expression syntax error: die size must be a positive number: `{term}`')
 		die_size=int(dice_part[0])
 		dice_part=dice_part[1:]
-		p=[1.0/die_size]*die_size
+		p=[0]+[1.0/die_size]*die_size # 0 is drop chance, p[v] for rolling v
 
 		## handle operators
-		TODO: actually operators are not done in order in the string, but most on the original die and k and d on the set as last
-
 		drop_set={}
 		keep_hi=None
 		keep_lo=None
+		drop_chance=0
 		dice_ops=[[dice_part[i],int(dice_part[i+1])] for i in range(0,len(dice_part),2) if dice_part[i+1].isnumeric()]
 		while dice_ops:
-			op=dice_ops.pop()
-			# drop lowest dice is the same as keep highest rest
-			if op[0]=='pl':
-				keep_lo=dice-op[1]
-			elif op[1]=='ph':
-				keep_hi=dice-op[1]
-			elif op[0]=='kh':
-				keep_hi=dop[1]
-			elif op[1]=='kl':
-				keeo_lo=op[1]
-			elif op[0]=='k<':
-				TODO drop set all others
-			elif op[0]=='k>':
-				TODO dropset
-			elif op[0]=='k':
-				TODO todo dropset
-			else op[0]=='p':
-				TODO dropset
-			# elif op[0].startsWith('ro'):
-				# ro1 and and ro<die_size> handle as ro<2 or ro>die_size-1, others ... TBD
-				# ro< & ro>, see math
-				pass	
-			# elif op[0].startsWidth('k'):
-				# use minimum of 0, add all dropped chances to p[0]
-				pass
-			# elif op[0].startsWidth('p'):
-				# p: set min of 0, add all dropped values to p[0] set to dropped p[] to 0, k: set rest to 0, with > and < adjust max and slice
-				pass	
-			# elif op[0]=='mi':
-				# mi: sum all chance <mi, increase min and slice 0 off p?
-				pass
-			# elif op[0]=='ma':
-				# ma: sum all chance >ma, decrease max and slice off p
-				pass
-			else:
-				err(f'Dice syntax error: Unsupported operator `{op[0]}` in `{term}`')
-				
-		# rr, same but infinite is probably: sum all rerolls and normalize the rest
+			op=dice_ops.pop(0)
+			arg_v=op[1]
+			operator=op[0].lower()
 
-			if keep_hi is not None:
-				if keep_lo is not None:
-					err('Query error: `{term}` Keeping both high and low dice is not yet supported.)
-				# kh: reduce die_size and power 1-p to the power of number of dice-op[1]
-				if keep_hi!=1:
-					err('Query error: `{term}` Keeping more or less than 1 die is not yet supported.')
-				# precomputed binomial coefficient, TODO move to gvar
-				bnc = [[], [1], [1, 2], [1, 3, 3], [1, 4, 6, 4], [1, 5, 10, 10, 5], [1, 6, 15, 20, 15, 6], [1, 7, 21, 35, 35, 21, 7], [1, 8, 28, 56, 70, 56, 28, 8], [1, 9, 36, 84, 126, 126, 84, 36, 9]]
-				pp=p[:]
-				for v in range(die_size):
-					np = []
-					for d in range(dice):
-						np = [sum([npi * pvi for npi in np for pvi in pp[:v]])]
-						np += [bnc[dice][-(d + 1)] * pp[v] ** (d + 1)]
-					p[v]=sum(np)
-				dice=op[1]
-			elif keep_lo is not None:
-				# kl: reduce die_size and power p to the power of number of dice-op[1]
-				dropped_dice=dice-op[1]
-				dice-=dropped_dice
+			# drop lowest dice is the same as keep highest rest
+			if operator=='pl':
+				keep_hi=dice-arg_v
+			elif operator=='ph':
+				keep_lo=dice-arg_v
+			elif operator=='kh':
+				keep_hi=arg_v
+			elif operator=='kl':
+				keep_lo=arg_v
+			else:
+				# not dropping hi or lo, handle the other operators which do not reduce the number of dice
+				arg_v=min(max(0,arg_v),die_size)
+				if operator[-1]=='<':
+					operator=operator[:-1]
+					selection=range(1,arg_v)
+				elif operator[-1]=='>':
+					operator=operator[:-1]
+					selection=range(arg_v+1,die_size+1)
+				elif arg_v>0 and arg_v<=die_size:
+					selection=[arg_v]
+				else:
+					selection=[]
+				if operator=='k':
+					# TODO: k1k2k3 doesn't work because it drops everything
+					p[0]+=sum(pv for v,pv in enumerate(p) if v not in selection and v>0)
+					p=[pv if (v==0 or v in selection) else 0 for v,pv in enumerate(p)]
+				elif operator=='p':
+					p[0]+=sum(pv for v,pv in enumerate(p) if v in selection)
+					p=[pv if (v==0 or v not in selection) else 0 for v,pv in enumerate(p)]
+				elif operator=='ro':
+					reroll_chance = sum(pv for v,pv in enumerate(p) if v in selection)
+					p = [(reroll_chance/die_size if v>0 else 0) + (0 if v in selection else pv) for v, pv in enumerate(p)]
+				elif operator=='rr':
+					reroll_chance = sum(pv for v,pv in enumerate(p) if v in selection)
+					rerolled_chance = reroll_chance / (die_size - len(selection))
+					p = [pv if v==0 else 0 if v in selection else pv + rerolled_chance for v, pv in enumerate(p)]
+
+#					inv_reroll_chance = 1-sum(pv for v,pv in enumerate(p) if v in selection)
+#					p = [pv if v==0 else 0 if v in selection else pv/inv_reroll_chance for v, pv in enumerate(p)] # to FIX 1d4p1rr<3  should be roughly 25%, 0.0%, 0.0%, 37.5%, 37.5%
+				elif operator=='mi':
+					selection=range(1,arg_v)
+					missed_chances=sum(pv for v,pv in enumerate(p) if v in selection)
+					p=[0 if v in selection else pv for v,pv in enumerate(p)]
+					p[arg_v]+=missed_chances
+				elif operator=='ma':
+					selection=range(arg_v+1,len(p))
+					missed_chances=sum(pv for v,pv in enumerate(p) if v in selection)
+					p=[0 if v in selection else pv for v,pv in enumerate(p)]
+					p[arg_v]+=missed_chances
+				elif operator=='e':
+					err(f'Implementation limitation: Exploding dice not supported in `{term}`')
+				else:
+					err(f'Dice expression syntax error: Unrecognized operator `{operator}` in `{term}`')
+
+		# precomputed binomial coefficient, TODO move to gvar
+		bnc = [[], [1], [1, 2], [1, 3, 3], [1, 4, 6, 4], [1, 5, 10, 10, 5], [1, 6, 15, 20, 15, 6],
+			   [1, 7, 21, 35, 35, 21, 7], [1, 8, 28, 56, 70, 56, 28, 8], [1, 9, 36, 84, 126, 126, 84, 36, 9]]
+
+		if keep_hi is not None and keep_hi<dice:
+			if keep_hi!=1:
+				err(f'Implementation limitation: `{term}` Keeping more or less than 1 die is not yet supported.')	 # also covers keep_hi>1 or keep_lo>1
+			pp=p[:]
+			for v in range(len(p)):
+				np = []
+				for d in range(dice):
+					np = [sum([npi * pvi for npi in np for pvi in pp[:v]])]
+					np += [bnc[dice][-(d + 1)] * pp[v] ** (d + 1)]
+				p[v]=sum(np)
+			dice=keep_hi
+		if keep_lo is not None and keep_lo<dice:
+			if keep_lo!=1:
+				err(f'Implementation limitation: `{term}` Keeping more or less than 1 die is not yet supported.')
+			pp=p[:]
+			for v in range(len(p)):
+				np = []
+				for d in range(dice):
+					np = [sum([npi * pvi for npi in np for pvi in pp[:v]])]
+					np += [bnc[dice][-(d + 1)] * pp[v] ** (d + 1)]
+				p[v]=sum(np)
+			dice=keep_lo
 
 		if sign<0:
 			p.reverse()
-			t={'term':'-'+term,'min':sign*die_size,'max':sign,'p':p}
+			t={'term':'-'+term,'min':sign*die_size,'max':0,'p':p}
 		else:
-			t={'term':term,'min':sign,'max':sign*die_size,'p':p}
+			t={'term':term,'min':0,'max':sign*die_size,'p':p}
 
 		# TODO: This can be optimized here, knowing all pmf are the same. At least for two dice can go through the triangle and double
 		# if all chances were even, binomial coefficients could count instead of enumerate the combinations for multiple dice, but comb and factorial aren't available anyway
 		terms+=[t]*dice
 	else:
-		err(f'Dice syntax error: Unrecognized term format: `{term}`')
+		err(f'Dice expression syntax error: Unrecognized term format: `{term}`')
 ### combine all terms
 lo=sum(t['min'] for t in terms)
 hi=sum(t['max'] for t in terms)
@@ -208,5 +233,4 @@ else:
 		report.append(f'**{t}**: Miss: `{miss*100.0:.1f}%`, Hit: `{(1-miss)*100:.1f}%`')
 sep='\n'
 return f'echo {sep.join(report)}'
-
 </drac2>

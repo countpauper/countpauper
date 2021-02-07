@@ -15,19 +15,31 @@ def rolls(dice, p):
 	op=p
 	for _ in range(1,dice):
 		np=[0]*(len(op)+len(p)-1)
-		for v0,p0 in enumerate(p):
-			for v1,p1 in enumerate(op):
+		for v0, p0 in enumerate(op):
+			for v1,p1 in enumerate(p):
 				np[v0+v1]+=p0*p1
 		op=np
 	return op
+
+def drop(selection, p):
+	if type(selection)==int:
+		selection={selection}
+	return [0 if v in selection else pv for v,pv in enumerate(p)]
+
+def keep(selection, p):
+	if type(selection)==int:
+		selection={selection}
+	return [pv if v in selection else 0 for v,pv in enumerate(p)]
+
 
 # Troll: repeat x:=1d20 while x<=5
 def rr(reroll, p):
 	if type(reroll)==int:
 		reroll=range(reroll)
 	# in draconic  {{ p[min(r):max(r)+1] }}
-	chance=1-sum(p[reroll.start:reroll.stop:reroll.step])
-	p=[(0 if v in reroll else ip/chance) for v,ip in enumerate(p)]
+	chance=sum(pv for v,pv in enumerate(p) if v in reroll)
+	remaining_die_size=len(p)-len(reroll)
+	p=[(0 if v in reroll else pv+chance/remaining_die_size) for v,pv in enumerate(p)]
 	return p
 
 #\ Halfling luck 1d20ro1
@@ -37,31 +49,43 @@ def ro(reroll, p):
 	if type(reroll)==int:
 		reroll=range(reroll)
 	# in draconic  {{ p[min(r):max(r)+1] }}
-	reroll_chance=sum(p[reroll.start:reroll.stop:reroll.step])
-	base=reroll_chance/len(p)
-	p=[base + (0 if v in reroll else ip) for v,ip in enumerate(p)]
+	reroll_chance=sum(ip for i,ip in enumerate(p) if i in reroll)
+	# base=reroll_chance/len(p)
+	#p=[base + (0 if v in reroll else ip) for v,ip in enumerate(p)]
+	p=[ip*reroll_chance + (0 if v in reroll else ip) for v,ip in enumerate(p)]
 	return p
 
 
 def kh(dice, keep, p):
-	kh1p=kh1(p)
-	sumkh1p=[sum(kh1p[:v]) for v in range(len(kh1p))]
+	# chance for kept dice line xdy, where x=keep and p(v)=p but now the chance p'(v)
+	#  the chance of v given that v is not dropped, or p'(v)=p(v|v>=z) where z is the miniumum value if the other dice
+	#  so do kh1(p) to get p(z) and p(v>=z) = sum i=[v..y] p(i)
+	# bayes p(a|b) = p(b|a) * p(a)/p(b)  so p(v|v>=z)= p(v>=z|v) *p(a)/p(b) = 1 *p(a)/p(b) (because if v=z then its certainly >=z)
+	# which is another way of saying, normalize the chances of the remaining values
+	#  when multiplying n dice, each p(v) needs to be divided by sum(p(v..y)) or in other words divide the whole chance by sum(p(v..z)) ^ keep
 
-	for _ in range(1,dice):
-		np=[0]*(len(op)+len(p)-1)
-		for v0,p0 in enumerate(p):
-			for v1,p1 in enumerate(op):
-				np[v0+v1]+=p0*p1
+
+	# chance for a set of rolls S is the chance for S * the chance that the dropped dice are <=min(dice)
+	#  S=s*s*s
+	#  but the chance for s in S is the change for s, given that the s>=min(dice) see above
+	# first kept die, one all chances would be 1
+	p_kh1=kh1(dice-(keep-1),p)
+	p_min=[sum(p_kh1[v:]) for v in range(len(p))]
+	op=[(i,i,p) for i,p in enumerate(p)]
+	for _ in range(1,keep):
+		# format min, total, chance
+		np=[(0,0,0)]*(len(op)+len(p)-1)
+		for v0, m0, p0 in op:
+			for v1,p1 in enumerate(p):
+				idx= v0+v1
+				v,min_v,current_p = np[idx]
+				new_min=min(min_v,v1)
+				new_v=v0+v1 # idx
+				new_p = current_p+p0*p1*p_min[min_v]/sum(p[new_min+1:])
+				np[idx] = (new_v, new_min, new_p)
 		op=np
-	return op
+	return [p for _,_,p in op]
 
-
-
-	rolld=rolls(keep,p)
-
-	totalp=rolls(keep,p)
-
-	return kh1(dice,p)
 	# other approach: do hk1(p) with dice =1+dice-keep, this is the chance that the dropped dice are < than V
 	# Then enumerate the remaining dice in keep from [1*keep to len(p)*keep]
 	# and make combinations [1,2,3] (preferably unique with a multiplier binomial coefficient for performance)
@@ -130,7 +154,7 @@ def test(label, result, expected, error=0.001):
 		print(f'{label} SUCCESS {result}')
 
 if __name__ == "__main__":
-	print(precompute(10))
+	# print(precompute(10))
 	# troll: max 3d20
 	test('1d4kh1', kh1(1, roll(4)),  [0.25]*4)
 	test('2d4kh1', kh1(2, roll(4)), [0.0625, 0.1875, 0.3125, 0.4375])
@@ -139,6 +163,7 @@ if __name__ == "__main__":
 	test('5d4kh1', kh1(5, roll(4)) , [0.000976563, 0.030273438, 0.206054688, 0.762695313])
 
 	test('1d20roX', ro(1, roll(20)),  [0.0025] + [0.0525]*19)
+	test('1d4rr>1', rr(2, drop(0,roll(4))),  [0,0,0.5,0.5])
 	test('3d4kl1', kl1(3, roll(4)),  [0.57812, 0.29687	, 0.10938, 0.01563])
 
 	test('3d6', rolls(3,roll(6)), [0.004630,0.013889,0.027778,0.046296,0.069444,0.097222,0.115741,0.125000,0.125000,0.115741,0.097222,0.069444,0.046296,0.027778,0.013889,0.004630])
@@ -149,8 +174,10 @@ if __name__ == "__main__":
 	# max { y,v }
 	test('2d4ro1kh1', kh1(2, ro(1,roll(4))),  [0.00391, 0.13672, 0.33203, 0.5273])
 
+	# Troll: sum largest 2 3z1
+	test('3z1kh2', kh(3, 2, roll(2)), [0.125,0.375,0.5])
 	# TODO: 4d6kh3/dl1 Troll: sum largest 3 4d6
-	test('4d6kh3', kh(4, 3, roll(6)),  [0.004630,0.013889, 0.027778, 0.046296, 0.069444, 0.097222, 0.115741, 0.125000, 0.125000, 0.115741, 0.097222,0.069444, 0.046296, 0.027778, 0.013889, 0.004630]) # NB [0] = 3
+	# test('4d6kh3', kh(4, 3, roll(6)),  [0.0007716,0.0030864,0.0077160,0.0162037,0.0293210,0.0478395,0.0702160,0.0941358,0.1141975,0.1288580,0.1327160,0.1234568,0.1010802,0.0725309,0.0416667,0.0162037])
 
 
 
