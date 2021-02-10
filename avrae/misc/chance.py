@@ -1,10 +1,12 @@
 <drac2>
 # Ideas: query attack, spell for base, skill
 # * Add all -b
-# use adv and replace first 1d20
-# Target: combatant (will also roll damage), hp and damage rolls to see if you dying or dead
+#*  use adv and replace first 1d20
+#*  Target: combatant
+#      (will also roll damage), hp and damage rolls to see if you dying or dead
 # rr and say how the chance of how many will hit (and crit?)
-# multiple AC/DC,  targets, report chance for each
+# * multiple AC/DC,  targets, report chance for each
+# death saves (1d20, should be with luck, but https://github.com/avrae/avrae/issues/1388)
 # - Display result qualitively (certain, impossible, high, medium, low) when targeting characters, (override with ... -s/-h)
 # 0 imppssible, <10 very low, <30 low <70 medium <90 high <100 very high, 100 certain
 #   option to show as techo (-h <sec>)
@@ -23,45 +25,127 @@
 # max dice math: https://math.stackexchange.com/questions/1696623/what-is-the-expected-value-of-the-largest-of-the-three-dice-rolls/
 # roller (seem to do it the hard waym but good to compare): http://topps.diku.dk/torbenm/troll.msp
 
-#parse query argument
-syntax=f'`{ctx.prefix}{ctx.alias} <roll> -ac <number>|-dc <number>`'
+#### Parse arguments
+syntax=f'`{ctx.prefix}{ctx.alias} <attack>/<skill>/<save>/<roll> -ac <number>|-dc <number>`'
 args=&ARGS&
 if not args:
 	return f'echo You did not specify a query. Use: {syntax}'
 query=args[0]
 args=argparse(args[1:])
-
 dbg=args.last('dbg',True)
+hide=args.last('h',False, type_=bool)
 
-# parse targets
-cancrit=None
-targets=[]
-if ac:=args.last('ac') :
-	cancrit=True
-	if not ac.isdigit():
-		return f'echo AC `{ac}` is not a number, Use {syntax}'
-	targets=[int(ac)]
-elif dc:=args.last('dc') :
-	cancrit=False
-	if not dc.isdigit():
-		return f'echo DC `{dc}` is not a number, Use {syntax}'
-	targets=[int(dc)]
+### Parse the query  and translate it into a query (description) and expression (roll string)
+expression=query
+reroll_luck=None
+criton=20
+reliability=None
+attack=None
+skill=None
+save_query=False
+if c:=character():
+	criton = c.csettings.get('criton', 20)
+	reroll_luck = c.csettings.get('reroll')
+
+	reliability=10 if c.csettings.get('talent') else None
+	queryId=query.replace(' ','').lower()
+
+	if saves:={save_name:skill for save_name, skill in character().saves if save_name.startswith(queryId)}:
+		query=tuple(saves.keys())[0]
+		skill=saves[query]
+		save_query=True
+		expression = skill.d20(reroll=reroll_luck)
+	elif skills:={skill_name:skill for skill_name,skill in character().skills if skill_name.lower().startswith(queryId)}:
+		if len(skills)>1:
+			return f'echo `{ctx.prefix}{ctx.alias} {" | ".join(skills.keys())}'
+		query=tuple(skills.keys())[0]
+		skill=skills[query]
+		save_query=False
+		expression = skill.d20(reroll=reroll_luck, min_val=reliability if skill.prof >= 1 else None)
+	elif attacks:={atk.name:atk for atk in c.attacks if atk.name.lower().startswith(query.lower())}:
+		if len(attacks)>1:
+			return f'echo `{ctx.prefix}{ctx.alias} {" | ".join(attacks.keys())}'
+		query=tuple(attacks.keys())[0]
+		attack=attacks[query]
+		if automation:=attack.raw.get('automation',[]):
+			effects=[]
+			for auto in automation:
+				effects+=auto.get('effects',[])
+			if len(effects)>1:
+				err(f'Implementation limitation: Multiple attack effects for {query} not yet supported')
+			effect=effects[0]
+			effect_type=effect.get('type','none')
+			if effect.get('type')=='attack':
+				expression='1d20'
+				if reroll_luck is not None:
+					expression+=f'ro{reroll_luck}'
+				if bonus:=effects[0].get("attackBonus",0):
+					expression+=f'+{bonus}'
+			else:
+				# TODO: with save set dc to save and find save type on target, same as spells
+				err(f'Implementation limitation: Attack effect type `{effect_type}` for {query} not yet supported.')
+	else:
+		pass # keep query, TODO spells, but need access to 'automation' info (which save or spell attack)
 
 # replace first 1d20 with advantage, this is almost the same as !roll, which only does it for the first term
-query = query.replace('1d20',['1d20','2d20kh1','3d20kh1','2d20kl1'][args.adv(ea=True)],1)
+expression = expression.replace('1d20',['1d20','2d20kh1','3d20kh1','2d20kl1'][args.adv(ea=True)],1)
 
 # append argument bonuses
-query='+'.join([query]+args.get('b'))
+expression='+'.join([expression]+args.get('b'))
 
 # chance the query < constant
-query=query.replace(' ','')
-expression=query.replace('+-','-').replace('-','+-').split('+')
+expression=expression.replace(' ','')
+expression_terms=expression.replace('+-','-').replace('-','+-')
+#####  parse targets
+cancrit=None
+targets={}
+if not skill:
+	for ac in args.get('ac'):
+		if not ac.isdigit():
+			return f'echo AC `{ac}` is not a number, Use {syntax}'
+		targets[f'AC `{ac}`']={'target':int(ac),'crit':True, 'hidden':False}
 
+if not attack:
+	for dc in args.get('dc'):
+		if not dc.isdigit():
+			return f'echo DC `{dc}` is not a number, Use {syntax}'
+		targets[f'DC `{dc}`']={'target':int(dc),'crit':False, 'hidden':False}
+
+# TODO opposed skills in gvar or something
+opposed_skills={
+	"acrobatics":"athletics",
+	"athletics":"athletics",
+	"deception":"insight",
+	"initiative":"initiative",
+	"insight":"deception",
+	"perception":"stealth",
+	"sleightOfHand":"perception",
+	"stealth":"perception",
+}
+if fight:=combat():
+	for t in args.get('t'):
+		# TODO: could also split target arguments | and specify opposed skill dc or extra bonuses, adv
+		if combatant:=fight.get_combatant(t):
+			target_name=combatant.name
+			if save_query:
+				targets[target_name]={'target':combatant.spellbook.dc, 'crit':False, 'hidden':hide}
+			elif attack:
+				targets[target_name]={'target':combatant.ac, 'crit':True, 'hidden':hide}
+			elif skill:
+				if opposed_skill_name:= opposed_skills.get(query):
+					opposed_skill = combatant.skills[opposed_skill_name]
+					targets[f'{target_name} passive {opposed_skill_name}']={'target':10+opposed_skill.value, 'crit':False, 'hidden':True}
+				else:
+					pass #
+
+
+########  Create the propabaility mass function for the experession
+expression_terms=expression.split('+')
 terms=[]
 crit=None
 fail=None
 firstd20=True
-for term in expression:
+for term in expression_terms:
 	sign=1
 	t = None
 	if term[0]=='-':
@@ -200,9 +284,15 @@ for term in expression:
 ### combine all terms
 lo=sum(t['min'] for t in terms)
 hi=sum(t['max'] for t in terms)
+crit_chance=None
+fail_chance=None
 pmf=[]
 for t in terms:
 	if tp:=t.get('p'):
+		if criton is not None and t['max']==20 and crit_chance is None:
+			fail_chance=tp[1]
+			crit_chance=sum(tp[criton:])
+
 		# combine probability mass functions into a new one
 		if not pmf:
 			#TODO: why is this case special?
@@ -218,19 +308,39 @@ for t in terms:
 # TODO: if dbg
 report=[]
 if dbg:
-	report.append(f'{query} : [{lo}] {", ".join(f"{p*100:.2f}%" for p in pmf)}  [{hi}]')
+	report.append(f'{query} / {expression} : [{lo}] {", ".join(f"{p*100:.2f}%" for p in pmf)}  [{hi}]')
+
+quality={0:'impossible', 20:'low',80:'medium', 99:'high','100':'certain'}
 
 if not targets:
 	report.append(f'You did not specify any targets. Use: {syntax}')
 else:
-	for t in targets:
-		if t>hi:
-			miss=1
-		elif t<lo:
-			miss=0
+	for target_name,target in targets.items():
+		query_description = f'**{query.title()} (`{expression}`) VS {target_name.title()}**'
+		target_value=target.get('target')
+		if target_value is None:
+			report.append(f'{query_description}: Not Applicable')
 		else:
-			miss=sum(pmf[i] for i in range(t-lo))
-		report.append(f'**{t}**: Miss: `{miss*100.0:.1f}%`, Hit: `{(1-miss)*100:.1f}%`')
+			if target_value > hi:
+				miss = 1
+			elif target_value < lo:
+				miss = 0
+			else:
+				miss = sum(pmf[i] for i in range(target_value - lo))
+			if target.get('crit'):
+				if crit_chance:
+					miss=min(miss,1-crit_chance)
+				else:
+					crit_chance=0
+				if fail_chance:
+					miss=max(miss,fail_chance)
+				if target.get('hidden'):
+
+					report.append(f'{query_description}: Miss: `{miss*100.0:.1f}%`, Hit: `{(1-miss)*100:.1f}%` Crit: `{(crit_chance)*100:.1f}%`')
+				else:
+					report.append(f'{query_description}: Miss: `{miss*100.0:.1f}%`, Hit: `{(1-miss)*100:.1f}%` Crit: `{(crit_chance)*100:.1f}%`')
+			else:
+				report.append(f'{query_description}: Failure: `{miss*100.0:.1f}%`, Success: `{(1-miss)*100:.1f}%`')
 sep='\n'
 return f'echo {sep.join(report)}'
 </drac2>

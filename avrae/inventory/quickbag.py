@@ -9,11 +9,12 @@
 #* solve 'ration' matching problem in the item database but especially in the bag
 # *  Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
 # *  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
+# explicit + for bags always adds, never selects
+# Remove from any/all bags (but selected first) (split up removal from addition?)
 # support bag open none one all (current is like one, none is no report, all is add range of bags to report at start)
 # $ prefix buys (automatically remove coins), but change? and -$ to sell?
 # Weight summary and delta (with support for custom weight configuration from bag)
 # Add capped removal items back to show in failed
-# Remove from any/all bags (but selected first) (split up removal from addition?)
 # [x] delta before bag selection doesn't add multiple but select an indexed copy [1 is first -1 is last], add to help
 # add recognized class weapons to a worn/equipped bag instead
 # add ammo to ammo bags automatically
