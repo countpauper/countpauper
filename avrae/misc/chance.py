@@ -6,23 +6,21 @@
 #*  Target: combatant
 #      (will also roll damage), hp and damage rolls to see if you dying or dead
 #* qualitative chance for target unlocked with -s
-#     - svar/uvar to set default behavior (show=False allow=True or list of ids, char or user names or just True/False)
-#     - svar to set levels per user
-# 	  - sub commands to config for user (config -s[how] -h[hide]) or server (block <id>, show <id>)
+#     * svar/uvar to set default behavior (show=False allow=True or list of ids, char or user names or just True/False)
+#     * svar to set levels per user
+# 	  - sub commands to config for user (block (all) allow [<id>]  and hide(all/id) show [<id>] and for uvar : config [-show]
 #     insight/nature/religion check for quality or quantity level (how to decide which for what?), based on race? https://github.com/avrae/avrae/issues/1292
 #     - monster database: undead, fiends are religion, beasts, monstrosities,aberations are nature, humanoids are insight?
 #         - DC related to CR? may not make sense. it's obvious a dragon has high AC, but
 #         - 5 over the DC shows detailed, under is blocked
-# -i <name in group> to use current initiative character instead of selected character
-#   -c <name> to select a combatant by name as executor
+# *-i <name in group> to use current initiative character instead of selected character
 # Spell database to identify spell attacks and saves
 #  - when checking against target DC, also hide the roll string of their save
 #  - run multiple expressions vs multiple targets (when targeting multiple with one spell)
 #  - handle spells without target (self range, touch range) as rollstr 0 dc 0 (certain)
 #  opposed checks are roll - opposing roll
 #     !chance grapple -t for opposed grapple check (auto select acrobatics or athletics)
-# take -b effects into account for attacks
-
+# take -b effects into account for attacks automatically
 
 # rr and say how the chance of how many will hit (and crit?) might get messy
 # !chance death (saves (1d20, should be with luck, but https://github.com/avrae/avrae/issues/1388)) with -rr for total chance to die (take into account crits then)
@@ -44,6 +42,33 @@
 # max dice math: https://math.stackexchange.com/questions/1696623/what-is-the-expected-value-of-the-largest-of-the-three-dice-rolls/
 # roller (seem to do it the hard way but good to compare): http://topps.diku.dk/torbenm/troll.msp
 
+#### Parse configuration
+config=load_json(get('Chance','{}'))
+config.update(load_json(get_svar('Chance','{}')))
+allowed=config.get('allowed',True)
+if typeof(allowed)=='str':
+	allowed=allowed.split(',')
+if typeof(allowed)=='SafeList':
+	allowed={id:True for id in allowed}
+if typeof(allowed)=='SafeDict':
+	# match with ids, user names, nick names, character names in order of precedence
+	allowed={id.lower():allow for id,allow in allowed.items()}
+	allowed = allowed.get(str(ctx.controller.id), show.get(ctx.controller.name.lower(), show.get(ctx.controller.display_name.lower(),show.get(character().name.lower(), False))))
+if not allowed:
+	return f'echo `{ctx.prefix}{ctx.alias}` is blocked for you by the server adminstrator.'
+
+show=config.get('show',False)
+if typeof(show)=='str':
+	show=show.split(',')
+if typeof(show)=='SafeList':
+	show={id:True for id in show}
+if typeof(show)=='SafeDict':
+	# match with ids, user names, nick names, character names in order of precedence
+	show={id.lower():s for id,s in show.items()}
+	show = show.get(str(ctx.controller.id), show.get(ctx.controller.name.lower(), show.get(ctx.controller.display_name.lower(),show.get(character().name.lower(), False))))
+
+# TODO: if typeof(show)=='SafeList') : (or string split, or dict: match)
+
 #### Parse arguments
 syntax=f'`{ctx.prefix}{ctx.alias} <attack>/<skill>/<save>/<roll> [-ac <number>][-dc <number>][-t <target>]... [-b <bonus roll>] [adv|dis|ea] [-h[ide]] [-s[how]] [-i [<combatant>]]`'
 args=&ARGS&
@@ -51,9 +76,12 @@ if not args:
 	return f'echo You did not specify a query. Use: {syntax}'
 query=args[0]
 args=argparse(args[1:])
-dbg=args.last('dbg',True)
+
+dbg=args.last('dbg',config.get('debug',False))
 hide=args.last('hide',args.last('h',False, type_=bool), type_=bool)
-show=args.last('show',args.last('s',False, type_=bool), type_=bool)
+show=args.last('show',args.last('s',show, type_=bool), type_=bool)
+
+
 
 ### Parse the query  and translate it into a query (description) and expression (roll string)
 expression=query
@@ -106,7 +134,7 @@ if executor:
 	if typeof(executor)=='AliasCharacter':	# duck say quack ?
 		criton = executor.csettings.get('criton', 20)
 		reroll_luck = executor.csettings.get('reroll')
-		reliability = 10 if c.csettings.get('talent') else None
+		reliability = 10 if executor.csettings.get('talent') else None
 
 	queryId=query.replace(' ','').lower()
 
@@ -368,7 +396,7 @@ report=[]
 if dbg:
 	report.append(f'{query} / {expression} : [{lo}] {", ".join(f"{p*100:.2f}%" for p in pmf)}  [{hi}]')
 
-quality_description=['flimsy','low','average','descent','high','certain']
+quality_description=['flimsy','low','average','decent','high','certain']
 
 if not targets:
 	report.append(f'You did not specify any targets. Use: {syntax}')
