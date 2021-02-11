@@ -13,9 +13,11 @@
 #     - monster database: undead, fiends are religion, beasts, monstrosities,aberations are nature, humanoids are insight?
 #         - DC related to CR? may not make sense. it's obvious a dragon has high AC, but
 #         - 5 over the DC shows detailed, under is blocked
+# -i <name in group> to use current initiative character instead of selected character
+#   -c <name> to select a combatant by name as executor
 # Spell database to identify spell attacks and saves
 #  - when checking against target DC, also hide the roll string of their save
-#  - run multiple expressions vs multiple targets (when targeting multiple with one spell) 
+#  - run multiple expressions vs multiple targets (when targeting multiple with one spell)
 #  - handle spells without target (self range, touch range) as rollstr 0 dc 0 (certain)
 #  opposed checks are roll - opposing roll
 #     !chance grapple -t for opposed grapple check (auto select acrobatics or athletics)
@@ -43,7 +45,7 @@
 # roller (seem to do it the hard way but good to compare): http://topps.diku.dk/torbenm/troll.msp
 
 #### Parse arguments
-syntax=f'`{ctx.prefix}{ctx.alias} <attack>/<skill>/<save>/<roll> [-ac <number>][-dc <number>][-t <target>]... [-b <bonus roll>] [adv|dis|ea] [-h] [-s]`'
+syntax=f'`{ctx.prefix}{ctx.alias} <attack>/<skill>/<save>/<roll> [-ac <number>][-dc <number>][-t <target>]... [-b <bonus roll>] [adv|dis|ea] [-h[ide]] [-s[how]] [-i [<combatant>]]`'
 args=&ARGS&
 if not args:
 	return f'echo You did not specify a query. Use: {syntax}'
@@ -61,11 +63,51 @@ reliability=None
 attack=None
 skill=None
 save_query=False
-if c:=character():
-	criton = c.csettings.get('criton', 20)
-	reroll_luck = c.csettings.get('reroll')
 
-	reliability=10 if c.csettings.get('talent') else None
+# select the executor
+executor=character()	# default current character
+
+# if in combat and using -i option, select another executor
+if init_name := args.last('i'):
+	executor=None
+	if fight:=combat():
+		current=combat().current
+		if init_name is True or str(init_name).startswith('-'):
+			if current:
+				if current.type=='group':
+					executor=current.combatants[0]
+				else:
+					executor=current
+			else:
+				err('No combatant active in initiative.')
+		else:
+			init_name=str(init_name).lower()
+			if current:
+				if current.type=='combatant' and current.name.lower().startswith(init_name):
+					executor=current
+				elif current.type=='group':
+					# prefer matches in current group
+					if matches:=[combatant for combatant in current.combatants if combatant.name.lower().startswith(init_name)]:
+						executor=matches[0]
+					# fallback to any matches
+			# if not matches with current just fal back to any in combat
+			if executor is None:
+				if matches:=[combatant for combatant in combat().combatants if combatant.name.lower().startswith(init_name)]:
+					executor=matches[0]
+				else:
+					err(f'Combatant `{init_name}` not found.')
+	else:
+		err(f'Error `-i` only works in a channel where combat is active.')
+
+criton=20
+reroll_luck=None
+reliability=None
+if executor:
+	if typeof(executor)=='AliasCharacter':	# duck say quack ?
+		criton = executor.csettings.get('criton', 20)
+		reroll_luck = executor.csettings.get('reroll')
+		reliability = 10 if c.csettings.get('talent') else None
+
 	queryId=query.replace(' ','').lower()
 
 	if saves:={save_name:skill for save_name, skill in character().saves if save_name.startswith(queryId)}:
@@ -73,16 +115,14 @@ if c:=character():
 		skill=saves[query]
 		save_query=True
 		expression = skill.d20(reroll=reroll_luck)
-	elif skills:={skill_name:skill for skill_name,skill in character().skills if skill_name.lower().startswith(queryId)}:
+	elif skills:={skill_name:skill for skill_name,skill in executor.skills if skill_name.lower().startswith(queryId)}:
 		if len(skills)>1:
 			return f'echo `{ctx.prefix}{ctx.alias} {" | ".join(skills.keys())}'
 		query=tuple(skills.keys())[0]
 		skill=skills[query]
 		save_query=False
 		expression = skill.d20(reroll=reroll_luck, min_val=reliability if skill.prof >= 1 else None)
-	elif attacks:={atk.name:atk for atk in c.attacks if atk.name.lower().startswith(query.lower())}:
-		if len(attacks)>1:
-			return f'echo `{ctx.prefix}{ctx.alias} {" | ".join(attacks.keys())}'
+	elif attacks:={atk.name:atk for atk in executor.attacks if atk.name.lower().startswith(query.lower())}:
 		query=tuple(attacks.keys())[0]
 		attack=attacks[query]
 		if automation:=attack.raw.get('automation',[]):
@@ -334,7 +374,7 @@ if not targets:
 	report.append(f'You did not specify any targets. Use: {syntax}')
 else:
 	for target_name,target in targets.items():
-		query_description = f'**{query.title()} (`{expression}`) VS {target_name.title()}**'
+		query_description = f'**{executor.name} {query.title()} (`{expression}`) VS {target_name.title()}**'
 		target_value=target.get('target')
 		quality_report=target.get('hidden')
 		if target_value is None:
