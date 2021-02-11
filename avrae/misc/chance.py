@@ -2,11 +2,28 @@
 # Ideas: query attack, spell for base, skill
 # * Add all -b
 #*  use adv and replace first 1d20
+# * multiple AC/DC,  targets, report chance for each
 #*  Target: combatant
 #      (will also roll damage), hp and damage rolls to see if you dying or dead
-# rr and say how the chance of how many will hit (and crit?)
-# * multiple AC/DC,  targets, report chance for each
-# death saves (1d20, should be with luck, but https://github.com/avrae/avrae/issues/1388)
+#* qualitative chance for target unlocked with -s
+#     - svar/uvar to set default behavior (show=False allow=True or list of ids, char or user names or just True/False)
+#     - svar to set levels per user
+# 	  - sub commands to config for user (config -s[how] -h[hide]) or server (block <id>, show <id>)
+#     insight/nature/religion check for quality or quantity level (how to decide which for what?), based on race? https://github.com/avrae/avrae/issues/1292
+#     - monster database: undead, fiends are religion, beasts, monstrosities,aberations are nature, humanoids are insight?
+#         - DC related to CR? may not make sense. it's obvious a dragon has high AC, but
+#         - 5 over the DC shows detailed, under is blocked
+# Spell database to identify spell attacks and saves
+#  - when checking against target DC, also hide the roll string of their save
+#  - run multiple expressions vs multiple targets (when targeting multiple with one spell) 
+#  - handle spells without target (self range, touch range) as rollstr 0 dc 0 (certain)
+#  opposed checks are roll - opposing roll
+#     !chance grapple -t for opposed grapple check (auto select acrobatics or athletics)
+# take -b effects into account for attacks
+
+
+# rr and say how the chance of how many will hit (and crit?) might get messy
+# !chance death (saves (1d20, should be with luck, but https://github.com/avrae/avrae/issues/1388)) with -rr for total chance to die (take into account crits then)
 # - Display result qualitively (certain, impossible, high, medium, low) when targeting characters, (override with ... -s/-h)
 # 0 imppssible, <10 very low, <30 low <70 medium <90 high <100 very high, 100 certain
 #   option to show as techo (-h <sec>)
@@ -23,17 +40,18 @@
 # maths: https://stats.stackexchange.com/questions/3614/how-to-easily-determine-the-results-distribution-for-multiple-dice
 # dnd maths: https://stats.stackexchange.com/questions/116792/dungeons-dragons-attack-hit-probability-success-percentage/116913#116913
 # max dice math: https://math.stackexchange.com/questions/1696623/what-is-the-expected-value-of-the-largest-of-the-three-dice-rolls/
-# roller (seem to do it the hard waym but good to compare): http://topps.diku.dk/torbenm/troll.msp
+# roller (seem to do it the hard way but good to compare): http://topps.diku.dk/torbenm/troll.msp
 
 #### Parse arguments
-syntax=f'`{ctx.prefix}{ctx.alias} <attack>/<skill>/<save>/<roll> -ac <number>|-dc <number>`'
+syntax=f'`{ctx.prefix}{ctx.alias} <attack>/<skill>/<save>/<roll> [-ac <number>][-dc <number>][-t <target>]... [-b <bonus roll>] [adv|dis|ea] [-h] [-s]`'
 args=&ARGS&
 if not args:
 	return f'echo You did not specify a query. Use: {syntax}'
 query=args[0]
 args=argparse(args[1:])
 dbg=args.last('dbg',True)
-hide=args.last('h',False, type_=bool)
+hide=args.last('hide',args.last('h',False, type_=bool), type_=bool)
+show=args.last('show',args.last('s',False, type_=bool), type_=bool)
 
 ### Parse the query  and translate it into a query (description) and expression (roll string)
 expression=query
@@ -103,13 +121,13 @@ if not skill:
 	for ac in args.get('ac'):
 		if not ac.isdigit():
 			return f'echo AC `{ac}` is not a number, Use {syntax}'
-		targets[f'AC `{ac}`']={'target':int(ac),'crit':True, 'hidden':False}
+		targets[f'AC `{ac}`']={'target':int(ac),'crit':True, 'hidden':hide}
 
 if not attack:
 	for dc in args.get('dc'):
 		if not dc.isdigit():
 			return f'echo DC `{dc}` is not a number, Use {syntax}'
-		targets[f'DC `{dc}`']={'target':int(dc),'crit':False, 'hidden':False}
+		targets[f'DC `{dc}`']={'target':int(dc),'crit':False, 'hidden':hide}
 
 # TODO opposed skills in gvar or something
 opposed_skills={
@@ -128,13 +146,13 @@ if fight:=combat():
 		if combatant:=fight.get_combatant(t):
 			target_name=combatant.name
 			if save_query:
-				targets[target_name]={'target':combatant.spellbook.dc, 'crit':False, 'hidden':hide}
+				targets[target_name]={'target':combatant.spellbook.dc, 'crit':False, 'hidden':not show}
 			elif attack:
-				targets[target_name]={'target':combatant.ac, 'crit':True, 'hidden':hide}
+				targets[target_name]={'target':combatant.ac, 'crit':True, 'hidden':not show}
 			elif skill:
 				if opposed_skill_name:= opposed_skills.get(query):
 					opposed_skill = combatant.skills[opposed_skill_name]
-					targets[f'{target_name} passive {opposed_skill_name}']={'target':10+opposed_skill.value, 'crit':False, 'hidden':True}
+					targets[f'{target_name} passive {opposed_skill_name}']={'target':10+opposed_skill.value, 'crit':False, 'hidden':not show}
 				else:
 					pass #
 
@@ -310,7 +328,7 @@ report=[]
 if dbg:
 	report.append(f'{query} / {expression} : [{lo}] {", ".join(f"{p*100:.2f}%" for p in pmf)}  [{hi}]')
 
-quality={0:'impossible', 20:'low',80:'medium', 99:'high','100':'certain'}
+quality_description=['flimsy','low','average','descent','high','certain']
 
 if not targets:
 	report.append(f'You did not specify any targets. Use: {syntax}')
@@ -318,6 +336,7 @@ else:
 	for target_name,target in targets.items():
 		query_description = f'**{query.title()} (`{expression}`) VS {target_name.title()}**'
 		target_value=target.get('target')
+		quality_report=target.get('hidden')
 		if target_value is None:
 			report.append(f'{query_description}: Not Applicable')
 		else:
@@ -334,13 +353,20 @@ else:
 					crit_chance=0
 				if fail_chance:
 					miss=max(miss,fail_chance)
-				if target.get('hidden'):
-
-					report.append(f'{query_description}: Miss: `{miss*100.0:.1f}%`, Hit: `{(1-miss)*100:.1f}%` Crit: `{(crit_chance)*100:.1f}%`')
+				hit=1-miss
+				if quality_report:
+					quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
+					report.append(f'{query_description}: Hit chance: `{quality}`, Crit : `{(crit_chance)*100:.1f}%`')
 				else:
-					report.append(f'{query_description}: Miss: `{miss*100.0:.1f}%`, Hit: `{(1-miss)*100:.1f}%` Crit: `{(crit_chance)*100:.1f}%`')
+					report.append(f'{query_description}: Miss: `{miss*100.0:.1f}%`, Hit: `{hit*100:.1f}%` Crit: `{(crit_chance)*100:.1f}%`')
 			else:
-				report.append(f'{query_description}: Failure: `{miss*100.0:.1f}%`, Success: `{(1-miss)*100:.1f}%`')
+				hit=1-miss
+				if quality_report:
+					quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
+					report.append(f'{query_description}: Success chance: `{quality}`')
+				else:
+					report.append(f'{query_description}: Failure: `{miss*100.0:.1f}%`, Success: `{hit*100:.1f}%`')
+
 sep='\n'
 return f'echo {sep.join(report)}'
 </drac2>
