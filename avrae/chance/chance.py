@@ -53,7 +53,7 @@ if typeof(allowed)=='SafeList':
 if typeof(allowed)=='SafeDict':
 	# match with ids, user names, nick names, character names in order of precedence
 	allowed={id.lower():allow for id,allow in allowed.items()}
-	allowed = allowed.get(str(ctx.controller.id), show.get(ctx.controller.name.lower(), show.get(ctx.controller.display_name.lower(),show.get(character().name.lower(), False))))
+	allowed = allowed.get(str(ctx.author.id), show.get(str(ctx.author).lower(), show.get(ctx.author.display_name.lower(),show.get(character().name.lower(), False))))
 if not allowed:
 	return f'echo `{ctx.prefix}{ctx.alias}` is blocked for you by the server adminstrator.'
 
@@ -65,7 +65,7 @@ if typeof(show)=='SafeList':
 if typeof(show)=='SafeDict':
 	# match with ids, user names, nick names, character names in order of precedence
 	show={id.lower():s for id,s in show.items()}
-	show = show.get(str(ctx.controller.id), show.get(ctx.controller.name.lower(), show.get(ctx.controller.display_name.lower(),show.get(character().name.lower(), False))))
+	show = show.get(str(ctx.author.id), show.get(str(ctx.author).lower(), show.get(ctx.author.display_name.lower(),show.get(character().name.lower(), False))))
 
 # TODO: if typeof(show)=='SafeList') : (or string split, or dict: match)
 
@@ -85,12 +85,13 @@ show=args.last('show',args.last('s',show, type_=bool), type_=bool)
 
 ### Parse the query  and translate it into a query (description) and expression (roll string)
 expression=query
+dice_expression='exp' if query[0].isnumeric() else False
 reroll_luck=None
 criton=20
 reliability=None
 attack=None
 skill=None
-save_query=False
+save_query=None
 
 # select the executor
 executor=character()	# default current character
@@ -130,6 +131,7 @@ if init_name := args.last('i'):
 criton=20
 reroll_luck=None
 reliability=None
+spell_list=load_json(get_gvar('13dc3e0a-a230-40ca-8fb3-a39846300b18'))
 if executor:
 	if typeof(executor)=='AliasCharacter':	# duck say quack ?
 		criton = executor.csettings.get('criton', 20)
@@ -141,14 +143,14 @@ if executor:
 	if saves:={save_name:skill for save_name, skill in character().saves if save_name.startswith(queryId)}:
 		query=tuple(saves.keys())[0]
 		skill=saves[query]
-		save_query=True
+		save_query=save_query
 		expression = skill.d20(reroll=reroll_luck)
 	elif skills:={skill_name:skill for skill_name,skill in executor.skills if skill_name.lower().startswith(queryId)}:
 		if len(skills)>1:
 			return f'echo `{ctx.prefix}{ctx.alias} {" | ".join(skills.keys())}'
 		query=tuple(skills.keys())[0]
 		skill=skills[query]
-		save_query=False
+		save_query=None
 		expression = skill.d20(reroll=reroll_luck, min_val=reliability if skill.prof >= 1 else None)
 	elif attacks:={atk.name:atk for atk in executor.attacks if atk.name.lower().startswith(query.lower())}:
 		query=tuple(attacks.keys())[0]
@@ -170,18 +172,24 @@ if executor:
 			else:
 				# TODO: with save set dc to save and find save type on target, same as spells
 				err(f'Implementation limitation: Attack effect type `{effect_type}` for {query} not yet supported.')
+	elif executor.spellbook.dc:	 # optimization, don't scan 500 spells if not a caster
+		if spells:={spell_name:spell for spell_name,spell in spell_list.items() if spell_name.startswith(query.lower())}:
+			query=tuple(spells.keys())[0]
+			spell=spells[query]
+			if spell.attack:
+				expression=f'1d20'
+				if reroll_luck is not None:
+					expression += f'ro{reroll_luck}'
+				expression+=f'+{executor.spellbook.sab}'
+				save_query=None
+			elif spell.save:
+				save_query=spell.save
+			else:
+				save_query=True
+				expression='0'
 	else:
 		pass # keep query, TODO spells, but need access to 'automation' info (which save or spell attack)
 
-# replace first 1d20 with advantage, this is almost the same as !roll, which only does it for the first term
-expression = expression.replace('1d20',['1d20','2d20kh1','3d20kh1','2d20kl1'][args.adv(ea=True)],1)
-
-# append argument bonuses
-expression='+'.join([expression]+args.get('b'))
-
-# chance the query < constant
-expression=expression.replace(' ','')
-expression_terms=expression.replace('+-','-').replace('-','+-')
 #####  parse targets
 cancrit=None
 targets={}
@@ -213,17 +221,37 @@ if fight:=combat():
 		# TODO: could also split target arguments | and specify opposed skill dc or extra bonuses, adv
 		if combatant:=fight.get_combatant(t):
 			target_name=combatant.name
-			if save_query:
+			if spell and save_query:
+				targets[target_name] = {'target': executor.spellbook.dc, 'crit': False, 'hidden': not show}
+				if saves := [(save_name, save) for save_name, save in combatant.saves if
+							 save_name.lower().startswith(spell.save)]:
+					expression = saves[0][1].d20(args.adv(ea=False, boolwise=True))  # advantage here to avoid ea
+				else:
+					err(f'`{spell.save} save for `{query}` not found for `{target_name}`')
+			elif save_query:
 				targets[target_name]={'target':combatant.spellbook.dc, 'crit':False, 'hidden':not show}
 			elif attack:
-				targets[target_name]={'target':combatant.ac, 'crit':True, 'hidden':not show}
+				targets[target_name]={'target':combatant.ac, 'crit':True, 'hidden':not show, 'hideexpression'}
 			elif skill:
 				if opposed_skill_name:= opposed_skills.get(query):
 					opposed_skill = combatant.skills[opposed_skill_name]
-					targets[f'{target_name} passive {opposed_skill_name}']={'target':10+opposed_skill.value, 'crit':False, 'hidden':not show}
+					targets[f'{target_name} passive {opposed_skill_name}']={'target':10+opposed_skill.value, 'crit':False, 'hidden':False, 'hide_exp':not show}
 				else:
 					pass #
 
+# dice expression has to start with a number or it's a valid spell/skill/attack
+if not expression[0].isnumeric():
+	return f'echo Invalid expression query `{expression}`.'
+
+# replace first 1d20 with advantage, this is almost the same as !roll, which only does it for the first term
+expression = expression.replace('1d20',['1d20','2d20kh1','3d20kh1','2d20kl1'][args.adv(ea=True)],1)
+
+# append argument bonuses
+expression='+'.join([expression]+args.get('b'))
+
+# chance the query < constant
+expression=expression.replace(' ','')
+expression_terms=expression.replace('+-','-').replace('-','+-')
 
 ########  Create the propabaility mass function for the experession
 expression_terms=expression.split('+')
