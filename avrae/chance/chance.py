@@ -14,8 +14,8 @@
 #         - DC related to CR? may not make sense. it's obvious a dragon has high AC, but
 #         - 5 over the DC shows detailed, under is blocked
 # *-i <name in group> to use current initiative character instead of selected character
-# Spell database to identify spell attacks and saves
-#  - when checking against target DC, also hide the roll string of their save
+#* Spell database to identify spell attacks and saves
+#*  when checking against target DC, also hide the roll string of their save
 #  - run multiple expressions vs multiple targets (when targeting multiple with one spell)
 #  - handle spells without target (self range, touch range) as rollstr 0 dc 0 (certain)
 #  opposed checks are roll - opposing roll
@@ -78,10 +78,8 @@ query=args[0]
 args=argparse(args[1:])
 
 dbg=args.last('dbg',config.get('debug',False))
-hide=args.last('hide',args.last('h',False, type_=bool), type_=bool)
-show=args.last('show',args.last('s',show, type_=bool), type_=bool)
-
-
+show_query=not args.last('hide',args.last('h',False, type_=bool), type_=bool)
+show_target=args.last('show',args.last('s',show, type_=bool), type_=bool)
 
 ### Parse the query  and translate it into a query (description) and expression (roll string)
 expression=query
@@ -127,6 +125,9 @@ if init_name := args.last('i'):
 					err(f'Combatant `{init_name}` not found.')
 	else:
 		err(f'Error `-i` only works in a channel where combat is active.')
+
+if executor!=character() and executor.controller!=ctx.author.id and not dice_expression:
+	show_query=not show_target
 
 criton=20
 reroll_luck=None
@@ -197,13 +198,13 @@ if not skill:
 	for ac in args.get('ac'):
 		if not ac.isdigit():
 			return f'echo AC `{ac}` is not a number, Use {syntax}'
-		targets[f'AC `{ac}`']={'target':int(ac),'crit':True, 'hidden':hide}
+		targets[f'AC `{ac}`']={'target':int(ac),'crit':True, 'show':True}
 
 if not attack:
 	for dc in args.get('dc'):
 		if not dc.isdigit():
 			return f'echo DC `{dc}` is not a number, Use {syntax}'
-		targets[f'DC `{dc}`']={'target':int(dc),'crit':False, 'hidden':hide}
+		targets[f'DC `{dc}`']={'target':int(dc),'crit':False, 'show':True}
 
 # TODO opposed skills in gvar or something
 opposed_skills={
@@ -222,20 +223,23 @@ if fight:=combat():
 		if combatant:=fight.get_combatant(t):
 			target_name=combatant.name
 			if spell and save_query:
-				targets[target_name] = {'target': executor.spellbook.dc, 'crit': False, 'hidden': not show}
+				if len(args.get('t'))>1:	# only one show_query and only one expression right now
+					err('Implementation limitation: multiple saving throws not yet supported.')
+				targets[f'{target_name} {save_query} save'] = {'target': executor.spellbook.dc, 'crit': False, 'reverse':True, 'show':show_query}
+				show_query=show_target
 				if saves := [(save_name, save) for save_name, save in combatant.saves if
 							 save_name.lower().startswith(spell.save)]:
 					expression = saves[0][1].d20(args.adv(ea=False, boolwise=True))  # advantage here to avoid ea
 				else:
 					err(f'`{spell.save} save for `{query}` not found for `{target_name}`')
 			elif save_query:
-				targets[target_name]={'target':combatant.spellbook.dc, 'crit':False, 'hidden':not show}
-			elif attack:
-				targets[target_name]={'target':combatant.ac, 'crit':True, 'hidden':not show, 'hideexpression'}
+				targets[f'{target_name} Spell DC']={'target':combatant.spellbook.dc, 'crit':False, 'show':show_target}
+			elif attack or dice_expression or spell:
+				targets[f'{target_name} AC']={'target':combatant.ac, 'crit':True, 'show':show_target}
 			elif skill:
 				if opposed_skill_name:= opposed_skills.get(query):
 					opposed_skill = combatant.skills[opposed_skill_name]
-					targets[f'{target_name} passive {opposed_skill_name}']={'target':10+opposed_skill.value, 'crit':False, 'hidden':False, 'hide_exp':not show}
+					targets[f'{target_name} passive {opposed_skill_name}']={'target':10+opposed_skill.value, 'crit':False, 'show':show_target}
 				else:
 					pass #
 
@@ -251,7 +255,7 @@ expression='+'.join([expression]+args.get('b'))
 
 # chance the query < constant
 expression=expression.replace(' ','')
-expression_terms=expression.replace('+-','-').replace('-','+-')
+expression=expression.replace('+-','-').replace('-','+-')
 
 ########  Create the propabaility mass function for the experession
 expression_terms=expression.split('+')
@@ -430,9 +434,18 @@ if not targets:
 	report.append(f'You did not specify any targets. Use: {syntax}')
 else:
 	for target_name,target in targets.items():
-		query_description = f'**{executor.name} {query.title()} (`{expression}`) VS {target_name.title()}**'
 		target_value=target.get('target')
-		quality_report=target.get('hidden')
+		target_description = f'{target_name}'
+		show_target=target.get('show')
+		if show_target:
+			target_description+=f' ({target_value})'
+
+		if show_query:
+			query_description = f'**{executor.name} {query.title()} (`{expression}`) VS {target_description}**'
+		else:
+			query_description = f'**{executor.name} {query.title()} VS {target_description}**'
+
+		show_chance=show_target and show_query
 		if target_value is None:
 			report.append(f'{query_description}: Not Applicable')
 		else:
@@ -442,6 +455,9 @@ else:
 				miss = 0
 			else:
 				miss = sum(pmf[i] for i in range(target_value - lo))
+			if target.get('reverse',False):
+				miss=1-miss
+
 			if target.get('crit'):
 				if crit_chance:
 					miss=min(miss,1-crit_chance)
@@ -450,18 +466,18 @@ else:
 				if fail_chance:
 					miss=max(miss,fail_chance)
 				hit=1-miss
-				if quality_report:
+				if show_chance:
+					report.append(f'{query_description}: Miss: `{miss * 100.0:.1f}%`, Hit: `{hit * 100:.1f}%` Crit: `{(crit_chance) * 100:.1f}%`')
+				else:
 					quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
 					report.append(f'{query_description}: Hit chance: `{quality}`, Crit : `{(crit_chance)*100:.1f}%`')
-				else:
-					report.append(f'{query_description}: Miss: `{miss*100.0:.1f}%`, Hit: `{hit*100:.1f}%` Crit: `{(crit_chance)*100:.1f}%`')
 			else:
 				hit=1-miss
-				if quality_report:
+				if show_chance:
+					report.append(f'{query_description}: Failure: `{miss * 100.0:.1f}%`, Success: `{hit * 100:.1f}%`')
+				else:
 					quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
 					report.append(f'{query_description}: Success chance: `{quality}`')
-				else:
-					report.append(f'{query_description}: Failure: `{miss*100.0:.1f}%`, Success: `{hit*100:.1f}%`')
 
 sep='\n'
 return f'echo {sep.join(report)}'
