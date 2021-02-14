@@ -10,7 +10,9 @@
 # *  Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
 # *  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
 # explicit + for bags always adds, never selects
+#   - select a second new back automatically, ie number >1 is select back
 # Remove from any/all bags (but selected first) (split up removal from addition?)
+# Split arguments that start with numbers into amounts eg 10gp => 10 gp
 # support bag open none one all (current is like one, none is no report, all is add range of bags to report at start)
 # $ prefix buys (automatically remove coins), but change? and -$ to sell?
 # Weight summary and delta (with support for custom weight configuration from bag)
@@ -56,7 +58,7 @@ coin_bags = [idx for idx,b in enumerate(bags) if b[0].lower() in purse_names]
 coin_idx = coin_bags[0] if coin_bags else None
 
 # convert arguments to quantified changes
-delta=1
+delta=None
 buy=False
 bag_idx=None	# track selection using index for report
 debug_break=None
@@ -68,7 +70,6 @@ removed_bags=[]
 debug=[]
 report={}	# list of modified bags: {bagidx:{item_name:[amount deltas]}], could be bag index to resolve reuse
 fail='fail'
-
 while args:
 	# debug break
 	if debug_break:
@@ -82,13 +83,23 @@ while args:
 	if arg[0]=='$':	# unimplemented
 		buy=True
 		arg=arg[1:]
+		delta=1
 	elif arg[0]=='-':
-		delta=-delta
+		delta=-1
 		arg=arg[1:]
 	elif arg[0] == '+':
 		arg = arg[1:]
+		delta=1
 
-	if delta==1 and arg.isnumeric():
+	for n_pos in range(len(arg)):
+		if not arg[n_pos].isnumeric():
+			break
+	text_arg=arg[n_pos:]
+	arg=arg[:n_pos]
+	if remaining:
+		args.insert(0,text_arg)
+
+	if (delta==1 or delta is None) and arg.isnumeric():
 		delta=int(arg)
 		continue
 	elif delta==-1 and arg.isnumeric():
@@ -127,8 +138,8 @@ while args:
 		existing_bags = [idx for idx,b in enumerate(bags) if idx not in removed_bags and (b[0].lower().startswith(item_name.lower()) or space_name in b[0].lower())]
 	else:
 		existing_bags = [idx for idx,b in enumerate(bags) if idx not in removed_bags and (item_name.lower()==b[0].lower())]
-	# TODO: if delta=-1 could delete existing bag and everything in it
-	if delta<0 and existing_bags:
+	# Delete exiting bag
+	if delta==-1 and existing_bags:
 		removed_bag_idx=existing_bags[0]
 		removed_bag=bags[removed_bag_idx]
 		removed_bags.append(removed_bag_idx)	# don't remove until the end
@@ -145,9 +156,10 @@ while args:
 		if delta:	# repeat remove next backpack
 			args=[item_name]+args
 		else:
-			delta=1
+			delta=None
 		continue
-	elif delta==1 and existing_bags:
+	# select existing bag
+	elif delta is None and existing_bags:
 		bag_idx=existing_bags[0]
 		bag=bags[bag_idx]
 		# TODO: what if it's the same bag? dict? what is it's not? index?
@@ -157,6 +169,7 @@ while args:
 			report[bag_idx]={ }
 		continue
 
+	delta = 1 if delta is None else delta
 
 	## Create a new purse with all coins if needed
 	if coin_idx is None and item_name in coins.keys() and purse_names:
@@ -166,6 +179,8 @@ while args:
 		# report[coin_idx]={coin:[0] for coin in coins.keys()}
 		report[coin_idx]={purse_name:[1]}
 		debug.append(f'Purse {purse_name}')
+
+
 
 	## Coins : if an item is in the coin pouch, change the coins (don't remove the whole entry)
 	if coin_idx is not None:
@@ -198,7 +213,7 @@ while args:
 
 			# TODO report[pouch_name].get(coin,[amount])
 			debug.append(f'$ {delta} {item_name}')
-			delta=1
+			delta=None
 			continue
 
 	## Add: new bags
@@ -215,7 +230,7 @@ while args:
 			# add the bag's name in its report to remember that it's new
 			report[len(bags)-1]={new_bag:[1]}
 			debug.append(f'Bag {new_bag}')
-			delta=1
+			delta=None
 			continue
 
 	# Default bag: about to add items to  the current bag, if there is no current bag, select one
@@ -226,13 +241,13 @@ while args:
 			default_bag=default_bags[0]
 			args=[default_bag ,str(delta),arg]+args
 			debug.append(f'Default {default_bag}')
-			delta=1
+			delta=None
 			continue
 		elif containers and delta>0:
 			default_bag = containers[0]
 			debug.append(f'Default* {default_bag}')
 			args=[default_bag ,str(delta),arg]+args
-			delta=1
+			delta=None
 			continue
 		else:	# will fail to remove from no bag
 			pass
@@ -260,7 +275,7 @@ while args:
 			diff[mod_item]=diff.get(mod_item,[current])+[current-amount]
 			report[bag_idx]=diff
 
-			delta=1
+			delta=None
 			continue
 
 		# NEW known items
@@ -277,7 +292,7 @@ while args:
 			diff[new_item]=[0,delta]
 			report[bag_idx]=diff
 
-			delta=1
+			delta=None
 			continue
 
 		# Sets: add all of a set's contents to the arguments and parse as normal
@@ -293,7 +308,7 @@ while args:
 				added_args+=[str(q),item_name]
 			args=added_args * delta + args
 			debug.append(f'Set {item_set}')
-			delta=1
+			delta=None
 			continue
 
 		# try again with partial prefix
@@ -309,7 +324,7 @@ while args:
 			diff=report.get(bag_idx,{})
 			diff[new_item]=[0,delta]
 			report[bag_idx]=diff
-			delta=1
+			delta=None
 			continue
 
 	debug.append('f Missing {-delta} {item_name}')
