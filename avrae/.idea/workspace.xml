@@ -31,7 +31,6 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/quickbag.py" afterDir="false" />
     </list>

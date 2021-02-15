@@ -9,10 +9,10 @@
 #* solve 'ration' matching problem in the item database but especially in the bag
 # *  Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
 # *  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
-# explicit + for bags always adds, never selects
+#* explicit + for bags always adds, never selects
 #   - select a second new back automatically, ie number >1 is select back
 # Remove from any/all bags (but selected first) (split up removal from addition?)
-# Split arguments that start with numbers into amounts eg 10gp => 10 gp
+#* Split arguments that start with numbers into amounts eg 10gp => 10 gp
 # support bag open none one all (current is like one, none is no report, all is add range of bags to report at start)
 # $ prefix buys (automatically remove coins), but change? and -$ to sell?
 # Weight summary and delta (with support for custom weight configuration from bag)
@@ -91,14 +91,15 @@ while args:
 		arg = arg[1:]
 		delta=1
 
+	# split number from item_name, especially for coins 2gp => 2 gp
 	for n_pos in range(len(arg)):
 		if not arg[n_pos].isnumeric():
+			if n_pos:
+				args.insert(0, arg[n_pos:])
+				arg = arg[:n_pos]
 			break
-	text_arg=arg[n_pos:]
-	arg=arg[:n_pos]
-	if remaining:
-		args.insert(0,text_arg)
 
+	# amounts
 	if (delta==1 or delta is None) and arg.isnumeric():
 		delta=int(arg)
 		continue
@@ -115,11 +116,11 @@ while args:
 	if not arg:	# spaces after prefixes are allowed, just continue parsing next argument
 		continue
 
+	# heuristic to
 	if arg in short_words:
 		err(f'`{arg}` is not an item. Use "quotes" for items that consist of more than one word.')
 
 	# TODO: could maybe pop next arg here maybe and remove all the delta=1, buy=False, continue
-
 	# TODO: if 1 is +1 and arg is the name of an existing bag, then select that bag. If it's preceded by $ then add the bag to bags first
 
 	if delta==0:
@@ -154,7 +155,7 @@ while args:
 		debug.append(f'Remove Bag {removed_bag[0]}')
 		delta+=1
 		if delta:	# repeat remove next backpack
-			args=[item_name]+args
+			args.insert(0,item_name)
 		else:
 			delta=None
 		continue
@@ -225,7 +226,7 @@ while args:
 		if new_bags:
 			new_bag=new_bags[0].title()
 			bags.append([new_bag,{}])
-			args=[new_bag]+args	# queue switching to this bag
+			args.insert(0,new_bag)	# queue switching to this bag
 
 			# add the bag's name in its report to remember that it's new
 			report[len(bags)-1]={new_bag:[1]}
@@ -311,9 +312,12 @@ while args:
 			delta=None
 			continue
 
+		# TODO Remove items from any bag
+
+
 		# try again with partial prefix
 		if not partial:
-			args=[f'~{arg}'] + args
+			args.insert(0,f'~{arg}')
 			continue
 
 		# Lowest priority: unrecognized item
@@ -384,6 +388,8 @@ if  report:
 
 
 if debug_break:
+	if not debug_break:
+		debug_break=["Nothing"]
 	fields+=f' -f "Debug [{dbg}/{debug_break}]|{", ".join(debug)}"'
 
 # remove bags after indices are no longer referenced
