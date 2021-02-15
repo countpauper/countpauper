@@ -61,6 +61,8 @@ You can also dismiss the Bladesong at any time you choose (no action required) u
 		fields+=f' -f "Not in combat|Bladesong was activated outside of combat. You can apply the effect after joining combat using `!{ctx.alias} [<rounds>] -i`"'
 	# You gain a bonus to your AC equal to your Intelligence modifier (minimum of +1).
 	ac_bonus = max(intelligenceMod,1)
+	speed_bonus = 10
+	con_bonus = max(intelligenceMod,1)
 	if me:
 		me.remove_effect(effect_name)
 		ac = me.ac
@@ -68,9 +70,8 @@ You can also dismiss the Bladesong at any time you choose (no action required) u
 		ac = armor
 	fields+=f' -f "AC|{ac}+{ac_bonus}[int] = {ac+ac_bonus}|inline" '
 	if me:
-		me.add_effect(effect_name,f'-ac +{ac_bonus}',turns, desc=f"Your ac inceases with {ac_bonus}.\n- Walking speed increases with 10 feet.\n- Advantage on dexterixy(acrobatics) checks.\n- +{max(inteligenceMod, 1)} bonus to any Constitution saving throw you make to maintain your concentration on a spell.")
+		me.add_effect(effect_name,f'-AC +{ac_bonus}',turns, desc=f'Your ac inceases with {ac_bonus}.\n - Walking speed increases with {speed_bonus} feet.\n - Advantage on dexterity(acrobatics) checks.\n - +{con_bonus} bonus to any Constitution saving throw you make to maintain your concentration on a spell.')
 	# Your walking speed increases by 10 feet
-	speed_bonus = 10
 	speed = get('speed',None)
 	if speed:    # common cvar, not adjusted because it's hard to restore
 		current_speed = int(speed.split(sep=" ")[0])
@@ -81,7 +82,6 @@ You can also dismiss the Bladesong at any time you choose (no action required) u
 	# You have advantage on Dexterity (Acrobatics) checks.
 	fields+=' -f "Acrobatics Advantage|`!check Acrobatics bladesong`|inline"'
 	# You gain a bonus to any Constitution saving throw you make to maintain your concentration on a spell equal to your Intelligence modifier (minimum of +1)
-	con_bonus = max(intelligenceMod,1)
 	fields+=f' -f "Concentration +{con_bonus}[int]|`!save Con bladesong`|inline"'
 	# Song of victory
 else:
