@@ -11,8 +11,9 @@
 # *  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
 #* explicit + for bags always adds, never selects
 #   - select a second new back automatically, ie number >1 is select back
-# Remove from any/all bags (but selected first) (split up removal from addition?)
+#* Remove from any/all bags (but selected first) (split up removal from addition?)
 #* Split arguments that start with numbers into amounts eg 10gp => 10 gp
+# fix extra sack problem (ie !qb dungeon folk will add a sack because it doesn't have a default bag before the set. Move bag creation to actual adding items?)
 # support bag open none one all (current is like one, none is no report, all is add range of bags to report at start)
 # $ prefix buys (automatically remove coins), but change? and -$ to sell?
 # Weight summary and delta (with support for custom weight configuration from bag)
@@ -250,7 +251,7 @@ while args:
 			args=[default_bag ,str(delta),arg]+args
 			delta=None
 			continue
-		else:	# will fail to remove from no bag
+		else:
 			pass
 	else:
 		###  ITEMS
@@ -273,47 +274,79 @@ while args:
 
 			# update the item's diff in the report
 			diff=report.get(bag_idx,{})
-			diff[mod_item]=diff.get(mod_item,[current])+[current-amount]
+			change=current-amount
+			diff[mod_item]=diff.get(mod_item,[current])+[change]
 			report[bag_idx]=diff
 
-			delta=None
-			continue
+			# next arg, unless still items to remove
+			delta+=change
+			if delta>=0:
+				delta=None
+				continue
 
-		# NEW known items
-		if partial:
-			new_items += [n for n in item_list if n.startswith(item_name) or space_name in n.lower()]
-		else:
-			new_items = [n for n in item_list if item_name == n]
-		if delta>0 and new_items:
-			new_item=new_items[0].title().replace("'S","'s")
-			bag[1][new_item]=delta
-			debug.append(f'Add {delta} x {new_item}')
-			# update the item's diff in the report
-			diff=report.get(bag_idx,{})
-			diff[new_item]=[0,delta]
-			report[bag_idx]=diff
+		# Add NEW known items
+		if delta>0:
+			if partial:
+				new_items += [n for n in item_list if n.startswith(item_name) or space_name in n.lower()]
+			else:
+				new_items = [n for n in item_list if item_name == n]
+			if new_items:
+				new_item=new_items[0].title().replace("'S","'s")
+				bag[1][new_item]=delta
+				debug.append(f'Add {delta} x {new_item}')
+				# update the item's diff in the report
+				diff=report.get(bag_idx,{})
+				diff[new_item]=[0,delta]
+				report[bag_idx]=diff
 
-			delta=None
-			continue
+				delta=None
+				continue
 
-		# Sets: add all of a set's contents to the arguments and parse as normal
-		if partial:
-			item_set += [n for n in sets.keys() if n.startswith(item_name) or space_name in n.lower()]
-		else:
-			item_set = [n for n in sets.keys() if item_name==n]
-		if delta>0 and item_set:
-			item_set=item_set[0]
-			set_items=sets[item_set]
-			added_args=[]
-			for item_name,q in set_items.items():
-				added_args+=[str(q),item_name]
-			args=added_args * delta + args
-			debug.append(f'Set {item_set}')
-			delta=None
-			continue
+			# Sets: add all of a set's contents to the arguments and parse as normal
+			if partial:
+				item_set += [n for n in sets.keys() if n.startswith(item_name) or space_name in n.lower()]
+			else:
+				item_set = [n for n in sets.keys() if item_name==n]
+			if item_set:
+				item_set=item_set[0]
+				set_items=sets[item_set]
+				added_args=[]
+				for item_name,q in set_items.items():
+					added_args+=[str(q),item_name]
+				args=added_args * delta + args
+				debug.append(f'Set {item_set}')
+				delta=None
+				continue
 
-		# TODO Remove items from any bag
+		# Remove items from any bag
+		if delta<0:
+			for bi,remove_bag in enumerate(bags):
+				remove_bag=remove_bag[1]
+				if partial:
+					remove_items = {n:q for n,q in remove_bag.items() if n.lower().startswith(item_name) or space_name in n.lower()}
+				else:
+					remove_items = {n:q for n,q in remove_bag.items() if n.lower()==item_name}
+				for remove_item,current in remove_items.items():
+					if current>-delta:
+						remove_bag[remove_item]+=delta
+						removed=-delta
+						delta=None
+					else:
+						removed=current
+						remove_bag.pop(remove_item)
+						delta+=removed
+					debug.append(f'RemoveAny {current}-{removed} x {remove_item}')
+					diff = report.get(bi, {})
+					diff[remove_item] = diff.get(remove_item, [current]) + [-removed]
+					report[bi] = diff
+					if not delta:
+						break
+				if not delta:
+					break
 
+			if not delta:
+				delta=None
+				continue
 
 		# try again with partial prefix
 		if not partial:

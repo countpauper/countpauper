@@ -31,6 +31,7 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/quickbag.py" afterDir="false" />
     </list>
@@ -268,10 +269,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="463" y="166" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1611733183503" />
-    <state x="681" y="261" width="555" height="524" key="StructurePopup" timestamp="1613073041339">
+    <state x="681" y="261" width="555" height="524" key="StructurePopup" timestamp="1613367134872">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="681" y="261" width="555" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1613073041339" />
+    <state x="681" y="261" width="555" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1613367134872" />
     <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1613146833212">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
