@@ -17,8 +17,8 @@
 #* Spell database to identify spell attacks and saves
 #*  when checking against target DC, also hide the roll string of their save
 #  - run multiple expressions vs multiple targets (when targeting multiple with one spell)
-#  - handle spells without target (self range, touch range) as rollstr 0 dc 0 (certain)
-#  opposed checks are roll - opposing roll
+#  x [fail query]  handle spells without target (self range, touch range) as rollstr 0 dc 0 (certain)
+# - opposed checks are roll - opposing roll
 #     !chance grapple -t for opposed grapple check (auto select acrobatics or athletics)
 # take -b effects into account for attacks automatically
 
@@ -174,22 +174,22 @@ if executor:
 				# TODO: with save set dc to save and find save type on target, same as spells
 				err(f'Implementation limitation: Attack effect type `{effect_type}` for {query} not yet supported.')
 	elif executor.spellbook.dc:	 # optimization, don't scan 500 spells if not a caster
-		if spells:={spell_name:spell for spell_name,spell in spell_list.items() if spell_name.startswith(query.lower())}:
-			query=tuple(spells.keys())[0]
-			spell=spells[query]
+		for query, spell in {spell_name:spell for spell_name,spell in spell_list.items() if spell_name.startswith(query.lower())}.items():
 			if spell.attack:
-				expression=f'1d20'
-				if reroll_luck is not None:
-					expression += f'ro{reroll_luck}'
-				expression+=f'+{executor.spellbook.sab}'
 				save_query=None
+				if reroll_luck is None:
+					expression = f'1d20+{executor.spellbook.sab}'
+				else:
+					expression = f'1d20ro{reroll_luck}+{executor.spellbook.sab}'
+				break
 			elif spell.save:
 				save_query=spell.save
+				break
 			else:
-				save_query=True
-				expression='0'
+				spell=None
 	else:
 		pass # keep query, TODO spells, but need access to 'automation' info (which save or spell attack)
+
 
 #####  parse targets
 cancrit=None
