@@ -20,12 +20,10 @@
 #  x [fail query]  handle spells without target (self range, touch range) as rollstr 0 dc 0 (certain)
 # - opposed checks are roll - opposing roll
 #     !chance grapple -t for opposed grapple check (auto select acrobatics or athletics)
-# take -b effects into account for attacks automatically
+#* take -b effects into account for attacks automatically
 
 # rr and say how the chance of how many will hit (and crit?) might get messy
 # !chance death (saves (1d20, should be with luck, but https://github.com/avrae/avrae/issues/1388)) with -rr for total chance to die (take into account crits then)
-# - Display result qualitively (certain, impossible, high, medium, low) when targeting characters, (override with ... -s/-h)
-# 0 imppssible, <10 very low, <30 low <70 medium <90 high <100 very high, 100 certain
 #   option to show as techo (-h <sec>)
 #   Always show precise number a spoiler
 
@@ -78,8 +76,8 @@ query=args[0]
 args=argparse(args[1:])
 
 dbg=args.last('dbg',config.get('debug',False))
-show_query=not args.last('hide',args.last('h',False, type_=bool), type_=bool)
-show_target=args.last('show',args.last('s',show, type_=bool), type_=bool)
+show_query=dbg or not args.last('hide',args.last('h',False, type_=bool), type_=bool)
+show_target=dbg or args.last('show',args.last('s',show, type_=bool), type_=bool)
 
 ### Parse the query  and translate it into a query (description) and expression (roll string)
 expression=query
@@ -250,8 +248,14 @@ if not expression[0].isnumeric():
 # replace first 1d20 with advantage, this is almost the same as !roll, which only does it for the first term
 expression = expression.replace('1d20',['1d20','2d20kh1','3d20kh1','2d20kl1'][args.adv(ea=True)],1)
 
-# append argument bonuses
-expression='+'.join([expression]+args.get('b'))
+# retrieve effects
+if executor==character():
+	effects=fight.me.effects if fight and fight.me else []
+else:
+	effects=executor.effects
+
+# append argument and effect bonuses to the expression
+expression='+'.join([expression]+args.get('b')+[e.effect.get('b',0) for e in effects if 'b' in e.effect.keys()])
 
 # chance the query < constant
 expression=expression.replace(' ','')
