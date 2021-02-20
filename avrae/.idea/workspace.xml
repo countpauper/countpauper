@@ -32,7 +32,8 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/bladesong.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/shoot.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/shoot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +70,7 @@
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\inventory" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.csv2json">
+  <component name="RunManager" selected="Python.console test">
     <configuration name="chance" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -83,6 +84,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="C:\Users\maurits.fassaert\countpauper\avrae\chance\chance.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="chance_py (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="avrae" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/chance" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/chance/chance_py.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -112,6 +134,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="console test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="avrae" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\dnd\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/misc" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/console test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="csv2json" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -133,55 +176,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="gem_script" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="avrae" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\edsdl\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/misc" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/gem_script.py" />
-      <option name="PARAMETERS" value="100" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="gems" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="avrae" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\edsdl\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/misc" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/gems.py" />
-      <option name="PARAMETERS" value="250" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.console test" />
+        <item itemvalue="Python.chance_py (1)" />
         <item itemvalue="Python.csv2json" />
         <item itemvalue="Python.chance_py" />
         <item itemvalue="Python.chance" />
-        <item itemvalue="Python.gem_script" />
-        <item itemvalue="Python.gems" />
       </list>
     </recent_temporary>
   </component>
@@ -207,11 +208,19 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="686" y="162" key="#chance_py/0.0.1920.1040@0.0.1920.1040" timestamp="1611217197188" />
+    <state x="686" y="162" key="#chance_py_(1)" timestamp="1613667095010">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="686" y="162" key="#chance_py_(1)/0.0.1920.1040@0.0.1920.1040" timestamp="1613667095010" />
     <state x="421" y="192" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1610891345406">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="421" y="192" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1610891345406" />
     <state x="421" y="199" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1606055498825" />
+    <state x="686" y="162" key="#console_test" timestamp="1613666952712">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="686" y="162" key="#console_test/0.0.1920.1040@0.0.1920.1040" timestamp="1613666952712" />
     <state x="686" y="162" key="#csv2json" timestamp="1613061602581">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -224,25 +233,25 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="722" y="237" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1611001093373" />
-    <state width="1899" height="170" key="GridCell.Tab.0.bottom" timestamp="1613115807221">
+    <state width="1899" height="170" key="GridCell.Tab.0.bottom" timestamp="1613667115718">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="170" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1613115807221" />
+    <state width="1899" height="170" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115718" />
     <state width="1882" height="170" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
-    <state width="1899" height="170" key="GridCell.Tab.0.center" timestamp="1613115807221">
+    <state width="1899" height="170" key="GridCell.Tab.0.center" timestamp="1613667115718">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="170" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1613115807221" />
+    <state width="1899" height="170" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115718" />
     <state width="1882" height="170" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
-    <state width="1899" height="170" key="GridCell.Tab.0.left" timestamp="1613115807221">
+    <state width="1899" height="170" key="GridCell.Tab.0.left" timestamp="1613667115717">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="170" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1613115807221" />
+    <state width="1899" height="170" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115717" />
     <state width="1882" height="170" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
-    <state width="1899" height="170" key="GridCell.Tab.0.right" timestamp="1613115807221">
+    <state width="1899" height="170" key="GridCell.Tab.0.right" timestamp="1613667115718">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="170" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1613115807221" />
+    <state width="1899" height="170" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115718" />
     <state width="1882" height="170" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
     <state width="1899" height="346" key="GridCell.Tab.1.bottom" timestamp="1613061876227">
       <screen x="0" y="0" width="1920" height="1040" />
