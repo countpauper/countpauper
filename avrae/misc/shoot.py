@@ -80,8 +80,8 @@ if len(ammo_split)>1:
 		bonus = int(bonus_postfix)
 		bonus_str=f'magical  -b {bonus} -d {bonus}'
 
-ammo_bag_names=[ammo_container for (contained_ammo,ammo_container) in ammo_containers.items() if contained_ammo.lower() in ammo_name.lower()]
-ammo_bag_names+=[eb for eb in equipment_bags]
+ammo_bag_names=[ammo_container.lower() for (contained_ammo,ammo_container) in ammo_containers.items() if contained_ammo.lower() in ammo_name.lower()]
+ammo_bag_names+=[eb.lower() for eb in equipment_bags]
 # compute the needed ammo
 ammount =  len(args.get('t'))
 if ammount==0:
@@ -92,14 +92,15 @@ if bags:
 	# collect all existing ammo bags, sorted by preference
 	ammo_bags=[]
 	for ammo_bag_name in ammo_bag_names:
-		ammo_bags+=[b for b in bags if b[0].lower()==ammo_bag_name.lower()]
+		ammo_bags+=[b for b in bags if b[0].lower()==ammo_bag_name]
 
-	if not ammo_bags:
-		err("No ammo containers found, there should at least be equipment bags setup.")
+	# RAW all containers can be used as part of an action, just prefer the ammo bags, add the rest after
+	ammo_bags+=[b for b in bags if b[0].lower() not in ammo_bag_names]
 	bag_name=ammo_bags[0][0]
 
+	used_ammo={}
+	total,used=0,0
 	# go over all ammmo bags. Remove sufficient ammo and count how many total there were
-	used,total=0,0
 	for ammo_bag in ammo_bags:
 		ammo_items = ammo_bag[1]
 		bag_items = [item for item in ammo_items.keys()]	# copy of keys to adjust ammo_bag during iteration
@@ -108,18 +109,21 @@ if bags:
 			if item in ammo_names:
 				total+=q
 				use = min(q,ammount-used)
+				used+=use
+				used_ammo[ammo_bag[0]]=used_ammo.get(ammo_bag[0],0)+use
 				if use>0:
 					if remaining:=q-use:
 						ammo_items[item] = remaining
 					else:
 						ammo_items.pop(item)
-				used+=use
+	used=sum(used_ammo.values())
 	if used<ammount:
 		if specific_ammo:
 			return f'echo There are not enough {ammo_plural} left in your {bag_name.lower()}. You can add some using `!bag "{bag_name}" + {ammount-used} "{ammo_name}"`.'
 		else:
 			return f'echo There are not enough mundane {ammo_plural} left in your {bag_name.lower()}. You can add some using `!bag "{bag_name}" + {ammount-used} "{ammo_name}"`. To specify magic ammo use the `-ammo "<Item>"` argument.'
-	field = f'-f "{bag_name}|{total-used} [{-used}] {ammo_name.lower()}{"s" if used > 1 else ""}"'
+	used_bags=','.join(used_ammo.keys())
+	field = f'-f "{used_bags}|{total-used} [{-used}] {ammo_name.lower()}{"s" if used > 1 else ""}"'
 	# apply the changes
 	character().set_cvar('bags', dump_json(bags))
 else:
@@ -127,7 +131,7 @@ else:
 		bag_name=ammo_bag_names[0]
 	else:
 		bag_name='Ammo'
-	field = f'-f "{bag_name}|{-ammount}"'
+	field = f'-f "{bag_name.title()}|{-ammount}"'
 
 return f'a {attack_name} {arg_str} {bonus_str} {field}'
 </drac2>
