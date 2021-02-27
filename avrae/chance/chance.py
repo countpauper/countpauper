@@ -16,7 +16,8 @@
 # *-i <name in group> to use current initiative character instead of selected character
 #* Spell database to identify spell attacks and saves
 #*  when checking against target DC, also hide the roll string of their save
-#  - run multiple expressions vs multiple targets (when targeting multiple with one spell)
+#  - DC only attacks
+#  - run multiple expressions vs multiple targets (when targeting multiple with one spell or attack)
 #  x [fail query]  handle spells without target (self range, touch range) as rollstr 0 dc 0 (certain)
 # - opposed checks are roll - opposing roll
 #     !chance grapple -t for opposed grapple check (auto select acrobatics or athletics)
@@ -26,6 +27,7 @@
 # !chance death (saves (1d20, should be with luck, but https://github.com/avrae/avrae/issues/1388)) with -rr for total chance to die (take into account crits then)
 #   option to show as techo (-h <sec>)
 #   Always show precise number a spoiler
+
 
 # approach: cut expression into + terms (*/ later at lower level)
 # for each term determine the range and the quadratic expression governing the chance? or the change for each value in the range
@@ -37,6 +39,7 @@
 # simple maths: http://www.darkshire.net/~jhkim/rpg/systemdesign/torben_rpg_dice.pdf
 # maths: https://stats.stackexchange.com/questions/3614/how-to-easily-determine-the-results-distribution-for-multiple-dice
 # dnd maths: https://stats.stackexchange.com/questions/116792/dungeons-dragons-attack-hit-probability-success-percentage/116913#116913
+# dice maths: https://www.omnicalculator.com/statistics/dice
 # max dice math: https://math.stackexchange.com/questions/1696623/what-is-the-expected-value-of-the-largest-of-the-three-dice-rolls/
 # roller (seem to do it the hard way but good to compare): http://topps.diku.dk/torbenm/troll.msp
 

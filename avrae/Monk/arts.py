@@ -18,7 +18,7 @@ if not ignore:
 	if ch.get_cc(cc)<2:
 		err(f'You don\'t have anough {cc} left. You need to rest first.')
 
-	ch.mod_cc(cc,-1)
+	ch.mod_cc(cc,-2)
 	field+=f'-f "{cc}|{ch.cc_str(cc)}"'
 else:
 	field+=f'-f "{cc}|Not used"'
