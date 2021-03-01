@@ -38,6 +38,10 @@ else:
 		selected['n']=n
 		changes.append(f'**Name:** {n}')
 	if c:=args.last('color'):
+		palette = load_json(get_gvar('74f3bd10-7163-4838-ad27-344ad0fb6b83'))
+		hex_digits='0123456789abcdefABCDEF'
+		if any(color_char not in hex_digits for color_char in c) and c not in palette.keys():
+			err(f'Unknown color `{c}')
 		selected['c']=c
 		changes.append(f'**Color:** {c}')
 	if i:=args.last('thumb'):
