@@ -80,6 +80,9 @@ while args:
 	# debug.append(str(args))
 	arg=args.pop(0)
 
+	# fix characters
+	arg=arg.replace("’","'")
+
 	## Prefixes
 	if arg[0]=='$':	# unimplemented
 		buy=True
