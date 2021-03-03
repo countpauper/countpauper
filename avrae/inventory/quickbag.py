@@ -10,7 +10,9 @@
 # *  Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
 # *  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
 #* explicit + for bags always adds, never selects
-#   - select a second new back automatically, ie number >1 is select back
+#   - explicit = to always select never add (ie =explorer)
+#   - select a second new bag automatically, ie number >1 is select bag
+
 #* Remove from any/all bags (but selected first) (split up removal from addition?)
 #* Split arguments that start with numbers into amounts eg 10gp => 10 gp
 # fix extra sack problem (ie !qb dungeon folk will add a sack because it doesn't have a default bag before the set. Move bag creation to actual adding items?)

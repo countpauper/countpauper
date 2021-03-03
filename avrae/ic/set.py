@@ -8,7 +8,7 @@ if not args:
 	header=f'`   {"Id":<12} {"Name":<24} {"Color":<10} Thumbnail`\n'
 	chars=[f'`{"* " if u.d.lower()==active else "  "} {u.d:<12} {u.n:<24} {u.c:<10}` [link]({u.i})' for u in roster]
 	nl='\n'
-	return f'embed -title Characters -desc "{header}{nl.join(chars)}" -t 8 -footer "* active"'
+	return f'embed -title Characters -desc "{header}{nl.join(chars)}" -footer "* active"'
 else:
 	# Select character with first argument
 	select=args[0].lower()
