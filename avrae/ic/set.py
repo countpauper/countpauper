@@ -1,14 +1,12 @@
-<drac2>
+	<drac2>
 args=&ARGS&
 roster_var='userRoster'
 roster = load_json(get(roster_var, '[]'))
 if not args:
 	# Temporarily show the whole roster in a table embed
 	active = get('sayActive', name).lower()
-	header=f'`   {"Id":<12} {"Name":<24} {"Color":<10} Thumbnail`\n'
-	chars=[f'`{"* " if u.d.lower()==active else "  "} {u.d:<12} {u.n:<24} {u.c:<10}` [link]({u.i})' for u in roster]
-	nl='\n'
-	return f'embed -title Characters -desc "{header}{nl.join(chars)}" -footer "* active"'
+	chars=[f'`{"*" if u.d.lower()==active else ""}{u.d}`' for u in roster]
+	return f'techo {len(chars)//3 + 3} {", ".join(chars)}'
 else:
 	# Select character with first argument
 	select=args[0].lower()
@@ -45,8 +43,17 @@ else:
 		selected['c']=c
 		changes.append(f'**Color:** {c}')
 	if i:=args.last('thumb'):
+		if i.lower()=='off':
+			i=None
 		selected['i']=i
 		changes.append(f'**Thumb:** {i}')
+	if g:=args.last('group'):
+		if g.lower()=='off':
+			g=None
+			selected.pop('g')
+		else:
+			selected['g']=g
+		changes.append(f'**Group:** {g}')
 
 	# apply
 	if new or changes:
@@ -56,9 +63,9 @@ else:
 	# Report
 	change_str=' '.join(changes)
 	if new:
-		return f'techo {2+len(changes)} {ctx.alias} **New** character {selected.d} selected {change_str}'
+		return f'techo {3+len(changes)} {ctx.alias} **New** character {selected.d} selected {change_str}'
 	elif switch:
-		return f'techo {1+len(changes)} {ctx.alias} active character set to `{selected.d}` {change_str}'
+		return f'techo {2+len(changes)} {ctx.alias} active character set to `{selected.d}` {change_str}'
 	elif changes:
 		return f'techo {1+len(changes)} {ctx.alias} character `{selected.d}` modified to  {change_str}'
 	else:

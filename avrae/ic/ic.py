@@ -1,4 +1,13 @@
 embed <drac2>
+# TODO https://discord.com/channels/688962463860785242/708772692022788157/816839465820487773
+# - make an npc version
+# - works mostly the same but uses the npc roster
+# - extra category for set
+# - category filter for list
+# - default color for npcs
+# - scan gvars for additional chars
+# - move npcs and categories to specific gvars and
+
 arg_str = """&*&"""
 
 options=('-image','-color','-name','-thumb')
