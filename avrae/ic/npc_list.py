@@ -14,7 +14,7 @@ GROUP_KEY='group'
 
 # load the rosters
 roster={}
-for rgv in load_json(get(SVAR_SERVER_ROSTERS,'[]')):
+for rgv in load_json(get_svar(SVAR_SERVER_ROSTERS,'[]')):
 	roster.update(load_json(get_gvar(rgv)))
 for rgv in load_json(get(UVAR_SUBSCRIBED,'[]')):
 	roster.update(load_json(get_gvar(rgv)))
@@ -58,7 +58,7 @@ for group, char_list in chars.items():
 	group_overhead=(len('"" ')+len(header) if group is None else len('-f "|"' )+len(group))
 	embed_limit-=(group_overhead)
 	npcs+=len(char_list)
-	section_limit=2047-group_overhead
+	section_limit=(2048 if group is None else 1024)-group_overhead
 	for l,char in enumerate(char_list):
 		embed_limit-=len(char)+2
 		section_limit-=len(char)+2
@@ -77,7 +77,8 @@ fields=[f'-desc "{header}{sep.join(chars[None]) if None in chars.keys() else ""}
 fields+=[f'-f "{group}|{sep.join(c) if (c:=chars[group]) else "None"}"' for group in chars.keys() if group is not None]
 fields=nl.join(fields)
 
-if len(fields)+len(footer)+32>6000:
+output = f'embed -title Characters {fields} {footer}'
+if len(output)>6000:
 	return f'echo Too long {len(fields)} {embed_limit}'
-return f'embed -title Characters {fields} {footer}'
+return output
 </drac2>
