@@ -1,41 +1,57 @@
 <drac2>
-roster_var='npc_local_roster'
-key='group'
+UVAR_LOCAL='npc_local_roster'
+GROUP_KEY='group'
+
+# load modifiable characters, only from user's private roster
+roster=load_json(get(UVAR_LOCAL, '{}'))
 
 #parse arguments
 args=&ARGS&
-if len(args)<2:
-	return f'echo You must provide at least one group and one selection.'
-group=args[0]
+if not args:
+	groups={c.get(GROUP_KEY) for c in roster.values()}
+	groups.remove(None)
+	if not groups:
+		return f'echo No local npcs are in a group. Use `{ctx.prefix}{ctx.alias} group -` to see them.'
+	else:
+		return f'echo Local groups: {", ".join(groups)}. Use `{ctx.prefix}{ctx.alias} <group name>` to see who\'s in them.'
+
+group=args[0].title()
 group=None if group.lower() in ['-','reset'] else group
 selection=args[1:]
 
-# load modifiable characters, only from user's private roster
-roster=load_json(get(roster_var, '{}'))
 
-grouped=[]
+# no selection: show current content
+if not selection:
+	grouped=[]
+	if group is None:
+		grouped=[id for id,c in roster.items() if c.get(GROUP_KEY) is None]
+	else:
+		grouped=[id for id,c in roster.items() if c.get(GROUP_KEY,'').lower()==group.lower()]
+	grouped=', '.join(g for g in grouped) if grouped else "None"
+	return f'echo {grouped} are in {group} and local.'
 
 # set the group of all characters whose current group or id matches the selection
+grouped=[]
 for id,c in roster.items():
-	if cat:= c.get(key):
-		if any(cat.lower().startswith(s.lower()) for s in selection):
-			c[key] = group
+	if current:= c.get(GROUP_KEY):
+		if any(current.lower().startswith(s.lower()) for s in selection):
+			c[GROUP_KEY] = group
 			grouped.append(id)
 	if any(id.lower().startswith(s.lower()) for s in selection):
-		c[key] =group
+		c[GROUP_KEY] =group
 		grouped.append(id)
 	# clear it all the way
-	if c.get(key, 'dont remove ') is None:
-		c.pop(key)
+	if c.get(GROUP_KEY, 'dont remove ') is None:
+		c.pop(GROUP_KEY)
 
 # store
-set_uvar(roster_var, dump_json(roster))
+set_uvar(UVAR_LOCAL, dump_json(roster))
 
 # output
-grouped=', '.join(g for g in grouped) if grouped else "None"
+grouped=', '.join(g for g in grouped) if grouped else None
+warning = 'Only NPCs from your private roster can be modified.'
 if group:
-	return f'echo {grouped} added to {group}'
+	return f'echo {grouped} added to {group}.{"" if grouped else f" {warning}"} '
 else:
-	return f'echo {grouped} removed from group.'
-
+	return f'echo {grouped} removed from group.{"" if grouped else f" {warning}"}'
 </drac2>
