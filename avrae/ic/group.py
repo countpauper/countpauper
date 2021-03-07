@@ -13,7 +13,7 @@ if not args:
 	if not groups:
 		return f'echo No local npcs are in a group. Use `{ctx.prefix}{ctx.alias} group -` to see them.'
 	else:
-		return f'echo Local groups: {", ".join(groups)}. Use `{ctx.prefix}{ctx.alias} <group name>` to see who\'s in them.'
+		return f'echo Local groups: {", ".join(groups)}. Use `{ctx.prefix}{ctx.alias} group <group name>` to see who\'s in them.'
 
 group=args[0].title()
 group=None if group.lower() in ['-','reset'] else group
@@ -27,8 +27,8 @@ if not selection:
 		grouped=[id for id,c in roster.items() if c.get(GROUP_KEY) is None]
 	else:
 		grouped=[id for id,c in roster.items() if c.get(GROUP_KEY,'').lower()==group.lower()]
-	grouped=', '.join(g for g in grouped) if grouped else "None"
-	return f'echo {grouped} are in {group} and local.'
+	group_list=', '.join(g for g in grouped) if grouped else "None"
+	return f'echo {group_list} {"is" if len(grouped)==1 else "are"} in {group} and local.'
 
 # set the group of all characters whose current group or id matches the selection
 grouped=[]

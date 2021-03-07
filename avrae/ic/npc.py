@@ -1,4 +1,4 @@
-tembed <drac2>
+<drac2>
 UVAR_SUBSCRIBED = "npc_subscribed_rosters"
 UVAR_LOCAL = "npc_local_roster"
 UVAR_GLOBAL_NPC = "npc_global_id"
@@ -8,7 +8,7 @@ SVAR_SERVER_ROSTERS = "npc_server_npcs"
 # Argument Processing
 
 # Data loading
-server_roster_gvars = get_svar(SVAR_SERVER_ROSTERS) if get_svar(SVAR_SERVER_ROSTERS) else []
+server_roster_gvars = load_json(get_svar(SVAR_SERVER_ROSTERS,'[]'))
 subscribed_roster_gvars = load_json(npc_subscribed_rosters) if uvar_exists(UVAR_SUBSCRIBED) else []
 local_roster = load_json(npc_local_roster) if uvar_exists(UVAR_LOCAL) else {}
 
@@ -35,8 +35,11 @@ npc_color = ""
 npc = None
 msg = None
 
-out = []
-argstring = ('''&*&'''.replace('"', '\\"').replace("'", "\\'") if '''&*&''' else '')
+out = ['embed']
+argstring = '''&*&'''.replace('"', '\\"').replace("'", "\\'")
+if not argstring:
+    return f'techo 5 Use `{ctx.prefix}{ctx.alias} [<npc>] <text>`'
+
 cmd = "&1&"
 channel_id = str(ctx.channel.id)
 if cmd in combined_roster:
@@ -49,14 +52,14 @@ elif channel_id in channel_bindings:
         npc = combined_roster[npc_id]
         msg = argstring
     else:
-        out.append(f'-title "Could not find the NPC bound to this channel: `{npc_id}`. Use `!npc setchannel reset` to remove the binding."')
+        return f'techo 10 Could not find the NPC bound to this channel: `{npc_id}`. Use `!npc setchannel reset` to remove the binding.'
 elif uvar_exists(UVAR_GLOBAL_NPC) and npc_global_id in combined_roster:
     npc = combined_roster[npc_global_id]
     msg = argstring
 
 # Couldn't find an NPC for the given ID...
 else:
-    out.append(f'-title "Could not find NPC {cmd}!"')
+    return f'techo 5 Could not find NPC `{cmd}`. This message will self destruct in 3… 2… 1…'
 
 if npc and msg:
     thumb = npc["image"]
