@@ -9,13 +9,15 @@ roster=load_json(get(UVAR_LOCAL, '{}'))
 args=&ARGS&
 if not args:
 	groups={c.get(GROUP_KEY) for c in roster.values()}
-	groups.remove(None)
+	if None in groups:
+		groups.remove(None)
+
 	if not groups:
 		return f'echo No local npcs are in a group. Use `{ctx.prefix}{ctx.alias} group -` to see them.'
 	else:
 		return f'echo Local groups: {", ".join(groups)}. Use `{ctx.prefix}{ctx.alias} group <group name>` to see who\'s in them.'
 
-group=args[0].title()
+group=args[0]
 group=None if group.lower() in ['-','reset'] else group
 selection=args[1:]
 

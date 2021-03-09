@@ -244,7 +244,11 @@ if fight:=combat():
 				else:
 					pass #
 
-# dice expression has to start with a number or it's a valid spell/skill/attack
+# d8 is a valid expression, defaults to 1 die
+if expression[0]=='d':
+	expression='1'+expression
+
+# dice expression has to start with a number or d to be a valid spell/skill/attack
 if not expression[0].isnumeric():
 	return f'echo Invalid expression query `{expression}`.'
 
@@ -285,7 +289,7 @@ for term in expression_terms:
 		dice_exp=term.split('d',maxsplit=1)
 		if not dice_exp[0].isnumeric():
 			err(f'Dice expression syntax error: number of dice must be positive number: `{term}`')
-		dice=int(dice_exp[0])
+		dice=int(dice_exp[0]) if dice_exp[0] else 1
 
 		## split in numbers and non numbers
 		numeric=None

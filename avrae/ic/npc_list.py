@@ -1,8 +1,5 @@
 <drac2>
-# TODO: test limiter
-# -c compact mode (only ids)
-#   remove header on combat mode
-#   , separate on combat mode
+# TODO:
 # document use of svars on workshop
 
 UVAR_LOCAL='npc_local_roster'
@@ -24,14 +21,25 @@ roster.update(local_roster)
 # parse options
 args=&ARGS&
 COMPACT_OPTION='-c'
+LINK_OPTION='-l'
 if compact:=COMPACT_OPTION in args:
 	args.remove(COMPACT_OPTION)
+if link:=LINK_OPTION in args:
+	args.remove(LINK_OPTION)
 
 # select groups filtered by arguments if any
+none_group=False
 if args:
 	groups={a for a in args}
 else:
 	groups={ c.get(GROUP_KEY) for c in roster.values() }
+	if none_group:=(None in groups):
+		groups.remove(None)
+
+groups=list(groups)
+groups.sort()
+if none_group:
+	groups=[None]+groups
 
 # select the active character if any
 channel_bindings = load_json(get(UVAR_CHANNEL_BINDINGS,'{}'))
@@ -44,11 +52,17 @@ if compact:
 		chars[group]=[f'{"*" if id.lower()==active else ""}{"†" if id in local_roster.keys() else ""}{id}' for id,c in roster.items() if c.get(GROUP_KEY)==group]
 else:
 	for group in groups:
-		chars[group]=[f'`{"*" if id.lower()==active else " "}{"†" if id in local_roster.keys() else " "}{id[:12]:<12} {c.name[:24]:<24} {c.color[:8]if c.color else "none":<8}` {f"[link]({c.image})" if c.image else "[none]"}'
-					  for id,c in roster.items() if c.get(GROUP_KEY)==group]
+		chars[group]=[]
+		for id,c in roster.items():
+			if c.get(GROUP_KEY)==group:
+				if link:
+					img = f'[`link`]({c.image})' if c.image else '`none`'
+				else:
+					img=f':heavy_check_mark:' if c.image else ':heavy_multiplication_x:'
+				chars[group].append(f'`{"*" if id.lower()==active else " "}{"†" if id in local_roster.keys() else " "}{id[:12]:<12} {c.name[:24]:<24} {c.color[:8]if c.color else "none":<8}` {img}')
 
 footer= '-footer "* active, † local, listed $total"'
-header=f'`  {"Id":<12} {"Name":<24} {"Color":<7} Thumbnail`\n' if not compact else ''
+header=f'`  {"Id":<12} {"Name":<24} {"Color":<7} Thumb`\n' if not compact else ''
 
 # limit size
 title='-title NPCs'
