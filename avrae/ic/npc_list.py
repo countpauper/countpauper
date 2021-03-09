@@ -22,11 +22,13 @@ roster.update(local_roster)
 args=&ARGS&
 COMPACT_OPTION='-c'
 LINK_OPTION='-l'
+NARROW_OPTION='-n'
 if compact:=COMPACT_OPTION in args:
 	args.remove(COMPACT_OPTION)
 if link:=LINK_OPTION in args:
 	args.remove(LINK_OPTION)
-
+if narrow:=NARROW_OPTION in args:
+	args.remove(NARROW_OPTION)
 # select groups filtered by arguments if any
 none_group=False
 if args:
@@ -47,6 +49,8 @@ active = channel_bindings.get(str(ctx.channel.id),get(UVAR_GLOBAL_NPC, '')).lowe
 
 # show the whole roster in a table embed by group
 chars={}
+cid,cname,ccol = (8,16,6) if narrow else (16,32,8)
+
 if compact:
 	for group in groups:
 		chars[group]=[f'{"*" if id.lower()==active else ""}{"†" if id in local_roster.keys() else ""}{id}' for id,c in roster.items() if c.get(GROUP_KEY)==group]
@@ -59,10 +63,14 @@ else:
 					img = f'[`link`]({c.image})' if c.image else '`none`'
 				else:
 					img=f':heavy_check_mark:' if c.image else ':heavy_multiplication_x:'
-				chars[group].append(f'`{"*" if id.lower()==active else " "}{"†" if id in local_roster.keys() else " "}{id[:12]:<12} {c.name[:24]:<24} {c.color[:8]if c.color else "none":<8}` {img}')
+
+				chars[group].append(f'`{"*" if id.lower() == active else " "}{"†" if id in local_roster.keys() else " "}{id[:cid]:<{cid}} {c.name[:cname]:<{cname}} {c.color[:ccol] if c.color else "none":<{ccol}}` {img}')
 
 footer= '-footer "* active, † local, listed $total"'
-header=f'`  {"Id":<12} {"Name":<24} {"Color":<7} Thumb`\n' if not compact else ''
+if compact:
+	header=''
+else:
+	header = f'`  {"Id":<{cid}} {"Name":<{cname}} {"Color":<{ccol}} Thumb`\n'
 
 # limit size
 title='-title NPCs'
