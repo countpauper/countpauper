@@ -1,7 +1,4 @@
 <drac2>
-# TODO:
-# document use of svars on workshop
-
 UVAR_LOCAL='npc_local_roster'
 UVAR_SUBSCRIBED='npc_subscribed_rosters'
 SVAR_SERVER_ROSTERS = "npc_server_npcs"
@@ -11,10 +8,17 @@ GROUP_KEY='group'
 
 # load the rosters
 roster={}
-for rgv in load_json(get_svar(SVAR_SERVER_ROSTERS,'[]')):
-	roster.update(load_json(get_gvar(rgv)))
-for rgv in load_json(get(UVAR_SUBSCRIBED,'[]')):
-	roster.update(load_json(get_gvar(rgv)))
+for gvar in load_json(get_svar(SVAR_SERVER_ROSTERS,'[]')):
+	if gv:=get_gvar(gvar):
+		roster.update(load_json(gv))
+	else:
+		err(f'Server gvar `{gvar}` is not accessible.')
+for gvar in load_json(get(UVAR_SUBSCRIBED,'[]')):
+	if gv:= get_gvar(gvar):
+		roster.update(load_json(gv))
+	else:
+		err(f'Subscribed gvar `{gvar}` is not accessible.')
+
 local_roster=load_json(get(UVAR_LOCAL, '{}'))
 roster.update(local_roster)
 
@@ -60,19 +64,19 @@ else:
 		for id,c in roster.items():
 			if c.get(GROUP_KEY)==group:
 				if link:
-					img = f'[`link`]({c.image})' if c.image else '`none`'
+					img = f'[`link `]({c.image})' if c.image else '`none `'
 				else:
-					img=f':heavy_check_mark:' if c.image else ':heavy_multiplication_x:'
+					img=f':white_check_mark:' if c.image else ':x:'
 
-				chars[group].append(f'`{"*" if id.lower() == active else " "}{"†" if id in local_roster.keys() else " "}{id[:cid]:<{cid}} {c.name[:cname]:<{cname}} {c.color[:ccol] if c.color else "none":<{ccol}}` {img}')
+				chars[group].append(f'`{"*" if id.lower() == active else " "}{"†" if id in local_roster.keys() else " "}` `{id[:cid]:<{cid}}` `{c.name[:cname]:<{cname}}` `{c.color[:ccol] if c.color else "none":<{ccol}}` {img}')
 
 footer= '-footer "* active, † local, listed $total"'
 if compact:
 	header=''
 else:
-	header = f'`  {"Id":<{cid}} {"Name":<{cname}} {"Color":<{ccol}} Thumb`\n'
+	header = f'**`  ` `{"Id":<{cid}}` `{"Name":<{cname}}` `{"Color":<{ccol}}` `Thumb`**\n'
 
-# limit size
+# truncate char lists and groups, limited by embed size, desc limit and field size and count limit
 title='-title NPCs'
 groups_field='Groups'
 embed_limit=6000-3-len(title)-len(groups_field)-len(footer) # maximum embed command minus overhead and safety margin

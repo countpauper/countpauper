@@ -19,13 +19,17 @@ combined_roster = {}
 
 # To build the NPC roster, first resolve all server rosters in order;
 for gvar in server_roster_gvars:
-    temp_roster = load_json(get_gvar(gvar))
-    combined_roster.update(temp_roster)
+    if gvar_data := get_gvar(gvar):
+        combined_roster.update(load_json(gvar_data))
+    else:
+        err(f'Server gvar `{gvar}` is not accessible.')
 
 # Then resolve subscribed rosters in order;
 for gvar in subscribed_roster_gvars:
-    temp_roster = load_json(get_gvar(gvar))
-    combined_roster.update(temp_roster)
+    if gvar_data := get_gvar(gvar):
+        combined_roster.update(load_json(gvar_data))
+    else:
+        err(f'Subscribed gvar `{gvar}` is not accessible.')
 
 # Then apply the user's local roster.
 combined_roster.update(local_roster)
