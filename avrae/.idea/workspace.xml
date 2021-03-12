@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/chance/allow.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chance/block.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/base64.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
@@ -26,14 +29,14 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Tactics/Tactics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Tactics/Tactics.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Bounds.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Bounds.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Mesh.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Mesh.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/npc.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/npc_list.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc_list.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -217,7 +220,6 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="421" y="192" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1610891345406" />
-    <state x="421" y="199" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1606055498825" />
     <state x="686" y="162" key="#console_test" timestamp="1613666952712">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -226,10 +228,6 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="686" y="162" key="#csv2json/0.0.1920.1040@0.0.1920.1040" timestamp="1613061602581" />
-    <state x="686" y="175" key="#gem_script" timestamp="1606640666374">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="686" y="175" key="#gem_script/0.0.1920.1040@0.0.1920.1040" timestamp="1606640666374" />
     <state x="722" y="237" key="#xdebugger.evaluate" timestamp="1611001093373">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -238,22 +236,18 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1899" height="170" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115718" />
-    <state width="1882" height="170" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
     <state width="1899" height="170" key="GridCell.Tab.0.center" timestamp="1613667115718">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1899" height="170" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115718" />
-    <state width="1882" height="170" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
     <state width="1899" height="170" key="GridCell.Tab.0.left" timestamp="1613667115717">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1899" height="170" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115717" />
-    <state width="1882" height="170" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
     <state width="1899" height="170" key="GridCell.Tab.0.right" timestamp="1613667115718">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1899" height="170" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115718" />
-    <state width="1882" height="170" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1606120835932" />
     <state width="1899" height="346" key="GridCell.Tab.1.bottom" timestamp="1613061876227">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -286,10 +280,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1614450508848" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1613030363442">
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1615548388323">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1613030363442" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1615548388323" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
