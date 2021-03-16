@@ -19,14 +19,14 @@
 #  - DC only attacks
 #  - run multiple expressions vs multiple targets (when targeting multiple with one spell or attack)
 #  x [fail query]  handle spells without target (self range, touch range) as rollstr 0 dc 0 (certain)
-# - opposed checks are roll - opposing roll
+# - opposed checks are roll - opposing roll (lots of term negating)
 #     !chance grapple -t for opposed grapple check (auto select acrobatics or athletics)
 #* take -b effects into account for attacks automatically
 
 # rr and say how the chance of how many will hit (and crit?) might get messy
 # !chance death (saves (1d20, should be with luck, but https://github.com/avrae/avrae/issues/1388)) with -rr for total chance to die (take into account crits then)
-#   option to show as techo (-h <sec>)
-#   Always show precise number a spoiler
+# x   option to show as techo (-h <sec>)
+# x  Always show precise number a spoiler
 
 
 # approach: cut expression into + terms (*/ later at lower level)
@@ -43,30 +43,33 @@
 # max dice math: https://math.stackexchange.com/questions/1696623/what-is-the-expected-value-of-the-largest-of-the-three-dice-rolls/
 # roller (seem to do it the hard way but good to compare): http://topps.diku.dk/torbenm/troll.msp
 
-#### Parse configuration
+#### Parse configuration: svar > cvar > uvar
 config=load_json(get('Chance','{}'))
 config.update(load_json(get_svar('Chance','{}')))
+
+# get allowed setting: don't run at all if not allowed
 allowed=config.get('allowed',True)
 if typeof(allowed)=='str':
 	allowed=allowed.split(',')
 if typeof(allowed)=='SafeList':
 	allowed={id:True for id in allowed}
 if typeof(allowed)=='SafeDict':
-	# match with ids, user names, nick names, character names in order of precedence
+	# match with ids, user names, nick names, character names, unmatched(*) in order of precedence
 	allowed={id.lower():allow for id,allow in allowed.items()}
-	allowed = allowed.get(str(ctx.author.id), show.get(str(ctx.author).lower(), show.get(ctx.author.display_name.lower(),show.get(character().name.lower(), False))))
+	allowed = allowed.get(str(ctx.author.id), allowed.get(str(ctx.author).lower(), allowed.get(ctx.author.display_name.lower(),allowed.get(character().name.lower(), allowed.get('*',False)))))
 if not allowed:
 	return f'echo `{ctx.prefix}{ctx.alias}` is blocked for you by the server adminstrator.'
 
+# get show setting: show detailed result (%)
 show=config.get('show',False)
 if typeof(show)=='str':
 	show=show.split(',')
 if typeof(show)=='SafeList':
 	show={id:True for id in show}
 if typeof(show)=='SafeDict':
-	# match with ids, user names, nick names, character names in order of precedence
+	# match with ids, user names, nick names, character names, unmatched(*) in order of precedence
 	show={id.lower():s for id,s in show.items()}
-	show = show.get(str(ctx.author.id), show.get(str(ctx.author).lower(), show.get(ctx.author.display_name.lower(),show.get(character().name.lower(), False))))
+	show = show.get(str(ctx.author.id), show.get(str(ctx.author).lower(), show.get(ctx.author.display_name.lower(),show.get(character().name.lower(), show.get('*',False)))))
 
 # TODO: if typeof(show)=='SafeList') : (or string split, or dict: match)
 
