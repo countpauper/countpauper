@@ -445,8 +445,19 @@ if dbg:
 quality_description=['flimsy','low','average','decent','high','certain']
 
 if not targets:
-	report.append(f'You did not specify any targets. Use: {syntax}')
-else:
+	average=sum((i+lo) * p for i,p in enumerate(pmf))
+	possible_lo=min(i+lo for i,p in enumerate(pmf) if p>0)
+	possible_hi=max(i+lo for i,p in enumerate(pmf) if p>0)
+	graph_bar=' ▁▂▃▄▅▆▇▉█'
+	p_max=max(pmf)
+	stripped_pmf=pmf[possible_lo:possible_hi+1]
+	graph="".join(graph_bar[int(p/p_max*(len(graph_bar)-1))] for p in stripped_pmf)
+	labels=','.join(str(i) for i in range(possible_lo,possible_hi+1))
+	data=','.join(f'{p:.3f}' for p in stripped_pmf)
+	url='https://quickchart.io/chart?c={type:%27bar%27,data:{labels:['+labels+'],datasets:[{label:%27'+expression+'%27,data:['+data+']}]}}'
+
+	report.append(f'**{executor.name} {query.title()} (`{expression}`)** **min:** {possible_lo} `{graph}▔{p_max:.3f}` **max:** {possible_hi} **avg:** {average:.2f}\n{url}')
+else:	# report chance to hit each target
 	for target_name,target in targets.items():
 		target_value=target.get('target')
 		target_description = f'{target_name}'
