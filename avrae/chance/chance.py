@@ -446,17 +446,19 @@ quality_description=['flimsy','low','average','decent','high','certain']
 
 if not targets:
 	average=sum((i+lo) * p for i,p in enumerate(pmf))
-	possible_lo=min(i+lo for i,p in enumerate(pmf) if p>0)
-	possible_hi=max(i+lo for i,p in enumerate(pmf) if p>0)
-	graph_bar=' ▁▂▃▄▅▆▇▉█'
-	p_max=max(pmf)
+	possible_lo=min(i for i,p in enumerate(pmf) if p>0)
+	possible_hi=max(i for i,p in enumerate(pmf) if p>0)
 	stripped_pmf=pmf[possible_lo:possible_hi+1]
-	graph="".join(graph_bar[int(p/p_max*(len(graph_bar)-1))] for p in stripped_pmf)
-	labels=','.join(str(i) for i in range(possible_lo,possible_hi+1))
-	data=','.join(f'{p:.3f}' for p in stripped_pmf)
-	url='https://quickchart.io/chart?c={type:%27bar%27,data:{labels:['+labels+'],datasets:[{label:%27'+expression+'%27,data:['+data+']}]}}'
+	accumulated_chance=[100*sum(stripped_pmf[:i+1]) for i in range(len(stripped_pmf))]
+	url='https://quickchart.io/chart?c={type:%27bar%27,data:{labels:['+\
+		','.join(str(i+lo) for i in range(possible_lo,possible_hi+1))+\
+		'],datasets:[{label:%27%25%3E%3D'+\
+		expression.replace('+','%2B')+\
+		'%27,data:['+\
+		','.join(f'{p:3.1f}' for p in accumulated_chance)+\
+		']}]}}'
 
-	report.append(f'**{executor.name} {query.title()} (`{expression}`)** **min:** {possible_lo} `{graph}▔{p_max:.3f}` **max:** {possible_hi} **avg:** {average:.2f}\n{url}')
+	return f'embed -title "{executor.name} {query.title()}" -footer "average {average:.3g}" -image {url}'
 else:	# report chance to hit each target
 	for target_name,target in targets.items():
 		target_value=target.get('target')
