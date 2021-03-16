@@ -1,4 +1,4 @@
-	<drac2>
+<drac2>
 args=&ARGS&
 roster_var='userRoster'
 roster = load_json(get(roster_var, '[]'))
@@ -36,10 +36,11 @@ else:
 		selected['n']=n
 		changes.append(f'**Name:** {n}')
 	if c:=args.last('color'):
+		c=c.lower()
 		palette = load_json(get_gvar('74f3bd10-7163-4838-ad27-344ad0fb6b83'))
-		hex_digits='0123456789abcdefABCDEF'
+		hex_digits='0123456789abcdef'
 		if any(color_char not in hex_digits for color_char in c) and c not in palette.keys():
-			err(f'Unknown color `{c}')
+			err(f'Unknown color `{c}`')
 		selected['c']=c
 		changes.append(f'**Color:** {c}')
 	if i:=args.last('thumb'):
