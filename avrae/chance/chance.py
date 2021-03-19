@@ -137,6 +137,8 @@ criton=20
 reroll_luck=None
 reliability=None
 spell_list=load_json(get_gvar('13dc3e0a-a230-40ca-8fb3-a39846300b18'))
+save_query = None
+spell_query = None
 if executor:
 	if typeof(executor)=='AliasCharacter':	# duck say quack ?
 		criton = executor.csettings.get('criton', 20)
@@ -155,7 +157,7 @@ if executor:
 			return f'echo `{ctx.prefix}{ctx.alias} {" | ".join(skills.keys())}'
 		query=tuple(skills.keys())[0]
 		skill=skills[query]
-		save_query=None
+
 		expression = skill.d20(reroll=reroll_luck, min_val=reliability if skill.prof >= 1 else None)
 	elif attacks:={atk.name:atk for atk in executor.attacks if atk.name.lower().startswith(query.lower())}:
 		query=tuple(attacks.keys())[0]
@@ -178,19 +180,19 @@ if executor:
 				# TODO: with save set dc to save and find save type on target, same as spells
 				err(f'Implementation limitation: Attack effect type `{effect_type}` for {query} not yet supported.')
 	elif executor.spellbook.dc:	 # optimization, don't scan 500 spells if not a caster
-		for query, spell in {spell_name:spell for spell_name,spell in spell_list.items() if spell_name.startswith(query.lower())}.items():
-			if spell.attack:
+		for query, spell_query in {spell_name:spell for spell_name,spell in spell_list.items() if spell_name.startswith(query.lower())}.items():
+			if spell_query.attack:
 				save_query=None
 				if reroll_luck is None:
 					expression = f'1d20+{executor.spellbook.sab}'
 				else:
 					expression = f'1d20ro{reroll_luck}+{executor.spellbook.sab}'
 				break
-			elif spell.save:
-				save_query=spell.save
+			elif spell_query.save:
+				save_query=spell_query.save
 				break
 			else:
-				spell=None
+				spell_query=None
 	else:
 		pass # keep query, TODO spells, but need access to 'automation' info (which save or spell attack)
 
@@ -202,15 +204,14 @@ if not skill:
 	for ac in args.get('ac'):
 		if not ac.isdigit():
 			return f'echo AC `{ac}` is not a number, Use {syntax}'
-		targets[f'AC `{ac}`']={'target':int(ac),'crit':True, 'show':True}
+		targets[f'AC {ac}']={'target':int(ac),'crit':True, 'show':True}
 
 if not attack:
 	for dc in args.get('dc'):
 		if not dc.isdigit():
 			return f'echo DC `{dc}` is not a number, Use {syntax}'
-		targets[f'DC `{dc}`']={'target':int(dc),'crit':False, 'show':True}
+		targets[f'DC {dc}']={'target':int(dc),'crit':False, 'show':True}
 
-# TODO opposed skills in gvar or something
 opposed_skills={
 	"acrobatics":"athletics",
 	"athletics":"athletics",
@@ -226,19 +227,19 @@ if fight:=combat():
 		# TODO: could also split target arguments | and specify opposed skill dc or extra bonuses, adv
 		if combatant:=fight.get_combatant(t):
 			target_name=combatant.name
-			if spell and save_query:
+			if spell_query and save_query:
 				if len(args.get('t'))>1:	# only one show_query and only one expression right now
 					err('Implementation limitation: multiple saving throws not yet supported.')
 				targets[f'{target_name} {save_query} save'] = {'target': executor.spellbook.dc, 'crit': False, 'reverse':True, 'show':show_query}
 				show_query=show_target
 				if saves := [(save_name, save) for save_name, save in combatant.saves if
-							 save_name.lower().startswith(spell.save)]:
+							 save_name.lower().startswith(spell_query.save)]:
 					expression = saves[0][1].d20(args.adv(ea=False, boolwise=True))  # advantage here to avoid ea
 				else:
-					err(f'`{spell.save} save for `{query}` not found for `{target_name}`')
+					err(f'`{spell_query.save} save for `{query}` not found for `{target_name}`')
 			elif save_query:
 				targets[f'{target_name} Spell DC']={'target':combatant.spellbook.dc, 'crit':False, 'show':show_target}
-			elif attack or dice_expression or spell:
+			elif attack or dice_expression or spell_query:
 				targets[f'{target_name} AC']={'target':combatant.ac, 'crit':True, 'show':show_target}
 			elif skill:
 				if opposed_skill_name:= opposed_skills.get(query):
@@ -438,74 +439,77 @@ for t in terms:
 
 ### Output the report
 # TODO: if dbg
-report=[]
+
+report = []
 if dbg:
-	report.append(f'{query} / {expression} : [{lo}] {", ".join(f"{p*100:.2f}%" for p in pmf)}  [{hi}]')
+	report.append(f'{query} / {expression} : [{lo}] {", ".join(f"{p * 100:.2f}%" for p in pmf)}  [{hi}]')
+quality_description = ['flimsy', 'low', 'average', 'decent', 'high', 'certain']
 
-quality_description=['flimsy','low','average','decent','high','certain']
+title = f'{query.title()} by {executor.name}'
+if show_query:
+	title+=f' `{expression}`'
 
-if not targets:
-	average=sum((i+lo) * p for i,p in enumerate(pmf))
-	possible_lo=min(i for i,p in enumerate(pmf) if p>0)
-	possible_hi=max(i for i,p in enumerate(pmf) if p>0)
-	stripped_pmf=pmf[possible_lo:possible_hi+1]
-	accumulated_chance=[100*sum(stripped_pmf[:i+1]) for i in range(len(stripped_pmf))]
-	url='https://quickchart.io/chart?c={type:%27bar%27,data:{labels:['+\
-		','.join(str(i+lo) for i in range(possible_lo,possible_hi+1))+\
-		'],datasets:[{label:%27%25%3E%3D'+\
-		expression.replace('+','%2B')+\
-		'%27,data:['+\
-		','.join(f'{p:3.1f}' for p in accumulated_chance)+\
-		']}]}}'
+for target_name,target in targets.items():
+	target_value=target.get('target')
+	target_description = f'{target_name}'
+	show_target=target.get('show')
+	if show_target:
+		target_description+=f' (`{target_value}`)'
 
-	return f'embed -title "{executor.name} {query.title()}" -footer "average {average:.3g}" -image {url}'
-else:	# report chance to hit each target
-	for target_name,target in targets.items():
-		target_value=target.get('target')
-		target_description = f'{target_name}'
-		show_target=target.get('show')
-		if show_target:
-			target_description+=f' ({target_value})'
+	query_description = f' VS **{target_description}**'
 
-		if show_query:
-			query_description = f'**{executor.name} {query.title()} (`{expression}`) VS {target_description}**'
+	show_chance=show_target and show_query
+	if target_value is None:
+		report.append(f'{query_description}: Not Applicable')
+	else:
+		if target_value > hi:
+			miss = 1
+		elif target_value < lo:
+			miss = 0
 		else:
-			query_description = f'**{executor.name} {query.title()} VS {target_description}**'
+			miss = sum(pmf[i] for i in range(target_value - lo))
+		if target.get('reverse',False):
+			miss=1-miss
 
-		show_chance=show_target and show_query
-		if target_value is None:
-			report.append(f'{query_description}: Not Applicable')
+		if target.get('crit'):
+			if crit_chance:
+				miss=min(miss,1-crit_chance)
+			else:
+				crit_chance=0
+			if fail_chance:
+				miss=max(miss,fail_chance)
+			hit=1-miss
+			if show_chance:
+				report.append(f'{query_description}: Miss: `{miss * 100.0:.1f}%`, Hit: `{hit * 100:.1f}%` Crit: `{(crit_chance) * 100:.1f}%`')
+			else:
+				quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
+				report.append(f'{query_description}: Hit chance: `{quality}`, Crit : `{(crit_chance)*100:.1f}%`')
 		else:
-			if target_value > hi:
-				miss = 1
-			elif target_value < lo:
-				miss = 0
+			hit=1-miss
+			if show_chance:
+				report.append(f'{query_description}: Failure: `{miss * 100.0:.1f}%`, Success: `{hit * 100:.1f}%`')
 			else:
-				miss = sum(pmf[i] for i in range(target_value - lo))
-			if target.get('reverse',False):
-				miss=1-miss
+				quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
+				report.append(f'{query_description}: Success chance: `{quality}`')
 
-			if target.get('crit'):
-				if crit_chance:
-					miss=min(miss,1-crit_chance)
-				else:
-					crit_chance=0
-				if fail_chance:
-					miss=max(miss,fail_chance)
-				hit=1-miss
-				if show_chance:
-					report.append(f'{query_description}: Miss: `{miss * 100.0:.1f}%`, Hit: `{hit * 100:.1f}%` Crit: `{(crit_chance) * 100:.1f}%`')
-				else:
-					quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
-					report.append(f'{query_description}: Hit chance: `{quality}`, Crit : `{(crit_chance)*100:.1f}%`')
-			else:
-				hit=1-miss
-				if show_chance:
-					report.append(f'{query_description}: Failure: `{miss * 100.0:.1f}%`, Success: `{hit * 100:.1f}%`')
-				else:
-					quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
-					report.append(f'{query_description}: Success chance: `{quality}`')
+if show_query:
+	average = sum((i + lo) * p for i, p in enumerate(pmf))
+	possible_lo = min(i for i, p in enumerate(pmf) if p > 0)
+	possible_hi = max(i for i, p in enumerate(pmf) if p > 0)
+	report.append(f'Minimum: `{possible_lo + lo}` Average: `{average:.3g}` Maximum: `{possible_hi + lo}`')
+	stripped_pmf = pmf[possible_lo:possible_hi + 1]
+	accumulated_chance = [100 * sum(stripped_pmf[i:]) for i in range(len(stripped_pmf))]
+	url = 'https://quickchart.io/chart?c={type:%27bar%27,data:{labels:[' + \
+		  ','.join(str(i + lo) for i in range(possible_lo, possible_hi + 1)) + \
+		  '],datasets:[{label:%27%25%20%3C%3D%20' + \
+		  expression.replace('+', '%2B') + \
+		  '%27,data:[' + \
+		  ','.join(f'{p:3.1f}' for p in accumulated_chance) + \
+		  ']}]}}'
+	report.append(f'Graph: [link]({url})')
 
+if not report:
+	report=['No targets']
 sep='\n'
-return f'echo {sep.join(report)}'
+return f'embed -title "Chance" -f "{title}|{sep.join(report)}"'
 </drac2>
