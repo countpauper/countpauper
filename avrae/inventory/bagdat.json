@@ -30,7 +30,7 @@
     "Faceless": {"Disguise Kit": 1, "Costume": 1, "gp": 10},
     "Faction Agent": {"Faction Badge": 1, "Faction Text": 1, "Common Clothes": 1, "gp": 15},
     "Failed Merchant": {"Merchant's Scale": 1, "Fine Clothes": 1, "gp": 10 },
-    "Far Traveler": {"Traveler's Clothes": 1, "Map":1, "Jewelry": 1, "gp": 15},
+    "Far Traveler": {"Traveler's Clothes": 1, "Poor map from your homeland":1, "Jewelry": 1, "gp": 5},
     "Fisher": {"Fishing Tackle": 1, "Net": 1, "Oiled Boots":1, "Traveler's Clothes": 1, "gp": 10},
     "Folk Hero": {"Shovel": 1, "Iron Pot": 1, "Common Clothes": 1, "gp": 10},
     "Gambler": {"Lucky Charm": 1, "Fine Clothes": 1, "gp": 10},

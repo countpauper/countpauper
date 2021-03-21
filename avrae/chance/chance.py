@@ -29,6 +29,7 @@
 # x  Always show precise number a spoiler
 
 
+
 # approach: cut expression into + terms (*/ later at lower level)
 # for each term determine the range and the quadratic expression governing the chance? or the change for each value in the range
 # it should recognize number and die size, ro, kh[1] and kl[1] at least (until generalized)
@@ -398,7 +399,7 @@ for term in expression_terms:
 			for v in range(len(p)):
 				np = []
 				for d in range(dice):
-					np = [sum([npi * pvi for npi in np for pvi in pp[:v]])]
+					np = [sum([npi * pvi for npi in np for pvi in pp[v+1:]])]
 					np += [bnc[dice][-(d + 1)] * pp[v] ** (d + 1)]
 				p[v]=sum(np)
 			dice=keep_lo
@@ -492,24 +493,40 @@ for target_name,target in targets.items():
 				quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
 				report.append(f'{query_description}: Success chance: `{quality}`')
 
+sep='\n'
 if show_query:
 	average = sum((i + lo) * p for i, p in enumerate(pmf))
 	possible_lo = min(i for i, p in enumerate(pmf) if p > 0)
 	possible_hi = max(i for i, p in enumerate(pmf) if p > 0)
 	report.append(f'Minimum: `{possible_lo + lo}` Average: `{average:.3g}` Maximum: `{possible_hi + lo}`')
+
 	stripped_pmf = pmf[possible_lo:possible_hi + 1]
+
+	label_var,title_var,color_var,data_var='$L$','$T$','$C$','$D$'
+	base_url= 'https://quickchart.io/chart?c={type:%27bar%27,data:{labels:$L$,datasets:[{label:%27$T$%27,backgroundColor:%27$C$%27,data:$D$}]}}'
+	labels=[i + lo for i in range(possible_lo, possible_hi + 1)]
+	graph_title=expression.replace('+', '%2B')
+
 	accumulated_chance = [100 * sum(stripped_pmf[i:]) for i in range(len(stripped_pmf))]
-	url = 'https://quickchart.io/chart?c={type:%27bar%27,data:{labels:[' + \
-		  ','.join(str(i + lo) for i in range(possible_lo, possible_hi + 1)) + \
-		  '],datasets:[{label:%27%25%20%3C%3D%20' + \
-		  expression.replace('+', '%2B') + \
-		  '%27,data:[' + \
-		  ','.join(f'{p:3.1f}' for p in accumulated_chance) + \
-		  ']}]}}'
+	url=base_url.replace(label_var,dump_json(labels).replace(' ', '')).replace(title_var,'%25%20%3C%3D%20'+graph_title).replace(color_var,'green').replace(data_var,dump_json([f'{p:3.1f}' for p in accumulated_chance]).replace(' ', ''))
 	report.append(f'Graph: [link]({url})')
+
+	pmf_url=base_url.replace(label_var,dump_json(labels).replace(' ', '')).replace(title_var,graph_title).replace(color_var,'red').replace(data_var,dump_json(stripped_pmf).replace(' ', ''))
+	report.append(f'PMF: [link]({pmf_url})')
+
+
+
 
 if not report:
 	report=['No targets']
-sep='\n'
-return f'embed -title "Chance" -f "{title}|{sep.join(report)}"'
+
+# concatenate report within field size limit
+field_len=1024-len(title)-3
+rep_str=''
+for r in report:
+	if field_len-len(r)<0:
+		break
+	rep_str+=r+sep
+
+return f'embed -title "Chance" -f "{title}|{rep_str}"'
 </drac2>
