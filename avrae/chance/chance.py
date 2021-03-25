@@ -27,8 +27,7 @@
 # !chance death (saves (1d20, should be with luck, but https://github.com/avrae/avrae/issues/1388)) with -rr for total chance to die (take into account crits then)
 # x   option to show as techo (-h <sec>)
 # x  Always show precise number a spoiler
-
-
+#* replace vars in expression for custom attacks:
 
 # approach: cut expression into + terms (*/ later at lower level)
 # for each term determine the range and the quadratic expression governing the chance? or the change for each value in the range
@@ -197,6 +196,20 @@ if executor:
 	else:
 		pass # keep query, TODO spells, but need access to 'automation' info (which save or spell attack)
 
+
+	# replace limited set of variables
+	vars={'proficiencyBonus':executor.stats.prof_bonus,
+	'strengthMod':-5 + executor.stats.strength//2,
+	'dexterityMod':-5 + executor.stats.dexterity//2,
+	'constitutionMod':-5 + executor.stats.constitution//2,
+	'intelligenceMod':-5 + executor.stats.intelligence//2,
+	'wisdomMod':-5 + executor.stats.wisdom//2,
+	'charismaMod':-5 + executor.stats.charisma//2,
+	'level':executor.levels.total_level,
+	'spell':executor.spellbook.sab or 0}
+
+	for var,val in vars.items():
+		expression=expression.replace(var,str(val))
 
 #####  parse targets
 cancrit=None
@@ -515,8 +528,6 @@ if show_query:
 	report.append(f'PMF: [link]({pmf_url})')
 
 
-
-
 if not report:
 	report=['No targets']
 
@@ -524,7 +535,8 @@ if not report:
 field_len=1024-len(title)-3
 rep_str=''
 for r in report:
-	if field_len-len(r)<0:
+	field_len-=len(r)+len(sep)
+	if field_len<0:
 		break
 	rep_str+=r+sep
 
