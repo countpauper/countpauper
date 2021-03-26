@@ -199,14 +199,14 @@ if executor:
 
 	# replace limited set of variables
 	vars={'proficiencyBonus':executor.stats.prof_bonus,
-	'strengthMod':-5 + executor.stats.strength//2,
-	'dexterityMod':-5 + executor.stats.dexterity//2,
-	'constitutionMod':-5 + executor.stats.constitution//2,
-	'intelligenceMod':-5 + executor.stats.intelligence//2,
-	'wisdomMod':-5 + executor.stats.wisdom//2,
-	'charismaMod':-5 + executor.stats.charisma//2,
-	'level':executor.levels.total_level,
-	'spell':executor.spellbook.sab or 0}
+		'strengthMod':-5 + executor.stats.strength//2,
+		'dexterityMod':-5 + executor.stats.dexterity//2,
+		'constitutionMod':-5 + executor.stats.constitution//2,
+		'intelligenceMod':-5 + executor.stats.intelligence//2,
+		'wisdomMod':-5 + executor.stats.wisdom//2,
+		'charismaMod':-5 + executor.stats.charisma//2,
+		'level':executor.levels.total_level,
+		'spell':executor.spellbook.sab or 0}
 
 	for var,val in vars.items():
 		expression=expression.replace(var,str(val))

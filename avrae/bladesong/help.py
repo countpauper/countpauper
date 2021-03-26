@@ -1,1 +1,1 @@
-help {{ctx.alias}} -here {{_=&ARGS&}}
+help {{ctx.alias}} {{"&*&"}} -here
