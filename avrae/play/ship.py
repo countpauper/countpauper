@@ -41,5 +41,5 @@ else:
 	desc= f'**Round:** {turn}/{turns} **Dice:** {ship} {cargo}'
 	if turn==turns:
 		desc+=' = 0'
-return f'embed -title "Ship, captain and crew" -desc "{desc}" -thumb https://upload.wikimedia.org/wikipedia/commons/9/99/Dice_-_1-2-4-5-6.jpg'
+return f'embed -title "Ship, captain and crew" -desc "{desc}" -thumb https://upload.wikimedia.org/wikipedia/commons/9/99/Dice_-_1-2-4-5-6.jpg -footer "{syntax}"'
 </drac2>

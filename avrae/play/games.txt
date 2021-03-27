@@ -21,22 +21,31 @@ Darts
 - cvar: kept dice and # rolls
 - 654: show score and bet
 
-Drinking:
+* Drinking:
 - !play drink (con save or out, increasing DC, track drinks)
 
 Dragon hoard:
 - https://www.reddit.com/r/DnD/comments/6cici0/oc_a_simple_dice_game_that_requires_nothing_but/
-- `!play hoard <bet> [<dice>=3]` : roll xd6 and show in spoiler (only for the player) also to cvar
-- `!play hoard roll: rolls `1d6 and tells players to `!play hoard <number>` to knock out their value
+- `!play hoard [<dice>=3d6]` : roll xd6 and show in spoiler (only for the player) also to cvar
+- `!play hoard [1]d6 : rolls `1d6 and tells players to `!play hoard <number>` to knock out their value
 - `!play hoard <number>` knock out number
 - `!play hoard reveal` show final score
 
 - (optional) `!play hoard raise <value>` raise bet
 - `!play hoard
+
+
+General betting (shared)
+!play bet <amount>
+!play raise <amount>
+!play call
+
+
 Liar's dice
 - `!play liar` (rolls)
 - `!play liar <score>`
 - `!play liar call`
+
 Arm Wrestling:
 - Syntax: !play arm
 - Athletics roll
