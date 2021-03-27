@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/play/blackjack.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/play/ship.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
@@ -34,8 +34,7 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bladesong/help.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/help.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/blackjack.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/blackjack.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/games.txt" beforeDir="false" afterPath="$PROJECT_DIR$/play/games.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -272,10 +271,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="681" y="261" width="555" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1613367134872" />
-    <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1616246452262">
+    <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1616826853272">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1616246452262" />
+    <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1616826853272" />
     <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1614450508848">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

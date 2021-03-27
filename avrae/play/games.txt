@@ -6,7 +6,7 @@ Darts
 - AC 20 or something (or 20 for x3/x2, 18 for bullseye, 12 for number) if below uneven is vertical divergence, for each -2 below number one of to random left or right
 - cvar is track (remaining) score and arrows thrown until out (auto reset)
 
-Blackjack:
+* Blackjack:
 - Syntax: `!play blackjack [<gold>|card|hold]`
 - When reset, get 2 cards
 - every run: pull a card
@@ -15,7 +15,7 @@ Blackjack:
 - Wager: given at the start and resdet
 - cvar: wager and list of cards. 11s get turned to 1s when busting
 
-Ship captain crew:
+* Ship captain crew:
 - Link: https://en.wikipedia.org/wiki/Ship,_captain,_and_crew
 - `!play ship [<bet>]`
 - cvar: kept dice and # rolls
