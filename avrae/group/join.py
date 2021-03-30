@@ -5,7 +5,7 @@ if not args:
 	return f'help {ctx.alias} join -here'
 
 group=args[0]
-joiner=ctx.author.display_name
+joiner=name
 if len(args)>1:
 	joiner=" ".join(args[1:])
 

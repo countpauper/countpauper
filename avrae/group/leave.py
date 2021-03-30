@@ -2,7 +2,7 @@
 args="&*&"
 
 if not args:
-	args=ctx.author.display_name
+	args=name
 
 c=combat()
 if not c:

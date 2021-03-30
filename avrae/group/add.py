@@ -4,7 +4,7 @@ args="&*&"
 if not args:
 	return f'help {ctx.alias} + -here'
 if not combat():
-	return f'echo The channel needs to be in initiaive. Use `{ctx.prefix}{ctx.alias} begin or `{ctx.prefix}i begin`'
+	return f'echo The channel needs to be in initiative. Use `{ctx.prefix}{ctx.alias} begin or `{ctx.prefix}i begin`'
 args=args.split('-',maxsplit=1)
 name=args[0]
 
@@ -21,7 +21,7 @@ notes+=args.get('n',type_=str)
 notes+=args.get('note',type_=str)
 
 if notes:
-	sep='\n'
+	sep=', '
 	notes=f'-note "{sep.join(notes)}"'
 else:
 	notes=''

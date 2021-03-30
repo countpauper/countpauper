@@ -7,18 +7,19 @@ c=combat()
 if not c:
 	return f'echo The channel needs to be in initiaive. Use `{ctx.prefix}{ctx.alias} begin or `{ctx.prefix}i begin`'
 args=args.split('-',maxsplit=1)
-name=args[0]
+groupname=args[0].strip()
 
 # parse notes and options
 args=argparse('-'+args[1]) if len(args)>1 else argparse('')
-group=c.get_combatant(name)
+group=c.get_combatant(groupname)
 if not group:
-	return f'echo No group named `{name}` found.'
+	return f'echo No group named `{groupname}` found.'
 
-notes=group.note.splitlines()
+# existing notes
+notes=[n.strip() for n in group.note.split(',')] if group.note else []
 
 # add or replace fixed args (insert in reverse order)
-fixed_fields={'dm':'DM', 'l':'Location','tz':'TZ'}
+fixed_fields={'dm':'DM', 'l':'Location','tz':'TZ',}
 fixed_args=list(fixed_fields.keys())
 fixed_args.reverse()
 for a in fixed_args:
@@ -30,17 +31,17 @@ for a in fixed_args:
 
 # add general notes
 for note in args.get('n',type_=str)+args.get('note',type_=str):
+	note=note.strip()
 	if note.lower()=='none':
 		# clean out generic notes
 		notes=[n for n in notes if any(n.startswith(prefix) for prefix in fixed_fields.values())]
-	else:
+	elif note:
 		notes.append(note)
 
 if notes:
-	sep='\n'
-	notes=f'{sep.join(notes)}'
+	notes=f'{", ".join(notes)}'
 else:
 	notes=''
 
-return f'i note "{name}" {notes}'
+return f'i note "{groupname}" {notes}'
 </drac2>
