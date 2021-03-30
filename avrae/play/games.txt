@@ -7,39 +7,54 @@ Darts
 - cvar is track (remaining) score and arrows thrown until out (auto reset)
 
 * Blackjack:
-- Syntax: `!play blackjack [<gold>|card|hold]`
-- When reset, get 2 cards
-- every run: pull a card
-- Track score and cards until out (auto reset on crash)
-- Profiency: card game: ?
-- Wager: given at the start and resdet
-- cvar: wager and list of cards. 11s get turned to 1s when busting
+* Syntax: `!play blackjack [<gold>|card|hold]`
+* When reset, get 2 cards
+* every run: pull a card
+* Track score and cards until out (auto reset on crash)
+- Proficiency: card game: how?
+- cheat: change one card to ace or raise one card to get 21?
+x Wager: given at the start and resdet
+* cvar: wager and list of cards. 11s get turned to 1s when busting
 
 * Ship captain crew:
 - Link: https://en.wikipedia.org/wiki/Ship,_captain,_and_crew
-- `!play ship [<bet>]`
-- cvar: kept dice and # rolls
-- 654: show score and bet
+* `!play ship x [<bet>]`
+* cvar: kept dice and # rolls
+* 654: show score and ~~bet~~
+- dice prof: how?
+- cheat: before ship change one die to ship, after, raise one die to 6
+- proficiency: mi prof on dice
 
 * Drinking:
-- !play drink (con save or out, increasing DC, track drinks)
+* !play drink (con save or out, increasing DC, track drinks)
+* adv, bonus
+- cheat (sleight of hand): pretend to drink (raise one drink no save)
 
 Dragon hoard:
 - https://www.reddit.com/r/DnD/comments/6cici0/oc_a_simple_dice_game_that_requires_nothing_but/
-- `!play hoard [<dice>=3d6]` : roll xd6 and show in spoiler (only for the player) also to cvar
-- `!play hoard [1]d6 : rolls `1d6 and tells players to `!play hoard <number>` to knock out their value
-- `!play hoard <number>` knock out number
-- `!play hoard reveal` show final score
+* `!play hoard [<dice>=3d6]` : roll xd6 and show in spoiler (only for the player) also to cvar
+* `!play hoard [1]d6 : rolls `1d6 and tells players to `!play hoard <number>` to knock out their value
+* `!play hoard <number>` knock out number
+* `!play hoard ~~reveal~~` show final score
+x (optional) `!play hoard raise <value>` raise bet
+- cheat: change a flipped out number
+- dice proficiency: -mi prof on dice
 
-- (optional) `!play hoard raise <value>` raise bet
-- `!play hoard
 
+* General betting (shared)
+* !play bet <amount>
+- !play raise <amount>
+!play call <amount> (does what? same as raise, different text?)
+* !play out/drop
+* !play collect ~~win~~  (collect winnings)
 
-General betting (shared)
-!play bet <amount>
-!play raise <amount>
-!play call
+*Slot machine
+* 6 fruits :cherries:  :lemon: :melon: :bell: :coin: :gem:
+* put in 3 wheels with 20 symbols clm7$g  with a distribution something like this http://www.quadibloc.com/math/sloint.htm
+* payout definition "c  " to "ggg" like that but 2, 5, 10, 15, 20, 100
 
+Cheating
+!play cheat <game> ? Roll a sleight of hand ? dice prof cards prof ?
 
 Liar's dice
 - `!play liar` (rolls)

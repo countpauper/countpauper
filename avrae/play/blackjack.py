@@ -1,10 +1,9 @@
 <drac2>
-# TODO: double aces at start (or after split) should also reduce
 cvar='Play'
 game_name='blackjack'
 state=load_json(get(cvar,'{}'))
 game=state.get(game_name,{})
-args="&*&"
+args="&*&".lower()
 target=21
 cards=['A',2,3,4,5,6,7,8,9,10,'J','Q','K']
 values={'a':1, 'A':11 , 'J':10, 'Q':10, 'K':10}
@@ -21,7 +20,7 @@ else:
 	hand=game.get('hand')
 	if not hand:
 		return f'echo No hand. Use `{ctx.prefix}{ctx.alias} {game_name}` to start.'
-	if args=='hit':
+	if args=='hit' or args=='draw' or args=='card':
 		hand.append(cards[randint(len(cards))])
 	elif args=='split':
 		if game.get('split'):
@@ -35,7 +34,7 @@ else:
 		game['split']=[hand[1] ,cards[randint(len(cards))]]
 		game['hand']=[hand[0] ,cards[randint(len(cards))]]
 		hand=game.hand
-	elif args=='stand':
+	elif args=='stand' or args=='stay':
 		game['done']=game.get('done',[])+[hand]
 		if split:=game.get('split'):
 			game['hand']=split
@@ -72,6 +71,6 @@ if split:=game.get('split'):
 	fields.append(f'-f "Split|`{" ".join(str(c) for c in split)}` = `{score}`"')
 for done_hand in game.get('done',[]):
 	score=sum(values[card] for card in done_hand)
-	fields.append(f'-f "{"Bust at " if score>target else "Stand at "}{score}|`{" ".join(str(c) for c in done_hand)}`"')
+	fields.append(f'-f "{name+" busted at " if score>target else name+" stands at "}{score}|`{" ".join(str(c) for c in done_hand)}`"')
 return f'embed -title {game_name.title()} {" ".join(fields)} -footer "{syntax}"'
 </drac2>

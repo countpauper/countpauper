@@ -19,10 +19,10 @@ if save.total<dc:
 
 flavour=[
 	["You're fine.","You feel good.","No problem."],
-	["You're tipsy.","You're woozy.","You feel merry.","You're buzzed."],
-	["You're intoxi. ... intoximicated.*","You're drunk.","Yes, you're definetly soused.","You may have had one too many, or two."],
-	["You're blind drunk.","You're smashed.","Wasted!","You're sloshed.","You're drunk as a lord.","You're hammered."],
-	["You're out!","You're black out drunk.","You're under the table.","You drank yourself into a stupor.","You pass out."]
+	["You are tipsy.","You're woozy.","You feel merry.","You're buzzed."],
+	["You're intoxi. ... intoximicated.","You're drunk.","Yes, you're definitely soused.","You may have had one too many, or two."],
+	["You're blind drunk.","You're smashed.","Wasted!","You're sloshed.","Drunk as a lord.","You're hammered."],
+	["You're out!","You're black out drunk.","You slide under the table.","You drank yourself into a stupor.","You pass out.","Zzzzz"]
 ]
 
 result=flavour[intoxication]
@@ -32,6 +32,8 @@ if done:
 	result=f'**{result}**'
 elif intoxication>=2:
 	result=f'*{result}*'
+
+result=f'*{"Success!" if save.total>=dc else "Failed."}*\n{result} (`{intoxication+1}`)'
 
 # persist
 if done:

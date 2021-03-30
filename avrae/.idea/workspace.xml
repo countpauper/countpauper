@@ -2,16 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/group/add.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/group/begin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/group/edit.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/group/join.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/group/leave.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/group/remove.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/group/view.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/play/bet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/play/drop_out.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/play/hoard.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/play/collect.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/play/slots.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
