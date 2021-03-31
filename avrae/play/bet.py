@@ -16,9 +16,11 @@ if not args:
 		return f'echo You haven\'t placed a bet yet. Use `{base_cmd} {game_name} <amount>` to do so.'
 elif bet:
 	return f'echo You still have placed a bet of `{bet}`. First drop out with `{base_cmd} drop` or collect with `!{base_cmd} collect`'
-else:
+elif args.isdigit():
 	title=f'{name} places a bet.'
 	amount=int(args)
+else:
+	return f'echo {args} is not a valid amount. Use `{syntax}`'
 
 # persist
 state[game_name]=str(amount)

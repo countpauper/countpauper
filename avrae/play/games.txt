@@ -1,10 +1,20 @@
 Darts
-- Syntax: `!play darts [<score>=20] [<mul>=3]`
-- dexteritymod + bonus args (adv) + proficiencybonus? (if class)
-- Specify number to aim for 20 [x 3] and count down score
-- represent darts board as round array of numbers and diverge based on difference between target score
-- AC 20 or something (or 20 for x3/x2, 18 for bullseye, 12 for number) if below uneven is vertical divergence, for each -2 below number one of to random left or right
-- cvar is track (remaining) score and arrows thrown until out (auto reset)
+* Syntax: `!play darts [<score>=20] [<mul>=3]`
+* dexteritymod + bonus args (adv) + proficiencybonus? (if class)
+* Specify number to aim for 20 [x 3] and count down score
+    - auto selection (double in, tripple 20, double out)
+    - specify as 20x3 first argument
+- select game type
+    - -double in,out -straight in,out
+    - -game 501 301
+- yield option to reset !play darts yield,
+    - if game type specified: auto yield
+
+* represent darts board as round array of numbers and diverge based on difference between target score
+* AC 20 or something (or 20 for x3/x2, 18 for bullseye, 12 for number) if below uneven is vertical divergence, for each -2 below number one of to random left or right
+* cvar is track (remaining) score and arrows thrown until out (auto reset)
+- nice display with image
+    - image optional
 
 * Blackjack:
 * Syntax: `!play blackjack [<gold>|card|hold]`
@@ -23,7 +33,7 @@ x Wager: given at the start and resdet
 * 654: show score and ~~bet~~
 - dice prof: how?
 - cheat: before ship change one die to ship, after, raise one die to 6
-- proficiency: mi prof on dice
+- proficiency: mi prof on dice (but max 4?)
 
 * Drinking:
 * !play drink (con save or out, increasing DC, track drinks)
@@ -47,7 +57,14 @@ x (optional) `!play hoard raise <value>` raise bet
 !play call <amount> (does what? same as raise, different text?)
 * !play out/drop
 * !play collect ~~win~~  (collect winnings)
-
+- really take out of coin pouch if any (coin names in there)
+    - allow 10gp 10sp postfixes or split 10 gp 10 sp
+    - bet will be dict same as pouch 'coin':amount
+    - bet/raise: remove from pouch
+    - collect: return bet + extra amount passed as args
+    - out: show as coin
+    - to confirm: show coin pouch contents in field
+    - play bet (nothing) just shows bet and pouch
 *Slot machine
 * 6 fruits :cherries:  :lemon: :melon: :bell: :coin: :gem:
 * put in 3 wheels with 20 symbols clm7$g  with a distribution something like this http://www.quadibloc.com/math/sloint.htm
