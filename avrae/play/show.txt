@@ -1,12 +1,12 @@
 **Play**: `!play` games in your game!
-**Subscribe**: avrae.io/dashboard/workshop/605cb7331e2241970bbf0f30
-**Description**: This is a workshop for players. Some games can be played solo, but most are more fun together.
- • Blackjack
- • Darts (x01)
- • Slots
- • Ship, Captain Crew (simple dice game)
- • Dragon Hoard (even simpler dice game)
- • Drinking contest
- • Betting integrated
+**Subscribe**: https://avrae.io/dashboard/workshop/605cb7331e2241970bbf0f30/
+**Description**: This is a workshop for players.
+ • Blackjack :clubs:
+ • Darts (x01) :dart:
+ • Slots :cherries:
+ • Dragon Hoard  :dragon:  (simple dice game)
+ • Ship, Captain Crew :sailboat:   (even simpler dice game)
+ • Drinking contest :beer:
+ • Betting integrated :coin:
 **Coming Soon**: Three Dragon Ante, Shell Game (3 cups and a ball), Cheating checks, Dice & card proficiency checks
 **Github**: github.com/countpauper/countpauper/tree/master/avrae/play

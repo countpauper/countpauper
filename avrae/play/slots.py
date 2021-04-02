@@ -20,6 +20,8 @@ numbers=' 123456'
 nl='\n'
 thumb='-thumb https://cdn.discordapp.com/attachments/755790258154635286/826340323331407912/Slot_Machine.png'
 footer=f'-footer "{syntax}, Collect pay out with {base_cmd} collect"'
+
+# Pay out list
 if args.lower().startswith('pay'):
 	desc=[]
 	for k,v in payout.items():
@@ -28,6 +30,7 @@ if args.lower().startswith('pay'):
 		desc.append(f'|{state_str}| **{v}**')
 	return f'embed -desc "{nl.join(desc)}" {footer} {thumb}'
 
+# parse arguments
 if args:
 	if not args.isdigit():
 		return f'echo {syntax}'
@@ -44,7 +47,7 @@ if bet[coin]<amount:
 	return f'echo You have not bet {amount} {coin}. Before you play slots you have to bet more using `{base_cmd} bet {amount} {coin}`'
 bet[coin]-=amount
 
-#compute
+# spin for results
 display=[]
 profit = 0
 for _ in range(amount):
@@ -61,7 +64,7 @@ for _ in range(amount):
 	profit+=pay
 	display.append(display_str)
 
-# persist
+# persist bet
 bet[coin]+=profit
 bet={c:q for c,q in bet.items() if q!=0}
 state[game_name]=bet
@@ -71,8 +74,8 @@ if profit:
 else:
 	profit=''
 
+# display output
 bet=', '.join(f'{q} {c}' for c,q in bet.items()) if bet else '*Broke*'
-
 return f'embed -title "Slots" -desc "{nl.join(display)}" -f ":coin:|{bet} {profit}" {footer} {thumb} '
 </drac2>
 

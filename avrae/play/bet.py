@@ -24,9 +24,10 @@ if args:
 			args=args.replace(coin,f' {coin}')
 		args=args.split()
 		if len(args)==1:	# default select most owned coin
-			max_coin = max(coins.values())
-			max_coin=[c for c,v in coins.items() if v==max_coin][0]
-			args.append(max_coin)
+			auto_coin=([None]+list(bet.keys()))[-1]
+			if not auto_coin:
+				auto_coin=[c for c,v in coins.items() if v==max(coins.values())][0]
+			args.append(auto_coin)
 
 		coin_idx={c:args.index(c)-1 for c in coins.keys() if c in args}
 		new_bet={c:int(args[i]) for c,i in coin_idx.items() if i>=0 and args[i].isdigit()}

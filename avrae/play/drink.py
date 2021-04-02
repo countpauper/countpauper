@@ -3,20 +3,25 @@ cvar='Play'
 game_name='drink'
 state=load_json(get(cvar,'{}'))
 game=state.get(game_name,{})
-args=argparse("&*&")
 syntax=f'{ctx.prefix}{ctx.alias} {game_name} [-b <bonus>] [adv] [dis] [-mi <minimum>]'
 
+# initialize game state
 drinks=game.get('drinks',0)
 drinks+=1
 dc=9+drinks
 ch=character()
+
+# parse arguments for roll string
+args=argparse("&*&")
 rolls=[ch.saves.get('con').d20(args.adv(boolwise=True),reroll=ch.csettings.get('reroll'), min_val=int(args.last('mi',0)))]+args.get('b')
 save=vroll("+".join(rolls))
 
+# increase intoxication on failed save
 intoxication=game.get('intoxication',0)
 if save.total<dc:
 	intoxication+=1
 
+# disply result
 flavour=[
 	["You're fine.","You feel good.","No problem."],
 	["You are tipsy.","You're woozy.","You feel merry.","You're buzzed."],
@@ -35,7 +40,7 @@ elif intoxication>=2:
 
 result=f'*{"Success!" if save.total>=dc else "Failed."}*\n{result} (`{intoxication+1}`)'
 
-# persist
+# persist game state
 if done:
 	state[game_name]={}
 else:

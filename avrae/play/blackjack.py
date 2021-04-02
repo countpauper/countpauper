@@ -28,15 +28,16 @@ if not args:
 	instructions=[f'Place your bet with `{base_cmd} bet [<amount> [<coin>]]`'] + base_instructions
 	if values[hand[0]] == values[hand[1]]:
 		instructions.append(f'You have equal value cards. You can split with `{game_cmd} split`')
-# hit: an extra card
 else:
 	hand=game.get('hand')
 	if not hand:
 		return f'echo No hand. Use `{ctx.prefix}{ctx.alias} {game_name}` to start.'
+	# hit: an extra card
 	if args=='hit' or args=='draw' or args=='card':
 		title=f'{name} asks for a card.'
 		hand.append(cards[randint(len(cards))])
 		instructions = base_instructions
+	# split hand
 	elif args=='split':
 		if game.get('split'):
 			return f'echo You already split.'
@@ -51,6 +52,7 @@ else:
 		game['hand']=[hand[0] ,cards[randint(len(cards))]]
 		hand=game.hand
 		instructions=base_instructions
+	# stay for final score
 	elif args=='stand' or args=='stay':
 		score = sum(values[card] for card in hand)
 		game['done']=game.get('done',[])+[hand]
@@ -63,8 +65,8 @@ else:
 		else:
 			title = f'{name} stands at {score}.'
 			game['hand']=None
-			instructions=[f'If you win, `{base_cmd} collect {" ".join(f"{q} {c}" for c,q in bet.items())}`',
-						  f'If you lose, forfeit with `{base_cmd} out`'] if bet else []
+			instructions=[f'If you win, double your bet with `{base_cmd} collect {" ".join(f"{q} {c}" for c,q in bet.items())}`',
+						  f'If you lose, forfeit your bet with `{base_cmd} out`'] if bet else []
 			instructions.append(f'Play again with `{game_cmd}`')
 	else:
 		return f'echo `{syntax}`'

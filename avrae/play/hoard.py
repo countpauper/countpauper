@@ -10,6 +10,7 @@ syntax=f'{base_syntax} [<dice>|<number eaten>]'
 
 hoard=game.get('hoard')
 
+# play first roll
 if not args:
 	if not hoard:
 		args='3d6'
@@ -17,12 +18,15 @@ if not args:
 		desc=f""":dragon: Hoard : {", ".join(f"*{d}*" if d>0 else f"~~{-d}~~" for d in hoard)} = **{sum(d for d in hoard if d>0)}**
 		The player with the biggest hoard wins. Split the pot on ties."""
 		hoard=None
+
 if args:
+	# plunder
 	if args.isdigit():
 		args=int(args)
 		hoard=[-args if h==args else h for h in hoard]
 		desc=f""":dragon: Hoard plundered [{args}] ||{", ".join(f"*{d}*" if d>0 else f"~~{-d}~~" for d in hoard)}||. **Only the {name}  can peek!**
 		Raise your bet with `{base_cmd} bet <amount>` or drop out with `{base_cmd} drop`. Then reveal with `{base_syntax}`"""
+	# roll plunder die
 	else:
 		dice=args.split('d',maxsplit=1)
 		if not dice[0]:
@@ -44,6 +48,7 @@ if args:
 			desc=f"""{name} :dragon: hoard. ||{", ".join(f"*{d}*" for d in hoard)}||. **Only {name} can peek!**
 			Place your bet with `{base_cmd} bet <amount>`. 
 			Then the dealer can plunder with `{base_syntax} d{dice[1]}`"""
+
 # persist
 if hoard:
 	state[game_name]={'hoard':hoard}

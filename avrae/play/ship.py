@@ -13,6 +13,7 @@ if turn>=turns:
 	turn=0
 	bank=[]
 
+# roll
 rolls=[roll('1d6') for _ in range(5-len(bank))]
 target=[6,5,4]
 for t in target:
@@ -24,7 +25,6 @@ for t in target:
 			break
 
 # persist
-
 if done:= all(t in bank for t in target):
 	state[game_name]={}
 else:
@@ -32,6 +32,7 @@ else:
 	state[game_name]={'turn':turn, 'bank':bank}
 character().set_cvar(cvar,dump_json(state))
 
+# display game
 ship=f'**{", ".join(str(r) for r in bank)}**, ' if bank else ''
 cargo=", ".join(str(r) for r in rolls)
 # output
