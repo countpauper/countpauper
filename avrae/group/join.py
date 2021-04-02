@@ -11,7 +11,7 @@ if len(args)>1:
 
 c=combat()
 if not c:
-	return f'echo The channel needs to be in initiaive. Use `{ctx.prefix}{ctx.alias} begin or `{ctx.prefix}i begin`'
+	return f'echo The channel needs to be in initiaive. Use `{ctx.prefix}{ctx.alias}` begin or `{ctx.prefix}i begin`'
 
 # clean the character from other/existing groups
 for g in c.combatants:

@@ -5,7 +5,7 @@ if not args:
 	return f'help {ctx.alias} edit -here'
 c=combat()
 if not c:
-	return f'echo The channel needs to be in initiaive. Use `{ctx.prefix}{ctx.alias} begin or `{ctx.prefix}i begin`'
+	return f'echo The channel needs to be in initiaive. Use `{ctx.prefix}{ctx.alias}` begin or `{ctx.prefix}i begin`'
 args=args.split('-',maxsplit=1)
 groupname=args[0].strip()
 
