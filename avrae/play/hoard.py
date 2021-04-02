@@ -22,7 +22,7 @@ if args:
 		args=int(args)
 		hoard=[-args if h==args else h for h in hoard]
 		desc=f""":dragon: Hoard plundered [{args}] ||{", ".join(f"*{d}*" if d>0 else f"~~{-d}~~" for d in hoard)}||. **Only the {name}  can peek!**
-		Raise your bet with `{base_cmd} raise <amount>` or drop out with `{base_cmd} drop`. Then reveal with `{base_syntax}`"""
+		Raise your bet with `{base_cmd} bet <amount>` or drop out with `{base_cmd} drop`. Then reveal with `{base_syntax}`"""
 	else:
 		dice=args.split('d',maxsplit=1)
 		if not dice[0]:

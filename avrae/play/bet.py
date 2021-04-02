@@ -2,31 +2,66 @@
 cvar='Play'
 game_name='bet'
 state=load_json(get(cvar,'{}'))
-bet=state.get(game_name)
-if bet is not None:
-	bet=int(bet)
-args="&*&".lower()
+bet=state.get(game_name,{})
 base_cmd=f'{ctx.prefix}{ctx.alias}'
-syntax=f'{base_cmd} {game_name} [<amount>]'
-if not args:
+syntax=f'{base_cmd} {game_name} [<amount> [<coin>]]'
+
+desc = ''
+args = "&*&".lower()
+
+# get !coins pouch if any
+bags = load_json(get('bags', '{}'))
+coins = ([b[1] for b in bags if b[0].lower().startswith('coin')] + [None])[0]
+
+if args:
 	if bet:
-		amount=bet
-		title=f'{name} previously placed a bet.'
+		title = f'{name} raises their bet.'
 	else:
-		return f'echo You haven\'t placed a bet yet. Use `{base_cmd} {game_name} <amount>` to do so.'
-elif bet:
-	return f'echo You still have placed a bet of `{bet}`. First drop out with `{base_cmd} drop` or collect with `!{base_cmd} collect`'
-elif args.isdigit():
-	title=f'{name} places a bet.'
-	amount=int(args)
+		title = f'{name} places a bet.'
+
+	if coins:
+		for coin in coins.keys():	# convert 10cp => 10 cp for split
+			args=args.replace(coin,f' {coin}')
+		args=args.split()
+		if len(args)==1:	# default select most owned coin
+			max_coin = max(coins.values())
+			max_coin=[c for c,v in coins.items() if v==max_coin][0]
+			args.append(max_coin)
+
+		coin_idx={c:args.index(c)-1 for c in coins.keys() if c in args}
+		new_bet={c:int(args[i]) for c,i in coin_idx.items() if i>=0 and args[i].isdigit()}
+		if not new_bet:
+			return f'echo Illegal bet. Use `{syntax}`'
+		# TODO: check and update pouch
+		for c,q in new_bet.items():
+			have=coins.get(c,0)
+			if have<q:
+				return f'echo You do not have {q} {c}, but only {have}.'
+			coins[c]=have-q
+		character().set_cvar('bags',dump_json(bags))
+	else:
+		args="&*&"
+		chips='chips'
+		if not args.isdigit():
+			return f'echo Since you have no `!coins` pouch you can only bet a number of {chips} `{base_cmd} {game_name} [<amount>]'
+		new_bet={chips:int(args)}
+
+	# persist
+	if bet:
+		desc=f':heavy_plus_sign: {", ".join(f"{q} {c}" for c,q in new_bet.items())}\n'
+	for c,v in new_bet.items():
+		bet[c]=bet.get(c,0)+v
+	state[game_name]=bet
+	character().set_cvar(cvar,dump_json(state))
+
 else:
-	return f'echo {args} is not a valid amount. Use `{syntax}`'
+	title= f'{name} counts {get("their","their")} bet.'
+	new_bet=None
 
-# persist
-state[game_name]=str(amount)
-character().set_cvar(cvar,dump_json(state))
 
-# output
-desc=f':coin: {amount}'
-return f'embed -title "{title}" -desc "{desc}" -footer "{syntax} | {base_cmd} raise <amount> | {base_cmd} drop."'
+desc+=f':coin: {", ".join(f"{q} {c}" for c,q in bet.items())}' if bet else 'Bet: *None*'
+if coins:
+	desc+=f'\n:moneybag: {", ".join(f"{q} {c}" for c,q in coins.items() if q!=0)}'
+
+return f'embed -title "{title}" -desc "{desc}" -footer "{syntax} {base_cmd} drop."'
 </drac2>

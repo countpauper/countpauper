@@ -33,8 +33,13 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/play/darts.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/darts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/bet.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/bet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/blackjack.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/blackjack.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/collect.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/collect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/drop_out.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/drop_out.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/games.txt" beforeDir="false" afterPath="$PROJECT_DIR$/play/games.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/hoard.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/hoard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/slots.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/slots.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -230,38 +235,38 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="722" y="237" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1611001093373" />
-    <state width="1899" height="170" key="GridCell.Tab.0.bottom" timestamp="1613667115718">
+    <state width="1899" height="346" key="GridCell.Tab.0.bottom" timestamp="1617346159612">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="170" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115718" />
-    <state width="1899" height="170" key="GridCell.Tab.0.center" timestamp="1613667115718">
+    <state width="1899" height="346" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1617346159612" />
+    <state width="1899" height="346" key="GridCell.Tab.0.center" timestamp="1617346159611">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="170" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115718" />
-    <state width="1899" height="170" key="GridCell.Tab.0.left" timestamp="1613667115717">
+    <state width="1899" height="346" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1617346159611" />
+    <state width="1899" height="346" key="GridCell.Tab.0.left" timestamp="1617346159611">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="170" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115717" />
-    <state width="1899" height="170" key="GridCell.Tab.0.right" timestamp="1613667115718">
+    <state width="1899" height="346" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1617346159611" />
+    <state width="1899" height="346" key="GridCell.Tab.0.right" timestamp="1617346159612">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="170" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1613667115718" />
-    <state width="1899" height="346" key="GridCell.Tab.1.bottom" timestamp="1613061876227">
+    <state width="1899" height="346" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1617346159612" />
+    <state width="1899" height="346" key="GridCell.Tab.1.bottom" timestamp="1617346159612">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="346" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1613061876227" />
-    <state width="1899" height="346" key="GridCell.Tab.1.center" timestamp="1613061876226">
+    <state width="1899" height="346" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1617346159612" />
+    <state width="1899" height="346" key="GridCell.Tab.1.center" timestamp="1617346159612">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="346" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1613061876226" />
-    <state width="1899" height="346" key="GridCell.Tab.1.left" timestamp="1613061876226">
+    <state width="1899" height="346" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1617346159612" />
+    <state width="1899" height="346" key="GridCell.Tab.1.left" timestamp="1617346159612">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="346" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1613061876226" />
-    <state width="1899" height="346" key="GridCell.Tab.1.right" timestamp="1613061876226">
+    <state width="1899" height="346" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1617346159612" />
+    <state width="1899" height="346" key="GridCell.Tab.1.right" timestamp="1617346159612">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="346" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1613061876226" />
+    <state width="1899" height="346" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1617346159612" />
     <state x="463" y="166" key="SettingsEditor" timestamp="1611733183503">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -278,10 +283,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1614450508848" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1617185078669">
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1617348743542">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1617185078669" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1617348743542" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -328,7 +333,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/play/drop_out.py</url>
-          <line>22</line>
+          <line>18</line>
           <option name="timeStamp" value="32" />
         </line-breakpoint>
       </breakpoints>

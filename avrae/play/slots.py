@@ -2,7 +2,7 @@
 cvar='Play'
 game_name='bet'
 state=load_json(get(cvar,'{}'))
-bet=state.get(game_name)
+bet=state.get(game_name,{})
 base_cmd=f'{ctx.prefix}{ctx.alias}'
 args="&*&"
 syntax=f'{base_cmd} slots [payout|<amount>]'
@@ -37,15 +37,12 @@ else:
 if amount>50:
 	return f'echo You can\'t bet more than 50 at once.'
 
-if bet is not None:
-	bet=int(bet)
-else:
-	return f'echo Before you play slots you have to bet using `{base_cmd} bet <amount>`'
-
-if bet<amount:
-	return f'echo You are out. Before you play slots you have to bet more using `{base_cmd} bet <amount>`'
-
-bet-=amount
+if not bet:
+	return f'echo Before you play slots you have to bet using `{base_cmd} bet <amount> [<coin>]`'
+coin=list(bet.keys())[-1]
+if bet[coin]<amount:
+	return f'echo You have not bet {amount} {coin}. Before you play slots you have to bet more using `{base_cmd} bet {amount} {coin}`'
+bet[coin]-=amount
 
 #compute
 display=[]
@@ -60,21 +57,23 @@ for _ in range(amount):
 		if payout_label.startswith(k):
 			pay=v
 	if pay:
-		display_str+=f' **+{pay}**'
+		display_str+=f' **+{pay} {coin}**'
 	profit+=pay
 	display.append(display_str)
 
 # persist
-bet+=profit
+bet[coin]+=profit
+bet={c:q for c,q in bet.items() if q!=0}
 state[game_name]=bet
 character().set_cvar(cvar,dump_json(state))
 if profit:
-	profit=f'**(+{profit})**'
+	profit=f'**(+{profit} {coin})**'
 else:
 	profit=''
 
+bet=', '.join(f'{q} {c}' for c,q in bet.items()) if bet else '*Broke*'
 
-return f'embed -title "Slots" -desc "{nl.join(display)}" -f "Coins|{bet}{profit}" {footer} {thumb} '
+return f'embed -title "Slots" -desc "{nl.join(display)}" -f ":coin:|{bet} {profit}" {footer} {thumb} '
 </drac2>
 
 
