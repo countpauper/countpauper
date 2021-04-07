@@ -33,7 +33,7 @@ x Wager: given at the start and resdet
 * 654: show score and ~~bet~~
 - dice prof: how?
 - cheat: before ship change one die to ship, after, raise one die to 6
-- proficiency: mi prof on dice (but max 4?)
+- proficiency: mi prof (//2? -1?) on dice
 
 * Drinking:
 * !play drink (con save or out, increasing DC, track drinks)
@@ -48,7 +48,7 @@ Dragon hoard:
 * `!play hoard ~~reveal~~` show final score
 x (optional) `!play hoard raise <value>` raise bet
 - cheat: change a flipped out number
-- dice proficiency: -mi prof on dice
+- dice proficiency: -mi prof (//2?) on dice
 
 
 * General betting (shared)

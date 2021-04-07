@@ -41,6 +41,9 @@ if done:
 else:
 	desc= f'**Round:** {turn}/{turns} **Dice:** {ship} {cargo}'
 	if turn==turns:
-		desc+=' = 0'
+		desc+=' = 0\nNo more tries left.'
+	else:
+		desc+=f'\nTry again with `{syntax}`'
+
 return f'embed -title "Ship, captain and crew" -desc "{desc}" -thumb https://upload.wikimedia.org/wikipedia/commons/9/99/Dice_-_1-2-4-5-6.jpg -footer "{syntax}"'
 </drac2>

@@ -32,6 +32,10 @@ args=&ARGS&
 if not args:
 	return f'echo `{ctx.prefix}{ctx.alias} [<bag>] [+/-][amount] <item> [<background>] [<pack>] ...`'
 
+# typo protection
+if len(args)==1 and ((args[0].lower().startswith('undo') and len(args[0])<7) or (args[0].lower().startswith('und') and len(args[0])<=4)):
+	return f"echo :confused: `{ctx.prefix}{ctx.alias} {args[0]}`? Maybe you mean `{ctx.prefix}{ctx.alias} undo`?"
+
 bv='bags'
 backup=get(bv)
 bags=load_json(get(bv,'[]'))
@@ -53,8 +57,8 @@ sets.update(config.get('backgrounds',{}))
 sets={n.lower():c for n,c in sets.items()}
 coins=config.get('coinRates',{})
 short_words=config.get('forbidden')
-item_list=[i for i in item_table.keys() if i not in sets.keys()]
-
+removed_items=["exploder's pack"]
+item_list=[i for i in item_table.keys() if i not in sets.keys() and i not in removed_items]
 
 # find the purse bag
 coin_bags = [idx for idx,b in enumerate(bags) if b[0].lower() in purse_names]

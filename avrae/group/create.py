@@ -2,7 +2,7 @@
 args="&*&"
 
 if not args:
-	return f'help {ctx.alias} + -here'
+	return f'help {ctx.alias} create -here'
 if not combat():
 	return f'echo The channel needs to be in initiative. Use `{ctx.prefix}{ctx.alias}` begin or `{ctx.prefix}i begin`'
 args=args.split('-',maxsplit=1)
