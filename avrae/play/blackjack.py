@@ -102,5 +102,5 @@ for done_hand in game.get('done',[]):
 	fields.append(f'-f "{name+" busted at " if score>target else name+" final hand at "}{score}|{" ".join(symbol[c] for c in done_hand)}"')
 thumb='-thumb !embed -thumb https://cdn.discordapp.com/attachments/751105864370356365/827258201502253116/blackjack.png'
 nl='\n'
-return f'embed -title "{title}" {" ".join(fields)} -f "Instructions|{nl.join(instructions)}"  {thumb}'
+return f'embed -title "{title}" {" ".join(fields)} -f "Instructions|{nl.join(instructions)}"  {thumb} -color {color}'
 </drac2>

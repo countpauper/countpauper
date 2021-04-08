@@ -46,5 +46,5 @@ if game_name in state:
 	state.pop(game_name)
 character().set_cvar(cvar,dump_json(state))
 
-return f'embed -title "{name} wins the bet." -desc "{desc}" -footer "{syntax}"'
+return f'embed -title "{name} wins the bet." -desc "{desc}" -color {color} -footer "{syntax}"'
 </drac2>

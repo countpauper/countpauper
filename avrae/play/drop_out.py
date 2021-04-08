@@ -16,5 +16,5 @@ character().set_cvar(cvar,dump_json(state))
 # output
 desc=f'{get("they","they").capitalize()} lost {get("their","their")} bet of {", ".join(f"{q} {c}" for c,q in bet.items())}'
 
-return f'embed -title "{name} drops out." -desc "{desc}" -footer "{syntax}"'
+return f'embed -title "{name} drops out." -desc "{desc}" -color {color} -footer "{syntax}"'
 </drac2>

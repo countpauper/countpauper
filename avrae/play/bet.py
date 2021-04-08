@@ -64,5 +64,5 @@ desc+=f':coin: {", ".join(f"{q} {c}" for c,q in bet.items())}' if bet else 'Bet:
 if coins:
 	desc+=f'\n:moneybag: {", ".join(f"{q} {c}" for c,q in coins.items() if q!=0)}'
 
-return f'embed -title "{title}" -desc "{desc}" -footer "{syntax} {base_cmd} drop."'
+return f'embed -title "{title}" -desc "{desc}" -color {color} -footer "{syntax} {base_cmd} drop."'
 </drac2>

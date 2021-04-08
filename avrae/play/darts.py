@@ -201,5 +201,5 @@ dart_desc=[f':dart: `{turn[i] if i<len(turn) else "..."}`' for i in range(3)]
 sep=' | '
 game_desc=f'{sep.join(dart_desc)}\n{turn_result} ({game.score if game["in"] else "Not in."})'
 image='' if gameover else '-image https://cdn.discordapp.com/attachments/751098635038621868/826779973271420948/Darts.png'
-return f'embed -title "{title}" -desc "{turn_desc}\n{game_desc}" {image} -footer "{syntax}"'
+return f'embed -title "{title}" -desc "{turn_desc}\n{game_desc}" {image} -footer "{syntax}" -color {color}'
 </drac2>

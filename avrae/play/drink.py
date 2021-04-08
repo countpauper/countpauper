@@ -47,5 +47,5 @@ else:
 	state[game_name]={'drinks':drinks,'intoxication':intoxication}
 character().set_cvar(cvar,dump_json(state))
 
-return f'embed -title "{name} drinks #{drinks}" -f "{save} VS DC {dc}|{result}" -footer "{syntax}" -thumb https://cdn.discordapp.com/attachments/751098635038621868/825287768040931349/Chasing-the-green-fairy-absinthe-fact-and-fiction-730x410.png'
+return f'embed -title "{name} drinks #{drinks}" -f "{save} VS DC {dc}|{result}" -footer "{syntax}" -color {color} -thumb https://cdn.discordapp.com/attachments/751098635038621868/825287768040931349/Chasing-the-green-fairy-absinthe-fact-and-fiction-730x410.png'
 </drac2>

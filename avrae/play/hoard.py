@@ -57,5 +57,5 @@ else:
 character().set_cvar(cvar,dump_json(state))
 
 # output
-return f'embed -title "Dragon Hoard" -footer "{syntax}" -desc "{desc}" -thumb https://cdn.discordapp.com/attachments/751098635038621868/825619306037248040/3041-DZ.png'
+return f'embed -title "{name} plays Dragon Hoard." -footer "{syntax}" -desc "{desc}" -color {color} -thumb https://cdn.discordapp.com/attachments/751098635038621868/825619306037248040/3041-DZ.png'
 </drac2>

@@ -76,7 +76,7 @@ else:
 
 # display output
 bet=', '.join(f'{q} {c}' for c,q in bet.items()) if bet else '*Broke*'
-return f'embed -title "Slots" -desc "{nl.join(display)}" -f ":coin:|{bet} {profit}" {footer} {thumb} '
+return f'embed -title "{name} plays on a Slot Machine." -desc "{nl.join(display)}" -color {color} -f ":coin:|{bet} {profit}" {footer} {thumb} '
 </drac2>
 
 
