@@ -1,23 +1,40 @@
-!alias xpzip tembed <drac2>
-# create a backup but don't overwrite an existing backlog
-backup_var='xplog_backup'
-xp_var='xplog'
-if not exists(backup_var) and exists(xp_var):
-	character().set_cvar(backup_var,get(xp_var))
+!alias xpzip echo <drac2>
+xp_logs = load_json(get('xplog', '{}'))
+#xp_logs = load_json(get('xplog', get('xplog_backup','{}')))
 
-# get the current xp log var, fall back to beta test gvar if deleted
-xp_in=load_json(get(xp_var, get_gvar('1975c6cb-b625-41e3-b827-df8560eab9b5')))
+# parse the arguments
+args=argparse(&ARGS&)
+arbitrary_period = {"day": 0, "month": 3, "year": 6}
+period = ([period for period in arbitrary_period.keys() if args.last(period)]+["day"])[0]
+limit=args.last('h',16, type_=int)
 
-# interpret the log
-xp={}	# date: int(xp) (comment discarded)
-for d,s in xp_in.items():
-	idx=min(i for i,c in enumerate(s+"|") if c not in '+- 0123456789')	# split integer part
-	xp[d]=int(s[:idx].replace(' ',''))
+# store the last <limit> items as tail and remove them from the log to be merged
+xp_tail={k:v for k,v in xp_logs.items() if k in list(xp_logs.keys())[-limit:]}
+xp_logs={k:v for k,v in xp_logs.items() if k not in xp_tail.keys()}
 
-# zip the log, v1: to a single entry
-xp_out={list(xp_in.keys())[0] : f'{sum(xp.values())} = {"+".join(str(v) for v in xp.values())}'}
+# list to prevent key errors
+date_time_list = [(i.split(" ")[0], j) for i, j in xp_logs.items()]
+# removing the comments to be able to add and make separate lists off dates and amounts to prevent key errors
+xp_dates = []
+xp_amounts = []
+for d,s in date_time_list:
+    idx=min(i for i,c in enumerate(s+"|") if c not in '+- 0123456789')    # split integer part
+    temp = int(s[:idx].replace(' ',''))
+    xp_dates.append(d[arbitrary_period[period]:])
+    xp_amounts.append(temp)
+
+# taking out conflicting keys.
+xp_logs_merged = {}
+for i in range(len(xp_dates)):
+    if xp_dates[i] not in xp_logs_merged.keys():
+        xp_logs_merged[xp_dates[i]] = xp_amounts[i]
+        continue
+    xp_logs_merged[xp_dates[i]] += xp_amounts[i]
+
+# append the tail again
+xp_logs_merged.update(xp_tail)
 
 # persist
-character().set_cvar(xp_var,dump_json(xp_out))
+# character().set_cvar('xplog',dump_json(xp_logs_merged))
+return "\n".join(f"{d} - {v}" for d,v in xp_logs_merged.items())
 </drac2>
-{{get_gvar("d903eb12-7842-4fd9-bb00-58d3db55acdc").replace("&*" + "&", "'log'").replace("&AR" + "GS&", "['log']")}}
