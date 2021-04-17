@@ -51,7 +51,7 @@ purse_names=config.get('purses',[])
 equipped_names=config.get('equipment',[])
 ammo_containers=config.get('ammo',[])
 containers=config.get('containers',[]) + equipped_names + ammo_containers + purse_names
-specific_bags=purse_names + ammo_containers
+special_bags=purse_names + ammo_containers
 sets=config.get('packs',{})
 sets.update(config.get('backgrounds',{}))
 sets={n.lower():c for n,c in sets.items()}
@@ -246,7 +246,7 @@ while args:
 
 	# Default bag: about to add items to  the current bag, if there is no current bag, select one
 	if bag_idx is None:
-		default_bags=[b[0] for i,b in enumerate(bags) if i not in removed_bags and (b[0].lower() not in specific_bags)]
+		default_bags=[b[0] for i,b in enumerate(bags) if i not in removed_bags and (b[0].lower() not in special_bags)]
 		# queue switching to the default bag explicitly and adding the current item. create arg basic one if none found
 		if default_bags:
 			default_bag=default_bags[0]
@@ -447,5 +447,5 @@ if backup:
 character().set_cvar(bv,dump_json(bags))
 possessive=f'{name}\'' if name[-1]=='s' else f'{name}\'s'
 
-return f'embed -title "{possessive} bags" -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png {fields}'
+return f'embed -title "{possessive} bags" -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png {fields} -color {color}'
 </drac2>
