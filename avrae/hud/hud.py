@@ -1,13 +1,14 @@
 <drac2>
 # if config string is a gvar, then that gvar overrides the default gvar
-# config with arguments. auto argument adds all ccs that match ccs, -removed +adds any bla resets, 'default' adds name hp ac spell
+# config (built-in) with arguments. auto argument adds all ccs that match ccs, -removed +adds any bla resets, 'default' adds name hp ac spell
 # items (gp,sp, arrow, bolt, healing potion) from bag
 # certain basic effects? (unconscious, restrained, grappled)
 # certain class effects: bladesong/rage/wildshape?
 # automatic support for current player's wildshape/polymorph state?
 
-args=&ARGS&
+args=[a.lower() for a in &ARGS&]
 ap=argparse(args)
+
 # Get statblocks, ch is character for CCs and other things not available from combatants
 # stat is a list of combatants for hp, ac other simple stuff
 ch=character()
@@ -36,30 +37,41 @@ config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
 # build the configuration (field_list) of fields to display
 # create the field list from arguments
 field_list=[]
-skipnext=False
 for a in args:
-	if skipnext:
-		skipnext=False
-		continue
 	if a[0]=='-':
-		skipnext=True
 		continue
 	if a[0]=='+':
 		continue
-	if a.lower() in config.keys():
-		field_list.append(a.lower())
+	if a in config.keys():
+		field_list.append(a)
 
+default_fields=["name", "hp", "ac", "spell"]
+if ap.last('default'):
+	field_list=default_fields+field_list
+
+cvar_name='hud_fields'
 if not field_list:
 	uvar_name='default_hud_fields'
 	if c := character():
 		c.delete_cvar(uvar_name)
-	field_list=get(uvar_name,'["name", "hp", "ac", "spell"]')
+	field_list=get(uvar_name,dump_json(default_fields))
 	if ch:
-		field_list=get('hud_fields',field_list)
+		field_list=get(cvar_name,field_list)
 	field_list=load_json(field_list)
+
+if ap.last('auto'):
+	pass 	# TODO: scan all CCs for config match
 
 # +field arguments are additional, no matter the source
 field_list+=[a[1:].lower() for a in args if a[0]=='+']
+# -field arguments are removed
+for label in config.keys():
+	if f'-{label}' in args:
+		field_list.remove(label)
+
+if ap.last('set'):
+	character().set_cvar(cvar_name,dump_json(field_list))
+
 # retrieve full config for field reference strings
 field_list=[config.get(field) if typeof(field)=='str' else field for field in field_list]
 
