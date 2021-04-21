@@ -1,0 +1,23 @@
+{
+	"name":{"display":"name","bold":true},
+	"hp":{"display":"hp", "icon":":heartpulse:"},
+	"ac":{"display":"ac", "icon":":shield:"},
+	"spell":{"display":"spell","type":"bubble", "label":[":one:",":two:",":three:",":four:",":five:",":six:",":seven:",":eight:",":nine:"]},
+	"class":{"display":"class"},
+	"xp":{"display":"xp","icon":":tada:"},
+	"xp%":{"display":"xp","icon":":tada:","%":true},
+	"hd":{"display": "hd", "icon": ":game_die:"},
+    "d6":{"display":"cc","cc":"Hit Dice (d6)", "icon": ":game_die:"},
+    "d8":{"display":"cc","cc":"Hit Dice (d8)", "icon": ":game_die:"},
+    "d10":{"display":"cc","cc":"Hit Dice (d10)", "icon": ":game_die:"},
+    "d12":{"display":"cc","cc":"Hit Dice (d12)", "icon": ":game_die:"},
+    "dmi":{"display":"flag","icon":":bulb:","cc":"DM Inspiration"},
+	"exhaustion":{"display":"cc","icon":":sleeping:","cc":"Exhaustion","min":1},
+    "bolt":{"display":"cc","cc":"Bolts","icon":":bow_and_arrow:"},
+    "arrow":{"display":"cc","cc":"Arrows","icon":":bow_and_arrow:"},
+    "bullet":{"display":"cc","cc":"Bullets","icon":":rock:"},
+    "bardic":{"display":"flag","cc":"Bardic Inspiration","icon":":headphones:"},
+    "divinity":{"display":"flag","cc":"Channel Divinity","icon":":angel:"},
+    "bladesong":{"display": "flag","cc":"Bladesong","icon": ":musical_note:"},
+    "arcane":{"display": "flag","cc": "Arcane Reovery","icon": ":book:"}
+}
