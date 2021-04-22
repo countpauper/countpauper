@@ -1,10 +1,13 @@
 <drac2>
 # if config string is a gvar, then that gvar overrides the default gvar
 # config (built-in) with arguments. auto argument adds all ccs that match ccs, -removed +adds any bla resets, 'default' adds name hp ac spell
-# items (gp,sp, arrow, bolt, healing potion) from bag
 # certain basic effects? (unconscious, restrained, grappled)
 # certain class effects: bladesong/rage/wildshape?
 # automatic support for current player's wildshape/polymorph state?
+# list sub command that shows all the options, with an icon for the type (item or counter ammo especially)
+# main class counters
+# sub commands or option (cc[Counter Name]|icon|flag) to add a cc with an icon, with options
+# race counters
 
 args=[a.lower() for a in &ARGS&]
 ap=argparse(args)
@@ -21,6 +24,8 @@ if c:=combat():
 			stat+=g.combatants
 		elif target:=c.get_combatant(t):
 			stat.append(target)
+		else:
+			stat.append(None)
 else:
 	if ap.get('i'):
 		return f'echo `-i` argument is only supported in initiative.'
@@ -37,10 +42,9 @@ config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
 # build the configuration (field_list) of fields to display
 # create the field list from arguments
 field_list=[]
+command_list=['set','auto','default','-i','-t']
 for a in args:
-	if a[0]=='-':
-		continue
-	if a[0]=='+':
+	if a[0] in '-+' or a in command_list:
 		continue
 	if a in config.keys():
 		field_list.append(a)
@@ -49,6 +53,7 @@ default_fields=["name", "hp", "ac", "spell"]
 if ap.last('default'):
 	field_list=default_fields+field_list
 
+# load fields from cvar if no fields are specified
 cvar_name='hud_fields'
 if not field_list:
 	uvar_name='default_hud_fields'
@@ -59,8 +64,15 @@ if not field_list:
 		field_list=get(cvar_name,field_list)
 	field_list=load_json(field_list)
 
-if ap.last('auto'):
-	pass 	# TODO: scan all CCs for config match
+# Add configuration fields for which the character has a matching cc
+if ap.last('auto') and ch:
+	# pre grab so each cc is added only once
+	consumable_names={cc.name for cc in ch.consumables}
+	for label, field in config.items():
+		if label not in field_list and (field_cc:=field.get('cc')):
+			if field_cc in consumable_names:
+				consumable_names.remove(field_cc)
+				field_list.append(label)
 
 # +field arguments are additional, no matter the source
 field_list+=[a[1:].lower() for a in args if a[0]=='+']
@@ -69,8 +81,14 @@ for label in config.keys():
 	if f'-{label}' in args:
 		field_list.remove(label)
 
-if ap.last('set'):
-	character().set_cvar(cvar_name,dump_json(field_list))
+if ap.last('set') and ch:
+	ch.set_cvar(cvar_name,dump_json(field_list))
+
+if ch:
+	bags=get('bags')
+	bags=load_json(bags) if bags else None
+else:
+	bags=None
 
 # retrieve full config for field reference strings
 field_list=[config.get(field) if typeof(field)=='str' else field for field in field_list]
@@ -153,8 +171,17 @@ for s in stat:
 			cc_val=ch.get_cc(cc)
 			if cc_val>=min_cc and cc_val<=max_cc:
 				field.append(f'{icon}{ch.cc_str(cc)}')
-
-	out.append(' '.join(field))
-nl='\n'
-return f'echo {nl.join(out)}'
+		elif display=='item' and bags:
+			item=f.get('item','').lower()
+			amount=sum(q for _,b in bags for i,q in b.items() if any(w.lower().startswith(item) for w in i.split()))
+			field.append(f'{icon}{amount}')
+	if field:
+		out.append(' '.join(field))
+	else:
+		out.append('*Invalid field selection.*')
+if out:
+	nl = '\n'
+	return f'echo {nl.join(out)}'
+else:
+	return f'echo *Invalid target selection.*'
 </drac2>
