@@ -1,13 +1,17 @@
 <drac2>
 args="&*&"
 guild=ctx.guild
+id=str(guild.id) if guild else 'None'
+guild=guild.name if guild else 'Private Message'
 uvar_name='me'
 us = load_json(get(uvar_name,'{}'))
 if args:
-    us[str(guild.id)] = args
+    if args.lower()=='set':
+        args=name
+    us[id] = args
     set_uvar(uvar_name,dump_json(us))
-    return f'echo Set character for {guild.name} to {args}'
-if me:=us.get(str(guild.id)):
+    return f'echo Set character for {guild} to {args}'
+if me:=us.get(id):
     return f'char {me}'
-return f'echo No character selected for {guild.name}. Use `{ctx.prefix}{ctx.alias} <character name>`'
+return f'echo No character selected for {guild}. Use `{ctx.prefix}{ctx.alias} set` or `{ctx.prefix}{ctx.alias} <character name>`'
 </drac2>
