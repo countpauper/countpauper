@@ -1,15 +1,15 @@
 <drac2>
+# list sub command that shows all the options, with an icon for the type (item or counter ammo especially)
+# counters of my own characters (channel harness, sorcery, arcanee, bladesong, ki)
+# auto inserts at auto position
+# main class counters
 # if config string is a gvar, then that gvar overrides the default gvar
-# config (built-in) with arguments. auto argument adds all ccs that match ccs, -removed +adds any bla resets, 'default' adds name hp ac spell
 # certain basic effects? (unconscious, restrained, grappled)
 # certain class effects: bladesong/rage/wildshape?
 # automatic support for current player's wildshape/polymorph state?
-# list sub command that shows all the options, with an icon for the type (item or counter ammo especially)
-# main class counters
-# sub commands or option (cc[Counter Name]|icon|flag) to add a cc with an icon, with options
 # race counters
 
-args=[a.lower() for a in &ARGS&]
+args=[a for a in &ARGS&]
 ap=argparse(args)
 
 # Get statblocks, ch is character for CCs and other things not available from combatants
@@ -42,18 +42,17 @@ config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
 # build the configuration (field_list) of fields to display
 # create the field list from arguments
 field_list=[]
-command_list=['set','auto','default','-i','-t']
+command_list=['set','auto','default','var','-i','-t']
 for a in args:
 	if a[0] in '-+' or a in command_list:
 		continue
-	if a in config.keys():
-		field_list.append(a)
+	field_list.append(a)
 
 default_fields=["name", "hp", "ac", "spell"]
 if ap.last('default'):
 	field_list=default_fields+field_list
 
-# load fields from cvar if no fields are specified
+# load fields from cvar if no fields are specified without a + or -
 cvar_name='hud_fields'
 if not field_list:
 	uvar_name='default_hud_fields'
@@ -75,14 +74,44 @@ if ap.last('auto') and ch:
 				field_list.append(label)
 
 # +field arguments are additional, no matter the source
-field_list+=[a[1:].lower() for a in args if a[0]=='+']
-# -field arguments are removed
-for label in config.keys():
-	if f'-{label}' in args:
-		field_list.remove(label)
+field_list+=[a[1:] for a in args if a[0]=='+']
 
+# replace all "cc..." fields with custom cc configurations
+for idx in range(len(field_list)):
+	f=field_list[idx]
+	if typeof(f)=='str' and f.startswith('cc'):
+		f=f[2:].strip(' ,()')
+		# arguments are <CC>,[<icon>],[<display type>]
+		cc_name,icon,display=(f.split(',')+[None,None,None])[:3]
+		if not cc_name:
+			continue
+		# fuzzy matching with known CCs
+		if ch:
+			for cc in ch.consumables:
+				if cc.name.lower().startswith(cc_name.lower()):
+					cc_name=cc.name
+					break
+
+		display=display or 'cc'
+		field_list[idx]=dict(display=display,cc=cc_name,icon=icon)
+
+# -field arguments are removed
+for a in args:
+	if a[:3]=='-cc':
+		cc=a[3:].strip(' ,()').lower()
+		field_list=[f for f in field_list if typeof(f)=='str' or not f.get('cc','').lower().startswith(cc)]
+	elif a[:1]=='-' and (f:=a[1:]) in field_list:
+		field_list.remove(f)
+
+# store or dump output
 if ap.last('set') and ch:
 	ch.set_cvar(cvar_name,dump_json(field_list))
+
+if ap.last('var'):
+	if ch:
+		return f'echo `!cvar {dump_json(field_list)}`'
+	else:
+		return f'echo `!uvar {dump_json(field_list)}`'
 
 if ch:
 	bags=get('bags')
@@ -91,7 +120,7 @@ else:
 	bags=None
 
 # retrieve full config for field reference strings
-field_list=[config.get(field) if typeof(field)=='str' else field for field in field_list]
+field_list=[config.get(field.lower(),field) if typeof(field)=='str' else field for field in field_list]
 
 out=[]
 for s in stat:
@@ -101,7 +130,9 @@ for s in stat:
 	for f in field_list:
 		if not f:
 			continue
-
+		if typeof(f)=='str':
+			field.append(f)
+			continue
 		display=f.get('display')
 		icon=f.get('icon','')
 		icon+=' ' if icon else ''
