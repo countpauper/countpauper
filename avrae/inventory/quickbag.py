@@ -1,31 +1,15 @@
 <drac2>
-#* recognize packs as argument
-#* create a backup and subcommand undo
-#* create coin pouch automatically if needed on coin change, using coins
-#* make change up, by attempting to remove some bigger coins and then adding the change
-#* remove whole bag with delta -1.. this might conflict (syntactically) with bag# negative index. but delta 1 will be add, 2 will be select #2. -1 will be remove -x push -(x-1) back on the queue
-#*  removing it from the entire list will mess up the indexing, queue them for removal in the report of separate set
-#* help sub command, minimal syntax with doing just !qb
-#* solve 'ration' matching problem in the item database but especially in the bag
-# *  Split and reorder all exact matches for priority: exact bag, set, item then partial bag set item
-# *  For code reuse ~ prefix to support partial match, automatically requeue with partial if no exact match
-#* explicit + for bags always adds, never selects
 #   - explicit = to always select never add (ie =explorer)
 #   - select a second new bag automatically, ie number >1 is select bag
-
-#* Remove from any/all bags (but selected first) (split up removal from addition?)
-#* Split arguments that start with numbers into amounts eg 10gp => 10 gp
 # fix extra sack problem (ie !qb dungeon folk will add a sack because it doesn't have a default bag before the set. Move bag creation to actual adding items?)
-# support bag open none one all (current is like one, none is no report, all is add range of bags to report at start)
 # $ prefix buys (automatically remove coins), but change? and -$ to sell?
-# Weight summary and delta (with support for custom weight configuration from bag)
+# Weight delta (with support for custom weight configuration from bag)
 # Add capped removal items back to show in failed
 # [x] delta before bag selection doesn't add multiple but select an indexed copy [1 is first -1 is last], add to help
 # add recognized class weapons to a worn/equipped bag instead
 # add ammo to ammo bags automatically
 # support using coins not in pouch
 # support extra_packs variable used by !bag
-
 
 args=&ARGS&
 
@@ -40,6 +24,12 @@ bv='bags'
 backup=get(bv)
 bags=load_json(get(bv,'[]'))
 item_table=load_json(get_gvar('19753bce-e2c1-42af-8c4f-baf56e2f6749'))	 # original !bag items for interop
+
+# use bagSettings
+bag_settings=load_json(get('bagSettings','{}'))
+item_table.update(bag_settings.get('customWeights'))
+show_bag=bag_settings.get('openMode','').lower()!='none'
+show_weight=bag_settings.get('weightTracking','').lower()=='on'
 
 # load configuration, prioroty: server, char, user, global
 var_name='quickbag'
@@ -59,6 +49,8 @@ coins=config.get('coinRates',{})
 short_words=config.get('forbidden')
 removed_items=["exploder's pack"]
 item_list=[i for i in item_table.keys() if i not in sets.keys() and i not in removed_items]
+
+iterations=int((10000-2000)/len(item_list))	# limit iterations through the item sets when computing weight especially
 
 # find the purse bag
 coin_bags = [idx for idx,b in enumerate(bags) if b[0].lower() in purse_names]
@@ -82,7 +74,7 @@ while args:
 	if debug_break:
 		dbg+=1
 		if dbg>=debug_break:
-			return f'echo **Debug [{dbg}]: *{debug}* arguments remaining `{delta}` `{args}`'
+			return f'echo **Debug [{dbg}]: *{debug}*\narguments remaining: `{delta}` `{args}`\niterations remaining: {iterations}'
 	# debug.append(str(args))
 	arg=args.pop(0)
 
@@ -296,8 +288,10 @@ while args:
 		# Add NEW known items
 		if delta>0:
 			if partial:
+				iterations-=1
 				new_items += [n for n in item_list if n.startswith(item_name) or space_name in n.lower()]
 			else:
+				iterations-=1
 				new_items = [n for n in item_list if item_name == n]
 			if new_items:
 				new_item=new_items[0].title().replace("'S","'s")
@@ -417,7 +411,7 @@ if  report:
 						items.append('+' + item_desc)
 					else:
 						items.append(f'~~{original_amount}~~ '+ item_desc)
-				else:	# unchanged item
+				elif show_bag:	# unchanged item
 					items.append(item_desc)
 			for item_name,diff in changes.items():
 				plural_name=item_name if item_name[-1]=='s' else item_name+'s'
@@ -444,8 +438,45 @@ if backup:
 	character().set_cvar('bag_backup', backup)
 
 #update the variable
+final_bags=bags
 character().set_cvar(bv,dump_json(bags))
-possessive=f'{name}\'' if name[-1]=='s' else f'{name}\'s'
 
-return f'embed -title "{possessive} bags" -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png {fields} -color {color}'
+footer=''
+if show_weight:
+	item_table.update({coin: dict(weight=0.02, cost=1 / rate) for coin, rate in coins.items()})
+	weightless = bag_settings.get('weightlessBags',[])
+	weight=0
+	unmatched=[]
+	items=len(final_bags)
+	for bag,content in final_bags:
+		bag=bag.lower()
+		match=item_table.get(bag) # ,([i for k,i in item_table.items() if bag.lower() in k]+[None])[0])
+		if not match and iterations>0:
+			iterations-=1
+			match=([i for n,i in item_table.items() if n in bag]+[None])[0]
+		if match:
+			weight+=match.get('weight',0)
+		else:
+			unmatched.append(bag)
+		if bag.lower() in weightless:
+			continue
+		items+=len(content)
+		for item,quantity in content.items():
+			item=item.lower()
+			match = item_table.get(item) # , ([i for k, i in item_table.items() if item.lower() in k] + [None])[0])
+			if not match and iterations>0:
+				iterations-=1
+				match = ([i for n, i in item_table.items() if n in item] + [None])[0]
+			if match:
+				weight += quantity * match.get('weight', 0)
+			else:
+				unmatched.append(item)
+	max_weight=character().stats.strength *15
+	powerful_races = ['Firbolg','Goliath','Orcs']+load_json(get('powerfulBuildRaces','[]'))
+	if any(r.lower() in character().race.lower() for r in powerful_races):
+		max_weight*=2
+	footer=f'-footer "Weight carried {weight:.2f} / {max_weight} lbs, with {len(unmatched) if unmatched else "no" } unrecognized items."'
+
+possessive=f'{name}\'' if name[-1]=='s' else f'{name}\'s'
+return f'embed -title "{possessive} bags" -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png {fields} {footer} -color {color}'
 </drac2>
