@@ -1,6 +1,5 @@
 <drac2>
-# list sub command that shows all the options, with an icon for the type (item or counter ammo especially)
-# counters of my own characters (channel harness, sorcery, arcanee, bladesong, ki)
+# custom item trackers +item
 # auto inserts at auto position
 # main class counters
 # if config string is a gvar, then that gvar overrides the default gvar
@@ -17,10 +16,12 @@ ap=argparse(args)
 ch=character()
 stat=[]
 if c:=combat():
-	for t in ap.get('i') + ap.get('t'):
-		if t=='True':
-			stat.append(c.current)
-		elif g:=c.get_group(t):
+	if ap.last('i'):
+		stat.append(c.current)
+	for t in ap.get('t'):
+		if t in args:
+			args.remove(t)
+		if g:=c.get_group(t):
 			stat+=g.combatants
 		elif target:=c.get_combatant(t):
 			stat.append(target)
@@ -53,9 +54,9 @@ if ap.last('default'):
 	field_list=default_fields+field_list
 
 # load fields from cvar if no fields are specified without a + or -
-cvar_name='hud_fields'
+cvar_name='hud_items'
 if not field_list:
-	uvar_name='default_hud_fields'
+	uvar_name='default_hud_items'
 	if c := character():
 		c.delete_cvar(uvar_name)
 	field_list=get(uvar_name,dump_json(default_fields))
@@ -79,7 +80,9 @@ field_list+=[a[1:] for a in args if a[0]=='+']
 # replace all "cc..." fields with custom cc configurations
 for idx in range(len(field_list)):
 	f=field_list[idx]
-	if typeof(f)=='str' and f.startswith('cc'):
+	if not typeof(f)=='str':
+		continue
+	if f.startswith('cc'):
 		f=f[2:].strip(' ,()')
 		# arguments are <CC>,[<icon>],[<display type>]
 		cc_name,icon,display=(f.split(',')+[None,None,None])[:3]
