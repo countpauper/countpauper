@@ -1,5 +1,6 @@
 <drac2>
 # custom item trackers +item
+# auto for items, auto=False in list (also for cc) to skip it (sp,cp,ep) pp
 # auto inserts at auto position
 # main class counters
 # if config string is a gvar, then that gvar overrides the default gvar
@@ -77,32 +78,47 @@ if ap.last('auto') and ch:
 # +field arguments are additional, no matter the source
 field_list+=[a[1:] for a in args if a[0]=='+']
 
+if ch:
+	bags=get('bags')
+	bags=load_json(bags) if bags else None
+else:
+	bags=None
+
 # replace all "cc..." fields with custom cc configurations
+custom_displays=['cc','item']
 for idx in range(len(field_list)):
 	f=field_list[idx]
 	if not typeof(f)=='str':
 		continue
-	if f.startswith('cc'):
-		f=f[2:].strip(' ,()')
-		# arguments are <CC>,[<icon>],[<display type>]
-		cc_name,icon,display=(f.split(',')+[None,None,None])[:3]
-		if not cc_name:
-			continue
-		# fuzzy matching with known CCs
-		if ch:
-			for cc in ch.consumables:
-				if cc.name.lower().startswith(cc_name.lower()):
-					cc_name=cc.name
-					break
-
-		display=display or 'cc'
-		field_list[idx]=dict(display=display,cc=cc_name,icon=icon)
+	for custom in custom_displays:
+		if f.startswith(custom):
+			f=f[len(custom):].strip(' ,()')
+			# arguments are <CC>,[<icon>],[<display type>]
+			sub_name,icon,display=(f.split(',')+[None,None,None])[:3]
+			if not sub_name:
+				continue
+			# fuzzy matching with known CCs
+			if ch and custom=='cc':
+				for cc in ch.consumables:
+					if cc.name.lower().startswith(sub_name.lower()):
+						sub_name=cc.name
+						break
+				display = display or custom
+				field_list[idx] = dict(display=display, cc=sub_name, icon=icon)
+			elif ch and custom=='item':
+				# TODO: last argument unused
+				item_name=([i for _,b in bags for i,_ in b if sub_name.lower() in i.lower()]+[sub_name])[0]
+				field_list[idx] = dict(display=custom, item=item_name, icon=icon)
+			break
 
 # -field arguments are removed
 for a in args:
-	if a[:3]=='-cc':
+	if a.startswith('-cc'):
 		cc=a[3:].strip(' ,()').lower()
 		field_list=[f for f in field_list if typeof(f)=='str' or not f.get('cc','').lower().startswith(cc)]
+	elif a.startswith('-item'):
+		item = a[5:].strip(' ,()').lower()
+		field_list = [f for f in field_list if typeof(f) == 'str' or not f.get('item', '').lower().startswith(item)]
 	elif a[:1]=='-' and (f:=a[1:]) in field_list:
 		field_list.remove(f)
 
@@ -115,12 +131,6 @@ if ap.last('var'):
 		return f'echo `!cvar {dump_json(field_list)}`'
 	else:
 		return f'echo `!uvar {dump_json(field_list)}`'
-
-if ch:
-	bags=get('bags')
-	bags=load_json(bags) if bags else None
-else:
-	bags=None
 
 # retrieve full config for field reference strings
 field_list=[config.get(field.lower(),field) if typeof(field)=='str' else field for field in field_list]
