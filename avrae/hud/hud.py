@@ -65,24 +65,34 @@ if not field_list:
 		field_list=get(cvar_name,field_list)
 	field_list=load_json(field_list)
 
-# Add configuration fields for which the character has a matching cc
+if ch:
+	bags=get('bags')
+	bags=load_json(bags) if bags else None
+	# flatten bags into one item dict, lower names
+	bag_items={}
+	for _,b in bags:
+		for i,q in b.items():
+			i=i.lower()
+			bag_items[i]=bag_items.get(i,0)+q
+else:
+	bag_items=None
+
+# Add configuration fields for which the character has a matching cc or item
 if ap.last('auto') and ch:
 	# pre grab so each cc is added only once
 	consumable_names={cc.name for cc in ch.consumables}
+	item_names=list(bag_items.keys())
 	for label, field in config.items():
-		if label not in field_list and (field_cc:=field.get('cc')):
-			if field_cc in consumable_names:
+		if field.get('auto',True) and label not in field_list:
+			if (field_cc:=field.get('cc')) and field_cc in consumable_names:
 				consumable_names.remove(field_cc)
+				field_list.append(label)
+			if (field_item:=field.get('item')) and (match_item:=([i for i in item_names if field_item in i]+[None])[0]):
+				item_names.remove(match_item)
 				field_list.append(label)
 
 # +field arguments are additional, no matter the source
 field_list+=[a[1:] for a in args if a[0]=='+']
-
-if ch:
-	bags=get('bags')
-	bags=load_json(bags) if bags else None
-else:
-	bags=None
 
 # replace all "cc..." fields with custom cc configurations
 custom_displays=['cc','item']
@@ -107,7 +117,7 @@ for idx in range(len(field_list)):
 				field_list[idx] = dict(display=display, cc=sub_name, icon=icon)
 			elif ch and custom=='item':
 				# TODO: last argument unused
-				item_name=([i for _,b in bags for i,_ in b if sub_name.lower() in i.lower()]+[sub_name])[0]
+				item_name=([i for i in bag_items.keys() if sub_name.lower() in i]+[sub_name])[0]
 				field_list[idx] = dict(display=custom, item=item_name, icon=icon)
 			break
 
@@ -215,9 +225,9 @@ for s in stat:
 			cc_val=ch.get_cc(cc)
 			if cc_val>=min_cc and cc_val<=max_cc:
 				field.append(f'{icon}{ch.cc_str(cc)}')
-		elif display=='item' and bags:
+		elif display=='item' and bag_items:
 			item=f.get('item','').lower()
-			amount=sum(q for _,b in bags for i,q in b.items() if any(w.lower().startswith(item) for w in i.split()))
+			amount=sum(q for i,q in bag_items.items() if any(w.lower().startswith(item) for w in i.split()))
 			field.append(f'{icon}{amount}')
 	if field:
 		out.append(' '.join(field))
