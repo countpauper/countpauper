@@ -1,8 +1,5 @@
 <drac2>
-# custom item trackers +item
-# auto for items, auto=False in list (also for cc) to skip it (sp,cp,ep) pp
 # auto inserts at auto position
-# main class counters
 # if config string is a gvar, then that gvar overrides the default gvar
 # certain basic effects? (unconscious, restrained, grappled)
 # certain class effects: bladesong/rage/wildshape?
