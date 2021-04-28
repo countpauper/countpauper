@@ -7,6 +7,7 @@
 	"xp":{"display":"xp","icon":":tada:"},
 	"xp%":{"display":"xp","icon":":tada:","%":true},
 	"hd":{"display": "hd", "icon": ":game_die:"},
+	"\\n":{"icon": "\n"},
     "d6":{"display":"cc","cc":"Hit Dice (d6)", "icon": ":game_die:`d6`"},
     "d8":{"display":"cc","cc":"Hit Dice (d8)", "icon": ":game_die:`d8`"},
     "d10":{"display":"cc","cc":"Hit Dice (d10)", "icon": ":game_die:`d10`"},

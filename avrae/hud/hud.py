@@ -1,5 +1,8 @@
 <drac2>
-# auto inserts at auto position
+# custom coin purse type (auto remove all coins)
+# timeout to remove using techo, which argument? any number? first number? as a field obviously
+# var display type, just gets a cvar and shows it (for speed?)
+# auto cvar?
 # if config string is a gvar, then that gvar overrides the default gvar
 # certain basic effects? (unconscious, restrained, grappled)
 # certain class effects: bladesong/rage/wildshape?
@@ -41,7 +44,7 @@ config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
 # build the configuration (field_list) of fields to display
 # create the field list from arguments
 field_list=[]
-command_list=['set','auto','default','var','-i','-t']
+command_list=['set','default','var','-i','-t']	# auto added as field
 for a in args:
 	if a[0] in '-+' or a in command_list:
 		continue
@@ -74,8 +77,13 @@ if ch:
 else:
 	bag_items=None
 
+# +field arguments are additional, no matter the source
+field_list+=[a[1:] for a in args if a[0]=='+']
+
 # Add configuration fields for which the character has a matching cc or item
-if ap.last('auto') and ch:
+auto='auto'
+if auto in field_list and ch:
+	field_list.pop(index:=field_list.index(auto))
 	# pre grab so each cc is added only once
 	consumable_names={cc.name for cc in ch.consumables}
 	item_names=list(bag_items.keys())
@@ -83,13 +91,12 @@ if ap.last('auto') and ch:
 		if field.get('auto',True) and label not in field_list:
 			if (field_cc:=field.get('cc')) and field_cc in consumable_names:
 				consumable_names.remove(field_cc)
-				field_list.append(label)
+				field_list.insert(index,label)
+				index+=1
 			if (field_item:=field.get('item')) and (match_item:=([i for i in item_names if field_item in i]+[None])[0]):
 				item_names.remove(match_item)
-				field_list.append(label)
-
-# +field arguments are additional, no matter the source
-field_list+=[a[1:] for a in args if a[0]=='+']
+				field_list.insert(index,label)
+				index+=1
 
 # replace all "cc..." fields with custom cc configurations
 custom_displays=['cc','item']
@@ -203,6 +210,8 @@ for s in stat:
 				field.append(f'{icon}`{int(fraction*100)}`%')
 			else:
 				field.append(f'{icon}`{xp}`/`{max_xp}`')
+		elif display is None:
+			field.append(icon)
 		elif display=='hd' and ch:
 			hds=[6,8,10,12]
 			total_hd,max_hd=0,0
