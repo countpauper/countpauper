@@ -35,6 +35,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hud/hud.json" beforeDir="false" afterPath="$PROJECT_DIR$/hud/hud.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hud/hud.py" beforeDir="false" afterPath="$PROJECT_DIR$/hud/hud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hud/list.py" beforeDir="false" afterPath="$PROJECT_DIR$/hud/list.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

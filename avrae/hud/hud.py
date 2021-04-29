@@ -1,5 +1,4 @@
 <drac2>
-# custom coin purse type (auto remove all coins)
 # timeout to remove using techo, which argument? any number? first number? as a field obviously
 # var display type, just gets a cvar and shows it (for speed?)
 # auto cvar?
@@ -46,7 +45,7 @@ config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
 field_list=[]
 command_list=['set','default','var','-i','-t']	# auto added as field
 for a in args:
-	if a[0] in '-+' or a in command_list:
+	if a[0] in '-+' or a in command_list or a.isdigit():
 		continue
 	field_list.append(a)
 
@@ -69,6 +68,8 @@ if ch:
 	bags=get('bags')
 	bags=load_json(bags) if bags else None
 	# flatten bags into one item dict, lower names
+	coins=list(([b for n,b in bags if n.lower().startswith('coin')]+[{}])[0].keys())
+	coins.reverse()
 	bag_items={}
 	for _,b in bags:
 		for i,q in b.items():
@@ -76,9 +77,12 @@ if ch:
 			bag_items[i]=bag_items.get(i,0)+q
 else:
 	bag_items=None
+	coins=[]
 
 # +field arguments are additional, no matter the source
 field_list+=[a[1:] for a in args if a[0]=='+']
+# and so are digits for the timeout
+field_list+=[a for a in args if a.isdigit()]
 
 # Add configuration fields for which the character has a matching cc or item
 auto='auto'
@@ -146,10 +150,10 @@ if ap.last('var'):
 	else:
 		return f'echo `!uvar {dump_json(field_list)}`'
 
-# retrieve full config for field reference strings
 field_list=[config.get(field.lower(),field) if typeof(field)=='str' else field for field in field_list]
 
 out=[]
+timeout=None
 for s in stat:
 	if not s:
 		continue
@@ -158,7 +162,10 @@ for s in stat:
 		if not f:
 			continue
 		if typeof(f)=='str':
-			field.append(f)
+			if f.isdigit():
+				timeout=int(f)
+			else:
+				field.append(f)
 			continue
 		display=f.get('display')
 		icon=f.get('icon','')
@@ -209,7 +216,7 @@ for s in stat:
 				fraction=(xp-prev_max)/(max_xp-prev_max)
 				field.append(f'{icon}`{int(fraction*100)}`%')
 			else:
-				field.append(f'{icon}`{xp}`/`{max_xp}`')
+				field.append(f'{icon}`{xp}`/{max_xp}')
 		elif display is None:
 			field.append(icon)
 		elif display=='hd' and ch:
@@ -222,6 +229,8 @@ for s in stat:
 					max_hd+=ch.get_cc_max(cc)
 			if max_hd:
 				field.append(f'{icon}`{total_hd}`/`{max_hd}`')
+		elif display=='coins' and bag_items and coins:
+			field.append(f'{icon} {" ".join(f"`{q}`{c}" for c in coins if (q:=bag_items.get(c,0)))}')
 		elif display=='flag' and ch and ch.cc_exists(cc:=f['cc']):
 			field.append(icon * ch.get_cc(cc))
 		elif display=='cc' and ch and ch.cc_exists(cc:=f['cc']):
@@ -239,9 +248,10 @@ for s in stat:
 		out.append(' '.join(field))
 	else:
 		out.append('*Invalid field selection.*')
+
 if out:
 	nl = '\n'
-	return f'echo {nl.join(out)}'
+	return f'{"echo" if timeout is None else f"techo {timeout}"} {nl.join(out)}'
 else:
 	return f'echo *Invalid target selection.*'
 </drac2>
