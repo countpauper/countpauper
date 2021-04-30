@@ -56,15 +56,16 @@ iterations=int((10000-2000)/len(item_list))	# limit iterations through the item 
 coin_bags = [idx for idx,b in enumerate(bags) if b[0].lower() in purse_names]
 coin_idx = coin_bags[0] if coin_bags else None
 
+# optionally enable debug mode
+debug_break=None
+if args[0].startswith('dbg='):
+	dbg = 0
+	debug_break=int(args.pop(0)[4:])
+
 # convert arguments to quantified changes
 delta=None
 buy=False
 bag_idx=None	# track selection using index for report
-debug_break=None
-dbg=0
-if args[0].startswith('dbg='):
-	debug_break=int(args.pop(0)[4:])
-
 removed_bags=[]
 debug=[]
 report={}	# list of modified bags: {bagidx:{item_name:[amount deltas]}], could be bag index to resolve reuse
@@ -424,9 +425,7 @@ if  report:
 
 
 if debug_break:
-	if not debug_break:
-		debug_break=["Nothing"]
-	fields+=f' -f "Debug [{dbg}/{debug_break}]|{", ".join(debug)}"'
+	fields+=f' -f "Debug [{dbg}/{debug_break}]|{", ".join(debug)}\niterations remaining: {iterations}"'
 
 # remove bags after indices are no longer referenced
 bag_idx=None
@@ -441,6 +440,7 @@ if backup:
 final_bags=bags
 character().set_cvar(bv,dump_json(bags))
 
+# format the output
 footer=''
 if show_weight:
 	item_table.update({coin: dict(weight=0.02, cost=1 / rate) for coin, rate in coins.items()})
