@@ -1,6 +1,4 @@
 <drac2>
-#   - explicit = to always select never add (ie =explorer)
-#   - select a second new bag automatically, ie number >1 is select bag
 # fix extra sack problem (ie !qb dungeon folk will add a sack because it doesn't have a default bag before the set. Move bag creation to actual adding items?)
 # $ prefix buys (automatically remove coins), but change? and -$ to sell?
 # Weight delta (with support for custom weight configuration from bag)
@@ -17,7 +15,7 @@ if not args:
 	return f'echo `{ctx.prefix}{ctx.alias} [<bag>] [+/-][amount] <item> [<background>] [<pack>] ...`'
 
 # typo protection
-if len(args)==1 and ((args[0].lower().startswith('undo') and len(args[0])<7) or (args[0].lower().startswith('und') and len(args[0])<=4)):
+if len(args)==1 and ((args[0].lower().startswith('undo') and len(args[0])<7) or (all(c in "undo" for c in args[0].lower()) and len(args[0]) in [3,4])):
 	return f"echo :confused: `{ctx.prefix}{ctx.alias} {args[0]}`? Maybe you mean `{ctx.prefix}{ctx.alias} undo`?"
 
 bv='bags'
@@ -137,43 +135,43 @@ while args:
 	#  so: string.startsWith(item_name) or space_name in string
 	space_name = f' {item_name}'
 
-	# select to existing bags if the delta is 1 and arg
-	if partial:
-		existing_bags = [idx for idx,b in enumerate(bags) if idx not in removed_bags and (b[0].lower().startswith(item_name.lower()) or space_name in b[0].lower())]
-	else:
+	# select to existing bags if the delta is 1 and arg, partial and
+	if delta is None or delta==-1:
+		# partial and exact matching at once to avoid creating a default sack when partial matching
 		existing_bags = [idx for idx,b in enumerate(bags) if idx not in removed_bags and (item_name.lower()==b[0].lower())]
-	# Delete exiting bag
-	if delta==-1 and existing_bags:
-		removed_bag_idx=existing_bags[0]
-		removed_bag=bags[removed_bag_idx]
-		removed_bags.append(removed_bag_idx)	# don't remove until the end
-		diff = report.get(removed_bag_idx,{})
-		for i,q in removed_bag[1].items():
-			removed_bag[1][i]=0
-			diff[i]=diff.get(i,[q])+[0]
+		if not existing_bags:
+			existing_bags = [idx for idx,b in enumerate(bags) if idx not in removed_bags and (b[0].lower().startswith(item_name.lower()) or space_name in b[0].lower())]
+		# Delete exiting bag
+		if delta==-1 and existing_bags:
+			removed_bag_idx=existing_bags[-1]	# remove last bag first
+			removed_bag=bags[removed_bag_idx]
+			removed_bags.append(removed_bag_idx)	# don't remove until the end
+			diff = report.get(removed_bag_idx,{})
+			for i,q in removed_bag[1].items():
+				removed_bag[1][i]=0
+				diff[i]=diff.get(i,[q])+[0]
 
-		if removed_bag_idx==bag_idx:
-			bag_idx=None
-		report[removed_bag_idx]=diff
-		debug.append(f'Remove Bag {removed_bag[0]}')
-		delta+=1
-		if delta:	# repeat remove next backpack
-			args.insert(0,item_name)
-		else:
-			delta=None
-		continue
-	# select existing bag
-	elif delta is None and existing_bags:
-		bag_idx=existing_bags[0]
-		bag=bags[bag_idx]
-		# TODO: what if it's the same bag? dict? what is it's not? index?
-		# TODO: report
-		debug.append(f'Select {bag[0]}')
-		if not bag_idx in report:
-			report[bag_idx]={ }
-		continue
-
-	delta = 1 if delta is None else delta
+			if removed_bag_idx==bag_idx:
+				bag_idx=None
+			report[removed_bag_idx]=diff
+			debug.append(f'Remove Bag {removed_bag[0]}')
+			delta+=1
+			if delta:	# repeat remove next backpack
+				args.insert(0,item_name)
+			else:
+				delta=None
+			continue
+		# select existing bag
+		elif delta is None and existing_bags:
+			bag_idx=existing_bags[0]
+			bag=bags[bag_idx]
+			# TODO: what if it's the same bag? dict? what is it's not? index?
+			# TODO: report
+			debug.append(f'Select {bag[0]}')
+			if not bag_idx in report:
+				report[bag_idx]={ }
+			continue
+		delta = 1 if delta is None else delta
 
 	## Create a new purse with all coins if needed
 	if coin_idx is None and item_name in coins.keys() and purse_names:
@@ -222,10 +220,10 @@ while args:
 
 	## Add: new bags
 	if delta==1:
-		if partial:
+		# partial and full matching in one go so bags are added before default* bag is created
+		new_bags=[nb for nb in containers if item_name==nb]
+		if not new_bags:
 			new_bags=[nb for nb in containers if nb.startswith(item_name) or space_name in nb]
-		else:
-			new_bags=[nb for nb in containers if item_name==nb]
 		if new_bags:
 			new_bag=new_bags[0].title()
 			bags.append([new_bag,{}])
@@ -424,8 +422,6 @@ if  report:
 		fields+=f' -f "{bag_name}|{nl.join(items)}|inline"'
 
 
-if debug_break:
-	fields+=f' -f "Debug [{dbg}/{debug_break}]|{", ".join(debug)}\niterations remaining: {iterations}"'
 
 # remove bags after indices are no longer referenced
 bag_idx=None
@@ -440,7 +436,7 @@ if backup:
 final_bags=bags
 character().set_cvar(bv,dump_json(bags))
 
-# format the output
+# Compute the weight
 footer=''
 if show_weight:
 	item_table.update({coin: dict(weight=0.02, cost=1 / rate) for coin, rate in coins.items()})
@@ -466,7 +462,8 @@ if show_weight:
 			match = item_table.get(item) # , ([i for k, i in item_table.items() if item.lower() in k] + [None])[0])
 			if not match and iterations>0:
 				iterations-=1
-				match = ([i for n, i in item_table.items() if n in item] + [None])[0]
+				# partial match,
+				match = ([None]+[i for n, i in item_table.items() if n in item])[-1]
 			if match:
 				weight += quantity * match.get('weight', 0)
 			else:
@@ -477,6 +474,10 @@ if show_weight:
 		max_weight*=2
 	footer=f'-footer "Weight carried {weight:.2f} / {max_weight} lbs, with {len(unmatched) if unmatched else "no" } unrecognized items."'
 
+if debug_break:
+	fields+=f' -f "Debug [{dbg}/{debug_break}]|{", ".join(debug)}\niterations remaining: {iterations}"'
+
+# Format the output
 possessive=f'{name}\'' if name[-1]=='s' else f'{name}\'s'
 return f'embed -title "{possessive} bags" -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png {fields} {footer} -color {color}'
 </drac2>

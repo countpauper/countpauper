@@ -4,10 +4,14 @@ args=&ARGS&
 if not args:
 	return f'help {ctx.alias} join -here'
 
-group=args[0]
-joiner=name
-if len(args)>1:
-	joiner=" ".join(args[1:])
+group=args.pop(0)
+
+if args and not args[0].startswith('-'):
+	joiner=" ".join(args)
+else:
+	joiner = name
+	if not '-l' in args:
+		joiner = joiner.split()[0]
 
 c=combat()
 if not c:
