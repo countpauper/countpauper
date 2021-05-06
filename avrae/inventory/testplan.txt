@@ -1,8 +1,12 @@
 !cvar delete bags
-!bqb dungeon folk quiver 10 arr -gp
+!bqb dungeon folk quiver 10 arr 9 -gp
 !cvar bags
 !bqb + 2 arrow +arendelle -4 ar
 !bqb -foobar -18 arrow
 !bqb undo
 !bqb blanket -2sp
 !bqb -quiver -arrow
+!bqb holding dagger bolt
+!bag track off
+!bqb bolt
+!bag track on

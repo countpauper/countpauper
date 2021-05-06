@@ -220,10 +220,10 @@ while args:
 
 	## Add: new bags
 	if delta==1:
-		# partial and full matching in one go so bags are added before default* bag is created
-		new_bags=[nb for nb in containers if item_name==nb]
-		if not new_bags:
+		if partial:
 			new_bags=[nb for nb in containers if nb.startswith(item_name) or space_name in nb]
+		else:
+			new_bags=[nb for nb in containers if item_name==nb]
 		if new_bags:
 			new_bag=new_bags[0].title()
 			bags.append([new_bag,{}])
@@ -235,25 +235,7 @@ while args:
 			delta=None
 			continue
 
-	# Default bag: about to add items to  the current bag, if there is no current bag, select one
-	if bag_idx is None:
-		default_bags=[b[0] for i,b in enumerate(bags) if i not in removed_bags and (b[0].lower() not in special_bags)]
-		# queue switching to the default bag explicitly and adding the current item. create arg basic one if none found
-		if default_bags:
-			default_bag=default_bags[0]
-			args=[default_bag ,str(delta),arg]+args
-			debug.append(f'Default {default_bag}')
-			delta=None
-			continue
-		elif containers and delta>0:
-			default_bag = containers[0]
-			debug.append(f'Default* {default_bag}')
-			args=[default_bag ,str(delta),arg]+args
-			delta=None
-			continue
-		else:
-			pass
-	else:
+	if bag_idx is not None:
 		###  ITEMS
 		bag = bags[bag_idx]
 		# Modify: find items already in the current bag, always use partial match first
@@ -284,87 +266,107 @@ while args:
 				delta=None
 				continue
 
-		# Add NEW known items
-		if delta>0:
+	# Remove items from any bag
+	if delta<0:
+		for bi,remove_bag in enumerate(bags):
+			remove_bag=remove_bag[1]
 			if partial:
-				iterations-=1
-				new_items += [n for n in item_list if n.startswith(item_name) or space_name in n.lower()]
+				remove_items = {n:q for n,q in remove_bag.items() if n.lower().startswith(item_name) or space_name in n.lower()}
 			else:
-				iterations-=1
-				new_items = [n for n in item_list if item_name == n]
-			if new_items:
-				new_item=new_items[0].title().replace("'S","'s")
-				bag[1][new_item]=delta
-				debug.append(f'Add {delta} x {new_item}')
-				# update the item's diff in the report
-				diff=report.get(bag_idx,{})
-				diff[new_item]=[0,delta]
-				report[bag_idx]=diff
-
-				delta=None
-				continue
-
-			# Sets: add all of a set's contents to the arguments and parse as normal
-			if partial:
-				item_set += [n for n in sets.keys() if n.startswith(item_name) or space_name in n.lower()]
-			else:
-				item_set = [n for n in sets.keys() if item_name==n]
-			if item_set:
-				item_set=item_set[0]
-				set_items=sets[item_set]
-				added_args=[]
-				for item_name,q in set_items.items():
-					added_args+=[str(q),item_name]
-				args=added_args * delta + args
-				debug.append(f'Set {item_set}')
-				delta=None
-				continue
-
-		# Remove items from any bag
-		if delta<0:
-			for bi,remove_bag in enumerate(bags):
-				remove_bag=remove_bag[1]
-				if partial:
-					remove_items = {n:q for n,q in remove_bag.items() if n.lower().startswith(item_name) or space_name in n.lower()}
+				remove_items = {n:q for n,q in remove_bag.items() if n.lower()==item_name}
+			for remove_item,current in remove_items.items():
+				if current>-delta:
+					remove_bag[remove_item]+=delta
+					removed=-delta
+					delta=None
 				else:
-					remove_items = {n:q for n,q in remove_bag.items() if n.lower()==item_name}
-				for remove_item,current in remove_items.items():
-					if current>-delta:
-						remove_bag[remove_item]+=delta
-						removed=-delta
-						delta=None
-					else:
-						removed=current
-						remove_bag.pop(remove_item)
-						delta+=removed
-					debug.append(f'RemoveAny {current}-{removed} x {remove_item}')
-					diff = report.get(bi, {})
-					diff[remove_item] = diff.get(remove_item, [current]) + [-removed]
-					report[bi] = diff
-					if not delta:
-						break
+					removed=current
+					remove_bag.pop(remove_item)
+					delta+=removed
+				debug.append(f'RemoveAny {current}-{removed} x {remove_item}')
+				diff = report.get(bi, {})
+				diff[remove_item] = diff.get(remove_item, [current]) + [-removed]
+				report[bi] = diff
 				if not delta:
 					break
-
 			if not delta:
-				delta=None
-				continue
+				break
 
-		# try again with partial prefix
-		if not partial:
-			args.insert(0,f'~{arg}')
+		if not delta:
+			delta=None
 			continue
 
-		# Lowest priority: unrecognized item
-		if delta>0:
-			new_item=item_name.title().replace("'S","'s")
+
+	# Default bag: about to add items to  the current bag, if there is no current bag, select one
+	if bag_idx is None:
+		default_bags = [b[0] for i, b in enumerate(bags) if
+						i not in removed_bags and (b[0].lower() not in special_bags)]
+		# queue switching to the default bag explicitly and adding the current item. create arg basic one if none found
+		if default_bags:
+			default_bag = default_bags[0]
+			args = [default_bag, str(delta), arg] + args
+			debug.append(f'Default {default_bag}')
+			delta = None
+			continue
+		elif containers and delta > 0:
+			default_bag = containers[0]
+			debug.append(f'Default* {default_bag}')
+			args = [default_bag, str(delta), arg] + args
+			delta = None
+			continue
+		else:
+			pass
+	# Add NEW known items to the current bag
+	if delta>0:
+		if partial:
+			iterations-=1
+			new_items += [n for n in item_list if n.startswith(item_name) or space_name in n.lower()]
+		else:
+			iterations-=1
+			new_items = [n for n in item_list if item_name == n]
+		if new_items:
+			new_item=new_items[0].title().replace("'S","'s")
 			bag[1][new_item]=delta
-			debug.append(f'Unknown {delta} x {new_item}')
+			debug.append(f'Add {delta} x {new_item}')
+			# update the item's diff in the report
 			diff=report.get(bag_idx,{})
 			diff[new_item]=[0,delta]
 			report[bag_idx]=diff
+
 			delta=None
 			continue
+
+		# Sets: add all of a set's contents to the arguments and parse as normal
+		if partial:
+			item_set += [n for n in sets.keys() if n.startswith(item_name) or space_name in n.lower()]
+		else:
+			item_set = [n for n in sets.keys() if item_name==n]
+		if item_set:
+			item_set=item_set[0]
+			set_items=sets[item_set]
+			added_args=[]
+			for item_name,q in set_items.items():
+				added_args+=[str(q),item_name]
+			args=added_args * delta + args
+			debug.append(f'Set {item_set}')
+			delta=None
+			continue
+
+	# try again with partial prefix
+	if not partial:
+		args.insert(0,f'~{arg}')
+		continue
+
+	# Lowest priority: unrecognized item
+	if delta>0:
+		new_item=item_name.title().replace("'S","'s")
+		bag[1][new_item]=delta
+		debug.append(f'Unknown {delta} x {new_item}')
+		diff=report.get(bag_idx,{})
+		diff[new_item]=[0,delta]
+		report[bag_idx]=diff
+		delta=None
+		continue
 
 	debug.append('f Missing {-delta} {item_name}')
 	diff=report.get('fail',{})
