@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/ic/subscribe.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/aid.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
@@ -34,8 +33,6 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hud/hud.py" beforeDir="false" afterPath="$PROJECT_DIR$/hud/hud.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ic/share.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/share.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
