@@ -15,7 +15,7 @@ for id in ids:
 	if not [len(idp) for idp in id_parts]==[8,4,4,4,12] or not all(idp.isalnum() for idp in id_parts):
 		invalid.append(f'`{id}`')
 if invalid:
-	return f'echo The following gvar identifiers are not properly formatted: {",".join(invalid)}.'
+	return f'echo The following gvar identifiers are not properly formatted: {",".join(invalid)}. Please use one or more from the `!gvar list` of the owner of the npc roster gvar.'
 
 server_roster_gvars = load_json(get_svar(SVAR_SERVER_ROSTERS,'[]'))
 

@@ -11,7 +11,7 @@ else:	# update
 		if not [len(idp) for idp in id_parts] == [8, 4, 4, 4, 12] or not all(idp.isalnum() for idp in id_parts):
 			invalid.append(f'`{id}`')
 	if invalid:
-		return err(f'The following gvar identifiers are not properly formatted: {",".join(invalid)}.')
+		return err(f'The following gvar identifiers are not properly formatted: {",".join(invalid)}. Please use one or more from the `!gvar list` of the owner of the npc roster gvar.')
 
 	subscribed_roster_gvars+=ids
 	set_uvar(UVAR_SUBSCRIBED, dump_json(subscribed_roster_gvars))
