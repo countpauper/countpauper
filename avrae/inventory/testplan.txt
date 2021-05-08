@@ -1,12 +1,23 @@
 !cvar delete bags
+# add dungeon backpack 9gp and a quiver with 10 arrows (still shows redundant sack)
 !bqb dungeon folk quiver 10 arr 9 -gp
+# double check format
 !cvar bags
+# removes 1 arrows total from the quiver add and remove the ardendelle
 !bqb + 2 arrow +arendelle -4 ar
+# remove all 9 remaining arrows and fail to remove the excess 9, report, also fail to remove foobar
 !bqb -foobar -18 arrow
+# restore and check that the bag and backup are the same and contains the ["Quiver", {"Arrow": 9}]
 !bqb undo
+!cvar bags
+!cvar bag_backup
+# add a blanket to the first bag (still sack), make change giving 3sp 1ep and -1 gp
 !bqb blanket -2sp
+# remove the quiver with all arrows, then fail to remove the additional arrow
 !bqb -quiver -arrow
+# add a Bag of Holding and add the dagger and bolt to it
 !bqb holding dagger bolt
-!bag track off
-!bqb bolt
+# show weight but the same as before because the dagger is in the bag of holding
 !bag track on
+!bqb cp -cp
+!bqb -dagger

@@ -58,7 +58,8 @@ coin_idx = coin_bags[0] if coin_bags else None
 debug_break=None
 if args[0].startswith('dbg='):
 	dbg = 0
-	debug_break=int(args.pop(0)[4:])
+	debug_break=args.pop(0)[4:]
+	debug_break=int(debug_break) if debug_break else 999
 
 # convert arguments to quantified changes
 delta=None
@@ -73,7 +74,7 @@ while args:
 	if debug_break:
 		dbg+=1
 		if dbg>=debug_break:
-			return f'echo **Debug [{dbg}]: *{debug}*\narguments remaining: `{delta}` `{args}`\niterations remaining: {iterations}'
+			break
 	# debug.append(str(args))
 	arg=args.pop(0)
 
@@ -168,8 +169,7 @@ while args:
 			# TODO: what if it's the same bag? dict? what is it's not? index?
 			# TODO: report
 			debug.append(f'Select {bag[0]}')
-			if not bag_idx in report:
-				report[bag_idx]={ }
+
 			continue
 		delta = 1 if delta is None else delta
 
@@ -178,7 +178,6 @@ while args:
 		purse_name=purse_names[0].title()
 		bags.append([purse_name, {coin:0 for coin in coins.keys()}])
 		coin_idx=len(bags)-1
-		# report[coin_idx]={coin:[0] for coin in coins.keys()}
 		report[coin_idx]={purse_name:[1]}
 		debug.append(f'Purse {purse_name}')
 
@@ -269,6 +268,8 @@ while args:
 	# Remove items from any bag
 	if delta<0:
 		for bi,remove_bag in enumerate(bags):
+			if bi in removed_bags:
+				continue
 			remove_bag=remove_bag[1]
 			if partial:
 				remove_items = {n:q for n,q in remove_bag.items() if n.lower().startswith(item_name) or space_name in n.lower()}
@@ -477,7 +478,10 @@ if show_weight:
 	footer=f'-footer "Weight carried {weight:.2f} / {max_weight} lbs, with {len(unmatched) if unmatched else "no" } unrecognized items."'
 
 if debug_break:
-	fields+=f' -f "Debug [{dbg}/{debug_break}]|{", ".join(debug)}\niterations remaining: {iterations}"'
+
+	fields+=f' -f "Debug [{dbg}/{debug_break}]|{nl.join(debug)}|inline" -f "Iterations|{iterations} remaining|inline"'
+	if args:
+		fields+=f' -f "arguments remaining|`{args}`"'
 
 # Format the output
 possessive=f'{name}\'' if name[-1]=='s' else f'{name}\'s'
