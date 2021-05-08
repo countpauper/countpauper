@@ -1,15 +1,12 @@
 !alias max_hp <drac2>
-argstr="&*&"
-if not argstr:
+args=&ARGS&
+if not args:
 	return f'echo {ctx.prefix}{ctx.alias} [+|-]maxhp [-t <target>][...]'
-mhp=argstr.split()[0]
-args=argparse(argstr)
+mhp=args[0]
+args=argparse(args)
 if c:=combat():
 	targets=[c.get_combatant(t) for t in args.get('t')] or [c.me]
-	if mhp[0]=='+':
-		hp_delta=int(mhp[1:])
-		hp_set=None
-	elif mhp[0]=='-':
+	if mhp[0] in '+-':
 		hp_delta=int(mhp)
 		hp_set=None
 	elif mhp=='reset':
@@ -25,7 +22,7 @@ if c:=combat():
 		if target is None:
 			continue
 		if hp_set is None:
-			current_max=character().max_hp if target.name==c.me.name else target.max_hp
+			current_max=character().max_hp if c.me and target.name==c.me.name else target.max_hp
 			target.set_maxhp(current_max+hp_delta)
 		else:
 			target.set_maxhp(hp_set)
