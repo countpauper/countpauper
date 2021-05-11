@@ -27,10 +27,8 @@ if c:=combat():
 			stat.append(target)
 		else:
 			stat.append(None)
-	if not stat:
+	if not stat and c.me:
 		stat=[c.me]
-	if not c.me in stat:
-		ch = None
 else:
 	if ap.get('i'):
 		return f'echo `-i` argument is only supported in initiative.'
@@ -38,6 +36,8 @@ else:
 		return f'echo `-t` argument is only supported in initiative.'
 if not stat:
 	stat=[ch]
+elif not c.me in stat:
+	ch=None
 
 
 config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))

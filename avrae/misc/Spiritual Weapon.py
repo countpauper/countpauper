@@ -1,0 +1,129 @@
+<drac2>
+# test recast
+loc_prefix='Location: '
+ovl_prefix='Overlay9: '
+size_prefix='Size: '
+
+# X axis dict A to CZ should be more than enough, map limit is 99x99
+alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+x_axis={col:idx for idx,col in enumerate(alphabet)}
+x_axis.update({f'A{col}':len(alphabet)+idx for idx,col in enumerate(alphabet)})
+x_axis.update({f'B{col}':2*len(alphabet)+idx for idx,col in enumerate(alphabet)})
+x_axis.update({f'C{col}':3*len(alphabet)+idx for idx,col in enumerate(alphabet)})
+
+argstr='&*&'
+
+caster=None
+if c:=combat():
+	caster=c.current
+	if caster.controller!=ctx.author.id:
+		caster=c.me
+
+# get the current location of the weapon from the overlay or the current location of the caster
+origin_pos = None
+max_range=None
+atk=False
+caster_notes = []
+if caster:
+	# range is 60ft from the caster or 20ft from the current position
+	caster_notes=[n.strip() for n in caster.note.split('|')] if caster.note else []
+	if overlay_note:=([note[len(ovl_prefix):] for note in caster_notes if note.startswith(ovl_prefix)]+[None])[0]:
+		p=max(idx for idx,c in enumerate(overlay_note) if c.islower())
+		origin_pos=overlay_note[p+1:]
+		max_range=20/5
+		move_explain="As a bonus action on your turn, you can move the weapon up to 20 feet and repeat the attack against a creature within 5 feet of it."
+	elif location_note:=([note[len(loc_prefix):] for note in caster_notes if note.startswith(loc_prefix)]+[None])[0]:
+		origin_pos=location_note
+		max_range=60/5
+		move_explain="You create a floating, spectral weapon within range [60 feet] that lasts for the duration or until you cast this spell again. "
+	else:
+		move_explain="As a bonus action on your turn, you can move the weapon up to 20 feet and repeat the attack against a creature within 5 feet of it."
+target_pos=None
+target=None
+target_size=0
+if c:
+	# get the target location of the weapon from the location of the target or the -m argument
+	args=argparse(argstr)
+	if target_pos:=args.last('m','').upper():
+		pass
+
+	if target_tag:=args.last('t'):
+		target=c.get_combatant(target_tag)
+		if not target:
+			return f'echo Unknown target `{target_tag}`.'
+		if not target_pos:
+			target_notes=[n.strip() for n in target.note.split('|')] if target.note else []
+			if location_note := ([note[len(loc_prefix):] for note in target_notes if note.startswith(loc_prefix)] + [None])[0]:
+				target_pos = location_note
+			if size_note :=  ([note[len(size_prefix):] for note in target_notes if note.startswith(size_prefix)] + [None])[0]:
+				grid_sizes={'T':1,'S':1,'M':1,'L':2,'H':3,'G':4}
+				target_size=grid_sizes.get(size_note[0].upper(),0)
+			else:
+				target_size=1
+
+# convert the text locations to the x,y coordinates
+op = dict(x=x_axis.get(''.join(c for c in origin_pos if c.isalpha())),
+		  y=int(''.join(c for c in origin_pos if c.isdigit()))) if origin_pos else None
+tl = dict(x=x_axis.get(''.join(c for c in target_pos if c.isalpha())),
+		  y=int(''.join(c for c in target_pos if c.isdigit()))) if target_pos else None
+
+if tl and op and target_size:
+	# target with a grid size (creature)
+	# stand next to it, minimum displacement for 5ft range
+	br=dict(x=tl.x+target_size,y=tl.y+target_size)
+	tp=dict(x=op.x,y=op.y)
+	if op.x<tl.x:
+		tp['x']=tl.x-1
+	elif op.x>br.x:
+		tp['x']=br.x
+	if op.y<tl.y:
+		tp['y']=tl.y-1
+	elif op.y>br.y:
+		tp['y']=br.y
+
+	destination_pos=f'{list(x_axis.keys())[tp.x]}{tp.y}'
+else:	# no size (-m), stand on it
+	tp=tl
+	destination_pos=target_pos
+
+# check range
+if max_range and op and tp:
+	distance=sqrt((op.x-tp.x)**2 + (op.y-tp.y)**2)*5.0
+	max_range*=5.0
+	if distance>max_range:
+		return f'echo "Destination {destination_pos} out of range: {distance:.1f} > {max_range:.1f}.'
+	if distance>0:
+		move_field=f'-f "Moving the Spiritual Weapon|from {origin_pos} to {destination_pos} [{distance:.1f} ft.]"'
+	else:
+		move_field=f'-f "Spiritual Weapon|Stays at {destination_pos}"'
+elif destination_pos:
+	move_field=f'-f "Placing the Spiritual Weapon|at {destination_pos}"'
+else:
+	move_field=''
+
+# clean out old overlay:
+if caster:
+	caster_notes=[n for n in caster_notes if not n.startswith(ovl_prefix)]
+	if destination_pos:
+		caster_notes.append(f'{ovl_prefix}c2r{destination_pos}')
+	caster.set_note(' | '.join(caster_notes))
+
+if caster:
+	effect_name = 'spiritual weapon'
+	# instead of effect, could ook for actual attack
+	# TODO: instead of aoo and reactcast, could use normal a and cast if current.name==caster.name
+	if caster.get_effect(effect_name) is None:
+		cmd=f'i reactcast "{caster.name}" "Spiritual Weapon"'
+	elif target:
+		cmd=f'i aoo "{caster.name}" "Spiritual Weapon"'
+	elif move_field:
+		cmd=f'embed -title "{caster.name} moves the Spiritual Weapon." -desc "{move_explain}"'
+	else:
+		# TODO: remove the effect and the overlay when the effect is active but no target or destination
+		caster.remove_effect(effect_name)
+		return f'embed -title "{caster.name} recalls the Spiritual Weapon."'
+else:
+	cmd=f'cast "Spiritual Weapon"'
+
+return f'{cmd} {argstr} {move_field}'
+</drac2>
