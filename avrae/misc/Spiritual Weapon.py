@@ -1,8 +1,5 @@
 <drac2>
 # test recast
-loc_prefix='Location: '
-ovl_prefix='Overlay9: '
-size_prefix='Size: '
 
 # X axis dict A to CZ should be more than enough, map limit is 99x99
 alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -12,6 +9,12 @@ x_axis.update({f'B{col}':2*len(alphabet)+idx for idx,col in enumerate(alphabet)}
 x_axis.update({f'C{col}':3*len(alphabet)+idx for idx,col in enumerate(alphabet)})
 
 argstr='&*&'
+args = argparse(argstr)
+loc_prefix='Location: '
+ovl_number=args.last('#',9,type_=int)
+ovl_prefix=f'Overlay{ovl_number or ""}: '
+ovl_color=args.last('color','c')
+size_prefix='Size: '
 
 caster=None
 if c:=combat():
@@ -23,27 +26,33 @@ if c:=combat():
 origin_pos = None
 max_range=None
 atk=False
+ovl_color='~ff00ff'
 caster_notes = []
 if caster:
 	# range is 60ft from the caster or 20ft from the current position
 	caster_notes=[n.strip() for n in caster.note.split('|')] if caster.note else []
 	if overlay_note:=([note[len(ovl_prefix):] for note in caster_notes if note.startswith(ovl_prefix)]+[None])[0]:
-		p=max(idx for idx,c in enumerate(overlay_note) if c.islower())
-		origin_pos=overlay_note[p+1:]
-		max_range=20/5
+		# parse the overlay string
+		size_idx=min(idx for idx,c in enumerate(overlay_note) if c.isdigit())	 			# skip shape
+		color_idx=size_idx+min(idx for idx,c in enumerate(overlay_note[size_idx:]) if not c.isdigit()) # skip size
+		coord_idx=color_idx+min(idx for idx,c in enumerate(overlay_note[color_idx:]) if c.isupper())	# get color
+		ovl_color=overlay_note[color_idx:coord_idx]
+		origin_pos=overlay_note[coord_idx:]
+		max_range=20//5
 		move_explain="As a bonus action on your turn, you can move the weapon up to 20 feet and repeat the attack against a creature within 5 feet of it."
 	elif location_note:=([note[len(loc_prefix):] for note in caster_notes if note.startswith(loc_prefix)]+[None])[0]:
 		origin_pos=location_note
-		max_range=60/5
+		max_range=60//5
 		move_explain="You create a floating, spectral weapon within range [60 feet] that lasts for the duration or until you cast this spell again. "
 	else:
 		move_explain="As a bonus action on your turn, you can move the weapon up to 20 feet and repeat the attack against a creature within 5 feet of it."
+ovl_color=args.last('color',ovl_color).lower()
+
 target_pos=None
 target=None
 target_size=0
 if c:
 	# get the target location of the weapon from the location of the target or the -m argument
-	args=argparse(argstr)
 	if target_pos:=args.last('m','').upper():
 		pass
 
@@ -89,9 +98,9 @@ else:	# no size (-m), stand on it
 # check range
 if max_range and op and tp:
 	distance=sqrt((op.x-tp.x)**2 + (op.y-tp.y)**2)*5.0
-	max_range*=5.0
-	if distance>max_range:
-		return f'echo "Destination {destination_pos} out of range: {distance:.1f} > {max_range:.1f}.'
+	max_range*=4
+	if round(distance)>max_range:
+		return f'echo "Destination {destination_pos} out of range: {distance:.1f} > {max_range}.'
 	if distance>0:
 		move_field=f'-f "Moving the Spiritual Weapon|from {origin_pos} to {destination_pos} [{distance:.1f} ft.]"'
 	else:
@@ -105,7 +114,7 @@ else:
 if caster:
 	caster_notes=[n for n in caster_notes if not n.startswith(ovl_prefix)]
 	if destination_pos:
-		caster_notes.append(f'{ovl_prefix}c2r{destination_pos}')
+		caster_notes.append(f'{ovl_prefix}c2{ovl_color}{destination_pos}')
 	caster.set_note(' | '.join(caster_notes))
 
 if caster:

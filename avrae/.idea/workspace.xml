@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/art.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
@@ -35,8 +33,8 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hud/hud.py" beforeDir="false" afterPath="$PROJECT_DIR$/hud/hud.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/wand.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/wand.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chance/spells.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -266,10 +264,6 @@
     </state>
     <state width="1899" height="346" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1617346159612" />
     <state width="960" height="402" key="GridCell.Tab.1.right/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1620219286943" />
-    <state x="463" y="166" key="SettingsEditor" timestamp="1611733183503">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="463" y="166" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1611733183503" />
     <state x="681" y="261" width="555" height="524" key="StructurePopup" timestamp="1613367134872">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -278,10 +272,11 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="615" y="139" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1619193490387" />
-    <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1616826853272">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="771" y="493" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1620808490736">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1616826853272" />
+    <state x="771" y="493" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1620808490736" />
     <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1620463257032">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -342,7 +337,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/misc/Spiritual Weapon.py</url>
-          <line>23</line>
+          <line>26</line>
           <option name="timeStamp" value="38" />
         </line-breakpoint>
       </breakpoints>
