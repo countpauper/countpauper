@@ -8,9 +8,25 @@ embed <drac2>
 # - scan gvars for additional chars
 # - move npcs and categories to specific gvars and
 
+settings=load_json(get_svar('ic_settings','{}'))
+if footer_format:=settings.get('footer'):
+	vars=[]
+	for idx,c in enumerate(footer_format):
+		if c!='{':
+			continue
+		remaining=footer_format[idx+1:]
+		if not '}' in remaining:
+			continue
+		vars.append(remaining[:remaining.index('}')])
+	footer=f'-footer "{footer_format}"'
+	for var in vars:
+		footer=footer.replace('{'+var+'}',str(get(var,'')))
+else:
+	footer=''
+
 arg_str = """&*&"""
 
-options=('-image','-color','-name','-thumb')
+options=('-image','-color','-name','-thumb','-footer')
 option_idx=[arg_str.find(option) for option in options]
 if options_start:=[idx for idx in option_idx if idx>=0]:
 	options_start=min(options_start)
@@ -43,6 +59,7 @@ title = args.last('name', user.n)
 thumb = args.last('thumb', user.i)
 color = args.last('color', user.c)
 img = args.last('image')
+# TODO: override footer? in which order?
 
 palette = load_json(get_gvar('74f3bd10-7163-4838-ad27-344ad0fb6b83'))
 color=palette.get(color.lower(),color)
@@ -67,5 +84,5 @@ if openquote:	# actually can't happen because avrae is typing ...
 if openitalic:
 	txt+='*'
 
-return f'-title "{title}" -desc "{txt}" -thumb {thumb} {f"-color {color}" if color is not None else ""} {f"-image {img}" if img else ""}'
+return f'-title "{title}" -desc "{txt}" {footer} -thumb {thumb} {f"-color {color}" if color is not None else ""} {f"-image {img}" if img else ""}'
 </drac2>

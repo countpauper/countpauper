@@ -1,7 +1,7 @@
 <drac2>
 cc='Channel Divinity'
 ch=character()
-args="&*&"
+args='&*&'.strip('".')
 ignore=argparse(args).last('i')
 if not ignore:
 	if not ch.cc_exists(cc):
@@ -43,10 +43,12 @@ if item:
 		else:
 			item=item.title().replace("'S","'s")
 			item_field=f'-f "{item}|*Price unknown*|inline"'
+	else:
+		an = 'an' if item[0].lower() in 'aeiou' else 'a'
 
-	title += f' to create {an} {item}.'
+	title = f'{title} to create {an} {item}.'
 else:
-	title+='.'
+	title = f'{title}.'
 
 desc="""You conduct an hour-long ritual that crafts a nonmagical item that must include some metal: a simple or martial weapon, a suit of armor, ten pieces of ammunition, a set of tools, or another metal object. The creation is completed at the end of the hour, coalescing in an unoccupied space of your choice on a surface within 5 feet of you.
 

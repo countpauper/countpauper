@@ -98,7 +98,7 @@ else:	# no size (-m), stand on it
 # check range
 if max_range and op and tp:
 	distance=sqrt((op.x-tp.x)**2 + (op.y-tp.y)**2)*5.0
-	max_range*=4
+	max_range*=5
 	if round(distance)>max_range:
 		return f'echo "Destination {destination_pos} out of range: {distance:.1f} > {max_range}.'
 	if distance>0:
