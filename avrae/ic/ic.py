@@ -9,20 +9,6 @@ embed <drac2>
 # - move npcs and categories to specific gvars and
 
 settings=load_json(get_svar('ic_settings','{}'))
-if footer_format:=settings.get('footer'):
-	vars=[]
-	for idx,c in enumerate(footer_format):
-		if c!='{':
-			continue
-		remaining=footer_format[idx+1:]
-		if not '}' in remaining:
-			continue
-		vars.append(remaining[:remaining.index('}')])
-	footer=f'-footer "{footer_format}"'
-	for var in vars:
-		footer=footer.replace('{'+var+'}',str(get(var,'')))
-else:
-	footer=''
 
 arg_str = """&*&"""
 
@@ -59,10 +45,12 @@ title = args.last('name', user.n)
 thumb = args.last('thumb', user.i)
 color = args.last('color', user.c)
 img = args.last('image')
-# TODO: override footer? in which order?
+footer = args.last('footer',settings.get('footer',''))
 
+# convert color names to hex
 palette = load_json(get_gvar('74f3bd10-7163-4838-ad27-344ad0fb6b83'))
 color=palette.get(color.lower(),color)
+
 
 txt=''
 openquote=False
@@ -83,6 +71,43 @@ if openquote:	# actually can't happen because avrae is typing ...
 
 if openitalic:
 	txt+='*'
+
+# define words for experience (footer)
+words = len(txt.split())
+cc = 'Experience'
+if ch:=character():
+	xp=settings.get('xp','0')
+	# find vars in xp expression
+	xp_vars=[]
+	for idx,c in enumerate(xp):
+		if c!='{':
+			continue
+		remaining=xp[idx+1:]
+		if not '}' in remaining:
+			continue
+		xp_vars.append(remaining[:remaining.index('}')])
+	for var in xp_vars:
+		xp=xp.replace('{'+var+'}',str(get(var,'0')))
+	# return f'-desc "xp={xp} v={xp_vars} words={words}"'
+	# roll and add the xp
+	if xp:=roll(xp):
+		ch.mod_cc(cc,xp)
+
+# convert footer configuration to footer text
+if footer:
+	# find vars in footer expression
+	vars=[]
+	for idx,c in enumerate(footer):
+		if c!='{':
+			continue
+		remaining=footer[idx+1:]
+		if not '}' in remaining:
+			continue
+		vars.append(remaining[:remaining.index('}')])
+
+	for var in vars:
+		footer=footer.replace('{'+var+'}',str(get(var,'' if not ch or not ch.cc_exists(var) else ch.cc_str(var))))
+	footer=f'-footer "{footer}"'
 
 return f'-title "{title}" -desc "{txt}" {footer} -thumb {thumb} {f"-color {color}" if color is not None else ""} {f"-image {img}" if img else ""}'
 </drac2>
