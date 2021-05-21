@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/ic/ic_setup.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/play/3da.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
@@ -34,9 +34,12 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dmi/dmi.py" beforeDir="false" afterPath="$PROJECT_DIR$/dmi/dmi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dmi/reward.py" beforeDir="false" afterPath="$PROJECT_DIR$/dmi/reward.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hud/hud.json" beforeDir="false" afterPath="$PROJECT_DIR$/hud/hud.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ic/ic.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/ic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/art.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/art.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ic/ic_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/ic_setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/quickbag.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -283,11 +286,11 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1620463257032" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1620368966009">
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1621580028519">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1620242363336" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1620368966009" />
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1621580028519" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

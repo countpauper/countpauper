@@ -1,0 +1,62 @@
+copyright issues? no license on dndbeyond/avrae
+
+use initiative
+!3da begin will create the deck or complain if there is no initiative
+- the deck uses hp and thp to store the deck as bits, hp are the dragons except white (9x7=63 bits) thp are the white dragons(7 bits) mortals and specials (30 bits)
+nb that there are 70 dragons and only 10 out of 30 special cards are chosen at the start
+
+
+- ac, resist and note are still reserved, but  for what?
+maxhp is what? it's set at creation but could be used after
+
+
+it is added as hidden
+i add 0 3da -h -p 20 -hp <lots of bits> -thp <less bits>
+
+!3da join will join a player and subtract their (6) hand randomly from the remaining deck. Their hand is stored in their local cvar
+Their initiative is set to (deck)-2* the number of players (including this one), so they are ordered by joining, but there's a spot in between each to place the deck
+
+their hp is their hoard (maxhp is 60)
+Their tho is how deep in the hole they go (6thp = -6)
+their initiative is set randomly at the start. set_init can be used at the start of each round
+their flight is in effects
+
+cards are in a gvar with their key a bit value in hp or thp (thp is negative?)
+name
+evil=true/false or none
+power=int
+color=color str ?
+type=dragon,legendary,mortal
+power=?
+
+
+sequence (coded in each player or the deck as its initiative?)
+0: setup
+1: ante
+2: first card
+2 second
+3 third
+4 optional tie breaker
+
+Card code: for players hand: A B C D E F G ... shown as spoiler tags code: <name> <other properties>
+!3da ante <card>  go to next sequence and add your ante as effect: Ante: card name (need to parse to and from effect description or add effect
+or just !3da play <card> and it will determine that it's for the ante
+or parse card description back to code Blue Dragon 9 or unique card name (look up in gvar)
+
+Last ante will automatically resolve the bet for everyone, subtract hp for all players and add it to the pot?
+The last ante will also automatically resolve the order, the deck is set as the highest (non tied) ante+1 and then the initiative is set to that player
+
+Hand will be placed in a cvar (play?), the format is much easier to parse than the bit masks, it's just the key of the card in the database
+!3da hand will show it, with a spoiler in a channel, without in a private message to avrae
+
+
+
+
+Need reusable routine to extract the deck from the 3da combatant, convert it to a list, load the gvar, pick random card(s) and restore the remaining using set_hp() and set_thp()
+
+All commands that do this may need to share code
+
+
+
+
+
