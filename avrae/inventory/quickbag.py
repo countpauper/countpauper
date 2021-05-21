@@ -15,7 +15,8 @@ if not args:
 	return f'echo `{ctx.prefix}{ctx.alias} [<bag>] [+/-][amount] <item> [<background>] [<pack>] ...`'
 
 # typo protection
-if len(args)==1 and ((args[0].lower().startswith('undo') and len(args[0])<7) or (all(c in "undo" for c in args[0].lower()) and len(args[0]) in [3,4])):
+if len(args)==1 and (('undo' in args[0] and len(args[0])<7) or
+					 (all(c in "undo" for c in args[0].lower()) and len(args[0]) in [3,4])):
 	return f"echo :confused: `{ctx.prefix}{ctx.alias} {args[0]}`? Maybe you mean `{ctx.prefix}{ctx.alias} undo`?"
 
 bv='bags'
