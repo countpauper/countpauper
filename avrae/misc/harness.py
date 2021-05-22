@@ -1,7 +1,7 @@
 !servalias harness <drac2>
 args=&ARGS&
 if args and args[0]!='-i':
-	if not args[0].isdigit():
+	if not args[0].isdecimal():
 		return f'echo `{ctx.prefix}{ctx.alias} [<spell level>] [-i]`'
 	slot = int(args[0])
 else:

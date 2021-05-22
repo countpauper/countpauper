@@ -48,7 +48,7 @@ config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
 field_list=[]
 command_list=['set','default','var','-i','-t']	# auto added as field
 for a in args:
-	if a[0] in '-+' or a in command_list or a.isdigit():
+	if a[0] in '-+' or a in command_list or a.isdecimal():
 		continue
 	field_list.append(a)
 
@@ -85,7 +85,7 @@ else:
 # +field arguments are additional, no matter the source
 field_list+=[a[1:] for a in args if a[0]=='+']
 # and so are digits for the timeout
-field_list+=[a for a in args if a.isdigit()]
+field_list+=[a for a in args if a.isdecimal()]
 
 # Add configuration fields for which the character has a matching cc or item
 auto='auto'
@@ -165,7 +165,7 @@ for s in stat:
 		if not f:
 			continue
 		if typeof(f)=='str':
-			if f.isdigit():
+			if f.isdecimal():
 				timeout=int(f)
 			else:
 				field.append(f)

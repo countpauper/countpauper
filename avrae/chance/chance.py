@@ -42,6 +42,7 @@
 # dice maths: https://www.omnicalculator.com/statistics/dice
 # max dice math: https://math.stackexchange.com/questions/1696623/what-is-the-expected-value-of-the-largest-of-the-three-dice-rolls/
 # roller (seem to do it the hard way but good to compare): http://topps.diku.dk/torbenm/troll.msp
+# troll rolls: 4d6kh3 * 6 stats treshold 80: repeat a:=sum({6 # sum(largest 3 4d6)}) until a>=80
 
 #### Parse configuration: svar > cvar > uvar
 config=load_json(get('Chance','{}'))
@@ -216,13 +217,13 @@ cancrit=None
 targets={}
 if not skill:
 	for ac in args.get('ac'):
-		if not ac.isdigit():
+		if not ac.isdecimal():
 			return f'echo AC `{ac}` is not a number, Use {syntax}'
 		targets[f'AC {ac}']={'target':int(ac),'crit':True, 'show':True}
 
 if not attack:
 	for dc in args.get('dc'):
-		if not dc.isdigit():
+		if not dc.isdecimal():
 			return f'echo DC `{dc}` is not a number, Use {syntax}'
 		targets[f'DC {dc}']={'target':int(dc),'crit':False, 'show':True}
 
@@ -305,7 +306,7 @@ for term in expression_terms:
 	elif 'd' in term:
 		## Parse number of rolled dice
 		dice_exp=term.split('d',maxsplit=1)
-		if not dice_exp[0].isnumeric():
+		if not dice_exp[0].isdecimal():
 			err(f'Dice expression syntax error: number of dice must be positive number: `{term}`')
 		dice=int(dice_exp[0]) if dice_exp[0] else 1
 
@@ -319,7 +320,7 @@ for term in expression_terms:
 			dice_part[-1]+=dice_char
 
 		## die size
-		if not dice_part or not dice_part[0].isnumeric():
+		if not dice_part or not dice_part[0].isdecimal():
 			err(f'Dice expression syntax error: die size must be a positive number: `{term}`')
 		die_size=int(dice_part[0])
 		dice_part=dice_part[1:]

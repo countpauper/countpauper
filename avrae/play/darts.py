@@ -8,7 +8,7 @@ syntax=f'{base_cmd} {game_name} [<target #>[x2|x3]|yield] [adv] [dis] [ea] [-b <
 args=&ARGS&
 if args:
 	target_arg=args[0]
-	if not target_arg[0].isdigit():
+	if not target_arg[0].isdecimal():
 		target_arg=None
 else:
 	target_arg=None

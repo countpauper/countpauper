@@ -26,7 +26,7 @@ if args:
 	else:
 		args="&*&"
 		chips=(['chips']+list(bet.keys()))[-1]
-		if not args.isdigit():
+		if not args.isdecimal():
 			return f'echo Since you have no `!coins` pouch you can only collect {chips} `{base_cmd} {game_name} [<amount>]'
 		winnings={chips:int(args)}
 else:

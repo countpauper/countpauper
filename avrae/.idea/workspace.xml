@@ -32,10 +32,17 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hud/hud.json" beforeDir="false" afterPath="$PROJECT_DIR$/hud/hud.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/ic.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/ic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/ic_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/ic_setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/bladesong.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hud/hud.py" beforeDir="false" afterPath="$PROJECT_DIR$/hud/hud.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/quickbag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/harness.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/harness.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/shoot.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/shoot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/bet.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/bet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/blackjack.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/blackjack.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/collect.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/collect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/darts.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/darts.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -278,10 +285,10 @@
     </state>
     <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1616826853272" />
     <state x="771" y="493" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1620808490736" />
-    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1620463257032">
+    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1621692017354">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1620463257032" />
+    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1621692017354" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1621580028519">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>

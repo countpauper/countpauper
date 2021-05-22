@@ -76,7 +76,7 @@ ammo_split = ammo_name.split('+',maxsplit=1)
 bonus_str=''
 if len(ammo_split)>1:
 	bonus_postfix = ammo_split[1]
-	if f'+{bonus_postfix}' not in attack_name and bonus_postfix.isdigit():
+	if f'+{bonus_postfix}' not in attack_name and bonus_postfix.isdecimal():
 		bonus = int(bonus_postfix)
 		bonus_str=f'magical  -b {bonus} -d {bonus}'
 

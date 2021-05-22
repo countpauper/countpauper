@@ -96,17 +96,17 @@ while args:
 
 	# split number from item_name, especially for coins 2gp => 2 gp
 	for n_pos in range(len(arg)):
-		if not arg[n_pos].isnumeric():
+		if not arg[n_pos].isdecimal():
 			if n_pos:
 				args.insert(0, arg[n_pos:])
 				arg = arg[:n_pos]
 			break
 
 	# amounts
-	if (delta==1 or delta is None) and arg.isnumeric():
+	if (delta==1 or delta is None) and arg.isdecimal():
 		delta=int(arg)
 		continue
-	elif delta==-1 and arg.isnumeric():
+	elif delta==-1 and arg.isdecimal():
 		delta=-int(arg)
 		continue
 

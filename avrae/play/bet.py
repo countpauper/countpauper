@@ -30,7 +30,7 @@ if args:
 			args.append(auto_coin)
 
 		coin_idx={c:args.index(c)-1 for c in coins.keys() if c in args}
-		new_bet={c:int(args[i]) for c,i in coin_idx.items() if i>=0 and args[i].isdigit()}
+		new_bet={c:int(args[i]) for c,i in coin_idx.items() if i>=0 and args[i].isdecimal()}
 		if not new_bet:
 			return f'echo Illegal bet. Use `{syntax}`'
 		# TODO: check and update pouch
@@ -43,7 +43,7 @@ if args:
 	else:
 		args="&*&"
 		chips='chips'
-		if not args.isdigit():
+		if not args.isdecimal():
 			return f'echo Since you have no `!coins` pouch you can only bet a number of {chips} `{base_cmd} {game_name} [<amount>]'
 		new_bet={chips:int(args)}
 

@@ -36,7 +36,7 @@ if not arg:
 	turns=10
 elif arg[0]=='off':
 	turns = 0
-elif arg[0].isdigit():
+elif arg[0].isdecimal():
 	# reapply when entering combat
 	turns=int(arg[0])
 else:
