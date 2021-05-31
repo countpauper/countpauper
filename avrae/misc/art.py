@@ -1,7 +1,7 @@
 <drac2>
 cc='Channel Divinity'
 ch=character()
-args='&*&'.strip('".')
+args="""&*&""".strip('".')
 ignore=argparse(args).last('i')
 if not ignore:
 	if not ch.cc_exists(cc):
