@@ -1,4 +1,4 @@
-embed <drac2>
+<drac2>
 # TODO https://discord.com/channels/688962463860785242/708772692022788157/816839465820487773
 # - make an npc version
 # - works mostly the same but uses the npc roster
@@ -47,10 +47,22 @@ color = args.last('color', user.c)
 img = args.last('image')
 footer = args.last('footer',settings.get('footer',''))
 
+# Check location limitation. cvar configured in settings.location, encoded as , separate list or json
+if loc_var:=settings.get('location'):
+	if loc:=get(loc_var):
+		loc=loc.strip()
+		if loc[0] in '[{':
+			loc=load_json(loc)
+		else:
+			loc=loc.split(',')
+		loc=[l.lower() for l in loc]
+		if ctx.channel.name not in loc and str(ctx.channel.id) not in loc:
+			return f'techo 8 {title} is not currently in this channel.'
+channel=ctx.channel.name	# set channel to be used in footer
+
 # convert color names to hex
 palette = load_json(get_gvar('74f3bd10-7163-4838-ad27-344ad0fb6b83'))
 color=palette.get(color.lower(),color)
-
 
 txt=''
 openquote=False
@@ -88,7 +100,6 @@ if ch:=character():
 		xp_vars.append(remaining[:remaining.index('}')])
 	for var in xp_vars:
 		xp=xp.replace('{'+var+'}',str(get(var,'0')))
-	# return f'-desc "xp={xp} v={xp_vars} words={words}"'
 	# roll and add the xp
 	if xp:=roll(xp):
 		ch.mod_cc(cc,xp)
@@ -97,6 +108,7 @@ if ch:=character():
 if footer:
 	# find vars in footer expression
 	vars=[]
+	footer=footer.strip('"')
 	for idx,c in enumerate(footer):
 		if c!='{':
 			continue
@@ -108,6 +120,5 @@ if footer:
 	for var in vars:
 		footer=footer.replace('{'+var+'}',str(get(var,'' if not ch or not ch.cc_exists(var) else ch.cc_str(var))))
 	footer=f'-footer "{footer}"'
-
-return f'-title "{title}" -desc "{txt}" {footer} -thumb {thumb} {f"-color {color}" if color is not None else ""} {f"-image {img}" if img else ""}'
+return f'embed -title "{title}" -desc "{txt}" {footer} -thumb {thumb} {f"-color {color}" if color is not None else ""} {f"-image {img}" if img else ""}'
 </drac2>
