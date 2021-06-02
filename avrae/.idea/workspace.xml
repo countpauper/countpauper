@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/ccast.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/date.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/rspell.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/hp_bar.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/wcast.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
@@ -36,10 +35,11 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/ic.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/ic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/ic_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/ic_setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/art.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/art.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/me.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/me.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hud/hud.json" beforeDir="false" afterPath="$PROJECT_DIR$/hud/hud.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/quickbag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/TurnUD.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/TurnUD.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/ccast.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/ccast.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/wand.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/wand.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

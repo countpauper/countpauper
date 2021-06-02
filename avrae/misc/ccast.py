@@ -47,5 +47,5 @@ else:
 	cc.set(cc.value-1)
 	field=f'-f "{cc.name} {cc}|{cc.desc}"'
 
-return f"""cast "{spell}" {" ".join(f'"{a}"'for a in args)}) {field} {cast_with} -i"""
+return f"""cast "{spell}" {" ".join(f'"{a}"'for a in args)} {field} {cast_with} -i"""
 </drac2>

@@ -1,4 +1,8 @@
 <drac2>
+## TODO -arcana: requires arcana check to cast or fizzles and uses a charge anyway
+## TODO -desc description for the cc and or the embed?
+## TODO dawn argument to reset at dawn instead of long rest and work together with !dawn
+
 syntax = f'{ctx.prefix}{ctx.alias} ["<name>"] [<spells>[:<cost>]][...] [-charge <charge/day=1d6+1>] [-max <charges=10>] [-dc <dc=13>] [-break <dice=1d20>|never]'
 
 spell_db=load_json(get_gvar('13dc3e0a-a230-40ca-8fb3-a39846300b18'))
