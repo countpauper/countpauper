@@ -3,6 +3,10 @@ args=argparse('&*&')
 
 # get all the targets in combat from the -t argument
 targets=args.get('t')
+target_args=[t.split('|') for t in target]
+target_args={t[0]:t[1:] for ta in target_args}
+targets=target_args.keys()
+
 c=combat()
 if targets and not c:
 	return f"echo Your channel needs to be in initiative to turn undead."
@@ -28,17 +32,32 @@ else:
 	cc_field=f'-f "{cc}|*Ignored*"'
 
 # have all targets roll saves
+### TODO: target_args for adv, dis or fail succeed
 dc=ch.spellbook.dc
 saves={t:vroll(t.saves.get('wis').d20(args.adv(boolwise=True,ephem=True))) for t in targets.values()}
 
-# apply the effect
-[t.add_effect('Turned','',duration=10) for t,s in saves.items() if s.total<dc]
-result=[f'**{t.name}** : WIS Save: {s} vs DC {dc} ; {"**Turned**" if s.total<dc else "*Saved*"}' for t,s in saves.items()]
+# destroy undead
+if destroy:=[None,None,None,None,None,0.5,0.5,0.5,1,1,1,2,2,2,3,3,3,4,4,4,4][ch.levels.get('Cleric')]:
+	destroyed = [t for t,s in saves.items() if s.total<dc and t.levels.total_level<=destroy]
+	[t.set_hp(0) for t in destroyed]
+else:
+	destroyed=[]
+
+# apply the turned effect
+turned = [t for t,s in saves.items() if s.total<dc and not t in destroyed]
+[t.add_effect('Turned','',duration=10) for t in turned]
+
+result=[f'**{t.name}** : WIS Save: {s} vs DC {dc} ; {"**Turned**" if t in turned else "**Destroyed**" if t in destroyed else "*Saved*"}' for t,s in saves.items()]
 
 # format the embed
 nl='\n'
-desc="""-f "Effect|As an action, you present your holy symbol and speak a prayer censuring the undead. Each undead that can see or hear you within 30 feet of you must make a Wisdom saving throw. If the creature fails its saving throw, it is turned for 1 minute or until it takes any damage.
+desc="""-f "Turn Undead|As an action, you present your holy symbol and speak a prayer censuring the undead. Each undead that can see or hear you within 30 feet of you must make a Wisdom saving throw. If the creature fails its saving throw, it is turned for 1 minute or until it takes any damage.
 
 A turned creature must spend its turns trying to move as far away from you as it can, and it can't willingly move to a space within 30 feet of you. It also can't take reactions. For its action, it can use only the Dash action or try to escape from an effect that prevents it from moving. If there's nowhere to move, the creature can use the Dodge action." """
+if destroy:
+	if destroy < 1:
+		destroy = f'1/{int(1 / destroy)}'
+	desc+=f""" -f "Destroy Undead|When an undead fails its saving throw against your Turn Undead feature, the creature is instantly destroyed if its challenge rating is at or below [{destroy}]." """
+
 return f'embed -title "{name} turns the undead!" {cc_field} {desc} -desc "{nl.join(result)}" -thumb {image} -color {color}'
 </drac2>

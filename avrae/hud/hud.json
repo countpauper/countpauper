@@ -51,5 +51,6 @@
     "tinkering": {"display": "cc","cc":"Magical Tinkering","icon": ":toolbox:" },
     "infuse": {"display": "cc","cc":"Infused Items","icon": ":ring:" },
     "genius": {"display": "cc","cc":"Flash of Genius","icon": ":brain:" },
-    "psionic": {"display": "cc","cc":"Psionic Power: Psionic Energy","icon": ":exploding_head:" }
+    "psionic": {"display": "cc","cc":"Psionic Power: Psionic Energy","icon": ":exploding_head:" },
+    "tides":{"display": "flag","cc": "Tides of Chaos", "icon":":ocean:"}
 }

@@ -479,7 +479,6 @@ if show_weight:
 	footer=f'-footer "Weight carried {weight:.2f} / {max_weight} lbs, with {len(unmatched) if unmatched else "no" } unrecognized items."'
 
 if debug_break:
-
 	fields+=f' -f "Debug [{dbg}/{debug_break}]|{nl.join(debug)}|inline" -f "Iterations|{iterations} remaining|inline"'
 	if args:
 		fields+=f' -f "arguments remaining|`{args}`"'
