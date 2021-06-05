@@ -52,7 +52,7 @@ for a in args:
 		continue
 	field_list.append(a)
 
-default_fields=["name", "hp", "ac", "spell"]
+default_fields=[f for f,prop in config.items() if prop.get('default',False)]
 if ap.last('default'):
 	field_list=default_fields+field_list
 
@@ -172,7 +172,8 @@ for s in stat:
 			continue
 		display=f.get('display')
 		icon=f.get('icon','')
-		icon+=' ' if icon else ''
+		if icon and typeof(icon)=='str':
+			icon+=' '
 		if display=='name':
 			if f.get('bold'):
 				field.append(f'{icon}**{s.name}**')
@@ -189,6 +190,10 @@ for s in stat:
 					field.append(f':heart: {ch.death_saves}')
 			else:
 				field.append(':skull_crossbones:')
+		elif display=='bar' and s.hp:
+			bar_length=f.get('length',10)
+			div = 1 + (s.max_hp // bar_length)
+			field.append(f'{icon * (s.hp // div)}{f.get("alticon",":black_large_square:") * ((s.max_hp - s.hp) // div)} {"" if div == 1 else f"[x{div}]"}')
 		elif display=='ac' and s.ac:
 			field.append(f'{icon}{s.ac}')
 		elif display=='spell' and s.spellbook:
@@ -197,15 +202,17 @@ for s in stat:
 			sb=s.spellbook
 			ss=[f'{label[lvl]}{sb.slots_str(lvl)[3:] if bubble else f"{sb.get_slots(lvl)}/{sb.get_max_slots(lvl)}"}' for lvl in range(1,10) if sb.get_max_slots(lvl)]
 			field.append(icon+' '.join(ss))
+		elif display=='label':
+			field.append(icon+f.get('text',''))
 		elif display=='class':
 			if cr:=s.levels.get('Monster'):	# mosnter class, show as CR
 				if cr<1:
 					cr=f'1/{int(1/cr)}'
 				field.append(f'{icon}CR {cr}')
 			else:
-				subclass = load_json(get('subclass', '{}')) if ch else {}
-				subclass = {cls[:-5]: sub for cls, sub in subclass.items()}
-				levels=[f'{subclass[cls]} {cls} `{level}`' if cls in subclass else f'{cls} `{level}`' for cls,level in s.levels]
+				sub_class = load_json(get('subclass', '{}')) if ch else {}
+				sub_class = {cls[:-5]: sub for cls, sub in sub_class.items()}
+				levels=[f'{sub_class[cls]} {cls} `{level}`' if cls in sub_class else f'{cls} `{level}`' for cls,level in s.levels]
 				field.append(icon+'/'.join(lvl for lvl in levels))
 		elif display=='xp' and ch:
 			cc='Experience'
@@ -234,6 +241,10 @@ for s in stat:
 				field.append(f'{icon}`{total_hd}`/`{max_hd}`')
 		elif display=='coins' and bag_items and coins:
 			field.append(f'{icon} {" ".join(f"`{q}`{c}" for c in coins if (q:=bag_items.get(c,0)))}')
+		elif display == 'gold' and bag_items:
+			conversion={'pp':10.0,'ep':5.0,'gp':1.0,'sp':0.1,'cp':0.01}
+			gold=sum(conversion.get(k,0)*q for k,q in bag_items.items())
+			field.append(f'{icon} {gold:.2f}'.rstrip('0').rstrip('.'))
 		elif display=='flag' and ch and ch.cc_exists(cc:=f['cc']):
 			field.append(icon * ch.get_cc(cc))
 		elif display=='cc' and ch and ch.cc_exists(cc:=f['cc']):

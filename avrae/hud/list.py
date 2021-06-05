@@ -1,7 +1,7 @@
 <drac2>
 config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
 display_fields={
-	None:["name","hp","ac","hd","spell","xp","xp","class","coins"],
+	None:["name","hp","bar","ac","hd","spell","xp","xp","class","coins","gold","label"],
 	"Consumable":["cc","flag"],
 	"Item":["item"]
 }
