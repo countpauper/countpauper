@@ -4,7 +4,7 @@ char=character()
 alias_name = ctx.alias.split()[0]
 if not char.cc_exists(cc) or char.get_cc(cc)<=0:
 	return f'echo You need to have Dungeon Master Inspiration to reward another player. Use `!{alias_name}` if you\'re supposed to have it.'
-target="&*&"
+target="""&*&"""
 if not target:
 	return f'echo Use `!{ctx.alias} reward <name>` to use your own Dungeon Master Inspiration to reward another player.'
 char.mod_cc(cc,-1)

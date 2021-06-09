@@ -1,5 +1,5 @@
 <drac2>
-args="&*&"
+args="""&*&""".strip('"\' ')
 
 if not args:
 	return f'help {ctx.alias} create -here'

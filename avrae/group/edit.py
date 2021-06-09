@@ -7,7 +7,7 @@ c=combat()
 if not c:
 	return f'echo The channel needs to be in initiaive. Use `{ctx.prefix}{ctx.alias}` begin or `{ctx.prefix}i begin`'
 args=args.split('-',maxsplit=1)
-groupname=args[0].strip()
+groupname=args[0].strip('"\' ')
 
 # parse notes and options
 args=argparse('-'+args[1]) if len(args)>1 else argparse('')
