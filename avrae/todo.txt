@@ -1,0 +1,7 @@
+Quickbag: count release & message
+weather: wind arrows and gvar dependency reduction
+Quickbag: adding plurals can now easily end up with two separate items in bag how to fix? Remove all plurals from the table and fix plural arguments in the same way?
+state: finish var rename thing
+state: skill bonuses (initiative, perception especially)
+state: server variable for defaults ?
+ic: [grisix] Could there be a server variable that identifies one or more chanID()/names as always allowing !ic, even if the local variable for the player does not have this chanid()/name?
