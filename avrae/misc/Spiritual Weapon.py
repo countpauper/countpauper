@@ -19,7 +19,7 @@ size_prefix='Size: '
 caster=None
 if c:=combat():
 	caster=c.current
-	if caster.controller!=ctx.author.id:
+	if not caster or caster.controller!=ctx.author.id:
 		caster=c.me
 
 # get the current location of the weapon from the overlay or the current location of the caster
@@ -35,9 +35,15 @@ if caster:
 		# parse the overlay string
 		size_idx=min(idx for idx,c in enumerate(overlay_note) if c.isdigit())	 			# skip shape
 		color_idx=size_idx+min(idx for idx,c in enumerate(overlay_note[size_idx:]) if not c.isdigit()) # skip size
-		coord_idx=color_idx+min(idx for idx,c in enumerate(overlay_note[color_idx:]) if c.isupper())	# get color
+		if overlay_note[color_idx]=='~':
+			coord_idx=color_idx+7 # ~hex color
+		else:
+			coord_idx=color_idx+1	# default 1 char id
+			for col in ['gy','pk','bn','bk']:	# multi char color ids
+				if overlay_note[coord_idx].lower().startswith(col):
+					coord_idx=color_idx+len(col)
 		ovl_color=overlay_note[color_idx:coord_idx]
-		origin_pos=overlay_note[coord_idx:]
+		origin_pos=overlay_note[coord_idx:].upper()
 		max_range=20//5
 		move_explain="As a bonus action on your turn, you can move the weapon up to 20 feet and repeat the attack against a creature within 5 feet of it."
 	elif location_note:=([note[len(loc_prefix):] for note in caster_notes if note.startswith(loc_prefix)]+[None])[0]:
@@ -69,6 +75,11 @@ if c:
 				target_size=grid_sizes.get(size_note[0].upper(),0)
 			else:
 				target_size=1
+
+# explicit move to *Z9 is no check
+if '*' in target_pos:
+	max_range=None
+	target_pos=target_pos.replace('*','')
 
 # convert the text locations to the x,y coordinates
 op = dict(x=x_axis.get(''.join(c for c in origin_pos if c.isalpha())),
@@ -117,14 +128,18 @@ if caster:
 		caster_notes.append(f'{ovl_prefix}c2{ovl_color}{destination_pos}')
 	caster.set_note(' | '.join(caster_notes))
 
+# clean spiritual weapon arguments like -m from the argstring
+for m in args.get('m'):
+	argstr=argstr.replace(f'-m {m}','')
+
 if caster:
 	effect_name = 'spiritual weapon'
 	# instead of effect, could ook for actual attack
 	# TODO: instead of aoo and reactcast, could use normal a and cast if current.name==caster.name
 	if caster.get_effect(effect_name) is None:
-		cmd=f'i reactcast "{caster.name}" "Spiritual Weapon"'
+		cmd=f'i reactcast "{caster.name}" "Spiritual Weapon"  {argstr}'
 	elif target:
-		cmd=f'i aoo "{caster.name}" "Spiritual Weapon"'
+		cmd=f'i aoo "{caster.name}" "Spiritual Weapon" {argstr}'
 	elif move_field:
 		cmd=f'embed -title "{caster.name} moves the Spiritual Weapon." -desc "{move_explain}"'
 	else:
@@ -134,5 +149,5 @@ if caster:
 else:
 	cmd=f'cast "Spiritual Weapon"'
 
-return f'{cmd} {argstr} {move_field}'
+return f'{cmd} {move_field}'
 </drac2>

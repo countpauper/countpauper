@@ -63,7 +63,7 @@ elif uvar_exists(UVAR_GLOBAL_NPC) and npc_global_id in combined_roster:
 
 # Couldn't find an NPC for the given ID...
 else:
-    return f'techo 5 Could not find NPC `{cmd}`. This message will self destruct in 3… 2… 1…'
+    return f'techo 6 Could not find NPC `{cmd}`. You can use ctrl-Z to recall your input until you switch channels. This message will self destruct in 3… 2… 1…'
 
 if npc and msg:
     thumb = npc["image"]

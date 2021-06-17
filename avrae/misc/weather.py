@@ -1,15 +1,16 @@
 !alias weather <drac2>
 args=&ARGS&
-x=args[0] if args else get('biome','list')
+cv='climate'
+x=args[0] if args else get(cv,'list')
 n="\n"
 g=load_json(get_gvar('16b912b6-817a-4923-9f66-f765bd69f346'))
 C=g.climate
 if x in 'list':
-	return f'embed -title "Supported Biomes" -desc "{n.join(c.title() for c in C.keys())}" -footer "{ctx.prefix}{ctx.alias} [biome] [season]"'
+	return f'embed -title "Supported Climates" -desc "{n.join(c.title() for c in C.keys())}" -footer "{ctx.prefix}{ctx.alias} [climate] [season]"'
 x2=([k for k in C.keys() if x.lower() in k]+[None])[0]
 if not x2:
 	return f'echo Unknown climate `{x}`'
-set_uvar('climate',x2)
+set_uvar(cv,x2)
 
 sns=g.season
 s=None
@@ -36,7 +37,7 @@ dir=g.wind
 c=g.weather
 
 s=p.title()
-bft=[0,1,4,8,13,19,25,32,39,47,55,64,72]
+bft=[0,1,4,8,13,19,25,32,39,47,55,64,73]
 bft=min(idx for idx,mpb in enumerate(bft) if mpb>=w)
 t=f'-title "Today\'s Weather:  {x2.title()}, {s}"'
 if tl>0:
@@ -45,7 +46,7 @@ else:
 	weather=[w for v,w in g.freezing.items() if r>int(v)][-1]
 
 weather=f'-f "Weather|{weather}"'
-wind=f'-f "Wind|💨 {w} mph ({round(0.447*w)} m/s) ({bft} bft), {(dir[wd-1] if w!=0 else "Still")}"'
+wind=f'-f "Wind|💨 {bft} bft ({w} mph, {round(0.447*w)} m/s), {(dir[wd-1] if w!=0 else "Still")}"'
 c0f,cf=32,9/5
 temp=f'-f "Temperature|🌡️ High: {th}°C ({round(cf*th+c0f)}°F)  | Low: {tl}°C ({round(cf*tl+c0f)}°F)"'
 return f'embed {t} {weather} {wind} {temp}' # -f "Debug|{r}"'
