@@ -44,6 +44,15 @@ argstring = '''&*&'''.replace('"', '\\"').replace("'", "\\'")
 if not argstring:
     return f'techo 5 Use `{ctx.prefix}{ctx.alias} [<npc>] <text>`'
 
+# find images by extension and remove them from the argstring text
+args=argstring.split()
+image_extensions=['.png','.gif','.jpg','.jpeg','.gifv']
+if images:=[a for a in args if any(a.lower().endswith(ext) for ext in image_extensions)]:
+    image=images[-1]
+    argstring=argstring.replace(image,'')
+else:
+    image=None
+
 cmd = "&1&"
 channel_id = str(ctx.channel.id)
 if cmd in combined_roster:
@@ -63,20 +72,23 @@ elif uvar_exists(UVAR_GLOBAL_NPC) and npc_global_id in combined_roster:
 
 # Couldn't find an NPC for the given ID...
 else:
-    return f'techo 6 Could not find NPC `{cmd}`. You can use ctrl-Z to recall your input until you switch channels. This message will self destruct in 3… 2… 1…'
+    return f'techo 6 Could not find NPC `{cmd}`. You can use ctrl-Z to recall your input, until you switch channels. This message will self destruct in 3… 2… 1…'
 
-if npc and msg:
+if npc:
     thumb = npc["image"]
     npc_color = npc["color"]
     out.append(f'-title "{npc["name"]}"')
 
+if msg:
     out.append(f'-desc "{msg}"')
-    show_footer = False
 
 out.append(f'-color {npc_color if npc_color else color}')
 
 if thumb:
     out.append(f'-thumb {thumb}')
+
+if image:
+    out.append(f'-image {image}')
 
 return " ".join(out)
 </drac2>
