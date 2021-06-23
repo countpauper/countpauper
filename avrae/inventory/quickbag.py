@@ -222,19 +222,19 @@ while args:
 			continue
 
 	## Add: new bags
-	if delta==1:
+	if delta>=1:
 		if partial:
 			new_bags=[nb for nb in containers if nb.startswith(item_name) or space_name in nb]
 		else:
 			new_bags=[nb for nb in containers if item_name==nb]
 		if new_bags:
 			new_bag=new_bags[0].title()
-			bags.append([new_bag,{}])
-			args.insert(0,new_bag)	# queue switching to this bag
+			bags+=[[new_bag,{}]]*delta
+			bag_idx=len(bags)-delta
 
 			# add the bag's name in its report to remember that it's new
-			report[len(bags)-1]={new_bag:[1]}
-			debug.append(f'Bag {new_bag}')
+			report[bag_idx]={new_bag:[delta]}
+			debug.append(f'Bag {delta}x{new_bag}')
 			delta=None
 			continue
 
@@ -302,24 +302,22 @@ while args:
 			delta=None
 			continue
 
-
 	# Default bag: about to add items to  the current bag, if there is no current bag, select one
 	if bag_idx is None:
-		default_bags = [b[0] for i, b in enumerate(bags) if
+		default_bags = [(i,b[0]) for i, b in enumerate(bags) if
 						i not in removed_bags and (b[0].lower() not in special_bags)]
 		# queue switching to the default bag explicitly and adding the current item. create arg basic one if none found
 		if default_bags:
-			default_bag = default_bags[0]
-			args = [default_bag, str(delta), arg] + args
+			bag_idx,default_bag = default_bags[0]
 			debug.append(f'Default {default_bag}')
-			delta = None
-			continue
+			bag=bags[bag_idx]
 		elif containers and delta > 0:
 			default_bag = containers[0]
 			debug.append(f'Default* {default_bag}')
-			args = [default_bag, str(delta), arg] + args
-			delta = None
-			continue
+			bags.append([default_bag,{}])
+			bag_idx=len(bags)-1
+			bag=bags[bag_idx]
+			report[bag_idx]={default_bag:[1]}
 		else:
 			pass
 	# Add NEW known items to the current bag
@@ -374,10 +372,13 @@ while args:
 		delta=None
 		continue
 
-	debug.append('f Missing {-delta} {item_name}')
-	diff=report.get('fail',{})
-	diff[item_name]=diff.get(item_name,[])+[delta]
-	report['fail']=diff
+	# missing items
+	if delta<0:
+		debug.append('f Missing {-delta} {item_name}')
+		diff=report.get('fail',{})
+		diff[item_name]=diff.get(item_name,[])+[delta]
+		report['fail']=diff
+		continue
 
 	delta=1
 

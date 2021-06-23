@@ -1,5 +1,6 @@
 !cvar delete bags
-# add dungeon backpack 9gp and a quiver with 10 arrows (still shows redundant sack)
+# add dungeon backpack,  shovel, pot, clothes, 9gp and a quiver with 10 arrows (still shows redundant sack)
+# TODO: should notify about optional artisan's tools
 !bqb dungeon folk quiver 10 arr 9 -gp
 # double check format
 !cvar bags
