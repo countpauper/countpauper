@@ -39,7 +39,7 @@ if item:
 
 			price = f'{int(price)} {coin}'
 			item=item.title().replace("'S","'s")
-			item_field=f'-f "{item}|{price}|inline"'
+			item_field=f'-f "{item}|`!coins -{price}`|inline"'
 		else:
 			item=item.title().replace("'S","'s")
 			item_field=f'-f "{item}|*Price unknown*|inline"'
