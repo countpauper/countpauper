@@ -1,5 +1,8 @@
 <drac2>
 # fix extra sack problem (ie !qb dungeon folk will add a sack because it doesn't have a default bag before the set. Move bag creation to actual adding items?)
+# irrgular plural: torches (and such) in separate database
+# if argument ends in plural (rations) and quantity>1 then remove plural on partial match
+# compact coins for coin pouch display
 # $ prefix buys (automatically remove coins), but change? and -$ to sell?
 # Weight delta (with support for custom weight configuration from bag)
 # Add capped removal items back to show in failed
@@ -119,7 +122,7 @@ while args:
 	if not arg:	# spaces after prefixes are allowed, just continue parsing next argument
 		continue
 
-	# heuristic to
+	# heuristic to detect missing quotes
 	if arg in short_words:
 		err(f'`{arg}` is not an item. Use "quotes" for items that consist of more than one word.')
 
@@ -275,7 +278,8 @@ while args:
 			if partial:
 				remove_items = {n:q for n,q in remove_bag.items() if n.lower().startswith(item_name) or space_name in n.lower()}
 			else:
-				remove_items = {n:q for n,q in remove_bag.items() if n.lower()==item_name}
+				remove_items = {n:q for n,q in remove_bag.items() if n.lower()==item_name or # exact match
+								(delta<1 and item_name[-1]=='s' and n.lower()==item_name[:-1])}	# plural name exact singular match
 			for remove_item,current in remove_items.items():
 				if current>-delta:
 					remove_bag[remove_item]+=delta
