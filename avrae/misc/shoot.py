@@ -13,11 +13,18 @@ ready_bags=server_data.get('equipment',[])+char_data.get('equipment',[])+game_da
 weapons=server_data.get('weapons', char_data.get('weapons', game_data.get('ranged_weapons')))
 ammo_containers=server_data.get('ammo', char_data.get('ammo', game_data.get('ammo_bags')))
 
+# ensure all configuration is lower case
+ready_bags=[rb.lower() for rb in ready_bags]
+weapons={w.lower():wd for w,wd in weapons.items()}
+ammo_containers={ac.lower():ad for ac,ad in ammo_containers.items()}
+
 # explicit argument attacks
 attack_options=None
 if len(arg_str):
 	first_arg='%1%'
-	if first_arg[0]!='-':
+	# if the first argument is a known attack argument/snippet, don't use it for partial matching
+	known_snippets=['adv','dis','ea','magical','max','crit','nocrit','hit','miss','sneak','tides','curse','foe','gwm','gfb','bb','steady','rage','hex','dmi','ammo']
+	if first_arg[0]!='-' and not first_arg in known_snippets:
 		attack_options=[a.name for a in c.attacks if first_arg.lower() in a.name.lower()]
 # else all recognized ranged attacks
 if attack_options is None:
@@ -28,29 +35,25 @@ If the attack name contains one of {", ".join(weapons.keys())} it will be automa
 Altenatively you can specify an existing attack as the first argument to throw it."""
 
 original_attacks = attack_options
-# auto resolve attack matching the wielded weapon
-ignore = args.last('i')
-equipment_bags = []
-if bags:
-	# check all ready_bags if they exist
-	for rb in ready_bags:	# ordered so equipment bags are priotized
-		equipment_bags+=[b for b in bags if b[0].lower()==rb.lower()]
+# auto select attack matching the wielded weapon
+equipment_bags = [b for b in bags if b[0].lower() in ready_bags]
+if bags and len(attack_options)>1:
 	if not equipment_bags and not ignore:
 		return f'echo No valid equipped weapon bags. Create a bag using `!bag $ "{ready_bags[0]}"`. Other valid bag names are: {", ".join(ready_bags[1:])}'
 
 	# filter out all attack options matching (partial and case insentive) with items that are equipped
-	if not ignore:
-		equipped_items = []
-		for eb in equipment_bags:
-			equipped_items += eb[1].keys()
-		attack_options = [ao for ao in attack_options if any([ao.lower() in item.lower() for item in equipped_items])]
-
-	equipment_bags = [eb[0] for eb in equipment_bags]
-	if not attack_options:
-		return f'echo No valid attack options. Make sure you equip a matching weapon using `!bag {equipment_bags[0]} + "{original_attacks[0]}"` '
+	equipped_items = []
+	for _,eb in equipment_bags:
+		equipped_items+=eb.keys()
+	equipped_weapons = [ao for ao in attack_options if any([ao.lower() in item.lower() for item in equipped_items])]
+	# return f'echo attacks {attack_options} bags {equipment_bags} equipped {equipped_items} equipped rnged weapons {equipped_weapons}'
+	if len(equipped_weapons) > 1:
+		return f'echo Too many equipped weapons Use `!{ctx.alias} <attack> [arguments]`, pick attack from: {", ".join(equipped_weapons)}."'
+	elif equipped_weapons:
+		attack_options=equipped_weapons
 
 if len(attack_options)>1:
-	return f'echo Too many attack options. Use `!{ctx.alias} <attack> [arguments]`, pick attack from: {", ".join(attack_options)}'
+	return f'echo Too many attack options. Use `!{ctx.alias} <attack> [arguments]`, pick attack from: {", ".join(attack_options)}.\nYou can also pre-select by placing your favored ranged weapon in a ready bag like *{" ".join(ready_bags)}*.'
 
 attack_name=attack_options[0]
 
@@ -81,7 +84,6 @@ if len(ammo_split)>1:
 		bonus_str=f'magical  -b {bonus} -d {bonus}'
 
 ammo_bag_names=[ammo_container.lower() for (contained_ammo,ammo_container) in ammo_containers.items() if contained_ammo.lower() in ammo_name.lower()]
-ammo_bag_names+=[eb.lower() for eb in equipment_bags]
 # compute the needed ammo
 ammount =  len(args.get('t'))
 if ammount==0:
@@ -90,12 +92,10 @@ ammount *= int(args.last('rr',1))
 
 if bags:
 	# collect all existing ammo bags, sorted by preference
-	ammo_bags=[]
-	for ammo_bag_name in ammo_bag_names:
-		ammo_bags+=[b for b in bags if b[0].lower()==ammo_bag_name]
-
-	# RAW all containers can be used as part of an action, just prefer the ammo bags, add the rest after
-	ammo_bags+=[b for b in bags if b[0].lower() not in ammo_bag_names]
+	ammo_bags=[b for b in bags if b[0].lower() in ammo_bag_names]
+	ammo_bags+=equipment_bags
+	# RAW all containers can be used as part of an action, just prefer the ammo bags, equipment bags, add the rest after
+	ammo_bags+=[b for b in bags if not b in ammo_bags]
 	bag_name=ammo_bags[0][0]
 
 	used_ammo={}
