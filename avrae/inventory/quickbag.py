@@ -69,6 +69,7 @@ if args[0].startswith('dbg='):
 delta=None
 buy=False
 bag_idx=None	# track selection using index for report
+force_bag=False	# explicitly selected bags have preference for the next item over coin pouch and removal
 removed_bags=[]
 debug=[]
 report={}	# list of modified bags: {bagidx:{item_name:[amount deltas]}], could be bag index to resolve reuse
@@ -169,6 +170,7 @@ while args:
 		# select existing bag
 		elif delta is None and existing_bags:
 			bag_idx=existing_bags[0]
+			force_bag=True
 			bag=bags[bag_idx]
 			# TODO: what if it's the same bag? dict? what is it's not? index?
 			# TODO: report
@@ -188,7 +190,7 @@ while args:
 
 
 	## Coins : if an item is in the coin pouch, change the coins (don't remove the whole entry)
-	if coin_idx is not None:
+	if coin_idx is not None  and not force_bag:
 		money=bags[coin_idx][1]
 		if item_name in money.keys():
 			current=money.get(item_name,0)
@@ -262,6 +264,7 @@ while args:
 			change=current-amount
 			diff[mod_item]=diff.get(mod_item,[current])+[change]
 			report[bag_idx]=diff
+			force_bag=False
 
 			# next arg, unless still items to remove
 			delta+=change
@@ -271,10 +274,11 @@ while args:
 
 	# Remove items from any bag
 	if delta<0:
-		for bi,remove_bag in enumerate(bags):
-			if bi in removed_bags:
-				continue
-			remove_bag=remove_bag[1]
+		if force_bag:
+			remove_bags={bag_idx:bags[bag_idx][1]}
+		else:
+			remove_bags={i:b[1] for i,b in enumerate(bags) if not i in removed_bags}
+		for bi,remove_bag in remove_bags.items():
 			if partial:
 				remove_items = {n:q for n,q in remove_bag.items() if n.lower().startswith(item_name) or space_name in n.lower()}
 			else:
@@ -336,6 +340,7 @@ while args:
 			diff=report.get(bag_idx,{})
 			diff[new_item]=[0,delta]
 			report[bag_idx]=diff
+			force_bag=False
 
 			delta=None
 			continue
@@ -369,6 +374,7 @@ while args:
 		diff=report.get(bag_idx,{})
 		diff[new_item]=[0,delta]
 		report[bag_idx]=diff
+		force_bag = False
 		delta=None
 		continue
 

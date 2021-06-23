@@ -21,4 +21,7 @@
 # show weight but the same as before because the dagger is in the bag of holding
 !bag track on
 !bqb cp -cp
-!bqb -dagger
+# remove dagger from explicitly the bag of holding, also the weight should increase by 1 (100.24)
+!bqb dagger holding -dagger holding +10000gp
+# count the gold and the daggers:   should be 10008 gp 3sp 1 ep and 1 dagger still
+!bqb # $ dagger
