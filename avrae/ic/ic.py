@@ -48,16 +48,24 @@ img = args.last('image')
 footer = args.last('footer',settings.get('footer',''))
 
 # Check location limitation. cvar configured in settings.location, encoded as , separate list or json
-if loc_var:=settings.get('location'):
-	if loc:=get(loc_var):
-		loc=loc.strip()
-		if loc[0] in '[{':
-			loc=load_json(loc)
-		else:
-			loc=loc.split(',')
-		loc=[l.lower() for l in loc]
-		if ctx.channel.name not in loc and str(ctx.channel.id) not in loc:
-			return f'techo 8 {title} is not currently in this channel.'
+channels=settings.get('channels',None)
+if typeof(channels)=='str':
+	channels=channels.split(',')
+
+if channels is not None and ctx.channel.name not in channels and str(ctx.channel.id) not in channels and ctx.channel.id not in channels:
+	if loc_var:=settings.get('location'):
+		if loc:=get(loc_var):
+			loc=loc.strip()
+			if loc[0] in '[{':
+				loc=load_json(loc)
+			else:
+				loc=loc.split(',')
+			loc=[l.lower() for l in loc]
+			if ctx.channel.name not in loc and str(ctx.channel.id) not in loc and ctx.channel.id not in loc:
+				return f'techo 8 {title} is not currently in this channel.'
+	else:
+		return f'techo 8 {title} is not currently in an in character channel.'
+
 channel=ctx.channel.name	# set channel to be used in footer
 
 # convert color names to hex
