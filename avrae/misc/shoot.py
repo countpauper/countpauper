@@ -10,12 +10,12 @@ server_data=load_json(get_svar(var_name,'{}'))
 char_data=load_json(get(var_name,'{}'))
 game_data=load_json(get_gvar('c2bd6046-90aa-4a2e-844e-ee736ccbc4ab'))
 ready_bags=server_data.get('equipment',[])+char_data.get('equipment',[])+game_data.get('equipment_bags',[])
-weapons=server_data.get('weapons', char_data.get('weapons', game_data.get('ranged_weapons')))
+weapons=server_data.get('weapons', char_data.get('weapons', game_data.get('weapons')))
 ammo_containers=server_data.get('ammo', char_data.get('ammo', game_data.get('ammo_bags')))
 
 # ensure all configuration is lower case
 ready_bags=[rb.lower() for rb in ready_bags]
-weapons={w.lower():wd for w,wd in weapons.items()}
+weapons={w.lower():wd for w,wd in weapons.items() if wd.get('range')}
 ammo_containers={ac.lower():ad for ac,ad in ammo_containers.items()}
 
 # explicit argument attacks
@@ -37,9 +37,7 @@ Altenatively you can specify an existing attack as the first argument to throw i
 original_attacks = attack_options
 # auto select attack matching the wielded weapon
 equipment_bags = [b for b in bags if b[0].lower() in ready_bags]
-if bags and len(attack_options)>1:
-	if not equipment_bags and not ignore:
-		return f'echo No valid equipped weapon bags. Create a bag using `!bag $ "{ready_bags[0]}"`. Other valid bag names are: {", ".join(ready_bags[1:])}'
+if equipment_bags and len(attack_options)>1:
 
 	# filter out all attack options matching (partial and case insentive) with items that are equipped
 	equipped_items = []
@@ -61,7 +59,7 @@ ammo_name = args.last('ammo')
 specific_ammo=True
 if not ammo_name:
 	# partial case insensitive weapon to attack matches, to allow for +1 weapons
-	ammo_matches = [weapon.get('ammo') for (weapon_name, weapon) in weapons.items() if weapon_name.lower() in attack_name.lower()]
+	ammo_matches = [weapon.get('ammo',weapon_name) for (weapon_name, weapon) in weapons.items() if weapon_name.lower() in attack_name.lower()]
 	specific_ammo = False
 	if ammo_matches:
 		ammo_name = ammo_matches[0]

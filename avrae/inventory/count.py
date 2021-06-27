@@ -51,8 +51,8 @@ owned=dict()
 for item_names in items.values():
 	arg_owned=dict()
 	for item_name in item_names:
-		quantity=sum(q for _,b in bags for i,q in b.items() if i.lower()==arg)
-		quantity+=sum(1 for bn,_ in bags if arg==bn.lower())
+		quantity=sum(q for _,b in bags for i,q in b.items() if i.lower()==item_name)
+		quantity+=sum(1 for bn,_ in bags if item_name==bn.lower())
 		if not quantity:	 # partial item matches
 			quantity=sum(q for _,b in bags for i,q in b.items() if item_name in i.lower())
 			quantity+=sum(1 for bn,_ in bags if item_name in bn.lower())
