@@ -33,11 +33,7 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chance/csv2json.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/csv2json.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/downtime/user_facing.json" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/user_facing.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/bagdat.json" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/bagdat.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/count.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/count.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/shoot.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/shoot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/state/combat.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/combat.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -264,10 +260,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="615" y="139" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1619193490387" />
-    <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1624734264217">
+    <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1624805494565">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1624734264217" />
+    <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1624805494565" />
     <state x="771" y="493" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1620808490736" />
     <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1624795217254">
       <screen x="0" y="0" width="1920" height="1040" />

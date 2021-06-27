@@ -1,20 +1,12 @@
 <drac2>
 # TODO: pre compute location of all combatants and put in dict
-# compute melee/ranged/extended range of all attacks
-# compute range of all attack type cantrips/ (use magic list, add range?)
-# compute range of all spells
-# show range: melee is swords, ranged is bow, extended range is bow with ? or telescope out of range is nothing/telescope, cantrip is wand, spell is sparkles
-#
-# show concentration as icon
-# show condition effects with icons (unconscious, restrained, grappled, poisoned and so on)
-# SHow DM controlled by getting controller id of map/dm
 # show class or monster
 #
 # add all that to base !state for all characters in combat. (range, concentration, effects)
 
 C=combat()
 if not C:
-	return f'echo The current channel is not in combat.'
+	return f'techo 8 The current channel is not in combat.'
 result=[]
 roundstr=[':zero:',':one:',':two:',':three:',':four:',':five:',':six:',':seven:',':eight:',':nine:',':keycap_ten:']
 header=f'Combat Round {C.round_num if C.round_num>=len(roundstr) else roundstr[C.round_num]} in "{ctx.channel.name}"'
@@ -51,6 +43,25 @@ if C.me:
 		if spell_ranges:=[s.get('range',0) for s in spells.values() if s.level>0 and (s.get('save') or s.get('attack'))]:
 			ranges['spell']=max(spell_ranges)
 
+conditions=dict(
+	blinded=":see_no_evil:",
+	blindness=":see_no_evil:",
+	charmed=":heart_eyes:",
+	deafened=":hear_no_evil:",
+	deafness=":hear_no_evil:",
+	frightened=":scream:",
+	grappled="::people_wrestling:",
+	incapacitated=":face_with_spiral_eyes:",
+	invisible=":bust_in_silhouette:",
+	paralyzed=":ice_cube:",
+	petrified=":rock:",
+	poisoned=":snake:",
+	prone=":upside_down:",
+	restrained=":chains:",
+	stunned=":dizzy_face:",
+	unconscious=":sleeping:",
+	sleeping = ":sleeping:")
+
 heartstr = [':skull: Dying', ':broken_heart: Critical', ':hearts: Bloodied', ':heartbeat: Hurt', ':heartpulse: Healthy']
 distancestr=['', ':telescope:', ':bow_and_arrow:']
 for c in C.combatants:
@@ -61,12 +72,19 @@ for c in C.combatants:
 	if c.max_hp:
 		health=(c.hp>0) + (c.hp>=c.max_hp/7) + (c.hp>=c.max_hp/2) + (c.hp>=c.max_hp)
 		props+=[heartstr[health]]
-	props+=[e.name for e in c.effects]
+
+	for e in c.effects:
+		if prop:=[c_str for cond,c_str in conditions.items() if cond in e.name.lower()]:
+			props.append(''.join(prop))
+		elif e.conc and e.children:
+			props.append(':brain:')
+		else:
+			props.append(e.name)
+
 	you,distance='',''
 	if C.me and C.me.name==c.name:
 		you='(You)'
 	else:
-
 		you='(Yours)' if c.controller == ctx.author.id else f'({c.group.name})' if c.group else 'DM' if c.controller==dm_id else ''
 		if C.me and (me_loc:=location.get(C.me.name)) and (c_loc:=location.get(c.name)):
 			dx=me_loc.x-c_loc.x
