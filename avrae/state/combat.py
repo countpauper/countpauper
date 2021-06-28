@@ -1,7 +1,11 @@
 <drac2>
 # TODO: pre compute location of all combatants and put in dict
 # show class or monster
-#
+# (persistent) arguments to make health as %, number, bar or values or quality
+# option for timeout in seconds
+# option for range in feet #
+# argument to make class/effects/conditions shown or hidden
+
 # add all that to base !state for all characters in combat. (range, concentration, effects)
 
 C=combat()
@@ -50,7 +54,7 @@ conditions=dict(
 	deafened=":hear_no_evil:",
 	deafness=":hear_no_evil:",
 	frightened=":scream:",
-	grappled="::people_wrestling:",
+	grappled=":people_wrestling:",
 	incapacitated=":face_with_spiral_eyes:",
 	invisible=":bust_in_silhouette:",
 	paralyzed=":ice_cube:",
@@ -62,16 +66,16 @@ conditions=dict(
 	unconscious=":sleeping:",
 	sleeping = ":sleeping:")
 
-heartstr = [':skull: Dying', ':broken_heart: Critical', ':hearts: Bloodied', ':heartbeat: Hurt', ':heartpulse: Healthy']
-distancestr=['', ':telescope:', ':bow_and_arrow:']
+heartstr = [':skull:', ':broken_heart:', ':hearts:', ':heartbeat:', ':heartpulse:']
+distancestr=['', ':dart:', ':bow_and_arrow:']
 for c in C.combatants:
 	if c.name in dm_combatants:
 		continue
-	active=c.name==C.current.name
+	active=C.current and c.name==C.current.name
 	props=[]
 	if c.max_hp:
 		health=(c.hp>0) + (c.hp>=c.max_hp/7) + (c.hp>=c.max_hp/2) + (c.hp>=c.max_hp)
-		props+=[heartstr[health]]
+		props.append(f'{heartstr[health]}{":heavy_plus_sign:" if c.temp_hp>0 else ""}')
 
 	for e in c.effects:
 		if prop:=[c_str for cond,c_str in conditions.items() if cond in e.name.lower()]:
@@ -80,6 +84,8 @@ for c in C.combatants:
 			props.append(':brain:')
 		else:
 			props.append(e.name)
+
+	desc='npc' if c.levels.get('Monster')>0.0 else c.levels	# TODO: option
 
 	you,distance='',''
 	if C.me and C.me.name==c.name:
@@ -95,5 +101,5 @@ for c in C.combatants:
 			distance += ':sparkles:' if d<ranges.get('spell',-1) else ''
 	result.append(f'{":arrow_forward:" if active else ":white_large_square:"} **{c.name}** {you} {distance} {", ".join(props)}')
 nl='\n'
-return f'embed -title "{header}" -desc "{nl.join(result)}" -t 120 -footer "Will disappear in 2 minutes. {ctx.prefix}help {ctx.alias} combat for legend."'
+return f'embed -title "{header}" -desc "{nl.join(result)}" -t 60 -footer "This information will disappear in 1 minute. {ctx.prefix}help {ctx.alias} combat for legend."'
 </drac2>
