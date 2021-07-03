@@ -1,20 +1,21 @@
 <drac2>
 ## TODO:
+# Still partial match unrecognized items (eg superior healing potions) even if matching exact
 # other categories like `ammo`?
 # specify bag name doesn't count bag but that bag's contents?
 # coins compact mode
 
 bv='bags'
 bags=load_json(get(bv,'[]'))
-item_table=load_json(get_gvar('19753bce-e2c1-42af-8c4f-baf56e2f6749'))	 # original !bag items for interop
 var_name='quickbag'
 sv=get_svar(var_name,'')
 config=load_json(sv if sv else get(var_name,get_gvar('71ff40cc-4c5f-4ae5-bdb6-32130f869090')))
+item_table=config.get('items',load_json(get_gvar('19753bce-e2c1-42af-8c4f-baf56e2f6749')))
 coins=config.get('coinRates',{})
 coin_list=list(coins.keys())
 if coins[coin_list[0]]>coins[coin_list[-1]]:
 	coin_list.reverse()	# if it's sorted cheap (high rate per 1) to expensive (low rate per 1), reverse it. assume it's sorted at least
-item_table.update({c:dict(weight=0.02, cost=f'{1}{c}') for c in coins.keys()})
+item_table.update({c:dict(weight=0.02, cost=f'{1}{c}', plural=c) for c in coins.keys()})
 
 # use bagSettings
 bag_settings=load_json(get('bagSettings','{}'))
@@ -42,9 +43,11 @@ for arg in args:
 			item_names = [n.lower() for n in item_table.keys() if any(np.startswith(arg) for np in n.lower().split())]
 		#	if not item_names:
 		#		item_names=[n for n in item_table.keys() if arg in n.lower()]
+		for _,b in bags:
+			item_names+=[i.lower() for i in b.keys() if arg.lower() in i.lower() and not any(i.lower() in n for n in item_names)]
 		if item_names:
 			items[arg]=item_names
-		else:	 # unrecognzied item
+		else:
 			items[arg]=[arg]
 # count owned items
 owned=dict()
@@ -83,7 +86,7 @@ for idx,c in enumerate(coin_list[:-1]):
 	coin_cost[c]=int_cost
 
 # plural
-owned={(n if q<=1 or n in coin_list else n if n[-1]=='s' else f'{n}s'):q for n,q in owned.items()}
+owned={(n if q<=1 else item_table.get(n,{}).get('plural', n if n[-1]=='s' else f'{n}s')):q for n,q in owned.items()}
 # capitalize
 owned={(n.title().replace("'S","'s") if not n in coin_list else n):q for n,q in owned.items()}
 # format amounts

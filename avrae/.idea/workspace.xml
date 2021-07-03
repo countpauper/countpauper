@@ -34,7 +34,8 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/bagdat.json" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/bagdat.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state/combat.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/combat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/count.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/count.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -265,16 +266,16 @@
     </state>
     <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1624805494565" />
     <state x="771" y="493" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1620808490736" />
-    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1624795217254">
+    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1625325308380">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1624795217254" />
+    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1625325308380" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1623237652515" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1624709588990">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1624874531894">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1624709588990" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1623395607270" />
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1624874531894" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

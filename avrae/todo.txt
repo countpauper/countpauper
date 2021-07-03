@@ -1,6 +1,20 @@
+Item DB: alt=["Rope, Hempen"] spelling and use in #count (!qb # rope)
+- alt should be same or less words rearanged to not require partial matching duplication
 Quickbag: count release & message
+
+
+Quickbag: count plurals
+Add coins to list
+
+Remove packs
+Change packs from rations to ration or keep rations in item list -.-
+
+Remove ballbearings and other weird duplicates
+
 Quickbag: adding plurals can now easily end up with two separate items in bag how to fix? Remove all plurals from the table and fix plural arguments in the same way?
+
 
 state: finish var rename thing
 state: skill bonuses (initiative, perception especially)
+state: fields from !state combat (effects, conditions, range), separate default for targeted
 state: server variable for defaults ?
