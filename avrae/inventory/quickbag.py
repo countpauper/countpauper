@@ -125,11 +125,9 @@ while args:
 
 	# heuristic to detect missing quotes
 	if arg in short_words:
-		err(f'`{arg}` is not an item. Use "quotes" for items that consist of more than one word.')
+		return f'echo `{arg}` is not a recognizable item. Use "quotes" for items that consist of more than one word.'
 
 	# TODO: could maybe pop next arg here maybe and remove all the delta=1, buy=False, continue
-	# TODO: if 1 is +1 and arg is the name of an existing bag, then select that bag. If it's preceded by $ then add the bag to bags first
-
 	if delta==0:
 		continue
 
@@ -326,6 +324,8 @@ while args:
 			pass
 	# Add NEW known items to the current bag
 	if delta>0:
+		if len(item_name)==1:
+			return f'echo `{item_name}` is not a recognizable item. Use "quotes" for items that consist of more than one word.'
 		if partial:
 			iterations-=1
 			new_items += [n for n in item_list if n.startswith(item_name) or space_name in n.lower()]

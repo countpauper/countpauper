@@ -1,18 +1,17 @@
-- quickbag disallow one letter items and numbers (also for people doing !qb #)
-
 Item DB: spelling and use in #count (!qb # rope)
 - solution 1: synonyms list or main one
 - alt should be same or less words rearranged to not require partial matching duplication
 Quickbag: count release & message
 
-
+- Frog Report: !chance disintragrate (without target) gives the wrong error (Error evaluating expression: Dice expression syntax error: die size must be a positive number: 1disn)
+   because it thinks it may be a dice expression. Check if it has 2 characters at least and the 2nd is a decimal
 
 Random race npc generator
-- gender
+- * gender
 - subrace
-- age
-- name
-- birthplace
+- * age
+- * name
+- birthplace (linked to subrace)
 - profession
 - backstory
 
