@@ -1,7 +1,20 @@
-Item DB: alt=["Rope, Hempen"] spelling and use in #count (!qb # rope)
-- alt should be same or less words rearanged to not require partial matching duplication
+- quickbag disallow one letter items and numbers (also for people doing !qb #)
+
+Item DB: spelling and use in #count (!qb # rope)
+- solution 1: synonyms list or main one
+- alt should be same or less words rearranged to not require partial matching duplication
 Quickbag: count release & message
 
+
+
+Random race npc generator
+- gender
+- subrace
+- age
+- name
+- birthplace
+- profession
+- backstory
 
 Quickbag: count plurals
 Add coins to list

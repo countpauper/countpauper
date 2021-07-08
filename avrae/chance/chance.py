@@ -182,15 +182,14 @@ if executor:
 				err(f'Implementation limitation: Attack effect type `{effect_type}` for {query} not yet supported.')
 	elif executor.spellbook.dc:	 # optimization, don't scan 500 spells if not a caster
 		for query, spell_query in {spell_name:spell for spell_name,spell in spell_list.items() if spell_name.startswith(query.lower())}.items():
-			if spell_query.attack:
+			if spell_query.get('attack'):
 				save_query=None
 				if reroll_luck is None:
 					expression = f'1d20+{executor.spellbook.sab}'
 				else:
 					expression = f'1d20ro{reroll_luck}+{executor.spellbook.sab}'
 				break
-			elif spell_query.save:
-				save_query=spell_query.save
+			elif save_query:=spell_query.get('save'):
 				break
 			else:
 				spell_query=None
