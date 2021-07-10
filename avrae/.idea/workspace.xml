@@ -2,42 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Maths.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Maths.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Maths.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Maths.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Matrix.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Matrix.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Mesh.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Mesh.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Range.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Range.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Vector.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Vector.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Vector.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Vector.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Element.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Element.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Map.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Map.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Box.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/FluidData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/FluidData.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Tactics/Tactics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Tactics/Tactics.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Bounds.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Bounds.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Mesh.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Mesh.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/VoxelMap.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/Box.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/StaticEnvironment.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/npc_gen.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc_gen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/bagdat.json" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/bagdat.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/transfer.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/transfer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/date.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/date.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/unit.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/unit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

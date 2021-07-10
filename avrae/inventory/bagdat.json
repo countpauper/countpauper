@@ -322,8 +322,8 @@
   },
   "backgrounds": {
     "Acolyte": {"Holy Symbol": 1, "Block Of Incense": 5, "Vestment": 1, "Common Clothes": 1, "Prayer Book": 1, "gp":  15},
-    "Anthropologist":{"Chest": 1, "Map": 1,"Bullseye Lantern":1, "Miner's Pick":1, "Traveler's Clothes": 1, "Shovel": 1, "Tent": 1, "Trinket": 1,  "gp": 25 },
-    "Archaeologist": {"Leather-bound Diary": 1,"Ink": 1, "Ink Pen": 1, "Traveler's Clothes": 1, "Trinket": 1, "gp": 10},
+    "Archaeologist":{"Bullseye Lantern":1, "Miner's Pick":1, "Traveler's Clothes": 1, "Shovel": 1, "Tent": 1, "Trinket": 1, "Map Case": 1, "Map to a ruin or dungeon": 1, "gp": 25 },
+    "Anthropologist": {"Leather-bound Diary": 1,"Ink": 1, "Ink Pen": 1, "Traveler's Clothes": 1, "Trinket": 1, "gp": 10},
     "Athlete": {"Trophy": 1,"Traveler's Clothes": 1, "gp": 10},
     "Azorius Functionary": {"Azorius Isignia": 1, "Scroll of Law": 1, "Ink": 1, "Ink Pen": 1, "Fine Clothes": 1, "gp": 1},
     "Boros Legionnaire": {"Boros Insignia": 1, "Feather from an Angels's Wing": 1, "Tattered Piece of Boros Banner": 1, "Common Clothes": 1, "gp": 2},

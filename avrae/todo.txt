@@ -1,7 +1,4 @@
-
-- Frog Report: !chance disintragrate (without target) gives the wrong error (Error evaluating expression: Dice expression syntax error: die size must be a positive number: 1disn)
-   because it thinks it may be a dice expression. Check if it has 2 characters at least and the 2nd is a decimal
-
+!chance auto adding of save effects not done due to target/executor swap
 
 Item DB: spelling and use in #count (!qb # rope)
 - solution 1: synonyms list or main one

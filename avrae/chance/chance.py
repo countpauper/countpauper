@@ -263,7 +263,7 @@ if fight:=combat():
 					pass #
 
 # d8 is a valid expression, defaults to 1 die
-if expression[0]=='d':
+if expression[0]=='d' and len(expression)>1 and expression[1].isdecimal():
 	expression='1'+expression
 
 # dice expression has to start with a number or d to be a valid spell/skill/attack
@@ -280,7 +280,15 @@ else:
 	effects=executor.effects
 
 # append argument and effect bonuses to the expression
-expression='+'.join([expression]+args.get('b')+[e.effect.get('b',0) for e in effects if 'b' in e.effect.keys()])
+effect_prefix=None
+if attack:
+	effect_prefix='b'
+elif skill:
+	effect_prefix='cb'
+# TODO save but look at target?
+else:
+	effect_prefix = None
+expression='+'.join([expression]+args.get('b')+[e.effect.get(effect_prefix,'0') for e in effects if effect_prefix in e.effect])
 
 # chance the query < constant
 expression=expression.replace(' ','')
