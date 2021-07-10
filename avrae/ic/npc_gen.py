@@ -1,6 +1,7 @@
 <drac2>
 # left 7 Aarakorca, Dragonborn, Tabaxi, Tiefling Genasi, Goliath, Aasimar, Bugbear, Firbolg, Goblin, Hobgoblin, Kenku, Kobold, Lizardfolk, Orc, Tabaxi, Triton, Yuan-Ti, Fey, but names ...
 races={"Human":65,"Dwarf":10,"Half Orc":5,"Elf":4,"Halfling":4,"Gnome":2,"Half Elf":1}
+# TODO: location specific/configurable distributions
 race_names={"Half Elf":["Human","Elf"],"Half Orc":["Human","Orc"]}	# TODO more race data like ages
 # TODO: half elves and half orcs, use combination tables of human/elf and human/orc
 genders={'Male':50,'Female':50}	# TODO: non binary, Race specific

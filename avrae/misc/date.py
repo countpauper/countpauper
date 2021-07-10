@@ -8,8 +8,9 @@ if C:
 if h:
 	return f'-title "Wait, what day is it?" -desc "{H[0]}" -f "Calendar Source|{G}"'
 vn=f'Date_{ctx.guild.id}' if ctx.guild else 'Date'
-dy=int(get(vn,1))
-dy=dy if'&1&'=='&1'+'&'else int(dy)+1 if'&1&'in'next'else int(dy)-1 if'&1&'in'prev'else int('&2&')if'&2&'!='&2'+'&'and'&1&'in'set'else int('&1&')if not(h or C)else 1
+dy=get(vn,'1')
+dy=dy if'&1&'=='&1'+'&'else f'{dy}+1' if'&1&'in'next'else f'{dy}-1' if'&1&'in'prev'else '&2&' if'&2&'!='&2'+'&'and'&1&'in'set'else '&1&' if not(h or C)else '1'
+dy=roll(dy)
 M=[i.length for i in g.months]
 N=[i.name for i in g.months]
 mth,dy=1,(dy if dy<=g.length else dy%g.length)

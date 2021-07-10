@@ -10,7 +10,7 @@ ounce_per_liter=33.814
 
 table={
 	"ft":{"m":1.0/ft_per_m},
-	"feet": {"m": 1.0/ft_per_m},
+	"foot": {"m": 1.0/ft_per_m},
 	"'": {"m": 1.0/ft_per_m},
 	"inch":{"cm":100/inch_per_m},
 # avrae can't parse "\"": {"cm": 100/inch_per_m},
@@ -30,8 +30,12 @@ table={
 	"fortnight":{"days": 14, "weeks":2}
 }
 
+synonyms={"fts":"ft","foot":"feet","inches":"inch","miles":"mile","lbs":"lb","ounces":"ounce","liters":"liter"}
+
 arg="""&*&""".lower()
 sep=', '
+for syn, org in synonyms.items():
+	arg = arg.replace(syn, org)
 for u,conv in table.items():
 	if arg.endswith(u):
 		v=arg[:-len(u)].strip().replace(',','')
@@ -39,7 +43,6 @@ for u,conv in table.items():
 			v='1'
 		if v.replace('.','').isdecimal():
 			v=float(v)
-
 			return f'echo **{arg}**= {sep.join(f"{v*f:.1f} {u}" for u,f in conv.items())}'
 return f'echo Unit of `{arg}` if not recognized. Use `!{ctx.prefix}{ctx.alias} <value> <unit>` where unit is one of {sep.join(table.keys())}. '
 </drac2>
