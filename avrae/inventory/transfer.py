@@ -36,14 +36,17 @@ else:
 	target_bag=([b for b in bags if b[0].lower()==target_name] +
 				[b for b in bags if b[0].lower().startswith(target_name)] +
 				[b for b in bags if ' '+target_name in b[0].lower()] +
-				[None])[0]
+				[None])
+	target_bag=[b for b in target_bag if b is not source_bag]
+	target_bag=target_bag[0]
 	if not target_bag:	# create a new bag
 		target_name=target_name.title().replace("'S","'s'")
 		bags.append([target_name,{}])
 		target_bag=bags[-1]
+		new_bag=True
 	else:
 		target_name=target_bag[0]
-
+		new_bag=False
 # move all items
 diff={}
 for item_name, amount in source_bag[1].items():
@@ -83,5 +86,5 @@ desc=[f'~~{old}~~ {new}x {item}' if old else f'+{item}' for item,(old,new) in di
 if not desc:
 	desc=["*No items transferred*"]
 possessive=f'{name}\'' if name[-1]=='s' else f'{name}\'s'
-return f'embed -title "{possessive} bags" -f "{target_bag[0]}|{nl.join(desc)}|inline" -f "{source_name}|{source_desc}|inline" -color {color} -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png'
+return f'embed -title "{possessive} bags" -f "{"+" if new_bag else ""}{target_bag[0]}|{nl.join(desc)}|inline" -f "{source_name}|{source_desc}|inline" -color {color} -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png'
 </drac2>
