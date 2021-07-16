@@ -1,4 +1,5 @@
-!chance auto adding of save effects not done due to target/executor swap
+!chance auto adding of save effects not done due to target/executor swap (already a one target limit)
+- probably check effects during looping over targets, add boni the to target dict
 
 Item DB: spelling and use in #count (!qb # rope)
 - solution 1: synonyms list or main one
@@ -7,12 +8,30 @@ Quickbag: count release & message
 
 Random race npc generator
 - * gender
-- subrace
+- subrace (race flexible, configurable for area)
 - * age
+    - Make age more numeric and race specific
 - * name
 - birthplace (linked to subrace/race%)
-- profession (race%)
-- backstory
+    - Sword coast/waterdeep/faerun (can overlap area, doesnt matter), outlands, barovia, domains of dread, icewind dale
+    - configurable template
+- profession (race% and/or location %)
+- physical characteristics  (% for race)
+    - hair color
+    - eye color
+    - skin color
+    - size
+    - disabilities/specials
+- backstory generator
+    - player backgrounds/professions + a tragedy + goals/ideals + bonds/religion + flaws
+Structure
+    - area [default in gvar]
+        - races
+            - gender% {"gender": percentage}
+            - age range {"category":years,..}
+            - physical characteristics
+            - professions
+            - name [references]
 
 Quickbag: count plurals
 Add coins to list

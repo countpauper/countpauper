@@ -285,7 +285,7 @@ if attack:
 	effect_prefix='b'
 elif skill:
 	effect_prefix='cb'
-# TODO save but look at target?
+# TODO save 'sb' but look at all targets instead of executor effects?
 else:
 	effect_prefix = None
 expression='+'.join([expression]+args.get('b')+[e.effect.get(effect_prefix,'0') for e in effects if effect_prefix in e.effect])

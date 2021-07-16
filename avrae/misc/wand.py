@@ -2,6 +2,7 @@
 ## TODO -arcana: requires arcana check to cast or fizzles and uses a charge anyway
 ## TODO -desc description for the cc and or the embed?
 ## TODO dawn argument to reset at dawn instead of long rest and work together with !dawn
+## Option to make bubbles cc
 
 syntax = f'{ctx.prefix}{ctx.alias} ["<name>"] [<spells>[:<cost>]][...] [-charge <charge/day=1d6+1>] [-max <charges=10>] [-dc <dc=13>] [-break <dice=1d20>|never]'
 
@@ -56,7 +57,6 @@ spells=%spells%
 wand='%wand%'
 cc='%cc%'"""
 
-
 if len(spell_list)>1:	 # multi spell argument
 	code+="""
 # parse first argument
@@ -67,7 +67,9 @@ if not args or args[0].lower() in ['?','help']:
 spell=args[0]
 
 # match the spell name
-match=[sn for sn in spells.keys() if spell.lower() in sn.lower()]
+match=[sn for sn in spells.keys() if spell.lower()==sn.lower()]
+if not match:
+	match=[sn for sn in spells.keys() if spell.lower() in sn.lower()]
 if not match:
 	return f'echo Spell `{spell}` is not available with {wand}. Use: {syntax}.\\nSupported spells: {", ".join(spells.keys())}.\\nCase insensitive and partial name is supported.'
 if len(match)>1:
