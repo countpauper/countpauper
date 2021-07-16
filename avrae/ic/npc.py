@@ -85,7 +85,10 @@ if msg:
 out.append(f'-color {npc_color if npc_color else color}')
 
 if thumb:
-    out.append(f'-thumb {thumb}')
+    if image or msg:
+        out.append(f'-thumb {thumb}')
+    else:
+        out.append(f'-image {thumb}')
 
 if image:
     out.append(f'-image {image}')
