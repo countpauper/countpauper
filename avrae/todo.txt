@@ -16,10 +16,12 @@ Random race npc generator
 #     if key is not directly found, check weighted randoms for "samekey:value" and select that {eg: "race":{5:{"race":"Human"}} matches race.Human
 #     if value is a list: check all branches with dicts again for {'samekey':'Value'}
 # weighted % is cumulative, but how mix { 1 5% 10 +5 }
-# None: dead end
+# None: dead end/unspecified option
+# update/override db with svar/uvar
+# gvar references in db so {[gvar,gvar,gvar]} as an svar just works
 # overrides: specific over generic (eye color in root is overridden by race/gender specific) due to order (breadth first? or just add new branch in front instead of end
-# argument "key=Value": select from random list
-#   or from random weighted based on sub key
+#* argument "key=Value": select from random list
+#*   or from random weighted based on sub key ( think I did at least because key:list already has to handle lists, can't look for sub key
 - * gender
 - subrace (race flexible, configurable for area)
 - * age
@@ -46,7 +48,9 @@ Structure
             - professions
             - name [references]
 
+
 Quickbag: count plurals
+Quickbag undo undo = redo, mention in message.
 Add coins to list
 
 Remove packs
