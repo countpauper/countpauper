@@ -7,6 +7,19 @@ Item DB: spelling and use in #count (!qb # rope)
 Quickbag: count release & message
 
 Random race npc generator
+
+#* Leaf: {"field":"val"} set field
+#* {int:<branch>, ...} weighted randomly select branch
+#* [<branch>,...] randomly selecy branch
+#* {"key":<branch>] branch off more fields
+# {"field":"@ref} reference different branch in db.
+#     if key is not directly found, check weighted randoms for "samekey:value" and select that {eg: "race":{5:{"race":"Human"}} matches race.Human
+#     if value is a list: check all branches with dicts again for {'samekey':'Value'}
+# weighted % is cumulative, but how mix { 1 5% 10 +5 }
+# None: dead end
+# overrides: specific over generic (eye color in root is overridden by race/gender specific) due to order (breadth first? or just add new branch in front instead of end
+# argument "key=Value": select from random list
+#   or from random weighted based on sub key
 - * gender
 - subrace (race flexible, configurable for area)
 - * age
