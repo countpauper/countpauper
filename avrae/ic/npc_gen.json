@@ -1,0 +1,52 @@
+{
+  "from": {
+    "faerun": {
+      "race": {
+        "1": {
+          "race": "Half Elf",
+          "gender": {
+            "50": {
+              "gender": "Male",
+              "name": ["@from.faerun.race.Human.gender.male","@from.faerun.race.Elf.gender.male"]
+            },
+            "100": {
+              "gender": "Female",
+              "name":["@from.faerun.race.Human.gender.female","@from.faerun.race.Elf.gender.female"]
+            }
+          },
+          "surname": ["@from.faerun.race.Human.surname","@from.faerun.race.Elf.surname"],
+          "age": {
+            "0": "Infant",
+            "10":"Child",
+            "20": "Young",
+            "100": "Adult",
+            "140": "Senior",
+            "180": "Elderly"
+          }
+        },
+        "100": {
+          "race": "Human",
+          "gender": {
+            "50": {
+              "gender": "Male",
+              "name": []
+            },
+            "100": {
+              "gender": "Female",
+              "name":[]
+            }
+          },
+          "surname": [],
+          "age": {
+            "0": "Infant",
+            "10":"Child",
+            "18": "Young",
+            "45": "Adult",
+            "65": "Senior",
+            "85": "Elderly"
+          }
+        }
+      }
+    }
+  }
+}
