@@ -7,11 +7,11 @@
           "gender": {
             "50": {
               "gender": "Male",
-              "name": ["@from.faerun.race.Human.gender.male","@from.faerun.race.Elf.gender.male"]
+              "name": ["@from.faerun.race.Human.gender.Male","@from.faerun.race.Elf.gender.Male"]
             },
             "100": {
               "gender": "Female",
-              "name":["@from.faerun.race.Human.gender.female","@from.faerun.race.Elf.gender.female"]
+              "name":["@from.faerun.race.Human.gender.Female","@from.faerun.race.Elf.gender.Female"]
             }
           },
           "surname": ["@from.faerun.race.Human.surname","@from.faerun.race.Elf.surname"],

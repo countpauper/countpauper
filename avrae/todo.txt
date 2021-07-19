@@ -12,14 +12,10 @@ Random race npc generator
 #* {int:<branch>, ...} weighted randomly select branch
 #* [<branch>,...] randomly selecy branch
 #* {"key":<branch>] branch off more fields
-# {"field":"@ref} reference different branch in db.
-#     if key is not directly found, check weighted randoms for "samekey:value" and select that {eg: "race":{5:{"race":"Human"}} matches race.Human
-#     if value is a list: check all branches with dicts again for {'samekey':'Value'}
-# weighted % is cumulative, but how mix { 1 5% 10 +5 }
-# None: dead end/unspecified option
-# update/override db with svar/uvar
-# gvar references in db so {[gvar,gvar,gvar]} as an svar just works
-# overrides: specific over generic (eye color in root is overridden by race/gender specific) due to order (breadth first? or just add new branch in front instead of end
+#* {"field":"@ref} reference different branch in db.
+#*     if key is not directly found, check weighted randoms for "samekey:value" and select that {eg: "race":{5:{"race":"Human"}} matches race.Human
+#*     if value is a list: check all branches with dicts again for {'samekey':'Value'}
+#* None: dead end/unspecified option
 #* argument "key=Value": select from random list
 #*   or from random weighted based on sub key ( think I did at least because key:list already has to handle lists, can't look for sub key
 - * gender
@@ -30,6 +26,12 @@ Random race npc generator
 - birthplace (linked to subrace/race%)
     - Sword coast/waterdeep/faerun (can overlap area, doesnt matter), outlands, barovia, domains of dread, icewind dale
     - configurable template
+# Dice string detection, roll it
+# update/override db with svar/uvar
+# gvar references in db so {[gvar,gvar,gvar]} as an svar just works
+#   prescan for all strings, or do this for all deep searching (references and such) that rely on dict type
+# weighted % is cumulative, but how mix { 1 5% 10 +5 }
+# overrides: specific over generic (eye color in root is overridden by race/gender specific) due to order (breadth first? or just add new branch in front instead of end
 - profession (race% and/or location %)
 - physical characteristics  (% for race)
     - hair color
