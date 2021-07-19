@@ -22,7 +22,8 @@
             "100": "Adult",
             "140": "Senior",
             "180": "Elderly"
-          }
+          },
+          "height": "3*12+9+2d8"
         },
        "3": {
           "race": "Gnome",
@@ -44,7 +45,8 @@
             "300": "Adult",
             "450": "Senior",
             "500": "Elderly"
-          }
+          },
+          "height": "2*12+11+2d4"
        },
        "7": {
           "race": "Halfling",
@@ -66,7 +68,8 @@
             "100": "Adult",
             "130": "Senior",
             "170": "Elderly"
-          }
+          },
+         "height": "2*12+7+2d4"
        },
        "11": {
           "race": "Elf",
@@ -88,7 +91,8 @@
             "600": "Adult",
             "700": "Senior",
             "750": "Elderly"
-          }
+          },
+         "height": "4*12+6+2d10"
        },
        "16": {
           "race": "Half Orc",
@@ -110,7 +114,8 @@
             "60": "Adult",
             "70": "Senior",
             "80": "Elderly"
-          }
+          },
+         "height": "4*12+10+2d10"
        },
        "26": {
           "race": "Dwarf",
@@ -132,7 +137,8 @@
             "300": "Adult",
             "350": "Senior",
             "400": "Elderly"
-          }
+          },
+         "height": "3*12+8+3d4"
        },
         "90": {
           "race": "Human",
@@ -154,7 +160,8 @@
             "60": "Adult",
             "75": "Senior",
             "100": "Elderly"
-          }
+          },
+          "height": "4*12+8+2d10"
         }
       }
     }

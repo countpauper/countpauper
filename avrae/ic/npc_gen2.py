@@ -24,6 +24,7 @@ while stack:
 		if typeof(stack_value)=='str':
 			if not stack_value:
 				continue
+
 			# reference "@a.b.c" links to another entry db[a][b][c] assuming all are dicts
 			if stack_value[0]=='@':
 				pointer=stack_value[1:].split(key_sep)
@@ -54,8 +55,14 @@ while stack:
 				if ref:
 					stack.append({stack_ref:ref})
 					dbg.append(f'[{stack_ref}] ref {stack_value}')
-			# TODO: dice string detection
+
+			#  dice string detected. TODO: doesn't check for rr/ro/kh/kl
+			elif len(stack_value)>1 and all(c in '0123456789+-*/d()' for c in stack_value):
+				r = vroll(stack_value)
+				fields[top_key]=r
+				dbg.append(f'[{stack_ref}] {top_key}={r}')
 			# TODO: gvar detection
+
 			# a straight field result, store it in fields
 			else:
 				fields[top_key]=stack_value
@@ -77,7 +84,7 @@ while stack:
 				if selection:=args.last(top_key):
 					selection=selection.lower()
 					if match:=[vo for vo in stack_value.values() if
-							   	(typeof(vo)=='str' and vo.lower()==selection) or
+								(typeof(vo)=='str' and vo.lower()==selection) or
 								(typeof(vo)=='SafeDict' and vo.get(top_key).lower()==selection) or
 								(typeof(vo)=='SafeList' and vo.lower() in vo)]:
 						stack.append({stack_ref:match[0]})
