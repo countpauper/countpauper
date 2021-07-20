@@ -19,7 +19,7 @@ def deduck(v):
 		v=v[7:-1].strip()
 	if v.lower()=='unlimited':
 		return 2^31
-	if v.lower()=='sight':	# sight range outdoors is ~2 mules
+	if v.lower()=='sight':	# sight range outdoors is ~2 miles
 		return 2000
 	if v.lower().endswith('mile'):
 		return 1056

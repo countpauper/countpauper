@@ -45,7 +45,7 @@ Random race npc generator
 # overrides: specific over generic (eye color in root is overridden by race/gender specific) due to order (breadth first? or just add new branch in front instead of end
 - profession (race% and/or location %)
 - physical characteristics  (% for race)
-    - eye color
+    * eye color
     - hair color (age)
     - skin color (tan, pale)
     * size

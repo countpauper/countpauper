@@ -8,15 +8,18 @@ ptr_prefix='@'
 stack=[{k:v for k,v in db.items() if k and k[0]!=ptr_prefix}]
 dir=[]
 dbg=[]
-dbg_idx=0
-dbg_break=100
+dbg_break=args.last('d')
+if dbg_break.isdecimal():
+	dbg_break=int(dbg_break)
+elif dbg_break is not None:
+	dbg_break=100
+
 key_sep='.'
 while stack:
-	head=stack.pop()
-	dbg_idx+=1
-	if dbg_idx>=dbg_break:
-		dbg.append(f'[{dbg_idx}/{dbg_break}] break {stack}')
+	if dbg_break and len(dbg)>=dbg_break:
+		dbg.append(f'[{dbg_break}] break {stack}')
 		break
+	head=stack.pop()
 
 	for stack_ref,stack_value in head.items():
 		top_key=stack_ref.split(key_sep)[-1]
@@ -108,14 +111,20 @@ while stack:
 			dbg.append(f'[{stack_ref}] `{idx}` / {len(stack_value)}')
 		elif typeof(stack_value)=='SafeDict':
 			# all numeric keys are treated as a waited table to roll on, values are tresholds
+			# percentages are cumulative with each other or the latest treshold 5 8% = 5,13
 			# it can be mixed with sub dicts
 			# This is queued in the stack before branching keys so it is executed last (FILO)
 			#  which serves to have specific (deep) fields override generic
-			decikeys=[int(k) for k in stack_value.keys() if k.isdecimal()]
+			offset=0
+			# reinterpret numeric and % keys
+			dict_value={int(offset:=k) if k.isdecimal() else
+						 (offset:=offset+int(kv) if k[-1]=='%' and (kv:=k[:-1]).isdecimal() else
+						  k):v for k,v in stack_value.items()}
+			decikeys=[k for k in dict_value.keys() if typeof(k)=='int']
 			if decikeys:
 				if selection:=args.last(top_key):
 					selection=selection.lower()
-					if match:=[vo for vo in stack_value.values() if
+					if match:=[vo for vo in dict_value.values() if
 								(typeof(vo)=='str' and vo.lower()==selection) or
 								(typeof(vo)=='SafeDict' and vo.get(top_key).lower()==selection) or
 								(typeof(vo)=='SafeList' and vo.lower() in vo)]:
@@ -127,23 +136,37 @@ while stack:
 					rand_key=randint(max(decikeys))
 					mkeys=[rk for rk in decikeys if rk>rand_key]
 					picked_key=min(mkeys)
-					next=stack_value[str(picked_key)]
+					next=dict_value[picked_key]
 					stack.append({stack_ref:next})
 					dbg.append(f'[{stack_ref}] `{rand_key}` % {max(decikeys)}')
 			# text keys form the main hierarchy of related properties, eg location->race->gender->pronoun
 			# children are tables whose chance/fields may depend on the grandparent
 			# siblings are unrelated fields
-			txtkeys = [k for k in stack_value.keys() if k and not k.isdecimal() and k[0]!=ptr_prefix]
+			txtkeys = [k for k in dict_value.keys() if typeof(k)=='str']
 			if txtkeys:
 				txtkeys.reverse()
-				stack+=[{f'{stack_ref}{key_sep}{nk}': stack_value[nk]} for nk in txtkeys]
+				stack+=[{f'{stack_ref}{key_sep}{nk}': dict_value[nk]} for nk in txtkeys]
 				dbg.append(f'[{stack_ref}] - `{", ".join(txtkeys)}`')
 			if not decikeys and not txtkeys:
 				dbg.append(f'[{stack_ref}] Empty')
 		else:
 			dbg.append('f[{stack_ref}] ? {typeof(stack_value)}')
-# generate the output
-debugstr="\n".join(dbg)[:2048]
-fields=[f'-f "{k}|{v}"' for k,v in fields.items()][:25]
-return f'embed -title "NPC" -desc "{debugstr}" '+' '.join(fields)
+if dbg_break:
+	# generate the output
+	debugstr="\n".join(dbg)[:4096]
+	fields=[f'-f "{k}|{v}"' for k,v in fields.items()][:25]
+	return f'embed -title "NPC" -desc "{debugstr}" '+' '.join(fields)
+else:
+	npc_name = fields.get('name','NPC')
+	if (surname:=fields.get('surname')):
+		npc_name=f'{npc_name} {surname}'
+
+	text="""{name} is a {race}. {Objective} is {age} and works as a {profession}. {Possessive} height is {height} inch and eyecolor is {eyes}."""
+	for k,v in fields.items():
+		v=str(v)
+		text=text.replace('{'+k+'}',v)
+		if v[0].islower():
+			text=text.replace('{'+k.capitalize()+'}', v.capitalize())
+
+	return f'embed -title "{npc_name}" -desc "{text}"'
 </drac2>
