@@ -2,7 +2,10 @@
 args=argparse(&ARGS&)
 db=load_json(get_gvar('e8dfa775-0f63-4aaa-9869-4fab02edfbfc'))
 fields={}
-stack=[db]	# TODO: should be svar, with default is [gvar]
+ptr_prefix='@'
+# TODO: should be svar, with default is [gvar]
+# TODO: should also reuse normal ptr_prefix check
+stack=[{k:v for k,v in db.items() if k and k[0]!=ptr_prefix}]
 dir=[]
 dbg=[]
 dbg_idx=0
@@ -26,16 +29,45 @@ while stack:
 				continue
 
 			# reference "@a.b.c" links to another entry db[a][b][c] assuming all are dicts
-			if stack_value[0]=='@':
+			if stack_value[0]==ptr_prefix:
 				pointer=stack_value[1:].split(key_sep)
-				# TODO: relative. for all empty pointers at the start, cut back k
+				# if first pointer is not filled in, ie "@." then relative to current stack_ref
+				if not pointer[0] and len(pointer)>1:
+					pointer.pop(0)	# remove relative
+					# if first pointer after . is present in stack_ref, then splice them together
+					# eg stack_key = race.Human.gender  @.gender.pronoun => race.Human.gender.pronoun
+					entry_point=pointer[0]
+					base_pointer=stack_ref.split(key_sep)
+					if entry_point and entry_point in base_pointer:
+						base_pointer=base_pointer[:base_pointer.index(entry_point)]
+					else:	# else base pointer is current race @.Human.gender => race.Human.gender
+						base_pointer=stack_ref.split(key_sep)
+					pointer=base_pointer+pointer
+
+				# reparse pointer to get parent on .. and parse {field} references
+				pointer,prep=[],pointer
+				for p in prep:
+					if not p:	# .. is navigate back
+						pointer = pointer[:-1]
+					elif p[0]=='{' and p[-1]=='}':	 # {field}: replace if exists
+						pointer.append(fields.get(p[1:-1],p))
+					else:
+						pointer.append(p)
+
+				# replace the stack head with the referred data, by traversing the absolute path from the original db
 				ref=db
 				prev_key=None
+				dbg_ptr = key_sep.join(pointer)
 				while pointer:
 					p=pointer.pop(0)
-					# for referencing keys into a dict tree
+					# Highest priority is referring to a @key, prefixed explicitly for sharing
+					# eg @human_names -> @human_names:['foo'] would refer to ['foo']
+					if typeof(ref)=='SafeDict' and (pp:=f'@{p}') in ref:
+						prev_key=p
+						ref=ref[pp]
+					# next referencing normal branch keys into a dict tree
 					# eg @gender.pronoun -> gender:{pronoun:"she"} would refer to "she"
-					if typeof(ref)=='SafeDict' and p in ref:
+					elif typeof(ref)=='SafeDict' and p in ref:
 						prev_key=p
 						ref=ref[p]
 					# for referencing inside of random weighted dict, based on a sub key matching the referenced VALUE
@@ -49,12 +81,12 @@ while stack:
 						ref=chosen_ref[0]
 					# prev_key stays the same
 					else:
-						dbg.append(f'[{stack_ref}] missing **{p}** in `{stack_value}`')
+						dbg.append(f'[{stack_ref}] missing **{p}** in `{dbg_ptr}`')
 						ref=None
 						break
 				if ref:
 					stack.append({stack_ref:ref})
-					dbg.append(f'[{stack_ref}] ref {stack_value}')
+					dbg.append(f'[{stack_ref}] {ref} {stack_value}=>`{dbg_ptr}`')
 
 			#  dice string detected. TODO: doesn't check for rr/ro/kh/kl
 			elif len(stack_value)>1 and all(c in '0123456789+-*/d()' for c in stack_value):
@@ -101,17 +133,17 @@ while stack:
 			# text keys form the main hierarchy of related properties, eg location->race->gender->pronoun
 			# children are tables whose chance/fields may depend on the grandparent
 			# siblings are unrelated fields
-			txtkeys=[k for k in stack_value.keys() if not k.isdecimal()]
+			txtkeys = [k for k in stack_value.keys() if k and not k.isdecimal() and k[0]!=ptr_prefix]
 			if txtkeys:
-				for nk in txtkeys:
-					nv=stack_value[nk]
-					stack.append({f'{stack_ref}{key_sep}{nk}': nv})
-					dbg.append(f'[{stack_ref}] @ **{nk}** {typeof(nv)} [{len(nv)}]')
+				txtkeys.reverse()
+				stack+=[{f'{stack_ref}{key_sep}{nk}': stack_value[nk]} for nk in txtkeys]
+				dbg.append(f'[{stack_ref}] - `{", ".join(txtkeys)}`')
 			if not decikeys and not txtkeys:
 				dbg.append(f'[{stack_ref}] Empty')
 		else:
 			dbg.append('f[{stack_ref}] ? {typeof(stack_value)}')
 # generate the output
-debugstr="\n".join(dbg)
-return f'embed -title "NPC" -desc "{debugstr}" '+' '.join(f'-f "{k}|{v}"' for k,v in fields.items())
+debugstr="\n".join(dbg)[:2048]
+fields=[f'-f "{k}|{v}"' for k,v in fields.items()][:25]
+return f'embed -title "NPC" -desc "{debugstr}" '+' '.join(fields)
 </drac2>

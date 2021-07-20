@@ -7,14 +7,14 @@
           "gender": {
             "50": {
               "gender": "Male",
-              "name": ["@from.faerun.race.Human.gender.Male","@from.faerun.race.Elf.gender.Male"]
+              "name": ["@.race.Human.gender.{gender}","@.race.Elf.gender.{gender}"]
             },
             "100": {
               "gender": "Female",
-              "name":["@from.faerun.race.Human.gender.Female","@from.faerun.race.Elf.gender.Female"]
+              "name":["@.race.Human.gender.{gender}","@.race.Elf.gender.{gender}"]
             }
           },
-          "surname": ["@from.faerun.race.Human.surname","@from.faerun.race.Elf.surname"],
+          "surname": ["@..Human.surname","@.race.Elf.surname"],
           "age": {
             "0": "Infant",
             "10":"Child",
@@ -23,7 +23,8 @@
             "140": "Senior",
             "180": "Elderly"
           },
-          "height": "3*12+9+2d8"
+          "height": "3*12+9+2d8",
+          "profession": "@profs"
         },
        "3": {
           "race": "Gnome",
@@ -99,14 +100,14 @@
           "gender": {
             "50": {
               "gender": "Male",
-              "name": ["@from.faerun.race.Human.gender.male","@from.faerun.race.Orc.gender.male"]
+              "name": ["@.race.Human.gender.male","@.race.Orc.gender.male"]
             },
             "100": {
               "gender": "Female",
-              "name":["@from.faerun.race.Human.gender.female","@from.faerun.race.Orc.gender.female"]
+              "name":["@.race.Human.gender.female","@.race.Orc.gender.female"]
             }
           },
-          "surname": ["@from.faerun.race.Human.surname","@from.faerun.race.Orc.surname"],
+          "surname": ["@.race.Human.surname","@.race.Orc.surname"],
           "age": {
             "0": "Infant",
             "6": "Child",
@@ -165,5 +166,6 @@
         }
       }
     }
-  }
+  },
+  "@profs": ["Fisherman","Guard","Soldier","Blacksmith","Weaver","Beggar"]
 }
