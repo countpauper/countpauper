@@ -8,11 +8,11 @@ ptr_prefix='@'
 stack=[{k:v for k,v in db.items() if k and k[0]!=ptr_prefix}]
 dir=[]
 dbg=[]
-dbg_break=args.last('d')
-if dbg_break.isdecimal():
-	dbg_break=int(dbg_break)
-elif dbg_break is not None:
-	dbg_break=100
+if dbg_break:=args.last('d'):
+	if dbg_break.isdecimal():
+		dbg_break=int(dbg_break)
+	else:
+		dbg_break=100
 
 key_sep='.'
 while stack:
@@ -157,16 +157,17 @@ if dbg_break:
 	fields=[f'-f "{k}|{v}"' for k,v in fields.items()][:25]
 	return f'embed -title "NPC" -desc "{debugstr}" '+' '.join(fields)
 else:
-	npc_name = fields.get('name','NPC')
-	if (surname:=fields.get('surname')):
-		npc_name=f'{npc_name} {surname}'
-
-	text="""{name} is a {race}. {Objective} is {age} and works as a {profession}. {Possessive} height is {height} inch and eyecolor is {eyes}."""
+	title=fields.get('title','NPC')
+	text=fields.get('text', '{name} {surname} the {age} {gender} {race}.')
 	for k,v in fields.items():
 		v=str(v)
-		text=text.replace('{'+k+'}',v)
+		var='{'+k+'}'
+		text=text.replace(var,v)
+		title=title.replace(var,v)
 		if v[0].islower():
-			text=text.replace('{'+k.capitalize()+'}', v.capitalize())
+			var='{'+k.capitalize()+'}'
+			text=text.replace(var, v.capitalize())
+			title=title.replace(var, v.capitalize())
 
-	return f'embed -title "{npc_name}" -desc "{text}"'
+	return f'embed -title "{title}" -desc "{text}"'
 </drac2>

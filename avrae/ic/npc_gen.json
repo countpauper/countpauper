@@ -7,15 +7,14 @@
           "gender": {
             "50": {
               "gender": "Male",
-              "name": ["@.race.Human.gender.{gender}","@.race.Elf.gender.{gender}"],
               "pronoun": "@male_pronouns"
             },
             "100": {
               "gender": "Female",
-              "name":["@.race.Human.gender.{gender}","@.race.Elf.gender.{gender}"],
               "pronoun": "@female_pronouns"
             }
           },
+          "name":["@.race.Human.gender.{gender}.name","@.race.Elf.gender.{gender}.name"],
           "surname": ["@..Human.surname","@.race.Elf.surname"],
           "age": {
             "0": "Infant",
@@ -108,12 +107,12 @@
           "gender": {
             "50": {
               "gender": "Male",
-              "name": ["@.race.Human.gender.male","@.race.Orc.gender.male"],
+              "name": ["@.race.Human.gender.{gender}.name","@.race.Orc.name"],
               "pronoun": "@male_pronouns"
             },
             "100": {
               "gender": "Female",
-              "name":["@.race.Human.gender.female","@.race.Orc.gender.female"],
+              "name":["@.race.Human.gender.{gender}.name","@.race.Orc.name"],
               "pronoun": "@female_pronouns"
            }
           },
@@ -125,6 +124,10 @@
             "60": "Adult",
             "70": "Senior",
             "80": "Elderly"
+          },
+          "eyes": {
+            "75%": "@.race.Orc.eyes",
+            "25%": "@eyes"
           },
          "height": "4*12+10+2d10"
        },
@@ -177,6 +180,38 @@
             "100": "Elderly"
           },
           "height": "4*12+8+2d10"
+        },
+        "91" : {
+          "race": "Orc",
+          "name": ["Sugbu", "Yambul", "Zalthu", "Snaglak", "Noogugh", "Varbu", "Podagog", "Cukgilug", "Xarpug", "Jughragh", "Murbol", "Bashuk", "Ugor", "Mog", "Ghak", "Murob", "Ulumpha", "Ushug", "Sharn", "Dura", "Raghat", "Brokil", "Pargu", "Hibub", "Jughog", "Nurghed", "Ditgurat", "Durz", "Kurdan", "Bugdul", "Sharamph", "Homraz", "Sharn", "Murob", "Oghash", "Shagdub", "Durgat", "Atub", "Bolar", "Snak", "Numhug", "Sulmthu", "Yakha", "Urgran", "Vrothu", "Sakgu", "Sahgigoth", "Matuk", "Rodagog", "Ertguth", "Sharn", "Orbul", "Durgat", "Gashnakh", "Kharzug", "Arob", "Dura", "Garakh", "Shufharz", "Gul", "Wegub", "Eichelberbog", "Wurgoth", "Durzol", "Wudhagh", "Digdug", "Zabub", "Omogulg", "Mugdul", "Jokgagu", "Borgakh", "Bulfim", "Arob", "Durz", "Bulfim", "Snak", "Atub", "Bagrak", "Snak", "Yazgash", "Bidgug", "Slaugh", "Farod", "Hagu", "Zunuguk", "Bogrum", "Oogorim", "Unrugagh", "Onugug", "Omugug", "Batul", "Agrob", "Dura", "Gluronk", "Rogbut", "Durgat", "Mog", "Shadbak", "Bula", "Durgat", "Nar", "Gun", "Rall", "Brar", "Brugvun", "Gruddakk", "Dudral", "Jortukk", "Brutran", "Zhutag", "Ghun", "Vin", "Rhuk", "Rhuam", "Bellul", "Bhivgon", "Ovie", "Rhivnuf", "Ilvo", "Movo", "Buk", "Zhukk", "Zok", "Lar", "Lanzan", "Rharlor", "Rhardon", "Zhobrok", "Bhurlur", "Urlok", "Dheng", "Beef", "Nuz", "Nev", "Ova", "Kongiz", "Aovno", "Guthao", "Kegvo", "Angok", "Gub", "Shak", "Guk", "Ghakk", "Aggukk", "Drugvakk", "Zartakk", "Ganall", "Nugak", "Guhzan"],
+          "surname": ["Toe Spear", "Chin Shatterer", "Giant Trasher", "Storm Killer", "Brass Hammer", "Nose Gouger", "Teeth Strangler", "Flesh Strangler", "Brain Scalper", "Nose Smasher", "The Fearless", "The Butcher", "The Smug", "Death Cutter", "The Vivid", "Rib Flayer", "The Crazy", "The Violent", "The Prime", "The Crooked", "The Disfigured", "Slave Wrecker", "The Fierce", "The Cold", "The Enormous", "The Outlandish", "Scale Cleaver", "Blood Quasher", "Spite Mutilator", "Doom Sword", "Eye Gouger", "Iron Mutilator", "The Ugly", "The Volatile", "Brain Masher", "Vein Slicer", "The Broad", "The Colossal", "The Barbarian", "Dream Cleaver", "Feet Ripper", "The Barbarian", "Ash Pummel", "Thunder Strangler", "The Brutal", "The Colossal", "Ankle Masher", "The Ugly", "The Warped", "The Infernal"],
+          "age": {
+            "0": "Infant",
+            "5":"Child",
+            "12": "Young",
+            "23": "Adult",
+            "35": "Senior",
+            "40": "Elderly"
+          },
+          "height": "5*12+4+2d8",
+          "weight": "175+2d6",
+          "gender": {
+            "50": {
+              "gender": "Male",
+              "pronoun": "@male_pronouns"
+            },
+            "100": {
+              "gender": "Female",
+              "pronoun": "@female_pronouns"
+            }
+          },
+          "eyes":
+          {
+            "50%": "black",
+            "30%": "brown",
+            "18%": "red",
+            "2%": "blue"
+          }
         }
       }
     }
@@ -199,5 +234,7 @@
     "18%": "hazel",
     "9%": "green",
     "1%": "amber"
-  }
+  },
+  "title": "{name} {surname}",
+  "text": "{name} is a {race}. {Objective} is {age} and works as a {profession}. {Possessive} height is {height} inch and {possessive} eyes are {eyes}."
 }
