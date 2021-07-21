@@ -94,7 +94,7 @@ while stack:
 			#  dice string detected. TODO: doesn't check for rr/ro/kh/kl
 			elif len(stack_value)>1 and all(c in '0123456789+-*/d()' for c in stack_value):
 				r = vroll(stack_value)
-				fields[top_key]=r
+				fields[top_key]=r.total
 				dbg.append(f'[{stack_ref}] {top_key}={r}')
 			# TODO: gvar detection
 
@@ -157,6 +157,15 @@ if dbg_break:
 	fields=[f'-f "{k}|{v}"' for k,v in fields.items()][:25]
 	return f'embed -title "NPC" -desc "{debugstr}" '+' '.join(fields)
 else:
+	# specific height hack
+	height_key='height'
+	if l:=fields.get(height_key):
+		ft=l//12
+		if (inch := l-(12*ft))>0:
+			fields[height_key]=f"{ft} ft. {inch} in."
+		else:
+			fields[height_key]=f"{ft} ft."
+
 	title=fields.get('title','NPC')
 	text=fields.get('text', '{name} {surname} the {age} {gender} {race}.')
 	for k,v in fields.items():
@@ -169,5 +178,12 @@ else:
 			text=text.replace(var, v.capitalize())
 			title=title.replace(var, v.capitalize())
 
-	return f'embed -title "{title}" -desc "{text}"'
+	# field for !npc
+	out_fields=[]
+	if get('npc_local_roster'):
+		first_name=fields.get('name')
+		npc_name=f'{first_name} {surname}' if (surname:=fields.get('surname')) else first_name
+		cmd = f'!npc edit {first_name.lower()} -name \\"{npc_name}\\"'
+		out_fields.append(f'''-f "Roster|`{cmd}`" ''')
+	return f'embed -title "{title}" -desc "{text}" {" ".join(out_fields)}'
 </drac2>

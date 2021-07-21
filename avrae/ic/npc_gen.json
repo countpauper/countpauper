@@ -1,297 +1,293 @@
 {
-  "from": {
-    "faerun": {
-      "race": {
-        "1": {
-          "race": "Half Elf",
-          "gender": {
-            "50": {
-              "gender": "Male",
-              "pronoun": "@male_pronouns"
-            },
-            "100": {
-              "gender": "Female",
-              "pronoun": "@female_pronouns"
-            }
-          },
-          "name":["@.race.Human.gender.{gender}.name","@.race.Elf.gender.{gender}.name"],
-          "surname": ["@..Human.surname","@.race.Elf.surname"],
-          "age": {
-            "0": "Infant",
-            "10":"Child",
-            "20": "Young",
-            "100": "Adult",
-            "140": "Senior",
-            "180": "Elderly"
-          },
-          "height": "3*12+9+2d8",
-          "profession": {
-            "10": "Soldier",
-            "25": "@prof.town",
-            "45": "@prof.rural",
-            "65": "@prof.forest",
-            "70": "@prof.mountain",
-            "75": "@prof.coastal",
-            "80": "@prof.scholar",
-            "100": "@prof.city"
-          }
+  "race": {
+    "1": {
+      "race": "Half Elf",
+      "gender": {
+        "50": {
+          "gender": "Male",
+          "pronoun": "@male_pronouns"
         },
-        "3": {
-          "race": "Gnome",
-          "gender": {
-            "50": {
-              "gender": "Male",
-              "name": [ "Alston", "Alvyn", "Boddynock", "Brocc", "Burgell", "Dimble", "Eldon", "Erky", "Fonkin", "Frug", "Gerbo", "Gimble", "Glim", "Jebeddo", "Kellen", "Namfoodle", "Orryn", "Seebo", "Sindri", "Warryn", "Wrenn", "Zook", "Begnym", "Jinzic", "Borwass", "Snaanbag", "Labkost", "Jenkkig", "Clamdor", "Bitty", "Brena", "Amorette", "Sarug", "Erpos", "Nimin", "Jorhim", "Salmorn", "Vorbar", "Davdri", "Valmin", "Nigrim", "Davkas" ],
-              "pronoun": "@male_pronouns"
-            },
-            "100": {
-              "gender": "Female",
-              "name":[ "Bimpnottin", "Breena", "Caramip", "Carlin", "Donella", "Duvamil", "Ella", "Ellyjobell", "Ellywick", "Lilli", "Loopmottin", "Lorilla", "Mardnab", "Nissa", "Nyx", "Oda", "Orla", "Roywyn", "Shamil", "Tana", "Waywocket", "Zanna" ,"Tyra", "Tawyn", "Rena", "Zanitina", "Tifapine", "Lyda", "Satra", "Lorifi", "Daphiphina", "Arila", "Zanigani", "Zindira", "Qiroe", "Tifaceli", "Folxi", "Grentina", "Heshana", "Tifamyn", "Myna", "Cartra"],
-              "pronoun": "@female_pronouns"
-            }
-          },
-          "surname": [ "Beren", "Daergel", "Folkor", "Garrick", "Nackle", "Murnig", "Ningel", "Raulnor", "Scheppen", "Timbers", "Turen", "Dustseeker", "Nuttlattle", "Bernfitlacks", "Ipswoms", "Pelletsniffer", "Tinkerfoot", "Gemhair", "Blaesocket", "Sabblewloth", "Muwlebra", "Giobibaar", "Woh", "Apleldosp", "Mirlon", "Peedlupnon"],
-          "age": {
-            "0": "Infant",
-            "20": "Child",
-            "40": "Young",
-            "300": "Adult",
-            "450": "Senior",
-            "500": "Elderly"
-          },
-          "height": "2*12+11+2d4",
-          "profession": {
-            "5": "Soldier",
-            "35": "@prof.town",
-            "45": "@prof.rural",
-            "60": "@prof.forest",
-            "65": "@prof.mountain",
-            "70": "@prof.coastal",
-            "85": "@prof.scholar",
-            "100": "@prof.city"
-          }
-        },
-        "7": {
-          "race": "Halfling",
-          "gender": {
-            "50": {
-              "gender": "Male",
-              "name": [ "Alton", "Ander", "Cade", "Corrin", "Eldon", "Errich", "Finnan", "Garret", "Lindal", "Lyle", "Merric", "Milo", "Osborn", "Perrin", "Reed", "Roscoe", "Wellby" ],
-              "pronoun": "@male_pronouns"
-            },
-            "100": {
-              "gender": "Female",
-              "name":[ "Andry", "Bree", "Callie", "Cora", "Euphemia", "Jillian", "Kithri", "Lavinia", "Lidda", "Merla", "Nedda", "Paela", "Portia", "Seraphina", "Shaena", "Trym", "Vani", "Verna" ],
-              "pronoun": "@female_pronouns"
-            }
-          },
-          "surname": [ "Brushgather", "Goodbarrel", "Greenbottle", "High-hill", "Hilltopple", "Leagallow", "Tealeaf", "Thorngage", "Tosscobble", "Underbough" ],
-          "age": {
-            "0": "Infant",
-            "10": "Child",
-            "20": "Young",
-            "100": "Adult",
-            "130": "Senior",
-            "170": "Elderly"
-          },
-          "height": "2*12+7+2d4",
-          "profession": {
-            "5": "Soldier",
-            "35": "@prof.town",
-            "65": "@prof.rural",
-            "75": "@prof.forest",
-            "80": "@prof.mountain",
-            "85": "@prof.coastal",
-            "90": "@prof.scholar",
-            "100": "@prof.city"
-          }
-        },
-        "11": {
-          "race": "Elf",
-          "gender": {
-            "50": {
-              "gender": "Male",
-              "name": ["Ailmar", "Akkar", "Axil", "Belstram", "Cluym", "Corym", "Daemeon", "Darcassan", "Darfin", "Eldar", "Elwin", "Eroan", "Faelar", "Finrod", "Gaemon", "Haemir", "Hastos", "Ismzal", "Jassin", "Jhaan", "Kuskyn", "Kymil", "Lago", "Morthil", "Myrinn", "Neldor", "Nesterin", "Nindr", "Onas", "Orym", "Pharom", "Pyrder", "Rijjat", "Silvyr", "Sudryl", "Thingol", "Turgon", "Usunaar", "Vaegon", "Zabbas", "Adran", "Aelar", "Aramil", "Arannis", "Aust", "Beiro", "Berrian", "Carric", "Enialis", "Erdan", "Erevan", "Galinndan", "Hadarai", "Heian", "Himo", "Immeral", "Ivellios", "Laucian", "Mindartis", "Paelias", "Peren", "Quarion", "Riardon", "Rolen", "Soveliss", "Thamior", "Tharivol", "Theren", "Varis", "Abadda", "Abarat", "Adamar", "Adorellan", "Adresin", "Aduce", "Aelrindel", "Aerendyl", "Aermhar", "Aesar", "Aeson", "Afamrail", "Agis", "Aglanthol", "Ainésilver", "Aithlin", "Ajaar", "Akhelbhen", "Akkar", "Alabyran", "Albondiel", "Alinar", "Allain", "Alok", "Alosrin", "Althidon", "Amrynn", "Anarallath", "Andaerean", "Andrathath", "Anfalen", "Anlyth", "Aolis", "Aquilan", "Araevin", "Arandron", "Aravilar", "Arbane", "Ardreth", "Ardryll", "Argus", "Arkhun", "Arkiem", "Arl", "Arlen", "Arun", "Ascal", "Athtar", "Aubric", "Aubron", "Aulathar", "Aulauthar", "Aumanas", "Aumrauth", "Avourel", "Baerdelcoam", "Baerithryn", "Belanor", "Beldroth", "Bellas", "Belstram", "Beluar", "Bhyrindaar", "Biafyndar", "Bialaer", "Braern", "Brindarry", "Buttorwyr", "Cameron", "Chaalmyth", "Chathanglas", "Cheyrth", "Chozzaster", "Chylnoth", "Cluhurach", "Cluym", "Cohnal", "Conall", "Connak", "Cornaith", "Corym", "Cymbiir", "Cystenn", "Dalyor", "Dakath", "Dannyd", "Daratrine", "Darcassan", "Darfin", "Darthoridan", "Deldrach", "Delmuth", "Delsaran", "Dhoelath", "Divisav", "Drannor", "Droth", "Druindar", "Durlan", "Durothil", "Dyffros", "Earynspieir", "Edansyr", "Edicûve", "Edwyrd", "Edyrm", "Ehlark", "Ehrendil", "Eilauver", "Elaethan", "Elaith", "Elandorr", "Elanjar", "Elashor", "Elbauthin", "Elbereth", "Eldaernth", "Eldar", "Eldrin", "Elénaril", "Elenshaer", "Elephon", "Elhieardacil", "Elidyr", "Elion", "Elkhazel", "Ellisar", "Elorfindar", "Elorshin", "Elpaerae", "Eltaor", "Eltargrim", "Emmyth", "Entrydal", "Erendriel", "Erglareo", "Eriladar", "Erlan", "Erlathan", "Eroan", "Erolith", "Eschallus", "Estelar", "Ethlando", "Ettrian", "Euchoé", "Evindal", "Eyrynnhv", "Faahresc", "Faelar", "Faelyn", "Faeranduil", "Falael", "Faoraar", "Felaern", "Fenian", "Fflar", "Fhaornik", "Fhociin", "Filarion", "Filvendor", "Filverel", "Finufaranell", "Flardryn", "Flinar", "Foxfire", "Fylson", "Gaeleath", "Gaelin", "Galaeron", "Galan", "Galather", "Ganamede", "Gantar", "Garrik", "Garynnon", "Giilvas", "Giullio", "Glarald", "Glorandal", "Goronyyv", "Grathgor", "Haalaari", "Hachaam", "Haemir", "Haladavar", "Halafarin", "Halamar", "Haldreithen", "Halflar", "Halgondas", "Halpaeril", "Halueth", "Halueve", "Haryk", "Hastos", "Hatharal", "Hiflanyl", "Hoccar", "Horith", "Hubyr", "Iefyr", "Ievos", "Ihimbraskar", "Ilbryn", "Illianaro", "Ilimitar", "Iliphar", "Ilitharath", "Illithor", "Illitran", "Ilphas", "Ilrune", "Ilthuryn", "Ilyndrathyl", "Inchel", "Inialos", "Injros", "Intevar", "Iolas", "Iolrath", "Itham", "Ithraides", "Ivlisar", "Ivósaar", "Ivran", "Iymbryl", "Iyrandrar", "Iyriklaunavan", "Jandar", "Jannalor", "Jaonos", "Jassin", "Jhaan", "Jhaartael", "Jhaeros", "Jharak", "Jharym", "Jhuvik", "Jonas", "Jonik", "Jorildyn", "Josidiah", "Juppar", "Kahvoerm", "Kalaerede", "Katar", "Katyr", "Keletheryl", "Kelvhan", "Kendel", "Kerym", "Keryth", "Kesefehon", "Khaalindaan", "Kharis", "Khatar", "Khidell", "Khiiral", "Khilseith", "Khuumal", "Khyrmn", "Khyssoun", "Kindroth", "Kivessin", "Kiyuigh", "Klaern", "Kolvar", "Korrigash", "Kroloth", "Kuornos", "Kuskyn", "Kuskyn", "Kymil", "Kyrtaar", "Laeroth", "Lafarallin", "Lamruil", "Laosx", "Larongar", "Larrel", "Lashul", "Lathai", "Lathlaeril", "Leayonadas", "Leojym", "Lhombaerth", "Lhoris", "Lianthorn", "Llarm", "Llewellenar", "Llombaerth", "Lorsan", "Luirlan", "Luthais", "Luvon", "Lyari", "Lyklor", "Lysanthir", "Maasli", "Maendellyn", "Maeraddyth", "Maeral", "Maiele", "Malgath", "Mardeiym", "Marikoth", "Marlevaur", "Melandrach", "Melisander", "Merellien", "Merith", "Methild", "Mhaenal", "Mi’tilarro", "Mihangyl", "Miilaethorn", "Miirphys", "Mirthal", "Mirthal", "Mlartlar", "Mlossae", "Molonym", "Molostroi", "Montagor", "Morgan", "Morthil", "Mothrys", "Mourn", "Myrddin", "Myriil", "Myrin", "Myronthilar", "Mythanthar", "Naertho", "Naeryndam", "Naeryndam", "Napraeleon", "Narbeth", "Nardual", "Nelaeryn", "Nelaeryn", "Neldor", "Neldor", "Nesterin", "Nevarth", "Nhamashal", "Nieven", "Nindrol", "Ninthalor", "Nlossae", "Nopos", "Norlorn", "Nremyn", "Nuvian", "Nyaalsir", "Nylian", "Nym", "Nyvorlas", "Oacenth", "Oenel", "Ohmbryn", "Olaurae", "Olinsivver", "Olithir", "Onas", "Oncith", "Ondabrar", "Ondroth", "Onvyr", "Orist", "Orlpar", "Orndacil", "Ornthalas", "Ornthalas", "Ortauré", "Orym", "Oslarelar", "Otaehryn", "Otaerhyn", "Othorion", "Paeral", "Paeris", "Passilorris", "Paulorin", "Phaendar", "Pharom", "Phraan", "Pirphal", "Pleufan", "Purtham", "Pyrder", "Pyrravym", "Pywaln", "Pyxaanthal,", "Qildor", "Quastarte", "Quynn", "Raeranthur", "Raibyr", "Ralikanthae", "Ralnor", "Rathal", "Raunaeril", "Rauthomyr", "Rauvelore", "Reluraun", "Reluvethel", "Rennyn", "Reptar", "Respen", "Rhaac'var", "Rhalyf", "Rhangyl", "Rhenalyrr", "Rhespen", "Rhistel", "Rhothomir", "Rhys", "Rilitar", "Riluaneth", "Rolim", "Rotheloe", "Rothilion", "Ruardh", "Ruehar", "Ruith", "Rumathil", "Ruvaen", "Ruven", "Ruvyn", "Rychell", "Ryfon", "Ryul", "Ryvvik,", "Sadalymn", "Saevel", "Sakrattars", "Samblar", "Sandevv", "Seanchai", "Seith", "Selanlar", "Selgauth", "Shael", "Shammath", "Sharian", "Sharlario", "Shaundyl", "Shevarash", "Shonassir", "Shyrrik", "Siirist", "Silvyr", "Simimar", "Sinaht", "Skalanis", "Sontar", "Srindin", "Strohm", "Sudryl", "Sundamar", "Sylvar", "Symkalr", "Sythaeryn", "Taanyth", "Taegen", "Taeglyn", "Taeral", "Taerntym", "Taleisin", "Tammson", "Tamnaeuth", "Tamsin", "Tanithil", "Tannivh", "Tannyll", "Tanseril", "Tanyl", "Taranath", "Tarathiel", "Taredd", "Tarosspur", "Tarron", "Tasar", "Tassarion", "Tathaln", "Tehlmar", "Teirist", "Tenyajn", "Tethir", "Thalanil", "Thallan", "Thatoryl", "Thiilthan", "Thurdan", "Thurruvyn", "Tiarshus", "Tlannatar", "Tolthe", "Tordynnar", "Toross", "Traeliorn", "Travaran", "Triandal", "Triktappic", "Tsaer", "Tsiilmas", "Tyvollus", "Saelethil", "Saevel", "Sakrattars", "Seiveril", "Sharian", "Skalanis", "Sinaht", "Sudryl", "Sythaeryn", "Taenaran", "Tannivh", "Tamnaeuth", "Tanyl", "Tarathiel", "T’karon", "Tolthe", "Traeliorn", "Ualair", "Uevareth", "Uldreiyn", "Uldreiyn", "Urddusk", "Usunaar", "Uthorim", "Vaalyun", "Vaeril", "Valmaxian", "Vander", "Vartan", "Velethuil", "Venali", "Vesperr", "Vesryn", "Vesstan", "Vhoadan", "Vhoori", "Vhoorhin", "Volodar", "Voron", "Waernas", "Wistari", "Wylchyr", "Wylym", "Wyn", "Wyndelleu", "Wyqhael", "Wyrran", "Xalph", "Xanotter", "Xhalh", "Xhalth", "Xharlion", "Yalathanil", "Yeschant", "Yhendorn", "Ylyndar", "Ynloeth", "Zabbas", "Zaltarish", "Zandro", "Zaor", "Zaos", "Zelphar", "Zhoron", "Zulae" ],
-              "pronoun": "@male_pronouns"
-            },
-            "100": {
-              "gender": "Female",
-              "name":["Alea", "Azariah", "Bellas", "Bonna", "Chandrelle", "Ciradyl", "Daealla", "Doreah", "Elora", "Estelar", "Faelyn", "Foxfire", "Gaylia", "Gylledha", "Haela", "Ilbryn", "Ilyrana", "Josidiah", "Keara", "Lymseia", "Merlara", "Narbeth", "Nym", "Oribel", "Phyrra", "Quamara", "Rennyn", "Rhenalyrr", "Saeya", "Sheedra", "Taena", "Talila", "Tanulia", "Uldreiyn", "Vaella", "Vesryn", "Wistari", "Ylyndar", "Yrlissa", "Zhuirentel", "Adrie", "Althaea", "anastrianna", "Andraste", "Antinua", "Bethrynna", "Birel", "Caelynn", "Drusilia", "Enna", "Felosial", "Ielenia", "Jelenneth", "Keyleth", "Leshanna", "Lia", "Meriele", "Mialee", "Naivara", "Quelenna", "Quillathe", "Sariel", "Shanairra", "Shava", "Silaqui", "Theirastra", "Thia", "Vadania", "Valanthe", "Xanaphia", "Aelieyeeva", "Aelrue", "Aelynthi", "Aerilaya", "Ahrendaaria", "Ahrendue", "Ahskahala", "Ajhalanda", "Alaglossa", "Alais", "Alauthshaee", "Alavara", "Alea", "Alerathla", "Allannia", "Allisa", "Alloralla", "Allynna", "Almithara", "Aloevan", "Alvaerele", "Aluendalee", "Alyndra", "Amara", "Amaranthae", "Amkissra", "Amlaruil", "Amnestria", "Amra", "Anaharae", "Anarzee", "Aneirin", "Anhaern", "Anyllan", "Ara", "Araushnee", "Aravae", "Arcaena", "Arielimnda", "Arlayna", "Arnarra", "Artin", "Ashemmi", "Aubaudameira", "Auluua", "Aurae", "Ava", "Axilya", "Ayaeqlarune", "Azariah", "Bhuraelea", "Blythswana", "Bonnalurie", "Braerindra", "Caerthynna", "Calarel", "Cauladra", "Chaenath", "Chalsarda", "Chandrelle", "Chasianna", "Chichlandra", "Chin’nesstre", "Chomylla", "Cilivren", "Ciyradyl", "Claire", "Csharynn", "Daenalaia", "Daratrine", "Darshee", "Dasyra", "Dathlue", "Dathlue", "Dathlue", "Delimbiyra", "Delshandra", "Deularla", "Duilya", "Eallyrl", "Ecaeris", "Edraele", "Elanalue", "Elanil", "Elasha", "Eldratha", "Elénaril", "Eletha", "Ellarian", "Ellifain", "Eloen", "Elora", "Elvandaruil", "Embrae", "Emvorele", "Enajharas", "Eshenesra", "Essaerae", "Esta", "Ester", "Esyae", "Faranni", "Faunalyn", "Fhaertala", "Fieryat", "Filaurel", "Filauria", "Fildaerae", "Fox-at-Twilight", "Francessca", "Gaelira", "Gaerradh", "Gaylia", "Gemstarzah", "Ghilanna", "Glynnii", "Gweyr", "Gwynnestri", "Gylledha", "Haalija", "Hacathra", "Halaema", "Halama", "Halaema", "Halanaestra", "Hamalitia", "Haramara", "Helartha", "Hhora", "Holone", "Huquethae", "Hycis", "Iahalae", "Ialantha", "Ikeshia", "Ildilyntra", "Ilmadia", "Ilyrana", "Ilythyrra", "Imdalace", "Imizael", "Immianthe", "Imra", "Imramarthree", "Imryll", "Innovindil", "Ioelena", "Irhaal", "Isciira", "Ithrythra", "Itiireae", "Itylra", "Jastra", "Jeardra", "Jhaer", "Jhalass", "Jhanandra", "Jhaumrithe", "Jhiilsraa", "Ilsevel", "Ilyrana", "Immianthe", "Isilfarrel", "Kavrala", "Kaylessa", "Keerla", "Keishara", "Kethryllia", "Keya", "Khiipaera", "Kileontheal", "Kythaela", "Laamtora", "Laerdya", "Laerune", "Laurlaethee", "Lazziar", "Leilatha", "Liluth", "Llamryl", "Lorelei", "Lydi’aleera", "Lyraesel", "Maaleshiira", "Maelyrra", "Maeralya", "Maith", "Makaela", "Malruthiia", "Mariona", "Marissa", "Martainn", "Meira", "Melarue", "Merethyl", "Merialeth", "Meriel", "Merlara", "Mistale", "Mladris", "Mnuvae", "Morgwais", "Moryggan", "Muerlara", "Mylaela", "Mylaerla", "Myriani", "Naevys", "Nakiasha", "Nambra", "Namyriitha", "Nanalethalee", "Nanthee", "Nanthleene", "Naumys", "Nlaea", "Nuala", "Nueleth", "Nuovis", "Nushala", "Nylaathria", "Ochyllyss", "Oluevaera", "Phaerl", "Phantyni", "Phelorna", "Phuingara", "Phyrra", "Pollae", "Puorlaas", "Qemba", "Quamara", "Raejiisa", "Raerauntha", "Rathiain", "Renestrae", "Roanmara", "Ruavia", "Rubrae", "Ryllae", "Saelihn", "Saélihn", "Saida", "Sakaala", "Sariandi", "Sarya", "Schimae", "Seirye", "Seldanna", "Selussa", "Séonais", "Shael", "Shadowmoon", "Shalana", "Shalantha", "Shalendra", "Shalheira", "Shandalar", "Shanyrria", "Sharaera", "Sheedra", "Sheera", "Shialaevar", "Shi’larra", "Shialaevar", "Shoulree", "Shyael", "Shyael", "Shyllisyrr", "Sinnafain", "Soliania", "Soora", "Sorsasta", "Susklahava", "Sylmae", "Symrustar", "Syndra", "Synnorha", "Syrune", "Syviis", "Taenya", "Takari", "Talaedra", "Talanashta", "Talila", "Talindra", "Tamara", "Tarasynora", "Teharissa", "Teryani", "Thalaera", "Thalanil", "Thaola", "Thasitalia", "Throleatha", "Tiatha", "Tira’allara", "Tiriara", "Tisharu", "Tsarra", "Tyllaetha,", "Ulelesse", "Unae", "Urmicca", "Uschymna", "Vaervenshalice", "Valindra", "Vashti", "Velaethaunyl", "Velatha", "Veluthil", "Verrona", "Vestele", "Viansola", "Winterflower", "Xiiltharra", "Yaereene", "Yalanilue", "Yathlanae", "Yeshelné", "Yghiilra", "Ygrainne", "Ynshael", "Yrlissa", "Yrneha", "Yrthraethra", "Ysmyrlda", "Ytharra", "Yulmanda", "Z’Beryl", "Zhuirentel", "Zoastria" ],
-              "pronoun": "@female_pronouns"
-            }
-          },
-          "surname": ["Amakir", "Amastacia", "Galanodel", "Holimion", "Ilphelkiir", "Liadon", "Meliamne", "Nailo", "Siannodel", "Xiloscient", "Aelasar", "Aelorothi", "Aendryr", "Aerasumé", "Aeravansel", "Agayous", "Agrivar", "Ahmaquissar", "Alaenree", "Alantar", "Alavara", "Alastrarra", "Alenuath", "Alerothi", "Alluth", "Aloevan", "Aluianti", "Aluviirsaan", "Amalith", "Amarallis", "Amaratharr", "Amarthen", "Ammath", "Amrallatha", "Anuaer", "Argentaamn", "Arren", "Ash", "Ashgrove", "Audark", "Auglamyr", "Auglathla", "Aunglor", "Autumnfire", "Bellas", "Berethryl", "Berilan", "Bharaclaiev", "Bhephel", "Blackhelm", "Braegen", "Briarbosk", "Brightcloak", "Brightsong", "Brightwing", "Caersaelk", "Calaudra", "Calauth", "Camusiil", "Cathdeiryn", "Ceretlan", "Chaadren", "Chamaranthe", "Clatharla", "Cormyth", "Coudoarluth", "Craulnober", "Crystalembers", "Dahast", "Dawnhorn", "Dhorinshyl", "Dlardrageth", "Doedance", "Donnathlascen", "Dracoseir", "Dree", "Duirsar", "Durothil", "Duskmere", "Duthjuth", "Ealoeth", "Echorn", "Elaéyadar", "Elassidil", "Elian", "Ellarian", "Elond", "Eluarshee", "Ereuvyn", "Erkowe", "Erladden", "Eroth", "Erlshade", "Estelda", "Evanara", "Eveningfall", "Everlove", "Evioro", "Eyriendor", "Faerondaerl", "Faerondarl", "Falanae", "Felinaun", "Fellmirr", "Fenmarel", "Fflannidan", "Floshin", "Fynnasla", "Gildenguard", "Goadulphyn", "Goldenleaf", "Gourael", "Greencloak", "Gwaelon", "Haell", "Haerlgent", "Haladar", "Hawksong", "Haevaul", "Halavanthlarr", "Hlarr", "Hyshaanth", "Iazymnal", "Ibryiil", "Ilbaereth", "Ilbenalu", "Ildacer", "Ildroun", "Iliathor", "Iliathor", "Iliathorr", "Ilnatar", "Immeril", "Ipyllasc", "Irian", "Irithyl", "Irithyl", "Ithruen", "Iydril", "Jaglene", "Kadelaryn", "Kelerandri", "Kelpor’ral", "Keove", "Kevanarial", "Korianthil", "Kraok", "Laelithar", "Laralytha", "Larenthanil", "Larethian", "Laughingwater", "Leafbower", "Leafsigil", "Le’Quella", "Lharithlyn", "Lhoril", "Llundlar", "Loceath", "Lightshiver", "Maendellyn", "Maerdrym", "Melruth", "Meirityn", "M'Haaren", "Miritar", "Mistrivvin", "Mistwinter", "Mithalvarin", "Moonbow", "Moondown", "Moonflower", "Moonglade", "Moonglamaer", "Moonsnow", "Moonweather", "Morningdove", "Mornmist", "Mrhulaedir", "Nacnar", "Naelgrath", "Narlbeth", "Narlbeth", "Neirdre", "Nelnueve", "Never", "Nhachashaal", "Nhaéslal", "Nharimlur", "Nightstar", "Nightwing", "Nihmedu", "Ni’Tessine", "Nierde", "Nightmeadow", "Nimesin", "Nlossae", "Nlossae", "Nolbrae", "Nyamtharsar", "Nyntynel", "Oakstaff", "Oakwood", "Olortynnal", "Olyrnn", "Omberdawn", "Ongluth", "Orama", "Orbryn", "Orbryn", "Ortauré", "Oumryn", "Phenthae", "Pholont", "Presrae", "Q'Naepp,", "Rachiilstar", "Raedrimn", "Raryndur", "Reithel", "Revven", "Rhaevaern", "Rhothomir", "Rhuidhen", "Rhyllgallohyr", "Rivleam", "Rivvikyn", "Runemaster", "Sarsantyr", "Selakiir", "Selmer", "Selorn", "Shadowmantle", "Shadowwater", "Shaeremae", "Shaethe", "Shalandalan", "Sharrith", "Shaurlanglar", "Shraiee", "Shyr", "Sicafei", "Siltral", "Silverbow", "Silverhand", "Silveroak", "Silverspear", "Sinaran", "Slenderbow", "Spellstalker", "Soryn", "Srinshee", "Starnar", "Starbrow", "Starglance", "Starglow", "Starym", "Stillhawk", "Stilmyst", "Straeth", "Strongbow", "Suldusk", "Sultaasar", "Summerstars", "Sunweaver", "Swordstar", "Symbaern", "Talandren", "Talesspur", "Tamlyranth", "Tanagathor", "Tarnruth", "Tarsap", "Tarsis", "Tassarion", "Taurntyrith", "Tellynnan", "Teshurr", "Thea", "Tlanbourn", "Tohrthaal", "Toralynnsyr", "Tornglara", "Tornglara", "Torthtan", "Toryvhallen", "Trueshot", "Tsornyl", "Tyrneladhelu", "Uirthur", "Ulondarr", "Ulongyr", "Vandiir", "Veverell", "Vispasial", "Vyshaan", "Waelvor", "Whitethistle", "Windstar", "Windwalker", "Xantrani", "Yeschant", "Yhendorn", "Yraueme", "Yridnae", "Yundraer" ],
-          "age": {
-            "0": "Infant",
-            "20": "Child",
-            "100": "Young",
-            "600": "Adult",
-            "700": "Senior",
-            "750": "Elderly"
-          },
-          "height": "4*12+6+2d10",
-          "profession": {
-            "5": "Soldier",
-            "20": "@prof.town",
-            "40": "@prof.rural",
-            "70": "@prof.forest",
-            "75": "@prof.mountain",
-            "80": "@prof.coastal",
-            "90": "@prof.scholar",
-            "100": "@prof.city"
-          }
-        },
-        "16": {
-          "race": "Half Orc",
-          "gender": {
-            "50": {
-              "gender": "Male",
-              "name": ["@.race.Human.gender.{gender}.name","@.race.Orc.name"],
-              "pronoun": "@male_pronouns"
-            },
-            "100": {
-              "gender": "Female",
-              "name":["@.race.Human.gender.{gender}.name","@.race.Orc.name"],
-              "pronoun": "@female_pronouns"
-            }
-          },
-          "surname": ["@.race.Human.surname","@.race.Orc.surname"],
-          "age": {
-            "0": "Infant",
-            "6": "Child",
-            "14": "Young",
-            "60": "Adult",
-            "70": "Senior",
-            "80": "Elderly"
-          },
-          "eyes": {
-            "75%": "@.race.Orc.eyes",
-            "25%": "@eyes"
-          },
-          "height": "4*12+10+2d10",
-          "profession": {
-            "40": "Soldier",
-            "65": "@prof.town",
-            "75": "@prof.rural",
-            "77": "@prof.forest",
-            "87": "@prof.mountain",
-            "92": "@prof.coastal",
-            "95": "@prof.scholar",
-            "100": "@prof.city"
-          }
-        },
-        "26": {
-          "race": "Dwarf",
-          "gender": {
-            "50": {
-              "gender": "Male",
-              "name": ["Angor", "Austi", "Bragi", "Braka", "Brobek", "Brulin", "Coalak", "Dagurt", "Digroi", "Eiki", "Eilivur", "Floki", "Frostar", "Fundar", "Gogu", "Gremin", "Gusak", "Heptin", "Horar", "Hungus", "Ingivald", "Jodis", "Killin", "Lipith", "Lofar", "Malok", "Noi", "Oddfinnur", "Prodos", "Ragriel", "Randil", "Rotnam", "Salvor", "Slyvek", "Throar", "Toki", "Virfi", "Voggur", "Withil", "Zazfa", "Adrik", "Alberich", "Baern", "Barendd", "Brottor", "Bruenor", "Dain", "Darrak", "Delg", "Eberk", "Einkil", "Fargrim", "Flint", "Gardain", "Harbek", "Kildrak", "Morgran", "Orsik", "Oskar", "Rangrim", "Rurik", "Taklinn", "Thoradin", "Thorin", "Tordek", "Traubon", "Travok", "Ulfgar", "Veit", "Vondal" ],
-              "pronoun": "@male_pronouns"
-            },
-            "100": {
-              "gender": "Female",
-              "name":[ "Amerstal", "Aqrilla", "Bellesta", "Bonnwynn", "Brilbelle", "Chalia", "Daernip", "Devella", "Dimlinn", "Edmyla", "Erthel", "Fada", "Gembelle", "Ithi", "Jaderyn", "Jinvia", "Kezda", "Kystal", "Lija", "Minelle", "Misi", "Misma", "Mistmael", "Mysris", "Nalra", "Narvari", "Pondral", "Ragna", "Saphil", "Sola", "Soldelle", "Tazlen", "Tisnip", "Tisthel", "Tiznys", "Vinelle", "Wiska", "Wispmaral", "Yrsa", "Zika", "Amber", "Artin", "Audhild", "Bardryn", "Dagnal", "Diesa", "Eldeth", "Falkrun", "Finellen", "Gunnloda", "Gurdis", "Helja", "Hlin", "Kathra", "Kristryd", "Ilde", "Liftrasa", "Mardred", "Riswynn", "Sannl", "Torbera", "Torgga", "Vistra" ],
-              "pronoun": "@female_pronouns"
-            }
-          },
-          "surname": [ "Balderk", "Battlehammer", "Brawnanvil", "Dankil", "Fireforge", "Frostbeard", "Gorunn", "Holderhek", "Ironfist", "Loder", "Lutgehr", "Rumnaheim", "Strakeln", "Torunn", "Ungart", "Oakchin", "Chaosbrow", "Cragbeard", "Fieryflayer", "Orcshaper", "Cragbringer", "Bonefoot", "Aletank", "Grimshaper", "Lavabane", "Kraghead", "Windarm", "Bottleriver", "Coinforge", "Cragbow", "Oreminer", "Drakecloak", "Bristlethane","Snowbuckle", "Greyforged", "Axestone", "Trollmaster", "Shatterhead", "Honorhood", "Gravelbender", "Noblebeard", "Earthbane", "Oakmaker", "Flatfall", "Kragmaker", "Warcloak", "Woldbraid", "Fierybender", "Greatfury", "Kragguard", "Earthchin", "Copperbeard", "Flaskbasher", "Shatterhelm", "Fierybow" ],
-          "age": {
-            "0": "Infant",
-            "20": "Child",
-            "50": "Young",
-            "300": "Adult",
-            "350": "Senior",
-            "400": "Elderly"
-          },
-         "height": "3*12+8+3d4",
-        "profession": {
-          "20": "Soldier",
-          "40": "@prof.town",
-          "45": "@prof.rural",
-          "47": "@prof.forest",
-          "87": "@prof.mountain",
-          "90": "@prof.coastal",
-          "95": "@prof.scholar",
-          "100": "@prof.city"
+        "100": {
+          "gender": "Female",
+          "pronoun": "@female_pronouns"
         }
-       },
-        "90": {
-          "race": "Human",
-          "gender": {
-            "50": {
-              "gender": "Male",
-              "name": ["Akibrus", "Angun", "Balrus", "Bulruk", "Caldor", "Dagen", "Darvyn", "Delvin", "Dracyian", "Dray", "Eldar", "Engar", "Fabien", "Farkas", "Galdor", "Igor", "Jai-Blynn", "Klayden", "Laimus", "Malfas", "Norok", "Orion", "Pindious", "Quintus", "Rammir", "Remus", "Rorik", "Sabir", "Séverin", "Sirius", "Soril", "Sulfu", "Syfas", "Viktas", "Vyn", "Wilkass", "Yagul", "Zakkas", "Zarek", "Zorion", "Anlow", "Arando", "Aseir", "Bardeid", "Bram", "Cale", "Dalkon", "Daylen", "Dodd", "Dungarth", "Dyrk", "Eddan", "Falken", "Feck", "Fenton", "Gryphero", "Hagar", "Haseid", "Jeras", "Khemed", "Krynt", "Lavant", "Leyten", "Madian", "Malfier", "Markus", "Mehmen", "Meklan", "Namen", "Navaren", "Nerle", "Nilus", "Ningyan", "Norris", "Quentin", "Semil", "Sevenson", "Steveren", "Sudeiman", "Talfen", "Tamond", "Taran", "Tavon", "Tegan", "Vanan", "Vincent", "Zasheir", "Aseir", "Bardeid", "Haseid", "Khemed", "Mehmen", "Sudeiman", "Zasheir", "Darvin", "Dorn", "Evendur", "Gorstag", "Grim", "Helm", "Malark", "Morn", "Randal", "Stedd", "Bor", "Fodel", "Glar", "Grigor", "Igan", "Ivor", "Kosef", "Mival", "Orel", "Pavel", "Sergor", "Ander", "Blath", "Bran", "Frath", "Geth", "Lander", "Luth", "Malcer", "Stor", "Taman", "Urth" ],
-              "pronoun": "@male_pronouns"
-            },
-            "100": {
-              "gender": "Female",
-              "name":[ "Aleera", "Alva", "Amara", "Anya", "Asralyn", "Azura", "Breya", "Brina", "Caelia", "Ciscra", "Dezaral", "Dorath", "Drusila", "Elda", "Esmeralla", "Freya", "Gelda", "Hadena", "Kyla", "Kyra", "Lavinia", "Lunarex", "Lyra", "Mireille", "Nyssa", "Olwyn", "Ophelia", "Peregrine", "Reyda", "Sarielle", "Shikta", "Sybella", "Syfyn", "Thalia", "Turilla", "Vasha", "Vixen", "Yvanna", "Zaria", "Zeniya", "Atala", "Azura", "Brey", "Ceidil", "Hallan", "Hama", "Jasmal", "Kasaki", "Lorelei", "Meilil", "Mirabel", "Pharana", "Remora", "Rosalyn", "Sachil", "Saidi", "Seipora", "Tanika", "Tura", "Tylsa", "Vencia", "Xandrilla", "Yasheira", "Zasheida", "Atala", "Ceidil", "hama", "Jasmal", "Meilil", "Seipora", "Yasheira", "Zasheida", "Arveene", "Esvele", "Jhessail", "Kerri", "Lureene", "Miri", "Rowan", "Shandri", "Tessele", "Alethra", "Kara", "Katernin", "Mara", "Natali", "Olma", "Tana", "Zora", "Amafrey", "Betha", "Cefrey", "Kethra", "Mara", "Olga", "Silifrey", "Westra", "", "Human Neutral", "Atala", "Brey", "Cale", "Ceidil", "Eddan", "Hallan", "Jasmal", "Kasaki", "Leyten", "Maidian", "Namen", "Navaren", "Sachil", "Talfen", "Tura" ],
-              "pronoun": "@female_pronouns"
-            }
-          },
-          "surname": ["Arkalis", "Armanci", "Bilger", "Blackstrand", "Brightwater", "Carnavon", "Caskajaro", "Coldshore", "Coyle", "Cresthill", "Cuttlescar", "Daargen", "Dalicarlia", "Danamark", "Donoghan", "Drumwind", "Dunhall", "Ereghast", "Falck", "Fallenbridge", "Faringray", "Fletcher", "Fryft", "Goldrudder", "Grantham", "Guddath", "Gullscream", "Hindergrass", "Iscalon", "Kreel", "Kroft", "Lamoth", "Leerstrom", "Lynchfield", "Moonridge", "Netheridge", "Oakenheart", "Pyncion", "Ratley", "Redraven", "Revenmar", "Roxley", "Sell", "Seratolva", "Shanks", "Shattermast", "Shaulfer", "Silvergraft", "Stavenger", "Stormchapel", "Strong", "Swiller", "Talandro", "Tamil", "Towerfall", "Umbermoor", "Van Devries", "Van Gandt", "Van Hyden", "Varcona", "Varzand", "Voortham", "Vrye", "Webb", "Welfer", "Wilxes", "Wintermere", "Wygarthe", "Zatchet", "Zethergyll", "Basha", "Dumein", "Jassan", "Khalid", "Mostana", "Pashar", "Rein", "Amblecrown", "Buckman", "Dundragon", "Evenwood", "Greycastle", "Tallstag", "Bersk", "Chernin", "Dotsk", "Kulenov", "Marsk", "Nemetsk", "Shemov", "Starag", "Brightwood", "Helder", "Hornraven", "Lackman", "Stormwind", "Windrivver" ],
-          "age": {
-            "0": "Infant",
-            "10":"Child",
-            "18": "Young",
-            "60": "Adult",
-            "75": "Senior",
-            "100": "Elderly"
-          },
-          "height": "4*12+8+2d10",
-          "profession": {
-            "10": "Soldier",
-            "40": "@prof.town",
-            "60": "@prof.rural",
-            "70": "@prof.forest",
-            "80": "@prof.mountain",
-            "90": "@prof.coastal",
-            "95": "@prof.scholar",
-            "100": "@prof.city"
-          }
+      },
+      "name":["@.race.Human.gender.{gender}.name","@.race.Elf.gender.{gender}.name"],
+      "surname": ["@..Human.surname","@.race.Elf.surname"],
+      "age": {
+        "0": "Infant",
+        "10":"Child",
+        "20": "Young",
+        "100": "Adult",
+        "140": "Senior",
+        "180": "Elderly"
+      },
+      "height": "3*12+9+2d8",
+      "profession": {
+        "10": "Soldier",
+        "25": "@prof.town",
+        "45": "@prof.rural",
+        "65": "@prof.forest",
+        "70": "@prof.mountain",
+        "75": "@prof.coastal",
+        "80": "@prof.scholar",
+        "100": "@prof.city"
+      }
+    },
+    "3": {
+      "race": "Gnome",
+      "gender": {
+        "50": {
+          "gender": "Male",
+          "name": [ "Alston", "Alvyn", "Boddynock", "Brocc", "Burgell", "Dimble", "Eldon", "Erky", "Fonkin", "Frug", "Gerbo", "Gimble", "Glim", "Jebeddo", "Kellen", "Namfoodle", "Orryn", "Seebo", "Sindri", "Warryn", "Wrenn", "Zook", "Begnym", "Jinzic", "Borwass", "Snaanbag", "Labkost", "Jenkkig", "Clamdor", "Bitty", "Brena", "Amorette", "Sarug", "Erpos", "Nimin", "Jorhim", "Salmorn", "Vorbar", "Davdri", "Valmin", "Nigrim", "Davkas" ],
+          "pronoun": "@male_pronouns"
         },
-        "91" : {
-          "race": "Orc",
-          "name": ["Sugbu", "Yambul", "Zalthu", "Snaglak", "Noogugh", "Varbu", "Podagog", "Cukgilug", "Xarpug", "Jughragh", "Murbol", "Bashuk", "Ugor", "Mog", "Ghak", "Murob", "Ulumpha", "Ushug", "Sharn", "Dura", "Raghat", "Brokil", "Pargu", "Hibub", "Jughog", "Nurghed", "Ditgurat", "Durz", "Kurdan", "Bugdul", "Sharamph", "Homraz", "Sharn", "Murob", "Oghash", "Shagdub", "Durgat", "Atub", "Bolar", "Snak", "Numhug", "Sulmthu", "Yakha", "Urgran", "Vrothu", "Sakgu", "Sahgigoth", "Matuk", "Rodagog", "Ertguth", "Sharn", "Orbul", "Durgat", "Gashnakh", "Kharzug", "Arob", "Dura", "Garakh", "Shufharz", "Gul", "Wegub", "Eichelberbog", "Wurgoth", "Durzol", "Wudhagh", "Digdug", "Zabub", "Omogulg", "Mugdul", "Jokgagu", "Borgakh", "Bulfim", "Arob", "Durz", "Bulfim", "Snak", "Atub", "Bagrak", "Snak", "Yazgash", "Bidgug", "Slaugh", "Farod", "Hagu", "Zunuguk", "Bogrum", "Oogorim", "Unrugagh", "Onugug", "Omugug", "Batul", "Agrob", "Dura", "Gluronk", "Rogbut", "Durgat", "Mog", "Shadbak", "Bula", "Durgat", "Nar", "Gun", "Rall", "Brar", "Brugvun", "Gruddakk", "Dudral", "Jortukk", "Brutran", "Zhutag", "Ghun", "Vin", "Rhuk", "Rhuam", "Bellul", "Bhivgon", "Ovie", "Rhivnuf", "Ilvo", "Movo", "Buk", "Zhukk", "Zok", "Lar", "Lanzan", "Rharlor", "Rhardon", "Zhobrok", "Bhurlur", "Urlok", "Dheng", "Beef", "Nuz", "Nev", "Ova", "Kongiz", "Aovno", "Guthao", "Kegvo", "Angok", "Gub", "Shak", "Guk", "Ghakk", "Aggukk", "Drugvakk", "Zartakk", "Ganall", "Nugak", "Guhzan"],
-          "surname": ["Toe Spear", "Chin Shatterer", "Giant Trasher", "Storm Killer", "Brass Hammer", "Nose Gouger", "Teeth Strangler", "Flesh Strangler", "Brain Scalper", "Nose Smasher", "The Fearless", "The Butcher", "The Smug", "Death Cutter", "The Vivid", "Rib Flayer", "The Crazy", "The Violent", "The Prime", "The Crooked", "The Disfigured", "Slave Wrecker", "The Fierce", "The Cold", "The Enormous", "The Outlandish", "Scale Cleaver", "Blood Quasher", "Spite Mutilator", "Doom Sword", "Eye Gouger", "Iron Mutilator", "The Ugly", "The Volatile", "Brain Masher", "Vein Slicer", "The Broad", "The Colossal", "The Barbarian", "Dream Cleaver", "Feet Ripper", "The Barbarian", "Ash Pummel", "Thunder Strangler", "The Brutal", "The Colossal", "Ankle Masher", "The Ugly", "The Warped", "The Infernal"],
-          "age": {
-            "0": "Infant",
-            "5":"Child",
-            "12": "Young",
-            "23": "Adult",
-            "35": "Senior",
-            "40": "Elderly"
-          },
-          "height": "5*12+4+2d8",
-          "weight": "175+2d6",
-          "gender": {
-            "50": {
-              "gender": "Male",
-              "pronoun": "@male_pronouns"
-            },
-            "100": {
-              "gender": "Female",
-              "pronoun": "@female_pronouns"
-            }
-          },
-          "eyes":
-          {
-            "50%": "black",
-            "30%": "brown",
-            "18%": "red",
-            "2%": "blue"
-          },
-          "profession": {
-            "30": "Raider",
-            "55": "@prof.town",
-            "75": "@prof.rural",
-            "85": "@prof.forest",
-            "95": "@prof.mountain",
-            "97": "@prof.coastal",
-            "98": "@prof.scholar",
-            "100": "@prof.city"
-          }
+        "100": {
+          "gender": "Female",
+          "name":[ "Bimpnottin", "Breena", "Caramip", "Carlin", "Donella", "Duvamil", "Ella", "Ellyjobell", "Ellywick", "Lilli", "Loopmottin", "Lorilla", "Mardnab", "Nissa", "Nyx", "Oda", "Orla", "Roywyn", "Shamil", "Tana", "Waywocket", "Zanna" ,"Tyra", "Tawyn", "Rena", "Zanitina", "Tifapine", "Lyda", "Satra", "Lorifi", "Daphiphina", "Arila", "Zanigani", "Zindira", "Qiroe", "Tifaceli", "Folxi", "Grentina", "Heshana", "Tifamyn", "Myna", "Cartra"],
+          "pronoun": "@female_pronouns"
         }
+      },
+      "surname": [ "Beren", "Daergel", "Folkor", "Garrick", "Nackle", "Murnig", "Ningel", "Raulnor", "Scheppen", "Timbers", "Turen", "Dustseeker", "Nuttlattle", "Bernfitlacks", "Ipswoms", "Pelletsniffer", "Tinkerfoot", "Gemhair", "Blaesocket", "Sabblewloth", "Muwlebra", "Giobibaar", "Woh", "Apleldosp", "Mirlon", "Peedlupnon"],
+      "age": {
+        "0": "Infant",
+        "20": "Child",
+        "40": "Young",
+        "300": "Adult",
+        "450": "Senior",
+        "500": "Elderly"
+      },
+      "height": "2*12+11+2d4",
+      "profession": {
+        "5": "Soldier",
+        "35": "@prof.town",
+        "45": "@prof.rural",
+        "60": "@prof.forest",
+        "65": "@prof.mountain",
+        "70": "@prof.coastal",
+        "85": "@prof.scholar",
+        "100": "@prof.city"
+      }
+    },
+    "7": {
+      "race": "Halfling",
+      "gender": {
+        "50": {
+          "gender": "Male",
+          "name": [ "Alton", "Ander", "Cade", "Corrin", "Eldon", "Errich", "Finnan", "Garret", "Lindal", "Lyle", "Merric", "Milo", "Osborn", "Perrin", "Reed", "Roscoe", "Wellby" ],
+          "pronoun": "@male_pronouns"
+        },
+        "100": {
+          "gender": "Female",
+          "name":[ "Andry", "Bree", "Callie", "Cora", "Euphemia", "Jillian", "Kithri", "Lavinia", "Lidda", "Merla", "Nedda", "Paela", "Portia", "Seraphina", "Shaena", "Trym", "Vani", "Verna" ],
+          "pronoun": "@female_pronouns"
+        }
+      },
+      "surname": [ "Brushgather", "Goodbarrel", "Greenbottle", "High-hill", "Hilltopple", "Leagallow", "Tealeaf", "Thorngage", "Tosscobble", "Underbough" ],
+      "age": {
+        "0": "Infant",
+        "10": "Child",
+        "20": "Young",
+        "100": "Adult",
+        "130": "Senior",
+        "170": "Elderly"
+      },
+      "height": "2*12+7+2d4",
+      "profession": {
+        "5": "Soldier",
+        "35": "@prof.town",
+        "65": "@prof.rural",
+        "75": "@prof.forest",
+        "80": "@prof.mountain",
+        "85": "@prof.coastal",
+        "90": "@prof.scholar",
+        "100": "@prof.city"
+      }
+    },
+    "11": {
+      "race": "Elf",
+      "gender": {
+        "50": {
+          "gender": "Male",
+          "name": ["Ailmar", "Akkar", "Axil", "Belstram", "Cluym", "Corym", "Daemeon", "Darcassan", "Darfin", "Eldar", "Elwin", "Eroan", "Faelar", "Finrod", "Gaemon", "Haemir", "Hastos", "Ismzal", "Jassin", "Jhaan", "Kuskyn", "Kymil", "Lago", "Morthil", "Myrinn", "Neldor", "Nesterin", "Nindr", "Onas", "Orym", "Pharom", "Pyrder", "Rijjat", "Silvyr", "Sudryl", "Thingol", "Turgon", "Usunaar", "Vaegon", "Zabbas", "Adran", "Aelar", "Aramil", "Arannis", "Aust", "Beiro", "Berrian", "Carric", "Enialis", "Erdan", "Erevan", "Galinndan", "Hadarai", "Heian", "Himo", "Immeral", "Ivellios", "Laucian", "Mindartis", "Paelias", "Peren", "Quarion", "Riardon", "Rolen", "Soveliss", "Thamior", "Tharivol", "Theren", "Varis", "Abadda", "Abarat", "Adamar", "Adorellan", "Adresin", "Aduce", "Aelrindel", "Aerendyl", "Aermhar", "Aesar", "Aeson", "Afamrail", "Agis", "Aglanthol", "Ainésilver", "Aithlin", "Ajaar", "Akhelbhen", "Akkar", "Alabyran", "Albondiel", "Alinar", "Allain", "Alok", "Alosrin", "Althidon", "Amrynn", "Anarallath", "Andaerean", "Andrathath", "Anfalen", "Anlyth", "Aolis", "Aquilan", "Araevin", "Arandron", "Aravilar", "Arbane", "Ardreth", "Ardryll", "Argus", "Arkhun", "Arkiem", "Arl", "Arlen", "Arun", "Ascal", "Athtar", "Aubric", "Aubron", "Aulathar", "Aulauthar", "Aumanas", "Aumrauth", "Avourel", "Baerdelcoam", "Baerithryn", "Belanor", "Beldroth", "Bellas", "Belstram", "Beluar", "Bhyrindaar", "Biafyndar", "Bialaer", "Braern", "Brindarry", "Buttorwyr", "Cameron", "Chaalmyth", "Chathanglas", "Cheyrth", "Chozzaster", "Chylnoth", "Cluhurach", "Cluym", "Cohnal", "Conall", "Connak", "Cornaith", "Corym", "Cymbiir", "Cystenn", "Dalyor", "Dakath", "Dannyd", "Daratrine", "Darcassan", "Darfin", "Darthoridan", "Deldrach", "Delmuth", "Delsaran", "Dhoelath", "Divisav", "Drannor", "Droth", "Druindar", "Durlan", "Durothil", "Dyffros", "Earynspieir", "Edansyr", "Edicûve", "Edwyrd", "Edyrm", "Ehlark", "Ehrendil", "Eilauver", "Elaethan", "Elaith", "Elandorr", "Elanjar", "Elashor", "Elbauthin", "Elbereth", "Eldaernth", "Eldar", "Eldrin", "Elénaril", "Elenshaer", "Elephon", "Elhieardacil", "Elidyr", "Elion", "Elkhazel", "Ellisar", "Elorfindar", "Elorshin", "Elpaerae", "Eltaor", "Eltargrim", "Emmyth", "Entrydal", "Erendriel", "Erglareo", "Eriladar", "Erlan", "Erlathan", "Eroan", "Erolith", "Eschallus", "Estelar", "Ethlando", "Ettrian", "Euchoé", "Evindal", "Eyrynnhv", "Faahresc", "Faelar", "Faelyn", "Faeranduil", "Falael", "Faoraar", "Felaern", "Fenian", "Fflar", "Fhaornik", "Fhociin", "Filarion", "Filvendor", "Filverel", "Finufaranell", "Flardryn", "Flinar", "Foxfire", "Fylson", "Gaeleath", "Gaelin", "Galaeron", "Galan", "Galather", "Ganamede", "Gantar", "Garrik", "Garynnon", "Giilvas", "Giullio", "Glarald", "Glorandal", "Goronyyv", "Grathgor", "Haalaari", "Hachaam", "Haemir", "Haladavar", "Halafarin", "Halamar", "Haldreithen", "Halflar", "Halgondas", "Halpaeril", "Halueth", "Halueve", "Haryk", "Hastos", "Hatharal", "Hiflanyl", "Hoccar", "Horith", "Hubyr", "Iefyr", "Ievos", "Ihimbraskar", "Ilbryn", "Illianaro", "Ilimitar", "Iliphar", "Ilitharath", "Illithor", "Illitran", "Ilphas", "Ilrune", "Ilthuryn", "Ilyndrathyl", "Inchel", "Inialos", "Injros", "Intevar", "Iolas", "Iolrath", "Itham", "Ithraides", "Ivlisar", "Ivósaar", "Ivran", "Iymbryl", "Iyrandrar", "Iyriklaunavan", "Jandar", "Jannalor", "Jaonos", "Jassin", "Jhaan", "Jhaartael", "Jhaeros", "Jharak", "Jharym", "Jhuvik", "Jonas", "Jonik", "Jorildyn", "Josidiah", "Juppar", "Kahvoerm", "Kalaerede", "Katar", "Katyr", "Keletheryl", "Kelvhan", "Kendel", "Kerym", "Keryth", "Kesefehon", "Khaalindaan", "Kharis", "Khatar", "Khidell", "Khiiral", "Khilseith", "Khuumal", "Khyrmn", "Khyssoun", "Kindroth", "Kivessin", "Kiyuigh", "Klaern", "Kolvar", "Korrigash", "Kroloth", "Kuornos", "Kuskyn", "Kuskyn", "Kymil", "Kyrtaar", "Laeroth", "Lafarallin", "Lamruil", "Laosx", "Larongar", "Larrel", "Lashul", "Lathai", "Lathlaeril", "Leayonadas", "Leojym", "Lhombaerth", "Lhoris", "Lianthorn", "Llarm", "Llewellenar", "Llombaerth", "Lorsan", "Luirlan", "Luthais", "Luvon", "Lyari", "Lyklor", "Lysanthir", "Maasli", "Maendellyn", "Maeraddyth", "Maeral", "Maiele", "Malgath", "Mardeiym", "Marikoth", "Marlevaur", "Melandrach", "Melisander", "Merellien", "Merith", "Methild", "Mhaenal", "Mi’tilarro", "Mihangyl", "Miilaethorn", "Miirphys", "Mirthal", "Mirthal", "Mlartlar", "Mlossae", "Molonym", "Molostroi", "Montagor", "Morgan", "Morthil", "Mothrys", "Mourn", "Myrddin", "Myriil", "Myrin", "Myronthilar", "Mythanthar", "Naertho", "Naeryndam", "Naeryndam", "Napraeleon", "Narbeth", "Nardual", "Nelaeryn", "Nelaeryn", "Neldor", "Neldor", "Nesterin", "Nevarth", "Nhamashal", "Nieven", "Nindrol", "Ninthalor", "Nlossae", "Nopos", "Norlorn", "Nremyn", "Nuvian", "Nyaalsir", "Nylian", "Nym", "Nyvorlas", "Oacenth", "Oenel", "Ohmbryn", "Olaurae", "Olinsivver", "Olithir", "Onas", "Oncith", "Ondabrar", "Ondroth", "Onvyr", "Orist", "Orlpar", "Orndacil", "Ornthalas", "Ornthalas", "Ortauré", "Orym", "Oslarelar", "Otaehryn", "Otaerhyn", "Othorion", "Paeral", "Paeris", "Passilorris", "Paulorin", "Phaendar", "Pharom", "Phraan", "Pirphal", "Pleufan", "Purtham", "Pyrder", "Pyrravym", "Pywaln", "Pyxaanthal,", "Qildor", "Quastarte", "Quynn", "Raeranthur", "Raibyr", "Ralikanthae", "Ralnor", "Rathal", "Raunaeril", "Rauthomyr", "Rauvelore", "Reluraun", "Reluvethel", "Rennyn", "Reptar", "Respen", "Rhaac'var", "Rhalyf", "Rhangyl", "Rhenalyrr", "Rhespen", "Rhistel", "Rhothomir", "Rhys", "Rilitar", "Riluaneth", "Rolim", "Rotheloe", "Rothilion", "Ruardh", "Ruehar", "Ruith", "Rumathil", "Ruvaen", "Ruven", "Ruvyn", "Rychell", "Ryfon", "Ryul", "Ryvvik,", "Sadalymn", "Saevel", "Sakrattars", "Samblar", "Sandevv", "Seanchai", "Seith", "Selanlar", "Selgauth", "Shael", "Shammath", "Sharian", "Sharlario", "Shaundyl", "Shevarash", "Shonassir", "Shyrrik", "Siirist", "Silvyr", "Simimar", "Sinaht", "Skalanis", "Sontar", "Srindin", "Strohm", "Sudryl", "Sundamar", "Sylvar", "Symkalr", "Sythaeryn", "Taanyth", "Taegen", "Taeglyn", "Taeral", "Taerntym", "Taleisin", "Tammson", "Tamnaeuth", "Tamsin", "Tanithil", "Tannivh", "Tannyll", "Tanseril", "Tanyl", "Taranath", "Tarathiel", "Taredd", "Tarosspur", "Tarron", "Tasar", "Tassarion", "Tathaln", "Tehlmar", "Teirist", "Tenyajn", "Tethir", "Thalanil", "Thallan", "Thatoryl", "Thiilthan", "Thurdan", "Thurruvyn", "Tiarshus", "Tlannatar", "Tolthe", "Tordynnar", "Toross", "Traeliorn", "Travaran", "Triandal", "Triktappic", "Tsaer", "Tsiilmas", "Tyvollus", "Saelethil", "Saevel", "Sakrattars", "Seiveril", "Sharian", "Skalanis", "Sinaht", "Sudryl", "Sythaeryn", "Taenaran", "Tannivh", "Tamnaeuth", "Tanyl", "Tarathiel", "T’karon", "Tolthe", "Traeliorn", "Ualair", "Uevareth", "Uldreiyn", "Uldreiyn", "Urddusk", "Usunaar", "Uthorim", "Vaalyun", "Vaeril", "Valmaxian", "Vander", "Vartan", "Velethuil", "Venali", "Vesperr", "Vesryn", "Vesstan", "Vhoadan", "Vhoori", "Vhoorhin", "Volodar", "Voron", "Waernas", "Wistari", "Wylchyr", "Wylym", "Wyn", "Wyndelleu", "Wyqhael", "Wyrran", "Xalph", "Xanotter", "Xhalh", "Xhalth", "Xharlion", "Yalathanil", "Yeschant", "Yhendorn", "Ylyndar", "Ynloeth", "Zabbas", "Zaltarish", "Zandro", "Zaor", "Zaos", "Zelphar", "Zhoron", "Zulae" ],
+          "pronoun": "@male_pronouns"
+        },
+        "100": {
+          "gender": "Female",
+          "name":["Alea", "Azariah", "Bellas", "Bonna", "Chandrelle", "Ciradyl", "Daealla", "Doreah", "Elora", "Estelar", "Faelyn", "Foxfire", "Gaylia", "Gylledha", "Haela", "Ilbryn", "Ilyrana", "Josidiah", "Keara", "Lymseia", "Merlara", "Narbeth", "Nym", "Oribel", "Phyrra", "Quamara", "Rennyn", "Rhenalyrr", "Saeya", "Sheedra", "Taena", "Talila", "Tanulia", "Uldreiyn", "Vaella", "Vesryn", "Wistari", "Ylyndar", "Yrlissa", "Zhuirentel", "Adrie", "Althaea", "anastrianna", "Andraste", "Antinua", "Bethrynna", "Birel", "Caelynn", "Drusilia", "Enna", "Felosial", "Ielenia", "Jelenneth", "Keyleth", "Leshanna", "Lia", "Meriele", "Mialee", "Naivara", "Quelenna", "Quillathe", "Sariel", "Shanairra", "Shava", "Silaqui", "Theirastra", "Thia", "Vadania", "Valanthe", "Xanaphia", "Aelieyeeva", "Aelrue", "Aelynthi", "Aerilaya", "Ahrendaaria", "Ahrendue", "Ahskahala", "Ajhalanda", "Alaglossa", "Alais", "Alauthshaee", "Alavara", "Alea", "Alerathla", "Allannia", "Allisa", "Alloralla", "Allynna", "Almithara", "Aloevan", "Alvaerele", "Aluendalee", "Alyndra", "Amara", "Amaranthae", "Amkissra", "Amlaruil", "Amnestria", "Amra", "Anaharae", "Anarzee", "Aneirin", "Anhaern", "Anyllan", "Ara", "Araushnee", "Aravae", "Arcaena", "Arielimnda", "Arlayna", "Arnarra", "Artin", "Ashemmi", "Aubaudameira", "Auluua", "Aurae", "Ava", "Axilya", "Ayaeqlarune", "Azariah", "Bhuraelea", "Blythswana", "Bonnalurie", "Braerindra", "Caerthynna", "Calarel", "Cauladra", "Chaenath", "Chalsarda", "Chandrelle", "Chasianna", "Chichlandra", "Chin’nesstre", "Chomylla", "Cilivren", "Ciyradyl", "Claire", "Csharynn", "Daenalaia", "Daratrine", "Darshee", "Dasyra", "Dathlue", "Dathlue", "Dathlue", "Delimbiyra", "Delshandra", "Deularla", "Duilya", "Eallyrl", "Ecaeris", "Edraele", "Elanalue", "Elanil", "Elasha", "Eldratha", "Elénaril", "Eletha", "Ellarian", "Ellifain", "Eloen", "Elora", "Elvandaruil", "Embrae", "Emvorele", "Enajharas", "Eshenesra", "Essaerae", "Esta", "Ester", "Esyae", "Faranni", "Faunalyn", "Fhaertala", "Fieryat", "Filaurel", "Filauria", "Fildaerae", "Fox-at-Twilight", "Francessca", "Gaelira", "Gaerradh", "Gaylia", "Gemstarzah", "Ghilanna", "Glynnii", "Gweyr", "Gwynnestri", "Gylledha", "Haalija", "Hacathra", "Halaema", "Halama", "Halaema", "Halanaestra", "Hamalitia", "Haramara", "Helartha", "Hhora", "Holone", "Huquethae", "Hycis", "Iahalae", "Ialantha", "Ikeshia", "Ildilyntra", "Ilmadia", "Ilyrana", "Ilythyrra", "Imdalace", "Imizael", "Immianthe", "Imra", "Imramarthree", "Imryll", "Innovindil", "Ioelena", "Irhaal", "Isciira", "Ithrythra", "Itiireae", "Itylra", "Jastra", "Jeardra", "Jhaer", "Jhalass", "Jhanandra", "Jhaumrithe", "Jhiilsraa", "Ilsevel", "Ilyrana", "Immianthe", "Isilfarrel", "Kavrala", "Kaylessa", "Keerla", "Keishara", "Kethryllia", "Keya", "Khiipaera", "Kileontheal", "Kythaela", "Laamtora", "Laerdya", "Laerune", "Laurlaethee", "Lazziar", "Leilatha", "Liluth", "Llamryl", "Lorelei", "Lydi’aleera", "Lyraesel", "Maaleshiira", "Maelyrra", "Maeralya", "Maith", "Makaela", "Malruthiia", "Mariona", "Marissa", "Martainn", "Meira", "Melarue", "Merethyl", "Merialeth", "Meriel", "Merlara", "Mistale", "Mladris", "Mnuvae", "Morgwais", "Moryggan", "Muerlara", "Mylaela", "Mylaerla", "Myriani", "Naevys", "Nakiasha", "Nambra", "Namyriitha", "Nanalethalee", "Nanthee", "Nanthleene", "Naumys", "Nlaea", "Nuala", "Nueleth", "Nuovis", "Nushala", "Nylaathria", "Ochyllyss", "Oluevaera", "Phaerl", "Phantyni", "Phelorna", "Phuingara", "Phyrra", "Pollae", "Puorlaas", "Qemba", "Quamara", "Raejiisa", "Raerauntha", "Rathiain", "Renestrae", "Roanmara", "Ruavia", "Rubrae", "Ryllae", "Saelihn", "Saélihn", "Saida", "Sakaala", "Sariandi", "Sarya", "Schimae", "Seirye", "Seldanna", "Selussa", "Séonais", "Shael", "Shadowmoon", "Shalana", "Shalantha", "Shalendra", "Shalheira", "Shandalar", "Shanyrria", "Sharaera", "Sheedra", "Sheera", "Shialaevar", "Shi’larra", "Shialaevar", "Shoulree", "Shyael", "Shyael", "Shyllisyrr", "Sinnafain", "Soliania", "Soora", "Sorsasta", "Susklahava", "Sylmae", "Symrustar", "Syndra", "Synnorha", "Syrune", "Syviis", "Taenya", "Takari", "Talaedra", "Talanashta", "Talila", "Talindra", "Tamara", "Tarasynora", "Teharissa", "Teryani", "Thalaera", "Thalanil", "Thaola", "Thasitalia", "Throleatha", "Tiatha", "Tira’allara", "Tiriara", "Tisharu", "Tsarra", "Tyllaetha,", "Ulelesse", "Unae", "Urmicca", "Uschymna", "Vaervenshalice", "Valindra", "Vashti", "Velaethaunyl", "Velatha", "Veluthil", "Verrona", "Vestele", "Viansola", "Winterflower", "Xiiltharra", "Yaereene", "Yalanilue", "Yathlanae", "Yeshelné", "Yghiilra", "Ygrainne", "Ynshael", "Yrlissa", "Yrneha", "Yrthraethra", "Ysmyrlda", "Ytharra", "Yulmanda", "Z’Beryl", "Zhuirentel", "Zoastria" ],
+          "pronoun": "@female_pronouns"
+        }
+      },
+      "surname": ["Amakir", "Amastacia", "Galanodel", "Holimion", "Ilphelkiir", "Liadon", "Meliamne", "Nailo", "Siannodel", "Xiloscient", "Aelasar", "Aelorothi", "Aendryr", "Aerasumé", "Aeravansel", "Agayous", "Agrivar", "Ahmaquissar", "Alaenree", "Alantar", "Alavara", "Alastrarra", "Alenuath", "Alerothi", "Alluth", "Aloevan", "Aluianti", "Aluviirsaan", "Amalith", "Amarallis", "Amaratharr", "Amarthen", "Ammath", "Amrallatha", "Anuaer", "Argentaamn", "Arren", "Ash", "Ashgrove", "Audark", "Auglamyr", "Auglathla", "Aunglor", "Autumnfire", "Bellas", "Berethryl", "Berilan", "Bharaclaiev", "Bhephel", "Blackhelm", "Braegen", "Briarbosk", "Brightcloak", "Brightsong", "Brightwing", "Caersaelk", "Calaudra", "Calauth", "Camusiil", "Cathdeiryn", "Ceretlan", "Chaadren", "Chamaranthe", "Clatharla", "Cormyth", "Coudoarluth", "Craulnober", "Crystalembers", "Dahast", "Dawnhorn", "Dhorinshyl", "Dlardrageth", "Doedance", "Donnathlascen", "Dracoseir", "Dree", "Duirsar", "Durothil", "Duskmere", "Duthjuth", "Ealoeth", "Echorn", "Elaéyadar", "Elassidil", "Elian", "Ellarian", "Elond", "Eluarshee", "Ereuvyn", "Erkowe", "Erladden", "Eroth", "Erlshade", "Estelda", "Evanara", "Eveningfall", "Everlove", "Evioro", "Eyriendor", "Faerondaerl", "Faerondarl", "Falanae", "Felinaun", "Fellmirr", "Fenmarel", "Fflannidan", "Floshin", "Fynnasla", "Gildenguard", "Goadulphyn", "Goldenleaf", "Gourael", "Greencloak", "Gwaelon", "Haell", "Haerlgent", "Haladar", "Hawksong", "Haevaul", "Halavanthlarr", "Hlarr", "Hyshaanth", "Iazymnal", "Ibryiil", "Ilbaereth", "Ilbenalu", "Ildacer", "Ildroun", "Iliathor", "Iliathor", "Iliathorr", "Ilnatar", "Immeril", "Ipyllasc", "Irian", "Irithyl", "Irithyl", "Ithruen", "Iydril", "Jaglene", "Kadelaryn", "Kelerandri", "Kelpor’ral", "Keove", "Kevanarial", "Korianthil", "Kraok", "Laelithar", "Laralytha", "Larenthanil", "Larethian", "Laughingwater", "Leafbower", "Leafsigil", "Le’Quella", "Lharithlyn", "Lhoril", "Llundlar", "Loceath", "Lightshiver", "Maendellyn", "Maerdrym", "Melruth", "Meirityn", "M'Haaren", "Miritar", "Mistrivvin", "Mistwinter", "Mithalvarin", "Moonbow", "Moondown", "Moonflower", "Moonglade", "Moonglamaer", "Moonsnow", "Moonweather", "Morningdove", "Mornmist", "Mrhulaedir", "Nacnar", "Naelgrath", "Narlbeth", "Narlbeth", "Neirdre", "Nelnueve", "Never", "Nhachashaal", "Nhaéslal", "Nharimlur", "Nightstar", "Nightwing", "Nihmedu", "Ni’Tessine", "Nierde", "Nightmeadow", "Nimesin", "Nlossae", "Nlossae", "Nolbrae", "Nyamtharsar", "Nyntynel", "Oakstaff", "Oakwood", "Olortynnal", "Olyrnn", "Omberdawn", "Ongluth", "Orama", "Orbryn", "Orbryn", "Ortauré", "Oumryn", "Phenthae", "Pholont", "Presrae", "Q'Naepp,", "Rachiilstar", "Raedrimn", "Raryndur", "Reithel", "Revven", "Rhaevaern", "Rhothomir", "Rhuidhen", "Rhyllgallohyr", "Rivleam", "Rivvikyn", "Runemaster", "Sarsantyr", "Selakiir", "Selmer", "Selorn", "Shadowmantle", "Shadowwater", "Shaeremae", "Shaethe", "Shalandalan", "Sharrith", "Shaurlanglar", "Shraiee", "Shyr", "Sicafei", "Siltral", "Silverbow", "Silverhand", "Silveroak", "Silverspear", "Sinaran", "Slenderbow", "Spellstalker", "Soryn", "Srinshee", "Starnar", "Starbrow", "Starglance", "Starglow", "Starym", "Stillhawk", "Stilmyst", "Straeth", "Strongbow", "Suldusk", "Sultaasar", "Summerstars", "Sunweaver", "Swordstar", "Symbaern", "Talandren", "Talesspur", "Tamlyranth", "Tanagathor", "Tarnruth", "Tarsap", "Tarsis", "Tassarion", "Taurntyrith", "Tellynnan", "Teshurr", "Thea", "Tlanbourn", "Tohrthaal", "Toralynnsyr", "Tornglara", "Tornglara", "Torthtan", "Toryvhallen", "Trueshot", "Tsornyl", "Tyrneladhelu", "Uirthur", "Ulondarr", "Ulongyr", "Vandiir", "Veverell", "Vispasial", "Vyshaan", "Waelvor", "Whitethistle", "Windstar", "Windwalker", "Xantrani", "Yeschant", "Yhendorn", "Yraueme", "Yridnae", "Yundraer" ],
+      "age": {
+        "0": "Infant",
+        "20": "Child",
+        "100": "Young",
+        "600": "Adult",
+        "700": "Senior",
+        "750": "Elderly"
+      },
+      "height": "4*12+6+2d10",
+      "profession": {
+        "5": "Soldier",
+        "20": "@prof.town",
+        "40": "@prof.rural",
+        "70": "@prof.forest",
+        "75": "@prof.mountain",
+        "80": "@prof.coastal",
+        "90": "@prof.scholar",
+        "100": "@prof.city"
+      }
+    },
+    "16": {
+      "race": "Half Orc",
+      "gender": {
+        "50": {
+          "gender": "Male",
+          "name": ["@.race.Human.gender.{gender}.name","@.race.Orc.name"],
+          "pronoun": "@male_pronouns"
+        },
+        "100": {
+          "gender": "Female",
+          "name":["@.race.Human.gender.{gender}.name","@.race.Orc.name"],
+          "pronoun": "@female_pronouns"
+        }
+      },
+      "surname": ["@.race.Human.surname","@.race.Orc.surname"],
+      "age": {
+        "0": "Infant",
+        "6": "Child",
+        "14": "Young",
+        "60": "Adult",
+        "70": "Senior",
+        "80": "Elderly"
+      },
+      "eyes": {
+        "75%": "@.race.Orc.eyes",
+        "25%": "@eyes"
+      },
+      "height": "4*12+10+2d10",
+      "profession": {
+        "40": "Soldier",
+        "65": "@prof.town",
+        "75": "@prof.rural",
+        "77": "@prof.forest",
+        "87": "@prof.mountain",
+        "92": "@prof.coastal",
+        "95": "@prof.scholar",
+        "100": "@prof.city"
+      }
+    },
+    "26": {
+      "race": "Dwarf",
+      "gender": {
+        "50": {
+          "gender": "Male",
+          "name": ["Angor", "Austi", "Bragi", "Braka", "Brobek", "Brulin", "Coalak", "Dagurt", "Digroi", "Eiki", "Eilivur", "Floki", "Frostar", "Fundar", "Gogu", "Gremin", "Gusak", "Heptin", "Horar", "Hungus", "Ingivald", "Jodis", "Killin", "Lipith", "Lofar", "Malok", "Noi", "Oddfinnur", "Prodos", "Ragriel", "Randil", "Rotnam", "Salvor", "Slyvek", "Throar", "Toki", "Virfi", "Voggur", "Withil", "Zazfa", "Adrik", "Alberich", "Baern", "Barendd", "Brottor", "Bruenor", "Dain", "Darrak", "Delg", "Eberk", "Einkil", "Fargrim", "Flint", "Gardain", "Harbek", "Kildrak", "Morgran", "Orsik", "Oskar", "Rangrim", "Rurik", "Taklinn", "Thoradin", "Thorin", "Tordek", "Traubon", "Travok", "Ulfgar", "Veit", "Vondal" ],
+          "pronoun": "@male_pronouns"
+        },
+        "100": {
+          "gender": "Female",
+          "name":[ "Amerstal", "Aqrilla", "Bellesta", "Bonnwynn", "Brilbelle", "Chalia", "Daernip", "Devella", "Dimlinn", "Edmyla", "Erthel", "Fada", "Gembelle", "Ithi", "Jaderyn", "Jinvia", "Kezda", "Kystal", "Lija", "Minelle", "Misi", "Misma", "Mistmael", "Mysris", "Nalra", "Narvari", "Pondral", "Ragna", "Saphil", "Sola", "Soldelle", "Tazlen", "Tisnip", "Tisthel", "Tiznys", "Vinelle", "Wiska", "Wispmaral", "Yrsa", "Zika", "Amber", "Artin", "Audhild", "Bardryn", "Dagnal", "Diesa", "Eldeth", "Falkrun", "Finellen", "Gunnloda", "Gurdis", "Helja", "Hlin", "Kathra", "Kristryd", "Ilde", "Liftrasa", "Mardred", "Riswynn", "Sannl", "Torbera", "Torgga", "Vistra" ],
+          "pronoun": "@female_pronouns"
+        }
+      },
+      "surname": [ "Balderk", "Battlehammer", "Brawnanvil", "Dankil", "Fireforge", "Frostbeard", "Gorunn", "Holderhek", "Ironfist", "Loder", "Lutgehr", "Rumnaheim", "Strakeln", "Torunn", "Ungart", "Oakchin", "Chaosbrow", "Cragbeard", "Fieryflayer", "Orcshaper", "Cragbringer", "Bonefoot", "Aletank", "Grimshaper", "Lavabane", "Kraghead", "Windarm", "Bottleriver", "Coinforge", "Cragbow", "Oreminer", "Drakecloak", "Bristlethane","Snowbuckle", "Greyforged", "Axestone", "Trollmaster", "Shatterhead", "Honorhood", "Gravelbender", "Noblebeard", "Earthbane", "Oakmaker", "Flatfall", "Kragmaker", "Warcloak", "Woldbraid", "Fierybender", "Greatfury", "Kragguard", "Earthchin", "Copperbeard", "Flaskbasher", "Shatterhelm", "Fierybow" ],
+      "age": {
+        "0": "Infant",
+        "20": "Child",
+        "50": "Young",
+        "300": "Adult",
+        "350": "Senior",
+        "400": "Elderly"
+      },
+     "height": "3*12+8+3d4",
+    "profession": {
+      "20": "Soldier",
+      "40": "@prof.town",
+      "45": "@prof.rural",
+      "47": "@prof.forest",
+      "87": "@prof.mountain",
+      "90": "@prof.coastal",
+      "95": "@prof.scholar",
+      "100": "@prof.city"
+    }
+   },
+    "90": {
+      "race": "Human",
+      "gender": {
+        "50": {
+          "gender": "Male",
+          "name": ["Akibrus", "Angun", "Balrus", "Bulruk", "Caldor", "Dagen", "Darvyn", "Delvin", "Dracyian", "Dray", "Eldar", "Engar", "Fabien", "Farkas", "Galdor", "Igor", "Jai-Blynn", "Klayden", "Laimus", "Malfas", "Norok", "Orion", "Pindious", "Quintus", "Rammir", "Remus", "Rorik", "Sabir", "Séverin", "Sirius", "Soril", "Sulfu", "Syfas", "Viktas", "Vyn", "Wilkass", "Yagul", "Zakkas", "Zarek", "Zorion", "Anlow", "Arando", "Aseir", "Bardeid", "Bram", "Cale", "Dalkon", "Daylen", "Dodd", "Dungarth", "Dyrk", "Eddan", "Falken", "Feck", "Fenton", "Gryphero", "Hagar", "Haseid", "Jeras", "Khemed", "Krynt", "Lavant", "Leyten", "Madian", "Malfier", "Markus", "Mehmen", "Meklan", "Namen", "Navaren", "Nerle", "Nilus", "Ningyan", "Norris", "Quentin", "Semil", "Sevenson", "Steveren", "Sudeiman", "Talfen", "Tamond", "Taran", "Tavon", "Tegan", "Vanan", "Vincent", "Zasheir", "Aseir", "Bardeid", "Haseid", "Khemed", "Mehmen", "Sudeiman", "Zasheir", "Darvin", "Dorn", "Evendur", "Gorstag", "Grim", "Helm", "Malark", "Morn", "Randal", "Stedd", "Bor", "Fodel", "Glar", "Grigor", "Igan", "Ivor", "Kosef", "Mival", "Orel", "Pavel", "Sergor", "Ander", "Blath", "Bran", "Frath", "Geth", "Lander", "Luth", "Malcer", "Stor", "Taman", "Urth" ],
+          "pronoun": "@male_pronouns"
+        },
+        "100": {
+          "gender": "Female",
+          "name":[ "Aleera", "Alva", "Amara", "Anya", "Asralyn", "Azura", "Breya", "Brina", "Caelia", "Ciscra", "Dezaral", "Dorath", "Drusila", "Elda", "Esmeralla", "Freya", "Gelda", "Hadena", "Kyla", "Kyra", "Lavinia", "Lunarex", "Lyra", "Mireille", "Nyssa", "Olwyn", "Ophelia", "Peregrine", "Reyda", "Sarielle", "Shikta", "Sybella", "Syfyn", "Thalia", "Turilla", "Vasha", "Vixen", "Yvanna", "Zaria", "Zeniya", "Atala", "Azura", "Brey", "Ceidil", "Hallan", "Hama", "Jasmal", "Kasaki", "Lorelei", "Meilil", "Mirabel", "Pharana", "Remora", "Rosalyn", "Sachil", "Saidi", "Seipora", "Tanika", "Tura", "Tylsa", "Vencia", "Xandrilla", "Yasheira", "Zasheida", "Atala", "Ceidil", "Jasmal", "Meilil", "Seipora", "Yasheira", "Zasheida", "Arveene", "Esvele", "Jhessail", "Kerri", "Lureene", "Miri", "Rowan", "Shandri", "Tessele", "Alethra", "Kara", "Katernin", "Mara", "Natali", "Olma", "Tana", "Zora", "Amafrey", "Betha", "Cefrey", "Kethra", "Mara", "Olga", "Silifrey", "Westra", "", "Human Neutral", "Atala", "Brey", "Cale", "Ceidil", "Eddan", "Hallan", "Jasmal", "Kasaki", "Leyten", "Maidian", "Namen", "Navaren", "Sachil", "Talfen", "Tura" ],
+          "pronoun": "@female_pronouns"
+        }
+      },
+      "surname": ["Arkalis", "Armanci", "Bilger", "Blackstrand", "Brightwater", "Carnavon", "Caskajaro", "Coldshore", "Coyle", "Cresthill", "Cuttlescar", "Daargen", "Dalicarlia", "Danamark", "Donoghan", "Drumwind", "Dunhall", "Ereghast", "Falck", "Fallenbridge", "Faringray", "Fletcher", "Fryft", "Goldrudder", "Grantham", "Guddath", "Gullscream", "Hindergrass", "Iscalon", "Kreel", "Kroft", "Lamoth", "Leerstrom", "Lynchfield", "Moonridge", "Netheridge", "Oakenheart", "Pyncion", "Ratley", "Redraven", "Revenmar", "Roxley", "Sell", "Seratolva", "Shanks", "Shattermast", "Shaulfer", "Silvergraft", "Stavenger", "Stormchapel", "Strong", "Swiller", "Talandro", "Tamil", "Towerfall", "Umbermoor", "Van Devries", "Van Gandt", "Van Hyden", "Varcona", "Varzand", "Voortham", "Vrye", "Webb", "Welfer", "Wilxes", "Wintermere", "Wygarthe", "Zatchet", "Zethergyll", "Basha", "Dumein", "Jassan", "Khalid", "Mostana", "Pashar", "Rein", "Amblecrown", "Buckman", "Dundragon", "Evenwood", "Greycastle", "Tallstag", "Bersk", "Chernin", "Dotsk", "Kulenov", "Marsk", "Nemetsk", "Shemov", "Starag", "Brightwood", "Helder", "Hornraven", "Lackman", "Stormwind", "Windrivver" ],
+      "age": {
+        "0": "Infant",
+        "10":"Child",
+        "18": "Young",
+        "60": "Adult",
+        "75": "Senior",
+        "100": "Elderly"
+      },
+      "height": "4*12+8+2d10",
+      "profession": {
+        "10": "Soldier",
+        "40": "@prof.town",
+        "60": "@prof.rural",
+        "70": "@prof.forest",
+        "80": "@prof.mountain",
+        "90": "@prof.coastal",
+        "95": "@prof.scholar",
+        "100": "@prof.city"
+      }
+    },
+    "91" : {
+      "race": "Orc",
+      "name": ["Sugbu", "Yambul", "Zalthu", "Snaglak", "Noogugh", "Varbu", "Podagog", "Cukgilug", "Xarpug", "Jughragh", "Murbol", "Bashuk", "Ugor", "Mog", "Ghak", "Murob", "Ulumpha", "Ushug", "Sharn", "Dura", "Raghat", "Brokil", "Pargu", "Hibub", "Jughog", "Nurghed", "Ditgurat", "Durz", "Kurdan", "Bugdul", "Sharamph", "Homraz", "Sharn", "Murob", "Oghash", "Shagdub", "Durgat", "Atub", "Bolar", "Snak", "Numhug", "Sulmthu", "Yakha", "Urgran", "Vrothu", "Sakgu", "Sahgigoth", "Matuk", "Rodagog", "Ertguth", "Sharn", "Orbul", "Durgat", "Gashnakh", "Kharzug", "Arob", "Dura", "Garakh", "Shufharz", "Gul", "Wegub", "Eichelberbog", "Wurgoth", "Durzol", "Wudhagh", "Digdug", "Zabub", "Omogulg", "Mugdul", "Jokgagu", "Borgakh", "Bulfim", "Arob", "Durz", "Bulfim", "Snak", "Atub", "Bagrak", "Snak", "Yazgash", "Bidgug", "Slaugh", "Farod", "Hagu", "Zunuguk", "Bogrum", "Oogorim", "Unrugagh", "Onugug", "Omugug", "Batul", "Agrob", "Dura", "Gluronk", "Rogbut", "Durgat", "Mog", "Shadbak", "Bula", "Durgat", "Nar", "Gun", "Rall", "Brar", "Brugvun", "Gruddakk", "Dudral", "Jortukk", "Brutran", "Zhutag", "Ghun", "Vin", "Rhuk", "Rhuam", "Bellul", "Bhivgon", "Ovie", "Rhivnuf", "Ilvo", "Movo", "Buk", "Zhukk", "Zok", "Lar", "Lanzan", "Rharlor", "Rhardon", "Zhobrok", "Bhurlur", "Urlok", "Dheng", "Beef", "Nuz", "Nev", "Ova", "Kongiz", "Aovno", "Guthao", "Kegvo", "Angok", "Gub", "Shak", "Guk", "Ghakk", "Aggukk", "Drugvakk", "Zartakk", "Ganall", "Nugak", "Guhzan"],
+      "surname": ["Toe Spear", "Chin Shatterer", "Giant Trasher", "Storm Killer", "Brass Hammer", "Nose Gouger", "Teeth Strangler", "Flesh Strangler", "Brain Scalper", "Nose Smasher", "The Fearless", "The Butcher", "The Smug", "Death Cutter", "The Vivid", "Rib Flayer", "The Crazy", "The Violent", "The Prime", "The Crooked", "The Disfigured", "Slave Wrecker", "The Fierce", "The Cold", "The Enormous", "The Outlandish", "Scale Cleaver", "Blood Quasher", "Spite Mutilator", "Doom Sword", "Eye Gouger", "Iron Mutilator", "The Ugly", "The Volatile", "Brain Masher", "Vein Slicer", "The Broad", "The Colossal", "The Barbarian", "Dream Cleaver", "Feet Ripper", "The Barbarian", "Ash Pummel", "Thunder Strangler", "The Brutal", "The Colossal", "Ankle Masher", "The Ugly", "The Warped", "The Infernal"],
+      "age": {
+        "0": "Infant",
+        "5":"Child",
+        "12": "Young",
+        "23": "Adult",
+        "35": "Senior",
+        "40": "Elderly"
+      },
+      "height": "5*12+4+2d8",
+      "weight": "175+2d6",
+      "gender": {
+        "50": {
+          "gender": "Male",
+          "pronoun": "@male_pronouns"
+        },
+        "100": {
+          "gender": "Female",
+          "pronoun": "@female_pronouns"
+        }
+      },
+      "eyes":
+      {
+        "50%": "black",
+        "30%": "brown",
+        "18%": "red",
+        "2%": "blue"
+      },
+      "profession": {
+        "30": "Raider",
+        "55": "@prof.town",
+        "75": "@prof.rural",
+        "85": "@prof.forest",
+        "95": "@prof.mountain",
+        "97": "@prof.coastal",
+        "98": "@prof.scholar",
+        "100": "@prof.city"
       }
     }
   },
@@ -322,6 +318,15 @@
     "9%": "green",
     "1%": "amber"
   },
+  "hair":
+  {
+    "46%": "brown",
+    "21%": "blond",
+    "19%": "black",
+    "9%": "red",
+    "3%": "blue",
+    "2%": "green"
+  },
   "title": "{name} {surname}",
-  "text": "{name} is a {race}. {Objective} is {age} and works as a {profession}. {Possessive} height is {height} inch and {possessive} eyes are {eyes}."
+  "text": "{name} is a {race}. {Objective} is {age} and works as a {profession}. {Possessive} height is {height} and {possessive} eyes are {eyes}. {Objective} has {hair} hair."
 }

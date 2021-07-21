@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/fantasy_names.json" beforeDir="false" afterPath="$PROJECT_DIR$/ic/fantasy_names.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ic/npc_gen.json" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc_gen.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ic/npc_gen2.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc_gen2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -227,6 +227,10 @@
     </state>
     <state width="1921" height="401" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1626530398830" />
     <state width="1921" height="48" key="GridCell.Tab.1.right/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1626707274983" />
+    <state x="681" y="321" width="540" height="524" key="StructurePopup" timestamp="1626875264294">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="681" y="321" width="540" height="524" key="StructurePopup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1626875264294" />
     <state x="615" y="139" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1619193490387">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
