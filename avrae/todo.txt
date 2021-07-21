@@ -43,13 +43,13 @@ Random race npc generator
 - Text representation, replace fields (with bold or italic)
 - weighted % is cumulative, but how mix { 1 5% 10 +5 }
 # overrides: specific over generic (eye color in root is overridden by race/gender specific) due to order (breadth first? or just add new branch in front instead of end
-- profession (race% and/or location %)
+* profession (race% and/or location %)
 - physical characteristics  (% for race)
     * eye color
     - hair color (age)
     - skin color (tan, pale)
     * size
-    - disabilities/specials
+    - disabilities/tattoos/specials
 - backstory generator
     - player backgrounds/professions + a tragedy + goals/ideals + bonds/religion + flaws
 - remaining races heights: https://preview.redd.it/51fh9i4c9q721.png?width=1128&format=png&auto=webp&s=e3be83a5ab34fe60ca870f03161b3b3f99866cba
