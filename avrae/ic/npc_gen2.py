@@ -4,7 +4,6 @@ db=load_json(get_gvar('e8dfa775-0f63-4aaa-9869-4fab02edfbfc'))
 fields={}
 ptr_prefix='@'
 # TODO: should be svar, with default is [gvar]
-# TODO: should also reuse normal ptr_prefix check
 stack=[{k:v for k,v in db.items() if k and k[0]!=ptr_prefix}]
 dir=[]
 dbg=[]
@@ -23,7 +22,7 @@ while stack:
 
 	for stack_ref,stack_value in head.items():
 		top_key=stack_ref.split(key_sep)[-1]
-		# unspecified for weighted tables that can be unspecified, like tattoos
+		# None for weighted tables that can have no result, like not having a tattoo or hair
 		if stack_value is None:
 			dbg.append('[{stack_ref}] none')
 			continue
@@ -98,13 +97,13 @@ while stack:
 				dbg.append(f'[{stack_ref}] {top_key}={r}')
 			# TODO: gvar detection
 
-			# a straight field result, store it in fields
+			# a straight string field result, store it in fields
 			else:
 				fields[top_key]=stack_value
 				dbg.append(f'[{stack_ref}] {top_key}=`{stack_value}`')
 		elif typeof(stack_value)=='SafeList':
 			# lists are like even weighted tables. pick a random one
-			# TODO: could still check fro arguments key:[{key:argument}]
+			# TODO: could still check for arguments key:[{key:argument}]
 			idx=randint(len(stack_value))
 			next=stack_value[idx]
 			stack.append({stack_ref:next})
@@ -166,6 +165,7 @@ else:
 		else:
 			fields[height_key]=f"{ft} ft."
 
+	# Take the title and text field and replace the other field
 	title=fields.get('title','NPC')
 	text=fields.get('text', '{name} {surname} the {age} {gender} {race}.')
 	for k,v in fields.items():
@@ -173,6 +173,7 @@ else:
 		var='{'+k+'}'
 		text=text.replace(var,v)
 		title=title.replace(var,v)
+		# capitalized field names get capitalized values
 		if v[0].islower():
 			var='{'+k.capitalize()+'}'
 			text=text.replace(var, v.capitalize())
