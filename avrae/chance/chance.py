@@ -516,9 +516,13 @@ for target_name,target in targets.items():
 
 sep='\n'
 if show_query:
+	if not pmf:
+		pmf=[1]
 	average = sum((i + lo) * p for i, p in enumerate(pmf))
+
 	possible_lo = min(i for i, p in enumerate(pmf) if p > 0)
 	possible_hi = max(i for i, p in enumerate(pmf) if p > 0)
+
 	report.append(f'Minimum: `{possible_lo + lo}` Average: `{average:.3g}` Maximum: `{possible_hi + lo}`')
 
 	stripped_pmf = pmf[possible_lo:possible_hi + 1]

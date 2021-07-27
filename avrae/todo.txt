@@ -2,15 +2,23 @@
 - probably check effects during looping over targets, add boni the to target dict
 
 
-- !play killer https://i.redd.it/fy7ksapryh141.png for PyroYoshi
+* !play killer https://i.redd.it/fy7ksapryh141.png for PyroYoshi
     - integrate bet
+
+- !play player (uvar)
+    - for killer at least
+    - for other small dice games like hoard, ship and blackjack
+    - for darts (it makes no sense)?
+
+
+- October: new spells in dragon book, add to list(s) for rspell and other aliases
 
 Item DB: spelling and use in #count (!qb # rope)
 - solution 1: synonyms list or main one
 - alt should be same or less words rearranged to not require partial matching duplication
 Quickbag: count release & message
 
-Random race npc generator
+==== Random race npc generator
 
 * Leaf: {"field":"val"} set field
 * {int:<branch>, ...} weighted randomly select branch
@@ -27,6 +35,21 @@ Random race npc generator
 * age
     - Make age more numeric and race specific, be able to refer to rolled values as fields like age.roll and height.value
 * name
+- physical characteristics  (% for race)
+    * eye color
+    * hair color (age)
+    * skin color (tan, pale)
+    * size
+    - disabilities/tattoos/specials
+- hair color override by age: age: 100 { age:senior, "hair": {80% gray, 20%: None = keep}}
+    - same for age and profession except override with real 'none'
+- list result for multiple charateristics: roll string in key means roll and generate a number of results
+    - '1d4': ['item','item']
+    - '1d4': {weighted table} too
+    - key starts with + then (also in stack) ? add to field
+    - in representation format a list with commas or spaces,how now? commas for characteristics (and for last) but list for menu recipe
+
+
 - birthplace (linked to subrace/race%)
     - Sword coast/waterdeep/faerun (can overlap area, doesnt matter), outlands, barovia, domains of dread, icewind dale
     - configurable template
@@ -35,8 +58,8 @@ Random race npc generator
 * Dice string detection, roll it
 - update/override db with svar/uvar  TODO: what is syntax for this?
     - Should be possible to replace svar with gvar and it works
-    - SHould be possible to have an svar with a gvar {default="gvar",waterdeep={my own stuff}}
-- gvar references in db so {[gvar,gvar,gvar]} as an svar just works
+    - Should be possible to have an svar with a gvar {default="gvar",waterdeep={my own stuff}}
+- gvar references in db so {[gvar,gvar,gvar]} as an svar just works, but how is updated instead of randomized? gvar+gvar+gvar?
 
     * relative references, otherwise gvar stuff will be weird
     * .. empty pointers remove the preceding, mostly for relative from current but could do .race..bla technically.
@@ -44,27 +67,19 @@ Random race npc generator
     * keys that start with @ are not added to the stack (only for referal)
         * refering can be done to these without the extra @ eg { name:'@humannames', '@humannames':[foo,bar]}
 - Text representation, replace fields (with bold or italic)
-- weighted % is cumulative, but how mix { 1 5% 10 +5 }
+* weighted % is cumulative, but how mix { 1 5% 10 +5 }
+    - problem 50% and 50% is duplicate key
 # overrides: specific over generic (eye color in root is overridden by race/gender specific) due to order (breadth first? or just add new branch in front instead of end
 * profession (race% and/or location %)
-- physical characteristics  (% for race)
-    * eye color
-    - hair color (age)
-    - skin color (tan, pale)
-    * size
-    - disabilities/tattoos/specials
+
+- tavern generator : two part name, barkeep (npc generator?)
+- inn room rates (4+1d4 rooms, then list of rooms with rate
+- menu rates (items drinks and items meals) meals two part 'poached' 'fish'
+
 - backstory generator
     - player backgrounds/professions + a tragedy + goals/ideals + bonds/religion + flaws
 - remaining races heights: https://preview.redd.it/51fh9i4c9q721.png?width=1128&format=png&auto=webp&s=e3be83a5ab34fe60ca870f03161b3b3f99866cba
 
-Structure
-    - area [default in gvar]
-        - races
-            - gender% {"gender": percentage}
-            - age range {"category":years,..}
-            - physical characteristics
-            - professions
-            - name [references]
 
 
 Quickbag: count plurals

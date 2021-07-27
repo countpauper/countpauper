@@ -23,6 +23,13 @@ else:
 	rr =''
 # TODO should count attacks out of 2 and add a field inline with cc, perhaps a footer with the use
 
-return f'attack Unarmed {args} {rr} {field} -title "[name] attacks with a Flurry of Blows!"'
+# select attack based on partially matching this priority list (not complete)
+attack_list=['Arms of the Astral Self','Astral','Unarmed Fighting', 'Unarmed Strike','Unarmed']
+attacks=ch.attacks
+if (c:=combat()) and (my:=c.me):
+	attacks=my.attacks
+attack_options=[a.name for al in attack_list for a in attacks if al.lower() in a.name.lower()]
+attack_options.append('Unarmed')	# let avrae's fuzzy matching try it
+return f'attack "{attack_options[0]}" {args} {rr} {field} -title "[name] attacks with a Flurry of Blows!"'
 </drac2>
 
