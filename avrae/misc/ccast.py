@@ -45,7 +45,10 @@ elif cc.value<1:
 	return f'echo {cc.name} : {cc}'
 else:
 	cc.set(cc.value-1)
-	field=f'-f "{cc.name} {cc}|{cc.desc}"'
+	if cc.desc:
+		field=f'-f "{cc.name} {cc}|{cc.desc}"'
+	else:
+		field=f'-f "{cc.name}|{cc}"'
 
 return f"""cast "{spell}" {" ".join(f'"{a}"'for a in args)} {field} {cast_with} -i"""
 </drac2>
