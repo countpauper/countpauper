@@ -471,6 +471,7 @@ title = f'{query.title()} by {executor.name}'
 if show_query:
 	title+=f' `{expression}`'
 
+decimals=args.last('d',2)
 for target_name,target in targets.items():
 	target_value=target.get('target')
 	target_description = f'{target_name}'
@@ -502,14 +503,14 @@ for target_name,target in targets.items():
 				miss=max(miss,fail_chance)
 			hit=1-miss
 			if show_chance:
-				report.append(f'{query_description}: Miss: `{miss * 100.0:.1f}%`, Hit: `{hit * 100:.1f}%` Crit: `{(crit_chance) * 100:.1f}%`')
+				report.append(f'{query_description}: Miss: `{miss * 100.0:.{decimals}f}%`, Hit: `{hit * 100:.{decimals}f}%` Crit: `{(crit_chance) * 100:.{decimals}f}%`')
 			else:
 				quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
-				report.append(f'{query_description}: Hit chance: `{quality}`, Crit : `{(crit_chance)*100:.1f}%`')
+				report.append(f'{query_description}: Hit chance: `{quality}`, Crit : `{(crit_chance)*100:.{decimals}f}%`')
 		else:
 			hit=1-miss
 			if show_chance:
-				report.append(f'{query_description}: Failure: `{miss * 100.0:.1f}%`, Success: `{hit * 100:.1f}%`')
+				report.append(f'{query_description}: Failure: `{miss * 100.0:.{decimals}f}%`, Success: `{hit * 100:.{decimals}f}%`')
 			else:
 				quality=quality_description[int(hit*(len(quality_description)-1))] if hit>0 else 'impossible'
 				report.append(f'{query_description}: Success chance: `{quality}`')
@@ -523,7 +524,7 @@ if show_query:
 	possible_lo = min(i for i, p in enumerate(pmf) if p > 0)
 	possible_hi = max(i for i, p in enumerate(pmf) if p > 0)
 
-	report.append(f'Minimum: `{possible_lo + lo}` Average: `{average:.3g}` Maximum: `{possible_hi + lo}`')
+	report.append(f'Minimum: `{possible_lo + lo}` Average: `{average:.{decimals}f}` Maximum: `{possible_hi + lo}`')
 
 	stripped_pmf = pmf[possible_lo:possible_hi + 1]
 
