@@ -1,16 +1,26 @@
+* !play killer https://i.redd.it/fy7ksapryh141.png for PyroYoshi
+    - integrate bet
+- !play npc (uvar)
+    * for killer at least
+    * for other small dice games like hoard, ship and blackjack
+    - for bets
+    - show player image and color for players and default icon and black for npcs
+    - integrate with `!npc` if found and matched for
+        - killer
+        - hoard
+        - ship
+        - 21
+        - bets
+
+    x for darts (it makes no sense)?
+
+
 !chance auto adding of save effects not done due to target/executor swap (already a one target limit)
 - probably check effects during looping over targets, add boni the to target dict
 
 
-* !play killer https://i.redd.it/fy7ksapryh141.png for PyroYoshi
-    - integrate bet
 
-- !play player (uvar)
-    - for killer at least
-    - for other small dice games like hoard, ship and blackjack
-    - for darts (it makes no sense)?
-
-
+- rspell SRD only (source
 - October: new spells in dragon book, add to list(s) for rspell and other aliases
 
 Item DB: spelling and use in #count (!qb # rope)

@@ -1,14 +1,22 @@
-!alias bk <drac2>
+<drac2>
+# load the appropriate !play state for the player
+uvar='Play_er'
 cvar='Play'
-game_name='killer'
-all_state=load_json(get(cvar,'{}'))
-if player:=all_state.get('player'):
-	all_state[player]=(state:=all_state.get(player,{}))
+default_image='https://cdn.discordapp.com/attachments/751098635038621868/867699902578032670/Kill_dice.png'
+player_state=load_json(get(uvar,'{}'))
+if player:=player_state.get('player'):
+	state=player_state.setdefault(player,{})
+	image=default_image
+	color = 0
 else:
-	player=name
-	state=all_state
+	player_state=None
+	state=load_json(get(cvar, '{}'))
+	player = name
+	image=image or default_image
 
-game=state.get(game_name,[])
+# get the state for this game out of the player's game state
+game_name='killer'
+game=state.setdefault(game_name,[])
 
 killer=1
 turns=len(game_name)
@@ -16,7 +24,7 @@ syntax=f'{ctx.prefix}{ctx.alias} {game_name}'
 args=&ARGS&
 
 if len(game)>=turns or any(d==killer for d in game):
-	game=[]
+	game.clear()
 rounds=1
 all_arg='all'
 if all_arg in args:
@@ -31,10 +39,11 @@ for _ in range(rounds):
 	if game[-1]==killer:
 		break
 
-
-# persist
-state[game_name]=game
-character().set_cvar(cvar,dump_json(all_state))
+# persist either the player's state or the character's state
+if player_state is not None:
+	set_uvar(uvar, dump_json(player_state))
+else:
+	character().set_cvar(cvar,dump_json(state))
 
 turn=len(game)
 if any(d==killer for d in game):
@@ -46,5 +55,5 @@ syntax='!play killer [die=d6] [all]'
 desc="`K I L L E R`\n"
 desc+="`" +" ".join(f"{d}" for i,d in enumerate(game))+"`"
 desc +=f'\n**{result}**'
-return f'embed -title "{player.title()} rolls the {rollstr}" -desc "{desc}" -thumb https://cdn.discordapp.com/attachments/751098635038621868/867699902578032670/Kill_dice.png -footer "{syntax}" -color {color}'
+return f'embed -title "{player.title()} rolls the {rollstr}" -desc "{desc}" -thumb {image} -footer "{syntax}" -color {color}'
 </drac2>

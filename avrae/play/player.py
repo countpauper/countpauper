@@ -1,12 +1,10 @@
-!alias bp <drac2>
-# TODO: this should go in an uvar, which one? and then jank it up knowing which data to store the state in killer
-
-uvar='Play_ers'
+<drac2>
+uvar='Play_er'
 name_name='player'
 state=load_json(get(uvar,'{}'))
 
 if args:="&*&":
-	if args.lower() in ['reset','none',name.lower()]:
+	if 	args.lower() in ['reset','none',name.lower(), name.lower().split()[0]]:
 		if name_name in state:
 			state.pop(name_name)
 	else:

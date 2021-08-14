@@ -2,16 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/gem_flight.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/alt_coin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/sleep.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/weather.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/weather.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ic/npc_gen.json" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc_gen.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ic/npc_gen2.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc_gen2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/bet.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/bet.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/blackjack.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/blackjack.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/collect.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/collect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/drop_out.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/drop_out.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/hoard.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/hoard.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/killer.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/killer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/player.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/ship.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/ship.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +45,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Avrae-Customizations/Collections/Initiative Utilities/conc.alias" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/play" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Console Colors" />
   </component>
   <component name="RecentsManager">
@@ -181,14 +186,14 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="686" y="162" key="#gem_script" timestamp="1619278585327">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="686" y="162" key="#gem_script/0.0.1920.1040@0.0.1920.1040" timestamp="1619278585327" />
     <state x="686" y="162" key="#show" timestamp="1624788037989">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="686" y="162" key="#show/0.0.1920.1040@0.0.1920.1040" timestamp="1624788037989" />
+    <state x="740" y="279" key="FileChooserDialogImpl" timestamp="1628927205751">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="279" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1628927205751" />
     <state width="1921" height="48" key="GridCell.Tab.0.bottom" timestamp="1627118254800">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -238,15 +243,15 @@
     </state>
     <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1624805494565" />
     <state x="771" y="493" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1626341912686" />
-    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1627998708612">
+    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1628927210857">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1627998708612" />
+    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1628927210857" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1627285791912" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1627161019399">
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1628427624037">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1627161019399" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1628427624037" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1626850029409" />
   </component>
   <component name="XDebuggerManager">
@@ -284,7 +289,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/play/drop_out.py</url>
-          <line>18</line>
+          <line>37</line>
           <option name="timeStamp" value="32" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

@@ -1,8 +1,24 @@
 <drac2>
-cvar='Play'
+# load the appropriate !play state for the player
+uvar='Play_er'
+player_state=load_json(get(uvar,'{}'))
+if player:=player_state.get('player'):
+	state=player_state.setdefault(player,{})
+	they='they'
+	their='their'
+	image='none'
+	color = 0
+else:
+	cvar = 'Play'
+	player_state=None
+	state=load_json(get(cvar, '{}'))
+	player = name
+	they=get("they","they")
+	their=get("their","their")
+
 game_name='bet'
-state=load_json(get(cvar,'{}'))
-bet=state.get(game_name,{})
+bet=state.get(game_name)
+
 args="&*&".lower()
 base_cmd=f'{ctx.prefix}{ctx.alias}'
 syntax=f'{base_cmd} drop|out'
@@ -11,10 +27,13 @@ if not bet:
 
 # persist
 state.pop(game_name)
-character().set_cvar(cvar,dump_json(state))
+if player_state is not None:
+	set_uvar(uvar, dump_json(player_state))
+else:
+	character().set_cvar(cvar,dump_json(state))
 
 # output
-desc=f'{get("they","they").capitalize()} lost {get("their","their")} bet of {", ".join(f"{q} {c}" for c,q in bet.items())}'
+desc=f'{they.capitalize()} lost {their} bet of {", ".join(f"{q} {c}" for c,q in bet.items())}'
 
-return f'embed -title "{name} drops out." -desc "{desc}" -color {color} -footer "{syntax}"'
+return f'embed -title "{player} drops out." -desc "{desc}" -color {color} -footer "{syntax}" -thumb {image}'
 </drac2>
