@@ -7,6 +7,7 @@ ptr_prefix='@'
 stack=[{k:v for k,v in db.items() if k and k[0]!=ptr_prefix}]
 dir=[]
 dbg=[]
+missing=dict()
 if dbg_break:=args.last('d'):
 	if dbg_break.isdecimal():
 		dbg_break=int(dbg_break)
@@ -130,6 +131,7 @@ while stack:
 						stack.append({stack_ref:match[0]})
 						dbg.append(f'[{stack_ref}]: chose `{selection}`')
 					else:
+						missing[top_key] = selection
 						dbg.append(f'[{stack_ref}]: missing `{selection}`')
 				else:
 					rand_key=randint(max(decikeys))
@@ -156,6 +158,8 @@ if dbg_break:
 	fields=[f'-f "{k}|{v}"' for k,v in fields.items()][:25]
 	return f'embed -title "NPC" -desc "{debugstr}" '+' '.join(fields)
 else:
+	if missing:
+		return f'echo The following selection was not matched: {",".join(f"{k}={v}" for k,v in missing.items())}'
 	# specific height hack
 	height_key='height'
 	if l:=fields.get(height_key):
@@ -182,7 +186,7 @@ else:
 	# field for !npc
 	out_fields=[]
 	if get('npc_local_roster'):
-		first_name=fields.get('name')
+		first_name=fields.get('name','Nemo')
 		npc_name=f'{first_name} {surname}' if (surname:=fields.get('surname')) else first_name
 		cmd = f'!npc edit {first_name.lower()} -name \\"{npc_name}\\"'
 		out_fields.append(f'''-f "Roster|`{cmd}`" ''')
