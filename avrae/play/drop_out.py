@@ -2,12 +2,21 @@
 # load the appropriate !play state for the player
 uvar='Play_er'
 player_state=load_json(get(uvar,'{}'))
+default_image='none'
 if player:=player_state.get('player'):
 	state=player_state.setdefault(player,{})
 	they='they'
 	their='their'
-	image='none'
-	color = 0
+	# load npc rosters if any
+	combined_roster=dict()
+	for gvar in  load_json(get_svar("npc_server_npcs", '[]'))+load_json(get("npc_subscribed_rosters","[]")):
+		combined_roster.update(load_json(gvar_data))
+	combined_roster.update(load_json(get("npc_local_roster","{}")))
+	# get the npc properties for the embed
+	npc=combined_roster.get(player,{})
+	player=npc.get('name',player.capitalize())
+	image=npc.get('image',default_image)
+	color=npc.get('color',0)
 else:
 	cvar = 'Play'
 	player_state=None

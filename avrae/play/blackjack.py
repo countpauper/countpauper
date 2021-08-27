@@ -1,18 +1,28 @@
 <drac2>
+# load the player and game state
 uvar='Play_er'
 cvar='Play'
 player_state=load_json(get(uvar,'{}'))
 default_image = 'https://cdn.discordapp.com/attachments/751105864370356365/827258201502253116/blackjack.png'
 if player:=player_state.get('player'):
 	state=player_state.setdefault(player,{})
-	image = default_image
-	color = 0
+	# load npc rosters if any
+	combined_roster=dict()
+	for gvar in  load_json(get_svar("npc_server_npcs", '[]'))+load_json(get("npc_subscribed_rosters","[]")):
+		combined_roster.update(load_json(gvar_data))
+	combined_roster.update(load_json(get("npc_local_roster","{}")))
+	# get the npc properties for the embed
+	npc=combined_roster.get(player,{})
+	player=npc.get('name',player.capitalize())
+	image=npc.get('image',default_image)
+	color=npc.get('color',0)
 else:
 	player_state=None
 	state=load_json(get(cvar, '{}'))
 	player = name
 	image = image or default_image
 
+# initialize the game
 game_name='blackjack'
 game=state.setdefault(game_name,{})
 bet=state.get('bet')
@@ -22,8 +32,6 @@ cards=['A',2,3,4,5,6,7,8,9,10,'J','Q','K']
 values={'a':1, 'A':11 , 'J':10, 'Q':10, 'K':10}
 symbol={'A':':a:','a':':a:',2:':two:',3:':three:',4:':four:',5:':five:',6:':six:',7:':seven:', 8:':eight:',9:':nine:',10:':keycap_ten:',
 		'J':':regional_indicator_j:','Q':':regional_indicator_q:','K':':regional_indicator_k:'}
-
-
 values.update({nr:nr for nr in range(2,11)})
 
 base_cmd=f'{ctx.prefix}{ctx.alias}'

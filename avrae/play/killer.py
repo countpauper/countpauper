@@ -6,8 +6,17 @@ default_image='https://cdn.discordapp.com/attachments/751098635038621868/8676999
 player_state=load_json(get(uvar,'{}'))
 if player:=player_state.get('player'):
 	state=player_state.setdefault(player,{})
-	image=default_image
-	color = 0
+
+	# load npc rosters if any
+	combined_roster=dict()
+	for gvar in  load_json(get_svar("npc_server_npcs", '[]'))+load_json(get("npc_subscribed_rosters","[]")):
+		combined_roster.update(load_json(gvar_data))
+	combined_roster.update(load_json(get("npc_local_roster","{}")))
+	# get the npc properties for the embed
+	npc=combined_roster.get(player,{})
+	player=npc.get('name',player.capitalize())
+	image=npc.get('image',default_image)
+	color=npc.get('color',0)
 else:
 	player_state=None
 	state=load_json(get(cvar, '{}'))
@@ -55,5 +64,5 @@ syntax='!play killer [die=d6] [all]'
 desc="`K I L L E R`\n"
 desc+="`" +" ".join(f"{d}" for i,d in enumerate(game))+"`"
 desc +=f'\n**{result}**'
-return f'embed -title "{player.title()} rolls the {rollstr}" -desc "{desc}" -thumb {image} -footer "{syntax}" -color {color}'
+return f'embed -title "{player} rolls the {rollstr}" -desc "{desc}" -thumb {image} -footer "{syntax}" -color {color}'
 </drac2>

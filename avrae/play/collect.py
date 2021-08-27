@@ -3,12 +3,21 @@
 uvar='Play_er'
 player_state=load_json(get(uvar,'{}'))
 coins=None
+default_image='none'
 if player:=player_state.get('player'):
 	state=player_state.setdefault(player,{})
 	coins=state.get('coins')
 	bags=None
-	image = 'none'
-	color = 0
+	# load npc rosters if any
+	combined_roster=dict()
+	for gvar in  load_json(get_svar("npc_server_npcs", '[]'))+load_json(get("npc_subscribed_rosters","[]")):
+		combined_roster.update(load_json(gvar_data))
+	combined_roster.update(load_json(get("npc_local_roster","{}")))
+	# get the npc properties for the embed
+	npc=combined_roster.get(player,{})
+	player=npc.get('name',player.capitalize())
+	image=npc.get('image',default_image)
+	color=npc.get('color',0)
 else:
 	cvar = 'Play'
 	player_state=None
@@ -22,10 +31,6 @@ else:
 
 game_name='bet'
 bet=state.setdefault(game_name,{})
-
-# since we're collecting, the npc receives a coin pouch made up of the bet coins
-if player_state and not coins:
-	coins=state.setdefault('coins',{coin:0 for coin in bet})
 
 base_cmd=f'{ctx.prefix}{ctx.alias}'
 syntax=f'{base_cmd} collect [<winnings> [<coin>]]'
@@ -54,6 +59,12 @@ if amount is not None:
 	else:
 		auto_coin=chips
 	winnings[auto_coin]=winnings.get(auto_coin, 0)+amount
+
+# since we're collecting, the npc receives a coin pouch made up of the bet and collected coins
+if player_state and not coins:
+	coins = state.setdefault('coins',{})
+	coins.update({coin:0 for coin in bet})
+	coins.update({coin:0 for coin in winnings})
 
 desc=f':coin: {", ".join(f"{q} {c}" for c,q in bet.items()) if bet else "Nothing"}'
 desc+=f'\n:heavy_plus_sign: {", ".join(f"{q} {c}" for c,q in winnings.items())}' if winnings else ''
