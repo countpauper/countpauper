@@ -2,19 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/alt_coin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/sleep.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory/treasure.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/block.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/river encounter.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/npc_gen.json" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc_gen.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/npc_gen2.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc_gen2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chance/chance_py.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance_py.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/ccast.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/ccast.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/bet.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/bet.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/blackjack.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/blackjack.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/collect.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/collect.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/drop_out.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/drop_out.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/hoard.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/hoard.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/killer.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/killer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/play/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/player.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/ship.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/ship.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
@@ -56,7 +56,7 @@
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\inventory" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.csv2json">
+  <component name="RunManager" selected="Python.chance_py (1)">
     <configuration name="chance_py (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -64,9 +64,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\build_analysis\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/chance" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/chance/chance_py.py" />
@@ -164,11 +164,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.chance_py (1)" />
         <item itemvalue="Python.csv2json" />
         <item itemvalue="Python.show" />
         <item itemvalue="Python.gem_script" />
         <item itemvalue="Python.console test" />
-        <item itemvalue="Python.chance_py (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -186,6 +186,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="686" y="162" key="#chance_py_(1)" timestamp="1629781956615">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="686" y="162" key="#chance_py_(1)/0.0.1920.1040@0.0.1920.1040" timestamp="1629781956615" />
     <state x="686" y="162" key="#show" timestamp="1624788037989">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -194,26 +198,26 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="279" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1628927205751" />
-    <state width="1921" height="48" key="GridCell.Tab.0.bottom" timestamp="1627118254800">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1921" height="278" key="GridCell.Tab.0.bottom" timestamp="1629806380269">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1921" height="48" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1627118254800" />
-    <state width="1921" height="48" key="GridCell.Tab.0.bottom/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1626707273961" />
-    <state width="1921" height="48" key="GridCell.Tab.0.center" timestamp="1627118254800">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1921" height="278" key="GridCell.Tab.0.bottom/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1629806380269" />
+    <state width="1921" height="278" key="GridCell.Tab.0.center" timestamp="1629806380269">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1921" height="48" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1627118254800" />
-    <state width="1921" height="48" key="GridCell.Tab.0.center/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1626707273961" />
-    <state width="1921" height="48" key="GridCell.Tab.0.left" timestamp="1627118254800">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1921" height="278" key="GridCell.Tab.0.center/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1629806380269" />
+    <state width="1921" height="278" key="GridCell.Tab.0.left" timestamp="1629806380269">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1921" height="48" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1627118254800" />
-    <state width="1921" height="48" key="GridCell.Tab.0.left/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1626707273961" />
-    <state width="1921" height="48" key="GridCell.Tab.0.right" timestamp="1627118254800">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1921" height="278" key="GridCell.Tab.0.left/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1629806380269" />
+    <state width="1921" height="278" key="GridCell.Tab.0.right" timestamp="1629806380269">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1921" height="48" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1627118254800" />
-    <state width="1921" height="48" key="GridCell.Tab.0.right/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1626707273961" />
+    <state width="1921" height="278" key="GridCell.Tab.0.right/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1629806380269" />
     <state width="1921" height="48" key="GridCell.Tab.1.bottom" timestamp="1627118254800">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -248,10 +252,10 @@
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1628927210857" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1627285791912" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1628427624037">
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1628944344820">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1628427624037" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1628944344820" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1626850029409" />
   </component>
   <component name="XDebuggerManager">
@@ -273,23 +277,13 @@
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/chance/chance_py.py</url>
-          <line>41</line>
-          <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/chance/chance_py.py</url>
-          <line>24</line>
-          <option name="timeStamp" value="27" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/ic/npc_list.py</url>
           <line>19</line>
           <option name="timeStamp" value="31" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/play/drop_out.py</url>
-          <line>37</line>
+          <line>46</line>
           <option name="timeStamp" value="32" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -299,7 +293,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/misc/Spiritual Weapon.py</url>
-          <line>26</line>
+          <line>35</line>
           <option name="timeStamp" value="38" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -321,6 +315,11 @@
           <url>file://$PROJECT_DIR$/play/player.py</url>
           <line>3</line>
           <option name="timeStamp" value="48" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/inventory/treasure.py</url>
+          <line>18</line>
+          <option name="timeStamp" value="49" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

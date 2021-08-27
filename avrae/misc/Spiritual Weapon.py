@@ -18,9 +18,18 @@ size_prefix='Size: '
 
 caster=None
 if c:=combat():
-	caster=c.current
-	if not caster or caster.controller!=ctx.author.id:
+	if (caster_tag:=args.last('c')) and (caster:=c.get_combatant(caster_tag)):
+		pass
+	elif caster:=c.me:
 		caster=c.me
+	else:
+		caster=c.current
+
+if caster and caster.type!='combatant':
+	caster=None
+
+if not caster:
+	return f'echo No valid caster found. Either join initiative, use it for the current character (groups not supported) or use `-c "<caster>"`.'
 
 # get the current location of the weapon from the overlay or the current location of the caster
 origin_pos = None

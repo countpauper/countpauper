@@ -3,17 +3,36 @@
 - !play npc (uvar)
     * for killer at least
     * for other small dice games like hoard, ship and blackjack
-    - for bets
-    - show player image and color for players and default icon and black for npcs
-    - integrate with `!npc` if found and matched for
-        - killer
-        - hoard
-        - ship
+    * for bets
+    * show player image and color for players and default icon and black for npcs
+    * integrate with `!npc` if found and matched for
+        * killer
+        * hoard
+        * ship
         - 21
         - bets
 
     x for darts (it makes no sense)?
 
+
+BLOCK Initiative
+- init treshold option
+- block member treshold
+- keep groups together
+- next, tracking who flagged
+- if not done, show embed
+- if done, multiline i move , i next and end with embed showing group summary
+- always next the whole block for dms or have a -f option
+
+
+New treasure table
+https://docs.google.com/spreadsheets/d/1S-8AUtZFoeQEtmKD5owg2kmbIpbBppgOP-X1S-JgQVk/edit#gid=1228159918
+
+A bit like !mitable
+- convert to json (done !gvar 1009a4b8-20b8-4892-8e7f-8259233128bf)
+- nested table for weapons and stuff
+- nested sub rolls
+- list with even chance
 
 !chance auto adding of save effects not done due to target/executor swap (already a one target limit)
 - probably check effects during looping over targets, add boni the to target dict
