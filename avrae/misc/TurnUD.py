@@ -5,7 +5,7 @@ args=argparse(argstr)
 # get all the targets in combat from the -t argument
 target_args=[t.split('|') for t in args.get('t')]
 targets=[ta[0] for ta in target_args]
-[args.add_context(ta[0], argparse(ta[1:])) for ta in target_args]
+[args.add_context(ta[0], argparse(" ".join(ta[1:]))) for ta in target_args]
 
 c=combat()
 if targets and not c:

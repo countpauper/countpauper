@@ -7,7 +7,7 @@ args=argparse('''&*&''')
 #  -dm (id=current/map} DM vs rest
 #  -b (number) per assume 5 maximum >=30,25-29,20-24 etc to -5 to 0, <-5
 #  combined. all players in a block then dms in that block (but whoever is first)
-
+# !block lock (-d minutes>=10) start taking your turn, warns others that want to lock based on time(). Unlock on !block next or
 # priority dms: argument
 dms=args.get('dm')
 # 2nd attempt: map or dm combatant's controller
