@@ -6,16 +6,17 @@ syntax=f'{base_cmd} {game_name} [<target #>[x2|x3]|yield] [adv] [dis] [ea] [-b <
 
 ### parse arguments
 args=&ARGS&
+
+target_arg = None
 if args:
-	target_arg=args[0]
-	if not target_arg[0].isdecimal():
-		target_arg=None
-else:
-	target_arg=None
+	first_arg=args[0].lower()
+	if first_arg[0].isdecimal() or first_arg in 'outer bullseye':
+		target_arg=first_arg
+
 args=argparse(args)
 game_type=args.last('game',type_=int)
-double_in=not any('in' in a for a in args.get('straight')) or any('in' in a for a in args.get('double')) 	# default True
-double_out=not any('out' in a for a in args.get('straight')) or any('out' in a for a in args.get('double'))	 # default True
+double_in=('in' in args.get('double')) and not ('in' in args.get('straight'))  	# default False
+double_out=('out' in args.get('double')) or not ('out' in args.get('straight'))	# default True
 
 ### get game state
 state=load_json(get(cvar,'{}'))
@@ -28,9 +29,9 @@ board=[20,1,18,4,13,6,10,15,2,17,3,19,7,16,8,11,14,9,12,5]
 # inner bullseye size 0.2"^2 [=1], outer=x3 outer segment =x18 inner=x12,tripple = 2x, double = 3x
 rings=[
 	dict(name='bullseye', mul=1, ac=18,dbl=True),
-	dict(name='bullseye', mul=1,ac=16,dbl=False),
+	dict(name='outer bullseye', mul=1,ac=16,dbl=False),
 	dict(name='',mul=1,ac=10,dbl=False),
-	dict(name='tripple',mul=3,ac=15,dbl=False),
+	dict(name='treble',mul=3,ac=15,dbl=False),
 	dict(name='',mul=1,ac=8,dbl=False),
 	dict(name='double',mul=2,ac=14,dbl=True),
 	dict(name='out',mul=0,ac=0,dbl=False)]
@@ -51,20 +52,43 @@ else:	### Turn
 		default_ring=5
 		default_nr=20
 	elif remaining_score<=62:
-		if remaining_score>40:	# get to doubling out
-			default_nr=remaining_score-40
-			default_ring=4
-		elif remaining_score % 2:	 # even
-			default_nr = 1
-			default_ring = 4
-		elif not game.out: 	# try to double out for doubles
-			default_nr=remaining_score//2
-			default_ring=5
-		elif game.score>20:	# try for doubles
-			default_nr=remaining_score//2
-			default_ring=5
+		if game['out']:
+			if remaining_score==50:
+				default_nr=remaining_score
+				default_ring=0
+			elif remaining_score==25:
+				default_nr=remaining_score
+				default_ring=1
+			elif remaining_score<=20:
+				default_nr=remaining_score
+				default_ring=4
+			elif remaining_score % 3 == 0:
+				default_ring=3
+				default_nr=remaining_score / 3
+			elif remaining_score % 2 == 0 and remaining_score<=40:
+				default_ring=5
+				default_nr=remaining_score / 2
+			else:
+				default_ring=4
+				default_nr=20
 		else:
-			default_nr=remaining_score
+			if remaining_score==50:	# double out on bullseye
+				default_nr=remaining_score
+				default_ring=0
+			elif remaining_score>40:	# get to doubling out
+				default_nr=remaining_score-40
+				default_ring=4
+			elif remaining_score % 2:	 # uneven, make even
+				default_nr = 1
+				default_ring = 4
+			elif not game.out: 	# try to double out for doubles
+				default_nr=remaining_score//2
+				default_ring=5
+			elif game.score>20:	# try for doubles
+				default_nr=remaining_score//2
+				default_ring=5
+			else:
+				default_nr=remaining_score
 	else:	# maximize score
 		default_ring=3
 		default_nr=20
@@ -76,13 +100,20 @@ else:	### Turn
 		# else if uneven: single 1
 		target=dict(nr=default_nr,ring=default_ring)
 	else:
-		target_args=target_arg.split('x',maxsplit=1)
-		target_nr=int(target_args[0])
-		if len(target_args)==1:	# allow for space between number and mul
-			if args.last('x3',False):
-				target_args+=[3]
-			elif args.last('x2',False):
-				target_args+=[2]
+		if 'out' in target_arg.lower():
+			target_nr=25
+		elif 'bull' in target_arg.lower() or 'eye' in target_arg.lower():
+			target_nr=50
+		else:
+			target_args = target_arg.split('x', maxsplit=1)
+			target_nr=int(target_args[0])
+			if len(target_args)==1:	# allow for space between number and mul
+				if args.last('x3',False):
+					target_args+=[3]
+				elif args.last('x2',False):
+					target_args+=[2]
+				elif args.last('x1',False):
+					target_args+=[1]
 
 		if target_nr not in board and target_nr!=50 and target_nr!=25:
 			return f'echo You can only aim for 1-20,25 or 50. Use `{syntax}`'
@@ -93,11 +124,10 @@ else:	### Turn
 		elif len(target_args)==1:
 			target=dict(nr=int(target_arg),ring=default_ring)
 		else:
-			matching_rings=[idx for idx,r in enumerate(rings) if r.mul==int(target_args[1])]
-			if matching_rings:
-				target=dict(nr=target_nr,ring=matching_rings[0])
-			else:
-				target=dict(nr=target_nr,ring=default_ring)
+			matching_rings= [default_ring] + [idx for idx,r in enumerate(rings) if r.mul==int(target_args[1])]
+			target=dict(nr=target_nr,ring=matching_rings[-1])
+
+	aim=f'**{rings[target.ring].name} {target.nr if target.nr<=20 else ""}**'
 
 	args=argparse(args)
 	if reroll:=character().csettings.get('reroll'):
@@ -114,8 +144,8 @@ else:	### Turn
 
 	if off<=0 or r.result.crit==1:
 		hit=target
+		hits = 'hits!'
 	else:	# miss
-
 		# ring	1			>1				>4				>10
 		# 0 	1 25		random #		(off random)	off the board
 		# 1 	1 50 		random #		(off random)	off the board
@@ -164,7 +194,7 @@ else:	### Turn
 			if t>=len(board):
 				t-=len(board)
 			hit=dict(nr=board[t],ring=hit_ring)
-
+		hits = f'misses and hits {rings[hit.ring].name} {hit.nr if hit.nr<=20 else ""}'
 	score=hit.nr * rings[hit.ring].mul
 	if not game['in']:	 # double in
 		game['in']=rings[hit.ring].dbl
@@ -187,7 +217,7 @@ else:	### Turn
 		game['turn']=[]
 		turn_result='*Your turn is over.* :track_next:'
 	title = f'{name} throws dart #{len(turn)}'
-	turn_desc=f'**Ranged Attack:** {r} vs AC `{ac}` hits {rings[hit.ring].name} {hit.nr} (`{score}`)'
+	turn_desc=f'**Ranged Attack:** {r} vs {aim} - AC `{ac}` {hits} (`{score}`)'
 # persist
 if gameover:
 	if game_name in state:
