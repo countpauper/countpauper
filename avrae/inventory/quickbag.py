@@ -74,6 +74,7 @@ removed_bags=[]
 debug=[]
 report={}	# list of modified bags: {bagidx:{item_name:[amount deltas]}], could be bag index to resolve reuse
 fail='fail'
+partial=False
 while args:
 	# debug break
 	if debug_break:
@@ -238,37 +239,6 @@ while args:
 			delta=None
 			continue
 
-	if bag_idx is not None:
-		###  ITEMS
-		bag = bags[bag_idx]
-		# Modify: find items already in the current bag, always use partial match first
-		if partial:
-			mod_items=[]
-		else:
-			mod_items = [n for n in bag[1].keys() if n.lower().startswith(item_name) or space_name in n.lower()]
-		if mod_items:
-			mod_item=mod_items[0]
-			current=bag[1].get(mod_item)
-			amount=max(0,current+delta)
-			if amount:
-				bag[1][mod_item]=amount
-				debug.append(f'Adjust {current}+{delta}={amount} x {mod_item}')
-			else:
-				bag[1].pop(mod_item)
-				debug.append(f'Remove {current} x {mod_item}')
-
-			# update the item's diff in the report
-			diff=report.get(bag_idx,{})
-			change=current-amount
-			diff[mod_item]=diff.get(mod_item,[current])+[change]
-			report[bag_idx]=diff
-			force_bag=False
-
-			# next arg, unless still items to remove
-			delta+=change
-			if delta>=0:
-				delta=None
-				continue
 
 	# Remove items from any bag
 	if delta<0:
@@ -322,6 +292,38 @@ while args:
 			report[bag_idx]={default_bag:[1]}
 		else:
 			pass
+
+	###  ITEMS
+	bag = bags[bag_idx]
+	# Modify: find items already in the current bag, always use partial match first
+	if partial:
+		mod_items=[]
+	else:
+		mod_items = [n for n in bag[1].keys() if n.lower().startswith(item_name) or space_name in n.lower()]
+	if mod_items:
+		mod_item=mod_items[0]
+		current=bag[1].get(mod_item)
+		amount=max(0,current+delta)
+		if amount:
+			bag[1][mod_item]=amount
+			debug.append(f'Adjust {current}+{delta}={amount} x {mod_item}')
+		else:
+			bag[1].pop(mod_item)
+			debug.append(f'Remove {current} x {mod_item}')
+
+		# update the item's diff in the report
+		diff=report.get(bag_idx,{})
+		change=current-amount
+		diff[mod_item]=diff.get(mod_item,[current])+[change]
+		report[bag_idx]=diff
+		force_bag=False
+
+		# next arg, unless still items to remove
+		delta+=change
+		if delta>=0:
+			delta=None
+			continue
+
 	# Add NEW known items to the current bag
 	if delta>0:
 		if len(item_name)==1:

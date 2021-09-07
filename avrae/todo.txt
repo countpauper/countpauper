@@ -4,14 +4,14 @@
 *   eye or bull argument should translate to `50` outer to 25
 *   Default straight in double out
 *   Double out on bullseye
-- links to rules for darts, blackjack, killer ones, hoard
+* links to rules for darts, blackjack, killer ones, hoard
     https://docs.google.com/document/d/1JugoNch6eVNTNVVgo05uT0O1Y-ie4s1WKUAAWtg1pQA/edit?usp=sharing
     https://bicyclecards.com/how-to-play/ship-captain-and-crew/
 - dragon hoard can roll again if done on 1 or 2
 
 BLOCK Initiative
-- init treshold option
-- block member treshold
+- init threshold option
+- block member threshold
 - keep groups together
 - next, tracking who flagged
 - if not done, show embed

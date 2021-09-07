@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/card_creator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Monk/stun.py" beforeDir="false" afterPath="$PROJECT_DIR$/Monk/stun.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/TurnUD.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/TurnUD.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/alt_coin.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/alt_coin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/base64.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/base64_alias.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/block.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/block.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/play/darts.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/darts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/quickbag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/testplan.txt" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/testplan.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/card_creator.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/card_creator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -64,7 +60,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/card_creator.py" />
-      <option name="PARAMETERS" value="npc C:\Users\maurits.fassaert\Documents\dnd\hotdq.txt" />
+      <option name="PARAMETERS" value="npc C:\Users\maurits.fassaert\Documents\dnd\wddh.txt" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -213,10 +209,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="686" y="162" key="#chance_py_(1)/0.0.1920.1040@0.0.1920.1040" timestamp="1629781956615" />
-    <state x="414" y="214" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1630744146330">
+    <state x="414" y="214" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1630964310698">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="414" y="214" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1630744146330" />
+    <state x="414" y="214" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1630964310698" />
     <state x="414" y="239" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1630674446545" />
     <state x="686" y="162" key="#show" timestamp="1624788037989">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -231,26 +227,26 @@
     </state>
     <state x="740" y="279" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1628927205751" />
     <state x="740" y="311" key="FileChooserDialogImpl/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1630673865822" />
-    <state width="1921" height="278" key="GridCell.Tab.0.bottom" timestamp="1630771176279">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1921" height="278" key="GridCell.Tab.0.bottom" timestamp="1631001327177">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1921" height="278" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1630771176279" />
-    <state width="1921" height="278" key="GridCell.Tab.0.bottom/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1630681503097" />
-    <state width="1921" height="278" key="GridCell.Tab.0.center" timestamp="1630771176279">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1921" height="278" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1630964334811" />
+    <state width="1921" height="278" key="GridCell.Tab.0.bottom/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1631001327177" />
+    <state width="1921" height="278" key="GridCell.Tab.0.center" timestamp="1631001327176">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1921" height="278" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1630771176279" />
-    <state width="1921" height="278" key="GridCell.Tab.0.center/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1630681503097" />
-    <state width="1921" height="278" key="GridCell.Tab.0.left" timestamp="1630771176279">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1921" height="278" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1630964334811" />
+    <state width="1921" height="278" key="GridCell.Tab.0.center/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1631001327176" />
+    <state width="1921" height="278" key="GridCell.Tab.0.left" timestamp="1631001327176">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1921" height="278" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1630771176279" />
-    <state width="1921" height="278" key="GridCell.Tab.0.left/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1630681503097" />
-    <state width="1921" height="278" key="GridCell.Tab.0.right" timestamp="1630771176279">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1921" height="278" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1630964334810" />
+    <state width="1921" height="278" key="GridCell.Tab.0.left/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1631001327176" />
+    <state width="1921" height="278" key="GridCell.Tab.0.right" timestamp="1631001327177">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1921" height="278" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1630771176279" />
-    <state width="1921" height="278" key="GridCell.Tab.0.right/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1630681503097" />
+    <state width="1921" height="278" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1630964334811" />
+    <state width="1921" height="278" key="GridCell.Tab.0.right/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1631001327177" />
     <state width="1921" height="281" key="GridCell.Tab.1.bottom" timestamp="1630771176269">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -331,7 +327,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/inventory/quickbag.py</url>
-          <line>314</line>
+          <line>284</line>
           <option name="timeStamp" value="41" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -363,16 +359,6 @@
           <url>file://$PROJECT_DIR$/misc/card_creator.py</url>
           <line>45</line>
           <option name="timeStamp" value="63" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/misc/card_creator.py</url>
-          <line>63</line>
-          <option name="timeStamp" value="64" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/misc/card_creator.py</url>
-          <line>66</line>
-          <option name="timeStamp" value="65" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
