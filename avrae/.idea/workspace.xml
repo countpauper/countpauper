@@ -281,11 +281,11 @@
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1628927210857" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1630485379406" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1630484927559">
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1631025721367">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1628944344820" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1630484927559" />
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1631025721367" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -316,7 +316,6 @@ while args:
 		change=current-amount
 		diff[mod_item]=diff.get(mod_item,[current])+[change]
 		report[bag_idx]=diff
-		force_bag=False
 
 		# next arg, unless still items to remove
 		delta+=change
@@ -342,7 +341,6 @@ while args:
 			diff=report.get(bag_idx,{})
 			diff[new_item]=[0,delta]
 			report[bag_idx]=diff
-			force_bag=False
 
 			delta=None
 			continue
@@ -376,7 +374,6 @@ while args:
 		diff=report.get(bag_idx,{})
 		diff[new_item]=[0,delta]
 		report[bag_idx]=diff
-		force_bag = False
 		delta=None
 		continue
 
