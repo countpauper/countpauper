@@ -2,6 +2,9 @@ import csv
 import json
 import sys
 
+def RemoveEmptySections(items):
+	tag='section'
+	return [i for idx,i in enumerate(items) if not i.startswith(tag) or (idx<len(items)-1 and not items[idx+1].startswith(tag))]
 
 def convert_item(data, item):
 	if type(item) is str:
@@ -27,7 +30,7 @@ def convert_item(data, item):
 				result+=list(v)
 			elif v is not None:
 				result.append(v)
-		return result
+		return RemoveEmptySections(result)
 	else:
 		return item
 
@@ -42,7 +45,7 @@ def apply_template(data, template):
 def convert(csv, template):
 	data=[]
 	for row in reader:
-		row_data={k:e for k,e	 in row.items() if k}
+		row_data={k:e for k,e	 in row.items() if 	k}
 		if not row_data.get('skip'):
 			data.append(apply_template(row_data,template))
 	return data
@@ -63,14 +66,16 @@ template = dict(
 			"property|Character|{character}",
 			"property|Mannerism|{manner}",
 			"property|Quote|{quote}",
-			"property|Skills|{skill}",
-			"section|background",	# TODO conditional
-			"property|faction|{faction}",
+			"property|Abilities|{ability}",
+			"property|Stats|{stats}",
+			"section|Background",	# TODO conditional if other parts empty
+			"property|Faction|{faction}",
 			"text|{background[]}",
 			"section|Goals",
 			"bullet|{goal[]}",
 			"section|Notes",
-			"text|{notes[]}",
+			"bullet|{notes[]}",
+			"property|{stock[]}",
 			"fill"
 		]
 	)

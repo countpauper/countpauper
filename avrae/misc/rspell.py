@@ -7,5 +7,5 @@ if not spells:
 	return f'echo No spells {levels}'
 spell=spells[randint(len(spells))]
 
-return f'spell {spell}'
+return f'spell "{spell}"'
 </drac2>

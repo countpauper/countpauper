@@ -3,16 +3,22 @@ cvar='Play'
 game_name='drink'
 state=load_json(get(cvar,'{}'))
 game=state.get(game_name,{})
-syntax=f'{ctx.prefix}{ctx.alias} {game_name} [-b <bonus>] [adv] [dis] [-mi <minimum>]'
+syntax=f'{ctx.prefix}{ctx.alias} {game_name} [reset]|[-b <bonus>] [adv] [dis] [-mi <minimum>]'
 
 # initialize game state
 drinks=game.get('drinks',0)
+args=&ARGS&
+if 'reset' in args:
+	state[game_name]={}
+	character().set_cvar(cvar, dump_json(state))
+	return f'''embed -title "{name} sleeps it off." -desc "{get("their","their").capitalize()} intoxication level is back to normal."'''
+
 drinks+=1
 dc=9+drinks
 ch=character()
 
 # parse arguments for roll string
-args=argparse("&*&")
+args=argparse(args)
 rolls=[ch.saves.get('con').d20(args.adv(boolwise=True),reroll=ch.csettings.get('reroll'), min_val=int(args.last('mi',0)))]+args.get('b')
 save=vroll("+".join(rolls))
 
