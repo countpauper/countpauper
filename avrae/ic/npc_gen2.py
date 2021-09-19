@@ -1,6 +1,8 @@
 <drac2>
 args=argparse(&ARGS&)
-db=load_json(get_gvar('e8dfa775-0f63-4aaa-9869-4fab02edfbfc'))
+default_db='e8dfa775-0f63-4aaa-9869-4fab02edfbfc'
+dbs=load_json(get('generate_db','{}'))
+db=load_json(get_gvar(dbs.get('npc',default_db)))
 fields={}
 ptr_prefix='@'
 # TODO: should be svar, with default is [gvar]
@@ -110,16 +112,21 @@ while stack:
 			stack.append({stack_ref:next})
 			dbg.append(f'[{stack_ref}] `{idx}` / {len(stack_value)}')
 		elif typeof(stack_value)=='SafeDict':
-			# all numeric keys are treated as a waited table to roll on, values are tresholds
-			# percentages are cumulative with each other or the latest treshold 5 8% = 5,13
+			# all numeric keys are treated as a weighted table to roll on, values are thresholds
 			# it can be mixed with sub dicts
 			# This is queued in the stack before branching keys so it is executed last (FILO)
 			#  which serves to have specific (deep) fields override generic
-			offset=0
-			# reinterpret numeric and % keys
-			dict_value={int(offset:=k) if k.isdecimal() else
-						 (offset:=offset+int(kv) if k[-1]=='%' and (kv:=k[:-1]).isdecimal() else
-						  k):v for k,v in stack_value.items()}
+
+			# tables with any integer values are considered percentages and converted to weighted tables
+			if stack_value and any(typeof(v)=='int' for v in stack_value.values()):
+				dict_value,offset=dict(),0
+				for txt, pct in stack_value.items():
+					offset+=int(pct)
+					dict_value[offset]=txt
+				dbg.append(f'[{stack_ref}] {offset}%')
+			else:	# otherwise decimal keys are converted to integers
+				dict_value={int(k) if k.isdecimal() else k:v for k,v in stack_value.items()}
+
 			decikeys=[k for k in dict_value.keys() if typeof(k)=='int']
 			if decikeys:
 				if selection:=args.last(top_key):
@@ -139,7 +146,7 @@ while stack:
 					picked_key=min(mkeys)
 					next=dict_value[picked_key]
 					stack.append({stack_ref:next})
-					dbg.append(f'[{stack_ref}] `{rand_key}` % {max(decikeys)}')
+					dbg.append(f'[{stack_ref}] `{rand_key}` / {max(decikeys)}')
 			# text keys form the main hierarchy of related properties, eg location->race->gender->pronoun
 			# children are tables whose chance/fields may depend on the grandparent
 			# siblings are unrelated fields

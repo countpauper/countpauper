@@ -9,17 +9,19 @@
     https://bicyclecards.com/how-to-play/ship-captain-and-crew/
 - dragon hoard can roll again if done on 1 or 2
 
-
-!qb
-- Forced bag doesn't apply to all subsequent bags eg testplan
-    !bqb 20cp 10gp holding 2000cp 1000gp
-    or Frog report !cvar bags [["Explorer's Pack", {"Backpack": 1, "Bedroll": 1, "Mess Kit": 1, "Tinderbox": 1, "Torch": 10, "Days of Rations": 10, "Waterskin (Full)": 1, "Hempen Rope (50 feet)": 1, "Crowbar": 1, "Playing Card Set": 1, "Cards": 1}], ["Coin Pouch", {"cp": 0, "sp": 2, "ep": 0, "gp": 15, "pp": 0, "mace": 1, "shield": 1, "longsword": 1, "chainmail": 1}]]
-    !bqb Explo Mace Shield Longsword Chainmail
-    also force things into coin pouch
-    !bqb Pouch +emerald +ring
+* !play drink reset if win or yield
 
 !generate npc
-    - speech and mannerism tables like https://www.reddit.com/r/BehindTheTables/comments/7fde9p/npc_voices_table/
+    * speech and mannerism tables like https://www.reddit.com/r/BehindTheTables/comments/7fde9p/npc_voices_table/
+    * visual accesories like tattoos, jewelry, eyepatches.
+    - backstory rough generic categories from profession (farmer, merchant, priest, sage) and related goals/ideals.
+
+Group movement:
+!gmove -t "group" -t "combatant" -approach a1 or -approach a5:d5 or -approach combatant
+!gmove -t combatant ... -line a1:b4
+!gmove -t combatant -go 20e15se
+!gmove -t combatant -approach a1 -ft 30
+
 
 BLOCK Initiative
 - init threshold option
