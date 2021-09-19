@@ -23,7 +23,7 @@ if len(args)==1 and (('undo' in args[0] and len(args[0])<7) or
 	return f"echo :confused: `{ctx.prefix}{ctx.alias} {args[0]}`? Maybe you mean `{ctx.prefix}{ctx.alias} undo`?"
 
 bv='bags'
-backup=get(bv)
+backup=get(bv, '[["Bag", {}]]')	# !bags can't handle []
 bags=load_json(get(bv,'[]'))
 item_table=load_json(get_gvar('19753bce-e2c1-42af-8c4f-baf56e2f6749'))	 # original !bag items for interop
 
