@@ -37,15 +37,15 @@ if targets:=args.get('t'):
 		if not c:
 			continue
 		if c.type == 'group':
-			movers.update({member.name:dict(c=member, s=speeds.get(t,default_speed)) for member in c.combatants})
+			movers.update({member.name:dict(combatant=member, speed=speeds.get(t,default_speed)) for member in c.combatants})
 		else:
-			movers[c.name]=dict(c=c,s=speeds.get(t,default_speed))
+			movers[c.name]=dict(combatant=c,speed=speeds.get(t,default_speed))
 elif not C.current:
 	return f'echo There is no current combatant, use `{ctx.prefix}{ctx.alias} -t <group>`'
 elif C.current.type=='group':
-	movers={c.name:dict(c=c, s=default_speed) for c in C.current.combatants}
+	movers={c.name:dict(combatant=c, speed=default_speed) for c in C.current.combatants}
 else:
-	movers={C.current.name:dict(c=C.current,s=default_speed)}
+	movers={C.current.name:dict(combatant=C.current,speed=default_speed)}
 
 ### create a dict with x,y,s (exclusive) squares of combatants
 # and a list of non moving combatants with a location that block targets or goals
@@ -69,11 +69,10 @@ for c in C.combatants:
 			blockers[c.name]=locations[c.name]
 
 # convert the movers list to a dictionary per mover with all necessary data
-movers=[dict(c=m.c,l=locations.get(n),size=default_size,speed=m.s/ft_per_grid,goal=None,target=None) for n,m in movers.items()]
+movers={n:dict(combatant=m.combatant,start=locations.get(n),size=locations.get(n).s,speed=m.speed/ft_per_grid,goal=None,target=None,dbg=[]) for n,m in movers.items()}
 
 # TODO: l[ine] and r[ectangle] targets first so their spread can be evened out to len(movers)
 # TODO: first parse all formation arguments into a [shape,area] list so they can all use the same coordinate parsing
-# TODO: approach targets can spiral out for number of movers, but should go to first row not closest when assigning so ... not easy
 targets=[]
 for area in args.get('approach')+args.get('a'):
 	parts=[p.strip().lower() for p in area.split(':')][:2]
@@ -124,47 +123,56 @@ for t in unclipped_targets:
 # return f'echo {unclipped_targets} in {map_rect} and not in {blockers} => {targets}'
 
 # Assign movers to targets, in order of movers, sorted preferred target by distance
-for m in movers:
-	if not m.target:
-		if not m.l and targets:	# place
-			m['goal']=targets.pop(0)
-			m['target']=m.goal
+for mover in movers.values():
+	if not mover.target:
+		if not mover.start and targets:	# place
+			mover['goal']=targets.pop(0)
+			mover['target']=mover.goal
 		else:
 			best_idx, best_dist=None, 0
 			for idx,t in enumerate(targets):
-				dx=m.l.x - t[0]
-				dy=m.l.y - t[1]
+				dx=mover.start.x - t[0]
+				dy=mover.start.y - t[1]
 				sqr_d=dx*dx + dy*dy	# TODO different speed diagonals
 				if not best_idx or sqr_d<best_dist:
 					best_dist=sqr_d
 					best_idx=idx
 			if best_idx is not None:
-				m['goal']=targets.pop(best_idx)
+				mover['goal']=targets.pop(best_idx)
 
 # move towards target with speed
-for m in movers:
-	if not m.goal or m.target:
+for name, mover in movers.items():
+	if not mover.goal or mover.target:
 		continue
-	dx,dy=m.goal[0] - m.l.x,m.goal[1]-m.l.y
+	# compute normalized direction vector
+	dx,dy=mover.goal[0] - mover.start.x,mover.goal[1]-mover.start.y
 	vector_length = sqrt(dx*dx+dy*dy)
-	if vector_length<=m.speed:
-		m['target']=m.goal
-		continue
-	# find maximum movement vector
-	normalize_multiplier=(m.speed)/vector_length
-	dx*=normalize_multiplier
-	dy*=normalize_multiplier
-	# TODO: find existing targets and avoid by finding other options IN RANGE.
-	# TODO: also avoid non moving enemies (put those in the list first, add targets)
-	# TODO: Take size into account
-	# TODO: what to do with movers that are not blockers but then they can't move so now they were
-	m['target']=round(m.l.x+dx), round(m.l.y+dy)
+	dx/=vector_length
+	dy/=vector_length
+	path_length=min(mover.speed,vector_length)
+	# render all grids from end to start in the path, path may contain duplicates due to rounding but that's only a small performance problem
+	path=[(round(mover.start.x+dx*step),round(mover.start.y+dy*step)) for step in range(round(path_length),0,-1)]
+
+	# find furthest non-blocked point along the path
+	# mover.dbg.append(f'path {path}')
+	for p in path:
+		# mover.dbg.append(f'blocked at {p} by { {f"{n}({b.x},{b.y},{b.s})":p[0] + mover.size > b.x and p[1] + mover.size > b.y and p[0] < b.x + b.s and p[1] < b.y + b.s for n,b in blockers.items()} }')
+		if any(p[0] + mover.size > b.x and p[1] + mover.size > b.y and p[0] < b.x + b.s and p[1] < b.y + b.s for b in blockers.values()):
+			continue
+		else:
+			mover['target'] = p
+			blockers[name]=dict(x=mover.target[0], y=mover.target[0], s=mover.size)
+			break
+	else:
+		mover['target'] = None
+		blockers[name] = mover.start
 
 inv_x_axis={val:s.upper() for s,val in x_axis.items()}
-description='\n'.join(f'{m.c.name} @ ({m.l}) :black_square_button:  {m.size*ft_per_grid}ft. :fast_forward: {m.speed*ft_per_grid}ft. :goal: {m.goal} :person_walking:  {m.target}' for m in movers)
-space,quote=' ','\\"'
-cmd_args=[f'-t {quote if space in m.c.name else ""}{m.c.name}|{inv_x_axis[m.target[0]]}{m.target[1]}{quote if space in m.c.name else ""}' for m in movers if m.target]
+description='\n'.join(f'{name} @ ({mover.start}) :black_square_button:  {mover.size*ft_per_grid}ft. :fast_forward: {mover.speed*ft_per_grid}ft. :goal: {mover.goal} :person_walking:  {mover.target}' for name, mover in movers.items())
+space,nl,quote=' ','\n','\\"'
+cmd_args=[f'-t {quote if space in name else ""}{name}|{inv_x_axis.get(mover.target[0],"??")}{mover.target[1]}{quote if space in name else ""}' for name, mover in movers.items() if mover.target]
 cmd_field=f'-f "Command|`!map {space.join(cmd_args)}`"' if cmd_args else ''
+dbg_fields=space.join(f'-f "{name}|{nl.join(mover.dbg)}"' for name,mover in movers.items() if mover.dbg)
 
-return f'embed -title March! -desc "{description}" {cmd_field}'
+return f'embed -title March! -desc "{description}" {cmd_field} {dbg_fields}'
 </drac2>
