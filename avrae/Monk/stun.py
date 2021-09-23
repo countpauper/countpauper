@@ -51,8 +51,8 @@ if me and target_args:
 			me.add_effect(en, '', duration=dur, end=True, desc='Targets are stunned until the end of your next turn.') 	# stacking=True
 			parent = me.get_effect(en)
 			combatant.add_effect('Stunned','', parent=parent, desc="""A stunned creature is incapacitated (can't act or react), can’t move, and can speak only falteringly.
-The creature automatically fails Strength and Dexterity Saving Throws.
-Attack Rolls against the creature have advantage.""")
+ - The creature automatically fails Strength and Dexterity Saving Throws.
+ - Attack Rolls against the creature have advantage.""")
 		field+=f' -f "{combatant.name}|{save} : {"Stunned!" if stunned else "Resisted!"}|inline"'
 
 return f'embed -title "{name} Strikes Stunningly!" {field} -thumb {image}'

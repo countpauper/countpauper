@@ -17,10 +17,34 @@
     - backstory rough generic categories from profession (farmer, merchant, priest, sage) and related goals/ideals.
 
 Group movement:
-!gmove -t "group" -t "combatant" -approach a1 or -approach a5:d5 or -approach combatant
-!gmove -t combatant ... -line a1:b4
-!gmove -t combatant -go 20e15se
-!gmove -t combatant -approach a1 -ft 30
+*!march -approach a1 [current combatant or group]
+!march -t "group" -t "combatant" -to a1 go up to but outside of a1
+
+!march -t group -approach a1 -approach a2  <- all in group go to a1 or a2 whatever is closer
+!march -approach a1::5 <- approach a circle around a rectangle? or a1:5 even? To plot a circle would have to enlarge rectangle and exclude all corners not at ~range
+!march -t bla -to a5:d6 or    <- approach to edge of rectangle (b, 4, d or 7)
+!march -t bla -to  combatant   <- take combatans location and size as rectangle
+!march -t combatant -to a1 -ft 30     <- speed added to all combatants with no speed defined yet (None) default afterwards is ? infinite or 30?
+
+
+!march -t combatant ... -line a1:b4 go onto line but distributed evenly over it (sorted by minimum distance for each?)
+!march -t combatant ... -rect a1:b4 go evenly spread out over a rectangle
+spreading out evenly can be done based on number of marchers before divided by number of targets and then slicing through target positions in order
+ie line 0 1 2 3 4 5  and 3 targets (6/3 = 2) 0 2 4
+
+square b2 b3 b4 c2 c3 c5 d2 d3 d4 and 5 movers = (9//5=2) B2 B4 C4 D2 D4
+
+!march -scatter a5:b10 <- place randomly in this area
+
+!march -t combatant -go 20e15se all move that way
+
+default it will output a start, target and distance moved and a `!map -t` command line
+`go` will execute, perhaps later `go` will be default and `cmd` or `map` will output the command
+
+!march -t "group|30" go 30 ft
+DONT need context target, then just run `!move` or run multiple time. it's too messy
+!march -t bla# wildcard match number
+!march -t bla1-5 ? or could it be called that way ?
 
 
 BLOCK Initiative
