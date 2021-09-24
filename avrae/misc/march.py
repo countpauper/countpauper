@@ -10,9 +10,10 @@ args = argparse(&ARGS&)
 # some constants
 loc_prefix = 'Location: '
 size_prefix = 'Size: '
-default_size=1
 sizes = dict(L=2, H=3, G=4)
 ft_per_grid=5
+size_arg=args.last('size','').upper()
+default_size=sizes.get(size_arg[:1], int(size_arg)//ft_per_grid if size_arg.isdecimal() else 1)
 alphabet='abcdefghijklmnopqrstuvwxyz'
 x_axis={col:idx+1 for idx,col in enumerate(alphabet)}
 for mul,prefix in enumerate('abc'):
@@ -72,7 +73,7 @@ for c in C.combatants:
 # convert the movers list to a dictionary per mover with all necessary data
 movers={n:dict(combatant=m.combatant,
 			   start=locations.get(n),
-			   size=locations.get(n,dict(s=1)).s,
+			   size=locations.get(n,dict(s=default_size)).s,
 			   speed=m.speed/ft_per_grid,
 			   goal=None,
 			   target=None,
@@ -92,7 +93,7 @@ for zone_type, zone_args in zone_args.items():
 		if len(parts)==1:
 			if matches:=[c for c in locations.keys() if c.lower().startswith(parts[0])]:
 				loc=locations[matches[0]]
-				area_rect=(loc.x, loc.y, loc.x+loc.w-1, loc.y+loc.h-1)
+				area_rect=(loc.x, loc.y, loc.x+loc.s-1, loc.y+loc.s-1)
 			else:
 				parts.append(parts[0])
 		if not area_rect:
@@ -109,6 +110,8 @@ for zone_type, zone_args in zone_args.items():
 			area_rect=(min(area_rect[0::2]),min(area_rect[1::2]),max(area_rect[0::2]),max(area_rect[1::2]))
 		zones[zone_type].append(area_rect)
 
+for idx,block in enumerate(zones.block):
+	blockers[f'Block#{idx}'] = dict(x=block[0],y=block[1],w=1+block[2]-block[0],h=1+block[3]-block[1])
 
 # TODO: l[ine] and r[ectangle] targets first so their spread can be evened out to len(movers)
 targets=[]
