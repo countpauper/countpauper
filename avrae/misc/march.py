@@ -207,11 +207,37 @@ for name, mover in movers.items():
 		mover['target'] = None
 		blockers[name] = dict(x=mover.start.x, y=mover.start.y, w=mover.size, h=mover.size)
 
-# generate embed text
+### generate embed text
 inv_x_axis={val:s.upper() for s,val in x_axis.items()}
-description='\n'.join(f'{name} @ ({mover.start}) :black_square_button:  {mover.size*ft_per_grid}ft. :fast_forward: {mover.speed*ft_per_grid}ft.'+
-					  f':goal: {mover.goal} :person_walking: {mover.target}{" :octagonal_sign:"+mover.block if mover .block else ""}' for name, mover in movers.items())
 space,nl,quote=' ','\n','\\"'
+descriptions=[]
+for name, mover in movers.items():
+	move_desc=[f'**{name}** :']
+	if mover.start:
+		move_desc.append(f'{inv_x_axis.get(mover.start.x,"??")}{mover.start.y}')
+		if mover.target:
+			move_desc.append(f'to {inv_x_axis.get(mover.target[0], "??")}{mover.target[1]}')
+			if mover.speed and mover.start:
+				dx=mover.target[0]-mover.start.x
+				dy=mover.target[1]-mover.start.y
+				distance = round(sqrt(dx*dx+dy*dy)*ft_per_grid)# TODO: diagonal distance
+				move_desc.append(f' - {distance} / {round(mover.speed*ft_per_grid)} ft.')
+		else:
+			move_desc.append('*No valid target*')
+		if mover.target!=mover.goal:
+			move_desc.append(f'{inv_x_axis.get(mover.goal[0],"??")}{mover.goal[1]}')
+		if mover.block:
+			move_desc.append(f'*blocked by* {mover.block}')
+	else:
+		move_desc.append(f'Placed at {inv_x_axis.get(mover.target[0], "??")}{mover.target[1]}')
+		# TODO: add size here and add size to command. store size as string in mover, (but not in loc)
+		#if mover.size:
+		#	description.append(f':black_square_button: {mover.size*ft_per_grid}ft.')
+		if mover.block:
+			err("Unhandled description: blocked at placement")
+	descriptions.append(space.join(move_desc))
+
+description=nl.join(descriptions)
 cmd_args=[f'-t {quote if space in name else ""}{name}|{inv_x_axis.get(mover.target[0],"??")}{mover.target[1]}{quote if space in name else ""}' for name, mover in movers.items() if mover.target]
 cmd_field=f'-f "Command|`!map {space.join(cmd_args)}`"' if cmd_args else ''
 dbg_fields=space.join(f'-f "{name}|{nl.join(mover.dbg)}"' for name,mover in movers.items() if mover.dbg)
