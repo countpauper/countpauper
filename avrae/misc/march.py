@@ -130,6 +130,11 @@ for idx,block in enumerate(zones.block):
 ### Construct goal locations into a list [(x,y),...]
 # TODO: l[ine] and r[ectangle] targets first so their spread can be evened out to len(movers)
 goals=[]
+for area in zones.rect:
+	for y in range(area.y, area.y + area.h):
+		for x in range(area.x,area.x+area.w):
+			goals.append((x,y))
+
 for area in zones.approach:
 	# plot target locations
 	for x in range(area.x-1,area.x+area.w):
@@ -138,6 +143,7 @@ for area in zones.approach:
 	for y in range(area.y-1,area.y+area.h):
 		goals.append((area.x-1, y+1))
 		goals.append((area.x+area.w,y))
+
 
 ### clip goals to map area and remove duplicate goals or those overlapping with blockers
 unclipped_goals,goals=goals,[]
@@ -153,6 +159,17 @@ for goal in unclipped_goals:
 		continue
 	# it's good
 	goals.append(goal)
+
+
+### thin or scatter out for the number of movers
+# todo: scatter algorithm is: shuffle before thinning
+if args.last('scatter'):
+	ordered_goals,goals=goals,[]
+	while ordered_goals:
+		goals.append(ordered_goals.pop(randint(len(ordered_goals))))
+
+if (density:=len(goals)//len(movers))>1:
+	goals=goals[::density]
 
 #return f'echo {unclipped_goals} in {map_rect} and not in {blockers} => {goals}'
 
@@ -237,10 +254,10 @@ for name, mover in movers.items():
 			err("Unhandled description: blocked at placement")
 	descriptions.append(space.join(move_desc))
 
-description=nl.join(descriptions)
+description=nl.join(descriptions)[:6000]
 cmd_args=[f'-t {quote if space in name else ""}{name}|{inv_x_axis.get(mover.target[0],"??")}{mover.target[1]}{quote if space in name else ""}' for name, mover in movers.items() if mover.target]
-cmd_field=f'-f "Command|`!map {space.join(cmd_args)}`"' if cmd_args else ''
-dbg_fields=space.join(f'-f "{name}|{nl.join(mover.dbg)}"' for name,mover in movers.items() if mover.dbg)
+cmd_field=f'-f "Command|`!map {space.join(cmd_args)[:1000]}`"' if cmd_args else ''
+dbg_fields=space.join(f'-f "{name}|{nl.join(mover.dbg)[:1000]}"' for name,mover in movers.items() if mover.dbg)
 not_found_field=f'-f "Unrecognized targets|{", ".join(not_found)}"' if not_found else ''
 return f'embed -title March! -desc "{description}" {cmd_field} {not_found_field} {dbg_fields}'
 </drac2>
