@@ -8,8 +8,7 @@ args = argparse(&ARGS&)
 # when computing distance this is basically just two variations. diagonal multiplied for min(abs(dx),abs(dy))+straight for abs(abs(dx)-abs(dy)) or sqrt(dx*dx+dy*dy)
 
 # some constants
-loc_prefix = 'Location: '
-size_prefix = 'Size: '
+
 sizes = dict(L=2, H=3, G=4)
 ft_per_grid=5
 size_arg=args.last('size','').upper()
@@ -18,7 +17,7 @@ alphabet='abcdefghijklmnopqrstuvwxyz'
 x_axis={col:idx+1 for idx,col in enumerate(alphabet)}
 for mul,prefix in enumerate('abc'):
 	x_axis.update({f'{prefix}{col}':(1+mul)*len(alphabet)+idx+1 for idx,col in enumerate(alphabet)})
-default_speed=float(args.last('ft',1000))	 # TODO context
+default_speed=float(args.last('ft',30))
 
 # inclusive map bounds
 map_rect=(1,1,len(x_axis),100)	# TODO get from combat map. it's in its attack description's text field, which is part of the raw.automation[0]
@@ -27,7 +26,8 @@ map_rect=(1,1,len(x_axis),100)	# TODO get from combat map. it's in its attack de
 not_found=[]
 ### Parse target arguments into a dict of mover_name:dict(c=combatant,s=speed)
 if targets:=args.get('t'):
-	# split the target aruguments into target id and config (only speed for now)
+	# split the target arguments into target id and config (only speed for now)
+	# TODO: could also add size per each target -t <target>|speed|size and add size to map command if changed or new
 	speeds = {split_t[0]: int(split_t[1]) for split_t in [t.split('|') + [default_speed] for t in targets]}
 	# find all targeted combatants or groups
 	combatants = {t: C.get_combatant(t) or C.get_group(t) for t in speeds.keys() if typeof(t)=='str'}
@@ -52,6 +52,8 @@ else:
 # and a list of non moving combatants with a location that block targets or goals
 locations=dict()
 blockers=dict()
+loc_prefix = 'Location: '
+size_prefix = 'Size: '
 for c in C.combatants:
 	notes=[n.strip() for n in c.note.split('|') if n] if c.note else []
 	x,y,s=None,None,default_size
@@ -66,9 +68,6 @@ for c in C.combatants:
 			s=sizes.get(n[len(size_prefix)],s)
 	if x is not None and y is not None:
 		locations[c.name] = dict(x=x, y=y, s=s)
-		if not any(mover_name==c.name for mover_name in movers.keys()):
-			loc=locations[c.name]
-			blockers[c.name]=dict(x=loc.x, y=loc.y, w=loc.s, h=loc.s)
 
 # convert the movers list to a dictionary per mover with all necessary data
 movers={n:dict(combatant=m.combatant,
@@ -80,6 +79,15 @@ movers={n:dict(combatant=m.combatant,
 			   block=None,
 			   dbg=[]) for n,m in movers.items()}
 
+# add all non moving map characters to the list of blockers
+for name,loc in locations.items():
+	if not name in movers.keys():
+		blockers[name] = dict(x=loc.x, y=loc.y, w=loc.s, h=loc.s)
+
+### Parse all goal arguments (approach, line, rect and the block argument)
+# the result is a dictionary {type: [dict(x,y,w,h),...]}
+# these are all done together to avoid code duplication for the different types
+# this means they all support the format A1 or A1:C3 or go1 (even when it makes no sense)
 zone_args=dict(approach=args.get('approach')+args.get('a'),
 		   line=args.get('line')+args.get('l'),
 		   rect=args.get('rect')+args.get('r'),
@@ -89,14 +97,15 @@ for zone_type, zone_args in zone_args.items():
 	for area in zone_args:
 		# TODO: can extra split by comma here or before for -block a1,b2,c3:d4 or -approach a1,f4
 		parts = [p.strip().lower() for p in area.split(':')][:2]
-		area_rect = tuple()  # Left,Top,Right,Bottom
+		area_rect=dict()  # Left,Top,width, height
 		if len(parts)==1:
 			if matches:=[c for c in locations.keys() if c.lower().startswith(parts[0])]:
 				loc=locations[matches[0]]
-				area_rect=(loc.x, loc.y, loc.x+loc.s-1, loc.y+loc.s-1)
+				area_rect=dict(x=loc.x, y=loc.y, w=loc.s, h=loc.s)
 			else:
 				parts.append(parts[0])
 		if not area_rect:
+			area_coordinates=tuple()
 			for p_str in parts:
 				x_loc_str = ''.join(c for c in p_str if c.isalpha())
 				x_loc = x_axis.get(x_loc_str)
@@ -104,53 +113,58 @@ for zone_type, zone_args in zone_args.items():
 				y_loc = int(y_loc_str) if y_loc_str.isdecimal() else None
 				if x_loc is None or y_loc is None:
 					err(f'{zone_type} area `{area}` is malformed')
-				area_rect+=(x_loc,y_loc)
+				area_coordinates+=(x_loc,y_loc)
 
 			# sort top left top left
-			area_rect=(min(area_rect[0::2]),min(area_rect[1::2]),max(area_rect[0::2]),max(area_rect[1::2]))
+			area_coordinates=(min(area_coordinates[0::2]),min(area_coordinates[1::2]),max(area_coordinates[0::2]),max(area_coordinates[1::2]))
+			area_rect=dict(x=area_coordinates[0],
+						   y=area_coordinates[1],
+						   w=1+area_coordinates[2]-area_coordinates[0],
+						   h=1+area_coordinates[3]-area_coordinates[1])
 		zones[zone_type].append(area_rect)
 
-for idx,block in enumerate(zones.block):
-	blockers[f'Block#{idx}'] = dict(x=block[0],y=block[1],w=1+block[2]-block[0],h=1+block[3]-block[1])
 
+for idx,block in enumerate(zones.block):
+	blockers[f'Block#{idx}'] = block
+
+### Construct goal locations into a list [(x,y),...]
 # TODO: l[ine] and r[ectangle] targets first so their spread can be evened out to len(movers)
-targets=[]
+goals=[]
 for area in zones.approach:
 	# plot target locations
-	for x in range(area[0]-1,area[2]+1):
-		targets.append((x,area[1]-1))
-		targets.append((x+1,area[3]+1))
-	for y in range(area[1]-1,area[3]+1):
-		targets.append((area[0]-1, y+1))
-		targets.append((area[2]+1,y))
+	for x in range(area.x-1,area.x+area.w):
+		goals.append((x,area.y-1))
+		goals.append((x+1,area.y+area.h))
+	for y in range(area.y-1,area.y+area.h):
+		goals.append((area.x-1, y+1))
+		goals.append((area.x+area.w,y))
 
-# clip targets to map area and remove targets overlapping with blockers
-unclipped_targets,targets=targets,[]
-size=1	 # TODO set to maximum size +1
-for t in unclipped_targets:
+### clip goals to map area and remove duplicate goals or those overlapping with blockers
+unclipped_goals,goals=goals,[]
+for goal in unclipped_goals:
 	# clip to map
-	if t[0]<map_rect[0] or t[1]<map_rect[1] or t[0]>map_rect[2] or t[1]>map_rect[3]:
+	if goal[0]<map_rect[0] or goal[1]<map_rect[1] or goal[0]>map_rect[2] or goal[1]>map_rect[3]:
 		continue
 	# remove duplicates
-	if t in targets:
+	if goal in goals:
 		continue
-	# remove targets overlapping with existing blockers
-	if any(t[0]+s>b.x and t[1]+s>b.y and t[0]<b.x+b.w and t[1]<b.y+b.h for b in blockers.values()):
+	# remove goals overlapping with existing blockers
+	if any(goal[0]+s>b.x and goal[1]+s>b.y and goal[0]<b.x+b.w and goal[1]<b.y+b.h for b in blockers.values()):
 		continue
+	# it's good
+	goals.append(goal)
 
-	targets.append(t)
+#return f'echo {unclipped_goals} in {map_rect} and not in {blockers} => {goals}'
 
-#return f'echo {unclipped_targets} in {map_rect} and not in {blockers} => {targets}'
-
-# Assign movers to targets, in order of movers, sorted preferred target by distance
+### Assign movers to goals, in order of movers, sorted preferred target by distance
 for mover in movers.values():
 	if not mover.target:
-		if not mover.start and targets:	# place
-			mover['goal']=targets.pop(0)
+		if not mover.start and goals:	# place
+			mover['goal']=goals.pop(0)
 			mover['target']=mover.goal
 		else:
 			best_idx, best_dist=None, 0
-			for idx,t in enumerate(targets):
+			for idx,t in enumerate(goals):
 				dx=mover.start.x - t[0]
 				dy=mover.start.y - t[1]
 				sqr_d=dx*dx + dy*dy	# TODO different speed diagonals
@@ -158,7 +172,7 @@ for mover in movers.values():
 					best_dist=sqr_d
 					best_idx=idx
 			if best_idx is not None:
-				mover['goal']=targets.pop(best_idx)
+				mover['goal']=goals.pop(best_idx)
 
 # move towards target with speed
 for name, mover in movers.items():
