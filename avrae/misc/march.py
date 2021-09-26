@@ -135,6 +135,22 @@ for area in zones.rect:
 		for x in range(area.x,area.x+area.w):
 			goals.append((x,y))
 
+for area in zones.line:
+	if area.w==0 and area.h==0:
+		goals.append((area.x,area.y))
+	else:
+		if area.w>area.h:
+			if area.w==1:
+				dx,dy,q=0,0,1
+			else:
+				dx,dy,q=1,(area.h-1)/(area.w-1),area.w
+		else:
+			if area.h==1:
+				dx,dy,q=0,0,1
+			else:
+				dx,dy,q=(area.w-1)/(area.h-1), 1,area.h
+		goals+=[(round(area.x+idx*dx),round(area.y+idx*dy)) for idx in range(q)]
+
 for area in zones.approach:
 	# plot target locations
 	for x in range(area.x-1,area.x+area.w):
@@ -241,17 +257,23 @@ for name, mover in movers.items():
 				move_desc.append(f' - {distance} / {round(mover.speed*ft_per_grid)} ft.')
 		else:
 			move_desc.append('*No valid target*')
+			distance=None
 		if mover.target!=mover.goal:
 			move_desc.append(f'{inv_x_axis.get(mover.goal[0],"??")}{mover.goal[1]}')
-		if mover.block:
-			move_desc.append(f'*blocked by* {mover.block}')
-	else:
+			if mover.block:
+				move_desc.append(f'*blocked by* {mover.block}')
+			else:
+				mover_desc.append('unreachable')
+
+	elif mover.target:
 		move_desc.append(f'Placed at {inv_x_axis.get(mover.target[0], "??")}{mover.target[1]}')
 		# TODO: add size here and add size to command. store size as string in mover, (but not in loc)
 		#if mover.size:
 		#	description.append(f':black_square_button: {mover.size*ft_per_grid}ft.')
 		if mover.block:
 			err("Unhandled description: blocked at placement")
+	else:
+		move_desc.append(f'*No place*')
 	descriptions.append(space.join(move_desc))
 
 description=nl.join(descriptions)[:6000]

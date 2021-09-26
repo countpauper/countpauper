@@ -24,11 +24,11 @@ Group movement:
 *!march -rect a5:b10 scatter  <- place randomly in this area instead of evenly
 !march -t combatant -go 20e15se all move that way(just create the path and add it to the path after the goal or if no goal the start
     - make sure go path is clipped to the map
-!march -t combatant ... -line a1:b4 go onto line but distributed evenly over it (sorted by minimum distance for each?)
+    - make sure go path is clipped to distance (always apply distance here) 
+*!march -t combatant ... -line a1:b4 go onto line but distributed evenly over it (sorted by minimum distance for each?)
 
 !march -approach a1::5 <- approach a circle around a rectangle? or a1:5 even? To plot a circle would have to enlarge rectangle and exclude all corners not at ~range
-!march -t bla -to a5:d6 or    <- approach to edge of rectangle (b, 4, d or 7)
-!march -t bla -to  combatant   <- take combatans location and size as rectangle
+!march -block a1:5 <- circular block
 *!march -t combatant -to a1 -ft 30     <- speed added to all combatants with no speed defined yet (None) default afterwards is ? infinite or 30?
 - place with size or modify size if specified !march -t bla -a a1 -size l -> !move -t bla|b1|l
     - specify size per target !march -t bla||l -a a1    => !move -t bla|b1|l
@@ -36,7 +36,12 @@ Group movement:
 default it will output a start, target and distance moved and a `!map -t` command line
 `go` will execute, perhaps later `go` will be default and `cmd` or `map` will output the command
 
-!march -t "group|30" go 30 ft
+Details:
+    - filter out command targets where target is current
+    - auto apply to note
+    - diagonal setting for distances
+
+
 DONT need context target, then just run `!move` or run multiple time. it's too messy
 !march -t bla# wildcard match number
 !march -t bla1-5 ? or could it be called that way ?
