@@ -20,7 +20,7 @@ for mul,prefix in enumerate('abc'):
 default_speed=float(args.last('ft',30))
 
 # inclusive map bounds
-map_rect=(1,1,len(x_axis),100)	# TODO get from combat map. it's in its attack description's text field, which is part of the raw.automation[0]
+map_rect=dict(x=1,y=1,w=len(x_axis),h=100)	# TODO get from combat map. it's in its attack description's text field, which is part of the raw.automation[0]
 # combat().get_combatant('map').attacks[0].raw.automation[0].text.split('~')  (attack's name is also 'map')
 
 not_found=[]
@@ -47,6 +47,9 @@ elif C.current.type=='group':
 	movers={c.name:dict(combatant=c, speed=default_speed) for c in C.current.combatants}
 else:
 	movers={C.current.name:dict(combatant=C.current,speed=default_speed)}
+
+if not movers:
+	return f'echo The following targets were not found: `{", ".join(not_found)}`'
 
 ### create a dict with x,y,s (exclusive) squares of combatants
 # and a list of non moving combatants with a location that block targets or goals
@@ -132,8 +135,13 @@ for idx,block in enumerate(zones.block):
 goals=[]
 for area in zones.rect:
 	for y in range(area.y, area.y + area.h):
-		for x in range(area.x,area.x+area.w):
-			goals.append((x,y))
+		# serpentine for nicer distribution
+		if y%1:
+			for x in range(area.x+area.w,area.x,-1):
+				goals.append((x-1,y))
+		else:
+			for x in range(area.x,area.x+area.w):
+				goals.append((x,y))
 
 for area in zones.line:
 	if area.w==0 and area.h==0:
@@ -165,7 +173,7 @@ for area in zones.approach:
 unclipped_goals,goals=goals,[]
 for goal in unclipped_goals:
 	# clip to map
-	if goal[0]<map_rect[0] or goal[1]<map_rect[1] or goal[0]>map_rect[2] or goal[1]>map_rect[3]:
+	if goal[0]<map_rect.x or goal[1]<map_rect.y or goal[0]>=map_rect.x+map_rect.w or goal[1]>=map_rect.y+map_rect.h:
 		continue
 	# remove duplicates
 	if goal in goals:
@@ -176,7 +184,6 @@ for goal in unclipped_goals:
 	# it's good
 	goals.append(goal)
 
-
 ### thin or scatter out for the number of movers
 # todo: scatter algorithm is: shuffle before thinning
 if args.last('scatter'):
@@ -186,6 +193,7 @@ if args.last('scatter'):
 
 if (density:=len(goals)//len(movers))>1:
 	goals=goals[::density]
+
 
 #return f'echo {unclipped_goals} in {map_rect} and not in {blockers} => {goals}'
 
@@ -206,27 +214,74 @@ for mover in movers.values():
 					best_idx=idx
 			if best_idx is not None:
 				mover['goal']=goals.pop(best_idx)
+# convert go targets to path strings
+path_str=''.join(args.get('go')).upper()
+idx,go_path=0,[]
+directions={'NE':(1,-1),'SE':(1,1),'SW':(-1,1),'NW':(-1,-1),'N':(0,-1),'E':(1,0),'S':(0,1),'W':(-1,0)}
+while path_str:
+	if number_idx:=min(idx for idx,c in enumerate(path_str+'!') if not c.isdecimal()):
+		number=round(int(path_str[:number_idx])/ft_per_grid)
+		path_str = path_str[number_idx:]
+	else:
+		number=1
+	if match_dir:=([d for d in directions.keys() if path_str.startswith(d)]+[''])[0]:
+		path_str=path_str[len(match_dir):]
+		go_path+=[(directions[match_dir][0], directions[match_dir][1])]*number
+	else:
+		return f'echo Unrecognized direction `{path_str}` in `-go` '
+
+## quick check if -go is before or after all target areas. this doesn't support both or interleaving
+pre_path = go_path
+## TODO: post_path use case? Line up and advance? will get whack
+# post_path = []
+#if go_path:
+#	arg_str='''&*&'''
+#	if area_args:=[arg_str.find(area_arg) for area_arg in ['-a','-l','-r']]:
+#		if arg_str.find('-go')>max(area_args):
+#			post_path=go_path
+#			pre_path=[]
+#
+#return f'echo {pre_path} area {post_path}'
 
 # move towards target with speed
 for name, mover in movers.items():
-	if not mover.goal or mover.target:
+	if mover.target:
 		continue
-	# compute normalized direction vector
-	dx,dy=mover.goal[0] - mover.start.x,mover.goal[1]-mover.start.y
-	vector_length = sqrt(dx*dx+dy*dy)
-	if vector_length>0.1:
-		dx/=vector_length
-		dy/=vector_length
-		path_length=min(mover.speed,vector_length)
-		# render all grids from end to start in the path, path may contain duplicates due to rounding but that's only a small performance problem
-		path=[(round(mover.start.x+dx*step),round(mover.start.y+dy*step)) for step in range(round(path_length),0,-1)]
-	else:
-		path=[(mover.start.x, mover.start.y)]
 
+	# render pre path, track movement remaining, reverse order
+	path = [(mover.start.x, mover.start.y)]
+	movement=mover.speed
+	if pre_path:
+		for dx,dy in pre_path:
+			if movement<0.5:
+				break
+			path.insert(0,(path[0][0] + dx, path[0][1] + dy))
+			# todo: diagonal distance
+			movement-=sqrt(dx*dx+dy*dy)
+			mover['goal']=path[0]
+
+	# add approach path
+	if mover.goal:
+		pos=path[0]
+		# compute normalized direction vector
+		dx,dy=mover.goal[0] - pos[0], mover.goal[1]-pos[1]
+		vector_length = sqrt(dx*dx+dy*dy)
+		if vector_length>0.1:
+			dx/=vector_length
+			dy/=vector_length
+			path_length=min(movement,vector_length)
+			# render all grids from end to pos the path, path may contain duplicates due to rounding but that's only a small performance problem
+			path=[(round(pos[0]+dx*step),round(pos[1]+dy*step)) for step in range(round(path_length),0,-1)]+path
+	# TODO render post path, is there really a use case?
+
+	# mover['dbg'].append(path)
 	# find furthest non-blocked point along the path
 	# mover.dbg.append(f'path {path}')
 	for p in path:
 		# mover.dbg.append(f'blocked at {p} by { {f"{n}({b.x},{b.y},{b.w},{b.h})":p[0] + mover.size > b.x and p[1] + mover.size > b.y and p[0] < b.x + b.w and p[1] < b.y + b.h for n,b in blockers.items()} }')
+		if p[0] < map_rect.x or p[1] < map_rect.y or p[0]+mover.size > map_rect.x + map_rect.w or p[1]+mover.size > map_rect.y + map_rect.h:
+			mover['block'] = 'map'
+			continue
 		for blocker, block in blockers.items():
 			if p[0] + mover.size > block.x and p[1] + mover.size > block.y and p[0] < block.x + block.w and p[1] < block.y + block.h:
 				mover['block'] = blocker
@@ -235,7 +290,6 @@ for name, mover in movers.items():
 			mover['target'] = p
 			blockers[name]=dict(x=mover.target[0], y=mover.target[1], w=mover.size, h=mover.size)
 			break
-		continue	# broke out of blocker loop, continue path loop
 	else:	# end of path, stay in position
 		mover['target'] = None
 		blockers[name] = dict(x=mover.start.x, y=mover.start.y, w=mover.size, h=mover.size)
@@ -258,12 +312,14 @@ for name, mover in movers.items():
 		else:
 			move_desc.append('*No valid target*')
 			distance=None
-		if mover.target!=mover.goal:
+		if not mover.goal:
+			move_desc.append('*No available destination*')
+		elif mover.target!=mover.goal:
 			move_desc.append(f'{inv_x_axis.get(mover.goal[0],"??")}{mover.goal[1]}')
 			if mover.block:
 				move_desc.append(f'*blocked by* {mover.block}')
 			else:
-				mover_desc.append('unreachable')
+				move_desc.append(f'unreachable')
 
 	elif mover.target:
 		move_desc.append(f'Placed at {inv_x_axis.get(mover.target[0], "??")}{mover.target[1]}')
@@ -279,7 +335,7 @@ for name, mover in movers.items():
 description=nl.join(descriptions)[:6000]
 cmd_args=[f'-t {quote if space in name else ""}{name}|{inv_x_axis.get(mover.target[0],"??")}{mover.target[1]}{quote if space in name else ""}' for name, mover in movers.items() if mover.target]
 cmd_field=f'-f "Command|`!map {space.join(cmd_args)[:1000]}`"' if cmd_args else ''
-dbg_fields=space.join(f'-f "{name}|{nl.join(mover.dbg)[:1000]}"' for name,mover in movers.items() if mover.dbg)
+dbg_fields=space.join(f'-f "{name}|{nl.join(str(d) for d in mover.dbg)[:1000]}"' for name,mover in movers.items() if mover.dbg)
 not_found_field=f'-f "Unrecognized targets|{", ".join(not_found)}"' if not_found else ''
 return f'embed -title March! -desc "{description}" {cmd_field} {not_found_field} {dbg_fields}'
 </drac2>
