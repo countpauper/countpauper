@@ -21,6 +21,15 @@ default_speed=float(args.last('ft',30))
 
 # inclusive map bounds
 map_rect=dict(x=1,y=1,w=len(x_axis),h=100)	# TODO get from combat map. it's in its attack description's text field, which is part of the raw.automation[0]
+map_combatants=[C.get_combatant('map'),C.get_combatant('dm'),C.get_combatant('lair')]
+map_attacks=[a.raw.automation for c in map_combatants if c is not None for a in c.attacks if a.name=='map']
+size_prefix='Size: '
+if map_attacks and (map_automation:=map_attacks[0]):
+	if size_property:=([prop for prop in map_automation[0].get('text').split(' ~ ') if prop.startswith(size_prefix)]+[None])[0]:
+		size_values=[int(sp) for sp in size_property[len(size_prefix):].split('x')]
+		map_rect['w']=size_values[0]
+		map_rect['h']=size_values[1]
+
 # combat().get_combatant('map').attacks[0].raw.automation[0].text.split('~')  (attack's name is also 'map')
 
 not_found=[]

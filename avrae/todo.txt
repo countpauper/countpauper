@@ -23,13 +23,13 @@ Group movement:
 *!march -t combatant ... -rect a1:b4 go evenly spread out over a rectangle
 *!march -rect a5:b10 scatter  <- place randomly in this area instead of evenly
 *!march -t combatant -go 20e15se all move that way(just create the path and add it to the path after the goal or if no goal the start
-    * - make sure go path is clipped to the map
-    - make sure go path is clipped to distance (always apply distance here)
+    * make sure go path is clipped to the map
+    * make sure go path is clipped to distance (always apply distance here)
 *!march -t combatant ... -line a1:b4 go onto line but distributed evenly over it (sorted by minimum distance for each?)
 !march v[erbose] for the whole embed, default just the command
 !march config verbose and -diagonal to set defaults
     - no diagonal default is trueDistance
-    
+
 !march -approach a1::5 <- approach a circle around a rectangle? or a1:5 even? To plot a circle would have to enlarge rectangle and exclude all corners not at ~range
 !march -block a1:5 <- circular block
 *!march -t combatant -to a1 -ft 30     <- speed added to all combatants with no speed defined yet (None) default afterwards is ? infinite or 30?
