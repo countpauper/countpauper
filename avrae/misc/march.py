@@ -4,6 +4,7 @@ if not C:
 	return f'echo You can only `{ctx.prefix}{ctx.alias}` in combat.'
 args = argparse(&ARGS&)
 
+config=load_json(get('march','{}'))
 # TODO: read out diagonal configuration. default is Euclidian. setting is "diagonal":ft. use 10 for manhattan or 5, 7.07, 7.5
 # when computing distance this is basically just two variations. diagonal multiplied for min(abs(dx),abs(dy))+straight for abs(abs(dx)-abs(dy)) or sqrt(dx*dx+dy*dy)
 
@@ -23,14 +24,10 @@ default_speed=float(args.last('ft',30))
 map_rect=dict(x=1,y=1,w=len(x_axis),h=100)	# TODO get from combat map. it's in its attack description's text field, which is part of the raw.automation[0]
 map_combatants=[C.get_combatant('map'),C.get_combatant('dm'),C.get_combatant('lair')]
 map_attacks=[a.raw.automation for c in map_combatants if c is not None for a in c.attacks if a.name=='map']
-size_prefix='Size: '
 if map_attacks and (map_automation:=map_attacks[0]):
+	size_prefix = 'Size: '
 	if size_property:=([prop for prop in map_automation[0].get('text').split(' ~ ') if prop.startswith(size_prefix)]+[None])[0]:
-		size_values=[int(sp) for sp in size_property[len(size_prefix):].split('x')]
-		map_rect['w']=size_values[0]
-		map_rect['h']=size_values[1]
-
-# combat().get_combatant('map').attacks[0].raw.automation[0].text.split('~')  (attack's name is also 'map')
+		map_rect['w'],map_rect['h']=[int(sp) for sp in size_property[len(size_prefix):].split('x') if sp.isdecimal()]
 
 not_found=[]
 ### Parse target arguments into a dict of mover_name:dict(c=combatant,s=speed)
@@ -305,7 +302,7 @@ for name, mover in movers.items():
 
 ### generate embed text
 inv_x_axis={val:s.upper() for s,val in x_axis.items()}
-space,nl,quote=' ','\n','\\"'
+space,nl,quote=' ','\n','"'
 descriptions=[]
 for name, mover in movers.items():
 	move_desc=[f'**{name}** :']
@@ -341,10 +338,14 @@ for name, mover in movers.items():
 		move_desc.append(f'*No place*')
 	descriptions.append(space.join(move_desc))
 
-description=nl.join(descriptions)[:6000]
 cmd_args=[f'-t {quote if space in name else ""}{name}|{inv_x_axis.get(mover.target[0],"??")}{mover.target[1]}{quote if space in name else ""}' for name, mover in movers.items() if mover.target]
-cmd_field=f'-f "Command|`!map {space.join(cmd_args)[:1000]}`"' if cmd_args else ''
-dbg_fields=space.join(f'-f "{name}|{nl.join(str(d) for d in mover.dbg)[:1000]}"' for name,mover in movers.items() if mover.dbg)
-not_found_field=f'-f "Unrecognized targets|{", ".join(not_found)}"' if not_found else ''
-return f'embed -title March! -desc "{description}" {cmd_field} {not_found_field} {dbg_fields}'
+if args.last('verbose',args.last('v',config.get('verbose'))):
+	description=nl.join(descriptions)[:6000]
+	escaped_quote='\\"'
+	cmd_field=f'''-f "Command|`!map {space.join(cmd_args).replace(quote,escaped_quote)[:1000]}`"''' if cmd_args else ''
+	dbg_fields=space.join(f'-f "{name}|{nl.join(str(d) for d in mover.dbg)[:1000]}"' for name,mover in movers.items() if mover.dbg)
+	not_found_field=f'-f "Unrecognized targets|{", ".join(not_found)}"' if not_found else ''
+	return f'embed -title March! -desc "{description}" {cmd_field} {not_found_field} {dbg_fields}'
+else:
+	return f'echo `!map {space.join(cmd_args)[:1900]}`'
 </drac2>
