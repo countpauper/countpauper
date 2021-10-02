@@ -8,12 +8,11 @@
 bv='bags'
 bags=load_json(get(bv,'[]'))
 var_name='quickbag'
-sv=get_svar(var_name,'')
-config=load_json(sv if sv else get(var_name,get_gvar('71ff40cc-4c5f-4ae5-bdb6-32130f869090')))
+config=load_json(get_gvar(get_svar(var_name,'71ff40cc-4c5f-4ae5-bdb6-32130f869090')))
 item_table=config.get('items',load_json(get_gvar('19753bce-e2c1-42af-8c4f-baf56e2f6749')))
 coins=config.get('coinRates',{})
 coin_list=list(coins.keys())
-if coins[coin_list[0]]>coins[coin_list[-1]]:
+if coin_list and coins[coin_list[0]]>coins[coin_list[-1]]:
 	coin_list.reverse()	# if it's sorted cheap (high rate per 1) to expensive (low rate per 1), reverse it. assume it's sorted at least
 item_table.update({c:dict(weight=0.02, cost=f'{1}{c}', plural=c) for c in coins.keys()})
 

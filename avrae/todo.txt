@@ -9,6 +9,7 @@
     https://bicyclecards.com/how-to-play/ship-captain-and-crew/
 - dragon hoard can roll again if done on 1 or 2
 
+
 * !play drink reset if win or yield
 
 !generate npc

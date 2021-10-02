@@ -1,6 +1,6 @@
 !alias base64 embed
 <drac2>
-a = '&*&'
+a = '''&*&'''
 
 ascii=""" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"""
 asciitable={ch:code+32 for code,ch in enumerate(ascii)}
@@ -35,6 +35,6 @@ if leftoverBits > 0:
         output += '='
 </drac2>
 
-{{f"-f 'Input|{a}'"}}
-{{f"-f 'Encoded|{output}'"}}
+{{f"-f 'Input|{a}"}}
+{{f"-f 'Encoded|{output}"}}
 -footer 'base64 encoding by Thrombo'
