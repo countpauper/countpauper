@@ -8,20 +8,19 @@ config=load_json(get('march','{}'))
 # TODO: read out diagonal configuration. default is Euclidian. setting is "diagonal":ft. use 10 for manhattan or 5, 7.07, 7.5
 # when computing distance this is basically just two variations. diagonal multiplied for min(abs(dx),abs(dy))+straight for abs(abs(dx)-abs(dy)) or sqrt(dx*dx+dy*dy)
 
-# some constants
-
-sizes = dict(L=2, H=3, G=4)
+###  some constants
+sizes = dict(T=1, S=1, M=1, L=2, H=3, G=4)
+sizes[None] = 1
 ft_per_grid=5
-size_arg=args.last('size','').upper()
-default_size=sizes.get(size_arg[:1], int(size_arg)//ft_per_grid if size_arg.isdecimal() else 1)
+default_speed=30
+
 alphabet='abcdefghijklmnopqrstuvwxyz'
 x_axis={col:idx+1 for idx,col in enumerate(alphabet)}
 for mul,prefix in enumerate('abc'):
 	x_axis.update({f'{prefix}{col}':(1+mul)*len(alphabet)+idx+1 for idx,col in enumerate(alphabet)})
-default_speed=float(args.last('ft',30))
 
-# inclusive map bounds
-map_rect=dict(x=1,y=1,w=len(x_axis),h=100)	# TODO get from combat map. it's in its attack description's text field, which is part of the raw.automation[0]
+### attempt to find map bounds
+map_rect=dict(x=1,y=1,w=len(x_axis),h=100)
 map_combatants=[C.get_combatant('map'),C.get_combatant('dm'),C.get_combatant('lair')]
 map_attacks=[a.raw.automation for c in map_combatants if c is not None for a in c.attacks if a.name=='map']
 if map_attacks and (map_automation:=map_attacks[0]):
@@ -31,12 +30,16 @@ if map_attacks and (map_automation:=map_attacks[0]):
 
 not_found=[]
 ### Parse target arguments into a dict of mover_name:dict(c=combatant,s=speed)
+size_arg=args.last('size','').upper()[:1] or None
+speed_arg=float(args.last('ft',default_speed))
 if targets:=args.get('t'):
-	# split the target arguments into target id and config (only speed for now)
-	# TODO: could also add size per each target -t <target>|speed|size and add size to map command if changed or new
-	speeds = {split_t[0]: int(split_t[1]) for split_t in [t.split('|') + [default_speed] for t in targets]}
+	# split the target arguments into target id and config (speed and size speed for now)
+	split_targets=[t.split('|') for t in targets]
+	target_args = {split_t[0]: dict(speed=int((split_t[1:2] or [speed_arg])[0]),
+									size=(split_t[2:3] or [size_arg])[0])
+				   for split_t in split_targets}
 	# find all targeted combatants or groups
-	combatants = {t: C.get_combatant(t) or C.get_group(t) for t in speeds.keys() if typeof(t)=='str'}
+	combatants = {t: C.get_combatant(t) or C.get_group(t) for t in target_args.keys() if typeof(t)=='str'}
 	movers = dict()
 
 	# TODO: override duplicates by storing movers by name and adding the c as a dict
@@ -44,15 +47,15 @@ if targets:=args.get('t'):
 		if not c:
 			not_found.append(t)
 		elif c.type == 'group':
-			movers.update({member.name:dict(combatant=member, speed=speeds.get(t,default_speed)) for member in c.combatants})
+			movers.update({member.name:dict(combatant=member,speed=target_args[t].speed, size=target_args[t].size) for member in c.combatants})
 		else:
-			movers[c.name]=dict(combatant=c,speed=speeds.get(t,default_speed))
+			movers[c.name]=dict(combatant=c, speed=target_args[t].speed, size=target_args[t].size)
 elif not C.current:
 	return f'echo There is no current combatant, use `{ctx.prefix}{ctx.alias} -t <group>`'
 elif C.current.type=='group':
-	movers={c.name:dict(combatant=c, speed=default_speed) for c in C.current.combatants}
+	movers={c.name:dict(combatant=c, speed=speed_arg) for c in C.current.combatants}
 else:
-	movers={C.current.name:dict(combatant=C.current,speed=default_speed)}
+	movers={C.current.name:dict(combatant=C.current,speed=speed_arg)}
 
 if not movers:
 	return f'echo The following targets were not found: `{", ".join(not_found)}`'
@@ -65,7 +68,7 @@ loc_prefix = 'Location: '
 size_prefix = 'Size: '
 for c in C.combatants:
 	notes=[n.strip() for n in c.note.split('|') if n] if c.note else []
-	x,y,s=None,None,default_size
+	x,y,s=None,None,None
 	for n in notes:
 		if n.startswith(loc_prefix):
 			location=n[len(loc_prefix):].lower()
@@ -74,15 +77,17 @@ for c in C.combatants:
 			y_loc_str=location[len(x_loc_str):]
 			y=int(y_loc_str) if y_loc_str.isdecimal() else None
 		elif n.startswith(size_prefix):
-			s=sizes.get(n[len(size_prefix)],s)
+			s=n[len(size_prefix)].upper()
 	if x is not None and y is not None:
-		locations[c.name] = dict(x=x, y=y, s=s)
+		locations[c.name] = dict(x=x, y=y, s=s, w=sizes.get(s), h=sizes.get(s))
 
 # convert the movers list to a dictionary per mover with all necessary data
 movers={n:dict(combatant=m.combatant,
 			   start=locations.get(n),
-			   size=locations.get(n,dict(s=default_size)).s,
-			   speed=m.speed/ft_per_grid,
+			   speed=m.get('speed' , default_speed)/ft_per_grid,
+			   size=m.get('size',locations.get(n,dict()).get(s)),
+			   w=sizes.get(s),
+			   h=sizes.get(s),
 			   goal=None,
 			   target=None,
 			   block=None,
@@ -110,7 +115,7 @@ for zone_type, zone_args in zone_args.items():
 		if len(parts)==1:
 			if matches:=[c for c in locations.keys() if c.lower().startswith(parts[0])]:
 				loc=locations[matches[0]]
-				area_rect=dict(x=loc.x, y=loc.y, w=loc.s, h=loc.s)
+				area_rect=dict(x=loc.x, y=loc.y, w=loc.w, h=loc.h)
 			else:
 				parts.append(parts[0])
 		if not area_rect:
@@ -131,7 +136,6 @@ for zone_type, zone_args in zone_args.items():
 						   w=1+area_coordinates[2]-area_coordinates[0],
 						   h=1+area_coordinates[3]-area_coordinates[1])
 		zones[zone_type].append(area_rect)
-
 
 for idx,block in enumerate(zones.block):
 	blockers[f'Block#{idx}'] = block
@@ -177,6 +181,8 @@ for area in zones.approach:
 
 ### clip goals to map area and remove duplicate goals or those overlapping with blockers
 unclipped_goals,goals=goals,[]
+max_w=max(m.w for m in movers.values())
+max_h=max(m.h for m in movers.values())
 for goal in unclipped_goals:
 	# clip to map
 	if goal[0]<map_rect.x or goal[1]<map_rect.y or goal[0]>=map_rect.x+map_rect.w or goal[1]>=map_rect.y+map_rect.h:
@@ -185,7 +191,7 @@ for goal in unclipped_goals:
 	if goal in goals:
 		continue
 	# remove goals overlapping with existing blockers
-	if any(goal[0]+s>b.x and goal[1]+s>b.y and goal[0]<b.x+b.w and goal[1]<b.y+b.h for b in blockers.values()):
+	if any(goal[0]+max_w>b.x and goal[1]+max_h>b.y and goal[0]<b.x+b.w and goal[1]<b.y+b.h for b in blockers.values()):
 		continue
 	# it's good
 	goals.append(goal)
@@ -220,6 +226,7 @@ for mover in movers.values():
 					best_idx=idx
 			if best_idx is not None:
 				mover['goal']=goals.pop(best_idx)
+
 # convert go targets to path strings
 path_str=''.join(args.get('go')).upper()
 idx,go_path=0,[]
@@ -253,52 +260,57 @@ pre_path = go_path
 for name, mover in movers.items():
 	if mover.target:
 		continue
-
 	# render pre path, track movement remaining, reverse order
-	path = [(mover.start.x, mover.start.y)]
-	movement=mover.speed
-	if pre_path:
-		for dx,dy in pre_path:
-			if movement<0.5:
-				break
-			path.insert(0,(path[0][0] + dx, path[0][1] + dy))
-			# todo: diagonal distance
-			movement-=sqrt(dx*dx+dy*dy)
-			mover['goal']=path[0]
+	if mover.start:
+		path = [(mover.start.x, mover.start.y)]
+		movement=mover.speed
+		if pre_path:
+			for dx,dy in pre_path:
+				if movement<0.5:
+					break
+				path.insert(0,(path[0][0] + dx, path[0][1] + dy))
+				# todo: diagonal distance
+				movement-=sqrt(dx*dx+dy*dy)
+				mover['goal']=path[0]
 
-	# add approach path
-	if mover.goal:
-		pos=path[0]
-		# compute normalized direction vector
-		dx,dy=mover.goal[0] - pos[0], mover.goal[1]-pos[1]
-		vector_length = sqrt(dx*dx+dy*dy)
-		if vector_length>0.1:
-			dx/=vector_length
-			dy/=vector_length
-			path_length=min(movement,vector_length)
-			# render all grids from end to pos the path, path may contain duplicates due to rounding but that's only a small performance problem
-			path=[(round(pos[0]+dx*step),round(pos[1]+dy*step)) for step in range(round(path_length),0,-1)]+path
+		# add approach path
+		if mover.goal:
+			pos=path[0]
+			# compute normalized direction vector
+			dx,dy=mover.goal[0] - pos[0], mover.goal[1]-pos[1]
+			vector_length = sqrt(dx*dx+dy*dy)
+			if vector_length>0.1:
+				dx/=vector_length
+				dy/=vector_length
+				path_length=min(movement,vector_length)
+				# render all grids from end to pos the path, path may contain duplicates due to rounding but that's only a small performance problem
+				path=[(round(pos[0]+dx*step),round(pos[1]+dy*step)) for step in range(round(path_length),0,-1)]+path
+	elif mover.goal:
+		path=[mover.goal]
+	else:
+		path=[]
 	# TODO render post path, is there really a use case?
 
 	# mover['dbg'].append(path)
 	# find furthest non-blocked point along the path
 	# mover.dbg.append(f'path {path}')
 	for p in path:
-		# mover.dbg.append(f'blocked at {p} by { {f"{n}({b.x},{b.y},{b.w},{b.h})":p[0] + mover.size > b.x and p[1] + mover.size > b.y and p[0] < b.x + b.w and p[1] < b.y + b.h for n,b in blockers.items()} }')
-		if p[0] < map_rect.x or p[1] < map_rect.y or p[0]+mover.size > map_rect.x + map_rect.w or p[1]+mover.size > map_rect.y + map_rect.h:
+		# mover.dbg.append(f'blocked at {p} by { {f"{n}({b.x},{b.y},{b.w},{b.h})":p[0] + mover.w > b.x and p[1] + mover.h > b.y and p[0] < b.x + b.w and p[1] < b.y + b.h for n,b in blockers.items()} }')
+		if p[0] < map_rect.x or p[1] < map_rect.y or p[0]+mover.w > map_rect.x + map_rect.w or p[1]+mover.h > map_rect.y + map_rect.h:
 			mover['block'] = 'map'
 			continue
 		for blocker, block in blockers.items():
-			if p[0] + mover.size > block.x and p[1] + mover.size > block.y and p[0] < block.x + block.w and p[1] < block.y + block.h:
+			if p[0] + mover.w > block.x and p[1] + mover.h > block.y and p[0] < block.x + block.w and p[1] < block.y + block.h:
 				mover['block'] = blocker
 				break
 		else:	# not blocked, move to p
 			mover['target'] = p
-			blockers[name]=dict(x=mover.target[0], y=mover.target[1], w=mover.size, h=mover.size)
+			blockers[name]=dict(x=mover.target[0], y=mover.target[1], w=mover.w, h=mover.h)
 			break
 	else:	# end of path, stay in position
 		mover['target'] = None
-		blockers[name] = dict(x=mover.start.x, y=mover.start.y, w=mover.size, h=mover.size)
+		if mover.start:
+			blockers[name] = dict(x=mover.start.x, y=mover.start.y, w=mover.w, h=mover.h)
 
 ### generate embed text
 inv_x_axis={val:s.upper() for s,val in x_axis.items()}
@@ -330,8 +342,6 @@ for name, mover in movers.items():
 	elif mover.target:
 		move_desc.append(f'Placed at {inv_x_axis.get(mover.target[0], "??")}{mover.target[1]}')
 		# TODO: add size here and add size to command. store size as string in mover, (but not in loc)
-		#if mover.size:
-		#	description.append(f':black_square_button: {mover.size*ft_per_grid}ft.')
 		if mover.block:
 			err("Unhandled description: blocked at placement")
 	else:
