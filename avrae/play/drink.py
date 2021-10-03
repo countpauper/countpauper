@@ -44,7 +44,7 @@ if done:
 elif intoxication>=2:
 	result=f'*{result}*'
 
-result=f'*{"Success!" if save.total>=dc else "Failed."}*\n{result} (`{intoxication+1}`)'
+result=f'*{"Success!" if save.total>=dc else "Failed."}*\n{result} (`{intoxication}`)'
 
 # persist game state
 if done:

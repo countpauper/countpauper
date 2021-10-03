@@ -8,6 +8,7 @@
     https://docs.google.com/document/d/1JugoNch6eVNTNVVgo05uT0O1Y-ie4s1WKUAAWtg1pQA/edit?usp=sharing
     https://bicyclecards.com/how-to-play/ship-captain-and-crew/
 - dragon hoard can roll again if done on 1 or 2
+- play darts as npc: use 0 for the bonus and -b
 
 
 * !play drink reset if win or yield
@@ -33,15 +34,17 @@ Group movement:
 - 3d:
     - take height into account for blockers
     - take height of movers into account and the same
-    - -height argument to add it to the thing and to take into account when moving (assume immediate elevation first)
+    - -height argument to add it to the thing and goal (-approach a1 -height 20 means approach at height 20, default current height)
+        - and to take into account when moving (assume immediate elevation first)
         - plot 3d height path ?
+    - per target height -t <target>|speed|size|height
     - add height to output if changed
     
 !march -approach a1::5 <- approach a circle around a rectangle? or a1:5 even? To plot a circle would have to enlarge rectangle and exclude all corners not at ~range
 !march -block a1:5 <- circular block
 *!march -t combatant -to a1 -ft 30     <- speed added to all combatants with no speed defined yet (None) default afterwards is ? infinite or 30?
-- place with size or modify size if specified !march -t bla -a a1 -size l -> !move -t bla|b1|l
-    - specify size per target !march -t bla||l -a a1    => !move -t bla|b1|l
+* place with size or modify size if specified !march -t bla -a a1 -size l -> !move -t bla|b1|l
+    * specify size per target !march -t bla||l -a a1    => !move -t bla|b1|l
 
 default it will output a start, target and distance moved and a `!map -t` command line
 `go` will execute, perhaps later `go` will be default and `cmd` or `map` will output the command

@@ -129,7 +129,6 @@ else:	### Turn
 
 	aim=f'**{rings[target.ring].name} {target.nr if target.nr<=20 else ""}**'
 
-	args=argparse(args)
 	if reroll:=character().csettings.get('reroll'):
 		die=f'd20ro{reroll}'
 	else:
