@@ -37,7 +37,9 @@ Group movement:
     - -height argument to add it to the thing and goal (-approach a1 -height 20 means approach at height 20, default current height)
         - and to take into account when moving (assume immediate elevation first)
         - plot 3d height path ?
-    - per target height -t <target>|speed|size|height
+    - !march -go u10s25
+    - [wip] per target height -t <target>|speed|size|height
+        - how does that relate with goal height, since those aren't per target
     - add height to output if changed
     
 !march -approach a1::5 <- approach a circle around a rectangle? or a1:5 even? To plot a circle would have to enlarge rectangle and exclude all corners not at ~range
