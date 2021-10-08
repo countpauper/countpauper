@@ -11,7 +11,7 @@ bags=load_json(get(bv,'[]'))
 # config
 var_name='quickbag'
 sv=get_svar(var_name,'')
-config=load_json(sv if sv else get(var_name,get_gvar('71ff40cc-4c5f-4ae5-bdb6-32130f869090'))) # get_svar(var_name,get(var_name,get_gvar('71ff40cc-4c5f-4ae5-bdb6-32130f869090'))))
+config=load_json(get_gvar(get_svar(var_name,'71ff40cc-4c5f-4ae5-bdb6-32130f869090')))
 purse_names=config.get('purses',[])
 ammo_containers=config.get('ammo',[])
 special_bags=purse_names + ammo_containers
