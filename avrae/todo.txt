@@ -32,12 +32,12 @@ Group movement:
 !march config verbose and -diagonal to set defaults
     - no diagonal default is trueDistance
 - 3d:
-    - take height into account for blockers
-    - take height of movers into account and the same
-    - -height argument to add it to the thing and goal (-approach a1 -height 20 means approach at height 20, default current height)
+    * take height into account for blockers
+    * take height of movers into account and the same
+    * height argument to add it to the thing and goal (-approach a1 -height 20 means approach at height 20, default current height)
         - and to take into account when moving (assume immediate elevation first)
         - plot 3d height path ?
-    - !march -go u10s25
+    - !march -go u10s25d15
     - [wip] per target height -t <target>|speed|size|height
         - how does that relate with goal height, since those aren't per target
     - add height to output if changed

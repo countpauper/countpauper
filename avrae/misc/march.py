@@ -40,7 +40,7 @@ if targets:=args.get('t'):
 	split_targets=[t.split('|') for t in targets]
 	target_args = {split_t[0]: dict(speed=int(split_t[1]) if len(split_t)>=2 and split_t[1] and split_t[1].isdecimal() else speed_arg,
 									size=split_t[2] if len(split_t)>=3 and split_t[2] and split_t[2] in sizes.keys() else size_arg,
-									height=split_t[3] if len(split_t)>=3 and split_t[3] and split_t[3].isdecimal() else height_arg)
+									height=int(split_t[3]) if len(split_t)>=3 and split_t[3] and split_t[3].isdecimal() else height_arg)
 				   for split_t in split_targets}
 	# find all targeted combatants or groups
 	combatants = {t: C.get_combatant(t) or C.get_group(t) for t in target_args.keys() if typeof(t)=='str'}
@@ -91,11 +91,12 @@ for c in C.combatants:
 		locations[c.name] = dict(x=x, y=y, z=z, s=s, w=sizes[s], h=sizes[s])
 
 # convert the movers list to a dictionary per mover with all necessary data
+old_movers={k:v for k,v in movers.items()}
 movers={n:dict(combatant=m.combatant,
 			   start=locations.get(n),
 			   speed=(m.get('speed') or default_speed)/ft_per_grid,
-			   size=(s:=m.get('size') or locations.get(n,dict()).get(s)),
-			   z=(m.get('height') or locations.get(n,dict()).get(z,0))//ft_per_grid,
+			   size=(s:=m.get('size') or locations.get(n,dict()).get('s')),
+			   z=(mover_height if (mover_height:=m.get('height')) is not None else locations.get(n,dict()).get('z',0)*ft_per_grid)//ft_per_grid,
 			   w=sizes[s],
 			   h=sizes[s],
 			   goal=None,
@@ -153,20 +154,19 @@ for idx,block in enumerate(zones.block):
 ### Construct goal locations into a list [(x,y),...]
 # TODO: l[ine] and r[ectangle] targets first so their spread can be evened out to len(movers)
 goals=[]
-goal_height=height_arg or 0
 for area in zones.rect:
 	for y in range(area.y, area.y + area.h):
 		# serpentine for nicer distribution
 		if y%1:
 			for x in range(area.x+area.w,area.x,-1):
-				goals.append((x-1,y,goal_height))
+				goals.append((x-1,y))
 		else:
 			for x in range(area.x,area.x+area.w):
-				goals.append((x,y,goal_height))
+				goals.append((x,y))
 
 for area in zones.line:
 	if area.w==0 and area.h==0:
-		goals.append((area.x,area.y,goal_height))
+		goals.append((area.x,area.y))
 	else:
 		if area.w>area.h:
 			if area.w==1:
@@ -178,7 +178,7 @@ for area in zones.line:
 				dx,dy,q=0,0,1
 			else:
 				dx,dy,q=(area.w-1)/(area.h-1), 1,area.h
-		goals+=[(round(area.x+idx*dx),round(area.y+idx*dy),goal_height) for idx in range(q)]
+		goals+=[(round(area.x+idx*dx),round(area.y+idx*dy)) for idx in range(q)]
 
 min_w=min(m.w for m in movers.values())
 min_h=min(m.h for m in movers.values())
@@ -191,6 +191,12 @@ for area in zones.approach:
 		goals.append((area.x-min_w, y+min_h,goal_height))
 		goals.append((area.x+area.w,y,goal_height))
 
+# Add height to the goals. if not specified the current height is maintained
+# the height range of all movers is used to determine available goals
+if height_arg:
+	goal_z=(height_arg, heigh_arg+max(mover.h for mover in movers.values()))
+else:
+	goal_z=(min(mover.z for mover in movers.values()),max(mover.z+mover.h for mover in movers.values()))
 
 ### clip goals to map area and remove duplicate goals or those overlapping with blockers
 unclipped_goals,goals=goals,[]
@@ -203,9 +209,10 @@ for goal in unclipped_goals:
 		continue
 	# remove goals overlapping with existing blockers
 	# uses minimum movers size as a pre-check. bigger sized may fail at path planning post-check
-	if any(goal[0]+min_w>b.x and goal[1]+min_h>b.y and goal[2]+min_h>b.z and
-		   goal[0]<b.x+b.w and goal[1]<b.y+b.h and goal[2]<b.z+b.h for b in blockers.values()):
+	if any(goal[0]+min_w>b.x and goal[1]+min_h>b.y and goal_z[1]>b.z and
+		   goal[0]<b.x+b.w and goal[1]<b.y+b.h and goal_z[0]<b.z+b.h for b in blockers.values()):
 		continue
+
 	# it's good
 	goals.append(goal)
 
@@ -219,7 +226,8 @@ if args.last('scatter'):
 if (density:=len(goals)//len(movers))>1:
 	goals=goals[::density]
 
-#return f'echo {unclipped_goals} in {map_rect} and not in {blockers} => {goals}'
+
+#return f'echo {unclipped_goals} @ {goal_z} in {map_rect} and not in {blockers} => {goals}'
 
 ### Assign movers to goals, in order of movers, sorted preferred target by distance
 for mover in movers.values():
@@ -339,7 +347,7 @@ for name, mover in movers.items():
 		props[1]=f'{inv_x_axis.get(mover.target[0],"??")}{mover.target[1]}'
 	if mover.size and (not mover.start or mover.size!=mover.start.s):
 		props[2]=mover.size
-	if mover.z and (not mover.start or mover.z!=mover.start.z):
+	if mover.z is not None and (not mover.start or mover.z!=mover.start.z):
 		props[5]=int(mover.z*ft_per_grid)
 	if props:
 		mover['args']=[name]+[str(props.get(idx,'')) for idx in range(1,1+max(props.keys()))]
@@ -355,9 +363,9 @@ if args.last('verbose',args.last('v',config.get('verbose'))):
 	for name, mover in movers.items():
 		move_desc = [f'**{name}** :']
 		if mover.start:
-			move_desc.append(f'{inv_x_axis.get(mover.start.x, "??")}{mover.start.y}')
+			move_desc.append(f'{inv_x_axis.get(mover.start.x, "??")}{mover.start.y}{f" :arrow_up: {mover.start.z*ft_per_grid}ft" if mover.start.z else ""}')
 			if mover.target:
-				move_desc.append(f'to {inv_x_axis.get(mover.target[0], "??")}{mover.target[1]}')
+				move_desc.append(f'to {inv_x_axis.get(mover.target[0], "??")}{mover.target[1]} @{mover.target[2]}')
 				if mover.speed and mover.start:
 					dx = mover.target[0] - mover.start.x
 					dy = mover.target[1] - mover.start.y
@@ -368,7 +376,7 @@ if args.last('verbose',args.last('v',config.get('verbose'))):
 				distance = None
 			if not mover.goal:
 				move_desc.append('*No available destination*')
-			elif mover.target != mover.goal:
+			elif mover.target[:2] != mover.goal[:2]:
 				move_desc.append(f'{inv_x_axis.get(mover.goal[0], "??")}{mover.goal[1]}')
 				if mover.block:
 					move_desc.append(f'*blocked by* {mover.block}')

@@ -212,10 +212,6 @@
     </state>
     <state x="414" y="214" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1630964310698" />
     <state x="414" y="239" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1630674446545" />
-    <state x="686" y="162" key="#show" timestamp="1624788037989">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="686" y="162" key="#show/0.0.1920.1040@0.0.1920.1040" timestamp="1624788037989" />
     <state width="664" height="466" key="DebuggerActiveHint" timestamp="1630674542215">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -273,12 +269,11 @@
     <state x="771" y="493" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1626341912686">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="771" y="442" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1624805494565" />
     <state x="771" y="493" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1626341912686" />
-    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1631966172619">
+    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1633789589326">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1631966172619" />
+    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1633789589326" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1631083626924" />
     <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1632556115381">
       <screen x="0" y="0" width="1920" height="1040" />
