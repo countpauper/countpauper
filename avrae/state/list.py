@@ -1,7 +1,8 @@
 <drac2>
 config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
+
 display_fields={
-	None:["name","hp","bar","ac","hd","spell","xp","xp","class","coins","gold","label"],
+	None:["name","hp","bar","ac","hd","spell","effects","xp","xp","class","coins","gold","label"],
 	"Consumable":["cc","flag"],
 	"Item":["item"]
 }
@@ -14,7 +15,7 @@ fields=[]
 desc=""
 sep=', '
 for field,display in display_fields.items():
-	items=[f'{props.get("icon","")} {f"**{item}**" if item in selected_items else item}' for item,props in config.items() if props.get('display') in display]
+	items=[f'{props.get("icon","")} {f"**{item}**" if item in selected_items else item}' for item,props in config.fields.items() if props.get('display') in display]
 	if field and items:
 		fields.append(f'-f "{field}|{sep.join(items)}"')
 	else:

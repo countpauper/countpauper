@@ -11,9 +11,14 @@
 C=combat()
 if not C:
 	return f'techo 8 The current channel is not in combat.'
+
+
 result=[]
 roundstr=[':zero:',':one:',':two:',':three:',':four:',':five:',':six:',':seven:',':eight:',':nine:',':keycap_ten:']
 header=f'Combat Round {C.round_num if C.round_num>=len(roundstr) else roundstr[C.round_num]} in "{ctx.channel.name}"'
+
+args=argparse('''&*&''')
+timeout = args.last('t',"60")
 
 alphabet='abcdefghijklmnopqrstuvwxyz'
 x_table=[' ']+[c for c in alphabet]+[f'a{c}' for c in alphabet]+[f'b{c}' for c in alphabet]
@@ -47,24 +52,8 @@ if C.me:
 		if spell_ranges:=[s.get('range',0) for s in spells.values() if s.level>0 and (s.get('save') or s.get('attack'))]:
 			ranges['spell']=max(spell_ranges)
 
-conditions=dict(
-	blinded=":see_no_evil:",
-	blindness=":see_no_evil:",
-	charmed=":heart_eyes:",
-	deafened=":hear_no_evil:",
-	deafness=":hear_no_evil:",
-	frightened=":scream:",
-	grappled=":people_wrestling:",
-	incapacitated=":face_with_spiral_eyes:",
-	invisible=":bust_in_silhouette:",
-	paralyzed=":ice_cube:",
-	petrified=":rock:",
-	poisoned=":snake:",
-	prone=":upside_down:",
-	restrained=":chains:",
-	stunned=":dizzy_face:",
-	unconscious=":sleeping:",
-	sleeping = ":sleeping:")
+config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
+conditions=config.conditions
 
 heartstr = [':skull:', ':broken_heart:', ':hearts:', ':heartbeat:', ':heartpulse:']
 distancestr=['', ':dart:', ':bow_and_arrow:']
@@ -91,7 +80,7 @@ for c in C.combatants:
 	if C.me and C.me.name==c.name:
 		you='(You)'
 	else:
-		you='(Yours)' if c.controller == ctx.author.id else f'({c.group.name})' if c.group else 'DM' if c.controller==dm_id else ''
+		you='(Yours)' if c.controller == ctx.author.id else f'({c.group})' if c.group else 'DM' if c.controller==dm_id else ''
 		if C.me and (me_loc:=location.get(C.me.name)) and (c_loc:=location.get(c.name)):
 			dx=me_loc.x-c_loc.x
 			dy=me_loc.y-c_loc.y
@@ -101,5 +90,8 @@ for c in C.combatants:
 			distance += ':sparkles:' if d<ranges.get('spell',-1) else ''
 	result.append(f'{":arrow_forward:" if active else ":white_large_square:"} **{c.name}** {you} {distance} {", ".join(props)}')
 nl='\n'
-return f'embed -title "{header}" -desc "{nl.join(result)}" -t 60 -footer "This information will disappear in 1 minute. {ctx.prefix}help {ctx.alias} combat for legend."'
+help_str=f'{ctx.prefix}help {ctx.alias} combat for legend.'
+timeout=int(timeout) if timeout.isdecimal() else None
+time_str=f'-footer "{help_str}"' if timeout is None else f'-t {timeout} -footer "This information will disappear in {f"{timeout} seconds" if timeout<120 else f"{timeout//60} minutes"}. {help_str}"'
+return f'embed -title "{header}" -desc "{nl.join(result)}" {time_str}'
 </drac2>

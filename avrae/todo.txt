@@ -11,6 +11,13 @@
 - play darts as npc: use 0 for the bonus and -b
 
 
+!stats:
+* condition icons from config in !stats combat
+* condition icons for effect in !stats
+* optional timeout for !stats combat  (-t?)
+* !stats -t * selects all combatants
+
+
 * !play drink reset if win or yield
 
 !generate npc

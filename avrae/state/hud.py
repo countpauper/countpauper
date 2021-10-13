@@ -14,6 +14,7 @@ ap=argparse(args)
 # Get statblocks, ch is character for CCs and other things not available from combatants
 # stat is a list of combatants for hp, ac other simple stuff
 ch=character()
+
 stat=[]
 if c:=combat():
 	if ap.last('i'):
@@ -21,7 +22,9 @@ if c:=combat():
 	for t in ap.get('t'):
 		if t in args:
 			args.remove(t)
-		if g:=c.get_group(t):
+		if t=='*':
+			stat+=[combatant for combatant in c.combatants if combatant.name.lower() and combatant.hp is not None]
+		elif g:=c.get_group(t):
 			stat+=g.combatants
 		elif target:=c.get_combatant(t):
 			stat.append(target)
@@ -39,8 +42,8 @@ if not stat:
 elif not c.me in stat:
 	ch=None
 
-
 config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
+config_fields=config.fields
 # TODO get this field list from 1) command line, 2) uvar 3) cvar (if ch)
 
 # build the configuration (field_list) of fields to display
@@ -52,7 +55,7 @@ for a in args:
 		continue
 	field_list.append(a)
 
-default_fields=[f for f,prop in config.items() if prop.get('default',False)]
+default_fields=[f for f,prop in config_fields.items() if prop.get('default',False)]
 if ap.last('default'):
 	field_list=default_fields+field_list
 
@@ -94,7 +97,7 @@ if auto in field_list and ch:
 	# pre grab so each cc is added only once
 	consumable_names={cc.name for cc in ch.consumables}
 	item_names=list(bag_items.keys())
-	for label, field in config.items():
+	for label, field in config_fields.items():
 		if field.get('auto',True) and label not in field_list:
 			if (field_cc:=field.get('cc')) and field_cc in consumable_names:
 				consumable_names.remove(field_cc)
@@ -153,20 +156,26 @@ if ap.last('var'):
 	else:
 		return f'echo `!uvar {uvar_name} {dump_json(field_list)}`'
 
-field_list=[config.get(field.lower(),field) if typeof(field)=='str' else field for field in field_list]
-
+field_list=[config_fields.get(field.lower(),field) if typeof(field)=='str' else field for field in field_list]
 out=[]
+if len(stat)>1:
+	out.append(f'{len(stat)} combatants:')
+	if 'name' not in field_list:
+		field_list=[config_fields.name]+field_list
+
 timeout=None
 for s in stat:
 	if not s:
 		continue
 	field=[]
+	hidden=not s.hp_str().upper().endswith('HP>')
 	for f in field_list:
 		if not f:
 			continue
 		if typeof(f)=='str':
 			if f.isdecimal():
 				timeout=int(f)
+				hidden = False
 			else:
 				field.append(f)
 			continue
@@ -194,9 +203,9 @@ for s in stat:
 			bar_length=f.get('length',10)
 			div = 1 + (s.max_hp // bar_length)
 			field.append(f'{icon * (s.hp // div)}{f.get("alticon",":black_large_square:") * ((s.max_hp - s.hp) // div)} {"" if div == 1 else f"[x{div}]"}')
-		elif display=='ac' and s.ac:
+		elif display=='ac' and s.ac and not hidden:
 			field.append(f'{icon}{s.ac}')
-		elif display=='spell' and s.spellbook:
+		elif display=='spell' and s.spellbook and not hidden:
 			label = [None]+f.get('label')
 			bubble=f.get('type').lower()=='bubble'
 			sb=s.spellbook
@@ -239,6 +248,17 @@ for s in stat:
 					max_hd+=ch.get_cc_max(cc)
 			if max_hd:
 				field.append(f'{icon}`{total_hd}`/`{max_hd}`')
+		elif display=='effect' or display=='effects':
+			effects=[]
+			for e in s.effects:
+				if conds := [c_str for cond, c_str in config.conditions.items() if cond in e.name.lower()]:
+					effects.append(''.join(conds))
+				elif e.conc and e.children:
+					effects.append(':brain:')
+				else:
+					effects.append(e.name)
+			if effects:
+				field.append(f'{icon}{", ".join(effects)}')
 		elif display=='coins' and bag_items and coins:
 			field.append(f'{icon} {" ".join(f"`{q}`{c}" for c in coins if (q:=bag_items.get(c,0)))}')
 		elif display == 'gold' and bag_items:
@@ -262,6 +282,7 @@ for s in stat:
 		out.append(' '.join(field))
 	else:
 		out.append('*Invalid field selection.*')
+
 
 if out:
 	nl = '\n'

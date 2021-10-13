@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/misc/statses.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/wrath.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/march.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/march.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/combat.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/combat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/hud.json" beforeDir="false" afterPath="$PROJECT_DIR$/state/hud.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/hud.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/hud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/list.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/list.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -275,10 +280,10 @@
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1633789589326" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1631083626924" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1632556115381">
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1633800946150">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1632556115381" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1633800946150" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1632212219303" />
   </component>
   <component name="XDebuggerManager">
@@ -323,11 +328,6 @@
           <url>file://$PROJECT_DIR$/inventory/quickbag.py</url>
           <line>283</line>
           <option name="timeStamp" value="41" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/state/combat.py</url>
-          <line>49</line>
-          <option name="timeStamp" value="42" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/misc/luck.py</url>
