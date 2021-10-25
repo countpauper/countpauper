@@ -11,11 +11,21 @@
 - play darts as npc: use 0 for the bonus and -b
 
 
+!wmcast nathair -l 2 doesn't know the spell level still
+
 !stats:
 * condition icons from config in !stats combat
 * condition icons for effect in !stats
 * optional timeout for !stats combat  (-t?)
 * !stats -t * selects all combatants
+- !stats conditions instead of referring to help
+- !stats options
+    - -hp [icon|text|bar|off]
+    - effect: -e  [icon|text|off]
+    - range: -r [icon|off]
+    - Persist in !uvar (with help) dict {hp: effect: range:}
+- timeout in minutes?
+- timeout 0 is also off
 
 
 * !play drink reset if win or yield

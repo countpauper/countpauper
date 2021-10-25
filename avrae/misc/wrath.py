@@ -5,7 +5,12 @@ if not args:
 	return f'echo Provude a target.'
 if not C:
 	return f'echo Not in combat.'
-target=argparse(args).last('t') or '''&1&'''
+if target:=argparse(args).last('t'):
+	pass
+else:
+	target=args
+	args=f'-t "{target}"'
+
 c=C.get_combatant(target)
 if not c:
 	return f'echo Target {target} was not found.'

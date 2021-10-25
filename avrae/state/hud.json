@@ -5,6 +5,7 @@
         "health":{"display":"bar", "icon":":hearts:","alticon":":white_heart:"},
         "ac":{"display":"ac", "icon":":shield:","default": true},
         "effects":{"display":"effects", "icon":":star2:","default": true},
+        "effect":{"display":"effects", "icon":":star2:","default": false},
         "spell":{"display":"spell","type":"bubble", "label":[":one:",":two:",":three:",":four:",":five:",":six:",":seven:",":eight:",":nine:"],"default": true},
         "class":{"display":"class"},
         "xp":{"display":"xp","icon":":partying_face:"},

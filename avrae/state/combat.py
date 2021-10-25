@@ -2,7 +2,6 @@
 # TODO: pre compute location of all combatants and put in dict
 # show class or monster
 # (persistent) arguments to make health as %, number, bar or values or quality
-# option for timeout in seconds
 # option for range in feet #
 # argument to make class/effects/conditions shown or hidden
 
@@ -24,7 +23,7 @@ alphabet='abcdefghijklmnopqrstuvwxyz'
 x_table=[' ']+[c for c in alphabet]+[f'a{c}' for c in alphabet]+[f'b{c}' for c in alphabet]
 loc_prefix='Location: '
 location={}
-dm_combatants=['map','dm']
+dm_combatants=['map','dm','lair']
 dm_id=None
 for c in C.combatants:
 	if full_note:=c.note:
@@ -88,7 +87,7 @@ for c in C.combatants:
 			distance = ':crossed_swords:' if d<=ranges.reach else distancestr[(d<=ranges.range) + (d<=ranges.max_range)]
 			distance += ':magic_wand:' if d<ranges.get('cantrip',-1) else ''
 			distance += ':sparkles:' if d<ranges.get('spell',-1) else ''
-	result.append(f'{":arrow_forward:" if active else ":white_large_square:"} **{c.name}** {you} {distance} {", ".join(props)}')
+	result.append(f'{":arrow_forward:" if active else ":white_large_square:"} **{c.name}** {you} {distance}{" - " if distance and props else ""}{", ".join(props)}')
 nl='\n'
 help_str=f'{ctx.prefix}help {ctx.alias} combat for legend.'
 timeout=int(timeout) if timeout.isdecimal() else None

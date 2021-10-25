@@ -250,13 +250,14 @@ for s in stat:
 				field.append(f'{icon}`{total_hd}`/`{max_hd}`')
 		elif display=='effect' or display=='effects':
 			effects=[]
-			for e in s.effects:
-				if conds := [c_str for cond, c_str in config.conditions.items() if cond in e.name.lower()]:
-					effects.append(''.join(conds))
-				elif e.conc and e.children:
-					effects.append(':brain:')
-				else:
-					effects.append(e.name)
+			if typeof(s)=='SimpleCombatant':
+				for e in s.effects:
+					if conds := [c_str for cond, c_str in config.conditions.items() if cond in e.name.lower()]:
+						effects.append(''.join(conds))
+					elif e.conc and e.children:
+						effects.append(':brain:')
+					else:
+						effects.append(e.name)
 			if effects:
 				field.append(f'{icon}{", ".join(effects)}')
 		elif display=='coins' and bag_items and coins:
