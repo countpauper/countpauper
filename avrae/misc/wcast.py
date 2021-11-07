@@ -1,6 +1,6 @@
 <drac2>
 # Data
-spell_gvar  = load_json(get_gvar('5e2c8e11-6ade-4ce2-9ece-562fc9db70c7'))
+spell_gvar  = load_json(get_gvar('13dc3e0a-a230-40ca-8fb3-a39846300b18'))
 meta_gvar   = load_json(get_gvar('9af34023-6eba-4789-82b1-e68b191220ac'))
 cc          = "Sorcery Points"
 footer='-f "Made by Croebh, Modified by Velglarn"'
@@ -9,15 +9,18 @@ footer='-f "Made by Croebh, Modified by Velglarn"'
 args        = &ARGS&
 
 # If not provided, search through the gvar for that spell
-spell_name  = args[0] if args else ''
-spells=[s for s in spell_gvar if spell_name.lower()==s.name.lower()]
+spell_name = args[0] if args else ''
+spells=[dict(name=s,level=d.level) for s,d in spell_gvar.items() if spell_name.lower()==s.lower()]
 if not spells:
-	spells=[s for s in spell_gvar if spell_name.lower() in s.name.lower()]
-if not spells:
-	return f"""embed -title "Spell not found!" -desc "Sorry, `{spell_name}` could not be matched to a level in the database. If this is a valid spell (perhaps homebrew?) you can bypass this by specifying a level with `-l #`" """
-spell_name=spells[0].name
-spell_level=spells[0].level
-spell_level = argparse(args).last('l', spell_level, type_=int)
+	spells=[dict(name=s,level=d.level) for s,d in spell_gvar.items() if spell_name.lower() in s.lower()]
+if spells:
+	spell_name=spells[0].name
+	spell_level=spells[0].level
+	spell_level = argparse(args).last('l', spell_level, type_=int)
+else:
+	spell_level = argparse(args).last('l', None, type_=int)
+	if spell_level is None:
+		return f"""embed -title "Spell not found!" -desc "Sorry, `{spell_name}` could not be matched to a level in the database. If this is a valid spell (perhaps homebrew?) you can bypass this by specifying a level with `-l #`" """
 
 # Figure out which meta magics we're using
 field_out  = []

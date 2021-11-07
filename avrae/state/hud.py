@@ -168,7 +168,7 @@ for s in stat:
 	if not s:
 		continue
 	field=[]
-	hidden=not s.hp_str().upper().endswith('HP>')
+	hidden=s.hp_str().strip('<>').isalpha()
 	for f in field_list:
 		if not f:
 			continue

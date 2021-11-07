@@ -28,8 +28,8 @@ dm_id=None
 for c in C.combatants:
 	if full_note:=c.note:
 		for loc_str in [sn.strip()[len(loc_prefix):].lower() for sn in full_note.split('|') if loc_prefix in sn]:
-			if x_loc:=([i+1 for i,xstr in enumerate(x_table) if loc_str.startswith(xstr)]+[None])[0]:
-				location[c.name]=dict(x=x_loc,y=int(loc_str[len(x_table[x_loc]):]))
+			if x_loc:=([None]+[i+1 for i, xstr in enumerate(x_table) if loc_str.startswith(xstr)])[-1]:
+				location[c.name]=dict(x=x_loc,y=int(loc_str[len(x_table[x_loc-1]):]))
 	if c.name.lower() in dm_combatants:
 		dm_id=c.controller
 

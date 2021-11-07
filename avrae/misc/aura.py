@@ -1,4 +1,4 @@
-!alias maura <drac2>
+<drac2>
 # TODO: -over 5 or -over5 select other default underlay #
 # TODO: parent aura to caster to only remove those of this paladin
 # TODO: check character().actions for aura for nicer error
@@ -13,25 +13,35 @@ args=argparse(argstr)
 effect_name=aura
 if me:=C.me:
 	effect_name=aura
-	parent_effect = me.effects.get_effect(effect_name)
+#	parent_effect = me.get_effect(effect_name)
 	if me and me.hp==0 or me.get_effect('Unconscious'):
 		targets={}	 # TODO: drop parent aura
-		me.remove_effect(effect_name)
 	else:
-		parent_effect
 		# TODO: add or get parent aura
 		phrase=''
+		overlay_nr='8'
+		overlay_color='a0e080'
 		targets={t:C.get_combatant(t) for t in args.get('t')}
 		if note:=me.note:
-			overlay_notes=[n.strip() for n in note.split('|') if 'overlay8' not in n.lower()]
+			effect_prefix='Effect'
+			overlay_notes=[n.strip() for n in note.split('|')]
+			# remove old overlay
+			if effect_note:=([n for n in overlay_notes if n.startswith(effect_prefix) and me.name in n]+[None])[0]:
+				overlay_nr=effect_note[len(effect_prefix)]
+			else:
+				overlay_nr = args.last('over', overlay_nr)
+			overlay_notes = [n for n in overlay_notes if
+							 not f'{effect_prefix}{overlay_nr}' in n and not f'Overlay{overlay_nr}' in n]
 		else:
 			overlay_notes=[]
-		overlay_color = args.last('c', 'a0e080').lower()
+		overlay_nr=args.last('over',overlay_nr)
+		overlay_color = args.last('c', overlay_color).lower()
 		if len(overlay_color) == 6:
 			overlay_color = '~' + overlay_color
-		overlay_notes += [f'Overlay8: uc12{overlay_color}'+'{targ}', f'Effect8: Aura of Protection / {me.name}']
+		overlay_notes += [f'Overlay{overlay_nr}: uc12{overlay_color}'+'{targ}', f'Effect{overlay_nr}: Aura of Protection / {me.name}']
 		me.set_note(' | '.join(overlay_notes))
 
+		targets[me.name]=me
 unknown=[t for t,c in targets.items() if not c]
 targets={t:c for t,c in targets.items() if not t in unknown}
 removed=[]

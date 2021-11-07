@@ -76,6 +76,6 @@
         "restrained": ":chains:",
         "stunned": "dizzy_face",
         "unconscious": ":sleeping:",
-        "sleeping": ":sleeping,:"
+        "sleeping": ":sleeping:"
     }
 }

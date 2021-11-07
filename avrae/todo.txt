@@ -10,9 +10,6 @@
 - dragon hoard can roll again if done on 1 or 2
 - play darts as npc: use 0 for the bonus and -b
 
-
-!wmcast nathair -l 2 doesn't know the spell level still
-
 !stats:
 * condition icons from config in !stats combat
 * condition icons for effect in !stats
@@ -26,9 +23,6 @@
     - Persist in !uvar (with help) dict {hp: effect: range:}
 - timeout in minutes?
 - timeout 0 is also off
-
-
-* !play drink reset if win or yield
 
 !generate npc
     * speech and mannerism tables like https://www.reddit.com/r/BehindTheTables/comments/7fde9p/npc_voices_table/
