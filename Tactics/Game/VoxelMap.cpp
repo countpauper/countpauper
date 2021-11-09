@@ -300,7 +300,7 @@ void VoxelMap::GenerateMesh()
                 Engine::Box box(Engine::Vector(grid.x, grid.z, grid.y));    // nb z<=>y
                 box.SetColor(color);
                 box *= Engine::Matrix::Translation(
-                    Engine::Vector(c.z, c.z, c.y));
+                    Engine::Vector(c.x, c.z, c.y));
                 (*mesh) += box;
 
             }
