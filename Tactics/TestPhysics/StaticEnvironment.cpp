@@ -12,7 +12,7 @@ TEST(Statics, Space)
     EXPECT_EQ(nullptr, nullEnv.GetMaterial(Engine::Coordinate(0, 0, 0)));
 
     StaticEnvironment oneEnv(Engine::Vector(1, 1, 1));
-    EXPECT_EQ(&Material::air, oneEnv.GetMaterial(Engine::Coordinate(0, 0, 0)));
+    EXPECT_EQ(&Material::vacuum, oneEnv.GetMaterial(Engine::Coordinate(0, 0, 0)));
 }
 
 TEST(Statics, Fill)

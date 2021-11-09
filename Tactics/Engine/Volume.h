@@ -1,6 +1,8 @@
 #pragma once
 
 #include "AxisAlignedBoundingBox.h"
+#include "Line.h"
+
 namespace Engine
 {
 
@@ -8,7 +10,7 @@ class IVolume
 {
 public:
     // bounding box around volume, no points outside this bounding box are inside the volume
-    virtual AABB  GetBoundingBox() const = 0;
+    virtual AABB GetBoundingBox() const = 0;
     // Distance from a point to the volume. distance==0 means the surface of the volume. distance<0 means inside the volume
     virtual double Distance(const Coordinate& p) const = 0;
 };
@@ -41,4 +43,28 @@ private:
     double radius;
 };
 
+class AABox : public AABB, public IVolume
+{
+public:
+    AABox(const Coordinate& a, const Coordinate& b) : AABB(a, b) {}
+    AABox(const Coordinate& c, const Vector& e) : AABB(c, e) {}
+    AABox(const Range<double>& x, const Range<double>& y, const Range<double>& z) : AABB(x, y, z) {}
+
+    // IVolume;
+    AABB GetBoundingBox() const override { return *this; }
+    virtual double Distance(const Coordinate& p) const override;
+};
+
+class Cylinder : public IVolume
+{
+public:
+    Cylinder(const Line& axis, double dx, double dy) : axis(axis), dx(dx), dy(dy) {}
+    AABB GetBoundingBox() const override;   // TODO. nb check tilted ends /----/
+    virtual double Distance(const Coordinate& p) const override; // TODO: distance to projection on line. subtract diameter vector, nb tilted in axis direction
+private:
+    Line axis;
+    double dx;
+    double dy;
+
+};
 }

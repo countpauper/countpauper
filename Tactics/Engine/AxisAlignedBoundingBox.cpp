@@ -65,6 +65,8 @@ Coordinate AABB::Clip(const Coordinate& p) const
 }
 
 
+
+
 AABB& AABB::operator*=(const Matrix& transformation)
 {
     auto begin = transformation * Begin();

@@ -22,9 +22,9 @@ public:
     Element Get(const Position& p) const override;
     Physics::Box Bounds() const override;
 
-     // Generate
+     // Generate all shapes are in meters
     void Space(const Engine::Vector& meters); // Day 0 there is nothing
-    void Space(const Physics::Size& size); // Day 0 there is nothing
+    void Space(const Physics::Size& size); // Day 0 there is nothing, size is in grids
     void World(double radius);
     void Air(double temperature, double meters);     // Day 1 the sky
     void Wind(const Engine::Vector& speed);     // direction in meter/second

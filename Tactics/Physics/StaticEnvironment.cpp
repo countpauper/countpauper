@@ -6,12 +6,12 @@ namespace Physics
 {
     
 StaticEnvironment::StaticEnvironment(const Engine::Vector& size, const Engine::Vector& grid) :
-    data(Size(int(std::round(size.x / grid.x)), int(std::round(size.y/ grid.y)), int(std::round(size.z / grid.z))), 0, grid)
+    data(Size(int(std::round(size.x / grid.x)), int(std::round(size.y/ grid.y)), int(std::round(size.z / grid.z))), 1, grid)
 {
     for (auto& v : data)
     {
         float temperature = 290.0;
-        v.second = { &Material::air, temperature, float(Material::air.Density(PascalPerAtmosphere, temperature)) };
+        v.second = { &Material::vacuum, temperature, 0 };
     }
 
 }

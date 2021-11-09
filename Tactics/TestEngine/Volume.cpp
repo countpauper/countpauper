@@ -23,6 +23,27 @@ TEST(Volume , Sphere)
     EXPECT_EQ(2, s.Distance(Coordinate(1, 1, 4)));
 }
 
+
+TEST(Volume, AABox)
+{
+    AABox b(Coordinate(-1.0, 0.0, -1.0), Coordinate(2, 1, 0));
+    EXPECT_EQ(3*1*1, b.GetBoundingBox().Volume());
+    EXPECT_TRUE(b.GetBoundingBox().Contains(Coordinate(0, 0.5, -0.5)));
+    EXPECT_EQ(0, b.Distance(Coordinate(0, 1, -1)));
+    EXPECT_EQ(-0.5, b.Distance(Coordinate(0, 0.5, -0.5)));
+    EXPECT_EQ(1, b.Distance(Coordinate(1, 1, 1)));
+}
+
+TEST(Volume, InfiniteAABox)
+{
+    AABox b(Range<double>::infinity(), Range<double>::infinity(), Range<double>(-2,0));
+    EXPECT_TRUE(std::isinf(b.GetBoundingBox().Volume()));
+    EXPECT_EQ(2, b.Distance(Coordinate(0, 0, 2)));
+    EXPECT_EQ(0, b.Distance(Coordinate(0, 0, 0)));
+    EXPECT_EQ(-1, b.Distance(Coordinate(0, 0, -1)));
+}
+
+
 TEST(Volume, Box)
 {
     Box b(Vector(2, 3, 4));

@@ -81,6 +81,22 @@ namespace Physics
         return !operator==(a, b);
     }
 
+    bool operator<(const Position& a, const Position& b)
+    {
+        if (a.z > b.z)
+            return false;
+        else if (a.z == b.z)
+        {
+            if (a.y > b.y)
+                return false;
+            else if (a.y == b.y)
+            {
+                return a.x < b.x;
+            }
+        }
+        return false;
+    }
+
     Size operator+(const Size& a, const Size& b)
     {
         Size o = a;

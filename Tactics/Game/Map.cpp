@@ -25,23 +25,28 @@ namespace Game
     Square Map::At(const Position& p) const
     {
         auto bounds = Bounds();
-        if (bounds.Contains(p))
-            return Square();
         Position pos = p;
-        for (pos.z = p.z; pos.z >= bounds.Start().z; --pos.z)
+        pos.z = std::min(pos.z, bounds.z.end - 1);
+        if (!bounds.Contains(pos))
+            return Square();
+        Element ephemeral = Element::None;
+        for (; pos.z >= bounds.Start().z; --pos.z)
         {
             Element element = Get(pos);
-            if (element == Element::Air)
+            if ((element == Element::Air) || (element == Element::None))
+            {
+                ephemeral = element;
                 continue;
-            else return Square(element , pos.z);
+            }
+            else return Square(element, pos.z+1);
         }
-        return Square(Element::None, pos.z);
+        return Square(ephemeral, bounds.Start().z);
     }
 
     Element FlatMap::Get(const Position& p) const
     {
         auto square = squares.at(p.x + p.y*width);
-        if (p.x > square.height)
+        if (p.z > square.height)
             return Element::Air;
         else
             return square.floor;
@@ -68,10 +73,11 @@ namespace Game
         if (direction.IsNone())
             return false;   // going nowhere is not going 
         auto square = At(from);
-        auto neighbour = At(from + direction.Vector());
+        const int stepHeight = 1;
+        auto neighbour = At(from + direction.Vector()+Physics::Position(0,0, stepHeight));
         if (!neighbour)
             return false;
-        if (std::abs(int(square.height) - int(neighbour.height)) > 1)
+        if (std::abs(int(square.height) - int(neighbour.height)) > stepHeight)
             return false;
         return true;
     }

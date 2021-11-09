@@ -20,6 +20,7 @@ namespace Physics
 
 	bool operator==(const Position& a, const Position& b);
     bool operator!=(const Position& a, const Position& b);
+    bool operator<(const Position& a, const Position& b); // for map keys
     Position operator+(const Position& a, const Position& b);
     Position operator-(const Position& a, const Position& b);
     std::ostream& operator<<(std::ostream& stream, const Position& position);

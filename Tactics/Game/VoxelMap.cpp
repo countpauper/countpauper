@@ -85,7 +85,10 @@ void VoxelMap::Space(const Physics::Size& size)
 
 void VoxelMap::Space(const Engine::Vector& size)
 {
-    physical = std::make_unique<Physics::StaticEnvironment>(size, Engine::Vector(HorizontalGrid, HorizontalGrid, VerticalGrid));
+    this->physical = std::make_unique<Physics::StaticEnvironment>(size, Engine::Vector(HorizontalGrid, HorizontalGrid, VerticalGrid));
+    this->size = Physics::Size(int(std::round(size.x / grid.x)),
+        int(std::round(size.y / grid.y)),
+        int(std::round(size.z / grid.z)));
 }
 
 void VoxelMap::World(double radius)
@@ -120,11 +123,11 @@ void VoxelMap::Air(double temperature, double meters)
     constexpr double layerThickness = 1.0;
     for(double elevation = 0; elevation<meters; elevation+= layerThickness)
     {
-        Engine::Box layer(Engine::AABB(
+        Engine::AABox layer(
             Engine::Range<double>::infinity(),
             Engine::Range<double>::infinity(),
-            Engine::Range<double>(elevation, elevation+ layerThickness)));
-        auto temperature = AtmosphericTemperature(elevation+ layerThickness *0.5);
+            Engine::Range<double>(elevation, elevation + layerThickness));
+        auto temperature = AtmosphericTemperature(elevation + layerThickness *0.5);
         dbgCount += physical->Fill(layer, Physics::Material::air, temperature);
     }
     OutputDebugStringW(std::wstring(L"Air =" + std::to_wstring(dbgCount) + L" voxels\n").c_str());
@@ -138,10 +141,10 @@ void VoxelMap::Wind(const Engine::Vector& speed)
 
 void VoxelMap::Sea(double level, double temperature)
 {
-    Engine::Box sea(Engine::AABB(
+    Engine::AABox sea(
         Engine::Range<double>::infinity(), 
         Engine::Range<double>::infinity(), 
-        Engine::Range<double>(0, level)));
+        Engine::Range<double>(0, level));
     auto dbgCount = physical->Fill(sea, Physics::Material::water, temperature);
     OutputDebugStringW((std::wstring(L"Sea level ") + Engine::ToWString(level) + L"=" + std::to_wstring(dbgCount) + L" voxels\n").c_str());
 }

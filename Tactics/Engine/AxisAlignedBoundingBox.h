@@ -3,7 +3,6 @@
 #include "Coordinate.h"
 #include "Range.h"
 
-
 namespace Engine
 {
 
@@ -23,6 +22,7 @@ namespace Engine
         Coordinate End() const;
         Coordinate Center() const;
 
+
         Vector Extent() const;
         double Volume() const;
         operator bool() const;
@@ -31,6 +31,7 @@ namespace Engine
         Range<double> Z() const;
         bool Contains(const Coordinate& p) const;
         Coordinate Clip(const Coordinate& p) const;
+
         bool operator[](const Coordinate& p) const { return Contains(p); }
         AABB& operator|=(const Coordinate& p);
         AABB& operator&=(const AABB& p);

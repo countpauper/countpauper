@@ -75,8 +75,22 @@ struct Range
 
     T Middle() const
     {
+        return Middle(std::_Is_floating_point<T>());
+    }
+
+    T Middle(std::true_type) const
+    {
+        if ((std::isinf(end)) && (std::isinf(begin)) && (std::signbit(begin)!=std::signbit(end)))
+            return 0;
+        else
+            return (begin + end) / 2;
+    }
+   
+    T Middle(std::false_type) const
+    {
         return (begin + end) / 2;
     }
+
 
     T begin;
     T end;
@@ -129,5 +143,19 @@ Range<T> operator&(const Range<T>& a, const Range<T>& b)
     return Range(begin, std::max(begin, std::min(a.end, b.end)));
 }
 
+template<typename T>
+std::ostream& operator<<(std::ostream& s, const Range<T>& range)
+{
+    s << "[" << range.begin << " ... " << range.end << "]";
+    return s;
+}
 
+template<typename T>
+std::wostream& operator<<(std::wostream& s, const Range<T>& range)
+{
+    s << "[" << range.begin << " ... " << range.end << "]";
+    return s;
+}
+
+//TODO, see if ... is a good idea template<typename T> std::wistream& operator>>(std::wistream& s, Range<T>& range)
 }

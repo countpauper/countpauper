@@ -22,6 +22,11 @@ TEST(Range, Middle)
     EXPECT_EQ(1.5, Range<double>(2, 1).Middle());
 }
 
+TEST(Range, MiddleOfEverything)
+{
+    EXPECT_EQ(0, Range<double>::infinity().Middle());
+}
+
 TEST(Range, Union)
 {
     EXPECT_EQ(Range(0, 2), Range(0, 1) | Range(1, 2));

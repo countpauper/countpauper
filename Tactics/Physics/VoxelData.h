@@ -145,16 +145,16 @@ public:
     Position Clip(const Position& p) const;
 
     // Data getters and setters
-    size_t Fill(const Engine::IVolume& v, const Material& m, double temperature);
+    size_t Fill(const Engine::IVolume& v, const Material& m, double temperature);   // volume in SI
     void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
     void AdjustGrid(const Position& location, double temperature, double density);
     double Density(const Position& position) const;
     double Density(const Engine::Coordinate& coordinate) const;
     double Density(const Engine::IVolume& volume) const;
     double Temperature(const Position& position) const;
-    double Temperature(const Engine::Coordinate& coordinate) const;
-    double Temperature(const Engine::IVolume& volume) const;
-    Engine::Vector Force(const Engine::IVolume& volume) const;
+    double Temperature(const Engine::Coordinate& coordinate) const; // coordinate in SI
+    double Temperature(const Engine::IVolume& volume) const;    // volume in SI
+    Engine::Vector Force(const Engine::IVolume& volume) const;  // volume in SI
     const Material& MaterialAt(const Position& position) const;
     void SetDensity(const Position& p, float density);
 protected:
