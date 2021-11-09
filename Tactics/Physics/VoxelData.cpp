@@ -349,21 +349,8 @@ size_t VoxelData::Fill(const Engine::IVolume& v, const Material& m, const double
         if (v.Distance(center) <= 0)
         {
             (*this)[voxel.first] = { &m, float(temperature), float(m.Density(PascalPerAtmosphere, temperature)) };
-            dbg[Position(voxel.first.x, voxel.first.y, 0)]|=voxel.first.z;
             ++filled;
         }
-    }
-    int y = std::numeric_limits<int>::min();
-    for (const auto& r : dbg)
-    {
-        std::wcout << r.first << L" = " << r.second;
-        if (r.first.y != y)
-        {
-            y = r.first.y;
-            std::wcout << std::endl;
-        }
-        else
-            std::wcout << L" ";
     }
     return filled;
 }
