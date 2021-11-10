@@ -6,6 +6,8 @@
 #include "Box.h"
 #include "Engine/Vector.h"
 #include "Engine/Volume.h"
+#include "Grid.h"
+#include "BoxIterator.h"
 
 namespace Engine { struct AABB;  }
 namespace Physics
@@ -20,83 +22,21 @@ public:
     const Voxel& operator[](const Position& p) const;
     Voxel& operator[](const Position& p);
     Size GetSize() const;
-    Position Grid(const Engine::Coordinate& meters) const;
+    Grid grid;
     Position ClippedGrid(const Engine::Coordinate& meters) const;
     Engine::Vector GridSize() const;
     double VoxelVolume() const; // liter
 
     Engine::Coordinate Center(const Position& p) const;
 protected:
-    template<class _D,typename _V>
-    class base_iterator
-    {
-    public:
-        // iterate over all data
-        explicit base_iterator(_D& data) : base_iterator(data, data.Insides()) {}
-        base_iterator(_D& data, const Box& box) : base_iterator(data, box, box.Start()) {}
-        base_iterator(_D& data, const Box& box, const Position& position) : data(data), box(box), position(position)
-        {
-            // clip to end
-            if (!box.Contains(position))
-            {
-                this->position = box.End();
-            }
-        }
-        base_iterator<_D,_V>& operator++()
-        {
-            if (++position.z >= box.z.end)
-            {
-                if (++position.y >= box.y.end)
-                {
-                    if (++position.x >= box.x.end)
-                    {
-                        // end
-                    }
-                    else
-                    {
-                        position.y = box.y.begin;
-                        position.z = box.z.begin;
-                    }
-                }
-                else
-                {
-                    position.z = box.z.begin;
-                }
-            }
-            return *this;
-        }
-        //iterator operator++(int);
-        bool operator==(const base_iterator<_D,_V>& other) const 
-        {
-            return &data == &other.data && position == other.position;
-        }
-        bool operator!=(const base_iterator<_D,_V>& other) const
-        {
-            return &data != &other.data || position != other.position;
-        }
 
-        using value_type = std::pair<Position, _V&>;
-        value_type operator*() const
-        {
-            return std::pair<Position, _V&>(position, data[position]);
-        }
-
-        // iterator traits
-        using difference_type = Position;
-        using pointer = const value_type*;
-        using reference = const value_type&;
-        using iterator_category = std::forward_iterator_tag;
-        _D& data;
-        const Box box;
-        Position position;
-    };
 public:
-    using iterator = base_iterator<VoxelData, Voxel>;
-    class const_iterator : public base_iterator<const VoxelData, const Voxel>
+    using iterator = BoxIterator<VoxelData, Voxel>;
+    class const_iterator : public BoxIterator<const VoxelData, const Voxel>
     {
     public:
-        explicit const_iterator(const VoxelData& data) : base_iterator<const VoxelData, const Voxel>(data) {}
-        explicit const_iterator(const VoxelData& data, const Box& box, const Position& position) : base_iterator<const VoxelData, const Voxel>(data, box, position) {}
+        explicit const_iterator(const VoxelData& data) : BoxIterator<const VoxelData, const Voxel>(data) {}
+        explicit const_iterator(const VoxelData& data, const Box& box, const Position& position) : BoxIterator<const VoxelData, const Voxel>(data, box, position) {}
         const_iterator(const iterator& o) : const_iterator(o.data, o.box, o.position) {}
     };
     using value_type = const_iterator::value_type;
@@ -165,7 +105,6 @@ protected:
 protected:
     Size size;                  // valid grids from 0 to size
     Size edge;                  // edge grids in all Directions <0 or >=size
-    Engine::Vector grid;        // in meters, TODO: make it a transformation matrix grids to meters
     std::vector<Voxel> voxels;  // longitude+2, latitude+2, altitude+2
 };
 

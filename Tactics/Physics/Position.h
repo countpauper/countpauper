@@ -25,24 +25,5 @@ namespace Physics
     Position operator-(const Position& a, const Position& b);
     std::ostream& operator<<(std::ostream& stream, const Position& position);
     std::wostream& operator<<(std::wostream& stream, const Position& position);
-
-    // TODO : move some stuff over and disallow some operators
-    struct Size : Position
-    {
-        Size() = default;
-
-        Size(int x, int y, int z) : Position(x, y, z)
-        {
-        }
-        explicit Size(int s) : Size(s, s, s) {}
-        explicit Size(const Position& p) : Position(p)
-        {
-        }
-        int Volume() const { return x * y * z; }
-    };
-
-    Size operator+(const Size& a, const Size& b);
-    Size operator+(const Size& a, int s);
-
-}   // ::Game
+}   // ::Physics
 

@@ -30,7 +30,6 @@ Matrix::Matrix(const Vector& x, const Vector& y, const Vector& z, const Vector& 
 
 Matrix Matrix::Rotation() const
 {
-    Matrix result;
     auto xl = X().Length();
     auto yl = Y().Length();
     auto zl = Z().Length();

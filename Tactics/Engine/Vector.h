@@ -8,7 +8,7 @@ struct Matrix;
 struct Line;
 struct Plane;
 
-struct Vector final
+struct Vector
 {
     Vector() = default;
     Vector(double x, double y, double z) :

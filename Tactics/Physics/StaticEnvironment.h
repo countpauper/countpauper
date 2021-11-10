@@ -2,7 +2,7 @@
 #include <string>
 #include "IEnvironment.h"
 #include "VoxelData.h"
-
+#include "Grid.h"
 
 namespace Physics
 {
@@ -27,6 +27,5 @@ public:
     void Tick(double seconds) override;
 private:
     VoxelData data;
-    const static Engine::Vector gridSize;
 };
 }

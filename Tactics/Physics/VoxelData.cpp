@@ -26,7 +26,7 @@ double VoxelData::Density(const Position& position) const
 
 double VoxelData::Density(const Engine::Coordinate& c) const
 {
-    auto gridPosition = Grid(c - grid * 0.5);
+    auto gridPosition = grid(c - grid * 0.5);
     double d[8];
     int i = 0;
     Position dP;
@@ -69,7 +69,7 @@ double VoxelData::Temperature(const Position& position) const
 
 double VoxelData::Temperature(const Engine::Coordinate& c) const
 {
-    auto gridPosition = Grid(c - grid * 0.5);
+    auto gridPosition = grid(c - grid * 0.5);
     double t[8];
     int i = 0;
     Position dP;
@@ -83,7 +83,7 @@ double VoxelData::Temperature(const Engine::Coordinate& c) const
             }
         }
     }
-    Engine::Vector gridWeight = c - Center(gridPosition);
+    Engine::Vector gridWeight = c - grid.Center(gridPosition);
     gridWeight.x /= grid.x;
     gridWeight.y /= grid.y;
     gridWeight.z /= grid.z;
@@ -136,21 +136,12 @@ unsigned VoxelData::GridIndex(const Position& p) const
     return UncheckedGridIndex(p);
 }
 
-
-Position VoxelData::Grid(const Engine::Coordinate& meters) const
-{
-    return Position(
-        int(std::floor(meters.x / grid.x)),
-        int(std::floor(meters.y / grid.y)),
-        int(std::floor(meters.z / grid.z)));
-}
-
 Position VoxelData::ClippedGrid(const Engine::Coordinate& meters) const
 {
     Box bounds = Bounds();
     Engine::AABB box(Engine::Coordinate(bounds.Start().x*grid.x, bounds.Start().y*grid.y, bounds.Start().z*grid.z),
         Engine::Coordinate(bounds.End().x*grid.x, bounds.End().y*grid.y, bounds.End().z*grid.z));
-    return Grid(box.Clip(meters));
+    return grid(box.Clip(meters));
 }
 
 
@@ -162,7 +153,7 @@ Engine::Vector VoxelData::GridSize() const
 
 double VoxelData::VoxelVolume() const
 {
-    return 1000.0 * grid.x * grid.y  * grid.z;
+    return 1000.0 * grid.Volume();
 }
 
 Engine::Coordinate VoxelData::Center(const Position& p) const
@@ -329,7 +320,7 @@ VoxelData::Section VoxelData::In(const Box& box) const
 
 VoxelData::Section VoxelData::In(const Engine::AABB& meters) const
 {
-    return In(Box(Grid(meters.Begin()), Grid(meters.End())));
+    return In(Box(grid(meters.Begin()), grid(meters.End())));
 }
 
 Position VoxelData::Clip(const Position& p) const
@@ -341,12 +332,12 @@ size_t VoxelData::Fill(const Engine::IVolume& v, const Material& m, const double
 {
     size_t filled = 0;
     auto bb = v.GetBoundingBox() & BoundingBox();
-    Box volBB(Grid(bb.Begin()), Grid(bb.End()) + Position(1, 1, 1));
+    Box volBB(grid(bb.Begin()), grid(bb.End()) + Position(1, 1, 1));
     std::map<Position, Engine::Range<int>> dbg;
     for (auto& voxel : In(volBB))
     {
         auto center = Center(voxel.first);
-        if (v.Distance(center) <= 0)
+        if (v.Contains(center))
         {
             (*this)[voxel.first] = { &m, float(temperature), float(m.Density(PascalPerAtmosphere, temperature)) };
             ++filled;

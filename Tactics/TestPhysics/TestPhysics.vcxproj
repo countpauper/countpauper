@@ -32,6 +32,9 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+  </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
   </ItemGroup>
@@ -47,6 +50,7 @@
     </ClCompile>
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="StaticEnvironment.cpp" />
+    <ClCompile Include="TreeGrid.cpp" />
     <ClCompile Include="VoxelData.cpp" />
   </ItemGroup>
   <ItemGroup>

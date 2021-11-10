@@ -17,7 +17,7 @@
 #include "Engine/Plane.h"
 #include "Engine/Utils.h"
 #include "Engine/AxisAlignedBoundingBox.h"
-#include "Physics/StaticEnvironment.h"
+#include "Physics/TreeGrid.h"
 #include "El.h"
 #include <string>
 
@@ -32,7 +32,7 @@ VoxelMap::VoxelMap() :
 VoxelMap::VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude) :
     grid(HorizontalGrid, HorizontalGrid, VerticalGrid),
     size(longitude, latitude, altitude),
-    physical(std::make_unique<Physics::StaticEnvironment>(Engine::Vector(size.x*grid.x, size.y*grid.y, size.z*grid.z), grid)),
+    physical(std::make_unique<Physics::TreeGrid>(Engine::Vector(size.x*grid.x, size.y*grid.y, size.z*grid.z), grid)),
     time(0),
     gravity(-10.0),
     planetRadius(6.371e6),  // assume earth sized planet
@@ -85,7 +85,7 @@ void VoxelMap::Space(const Physics::Size& size)
 
 void VoxelMap::Space(const Engine::Vector& size)
 {
-    this->physical = std::make_unique<Physics::StaticEnvironment>(size, Engine::Vector(HorizontalGrid, HorizontalGrid, VerticalGrid));
+    this->physical = std::make_unique<Physics::TreeGrid>(size, Engine::Vector(HorizontalGrid, HorizontalGrid, VerticalGrid));
     this->size = Physics::Size(int(std::round(size.x / grid.x)),
         int(std::round(size.y / grid.y)),
         int(std::round(size.z / grid.z)));

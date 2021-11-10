@@ -13,6 +13,8 @@ public:
     virtual AABB GetBoundingBox() const = 0;
     // Distance from a point to the volume. distance==0 means the surface of the volume. distance<0 means inside the volume
     virtual double Distance(const Coordinate& p) const = 0;
+    // Check whether the volume contains a point
+    bool Contains(const Coordinate& p) const { return Distance(p) <= 0; }
 };
 
 

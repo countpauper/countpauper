@@ -89,9 +89,17 @@
       <AdditionalLibraryDirectories>..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Debug;..\..\Dependencies\libxml\lib;..\..\Dependencies\zlib\lib;$(TargetDir);..\..\Dependencies\glew\lib\Release\x64</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Message>Testing Game</Message>
-      <Command>$(TargetPath) </Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>$(TargetPath) </Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>Testing Game</Message>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

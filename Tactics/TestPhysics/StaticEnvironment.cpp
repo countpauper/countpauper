@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Physics/StaticEnvironment.h"
+#include "Engine/Volume.h"
 
 namespace Physics
 {

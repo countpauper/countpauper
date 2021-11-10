@@ -45,7 +45,7 @@ Engine::Vector StaticEnvironment::Force(const Engine::IVolume& c) const
 const Material* StaticEnvironment::GetMaterial(const Engine::Coordinate& c) const
 {
     // TODO: grid size in the environment or the data
-    Position p(data.Grid(c));
+    Position p(data.grid(c));
     if (!data.IsInside(p))
         return nullptr;
     return &data.MaterialAt(p);
@@ -53,7 +53,7 @@ const Material* StaticEnvironment::GetMaterial(const Engine::Coordinate& c) cons
 
 Engine::RGBA StaticEnvironment::Color(const Engine::Line& l) const
 {
-    Position p(data.Grid(l.b));
+    Position p(data.grid(l.b));
     if (!data.IsInside(p))
         return Engine::RGBA::transparent;
     return data[p].Color(l.Length());

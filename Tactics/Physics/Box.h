@@ -1,5 +1,6 @@
 #pragma once
 #include "Position.h"
+#include "Size.h"
 #include "Engine/Range.h"
 
 namespace Physics
