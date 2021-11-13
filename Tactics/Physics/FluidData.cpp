@@ -68,7 +68,7 @@ void FluidDynamics::Data::InvalidateCorners()
             if (d0.IsParallel(d1))
                 continue;   // not a corner
             Corner corner(*this, d0 | d1);
-            //OutputDebugStringW((std::wstring(L"Voxel Corner ") + Engine::ToWString(d0) + L" / " + Engine::ToWString(d1) + L" Volume= " + std::to_wstring(corner.box.Volume()) + L"\n").c_str());
+            //Engine::Debug::Log(std::wstring(L"Voxel Corner ") + Engine::ToWString(d0) + L" / " + Engine::ToWString(d1) + L" Volume= " + std::to_wstring(corner.box.Volume()) + L"\n");
             for (auto v : corner)
             {
                 SetInvalid(v.first);
@@ -152,7 +152,7 @@ void FluidDynamics::Data::Flux::InvalidateCorners()
             if (d0.IsParallel(d1))
                 continue;
             Corner corner(*this, d0 | d1);
-            //OutputDebugStringW((std::wstring(L"Flux Corner ")+Engine::ToWString(d0) +L" / " + Engine::ToWString(d1) + L" Volume= " + std::to_wstring(corner.box.Volume())+L"\n").c_str());
+            // Engine::Debug::Log(std::wstring(L"Flux Corner ")+Engine::ToWString(d0) +L" / " + Engine::ToWString(d1) + L" Volume= " + std::to_wstring(corner.box.Volume())+L"\n");
 
             for (auto fluxPair : corner)
             {

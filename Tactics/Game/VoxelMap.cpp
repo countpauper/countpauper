@@ -16,6 +16,7 @@
 #include "Engine/Matrix.h"
 #include "Engine/Plane.h"
 #include "Engine/Utils.h"
+#include "Engine/Debug.h"
 #include "Engine/AxisAlignedBoundingBox.h"
 #include "Physics/TreeGrid.h"
 #include "El.h"
@@ -130,7 +131,7 @@ void VoxelMap::Air(double temperature, double meters)
         auto temperature = AtmosphericTemperature(elevation + layerThickness *0.5);
         dbgCount += physical->Fill(layer, Physics::Material::air, temperature);
     }
-    OutputDebugStringW(std::wstring(L"Air =" + std::to_wstring(dbgCount) + L" voxels\n").c_str());
+    Engine::Debug::Log(L"Air =" + std::to_wstring(dbgCount) + L" voxels\n");
 }
 
 void VoxelMap::Wind(const Engine::Vector& speed)
@@ -146,7 +147,7 @@ void VoxelMap::Sea(double level, double temperature)
         Engine::Range<double>::infinity(), 
         Engine::Range<double>(0, level));
     auto dbgCount = physical->Fill(sea, Physics::Material::water, temperature);
-    OutputDebugStringW((std::wstring(L"Sea level ") + Engine::ToWString(level) + L"=" + std::to_wstring(dbgCount) + L" voxels\n").c_str());
+    Engine::Debug::Log(std::wstring(L"Sea level ") + Engine::ToWString(level) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
 }
 
 class Hill : public Engine::IVolume
@@ -204,7 +205,7 @@ void VoxelMap::Hill(const Engine::Line& ridgeLine, double stddev)
     Game::Hill hill(ridgeLine, stddev);
 
     auto dbgCount = physical->Fill(hill, Physics::Material::stone, atmosphericTemperature);
-    OutputDebugStringW((std::wstring(L"Hill at ") + Engine::ToWString(ridgeLine) + L"=" + std::to_wstring(dbgCount) + L" voxels\n").c_str());
+    Engine::Debug::Log(std::wstring(L"Hill at ") + Engine::ToWString(ridgeLine) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
 }
 
 void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickness)
@@ -222,7 +223,7 @@ void VoxelMap::Wall(const Engine::Line& bottomLine, double height, double thickn
         Engine::Vector(bottomLine.a));
 
     auto dbgCount = physical->Fill(box, Physics::Material::stone, atmosphericTemperature);
-    OutputDebugStringW((std::wstring(L"Wall at ") + Engine::ToWString(bottomLine) + L"=" + std::to_wstring(dbgCount)+L" voxels\n").c_str());
+    Engine::Debug::Log(std::wstring(L"Wall at ") + Engine::ToWString(bottomLine) + L"=" + std::to_wstring(dbgCount)+L" voxels\n");
 
 }
 
@@ -311,7 +312,10 @@ void VoxelMap::GenerateMesh()
 void VoxelMap::Render() const
 {
     if (!mesh)
+    {
+        Engine::Debug::Timer t(L"Genrate Mesh");
         const_cast<VoxelMap*>(this)->GenerateMesh();
+    }
     if (mesh)
     {
         glEnable(GL_LIGHTING);

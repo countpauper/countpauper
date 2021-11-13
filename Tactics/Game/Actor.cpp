@@ -3,6 +3,7 @@
 #include "Engine/Text.h"
 #include "Engine/Geometry.h"
 #include "Engine/Coordinate.h"
+#include "Engine/Debug.h"
 #include "Game/Skills.h"
 #include "Actor.h"
 #include "Action.h"
@@ -139,7 +140,7 @@ namespace Game
         if (Dead())
         {
             mp = 0;
-            OutputDebugStringW((L"Dead " + name + L"\r\n").c_str());
+            Engine::Debug::Log(L"Dead " + name);
         }
         else
         {
@@ -150,12 +151,12 @@ namespace Game
             if (CanAct())
             {
                 active = true;
-                OutputDebugStringW((L"Turn " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
+                Engine::Debug::Log(L"Turn " + name + L" MP=" + mps.Description() + L"\r\n");
             }
             else
             {
                 active = false;
-                OutputDebugStringW((L"Skip " + name + L" MP=" + mps.Description() + L"\r\n").c_str());
+                Engine::Debug::Log(L"Skip " + name + L" MP=" + mps.Description() + L"\r\n");
             }
         }
     }

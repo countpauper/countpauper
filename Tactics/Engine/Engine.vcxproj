@@ -82,6 +82,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="CSV.h" />
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="Error.h" />
     <ClInclude Include="from_string.h" />
     <ClInclude Include="Geometry.h" />
@@ -114,6 +115,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Coordinate.cpp" />
+    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="from_string.cpp" />

@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Engine/Random.h"
 #include "Engine/Utils.h"
+#include "Engine/Debug.h"
 #include "Game/Skills.h"
 #include "Plan.h"
 #include "Action.h"
@@ -260,13 +261,13 @@ namespace Game
         {
 			if (score < outcome.first)
             {
-				OutputDebugStringW((L"Execute: " + Description() + L" " + outcome.second->Description() + L"@" + std::to_wstring(outcome.first* 100) + L"%\r\n").c_str());
+				Engine::Debug::Log(L"Execute: " + Description() + L" " + outcome.second->Description() + L"@" + std::to_wstring(outcome.first* 100) + L"%\r\n");
 				Apply(*outcome.second, game);
                 return true;
             }
 			score -= outcome.first;
         }
-        OutputDebugStringW((L"Execute: " + Description() + L" Fail >" + std::to_wstring(score*100.0) + L"%\r\n").c_str());
+        Engine::Debug::Log(L"Execute: " + Description() + L" Fail >" + std::to_wstring(score*100.0) + L"%\r\n");
         return false;
     }
 
@@ -629,7 +630,7 @@ namespace Game
 
     bool SkipPlan::Execute(Game& game) const
     {
-        OutputDebugStringW((L"Execute: " + Description() + L"\r\n").c_str());
+        Engine::Debug::Log(L"Execute: " + Description() + L"\r\n");
         const_cast<Actor&>(actor).Deactivate();
         return true;
     }

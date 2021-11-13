@@ -6,6 +6,7 @@
 #include "Actor.h"
 #include "Plan.h"
 #include "Item.h"
+#include "Engine/Debug.h"
 #include <fstream>
 
 namespace Game
@@ -45,7 +46,7 @@ namespace Game
     {
         Identity& nonConstId = const_cast<Identity&>(actor);   // faster than reverse look up in objects
         nonConstId.Apply(state);
-		OutputDebugStringW((actor.Description() + L":" + description + L"\n").c_str());
+        Engine::Debug::Log(actor.Description() + L":" + description + L"\n");
     }
     void Game::Apply(IGame& root) const
     {
@@ -323,7 +324,7 @@ namespace Game
         {
             if (plan->Valid())
             {
-                OutputDebugStringW((L"Plan: " + plan->Description() + L" \r\n").c_str());
+                Engine::Debug::Log(L"Plan: " + plan->Description() + L" \r\n");
                 selectedActor->plan = std::move(plan);
                 for (auto actor : ActiveActors())
                 {
@@ -336,7 +337,7 @@ namespace Game
             }
             else
             {
-                OutputDebugStringW((L"Plan: " + plan->Description() + L" Failed\r\n").c_str());
+                Engine::Debug::Log(L"Plan: " + plan->Description() + L" Failed\r\n");
             }
         }
     }

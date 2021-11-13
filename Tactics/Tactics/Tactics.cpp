@@ -13,6 +13,7 @@
 #include "Engine/Random.h"
 #include "Engine/Image.h"
 #include "Engine/Timer.h"
+#include "Engine/Debug.h"
 #include "Game/Game.h"
 #include "SkillBar.h"
 #include "TurnList.h"
@@ -103,7 +104,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     }
 
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TACTICS));
-    OutputDebugStringW((std::wstring(L"Random=") + std::to_wstring(Engine::Random().GetSeed()) + L"\n").c_str());
+    Engine::Debug::Log(std::wstring(L"Random=") + std::to_wstring(Engine::Random().GetSeed()));
     // Main message loop:
     while (GetMessage(&msg, NULL, 0, 0))
     {
@@ -197,7 +198,10 @@ BOOL Start()
             MessageBox(NULL, L"Loading Game failed:  ", L"Error", MB_OK);
             return FALSE;
         }
-        fs >> *game;
+        {
+            Engine::Debug::Timer loadProfile(L"Load Map");
+            fs >> *game;
+        }
         if (fs.fail())
         {
             MessageBox(NULL, L"Reading Game failed:  ", L"Error", MB_OK);
@@ -372,7 +376,7 @@ void ShowClick()
 
 void Render()
 {
-    Engine::Timer performance;
+    Engine::Debug::Timer renderPerformance(L"Render");
 
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -429,8 +433,6 @@ void Render()
     ShowClick();
 
     list->Render();
-    auto duration = 1000.0*performance.Seconds();
-    OutputDebugStringW((std::wstring(L"Render in ") + std::to_wstring(duration) + L" ms\n").c_str());
 }
 
 //
@@ -554,10 +556,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 KillTimer(hWnd, 1);
             }
         }
-        camera.Key(wParam);
-        skills->Key(wParam);
-        list->Key(wParam);
-        game->Key(wParam);
+        camera.Key(unsigned(wParam));
+        skills->Key(unsigned(wParam));
+        list->Key(unsigned(wParam));
+        game->Key(unsigned(wParam));
         InvalidateRect(hWnd, nullptr, TRUE);
         break;
     case WM_CLOSE:
