@@ -1,1 +1,1 @@
-help {{ctx.alias}} {{"&*&"}} -here
+csettings 

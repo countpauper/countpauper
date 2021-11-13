@@ -18,6 +18,7 @@ public:
     int Volume() const;
     Size Extent() const;
 
+    bool Empty() const;
     bool Contains(const Position& position) const;
     bool operator[](const Position& position) { return Contains(position); }
     Box& Grow(int amount);
@@ -40,6 +41,7 @@ Box operator|(const Box& a, const Box& b);
 Box operator&(const Box& a, const Box& b);
 Box operator|(const Box& a, const Position& p);
 Box operator+(const Box& a, const Size& s);
+Box operator+(const Box& a, const Position& translation);
 std::ostream& operator<<(std::ostream& os, const Box& box);
 std::wostream& operator<<(std::wostream& os, const Box& box);
 

@@ -53,5 +53,6 @@ namespace Engine
     AABB operator|(const AABB& a, const AABB& b);
     AABB operator|(const AABB& a, const Coordinate& c);
     AABB operator&(const AABB& a, const AABB& b);
+    AABB operator*(const AABB& a, const Matrix& transformation);
 
 } // ::Engine

@@ -166,4 +166,10 @@ AABB operator&(const AABB& a, const AABB& b)
         a.Z() & b.Z());
 }
 
+AABB operator*(const AABB& a, const Matrix& transformation)
+{
+    return AABB(a) *= transformation;
+}
+
+
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <array>
 #include "IEnvironment.h"
 #include "Engine/Vector.h"
 #include "Physics/Size.h"
@@ -26,39 +27,59 @@ public:
     const Material* GetMaterial(const Engine::Coordinate& c) const override;
     Engine::RGBA Color(const Engine::Line& l) const override;
     void Tick(double seconds) override;
-    struct Node
+    
+    class Leaf;
+    class Node
     {
+    public:
+        virtual const Leaf* Get(const Position& p) const = 0;
+        static Grid grid;
+    };
+
+    class Leaf : public Node
+    {
+    public:
+        Leaf();
+        Leaf(const Material& m, double temperature);
+        const Leaf* Get(const Position& p) const override;
+
+        void Set(const Material* newMat);
+        const Material* GetMaterial() const;
+        double Temperature() const;
+        void SetTemperature(double t);
+        double Density() const;
+    private:
         // material: 0 = vacuum, air, water, earth, stone
         // amount 0 = empty, 15 = full/max density or granularity
         // hot = 0: temperature = 2 * k (0-510), 1 = 510 + 30 k (510-1275) 
         unsigned short material : 3, amount : 4, hot : 1, temperature : 8;
 
-        const double ColdTGradient = 2;
-        const double HotTGradient = 30;
-        const double HotOffset = 255.0*ColdTGradient;
+        const int ColdTGradient = 2;
+        const int HotTGradient = 30;
+        const int HotOffset = 255*ColdTGradient;
         static const Material* mats[];
-
-        Node();
-        void Set(const Material* material);
-        const Material* GetMaterial() const;
-        double Temperature() const;
-        void SetTemperature(double t);
-        double Density() const;
     };
-    const Node& operator[](const Position& p) const;
-    Node& operator[](const Position& p);
 private:
 
-    Box Bounds() const;
-    bool Inside(const Position& p) const;
-    const Node* Get(const Position& p) const;
-    unsigned Index(const Position&p) const;
-    using iterator = BoxIterator<TreeGrid, Node>;
-    using const_iterator = BoxIterator<const TreeGrid, const Node>;
-
-    Grid grid;
-    Size size;
-    std::vector<Node> data;
+    class Branch : public Node
+    {
+    public:
+        Branch(const Size& size);
+        unsigned Fill(const Engine::IVolume& v, const Position& offset, const Material& m, double temperature);
+        std::pair<double, double> GetTemperature(const Engine::IVolume& v, const Position& ofset) const;
+        const Leaf* Get(const Position& p) const;
+    private:
+        Position Pivot() const;
+        unsigned GetIndex(const Position& p) const;
+        Position GetOffset(unsigned index) const;
+        Box GetBounds(unsigned index) const;
+        static bool AllIn(const Box& box, const Engine::IVolume& v);
+        static double Overlap(const Box& box, const Engine::IVolume& v);
+        Size size;
+        std::array<std::unique_ptr<Node>, 8> nodes;
+    };
+    const Leaf* TreeGrid::Get(const Position& p) const;
+    std::unique_ptr<Branch> root;
 };
 
 }

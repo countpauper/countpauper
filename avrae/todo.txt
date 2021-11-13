@@ -21,8 +21,11 @@
     - effect: -e  [icon|text|off]
     - range: -r [icon|off]
     - Persist in !uvar (with help) dict {hp: effect: range:}
-- timeout in minutes?
+- timeout in minutes? (5m/5min) max is 600, but it's fine. don't need hours
+- auto timeout scaled to number of targets listed (10 seconds per + 20 seconds?)
 - timeout 0 is also off
+
+!qb transfer <from> <to> [<item>][...]
 
 !generate npc
     * speech and mannerism tables like https://www.reddit.com/r/BehindTheTables/comments/7fde9p/npc_voices_table/

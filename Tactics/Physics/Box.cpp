@@ -32,6 +32,11 @@ Position Box::End() const
     return Position(x.end, y.end, z.end); 
 }
 
+bool Box::Empty() const
+{
+    return !(x && y && z);
+}
+
 int Box::Volume() const
 {
     return Extent().Volume();
@@ -108,6 +113,11 @@ Box operator|(const Box& a, const Position& p)
 Box operator+(const Box& a, const Size& s)
 {
     return Box(a) += s;
+}
+
+Box operator+(const Box& a, const Position& translation)
+{
+    return Box(a) += translation;
 }
 
 std::ostream& operator<<(std::ostream& os, const Box& box)

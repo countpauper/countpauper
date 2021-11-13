@@ -31,12 +31,12 @@ public:
 protected:
 
 public:
-    using iterator = BoxIterator<VoxelData, Voxel>;
-    class const_iterator : public BoxIterator<const VoxelData, const Voxel>
+    using iterator = BoxDataIterator<VoxelData, Voxel>;
+    class const_iterator : public BoxDataIterator<const VoxelData, const Voxel>
     {
     public:
-        explicit const_iterator(const VoxelData& data) : BoxIterator<const VoxelData, const Voxel>(data) {}
-        explicit const_iterator(const VoxelData& data, const Box& box, const Position& position) : BoxIterator<const VoxelData, const Voxel>(data, box, position) {}
+        explicit const_iterator(const VoxelData& data) : BoxDataIterator<const VoxelData, const Voxel>(data) {}
+        explicit const_iterator(const VoxelData& data, const Box& box, const Position& position) : BoxDataIterator<const VoxelData, const Voxel>(data, box, position) {}
         const_iterator(const iterator& o) : const_iterator(o.data, o.box, o.position) {}
     };
     using value_type = const_iterator::value_type;

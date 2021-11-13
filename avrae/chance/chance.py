@@ -142,7 +142,7 @@ save_query = None
 spell_query = None
 if executor:
 	if typeof(executor)=='AliasCharacter':	# duck say quack ?
-		criton = executor.csettings.get('criton', 20)
+		criton = executor. TODO will be renamed to crit_on csettings.get('criton', 20)
 		reroll_luck = executor.csettings.get('reroll')
 		reliability = 10 if executor.csettings.get('talent') else None
 

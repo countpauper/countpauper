@@ -176,6 +176,7 @@
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="FluidData.cpp" />
     <ClCompile Include="FluidDynamics.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Matetrial.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Position.cpp" />
