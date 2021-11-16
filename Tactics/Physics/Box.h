@@ -11,8 +11,8 @@ class Box
 public:
     Box(const Engine::Range<int>& x, const Engine::Range<int>& y, const Engine::Range<int>& z);
     Box(const Position& from, const Position& to);
-    Box(const Position& from, const Size& extent) : Box(from, from + extent) {} 
-    Box(const Size& extent) : Box(Position(0, 0, 0), extent) {}
+    Box(const Position& from, const Size& extent) : Box(from, from + extent) {}
+    explicit Box(const Size& extent) : Box(Position(0, 0, 0), extent) {}
     Position Start() const;
     Position End() const;
     int Volume() const;

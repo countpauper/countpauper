@@ -2,22 +2,23 @@
 #include "TreeGrid.h"
 #include "Engine/Line.h"
 #include "Engine/Volume.h"
+#include "Engine/Debug.h"
 #include <numeric>
+#include <sstream>
 
 namespace Physics
 {
 
-TreeGrid::TreeGrid(const Engine::Vector& extent, const Engine::Vector& grid) :
+TreeGrid::TreeGrid(const Engine::Vector& extent, const Grid& grid) :
     root(std::make_unique<Branch>(Size(int(std::round(extent.x / grid.x)), int(std::round(extent.y / grid.y)), int(std::round(extent.z / grid.z)))))
 {
-    Node::grid = Grid(grid);
+    Node::grid = grid;
     root->Fill(Engine::AABox(Engine::Coordinate(0, 0, 0), extent), Position(), Material::vacuum, 0);
 }
 
 size_t TreeGrid::Fill(const Engine::IVolume& v, const Material& m, double temperature)
 {
-    root->Fill(v, Position(), m, temperature);
-    return 0;
+    return root->Fill(v, Position(), m, temperature);
 }
 
 void TreeGrid::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
@@ -65,10 +66,10 @@ const Material* TreeGrid::GetMaterial(const Engine::Coordinate& c) const
 
 Engine::RGBA TreeGrid::Color(const Engine::Line& l) const
 {
-    Position p = Node::grid(l.a);
+    Position p = Node::grid(l.b);
     if (const Leaf* n = Get(p))
     {
-        return n->GetMaterial()->color;
+        return n->Color();
     }
     else
     {
@@ -80,6 +81,12 @@ void TreeGrid::Tick(double seconds)
 {
 }
 
+
+double TreeGrid::Measure(const Material* material) const
+{
+    return root->Measure(material);
+}
+
 TreeGrid::Leaf::Leaf():
     material(0),
     amount(0),
@@ -88,7 +95,8 @@ TreeGrid::Leaf::Leaf():
 {
 }
 
-TreeGrid::Leaf::Leaf(const Material& m, double temperature)
+TreeGrid::Leaf::Leaf(const Material& m, double temperature) :
+    amount(0)
 {
     Set(&m);
     SetTemperature(temperature);
@@ -111,7 +119,13 @@ void TreeGrid::Leaf::Set(const Material* newMat)
     for (material = 0; mats[material]; material++)
     {
         if (mats[material] == newMat)
+        {
+            if (newMat->normalDensity)
+                amount = 15;
+            else
+                amount = 0;
             return;
+        }
     }
     throw std::runtime_error("Material needs to be a standard one");
 }
@@ -124,8 +138,18 @@ const TreeGrid::Leaf* TreeGrid::Leaf::Get(const Position& p) const
 
 const Material* TreeGrid::Leaf::GetMaterial() const
 {
-
     return mats[material];
+}
+
+Engine::RGBA TreeGrid::Leaf::Color() const
+{
+    if (!material)
+        return Engine::RGBA();
+    else
+    {
+        auto factor = amount/15;
+        return GetMaterial()->color.Translucent(1.0 / factor);
+    }
 }
 
 double TreeGrid::Leaf::Temperature() const
@@ -202,7 +226,7 @@ bool TreeGrid::Branch::AllIn(const Box& box, const Engine::IVolume& v)
     return true;
 }
 
-double TreeGrid::Branch::Overlap(const Box& box, const Engine::IVolume& v)
+unsigned TreeGrid::Branch::Overlap(const Box& box, const Engine::IVolume& v)
 {
     auto count = 0;
     for (BoxIterator i(box); i != i.end(); ++i)
@@ -215,32 +239,80 @@ double TreeGrid::Branch::Overlap(const Box& box, const Engine::IVolume& v)
     return count;
 }
 
-unsigned TreeGrid::Branch::Fill(const Engine::IVolume& v, const Position& offset, const Material& m, double temperature)
+unsigned TreeGrid::Branch::Fill(const Engine::IVolume& v, const Position& offset, const Material& m, double temperature, const Material* oldMaterial, double oldTemperature)
 {
     unsigned filled = 0;
-    Box volumeBounds = grid(v.GetBoundingBox());
+    Box volumeBounds = grid(v.GetBoundingBox()); 
     for (auto idx = 0; idx< nodes.size(); ++idx)
     {
         Physics::Box branchBounds = GetBounds(idx) + offset;
-       
+
+        std::wstringstream boundStr;
+        boundStr << branchBounds;
+
+        // None in 
         if ((branchBounds & volumeBounds).Empty())
-            continue;
-        if (AllIn(branchBounds, v))
         {
+            if (oldMaterial)
+            {  // replace remaining sub node with original material from the old parent
+                // there are no sub branched, because the parent was a leaf 
+                assert(!nodes[idx]);    // must be growing new branches
+                nodes[idx] = std::make_unique<Leaf>(*oldMaterial, oldTemperature);
+            }
+            else
+            {   // keep existing branches if any or keep unfilled
+                //Engine::Debug::Log(L"No " + std::wstring(m.name) + L" at " + boundStr.str());
+                continue;
+            }
+        }
+        // All in: replace with a leaf full of new material
+        else if (AllIn(branchBounds, v))
+        {
+            Engine::Debug::Log(std::wstring(m.name) + L" at " + boundStr.str());
             nodes[idx] = std::make_unique<Leaf>(m, temperature);
             filled += branchBounds.Volume();
         }
-        else
+        else // Partial in, create/reuse a branch for the hybrid materials
         {
+            const Material* restMaterial = oldMaterial;
+            double restTemperature = oldTemperature;
+            // Split up an existing leaf by creating a new branch and setting all unset to the previous material
+            if (Leaf* leaf = dynamic_cast<Leaf*>(nodes[idx].get()))
+            {
+                assert(restMaterial == nullptr);    // This is a leaf so parent was not, so it can't have provided a material
+                restMaterial = leaf->GetMaterial();
+                restTemperature = leaf->Temperature();
+                
+                if (restMaterial == &m) //&& TODO, what precision if any? (restTemperature==temperature))
+                {   // new material is filled in a leaf that's the same material, so just keep it 
+                    filled += Overlap(branchBounds&volumeBounds, v);
+                    continue;
+                }
+            }
             Branch* branch = dynamic_cast<Branch*>(nodes[idx].get());
             if (!branch)
             {
-                nodes[idx] = std::make_unique<Branch>(branchBounds.Extent());
-                branch = static_cast<Branch*>(nodes[idx].get());
+                if (branchBounds.Volume() == 1)
+                {   // partial in (Not AllIn) with one grid means it wasn't in at all, just bounding box slightly overlaps
+                    if (restMaterial)
+                    {
+                        nodes[idx] = std::make_unique<Leaf>(*restMaterial, restTemperature);
+                        filled += 1;
+                    }
+                    else
+                    {
+                        nodes[idx].reset();
+                    }
+                }
+                else
+                {   // big enough to make a new branch
+                    branch = static_cast<Branch*>((nodes[idx] = std::make_unique<Branch>(branchBounds.Extent())).get());
+                }
             }
             if (branch)
             {
-                filled += branch->Fill(v, offset + branchBounds.Start(), m, temperature);
+                filled += branch->Fill(v, branchBounds.Start(), m, temperature, restMaterial, restTemperature);
+                // TODO: possibly optimize and replace branch by leaf if all branch is leaf of the same (from multiple nearby fills)
             }
         }
 
@@ -288,7 +360,7 @@ std::pair<double, double> TreeGrid::Branch::GetTemperature(const Engine::IVolume
 
 Position TreeGrid::Branch::Pivot() const
 {   
-    return Position(size.x >> 1, size.y >> 1, size.z >> 1);
+    return Position((size.x+1) >> 1, (size.y+1) >> 1, (size.z+1) >> 1);
 /*        // TODO can maybe be optimized by equalizing the size in the constructor, but then the maps size might get much bigger
         // or by caching one coordinate in the constructor
         // can also just take the middle, we have uncubed nodes anyway 
@@ -309,10 +381,37 @@ const TreeGrid::Leaf* TreeGrid::Branch::Get(const Position& p) const
 {
     auto idx = GetIndex(p);
     if (auto branch = nodes[idx].get())
-        return branch->Get(p);
+        return branch->Get(p - GetOffset(idx));
     else
         return nullptr;
 }
+
+double TreeGrid::Branch::Measure(const Material* material) const
+{
+    double total = 0;
+    for (auto idx = 0; idx< nodes.size(); ++idx)
+    {
+        auto bounds = GetBounds(idx);
+        auto vol = bounds.Volume() * grid.Volume();
+        const auto& n = nodes[idx];
+        if (const auto* leaf = dynamic_cast<const Leaf*>(n.get()))
+        {
+            if (leaf->GetMaterial() == material)
+                total += vol;
+        }
+        else if (const auto* branch = dynamic_cast<const Branch*>(n.get()))
+        {
+            total += branch->Measure(material);
+        }
+        else if (!material)
+        {   // no material in non nodes
+            assert(!n);
+            total += vol;
+        }
+    }
+    return total;
+}
+
 
 
 }

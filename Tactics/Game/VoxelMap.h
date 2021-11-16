@@ -5,6 +5,7 @@
 #include "Physics/Plane.h"
 #include "Physics/Box.h"
 #include "Physics/IEnvironment.h"
+#include "Physics/Grid.h"
 #include <string>
 
 namespace Engine { class Mesh;  }
@@ -38,9 +39,11 @@ public:
     double Mass() const;
     unsigned WindForce() const; // Beaufort
 */
+    std::map<Element, double> ElementVolume() const;
     // Map
     void Render() const override;
     void Tick(double seconds) override;
+
 protected:
     void GenerateMesh();
     void RenderPretty() const;
@@ -52,7 +55,7 @@ protected:
     float AtmosphericTemperature(double elevation) const;
     float AtmosphericPressure(double elevation) const;
 protected:
-    Engine::Vector grid;
+    Physics::Grid grid;
     Physics::Size size;
     std::unique_ptr<Physics::IEnvironment> physical;
     std::unique_ptr<Engine::Mesh> mesh;

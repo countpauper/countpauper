@@ -63,4 +63,10 @@ void StaticEnvironment::Tick(double seconds)
 {
 
 }
+
+double StaticEnvironment::Measure(const Material* material) const
+{
+    return data.VoxelVolume();
+}
+
 }

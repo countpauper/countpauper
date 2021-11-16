@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include <debugapi.h>
+#include <iostream>
 #include "Debug.h"
 
 namespace Engine::Debug
@@ -8,14 +9,28 @@ namespace Engine::Debug
 
 void Log(std::string_view txt)
 {
-    OutputDebugStringA(txt.data());
-    OutputDebugStringA("\n");
+    if (GetConsoleWindow())
+    {
+        std::cout << txt.data() << std::endl;
+    }
+    else
+    {
+        OutputDebugStringA(txt.data());
+        OutputDebugStringA("\n");
+    }
 }
 
 void Log(std::wstring_view txt)
 {
-    OutputDebugString(txt.data());
-    OutputDebugString(L"\n");
+    if (GetConsoleWindow())
+    {
+        std::wcout << txt.data() << std::endl;
+    }
+    else
+    {
+        OutputDebugString(txt.data());
+        OutputDebugString(L"\n");
+    }
 }
 
 Timer::Timer(std::wstring_view desc) :

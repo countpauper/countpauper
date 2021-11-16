@@ -120,7 +120,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <AdditionalDependencies>opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;libfastsignals-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Dependencies\glew\lib\Release\x64;..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Release;..\..\Dependencies\libxml\lib;..\..\Dependencies\zlib\lib;$(TargetDir);..\..\Dependencies\glew\lib\Release\x64</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>$(TargetPath) </Command>

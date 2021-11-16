@@ -52,7 +52,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>..;..\iconv\include;..\libxml2\include;..\..\Dependencies\fastsignals\libfastsignals\include;..\Stb;..\..\Dependencies\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -67,7 +67,7 @@
     </Link>
     <PostBuildEvent>
       <Command>copy_dlls.bat $(TargetDir)</Command>
-      <Message>copy libxml2</Message>
+      <Message>copy dlls to $(TargetDir)</Message>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>
@@ -85,7 +85,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64;DEBUG;_WINDOWS;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..;..\iconv\include;..\libxml2\include;..\..\Dependencies\fastsignals\libfastsignals\include;..\Stb;..\..\Dependencies\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -97,12 +97,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;zlib.dll.a;libfastsignals-v141-x64;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Dependencies\libxml\lib;..\..\Dependencies\glew\lib\Release\x64;..\..\Dependencies\zlib\lib;..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Release;$(TargetDir);C:\libraries\boost\boost_1_69_0\lib32-msvc-14.1;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;opengl32.lib;glew32.lib;libz.dll.a;libxml2.dll.a;libfastsignals-v141-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Dependencies\libxml\lib;..\..\Dependencies\glew\lib\Release\x64;..\..\Dependencies\zlib\lib;..\libxml2\lib;..\zlib\lib;..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Release;$(TargetDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy_dlls.bat $(TargetDir)</Command>
-      <Message>copy libxml2</Message>
+      <Message>copy dlls to $(TargetDir)</Message>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>
@@ -111,7 +111,7 @@
       </Message>
     </CustomBuildStep>
     <ProjectReference>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -25,6 +25,8 @@ public:
     const Material* GetMaterial(const Engine::Coordinate& c) const override;
     Engine::RGBA Color(const Engine::Line& l) const override;
     void Tick(double seconds) override;
+    double Measure(const Material* material) const override;
+
 private:
     VoxelData data;
 };

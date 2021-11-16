@@ -13,7 +13,7 @@ class TreeGrid : public IEnvironment
 {
 public:
     // size in meter, grid in meter/voxel
-    TreeGrid(const Engine::Vector& extent, const Engine::Vector& grid = Engine::Vector(1, 1, 1));
+    TreeGrid(const Engine::Vector& extent, const Grid& grid = Grid());
 
     size_t Fill(const Engine::IVolume& v, const Material& m, double temperature) override;
     void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) override;
@@ -27,7 +27,8 @@ public:
     const Material* GetMaterial(const Engine::Coordinate& c) const override;
     Engine::RGBA Color(const Engine::Line& l) const override;
     void Tick(double seconds) override;
-    
+    double Measure(const Material* material) const override;
+
     class Leaf;
     class Node
     {
@@ -45,6 +46,7 @@ public:
 
         void Set(const Material* newMat);
         const Material* GetMaterial() const;
+        Engine::RGBA Color() const;
         double Temperature() const;
         void SetTemperature(double t);
         double Density() const;
@@ -65,16 +67,17 @@ private:
     {
     public:
         Branch(const Size& size);
-        unsigned Fill(const Engine::IVolume& v, const Position& offset, const Material& m, double temperature);
+        unsigned Fill(const Engine::IVolume& v, const Position& offset, const Material& m, double temperaturee, const Material* restMaterial=nullptr, double restTemperature = 0);
         std::pair<double, double> GetTemperature(const Engine::IVolume& v, const Position& ofset) const;
         const Leaf* Get(const Position& p) const;
+        double Measure(const Material* material) const;
     private:
         Position Pivot() const;
         unsigned GetIndex(const Position& p) const;
         Position GetOffset(unsigned index) const;
         Box GetBounds(unsigned index) const;
         static bool AllIn(const Box& box, const Engine::IVolume& v);
-        static double Overlap(const Box& box, const Engine::IVolume& v);
+        static unsigned  Overlap(const Box& box, const Engine::IVolume& v);
         Size size;
         std::array<std::unique_ptr<Node>, 8> nodes;
     };

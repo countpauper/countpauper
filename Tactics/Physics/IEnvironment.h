@@ -29,8 +29,8 @@ public:
     virtual Engine::Vector Force(const Engine::IVolume& c) const = 0;
     virtual const Material* GetMaterial(const Engine::Coordinate& c) const = 0;
     virtual Engine::RGBA Color(const Engine::Line& l) const = 0;
+    virtual double Measure(const Material* material) const = 0;
 
     virtual void Tick(double seconds) = 0;
-
 };
 }
