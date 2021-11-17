@@ -52,6 +52,10 @@ struct Range
         end *= v;
         return *this;
     }
+    Range& operator/=(T v)
+    {
+        return operator()(1 / v);
+    }
 
     Range& Expand(T v)
     {
@@ -96,11 +100,25 @@ struct Range
     T end;
 
    
+    bool infinite() const
+    {
+        return std::isinf(begin) || std::isinf(end);
+    }
+    bool finite() const
+    {
+        return !infinite();
+    }
     static constexpr Range infinity()
     {
         static_assert(std::numeric_limits<T>::has_infinity);
         return Range(-std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity());
     }
+
+    static constexpr Range max()
+    {
+        return Range(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
+    }
+
     static constexpr Range null()
     {
         return Range(0, 0);
@@ -135,7 +153,11 @@ Range<T> operator*(const Range<T>& a, T v)
 {
     return Range(a) *= v;
 }
-
+template<typename T>
+Range<T> operator/(const Range<T>& a, T v)
+{
+    return Range(a) /= v;
+}
 template<typename T>
 Range<T> operator&(const Range<T>& a, const Range<T>& b)
 {

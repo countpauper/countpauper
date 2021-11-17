@@ -71,6 +71,7 @@ private:
         std::pair<double, double> GetTemperature(const Engine::IVolume& v, const Position& ofset) const;
         const Leaf* Get(const Position& p) const;
         double Measure(const Material* material) const;
+        Size GetSize() const;
     private:
         Position Pivot() const;
         unsigned GetIndex(const Position& p) const;

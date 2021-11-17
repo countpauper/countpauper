@@ -487,8 +487,8 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
     int waterLevel;
     double temperature;
     s >> temperature >> waterLevel;
-    //map.Sea(waterLevel, temperature);
-    //map.Air(temperature, 20000);
+    map.Sea(waterLevel, temperature);
+    map.Air(temperature, 20000);
     unsigned procedures;
     s >> procedures;
     for (unsigned p = 0; p < procedures; ++p)

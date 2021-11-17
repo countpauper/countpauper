@@ -48,7 +48,11 @@ Engine::Vector TreeGrid::Force(const Engine::IVolume& c) const
 
 const TreeGrid::Leaf* TreeGrid::Get(const Position& p) const
 {
-    return root->Get(p);
+    Box bounds (root->GetSize());
+    if (bounds.Contains(p))
+        return root->Get(p);
+    else
+        return nullptr;
 }
 
 const Material* TreeGrid::GetMaterial(const Engine::Coordinate& c) const
@@ -147,8 +151,14 @@ Engine::RGBA TreeGrid::Leaf::Color() const
         return Engine::RGBA();
     else
     {
-        auto factor = amount/15;
-        return GetMaterial()->color.Translucent(1.0 / factor);
+        const auto* mat = GetMaterial();
+        double temperature = Temperature();
+        double translucency = 1.0;
+        if (mat->Fluid(temperature))
+            translucency = 0.25;
+        else if (mat->Gas(temperature))
+            translucency = 0.1;
+        return mat->color.Translucent(translucency);
     }
 }
 
@@ -268,7 +278,7 @@ unsigned TreeGrid::Branch::Fill(const Engine::IVolume& v, const Position& offset
         // All in: replace with a leaf full of new material
         else if (AllIn(branchBounds, v))
         {
-            Engine::Debug::Log(std::wstring(m.name) + L" at " + boundStr.str());
+            //Engine::Debug::Log(std::wstring(m.name) + L" at " + boundStr.str());
             nodes[idx] = std::make_unique<Leaf>(m, temperature);
             filled += branchBounds.Volume();
         }
@@ -384,6 +394,11 @@ const TreeGrid::Leaf* TreeGrid::Branch::Get(const Position& p) const
         return branch->Get(p - GetOffset(idx));
     else
         return nullptr;
+}
+
+Size TreeGrid::Branch::GetSize() const
+{
+    return size;
 }
 
 double TreeGrid::Branch::Measure(const Material* material) const

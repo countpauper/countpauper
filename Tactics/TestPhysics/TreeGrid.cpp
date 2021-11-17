@@ -6,7 +6,6 @@ namespace Physics
 {
 namespace Test
 {
-
 TEST(Tree, Space)
 {
     TreeGrid nullEnv(Engine::Vector(0, 0, 0));
@@ -16,6 +15,12 @@ TEST(Tree, Space)
     TreeGrid oneEnv(Engine::Vector(1, 1, 1));
     EXPECT_EQ(&Material::vacuum, oneEnv.GetMaterial(Engine::Coordinate(0, 0, 0)));
     EXPECT_DOUBLE_EQ(1.0, oneEnv.Measure(&Material::vacuum));
+    EXPECT_EQ(nullptr, oneEnv.GetMaterial(Engine::Coordinate(-1, 0, 0)));
+    EXPECT_EQ(nullptr, oneEnv.GetMaterial(Engine::Coordinate(0, 0, 2)));
+
+    TreeGrid splitEnv(Engine::Vector(2, 2, 2));
+    EXPECT_EQ(nullptr, splitEnv.GetMaterial(Engine::Coordinate(-1, 0, 0)));
+    EXPECT_EQ(nullptr, splitEnv.GetMaterial(Engine::Coordinate( 0, 3, 0)));
 }
 
 TEST(Tree, Fill)

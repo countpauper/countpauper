@@ -37,6 +37,9 @@ struct Material
     static const Material water;
 };
 
+std::ostream& operator<<(std::ostream& stream, const Physics::Material& material);
+std::ostream& operator<<(std::ostream& stream, const Physics::Material* material);
+
 constexpr double IdealGasConstant = 8.31446261815324e3; // ideal gas constant in L * Pa / K * mol
 constexpr double PascalPerAtmosphere = 101325.0;        // Pa/Atm
 

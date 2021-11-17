@@ -33,4 +33,19 @@ double Material::Density(double pressure, double temperature) const
     }
 }
 
+std::ostream& operator<<(std::ostream& stream, const Physics::Material& material)
+{
+    stream << std::string(material.name.begin(), material.name.end());
+    return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Physics::Material* material)
+{
+    if (!material)
+        stream << "None";
+    else
+        stream << *material;
+    return stream;
+}
+
 }
