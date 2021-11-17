@@ -112,7 +112,8 @@ void Mesh::RenderTranslucent() const
 {
     if (!translucentTrianglesBuffered)
         return;
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, translucentTriangleBuffer);
     glDrawElements(GL_TRIANGLES, 3 * translucentTrianglesBuffered, GL_UNSIGNED_INT, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);

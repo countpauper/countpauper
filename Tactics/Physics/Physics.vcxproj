@@ -157,10 +157,12 @@
     <ClInclude Include="Box.h" />
     <ClInclude Include="BoxIterator.h" />
     <ClInclude Include="Direction.h" />
+    <ClInclude Include="DiscreteGrid.h" />
     <ClInclude Include="FluidDynamics.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="IEnvironment.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="PackedVoxel.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Size.h" />
@@ -174,10 +176,12 @@
   <ItemGroup>
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Direction.cpp" />
+    <ClCompile Include="DiscreteGrid.cpp" />
     <ClCompile Include="FluidData.cpp" />
     <ClCompile Include="FluidDynamics.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Matetrial.cpp" />
+    <ClCompile Include="PackedVoxel.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="Size.cpp" />

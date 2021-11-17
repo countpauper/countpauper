@@ -3,6 +3,7 @@
 #include "Engine/Line.h"
 #include "Engine/Volume.h"
 #include "Engine/Debug.h"
+#include "Physics/BoxIterator.h"
 #include <numeric>
 #include <sstream>
 
@@ -109,114 +110,12 @@ std::wstring TreeGrid::Statistics() const
     return str.str();
 }
 
-TreeGrid::Leaf::Leaf():
-    material(0),
-    amount(0),
-    hot(0),
-    temperature(0)
-{
-}
-
-TreeGrid::Leaf::Leaf(const Material& m, double temperature) :
-    amount(0)
-{
-    Set(&m);
-    SetTemperature(temperature);
-}
 
 Grid TreeGrid::Node::grid = Grid();
-
-const Material* TreeGrid::Leaf::mats[] =
-{
-    &Material::vacuum,
-    &Material::air,
-    &Material::water,
-    &Material::soil,
-    &Material::stone,
-    nullptr
-};
-
-void TreeGrid::Leaf::Set(const Material* newMat)
-{
-    for (material = 0; mats[material]; material++)
-    {
-        if (mats[material] == newMat)
-        {
-            if (newMat->normalDensity)
-                amount = 15;
-            else
-                amount = 0;
-            return;
-        }
-    }
-    throw std::runtime_error("Material needs to be a standard one");
-}
-
-
-const TreeGrid::Leaf* TreeGrid::Leaf::Get(const Position& p) const
-{
-    return this;
-}
-
-const Material* TreeGrid::Leaf::GetMaterial() const
-{
-    return mats[material];
-}
-
-Engine::RGBA TreeGrid::Leaf::Color() const
-{
-    if (!material)
-        return Engine::RGBA();
-    else
-    {
-        const auto* mat = GetMaterial();
-        double temperature = Temperature();
-        double translucency = 1.0;
-        if (mat->Fluid(temperature))
-            translucency = 0.25;
-        else if (mat->Gas(temperature))
-            translucency = 0.1;
-        return mat->color.Translucent(translucency);
-    }
-}
-
-double TreeGrid::Leaf::Temperature() const
-{
-    if (hot)
-    {
-        return HotOffset + temperature * HotTGradient;
-    }
-    else
-    {
-        return temperature * ColdTGradient;
-    }
-}
-
-void TreeGrid::Leaf::SetTemperature(double t)
-{
-    int it = int(std::floor(t));
-    if (t > HotOffset)
-    {
-        hot = 1;
-        temperature = (it - HotOffset) / HotTGradient;
-    }
-    else
-    {
-        hot = 0;
-        temperature = it / ColdTGradient;
-    }
-}
-
-double TreeGrid::Leaf::Density() const
-{
-    return GetMaterial()->normalDensity;    // TODO: temperature? 
-}
-
 
 TreeGrid::Branch::Branch(const Size& size) :
     size(size)
 {
-
 }
 
 unsigned TreeGrid::Branch::GetIndex(const Position& p) const
@@ -412,6 +311,11 @@ const TreeGrid::Leaf* TreeGrid::Branch::Get(const Position& p) const
         return branch->Get(p - GetOffset(idx));
     else
         return nullptr;
+}
+
+const TreeGrid::Leaf* TreeGrid::Leaf::Get(const Position& p) const
+{
+    return this;
 }
 
 Size TreeGrid::Branch::GetSize() const

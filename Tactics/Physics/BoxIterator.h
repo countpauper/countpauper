@@ -138,7 +138,7 @@ public:
 
     BoxDataIterator<_D, _V> end() const
     {
-        return BoxIterator(data, box, box.End());
+        return BoxDataIterator(data, box, box.End());
     }
 
     explicit operator bool() const

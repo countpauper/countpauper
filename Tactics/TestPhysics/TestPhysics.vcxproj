@@ -41,6 +41,7 @@
   <ItemGroup>
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Direction.cpp" />
+    <ClCompile Include="DiscreteGrid.cpp" />
     <ClCompile Include="FluidDynamics.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

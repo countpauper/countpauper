@@ -18,8 +18,7 @@
 #include "Engine/Utils.h"
 #include "Engine/Debug.h"
 #include "Engine/AxisAlignedBoundingBox.h"
-#include "Physics/TreeGrid.h"
-#include "Physics/StaticEnvironment.h"
+#include "Physics/DiscreteGrid.h"
 #include "Physics/BoxIterator.h"
 
 #include "El.h"
@@ -36,7 +35,7 @@ namespace Game
     VoxelMap::VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude) :
         grid(HorizontalGrid, HorizontalGrid, VerticalGrid),
         size(longitude, latitude, altitude),
-        physical(std::make_unique<Physics::TreeGrid>(grid.Meters(size), grid)),
+        physical(std::make_unique<Physics::DiscreteGrid>(grid.Meters(size), grid)),
         time(0),
         gravity(-10.0),
         planetRadius(6.371e6),  // assume earth sized planet
@@ -93,7 +92,7 @@ namespace Game
 
     void VoxelMap::Space(const Engine::Vector& size)
     {
-        this->physical = std::make_unique<Physics::TreeGrid>(size, Engine::Vector(HorizontalGrid, HorizontalGrid, VerticalGrid));
+        this->physical = std::make_unique<Physics::DiscreteGrid>(size, Engine::Vector(HorizontalGrid, HorizontalGrid, VerticalGrid));
         this->size = Physics::Size(int(std::round(size.x / grid.x)),
             int(std::round(size.y / grid.y)),
             int(std::round(size.z / grid.z)));
@@ -325,9 +324,11 @@ namespace Game
         {
             glEnable(GL_LIGHTING);
             glDisable(GL_BLEND);
+            //glEnable(GL_DEPTH_TEST);
             mesh->Render();
             glDisable(GL_LIGHTING);
             glEnable(GL_BLEND);
+            //glDisable(GL_DEPTH_TEST); only needed if air blocks remove top of water
             mesh->Render();
         }
         else
@@ -494,8 +495,8 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
     int waterLevel;
     double temperature;
     s >> temperature >> waterLevel;
-    map.Sea(waterLevel, temperature);
     map.Air(temperature, 20000);
+    map.Sea(waterLevel, temperature);
     unsigned procedures;
     s >> procedures;
     for (unsigned p = 0; p < procedures; ++p)

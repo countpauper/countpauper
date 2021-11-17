@@ -6,7 +6,7 @@
 #include "Engine/Vector.h"
 #include "Physics/Size.h"
 #include "Physics/Grid.h"
-#include "Physics/BoxIterator.h"
+#include "Physics/PackedVoxel.h"
 
 namespace Physics
 {
@@ -40,7 +40,6 @@ public:
     };
 
 #pragma pack(push)
-#pragma pack(2)
     // TODO: this can be optimized much more by not using polymorphism 
     // The whole tree should be branches. Instead of an octree it could be binary tree (only 2 8-byte pointers)
     // each branch can have a small header if it's a leaf. If so the pointers are not pointers (union?) but material data 
@@ -49,30 +48,15 @@ public:
     // Instead of the 24 byte size it can store the x/y/z axis to divide (2 bits, part of branch header) and pass the 3d size on the stack when recursing 
     // anyway it's all even more premature optimization for now. 
 
-    // ... Because I already did the math wrong and a 100x100x100 map with 4 bytes packed data is only 4mb not 4 gb
-    class Leaf : public Node
+    // ... Because I already did the math wrong and a 100x100x100 map with 2 bytes packed data is only 2mb not 2 gb
+#pragma pack(push)
+#pragma pack(2)
+    class Leaf : public Node, public PackedVoxel
     {
     public:
-        Leaf();
-        Leaf(const Material& m, double temperature);
+        Leaf() = default;
+        Leaf(const Material& m, double temperature) : PackedVoxel(m, temperature) {} ;
         const Leaf* Get(const Position& p) const override;
-
-        void Set(const Material* newMat);
-        const Material* GetMaterial() const;
-        Engine::RGBA Color() const;
-        double Temperature() const;
-        void SetTemperature(double t);
-        double Density() const;
-    private:
-        // material: 0 = vacuum, air, water, earth, stone
-        // amount 0 = empty, 15 = full/max density or granularity
-        // hot = 0: temperature = 2 * k (0-510), 1 = 510 + 30 k (510-1275) 
-        uint8_t material : 3, amount : 4, hot : 1, temperature : 8;
-
-        static const int ColdTGradient = 2;
-        static const int HotTGradient = 30;
-        static const int HotOffset = 255*ColdTGradient;
-        static const Material* mats[];
     };
 #pragma pack(pop)
 private:
