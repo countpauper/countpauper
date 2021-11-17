@@ -69,4 +69,10 @@ double StaticEnvironment::Measure(const Material* material) const
     return data.VoxelVolume();
 }
 
+
+std::wstring StaticEnvironment::Statistics() const
+{
+    return L"TODO: Voxeldata statistics";
+}
+
 }

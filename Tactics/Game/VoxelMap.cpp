@@ -478,8 +478,15 @@ void VoxelMap::RenderAnalysis() const
     Engine::CheckGLError();
 }
 
+
+std::wstring VoxelMap::Statistics()
+{
+    return physical->Statistics();
+}
+
 std::wistream& operator>>(std::wistream& s, VoxelMap& map)
 {
+    Engine::Timer timer;
     std::wstring name;
     Engine::Vector size;
     s >> name >> size.x >> size.y >> size.z;
@@ -520,6 +527,7 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
             throw std::runtime_error("Unknown procedure");
         }
     }
+    Engine::Debug::Log(L"Map generated in " + std::to_wstring(timer.Seconds()*1000.0) +L"ms "+ map.Statistics());
     return s;
 }
 

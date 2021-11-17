@@ -91,6 +91,24 @@ double TreeGrid::Measure(const Material* material) const
     return root->Measure(material);
 }
 
+std::wstring TreeGrid::Statistics() const
+{
+    std::map<unsigned, unsigned> leaves;
+    unsigned branches=0;
+    root->GetStatistics(leaves, branches);
+    std::wstringstream str;
+    str << "Branches: " << branches << "(" << branches * sizeof(Branch) / 1024 << "kB) ";
+    str << "Leaves:";
+    unsigned leafCount = 0;
+    for (const auto& leaf : leaves)
+    {
+        str << "[" << leaf.first << "] = " << leaf.second;
+        leafCount += leaf.second;
+    }
+    str << "(" << leafCount * sizeof(Leaf) / 1024 << "kB) ";
+    return str.str();
+}
+
 TreeGrid::Leaf::Leaf():
     material(0),
     amount(0),
@@ -427,6 +445,26 @@ double TreeGrid::Branch::Measure(const Material* material) const
     return total;
 }
 
-
+void TreeGrid::Branch::GetStatistics(std::map<unsigned, unsigned>& leaves, unsigned& branches) const
+{
+    branches += 1;
+    for (auto idx = 0; idx < nodes.size(); ++idx)
+    {
+        auto bounds = GetBounds(idx);
+        const auto& n = nodes[idx];
+        if (const auto* leaf = dynamic_cast<const Leaf*>(n.get()))
+        {
+            leaves[bounds.Volume()] += 1;
+        }
+        else if (const auto* branch = dynamic_cast<const Branch*>(n.get()))
+        {
+            branch->GetStatistics(leaves, branches);
+        }
+        else
+        {
+            assert(!n);
+        }
+    }
+}
 
 }

@@ -43,7 +43,7 @@ public:
     // Map
     void Render() const override;
     void Tick(double seconds) override;
-
+    std::wstring Statistics(); 
 protected:
     void GenerateMesh();
     void RenderPretty() const;

@@ -78,6 +78,17 @@ TEST(Tree, FillOneByOne)
         EXPECT_DOUBLE_EQ(4 * 4 * 4 * grid.Volume() - expectedVolume, env.Measure(&Material::vacuum));
     }
 }
+TEST(Tree, MemoryUsage)
+{
+    const unsigned ptr = sizeof(void*);
+    const unsigned cls = ptr;
+    const unsigned material_data = 2;
+
+    EXPECT_EQ(ptr, sizeof(TreeGrid::Node));
+    EXPECT_EQ(ptr + material_data, sizeof(TreeGrid::Leaf));
+    // Size is still in there, more memory, less cpu recomputing it every recursion EXPECT_EQ(ptr + 8 * ptr, sizeof(TreeGrid::Leaf));
+
+}
 
 }
 }
