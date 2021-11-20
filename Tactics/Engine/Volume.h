@@ -2,6 +2,8 @@
 
 #include "AxisAlignedBoundingBox.h"
 #include "Line.h"
+#include <any>
+#include <vector>
 
 namespace Engine
 {
@@ -60,13 +62,29 @@ public:
 class Cylinder : public IVolume
 {
 public:
-    Cylinder(const Line& axis, double dx, double dy) : axis(axis), dx(dx), dy(dy) {}
-    AABB GetBoundingBox() const override;   // TODO. nb check tilted ends /----/
-    virtual double Distance(const Coordinate& p) const override; // TODO: distance to projection on line. subtract diameter vector, nb tilted in axis direction
+    Cylinder(const Line& axis, double dy, double dz) : xaxis(axis), dy(dy), dz(dz) {}
+    AABB GetBoundingBox() const override;   
+    virtual double Distance(const Coordinate& p) const override; 
 private:
-    Line axis;
-    double dx;
+    Line xaxis;
     double dy;
+    double dz;
+};
+
+class Intersection : public IVolume
+{
+public:
+    Intersection() = default;
+    Intersection(std::vector<std::any> vols) : volumes(vols) {}
+    AABB GetBoundingBox() const override;
+    virtual double Distance(const Coordinate& p) const override;
+private:
+    std::vector<std::any> volumes; 
+};
+
+class Union : public IVolume
+{
 
 };
+
 }

@@ -63,4 +63,39 @@ TEST(Volume, Box)
     // Inside
     EXPECT_NEAR(-1, b.Distance(Coordinate(2, 0, 2)), precision);
 }
+
+TEST(Volume, NulCylinder)
+{
+    Cylinder c(Line(Coordinate(0, 0, 0), Coordinate(0, 0, 0)), 0, 0);
+    EXPECT_FALSE(c.GetBoundingBox().Volume());
+    EXPECT_EQ(0, c.Distance(Coordinate(0, 0, 0)));
+    EXPECT_EQ(1.0, c.Distance(Coordinate(1, 0, 0)));
+}
+
+TEST(Volume, AxisAlignedCylinder)
+{
+    Cylinder c(Line(Coordinate(0, 0, 0), Coordinate(1, 0, 0)), 1, 1);
+    EXPECT_DOUBLE_EQ(4.0, c.GetBoundingBox().Volume()); // 1x2x2
+    EXPECT_EQ(0, c.Distance(Coordinate(0, 0, 0)));
+    EXPECT_EQ(0.0, c.Distance(Coordinate(1, 0, 0)));
+    EXPECT_EQ(0.0, c.Distance(Coordinate(0, 1, 0)));
+    EXPECT_EQ(0.0, c.Distance(Coordinate(0, 0, 1)));
+    EXPECT_EQ(1, c.Distance(Coordinate(-1, 0, 0)));
+    EXPECT_EQ(1, c.Distance(Coordinate( 0, -2, 0)));
+    EXPECT_EQ(1, c.Distance(Coordinate(0, 0, 2)));
+    EXPECT_DOUBLE_EQ(sqrt(2) - 1.0, c.Distance(Coordinate(0.5, 1, 1)));
+    EXPECT_DOUBLE_EQ(sqrt(2) - 1.0, c.Distance(Coordinate(0, 1, 1)));
+    EXPECT_DOUBLE_EQ(sqrt(2) - 1.0, c.Distance(Coordinate(1, 1, 1)));
+}
+
+TEST(Volume, EllipseCylinder)
+{
+    Cylinder flat(Line(Coordinate(0, 0, 0), Coordinate(1, 0, 0)), 1, 0.0);
+    EXPECT_DOUBLE_EQ(0.0, flat.GetBoundingBox().Volume()); 
+    EXPECT_EQ(0.0, flat.Distance(Coordinate(0.5, 0.0, 0.0)));
+    EXPECT_EQ(1.0, flat.Distance(Coordinate(0.5, 0.0, 1.0)));
+    EXPECT_EQ(0.0, flat.Distance(Coordinate(0.5, 1.0, 0.0)));
+
+}
+
 }

@@ -24,8 +24,9 @@ Normal Steel Coif
 RArm Normal Wooden Club
 LArm Normal Steel Targe
 Wait Hack Duck Slash Dodge Block Parry Scrap Walk 
-3D Vox 50 50 16 300 2
-3
-WALL (3,8,0) (46,32,2) 5 1.5
+3D Vox 50 50 16 300 1
+4
 HILL (20,15,5) (20,10,5) 5.0 
 HILL (10,8,1.666) (19,5,2.666) 11.0 
+RIVER (15,10,4) (20,10,2) 2 1
+WALL (3,8,0) (46,32,2) 5 1.5

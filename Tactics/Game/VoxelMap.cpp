@@ -234,6 +234,26 @@ namespace Game
 
     }
 
+
+    void VoxelMap::River(const Engine::Line& flow, double width, double depth)
+    {
+        Engine::Cylinder cylinder(flow, width, depth);
+        Engine::Vector flowVector(flow);
+        Engine::Vector yaxis(flowVector.y, flowVector.x, 0);
+        Engine::Plane surface(flow.a, flow.b, flow.a + yaxis);
+        Engine::Intersection intersection({ cylinder, surface });
+
+        auto dbgCount = physical->Fill(cylinder, Physics::Material::water, atmosphericTemperature);
+        Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+    }
+
+    void VoxelMap::Cave(const Engine::Line& flow, double width, double height)
+    {
+        Engine::Cylinder cylinder(flow, width, height);
+        auto dbgCount = physical->Fill(cylinder, Physics::Material::air, atmosphericTemperature);
+        Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+    }
+
     Engine::Coordinate VoxelMap::Center(const Position& p) const
     {
         return grid.Center(p);
@@ -522,6 +542,20 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
             float stddev;
             s >> p0 >> p1 >> stddev;
             map.Hill(Engine::Line(p0, p1), stddev);
+        }
+        else if (procedure == L"RIVER")
+        {
+            Engine::Coordinate p0, p1;
+            float width, depth;
+            s >> p0 >> p1 >> width >> depth;
+            map.River(Engine::Line(p0, p1), width, depth);
+        }
+        else if (procedure == L"CAVE")
+        {
+            Engine::Coordinate p0, p1;
+            float width, height;
+            s >> p0 >> p1 >> width >> height;
+            map.Cave(Engine::Line(p0, p1), width, height);
         }
         else
         {

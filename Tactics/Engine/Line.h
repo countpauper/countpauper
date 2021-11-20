@@ -20,6 +20,7 @@ public:
     double LengthSquared() const;
     double Length() const;
     double Distance(const Coordinate& p) const;
+    double ProjectionCoefficient(const Coordinate& p) const;
     Coordinate Project(const Coordinate& p) const;
     AABB Bounds() const;
 };

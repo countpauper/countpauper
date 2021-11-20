@@ -32,7 +32,9 @@ public:
     void Sea(double level, double temperature);      // Day 2 Separate the water from the sky 
     void Hill(const Engine::Line& ridgeLine, double stddev);
     void Wall(const Engine::Line& bottomLine, double height, double thickness);
-/*    // Evaluate
+    void River(const Engine::Line& flow, double width, double depth);
+    void Cave(const Engine::Line& flow, double width, double height);
+    /*    // Evaluate
     double Volume() const;
     double Mass(const Physics::Material& material) const;
     double Temperature(const Physics::Material& material) const;

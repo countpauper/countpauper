@@ -72,10 +72,13 @@ TEST(Line, Length)
 
 TEST(Line, Distance)
 {
-    Engine::Line l(Engine::Coordinate(1, 0, 0), Engine::Coordinate(3, 2, 0));
-    EXPECT_EQ(1.0, l.Distance(Engine::Coordinate(1, -1, 0)));
-    EXPECT_EQ(2.0, l.Distance(Engine::Coordinate(5, 2, 0)));
-    EXPECT_EQ(3.0, l.Distance(Engine::Coordinate(0, 3, 1)));
+    Engine::Line l0(Engine::Coordinate(1, 0, 0), Engine::Coordinate(1, 0, 0));
+    EXPECT_EQ(1.0, l0.Distance(Engine::Coordinate(1, -1, 0)));
+
+    Engine::Line l1(Engine::Coordinate(1, 0, 0), Engine::Coordinate(3, 2, 0));
+    EXPECT_EQ(1.0, l1.Distance(Engine::Coordinate(1, -1, 0)));
+    EXPECT_EQ(2.0, l1.Distance(Engine::Coordinate(5, 2, 0)));
+    EXPECT_EQ(3.0, l1.Distance(Engine::Coordinate(0, 3, 1)));
 
     Line l2(Engine::Coordinate(1, 1, 0), Engine::Coordinate(1, 1, 0));
     EXPECT_EQ(1.0, l2.Distance(Engine::Coordinate(1, 0, 0)));
