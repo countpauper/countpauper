@@ -4,6 +4,7 @@
 #include "Line.h"
 #include "Plane.h"
 #include "Matrix.h"
+#include "Quaternion.h"
 
 namespace Engine
 {
@@ -108,13 +109,16 @@ Vector& Vector::operator*=(const Matrix& m)
     return *this;
 }
 
+Vector& Vector::operator*=(const Quaternion& q)
+{
+    *this = q* *this;
+    return *this;
+}
 
 Vector Vector::operator-() const
 {
     return Vector(-x, -y, -z);
 }
-
-
 
 double Vector::Dot(const Vector& v) const
 {

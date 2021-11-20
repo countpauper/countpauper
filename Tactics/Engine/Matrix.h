@@ -44,6 +44,9 @@ struct Matrix
     static Matrix Projection();
     static Matrix Identity();
     static Matrix Scale(const Vector& scale);
+    static Matrix XRot(double angle);
+    static Matrix YRot(double angle);
+    static Matrix ZRot(double angle);
     static Matrix Translation(const Vector& vector);
     static Matrix Perspective(double near, double far);
 };

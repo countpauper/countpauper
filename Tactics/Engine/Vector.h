@@ -7,6 +7,7 @@ struct Coordinate;
 struct Matrix;
 struct Line;
 struct Plane;
+struct Quaternion;
 
 struct Vector
 {
@@ -36,6 +37,7 @@ struct Vector
     Vector& operator-=(const Vector& v);
     Vector operator-() const;
     Vector& operator*=(const Matrix& m);
+    Vector& operator*=(const Quaternion& m);
 
     double Dot(const Vector& v) const;
 

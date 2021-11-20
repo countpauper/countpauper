@@ -27,6 +27,25 @@ TEST(Matrix, Scale)
     EXPECT_TRUE(matrix.NormalScale().IsIdentity());
 }
 
+TEST(Matrix, Rotations)
+{
+
+    Matrix xrot = Matrix::XRot(PI*0.5);
+    EXPECT_DOUBLE_EQ(1, (xrot * Vector(1, 1, 1)).x);
+    EXPECT_DOUBLE_EQ(-1, (xrot * Vector(1, 1, 1)).y);
+    EXPECT_DOUBLE_EQ(1, (xrot * Vector(1, 1, 1)).z);
+
+    Matrix yrot = Matrix::YRot(PI*0.5);
+    EXPECT_DOUBLE_EQ(1, (yrot * Vector(1, 1, 1)).x);
+    EXPECT_DOUBLE_EQ(1, (yrot * Vector(1, 1, 1)).y);
+    EXPECT_DOUBLE_EQ(-1, (yrot * Vector(1, 1, 1)).z);
+
+    Matrix zrot = Matrix::ZRot(PI*0.5);
+    EXPECT_DOUBLE_EQ(-1, (zrot * Vector(1, 1, 1)).x);
+    EXPECT_DOUBLE_EQ(1, (zrot * Vector(1, 1, 1)).y);
+    EXPECT_DOUBLE_EQ(1, (zrot * Vector(1, 1, 1)).z);
+}
+
 TEST(Matrix, Multiplication)
 {
     Matrix l{ 1,4, 0,0, 2, 5, 0,0, 3,6,0,0, 0,0,0,0 };
@@ -83,38 +102,6 @@ TEST(Matrix, InversePerspective)
     EXPECT_NEAR(inverse.x, 1, 1e-6);
     EXPECT_NEAR(inverse.y, -2, 1e-6);
     EXPECT_NEAR(inverse.z, 0.5, 1e-6);
-}
-
-
-TEST(Quaternion, Unit)
-{
-    EXPECT_TRUE(Quaternion(Vector(0, 0, 0), 0).IsNormalized());
-    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 0).IsNormalized());
-
-    EXPECT_FALSE(Quaternion(Vector(1, -1, 0), 1.0).IsNormalized());
-    EXPECT_TRUE(Quaternion(Vector(1, -1, 0), 1.0).Normalized().IsNormalized());
-
-    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 0).Matrix().IsIdentity());
-    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 1.0).IsNormalized());
-    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 1.0).Matrix().IsAffine());
-}
-
-TEST(Quaternion, RightHandedRotation)
-{
-    Quaternion xrot(Vector(1, 0, 0), float(PI / 2));
-    EXPECT_NEAR( 1, (xrot * Vector(1, 1, 1)).x, 1e-6);
-    EXPECT_NEAR(-1, (xrot * Vector(1, 1, 1)).y, 1e-6);
-    EXPECT_NEAR( 1, (xrot * Vector(1, 1, 1)).z, 1e-6);
-
-    Quaternion yrot(Vector(0, 1, 0), float(PI / 2));
-    EXPECT_NEAR( 1, (yrot * Vector(1, 1, 1)).x, 1e-6);
-    EXPECT_NEAR( 1, (yrot * Vector(1, 1, 1)).y, 1e-6);
-    EXPECT_NEAR(-1, (yrot * Vector(1, 1, 1)).z, 1e-6);
-
-    Quaternion zrot(Vector(0, 0, 1), float(PI / 2));
-    EXPECT_NEAR(-1, (zrot * Vector(1, 1, 1)).x, 1e-6);
-    EXPECT_NEAR( 1, (zrot * Vector(1, 1, 1)).y, 1e-6);
-    EXPECT_NEAR( 1, (zrot * Vector(1, 1, 1)).z, 1e-6);
 }
 
 }

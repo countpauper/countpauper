@@ -334,6 +334,39 @@ Matrix Matrix::Scale(const Vector& scale)
     return matrix;
 }
 
+
+Matrix Matrix::XRot(double angle)
+{
+    Matrix matrix;
+    memset(&matrix[0][0], 0, sizeof(matrix[0][0]) * 4 * 4);
+    matrix[0][0] = 1;
+    matrix[1][1] = cos(angle); matrix[2][1] = -sin(angle);
+    matrix[1][2] = sin(angle); matrix[2][2] = cos(angle);
+    matrix[3][3] = 1;
+    return matrix;
+}
+Matrix Matrix::YRot(double angle)
+{
+    Matrix matrix;
+    memset(&matrix[0][0], 0, sizeof(matrix[0][0]) * 4 * 4);
+    matrix[0][0] = cos(angle); matrix[2][0] = sin(angle);
+    matrix[1][1] = 1;
+    matrix[0][2] = -sin(angle); matrix[2][2] = cos(angle);
+    matrix[3][3] = 1;
+    return matrix;
+}
+
+Matrix Matrix::ZRot(double angle)
+{
+    Matrix matrix;
+    memset(&matrix[0][0], 0, sizeof(matrix[0][0]) * 4 * 4);
+    matrix[0][0] = cos(angle); matrix[1][0] = -sin(angle);
+    matrix[0][1] = sin(angle); matrix[1][1] = cos(angle);
+    matrix[2][2] = 1;
+    matrix[3][3] = 1;
+    return matrix;
+}
+
 Matrix Matrix::Translation(const Vector& vector)
 {
     Matrix matrix = Identity();

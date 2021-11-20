@@ -8,6 +8,16 @@ namespace Engine
 
 const double Quaternion::precision = 1e-12;
 
+Quaternion::Quaternion(double x, double y, double z, double w) :
+    x(x),
+    y(y),
+    z(z),
+    w(w)
+{
+
+}
+
+
 Quaternion::Quaternion(const Vector& axis, double angle) : 
     w(cos(angle/2))
 {
@@ -43,6 +53,17 @@ Quaternion Quaternion::Normalized() const
     return o;
 }
 
+
+Quaternion Quaternion::Conjugate() const
+{
+    return Quaternion(-x, -y, -z, w);
+}
+
+Quaternion Quaternion::operator-()
+{
+    return Conjugate();
+}
+
 bool Quaternion::IsNormalized() const
 {
     auto sqrMag = SquareMagnitude();
@@ -64,12 +85,34 @@ Matrix Quaternion::Matrix() const
          0,                             0,                             0,                             1 };
 }
 
-
+Quaternion Quaternion::Identity()
+{
+    return Quaternion(0, 0, 0, 1);
+}
 
 Vector operator*(const Quaternion& q, const Vector& v)
 {
-    return q.Matrix() * v;
+/*    //gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion
+
+    Vector u(q.x, q.y, q.z);
+    double s = q.w;
+    return u * 2.0 * u.Dot(v) + v * (s*s - u.Dot(u)) + u.Cross(v) * s * 2.0;
+*/
+
+    return Vector(
+        q.w * q.w*v.x   + 2 * q.y*q.w*v.z  - 2 * q.z*q.w*v.y + q.x * q.x*v.x     + 2 * q.y*q.x*v.y + 2 * q.z*q.x*v.z - q.z * q.z*v.x - q.y * q.y*v.x,
+        2 * q.x*q.y*v.x + q.y * q.y*v.y    + 2 * q.z*q.y*v.z + 2 * q.w*q.z*v.x   - q.z * q.z*v.y   + q.w * q.w*v.y   - 2 * q.x*q.w*v.z - q.x * q.x*v.y,
+        2 * q.x*q.z*v.x + 2 * q.y*q.z*v.y  + q.z * q.z*v.z   - 2 * q.w*q.y*v.x   - q.y * q.y*v.z   + 2 * q.w*q.x*v.y - q.x * q.x*v.z + q.w * q.w*v.z);
 }
 
+Quaternion operator*(const Quaternion& q1, const Quaternion& q2)
+{
+    // http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/code/index.htm
+    return Quaternion(
+         q1.x * q2.w + q1.y * q2.z - q1.z * q2.y + q1.w * q2.x,
+        -q1.x * q2.z + q1.y * q2.w + q1.z * q2.x + q1.w * q2.y,
+         q1.x * q2.y - q1.y * q2.x + q1.z * q2.w + q1.w * q2.z,
+        -q1.x * q2.x - q1.y * q2.y - q1.z * q2.z + q1.w * q2.w);
+}
 
 }

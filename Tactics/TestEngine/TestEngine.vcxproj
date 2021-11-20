@@ -34,6 +34,7 @@
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="String.cpp" />
     <ClCompile Include="pch.cpp">
