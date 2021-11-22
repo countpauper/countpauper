@@ -21,11 +21,28 @@
     - effect: -e  [icon|text|off]
     - range: -r [icon|off]
     - Persist in !uvar (with help) dict {hp: effect: range:}
-- timeout in minutes? (5m/5min) max is 600, but it's fine. don't need hours
-- auto timeout scaled to number of targets listed (10 seconds per + 20 seconds?)
-- timeout 0 is also off
+* timeout in minutes? (5m/5min) max is 600, but it's fine. don't need hours
+* auto timeout scaled to number of targets listed (10 seconds per + 20 seconds?)
+* timeout 0 is also off
+x !state combat: automatically put groups into separate fields (then not sorted by initiative anymore?) or with headers (might get too big, with fields big groups might be a problem)
+* truncate entries for description size (In embeds.0.description: Must be 4096 or fewer in length.)
+- Configurable combat state display with hp, owner, cantrip, melee, ranged, spell, condition, effect flags (and all others eventually)
+    - default no ranges just conditions and effects, just hp, owner, condition, effects
 
 !qb transfer <from> <to> [<item>][...]
+
+* !sw aoo uses name, could be quotes, they can be .replace('"','\"')
+* !sw uses note to see if it casts, should use the attack. SHould also attack with the attack instead of aoo
+- Doesn't seem to always work, maybe because of also using !conjure? or the group it creates?
+ https://discord.com/channels/767440562466586655/803296531246612540/912022942756507669
+
+!center <spell/radius> <target> [...]
+checks map locations+sizes of targets
+gives a position (and height if applicable) where the most targets are hit
+TODO: exclude friendlies (automatically all other targets?)
+Use the spell table gvar for area of effect/shape radius
+make a collection with march
+
 
 !generate npc
     * speech and mannerism tables like https://www.reddit.com/r/BehindTheTables/comments/7fde9p/npc_voices_table/

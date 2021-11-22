@@ -131,10 +131,13 @@ else:
 	move_field=''
 
 # clean out old overlay:
+caster_name = caster.name.replace('"','\"')
 if caster:
-	caster_notes=[n for n in caster_notes if not n.startswith(ovl_prefix)]
+	attach_effect='Effect: Spiritual Weapon'
+	caster_notes=[n for n in caster_notes if not n.startswith(ovl_prefix) and not n.startswith(attach_effect)]
 	if destination_pos:
 		caster_notes.append(f'{ovl_prefix}c2{ovl_color}{destination_pos}')
+		caster_notes.append(f'{attach_effect} / {caster.name}')
 	caster.set_note(' | '.join(caster_notes))
 
 # clean spiritual weapon arguments like -m from the argstring
@@ -142,19 +145,17 @@ for m in args.get('m'):
 	argstr=argstr.replace(f'-m {m}','')
 
 if caster:
-	effect_name = 'spiritual weapon'
-	# instead of effect, could ook for actual attack
-	# TODO: instead of aoo and reactcast, could use normal a and cast if current.name==caster.name
-	if caster.get_effect(effect_name) is None:
-		cmd=f'i reactcast "{caster.name}" "Spiritual Weapon"  {argstr}'
+	attack = ([a for a in caster.attacks if a.name.lower()=='spiritual weapon']+[None])[0]
+	if not attack:
+		cmd=f'i reactcast "{caster_name}" "Spiritual Weapon"  {argstr}'
 	elif target:
-		cmd=f'i aoo "{caster.name}" "Spiritual Weapon" {argstr}'
+		cmd=f'i aoo "{caster_name}" "{attack.name}" {argstr}'
 	elif move_field:
 		cmd=f'embed -title "{caster.name} moves the Spiritual Weapon." -desc "{move_explain}"'
 	else:
 		# TODO: remove the effect and the overlay when the effect is active but no target or destination
-		caster.remove_effect(effect_name)
-		return f'embed -title "{caster.name} recalls the Spiritual Weapon."'
+		caster.remove_effect("spiritual weapon")
+		return f'embed -title "{caster_name} recalls the Spiritual Weapon."'
 else:
 	cmd=f'cast "Spiritual Weapon"'
 

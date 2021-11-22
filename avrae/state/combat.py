@@ -17,7 +17,27 @@ roundstr=[':zero:',':one:',':two:',':three:',':four:',':five:',':six:',':seven:'
 header=f'Combat Round {C.round_num if C.round_num>=len(roundstr) else roundstr[C.round_num]} in "{ctx.channel.name}"'
 
 args=argparse('''&*&''')
-timeout = args.last('t',"60")
+timeout = args.last('t','auto')
+timeunit=dict(m=60,min=60,s=1,sec=1)
+for unit,mul in timeunit.items():
+	if timeout.lower().endswith(unit):
+		timeout=timeout[:-len(unit)]
+		if timeout.isdecimal():
+			timeout = mul * int(timeout)
+			break
+		else:
+			return f'echo Timeout argument `-t {timeout}{unit}` syntax error. The value must be a number.'
+else:
+	if timeout=='auto':
+		pass
+	elif timeout.startwith('no'):
+		timeout=None
+	elif timeout.isdecimal():
+		timeout = int(timeout)
+		if not timeout:
+			timeout=None
+	else:
+		return f'echo Timeout argument `-t {timeout}` syntax error. The value must be a number.'
 
 alphabet='abcdefghijklmnopqrstuvwxyz'
 x_table=[' ']+[c for c in alphabet]+[f'a{c}' for c in alphabet]+[f'b{c}' for c in alphabet]
@@ -54,6 +74,7 @@ if C.me:
 config=load_json(get_gvar('f9fd35a8-1c8e-477c-b66e-2eeee09a4735'))
 conditions=config.conditions
 
+dbg=''
 heartstr = [':skull:', ':broken_heart:', ':hearts:', ':heartbeat:', ':heartpulse:']
 distancestr=['', ':dart:', ':bow_and_arrow:']
 for c in C.combatants:
@@ -88,9 +109,33 @@ for c in C.combatants:
 			distance += ':magic_wand:' if d<ranges.get('cantrip',-1) else ''
 			distance += ':sparkles:' if d<ranges.get('spell',-1) else ''
 	result.append(f'{":arrow_forward:" if active else ":white_large_square:"} **{c.name}** {you} {distance}{" - " if distance and props else ""}{", ".join(props)}')
+
+# limit result size to 4096 discord embed description limit, discord also cuts the field short with too many smileys
+# and the whole embed can only be 6000
+total_limit, txt_limit, smile_limit, results=5900-len(header), 4000, 150, [[]]
+for item in result:
+	# item+=f'{item.count(":")} {150-smile_limit}'
+	total_limit-=len(item)+1
+	if total_limit<0:
+		break
+	txt_limit-=len(item)+1
+	smile_limit-=item.count(':')//2
+	if txt_limit<=0 or smile_limit<=0:
+		if len(results)>=24:
+			results.append(['*(more)*'])
+			break
+		else:
+			results.append([])
+			txt_limit=1000-len(item)
+			smile_limit=150-item.count(':')//2
+	results[-1].append(item)
+
 nl='\n'
 help_str=f'{ctx.prefix}help {ctx.alias} combat for legend.'
-timeout=int(timeout) if timeout.isdecimal() else None
+if timeout=='auto':
+	timeout=45+len(result)*5
 time_str=f'-footer "{help_str}"' if timeout is None else f'-t {timeout} -footer "This information will disappear in {f"{timeout} seconds" if timeout<120 else f"{timeout//60} minutes"}. {help_str}"'
-return f'embed -title "{header}" -desc "{nl.join(result)}" {time_str}'
+desc=nl.join(results[0])
+fields=nl.join(f'-f "{nl.join(f)}"' for f in results[1:])
+return f'''embed -title "{header}" -desc "{desc}" {fields} {time_str} {dbg}'''
 </drac2>

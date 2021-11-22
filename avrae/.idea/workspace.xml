@@ -2,10 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/wildshape.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/build/bin/libfastsignals/x64/Release/libfastsignals-v141-x64.lib" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/fastsignals/build/bin/libfastsignals/x64/Release/libfastsignals-v141-x64.lib" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/libfastsignals_unit_tests.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/libfastsignals_unit_tests.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Volume.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Volume.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Volume.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Volume.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Bounds.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Bounds.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Quaternion.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Quaternion.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Volume.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Volume.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bladesong/help.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/help.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/combat.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/combat.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,7 +44,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/misc/card_creator.py" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Console Colors" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -221,7 +229,6 @@
     <state x="740" y="311" key="FileChooserDialogImpl" timestamp="1630673865822">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="740" y="279" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1628927205751" />
     <state x="740" y="311" key="FileChooserDialogImpl/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1630673865822" />
     <state width="958" height="316" key="GridCell.Tab.0.bottom" timestamp="1635330780721">
       <screen x="0" y="0" width="1920" height="1160" />
@@ -267,6 +274,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="761" y="235" key="RollbackChangesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1635109814693" />
+    <state x="463" y="166" key="SettingsEditor" timestamp="1637606677671">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="463" y="166" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1637606677671" />
     <state x="681" y="288" width="555" height="470" key="StructurePopup" timestamp="1632241113665">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -280,11 +291,11 @@
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1636575627412" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1631083626924" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1635949779117">
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1637587718755">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1633800946150" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1635949779117" />
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1637587718755" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -318,11 +329,6 @@
           <url>file://$PROJECT_DIR$/chance/csv2json.py</url>
           <line>36</line>
           <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/misc/Spiritual Weapon.py</url>
-          <line>35</line>
-          <option name="timeStamp" value="38" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/inventory/quickbag.py</url>
