@@ -27,7 +27,7 @@
 x !state combat: automatically put groups into separate fields (then not sorted by initiative anymore?) or with headers (might get too big, with fields big groups might be a problem)
 * truncate entries for description size (In embeds.0.description: Must be 4096 or fewer in length.)
 - Configurable combat state display with hp, owner, cantrip, melee, ranged, spell, condition, effect flags (and all others eventually)
-    - default no ranges just conditions and effects, just hp, owner, condition, effects
+    - default no ranges just conditions and effects, just heart, team, effects
 
 !qb transfer <from> <to> [<item>][...]
 

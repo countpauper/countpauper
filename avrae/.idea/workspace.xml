@@ -6,13 +6,13 @@
       <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/libfastsignals_unit_tests.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/libfastsignals_unit_tests.vcxproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/AxisAlignedBoundingBox.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Matrix.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Matrix.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Volume.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Volume.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Volume.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Volume.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Bounds.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Bounds.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Quaternion.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Quaternion.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/Volume.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/Volume.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/state/combat.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/combat.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
