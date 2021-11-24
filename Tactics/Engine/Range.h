@@ -3,6 +3,7 @@
 #include "Coordinate.h"
 #include "Maths.h"
 #include <algorithm>
+#include <type_traits>
 
 namespace Engine
 {
@@ -18,6 +19,14 @@ struct Range
     {
     }
 
+    constexpr T ElementSize() const
+    {   // floating point ranges are inclusive for clipping
+        if (std::is_floating_point<T>::value)
+            return static_cast<T>(0.0);
+        else
+            return static_cast<T>(1);
+    }
+
     operator bool() const
     {
         return end > begin;
@@ -29,13 +38,13 @@ struct Range
 
     bool operator[](T v) const
     {   // in
-        return (begin <= v) && (v < end);
+        return (begin <= v) && (v+ElementSize() <= end);
     }
 
     Range& operator|=(T v)
     {
         begin = std::min(begin, v);
-        end = std::max(end, Engine::ALittleMore<T>(v));
+        end = std::max(end, v+ElementSize());
         return *this;
     }
 
@@ -74,7 +83,7 @@ struct Range
     }
     T Clip(T v) const
     {
-        return Engine::Clip(v, begin, ALittleLess<T>(end));
+        return Engine::Clip(v, begin, end - ElementSize());
     }
 
     T Middle() const

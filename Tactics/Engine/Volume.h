@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AxisAlignedBoundingBox.h"
+#include "Quaternion.h"
 #include "Line.h"
 #include <any>
 #include <vector>
@@ -62,13 +63,13 @@ public:
 class Cylinder : public IVolume
 {
 public:
-    Cylinder(const Line& axis, double dy, double dz) : xaxis(axis), dy(dy), dz(dz) {}
+    Cylinder(const Line& axis, double dy, double dz);
     AABB GetBoundingBox() const override;   
     virtual double Distance(const Coordinate& p) const override; 
 private:
-    Line xaxis;
-    double dy;
-    double dz;
+    Vector scale;
+    Quaternion orientation;
+    Vector origin;
 };
 
 class Intersection : public IVolume

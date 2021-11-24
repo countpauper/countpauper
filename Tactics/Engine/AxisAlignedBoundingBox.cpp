@@ -3,7 +3,8 @@
 #include "Vector.h"
 #include "Range.h"
 #include "Line.h"
-
+#include "Matrix.h"
+#include <array>
 namespace Engine
 {
 
@@ -69,9 +70,37 @@ Coordinate AABB::Clip(const Coordinate& p) const
 
 AABB& AABB::operator*=(const Matrix& transformation)
 {
-    auto begin = transformation * Begin();
-    auto end = transformation * End();
-    *this = AABB(begin, end);
+    // wrong
+    //auto begin = transformation * Begin();
+    //auto end = transformation * End();
+        //lame/slow way is to rotate all 8 corners and put a bounding box around all of them
+        // reference imlementation
+    std::array<Coordinate, 8> vertex;
+    auto extent = Extent();
+    for (int i = 0; i < 8; i++)
+    {
+        vertex[i] = Begin() + Vector(i & 1 ? extent.x : 0,
+            i & 2 ? extent.y : 0,
+            i & 4 ? extent.z : 0);
+        vertex[i] *= transformation;
+    }
+    x = y = z = Range<double>(std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity());
+    for (const auto& v : vertex)
+    {
+        (*this) |= v;
+    }
+
+        // could also transform the center and then the half extent vector minus the translation, then mirror it 8 ways. Still get 8 points that need minned and maxes
+        // there must be something about the orientation/scale 3x3 matrix if all 3 aligned axes are transformed by it. Only need their length really to get a new oriented bounding box
+        // the sin of the angle of the matrix axes says something about the size factor of the original. 0 & 90 is the same (but other axis).
+        // Take the extent and tranform it with the 3x3? 
+/*
+// This is also not exactly right with the 
+    Coordinate newCenter = Center() + transformation.Translation();
+    Matrix rotscale(transformation.X(), transformation.Y(), transformation.Z(),Vector());
+    Vector newExtent = rotscale * Extent();
+    *this = AABB(newCenter -newExtent * 0.5, newExtent);
+*/
 
     return *this;
 }
@@ -166,7 +195,7 @@ AABB operator&(const AABB& a, const AABB& b)
         a.Z() & b.Z());
 }
 
-AABB operator*(const AABB& a, const Matrix& transformation)
+AABB operator*(const Matrix& transformation, const AABB& a)
 {
     return AABB(a) *= transformation;
 }

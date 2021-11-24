@@ -73,11 +73,6 @@ TEST(Quaternion, Multiplication)
     // (q1*q2) * v =  (q2*v) * q1 
     EXPECT_EQ((yrot*(xrot*v)), ((yrot*xrot)*v));
     EXPECT_EQ((xrot*(yrot*v)), ((xrot*yrot)*v));
-    // transform x => y,  y => z and z =>x 
-    auto mxy = (xrot*yrot).Matrix();
-    auto mxy2 = Matrix::XRot(PI*0.5) * Matrix::YRot(PI*0.5);
-    auto t = mxy2 * v;
-    EXPECT_EQ(t, (xrot*yrot*v));
 }
 
 
