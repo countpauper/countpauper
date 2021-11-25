@@ -15,25 +15,31 @@
 * condition icons for effect in !stats
 * optional timeout for !stats combat  (-t?)
 * !stats -t * selects all combatants
-- !stats conditions instead of referring to help
-- !stats options
+* !state conditions instead of referring to help (for combat as well)
+- !state options
     - -hp [icon|text|bar|off]
     - effect: -e  [icon|text|off]
     - range: -r [icon|off]
     - Persist in !uvar (with help) dict {hp: effect: range:}
-* timeout in minutes? (5m/5min) max is 600, but it's fine. don't need hours
+
+ timeout in minutes? (5m/5min) max is 600, but it's fine. don't need hours
 * auto timeout scaled to number of targets listed (10 seconds per + 20 seconds?)
 * timeout 0 is also off
 x !state combat: automatically put groups into separate fields (then not sorted by initiative anymore?) or with headers (might get too big, with fields big groups might be a problem)
 * truncate entries for description size (In embeds.0.description: Must be 4096 or fewer in length.)
-- Configurable combat state display with hp, owner, cantrip, melee, ranged, spell, condition, effect flags (and all others eventually)
-    - default no ranges just conditions and effects, just heart, team, effects
+* Configurable combat state display with hp, owner, cantrip, melee, ranged, spell, condition, effect flags (and all others eventually)
+    * default no ranges just conditions and effects, just heart, team, effects
 
 !qb transfer <from> <to> [<item>][...]
 
 * !sw aoo uses name, could be quotes, they can be .replace('"','\"')
 * !sw uses note to see if it casts, should use the attack. SHould also attack with the attack instead of aoo
 - Doesn't seem to always work, maybe because of also using !conjure? or the group it creates?
+!sw -m 019 -> confusing Error evaluating expression: unsupported operand type(s) for -: 'int' and 'NoneType'  in     distance=sqrt((op.x-tp.x)2 + (op.y-tp.y)2)*5.0
+* !sw -m X move 21ft should be rounded down (limit 22.5)
+!sw -m X -i ignore distance
+* !sw help sub alias
+
  https://discord.com/channels/767440562466586655/803296531246612540/912022942756507669
 
 !center <spell/radius> <target> [...]

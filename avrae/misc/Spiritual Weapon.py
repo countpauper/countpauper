@@ -96,6 +96,11 @@ op = dict(x=x_axis.get(''.join(c for c in origin_pos if c.isalpha())),
 tl = dict(x=x_axis.get(''.join(c for c in target_pos if c.isalpha())),
 		  y=int(''.join(c for c in target_pos if c.isdigit()))) if target_pos else None
 
+if tl and not tl.x:
+	return f'echo Invalid target position `{target_pos}`'
+if op and not op.x:
+	op=None
+
 if tl and op and target_size:
 	# target with a grid size (creature)
 	# stand next to it, minimum displacement for 5ft range
@@ -119,7 +124,7 @@ else:	# no size (-m), stand on it
 if max_range and op and tp:
 	distance=sqrt((op.x-tp.x)**2 + (op.y-tp.y)**2)*5.0
 	max_range*=5
-	if round(distance)>max_range:
+	if round(distance)>max_range + (5/2):
 		return f'echo "Destination {destination_pos} out of range: {distance:.1f} > {max_range}.'
 	if distance>0:
 		move_field=f'-f "Moving the Spiritual Weapon|from {origin_pos} to {destination_pos} [{distance:.1f} ft.]"'
@@ -152,12 +157,14 @@ if caster:
 		cmd=f'i aoo "{caster_name}" "{attack.name}" {argstr}'
 	elif move_field:
 		cmd=f'embed -title "{caster.name} moves the Spiritual Weapon." -desc "{move_explain}"'
-	else:
+	elif 'end' in argstr:
 		# TODO: remove the effect and the overlay when the effect is active but no target or destination
 		caster.remove_effect("spiritual weapon")
 		return f'embed -title "{caster_name} recalls the Spiritual Weapon."'
+	else:
+		return f'echo No target or destination specified. Use `!help sw` for help.'
 else:
-	cmd=f'cast "Spiritual Weapon"'
+	cmd=f'cast "Spiritual Weapon" {argstr}'
 
 return f'{cmd} {move_field}'
 </drac2>

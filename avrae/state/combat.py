@@ -38,19 +38,19 @@ else:
 	else:
 		return f'echo Timeout argument `-t {timeout}` syntax error. The value must be a number.'
 
-cvar_name=f'{ctx.alias}_combat'
+var_name=f'{ctx.alias}_combat'
 fields=[]
-store_cvar=False
+store_var=False
 for a in &ARGS&:
 	if a.startswith('-'):
 		break
 	else:
 		fields.append(a.lower())
-		store_cvar = True
-fields = fields or load_json(get(cvar_name,'{}')).get('fields',['team','heart','melee','ranged','cantrip','spell','condition','effect'])
+		store_var = True
+fields = fields or load_json(get(var_name,'{}')).get('fields',['team','heart','melee','ranged','cantrip','spell','condition','effect'])
 
-if store_cvar:
-	character().set_cvar(cvar_name,dump_json(dict(fields=fields)))
+if store_var:
+	set_uvar(var_name,dump_json(dict(fields=fields)))
 
 alphabet='abcdefghijklmnopqrstuvwxyz'
 x_table=[' ']+[c for c in alphabet]+[f'a{c}' for c in alphabet]+[f'b{c}' for c in alphabet]
