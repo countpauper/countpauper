@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector.h"
+#include "Volume.h"
 
 namespace Engine
 {
@@ -7,7 +8,7 @@ namespace Engine
 struct Coordinate;
 struct Line;
 
-struct Plane
+struct Plane : public IVolume
 {
     // a*normal.x + b*normal.y + c*normal.z + d = 0;
     Plane(const Engine::Vector& n, double d) :
@@ -28,7 +29,8 @@ struct Plane
     Coordinate Project(const Coordinate& c) const;
     Line Project(const Line& l) const;
     bool Above(const Coordinate& c) const;
-    double Distance(const Coordinate& c) const;
+    AABB GetBoundingBox() const override;
+    double Distance(const Coordinate& c) const override;
     bool IsParallel(const Line& line) const;
     Coordinate Intersection(const Line& line) const;
     Engine::Vector normal;  // does not need to be normalized 

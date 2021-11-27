@@ -76,11 +76,11 @@ class Intersection : public IVolume
 {
 public:
     Intersection() = default;
-    Intersection(std::vector<std::any> vols) : volumes(vols) {}
+    Intersection(std::vector<std::reference_wrapper<const IVolume>> vols) : volumes(vols) {}
     AABB GetBoundingBox() const override;
     virtual double Distance(const Coordinate& p) const override;
 private:
-    std::vector<std::any> volumes; 
+    std::vector<std::reference_wrapper<const IVolume>> volumes;
 };
 
 class Union : public IVolume

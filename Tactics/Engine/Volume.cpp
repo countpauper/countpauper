@@ -52,7 +52,7 @@ Cylinder::Cylinder(const Line& axis, double dy, double dz) :
     origin(axis.a)
 {
     Vector v(axis);
-    // axis inverted because we need the conjugate, the rotation that led to this orientation
+    // axis inverted because we need the conjugate, the rotation that led to this orientation 
     Quaternion zrot(Vector(0, 0, -1), atan2(v.y, v.x));
     v *= -zrot;
     Quaternion yrot(Vector(0, -1, 0), atan2(v.z, v.x));
@@ -140,27 +140,16 @@ AABB Intersection::GetBoundingBox() const
     AABB box = AABB::infinity;
     for (const auto& av : volumes)
     {
-        if (const IVolume* v = std::any_cast<IVolume>(&av))
-        {
-            box &= v->GetBoundingBox();
-        }
+        box &= av.get().GetBoundingBox();
     }
     return box;
 }
 
 double Intersection::Distance(const Coordinate& p) const 
 {
-    return std::accumulate(volumes.begin(), volumes.end(), std::numeric_limits<double>::infinity(), [&p](double value, const std::any& av)
+    return std::accumulate(volumes.begin(), volumes.end(), -std::numeric_limits<double>::infinity(), [&p](double value, const std::reference_wrapper<const IVolume>& av)
     {
-        if (const IVolume* v = std::any_cast<IVolume>(&av))
-        {
-            return std::max(value, v->Distance(p));
-        }
-        else
-        {
-            return value;
-        }
-        
+        return std::max(value, av.get().Distance(p));        
     });
 }
 

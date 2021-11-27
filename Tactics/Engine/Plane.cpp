@@ -42,9 +42,50 @@ namespace Engine
         return NormalDistance(c) > 0;
     }
 
+    AABB Plane::GetBoundingBox() const
+    {
+        // if the normal is perpendicular to an axis, then it is limited
+        auto result = AABB::infinity;
+        if (normal.y == 0 && normal.z == 0)
+        {   // perendicular to x
+            if (normal.x < 0)
+            {
+                result.x.begin = -d / normal.x;
+            }
+            else
+            {
+                result.x.end = -d / normal.x;
+            }
+        }
+        else if (normal.x == 0 && normal.z == 0)
+        {   // perpendicular to y
+            if (normal.y < 0)
+            {
+                result.y.begin = -d / normal.y;
+            }
+            else
+            {
+                result.y.end = -d / normal.y;
+            }
+        }
+        else if (normal.x == 0 && normal.y == 0)
+        {   // perpendicular to z
+            if (normal.z < 0)
+            {
+                result.z.begin = -d / normal.z;
+            }
+            else
+            {
+                result.z.end = -d / normal.z;
+            }
+        }
+        return result;
+    }
+
+
     double Plane::Distance(const Coordinate& c) const
     {
-        return std::abs(NormalDistance(c) / normal.Length());
+        return NormalDistance(c) / normal.Length();
     }
 
     bool Plane::IsParallel(const Line& line) const

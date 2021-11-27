@@ -35,6 +35,7 @@ namespace Engine
         bool operator[](const Coordinate& p) const { return Contains(p); }
         AABB& operator|=(const Coordinate& p);
         AABB& operator&=(const AABB& p);
+        AABB& operator|=(const AABB& p);
         AABB& Expand(const Engine::Vector& v);
         AABB& Grow(const Engine::Vector& v);
         AABB& Grow(double v);

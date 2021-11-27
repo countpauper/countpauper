@@ -101,7 +101,7 @@ TEST(Volume, TiltedCylinder)
     Cylinder c(Line(Coordinate(0, 0, 0), Coordinate(0.5*sqrt(2), 0, 0.5*sqrt(2))), 0.5, 0.5);
     EXPECT_3D_EQ(Vector(1*sqrt(2), 1, 1*sqrt(2)),c.GetBoundingBox().Extent());
     EXPECT_LT(c.Distance(Coordinate(0.7, 0, 0.7)), 0.0);
-    EXPECT_GT(c.Distance(Coordinate(0.7, 0, 0.0)), 0.0);
+    EXPECT_GT(c.Distance(Coordinate(1.0, 0, 0.0)), 0.0);
 }
 
 TEST(Volume, DiagonalCylinder)
@@ -123,7 +123,18 @@ TEST(Volume, EllipseCylinder)
 
     Cylinder skinnz(Line(Coordinate(0, 0, 0), Coordinate(2, 0, 0)), 1, 0.5);
     EXPECT_3D_EQ(Vector(2,2,1), skinnz.GetBoundingBox().Extent());
+}
 
+TEST(Volume, BoxIntersection)
+{
+    AABox a(Coordinate(0.0, 0.0, 0.0), Coordinate(2, 3, 4));
+    AABox b(Coordinate(-3, -2, -1), Coordinate(1, 1, 2));
+    Intersection i({ a, b });
+    EXPECT_3D_EQ(Vector(1,1,2), i.GetBoundingBox().Extent());
+    EXPECT_DOUBLE_EQ(-0.5, i.Distance(Coordinate(0.5, 0.5, 0.5)));
+    EXPECT_DOUBLE_EQ( 0.0, i.Distance(Coordinate(1.0, 1.0, 0.5)));
+    EXPECT_DOUBLE_EQ(-0.5, i.Distance(Coordinate(0.5, 0.5, 0.5)));
+    EXPECT_DOUBLE_EQ( 1.0, i.Distance(Coordinate(-1.0, 0.5, 0.5)));
 }
 
 }

@@ -243,7 +243,7 @@ namespace Game
         Engine::Plane surface(flow.a, flow.b, flow.a + yaxis);
         Engine::Intersection intersection({ cylinder, surface });
 
-        auto dbgCount = physical->Fill(cylinder, Physics::Material::water, atmosphericTemperature);
+        auto dbgCount = physical->Fill(intersection, Physics::Material::water, atmosphericTemperature);
         Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
     }
 

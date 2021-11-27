@@ -5,6 +5,7 @@
 #include "Line.h"
 #include "Plane.h"
 #include "Triangle.h"
+#include "GTestGeometry.h"
 
 namespace Engine::Test
 {
@@ -100,10 +101,10 @@ TEST(Plane, XY)
     EXPECT_TRUE(Plane::xy);
     EXPECT_EQ(Plane::xy, Plane(Coordinate(0, 0, 0), Vector(1, 0, 0), Vector(0, 1, 0)));
     EXPECT_EQ(0, Plane::xy.Distance(Coordinate::zero));
-    EXPECT_EQ(1, Plane::xy.Distance(Coordinate(0, 0, 1)));
-    EXPECT_EQ(0, Plane::xy.Distance(Coordinate(1, 1, 0)));
-    EXPECT_EQ(Coordinate::zero, Plane::xy.Project(Coordinate(0, 0, 1)));
-    EXPECT_EQ(Coordinate(1, 1, 0), Plane::xy.Project(Coordinate(1, 1, 1)));
+    EXPECT_DOUBLE_EQ(1, Plane::xy.Distance(Coordinate(0, 0, 1)));
+    EXPECT_DOUBLE_EQ(0, Plane::xy.Distance(Coordinate(1, 1, 0)));
+    EXPECT_3D_EQ(Coordinate::zero, Plane::xy.Project(Coordinate(0, 0, 1)));
+    EXPECT_3D_EQ(Coordinate(1, 1, 0), Plane::xy.Project(Coordinate(1, 1, 1)));
     EXPECT_TRUE(Plane::xy.Above(Coordinate(0, 0, 1)));
     EXPECT_FALSE(Plane::xy.Above(Coordinate(0, 0, -1)));
 }
@@ -122,9 +123,9 @@ TEST(Plane, Diagonal)
     EXPECT_EQ(0, plane.Distance(Coordinate(1, 0, 0)));
     EXPECT_EQ(0, plane.Distance(Coordinate(0, 1, 0)));
     EXPECT_EQ(0, plane.Distance(Coordinate(0, 0, 1)));
-    EXPECT_NEAR(1.0 / sqrt(3), plane.Distance(Coordinate::zero), std::numeric_limits<double>::epsilon());
+    EXPECT_DOUBLE_EQ(-1.0 / sqrt(3), plane.Distance(Coordinate::zero));
 
-    EXPECT_NEAR(1.0 / 3.0, plane.Project(Coordinate::zero).x, 1e-12);
+    EXPECT_3D_EQ(Vector(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0), plane.Project(Coordinate::zero));
 }
 
 TEST(Plane, DoubleXYAt1)
@@ -132,11 +133,17 @@ TEST(Plane, DoubleXYAt1)
     Plane xy2(Coordinate(1,1,1), Vector(0, 0, 2));
     EXPECT_TRUE(xy2.Above(Coordinate(1, 1, 1.1)));
     EXPECT_FALSE(xy2.Above(Coordinate(0, 0, 0.9)));
-    EXPECT_EQ(1, xy2.Distance(Coordinate::zero));
-    EXPECT_EQ(2, xy2.Distance(Coordinate(1,1,-1)));
-    EXPECT_EQ(Coordinate(0, 0, 1), xy2.Project(Coordinate::zero));
-    EXPECT_EQ(Coordinate(1, 1, 1), xy2.Project(Coordinate(1, 1, 1)));
-    EXPECT_EQ(Coordinate(-2,-3, 1), xy2.Project(Coordinate(-2, -3, -4)));
+    EXPECT_DOUBLE_EQ( 1, xy2.Distance(Coordinate(1,1,2)));
+    EXPECT_DOUBLE_EQ(-1, xy2.Distance(Coordinate::zero));
+    EXPECT_DOUBLE_EQ(-2, xy2.Distance(Coordinate(1,1,-1)));
+    EXPECT_3D_EQ(Coordinate(0, 0, 1), xy2.Project(Coordinate::zero));
+    EXPECT_3D_EQ(Coordinate(1, 1, 1), xy2.Project(Coordinate(1, 1, 1)));
+    EXPECT_3D_EQ(Coordinate(-2,-3, 1), xy2.Project(Coordinate(-2, -3, -4)));
+    // bounding box should be inf, inf, 1 ... inf
+    EXPECT_TRUE(xy2.GetBoundingBox().x.infinite());
+    EXPECT_TRUE(xy2.GetBoundingBox().y.infinite());
+    EXPECT_FALSE(xy2.GetBoundingBox().Contains(Coordinate(1, 1, 1.1)));
+    EXPECT_TRUE(xy2.GetBoundingBox().Contains(Coordinate(0, 0, 0.9)));
 }
 
 
@@ -148,9 +155,12 @@ TEST(Plane, NotNormalDiagonal)
     EXPECT_EQ(0, abnormal.Distance(Coordinate(1, 0, 0)));
     EXPECT_EQ(0, abnormal.Distance(Coordinate(-1, 2, 0)));
     EXPECT_EQ(0, abnormal.Distance(Coordinate(1, 2, -2)));
-    EXPECT_NEAR(1.0 / 3.0, abnormal.Project(Coordinate::zero).x, 1e-12);
-}
+    EXPECT_3D_EQ(Vector(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0), abnormal.Project(Coordinate::zero));
+    EXPECT_TRUE(abnormal.GetBoundingBox().x.infinite());
+    EXPECT_TRUE(abnormal.GetBoundingBox().y.infinite());
+    EXPECT_TRUE(abnormal.GetBoundingBox().z.infinite());
 
+}
 
 TEST(Triangle, Surface)
 {

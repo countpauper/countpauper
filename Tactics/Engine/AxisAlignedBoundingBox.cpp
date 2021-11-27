@@ -153,6 +153,13 @@ AABB& AABB::operator&=(const AABB& o)
     return *this;
 }
 
+AABB& AABB::operator|=(const AABB& o)
+{
+    *this = (*this) | o;
+    return *this;
+}
+
+
 AABB& AABB::Expand(const Engine::Vector& v)
 {
     x.Expand(v.x);
