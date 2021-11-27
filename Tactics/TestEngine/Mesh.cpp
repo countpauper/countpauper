@@ -3,6 +3,7 @@
 #include "AxisAlignedBoundingBox.h"
 #include "OffscreenSurface.h"
 #include "Matrix.h"
+#include "GTestGeometry.h"
 #include <gl/glew.h>
 
 namespace Engine::Test
@@ -18,7 +19,7 @@ struct Mesh : public ::testing::Test
 TEST_F(Mesh, BoundingBox)
 {
     Box cube(1.0);
-    EXPECT_NEAR(1.0, cube.GetBoundingBox().Volume(), precision);
+    EXPECT_3D_EQ(Vector(1.0, 1.0, 1.0), cube.GetBoundingBox().Extent());
     EXPECT_TRUE(cube.GetBoundingBox().Contains(Engine::Coordinate(0, 0, 0)));
 }
 
@@ -35,8 +36,8 @@ TEST_F(Mesh, BoxVolume)
     std::vector<Vector> dirs = { Vector(1,0,0),Vector(0,1,0), Vector(0,0,1), Vector(-1,0,0), Vector(0,-1,0), Vector(0,0,-1) };
     for (auto dir : dirs)
     {
-        EXPECT_NEAR(0, cube.Distance(center+dir), precision) << dir;
-        EXPECT_NEAR(1, cube.Distance(center + dir * 2.0), precision) << dir;
+        EXPECT_DOUBLE_EQ(0, cube.Distance(center+dir)) << dir;
+        EXPECT_DOUBLE_EQ(1, cube.Distance(center + dir * 2.0)) << dir;
     }
 
 }
@@ -53,7 +54,7 @@ TEST_F(Mesh, Scale)
 {
     Box cube(1.0);
     cube *= Matrix::Scale(Engine::Vector(2, 2, 2));
-    EXPECT_NEAR(8.0, cube.GetBoundingBox().Volume(), 1e-6);
+    EXPECT_3D_EQ(Vector(2,2,2), cube.GetBoundingBox().Extent());
 }
 
 TEST_F(Mesh, Translate)

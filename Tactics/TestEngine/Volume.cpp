@@ -98,8 +98,10 @@ TEST(Volume, TurnedCylinder)
 TEST(Volume, TiltedCylinder)
 {
     // cylinder still unit length
-    Cylinder c(Line(Coordinate(0, 0, 0), Coordinate(0.5*sqrt(2), 0, 0.5*sqrt(2))), 1, 1);
-    EXPECT_3D_EQ(Vector(1.5*sqrt(2), 2, 1.5*sqrt(2)),c.GetBoundingBox().Extent());
+    Cylinder c(Line(Coordinate(0, 0, 0), Coordinate(0.5*sqrt(2), 0, 0.5*sqrt(2))), 0.5, 0.5);
+    EXPECT_3D_EQ(Vector(1*sqrt(2), 1, 1*sqrt(2)),c.GetBoundingBox().Extent());
+    EXPECT_LT(c.Distance(Coordinate(0.7, 0, 0.7)), 0.0);
+    EXPECT_GT(c.Distance(Coordinate(0.7, 0, 0.0)), 0.0);
 }
 
 TEST(Volume, DiagonalCylinder)

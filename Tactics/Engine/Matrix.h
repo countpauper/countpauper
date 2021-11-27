@@ -40,6 +40,7 @@ struct Matrix
     bool IsIdentity() const;
     Matrix Inverse() const;
     Matrix NormalScale() const;
+    Matrix Orthogonalize() const;
     Matrix& operator*=(const Matrix& o);
     static Matrix Projection();
     static Matrix Identity();

@@ -248,6 +248,16 @@ Matrix Matrix::NormalScale() const
     return Matrix(x, y, z, Translation());
 }
 
+Matrix Matrix::Orthogonalize() const
+{
+    double xyerror = X().Dot(Y());
+    Vector x = X() - (Y() * 0.5*xyerror);
+    Vector y = Y() - (X() * 0.5*xyerror);
+    Vector z = x.Cross(y);
+    return Matrix(x, y, z, Translation());
+
+}
+
 Matrix& Matrix::operator*=(const Matrix& o)
 {
     Multiply(*this, Matrix(*this), o);

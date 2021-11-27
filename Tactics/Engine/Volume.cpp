@@ -52,9 +52,10 @@ Cylinder::Cylinder(const Line& axis, double dy, double dz) :
     origin(axis.a)
 {
     Vector v(axis);
-    Quaternion zrot(Vector(0, 0, 1), atan2(v.y, v.x));
+    // axis inverted because we need the conjugate, the rotation that led to this orientation
+    Quaternion zrot(Vector(0, 0, -1), atan2(v.y, v.x));
     v *= -zrot;
-    Quaternion yrot(Vector(0, 1, 0), atan2(v.z, v.x));
+    Quaternion yrot(Vector(0, -1, 0), atan2(v.z, v.x));
     orientation = zrot * yrot;
 
 }

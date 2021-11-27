@@ -3,6 +3,7 @@
 #include "Quaternion.h"
 #include "Vector.h"
 #include "Geometry.h"
+#include "GTestGeometry.h"
 
 namespace Engine::Test
 {
@@ -31,19 +32,13 @@ TEST(Matrix, Rotations)
 {
 
     Matrix xrot = Matrix::XRot(PI*0.5);
-    EXPECT_DOUBLE_EQ(1, (xrot * Vector(1, 1, 1)).x);
-    EXPECT_DOUBLE_EQ(-1, (xrot * Vector(1, 1, 1)).y);
-    EXPECT_DOUBLE_EQ(1, (xrot * Vector(1, 1, 1)).z);
+    EXPECT_3D_EQ(Vector(1, -1, 1), xrot * Vector(1, 1, 1));
 
     Matrix yrot = Matrix::YRot(PI*0.5);
-    EXPECT_DOUBLE_EQ(1, (yrot * Vector(1, 1, 1)).x);
-    EXPECT_DOUBLE_EQ(1, (yrot * Vector(1, 1, 1)).y);
-    EXPECT_DOUBLE_EQ(-1, (yrot * Vector(1, 1, 1)).z);
+    EXPECT_3D_EQ(Vector(1, 1, -1), yrot * Vector(1, 1, 1));
 
     Matrix zrot = Matrix::ZRot(PI*0.5);
-    EXPECT_DOUBLE_EQ(-1, (zrot * Vector(1, 1, 1)).x);
-    EXPECT_DOUBLE_EQ(1, (zrot * Vector(1, 1, 1)).y);
-    EXPECT_DOUBLE_EQ(1, (zrot * Vector(1, 1, 1)).z);
+    EXPECT_3D_EQ(Vector(-1, 1, 1), zrot * Vector(1, 1, 1));
 }
 
 TEST(Matrix, Multiplication)
@@ -76,18 +71,14 @@ TEST(Matrix, InverseAffine)
     Vector v = Vector(1, -2, 0.5);
     auto v_transformed = matrix * v;
     auto inverse = matrix.Inverse() * v_transformed;
-    EXPECT_NEAR(inverse.x, v.x, 1e-6);
-    EXPECT_NEAR(inverse.y, v.y, 1e-6);
-    EXPECT_NEAR(inverse.z, v.z, 1e-6);
+    EXPECT_3D_NEAR(inverse, v, 1e-12);
     
     auto matrix2 = Matrix::Scale(Vector(0.2f,0.3f,0.4f)) * 
         Matrix::Translation(Vector(-2, 3, -4)) * 
         Quaternion(Vector(1, 0.5f, 0.5f), -0.3f).Matrix();
     v_transformed = matrix * v;
     inverse = matrix.Inverse() * v_transformed;
-    EXPECT_NEAR(inverse.x, v.x, 1e-6);
-    EXPECT_NEAR(inverse.y, v.y, 1e-6);
-    EXPECT_NEAR(inverse.z, v.z, 1e-6);
+    EXPECT_3D_NEAR(inverse, v, 1e-12);
 }
 
 TEST(Matrix, InversePerspective)
@@ -99,9 +90,7 @@ TEST(Matrix, InversePerspective)
     auto inverse = matrix.Inverse() * v;
     auto identity = matrix * matrix.Inverse();
     ASSERT_TRUE(identity.IsIdentity());
-    EXPECT_NEAR(inverse.x, 1, 1e-6);
-    EXPECT_NEAR(inverse.y, -2, 1e-6);
-    EXPECT_NEAR(inverse.z, 0.5, 1e-6);
+    EXPECT_3D_EQ(Vector(1, -2, 0.5), inverse);
 }
 
 }

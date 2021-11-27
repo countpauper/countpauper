@@ -113,6 +113,7 @@ struct Range
     {
         return std::isinf(begin) || std::isinf(end);
     }
+
     bool finite() const
     {
         return !infinite();
