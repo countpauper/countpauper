@@ -43,7 +43,7 @@ public:
         std::shared_ptr<Texture> texture;
     };
 
-    static void Write(const std::string& filename, unsigned width, unsigned height, RGBA data[]);
-    static void Write(const std::string& filename, unsigned width, unsigned height, float data[]);
+    static void Write(const std::wstring& filename, unsigned width, unsigned height, RGBA data[]);
+    static void Write(const std::wstring& filename, unsigned width, unsigned height, float data[]);
 };
 }//::Engine

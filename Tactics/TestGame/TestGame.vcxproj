@@ -89,10 +89,8 @@
       <AdditionalLibraryDirectories>..\..\Dependencies\fastsignals\build\bin\libfastsignals\x64\Debug;..\..\Dependencies\libxml\lib;..\..\Dependencies\zlib\lib;$(TargetDir);..\..\Dependencies\glew\lib\Release\x64</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
+      <Message>Testing Game</Message>
+      <Command>$(TargetPath)</Command>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>$(TargetPath) </Command>

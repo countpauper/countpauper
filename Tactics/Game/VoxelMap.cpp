@@ -16,6 +16,7 @@
 #include "Engine/Matrix.h"
 #include "Engine/Plane.h"
 #include "Engine/Utils.h"
+#include "Engine/from_string.h"
 #include "Engine/Debug.h"
 #include "Engine/AxisAlignedBoundingBox.h"
 #include "Physics/DiscreteGrid.h"
@@ -251,7 +252,7 @@ namespace Game
     {
         Engine::Cylinder cylinder(flow, width, height);
         auto dbgCount = physical->Fill(cylinder, Physics::Material::air, atmosphericTemperature);
-        Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+        Engine::Debug::Log(std::wstring(L"Cave at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
     }
 
     Engine::Coordinate VoxelMap::Center(const Position& p) const
@@ -516,13 +517,13 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
     double temperature;
     s >> temperature >> waterLevel;
     map.Air(temperature, 20000);
-    map.Sea(waterLevel, temperature);
     unsigned procedures;
     s >> procedures;
     for (unsigned p = 0; p < procedures; ++p)
     {
         std::wstring procedure;
         s >> procedure;
+        procedure = Engine::UpperCase(procedure);
         if (procedure == L"WIND")
         {
             Engine::Vector wind;
@@ -543,6 +544,12 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
             s >> p0 >> p1 >> stddev;
             map.Hill(Engine::Line(p0, p1), stddev);
         }
+        else if (procedure == L"SEA")
+        {
+            float depth, temperature;
+            s >> depth >> temperature;
+            map.Sea(depth, temperature);
+        }
         else if (procedure == L"RIVER")
         {
             Engine::Coordinate p0, p1;
@@ -559,7 +566,7 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
         }
         else
         {
-            throw std::runtime_error("Unknown procedure");
+            throw std::runtime_error("Unknown procedure: "+Engine::from_string<std::string>(procedure));
         }
     }
     Engine::Debug::Log(L"Map generated in " + std::to_wstring(timer.Seconds()*1000.0) +L"ms "+ map.Statistics());

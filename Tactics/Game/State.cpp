@@ -180,7 +180,7 @@ namespace Game
         default:
             return Score();
         }
-        return Score(ToString(attribute) + L"(" + attrScore.Description() + L")", attrScore.Value());
+        return Score(std::wstring(ToString(attribute)) + L"(" + attrScore.Description() + L")", attrScore.Value());
     }
 
     Bonus State::ConstitutionBonus() const

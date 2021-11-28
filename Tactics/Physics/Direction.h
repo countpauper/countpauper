@@ -89,7 +89,7 @@ public:
 	static const Direction up;
 	static const Direction down;
     static const Direction& z;
-	static const std::map<const std::wstring, Direction> map;
+	static const std::map<const std::wstring_view, Direction> map;
     static std::array<Direction, 4> cardinal;
     static std::array<Direction, 6> all;
     static std::array<Direction, 3> positive;

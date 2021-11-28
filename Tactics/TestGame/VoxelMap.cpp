@@ -60,14 +60,16 @@ TEST(VoxelMap, HillPeak)
 TEST(VoxelMap, HillRidge)
 {
     VoxelMap map;
-    map.Space(Physics::Size(3, 3, 3));
+    map.Space(Physics::Size(4, 4, 4));
     map.Air(300, 10000);
     map.World(10e6);
     map.Hill(Engine::Line(Engine::Coordinate(3, 0, 0), Engine::Coordinate(0, 3, 3/3.0)), 1.666 );
     // The line goes straight through the middle of (0,2) (1,1) and (2,0)
     // but is highest at the first and lowest at the last
+
     EXPECT_EQ(Element::Stone, map.At(Position(2, 0, 3)).floor);
-    EXPECT_EQ(1, map.At(Position(2, 0, 3)).height);
+    EXPECT_EQ(0, map.At(Position(3, 0, 3)).height);
+    EXPECT_EQ(3, map.At(Position(0, 3, 3)).height);
 
     EXPECT_EQ(2, map.At(Position(1, 1, 2)).height);
     EXPECT_EQ(Element::Stone, map.At(Position(1, 1, 1)).floor);

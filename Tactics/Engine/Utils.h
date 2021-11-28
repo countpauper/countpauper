@@ -8,13 +8,13 @@
 
 namespace Engine
 {
-    std::vector<std::wstring> Split(const std::wstring& str, wchar_t delimiter);
-    std::vector<std::string> Split(const std::string& str, char delimiter);
-    std::set<std::wstring> SplitSet(const std::wstring& str, wchar_t delimiter);
-    std::set<std::string> SplitSet(const std::string& str, char delimiter);
+    std::vector<std::wstring> Split(const std::wstring_view str, wchar_t delimiter);
+    std::vector<std::string> Split(const std::string_view str, char delimiter);
+    std::set<std::wstring> SplitSet(const std::wstring_view str, wchar_t delimiter);
+    std::set<std::string> SplitSet(const std::string_view str, char delimiter);
 	extern const std::wstring_view whitespace;
-    std::wstring Strip(const std::wstring& str, const std::wstring_view& trash = whitespace);
-    std::string UpperCase(const std::string& str);
+    std::wstring_view Strip(const std::wstring_view, std::wstring_view trash = whitespace);
+    std::wstring UpperCase(const std::wstring_view str);
 
     template<class T> 
     std::wstring ToWString(const T& object)

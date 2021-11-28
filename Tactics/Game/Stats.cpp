@@ -6,7 +6,7 @@
 
 namespace Game
 {
-    const std::map<const std::wstring, Attribute> Attributes::map({
+    const std::map<const std::wstring_view, Attribute> Attributes::map({
         { L"", Attribute::None },
         { L"Str", Attribute::Strength },
         { L"Strength", Attribute::Strength },
@@ -20,7 +20,7 @@ namespace Game
         { L"Wisdom", Attribute::Wisdom }
     });
 
-    std::wstring ToString(Attribute attribute) 
+    const std::wstring_view ToString(Attribute attribute) 
     {
         auto it = std::find_if(Attributes::map.begin(), Attributes::map.end(), [attribute](const decltype(Attributes::map)::value_type& pair)
         {

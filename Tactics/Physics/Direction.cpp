@@ -93,7 +93,7 @@ const Direction& Direction::x = east;
 const Direction& Direction::y = north;
 const Direction& Direction::z = up;
 
-const std::map<const std::wstring, Direction> Direction::map(
+const std::map<const std::wstring_view, Direction> Direction::map(
 {
 	{ L"east", Direction::east },
 	{ L"north", Direction::north },

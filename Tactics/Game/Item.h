@@ -207,7 +207,7 @@ namespace Game
 
             Style style;
             Requirement requirement;
-            static const std::map<const std::wstring, Style> styleMap;
+            static const std::map<const std::wstring_view, Style> styleMap;
             Material::Category material;
             Damage damage;
             int length; 

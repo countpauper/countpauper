@@ -9,7 +9,7 @@ namespace Game
     public:
         Bonus();
         explicit Bonus(int value);
-        Bonus(const std::wstring& description, int value);
+        Bonus(const std::wstring_view description, int value);
         Bonus(const Bonus& other);
         operator bool() const { return value != 0;  }
         int value;
@@ -22,7 +22,7 @@ namespace Game
         Score();
         explicit Score(const Bonus& bonus);
         Score(const Score& other);
-        Score(const std::wstring& description, int value);
+        Score(const std::wstring_view description, int value);
         unsigned Value() const;
         std::wstring Description() const;
         unsigned operator()() const { return Value(); }

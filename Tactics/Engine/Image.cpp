@@ -7,6 +7,7 @@
 #include "Color.h"
 #include "Error.h"
 #include "Utils.h"
+#include "from_string.h"
 
 namespace Engine
 {
@@ -89,12 +90,12 @@ void Image::Load(const std::wstring& fn)
 }
 
 
-void Image::Write(const std::string& filename, unsigned width, unsigned height, Engine::RGBA data[])
+void Image::Write(const std::wstring& filename, unsigned width, unsigned height, Engine::RGBA data[])
 {
-    std::string extension = UpperCase(filename.substr(filename.find_last_of('.'), std::string::npos));
-    if (extension == ".PNG")
+    std::wstring extension = UpperCase(filename.substr(filename.find_last_of('.'), std::string::npos));
+    if (extension == L".PNG")
     {
-        stbi_write_png(filename.c_str(), width, height, 4, data, width * sizeof(RGBA));
+        stbi_write_png(from_string<std::string>(filename).c_str(), width, height, 4, data, width * sizeof(RGBA));
     }
     else
     {
@@ -103,7 +104,7 @@ void Image::Write(const std::string& filename, unsigned width, unsigned height, 
 }
 
 
-void Image::Write(const std::string& filename, unsigned width, unsigned height, float data[])
+void Image::Write(const std::wstring& filename, unsigned width, unsigned height, float data[])
 {
     std::unique_ptr<RGBA[]> recode = std::make_unique<RGBA[]>(width*height);
     for (unsigned i = 0; i < width*height; ++i)

@@ -415,7 +415,7 @@ void Render()
         std::vector<float> depths;
         depths.resize(clientRect.right * clientRect.bottom);
         glReadPixels(0, 0, clientRect.right, clientRect.bottom, GL_DEPTH_COMPONENT, GL_FLOAT, depths.data());
-        Engine::Image::Write("DepthMask.png", clientRect.right, clientRect.bottom, depths.data());
+        Engine::Image::Write(L"DepthMask.png", clientRect.right, clientRect.bottom, depths.data());
 
         writeDepthMap = false;
     }

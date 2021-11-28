@@ -21,7 +21,7 @@ namespace Game
     };
 
 
-    static const std::map<const std::wstring, Slot> slotMap({
+    static const std::map<const std::wstring_view, Slot> slotMap({
         { L"Nothing", Slot::Nothing },
         { L"Belly", Slot::Belly },
         { L"Chest", Slot::Chest },

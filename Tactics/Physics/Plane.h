@@ -24,7 +24,7 @@ namespace Physics
 		static const Plane bottom;
 		static const Plane transversal;
 		static const Plane all;
-		static const std::map<const std::wstring, Plane> map;
+		static const std::map<const std::wstring_view, Plane> map;
 	};
 
 	std::wistream& operator>>(std::wistream& s, Plane& plane);

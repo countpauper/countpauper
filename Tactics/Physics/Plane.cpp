@@ -24,7 +24,7 @@ namespace Physics
 	const Plane Plane::transversal({ Direction::up, Direction::down });
 	const Plane Plane::all({ Direction::left, Direction::forward, Direction::right, Direction::backward, Direction::up, Direction::down });
 
-	const std::map<const std::wstring, Plane> Plane::map =
+	const std::map<const std::wstring_view, Plane> Plane::map =
 	{
 		{ L"Left", Plane::left},
 		{ L"Right", Plane::right },
@@ -54,7 +54,7 @@ namespace Physics
 			return plane_pair.second == plane;
 		});
 		assert(it != Plane::map.end()); // plane not in map
-		s << it->first.c_str();
+		s << it->first.data();
 		return s;
 	}
 

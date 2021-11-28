@@ -18,7 +18,7 @@ Bonus::Bonus( int value) :
 {
 }
 
-Bonus::Bonus(const std::wstring& description, int value) :
+Bonus::Bonus(const std::wstring_view description, int value) :
     value(value),
     description(description)
 {
@@ -36,7 +36,7 @@ Score::Score()
 {
 }
 
-Score::Score(const std::wstring& description, int value) :
+Score::Score(const std::wstring_view description, int value) :
     Score(Bonus(description, value))
 {
 }

@@ -282,7 +282,7 @@ Skill::Skill(const xmlNode* node) :
 		}
 		else if (Engine::Xml::hasTag(prop, "trajectory"))
 		{
-			trajectory = Engine::from_strings<Physics::Direction>(Engine::Xml::text(prop->children), L'|', Physics::Direction::map);
+			trajectory = Engine::from_strings<Physics::Direction>(std::wstring_view(Engine::Xml::text(prop->children)), L'|', Physics::Direction::map);
 		}
 		else if (Engine::Xml::hasTag(prop, "target"))
 		{

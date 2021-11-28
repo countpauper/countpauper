@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Material.h"
+#include "Engine/from_string.h"
 
 namespace Physics
 {
@@ -35,7 +36,7 @@ double Material::Density(double pressure, double temperature) const
 
 std::ostream& operator<<(std::ostream& stream, const Physics::Material& material)
 {
-    stream << std::string(material.name.begin(), material.name.end());
+    stream << Engine::from_string<std::string>(material.name);
     return stream;
 }
 

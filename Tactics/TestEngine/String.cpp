@@ -58,7 +58,7 @@ TEST(String, String)
 TEST(String, Enum)
 {
     enum class TestEnum { First, Second };
-    std::map<const std::wstring, TestEnum> map({
+    std::map<const std::wstring_view, TestEnum> map({
         { L"1st", TestEnum::First },
         { L"2nd", TestEnum::Second }
         });
@@ -87,7 +87,7 @@ TEST(String, Strip)
 
 TEST(String, UpperCase)
 {
-    EXPECT_EQ("UPP3RC4SE", Engine::UpperCase("Upp3rC4se"));
-    EXPECT_EQ("O0O", Engine::UpperCase("o0o"));
+    EXPECT_EQ(L"UPP3RC4SE", Engine::UpperCase(L"Upp3rC4se"));
+    EXPECT_EQ(L"O0O", Engine::UpperCase(L"o0o"));
 }
 }
