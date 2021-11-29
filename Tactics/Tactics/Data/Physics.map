@@ -11,13 +11,7 @@ Studded Elephant Hood
 Studded Demon Brigandine
 RArm Normal Yew Wand
 Wait Hack Zap Dodge Block Parry Scrap Walk 
-3D Vox 2 2 0.666 300
-7
-SEA 0.666 300
-WALL (-0.5,  0.0, 0) (-0.5,  3.0, 0) 1 1
-WALL (2.5,  0.0, 0) (2.5,  3.0, 0) 1 1
-WALL (-1.0, -0.5, 0) (3.0, -0.5, 0) 1 1
-WALL (-1.0,  2.5, 0) (3.0,  2.5, 0) 1 1
-HILL ( 0.0,  0.5, 0) (2.0,  0.5, 0) 10.0 
-WIND ( 0.1,-0.0, 0.0)
-
+3D Vox 2 2 1 300
+2
+HILL ( 0.0,  0.0, 0.35) (2.0,  2.0, 0.35) 10.0 
+RIVER (0.5, 0.0, 0.65) (0.5, 1.0, 0.65) 0.5 0.3

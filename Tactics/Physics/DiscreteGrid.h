@@ -21,7 +21,7 @@ public:
     void ApplyForce(const Engine::Coordinate& c, double force) override;
     void Heat(const Engine::Coordinate& c, double energy) override;
 
-    void ConnectChange(ChangeSignal::slot_type slot) override;
+    is::signals::connection ConnectChange(ChangeSignal::slot_type slot) override;
     double Density(const Engine::IVolume& c) const override;
     double Temperature(const Engine::IVolume& c) const override;
     Engine::Vector Force(const Engine::IVolume& c) const override;
@@ -37,9 +37,11 @@ public:
     using const_iterator = BoxDataIterator<const DiscreteGrid, const PackedVoxel>;
 private:
     Box Bounds() const;
+    Box Neighbourhood(const Position& p) const;
     unsigned Index(const Position& p) const;
     Size size;
     Grid grid;
     std::vector<PackedVoxel> m_data;
+    ChangeSignal m_changed;
 };
 }

@@ -19,6 +19,13 @@ struct Range
     {
     }
 
+    template<typename OT>
+    Range(const Range<OT>& o) :
+        begin(static_cast<T>(begin)),
+        end(static_cast<T>(end))
+    {
+    }
+
     constexpr T ElementSize() const
     {   // floating point ranges are inclusive for clipping
         if (std::is_floating_point<T>::value)
@@ -63,7 +70,7 @@ struct Range
     }
     Range& operator/=(T v)
     {
-        return operator()(1 / v);
+        return operator*(1 / v);
     }
 
     Range& Expand(T v)

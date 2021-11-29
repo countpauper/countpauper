@@ -36,7 +36,7 @@ namespace Game
     VoxelMap::VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude) :
         grid(HorizontalGrid, HorizontalGrid, VerticalGrid),
         size(longitude, latitude, altitude),
-        physical(std::make_unique<Physics::DiscreteGrid>(grid.Meters(size), grid)),
+        physical(),
         time(0),
         gravity(-10.0),
         planetRadius(6.371e6),  // assume earth sized planet
@@ -44,9 +44,8 @@ namespace Game
         atmosphericTemperature(273.15f),
         wind(0, 0, 0)
     {
-
-
         World(planetRadius);
+        Space(grid.Meters(size));
     }
 
     VoxelMap::~VoxelMap() = default;
@@ -93,10 +92,13 @@ namespace Game
 
     void VoxelMap::Space(const Engine::Vector& size)
     {
-        this->physical = std::make_unique<Physics::DiscreteGrid>(size, Engine::Vector(HorizontalGrid, HorizontalGrid, VerticalGrid));
+        physical = std::make_unique<Physics::DiscreteGrid>(size, Engine::Vector(HorizontalGrid, HorizontalGrid, VerticalGrid));
         this->size = Physics::Size(int(std::round(size.x / grid.x)),
             int(std::round(size.y / grid.y)),
             int(std::round(size.z / grid.z)));
+        physical->ConnectChange([this](const Engine::AABB&) {
+            mesh.reset();
+        });
     }
 
     void VoxelMap::World(double radius)
@@ -242,7 +244,8 @@ namespace Game
         Engine::Vector flowVector(flow);
         Engine::Vector yaxis(flowVector.y, flowVector.x, 0);
         Engine::Plane surface(flow.a, flow.b, flow.a + yaxis);
-        Engine::Intersection intersection({ cylinder, surface });
+        Engine::Plane underSurface = -surface;
+        Engine::Intersection intersection({ cylinder, underSurface });
 
         auto dbgCount = physical->Fill(intersection, Physics::Material::water, atmosphericTemperature);
         Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
@@ -513,9 +516,8 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
     Engine::Vector size;
     s >> name >> size.x >> size.y >> size.z;
     map.Space(size);
-    int waterLevel;
     double temperature;
-    s >> temperature >> waterLevel;
+    s >> temperature;
     map.Air(temperature, 20000);
     unsigned procedures;
     s >> procedures;

@@ -29,16 +29,16 @@ namespace Physics
         nullptr
     };
 
-    void PackedVoxel::Set(const Material* newMat)
+    void PackedVoxel::Set(const Material* newMat, unsigned amt)
     {
         for (material = 0; mats[material]; material++)
         {
             if (mats[material] == newMat)
             {
                 if (newMat->normalDensity)
-                    amount = 15;
+                    amount = amt;
                 else
-                    amount = 0;
+                    amount = 0; // vacuum
                 return;
             }
         }
@@ -61,7 +61,7 @@ Engine::RGBA PackedVoxel::Color() const
         double temperature = Temperature();
         double translucency = 1.0;
         if (mat->Fluid(temperature))
-            translucency = 0.5;
+            translucency = 0.2 + (0.466 * amount / 15);
         else if (mat->Gas(temperature))
             translucency = 0.0;
         return mat->color.Translucent(translucency);
@@ -100,5 +100,9 @@ double PackedVoxel::Density() const
     return GetMaterial()->normalDensity;    // TODO: temperature? 
 }
 
+int PackedVoxel::Amount() const
+{
+    return amount;
+}
 
 }

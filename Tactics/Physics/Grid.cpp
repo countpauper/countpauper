@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Physics/Grid.h"
 #include "Engine/Matrix.h"
+#include "Engine/Range.h"
 
 namespace Physics
 {
@@ -17,6 +18,15 @@ Engine::Vector Grid::Meters(const Size& size) const
 Position Grid::operator()(const Engine::Coordinate& c) const
 {
     return Position(int(std::floor(c.x / x)), int(std::floor(c.y / y)), int(std::floor(c.z / z)));
+}
+
+Engine::AABB Grid::BoundingBox(const Box& b) const
+{
+    return Engine::AABB(
+        Engine::Range<double>(b.x) * x,
+        Engine::Range<double>(b.y) * y,
+        Engine::Range<double>(b.z) * z
+    );
 }
 
 Box Grid::operator()(const Engine::AABB& b) const

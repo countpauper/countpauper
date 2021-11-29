@@ -23,7 +23,7 @@ public:
     virtual void Heat(const Engine::Coordinate& c, double energy) = 0;
     using ChangeSignal = is::signals::signal<void(const Engine::AABB&)>;
 
-    virtual void ConnectChange(ChangeSignal::slot_type slot) = 0;
+    virtual is::signals::connection ConnectChange(ChangeSignal::slot_type slot) = 0;
     virtual double Density(const Engine::IVolume& c) const =0;
     virtual double Temperature(const Engine::IVolume& c) const = 0; // kelvin
     virtual Engine::Vector Force(const Engine::IVolume& c) const = 0;

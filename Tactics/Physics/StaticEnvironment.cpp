@@ -25,7 +25,7 @@ void StaticEnvironment::ApplyForce(const Engine::IVolume& c, const Engine::Vecto
 void StaticEnvironment::ApplyForce(const Engine::Coordinate& c, double force) {}
 void StaticEnvironment::Heat(const Engine::Coordinate& c, double energy) {}
 
-void StaticEnvironment::ConnectChange(ChangeSignal::slot_type slot) {}
+is::signals::connection StaticEnvironment::ConnectChange(ChangeSignal::slot_type slot) { return is::signals::connection(); }
 
 double StaticEnvironment::Density(const Engine::IVolume& c) const
 {

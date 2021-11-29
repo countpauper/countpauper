@@ -26,7 +26,7 @@ void TreeGrid::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
 void TreeGrid::ApplyForce(const Engine::Coordinate& c, double force) {}
 void TreeGrid::Heat(const Engine::Coordinate& c, double energy) {}
 
-void TreeGrid::ConnectChange(ChangeSignal::slot_type slot) {}
+is::signals::connection TreeGrid::ConnectChange(ChangeSignal::slot_type slot) { return is::signals::connection(); }
 
 double TreeGrid::Density(const Engine::IVolume& c) const
 {
@@ -178,7 +178,7 @@ unsigned TreeGrid::Branch::Fill(const Engine::IVolume& v, const Position& offset
         boundStr << branchBounds;
 
         // None in 
-        if ((branchBounds & volumeBounds).Empty())
+        if (!(branchBounds & volumeBounds))
         {
             if (oldMaterial)
             {  // replace remaining sub node with original material from the old parent
@@ -256,7 +256,7 @@ std::pair<double, double> TreeGrid::Branch::GetTemperature(const Engine::IVolume
     for (auto idx = 0; idx< nodes.size(); ++idx)
     {
         Physics::Box branchBounds = GetBounds(idx) + offset;
-        if ((branchBounds & volumeBounds).Empty())
+        if (!(branchBounds & volumeBounds))
             continue;
         auto* node = nodes[idx].get();
         if (!node)

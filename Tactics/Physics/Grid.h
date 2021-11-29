@@ -23,6 +23,8 @@ public:
     Engine::Coordinate Center(const Physics::Position& p) const;
     Engine::Vector Meters(const Size& size) const;
     Position operator()(const Engine::Coordinate& c) const;
+    
+    Engine::AABB BoundingBox(const Box& b) const;
     Box operator()(const Engine::AABB& b) const;
     double Volume() const;
 };

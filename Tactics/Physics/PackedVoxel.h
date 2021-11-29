@@ -11,12 +11,14 @@ namespace Physics
         PackedVoxel();
         PackedVoxel(const Material& m, double temperature);
 
-        void Set(const Material* newMat);
+        void Set(const Material* newMat, unsigned  amount = 15);
+        void Set(const Material& newMat, unsigned  amount = 15) { Set(&newMat, amount); }
         const Material* GetMaterial() const;
         Engine::RGBA Color() const;
         double Temperature() const;
         void SetTemperature(double t);
         double Density() const;
+        int Amount() const;
     private:
 
         // material: 0 = vacuum, air, water, earth, stone

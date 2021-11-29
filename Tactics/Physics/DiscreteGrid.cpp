@@ -20,6 +20,11 @@ Box DiscreteGrid::Bounds() const
     return Box(size);
 }
 
+Box DiscreteGrid::Neighbourhood(const Position& p) const
+{
+    return Box(p, Size(1, 1, 1)).Grow(1) & Bounds();
+}
+
 unsigned DiscreteGrid::Index(const Position& p) const
 {
     return p.x + (p.y * size.x) + (p.z * size.x * size.y);
@@ -57,7 +62,10 @@ void DiscreteGrid::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v)
 void DiscreteGrid::ApplyForce(const Engine::Coordinate& c, double force) {}
 void DiscreteGrid::Heat(const Engine::Coordinate& c, double energy) {}
 
-void DiscreteGrid::ConnectChange(ChangeSignal::slot_type slot) {}
+is::signals::connection DiscreteGrid::ConnectChange(ChangeSignal::slot_type slot)
+{
+    return m_changed.connect(slot);
+}
 
 double DiscreteGrid::Density(const Engine::IVolume& c) const
 {
@@ -116,6 +124,63 @@ Engine::RGBA DiscreteGrid::Color(const Engine::Line& l) const
 
 void DiscreteGrid::Tick(double seconds)
 {
+    Box invalid;
+
+    for (iterator it(*this, Bounds()); it != it.end(); ++it)
+    {
+        auto& current = (*it).second;
+
+        if (current.GetMaterial() == &Material::water)
+        {
+            // TODO: first flow down, only direct neighbours 
+
+            int emptiness = std::numeric_limits<int>::max();
+            std::vector<Position> flowDestination;    
+            for(iterator nit(*this, Neighbourhood(it.position)); nit!= nit.end(); ++nit)
+            {
+                if (it == nit)
+                    continue;
+                const auto& neighbour = (*nit).second;
+                if (neighbour.GetMaterial() == &Material::air)
+                {
+                    if (emptiness > 0)
+                        flowDestination.clear();
+                    emptiness = 0;
+                    flowDestination.push_back(nit.position);
+                }
+                else if (neighbour.GetMaterial() == &Material::water)
+                {
+                    if (neighbour.Amount() < emptiness)
+                        flowDestination.clear();
+                    if (neighbour.Amount() <= emptiness)
+                    {
+                        emptiness = std::min(emptiness, neighbour.Amount());
+                        flowDestination.push_back(nit.position);
+                    }
+                }
+                
+            }
+            auto newAmount = current.Amount() - 1;
+            if ((flowDestination.size()) && (emptiness<newAmount))
+            {
+                if (newAmount == 0)
+                {
+                    assert(false); // TODO: how currently. Can only empty downwards because destination needs to be less than 0 
+                }
+                else
+                {
+                    auto flowLocation = flowDestination.front();    // TODO randomize
+                    invalid |= it.position;
+                    invalid |= flowLocation;
+                    current.Set(Material::water, newAmount);
+                    auto& neighbour = (*this)[flowLocation]; 
+                    neighbour.Set(Material::water, emptiness + 1);
+                }
+            }
+        }
+    }
+    if (invalid)
+        m_changed(grid.BoundingBox(invalid));
 }
 
 

@@ -9,6 +9,7 @@ namespace Physics
 class Box
 {
 public:
+    Box() : Box(Size()) {} 
     Box(const Engine::Range<int>& x, const Engine::Range<int>& y, const Engine::Range<int>& z);
     Box(const Position& from, const Position& to);
     Box(const Position& from, const Size& extent) : Box(from, from + extent) {}
@@ -18,6 +19,7 @@ public:
     int Volume() const;
     Size Extent() const;
 
+    operator bool() const { return !Empty(); }
     bool Empty() const;
     bool Contains(const Position& position) const;
     bool operator[](const Position& position) { return Contains(position); }
