@@ -1,7 +1,7 @@
 <drac2>
 args=&ARGS&
 if not args:
-	return f'echo `{ctx.prefix}{ctx.alias} transfer <bag> [<target>]`'
+	return f'echo `{ctx.prefix}{ctx.alias} transfer <bag> [<target>] ["<filter item>"|-"<exclude item>"][...]`'
 
 # bag state
 bv='bags'
@@ -47,31 +47,53 @@ else:
 	else:
 		target_name=target_bag[0]
 		new_bag=False
+include_items=[a.lower() for a in args[2:] if not a.startswith('-')]
+exclude_items=[a[1:].lower() for a in args[2:] if a.startswith('-')]
+
 # move all items
+dbg=[]
 diff={}
 for item_name, amount in source_bag[1].items():
-	if item_name.lower() not in unmovable_items:
-		old_amount=target_bag[1].get(item_name,0)
-		new_amount = old_amount + amount
-		target_bag[1][item_name]= new_amount
-		source_bag[1][item_name]=0
-		# remember changes for report
-		plural_name=(item_name if item_name[-1]=='s' else item_name+'s') if new_amount>1 else item_name
-		diff[plural_name]=(old_amount,new_amount)
+	# filter prioritized
+	if item_name.lower() in unmovable_items:
+		dbg.append(f'Unmove {item_name}')
+		continue
+	elif any(include==item_name.lower() for include in include_items):
+		dbg.append(f'Include {item_name}')
+		pass	# exact (case insensitive match) to include
+	elif any(exclude==item_name.lower() for exclude in exclude_items):
+		dbg.append(f'Exclude {item_name}')
+		continue	# exact (case insensitive match) to exclude
+	elif any(any(item_part.startswith(include) for item_part in item_name.lower().split()) for include in include_items):
+		dbg.append(f'include {item_name}')
+		pass 	# partial to include
+	elif any(any(item_part.startswith(exclude) for item_part in item_name.lower().split()) for exclude in exclude_items):
+		dbg.append(f'exclude {item_name}')
+		continue	# partial to exclude
+	elif include_items:
+		dbg.append(f'skip {item_name}')
+		continue	# if include is specified but it doesn't match, then don't assume
+	old_amount=target_bag[1].get(item_name,0)
+	new_amount = old_amount + amount
+	target_bag[1][item_name]= new_amount
+	source_bag[1][item_name]=0
+	# remember changes for report
+	diff[item_name]=(old_amount,new_amount)
 
-# clean up source bag
+# clean up source bag of 0 count items
 source_bag[1]={i:q for i,q in source_bag[1].items() if q>0 or i in unmovable_items}
 
 # clear the source bag, but only remove it if it is free(beer)
 source_desc="*Empty*"
 nl='\n'
+plural_es=['s','sh','ch','x','z']
 source_name=source_bag[0].lower()
 if not source_bag[1]:
 	if not source_name in item_table or not item_table[source_name].get('cost'):
 		bags.remove(source_bag)
 		source_desc="*Removed*"
 else:
-	source_desc=nl.join(f'{q} x {i}' if q>1 else i for i,q in source_bag[1].items())
+	source_desc=nl.join(f'{q} x {i}{"es" if any(i.endswith(end) for end in plural_es) else "s"}' if q>1 else i for i,q in source_bag[1].items())
 
 source_name = source_name.title().replace("'S","'s")
 
@@ -80,11 +102,15 @@ if backup:
 	character().set_cvar('bag_backup', backup)
 character().set_cvar(bv,dump_json(bags))
 
-# report changes
 
-desc=[f'~~{old}~~ {new}x {item}' if old else f'+{item}' for item,(old,new) in diff.items()]
+# plurallize
+plural_diff={(f'{new}x {i}{"es" if any(i.endswith(end) for end in plural_es) else "s"}' if new>1 else i):old for i,(old,new) in diff.items()}
+# report changes
+desc=[f'~~{old}~~ {item}' if old else item for item,old in plural_diff.items()]
+
 if not desc:
 	desc=["*No items transferred*"]
 possessive=f'{name}\'' if name[-1]=='s' else f'{name}\'s'
-return f'embed -title "{possessive} bags" -f "{"+" if new_bag else ""}{target_bag[0]}|{nl.join(desc)}|inline" -f "{source_name}|{source_desc}|inline" -color {color} -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png'
+dbg=f'-f "Debug|{nl.join(dbg)}"' if dbg and ctx.alias=='bqb' else ''
+return f'embed -title "{possessive} bags" -f "{"+" if new_bag else ""}{target_bag[0]}|{nl.join(desc)}|inline" -f "{source_name}|{source_desc}|inline" {dbg} -color {color} -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png'
 </drac2>

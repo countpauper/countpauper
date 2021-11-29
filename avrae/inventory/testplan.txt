@@ -53,3 +53,35 @@
 
 # count the gold and the daggers:   should be 10008 gp 3sp 1 ep and 1 dagger still
 !bqb count $ dagger
+
+
+
+
+### transfer (setup)
+!cvar delete bags
+!bqb pouch explorer
+
+# transfer all, keep backpack
+!bqb transfer backpack pouch
+
+# transfer include item, check plural on source
+!bqb transfer pouch backpack bedroll
+
+#transfer include partial
+!bqb transfer pouch backpack mess
+
+#transfer exclude check plural torches and remaining rantionses (todo)
+!bqb transfer pouch backpack -ration
+
+# transfer include unknown item, should do nothing
+!bqb transfer pouch backpack cheese
+
+# transfer exclude unknown item
+!bqb transfer pouch backpack -cheese
+
+# transfer exact match overrules partial
+!bqb transfer backpack pouch tinder -tinderbox
+!bqb transfer backpack pouch -tinder tinderbox
+
+#tranfer multiple include and stack, check item counts
+!bqb transfer backpack pouch torch bed
