@@ -242,13 +242,21 @@ namespace Game
     {
         Engine::Cylinder cylinder(flow, width, depth);
         Engine::Vector flowVector(flow);
-        Engine::Vector yaxis(flowVector.y, flowVector.x, 0);
-        Engine::Plane surface(flow.a, flow.b, flow.a + yaxis);
-        Engine::Plane underSurface = -surface;
-        Engine::Intersection intersection({ cylinder, underSurface });
+        Engine::Vector reverseGravity(0, 0, 1); // prefer water belly hangs down in the gravity direction
+        Engine::Vector surfaceVector = flowVector.Cross(reverseGravity);
+        if (!surfaceVector)
+        {   // completely vertical, make it a well, TODO: there could be a slope angle for nearly vertical rivers 
+            auto dbgCount = physical->Fill(cylinder, Physics::Material::water, atmosphericTemperature);
+            Engine::Debug::Log(std::wstring(L"Well at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+        }
+        else
+        {
+            Engine::Plane surface(flow.a, flow.a + surfaceVector, flow.b);
+            Engine::Intersection intersection({ cylinder, surface });
 
-        auto dbgCount = physical->Fill(intersection, Physics::Material::water, atmosphericTemperature);
-        Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+            auto dbgCount = physical->Fill(intersection, Physics::Material::water, atmosphericTemperature);
+            Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+        }
     }
 
     void VoxelMap::Cave(const Engine::Line& flow, double width, double height)
