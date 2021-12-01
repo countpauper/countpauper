@@ -61,6 +61,11 @@
 !cvar delete bags
 !bqb pouch explorer
 
+# default to pouch
+!bqb transfer backpack
+# undo transfer
+!bqb undo
+ 
 # transfer all, keep backpack
 !bqb transfer backpack pouch
 

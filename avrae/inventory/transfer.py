@@ -29,9 +29,10 @@ if not source_bag:
 
 target_name=args[1].lower() if len(args)>=2 else None
 if not target_name:
-	target_bag=([b for b in bags if b[0].lower() not in special_bags] + [None])[0]
+	target_bag=([b for b in bags if b[0].lower() not in purse_names] + [None])[0]
 	if not target_bag:
 		return f'echo No default bag found to transfer to.'
+	new_bag = False
 else:
 	target_bag=([b for b in bags if b[0].lower()==target_name] +
 				[b for b in bags if b[0].lower().startswith(target_name)] +

@@ -26,6 +26,9 @@ x !state combat: automatically put groups into separate fields (then not sorted 
     * default no ranges just conditions and effects, just heart, team, effects
 
 * !qb transfer <from> <to> [<item>][...]
+- !qb plurals same as transfer (es)
+    - plurals solutions for default plural items (rations)
+    - plural solution for items with bracers hempen rope (50 ft)
 
 * !sw aoo uses name, could be quotes, they can be .replace('"','\"')
 * !sw uses note to see if it casts, should use the attack. SHould also attack with the attack instead of aoo

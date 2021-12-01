@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/weal and woe.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/VoxelMap.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Tactics/Data/Physics.map" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Tactics/Data/Physics.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/testplan.txt" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/testplan.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/transfer.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/transfer.py" afterDir="false" />
