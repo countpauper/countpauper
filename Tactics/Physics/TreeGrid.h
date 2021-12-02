@@ -15,8 +15,7 @@ class TreeGrid : public IEnvironment
 public:
     // size in meter, grid in meter/voxel
     TreeGrid(const Engine::Vector& extent, const Grid& grid = Grid());
-
-    size_t Fill(const Engine::IVolume& v, const Material& m, double temperature) override;
+    size_t Fill(const Engine::IVolume& v, const Material& m, double temperature, std::optional<double> density=std::optional<double>()) override;
     void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) override;
     void ApplyForce(const Engine::Coordinate& c, double force) override;
     void Heat(const Engine::Coordinate& c, double energy) override;

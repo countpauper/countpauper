@@ -17,7 +17,8 @@ namespace Physics
 class IEnvironment
 {
 public:
-    virtual size_t Fill(const Engine::IVolume& v, const Material& m, double temperature)=0;
+    virtual size_t Fill(const Engine::IVolume& v, const Material& m, double temperature, std::optional<double> density=std::optional<double>()) = 0;
+
     virtual void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v)=0;
     virtual void ApplyForce(const Engine::Coordinate& c, double force) = 0;
     virtual void Heat(const Engine::Coordinate& c, double energy) = 0;

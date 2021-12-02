@@ -72,7 +72,7 @@ TEST(Tree, FillOneByOne)
     for (BoxIterator i(bounds); i != i.end(); ++i)
     {
         Engine::AABox volume(Engine::Coordinate(i->x, i->y, i->z), Engine::Vector(1, 1, 1));
-        EXPECT_EQ(1, env.Fill(volume, Material::water, 300));
+        EXPECT_EQ(1, env.Fill(volume, Material::water, 300, std::optional<double>()));
         EXPECT_EQ(&Material::water, env.GetMaterial(Engine::Coordinate(i->x + 0.5, i->y + 0.5, i->z + 0.5)));
         expectedVolume += grid.Volume();
         EXPECT_DOUBLE_EQ(expectedVolume, env.Measure(&Material::water));

@@ -47,5 +47,13 @@ TEST(DiscreteGrid, Fill)
     EXPECT_DOUBLE_EQ(1.0, quadEnv.Measure(&Material::water));
 }
 
+TEST(DiscreteGrid, FillAmount)
+{
+    DiscreteGrid oneEnv(Engine::Vector(1, 1, 1));
+    oneEnv.Fill(Engine::Sphere(Engine::Coordinate(0, 0, 0), 1), Material::water, 273, Material::water.normalDensity/2);
+    EXPECT_NEAR(0.5, oneEnv.Measure(&Material::water), 0.1);
+}
+
+
 }
 }

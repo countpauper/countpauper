@@ -12,16 +12,15 @@ namespace Physics
     {
     }
 
-    PackedVoxel::PackedVoxel(const Material& m, double temperature) :
+    PackedVoxel::PackedVoxel(const Material& m, double temperature, int amt) :
         amount(0)
     {
-        Set(&m);
+        Set(&m, amt);
         SetTemperature(temperature);
     }
 
     const Material* PackedVoxel::mats[] =
     {
-        &Material::vacuum,
         &Material::air,
         &Material::water,
         &Material::soil,
@@ -31,14 +30,16 @@ namespace Physics
 
     void PackedVoxel::Set(const Material* newMat, unsigned amt)
     {
+        if (!newMat->normalDensity)
+        {
+            amt = 0;
+            newMat = mats[0];
+        }
         for (material = 0; mats[material]; material++)
         {
             if (mats[material] == newMat)
             {
-                if (newMat->normalDensity)
-                    amount = amt;
-                else
-                    amount = 0; // vacuum
+                amount = amt;
                 return;
             }
         }
@@ -48,7 +49,10 @@ namespace Physics
 
 const Material* PackedVoxel::GetMaterial() const
 {
-    return mats[material];
+    if (!amount)
+        return &Material::vacuum;
+    else
+        return mats[material];
 }
 
 Engine::RGBA PackedVoxel::Color() const
@@ -61,7 +65,7 @@ Engine::RGBA PackedVoxel::Color() const
         double temperature = Temperature();
         double translucency = 1.0;
         if (mat->Fluid(temperature))
-            translucency = 0.2 + (0.466 * amount / 15);
+            translucency = 0.2 + (0.5 * amount / maxAmount);
         else if (mat->Gas(temperature))
             translucency = 0.0;
         return mat->color.Translucent(translucency);
@@ -97,7 +101,7 @@ void PackedVoxel::SetTemperature(double t)
 
 double PackedVoxel::Density() const
 {
-    return GetMaterial()->normalDensity;    // TODO: temperature? 
+    return GetMaterial()->normalDensity;    // TODO: temperature? amount? 
 }
 
 int PackedVoxel::Amount() const

@@ -85,7 +85,7 @@ public:
     Position Clip(const Position& p) const;
 
     // Data getters and setters
-    size_t Fill(const Engine::IVolume& v, const Material& m, double temperature);   // volume in SI
+    size_t Fill(const Engine::IVolume& v, const Material& m, double density, double temperature);   // volume in SI
     void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
     void AdjustGrid(const Position& location, double temperature, double density);
     double Density(const Position& position) const;

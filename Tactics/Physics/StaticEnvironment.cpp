@@ -16,9 +16,9 @@ StaticEnvironment::StaticEnvironment(const Engine::Vector& size, const Engine::V
 
 }
 
-size_t StaticEnvironment::Fill(const Engine::IVolume& v, const Material& m, double temperature)
+size_t StaticEnvironment::Fill(const Engine::IVolume& v, const Material& m, double temperature, std::optional<double> density)
 {
-    return data.Fill(v, m, temperature);
+    return data.Fill(v, m, temperature, density.has_value()?*density : m.Density(PascalPerAtmosphere,temperature));
 }
 
 void StaticEnvironment::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}

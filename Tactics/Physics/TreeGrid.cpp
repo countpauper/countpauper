@@ -17,7 +17,7 @@ TreeGrid::TreeGrid(const Engine::Vector& extent, const Grid& grid) :
     root->Fill(Engine::AABox(Engine::Coordinate(0, 0, 0), extent), Position(), Material::vacuum, 0);
 }
 
-size_t TreeGrid::Fill(const Engine::IVolume& v, const Material& m, double temperature)
+size_t TreeGrid::Fill(const Engine::IVolume& v, const Material& m, double temperature, std::optional<double>)
 {
     return root->Fill(v, Position(), m, temperature);
 }

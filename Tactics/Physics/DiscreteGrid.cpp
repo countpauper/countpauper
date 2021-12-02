@@ -43,16 +43,24 @@ const PackedVoxel& DiscreteGrid::operator[](const Position& p) const
     return  m_data.at(Index(p));
 }
 
-size_t DiscreteGrid::Fill(const Engine::IVolume& v, const Material& m, double temperature)
+size_t DiscreteGrid::Fill(const Engine::IVolume& v, const Material& m, double temperature, std::optional<double> density)
 {
     size_t filled = 0;
     Box bounds = grid(v.GetBoundingBox()) & Bounds();
 
+    if (!density.has_value())
+        density = m.normalDensity;
+
+    double normalDensity = m.Density(PascalPerAtmosphere, temperature);
+    double airDensity = Material::air.Density(PascalPerAtmosphere, temperature);
+    double fraction = (*density - airDensity) / (normalDensity - airDensity);
+    int amount = int(PackedVoxel::maxAmount * std::min(fraction, 1.0));
     for (iterator it(*this, bounds); it != it.end(); ++it)
     {
         if (v.Contains(grid.Center(it.position)))
         {
-            (*it).second = PackedVoxel(m, temperature);
+
+            (*it).second = PackedVoxel(m, temperature, amount);
             filled++;
         }
     }
@@ -220,10 +228,21 @@ void DiscreteGrid::Tick(double seconds)
 double DiscreteGrid::Measure(const Material* material) const
 {
     double volume = 0.0;
-    for (const_iterator it(*this, Bounds()); it != it.end(); ++it)
+    if (material == &Material::vacuum)
     {
-        if ((*it).second.GetMaterial() == material)
-            volume += grid.Volume();
+        for (const_iterator it(*this, Bounds()); it != it.end(); ++it)
+        {
+            if ((*it).second.GetMaterial() == material)
+                volume += grid.Volume() ;
+        }
+    }
+    else
+    {
+        for (const_iterator it(*this, Bounds()); it != it.end(); ++it)
+        {
+            if ((*it).second.GetMaterial() == material)
+                volume += grid.Volume() * (*it).second.Amount() / PackedVoxel::maxAmount;
+        }
     }
     return volume;
 }
