@@ -53,6 +53,7 @@ class AABox : public AABB, public IVolume
 public:
     AABox(const Coordinate& a, const Coordinate& b) : AABB(a, b) {}
     AABox(const Coordinate& c, const Vector& e) : AABB(c, e) {}
+    AABox(const AABB& box) : AABB(box) {}
     AABox(const Range<double>& x, const Range<double>& y, const Range<double>& z) : AABB(x, y, z) {}
 
     // IVolume;

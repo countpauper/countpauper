@@ -257,6 +257,11 @@ namespace Game
             auto dbgCount = physical->Fill(intersection, Physics::Material::water, atmosphericTemperature);
             Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
         }
+        Engine::Cylinder c(Engine::Line(flow.a, flow.a + Engine::Vector(flow).Normal()), width, depth);
+        Engine::Plane constraintSurface(flow.a, Engine::Vector(1, 0, 0), Engine::Vector(0, 1, 0));
+        Engine::Intersection constrainInteraction({ c, constraintSurface });
+        physical->Constrain(constrainInteraction, Physics::Material::water, atmosphericTemperature, [](double) {return Physics::Material::water.normalDensity; });
+
     }
 
     void VoxelMap::Cave(const Engine::Line& flow, double width, double height)

@@ -2,11 +2,13 @@
 #include <string>
 #include <array>
 #include <map>
+
 #include "IEnvironment.h"
 #include "Engine/Vector.h"
 #include "Physics/Grid.h"
 #include "Physics/PackedVoxel.h"
 #include "Physics/BoxIterator.h"
+#include "Physics/Constraint.h"
 
 namespace Physics
 {
@@ -17,6 +19,8 @@ public:
     DiscreteGrid(const Engine::Vector& extent, const Grid& grid = Grid());
 
     size_t Fill(const Engine::IVolume& v, const Material& m, double temperature, std::optional<double> density=std::optional<double>()) override;
+    void Constrain(const Engine::IVolume& v, const Material& m, double temperatire, Function density) override;
+
     void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) override;
     void ApplyForce(const Engine::Coordinate& c, double force) override;
     void Heat(const Engine::Coordinate& c, double energy) override;
@@ -39,9 +43,11 @@ private:
     Box Bounds() const;
     Box Neighbourhood(const Position& p) const;
     unsigned Index(const Position& p) const;
+    double time = 0;    // TODO: could be in game and IEnvironment::Tick(...)
     Size size;
     Grid grid;
     std::vector<PackedVoxel> m_data;
+    std::vector<Constraint> m_constraints;
     ChangeSignal m_changed;
 };
 }

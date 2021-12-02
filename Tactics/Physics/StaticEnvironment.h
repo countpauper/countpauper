@@ -14,6 +14,7 @@ public:
     StaticEnvironment(const Engine::Vector& size, const Engine::Vector& grid=Engine::Vector(1,1,1));
 
     size_t Fill(const Engine::IVolume& v, const Material& m, double density, std::optional<double> temperature) override;
+    void Constrain(const Engine::IVolume& v, const Material& m, double temperatire, Function density) override;
     void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) override;
     void ApplyForce(const Engine::Coordinate& c, double force) override;
     void Heat(const Engine::Coordinate& c, double energy) override;

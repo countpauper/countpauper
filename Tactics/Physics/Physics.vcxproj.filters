@@ -69,7 +69,7 @@
     <ClInclude Include="PackedVoxel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Condition.h">
+    <ClInclude Include="Constraint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -122,7 +122,7 @@
     <ClCompile Include="DiscreteGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Condition.cpp">
+    <ClCompile Include="Constraint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -22,6 +22,10 @@ size_t TreeGrid::Fill(const Engine::IVolume& v, const Material& m, double temper
     return root->Fill(v, Position(), m, temperature);
 }
 
+void TreeGrid::Constrain(const Engine::IVolume& v, const Material& m, double temperatire, Function density)
+{
+}
+
 void TreeGrid::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
 void TreeGrid::ApplyForce(const Engine::Coordinate& c, double force) {}
 void TreeGrid::Heat(const Engine::Coordinate& c, double energy) {}

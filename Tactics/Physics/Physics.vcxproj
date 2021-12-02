@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="Box.h" />
     <ClInclude Include="BoxIterator.h" />
+    <ClInclude Include="Constraint.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="DiscreteGrid.h" />
     <ClInclude Include="FluidDynamics.h" />
@@ -166,7 +167,6 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Size.h" />
-    <ClInclude Include="Condition.h" />
     <ClInclude Include="StaticEnvironment.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -176,7 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Box.cpp" />
-    <ClCompile Include="Condition.cpp" />
+    <ClCompile Include="Constraint.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="DiscreteGrid.cpp" />
     <ClCompile Include="FluidData.cpp" />

@@ -21,6 +21,11 @@ size_t StaticEnvironment::Fill(const Engine::IVolume& v, const Material& m, doub
     return data.Fill(v, m, temperature, density.has_value()?*density : m.Density(PascalPerAtmosphere,temperature));
 }
 
+
+void StaticEnvironment::Constrain(const Engine::IVolume& v, const Material& m, double temperatire, Function density)
+{
+}
+
 void StaticEnvironment::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
 void StaticEnvironment::ApplyForce(const Engine::Coordinate& c, double force) {}
 void StaticEnvironment::Heat(const Engine::Coordinate& c, double energy) {}

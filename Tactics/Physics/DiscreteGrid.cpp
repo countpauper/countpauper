@@ -57,14 +57,19 @@ size_t DiscreteGrid::Fill(const Engine::IVolume& v, const Material& m, double te
     int amount = int(PackedVoxel::maxAmount * std::min(fraction, 1.0));
     for (iterator it(*this, bounds); it != it.end(); ++it)
     {
+        // TODO: for water it could be filled with amounts based on vertical levels for even smoother water surface
         if (v.Contains(grid.Center(it.position)))
         {
-
             (*it).second = PackedVoxel(m, temperature, amount);
             filled++;
         }
     }
     return filled;
+}
+
+void DiscreteGrid::Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density)
+{
+    m_constraints.emplace_back(Constraint(v, m, temperature, density));
 }
 
 void DiscreteGrid::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
@@ -135,6 +140,14 @@ void DiscreteGrid::Tick(double seconds)
 {
     Box invalid;
     Box bounds = Bounds();
+    
+    time += seconds;
+
+    for (const auto c : m_constraints)
+    {
+        c.Tick(time, *this);
+    }
+
     for (iterator it(*this, bounds); it != it.end(); ++it)
     {
         auto& current = (*it).second;
