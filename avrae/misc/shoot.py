@@ -15,7 +15,7 @@ ammo_containers=server_data.get('ammo', char_data.get('ammo', game_data.get('amm
 
 # ensure all configuration is lower case
 ready_bags=[rb.lower() for rb in ready_bags]
-weapons={w.lower():wd for w,wd in weapons.items() if wd.get('range')}
+weapons={w:wd for w,wd in weapons.items() if wd.get('range')}
 ammo_containers={ac.lower():ad for ac,ad in ammo_containers.items()}
 
 # explicit argument attacks
@@ -88,6 +88,7 @@ if ammount==0:
 	ammount=1
 ammount *= int(args.last('rr',1))
 
+
 if bags:
 	# collect all existing ammo bags, sorted by preference
 	ammo_bags=[b for b in bags if b[0].lower() in ammo_bag_names]
@@ -95,10 +96,9 @@ if bags:
 	# RAW all containers can be used as part of an action, just prefer the ammo bags, equipment bags, add the rest after
 	ammo_bags+=[b for b in bags if not b in ammo_bags]
 	bag_name=ammo_bags[0][0]
-
 	used_ammo={}
 	total,used=0,0
-	# go over all ammmo bags. Remove sufficient ammo and count how many total there were
+	# go over all ammo bags. Remove sufficient ammo and count how many total there were
 	for ammo_bag in ammo_bags:
 		ammo_items = ammo_bag[1]
 		bag_items = [item for item in ammo_items.keys()]	# copy of keys to adjust ammo_bag during iteration

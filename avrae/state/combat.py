@@ -143,7 +143,8 @@ for c in C.combatants:
 				props.append('(DM)')
 			elif c.group:
 				props.append(f'({c.group})')
-	result.append(f'{":arrow_forward:" if active else ":white_large_square:"} **{c.name}** {" - " if props else ""}{" ".join(props)}')
+	props=", ".join(props).replace(':, :',': :')
+	result.append(f'{":arrow_forward:" if active else ":white_large_square:"} **{c.name}** {" - " if props else ""}{props}')
 
 # limit result size to 4096 discord embed description limit, discord also cuts the field short with too many smileys
 # and the whole embed can only be 6000
