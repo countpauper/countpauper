@@ -118,6 +118,25 @@ const Material& VoxelData::MaterialAt(const Position& position) const
     return *(voxels[GridIndex(position)].material);
 }
 
+double VoxelData::Measure(const Engine::IVolume& v, const Material* material) const
+{
+    double volume = 0;
+    auto bb = v.GetBoundingBox() & BoundingBox();
+    Box volBB(grid(bb.Begin()), grid(bb.End()) + Position(1, 1, 1));
+    for (auto& voxel : In(volBB))
+    {
+        auto center = Center(voxel.first);
+        if (v.Contains(center))
+        {
+            if (&MaterialAt(voxel.first) == material)
+            {
+                volume += grid.Volume();
+            }
+        }
+    }
+    return volume;
+}
+
 void VoxelData::SetDensity(const Position& position, float density)
 {
     auto& v = voxels[GridIndex(position)];
@@ -328,7 +347,7 @@ Position VoxelData::Clip(const Position& p) const
     return Bounds().Clip(p);
 }
 
-size_t VoxelData::Fill(const Engine::IVolume& v, const Material& m, double density, const double temperature)
+size_t VoxelData::Fill(const Engine::IVolume& v, Filter filter, const Material& m, double density, const double temperature)
 {
     size_t filled = 0;
     auto bb = v.GetBoundingBox() & BoundingBox();
@@ -339,8 +358,11 @@ size_t VoxelData::Fill(const Engine::IVolume& v, const Material& m, double densi
         auto center = Center(voxel.first);
         if (v.Contains(center))
         {
-            (*this)[voxel.first] = { &m, float(temperature), float(density) };
-            ++filled;
+            if (filter(center, (voxel.second).material, (voxel.second).density, (voxel.second).temperature))
+            {
+                (*this)[voxel.first] = { &m, float(temperature), float(density) };
+                ++filled;
+            }
         }
     }
     return filled;

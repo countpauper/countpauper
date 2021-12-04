@@ -9,9 +9,6 @@
 #include "Engine/Line.h"
 #include "Engine/Timer.h"
 #include "Engine/Maths.h"
-#include "Engine/Random.h"
-#include "Engine/Drawing.h"
-#include "Engine/Text.h"
 #include "Engine/Mesh.h"
 #include "Engine/Matrix.h"
 #include "Engine/Plane.h"
@@ -21,6 +18,7 @@
 #include "Engine/AxisAlignedBoundingBox.h"
 #include "Physics/DiscreteGrid.h"
 #include "Physics/BoxIterator.h"
+#include "Physics/Direction.h"
 
 #include "El.h"
 #include <string>
@@ -139,7 +137,7 @@ namespace Game
                 Engine::Range<double>::infinity(),
                 Engine::Range<double>(elevation, elevation + layerThickness));
             auto temperature = AtmosphericTemperature(elevation + layerThickness * 0.5);
-            dbgCount += physical->Fill(layer, Physics::Material::air, temperature);
+            dbgCount += physical->Fill(layer, Physics::fillAll, Physics::Material::air, temperature);
         }
         Engine::Debug::Log(L"Air =" + std::to_wstring(dbgCount) + L" voxels\n");
     }
@@ -150,14 +148,64 @@ namespace Game
         // TODO: set all air flux and boundary
     }
 
+
+    double EdgeStartCoord(double s, double v)
+    {
+        if (v == 0)
+            return 0;
+        else if (v < 0)
+            return 0;
+        else
+            return s - v;
+    }
+
+    Engine::Coordinate EdgeStart(const Physics::Size& s, Physics::Direction d)
+    {
+        auto v = d.Vector();
+        return Engine::Coordinate(
+            EdgeStartCoord(s.x, v.x),
+            EdgeStartCoord(s.y, v.y),
+            EdgeStartCoord(s.z, v.z)
+        );
+    }
+
+    double EdgeEndCoord(double s, double v)
+    {
+        if (v == 0)
+            return s;
+        else if (v < 0)
+            return -v;
+        else
+            return s;
+
+    }
+
+    Engine::Coordinate EdgeEnd(const Physics::Size& s, Physics::Direction d)
+    {
+        auto v = d.Vector();
+        return Engine::Coordinate(
+            EdgeEndCoord(s.x, v.x),
+            EdgeEndCoord(s.y, v.y),
+            EdgeEndCoord(s.z, v.z)
+        );
+    }
+
+
     void VoxelMap::Sea(double level, double temperature)
     {
         Engine::AABox sea(
             Engine::Range<double>::infinity(),
             Engine::Range<double>::infinity(),
             Engine::Range<double>(0, level));
-        auto dbgCount = physical->Fill(sea, Physics::Material::water, temperature);
+        auto dbgCount = physical->Fill(sea, Physics::fillAll, Physics::Material::water, temperature);
         Engine::Debug::Log(std::wstring(L"Sea level ") + Engine::ToWString(level) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+        for (auto side : Physics::Directions() | Physics::Direction::north | Physics::Direction::south |Physics::Direction::east | Physics::Direction::west)
+        {
+            auto s = EdgeStart(size, side), e= EdgeEnd(size, side);
+            Engine::AABox sideBox(Engine::Range<double>(s.x, e.x), Engine::Range<double>(s.y, e.y), Engine::Range<double>(level - grid.z, level));
+            physical->Constrain(sideBox, Physics::Material::water, temperature, [](double time) { return 0.5 + 0.4*sin(time)*Physics::Material::water.normalDensity; });
+
+        }
     }
 
     class Hill : public Engine::IVolume
@@ -214,7 +262,7 @@ namespace Game
     {
         Game::Hill hill(ridgeLine, stddev);
 
-        auto dbgCount = physical->Fill(hill, Physics::Material::stone, atmosphericTemperature);
+        auto dbgCount = physical->Fill(hill, Physics::fillAll, Physics::Material::stone, atmosphericTemperature);
         Engine::Debug::Log(std::wstring(L"Hill at ") + Engine::ToWString(ridgeLine) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
     }
 
@@ -232,7 +280,7 @@ namespace Game
             zAxis,  // the zAxis remains aligned with the world to not rotate the wall, but skew it along the line 
             Engine::Vector(bottomLine.a));
 
-        auto dbgCount = physical->Fill(box, Physics::Material::stone, atmosphericTemperature);
+        auto dbgCount = physical->Fill(box, Physics::fillAll, Physics::Material::stone, atmosphericTemperature);
         Engine::Debug::Log(std::wstring(L"Wall at ") + Engine::ToWString(bottomLine) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
 
     }
@@ -246,7 +294,7 @@ namespace Game
         Engine::Vector surfaceVector = flowVector.Cross(reverseGravity);
         if (!surfaceVector)
         {   // completely vertical, make it a well, TODO: there could be a slope angle for nearly vertical rivers 
-            auto dbgCount = physical->Fill(cylinder, Physics::Material::water, atmosphericTemperature);
+            auto dbgCount = physical->Fill(cylinder, Physics::fillAll, Physics::Material::water, atmosphericTemperature);
             Engine::Debug::Log(std::wstring(L"Well at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
         }
         else
@@ -254,7 +302,7 @@ namespace Game
             Engine::Plane surface(flow.a, flow.a + surfaceVector, flow.b);
             Engine::Intersection intersection({ cylinder, surface });
 
-            auto dbgCount = physical->Fill(intersection, Physics::Material::water, atmosphericTemperature);
+            auto dbgCount = physical->Fill(intersection, Physics::fillAll, Physics::Material::water, atmosphericTemperature);
             Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
         }
         Engine::Cylinder c(Engine::Line(flow.a, flow.a + Engine::Vector(flow).Normal()), width, depth);
@@ -267,7 +315,7 @@ namespace Game
     void VoxelMap::Cave(const Engine::Line& flow, double width, double height)
     {
         Engine::Cylinder cylinder(flow, width, height);
-        auto dbgCount = physical->Fill(cylinder, Physics::Material::air, atmosphericTemperature);
+        auto dbgCount = physical->Fill(cylinder, Physics::fillAll, Physics::Material::air, atmosphericTemperature);
         Engine::Debug::Log(std::wstring(L"Cave at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
     }
 

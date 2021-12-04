@@ -15,8 +15,12 @@ Constraint::Constraint(const Engine::IVolume& v, const Material& mat,double temp
 
 void Constraint::Tick(double t, IEnvironment& environment) const
 {
+    Filter materialFilter = [this](const Engine::Coordinate&, const Material* m, double, double)
+    {
+        return m == material;
+    };
     if (fn)
-        environment.Fill(area, *material, temperature, fn(t));
+        environment.Fill(area, materialFilter, *material, temperature, fn(t));
 }
 
 

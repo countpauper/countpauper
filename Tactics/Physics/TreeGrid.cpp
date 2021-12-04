@@ -17,12 +17,13 @@ TreeGrid::TreeGrid(const Engine::Vector& extent, const Grid& grid) :
     root->Fill(Engine::AABox(Engine::Coordinate(0, 0, 0), extent), Position(), Material::vacuum, 0);
 }
 
-size_t TreeGrid::Fill(const Engine::IVolume& v, const Material& m, double temperature, std::optional<double>)
+size_t TreeGrid::Fill(const Engine::IVolume& v, Filter filter, const Material& m, double temperature, std::optional<double>)
 {
+    //assert(&filter == &fillAll);   // filtering not implemented yet in the tree, but static different instance in different libraries so assert fails
     return root->Fill(v, Position(), m, temperature);
 }
 
-void TreeGrid::Constrain(const Engine::IVolume& v, const Material& m, double temperatire, Function density)
+void TreeGrid::Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density)
 {
 }
 

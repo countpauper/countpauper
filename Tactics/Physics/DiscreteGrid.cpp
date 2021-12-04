@@ -43,7 +43,7 @@ const PackedVoxel& DiscreteGrid::operator[](const Position& p) const
     return  m_data.at(Index(p));
 }
 
-size_t DiscreteGrid::Fill(const Engine::IVolume& v, const Material& m, double temperature, std::optional<double> density)
+size_t DiscreteGrid::Fill(const Engine::IVolume& v, Filter filter, const Material& m, double temperature, std::optional<double> density)
 {
     size_t filled = 0;
     Box bounds = grid(v.GetBoundingBox()) & Bounds();
@@ -58,9 +58,11 @@ size_t DiscreteGrid::Fill(const Engine::IVolume& v, const Material& m, double te
     for (iterator it(*this, bounds); it != it.end(); ++it)
     {
         // TODO: for water it could be filled with amounts based on vertical levels for even smoother water surface
-        if (v.Contains(grid.Center(it.position)))
+        auto center = grid.Center(it.position);
+        auto& voxel = (*it).second;
+        if ((v.Contains(center)) && (filter(center, voxel.GetMaterial(), voxel.Temperature(), voxel.Density())))
         {
-            (*it).second = PackedVoxel(m, temperature, amount);
+            voxel = PackedVoxel(m, temperature, amount);
             filled++;
         }
     }

@@ -8,6 +8,7 @@
 #include "Engine/Volume.h"
 #include "Grid.h"
 #include "BoxIterator.h"
+#include "Filter.h"
 
 namespace Engine { struct AABB;  }
 namespace Physics
@@ -85,7 +86,7 @@ public:
     Position Clip(const Position& p) const;
 
     // Data getters and setters
-    size_t Fill(const Engine::IVolume& v, const Material& m, double density, double temperature);   // volume in SI
+    size_t Fill(const Engine::IVolume& v, Filter filter, const Material& m, double density, double temperature);   // volume in SI
     void SetPressure(const Position& location, const Material& material, double temperature, double pressure);
     void AdjustGrid(const Position& location, double temperature, double density);
     double Density(const Position& position) const;
@@ -96,6 +97,8 @@ public:
     double Temperature(const Engine::IVolume& volume) const;    // volume in SI
     Engine::Vector Force(const Engine::IVolume& volume) const;  // volume in SI
     const Material& MaterialAt(const Position& position) const;
+    double Measure(const Engine::IVolume& volume, const Material* material) const;
+
     void SetDensity(const Position& p, float density);
 protected:
     Position Stride() const;

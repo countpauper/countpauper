@@ -16,13 +16,13 @@ StaticEnvironment::StaticEnvironment(const Engine::Vector& size, const Engine::V
 
 }
 
-size_t StaticEnvironment::Fill(const Engine::IVolume& v, const Material& m, double temperature, std::optional<double> density)
+size_t StaticEnvironment::Fill(const Engine::IVolume& v, Filter filter, const Material& m, double temperature, std::optional<double> density)
 {
-    return data.Fill(v, m, temperature, density.has_value()?*density : m.Density(PascalPerAtmosphere,temperature));
+    return data.Fill(v, filter, m, temperature, density.has_value()?*density : m.Density(PascalPerAtmosphere, temperature));
 }
 
 
-void StaticEnvironment::Constrain(const Engine::IVolume& v, const Material& m, double temperatire, Function density)
+void StaticEnvironment::Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density)
 {
 }
 
@@ -71,7 +71,7 @@ void StaticEnvironment::Tick(double seconds)
 
 double StaticEnvironment::Measure(const Material* material) const
 {
-    return data.VoxelVolume();
+    return data.Measure(Engine::AABox(Engine::AABB::infinity), material);
 }
 
 

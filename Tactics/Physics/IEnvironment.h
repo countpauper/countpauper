@@ -2,7 +2,7 @@
 #include <string>
 #include "Material.h"
 #include <signal.h>
-#include <functional>
+#include "Filter.h"
 
 namespace Engine { 
     struct Line; 
@@ -21,8 +21,9 @@ class IEnvironment
 {
 public:
     // Creation
-    virtual size_t Fill(const Engine::IVolume& v, const Material& m, double temperature, std::optional<double> density=std::optional<double>()) = 0;
-    virtual void Constrain(const Engine::IVolume& v, const Material& m, double temperatire, Function density) = 0;
+
+    virtual size_t Fill(const Engine::IVolume& v, Filter filter, const Material& m, double temperature, std::optional<double> density=std::optional<double>()) = 0;
+    virtual void Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density) = 0;
     virtual void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v)=0;
     virtual void ApplyForce(const Engine::Coordinate& c, double force) = 0;
     virtual void Heat(const Engine::Coordinate& c, double energy) = 0;
