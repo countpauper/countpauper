@@ -20,9 +20,9 @@ struct Range
     }
 
     template<typename OT>
-    Range(const Range<OT>& o) :
-        begin(static_cast<T>(begin)),
-        end(static_cast<T>(end))
+    explicit Range(Range<OT> o) :
+        begin(static_cast<T>(o.begin)),
+        end(static_cast<T>(o.end))
     {
     }
 

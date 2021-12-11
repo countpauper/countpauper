@@ -133,7 +133,7 @@ Engine::RGBA DiscreteGrid::Color(const Engine::Line& l) const
         return (*this)[p].Color();
     }
     else
-    {
+    {   
         return Engine::RGBA();
     }
 }

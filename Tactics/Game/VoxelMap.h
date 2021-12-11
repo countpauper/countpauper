@@ -6,6 +6,7 @@
 #include "Physics/Box.h"
 #include "Physics/IEnvironment.h"
 #include "Physics/Grid.h"
+#include "Physics/Direction.h"
 #include <string>
 
 namespace Engine { class Mesh;  }
@@ -54,6 +55,7 @@ protected:
 
     Engine::Coordinate Center(const Position& p) const;
     Physics::Directions Visibility(const Position& p) const;
+    Physics::Box Edge(Physics::Direction side) const;
     float AtmosphericTemperature(double elevation) const;
     float AtmosphericPressure(double elevation) const;
 protected:

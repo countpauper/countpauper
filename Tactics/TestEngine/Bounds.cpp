@@ -55,6 +55,11 @@ TEST(Range, Expand)
     EXPECT_EQ(2, Range(0, 1).Expand(1).Size());
 }
 
+TEST(Range, Cast)
+{
+    EXPECT_EQ(Range<int>(0, 1), Range<int>(Range<double>(0.1, 1.2)));
+    EXPECT_EQ(Range<double>(-1.0, 2.0), Range<double>(Range<int>(-1, 2)));
+}
 
 TEST(Range, consts)
 {

@@ -120,7 +120,7 @@ namespace Game
         return float(Physics::PascalPerAtmosphere * (1.0 - elevation / atmosphereRadius));
     }
 
-    void VoxelMap::Air(double temperature, double meters)
+    void VoxelMap::Air(double temperature,  double meters)
     {
         //    atmosphere.mass = float((Engine::SphereVolume(meters + planetRadius) - Engine::SphereVolume(planetRadius))*
         //        1000.0 * atmosphere.material->normalDensity * 0.5);    // TODO: density isn't even over the whole atmosphere. assumed average
@@ -148,49 +148,6 @@ namespace Game
         // TODO: set all air flux and boundary
     }
 
-
-    double EdgeStartCoord(double s, double v)
-    {
-        if (v == 0)
-            return 0;
-        else if (v < 0)
-            return 0;
-        else
-            return s - v;
-    }
-
-    Engine::Coordinate EdgeStart(const Physics::Size& s, Physics::Direction d)
-    {
-        auto v = d.Vector();
-        return Engine::Coordinate(
-            EdgeStartCoord(s.x, v.x),
-            EdgeStartCoord(s.y, v.y),
-            EdgeStartCoord(s.z, v.z)
-        );
-    }
-
-    double EdgeEndCoord(double s, double v)
-    {
-        if (v == 0)
-            return s;
-        else if (v < 0)
-            return -v;
-        else
-            return s;
-
-    }
-
-    Engine::Coordinate EdgeEnd(const Physics::Size& s, Physics::Direction d)
-    {
-        auto v = d.Vector();
-        return Engine::Coordinate(
-            EdgeEndCoord(s.x, v.x),
-            EdgeEndCoord(s.y, v.y),
-            EdgeEndCoord(s.z, v.z)
-        );
-    }
-
-
     void VoxelMap::Sea(double level, double temperature)
     {
         Engine::AABox sea(
@@ -199,12 +156,15 @@ namespace Game
             Engine::Range<double>(0, level));
         auto dbgCount = physical->Fill(sea, Physics::fillAll, Physics::Material::water, temperature);
         Engine::Debug::Log(std::wstring(L"Sea level ") + Engine::ToWString(level) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+        
+        int gridLevel = int(std::round(level / grid.z));
+        Physics::Box surface(Engine::Range<int>(0,size.x), Engine::Range<int>(0,size.y), Engine::Range<int>(gridLevel-1, gridLevel));
         for (auto side : Physics::Directions() | Physics::Direction::north | Physics::Direction::south |Physics::Direction::east | Physics::Direction::west)
         {
-            auto s = EdgeStart(size, side), e= EdgeEnd(size, side);
-            Engine::AABox sideBox(Engine::Range<double>(s.x, e.x), Engine::Range<double>(s.y, e.y), Engine::Range<double>(level - grid.z, level));
-            physical->Constrain(sideBox, Physics::Material::water, temperature, [](double time) { return 0.5 + 0.4*sin(time)*Physics::Material::water.normalDensity; });
-
+            physical->Constrain(Engine::AABox(grid.BoundingBox(Edge(side) & surface)), 
+                                Physics::Material::water, temperature, [](double time) { 
+                                    return (0.5 + 0.4*sin(time*0.2))*Physics::Material::water.normalDensity; 
+                                });
         }
     }
 
@@ -323,6 +283,45 @@ namespace Game
     {
         return grid.Center(p);
     }
+
+    int EdgeStartCoord(int s, int v)
+    {
+        if (v == 0)
+            return 0;
+        else if (v < 0)
+            return 0;
+        else
+            return s - v;
+    }
+
+    int EdgeEndCoord(int  s, int v)
+    {
+        if (v == 0)
+            return s;
+        else if (v < 0)
+            return -v;
+        else
+            return s;
+    }
+
+    Engine::Range<int> EdgeRange(int size, int v)
+    {
+        if (v == 0)
+            return Engine::Range<int>(0, size);
+        else if (v < 0)
+            return Engine::Range<int>(0, -v);
+        else
+            return Engine::Range<int>(size - v, size);
+    }
+
+    Physics::Box VoxelMap::Edge(Physics::Direction side) const
+    {
+        auto v = side.Vector();
+        return Physics::Box(EdgeRange(size.x, v.x),
+            EdgeRange(size.y, v.y),
+            EdgeRange(size.z, v.z));
+    }
+
 
     Physics::Directions VoxelMap::Visibility(const Position& p) const
     {
