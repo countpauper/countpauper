@@ -10,13 +10,18 @@ namespace Engine
 {
 
 
-    Vector TransformBillboard(const Vector& v)
+    Vector TransformBillboard(const Vector & c)
     {
         auto m = Matrix::Projection();
+        return TransformBillboard(c, m);
+    }
+
+    Vector TransformBillboard(const Vector &v, const Matrix& m)
+    {
         //m.SetTranslation(Vector());
         //Vector o = m.Inverse() * v;
 
-        Vector o = m.X()* v.x + m.Y() * v.y + m.Z() * v.z;
+        Vector o = m.X().Normal()* v.x + m.Y().Normal() * v.y + m.Z().Normal() * v.z;
         return o;
 /*
         GLfloat matrix[4][4];
@@ -30,6 +35,11 @@ namespace Engine
  */
     }
 
+    void glVertex(const Vector& v)
+    {
+        glVertex3d(v.x, v.y, v.z);
+    }
+
     void glBillBoard(double width, double height)
     {
         auto a = TransformBillboard(Vector(0, 0, 0));
@@ -37,10 +47,10 @@ namespace Engine
         auto c = TransformBillboard(Vector(width, height, 0));
         auto d = TransformBillboard(Vector(0, height, 0));
         glBegin(GL_QUADS);
-            glVertex3d(a.x, a.y, a.z);
-            glVertex3d(b.x, b.y, b.z);
-            glVertex3d(c.x, c.y, c.z);
-            glVertex3d(d.x, d.y, d.z);
+            glVertex(a);
+            glVertex(b);
+            glVertex(c);
+            glVertex(d);
         glEnd();
     }
 

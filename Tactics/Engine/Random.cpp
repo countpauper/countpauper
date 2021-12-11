@@ -24,6 +24,13 @@ double Generator::Chance()
     return distribution(generator);
 }
 
+double Generator::Uniform(const Range<double>& range)
+{
+    std::uniform_real_distribution<> distribution(range.begin, range.end);
+    return distribution(generator);
+}
+
+
 double Generator::Normal(double sigma)
 {
     std::normal_distribution<> distribution(0, sigma);

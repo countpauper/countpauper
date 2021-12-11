@@ -41,6 +41,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="Volume.cpp" />

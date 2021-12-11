@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include "Range.h"
 
 namespace Engine
 {
@@ -9,7 +10,8 @@ namespace Engine
         Generator();
         Generator(unsigned seed);
         double Chance();
-        double Normal(double sigma); 
+        double Uniform(const Range<double>& range);
+        double Normal(double sigma);
         using Seed = unsigned;
         Seed GetSeed() const;
         void SetSeed(Seed newSeed);

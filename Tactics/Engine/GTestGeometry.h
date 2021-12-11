@@ -18,3 +18,22 @@
     EXPECT_NEAR(_r.y, _t.y, abs_error); \
     EXPECT_NEAR(_r.z, _t.z, abs_error); \
  }
+
+
+#define EXPECT_3D_GE(ref, target) \
+{ \
+    const auto& _r=(ref); \
+    const auto& _t = (target); \
+    EXPECT_DOUBLE_GE(_r.x, _t.x); \
+    EXPECT_DOUBLE_GE(_r.y, _t.y); \
+    EXPECT_DOUBLE_GE(_r.z, _t.z); \
+ }
+
+#define EXPECT_3D_LE(ref, target) \
+{ \
+    const auto& _r=(ref); \
+    const auto& _t = (target); \
+    EXPECT_DOUBLE_LE(_r.x, _t.x); \
+    EXPECT_DOUBLE_LE(_r.y, _t.y); \
+    EXPECT_DOUBLE_LE(_r.z, _t.z); \
+ }

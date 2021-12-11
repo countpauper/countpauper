@@ -19,7 +19,7 @@
 #include "Physics/DiscreteGrid.h"
 #include "Physics/BoxIterator.h"
 #include "Physics/Direction.h"
-
+#include "Engine//Effect.h"
 #include "El.h"
 #include <string>
 
@@ -29,6 +29,8 @@ namespace Game
     VoxelMap::VoxelMap() :
         VoxelMap(0, 0, 0)
     {
+        effects.emplace_back(std::make_unique<Engine::ParticleEffect<Engine::Steam>>());
+
     }
 
     VoxelMap::VoxelMap(unsigned longitude, unsigned latitude, unsigned altitude) :
@@ -342,6 +344,10 @@ namespace Game
     void VoxelMap::Tick(double seconds)
     {
         physical->Tick(seconds);
+        for (const auto& e : effects)
+        {
+            e->Tick(seconds);
+        }
     }
 
     void VoxelMap::SetDensityToMeshColor()
@@ -414,6 +420,10 @@ namespace Game
             glEnable(GL_BLEND);
             //glDisable(GL_DEPTH_TEST); only needed if air blocks remove top of water
             mesh->Render();
+            for (const auto& e : effects)
+            {
+                e->Render();
+            }
         }
         else
         {
