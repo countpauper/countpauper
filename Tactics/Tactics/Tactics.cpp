@@ -17,7 +17,7 @@
 #include "Game/Game.h"
 #include "SkillBar.h"
 #include "TurnList.h"
-
+#include "Engine/Effect.h"
 
 #define MAX_LOADSTRING 100
 
@@ -265,6 +265,7 @@ BOOL InitInstance(HINSTANCE hInstance)
    SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 1920, 1080, SWP_SHOWWINDOW);
    */
 
+   Engine::Particles::LoadTextures(L"Data/Particles");
    ShowWindow(hWnd, windowShow);
    light.Move(Engine::Coordinate(2, 5, 0));
    camera.Move(Engine::Coordinate(-1, 10, 3));
@@ -412,10 +413,12 @@ void Render()
     if (writeDepthMap)
     {
         // check depth map
+        
         std::vector<float> depths;
         depths.resize(clientRect.right * clientRect.bottom);
         glReadPixels(0, 0, clientRect.right, clientRect.bottom, GL_DEPTH_COMPONENT, GL_FLOAT, depths.data());
-        Engine::Image::Write(L"DepthMask.png", clientRect.right, clientRect.bottom, depths.data());
+        Engine::Image::Data data(clientRect.right, clientRect.bottom, depths.data());
+        data.Write(L"DepthMask.png");
 
         writeDepthMap = false;
     }

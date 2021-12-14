@@ -3,6 +3,9 @@
 #include <GL/glew.h>
 #include "Drawing.h"
 #include "Random.h"
+#include "Image.h"
+#include "Utils.h"
+#include <filesystem>
 
 namespace Engine
 {
@@ -31,6 +34,8 @@ namespace Engine
 
     void Particles::Render() const
     {
+        Engine::Image::Bind bind(textures[L"flame_03"]);
+
         auto pm = Matrix::Projection();
         glPushMatrix();
         glMultMatrixd(&m.data());
@@ -39,10 +44,14 @@ namespace Engine
         for (const auto& p : particles)
         {
             p.color.Render();
-            glVertex(Vector(p.c) + TransformBillboard(Vector(0,           0, 0), pm));
-            glVertex(Vector(p.c) + TransformBillboard(Vector(p.size,      0, 0), pm));
+            glTexCoord2f(0, 0);
+            glVertex(Vector(p.c) + TransformBillboard(Vector(0, 0, 0), pm));
+            glTexCoord2f(0, 1);
+            glVertex(Vector(p.c) + TransformBillboard(Vector(p.size, 0, 0), pm));
+            glTexCoord2f(1, 1);
             glVertex(Vector(p.c) + TransformBillboard(Vector(p.size, p.size, 0), pm));
-            glVertex(Vector(p.c) + TransformBillboard(Vector(     0, p.size, 0), pm));
+            glTexCoord2f(1, 0);
+            glVertex(Vector(p.c) + TransformBillboard(Vector(0, p.size, 0), pm));
         }
         glEnd();
         glPopMatrix();
@@ -86,7 +95,7 @@ namespace Engine
             auto& p = particles.Spawn();
             p.color = RGBA::white;
             p.movement.y = speed;
-            p.size = 0.1;
+            p.size = 0.25;
         }
 
     }
@@ -103,6 +112,22 @@ namespace Engine
         particle.color = RGBA::white.Translucent(1.0-(particle.age / lifetime));
     }
 
+
+    void Particles::LoadTextures(std::wstring_view location)
+    {
+        for (const auto & entry : std::filesystem::directory_iterator(location))
+        {
+            if (!entry.is_regular_file())
+                continue;
+            if (UpperCase(entry.path().extension().c_str()) != L".PNG")
+                continue;
+
+            textures.emplace(std::make_pair(entry.path().stem(), Image(entry.path().c_str())));
+        }
+    }
+
+
 Generator Effect::random;
+std::map<std::wstring, Image> Particles::textures;
 
 }

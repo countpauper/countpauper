@@ -11,13 +11,9 @@ class Image
 {
 public:
     Image();
-    explicit Image(const std::wstring& fn);
-    void Load(const std::wstring& fn);
-
+    explicit Image(const std::wstring_view fn);
+    void Load(const std::wstring_view fn);
 private:
-    int w;
-    int h;
-    int channels;
     class Texture
     {
     public:
@@ -43,7 +39,25 @@ public:
         std::shared_ptr<Texture> texture;
     };
 
-    static void Write(const std::wstring& filename, unsigned width, unsigned height, RGBA data[]);
-    static void Write(const std::wstring& filename, unsigned width, unsigned height, float data[]);
+    struct Data
+    {
+        Data();
+        explicit Data(const std::wstring_view fileName);
+        Data(unsigned width, unsigned height, unsigned channels = 1);
+        Data(unsigned width, unsigned height, float* floaData);
+        ~Data();
+
+        void Write(const std::wstring_view filename) const;
+        void Read(const std::wstring_view filename);
+        void Release();
+
+        unsigned size() const;
+        unsigned Pixels() const;
+
+        unsigned width;
+        unsigned height;
+        unsigned channels;
+        uint8_t* data;
+    };
 };
 }//::Engine

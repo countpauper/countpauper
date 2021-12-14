@@ -7,6 +7,7 @@
 #include "Random.h"
 #include "AxisAlignedBoundingBox.h"
 #include <vector>
+#include <map>
 #include <memory>
 
 namespace Engine
@@ -39,7 +40,10 @@ namespace Engine
         double age = 0;
         Matrix m;
         std::unique_ptr<class Effect> effect;
-        std::vector<Particle> particles;    
+        std::vector<Particle> particles;   
+        static void LoadTextures(const std::wstring_view location);
+    private:
+        static std::map<std::wstring, class Image> textures;
     };
 
     template<class E, typename... T> 
