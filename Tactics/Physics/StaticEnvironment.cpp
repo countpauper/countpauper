@@ -66,8 +66,13 @@ Engine::RGBA StaticEnvironment::Color(const Engine::Line& l) const
 
 void StaticEnvironment::Tick(double seconds)
 {
-
 }
+
+std::vector<const Engine::IRendition*> StaticEnvironment::Render() const
+{
+    return std::vector<const Engine::IRendition*>();
+}
+
 
 double StaticEnvironment::Measure(const Material* material) const
 {

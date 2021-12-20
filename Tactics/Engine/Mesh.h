@@ -4,6 +4,7 @@
 #include "Coordinate.h"
 #include "Color.h"
 #include "Volume.h"
+#include "IRendition.h"
 #include <vector>
 #include <set>
 
@@ -12,7 +13,7 @@ namespace Engine
 struct Matrix;
 struct AABB;
 
-class Mesh : public IVolume
+class Mesh : public IVolume, public IRendition
 {
 public:
     Mesh();
@@ -35,7 +36,7 @@ public:
         uint32_t vertex[3];
     };
 
-    void Render() const;
+    void Render() const override;
     AABB GetBoundingBox() const override;
     Mesh& operator*=(const Matrix& transformation);
 

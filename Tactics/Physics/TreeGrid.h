@@ -28,6 +28,7 @@ public:
     const Material* GetMaterial(const Engine::Coordinate& c) const override;
     Engine::RGBA Color(const Engine::Line& l) const override;
     void Tick(double seconds) override;
+    std::vector<const Engine::IRendition*> Render() const override;
     double Measure(const Material* material) const override;
     std::wstring Statistics() const override;
 

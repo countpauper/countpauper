@@ -88,26 +88,31 @@ namespace Engine
         return m * bounds;
     }
 
-    void Steam::Tick(double seconds, Particles& particles) const
+    Cloud::Cloud(size_t count):
+        count(count)
     {
-        if (particles.Count() <= int(particles.age * rate))
+    }
+    void Cloud::Tick(double seconds, Particles& particles) const
+    {
+        for (size_t i = particles.Count(); i < count; ++i)
         {
             auto& p = particles.Spawn();
+            p.c.x = Effect::random.Chance();
+            p.c.z = Effect::random.Chance();
             p.color = RGBA::white;
-            p.movement.y = speed;
             p.size = 0.25;
         }
-
+        particles.m *= Matrix::Translation(Vector(0, speed * seconds, 0));
     }
 
-    void Steam::Tick(double seconds, Particle& particle) const
+    void Cloud::Tick(double seconds, Particle& particle) const
     {
         if (particle.age > lifetime)
             particle.Despawn();
-        double zig = seconds * zag;   // take of every zig
+        double zig = seconds * zag;   // Move 'ZIG'
         particle.movement.x += random.Uniform(Range<double>(-zig, zig));
+        particle.movement.y += random.Uniform(Range<double>(-zig, zig));
         particle.movement.z += random.Uniform(Range<double>(-zig, zig));
-        particle.movement.y -= zig*(0.5/lifetime);
 
         particle.color = RGBA::white.Translucent(1.0-(particle.age / lifetime));
     }

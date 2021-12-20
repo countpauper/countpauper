@@ -91,6 +91,10 @@ void TreeGrid::Tick(double seconds)
 {
 }
 
+std::vector<const Engine::IRendition*> TreeGrid::Render() const
+{
+    return std::vector<const Engine::IRendition*>();
+}
 
 double TreeGrid::Measure(const Material* material) const
 {

@@ -3,6 +3,7 @@
 #include "Engine/Debug.h"
 #include "Engine/Volume.h"
 #include "Direction.h"
+#include "EnvironmentalEffects.h"
 
 #include <sstream>
 
@@ -12,7 +13,7 @@ namespace Physics
 DiscreteGrid::DiscreteGrid(const Engine::Vector& extent, const Grid& grid) :
     grid(grid),
     size(int(std::round(extent.x / grid.x)), int(std::round(extent.y / grid.y)), int(std::round(extent.z / grid.z))),
-    m_data(size.Volume())
+    data(size.Volume())
 {
 }
 
@@ -35,12 +36,12 @@ unsigned DiscreteGrid::Index(const Position& p) const
 
 PackedVoxel& DiscreteGrid::operator[](const Position& p)
 {
-    return m_data.at(Index(p));
+    return data.at(Index(p));
 }
 
 const PackedVoxel& DiscreteGrid::operator[](const Position& p) const
 {
-    return  m_data.at(Index(p));
+    return  data.at(Index(p));
 }
 
 size_t DiscreteGrid::Fill(const Engine::IVolume& v, Filter filter, const Material& m, double temperature, std::optional<double> density)
@@ -71,7 +72,7 @@ size_t DiscreteGrid::Fill(const Engine::IVolume& v, Filter filter, const Materia
 
 void DiscreteGrid::Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density)
 {
-    m_constraints.emplace_back(Constraint(v, m, temperature, density));
+    constraints.emplace_back(Constraint(v, m, temperature, density));
 }
 
 void DiscreteGrid::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
@@ -80,7 +81,7 @@ void DiscreteGrid::Heat(const Engine::Coordinate& c, double energy) {}
 
 is::signals::connection DiscreteGrid::ConnectChange(ChangeSignal::slot_type slot)
 {
-    return m_changed.connect(slot);
+    return changed.connect(slot);
 }
 
 double DiscreteGrid::Density(const Engine::IVolume& c) const
@@ -145,7 +146,7 @@ void DiscreteGrid::Tick(double seconds)
     
     time += seconds;
 
-    for (const auto c : m_constraints)
+    for (const auto c : constraints)
     {
         c.Tick(time, *this);
     }
@@ -154,9 +155,9 @@ void DiscreteGrid::Tick(double seconds)
     {
         auto& current = (*it).second;
 
-        if (current.GetMaterial() == &Material::water)
+        if ((current.GetMaterial() == &Material::water) && (current.IsFluid()))
         {
-            // TODO: first flow down, only direct neighbours 
+            // first flow down
             auto down = it.position + Direction::down.Vector();
             if (bounds.Contains(down))
             {   // TODO: what if water is bottom, keep?
@@ -188,55 +189,82 @@ void DiscreteGrid::Tick(double seconds)
                     continue;
                 }
             }
-            int density = current.Amount()-1;            
-            Directions sides = Direction::north | Direction::south | Direction::east | Direction::west;
-            std::vector<Position> flowDestination;
-
-            for (auto dir : sides)
+            // did not continue, flow horizontal, first make a list of options
+            // which is neighbours with equal the least amount
+            int amount = current.Amount()-1;       
+            if (amount)
             {
-                auto side = it.position + dir.Vector();
-                if (!bounds.Contains(side))
-                    continue;
-                auto& neighbour = (*this)[side];
-                if (neighbour.GetMaterial() == &Material::air)
+                // find flow destinations
+                const Directions sides = Direction::north | Direction::south | Direction::east | Direction::west;
+                std::vector<Position> flowDestination;
+                for (auto dir : sides)
                 {
-                    if (density > 0)
-                        flowDestination.clear();
-                    density = 0;
-                    flowDestination.push_back(side);
-                }
-                else if (neighbour.GetMaterial() == &Material::water)
-                {
-                    if (neighbour.Amount() < density)
-                        flowDestination.clear();
-                    if (neighbour.Amount() <= density)
+                    auto side = it.position + dir.Vector();
+                    if (!bounds.Contains(side))
+                        continue;
+                    auto& neighbour = (*this)[side];
+                    if (neighbour.GetMaterial() == &Material::air)
                     {
-                        density = neighbour.Amount();
+                        if (amount > 0)
+                            flowDestination.clear();
+                        amount = 0;
                         flowDestination.push_back(side);
                     }
+                    else if (neighbour.GetMaterial() == &Material::water)
+                    {
+                        if (neighbour.Amount() < amount)
+                            flowDestination.clear();
+                        if (neighbour.Amount() <= amount)
+                        {
+                            amount = neighbour.Amount();
+                            flowDestination.push_back(side);
+                        }
+                    }
+                }
+                // Now spread the current amount over the neighbours
+                auto newAmount = current.Amount();
+                while ((!flowDestination.empty()) && (newAmount > amount))
+                {
+                    // TODO: engine controlled random
+                    int idx = rand() % flowDestination.size();
+
+                    auto flowLocation = flowDestination[idx];
+                    flowDestination.erase(flowDestination.begin() + idx);
+                    invalid |= it.position;
+                    invalid |= flowLocation;
+                    if (--newAmount)
+                        current.Set(Material::water, newAmount);
+                    else
+                        current.Set(Material::air);
+                    auto& neighbour = (*this)[flowLocation];
+                    neighbour.Set(Material::water, amount + 1);
                 }
             }
-            auto newAmount = current.Amount();
-            while ((!flowDestination.empty()) && (newAmount>density))
-            {
-                // TODO: engine controlled random
-                int idx = rand() % flowDestination.size();
-
-                auto flowLocation = flowDestination[idx]; 
-                flowDestination.erase(flowDestination.begin() + idx);
+            else
+            {   // water level 1 doesn't flow back, it evaporates (or seeps the ground ?)
+                // evaporate (TODO: chance based on temperature from between solid and gas
+                effects.emplace_back(Steam(grid.Center(it.position),current.Density()*grid.Volume(), current.Temperature()));
+                current.Set(Material::air);
                 invalid |= it.position;
-                invalid |= flowLocation;
-                if (--newAmount)
-                    current.Set(Material::water, newAmount);
-                else
-                    current.Set(Material::air);
-                auto& neighbour = (*this)[flowLocation];
-                neighbour.Set(Material::water, density + 1);
             }
         }
     }
+    effects.Tick(seconds);
     if (invalid)
-        m_changed(grid.BoundingBox(invalid));
+        changed(grid.BoundingBox(invalid));
+}
+
+
+
+std::vector<const Engine::IRendition*> DiscreteGrid::Render() const
+{
+    std::vector<const Engine::IRendition*> result;
+    result.reserve(effects.size());
+    for (const auto& effect : effects)
+    {
+        result.push_back(&effect.GetParticles());
+    }
+    return result;
 }
 
 
@@ -265,7 +293,7 @@ double DiscreteGrid::Measure(const Material* material) const
 std::wstring DiscreteGrid::Statistics() const
 {
     std::wstringstream str;
-    str << size.Volume() * sizeof(m_data[0]) / 1024 << "kB";
+    str << size.Volume() * sizeof(data[0]) / 1024 << "kB";
     return str.str();
 }
 

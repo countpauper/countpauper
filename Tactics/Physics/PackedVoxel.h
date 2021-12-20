@@ -20,8 +20,12 @@ namespace Physics
         Engine::RGBA Color() const;
         double Temperature() const;
         void SetTemperature(double t);
+        bool IsFluid() const;
+        bool IsSolid() const;
+        bool IsGas() const;
         double Density() const;
-        int Amount() const;
+        double Mass() const;
+        int Amount() const; // for gas: pressure, for fluid: level, for solid: granularity  
     private:
 
         // material: 0 = vacuum, air, water, earth, stone

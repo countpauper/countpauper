@@ -29,7 +29,6 @@ namespace Game
     VoxelMap::VoxelMap() :
         VoxelMap(0, 0, 0)
     {
-        effects.emplace_back(std::make_unique<Engine::ParticleEffect<Engine::Steam>>());
 
     }
 
@@ -344,10 +343,6 @@ namespace Game
     void VoxelMap::Tick(double seconds)
     {
         physical->Tick(seconds);
-        for (const auto& e : effects)
-        {
-            e->Tick(seconds);
-        }
     }
 
     void VoxelMap::SetDensityToMeshColor()
@@ -409,6 +404,7 @@ namespace Game
         {
             Engine::Debug::Timer t(L"Genrate Mesh");
             const_cast<VoxelMap*>(this)->GenerateMesh();
+            Engine::CheckGLError();
         }
         if (mesh)
         {
@@ -420,16 +416,19 @@ namespace Game
             glEnable(GL_BLEND);
             //glDisable(GL_DEPTH_TEST); only needed if air blocks remove top of water
             mesh->Render();
-            for (const auto& e : effects)
-            {
-                e->Render();
-            }
         }
         else
         {
             //RenderPretty();
             RenderAnalysis();
         }
+        Engine::CheckGLError();
+        for (const auto renderable : physical->Render())
+        {
+            renderable->Render();
+        }
+        Engine::CheckGLError();
+
     }
 
     std::map<Element, double> VoxelMap::ElementVolume() const

@@ -92,6 +92,7 @@
     <ClInclude Include="GTestGeometry.h" />
     <ClInclude Include="Identification.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="IRendition.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Maths.h" />

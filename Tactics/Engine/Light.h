@@ -2,14 +2,15 @@
 
 #include "Color.h"
 #include "Coordinate.h"
+#include "IRendition.h"
 
 namespace Engine
 {
-    class Light
+    class Light : public IRendition
     {
     public:
         Light();
-        void Render() const;
+        void Render() const override;
         void On();
         void Off();
         void Move(const Coordinate& newPosition);

@@ -6,6 +6,7 @@
 #include "Matrix.h"
 #include "Random.h"
 #include "AxisAlignedBoundingBox.h"
+#include "IRendition.h"
 #include <vector>
 #include <map>
 #include <memory>
@@ -27,12 +28,12 @@ namespace Engine
 
 
 
-    class Particles
+    class Particles : public IRendition
     {
     public:
         Particles(std::unique_ptr<class Effect> effect);
         Particle& Spawn();
-        void Render() const;
+        void Render() const override;
         void Tick(double seconds);
         size_t Count() const;
         AABB Bounds() const;
@@ -46,35 +47,44 @@ namespace Engine
         static std::map<std::wstring, class Image> textures;
     };
 
-    template<class E, typename... T> 
-    class ParticleEffect : public Particles
-    {
-    public:
-        ParticleEffect(T... parameters) :
-            Particles(std::make_unique<E>(std::forward(parameters)...))
-        {
-        }
-    };
-
     class Effect
     {
     public:
+        virtual ~Effect() = default;
         virtual void Tick(double seconds, Particles& particles) const = 0;
         virtual void Tick(double seconds, Particle& particle) const = 0;
     protected:
         static Generator random;
     };
 
-    class Steam: public Effect
+    class Cloud : public Effect
     {
+    // https://www.weather.gov/source/zhu/ZHU_Training_Page/clouds/cloud_development/clouds.htm
     public:
+        Cloud(size_t count);
         void Tick(double seconds, Particles& particles) const override;
         void Tick(double seconds, Particle& particle) const override;
     private:
+        const size_t count;
         const double rate = 1;  // Hz, particles spawned per second
         const double lifetime = 10; // Maximimum particle age in seconds
         const double speed = 0.5; // vertical speed
-        const double zag = 0.2; // horizontal zig zag
+        const double zag = 2; // horizontal zig zag
     };
+
+    template<class E>
+    class ParticleEffect : public Particles
+    {
+    public:
+        template<typename... T>
+        explicit ParticleEffect(T... parameters) :
+            Particles(std::make_unique<E>(std::forward<T>(parameters)...))
+        {
+        }
+        ParticleEffect(const ParticleEffect<E>&) = delete;
+        ParticleEffect(ParticleEffect<E>&&) = delete;
+    };
+
+
 
 }   // ::Engine

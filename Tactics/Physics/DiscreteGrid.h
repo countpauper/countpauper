@@ -9,9 +9,11 @@
 #include "Physics/PackedVoxel.h"
 #include "Physics/BoxIterator.h"
 #include "Physics/Constraint.h"
+#include "Physics/EnvironmentalEffects.h"
 
 namespace Physics
 {
+
 class DiscreteGrid : public IEnvironment
 {
 public:
@@ -32,6 +34,8 @@ public:
     const Material* GetMaterial(const Engine::Coordinate& c) const override;
     Engine::RGBA Color(const Engine::Line& l) const override;
     void Tick(double seconds) override;
+    std::vector<const Engine::IRendition*> Render() const override;
+
     double Measure(const Material* material) const override;
     std::wstring Statistics() const override;
     PackedVoxel& operator[](const Position& p);
@@ -46,8 +50,9 @@ private:
     double time = 0;    // TODO: could be in game and IEnvironment::Tick(...)
     Size size;
     Grid grid;
-    std::vector<PackedVoxel> m_data;
-    std::vector<Constraint> m_constraints;
-    ChangeSignal m_changed;
+    std::vector<PackedVoxel> data;
+    std::vector<Constraint> constraints;
+    EnvironmentalEffects effects;
+    ChangeSignal changed;
 };
 }

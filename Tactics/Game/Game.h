@@ -67,7 +67,7 @@ namespace Game
         const Type::Armor::Material&  FindArmorMaterial(const std::wstring& name, const Type::Armor& armor) const;
         const Type::Armor::Modifier& FindArmorModifier(const std::wstring& name, const Type::Armor& armor) const;
         const Type::Weapon& FindWeapon(const std::wstring& name) const;
-        const Type::Weapon::Material&  FindWeaponMaterial(const std::wstring& name, const Type::Weapon& armor) const;
+        const Type::Weapon::Material& FindWeaponMaterial(const std::wstring& name, const Type::Weapon& armor) const;
         const Type::Weapon::Modifier& FindWeaponModifier(const std::wstring& name, const Type::Weapon& armor) const;
 
         Engine::Coordinate focus;

@@ -62,7 +62,6 @@ protected:
     Physics::Grid grid;
     Physics::Size size;
     std::unique_ptr<Physics::IEnvironment> physical;
-    std::vector<std::unique_ptr<Engine::Particles>> effects;
     std::unique_ptr<Engine::Mesh> mesh;
     double time;
     double planetRadius;    // m

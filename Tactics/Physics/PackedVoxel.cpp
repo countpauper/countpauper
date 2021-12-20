@@ -99,9 +99,27 @@ void PackedVoxel::SetTemperature(double t)
     }
 }
 
+
+bool PackedVoxel::IsFluid() const
+{
+    const auto mat = GetMaterial();
+    return mat->Fluid(Temperature());
+}
+
+bool PackedVoxel::IsSolid() const
+{
+    const auto mat = GetMaterial();
+    return mat->Gas(Temperature());
+}
+bool PackedVoxel::IsGas() const
+{
+    const auto mat = GetMaterial();
+    return mat->Gas(Temperature());
+}
+
 double PackedVoxel::Density() const
 {
-    return GetMaterial()->normalDensity;    // TODO: temperature? amount? 
+    return Amount()/ double(maxAmount) * GetMaterial()->normalDensity;    // TODO: temperature? amount? 
 }
 
 int PackedVoxel::Amount() const
