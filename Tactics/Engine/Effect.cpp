@@ -40,6 +40,9 @@ namespace Engine
         glPushMatrix();
         glMultMatrixd(&m.data());
 
+        glColor3d(1, 1, 1);
+        Bounds().Render();
+
         glBegin(GL_QUADS);
         for (const auto& p : particles)
         {

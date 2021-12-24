@@ -4,7 +4,10 @@
 #include "Range.h"
 #include "Line.h"
 #include "Matrix.h"
+#include "Drawing.h"
 #include <array>
+#include <gl/GL.h>
+
 namespace Engine
 {
 
@@ -65,6 +68,51 @@ Coordinate AABB::Clip(const Coordinate& p) const
     return Coordinate(x.Clip(p.x), y.Clip(p.y), z.Clip(p.z));
 }
 
+
+void AABB::Render()
+{
+    Coordinate minC = Begin();
+    Coordinate maxC = End();
+    glPushMatrix();
+    glLoadIdentity();
+    auto blend = glIsEnabled(GL_BLEND); // TODO: make something more cool
+    if (blend)
+        glDisable(GL_BLEND);
+    std::array<Vector, 8> vertex;
+    vertex[0] = Vector(minC);
+    vertex[1] = Vector(minC.x, maxC.y, minC.z);
+    vertex[2] = Vector(maxC.x, maxC.y, minC.z);
+    vertex[3] = Vector(maxC.x, minC.y, minC.z);
+    vertex[4] = Vector(minC.x, minC.y, maxC.z);
+    vertex[5] = Vector(minC.x, maxC.y, maxC.z);
+    vertex[6] = Vector(maxC);
+    vertex[7] = Vector(maxC.x, minC.y, maxC.z);
+    glBegin(GL_LINE_LOOP);
+        glVertex(vertex[0]);
+        glVertex(vertex[1]);
+        glVertex(vertex[2]);
+        glVertex(vertex[3]);
+    glEnd();
+    glBegin(GL_LINE_LOOP);
+        glVertex(vertex[4]);
+        glVertex(vertex[5]);
+        glVertex(vertex[6]);
+        glVertex(vertex[7]);
+    glEnd();
+    glBegin(GL_LINES);
+        glVertex(vertex[0]);
+        glVertex(vertex[4]);
+        glVertex(vertex[1]);
+        glVertex(vertex[5]);
+        glVertex(vertex[2]);
+        glVertex(vertex[6]);
+        glVertex(vertex[3]);
+        glVertex(vertex[7]);
+    glEnd();
+    if (blend)
+        glEnable(GL_BLEND);
+    glPopMatrix();
+}
 
 
 

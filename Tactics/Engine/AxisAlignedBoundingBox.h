@@ -32,6 +32,8 @@ namespace Engine
         bool Contains(const Coordinate& p) const;
         Coordinate Clip(const Coordinate& p) const;
 
+        void Render();
+
         bool operator[](const Coordinate& p) const { return Contains(p); }
         AABB& operator|=(const Coordinate& p);
         AABB& operator&=(const AABB& p);
@@ -41,6 +43,7 @@ namespace Engine
         AABB& Grow(double v);
         AABB& operator*=(const Matrix& transformation);
         AABB& operator+=(const Vector& offset);
+
 
         Range<double> x;
         Range<double> y;
