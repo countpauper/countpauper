@@ -410,11 +410,9 @@ namespace Game
         {
             glEnable(GL_LIGHTING);
             glDisable(GL_BLEND);
-            //glEnable(GL_DEPTH_TEST);
             mesh->Render();
             glDisable(GL_LIGHTING);
             glEnable(GL_BLEND);
-            //glDisable(GL_DEPTH_TEST); only needed if air blocks remove top of water
             mesh->Render();
         }
         else

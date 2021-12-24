@@ -1,37 +1,27 @@
 #pragma once
-
-#include <GL/glew.h>
-
+#include <GL/GL.h>
 template<typename T> T glGet(GLenum what)
 {
-    assert(false); // invalid type
+    static_assert(false); // invalid type
     return T();
 }
 
-template<> int glGet(GLenum what)
-{
-    GLint v;
-    glGetIntegerv(what, &v);
-    return v;
-}
+template<> int glGet(GLenum what);
+template<> bool glGet(GLenum what);
+template<> double glGet(GLenum what);
+template<> float glGet(GLenum what);
 
-template<> bool glGet(GLenum what)
+struct glTemporary
 {
-    GLboolean v;
-    glGetBooleanv(what, &v);
-    return v==GL_TRUE;
-}
+    GLenum option = 0;
+    bool enabled;
+    glTemporary(GLenum option, bool enable);
+    glTemporary(const glTemporary&) = delete;
+    glTemporary& operator=(const glTemporary&) = delete;
+    glTemporary(glTemporary&& other);
+    glTemporary& operator=(glTemporary&& other);
 
-template<> double glGet(GLenum what)
-{
-    GLdouble v;
-    glGetDoublev(what, &v);
-    return v;
-}
-
-template<> float glGet(GLenum what)
-{
-    GLfloat v;
-    glGetFloatv(what, &v);
-    return v;
-}
+    static glTemporary Enable(GLenum option);
+    static glTemporary Disable(GLenum option);
+    ~glTemporary();
+};

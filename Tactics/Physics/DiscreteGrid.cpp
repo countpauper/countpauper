@@ -52,10 +52,8 @@ size_t DiscreteGrid::Fill(const Engine::IVolume& v, Filter filter, const Materia
     if (!density.has_value())
         density = m.normalDensity;
 
-    double normalDensity = m.Density(PascalPerAtmosphere, temperature);
-    double airDensity = Material::air.Density(PascalPerAtmosphere, temperature);
-    double fraction = (*density - airDensity) / (normalDensity - airDensity);
-    int amount = int(PackedVoxel::maxAmount * std::min(fraction, 1.0));
+    double normalDensity = m.normalDensity; //  Density(PascalPerAtmosphere, temperature);
+    double fraction = *density / normalDensity;
     for (iterator it(*this, bounds); it != it.end(); ++it)
     {
         // TODO: for water it could be filled with amounts based on vertical levels for even smoother water surface
@@ -63,7 +61,7 @@ size_t DiscreteGrid::Fill(const Engine::IVolume& v, Filter filter, const Materia
         auto& voxel = (*it).second;
         if ((v.Contains(center)) && (filter(center, voxel.GetMaterial(), voxel.Temperature(), voxel.Density())))
         {
-            voxel = PackedVoxel(m, temperature, amount);
+            voxel = PackedVoxel(m, temperature, fraction);
             filled++;
         }
     }
@@ -284,7 +282,7 @@ double DiscreteGrid::Measure(const Material* material) const
         for (const_iterator it(*this, Bounds()); it != it.end(); ++it)
         {
             if ((*it).second.GetMaterial() == material)
-                volume += grid.Volume() * (*it).second.Amount() / PackedVoxel::maxAmount;
+                volume += grid.Volume() * (*it).second.Amount() / PackedVoxel::normalAmount;
         }
     }
     return volume;

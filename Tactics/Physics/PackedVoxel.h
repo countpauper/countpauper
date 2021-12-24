@@ -9,13 +9,14 @@ namespace Physics
     {
     public:
         static const int maxAmount = 15;
+        static const int normalAmount = 10;
         PackedVoxel();
         // TODO: amount could be double density on interface as well, but it's much slower to fill large areas and compute over an over again
         // and the discrete physics is not that continuous either
-        PackedVoxel(const Material& m, double temperature, int amount = maxAmount);
+        PackedVoxel(const Material& m, double temperature, double fraction=1.0);
 
-        void Set(const Material* newMat, unsigned  amount = maxAmount);
-        void Set(const Material& newMat, unsigned  amount = maxAmount) { Set(&newMat, amount); }
+        void Set(const Material* newMat, unsigned  amount = normalAmount);
+        void Set(const Material& newMat, unsigned  amount = normalAmount) { Set(&newMat, amount); }
         const Material* GetMaterial() const;
         Engine::RGBA Color() const;
         double Temperature() const;

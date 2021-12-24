@@ -124,6 +124,7 @@
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="from_string.cpp" />
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="GlUtil.cpp" />
     <ClCompile Include="Identification.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Light.cpp" />

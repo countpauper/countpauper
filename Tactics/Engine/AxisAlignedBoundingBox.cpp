@@ -7,6 +7,7 @@
 #include "Drawing.h"
 #include <array>
 #include <gl/GL.h>
+#include "GLutil.h"
 
 namespace Engine
 {
@@ -73,11 +74,9 @@ void AABB::Render()
 {
     Coordinate minC = Begin();
     Coordinate maxC = End();
+    auto blend = glTemporary::Disable(GL_BLEND);
     glPushMatrix();
     glLoadIdentity();
-    auto blend = glIsEnabled(GL_BLEND); // TODO: make something more cool
-    if (blend)
-        glDisable(GL_BLEND);
     std::array<Vector, 8> vertex;
     vertex[0] = Vector(minC);
     vertex[1] = Vector(minC.x, maxC.y, minC.z);
@@ -109,8 +108,6 @@ void AABB::Render()
         glVertex(vertex[3]);
         glVertex(vertex[7]);
     glEnd();
-    if (blend)
-        glEnable(GL_BLEND);
     glPopMatrix();
 }
 

@@ -12,9 +12,11 @@ namespace Physics
     {
     }
 
-    PackedVoxel::PackedVoxel(const Material& m, double temperature, int amt) :
+    PackedVoxel::PackedVoxel(const Material& m, double temperature, double fraction) :
         amount(0)
     {
+        int amt = std::min(maxAmount, int(PackedVoxel::normalAmount * fraction));
+
         Set(&m, amt);
         SetTemperature(temperature);
     }
@@ -119,7 +121,7 @@ bool PackedVoxel::IsGas() const
 
 double PackedVoxel::Density() const
 {
-    return Amount()/ double(maxAmount) * GetMaterial()->normalDensity;    // TODO: temperature? amount? 
+    return Amount()/ double(normalAmount) * GetMaterial()->normalDensity;    // TODO: temperature? amount? 
 }
 
 int PackedVoxel::Amount() const
