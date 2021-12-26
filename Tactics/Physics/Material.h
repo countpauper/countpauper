@@ -5,6 +5,10 @@
 namespace Physics
 {
 
+constexpr double IdealGasConstant = 8.31446261815324e3; // ideal gas constant in L * Pa / K * mol
+constexpr double PascalPerAtmosphere = 101325.0;        // Pa/Atm
+
+
 struct Material
 {
     std::wstring_view name;
@@ -24,11 +28,12 @@ struct Material
                             // ulatraviolet (sun light) would be 10-400nm 
                             // electric conductivity?
 
-
     double Density(double pressure, double temperature) const;
     bool Solid(double temperature) const;
     bool Fluid(double temperature) const;
     bool Gas(double temperature) const;
+    // Evaporation rate in g/(second * m^2)
+    double Evaporation(double temperature, double pressure=PascalPerAtmosphere, double humidity=0.001, double windSpeed=1) const; // g/m2
 
     static const Material vacuum;
     static const Material air;
@@ -40,7 +45,5 @@ struct Material
 std::ostream& operator<<(std::ostream& stream, const Physics::Material& material);
 std::ostream& operator<<(std::ostream& stream, const Physics::Material* material);
 
-constexpr double IdealGasConstant = 8.31446261815324e3; // ideal gas constant in L * Pa / K * mol
-constexpr double PascalPerAtmosphere = 101325.0;        // Pa/Atm
 
 }

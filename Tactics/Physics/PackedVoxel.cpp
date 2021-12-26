@@ -48,6 +48,16 @@ namespace Physics
         throw std::runtime_error("Material needs to be a standard one");
     }
 
+    void PackedVoxel::Increase(int delta)
+    {
+        int newAmount = amount + delta;
+        if (newAmount < 1)
+            throw std::runtime_error("All material drained");
+        else if (newAmount > PackedVoxel::maxAmount)
+            throw std::runtime_error("Material overflow");
+        amount = newAmount;
+    }
+
 
 const Material* PackedVoxel::GetMaterial() const
 {
@@ -122,6 +132,11 @@ bool PackedVoxel::IsGas() const
 double PackedVoxel::Density() const
 {
     return Amount()/ double(normalAmount) * GetMaterial()->normalDensity;    // TODO: temperature? amount? 
+}
+
+double PackedVoxel::Mass(double volume) const
+{
+    return Density() * volume;
 }
 
 int PackedVoxel::Amount() const

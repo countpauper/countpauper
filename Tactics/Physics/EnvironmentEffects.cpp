@@ -39,7 +39,7 @@ namespace Physics
         EnvironmentalEffect(origin, Material::water, mass, temperature)
     {
         const double massPerParticle = 1;
-        particles = std::make_unique<Engine::ParticleEffect<Engine::Cloud>>(mass/massPerParticle); // mass / massPerParticle);
+        particles = std::make_unique<Engine::ParticleEffect<Engine::Cloud>>(static_cast<size_t>(mass/massPerParticle)); // mass / massPerParticle);
         particles->m.SetTranslation(Engine::Vector(origin.x, origin.z, origin.y));  // TODO y/z swap find the right place
         // TODO: mass and temperature influence particle amount/movement
     }

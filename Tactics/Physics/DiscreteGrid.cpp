@@ -155,6 +155,7 @@ void DiscreteGrid::Tick(double seconds)
 
         if ((current.GetMaterial() == &Material::water) && (current.IsFluid()))
         {
+            bool waterLeft = true;
             // first flow down
             auto down = it.position + Direction::down.Vector();
             if (bounds.Contains(down))
@@ -176,6 +177,7 @@ void DiscreteGrid::Tick(double seconds)
                     if (!newAmount)
                     {
                         current.Set(Material::air);
+                        waterLeft = false;
                     }
                     else
                     {
@@ -189,9 +191,9 @@ void DiscreteGrid::Tick(double seconds)
             }
             // did not continue, flow horizontal, first make a list of options
             // which is neighbours with equal the least amount
-            int amount = current.Amount()-1;       
-            if (amount)
-            {
+            int drainAmount = current.Amount()-1;
+            if (drainAmount)
+            {   // If the water level >=2 it can flow sideways to lower levels or air. Level 1 just waits to evaporate
                 // find flow destinations
                 const Directions sides = Direction::north | Direction::south | Direction::east | Direction::west;
                 std::vector<Position> flowDestination;
@@ -203,25 +205,24 @@ void DiscreteGrid::Tick(double seconds)
                     auto& neighbour = (*this)[side];
                     if (neighbour.GetMaterial() == &Material::air)
                     {
-                        if (amount > 0)
+                        if (drainAmount> 0)
                             flowDestination.clear();
-                        amount = 0;
+                        drainAmount = 0;
                         flowDestination.push_back(side);
                     }
                     else if (neighbour.GetMaterial() == &Material::water)
                     {
-                        if (neighbour.Amount() < amount)
+                        if (neighbour.Amount() < drainAmount)
                             flowDestination.clear();
-                        if (neighbour.Amount() <= amount)
+                        if (neighbour.Amount() <= drainAmount)
                         {
-                            amount = neighbour.Amount();
+                            drainAmount = neighbour.Amount();
                             flowDestination.push_back(side);
                         }
                     }
                 }
                 // Now spread the current amount over the neighbours
-                auto newAmount = current.Amount();
-                while ((!flowDestination.empty()) && (newAmount > amount))
+                while ((!flowDestination.empty()) && (current.Amount()> drainAmount))
                 {
                     // TODO: engine controlled random
                     int idx = rand() % flowDestination.size();
@@ -230,20 +231,67 @@ void DiscreteGrid::Tick(double seconds)
                     flowDestination.erase(flowDestination.begin() + idx);
                     invalid |= it.position;
                     invalid |= flowLocation;
-                    if (--newAmount)
+                    if (auto newAmount = current.Amount()-1)
                         current.Set(Material::water, newAmount);
                     else
+                    {
                         current.Set(Material::air);
+                    }
                     auto& neighbour = (*this)[flowLocation];
-                    neighbour.Set(Material::water, amount + 1);
+                    neighbour.Set(Material::water, drainAmount + 1);
                 }
             }
-            else
-            {   // water level 1 doesn't flow back, it evaporates (or seeps the ground ?)
-                // evaporate (TODO: chance based on temperature from between solid and gas
-                effects.emplace_back(Steam(grid.Center(it.position),current.Density()*grid.Volume(), current.Temperature()));
-                current.Set(Material::air);
-                invalid |= it.position;
+            // if water > normal pressure (atmospheric) easily checked with normal amount, potentially flow up 
+            if ((current.GetMaterial() == &Material::water) && (current.Amount()>PackedVoxel::normalAmount))
+            {
+                auto up = it.position + Direction::up.Vector();
+                if (bounds.Contains(up))
+                {
+                    auto& neighbour = (*this)[up];
+                    auto newAmount = current.Amount() - 1;
+                    assert(newAmount > 0);
+                    if (neighbour.IsGas())
+                    {
+                        invalid |= up;
+                        neighbour.Set(Material::water, 1);
+                        assert(current.Amount() > 1);
+                        invalid |= it.position;
+                        current.Increase(-1);
+                    }
+                    else if ((neighbour.GetMaterial() == current.GetMaterial()) 
+                        && (neighbour.Amount() < newAmount)
+                        && (neighbour.Amount() < PackedVoxel::maxAmount))
+                    {
+                        invalid |= up;
+                        neighbour.Increase(1);
+                        invalid |= it.position;
+                        current.Increase(-1);
+                    }
+
+                }
+            }
+
+            if (current.GetMaterial()==&Material::water)
+            {   // evaporate
+                double surface = grid.x*grid.y;
+                double evaporationRate = current.GetMaterial()->Evaporation(current.Temperature());
+                double mass = current.Mass(grid.Volume());
+                double timeToEvaporate = mass / evaporationRate;
+                double chance = seconds / timeToEvaporate; // TODO: not exact cummulative chance, but no need to track evopration progress
+                if (Engine::Random().Chance() < chance)
+                {
+                    effects.emplace_back(Steam(grid.Center(it.position), current.Density()*grid.Volume(), current.Temperature()));
+                    invalid |= it.position;
+                    if (auto newAmount = current.Amount() - 1)
+                    {
+                        current.Set(Material::water, newAmount);
+                    }
+                    else
+                    {
+                        current.Set(Material::air);
+                    }
+                }
+
             }
         }
     }

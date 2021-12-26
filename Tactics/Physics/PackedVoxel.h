@@ -17,6 +17,7 @@ namespace Physics
 
         void Set(const Material* newMat, unsigned  amount = normalAmount);
         void Set(const Material& newMat, unsigned  amount = normalAmount) { Set(&newMat, amount); }
+        void Increase(int delta);
         const Material* GetMaterial() const;
         Engine::RGBA Color() const;
         double Temperature() const;
@@ -25,7 +26,7 @@ namespace Physics
         bool IsSolid() const;
         bool IsGas() const;
         double Density() const;
-        double Mass() const;
+        double Mass(double volume) const;
         int Amount() const; // for gas: pressure, for fluid: level, for solid: granularity  
     private:
 
