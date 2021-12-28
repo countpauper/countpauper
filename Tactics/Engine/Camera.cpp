@@ -11,7 +11,7 @@
 namespace Engine
 {
     Camera::Camera() :
-        position(0, 0, 0),
+        position(Coordinate::origin),
         target(0, 0, 0),
         rotation(0 ,180, 0),
         zoom(1.0f),

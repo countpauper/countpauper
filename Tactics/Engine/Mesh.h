@@ -38,6 +38,8 @@ public:
 
     void Render() const override;
     AABB GetBoundingBox() const override;
+    double Volume() const override;
+
     Mesh& operator*=(const Matrix& transformation);
 
     std::vector<Vertex> vertices; 

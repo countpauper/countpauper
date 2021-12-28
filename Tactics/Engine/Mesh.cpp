@@ -190,7 +190,11 @@ double Mesh::Distance(const Coordinate& p) const
     return minDistance;
 }
 
-
+double Mesh::Volume() const
+{
+    // http://chenlab.ece.cornell.edu/Publication/Cha/icip01_Cha.pdf
+    throw std::runtime_error("Volume of arbitrary mesh is unimplemented");
+}
 
 Mesh& Mesh::operator+=(const Mesh& addition)
 {
@@ -381,7 +385,7 @@ Box::Box()
         triangles[ti++] = Triangle{ vi, vi + 1, vi + 3 };
         triangles[ti++] = Triangle{ vi + 2, vi + 3, vi + 1 };
 
-        Coordinate faceCenter = Coordinate::zero + face.normal;
+        Coordinate faceCenter = Coordinate::origin + face.normal;
         Vector diagonal = face.diagonal;
         double angle = 0;
         for (const auto& t : texCoords)

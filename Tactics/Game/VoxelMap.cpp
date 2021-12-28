@@ -164,7 +164,7 @@ namespace Game
         {
             physical->Constrain(Engine::AABox(grid.BoundingBox(Edge(side) & surface)), 
                                 Physics::Material::water, temperature, [](double time) { 
-                                    return (0.5 + 0.4*sin(time*0.2))*Physics::Material::water.normalDensity; 
+                                    return (0.7 + 0.3*sin(time*0.2))*Physics::Material::water.normalDensity; 
                                 });
         }
     }
@@ -185,11 +185,11 @@ namespace Game
                 aHorRange = Engine::InvGaussian(treshold / m_line.a.z, m_stddev);
             if (m_line.b.z >= treshold)
                 bHorRange = Engine::InvGaussian(treshold / m_line.b.z, m_stddev);
-            Engine::AABB aBounds(Engine::Range<double>(m_line.a.x - aHorRange, m_line.a.x + aHorRange),
+            Engine::AABB aBounds(Engine::Range(m_line.a.x - aHorRange, m_line.a.x + aHorRange),
                 Engine::Range<double>(m_line.a.y - aHorRange, m_line.a.y + aHorRange),
                 Engine::Range<double>(0, m_line.a.z));
 
-            Engine::AABB bBounds(Engine::Range<double>(m_line.b.x - bHorRange, m_line.b.x + bHorRange),
+            Engine::AABB bBounds(Engine::Range(m_line.b.x - bHorRange, m_line.b.x + bHorRange),
                 Engine::Range<double>(m_line.b.y - bHorRange, m_line.b.y + bHorRange),
                 Engine::Range<double>(0, m_line.b.z));
 
@@ -213,6 +213,10 @@ namespace Game
                 c.z = m_line.a.z * Engine::Gaussian(distance, m_stddev);
             }
             return p.z - c.z;
+        }
+        double Volume() const 
+        {
+            throw std::runtime_error("Volume of a hill is unimplemented");
         }
     private:
         Engine::Line m_line;
@@ -253,10 +257,13 @@ namespace Game
         Engine::Vector flowVector(flow);
         Engine::Vector reverseGravity(0, 0, 1); // prefer water belly hangs down in the gravity direction
         Engine::Vector surfaceVector = flowVector.Cross(reverseGravity);
+        Engine::Cylinder source = cylinder.Slice(Engine::Range<double>(0, 1));
         if (!surfaceVector)
         {   // completely vertical, make it a well, TODO: there could be a slope angle for nearly vertical rivers 
             auto dbgCount = physical->Fill(cylinder, Physics::fillAll, Physics::Material::water, atmosphericTemperature);
             Engine::Debug::Log(std::wstring(L"Well at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+           // assert(physical->Measure(&Physics::Material::water, source) > 0);
+            physical->Constrain(source, Physics::Material::water, atmosphericTemperature, [](double) {return Physics::Material::water.normalDensity*1.25; });
         }
         else
         {
@@ -265,11 +272,11 @@ namespace Game
 
             auto dbgCount = physical->Fill(intersection, Physics::fillAll, Physics::Material::water, atmosphericTemperature);
             Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+
+            Engine::Intersection constrainIntsection({ source, surface });
+            //assert(physical->Measure(&Physics::Material::water, constraintIntersection) > 0);
+            physical->Constrain(constrainIntsection, Physics::Material::water, atmosphericTemperature, [](double) {return Physics::Material::water.normalDensity*1.25; });
         }
-        Engine::Cylinder c(Engine::Line(flow.a, flow.a + Engine::Vector(flow).Normal()), width, depth);
-        Engine::Plane constraintSurface(flow.a, Engine::Vector(1, 0, 0), Engine::Vector(0, 1, 0));
-        Engine::Intersection constrainInteraction({ c, constraintSurface });
-        physical->Constrain(constrainInteraction, Physics::Material::water, atmosphericTemperature, [](double) {return Physics::Material::water.normalDensity; });
 
     }
 

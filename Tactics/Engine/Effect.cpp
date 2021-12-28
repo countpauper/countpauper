@@ -113,9 +113,9 @@ namespace Engine
         if (particle.age > lifetime)
             particle.Despawn();
         double zig = seconds * zag;   // Move 'ZIG'
-        particle.movement.x += random.Uniform(Range<double>(-zig, zig));
-        particle.movement.y += random.Uniform(Range<double>(-zig, zig));
-        particle.movement.z += random.Uniform(Range<double>(-zig, zig));
+        particle.movement.x += random.Uniform(Range(-zig, zig));
+        particle.movement.y += random.Uniform(Range(-zig, zig));
+        particle.movement.z += random.Uniform(Range(-zig, zig));
 
         particle.color = RGBA::white.Translucent(1.0-(particle.age / lifetime));
     }

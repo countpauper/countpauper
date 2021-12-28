@@ -2,6 +2,7 @@
 #include "Volume.h"
 #include "Coordinate.h"
 #include "Matrix.h"
+#include "Geometry.h"
 #include <numeric>
 
 namespace Engine
@@ -28,6 +29,11 @@ double Sphere::Distance(const Coordinate& p) const
     return d;
 }
 
+double Sphere::Volume() const
+{
+    return radius * radius * radius * PI * 4.0 / 3.0;
+}
+
 double AABox::Distance(const Coordinate& p) const
 {
     if (GetBoundingBox().Contains(p))
@@ -46,6 +52,12 @@ double AABox::Distance(const Coordinate& p) const
     }
 }
 
+Cylinder::Cylinder() :
+    scale(Vector::zero),
+    origin(Coordinate::origin),
+    orientation(Quaternion::Identity())
+{
+}
 
 Cylinder::Cylinder(const Line& axis, double dy, double dz) :
     scale(axis.Length(),dy,dz),  // unit cylinder unit length and unit radius in both directions
@@ -135,6 +147,22 @@ double Cylinder::Distance(const Coordinate& p) const
     return 0;
 }
 
+Line Cylinder::Axis() const
+{
+    Vector v = orientation * Vector(scale.x, 0,0);
+    return Line(Coordinate::origin + origin, Coordinate::origin + origin + v);
+}
+
+Cylinder Cylinder::Slice(const Engine::Range<double>& range) const
+{
+    return Cylinder(Axis().Section(range), scale.y, scale.z);
+}
+
+double Cylinder::Volume() const
+{
+    return Engine::PI * scale.y * scale.z * scale.z;
+}
+
 AABB Intersection::GetBoundingBox() const
 {
     AABB box = AABB::infinity;
@@ -153,5 +181,9 @@ double Intersection::Distance(const Coordinate& p) const
     });
 }
 
+double Intersection::Volume() const
+{
+    throw std::runtime_error("Intersection volume unimplemented.");
+}
 
 }

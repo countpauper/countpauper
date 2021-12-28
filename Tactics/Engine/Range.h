@@ -70,7 +70,7 @@ struct Range
     }
     Range& operator/=(T v)
     {
-        return operator*(1 / v);
+        return operator*=(1 / v);
     }
 
     Range& Expand(T v)

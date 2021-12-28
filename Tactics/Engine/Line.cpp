@@ -26,6 +26,15 @@ double Line::ProjectionCoefficient(const Coordinate& p) const
     return Vector(*this).Dot(v) / length_squared;
 }
 
+
+Line Line::Section(const Engine::Range<double>& range) const
+{
+    Range<double> slice = range / Length();
+    slice *= Range(0.0, 1.0);
+    auto v = Vector(*this);
+    return Line(a + v * slice.begin, a + v * slice.end);
+}
+
 Coordinate Line::Project(const Coordinate& p) const
 {
     double interpolation_factor = ProjectionCoefficient(p);
@@ -39,7 +48,7 @@ Coordinate Line::Project(const Coordinate& p) const
     }
     else
     {
-        return Coordinate::zero+Lerp(Vector(a), Vector(b), interpolation_factor);
+        return Coordinate::origin+Lerp(Vector(a), Vector(b), interpolation_factor);
     }
 }
 double Line::Distance(const Coordinate& p) const

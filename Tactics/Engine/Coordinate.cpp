@@ -10,7 +10,7 @@ namespace Engine
 {
 
 
-const Coordinate Coordinate::zero{ 0,0,0 };
+const Coordinate Coordinate::origin { 0,0,0 };
 
 Coordinate& Coordinate::operator+=(const Vector& v)
 {

@@ -20,7 +20,7 @@ TEST_F(Mesh, BoundingBox)
 {
     Box cube(1.0);
     EXPECT_3D_EQ(Vector(1.0, 1.0, 1.0), cube.GetBoundingBox().Extent());
-    EXPECT_TRUE(cube.GetBoundingBox().Contains(Engine::Coordinate(0, 0, 0)));
+    EXPECT_TRUE(cube.GetBoundingBox().Contains(Engine::Coordinate::origin));
 }
 
 TEST_F(Mesh, BoxVolume)
@@ -61,7 +61,7 @@ TEST_F(Mesh, Translate)
 {
     Box cube(1.0);
     cube *= Matrix::Translation(Engine::Vector(1, 1, 1));
-    EXPECT_FALSE(cube.GetBoundingBox().Contains(Engine::Coordinate(0, 0, 0)));
+    EXPECT_FALSE(cube.GetBoundingBox().Contains(Engine::Coordinate::origin));
 }
 
 }

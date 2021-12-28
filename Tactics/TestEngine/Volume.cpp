@@ -40,7 +40,7 @@ TEST(Volume, InfiniteAABox)
     AABox b(Range<double>::infinity(), Range<double>::infinity(), Range<double>(-2,0));
     EXPECT_TRUE(std::isinf(b.GetBoundingBox().Volume()));
     EXPECT_EQ(2, b.Distance(Coordinate(0, 0, 2)));
-    EXPECT_EQ(0, b.Distance(Coordinate(0, 0, 0)));
+    EXPECT_EQ(0, b.Distance(Coordinate::origin));
     EXPECT_EQ(-1, b.Distance(Coordinate(0, 0, -1)));
 }
 
@@ -66,17 +66,19 @@ TEST(Volume, Box)
 
 TEST(Volume, NulCylinder)
 {
-    Cylinder c(Line(Coordinate(0, 0, 0), Coordinate(0, 0, 0)), 0, 0);
-    EXPECT_FALSE(c.GetBoundingBox().Volume());
-    EXPECT_EQ(0, c.Distance(Coordinate(0, 0, 0)));
+    Cylinder c(Line(Coordinate::origin, Coordinate::origin), 0, 0);
+    EXPECT_FALSE(c.Volume());
+    EXPECT_EQ(0, c.Distance(Coordinate::origin));
     EXPECT_EQ(1.0, c.Distance(Coordinate(1, 0, 0)));
+
+    EXPECT_FALSE(c.Slice(Range(0.0, 1.0)).Volume());
 }
 
 TEST(Volume, AxisAlignedCylinder)
 {
-    Cylinder c(Line(Coordinate(0, 0, 0), Coordinate(1, 0, 0)), 1, 1);
+    Cylinder c(Line(Coordinate::origin, Coordinate(1, 0, 0)), 1, 1);
     EXPECT_DOUBLE_EQ(1.0*2.0*2.0, c.GetBoundingBox().Volume()); 
-    EXPECT_EQ(0, c.Distance(Coordinate(0, 0, 0)));
+    EXPECT_EQ(0, c.Distance(Coordinate::origin));
     EXPECT_EQ(0.0, c.Distance(Coordinate(1, 0, 0)));
     EXPECT_EQ(0.0, c.Distance(Coordinate(0, 1, 0)));
     EXPECT_EQ(0.0, c.Distance(Coordinate(0, 0, 1)));
@@ -90,7 +92,7 @@ TEST(Volume, AxisAlignedCylinder)
 
 TEST(Volume, TurnedCylinder)
 {
-    Cylinder c(Line(Coordinate(0, 0, 0), Coordinate(2, 0, 0)), 1, 1);
+    Cylinder c(Line(Coordinate::origin, Coordinate(2, 0, 0)), 1, 1);
     EXPECT_3D_EQ(Vector(2,2,2), c.GetBoundingBox().Extent()); 
 }
 
@@ -98,7 +100,7 @@ TEST(Volume, TurnedCylinder)
 TEST(Volume, TiltedCylinder)
 {
     // cylinder still unit length
-    Cylinder c(Line(Coordinate(0, 0, 0), Coordinate(0.5*sqrt(2), 0, 0.5*sqrt(2))), 0.5, 0.5);
+    Cylinder c(Line(Coordinate::origin, Coordinate(0.5*sqrt(2), 0, 0.5*sqrt(2))), 0.5, 0.5);
     EXPECT_3D_EQ(Vector(1*sqrt(2), 1, 1*sqrt(2)),c.GetBoundingBox().Extent());
     EXPECT_LT(c.Distance(Coordinate(0.7, 0, 0.7)), 0.0);
     EXPECT_GT(c.Distance(Coordinate(1.0, 0, 0.0)), 0.0);
@@ -106,22 +108,22 @@ TEST(Volume, TiltedCylinder)
 
 TEST(Volume, DiagonalCylinder)
 {
-    Cylinder c(Line(Coordinate(0, 0, 0), Coordinate(2, 2, 0)), 1, 1);
+    Cylinder c(Line(Coordinate::origin, Coordinate(2, 2, 0)), 1, 1);
     EXPECT_3D_EQ(Vector(2+sqrt(2),2+sqrt(2), 2), c.GetBoundingBox().Extent());
 }
 
 TEST(Volume, EllipseCylinder)
 {
-    Cylinder flat(Line(Coordinate(0, 0, 0), Coordinate(2, 0, 0)), 1, 0.0);
+    Cylinder flat(Line(Coordinate::origin, Coordinate(2, 0, 0)), 1, 0.0);
     EXPECT_DOUBLE_EQ(0.0, flat.GetBoundingBox().Volume()); 
     EXPECT_DOUBLE_EQ(0.0, flat.Distance(Coordinate(1.0, 0.0, 0.0)));
     EXPECT_DOUBLE_EQ(1.0, flat.Distance(Coordinate(1.0, 0.0, 1.0)));
     EXPECT_DOUBLE_EQ(0.0, flat.Distance(Coordinate(1.0, 1.0, 0.0)));
 
-    Cylinder skinny(Line(Coordinate(0, 0, 0), Coordinate(2, 0, 0)), 0.5, 1.0);
+    Cylinder skinny(Line(Coordinate::origin, Coordinate(2, 0, 0)), 0.5, 1.0);
     EXPECT_3D_EQ(Vector(2,1,2), skinny.GetBoundingBox().Extent());
 
-    Cylinder skinnz(Line(Coordinate(0, 0, 0), Coordinate(2, 0, 0)), 1, 0.5);
+    Cylinder skinnz(Line(Coordinate::origin, Coordinate(2, 0, 0)), 1, 0.5);
     EXPECT_3D_EQ(Vector(2,2,1), skinnz.GetBoundingBox().Extent());
 }
 

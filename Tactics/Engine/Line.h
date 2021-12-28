@@ -1,4 +1,5 @@
 #include "Coordinate.h"
+#include "Range.h"
 #pragma once
 
 namespace Engine
@@ -21,6 +22,7 @@ public:
     double Length() const;
     double Distance(const Coordinate& p) const;
     double ProjectionCoefficient(const Coordinate& p) const;
+    Line Section(const Engine::Range<double>& range) const;
     Coordinate Project(const Coordinate& p) const;
     AABB Bounds() const;
 };

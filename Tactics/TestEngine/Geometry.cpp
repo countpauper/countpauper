@@ -35,8 +35,8 @@ TEST(Geometry, Vector)
 
 TEST(Geometry, Coordinate)
 {
-    Engine::Coordinate a(1, 2, 3);
-    Engine::Coordinate b(4, 3, 3);
+    Coordinate a(1, 2, 3);
+    Coordinate b(4, 3, 3);
 
     Engine::Vector v = b - a;
     EXPECT_EQ(v, Engine::Vector(3, 1, 0));
@@ -66,32 +66,48 @@ TEST(Geometry, Turn)
 
 TEST(Line, Length)
 {
-    Engine::Coordinate a(1, 2, 3);
-    Engine::Coordinate b(3, 0, 4);
+    Coordinate a(1, 2, 3);
+    Coordinate b(3, 0, 4);
     EXPECT_EQ(3.0, Line( a, b ).Length());
 }
 
 TEST(Line, Distance)
 {
-    Engine::Line l0(Engine::Coordinate(1, 0, 0), Engine::Coordinate(1, 0, 0));
-    EXPECT_EQ(1.0, l0.Distance(Engine::Coordinate(1, -1, 0)));
+    Line l0(Coordinate(1, 0, 0), Coordinate(1, 0, 0));
+    EXPECT_EQ(1.0, l0.Distance(Coordinate(1, -1, 0)));
 
-    Engine::Line l1(Engine::Coordinate(1, 0, 0), Engine::Coordinate(3, 2, 0));
-    EXPECT_EQ(1.0, l1.Distance(Engine::Coordinate(1, -1, 0)));
-    EXPECT_EQ(2.0, l1.Distance(Engine::Coordinate(5, 2, 0)));
-    EXPECT_EQ(3.0, l1.Distance(Engine::Coordinate(0, 3, 1)));
+    Line l1(Coordinate(1, 0, 0), Coordinate(3, 2, 0));
+    EXPECT_EQ(l1.Distance(Coordinate(1, -1, 0)), 1.0);
+    EXPECT_EQ(l1.Distance(Coordinate(5, 2, 0)), 2.0);
+    EXPECT_EQ(l1.Distance(Coordinate(0, 3, 1)), 3.0);
 
-    Line l2(Engine::Coordinate(1, 1, 0), Engine::Coordinate(1, 1, 0));
-    EXPECT_EQ(1.0, l2.Distance(Engine::Coordinate(1, 0, 0)));
+    Line l2(Coordinate(1, 1, 0), Coordinate(1, 1, 0));
+    EXPECT_EQ(1.0, l2.Distance(Coordinate(1, 0, 0)));
+}
+
+TEST(Line, Section)
+{
+    Coordinate a(1, 2, 3);
+    Coordinate b(3, 0, 4);
+    Line line(a, b);
+    auto firstSection = line.Section(Range(0.0, line.Length() / 2.0));
+    EXPECT_3D_EQ(line.a, firstSection.a);
+    EXPECT_3D_EQ(firstSection.b, Coordinate(2, 1, 3.5));
+    auto secondSection = line.Section(Range(line.Length() / 2.0, line.Length()));
+    EXPECT_3D_EQ(line.b, secondSection.b);
+    EXPECT_3D_EQ(secondSection.a, firstSection.b)
+    auto clippedSection = line.Section(Range(0.0, std::numeric_limits<double>::infinity()));
+    
+
 }
 
 TEST(Plane, Null)
 {
-    EXPECT_FALSE(Plane(Vector(0, 0, 0), 1));
-    EXPECT_FALSE(Plane(Vector(0, 0, 0), 1));
-    EXPECT_FALSE(Plane(Coordinate::zero, Coordinate::zero, Coordinate::zero));
+    EXPECT_FALSE(Plane(Vector::zero, 1));
+    EXPECT_FALSE(Plane(Vector::zero, 1));
+    EXPECT_FALSE(Plane(Coordinate::origin, Coordinate::origin, Coordinate::origin));
     EXPECT_FALSE(Plane(Coordinate(1, 0, 0), Coordinate(1, 0, 0), Coordinate(1, 0, 0)));
-    EXPECT_EQ(Plane(Vector(0,0,0),0) , Plane(Coordinate(1, 0, 0), Coordinate(1, 0, 0), Coordinate(1, 0, 0)));
+    EXPECT_EQ(Plane(Vector::zero,0) , Plane(Coordinate(1, 0, 0), Coordinate(1, 0, 0), Coordinate(1, 0, 0)));
     EXPECT_FALSE(Plane::null);
     EXPECT_FALSE(Plane::null.Normalized());
 }
@@ -99,11 +115,11 @@ TEST(Plane, Null)
 TEST(Plane, XY)
 {
     EXPECT_TRUE(Plane::xy);
-    EXPECT_EQ(Plane::xy, Plane(Coordinate(0, 0, 0), Vector(1, 0, 0), Vector(0, 1, 0)));
-    EXPECT_EQ(0, Plane::xy.Distance(Coordinate::zero));
+    EXPECT_EQ(Plane::xy, Plane(Coordinate::origin, Vector(1, 0, 0), Vector(0, 1, 0)));
+    EXPECT_EQ(0, Plane::xy.Distance(Coordinate::origin));
     EXPECT_DOUBLE_EQ(1, Plane::xy.Distance(Coordinate(0, 0, 1)));
     EXPECT_DOUBLE_EQ(0, Plane::xy.Distance(Coordinate(1, 1, 0)));
-    EXPECT_3D_EQ(Coordinate::zero, Plane::xy.Project(Coordinate(0, 0, 1)));
+    EXPECT_3D_EQ(Coordinate::origin, Plane::xy.Project(Coordinate(0, 0, 1)));
     EXPECT_3D_EQ(Coordinate(1, 1, 0), Plane::xy.Project(Coordinate(1, 1, 1)));
     EXPECT_TRUE(Plane::xy.Above(Coordinate(0, 0, 1)));
     EXPECT_FALSE(Plane::xy.Above(Coordinate(0, 0, -1)));
@@ -115,17 +131,16 @@ TEST(Plane, Diagonal)
     Plane plane(Coordinate(1, 0, 0), Coordinate(0, 1, 0), Coordinate(0, 0, 1));
     EXPECT_TRUE(plane);
     // as long as it's clockwise the same, the plane is the same
-    EXPECT_EQ(plane, Plane(Coordinate(0, 0, 1), Coordinate(1, 0, 0), Coordinate(0, 1, 0)));
-    EXPECT_EQ(plane, Plane(Coordinate(0, 1, 0), Coordinate(0, 0, 1), Coordinate(1, 0, 0)));
+    EXPECT_EQ(Plane(Coordinate(0, 0, 1), Coordinate(1, 0, 0), Coordinate(0, 1, 0)), plane);
+    EXPECT_EQ(Plane(Coordinate(0, 1, 0), Coordinate(0, 0, 1), Coordinate(1, 0, 0)), plane);
     // flipped direction is flipped plane 
-    EXPECT_EQ(-plane, Plane(Coordinate(1, 0, 0), Coordinate(0, 0, 1), Coordinate(0, 1, 0)));
+    EXPECT_EQ(Plane(Coordinate(1, 0, 0), Coordinate(0, 0, 1), Coordinate(0, 1, 0)), -plane);
 
-    EXPECT_EQ(0, plane.Distance(Coordinate(1, 0, 0)));
-    EXPECT_EQ(0, plane.Distance(Coordinate(0, 1, 0)));
-    EXPECT_EQ(0, plane.Distance(Coordinate(0, 0, 1)));
-    EXPECT_DOUBLE_EQ(-1.0 / sqrt(3), plane.Distance(Coordinate::zero));
-
-    EXPECT_3D_EQ(Vector(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0), plane.Project(Coordinate::zero));
+    EXPECT_EQ(plane.Distance(Coordinate(1, 0, 0)), 0);
+    EXPECT_EQ(plane.Distance(Coordinate(0, 1, 0)), 0);
+    EXPECT_EQ(plane.Distance(Coordinate(0, 0, 1)), 0);
+    EXPECT_DOUBLE_EQ(-1.0 / sqrt(3), plane.Distance(Coordinate::origin));
+    EXPECT_3D_EQ(plane.Project(Coordinate::origin), Vector(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0));
 }
 
 TEST(Plane, DoubleXYAt1)
@@ -133,10 +148,10 @@ TEST(Plane, DoubleXYAt1)
     Plane xy2(Coordinate(1,1,1), Vector(0, 0, 2));
     EXPECT_TRUE(xy2.Above(Coordinate(1, 1, 1.1)));
     EXPECT_FALSE(xy2.Above(Coordinate(0, 0, 0.9)));
-    EXPECT_DOUBLE_EQ( 1, xy2.Distance(Coordinate(1,1,2)));
-    EXPECT_DOUBLE_EQ(-1, xy2.Distance(Coordinate::zero));
-    EXPECT_DOUBLE_EQ(-2, xy2.Distance(Coordinate(1,1,-1)));
-    EXPECT_3D_EQ(Coordinate(0, 0, 1), xy2.Project(Coordinate::zero));
+    EXPECT_DOUBLE_EQ(xy2.Distance(Coordinate(1,1,2)), 1);
+    EXPECT_DOUBLE_EQ(xy2.Distance(Coordinate::origin), -1);
+    EXPECT_DOUBLE_EQ(xy2.Distance(Coordinate(1,1,-1)), -2);
+    EXPECT_3D_EQ(Coordinate(0, 0, 1), xy2.Project(Coordinate::origin));
     EXPECT_3D_EQ(Coordinate(1, 1, 1), xy2.Project(Coordinate(1, 1, 1)));
     EXPECT_3D_EQ(Coordinate(-2,-3, 1), xy2.Project(Coordinate(-2, -3, -4)));
     // bounding box should be inf, inf, 1 ... inf
@@ -151,11 +166,11 @@ TEST(Plane, NotNormalDiagonal)
 {
     Plane abnormal(Coordinate(1,0,0), Vector(-2, 2, 0), Vector(0, 2, -2));
     EXPECT_TRUE(abnormal);
-    EXPECT_EQ(abnormal, abnormal.Normalized());
-    EXPECT_EQ(0, abnormal.Distance(Coordinate(1, 0, 0)));
-    EXPECT_EQ(0, abnormal.Distance(Coordinate(-1, 2, 0)));
-    EXPECT_EQ(0, abnormal.Distance(Coordinate(1, 2, -2)));
-    EXPECT_3D_EQ(Vector(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0), abnormal.Project(Coordinate::zero));
+    EXPECT_EQ(abnormal.Normalized(), abnormal);
+    EXPECT_EQ(abnormal.Distance(Coordinate(1, 0, 0)), 0);
+    EXPECT_EQ(abnormal.Distance(Coordinate(-1, 2, 0)), 0);
+    EXPECT_EQ(abnormal.Distance(Coordinate(1, 2, -2)), 0);
+    EXPECT_3D_EQ(abnormal.Project(Coordinate::origin), Vector(1.0, 1.0, 1.0)/3.0);
     EXPECT_TRUE(abnormal.GetBoundingBox().x.infinite());
     EXPECT_TRUE(abnormal.GetBoundingBox().y.infinite());
     EXPECT_TRUE(abnormal.GetBoundingBox().z.infinite());
@@ -173,10 +188,10 @@ TEST(Triangle, Surface)
     Triangle xyTriangle(Coordinate(1, 0, 0), Coordinate(3, 0, 0), Coordinate(1, 4, 0));
     EXPECT_EQ(4, xyTriangle.Surface());
 
-    Triangle yzTriangle(Coordinate(0, 0, 0), Coordinate(0, 1, 0), Coordinate(0, 0, 2));
+    Triangle yzTriangle(Coordinate::origin, Coordinate(0, 1, 0), Coordinate(0, 0, 2));
     EXPECT_EQ(1, yzTriangle.Surface());
 
-    Triangle xzTriangle(Coordinate(0, 0, 0), Coordinate(0, 0, 3), Coordinate(0, 2, 1));
+    Triangle xzTriangle(Coordinate::origin, Coordinate(0, 0, 3), Coordinate(0, 2, 1));
     EXPECT_EQ(3, xzTriangle.Surface());
 }
 
@@ -193,7 +208,7 @@ TEST(Triangle, Distance)
     // right hand ccw (like default opengl): triangle is facing -z axis
     Triangle xyTriangle(Coordinate(1, 4, 0), Coordinate(3, 0, 0), Coordinate(1, 0, 0));
     EXPECT_LT(xyTriangle.Normal().z, 0);
-    EXPECT_EQ(1, xyTriangle.Distance(Coordinate(0, 0, 0))); // near first vertex
+    EXPECT_EQ(1, xyTriangle.Distance(Coordinate::origin)); // near first vertex
     EXPECT_EQ(3, xyTriangle.Distance(Coordinate(3, 0, -3))); // near second vertex, but in front
     EXPECT_EQ(2, xyTriangle.Distance(Coordinate(1, 6, 0))); // near third vertex
     EXPECT_EQ(0, xyTriangle.Distance(Coordinate(2, 0, 0))); // on edge
@@ -204,7 +219,7 @@ TEST(Triangle, Distance)
     EXPECT_EQ(2, xyTriangle.Flipped().Distance(Coordinate(2, 1, 2))); // flipped triangle->flipped distance
 
     // triangle is facing +y axis
-    Triangle xzTriangle(Coordinate(0, 0, 0), Coordinate(0, 0, 3), Coordinate(2, 0, 1));
+    Triangle xzTriangle(Coordinate::origin, Coordinate(0, 0, 3), Coordinate(2, 0, 1));
     EXPECT_GT(xzTriangle.Normal().y, 0);
     EXPECT_EQ(-1, xzTriangle.Distance(Coordinate(0, -1, 0))); // behind first vertex
     EXPECT_EQ(1, xzTriangle.Distance(Coordinate(3, 0, 1))); // in front of third vertex

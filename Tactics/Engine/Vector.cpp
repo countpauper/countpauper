@@ -52,7 +52,7 @@ Vector Vector::Normal() const
 {
     auto l = Length();
     if (l == 0)
-        return Vector(0, 0, 0);
+        return Vector::zero;
     return Vector(x / l, y / l, z / l);
 }
 
@@ -124,6 +124,8 @@ double Vector::Dot(const Vector& v) const
 {
     return x * v.x + y * v.y + z * v.z;
 }
+
+const Vector Vector::zero(0, 0, 0);
 
 std::ostream& operator<<(std::ostream& s, const Vector& v)
 {

@@ -79,8 +79,8 @@ TEST(Range, Inclusion)
 
 TEST(AABB, Size)
 {
-    EXPECT_EQ(1, AABB(Coordinate(0, 0, 0), Coordinate(1, 1, 1)).Volume());
-    EXPECT_EQ(Vector(1, 1, 1), AABB(Coordinate(0, 0, 0), Coordinate(1, 1, 1)).Extent());
+    EXPECT_EQ(1, AABB(Coordinate::origin, Coordinate(1, 1, 1)).Volume());
+    EXPECT_EQ(Vector(1, 1, 1), AABB(Coordinate::origin, Coordinate(1, 1, 1)).Extent());
     EXPECT_EQ(Range(-1, 0), AABB(Coordinate(-1, 1, 3), Coordinate(0, 2, 4)).X());
     EXPECT_EQ(Range(1, 2), AABB(Coordinate(-1, 1, 3), Coordinate(0, 2, 4)).Y());
     EXPECT_EQ(Range(3, 4), AABB(Coordinate(-1, 1, 3), Coordinate(0, 2, 4)).Z());
@@ -89,7 +89,7 @@ TEST(AABB, Size)
 
 TEST(AABB, Expand)
 {
-    AABB box(Coordinate(0, 0, 0), Coordinate(1, 1, 1));
+    AABB box(Coordinate::origin, Coordinate(1, 1, 1));
     box.Expand(Vector(1, -1, 0));
     EXPECT_EQ(4, box.Volume()); // 2x2x1
     EXPECT_EQ(Range(0, 2), box.X());
@@ -102,7 +102,7 @@ TEST(AABB, Expand)
 
 TEST(AABB, Include)
 {
-    AABB box(Coordinate(0, 0, 0), Coordinate(1, 1, 1));
+    AABB box(Coordinate::origin, Coordinate(1, 1, 1));
     
     EXPECT_TRUE((box | Coordinate(2, 2, 2))[Coordinate(1.5, 1.5, 1.5)]);
 }
@@ -110,7 +110,7 @@ TEST(AABB, Include)
 
 TEST(AABB, Clip)
 {
-    AABB box(Coordinate(0, 0, 0), Coordinate(1, 1, 1));
+    AABB box(Coordinate::origin, Coordinate(1, 1, 1));
 
     EXPECT_TRUE(box.Contains(box.Clip(Coordinate(2, -1, 0))));
     EXPECT_TRUE(box.Contains(box.Clip(Coordinate(-std::numeric_limits<double>::infinity(), 0.5, 10.0))));
@@ -118,7 +118,7 @@ TEST(AABB, Clip)
 
 TEST(AABB, Transform)
 {
-    AABB box(Coordinate(0, 0, 0), Coordinate(1, 1, 1));
+    AABB box(Coordinate::origin, Coordinate(1, 1, 1));
 
     EXPECT_3D_EQ(Vector(2,1,1), (Matrix::Scale(Vector(2, 1, 1)) * box).Extent()); // 0,0,0 ... 2,1,1
     EXPECT_3D_EQ(Vector(1, 1, 1),(Matrix::XRot(PI * 0.5) * box).Extent()); // 0,-1,0 ... 1,0,1

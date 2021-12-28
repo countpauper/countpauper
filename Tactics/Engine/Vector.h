@@ -44,6 +44,7 @@ struct Vector
     double x;
     double y;
     double z;
+    static const Vector zero;
 };
 Vector operator*(const Vector& v, double factor);
 Vector operator/(const Vector& v, double factor);

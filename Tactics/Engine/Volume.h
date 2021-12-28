@@ -18,6 +18,7 @@ public:
     virtual double Distance(const Coordinate& p) const = 0;
     // Check whether the volume contains a point
     bool Contains(const Coordinate& p) const { return Distance(p) <= 0; }
+    virtual double Volume() const = 0;
 };
 
 
@@ -29,6 +30,7 @@ public:
     {}
     AABB  GetBoundingBox() const override;
     double Distance(const Coordinate& p) const override;
+    double Volume() const override { return 0.0;  }
 private:
     Coordinate c;
 };
@@ -43,6 +45,7 @@ public:
     }
     AABB  GetBoundingBox() const override;
     double Distance(const Coordinate& p) const override;
+    double Volume() const override;
 private:
     Coordinate center;
     double radius;
@@ -59,14 +62,19 @@ public:
     // IVolume;
     AABB GetBoundingBox() const override { return *this; }
     virtual double Distance(const Coordinate& p) const override;
+    double Volume() const override { return AABB::Volume(); }
 };
 
 class Cylinder : public IVolume
 {
 public:
+    Cylinder();
     Cylinder(const Line& axis, double dy, double dz);
     AABB GetBoundingBox() const override;   
-    virtual double Distance(const Coordinate& p) const override; 
+    virtual double Distance(const Coordinate& p) const override;
+    Line Axis() const;
+    Cylinder Slice(const Engine::Range<double>& range) const;
+    double Volume() const override;
 private:
     Vector scale;
     Quaternion orientation;
@@ -80,6 +88,7 @@ public:
     Intersection(std::vector<std::reference_wrapper<const IVolume>> vols) : volumes(vols) {}
     AABB GetBoundingBox() const override;
     virtual double Distance(const Coordinate& p) const override;
+    double Volume() const override;
 private:
     std::vector<std::reference_wrapper<const IVolume>> volumes;
 };

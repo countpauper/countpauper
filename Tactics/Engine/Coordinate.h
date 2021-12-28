@@ -23,7 +23,7 @@ struct Coordinate final
     double x;
     double y;
     double z;
-    static const Coordinate zero;
+    static const Coordinate origin;
 };
 
 Coordinate operator*(const Coordinate& c, double factor);

@@ -31,6 +31,7 @@ struct Plane : public IVolume
     bool Above(const Coordinate& c) const;
     AABB GetBoundingBox() const override;
     double Distance(const Coordinate& c) const override;
+    double Volume() const override { return std::numeric_limits<double>::infinity(); }
     bool IsParallel(const Line& line) const;
     Coordinate Intersection(const Line& line) const;
     Engine::Vector normal;  // does not need to be normalized 
