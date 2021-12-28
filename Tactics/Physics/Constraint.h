@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Volume.h"
 #include "IEnvironment.h"
-
+#include "Engine/AxisAlignedBoundingBox.h"
 #include <functional>
 
 namespace Physics
@@ -16,7 +16,7 @@ public:
     void Tick(double t, IEnvironment& environment) const;
 private:
     const Material * material;
-    Engine::AABox area;
+    Engine::AABB area;
     double temperature;
     Function fn;
 };

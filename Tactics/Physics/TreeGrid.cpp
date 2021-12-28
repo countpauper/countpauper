@@ -14,7 +14,7 @@ TreeGrid::TreeGrid(const Engine::Vector& extent, const Grid& grid) :
     root(std::make_unique<Branch>(Size(int(std::round(extent.x / grid.x)), int(std::round(extent.y / grid.y)), int(std::round(extent.z / grid.z)))))
 {
     Node::grid = grid;
-    root->Fill(Engine::AABox(Engine::Coordinate::origin, extent), Position(), Material::vacuum, 0);
+    root->Fill(Engine::AABB(Engine::Coordinate::origin, extent), Position(), Material::vacuum, 0);
 }
 
 size_t TreeGrid::Fill(const Engine::IVolume& v, Filter filter, const Material& m, double temperature, std::optional<double>)
@@ -96,8 +96,9 @@ std::vector<const Engine::IRendition*> TreeGrid::Render() const
     return std::vector<const Engine::IRendition*>();
 }
 
-double TreeGrid::Measure(const Material* material) const
+double TreeGrid::Measure(const Material* material, const Engine::IVolume& in) const
 {
+    assert(std::isinf(in.Volume())); // limited volume supported yet
     return root->Measure(material);
 }
 

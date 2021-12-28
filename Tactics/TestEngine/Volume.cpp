@@ -2,6 +2,7 @@
 #include "Volume.h"
 #include "Mesh.h"
 #include "Matrix.h"
+#include "AxisAlignedBoundingBox.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test
@@ -27,7 +28,7 @@ TEST(Volume , Sphere)
 
 TEST(Volume, AABox)
 {
-    AABox b(Coordinate(-1.0, 0.0, -1.0), Coordinate(2, 1, 0));
+    AABB b(Coordinate(-1.0, 0.0, -1.0), Coordinate(2, 1, 0));
     EXPECT_3D_EQ(Vector(3,1,1), b.GetBoundingBox().Extent());
     EXPECT_TRUE(b.GetBoundingBox().Contains(Coordinate(0, 0.5, -0.5)));
     EXPECT_EQ(0, b.Distance(Coordinate(0, 1, -1)));
@@ -37,7 +38,7 @@ TEST(Volume, AABox)
 
 TEST(Volume, InfiniteAABox)
 {
-    AABox b(Range<double>::infinity(), Range<double>::infinity(), Range<double>(-2,0));
+    AABB b(Range<double>::infinity(), Range<double>::infinity(), Range<double>(-2,0));
     EXPECT_TRUE(std::isinf(b.GetBoundingBox().Volume()));
     EXPECT_EQ(2, b.Distance(Coordinate(0, 0, 2)));
     EXPECT_EQ(0, b.Distance(Coordinate::origin));
@@ -129,8 +130,8 @@ TEST(Volume, EllipseCylinder)
 
 TEST(Volume, BoxIntersection)
 {
-    AABox a(Coordinate(0.0, 0.0, 0.0), Coordinate(2, 3, 4));
-    AABox b(Coordinate(-3, -2, -1), Coordinate(1, 1, 2));
+    AABB a(Coordinate(0.0, 0.0, 0.0), Coordinate(2, 3, 4));
+    AABB b(Coordinate(-3, -2, -1), Coordinate(1, 1, 2));
     Intersection i({ a, b });
     EXPECT_3D_EQ(Vector(1,1,2), i.GetBoundingBox().Extent());
     EXPECT_DOUBLE_EQ(-0.5, i.Distance(Coordinate(0.5, 0.5, 0.5)));

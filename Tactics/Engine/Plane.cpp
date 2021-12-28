@@ -3,6 +3,7 @@
 #include "Coordinate.h"
 #include "Line.h"
 #include "Maths.h"
+#include "AxisAlignedBoundingBox.h"
 
 namespace Engine
 {

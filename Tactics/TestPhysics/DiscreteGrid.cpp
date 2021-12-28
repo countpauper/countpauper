@@ -33,7 +33,7 @@ TEST(DiscreteGrid, Fill)
     DiscreteGrid oneEnv(Engine::Vector(1, 1, 1));
     oneEnv.Fill(Engine::Sphere(Engine::Coordinate::origin, 1), fillAll, Material::water, 273);
     EXPECT_EQ(&Material::water, oneEnv.GetMaterial(Engine::Coordinate::origin));
-    EXPECT_NEAR(273.0, oneEnv.Temperature(Engine::AABox(Engine::Coordinate::origin, Engine::Coordinate(1, 1, 1))), 1);
+    EXPECT_NEAR(273.0, oneEnv.Temperature(Engine::AABB(Engine::Coordinate::origin, Engine::Coordinate(1, 1, 1))), 1);
     EXPECT_DOUBLE_EQ(1.0, oneEnv.Measure(&Material::water));
     EXPECT_DOUBLE_EQ(0.0, oneEnv.Measure(&Material::vacuum));
 

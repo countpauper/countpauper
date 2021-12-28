@@ -1,6 +1,5 @@
 #pragma once
 
-#include "AxisAlignedBoundingBox.h"
 #include "Quaternion.h"
 #include "Line.h"
 #include <any>
@@ -8,6 +7,8 @@
 
 namespace Engine
 {
+
+struct AABB;
 
 class IVolume
 {
@@ -28,7 +29,7 @@ public:
     Point(const Coordinate& c) : 
         c(c) 
     {}
-    AABB  GetBoundingBox() const override;
+    AABB GetBoundingBox() const override;
     double Distance(const Coordinate& p) const override;
     double Volume() const override { return 0.0;  }
 private:
@@ -49,20 +50,6 @@ public:
 private:
     Coordinate center;
     double radius;
-};
-
-class AABox : public AABB, public IVolume
-{
-public:
-    AABox(const Coordinate& a, const Coordinate& b) : AABB(a, b) {}
-    AABox(const Coordinate& c, const Vector& e) : AABB(c, e) {}
-    AABox(const Range<double>& x, const Range<double>& y, const Range<double>& z) : AABB(x, y, z) {}
-    AABox(const AABB& box) : AABB(box) {}
-
-    // IVolume;
-    AABB GetBoundingBox() const override { return *this; }
-    virtual double Distance(const Coordinate& p) const override;
-    double Volume() const override { return AABB::Volume(); }
 };
 
 class Cylinder : public IVolume

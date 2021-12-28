@@ -2,6 +2,7 @@
 
 #include "Coordinate.h"
 #include "Range.h"
+#include "Volume.h"
 
 namespace Engine
 {
@@ -10,7 +11,7 @@ namespace Engine
     struct Line;
     struct Matrix;
 
-    struct AABB
+    struct AABB : public IVolume
     {
         AABB() = default;
         AABB(const Coordinate& begin, const Coordinate& end);
@@ -22,13 +23,16 @@ namespace Engine
         Coordinate End() const;
         Coordinate Center() const;
 
-
         Vector Extent() const;
-        double Volume() const;
         operator bool() const;
         Range<double> X() const;
         Range<double> Y() const;
         Range<double> Z() const;
+
+        AABB GetBoundingBox() const override { return *this; }
+        virtual double Distance(const Coordinate& p) const override;
+        double Volume() const override;
+
         bool Contains(const Coordinate& p) const;
         Coordinate Clip(const Coordinate& p) const;
 

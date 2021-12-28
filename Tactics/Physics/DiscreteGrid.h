@@ -36,7 +36,7 @@ public:
     void Tick(double seconds) override;
     std::vector<const Engine::IRendition*> Render() const override;
 
-    double Measure(const Material* material) const override;
+    double Measure(const Material* material, const Engine::IVolume& in = Engine::AABB::infinity) const override;
     std::wstring Statistics() const override;
     PackedVoxel& operator[](const Position& p);
     const PackedVoxel& operator[](const Position& p) const;

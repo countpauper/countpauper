@@ -118,7 +118,7 @@ const Material& VoxelData::MaterialAt(const Position& position) const
     return *(voxels[GridIndex(position)].material);
 }
 
-double VoxelData::Measure(const Engine::IVolume& v, const Material* material) const
+double VoxelData::Measure(const Material* material, const Engine::IVolume& v) const
 {
     double volume = 0;
     auto bb = v.GetBoundingBox() & BoundingBox();

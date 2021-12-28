@@ -155,7 +155,6 @@ void DiscreteGrid::Tick(double seconds)
 
         if ((current.GetMaterial() == &Material::water) && (current.IsFluid()))
         {
-            bool waterLeft = true;
             // first flow down
             auto down = it.position + Direction::down.Vector();
             if (bounds.Contains(down))
@@ -170,14 +169,13 @@ void DiscreteGrid::Tick(double seconds)
                 {
                     newFill = neighbour.Amount() + 1;
                 }
-                if ((newFill > 0) && (newFill < 16))
+                if ((newFill > 0) && (newFill < PackedVoxel::normalAmount))
                 {
 
                     auto newAmount = current.Amount() - 1;
                     if (!newAmount)
                     {
                         current.Set(Material::air);
-                        waterLeft = false;
                     }
                     else
                     {
@@ -314,22 +312,26 @@ std::vector<const Engine::IRendition*> DiscreteGrid::Render() const
 }
 
 
-double DiscreteGrid::Measure(const Material* material) const
+double DiscreteGrid::Measure(const Material* material, const Engine::IVolume& in) const
 {
     double volume = 0.0;
+    auto bounds = grid(in.GetBoundingBox()) & Bounds();
+
     if (material == &Material::vacuum)
     {
-        for (const_iterator it(*this, Bounds()); it != it.end(); ++it)
+        for (const_iterator it(*this, bounds); it != it.end(); ++it)
         {
-            if ((*it).second.GetMaterial() == material)
+            if (((*it).second.GetMaterial() == material) && 
+                (in.Contains(grid.Center(it.position))))
                 volume += grid.Volume() ;
         }
     }
     else
     {
-        for (const_iterator it(*this, Bounds()); it != it.end(); ++it)
+        for (const_iterator it(*this, bounds); it != it.end(); ++it)
         {
-            if ((*it).second.GetMaterial() == material)
+            if (((*it).second.GetMaterial() == material) &&
+                (in.Contains(grid.Center(it.position))))
                 volume += grid.Volume() * (*it).second.Amount() / PackedVoxel::normalAmount;
         }
     }

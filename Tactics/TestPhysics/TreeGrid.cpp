@@ -34,7 +34,7 @@ TEST(Tree, Fill)
     TreeGrid oneEnv(Engine::Vector(1, 1, 1));
     oneEnv.Fill(Engine::Sphere(Engine::Coordinate::origin, 1), fillAll, Material::water, 273);
     EXPECT_EQ(&Material::water, oneEnv.GetMaterial(Engine::Coordinate::origin));
-    EXPECT_NEAR(273.0, oneEnv.Temperature(Engine::AABox(Engine::Coordinate(0,0,0),Engine::Coordinate(1,1,1))),1);
+    EXPECT_NEAR(273.0, oneEnv.Temperature(Engine::AABB(Engine::Coordinate(0,0,0),Engine::Coordinate(1,1,1))),1);
     EXPECT_DOUBLE_EQ(1.0, oneEnv.Measure(&Material::water));
     EXPECT_DOUBLE_EQ(0.0, oneEnv.Measure(&Material::vacuum));
 
@@ -55,7 +55,7 @@ TEST(Tree, FillOne)
     for (BoxIterator i(bounds); i != i.end(); ++i)
     {
         TreeGrid env(grid.Meters(bounds.Extent()), grid);
-        Engine::AABox volume(Engine::Coordinate(i->x, i->y, i->z), Engine::Vector(1, 1, 1));
+        Engine::AABB volume(Engine::Coordinate(i->x, i->y, i->z), Engine::Vector(1, 1, 1));
         EXPECT_EQ(1, env.Fill(volume, fillAll, Material::water,300));
         EXPECT_EQ(&Material::water, env.GetMaterial(Engine::Coordinate(i->x + 0.5, i->y + 0.5, i->z + 0.5)));
         EXPECT_DOUBLE_EQ(grid.Volume(), env.Measure(&Material::water));
@@ -71,7 +71,7 @@ TEST(Tree, FillOneByOne)
     double expectedVolume = 0;
     for (BoxIterator i(bounds); i != i.end(); ++i)
     {
-        Engine::AABox volume(Engine::Coordinate(i->x, i->y, i->z), Engine::Vector(1, 1, 1));
+        Engine::AABB volume(Engine::Coordinate(i->x, i->y, i->z), Engine::Vector(1, 1, 1));
         EXPECT_EQ(1, env.Fill(volume, fillAll, Material::water, 300, std::optional<double>()));
         EXPECT_EQ(&Material::water, env.GetMaterial(Engine::Coordinate(i->x + 0.5, i->y + 0.5, i->z + 0.5)));
         expectedVolume += grid.Volume();

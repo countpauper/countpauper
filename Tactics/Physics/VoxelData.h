@@ -97,7 +97,7 @@ public:
     double Temperature(const Engine::IVolume& volume) const;    // volume in SI
     Engine::Vector Force(const Engine::IVolume& volume) const;  // volume in SI
     const Material& MaterialAt(const Position& position) const;
-    double Measure(const Engine::IVolume& volume, const Material* material) const;
+    double Measure(const Material* material, const Engine::IVolume& volume) const;
 
     void SetDensity(const Position& p, float density);
 protected:

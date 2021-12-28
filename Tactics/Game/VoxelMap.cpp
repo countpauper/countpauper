@@ -133,7 +133,7 @@ namespace Game
         meters = grid.Meters(size).z;
         for (double elevation = 0; elevation < meters; elevation += layerThickness)
         {
-            Engine::AABox layer(
+            Engine::AABB layer(
                 Engine::Range<double>::infinity(),
                 Engine::Range<double>::infinity(),
                 Engine::Range<double>(elevation, elevation + layerThickness));
@@ -151,7 +151,7 @@ namespace Game
 
     void VoxelMap::Sea(double level, double temperature)
     {
-        Engine::AABox sea(
+        Engine::AABB sea(
             Engine::Range<double>::infinity(),
             Engine::Range<double>::infinity(),
             Engine::Range<double>(0, level));
@@ -162,7 +162,7 @@ namespace Game
         Physics::Box surface(Engine::Range<int>(0,size.x), Engine::Range<int>(0,size.y), Engine::Range<int>(gridLevel-1, gridLevel));
         for (auto side : Physics::Directions() | Physics::Direction::north | Physics::Direction::south |Physics::Direction::east | Physics::Direction::west)
         {
-            physical->Constrain(Engine::AABox(grid.BoundingBox(Edge(side) & surface)), 
+            physical->Constrain(Engine::AABB(grid.BoundingBox(Edge(side) & surface)),
                                 Physics::Material::water, temperature, [](double time) { 
                                     return (0.7 + 0.3*sin(time*0.2))*Physics::Material::water.normalDensity; 
                                 });
@@ -259,7 +259,8 @@ namespace Game
         Engine::Vector surfaceVector = flowVector.Cross(reverseGravity);
         Engine::Cylinder source = cylinder.Slice(Engine::Range<double>(0, 1));
 
-        // TODO: flow is in pepernoten, should be mass per second, which should be implemented also by sources as they tick over time instead of constraining to a fixed density
+        // TODO: flow is in percentage delta of normal density of water per source block so ~333 kg of water 
+        //   should be mass per second, which should be implemented also by sources as they tick over time instead of constraining to a fixed density
         if (!surfaceVector)
         {   // completely vertical, make it a well, TODO: there could be a slope angle for nearly vertical rivers 
             auto dbgCount = physical->Fill(cylinder, Physics::fillAll, Physics::Material::water, atmosphericTemperature);
@@ -279,9 +280,9 @@ namespace Game
             Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(axis) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
             if (flow)
             {
-                Engine::Intersection constrainIntsection({ source, surface });
-                //assert(physical->Measure(&Physics::Material::water, constraintIntersection) > 0);
-                physical->Constrain(constrainIntsection, Physics::Material::water, atmosphericTemperature, [flow](double) {return Physics::Material::water.normalDensity*(1.0 + flow); });
+                Engine::Intersection constraintIntsection({ source, surface });
+                assert(physical->Measure(&Physics::Material::water, constraintIntsection) > 0);
+                physical->Constrain(constraintIntsection, Physics::Material::water, atmosphericTemperature, [flow](double) {return Physics::Material::water.normalDensity*(1.0 + flow); });
             }
         }
 

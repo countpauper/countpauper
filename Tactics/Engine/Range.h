@@ -55,6 +55,7 @@ struct Range
         return *this;
     }
 
+
     Range& operator+=(T v)
     {
         begin += v;
@@ -71,6 +72,18 @@ struct Range
     Range& operator/=(T v)
     {
         return operator*=(1 / v);
+    }
+
+    Range& operator|=(const Range<T>& o)
+    {
+        *this = *this | o;
+        return *this;
+    }
+
+    Range& operator&=(const Range<T>& o)
+    {
+        *this = *this & o;
+        return *this;
     }
 
     Range& Expand(T v)

@@ -74,9 +74,9 @@ std::vector<const Engine::IRendition*> StaticEnvironment::Render() const
 }
 
 
-double StaticEnvironment::Measure(const Material* material) const
+double StaticEnvironment::Measure(const Material* material, const Engine::IVolume& in) const
 {
-    return data.Measure(Engine::AABox(Engine::AABB::infinity), material);
+    return data.Measure(material, in);
 }
 
 
@@ -84,5 +84,6 @@ std::wstring StaticEnvironment::Statistics() const
 {
     return L"TODO: Voxeldata statistics";
 }
+
 
 }

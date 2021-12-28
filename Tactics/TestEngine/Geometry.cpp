@@ -5,6 +5,7 @@
 #include "Line.h"
 #include "Plane.h"
 #include "Triangle.h"
+#include "AxisAlignedBoundingBox.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test
