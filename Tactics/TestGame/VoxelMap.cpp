@@ -161,7 +161,7 @@ TEST(VoxelMap, XRiver)
 {
     VoxelMap map;
     map.Space(Physics::Size(2, 2, 2));
-    map.River(Engine::Line(Engine::Coordinate(0.0, 0.5, 1.0 / 3.0), Engine::Coordinate(1.0, 0.5, 1.0 / 3.0)), 0.5, 1.0 / 3.0);
+    map.River(Engine::Line(Engine::Coordinate(0.0, 0.5, 1.0 / 3.0), Engine::Coordinate(1.0, 0.5, 1.0 / 3.0)), 0.5, 1.0 / 3.0, 0.0);
     EXPECT_EQ(Element::Water, map.At(Position(0, 0, 3)).floor);
     EXPECT_EQ(1, map.At(Position(0, 0, 3)).height);
     EXPECT_EQ(Element::None, map.At(Position(0, 1, 3)).floor);
@@ -172,7 +172,7 @@ TEST(VoxelMap, YRiver)
 {
     VoxelMap map;
     map.Space(Physics::Size(2, 2, 2));
-    map.River(Engine::Line(Engine::Coordinate(0.5, 0.0, 1.0/3.0), Engine::Coordinate(0.5, 1.0, 1.0 / 3.0)), 0.5, 1.0 / 3.0);
+    map.River(Engine::Line(Engine::Coordinate(0.5, 0.0, 1.0/3.0), Engine::Coordinate(0.5, 1.0, 1.0 / 3.0)), 0.5, 1.0 / 3.0, 0.0);
     EXPECT_EQ(Element::Water, map.At(Position(0, 0, 3)).floor);
     EXPECT_EQ(1, map.At(Position(0, 0, 3)).height);
     EXPECT_EQ(Element::None, map.At(Position(0, 1, 3)).floor);
@@ -183,7 +183,7 @@ TEST(VoxelMap, ZRiver)
 {
     VoxelMap map;
     map.Space(Physics::Size(2, 2, 2));
-    map.River(Engine::Line(Engine::Coordinate(0.5, 0.5, 0.0 / 3.0), Engine::Coordinate(0.5, 0.5, 2.0 / 3.0)), 0.5, 0.5);
+    map.River(Engine::Line(Engine::Coordinate(0.5, 0.5, 0.0 / 3.0), Engine::Coordinate(0.5, 0.5, 2.0 / 3.0)), 0.5, 0.5, 0.0);
     EXPECT_EQ(Element::Water, map.At(Position(0, 0, 3)).floor);
     EXPECT_EQ(2, map.At(Position(0, 0, 3)).height);
     EXPECT_EQ(Element::None, map.At(Position(0, 1, 3)).floor);

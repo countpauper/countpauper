@@ -193,9 +193,9 @@ BOOL Start()
     game = std::make_unique<Game::Game>();
     {
         std::wifstream fs(mapName);
-        if (fs.fail())
+        if (!fs)
         {
-            MessageBox(NULL, L"Loading Game failed:  ", L"Error", MB_OK);
+            MessageBox(NULL, (std::wstring(L"Open Game file ") + mapName + L" failed.").c_str(), L"Error", MB_OK);
             return FALSE;
         }
         {

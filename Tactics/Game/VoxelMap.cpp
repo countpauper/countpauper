@@ -251,40 +251,47 @@ namespace Game
     }
 
 
-    void VoxelMap::River(const Engine::Line& flow, double width, double depth)
+    void VoxelMap::River(const Engine::Line& axis, double width, double depth, double flow)
     {
-        Engine::Cylinder cylinder(flow, width, depth);
-        Engine::Vector flowVector(flow);
+        Engine::Cylinder cylinder(axis, width, depth);
+        Engine::Vector flowVector(axis);
         Engine::Vector reverseGravity(0, 0, 1); // prefer water belly hangs down in the gravity direction
         Engine::Vector surfaceVector = flowVector.Cross(reverseGravity);
         Engine::Cylinder source = cylinder.Slice(Engine::Range<double>(0, 1));
+
+        // TODO: flow is in pepernoten, should be mass per second, which should be implemented also by sources as they tick over time instead of constraining to a fixed density
         if (!surfaceVector)
         {   // completely vertical, make it a well, TODO: there could be a slope angle for nearly vertical rivers 
             auto dbgCount = physical->Fill(cylinder, Physics::fillAll, Physics::Material::water, atmosphericTemperature);
             Engine::Debug::Log(std::wstring(L"Well at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
-           // assert(physical->Measure(&Physics::Material::water, source) > 0);
-            physical->Constrain(source, Physics::Material::water, atmosphericTemperature, [](double) {return Physics::Material::water.normalDensity*1.25; });
+            if (flow)
+            {
+                // assert(physical->Measure(&Physics::Material::water, source) > 0);
+                physical->Constrain(source, Physics::Material::water, atmosphericTemperature, [flow](double) {return Physics::Material::water.normalDensity*(1.0 + flow); });
+            }
         }
         else
         {
-            Engine::Plane surface(flow.a, flow.a + surfaceVector, flow.b);
+            Engine::Plane surface(axis.a, axis.a + surfaceVector, axis.b);
             Engine::Intersection intersection({ cylinder, surface });
 
             auto dbgCount = physical->Fill(intersection, Physics::fillAll, Physics::Material::water, atmosphericTemperature);
-            Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
-
-            Engine::Intersection constrainIntsection({ source, surface });
-            //assert(physical->Measure(&Physics::Material::water, constraintIntersection) > 0);
-            physical->Constrain(constrainIntsection, Physics::Material::water, atmosphericTemperature, [](double) {return Physics::Material::water.normalDensity*1.25; });
+            Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(axis) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+            if (flow)
+            {
+                Engine::Intersection constrainIntsection({ source, surface });
+                //assert(physical->Measure(&Physics::Material::water, constraintIntersection) > 0);
+                physical->Constrain(constrainIntsection, Physics::Material::water, atmosphericTemperature, [flow](double) {return Physics::Material::water.normalDensity*(1.0 + flow); });
+            }
         }
 
     }
 
-    void VoxelMap::Cave(const Engine::Line& flow, double width, double height)
+    void VoxelMap::Cave(const Engine::Line& axis, double width, double height)
     {
-        Engine::Cylinder cylinder(flow, width, height);
+        Engine::Cylinder cylinder(axis, width, height);
         auto dbgCount = physical->Fill(cylinder, Physics::fillAll, Physics::Material::air, atmosphericTemperature);
-        Engine::Debug::Log(std::wstring(L"Cave at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+        Engine::Debug::Log(std::wstring(L"Cave at ") + Engine::ToWString(axis) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
     }
 
     Engine::Coordinate VoxelMap::Center(const Position& p) const
@@ -629,9 +636,9 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
         else if (procedure == L"RIVER")
         {
             Engine::Coordinate p0, p1;
-            float width, depth;
-            s >> p0 >> p1 >> width >> depth;
-            map.River(Engine::Line(p0, p1), width, depth);
+            float width, depth, flow;
+            s >> p0 >> p1 >> width >> depth >> flow;
+            map.River(Engine::Line(p0, p1), width, depth, flow);
         }
         else if (procedure == L"CAVE")
         {

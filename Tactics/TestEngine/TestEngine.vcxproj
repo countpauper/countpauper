@@ -32,6 +32,7 @@
     <ClCompile Include="Callback.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="Identification.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Quaternion.cpp" />
