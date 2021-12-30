@@ -47,6 +47,7 @@ private:
     Box Bounds() const;
     Box Neighbourhood(const Position& p) const;
     unsigned Index(const Position& p) const;
+    Box Heat(double seconds, const Position& p, PackedVoxel& current);
     Box Flow(const Position& p, PackedVoxel& current);
     Box FlowDown(const Position& p, PackedVoxel& current);
     Box FlowSide(const Position& p, PackedVoxel& current);

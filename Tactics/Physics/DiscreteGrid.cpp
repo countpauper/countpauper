@@ -153,6 +153,7 @@ void DiscreteGrid::Tick(double seconds)
     {
         auto& current = (*it).second;
 
+        invalid |= Heat(seconds, it.position, current);
         invalid |= Flow(it.position, current);
         invalid |= Evaporate(seconds, it.position, current);
     }
@@ -168,6 +169,44 @@ Box DiscreteGrid::Flow(const Position &position, PackedVoxel& current)
     invalid |= FlowDown(position, current);
     invalid |= FlowSide(position, current);
     invalid |= FlowUp(position, current);
+    return invalid;
+}
+
+Box DiscreteGrid::Heat(double seconds, const Position &position, PackedVoxel& current)
+{
+    Directions halfDirs = Direction::up | Direction::north | Direction::west;
+    Box invalid;
+    Box bounds = Bounds();
+    double t = current.Temperature();
+    const auto& material = current.GetMaterial();
+    double mass = current.Mass(grid.Volume());
+    double energy = mass * t * material->heatCapacity;
+
+    for (auto dir : halfDirs)
+    {
+        auto dirPosition = position + dir.Vector();
+        if (!bounds.Contains(dirPosition))
+            continue;
+        auto& neighbour = (*this)[dirPosition];
+        double nt = neighbour.Temperature();
+        if (t == nt)
+            continue;
+
+        const auto& neighbour_mat = neighbour.GetMaterial();
+        double neighbour_mass = neighbour.Mass(grid.Volume());
+        double neighbour_energy = neighbour_mass * nt * neighbour_mat->heatCapacity;
+
+        // use conducivity of coldest, based on nothing except a hunch that it's dominant to spread the energy from the interface
+        double conductivity = (t < nt) ? material->conductivity : neighbour_mat->conductivity;
+        double rate = dir.Surface(grid) * seconds * conductivity * (t - nt);    // In like ... joules towards the neighbour
+        energy -= rate;
+        current.SetTemperature(energy / (mass*material->heatCapacity));
+        neighbour_energy += rate;
+        neighbour.SetTemperature(neighbour_energy / (neighbour_mass * neighbour_mat->heatCapacity));
+        invalid |= position;
+        invalid |= dirPosition;
+    }
+
     return invalid;
 }
 
