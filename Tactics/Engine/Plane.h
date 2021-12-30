@@ -8,7 +8,7 @@ namespace Engine
 struct Coordinate;
 struct Line;
 
-struct Plane : public IVolume
+struct Plane : public IVolume, public Clone<Plane>
 {
     // a*normal.x + b*normal.y + c*normal.z + d = 0;
     Plane(const Engine::Vector& n, double d) :

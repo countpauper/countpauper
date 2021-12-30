@@ -43,7 +43,7 @@ Cylinder::Cylinder() :
 }
 
 Cylinder::Cylinder(const Line& axis, double dy, double dz) :
-    scale(axis.Length(),dy,dz),  // unit cylinder unit length and unit radius in both directions
+    scale(axis.Length(), dy, dz),  // unit cylinder unit length and unit radius in both directions
     origin(axis.a),
     orientation(Quaternion::Shortest(Vector(1, 0, 0), Vector(axis)))
 {
@@ -140,21 +140,38 @@ double Cylinder::Volume() const
     return Engine::PI * scale.y * scale.z * scale.z;
 }
 
+
+CompoundVolume::CompoundVolume(const std::vector<std::reference_wrapper<const IVolume>>& vols)
+{
+    for (const auto& v : vols)
+    {
+        volumes.emplace_back(std::unique_ptr<IVolume>(dynamic_cast<IVolume*>(dynamic_cast<const IClone&>(v.get()).clone())));
+    }
+}
+
+CompoundVolume::CompoundVolume(const CompoundVolume& other)
+{
+    for (const auto& v : other.volumes)
+    {
+        volumes.emplace_back(std::unique_ptr<IVolume>(dynamic_cast<IVolume*>(dynamic_cast<const IClone&>(*v).clone())));
+    }
+}
+
 AABB Intersection::GetBoundingBox() const
 {
     AABB box = AABB::infinity;
     for (const auto& av : volumes)
     {
-        box &= av.get().GetBoundingBox();
+        box &= av->GetBoundingBox();
     }
     return box;
 }
 
 double Intersection::Distance(const Coordinate& p) const 
 {
-    return std::accumulate(volumes.begin(), volumes.end(), -std::numeric_limits<double>::infinity(), [&p](double value, const std::reference_wrapper<const IVolume>& av)
+    return std::accumulate(volumes.begin(), volumes.end(), -std::numeric_limits<double>::infinity(), [&p](double value, const decltype(volumes)::value_type& av)
     {
-        return std::max(value, av.get().Distance(p));        
+        return std::max(value, av->Distance(p));        
     });
 }
 

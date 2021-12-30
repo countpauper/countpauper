@@ -115,7 +115,7 @@ TEST(Cylinder, Titlted)
     // cylinder still unit length
     Line axis(Coordinate::origin, Coordinate(0.5*sqrt(2), 0, 0.5*sqrt(2)));
     Cylinder c(axis, 0.5, 0.5);
-    EXPECT_3D_EQ(Vector(1*sqrt(2), 1, 1*sqrt(2)),c.GetBoundingBox().Extent());
+    EXPECT_3D_EQ(c.GetBoundingBox().Extent(), Vector(1 * sqrt(2), 1, 1 * sqrt(2)));
     EXPECT_LT(c.Distance(Coordinate(0.7, 0, 0.7)), 0.0);
     EXPECT_GT(c.Distance(Coordinate(1.0, 0, 0.0)), 0.0);
 
@@ -128,7 +128,7 @@ TEST(Cylinder, Diagonal)
 {
     Line axis(Coordinate::origin, Coordinate(2, 2, 0));
     Cylinder c(axis, 1, 1);
-    EXPECT_3D_EQ(Vector(2+sqrt(2),2+sqrt(2), 2), c.GetBoundingBox().Extent());
+    EXPECT_3D_EQ(c.GetBoundingBox().Extent(), Vector(2 + sqrt(2), 2 + sqrt(2), 2));
 
     EXPECT_3D_EQ(c.Axis().a, axis.a);
     EXPECT_3D_NEAR(c.Axis().b, axis.b, 1e-12);
@@ -137,16 +137,16 @@ TEST(Cylinder, Diagonal)
 TEST(Cylinder, Ellipse)
 {
     Cylinder flat(Line(Coordinate::origin, Coordinate(2, 0, 0)), 1, 0.0);
-    EXPECT_DOUBLE_EQ(0.0, flat.GetBoundingBox().Volume()); 
-    EXPECT_DOUBLE_EQ(0.0, flat.Distance(Coordinate(1.0, 0.0, 0.0)));
-    EXPECT_DOUBLE_EQ(1.0, flat.Distance(Coordinate(1.0, 0.0, 1.0)));
-    EXPECT_DOUBLE_EQ(0.0, flat.Distance(Coordinate(1.0, 1.0, 0.0)));
+    EXPECT_DOUBLE_EQ(flat.GetBoundingBox().Volume(), 0.0);
+    EXPECT_DOUBLE_EQ(flat.Distance(Coordinate(1.0, 0.0, 0.0)), 0.0);
+    EXPECT_DOUBLE_EQ(flat.Distance(Coordinate(1.0, 0.0, 1.0)), 1.0);
+    EXPECT_DOUBLE_EQ(flat.Distance(Coordinate(1.0, 1.0, 0.0)), 0.0 );
 
     Cylinder skinny(Line(Coordinate::origin, Coordinate(2, 0, 0)), 0.5, 1.0);
-    EXPECT_3D_EQ(Vector(2,1,2), skinny.GetBoundingBox().Extent());
+    EXPECT_3D_EQ(skinny.GetBoundingBox().Extent(), Vector(2, 1, 2));
 
     Cylinder skinnz(Line(Coordinate::origin, Coordinate(2, 0, 0)), 1, 0.5);
-    EXPECT_3D_EQ(Vector(2,2,1), skinnz.GetBoundingBox().Extent());
+    EXPECT_3D_EQ(skinnz.GetBoundingBox().Extent(), Vector(2, 2, 1));
 }
 
 TEST(Intersection, Boxes)
@@ -155,10 +155,10 @@ TEST(Intersection, Boxes)
     AABB b(Coordinate(-3, -2, -1), Coordinate(1, 1, 2));
     Intersection i({ a, b });
     EXPECT_3D_EQ(Vector(1,1,2), i.GetBoundingBox().Extent());
-    EXPECT_DOUBLE_EQ(-0.5, i.Distance(Coordinate(0.5, 0.5, 0.5)));
-    EXPECT_DOUBLE_EQ( 0.0, i.Distance(Coordinate(1.0, 1.0, 0.5)));
-    EXPECT_DOUBLE_EQ(-0.5, i.Distance(Coordinate(0.5, 0.5, 0.5)));
-    EXPECT_DOUBLE_EQ( 1.0, i.Distance(Coordinate(-1.0, 0.5, 0.5)));
+    EXPECT_DOUBLE_EQ(i.Distance(Coordinate( 0.5, 0.5, 0.5)),-0.5);
+    EXPECT_DOUBLE_EQ(i.Distance(Coordinate(1.0, 1.0, 0.5)),  0.0);
+    EXPECT_DOUBLE_EQ(i.Distance(Coordinate(0.5, 0.5, 0.5)), -0.5);
+    EXPECT_DOUBLE_EQ(i.Distance(Coordinate(-1.0, 0.5, 0.5)), 1.0);
 }
 
 }

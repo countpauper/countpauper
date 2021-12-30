@@ -11,7 +11,7 @@ namespace Engine
     struct Line;
     struct Matrix;
 
-    struct AABB : public IVolume
+    struct AABB : public IVolume, public Clone<AABB>
     {
         AABB() = default;
         AABB(const Coordinate& begin, const Coordinate& end);

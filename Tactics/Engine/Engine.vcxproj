@@ -79,6 +79,7 @@
     <ClInclude Include="AxisAlignedBoundingBox.h" />
     <ClInclude Include="Callback.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Clone.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="CSV.h" />

@@ -2,6 +2,7 @@
 
 #include "Quaternion.h"
 #include "Line.h"
+#include "Clone.h"
 #include <any>
 #include <vector>
 
@@ -23,7 +24,7 @@ public:
 };
 
 
-class Point : public IVolume
+class Point : public IVolume, public Clone<Point>
 {
 public:
     Point(const Coordinate& c) : 
@@ -31,12 +32,12 @@ public:
     {}
     AABB GetBoundingBox() const override;
     double Distance(const Coordinate& p) const override;
-    double Volume() const override { return 0.0;  }
+    double Volume() const override { return 0.0; }
 private:
     Coordinate c;
 };
 
-class Sphere : public IVolume
+class Sphere : public IVolume, public Clone<Sphere>
 {
 public:
     Sphere(const Coordinate& center, double radius) :
@@ -52,7 +53,7 @@ private:
     double radius;
 };
 
-class Cylinder : public IVolume
+class Cylinder : public IVolume, public Clone<Cylinder>
 {
 public:
     Cylinder();
@@ -64,25 +65,36 @@ public:
     double Volume() const override;
 private:
     Vector scale;
-    Quaternion orientation;
     Vector origin;
+    Quaternion orientation;
 };
 
-class Intersection : public IVolume
+
+class CompoundVolume : public IVolume
+{
+public:
+    CompoundVolume() = default;
+    CompoundVolume(const std::vector<std::reference_wrapper<const IVolume>>& vols);
+    CompoundVolume(const CompoundVolume& o);
+protected:
+    std::vector<std::unique_ptr<const IVolume>> volumes;
+};
+
+class Intersection : public CompoundVolume
 {
 public:
     Intersection() = default;
-    Intersection(std::vector<std::reference_wrapper<const IVolume>> vols) : volumes(vols) {}
+    Intersection(const std::vector<std::reference_wrapper<const IVolume>>& vols) : CompoundVolume(vols) {}
     AABB GetBoundingBox() const override;
     virtual double Distance(const Coordinate& p) const override;
     double Volume() const override;
-private:
-    std::vector<std::reference_wrapper<const IVolume>> volumes;
 };
 
-class Union : public IVolume
+/*
+class Union : public CompoundVolume
 {
 
 };
+*/
 
 }

@@ -13,7 +13,7 @@ namespace Engine
 struct Matrix;
 struct AABB;
 
-class Mesh : public IVolume, public IRendition
+class Mesh : public IVolume, public IRendition, public Clone<Mesh>
 {
 public:
     Mesh();
