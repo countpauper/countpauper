@@ -145,7 +145,7 @@ CompoundVolume::CompoundVolume(const std::vector<std::reference_wrapper<const IV
 {
     for (const auto& v : vols)
     {
-        volumes.emplace_back(std::unique_ptr<IVolume>(dynamic_cast<IVolume*>(dynamic_cast<const IClone&>(v.get()).clone())));
+        volumes.emplace_back(Engine::clone_ptr<IVolume>(v));
     }
 }
 
@@ -153,7 +153,7 @@ CompoundVolume::CompoundVolume(const CompoundVolume& other)
 {
     for (const auto& v : other.volumes)
     {
-        volumes.emplace_back(std::unique_ptr<IVolume>(dynamic_cast<IVolume*>(dynamic_cast<const IClone&>(*v).clone())));
+        volumes.push_back(v);
     }
 }
 
@@ -177,7 +177,8 @@ double Intersection::Distance(const Coordinate& p) const
 
 double Intersection::Volume() const
 {
-    throw std::runtime_error("Intersection volume unimplemented.");
+    // TODO "Intersection volume unimplemented.");
+    return std::numeric_limits<double>::quiet_NaN();
 }
 
 }

@@ -77,10 +77,10 @@ public:
     CompoundVolume(const std::vector<std::reference_wrapper<const IVolume>>& vols);
     CompoundVolume(const CompoundVolume& o);
 protected:
-    std::vector<std::unique_ptr<const IVolume>> volumes;
+    std::vector<Engine::clone_ptr<IVolume>> volumes;
 };
 
-class Intersection : public CompoundVolume
+class Intersection : public CompoundVolume, public Clone<Intersection>
 {
 public:
     Intersection() = default;

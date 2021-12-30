@@ -27,11 +27,11 @@ class clone_ptr
 public:
     clone_ptr() = default;
     clone_ptr(const CloneType& ref) : 
-        p(dynamic_cast<const IClone&>(ref).clone()) 
+        p(dynamic_cast<CloneType*>((dynamic_cast<const IClone&>(ref)).clone())) 
     {
     } 
     clone_ptr(const clone_ptr& o) : 
-        p(dynamic_cast<const IClone&>(o.p).clone()) 
+        p(dynamic_cast<CloneType*>((dynamic_cast<const IClone&>(*o.p)).clone()))
     {
     }
     clone_ptr(clone_ptr&& o) : 
@@ -40,11 +40,11 @@ public:
     }
     clone_ptr& operator=(const CloneType& ref)
     {
-        p = std::unique_ptr<IClone>(dynamic_cast<const IClone&>(ref).clone());
+        p = dynamic_cast<CloneType*>((dynamic_cast<const IClone&>(ref)).clone());
     }
     clone_ptr& operator=(const clone_ptr& o)
     {
-        p = std::unique_ptr<IClone>(dynamic_cast<const IClone&>(o.p).clone());
+        p = dynamic_cast<CloneType*>((dynamic_cast<const IClone&>(o.p)).clone());
         return *this;
     }
     clone_ptr& operator=(clone_ptr&& o)

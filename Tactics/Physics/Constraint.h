@@ -3,6 +3,7 @@
 #include "IEnvironment.h"
 #include "Engine/AxisAlignedBoundingBox.h"
 #include <functional>
+#include "Engine/Clone.h"
 
 namespace Physics
 {
@@ -16,7 +17,7 @@ public:
     void Tick(double t, IEnvironment& environment) const;
 private:
     const Material * material;
-    Engine::AABB area;
+    Engine::clone_ptr<Engine::IVolume> volume;
     double temperature;
     Function fn;
 };
