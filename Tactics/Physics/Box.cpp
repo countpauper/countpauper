@@ -89,12 +89,18 @@ Box& Box::operator|=(const Position& p)
     z |= p.z;
     return *this;
 }
+
+Box& Box::operator|=(const Box& b)
+{
+    x |= b.x;
+    y |= b.y;
+    z |= b.z;
+    return *this;
+}
+
 Box operator|(const Box& a, const Box& b)
 {
-    return Box(
-        a.x | b.x,
-        a.y | b.y,
-        a.z | b.z);
+    return Box(a) |= b;
 }
 
 Box operator&(const Box& a, const Box& b)

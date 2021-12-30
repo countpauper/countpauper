@@ -129,7 +129,7 @@ bool PackedVoxel::IsFluid() const
 bool PackedVoxel::IsSolid() const
 {
     const auto mat = GetMaterial();
-    return mat->Gas(Temperature());
+    return mat->Solid(Temperature());
 }
 bool PackedVoxel::IsGas() const
 {

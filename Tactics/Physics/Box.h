@@ -29,6 +29,7 @@ public:
     Box& operator+=(const Position& translation);
     Position Clip(const Position& position) const;
     Box& operator|=(const Position& p);
+    Box& operator|=(const Box& b);
 
     Engine::Range<int> x;
     Engine::Range<int> y;

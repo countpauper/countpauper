@@ -279,7 +279,7 @@ namespace Game
             if (flow)
             {
                 // assert(physical->Measure(&Physics::Material::water, source) > 0);
-                physical->Constrain(source, material, temperature, [flow](double) {return Physics::Material::water.normalDensity*(1.0 + flow); });
+                physical->Constrain(source, material, temperature, [flow, &material](double) {return material.normalDensity*(1.0 + flow); });
             }
             return dbgCount;
         }

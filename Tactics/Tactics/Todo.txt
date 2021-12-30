@@ -1,20 +1,34 @@
 
 ==== Discrete version 
-GEneralize flowing to all fluids
-	- Flow temperature averaging (or mostly copying when flooding gas)
-	- Refactor Flow to PackedVoxel 
-Spread Temperature: half directions bidirectional
-	- Heat capacitiy 
-	- Spreading speed based on ... ?
+Lava
+	* Generalize generation to all fluids
+	* Generalize flowing to all fluids
+	* Flow temperature averaging (or mostly copying when flooding gas)
+	* Refactor Flow 
+		x to PackedVoxel 
+	- Spread Temperature: half directions bidirectional
+	- Heat capacity 
+	- Heat exchange rate based on ... ?
+    - Thickness flow speed (no seconds used currently) lava flows slower, chance?
 
 Wind and air pressure
 	- What happens to air/gas when flooding with liquid? 
-	- Always air mass in a PackedVoxel, same with water (moist earth) 
-Nature deposit
+	- Always air mass in a PackedVoxel, same with water (moist earth)
+	- Heat up increases density ? 
+Weather 
+	- Puddle / water deposit particles (pre-steam)
+	- Reabsorb puddle to water flow ? 
+	- Waterall with particle
+	- Clouds
+	- Rain
+	- Snow hail if it's cold
+	- Snow deposit particles
+Nature deposit: 
 	- Map creation in height zone based on neighbours (water, air) and temperature 
 
-Puddle particles 
-Snow/Hail
+=== Rendering 
+- Optimize mesh generation in general 
+- Partial mesh update (octree chunks. also to OpenGL?)
 
 ==== Game 
 Combo Skill

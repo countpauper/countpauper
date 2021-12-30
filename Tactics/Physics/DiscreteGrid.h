@@ -47,6 +47,12 @@ private:
     Box Bounds() const;
     Box Neighbourhood(const Position& p) const;
     unsigned Index(const Position& p) const;
+    Box Flow(const Position& p, PackedVoxel& current);
+    Box FlowDown(const Position& p, PackedVoxel& current);
+    Box FlowSide(const Position& p, PackedVoxel& current);
+    Box FlowUp(const Position& p, PackedVoxel& current);
+    Box Evaporate(double seconds, const Position& position, PackedVoxel& current);
+        
     double time = 0;    // TODO: could be in game and IEnvironment::Tick(...)
     Size size;
     Grid grid;
