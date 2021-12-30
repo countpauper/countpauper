@@ -31,6 +31,18 @@ namespace Engine
         return *this;
     }
 
+    RGBA RGBA::operator+=(const RGBA& other)
+    {
+        double newAlpha = std::min(255, a+other.a);
+        double wa = a / newAlpha;
+        double wb = other.a / newAlpha;
+
+        r = GLubyte(std::min(255.0, (r*wa) + (other.r*wb)));
+        g = GLubyte(std::min(255.0, (g*wa) + (other.g*wb)));
+        b = GLubyte(std::min(255.0, (b*wa) + (other.b*wb)));
+        a = GLubyte(newAlpha);
+        return *this;
+    }
     RGBA RGBA::Translucent(double factor) const
     {
         RGBA result(*this);
@@ -45,6 +57,12 @@ namespace Engine
     {
         RGBA result(color);
         return result *= factor;
+    }
+
+    RGBA operator+(const RGBA& a, const RGBA& b)
+    {
+        RGBA result(a);
+        return result += b;
     }
 
     bool RGBA::IsVisible() const

@@ -44,15 +44,9 @@ Cylinder::Cylinder() :
 
 Cylinder::Cylinder(const Line& axis, double dy, double dz) :
     scale(axis.Length(),dy,dz),  // unit cylinder unit length and unit radius in both directions
-    origin(axis.a)
+    origin(axis.a),
+    orientation(Quaternion::Shortest(Vector(1, 0, 0), Vector(axis)))
 {
-    Vector v(axis);
-    // axis inverted because we need the conjugate, the rotation that led to this orientation 
-    Quaternion zrot(Vector(0, 0, -1), atan2(v.y, v.x));
-    v *= -zrot;
-    Quaternion yrot(Vector(0, -1, 0), atan2(v.z, v.x));
-    orientation = zrot * yrot;
-
 }
 
 AABB Cylinder::GetBoundingBox() const

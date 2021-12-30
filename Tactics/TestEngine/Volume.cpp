@@ -65,7 +65,7 @@ TEST(Volume, Box)
     EXPECT_DOUBLE_EQ(-1, b.Distance(Coordinate(2, 0, 2)));
 }
 
-TEST(Volume, NulCylinder)
+TEST(Cylinder, Nul)
 {
     Cylinder c(Line(Coordinate::origin, Coordinate::origin), 0, 0);
     EXPECT_FALSE(c.Volume());
@@ -73,14 +73,18 @@ TEST(Volume, NulCylinder)
     EXPECT_EQ(1.0, c.Distance(Coordinate(1, 0, 0)));
 
     EXPECT_FALSE(c.Slice(Range(0.0, 1.0)).Volume());
+
+    EXPECT_3D_EQ(c.Axis().a, Coordinate::origin);
+    EXPECT_3D_EQ(c.Axis().b, Coordinate::origin);
 }
 
-TEST(Volume, AxisAlignedCylinder)
+TEST(Cylinder, AxisAligned)
 {
-    Cylinder c(Line(Coordinate::origin, Coordinate(1, 0, 0)), 1, 1);
+    Coordinate b(1, 0, 0);
+    Cylinder c(Line(Coordinate::origin, b), 1, 1);
     EXPECT_DOUBLE_EQ(1.0*2.0*2.0, c.GetBoundingBox().Volume()); 
     EXPECT_EQ(0, c.Distance(Coordinate::origin));
-    EXPECT_EQ(0.0, c.Distance(Coordinate(1, 0, 0)));
+    EXPECT_EQ(0.0, c.Distance(b));
     EXPECT_EQ(0.0, c.Distance(Coordinate(0, 1, 0)));
     EXPECT_EQ(0.0, c.Distance(Coordinate(0, 0, 1)));
     EXPECT_EQ(1, c.Distance(Coordinate(-1, 0, 0)));
@@ -89,31 +93,48 @@ TEST(Volume, AxisAlignedCylinder)
     EXPECT_DOUBLE_EQ(sqrt(2) - 1.0, c.Distance(Coordinate(0.5, 1, 1)));
     EXPECT_DOUBLE_EQ(sqrt(2) - 1.0, c.Distance(Coordinate(0, 1, 1)));
     EXPECT_DOUBLE_EQ(sqrt(2) - 1.0, c.Distance(Coordinate(1, 1, 1)));
+
+    EXPECT_3D_EQ(c.Axis().a, Coordinate::origin);
+    EXPECT_3D_NEAR(c.Axis().b, b, 1e-20);
 }
 
-TEST(Volume, TurnedCylinder)
+TEST(Cylinder, Turned)
 {
-    Cylinder c(Line(Coordinate::origin, Coordinate(2, 0, 0)), 1, 1);
+    Line axis(Coordinate::origin, Coordinate(2, 0, 0));
+    Cylinder c(axis, 1, 1);
     EXPECT_3D_EQ(Vector(2,2,2), c.GetBoundingBox().Extent()); 
+
+    EXPECT_3D_EQ(c.Axis().a, axis.a);
+    EXPECT_3D_NEAR(c.Axis().b, axis.b, 1e-12);
+
 }
 
 
-TEST(Volume, TiltedCylinder)
+TEST(Cylinder, Titlted)
 {
     // cylinder still unit length
-    Cylinder c(Line(Coordinate::origin, Coordinate(0.5*sqrt(2), 0, 0.5*sqrt(2))), 0.5, 0.5);
+    Line axis(Coordinate::origin, Coordinate(0.5*sqrt(2), 0, 0.5*sqrt(2)));
+    Cylinder c(axis, 0.5, 0.5);
     EXPECT_3D_EQ(Vector(1*sqrt(2), 1, 1*sqrt(2)),c.GetBoundingBox().Extent());
     EXPECT_LT(c.Distance(Coordinate(0.7, 0, 0.7)), 0.0);
     EXPECT_GT(c.Distance(Coordinate(1.0, 0, 0.0)), 0.0);
+
+    EXPECT_3D_EQ(c.Axis().a, axis.a);
+    EXPECT_3D_NEAR(c.Axis().b, axis.b, 1e-12);
+
 }
 
-TEST(Volume, DiagonalCylinder)
+TEST(Cylinder, Diagonal)
 {
-    Cylinder c(Line(Coordinate::origin, Coordinate(2, 2, 0)), 1, 1);
+    Line axis(Coordinate::origin, Coordinate(2, 2, 0));
+    Cylinder c(axis, 1, 1);
     EXPECT_3D_EQ(Vector(2+sqrt(2),2+sqrt(2), 2), c.GetBoundingBox().Extent());
+
+    EXPECT_3D_EQ(c.Axis().a, axis.a);
+    EXPECT_3D_NEAR(c.Axis().b, axis.b, 1e-12);
 }
 
-TEST(Volume, EllipseCylinder)
+TEST(Cylinder, Ellipse)
 {
     Cylinder flat(Line(Coordinate::origin, Coordinate(2, 0, 0)), 1, 0.0);
     EXPECT_DOUBLE_EQ(0.0, flat.GetBoundingBox().Volume()); 
@@ -128,7 +149,7 @@ TEST(Volume, EllipseCylinder)
     EXPECT_3D_EQ(Vector(2,2,1), skinnz.GetBoundingBox().Extent());
 }
 
-TEST(Volume, BoxIntersection)
+TEST(Intersection, Boxes)
 {
     AABB a(Coordinate(0.0, 0.0, 0.0), Coordinate(2, 3, 4));
     AABB b(Coordinate(-3, -2, -1), Coordinate(1, 1, 2));

@@ -1,39 +1,39 @@
 #pragma once
 
-#define EXPECT_3D_EQ(ref, target) \
+#define EXPECT_3D_EQ(v1, v2) \
 { \
-    const auto& _r=(ref); \
-    const auto& _t = (target); \
-    EXPECT_DOUBLE_EQ(_r.x, _t.x); \
-    EXPECT_DOUBLE_EQ(_r.y, _t.y); \
-    EXPECT_DOUBLE_EQ(_r.z, _t.z); \
+    const auto& _real=(v1); \
+    const auto& _expected = (v2); \
+    EXPECT_DOUBLE_EQ(_real.x, _expected.x); \
+    EXPECT_DOUBLE_EQ(_real.y, _expected.y); \
+    EXPECT_DOUBLE_EQ(_real.z, _expected.z); \
  }
 
 
-#define EXPECT_3D_NEAR(ref, target, abs_error) \
+#define EXPECT_3D_NEAR(v1, v2, abs_error) \
 { \
-    const auto& _r=(ref); \
-    const auto& _t = (target); \
-    EXPECT_NEAR(_r.x, _t.x, abs_error); \
-    EXPECT_NEAR(_r.y, _t.y, abs_error); \
-    EXPECT_NEAR(_r.z, _t.z, abs_error); \
+    const auto& _real=(v1); \
+    const auto& _expected = (v2); \
+    EXPECT_NEAR(_real.x, _expected.x, abs_error); \
+    EXPECT_NEAR(_real.y, _expected.y, abs_error); \
+    EXPECT_NEAR(_real.z, _expected.z, abs_error); \
  }
 
 
-#define EXPECT_3D_GE(ref, target) \
+#define EXPECT_3D_GE(v1, v2) \
 { \
-    const auto& _r=(ref); \
-    const auto& _t = (target); \
-    EXPECT_DOUBLE_GE(_r.x, _t.x); \
-    EXPECT_DOUBLE_GE(_r.y, _t.y); \
-    EXPECT_DOUBLE_GE(_r.z, _t.z); \
+    const auto& _real=(v1); \
+    const auto& _compare = (v2); \
+    EXPECT_DOUBLE_GE(_real.x, _compare.x); \
+    EXPECT_DOUBLE_GE(_real.y, _compare.y); \
+    EXPECT_DOUBLE_GE(_real.z, _compare.z); \
  }
 
 #define EXPECT_3D_LE(ref, target) \
 { \
-    const auto& _r=(ref); \
-    const auto& _t = (target); \
-    EXPECT_DOUBLE_LE(_r.x, _t.x); \
-    EXPECT_DOUBLE_LE(_r.y, _t.y); \
-    EXPECT_DOUBLE_LE(_r.z, _t.z); \
+    const auto& _real=(v1); \
+    const auto& _compare = (v2); \
+    EXPECT_DOUBLE_LE(_real.x, _compare.x); \
+    EXPECT_DOUBLE_LE(_real.y, _compare.y); \
+    EXPECT_DOUBLE_LE(_real.z, _compare.z); \
  }

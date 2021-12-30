@@ -14,7 +14,6 @@ Quaternion::Quaternion(double x, double y, double z, double w) :
     z(z),
     w(w)
 {
-
 }
 
 
@@ -64,6 +63,12 @@ Quaternion Quaternion::operator-()
     return Conjugate();
 }
 
+bool Quaternion::operator==(const Quaternion& o) const
+{
+    // FOr the same orientation, it could also be x==-o.x && y==-o.y and so on, but for the same rotation the sign has to match too
+    return x == o.x && y == o.y && z == o.z && w == o.w;
+}
+
 bool Quaternion::IsNormalized() const
 {
     auto sqrMag = SquareMagnitude();
@@ -88,6 +93,18 @@ Matrix Quaternion::Matrix() const
 Quaternion Quaternion::Identity()
 {
     return Quaternion(0, 0, 0, 1);
+}
+
+Quaternion Quaternion::Shortest(const Vector& a, const Vector& b)
+{
+    Vector an = a.Normal();
+    Vector bn = b.Normal();
+    auto dot = an.Dot(bn);
+    if (dot >= 1.0 - std::numeric_limits<double>::epsilon())
+        return Quaternion::Identity();
+
+    auto cross = an.Cross(bn);
+    return Quaternion{ cross.x, cross.y, cross.z, 1+dot }.Normalized();
 }
 
 Vector operator*(const Quaternion& q, const Vector& v)

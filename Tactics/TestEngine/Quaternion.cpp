@@ -3,6 +3,7 @@
 #include "Vector.h"
 #include "Geometry.h"
 #include "Matrix.h"
+#include "GTestGeometry.h"
 
 namespace Engine::Test
 {
@@ -75,5 +76,22 @@ TEST(Quaternion, Multiplication)
     EXPECT_EQ((xrot*(yrot*v)), ((xrot*yrot)*v));
 }
 
+TEST(Quaternion, Shortest)
+{
+    EXPECT_3D_EQ(Quaternion::Shortest(Vector(1, 0, 0), Vector(0, 0, 1)) * Vector(1, 0, 0), Vector(0, 0, 1));
+    EXPECT_3D_EQ(Quaternion::Shortest(Vector(1, 0, 0), Vector(0, 1, 0)) * Vector(1, 0, 0), Vector(0, 1, 0));
+    EXPECT_3D_EQ(Quaternion::Shortest(Vector(2, 0, 0), Vector(0, 0, 3)) * Vector(2, 0, 0), Vector(0, 0, 2));
+    EXPECT_3D_EQ(Quaternion::Shortest(Vector(0, 0, 2), Vector(1, 2, 3)) * Vector(0, 0, 1), Vector(1, 2, 3).Normal());
+    EXPECT_EQ(Quaternion::Shortest(Vector(0, 0, 1), Vector(0, 0, 2)), Quaternion::Identity());
+    EXPECT_EQ(Quaternion::Shortest(Vector(0, 0, 0), Vector(0, 0, 1)), Quaternion::Identity());
+
+    Quaternion rot(Vector(0, 2, 3), PI*0.5);
+    rot.Normalize();
+    auto shortest = Quaternion::Shortest(Vector(1, 0, 0), rot * Vector(1, 0, 0));
+    EXPECT_DOUBLE_EQ(shortest.x, rot.x);
+    EXPECT_DOUBLE_EQ(shortest.y, rot.y);
+    EXPECT_DOUBLE_EQ(shortest.z, rot.z);
+    EXPECT_DOUBLE_EQ(shortest.w, rot.w);
+}
 
 }

@@ -253,6 +253,18 @@ namespace Game
 
     void VoxelMap::River(const Engine::Line& axis, double width, double depth, double flow)
     {
+        auto dbgCount = Stream(Physics::Material::water, atmosphericTemperature, axis, width, depth, flow);
+        Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(axis) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+    }
+
+    void VoxelMap::Vulcano(const Engine::Line& axis, double radius, double flow)
+    {
+        auto dbgCount = Stream(Physics::Material::stone, Physics::Material::stone.melt*1.2, axis, radius, radius, flow);
+        Engine::Debug::Log(std::wstring(L"Vulcano at ") + Engine::ToWString(axis) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+    }
+
+    size_t VoxelMap::Stream(const Physics::Material& material, double temperature, const Engine::Line& axis, double width, double depth, double flow)
+    {
         Engine::Cylinder cylinder(axis, width, depth);
         Engine::Vector flowVector(axis);
         Engine::Vector reverseGravity(0, 0, 1); // prefer water belly hangs down in the gravity direction
@@ -263,29 +275,28 @@ namespace Game
         //   should be mass per second, which should be implemented also by sources as they tick over time instead of constraining to a fixed density
         if (!surfaceVector)
         {   // completely vertical, make it a well, TODO: there could be a slope angle for nearly vertical rivers 
-            auto dbgCount = physical->Fill(cylinder, Physics::fillAll, Physics::Material::water, atmosphericTemperature);
-            Engine::Debug::Log(std::wstring(L"Well at ") + Engine::ToWString(flow) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+            auto dbgCount = physical->Fill(cylinder, Physics::fillAll, material, temperature);
             if (flow)
             {
                 // assert(physical->Measure(&Physics::Material::water, source) > 0);
-                physical->Constrain(source, Physics::Material::water, atmosphericTemperature, [flow](double) {return Physics::Material::water.normalDensity*(1.0 + flow); });
+                physical->Constrain(source, material, temperature, [flow](double) {return Physics::Material::water.normalDensity*(1.0 + flow); });
             }
+            return dbgCount;
         }
         else
         {
             Engine::Plane surface(axis.a, axis.a + surfaceVector, axis.b);
             Engine::Intersection intersection({ cylinder, surface });
 
-            auto dbgCount = physical->Fill(intersection, Physics::fillAll, Physics::Material::water, atmosphericTemperature);
-            Engine::Debug::Log(std::wstring(L"River at ") + Engine::ToWString(axis) + L"=" + std::to_wstring(dbgCount) + L" voxels\n");
+            auto dbgCount = physical->Fill(intersection, Physics::fillAll, material, temperature);
             if (flow)
             {
                 Engine::Intersection constraintIntsection({ source, surface });
                 assert(physical->Measure(&Physics::Material::water, constraintIntsection) > 0);
-                physical->Constrain(constraintIntsection, Physics::Material::water, atmosphericTemperature, [flow](double) {return Physics::Material::water.normalDensity*(1.0 + flow); });
+                physical->Constrain(constraintIntsection, material, temperature, [&material, flow](double) {return material.normalDensity*(1.0 + flow); });
             }
+            return dbgCount;
         }
-
     }
 
     void VoxelMap::Cave(const Engine::Line& axis, double width, double height)
@@ -423,7 +434,6 @@ namespace Game
         }
         if (mesh)
         {
-            glEnable(GL_LIGHTING);
             glDisable(GL_BLEND);
             mesh->Render();
             glDisable(GL_LIGHTING);
@@ -640,6 +650,13 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
             float width, depth, flow;
             s >> p0 >> p1 >> width >> depth >> flow;
             map.River(Engine::Line(p0, p1), width, depth, flow);
+        }
+        else if (procedure == L"VULCANO")
+        {
+            Engine::Coordinate p0, p1;
+            float width, flow;
+            s >> p0 >> p1 >> width >> flow;
+            map.Vulcano(Engine::Line(p0, p1), width, flow);
         }
         else if (procedure == L"CAVE")
         {

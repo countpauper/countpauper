@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <math.h>
 #include "Color.h"
+#include "Maths.h"
 
 namespace Engine::Test
 {
@@ -25,22 +26,24 @@ TEST(Color, Multiply)
     RGBA color(10, 20, 30, 40);
 
     color *= 10.0;
-    EXPECT_EQ(100, color.r);
-    EXPECT_EQ(200, color.g);
-    EXPECT_EQ(255, color.b);
-    EXPECT_EQ(40, color.a);
+    EXPECT_EQ(color, RGBA(100, 200, 255, 40));
 
-    RGBA half_color = color * 0.5;
-    EXPECT_EQ(50, half_color.r);
-    EXPECT_EQ(100, half_color.g);
-    EXPECT_EQ(128, half_color.b);
-    EXPECT_EQ(40, half_color.a);
+    EXPECT_EQ(color * 0.5, RGBA(50, 100,128, 40));
 
     RGBA no_color = color * -0.1;
-    EXPECT_EQ(0, no_color.r);
-    EXPECT_EQ(0, no_color.g);
-    EXPECT_EQ(0, no_color.b);
-    EXPECT_EQ(40, no_color.a);
+    EXPECT_EQ(color*-0.1, RGBA(0,0,0,40));
+}
+
+TEST(Color, Add)
+{
+    EXPECT_EQ(RGBA(100, 0, 0) + RGBA(0, 100, 0), RGBA(100, 100, 0));
+}
+
+TEST(Color, Lerp)
+{
+    EXPECT_EQ(Lerp(RGBA(100, 0, 0), RGBA(0, 100, 0), 0.5), RGBA(50, 50, 0));
+    EXPECT_EQ(Lerp(RGBA(100, 0, 0, 128), RGBA(0, 100, 0, 128), 0.5), RGBA(50, 50, 0));
+    EXPECT_EQ(Lerp(RGBA(100, 0, 0, 100), RGBA(0, 100, 0, 100), 0.5), RGBA(50, 50, 0, 200));
 }
 
 TEST(Color, Translucent)

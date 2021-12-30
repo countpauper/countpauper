@@ -16,10 +16,11 @@ struct Quaternion
     Quaternion Normalized() const;
     Quaternion Conjugate() const;
     Quaternion operator-();
-
+    bool operator==(const Quaternion& o)const;
     Matrix Matrix() const;
     double x, y, z, w;
     static Quaternion Identity();
+    static Quaternion Shortest(const Vector& a, const Vector& b);
 private:
     double SquareMagnitude() const;
     static const double precision; // 1e-12;

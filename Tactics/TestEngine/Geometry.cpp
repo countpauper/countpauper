@@ -34,6 +34,7 @@ TEST(Geometry, Vector)
     EXPECT_EQ(Vector(0, 0, -0.5), Vector(0.5, 0, 0).Cross(Vector(0, -1, 0)));
 }
 
+
 TEST(Geometry, Coordinate)
 {
     Coordinate a(1, 2, 3);
@@ -85,6 +86,8 @@ TEST(Line, Distance)
     Line l2(Coordinate(1, 1, 0), Coordinate(1, 1, 0));
     EXPECT_EQ(1.0, l2.Distance(Coordinate(1, 0, 0)));
 }
+
+
 
 TEST(Line, Section)
 {

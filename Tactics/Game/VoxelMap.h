@@ -34,6 +34,7 @@ public:
     void Hill(const Engine::Line& ridgeLine, double stddev);
     void Wall(const Engine::Line& bottomLine, double height, double thickness);
     void River(const Engine::Line& axis, double width, double depth, double flow);
+    void Vulcano(const Engine::Line& axis, double radius, double flow);
     void Cave(const Engine::Line& axis, double width, double height);
     /*    // Evaluate
     double Volume() const;
@@ -58,6 +59,8 @@ protected:
     Physics::Box Edge(Physics::Direction side) const;
     float AtmosphericTemperature(double elevation) const;
     float AtmosphericPressure(double elevation) const;
+
+    size_t Stream(const Physics::Material& material, double temperature, const Engine::Line& axis, double width, double depth, double flow);
 protected:
     Physics::Grid grid;
     Physics::Size size;

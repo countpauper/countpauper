@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Physics/Constraint.h"
+#include "Engine/Debug.h"
 
 namespace Physics
 {
@@ -20,8 +21,10 @@ void Constraint::Tick(double t, IEnvironment& environment) const
         return m == material;
     };
     if (fn)
-        environment.Fill(area, materialFilter, *material, temperature, fn(t));
+    {
+        auto count = environment.Fill(area, materialFilter, *material, temperature, fn(t));
+        Engine::Debug::Log(std::wstring(L"Constrained ") + std::to_wstring(count) + L" blocks of " + std::wstring(material->name)+ L" in a " + std::to_wstring(area.Volume()) + L" volume.");
+    }
 }
-
 
 }

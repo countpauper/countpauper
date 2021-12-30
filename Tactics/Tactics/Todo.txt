@@ -1,3 +1,26 @@
+
+==== Discrete version 
+GEneralize flowing to all fluids
+	- Flow temperature averaging (or mostly copying when flooding gas)
+	- Refactor Flow to PackedVoxel 
+Spread Temperature: half directions bidirectional
+	- Heat capacitiy 
+	- Spreading speed based on ... ?
+
+Wind and air pressure
+	- What happens to air/gas when flooding with liquid? 
+	- Always air mass in a PackedVoxel, same with water (moist earth) 
+Nature deposit
+	- Map creation in height zone based on neighbours (water, air) and temperature 
+
+Puddle particles 
+Snow/Hail
+
+==== Game 
+Combo Skill
+Parry
+
+==== Fluid dynamics version 
 * Explicit wind
 * Atmospheric pressure & temperature per meter, with z to meter
 Explicit Atmosphere and Earth commands
@@ -14,11 +37,10 @@ x Nan density corners
 * Corners should take a DirectionS, for edge corners and full corners and to know how to extrapolate boundary (or use IsBoundary), also remove early out in FluxBoundary
 Stone boundary flux = 0,0,0 (no wind) <- material interface: assume 100% cohesions/surface tension at first in both directions, later spread somehow
 Stone boundary density
-Unit tests (before or after splitting fluid dynamics)
+[partially ] Unit tests (before or after splitting fluid dynamics)
 Make explicit boundary matrices for the directions, including corners: density, temperature, flux vector
 	Commands: -> voxels and boundaries Evolve = Voxels + boundaries -> Voxels 
-Consider splitting fluid dynamics engine from voxel map for separation of concerns/unit testability to prepare for moving to gpu/eigen 
-
+*Consider splitting fluid dynamics engine from voxel map for separation of concerns/unit testability to prepare for moving to gpu/eigen 
 Reynolds number computation (need distance to surface per grid/direction)
 Fix flux boundary extrapolation 
 Temperature <-> pressure relation (flux)
