@@ -25,9 +25,10 @@ RArm Normal Wooden Club
 LArm Normal Steel Targe
 Wait Hack Duck Slash Dodge Block Parry Scrap Walk 
 3D Vox 50 50 16 300
-4
+5
 SEA 1 300
 HILL (35,20,5) (15,10,5) 5.0 
-RIVER (25,15,5) (20,30,1) 2 3 0.25
+RIVER (27,13,5) (20,30,1) 2 3 0.25
 HILL (10,8,1.666) (19,5,2.666) 11.0 
+VULCANO (19,5,0.5) (19, 5, 3) 1 0.2
 WALL (3,8,0) (46,32,2) 5 1.5

@@ -199,10 +199,10 @@ Box DiscreteGrid::Heat(double seconds, const Position &position, PackedVoxel& cu
         // use conducivity of coldest, based on nothing except a hunch that it's dominant to spread the energy from the interface
         double conductivity = (t < nt) ? material->conductivity : neighbour_mat->conductivity;
         double rate = dir.Surface(grid) * seconds * conductivity * (t - nt);    // In like ... joules towards the neighbour
-        energy -= rate;
-        current.SetTemperature(energy / (mass*material->heatCapacity));
-        neighbour_energy += rate;
-        neighbour.SetTemperature(neighbour_energy / (neighbour_mass * neighbour_mat->heatCapacity));
+        double newTemperature = (energy-rate) / (mass*material->heatCapacity);
+        current.SetTemperature(newTemperature);
+        double newNeighbourTemperature = (neighbour_energy + rate) / (neighbour_mass * neighbour_mat->heatCapacity);
+        neighbour.SetTemperature(newNeighbourTemperature);
         invalid |= position;
         invalid |= dirPosition;
     }
@@ -243,11 +243,11 @@ Box DiscreteGrid::FlowDown(const Position &position, PackedVoxel& current)
         neighbour.SetTemperature(newTemperature);
         if (auto newAmount = current.Amount() - 1)
         {
-            current.Set(Material::air);
+            current.Set(current.GetMaterial(), newAmount);
         }
         else
         {
-            current.Set(current.GetMaterial(), newAmount);
+            current.Set(Material::air);
         }
     }
     return invalid;

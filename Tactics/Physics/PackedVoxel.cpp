@@ -106,16 +106,15 @@ double PackedVoxel::Temperature() const
 
 void PackedVoxel::SetTemperature(double t)
 {
-    int it = int(std::floor(t));
     if (t > HotOffset)
     {
         hot = 1;
-        temperature = (it - HotOffset) / HotTGradient;
+        temperature = int(std::round((t - HotOffset) / HotTGradient));
     }
     else
     {
         hot = 0;
-        temperature = it / ColdTGradient;
+        temperature = int(std::round(t / ColdTGradient));
     }
 }
 
