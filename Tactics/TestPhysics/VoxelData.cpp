@@ -1,9 +1,7 @@
 #include "pch.h"
 #include "Physics/VoxelData.h"
 
-namespace Physics
-{
-namespace Test
+namespace Physics::Test
 {
 
 TEST(VoxelData, Construction)
@@ -122,5 +120,4 @@ TEST(VoxelData, BoundaryGrids)
     EXPECT_EQ(Direction::west | Direction::south | Direction::down, data.IsBoundary(Position(-1, -1, -1)));
 }
 
-}
 }

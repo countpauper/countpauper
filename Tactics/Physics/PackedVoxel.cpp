@@ -8,7 +8,6 @@ namespace Physics
     PackedVoxel::PackedVoxel() :
         material(0),
         amount(0),
-        hot(0),
         temperature(0)
     {
     }
@@ -94,28 +93,12 @@ Engine::RGBA PackedVoxel::Color() const
 
 double PackedVoxel::Temperature() const
 {
-    if (hot)
-    {
-        return HotOffset + temperature * HotTGradient;
-    }
-    else
-    {
-        return temperature * ColdTGradient;
-    }
+    return static_cast<double>(temperature);
 }
 
 void PackedVoxel::SetTemperature(double t)
 {
-    if (t > HotOffset)
-    {
-        hot = 1;
-        temperature = int(std::round((t - HotOffset) / HotTGradient));
-    }
-    else
-    {
-        hot = 0;
-        temperature = int(std::round(t / ColdTGradient));
-    }
+    temperature = static_cast<float>(t);
 }
 
 

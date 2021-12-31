@@ -84,7 +84,7 @@ TEST(Tree, MemoryUsage)
     const unsigned ptr = sizeof(void*);
     const unsigned cls = ptr;
     const unsigned voxel_data = sizeof(PackedVoxel);
-    EXPECT_LE(voxel_data, 4U);
+    EXPECT_LE(voxel_data, 6U);
     EXPECT_EQ(ptr, sizeof(TreeGrid::Node));
     EXPECT_EQ(ptr + voxel_data, sizeof(TreeGrid::Leaf));
     // Size is still in there, more memory, less cpu recomputing it every recursion EXPECT_EQ(ptr + 8 * ptr, sizeof(TreeGrid::Leaf));

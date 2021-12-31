@@ -6,9 +6,10 @@ Lava
 	* Flow temperature averaging (or mostly copying when flooding gas)
 	* Refactor Flow 
 		x to PackedVoxel 
-	- Spread Temperature: half directions bidirectional
-	- Heat capacity 
-	- Heat exchange rate based on ... ?
+	* Spread Temperature: half directions bidirectional
+	* Heat capacity 
+	* Heat exchange rate based on ... ?
+	- Packed voxel unit tests (especially temperature rounding), still see spontaneous freezing
     - Thickness flow speed (no seconds used currently) lava flows slower, chance?
 
 Wind and air pressure

@@ -196,13 +196,20 @@ Box DiscreteGrid::Heat(double seconds, const Position &position, PackedVoxel& cu
         double neighbour_mass = neighbour.Mass(grid.Volume());
         double neighbour_energy = neighbour_mass * nt * neighbour_mat->heatCapacity;
 
-        // use conducivity of coldest, based on nothing except a hunch that it's dominant to spread the energy from the interface
-        double conductivity = (t < nt) ? material->conductivity : neighbour_mat->conductivity;
-        double rate = dir.Surface(grid) * seconds * conductivity * (t - nt);    // In like ... joules towards the neighbour
-        double newTemperature = (energy-rate) / (mass*material->heatCapacity);
-        current.SetTemperature(newTemperature);
-        double newNeighbourTemperature = (neighbour_energy + rate) / (neighbour_mass * neighbour_mat->heatCapacity);
-        neighbour.SetTemperature(newNeighbourTemperature);
+        double surface = dir.Surface(grid);
+        Engine::Vector v(t, nt, 0);
+        auto rateFunction = [&](double, const Engine::Vector& t)
+        {
+            // use conducivity of coldest, based on nothing except a hunch that it's dominant to spread the energy from the interface
+            auto conductivity = (t.x < t.y ) ? material->thermalConductivity : neighbour_mat->thermalConductivity;
+            double exchangeRate = surface * conductivity * (t.y - t.x);
+            double dx = exchangeRate / (mass*material->heatCapacity);
+            double dy = -exchangeRate / (neighbour_mass * neighbour_mat->heatCapacity);
+            return Engine::Vector(dx, dy, 0);
+        };
+        Engine::Vector newState = Engine::RungeKutta<Engine::Vector>(0, v, seconds, rateFunction);
+        current.SetTemperature(newState.x);
+        neighbour.SetTemperature(newState.y);
         invalid |= position;
         invalid |= dirPosition;
     }

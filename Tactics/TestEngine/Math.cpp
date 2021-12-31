@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Maths.h"
+#include "GTestGeometry.h"
 
 namespace Engine::Test
 {
@@ -144,6 +145,27 @@ TEST(Math, ALittleLessDouble)
 
     EXPECT_THROW(ALittleLess<double>(std::numeric_limits<double>::lowest()), std::exception);
     EXPECT_THROW(ALittleLess<double>(-std::numeric_limits<double>::infinity()), std::exception);
+}
+
+TEST(Math, RungeKutta)
+{
+    auto df = [](double t, double y)
+    {
+        return sin(t)*sin(t) * y;
+    };
+
+    // EXPECT results not analytical (100% correct) but simulated in 5000 iterations
+    EXPECT_NEAR(RungeKutta<double>(0.0, 2.0, 0.5, df), 2.0808, 1e-3);
+    EXPECT_NEAR(RungeKutta<double>(2.0, 6.5686740469, 0.5, df), 8.8712, 1e-3);
+}
+
+TEST(Math, RungeKuttaVector)
+{
+    auto df = [](double, const Vector& y)
+    {
+        return Vector(y.x / y.z, y.y / y.z, 0.1);
+    };
+    EXPECT_3D_NEAR(RungeKutta<Vector>(0, Vector(1, 2, 3), 0.5, df), Vector(1.179736, 2.359472, 3.05), 1e-3);
 }
 
 }

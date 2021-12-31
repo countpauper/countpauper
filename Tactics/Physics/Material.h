@@ -21,6 +21,7 @@ struct Material
     double molarMass;       // G/mol
     double viscosity;       // mu, = N s /m2 = Pa*s t room temperature (25 C) 
     double conductivity;    // J/Mol-K 
+    double thermalConductivity; // W/mK = J/smK (at ~room temperature) https://en.wikipedia.org/wiki/List_of_thermal_conductivities 
     double heatCapacity;    // J/g*K    https://en.wikipedia.org/wiki/Table_of_specific_heat_capacities
     double surfaceTension;  // N/meter hardness when liquid https://en.wikipedia.org/wiki/Surface_tension#Data_table
     double youngsModulus;   // hardness when solid      (Pa) https://en.wikipedia.org/wiki/Young%27s_modulus#Approximate_values

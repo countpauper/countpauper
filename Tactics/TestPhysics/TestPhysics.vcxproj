@@ -52,6 +52,7 @@
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="StaticEnvironment.cpp" />
     <ClCompile Include="TreeGrid.cpp" />
+    <ClCompile Include="Voxel.cpp" />
     <ClCompile Include="VoxelData.cpp" />
   </ItemGroup>
   <ItemGroup>

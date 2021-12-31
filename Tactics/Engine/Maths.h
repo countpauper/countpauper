@@ -2,6 +2,8 @@
 
 #include "Vector.h"
 #include <type_traits>
+#include <functional>
+
 // NB Named maths.h because otherwise the release build gets confused with stdlib math.h
 namespace Engine
 {
@@ -80,6 +82,15 @@ namespace Engine
             throw std::range_error("Can't compute a little less than the minimum floating point");
         return std::nexttoward(v, std::numeric_limits<T>::lowest());
     }
+    
+    template<typename T>
+    T RungeKutta(double tn, T yn, double h, std::function<T(double t, const T& state)> df)
+    {   // https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
+        T k1 = df(tn,           yn);
+        T k2 = df(tn + (h / 2), yn + k1 * (h / 2));
+        T k3 = df(tn + (h / 2), yn + k2 * (h / 2));
+        T k4 = df(tn + h,       yn + k3 * h);
 
-
+        return yn + (k1 + (k2 * 2.0) + (k3 * 2.0) + k4) *  (h / 6.0);
+    }
 }
