@@ -13,7 +13,7 @@ if not C:
 
 result=[]
 roundstr=[':zero:',':one:',':two:',':three:',':four:',':five:',':six:',':seven:',':eight:',':nine:',':keycap_ten:']
-header=f'Combat Round {C.round_num if C.round_num>=len(roundstr) else roundstr[C.round_num]} in "{ctx.channel.name}"'
+header=f'{C.name or "Combat"} Round {C.round_num if C.round_num>=len(roundstr) else roundstr[C.round_num]} in "{ctx.channel.name}"'
 
 args=argparse('''&*&''')
 timeout = args.last('t','auto')

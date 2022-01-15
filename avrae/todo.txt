@@ -10,6 +10,12 @@
 - dragon hoard can roll again if done on 1 or 2
 - play darts as npc: use 0 for the bonus and -b
 
+
+* Strixhaven background equipment: https://www.dndbeyond.com/sources/sacoc/character-options#StrixhavenBackgrounds
+- and http://dnd5e.wikidot.com/background:dragon-casualty and other CoS backgrounds?
+
+- Update HB magic item table again: https://docs.google.com/spreadsheets/d/1hGSA9EmvALogeh-HR5XKaUIdX_3OnPrT/edit#gid=1009357369
+
 !stats:
 * condition icons from config in !stats combat
 * condition icons for effect in !stats

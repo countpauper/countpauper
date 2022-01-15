@@ -96,17 +96,18 @@ if auto in field_list and ch:
 	field_list.pop(index:=field_list.index(auto))
 	# pre grab so each cc is added only once
 	consumable_names={cc.name for cc in ch.consumables}
-	item_names=list(bag_items.keys())
-	for label, field in config_fields.items():
-		if field.get('auto',True) and label not in field_list:
-			if (field_cc:=field.get('cc')) and field_cc in consumable_names:
-				consumable_names.remove(field_cc)
-				field_list.insert(index,label)
-				index+=1
-			if (field_item:=field.get('item')) and (match_item:=([i for i in item_names if field_item in i]+[None])[0]):
-				item_names.remove(match_item)
-				field_list.insert(index,label)
-				index+=1
+	if bag_items:
+		item_names=list(bag_items.keys())
+		for label, field in config_fields.items():
+			if field.get('auto',True) and label not in field_list:
+				if (field_cc:=field.get('cc')) and field_cc in consumable_names:
+					consumable_names.remove(field_cc)
+					field_list.insert(index,label)
+					index+=1
+				if (field_item:=field.get('item')) and (match_item:=([i for i in item_names if field_item in i]+[None])[0]):
+					item_names.remove(match_item)
+					field_list.insert(index,label)
+					index+=1
 
 # replace all "cc..." fields with custom cc configurations
 custom_displays=['cc','item']
