@@ -31,8 +31,7 @@ namespace Physics
     private:
 
         // material: 0 = vacuum, air, water, earth, stone
-        // amount 0 = empty, 15 = full/max density or granularity
-        // hot = 0: temperature = 2 * k (0-510), 1 = 510 + 30 k (510-1275) 
+        // amount 0 = empty, 10 = full, 15 = max density or granularity
         uint8_t material : 2, amount : 4;
         float temperature;
 

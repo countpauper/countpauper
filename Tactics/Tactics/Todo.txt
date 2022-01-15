@@ -9,13 +9,15 @@ Lava
 	* Spread Temperature: half directions bidirectional
 	* Heat capacity 
 	* Heat exchange rate based on ... ?
-	- Packed voxel unit tests (especially temperature rounding), still see spontaneous freezing
+	* Packed voxel unit tests (especially temperature rounding), still see spontaneous freezing
     - Thickness flow speed (no seconds used currently) lava flows slower, chance?
 
 Wind and air pressure
 	- What happens to air/gas when flooding with liquid? 
 	- Always air mass in a PackedVoxel, same with water (moist earth)
 	- Heat up increases density ? 
+	- Air flow (vector?)
+	- Water flow (vector?)
 Weather 
 	- Puddle / water deposit particles (pre-steam)
 	- Reabsorb puddle to water flow ? 

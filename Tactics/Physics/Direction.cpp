@@ -190,14 +190,18 @@ Position Direction::Vector() const
 
 double Direction::Surface(const Engine::Vector& grid) const
 {
-    if (IsVertical())
+    if (IsZ())
     {
         assert(grid.x == grid.y);
+        return grid.x * grid.y;
+    }
+    else if (IsY())
+    {
         return grid.x * grid.z;
     }
     else
     {
-        return grid.x* grid.y;
+        return grid.y * grid.z;
     }
 }
 
