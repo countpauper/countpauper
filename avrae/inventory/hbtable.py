@@ -26,14 +26,16 @@ for t,r in req.items():
 	table_items=[]
 	for idx in range(r.total):
 		table=tables.get(t,[])
-		table=[dict(min=int(item.min),max=int(item.get('max',int(item.min)+1)),name=item.name) for item in table]
+		table=[dict(min=int(item.min),max=int(item.get('max',item.min)),name=item.name) for item in table]
 		if table:
-			die_size=max(item.max for item in table)-1
+			die_size=max(item.max for item in table)
 			item_roll=vroll(f'1d{die_size}')
-			if match:=[item.name for item in table if item_roll.total>=item.min and item_roll.total<item.max]:
+			item_idx = f'**{idx + 1}.**' if r.total > 1 else ''
+			if match:=[item.name for item in table if item_roll.total>=item.min and item_roll.total<=item.max]:
 				item=match[0]
-				item_idx=f'**{idx+1}.**' if r.total>1 else ''
-				table_items.append(f'{item_idx} `{str(item_roll.total).rjust(3)}` - {match[0]}')
+			else:
+				item='???'
+			table_items.append(f'{item_idx} `{item_roll.total}` - {item}')
 		treasure[title]=table_items
 
 # format output

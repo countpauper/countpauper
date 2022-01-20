@@ -2,18 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/dist.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/twilight.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Direction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Direction.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/PackedVoxel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/PackedVoxel.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/PackedVoxel.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/PackedVoxel.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Tactics/Todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Tactics/Todo.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/TreeGrid.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/TreeGrid.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/TreeGrid.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/TreeGrid.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/bagdat.json" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/bagdat.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/unit.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/unit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state/combat.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/combat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state/hud.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/hud.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/hbtable.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/hbtable.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/twilight.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/twilight.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/wand.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/wand.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

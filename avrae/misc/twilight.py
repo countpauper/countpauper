@@ -10,13 +10,14 @@ else:
 	t = c.me or c.current
 	if not t:
 		return f'echo No active combatant. Use `{ctx.prefix}{ctx.alias} <target>`'
+
 clerics={cleric:lvl for cleric in c.combatants if cleric.get_effect('Twilight Sanctuary') and (lvl:=cleric.levels.get('Cleric'))>=2}
 if not clerics:
 	return f'echo No clerics with Twilight Sanctuary found.'
 cleric=list(clerics.keys())[0]	# TODO: nearest and within range or highest level in range
 cleric_level = clerics[cleric]
 
-if e := t.get_effect('charmed') or t.get_effect('frightened'):
+if e := (t.get_effect('charmed') or t.get_effect('frightened')):
 	t.remove_effect(e.name)
 	return f'''embed -title "{cleric.name}'s Twilight sanctuary" -desc "Removed {e.name} from {t.name}"'''
 else:

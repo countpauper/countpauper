@@ -121,7 +121,7 @@ dc=args.last('dc',int("%dc%"))
 mod=args.last('mod',dc-8)
 
 # perform the casting
-return f'cast "{match}" {cast_args} -title "<name> casts [sname] with {get("their","their")} {wand}." -i {fields} -dc {dc} -mod {mod}'
+return f'cast "{match}" -title "<name> casts [sname] with {get("their","their")} {wand}." -i {fields} -dc {dc} -mod {mod} {cast_args}'
 </"""+"drac2>"
 
 
