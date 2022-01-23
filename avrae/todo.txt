@@ -32,6 +32,9 @@ x !state combat: automatically put groups into separate fields (then not sorted 
     * default no ranges just conditions and effects, just heart, team, effects
 
 * !qb transfer <from> <to> [<item>][...]
+- !qb count "bag name" count items in the bag instead of the bags
+    - display it as such
+    - counts the bags as well
 - !qb plurals same as transfer (es)
     - plurals solutions for default plural items (rations)
     - plural solution for items with bracers hempen rope (50 ft)
