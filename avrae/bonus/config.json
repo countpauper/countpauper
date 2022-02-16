@@ -1,0 +1,20 @@
+{
+  "commands":
+  {
+    "danger": "50*died*lvl",
+    "lethal": "100*died*lvl",
+    "crit": "(1+dead)*50*cr",
+    "critical": "(1+dead)*50*cr",
+    "ohko": {"kill": true, "reward": "100*cr"},
+    "kill": {"kill": true, "reward": "(((-hp>=max)*150)+((-hp>=max/2)*50))*cr"},
+    "overkill": {"kill": true, "reward": "(((-hp>=max)*150)+((-hp>=max/2)*50))*cr"},
+    "shenanigans": "200*lvl",
+    "attempt": "50*lvl",
+    "assist": "50*lvl",
+    "coward": "-50*lvl"
+  },
+
+  "streak": [0, 50,100,150,250],
+  "combo": [0, 200,500,1000],
+  "mass": [0, 200]
+}
