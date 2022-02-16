@@ -1,0 +1,20 @@
+{
+  "work":
+  {
+    "result":
+    {
+      "-999": {"gp": 10, "quality":"average"},
+      "10" : {"gp": 25, "quality": "above average"},
+      "15" : {"gp": 50, "quality": "excellent"},
+      "21" : {"gp": 75, "quality": "exceptional"}
+    },
+    "complication":
+    {
+      "1": {"desc": "Mistakes made on the job reduce the wages earned by half.", "mult": 0.5, "dm": false},
+      "2": {"desc": "Financial difficulties result in your not being paid.", "mult": 0, "dm": false},
+      "3": {"desc": "A coworker with ties to the faction in town takes a dislike to you.", "mult": 1, "dm": true},
+      "4": {"desc": "Your job leads to your involvement with a dark cult or a criminal enterprise, exposing you to retaliation by their enemies.", "dm": true},
+      "5": {"desc": "You gain a reputation for laziness (unjustified or not, as you choose), giving you disadvantage on checks made for this downtime activity for the next 1d4 workweeks you devote to it.", "dm": true}
+    }
+  }
+}

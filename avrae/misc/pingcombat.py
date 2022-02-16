@@ -8,3 +8,7 @@ return ", ".join(controllers)
 # Channels work at least
 
 !test {{ f'<#{ctx.channel.id}>' }}
+
+# roles would be
+<@&role id>
+# but no way to get them in code, just discord right click
