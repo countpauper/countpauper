@@ -31,10 +31,19 @@ x !state combat: automatically put groups into separate fields (then not sorted 
 * Configurable combat state display with hp, owner, cantrip, melee, ranged, spell, condition, effect flags (and all others eventually)
     * default no ranges just conditions and effects, just heart, team, effects
 
+* !play pig
+* http://superm.math.hawaii.edu/_pdfs/lessons/sixth_eighth/Greedy_Pig.pdf
+* store as a list of roll sums, add [0] on !play pig hold
+* allow other dice?
+    - at the start?
+- Other modes: race to 101, variable rounds.
+
 * !qb transfer <from> <to> [<item>][...]
 - !qb count "bag name" count items in the bag instead of the bags
+    - needs to reorganize, now flattens items first.
     - display it as such
     - counts the bags as well
+    - don't show repeated similar items, needs to reorganize db?
 - !qb plurals same as transfer (es)
     - plurals solutions for default plural items (rations)
     - plural solution for items with bracers hempen rope (50 ft)
