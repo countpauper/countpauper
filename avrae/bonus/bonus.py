@@ -43,7 +43,7 @@ for cmd,b in config.get('commands',{}).items():
 
 # early check all arguments to prevent missed registration due to typos
 if unknown_args:=[a for a in args if not (C.get_combatant(a) or a in commands or a.isdecimal())]:
-	return f'techo 5 "Unknown arguments `{",".join(unknown_args)}`'
+	return f'techo 5 "Unrecognized arguments `{",".join(unknown_args)}`'
 
 # gather all player and monster from all arguments
 players=[t for a in args if (t:=C.get_combatant(a))  and t.levels and not t.levels.get('Monster')]
