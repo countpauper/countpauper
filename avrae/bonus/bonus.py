@@ -7,6 +7,22 @@
 #!bonus ]<player>] perform[ance] <score> store as performance:gp with value from svar performance tresholds
 #!bonus [<npc>] ko <target> store as really dead
 
+
+# TODO: add a way to add a kill in a round with a CR if missed, it's a pain to add it by hand in the uvar/metadata.
+#   Sub command would have a weird name and still have to do the undo thing
+#   - CR<x> becomes a general CR creature added to kills with duck typing. May need to flatten SimpleCombatants into ducks as well
+#   - : all -options val are allowed and argparsed. Only before first -string option is parsed as bonus data
+#   - round <x> overrides the current combat round to store
+#   - (and later -hp -max and maybe even -cr then too? )
+# TODO: store backup in single bonus_backup uvar per channel.
+#   - reward without combat still finds the reward of the current channel in the back
+#   - reward without channel shows the first backup
+#   - reward with channel id argument shows that channel's backup regardless of combat or channel
+#  	- Separate restore command to restore
+#   - undo goes back to combat metadata
+# TODO: Allow not just decimals but all formula operators as well for flat bonuses, store that string, roll it. (+-*/.())
+#       make sure this - doesn't trigger the -argument. First character after the - must be there and it must be alphabetical for options -3 is flat -d is options just - is nothing
+
 C=combat()
 if not C:
 	return f'echo Can only track the bonus in combat'
@@ -102,6 +118,7 @@ debug = ctx.guild.id == 751060661290795069
 if kills or total_bonus:
 	C.set_metadata(mdb_key, dump_json(mdb))
 	C.set_metadata(mdk_key, dump_json(mdk))
+	# TODO: store bonus undo per channel id and fix undo
 	set_uvar('bonus_undo', original_data)
 
 if debug:
