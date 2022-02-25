@@ -8,11 +8,11 @@
 #!bonus [<npc>] ko <target> store as really dead
 
 
-# TODO: add a way to add a kill in a round with a CR if missed, it's a pain to add it by hand in the uvar/metadata.
+# TODO: add a way to add a kill in a roun with a CR if missed, it's a pain to add it by hand in the uvar/metadata.
 #   Sub command would have a weird name and still have to do the undo thing
-#   - CR<x> becomes a general CR creature added to kills with duck typing. May need to flatten SimpleCombatants into ducks as well
-#   - : all -options val are allowed and argparsed. Only before first -string option is parsed as bonus data
-#   - round <x> overrides the current combat round to store
+#   - [done] CR<x> becomes a general CR creature added to kills with duck typing. May need to flatten SimpleCombatants into ducks as well
+#   - [done] all -options val are allowed and argparsed. Only before first -string option is parsed as bonus data
+#   - [done] -round <x> overrides the current combat round to store
 #   - (and later -hp -max and maybe even -cr then too? )
 # TODO: [done] store backup in single bonus_backup uvar per channel.
 #   - [done] reward without combat still finds the reward of the current channel in the back
@@ -36,7 +36,12 @@ mdk = load_json(C.get_metadata(mdk_key,'[]'))
 # remember this data for potential undo update
 original_data = dump_json(dict(kills=mdk, bonus=mdb))
 
+# parse arguments, split in before and after first '-' option
 args=&ARGS&
+first_option=min(idx for idx, a in enumerate(args+['-']) if a.startswith('-'))
+pargs=argparse(args[first_option:])
+args=args[:first_option]
+
 # boni is {"cmd":{"reward":"formula","kill":bool}} or just forumula string instead of a dict or just a boolean to track ?
 # formula will be parsed and can contain variables:
 #       cr = cr of target (for each)
@@ -58,18 +63,24 @@ for cmd,b in config.get('commands',{}).items():
 		commands[cmd]=b
 
 # early check all arguments to prevent missed registration due to typos
-if unknown_args:=[a for a in args if not (C.get_combatant(a) or a in commands or a.isdecimal())]:
+if unknown_args:=[a for a in args if not a.startswith('-') and not a.lower().startswith('cr') and not (C.get_combatant(a) or a in commands or a.isdecimal())]:
 	return f'techo 5 "Unrecognized arguments `{",".join(unknown_args)}`'
 
 # gather all player and monster from all arguments
 players=[t for a in args if (t:=C.get_combatant(a))  and t.levels and not t.levels.get('Monster')]
+# get all monsters
 monsters=[t for a in args if (t:=C.get_combatant(a)) and t.levels.get('Monster')]
+# convert monters to data dicts
+monsters=[dict(name=m.name, cr=m.levels.get('monster'), hp=m.hp, max_hp=m.max_hp) for m in monsters]
+# add argument CRx
+monsters+=[dict(name=a, cr=roll("8*("+a[2:]+")")/8.0, hp=0, max_hp=0) for a in args if a.lower().startswith('cr') and not C.get_combatant(a)]
+# count the dead monster arguments
 kills=[t for t in monsters if t.hp<=0]
 
 # create a dictionary of usable variables from the combat state
 variables=dict(
 	lvl=sum(t.levels.total_level for t in players) if players else None,
-	cr=sum(t.levels.get('Monster') for t in monsters) if monsters else None,
+	cr=sum(t.cr for t in monsters) if monsters else None,
 	kills=len(kills) if kills else None,
 	hp=sum(t.hp for t in monsters)  if monsters else None,
 	max=sum(t.max_hp for t in monsters) if monsters else None,
@@ -82,12 +93,14 @@ kill=False
 total_bonus = 0
 player_names=[p.name for p in players]
 
+combat_round=pargs.last('r',C.round_num,type_=int)
+
 # Add all number arguments as flat bonuses
 for a in args:
 	if a.isdecimal():
 		b = int(a)
 		total_bonus+=b
-		mdb.append(dict(p=player_names, c='flat',f=a, b=b, r=C.round_num))
+		mdb.append(dict(p=player_names, c='flat',f=a, b=b, r=combat_round))
 
 # loop over all configured commands present in the arguments and apply their formula
 for cmd,b in commands.items():
@@ -105,12 +118,12 @@ for cmd,b in commands.items():
 			formula=formula.replace(var,str(val))
 		else:	# all variables replaced, valid formula, apply the bonus
 			if bonus_value := roll(formula):
-				mdb.append(dict(p=player_names, c=cmd, f=formula, b=bonus_value,r=C.round_num))
+				mdb.append(dict(p=player_names, c=cmd, f=formula, b=bonus_value,r=combat_round))
 				total_bonus+=bonus_value
 if kill and kills:
 	mdk.append(dict(k={p.name:p.levels.total_level for p in players},
-					t={k.name:k.levels.get('Monster') for k in kills},
-					r=C.round_num))
+					t={k.name:k.cr for k in kills},
+					r=combat_round))
 
 # debug only on the debug server
 debug = ctx.guild.id == 751060661290795069

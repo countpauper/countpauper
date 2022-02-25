@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/bonus/restore.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" afterDir="false" />
@@ -19,7 +18,6 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bonus/bonus.py" beforeDir="false" afterPath="$PROJECT_DIR$/bonus/bonus.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bonus/reward.py" beforeDir="false" afterPath="$PROJECT_DIR$/bonus/reward.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
