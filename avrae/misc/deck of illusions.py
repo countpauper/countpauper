@@ -5,7 +5,7 @@ gv=get_svar(var,'3c73c64e-9975-4e9a-8dd0-6a7025e2122c')
 cards=load_json(get_gvar(gv))
 cards["Joker"]["img"]=image
 
-arg='''&*&'''
+arg="""&*&"""
 
 # if the reset argument is given or there is no deck, a new deck is constructed from the gvar cards
 new = ''
@@ -43,6 +43,8 @@ if discards:=pargs.get('discard',pargs.get('d')):
 	desc='\n'.join(f':black_small_square: {card} - {cards[card].name}' for card in dis_carded)
 	remaining = len(deck) or 'None'
 	return f'''embed -title "{name} discards {len(dis_carded)} cards from {get('their','their')} {new}Deck of Illusions" -desc "{desc}" -f "Remaining|{remaining}"'''
+
+arg=arg.strip('''"'“”''')
 
 if arg:
 	if select:={c:f for c,f in cards.items() if arg.lower() in c.lower() or arg.lower() in f.name.lower()}:
