@@ -3,18 +3,35 @@ C=combat()
 mdb_key = 'bonus'
 mdk_key = 'kills'
 
+args=&ARGS&
+
 title=None
 if C:
 	mdb = load_json(C.get_metadata(mdb_key,'[]'))
 	mdk = load_json(C.get_metadata(mdk_key,'[]'))
 	title = 'Bonus'
 else:
-	db=load_json(get('bonus_undo'))
-	mdb=db.get(mdb_key,{})
-	mdk=db.get(mdk_key,{})
-	title = 'Backup'
+	backup=load_json(get('bonus_backup','{}'))
+	for a in args:
+		if a in backup:
+			channel_key = a
+			break
+	else:
+		channel_key=str(ctx.channel.id or "pm")
 
-args=&ARGS&
+	if channel_key in backup:
+		db=backup[channel_key]
+		title = 'Backup'
+	elif backup:
+		backup_key, db=list(backup.items())[0]
+		title = f'Backup of {backup_key}'
+	if db:
+		mdb=db.get(mdb_key, {})
+		mdk=db.get(mdk_key, {})
+	else:
+		return f'echo No bonus data available.'
+
+
 sv='bonus'
 config = load_json(get_svar(sv,'{}'))
 
@@ -64,10 +81,10 @@ total_reward=sum(b.b for b in mdb)
 
 verbose = 'verbose' in args or 'v' in args or (ctx.guild and ctx.guild.id == 751060661290795069)
 if verbose:
+	nl='\n'
 	killboard = [f''' {killer} @ {r} : `{cr}`''' for killer, cnt in kill_board.items() for r,cr in cnt.items()]
 	verbonus = [f'''{'& '.join(b.get('p',[]))} @ {b.get('r','?')} : `{b.get('c','???')} ({b.get('f')}) = {b.get('b')}` ''' for b in mdb]
-	nl='\n'
-	return f'embed -title "{title} Reward" -desc "{nl.join(verbonus)}" -f "Board|{nl.join(killboard)}" -f "Total|`{total_reward}`"'
+	return f'embed -title "{title} Reward" -desc "{nl.join(verbonus)}" -f "Board|{nl.join(killboard) or "Empty" }" -f "Total|`{total_reward}`"'
 else:
 	return f'techo 5 Total {title} Reward: `{total_reward}`'
 </drac2>

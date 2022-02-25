@@ -14,12 +14,12 @@
 #   - : all -options val are allowed and argparsed. Only before first -string option is parsed as bonus data
 #   - round <x> overrides the current combat round to store
 #   - (and later -hp -max and maybe even -cr then too? )
-# TODO: store backup in single bonus_backup uvar per channel.
-#   - reward without combat still finds the reward of the current channel in the back
-#   - reward without channel shows the first backup
-#   - reward with channel id argument shows that channel's backup regardless of combat or channel
-#  	- Separate restore command to restore
-#   - undo goes back to combat metadata
+# TODO: [done] store backup in single bonus_backup uvar per channel.
+#   - [done] reward without combat still finds the reward of the current channel in the back
+#   - [done] reward without channel shows the first backup
+#   - [done] reward with channel id argument shows that channel's backup regardless of combat or channel
+#  	- [done] Separate restore command to restore
+#   - [done] undo goes back to combat metadata
 # TODO: Allow not just decimals but all formula operators as well for flat bonuses, store that string, roll it. (+-*/.())
 #       make sure this - doesn't trigger the -argument. First character after the - must be there and it must be alphabetical for options -3 is flat -d is options just - is nothing
 
@@ -124,7 +124,7 @@ if kills or total_bonus:
 # store the state as backup per channel
 backup_var='bonus_backup'
 backup=load_json(get(backup_var,"{}"))
-backup[str(ctx.channel.id)]=dict(kill=mdk, bonus=mdb)
+backup[str(ctx.channel.id)]=dict(kills=mdk, bonus=mdb)
 set_uvar(backup_var, dump_json(backup))
 
 if debug:
