@@ -118,11 +118,17 @@ debug = ctx.guild.id == 751060661290795069
 if kills or total_bonus:
 	C.set_metadata(mdb_key, dump_json(mdb))
 	C.set_metadata(mdk_key, dump_json(mdk))
+	C.set_metadata('bonus_undo', original_data)
 	# TODO: store bonus undo per channel id and fix undo
-	set_uvar('bonus_undo', original_data)
+
+# store the state as backup per channel
+backup_var='bonus_backup'
+backup=load_json(get(backup_var,"{}"))
+backup[str(ctx.channel.id)]=dict(kill=mdk, bonus=mdb)
+set_uvar(backup_var, dump_json(backup))
 
 if debug:
-	return f'echo Bonus `{total_bonus}` kills `{", ".join(k.name for k in kills)}`'
+	return f'echo Bonus `{total_bonus}` kills `{", ".join(k.name for k in kills) or "none"}`'
 elif kills:
 	if total_bonus:
 		return f'techo 3 Bonus and kill registered.'
