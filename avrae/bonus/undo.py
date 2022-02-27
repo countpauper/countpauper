@@ -26,5 +26,5 @@ backup=load_json(get(backup_var,"{}"))
 backup[str(ctx.channel.id)]=undo
 set_uvar(backup_var, dump_json(backup))
 
-return f'echo Bonus data restored.'
+return f'techo 10 Bonus data restored.'
 </drac2>

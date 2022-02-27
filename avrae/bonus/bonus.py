@@ -20,8 +20,9 @@
 #   - [done] reward with channel id argument shows that channel's backup regardless of combat or channel
 #  	- [done] Separate restore command to restore
 #   - [done] undo goes back to combat metadata
-# TODO: Allow not just decimals but all formula operators as well for flat bonuses, store that string, roll it. (+-*/.())
-#       make sure this - doesn't trigger the -argument. First character after the - must be there and it must be alphabetical for options -3 is flat -d is options just - is nothing
+# TODO:[done] Allow not just decimals but all formula operators as well for flat bonuses, store that string, roll it. (+-*/.())
+#      [done] make sure this - doesn't trigger the -argument. First character after the - must be there and it must be alphabetical for options -3 is flat -d is options just - is nothing
+#      - Allow the variables to be used in this flat bonus
 
 C=combat()
 if not C:
@@ -38,7 +39,7 @@ original_data = dump_json(dict(kills=mdk, bonus=mdb))
 
 # parse arguments, split in before and after first '-' option
 args=&ARGS&
-first_option=min(idx for idx, a in enumerate(args+['-']) if a.startswith('-'))
+first_option=min(idx for idx, a in enumerate((args+['-terminate'])) if a.startswith('-') and a[1:2].isalpha())
 pargs=argparse(args[first_option:])
 args=args[:first_option]
 
@@ -63,15 +64,19 @@ for cmd,b in config.get('commands',{}).items():
 		commands[cmd]=b
 
 # early check all arguments to prevent missed registration due to typos
-if unknown_args:=[a for a in args if not a.startswith('-') and not a.lower().startswith('cr') and not (C.get_combatant(a) or a in commands or a.isdecimal())]:
+formula_chars='0123456789+-*/(). '
+if unknown_args:=[a for a in args if not a.lower().startswith('cr')
+									 and not C.get_combatant(a)
+									 and not all(c in formula_chars for c in a)
+									 and a not in commands]:
 	return f'techo 5 "Unrecognized arguments `{",".join(unknown_args)}`'
 
 # gather all player and monster from all arguments
 players=[t for a in args if (t:=C.get_combatant(a))  and t.levels and not t.levels.get('Monster')]
 # get all monsters
-monsters=[t for a in args if (t:=C.get_combatant(a)) and t.levels.get('Monster')]
-# convert monters to data dicts
-monsters=[dict(name=m.name, cr=m.levels.get('monster'), hp=m.hp, max_hp=m.max_hp) for m in monsters]
+monsters={t:cr for a in args if (t:=C.get_combatant(a)) and (cr:=t.levels.get('Monster'))}
+# convert monsters to data dicts
+monsters=[dict(name=m.name, cr=cr, hp=m.hp, max_hp=m.max_hp) for m, cr in monsters.items()]
 # add argument CRx
 monsters+=[dict(name=a, cr=roll("8*("+a[2:]+")")/8.0, hp=0, max_hp=0) for a in args if a.lower().startswith('cr') and not C.get_combatant(a)]
 # count the dead monster arguments
@@ -84,8 +89,8 @@ variables=dict(
 	kills=len(kills) if kills else None,
 	hp=sum(t.hp for t in monsters)  if monsters else None,
 	max=sum(t.max_hp for t in monsters) if monsters else None,
-	dead=(1 if any(t.hp<=0 for t in monsters) else 0) if monsters else None,
-	died=(1 if any(t.hp==0 for t in players) else 0) if players else None
+	dead=sum(t.hp<=0 for t in monsters) if monsters else None,
+	died=sum(t.hp==0 for t in players) if players else None
 )
 
 # prepare for adding bonuses
@@ -95,12 +100,14 @@ player_names=[p.name for p in players]
 
 combat_round=pargs.last('r',C.round_num,type_=int)
 
+debug=[]
 # Add all number arguments as flat bonuses
 for a in args:
-	if a.isdecimal():
-		b = int(a)
+	if all(c in formula_chars for c in a):
+		b = roll(a)
 		total_bonus+=b
 		mdb.append(dict(p=player_names, c='flat',f=a, b=b, r=combat_round))
+		debug.append(f'flat {a} = {b}  ')
 
 # loop over all configured commands present in the arguments and apply their formula
 for cmd,b in commands.items():
@@ -112,21 +119,23 @@ for cmd,b in commands.items():
 		for var, val in variables.items():
 			if val is None:
 				if var in formula:
-					break	 # unavailable varliable, formula invalid, skip
+					break	 # unavailable variable, formula invalid, skip
 				else:
 					continue # unavailable but unneeded
 			formula=formula.replace(var,str(val))
 		else:	# all variables replaced, valid formula, apply the bonus
 			if bonus_value := roll(formula):
-				mdb.append(dict(p=player_names, c=cmd, f=formula, b=bonus_value,r=combat_round))
+				mdb.append(dict(p=player_names, c=cmd, f=formula, b=bonus_value, r=combat_round))
 				total_bonus+=bonus_value
+			debug.append(f'{cmd} {formula}={bonus_value}')
 if kill and kills:
 	mdk.append(dict(k={p.name:p.levels.total_level for p in players},
 					t={k.name:k.cr for k in kills},
 					r=combat_round))
 
+
 # debug only on the debug server
-debug = ctx.guild.id == 751060661290795069
+debug = debug if ctx.guild.id == 751060661290795069 else None
 
 if kills or total_bonus:
 	C.set_metadata(mdb_key, dump_json(mdb))
@@ -141,7 +150,7 @@ backup[str(ctx.channel.id)]=dict(kills=mdk, bonus=mdb)
 set_uvar(backup_var, dump_json(backup))
 
 if debug:
-	return f'echo Bonus `{total_bonus}` kills `{", ".join(k.name for k in kills) or "none"}`'
+	return f'echo Bonus {player_names} @ {combat_round} - `{total_bonus}` kills `{", ".join(k.name for k in kills) or "none"}`\n{debug}'
 elif kills:
 	if total_bonus:
 		return f'techo 3 Bonus and kill registered.'
