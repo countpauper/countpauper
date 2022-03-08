@@ -78,7 +78,7 @@ monsters={t:cr for a in args if (t:=C.get_combatant(a)) and (cr:=t.levels.get('M
 # convert monsters to data dicts
 monsters=[dict(name=m.name, cr=cr, hp=m.hp, max_hp=m.max_hp) for m, cr in monsters.items()]
 # add argument CRx
-monsters+=[dict(name=a, cr=roll("8*("+a[2:]+")")/8.0, hp=0, max_hp=0) for a in args if a.lower().startswith('cr') and not C.get_combatant(a)]
+monsters+=[dict(name=a, cr=cr, hp=0, max_hp=1) for a in args if a.lower().startswith('cr') and not C.get_combatant(a) and (cr:=roll("8*("+a[2:]+")")/8.0)>0]
 # count the dead monster arguments
 kills=[t for t in monsters if t.hp<=0]
 
@@ -150,7 +150,7 @@ backup[str(ctx.channel.id)]=dict(kills=mdk, bonus=mdb)
 set_uvar(backup_var, dump_json(backup))
 
 if debug:
-	return f'echo Bonus {player_names} @ {combat_round} - `{total_bonus}` kills `{", ".join(k.name for k in kills) or "none"}`\n{debug}'
+	return f'echo Bonus {player_names} @ {combat_round} - `{total_bonus}` kills `{", ".join(k.name for k in kills) or "none"}`\n```{debug}```'
 elif kills:
 	if total_bonus:
 		return f'techo 3 Bonus and kill registered.'

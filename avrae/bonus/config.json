@@ -4,7 +4,7 @@
     "danger": "50*died*lvl",
     "lethal": "100*died*lvl",
     "crit": "(1+(dead>0))*50*cr",
-    "critical": "(1+(dead>0))*50*cr",
+    "critical": {"kill": true, "reward":"(1+(dead>0))*50*cr"},
     "ohko": {"kill": true, "reward": "100*cr"},
     "kill": {"kill": true, "reward": "(((-hp>=max)*150)+((-hp>=max/2)*50))*cr"},
     "overkill": {"kill": true, "reward": "(((-hp>=max)*150)+((-hp>=max/2)*50))*cr"},

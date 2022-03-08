@@ -5,7 +5,7 @@ mdk_key = 'kills'
 
 args=&ARGS&
 
-title=None
+title, channel_key=None, None
 if C:
 	mdb = load_json(C.get_metadata(mdb_key,'[]'))
 	mdk = load_json(C.get_metadata(mdk_key,'[]'))
@@ -15,22 +15,22 @@ else:
 	for a in args:
 		if a in backup:
 			channel_key = a
+			title = f'Backup of {channel_key}'
 			break
 	else:
+		title = f'Backup of current channel'
 		channel_key=str(ctx.channel.id or "pm")
 
 	if channel_key in backup:
 		db=backup[channel_key]
-		title = 'Backup'
 	elif backup:
-		backup_key, db=list(backup.items())[0]
-		title = f'Backup of {backup_key}'
+		channel_key, db=list(backup.items())[0]
+		title = f'Backup of first channel {channel_key}'
 	if db:
 		mdb=db.get(mdb_key, {})
 		mdk=db.get(mdk_key, {})
 	else:
 		return f'echo No bonus data available.'
-
 
 sv='bonus'
 config = load_json(get_svar(sv,'{}'))
@@ -40,7 +40,7 @@ if mass:=config.get('mass',[]):
 	for k in mdk:
 		if b:=mass[min(len(k.t),len(mass))-1]:	# !bonus shouldn't put in empty kill lists
 			cr=k.t.values()
-			mdb.append(dict(c='mass', p=[k.k], r=k.r, f=f'{b}*({"+".join(str(ccr) for ccr in cr)})', b=b*sum(cr)))
+			mdb.append(dict(c=f'mass {",".join(k.t.keys())}', p=list(k.k.keys()), r=k.r, f=f'{b}*({"+".join(str(ccr) for ccr in cr)})', b=b*sum(cr)))
 
 # Make a kill board, summing up the CR of all mass kills already
 # it will be dict(killer.name=dict(round=[cr,cr,..],...),...)
@@ -53,6 +53,7 @@ for kill in mdk:
 		kill_board[killer]=kill_count
 
 # add bonuses for all combos
+combos=[]
 combo = config.get('combo',[])
 for killer, board in kill_board.items():
 	for rnd, round_kills in board.items():
@@ -78,7 +79,7 @@ if streak:=config.get('streak',[]):
 
 
 total_reward=sum(b.b for b in mdb)
-
+# return f'multiline !echo mdk ```{dump_json(mdk)}```\n!echo mdb ```{dump_json(mdb)}```'
 verbose = 'verbose' in args or 'v' in args or (ctx.guild and ctx.guild.id == 751060661290795069)
 if verbose:
 	nl='\n'
