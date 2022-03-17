@@ -23,13 +23,25 @@ Coinpurse:
    * transfer from Coinpurse, set to 0,0,0,0 afterwards
    * coinpurse in undo only if it was modified
    - don't clear out coins if partial transfer and not deleted
-   - icons in source_desc and target_desc :DDBPlatinum: :DDBGold::DDBElectrum: :DDBSilver: :DDBCopper:
+   - icons in source_desc and target_desc
+
+   <:DDBPlatinum:948681049326624849> 0 pp
+<:DDBGold:948681049221775370> 0 gp
+<:DDBElectrum:948681048932364401> 0 ep
+<:DDBSilver:948681049288867930> 0 sp
+<:DDBCopper:948681049217597480> 0 cp
+
 - qb
-   - if no Coin Pouch found, default add items matching keys in get_coins() to coipurse with modify
-      - write purse state to undo only if modified
-   - if coin pouch found, still default to pouch but:
+   * if no Coin Pouch found, default add items matching keys in get_coins() to coipurse with modify
+      * write purse state to undo only if modified
+    * if coin pouch found, still default to pouch
       - complain in a field with an icon and suggest to transfer
-  - double check all backgrounds go to purse after transfer
+   - support multiple pouch indices, default is just first
+        - purse added as last
+        - format all of them as coins
+        - make sure ordered from big to small like g coins
+        - icons (in config, default is just coins to coins)
+  - double check all backgrounds go to purse after transfer with no pouch
     - for backgrounds if coinpurse.total is not 0 then don't add any coins
   - update test plan
   - run test plan

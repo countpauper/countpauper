@@ -6,11 +6,11 @@ if backup_str:= get(backup_var,None):
 	backup = load_json(backup_str)
 	# undo changes to coinpurse if any
 	config = load_json(get_gvar(get_svar('quickbag', '71ff40cc-4c5f-4ae5-bdb6-32130f869090')))
-	purse_name = config.get('purse', 'coinpurse').lower()
-	if purse:=([b for b in backup if b[0].lower()==purse_name]+[None])[0]:
+	purse_name = config.get('purse', 'Coinpurse')
+	if purse:=([b for b in backup if b[0].lower()==purse_name.lower()]+[None])[0]:
 		backup.remove(purse)
 		character().coinpurse.set_coins(purse[1].get('pp',0), purse[1].get('gp',0), purse[1].get('ep',0), purse[1].get('sp',0), purse[1].get('cp',0))
-		restored+=' and Coinpurse'
+		restored+=f' and {purse_name}'
 	# apply the remaining bags
 	character().set_cvar(bag_var,dump_json(backup))
 	return f'echo {restored} restored for {name} .'

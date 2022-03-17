@@ -12,7 +12,7 @@ bags=load_json(get(bv,'[]'))
 var_name='quickbag'
 sv=get_svar(var_name,'')
 config=load_json(get_gvar(get_svar(var_name,'71ff40cc-4c5f-4ae5-bdb6-32130f869090')))
-purse_name=config.get('purse','coinpurse')
+purse_name=config.get('purse','Coinpurse')
 purse_names=config.get('purse_bags',[])
 ammo_containers=config.get('ammo',[])
 special_bags=purse_names + ammo_containers
@@ -131,7 +131,7 @@ source_name = source_name.title().replace("'S","'s")
 if backup:
 	character().set_cvar('bag_backup', backup)
 if purse is not None:
-	character().coinpurse.set_coins(purse.pp, purse.gp, purse.ep, purse.sp, purse.cp)
+	character().coinpurse.set_coins(purse.get('pp',0), purse.get('gp',0), purse.get('ep',0), purse.get('sp',0), purse.get('cp',0))
 character().set_cvar(bv,dump_json(bags))
 
 # plurallize

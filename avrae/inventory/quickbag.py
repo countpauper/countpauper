@@ -39,6 +39,7 @@ config=load_json(get_gvar(get_svar(var_name,'71ff40cc-4c5f-4ae5-bdb6-32130f86909
 
 # TODO add to quickbag gvar and add svar override
 purse_names=config.get('purse_bags',[])
+purse_name=config.get('purse','Coinpurse')
 equipped_names=config.get('equipment',[])
 ammo_containers=config.get('ammo',[])
 containers=config.get('containers',[]) + equipped_names + ammo_containers + purse_names
@@ -52,10 +53,16 @@ removed_items=["exploder's pack"]
 item_list=[i for i in item_table.keys() if i not in sets.keys() and i not in removed_items]
 
 iterations=int((10000-2000)/len(item_list))	# limit iterations through the item sets when computing weight especially
+# add the purse bag at the end
+purse_idx=len(bags)
+purse=character().coinpurse.get_coins()
+if 'total' in purse:
+	purse.pop('total')
+bags.append([purse_name,purse])
 
 # find the purse bag
 coin_bags = [idx for idx,b in enumerate(bags) if b[0].lower() in purse_names]
-coin_idx = coin_bags[0] if coin_bags else None
+coin_idx = coin_bags[0] if coin_bags else purse_idx
 
 # optionally enable debug mode
 debug_break=None
@@ -176,16 +183,6 @@ while args:
 
 			continue
 		delta = 1 if delta is None else delta
-
-	## Create a new purse with all coins if needed
-	if coin_idx is None and item_name in coins.keys() and purse_names:
-		purse_name=purse_names[0].title()
-		bags.append([purse_name, {coin:0 for coin in coins.keys()}])
-		coin_idx=len(bags)-1
-		report[coin_idx]={purse_name:[1]}
-		debug.append(f'Purse {purse_name}')
-
-
 
 	## Coins : if an item is in the coin pouch, change the coins (don't remove the whole entry)
 	if coin_idx is not None  and not force_bag:
@@ -407,6 +404,7 @@ if  report:
 		items=[]
 		if idx==coin_idx:
 			# format as coins: no plural, no removal, no new items
+			# TODO: icons
 			for coin,q in contents.items():
 				if coin in changes:
 					items.append(f'~~{changes[coin][0]}~~ {q} {coin}')
@@ -425,21 +423,30 @@ if  report:
 						items.append(f'~~{original_amount}~~ '+ item_desc)
 				elif show_bag:	# unchanged item
 					items.append(item_desc)
-			for item_name,diff in changes.items():
-				plural_name=item_name if item_name[-1]=='s' else item_name+'s'
-				if item_name not in contents.keys():
-					original_amount=diff[0]
-					items.append(f'~~{original_amount} x {plural_name}~~' if original_amount!=1 else f'~~{item_name}~~')
+		for item_name,diff in changes.items():
+			plural_name=item_name if item_name[-1]=='s' else item_name+'s'
+			if item_name not in contents.keys():
+				original_amount=diff[0]
+				items.append(f'~~{original_amount} x {plural_name}~~' if original_amount!=1 else f'~~{item_name}~~')
 		if not items:
 			items=['Empty']
 		fields+=f' -f "{bag_name}|{nl.join(items)}|inline"'
 
-
-
 # remove bags after indices are no longer referenced
 bag_idx=None
-report=[]
 bags=[b for i,b in enumerate(bags) if i not in removed_bags]
+# update the purse if changed
+purse = bags.pop(purse_idx)[1]
+if report.get(purse_idx):
+	# inject old coinpurse into backup
+	backup_bags=load_json(backup)
+	backup_purse=character().coinpurse.get_coins()
+	if 'total' in backup_purse:
+		backup_purse.pop('total')
+	backup_bags.append([purse_name, backup_purse])
+	backup=dump_json(backup_bags)
+	# apply purse update
+	character().coinpurse.set_coins(purse.get('pp',0), purse.get('gp',0), purse.get('ep',0), purse.get('sp',0), purse.get('cp',0))
 
 #backup
 if backup:
