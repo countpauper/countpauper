@@ -76,7 +76,8 @@
       "Witchlight Hand": {" Disguise kit": 1, "Musical Instrument": 1, "Playing Card Set": 1, "Costume": 1, "Feywild Trinket": 1, "gp": 8},
       "Witherbloom  Student": {"Ink (1 ounce Bottle)":1, "Ink Pen":1,"Book about Plant Identification": 1, "Iron Pot": 1, "Herbalism Kit": 1,  "School Uniform": 1, "gp": 15}
       },
-    "purses":["coin pouch"],
+    "purse": "Coinpurse",
+    "purse_bags":["coin pouch"],
     "equipment": ["equipped","equipment","wearing","worn","held"],
     "ammo":["quiver","pouch","case, crossbow bolt","crossbow bolt case"],
     "containers":["sack","backpack","chest","basket","scroll case","map case","case, map or scroll","basket", "bag of holding", "handy haversack"],

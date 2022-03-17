@@ -12,18 +12,27 @@ bags=load_json(get(bv,'[]'))
 var_name='quickbag'
 sv=get_svar(var_name,'')
 config=load_json(get_gvar(get_svar(var_name,'71ff40cc-4c5f-4ae5-bdb6-32130f869090')))
-purse_names=config.get('purses',[])
+purse_name=config.get('purse','coinpurse')
+purse_names=config.get('purse_bags',[])
 ammo_containers=config.get('ammo',[])
 special_bags=purse_names + ammo_containers
 item_table=load_json(get_gvar('19753bce-e2c1-42af-8c4f-baf56e2f6749'))	 # original !bag items for interop
 coins=config.get('coinRates',{})
-unmovable_items=list(coins.keys())
+
+backup_purse=False
+purse=character().coinpurse.get_coins()
+if 'total' in purse:
+	purse.pop('total')
 
 source_name=args[0].lower()
-source_bag=([b for b in bags if b[0].lower()==source_name] +
-			[b for b in bags if b[0].lower().startswith(source_name)] +
-			[b for b in bags if ' '+source_name in b[0].lower()] +
-			[None])[0]
+if source_name == purse_name.lower():
+	source_bag=[purse_name, purse]
+	backup_purse=True
+else:
+	source_bag=([b for b in bags if b[0].lower()==source_name] +
+				[b for b in bags if b[0].lower().startswith(source_name)] +
+				[b for b in bags if ' '+source_name in b[0].lower()] +
+				[None])[0]
 if not source_bag:
 	return f'echo No bag named `{source_name}` found to transfer from.'
 
@@ -32,6 +41,10 @@ if not target_name:
 	target_bag=([b for b in bags if b[0].lower() not in purse_names] + [None])[0]
 	if not target_bag:
 		return f'echo No default bag found to transfer to.'
+	new_bag = False
+elif target_name==purse_name.lower():
+	target_bag=[purse_name, purse]
+	backup_purse=True
 	new_bag = False
 else:
 	target_bag=([b for b in bags if b[0].lower()==target_name] +
@@ -48,8 +61,20 @@ else:
 	else:
 		target_name=target_bag[0]
 		new_bag=False
+
+# remaining arguments are to filter items
 include_items=[a.lower() for a in args[2:] if not a.startswith('-')]
 exclude_items=[a[1:].lower() for a in args[2:] if a.startswith('-')]
+
+# if purse is affected, add it to the backup json
+if backup_purse:
+	backup_list=load_json(backup) if backup else dict()
+	backup_list.append([purse_name,purse])
+	backup=dump_json(backup_list)
+	unmovable_items=[]
+else:
+	purse=None
+	unmovable_items+=list(coins.keys())
 
 # move all items
 dbg=[]
@@ -82,27 +107,32 @@ for item_name, amount in source_bag[1].items():
 	diff[item_name]=(old_amount,new_amount)
 
 # clean up source bag of 0 count items
-source_bag[1]={i:q for i,q in source_bag[1].items() if q>0 or i in unmovable_items}
 
 # clear the source bag, but only remove it if it is free(beer)
-source_desc="*Empty*"
 nl='\n'
-plural_es=['s','sh','ch','x','z']
+plural_es = ['s', 'sh', 'ch', 'x', 'z']
+source_desc = "*Empty*"
 source_name=source_bag[0].lower()
-if not source_bag[1]:
-	if not source_name in item_table or not item_table[source_name].get('cost'):
-		bags.remove(source_bag)
-		source_desc="*Removed*"
+if source_name==purse_name.lower():
+	# TODO: icons
+	source_desc=nl.join(f'{q} x {i}' for i,q in source_bag[1].items())
 else:
-	source_desc=nl.join(f'{q} x {i}{"es" if any(i.endswith(end) for end in plural_es) else "s"}' if q>1 else i for i,q in source_bag[1].items())
+	source_bag[1] = {i: q for i, q in source_bag[1].items() if q > 0 or i in unmovable_items}
+	if not source_bag[1]:
+		if source_name in purse_names or not source_name in item_table or not item_table[source_name].get('cost'):
+			bags.remove(source_bag)
+			source_desc="*Removed*"
+	else:
+		source_desc=nl.join(f'{q} x {i}{"es" if any(i.endswith(end) for end in plural_es) else "s"}' if q>1 else i for i,q in source_bag[1].items())
 
 source_name = source_name.title().replace("'S","'s")
 
 # backup and persist
 if backup:
 	character().set_cvar('bag_backup', backup)
+if purse is not None:
+	character().coinpurse.set_coins(purse.pp, purse.gp, purse.ep, purse.sp, purse.cp)
 character().set_cvar(bv,dump_json(bags))
-
 
 # plurallize
 plural_diff={(f'{new}x {i}{"es" if any(i.endswith(end) for end in plural_es) else "s"}' if new>1 else i):old for i,(old,new) in diff.items()}
