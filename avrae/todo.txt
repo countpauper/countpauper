@@ -36,11 +36,16 @@ Coinpurse:
       * write purse state to undo only if modified
     * if coin pouch found, still default to pouch
       - complain in a field with an icon and suggest to transfer
-   - support multiple pouch indices, default is just first
-        - purse added as last
-        - format all of them as coins
-        - make sure ordered from big to small like g coins
-        - icons (in config, default is just coins to coins)
+   * support multiple pouch indices, default is just first
+        * purse added as last
+        * format all of them as coins
+        * make sure ordered from big to small like g coins
+        * icons (in config, default is just coins to coins)
+  * Don't allow forced items into coinpurse
+  * What to do with -coinpurse? empty but keep
+  * check -"Coin Pouch" +cp should add to purse (remove removed bag idx from purses)
+     - looks weird in report, like coins were added, when really they were gone
+  - showing coins with bag open none: only changes
   - double check all backgrounds go to purse after transfer with no pouch
     - for backgrounds if coinpurse.total is not 0 then don't add any coins
   - update test plan

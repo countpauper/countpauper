@@ -17,9 +17,9 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/bag_undo.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/bag_undo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/bagdat.json" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/bagdat.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/quickbag.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/transfer.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/transfer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/testplan.txt" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/testplan.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
@@ -283,7 +283,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/inventory/quickbag.py</url>
-          <line>287</line>
+          <line>315</line>
           <option name="timeStamp" value="41" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

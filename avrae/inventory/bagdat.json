@@ -82,5 +82,6 @@
     "ammo":["quiver","pouch","case, crossbow bolt","crossbow bolt case"],
     "containers":["sack","backpack","chest","basket","scroll case","map case","case, map or scroll","basket", "bag of holding", "handy haversack"],
     "coinRates": {"cp":100,"sp":10,"ep":2,"gp":1,"pp":0.1},
+    "coinIcons": {"pp": "<:DDBPlatinum:948681049326624849>","gp": "<:DDBGold:948681049221775370>", "ep": "<:DDBElectrum:948681048932364401>","sp": "<:DDBSilver:948681049288867930>","cp": "<:DDBCopper:948681049217597480>"},
     "forbidden": ["of","or","a","an","the"]
   }

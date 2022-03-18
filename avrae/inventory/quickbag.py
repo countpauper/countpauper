@@ -61,8 +61,8 @@ if 'total' in purse:
 bags.append([purse_name,purse])
 
 # find the purse bag
-coin_bags = [idx for idx,b in enumerate(bags) if b[0].lower() in purse_names]
-coin_idx = coin_bags[0] if coin_bags else purse_idx
+coin_bag_idx = [idx for idx,b in enumerate(bags) if b[0].lower() in purse_names]
+coin_bag_idx.append(purse_idx)
 
 # optionally enable debug mode
 debug_break=None
@@ -155,22 +155,35 @@ while args:
 		# Delete exiting bag
 		if delta==-1 and existing_bags:
 			removed_bag_idx=existing_bags[-1]	# remove last bag first
-			removed_bag=bags[removed_bag_idx]
-			removed_bags.append(removed_bag_idx)	# don't remove until the end
-			diff = report.get(removed_bag_idx,{})
-			for i,q in removed_bag[1].items():
-				removed_bag[1][i]=0
-				diff[i]=diff.get(i,[q])+[0]
-
-			if removed_bag_idx==bag_idx:
-				bag_idx=None
-			report[removed_bag_idx]=diff
-			debug.append(f'Remove Bag {removed_bag[0]}')
-			delta+=1
-			if delta:	# repeat remove next backpack
-				args.insert(0,item_name)
-			else:
+			if removed_bag_idx==purse_idx:
+				# instead of removing the coinpurse
+				force_bag=True
+				bag_idx=purse_idx
+				money=bags[bag_idx][1]
+				for coin,q in money.items():
+					if q:
+						args=[str(-q), coin] + args
+				debug.append(f'Empty purse')
 				delta=None
+			else:
+				removed_bag=bags[removed_bag_idx]
+				removed_bags.append(removed_bag_idx)	# don't remove until the end
+				if removed_bag_idx in coin_bag_idx:
+					coin_bag_idx.remove(removed_bag_idx)
+				diff = report.get(removed_bag_idx,{})
+				for i,q in removed_bag[1].items():
+					removed_bag[1][i]=0
+					diff[i]=diff.get(i,[q])+[0]
+
+				if removed_bag_idx==bag_idx:
+					bag_idx=None
+				report[removed_bag_idx]=diff
+				debug.append(f'Remove Bag {removed_bag[0]}')
+				delta+=1
+				if delta:	# repeat remove next backpack
+					args.insert(0,item_name)
+				else:
+					delta=None
 			continue
 		# select existing bag
 		elif delta is None and existing_bags:
@@ -185,12 +198,36 @@ while args:
 		delta = 1 if delta is None else delta
 
 	## Coins : if an item is in the coin pouch, change the coins (don't remove the whole entry)
-	if coin_idx is not None  and not force_bag:
-		money=bags[coin_idx][1]
-		if item_name in money.keys():
-			current=money.get(item_name,0)
-			if -delta>current:
-				# make chance:
+	if item_name in coins:
+		if force_bag:
+			used_purses=[idx for idx in coin_bag_idx if idx==bag_idx]
+		else:
+			used_purses=coin_bag_idx
+		if used_purses:
+			for coin_idx in used_purses:
+				money=bags[coin_idx][1]
+				current=money.get(item_name)
+				diff = report.get(coin_idx, {})
+				if current+delta>=0:
+					# enough coins, take them or add them
+					money[item_name] = current + delta
+					debug.append(f'${delta} {item_name}')
+					# update report
+					diff[item_name] = diff.get(item_name, [current]) + [delta]
+					report[coin_idx] = diff
+					delta = None
+					break
+				elif current:
+					# coins, but not enough, take them and continue with the remaining coins
+					money[item_name] = 0
+					debug.append(f'$= {current}/{-delta} {item_name}')
+
+					diff[item_name] = diff.get(item_name, [current]) + [-current]
+					report[coin_idx] = diff
+
+					delta = delta + current
+			else:
+				# none of the purses have these coins, make change
 				bigger_coins={c:r for c,r in coins.items() if r<coins[item_name]}
 				if not bigger_coins:
 					err(f'You don\'t have {-delta} {item_name}.')
@@ -199,24 +236,15 @@ while args:
 					exchange_rate=int(round(coins[item_name]/coins[next_coin]))
 					next_needed=int(ceil((-delta-current)/exchange_rate))
 					change=next_needed*exchange_rate + delta
+					debug.append(f'$$ {next_needed} {next_coin} +{change} {item_name}')
 					if change:
 						args=[next_coin, str(change), item_name]+args
 					else:
 						args=[next_coin]+args
 					delta=-next_needed
 					continue
-
-			money[item_name]=current+delta
-
-			# update report
-			diff = report.get(coin_idx,{})
-			diff[item_name]=diff.get(item_name,[])+[current, delta]
-			report[coin_idx]=diff
-
-			# TODO report[pouch_name].get(coin,[amount])
-			debug.append(f'$ {delta} {item_name}')
-			delta=None
-			continue
+			if delta is None:
+				continue
 
 	## Add: new bags
 	if delta>=1:
@@ -270,10 +298,10 @@ while args:
 			delta=None
 			continue
 
-	# Default bag: about to add items to  the current bag, if there is no current bag, select one
-	if bag_idx is None:
+	# Default bag: about to add items to  the current bag, if there is no current bag (or its the purse), select one
+	if bag_idx is None or bag_idx==purse_idx:
 		default_bags = [(i,b[0]) for i, b in enumerate(bags) if
-						i not in removed_bags and (b[0].lower() not in special_bags)]
+						i not in removed_bags and (b[0].lower() not in special_bags) and i!=purse_idx]
 		# queue switching to the default bag explicitly and adding the current item. create arg basic one if none found
 		if default_bags:
 			bag_idx,default_bag = default_bags[0]
@@ -375,7 +403,7 @@ while args:
 
 	# missing items
 	if delta<0:
-		debug.append('f Missing {-delta} {item_name}')
+		debug.append(f'Missing {-delta} {item_name}')
 		diff=report.get('fail',{})
 		diff[item_name]=diff.get(item_name,[])+[delta]
 		report['fail']=diff
@@ -402,39 +430,41 @@ if  report:
 
 		contents=bag[1] if bag else {}
 		items=[]
-		if idx==coin_idx:
+		done_items=[]
+		if idx in coin_bag_idx:
 			# format as coins: no plural, no removal, no new items
-			# TODO: icons
-			for coin,q in contents.items():
+			coinIcons = config.get('coinIcons',{})
+			done_items+=list(coinIcons.keys())
+			for coin, icon in coinIcons.items():
+				q=contents.get(coin,0)
 				if coin in changes:
-					items.append(f'~~{changes[coin][0]}~~ {q} {coin}')
+					items.append(f'{icon} ~~{changes[coin][0]}~~ {q} {coin}')
 				else:
-					items.append(f'{q} {coin}')
-		else:
-			for item_name,q in contents.items():
-				plural_name=item_name if item_name[-1]=='s' else item_name+'s'
-
-				item_desc= f'{q} x {plural_name}' if q>1 else item_name	# TODO: better plural
-				if item_name in changes:
-					original_amount=changes[item_name][0]
-					if original_amount==0:
-						items.append('+' + item_desc)
-					else:
-						items.append(f'~~{original_amount}~~ '+ item_desc)
-				elif show_bag:	# unchanged item
-					items.append(item_desc)
-		for item_name,diff in changes.items():
+					items.append(f'{icon} {q} {coin}')
+		for item_name,q in contents.items():
+			if item_name in done_items:
+				continue
+			done_items.append(item_name)
 			plural_name=item_name if item_name[-1]=='s' else item_name+'s'
-			if item_name not in contents.keys():
-				original_amount=diff[0]
-				items.append(f'~~{original_amount} x {plural_name}~~' if original_amount!=1 else f'~~{item_name}~~')
+			item_desc= f'{q} x {plural_name}' if q>1 else item_name	# TODO: better plural
+			if item_name in changes:
+				original_amount=changes[item_name][0]
+				if original_amount==0:
+					items.append('+' + item_desc)
+				else:
+					items.append(f'~~{original_amount}~~ '+ item_desc)
+			elif show_bag:	# unchanged item
+				items.append(item_desc)
+		for item_name,diff in changes.items():
+			if item_name in done_items:
+				continue
+			plural_name=item_name if item_name[-1]=='s' else item_name+'s'
+			original_amount=diff[0]
+			items.append(f'~~{original_amount} x {plural_name}~~' if original_amount!=1 else f'~~{item_name}~~')
 		if not items:
 			items=['Empty']
 		fields+=f' -f "{bag_name}|{nl.join(items)}|inline"'
 
-# remove bags after indices are no longer referenced
-bag_idx=None
-bags=[b for i,b in enumerate(bags) if i not in removed_bags]
 # update the purse if changed
 purse = bags.pop(purse_idx)[1]
 if report.get(purse_idx):
@@ -447,6 +477,10 @@ if report.get(purse_idx):
 	backup=dump_json(backup_bags)
 	# apply purse update
 	character().coinpurse.set_coins(purse.get('pp',0), purse.get('gp',0), purse.get('ep',0), purse.get('sp',0), purse.get('cp',0))
+
+# remove bags after indices are no longer referenced
+bag_idx=None
+bags=[b for i,b in enumerate(bags) if i not in removed_bags]
 
 #backup
 if backup:

@@ -33,7 +33,6 @@
 # force add items to the coin pouch
 !bqb Coin +emerald +signet
 
-# force remove the ring from the coin pouch
 
 # remove the quiver with all arrows, then fail to remove the additional arrow
 !bqb -quiver -arrow
@@ -43,6 +42,9 @@
 
 # force add coins to bag of holding
 !bqb 2sp holding 2000cp 1000gp
+
+# make change with multiple purses should end with: pouch 6cp, purse 0cp 0sp (plus what was there before)
+!bqb +4cp Coinpurse +2cp +1sp -10cp
 
 # show weight but the same as before because the dagger is in the bag of holding
 !bag track on
