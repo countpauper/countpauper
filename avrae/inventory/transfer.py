@@ -74,7 +74,7 @@ if backup_purse:
 	unmovable_items=[]
 else:
 	purse=None
-	unmovable_items+=list(coins.keys())
+	unmovable_items=list(coins.keys())
 
 # move all items
 dbg=[]
@@ -111,11 +111,11 @@ for item_name, amount in source_bag[1].items():
 # clear the source bag, but only remove it if it is free(beer)
 nl='\n'
 plural_es = ['s', 'sh', 'ch', 'x', 'z']
+coinIcons = config.get('coinIcons', {})
 source_desc = "*Empty*"
 source_name=source_bag[0].lower()
 if source_name==purse_name.lower():
-	# TODO: icons
-	source_desc=nl.join(f'{q} x {i}' for i,q in source_bag[1].items())
+	source_desc=nl.join(f'{coinIcons.get(coin,coin)} ~~{character().coinpurse[coin]}~~ {coin}' for coin in purse.keys())
 else:
 	source_bag[1] = {i: q for i, q in source_bag[1].items() if q > 0 or i in unmovable_items}
 	if not source_bag[1]:
@@ -134,10 +134,19 @@ if purse is not None:
 	character().coinpurse.set_coins(purse.get('pp',0), purse.get('gp',0), purse.get('ep',0), purse.get('sp',0), purse.get('cp',0))
 character().set_cvar(bv,dump_json(bags))
 
-# plurallize
-plural_diff={(f'{new}x {i}{"es" if any(i.endswith(end) for end in plural_es) else "s"}' if new>1 else i):old for i,(old,new) in diff.items()}
-# report changes
-desc=[f'~~{old}~~ {item}' if old else item for item,old in plural_diff.items()]
+if target_name==purse_name.lower():
+	desc=[]
+	for coin in purse.keys():
+		if change:=diff.get(coin): # TODO or showbag, then default to (q,q)
+			if change[0]!=change[1]:
+				desc.append(f'{coinIcons.get(coin,coin)} ~~{change[0]}~~ {change[1]} {coin}')
+			else:
+				desc.append(f'{coinIcons.get(coin,coin)} {change[0]} {coin} ')
+else:
+	# plurallize
+	plural_diff={(f'{new}x {i}{"es" if any(i.endswith(end) for end in plural_es) else "s"}' if new>1 else i):old for i,(old,new) in diff.items()}
+	# report changes
+	desc=[f'~~{old}~~ {item}' if old else item for item,old in plural_diff.items()]
 
 if not desc:
 	desc=["*No items transferred*"]

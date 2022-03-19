@@ -23,14 +23,10 @@ Coinpurse:
    * transfer from Coinpurse, set to 0,0,0,0 afterwards
    * coinpurse in undo only if it was modified
    - don't clear out coins if partial transfer and not deleted
-   - icons in source_desc and target_desc
-
-   <:DDBPlatinum:948681049326624849> 0 pp
-<:DDBGold:948681049221775370> 0 gp
-<:DDBElectrum:948681048932364401> 0 ep
-<:DDBSilver:948681049288867930> 0 sp
-<:DDBCopper:948681049217597480> 0 cp
-
+   * icons in source_desc and target_desc
+   [after update]
+   - don't show non transfered coins if !bag open none
+   - if moving pouch to coinpurse with still items in it, don't move the items and don't delete the pouch if it still has items
 - qb
    * if no Coin Pouch found, default add items matching keys in get_coins() to coipurse with modify
       * write purse state to undo only if modified
@@ -45,13 +41,14 @@ Coinpurse:
   * What to do with -coinpurse? empty but keep
   * check -"Coin Pouch" +cp should add to purse (remove removed bag idx from purses)
      - looks weird in report, like coins were added, when really they were gone
-  - showing coins with bag open none: only changes
-  - double check all backgrounds go to purse after transfer with no pouch
-    - for backgrounds if coinpurse.total is not 0 then don't add any coins
-  - update test plan
-  - run test plan
-- deliver!!
-   - update real gvar (rename purses->purse_bags
+  * showing coins with bag open none: only changes
+  * double check all backgrounds go to purse after transfer with no pouch
+    * for backgrounds if coinpurse.total is not 0 then don't add any coins
+  * Track purse weight
+  * update test plan
+  * run test plan
+   * update real gvar (rename purses->purse_bags
+   * deliver!!
 - count
   - $ is purse or pouch
 - state

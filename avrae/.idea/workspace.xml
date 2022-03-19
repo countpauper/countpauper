@@ -17,9 +17,9 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/bagdat.json" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/bagdat.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/quickbag.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/testplan.txt" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/testplan.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/transfer.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/transfer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
@@ -221,31 +221,15 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state width="958" height="277" key="GridCell.Tab.0.bottom" timestamp="1638971923830">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="958" height="277" key="GridCell.Tab.0.bottom/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1638971923830" />
-    <state width="958" height="277" key="GridCell.Tab.0.center" timestamp="1638971923830">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="958" height="277" key="GridCell.Tab.0.center/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1638971923830" />
-    <state width="958" height="277" key="GridCell.Tab.0.left" timestamp="1638971923830">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="958" height="277" key="GridCell.Tab.0.left/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1638971923830" />
-    <state width="958" height="277" key="GridCell.Tab.0.right" timestamp="1638971923830">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="958" height="277" key="GridCell.Tab.0.right/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1638971923830" />
     <state x="667" y="187" width="586" height="787" key="find.popup" timestamp="1647527261914">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1645873122182" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1647527261914" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1647538330234">
-      <screen x="0" y="0" width="1920" height="1160" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1647678946878">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1645362047771" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1647678946878" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1647538330234" />
   </component>
   <component name="XDebuggerManager">

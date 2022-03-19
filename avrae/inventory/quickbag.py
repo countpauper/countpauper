@@ -377,11 +377,18 @@ while args:
 		if item_set:
 			item_set=item_set[0]
 			set_items=sets[item_set]
+
+			# if updated with coin, then don't add set (assumed background) item coins, the sheet did it
+			if character().coinpurse.total:
+				set_items={i:q for i,q in set_items.items() if i.lower() not in character().coinpurse.get_coins()}
+				debug.append(f'Limited Set {item_set}')
+			else:
+				debug.append(f'Set {item_set}')
+
 			added_args=[]
 			for item_name,q in set_items.items():
 				added_args+=[str(q),item_name]
 			args=added_args * delta + args
-			debug.append(f'Set {item_set}')
 			delta=None
 			continue
 
@@ -439,7 +446,7 @@ if  report:
 				q=contents.get(coin,0)
 				if coin in changes:
 					items.append(f'{icon} ~~{changes[coin][0]}~~ {q} {coin}')
-				else:
+				elif show_bag:
 					items.append(f'{icon} {q} {coin}')
 		for item_name,q in contents.items():
 			if item_name in done_items:
@@ -496,6 +503,8 @@ if show_weight:
 	item_table.update({coin: dict(weight=0.02, cost=1 / rate) for coin, rate in coins.items()})
 	weightless = bag_settings.get('weightlessBags',[])
 	weight=0
+	# add coinpurse weight
+	weight+=sum(character().coinpurse.get_coins().get(coin)*item_table.get(coin,{}).get('weight',0) for coin in coins)
 	unmatched=[]
 	items=len(final_bags)
 	for bag,content in final_bags:

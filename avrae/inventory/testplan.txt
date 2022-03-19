@@ -1,4 +1,6 @@
 !cvar delete bags
+# test with old coins first
+!coins
 # add dungeon backpack,  shovel, pot, clothes, 9gp and a quiver with 10 arrows (still shows redundant sack)
 # TODO: should notify about optional artisan's tools
 !bqb dungeon 1gp folk quiver 10 arr 9 -gp
@@ -43,9 +45,6 @@
 # force add coins to bag of holding
 !bqb 2sp holding 2000cp 1000gp
 
-# make change with multiple purses should end with: pouch 6cp, purse 0cp 0sp (plus what was there before)
-!bqb +4cp Coinpurse +2cp +1sp -10cp
-
 # show weight but the same as before because the dagger is in the bag of holding
 !bag track on
 !bqb cp -cp
@@ -56,23 +55,58 @@
 # count the gold and the daggers:   should be 10008 gp 3sp 1 ep and 1 dagger still
 !bqb count $ dagger
 
+# make change with multiple purses should end with: pouch 4cp, purse 2cp 0sp
+!bqb +4cp Coinpurse +2cp +1sp -10cp
 
+# Remove the whole pouch and EMPTy the purse, then redo some with a purse
+!bqb -pouch -coinpurse
 
+# coins should be added to purse, because the purse is 0 total
+!cvar delete bags
+!bqb dungeon 1gp folk quiver 10 arr 9 -gp
+
+# check that there's no purse in the bag var
+!cvar bags
+
+# undo and check that the purse is restored as well
+!bqb undo
+!g coins 10gp
+
+# now the background gold should not be added
+!bqb dungeon folk quiver 10 arr
+
+# Trying to force items in the coinpurse should use a default bag instead
+!bqb Coinpurse +emerald +signet
+
+# Coins can be force added to the backpack ALSO check that the purse weight is tracked
+!bqb 1000cp Backpack 10gp
+
+# check that gold can be removed from the backpack still
+!bqb Backpack -5gp
 
 ### transfer (setup)
-!cvar delete bags
-!bqb pouch explorer
+# Transfer purse to pouch
+!coins
+!bqb transfer coinPurse pouch
 
-# default to pouch
+# add items to the pouch and check only the items are transfered to the back
+!bqb pouch +signet
+!bqb transfer pouch backpack
+
+# Transfer coins to purse and delete the pouch
+!bqb transfer pouch coinpurse
+
+# default bag to backpack
 !bqb transfer backpack
 # undo transfer
 !bqb undo
 
 # transfer all, keep backpack
-!bqb transfer backpack pouch
+!bqb +Bag
+!bqb transfer backpack bag
 
 # transfer include item, check plural on source
-!bqb transfer pouch backpack bedroll
+!bqb transfer holding backpack bedroll
 
 #transfer include partial
 !bqb transfer pouch backpack mess
