@@ -62,6 +62,32 @@ Coinpurse:
 
 - Update HB magic item table again: https://docs.google.com/spreadsheets/d/1hGSA9EmvALogeh-HR5XKaUIdX_3OnPrT/edit#gid=1009357369
 
+
+
+
+!DC
+* !dc <sight/smell/sound> perception with modifiers
+* !dc <skill> <modifiers>
+- !dc <stuff> -distance value or -size size: key value modifier tables with nested dict
+- !dc <value> in modifier table (if not matched before) also just use
+-  numeric values take closest bigger? or smaller? or lerp?
+- !dc <skill> (show all possible modifiers)
+- !dc identify <thing> <modifiers> spell, cast, item, <creature type> will tell you the skill and the dcs
+- !dc identify <spell>
+    - advantage if known? use character spell and class to see if they know it, needs whole spell db to contain a list of classes/subclasses known ... lots data entry
+    - for npcs too? hmmm
+- change input format to match other commands (like argparse) but need to iterate over arguments so ... preprocess into a dict.
+- True in dc = auto pass (test)
+- passive with adv/dis
+- support dice dc 1d6 if value is string
+To store: database in gvar has
+type of check:
+    modifier: <bonus> if integer
+    modifier:
+        value: bonus
+    modifier: adv/dis if string
+
+
 !stats:
 * condition icons from config in !stats combat
 * condition icons for effect in !stats

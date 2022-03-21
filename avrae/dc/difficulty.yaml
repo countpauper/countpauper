@@ -1,0 +1,50 @@
+skill:
+  trivial: 0
+  very easy: 5
+  easy: 10
+  medium: 15
+  hard: 20
+  very hard: 25
+  nearly impossible: 30
+  adv: +5
+  dis: -5
+sight:
+  size:
+    gargantuan: -20
+    huge: -15
+    large: -10
+    medium: -5
+    small: 0
+    tiny: 5
+    inch: 10
+    1/2inch: 15
+    cm: 15
+    1/16inch: 20
+    mm: 20
+  half cover: +5
+  3/4cover: +10
+  3/4 cover: +10
+  full cover: no
+  cover:
+    half: +5
+    3/4: +10
+    full: no
+  moving: -5
+  colorful: -2
+  shiny: -5
+  strange: -5
+  unique: -10
+  distance:
+    0: -5
+    5: 0
+    10: 2
+    30: 5
+    60: 7
+    120: 10
+    240: 12
+    1000: 15
+    2000: 17
+    5280: 20
+  dim: dis
+  dark: no
+
