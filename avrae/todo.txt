@@ -67,19 +67,30 @@ Coinpurse:
 
 !DC
 * !dc <sight/smell/sound> perception with modifiers
-* !dc <skill> <modifiers>
-- !dc <stuff> -distance value or -size size: key value modifier tables with nested dict
-- !dc <value> in modifier table (if not matched before) also just use
--  numeric values take closest bigger? or smaller? or lerp?
-- !dc <skill> (show all possible modifiers)
+    * change input format to match other commands (like argparse) but need to iterate over arguments so ... preprocess into a dict.
+    * !dc <stuff> -distance value or -size size: key value modifier tables with nested dict
+    * numeric values take closest bigger? or smaller? or lerp?
+    * support dice dc 1d6 if value is string
+    - !dc ... <value> in modifier table (if not matched before) also just use
+* !dc <skill> (show all possible modifiers)
+- use @references in yaml for knowledge skills
+   bill-to: &id001
+    given  : Chris
+    family : Dumars
+  ship-to: *id001
+
+DC identify is a sub command? but have to copy the whole modifiers thing ?
 - !dc identify <thing> <modifiers> spell, cast, item, <creature type> will tell you the skill and the dcs
+- !dc identify <monster> <mods> should give a hint on multiple outcomes. basics, name, lore, strengths, weaknesses. these are sort of modifiers, but intrusive ones that are auto added ?
+    eg !dc identify zombie will say: religion dc 10, but dc 15 for modifier weakness and dc 20 for modifier lore
+   intrusive modifiers could be capitalized LORE
+   - does this require inversting the modifier/argument loop? and can -arguments then be parsed jit for dict ?
+- use semi intrusive modifiers as well to hint if someone didn't specify common modifiers like light in perception and that the default (0) one is used
 - !dc identify <spell>
     - advantage if known? use character spell and class to see if they know it, needs whole spell db to contain a list of classes/subclasses known ... lots data entry
     - for npcs too? hmmm
-- change input format to match other commands (like argparse) but need to iterate over arguments so ... preprocess into a dict.
 - True in dc = auto pass (test)
-- passive with adv/dis
-- support dice dc 1d6 if value is string
+x [makes no sense, the dc is the same] passive with adv/dis
 To store: database in gvar has
 type of check:
     modifier: <bonus> if integer
