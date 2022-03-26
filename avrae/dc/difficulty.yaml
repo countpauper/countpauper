@@ -1,14 +1,14 @@
 skill:
-  trivial: 0
-  very easy: 5
-  easy: 10
-  medium: 15
-  hard: 20
-  very hard: 25
-  nearly impossible: 30
-  adv: +5
-  dis: -5
+  difficulty:
+    trivial: 0
+    very easy: 5
+    easy: 10
+    medium: 15
+    hard: 20
+    very hard: 25
+    nearly impossible: 30
 sight:
+  skill: perception
   size:
     gargantuan: -20
     huge: -15
@@ -21,20 +21,17 @@ sight:
     cm: 15
     1/16inch: 20
     mm: 20
-  half cover: +5
-  3/4cover: +10
-  3/4 cover: +10
-  full cover: no
   cover:
     half: +5
     3/4: +10
     full: no
-  moving: -5
+  camouflaged: 2
+  moving: -2
   colorful: -2
-  shiny: -5
+  shiny: -3
   strange: -5
   unique: -10
-  distance:
+  ft: &feet
     0: -5
     5: 0
     10: 2
@@ -45,6 +42,157 @@ sight:
     1000: 15
     2000: 17
     5280: 20
-  dim: dis
-  dark: no
-
+    mile: 20
+    10560: 25
+  mile: &mile
+    1: 20
+    2: 25
+  distance:
+    <<: *feet
+    mile: 20
+  light:
+    dim: dis
+    dark: no
+  information:
+    detect: 0
+    size: 2
+    detail: 5
+sound:
+  skill: perception
+  level:  # decibels
+    # 140dB: -15
+    explosion: -15
+    # 120db: -10
+    # 100 db: -5
+    battle: -5
+    screaming: -5
+    party: -5
+    # 80 dB: 0
+    fighting: 0
+    shouting: 0
+    music: 0
+    # 60 dB: 5
+    talking: 5
+    riding: 5
+    # 40 dB: 10
+    casting: 10
+    drawing: 10
+    running: 10
+    sheathing: 10
+    walking: 10
+    # 30dB: 15
+    whisper: 15
+    breathing: 15
+    # 20dB : 20
+    rustling: 20
+    # 10dB: 25
+    heartbeat: 25
+  distance: # -6dB per doubled distance, ~x10 = +3 dc
+    0: 0
+    10: 5
+    30: 8
+    60: 10
+    120: 12
+    300: 15
+    1000: 20  # round up 18.5
+    5280: 25  # round up ~23
+    mile: 25
+  wind:
+    still: 0
+    down: -5
+    up: +5
+    strong: +2
+  background:
+    silent: 0
+    quiet: +2
+    noisy: +5
+    loud: +10
+  barrier:
+    open: +0
+    wood: +2
+    brick: +10  # 40dB
+    rock: +15
+  environment:
+    hall: -5
+    echo: -2
+    room: 0
+    forest: +2
+    town: +5
+  information:
+    detect: 0
+    words: 2
+    sentence: 5
+tracking: # DMG 244
+  skill: survival
+  ground:
+    snow: 10
+    soft: 10
+    dirt: 15
+    grass: 15
+    stone: 20
+  hour: &hour # DMG 244 with interpolation
+    8: +2
+    24: +5
+    48: +10
+    72: +15
+    96: +20
+    120: +25
+    144: +30
+  time:
+    <<: *hour
+    day: +5
+    week: +35
+  size:
+    tiny: +10
+    small: +2
+    medium: 0
+    large: -2
+    huge: -5
+    gargantuan: -10
+  amount:
+    one: 0
+    couple: -2
+    few: -5
+    many: -10
+    1: 0
+    2: -2
+    5: -5
+    10: -10
+    20: -15
+social: # DMG 245 with some inter and extrapolation
+  skill: persuasion
+  risk:
+    none: 0
+    minor: 10
+    moderate: 15
+    significant: 20
+    extreme: 25
+  attitude:
+    loved: -10
+    liked: -5
+    friendly: 0
+    agreeable: +5
+    indifferent: +10
+    defiant: +15
+    hostile: +20
+spell:
+  skill: arcana
+  # XGE #85
+  level:
+    cantrip: 15
+    0: 15
+    1: 16
+    2: 17
+    3: 18
+    4: 19
+    5: 20
+    6: 21
+    7: 22
+    8: 23
+    9: 24
+  known:
+    class: adv
+  # Homebrew
+  information:
+    spell: 0
+    school: -5

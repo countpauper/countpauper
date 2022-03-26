@@ -2,24 +2,33 @@
 var_name='dc_db'
 db=load_yaml(get_gvar(get_svar(var_name,'5a2806d6-b3d1-4253-a4fe-fb090910e896')))
 # return f'echo ```{db}```'
-syntax=f'{ctx.prefix}{ctx.alias} <check_type> <main modifier> [<modifiers>|<modifier>=<value>|-<modifier> <value>]...'
-if not (args:=&ARGS&):
-	return f'echo `{syntax}`'
-check_str=args.pop(0).lower()
-check_type=([chk for chk in db if check_str.startswith(chk.lower())]+[None])[0]
+syntax=f'{ctx.prefix}{ctx.alias} <check_type> <base> ["<modifier>"|-<modifier> "<value>"|"<value> <modifier>"]...'
+if (args:=&ARGS&):
+	check_str=args.pop(0).lower()
+	check_type=([chk for chk in db if chk.lower().startswith(check_str)]+[None])[0]
+else:
+	check_str, check_type='?', None
 if check_str in "?help" or not check_type:
 	return f'echo `{syntax}`.\nCheck type can be one of {", ".join(db)}.'
-available_modifiers=db[check_type]
 
+available_modifiers=db[check_type]
+skill_key='skill'
+if skill:=available_modifiers.get(skill_key):
+	available_modifiers.pop(skill_key)
+base=list(available_modifiers)[0]
 # parse arguments into a dictionary key:val where -a b will be added a:b just a will be added as a:None
 arg_dict=dict()
 while args:
 	arg=args.pop(0).lower()
 	if arg.startswith('-') and args and len(arg)>1:
 		argval=args.pop(0)
-		arg_dict[arg[1:]]=int(argval) if argval and argval.isdecimal() else argval
+		arg_dict[arg[1:]]= argval
+	elif endmatches:=[mod for mod in available_modifiers if arg.endswith(' '+mod.lower())]:
+		arg_dict[endmatches[0].lower()]=arg[:-len(endmatches[0])-1]
 	else:
 		arg_dict[arg]=None
+# convert decimal values into actual integers
+arg_dict={arg:int(val) if val and val.isdecimal() else val for arg,val in arg_dict.items()}
 
 modifiers=dict()
 unhandled_args=[]
@@ -32,7 +41,7 @@ while arg_dict:
 			if typeof(val)=='int':
 				modifiers[mod]=val
 				break
-			elif typeof(val)=='bool':
+			elif  typeof(val)=='bool':
 				modifiers[mod]=val
 				break
 			elif typeof(val)=='SafeDict':
@@ -48,30 +57,51 @@ while arg_dict:
 						else:
 							modifiers[f'{mod}={argval}'] = val[best.key]
 						break
-				elif argval and (key_match:={k:v for k,v in val.items() if k.startswith(argval)}):
+				elif argval and (key_match:={k:v for k,v in val.items() if str(k).startswith(argval)}):
 					first=list(key_match.keys())[0]
 					modifiers[f'{mod}={first}'] = key_match[first]
 					break
 				return f'echo For `{argkey}` provide one of the following values: {", ".join(str(v) for v in val)}'
+
 	else:
-		# go over all modifiers again to partial match the argument with all values of dictionary modifiers
-		for mod, val in available_modifiers.items():
-			if typeof(val)=='SafeDict':
-				if matches:=[k for k in val if str(k).lower().startswith(argkey)]:
-					match=matches[0]
-					modifiers[f'{mod}={match}']=val[match]
-					break
+		if argval is None:
+			# go over all dictionary modifiers again to partial match the argument with all values
+			for mod, val in available_modifiers.items():
+				if typeof(val)=='SafeDict':
+					# matches with small or small size (or 3/4 cover)
+					if matches:=[k for k in val if f'{k} {mod}'.lower().startswith(argkey)]:
+						match=matches[0]
+						modifiers[f'{mod}={match}']=val[match]
+						break
 		else:
 			unhandled_args.append(argkey)
-
 if unhandled_args:
 	return f'echo Unhandled arguments: {", ".join(f"`{a}`" for a in unhandled_args)}'
+rollargs=[skill] if skill else []
+# collect all advantage and disadvantage bonuses and filter them out
+adv=[mod for mod, bonus in modifiers.items() if bonus=='adv']
+dis=[mod for mod, bonus in modifiers.items() if bonus=='dis']
+if adv and dis:
+	advdis=f'straight because {", ".join(adv)}, but {", ".join(dis)}'
+elif adv:
+	advdis=f'with advantage because {", ".join(adv)}'
+	rollargs.append('adv')
+elif dis:
+	advdis=f'with disadvantage because {", ".join(dis)}'
+	rollargs.append('dis')
+else:
+	advdis=""
+modifiers={mod:bonus for mod, bonus in modifiers.items() if typeof(bonus) not in adv+dis}
 if not modifiers:
 	return f'echo `{syntax}`. Select at least one DC modifier from {", ".join(available_modifiers)}.'
-if fail:=any(bonus is False for bonus in modifiers.values()):
-	return f'echo check_type {" ".join(selected_modifiers)} = fail'
-elif success:=any(bonus is True for bonus in modifiers.values()):
-	return f'echo check_type {" ".join(selected_modifiers)} = success'
-dc_roll='+'.join(f'{bonus}[{mod}]' for mod,bonus in modifiers.items()).replace('+-','-')
-return f'echo {vroll(dc_roll)}'
+if fail:=[mod for mod, bonus in modifiers.items() if bonus is False]:
+	dc=f'fail because {", ".join(fail)}'
+	return f'echo {skill + " " if skill else ""}{dc} {advdis}'
+elif success:=[mod for mod, bonus in modifiers.items() if bonus is True]:
+	dc=f'pass because {", ".join(success)}'
+	return f'echo {skill + " " if skill else ""}{dc} {advdis}'
+else:
+	dc=vroll('+'.join(f'{bonus}[{mod}]' for mod,bonus in modifiers.items()).replace('+-','-'))
+	rollargs.append(f'-dc {dc.total}')
+return f'echo {skill+" " if skill else ""}{dc} {advdis}\n`{ctx.prefix}check {" ".join(rollargs)}`'
 </drac2>

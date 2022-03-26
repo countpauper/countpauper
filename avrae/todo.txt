@@ -71,8 +71,21 @@ Coinpurse:
     * !dc <stuff> -distance value or -size size: key value modifier tables with nested dict
     * numeric values take closest bigger? or smaller? or lerp?
     * support dice dc 1d6 if value is string
-    - !dc ... <value> in modifier table (if not matched before) also just use
+    *    !dc ... <value> in modifier table (if not matched before) also just use
 * !dc <skill> (show all possible modifiers)
+* show skill and don't show it as a modifier
+* nearest matching on numeric keys for no value syntax (eg "100 ft")
+* show if advantage
+- nearest matching numeric value only in dict
+* output roll command `!check <skill> -dc <dc> <adv/dis/pass/fail>`
+- identify poison/poison data [rarity]
+- identify scroll [level, class]
+- identify monster generic [rarity]
+    - identify by monster type give skill
+- identify item generic  [rarity]
+
+? require exactly one baseline dc. the first "modifier" (better be dict type then? perhaps even call it target or base?),
+? allow numeric or dice string bases? (for mods it gets mixed up with distances and such)
 - use @references in yaml for knowledge skills
    bill-to: &id001
     given  : Chris
@@ -80,12 +93,13 @@ Coinpurse:
   ship-to: *id001
 
 DC identify is a sub command? but have to copy the whole modifiers thing ?
-- !dc identify <thing> <modifiers> spell, cast, item, <creature type> will tell you the skill and the dcs
+- !dc id[entify] <thing> <modifiers> spell, cast, item, <creature type> will tell you the skill and the dcs
 - !dc identify <monster> <mods> should give a hint on multiple outcomes. basics, name, lore, strengths, weaknesses. these are sort of modifiers, but intrusive ones that are auto added ?
     eg !dc identify zombie will say: religion dc 10, but dc 15 for modifier weakness and dc 20 for modifier lore
    intrusive modifiers could be capitalized LORE
-   - does this require inversting the modifier/argument loop? and can -arguments then be parsed jit for dict ?
-- use semi intrusive modifiers as well to hint if someone didn't specify common modifiers like light in perception and that the default (0) one is used
+   - does this require inverting the modifier/argument loop? and can -arguments then be parsed jit for dict ?
+- use semi intrusive modifiers as well to hint if someone didn't specify common modifiers like light in perception and that the default (0) one is used.
+    - how to specify? character prefix? check metadata? capitalization naming convention?
 - !dc identify <spell>
     - advantage if known? use character spell and class to see if they know it, needs whole spell db to contain a list of classes/subclasses known ... lots data entry
     - for npcs too? hmmm
