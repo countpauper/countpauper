@@ -76,8 +76,13 @@ Coinpurse:
 * show skill and don't show it as a modifier
 * nearest matching on numeric keys for no value syntax (eg "100 ft")
 * show if advantage
-- nearest matching numeric value only in dict
+- nearest matching numeric value only in dict (!bdc sight small 100 should be 120, not 1000)
+    - allow key=>value to be dice strings
+* show all unused modifiers
+* allow values to be dice strings (-amount 2d6+2 1d100 ft)
 * output roll command `!check <skill> -dc <dc> <adv/dis/pass/fail>`
+* for unspecified with dict: assume 0 value and specify it, for others specify: no {mod}
+- smell data
 - identify poison/poison data [rarity]
 - identify scroll [level, class]
 - identify monster generic [rarity]

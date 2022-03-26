@@ -27,8 +27,8 @@ while args:
 		arg_dict[endmatches[0].lower()]=arg[:-len(endmatches[0])-1]
 	else:
 		arg_dict[arg]=None
-# convert decimal values into actual integers
-arg_dict={arg:int(val) if val and val.isdecimal() else val for arg,val in arg_dict.items()}
+# convert decimal values and roll strings into actual integers
+arg_dict={arg:roll(val) if val and val.split('d')[0].isdecimal() else val for arg,val in arg_dict.items()}
 
 modifiers=dict()
 unhandled_args=[]
@@ -40,9 +40,11 @@ while arg_dict:
 		if mod.lower().startswith(argkey):
 			if typeof(val)=='int':
 				modifiers[mod]=val
+				available_modifiers.pop(mod)
 				break
 			elif  typeof(val)=='bool':
 				modifiers[mod]=val
+				available_modifiers.pop(mod)
 				break
 			elif typeof(val)=='SafeDict':
 				if typeof(argval)=='int':
@@ -56,10 +58,12 @@ while arg_dict:
 							modifiers[f'{mod}≈{best.key}'] = val[best.key]
 						else:
 							modifiers[f'{mod}={argval}'] = val[best.key]
+						available_modifiers.pop(mod)
 						break
 				elif argval and (key_match:={k:v for k,v in val.items() if str(k).startswith(argval)}):
 					first=list(key_match.keys())[0]
 					modifiers[f'{mod}={first}'] = key_match[first]
+					available_modifiers.pop(mod)
 					break
 				return f'echo For `{argkey}` provide one of the following values: {", ".join(str(v) for v in val)}'
 
@@ -72,6 +76,7 @@ while arg_dict:
 					if matches:=[k for k in val if f'{k} {mod}'.lower().startswith(argkey)]:
 						match=matches[0]
 						modifiers[f'{mod}={match}']=val[match]
+						available_modifiers.pop(mod)
 						break
 		else:
 			unhandled_args.append(argkey)
@@ -91,7 +96,7 @@ elif dis:
 	rollargs.append('dis')
 else:
 	advdis=""
-modifiers={mod:bonus for mod, bonus in modifiers.items() if typeof(bonus) not in adv+dis}
+modifiers={mod:bonus for mod, bonus in modifiers.items() if mod not in adv+dis}
 if not modifiers:
 	return f'echo `{syntax}`. Select at least one DC modifier from {", ".join(available_modifiers)}.'
 if fail:=[mod for mod, bonus in modifiers.items() if bonus is False]:
@@ -103,5 +108,17 @@ elif success:=[mod for mod, bonus in modifiers.items() if bonus is True]:
 else:
 	dc=vroll('+'.join(f'{bonus}[{mod}]' for mod,bonus in modifiers.items()).replace('+-','-'))
 	rollargs.append(f'-dc {dc.total}')
-return f'echo {skill+" " if skill else ""}{dc} {advdis}\n`{ctx.prefix}check {" ".join(rollargs)}`'
+skill=f'{skill} ' if skill else ''
+unspecified=[]
+for mod, val in available_modifiers.items():
+	if typeof(val)=='SafeDict':
+		if zero_val:=([k for k,v in val.items() if v is 0]+[None])[0]:
+			unspecified.append(f'{mod}={zero_val}')
+		else:
+			unspecified.append(f'{mod}=unknown')
+	else:
+		unspecified.append(f'not {mod}')
+unspecified=f'\nAssumed: {", ".join(unspecified)}' if unspecified else ""
+return f'''echo {skill}{dc} {advdis}{unspecified}
+`{ctx.prefix}check {" ".join(rollargs)}`'''
 </drac2>
