@@ -11,11 +11,41 @@ else:
 if check_str in "?help" or not check_type:
 	return f'echo `{syntax}`.\nCheck type can be one of {", ".join(db)}.'
 
+units=dict(
+	foot=1,
+	ft=1,
+	inch=1/12,
+	mile=5280,
+	second=1/60,
+	minute=1,
+	min=1,
+	hour=60,
+	hr=60,
+	day=24*60,
+	week=7*24*60)
+
 available_modifiers=db[check_type]
 skill_key='skill'
 if skill:=available_modifiers.get(skill_key):
 	available_modifiers.pop(skill_key)
-base=list(available_modifiers)[0]
+
+# convert dict keys with units to base amounts
+for mod, val in available_modifiers.items():
+	if typeof(val)=='SafeDict':
+		remove_list=[]
+		new_vals=dict()
+		for k,v in val.items():
+			if typeof(k)=='str' and (unit:=([u for u in units if k.lower().endswith(u)]+[None])[0]):
+				k_amount=k.replace(' ','')[:-len(unit)]
+				if k_amount.isdecimal():
+					new_vals[int(k_amount)*units[unit]] = v
+					remove_list.append(k)
+				elif not k_amount:
+					new_vals[units[unit]] = v
+					remove_list.append(k)
+		val.update(new_vals)
+		available_modifiers[mod]={k:v for k,v in val.items() if k not in remove_list}
+
 # parse arguments into a dictionary key:val where -a b will be added a:b just a will be added as a:None
 arg_dict=dict()
 while args:
@@ -27,8 +57,22 @@ while args:
 		arg_dict[endmatches[0].lower()]=arg[:-len(endmatches[0])-1]
 	else:
 		arg_dict[arg]=None
-# convert decimal values and roll strings into actual integers
-arg_dict={arg:roll(val) if val and val.split('d')[0].isdecimal() else val for arg,val in arg_dict.items()}
+
+# convert argument values that are decimal with or without unit
+for arg, val in arg_dict.items():
+	# TODO: convert unit arguments
+	if val is None:
+		continue
+	if val.isdecimal():
+		arg_dict[arg]=int(val)
+	elif unit:=([u for u in units if val.endswith(u)]+[None])[0]:
+		unit_val=val.replace(' ','')[:-len(unit)]
+		if unit_val.isdecimal():
+			arg_dict[arg]=int(unit_val)*units[unit]
+		elif not unit_val:
+			arg_dict[arg]=units[unit]
+
+# return f'echo ```{available_modifiers}\n{remove_list}\n{arg_dict}```'
 
 modifiers=dict()
 unhandled_args=[]

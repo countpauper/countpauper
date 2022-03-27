@@ -77,12 +77,22 @@ Coinpurse:
 * nearest matching on numeric keys for no value syntax (eg "100 ft")
 * show if advantage
 - nearest matching numeric value only in dict (!bdc sight small 100 should be 120, not 1000)
+    - also unit arguments (without value) converted to match with this dict key `!dc smell pungent 100ft`
     - allow key=>value to be dice strings
 * show all unused modifiers
 * allow values to be dice strings (-amount 2d6+2 1d100 ft)
 * output roll command `!check <skill> -dc <dc> <adv/dis/pass/fail>`
 * for unspecified with dict: assume 0 value and specify it, for others specify: no {mod}
 - smell data
+- Something about units (miles feet) so they can be in the same mod type (for suggestion) but match with nearest and unit or something -distance 100ft
+    - add as 100ft in the yaml and convert to some 'base' unit from a multiplier dict (mixed) (remove spaces, then unit postfix
+    - add alternative spellings foot ft min minute hr hour
+    - arguments also
+    - convert back in the output? remember the input unit somehow, for each mod?
+
+- make svar an array, merge all gvars dicts, default is [default]
+    - make a raw yaml and a default yaml
+    - allow nested check names (identify item or recognize monster) not as a sub command but by structure of the yaml. how to distinguish nested checks from mods though?
 - identify poison/poison data [rarity]
 - identify scroll [level, class]
 - identify monster generic [rarity]

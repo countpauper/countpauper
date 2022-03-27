@@ -31,25 +31,18 @@ sight:
   shiny: -3
   strange: -5
   unique: -10
-  ft: &feet
-    0: -5
-    5: 0
-    10: 2
-    30: 5
-    60: 7
-    120: 10
-    240: 12
-    1000: 15
-    2000: 17
-    5280: 20
-    mile: 20
-    10560: 25
-  mile: &mile
-    1: 20
-    2: 25
   distance:
-    <<: *feet
+    0: -5
+    5ft: 0
+    10 feet: 2
+    30 ft: 5
+    60 ft: 7
+    120ft: 10
+    240ft: 12
+    1000ft: 15
+    2000ft: 17
     mile: 20
+    2 mile: 25
   light:
     dim: dis
     dark: no
@@ -88,14 +81,13 @@ sound:
     # 10dB: 25
     heartbeat: 25
   distance: # -6dB per doubled distance, ~x10 = +3 dc
-    0: 0
-    10: 5
-    30: 8
-    60: 10
-    120: 12
-    300: 15
-    1000: 20  # round up 18.5
-    5280: 25  # round up ~23
+    0 ft: 0
+    10ft: 5
+    30ft: 8
+    60ft: 10
+    120ft: 12
+    300ft: 15
+    1000ft: 20  # round up 18.5
     mile: 25
   wind:
     still: 0
@@ -104,7 +96,7 @@ sound:
     strong: +2
   background:
     silent: 0
-    quiet: +2
+    hushed: +2
     noisy: +5
     loud: +10
   barrier:
@@ -122,6 +114,49 @@ sound:
     detect: 0
     words: 2
     sentence: 5
+smell:
+  intensity:   # at 0-5 ft distance
+    overwhelming: -15 # 100%
+    pungent: -10 #100k ppm
+    stinky: -5 # 10k
+    fragrant: 0 # 1000 ppm
+    smelly : 5 # 100 ppm
+    noticable: 10 # 10 ppm (average human)
+    faint: 15 # 1ppm
+    trace: 20 # 0.1ppm
+  wind:
+    up: 2
+    down: -2
+    still: 0
+    heavy: +5
+  background smell:
+    sterile: 0
+    weak: +5
+    strong: +10
+  distance: # sphere volume mixing with normal air is cubic on a logarithmic ppm scale
+    0ft: 0
+    5 ft: 1
+    10 feet: 2
+    15ft: 5
+    30ft: 10
+    90ft: 15
+    120ft: 20
+    300ft: 25
+    600ft: 30
+    1200ft: 35
+    2400ft: 40
+    mile: 45
+  # durations based roughly on ppm with a 8 minute half life (every 1 hours ppm/100 = dc+10)
+  duration:
+    0 min: 0
+    minute: 0
+    15min: 2
+    30min: 5
+    hour: 10
+    half hour: 5
+    2 hour: 20
+    3 hour: 30
+    4 hour: 40
 tracking: # DMG 244
   skill: survival
   ground:
@@ -130,17 +165,14 @@ tracking: # DMG 244
     dirt: 15
     grass: 15
     stone: 20
-  hour: &hour # DMG 244 with interpolation
-    8: +2
-    24: +5
-    48: +10
-    72: +15
-    96: +20
-    120: +25
-    144: +30
-  time:
-    <<: *hour
-    day: +5
+  time: &hour # DMG 244 with interpolation
+    8hr: +2
+    day : +5
+    2 day: +10
+    3 day: +15
+    4 day : +20
+    5 day: +25
+    6 day: +30
     week: +35
   size:
     tiny: +10
