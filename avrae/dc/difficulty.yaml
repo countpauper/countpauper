@@ -186,11 +186,16 @@ tracking: # DMG 244
     couple: -2
     few: -5
     many: -10
+    0: no
     1: 0
     2: -2
     5: -5
     10: -10
     20: -15
+  information:
+    presence: 0
+    amount: 5
+    identity: 10
 social: # DMG 245 with some inter and extrapolation
   skill: persuasion
   risk:

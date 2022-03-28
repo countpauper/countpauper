@@ -21,7 +21,7 @@ for u, conv in table.items():
 			v='1'
 		if v.replace('.','').isdecimal():
 			v=float(v)
-			conversions = [f"{v*f:.1f} {u if v*f<2 else plural.get(u,u)}" for u,f in conv.items() if f!=1]
+			conversions = [f"{v*f:.1f} {u if v*f<2 else plural.get(u,u)}" for u,f in conv.items() if f!=1 and v*f>=0.1]
 			return f'echo **{arg}**= {" or ".join(conversions)}'
 return f'echo Unit of `{arg}` is not recognized. Use {syntax}.'
 </drac2>

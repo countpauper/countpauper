@@ -11,40 +11,12 @@ else:
 if check_str in "?help" or not check_type:
 	return f'echo `{syntax}`.\nCheck type can be one of {", ".join(db)}.'
 
-units=dict(
-	foot=1,
-	ft=1,
-	inch=1/12,
-	mile=5280,
-	second=1/60,
-	minute=1,
-	min=1,
-	hour=60,
-	hr=60,
-	day=24*60,
-	week=7*24*60)
+units=table=load_yaml(get_gvar('7b9457fc-3dfa-44f6-a0a2-794388ca9a28'))
 
 available_modifiers=db[check_type]
 skill_key='skill'
 if skill:=available_modifiers.get(skill_key):
 	available_modifiers.pop(skill_key)
-
-# convert dict keys with units to base amounts
-for mod, val in available_modifiers.items():
-	if typeof(val)=='SafeDict':
-		remove_list=[]
-		new_vals=dict()
-		for k,v in val.items():
-			if typeof(k)=='str' and (unit:=([u for u in units if k.lower().endswith(u)]+[None])[0]):
-				k_amount=k.replace(' ','')[:-len(unit)]
-				if k_amount.isdecimal():
-					new_vals[int(k_amount)*units[unit]] = v
-					remove_list.append(k)
-				elif not k_amount:
-					new_vals[units[unit]] = v
-					remove_list.append(k)
-		val.update(new_vals)
-		available_modifiers[mod]={k:v for k,v in val.items() if k not in remove_list}
 
 # parse arguments into a dictionary key:val where -a b will be added a:b just a will be added as a:None
 arg_dict=dict()
@@ -58,22 +30,10 @@ while args:
 	else:
 		arg_dict[arg]=None
 
-# convert argument values that are decimal with or without unit
-for arg, val in arg_dict.items():
-	# TODO: convert unit arguments
-	if val is None:
-		continue
-	if val.isdecimal():
-		arg_dict[arg]=int(val)
-	elif unit:=([u for u in units if val.endswith(u)]+[None])[0]:
-		unit_val=val.replace(' ','')[:-len(unit)]
-		if unit_val.isdecimal():
-			arg_dict[arg]=int(unit_val)*units[unit]
-		elif not unit_val:
-			arg_dict[arg]=units[unit]
+# convert argument values that are decimal
+arg_dict={arg:int(val) if val is not None and val.isdecimal() else val for arg, val in arg_dict.items() }
 
 # return f'echo ```{available_modifiers}\n{remove_list}\n{arg_dict}```'
-
 modifiers=dict()
 unhandled_args=[]
 while arg_dict:
@@ -91,20 +51,46 @@ while arg_dict:
 				available_modifiers.pop(mod)
 				break
 			elif typeof(val)=='SafeDict':
+				# find a unit and compatible conversions
+				arg_conversion=dict()
+				if argval:
+					if arg_unit:=([unit for unit in units if argval.lower().endswith(unit)]+[None])[0]:
+						if (arg_value:=argval.replace(' ','')[:-len(arg_unit)]).isdecimal():
+							argval=int(arg_value)
+							arg_conversion=units[arg_unit]
+							arg_conversion[arg_unit]=1
 				if typeof(argval)=='int':
+					dbg=dict()
 					best=dict(key=None, delta=2**31)
 					for k,v in val.items():
-						if typeof(k)=='int':
+						if typeof(k) == 'str' and (key_unit := ([unit for unit in arg_conversion if k.lower().endswith(unit)] + [None])[0]):
+							if key_value:=k.replace(' ', '')[:-len(key_unit)]:
+								if key_value.isdecimal():
+									key_value=int(key_value)
+								elif key_value.replace('.','').isdecimal():
+									key_value=float(key_value)
+								else:
+									continue
+							else:
+								key_value=1
+							dbg[k] = f'{key_value}/{arg_conversion[key_unit]} {key_unit}'
+							converted_value=float(key_value) / arg_conversion[key_unit]
+							if (delta := abs(converted_value - argval)) < best.delta:
+								best = dict(key=f'{argval} {arg_unit}', delta=delta, val=v)
+						elif typeof(k)=='int':
 							if (delta:=abs(k - argval))<best.delta:
-								best=dict(key=k, delta=delta)
+								best=dict(key=k, delta=delta, val=v)
+					#return f'echo {best} with `{dbg}` using `{arg_conversion}`'
 					if best.key is not None:
 						if best.delta:
-							modifiers[f'{mod}≈{best.key}'] = val[best.key]
+							modifiers[f'{mod}≈{best.key}'] = best.val
 						else:
-							modifiers[f'{mod}={argval}'] = val[best.key]
+							modifiers[f'{mod}={argval}'] = best.val
 						available_modifiers.pop(mod)
 						break
-				elif argval and (key_match:={k:v for k,v in val.items() if str(k).startswith(argval)}):
+					else:
+						argval=str(argval)
+				if argval and (key_match:={k:v for k,v in val.items() if str(k).startswith(argval)}):
 					first=list(key_match.keys())[0]
 					modifiers[f'{mod}={first}'] = key_match[first]
 					available_modifiers.pop(mod)
