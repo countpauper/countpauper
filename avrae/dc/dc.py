@@ -2,21 +2,33 @@
 var_name='dc_db'
 db=load_yaml(get_gvar(get_svar(var_name,'5a2806d6-b3d1-4253-a4fe-fb090910e896')))
 # return f'echo ```{db}```'
-syntax=f'{ctx.prefix}{ctx.alias} <check_type> <base> ["<modifier>"|-<modifier> "<value>"|"<value> <modifier>"]...'
-if (args:=&ARGS&):
+syntax=f'{ctx.prefix}{ctx.alias} <check_type> [<sub type>]... <base> ["<modifier>"|-<modifier> "<value>"|"<value> <modifier>"]...'
+
+args=&ARGS&
+skill_key='skill'
+check_dir=[]
+while args:
 	check_str=args.pop(0).lower()
-	check_type=([chk for chk in db if chk.lower().startswith(check_str)]+[None])[0]
-else:
-	check_str, check_type='?', None
-if check_str in "?help" or not check_type:
-	return f'echo `{syntax}`.\nCheck type can be one of {", ".join(db)}.'
+	if check_type:=([chk for chk in db if chk.lower().startswith(check_str)]+[None])[0]:
+		check_dir.append(check_type)
+		available_modifiers=db[check_type]
+		if skill:=available_modifiers.get(skill_key):
+			available_modifiers.pop(skill_key)
+			break
+		else:
+			db=db[check_type]
+	elif check_str in ['?','help']:
+		return f'echo `{syntax}`.\n{" ".join(check_dir) or "Check"} can be one of {", ".join(db)}.'
+	else:
+		return f'echo `{check_str}` is not recognized. Choose one of {", ".join(db)}.'
+if not skill:
+	return f'echo `{syntax}`.\n{" ".join(check_dir)} can be one of {", ".join(db)}.'
+
+if not check_dir:
+	return f'echo `{syntax}`.\nCheck can be one of {", ".join(db)}.'
 
 units=table=load_yaml(get_gvar('7b9457fc-3dfa-44f6-a0a2-794388ca9a28'))
 
-available_modifiers=db[check_type]
-skill_key='skill'
-if skill:=available_modifiers.get(skill_key):
-	available_modifiers.pop(skill_key)
 
 # parse arguments into a dictionary key:val where -a b will be added a:b just a will be added as a:None
 arg_dict=dict()
@@ -115,7 +127,7 @@ else:
 	advdis=""
 modifiers={mod:bonus for mod, bonus in modifiers.items() if mod not in adv+dis}
 if not modifiers:
-	return f'echo `{syntax}`. Select at least one DC modifier from {", ".join(available_modifiers)}.'
+	return f'echo `{syntax}`. Select at least one {skill} DC modifier from {", ".join(available_modifiers)}.'
 if fail:=[mod for mod, bonus in modifiers.items() if bonus is False]:
 	dc=f'fail because {", ".join(fail)}'
 	return f'echo {skill + " " if skill else ""}{dc} {advdis}'
