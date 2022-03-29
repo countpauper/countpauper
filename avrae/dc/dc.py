@@ -39,7 +39,6 @@ unhandled_args=[]
 while arg_dict:
 	argkey=list(arg_dict.keys())[0]
 	argval=arg_dict.pop(argkey)
-
 	for mod, val in available_modifiers.items():
 		if mod.lower().startswith(argkey):
 			if typeof(val)=='int':
@@ -50,66 +49,54 @@ while arg_dict:
 				modifiers[mod]=val
 				available_modifiers.pop(mod)
 				break
-			elif typeof(val)=='SafeDict':
-				# find a unit and compatible conversions
-				arg_conversion=dict()
-				if argval:
-					if arg_unit:=([unit for unit in units if argval.lower().endswith(unit)]+[None])[0]:
-						if (arg_value:=argval.replace(' ','')[:-len(arg_unit)]).isdecimal():
-							argval=int(arg_value)
-							arg_conversion=units[arg_unit]
-							arg_conversion[arg_unit]=1
-				if typeof(argval)=='int':
-					dbg=dict()
-					best=dict(key=None, delta=2**31)
-					for k,v in val.items():
-						if typeof(k) == 'str' and (key_unit := ([unit for unit in arg_conversion if k.lower().endswith(unit)] + [None])[0]):
-							if key_value:=k.replace(' ', '')[:-len(key_unit)]:
-								if key_value.isdecimal():
-									key_value=int(key_value)
-								elif key_value.replace('.','').isdecimal():
-									key_value=float(key_value)
-								else:
-									continue
+		if typeof(val)=='SafeDict' and (argval is None or mod.lower().startswith(argkey)):
+			search_key = argval or argkey
+			# find the unit if the argument and compatible conversions
+			arg_conversion=dict()
+			if arg_unit:=([unit for unit in units if str(search_key).lower().endswith(unit)]+[None])[0]:
+				if (arg_value:=search_key.replace(' ','')[:-len(arg_unit)]).isdecimal():
+					search_key=int(arg_value)
+					arg_conversion=units[arg_unit]
+					arg_conversion[arg_unit]=1
+
+			if typeof(search_key)=='int':
+				dbg=dict()
+				best=dict(key=None, delta=2**31)
+				for k,v in val.items():
+					if typeof(k) == 'str' and (key_unit := ([unit for unit in arg_conversion if k.lower().endswith(unit)] + [None])[0]):
+						if key_value:=k.replace(' ', '')[:-len(key_unit)]:
+							if key_value.isdecimal():
+								key_value=int(key_value)
+							elif key_value.replace('.','').isdecimal():
+								key_value=float(key_value)
 							else:
-								key_value=1
-							dbg[k] = f'{key_value}/{arg_conversion[key_unit]} {key_unit}'
-							converted_value=float(key_value) / arg_conversion[key_unit]
-							if (delta := abs(converted_value - argval)) < best.delta:
-								best = dict(key=f'{argval} {arg_unit}', delta=delta, val=v)
-						elif typeof(k)=='int':
-							if (delta:=abs(k - argval))<best.delta:
-								best=dict(key=k, delta=delta, val=v)
-					#return f'echo {best} with `{dbg}` using `{arg_conversion}`'
-					if best.key is not None:
-						if best.delta:
-							modifiers[f'{mod}≈{best.key}'] = best.val
+								continue
 						else:
-							modifiers[f'{mod}={argval}'] = best.val
-						available_modifiers.pop(mod)
-						break
+							key_value=1
+						# dbg[k] = f'{key_value}/{arg_conversion[key_unit]} {key_unit}'
+						converted_value=float(key_value) / arg_conversion[key_unit]
+						if (delta := abs(converted_value - search_key)) < best.delta:
+							best = dict(key=f'{search_key} {arg_unit}', delta=delta, val=v)
+					elif typeof(k)=='int':
+						if (delta:=abs(k - search_key))<best.delta:
+							best=dict(key=k, delta=delta, val=v)
+				# return f'echo {best} with `{dbg}` using `{arg_conversion}`'
+				if best.key is not None:
+					if best.delta:
+						modifiers[f'{mod}≈{best.key}'] = best.val
 					else:
-						argval=str(argval)
-				if argval and (key_match:={k:v for k,v in val.items() if str(k).startswith(argval)}):
-					first=list(key_match.keys())[0]
-					modifiers[f'{mod}={first}'] = key_match[first]
+						modifiers[f'{mod}={best.key}'] = best.val
 					available_modifiers.pop(mod)
 					break
+			if key_match:={k:v for k,v in val.items() if str(k).startswith(str(search_key))}:
+				first=list(key_match.keys())[0]
+				modifiers[f'{mod}={first}'] = key_match[first]
+				available_modifiers.pop(mod)
+				break
+			if argval:
 				return f'echo For `{argkey}` provide one of the following values: {", ".join(str(v) for v in val)}'
-
 	else:
-		if argval is None:
-			# go over all dictionary modifiers again to partial match the argument with all values
-			for mod, val in available_modifiers.items():
-				if typeof(val)=='SafeDict':
-					# matches with small or small size (or 3/4 cover)
-					if matches:=[k for k in val if f'{k} {mod}'.lower().startswith(argkey)]:
-						match=matches[0]
-						modifiers[f'{mod}={match}']=val[match]
-						available_modifiers.pop(mod)
-						break
-		else:
-			unhandled_args.append(argkey)
+		unhandled_args.append(argkey)
 if unhandled_args:
 	return f'echo Unhandled arguments: {", ".join(f"`{a}`" for a in unhandled_args)}'
 rollargs=[skill] if skill else []
