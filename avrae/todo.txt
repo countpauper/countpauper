@@ -76,9 +76,10 @@ Coinpurse:
 * show skill and don't show it as a modifier
 * nearest matching on numeric keys for no value syntax (eg "100 ft")
 * show if advantage
-- nearest matching numeric value only in dict (!bdc sight small 100 should be 120, not 1000)
-    - also unit arguments (without value) converted to match with this dict key `!dc smell pungent 100ft`
+- nearest matching numeric value only in dict (!bdc sight small 100ft should be 120, not 1000)
+    * also unit arguments (without value) converted to match with this dict key `!dc smell pungent 100ft`
     - allow key=>value to be dice strings
+    - 2d6ft and -amount 2d6, also to allow 20*5ft
 * show all unused modifiers
 * allow values to be dice strings (-amount 2d6+2 1d100 ft)
 * output roll command `!check <skill> -dc <dc> <adv/dis/pass/fail>`
@@ -89,14 +90,14 @@ Coinpurse:
     * add alternative spellings foot ft min minute hr hour
     * arguments also
     * convert back in the output? remember the input unit somehow, for each mod?
+* make svar an array, merge all gvars dicts, default is [default]
+  - make a raw yaml and a default yaml
+  * allow nested check names (identify item or recognize monster) not as a sub command but by structure of the yaml. how to distinguish nested checks from mods though? [by having a skill specified]
 
-- make svar an array, merge all gvars dicts, default is [default]
-    - make a raw yaml and a default yaml
-    - allow nested check names (identify item or recognize monster) not as a sub command but by structure of the yaml. how to distinguish nested checks from mods though?
-- identify poison/poison data [rarity]
+- identify poison/poison data [rarity] (https://roll20.net/compendium/dnd5e/Poisons#content) find raw DCs
 - identify scroll [level, class]
-- identify monster generic [rarity]
-    - identify by monster type give skill
+* identify monster generic [rarity]
+    * identify by monster type give skill
 - identify item generic  [rarity]
 
 ? require exactly one baseline dc. the first "modifier" (better be dict type then? perhaps even call it target or base?),

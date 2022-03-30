@@ -16,6 +16,9 @@ sight:
     half: +5
     3/4: +10
     full: no
+  obscured:
+    lightly: dis
+    heavily: no
   camouflaged: 2
   moving: -2
   colorful: -2
@@ -106,6 +109,7 @@ sound:
     words: 2
     sentence: 5
 smell:
+  skill: perception
   intensity:   # at 0-5 ft distance
     overwhelming: -15 # 100%
     pungent: -10 #100k ppm

@@ -1,12 +1,22 @@
 <drac2>
 var_name='dc_db'
-db=load_yaml(get_gvar(get_svar(var_name,'5a2806d6-b3d1-4253-a4fe-fb090910e896')))
+data = load_yaml(get_svar(var_name,get(var_name,'5a2806d6-b3d1-4253-a4fe-fb090910e896')))
+if typeof(data)!='SafeList':
+	data=[data]
+db=dict()
+for d in data:
+	if (typeof(d)=='str') and len(d)==36:
+		db.update(load_yaml(get_gvar(d)))
+	elif typeof(d)=='SafeDict':
+		db.update(d)
+	else:
+		return f'echo Unrecognized data `{d}` in `{var_name}`. Use a (list of) `{ctx.prefix}gvar` guids referencing yaml data or direct yaml.'
+
 # return f'echo ```{db}```'
 syntax=f'{ctx.prefix}{ctx.alias} <check_type> [<sub type>]... <base> ["<modifier>"|-<modifier> "<value>"|"<value> <modifier>"]...'
 
-args=&ARGS&
-skill_key='skill'
-check_dir=[]
+args, check_dir=&ARGS&, []
+skill_key, skill='skill', None
 while args:
 	check_str=args.pop(0).lower()
 	if check_type:=([chk for chk in db if chk.lower().startswith(check_str)]+[None])[0]:
@@ -22,15 +32,14 @@ while args:
 	else:
 		return f'echo `{check_str}` is not recognized. Choose one of {", ".join(db)}.'
 if not skill:
-	return f'echo `{syntax}`.\n{" ".join(check_dir)} can be one of {", ".join(db)}.'
+	return f'echo `{syntax}`.\n{" ".join(check_dir) or "Check"} can be one of {", ".join(db)}.'
 
 if not check_dir:
 	return f'echo `{syntax}`.\nCheck can be one of {", ".join(db)}.'
 
 units=table=load_yaml(get_gvar('7b9457fc-3dfa-44f6-a0a2-794388ca9a28'))
 
-
-# parse arguments into a dictionary key:val where -a b will be added a:b just a will be added as a:None
+# parse remaining arguments into a dictionary key:val where -a b will be added a:b just a will be added as a:None
 arg_dict=dict()
 while args:
 	arg=args.pop(0).lower()
@@ -38,7 +47,7 @@ while args:
 		argval=args.pop(0)
 		arg_dict[arg[1:]]= argval
 	elif endmatches:=[mod for mod in available_modifiers if arg.endswith(' '+mod.lower())]:
-		arg_dict[endmatches[0].lower()]=arg[:-len(endmatches[0])-1]
+		arg_dict[endmatches[0].lower()]=arg[:-len(endmatches[0])-1].lower()
 	else:
 		arg_dict[arg]=None
 
