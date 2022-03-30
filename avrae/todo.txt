@@ -78,8 +78,8 @@ Coinpurse:
 * show if advantage
 - nearest matching numeric value only in dict (!bdc sight small 100ft should be 120, not 1000)
     * also unit arguments (without value) converted to match with this dict key `!dc smell pungent 100ft`
-    - allow key=>value to be dice strings
-    - 2d6ft and -amount 2d6, also to allow 20*5ft
+    * allow key=>value to be dice strings
+    * 2d6ft and -amount 2d6, also to allow 20*5ft
 * show all unused modifiers
 * allow values to be dice strings (-amount 2d6+2 1d100 ft)
 * output roll command `!check <skill> -dc <dc> <adv/dis/pass/fail>`

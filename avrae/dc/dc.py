@@ -51,9 +51,6 @@ while args:
 	else:
 		arg_dict[arg]=None
 
-# convert argument values that are decimal
-arg_dict={arg:int(val) if val is not None and val.isdecimal() else val for arg, val in arg_dict.items() }
-
 # return f'echo ```{available_modifiers}\n{remove_list}\n{arg_dict}```'
 modifiers=dict()
 unhandled_args=[]
@@ -75,10 +72,13 @@ while arg_dict:
 			# find the unit if the argument and compatible conversions
 			arg_conversion=dict()
 			if arg_unit:=([unit for unit in units if str(search_key).lower().endswith(unit)]+[None])[0]:
-				if (arg_value:=search_key.replace(' ','')[:-len(arg_unit)]).isdecimal():
-					search_key=int(arg_value)
+				arg_value = search_key.replace(' ', '')[:-len(arg_unit)]
+				if not arg_value.isalpha():
+					search_key=roll(arg_value)	# assume it's 2d6*4<unit>, but
 					arg_conversion=units[arg_unit]
 					arg_conversion[arg_unit]=1
+			elif typeof(search_key)=='str' and not search_key.isalpha():
+				search_key=roll(search_key)
 
 			if typeof(search_key)=='int':
 				dbg=dict()
