@@ -76,7 +76,9 @@ Coinpurse:
 * show skill and don't show it as a modifier
 * nearest matching on numeric keys for no value syntax (eg "100 ft")
 * show if advantage
-- nearest matching numeric value only in dict (!bdc sight small 100ft should be 120, not 1000)
+- !bdc sight small -cover 3/4 doesn't work, probably because 3/4 is seen as a dice roll and converted to whatever before being matched as text
+
+* nearest matching numeric value only in dict (!bdc sight small 100ft should be 120, not 1000)
     * also unit arguments (without value) converted to match with this dict key `!dc smell pungent 100ft`
     * allow key=>value to be dice strings
     * 2d6ft and -amount 2d6, also to allow 20*5ft

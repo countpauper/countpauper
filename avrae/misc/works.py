@@ -2,7 +2,7 @@
 args=&ARGS&
 pargs=argparse(args)
 ch=character()
-use=f'{ctx.prefix}{ctx.alias} <skill> [-b <bonus>] [-rr <count>] [adv|dis]'
+use=f'{ctx.prefix}{ctx.alias} <skill> [-b <bonus>] [-rr <count>] [adv] [dis]'
 if any(h in args for h in ['help','?']) in args:
 	return f'echo `{use}`'
 mi = int(pargs.last('mi', default=(10 if ch.csettings.get('talent', False) else 0), type_=int))

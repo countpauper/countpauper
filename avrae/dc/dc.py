@@ -69,6 +69,13 @@ while arg_dict:
 				break
 		if typeof(val)=='SafeDict' and (argval is None or mod.lower().startswith(argkey)):
 			search_key = argval or argkey
+			# try exact matches first, for isntance for -cover 3/4
+			if key_match:={k:v for k,v in val.items() if k==search_key}:
+				first=list(key_match.keys())[0]
+				modifiers[f'{mod}={first}'] = key_match[first]
+				available_modifiers.pop(mod)
+				break
+
 			# find the unit if the argument and compatible conversions
 			arg_conversion=dict()
 			if arg_unit:=([unit for unit in units if str(search_key).lower().endswith(unit)]+[None])[0]:
@@ -156,7 +163,7 @@ for mod, val in available_modifiers.items():
 			unspecified.append(f'{mod}=unknown')
 	else:
 		unspecified.append(f'not {mod}')
-unspecified=f'\nAssumed: {", ".join(unspecified)}' if unspecified else ""
-return f'''echo {skill}{dc} {advdis}{unspecified}
+assumptions=f'\nAssuming {", ".join(unspecified)}' if unspecified else ""
+return f'''echo {skill}{dc} {advdis}{assumptions}
 `{ctx.prefix}check {" ".join(rollargs)}`'''
 </drac2>

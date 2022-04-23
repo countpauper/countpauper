@@ -1,0 +1,37 @@
+poison:
+  method:
+    visual: 10
+    smell: 5
+    taste: 0
+  type:
+    Assassin’s blood:
+      method:
+        smell: 15
+        visual: 15
+        taste: 20
+      info:
+        poisonous: 0
+        type: 0
+    Burnt othur fumes:
+      smell: 12
+      visual: 17
+      taste: 12
+    Crawler mucus:
+      smell: 17
+      visual: 15
+      taste: 12
+    Drow poison: 12
+    Essence of ether: 15
+      smell: 10
+      taste: 12
+      visual: 15
+    Malice: 12
+    Midnight tears: 25
+    Oil of taggit: 15
+      method:
+        smell: no
+        visual: 10
+        taste: 0
+      info:
+        poisonous: 0
+        type: 5
