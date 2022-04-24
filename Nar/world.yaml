@@ -1,0 +1,36 @@
+locations:
+  Amsterdam:
+      locations:
+        Leidseplein:
+          creatures:
+            - Tourist
+            - Pigeon
+        Broodje van Kootje:
+          creatures:
+            - Kootje
+            - Student
+        Paleis op de Dam:
+          creatures:
+            - Koningin Beatrix
+      travel:
+        - from: Leidseplein
+          to: Broodje van Kootje
+          distance: 0.4
+        - from: Leidseplein
+          to: Paleis op de Dam
+          distance: 3
+  Waalwijk:
+      locations:
+        Vredesplein: ~
+        Bakker Bart:
+          creatures:
+            - Bart
+            - Franske
+      travel:
+        - from: Vredesplein
+          to: Bakker Bart
+          distance: 1
+travel:
+  - from: Amsterdam
+    to: Waalwijk
+    distance: 100
