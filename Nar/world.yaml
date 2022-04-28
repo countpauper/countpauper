@@ -2,14 +2,17 @@ locations:
   Amsterdam:
       locations:
         Leidseplein:
+          description: A busy square at the southern end of Amsterdam's central canal ring.
           creatures:
             - Tourist
             - Pigeon
         Broodje van Kootje:
+          description: A street vendor known for its pastrami and liver sandwiches.
           creatures:
             - Kootje
             - Student
         Paleis op de Dam:
+          description: The Royal Palace sitting at the Dam Square, opposite the war monument.
           creatures:
             - Koningin Beatrix
       travel:
@@ -21,8 +24,10 @@ locations:
           distance: 3
   Waalwijk:
       locations:
-        Vredesplein: ~
+        Vredesplein:
+          description: A square just behind the center, where locals, travelers and tradesmen find each other.
         Bakker Bart:
+          description: A bakery specializing in sausage rolls, sweet rolls and coffee.
           creatures:
             - Bart
             - Franske

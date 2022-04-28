@@ -9,6 +9,13 @@ class Creature(object):
 		self.relations = dict()
 		self.knowledge = list()
 
+
+	def move(self, destination):
+		self.location.creatures.remove(self)
+		self.location = destination
+		self.location.creatures.append(self)
+
+
 	def __str__(self):
 		return self.name
 

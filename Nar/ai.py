@@ -4,4 +4,4 @@ class AI(object):
 		self.controlled = []
 
 	def control(self, world):
-		self.control = world.find_creatures(lambda c: c.player is None)
+		self.controlled = world.find_creatures(lambda c: c.player is None)
