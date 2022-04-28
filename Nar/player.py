@@ -14,15 +14,16 @@ class Player(object):
 			self.reincarnate(world)
 		creature = self.controlled[0]
 
-		print(f"{creature.name} ({self.name}) : You're at {creature.location.blurb()}\n")
+		print(f"{self.name}: {creature.description()}")
+		print(f"You're at {creature.location.blurb()}\n")
+
 		command = input()
 		action_command, args=command.split(" ",maxsplit=1)
 		args=args.split(',go')
 		action = actions.get(action_command)
 		if action:
 			act = action(*args)
-			act.execute(self.controlled[0], world)
-
+			act.execute(creature, world)
 
 	def reincarnate(self, world):
 		creatures=world.find_creatures(lambda c : c.player is None)

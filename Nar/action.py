@@ -18,7 +18,19 @@ class Go(Action):
 		else:
 			raise Exception("Failed to find destination "+self.destination)
 
+class Get(Action):
+	def __init__(self, item):
+		super().__init__()
+		self.item = item
+
+	def execute(self, actor, world):
+		item = actor.location.find(self.item)
+		if item:
+			actor.obtain(1, item)
+		else:
+			raise Exception("Failed to find item "+self.destination)
+
 # Go = type('Action', (Action,), dict())
 
-actions = dict(go=Go)
+actions = dict(go=Go, get=Get)
 

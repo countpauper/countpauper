@@ -11,6 +11,8 @@ locations:
           creatures:
             - Kootje
             - Student
+          items:
+            - Bread
         Paleis op de Dam:
           description: The Royal Palace sitting at the Dam Square, opposite the war monument.
           creatures:
@@ -31,6 +33,8 @@ locations:
           creatures:
             - Bart
             - Franske
+          items:
+            - Bread
       travel:
         - from: Vredesplein
           to: Bakker Bart
