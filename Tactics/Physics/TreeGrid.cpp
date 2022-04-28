@@ -28,7 +28,6 @@ void TreeGrid::Constrain(const Engine::IVolume& v, const Material& m, double tem
 }
 
 void TreeGrid::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
-void TreeGrid::ApplyForce(const Engine::Coordinate& c, double force) {}
 void TreeGrid::Heat(const Engine::Coordinate& c, double energy) {}
 
 is::signals::connection TreeGrid::ConnectChange(ChangeSignal::slot_type slot) { return is::signals::connection(); }
@@ -47,9 +46,9 @@ double TreeGrid::Temperature(const Engine::IVolume& v) const
         return 0.0; // vacuum
 }
 
-Engine::Vector TreeGrid::Force(const Engine::IVolume& c) const
+Engine::Vector TreeGrid::Force(const Engine::Coordinate& c) const
 {
-    return Engine::Vector();
+    return Engine::Vector::zero;
 }
 
 const TreeGrid::Leaf* TreeGrid::Get(const Position& p) const

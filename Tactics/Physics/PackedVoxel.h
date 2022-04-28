@@ -1,5 +1,7 @@
 #include "Physics/Material.h"
 #include "Engine/Color.h"
+#include "Engine/Vector.h"
+
 namespace Physics
 {
 #pragma pack(push)
@@ -27,6 +29,7 @@ namespace Physics
         bool IsGas() const;
         double Density() const;
         double Mass(double volume) const;
+        Engine::Vector Flow() const;
         int Amount() const; // for gas: pressure, for fluid: level, for solid: granularity  
     private:
 
@@ -34,7 +37,7 @@ namespace Physics
         // amount 0 = empty, 10 = full, 15 = max density or granularity
         uint8_t material : 2, amount : 4;
         float temperature;
-
+        Engine::Vector flow;    // TODO: optimize size: can be in (current? normal? density of the material and then use realistic speeds from cm/s to high wind speed ~40m/sec using ~16 bit shorts)
         static const Material* mats[];
     };
 #pragma pack(pop)

@@ -27,7 +27,6 @@ void StaticEnvironment::Constrain(const Engine::IVolume& v, const Material& m, d
 }
 
 void StaticEnvironment::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
-void StaticEnvironment::ApplyForce(const Engine::Coordinate& c, double force) {}
 void StaticEnvironment::Heat(const Engine::Coordinate& c, double energy) {}
 
 is::signals::connection StaticEnvironment::ConnectChange(ChangeSignal::slot_type slot) { return is::signals::connection(); }
@@ -42,7 +41,7 @@ double StaticEnvironment::Temperature(const Engine::IVolume& c) const
     return data.Temperature(c);
 }
 
-Engine::Vector StaticEnvironment::Force(const Engine::IVolume& c) const
+Engine::Vector StaticEnvironment::Force(const Engine::Coordinate& c) const
 {
     return data.Force(c);
 }

@@ -19,7 +19,7 @@ struct Material
                     // texture
     double normalDensity;   // g/L at stp  0 °C, ~1000 mbar
     double molarMass;       // G/mol
-    double viscosity;       // mu, = N s /m2 = Pa*s t room temperature (25 C) 
+    double viscosity;       // at normal pressure and room temperature (Pa*s = kgm-1s-1)
     double conductivity;    // J/Mol-K 
     double thermalConductivity; // W/mK = J/smK (at ~room temperature) https://en.wikipedia.org/wiki/List_of_thermal_conductivities 
     double heatCapacity;    // J/g*K    https://en.wikipedia.org/wiki/Table_of_specific_heat_capacities
@@ -30,6 +30,8 @@ struct Material
                             // electric conductivity?
 
     double Density(double pressure, double temperature) const;
+    double Viscosity(double density, double temperature) const;
+    double Reynolds(double density, double temperature, double velocity = 1.0) const;
     bool Solid(double temperature) const;
     bool Fluid(double temperature) const;
     bool Gas(double temperature) const;

@@ -8,7 +8,7 @@ namespace Physics
 //                               Name,         Color,                      Melt,   Boil, Density, molar mass,   Viscosity,  Conduct,    thermalCond, Capacity    surfaceTensiom, youngModulus,  Opacity,         
 const Material Material::vacuum{ L"Vacuum",    Engine::RGBA(0x00000000),   0,      0,      0,      0,           0,          0,          0,          0,          0,              0,             0.0 };
 const Material Material::air   { L"Air",       Engine::RGBA(0xFFA08040),   60,     80,     1.225,  29,          18e-6,      29.2,       0.024,      1.012,      10e-3,          1e9,           0.01 };     // 28.964g/mol because n2&o2 diatomic
-const Material Material::soil  { L"Soil",      Engine::RGBA(0xFF20FF20),   0,      0,      1600,   65,          10e3,       0.4,        1,          2.0,        0.7,            1e7,           10 };     // 65g/mol, based on 0% humidity. Part SiO2, N2 and proteins
+const Material Material::soil  { L"Soil",      Engine::RGBA(0xFF20FF20),   0,      0,      1600,   65,          10e6,       0.4,        1,          2.0,        0.7,            1e7,           10 };     // 65g/mol, based on 0% humidity. Part SiO2, N2 and proteins
 const Material Material::stone { L"Stone",     Engine::RGBA(0xFFA0A0A0),   1986,   3220,   2648,   60,          10e21,      10,         1.8,        0.790,      0.8,            1e10,          10 };     // for now 100% silicon dioxide, 60 g/mol
 const Material Material::water { L"Water",     Engine::RGBA(0xFFFF6010),   273,    373,    1000,   18,          8.9e-4,     0.6065,     0.6,        4.1813,     0.07,           9e9,           6.9 / 1000 };     // H2O 18 g/mol
                                                                                                                                             
@@ -66,6 +66,35 @@ double Material::Density(double pressure, double temperature) const
     {
         return normalDensity;  // incompressible, also as liquid
     }
+}
+
+double Material::Viscosity(double density, double temperature) const
+{
+    assert(density > 0.1*normalDensity && density < 10 * normalDensity);
+    assert(temperature > 270 && temperature < 300);
+    // TODO: it's very temperature temperature dependendent, there are special formulas for 
+    // water : https://en.wikipedia.org/wiki/Viscosity#Water
+    // air   : https://en.wikipedia.org/wiki/Viscosity#Air
+    //  assuming they are both still liquid and gasseous respectively
+    // stone and soil would also have different numbers in liquid phase. eg lava is more like 10e4 - 10e8 depending also on the silicate content
+    return this->viscosity;
+}
+
+double Material::Reynolds(double density, double temperature, double velocity) const
+{
+   // Has to do with viscosity VS friction https://en.wikipedia.org/wiki/Reynolds_number
+   // ELI5: https://www.youtube.com/watch?v=wtIhVwPruwY&list=PLt5AfwLFPxWK_BKKR2xTZoh2MddOtGbAM&index=2&t=2s
+   // TLDR: High numbers (>1000) pressure is dominant, low numbers (<0.01) internal friction is dominant
+   //       It's made up of density(kgm-3) * length(m) * velocity(ms-1) / viscosity(kgm-1s-1)
+   //       If any of the first terms is very high or the viscosity is low (the fluid is dense, the scale is big of the speed is high and or the fluid is not sticky) 
+   //         The reynolds number will be high (>1000) and pressure is dominant, friction negligable
+   //        Conversely at small scale, high density or low velocity or very sticky, the number may be low (<0.01) and pressure is negligable, friction is dominant 
+   //  The scale here is fixed (~one meter per grid), speeds are up to 0-10m/s so the material (density and viscosity) is dominant
+   // TODO: per grid reynold's number based on at least material. perhaps scale with current velocity and pressure 
+
+    const double scale = 0.5;   // ~average between vertical and horizontal meter per grid 
+    return density * scale * velocity / Viscosity(density, temperature);
+
 }
 
 std::ostream& operator<<(std::ostream& stream, const Physics::Material& material)

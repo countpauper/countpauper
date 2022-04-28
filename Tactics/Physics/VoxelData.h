@@ -95,7 +95,7 @@ public:
     double Temperature(const Position& position) const;
     double Temperature(const Engine::Coordinate& coordinate) const; // coordinate in SI
     double Temperature(const Engine::IVolume& volume) const;    // volume in SI
-    Engine::Vector Force(const Engine::IVolume& volume) const;  // volume in SI
+    Engine::Vector Force(const Engine::Coordinate& volume) const;  // volume in SI
     const Material& MaterialAt(const Position& position) const;
     double Measure(const Material* material, const Engine::IVolume& volume) const;
 

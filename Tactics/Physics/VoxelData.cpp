@@ -107,7 +107,7 @@ double VoxelData::Temperature(const Engine::IVolume& area) const
 }
 
 
-Engine::Vector VoxelData::Force(const Engine::IVolume& volume) const
+Engine::Vector VoxelData::Force(const Engine::Coordinate& volume) const
 {
     assert(false);
     return Engine::Vector();

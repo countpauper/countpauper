@@ -8,7 +8,8 @@ namespace Physics
     PackedVoxel::PackedVoxel() :
         material(0),
         amount(0),
-        temperature(0)
+        temperature(0),
+        flow(Engine::Vector::zero)
     {
     }
 
@@ -132,6 +133,11 @@ double PackedVoxel::Mass(double volume) const
 int PackedVoxel::Amount() const
 {
     return amount;
+}
+
+Engine::Vector PackedVoxel::Flow() const
+{
+    return flow;
 }
 
 }

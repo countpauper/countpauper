@@ -74,7 +74,6 @@ void DiscreteGrid::Constrain(const Engine::IVolume& v, const Material& m, double
 }
 
 void DiscreteGrid::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
-void DiscreteGrid::ApplyForce(const Engine::Coordinate& c, double force) {}
 void DiscreteGrid::Heat(const Engine::Coordinate& c, double energy) {}
 
 is::signals::connection DiscreteGrid::ConnectChange(ChangeSignal::slot_type slot)
@@ -106,9 +105,9 @@ double DiscreteGrid::Temperature(const Engine::IVolume& v) const
         return 0;
 }
 
-Engine::Vector DiscreteGrid::Force(const Engine::IVolume& c) const
+Engine::Vector DiscreteGrid::Force(const Engine::Coordinate& c) const
 {
-    return Engine::Vector();
+    return Engine::Vector::zero;
 }
 
 const Material* DiscreteGrid::GetMaterial(const Engine::Coordinate& c) const

@@ -18,6 +18,9 @@
 #include "Engine/AxisAlignedBoundingBox.h"
 #include <string>
 
+// Navier Stokes Explanation on youtube: 
+// https://www.youtube.com/playlist?list=PLt5AfwLFPxWK_BKKR2xTZoh2MddOtGbAM
+
 namespace Physics
 {
 
@@ -408,7 +411,6 @@ void FluidDynamics::Flow(double dt)
     const double dy = voxels.GridSize().y;
     const double dz = voxels.GridSize().z;
     // U Flow
-    double Reynolds = 100.0;    // TODO: Apparently has to do with viscosity and friction https://en.wikipedia.org/wiki/Reynolds_number
     for (const auto& uit : oU)
     {
         // d  ab d something: 
@@ -421,10 +423,11 @@ void FluidDynamics::Flow(double dt)
             - (oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) * (oV(p.x, p.y - 1, p.z) + oV(p.x + 1, p.y - 1, p.z))) / dy;
         double duwdz = 0.25*((oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x + 1, p.y, p.z))
             - (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z - 1)) * (oW(p.x, p.y, p.z - 1) + oW(p.x + 1, p.y, p.z - 1))) / dz;
-        double dpdx = (voxels.VoxelData::Density(Position(p.x + 1, p.y, p.z)) - voxels.VoxelData::Density(p)) / dx;
-        // can be computed from visocity and flow speed, but also need to know how far to the nearest surface 
-        // it should be as simply as massflowrate (=flux*area) / diameter * dynamic viscosity of the material
-        // trick will be to compute the diamter in x y and z for each grid
+        double densityA = voxels.VoxelData::Density(p);
+        double densityB = voxels.VoxelData::Density(Position(p.x + 1, p.y, p.z));
+        double dpdx = (densityB - densityA) / dx;
+        // TODO: feed th velocity here (should be sort of flux (material/second) divided by density (material/space) and the other directions
+        double Reynolds = voxels.VoxelData::MaterialAt(p).Reynolds(voxels.VoxelData::Temperature(p), (densityA+densityB)*0.5);
         double diff = (1.0 / Reynolds) *
             ((oU(p.x + 1, p.y, p.z) - 2.0*oU(p.x, p.y, p.z) + oU(p.x - 1, p.y, p.z)) / (dx*dx) +
             (oU(p.x, p.y + 1, p.z) + 2.0*oU(p.x, p.y, p.z) + oU(p.x, p.y - 1, p.z)) / (dy*dy) +
@@ -441,9 +444,12 @@ void FluidDynamics::Flow(double dt)
             - (oV(p.x, p.y, p.z) + oV(p.x - 1, p.y, p.z)) * (oU(p.x - 1, p.y, p.z) + oU(p.x - 1, p.y + 1, p.z))) / dx;
         double dvwdz = 0.25*((oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z + 1)) * (oW(p.x, p.y, p.z) + oW(p.x, p.y + 1, p.z))
             - (oV(p.x, p.y, p.z) + oV(p.x, p.y, p.z - 1)) * (oW(p.x, p.y, p.z - 1) + oW(p.x, p.y + 1, p.z - 1))) / dz;
-        double dpdy = (voxels.VoxelData::Density(Position(p.x, p.y + 1, p.z)) - voxels.VoxelData::Density(p)) / dy;
+        auto densityA = voxels.VoxelData::Density(p);
+        auto densityB = voxels.VoxelData::Density(Position(p.x, p.y + 1, p.z));
+        double dpdy = (densityB- densityA) / dy;
         // TODO: code duplication with u and z flow, move to flux 
         //  after unit test!
+        double Reynolds = voxels.VoxelData::MaterialAt(p).Reynolds(voxels.VoxelData::Temperature(p), (densityA+densityB)*0.5);
         double diff = (1.0 / Reynolds) *
             ((oV(p.x + 1, p.y, p.z) - 2.0*oV(p.x, p.y, p.z) + oV(p.x - 1, p.y, p.z)) / (dx*dx) +
             (oV(p.x, p.y + 1, p.z) + 2.0*oV(p.x, p.y, p.z) + oV(p.x, p.y - 1, p.z)) / (dy*dy) +
@@ -459,7 +465,10 @@ void FluidDynamics::Flow(double dt)
             - (oW(p.x, p.y, p.z) + oW(p.x, p.y - 1, p.z)) * (oV(p.x, p.y - 1, p.z) + oV(p.x, p.y - 1, p.z + 1))) / dy;
         double dwudx = 0.25*((oW(p.x, p.y, p.z) + oW(p.x, p.y, p.z + 1)) * (oU(p.x, p.y, p.z) + oU(p.x, p.y, p.z + 1))
             - (oW(p.x, p.y, p.z) + oW(p.x - 1, p.y, p.z)) * (oU(p.x - 1, p.y, p.z ) + oU(p.x - 1, p.y, p.z + 1))) / dx;
-        double dpdz = (voxels.VoxelData::Density(Position(p.x, p.y, p.z + 1)) - voxels.VoxelData::Density(p)) / dz;
+        auto densityA = voxels.VoxelData::Density(p);
+        auto densityB = voxels.VoxelData::Density(Position(p.x, p.y, p.z + 1));
+        double dpdz = (densityB - densityA) / dz;
+        double Reynolds = voxels.VoxelData::MaterialAt(p).Reynolds(voxels.VoxelData::Temperature(p), (densityA+densityB)*0.5);
         double diff = (1.0 / Reynolds) *
             ((oW(p.x + 1, p.y, p.z) - 2.0*oW(p.x, p.y, p.z) + oW(p.x - 1, p.y, p.z)) / (dx*dx) +
             (oW(p.x, p.y + 1, p.z) + 2.0*oW(p.x, p.y, p.z) + oW(p.x, p.y - 1, p.z)) / (dy*dy) +

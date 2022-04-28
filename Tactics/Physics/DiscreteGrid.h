@@ -24,13 +24,12 @@ public:
     void Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density) override;
 
     void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) override;
-    void ApplyForce(const Engine::Coordinate& c, double force) override;
     void Heat(const Engine::Coordinate& c, double energy) override;
 
     is::signals::connection ConnectChange(ChangeSignal::slot_type slot) override;
     double Density(const Engine::IVolume& c) const override;
     double Temperature(const Engine::IVolume& c) const override;
-    Engine::Vector Force(const Engine::IVolume& c) const override;
+    Engine::Vector Force(const Engine::Coordinate& c) const override;
     const Material* GetMaterial(const Engine::Coordinate& c) const override;
     Engine::RGBA Color(const Engine::Line& l) const override;
     void Tick(double seconds) override;
