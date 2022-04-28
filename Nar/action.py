@@ -18,19 +18,41 @@ class Go(Action):
 		else:
 			raise Exception("Failed to find destination "+self.destination)
 
+def parse_items(args):
+	if len(args) >= 2:
+		return args[1], int(args[0])
+	elif args:
+		return args[0], 1
+	else:
+		raise ValueError("No items specified")
+
 class Get(Action):
-	def __init__(self, item):
+	def __init__(self, *args):
 		super().__init__()
-		self.item = item
+		self.item, self.amount = parse_items(args)
 
 	def execute(self, actor, world):
 		item = actor.location.find(self.item)
 		if item:
-			actor.obtain(1, item)
+			actor.obtain(self.amount, item)
 		else:
-			raise Exception("Failed to find {self.item} in {actor.location.name}")
+			raise Exception(f"Failed to find {self.item} in {actor.location.name}")
+
+
+class Drop(Action):
+	def __init__(self, *args):
+		super().__init__()
+		self.item, self.amount = parse_items(args)
+
+	def execute(self, actor, world):
+		item = actor.find(self.item)
+		if item:
+			actor.location.obtain(self.amount, item)
+		else:
+			raise Exception(f"Failed to find {self.item} in {actor.name}")
+
 
 # Go = type('Action', (Action,), dict())
 
-actions = dict(go=Go, get=Get)
+actions = dict(go=Go, get=Get, drop=Drop)
 
