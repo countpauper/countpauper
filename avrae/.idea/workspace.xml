@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dc/identify.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dc/poisons.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/hp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Nar/action.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/action.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Nar/creature.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/creature.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Nar/item.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/item.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Nar/location.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/location.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Nar/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Nar/world.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/world.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" afterDir="false" />
@@ -20,11 +23,7 @@
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dc/dc.py" beforeDir="false" afterPath="$PROJECT_DIR$/dc/dc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dc/difficulty.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/dc/difficulty.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/works.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/works.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -229,10 +228,10 @@
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1647790145457" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1647527261914" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1648668861488">
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1651095899524">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1648668861488" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1651095899524" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1647538330234" />
   </component>
   <component name="XDebuggerManager">
