@@ -1,13 +1,15 @@
 from creature import Creature
 from item import items_types
+from container import Container
 
 class Location(object):
 	def __init__(self):
+		super().__init__()
 		self.name = None
 		self.parent = None
 		self.locations = []
 		self.creatures = []
-		self.items = []
+		self.items = Container()
 		self.travel = dict()
 
 	def __str__(self):
@@ -27,21 +29,17 @@ class Location(object):
 		else:
 			return None
 
-	def find(self, item):
-		matches = [i for i in self.items if i.name.lower() == item.lower()]
-		if not matches:
-			# TODO: check open containers
-			raise ValueError("Item "+item+" not found in "+self.name)
-		return matches[0]
+	def find(self, item_name):
+		return self.items.find(item_name)
 
 	def populate(self, name, data):
 		self.name = name
 		self.description = data.get('description', None)
 
 		self.populate_rooms(data.get('locations', dict()))
-		self.populate_destinations(data.get('travel', []))
-		self.populate_creatures(data.get('creatures', []))
-		self.populate_items(data.get('items',[]))
+		self.populate_destinations(data.get('travel', list()))
+		self.populate_creatures(data.get('creatures', list()))
+		self.populate_items(data.get('items',dict()))
 
 	def populate_rooms(self, rooms):
 		for location, sub in rooms.items():
@@ -73,18 +71,21 @@ class Location(object):
 			creature.name = creature_name
 			creature.location = self
 
+	def obtain(self, amount, item):
+		return self.items.add(self, amount, item)
+
 	def populate_items(self, items):
-		for item_name in items:
+		for item_name, stack in items.items():
 			item_type=items_types.get(item_name.lower())
 			if item_type:
-				self.items.append(item_type())
-				item = self.items[-1]
-				item.location = self
+				new_item = item_type()
+				new_item.stack = stack
+				self.obtain(stack, new_item)
 			else:
-				raise ValueError("Unknown item "+item_name+" in "+self.name)
+				raise ValueError(f"Unknown item {item_name} in {+self.name}")
 
 	def blurb(self):
-		return f"{self.name}\n{self.description}\n{', '.join(c.name for c in self.creatures)}\n{', '.join(i.name for i in self.items)}"
+		return f"{self.name}\n{self.description}\nContaining {self.items.description()}\n{', '.join(c.name for c in self.creatures)}"
 
 	def find_creatures(self, condition=None):
 		return [c for c in self. creatures if condition is None or condition(c)] + [c for l in self.locations for c in l.find_creatures(condition)]

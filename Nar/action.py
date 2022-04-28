@@ -28,7 +28,7 @@ class Get(Action):
 		if item:
 			actor.obtain(1, item)
 		else:
-			raise Exception("Failed to find item "+self.destination)
+			raise Exception("Failed to find {self.item} in {actor.location.name}")
 
 # Go = type('Action', (Action,), dict())
 
