@@ -2,28 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../Nar/contents.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Nar/items.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nar/action.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/action.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Nar/container.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/container.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nar/creature.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/creature.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nar/item.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/item.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nar/location.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/location.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Nar/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nar/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Nar/world.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/world.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nar/world.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/world.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/DiscreteGrid.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/FluidDynamics.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Material.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Material.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Matetrial.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Matetrial.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/PackedVoxel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/PackedVoxel.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/PackedVoxel.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/PackedVoxel.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/TreeGrid.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/TreeGrid.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/TreeGrid.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/TreeGrid.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/VoxelData.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dc/difficulty.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/dc/difficulty.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

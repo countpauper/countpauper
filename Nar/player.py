@@ -1,5 +1,6 @@
 from random import choice
 from action import actions
+from debugging import is_debugging
 
 class Player(object):
 	def __init__(self):
@@ -14,7 +15,7 @@ class Player(object):
 		args=args.strip(" ").split(',')
 		action = actions.get(action_command)
 		if action:
-			return action(args)
+			return action(*args)
 		else:
 			return None
 
@@ -24,14 +25,17 @@ class Player(object):
 		creature = self.controlled[0]
 
 		print(f"{self.name}: {creature.description()}")
-		print(f"You're at {creature.location.blurb()}\n")
-	
-		act = self.parse(input())
+		print(f"You're at {creature.location.description()}\n")
+
+		act = Player.parse(input())
 		if act:
-			try:
+			if is_debugging():
 				act.execute(creature, world)
-			except Exception as e:
-				print(e)
+			else:
+				try:
+					act.execute(creature, world)
+				except Exception as e:
+					print(e)
 
 	def reincarnate(self, world):
 		creatures=world.find_creatures(lambda c : c.player is None)

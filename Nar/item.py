@@ -1,10 +1,19 @@
 class Item(object):
-	def __init__(self):
-		self.stack=0
+	def __init__(self, amount=0):
+		self.stack=amount
 		self.location = None
+		self.contents = None
 
 	def __str__(self):
 		return self.name
+
+	def description(self):
+		if self.contents:
+			return f"{self.name} with {self.contents.description()}"
+		elif self.stack==1:
+			return self.name
+		else:
+			return f"{self.stack}x{self.name}"
 
 	def reduce(self, amount):
 		if amount>self.stack:
@@ -21,7 +30,3 @@ class Item(object):
 		return self.stack <= 0
 
 
-# TODO: define item types in a yaml hierarchy with the roots have Item as base and the leaves their parent as base
-Food = type('Item', (Item,), dict())
-Bread = type('Food', (Food,), dict(weight=1, name='Bread'))
-items_types=dict(bread=Bread)

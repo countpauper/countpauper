@@ -1,91 +1,91 @@
 from creature import Creature
-from item import items_types
-from container import Container
+from contents import Contents
 
 class Location(object):
-	def __init__(self):
+	def __init__(self, name=None, parent=None, data=dict()):
 		super().__init__()
-		self.name = None
-		self.parent = None
+		self.name = name
+		self.parent = parent
 		self.locations = []
 		self.creatures = []
-		self.items = Container()
-		self.travel = dict()
+		self.items = Contents()
+		self.path = dict()
+		self.populate(data)
 
 	def __str__(self):
 		return self.name
 
-	def locate(self, location, ignore=[]):
-		if self in ignore:
+	def locate(self, location, closed=[]):
+		if self in closed:
 			return None
 		if self.name.lower() == location.lower():
 			return self
-		children = [l.locate(location, ignore+[self]) for l in self.locations]
+		children = [l.locate(location, closed+[self]) for l in self.locations]
 		children = [c for c in children if c is not None]
 		if children:
 			return children[0]
 		elif self.parent:
-			return self.parent.locate(location, ignore=ignore+[self])
+			return self.parent.locate(location, closed=closed+[self])
 		else:
 			return None
+
+	def travel(self, destination, closed=list()):
+		if self in closed:
+			return None
+		destinations = [d for d in self.path if destination.lower() in d.name.lower()]
+		if destinations:
+			return [destinations[0]]
+		else:
+			return None # First only one depth
+			# TODO then depth first search, add self to closed list, return a route with intermediate destinations and lengths
+			# later keep searching for shortest paths A* requires an estimate of proximity to destination. This may be hard to do without coordinates
+			# dijkstra algorithm (take node distance into account at least)
 
 	def find(self, item_name):
 		return self.items.find(item_name)
 
-	def populate(self, name, data):
-		self.name = name
-		self.description = data.get('description', None)
-
+	def populate(self, data):
+		self.details = data.get('description', None)
 		self.populate_rooms(data.get('locations', dict()))
 		self.populate_destinations(data.get('travel', list()))
-		self.populate_creatures(data.get('creatures', list()))
-		self.populate_items(data.get('items',dict()))
+		self.populate_creatures(data.get('creatures', dict()))
+		self.items.populate(self, data.get('items',dict()))
 
 	def populate_rooms(self, rooms):
-		for location, sub in rooms.items():
-			self.locations.append(Location())
-			self.locations[-1].populate(location, sub or dict())
-			self.locations[-1].parent = self
+		for name, sub in rooms.items():
+			self.locations.append(Location(name, self, sub))
 
 	def populate_destinations(self, destinations):
+		if not destinations:
+			return
 		for travel in destinations:
-			from_location = travel.get('from')
-			froms = [l for l in self.locations if l.name.lower()==from_location.lower()]
-			if not froms:
+			from_location = self.locate(travel.get('from'))
+			if not from_location:
 				raise ValueError(f"Unknown travel origin {from_location}")
-			to_location=travel.get("to")
-			tos = [l for l in self.locations if l.name.lower()==to_location.lower()]
-			if not tos:
+			to_location=self.locate(travel.get("to"))
+			if not to_location:
 				raise ValueError(f"Unknown travel destination {travel.to}")
 			travel_distance=travel.get('distance',0)
-			from_location=froms[0]
-			to_location=tos[0]
-			from_location.travel[to_location] = travel_distance
-			to_location.travel[from_location] = travel_distance
+			from_location.path[to_location] = travel_distance
+			to_location.path[from_location] = travel_distance
 
 	def populate_creatures(self, creatures):
-		for creature_name in creatures:
-			self.creatures.append(Creature())
-			creature = self.creatures[-1]
+		if type(creatures) == list:
+			for creature_name in creatures:
+				self.creatures.append(Creature(creature_name, self, dict()))
+		else:
+			for creature_name, data in creatures.items():
+				self.creatures.append(Creature(creature_name, self, data))
 
-			creature.name = creature_name
-			creature.location = self
+	def place(self, item, amount=None):
+		return self.items.add(self, item, amount)
 
-	def obtain(self, amount, item):
-		return self.items.add(self, amount, item)
-
-	def populate_items(self, items):
-		for item_name, stack in items.items():
-			item_type=items_types.get(item_name.lower())
-			if item_type:
-				new_item = item_type()
-				new_item.stack = stack
-				self.obtain(stack, new_item)
-			else:
-				raise ValueError(f"Unknown item {item_name} in {+self.name}")
-
-	def blurb(self):
-		return f"{self.name}\n{self.description}\nContaining {self.items.description()}\n{', '.join(c.name for c in self.creatures)}"
+	def description(self):
+		return f"""{self.name}
+{self.details}
+Containing {self.items.description()}
+{', '.join(c.name for c in self.creatures)}
+Exits to {", ".join(l.name for l in self.path)}"""
 
 	def find_creatures(self, condition=None):
 		return [c for c in self. creatures if condition is None or condition(c)] + [c for l in self.locations for c in l.find_creatures(condition)]

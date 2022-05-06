@@ -13,13 +13,14 @@ sight:
     1/16inch: 20
     mm: 20
   cover:
+    no: 0
     half: +5
     3/4: +10
     full: no
   obscured:
+    no: 0
     lightly: dis
     heavily: no
-  camouflaged: 2
   moving: -2
   colorful: -2
   shiny: -3
@@ -38,6 +39,7 @@ sight:
     mile: 20
     2 mile: 25
   light:
+    bright: 0
     dim: dis
     dark: no
   information:
@@ -152,6 +154,74 @@ smell:
     2 hour: 20
     3 hour: 30
     4 hour: 40
+search:
+  skill: investigation
+  size:
+    gargantuan: -20
+    huge: -15
+    large: -10
+    medium: -5
+    small: 0
+    tiny: 5
+    inch: 10
+    1/2inch: 15
+    cm: 15
+    1/16inch: 20
+    mm: 20
+  cover:
+    none: 0
+    half: +2
+    3/4: +5
+    full: +10
+  obscured:
+    lightly: dis
+    heavily: no
+  camouflaged: 2
+  conspicuous: -5
+  unique: -10
+  placement:
+    obvious: -5
+    logical: 0
+    abnormal: 5
+    nonsensical: -10
+  area:
+    1 grid: -10  # 1 grid is 25 sqft
+    25 sqft: -10
+    3 sqyd: -10 # 1 square yards = 9 square feet
+
+    4 grid: -7
+    100 sqft: -7
+    10 sqyd: -7
+
+    40 grid: -5
+    100 sqyd: -5
+    1000 sqft: -5
+
+    120 grid: -2
+    300 sqyd: -2
+
+    1000 sqyd: 0
+    10000 sqyd: 5
+
+    1 acre: 3   # 1 acre = 4850 square yards = ~ 43.6k square feet
+    2 acre: 5
+    5 acre: 7
+    10 acre: 12
+    20 acre: 13
+    50 acre: 15
+    100 acre: 16
+    200 acre: 17
+    500 acre: 20
+    1 sq ml: 21 # 1 square mile = 640 square acres = ~3.1 mil square yard = ~28mil square feet
+    1000 acre: 22
+    2 sq ml: 23
+    2000 acre: 24
+    5000 acre: 25
+    5 sq ml: 26
+  light:
+    bright: 0
+    dim: dis
+    dark: no
 tracking: # DMG 244
   skill: survival
   ground:
@@ -161,6 +231,7 @@ tracking: # DMG 244
     grass: 15
     stone: 20
   time: # DMG 244 with interpolation
+    1hr: 0
     8hr: +2
     day : +5
     2 day: +10

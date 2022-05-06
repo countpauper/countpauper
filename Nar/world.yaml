@@ -9,10 +9,14 @@ locations:
         Broodje van Kootje:
           description: A street vendor known for its pastrami and liver sandwiches.
           creatures:
-            - Kootje
-            - Student
+            Kootje:
+              items:
+                - Bread
+            Student: ~
           items:
-            bread: 2
+            shelf:
+              items:
+                bread: 2
         Paleis op de Dam:
           description: The Royal Palace sitting at the Dam Square, opposite the war monument.
           creatures:
@@ -36,10 +40,10 @@ locations:
           items:
             bread: 2
       travel:
-        - from: Vredesplein
-          to: Bakker Bart
-          distance: 1
+      - from: Vredesplein
+        to: Bakker Bart
+        distance: 1
 travel:
-  - from: Amsterdam
-    to: Waalwijk
+  - from: Vredesplein
+    to: Leidseplein
     distance: 100
