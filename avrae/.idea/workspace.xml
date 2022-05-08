@@ -2,19 +2,66 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../Nar/contents.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Nar/items.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Nar/action.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/action.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Nar/container.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/container.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Nar/creature.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/creature.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Nar/item.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/item.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Nar/location.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/location.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Nar/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Nar/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Nar/world.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/world.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Nar/world.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../Nar/world.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.gitmodules" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Dependencies/pybind11" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Angel/Angel.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Angel/Angel.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Array.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Array.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Collection.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Collection.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Logic.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Logic.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Namespace.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Namespace.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Object.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Object.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestLogic/TestLogic.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestLogic/TestLogic.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestParser/TestParser.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/TestParser.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/.clang-format" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/.travis.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/FastSignals.sln" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/build/bin/libfastsignals/Win32/Debug/libfastsignalsd-v141-x32.lib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/build/bin/libfastsignals/Win32/Release/libfastsignals-v141-x32.lib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/build/bin/libfastsignals/x64/Debug/libfastsignalsd-v141-x64.lib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/build/bin/libfastsignals/x64/Release/libfastsignals-v141-x64.lib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/cmake/functions.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/docs/bind_weak.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/docs/migration-from-boost-signals2.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/docs/simple-examples.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/docs/why-fastsignals.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/bind_weak.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/combiners.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/connection.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/function.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/function_detail.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/msvc_autolink.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/signal.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/signal_impl.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/spin_mutex.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/type_traits.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/libfastsignals.vcxproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/libfastsignals.vcxproj.filters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/src/connection.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/src/function_detail.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/src/signal_impl.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals_build_options.props" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/catch2/catch.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_stress_tests/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_stress_tests/libfastsignals_stress_tests.vcxproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_stress_tests/libfastsignals_stress_tests.vcxproj.filters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_stress_tests/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_stress_tests/signal_stress_tests.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/Function_tests.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/bind_weak_tests.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/libfastsignals_unit_tests.vcxproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/libfastsignals_unit_tests.vcxproj.filters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/signal_tests.cpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dc/difficulty.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/dc/difficulty.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bonus/bonus.py" beforeDir="false" afterPath="$PROJECT_DIR$/bonus/bonus.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

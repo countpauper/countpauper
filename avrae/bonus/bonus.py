@@ -63,11 +63,13 @@ for cmd,b in config.get('commands',{}).items():
 	else:
 		commands[cmd]=b
 
+flags=['debug']
 # early check all arguments to prevent missed registration due to typos
 formula_chars='0123456789+-*/(). '
 if unknown_args:=[a for a in args if not a.lower().startswith('cr')
 									 and not C.get_combatant(a)
 									 and not all(c in formula_chars for c in a)
+									 and a not in flags
 									 and a not in commands]:
 	return f'techo 5 "Unrecognized arguments `{",".join(unknown_args)}`'
 
@@ -135,7 +137,7 @@ if kill and kills:
 
 
 # debug only on the debug server
-debug = debug if ctx.guild.id == 751060661290795069 else None
+debug = debug if ctx.guild.id == 751060661290795069 or 'debug' in args else None
 
 if kills or total_bonus:
 	C.set_metadata(mdb_key, dump_json(mdb))
