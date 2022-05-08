@@ -8,7 +8,8 @@ namespace Angel
 namespace Logic
 {
 
-class Namespace
+// A namespace is a collection of Knowledge Objects 
+class Namespace : public Collection
 {
 public:
 	explicit Namespace(const Id& id);

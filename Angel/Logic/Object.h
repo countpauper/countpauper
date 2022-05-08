@@ -10,6 +10,7 @@ namespace Logic
 class Knowledge;
 class Item;
 
+// An object is a variadic instance of any type of item
 class Object final
 {
 public:

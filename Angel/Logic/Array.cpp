@@ -20,7 +20,6 @@ Array::Array(Array&& other) :
 {
 }
 
-
 bool Array::operator==(const Item& other) const
 {
 	if (auto array = dynamic_cast<const Array*>(&other))
@@ -57,7 +56,6 @@ bool Array::Match(const Item& item, const Knowledge& knowledge) const
 	}
 	return false;
 }
-
 
 void Array::Append(Object&& value)
 {
@@ -105,8 +103,6 @@ Object array(Object&& left, Array&& right)
 	result.Cast<Array>()->Merge(std::move(right));
 	return result;
 }
-
-
 
 }
 }
