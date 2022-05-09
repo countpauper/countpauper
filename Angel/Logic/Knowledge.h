@@ -7,6 +7,7 @@ namespace Angel
 namespace Logic
 {
 
+// Knowledge is a set of items organized in namespaces
 class Knowledge
 {
 public:

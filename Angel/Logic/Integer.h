@@ -9,6 +9,7 @@ namespace Angel
 namespace Logic
 {
 
+// An integer is a whole number element, the size depends on the CPU type
 class Integer : public Element
 {
 public:

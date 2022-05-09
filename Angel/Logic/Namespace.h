@@ -9,7 +9,7 @@ namespace Logic
 {
 
 // A namespace is a collection of Knowledge Objects 
-class Namespace : public Collection
+class Namespace
 {
 public:
 	explicit Namespace(const Id& id);

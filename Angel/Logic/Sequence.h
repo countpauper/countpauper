@@ -11,6 +11,7 @@ namespace Logic
 
 class Array;
 
+// A sequence is a comma separates list of items that can probably be removed since it's the same as an Array
 class Sequence : public Collection, public std::vector<Object>
 {
 public:

@@ -9,6 +9,7 @@ namespace Angel
 namespace Logic
 {
 
+// Boolean is an element that is simply true, or false
 class Boolean : public Element
 {
 public:

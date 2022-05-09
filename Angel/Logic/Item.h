@@ -7,6 +7,7 @@ namespace Logic
 
 class Knowledge;
 
+// An item is the base class of all knowledge
 class Item
 {
 public:

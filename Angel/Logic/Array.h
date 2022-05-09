@@ -9,6 +9,9 @@ namespace Angel
 namespace Logic
 {
 
+// An array is an ordered, unsorted collection of Objects
+// The text format is <Object>, <Object> 
+// it is used as such in clauses as the conjunction of conditions
 class Array : public Collection, public std::vector<Object>
 {
 public:

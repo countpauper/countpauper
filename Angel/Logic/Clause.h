@@ -9,6 +9,7 @@ namespace Angel
 namespace Logic
 {
 
+// A clause is an expresion that specifies that a predicate is true if all of the array of its conditions is true
 class Clause : public Expression
 {
 public:
