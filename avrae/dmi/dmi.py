@@ -1,7 +1,7 @@
 embed {{ cc="DM Inspiration"}}
 {{dmi_max=load_json(get_svar('dmi','{}')).get('max',1)}}
-{{ character().create_cc_nx(cc,maxVal=dmi_max,minVal=0,dispType='bubble') }}
-{{ character().set_cc(cc,1) }}
+{{ character().create_cc_nx(cc,maxVal=dmi_max,minVal=0,reset_to=0,dispType='bubble') }}
+{{ character().mod_cc(cc,1) }}
 {{ f'-title "{name} receives DM inspiration!" '}}
 {{ f'-f "{cc}"|"{cc_str(cc)}" '}}
 {{ arg="&*&" }}
