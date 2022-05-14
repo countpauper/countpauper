@@ -11,7 +11,8 @@ namespace Logic
 
 class Array;
 
-// A sequence is a comma separates list of items that can probably be removed since it's the same as an Array
+// A sequence is an ordered Collection of Objects
+// Its string representation is simply its elements separated with a , with round bracers ()
 class Sequence : public Collection, public std::vector<Object>
 {
 public:
@@ -31,10 +32,12 @@ public:
 	Sequence(const Sequence&) = delete;
 	Sequence& operator=(const Sequence&) = delete;
 	Sequence(Sequence&& other);
-	bool operator==(const Item& other) const override;
-	bool Match(const Item& other, const Knowledge& knowledge) const override;
+	bool operator==(const Expression& other) const override;
+	bool Match(const Expression& other, const Knowledge& knowledge) const override;
 	void Append(Object&& value);
 	void Merge(Sequence&& other);
+protected:
+    Object Cast(const std::type_info& t, const Knowledge& k) const override;
 };
 
 Object sequence();
@@ -45,7 +48,7 @@ template<class ...Args, class = std::enable_if_t <
 >>
 Object sequence(Args... args)
 {
-	return Object(std::make_unique<Sequence>(std::forward<Args>(args)...));
+	return Create<Sequence>(std::forward<Args>(args)...);
 }
 
 }

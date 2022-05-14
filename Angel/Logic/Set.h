@@ -30,10 +30,12 @@ public:
 	Set(const Set&) = delete;
 	Set& operator=(const Set&) = delete;
 	Set(Set&& other);
-	bool operator==(const Item& other) const override;
-	bool Match(const Item& other, const Knowledge& knowledge) const override;
+	bool operator==(const Expression& other) const override;
+	bool Match(const Expression& other, const Knowledge& knowledge) const override;
 	void Append(Object&& value);
 	void Merge(Set&& other);
+protected:
+    Object Cast(const std::type_info& t, const Knowledge& k) const override;
 };
 
 Object set();
@@ -44,7 +46,7 @@ template<class ...Args, class = std::enable_if_t <
 >>
 Object set(Args... args)
 {
-	return Object(std::make_unique<Set>(std::forward<Args>(args)...));
+	return Create<Set>(std::forward<Args>(args)...);
 }
 
 }

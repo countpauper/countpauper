@@ -14,9 +14,12 @@ class Boolean : public Element
 {
 public:
 	explicit Boolean(bool v);
-	bool operator==(const Item& other) const override;
+	bool operator==(const Expression& other) const override;
 	bool operator*() const;
+    Object Compute(const Knowledge& known) const;
 	static std::optional<bool> Parse(const std::wstring& tag);
+protected:
+    Object Cast(const std::type_info& t, const Knowledge& k) const override;
 private:
 	bool truth;
 };

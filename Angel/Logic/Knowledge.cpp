@@ -17,10 +17,15 @@ void Knowledge::Know(Object&& e)
 	root.Add(std::move(e));
 }
 
-bool Knowledge::Query(const Object& e) const
+bool Knowledge::Query(const Object& o) const
 {
-	if (e.Trivial())
-		return true;
+    if (o.Trivial())
+        return true;
+    return Query(*o);
+}
+
+bool Knowledge::Query(const Expression& e) const
+{
 	return root.Match(e, *this);
 }
 

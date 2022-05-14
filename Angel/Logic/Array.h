@@ -9,7 +9,7 @@ namespace Angel
 namespace Logic
 {
 
-// An array is an ordered, unsorted collection of Objects
+// An array is an unordered collection of Objects
 // The text format is <Object>, <Object> 
 // it is used as such in clauses as the conjunction of conditions
 class Array : public Collection, public std::vector<Object>
@@ -27,11 +27,12 @@ public:
 	Array(const Array&) = delete;
 	Array& operator=(const Array&) = delete;
 	Array(Array&& other);
-
-	bool operator==(const Item& other) const override;
-	bool Match(const Item& other, const Knowledge& knowledge) const override;
+	bool operator==(const Expression& other) const override;
+	bool Match(const Expression& other, const Knowledge& knowledge) const override;
 	void Append(Object&& value);
 	void Merge(Array&& other);
+protected:
+    Object Cast(const std::type_info& t, const Knowledge& k) const override;
 };
 
 Object array();

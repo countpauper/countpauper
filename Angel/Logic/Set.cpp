@@ -2,6 +2,7 @@
 #include "Set.h"
 #include <algorithm>
 #include "Array.h"
+#include "Boolean.h"
 
 namespace Angel
 {
@@ -20,7 +21,7 @@ Set::Set(Array&& array)
 
 Set::Set(Object&& value)
 {
-	if (auto array = value.Cast<Array>())
+	if (auto array = value.As<Array>())
 	{
 		for (auto& e : *array)
 		{
@@ -39,7 +40,7 @@ Set::Set(Set&& other) :
 }
 
 
-bool Set::operator==(const Item& other) const
+bool Set::operator==(const Expression& other) const
 {
 	if (auto set = dynamic_cast<const Set*>(&other))
 	{
@@ -49,15 +50,15 @@ bool Set::operator==(const Item& other) const
 	return false;
 }
 
-bool Set::Match(const Item& item, const Knowledge& knowledge) const
+bool Set::Match(const Expression& expr, const Knowledge& knowledge) const
 {
-	if (auto set = dynamic_cast<const Set*>(&item))
+	if (auto set = dynamic_cast<const Set*>(&expr))
 	{
 		for (const auto& e : *this)
 		{
 			if (!std::none_of(set->begin(), set->end(), [&e, &knowledge](const Object& ov)
 			{
-				return e.Match(ov, knowledge);
+				return e.Match(*ov, knowledge);
 			}))
 			{
 				return false;
@@ -68,6 +69,18 @@ bool Set::Match(const Item& item, const Knowledge& knowledge) const
 	return false;
 }
 
+Object Set::Cast(const std::type_info& t, const Knowledge& k) const
+{
+    if (t == typeid(Boolean))
+    {
+        return boolean(!empty());
+    }
+    else if (t == typeid(Array))
+    {
+        return Object(); // TODO: copy all members 
+    }
+    throw CastException<Set>(t);
+}
 
 void Set::Append(Object&& value)
 {
@@ -83,12 +96,12 @@ void Set::Merge(Set&& other)
 
 Object set()
 {
-	return Object(std::make_unique<Set>());
+	return Create<Set>();
 }
 
 Object set(Array&& array)
 {
-	return Object(std::make_unique<Set>(std::move(array)));
+	return Create<Set>(std::move(array));
 }
 
 }

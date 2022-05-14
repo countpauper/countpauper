@@ -17,32 +17,32 @@ Object::Object(const std::wstring& tag)
 	}
 	else if (auto boolean = Boolean::Parse(tag))
 	{
-		item = std::make_unique<Boolean>(*boolean);
+        expr = std::make_unique<Boolean>(*boolean);
 	}
 	else if (auto integer = Integer::Parse(tag))
 	{
-		item = std::make_unique<Integer>(*integer);
+        expr = std::make_unique<Integer>(*integer);
 	}
 	else
 	{
-		item = std::make_unique<Id>(tag);
+        expr = std::make_unique<Id>(tag);
 	}
 
 }
 Object::Object(Object&& other) :
-	item(std::move(other.item))
+    expr(std::move(other.expr))
 {
 }
 
 Object& Object::operator=(Object&& other)
 {
-	item = std::move(other.item);
+    expr = std::move(other.expr);
 	return *this;
 }
 
 Object::operator bool() const
 {
-	return item.get();
+	return expr.get();
 }
 
 bool Object::Trivial() const
@@ -53,17 +53,32 @@ bool Object::Trivial() const
 
 bool Object::operator==(const Object& other) const
 {
-	return *item == *other.item;
+	return *expr == *other.expr;
 }
 
-bool Object::Match(const Object& other, const Knowledge& knowledge) const
+bool Object::Match(const Expression& other, const Knowledge& knowledge) const
 {
-	return item->Match(*other.item, knowledge);
+	return expr->Match(other, knowledge);
+}
+
+Object Object::Compute(const Knowledge& knowledge) const
+{
+    return expr->Compute(knowledge);
+}
+
+const Expression& Object::operator*() const
+{
+    return *expr;
 }
 
 size_t Object::Hash() const
 {
-	return reinterpret_cast<size_t>(item.get());
+	return reinterpret_cast<size_t>(expr.get());
+}
+
+Object Object::Cast(const std::type_info& t, const Knowledge& knowledge) const
+{
+    return expr->Cast(t, knowledge);
 }
 
 

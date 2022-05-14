@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Array.h"
+#include "Boolean.h"
+#include "Set.h"
 
 namespace Angel
 {
@@ -20,7 +22,7 @@ Array::Array(Array&& other) :
 {
 }
 
-bool Array::operator==(const Item& other) const
+bool Array::operator==(const Expression& other) const
 {
 	if (auto array = dynamic_cast<const Array*>(&other))
 	{
@@ -39,16 +41,16 @@ bool Array::operator==(const Item& other) const
 	return false;
 }
 
-bool Array::Match(const Item& item, const Knowledge& knowledge) const
+bool Array::Match(const Expression& expr, const Knowledge& knowledge) const
 {
-	if (auto array = dynamic_cast<const Array*>(&item))
+	if (auto array = dynamic_cast<const Array*>(&expr))
 	{
 		if (size() != array->size())
 			return false;
 		auto it = array->begin();
 		for (const auto& e : *this)
 		{
-			if (!e.Match(*it, knowledge))
+			if (!e.Match(**it, knowledge))
 				return false;
 			++it;	// TODO: zip
 		}
@@ -57,9 +59,22 @@ bool Array::Match(const Item& item, const Knowledge& knowledge) const
 	return false;
 }
 
+Object Array::Cast(const std::type_info& t, const Knowledge& k) const
+{
+    if (t == typeid(Boolean))
+    {
+        return boolean(!empty());
+    }
+    else if (t == typeid(Set))
+    {
+        return Object(); // TODO: copy all members 
+    }
+    throw CastException<Array>(t);
+}
+
 void Array::Append(Object&& value)
 {
-	if (auto array = value.Cast<Array>())
+	if (auto array = value.As<Array>())
 	{
 		Merge(std::move(*array));
 	}
@@ -75,32 +90,31 @@ void Array::Merge(Array&& other)
 		emplace_back(std::move(e));
 }
 
-
 Object array()
 {
-	return Object(std::make_unique<Array>());
+    return Create<Array>();
 }
 
 Object array(Array&& left, Array&& right)
 {
 	auto result = array();
-	result.Cast<Array>()->Merge(std::move(left));
-	result.Cast<Array>()->Merge(std::move(right));
+	result.As<Array>()->Merge(std::move(left));
+	result.As<Array>()->Merge(std::move(right));
 	return result;
 }
 
 Object array(Array&& left, Object&& right)
 {
 	auto result = array();
-	result.Cast<Array>()->Merge(std::move(left));
-	result.Cast<Array>()->Append(std::move(right));
+	result.As<Array>()->Merge(std::move(left));
+	result.As<Array>()->Append(std::move(right));
 	return result;
 }
 
 Object array(Object&& left, Array&& right)
 {
 	auto result = array(std::move(left));
-	result.Cast<Array>()->Merge(std::move(right));
+	result.As<Array>()->Merge(std::move(right));
 	return result;
 }
 

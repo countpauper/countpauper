@@ -21,7 +21,7 @@ Sequence::Sequence(Array&& array)
 
 Sequence::Sequence(Object&& value)
 {
-	if (auto array = value.Cast<Array>())
+	if (auto array = value.As<Array>())
 	{
 		for (auto& e : *array)
 		{
@@ -51,7 +51,7 @@ Sequence::Sequence(Sequence&& other) :
 }
 
 
-bool Sequence::operator==(const Item& other) const
+bool Sequence::operator==(const Expression& other) const
 {
 	if (auto sequence= dynamic_cast<const Sequence*>(&other))
 	{
@@ -68,22 +68,28 @@ bool Sequence::operator==(const Item& other) const
 	return false;
 }
 
-bool Sequence::Match(const Item& item, const Knowledge& knowledge) const
+bool Sequence::Match(const Expression& expr, const Knowledge& knowledge) const
 {
-	if (auto sequence = dynamic_cast<const Sequence*>(&item))
+	if (auto sequence = dynamic_cast<const Sequence*>(&expr))
 	{
 		if (size() != sequence->size())
 			return false;
 		auto it = sequence->begin();
 		for (const auto& e : *this)
 		{
-			if (!e.Match(*it, knowledge))
+			if (!e.Match(**it, knowledge))
 				return false;
 			++it;	// TODO: zip
 		}
 		return true;
 	}
 	return false;
+}
+
+Object Sequence::Cast(const std::type_info& t, const Knowledge& k) const
+{
+    // TODO: array, set
+    throw CastException<Sequence>(t);
 }
 
 
@@ -108,13 +114,13 @@ Object sequence()
 
 Object sequence(Array&& array)
 {
-	return Object(std::make_unique<Sequence>(std::move(array)));
+	return Create<Sequence>(std::move(array));
 }
 
 /*
 Object sequence(const std::initializer_list<Object&&>& init)
 {
-	return Object(std::make_unique<Sequence>(init));
+	return Object<Sequence>(init);
 }
 */
 

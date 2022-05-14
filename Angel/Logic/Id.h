@@ -13,7 +13,10 @@ class Id : public Element
 public:
 	explicit Id(const std::wstring& name);
 	bool operator==(const Id& id) const;
-	bool operator==(const Item& value) const override;
+	bool operator==(const Expression& value) const override;
+    Object Compute(const Knowledge& known) const;
+protected:
+    Object Cast(const std::type_info& t, const Knowledge& k) const override;
 private:
     std::wstring name;
 };

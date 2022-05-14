@@ -1,4 +1,5 @@
 #pragma once
+
 #include <memory>
 #include <string>
 
@@ -8,18 +9,19 @@ namespace Logic
 {
 
 class Knowledge;
-class Item;
+class Expression;
 
-// An object is a variadic instance of any type of item
+// An object is a variadic instance of any type of expr
 class Object final
 {
 public:
-	Object() = default;
+    Object() = default;
+    explicit Object(std::unique_ptr<Expression>&& v) :
+        expr(std::move(v))
+    {
+    }
 
-	Object(std::unique_ptr<Item>&& v) :
-		item(std::move(v))
-	{
-	}
+
 	Object(const std::wstring& tag);
 	Object(const Object& other) = delete;
 	Object& operator=(const Object& other) = delete;
@@ -28,15 +30,20 @@ public:
 
 	operator bool() const;
 	bool Trivial() const;
-	bool operator==(const Object& other) const;
-	bool operator!=(const Object& other) const { return !operator==(other); }
-	bool Match(const Object& other, const Knowledge& knowledge) const;
-
+    bool operator==(const Object& other) const;
+    bool operator!=(const Object& other) const { return !operator==(other); }
+	bool Match(const Expression& other, const Knowledge& knowledge) const;
+    const Expression& operator*() const;
+    Object Compute(const Knowledge& knowledge) const;
 	template<class C>
-	C* Cast() const { return dynamic_cast<C*>(item.get()); }
-	size_t Hash() const;
+    C* As() const { return dynamic_cast<C*>(expr.get()); }
+    template<class C>
+    Object Cast(const Knowledge& knowledge) const { return Cast(typeid(C), knowledge); } 
+    size_t Hash() const;
 private:
-	std::unique_ptr<Item> item;
+    friend class Expression;
+    Object Cast(const std::type_info& t, const Knowledge& knowledge) const;
+	std::unique_ptr<Expression> expr;
 };
 
 template<class T, typename... Args>

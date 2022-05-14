@@ -127,11 +127,11 @@ Logic::Object MakeExpression(Logic::Object&& left, Operator op, Logic::Object&& 
 	{
 		return Logic::array(std::move(left), std::move(right));
 	}
-	auto id0 = left.Cast<Logic::Id>();
-	auto pred1 = right.Cast<Logic::Predicate>();
-	auto seq0 = left.Cast<Logic::Sequence>();
-	auto pred0 = left.Cast<Logic::Predicate>();
-	auto array1 = right.Cast<Logic::Array>();
+	auto id0 = left.As<Logic::Id>();
+	auto pred1 = right.As<Logic::Predicate>();
+	auto seq0 = left.As<Logic::Sequence>();
+	auto pred0 = left.As<Logic::Predicate>();
+	auto array1 = right.As<Logic::Array>();
 
 	if ((id0) && (op == Operator::SequenceBegin))
 	{	// predicate = <id> ( <seq> ) , also works if right is void
@@ -139,11 +139,11 @@ Logic::Object MakeExpression(Logic::Object&& left, Operator op, Logic::Object&& 
 	}
 	else if ((pred0) && (array1) && (op == Operator::Colon))
 	{	// clause = <pred> : <array>
-		return Logic::clause(std::move(*pred0), std::move(*array1));
+		return Logic::clause(std::move(*pred0), Logic::conjunction(std::move(*array1)));
 	}
 	else if ((pred0) && (op == Operator::Colon))
 	{	// clause = <pred> : <whatever>
-		return Logic::clause(std::move(*pred0), Logic::Array(std::move(right)));
+		return Logic::clause(std::move(*pred0), std::move(right));
 	}
 	else if ((op == Operator::SequenceBegin) && (!left))
 	{	// also works for right being an array or void

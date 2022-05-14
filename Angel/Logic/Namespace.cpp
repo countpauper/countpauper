@@ -17,7 +17,7 @@ void Namespace::Add(Object&& e)
 	contents.insert(std::move(e));
 }
 
-bool Namespace::Match(const Object& e, const Knowledge& knowledge) const
+bool Namespace::Match(const Expression& e, const Knowledge& knowledge) const
 {
 	for (auto& c : contents)
 	{
