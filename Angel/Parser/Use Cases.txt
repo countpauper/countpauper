@@ -1,0 +1,169 @@
+== axiomatic predicates
+= an axioma is considered true if it is contained in the knowledge
+cat
+cat? 
+> true 
+mouse?
+> false
+
+== functional predicates
+= a function is true if it's label and arguments match, else it is false
+cat(ginny) 
+cat(ginny)?
+> true
+cat(gizmo)?
+> false
+
+== Clause
+= a predicate is true if it is implied and it's antecedent is true
+cat(ginny) : hairy(ginny)
+hairy(ginny)
+cat(ginny)?
+> true
+
+== Expression clause 
+= an antecedent is true if it's expression evaluates to a true boolean
+cat(ginny) : true
+cat(ginny)?
+true
+
+== Integers 
+= integers match if they are evaluate to equal
+cat(ginny): legs(4)
+legs(4)
+cat(ginny)?
+> true
+
+== Conjunection 
+= a conjunection if expressions is true if all its elements are true
+cat(ginny): hairy(ginny) & noisy(ginny)
+hairy(ginny)
+noisy(ginny)
+cat(ginny)?
+> true
+
+== DIsjunction 
+A disjunction is true if at least one of its elements is true
+cat(ginny): noisy(ginny) | shy(ginny)
+shy(ginny)
+cat(ginny)?
+> true
+
+== Summation
+A summation evaluates to the sum of its elements
+cat(ginny) : legs(4) 
+legs(2+2)
+cat(ginny)?
+> true
+
+== Variables 
+= variable matching is postponed (assumptions) until the value is assigned
+cat(X) : noisy(X)
+noisy(ginny)
+cat(ginny)?
+> true 
+(how it works is cat(X) matches with the query to assume X=ginny, so noise(X) is noisy(ginny), this matches)
+
+== Equations are true if the equation is true
+cat(X) : legs(X,Y), Y=4
+legs(ginny, 4)
+cat(ginny)?
+> true
+
+== Equations can be inequal. they are true if the value is in range
+= Inequal equations 
+cat(X) : legs(X,Y) Y>3
+legs(ginny,4)
+cat(ginny)?
+> true
+
+== Query variables 
+cat(ginny)
+cat(X)?
+X=ginny
+(how it works is cat(X) assumes X is ginny. This assumption remains)
+
+== Arrays = ordered non-unique collection 
+= you can use the @ operator to see check an array 
+cat(X) : X @ [ginny,max])
+cat(ginny)?
+> true
+(how it works, assume X=ginny, ginny @ [ginny,max] is true because ginny is in that array)
+
+== Indexing 
+= When using an integer index on an array a single element is used 
+[1,2,3][2] 
+> 3
+
+== Array indexing
+[max,ginny,gizmo][0,2]?
+> [max,gizmo]
+
+== Slicing 
+= When using a range index, multiple elements are used
+[1,2,3][1:2]
+> [2,3]
+
+== Infinite range 
+= When not specifying a value for a range index, that side is infinite 
+[1,2,3][1:]
+> [2,3]
+
+== Exclusive range 
+= < > brackets are used for exclusive 
+[1,2,3][1,2>
+> [2]
+
+== @ operator also works on ranges
+2 @ [2:]
+> true
+
+== Clauses (functions) don't just return boolean 
+= 
+f(X): X+2
+f(1)?
+> 3
+
+== axioms are used as variable assignment with that 
+legs: 4
+cat(X): legs>=3
+cat(ginny)?
+> true
+
+== id axiomas are like enums 
+cat: ginny 
+cat ? 
+> ginny 
+(but it would be hard to not try to match ginny and fail and decide she's not a cat)
+
+== Array/range matching 
+cats([X,max]) : X=ginny
+cats([ginny,max])?
+> true
+
+== Prolog like head tail matching? 
+cats([H|T]) : cat(H) & cats(T)
+cat(max)
+cat(ginny)
+cats([max,ginny])?
+> true
+
+== ALso assumption assignment
+.... (same knowledge as above)
+cats(X)?
+> X=[max,ginny]
+
+== Queries can return expressions if assumptions aren't entirely fulfilled
+f(X):X+2
+f(Y)?
+> X+2
+
+== Also element of, when the final answer is ambiguous 
+cat(max)
+cat(ginny)
+cat(X) ? 
+> X @ [max,ginny]
+(this also requires to not stop matching on the first hit and keep expanding assumptions. Can be very powerful)
+
+
+
