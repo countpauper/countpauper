@@ -12,7 +12,7 @@ if player:=player_state.get('player'):
 	# load npc rosters if any
 	combined_roster=dict()
 	for gvar in  load_json(get_svar("npc_server_npcs", '[]'))+load_json(get("npc_subscribed_rosters","[]")):
-		combined_roster.update(load_json(gvar_data))
+		combined_roster.update(load_json(get_gvar(gvar)))
 	combined_roster.update(load_json(get("npc_local_roster","{}")))
 	# get the npc properties for the embed
 	npc=combined_roster.get(player,{})

@@ -133,7 +133,7 @@ else:	### Turn
 		die=f'd20ro{reroll}'
 	else:
 		die='d20'
-	die=[f'1{die}',f'2{die}kh1',f'3{die}kh1',f'2{die}kl1'][args.adv(ea=True)]
+	die=[f'1{die}',f'2{die}kh1',f'3{die}kh1',f'2{die}kl1'][args.adv(eadv=True)]
 	dice='+'.join([die,str(proficiencyBonus),str(dexterityMod)]+args.get('b'))
 	r=vroll(dice)
 	ac=rings[target.ring].ac

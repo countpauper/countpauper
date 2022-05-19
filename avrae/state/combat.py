@@ -29,7 +29,7 @@ for unit,mul in timeunit.items():
 else:
 	if timeout=='auto':
 		pass
-	elif timeout.startwith('no'):
+	elif timeout.startswith('no'):
 		timeout=None
 	elif timeout.isdecimal():
 		timeout = int(timeout)

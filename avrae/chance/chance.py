@@ -142,7 +142,7 @@ save_query = None
 spell_query = None
 if executor:
 	if typeof(executor)=='AliasCharacter':	# duck say quack ?
-		criton = executor. TODO will be renamed to crit_on csettings.get('criton', 20)
+		criton = executor.csettings.get('crit_on', 20)
 		reroll_luck = executor.csettings.get('reroll')
 		reliability = 10 if executor.csettings.get('talent') else None
 
@@ -248,7 +248,7 @@ if fight:=combat():
 				show_query=show_target
 				if saves := [(save_name, save) for save_name, save in combatant.saves if
 							 save_name.lower().startswith(spell_query.save)]:
-					expression = saves[0][1].d20(args.adv(ea=False, boolwise=True))  # advantage here to avoid ea
+					expression = saves[0][1].d20(args.adv(eadv=False, boolwise=True))  # advantage here to avoid ea
 				else:
 					err(f'`{spell_query.save} save for `{query}` not found for `{target_name}`')
 			elif save_query:
@@ -271,7 +271,7 @@ if not expression[0].isnumeric():
 	return f'echo Invalid expression query `{expression}`.'
 
 # replace first 1d20 with advantage, this is almost the same as !roll, which only does it for the first term
-expression = expression.replace('1d20',['1d20','2d20kh1','3d20kh1','2d20kl1'][args.adv(ea=True)],1)
+expression = expression.replace('1d20',['1d20','2d20kh1','3d20kh1','2d20kl1'][args.adv(eadv=True)],1)
 
 # retrieve effects
 if executor==character():

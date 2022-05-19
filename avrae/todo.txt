@@ -1,3 +1,20 @@
+* Avrae 4.0 fixes
+- Rewrite !qb with functions
+- Rewrite !chance with functions
+- !qb count $ doesn't show thing
+
+Outlands:
+* fix !tt with missing cvar (testy)
+* fix rpxp and add to workshop
+   - split in sub commands gain
+   - help
+* add pitfight to worskhop
+    - split in sub commands set
+    - help
+- add outlandschar to workshop
+- check other aliases, see #suggestions
+    > Other ones made specifically for this server would be !carousing, !downtime, !gamble, !gatetown, !piety, !planes, !powers, and !rpxp
+
 !play darts
 *   make it clear what the aim was
 *   make an explicit x1 so it doesn't automatically double in or tripple
