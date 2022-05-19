@@ -2,66 +2,61 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../.gitmodules" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Dependencies/pybind11" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Angel/Angel.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Angel/Angel.vcxproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outlands/rpxp.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outlands/tt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Design/Logic.mdj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Design/Logic.mdj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Array.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Array.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Array.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Array.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Boolean.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Boolean.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Clause.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Clause.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Clause.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Clause.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Collection.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Collection.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Element.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Element.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Element.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Element.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Expression.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Expression.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Expression.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Expression.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Id.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Id.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Knowledge.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Knowledge.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Logic.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Logic.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Logic.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Logic.vcxproj.filters" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Namespace.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Namespace.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Namespace.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Namespace.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Object.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Object.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Object.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Object.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Operator.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Operator.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Predicate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Predicate.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Predicate.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Predicate.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Sequence.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Sequence.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Sequence.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Sequence.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Set.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Set.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Set.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Set.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.vcxproj.filters" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Use Cases.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Use Cases.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestLogic/Clause.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestLogic/Clause.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestLogic/Predicate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestLogic/Predicate.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestLogic/Sequence.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestLogic/Sequence.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestLogic/Set.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestLogic/Set.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/TestLogic/TestLogic.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestLogic/TestLogic.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/TestParser/TestParser.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/TestParser.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/.clang-format" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/.travis.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/FastSignals.sln" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/build/bin/libfastsignals/Win32/Debug/libfastsignalsd-v141-x32.lib" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/build/bin/libfastsignals/Win32/Release/libfastsignals-v141-x32.lib" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/build/bin/libfastsignals/x64/Debug/libfastsignalsd-v141-x64.lib" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/build/bin/libfastsignals/x64/Release/libfastsignals-v141-x64.lib" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/cmake/functions.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/docs/bind_weak.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/docs/migration-from-boost-signals2.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/docs/simple-examples.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/docs/why-fastsignals.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/bind_weak.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/combiners.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/connection.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/function.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/function_detail.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/msvc_autolink.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/signal.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/signal_impl.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/spin_mutex.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/include/type_traits.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/libfastsignals.vcxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/libfastsignals.vcxproj.filters" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/src/connection.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/src/function_detail.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals/src/signal_impl.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/libfastsignals_build_options.props" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/catch2/catch.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_stress_tests/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_stress_tests/libfastsignals_stress_tests.vcxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_stress_tests/libfastsignals_stress_tests.vcxproj.filters" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_stress_tests/main.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_stress_tests/signal_stress_tests.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/Function_tests.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/bind_weak_tests.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/libfastsignals_unit_tests.vcxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/libfastsignals_unit_tests.vcxproj.filters" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/main.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Dependencies/fastsignals/tests/libfastsignals_unit_tests/signal_tests.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestParser/Sequence.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/Sequence.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bonus/bonus.py" beforeDir="false" afterPath="$PROJECT_DIR$/bonus/bonus.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/pitfight.py" beforeDir="false" afterPath="$PROJECT_DIR$/outlands/pitfight.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/bet.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/bet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/blackjack.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/blackjack.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/collect.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/collect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/darts.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/darts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/drop_out.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/drop_out.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/hoard.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/hoard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/killer.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/killer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/pig.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/pig.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/ship.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/ship.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/combat.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/combat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,11 +90,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\maurits.fassaert\countpauper\avrae\outlands" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\bonus" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\hud" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\ic" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\chance" />
-      <recent name="C:\Users\maurits.fassaert\countpauper\avrae\inventory" />
     </key>
   </component>
   <component name="RunManager" selected="Python.csv2json">
@@ -266,10 +261,11 @@
     </state>
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1647790145457" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1647527261914" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1651095899524">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1652877838631">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1651095899524" />
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.0.1920.1160@0.0.1920.1160" timestamp="1652877838631" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1647538330234" />
   </component>
   <component name="XDebuggerManager">
