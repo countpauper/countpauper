@@ -2,14 +2,10 @@
 #include "Logic/Set.h"
 #include "Logic/Knowledge.h"
 #include "Logic/Id.h"
-#include "Logic/Array.h"
+#include "Logic/Sequence.h"
 #include "Logic/Boolean.h"
 
-namespace Angel
-{
-namespace Logic
-{
-namespace Test
+namespace Angel::Logic::Test
 {
 
 TEST(TestSet, Construction)
@@ -27,20 +23,19 @@ TEST(TestSet, Construction)
 	Set cats(id(L"ginny"), id(L"max"));
 	EXPECT_EQ(cats.size(), 2);
 
-	Set array(array(id(L"ginny"), id(L"max")));
-	EXPECT_EQ(array.size(), 2);
+	Set seq_set(sequence(id(L"ginny"), id(L"max")));
+	EXPECT_EQ(seq_set.size(), 1);
 
 	Knowledge k;
-	k.Know(set(id(L"table"), id(L"moon"), id(L"hope")));
-	EXPECT_EQ(k.Clauses(), 1);
+    EXPECT_THROW(k.Know(set(id(L"table"), id(L"moon"), id(L"hope"))), std::invalid_argument);
 }
 
 
-TEST(TestSet, Array)
+TEST(TestSet, Sequence)
 {
-	Array array{ set(id(L"cat")), set(id(L"dog")) };
+	Sequence array{ set(id(L"cat")), set(id(L"dog")) };
 	EXPECT_EQ(2, array.size());
-	EXPECT_NE(array, Array(id(L"cat"), id(L"dog")));
+	EXPECT_NE(array, Sequence(id(L"cat"), id(L"dog")));
 }
 
 
@@ -61,6 +56,4 @@ TEST(TestSet, Compare)
 
 }
 
-}
-}
 }

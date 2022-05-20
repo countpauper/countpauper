@@ -1,6 +1,6 @@
 #pragma once
 #include "Object.h"
-#include "Array.h"
+#include "Sequence.h"
 
 namespace Angel
 {
@@ -45,9 +45,9 @@ class Nary : public Operator
 {
 public:
     Nary() = default;
-    Nary(Array&& operands) : operands(std::move(operands)) {} 
+    Nary(Sequence&& operands) : operands(std::move(operands)) {} 
 protected:
-    Array operands;
+    Sequence operands;
 };
 
 

@@ -51,6 +51,12 @@ Object Clause::Compute(const Knowledge& known) const
 }
 
 
+Object Clause::Copy() const
+{
+    return clause(Predicate(predicate), Object(std::move(condition->Copy())));
+}
+
+
 Object Clause::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (typeid(t) == typeid(Boolean))

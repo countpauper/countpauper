@@ -9,6 +9,18 @@ namespace Angel
 namespace Logic
 {
 
+Predicate::Predicate(const Predicate& other) :
+    Predicate(other.id, Sequence(other.arguments))
+{
+
+}
+
+Predicate::Predicate(Predicate&& other) :
+    id(other.id),
+    arguments(std::move(other.arguments))
+{
+}
+
 Predicate::Predicate(const Id& id, Sequence&& arguments) :
 	id(id),
 	arguments(std::move(arguments))
@@ -27,6 +39,12 @@ bool Predicate::operator==(const Expression& other) const
 		return id == predicate->id && arguments == predicate->arguments;
 	}
 	return false;
+}
+
+
+Object Predicate::Copy() const
+{
+    return Create<Predicate>(*this);
 }
 
 bool Predicate::Match(const Expression& expr, const Knowledge& knowledge) const

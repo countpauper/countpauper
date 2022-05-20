@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Id.h"
 #include "Boolean.h"
+#include <iostream>
 
 namespace Angel
 {
@@ -33,7 +34,11 @@ Object Id::Compute(const Knowledge& known) const
 
 Object Id::Cast(const std::type_info& t, const Knowledge& k) const
 {
-    if (t == typeid(Boolean))
+    if (t == typeid(Id))
+    {
+        return Compute(k);
+    }
+    else if (t == typeid(Boolean))
     {
         return boolean(true);
     }

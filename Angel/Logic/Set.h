@@ -9,28 +9,28 @@ namespace Angel
 namespace Logic
 {
 
-class Array;
+class Sequence;
 
 class Set : public Collection, public std::unordered_set<Object>
 {
 public:
 	Set();
-	explicit Set(Array&& array);
-	explicit Set(Object&& value);
+    Set(const Set&);
+    explicit Set(Sequence&& array);
 
 	template<class ...Args, class = std::enable_if_t <
 		all_true < std::is_convertible<Args, Object>{}... > {}
 	>>
-		explicit Set(Object&& first, Args... args) :
-		Set(std::move(first))
-	{
+		explicit Set(Object&& first, Args... args)
+    {
+        Append(std::move(first));
 		Merge(Set(std::forward<Args>(args)...));
 	}
 
-	Set(const Set&) = delete;
 	Set& operator=(const Set&) = delete;
 	Set(Set&& other);
-	bool operator==(const Expression& other) const override;
+    Object Copy() const override;
+    bool operator==(const Expression& other) const override;
 	bool Match(const Expression& other, const Knowledge& knowledge) const override;
 	void Append(Object&& value);
 	void Merge(Set&& other);
@@ -39,7 +39,7 @@ protected:
 };
 
 Object set();
-Object set(Array&& array);
+Object set(Sequence&& array);
 
 template<class ...Args, class = std::enable_if_t <
 	all_true < std::is_convertible<Args, Object>{}... > {}

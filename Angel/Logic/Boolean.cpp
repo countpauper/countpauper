@@ -2,9 +2,7 @@
 #include "Boolean.h"
 #include "Integer.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 Boolean::Boolean(bool v) :
@@ -67,5 +65,4 @@ Object boolean(bool v)
 }
 
 
-}
 }

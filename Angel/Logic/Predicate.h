@@ -11,10 +11,13 @@ namespace Logic
 class Predicate : public Expression
 {
 public:
-	explicit Predicate(const Id& id, Sequence&& parameters=Sequence());
-	explicit Predicate(const std::wstring& name, Sequence&& parameters=Sequence());
+    Predicate(const Predicate& other);
+    Predicate(const Id& id, Sequence&& arguments = Sequence());
+    Predicate(const std::wstring& name, Sequence&& arguments=Sequence());
+    Predicate(Predicate&& other);
 	bool operator==(const Expression& other) const override;
-	bool Match(const Expression& other, const Knowledge& knowledge) const override;
+    Object Copy() const override;
+    bool Match(const Expression& other, const Knowledge& knowledge) const override;
     Object Compute(const Knowledge& known) const override;
     void Argue(Object&& value);
 protected:
@@ -25,7 +28,7 @@ private:
 };
 
 Object predicate(const Id& id, Sequence&& arguments=Sequence());
-Object predicate(const std::wstring& name, Sequence&& arguments=Sequence());
+Object predicate(const std::wstring& name, Sequence&& arguments= Sequence());
 
 }
 }

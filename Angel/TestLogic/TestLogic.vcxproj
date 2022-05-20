@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Clause.cpp" />
+    <ClCompile Include="Computation.cpp" />
     <ClCompile Include="Sequence.cpp" />
     <ClCompile Include="Predicate.cpp" />
     <ClCompile Include="Element.cpp" />

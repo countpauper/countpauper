@@ -3,11 +3,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Sequence.h"
 
-namespace Angel
-{
-namespace Logic
-{
-namespace Test
+namespace Angel::Logic::Test
 {
 
 TEST(TestPredicate, 0ary)
@@ -29,7 +25,5 @@ TEST(TestPredicate, 1ary)
 	EXPECT_FALSE(k.Query(predicate(L"dog", Sequence(id(L"ginny")))));
 }
 
+}
 
-}
-}
-}

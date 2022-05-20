@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Parser/Parser.h"
 #include "Logic/Sequence.h"
-#include "Logic/Array.h"
+#include "Logic/Sequence.h"
 
 namespace Angel
 {
@@ -15,17 +15,17 @@ TEST(TestSequence, Comma)
 	Logic::Knowledge k = Parse(L"cat, dog");
 
 	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::array(Logic::id(L"cat"), Logic::id(L"dog"))));
+	EXPECT_TRUE(k.Knows(Logic::sequence(Logic::id(L"cat"), Logic::id(L"dog"))));
 	EXPECT_FALSE(k.Knows(Logic::id(L"cat")));
 	EXPECT_FALSE(k.Knows(Logic::id(L"dog")));
 }
 
-TEST(TestSequence, MakeArray)
+TEST(TestSequence, MakeSequence)
 {
 	Logic::Knowledge k = Parse(L"cat, ");
 
 	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::array(Logic::id(L"cat"))));
+	EXPECT_TRUE(k.Knows(Logic::sequence(Logic::id(L"cat"))));
 	EXPECT_FALSE(k.Knows(Logic::id(L"cat")));
 }
 
@@ -34,7 +34,7 @@ TEST(TestSequence, Commas)
 	Logic::Knowledge k = Parse(L"cat, dog, hamster");
 
 	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::array(
+	EXPECT_TRUE(k.Knows(Logic::sequence(
 		Logic::id(L"cat"), 
 		Logic::id(L"dog"),
 		Logic::id(L"hamster"))));

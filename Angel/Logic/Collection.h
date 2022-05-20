@@ -8,15 +8,14 @@ namespace Logic
 {
 
 // A colllection is a sub category of exprs consisting of multiple sub exprs
-// for instance Array, Seqeucence, Set are Collections
+// for instance Sequence, Seqeucence, Set are Collections
 class Collection : public Expression
 {
 public:
-    Object Compute(const Knowledge& known) const override
+    Object Compute(const Knowledge& known) const
     {
-        assert(false); // TODO: copy all elements? 
-        return Object();
-
+        // Just return a copy. Or compute all members? 
+        return Copy();
     }
 };
 

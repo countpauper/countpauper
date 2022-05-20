@@ -1,129 +1,138 @@
 #include "stdafx.h"
 #include "Sequence.h"
-#include "Array.h"
+#include "Boolean.h"
+#include "Set.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
-Sequence::Sequence() 
+Sequence::Sequence()
 {
-}
-
-Sequence::Sequence(Array&& array)
-{
-	for (auto& e : array)
-	{
-		emplace_back(std::move(e));
-	}
 }
 
 Sequence::Sequence(Object&& value)
 {
-	if (auto array = value.As<Array>())
-	{
-		for (auto& e : *array)
-		{
-			emplace_back(std::move(e));
-		}
-	}
-	else if (value)
-	{
-		emplace_back(std::move(value));
-	}
+    if (value)
+        emplace_back(value);
 }
 
-
-/* 	// Elements have to be copyable or no initializer list ... 
-Sequence::Sequence(const std::initializer_list<Object&&>& init) 
+Sequence::Sequence(Sequence&& other) 
 {
-	for (auto it = init.begin(); it!=init.end(); ++it)
-	{
-		contents.emplace_back(std::move(*it));
-	}
+    reserve(other.size());
+    for (auto& o : other)
+        emplace_back(std::move(o));
 }
-*/
 
-Sequence::Sequence(Sequence&& other) :
-	std::vector<Object>(std::move(other))
+Sequence::Sequence(const Sequence& other)
 {
+    for (const auto& io : other)
+    {
+        Append(io->Copy());
+    }
 }
 
 
 bool Sequence::operator==(const Expression& other) const
 {
-	if (auto sequence= dynamic_cast<const Sequence*>(&other))
-	{
-		if (size() != sequence->size())
-			return false;
-		auto valueIt = sequence->begin();
-		for (auto it = begin(); it!=end(); ++it, ++valueIt)
-		{
-			if (it->operator!=(*valueIt))
-				return false;
-		}
-		return true;	
-	}
-	return false;
+    if (auto seq = dynamic_cast<const Sequence*>(&other))
+    {
+        if (size() != seq->size())
+            return false;
+        auto it = seq->begin();
+        for (const auto& e : *this)
+        {
+            if (*it++ != e)
+                return false;
+        }
+        return true;
+    }
+    return false;
+}
+
+Object Sequence::Copy() const
+{
+    return Create<Sequence>(*this);
 }
 
 bool Sequence::Match(const Expression& expr, const Knowledge& knowledge) const
 {
-	if (auto sequence = dynamic_cast<const Sequence*>(&expr))
-	{
-		if (size() != sequence->size())
-			return false;
-		auto it = sequence->begin();
-		for (const auto& e : *this)
-		{
-			if (!e.Match(**it, knowledge))
-				return false;
-			++it;	// TODO: zip
-		}
-		return true;
-	}
-	return false;
+    if (auto seq = dynamic_cast<const Sequence*>(&expr))
+    {
+        if (size() != seq->size())
+            return false;
+        auto it = seq->begin();
+        for (const auto& e : *this)
+        {
+            if (!e.Match(**it, knowledge))
+                return false;
+            ++it;	// TODO: zip
+        }
+        return true;
+    }
+    return false;
 }
 
 Object Sequence::Cast(const std::type_info& t, const Knowledge& k) const
 {
-    // TODO: array, set
+    if (t == typeid(Boolean))
+    {
+        return boolean(!empty());
+    }
+    else if (t == typeid(Set))
+    {
+        auto result = Create<Set>();
+        for (const auto& e : *this)
+        {
+            result.As<Set>()->Append(Object(e));
+        }
+        return result;
+    }
     throw CastException<Sequence>(t);
 }
 
-
 void Sequence::Append(Object&& value)
 {
-	if (value)
-		emplace_back(std::move(value));
+    if (value)
+    {
+        emplace_back(std::move(value));
+    }
 }
 
 void Sequence::Merge(Sequence&& other)
 {
-	for (auto& e : other)
-		emplace_back(std::move(e));
+    for (auto& o : other)
+        emplace_back(std::move(o));
 }
-
 
 Object sequence()
 {
-	return Object(std::make_unique<Sequence>());
+    return Create<Sequence>();
 }
 
-
-Object sequence(Array&& array)
+Object sequence(Sequence&& seq)
 {
-	return Create<Sequence>(std::move(array));
+    return Create<Sequence>(seq);
 }
 
-/*
-Object sequence(const std::initializer_list<Object&&>& init)
+Object sequence(Sequence&& left, Sequence&& right)
 {
-	return Object<Sequence>(init);
+    auto result = sequence(left);
+    result.As<Sequence>()->Merge(std::move(right));
+    return result;
 }
-*/
 
-
+Object sequence(Sequence&& left, Object&& right)
+{
+    auto result = sequence(left);
+    result.As<Sequence>()->Append(std::move(right));
+    return result;
 }
+
+Object sequence(Object&& left, Sequence&& right)
+{
+    auto result = sequence(Sequence(std::move(left)));
+    result.As<Sequence>()->Merge(std::move(right));
+    return result;
+}
+
 }

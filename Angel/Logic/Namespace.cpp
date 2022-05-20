@@ -12,9 +12,10 @@ Namespace::Namespace(const Id& id) :
 {
 }
 
-void Namespace::Add(Object&& e)
+void Namespace::Add(Clause&& c)
 {
-	contents.insert(std::move(e));
+    if (!Contains(c))
+        contents.emplace_back(std::move(c));
 }
 
 bool Namespace::Match(const Expression& e, const Knowledge& knowledge) const
@@ -27,9 +28,21 @@ bool Namespace::Match(const Expression& e, const Knowledge& knowledge) const
 	return false;
 }
 
+bool Namespace::Contains(const Clause& c) const
+{
+    return std::find(contents.begin(), contents.end(), c) != contents.end();
+}
+
 bool Namespace::Contains(const Object& e) const
 {
-	return std::find(contents.begin(), contents.end(), e)!=contents.end();
+    if (Clause* c = e.As<Clause>())
+    {
+        return Contains(*c);
+    }
+    else
+    {
+        return false;
+    }
 }
 
 

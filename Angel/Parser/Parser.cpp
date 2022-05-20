@@ -6,7 +6,7 @@
 #include "Parser.h"
 #include "Logic/Predicate.h"
 #include "Logic/Boolean.h"
-#include "Logic/Array.h"
+#include "Logic/Sequence.h"
 #include "Logic/Sequence.h"
 #include "Logic/Set.h"
 #include "Logic/Clause.h"
@@ -125,13 +125,13 @@ Logic::Object MakeExpression(Logic::Object&& left, Operator op, Logic::Object&& 
 {
 	if (op == Operator::Comma)
 	{
-		return Logic::array(std::move(left), std::move(right));
+		return Logic::sequence(std::move(left), std::move(right));
 	}
 	auto id0 = left.As<Logic::Id>();
 	auto pred1 = right.As<Logic::Predicate>();
 	auto seq0 = left.As<Logic::Sequence>();
 	auto pred0 = left.As<Logic::Predicate>();
-	auto array1 = right.As<Logic::Array>();
+	auto array1 = right.As<Logic::Sequence>();
 
 	if ((id0) && (op == Operator::SequenceBegin))
 	{	// predicate = <id> ( <seq> ) , also works if right is void

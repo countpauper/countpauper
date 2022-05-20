@@ -8,7 +8,7 @@ namespace Angel
 namespace Logic
 {
 
-Conjunction::Conjunction(Array&& operands) :
+Conjunction::Conjunction(Sequence&& operands) :
     Nary(std::move(operands))
 {
 }
@@ -47,11 +47,14 @@ Object Conjunction::Compute(const Knowledge& knowledge) const
         auto truth = condition.Compute(knowledge);
         if (!truth.Trivial())
             return truth;
-        // TODO: compute the operands, but cast them to boolean, forcing clauses to be queried? 
-        if (!knowledge.Query(condition))
-            return boolean(false);
     }
     return boolean(true);
+}
+
+
+Object Conjunction::Copy() const
+{
+    return Create<Conjunction>(Sequence(operands));
 }
 
 Object Conjunction::Cast(const std::type_info& t, const Knowledge& k) const

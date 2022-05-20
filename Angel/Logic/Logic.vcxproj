@@ -76,10 +76,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AllTrue.h" />
-    <ClInclude Include="Array.h" />
     <ClInclude Include="Boolean.h" />
     <ClInclude Include="Clause.h" />
-    <ClInclude Include="Clone.h" />
     <ClInclude Include="Collection.h" />
     <ClInclude Include="Conjunction.h" />
     <ClInclude Include="Element.h" />
@@ -97,7 +95,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Array.cpp" />
     <ClCompile Include="Clause.cpp" />
     <ClCompile Include="Conjunction.cpp" />
     <ClCompile Include="Element.cpp" />
@@ -107,6 +104,7 @@
     <ClCompile Include="Id.cpp" />
     <ClCompile Include="Knowledge.cpp" />
     <ClCompile Include="Namespace.cpp" />
+    <ClCompile Include="Operator.cpp" />
     <ClCompile Include="Predicate.cpp" />
     <ClCompile Include="Boolean.cpp" />
     <ClCompile Include="Sequence.cpp" />

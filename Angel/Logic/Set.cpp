@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Set.h"
 #include <algorithm>
-#include "Array.h"
+#include "Sequence.h"
 #include "Boolean.h"
 
 namespace Angel
@@ -11,17 +11,25 @@ namespace Logic
 
 Set::Set() = default;
 
-Set::Set(Array&& array)
+Set::Set(const Set& set)
+{
+    for (const auto& si : set)
+        emplace(si->Copy());
+}
+
+
+Set::Set(Sequence&& array)
 {
 	for (auto& e : array)
 	{
-		emplace(std::move(e));
+		Append(std::move(e));
 	}
 }
 
+/*  // this is weird, either added as element or cast implicity?
 Set::Set(Object&& value)
 {
-	if (auto array = value.As<Array>())
+	if (auto array = value.As<Sequence>())
 	{
 		for (auto& e : *array)
 		{
@@ -33,10 +41,17 @@ Set::Set(Object&& value)
 		emplace(std::move(value));
 	}
 }
+*/
 
 Set::Set(Set&& other) :
 	std::unordered_set<Object>(std::move(other))
 {
+}
+
+
+Object Set::Copy() const
+{
+    return Create<Set>(*this);
 }
 
 
@@ -75,7 +90,7 @@ Object Set::Cast(const std::type_info& t, const Knowledge& k) const
     {
         return boolean(!empty());
     }
-    else if (t == typeid(Array))
+    else if (t == typeid(Sequence))
     {
         return Object(); // TODO: copy all members 
     }
@@ -99,7 +114,7 @@ Object set()
 	return Create<Set>();
 }
 
-Object set(Array&& array)
+Object set(Sequence&& array)
 {
 	return Create<Set>(std::move(array));
 }

@@ -23,7 +23,7 @@ public:
 
 
 	Object(const std::wstring& tag);
-	Object(const Object& other) = delete;
+    explicit Object(const Object& other);
 	Object& operator=(const Object& other) = delete;
 	Object(Object&& other);
 	Object& operator=(Object&& other);
@@ -34,6 +34,7 @@ public:
     bool operator!=(const Object& other) const { return !operator==(other); }
 	bool Match(const Expression& other, const Knowledge& knowledge) const;
     const Expression& operator*() const;
+    const Expression* operator->() const;
     Object Compute(const Knowledge& knowledge) const;
 	template<class C>
     C* As() const { return dynamic_cast<C*>(expr.get()); }

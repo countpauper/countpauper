@@ -26,4 +26,8 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Syntax.txt" />
+    <Text Include="Use Cases.txt" />
+  </ItemGroup>
 </Project>

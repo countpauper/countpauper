@@ -27,8 +27,14 @@ Object::Object(const std::wstring& tag)
 	{
         expr = std::make_unique<Id>(tag);
 	}
-
 }
+
+Object::Object(const Object& other) :
+    Object(other->Copy())
+{
+}
+
+
 Object::Object(Object&& other) :
     expr(std::move(other.expr))
 {
@@ -70,6 +76,12 @@ const Expression& Object::operator*() const
 {
     return *expr;
 }
+
+const Expression* Object::operator->() const
+{
+    return expr.get();
+}
+
 
 size_t Object::Hash() const
 {

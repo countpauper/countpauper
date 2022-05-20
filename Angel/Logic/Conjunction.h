@@ -12,12 +12,13 @@ class Conjunction : public Nary
 public:
     Conjunction() = default;
     explicit Conjunction(Conjunction&& value);
-    explicit Conjunction(Array&& operands);
+    explicit Conjunction(Sequence&& operands);
     template<class ...Args>
     explicit Conjunction(Args... args) :
-        Conjunction(Array(std::forward<Args>(args)...))
+        Conjunction(Sequence(std::forward<Args>(args)...))
     {
     }
+    Object Copy() const override;
     bool operator==(const Expression& other) const;
     Object Compute(const Knowledge& known) const override;
     bool Match(const Expression& other, const Knowledge& knowledge) const override;

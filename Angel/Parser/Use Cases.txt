@@ -83,7 +83,7 @@ cat(X)?
 X=ginny
 (how it works is cat(X) assumes X is ginny. This assumption remains)
 
-== Arrays = ordered non-unique collection 
+== Sequences = ordered non-unique collection 
 = you can use the @ operator to see check an array 
 cat(X) : X @ [ginny,max])
 cat(ginny)?
@@ -95,7 +95,7 @@ cat(ginny)?
 [1,2,3][2] 
 > 3
 
-== Array indexing
+== Sequence indexing
 [max,ginny,gizmo][0,2]?
 > [max,gizmo]
 
@@ -136,10 +136,10 @@ cat ?
 > ginny 
 (but it would be hard to not try to match ginny and fail and decide she's not a cat)
 
-== Array/range matching 
-cats([X,max]) : X=ginny
-cats([ginny,max])?
-> true
+== Sequence/range matching 
+[X,Y,Z] = [max, ginny, gizmo]
+> X=max & Y=ginny & Z=gizmo 
+(not sure if the assumptions should take the form of a conjunction or an array)
 
 == Prolog like head tail matching? 
 cats([H|T]) : cat(H) & cats(T)
@@ -148,7 +148,7 @@ cat(ginny)
 cats([max,ginny])?
 > true
 
-== ALso assumption assignment
+== Also assumption assignment
 .... (same knowledge as above)
 cats(X)?
 > X=[max,ginny]
@@ -158,12 +158,17 @@ f(X):X+2
 f(Y)?
 > X+2
 
+== Clauses are a disjunction so multiple matches can be a disjunction
+cat : 1
+cat : 2
+cat? 
+> 1 | 2
+(disjunctions of booleans are simplified to a simple computes result, predicates have to be true or at least one of them. But not cast ? why not? )
+
 == Also element of, when the final answer is ambiguous 
 cat(max)
 cat(ginny)
 cat(X) ? 
 > X @ [max,ginny]
 (this also requires to not stop matching on the first hit and keep expanding assumptions. Can be very powerful)
-
-
 
