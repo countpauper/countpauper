@@ -1,16 +1,18 @@
 * Avrae 4.0 fixes
+- `!ic` roleplay xp, not compatibile with "new" !xp. No one is using it so can be removed or upgraded.
 - Rewrite !qb with functions
 - Rewrite !chance with functions
 - !qb count $ doesn't show thing
 
 Outlands:
+* !rpxp gain not working for dahlia, see @hallowed by rose in #Bot-commands2
 * fix !tt with missing cvar (testy)
 * fix rpxp and add to workshop
    - split in sub commands gain
    - help
 * add pitfight to worskhop
-    - split in sub commands set
-    - help
+    * split in sub commands set
+    * help
 - add outlandschar to workshop
 - check other aliases, see #suggestions
     > Other ones made specifically for this server would be !carousing, !downtime, !gamble, !gatetown, !piety, !planes, !powers, and !rpxp
