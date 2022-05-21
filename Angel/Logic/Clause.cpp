@@ -40,8 +40,15 @@ Object Clause::Match(const Expression& value) const
         else
             return predicateMatch;
 	}
-	else
-	    return boolean(false);
+    else if (auto clause = dynamic_cast<const Clause*>(&value))
+    {
+        auto predicateMatch = predicate.Match(clause->predicate);
+        if (predicateMatch.Trivial())
+        {
+            return condition->Match(*(clause->condition));
+        }
+    }
+	return boolean(false);
 }
 
 Object Clause::Compute(const Knowledge& known) const

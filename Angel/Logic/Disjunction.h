@@ -10,10 +10,10 @@ class Disjunction : public Nary
 public:
     Disjunction() = default;
     explicit Disjunction(Disjunction&& value);
-    explicit Disjunction(Sequence&& operands);
+    explicit Disjunction(Set&& operands);
     template<class ...Args>
     explicit Disjunction(Args... args) :
-        Disjunction(Sequence(std::forward<Args>(args)...))
+        Disjunction(Set(std::forward<Args>(args)...))
     {
     }
     Object Copy() const override;

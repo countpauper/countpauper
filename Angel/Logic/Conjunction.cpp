@@ -8,7 +8,7 @@ namespace Angel
 namespace Logic
 {
 
-Conjunction::Conjunction(Sequence&& operands) :
+Conjunction::Conjunction(Set&& operands) :
     Nary(std::move(operands))
 {
 }
@@ -32,8 +32,7 @@ bool Conjunction::operator==(const Expression& other) const
 
 Object Conjunction::Match(const Expression& other) const
 {
-    // TODO: how to match an operation? Compute it and match that?
-    return boolean(false);
+    return boolean(other == *this);
 }
 
 Object Conjunction::Compute(const Knowledge& knowledge) const
@@ -50,7 +49,7 @@ Object Conjunction::Compute(const Knowledge& knowledge) const
 
 Object Conjunction::Copy() const
 {
-    return Create<Conjunction>(Sequence(operands));
+    return Create<Conjunction>(Set(operands));
 }
 
 Object Conjunction::Cast(const std::type_info& t, const Knowledge& k) const

@@ -34,7 +34,7 @@ Object Namespace::Match(const Expression& e) const
     {
         return boolean(false);
     }
-    else if (result.size() == 0)
+    else if (result.size() == 1)
     {
         return Object(std::move(result[0]));
     }

@@ -6,7 +6,7 @@
 namespace Angel::Logic
 {
 
-Disjunction::Disjunction(Sequence&& operands) :
+Disjunction::Disjunction(Set&& operands) :
     Nary(std::move(operands))
 {
 }
@@ -30,8 +30,7 @@ bool Disjunction::operator==(const Expression& other) const
 
 Object Disjunction::Match(const Expression& other) const
 {
-    // TODO: how to match an operation? Compute it and match that?
-    return boolean(false);
+    return boolean(other == *this);
 }
 
 Object Disjunction::Compute(const Knowledge& knowledge) const
@@ -48,7 +47,7 @@ Object Disjunction::Compute(const Knowledge& knowledge) const
 
 Object Disjunction::Copy() const
 {
-    return Create<Disjunction>(Sequence(operands));
+    return Create<Disjunction>(Set(operands));
 }
 
 Object Disjunction::Cast(const std::type_info& t, const Knowledge& k) const

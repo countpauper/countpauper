@@ -37,7 +37,7 @@ TEST(TestParser, UnicodeId)
 
 	EXPECT_EQ(k.Clauses(), 2);
 	EXPECT_TRUE(k.Knows(Logic::predicate(L"Γάτα")));
-	EXPECT_TRUE(k.Knows(Logic::id(L"猫")));
+	EXPECT_TRUE(k.Knows(Logic::predicate(L"猫")));
 }
 
 }

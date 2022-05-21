@@ -19,7 +19,6 @@ public:
     Object Copy() const override;
     Object Match(const Expression& other) const override;
     Object Compute(const Knowledge& known) const override;
-    void Argue(Object&& value);
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
 private:

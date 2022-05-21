@@ -10,10 +10,10 @@ class Conjunction : public Nary
 public:
     Conjunction() = default;
     explicit Conjunction(Conjunction&& value);
-    explicit Conjunction(Sequence&& operands);
+    explicit Conjunction(Set&& operands);
     template<class ...Args>
     explicit Conjunction(Args... args) :
-        Conjunction(Sequence(std::forward<Args>(args)...))
+        Conjunction(Set(std::forward<Args>(args)...))
     {
     }
     Object Copy() const override;

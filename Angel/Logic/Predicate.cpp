@@ -55,7 +55,7 @@ Object Predicate::Match(const Expression& expr) const
             return boolean(false);;
 		return arguments.Match(predicate->arguments);
 	}
-	return false;
+	return boolean(false);
 }
 
 Object Predicate::Compute(const Knowledge& known) const
@@ -69,11 +69,6 @@ Object Predicate::Cast(const std::type_info& t, const Knowledge& k) const
     if (typeid(t) == typeid(Boolean))
         return Compute(k);
     throw CastException<Predicate>(t);
-}
-
-void Predicate::Argue(Object&& value)
-{
-	arguments.Append(std::move(value));
 }
 
 Object predicate(const Id& id, Sequence&& arguments)
