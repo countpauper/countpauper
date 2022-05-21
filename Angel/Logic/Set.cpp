@@ -65,23 +65,23 @@ bool Set::operator==(const Expression& other) const
 	return false;
 }
 
-bool Set::Match(const Expression& expr, const Knowledge& knowledge) const
+Object Set::Match(const Expression& expr) const
 {
 	if (auto set = dynamic_cast<const Set*>(&expr))
 	{
 		for (const auto& e : *this)
 		{
-			if (!std::none_of(set->begin(), set->end(), [&e, &knowledge](const Object& ov)
+			if (!std::none_of(set->begin(), set->end(), [&e](const Object& ov)
 			{
-				return e.Match(*ov, knowledge);
+				return e.Match(*ov);
 			}))
 			{
-				return false;
+                return boolean(false);
 			}
 		}
-		return true;
+		return boolean(true);
 	}
-	return false;
+	return boolean(false);
 }
 
 Object Set::Cast(const std::type_info& t, const Knowledge& k) const

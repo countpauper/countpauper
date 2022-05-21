@@ -38,7 +38,7 @@ public:
 
     virtual bool operator==(const Expression& other) const = 0;
     bool operator!=(const Expression& other) const { return !operator==(other); }
-    virtual bool Match(const Expression& other, const Knowledge& knowledge) const = 0;
+    virtual Object Match(const Expression& other) const = 0;
 protected:
     friend class Object;
     virtual Object Cast(const std::type_info& t, const Knowledge& k) const = 0;

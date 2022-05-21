@@ -30,14 +30,10 @@ bool Conjunction::operator==(const Expression& other) const
 }
 
 
-bool Conjunction::Match(const Expression& other, const Knowledge& knowledge) const
+Object Conjunction::Match(const Expression& other) const
 {
-    for (const auto& condition : operands)
-    {
-        if (!knowledge.Query(condition))
-            return false;
-    }
-    return true;
+    // TODO: how to match an operation? Compute it and match that?
+    return boolean(false);
 }
 
 Object Conjunction::Compute(const Knowledge& knowledge) const

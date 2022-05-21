@@ -4,16 +4,16 @@
 namespace Angel::Logic
 {
 
-// A Conjunction is a logical operator, which is true, only if all its elements are True
-class Conjunction : public Nary
+// A Disjunction is a logical operator, which is True, if at least one of its elements are True
+class Disjunction : public Nary
 {
 public:
-    Conjunction() = default;
-    explicit Conjunction(Conjunction&& value);
-    explicit Conjunction(Sequence&& operands);
+    Disjunction() = default;
+    explicit Disjunction(Disjunction&& value);
+    explicit Disjunction(Sequence&& operands);
     template<class ...Args>
-    explicit Conjunction(Args... args) :
-        Conjunction(Sequence(std::forward<Args>(args)...))
+    explicit Disjunction(Args... args) :
+        Disjunction(Sequence(std::forward<Args>(args)...))
     {
     }
     Object Copy() const override;
@@ -27,7 +27,7 @@ protected:
 template<class ...Args>
 Object conjunction(Args... args)
 {
-    return Create<Conjunction>(std::forward<Args>(args)...);
+    return Create<Disjunction>(std::forward<Args>(args)...);
 }
 
 }

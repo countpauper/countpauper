@@ -29,22 +29,24 @@ void Knowledge::Know(Object&& e)
     }
 }
 
-bool Knowledge::Query(const Object& o) const
+Object Knowledge::Query(const Object& o) const
 {
-    if (o.Trivial())
-        return true;
     return Query(*o);
 }
 
-bool Knowledge::Query(const Expression& e) const
+Object Knowledge::Query(const Expression& e) const
 {
-	return root.Match(e, *this);
+    return e.Compute(*this);
+}
+
+Object Knowledge::Match(const Expression& e) const
+{
+    return root.Match(e);
 }
 
 bool Knowledge::Knows(const Object& e) const
 {
-    // TODO: contains should just match predicates (without computing them) and check if the returned matches (could be a disjunction or sequence if true) is a boolean false
-	return root.Contains(e);
+    return root.Contains(*e);
 }
 
 size_t Knowledge::Clauses() const

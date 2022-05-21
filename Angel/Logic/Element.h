@@ -12,7 +12,7 @@ class Element : public Expression
 {
 public:
     Object Copy() const override;
-    bool Match(const Expression& other, const Knowledge& knowledge) const override;
+    Object Match(const Expression& other) const override;
 };
 
 }

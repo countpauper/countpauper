@@ -31,7 +31,7 @@ public:
 	Set(Set&& other);
     Object Copy() const override;
     bool operator==(const Expression& other) const override;
-	bool Match(const Expression& other, const Knowledge& knowledge) const override;
+	Object Match(const Expression& other) const override;
 	void Append(Object&& value);
 	void Merge(Set&& other);
 protected:

@@ -3,6 +3,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Sequence.h"
 #include "Logic/Clause.h"
+#include "Logic/Conjunction.h"
 
 namespace Angel::Logic::Test
 {
@@ -11,17 +12,17 @@ namespace Angel::Logic::Test
 	{
 		Knowledge k;
 		k.Know(clause(Predicate(L"cat")));
-		EXPECT_TRUE(k.Query(predicate(L"cat")));
-		EXPECT_FALSE(k.Query(predicate(L"dog")));
+		EXPECT_TRUE(k.Query(predicate(L"cat")).Trivial());
+		EXPECT_FALSE(k.Query(predicate(L"dog")).Trivial());
 	}
 
 	TEST(TestClause, Condition)
 	{
 		Knowledge k;
 		k.Know(clause(Predicate(L"cat"), predicate(L"ginny")));
-		EXPECT_FALSE(k.Query(predicate(L"cat")));
+		EXPECT_FALSE(k.Query(predicate(L"cat")).Trivial());
 		k.Know(predicate(L"ginny"));
-		EXPECT_TRUE(k.Query(predicate(L"cat")));
+		EXPECT_TRUE(k.Query(predicate(L"cat")).Trivial());
 	}
 
 	TEST(TestClause, Conjunction)
@@ -29,12 +30,12 @@ namespace Angel::Logic::Test
 		Knowledge k;
 		k.Know(clause(Predicate(L"cat"), conjunction(predicate(L"fuzzy"), predicate(L"noisy"))));
 		k.Know(clause(Predicate(L"hamster"), conjunction(predicate(L"fuzzy"), predicate(L"quiet"))));
-		EXPECT_FALSE(k.Query(predicate(L"cat")));
-		EXPECT_FALSE(k.Query(predicate(L"hamster")));
+		EXPECT_FALSE(k.Query(predicate(L"cat")).Trivial());
+		EXPECT_FALSE(k.Query(predicate(L"hamster")).Trivial());
 		k.Know(predicate(L"fuzzy"));
 		k.Know(predicate(L"noisy"));
-		EXPECT_TRUE(k.Query(predicate(L"cat")));
-		EXPECT_FALSE(k.Query(predicate(L"hamster")));
+		EXPECT_TRUE(k.Query(predicate(L"cat")).Trivial());
+		EXPECT_FALSE(k.Query(predicate(L"hamster")).Trivial());
 	}
 
 	TEST(TestClause, Predicate1Ary)
@@ -44,11 +45,11 @@ namespace Angel::Logic::Test
             predicate(L"fuzzy", Sequence(id(L"ginny")))));
 		k.Know(clause(Predicate(L"cat", Sequence(id(L"woofer"))),
             predicate(L"fuzzy", Sequence(id(L"woofer")))));
-		EXPECT_FALSE(k.Query(predicate(L"cat", Sequence(id(L"ginny")))));
+		EXPECT_FALSE(k.Query(predicate(L"cat", Sequence(id(L"ginny")))).Trivial());
 		k.Know(predicate(L"fuzzy", Sequence(id(L"ginny"))));
 
-		EXPECT_TRUE(k.Query(predicate(L"cat", Sequence(id(L"ginny")))));
-		EXPECT_FALSE(k.Query(predicate(L"cat", Sequence(id(L"woofer")))));
+		EXPECT_TRUE(k.Query(predicate(L"cat", Sequence(id(L"ginny")))).Trivial());
+		EXPECT_FALSE(k.Query(predicate(L"cat", Sequence(id(L"woofer")))).Trivial());
 	}
 
 	TEST(TestClause, Predicate2Ary)
@@ -57,12 +58,12 @@ namespace Angel::Logic::Test
 		k.Know(clause(Predicate(L"cats", Sequence(id(L"ginny"), id(L"max"))),
             conjunction(predicate(L"cat", Sequence(id(L"ginny"))),
 				predicate(L"cat", Sequence(id(L"max"))))));
-		EXPECT_FALSE(k.Query(predicate(L"cats", Sequence(id(L"ginny"), id(L"max")))));
+		EXPECT_FALSE(k.Query(predicate(L"cats", Sequence(id(L"ginny"), id(L"max")))).Trivial());
 
 		k.Know(predicate(L"cat", Sequence(id(L"ginny"))));
 		k.Know(predicate(L"cat", Sequence(id(L"max"))));
 
-		EXPECT_TRUE(k.Query(predicate(L"cats", Sequence(id(L"ginny"), id(L"max")))));
+		EXPECT_TRUE(k.Query(predicate(L"cats", Sequence(id(L"ginny"), id(L"max")))).Trivial());
 	}
 
 

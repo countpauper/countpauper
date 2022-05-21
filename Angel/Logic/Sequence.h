@@ -31,7 +31,7 @@ public:
     Object Copy() const override;
     void Append(Object&& value);
     void Merge(Sequence&& other);
-    bool Match(const Expression& other, const Knowledge& knowledge) const override;
+    Object Match(const Expression& other) const override;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
 };

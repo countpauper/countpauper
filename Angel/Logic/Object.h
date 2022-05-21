@@ -32,7 +32,7 @@ public:
 	bool Trivial() const;
     bool operator==(const Object& other) const;
     bool operator!=(const Object& other) const { return !operator==(other); }
-	bool Match(const Expression& other, const Knowledge& knowledge) const;
+	Object Match(const Expression& other) const;
     const Expression& operator*() const;
     const Expression* operator->() const;
     Object Compute(const Knowledge& knowledge) const;

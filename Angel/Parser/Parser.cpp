@@ -7,7 +7,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Boolean.h"
 #include "Logic/Sequence.h"
-#include "Logic/Sequence.h"
+#include "Logic/Conjunction.h"
 #include "Logic/Set.h"
 #include "Logic/Clause.h"
 #include "Logic/Object.h"

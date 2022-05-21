@@ -3,18 +3,14 @@
 #include "Logic/Boolean.h"
 #include "Logic/Integer.h"
 
-namespace Angel
-{
-namespace Logic 
-{
-namespace Test
+namespace Angel::Logic::Test
 {
 
 TEST(TestElement, Boolean)
 {
 	Knowledge k;
-	EXPECT_TRUE(k.Query(boolean(true)));
-	EXPECT_FALSE(k.Query(boolean(false)));
+	EXPECT_TRUE(k.Query(boolean(true)).Trivial());
+	EXPECT_FALSE(k.Query(boolean(false)).Trivial());
 	EXPECT_EQ(Logic::Boolean(true), Logic::Integer(2));
 	EXPECT_EQ(Logic::Boolean(false), Logic::Integer(0));
 	EXPECT_NE(Logic::Boolean(false), Logic::Integer(-3));
@@ -30,12 +26,8 @@ TEST(TestElement, Integer)
 
 
 	Knowledge k;
-	EXPECT_TRUE(k.Query(integer(1)));
-	EXPECT_FALSE(k.Query(integer(0)));
+	EXPECT_TRUE(k.Query(integer(1)).Trivial());
+	EXPECT_FALSE(k.Query(integer(0)).Trivial());
 }
 
-
-
-}
-}
 }

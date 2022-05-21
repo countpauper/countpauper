@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include <algorithm>
 #include "Namespace.h"
+#include "Disjunction.h"
+#include "Knowledge.h"
 
 namespace Angel
 {
@@ -18,32 +20,36 @@ void Namespace::Add(Clause&& c)
         contents.emplace_back(std::move(c));
 }
 
-bool Namespace::Match(const Expression& e, const Knowledge& knowledge) const
+Object Namespace::Match(const Expression& e) const
 {
+    Sequence result;
 	for (auto& c : contents)
 	{
-		if (c.Match(e, knowledge))
-			return true;
+        Object match = c.Match(e);
+        if (match!=boolean(false))  // optimization, but only works because empty result is also false
+            result.Append(std::move(match));
 	}
-	return false;
-}
 
-bool Namespace::Contains(const Clause& c) const
-{
-    return std::find(contents.begin(), contents.end(), c) != contents.end();
-}
-
-bool Namespace::Contains(const Object& e) const
-{
-    if (Clause* c = e.As<Clause>())
+    if (result.empty())
     {
-        return Contains(*c);
+        return boolean(false);
+    }
+    else if (result.size() == 0)
+    {
+        return Object(std::move(result[0]));
     }
     else
     {
-        return false;
+        return Create<Disjunction>(std::move(result));
     }
 }
+
+bool Namespace::Contains(const Expression& e) const
+{
+    auto match = Match(e);
+    return match.Trivial();
+}
+
 
 
 size_t Namespace::Clauses() const

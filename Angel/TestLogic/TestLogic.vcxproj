@@ -55,6 +55,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Knowledge.cpp" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemDefinitionGroup />

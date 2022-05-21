@@ -1,7 +1,6 @@
 #pragma once
 #include "Object.h"
 #include "Predicate.h"
-#include "Conjunction.h"
 #include "Boolean.h"
 #include "Expression.h"
 
@@ -16,7 +15,7 @@ class Clause : public Expression
 public:
 	explicit Clause(Predicate&& predicate, Object&& condition = boolean(true));
 	bool operator==(const Expression& other) const override;
-	bool Match(const Expression& other, const Knowledge& knowledge) const override;
+	Object Match(const Expression& other) const override;
     Object Copy() const override;
     Object Compute(const Knowledge& known) const override;
 protected:

@@ -13,8 +13,9 @@ class Knowledge
 public:
 	Knowledge();
 	void Know(Object&& e);
-	bool Query(const Object& e) const;
-    bool Query(const Expression& e) const;
+	Object Query(const Object& e) const;
+    Object Query(const Expression& e) const;
+    Object Match(const Expression& e) const;
 	bool Knows(const Object& e) const;
 	size_t Clauses() const;
 private:

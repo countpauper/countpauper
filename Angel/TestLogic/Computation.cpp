@@ -7,7 +7,7 @@
 namespace Angel::Logic::Test
 {
 
-TEST(TestComputation, Conjunctions)
+TEST(TestComputation, Disjunctions)
 {
     Knowledge k;
     // TODO: not all expression should be knowable. Elements and operators are not the same as predicates, clauses and ... formulas? 

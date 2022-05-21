@@ -15,9 +15,9 @@ Object Element::Copy() const
 }
 
 
-bool Element::Match(const Expression& other, const Knowledge& knowledge) const
+Object Element::Match(const Expression& other) const
 {
-    return (*this) == other;    // TODO: might need to Cast or does == do this?
+    return boolean((*this) == other);
 }
 
 }

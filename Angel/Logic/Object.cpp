@@ -62,9 +62,9 @@ bool Object::operator==(const Object& other) const
 	return *expr == *other.expr;
 }
 
-bool Object::Match(const Expression& other, const Knowledge& knowledge) const
+Object Object::Match(const Expression& other) const
 {
-	return expr->Match(other, knowledge);
+	return expr->Match(other);
 }
 
 Object Object::Compute(const Knowledge& knowledge) const

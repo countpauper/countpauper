@@ -17,7 +17,7 @@ public:
     Predicate(Predicate&& other);
 	bool operator==(const Expression& other) const override;
     Object Copy() const override;
-    bool Match(const Expression& other, const Knowledge& knowledge) const override;
+    Object Match(const Expression& other) const override;
     Object Compute(const Knowledge& known) const override;
     void Argue(Object&& value);
 protected:
@@ -27,8 +27,8 @@ private:
 	Sequence arguments;
 };
 
-Object predicate(const Id& id, Sequence&& arguments=Sequence());
-Object predicate(const std::wstring& name, Sequence&& arguments= Sequence());
+Object predicate(const Id& id, Sequence&& arguments = Sequence());
+Object predicate(const std::wstring& name, Sequence&& arguments = Sequence());
 
 }
 }

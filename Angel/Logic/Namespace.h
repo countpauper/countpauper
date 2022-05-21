@@ -16,10 +16,8 @@ class Namespace
 public:
 	explicit Namespace(const Id& id);
 	void Add(Clause&& e);
-	bool Match(const Expression& e, const Knowledge& knowledge) const;
-	bool Contains(const Object& e) const;
-    bool Contains(const Clause& c) const;
-
+	Object Match(const Expression& e) const;
+	bool Contains(const Expression& e) const;
 	size_t Clauses() const;
 private:
     Id id;

@@ -1,0 +1,63 @@
+#include "stdafx.h"
+#include "Disjunction.h"
+#include "Boolean.h"
+#include "Knowledge.h"
+
+namespace Angel::Logic
+{
+
+Disjunction::Disjunction(Sequence&& operands) :
+    Nary(std::move(operands))
+{
+}
+
+Disjunction::Disjunction(Disjunction&& value) :
+    Disjunction(std::move(value.operands))
+{
+}
+
+
+bool Disjunction::operator==(const Expression& other) const
+{
+    // TODO: could be in Nary if the type was the same 
+    if (auto conjunction = dynamic_cast<const Disjunction*>(&other))
+    {
+        return operands == conjunction->operands;
+    }
+    return false;
+}
+
+
+Object Disjunction::Match(const Expression& other) const
+{
+    // TODO: how to match an operation? Compute it and match that?
+    return boolean(false);
+}
+
+Object Disjunction::Compute(const Knowledge& knowledge) const
+{
+    for (const auto& condition : operands)
+    {
+        auto truth = condition.Compute(knowledge);
+        if (truth.Trivial())
+            return truth;
+    }
+    return boolean(false);
+}
+
+
+Object Disjunction::Copy() const
+{
+    return Create<Disjunction>(Sequence(operands));
+}
+
+Object Disjunction::Cast(const std::type_info& t, const Knowledge& k) const
+{
+    if (t == typeid(Boolean))
+    {
+        return Compute(k);
+    }
+    throw CastException<Disjunction>(t);
+}
+
+}

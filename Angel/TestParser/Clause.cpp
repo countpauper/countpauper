@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Parser/Parser.h"
 #include "Logic/Clause.h"
+#include "Logic/Conjunction.h"
 
 namespace Angel
 {
