@@ -20,7 +20,7 @@ public:
     template<class ...Args>
     explicit Sequence(Object&& first, Args... args)
     {
-        Append(std::move(first));
+        Add(std::move(first));
         Merge(std::move(Sequence(std::forward<Args>(args)...)));
     }
 
@@ -29,7 +29,7 @@ public:
     Sequence(Sequence&& other);
     bool operator==(const Expression& other) const override;
     Object Copy() const override;
-    void Append(Object&& value);
+    void Add(Object&& value);
     void Merge(Sequence&& other);
     Object Match(const Expression& other) const override;
 protected:

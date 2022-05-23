@@ -59,7 +59,7 @@ bool Object::Trivial() const
 
 bool Object::operator==(const Object& other) const
 {
-	return *expr == *other.expr;
+	return expr && other && *expr == *other.expr;
 }
 
 Object Object::Match(const Expression& other) const

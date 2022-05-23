@@ -14,40 +14,40 @@ namespace Test
 
 TEST(TestElement, Id)
 {
-	Logic::Knowledge k = Parse(L"cat");
-
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::id(L"cat")));
-	EXPECT_FALSE(k.Knows(Logic::id(L"dog")));
+    std::wstringstream s(L"cat");
+    Logic::Object cat;
+    s >> cat;
+    EXPECT_EQ(cat, Logic::id(L"cat"));
 }
-
 
 TEST(TestElement, Ids)
 {
-	Logic::Knowledge k = Parse(L"max ginny");
-
-	EXPECT_EQ(k.Clauses(), 2);
-	EXPECT_TRUE(k.Knows(Logic::id(L"max")));
-	EXPECT_TRUE(k.Knows(Logic::id(L"ginny")));
+    std::wstringstream s(L"gizmo ginny");
+    Logic::Object gizmo, ginny;
+    s >> gizmo >> ginny;
+    EXPECT_EQ(gizmo, Logic::id(L"gizmo"));
+	EXPECT_EQ(ginny, Logic::id(L"ginny"));
 }
 
 TEST(TestElement, Boolean)
 {
-	Logic::Knowledge k = Parse(L"true false");
+    std::wstringstream s(L"true false");
+    Logic::Object yes, no;
+    s >> yes >> no;
 
-	EXPECT_EQ(k.Clauses(), 2);
-	EXPECT_TRUE(k.Knows(Logic::boolean(true)));
-	EXPECT_TRUE(k.Knows(Logic::boolean(false)));
+    EXPECT_EQ(yes, Logic::boolean(true));
+    EXPECT_EQ(no, Logic::boolean(false));
 }
 
 TEST(TestElement, Integer)
 {
-	Logic::Knowledge k = Parse(L"-9 23 cat2");
+    std::wstringstream s(L"-9 23 cat2");
+    Logic::Object negative, positive, id;
+    s >> negative >> positive >> id;
 
-	EXPECT_EQ(k.Clauses(), 3);
-	EXPECT_TRUE(k.Knows(Logic::integer(23)));
-	EXPECT_TRUE(k.Knows(Logic::integer(-9)));
-	EXPECT_TRUE(k.Knows(Logic::id(L"cat2")));
+    EXPECT_EQ(positive, Logic::integer(23));
+    EXPECT_EQ(negative, Logic::integer(-9));
+    EXPECT_EQ(id, Logic::id(L"cat2"));
 }
 
 

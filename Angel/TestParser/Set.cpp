@@ -11,43 +11,42 @@ namespace Test
 
 TEST(TestSet, Empty)
 {
-	Logic::Knowledge k = Parse(L"{} ");
+    Logic::Object set;
+    std::wstringstream s(L"{} ");
+    s >> set;
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::set()));
+	EXPECT_EQ(set, Logic::set());
 }
 
 
 TEST(TestSet, Single)
 {
-	Logic::Knowledge k = Parse(L"{ cat}");
+    Logic::Object set;
+    std::wstringstream s(L"{ cat}");
+    s >> set;
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::set(Logic::id(L"cat"))));
-	EXPECT_FALSE(k.Knows(Logic::id(L"cat")));
+    EXPECT_EQ(set, Logic::set(Logic::id(L"cat")));
 }
 
 
 TEST(TestSet, Multiple)
 {
-	Logic::Knowledge k = Parse(L"{ cat, dog, cat } ");
+    Logic::Object set;
+    std::wstringstream s(L"{ cat, dog, cat } ");
+    s >> set;
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::set(Logic::id(L"cat"), Logic::id(L"dog"))));
-	EXPECT_FALSE(k.Knows(Logic::id(L"cat")));
-	EXPECT_FALSE(k.Knows(Logic::id(L"dog")));
+    EXPECT_EQ(set, Logic::set(Logic::id(L"cat"), Logic::id(L"dog")));
 }
 
 TEST(TestSet, Nested)
 {
-	Logic::Knowledge k = Parse(L"{ {cat, dog }, cat}");
+    Logic::Object set;
+    std::wstringstream s(L"{ {cat, dog }, cat}");
+    s >> set;
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::set(
+	EXPECT_EQ(set, Logic::set(
 		Logic::set(Logic::id(L"cat"), Logic::id(L"dog")), 
-		Logic::id(L"cat"))));
-	EXPECT_FALSE(k.Knows(Logic::set(Logic::id(L"cat"),
-		Logic::id(L"dog"))));
+		Logic::id(L"cat")));
 }
 
 

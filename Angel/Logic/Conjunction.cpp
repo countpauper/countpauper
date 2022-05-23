@@ -61,6 +61,15 @@ Object Conjunction::Cast(const std::type_info& t, const Knowledge& k) const
     throw CastException<Conjunction>(t);
 }
 
+Object conjunction(Sequence&& operands)
+{
+    return Create<Conjunction>(Set(std::move(operands)));
+}
+
+Object conjunction(Set&& operands)
+{
+    return Create<Conjunction>(std::move(operands));
+}
 
 }
 }

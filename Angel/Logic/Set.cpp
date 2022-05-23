@@ -18,13 +18,18 @@ Set::Set(const Set& set)
 }
 
 
-Set::Set(Sequence&& array)
+Set::Set(Set&& other) :
+    std::unordered_set<Object>(std::move(other))
 {
-	for (auto& e : array)
-	{
-		Append(std::move(e));
-	}
 }
+
+Set::Set(Sequence&& seq)
+{
+    for (auto& si : seq)
+        emplace(std::move(si));
+}
+
+
 
 /*  // this is weird, either added as element or cast implicity?
 Set::Set(Object&& value)
@@ -43,10 +48,6 @@ Set::Set(Object&& value)
 }
 */
 
-Set::Set(Set&& other) :
-	std::unordered_set<Object>(std::move(other))
-{
-}
 
 
 Object Set::Copy() const
@@ -97,7 +98,7 @@ Object Set::Cast(const std::type_info& t, const Knowledge& k) const
     throw CastException<Set>(t);
 }
 
-void Set::Append(Object&& value)
+void Set::Add(Object&& value)
 {
 	if (value)
 		insert(std::move(value));
@@ -114,9 +115,16 @@ Object set()
 	return Create<Set>();
 }
 
-Object set(Sequence&& array)
+Object set(Sequence&& seq)
 {
-	return Create<Set>(std::move(array));
+    return Create<Set>(std::move(seq));
+}
+
+Object set(Set&& s, Object&& o)
+{
+    auto result = Create<Set>(std::move(s));
+    result.As<Set>()->Add(std::move(o));
+    return std::move(result);
 }
 
 }

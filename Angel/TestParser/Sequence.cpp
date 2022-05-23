@@ -2,6 +2,7 @@
 #include "Parser/Parser.h"
 #include "Logic/Sequence.h"
 #include "Logic/Sequence.h"
+#include <ios>
 
 namespace Angel
 {
@@ -12,82 +13,90 @@ namespace Test
 
 TEST(TestSequence, Comma)
 {
-	Logic::Knowledge k = Parse(L"cat, dog");
+    Logic::Object seq;
+    std::wstringstream s(L"(cat, dog)");
+    s >> seq;
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::sequence(Logic::id(L"cat"), Logic::id(L"dog"))));
-	EXPECT_FALSE(k.Knows(Logic::id(L"cat")));
-	EXPECT_FALSE(k.Knows(Logic::id(L"dog")));
+	EXPECT_EQ(seq, Logic::sequence(Logic::id(L"cat"), Logic::id(L"dog")));
 }
 
 TEST(TestSequence, MakeSequence)
 {
-	Logic::Knowledge k = Parse(L"cat, ");
+    std::wstringstream s(L"(cat,)");
+    Logic::Object seq;
+    s >> seq;
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::sequence(Logic::id(L"cat"))));
-	EXPECT_FALSE(k.Knows(Logic::id(L"cat")));
+    EXPECT_EQ(seq, Logic::sequence(Logic::id(L"cat")));
 }
 
 TEST(TestSequence, Commas)
 {
-	Logic::Knowledge k = Parse(L"cat, dog, hamster");
+    Logic::Object seq;
+    std::wstringstream s(L"( cat, dog, hamster )");
+    s >> seq;
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::sequence(
+    EXPECT_EQ(seq, Logic::sequence(
 		Logic::id(L"cat"), 
 		Logic::id(L"dog"),
-		Logic::id(L"hamster"))));
+		Logic::id(L"hamster")));
 }
 
 
 TEST(TestSequence, Empty)
 {
-	Logic::Knowledge k = Parse(L"( )");
+    Logic::Object seq;
+    std::wstringstream s(L"( )");
+    s >> seq;
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::sequence()));
+    EXPECT_EQ(seq, Logic::sequence());
 }
 
 TEST(TestSequence, Single)
 {
-	Logic::Knowledge k = Parse(L"( cat)");
-
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::sequence(Logic::id(L"cat"))));
-	EXPECT_FALSE(k.Knows(Logic::id(L"cat")));
+    Logic::Object seq;
+    std::wstringstream s(L"( cat)");
+    s >> seq;
+    EXPECT_EQ(seq, Logic::sequence(Logic::id(L"cat")));
 }
 
 
 TEST(TestSequence, Multiple)
 {
-	Logic::Knowledge k = Parse(L"( cat, dog )");
+    Logic::Object seq;
+    std::wstringstream s(L"( cat, dog )");
+    s >> seq;
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::sequence(Logic::id(L"cat"), Logic::id(L"dog"))));
-	EXPECT_FALSE(k.Knows(Logic::id(L"cat")));
-	EXPECT_FALSE(k.Knows(Logic::id(L"dog")));
+    EXPECT_EQ(seq, Logic::sequence(Logic::id(L"cat"), Logic::id(L"dog")));
+}
+
+TEST(TestSequence, SequenceInSequence)
+{
+    Logic::Object seq;
+    std::wstringstream s(L"((cat, dog))");
+    s >> seq;
+    EXPECT_EQ(seq, sequence(sequence(Logic::id(L"cat"), Logic::id(L"dog"))));
 }
 
 TEST(TestSequence, Errors)
 {
-	EXPECT_THROW(Parse(L"cat, dog)"), std::runtime_error);
-	EXPECT_THROW(Parse(L"(cat, dog"), std::runtime_error);
-	EXPECT_THROW(Parse(L"(cat, dog}"), std::runtime_error);
+    Logic::Object seq;
+    std::wstringstream badOpen(L"cat, dog)"), badClose(L"(cat, dog"), badBraces(L"(cat, dog}");
+    EXPECT_THROW(badOpen >> seq, SyntaxError);
+	EXPECT_THROW(badClose >> seq, SyntaxError);
+	EXPECT_THROW(badBraces >> seq, SyntaxError);
 }
+
+
 
 TEST(TestSequence, Nested)
 {
-	Logic::Knowledge k = Parse(L"( cat, (dog, hamster) )");
+    Logic::Object seq;
+    std::wstringstream s(L"( cat, (dog, hamster) )");
+    s >> seq;
 
-	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::sequence(Logic::id(L"cat"), Logic::sequence(
-		Logic::id(L"dog"), Logic::id(L"hamster")))));
-	EXPECT_FALSE(k.Knows(Logic::sequence(Logic::id(L"cat"), 
-		Logic::id(L"dog"), 
-		Logic::id(L"hamster"))));
+    EXPECT_EQ(seq, Logic::sequence(Logic::id(L"cat"), Logic::sequence(
+        Logic::id(L"dog"), Logic::id(L"hamster"))));
 }
-
 
 }
 }

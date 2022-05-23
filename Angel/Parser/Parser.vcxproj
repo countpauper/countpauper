@@ -122,8 +122,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BNF.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Syntax.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Parser.cpp">

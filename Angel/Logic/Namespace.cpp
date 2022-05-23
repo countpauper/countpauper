@@ -22,12 +22,12 @@ void Namespace::Add(Clause&& c)
 
 Object Namespace::Match(const Expression& e) const
 {
-    Sequence result;
+    Set result;
 	for (auto& c : contents)
 	{
         Object match = c.Match(e);
         if (match!=boolean(false))  // optimization, but only works because empty result is also false
-            result.Append(std::move(match));
+            result.Add(std::move(match));
 	}
 
     if (result.empty())
@@ -36,7 +36,7 @@ Object Namespace::Match(const Expression& e) const
     }
     else if (result.size() == 1)
     {
-        return Object(std::move(result[0]));
+        return Object(std::move(*result.begin()));
     }
     else
     {

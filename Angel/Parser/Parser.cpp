@@ -123,23 +123,28 @@ std::wstring ReadTag(std::wistream& s)
 // TODO: can be constructor of element
 Logic::Object MakeExpression(Logic::Object&& left, Operator op, Logic::Object&& right)
 {
-	if (op == Operator::Comma)
-	{
-		return Logic::sequence(std::move(left), std::move(right));
-	}
 	auto id0 = left.As<Logic::Id>();
 	auto pred1 = right.As<Logic::Predicate>();
-	auto seq0 = left.As<Logic::Sequence>();
-	auto pred0 = left.As<Logic::Predicate>();
-	auto array1 = right.As<Logic::Sequence>();
+    auto seq0 = left.As<Logic::Sequence>();
+    auto set0 = left.As<Logic::Set>();
+    auto pred0 = left.As<Logic::Predicate>();
+	auto seq1 = right.As<Logic::Sequence>();
 
+    if ((seq0) && (op == Operator::Comma))
+    {
+        return Logic::sequence(std::move(*seq0), std::move(right));
+    }
+    else if ((set0) && (op == Operator::Comma))
+    {
+        return Logic::set(std::move(*set0), std::move(right));
+    }
 	if ((id0) && (op == Operator::SequenceBegin))
 	{	// predicate = <id> ( <seq> ) , also works if right is void
 		return Logic::predicate(*id0, Logic::Sequence(std::move(right)));
 	}
-	else if ((pred0) && (array1) && (op == Operator::Colon))
+	else if ((pred0) && (seq1) && (op == Operator::Colon))
 	{	// clause = <pred> : <array>
-		return Logic::clause(std::move(*pred0), Logic::conjunction(std::move(*array1)));
+		return Logic::clause(std::move(*pred0), Logic::conjunction(std::move(*seq1)));
 	}
 	else if ((pred0) && (op == Operator::Colon))
 	{	// clause = <pred> : <whatever>
@@ -147,15 +152,22 @@ Logic::Object MakeExpression(Logic::Object&& left, Operator op, Logic::Object&& 
 	}
 	else if ((op == Operator::SequenceBegin) && (!left))
 	{	// also works for right being an array or void
-		return Logic::sequence(std::move(right));
+        if (right.As<Logic::Sequence>())
+            return std::move(right);
+        else
+		    return Logic::sequence(std::move(right));
 	}
 	else if ((op == Operator::SetBegin) && (!left))
 	{	// also works for right being an array or void
-		return Logic::set(std::move(right));
+        auto seq = right.As<Logic::Sequence>();
+        if (seq)
+            return Logic::set(std::move(*seq));
+        else
+            return Logic::set(std::move(right));
 	}
 	else
 	{
-		throw std::runtime_error((std::string("Unexpected operator ")+Description(op)).c_str());
+		throw SyntaxError((std::string("Unexpected operator ")+Description(op)).c_str());
 	}
 }
 
@@ -172,13 +184,21 @@ Logic::Object ParseExpression(std::wistream& stream, Operator previousOperator, 
 
 Logic::Object ParseCollection(std::wistream& stream, Operator openOperator)
 {
-	auto left = ParseElement(stream);
+    Logic::Object left;
+    if (openOperator == Operator::SequenceBegin)
+        left = Logic::sequence();
+    else if (openOperator == Operator::SetBegin)
+        left = Logic::set();
+
 	while (!stream.bad())
 	{
 		auto op = PeekOperator(stream);
 		if (op == Operator::None)
 		{
-			throw std::runtime_error((std::string("Missing closing operator for ")+Description(openOperator)).c_str());
+            auto element = ParseElement(stream);
+            //o.Add(element);
+
+            throw std::runtime_error((std::string("Missing closing operator for ")+Description(openOperator)).c_str());
 
 		}
 		else if (ClosesSomethingElse(openOperator, op))
@@ -251,6 +271,17 @@ Logic::Knowledge Parse(const std::wstring& text)
 		}
 	}
 	return result;
+}
+
+std::wostream& operator<<(std::wostream& s, const Logic::Object& o)
+{
+    return s;
+}
+
+std::wistream& operator>>(std::wistream& s, Logic::Object& o)
+{
+    o = ParseExpression(s, Operator::None, Operator::None);
+    return s;
 }
 
 }

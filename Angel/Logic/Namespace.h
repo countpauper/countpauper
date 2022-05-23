@@ -15,7 +15,7 @@ class Namespace
 {
 public:
 	explicit Namespace(const Id& id);
-	void Add(Clause&& e);
+	void Add(Clause&& e);   // TODO: is it a collection? 
 	Object Match(const Expression& e) const;
 	bool Contains(const Expression& e) const;
 	size_t Clauses() const;

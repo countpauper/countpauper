@@ -29,5 +29,7 @@ Object conjunction(Args... args)
 {
     return Create<Conjunction>(std::forward<Args>(args)...);
 }
+Object conjunction(Sequence&& seq);
+Object conjunction(Set&& set);
 
 }

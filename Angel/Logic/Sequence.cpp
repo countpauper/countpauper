@@ -27,7 +27,7 @@ Sequence::Sequence(const Sequence& other)
 {
     for (const auto& io : other)
     {
-        Append(io->Copy());
+        Add(io->Copy());
     }
 }
 
@@ -88,14 +88,14 @@ Object Sequence::Cast(const std::type_info& t, const Knowledge& k) const
         auto result = Create<Set>();
         for (const auto& e : *this)
         {
-            result.As<Set>()->Append(Object(e));
+            result.As<Set>()->Add(Object(e));
         }
         return result;
     }
     throw CastException<Sequence>(t);
 }
 
-void Sequence::Append(Object&& value)
+void Sequence::Add(Object&& value)
 {
     if (value)
     {
@@ -129,7 +129,7 @@ Object sequence(Sequence&& left, Sequence&& right)
 Object sequence(Sequence&& left, Object&& right)
 {
     auto result = sequence(left);
-    result.As<Sequence>()->Append(std::move(right));
+    result.As<Sequence>()->Add(std::move(right));
     return result;
 }
 

@@ -15,31 +15,32 @@ class Set : public Collection, public std::unordered_set<Object>
 {
 public:
 	Set();
-    Set(const Set&);
-    explicit Set(Sequence&& array);
+    explicit Set(const Set& set);
+    explicit Set(Set&& set);
+    explicit Set(Sequence&& set);
 
 	template<class ...Args, class = std::enable_if_t <
 		all_true < std::is_convertible<Args, Object>{}... > {}
 	>>
 		explicit Set(Object&& first, Args... args)
     {
-        Append(std::move(first));
+        Add(std::move(first));
 		Merge(Set(std::forward<Args>(args)...));
 	}
 
 	Set& operator=(const Set&) = delete;
-	Set(Set&& other);
     Object Copy() const override;
     bool operator==(const Expression& other) const override;
 	Object Match(const Expression& other) const override;
-	void Append(Object&& value);
+	void Add(Object&& value);
 	void Merge(Set&& other);
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
 };
 
 Object set();
-Object set(Sequence&& array);
+Object set(Sequence&& seq);
+Object set(Set&& s, Object&& o);
 
 template<class ...Args, class = std::enable_if_t <
 	all_true < std::is_convertible<Args, Object>{}... > {}

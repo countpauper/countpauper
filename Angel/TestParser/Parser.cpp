@@ -33,11 +33,12 @@ TEST(TestParser, Whitespace)
 
 TEST(TestParser, UnicodeId)
 {
-	Logic::Knowledge k = Parse(L"Γάτα() 猫");
+    std::wstringstream s(L"Γάτα() 猫");
 
-	EXPECT_EQ(k.Clauses(), 2);
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"Γάτα")));
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"猫")));
+    Logic::Object predicate, id;
+    s >> predicate >> id;
+	EXPECT_EQ(predicate, Logic::predicate(L"Γάτα"));
+    EXPECT_EQ(id, Logic::id(L"猫"));
 }
 
 }

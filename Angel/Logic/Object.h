@@ -48,7 +48,7 @@ private:
 };
 
 template<class T, typename... Args>
-Object Create(Args... args)
+Object Create(Args&&... args)
 {
 	return Object(std::make_unique<T>(std::forward<Args>(args)...));
 }
