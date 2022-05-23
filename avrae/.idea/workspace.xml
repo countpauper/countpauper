@@ -2,15 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Clause.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Clause.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outlands/piety.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Namespace.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Namespace.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Predicate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Predicate.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Predicate.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Predicate.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Object.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Object.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Object.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Object.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Set.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Set.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Set.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Set.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.vcxproj.filters" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestParser/Element.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/Element.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/TestParser/Parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/Parser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestParser/Sequence.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/Sequence.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestParser/Set.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/Set.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outlands/rpxp.py" beforeDir="false" afterPath="$PROJECT_DIR$/outlands/rpxp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outlands/tt.py" beforeDir="false" afterPath="$PROJECT_DIR$/outlands/tt.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

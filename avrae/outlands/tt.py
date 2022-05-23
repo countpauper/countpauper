@@ -33,7 +33,7 @@ else:
 		sp=min([int(a[0]),-1*int(a[0])]) if a[0].strip("-").isdigit() else min([int(a[1]),-1*int(a[1])]) if str(a[0]+a[1]).strip("-").isdigit() else int(a[0]) if a[0].strip("+").isdigit() else int(a[1]) if a[0]=="+" and a[1].isdigit() else ""
 		st=a[0]=="set" and ex and a[1].isdigit()
 		if ud:
-			c.set_cc(t,hr+get_cc(t))
+			c.set_cc(t, hr + c.get_cc(t))
 			c.set_cvar("last_reset",wk)
 			c.set_cc(r,0)
 		if (sp and ex):
