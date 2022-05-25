@@ -45,7 +45,8 @@ static const std::map<wchar_t, Operator> translateOperator = {
 std::string Description(Operator op)
 {
 	static const std::map<Operator, std::string> description = {
-	{ Operator::Comma, "," },
+    { Operator::None, "<None>" },
+    { Operator::Comma, "," },
 	{ Operator::SequenceBegin, "(" },
 	{ Operator::SequenceEnd, "(" },
 	{ Operator::SetBegin, "{" },
@@ -185,23 +186,11 @@ Logic::Object ParseExpression(std::wistream& stream, Operator previousOperator, 
 Logic::Object ParseCollection(std::wistream& stream, Operator openOperator)
 {
     Logic::Object left;
-    if (openOperator == Operator::SequenceBegin)
-        left = Logic::sequence();
-    else if (openOperator == Operator::SetBegin)
-        left = Logic::set();
-
-	while (!stream.bad())
+    Logic::Sequence seq;
+    while (!stream.bad())
 	{
 		auto op = PeekOperator(stream);
-		if (op == Operator::None)
-		{
-            auto element = ParseElement(stream);
-            //o.Add(element);
-
-            throw std::runtime_error((std::string("Missing closing operator for ")+Description(openOperator)).c_str());
-
-		}
-		else if (ClosesSomethingElse(openOperator, op))
+        if (ClosesSomethingElse(openOperator, op))
 		{
 			throw std::runtime_error((std::string("Unexpected ") + Description(op)).c_str());
 		}
@@ -230,15 +219,19 @@ Logic::Object ParseExpression(std::wistream& stream, Operator previousOperator, 
 		auto op = PeekOperator(stream);
 		if (op == Operator::None)
 		{
-			break;
+            break; // done
 		}
-		else if (op <= previousOperator)
+        else if (op == Operator::Comma)
+        {
+            break;
+        }
+        else if (op <= previousOperator)
 		{	// equal, because chains of , or other equivalent operators should be iterative
 			break;
 		}
 		else if (ClosesSomethingElse(openOperator, op))
 		{
-			throw std::runtime_error((std::string("Unexpected ") + Description(op)).c_str());
+			throw std::runtime_error(std::string("Unexpected ") + Description(op));
 		}
 		else if (Closes(openOperator, op))
 		{	// end of collection is end of expression

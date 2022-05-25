@@ -1,7 +1,7 @@
 #pragma once
 #include "BNF.h"
 
-namespace Angel::Logic::Parser
+namespace Angel::Parser
 {
     // literals
     Rule id{ RegularExpression{"a-z+"} };

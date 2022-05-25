@@ -12,6 +12,8 @@ namespace Parser
 namespace Test
 {
 
+    /* Reenable with BNF
+
 TEST(TestElement, Id)
 {
     std::wstringstream s(L"cat");
@@ -49,6 +51,7 @@ TEST(TestElement, Integer)
     EXPECT_EQ(negative, Logic::integer(-9));
     EXPECT_EQ(id, Logic::id(L"cat2"));
 }
+*/
 
 
 

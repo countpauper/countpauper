@@ -123,11 +123,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BNF.h" />
+    <ClInclude Include="Errors.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Syntax.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BNF.cpp" />
     <ClCompile Include="Parser.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>

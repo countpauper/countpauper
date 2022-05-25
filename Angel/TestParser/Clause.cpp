@@ -3,12 +3,10 @@
 #include "Logic/Clause.h"
 #include "Logic/Conjunction.h"
 
-namespace Angel
+namespace Angel::Parser::Test
 {
-namespace Parser
-{
-namespace Test
-{
+
+/*  // reeanble with BNF
 
 TEST(TestClause, Predicate)
 {
@@ -39,8 +37,7 @@ TEST(TestClause, Conditions)
 						Logic::conjunction(Logic::predicate(L"fuzzy"),
 										Logic::predicate(L"noisy")))));
 }
+*/
 
-}
-}
 }
 

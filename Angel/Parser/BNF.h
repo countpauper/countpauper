@@ -2,17 +2,29 @@
 #include <string>
 #include <vector>
 #include <initializer_list>
+#include <optional>
+#include "Errors.h"
 
-namespace Angel::Logic::Parser
+namespace Angel::Parser::BNF
 {
+
+    struct Match
+    {
+        const std::string_view remaining;
+    };
+
+    using PossibleMatch = std::optional<Match>;
+
     struct Expression
     {
         Expression() = default;
         virtual ~Expression() = default;
+        virtual PossibleMatch Parse(const std::string_view data) const = 0;
     };
 
     struct Nothing : Expression
     {
+        PossibleMatch Parse(const std::string_view data) const override;
     };
 
     struct Literal : Expression
@@ -22,6 +34,7 @@ namespace Angel::Logic::Parser
         {
         }
         std::string literal;
+        PossibleMatch Parse(const std::string_view data) const override;
     };
 
     struct RegularExpression : Expression
@@ -31,47 +44,56 @@ namespace Angel::Logic::Parser
         {
         }
         std::string expression;
-    };
-
-    struct Symbol : Expression
-    {
-        Symbol(const std::string_view label) :
-            label(label)
-        {
-        }
-        std::string label;
+        PossibleMatch Parse(const std::string_view data) const override;
     };
 
     struct Disjunction : Expression
     {
-        Disjunction(std::initializer_list<Expression> init) :
-            expressions(init)
+        Disjunction(std::initializer_list<const Expression> init)
         {
+            expressions.reserve(init.size());
+            for (auto& e : init)
+            {
+                expressions.emplace_back(&e);
+            }
         }
-        std::vector<Expression> expressions;
+        std::vector<const Expression*> expressions;
+        PossibleMatch Parse(const std::string_view data) const override;
     };
 
     struct Sequence : Expression
     {
-        Sequence(std::initializer_list<Expression> init) : 
-            expressions(init) 
+        Sequence(std::initializer_list<const Expression> init)
         {
+            expressions.reserve(init.size());
+            for (auto& e : init)
+            {
+                expressions.emplace_back(&e);
+            }
         }
-        std::vector<Expression> expressions;
+        std::vector<const Expression*> expressions;
+        PossibleMatch Parse(const std::string_view data) const override;
     };
 
     struct Loop : Expression
     {
-        Expression Expression;
+        const Expression& expresion;
+        PossibleMatch Parse(const std::string_view data) const override;
     };
 
     struct Whitespace : Expression
     {
+        PossibleMatch Parse(const std::string_view data) const override;
     };
 
-    struct Rule
+    struct Rule 
     {
-        Expression Expression;
+        Rule(const Expression& e)
+            : expression(e)
+        {
+        }
+        const Expression& expression;
+        PossibleMatch Parse(const std::string_view data) const;
     };
 
     struct RuleRef : Expression
@@ -80,6 +102,9 @@ namespace Angel::Logic::Parser
             rule(rule)
         {
         }
-        Rule& rule;
+        const Rule& rule;
+        PossibleMatch Parse(const std::string_view data) const;
     };
+
+    void Parse(const Rule& root, const std::string_view data);
 }

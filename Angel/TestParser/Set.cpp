@@ -9,6 +9,7 @@ namespace Parser
 namespace Test
 {
 
+    /* Reeanble with BNF
 TEST(TestSet, Empty)
 {
     Logic::Object set;
@@ -48,7 +49,7 @@ TEST(TestSet, Nested)
 		Logic::set(Logic::id(L"cat"), Logic::id(L"dog")), 
 		Logic::id(L"cat")));
 }
-
+*/
 
 }
 }

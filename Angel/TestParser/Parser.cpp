@@ -13,6 +13,7 @@ namespace Parser
 namespace Test
 {
 
+/* Reenable with BNF
 TEST(TestParser, Empty)
 {
 	Logic::Knowledge k = Parse(L"");
@@ -40,6 +41,7 @@ TEST(TestParser, UnicodeId)
 	EXPECT_EQ(predicate, Logic::predicate(L"Γάτα"));
     EXPECT_EQ(id, Logic::id(L"猫"));
 }
+*/
 
 }
 }
