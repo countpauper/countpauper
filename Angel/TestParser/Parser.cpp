@@ -3,6 +3,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Sequence.h"
 #include "Logic/Boolean.h"
+#include "Parser/Syntax.h"
 
 #pragma warning(disable:4566)	// google test can't represent unicode
 
