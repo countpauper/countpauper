@@ -16,6 +16,9 @@ namespace Angel::Parser::BNF::Test
         EXPECT_TRUE(Parse(Rule("test", l), "Test").remaining.empty());
         EXPECT_THROW(Parse(Rule("fail", l), "Fail"), SyntaxError);
         EXPECT_EQ(Parse(Rule("remaining space", l), "Test ").remaining, " ");
+        
+        EXPECT_EQ(Parse(Rule{ "test", l }, "Test")["test"], std::string_view("Test"));
+
     }
 
     TEST(TestBNF, Whitespace)
@@ -57,12 +60,16 @@ namespace Angel::Parser::BNF::Test
         EXPECT_EQ(Parse(Rule{ "empty Loop", Loop(Nothing()) }, "foo").remaining, "foo");
         EXPECT_EQ(Parse(Rule{ "single Loop", Loop(Literal("f")) }, "foo").remaining, "oo");
         EXPECT_EQ(Parse(Rule{ "lots Loop", Loop(Literal("f")) }, "fffffoo").remaining, "oo");
+    
+        EXPECT_EQ(Parse(Rule{ "index", Loop(RegularExpression("[a-z]+.")) }, "c bb abc")["index[1]"], std::string_view("bb "));
     }
 
     TEST(TestBNF, Ref)
     {
         Rule rule {"refered", Literal("foo") };
         EXPECT_TRUE(Parse(Rule{ "ref rule", Ref(rule) }, "foo").remaining.empty());
+
+        EXPECT_EQ(Parse(Rule{ "referee", Ref(rule) }, "foo")["referee.refered"], "foo");
     }
 
 

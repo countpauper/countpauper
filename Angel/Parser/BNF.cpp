@@ -7,13 +7,13 @@ namespace Angel::Parser::BNF
 
 PossibleMatch Nothing::Parse(const std::string_view data) const
 {
-    return Match{ data };
+    return Match( data );
 }
 
 PossibleMatch Literal::Parse(const std::string_view data) const
 {
     if (data.substr(0,literal.size()).compare(literal)==0)
-        return Match({ data.data() + literal.size() });
+        return Match( data.data() + literal.size() );
     else
         return PossibleMatch();
 }
@@ -24,7 +24,7 @@ PossibleMatch RegularExpression::Parse(const std::string_view data) const
     std::cmatch match;
     if (std::regex_search(data.data(), match, re, std::regex_constants::match_continuous))
     {
-        return Match({ data.data() + match[0].length() });
+        return Match( data.data() + match[0].length() );
     }
 
     return PossibleMatch();
@@ -57,6 +57,7 @@ PossibleMatch Sequence::Parse(const std::string_view data) const
 PossibleMatch Loop::Parse(const std::string_view data) const
 {
     auto remaining = data;
+    std::vector<std::string> results;
     while (!remaining.empty())
     {
         auto m = expression->Parse(remaining);
@@ -64,9 +65,17 @@ PossibleMatch Loop::Parse(const std::string_view data) const
             break;
         if (m->remaining == remaining)
             break;
+        auto len = m->remaining.data() - remaining.data();
+        results.push_back(std::string(remaining.substr(0,len)));
         remaining = m->remaining;
     }
-    return Match{ remaining };
+    auto result = Match{ remaining };
+
+    for (auto it = results.begin(); it != results.end(); ++it)
+    {
+        result.result(std::string("[") + std::to_string(it - results.begin()) + "]", *it);
+    }
+    return result;
 }
 
 PossibleMatch Whitespace::Parse(const std::string_view data) const
@@ -84,7 +93,17 @@ PossibleMatch Whitespace::Parse(const std::string_view data) const
 
 PossibleMatch Rule::Parse(const std::string_view data) const
 {
-    return expression->Parse(data);
+    auto m = expression->Parse(data);
+    if (!m)
+        return m;
+    else
+    {
+        // TODO: prepend all existing keys in m with this name
+        Match result(name, *m);
+        auto len = m->remaining.data() - data.data();
+        result.result(name, data.substr(0, len));
+        return result;;
+    }
 }
 
 PossibleMatch Ref::Parse(const std::string_view data) const

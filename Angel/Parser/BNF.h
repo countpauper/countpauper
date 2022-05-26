@@ -9,9 +9,36 @@
 namespace Angel::Parser::BNF
 {
 
-    struct Match
+    class Match
     {
+    public:
+        Match(const std::string_view r) :
+            remaining(r)
+        {
+        }
+        Match(const std::string_view name, const Match& child) :
+            remaining(child.remaining)
+        {
+            for (auto& cr : child.results)
+            {
+                if (cr.first[0] == '[')
+                    result(std::string(name)+cr.first,  cr.second);
+                else
+                    result(std::string(name) + "." + cr.first, cr.second);
+            }
+        }
+        const std::string_view operator[](const std::string_view k) const
+        {
+            return results.at(k.data()).c_str();
+        }
+        void result(const std::string_view k, const std::string_view v)
+        {
+            results[k.data()] = v; // TODO: append if it already exists
+        }
         const std::string_view remaining;
+    private:
+        // TODO: nested results, vector results, get out with key dots, indices
+        std::map<std::string, std::string> results;
     };
 
     using PossibleMatch = std::optional<Match>;
