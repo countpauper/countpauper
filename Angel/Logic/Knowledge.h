@@ -12,7 +12,7 @@ class Knowledge
 {
 public:
 	Knowledge();
-	void Know(Object&& e);
+    void Know(Object&& e);
 	Object Query(const Object& e) const;
     Object Query(const Expression& e) const;
     Object Match(const Expression& e) const;

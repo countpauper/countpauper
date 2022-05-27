@@ -27,6 +27,7 @@ private:
 
 
 Object integer(long value);
+Object integer(const std::string_view value);
 
 }
 }

@@ -34,6 +34,12 @@ Object::Object(const Object& other) :
 {
 }
 
+Object& Object::operator=(const Object& other)
+{
+    expr.reset();
+    expr = std::move(other.expr->Copy().expr);
+    return *this;
+}
 
 Object::Object(Object&& other) :
     expr(std::move(other.expr))

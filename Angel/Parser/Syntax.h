@@ -4,13 +4,13 @@
 namespace Angel::Parser::BNF
 {
     // literals
-    Rule id{ "id", RegularExpression{"a-z+"} };
+    Rule id{ "id", RegularExpression{"[a-z][a-z0-9_]*"} };
     Rule optionalWhitespace{"whitespace", Disjunction(Whitespace(), Nothing() ) };
-    Rule integer{"integer", RegularExpression{"0-9+"} };
+    Rule integer{"integer", RegularExpression{"-*[0-9]+"} };
     Rule boolean{"boolean", Disjunction{Literal{"true"},Literal{"false"}} };
 
     // expressions
-    Rule element{"element", Disjunction{Ref{id}, Ref{integer}, Ref{boolean} } };
+    Rule element{"element", Disjunction{ Ref{ boolean }, Ref{integer}, Ref{ id } } };
     Rule expression{"expression", Disjunction{Ref{element}} };
     
     // Collections
@@ -27,5 +27,5 @@ namespace Angel::Parser::BNF
     Rule clauses{"clauses", Loop{Ref(clause)} };
     Rule space{"namespace", Sequence{ Ref(id), Ref(optionalWhitespace), Literal{":"}, Ref(optionalWhitespace), Literal{"{"}, Ref(optionalWhitespace),Ref(clauses), Ref(optionalWhitespace),Literal{"}"}} };
 
-    Rule knowledge{"knowledge", Disjunction{Ref{optionalWhitespace}, Ref{space}, Ref{clauses}} };
+    Rule knowledge{"knowledge", Disjunction{Ref{space}, Ref{clauses}, Ref{ optionalWhitespace } } };
 }

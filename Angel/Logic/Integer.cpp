@@ -60,6 +60,11 @@ Object integer(long value)
 	return Create<Integer>(value);
 }
 
+Object integer(const std::string_view value)
+{
+    return Create<Integer>(std::stol(std::string(value)));
+}
+
 std::optional<long> Integer::Parse(const std::string& tag)
 {
 	size_t parsedLength=0;

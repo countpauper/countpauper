@@ -22,7 +22,7 @@ private:
 };
 
 
-Object id(const std::string& name);
+Object id(const std::string_view name);
 
 }
 }

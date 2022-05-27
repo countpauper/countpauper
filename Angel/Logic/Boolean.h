@@ -25,5 +25,7 @@ private:
 };
 
 Object boolean(bool v);
+Object boolean(const std::string_view v);
+
 }
 }

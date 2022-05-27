@@ -46,9 +46,9 @@ Object Id::Cast(const std::type_info& t, const Knowledge& k) const
 }
 
 
-Object id(const std::string& name)
+Object id(const std::string_view name)
 {
-	return Create<Id>(name);
+	return Create<Id>(std::string(name));
 }
 
 

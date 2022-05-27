@@ -64,5 +64,15 @@ Object boolean(bool v)
 	return Create<Boolean>(v);
 }
 
+Object boolean(const std::string_view v)
+{
+    if (v == "true")
+        return boolean(true);
+    else if (v == "false")
+        return boolean(false);
+    else
+        throw std::invalid_argument(std::string("Unrecognized boolean value:") + std::string(v));
+}
+
 
 }

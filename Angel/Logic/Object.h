@@ -21,10 +21,9 @@ public:
     {
     }
 
-
 	Object(const std::string& tag);
     explicit Object(const Object& other);
-	Object& operator=(const Object& other) = delete;
+	Object& operator=(const Object& other);
 	Object(Object&& other);
 	Object& operator=(Object&& other);
 
