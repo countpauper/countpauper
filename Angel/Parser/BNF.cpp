@@ -1,52 +1,66 @@
 #include "stdafx.h"
 #include "BNF.h"
+#include "Interpreter.h"
 #include <regex>
 
 namespace Angel::Parser::BNF
 {
 
-PossibleMatch Nothing::Parse(const std::string_view data) const
+PossibleMatch Nothing::Parse(const std::string_view data, const Interpreter&) const
 {
     return Match( data );
 }
 
-PossibleMatch Literal::Parse(const std::string_view data) const
+PossibleMatch Literal::Parse(const std::string_view data, const Interpreter&) const
 {
     if (data.substr(0,literal.size()).compare(literal)==0)
-        return Match( data.data() + literal.size() );
+        return Match( data.substr(literal.size()) );
     else
         return PossibleMatch();
 }
 
-PossibleMatch RegularExpression::Parse(const std::string_view data) const
+PossibleMatch RegularExpression::Parse(const std::string_view data, const Interpreter&) const
 {
     const std::regex re(expression);
     std::cmatch match;
-    if (std::regex_search(data.data(), match, re, std::regex_constants::match_continuous))
+    if (std::regex_search(std::string(data).c_str(), match, re, std::regex_constants::match_continuous))
     {
-        return Match( data.data() + match[0].length() );
+        return Match( data.substr(match[0].length()) );
     }
 
     return PossibleMatch();
 }
 
-PossibleMatch Disjunction::Parse(const std::string_view data) const
+PossibleMatch Whitespace::Parse(const std::string_view data, const Interpreter&) const
+{
+    if (data.empty())
+        return PossibleMatch();
+    auto p = data.find_first_not_of(" \t\r\n");
+    if (p == data.npos)
+        return Match{ data.substr(data.size()) };
+    else if (p>0)
+        return Match{ data.substr(p) };
+    else
+        return PossibleMatch();
+}
+
+PossibleMatch Disjunction::Parse(const std::string_view data, const Interpreter& interpreter) const
 {
     for (const auto& e : expressions)
     {
-        auto m = e->Parse(data);
+        auto m = e->Parse(data, interpreter);
         if (m)
             return m;
     }
     return PossibleMatch();
 }
 
-PossibleMatch Sequence::Parse(const std::string_view data) const
+PossibleMatch Sequence::Parse(const std::string_view data, const Interpreter& interpreter) const
 {
     auto remaining = data;
     for (const auto& e : expressions)
     {
-        auto m = e->Parse(remaining);
+        auto m = e->Parse(remaining, interpreter);
         if (!m)
             return PossibleMatch();
         remaining = m->remaining;
@@ -54,68 +68,51 @@ PossibleMatch Sequence::Parse(const std::string_view data) const
     return Match{ remaining };
 }
 
-PossibleMatch Loop::Parse(const std::string_view data) const
+PossibleMatch Loop::Parse(const std::string_view data, const Interpreter& interpreter) const
 {
     auto remaining = data;
-    std::vector<std::string> results;
+    std::any allInterpretations;
+    int index = 0;
     while (!remaining.empty())
     {
-        auto m = expression->Parse(remaining);
+        auto m = expression->Parse(remaining, interpreter);
         if (!m)
             break;
         if (m->remaining == remaining)
             break;
+
         auto len = m->remaining.data() - remaining.data();
-        results.push_back(std::string(remaining.substr(0,len)));
+        auto parsed = remaining.substr(0,len);
+        std::string indexKey = std::string("[") + std::to_string(index++) + "]";
+        allInterpretations = interpreter.Merge(allInterpretations, interpreter.Interpret(indexKey, m->interpretation, parsed));
         remaining = m->remaining;
     }
-    auto result = Match{ remaining };
-
-    for (auto it = results.begin(); it != results.end(); ++it)
-    {
-        result.result(std::string("[") + std::to_string(it - results.begin()) + "]", *it);
-    }
-    return result;
+    return Match{ remaining, allInterpretations };
 }
 
-PossibleMatch Whitespace::Parse(const std::string_view data) const
+PossibleMatch Rule::Parse(const std::string_view data, const Interpreter& interpreter) const
 {
-    if (data.empty())
-        return PossibleMatch();
-    auto p = data.find_first_not_of(" \t\r\n");
-    if (p == data.npos)
-        return Match{ data.data() + data.size() };
-    else if (p>0)
-        return Match{ data.substr(p) };
-    else
-        return PossibleMatch();
-}
-
-PossibleMatch Rule::Parse(const std::string_view data) const
-{
-    auto m = expression->Parse(data);
+    auto m = expression->Parse(data, interpreter);
     if (!m)
         return m;
     else
     {
-        // TODO: prepend all existing keys in m with this name
-        Match result(name, *m);
         auto len = m->remaining.data() - data.data();
-        result.result(name, data.substr(0, len));
-        return result;;
+        std::string_view parsed = data.substr(0, len);
+        return Match{ m->remaining, interpreter.Interpret(name, m->interpretation, parsed) };
     }
 }
 
-PossibleMatch Ref::Parse(const std::string_view data) const
+PossibleMatch Ref::Parse(const std::string_view data, const Interpreter& interpreter) const
 {
-    return rule->Parse(data);
+    return rule->Parse(data, interpreter);
 }
 
-Match Parse(const Rule& root, const std::string_view data)
+Match Parse(const Rule& root, const Interpreter& interpreter, const std::string_view data)
 {
-    auto possible = root.Parse(data);
+    auto possible = root.Parse(data, interpreter);
     if (!possible)
-        throw SyntaxError(std::string("Couldn't match ") + root.name.data() +" at:" + data.data());
+        throw SyntaxError(std::string("Couldn't match ") + std::string(root.name) +" at:" + std::string(data));
     else
         return *possible;
 }

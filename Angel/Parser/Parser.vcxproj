@@ -124,7 +124,9 @@
   <ItemGroup>
     <ClInclude Include="BNF.h" />
     <ClInclude Include="Errors.h" />
+    <ClInclude Include="Interpreter.h" />
     <ClInclude Include="Parser.h" />
+    <ClInclude Include="Match.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Syntax.h" />
   </ItemGroup>
