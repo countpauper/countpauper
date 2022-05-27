@@ -8,7 +8,7 @@ namespace Angel
 namespace Logic
 {
 
-Id::Id(const std::wstring& name) :
+Id::Id(const std::string& name) :
 	name(name)
 {
 }
@@ -46,7 +46,7 @@ Object Id::Cast(const std::type_info& t, const Knowledge& k) const
 }
 
 
-Object id(const std::wstring& name)
+Object id(const std::string& name)
 {
 	return Create<Id>(name);
 }

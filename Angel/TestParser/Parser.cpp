@@ -17,30 +17,30 @@ namespace Test
 /* Reenable with BNF
 TEST(TestParser, Empty)
 {
-	Logic::Knowledge k = Parse(L"");
+	Logic::Knowledge k = Parse("");
 	EXPECT_EQ(k.Clauses(), 0);
 
-	Logic::Knowledge w = Parse(L"  \t   \r\n  ");
+	Logic::Knowledge w = Parse("  \t   \r\n  ");
 	EXPECT_EQ(w.Clauses(), 0);
 }
 
 
 TEST(TestParser, Whitespace)
 {
-	Logic::Knowledge k = Parse(L"\t  cat(\n )\r\n");
+	Logic::Knowledge k = Parse("\t  cat(\n )\r\n");
 
 	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"cat")));
+	EXPECT_TRUE(k.Knows(Logic::predicate("cat")));
 }
 
 TEST(TestParser, UnicodeId)
 {
-    std::wstringstream s(L"Γάτα() 猫");
+    std::wstringstream s("Γάτα() 猫");
 
     Logic::Object predicate, id;
     s >> predicate >> id;
-	EXPECT_EQ(predicate, Logic::predicate(L"Γάτα"));
-    EXPECT_EQ(id, Logic::id(L"猫"));
+	EXPECT_EQ(predicate, Logic::predicate("Γάτα"));
+    EXPECT_EQ(id, Logic::id("猫"));
 }
 */
 

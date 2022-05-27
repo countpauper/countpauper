@@ -17,8 +17,8 @@ namespace Angel
 namespace Parser
 {
 
-static std::wstring operators(L"~!@#$%^&|=+-*/,:()[]{}<>.?!");
-static std::wstring whitespace(L" \t\r\n");
+static std::string operators("~!@#$%^&|=+-*/,:()[]{}<>.?!");
+static std::string whitespace(" \t\r\n");
 
 enum class Operator 
 {	// in order of precedence low to high
@@ -31,13 +31,13 @@ enum class Operator
 	SetEnd,
 };
 
-static const std::map<wchar_t, Operator> translateOperator = {
-	{L',', Operator::Comma},
-	{L'(', Operator::SequenceBegin},
-	{L')', Operator::SequenceEnd},
-	{L'{', Operator::SetBegin},
-	{L'}', Operator::SetEnd},
-	{L':', Operator::Colon}
+static const std::map<char, Operator> translateOperator = {
+	{',', Operator::Comma},
+	{'(', Operator::SequenceBegin},
+	{')', Operator::SequenceEnd},
+	{'{', Operator::SetBegin},
+	{'}', Operator::SetEnd},
+	{':', Operator::Colon}
 };
 
 // TODO: operator properties should be OO
@@ -79,39 +79,39 @@ bool IsUnary(Operator o)
 	return false;
 }
 
-void SkipWhitespace(std::wistream& s)
+void SkipWhitespace(std::istream& s)
 {
 	while (s.good())
 	{
-		wchar_t c = s.peek();
-		if (whitespace.find(c) == std::wstring::npos)
+		char c = s.peek();
+		if (whitespace.find(c) == whitespace.npos)
 			return;
 		s.ignore();
 	}
 }
 
-Operator PeekOperator(std::wistream& stream)
+Operator PeekOperator(std::istream& stream)
 {
 	SkipWhitespace(stream);
 	if (!stream.good())
 		return Operator::None;
-	wchar_t c = stream.peek();
-	if (operators.find(c) == std::wstring::npos)
+	char c = stream.peek();
+	if (operators.find(c) == operators.npos)
 		return Operator::None;
 	// TODO: double character operators and ignore() them later
 	return translateOperator.at(c);
 }
 
-std::wstring ReadTag(std::wistream& s)
+std::string ReadTag(std::istream& s)
 {
-	std::wstring result;
+	std::string result;
 	while (s.good())
 	{
 		wchar_t c = s.peek();
 		if (iswalnum(c) ||
 			((c == L'-') && (result.empty())))
 		{
-			result.append(1, wchar_t(s.get()));
+			result.append(1, s.get());
 		}
 		else
 		{
@@ -173,7 +173,7 @@ Logic::Object MakeExpression(Logic::Object&& left, Operator op, Logic::Object&& 
 }
 
 
-Logic::Object ParseElement(std::wistream& stream)
+Logic::Object ParseElement(std::istream& stream)
 {
 	// TODO Object::operator<< ?
 	SkipWhitespace(stream);
@@ -181,9 +181,9 @@ Logic::Object ParseElement(std::wistream& stream)
 	return Logic::Object(tag);
 }
 
-Logic::Object ParseExpression(std::wistream& stream, Operator previousOperator, Operator openOperator);
+Logic::Object ParseExpression(std::istream& stream, Operator previousOperator, Operator openOperator);
 
-Logic::Object ParseCollection(std::wistream& stream, Operator openOperator)
+Logic::Object ParseCollection(std::istream& stream, Operator openOperator)
 {
     Logic::Object left;
     Logic::Sequence seq;
@@ -211,7 +211,7 @@ Logic::Object ParseCollection(std::wistream& stream, Operator openOperator)
 	return left;
 }
 
-Logic::Object ParseExpression(std::wistream& stream, Operator previousOperator, Operator openOperator)
+Logic::Object ParseExpression(std::istream& stream, Operator previousOperator, Operator openOperator)
 {
 	auto left = ParseElement(stream);
 	while (!stream.bad())
@@ -250,11 +250,11 @@ Logic::Object ParseExpression(std::wistream& stream, Operator previousOperator, 
 	return left;
 }
 
-Logic::Knowledge Parse(const std::wstring& text)
+Logic::Knowledge Parse(const std::string& text)
 {
 	Logic::Knowledge result;
-	std::wstringstream stream(text);
-	stream.exceptions(std::wistream::failbit | std::wistream::badbit);
+	std::stringstream stream(text);
+	stream.exceptions(std::istream::failbit | std::istream::badbit);
 	while (stream.good())
 	{
 		Logic::Object e = ParseExpression(stream, Operator::None, Operator::None);
@@ -266,12 +266,13 @@ Logic::Knowledge Parse(const std::wstring& text)
 	return result;
 }
 
-std::wostream& operator<<(std::wostream& s, const Logic::Object& o)
+std::ostream& operator<<(std::ostream& s, const Logic::Object& o)
 {
+    assert(false);  // TODO: all expressions shoudl be serializable
     return s;
 }
 
-std::wistream& operator>>(std::wistream& s, Logic::Object& o)
+std::istream& operator>>(std::istream& s, Logic::Object& o)
 {
     o = ParseExpression(s, Operator::None, Operator::None);
     return s;

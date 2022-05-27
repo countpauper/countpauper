@@ -16,9 +16,9 @@ TEST(TestComputation, Disjunctions)
     EXPECT_FALSE(conjunction(boolean(true), boolean(false)).Compute(k).Trivial());
     EXPECT_TRUE(conjunction(conjunction(boolean(true))).Compute(k).Trivial());
     EXPECT_FALSE(conjunction(conjunction(boolean(false)), conjunction(boolean(true))).Compute(k).Trivial());
-    EXPECT_FALSE(conjunction(predicate(L"cat")).Trivial());
-    k.Know(predicate(L"cat", Sequence()));
-    EXPECT_TRUE(conjunction(predicate(L"cat")).Compute(k).Trivial());
+    EXPECT_FALSE(conjunction(predicate("cat")).Trivial());
+    k.Know(predicate("cat", Sequence()));
+    EXPECT_TRUE(conjunction(predicate("cat")).Compute(k).Trivial());
 }
 
 }

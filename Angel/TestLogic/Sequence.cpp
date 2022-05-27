@@ -17,30 +17,30 @@ TEST(TestSequence, Construction)
 	EXPECT_EQ(voidSequence.size(), 0);
 
 
-	Sequence single(id(L"ginny"));
+	Sequence single(id("ginny"));
 	EXPECT_EQ(single.size(), 1);
-    EXPECT_EQ(single.front(), id(L"ginny"));
+    EXPECT_EQ(single.front(), id("ginny"));
 
-	Sequence cats(boolean(L"ginny"), boolean(L"max"));
+	Sequence cats(boolean("ginny"), boolean("max"));
 	EXPECT_EQ(cats.size(), 2);
 
-	Sequence seq(sequence(id(L"ginny"), id(L"max")));
+	Sequence seq(sequence(id("ginny"), id("max")));
 	EXPECT_EQ(seq.size(), 1);
    
     Knowledge k;
-	EXPECT_THROW(k.Know(sequence(id(L"table"), id(L"moon"), id(L"hope"))), std::invalid_argument);
+	EXPECT_THROW(k.Know(sequence(id("table"), id("moon"), id("hope"))), std::invalid_argument);
 }
 
 
 TEST(TestSequence, Compare)
 {
 
-	Sequence a(id(L"ginny"));
-	Sequence b(id(L"ginny"));
+	Sequence a(id("ginny"));
+	Sequence b(id("ginny"));
 	EXPECT_EQ(a, b);
 
-	Sequence ab(id(L"ginny"), id(L"max"));
-	Sequence ba(id(L"max"), id(L"ginny"));
+	Sequence ab(id("ginny"), id("max"));
+	Sequence ba(id("max"), id("ginny"));
 	EXPECT_NE(ab, ba);
 }
 

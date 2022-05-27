@@ -10,32 +10,32 @@ namespace Angel::Parser::Test
 
 TEST(TestClause, Predicate)
 {
-	Logic::Knowledge k = Parse(L"cat(ginny) ginny()");
+	Logic::Knowledge k = Parse("cat(ginny) ginny()");
 
 	EXPECT_EQ(k.Clauses(), 2);
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"cat", Logic::Sequence(Logic::id(L"ginny")))));
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"ginny")));
-	EXPECT_FALSE(k.Knows(Logic::predicate(L"dog")));
+	EXPECT_TRUE(k.Knows(Logic::predicate("cat", Logic::Sequence(Logic::id("ginny")))));
+	EXPECT_TRUE(k.Knows(Logic::predicate("ginny")));
+	EXPECT_FALSE(k.Knows(Logic::predicate("dog")));
 }
 
 TEST(TestClause, Condition)
 {
-	Logic::Knowledge k = Parse(L"cat() : ginny() ginny()");
+	Logic::Knowledge k = Parse("cat() : ginny() ginny()");
 
 	EXPECT_EQ(k.Clauses(), 2);
-	EXPECT_TRUE(k.Knows(Logic::clause(Logic::Predicate(L"cat"), Logic::predicate(L"ginny"))));
-	EXPECT_FALSE(k.Knows(Logic::clause(Logic::Predicate(L"cat"))));
-	EXPECT_TRUE(k.Knows(Logic::predicate(L"ginny")));
+	EXPECT_TRUE(k.Knows(Logic::clause(Logic::Predicate("cat"), Logic::predicate("ginny"))));
+	EXPECT_FALSE(k.Knows(Logic::clause(Logic::Predicate("cat"))));
+	EXPECT_TRUE(k.Knows(Logic::predicate("ginny")));
 }
 
 TEST(TestClause, Conditions)
 {
-	Logic::Knowledge k = Parse(L"cat() : fuzzy(), noisy()");
+	Logic::Knowledge k = Parse("cat() : fuzzy(), noisy()");
 
 	EXPECT_EQ(k.Clauses(), 1);
-	EXPECT_TRUE(k.Knows(Logic::clause(Logic::Predicate(L"cat"), 
-						Logic::conjunction(Logic::predicate(L"fuzzy"),
-										Logic::predicate(L"noisy")))));
+	EXPECT_TRUE(k.Knows(Logic::clause(Logic::Predicate("cat"), 
+						Logic::conjunction(Logic::predicate("fuzzy"),
+										Logic::predicate("noisy")))));
 }
 */
 

@@ -16,7 +16,7 @@ namespace Test
 TEST(TestSequence, Empty)
 {
     Logic::Object seq;
-    std::wstringstream s(L"( )");
+    std::wstringstream s("( )");
     s >> seq;
 
     EXPECT_EQ(seq, Logic::sequence());
@@ -25,63 +25,63 @@ TEST(TestSequence, Empty)
 TEST(TestSequence, Single)
 {
     Logic::Object seq;
-    std::wstringstream s(L"( cat)");
+    std::wstringstream s("( cat)");
     s >> seq;
-    EXPECT_EQ(seq, Logic::sequence(Logic::id(L"cat")));
+    EXPECT_EQ(seq, Logic::sequence(Logic::id("cat")));
 }
 
 TEST(TestSequence, Comma)
 {
     Logic::Object seq;
-    std::wstringstream s(L"(cat, dog)");
+    std::wstringstream s("(cat, dog)");
     s >> seq;
 
-	EXPECT_EQ(seq, Logic::sequence(Logic::id(L"cat"), Logic::id(L"dog")));
+	EXPECT_EQ(seq, Logic::sequence(Logic::id("cat"), Logic::id("dog")));
 }
 
 TEST(TestSequence, SillySequence)
 {
-    std::wstringstream s(L"(cat,)");
+    std::wstringstream s("(cat,)");
     Logic::Object seq;
     s >> seq;
 
-    EXPECT_EQ(seq, Logic::sequence(Logic::id(L"cat")));
+    EXPECT_EQ(seq, Logic::sequence(Logic::id("cat")));
 }
 
 TEST(TestSequence, Commas)
 {
     Logic::Object seq;
-    std::wstringstream s(L"( cat, dog, hamster )");
+    std::wstringstream s("( cat, dog, hamster )");
     s >> seq;
 
     EXPECT_EQ(seq, Logic::sequence(
-		Logic::id(L"cat"), 
-		Logic::id(L"dog"),
-		Logic::id(L"hamster")));
+		Logic::id("cat"), 
+		Logic::id("dog"),
+		Logic::id("hamster")));
 }
 
 TEST(TestSequence, SequenceInSequence)
 {
     Logic::Object seq;
-    std::wstringstream s(L"((cat, dog))");
+    std::wstringstream s("((cat, dog))");
     s >> seq;
-    EXPECT_EQ(seq, sequence(sequence(Logic::id(L"cat"), Logic::id(L"dog"))));
+    EXPECT_EQ(seq, sequence(sequence(Logic::id("cat"), Logic::id("dog"))));
 }
 
 TEST(TestSequence, Nested)
 {
     Logic::Object seq;
-    std::wstringstream s(L"( cat, (dog, hamster) )");
+    std::wstringstream s("( cat, (dog, hamster) )");
     s >> seq;
 
-    EXPECT_EQ(seq, Logic::sequence(Logic::id(L"cat"), Logic::sequence(
-        Logic::id(L"dog"), Logic::id(L"hamster"))));
+    EXPECT_EQ(seq, Logic::sequence(Logic::id("cat"), Logic::sequence(
+        Logic::id("dog"), Logic::id("hamster"))));
 }
 
 TEST(TestSequence, Errors)
 {
     Logic::Object seq;
-    std::wstringstream badOpen(L"cat, dog)"), badClose(L"(cat, dog"), badBraces(L"(cat, dog}");
+    std::wstringstream badOpen("cat, dog)"), badClose("(cat, dog"), badBraces("(cat, dog}");
     EXPECT_THROW(badOpen >> seq, SyntaxError);
 	EXPECT_THROW(badClose >> seq, SyntaxError);
 	EXPECT_THROW(badBraces >> seq, SyntaxError);

@@ -17,7 +17,7 @@ public:
 	bool operator==(const Integer& value) const;
 	bool operator==(const Expression& value) const override;
 	long operator*() const;
-	static std::optional <long> Parse(const std::wstring& tag);
+	static std::optional <long> Parse(const std::string& tag);
     Object Compute(const Knowledge& known) const;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;

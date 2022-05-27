@@ -11,59 +11,59 @@ namespace Angel::Logic::Test
 	TEST(TestClause, Trivial)
 	{
 		Knowledge k;
-		k.Know(clause(Predicate(L"cat")));
-		EXPECT_TRUE(k.Query(predicate(L"cat")).Trivial());
-		EXPECT_FALSE(k.Query(predicate(L"dog")).Trivial());
+		k.Know(clause(Predicate("cat")));
+		EXPECT_TRUE(k.Query(predicate("cat")).Trivial());
+		EXPECT_FALSE(k.Query(predicate("dog")).Trivial());
 	}
 
 	TEST(TestClause, Condition)
 	{
 		Knowledge k;
-		k.Know(clause(Predicate(L"cat"), predicate(L"ginny")));
-		EXPECT_FALSE(k.Query(predicate(L"cat")).Trivial());
-		k.Know(predicate(L"ginny"));
-		EXPECT_TRUE(k.Query(predicate(L"cat")).Trivial());
+		k.Know(clause(Predicate("cat"), predicate("ginny")));
+		EXPECT_FALSE(k.Query(predicate("cat")).Trivial());
+		k.Know(predicate("ginny"));
+		EXPECT_TRUE(k.Query(predicate("cat")).Trivial());
 	}
 
 	TEST(TestClause, Conjunction)
 	{
 		Knowledge k;
-		k.Know(clause(Predicate(L"cat"), conjunction(predicate(L"fuzzy"), predicate(L"noisy"))));
-		k.Know(clause(Predicate(L"hamster"), conjunction(predicate(L"fuzzy"), predicate(L"quiet"))));
-		EXPECT_FALSE(k.Query(predicate(L"cat")).Trivial());
-		EXPECT_FALSE(k.Query(predicate(L"hamster")).Trivial());
-		k.Know(predicate(L"fuzzy"));
-		k.Know(predicate(L"noisy"));
-		EXPECT_TRUE(k.Query(predicate(L"cat")).Trivial());
-		EXPECT_FALSE(k.Query(predicate(L"hamster")).Trivial());
+		k.Know(clause(Predicate("cat"), conjunction(predicate("fuzzy"), predicate("noisy"))));
+		k.Know(clause(Predicate("hamster"), conjunction(predicate("fuzzy"), predicate("quiet"))));
+		EXPECT_FALSE(k.Query(predicate("cat")).Trivial());
+		EXPECT_FALSE(k.Query(predicate("hamster")).Trivial());
+		k.Know(predicate("fuzzy"));
+		k.Know(predicate("noisy"));
+		EXPECT_TRUE(k.Query(predicate("cat")).Trivial());
+		EXPECT_FALSE(k.Query(predicate("hamster")).Trivial());
 	}
 
 	TEST(TestClause, Predicate1Ary)
 	{
 		Knowledge k;
-		k.Know(clause(Predicate(L"cat", Sequence(id(L"ginny"))),
-            predicate(L"fuzzy", Sequence(id(L"ginny")))));
-		k.Know(clause(Predicate(L"cat", Sequence(id(L"woofer"))),
-            predicate(L"fuzzy", Sequence(id(L"woofer")))));
-		EXPECT_FALSE(k.Query(predicate(L"cat", Sequence(id(L"ginny")))).Trivial());
-		k.Know(predicate(L"fuzzy", Sequence(id(L"ginny"))));
+		k.Know(clause(Predicate("cat", Sequence(id("ginny"))),
+            predicate("fuzzy", Sequence(id("ginny")))));
+		k.Know(clause(Predicate("cat", Sequence(id("woofer"))),
+            predicate("fuzzy", Sequence(id("woofer")))));
+		EXPECT_FALSE(k.Query(predicate("cat", Sequence(id("ginny")))).Trivial());
+		k.Know(predicate("fuzzy", Sequence(id("ginny"))));
 
-		EXPECT_TRUE(k.Query(predicate(L"cat", Sequence(id(L"ginny")))).Trivial());
-		EXPECT_FALSE(k.Query(predicate(L"cat", Sequence(id(L"woofer")))).Trivial());
+		EXPECT_TRUE(k.Query(predicate("cat", Sequence(id("ginny")))).Trivial());
+		EXPECT_FALSE(k.Query(predicate("cat", Sequence(id("woofer")))).Trivial());
 	}
 
 	TEST(TestClause, Predicate2Ary)
 	{
 		Knowledge k;
-		k.Know(clause(Predicate(L"cats", Sequence(id(L"ginny"), id(L"max"))),
-            conjunction(predicate(L"cat", Sequence(id(L"ginny"))),
-				predicate(L"cat", Sequence(id(L"max"))))));
-		EXPECT_FALSE(k.Query(predicate(L"cats", Sequence(id(L"ginny"), id(L"max")))).Trivial());
+		k.Know(clause(Predicate("cats", Sequence(id("ginny"), id("max"))),
+            conjunction(predicate("cat", Sequence(id("ginny"))),
+				predicate("cat", Sequence(id("max"))))));
+		EXPECT_FALSE(k.Query(predicate("cats", Sequence(id("ginny"), id("max")))).Trivial());
 
-		k.Know(predicate(L"cat", Sequence(id(L"ginny"))));
-		k.Know(predicate(L"cat", Sequence(id(L"max"))));
+		k.Know(predicate("cat", Sequence(id("ginny"))));
+		k.Know(predicate("cat", Sequence(id("max"))));
 
-		EXPECT_TRUE(k.Query(predicate(L"cats", Sequence(id(L"ginny"), id(L"max")))).Trivial());
+		EXPECT_TRUE(k.Query(predicate("cats", Sequence(id("ginny"), id("max")))).Trivial());
 	}
 
 

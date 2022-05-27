@@ -22,7 +22,7 @@ public:
     }
 
 
-	Object(const std::wstring& tag);
+	Object(const std::string& tag);
     explicit Object(const Object& other);
 	Object& operator=(const Object& other) = delete;
 	Object(Object&& other);

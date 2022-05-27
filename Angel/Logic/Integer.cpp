@@ -60,11 +60,11 @@ Object integer(long value)
 	return Create<Integer>(value);
 }
 
-std::optional<long> Integer::Parse(const std::wstring& tag)
+std::optional<long> Integer::Parse(const std::string& tag)
 {
-	wchar_t* end=nullptr;
-	long result = std::wcstol(tag.c_str(), &end,10);
-	if ((*end == L'\x0') && (end!=tag.c_str()))
+	size_t parsedLength=0;
+	long result = std::stol(tag.c_str(), &parsedLength, 10);
+	if ((parsedLength==tag.size()) && (parsedLength))
 	{
 		return result;
 	}

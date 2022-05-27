@@ -17,39 +17,39 @@ TEST(TestSet, Construction)
 	EXPECT_EQ(voidSet.size(), 0);
 
 
-	Set single(id(L"ginny"));
+	Set single(id("ginny"));
 	EXPECT_EQ(single.size(), 1);
 
-	Set cats(id(L"ginny"), id(L"max"));
+	Set cats(id("ginny"), id("max"));
 	EXPECT_EQ(cats.size(), 2);
 
-	Set seq_set(sequence(id(L"ginny"), id(L"max")));
+	Set seq_set(sequence(id("ginny"), id("max")));
 	EXPECT_EQ(seq_set.size(), 1);
 
 	Knowledge k;
-    EXPECT_THROW(k.Know(set(id(L"table"), id(L"moon"), id(L"hope"))), std::invalid_argument);
+    EXPECT_THROW(k.Know(set(id("table"), id("moon"), id("hope"))), std::invalid_argument);
 }
 
 
 TEST(TestSet, Sequence)
 {
-	Sequence array{ set(id(L"cat")), set(id(L"dog")) };
+	Sequence array{ set(id("cat")), set(id("dog")) };
 	EXPECT_EQ(2, array.size());
-	EXPECT_NE(array, Sequence(id(L"cat"), id(L"dog")));
+	EXPECT_NE(array, Sequence(id("cat"), id("dog")));
 }
 
 
 TEST(TestSet, Compare)
 {
-	Set a(id(L"ginny"));
-	Set b(id(L"ginny"));
+	Set a(id("ginny"));
+	Set b(id("ginny"));
 	EXPECT_EQ(a, b);
 
-	Set aa(id(L"ginny"), id(L"ginny"));
+	Set aa(id("ginny"), id("ginny"));
 	EXPECT_EQ(a, aa);
 
-	Set ab(id(L"ginny"), id(L"max"));
-	Set ba(id(L"max"), id(L"ginny"));
+	Set ab(id("ginny"), id("max"));
+	Set ba(id("max"), id("ginny"));
 	EXPECT_EQ(ab, ba);
 	EXPECT_NE(a, ab);
 	EXPECT_NE(b, ba);

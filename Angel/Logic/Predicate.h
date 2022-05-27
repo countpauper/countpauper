@@ -13,7 +13,7 @@ class Predicate : public Expression
 public:
     Predicate(const Predicate& other);
     Predicate(const Id& id, Sequence&& arguments = Sequence());
-    Predicate(const std::wstring& name, Sequence&& arguments=Sequence());
+    Predicate(const std::string& name, Sequence&& arguments=Sequence());
     Predicate(Predicate&& other);
 	bool operator==(const Expression& other) const override;
     Object Copy() const override;
@@ -27,7 +27,7 @@ private:
 };
 
 Object predicate(const Id& id, Sequence&& arguments = Sequence());
-Object predicate(const std::wstring& name, Sequence&& arguments = Sequence());
+Object predicate(const std::string& name, Sequence&& arguments = Sequence());
 
 }
 }

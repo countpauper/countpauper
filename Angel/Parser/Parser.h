@@ -10,8 +10,8 @@ namespace Logic { class Object;  }
 namespace Parser
 {
 
-Logic::Knowledge Parse(const std::wstring& text);
-std::wostream& operator<<(std::wostream& s, const Logic::Object& o);
-std::wistream& operator>>(std::wistream& s, Logic::Object& o);
+Logic::Knowledge Parse(const std::string& text);
+std::ostream& operator<<(std::ostream& s, const Logic::Object& o);
+std::istream& operator>>(std::istream& s, Logic::Object& o);
 }
 }

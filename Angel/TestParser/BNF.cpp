@@ -42,8 +42,6 @@ namespace Angel::Parser::BNF::Test
                 merge.insert(rightI.begin(), rightI.end());
                 return merge;
             }
-
-
         };
 
         const std::string_view Get(const Match& m, const std::string_view key)

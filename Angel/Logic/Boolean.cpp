@@ -35,11 +35,11 @@ bool Boolean::operator*() const
 }
 
 
-std::optional<bool> Boolean::Parse(const std::wstring& tag)
+std::optional<bool> Boolean::Parse(const std::string& tag)
 {
-	if (tag == L"true")
+	if (tag == "true")
 		return true;
-	else if (tag == L"false")
+	else if (tag == "false")
 		return false;
 	else
 		return std::optional<bool>();

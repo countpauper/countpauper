@@ -9,7 +9,7 @@ namespace Angel
 namespace Logic
 {
 
-Object::Object(const std::wstring& tag)
+Object::Object(const std::string& tag)
 {
 	if (tag.empty())
 	{

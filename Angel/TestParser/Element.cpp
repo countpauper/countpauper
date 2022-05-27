@@ -16,24 +16,24 @@ namespace Test
 
 TEST(TestElement, Id)
 {
-    std::wstringstream s(L"cat");
+    std::wstringstream s("cat");
     Logic::Object cat;
     s >> cat;
-    EXPECT_EQ(cat, Logic::id(L"cat"));
+    EXPECT_EQ(cat, Logic::id("cat"));
 }
 
 TEST(TestElement, Ids)
 {
-    std::wstringstream s(L"gizmo ginny");
+    std::wstringstream s("gizmo ginny");
     Logic::Object gizmo, ginny;
     s >> gizmo >> ginny;
-    EXPECT_EQ(gizmo, Logic::id(L"gizmo"));
-	EXPECT_EQ(ginny, Logic::id(L"ginny"));
+    EXPECT_EQ(gizmo, Logic::id("gizmo"));
+	EXPECT_EQ(ginny, Logic::id("ginny"));
 }
 
 TEST(TestElement, Boolean)
 {
-    std::wstringstream s(L"true false");
+    std::wstringstream s("true false");
     Logic::Object yes, no;
     s >> yes >> no;
 
@@ -43,13 +43,13 @@ TEST(TestElement, Boolean)
 
 TEST(TestElement, Integer)
 {
-    std::wstringstream s(L"-9 23 cat2");
+    std::wstringstream s("-9 23 cat2");
     Logic::Object negative, positive, id;
     s >> negative >> positive >> id;
 
     EXPECT_EQ(positive, Logic::integer(23));
     EXPECT_EQ(negative, Logic::integer(-9));
-    EXPECT_EQ(id, Logic::id(L"cat2"));
+    EXPECT_EQ(id, Logic::id("cat2"));
 }
 */
 

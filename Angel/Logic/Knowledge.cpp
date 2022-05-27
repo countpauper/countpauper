@@ -9,7 +9,7 @@ namespace Logic
 {
 
 Knowledge::Knowledge() :
-	root(Id(L""))
+	root(Id(""))
 {
 }
 

@@ -27,7 +27,7 @@ Predicate::Predicate(const Id& id, Sequence&& arguments) :
 {
 }
 
-Predicate::Predicate(const std::wstring& tag, Sequence&& arguments) :
+Predicate::Predicate(const std::string& tag, Sequence&& arguments) :
 	id(tag),
 	arguments(std::move(arguments))
 {
@@ -76,7 +76,7 @@ Object predicate(const Id& id, Sequence&& arguments)
 	return Create<Predicate>(id, std::move(arguments));
 }
 
-Object predicate(const std::wstring& name, Sequence&& arguments)
+Object predicate(const std::string& name, Sequence&& arguments)
 {
 	return Create<Predicate>(Id(name), std::move(arguments));
 }
