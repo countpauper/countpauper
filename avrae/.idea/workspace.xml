@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/outlands/outlandschar.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory/mundane item prices.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory/price.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory/sane item prices.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/saneprices.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Parser/BNF.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/BNF.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Parser/BNF.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/BNF.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.cpp" afterDir="false" />
@@ -44,11 +48,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\maurits.fassaert\countpauper\avrae\inventory" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\outlands" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\bonus" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\hud" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\ic" />
-      <recent name="C:\Users\maurits.fassaert\countpauper\avrae\chance" />
     </key>
   </component>
   <component name="RunManager" selected="Python.csv2json">
@@ -210,10 +214,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1647790145457">
+    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1653892428923">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1647790145457" />
+    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1653892428923" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1647527261914" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1652877838631">
       <screen x="0" y="0" width="1920" height="1160" />

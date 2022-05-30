@@ -1,0 +1,232 @@
+alchemist's supplies: 50
+brewer's supplies: 20
+calligrapher's supplies: 10
+carpenter's tools: 8
+cartographer's tools: 15
+cobbler's tools: 5
+cook's utensils: 1
+glassblower's tools: 30
+jeweler's tools: 25
+leatherworker's tools: 5
+mason's tools: 10
+painter's supplies: 10
+potter's tools: 10
+smith's tools: 20
+tinker's tools: 50
+weaver's tools: 1
+woodcarver's tools: 1
+disguise kit: 25
+forgery kit: 15
+dice set: 0.1
+dragonchess set: 1
+playing card set: 0.5
+three-dragon ante set: 1
+herbalism kit: 5
+bagpipes: 30
+drum: 6
+dulcimer: 25
+pan flute: 12
+flute: 2
+lute: 35
+lyre: 30
+horn: 3
+shawm: 2
+viol: 30
+navigator's tools: 25
+poisoner's kit: 50
+thieves' tools: 25
+padded: 5
+studded leather: 45
+leather: 10
+hide: 10
+chain shirt: 50
+scale mail: 50
+breastplate: 400
+half plate: 750
+ring mail: 30
+chain mail: 75
+splint: 200
+plate: 1500
+padded armor: 5
+studded leather armor: 45
+leather armor: 10
+hide armor: 10
+chain shirt armor: 50
+scale mail armor: 50
+breastplate armor: 400
+half plate armor: 750
+ring mail armor: 30
+chain mail armor: 75
+splint armor: 200
+plate armor: 1500
+shield: 10
+greatclub: 0.2
+club: 0.1
+dagger: 2
+handaxe: 5
+javelin: 0.5
+light hammer: 2
+mace: 5
+quarterstaff: 0.2
+sickle: 1
+spear: 1
+crossbow, light: 25
+light crossbow: 25
+dart: 0.05
+shortbow: 25
+sling: 0.1
+battleaxe: 10
+flail: 10
+glaive: 20
+greataxe: 30
+greatsword: 50
+halberd: 20
+lance: 10
+longsword: 15
+maul: 10
+morningstar: 15
+pike: 5
+rapier: 25
+scimitar: 25
+shortsword: 10
+trident: 5
+war pick: 5
+warhammer: 15
+whip: 2
+blowgun: 10
+hand crossbow: 75
+heavy crossbow: 50
+longbow: 50
+net: 1
+abacus: 2
+acid (vial): 25
+alchemist's fire (flask): 50
+alms box: 0
+arrows (20): 1
+blowgun needles (20): 1
+crossbow bolts (20): 1
+bullets (20): 0.04
+antitoxin (vial): 50
+arcane focus (crystal): 10
+arcane focus (orb): 20
+arcane focus (rod): 10
+arcane focus (staff): 5
+arcane focus (wand): 10
+backpack: 2
+bag of ball bearings (bag of 1,000): 1
+barrel: 2
+basket: 4sp
+bedroll: 1
+bell: 1
+blanket: 0.5
+block and tackle: 1
+block of incense: 0
+spellbook: 50
+book of lore: 0
+book of shadows: 0
+book: 25
+glass bottle: 2
+bottle: 2
+bucket: 0.05
+caltrops (bag of 20): 1
+candle: 0.01
+case: 1
+censer: 0
+crossbow bolt case: 1
+map or scroll case: 1
+map case: 1
+scroll case: 1
+chain (10 feet): 5
+chalk (1 piece): 0.01
+chest: 5
+climber's kit: 25
+common clothes: 0.5
+clothes, costume: 5
+fine clothes: 15
+traveler's clothes: 2
+component pouch: 25
+crowbar: 2
+druidic focus (sprig of mistletoe): 1
+druidic focus (totem): 1
+druidic focus (wooden staff): 5
+druidic focus (yew wand): 10
+fishing tackle: 1
+flask or tankard: 0.02
+flask: 0.02
+tankard: 0.02
+grappling hook: 2
+sledge hammer: 2
+hammer, sledge: 2
+sledgehammer: 2
+hammer: 1
+healer's kit: 5
+holy symbol (amulet): 5
+holy symbol (emblem): 5
+holy symbol (reliquary): 5
+holy water (flask): 25
+hourglass: 25
+hunting trap: 5
+ink (1 ounce bottle): 10
+ink pen: 0.02
+pitcher: 0.02
+jug: 0.02
+ladder (10-foot): 0.1
+lamp: 0.5
+bullseye lantern: 10
+hooded lantern: 5
+little bag of sand: 0
+lock: 10
+magnifying glass: 100
+manacles: 2
+mess kit: 2
+steel mirror: 5
+oil (flask): 0.1
+paper (sheet): 0.2
+parchment (one sheet): 0.1
+perfume (vial): 5
+miner's pick: 2
+piton: 5cp
+basic poison (vial): 100
+10-foot pole, pole (10-foot): 0.05
+iron pot: 2
+potion of healing, healing potion: 50
+pouch: 0.5
+coin pouch: 0.5
+quiver: 1
+portable ram: 4
+rations (1 day): 0.5
+robes: 1
+hempen rope (50 feet): 1
+silk rope (50 feet): 10
+sack: 0.01
+merchant's scale: 5
+sealing wax: 0.5
+shovel: 2
+signal whistle: 0.05
+signet ring: 5
+small knife: 0
+soap: 0.02
+iron spikes (10): 1
+spyglass: 1000
+string (10 feet): 0.01
+two-person tent: 2
+tinderbox: 0.5
+torch: 0.01
+vestments: 1
+vial: 1
+waterskin (full): 0.2
+pint of water: 0
+whetstone: 0.01
+wooden stake: 0.01
+bit and bridle: 2
+carriage: 100
+cart: 15
+chariot: 250
+feed: 0.05
+exotic saddle: 60
+military saddle: 20
+pack saddle: 5
+riding saddle: 10
+saddlebags: 4
+sled: 20
+wagon: 35
