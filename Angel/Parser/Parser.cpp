@@ -20,6 +20,28 @@ namespace Angel
 namespace Parser
 {
 
+// TODO: generalize to all collections, including disjunctions, products, summations
+void RecursiveCollect(Logic::Sequence& seq, const std::any& interpretation)
+{
+    if (!interpretation.has_value())
+        return;
+    if (interpretation.type() == typeid(Logic::Object))
+    {
+        seq.Add(std::any_cast<Logic::Object>(interpretation));
+        return;
+    }
+    if (interpretation.type() == typeid(std::vector<std::any>))
+    {
+        const auto& elements = std::any_cast<std::vector<std::any>>(interpretation);
+        for (const auto&e : elements)
+        {
+            RecursiveCollect(seq, e);
+        }
+        return;
+    }
+    assert(false); // then what is it
+}
+
 class LogicInterpreter : public BNF::Interpreter
 {
     std::any Interpret(const std::string_view rule, const std::any& interpretation, const std::string_view value) const override
@@ -37,6 +59,25 @@ class LogicInterpreter : public BNF::Interpreter
             }
             return knowledge;
         }
+        if (rule == "braces")
+        {
+            if (interpretation.type() == typeid(const std::vector<Logic::Object>&))
+            {
+                const auto& obj = std::any_cast<Logic::Object>(interpretation);
+                if (obj.As<Logic::Collection>())
+                {
+                    return obj;
+                }
+                else
+                {
+                    return Logic::sequence(Logic::Object(obj));
+                }
+            }
+            else
+            {
+
+            }
+        }
         else if (rule == "id")
         {
             return Logic::id(value);
@@ -53,14 +94,41 @@ class LogicInterpreter : public BNF::Interpreter
         {
             return interpretation;
         }
+        else if (rule == "sequence")
+        {
+            auto result = std::make_unique<Logic::Sequence>();
+            RecursiveCollect(*result, interpretation);
+            return Logic::Object(std::move(result));
+        }
 
         return interpretation;
     }
 
     std::any Merge(const std::any& left, const std::any& right) const
     {
-        return left;    // what? we looped, make a sequence of them? which type? we just moved the sequence/set parsing problem arround the long way 
-        // perhaps just allow vectors of expressions, but interpret should really tell us what is interpreted, also for sequence/disjunction and which index perhaps too 
+        if (!right.has_value())
+            return left;
+
+        if (left.has_value())
+        {
+            if (left.type() == typeid(std::vector<std::any>))
+            {
+                const auto& leftArray = std::any_cast<std::vector<std::any>>(left);
+                std::vector<std::any> merged(leftArray);
+                merged.push_back(right);
+                return merged;
+            }
+            else
+            {
+                assert(false); // what? merge two normal expressions into a vector? Under which circumstances?  
+                return left;
+            }
+        }
+        else 
+        {
+            return std::vector<std::any>{right};
+        }
+                
     }
 };
 

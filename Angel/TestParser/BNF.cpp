@@ -120,5 +120,13 @@ namespace Angel::Parser::BNF::Test
         EXPECT_EQ(Get(Parse(Rule{ "referee", Ref(rule) }, interpreter, "foo"), "referee.referred"), "foo");
     }
 
+    TEST_F(TestBNF, Declare)
+    {
+        Declare declaration("declared");
+        Declare nodeclaration("not declared");
+        Rule rule{ "declared", Literal("foo") };
 
+        EXPECT_TRUE(Parse(Rule{ "declared rule", Ref(declaration) }, interpreter, "foo").remaining.empty());
+        EXPECT_THROW(Parse(Rule{ "not declared rule", Ref(nodeclaration) }, interpreter, "bar"), std::runtime_error);
+    }
 }

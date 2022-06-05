@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 #include <initializer_list>
 #include "Errors.h"
 #include "Match.h"
@@ -10,12 +11,14 @@ namespace Angel::Parser::BNF
 {
     class Interpreter;
 
+    using Progress = std::map<const struct Rule*, size_t>;
+
     struct Expression
     {
         Expression() = default;
         virtual ~Expression() = default;
         virtual std::unique_ptr<Expression> Copy() const = 0;
-        virtual PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter) const = 0;
+        virtual PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress=Progress()) const = 0;
     };
 
     class ExpressionRef
@@ -51,7 +54,7 @@ namespace Angel::Parser::BNF
 
     struct Nothing : Expression
     {
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter) const override;
+        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Nothing>(*this); }
     };
 
@@ -62,7 +65,7 @@ namespace Angel::Parser::BNF
         {
         }
         std::string literal;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter) const override;
+        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Literal>(*this); }
     };
 
@@ -73,13 +76,13 @@ namespace Angel::Parser::BNF
         {
         }
         std::string expression;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter) const override;
+        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<RegularExpression>(*this); }
     };
 
     struct Whitespace : Expression
     {
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter) const override;
+        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Whitespace>(*this); }
     };
 
@@ -96,7 +99,7 @@ namespace Angel::Parser::BNF
         {
         }
         std::vector<ExpressionRef> expressions;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter) const override;
+        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Disjunction>(*this); }
     };
 
@@ -110,7 +113,7 @@ namespace Angel::Parser::BNF
             expressions.emplace(expressions.begin(), first);
         }
         std::vector<ExpressionRef> expressions;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter) const override;
+        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Sequence>(*this); }
     };
 
@@ -121,21 +124,31 @@ namespace Angel::Parser::BNF
         {
         }
         ExpressionRef expression;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter) const override;
+        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Loop>(*this); }
     };
 
     struct Rule : Expression
     {
-        Rule(const std::string_view n, const Expression& e)
-            : name(n), expression(e)
-        {
-        }
+        Rule(const std::string_view n, const Expression& e);
         const std::string_view name;
         ExpressionRef expression;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter) const;
+        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Rule>(*this); }
     };
+
+    struct Declare : public Expression
+    {
+        Declare(const std::string_view rule);
+        static void Define(const Rule& rule);
+        const Rule& Get() const;
+        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
+        std::unique_ptr<Expression> Copy() const override { return std::make_unique<Declare>(*this); }
+    private:
+        const std::string_view rule;
+        static std::map<const std::string_view, const Rule*> definitions;
+    };
+
 
     struct Ref : Expression
     {
@@ -143,8 +156,12 @@ namespace Angel::Parser::BNF
             rule(rule)
         {
         }
+        Ref(Declare& declaration) :
+            rule(declaration)
+        {
+        }
         ExpressionRef rule;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter) const;
+        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Ref>(*this); }
     };
 

@@ -40,6 +40,7 @@ protected:
     Object right;
 };
 
+// TODO: Narys are colllections, not owners of a set, sequences are narys with a collection operator, 
 // The N-ary Operator performs a function on a set of zero or more Objects, which typically have a symetric relation 
 class Nary : public Operator
 {

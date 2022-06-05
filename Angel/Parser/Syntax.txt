@@ -53,6 +53,12 @@
 <set> ::= "{" <elements> "}"
 ; TODO: does anyone really care about unordered unique or multiset (unordered non unique)
 
+<sequence elements> ::= <sequence elements> "," <expression>
+<collection sequence> ::= "(" <sequence elements> ")" | <sequence elements>
+<empty sequence> ::= "(" ")"
+<single sequence> ::= "(" <expression> ")"
+<sequence> ::= <empty sequence> | <single sequence> | <collection sequence>
+
 
 ; The supported operations are: 
 ;   n-ary: conjunction, disjunction, summation, multiplication
