@@ -1,10 +1,11 @@
 !cvar delete bags
-# test with old coins first
-!coins
+# Empty first
+!bqb -Coinpurse
+!bqb "Coin Pouch"
 # test with open bags first
 !bag open all
 
-# add dungeon backpack,  shovel, pot, clothes, 9gp and a quiver with 10 arrows (still shows redundant sack)
+# add dungeon backpack,  shovel, pot, clothes, 10gp and a quiver with 10 arrows (still shows redundant sack)
 # TODO: should notify about optional artisan's tools
 !bqb dungeon 1gp folk quiver 10 arr 9 -gp
 
@@ -35,7 +36,7 @@
 # add a blanket to the first bag (still sack), make change giving 3sp 1ep and -1 gp
 !bqb blanket -2sp
 
-# force add items to the coin pouch
+# force add items to the coin pouch (doesn't work with purse)
 !bqb Coin +emerald +signet
 
 
@@ -129,3 +130,12 @@
 
 #tranfer multiple include and stack, check item counts
 !bqb transfer backpack pouch torch bed
+
+# big bag , only with open all
+!cvar bags [["Backpack", {"Bedroll": 1, "Mess Kit": 1, "Tinderbox": 6, "Torch": 40, "Rations": 38, "Waterskin (Full)": 5, "Hempen Rope (50 Feet)": 4, "Crowbar": 3, "Hammer": 4, "Piton": 20, "Shovel": 1, "Iron Pot": 2, "Common Clothes": 9, "Insignia Of Rank": 2, "Trophy": 2, "Dice Set": 2, "Blanket": 3, "Emerald": 1, "Signet Ring": 1, "Dagger": 1, "Bolt": 1, "Candle": 15, "Alms Box": 1, "Block Of Incense": 12, "Censer": 1, "Vestments": 3, "Ball Bearings (Bag Of 1,000)": 1, "String (10 Feet)": 1, "Bell": 1, "Pitons": 10, "Hooded Lantern": 2, "Oil (Flask)": 2, "Golgari Insignia": 1, "Poisoner's Kit": 1, "Pet Beetle": 1, "Radkos Insignia": 1, "Costume": 1, "Chain (10 Feet)": 1, "Bottle Of Sweet, Red Juice": 1, "Ink (1 Ounce Bottle)": 4, "Ink Pen": 4, "School Uniform": 2, "Simic Insignia": 1, "Vial Of Seaweed": 1, "Vial Of Jellyfish Stingers": 1, "Glass Bottle With Slime": 1, "Book About Plant Identification": 1, "Herbalism Kit": 2, "Holy Symbol": 2, "Prayer Book": 2, "Leather-Bound Diary": 2, "Traveler's Clothes": 3, "Trinket": 1, "Boros Insignia": 1, "Feather From An Angels's Wing": 1, "Tattered Piece Of Boros Banner": 1, "Gruul Insignia": 1, "Hunting Trap": 1, "Boar Skull": 1, "Beast-Hide Cloak": 1, "Izzet Insignia": 1, "Charred And Twisted Remains": 1, "Block And Tackle": 1, "Guitar": 1, "Fishing Tackle": 1, "Coffee Grounds": 1, "Mug": 1}], ["Sack", {}]]
+!bqb torch
+!bqb transfer backpack sack
+!bqb undo
+
+# repeat (last) part with
+!bag open none

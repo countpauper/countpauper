@@ -206,7 +206,7 @@ while args:
 		if used_purses:
 			for coin_idx in used_purses:
 				money=bags[coin_idx][1]
-				current=money.get(item_name)
+				current=money.get(item_name, 0)
 				diff = report.get(coin_idx, {})
 				if current+delta>=0:
 					# enough coins, take them or add them
@@ -421,6 +421,7 @@ while args:
 # format the bags
 nl='\n'
 fields=''
+bold='**' if show_bag else ''
 if  report:
 	for idx,changes in report.items():
 		if idx==fail:
@@ -445,7 +446,7 @@ if  report:
 			for coin, icon in coinIcons.items():
 				q=contents.get(coin,0)
 				if coin in changes:
-					items.append(f'{icon} ~~{changes[coin][0]}~~ {q} {coin}')
+					items.append(f'{icon} {bold}~~{changes[coin][0]}~~ {q} {coin}{bold}')
 				elif show_bag:
 					items.append(f'{icon} {q} {coin}')
 		for item_name,q in contents.items():
@@ -457,9 +458,9 @@ if  report:
 			if item_name in changes:
 				original_amount=changes[item_name][0]
 				if original_amount==0:
-					items.append('+' + item_desc)
+					items.append(f'{bold}+{item_desc}{bold}')
 				else:
-					items.append(f'~~{original_amount}~~ '+ item_desc)
+					items.append(f'{bold}~~{original_amount}~~ {item_desc}{bold}')
 			elif show_bag:	# unchanged item
 				items.append(item_desc)
 		for item_name,diff in changes.items():
@@ -467,10 +468,32 @@ if  report:
 				continue
 			plural_name=item_name if item_name[-1]=='s' else item_name+'s'
 			original_amount=diff[0]
-			items.append(f'~~{original_amount} x {plural_name}~~' if original_amount!=1 else f'~~{item_name}~~')
+			items.append(f'{bold}~~{original_amount} x {plural_name}~~{bold}' if original_amount!=1 else f'{bold}~~{item_name}~~{bold}')
+
+		# Convert the items for this bag into fields, splitting them to stay under discord's 1024 character limit if needed
 		if not items:
-			items=['Empty']
-		fields+=f' -f "{bag_name}|{nl.join(items)}|inline"'
+			fields += f' -f "{bag_name}|*Empty*|inline"'
+		else:
+			field_length=0
+			field_items=[]
+			for i in items:
+				if field_length +len(i) >= 1024-len(bag_name)-10:
+					if bag_name:
+						fields+=f' -f "{bag_name}|{nl.join(field_items)}|inline"'
+					else:
+						fields+=f' -f "{nl.join(field_items)}"'
+					field_items=[i]
+					field_length=len(i)
+					bag_name=""
+				else:
+					field_items.append(i)
+					field_length+=len(i)+1
+			if bag_name:
+				fields += f' -f "{bag_name}|{nl.join(field_items)}|inline"'
+			else:
+				fields += f' -f "{nl.join(field_items)}"'
+else:
+	fields+=f' -desc "Nothing changed"'
 
 # update the purse if changed
 purse = bags.pop(purse_idx)[1]

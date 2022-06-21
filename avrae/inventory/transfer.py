@@ -143,14 +143,25 @@ if target_name==purse_name.lower():
 			else:
 				desc.append(f'{coinIcons.get(coin,coin)} {change[0]} {coin} ')
 else:
-	# plurallize
+	# pluralize
 	plural_diff={(f'{new}x {i}{"es" if any(i.endswith(end) for end in plural_es) else "s"}' if new>1 else i):old for i,(old,new) in diff.items()}
 	# report changes
 	desc=[f'~~{old}~~ {item}' if old else item for item,old in plural_diff.items()]
 
 if not desc:
 	desc=["*No items transferred*"]
+
+def format_field(header, items):
+	item_desc=nl.join(items)
+	limit = 1024
+	if len(item_desc) + 10 + len(header) >= limit:
+		return item_desc[:limit-len(header)-10]+'…'
+	else:
+		return item_desc
+
+desc=format_field(target_bag[0], desc)
+
 possessive=f'{name}\'' if name[-1]=='s' else f'{name}\'s'
 dbg=f'-f "Debug|{nl.join(dbg)}"' if dbg and ctx.alias=='bqb' else ''
-return f'embed -title "{possessive} bags" -f "{"+" if new_bag else ""}{target_bag[0]}|{nl.join(desc)}|inline" -f "{source_name}|{source_desc}|inline" {dbg} -color {color} -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png'
+return f'embed -title "{possessive} bags" -f "{"+" if new_bag else ""}{target_bag[0]}|{desc}|inline" -f "{source_name}|{source_desc}|inline" {dbg} -color {color} -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png'
 </drac2>
