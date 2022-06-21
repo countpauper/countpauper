@@ -1,6 +1,9 @@
 !cvar delete bags
 # test with old coins first
 !coins
+# test with open bags first
+!bag open all
+
 # add dungeon backpack,  shovel, pot, clothes, 9gp and a quiver with 10 arrows (still shows redundant sack)
 # TODO: should notify about optional artisan's tools
 !bqb dungeon 1gp folk quiver 10 arr 9 -gp

@@ -48,19 +48,32 @@ for arg in args:
 			items[arg]=item_names
 		else:
 			items[arg]=[arg]
+
 # count owned items
 owned=dict()
+containers={""}
+containers.remove("")
+purse = character().coinpurse.get_coins()
 for item_names in items.values():
 	arg_owned=dict()
 	for item_name in item_names:
-		quantity=sum(q for _,b in bags for i,q in b.items() if i.lower()==item_name)
-		quantity+=sum(1 for bn,_ in bags if item_name==bn.lower())
-		if not quantity:	 # partial item matches
-			quantity=sum(q for _,b in bags for i,q in b.items() if item_name in i.lower())
+		quantity = 0
+		if bag_quant:={container:q for container,bag in bags for i,q in bag.items() if i.lower()==item_name}:
+			quantity = sum(bag_quant.values())
+			containers.update({b for b in bag_quant.keys()})
+			quantity+=sum(1 for bn,_ in bags if item_name==bn.lower())
+		elif bag_quant:={container:q for container,bag in bags for i,q in bag.items() if item_name in i.lower()}:
+			quantity=sum(bag_quant.values())
+			containers.update({b for b in bag_quant.keys()})
 			quantity+=sum(1 for bn,_ in bags if item_name in bn.lower())
-		arg_owned[item_name] = owned.get(item_name, 0) + quantity
-	# clear mismatched items
+		# add coins from purse
+		if coin_quant:=purse.get(item_name,0):
+			quantity += coin_quant
+			containers.add("Coinpurse")
 
+		arg_owned[item_name] = owned.get(item_name, 0) + quantity
+
+	# clear mismatched items
 	if sum(arg_owned.values()):
 		arg_owned={a:q for a,q in arg_owned.items() if q>0}
 	elif arg_owned:	 # only add a single mismatched unowned item per argument
@@ -80,7 +93,7 @@ for idx,c in enumerate(coin_list[:-1]):
 	int_cost=int(coin_cost[c])
 	exchange_coin=coin_list[idx+1]
 	frac_rate=coins[exchange_coin]/coins[c]
-	frac_cost = coin_cost[c] - int_cost
+	frac_cost = coin_cost[c] - int_cost	
 	coin_cost[exchange_coin]+=frac_cost*frac_rate
 	coin_cost[c]=int_cost
 
@@ -89,12 +102,14 @@ owned={(n if q<=1 else item_table.get(n,{}).get('plural', n if n[-1]=='s' else f
 # capitalize
 owned={(n.title().replace("'S","'s") if not n in coin_list else n):q for n,q in owned.items()}
 # format amounts
-result='\n'.join(f'{q}x {n}' if q else f'No {n}' for n,q in owned.items())
+result='\n'.join(f'• {q}x {n}' if q else f'No {n}' for n,q in owned.items())
+if containers:
+	result+=f'\n\tin {get("their","their")} {", ".join(containers)}.'
 # format costs
 total_cost=' '.join(f'{int(q)} {c}' for c,q in coin_cost.items() if q>0)
 if not total_cost:
 	total_cost='None'
 
 footer=f'Total Weight: {round(total_weight)} lbs - Total Value: {total_cost}'
-return f'embed -title "{name} owns" -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png -desc "{result}" -footer "{footer}" -color {color}'
+return f'embed -title "{name} has" -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png -desc "{result}" -footer "{footer}" -color {color}'
 </drac2>

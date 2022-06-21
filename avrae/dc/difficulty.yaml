@@ -48,58 +48,62 @@ sight:
     detail: 5
 sound:
   skill: perception
-  level:  # decibels
-    # 140dB: -15
-    explosion: -15
-    # 120db: -10
-    # 100 db: -5
-    battle: -5
-    screaming: -5
-    party: -5
-    # 80 dB: 0
-    fighting: 0
-    shouting: 0
-    music: 0
-    # 60 dB: 5
-    talking: 5
-    riding: 5
-    # 40 dB: 10
-    casting: 10
-    drawing: 10
-    running: 10
-    sheathing: 10
-    walking: 10
-    # 30dB: 15
-    whisper: 15
-    breathing: 15
-    # 20dB : 20
-    rustling: 20
-    # 10dB: 25
-    heartbeat: 25
-  distance: # -6dB per doubled distance, ~x10 = +3 dc
-    0 ft: 0
-    10ft: 5
-    30ft: 8
-    60ft: 10
-    120ft: 12
-    300ft: 15
-    1000ft: 20  # round up 18.5
-    mile: 25
+  level:  # decibels -5DC/20dB
+    # 140dB: -20
+    explosion: -20
+    # 120db: -15
+    # 100 db: -10
+    battle: -10
+    screaming: -10
+    party: -10
+    # 80 dB: -5
+    fighting: -5
+    shouting: -5
+    music: -5
+    # 60 dB: 0, normal noise at 60ft (+2)
+    talking: 0
+    riding: 0
+    casting: 0
+    # 40 dB: 5
+    drawing: 5
+    running: 5
+    sheathing: 5
+    walking: 5
+    # 30dB: 10
+    whisper: 10
+    breathing: 12
+    # 20dB : 15
+    rustling: 15
+    # 10dB: 20
+    heartbeat: 20
+  distance: # -6dB per doubled distance = +1.5DC. DM screen audible: 4x distance is +8DC
+    0ft: -10 # +40dB
+    5ft: -5 # +20dB,
+    10ft: -3 # +dB
+    30ft: 0 # 0 dB, baseline
+    60ft: 2 # -6dB
+    120ft: 3 # -12dB
+    300ft: 5 # -20dB
+    1000ft: 7 # -30dB
+    mile: 10 # -45dB
+    2 mile: 13 # -50dB
+    5 mile: 15 # -60dB
   wind:
     still: 0
     down: -5
     up: +5
     strong: +2
   background:
-    silent: 0
-    hushed: +2
-    noisy: +5
-    loud: +10
+    silent: 0  # 20dB
+    quiet : +3  # 40dB background noise easily ignored, room at inn, library, grove
+    moderate : +5 # 60dB you could speak quietly without being overheard tavern, vibrant forest
+    noisy: +10  # 80dB talking  difficult, market
+    deafening: +12 # 100 dB ear damage, storm
   barrier:
     open: +0
-    wood: +2
-    brick: +10  # 40dB
-    rock: +15
+    wood: +5 # -20dB
+    brick: +10  # -40dB
+    rock: +15 # -60dB
   environment:
     hall: -5
     echo: -2
@@ -108,8 +112,10 @@ sound:
     town: +5
   information:
     detect: 0
+    fragments: 2
     words: 2
     sentence: 5
+    exact: 5
 smell:
   skill: perception
   intensity:   # at 0-5 ft distance

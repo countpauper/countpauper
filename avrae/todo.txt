@@ -2,7 +2,17 @@
 - `!ic` roleplay xp, not compatibile with "new" !xp. No one is using it so can be removed or upgraded.
 - Rewrite !qb with functions
 - Rewrite !chance with functions
-- !qb count $ doesn't show thing
+* !qb count $ doesn't show thing
+* !qb count show bag in parenthesis of found items
+* !qb count none found in his. <- remove or replace with in any bag.
+- Big bags go over field limit with `!qb` and `!bag open all` split them
+- !qb count use !price database instead to avoid 0x 0x 0x  hempen ropes, add weigh and plural in there too
+
+!cvar bags [["Backpack", {"Bedroll": 1, "Mess Kit": 1, "Tinderbox": 6, "Torch": 42, "Rations": 38, "Waterskin (Full)": 5, "Hempen Rope (50 Feet)": 4, "Crowbar": 3, "Hammer": 4, "Piton": 20, "Shovel": 1, "Iron Pot": 2, "Common Clothes": 9, "Insignia Of Rank": 2, "Trophy": 2, "Dice Set": 2, "Blanket": 2, "Emerald": 1, "Signet Ring": 1, "Dagger": 1, "Bolt": 1, "Candle": 15, "Alms Box": 1, "Block Of Incense": 12, "Censer": 1, "Vestments": 3, "Ball Bearings (Bag Of 1,000)": 1, "String (10 Feet)": 1, "Bell": 1, "Pitons": 10, "Hooded Lantern": 2, "Oil (Flask)": 2, "Golgari Insignia": 1, "Poisoner's Kit": 1, "Pet Beetle": 1, "Radkos Insignia": 1, "Costume": 1, "Chain (10 Feet)": 1, "Bottle Of Sweet, Red Juice": 1, "Ink (1 Ounce Bottle)": 4, "Ink Pen": 4, "School Uniform": 2, "Simic Insignia": 1, "Vial Of Seaweed": 1, "Vial Of Jellyfish Stingers": 1, "Glass Bottle With Slime": 1, "Book About Plant Identification": 1, "Herbalism Kit": 2, "Holy Symbol": 2, "Prayer Book": 2, "Leather-Bound Diary": 2, "Traveler's Clothes": 3, "Trinket": 2, "Boros Insignia": 1, "Feather From An Angels's Wing": 1, "Tattered Piece Of Boros Banner": 1, "Gruul Insignia": 1, "Hunting Trap": 1, "Boar Skull": 1, "Beast-Hide Cloak": 1, "Izzet Insignia": 1, "Charred And Twisted Remains": 1, "Block And Tackle": 1}]]
+- probably qb transfer as well. that one just truncate with ellipsis ?
+    
+- Bag description of changes/summary (added pack, removed item) not per item
+
 
 Outlands:
 * !rpxp gain not working for dahlia, see @hallowed by rose in #Bot-commands2

@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/inventory/mundane item prices.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/inventory/price.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/inventory/sane item prices.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/saneprices.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/back.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Parser/BNF.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/BNF.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Parser/BNF.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/BNF.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.cpp" afterDir="false" />
@@ -15,6 +11,17 @@
       <change beforePath="$PROJECT_DIR$/../Angel/TestParser/Sequence.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/Sequence.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dc/difficulty.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/dc/difficulty.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dmi/dmi.py" beforeDir="false" afterPath="$PROJECT_DIR$/dmi/dmi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dmi/dmi_snippet.py" beforeDir="false" afterPath="$PROJECT_DIR$/dmi/dmi_snippet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/count.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/count.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/custom item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/mundane item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/mundane item prices.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/quickbag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/testplan.txt" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/testplan.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/aura.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/aura.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,9 +221,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1653892428923">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="667" y="187" width="586" height="787" key="find.popup" timestamp="1655190844482">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
+    <state x="667" y="187" width="586" height="787" key="find.popup/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1655190844482" />
     <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1653892428923" />
     <state x="667" y="187" width="586" height="787" key="find.popup/0.1200.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1647527261914" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1652877838631">
@@ -258,11 +266,6 @@
           <url>file://$PROJECT_DIR$/chance/csv2json.py</url>
           <line>36</line>
           <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/inventory/quickbag.py</url>
-          <line>315</line>
-          <option name="timeStamp" value="41" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/misc/luck.py</url>

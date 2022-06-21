@@ -42,6 +42,9 @@ if me:=C.me:
 		me.set_note(' | '.join(overlay_notes))
 
 		targets[me.name]=me
+else:
+	targets[me.name]=dict()
+
 unknown=[t for t,c in targets.items() if not c]
 targets={t:c for t,c in targets.items() if not t in unknown}
 removed=[]
