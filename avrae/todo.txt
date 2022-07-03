@@ -8,6 +8,10 @@
 * Big bags go over field limit with `!qb` and `!bag open all` split them
 - !qb count use !price database instead to avoid 0x 0x 0x  hempen ropes, add weigh and plural in there too
 
+* !sw doesn't check trueDistance and just assumes?
+* !sw error with hallowed at -20
+* !unit 150kg: TypeError: can't multiply sequence by non-int of type 'float'
+
 
 Outlands:
 * !rpxp gain not working for dahlia, see @hallowed by rose in #Bot-commands2

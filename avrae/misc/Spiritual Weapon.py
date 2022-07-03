@@ -96,7 +96,7 @@ if c:
 			target_size=1
 		# extract the height from the target's note
 		if height_note := ([note[len(height_prefix):] for note in target_notes if note.startswith(height_prefix)] + [None])[0]:
-			target_height=height_note
+			target_height=int(height_note)
 
 target_pos=args.last('m', target_pos or '').upper()
 
@@ -106,16 +106,17 @@ if '*' in target_pos:
 	target_pos=target_pos.replace('*','')
 
 # convert the text locations to the x,y,z coordinates
+origin_height
 origin_coord = dict(x=x_axis.get(''.join(c for c in origin_pos if c.isalpha())),
 		  y=int(''.join(c for c in origin_pos if c.isdigit())),
-		  z=origin_height) if origin_pos else None
+		  z=origin_height//ft_per_grid) if origin_pos else None
 target_top_left_coord = dict(x=x_axis.get(''.join(c for c in target_pos if c.isalpha())),
 		  y=int(''.join(c for c in target_pos if c.isdigit())),
-		  z=target_height) if target_pos else None
+		  z=target_height//ft_per_grid) if target_pos else None
 
-if target_top_left_coord and not target_top_left_coord.x:
+if target_top_left_coord and target_top_left_coord.x is None:
 	return f'echo Invalid target position `{target_pos}`'
-if origin_coord and not origin_coord.x:
+if origin_coord and origin_coord.x is None:
 	origin_coord=None
 # approach: find the location around the target's space that is closest to the origin
 if target_top_left_coord and origin_coord and target_size:
@@ -142,30 +143,36 @@ else:	# no size (-m), stand on it
 
 destination_coord['z'] = int(float(args.last('h',args.last('height', destination_coord.z*ft_per_grid))) / ft_per_grid)
 destination_pos = f'{list(x_axis.keys())[destination_coord.x]}{destination_coord.y}'
-destination_height=destination_coord.z*ft_per_grid
-
-# clean out old overlay:
-caster_name = caster.name.replace('"','\"')
-attach_effect='Effect: Spiritual Weapon'
-caster_notes=[n for n in caster_notes if not n.startswith(ovl_prefix) and not n.startswith(attach_effect)]
-if destination_pos:
-	caster_notes.append(f'{ovl_prefix}c2{ovl_color}{destination_pos}')
-	caster_notes.append(f'{attach_effect} / {caster.name}')
-caster.set_note(' | '.join(caster_notes))
+destination_height=destination_coord.z*ft_per_grid # height are in ft, coordinates in grids
 
 # add the change height to position descriptions for embed if relevant
 if origin_height!=destination_height:
 	origin_pos+=f' {origin_height}'
 	destination_pos+=f' {destination_height}'
 
+def compute_distance(a,b):
+	if a.z is None:
+		delta=[abs(a.x - b.x), abs(a.y - b.y), 0]
+	else:
+		delta=[abs(a.x - b.x), abs(a.y - b.y), abs(a.z - b.z)]
+	if bool(get_svar('trueDistance',get('trueDistance', False))):
+		delta.sort()
+		diagonal = delta[1]
+		straight=delta[2] - diagonal
+		return straight + diagonal + diagonal//2	# every 2nd diagonal costs 10ft
+	else:
+		return max(delta)
+
 # check the range from the origin_coord to the destination_coord
+distance = None
 if max_range and origin_coord and destination_coord:
-	distance=sqrt((origin_coord.x-destination_coord.x)**2 + (origin_coord.y-destination_coord.y)**2 + (origin_coord.z-destination_coord.z)**2)*ft_per_grid
+	distance=compute_distance(origin_coord, destination_coord) * ft_per_grid
+	# sqrt((origin_coord.x-destination_coord.x)**2 + (origin_coord.y-destination_coord.y)**2 + (origin_coord.z-destination_coord.z)**2)*ft_per_grid
 	max_range*=ft_per_grid
 	if round(distance)>max_range + (ft_per_grid/2):
-		return f'echo "Destination {destination_pos} out of range {origin_coord}: {distance:.1f} > {max_range}.'
+		return f'echo "Destination {destination_pos} out of range: {distance:.1f} > {max_range}.'
 	if distance>0:
-		move_field=f'-f "Moving the Spiritual Weapon|from {origin_pos} to {destination_pos} {distance:.1f} ft.]"'
+		move_field=f'-f "Moving the Spiritual Weapon|from {origin_pos} to {destination_pos} ({distance:.1f} ft.)"'
 	else:
 		move_field=f'-f "Spiritual Weapon|Stays at {destination_pos}"'
 elif destination_pos:
@@ -173,6 +180,14 @@ elif destination_pos:
 else:
 	move_field=''
 
+# clean out old overlay:
+caster_name = caster.name.replace('"','\"')
+attach_effect='Effect: Spiritual Weapon'
+caster_notes=[n for n in caster_notes if not n.startswith(ovl_prefix) and not n.startswith(attach_effect)]
+if destination_pos:
+	caster_notes.append(f'{ovl_prefix}c2{ovl_color}{destination_pos.split(" ")[0]}')
+	caster_notes.append(f'{attach_effect} / {caster.name}')
+caster.set_note(' | '.join(caster_notes))
 
 # clean spiritual weapon arguments like -m from the argstring
 for m in args.get('m'):
