@@ -7,6 +7,26 @@
 * !qb count none found in his. <- remove or replace with in any bag.
 * Big bags go over field limit with `!qb` and `!bag open all` split them
 - !qb count use !price database instead to avoid 0x 0x 0x  hempen ropes, add weigh and plural in there too
+- !wand alias has deprecation warning with cc or at least ariel's wand does
+* add_effect `args` is removed use passive effects dict https://avrae.readthedocs.io/en/latest/aliasing/api.html#aliasing.api.combat.SimpleCombatant.add_effect
+    * bladesong
+    * twilight
+    * gem_flight
+    * wcast
+    * delete sleep
+    - delete monk stuff
+
+- hp got error healing hallowed for +25 outside of initiative 
+Traceback (most recent call last):
+  Line 38, col 6
+    r=vroll(delta)
+      ^^^^^^^^^^^^
+RollSyntaxError: Unexpected input on line 1, col 1: expected DECIMAL, D, U_OP, LPAR, INTEGER, got h
+
+In v4.1, with the addition of ieffect2 models through the SimpleCombatant.add_effect() method, we've also changed the way this method works slightly.
+- BREAKING CHANGE: SimpleCombatant.add_effect() now returns the added SimpleEffect instead of None
+- Deprecation: The args arg is now deprecated and will raise a deprecation warning if used. Check the docs on how to use passive_effects and attacks instead.
+- Deprecation: Passing negative values to duration to create an indefinite effect is now deprecated. Use None or omit the argument instead.
 
 * !sw doesn't check trueDistance and just assumes?
 * !sw error with hallowed at -20

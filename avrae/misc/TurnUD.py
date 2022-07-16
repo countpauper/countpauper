@@ -52,7 +52,7 @@ else:
 
 # apply the turned effect
 turned = [t for t,s in saves.items() if s and s is False and (s is not True or s.total<dc) and not t in destroyed]
-[t.add_effect('Turned','',duration=10) for t in turned]
+[t.add_effect('Turned',duration=10) for t in turned]
 
 result=[f'**{t.name}** : WIS Save: {"fail" if s is False else "pass" if s is True else s} vs DC {dc} ; {"**Turned**" if t in turned else "**Destroyed**" if t in destroyed else "*Saved*"}' for t,s in saves.items()]
 

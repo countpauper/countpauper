@@ -103,7 +103,7 @@ if wild and spell_level>0:
 					args.append('-i')
 			elif surge.type=='effect':
 				if Combat:=combat():
-					Combat.me.add_effect(surge.effect[0], surge.effect[2], surge.effect[1])
+					Combat.me.add_effect(surge.effect.name, duration=surge.effect.duration, passive_effects=surge.effect.passive_effects)
 			elif surge.type=='cast':
 				if surge.cast[2]=='self':
 					cast_target=f'-t "{name}"'

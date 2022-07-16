@@ -8,6 +8,6 @@ if not cc.value:
   return f'echo You already used {cc.name}. You need to rest.'
 cc.set(0)
 if (c:=combat()) and (m:=c.me):
-   m.add_effect('Gem Flight','',10)
+   m.add_effect('Gem Flight',10)
 return f'embed -title "{name} uses {cc.name}." -desc "{cc.desc}" -f "{cc.name}|{cc}" -thumb {image} -color {color}'
 </drac2>
