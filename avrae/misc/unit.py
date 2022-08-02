@@ -14,6 +14,7 @@ for singular, multiple in plural.items():
 # TODO: parse all input units and if they all have an overlapping output unit add them together uscase: 5ft 4 inch = meter/cm
 # TODO: for the output unit if total<1 and another output unit has total>1 then use that use case: 3cm = 1.2 inch, don't mention feet (?) but mostly:
 # TODO: if there's a fraction left after whole units and another conversion is available use that? use case 166cm = 5ft 5 inch
+# TODO: offsets to do celsius/fahrenheit
 for u, conv in table.items():
 	if arg.endswith(u):
 		v=arg[:-len(u)].strip().replace(',','')

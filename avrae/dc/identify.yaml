@@ -118,10 +118,11 @@ identify:
       uncommon: 15
       rare: 20
       very rare: 25
-      legendary: 15
+      legendary: 15 
     method:
       visual: 5
       touch: 0
+      smell: -2
       use: -5
     information:
       magical: yes

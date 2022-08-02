@@ -21,7 +21,21 @@ else:
 		return 'g hp'
 	else:
 		target = character()
-		delta=args.pop(0)
+		first = args.pop(0)
+		if first.strip('+-').isdigit():
+			delta=int(first)
+		elif name.lower().startswith(first.lower()):
+			if args:
+				delta=int(args[0])
+			else:
+				return 'g hp'
+		else:
+			return f'echo You can not {"change" if args else "inspect"} the hitpoints of {first} outside of initiatve.'
+		if delta>0:
+			return f'g hp +{delta}'
+		else:
+			return f'g hp {delta}'
+
 if not target:
 	return f'echo Target not found.'
 

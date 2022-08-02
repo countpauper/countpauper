@@ -107,7 +107,7 @@ else:
 	if cost>current:
 		return f'echo Not enough charges [{cost}] on your {wand} to cast {match.title()} : {C.cc_str(cc)}'
 	remaining = C.mod_cc(cc,-cost)
-	fields=f' -f "{cc}[-{cost}]|{cc_str(cc)}|inline" '"""
+	fields=f' -f "{cc}[-{cost}]|{C.cc_str(cc)}|inline" '"""
 
 if break_dice is not None:
 	code+="""# Did it break?

@@ -7,7 +7,7 @@
 * !qb count none found in his. <- remove or replace with in any bag.
 * Big bags go over field limit with `!qb` and `!bag open all` split them
 - !qb count use !price database instead to avoid 0x 0x 0x  hempen ropes, add weigh and plural in there too
-- !wand alias has deprecation warning with cc or at least ariel's wand does
+* !wand alias has deprecation warning with cc or at least ariel's wand does
 * add_effect `args` is removed use passive effects dict https://avrae.readthedocs.io/en/latest/aliasing/api.html#aliasing.api.combat.SimpleCombatant.add_effect
     * bladesong
     * twilight
@@ -15,13 +15,9 @@
     * wcast
     * delete sleep
     - delete monk stuff
+x !qb bagSettings error checking (especially weight [0. lbs]) [can't add that to bagSettings with !bag]
+* hp got error healing hallowed for +25 outside of initiative
 
-- hp got error healing hallowed for +25 outside of initiative 
-Traceback (most recent call last):
-  Line 38, col 6
-    r=vroll(delta)
-      ^^^^^^^^^^^^
-RollSyntaxError: Unexpected input on line 1, col 1: expected DECIMAL, D, U_OP, LPAR, INTEGER, got h
 
 In v4.1, with the addition of ieffect2 models through the SimpleCombatant.add_effect() method, we've also changed the way this method works slightly.
 - BREAKING CHANGE: SimpleCombatant.add_effect() now returns the added SimpleEffect instead of None

@@ -16,7 +16,10 @@ N=[i.name for i in g.months]
 mth,dy=1,(dy if dy<=g.length else dy%g.length)
 set_uvar(vn, str(dy)) if '%1%' in 'setnextprev' else ''
 D=dy
-[set("dy",dy-M[x])or set("mth",mth+1)for x in range(len(M))if mth>x and dy>M[x]]
+for x in range(len(M)):
+	if mth>x and dy>M[x]:
+		dy-=M[x]
+		mth+=1
 mth=mth-1
 hldy=[i.name.replace("'","ʼ")for i in g.months[mth].holidays if i.day==dy]if g.months[mth].holidays else[]
 mn=(' | 'if sum([1 for i in[""]+range(20)if f"moon{i}"in g])<4 else n).join([f"""{f'''**{g.get(f'moonName{i}')}** '''if g.get(f'moonName{i}')else''}{g.get(f'moon{i}')[int(str(round((D-1)/(g.get(f'moonCycle{i}')),0))[:-2])%len(g.get(f'moon{i}'))]}"""for i in[""]+range(20)if f"moonCycle{i}"in g])
