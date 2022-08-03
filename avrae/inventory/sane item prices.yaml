@@ -1,15 +1,15 @@
-Spell Scroll Level 0: 10
+Spell Scroll (Level 0): 10
 Ammunition +1(each): 25
 Potion of Healing: 50
 Quaal's Feather Token Anchor: 50
-Spell Scroll Level 1: 60
+Spell Scroll (Level 1): 60
 Philter of Love: 90
-Ammunition +2(ea): 100
+Ammunition +2(each): 100
 Potion of Poison: 100
 Dust of Dryness(1 pellet): 120
 Elixir of Health: 120
 Keoghtom's Ointment(Per dose): 120
-Spell Scroll Level 2: 120
+Spell Scroll (Level 2): 120
 Potion of Fire Breath: 150
 Potion of Greater Healing: 150
 Potion of Climbing: 180
@@ -20,7 +20,7 @@ Potion of Water Breathing: 180
 Scroll of Protection: 180
 Nolzur's Marvelous Pigments: 200
 Potion of Animal Friendship: 200
-Spell Scroll Level 3: 200
+Spell Scroll (Level 3): 200
 Quaal's Feather Token Fan: 250
 Quaal's Feather Token Whip: 250
 Potion of Diminution: 270
@@ -30,8 +30,8 @@ Necklace of Fireballs(One bead): 300
 Potion of Gaseous Form: 300
 Potion of Resistance: 300
 Universal Solvent: 300
-Spell Scroll Level 4: 320
-Ammunition +3(ea): 400
+Spell Scroll (Level 4): 320
+Ammunition +3(each): 400
 Potion of Speed: 400
 Sovereign Glue: 400
 Horn of Blasting: 450
@@ -40,30 +40,30 @@ Dust of Sneezing and Choking: 480
 Necklace of Fireballs(Two beads): 480
 Oil of Slipperiness: 480
 Potion of Flying: 500
-Arrow of Slaying(ea): 600
-Spell Scroll Level 5: 640
+Arrow of Slaying(each): 600
+Spell Scroll (Level 5): 640
 Bead of Force: 960
 Elemental Gem: 960
 Necklace of Fireballs(Three beads): 960
 Potion of Clairvoyance: 960
 Potion of Vitality: 960
-Spell Scroll Level 6: 1280
+Spell Scroll (Level 6): 1280
 Potion of Supreme Healing: 1350
 Chime of Opening: 1500
 Necklace of Fireballs(Four beads): 1600
 Oil of Etherealness: 1920
 Ioun Stone Absorption: 2400
-Spell Scroll Level 7: 2560
+Spell Scroll (Level 7): 2560
 Quaal's Feather Token Bird: 3000
 Quaal's Feather Token Swan Boat: 3000
 Oil of Sharpness: 3200
 Necklace of Fireballs(Five beads): 3840
 Potion of Invulnerability: 3840
 Gem of Brightness: 5000
-Spell Scroll Level 8: 5120
+Spell Scroll (Level 8): 5120
 Deck of Illusions: 6120
 Necklace of Fireballs(Six beads): 7680
-Spell Scroll Level 9: 10240
+Spell Scroll (Level 9): 10240
 Ioun Stone Greater Absorption: 31000
 Rod of Absorption: 50000
 Talisman of Ultimate Evil: 61440
@@ -78,14 +78,14 @@ Wand of the War Mage +1: 1200
 Bracers of Archery: 1500
 Circlet of Blasting: 1500
 Javelin of Lightning: 1500
-Prayer Bead - Smiting: 1500
+Prayer Bead (Smiting): 1500
 Wind Fan: 1500
 Sword of Sharpness: 1700
 Staff of the Adder: 1800
 Dancing Sword: 2000
 Glamoured Studded Leather: 2000
 Pipes of the Sewers: 2000
-Prayer Bead - Bless: 2000
+Prayer Bead (Bless): 2000
 Saddle of the Cavalier: 2000
 Sword of Wounding: 2000
 Frost Brand: 2200
@@ -107,7 +107,7 @@ Dragon Scale Mail: 4000
 Elven Chain: 4000
 Ioun Stone Regeneration: 4000
 Iron Bands of Bilarro: 4000
-Prayer Bead - Curing: 4000
+Prayer Bead (Curing): 4000
 Rope of Entanglement: 4000
 Wand of Enemy Detection: 4000
 Luckstone: 4200
@@ -169,19 +169,19 @@ Vorpal Sword: 24000
 Ring of Water Elemental Command: 25000
 Rod of Alertness: 25000
 Staff of Frost: 26000
-Instrument of the Bards - Fochulan Bandlore: 26500
-Instrument of the Bards - Mac-Fuirmidh Cittern: 27000
+Instrument of the Bards (Fochulan Bandlore): 26500
+Instrument of the Bards (Mac-Fuirmidh Cittern): 27000
 Rod of Lordly Might: 28000
 Rod of the Pact Keeper +2: 28000
-Instrument of the Bards - Doss Lute: 28500
-Instrument of the Bards - Canaith Mandolin: 30000
+Instrument of the Bards (Doss Lute): 28500
+Instrument of the Bards (Canaith Mandolin): 30000
 Mantle of Spell Resistance: 30000
 Ring of Spell Turning: 30000
-Prayer Bead - Favor: 32000
+Prayer Bead (Favor): 32000
 Wand of Fireballs: 32000
 Wand of Lightning Bolts: 32000
 Wand of Polymorph: 32000
-Instrument of the Bards - Cli Lyre: 35000
+Instrument of the Bards (Cli Lyre): 35000
 Scarab of Protection: 36000
 Sword of Answering: 36000
 Staff of the Woodlands: 44000
@@ -189,10 +189,10 @@ Spellguard Shield: 50000
 Cloak of Displacement: 60000
 Robe of Stars: 60000
 Weapon of Warning: 60000
-Prayer Bead - Wind Walking: 96000
-Instrument of the Bards - Anstruth Harp: 109000
-Instrument of the Bards - Ollamh Harp: 125000
-Prayer Bead - Summons: 128000
+Prayer Bead (Wind Walking): 96000
+Instrument of the Bards (Anstruth Harp): 109000
+Instrument of the Bards (Ollamh Harp): 125000
+Prayer Bead (Summons): 128000
 Holy Avenger: 165000
 Helm of Comprehend Languages: 500
 Driftglobe: 750
@@ -205,7 +205,7 @@ Ring of Warmth: 1000
 Goggles of Night: 1500
 Horseshoes of the Zephyr: 1500
 Mariner's Armor: 1500
-Necklace of Adaption: 1500
+Necklace of Adaptation: 1500
 Ring of Water Walking: 1500
 Wand of Magic Detection: 1500
 Wand of Secrets: 1500
@@ -254,7 +254,7 @@ Robe of Eyes: 30000
 Gem of Seeing: 32000
 Plate Armor of Etherealness: 48000
 Ivory Goat(Travail): 400
-Golden Lion(ea): 600
+Golden Lion(each): 600
 Ivory Goat(Traveling): 1000
 Staff of the Python: 2000
 Onyx Dog: 3000

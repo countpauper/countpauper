@@ -17,12 +17,12 @@
     - delete monk stuff
 x !qb bagSettings error checking (especially weight [0. lbs]) [can't add that to bagSettings with !bag]
 * hp got error healing hallowed for +25 outside of initiative
-
+* !price links don't work for mundane items. Should be in the gvars or in the svar/default or find again in the list of mundane items
 
 In v4.1, with the addition of ieffect2 models through the SimpleCombatant.add_effect() method, we've also changed the way this method works slightly.
-- BREAKING CHANGE: SimpleCombatant.add_effect() now returns the added SimpleEffect instead of None
-- Deprecation: The args arg is now deprecated and will raise a deprecation warning if used. Check the docs on how to use passive_effects and attacks instead.
-- Deprecation: Passing negative values to duration to create an indefinite effect is now deprecated. Use None or omit the argument instead.
+* BREAKING CHANGE: SimpleCombatant.add_effect() now returns the added SimpleEffect instead of None
+* Deprecation: The args arg is now deprecated and will raise a deprecation warning if used. Check the docs on how to use passive_effects and attacks instead.
+* Deprecation: Passing negative values to duration to create an indefinite effect is now deprecated. Use None or omit the argument instead
 
 * !sw doesn't check trueDistance and just assumes?
 * !sw error with hallowed at -20
@@ -38,7 +38,7 @@ Outlands:
 * add pitfight to worskhop
     * split in sub commands set
     * help
-- add outlandschar to workshop
+x add outlandschar to workshop
 - check other aliases, see #suggestions
     > Other ones made specifically for this server would be !carousing, !downtime, !gamble, !gatetown, !piety, !planes, !powers, and !rpxp
 
