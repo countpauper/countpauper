@@ -32,6 +32,11 @@ bool Integer::operator==(const Expression& other) const
 	return false;
 }
 
+std::string Integer::String() const
+{
+    return std::to_string(value);
+}
+
 long Integer::operator*() const
 {
 	return value;

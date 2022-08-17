@@ -29,6 +29,17 @@ bool Conjunction::operator==(const Expression& other) const
     return false;
 }
 
+std::string Conjunction::String() const
+{
+    std::string result;
+    for (const auto& condition : operands)
+    {
+        if (!result.empty())
+            result += "&";
+        result += condition->String();
+    }
+    return result;
+}
 
 Object Conjunction::Match(const Expression& other) const
 {

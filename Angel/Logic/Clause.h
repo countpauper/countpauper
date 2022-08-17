@@ -15,7 +15,8 @@ class Clause : public Expression
 public:
 	explicit Clause(Predicate&& predicate, Object&& condition = boolean(true));
 	bool operator==(const Expression& other) const override;
-	Object Match(const Expression& other) const override;
+    std::string String() const override;
+    Object Match(const Expression& other) const override;
     Object Copy() const override;
     Object Compute(const Knowledge& known) const override;
 protected:

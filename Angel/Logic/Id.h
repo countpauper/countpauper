@@ -14,6 +14,7 @@ public:
 	explicit Id(const std::string& name);
 	bool operator==(const Id& id) const;
 	bool operator==(const Expression& value) const override;
+    std::string String() const override;
     Object Compute(const Knowledge& known) const;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;

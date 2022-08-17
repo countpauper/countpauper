@@ -82,8 +82,11 @@ namespace Angel::Parser::BNF
 
     struct Whitespace : Expression
     {
+        Whitespace(size_t amount=1, const std::string_view characters= " \t\r\n");
         PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Whitespace>(*this); }
+        size_t amount;
+        std::string characters;
     };
 
     struct Disjunction : Expression

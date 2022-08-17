@@ -24,13 +24,22 @@ TEST(TestSequence, Empty)
 TEST(TestSequence, Single)
 {
     Logic::Object seq;
-    std::stringstream s("( cat)");
+    std::stringstream s("(cat)");
     s >> seq;
     EXPECT_EQ(seq, Logic::sequence(Logic::id("cat")));
 }
 
 
 TEST(TestSequence, Comma)
+{
+    Logic::Object seq;
+    std::stringstream s("cat, dog");
+    s >> seq;
+
+    EXPECT_EQ(seq, Logic::sequence(Logic::id("cat"), Logic::id("dog")));
+}
+
+TEST(TestSequence, BracesComma)
 {    Logic::Object seq;
     std::stringstream s("(cat, dog)");
     s >> seq;
@@ -42,9 +51,12 @@ TEST(TestSequence, Comma)
 TEST(TestSequence, Commas)
 {
     Logic::Object seq;
-    std::stringstream s("( cat, dog, hamster )");
+    std::stringstream s("cat, dog, hamster");
     s >> seq;
 
+TODO: this comes out as (cat,(dog,hamster)) because in naked_expression, collection has priority over element
+but if this is turned around, naked sequences are not parsed right, because they will just be elements followed by garbage
+what will have to be done is split the loop inside sequence into reverted priority naked expressions or something 
     EXPECT_EQ(seq, Logic::sequence(
 		Logic::id("cat"), 
 		Logic::id("dog"),

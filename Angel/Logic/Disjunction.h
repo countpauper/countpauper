@@ -17,9 +17,10 @@ public:
     {
     }
     Object Copy() const override;
-    bool operator==(const Expression& other) const;
+    bool operator==(const Expression& other) const override;
     Object Compute(const Knowledge& known) const override;
     Object Match(const Expression& other) const override;
+    std::string String() const override;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
 };

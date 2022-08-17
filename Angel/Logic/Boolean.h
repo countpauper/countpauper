@@ -15,7 +15,8 @@ class Boolean : public Element
 public:
 	explicit Boolean(bool v);
 	bool operator==(const Expression& other) const override;
-	bool operator*() const;
+    std::string String() const override;
+    bool operator*() const;
     Object Compute(const Knowledge& known) const;
 	static std::optional<bool> Parse(const std::string& tag);
 protected:

@@ -28,6 +28,7 @@ public:
     Sequence& operator=(const Sequence&) = delete;
     Sequence(Sequence&& other);
     bool operator==(const Expression& other) const override;
+    std::string String() const override;
     Object Copy() const override;
     void Add(Object&& value);
     void Merge(Sequence&& other);

@@ -6,6 +6,7 @@ def load_prices():
 	for gv in gvars:
 		price_list.update(load_yaml(get_gvar(gv)))
 	return {i.lower():p for i,p in price_list.items()}
+
 mundane=load_yaml(get_gvar(mundane_gvar)).keys()
 
 def match_query(items, query):

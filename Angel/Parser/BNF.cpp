@@ -31,14 +31,21 @@ PossibleMatch RegularExpression::Parse(const std::string_view data, const Interp
     return PossibleMatch();
 }
 
+Whitespace::Whitespace(size_t amt, const std::string_view chars) :
+    amount(amt),
+    characters(chars)
+{
+}
+
+
 PossibleMatch Whitespace::Parse(const std::string_view data, const Interpreter&, const Progress&) const
 {
     if (data.empty())
         return PossibleMatch();
-    auto p = data.find_first_not_of(" \t\r\n");
+    auto p = data.find_first_not_of(characters);
     if (p == data.npos)
         return Match{ data.substr(data.size()) };
-    else if (p>0)
+    else if (p>=amount)
         return Match{ data.substr(p) };
     else
         return PossibleMatch();

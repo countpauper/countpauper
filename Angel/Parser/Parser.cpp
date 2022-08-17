@@ -20,27 +20,6 @@ namespace Angel
 namespace Parser
 {
 
-// TODO: generalize to all collections, including disjunctions, products, summations
-void RecursiveCollect(Logic::Sequence& seq, const std::any& interpretation)
-{
-    if (!interpretation.has_value())
-        return;
-    if (interpretation.type() == typeid(Logic::Object))
-    {
-        seq.Add(std::any_cast<Logic::Object>(interpretation));
-        return;
-    }
-    if (interpretation.type() == typeid(std::vector<std::any>))
-    {
-        const auto& elements = std::any_cast<std::vector<std::any>>(interpretation);
-        for (const auto&e : elements)
-        {
-            RecursiveCollect(seq, e);
-        }
-        return;
-    }
-    assert(false); // then what is it
-}
 
 class LogicInterpreter : public BNF::Interpreter
 {
@@ -59,9 +38,9 @@ class LogicInterpreter : public BNF::Interpreter
             }
             return knowledge;
         }
-        if (rule == "braces")
+        /*if (rule == "braces")
         {
-            if (interpretation.type() == typeid(const std::vector<Logic::Object>&))
+            if (interpretation.type() == typeid(Logic::Object))
             {
                 const auto& obj = std::any_cast<Logic::Object>(interpretation);
                 if (obj.As<Logic::Collection>())
@@ -78,7 +57,7 @@ class LogicInterpreter : public BNF::Interpreter
 
             }
         }
-        else if (rule == "id")
+        else*/ if (rule == "id")
         {
             return Logic::id(value);
         }
@@ -94,13 +73,60 @@ class LogicInterpreter : public BNF::Interpreter
         {
             return interpretation;
         }
-        else if (rule == "sequence")
+/*        else if (rule == "comma sequence")
+        {
+            const auto& elements = std::any_cast<std::vector<std::any>>(interpretation);
+            assert(elements.size() == 2);
+            auto result = std::make_unique<Logic::Sequence>(std::any_cast<Logic::Object>(elements.at(0)));
+            result->Merge(std::move(*std::any_cast<Logic::Object>(elements.at(1)).As<Logic::Sequence>()));
+            return Logic::Object(std::move(result));
+        }
+        else if (rule=="sequence elements")
         {
             auto result = std::make_unique<Logic::Sequence>();
             RecursiveCollect(*result, interpretation);
             return Logic::Object(std::move(result));
         }
+*/       
+        else if (rule == "braced expression")
+        {  
+            if (interpretation.has_value())
+            {
+                auto naked_expression = std::any_cast<Logic::Object>(interpretation);
+                if (naked_expression.As<Logic::Sequence>()) 
+                {   // on sequences, braces are optional since () is an empty sequence and (element) is a size 1 sequence
+                    return naked_expression;
+                }
+                else if (naked_expression.As<Logic::Operator>())
+                {   // operators use braces for precedence
+                    return naked_expression;
+                }
+                else
+                {    // if the naked expression is not a computation, sequence or collection, then make it one (ie (1) = a sequence of 1 
+                    return Logic::sequence(std::move(naked_expression));                
+                }
+            }
+        }
+        else if (rule == "sequence")
+        {
+            if (interpretation.has_value())
+            {
+                const auto& elements = std::any_cast<std::vector<std::any>>(interpretation);
+                auto result = std::make_unique<Logic::Sequence>();
+                for (const auto& e : elements)
+                {
+                    result->Add(std::move(std::any_cast<Logic::Object>(e)));
+                }
+                return Logic::Object(std::move(result));
 
+            }
+            else
+                return Logic::sequence();   // empty sequence
+        }
+        if (interpretation.type() == typeid(std::vector<std::any>))
+        {
+            return interpretation;
+        }
         return interpretation;
     }
 
@@ -141,11 +167,6 @@ Logic::Knowledge Parse(const std::string& text)
     return std::any_cast<Logic::Knowledge>(match.interpretation);
 }
 
-std::ostream& operator<<(std::ostream& s, const Logic::Object& o)
-{
-    assert(false);  // TODO: all expressions shoudl be serializable
-    return s;
-}
 
 std::istream& operator>>(std::istream& s, Logic::Object& o)
 {
@@ -162,16 +183,24 @@ std::istream& operator>>(std::istream& s, Logic::Object& o)
 
     // skip inital whitespace
     std::string_view start = allData;
-    if (auto whiteMatch = BNF::Whitespace().Parse(allData.c_str(), interpreter))
+    if (auto whiteMatch = Angel::Parser::BNF::Whitespace().Parse(allData.c_str(), interpreter))
     {
         start = whiteMatch->remaining;
     }
-    auto match = BNF::Parse(BNF::expression, interpreter, start);
+    auto match = Parser::BNF::Parse(Angel::Parser::BNF::expression, interpreter, start);
     s.seekg(-std::streamoff(match.remaining.length()), std::ios_base::cur);
- 
+
     o = std::any_cast<const Logic::Object&>(match.interpretation);
     return s;
 }
+}
+}
 
+std::ostream& operator<<(std::ostream& s, const Angel::Logic::Object& o)
+{
+    s << o->String();
+    return s;
 }
-}
+
+
+

@@ -27,6 +27,11 @@ bool Id::operator==(const Expression& other) const
 	return false;
 }
 
+std::string Id::String() const
+{
+    return name;
+}
+
 Object Id::Compute(const Knowledge& known) const
 {
     return id(name);

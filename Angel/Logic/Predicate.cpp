@@ -42,6 +42,14 @@ bool Predicate::operator==(const Expression& other) const
 }
 
 
+std::string Predicate::String() const
+{
+    // TODO if arguments is an empty sequence, then it could also be represented by just the id
+    // then it would be indistinguishable from an id, but perhaps that should be equivalent anyway and operator== should compare them
+    // also if arguments is a sequence then the () should not be needed. Can it be anything else? 
+    return id.String() + arguments.String();
+}
+
 Object Predicate::Copy() const
 {
     return Create<Predicate>(*this);

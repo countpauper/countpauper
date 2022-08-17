@@ -27,6 +27,17 @@ bool Disjunction::operator==(const Expression& other) const
     return false;
 }
 
+std::string Disjunction::String() const
+{
+    std::string result;
+    for (const auto& condition : operands)
+    {
+        if (!result.empty())
+            result += "|";
+        result += condition->String();
+    }
+    return result;
+}
 
 Object Disjunction::Match(const Expression& other) const
 {

@@ -24,6 +24,14 @@ bool Boolean::operator==(const Expression& other) const
 	return false;
 }
 
+std::string Boolean::String() const
+{
+    if (truth)
+        return "true";
+    else
+        return "false";
+}
+
 Object Boolean::Compute(const Knowledge& known) const
 {
     return boolean(truth);

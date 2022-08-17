@@ -66,6 +66,18 @@ bool Set::operator==(const Expression& other) const
 	return false;
 }
 
+std::string Set::String() const
+{
+    std::string result;
+    for (const auto& element : *this)
+    {
+        if (!result.empty())
+            result += "&";
+        result += element->String();
+    }
+    return "{"+result+"}";
+}
+
 Object Set::Match(const Expression& expr) const
 {
 	if (auto set = dynamic_cast<const Set*>(&expr))

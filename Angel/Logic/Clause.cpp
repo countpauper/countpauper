@@ -24,6 +24,13 @@ bool Clause::operator==(const Expression& value) const
 	return false;
 }
 
+std::string Clause::String() const
+{
+    // TODO: if condition is true it could just be the predicate. But then it would be indistinguishable if the type is in question. Perhaps it should be equivalent and operator== should also support that
+    return predicate.String() + ":" + condition->String();
+}
+
+
 Object Clause::Match(const Expression& value) const
 {
 	if (auto query = dynamic_cast<const Predicate*>(&value))

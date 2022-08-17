@@ -16,6 +16,7 @@ public:
     Predicate(const std::string& name, Sequence&& arguments=Sequence());
     Predicate(Predicate&& other);
 	bool operator==(const Expression& other) const override;
+    std::string String() const override;
     Object Copy() const override;
     Object Match(const Expression& other) const override;
     Object Compute(const Knowledge& known) const override;

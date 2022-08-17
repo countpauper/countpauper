@@ -78,6 +78,7 @@ namespace Angel::Parser::BNF::Test
         EXPECT_EQ(Parse(Rule("after space", Whitespace()), interpreter, " foo").remaining, "foo");
         EXPECT_THROW(Parse(Rule("no space", Whitespace()), interpreter, ""), SyntaxError);
         EXPECT_THROW(Parse(Rule("no whitespace", Whitespace()), interpreter, "Test"), SyntaxError);
+        EXPECT_EQ(Parse(Rule("optional whitespace", Whitespace(0)), interpreter, "Test").remaining, "Test");
     }
 
     TEST_F(TestBNF, RegularExpression)

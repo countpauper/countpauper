@@ -31,7 +31,6 @@ Sequence::Sequence(const Sequence& other)
     }
 }
 
-
 bool Sequence::operator==(const Expression& other) const
 {
     if (auto seq = dynamic_cast<const Sequence*>(&other))
@@ -48,6 +47,19 @@ bool Sequence::operator==(const Expression& other) const
     }
     return false;
 }
+
+std::string Sequence::String() const
+{
+    std::string result;
+    for (const auto& element: *this)
+    {
+        if (!result.empty())
+            result += ",";
+        result += element->String();
+    }
+    return "("+result+")";
+}
+
 
 Object Sequence::Copy() const
 {
