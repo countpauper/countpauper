@@ -73,15 +73,24 @@ class LogicInterpreter : public BNF::Interpreter
         {
             return interpretation;
         }
-/*        else if (rule == "comma sequence")
+        else if (rule == "comma sequence")
         {
             const auto& elements = std::any_cast<std::vector<std::any>>(interpretation);
             assert(elements.size() == 2);
-            auto result = std::make_unique<Logic::Sequence>(std::any_cast<Logic::Object>(elements.at(0)));
-            result->Merge(std::move(*std::any_cast<Logic::Object>(elements.at(1)).As<Logic::Sequence>()));
-            return Logic::Object(std::move(result));
+            if (elements[1].type() == typeid(std::vector<std::any>))
+            {   // flattern recursive vector of anys (should all be comma sequences, assuming that's the only interprationat that returns those 
+                // without turning them into Logic::Objects. If recursive summations, con and disjunctions start doing this it will be needed
+                // to extend the interpration structure (ector of anys) with the rules applied to match the type 
+                auto result = std::any_cast<std::vector<std::any>>(elements[1]);
+                result.insert(result.begin(), elements[0]);
+                return result;
+            }
+            else
+            {
+                return elements;
+            }
         }
-        else if (rule=="sequence elements")
+        /*        else if (rule=="sequence elements")
         {
             auto result = std::make_unique<Logic::Sequence>();
             RecursiveCollect(*result, interpretation);

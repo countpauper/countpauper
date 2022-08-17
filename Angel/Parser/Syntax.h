@@ -48,8 +48,9 @@ namespace Angel::Parser::BNF
     //Rule sequence_elements("sequence elements", Sequence{Ref(expression), Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) })});
     Rule empty_sequence{ "empty sequence", Sequence{ Literal("("), Whitespace(0), Literal(")") } };
 //    Rule braces_sequence("braces sequence", Sequence{ Literal("("), Whitespace(0), Ref(sequence_elements), Whitespace(0), Literal(")") });
-    Rule comma_sequence("comma sequence", Sequence{ Ref(expression), Whitespace(0), Literal(","), Whitespace(0), Ref(expression),
-        Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }) });
+    Declare comma_sequence("comma sequence");
+    Rule comma_sequence_("comma sequence", Sequence{ Ref(expression), Whitespace(0), Literal(","), Whitespace(0), 
+        Disjunction{ Ref(comma_sequence), Ref(expression)} });
 
     Rule sequence("sequence", Disjunction{
         Ref(empty_sequence),
