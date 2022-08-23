@@ -138,8 +138,14 @@ namespace Angel::Parser::BNF
         ExpressionRef expression;
         PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Rule>(*this); }
+    protected:
+        bool recursive = false;
     };
 
+    struct Recursive : Rule
+    {
+        Recursive(const std::string_view n, const Expression& e);
+    };
     struct Declare : public Expression
     {
         Declare(const std::string_view rule);

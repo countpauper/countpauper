@@ -35,7 +35,6 @@ TEST(TestSequence, Comma)
     Logic::Object seq;
     std::stringstream s("cat, dog");
     s >> seq;
-
     EXPECT_EQ(seq, Logic::sequence(Logic::id("cat"), Logic::id("dog")));
 }
 

@@ -119,14 +119,23 @@ Rule::Rule(const std::string_view n, const Expression& e) :
     Declare::Define(*this);
 }
 
+Recursive::Recursive(const std::string_view n, const Expression& e) :
+    Rule(n, e)
+{
+    recursive = true;
+}
+
 PossibleMatch Rule::Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress) const
 {
-    // infinite recursion protection
-    auto previousProgress = progress.find(this);
-    if (previousProgress != progress.end() && previousProgress->second == data.size())
-        return PossibleMatch();
     Progress newProgress = progress;
-    newProgress[this] = data.size();
+    if (!recursive)
+    {
+        // infinite recursion protection
+        auto previousProgress = progress.find(this);
+        if (previousProgress != progress.end() && previousProgress->second == data.size())
+            return PossibleMatch();
+        newProgress[this] = data.size();
+    }
     auto m = expression->Parse(data, interpreter, newProgress);
     if (!m)
         return m;

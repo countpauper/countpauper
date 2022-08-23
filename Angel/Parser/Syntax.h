@@ -40,9 +40,10 @@ namespace Angel::Parser::BNF
     // expressions
     Declare collection("collection");
     Rule element( "element", Disjunction{ Ref(boolean), Ref(integer), Ref(id) } );
-    Rule naked_expression( "naked expression", Disjunction{ Ref(collection), Ref(element) } );
-    Rule braced_expression("braced expression", Sequence{ Literal("("), Whitespace(0), Ref(naked_expression), Whitespace(0), Literal(")") });
-    Rule expression("expression", Disjunction{ Ref(braced_expression), Ref(naked_expression) });
+    Recursive naked_expression( "naked expression", Disjunction{ Ref(collection), Ref(element) } );
+    Declare expression("expression");
+    Rule braced_expression("braced expression", Sequence{ Literal("("), Whitespace(0), Ref(expression), Whitespace(0), Literal(")") });
+    Recursive expression_("expression", Disjunction{ Ref(braced_expression), Ref(naked_expression) });
 
     // Collections
     //Rule sequence_elements("sequence elements", Sequence{Ref(expression), Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) })});
@@ -59,7 +60,7 @@ namespace Angel::Parser::BNF
 
     Rule set_elements("set elements", Sequence{ Ref(expression), Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }) });
     Rule set     {"set", Sequence{ Literal("{"), Whitespace(0), Ref{ set_elements }, Whitespace(0), Literal("}") } };
-    Rule collection_ { "collection", Disjunction{ Ref{set}, Ref{sequence}} };
+    Recursive collection_ { "collection", Disjunction{ Ref{set}, Ref{sequence}} };
 
     // Operations 
 

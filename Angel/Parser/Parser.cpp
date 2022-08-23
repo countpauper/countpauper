@@ -90,13 +90,6 @@ class LogicInterpreter : public BNF::Interpreter
                 return elements;
             }
         }
-        /*        else if (rule=="sequence elements")
-        {
-            auto result = std::make_unique<Logic::Sequence>();
-            RecursiveCollect(*result, interpretation);
-            return Logic::Object(std::move(result));
-        }
-*/       
         else if (rule == "braced expression")
         {  
             if (interpretation.has_value())
@@ -196,7 +189,7 @@ std::istream& operator>>(std::istream& s, Logic::Object& o)
     {
         start = whiteMatch->remaining;
     }
-    auto match = Parser::BNF::Parse(Angel::Parser::BNF::expression, interpreter, start);
+    auto match = Parser::BNF::Parse(Angel::Parser::BNF::expression_, interpreter, start);
     s.seekg(-std::streamoff(match.remaining.length()), std::ios_base::cur);
 
     o = std::any_cast<const Logic::Object&>(match.interpretation);
