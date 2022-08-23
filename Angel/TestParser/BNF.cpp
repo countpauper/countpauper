@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Parser/BNF.h"
-#include "Parser/Interpreter.h"
+#include "Parser/Parser.h"
 
 namespace Angel::Parser::BNF::Test
 {

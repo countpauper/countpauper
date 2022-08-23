@@ -1,16 +1,16 @@
 #pragma once
 #include <string>
-#include "Logic/Knowledge.h"
-#include <ios>
-#include "Errors.h"
+#include <map>
+#include <memory>
+#include <optional>
+#include <any>
 
-namespace Angel
+namespace Angel::Parser::BNF
 {
-namespace Logic { class Object;  }
-namespace Parser
-{
-Logic::Knowledge Parse(const std::string& text);
-std::istream& operator>>(std::istream& s, Logic::Object& o);
+    class Parser
+    {
+    public:
+        virtual std::any Parse(const std::string_view rule, const std::any& tokens, const std::string_view value) const = 0;
+        virtual std::any Merge(const std::any& left, const std::any& right) const = 0;
+    };
 }
-}
-std::ostream& operator<<(std::ostream& s, const Angel::Logic::Object& o);

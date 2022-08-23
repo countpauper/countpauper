@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include "Parser.h"
 #include "Parser/Syntax.h"
-#include "Parser/Interpreter.h"
+#include "Parser/Parser.h"
 #include "Logic/Predicate.h"
 #include "Logic/Boolean.h"
 #include "Logic/Integer.h"

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "BNF.h"
-#include "Interpreter.h"
+#include "Parser.h"
 #include <regex>
 
 namespace Angel::Parser::BNF
