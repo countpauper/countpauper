@@ -7,18 +7,18 @@ namespace Angel::Parser::BNF::Test
     class TestBNF : public ::testing::Test
     {
     public:
-        class Interpreter : public BNF::Interpreter
+        class Parser : public BNF::Parser
         {
         public:
-            using Interpretation = std::map<std::string, const std::string_view>;
+            using Tokens = std::map<std::string, const std::string_view>;
 
-            std::any Interpret(const std::string_view rule, const std::any& interpretation, const std::string_view value) const override
+            std::any Parse(const std::string_view rule, const std::any& tokens, const std::string_view value) const override
             {
-                Interpretation result;
+                Tokens result;
 
-                if (interpretation.has_value())
+                if (tokens.has_value())
                 {
-                    const auto& previous = std::any_cast<const Interpretation&>(interpretation);
+                    const auto& previous = std::any_cast<const Tokens&>(tokens);
                     for (auto& kv : previous)
                     {
                         if (kv.first[0] == '[')
@@ -36,9 +36,9 @@ namespace Angel::Parser::BNF::Test
                     return right;
                 if (!right.has_value())
                     return left;
-                const Interpretation& leftI = std::any_cast<const Interpretation&>(left);
-                const Interpretation& rightI = std::any_cast<const Interpretation&>(right);
-                Interpretation merge = leftI;
+                const Tokens& leftI = std::any_cast<const Tokens&>(left);
+                const Tokens& rightI = std::any_cast<const Tokens&>(right);
+                Tokens merge = leftI;
                 merge.insert(rightI.begin(), rightI.end());
                 return merge;
             }
@@ -46,79 +46,79 @@ namespace Angel::Parser::BNF::Test
 
         const std::string_view Get(const Match& m, const std::string_view key)
         {
-            const auto& results = std::any_cast<const Interpreter::Interpretation&>(m.interpretation);
+            const auto& results = std::any_cast<const Parser::Tokens&>(m.tokens);
             return results.at(std::string(key));
         }
-        Interpreter interpreter;
+        Parser parser;
     };
 
     TEST_F(TestBNF, Nothing)
     {
         Nothing n;
-        EXPECT_TRUE(Parse(Rule("nothing", n), interpreter, "").remaining.empty());
-        EXPECT_EQ(Parse(Rule("something", n), interpreter, "Test").remaining, "Test");
+        EXPECT_TRUE(Parse(Rule("nothing", n), parser, "").remaining.empty());
+        EXPECT_EQ(Parse(Rule("something", n), parser, "Test").remaining, "Test");
     }
 
     TEST_F(TestBNF, Literal)
     {
         Literal l("Test");
-        EXPECT_TRUE(Parse(Rule("test", l), interpreter, "Test").remaining.empty());
-        EXPECT_THROW(Parse(Rule("fail", l), interpreter, "Fail"), SyntaxError);
-        EXPECT_EQ(Parse(Rule("remaining space", l), interpreter, "Test ").remaining, " ");
+        EXPECT_TRUE(Parse(Rule("test", l), parser, "Test").remaining.empty());
+        EXPECT_THROW(Parse(Rule("fail", l), parser, "Fail"), SyntaxError);
+        EXPECT_EQ(Parse(Rule("remaining space", l), parser, "Test ").remaining, " ");
         
-        EXPECT_EQ(Get(Parse(Rule{ "test", l }, interpreter, "Test"), "test"), std::string_view("Test"));
+        EXPECT_EQ(Get(Parse(Rule{ "test", l }, parser, "Test"), "test"), std::string_view("Test"));
 
     }
 
     TEST_F(TestBNF, Whitespace)
     {
-        EXPECT_TRUE(Parse(Rule("space", Whitespace()), interpreter, " ").remaining.empty());
-        EXPECT_TRUE(Parse(Rule("multiple space", Whitespace()), interpreter, "  ").remaining.empty());
-        EXPECT_TRUE(Parse(Rule("any whitespace", Whitespace()), interpreter, "\t\n\r ").remaining.empty());
-        EXPECT_EQ(Parse(Rule("after space", Whitespace()), interpreter, " foo").remaining, "foo");
-        EXPECT_THROW(Parse(Rule("no space", Whitespace()), interpreter, ""), SyntaxError);
-        EXPECT_THROW(Parse(Rule("no whitespace", Whitespace()), interpreter, "Test"), SyntaxError);
-        EXPECT_EQ(Parse(Rule("optional whitespace", Whitespace(0)), interpreter, "Test").remaining, "Test");
+        EXPECT_TRUE(Parse(Rule("space", Whitespace()), parser, " ").remaining.empty());
+        EXPECT_TRUE(Parse(Rule("multiple space", Whitespace()), parser, "  ").remaining.empty());
+        EXPECT_TRUE(Parse(Rule("any whitespace", Whitespace()), parser, "\t\n\r ").remaining.empty());
+        EXPECT_EQ(Parse(Rule("after space", Whitespace()), parser, " foo").remaining, "foo");
+        EXPECT_THROW(Parse(Rule("no space", Whitespace()), parser, ""), SyntaxError);
+        EXPECT_THROW(Parse(Rule("no whitespace", Whitespace()), parser, "Test"), SyntaxError);
+        EXPECT_EQ(Parse(Rule("optional whitespace", Whitespace(0)), parser, "Test").remaining, "Test");
     }
 
     TEST_F(TestBNF, RegularExpression)
     {
-        EXPECT_TRUE(Parse(Rule("literal regex", RegularExpression("a")), interpreter, "a").remaining.empty());
-        EXPECT_EQ(Parse(Rule("literal regextra", RegularExpression("b")), interpreter, "bc").remaining, "c");
-        EXPECT_THROW(Parse(Rule("start regex", RegularExpression("b")), interpreter, "cba"), SyntaxError);
-        EXPECT_TRUE(Parse(Rule("regex range", RegularExpression("[a-z]+")), interpreter, "thequickbrownfoxjumpsoverthelazydog").remaining.empty());
+        EXPECT_TRUE(Parse(Rule("literal regex", RegularExpression("a")), parser, "a").remaining.empty());
+        EXPECT_EQ(Parse(Rule("literal regextra", RegularExpression("b")), parser, "bc").remaining, "c");
+        EXPECT_THROW(Parse(Rule("start regex", RegularExpression("b")), parser, "cba"), SyntaxError);
+        EXPECT_TRUE(Parse(Rule("regex range", RegularExpression("[a-z]+")), parser, "thequickbrownfoxjumpsoverthelazydog").remaining.empty());
     }
 
     TEST_F(TestBNF, Disjunction)
     {
         Rule optional{ "optional", Disjunction{ Literal("dog"), Nothing() } };
-        EXPECT_TRUE(Parse(optional, interpreter, "dog").remaining.empty());
-        EXPECT_EQ(Parse(optional, interpreter, "god").remaining, "god");
-        EXPECT_THROW(Parse(Rule{ "no option", Disjunction{} }, interpreter, "god"), SyntaxError);
+        EXPECT_TRUE(Parse(optional, parser, "dog").remaining.empty());
+        EXPECT_EQ(Parse(optional, parser, "god").remaining, "god");
+        EXPECT_THROW(Parse(Rule{ "no option", Disjunction{} }, parser, "god"), SyntaxError);
     }
 
     TEST_F(TestBNF, Sequence)
     {
-        EXPECT_EQ(Parse(Rule{ "empty sequence", Sequence() }, interpreter, "foo").remaining, "foo");
-        EXPECT_EQ(Parse(Rule{ "single sequence", Sequence{Literal("foo")} }, interpreter, "foobar").remaining, "bar");
-        EXPECT_TRUE(Parse(Rule{ "long sequence", Sequence{ Literal("foo"), Whitespace(), Literal("bar") } }, interpreter, "foo bar").remaining.empty());
-        EXPECT_THROW(Parse(Rule{ "faileds equence", Sequence{ Literal("foo"), Whitespace(), Literal("bar") } } , interpreter, "foobar"), SyntaxError);
+        EXPECT_EQ(Parse(Rule{ "empty sequence", Sequence() }, parser, "foo").remaining, "foo");
+        EXPECT_EQ(Parse(Rule{ "single sequence", Sequence{Literal("foo")} }, parser, "foobar").remaining, "bar");
+        EXPECT_TRUE(Parse(Rule{ "long sequence", Sequence{ Literal("foo"), Whitespace(), Literal("bar") } }, parser, "foo bar").remaining.empty());
+        EXPECT_THROW(Parse(Rule{ "faileds equence", Sequence{ Literal("foo"), Whitespace(), Literal("bar") } } , parser, "foobar"), SyntaxError);
     }
 
     TEST_F(TestBNF, Loop)
     {
-        EXPECT_EQ(Parse(Rule{ "empty Loop", Loop(Nothing()) }, interpreter, "foo").remaining, "foo");
-        EXPECT_EQ(Parse(Rule{ "single Loop", Loop(Literal("f")) }, interpreter, "foo").remaining, "oo");
-        EXPECT_EQ(Parse(Rule{ "lots Loop", Loop(Literal("f")) }, interpreter, "fffffoo").remaining, "oo");
+        EXPECT_EQ(Parse(Rule{ "empty Loop", Loop(Nothing()) }, parser, "foo").remaining, "foo");
+        EXPECT_EQ(Parse(Rule{ "single Loop", Loop(Literal("f")) }, parser, "foo").remaining, "oo");
+        EXPECT_EQ(Parse(Rule{ "lots Loop", Loop(Literal("f")) }, parser, "fffffoo").remaining, "oo");
     
-        EXPECT_EQ(Get(Parse(Rule{ "index", Loop(RegularExpression("[a-z]+.")) }, interpreter, "c bb abc"),"index[1]"), std::string_view("bb "));
+        EXPECT_EQ(Get(Parse(Rule{ "index", Loop(RegularExpression("[a-z]+.")) }, parser, "c bb abc"),"index[1]"), std::string_view("bb "));
     }
 
     TEST_F(TestBNF, Ref)
     {
         Rule rule {"referred", Literal("foo") };
-        EXPECT_TRUE(Parse(Rule{ "ref rule", Ref(rule) }, interpreter, "foo").remaining.empty());
-        EXPECT_EQ(Get(Parse(Rule{ "referee", Ref(rule) }, interpreter, "foo"), "referee.referred"), "foo");
+        EXPECT_TRUE(Parse(Rule{ "ref rule", Ref(rule) }, parser, "foo").remaining.empty());
+        EXPECT_EQ(Get(Parse(Rule{ "referee", Ref(rule) }, parser, "foo"), "referee.referred"), "foo");
     }
 
     TEST_F(TestBNF, Declare)
@@ -127,7 +127,7 @@ namespace Angel::Parser::BNF::Test
         Declare nodeclaration("not declared");
         Rule rule{ "declared", Literal("foo") };
 
-        EXPECT_TRUE(Parse(Rule{ "declared rule", Ref(declaration) }, interpreter, "foo").remaining.empty());
-        EXPECT_THROW(Parse(Rule{ "not declared rule", Ref(nodeclaration) }, interpreter, "bar"), std::runtime_error);
+        EXPECT_TRUE(Parse(Rule{ "declared rule", Ref(declaration) }, parser, "foo").remaining.empty());
+        EXPECT_THROW(Parse(Rule{ "not declared rule", Ref(nodeclaration) }, parser, "bar"), std::runtime_error);
     }
 }

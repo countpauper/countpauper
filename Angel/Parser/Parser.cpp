@@ -21,16 +21,16 @@ namespace Parser
 {
 
 
-class LogicInterpreter : public BNF::Interpreter
+class LogicParser : public BNF::Parser
 {
-    std::any Interpret(const std::string_view rule, const std::any& interpretation, const std::string_view value) const override
+    std::any Parse(const std::string_view rule, const std::any& tokens, const std::string_view value) const override
     {
         if (rule == "knowledge")
         {
             Logic::Knowledge knowledge;
-            if (interpretation.type() == typeid(const std::vector<Logic::Clause>&))
+            if (tokens.type() == typeid(const std::vector<Logic::Clause>&))
             {
-                const std::vector<Logic::Expression>& expressions = std::any_cast<const std::vector<Logic::Expression>&>(interpretation);
+                const std::vector<Logic::Expression>& expressions = std::any_cast<const std::vector<Logic::Expression>&>(tokens);
                 for (auto& e : expressions)
                 {
                     knowledge.Know(Logic::Object(e.Copy()));
@@ -71,11 +71,11 @@ class LogicInterpreter : public BNF::Interpreter
         }
         else if (rule == "element")
         {
-            return interpretation;
+            return tokens;
         }
         else if (rule == "comma sequence")
         {
-            const auto& elements = std::any_cast<std::vector<std::any>>(interpretation);
+            const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
             assert(elements.size() == 2);
             if (elements[1].type() == typeid(std::vector<std::any>))
             {   // flattern recursive vector of anys (should all be comma sequences, assuming that's the only interprationat that returns those 
@@ -92,9 +92,9 @@ class LogicInterpreter : public BNF::Interpreter
         }
         else if (rule == "braced expression")
         {  
-            if (interpretation.has_value())
+            if (tokens.has_value())
             {
-                auto naked_expression = std::any_cast<Logic::Object>(interpretation);
+                auto naked_expression = std::any_cast<Logic::Object>(tokens);
                 if (naked_expression.As<Logic::Sequence>()) 
                 {   // on sequences, braces are optional since () is an empty sequence and (element) is a size 1 sequence
                     return naked_expression;
@@ -111,9 +111,9 @@ class LogicInterpreter : public BNF::Interpreter
         }
         else if (rule == "sequence")
         {
-            if (interpretation.has_value())
+            if (tokens.has_value())
             {
-                const auto& elements = std::any_cast<std::vector<std::any>>(interpretation);
+                const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
                 auto result = std::make_unique<Logic::Sequence>();
                 for (const auto& e : elements)
                 {
@@ -125,11 +125,11 @@ class LogicInterpreter : public BNF::Interpreter
             else
                 return Logic::sequence();   // empty sequence
         }
-        if (interpretation.type() == typeid(std::vector<std::any>))
+        if (tokens.type() == typeid(std::vector<std::any>))
         {
-            return interpretation;
+            return tokens;
         }
-        return interpretation;
+        return tokens;
     }
 
     std::any Merge(const std::any& left, const std::any& right) const
@@ -160,13 +160,13 @@ class LogicInterpreter : public BNF::Interpreter
     }
 };
 
-LogicInterpreter interpreter;
+LogicParser parser;
 
 Logic::Knowledge Parse(const std::string& text)
 {
 	Logic::Knowledge result;
-    auto match = BNF::Parse(BNF::knowledge, interpreter, text.c_str());
-    return std::any_cast<Logic::Knowledge>(match.interpretation);
+    auto match = BNF::Parse(BNF::knowledge, parser, text.c_str());
+    return std::any_cast<Logic::Knowledge>(match.tokens);
 }
 
 
@@ -185,14 +185,14 @@ std::istream& operator>>(std::istream& s, Logic::Object& o)
 
     // skip inital whitespace
     std::string_view start = allData;
-    if (auto whiteMatch = Angel::Parser::BNF::Whitespace().Parse(allData.c_str(), interpreter))
+    if (auto whiteMatch = Angel::Parser::BNF::Whitespace().Parse(allData.c_str(), parser))
     {
         start = whiteMatch->remaining;
     }
-    auto match = Parser::BNF::Parse(Angel::Parser::BNF::expression_, interpreter, start);
+    auto match = Parser::BNF::Parse(Angel::Parser::BNF::expression_, parser, start);
     s.seekg(-std::streamoff(match.remaining.length()), std::ios_base::cur);
 
-    o = std::any_cast<const Logic::Object&>(match.interpretation);
+    o = std::any_cast<const Logic::Object&>(match.tokens);
     return s;
 }
 }

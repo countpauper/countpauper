@@ -11,14 +11,14 @@ namespace Angel::Parser::BNF
     {
     public:
         using Rules = std::vector<const struct Rule*>;
-        Match(const std::string_view r, const std::any& i= std::any(), const Rules& rules= Rules()) :
+        Match(const std::string_view r, const std::any& t= std::any(), const Rules& rules= Rules()) :
             remaining(r),
-            interpretation(i),
+            tokens(t),
             rules(rules)
         {
         }
         const std::string_view remaining;
-        std::any interpretation;
+        std::any tokens;
         Rules rules;
     };
     using PossibleMatch = std::optional<Match>;

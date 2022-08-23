@@ -9,7 +9,7 @@
 
 namespace Angel::Parser::BNF
 {
-    class Interpreter;
+    class Parser;
 
     using Progress = std::map<const struct Rule*, size_t>;
 
@@ -18,7 +18,7 @@ namespace Angel::Parser::BNF
         Expression() = default;
         virtual ~Expression() = default;
         virtual std::unique_ptr<Expression> Copy() const = 0;
-        virtual PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress=Progress()) const = 0;
+        virtual PossibleMatch Parse(const std::string_view data, const Parser& parser, const Progress& progress=Progress()) const = 0;
     };
 
     class ExpressionRef
@@ -54,7 +54,7 @@ namespace Angel::Parser::BNF
 
     struct Nothing : Expression
     {
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
+        PossibleMatch Parse(const std::string_view data, const Parser& parser , const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Nothing>(*this); }
     };
 
@@ -65,7 +65,7 @@ namespace Angel::Parser::BNF
         {
         }
         std::string literal;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
+        PossibleMatch Parse(const std::string_view data, const Parser& parser , const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Literal>(*this); }
     };
 
@@ -76,14 +76,14 @@ namespace Angel::Parser::BNF
         {
         }
         std::string expression;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
+        PossibleMatch Parse(const std::string_view data, const Parser& parser , const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<RegularExpression>(*this); }
     };
 
     struct Whitespace : Expression
     {
         Whitespace(size_t amount=1, const std::string_view characters= " \t\r\n");
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
+        PossibleMatch Parse(const std::string_view data, const Parser& parser, const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Whitespace>(*this); }
         size_t amount;
         std::string characters;
@@ -102,7 +102,7 @@ namespace Angel::Parser::BNF
         {
         }
         std::vector<ExpressionRef> expressions;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
+        PossibleMatch Parse(const std::string_view data, const Parser& parser , const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Disjunction>(*this); }
     };
 
@@ -116,7 +116,7 @@ namespace Angel::Parser::BNF
             expressions.emplace(expressions.begin(), first);
         }
         std::vector<ExpressionRef> expressions;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
+        PossibleMatch Parse(const std::string_view data, const Parser& parser , const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Sequence>(*this); }
     };
 
@@ -127,7 +127,7 @@ namespace Angel::Parser::BNF
         {
         }
         ExpressionRef expression;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
+        PossibleMatch Parse(const std::string_view data, const Parser& parser , const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Loop>(*this); }
     };
 
@@ -136,7 +136,7 @@ namespace Angel::Parser::BNF
         Rule(const std::string_view n, const Expression& e);
         const std::string_view name;
         ExpressionRef expression;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const;
+        PossibleMatch Parse(const std::string_view data, const Parser& parser , const Progress& progress = Progress()) const;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Rule>(*this); }
     protected:
         bool recursive = false;
@@ -151,7 +151,7 @@ namespace Angel::Parser::BNF
         Declare(const std::string_view rule);
         static void Define(const Rule& rule);
         const Rule& Get() const;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const override;
+        PossibleMatch Parse(const std::string_view data, const Parser& parser , const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Declare>(*this); }
     private:
         const std::string_view rule;
@@ -170,9 +170,9 @@ namespace Angel::Parser::BNF
         {
         }
         ExpressionRef rule;
-        PossibleMatch Parse(const std::string_view data, const Interpreter& interpreter, const Progress& progress = Progress()) const;
+        PossibleMatch Parse(const std::string_view data, const Parser& parser , const Progress& progress = Progress()) const;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Ref>(*this); }
     };
 
-    Match Parse(const Rule& root, const Interpreter& interpreter, const std::string_view data);
+    Match Parse(const Rule& root, const Parser& parser , const std::string_view data);
 }
