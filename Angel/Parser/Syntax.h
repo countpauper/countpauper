@@ -48,14 +48,14 @@ namespace Angel::Parser::BNF
     // Collections
     //Rule sequence_elements("sequence elements", Sequence{Ref(expression), Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) })});
     Rule empty_sequence{ "empty sequence", Sequence{ Literal("("), Whitespace(0), Literal(")") } };
-//    Rule braces_sequence("braces sequence", Sequence{ Literal("("), Whitespace(0), Ref(sequence_elements), Whitespace(0), Literal(")") });
     Declare comma_sequence("comma sequence");
     Rule comma_sequence_("comma sequence", Sequence{ Ref(expression), Whitespace(0), Literal(","), Whitespace(0), 
         Disjunction{ Ref(comma_sequence), Ref(expression)} });
+    Rule braced_sequence("braced sequence", Sequence{ Literal("("), Whitespace(0), Ref(comma_sequence), Whitespace(0), Literal(")") });
 
     Rule sequence("sequence", Disjunction{
         Ref(empty_sequence),
-//        Ref(braces_sequence),
+        Ref(braced_sequence),
         Ref(comma_sequence) });
 
     Rule set_elements("set elements", Sequence{ Ref(expression), Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }) });
@@ -66,10 +66,11 @@ namespace Angel::Parser::BNF
 
     // Knowledge rules
     Rule simplePredicate{"predicate", Ref(id) };
-    Rule argumentedPredicate{"predicate()", Sequence{Ref(id),Ref(sequence)} };
-    Rule predicate{"predicate[()]", Disjunction{Ref(simplePredicate), Ref(argumentedPredicate) } };  
+    Rule arguments{ "arguments", Disjunction{ Ref(empty_sequence), Ref(braced_sequence)} };
+    Rule argumentedPredicate{"predicate()", Sequence{Ref(id),Ref(arguments)} };
+    Rule predicate{"predicate[()]", Disjunction{Ref(argumentedPredicate), Ref(simplePredicate)} };
     Rule clause{"clause", Ref{predicate} };  // TODO:  <consequent> ":" <antecedent>
-    Rule clauses{ "clauses", Loop{ Sequence{Ref(clause), Whitespace(1) } } };
+    Rule clauses{ "clauses", Loop{ Sequence{Whitespace(0), Ref(clause), Whitespace(1) } } };
     Rule space{"namespace", Sequence{ Ref(id), Whitespace(0), Literal{":"}, Whitespace(0), Literal{"{"}, Whitespace(0),Ref(clauses), Whitespace(0),Literal{"}"}} };
 
     Rule knowledge{"knowledge", Disjunction{Ref{space}, Ref{clauses}, Whitespace(0) } };

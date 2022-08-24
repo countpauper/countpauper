@@ -23,39 +23,28 @@ namespace Parser
 
 class LogicParser : public BNF::Parser
 {
-    std::any Parse(const std::string_view rule, const std::any& tokens, const std::string_view value) const override
+
+    std::any ParseImpl(const std::string_view rule, const std::any& tokens, const std::string_view value) const
     {
-        if (rule == "knowledge")
-        {
-            Logic::Knowledge knowledge;
-            if (tokens.type() == typeid(const std::vector<Logic::Clause>&))
-            {
-                const std::vector<Logic::Expression>& expressions = std::any_cast<const std::vector<Logic::Expression>&>(tokens);
-                for (auto& e : expressions)
-                {
-                    knowledge.Know(Logic::Object(e.Copy()));
-                }
-            }
-            return knowledge;
-        }
+
         /*if (rule == "braces")
         {
-            if (interpretation.type() == typeid(Logic::Object))
-            {
-                const auto& obj = std::any_cast<Logic::Object>(interpretation);
-                if (obj.As<Logic::Collection>())
-                {
-                    return obj;
-                }
-                else
-                {
-                    return Logic::sequence(Logic::Object(obj));
-                }
-            }
-            else
-            {
+        if (interpretation.type() == typeid(Logic::Object))
+        {
+        const auto& obj = std::any_cast<Logic::Object>(interpretation);
+        if (obj.As<Logic::Collection>())
+        {
+        return obj;
+        }
+        else
+        {
+        return Logic::sequence(Logic::Object(obj));
+        }
+        }
+        else
+        {
 
-            }
+        }
         }
         else*/ if (rule == "id")
         {
@@ -91,11 +80,11 @@ class LogicParser : public BNF::Parser
             }
         }
         else if (rule == "braced expression")
-        {  
+        {
             if (tokens.has_value())
             {
                 auto naked_expression = std::any_cast<Logic::Object>(tokens);
-                if (naked_expression.As<Logic::Sequence>()) 
+                if (naked_expression.As<Logic::Sequence>())
                 {   // on sequences, braces are optional since () is an empty sequence and (element) is a size 1 sequence
                     return naked_expression;
                 }
@@ -105,7 +94,7 @@ class LogicParser : public BNF::Parser
                 }
                 else
                 {    // if the naked expression is not a computation, sequence or collection, then make it one (ie (1) = a sequence of 1 
-                    return Logic::sequence(std::move(naked_expression));                
+                    return Logic::sequence(std::move(naked_expression));
                 }
             }
         }
@@ -124,6 +113,42 @@ class LogicParser : public BNF::Parser
             }
             else
                 return Logic::sequence();   // empty sequence
+        }
+        else if (rule == "predicate[()]")
+        {
+            if (tokens.has_value())
+            {
+                if (tokens.type() == typeid(Logic::Object))
+                {
+                    auto id = std::any_cast<Logic::Object>(tokens);
+                    return Logic::predicate(*id.As<Logic::Id>());
+                }
+                else if (tokens.type() == typeid(std::vector<std::any>))
+                {
+                    const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
+                    assert(elements.size() == 2);   // id and argument sequence
+                    auto id = std::any_cast<Logic::Object>(elements[0]).As<Logic::Id>();
+                    auto args = *std::any_cast<Logic::Object>(elements[1]).As<Logic::Sequence>();
+
+                    return Logic::predicate(*id, std::move(args));
+                }
+            }
+
+        }
+        else if (rule == "knowledge")
+        {
+            Logic::Knowledge result; 
+            if (tokens.has_value())
+            {
+                auto clauses = std::any_cast<std::vector<std::any>>(tokens);
+                for (auto& c : clauses)
+                {
+                    auto clause = std::any_cast<Logic::Object>(c);
+                    result.Know(std::move(clause));
+
+                }
+            }
+            return result;
         }
         if (tokens.type() == typeid(std::vector<std::any>))
         {
@@ -152,12 +177,27 @@ class LogicParser : public BNF::Parser
                 return left;
             }
         }
-        else 
+        else
         {
             return std::vector<std::any>{right};
         }
-                
+
     }
+
+
+    std::any Parse(const std::string_view rule, const std::any& tokens, const std::string_view value) const override
+    {
+        std::string_view inType = tokens.type().name();
+        auto result = ParseImpl(rule, tokens, value);
+        std::string outType = result.type().name();
+        if (result.type() == typeid(Logic::Object))
+        {
+            const auto& obj = std::any_cast<Logic::Object>(result);
+            outType = obj->String();
+        }
+        return result;
+    }
+
 };
 
 LogicParser parser;

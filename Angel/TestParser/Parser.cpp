@@ -6,13 +6,8 @@
 
 #pragma warning(disable:4566)	// google test can't represent unicode
 
-namespace Angel
+namespace Angel::Parser::Test
 {
-namespace Parser
-{
-namespace Test
-{
-
 
 TEST(TestParser, Empty)
 {
@@ -22,7 +17,6 @@ TEST(TestParser, Empty)
 	Logic::Knowledge w = Parse("  \t   \r\n  ");
 	EXPECT_EQ(w.Clauses(), 0);
 }
-/*
 
 TEST(TestParser, Whitespace)
 {
@@ -34,16 +28,13 @@ TEST(TestParser, Whitespace)
 
 TEST(TestParser, UnicodeId)
 {
-    std::wstringstream s("Γάτα() 猫");
+    std::stringstream s("Γάτα() 猫");
 
     Logic::Object predicate, id;
     s >> predicate >> id;
 	EXPECT_EQ(predicate, Logic::predicate("Γάτα"));
     EXPECT_EQ(id, Logic::id("猫"));
 }
-*/
 
-}
-}
 }
 
