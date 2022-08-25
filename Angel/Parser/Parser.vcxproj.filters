@@ -32,6 +32,9 @@
     <ClInclude Include="LogicParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StringEncoding.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -41,6 +44,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LogicParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StringEncoding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

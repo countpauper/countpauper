@@ -128,6 +128,7 @@
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Match.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StringEncoding.h" />
     <ClInclude Include="Syntax.h" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +138,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StringEncoding.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Syntax.txt" />

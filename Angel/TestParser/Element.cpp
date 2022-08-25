@@ -23,11 +23,12 @@ TEST(TestElement, Id)
 
 TEST(TestElement, Ids)
 {
-    std::stringstream s("gizmo ginny");
-    Logic::Object gizmo, ginny;
-    s >> gizmo >> ginny;
+    std::stringstream s("gizmo ginny 天使");
+    Logic::Object gizmo, ginny, angel;
+    s >> gizmo >> ginny >> angel;
     EXPECT_EQ(gizmo, Logic::id("gizmo"));
-	EXPECT_EQ(ginny, Logic::id("ginny"));
+    EXPECT_EQ(ginny, Logic::id("ginny"));
+    EXPECT_EQ(angel, Logic::id("天使"));
 }
 
 TEST(TestElement, Boolean)

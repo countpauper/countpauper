@@ -45,6 +45,7 @@
     <ClCompile Include="BNF.cpp" />
     <ClCompile Include="Clause.cpp" />
     <ClCompile Include="Element.cpp" />
+    <ClCompile Include="Encoding.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

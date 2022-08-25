@@ -33,7 +33,7 @@ clause -> predicate : expression
 namespace Angel::Parser::BNF
 {
     // literals
-    Rule id( "id", RegularExpression{"[a-z_][a-z0-9_]*"} );
+    Rule id( "id", RegularExpression{"[a-z_\\u0080-\\uDB7Fa][a-z0-9_\\u0080-\\uDB7Fa]*"} );
     Rule integer( "integer", RegularExpression{"-*[0-9]+"} );
     Rule boolean("boolean", Disjunction{ Literal{"true"},Literal{"false"} });
 
@@ -70,8 +70,8 @@ namespace Angel::Parser::BNF
     Rule argumentedPredicate{"predicate()", Sequence{Ref(id),Ref(arguments)} };
     Rule predicate{"predicate[()]", Disjunction{Ref(argumentedPredicate), Ref(simplePredicate)} };
     Rule clause{"clause", Ref{predicate} };  // TODO:  <consequent> ":" <antecedent>
-    Rule clauses{ "clauses", Loop{ Sequence{Whitespace(0), Ref(clause), Whitespace(1) } } };
+    Rule clauses{ "clauses", Loop{ Sequence{ Ref(clause), Whitespace(1) } } };
     Rule space{"namespace", Sequence{ Ref(id), Whitespace(0), Literal{":"}, Whitespace(0), Literal{"{"}, Whitespace(0),Ref(clauses), Whitespace(0),Literal{"}"}} };
 
-    Rule knowledge{"knowledge", Disjunction{Ref{space}, Ref{clauses}, Whitespace(0) } };
+    Rule knowledge{"knowledge", Sequence{ Whitespace(0), Disjunction{Ref{space}, Ref{clauses}, Whitespace(0) } }};
 }

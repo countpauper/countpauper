@@ -1,6 +1,7 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "BNF.h"
 #include "Parser.h"
+#include "StringEncoding.h"
 #include <regex>
 
 namespace Angel::Parser::BNF
@@ -19,13 +20,18 @@ PossibleMatch Literal::Parse(const std::string_view data, const Parser&, const P
         return PossibleMatch();
 }
 
+
 PossibleMatch RegularExpression::Parse(const std::string_view data, const Parser&, const Progress&) const
 {
-    const std::regex re(expression);
-    std::cmatch match;
-    if (std::regex_search(std::string(data).c_str(), match, re, std::regex_constants::match_continuous))
+
+    std::wstring wdata = from_utf8(data);
+    std::wstring wexpression = from_utf8(expression);
+    std::wregex  wexpr(wexpression);
+    std::wsmatch match;
+    if (std::regex_search(wdata, match, wexpr, std::regex_constants::match_continuous))
     {
-        return Match( data.substr(match[0].length()) );
+        std::string match_str = to_utf8(match.str(0));
+        return Match(data.substr(match_str.size()));
     }
 
     return PossibleMatch();
