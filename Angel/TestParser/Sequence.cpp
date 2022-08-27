@@ -1,6 +1,5 @@
 #include "pch.h"
-#include "Parser/Parser.h"
-#include "Logic/Sequence.h"
+#include "Parser/LogicParser.h"
 #include "Logic/Sequence.h"
 #include <ios>
 

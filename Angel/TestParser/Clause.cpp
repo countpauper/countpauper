@@ -1,13 +1,14 @@
 #include "pch.h"
-#include "Parser/Parser.h"
+#include "Parser/LogicParser.h"
 #include "Logic/Clause.h"
 #include "Logic/Conjunction.h"
+#include "Logic/Knowledge.h"
 
 namespace Angel::Parser::Test
 {
 
-/*  // reeanble with BNF
 
+/*  // reeanble with BNF
 TEST(TestClause, Predicate)
 {
 	Logic::Knowledge k = Parse("cat(ginny) ginny()");
@@ -17,6 +18,7 @@ TEST(TestClause, Predicate)
 	EXPECT_TRUE(k.Knows(Logic::predicate("ginny")));
 	EXPECT_FALSE(k.Knows(Logic::predicate("dog")));
 }
+
 
 TEST(TestClause, Condition)
 {

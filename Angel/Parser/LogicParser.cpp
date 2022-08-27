@@ -114,7 +114,7 @@ class LogicParser : public BNF::Parser
             else
                 return Logic::sequence();   // empty sequence
         }
-        else if (rule == "predicate[()]")
+        else if (rule == "predicate")
         {
             if (tokens.has_value())
             {

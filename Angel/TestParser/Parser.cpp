@@ -27,7 +27,7 @@ TEST(TestParser, Whitespace)
 }
 
 TEST(TestParser, UnicodeId)
-{   // TODO: unicode sort of works now but the predicate is parsed as an id and the id an empty () expression predicate() should have 
+{
     std::stringstream s("Γάτα() 猫");
 
     Logic::Object predicate, id;

@@ -46,7 +46,7 @@ Whitespace::Whitespace(size_t amt, const std::string_view chars) :
 
 PossibleMatch Whitespace::Parse(const std::string_view data, const Parser&, const Progress&) const
 {
-    if (data.empty())
+    if ((data.empty()) && (amount))
         return PossibleMatch();
     auto p = data.find_first_not_of(characters);
     if (p == data.npos)

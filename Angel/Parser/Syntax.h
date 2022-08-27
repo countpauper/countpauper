@@ -32,16 +32,18 @@ clause -> predicate : expression
 */
 namespace Angel::Parser::BNF
 {
+    Declare predicate("predicate");
+    Declare expression("expression");
+    Declare collection("collection");
+
     // literals
     Rule id( "id", RegularExpression{"[a-z_\\u0080-\\uDB7Fa][a-z0-9_\\u0080-\\uDB7Fa]*"} );
     Rule integer( "integer", RegularExpression{"-*[0-9]+"} );
     Rule boolean("boolean", Disjunction{ Literal{"true"},Literal{"false"} });
 
     // expressions
-    Declare collection("collection");
     Rule element( "element", Disjunction{ Ref(boolean), Ref(integer), Ref(id) } );
-    Recursive naked_expression( "naked expression", Disjunction{ Ref(collection), Ref(element) } );
-    Declare expression("expression");
+    Recursive naked_expression( "naked expression", Disjunction{ Ref(collection), Ref(predicate), Ref(element) } );
     Rule braced_expression("braced expression", Sequence{ Literal("("), Whitespace(0), Ref(expression), Whitespace(0), Literal(")") });
     Recursive expression_("expression", Disjunction{ Ref(braced_expression), Ref(naked_expression) });
 
@@ -65,10 +67,8 @@ namespace Angel::Parser::BNF
     // Operations 
 
     // Knowledge rules
-    Rule simplePredicate{"predicate", Ref(id) };
     Rule arguments{ "arguments", Disjunction{ Ref(empty_sequence), Ref(braced_sequence)} };
-    Rule argumentedPredicate{"predicate()", Sequence{Ref(id),Ref(arguments)} };
-    Rule predicate{"predicate[()]", Disjunction{Ref(argumentedPredicate), Ref(simplePredicate)} };
+    Rule predicate_{"predicate", Sequence{Ref(id),Ref(arguments)} };
     Rule clause{"clause", Ref{predicate} };  // TODO:  <consequent> ":" <antecedent>
     Rule clauses{ "clauses", Loop{ Sequence{ Ref(clause), Whitespace(1) } } };
     Rule space{"namespace", Sequence{ Ref(id), Whitespace(0), Literal{":"}, Whitespace(0), Literal{"{"}, Whitespace(0),Ref(clauses), Whitespace(0),Literal{"}"}} };
