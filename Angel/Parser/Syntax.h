@@ -53,7 +53,8 @@ namespace Angel::Parser::BNF
     Declare comma_sequence("comma sequence");
     Rule comma_sequence_("comma sequence", Sequence{ Ref(expression), Whitespace(0), Literal(","), Whitespace(0), 
         Disjunction{ Ref(comma_sequence), Ref(expression)} });
-    Rule braced_sequence("braced sequence", Sequence{ Literal("("), Whitespace(0), Ref(comma_sequence), Whitespace(0), Literal(")") });
+    Rule braced_sequence("braced sequence", Sequence{ Literal("("), Whitespace(0), Ref(expression),
+        Loop { Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }}, Whitespace(0), Literal(")") });
 
     Rule sequence("sequence", Disjunction{
         Ref(empty_sequence),
@@ -70,7 +71,7 @@ namespace Angel::Parser::BNF
     Rule arguments{ "arguments", Disjunction{ Ref(empty_sequence), Ref(braced_sequence)} };
     Rule predicate_{"predicate", Sequence{Ref(id),Ref(arguments)} };
     Rule clause{"clause", Ref{predicate} };  // TODO:  <consequent> ":" <antecedent>
-    Rule clauses{ "clauses", Loop{ Sequence{ Ref(clause), Whitespace(1) } } };
+    Rule clauses{ "clauses", Sequence{ Ref(clause), Loop{ Sequence{ Whitespace(1), Ref(clause) } } } };
     Rule space{"namespace", Sequence{ Ref(id), Whitespace(0), Literal{":"}, Whitespace(0), Literal{"{"}, Whitespace(0),Ref(clauses), Whitespace(0),Literal{"}"}} };
 
     Rule knowledge{"knowledge", Sequence{ Whitespace(0), Disjunction{Ref{space}, Ref{clauses}, Whitespace(0) } }};

@@ -79,7 +79,18 @@ PossibleMatch Sequence::Parse(const std::string_view data, const Parser& parser 
         if (!m)
             return PossibleMatch();
         if (m->tokens.has_value())
-            tokens.push_back(m->tokens);
+        {
+            // flatten vectors of any 
+            if (m->tokens.type() == typeid(std::vector<std::any>))
+            {
+                auto mergeVector = std::any_cast<std::vector<std::any>>(m->tokens);
+                tokens.insert(tokens.end(), mergeVector.begin(), mergeVector.end());
+            }
+            else
+            {
+                tokens.push_back(m->tokens);
+            }
+        }
                 
         remaining = m->remaining;
         if (!m->rules.empty())

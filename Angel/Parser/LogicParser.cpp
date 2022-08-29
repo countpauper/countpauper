@@ -64,20 +64,24 @@ class LogicParser : public BNF::Parser
         }
         else if (rule == "comma sequence")
         {
-            const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
-            assert(elements.size() == 2);
-            if (elements[1].type() == typeid(std::vector<std::any>))
-            {   // flattern recursive vector of anys (should all be comma sequences, assuming that's the only interprationat that returns those 
-                // without turning them into Logic::Objects. If recursive summations, con and disjunctions start doing this it will be needed
-                // to extend the interpration structure (ector of anys) with the rules applied to match the type 
-                auto result = std::any_cast<std::vector<std::any>>(elements[1]);
-                result.insert(result.begin(), elements[0]);
-                return result;
+            return tokens;
+        }
+        else if (rule == "braced sequence")
+        {
+            if (tokens.has_value())
+            {
+                auto naked_expression = std::any_cast<Logic::Object>(tokens);
+                if (naked_expression.As<Logic::Sequence>())
+                {   // on sequences, braces are optional since () is an empty sequence and (element) is a size 1 sequence
+                    return naked_expression;
+                }
+                else
+                {    // if the naked expression is not a sequence or collection, then make it one (ie (1) = a sequence of 1
+                    return Logic::sequence(std::move(naked_expression));
+                }
             }
             else
-            {
-                return elements;
-            }
+                return Logic::sequence();
         }
         else if (rule == "braced expression")
         {
@@ -127,10 +131,19 @@ class LogicParser : public BNF::Parser
                 {
                     const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
                     assert(elements.size() == 2);   // id and argument sequence
-                    auto id = std::any_cast<Logic::Object>(elements[0]).As<Logic::Id>();
-                    auto args = *std::any_cast<Logic::Object>(elements[1]).As<Logic::Sequence>();
+                    auto e0 = std::any_cast<Logic::Object>(elements.at(0));
+                    auto pId = e0.As<Logic::Id>();
+                    auto args = std::any_cast<Logic::Object>(elements.at(1));
+                    if (auto pSeq = args.As<Logic::Sequence>())
+                    {
+                        return Logic::predicate(*pId, std::move(*pSeq));
+                    }
+                    else
+                    {
+                        auto seq = Logic::Sequence(std::move(args));
+                        return Logic::predicate(*pId, std::move(seq));
+                    }
 
-                    return Logic::predicate(*id, std::move(args));
                 }
             }
 
@@ -140,12 +153,20 @@ class LogicParser : public BNF::Parser
             Logic::Knowledge result; 
             if (tokens.has_value())
             {
-                auto clauses = std::any_cast<std::vector<std::any>>(tokens);
-                for (auto& c : clauses)
+                if (tokens.type() == typeid(Logic::Object))
                 {
-                    auto clause = std::any_cast<Logic::Object>(c);
+                    auto clause = std::any_cast<Logic::Object>(tokens);
                     result.Know(std::move(clause));
+                }
+                else
+                {
+                    auto clauses = std::any_cast<std::vector<std::any>>(tokens);
+                    for (auto& c : clauses)
+                    {
+                        auto clause = std::any_cast<Logic::Object>(c);
+                        result.Know(std::move(clause));
 
+                    }
                 }
             }
             return result;
@@ -187,7 +208,12 @@ class LogicParser : public BNF::Parser
 
     std::any Parse(const std::string_view rule, const std::any& tokens, const std::string_view value) const override
     {
-        std::string_view inType = tokens.type().name();
+        std::string inType = tokens.type().name();
+        if (tokens.type() == typeid(Logic::Object))
+        {
+            const auto& obj = std::any_cast<Logic::Object>(tokens);
+            inType = obj->String();
+        }
         auto result = ParseImpl(rule, tokens, value);
         std::string outType = result.type().name();
         if (result.type() == typeid(Logic::Object))
