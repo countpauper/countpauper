@@ -24,156 +24,161 @@ namespace Parser
 class LogicParser : public BNF::Parser
 {
 
+    static std::any ParseId(const std::string_view value)
+    {
+        return Logic::id(value);
+    }
+
+    static std::any ParseInteger(const std::string_view value)
+    {
+        return Logic::integer(value);
+    }
+
+
+    static std::any ParseBoolean(const std::string_view value)
+    {
+        return Logic::boolean(value);
+    }
+
+    static std::any TokenizeBracedSequence(const std::any& tokens)
+    {
+        if (tokens.has_value())
+        {
+            auto naked_expression = std::any_cast<Logic::Object>(tokens);
+            if (naked_expression.As<Logic::Sequence>())
+            {   // on sequences, braces are optional since () is an empty sequence and (element) is a size 1 sequence
+                return naked_expression;
+            }
+            else
+            {    // if the naked expression is not a sequence or collection, then make it one (ie (1) = a sequence of 1
+                return Logic::sequence(std::move(naked_expression));
+            }
+        }
+        else
+            return Logic::sequence();
+    }
+
+    static std::any TokenizeBracedExpression(const std::any& tokens)
+    {
+        if (!tokens.has_value())
+            return Logic::sequence();
+
+        auto naked_expression = std::any_cast<Logic::Object>(tokens);
+        if (naked_expression.As<Logic::Sequence>())
+        {   // on sequences, braces are optional since () is an empty sequence and (element) is a size 1 sequence
+            return naked_expression;
+        }
+        else if (naked_expression.As<Logic::Operator>())
+        {   // operators use braces for precedence
+            return naked_expression;
+        }
+        else
+        {    // if the naked expression is not a computation, sequence or collection, then make it one (ie (1) = a sequence of 1 
+            return Logic::sequence(std::move(naked_expression));
+        }
+    }
+
+    static std::any TokenizeSequence(const std::any& tokens)
+    {
+        if (!tokens.has_value())
+            return Logic::sequence();   // empty sequence
+        const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
+        auto result = std::make_unique<Logic::Sequence>();
+        for (const auto& e : elements)
+        {
+            result->Add(std::move(std::any_cast<Logic::Object>(e)));
+        }
+        return Logic::Object(std::move(result));
+    }
+
+
+    static std::any TokenizePredicate(const std::any& tokens)
+    {
+        if (!tokens.has_value())
+            throw std::invalid_argument("Predicate can't be void");
+
+        if (tokens.type() == typeid(Logic::Object))
+        {
+            auto id = std::any_cast<Logic::Object>(tokens);
+            return Logic::predicate(*id.As<Logic::Id>());
+        }
+        else
+        {
+            const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
+            assert(elements.size() == 2);   // id and argument sequence
+            auto e0 = std::any_cast<Logic::Object>(elements.at(0));
+            auto pId = e0.As<Logic::Id>();
+            auto args = std::any_cast<Logic::Object>(elements.at(1));
+            if (auto pSeq = args.As<Logic::Sequence>())
+            {
+                return Logic::predicate(*pId, std::move(*pSeq));
+            }
+            else
+            {
+                auto seq = Logic::Sequence(std::move(args));
+                return Logic::predicate(*pId, std::move(seq));
+            }
+        }
+    }
+
+
+    static std::any TokenizeKnowledge(const std::any& tokens)
+    {
+        Logic::Knowledge result;
+        if (tokens.has_value())
+        {
+            if (tokens.type() == typeid(Logic::Object))
+            {
+                auto clause = std::any_cast<Logic::Object>(tokens);
+                result.Know(std::move(clause));
+            }
+            else
+            {
+                auto clauses = std::any_cast<std::vector<std::any>>(tokens);
+                for (auto& c : clauses)
+                {
+                    auto clause = std::any_cast<Logic::Object>(c);
+                    result.Know(std::move(clause));
+
+                }
+            }
+        }
+        return result;
+    }
+
     std::any ParseImpl(const std::string_view rule, const std::any& tokens, const std::string_view value) const
     {
-
-        /*if (rule == "braces")
+        if (rule == "id")
         {
-        if (interpretation.type() == typeid(Logic::Object))
-        {
-        const auto& obj = std::any_cast<Logic::Object>(interpretation);
-        if (obj.As<Logic::Collection>())
-        {
-        return obj;
-        }
-        else
-        {
-        return Logic::sequence(Logic::Object(obj));
-        }
-        }
-        else
-        {
-
-        }
-        }
-        else*/ if (rule == "id")
-        {
-            return Logic::id(value);
+            return ParseId(value);
         }
         else if (rule == "integer")
         {
-            return Logic::integer(value);
+            return ParseInteger(value);
         }
         else if (rule == "boolean")
         {
-            return Logic::boolean(value);
-        }
-        else if (rule == "element")
-        {
-            return tokens;
-        }
-        else if (rule == "comma sequence")
-        {
-            return tokens;
+            return ParseBoolean(value);
         }
         else if (rule == "braced sequence")
         {
-            if (tokens.has_value())
-            {
-                auto naked_expression = std::any_cast<Logic::Object>(tokens);
-                if (naked_expression.As<Logic::Sequence>())
-                {   // on sequences, braces are optional since () is an empty sequence and (element) is a size 1 sequence
-                    return naked_expression;
-                }
-                else
-                {    // if the naked expression is not a sequence or collection, then make it one (ie (1) = a sequence of 1
-                    return Logic::sequence(std::move(naked_expression));
-                }
-            }
-            else
-                return Logic::sequence();
+            return TokenizeBracedSequence(tokens);
         }
         else if (rule == "braced expression")
         {
-            if (tokens.has_value())
-            {
-                auto naked_expression = std::any_cast<Logic::Object>(tokens);
-                if (naked_expression.As<Logic::Sequence>())
-                {   // on sequences, braces are optional since () is an empty sequence and (element) is a size 1 sequence
-                    return naked_expression;
-                }
-                else if (naked_expression.As<Logic::Operator>())
-                {   // operators use braces for precedence
-                    return naked_expression;
-                }
-                else
-                {    // if the naked expression is not a computation, sequence or collection, then make it one (ie (1) = a sequence of 1 
-                    return Logic::sequence(std::move(naked_expression));
-                }
-            }
+            return TokenizeBracedExpression(tokens);
         }
         else if (rule == "sequence")
         {
-            if (tokens.has_value())
-            {
-                const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
-                auto result = std::make_unique<Logic::Sequence>();
-                for (const auto& e : elements)
-                {
-                    result->Add(std::move(std::any_cast<Logic::Object>(e)));
-                }
-                return Logic::Object(std::move(result));
-
-            }
-            else
-                return Logic::sequence();   // empty sequence
+            return TokenizeSequence(tokens);
         }
         else if (rule == "predicate")
         {
-            if (tokens.has_value())
-            {
-                if (tokens.type() == typeid(Logic::Object))
-                {
-                    auto id = std::any_cast<Logic::Object>(tokens);
-                    return Logic::predicate(*id.As<Logic::Id>());
-                }
-                else if (tokens.type() == typeid(std::vector<std::any>))
-                {
-                    const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
-                    assert(elements.size() == 2);   // id and argument sequence
-                    auto e0 = std::any_cast<Logic::Object>(elements.at(0));
-                    auto pId = e0.As<Logic::Id>();
-                    auto args = std::any_cast<Logic::Object>(elements.at(1));
-                    if (auto pSeq = args.As<Logic::Sequence>())
-                    {
-                        return Logic::predicate(*pId, std::move(*pSeq));
-                    }
-                    else
-                    {
-                        auto seq = Logic::Sequence(std::move(args));
-                        return Logic::predicate(*pId, std::move(seq));
-                    }
-
-                }
-            }
-
+            return TokenizePredicate(tokens);
         }
         else if (rule == "knowledge")
         {
-            Logic::Knowledge result; 
-            if (tokens.has_value())
-            {
-                if (tokens.type() == typeid(Logic::Object))
-                {
-                    auto clause = std::any_cast<Logic::Object>(tokens);
-                    result.Know(std::move(clause));
-                }
-                else
-                {
-                    auto clauses = std::any_cast<std::vector<std::any>>(tokens);
-                    for (auto& c : clauses)
-                    {
-                        auto clause = std::any_cast<Logic::Object>(c);
-                        result.Know(std::move(clause));
-
-                    }
-                }
-            }
-            return result;
-        }
-        if (tokens.type() == typeid(std::vector<std::any>))
-        {
-            return tokens;
+            return TokenizeKnowledge(tokens);
         }
         return tokens;
     }

@@ -1,6 +1,6 @@
 #pragma once
 #include "BNF.h"
-
+#include "LogicParser.h"
 /*
 elements: 
 id -> lowercase lowercase digits and underscore, starting with not a digit 
