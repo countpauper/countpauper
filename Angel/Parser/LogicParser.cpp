@@ -27,24 +27,34 @@ namespace Parser
         if (!right.has_value())
             return left;
 
-        if (left.has_value())
+        if (!left.has_value())
+            return right;
+
+        if (left.type() == typeid(std::vector<std::any>))
         {
-            if (left.type() == typeid(std::vector<std::any>))
+            const auto& leftArray = std::any_cast<std::vector<std::any>>(left);
+            std::vector<std::any> merged(leftArray);
+            assert(right.type() == typeid(Logic::Object));  // merge two vectors not implemented yet
+            merged.push_back(right);
+            return merged;
+        }
+        else if (left.type() == typeid(Logic::Object))
+        {
+            if (right.type() == typeid(std::vector<std::any>))
             {
-                const auto& leftArray = std::any_cast<std::vector<std::any>>(left);
-                std::vector<std::any> merged(leftArray);
-                merged.push_back(right);
-                return merged;
+                auto rightArray= std::any_cast<std::vector<std::any>>(right);
+                rightArray.insert(rightArray.begin(), left);
+                return rightArray;
             }
             else
             {
-                assert(false); // what? merge two normal expressions into a vector? Under which circumstances?  
-                return left;
+                return std::vector<std::any>{left, right};
             }
         }
         else
         {
-            return std::vector<std::any>{right};
+            assert(false); // What is it ?
+            return left;
         }
     }
 
@@ -105,13 +115,22 @@ namespace Parser
 
     std::any ConstructSequence(const std::any& tokens)
     {
-        if (!tokens.has_value())
-            return Logic::sequence();   // empty sequence
-        const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
         auto result = std::make_unique<Logic::Sequence>();
-        for (const auto& e : elements)
+        if (!tokens.has_value())
         {
-            result->Add(std::move(std::any_cast<Logic::Object>(e)));
+            // empty sequence
+        }
+        else if (tokens.type() == typeid(Logic::Object))
+        {
+            result->Add(std::any_cast<Logic::Object>(tokens));
+        }
+        else if (tokens.type() == typeid(std::vector<std::any>))
+        {
+            const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
+            for (const auto& e : elements)
+            {
+                result->Add(std::move(std::any_cast<Logic::Object>(e)));
+            }
         }
         return Logic::Object(std::move(result));
     }

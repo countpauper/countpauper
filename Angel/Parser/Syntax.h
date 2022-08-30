@@ -44,35 +44,35 @@ namespace Angel::Parser::BNF
     // expressions
     Rule element( "element", Disjunction{ Ref(boolean), Ref(integer), Ref(id) } );
     Recursive naked_expression( "naked expression", Disjunction{ Ref(collection), Ref(predicate), Ref(element) } );
-    Rule braced_expression("braced expression", Sequence{ Literal("("), Whitespace(0), Ref(expression), Whitespace(0), Literal(")") }, static_cast<Rule::ConstructFn>(ConstructBracedExpression));
+    Rule braced_expression("braced expression", Sequence{ Merge, Literal("("), Whitespace(0), Ref(expression), Whitespace(0), Literal(")") }, static_cast<Rule::ConstructFn>(ConstructBracedExpression));
     Recursive expression_("expression", Disjunction{ Ref(braced_expression), Ref(naked_expression) });
 
     // Collections
     //Rule sequence_elements("sequence elements", Sequence{Ref(expression), Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) })});
-    Rule empty_sequence{ "empty sequence", Sequence{ Literal("("), Whitespace(0), Literal(")") } };
+    Rule empty_sequence{ "empty sequence", Sequence{Merge, Literal("("), Whitespace(0), Literal(")") } };
     Declare comma_sequence("comma sequence");
-    Rule comma_sequence_("comma sequence", Sequence{ Ref(expression), Whitespace(0), Literal(","), Whitespace(0), 
-        Disjunction{ Ref(comma_sequence), Ref(expression)} });
-    Rule braced_sequence("braced sequence", Sequence{ Literal("("), Whitespace(0), Ref(expression),
-        Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }, Merge), Whitespace(0), Literal(")") }, static_cast<Rule::ConstructFn > (ConstructBracedSequence));
+    Rule comma_sequence_("comma sequence", Sequence{Merge, Ref(expression), Whitespace(0), Literal(","), Whitespace(0), 
+        Disjunction{ Ref(comma_sequence), Ref(expression)}});
+    Rule braced_sequence("braced sequence", Sequence{Merge, Literal("("), Whitespace(0), Ref(expression),
+        Loop(Sequence{Merge, Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }, Merge), Whitespace(0), Literal(")") }, static_cast<Rule::ConstructFn>(ConstructBracedSequence));
 
     Rule sequence("sequence", Disjunction{
         Ref(empty_sequence),
         Ref(braced_sequence),
         Ref(comma_sequence) }, static_cast<Rule::ConstructFn>(ConstructSequence));
 
-    Rule set_elements("set elements", Sequence{ Ref(expression), Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }, Merge) });
-    Rule set     {"set", Sequence{ Literal("{"), Whitespace(0), Ref{ set_elements }, Whitespace(0), Literal("}") } };
+    Rule set_elements("set elements", Sequence{Merge, Ref(expression), Loop(Sequence{Merge, Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }, Merge) });
+    Rule set     {"set", Sequence{Merge, Literal("{"), Whitespace(0), Ref{ set_elements }, Whitespace(0), Literal("}")} };
     Recursive collection_ { "collection", Disjunction{ Ref{set}, Ref{sequence}} };
 
     // Operations 
 
     // Knowledge rules
     Rule arguments{ "arguments", Disjunction{ Ref(empty_sequence), Ref(braced_sequence)} };
-    Rule predicate_("predicate", Sequence{Ref(id),Ref(arguments)}, static_cast<Rule::ConstructFn>(ConstructPredicate));
+    Rule predicate_("predicate", Sequence{Merge, Ref(id),Ref(arguments)}, static_cast<Rule::ConstructFn>(ConstructPredicate));
     Rule clause{"clause", Ref{predicate} };  // TODO:  <consequent> ":" <antecedent>
-    Rule clauses{ "clauses", Sequence{ Ref(clause), Loop( Sequence{ Whitespace(1), Ref(clause) }, Merge) } };
-    Rule space{"namespace", Sequence{ Ref(id), Whitespace(0), Literal{":"}, Whitespace(0), Literal{"{"}, Whitespace(0),Ref(clauses), Whitespace(0),Literal{"}"}} };
+    Rule clauses{ "clauses", Sequence{Merge, Ref(clause), Loop(Sequence{Merge, Whitespace(1), Ref(clause)}, Merge ) }};
+    Rule space{ "namespace", Sequence{Merge, Ref(id), Whitespace(0), Literal{":"}, Whitespace(0), Literal{"{"}, Whitespace(0),Ref(clauses), Whitespace(0),Literal{"}"}} };
 
-    Rule knowledge( "knowledge", Sequence{ Whitespace(0), Disjunction{Ref{space}, Ref{clauses}, Whitespace(0) } }, static_cast<Rule::ConstructFn>(ConstructKnowledge));
+    Rule knowledge( "knowledge", Sequence{Merge, Whitespace(0), Disjunction{Ref{space}, Ref{clauses}, Whitespace(0) } }, static_cast<Rule::ConstructFn>(ConstructKnowledge));
 }

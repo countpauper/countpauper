@@ -71,37 +71,19 @@ PossibleMatch Disjunction::Parse(const std::string_view data , const Progress& p
 PossibleMatch Sequence::Parse(const std::string_view data , const Progress& progress) const
 {
     auto remaining = data;
-    std::vector<std::any> tokens;
+    std::any tokens;
     Match::Rules lastRules;
     for (const auto& e : expressions)
     {
         auto m = e->Parse(remaining, progress);
         if (!m)
             return PossibleMatch();
-        if (m->tokens.has_value())
-        {
-            // flatten vectors of any TODO use MergeFn
-            if (m->tokens.type() == typeid(std::vector<std::any>))
-            {
-                auto mergeVector = std::any_cast<std::vector<std::any>>(m->tokens);
-                tokens.insert(tokens.end(), mergeVector.begin(), mergeVector.end());
-            }
-            else
-            {
-                tokens.push_back(m->tokens);
-            }
-        }
-                
+        tokens = merge(tokens, m->tokens);
         remaining = m->remaining;
         if (!m->rules.empty())
             lastRules = m->rules;
     }
-    if (tokens.empty())
-        return Match{ remaining };
-    else if (tokens.size() == 1)
-        return Match{ remaining, tokens.front(), lastRules };
-    else
-        return Match{ remaining, tokens, lastRules };
+    return Match{ remaining, tokens, lastRules };
 }
 
 PossibleMatch Loop::Parse(const std::string_view data , const Progress& progress) const

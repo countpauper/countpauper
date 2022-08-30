@@ -123,10 +123,11 @@ namespace Angel::Parser::BNF::Test
 
     TEST_F(TestBNF, Sequence)
     {
-        EXPECT_EQ(Parse(Rule{ "empty sequence", Sequence() }, "foo").remaining, "foo");
-        EXPECT_EQ(Parse(Rule{ "single sequence", Sequence{Literal("foo")} }, "foobar").remaining, "bar");
-        EXPECT_TRUE(Parse(Rule{ "long sequence", Sequence{ Literal("foo"), Whitespace(), Literal("bar") } }, "foo bar").remaining.empty());
-        EXPECT_THROW(Parse(Rule{ "faileds equence", Sequence{ Literal("foo"), Whitespace(), Literal("bar") } } , "foobar"), SyntaxError);
+        EXPECT_EQ(Parse(Rule{ "empty sequence", Sequence(Merge) }, "foo").remaining, "foo");
+        EXPECT_EQ(Parse(Rule{ "single sequence", Sequence{ Merge, Literal("foo") } }, "foobar").remaining, "bar");
+        EXPECT_EQ(Get(Parse(Rule{ "merged sequence", Sequence{ Merge, Rule("first",Literal("foo"), ParseFn), Rule("second", Literal("bar"), ParseFn) } }, "foobar")), "foo.bar");
+        EXPECT_TRUE(Parse(Rule{ "long sequence", Sequence{ Merge, Literal("foo"), Whitespace(), Literal("bar")} }, "foo bar").remaining.empty());
+        EXPECT_THROW(Parse(Rule{ "failed sequence", Sequence{ Merge, Literal("foo"), Whitespace(), Literal("bar")} } , "foobar"), SyntaxError);
     }
 
     TEST_F(TestBNF, Loop)

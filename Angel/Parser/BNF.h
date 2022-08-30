@@ -109,16 +109,17 @@ namespace Angel::Parser::BNF
 
     struct Sequence : Expression
     {
-        Sequence() = default;
+        Sequence(MergeFn m) : merge(m) {} 
         template<class ...Args>
-        Sequence(const Expression& first, const Args& ... args) :
-            Sequence(std::forward<const Args&>(args)...)
+        Sequence(MergeFn m, const Expression& first, const Args& ... args) :
+            Sequence(m, std::forward<const Args&>(args)...)
         {
             expressions.emplace(expressions.begin(), first);
         }
         std::vector<ExpressionRef> expressions;
         PossibleMatch Parse(const std::string_view data, const Progress& progress = Progress()) const override;
         std::unique_ptr<Expression> Copy() const override { return std::make_unique<Sequence>(*this); }
+        MergeFn merge;
     };
 
     struct Loop : Expression
