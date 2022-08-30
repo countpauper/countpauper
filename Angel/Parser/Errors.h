@@ -24,4 +24,13 @@ namespace Angel::Parser
         {
         }
     };
+
+    class ParseException : public Exception
+    {
+    public:
+        ParseException(const std::string& msg) :
+            Exception(msg)
+        {
+        }
+    };
 }

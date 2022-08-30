@@ -61,7 +61,8 @@ TEST(TestSequence, Commas)
 
 TEST(TestSequence, DISABLED_SequenceInSequence)
 {   // THis doesn't work yet, because cat,dog is a sequence returned by the parser, (cat,dog) is a sequence for the parser 
-    // the braces expression matcher can not distinguish and create a nested sequence
+    // the braces expression matcher can not distinguish and create a nested sequence.
+    // Either this doesn't work or (cat) doesn't become a sequence in TestSequence.Single 
     Logic::Object seq;
     std::stringstream s("((cat, dog))");
     s >> seq;

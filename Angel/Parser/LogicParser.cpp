@@ -14,33 +14,58 @@
 #include "Logic/Set.h"
 #include "Logic/Clause.h"
 #include "Logic/Object.h"
+#include "LogicParser.h"
+#include "Parser/Errors.h"
 
 namespace Angel
 {
 namespace Parser
 {
 
+    std::any Merge(const std::any& left, const std::any& right)
+    {
+        if (!right.has_value())
+            return left;
 
-class LogicParser : public BNF::Parser
-{
+        if (left.has_value())
+        {
+            if (left.type() == typeid(std::vector<std::any>))
+            {
+                const auto& leftArray = std::any_cast<std::vector<std::any>>(left);
+                std::vector<std::any> merged(leftArray);
+                merged.push_back(right);
+                return merged;
+            }
+            else
+            {
+                assert(false); // what? merge two normal expressions into a vector? Under which circumstances?  
+                return left;
+            }
+        }
+        else
+        {
+            return std::vector<std::any>{right};
+        }
+    }
 
-    static std::any ParseId(const std::string_view value)
+
+    std::any ParseId(const std::string_view value)
     {
         return Logic::id(value);
     }
-
-    static std::any ParseInteger(const std::string_view value)
+    
+    std::any ParseInteger(const std::string_view value)
     {
         return Logic::integer(value);
     }
 
 
-    static std::any ParseBoolean(const std::string_view value)
+    std::any ParseBoolean(const std::string_view value)
     {
         return Logic::boolean(value);
     }
 
-    static std::any TokenizeBracedSequence(const std::any& tokens)
+    std::any ConstructBracedSequence(const std::any& tokens)
     {
         if (tokens.has_value())
         {
@@ -58,7 +83,7 @@ class LogicParser : public BNF::Parser
             return Logic::sequence();
     }
 
-    static std::any TokenizeBracedExpression(const std::any& tokens)
+    std::any ConstructBracedExpression(const std::any& tokens)
     {
         if (!tokens.has_value())
             return Logic::sequence();
@@ -78,7 +103,7 @@ class LogicParser : public BNF::Parser
         }
     }
 
-    static std::any TokenizeSequence(const std::any& tokens)
+    std::any ConstructSequence(const std::any& tokens)
     {
         if (!tokens.has_value())
             return Logic::sequence();   // empty sequence
@@ -91,11 +116,10 @@ class LogicParser : public BNF::Parser
         return Logic::Object(std::move(result));
     }
 
-
-    static std::any TokenizePredicate(const std::any& tokens)
+    std::any ConstructPredicate(const std::any& tokens)
     {
         if (!tokens.has_value())
-            throw std::invalid_argument("Predicate can't be void");
+            throw ParseException("Predicate can't be void");
 
         if (tokens.type() == typeid(Logic::Object))
         {
@@ -121,8 +145,7 @@ class LogicParser : public BNF::Parser
         }
     }
 
-
-    static std::any TokenizeKnowledge(const std::any& tokens)
+    std::any ConstructKnowledge(const std::any& tokens)
     {
         Logic::Knowledge result;
         if (tokens.has_value())
@@ -146,6 +169,10 @@ class LogicParser : public BNF::Parser
         return result;
     }
 
+
+
+class LogicParser : public BNF::Parser
+{
     std::any ParseImpl(const std::string_view rule, const std::any& tokens, const std::string_view value) const
     {
         if (rule == "id")
@@ -162,23 +189,23 @@ class LogicParser : public BNF::Parser
         }
         else if (rule == "braced sequence")
         {
-            return TokenizeBracedSequence(tokens);
+            return ConstructBracedSequence(tokens);
         }
         else if (rule == "braced expression")
         {
-            return TokenizeBracedExpression(tokens);
+            return ConstructBracedExpression(tokens);
         }
         else if (rule == "sequence")
         {
-            return TokenizeSequence(tokens);
+            return ConstructSequence(tokens);
         }
         else if (rule == "predicate")
         {
-            return TokenizePredicate(tokens);
+            return ConstructPredicate(tokens);
         }
         else if (rule == "knowledge")
         {
-            return TokenizeKnowledge(tokens);
+            return ConstructKnowledge(tokens);
         }
         return tokens;
     }
@@ -209,8 +236,7 @@ class LogicParser : public BNF::Parser
         }
 
     }
-
-
+/*
     std::any Parse(const std::string_view rule, const std::any& tokens, const std::string_view value) const override
     {
         std::string inType = tokens.type().name();
@@ -228,15 +254,14 @@ class LogicParser : public BNF::Parser
         }
         return result;
     }
+*/
 
 };
-
-LogicParser parser;
 
 Logic::Knowledge Parse(const std::string& text)
 {
 	Logic::Knowledge result;
-    auto match = BNF::Parse(BNF::knowledge, parser, text.c_str());
+    auto match = BNF::Parse(BNF::knowledge,  text.c_str());
     return std::any_cast<Logic::Knowledge>(match.tokens);
 }
 
@@ -256,14 +281,20 @@ std::istream& operator>>(std::istream& s, Logic::Object& o)
 
     // skip inital whitespace
     std::string_view start = allData;
-    if (auto whiteMatch = Angel::Parser::BNF::Whitespace().Parse(allData.c_str(), parser))
+    if (auto whiteMatch = Angel::Parser::BNF::Whitespace().Parse(allData.c_str()))
     {
         start = whiteMatch->remaining;
     }
-    auto match = Parser::BNF::Parse(Angel::Parser::BNF::expression_, parser, start);
+    auto match = Parser::BNF::Parse(Angel::Parser::BNF::expression_, start);
     s.seekg(-std::streamoff(match.remaining.length()), std::ios_base::cur);
 
-    o = std::any_cast<const Logic::Object&>(match.tokens);
+    if (match.tokens.has_value())
+        o = std::any_cast<const Logic::Object&>(match.tokens);
+    else
+    {
+        std::string_view parsedString = start.substr(0, start.length() - match.remaining.length());
+        throw ParseException(std::string("No object parsed from '") + parsedString.data() + "'");
+    }
     return s;
 }
 }

@@ -7,12 +7,12 @@
 namespace Angel::Parser::BNF
 {
 
-PossibleMatch Nothing::Parse(const std::string_view data, const Parser&, const Progress&) const
+PossibleMatch Nothing::Parse(const std::string_view data, const Progress&) const
 {
     return Match( data );
 }
 
-PossibleMatch Literal::Parse(const std::string_view data, const Parser&, const Progress&) const
+PossibleMatch Literal::Parse(const std::string_view data, const Progress&) const
 {
     if (data.substr(0,literal.size()).compare(literal)==0)
         return Match( data.substr(literal.size()) );
@@ -21,7 +21,7 @@ PossibleMatch Literal::Parse(const std::string_view data, const Parser&, const P
 }
 
 
-PossibleMatch RegularExpression::Parse(const std::string_view data, const Parser&, const Progress&) const
+PossibleMatch RegularExpression::Parse(const std::string_view data, const Progress&) const
 {
 
     std::wstring wdata = from_utf8(data);
@@ -44,7 +44,7 @@ Whitespace::Whitespace(size_t amt, const std::string_view chars) :
 }
 
 
-PossibleMatch Whitespace::Parse(const std::string_view data, const Parser&, const Progress&) const
+PossibleMatch Whitespace::Parse(const std::string_view data, const Progress&) const
 {
     if ((data.empty()) && (amount))
         return PossibleMatch();
@@ -57,30 +57,30 @@ PossibleMatch Whitespace::Parse(const std::string_view data, const Parser&, cons
         return PossibleMatch();
 }
 
-PossibleMatch Disjunction::Parse(const std::string_view data, const Parser& parser , const Progress& progress) const
+PossibleMatch Disjunction::Parse(const std::string_view data , const Progress& progress) const
 {
     for (const auto& e : expressions)
     {
-        auto m = e->Parse(data, parser, progress);
+        auto m = e->Parse(data, progress);
         if (m)
             return m;
     }
     return PossibleMatch();
 }
 
-PossibleMatch Sequence::Parse(const std::string_view data, const Parser& parser , const Progress& progress) const
+PossibleMatch Sequence::Parse(const std::string_view data , const Progress& progress) const
 {
     auto remaining = data;
     std::vector<std::any> tokens;
     Match::Rules lastRules;
     for (const auto& e : expressions)
     {
-        auto m = e->Parse(remaining, parser, progress);
+        auto m = e->Parse(remaining, progress);
         if (!m)
             return PossibleMatch();
         if (m->tokens.has_value())
         {
-            // flatten vectors of any 
+            // flatten vectors of any TODO use MergeFn
             if (m->tokens.type() == typeid(std::vector<std::any>))
             {
                 auto mergeVector = std::any_cast<std::vector<std::any>>(m->tokens);
@@ -104,7 +104,7 @@ PossibleMatch Sequence::Parse(const std::string_view data, const Parser& parser 
         return Match{ remaining, tokens, lastRules };
 }
 
-PossibleMatch Loop::Parse(const std::string_view data, const Parser& parser , const Progress& progress) const
+PossibleMatch Loop::Parse(const std::string_view data , const Progress& progress) const
 {
     auto remaining = data;
     std::any tokens;
@@ -112,7 +112,7 @@ PossibleMatch Loop::Parse(const std::string_view data, const Parser& parser , co
     int index = 0;
     while (!remaining.empty())
     {
-        auto m = expression->Parse(remaining, parser, progress);
+        auto m = expression->Parse(remaining, progress);
         if (!m)
             break;
         if (m->remaining == remaining)
@@ -121,7 +121,7 @@ PossibleMatch Loop::Parse(const std::string_view data, const Parser& parser , co
         auto len = m->remaining.data() - remaining.data();
         auto parsed = remaining.substr(0,len);
         std::string indexKey = std::string("[") + std::to_string(index++) + "]";
-        tokens = parser.Merge(tokens, parser.Parse(indexKey, m->tokens, parsed));
+        tokens = merge(tokens, m->tokens);
         remaining = m->remaining;
         if (!m->rules.empty())
             lastRules = m->rules;
@@ -131,18 +131,90 @@ PossibleMatch Loop::Parse(const std::string_view data, const Parser& parser , co
 
 Rule::Rule(const std::string_view n, const Expression& e) :
     name(n),
-    expression(e)
+    expression(e),
+    construct(PassToken)
 {
     Declare::Define(*this);
 }
 
-Recursive::Recursive(const std::string_view n, const Expression& e) :
+Rule::Rule(const std::string_view n, const Expression& e, ParseFn p) :
     Rule(n, e)
+{
+    parse = p;
+}
+
+Rule::Rule(const std::string_view n, const Expression& e, ConstructFn c) :
+    Rule(n, e)
+{
+    construct = c;
+}
+
+std::any Rule::Tokenize(std::any tokens, const std::string_view data) const
+{
+    // Rules are currently initialized to either parse the string data into a token 
+    //  or to construct the tokens returned by referenced sub rules into a higher level structure
+    //  it's not yet supported to do both yet, because what would be the use case? 
+
+
+    std::string inType, outType;
+    std::any result;
+    if (parse)
+    {
+        inType = data;
+        result = parse(data);
+    }
+    else 
+    {
+        // convert input type to string 
+        if (tokens.type() == typeid(Logic::Object))
+        {
+            const auto& obj = std::any_cast<Logic::Object>(tokens);
+            inType = obj->String();
+        }
+        else
+        {
+            inType = tokens.type().name();
+        }
+        if (construct)
+            result = construct(tokens);
+        else
+            result = tokens;
+    }
+    if (result.has_value())
+    {
+        outType = result.type().name();
+        if (result.type() == typeid(Logic::Object))
+        {
+            const auto& obj = std::any_cast<Logic::Object>(result);
+            outType = obj->String();
+        }
+    }
+    else
+    {
+        outType = "none";
+    }
+    return result;  // Tokenize {name}({data}) with { inType } as { outType }
+}
+
+std::any Rule::VoidParse(const std::string_view) 
+{ 
+    return std::any(); 
+}
+
+
+std::any Rule::PassToken(std::any tokens)
+{
+    return tokens;
+}
+
+
+Recursive::Recursive(const std::string_view n, const Expression& e, ConstructFn c) :
+    Rule(n, e, c)
 {
     recursive = true;
 }
 
-PossibleMatch Rule::Parse(const std::string_view data, const Parser& parser , const Progress& progress) const
+PossibleMatch Rule::Parse(const std::string_view data , const Progress& progress) const
 {
     Progress newProgress = progress;
     if (!recursive)
@@ -150,20 +222,20 @@ PossibleMatch Rule::Parse(const std::string_view data, const Parser& parser , co
         // infinite recursion protection
         auto previousProgress = progress.find(this);
         if (previousProgress != progress.end() && previousProgress->second == data.size())
-            return PossibleMatch();
+            return PossibleMatch();     // Recursion stop { name } @ { data} 
         newProgress[this] = data.size();
     }
-    auto m = expression->Parse(data, parser, newProgress);
+    auto m = expression->Parse(data, newProgress);
     if (!m)
-        return m;
+        return m;               // Failed to lex { data } as { name }
     else
     {
         auto len = m->remaining.data() - data.data();
         std::string_view parsed = data.substr(0, len);
-        auto newRules = m->rules;
+        auto newRules = m->rules;   // Lexed { parsed } as { name }
         newRules.push_back(this);
 
-        return Match{ m->remaining, parser.Parse(name, m->tokens, parsed), newRules };
+        return Match{ m->remaining, Tokenize(m->tokens, parsed), newRules };
     }
 }
 
@@ -188,22 +260,22 @@ const Rule& Declare::Get() const
 }
 
 
-PossibleMatch Declare::Parse(const std::string_view data, const Parser& parser , const Progress& progress) const
+PossibleMatch Declare::Parse(const std::string_view data , const Progress& progress) const
 {
     auto& rule = Get();
-    return rule.Parse(data, parser, progress);
+    return rule.Parse(data, progress);
 }
 
 
-PossibleMatch Ref::Parse(const std::string_view data, const Parser& parser , const Progress& progress) const
+PossibleMatch Ref::Parse(const std::string_view data, const Progress& progress) const
 {
-    return rule->Parse(data, parser, progress);
+    return rule->Parse(data, progress);
 }
 
-Match Parse(const Rule& root, const Parser& parser , const std::string_view data)
+Match Parse(const Rule& root, const std::string_view data)
 {
     Progress start;
-    auto possible = root.Parse(data, parser, start);
+    auto possible = root.Parse(data, start);
     if (!possible)
         throw SyntaxError(std::string("Couldn't match ") + std::string(root.name) +" at:" + std::string(data));
     else

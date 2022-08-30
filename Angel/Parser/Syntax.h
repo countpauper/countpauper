@@ -37,14 +37,14 @@ namespace Angel::Parser::BNF
     Declare collection("collection");
 
     // literals
-    Rule id( "id", RegularExpression{"[a-z_\\u0080-\\uDB7Fa][a-z0-9_\\u0080-\\uDB7Fa]*"} );
-    Rule integer( "integer", RegularExpression{"-*[0-9]+"} );
-    Rule boolean("boolean", Disjunction{ Literal{"true"},Literal{"false"} });
+    Rule id( "id", RegularExpression{"[a-z_\\u0080-\\uDB7Fa][a-z0-9_\\u0080-\\uDB7Fa]*"}, ParseId );
+    Rule integer( "integer", RegularExpression{"-*[0-9]+"}, ParseInteger );
+    Rule boolean("boolean", Disjunction{ Literal{"true"},Literal{"false"} }, ParseBoolean);
 
     // expressions
     Rule element( "element", Disjunction{ Ref(boolean), Ref(integer), Ref(id) } );
     Recursive naked_expression( "naked expression", Disjunction{ Ref(collection), Ref(predicate), Ref(element) } );
-    Rule braced_expression("braced expression", Sequence{ Literal("("), Whitespace(0), Ref(expression), Whitespace(0), Literal(")") });
+    Rule braced_expression("braced expression", Sequence{ Literal("("), Whitespace(0), Ref(expression), Whitespace(0), Literal(")") }, static_cast<Rule::ConstructFn>(ConstructBracedExpression));
     Recursive expression_("expression", Disjunction{ Ref(braced_expression), Ref(naked_expression) });
 
     // Collections
@@ -54,14 +54,14 @@ namespace Angel::Parser::BNF
     Rule comma_sequence_("comma sequence", Sequence{ Ref(expression), Whitespace(0), Literal(","), Whitespace(0), 
         Disjunction{ Ref(comma_sequence), Ref(expression)} });
     Rule braced_sequence("braced sequence", Sequence{ Literal("("), Whitespace(0), Ref(expression),
-        Loop { Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }}, Whitespace(0), Literal(")") });
+        Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }, Merge), Whitespace(0), Literal(")") }, static_cast<Rule::ConstructFn > (ConstructBracedSequence));
 
     Rule sequence("sequence", Disjunction{
         Ref(empty_sequence),
         Ref(braced_sequence),
-        Ref(comma_sequence) });
+        Ref(comma_sequence) }, static_cast<Rule::ConstructFn>(ConstructSequence));
 
-    Rule set_elements("set elements", Sequence{ Ref(expression), Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }) });
+    Rule set_elements("set elements", Sequence{ Ref(expression), Loop(Sequence{ Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }, Merge) });
     Rule set     {"set", Sequence{ Literal("{"), Whitespace(0), Ref{ set_elements }, Whitespace(0), Literal("}") } };
     Recursive collection_ { "collection", Disjunction{ Ref{set}, Ref{sequence}} };
 
@@ -69,10 +69,10 @@ namespace Angel::Parser::BNF
 
     // Knowledge rules
     Rule arguments{ "arguments", Disjunction{ Ref(empty_sequence), Ref(braced_sequence)} };
-    Rule predicate_{"predicate", Sequence{Ref(id),Ref(arguments)} };
+    Rule predicate_("predicate", Sequence{Ref(id),Ref(arguments)}, static_cast<Rule::ConstructFn>(ConstructPredicate));
     Rule clause{"clause", Ref{predicate} };  // TODO:  <consequent> ":" <antecedent>
-    Rule clauses{ "clauses", Sequence{ Ref(clause), Loop{ Sequence{ Whitespace(1), Ref(clause) } } } };
+    Rule clauses{ "clauses", Sequence{ Ref(clause), Loop( Sequence{ Whitespace(1), Ref(clause) }, Merge) } };
     Rule space{"namespace", Sequence{ Ref(id), Whitespace(0), Literal{":"}, Whitespace(0), Literal{"{"}, Whitespace(0),Ref(clauses), Whitespace(0),Literal{"}"}} };
 
-    Rule knowledge{"knowledge", Sequence{ Whitespace(0), Disjunction{Ref{space}, Ref{clauses}, Whitespace(0) } }};
+    Rule knowledge( "knowledge", Sequence{ Whitespace(0), Disjunction{Ref{space}, Ref{clauses}, Whitespace(0) } }, static_cast<Rule::ConstructFn>(ConstructKnowledge));
 }
