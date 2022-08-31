@@ -74,5 +74,5 @@ namespace Angel::Parser::BNF
     Rule clauses{ "clauses", Sequence{Merge, Ref(clause), Loop(Sequence{Merge, Whitespace(1), Ref(clause)}, Merge ) }};
     Rule space{ "namespace", Sequence{Merge, Ref(id), Whitespace(0), Literal{":"}, Whitespace(0), Literal{"{"}, Whitespace(0),Ref(clauses), Whitespace(0),Literal{"}"}} };
 
-    Rule knowledge( "knowledge", Sequence{Merge, Whitespace(0), Disjunction{Ref{space}, Ref{clauses}, Whitespace(0) } }, static_cast<Rule::ConstructFn>(ConstructKnowledge));
+    Rule knowledge( "knowledge", Sequence{Merge, Whitespace(0), Disjunction{Ref{space}, Ref{clauses}, Whitespace(0) }, Whitespace(0) }, static_cast<Rule::ConstructFn>(ConstructKnowledge));
 }

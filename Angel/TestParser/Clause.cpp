@@ -21,7 +21,7 @@ TEST(TestClause, Predicate)
 	EXPECT_FALSE(k.Knows(Logic::predicate("dog")));
 }
 
-/*  // reeanble with BNF
+
 TEST(TestClause, Condition)
 {
 	Logic::Knowledge k = Parse("cat() : ginny() ginny()");
@@ -32,6 +32,7 @@ TEST(TestClause, Condition)
 	EXPECT_TRUE(k.Knows(Logic::predicate("ginny")));
 }
 
+/*  // reeanble with BNF
 TEST(TestClause, Conditions)
 {
 	Logic::Knowledge k = Parse("cat() : fuzzy(), noisy()");

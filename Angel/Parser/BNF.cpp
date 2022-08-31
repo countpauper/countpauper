@@ -259,8 +259,10 @@ Match Parse(const Rule& root, const std::string_view data)
     Progress start;
     auto possible = root.Parse(data, start);
     if (!possible)
-        throw SyntaxError(std::string("Couldn't match ") + std::string(root.name) +" at:" + std::string(data));
-    else
+    {
+        std::string unparsed(data.data(), data.size());
+        throw SyntaxError(std::string("Couldn't match ") + std::string(root.name.data(), root.name.size()) + " at: '" + unparsed + "'");
+    }
         return *possible;
 }
 

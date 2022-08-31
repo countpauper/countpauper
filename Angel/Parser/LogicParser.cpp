@@ -3,6 +3,7 @@
 #include <optional>
 #include <map>
 #include <ctype.h>
+#include <algorithm>
 #include "Parser.h"
 #include "Parser/Syntax.h"
 #include "Parser/Parser.h"
@@ -281,6 +282,11 @@ Logic::Knowledge Parse(const std::string& text)
 {
 	Logic::Knowledge result;
     auto match = BNF::Parse(BNF::knowledge,  text.c_str());
+    if (!match.remaining.empty())
+    {
+        std::string trailing(match.remaining.data(), std::min(match.remaining.size(), 20U));
+        throw SyntaxError(std::string("Trailing data after clause at: '") + trailing + "'");
+    }
     return std::any_cast<Logic::Knowledge>(match.tokens);
 }
 
@@ -314,6 +320,7 @@ std::istream& operator>>(std::istream& s, Logic::Object& o)
         std::string_view parsedString = start.substr(0, start.length() - match.remaining.length());
         throw ParseException(std::string("No object parsed from '") + parsedString.data() + "'");
     }
+
     return s;
 }
 }
