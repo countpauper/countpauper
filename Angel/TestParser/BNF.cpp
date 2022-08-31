@@ -111,6 +111,8 @@ namespace Angel::Parser::BNF::Test
         EXPECT_EQ(Parse(Rule("literal regextra", RegularExpression("b")), "bc").remaining, "c");
         EXPECT_THROW(Parse(Rule("start regex", RegularExpression("b")), "cba"), SyntaxError);
         EXPECT_TRUE(Parse(Rule("regex range", RegularExpression("[a-z]+")), "thequickbrownfoxjumpsoverthelazydog").remaining.empty());
+        EXPECT_TRUE(Parse(Rule("regex unicode", RegularExpression("[\\u2C80-\\u2cFF]+")), "ⲁⲅⲅⲉⲗⲟⲩ").remaining.empty());
+        EXPECT_TRUE(Parse(Rule("regex unicode", RegularExpression("[Ⲁ-ⲱ]+")), "ⲁⲅⲅⲉⲗⲟⲩ").remaining.empty());
     }
 
     TEST_F(TestBNF, Disjunction)
