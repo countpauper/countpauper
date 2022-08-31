@@ -57,6 +57,15 @@ PossibleMatch Whitespace::Parse(const std::string_view data, const Progress&) co
         return PossibleMatch();
 }
 
+PossibleMatch Optional::Parse(const std::string_view data, const Progress& progress) const
+{
+    auto m = expression->Parse(data, progress);
+    if (!m)
+        return Match{ data, def() };
+    else
+        return m;
+}
+
 PossibleMatch Disjunction::Parse(const std::string_view data , const Progress& progress) const
 {
     for (const auto& e : expressions)
@@ -188,7 +197,6 @@ std::any Rule::PassToken(std::any tokens)
 {
     return tokens;
 }
-
 
 Recursive::Recursive(const std::string_view n, const Expression& e, ConstructFn c) :
     Rule(n, e, c)

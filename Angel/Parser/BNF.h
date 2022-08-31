@@ -90,6 +90,22 @@ namespace Angel::Parser::BNF
         std::string characters;
     };
 
+    struct Optional : Expression
+    {
+        using DefaultFn = std::function<std::any()>;
+        Optional(const Expression& e, DefaultFn d = VoidOption)
+            : expression(e)
+            , def(d)
+        {
+        }
+        static std::any VoidOption() { return std::any(); }
+        ExpressionRef expression;
+        DefaultFn def;
+        PossibleMatch Parse(const std::string_view data, const Progress& progress = Progress()) const override;
+        std::unique_ptr<Expression> Copy() const override { return std::make_unique<Optional>(*this); }
+
+    };
+
     struct Disjunction : Expression
     {
         Disjunction() = default;
@@ -174,7 +190,6 @@ namespace Angel::Parser::BNF
         const std::string_view rule;
         static std::map<const std::string_view, const Rule*> definitions;
     };
-
 
     struct Ref : Expression
     {

@@ -121,6 +121,15 @@ namespace Angel::Parser::BNF::Test
         EXPECT_THROW(Parse(Rule{ "no option", Disjunction{} }, "god"), SyntaxError);
     }
 
+    TEST_F(TestBNF, Optional)
+    {
+        EXPECT_TRUE(Parse(Rule("option", Optional(Literal("dog"))), "dog").remaining.empty());
+        EXPECT_EQ(Parse(Rule("non option", Optional(Literal("dog"))), "cat").remaining, "cat");
+        auto defFn = []() { return std::string("mouse"); };
+        EXPECT_EQ(Get(Parse(Rule("default option", Optional(Literal("dog"), defFn)), "cat")), "mouse");
+    }
+
+
     TEST_F(TestBNF, Sequence)
     {
         EXPECT_EQ(Parse(Rule{ "empty sequence", Sequence(Merge) }, "foo").remaining, "foo");
