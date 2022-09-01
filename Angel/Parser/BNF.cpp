@@ -3,6 +3,7 @@
 #include "Parser.h"
 #include "StringEncoding.h"
 #include <regex>
+#include <numeric>
 
 namespace Angel::Parser::BNF
 {
@@ -140,14 +141,42 @@ Rule::Rule(const std::string_view n, const Expression& e, ConstructFn c) :
     construct = c;
 }
 
+std::string DescribeType(const std::any& tokens)
+{
+    // convert input type to string 
+    if (!tokens.has_value())
+    {
+        return "none";
+    }
+    else if (tokens.type() == typeid(Logic::Object))
+    {
+        const auto& obj = std::any_cast<Logic::Object>(tokens);
+        return obj->String();
+    }
+    else if (tokens.type() == typeid(std::vector<std::any>))
+    {
+        std::string allResults;
+        auto v = std::any_cast<std::vector<std::any>>(tokens);
+        return std::accumulate(v.begin(), v.end(), std::string(), [](const std::string& current, const std::any& subToken)
+        {
+            if (current.empty())
+                return DescribeType(subToken);
+            else
+                return current + ", " + DescribeType(subToken);
+        });
+    }
+    else
+    {
+        return tokens.type().name();
+    }
+}
 std::any Rule::Tokenize(std::any tokens, const std::string_view data) const
 {
     // Rules are currently initialized to either parse the string data into a token 
     //  or to construct the tokens returned by referenced sub rules into a higher level structure
     //  it's not yet supported to do both yet, because what would be the use case? 
 
-
-    std::string inType, outType;
+    std::string inType = DescribeType(tokens);
     std::any result;
     if (parse)
     {
@@ -156,34 +185,12 @@ std::any Rule::Tokenize(std::any tokens, const std::string_view data) const
     }
     else 
     {
-        // convert input type to string 
-        if (tokens.type() == typeid(Logic::Object))
-        {
-            const auto& obj = std::any_cast<Logic::Object>(tokens);
-            inType = obj->String();
-        }
-        else
-        {
-            inType = tokens.type().name();
-        }
         if (construct)
             result = construct(tokens);
         else
             result = tokens;
     }
-    if (result.has_value())
-    {
-        outType = result.type().name();
-        if (result.type() == typeid(Logic::Object))
-        {
-            const auto& obj = std::any_cast<Logic::Object>(result);
-            outType = obj->String();
-        }
-    }
-    else
-    {
-        outType = "none";
-    }
+    std::string outType = DescribeType(result);
     return result;  // Tokenize {name}({data}) with { inType } as { outType }
 }
 

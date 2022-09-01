@@ -70,7 +70,7 @@ namespace Angel::Parser::BNF
     // Knowledge rules
     Rule arguments{ "arguments", Disjunction{ Ref(empty_sequence), Ref(braced_sequence)} };
     Rule predicate_("predicate", Sequence{Merge, Ref(id),Ref(arguments)}, static_cast<Rule::ConstructFn>(ConstructPredicate));
-    Rule clause{"clause", Ref{predicate} };  // TODO:  <consequent> ":" <antecedent>
+    Rule clause{ "clause", Sequence{ Merge, Ref{predicate}, Optional{ Sequence{ Merge, Whitespace(0), Literal(":"), Whitespace(0), Ref(expression)} } }, static_cast<Rule::ConstructFn>(ConstructClause) };
     Rule clauses{ "clauses", Sequence{Merge, Ref(clause), Loop(Sequence{Merge, Whitespace(1), Ref(clause)}, Merge ) }};
     Rule space{ "namespace", Sequence{Merge, Ref(id), Whitespace(0), Literal{":"}, Whitespace(0), Literal{"{"}, Whitespace(0),Ref(clauses), Whitespace(0),Literal{"}"}} };
 
