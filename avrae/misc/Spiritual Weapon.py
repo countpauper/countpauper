@@ -106,7 +106,7 @@ if '*' in target_pos:
 	target_pos=target_pos.replace('*','')
 
 # convert the text locations to the x,y,z coordinates
-origin_height
+origin_height=0
 origin_coord = dict(x=x_axis.get(''.join(c for c in origin_pos if c.isalpha())),
 		  y=int(''.join(c for c in origin_pos if c.isdigit())),
 		  z=origin_height//ft_per_grid) if origin_pos else None

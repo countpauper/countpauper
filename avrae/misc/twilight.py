@@ -64,7 +64,7 @@ if target_args:=args.get('t'):
 	targets=[t for t in target_args.keys() if t]
 elif c.me:
 	targets=[c.me]
-elif c.current:
+elif c.current and c.current.type!='group':
 	targets=[c.current]
 else:
 	return f'echo No active combatant or specified target. Use `{ctx.prefix}{ctx.alias} -t <target>`'

@@ -2,35 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Boolean.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Boolean.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Boolean.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Boolean.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Clause.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Clause.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Clause.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Clause.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/challenge.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/colors.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/levelHd.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Disjunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Disjunction.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Expression.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Expression.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Id.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Id.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Id.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Id.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Integer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Integer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Integer.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Integer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Predicate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Predicate.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Predicate.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Predicate.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Sequence.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Sequence.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Namespace.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Namespace.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Operator.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Operator.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Sequence.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Sequence.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Set.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Set.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Set.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Set.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Parser/BNF.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/BNF.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Parser/BNF.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/BNF.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Parser.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Parser.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Parser/LogicParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/LogicParser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/Parser/LogicParser.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/LogicParser.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Parser/Syntax.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Syntax.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/TestParser/BNF.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/BNF.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/TestParser/Sequence.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/Sequence.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Angel/TestParser/Clause.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/Clause.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/price.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/price.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/twilight.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/twilight.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/unit.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/unit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/unit.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/misc/unit.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/works.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/works.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/hud.json" beforeDir="false" afterPath="$PROJECT_DIR$/state/hud.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -230,57 +225,18 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1899" height="312" key="GridCell.Tab.0.bottom" timestamp="1655899999401">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1899" height="312" key="GridCell.Tab.0.bottom/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1655809220174" />
-    <state width="1899" height="312" key="GridCell.Tab.0.bottom/1920.133.1920.1040/0.0.1920.1160/-1920.15.1920.1160@0.0.1920.1160" timestamp="1655899999401" />
-    <state width="1899" height="312" key="GridCell.Tab.0.center" timestamp="1655899999401">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1899" height="312" key="GridCell.Tab.0.center/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1655809220174" />
-    <state width="1899" height="312" key="GridCell.Tab.0.center/1920.133.1920.1040/0.0.1920.1160/-1920.15.1920.1160@0.0.1920.1160" timestamp="1655899999401" />
-    <state width="1899" height="312" key="GridCell.Tab.0.left" timestamp="1655899999401">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1899" height="312" key="GridCell.Tab.0.left/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1655809220174" />
-    <state width="1899" height="312" key="GridCell.Tab.0.left/1920.133.1920.1040/0.0.1920.1160/-1920.15.1920.1160@0.0.1920.1160" timestamp="1655899999401" />
-    <state width="1899" height="312" key="GridCell.Tab.0.right" timestamp="1655899999401">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1899" height="312" key="GridCell.Tab.0.right/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1655809220174" />
-    <state width="1899" height="312" key="GridCell.Tab.0.right/1920.133.1920.1040/0.0.1920.1160/-1920.15.1920.1160@0.0.1920.1160" timestamp="1655899999401" />
-    <state width="1899" height="312" key="GridCell.Tab.1.bottom" timestamp="1655899999401">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1899" height="312" key="GridCell.Tab.1.bottom/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1655809220174" />
-    <state width="1899" height="312" key="GridCell.Tab.1.bottom/1920.133.1920.1040/0.0.1920.1160/-1920.15.1920.1160@0.0.1920.1160" timestamp="1655899999401" />
-    <state width="1899" height="312" key="GridCell.Tab.1.center" timestamp="1655899999401">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1899" height="312" key="GridCell.Tab.1.center/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1655809220174" />
-    <state width="1899" height="312" key="GridCell.Tab.1.center/1920.133.1920.1040/0.0.1920.1160/-1920.15.1920.1160@0.0.1920.1160" timestamp="1655899999401" />
-    <state width="1899" height="312" key="GridCell.Tab.1.left" timestamp="1655899999401">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1899" height="312" key="GridCell.Tab.1.left/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1655809220174" />
-    <state width="1899" height="312" key="GridCell.Tab.1.left/1920.133.1920.1040/0.0.1920.1160/-1920.15.1920.1160@0.0.1920.1160" timestamp="1655899999401" />
-    <state width="1899" height="312" key="GridCell.Tab.1.right" timestamp="1655899999401">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1899" height="312" key="GridCell.Tab.1.right/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1655809220174" />
-    <state width="1899" height="312" key="GridCell.Tab.1.right/1920.133.1920.1040/0.0.1920.1160/-1920.15.1920.1160@0.0.1920.1160" timestamp="1655899999401" />
-    <state x="667" y="168" width="586" height="705" key="find.popup" timestamp="1659526870197">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="897" y="226" width="782" height="950" key="find.popup" timestamp="1665148365699">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="667" y="187" width="586" height="787" key="find.popup/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1659450097709" />
-    <state x="667" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1659526870197" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1656855824779">
+    <state x="673" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1663739406134" />
+    <state x="897" y="226" width="782" height="950" key="find.popup/0.0.2560.1400/2560.0.2560.1400@0.0.2560.1400" timestamp="1665148365699" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1665078568485">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1655812039091" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1656855824779" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/0.0.1920.1160@0.0.1920.1160" timestamp="1652877838631" />
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1663941102266" />
+    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1663053256583" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1665078568485" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -349,11 +305,6 @@
           <url>file://$PROJECT_DIR$/misc/Spiritual Weapon.py</url>
           <line>72</line>
           <option name="timeStamp" value="65" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/inventory/price.py</url>
-          <line>26</line>
-          <option name="timeStamp" value="66" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -294,7 +294,7 @@ expression='+'.join([expression]+args.get('b')+[e.effect.get(effect_prefix,'0') 
 expression=expression.replace(' ','')
 expression=expression.replace('+-','-').replace('-','+-')
 
-########  Create the propabaility mass function for the experession
+########  Create the propability mass function for the experession
 expression_terms=expression.split('+')
 terms=[]
 crit=None

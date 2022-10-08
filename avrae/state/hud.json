@@ -74,7 +74,7 @@
         "poisoned": ":snake:",
         "prone": ":upside_down:",
         "restrained": ":chains:",
-        "stunned": "dizzy_face",
+        "stunned": ":dizzy_face:",
         "unconscious": ":sleeping:",
         "sleeping": ":sleeping:"
     }

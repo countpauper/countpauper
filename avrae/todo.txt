@@ -1,5 +1,22 @@
 * Avrae 4.0 fixes
+- SOON !play bet, remove from coin pouch instead of bag.\
+-   AND add a footer/help on how to bet and collect real money.
+-  bettering single letter custom things (g s p c e) instead of pieces should use the coins.
+-  other single letters and typo protection for custom garbage (anything <=2 chars)
+- !play baldur's bonus https://infernalmachines.obsidianportal.com/wikis/baldurs-bones
+
 - `!ic` roleplay xp, not compatibile with "new" !xp. No one is using it so can be removed or upgraded.
+- !state gp and coins are also not coinpurse compatible
+
+- !works add it to the workshop
+    * write more elaborate help there
+    * remove the built in mini help unless like no argument is given
+    * automatic coins added
+    * add the tool checks now there's room
+    * rewrite it to be readable
+    * add a -with <stat> option
+    - move tools and stats to gvar
+
 - Rewrite !qb with functions
 - Rewrite !chance with functions
 * !qb count $ doesn't show thing
@@ -8,7 +25,7 @@
 * Big bags go over field limit with `!qb` and `!bag open all` split them
 - !qb count use !price database instead to avoid 0x 0x 0x  hempen ropes, add weigh and plural in there too
 * !wand alias has deprecation warning with cc or at least ariel's wand does
-* add_effect `args` is removed use passive effects dict https://avrae.readthedocs.io/en/latest/aliasing/api.html#aliasing.api.combat.SimpleCombatant.add_effect
+    * add_effect `args` is removed use passive effects dict https://avrae.readthedocs.io/en/latest/aliasing/api.html#aliasing.api.combat.SimpleCombatant.add_effect
     * bladesong
     * twilight
     * gem_flight
