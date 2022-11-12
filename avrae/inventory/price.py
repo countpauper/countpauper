@@ -34,7 +34,9 @@ def format_url(item):
 	for extension in ['+1','+2','+3']:
 		base_name = base_name.replace(extension, '')
 	direct_replace=dict()
-	direct_replace.update({f"{type} +{bonus}":f"{type}-{bonus}" for type in ["armor","ammunition", "shield","weapon"] for bonus in [1,2,3]})
+	enchanted_items = ["armor","ammunition", "shield","weapon"]
+	enchanted_items+= ["mithral half plate", "boomerang", "vicious rapier", "yklwa"]
+	direct_replace.update({f"{type} +{bonus}":f"{type}-{bonus}" for type in enchanted_items for bonus in [1,2,3]})
 	url_name = base_name.lower()
 	url_name= direct_replace.get(remove_enclosed(item.lower()), url_name)
 	url_name=remove_enclosed(url_name).strip()

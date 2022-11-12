@@ -1,7 +1,7 @@
 Spell Scroll (Level 0): 10
 Ammunition +1(each): 25
 Potion of Healing: 50
-Quaal's Feather Token Anchor: 50
+(Quaal's) Feather Token Anchor: 50
 Spell Scroll (Level 1): 60
 Philter of Love: 90
 Ammunition +2(each): 100
@@ -21,8 +21,8 @@ Scroll of Protection: 180
 Nolzur's Marvelous Pigments: 200
 Potion of Animal Friendship: 200
 Spell Scroll (Level 3): 200
-Quaal's Feather Token Fan: 250
-Quaal's Feather Token Whip: 250
+(Quaal's) Feather Token Fan: 250
+(Quaal's) Feather Token Whip: 250
 Potion of Diminution: 270
 Potion of Growth: 270
 Dust of Disappearance: 300
@@ -54,8 +54,8 @@ Necklace of Fireballs(Four beads): 1600
 Oil of Etherealness: 1920
 Ioun Stone Absorption: 2400
 Spell Scroll (Level 7): 2560
-Quaal's Feather Token Bird: 3000
-Quaal's Feather Token Swan Boat: 3000
+(Quaal's) Feather Token Bird: 3000
+(Quaal's) Feather Token Swan Boat: 3000
 Oil of Sharpness: 3200
 Necklace of Fireballs(Five beads): 3840
 Potion of Invulnerability: 3840
@@ -253,14 +253,14 @@ Amulet of Proof Against Detection and Location: 20000
 Robe of Eyes: 30000
 Gem of Seeing: 32000
 Plate Armor of Etherealness: 48000
-Ivory Goat(Travail): 400
-Golden Lion(each): 600
-Ivory Goat(Traveling): 1000
+Figurine of Wondrous Power Ivory Goats(Travail): 400
+Figurine of Wondrous Power Golden Lions(each): 600
+Figurine of Wondrous Power Ivory Goats(Traveling): 1000
 Staff of the Python: 2000
-Onyx Dog: 3000
-Silver Raven: 5000
+Figurine of Wondrous Power Onyx Dog: 3000
+Figurine of Wondrous Power Silver Raven: 5000
 Silver Horn of Valhalla: 5600
-Marble Elephant: 6000
+Figurine of Wondrous Power Marble Elephant: 6000
 Bowl of Commanding Water Elementals: 8000
 Brazier of Commanding Fire Elementals: 8000
 Censer of Controlling Air Elementals: 8000
@@ -268,7 +268,7 @@ Stone of Controlling Earth Elementals: 8000
 Brass Horn of Valhalla: 8400
 Bronze Horn of Valhalla: 11200
 Iron Horn of Valhalla: 14000
-Ivory Goat(Terror): 20000
+Figurine of Wondrous Power Ivory Goats(Terror): 20000
 Armor +1: 1500
 Shield +1: 1500
 Sending Stones: 2000
@@ -276,10 +276,10 @@ Wings of Flying: 5000
 Alchemy Jug: 6000
 Armor +2: 6000
 Shield +2: 6000
-Ebony Fly: 6000
-Bronze Griffon: 8000
+Figurine of Wondrous Power Ebony Fly: 6000
+Figurine of Wondrous Power Bronze Griffon: 8000
 Broom of Flying: 8000
-Serpentine Owl: 8000
+Figurine of Wondrous Power Serpentine Owl: 8000
 Winged Boots: 8000
 Dwarven Plate: 9000
 Potion of Longevity: 9000
@@ -302,6 +302,6 @@ Ring of Telekinesis: 80000
 Cloak of Invisibility: 80000
 Rod of Security: 90000
 Staff of Power: 95500
-Obsidian Steed: 128000
+Figurine of Wondrous Power Obsidian Steed: 128000
 Decanter of Endless Water: 135000
 Amulet of the Planes: 160000

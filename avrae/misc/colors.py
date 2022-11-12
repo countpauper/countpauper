@@ -1,9 +1,9 @@
 <drac2>
-# syntax [auto] [-<color> A[,B]]... [-clear A[,B]]... [-nr <overlay>]
 C=combat()
+if not C:
+	return f'echo Colors can only be set in combat.'
 
-# TODO:
-# - buffed = any effect with positive bonuses, debuffed negative (low prio)
+
 colors=dict(
 	clear=dict(tag=None, icon=':no_entry_sign:'),
 	black=dict(tag='bk',icon=':black_circle:'),
@@ -19,20 +19,23 @@ colors=dict(
 
 ring_prefix=dict(T='c2',S='c3', M='c3', L='co6', H='c8', G='co11')
 
-var_name='condition_colors'
+var_name='combat_colors'
 conditions=load_yaml(get_svar(var_name,get(var_name,dict(
 	dying= 'black', dead= 'black', petrified= 'black',
-	prone= 'purple', unconscious= 'purple', blinded= 'purple', restrained= 'purple', paralyzed= 'purple', stunned= 'purple',
+	prone= 'purple', unconscious= 'purple', blinded= 'purple', restrained= 'purple', paralyzed= 'purple', stunned= 'purple', dodge='purple',
+	sanctuary='red',
 	charmed= 'yellow', frightened= 'yellow',
 	grappled= 'blue', incapacitated= 'blue',
 	poisoned= 'green',
 	invisible= 'white',
-	concentrating= 'orange', ready= 'orange',
-	buffed= 'red',
-	debuffed= 'brown'
+	concentrating= 'orange', ready= 'orange'
 ))))
+if typeof(conditions)!='SafeDict':
+	return f'echo Invalid condition configuration ```{dump_yaml(conditions)}```'
 
 def ParseMapNotes(notes):
+	if not notes:
+		return dict()
 	parsed=dict()
 	for note in notes.split('|'):
 		key,val = note.strip().split(':')
@@ -48,7 +51,7 @@ def IsMonster(creature):
 def IsPositive(value):
 	if typeof(value)=='str':
 		value=roll(value)
-	if typeof(value)=='list':
+	if typeof(value)=='SafeList':
 		value=len(value)
 	if typeof(value)=='bool':
 		return value
@@ -96,21 +99,49 @@ def CombatantEffects(combatant):
 
 def CollectTargets(args):
 	if True in args or 'True' in args or 'all' in args:
-		return [c for c in combat().combatants if c.type=='combatant']
+		return [c for c in combat().combatants if c.type=='combatant' and c.note and 'Location' in c.note]
 	else:
-		return [combat().get_combatant(n.strip()) for arg in args for n in arg.split(',')]
+		split_args=[n.strip() for arg in args for n in arg.split(',')]
+		combatants = [combat().get_combatant(n) or combat().get_group(n) for n in split_args]
+		result=[]
+		for c in combatants:
+			if not c:
+				continue
+			if c.type=='group':
+				result+=c.combatants
+			elif c.type=='combatant':
+				result.append(c)
+		return result
+
+def ParseTime(time_str):
+	for postfix, mul in dict(s=1, sec=1, m=60, min=60, h=3600, hr=3600, hour=3600).items():
+		if time_str.endswith(postfix):
+			return int(time_str[:-len(postfix)])*mul
+	return int(time_str)
 
 # parse arguments
 args=&ARGS&
 nl = '\n'
 if not args:
+	effects=set()
+	for c in C.combatants:
+		effects.update(CombatantEffects(c)[:1])
+	used_colors=dict()
+	for condition, color_name in conditions.items():
+		if condition in effects:
+			used_colors[color_name]=used_colors.get(color_name,[])+[condition]
+	legend=[f'{colors[color_name].icon} - {", ".join(conditions)}' for color_name, conditions in used_colors.items()]
 	# TODO report only active conditions and the combatants afflicted
-	legend=[f'{color.icon} - {", ".join(condition_name for condition_name, condition_color in conditions.items() if condition_color==color_name)}' for color_name,color in colors.items()]
+	#legend=[f'{color.icon} - {", ".join(condition_name for condition_name, condition_color in conditions.items() if condition_color==color_name)}' for color_name,color in colors.items()]
 	return f'''embed -title "color legend" -desc "{nl.join(legend)}" '''
-
 else:
 	desc=[]
 	pargs = argparse(args)
+	if timer:=pargs.last('t'):
+		timer=ParseTime(timer)
+		timer_arg=f'-t {timer}'
+	else:
+		timer_arg=''
 	overlay_nr = pargs.last('nr',8,type_=int)
 	applied=dict()
 
@@ -147,6 +178,7 @@ else:
 		elif overlay in notes:
 			notes.pop(overlay)
 		c.set_note(SerializeMapNotes(notes))
-
-	return f'''embed -title "Colors applied" -desc "{nl.join(desc)}" '''
+	if not desc:
+		desc=['None']
+	return f'''embed -title "Colors applied" -desc "{nl.join(desc)}" {timer_arg}'''
 </drac2>
