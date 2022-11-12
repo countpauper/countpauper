@@ -66,9 +66,9 @@ if amount>1:
 
 effort = recipe.get('effort',1)
 if effort>0:
-	downtime = get_cc(ccn)
+	downtime = char.get_cc(ccn)
 	if not downtime:
-		return f'-title "{name} doesn\'t have time to craft {item_d}." -desc "You have no more downtime left. Go do something useful." -f Downtime|"{cc_str(ccn)}"|inline'
+		return f'-title "{name} doesn\'t have time to craft {item_d}." -desc "You have no more downtime left. Go do something useful." -f Downtime|"{char.cc_str(ccn)}"|inline'
 
 override = args.last('with')
 override = override.lower().split('&') if override else []
@@ -144,8 +144,16 @@ else:
 			if coins_needed:
 				total_needed += [f'{coins_needed} {inv_rates[coin_value]}']
 				cost_remaining -= coins_needed * coin_value
+
+		total_taken = []
+		purse = char.coinpurse
+		if purse.total>=cost:
+			gp=int(cost)
+			cp=int((cost-gp)*rates.cp)
+			purse_delta = purse.modify_coins(gp=gp,cp=cp)
+			total_taken=[f'{amt} {coin}' for coin,amt in purse_delta.items()]
+			cost = 0
 		if bag:
-			total_taken=[]
 			spare_coins = []
 			for coin_value in rev_coin_values:
 				coin_name=inv_rates[coin_value]
@@ -178,7 +186,7 @@ else:
 			if cost>0:
 				if not total_taken:
 					total_taken=['nothing']
-				return f'-title "{name} can\'t afford the ingredients for {item_d}." -desc "You need {" ".join(total_needed)}, but have {" ".join(total_taken)} in your bags." '
+				return f'-title "{name} can\'t afford the ingredients for {item_d}." -desc "You need {" ".join(total_needed)}, but have {purse.compact_str()} in your coin purse and {" ".join(total_taken)} in your bags." '
 			else:
 				fields+=f'-f Cost|"{" ".join(total_taken)}"|inline '
 				bag_update=True
@@ -355,9 +363,9 @@ if img_url:=recipe.get('img'):
 char.set_cvar(cvn, dump_json(project))
 if effort>0:
 	char.mod_cc(ccn, -1, True)
-	fields += f'-f Downtime|"{cc_str(ccn)}"|inline '
+	fields += f'-f Downtime|"{char.cc_str(ccn)}"|inline '
 if bag_update:	# update bag at end to avoid item loss
-	set_cvar(bag_var, dump_json(bag))
+	char.set_cvar(bag_var, dump_json(bag))
 
 return f'-title "{title}" -desc "{desc}" ' + fields
 </drac2>

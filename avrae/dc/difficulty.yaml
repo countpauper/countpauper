@@ -230,12 +230,15 @@ search:
     dark: no
 tracking: # DMG 244
   skill: survival
-  ground:
+  ground:  # DMG Exploration - Tracking DCs
     snow: 10
     soft: 10
     dirt: 15
     grass: 15
     stone: 20
+  trail:
+    no: 0
+    yes: -5
   time: # DMG 244 with interpolation
     1hr: 0
     8hr: +2
@@ -284,5 +287,3 @@ social: # DMG 245 with some inter and extrapolation
     indifferent: +10
     defiant: +15
     hostile: +20
-
-

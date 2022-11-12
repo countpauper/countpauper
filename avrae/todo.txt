@@ -3,11 +3,11 @@
 -   AND add a footer/help on how to bet and collect real money.
 -  bettering single letter custom things (g s p c e) instead of pieces should use the coins.
 -  other single letters and typo protection for custom garbage (anything <=2 chars)
-- !play baldur's bonus https://infernalmachines.obsidianportal.com/wikis/baldurs-bones
+- !play baldur's bones https://infernalmachines.obsidianportal.com/wikis/baldurs-bones
 
 - `!ic` roleplay xp, not compatibile with "new" !xp. No one is using it so can be removed or upgraded.
 - !state gp and coins are also not coinpurse compatible
-
+Outlands
 - !works add it to the workshop
     * write more elaborate help there
     * remove the built in mini help unless like no argument is given
@@ -16,6 +16,7 @@
     * rewrite it to be readable
     * add a -with <stat> option
     - move tools and stats to gvar
+!piety split it
 
 - Rewrite !qb with functions
 - Rewrite !chance with functions

@@ -2,9 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/.ipynb_checkpoints/Damp spring-checkpoint.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/.ipynb_checkpoints/l0lweather-checkpoint.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/.ipynb_checkpoints/sin cos taylor-checkpoint.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/.ipynb_checkpoints/taylor tan-checkpoint.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/Damp spring.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/l0lweather.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/sin cos taylor.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/taylor tan.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Math/Solvers/poly.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/misc/challenge.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/colors.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/levelHd.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/outlands/planeshift.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" afterDir="false" />
@@ -18,13 +26,13 @@
       <change beforePath="$PROJECT_DIR$/../Angel/TestParser/Clause.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/Clause.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/Spiritual Weapon.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/Spiritual Weapon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/twilight.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/twilight.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/unit.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/unit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/unit.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/misc/unit.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/works.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/works.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state/hud.json" beforeDir="false" afterPath="$PROJECT_DIR$/state/hud.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dc/difficulty.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/dc/difficulty.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/downtime/craft.py" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/craft.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/custom item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/price.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/price.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/sane item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/sane item prices.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/colors.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/colors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outlands/piety.py" beforeDir="false" afterPath="$PROJECT_DIR$/outlands/piety.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -225,18 +233,23 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="897" y="226" width="782" height="950" key="find.popup" timestamp="1665148365699">
-      <screen x="0" y="0" width="2560" height="1400" />
+    <state x="719" y="331" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1665775850480">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state x="719" y="331" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1665775850480" />
+    <state x="673" y="187" width="587" height="788" key="find.popup" timestamp="1667311726734">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="673" y="187" width="587" height="788" key="find.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1667311726734" />
     <state x="667" y="187" width="586" height="787" key="find.popup/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1659450097709" />
     <state x="673" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1663739406134" />
     <state x="897" y="226" width="782" height="950" key="find.popup/0.0.2560.1400/2560.0.2560.1400@0.0.2560.1400" timestamp="1665148365699" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1665078568485">
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1665250672714">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1663941102266" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1663053256583" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1665078568485" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1665250672714" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
