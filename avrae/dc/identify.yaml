@@ -118,7 +118,7 @@ identify:
       uncommon: 15
       rare: 20
       very rare: 25
-      legendary: 15 
+      legendary: 15
     method:
       visual: 5
       touch: 0
@@ -126,8 +126,8 @@ identify:
       use: -5
     information:
       magical: yes
-      lore: 0
-      use: 5
-      limitations: 8
-      cursed: 10
-      charges: 12
+      lore: -5
+      use: 0
+      limitations: 3
+      cursed: 5
+      charges: 7

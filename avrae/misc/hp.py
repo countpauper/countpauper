@@ -22,19 +22,19 @@ else:
 	else:
 		target = character()
 		first = args.pop(0)
-		if first.strip('+-').isdigit():
-			delta=int(first)
+		if all(a in "0123456789d+-*/() " for a in first):
+			delta=first
 		elif name.lower().startswith(first.lower()):
 			if args:
-				delta=int(args[0])
+				delta=args[0]
 			else:
 				return 'g hp'
 		else:
 			return f'echo You can not {"change" if args else "inspect"} the hitpoints of {first} outside of initiatve.'
-		if delta>0:
-			return f'g hp +{delta}'
-		else:
+		if delta[0] in '+-':
 			return f'g hp {delta}'
+		else:
+			return f'g hp +{delta}'
 
 if not target:
 	return f'echo Target not found.'

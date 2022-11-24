@@ -18,6 +18,7 @@ Outlands
     - move tools and stats to gvar
 !piety split it
 
+* !hp hallowed 6d6
 - Rewrite !qb with functions
 - Rewrite !chance with functions
 * !qb count $ doesn't show thing
