@@ -3,6 +3,7 @@
 uvar='Play_er'
 player_state=load_json(get(uvar,'{}'))
 coins=None
+purse = None
 default_image='none'
 if player:=player_state.get('player'):
 	state=player_state.setdefault(player,{})
@@ -28,6 +29,7 @@ else:
 	if (bags:=get('bags')) is not None:
 		bags = load_json(bags)
 		coins = ([b[1] for b in bags if b[0].lower().startswith('coin')] + [None])[0]
+	purse=character().coinpurse
 
 game_name='bet'
 bet=state.setdefault(game_name,{})
@@ -69,13 +71,19 @@ if player_state and not coins:
 desc=f':coin: {", ".join(f"{q} {c}" for c,q in bet.items()) if bet else "Nothing"}'
 desc+=f'\n:heavy_plus_sign: {", ".join(f"{q} {c}" for c,q in winnings.items())}' if winnings else ''
 
+
 # update and persist !coins
+collect=bet
+collect.update({k:collect.get(k,0)+winnings.get(k,0) for k in winnings.keys()})
 if coins:
 	for c,q in coins.items():
-		coins[c]=q + winnings.get(c,0) + bet.get(c,0)
+		coins[c]=q + collect.get(c,0)
 	desc+=f'\n:moneybag: {", ".join(f"{q} {c}" for c,q in coins.items() if q!=0)}'
 	if bags:
 		character().set_cvar('bags',dump_json(bags))
+elif purse:
+	purse.modify_coins(pp=collect.get('pp',0), gp=collect.get('gp',0), ep=collect.get('ep',0), sp=collect.get('sp',0), cp=collect.get('cp',0) )
+	desc+='\n:moneybag: '+purse.compact_str()
 
 # persist bet
 state.pop(game_name)

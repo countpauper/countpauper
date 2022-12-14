@@ -7,6 +7,7 @@ default_image='none'
 if player:=player_state.get('player'):
 	state=player_state.setdefault(player,{})
 	bags=None
+	purse=None
 	coins=state.get('coins',coins)
 	their = 'their'
 	# load npc rosters if any
@@ -27,6 +28,8 @@ else:
 	if (bags:=get('bags')) is not None:
 		bags = load_json(bags)
 		coins = ([b[1] for b in bags if b[0].lower().startswith('coin')] + [None])[0]
+	if not coins:
+		purse=character().coinpurse
 	their=get("their","their")
 
 game_name='bet'
@@ -59,6 +62,9 @@ if amount is not None:
 		auto_coin = list(bet.keys())[-1]
 	elif coins:
 		auto_coin = ([c.lower() for c, v in coins.items() if v == max(coins.values())]+[chips])[0]
+	elif purse:
+		coin_values={c:purse.get_coins().get(c,0) for c in ['cp','sp','ep','gp','pp']}
+		auto_coin = ([c for c,v in coin_values.items() if v==max(coin_values.values())]+[chips])[0]
 	else:
 		auto_coin=chips
 	new_bet[auto_coin]=new_bet.get(auto_coin, 0)+amount
@@ -77,6 +83,8 @@ if new_bet:
 				coins[c]=have-q
 		if bags:
 			character().set_cvar('bags',dump_json(bags))
+	elif purse:
+		purse.modify_coins(pp=-new_bet.get('pp',0), gp=-new_bet.get('gp',0), ep=-new_bet.get('ep',0), sp=-new_bet.get('sp',0), cp=-new_bet.get('cp',0) )
 
 	# persist
 	if bet:

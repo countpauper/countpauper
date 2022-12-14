@@ -21,7 +21,7 @@ for x in range(len(M)):
 		dy-=M[x]
 		mth+=1
 mth=mth-1
-hldy=[i.name.replace("'","ʼ")for i in g.months[mth].holidays if i.day==dy]if g.months[mth].holidays else[]
+hldy=[i.name.replace("'","ʼ")for i in g.months[mth].holidays if int(i.day)==dy]if g.months[mth].holidays else[]
 mn=(' | 'if sum([1 for i in[""]+range(20)if f"moon{i}"in g])<4 else n).join([f"""{f'''**{g.get(f'moonName{i}')}** '''if g.get(f'moonName{i}')else''}{g.get(f'moon{i}')[int(str(round((D-1)/(g.get(f'moonCycle{i}')),0))[:-2])%len(g.get(f'moon{i}'))]}"""for i in[""]+range(20)if f"moonCycle{i}"in g])
 z=int(str(dy)[-1:])
 sfx='th'if 14>int(dy)>10 else'st'if z==1 else'nd'if z==2 else'rd'if z==3 else'th'

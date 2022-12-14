@@ -1,56 +1,54 @@
-!alias hp <drac2>
+<drac2>
 args=&ARGS&
-if '?' in args or 'help' in args:
-	return f'echo `{ctx.prefix}{ctx.alias} [<target>=you] [[-]<hp modification> [<reason with spaces, no quotes needed>]]`'
+def is_dice(s):
+	return all(a in "0123456789d+-*/() " for a in s)
 
-if c:=combat():
-	if not args:
-		if t:=c.current:
-			return f'i hp {t.name}'
-		elif c.me:
-			return f'i hp {c.me.name}'
-		else:
-			return f'echo No target found.'
-	elif len(args)==1:
-		return f'i hp {args[0]}'
-	else:
-		target=c.get_combatant(args.pop(0))
+# parse arguments
+delta=None
+target = None
+if args:
+	if is_dice(args[0]):
 		delta=args.pop(0)
-else:
-	if not args:
-		return 'g hp'
 	else:
-		target = character()
-		first = args.pop(0)
-		if all(a in "0123456789d+-*/() " for a in first):
-			delta=first
-		elif name.lower().startswith(first.lower()):
-			if args:
-				delta=args[0]
-			else:
-				return 'g hp'
-		else:
-			return f'echo You can not {"change" if args else "inspect"} the hitpoints of {first} outside of initiatve.'
-		if delta[0] in '+-':
-			return f'g hp {delta}'
-		else:
-			return f'g hp +{delta}'
-
-if not target:
-	return f'echo Target not found.'
-
+		target=args.pop(0)
+		if args:
+			delta=args.pop(0)
 if message:=" ".join(args):
 	message=f' *{message}*'
-if delta[0]=='-':
-	delta=delta[1:]
-	if c:
-		r=target.damage(delta).roll
+
+# execute for combat
+if c:=combat():
+	# find combat target
+	if target:
+		target = c.get_combatant(target)
 	else:
-		r=vroll(delta)
-		target.modify_hp(-r.total, False, False)
-	return f'echo hurts {target.name} by {r}. {target.hp_str()}{message}'
+		target = c.me or c.current
+	if not target:
+		return f'echo No combatant found.'
+
+	# apply delta
+	if delta:
+		if delta[0]=='-':
+			delta=delta[1:]
+			r=target.damage(delta).roll
+			return f'echo hurts {target.name} by {r}. {target.hp_str()}{message}'
+		else:
+			r=vroll(delta)
+			target.modify_hp(r.total, False, False)
+			return f'echo heals {target.name} by {r}. {target.hp_str()}{message}'
+	# or just output the current hitpoints
+	else:
+			return f'i hp {target.name}'
+# execute out of combat
 else:
-	r=vroll(delta)
-	target.modify_hp(r.total, False, False)
-	return f'echo heals {target.name} by {r}. {target.hp_str()}{message}'
+	if target is None or name.lower().startswith(target.lower()):
+		if delta:
+			if delta[0] in '+-':
+				return f'g hp {delta}'
+			else:
+				return f'g hp +{delta}'
+		else:
+			return f'g hp'
+	else:
+		return f'echo You can not {"inspect" if delta is None else "change"} the hitpoints of {target} outside of initiatve.'
 </drac2>

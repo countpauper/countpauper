@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/divine.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dc/monster_converter.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dc/srd_monsters.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" afterDir="false" />
@@ -17,10 +18,11 @@
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Math/Solvers/poly.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Solvers/poly.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dc/identify.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/dc/identify.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/downtime/craft.txt" beforeDir="false" afterPath="$PROJECT_DIR$/downtime/craft.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/challenge.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/challenge.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/date.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/date.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/hp.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/hp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/levelHd.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/levelHd.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/bet.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/bet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/collect.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/collect.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,7 +64,7 @@
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\ic" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.gem_script">
+  <component name="RunManager" selected="Python.monster_converter">
     <configuration name="card_creator" type="PythonConfigurationType" factoryName="Python">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -97,27 +99,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/chance/chance_py.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="console test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="avrae" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\dnd\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/misc" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/console test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -168,6 +149,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="monster_converter" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="avrae" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\dnd\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/dc" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dc/monster_converter.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="show" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -192,18 +194,18 @@
     <list>
       <item itemvalue="Python.card_creator" />
       <item itemvalue="Python.chance_py (1)" />
-      <item itemvalue="Python.console test" />
       <item itemvalue="Python.csv2json" />
       <item itemvalue="Python.gem_script" />
+      <item itemvalue="Python.monster_converter" />
       <item itemvalue="Python.show" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.monster_converter" />
         <item itemvalue="Python.gem_script" />
         <item itemvalue="Python.csv2json" />
         <item itemvalue="Python.chance_py (1)" />
         <item itemvalue="Python.show" />
-        <item itemvalue="Python.console test" />
       </list>
     </recent_temporary>
   </component>
@@ -225,18 +227,63 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="719" y="331" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1665775850480" />
-    <state x="673" y="187" width="587" height="788" key="find.popup" timestamp="1668669969551">
+    <state x="499" y="77" key="#monster_converter" timestamp="1670169731103">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="499" y="77" key="#monster_converter/0.0.1920.1040@0.0.1920.1040" timestamp="1670169731103" />
+    <state width="1899" height="270" key="GridCell.Tab.0.bottom" timestamp="1670747404786">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="270" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
+    <state width="1508" height="210" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
+    <state width="1899" height="270" key="GridCell.Tab.0.center" timestamp="1670747404786">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="270" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
+    <state width="1508" height="210" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
+    <state width="1899" height="270" key="GridCell.Tab.0.left" timestamp="1670747404784">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="270" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404784" />
+    <state width="1508" height="210" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
+    <state width="1899" height="270" key="GridCell.Tab.0.right" timestamp="1670747404786">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="270" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
+    <state width="1508" height="210" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
+    <state width="1899" height="270" key="GridCell.Tab.1.bottom" timestamp="1670747404787">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="270" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404787" />
+    <state width="1899" height="270" key="GridCell.Tab.1.center" timestamp="1670747404787">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="270" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
+    <state width="1899" height="270" key="GridCell.Tab.1.left" timestamp="1670747404786">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="270" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
+    <state width="1899" height="270" key="GridCell.Tab.1.right" timestamp="1670747404787">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="270" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404787" />
+    <state x="494" y="180" width="540" height="524" key="StructurePopup" timestamp="1670172402258">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="494" y="180" width="540" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1670172402258" />
+    <state x="673" y="187" width="586" height="787" key="find.popup" timestamp="1671020368075">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="673" y="187" width="587" height="788" key="find.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1668669969551" />
-    <state x="673" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1663739406134" />
+    <state x="673" y="187" width="586" height="787" key="find.popup/-1920.129.1920.1040/0.0.1920.1160/1920.10.1920.1160@0.0.1920.1160" timestamp="1671020368075" />
+    <state x="673" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1669300928640" />
     <state x="897" y="226" width="782" height="950" key="find.popup/0.0.2560.1400/2560.0.2560.1400@0.0.2560.1400" timestamp="1665148365699" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup" timestamp="1668434394504">
-      <screen x="0" y="0" width="1920" height="1160" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1670184871530">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1668434394504" />
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1663053256583" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1665250672714" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1670184871530" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -310,11 +357,37 @@
           <url>file://$PROJECT_DIR$/misc/levelHd.py</url>
           <option name="timeStamp" value="66" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dc/monster_converter.py</url>
+          <line>34</line>
+          <option name="timeStamp" value="72" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dc/monster_converter.py</url>
+          <line>109</line>
+          <option name="timeStamp" value="77" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dc/monster_converter.py</url>
+          <line>75</line>
+          <option name="timeStamp" value="80" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dc/monster_converter.py</url>
+          <line>54</line>
+          <option name="timeStamp" value="83" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dc/monster_converter.py</url>
+          <line>66</line>
+          <option name="timeStamp" value="84" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="data" />
+        <watch expression="action.startswith('&lt;em&gt;')" />
       </configuration>
     </watches-manager>
   </component>
