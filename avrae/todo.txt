@@ -2,12 +2,12 @@
 * SOON !play bet, remove from coin pouch instead of bag.
  *  !play collect
 -   AND add a footer/help on how to bet and collect real money.
--  bettering single letter custom things (g s p c e) instead of pieces should use the coins.
--  other single letters and typo protection for custom garbage (anything <=2 chars)
+*  bettering single letter custom things (g s p c e) instead of pieces should use the coins.
+*  other single letters and typo protection for custom garbage (anything <=2 chars)
 - !play baldur's bones https://infernalmachines.obsidianportal.com/wikis/baldurs-bones
+* !state gp and coins are also not coinpurse compatible
 
 - `!ic` roleplay xp, not compatibile with "new" !xp. No one is using it so can be removed or upgraded.
-- !state gp and coins are also not coinpurse compatible
 Outlands
 - !works add it to the workshop
     * write more elaborate help there

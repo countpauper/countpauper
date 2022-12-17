@@ -70,16 +70,13 @@ if not field_list:
 		field_list=get(cvar_name,field_list)
 	field_list=load_json(field_list)
 
-bag_items = None
-coins = []
+bag_items = ch.coinpurse.get_coins()
+coins = list(bag_items.keys())
+coins.reverse()
 if ch:
 	if bags:=get('bags'):
 		bags = load_json(bags)
-		# get coin items used from any 'coin' bag
-		coins=list(([b for n,b in bags if n.lower().startswith('coin')]+[{}])[0].keys())
-		coins.reverse()
 		# flatten bags into one item dict, lower names
-		bag_items={}
 		for _,b in bags:
 			for i,q in b.items():
 				i=i.lower()

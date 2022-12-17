@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dc/monster_converter.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dc/srd_monsters.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" afterDir="false" />
@@ -18,11 +16,8 @@
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Math/Solvers/poly.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Solvers/poly.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/challenge.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/challenge.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/date.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/date.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/hp.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/hp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/play/bet.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/bet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/play/collect.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/collect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/hud.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/hud.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

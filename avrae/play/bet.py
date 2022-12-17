@@ -54,6 +54,14 @@ for i,arg in enumerate(arg_list):
 	if arg.isalpha() and amount is not None:
 		new_bet[arg]=new_bet.get(arg, 0)+int(amount)
 		amount=None
+# convert single letter coins to coins
+translate=dict(c='cp',s='sp',e='ep',g='gp')
+for org,targ in translate.items():
+	if  org in new_bet:
+		new_bet[targ] = new_bet.pop(org)
+# remove small keys that are not coins:
+coin_names=['cp','sp','ep','gp','pp']
+new_bet={k:a for k,a in new_bet.items() if len(k)>2 or k in coin_names}
 
 # last amount is with default coin: 1) current bet coin 2) most owned coin 3) chips
 chips = 'chips'
@@ -63,7 +71,7 @@ if amount is not None:
 	elif coins:
 		auto_coin = ([c.lower() for c, v in coins.items() if v == max(coins.values())]+[chips])[0]
 	elif purse:
-		coin_values={c:purse.get_coins().get(c,0) for c in ['cp','sp','ep','gp','pp']}
+		coin_values={c:purse.get_coins().get(c,0) for c in coin_names}
 		auto_coin = ([c for c,v in coin_values.items() if v==max(coin_values.values())]+[chips])[0]
 	else:
 		auto_coin=chips
