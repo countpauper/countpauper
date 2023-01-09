@@ -1,18 +1,18 @@
 Weapon of warning: 6000
-Arcane Grimoire +1: 10000
-Amulet of the Devout +1: 10000
-Rhythmmakers Drum +1: 10000
-Bloodwell Vial +1: 10000
-Moon Sickle +1: 10000
-Rod of the Pact Keeper +1: 10000
-Dragonhide Belt +1: 10000
-Arcane Grimoire +2: 15000
-Amulet of the Devout +2: 15000
-Rhythmmakers Drum +2: 15000
-Bloodwell Vial +2: 15000
-Moon Sickle +2: 15000
-Rod of the Pact Keeper +2: 15000
-Dragonhide Belt +2: 15000
+Arcane Grimoire +1: 5000
+Amulet of the Devout +1: 5000
+Rhythmmakers Drum +1: 5000
+Bloodwell Vial +1: 7000
+Moon Sickle +1: 5000
+Rod of the Pact Keeper +1: 5000
+Dragonhide Belt +1: 5000
+Arcane Grimoire +2: 10000
+Amulet of the Devout +2: 10000
+Rhythmmakers Drum +2: 10000
+Bloodwell Vial +2: 11000
+Moon Sickle +2: 10000
+Rod of the Pact Keeper +2: 10000
+Dragonhide Belt +2: 10000
 Arcane Grimoire +3: 25000
 Amulet of the Devout +3: 25000
 Rhythmmakers Drum +3: 25000
@@ -49,3 +49,5 @@ Barrier Tattoo (Very Rare): 12000
 Prosthetic Limb: 100
 Feather Token Feather Fall: 250
 Wingwear: 600
+(Quaal's) Feather Token Tree: 50
+Night Caller: 10000

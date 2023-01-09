@@ -5,7 +5,7 @@ args=argparse('&*&')
 
 definition={
 	"footer":dict(reset=['false','none','reset','','off']),
-	"xp":dict(reset=['0','none','']),
+#	"xp":dict(reset=['0','none','']),
 	"location":dict(reset=['false','none','reset','','off']),
 	"channels": dict(reset=['none'],list=True)
 }

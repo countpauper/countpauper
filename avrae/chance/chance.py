@@ -23,14 +23,15 @@
 #     !chance grapple -t for opposed grapple check (auto select acrobatics or athletics)
 #* take -b effects into account for attacks automatically
 
-# rr and say how the chance of how many will hit (and crit?) might get messy
+# rr and say how the chance of how many will hit/miss (and crit? might get messy)
+# also split arguments differently (first - arg) and allow separate terms like !chance 1d20 1d20+1d4 -ac 12
 # !chance death (saves (1d20, should be with luck, but https://github.com/avrae/avrae/issues/1388)) with -rr for total chance to die (take into account crits then)
 # x   option to show as techo (-h <sec>)
 # x  Always show precise number a spoiler
 #* replace vars in expression for custom attacks:
 
 # approach: cut expression into + terms (*/ later at lower level)
-# for each term determine the range and the quadratic expression governing the chance? or the change for each value in the range
+# for each term determine the range and the expression governing the chance? or the change for each value in the range
 # it should recognize number and die size, ro, kh[1] and kl[1] at least (until generalized)
 # then iterate, starting with a 0,0 range and empty change array. One by one sum the min and max and multiply the chance
 # dict per term in array {term=str, min=int, max=int, p=[probability mass function]}
@@ -290,11 +291,11 @@ else:
 	effect_prefix = None
 expression='+'.join([expression]+args.get('b')+[e.effect.get(effect_prefix,'0') for e in effects if effect_prefix in e.effect])
 
-# chance the query < constant
+# change the query < constant
 expression=expression.replace(' ','')
 expression=expression.replace('+-','-').replace('-','+-')
 
-########  Create the propability mass function for the experession
+########  Create the probability mass function for the expression
 expression_terms=expression.split('+')
 terms=[]
 crit=None
@@ -436,6 +437,7 @@ for term in expression_terms:
 		terms+=[t]*dice
 	else:
 		err(f'Dice expression syntax error: Unrecognized term format: `{term}`')
+
 ### combine all terms
 lo=sum(t['min'] for t in terms)
 hi=sum(t['max'] for t in terms)

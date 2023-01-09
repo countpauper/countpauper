@@ -16,9 +16,12 @@
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Math/Solvers/poly.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Solvers/poly.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/play/bet.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/bet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state/hud.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/hud.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ic/ic.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/ic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ic/ic_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/ic_setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/custom item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/march.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/march.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/pig.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/pig.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -273,12 +276,11 @@
     <state x="673" y="187" width="586" height="787" key="find.popup/-1920.129.1920.1040/0.0.1920.1160/1920.10.1920.1160@0.0.1920.1160" timestamp="1671020368075" />
     <state x="673" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1669300928640" />
     <state x="897" y="226" width="782" height="950" key="find.popup/0.0.2560.1400/2560.0.2560.1400@0.0.2560.1400" timestamp="1665148365699" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1670184871530">
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1672343596582">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1668434394504" />
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.386.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1663053256583" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1670184871530" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1672343596582" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -92,26 +92,6 @@ if openquote:	# actually can't happen because avrae is typing ...
 if openitalic:
 	txt+='*'
 
-# define words for experience (footer)
-words = len(txt.split())
-cc = 'Experience'
-if ch:=character():
-	xp=settings.get('xp','0')
-	# find vars in xp expression
-	xp_vars=[]
-	for idx,c in enumerate(xp):
-		if c!='{':
-			continue
-		remaining=xp[idx+1:]
-		if not '}' in remaining:
-			continue
-		xp_vars.append(remaining[:remaining.index('}')])
-	for var in xp_vars:
-		xp=xp.replace('{'+var+'}',str(get(var,'0')))
-	# roll and add the xp
-	if xp:=roll(xp):
-		ch.mod_cc(cc,xp)
-
 # convert footer configuration to footer text
 if footer:
 	# find vars in footer expression
