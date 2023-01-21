@@ -39,11 +39,8 @@ if not twilight_clerics:
 			notes.append(f'Effect{overlay_nr}: {sanctuary_effect} / {me.name}')
 			me.set_note(' | '.join(notes))
 			# Execute the action
-# can't detect if licensed		if any(a.name==action for a in C.actions):
-#				return f'a "{action}"'
-#			else:
 			C.mod_cc(cc,-1)
-			c.me.add_effect(sanctuary_effect,10)
+			c.me.add_effect(sanctuary_effect,duration=10)
 			return f"""embed -title "{C.name} uses {action}" -f "{cc}|{C.get_cc(cc)}" -desc "As an action, you present your holy symbol, and a sphere of twilight emanates from you. The sphere is centered on you, has a {radius}-foot radius, and is filled with dim light. The sphere moves with you, and it lasts for 1 minute or until you are incapacitated or die. Whenever a creature (including you) ends its turn in the sphere, you can grant that creature one of these benefits:
 - You grant it temporary hit points equal to {formula_desc}.
 - You end one effect on it causing it to 	be charmed or frightened." -thumb {image}"""

@@ -70,7 +70,7 @@ You can also dismiss the Bladesong at any time you choose (no action required) u
 		ac = armor
 	fields+=f' -f "AC|{ac}+{ac_bonus}[int] = {ac+ac_bonus}|inline" '
 	if me:
-		me.add_effect(effect_name,passive_effects=dict(ac_bonus=ac_bonus), desc=f'Your AC increases by {ac_bonus}.\n - Walking speed increases by {speed_bonus} feet.\n - Advantage on dexterity(acrobatics) checks.\n - +{con_bonus} bonus to any Constitution saving throw you make to maintain your concentration on a spell.')
+		me.add_effect(effect_name, duration=10, passive_effects=dict(ac_bonus=ac_bonus), desc=f'Your AC increases by {ac_bonus}.\n - Walking speed increases by {speed_bonus} feet.\n - Advantage on dexterity(acrobatics) checks.\n - +{con_bonus} bonus to any Constitution saving throw you make to maintain your concentration on a spell.')
 	# Your walking speed increases by 10 feet
 	speed = get('speed',None)
 	if speed:    # common cvar, not adjusted because it's hard to restore

@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/misc/iss.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/ring of spell storing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" afterDir="false" />
@@ -16,12 +18,9 @@
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Math/Solvers/poly.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Solvers/poly.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/ic.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/ic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ic/ic_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/ic_setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/custom item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bladesong/bladesong.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/misc/march.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/march.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/play/pig.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/pig.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/twilight.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/twilight.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -275,12 +274,11 @@
     <state x="673" y="187" width="587" height="788" key="find.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1668669969551" />
     <state x="673" y="187" width="586" height="787" key="find.popup/-1920.129.1920.1040/0.0.1920.1160/1920.10.1920.1160@0.0.1920.1160" timestamp="1671020368075" />
     <state x="673" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1669300928640" />
-    <state x="897" y="226" width="782" height="950" key="find.popup/0.0.2560.1400/2560.0.2560.1400@0.0.2560.1400" timestamp="1665148365699" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1672343596582">
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1673800386614">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1668434394504" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1672343596582" />
+    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1673800386614" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
