@@ -7,6 +7,10 @@ args = argparse(&ARGS&)
 config=load_json(get('march','{}'))
 # TODO: read out diagonal configuration. default is Euclidian. setting is "diagonal":ft. use 10 for manhattan or 5, 7.07, 7.5
 # when computing distance this is basically just two variations. diagonal multiplied for min(abs(dx),abs(dy))+straight for abs(abs(dx)-abs(dy)) or sqrt(dx*dx+dy*dy)
+# TODO: without destination -block is stored in metadata for future use
+# -unblock to remove blocks
+# -block a1:b2:20 makes it 20 high (always from 0? or a1|0:b2|20?
+# store target's speed in metadata or note, use that if not provided as argument
 
 ###  some constants
 sizes = dict(T=1, S=1, M=1, L=2, H=3, G=4)
@@ -29,6 +33,7 @@ if map_attacks and (map_automation:=map_attacks[0]):
 		map_rect['w'],map_rect['h']=[int(sp) for sp in size_property[len(size_prefix):].split('x') if sp.isdecimal()]
 
 not_found=[]
+
 ### Parse target arguments into a dict of mover_name:dict(c=combatant,s=speed)
 size_arg=args.last('size','').upper()[:1] or None
 if size_arg not in sizes.keys():
@@ -36,7 +41,7 @@ if size_arg not in sizes.keys():
 speed_arg=int(args.last('ft',default_speed,type_=int))
 height_arg=args.last('height',None,type_=int)
 if targets:=args.get('t'):
-	# split the target arguments into target id and config (speed and size speed for now)
+	# split the target arguments into target id and config (speed, size and height for now)
 	split_targets=[t.split('|') for t in targets]
 	target_args = {split_t[0]: dict(speed=int(split_t[1]) if len(split_t)>=2 and split_t[1] and split_t[1].isdecimal() else speed_arg,
 									size=split_t[2] if len(split_t)>=3 and split_t[2] and split_t[2] in sizes.keys() else size_arg,
@@ -100,7 +105,7 @@ movers={n:dict(combatant=m.combatant,
 			   w=sizes[s],
 			   h=sizes[s],
 			   goal=None,
-			   target=None,
+			   destination=None,
 			   block=None,
 			   dbg=[]) for n,m in movers.items()}
 
@@ -183,18 +188,19 @@ for area in zones.line:
 min_w=min(m.w for m in movers.values())
 min_h=min(m.h for m in movers.values())
 for area in zones.approach:
-	# plot target locations
-	for x in range(area.x-min_w,area.x+area.w):
-		goals.append((x,area.y-min_h,goal_height))
-		goals.append((x+min_w,area.y+area.h,goal_height))
-	for y in range(area.y-min_h,area.y+area.h):
-		goals.append((area.x-min_w, y+min_h,goal_height))
-		goals.append((area.x+area.w,y,goal_height))
+	# plot goal locations
+	for x in range(area.x-min_w, area.x+area.w):
+		goals.append((x, area.y-min_h))
+		goals.append((x+min_w, area.y+area.h))
+	for y in range(area.y-min_h, area.y+area.h):
+		goals.append((area.x-min_w, y+min_h))
+		goals.append((area.x+area.w, y))
 
 # Add height to the goals. if not specified the current height is maintained
 # the height range of all movers is used to determine available goals
 if height_arg:
-	goal_z=(height_arg, heigh_arg+max(mover.h for mover in movers.values()))
+	z_arg=height_arg//ft_per_grid
+	goal_z=(z_arg, z_arg+max(mover.h for mover in movers.values()))
 else:
 	goal_z=(min(mover.z for mover in movers.values()),max(mover.z+mover.h for mover in movers.values()))
 
@@ -217,7 +223,7 @@ for goal in unclipped_goals:
 	goals.append(goal)
 
 ### thin or scatter out for the number of movers
-# todo: scatter algorithm is: shuffle before thinning
+	# todo: scatter algorithm is: shuffle before thinning
 if args.last('scatter'):
 	ordered_goals,goals=goals,[]
 	while ordered_goals:
@@ -231,7 +237,7 @@ if (density:=len(goals)//len(movers))>1:
 
 ### Assign movers to goals, in order of movers, sorted preferred target by distance
 for mover in movers.values():
-	if not mover.target:
+	if not mover.goal:
 		if not mover.start and goals:	# place
 			mover['goal']=goals.pop(0)
 		else:
@@ -263,6 +269,10 @@ while path_str:
 	else:
 		return f'echo Unrecognized direction `{path_str}` in `-go` '
 
+def length(x, y, z=0):
+	# todo: diagonal distance option
+	return sqrt(x*x + y*y + z*z)
+
 ## quick check if -go is before or after all target areas. this doesn't support both or interleaving
 pre_path = go_path
 ## TODO: post_path use case? Line up and advance? will get whack
@@ -277,39 +287,37 @@ pre_path = go_path
 #return f'echo {pre_path} area {post_path}'
 #return f'echo {movers}'
 
-# move towards target with speed
+# move towards goals with speed and compute the destination until blocked or out of movement
 for name, mover in movers.items():
-	if mover.target:
+	if mover.destination:
 		continue
 	# render pre path, track movement remaining, reverse order
-	z=mover.z	 # immediately teleport to target height, no blocking check no u d path yet
 	if mover.start:
-		path = [(mover.start.x, mover.start.y, z)]
+		path = [(mover.start.x, mover.start.y, mover.start.z)]
 		movement=mover.speed
 		if pre_path:
 			for dx,dy in pre_path:
 				if movement<0.5:
 					break
-				path.insert(0,(path[0][0] + dx, path[0][1] + dy, z))
-				# todo: diagonal distance
-				movement-=sqrt(dx*dx+dy*dy)
+				path.insert(0,(path[0][0] + dx, path[0][1] + dy, path[0][2]))
+				movement-=length(dx, dy)
 				mover['goal']=path[0]
 
 		# add approach path
 		if mover.goal:
 			pos=path[0]
 			# compute normalized direction vector
-			dx,dy=mover.goal[0] - pos[0], mover.goal[1]-pos[1]
-			vector_length = sqrt(dx*dx+dy*dy)
+			dx, dy, dz=mover.goal[0] - pos[0], mover.goal[1]-pos[1], goal_z[0]-pos[2]
+			vector_length = length(dx, dy, dz)
 			if vector_length>0.1:
 				dx/=vector_length
 				dy/=vector_length
-				dz=0	# TODO height change
+				dz/=vector_length
 				path_length=min(movement,vector_length)
 				# render all grids from end to pos the path, path may contain duplicates due to rounding but that's only a small performance problem
 				path=[(round(pos[0]+dx*step),round(pos[1]+dy*step), round(pos[2]+dz*step)) for step in range(round(path_length),0,-1)]+path
 	elif mover.goal:	# place
-		path=[(mover.goal[0], mover.goal[1], z)]
+		path=[(mover.goal[0], mover.goal[1], mover.z)]
 	else:
 		path=[]
 	# TODO render post path, is there really a use case?
@@ -328,27 +336,39 @@ for name, mover in movers.items():
 				mover['block'] = blocker
 				break
 		else:	# not blocked, move to p
-			mover['target'] = p
-			blockers[name]=dict(x=mover.target[0], y=mover.target[1], z=mover.target[2], w=mover.w, h=mover.h)
+			mover['destination'] = p
+			blockers[name]=dict(x=mover.destination[0], y=mover.destination[1], z=mover.destination[2], w=mover.w, h=mover.h)
 			break
 	else:	# end of path, stay in position
-		mover['target'] = None
+		mover['destination'] = None
 		if mover.start:
 			blockers[name] = dict(x=mover.start.x, y=mover.start.y, z=mover.start.z, w=mover.w, h=mover.h)
+	# return f'echo path `{path}`  to @`{goal_z}`for `{mover}`'
 
 ### generate verbose output
 inv_x_axis={val:s.upper() for s,val in x_axis.items()}
 space,nl,quote=' ','\n','"'
 
+def CoordString(x, y=None, z=None):
+	if typeof(x) == 'SafeDict':
+		return CoordString(x.get('x', 0), x.get('y', 0), x.get('z', None))
+	elif typeof(x)=='SafeList' or typeof(x)=='tuple':
+		if len(x)>2:
+			return CoordString(x[0], x[1], x[2])
+		else:
+			return CoordString(x[0], x[1])
+	else:
+		return f'{inv_x_axis.get(x,"??")}{y}' + (f' :arrow_up: {mover.start.z*ft_per_grid}ft' if z is not None else '')
+
 ### create arguments for all movers
 for name, mover in movers.items():
 	props=dict()
-	if mover.target:
-		props[1]=f'{inv_x_axis.get(mover.target[0],"??")}{mover.target[1]}'
+	if mover.destination:
+		props[1]=CoordString(mover.destination[:2])
 	if mover.size and (not mover.start or mover.size!=mover.start.s):
 		props[2]=mover.size
-	if mover.z is not None and (not mover.start or mover.z!=mover.start.z):
-		props[5]=int(mover.z*ft_per_grid)
+	if (not mover.start and mover.destination[2]!=0) or (mover.destination[2] !=mover.start.z):
+		props[5]=int(mover.destination[2]*ft_per_grid)
 	if props:
 		mover['args']=[name]+[str(props.get(idx,'')) for idx in range(1,1+max(props.keys()))]
 	else:
@@ -363,12 +383,12 @@ if args.last('verbose',args.last('v',config.get('verbose'))):
 	for name, mover in movers.items():
 		move_desc = [f'**{name}** :']
 		if mover.start:
-			move_desc.append(f'{inv_x_axis.get(mover.start.x, "??")}{mover.start.y}{f" :arrow_up: {mover.start.z*ft_per_grid}ft" if mover.start.z else ""}')
-			if mover.target:
-				move_desc.append(f'to {inv_x_axis.get(mover.target[0], "??")}{mover.target[1]} @{mover.target[2]}')
+			move_desc.append(CoordString(mover.start))
+			if mover.destination:
+				move_desc.append(f'to {CoordString(mover.target)}')
 				if mover.speed and mover.start:
-					dx = mover.target[0] - mover.start.x
-					dy = mover.target[1] - mover.start.y
+					dx = mover.destination[0] - mover.start.x
+					dy = mover.destination[1] - mover.start.y
 					distance = round(sqrt(dx * dx + dy * dy) * ft_per_grid)  # TODO: diagonal distance
 					move_desc.append(f' - {distance} / {round(mover.speed * ft_per_grid)} ft.')
 			else:
@@ -376,15 +396,15 @@ if args.last('verbose',args.last('v',config.get('verbose'))):
 				distance = None
 			if not mover.goal:
 				move_desc.append('*No available destination*')
-			elif mover.target[:2] != mover.goal[:2]:
-				move_desc.append(f'{inv_x_axis.get(mover.goal[0], "??")}{mover.goal[1]}')
+			elif mover.destination[:2] != mover.goal[:2]:
+				move_desc.append(CoordString(mover.goal))
 				if mover.block:
 					move_desc.append(f'*blocked by* {mover.block}')
 				else:
 					move_desc.append(f'unreachable')
 
-		elif mover.target:
-			move_desc.append(f'Placed at {inv_x_axis.get(mover.target[0], "??")}{mover.target[1]}')
+		elif mover.destination:
+			move_desc.append(f'Placed at {CoordString(mover.destination)}')
 			# TODO: add size here and add size to command. store size as string in mover, (but not in loc)
 			if mover.block:
 				err("Unhandled description: blocked at placement")
