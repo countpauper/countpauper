@@ -12,6 +12,7 @@ namespace Logic
 
 // A sequence is an unordered collection of Objects
 // The text format is <Object>, <Object> 
+// TODO: make Sequence an NAry ?
 class Sequence : public Collection, public std::vector<Object>
 {
 public:

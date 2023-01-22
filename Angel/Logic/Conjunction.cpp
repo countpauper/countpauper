@@ -8,8 +8,11 @@ namespace Angel
 namespace Logic
 {
 
-Conjunction::Conjunction(Set&& operands) :
-    Nary(std::move(operands))
+
+
+
+Conjunction::Conjunction(const Operands& value) :
+    Nary(value)
 {
 }
 
@@ -17,7 +20,6 @@ Conjunction::Conjunction(Conjunction&& value) :
     Conjunction(std::move(value.operands))
 {
 }
-
 
 bool Conjunction::operator==(const Expression& other) const
 {
@@ -60,7 +62,7 @@ Object Conjunction::Compute(const Knowledge& knowledge) const
 
 Object Conjunction::Copy() const
 {
-    return Create<Conjunction>(Set(operands));
+    return Create<Conjunction>(operands);
 }
 
 Object Conjunction::Cast(const std::type_info& t, const Knowledge& k) const
@@ -70,16 +72,6 @@ Object Conjunction::Cast(const std::type_info& t, const Knowledge& k) const
         return Compute(k);
     }
     throw CastException<Conjunction>(t);
-}
-
-Object conjunction(Sequence&& operands)
-{
-    return Create<Conjunction>(Set(std::move(operands)));
-}
-
-Object conjunction(Set&& operands)
-{
-    return Create<Conjunction>(std::move(operands));
 }
 
 }

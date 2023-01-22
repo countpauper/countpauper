@@ -3,6 +3,8 @@
 
 namespace Angel::Logic
 {
+    class Sequence;
+    class Set;
 
 // A Conjunction is a logical operator, which is true, only if all its elements are True
 class Conjunction : public Nary
@@ -10,11 +12,12 @@ class Conjunction : public Nary
 public:
     Conjunction() = default;
     explicit Conjunction(Conjunction&& value);
-    explicit Conjunction(Set&& operands);
+    explicit Conjunction(const Operands& value);
     template<class ...Args>
-    explicit Conjunction(Args... args) :
-        Conjunction(Set(std::forward<Args>(args)...))
+    explicit Conjunction(Logic::Object first, Args... args) :
+        Conjunction(std::forward<Args>(args)...)
     {
+        operands.insert(operands.begin(), first);
     }
     Object Copy() const override;
     bool operator==(const Expression& other) const override;
@@ -30,7 +33,6 @@ Object conjunction(Args... args)
 {
     return Create<Conjunction>(std::forward<Args>(args)...);
 }
-Object conjunction(Sequence&& seq);
-Object conjunction(Set&& set);
+
 
 }

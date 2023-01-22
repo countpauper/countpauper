@@ -6,11 +6,6 @@
 namespace Angel::Logic
 {
 
-Disjunction::Disjunction(Set&& operands) :
-    Nary(std::move(operands))
-{
-}
-
 Disjunction::Disjunction(Disjunction&& value) :
     Disjunction(std::move(value.operands))
 {
@@ -39,6 +34,22 @@ std::string Disjunction::String() const
     return result;
 }
 
+Object Disjunction::Simplify() const
+{
+    if (operands.empty())
+    {
+        return boolean(false);
+    }
+    else if (operands.size() == 1)
+    {
+        return Object(std::move(*operands.begin()));
+    }
+    else
+    {
+        return Copy();
+    }
+
+}
 Object Disjunction::Match(const Expression& other) const
 {
     return boolean(other == *this);
@@ -58,7 +69,7 @@ Object Disjunction::Compute(const Knowledge& knowledge) const
 
 Object Disjunction::Copy() const
 {
-    return Create<Disjunction>(Set(operands));
+    return Create<Disjunction>(operands);
 }
 
 Object Disjunction::Cast(const std::type_info& t, const Knowledge& k) const

@@ -35,6 +35,7 @@ namespace Angel::Parser::BNF
     Declare predicate("predicate");
     Declare expression("expression");
     Declare collection("collection");
+    Declare operation("operation");    // isn't collecting an operation? Isn't predicating ... well
 
     // literals
     Rule id( "id", RegularExpression{"[a-z_\\u0080-\\uDB7Fa][a-z0-9_\\u0080-\\uDB7Fa]*"}, ParseId );
@@ -43,7 +44,7 @@ namespace Angel::Parser::BNF
 
     // expressions
     Rule element( "element", Disjunction{ Ref(boolean), Ref(integer), Ref(id) } );
-    Recursive naked_expression( "naked expression", Disjunction{ Ref(collection), Ref(predicate), Ref(element) } );
+    Recursive naked_expression( "naked expression", Disjunction{ Ref(collection), Ref(predicate), Ref(operation), Ref(element) } );
     Rule braced_expression("braced expression", Sequence{ Merge, Literal("("), Whitespace(0), Ref(expression), Whitespace(0), Literal(")") }, static_cast<Rule::ConstructFn>(ConstructBracedExpression));
     Recursive expression_("expression", Disjunction{ Ref(braced_expression), Ref(naked_expression) });
 
@@ -56,6 +57,7 @@ namespace Angel::Parser::BNF
     Rule braced_sequence("braced sequence", Sequence{Merge, Literal("("), Whitespace(0), Ref(expression),
         Loop(Sequence{Merge, Whitespace(0), Literal(","), Whitespace(0), Ref(expression) }, Merge), Whitespace(0), Literal(")") }, static_cast<Rule::ConstructFn>(ConstructBracedSequence));
 
+
     Rule sequence("sequence", Disjunction{
         Ref(empty_sequence),
         Ref(braced_sequence),
@@ -66,7 +68,9 @@ namespace Angel::Parser::BNF
     Recursive collection_ { "collection", Disjunction{ Ref{set}, Ref{sequence}} };
 
     // Operations 
+    Rule conjunction("conjunction", Sequence{ Merge, Ref(expression), Loop(Sequence{Merge, Whitespace(0), Literal("&"), Whitespace(0), Ref(expression)}, Merge) }, static_cast<Rule::ConstructFn>(ConstructConjunction));
 
+    Rule operation_("operation", Disjunction{ Ref(conjunction) });
     // Knowledge rules
     Rule arguments{ "arguments", Disjunction{ Ref(empty_sequence), Ref(braced_sequence)} };
     Rule predicate_("predicate", Sequence{Merge, Ref(id),Ref(arguments)}, static_cast<Rule::ConstructFn>(ConstructPredicate));

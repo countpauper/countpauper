@@ -23,6 +23,7 @@ namespace Angel
         std::any ConstructBracedSequence(const std::any& tokens);
         std::any ConstructBracedExpression(const std::any& tokens);
         std::any ConstructSequence(const std::any& tokens);
+        std::any ConstructConjunction(const std::any& tokens);
         std::any ConstructPredicate(const std::any& tokens);
         std::any ConstructClause(const std::any& tokens);
         std::any ConstructKnowledge(const std::any& tokens);

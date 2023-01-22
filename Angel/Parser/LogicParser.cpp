@@ -136,6 +136,28 @@ std::any ConstructSequence(const std::any& tokens)
     return Logic::Object(std::move(result));
 }
 
+std::any ConstructConjunction(const std::any& tokens)
+{
+    auto result = std::make_unique<Logic::Conjunction>();
+    if (!tokens.has_value())
+    {
+        // empty sequence
+    }
+    else if (tokens.type() == typeid(Logic::Object))
+    {
+        result->Add(std::any_cast<Logic::Object>(tokens));
+    }
+    else if (tokens.type() == typeid(std::vector<std::any>))
+    {
+        const auto& elements = std::any_cast<std::vector<std::any>>(tokens);
+        for (const auto& e : elements)
+        {
+            result->Add(std::move(std::any_cast<Logic::Object>(e)));
+        }
+    }
+    return Logic::Object(std::move(result));
+}
+
 std::any ConstructPredicate(const std::any& tokens)
 {
     if (!tokens.has_value())

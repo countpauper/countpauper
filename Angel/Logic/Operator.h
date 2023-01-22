@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
-#include "Set.h"
+#include "Expression.h"
+#include <unordered_set>
 
 namespace Angel
 {
@@ -46,9 +47,11 @@ class Nary : public Operator
 {
 public:
     Nary() = default;
-    Nary(Set&& operands) : operands(std::move(operands)) {} 
+    void Add(Object&& value);
 protected:
-    Set operands;
+    using Operands = std::unordered_set<Object>;
+    Nary(const Operands& other);
+    Operands operands;
 };
 
 

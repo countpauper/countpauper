@@ -3,6 +3,7 @@
 #include "Namespace.h"
 #include "Disjunction.h"
 #include "Knowledge.h"
+#include "Set.h"
 
 namespace Angel
 {
@@ -22,7 +23,7 @@ void Namespace::Add(Clause&& c)
 
 Object Namespace::Match(const Expression& e) const
 {
-    Set result;
+    Disjunction result;
 	for (auto& c : contents)
 	{
         Object match = c.Match(e);
@@ -30,18 +31,7 @@ Object Namespace::Match(const Expression& e) const
             result.Add(std::move(match));
 	}
 
-    if (result.empty())
-    {
-        return boolean(false);
-    }
-    else if (result.size() == 1)
-    {
-        return Object(std::move(*result.begin()));
-    }
-    else
-    {
-        return Create<Disjunction>(std::move(result));
-    }
+    return result.Simplify();
 }
 
 bool Namespace::Contains(const Expression& e) const
