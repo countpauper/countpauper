@@ -18,6 +18,12 @@ Outlands
     * add a -with <stat> option
     - move tools and stats to gvar
 !piety split it
+!rpxp split it
+
+* !play npc "quotes"  - strip quotes, they're not needed and a common mistake.
+
+
+metamagic snippets?
 
 * !hp hallowed 6d6
 - Rewrite !qb with functions

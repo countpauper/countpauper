@@ -8,7 +8,7 @@
     "ohko": {"kill": true, "reward": "100*cr"},
     "kill": {"kill": true, "reward": "(((-hp>=max)*150)+((-hp>=max/2)*50))*cr"},
     "overkill": {"kill": true, "reward": "(((-hp>=max)*150)+((-hp>=max/2)*50))*cr"},
-      "success": "200*lvl",
+    "success": "200*lvl",
     "attempt": "50*lvl",
     "assist": "50*lvl",
     "coward": "-50*lvl"

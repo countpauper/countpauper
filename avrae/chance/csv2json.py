@@ -40,9 +40,42 @@ def convert(csv, key, fields):
 		data[row[key].strip().lower()]={k.lower():deduck(row[k]) for k in fields if k in row}
 	return data
 
+def convert_speed(speed):
+	if type(speed) is int:
+		return dict(walk=speed)
+	output = dict()
+	for speedStr in speed.split(' '):
+		if speedStr.isdecimal():
+			output['walk']=int(speedStr)
+		else:
+			speedTypes=dict(F='fly', C='climb', S='swim', B='burrow', H='hover')
+			for postfix, speedType in speedTypes.items():
+				if speedStr.endswith(postfix):
+					output[speedType]=int(speedStr[:-len(postfix)])
+					break
+			else:
+				raise RuntimeError(f'''Unrecognized speed string "{speedStr}"''')
+	return output
+
+def convert_beasts(input):
+	output={k:v for k,v in input.items()}
+	for key, value in output.items():
+		value['speed']=convert_speed(value['speed'])
+		value['type']=value['type'].lower()
+	return output
+
 if __name__ == "__main__":
+	# spells
 	with open('.\\spells.csv', newline='') as csvfile:
 		reader = csv.DictReader(csvfile)
-		data = convert(reader, 'Name', ['Level','Attack','Save','Range'])
+		data = convert(reader, 'Name', ['Level', 'Attack', 'Save', 'Range'])
 		with open('.\\spells.json',mode='w',newline='') as jsonFile:
+			jsonFile.write(json.dumps(data,indent='\t'))
+
+	# beasts (todo arguments)
+	with open('..\\misc\\beasts.csv', newline='') as csvfile:
+		reader = csv.DictReader(csvfile)
+		data = convert(reader, 'Name', ['Type', 'CR', 'AC', 'HP', 'HD', 'Speed'])
+		data = convert_beasts(data)
+		with open('..\\misc\\beasts.json',mode='w',newline='') as jsonFile:
 			jsonFile.write(json.dumps(data,indent='\t'))

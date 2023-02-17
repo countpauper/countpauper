@@ -1,7 +1,10 @@
 <drac2>
 # Data
+override 	= load_json(get_svar('wildmagic','{}'))
 spell_gvar  = load_json(get_gvar('13dc3e0a-a230-40ca-8fb3-a39846300b18'))
 meta_gvar   = load_json(get_gvar('9af34023-6eba-4789-82b1-e68b191220ac'))
+spell_gvar.update(override.get('extra_spells',dict()))
+
 cc          = "Sorcery Points"
 footer='-f "Made by Croebh, Modified by Velglarn"'
 
@@ -46,10 +49,24 @@ field_out.append(f""" -f "{cc} {f'(-{meta_cost})' if meta_cost and ch.get_cc(cc)
 if not args:
 	return f"help {ctx.alias} -here"
 
+# ButtonInteraction needs all properties even when they are optional. Extend missing properties with None
+def FixButton(button):
+	return dict(
+		label=button.label,
+		automation=button.automation,
+		verb=button.get('verb', ''),
+		style=button.get('style', '1')
+	)
+
+def FixButtons(buttons):
+	if buttons is None:
+		return buttons
+	return [FixButton(button) for button in buttons]
+
 wild='wild' in load_json(get('subclass','{}')).get('SorcererLevel','').lower()
 # build in wild magic. it's once per turn but on leveled spells which (baring action surge) are once per turn at most
 if wild and spell_level>0:
-	surge_db = load_json(get_gvar('9274bf9a-f3d2-407e-9723-0a8901d04003'))
+	surge_db = load_json(get_gvar(override.get('surge', '9274bf9a-f3d2-407e-9723-0a8901d04003')))
 	tidesCC = "Tides of Chaos"
 
 	tides=ch.cc_exists(tidesCC) and ch.get_cc(tidesCC)<ch.get_cc_max(tidesCC)
@@ -90,7 +107,7 @@ if wild and spell_level>0:
 				ch.modify_hp(hp_roll.total, overflow=False)
 				field_out.append(f'-f "Health gained|{hp_roll}\n{ch.hp_str()}|inline"')
 			elif surge.type == 'cc':
-				ch.set_cc(cc,ch.get_cc_max(cc))
+				ch.set_cc(cc, ch.get_cc_max(cc))
 				field_out.append(f'-f "{cc}|{ch.cc_str(cc)}"')
 			elif surge.type == 'slots':
 				usedSlots = [x for x in range(1, 10) if ch.spellbook.get_slots(x) < character().spellbook.get_max_slots(x)]
@@ -101,15 +118,16 @@ if wild and spell_level>0:
 				else:
 					field_out.append(f'-f "Spell Slots|Free {spell_name}|inline"')
 					args.append('-i')
-			elif surge.type=='effect':
-				if Combat:=combat():
-					Combat.me.add_effect(surge.effect.name, duration=surge.effect.duration, passive_effects=surge.effect.passive_effects)
+			elif surge.get('effect'):
+				if (Combat:=combat()) and Combat.me:
+					Combat.me.add_effect(surge.effect.name, duration=surge.effect.get('duration'), desc=surge.desc,
+										 passive_effects=surge.effect.get('passive_effects'), attacks=surge.get('actions'), buttons=FixButtons(surge.effect.get('buttons')))
 			elif surge.type=='cast':
 				if surge.cast[2]=='self':
-					cast_target=f'-t "{name}"'
+					cast_target=f'-t \\"{name}\\"'
 				else:
 					cast_target=''
-				field_out.append(f'''-f "To cast|`{ctx.prefix}cast \\"{surge.cast[0]}\\" -i noconc -l {surge.cast[1]} {cast_target}`"''')
+				field_out.append(f'''-f """To cast|`{ctx.prefix}cast \\"{surge.cast[0]}\\" -i noconc -l {surge.cast[1]} {cast_target}`"""''')
 			elif surge.type=='text':
 				pass
 			else:

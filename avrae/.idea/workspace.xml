@@ -2,25 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/misc/iss.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/ring of spell storing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Conjunction.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Disjunction.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Disjunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Disjunction.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Namespace.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Namespace.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Operator.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Operator.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Logic/Sequence.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Logic/Sequence.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Parser/LogicParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/LogicParser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Parser/LogicParser.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/LogicParser.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/Parser/Syntax.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/Parser/Syntax.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Angel/TestParser/Clause.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Angel/TestParser/Clause.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Math/Solvers/function.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/Beasts.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/beasts.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/cast_cc.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/might summoner.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/raised.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sorcerer/careful.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Math/Solvers/poly.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Solvers/poly.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bladesong/bladesong.py" beforeDir="false" afterPath="$PROJECT_DIR$/bladesong/bladesong.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/march.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/march.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/twilight.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/twilight.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bonus/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/bonus/config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chance/csv2json.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/csv2json.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/custom item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/sane item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/sane item prices.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/levelHd.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/levelHd.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/wcast.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/wcast.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +59,7 @@
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\ic" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.monster_converter">
+  <component name="RunManager" selected="Python.csv2json">
     <configuration name="card_creator" type="PythonConfigurationType" factoryName="Python">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -198,9 +196,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.csv2json" />
         <item itemvalue="Python.monster_converter" />
         <item itemvalue="Python.gem_script" />
-        <item itemvalue="Python.csv2json" />
         <item itemvalue="Python.chance_py (1)" />
         <item itemvalue="Python.show" />
       </list>
@@ -220,60 +218,64 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="719" y="331" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1665775850480">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="719" y="331" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1665775850480" />
     <state x="499" y="77" key="#monster_converter" timestamp="1670169731103">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="499" y="77" key="#monster_converter/0.0.1920.1040@0.0.1920.1040" timestamp="1670169731103" />
-    <state width="1899" height="270" key="GridCell.Tab.0.bottom" timestamp="1670747404786">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1898" height="323" key="GridCell.Tab.0.bottom" timestamp="1675771339252">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
+    <state width="1898" height="323" key="GridCell.Tab.0.bottom/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
     <state width="1899" height="270" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
     <state width="1508" height="210" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
-    <state width="1899" height="270" key="GridCell.Tab.0.center" timestamp="1670747404786">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1898" height="323" key="GridCell.Tab.0.center" timestamp="1675771339252">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
+    <state width="1898" height="323" key="GridCell.Tab.0.center/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
     <state width="1899" height="270" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
     <state width="1508" height="210" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
-    <state width="1899" height="270" key="GridCell.Tab.0.left" timestamp="1670747404784">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1898" height="323" key="GridCell.Tab.0.left" timestamp="1675771339252">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
+    <state width="1898" height="323" key="GridCell.Tab.0.left/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
     <state width="1899" height="270" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404784" />
     <state width="1508" height="210" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
-    <state width="1899" height="270" key="GridCell.Tab.0.right" timestamp="1670747404786">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1898" height="323" key="GridCell.Tab.0.right" timestamp="1675771339252">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
+    <state width="1898" height="323" key="GridCell.Tab.0.right/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
     <state width="1899" height="270" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
     <state width="1508" height="210" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
-    <state width="1899" height="270" key="GridCell.Tab.1.bottom" timestamp="1670747404787">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1898" height="323" key="GridCell.Tab.1.bottom" timestamp="1675771339252">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
+    <state width="1898" height="323" key="GridCell.Tab.1.bottom/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
     <state width="1899" height="270" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404787" />
-    <state width="1899" height="270" key="GridCell.Tab.1.center" timestamp="1670747404787">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1898" height="323" key="GridCell.Tab.1.center" timestamp="1675771339252">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
+    <state width="1898" height="323" key="GridCell.Tab.1.center/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
     <state width="1899" height="270" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
-    <state width="1899" height="270" key="GridCell.Tab.1.left" timestamp="1670747404786">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1898" height="323" key="GridCell.Tab.1.left" timestamp="1675771339252">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
+    <state width="1898" height="323" key="GridCell.Tab.1.left/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
     <state width="1899" height="270" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
-    <state width="1899" height="270" key="GridCell.Tab.1.right" timestamp="1670747404787">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1898" height="323" key="GridCell.Tab.1.right" timestamp="1675771339252">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
+    <state width="1898" height="323" key="GridCell.Tab.1.right/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
     <state width="1899" height="270" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404787" />
     <state x="494" y="180" width="540" height="524" key="StructurePopup" timestamp="1670172402258">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="494" y="180" width="540" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1670172402258" />
-    <state x="673" y="187" width="586" height="787" key="find.popup" timestamp="1671020368075">
-      <screen x="0" y="0" width="1920" height="1160" />
+    <state x="673" y="168" width="586" height="705" key="find.popup" timestamp="1676318920727">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="673" y="187" width="587" height="788" key="find.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1668669969551" />
     <state x="673" y="187" width="586" height="787" key="find.popup/-1920.129.1920.1040/0.0.1920.1160/1920.10.1920.1160@0.0.1920.1160" timestamp="1671020368075" />
-    <state x="673" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1669300928640" />
+    <state x="673" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1676318920727" />
     <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1673800386614">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -307,11 +309,6 @@
           <url>file://$PROJECT_DIR$/play/drop_out.py</url>
           <line>46</line>
           <option name="timeStamp" value="32" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/chance/csv2json.py</url>
-          <line>36</line>
-          <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/misc/luck.py</url>

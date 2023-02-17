@@ -1,0 +1,1263 @@
+{
+	"baboon": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 12,
+		"hp": 3,
+		"hd": "1d6",
+		"speed": {
+			"walk": 30,
+			"climb": 30
+		}
+	},
+	"badger": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 10,
+		"hp": 3,
+		"hd": "1d4+1",
+		"speed": {
+			"walk": 20,
+			"burrow": 5
+		}
+	},
+	"cat": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 12,
+		"hp": 2,
+		"hd": "1d4",
+		"speed": {
+			"walk": 40,
+			"climb": 30
+		}
+	},
+	"deer": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 13,
+		"hp": 4,
+		"hd": "1d8",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"giant fire beetle": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 13,
+		"hp": 4,
+		"hd": "1d6+1",
+		"speed": {
+			"walk": 30
+		}
+	},
+	"goat": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 10,
+		"hp": 4,
+		"hd": "1d8",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"hyena": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 11,
+		"hp": 5,
+		"hd": "1d8+1",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"jackal": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 12,
+		"hp": 3,
+		"hd": "1d6",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"lizard": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 10,
+		"hp": 2,
+		"hd": "1d4",
+		"speed": {
+			"walk": 20,
+			"climb": 20
+		}
+	},
+	"rat": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 10,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 20
+		}
+	},
+	"scorpion": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 11,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 10
+		}
+	},
+	"spider": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 12,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 20,
+			"climb": 20
+		}
+	},
+	"weasel": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 13,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 30
+		}
+	},
+	"camel": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 9,
+		"hp": 1,
+		"hd": "2d10+4",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"diseased giant rat": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 12,
+		"hp": 7,
+		"hd": "2d6",
+		"speed": {
+			"walk": 30
+		}
+	},
+	"giant rat": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 12,
+		"hp": 7,
+		"hd": "2d6",
+		"speed": {
+			"walk": 30
+		}
+	},
+	"giant weasel": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 13,
+		"hp": 9,
+		"hd": "2d8",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"mastiff": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 12,
+		"hp": 5,
+		"hd": "1d8+1",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"mule": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 10,
+		"hp": 1,
+		"hd": "2d8+2",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"pony": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 10,
+		"hp": 1,
+		"hd": "2d8+2",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"axe beak": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 11,
+		"hp": 1,
+		"hd": "3d10+3",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"boar": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 11,
+		"hp": 1,
+		"hd": "2d8+2",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"draft horse": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 10,
+		"hp": 1,
+		"hd": "3d10+3",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"elk": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 10,
+		"hp": 1,
+		"hd": "2d10+2",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"giant badger": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 10,
+		"hp": 1,
+		"hd": "2d10+2",
+		"speed": {
+			"walk": 30,
+			"burrow": 10
+		}
+	},
+	"giant centipede": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 13,
+		"hp": 4,
+		"hd": "1d6+1",
+		"speed": {
+			"walk": 30,
+			"climb": 30
+		}
+	},
+	"giant lizard": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 12,
+		"hp": 1,
+		"hd": "3d10+3",
+		"speed": {
+			"walk": 30,
+			"climb": 30
+		}
+	},
+	"giant wolf spider": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 13,
+		"hp": 1,
+		"hd": "2d8+2",
+		"speed": {
+			"walk": 40,
+			"climb": 40
+		}
+	},
+	"panther": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 12,
+		"hp": 1,
+		"hd": "3d8",
+		"speed": {
+			"walk": 50,
+			"climb": 40
+		}
+	},
+	"riding horse": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 10,
+		"hp": 1,
+		"hd": "2d10+2",
+		"speed": {
+			"walk": 60
+		}
+	},
+	"wolf": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 13,
+		"hp": 1,
+		"hd": "2d8+2",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"ape": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 12,
+		"hp": 1,
+		"hd": "3d8+6",
+		"speed": {
+			"walk": 30,
+			"climb": 30
+		}
+	},
+	"black bear": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 11,
+		"hp": 1,
+		"hd": "3d8+6",
+		"speed": {
+			"walk": 40,
+			"climb": 30
+		}
+	},
+	"giant goat": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 11,
+		"hp": 1,
+		"hd": "3d10+3",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"warhorse": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 11,
+		"hp": 1,
+		"hd": "3d10+3",
+		"speed": {
+			"walk": 60
+		}
+	},
+	"brown bear": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 11,
+		"hp": 3,
+		"hd": "4d10+12",
+		"speed": {
+			"walk": 40,
+			"climb": 30
+		}
+	},
+	"dire wolf": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 14,
+		"hp": 3,
+		"hd": "5d10+10",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"giant hyena": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 12,
+		"hp": 4,
+		"hd": "6d10+12",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"giant spider": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 14,
+		"hp": 2,
+		"hd": "4d10+4",
+		"speed": {
+			"walk": 30,
+			"climb": 30
+		}
+	},
+	"lion": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 12,
+		"hp": 2,
+		"hd": "4d10+4",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"tiger": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 12,
+		"hp": 3,
+		"hd": "5d10+10",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"crab": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 11,
+		"hp": 2,
+		"hd": "1d4",
+		"speed": {
+			"walk": 20,
+			"swim": 20
+		}
+	},
+	"frog": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 11,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 20,
+			"swim": 20
+		}
+	},
+	"octopus": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 12,
+		"hp": 3,
+		"hd": "1d6",
+		"speed": {
+			"walk": 5,
+			"swim": 30
+		}
+	},
+	"quipper": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 13,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 0,
+			"swim": 40
+		}
+	},
+	"sea horse": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 11,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 0,
+			"swim": 20
+		}
+	},
+	"giant crab": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 15,
+		"hp": 1,
+		"hd": "3d8",
+		"speed": {
+			"walk": 30,
+			"swim": 30
+		}
+	},
+	"poisonous snake": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 13,
+		"hp": 2,
+		"hd": "1d4",
+		"speed": {
+			"walk": 30,
+			"swim": 30
+		}
+	},
+	"constrictor snake": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 12,
+		"hp": 1,
+		"hd": "2d10+2",
+		"speed": {
+			"walk": 30,
+			"swim": 30
+		}
+	},
+	"giant frog": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 11,
+		"hp": 1,
+		"hd": "4d8",
+		"speed": {
+			"walk": 30,
+			"swim": 30
+		}
+	},
+	"giant lizard variant": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 12,
+		"hp": 1,
+		"hd": "3d10+3",
+		"speed": {
+			"walk": 30,
+			"climb": 30,
+			"swim": 30
+		}
+	},
+	"giant poisonous snake": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 14,
+		"hp": 1,
+		"hd": "2d8+2",
+		"speed": {
+			"walk": 30,
+			"swim": 30
+		}
+	},
+	"crocodile": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 12,
+		"hp": 1,
+		"hd": "3d10+3",
+		"speed": {
+			"walk": 20,
+			"swim": 30
+		}
+	},
+	"giant sea horse": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 13,
+		"hp": 1,
+		"hd": "3d10",
+		"speed": {
+			"walk": 0,
+			"swim": 40
+		}
+	},
+	"reef shark": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 12,
+		"hp": 2,
+		"hd": "4d8+4",
+		"speed": {
+			"walk": 0,
+			"swim": 40
+		}
+	},
+	"giant octopus": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 11,
+		"hp": 5,
+		"hd": "8d10+8",
+		"speed": {
+			"walk": 10,
+			"swim": 60
+		}
+	},
+	"giant toad": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 11,
+		"hp": 3,
+		"hd": "6d10+6",
+		"speed": {
+			"walk": 20,
+			"swim": 40
+		}
+	},
+	"allosaurus": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 13,
+		"hp": 5,
+		"hd": "6d10+18",
+		"speed": {
+			"walk": 60
+		}
+	},
+	"cave bear": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 12,
+		"hp": 4,
+		"hd": "5d10+15",
+		"speed": {
+			"walk": 40,
+			"swim": 30
+		}
+	},
+	"giant boar": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 12,
+		"hp": 4,
+		"hd": "5d10+15",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"giant constrictor snake": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 12,
+		"hp": 6,
+		"hd": "8d12+8",
+		"speed": {
+			"walk": 30,
+			"swim": 30
+		}
+	},
+	"giant elk": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 14,
+		"hp": 4,
+		"hd": "5d12+10",
+		"speed": {
+			"walk": 60
+		}
+	},
+	"hunter shark": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 12,
+		"hp": 4,
+		"hd": "6d10+12",
+		"speed": {
+			"walk": 0,
+			"swim": 40
+		}
+	},
+	"plesiosaurus": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 13,
+		"hp": 6,
+		"hd": "8d10+24",
+		"speed": {
+			"walk": 20,
+			"swim": 40
+		}
+	},
+	"polar bear": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 12,
+		"hp": 4,
+		"hd": "5d10+15",
+		"speed": {
+			"walk": 40,
+			"swim": 30
+		}
+	},
+	"rhinoceros": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 11,
+		"hp": 4,
+		"hd": "6d10+12",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"saber-toothed tiger": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 12,
+		"hp": 5,
+		"hd": "7d10+14",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"bat": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 12,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 5,
+			"fly": 30
+		}
+	},
+	"eagle": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 12,
+		"hp": 3,
+		"hd": "1d6",
+		"speed": {
+			"walk": 10,
+			"fly": 60
+		}
+	},
+	"hawk": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 13,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 10,
+			"fly": 60
+		}
+	},
+	"owl": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 11,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 5,
+			"fly": 60
+		}
+	},
+	"raven": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 12,
+		"hp": 1,
+		"hd": "1d4-1",
+		"speed": {
+			"walk": 10,
+			"fly": 50
+		}
+	},
+	"vulture": {
+		"type": "beast",
+		"cr": 0,
+		"ac": 10,
+		"hp": 5,
+		"hd": "1d8+1",
+		"speed": {
+			"walk": 10,
+			"fly": 50
+		}
+	},
+	"blood hawk": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 12,
+		"hp": 7,
+		"hd": "2d6",
+		"speed": {
+			"walk": 10,
+			"fly": 60
+		}
+	},
+	"flying snake": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 14,
+		"hp": 5,
+		"hd": "2d4",
+		"speed": {
+			"walk": 30,
+			"fly": 60,
+			"swim": 30
+		}
+	},
+	"stirge": {
+		"type": "beast",
+		"cr": "1/8",
+		"ac": 14,
+		"hp": 2,
+		"hd": "1d4",
+		"speed": {
+			"walk": 10,
+			"fly": 40
+		}
+	},
+	"giant bat": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 13,
+		"hp": 2,
+		"hd": "4d10",
+		"speed": {
+			"walk": 10,
+			"fly": 60
+		}
+	},
+	"giant owl": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 12,
+		"hp": 1,
+		"hd": "3d10+3",
+		"speed": {
+			"walk": 5,
+			"fly": 60
+		}
+	},
+	"pteranodon": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 13,
+		"hp": 1,
+		"hd": "3d8",
+		"speed": {
+			"walk": 10,
+			"fly": 60
+		}
+	},
+	"giant wasp": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 12,
+		"hp": 1,
+		"hd": "3d8",
+		"speed": {
+			"walk": 10,
+			"fly": 50
+		}
+	},
+	"giant eagle": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 13,
+		"hp": 2,
+		"hd": "4d10+4",
+		"speed": {
+			"walk": 10,
+			"fly": 80
+		}
+	},
+	"giant vulture": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 10,
+		"hp": 2,
+		"hd": "3d10+6",
+		"speed": {
+			"walk": 10,
+			"fly": 60
+		}
+	},
+	"ankylosaurus": {
+		"type": "beast",
+		"cr": 3,
+		"ac": 15,
+		"hp": 6,
+		"hd": "8d12+16",
+		"speed": {
+			"walk": 30
+		}
+	},
+	"giant scorpion": {
+		"type": "beast",
+		"cr": 3,
+		"ac": 15,
+		"hp": 5,
+		"hd": "7d10+14",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"killer whale": {
+		"type": "beast",
+		"cr": 3,
+		"ac": 12,
+		"hp": 9,
+		"hd": "12d12+12",
+		"speed": {
+			"walk": 0,
+			"swim": 60
+		}
+	},
+	"elephant": {
+		"type": "beast",
+		"cr": 4,
+		"ac": 12,
+		"hp": 7,
+		"hd": "8d12+24",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"giant crocodile": {
+		"type": "beast",
+		"cr": 5,
+		"ac": 14,
+		"hp": 8,
+		"hd": "9d12+27",
+		"speed": {
+			"walk": 30,
+			"swim": 50
+		}
+	},
+	"giant shark": {
+		"type": "beast",
+		"cr": 5,
+		"ac": 13,
+		"hp": 1,
+		"hd": "11d12+55",
+		"speed": {
+			"walk": 0,
+			"swim": 50
+		}
+	},
+	"triceratops": {
+		"type": "beast",
+		"cr": 5,
+		"ac": 13,
+		"hp": 9,
+		"hd": "10d12+30",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"mammoth": {
+		"type": "beast",
+		"cr": 6,
+		"ac": 13,
+		"hp": 1,
+		"hd": "11d12+55",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"relic sloth": {
+		"type": "beast",
+		"cr": "2 ",
+		"ac": 13,
+		"hp": 7,
+		"hd": "8d12 + 24",
+		"speed": {
+			"walk": 20,
+			"climb": 20
+		}
+	},
+	"quetzalcoatlus": {
+		"type": "beast",
+		"cr": 2,
+		"ac": 13,
+		"hp": 2,
+		"hd": "4d12 + 4",
+		"speed": {
+			"walk": 10,
+			"fly": 80
+		}
+	},
+	"clawfoot": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 13,
+		"hp": 1,
+		"hd": "3d8 + 6",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"deinonychus": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 13,
+		"hp": " ",
+		"hd": "4d8 + 8",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"giant swan": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 13,
+		"hp": 2,
+		"hd": "4d10+4",
+		"speed": {
+			"walk": 10,
+			"fly": 80
+		}
+	},
+	"moorbounder": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 13,
+		"hp": 3,
+		"hd": "4d10 + 8",
+		"speed": {
+			"walk": 70
+		}
+	},
+	"nyxborn lynx": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 12,
+		"hp": 3,
+		"hd": "5d10 + 10",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"spider king": {
+		"type": "beast",
+		"cr": 1,
+		"ac": 14,
+		"hp": 4,
+		"hd": "4d10 + 7",
+		"speed": {
+			"walk": 30,
+			"climb": 30
+		}
+	},
+	"clawfoot raptor": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 14,
+		"hp": 1,
+		"hd": "3d8 + 3",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"fiendish giant spider": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 13,
+		"hp": 1,
+		"hd": "2d8 + 2",
+		"speed": {
+			"walk": 40,
+			"climb": 40
+		}
+	},
+	"giant canary": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 12,
+		"hp": 2,
+		"hd": "4d10 + 4",
+		"speed": {
+			"walk": 30,
+			"fly": 60
+		}
+	},
+	"giant dragonfly": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 16,
+		"hp": 2,
+		"hd": "4d10",
+		"speed": {
+			"walk": 10,
+			"fly": 60
+		}
+	},
+	"giant sea eel": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 13,
+		"hp": 1,
+		"hd": "3d10 + 3",
+		"speed": {
+			"swim": 40
+		}
+	},
+	"space eel": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 14,
+		"hp": 7,
+		"hd": "2d6",
+		"speed": {
+			"walk": 10,
+			"fly": 30
+		}
+	},
+	"jaculi": {
+		"type": "beast",
+		"cr": "1/2",
+		"ac": 14,
+		"hp": 1,
+		"hd": "3d10",
+		"speed": {
+			"walk": 30,
+			"climb": 20
+		}
+	},
+	"cave badger": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 12,
+		"hp": 1,
+		"hd": "2d8 + 4",
+		"speed": {
+			"walk": 30,
+			"burrow": 15
+		}
+	},
+	"deep roth\u00e9": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 10,
+		"hp": 1,
+		"hd": "2d8 + 4",
+		"speed": {
+			"walk": 30
+		}
+	},
+	"dimetrodon": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 12,
+		"hp": 1,
+		"hd": "3d8 + 6",
+		"speed": {
+			"walk": 30,
+			"swim": 20
+		}
+	},
+	"fastieth": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 14,
+		"hp": 9,
+		"hd": "2d8",
+		"speed": {
+			"walk": 50
+		}
+	},
+	"giant riding lizard": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 12,
+		"hp": 1,
+		"hd": "3d10 + 3",
+		"speed": {
+			"walk": 30,
+			"climb": 30
+		}
+	},
+	"giant snail": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 11,
+		"hp": 2,
+		"hd": "4d10",
+		"speed": {
+			"walk": 10,
+			"climb": 10
+		}
+	},
+	"giant space hamster": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 11,
+		"hp": 2,
+		"hd": "4d10",
+		"speed": {
+			"walk": 30,
+			"burrow": 10
+		}
+	},
+	"guthash": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 12,
+		"hp": 1,
+		"hd": "2d8",
+		"speed": {
+			"walk": 30
+		}
+	},
+	"hadrosaurus": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 11,
+		"hp": 1,
+		"hd": "3d10 + 3",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"ox": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 10,
+		"hp": 1,
+		"hd": "2d10 + 4",
+		"speed": {
+			"walk": 30
+		}
+	},
+	"snarl": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 13,
+		"hp": 1,
+		"hd": "2d8 + 2",
+		"speed": {
+			"walk": 40
+		}
+	},
+	"space swine": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 11,
+		"hp": 2,
+		"hd": "4d8 + 4",
+		"speed": {
+			"walk": 40,
+			"fly": 40
+		}
+	},
+	"velociraptor": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 13,
+		"hp": 1,
+		"hd": "3d4 + 3",
+		"speed": {
+			"walk": 30
+		}
+	},
+	"walrus": {
+		"type": "beast",
+		"cr": "1/4",
+		"ac": 9,
+		"hp": 2,
+		"hd": "3d10 + 6",
+		"speed": {
+			"walk": 20,
+			"swim": 40
+		}
+	}
+}

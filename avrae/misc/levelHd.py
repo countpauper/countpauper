@@ -23,5 +23,5 @@ for hd, dice in maxHD_per_die.items():
 class_desc = "\n".join(f"**{cls}**: {lvl}d{HDs[cls.lower()]}" for cls, lvl in ch.levels)
 separator="⎯"* 18
 cc_desc = "\n".join(f"**{cc.name}** : {str(cc)}" for cc in new_CCs)
-return f'''embed -title "{name} updates {get('their','their')} hit dice." -desc "{class_desc}\n{separator}\n{cc_desc}"'''
+return f'''embed -title "{name} updates {get('their','their')} hit dice." -desc "{class_desc}\n{separator}\n{cc_desc}\n{reset_info}"'''
 </drac2>
