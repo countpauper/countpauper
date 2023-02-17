@@ -61,7 +61,7 @@ private:
     void GenerateIndexBuffer() const;
 
     mutable uint32_t vertexBuffer, opaqueTriangleBuffer, translucentTriangleBuffer;
-    mutable size_t opaqueTrianglesBuffered, translucentTrianglesBuffered;
+    mutable uint32_t opaqueTrianglesBuffered, translucentTrianglesBuffered;
 
     void RenderSelection() const;
     void RenderOpaque() const;
