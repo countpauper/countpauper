@@ -159,6 +159,7 @@
     <ClInclude Include="Constraint.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="DiscreteGrid.h" />
+    <ClInclude Include="ElementalVoxel.h" />
     <ClInclude Include="EnvironmentalEffects.h" />
     <ClInclude Include="Filter.h" />
     <ClInclude Include="FluidDynamics.h" />

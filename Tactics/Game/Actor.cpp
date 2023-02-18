@@ -362,7 +362,7 @@ namespace Game
         s >> actor.position.x >> actor.position.y;
         s >> actor.mp;
         s >> actor.anatomy;
-		actor.body = Body(actor.anatomy);
+        actor.body = Body(actor.anatomy);
         unsigned armors, weapons, skills;
         s >> armors >> weapons >> skills;
         actor.worn.reserve(armors);

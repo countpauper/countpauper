@@ -138,6 +138,7 @@
     <Image Include="Tactics.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\2d.map" />
     <None Include="Data\Armor.csv" />
     <None Include="Data\ArmorBonus.csv" />
     <None Include="Data\ArmorMaterial.csv" />

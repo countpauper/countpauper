@@ -292,8 +292,8 @@ namespace Game
             if (flow)
             {
                 Engine::Intersection constraintIntsection({ source, surface });
-                assert(physical->Measure(&Physics::Material::water, constraintIntsection) > 0);
-                physical->Constrain(constraintIntsection, material, temperature, [&material, flow](double) {return material.normalDensity*(1.0 + flow); });
+                if (physical->Measure(&Physics::Material::water, constraintIntsection) > 0)
+                    physical->Constrain(constraintIntsection, material, temperature, [&material, flow](double) {return material.normalDensity*(1.0 + flow); });
             }
             return dbgCount;
         }

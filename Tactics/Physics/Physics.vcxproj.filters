@@ -78,6 +78,9 @@
     <ClInclude Include="EnvironmentalEffects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ElementalVoxel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
