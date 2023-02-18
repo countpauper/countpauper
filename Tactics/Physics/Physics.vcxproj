@@ -182,6 +182,7 @@
     <ClCompile Include="Constraint.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="DiscreteGrid.cpp" />
+    <ClCompile Include="ElementalVoxel.cpp" />
     <ClCompile Include="EnvironmentEffects.cpp" />
     <ClCompile Include="FluidData.cpp" />
     <ClCompile Include="FluidDynamics.cpp" />

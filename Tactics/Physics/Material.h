@@ -29,7 +29,7 @@ struct Material
                             // ulatraviolet (sun light) would be 10-400nm 
                             // electric conductivity?
 
-    double Density(double pressure, double temperature) const;
+    double Density(double pressure, double temperature) const;     // pressure in pascal, temperature in kelvin, density in g/L
     double Viscosity(double density, double temperature) const;
     double Reynolds(double density, double temperature, double velocity = 1.0) const;
     bool Solid(double temperature) const;

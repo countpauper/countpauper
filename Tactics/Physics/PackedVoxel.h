@@ -29,7 +29,6 @@ namespace Physics
         bool IsGas() const;
         double Density() const;
         double Mass(double volume) const;
-        Engine::Vector Flow() const;
         int Amount() const; // for gas: pressure, for fluid: level, for solid: granularity  
     private:
 

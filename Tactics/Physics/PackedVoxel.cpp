@@ -135,9 +135,4 @@ int PackedVoxel::Amount() const
     return amount;
 }
 
-Engine::Vector PackedVoxel::Flow() const
-{
-    return Engine::Vector(0, 0, 0); // flow;
-}
-
 }

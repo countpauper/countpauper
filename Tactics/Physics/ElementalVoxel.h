@@ -1,9 +1,14 @@
 #include "Physics/Material.h"
 #include "Engine/Color.h"
 
+namespace Physics
+{
+
 class ElementalVoxel
 {
 public:
+    static const int normalAmount = 100;
+
     ElementalVoxel();
     // TODO: amount could be double density on interface as well, but it's much slower to fill large areas and compute over an over again
     // and the discrete physics is not that continuous either
@@ -20,11 +25,12 @@ public:
     bool IsSolid() const;
     bool IsGas() const;
     double Density() const;
-    double Mass(double volume) const;
-    Engine::Vector Flow() const;
-    int Amount() const; // for gas: pressure, for fluid: level, for solid: granularity  
+    //  double Mass(double volume) const;
+    // int Amount() const; // for gas: pressure, for fluid: level, for solid: granularity  
 private:
     uint8_t air, water, stone, fire, nature;
     //Engine::Vector flow;    // TODO: optimize size: can be in (current? normal? density of the material and then use realistic speeds from cm/s to high wind speed ~40m/sec using ~16 bit shorts)
     static const Material* mats[];
 };
+
+}
