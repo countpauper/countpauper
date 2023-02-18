@@ -166,6 +166,7 @@
     <ClInclude Include="Grid.h" />
     <ClInclude Include="IEnvironment.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="PackedGrid.h" />
     <ClInclude Include="PackedVoxel.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Position.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="TreeGrid.h" />
     <ClInclude Include="Voxel.h" />
     <ClInclude Include="VoxelData.h" />
+    <ClInclude Include="VoxelGrid.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Box.cpp" />
@@ -188,6 +190,7 @@
     <ClCompile Include="FluidDynamics.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Matetrial.cpp" />
+    <ClCompile Include="PackedGrid.cpp" />
     <ClCompile Include="PackedVoxel.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Position.cpp" />

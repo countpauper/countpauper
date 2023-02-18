@@ -16,7 +16,7 @@
 #include "Engine/from_string.h"
 #include "Engine/Debug.h"
 #include "Engine/AxisAlignedBoundingBox.h"
-#include "Physics/DiscreteGrid.h"
+#include "Physics/PackedGrid.h"
 #include "Physics/BoxIterator.h"
 #include "Physics/Direction.h"
 #include "Engine//Effect.h"
@@ -91,7 +91,7 @@ namespace Game
 
     void VoxelMap::Space(const Engine::Vector& size)
     {
-        physical = std::make_unique<Physics::DiscreteGrid>(size, Engine::Vector(HorizontalGrid, HorizontalGrid, VerticalGrid));
+        physical = std::make_unique<Physics::PackedGrid>(size, Engine::Vector(HorizontalGrid, HorizontalGrid, VerticalGrid));
         this->size = Physics::Size(int(std::round(size.x / grid.x)),
             int(std::round(size.y / grid.y)),
             int(std::round(size.z / grid.z)));

@@ -81,6 +81,12 @@
     <ClInclude Include="ElementalVoxel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PackedGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -138,6 +144,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ElementalVoxel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PackedGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

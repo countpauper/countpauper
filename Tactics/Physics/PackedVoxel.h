@@ -1,3 +1,4 @@
+#pragma once
 #include "Physics/Material.h"
 #include "Engine/Color.h"
 #include "Engine/Vector.h"
