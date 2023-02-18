@@ -130,6 +130,17 @@ double PackedVoxel::Mass(double volume) const
     return Density() * volume;
 }
 
+double PackedVoxel::Measure(const Material* material) const
+{
+    if (GetMaterial() == material)
+        if (material->normalDensity == 0)
+            return 1.0;
+        else
+            return static_cast<double>(Amount()) / normalAmount;
+    else
+        return 0;
+}
+
 int PackedVoxel::Amount() const
 {
     return amount;

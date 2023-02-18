@@ -30,6 +30,7 @@ namespace Physics
         bool IsGas() const;
         double Density() const;
         double Mass(double volume) const;
+        double Measure(const Material* material) const;
         int Amount() const; // for gas: pressure, for fluid: level, for solid: granularity  
     private:
 

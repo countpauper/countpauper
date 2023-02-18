@@ -46,7 +46,7 @@ namespace Physics
                 auto& voxel = (*it).second;
                 if ((v.Contains(center)) && (filter(center, voxel.GetMaterial(), voxel.Temperature(), voxel.Density())))
                 {
-                    voxel = PackedVoxel(m, temperature, fraction);
+                    voxel = _Voxel(m, temperature, fraction);
                     filled++;
                 }
             }
@@ -166,23 +166,10 @@ namespace Physics
             double volume = 0.0;
             auto bounds = grid(in.GetBoundingBox()) & Bounds();
 
-            if (material == &Material::vacuum)
+            for (const_iterator it(*this, bounds); it != it.end(); ++it)
             {
-                for (const_iterator it(*this, bounds); it != it.end(); ++it)
-                {
-                    if (((*it).second.GetMaterial() == material) &&
-                        (in.Contains(grid.Center(it.position))))
-                        volume += grid.Volume();
-                }
-            }
-            else
-            {
-                for (const_iterator it(*this, bounds); it != it.end(); ++it)
-                {
-                    if (((*it).second.GetMaterial() == material) &&
-                        (in.Contains(grid.Center(it.position))))
-                        volume += grid.Volume() * (*it).second.Amount() / PackedVoxel::normalAmount;
-                }
+                if (in.Contains(grid.Center(it.position)))
+                    volume += (*it).second.Measure(material);
             }
             return volume;
         }
