@@ -33,6 +33,21 @@ void Log(std::wstring_view txt)
     }
 }
 
+LogStream Log()
+{
+    return LogStream();
+}
+
+LogStream::LogStream(LogStream&& o)
+{
+    s << o.s.str();
+}
+
+LogStream::~LogStream()
+{
+    Log(s.str());
+}
+
 Timer::Timer(std::wstring_view desc) :
     description(desc.data())
 {

@@ -18,7 +18,7 @@ ElementalVoxel::ElementalVoxel() :
 ElementalVoxel::ElementalVoxel(const Material& m, double temperature, double fraction) :
     ElementalVoxel()
 {
-    int amt = std::min(255, int(ElementalVoxel::normalAmount * fraction));
+    int amt = std::min(std::numeric_limits<decltype(stone)>::max(), static_cast<unsigned short>(ElementalVoxel::normalAmount * fraction));
 
     Set(&m, amt);
     SetTemperature(temperature);
@@ -51,15 +51,15 @@ void ElementalVoxel::Set(const Material* newMat, unsigned amt)
     }
     else if (newMat == &Material::stone)
     {
-        stone = 200;
+        stone = normalAmount*2;
         air = std::max(0, normalAmount - static_cast<int>(amt));
         water = 0;
         nature = 0;
     }
     else if (newMat == &Material::soil)
     {
-        stone = 20;
-        water = 20;
+        stone = normalAmount/5;
+        water = normalAmount/5;
         nature = amt;
     }
     else
@@ -74,14 +74,13 @@ void ElementalVoxel::Increase(int delta)
     // could GetMaterial and Set(material, amount+delta) where amount depends on the type of material 
 }
 
-
 const Material* ElementalVoxel::GetMaterial() const
 {
     if ((water >= (normalAmount - air)) && (water > nature))
     {
         return &Material::water;
     }
-    else if ((air < 10) && (stone >= normalAmount))
+    else if ((air < normalAmount/10) && (stone >= normalAmount))
     {
         return &Material::stone;
     }
@@ -105,7 +104,6 @@ const Material* ElementalVoxel::GetMaterial() const
 
 Engine::RGBA ElementalVoxel::Color() const
 {
-
     const auto* mat = GetMaterial();
     double temperature = Temperature();
     double translucency = 1.0;
@@ -123,40 +121,15 @@ Engine::RGBA ElementalVoxel::Color() const
         return baseColor;
 }
 
-constexpr double coefficients[4] = { 0.00036, -0.0862, 8.7063, 0 };
-
 double ElementalVoxel::Temperature() const
 {
-    return pow(fire, 3) * coefficients[0] +
-        pow(fire, 2) * coefficients[1] +
-        fire * coefficients[2] +
-        coefficients[3];
+    return static_cast<double>(fire)/10.0;
 }
 
 void ElementalVoxel::SetTemperature(double t)
 {
-    // simplified Cardano's method, knowing there's one solution with these coefficients
-    constexpr double a = coefficients[0];
-    constexpr double b = coefficients[1];
-    constexpr double c = coefficients[2];
-    double d = (coefficients[3] - t);
-
-    // define a depressed cubic t^3 +pt +q by substitution t=x+b/3a 
-    constexpr double p = (3 * a*c - b * b) / (9 * a*a);
-    double q = (9 * a*b*c - 27 * a*a*d - 2 * b*b*b) / (54 * a*a*a);
-
-    // solve the roots of the u and v of the depressed cubic
-    double D = std::pow(p, 3) + pow(q, 2);
-    double sqrtD = sqrt(D);
-    double u = std::cbrt(q - sqrtD);
-    double v = std::cbrt(q + sqrtD);
-
-    // convert back to the first root of the original cubic equation. the other cubes are complex and ignored
-    double root = u + v - b / (3 * a);
-    // assign the rounded root to the fire as that inverts the polynomial
-    fire = static_cast<uint8_t>(std::max(0.0, std::min(255.0, std::round(root))));
+    fire = static_cast<uint16_t>(std::round(t * 10.0));
 }
-
 
 bool ElementalVoxel::IsFluid() const
 {
@@ -228,6 +201,25 @@ double ElementalVoxel::Measure(const Material* m) const
     {
         throw std::runtime_error("Unmeasurable material " + std::string(m->name));
     }
+}
+
+bool ElementalVoxel::PropagateFire(ElementalVoxel& neighbour)
+{
+    auto dFire = static_cast<int>(fire) - neighbour.fire;
+    if (dFire >= 2)
+    {
+        fire -= 1;
+        neighbour.fire += 1;
+        return true;
+    }
+    else if (dFire <= -2)
+    {
+        fire += 1;
+        neighbour.fire -= 1;
+        return true;
+    }
+    else
+        return false;
 }
 
 }

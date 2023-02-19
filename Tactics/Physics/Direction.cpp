@@ -474,6 +474,14 @@ Directions::Directions(uint16_t flags) :
 {
 }
 
+Directions::Directions(const std::initializer_list<Direction>& dirs) :
+    Directions()
+{
+    for (const auto& dir : dirs)
+        (*this) |= dir;
+}
+
+
 Directions& Directions::operator|=(const Direction& dir)
 {
     flags |= 1 << dir.Id();

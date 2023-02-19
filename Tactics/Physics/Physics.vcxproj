@@ -159,6 +159,7 @@
     <ClInclude Include="Constraint.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="DiscreteGrid.h" />
+    <ClInclude Include="ElementalGrid.h" />
     <ClInclude Include="ElementalVoxel.h" />
     <ClInclude Include="EnvironmentalEffects.h" />
     <ClInclude Include="Filter.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="Constraint.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="DiscreteGrid.cpp" />
+    <ClCompile Include="ElementalGrid.cpp" />
     <ClCompile Include="ElementalVoxel.cpp" />
     <ClCompile Include="EnvironmentEffects.cpp" />
     <ClCompile Include="FluidData.cpp" />

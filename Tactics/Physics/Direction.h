@@ -137,6 +137,7 @@ class Directions
 public:
     Directions();
     explicit Directions(Direction dir);
+    explicit Directions(const std::initializer_list<Direction>& dirs);
     explicit Directions(uint16_t flags);
 
     Directions& operator|=(const Direction& dir);
