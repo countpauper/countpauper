@@ -102,7 +102,6 @@ void PackedVoxel::SetTemperature(double t)
     temperature = static_cast<float>(t);
 }
 
-
 bool PackedVoxel::IsFluid() const
 {
     const auto mat = GetMaterial();
@@ -114,6 +113,13 @@ bool PackedVoxel::IsSolid() const
     const auto mat = GetMaterial();
     return mat->Solid(Temperature());
 }
+
+bool PackedVoxel::IsGranular() const
+{
+    const auto mat = GetMaterial();
+    return mat->Granular();
+}
+
 bool PackedVoxel::IsGas() const
 {
     const auto mat = GetMaterial();

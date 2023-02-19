@@ -23,7 +23,7 @@ void Constraint::Tick(double t, IEnvironment& environment) const
     if (fn)
     {
         auto count = environment.Fill(*volume, materialFilter, *material, temperature, fn(t));
-        Engine::Debug::Log(std::wstring(L"Constrained ") + std::to_wstring(count) + L" blocks of " + std::wstring(material->name)+ L" in a " + std::to_wstring(volume->Volume()) + L" volume.");
+        Engine::Debug::Log(std::string("Constrained ") + std::to_string(count) + " blocks of " + std::string(material->name)+ " in a " + std::to_string(volume->Volume()) + " volume.");
     }
 }
 

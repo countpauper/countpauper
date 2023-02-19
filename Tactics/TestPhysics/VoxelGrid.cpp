@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Physics/PackedGrid.h"
+#include "Physics/VoxelGrid.h"
 #include "Engine/Volume.h"
 
 namespace Physics
@@ -59,7 +59,7 @@ namespace Physics
 
 namespace Test
 {
-TEST(PackedGrid, Space)
+TEST(VoxelGrid, Space)
 {
     TestGrid nullEnv(Engine::Vector(0, 0, 0));
     EXPECT_EQ(nullptr, nullEnv.GetMaterial(Engine::Coordinate::origin));
@@ -76,7 +76,7 @@ TEST(PackedGrid, Space)
     EXPECT_EQ(nullptr, splitEnv.GetMaterial(Engine::Coordinate(0, 3, 0)));
 }
 
-TEST(PackedGrid, Fill)
+TEST(VoxelGrid, Fill)
 {
     TestGrid nullEnv(Engine::Vector(0, 0, 0));
     nullEnv.Fill(Engine::Sphere(Engine::Coordinate::origin, 1), fillAll, Physics::Material::air, 0);
@@ -100,19 +100,27 @@ TEST(PackedGrid, Fill)
     EXPECT_DOUBLE_EQ(1.0, quadEnv.Measure(&Material::water));
 }
 
-TEST(PackedGrid, FillAmount)
+TEST(VoxelGrid, FillAmount)
 {
     TestGrid oneEnv(Engine::Vector(1, 1, 1));
     oneEnv.Fill(Engine::Sphere(Engine::Coordinate::origin, 1), fillAll, Material::water, 273, Material::water.normalDensity/2);
     EXPECT_NEAR(0.5, oneEnv.Measure(&Material::water), 0.1);
 }
 
-TEST(PackedGrid, FillFilter)
+TEST(VoxelGrid, FillFilter)
 {
     TestGrid oneEnv(Engine::Vector(1, 1, 1));
     Filter none = [](const Engine::Coordinate&, const Material*, double, double) { return false;  };
     oneEnv.Fill(Engine::Sphere(Engine::Coordinate::origin, 1), none, Material::water, 273);
     EXPECT_EQ(0, oneEnv.Measure(&Material::water));
+}
+
+TEST(VoxelGrid, Statistics)
+{
+    TestGrid oneEnv(Engine::Vector(1, 1, 1));
+    EXPECT_EQ(oneEnv.Statistics(), L"0kB");
+    TestGrid bigEnv(Engine::Vector(10, 5, 5));
+    EXPECT_EQ(bigEnv.Statistics(), L"5kB");
 }
 
 }

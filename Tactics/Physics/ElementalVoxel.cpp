@@ -93,6 +93,10 @@ const Material* ElementalVoxel::GetMaterial() const
     {
         return &Material::air;
     }
+    else if (air + water + stone + nature == 0.0)
+    {
+        return &Material::vacuum;
+    }
     else
     {
         throw std::runtime_error("Unrecognized material");
@@ -171,6 +175,11 @@ bool ElementalVoxel::IsGas() const
     return mat->Gas(Temperature());
 }
 
+bool ElementalVoxel::IsGranular() const
+{
+    return ((stone > 0) && (stone < normalAmount));
+}
+
 double ElementalVoxel::Density() const
 {
     double t = Temperature();
@@ -182,6 +191,43 @@ double ElementalVoxel::Density() const
     double airWeight = static_cast<double>(air) / normalAmount * volume * Material::air.normalDensity;  // weight of air in g   
     double natureWeight = static_cast<double>(nature) / normalAmount * volume * Material::water.normalDensity; // nature is made of water 
     return (stoneWeight + waterWeight + airWeight + natureWeight) / volume;
+}
+
+double ElementalVoxel::Measure(const Material* m) const
+{
+    if (m == &Material::stone)
+    {
+        if (stone >= normalAmount)
+            return static_cast<double>(normalAmount - water - air) / normalAmount;
+        else
+            return 0.0;
+    }
+    else if (m == &Material::water)
+    {
+        return static_cast<double>(water) / normalAmount;
+    }
+    else if (m == &Material::air)
+    {
+        return static_cast<double>(air) / normalAmount;
+    }
+    else if (m == &Material::soil)
+    {
+        if (stone < normalAmount)
+            return static_cast<double>(normalAmount - air) / normalAmount;
+        else
+            return 0.0;
+    }
+    else if (m == &Material::vacuum)
+    {
+        if (stone == 0)
+            return static_cast<double>(normalAmount - water - air) / normalAmount;
+        else
+            return 0;
+    }
+    else
+    {
+        throw std::runtime_error("Unmeasurable material " + std::string(m->name));
+    }
 }
 
 }

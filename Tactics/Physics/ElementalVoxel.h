@@ -24,7 +24,9 @@ public:
     bool IsFluid() const;
     bool IsSolid() const;
     bool IsGas() const;
+    bool IsGranular() const;
     double Density() const;
+    double Measure(const Material* m) const;
     //  double Mass(double volume) const;
     // int Amount() const; // for gas: pressure, for fluid: level, for solid: granularity  
 private:

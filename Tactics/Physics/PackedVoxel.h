@@ -27,6 +27,7 @@ namespace Physics
         void SetTemperature(double t);
         bool IsFluid() const;
         bool IsSolid() const;
+        bool IsGranular() const;
         bool IsGas() const;
         double Density() const;
         double Mass(double volume) const;

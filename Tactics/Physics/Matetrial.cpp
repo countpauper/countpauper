@@ -5,12 +5,12 @@
 namespace Physics
 {
 
-//                               Name,         Color,                      Melt,   Boil, Density, molar mass,   Viscosity,  Conduct,    thermalCond, Capacity    surfaceTensiom, youngModulus,  Opacity,         
-const Material Material::vacuum{ L"Vacuum",    Engine::RGBA(0x00000000),   0,      0,      0,      0,           0,          0,          0,          0,          0,              0,             0.0 };
-const Material Material::air   { L"Air",       Engine::RGBA(0xFFA08040),   60,     80,     1.225,  29,          18e-6,      29.2,       0.024,      1.012,      10e-3,          1e9,           0.01 };     // 28.964g/mol because n2&o2 diatomic
-const Material Material::soil  { L"Soil",      Engine::RGBA(0xFF20FF20),   1000,   0,      1600,   65,          10e6,       0.4,        1,          2.0,        0.7,            1e7,           10 };     // 65g/mol, based on 0% humidity. Part SiO2, N2 and proteins
-const Material Material::stone { L"Stone",     Engine::RGBA(0xFFA0A0A0),   1986,   3220,   2648,   60,          10e21,      10,         1.8,        0.790,      0.8,            1e10,          10 };     // for now 100% silicon dioxide, 60 g/mol
-const Material Material::water { L"Water",     Engine::RGBA(0xFFFF6010),   273,    373,    1000,   18,          8.9e-4,     0.6065,     0.6,        4.1813,     0.07,           9e9,           6.9 / 1000 };     // H2O 18 g/mol
+//                               Name,         Color,                      Melt,   Boil, Density, molar mass,   Viscosity,  Conduct,    thermalCond, Capacity    surfaceTensiom, youngModulus, granularit,  Opacity,         
+const Material Material::vacuum{ "Vacuum",    Engine::RGBA(0x00000000),   0,      0,      0,      0,           0,          0,          0,          0,          0,              0,             0.0,          0.0 };
+const Material Material::air   { "Air",       Engine::RGBA(0xFFA08040),   60,     80,     1.225,  29,          18e-6,      29.2,       0.024,      1.012,      10e-3,          1e9,           0.0,          0.01 };     // 28.964g/mol because n2&o2 diatomic
+const Material Material::soil  { "Soil",      Engine::RGBA(0xFF20FF20),   1000,   0,      1600,   65,          10e6,       0.4,        1,          2.0,        0.7,            1e7,           1000.0,       10 };     // 65g/mol, based on 0% humidity. Part SiO2, N2 and proteins
+const Material Material::stone { "Stone",     Engine::RGBA(0xFFA0A0A0),   1986,   3220,   2648,   60,          10e21,      10,         1.8,        0.790,      0.8,            1e10,          0.0,          10 };     // for now 100% silicon dioxide, 60 g/mol
+const Material Material::water { "Water",     Engine::RGBA(0xFFFF6010),   273,    373,    1000,   18,          8.9e-4,     0.6065,     0.6,        4.1813,     0.07,           9e9,           0.0,          6.9 / 1000 };     // H2O 18 g/mol
                                                                                                                                             
 // redundant for now VoxelMap::Material VoxelMap::Material::sand  { L"Sand",      1986,   3220,   2648,        10,            0.0           };     // silicon dioxide, 60 g/mol
 
@@ -27,6 +27,11 @@ bool Material::Fluid(double temperature) const
 bool Material::Gas(double temperature) const
 {
     return temperature >= boil;
+}
+
+bool Material::Granular() const
+{   // assuming not gas or liquid 
+    return granularity > 0;
 }
 
 double Material::Evaporation(double temperature, double pressure, double humidity, double windSpeed) const
@@ -99,7 +104,7 @@ double Material::Reynolds(double density, double temperature, double velocity) c
 
 std::ostream& operator<<(std::ostream& stream, const Physics::Material& material)
 {
-    stream << Engine::from_string<std::string>(material.name);
+    stream << material.name;
     return stream;
 }
 
