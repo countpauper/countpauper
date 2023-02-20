@@ -54,11 +54,6 @@ namespace Physics
             return filled;
         }
 
-        void Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density) override
-        {
-            constraints.emplace_back(Constraint(v, m, temperature, density));
-        }
-
         void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) override {}
         void Heat(const Engine::IVolume& c, double energy) override {}
 

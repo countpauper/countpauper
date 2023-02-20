@@ -20,7 +20,8 @@ void ElementalGrid::Tick(double seconds)
 void ElementalGrid::Update()
 {
     PropagateFire();
-    Sun(1);  // ray trace through gas and liquid spreading a certain amount of fire depending on density
+    Sun(2);
+    Constrain();
 }
 
 void ElementalGrid::PropagateFire()
@@ -85,6 +86,14 @@ void ElementalGrid::Sun(int heat)
         }
     }
     changed(grid.BoundingBox(invalid));
+}
+
+void ElementalGrid::Constrain()
+{
+    for (const auto& c : constraints)
+    {
+        c.Tick(time, *this);
+    }
 }
 
 }

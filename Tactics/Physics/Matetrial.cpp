@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Material.h"
 #include "Engine/from_string.h"
+#include "Engine/Maths.h"
 
 namespace Physics
 {
@@ -99,6 +100,37 @@ double Material::Reynolds(double density, double temperature, double velocity) c
 
     const double scale = 0.5;   // ~average between vertical and horizontal meter per grid 
     return density * scale * velocity / Viscosity(density, temperature);
+
+}
+
+Engine::RGBA Material::Color(double temperature, double density) const
+{
+    double translucency = 1.0;
+    if (Fluid(temperature))
+        translucency = 0.2 + std::min(0.8, density / 2500.0);
+    else if (Gas(temperature))
+    {
+        static const Engine::RGBA redFire   { 255, 32, 16, 32 };
+        static const Engine::RGBA orangeFire{ 255, 128, 32, 64 };
+        static const Engine::RGBA whiteFire { 255, 255, 255, 128 };
+        static const Engine::RGBA blueFire  { 32, 32, 255, 64 };
+
+        if (temperature <= 900)
+            return Engine::RGBA::transparent;
+        else if (temperature <= 1250)
+            return Engine::Lerp(900, redFire, 1250, orangeFire, temperature);
+        else if (temperature <= 1750)
+            return Engine::Lerp(1250, orangeFire, 2000, whiteFire, temperature);
+        else
+            return Engine::Lerp(2000, whiteFire, 3500, blueFire, temperature);
+    }
+    auto baseColor = color.Translucent(translucency);
+    if (temperature < 270)
+        return Engine::Lerp(baseColor, Engine::RGBA(0, 0, 255), (temperature - 270) / 270.0);
+    else if (temperature > 750)
+        return Engine::Lerp(baseColor, Engine::RGBA(255, 64, 0), (temperature - 750) / (boil - 700));
+    else
+        return baseColor;
 
 }
 

@@ -41,4 +41,8 @@ std::vector<const Engine::IRendition*> DiscreteGrid::Render() const
     return result;
 }
 
+void DiscreteGrid::Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density)
+{
+    constraints.emplace_back(Constraint(v, m, temperature, density));
+}
 }

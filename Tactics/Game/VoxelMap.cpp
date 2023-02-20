@@ -141,6 +141,9 @@ namespace Game
             dbgCount += physical->Fill(layer, Physics::fillAll, Physics::Material::air, temperature);
         }
         Engine::Debug::Log(L"Air =" + std::to_wstring(dbgCount) + L" voxels\n");
+        
+        physical->Constrain(Engine::AABB(Engine::Range<double>::infinity(), Engine::Range<double>::infinity(), Engine::Range<double>(meters-grid.z, meters)),
+            Physics::Material::air, temperature, [](double) { return Physics::PascalPerAtmosphere; });
     }
 
     void VoxelMap::Wind(const Engine::Vector& speed)

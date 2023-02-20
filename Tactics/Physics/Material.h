@@ -39,6 +39,7 @@ struct Material
     bool Granular() const;
     // Evaporation rate in g/(second * m^2)
     double Evaporation(double temperature, double pressure=PascalPerAtmosphere, double humidity=0.001, double windSpeed=1) const; // g/m2
+    Engine::RGBA Color(double temperature, double density) const;
 
     static const Material vacuum;
     static const Material air;

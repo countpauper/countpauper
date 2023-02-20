@@ -15,7 +15,7 @@ public:
     DiscreteGrid(const Engine::Vector& extent, const Grid& grid = Grid());
     is::signals::connection ConnectChange(ChangeSignal::slot_type slot) override;
     std::vector<const Engine::IRendition*> Render() const override;
-
+    void Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density) override;
 protected:
     Box Bounds() const;
     Box Neighbourhood(const Position& p) const;

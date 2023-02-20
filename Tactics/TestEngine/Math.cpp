@@ -38,6 +38,8 @@ TEST(Math, LinearInterpolotion)
     EXPECT_EQ(1.5, Lerp(1.0, 2.0, 0.5));
     EXPECT_EQ(1.5, Lerp(2.0, 1.0, 0.5));
     EXPECT_EQ(-1, Lerp(-3.0, 1.0, 0.5));
+
+    EXPECT_EQ(Lerp(0, 10, 100, 20, 50), 15);
 }
 
 // TODO: infinite doesn't work as expected but specific checks would cost performance

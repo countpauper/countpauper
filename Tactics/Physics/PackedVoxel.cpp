@@ -75,20 +75,7 @@ Engine::RGBA PackedVoxel::Color() const
     else
     {
         const auto* mat = GetMaterial();
-        double temperature = Temperature();
-        double translucency = 1.0;
-        if (mat->Fluid(temperature))
-            translucency = 0.2+std::min(0.8, Density()/2500.0);
-        else if (mat->Gas(temperature))
-            translucency = 0.0;
-        auto baseColor = mat->color.Translucent(translucency);
-        
-        if (temperature < 270)
-            return Engine::Lerp(baseColor, Engine::RGBA(0, 0, 255), (temperature - 270) / 270.0);
-        else if (temperature > 750)
-            return Engine::Lerp(baseColor, Engine::RGBA(255, 64, 0), (temperature - 750) / (mat->boil - 700));
-        else
-            return baseColor;
+        return mat->Color(Temperature(), Density());
     }
 }
 

@@ -65,7 +65,10 @@ std::wstring UpperCase(const std::wstring_view str)
 
 std::string FormatDuration(double seconds)
 {
-    return FormatDuration(std::chrono::milliseconds(static_cast<uint64_t>(seconds*1000.0)));
+    if (seconds >=0)
+        return FormatDuration(std::chrono::milliseconds(static_cast<uint64_t>(seconds*1000.0)));
+    else 
+        return "-" + FormatDuration(std::chrono::milliseconds(static_cast<uint64_t>(-seconds*1000.0)));
 }
 
 std::string FormatDuration(std::chrono::milliseconds duration)

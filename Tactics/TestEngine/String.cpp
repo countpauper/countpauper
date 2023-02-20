@@ -97,6 +97,7 @@ TEST(String, Duration)
     EXPECT_EQ(FormatDuration(0), "0:00:00.000");
     EXPECT_EQ(FormatDuration(0.123), "0:00:00.123");
     EXPECT_EQ(FormatDuration(3666.999), "1:01:06.999");
+    EXPECT_EQ(FormatDuration(-1), "-0:00:01.000");
 }
 
 }
