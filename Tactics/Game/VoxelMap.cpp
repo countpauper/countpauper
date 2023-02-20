@@ -369,30 +369,8 @@ namespace Game
     void VoxelMap::Tick(double seconds)
     {
         physical->Tick(seconds);
+        Engine::Debug::Log(physical->Statistics());
     }
-
-    void VoxelMap::SetDensityToMeshColor()
-    {
-        if (!mesh)
-            return;
-        mesh->Invalidate();
-        for (auto& vertex : mesh->vertices)
-        {
-            Engine::Coordinate meters(vertex.c.x, vertex.c.z, vertex.c.y);
-
-            //auto position = Grid(meters);
-            auto temperature = physical->Temperature(Engine::Point(meters));
-            const auto* material = physical->GetMaterial(meters);
-            auto density = physical->Density(Engine::Point(meters));
-            double sigmoidDensity = Engine::Sigmoid((density - material->normalDensity) / material->normalDensity);
-            double sigmoidTemperature = Engine::Sigmoid(temperature - atmosphericTemperature);
-            vertex.color = Engine::RGBA(BYTE(127 + sigmoidTemperature * 127.0),
-                BYTE(127 + sigmoidDensity * 127.0),
-                BYTE(127 - sigmoidDensity * 127.0), 255);
-        }
-    }
-
-
 
     void VoxelMap::GenerateMesh()
     {
@@ -596,7 +574,7 @@ void VoxelMap::RenderAnalysis() const
 }
 
 
-std::wstring VoxelMap::Statistics()
+std::string VoxelMap::Statistics()
 {
     return physical->Statistics();
 }
@@ -670,7 +648,7 @@ std::wistream& operator>>(std::wistream& s, VoxelMap& map)
             throw std::runtime_error("Unknown procedure: "+Engine::from_string<std::string>(procedure));
         }
     }
-    Engine::Debug::Log(L"Map generated in " + std::to_wstring(timer.Seconds()*1000.0) +L"ms "+ map.Statistics());
+    Engine::Debug::Log("Map generated in " + std::to_string(timer.Seconds()*1000.0) +"ms "+ map.Statistics());
     return s;
 }
 

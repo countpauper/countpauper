@@ -32,6 +32,7 @@ namespace Physics
             else
                 return 0.0;
         }
+
         Engine::RGBA Color() const
         {
             return m_material->color;
@@ -118,9 +119,10 @@ TEST(VoxelGrid, FillFilter)
 TEST(VoxelGrid, Statistics)
 {
     TestGrid oneEnv(Engine::Vector(1, 1, 1));
-    EXPECT_EQ(oneEnv.Statistics(), L"0kB");
+    EXPECT_EQ(oneEnv.Statistics(), "Time: 0:00:00.000 Mass: 0kg Temperature: 0K Memory: 0kB");
     TestGrid bigEnv(Engine::Vector(10, 5, 5));
-    EXPECT_EQ(bigEnv.Statistics(), L"5kB");
+    bigEnv.Fill(Engine::AABB::infinity, fillAll, Material::water, 300);
+    EXPECT_EQ(bigEnv.Statistics(), "Time: 0:00:00.000 Mass: 250kg Temperature: 300K Memory: 5kB");
 }
 
 }

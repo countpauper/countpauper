@@ -5,6 +5,7 @@
 #include <sstream>
 #include "DiscreteGrid.h"
 #include "Physics/BoxIterator.h"
+#include "Engine/Utils.h"
 
 namespace Physics
 {
@@ -29,7 +30,7 @@ namespace Physics
             return  data.at(Index(p));
         }
 
-        size_t Fill(const Engine::IVolume& v, Filter filter, const Material& m, double temperature, std::optional<double> density = std::optional<double>())
+        size_t Fill(const Engine::IVolume& v, Filter filter, const Material& m, double temperature, std::optional<double> density = std::optional<double>()) override
         {
             size_t filled = 0;
             Box bounds = grid(v.GetBoundingBox()) & Bounds();
@@ -53,13 +54,13 @@ namespace Physics
             return filled;
         }
 
-        void Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density)
+        void Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density) override
         {
             constraints.emplace_back(Constraint(v, m, temperature, density));
         }
 
-        void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
-        void Heat(const Engine::Coordinate& c, double energy) {}
+        void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) override {}
+        void Heat(const Engine::IVolume& c, double energy) override {}
 
         Box Heat(double seconds, const Position &position, _Voxel& current)
         {
@@ -68,7 +69,7 @@ namespace Physics
             Box bounds = Bounds();
             double t = current.Temperature();
             const auto& material = current.GetMaterial();
-            double mass = current.Mass(grid.Volume());
+            double mass = current.Density() * grid.Volume();
             double energy = mass * t * material->heatCapacity;
 
             for (auto dir : halfDirs)
@@ -82,7 +83,7 @@ namespace Physics
                     continue;
 
                 const auto& neighbour_mat = neighbour.GetMaterial();
-                double neighbour_mass = neighbour.Mass(grid.Volume());
+                double neighbour_mass = neighbour.Density() * grid.Volume();
                 double neighbour_energy = neighbour_mass * nt * neighbour_mat->heatCapacity;
 
                 double surface = dir.Surface(grid);
@@ -106,19 +107,27 @@ namespace Physics
             return invalid;
         }
 
-        double Density(const Engine::IVolume& c) const
+        double Mass(const Engine::IVolume& in) const override
         {
-            return 0.0;
+            double volume = 0.0;
+            auto bounds = grid(in.GetBoundingBox()) & Bounds();
+
+            for (const_iterator it(*this, bounds); it != it.end(); ++it)
+            {
+                if (in.Contains(grid.Center(it.position)))  
+                    volume += (*it).second.Density() * grid.Volume(); // TODO: not entirely accurate, should measure overlap % with grid volume
+            }
+            return volume;
         }
 
-        double Temperature(const Engine::IVolume& v) const
+        double Temperature(const Engine::IVolume& v) const override
         {
             Box bounds = grid(v.GetBoundingBox()) & Bounds();
             double count = 0.0;
             double total = 0.0;
             for (const_iterator it(*this, bounds); it != it.end(); ++it)
             {
-                if (v.Contains(grid.Center(it.position)))
+                if (v.Contains(grid.Center(it.position)))   // TODO: not entirely accurate, should measure overlap % and energy and don't divide by count but volume
                 {
                     count++;
                     total += (*it).second.Temperature();
@@ -130,12 +139,12 @@ namespace Physics
                 return 0;
         }
 
-        Engine::Vector Force(const Engine::Coordinate& c) const
+        Engine::Vector Force(const Engine::Coordinate& c) const override
         {
             return Engine::Vector::zero;
         }
 
-        const Material* GetMaterial(const Engine::Coordinate& c) const
+        const Material* GetMaterial(const Engine::Coordinate& c) const override
         {
             auto p = grid(c);
             if (Bounds().Contains(p))
@@ -148,7 +157,7 @@ namespace Physics
             }
         }
 
-        Engine::RGBA Color(const Engine::Line& l) const
+        Engine::RGBA Color(const Engine::Line& l) const override
         {
             Position p = grid(l.b);
             if (Bounds().Contains(p))
@@ -161,7 +170,7 @@ namespace Physics
             }
         }
 
-        double Measure(const Material* material, const Engine::IVolume& in = Engine::AABB::infinity) const
+        double Measure(const Material* material, const Engine::IVolume& in = Engine::AABB::infinity) const override
         {
             double volume = 0.0;
             auto bounds = grid(in.GetBoundingBox()) & Bounds();
@@ -174,10 +183,14 @@ namespace Physics
             return volume;
         }
 
-        std::wstring Statistics() const
+        std::string Statistics() const override
         {
-            std::wstringstream str;
-            str << size.Volume() * sizeof(data[0]) / 1024 << "kB";
+            std::stringstream str;
+            // TODO: chrono duration and format as string?
+            str << "Time: " << Engine::FormatDuration(time).c_str();
+            str << " Mass: " << Mass(Engine::AABB::infinity)/1000.0 << "kg";
+            str << " Temperature: " << Temperature(Engine::AABB::infinity) << "K";
+            str << " Memory: " << size.Volume() * sizeof(data[0]) / 1024 << "kB";
             return str.str();
         }
 

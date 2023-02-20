@@ -47,15 +47,15 @@ double VoxelData::Density(const Engine::Coordinate& c) const
     return TrilinearInterpolation(d, gridWeight);
 }
 
-double VoxelData::Density(const Engine::IVolume& area) const
+double VoxelData::Mass(const Engine::IVolume& area) const
 {
-    auto bb = area.GetBoundingBox();
-    if (bb.Volume() == 0)
+    if (area.Volume() == 0)
     {   // point
-        return Density(bb.Begin());
+        return 0.0;
     }
     else
     {
+        auto bb = area.GetBoundingBox();
         bb &= BoundingBox();
         assert(false); // unimplemented
         return std::numeric_limits<float>::signaling_NaN();

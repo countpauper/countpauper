@@ -131,11 +131,6 @@ double PackedVoxel::Density() const
     return Amount()/ double(normalAmount) * GetMaterial()->normalDensity;    // TODO: temperature? amount? 
 }
 
-double PackedVoxel::Mass(double volume) const
-{
-    return Density() * volume;
-}
-
 double PackedVoxel::Measure(const Material* material) const
 {
     if (GetMaterial() == material)

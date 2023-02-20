@@ -18,10 +18,10 @@ public:
     size_t Fill(const Engine::IVolume& v, Filter filter, const Material& m, double temperature, std::optional<double> density=std::optional<double>()) override;
     void Constrain(const Engine::IVolume& v, const Material& m, double temperature, Function density) override;
     void ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) override;
-    void Heat(const Engine::Coordinate& c, double energy) override;
+    void Heat(const Engine::IVolume& c, double energy) override;
 
     is::signals::connection ConnectChange(ChangeSignal::slot_type slot) override;
-    double Density(const Engine::IVolume& c) const override;
+    double Mass(const Engine::IVolume& c) const override;
     double Temperature(const Engine::IVolume& c) const override;
     Engine::Vector Force(const Engine::Coordinate& c) const override;
     const Material* GetMaterial(const Engine::Coordinate& c) const override;
@@ -29,7 +29,7 @@ public:
     void Tick(double seconds) override;
     std::vector<const Engine::IRendition*> Render() const override;
     double Measure(const Material* material, const Engine::IVolume& in=Engine::AABB::infinity) const override;
-    std::wstring Statistics() const override;
+    std::string Statistics() const override;
 
     class Leaf;
     class Node

@@ -91,7 +91,7 @@ public:
     void AdjustGrid(const Position& location, double temperature, double density);
     double Density(const Position& position) const;
     double Density(const Engine::Coordinate& coordinate) const;
-    double Density(const Engine::IVolume& volume) const;
+    double Mass(const Engine::IVolume& volume) const;
     double Temperature(const Position& position) const;
     double Temperature(const Engine::Coordinate& coordinate) const; // coordinate in SI
     double Temperature(const Engine::IVolume& volume) const;    // volume in SI

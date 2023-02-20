@@ -26,14 +26,14 @@ void StaticEnvironment::Constrain(const Engine::IVolume& v, const Material& m, d
 {
 }
 
-void StaticEnvironment::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
-void StaticEnvironment::Heat(const Engine::Coordinate& c, double energy) {}
+void StaticEnvironment::ApplyForce(const Engine::IVolume& v, const Engine::Vector& force) {}
+void StaticEnvironment::Heat(const Engine::IVolume& v, double energy) {}
 
 is::signals::connection StaticEnvironment::ConnectChange(ChangeSignal::slot_type slot) { return is::signals::connection(); }
 
-double StaticEnvironment::Density(const Engine::IVolume& c) const
+double StaticEnvironment::Mass(const Engine::IVolume& c) const
 {
-    return data.Density(c);
+    return data.Mass(c);
 }
 
 double StaticEnvironment::Temperature(const Engine::IVolume& c) const
@@ -79,9 +79,9 @@ double StaticEnvironment::Measure(const Material* material, const Engine::IVolum
 }
 
 
-std::wstring StaticEnvironment::Statistics() const
+std::string StaticEnvironment::Statistics() const
 {
-    return L"TODO: Voxeldata statistics";
+    return "TODO: Voxeldata statistics";
 }
 
 

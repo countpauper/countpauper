@@ -27,14 +27,14 @@ void TreeGrid::Constrain(const Engine::IVolume& v, const Material& m, double tem
 {
 }
 
-void TreeGrid::ApplyForce(const Engine::IVolume& c, const Engine::Vector& v) {}
-void TreeGrid::Heat(const Engine::Coordinate& c, double energy) {}
+void TreeGrid::ApplyForce(const Engine::IVolume& v, const Engine::Vector& force) {}
+void TreeGrid::Heat(const Engine::IVolume& v, double energy) {}
 
 is::signals::connection TreeGrid::ConnectChange(ChangeSignal::slot_type slot) { return is::signals::connection(); }
 
-double TreeGrid::Density(const Engine::IVolume& c) const
+double TreeGrid::Mass(const Engine::IVolume& c) const
 {
-    return 0.0;
+    throw std::runtime_error("Tree grid mass unimplemented");
 }
 
 double TreeGrid::Temperature(const Engine::IVolume& v) const
@@ -101,12 +101,12 @@ double TreeGrid::Measure(const Material* material, const Engine::IVolume& in) co
     return root->Measure(material);
 }
 
-std::wstring TreeGrid::Statistics() const
+std::string TreeGrid::Statistics() const
 {
     std::map<unsigned, unsigned> leaves;
     unsigned branches=0;
     root->GetStatistics(leaves, branches);
-    std::wstringstream str;
+    std::stringstream str;
     str << "Branches: " << branches << "(" << branches * sizeof(Branch) / 1024 << "kB) ";
     str << "Leaves:";
     unsigned leafCount = 0;

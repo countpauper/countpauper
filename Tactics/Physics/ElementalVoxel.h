@@ -28,7 +28,6 @@ public:
     double Density() const;
     double Measure(const Material* m) const;
     bool PropagateFire(ElementalVoxel& neighbour);
-    //  double Mass(double volume) const;
     // int Amount() const; // for gas: pressure, for fluid: level, for solid: granularity  
 
     uint16_t air, water, stone, fire, nature;

@@ -5,6 +5,7 @@
 #include <set>
 #include <sstream>
 #include <string_view>
+#include <chrono>
 
 namespace Engine
 {
@@ -15,7 +16,8 @@ namespace Engine
 	extern const std::wstring_view whitespace;
     std::wstring_view Strip(const std::wstring_view, std::wstring_view trash = whitespace);
     std::wstring UpperCase(const std::wstring_view str);
-
+    std::string FormatDuration(double seconds);
+    std::string FormatDuration(std::chrono::milliseconds);
     template<class T> 
     std::wstring ToWString(const T& object)
     {

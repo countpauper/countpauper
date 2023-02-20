@@ -47,12 +47,11 @@ public:
     // Map
     void Render() const override;
     void Tick(double seconds) override;
-    std::wstring Statistics(); 
+    std::string Statistics(); 
 protected:
     void GenerateMesh();
     void RenderPretty() const;
     void RenderAnalysis() const;
-    void SetDensityToMeshColor();
 
     Engine::Coordinate Center(const Position& p) const;
     Physics::Directions Visibility(const Position& p) const;

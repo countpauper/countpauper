@@ -208,7 +208,7 @@ Box PackedGrid::Evaporate(double seconds, const Position& position, PackedVoxel&
 
     double surface = grid.x*grid.y;
     double evaporationRate = surface * current.GetMaterial()->Evaporation(current.Temperature());
-    double mass = current.Mass(grid.Volume());
+    double mass = current.Density() * grid.Volume();
     double timeToEvaporate = mass / evaporationRate;
     double chance = seconds / timeToEvaporate; // TODO: not exact cummulative chance, but no need to track evopration progress
     if (Engine::Random().Chance() < chance)

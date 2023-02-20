@@ -21,7 +21,6 @@ void ElementalGrid::Update()
 {
     PropagateFire();
     Sun(1);  // ray trace through gas and liquid spreading a certain amount of fire depending on density
-    Engine::Debug::Log("Elemental Grid tick @ " + std::to_string(time) + "s");
 }
 
 void ElementalGrid::PropagateFire()

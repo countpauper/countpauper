@@ -156,18 +156,34 @@ bool ElementalVoxel::IsGranular() const
 double ElementalVoxel::Density() const
 {
     double t = Temperature();
-    assert(!Material::stone.Gas(t));    // assume no gas pressure from stone
-    constexpr double volume = 10 * 10 * 3333; // L
-    // TODO: no temperature density is used 
-    double stoneWeight = static_cast<double>(stone) / normalAmount * volume * Material::stone.normalDensity;
-    double waterWeight = static_cast<double>(water) / normalAmount * volume * Material::water.normalDensity;  // weight of water in g
-    double airWeight = static_cast<double>(air) / normalAmount * volume * Material::air.normalDensity;  // weight of air in g   
-    double natureWeight = static_cast<double>(nature) / normalAmount * volume * Material::water.normalDensity; // nature is made of water 
-    return (stoneWeight + waterWeight + airWeight + natureWeight) / volume;
+    double density = 0;
+    double soilPercentage = Measure(&Material::soil);
+    if (soilPercentage > 0)
+    {   // soil is made up of sand, water and nature in a mix. don't measure stone and water
+        density += soilPercentage * Material::soil.Density(PascalPerAtmosphere, t);
+    }
+    else
+    {
+        double stonePercentage = Measure(&Material::stone);
+        density += stonePercentage * Material::stone.Density(PascalPerAtmosphere, t);
+        
+        double waterFraction = Measure(&Material::water);
+        if (waterFraction < 1.0)  // water level
+            density += Measure(&Material::water)  * Material::water.Density(PascalPerAtmosphere, t);
+        else     // high pressure water
+            density += Material::water.Density(waterFraction * PascalPerAtmosphere, t);
+    }
+    double airFraction = Measure(&Material::air);
+    if (airFraction <= 1)
+        density += airFraction * Material::air.Density(PascalPerAtmosphere, t);
+    else
+        density += Material::air.Density(airFraction * PascalPerAtmosphere, t);
+    return density;
 }
 
 double ElementalVoxel::Measure(const Material* m) const
 {
+    assert(nature == 0);     // nature is not taken into account. If could be the amount of soil but it's more plant mass on top of it 
     if (m == &Material::stone)
     {
         if (stone >= normalAmount)
@@ -202,6 +218,8 @@ double ElementalVoxel::Measure(const Material* m) const
         throw std::runtime_error("Unmeasurable material " + std::string(m->name));
     }
 }
+
+
 
 bool ElementalVoxel::PropagateFire(ElementalVoxel& neighbour)
 {

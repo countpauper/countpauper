@@ -90,4 +90,13 @@ TEST(String, UpperCase)
     EXPECT_EQ(L"UPP3RC4SE", Engine::UpperCase(L"Upp3rC4se"));
     EXPECT_EQ(L"O0O", Engine::UpperCase(L"o0o"));
 }
+
+
+TEST(String, Duration)
+{
+    EXPECT_EQ(FormatDuration(0), "0:00:00.000");
+    EXPECT_EQ(FormatDuration(0.123), "0:00:00.123");
+    EXPECT_EQ(FormatDuration(3666.999), "1:01:06.999");
+}
+
 }

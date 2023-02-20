@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include <sstream>
 #include <ctype.h>
-
+#include <iomanip>
 
 namespace Engine
 {
@@ -63,6 +63,25 @@ std::wstring UpperCase(const std::wstring_view str)
     return result;
 }
 
+std::string FormatDuration(double seconds)
+{
+    return FormatDuration(std::chrono::milliseconds(static_cast<uint64_t>(seconds*1000.0)));
+}
+
+std::string FormatDuration(std::chrono::milliseconds duration)
+{
+    const auto hours = std::chrono::duration_cast<std::chrono::hours>(duration);
+    const auto minutes = std::chrono::duration_cast<std::chrono::minutes>(duration - hours);
+    const auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration - hours - minutes);
+    const auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration - hours - minutes - seconds);
+
+    std::stringstream ss;
+    ss << std::setfill('0') << hours.count() << ":" << 
+        std::setw(2)  << minutes.count() << ":" << 
+        std::setw(2)  << seconds.count() << "." << 
+        std::setw(3) << millis.count();
+    return ss.str();
+}
 
 std::wstring_view Strip(const std::wstring_view str, const std::wstring_view trash)
 {
