@@ -14,6 +14,7 @@ ElementalGrid::ElementalGrid(const Engine::Vector& extent, const Grid& grid) :
 void ElementalGrid::Tick(double seconds) 
 {
     m_update.Tick(seconds);
+    effects.Tick(seconds);
     time += seconds;
 }
 
@@ -21,8 +22,10 @@ void ElementalGrid::Update()
 {
     PropagateFire();
     Sun(2);
+    Evaporate();
     Constrain();
 }
+
 
 void ElementalGrid::PropagateFire()
 {
@@ -86,6 +89,26 @@ void ElementalGrid::Sun(int heat)
         }
     }
     changed(grid.BoundingBox(invalid));
+}
+
+void ElementalGrid::Evaporate()
+{
+    Box invalid;
+    Box bounds = Bounds();
+
+    for (iterator it(*this, bounds); it != it.end(); ++it)
+    {
+        auto& current = (*it).second;
+        auto t = current.Temperature();
+        auto rate = std::min(static_cast<int>(current.water), 10*static_cast<int>(t - Material::water.boil));
+        if (rate >0 )
+        {
+            current.water -= rate;
+            current.air+= rate;
+            effects.push_back(Steam(grid.Center((*it).first), rate, t));
+        }
+    }
+
 }
 
 void ElementalGrid::Constrain()

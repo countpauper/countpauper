@@ -6,7 +6,7 @@
 namespace Physics
 {
 
-//                               Name,         Color,                      Melt,   Boil, Density, molar mass,   Viscosity,  Conduct,    thermalCond, Capacity    surfaceTensiom, youngModulus, granularit,  Opacity,         
+//                               Name,         Color,                      Melt,   Boil, Density, molar mass,  Viscosity,  Conduct,    thermalCond, Capacity    surfaceTensiom, youngModulus, granularit,  Opacity,         
 const Material Material::vacuum{ "Vacuum",    Engine::RGBA(0x00000000),   0,      0,      0,      0,           0,          0,          0,          0,          0,              0,             0.0,          0.0 };
 const Material Material::air   { "Air",       Engine::RGBA(0xFFA08040),   60,     80,     1.225,  29,          18e-6,      29.2,       0.024,      1.012,      10e-3,          1e9,           0.0,          0.01 };     // 28.964g/mol because n2&o2 diatomic
 const Material Material::soil  { "Soil",      Engine::RGBA(0xFF20FF20),   1000,   0,      1600,   65,          10e6,       0.4,        1,          2.0,        0.7,            1e7,           1000.0,       10 };     // 65g/mol, based on 0% humidity. Part SiO2, N2 and proteins

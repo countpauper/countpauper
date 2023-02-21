@@ -211,18 +211,12 @@ double ElementalVoxel::Measure(const Material* m) const
 bool ElementalVoxel::PropagateFire(ElementalVoxel& neighbour)
 {
     auto dFire = static_cast<int>(fire) - neighbour.fire;
-    auto rate = std::max(1, std::abs(dFire / 16));
+    auto rate = static_cast<int>(std::round(std::cbrt(dFire)));
 
-    if (dFire >= 2)
+    if (rate>0)
     {
         fire -= rate;
         neighbour.fire += rate;
-        return true;
-    }
-    else if (dFire <= -2)
-    {
-        fire += rate;
-        neighbour.fire -= rate;
         return true;
     }
     else

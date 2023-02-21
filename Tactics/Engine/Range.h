@@ -138,6 +138,7 @@ struct Range
     {
         return !infinite();
     }
+
     static constexpr Range infinity()
     {
         static_assert(std::numeric_limits<T>::has_infinity);
