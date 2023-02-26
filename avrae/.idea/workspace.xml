@@ -2,23 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../Math/Solvers/function.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/Beasts.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/beasts.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/cast_cc.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/might summoner.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/raised.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sorcerer/careful.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/ElementalGrid.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/ElementalGrid.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bonus/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/bonus/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chance/csv2json.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/csv2json.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/custom item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/sane item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/sane item prices.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/levelHd.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/levelHd.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/wcast.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/wcast.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/play/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/play/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

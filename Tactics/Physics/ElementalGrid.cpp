@@ -22,6 +22,9 @@ void ElementalGrid::Update()
 {
     PropagateFire();
     Sun(2);
+    // TODO: liquid flow, granular fall, 
+    // hot gas & liquid pressure (increases amount, possibly above "normal"), flow to neighbours until normal, flow transports share of fire
+    // steam moisterize (particles condense into cooler air), rain? plants grow
     Evaporate();
     Constrain();
 }
