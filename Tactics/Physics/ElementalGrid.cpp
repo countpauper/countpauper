@@ -20,8 +20,9 @@ void ElementalGrid::Tick(double seconds)
 
 void ElementalGrid::Update()
 {
-    PropagateFire();
     Sun(2);
+    PropagateFire();
+    Flow();
     // TODO: liquid flow, granular fall, 
     // hot gas & liquid pressure (increases amount, possibly above "normal"), flow to neighbours until normal, flow transports share of fire
     // steam moisterize (particles condense into cooler air), rain? plants grow
@@ -92,6 +93,31 @@ void ElementalGrid::Sun(int heat)
         }
     }
     changed(grid.BoundingBox(invalid));
+}
+
+void ElementalGrid::Flow()
+{
+    Box invalid;
+    Box bounds = Bounds();
+    const auto propagationDirections = Directions{ Direction::north, Direction::east};
+    for (iterator it(*this, bounds); it != it.end(); ++it)
+    {
+        auto& current = (*it).second;
+        for (const auto & dir : propagationDirections)
+        {
+            auto neightbourPosition = (*it).first + dir.Vector();
+            if (bounds.Contains(neightbourPosition))
+            {
+                auto& neighbour = (*this)[neightbourPosition];
+                if (current.Flow(neighbour))
+                {
+                    invalid |= (*it).first;
+                    invalid |= neightbourPosition;
+                }
+            }
+        }
+    }
+
 }
 
 void ElementalGrid::Evaporate()

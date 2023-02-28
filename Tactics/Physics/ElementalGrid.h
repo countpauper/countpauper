@@ -14,6 +14,7 @@ namespace Physics
         void Update();
         void PropagateFire();
         void Sun(int heat);
+        void Flow();
         void Evaporate();
         void Constrain();
         Engine::UpdateFrequency m_update;

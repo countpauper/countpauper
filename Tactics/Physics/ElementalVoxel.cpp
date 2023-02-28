@@ -206,14 +206,12 @@ double ElementalVoxel::Measure(const Material* m) const
     }
 }
 
-
-
 bool ElementalVoxel::PropagateFire(ElementalVoxel& neighbour)
 {
     auto dFire = static_cast<int>(fire) - neighbour.fire;
     auto rate = static_cast<int>(std::round(std::cbrt(dFire)));
 
-    if (rate>0)
+    if (rate!=0)
     {
         fire -= rate;
         neighbour.fire += rate;
@@ -223,4 +221,23 @@ bool ElementalVoxel::PropagateFire(ElementalVoxel& neighbour)
         return false;
 }
 
+template <typename T> int signum(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+bool ElementalVoxel::Flow(ElementalVoxel& neighbour)
+{
+    auto dWater = static_cast<int>(water) - neighbour.water;
+    auto rate = signum(dWater);
+
+    if ((rate != 0) && (air>=-rate) && (neighbour.air>=rate))
+    {
+        water -= rate;
+        air += rate;
+        neighbour.water += rate;
+        neighbour.air -= rate;
+        return true;
+    }
+    else 
+        return false;
+}
 }
