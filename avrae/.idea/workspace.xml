@@ -4,7 +4,11 @@
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Physics/ElementalGrid.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/ElementalGrid.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/ElementalGrid.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/ElementalGrid.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/ElementalVoxel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/ElementalVoxel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/ElementalVoxel.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/ElementalVoxel.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

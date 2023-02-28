@@ -20,6 +20,18 @@ Outlands
 !piety split it
 !rpxp split it
 
+An alias for `!import` to generate the automation for casting a spell with a cc
+  ??? spell name to id database?
+  - -dc option to the alias to override the default dc of the automation
+  - -sb option to the alias to override the default spell attack bonus
+  - -cc option to override the cc name
+  - a -with <stat> option
+  - allow for Feytouched: Spell automatically
+
+`cc` snippet
+   - Accept a cc with Fey Touched (Intelligence): or whatever prefix
+   - check cc name for casting stat if any to override `-with
+
 * !play npc "quotes"  - strip quotes, they're not needed and a common mistake.
 
 
