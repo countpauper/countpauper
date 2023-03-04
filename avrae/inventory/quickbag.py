@@ -315,98 +315,100 @@ while args:
 			bag=bags[bag_idx]
 			report[bag_idx]={default_bag:[1]}
 		else:
-			pass
+			bag = None
+	else:
+		bag = bags[bag_idx]
 
 	###  ITEMS
-	bag = bags[bag_idx]
-	# Modify: find items already in the current bag, always use partial match first
-	if partial:
-		mod_items=[]
-	else:
-		mod_items = [n for n in bag[1].keys() if n.lower().startswith(item_name) or space_name in n.lower()]
-	if mod_items:
-		mod_item=mod_items[0]
-		current=bag[1].get(mod_item)
-		amount=max(0,current+delta)
-		if amount:
-			bag[1][mod_item]=amount
-			debug.append(f'Adjust {current}+{delta}={amount} x {mod_item}')
+	if bag is not None:
+		# Modify: find items already in the current bag, always use partial match first
+		if partial:
+			mod_items=[]
 		else:
-			bag[1].pop(mod_item)
-			debug.append(f'Remove {current} x {mod_item}')
+			mod_items = [n for n in bag[1].keys() if n.lower().startswith(item_name) or space_name in n.lower()]
+		if mod_items:
+			mod_item=mod_items[0]
+			current=bag[1].get(mod_item)
+			amount=max(0,current+delta)
+			if amount:
+				bag[1][mod_item]=amount
+				debug.append(f'Adjust {current}+{delta}={amount} x {mod_item}')
+			else:
+				bag[1].pop(mod_item)
+				debug.append(f'Remove {current} x {mod_item}')
 
-		# update the item's diff in the report
-		diff=report.get(bag_idx,{})
-		change=current-amount
-		diff[mod_item]=diff.get(mod_item,[current])+[change]
-		report[bag_idx]=diff
+			# update the item's diff in the report
+			diff=report.get(bag_idx,{})
+			change=current-amount
+			diff[mod_item]=diff.get(mod_item,[current])+[change]
+			report[bag_idx]=diff
 
-		# next arg, unless still items to remove
-		delta+=change
-		if delta>=0:
-			delta=None
+			# next arg, unless still items to remove
+			delta+=change
+			if delta>=0:
+				delta=None
+				continue
+
+		# Add NEW known items to the current bag
+		if delta>0:
+			if len(item_name)==1:
+				return f'echo `{item_name}` is not a recognizable item. Use "quotes" for items that consist of more than one word.'
+			if partial:
+				iterations-=1
+				new_items += [n for n in item_list if n.startswith(item_name) or space_name in n.lower()]
+			else:
+				iterations-=1
+				new_items = [n for n in item_list if item_name == n]
+			if new_items:
+				new_item=new_items[0].title().replace("'S","'s")
+				bag[1][new_item]=delta
+				debug.append(f'Add {delta} x {new_item}')
+				# update the item's diff in the report
+				diff=report.get(bag_idx,{})
+				diff[new_item]=[0,delta]
+				report[bag_idx]=diff
+
+				delta=None
+				continue
+
+			# Sets: add all of a set's contents to the arguments and parse as normal
+			if partial:
+				item_set += [n for n in sets.keys() if n.startswith(item_name) or space_name in n.lower()]
+			else:
+				item_set = [n for n in sets.keys() if item_name==n]
+			if item_set:
+				item_set=item_set[0]
+				set_items=sets[item_set]
+
+				# if updated with coin, then don't add set (assumed background) item coins, the sheet did it
+				if character().coinpurse.total:
+					set_items={i:q for i,q in set_items.items() if i.lower() not in character().coinpurse.get_coins()}
+					debug.append(f'Limited Set {item_set}')
+				else:
+					debug.append(f'Set {item_set}')
+
+				added_args=[]
+				for item_name,q in set_items.items():
+					added_args+=[str(q),item_name]
+				args=added_args * delta + args
+				delta=None
+				continue
+
+		# try again with partial prefix
+		if not partial:
+			args.insert(0,f'~{arg}')
 			continue
 
-	# Add NEW known items to the current bag
-	if delta>0:
-		if len(item_name)==1:
-			return f'echo `{item_name}` is not a recognizable item. Use "quotes" for items that consist of more than one word.'
-		if partial:
-			iterations-=1
-			new_items += [n for n in item_list if n.startswith(item_name) or space_name in n.lower()]
-		else:
-			iterations-=1
-			new_items = [n for n in item_list if item_name == n]
-		if new_items:
-			new_item=new_items[0].title().replace("'S","'s")
+		# Lowest priority: unrecognized item
+		if delta>0:
+			new_item=item_name.title().replace("'S","'s")
 			bag[1][new_item]=delta
-			debug.append(f'Add {delta} x {new_item}')
-			# update the item's diff in the report
+			debug.append(f'Unknown {delta} x {new_item}')
 			diff=report.get(bag_idx,{})
 			diff[new_item]=[0,delta]
 			report[bag_idx]=diff
-
 			delta=None
 			continue
-
-		# Sets: add all of a set's contents to the arguments and parse as normal
-		if partial:
-			item_set += [n for n in sets.keys() if n.startswith(item_name) or space_name in n.lower()]
-		else:
-			item_set = [n for n in sets.keys() if item_name==n]
-		if item_set:
-			item_set=item_set[0]
-			set_items=sets[item_set]
-
-			# if updated with coin, then don't add set (assumed background) item coins, the sheet did it
-			if character().coinpurse.total:
-				set_items={i:q for i,q in set_items.items() if i.lower() not in character().coinpurse.get_coins()}
-				debug.append(f'Limited Set {item_set}')
-			else:
-				debug.append(f'Set {item_set}')
-
-			added_args=[]
-			for item_name,q in set_items.items():
-				added_args+=[str(q),item_name]
-			args=added_args * delta + args
-			delta=None
-			continue
-
-	# try again with partial prefix
-	if not partial:
-		args.insert(0,f'~{arg}')
-		continue
-
-	# Lowest priority: unrecognized item
-	if delta>0:
-		new_item=item_name.title().replace("'S","'s")
-		bag[1][new_item]=delta
-		debug.append(f'Unknown {delta} x {new_item}')
-		diff=report.get(bag_idx,{})
-		diff[new_item]=[0,delta]
-		report[bag_idx]=diff
-		delta=None
-		continue
 
 	# missing items
 	if delta<0:
@@ -446,21 +448,21 @@ if  report:
 			for coin, icon in coinIcons.items():
 				q=contents.get(coin,0)
 				if coin in changes:
-					items.append(f'{icon} {bold}~~{changes[coin][0]}~~ {q} {coin}{bold}')
+					items.append(f'{icon} {q:,} ({q-changes[coin][0]:+,})')
 				elif show_bag:
-					items.append(f'{icon} {q} {coin}')
+					items.append(f'{icon} {q:,} {coin}')
 		for item_name,q in contents.items():
 			if item_name in done_items:
 				continue
 			done_items.append(item_name)
 			plural_name=item_name if item_name[-1]=='s' else item_name+'s'
-			item_desc= f'{q} x {plural_name}' if q>1 else item_name	# TODO: better plural
+			item_desc= f'{q:,} x {plural_name}' if q>1 else item_name	# TODO: better plural
 			if item_name in changes:
 				original_amount=changes[item_name][0]
 				if original_amount==0:
 					items.append(f'{bold}+{item_desc}{bold}')
 				else:
-					items.append(f'{bold}~~{original_amount}~~ {item_desc}{bold}')
+					items.append(f'{bold}~~{original_amount:,}~~ {item_desc}{bold}')
 			elif show_bag:	# unchanged item
 				items.append(item_desc)
 		for item_name,diff in changes.items():
@@ -468,7 +470,7 @@ if  report:
 				continue
 			plural_name=item_name if item_name[-1]=='s' else item_name+'s'
 			original_amount=diff[0]
-			items.append(f'{bold}~~{original_amount} x {plural_name}~~{bold}' if original_amount!=1 else f'{bold}~~{item_name}~~{bold}')
+			items.append(f'{bold}~~{original_amount:,} x {plural_name}~~{bold}' if original_amount!=1 else f'{bold}~~{item_name}~~{bold}')
 
 		# Convert the items for this bag into fields, splitting them to stay under discord's 1024 character limit if needed
 		if not items:

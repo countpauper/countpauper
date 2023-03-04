@@ -102,11 +102,11 @@ owned={(n if q<=1 else item_table.get(n,{}).get('plural', n if n[-1]=='s' else f
 # capitalize
 owned={(n.title().replace("'S","'s") if not n in coin_list else n):q for n,q in owned.items()}
 # format amounts
-result='\n'.join(f'• {q}x {n}' if q else f'No {n}' for n,q in owned.items())
+result='\n'.join(f'• {q:,}x {n}' if q else f'No {n}' for n,q in owned.items())
 if containers:
 	result+=f'\n\tin {get("their","their")} {", ".join(containers)}.'
 # format costs
-total_cost=' '.join(f'{int(q)} {c}' for c,q in coin_cost.items() if q>0)
+total_cost=' '.join(f'{int(q):,} {c}' for c,q in coin_cost.items() if q>0)
 if not total_cost:
 	total_cost='None'
 

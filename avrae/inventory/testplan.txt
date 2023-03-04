@@ -1,6 +1,9 @@
 !cvar delete bags
 # Empty first
 !bqb -Coinpurse
+# first try to remove with nothing
+!bqb -healing
+
 !bqb "Coin Pouch"
 # test with open bags first
 !bag open all

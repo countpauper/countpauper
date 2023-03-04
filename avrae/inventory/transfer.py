@@ -139,14 +139,14 @@ if target_name==purse_name.lower():
 	for coin in purse.keys():
 		if change:=diff.get(coin): # TODO or showbag, then default to (q,q)
 			if change[0]!=change[1]:
-				desc.append(f'{coinIcons.get(coin,coin)} ~~{change[0]}~~ {change[1]} {coin}')
+				desc.append(f'{coinIcons.get(coin,coin)} {change[1]:,} {coin} ({change[1]-change[0]:+,})')
 			else:
-				desc.append(f'{coinIcons.get(coin,coin)} {change[0]} {coin} ')
+				desc.append(f'{coinIcons.get(coin,coin)} {change[0]:,} {coin} ')
 else:
 	# pluralize
-	plural_diff={(f'{new}x {i}{"es" if any(i.endswith(end) for end in plural_es) else "s"}' if new>1 else i):old for i,(old,new) in diff.items()}
+	plural_diff={(f'{new:,}x {i}{"es" if any(i.endswith(end) for end in plural_es) else "s"}' if new>1 else i):old for i,(old,new) in diff.items()}
 	# report changes
-	desc=[f'~~{old}~~ {item}' if old else item for item,old in plural_diff.items()]
+	desc=[f'~~{old:,}~~ {item}' if old else item for item,old in plural_diff.items()]
 
 if not desc:
 	desc=["*No items transferred*"]
