@@ -1,10 +1,3 @@
-!qb -healing with no cvar gives
-Traceback (most recent call last):
-  Line 320, col 7
-        bag = bags[bag_idx]
-           ^^^^^^^^^^^^^
-
-
 An alias for `!import` to generate the automation for casting a spell with a cc
   ??? spell name to id database?
   - -dc option to the alias to override the default dc of the automation
@@ -16,9 +9,7 @@ An alias for `!import` to generate the automation for casting a spell with a cc
 `cc` snippet
    - Accept a cc with Fey Touched (Intelligence): or whatever prefix
    - check cc name for casting stat if any to override `-with
-
-
-
+ 
 * Avrae 4.0 fixes
 * SOON !play bet, remove from coin pouch instead of bag.
  *  !play collect

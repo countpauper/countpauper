@@ -16,6 +16,15 @@ if args:
 if message:=" ".join(args):
 	message=f' *{message}*'
 
+def negate_roll_str(s):
+	if s[0]=='-':
+		if any(c in s[1:] for c in '+-'):
+			return f'-({s})'
+		else:
+			return s[1:]
+	else:
+		return f'-({s})'
+
 # execute for combat
 if c:=combat():
 	# find combat target
@@ -29,8 +38,7 @@ if c:=combat():
 	# apply delta
 	if delta:
 		if delta[0]=='-':
-			delta=delta[1:]
-			r=target.damage(delta).roll
+			r=target.damage(negate_roll_str(delta)).roll
 			return f'echo hurts {target.name} by {r}. {target.hp_str()}{message}'
 		else:
 			r=vroll(delta)

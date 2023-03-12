@@ -5,11 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../Dependencies/googletest" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitmodules" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Clone.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Clone.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Engine.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Engine.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Error.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Error.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Line.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Line.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Matrix.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Matrix.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Range.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Range.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/stdafx.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/stdafx.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Game.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Game.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Physics.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Physics.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Tactics/Tactics.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Tactics/Tactics.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/TestEngine.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/TestEngine.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/TestGame.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/TestGame.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/TestPhysics.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/TestPhysics.vcxproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/count.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/count.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/quickbag.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/quickbag.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/testplan.txt" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/testplan.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/transfer.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/transfer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/hp.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/hp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -366,6 +382,11 @@
           <url>file://$PROJECT_DIR$/dc/monster_converter.py</url>
           <line>66</line>
           <option name="timeStamp" value="84" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/misc/hp.py</url>
+          <line>45</line>
+          <option name="timeStamp" value="85" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
