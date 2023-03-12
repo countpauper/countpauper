@@ -108,7 +108,7 @@ struct Range
 
     T Middle() const
     {
-        return Middle(std::_Is_floating_point<T>());
+        return Middle(std::is_floating_point<T>());
     }
 
     T Middle(std::true_type) const

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <optional>
 #include "IEnvironment.h"
 #include "VoxelData.h"
 #include "Grid.h"

@@ -13,9 +13,9 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{c6ec2349-4889-451a-9585-58a919a85d13}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,9 +70,9 @@
       <PreprocessorDefinitions>X64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\Engine;..\..\Dependencies\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Engine;..\..\Dependencies\glew\include;C:\Users\mauri\countpauper\Dependencies\googletest\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -82,8 +82,8 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);opengl32.lib;glew32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Dependencies\glew\lib\Release\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);opengl32.lib;glew32.lib;gtest.lib;gmock.lib;gmock_main.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Dependencies\glew\lib\Release\x64;..\..\Dependencies\googletest\lib\Debug</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>$(TargetPath) </Command>
@@ -97,10 +97,10 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\Engine;..\..\Dependencies\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Engine;..\..\Dependencies\glew\include;..\..\Dependencies\googletest\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -112,8 +112,8 @@
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalDependencies>%(AdditionalDependencies);opengl32.lib;glew32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\Dependencies\glew\lib\Release\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);opengl32.lib;glew32.lib;gtest.lib;gmock.lib;;gmock_main.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Dependencies\glew\lib\Release\x64;.\..\Dependencies\googletest\lib\Release</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>$(TargetPath) </Command>

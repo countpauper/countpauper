@@ -3,6 +3,7 @@
 #include "Maths.h"
 #include "Vector.h"
 #include "AxisAlignedBoundingBox.h"
+#include <sstream>
 
 namespace Engine
 {

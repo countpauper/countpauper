@@ -3,6 +3,7 @@
 #include "Filter.h"
 #include <signal.h>
 #include <vector>
+#include <optional>
 
 namespace Engine { 
     struct Line; 
