@@ -5,28 +5,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../Dependencies/googletest" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitmodules" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Math/.idea/Math.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chance/math.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory/help.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inventory/tales prices.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/price_range.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/tokens.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/ttrpg_dice.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ttrpg/.idea/ttrpg.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ttrpg/ability.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ttrpg/character.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ttrpg/items.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ttrpg/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ttrpg/scripts/dice_math.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ttrpg/sizes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Clone.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Clone.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Coordinate.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Engine.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Engine.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Error.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Error.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Line.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Line.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Matrix.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Matrix.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Range.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Range.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/stdafx.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/stdafx.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Game/Game.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Game/Game.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/IEnvironment.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/Physics.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/Physics.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Physics/StaticEnvironment.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Tactics/Tactics.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Tactics/Tactics.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestEngine/TestEngine.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestEngine/TestEngine.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestGame/TestGame.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestGame/TestGame.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/TestPhysics/TestPhysics.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/TestPhysics/TestPhysics.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Math/Solvers/function.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Solvers/function.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Debug.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Debug.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/from_string.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/from_string.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/hp.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/hp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/custom item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/sane item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/sane item prices.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/treasure_table.json" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/treasure_table.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/cast_cc.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/cast_cc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/exhaustion.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/exhaustion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/gem_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/gem_script.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/levelHd.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/levelHd.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/march.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/march.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/math.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/math.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/twilight.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/twilight.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/hud.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/hud.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,19 +63,20 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\mauri\countpauper\avrae\chance" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\inventory" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\outlands" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\bonus" />
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\hud" />
-      <recent name="C:\Users\maurits.fassaert\countpauper\avrae\ic" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.csv2json">
+  <component name="RunManager" selected="Python.ttrpg_dice">
     <configuration name="card_creator" type="PythonConfigurationType" factoryName="Python">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -173,19 +182,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="show" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="ttrpg_dice" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/chance" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="SDK_HOME" value="C:\Users\mauri\AppData\Local\Programs\Python\Python39\python.exe" />
+      <option name="SDK_NAME" value="Python 3.9" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/misc" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/chance/show.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/ttrpg_dice.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -200,15 +210,15 @@
       <item itemvalue="Python.csv2json" />
       <item itemvalue="Python.gem_script" />
       <item itemvalue="Python.monster_converter" />
-      <item itemvalue="Python.show" />
+      <item itemvalue="Python.ttrpg_dice" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.ttrpg_dice" />
         <item itemvalue="Python.csv2json" />
         <item itemvalue="Python.monster_converter" />
         <item itemvalue="Python.gem_script" />
         <item itemvalue="Python.chance_py (1)" />
-        <item itemvalue="Python.show" />
       </list>
     </recent_temporary>
   </component>
@@ -225,71 +235,6 @@
       <updated>1602832588163</updated>
     </task>
     <servers />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="499" y="77" key="#monster_converter" timestamp="1670169731103">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="499" y="77" key="#monster_converter/0.0.1920.1040@0.0.1920.1040" timestamp="1670169731103" />
-    <state width="1898" height="323" key="GridCell.Tab.0.bottom" timestamp="1675771339252">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1898" height="323" key="GridCell.Tab.0.bottom/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
-    <state width="1899" height="270" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
-    <state width="1508" height="210" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
-    <state width="1898" height="323" key="GridCell.Tab.0.center" timestamp="1675771339252">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1898" height="323" key="GridCell.Tab.0.center/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
-    <state width="1899" height="270" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
-    <state width="1508" height="210" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
-    <state width="1898" height="323" key="GridCell.Tab.0.left" timestamp="1675771339252">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1898" height="323" key="GridCell.Tab.0.left/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
-    <state width="1899" height="270" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404784" />
-    <state width="1508" height="210" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
-    <state width="1898" height="323" key="GridCell.Tab.0.right" timestamp="1675771339252">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1898" height="323" key="GridCell.Tab.0.right/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
-    <state width="1899" height="270" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
-    <state width="1508" height="210" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1670228175836" />
-    <state width="1898" height="323" key="GridCell.Tab.1.bottom" timestamp="1675771339252">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1898" height="323" key="GridCell.Tab.1.bottom/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
-    <state width="1899" height="270" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404787" />
-    <state width="1898" height="323" key="GridCell.Tab.1.center" timestamp="1675771339252">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1898" height="323" key="GridCell.Tab.1.center/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
-    <state width="1899" height="270" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
-    <state width="1898" height="323" key="GridCell.Tab.1.left" timestamp="1675771339252">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1898" height="323" key="GridCell.Tab.1.left/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
-    <state width="1899" height="270" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404786" />
-    <state width="1898" height="323" key="GridCell.Tab.1.right" timestamp="1675771339252">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1898" height="323" key="GridCell.Tab.1.right/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1675771339252" />
-    <state width="1899" height="270" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1670747404787" />
-    <state x="494" y="180" width="540" height="524" key="StructurePopup" timestamp="1670172402258">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="494" y="180" width="540" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1670172402258" />
-    <state x="673" y="168" width="586" height="705" key="find.popup" timestamp="1676318920727">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="673" y="187" width="587" height="788" key="find.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1668669969551" />
-    <state x="673" y="187" width="586" height="787" key="find.popup/-1920.129.1920.1040/0.0.1920.1160/1920.10.1920.1160@0.0.1920.1160" timestamp="1671020368075" />
-    <state x="673" y="168" width="586" height="705" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1676318920727" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup" timestamp="1673800386614">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="252" width="672" height="729" key="search.everywhere.popup/-1920.106.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1668434394504" />
-    <state x="623" y="226" width="672" height="653" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1673800386614" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -387,6 +332,16 @@
           <url>file://$PROJECT_DIR$/misc/hp.py</url>
           <line>45</line>
           <option name="timeStamp" value="85" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/misc/ttrpg_dice.py</url>
+          <line>58</line>
+          <option name="timeStamp" value="92" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/misc/ttrpg_dice.py</url>
+          <line>45</line>
+          <option name="timeStamp" value="93" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

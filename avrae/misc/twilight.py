@@ -97,7 +97,7 @@ for t in targets:
 
 	if to_remove:=removable_effects.get(command):
 		if e := t.get_effect(to_remove):
-			t.remove_effect(e)
+			t.remove_effect(e.name)
 			results.append(f"Removed {e.name} from {t.name}")
 		else:
 			results.append(f"Failed to remove {to_remove} from {t.name} since they are not affected.")

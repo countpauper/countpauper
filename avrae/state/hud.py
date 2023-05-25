@@ -70,10 +70,10 @@ if not field_list:
 		field_list=get(cvar_name,field_list)
 	field_list=load_json(field_list)
 
-bag_items = ch.coinpurse.get_coins()
-coins = list(bag_items.keys())
-coins.reverse()
-if ch:
+if ch and ch in stat:
+	bag_items = ch.coinpurse.get_coins()
+	coins = list(bag_items.keys())
+	coins.reverse()
 	if bags:=get('bags'):
 		bags = load_json(bags)
 		# flatten bags into one item dict, lower names
@@ -200,7 +200,11 @@ for s in stat:
 		elif display=='bar' and s.hp:
 			bar_length=f.get('length',10)
 			div = 1 + (s.max_hp // bar_length)
-			field.append(f'{icon * (s.hp // div)}{f.get("alticon",":black_large_square:") * ((s.max_hp - s.hp) // div)} {"" if div == 1 else f"[x{div}]"}')
+			if "HP>" in s.hp_str() and div >1:
+				multiplier = f"[x{div}]"
+			else:
+				multiplier = ""
+			field.append(f'{icon * (s.hp // div)}{f.get("alticon",":black_large_square:") * ((s.max_hp - s.hp) // div)} {multiplier}')
 		elif display=='ac' and s.ac and not hidden:
 			field.append(f'{icon}{s.ac}')
 		elif display=='spell' and s.spellbook and not hidden:

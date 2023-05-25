@@ -1,88 +1,59 @@
-<drac2>
-# Ideas: query attack, spell
-# Target: combatant (will also roll damage), hp and damage rolls to see if you dying or dead
-# rr and say how the chance of how many will hit (and crit?)
-# multiple AC/DC targets, report chance for each
+!alias math <drac2>
+# use as a generic calculator with a C++ like syntax
+# +-*/^ operators PEMDAS ^power (not ** python like)
+# braces
+# special: % divides the preceding number by 100.0
+# later: constants e, pi,
+# later: ln log sin cos tan etc but not in draconic so needs approximation.
+# later ! operator, logic/binary operators, binary and hex numbers
 
-#parse query
+formula='''&*&'''
+formula = formula.replace(' ','') # remove whitespace
 
-syntax=f'`{ctx.prefix}{ctx.alias} <roll> -ac <number>|-dc <number>`'
+###  parse the formula into a tree: operator, left, [right]
 
-args=&ARGS&
-if not args:
-	return f'echo You did not specify a query. Use: {syntax}'
-query=args[0]
-args=argparse(args[1:])
+# first parse parenthesis, returns a list with nested lists and strings
+# every list corresponds to one matched pair of parentheses, except the outer list
+# this is done with recursion and every call returns a string prefix, a list and a string posfix
+# the strings may be empty
 
-# parse targets
-crit=None
-targets=[]
-if ac:=args.last('ac') :
-	crit=True
-	if not ac.isdigit():
-		return f'echo AC `{ac}` is not a number, Use {syntax}'
-	targets=[int(ac)]
-elif dc:=args.last('dc') :
-	crit=False
-	if not dc.isdigit():
-		return f'echo DC `{dc}` is not a number, Use {syntax}'
-	targets=[int(dc)]
+# helper to find nested enclosures, returns the position past the last close
+def find_enclosure(s,open, close):
+    idx = s.find(open)
+    if idx==-1:
+        return len(s)
+    idx+=len(open)
+    level=1
+    while level>0 and idx>0:
+        close_idx=s.find(close, idx)
+        next_idx=s.find(open, idx)
+        if next_idx!=-1 and next_idx<close_idx:
+            level+=1
+            idx=next_idx+len(open)
+        elif close_idx!=-1:
+            level-=1
+            idx=close_idx+len(close)
+        else:
+            err(f"Missing closing '{close}` at {s} at level {level}")
+    return idx
 
-if not targets:
-	return f'echo You did not specify any targets. Use: {syntax}'
+def parentheses(s):
+    start=s.find('(')
+    if start==-1:
+        return s
+    end=find_enclosure(s[start:],'(',')') + start
+    prefix = s[0:start]
+    middle= parentheses(s[start+1:end-1])
+    postfix = parentheses(s[end:])
 
-#TODO: split */
-r={'':1.0}
-query=query.replace(' ','')
-expression=query.replace('+-','-').replace('-','+-').split('+')
-# TODO: remove [stuff]
-for exp in expression:
-	if exp[0]=='-':
-		sign=-1
-		exp=exp[1:]
-	else:
-		sign=1
-	if exp.isdigit():
-		# modify all values
-		delta=sign*int(exp)
-		r={'+'.join([str((int(v) if v else 0)+delta) for v in values.split('+')]):chance for values,chance in r.items()}
-	elif 'd' in exp:
-		dicexp=exp.split('d',maxsplit=1)
-		if not dicexp[0].isdigit():
-			err(f'Dice syntax error, number of dice must be positive number: `{exp}`')
-		dice=int(dicexp[0])
-		if dice>10:
-			err(f'Dice syntax error, for performance reasons the number of dice should be be at most 10: `{exp}`')
-		# TODO: split operators=['k','p','rr','ro','ra','mi','ma','e']
-		if not dicexp[1].isdigit():
-			err(f'Dice synax error: die size must be a positive number: `{exp}`')
-		if dice>0:
-			diesize=int(dicexp[1])
-			if diesize>100:
-				err(f'Dice syntax error, for performance reasons the die size should be at most 100: `{exp}`')
-			p=1.0/diesize
-			newrolls={str(v):p for v in range(1,diesize+1)}
-			for die in range(1,dice):
-				newrolls={values+'+'+str(v):chance*p for v in range(1,diesize+1) for values,chance in newrolls.items() }
+    if prefix and postfix:
+        return prefix, [middle], postfix
+    elif prefix:
+        return prefix, [middle]
+    elif postfix:
+        return [middle], postfix
+    else:
+        return middle
 
-			# TODO operators on newdice
-			# sum and flatten
-			r={(values+'+' if values else '')+newvalues:chance*newchance for values,chance in r.items() for newvalues,newchance in newrolls.items()}
-	else:
-		err(f'Expression syntax error, must be a dice or number: {exp}')
-
-# sum
-result={}
-for values,chance in r.items():
-	value = sum([int(v) for v in values.split('+') if v])
-	result[value]=result.get(value,0)+chance
-
-#return f'echo {result}'
-report=[]
-for t in targets:
-	hit=sum([chance for total,chance in result.items() if total>=t])*100.0
-	miss=sum([chance for total,chance in result.items() if total<t])*100.0
-	report.append(f'Target {t}: Hit: {round(hit)}%, Miss: {round(miss)}%')
-return f'echo {query} : {", ".join(report)}'
-
+return f'echo {parentheses(formula)}'
 </drac2>

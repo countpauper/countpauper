@@ -1,4 +1,4 @@
-!servalias hd <drac2>
+!servalias hd_hp <drac2>
 ch=character()
 HDs=dict(wizard=6,sorcerer=6,
 		 artificer=8, bard=8, cleric=8, druid=8, monk=8, rogue=8, warlock=8,

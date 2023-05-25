@@ -1,15 +1,15 @@
-Spell Scroll (Level 0): 10
+Spell Scroll (Cantrip): 10
 Ammunition +1(each): 25
 Potion of Healing: 50
 (Quaal's) Feather Token Anchor: 50
-Spell Scroll (Level 1): 60
+Spell Scroll (1st level): 60
 Philter of Love: 90
 Ammunition +2(each): 100
 Potion of Poison: 100
 Dust of Dryness(1 pellet): 120
 Elixir of Health: 120
 Keoghtom's Ointment(Per dose): 120
-Spell Scroll (Level 2): 120
+Spell Scroll (2nd level): 120
 Potion of Fire Breath: 150
 Potion of Greater Healing: 150
 Potion of Climbing: 180
@@ -20,7 +20,7 @@ Potion of Water Breathing: 180
 Scroll of Protection: 180
 Nolzur's Marvelous Pigments: 200
 Potion of Animal Friendship: 200
-Spell Scroll (Level 3): 200
+Spell Scroll (3rd level): 200
 (Quaal's) Feather Token Fan: 250
 (Quaal's) Feather Token Whip: 250
 Potion of Diminution: 270
@@ -30,7 +30,7 @@ Necklace of Fireballs(One bead): 300
 Potion of Gaseous Form: 300
 Potion of Resistance: 300
 Universal Solvent: 300
-Spell Scroll (Level 4): 320
+Spell Scroll (4th level): 320
 Ammunition +3(each): 400
 Potion of Speed: 400
 Sovereign Glue: 400
@@ -41,30 +41,30 @@ Necklace of Fireballs(Two beads): 480
 Oil of Slipperiness: 480
 Potion of Flying: 500
 Arrow of Slaying(each): 600
-Spell Scroll (Level 5): 640
+Spell Scroll (5th level): 640
 Bead of Force: 960
 Elemental Gem: 960
 Necklace of Fireballs(Three beads): 960
 Potion of Clairvoyance: 960
 Potion of Vitality: 960
-Spell Scroll (Level 6): 1280
+Spell Scroll (6th level): 1280
 Potion of Supreme Healing: 1350
 Chime of Opening: 1500
 Necklace of Fireballs(Four beads): 1600
 Oil of Etherealness: 1920
-Ioun Stone Absorption: 2400
-Spell Scroll (Level 7): 2560
+Ioun Stone of Absorption: 2400
+Spell Scroll (7th level): 2560
 (Quaal's) Feather Token Bird: 3000
 (Quaal's) Feather Token Swan Boat: 3000
 Oil of Sharpness: 3200
 Necklace of Fireballs(Five beads): 3840
 Potion of Invulnerability: 3840
 Gem of Brightness: 5000
-Spell Scroll (Level 8): 5120
+Spell Scroll (8th level): 5120
 Deck of Illusions: 6120
 Necklace of Fireballs(Six beads): 7680
-Spell Scroll (Level 9): 10240
-Ioun Stone Greater Absorption: 31000
+Spell Scroll (9th level): 10240
+Ioun Stone of Greater Absorption: 31000
 Rod of Absorption: 50000
 Talisman of Ultimate Evil: 61440
 Talisman of Pure Good: 71680
@@ -73,7 +73,7 @@ Adamantine Armor: 500
 Mithral Armor: 800
 Weapon +1: 1000
 Sword of Life-Stealing: 1000
-Ioun Stone Protection: 1200
+Ioun Stone of Protection: 1200
 Wand of the War Mage +1: 1200
 Bracers of Archery: 1500
 Circlet of Blasting: 1500
@@ -91,12 +91,12 @@ Sword of Wounding: 2000
 Frost Brand: 2200
 Dagger of Venom: 2500
 Gloves of Missile Snaring: 3000
-Ioun Stone Agility: 3000
-Ioun Stone Fortitude: 3000
-Ioun Stone Insight: 3000
-Ioun Stone Intellect: 3000
-Ioun Stone Leadership: 3000
-Ioun Stone Strength: 3000
+Ioun Stone of Agility: 3000
+Ioun Stone of Fortitude: 3000
+Ioun Stone of Insight: 3000
+Ioun Stone of Intellect: 3000
+Ioun Stone of Leadership: 3000
+Ioun Stone of Strength: 3000
 Staff of Withering: 3000
 Cloak of Protection: 3500
 Oathbow: 3500
@@ -105,7 +105,7 @@ Weapon +2: 4000
 Boots of Speed: 4000
 Dragon Scale Mail: 4000
 Elven Chain: 4000
-Ioun Stone Regeneration: 4000
+Ioun Stone of Regeneration: 4000
 Iron Bands of Bilarro: 4000
 Prayer Bead (Curing): 4000
 Rope of Entanglement: 4000
@@ -122,7 +122,7 @@ Armor of Resistance: 6000
 Arrow-Catching Shield: 6000
 Belt of Dwarvenkind: 6000
 Bracers of Defense: 6000
-Ioun Stone Reserve: 6000
+Ioun Stone of Reserve: 6000
 Pearl of Power: 6000
 Pipes of Haunting: 6000
 Ring of Resistance: 6000
@@ -144,13 +144,13 @@ Wand of Web: 8000
 Staff of Thunder and Lightning: 10000
 Wand of Binding: 10000
 Wand of Fear: 10000
-Ioun Stone Awareness: 12000
+Ioun Stone of Awareness: 12000
 Rod of the Pact Keeper +1: 12000
 Staff of Charming: 12000
 Sun Blade: 12000
 Staff of Healing: 13000
 Ring of Shooting Stars: 14000
-Ioun Stone Mastery: 15000
+Ioun Stone of Mastery: 15000
 Weapon +3 : 16000
 Hammer of Thunderbolts: 16000
 Rod of the Pact Keeper +2: 16000
@@ -194,13 +194,13 @@ Instrument of the Bards (Anstruth Harp): 109000
 Instrument of the Bards (Ollamh Harp): 125000
 Prayer Bead (Summons): 128000
 Holy Avenger: 165000
-Helm of Comprehend Languages: 500
+Helm of Comprehending Languages: 500
 Driftglobe: 750
 Trident of Fish Command: 800
 Cap of Water Breathing: 1000
 Eversmoking Bottle: 1000
 Quiver of Ehlonna: 1000
-Ioun Stone Sustenance: 1000
+Ioun Stone of Sustenance: 1000
 Ring of Warmth: 1000
 Goggles of Night: 1500
 Horseshoes of the Zephyr: 1500

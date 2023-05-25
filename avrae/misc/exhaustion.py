@@ -27,5 +27,5 @@ for lvl in range(0,c.get_cc(cc)+1):
         all_desc.append(desc)
 if not all_desc:
     all_desc.append('Nothing')
-return ('dis ' if disadvantage else '')+f'-f "{cc}|{cc_str(cc)}\nDisadvantage on {", ".join(all_desc)}"'
+return ('dis ' if disadvantage else '')+f'-f "{cc}|{c.cc_str(cc)}\nDisadvantage on {", ".join(all_desc)}"'
 </drac2>

@@ -1,7 +1,7 @@
 # real python
 import sys
 import random
-import math
+from chance import math
 import json
 
 def rand_key(dictionary):
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         max_gold = float(sys.argv[1])
         gold = (max_gold / 2,max_gold+1)
     else:
-        max_gold = random.randint(1,int(math.pow(5, random.randint(1,8))))
+        max_gold = random.randint(1, int(math.pow(5, random.randint(1, 8))))
         gold = (max_gold / 2, max_gold+1)
     print(money_description(min(gold))+" to "+money_description(max(gold)-1))
     # gems = random_gems(gold)

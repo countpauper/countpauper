@@ -1,0 +1,23 @@
+`[<bag>] [+/-][amount] <item> [<background>] [<pack>] ...`
+
+Add or remove multiple items to your bag or bags. Example: `!qb 2 Blanket bedroll -ration`. All item names are case insensitive and the beginning of individual words will be matched for items in Player's Handbook or in your inventory. For instance `!qb grappling` will give you a grappling hook and `!qb -rat` will remove a Ration or "Days of Rations" from the first food bag. Unless you have an actual rat in there of course, then remove that first, ew.
+
+For items consisting of multiple words __Use "quotes"__, for instance, `!qb "Red Herring"`.
+
+By specifying a positive number a stack of the next item will be added. Using a negative number or simply `-` the next item will be removed. Example; `!qb -5 arrow`. You can also remove a whole bag this way, e.g. `!qb -sack`. If the selected or default bag does not contain enough items, the remainder will automatically be removed from any other bag. For instance `!qb -ration` will remove a ration, even if they are not in your first bag.
+
+Coins are automatically added to or removed from the Coin Pouch or Coinpurse, in that other. Example `!qb Blanket -5 sp`. If you don't have enough of a coin in the pouch or purse, higher value coins are exchanged. Coins placed in regular bags are only used if explicitly selected, eg `!qb Holding -1000gp`.
+
+By specifying an owned bag, all items after it are added to that bag. `!qb Equipped dagger shortbow`. It is possible to repeat this to add multiple things to multiple bags at once, eg `!qb equip shortsword backpack 10 rations`.
+
+If a new container is added, it will also automatically be selected for the following items. Example: `!qb Quiver 20 arrow` will add a quiver and put the arrows into it directly.
+
+If no bag is specified, the default bag is your first bag, which is not a coin pouch or ammo container. If you don't have any bag, a free sack will be provided.
+
+Adding a pack works differently from `!bag pack <name>`. It adds the included bag first and then all subsequent items to that container. For example `!qb priest` will add a backpack and all priest items in that backpack or into an already owned backpack.
+
+When specifying a background, all non-optional items for that background are added to the selected bag. The starting gold is added to your pouch. Example `!qb "Folk Hero"` will give you a shovel, pot, and clothes in your default bag. 10 gp will be added to your coin pouch. You have to specify which artisan tool you selected manually for instance `!qb "Folk Hero" Herbalism`.
+
+The recognized containers and packs can be configured in an svar/uvar/cvar `quickbag`, copy from the default `!gvar 71ff40cc-4c5f-4ae5-bdb6-32130f869090`. This also contains the exchange rate of coins.
+
+The source code is available [here](https://github.com/countpauper/countpauper/blob/master/avrae/inventory/quickbag.py).
