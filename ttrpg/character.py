@@ -1,8 +1,7 @@
-from ability import abilities, dice
 from sizes import sizes
 import random
 from items import *
-from d20 import roll
+from dice import Dice
 
 class Counter(object):
 
@@ -25,21 +24,6 @@ class Counter(object):
     def __bool__(self):
         return self.value>0
 
-def dice_expr(dice):
-    while 0 in dice:
-        dice.remove(0)
-    if not dice:
-        return '0'
-    parts = []
-    while dice:
-        die = dice[0]
-        if die <= 1:
-            parts.append(str(dice.count(die)*die))
-        else:
-            parts.append(f'{dice.count(die)}d{die}')
-        dice = [d for d in dice if d is not die]
-    return '+'.join(parts).replace('+-','-')
-
 
 class Character(object):
 
@@ -52,13 +36,24 @@ class Character(object):
         self.physical = kwargs.get('physical',self.size['physical'])
         self.mental = kwargs.get('mental',2)
         self.social = kwargs.get('social',2)
-        self.hp = Counter(self.max_hp())
-        self.sp = Counter(self.max_sp())
-        self.mp = Counter(self.max_mp())
-        self.skills = []
-        self.inventory = []
+        self.hp = Counter(kwargs.get('hp', self.max_hp()))
+        self.sp = Counter(kwargs.get('sp', self.max_sp()))
+        self.mp = Counter(kwargs.get('mp', self.max_mp()))
+        self.skills = kwargs.get('skills', [])
+        self.inventory = kwargs.get('inventory',[])
+        # TODO: find a way to put equipped status in a record, but still allow duplicate items and duplicate location
+        # list of tuples? or dict with locations, then list of items there.
         self.held = dict(main=None, off=None) # TODO: less hands for paws, more hands for weird creatures
         self.worn = None
+        self.color = kwargs.get('color')
+        self.portrait = kwargs.get('portrait')
+
+    def get(self, prop):
+        value = self.__getattribute__(prop)
+        if type(value) == Counter:
+            return value.value
+        else:
+            return value
 
     def max_hp(self):
         return self.level + self.physical
@@ -72,29 +67,36 @@ class Character(object):
     def natural_armor(self):
         return self.size['physical']
 
-    def defense(self):
-        if not self.worn:
-            return self.natural_armor()
-        else:
-            return self.natural_armor() + self.worn.defense()
+    def defense_dice(self):
+        bonus = self.worn.defense() if self.worn else 0
+        return Dice.for_ability(self.physical) + bonus
 
-    def attack(self, enemy, bonus=0):
-        attack_roll = roll(dice_expr(self.attack_dice()+[bonus]))
-        damage = attack_roll.total - enemy.defense()
+    def attack(self, enemy, number=0, bonus=0):
+        attack_roll = self.attack_dice(number).roll()
+        defense_roll = enemy.defense_dice().roll()
+        damage = attack_roll.total - defense_roll.total
         if damage < 0:
-            return f"{self.name} misses {enemy.name} ({attack_roll})"
+            return f"{self.name} misses {enemy.name} ({attack_roll} VS {defense_roll})"
         else:
             enemy.damage(damage)
-            return f'{self.name} attacks ({attack_roll}) {enemy.name} ({enemy.hp})[-{damage}]'
+            return f'{self.name} attacks ({attack_roll} VS {defense_roll}) {enemy.name} ({enemy.hp})[-{damage}]'
 
     def damage(self, dmg):
         self.hp -= dmg
 
-    def attack_dice(self):
-        if not (weapon:=self.held['main']):
-            return [4]
+    def attack_dice(self, nr=0):
+        result = Dice.for_ability(self.physical)
+        if nr == 1:   # check for dual wielding
+            if weapon:=self.off_hand():
+                result += weapon.bonus()
+            else:
+                result += nr*-2
         else:
-            return dice[self.physical] + weapon.bonus()
+            if weapon:=self.main_hand():
+                result += weapon.bonus() +nr*-2
+            else:
+                result += nr*-2
+        return result
 
     def bodyweight(self):
         return self.size.weight
@@ -110,11 +112,12 @@ class Character(object):
 
     def __str__(self):
         return f"""{self.name}: Level {self.level}
-    Defense {self.defense()}. Attack {dice_expr(self.attack_dice())}
     {self.physical} Physical: {self.hp} HP
     {self.mental} Mental: {self.sp} SP
     {self.social} Social: MP {self.mp} MP
-    [{" ".join(str(i) for i in self.inventory)}] {self.carried()}/{self.capacity()}"""
+    Defense {self.defense_dice()}. Attack {self.attack_dice()}
+    Inventory[{self.carried()}/{self.capacity()}] {" ".join(str(i) for i in self.inventory)} 
+    {" ".join(str(s) for s in self.skills)}"""
 
     def alive(self):
         return bool(self.hp)
@@ -129,15 +132,19 @@ class Character(object):
     def random_pc(level=1):
         assert level == 1 # not yet implemented
         size = random.randint(1, 3)
+        c = None
         if size == 1:
-            return Character(name='Pixie', size='xs', social=3, mental=3)
+            c = Character(name='Pixie', size='xs', social=3, mental=3)
         elif size == 2:
             r = random.randint(0, 1)
-            return Character(name='Gnome', size='s', social=2+r, mental=2+(1-r))
+            c = Character(name='Gnome', size='s', social=2+r, mental=2+(1-r))
         elif size == 3:
-            return Character(name='Human', size='m')
+            c = Character(name='Human', size='m')
         else:
-             return Character(name='Default')
+             c =Character(name='Default')
+        c.obtain(c.random_equipment())
+        c.auto_equip()
+        return c
 
     @staticmethod
     def random_monster(level):
@@ -153,16 +160,22 @@ class Character(object):
     def obtain(self, items):
         self.inventory+=items
 
+    def main_hand(self):
+        return self.held['main']
+
+    def off_hand(self):
+        return self.held['off']
+
     def auto_equip(self):
         for i in self.inventory:
-            if not self.held['main'] and i.hands() >= 1:
+            if not self.main_hand() and i.hands() >= 1:
                 self.held['main'] = i
                 # TODO: find best main weapon
 
-        if not self.held['main'] or self.held['main'].hands()<2:
+        if not self.main_hand() or self.main_hand().hands() < 2:
             for i in self.inventory:
-                if (not self.held['off'] and
-                    abs(i.hands())==1):
+                if (not self.off_hand() and
+                   abs(i.hands())==1):
                     self.held['off'] = i
                     # TODO: find best off hand item
 
@@ -190,5 +203,3 @@ class Character(object):
         else:
             armor = None
         return [i for i in (weapon, offhand, armor) if i]
-
-

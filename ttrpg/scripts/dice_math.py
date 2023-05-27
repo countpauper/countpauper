@@ -1,4 +1,4 @@
-from ability import dice as ability_dice
+from dice import Dice
 
 def pmf(die):
     return [1/die]*die
@@ -29,6 +29,8 @@ def var_pmf(pmf):
     return sum(p * (idx**2) for idx, p in enumerate(pmf)) - (mp**2)
 
 if __name__ == "__main__":
+    ability_dice=[Dice.for_ability(score).dice for score in range(1,20)]
+
     for ability ,ad in enumerate(ability_dice):
         _pmf =  pmf_sum(ad)
         weighted = [p*(idx+1) for idx,p in enumerate(_pmf)]

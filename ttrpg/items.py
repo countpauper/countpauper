@@ -1,3 +1,6 @@
+from dice import Dice
+import random
+
 class Item(object):
     def __init__(self):
         self.name = 'thing'
@@ -29,7 +32,8 @@ class Weapon(Item):
     def __init__(self, heavy=False):
         self.heavy = heavy
         self.ability = 'physical'
-        self.name = 'Claymore' if heavy else 'Sword'
+        self.name = random.choice(['claymore', 'katana', 'spear', 'quarterstaff']) if heavy else \
+            random.choice(['sword', 'battle axe', 'mace', 'dagger'])
         self.enchantment = 0
 
     def range(self):
@@ -43,15 +47,16 @@ class Weapon(Item):
 
     def bonus(self):
         if self.heavy:
-            return [4, self.enchantment]
+            return Dice(4, self.enchantment)
         else:
-            return [self.enchantment]
+            return Dice(self.enchantment)
 
 
 class RangedWeapon(Weapon):
-    def __init(self, heavy=False):
-        super(self).__init(heavy)
-        self.name = 'Crossbow' if self.heay else 'Bow'
+    def __init__(self, heavy=False):
+        super(RangedWeapon, self).__init__(heavy)
+        self.name = random.choice(['crossbow','longbow', 'arquebus']) if self.heavy \
+            else random.choice(['bow', 'sling'])
 
     def hands(self):
         # NB no one handed ranged weapons like sling, because no trade off for shield, anyway need to load

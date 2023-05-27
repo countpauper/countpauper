@@ -52,7 +52,7 @@ async def memory(ctx, *, arg):
                         description="This embed will show how to build an embed and the different components",
                         color=discord.Color.blue())
     embed.set_thumbnail(url='https://images.pexels.com/photos/1003914/pexels-photo-1003914.jpeg')
-    embed.add_field(name="Remeber=",value=arg)
+    embed.add_field(name="Memory=",value=arg)
     await ctx.send(embed=embed)
     await ctx.message.delete()
 
