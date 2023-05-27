@@ -1,3 +1,5 @@
+import d20
+
 from dice import Dice
 
 
@@ -11,7 +13,6 @@ def test_roll_one():
 
 def test_roll_two_different():
     r = Dice(4, 6).roll()
-    assert len(r.expr.children)==1
     assert r.expr.children[0].op=='+'
     terms=r.expr.children[0].children
     assert len(terms)==2
@@ -28,6 +29,16 @@ def test_roll_two_same():
     assert r.expr.children[0].size==6
 
 
+def test_roll_with_bonus():
+    r = (Dice(6)+2).roll()
+    assert r.expr.children[0].op=='+'
+    terms=r.expr.children[0].children
+    assert len(terms)==2
+    assert len(terms)==2
+    assert terms[0].num==1
+    assert type(terms[1])==d20.Literal
+    assert terms[1].number == 2
+
 def test_none():
     d = Dice()
     r = d.roll()
@@ -39,19 +50,25 @@ def test_str():
     assert str(Dice(6)) == '1d6'
     assert str(Dice(6,6)) == '2d6'
     assert str(Dice(4,6)) == '1d4+1d6'
-    assert str(Dice(8,-1)) == '1d8-1'
-    assert str(Dice(8,1)) == '1d8+1'
+    assert str(Dice(10)+2) == '1d10+2'
+    assert str(Dice(8)-1) == '1d8-1'
+    assert str(Dice(8, 1)) == '1d8+1'
     assert str(Dice(10,0)) == '1d10'
 
 
-def test_append():
+def test_add():
     assert Dice(6)+Dice(4) == Dice(6,4)
-    assert Dice(10)+Dice(2) == Dice(10)+2
+    assert Dice(10)+Dice(1) == Dice(10)+1
     assert Dice()+Dice(8) == Dice(8)
     d = Dice(4)
-    d += 2
+    d += Dice(2)
     d += 1
-    assert d == Dice(4,2,1)
+    assert d == Dice(4, 2)+1
+
+
+def test_sub():
+    assert Dice(6)-Dice(4) == Dice(6,-4)
+    assert Dice(10)-1 == Dice(10, -1)
 
 
 def test_minimum():

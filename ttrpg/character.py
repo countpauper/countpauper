@@ -68,8 +68,8 @@ class Character(object):
         return self.size['physical']
 
     def defense_dice(self):
-        bonus = self.worn.defense() if self.worn else 0
-        return Dice.for_ability(self.physical) + Dice(*([1]*bonus))     # TODO: this is jank. Clearly distinguish flat bonus and dice in Dice
+        bonus = [self.worn.defense()] if self.worn else []
+        return Dice.for_ability(self.physical)+Dice(bonus=bonus)
 
     def attack(self, enemy, number=0, bonus=0):
         attack_roll = self.attack_dice(number).roll()
@@ -89,12 +89,12 @@ class Character(object):
         if nr == 1:   # check for dual wielding
             if weapon:=self.off_hand():
                 result += weapon.bonus()
-            else:
+            elif nr:
                 result += nr*-2
         else:
             if weapon:=self.main_hand():
-                result += weapon.bonus() +nr*-2
-            else:
+                result += weapon.bonus()
+            if nr:
                 result += nr*-2
         return result
 
@@ -194,7 +194,7 @@ class Character(object):
         else:
             weapon = random.choice([Weapon(), Weapon(heavy=True), RangedWeapon(), RangedWeapon(heavy=True)])
         capacity -= weapon.weight()
-        if weapon.hands() == 1:
+        if capacity and weapon.hands() == 1:
             offhand = random.choice([Weapon(), Shield() if capacity else None, None])
             capacity -= offhand.weight() if offhand else 0
         else:

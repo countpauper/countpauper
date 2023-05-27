@@ -2,21 +2,24 @@ from d20 import roll
 
 
 class Dice(object):
-    def __init__(self, *dice):
-        self.dice = list(dice)
+    def __init__(self, *dice, bonus=[]):
+        self.dice = list(d for d in dice if abs(d) > 1)
+        self.flat = bonus + list(d for d in dice if abs(d) <= 1)
 
     def __add__(self, other):
         if type(other) == Dice:
-            return Dice(*self.dice, *other.dice)
+            return Dice(*self.dice, *other.dice, bonus=other.flat)
         else:
-            return Dice(*self.dice, other)
+            return Dice(*self.dice, bonus=self.flat+[other])
+
+    def __sub__(self, other):
+        if type(other) == Dice:
+            return Dice(*self.dice, *[-d for d in other.dice], bonus=[-b for b in other.flat])
+        else:
+            return Dice(*self.dice, bonus=self.flat+[-other])
 
     def __str__(self):
         dice = self.dice
-        while 0 in dice:
-            dice.remove(0)
-        if not dice:
-            return '0'
         parts = []
         while dice:
             die = dice[0]
@@ -25,20 +28,24 @@ class Dice(object):
             else:
                 parts.append(f'{dice.count(die)}d{die}')
             dice = [d for d in dice if d is not die]
-        return '+'.join(parts).replace('+-', '-')
+        parts += [str(b) for b in self.flat if b]
+        if parts:
+            return '+'.join(parts).replace('+-', '-')
+        else:
+            return '0'
 
     def roll(self):
         return roll(str(self))
 
     def minimum(self):
-        return len([d for d in self.dice if d>1])+sum(d for d in self.dice if d<=1)
+        return len([d for d in self.dice])+sum(self.flat)
 
     def maximum(self):
-        return sum(d for d in self.dice)
+        return sum(d for d in self.dice)+sum(self.flat)
 
     def __eq__(self,other):
         if isinstance(other, Dice):
-            return self.dice == other.dice
+            return self.dice == other.dice and self.flat == other.flat
         else:
             return False
 

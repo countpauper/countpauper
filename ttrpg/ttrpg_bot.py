@@ -27,7 +27,6 @@ def embed_sheet(c):
                   color=discord.Color.from_str(c.color) or discord.Color.random())
     if c.portrait:
         embed.set_thumbnail(url=c.portrait)
-    # TODO: field for inventory and skills
     embed.add_field(name=f"Inventory [{c.carried()}/{c.capacity()}]", value="\n".join(str(i) for i in c.inventory), inline=True)
     embed.add_field(name="Skills", value="\n".join(str(s) for s in c.skills), inline=True)
     return embed

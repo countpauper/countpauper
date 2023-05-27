@@ -60,9 +60,9 @@ class Weapon(Item):
 
     def bonus(self):
         if self.heavy:
-            return Dice(4, self.enchantment)
+            return Dice(4) + self.enchantment
         else:
-            return Dice(self.enchantment)
+            return Dice() + self.enchantment
 
 
 class RangedWeapon(Weapon):
