@@ -4,8 +4,8 @@ from dice import Dice
 
 
 def test_roll_one():
-    d=Dice(6)
-    r=d.roll()
+    d = Dice(6)
+    r = d.roll()
     assert len(r.expr.children)==1
     assert r.expr.children[0].num==1
     assert r.expr.children[0].size==6
@@ -53,7 +53,7 @@ def test_str():
     assert str(Dice(10)+2) == '1d10+2'
     assert str(Dice(8)-1) == '1d8-1'
     assert str(Dice(8, 1)) == '1d8+1'
-    assert str(Dice(10,0)) == '1d10'
+    assert str(Dice(10,0)) == '1d10+0'
 
 
 def test_add():

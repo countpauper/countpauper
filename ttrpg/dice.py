@@ -1,5 +1,27 @@
 from d20 import roll
 
+ability_dice = [
+    [2],
+    [4],
+    [6],
+    [8],
+    [10],
+    [6, 4],
+    [6, 6],
+    [8, 6],
+    [8, 8],
+    [10, 8],
+    [10, 10],
+    [12, 10],
+    [12, 12],
+    [8, 8, 8],
+    [10, 8, 8],
+    [10, 10, 8],
+    [10, 10, 10],
+    [12, 10, 10],
+    [12, 12, 10],
+    [12, 12, 12]]
+
 
 class Dice(object):
     def __init__(self, *dice, bonus=[]):
@@ -28,7 +50,7 @@ class Dice(object):
             else:
                 parts.append(f'{dice.count(die)}d{die}')
             dice = [d for d in dice if d is not die]
-        parts += [str(b) for b in self.flat if b]
+        parts += [str(b) for b in self.flat]
         if parts:
             return '+'.join(parts).replace('+-', '-')
         else:
@@ -51,25 +73,4 @@ class Dice(object):
 
     @staticmethod
     def for_ability(score):
-        dice = [
-            [2],
-            [4],
-            [6],
-            [8],
-            [10],
-            [6, 4],
-            [6, 6],
-            [8, 6],
-            [8, 8],
-            [10, 8],
-            [10, 10],
-            [12, 10],
-            [12, 12],
-            [8, 8, 8],
-            [10, 8, 8],
-            [10, 10, 8],
-            [10, 10, 10],
-            [12, 10, 10],
-            [12, 12, 10],
-            [12, 12, 12]]
-        return Dice(*dice[score-1])
+        return Dice(*ability_dice[score-1])

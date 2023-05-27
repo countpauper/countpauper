@@ -59,10 +59,10 @@ class Weapon(Item):
         return 1+self.heavy
 
     def bonus(self):
-        if self.heavy:
-            return Dice(4) + self.enchantment
-        else:
-            return Dice() + self.enchantment
+        d=Dice(4) if self.heavy else Dice()
+        if self.enchantment:
+            d+=self.enchantment
+        return d
 
 
 class RangedWeapon(Weapon):
@@ -86,7 +86,7 @@ class RangedWeapon(Weapon):
 
 class Shield(Item):
     def __init__(self):
-        self.name = 'Shield'
+        self.name = 'shield'
 
     def hands(self):
         return -1
@@ -94,3 +94,15 @@ class Shield(Item):
     def weight(self):
         return 1
 
+
+class Equipment(Item):
+    def __init__(self, name, **props):
+        self.name=name
+        self.heavy=props.get('heavy', False)
+
+    def properties(self):
+        return dict(name=self.name,
+                    heavy=self.heavy)
+
+    def weight(self):
+        return self.heavy

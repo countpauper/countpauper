@@ -52,20 +52,22 @@ async def roll(ctx, arg="1d6"):
     await ctx.message.delete()
 
 @bot.command()
-async def generate(ctx, name=None):
+async def generate(ctx, name=None, level=1):
     """Generate a new character and show its sheet.
-    Syntax generate [<name>]
-        name - Character name
-    By default the character will be level 1 and use your nick name.
+    Syntax generate [<name>] [<level>=1]
+        name - Character name, default: your discord nick name
+        level - Character level (1-10), default 1
     The character will become your default character.
 
     Examples:
         generate - Generates a level 1 character with your nick, portrait and color
-        generate Foo - Generates a level 1 character named foo. """
+        generate Foo - Generates a level 1 character named foo.
+        generate Bar 2 - Generate a level 2 character named Bar"""
+
     name = name or ctx.author.nick or ctx.author.name
     if c := db.exists(ctx.guild, ctx.author, name):
         raise commands.CommandError(f"You already have a character named '{name}'. Retire first.")
-    c = Character.random_pc()
+    c = Character.random_character(level)
     c.name = name
     c.color = str(ctx.author.color)
     c.portrait = str(ctx.author.display_avatar)

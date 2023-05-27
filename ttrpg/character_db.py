@@ -84,14 +84,20 @@ class CharacterDB(object):
             return Weapon(**properties)
         elif item=='RangedWeapon':
             return RangedWeapon(**properties)
+        elif item=='Shield':
+            return Shield(**properties)
+        elif item=='Armor':
+            return Armor(**properties)
+        elif item=='Equipment':
+            return Equipment(**properties)
         else:
-            return None
+            raise RuntimeError(f"Item type '{item}' unsupported.")
 
     def _retrieve_inventory(self, idx):
         query = f"""SELECT item, properties, location FROM inventory WHERE character=:id"""
         cur = self.connection.cursor()
         cur = cur.execute(query, dict(id=idx))
-        return [self._create_item(row[0], json.loads(row[1])) for row in cur.fetchall()]
+        return [self._create_item(row[0], json.loads(row[1]) if row[1] else dict()) for row in cur.fetchall()]
 
     def delete(self, guild, user, name):
         idx = self._find_character(guild, user, name)

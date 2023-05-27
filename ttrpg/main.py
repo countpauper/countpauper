@@ -11,7 +11,7 @@ from character import Character
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    c = Character.random_pc()
+    c = Character.random_character()
     print(c)
     m = Character().random_monster(1)
     print(m)
