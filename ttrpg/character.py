@@ -124,20 +124,13 @@ class Character(object):
         for i in self.inventory:
             if not self.main_hand() and i.hands() >= 1:
                 self.held['main'] = i
-                # TODO: find best main weapon
-
-        if not self.main_hand() or self.main_hand().hands() < 2:
-            for i in self.inventory:
-                if (not self.off_hand() and
-                   abs(i.hands())==1):
-                    self.held['off'] = i
-                    # TODO: find best off hand item
-
-        if not self.worn:
-            for i in self.inventory:
+            elif not self.off_hand() and \
+                (not self.main_hand() or self.main_hand().hands() < 2) and \
+                abs(i.hands())==1:
+                self.held['off'] = i
+            if not self.worn:
                 if type(i) == Armor:
                     self.worn = i
-                    break
         return self
 
     def __str__(self):

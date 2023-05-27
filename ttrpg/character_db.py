@@ -73,7 +73,11 @@ class CharacterDB(object):
         if row := cur.fetchone():
             record = {col: row[idx] for idx, col in enumerate(columns)}
             c = Character(**record)
-            c.inventory = self._retrieve_inventory(record['Id'])
+            inventory = self._retrieve_inventory(record['Id'])
+            c.inventory = [i for location_items in inventory.values() for i in location_items]
+            c.worn = inventory.get('worn',[None])[0]
+            c.held['main'] = inventory.get('main', [None])[0]
+            c.held['off'] = inventory.get('off', [None])[0]
             return c
         else:
             return None
@@ -97,7 +101,11 @@ class CharacterDB(object):
         query = f"""SELECT item, properties, location FROM inventory WHERE character=:id"""
         cur = self.connection.cursor()
         cur = cur.execute(query, dict(id=idx))
-        return [self._create_item(row[0], json.loads(row[1]) if row[1] else dict()) for row in cur.fetchall()]
+        result = dict()
+        while row:=cur.fetchone():
+            location=row[2]
+            result[location] = result.get(location,[]) + [self._create_item(row[0], json.loads(row[1]) if row[1] else dict())]
+        return result
 
     def delete(self, guild, user, name):
         idx = self._find_character(guild, user, name)

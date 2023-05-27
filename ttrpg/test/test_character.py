@@ -1,5 +1,5 @@
 from character import Character
-from items import Weapon, Shield, Armor
+from items import Weapon, RangedWeapon, Shield, Armor, Equipment
 from dice import Dice
 
 def test_default():
@@ -67,6 +67,15 @@ def test_attack():
     assert Character(physical=3, inventory=[Weapon(enchantment=1)]).attack_dice() == Dice(6)+1
     assert Character(physical=3, inventory=[Weapon(heavy=True, enchantment=2)]).attack_dice() == Dice(6,4)+2
     assert Character(physical=3, inventory=[Weapon(), Weapon()]).attack_dice(1) == Dice(6)
+
+def test_auto_equip():
+    assert Character(inventory=[Equipment(name='Test')]).main_hand() is None
+    assert type(Character(inventory=[Weapon()]).main_hand()) == Weapon
+    assert Character(inventory=[Weapon(name='Sword'), Weapon(name='Dagger')]).off_hand().name == 'Dagger'
+    assert Character(inventory=[Weapon(heavy=True), Weapon()]).off_hand() is None
+    assert Character(inventory=[RangedWeapon(), Weapon()]).off_hand() is None
+    assert type(Character(inventory=[Shield()]).off_hand()) == Shield
+    assert type(Character(inventory=[Armor()]).worn) == Armor
 
 def test_str():
     assert str(Character(name='Foo', level=2, size='l', mental=3, hp=2, inventory=[Weapon(name="Testsword"),Shield()]))=="""Foo: Level 2
