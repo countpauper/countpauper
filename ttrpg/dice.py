@@ -6,7 +6,7 @@ class Dice(object):
         self.dice = list(dice)
 
     def __add__(self, other):
-        if type(other)==Dice:
+        if type(other) == Dice:
             return Dice(*self.dice, *other.dice)
         else:
             return Dice(*self.dice, other)
@@ -29,6 +29,18 @@ class Dice(object):
 
     def roll(self):
         return roll(str(self))
+
+    def minimum(self):
+        return len([d for d in self.dice if d>1])+sum(d for d in self.dice if d<=1)
+
+    def maximum(self):
+        return sum(d for d in self.dice)
+
+    def __eq__(self,other):
+        if isinstance(other, Dice):
+            return self.dice == other.dice
+        else:
+            return False
 
     @staticmethod
     def for_ability(score):
