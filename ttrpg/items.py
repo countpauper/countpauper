@@ -11,15 +11,18 @@ class Item(object):
     def hands(self):
         return 0
 
+    def properties(self):
+        return None
+
     def __str__(self):
         return self.name
 
 
 class Armor(Item):
-    def __init__(self, rating=1):
-        self.rating = rating
-        self.enchantment = 0
-        self.name = ['Shirt', 'Gambeson', 'Chainmail', 'Brigandine', 'Cuirass', 'Plate'][self.rating]
+    def __init__(self, **props):
+        self.rating = props.get('rating',1)
+        self.enchantment = props.get('enchantment', 0)
+        self.name = props.get('name', ['shirt', 'gambeson', 'chainmail', 'brigandine', 'cuirass', 'plate'][self.rating])
 
     def defense(self):
         return self.rating + self.enchantment
@@ -27,14 +30,24 @@ class Armor(Item):
     def weight(self):
         return self.rating
 
+    def properties(self):
+        return dict(name=self.name,
+                    rating=self.rating,
+                    enchantment=self.enchantment)
 
 class Weapon(Item):
-    def __init__(self, heavy=False):
-        self.heavy = heavy
-        self.ability = 'physical'
-        self.name = random.choice(['claymore', 'katana', 'spear', 'quarterstaff']) if heavy else \
-            random.choice(['sword', 'battle axe', 'mace', 'dagger'])
-        self.enchantment = 0
+    def __init__(self, **props):
+        self.heavy = props.get('heavy', False)
+        self.ability = props.get('ability','physical')
+        self.name = props.get('name',random.choice(['claymore', 'katana', 'spear', 'quarterstaff']) if self.heavy else \
+            random.choice(['sword', 'battle axe', 'mace', 'dagger']))
+        self.enchantment = props.get('enchantment',0)
+
+    def properties(self):
+        return dict(name=self.name,
+                    heavy=self.heavy,
+                    ability=self.ability,
+                    enchantment=self.enchantment)
 
     def range(self):
         return 0
@@ -43,7 +56,7 @@ class Weapon(Item):
         return 1+self.heavy
 
     def weight(self):
-        return self.heavy
+        return 1+self.heavy
 
     def bonus(self):
         if self.heavy:
@@ -53,10 +66,11 @@ class Weapon(Item):
 
 
 class RangedWeapon(Weapon):
-    def __init__(self, heavy=False):
-        super(RangedWeapon, self).__init__(heavy)
-        self.name = random.choice(['crossbow','longbow', 'arquebus']) if self.heavy \
-            else random.choice(['bow', 'sling'])
+    def __init__(self, **props):
+        heavy = props.get('heavy', False)
+        props['name'] = props.get('name', random.choice(['crossbow','longbow', 'arquebus']) if heavy \
+            else random.choice(['bow', 'sling']))
+        super(RangedWeapon, self).__init__(**props)
 
     def hands(self):
         # NB no one handed ranged weapons like sling, because no trade off for shield, anyway need to load

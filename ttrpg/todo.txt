@@ -1,0 +1,14 @@
+[done] retrieve inventory
+[done] handle command execution exceptions as user facing errors
+unit test for dice
+unit tests for character
+unit tests for items
+unit tests for database
+execute sql commands with """:key""", dict(key=value) to automatically '' and for safety of JOHNNY'); DROP TABLE (seems to already prevent more than one command)
+database auto commit and "with cursor" or something to refactor multi query atomic operations and make them efficient
+unit tests for commands (split commands into testable units? or mock context?)
+initial skills and random skill assignment
+represent flat bonuses above 1 in Dice
+random characters and monsters above level 1
+organize commands in cogs (well, mostly game cog) can help with error handling, https://guide.pycord.dev/popular-topics/error-handling
+

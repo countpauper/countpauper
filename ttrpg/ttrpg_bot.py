@@ -18,8 +18,8 @@ db = CharacterDB()
 def embed_sheet(c):
     description=f"""**Level:** {c.level}
 **Physical** {c.physical}, **HP** {c.hp}
-**Mental** {c.physical}, **SP** {c.sp}
-**Social** {c.physical}, **MP** {c.mp}
+**Mental** {c.mental}, **SP** {c.sp}
+**Social** {c.social}, **MP** {c.mp}
 **Attack** {c.attack_dice()} **Defense** {c.defense_dice()}"""
 
     embed = discord.Embed(title=c.name,
@@ -43,27 +43,65 @@ async def on_ready():
 
 @bot.command()
 async def roll(ctx, arg="1d6"):
+    """Roll dice. By default it rolls a six sided die.
+    Examples:
+        roll 1d12 - rolls a twelve sided die
+        roll 2d6 - rolls two six sided dice.
+        roll 1d4+1 - rolls a four sided die with a +1 bonus."""
     result = d20.roll(arg)
     await ctx.send(f'**{ctx.author}**: :game_die: {result}')
     await ctx.message.delete()
 
 @bot.command()
 async def generate(ctx, name=None):
+    """Generate a new character and show its sheet.
+    Syntax generate [<name>]
+        name - Character name
+    By default the character will be level 1 and use your nick name.
+    The character will become your default character.
+
+    Examples:
+        generate - Generates a level 1 character with your nick, portrait and color
+        generate Foo - Generates a level 1 character named foo. """
+    name = name or ctx.author.nick or ctx.author.name
+    if c := db.exists(ctx.guild, ctx.author, name):
+        raise commands.CommandError(f"You already have a character named '{name}'. Retire first.")
     c = Character.random_pc()
-    c.name = name or ctx.author.nick or ctx.author.name
+    c.name = name
     c.color = str(ctx.author.color)
     c.portrait = str(ctx.author.display_avatar)
-    db.store( ctx.guild, ctx.author, c)
+    db.store(ctx.guild, ctx.author, c)
     await ctx.send(embed=embed_sheet(c))
     await ctx.message.delete()
 
 @bot.command()
 async def sheet(ctx, name=None):
+    """Show the sheet of the given character,.
+    Syntax: sheet [<name>]
+        name: the name of the charter whose sheet to show. If omitted your default character is shown
+    Examples:
+        sheet - Show the sheet of your active (latest) character.
+        sheet foo - Show the sheet of your character foo."""
     if c := db.retrieve(ctx.guild, ctx.author, name):
         await ctx.send(embed=embed_sheet(c))
     else:
         raise Exception(f"No character {name} found for {ctx.author} on {ctx.guild}.")
     await ctx.message.delete()
+
+@bot.command()
+async def retire(ctx, name):
+    """Delete a character
+    Syntax: retire name
+        name : name of the character to retire.
+    Examples:
+        retire foo - retire your character foo"""
+    try:
+        db.delete(ctx.guild, ctx.author, name)
+        await ctx.send(f"Your character {name} has been retired.")
+        await ctx.message.delete()
+    except Exception as e:
+        raise commands.CommandError(*e.args)
+
 
 # scan all messages, pass on to the bot
 @bot.event
@@ -74,7 +112,7 @@ async def on_message(message):
 # handle all errors like argument parsing
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, discord.ClientException):
+    if isinstance(error, discord.ClientException) or isinstance(error, commands.CommandError):
         await ctx.send(f"Error: {error}")
     else:
         await ctx.send(f"Bot Error.")

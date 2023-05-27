@@ -34,8 +34,8 @@ class Character(object):
         if type(self.size) == str:
             self.size = sizes.get(self.size)
         self.physical = kwargs.get('physical',self.size['physical'])
-        self.mental = kwargs.get('mental',2)
-        self.social = kwargs.get('social',2)
+        self.mental = kwargs.get('mental',1)
+        self.social = kwargs.get('social',1)
         self.hp = Counter(kwargs.get('hp', self.max_hp()))
         self.sp = Counter(kwargs.get('sp', self.max_sp()))
         self.mp = Counter(kwargs.get('mp', self.max_mp()))
@@ -69,7 +69,7 @@ class Character(object):
 
     def defense_dice(self):
         bonus = self.worn.defense() if self.worn else 0
-        return Dice.for_ability(self.physical) + bonus
+        return Dice.for_ability(self.physical) + Dice(*([1]*bonus))     # TODO: this is jank. Clearly distinguish flat bonus and dice in Dice
 
     def attack(self, enemy, number=0, bonus=0):
         attack_roll = self.attack_dice(number).roll()
@@ -128,20 +128,22 @@ class Character(object):
     def active(self):
         return self.alive() and self.moralized()
 
+    races = [dict(name='Imp', size='xs', social=3, mental=3),
+             dict(name='Fairy', size='xs', social=4, mental=2),
+             dict(name='Pixie', size='xs', social=2, mental=4),
+             dict(name='Halfling', size='s', social=3, mental=2),
+             dict(name='Gnome', size='s', social=2, mental=3),
+             dict(name='Dwarf', size='s', physical=3, mental=2, social=2),
+             dict(name='Orc', size='m', physical=4, mental=1, social=2),
+             dict(name='Elf', size='m', mental=3, social=1),
+             dict(name='Satyr', size='m', mental=1, social=3),
+             dict(name='Human', size='m', social=2, mental=2),
+             dict(name='Ogre', size='l')]
+
     @staticmethod
     def random_pc(level=1):
         assert level == 1 # not yet implemented
-        size = random.randint(1, 3)
-        c = None
-        if size == 1:
-            c = Character(name='Pixie', size='xs', social=3, mental=3)
-        elif size == 2:
-            r = random.randint(0, 1)
-            c = Character(name='Gnome', size='s', social=2+r, mental=2+(1-r))
-        elif size == 3:
-            c = Character(name='Human', size='m')
-        else:
-             c =Character(name='Default')
+        c=Character(**random.choice(Character.races))
         c.obtain(c.random_equipment())
         c.auto_equip()
         return c
@@ -186,11 +188,11 @@ class Character(object):
                     break
 
     def random_equipment(self):
-        capacity = self.physical - self.size['physical']
-        if capacity < 2 :
+        capacity = self.physical
+        if capacity < 2:
             weapon = random.choice([Weapon(), RangedWeapon()])
         else:
-            weapon = random.choice([Weapon(), Weapon(True), RangedWeapon(), RangedWeapon(True)])
+            weapon = random.choice([Weapon(), Weapon(heavy=True), RangedWeapon(), RangedWeapon(heavy=True)])
         capacity -= weapon.weight()
         if weapon.hands() == 1:
             offhand = random.choice([Weapon(), Shield() if capacity else None, None])
@@ -198,7 +200,7 @@ class Character(object):
         else:
             offhand = None
         if capacity and (armor_rating := random.randint(0, min(capacity, 3))):
-            armor = Armor(armor_rating)
+            armor = Armor(rating=armor_rating)
             capacity -= armor.weight()
         else:
             armor = None
