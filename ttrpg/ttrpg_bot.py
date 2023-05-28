@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 from character import Character
 from character_db import CharacterDB
-import d20
+from game_commands import GameCommands
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -39,17 +39,8 @@ async def on_ready():
         f'{bot.user} is connected to the following guild:\n'+
         '\n'.join(f'{guild.name}(id: {guild.id})' for guild in bot.guilds)
     )
+    await bot.add_cog(GameCommands(bot))
 
-@bot.command()
-async def roll(ctx, arg="1d6"):
-    """Roll dice. By default it rolls a six sided die.
-    Examples:
-        roll 1d12 - rolls a twelve sided die
-        roll 2d6 - rolls two six sided dice.
-        roll 1d4+1 - rolls a four sided die with a +1 bonus."""
-    result = d20.roll(arg)
-    await ctx.send(f'**{ctx.author}**: :game_die: {result}')
-    await ctx.message.delete()
 
 @bot.command()
 async def generate(ctx, name=None, level=1):
