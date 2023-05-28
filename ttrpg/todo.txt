@@ -2,13 +2,14 @@
 [done] handle command execution exceptions as user facing errors
 [done] unit test for dice
 [done] unit tests for character
-unit tests for items
-unit tests for database
+[done] unit tests for items and heavy shield
+[done] unit tests for database
 execute sql commands with """:key""", dict(key=value) to automatically '' and for safety of JOHNNY'); DROP TABLE (seems to already prevent more than one command)
-database auto commit and "with cursor" or something to refactor multi query atomic operations and make them efficient
+database transactions and auto commit and use cursor.close() or with connection or something to refactor multi query atomic operations and make them efficient
 unit tests for commands (split commands into testable units? or mock context?)
 initial skills and random skill assignment
 [done] represent flat bonuses above 1 in Dice
 random characters and monsters above level 1
 organize commands in cogs (well, mostly game cog) can help with error handling, https://guide.pycord.dev/popular-topics/error-handling
+character database dirty flags (props, inventory, skills) to optimize updates
 

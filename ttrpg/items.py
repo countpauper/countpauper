@@ -49,7 +49,7 @@ class Weapon(Item):
                     ability=self.ability,
                     enchantment=self.enchantment)
 
-    def range(self):
+    def reach(self):
         return 0
 
     def hands(self):
@@ -61,7 +61,7 @@ class Weapon(Item):
     def bonus(self):
         d=Dice(4) if self.heavy else Dice()
         if self.enchantment:
-            d+=self.enchantment
+            d += self.enchantment
         return d
 
 
@@ -76,7 +76,7 @@ class RangedWeapon(Weapon):
         # NB no one handed ranged weapons like sling, because no trade off for shield, anyway need to load
         return 2
 
-    def range(self):
+    def reach(self):
         # TODO: not sure what the unit is. Units of theater of the mind here.
         if self.heavy:
             return 3
@@ -99,10 +99,14 @@ class Equipment(Item):
     def __init__(self, name, **props):
         self.name=name
         self.heavy=props.get('heavy', False)
+        self.usable = props.get('use', False)
 
     def properties(self):
         return dict(name=self.name,
                     heavy=self.heavy)
+
+    def hands(self):
+        return self.usable # TODO: for torches and so on
 
     def weight(self):
         return self.heavy

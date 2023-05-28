@@ -7,12 +7,12 @@ class Counter(object):
 
     def __init__(self, a, b=None):
         if b is None:
-            self.max = self.value = a
+            self.max = self.value = max(0,int(a))
         elif a is None:
-            self.max = self.value = b
+            self.max = self.value = max(0, int(b))
         else:
-            self.value = min(a, b)
-            self.max = b
+            self.max = max(0,int(b))
+            self.value = min(int(a), self.max)
 
     def __str__(self):
         return f'{self.value}/{self.max}'
@@ -26,6 +26,11 @@ class Counter(object):
     def __bool__(self):
         return self.value > 0
 
+    def __eq__(self, other):
+        if type(other) == Counter:
+            return self.value == other.value and self.max == other.max
+        else:
+            return self.value == other
 
 class Character(object):
 
@@ -119,6 +124,9 @@ class Character(object):
 
     def off_hand(self):
         return self.held['off']
+
+    def item(self, name):
+        return [i for i in self.inventory if i.name==name]
 
     def auto_equip(self):
         for i in self.inventory:

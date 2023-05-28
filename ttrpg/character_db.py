@@ -9,9 +9,17 @@ class CharacterDB(object):
 
     def __init__(self, filename="ttrpg.db"):
         self.connection = sqlite3.connect(filename)
-        self.create_table()
+        self._create_table()
 
-    def create_table(self):
+    def close(self):
+        if self.connection:
+            self.connection.close()
+        self.connection = None
+
+    def __del__(self):
+        self.close()
+
+    def _create_table(self):
         cur = self.connection.cursor()
         cur.execute(f"""CREATE TABLE IF NOT EXISTS character (Id INTEGER PRIMARY KEY, user, guild, {", ".join(self.properties)});""")
         cur.execute(f"""CREATE TABLE IF NOT EXISTS inventory (character, item, properties, location);""")
@@ -19,7 +27,9 @@ class CharacterDB(object):
 
     @staticmethod
     def _format_column(v):
-        if type(v) == str:
+        if v is None:
+            return 'NULL'
+        elif type(v) == str:
             return f"'{v}'"
         else:
             return str(v)
@@ -110,9 +120,10 @@ class CharacterDB(object):
     def delete(self, guild, user, name):
         idx = self._find_character(guild, user, name)
         if idx is None:
-            raise Exception(f"There is no character named '{name}' to retire.")
+            raise RuntimeError(f"There is no character named '{name}' to retire.")
         self._delete_character(idx)
         self._delete_inventory(idx)
+        return idx
 
     def _find_character(self, guild, user, name):
         cur = self.connection.cursor()
