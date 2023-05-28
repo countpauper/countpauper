@@ -4,7 +4,7 @@
 [done] unit tests for character
 [done] unit tests for items and heavy shield
 [done] unit tests for database
-execute sql commands with """:key""", dict(key=value) to automatically '' and for safety of JOHNNY'); DROP TABLE (seems to already prevent more than one command)
+[done] execute sql commands with """:key""", dict(key=value) to automatically '' and for safety of JOHNNY'); DROP TABLE (seems to already prevent more than one command)
 database transactions and auto commit and use cursor.close() or with connection or something to refactor multi query atomic operations and make them efficient
 unit tests for commands (split commands into testable units? or mock context?)
 initial skills and random skill assignment
@@ -12,4 +12,4 @@ initial skills and random skill assignment
 random characters and monsters above level 1
 organize commands in cogs (well, mostly game cog) can help with error handling, https://guide.pycord.dev/popular-topics/error-handling
 character database dirty flags (props, inventory, skills) to optimize updates
-
+character worn can be a list for jewelry and multi part armor?
