@@ -5,7 +5,7 @@
 [done] unit tests for items and heavy shield
 [done] unit tests for database
 [done] execute sql commands with """:key""", dict(key=value) to automatically '' and for safety of JOHNNY'); DROP TABLE (seems to already prevent more than one command)
-database transactions and auto commit and use cursor.close() or with connection or something to refactor multi query atomic operations and make them efficient
+[done] database transactions and auto commit and use cursor.close() or with connection or something to refactor multi query atomic operations and make them efficient
 unit tests for commands (split commands into testable units? or mock context?)
 initial skills and random skill assignment
 [done] represent flat bonuses above 1 in Dice

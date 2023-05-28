@@ -21,24 +21,23 @@ class CharacterDB(object):
 
     def _create_table(self):
         cur = self.connection.cursor()
-        cur.execute(f"""CREATE TABLE IF NOT EXISTS character (Id INTEGER PRIMARY KEY, user, guild, {", ".join(self.properties)});""")
-        cur.execute(f"""CREATE TABLE IF NOT EXISTS inventory (character, item, properties, location);""")
-        # cur.execute("CREATE TABLE IF NOT EXISTS inventory(character, skill)")
+        cur.executescript(f"""
+            BEGIN;
+            CREATE TABLE IF NOT EXISTS character (Id INTEGER PRIMARY KEY, user, guild, {", ".join(self.properties)});
+            CREATE TABLE IF NOT EXISTS inventory (character, item, properties, location);
+            COMMIT;""")
 
     # TODO: move database character link to another file
     def store(self, guild, user, c):
-        # TODO allow GMs (anyone) to have multiple characters. Create with name. Create with template (monster) sheet (import json).
-        # make a separate character database where unique character Ids are stored and linked to the owner and to the rest
-        cur = self.connection.cursor()
-        properties = {p: c.get(p) for p in self.properties}
-        query = f"""REPLACE INTO character(user, guild, {", ".join(self.properties)}) VALUES 
-            (:user, :guild, {", ".join(f":{p}" for p in properties.keys())});"""
-        properties.update(dict(user=user, guild=guild))
-        cur.execute(query, properties)
-        idx = cur.lastrowid
-        self._clear_inventory(idx)
-        self._store_inventory(idx, c)
-        self.connection.commit()
+        with self.connection as con:
+            properties = {p: c.get(p) for p in self.properties}
+            query = f"""REPLACE INTO character(user, guild, {", ".join(self.properties)}) VALUES 
+                (:user, :guild, {", ".join(f":{p}" for p in properties.keys())});"""
+            properties.update(dict(user=user, guild=guild))
+            cur = con.execute(query, properties)
+            idx = cur.lastrowid
+            cur = self._clear_inventory(cur, idx)
+            self._store_inventory(cur, idx, c)
 
     @staticmethod
     def _encode_location(item, c):
@@ -51,8 +50,8 @@ class CharacterDB(object):
         else:
             return None
 
-    def _store_inventory(self, idx, c):
-        cur = self.connection.cursor()
+    def _store_inventory(self, cursor, idx, c):
+        cursor = self.connection.cursor()
         item_columns = [dict(item=type(item).__name__,
                              properties=json.dumps(props) if (props := item.properties()) else None,
                              location = self._encode_location(item, c)) for item in c.inventory]
@@ -60,29 +59,26 @@ class CharacterDB(object):
             return
         query = f"""INSERT INTO inventory (character, item, properties, location) VALUES 
                 ({int(idx)}, :item, :properties, :location)"""
-        cur.executemany(query, item_columns)
+        return cursor.executemany(query, item_columns)
 
-    def _clear_inventory(self, idx):
-        cur = self.connection.cursor()
-        query = f"""DELETE FROM inventory WHERE character==?"""
-        cur.execute(query, [idx])
+    def _clear_inventory(self, cursor, idx):
+        return cursor.execute(f"""DELETE FROM inventory WHERE character==?""", [idx])
 
     def exists(self, guild, user, name):
         return self._find_character(guild, user, name) is not None
 
     def retrieve(self, guild, user, name=None):
-        cur = self.connection.cursor()
         name_query=f"""AND name=:name COLLATE NOCASE""" if name else ''
         query = f"""SELECT Id, {", ".join(self.properties)} FROM character 
             WHERE user=:user AND guild=:guild {name_query}
             ORDER BY id DESC LIMIT 1"""
 
-        cur = cur.execute(query, dict(user=user, guild=guild, name=name))
-        columns = [x[0] for x in cur.description]
-        if row := cur.fetchone():
+        cursor = self.connection.execute(query, dict(user=user, guild=guild, name=name))
+        columns = [x[0] for x in cursor.description]
+        if row := cursor.fetchone():
             record = {col: row[idx] for idx, col in enumerate(columns)}
             c = Character(**record)
-            inventory = self._retrieve_inventory(record['Id'])
+            inventory = self._retrieve_inventory(cursor, record['Id'])
 
             c.inventory = [i for location_items in inventory.values() for i in location_items]
             c.worn = inventory.get('worn',[None])[0]
@@ -107,13 +103,12 @@ class CharacterDB(object):
         else:
             raise RuntimeError(f"Item type '{item}' unsupported.")
 
-    def _retrieve_inventory(self, idx):
+    def _retrieve_inventory(self, cursor, idx):
         query = f"""SELECT item, properties, location FROM inventory WHERE character=:id"""
-        cur = self.connection.cursor()
-        cur = cur.execute(query, dict(id=idx))
+        response = cursor.execute(query, dict(id=idx))
         result = dict()
-        while row:=cur.fetchone():
-            location=row[2]
+        while row:=response.fetchone():
+            location = row[2]
             result[location] = result.get(location,[]) + [self._create_item(row[0], json.loads(row[1]) if row[1] else dict())]
         return result
 
@@ -121,26 +116,21 @@ class CharacterDB(object):
         idx = self._find_character(guild, user, name)
         if idx is None:
             raise RuntimeError(f"There is no character named '{name}' to retire.")
-        self._delete_character(idx)
-        self._delete_inventory(idx)
+        with self.connection as con:
+            cursor = self._delete_character(con.cursor(), idx)
+            self._delete_inventory(cursor, idx)
         return idx
 
     def _find_character(self, guild, user, name):
-        cur = self.connection.cursor()
         query = f"""SELECT Id FROM character WHERE user=:user AND guild=:guild AND name=:name COLLATE NOCASE ORDER BY Id DESC LIMIT 1"""
-        cur = cur.execute(query, dict(user=user, guild=guild, name=name))
-        result = cur.fetchone()
+        response = self.connection.execute(query, dict(user=user, guild=guild, name=name))
+        result = response.fetchone()
         if not result:
             return None
         return result[0]
 
-    def _delete_character(self, idx):
-        cur = self.connection.cursor()
-        query = f"""DELETE FROM character WHERE Id=?"""
-        cur = cur.execute(query, [idx])
+    def _delete_character(self, cursor, idx):
+        return cursor.execute(f"""DELETE FROM character WHERE Id=?""", [idx])
 
-    def _delete_inventory(self, idx):
-        cur = self.connection.cursor()
-        query = f"""DELETE FROM inventory WHERE character=?"""
-        cur = cur.execute(query, [idx])
-        self.connection.commit()
+    def _delete_inventory(self, cursor, idx):
+        return cursor.execute(f"""DELETE FROM inventory WHERE character=?""", [idx])
