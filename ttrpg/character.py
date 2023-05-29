@@ -77,8 +77,8 @@ class Character(object):
         bonus = [self.worn.defense()] if self.worn else []
         return Dice.for_ability(self.physical)+Dice(bonus=bonus)
 
-    def attack(self, enemy, number=0, bonus=0):
-        attack_roll = self.attack_dice(number).roll()
+    def attack(self, enemy, number=0, bonus=None):
+        attack_roll = self.attack_dice(number, bonus).roll()
         defense_roll = enemy.defense_dice().roll()
         damage = attack_roll.total - defense_roll.total
         if damage < 0:
@@ -90,7 +90,7 @@ class Character(object):
     def damage(self, dmg):
         self.hp -= dmg
 
-    def attack_dice(self, nr=0):
+    def attack_dice(self, nr=0, bonus=None):
         result = Dice.for_ability(self.physical)
         if nr == 1:   # check for dual wielding
             if weapon:=self.off_hand():
@@ -102,6 +102,8 @@ class Character(object):
                 result += weapon.bonus()
             if nr:
                 result += nr*-2
+        if bonus is not None:
+            result+=bonus
         return result
 
     def bodyweight(self):

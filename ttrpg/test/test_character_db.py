@@ -25,6 +25,31 @@ def test_character_stats(db):
     assert restored.color is None
 
 
+def test_retrieve_default_character(db):
+    c = Character(name="foo", level=2, mental=3, social=4, physical=5)
+    db.store("guild", "user", c)
+    restored = db.retrieve("guild", "user")
+    assert restored.name == 'foo'
+
+
+def test_cannot_retrieve_default_opponent(db):
+    db.store("guild", "user", Character())
+    with pytest.raises(RuntimeError):
+        db.retrieve("guild", None)
+
+
+def test_user(db):
+    c = Character(name="foo", level=2, mental=3, social=4, physical=5)
+    db.store("guild", "owner", c)
+    assert db.user("guild", c.name)
+
+def test_retrieve_opponent(db):
+    c = Character(name="foo", level=2, mental=3, social=4, physical=5)
+    db.store("guild", "opponent", c)
+    restored = db.retrieve("guild", None, "foo")
+    assert restored is not None
+
+
 def test_character_flavour(db):
     c=Character(name="Name with Space", portrait="http://www.unittest.com/portrait.jpg", color="#blue")
     db.store("guild","user", c)
@@ -51,10 +76,17 @@ def test_inventory(db):
 
 
 def test_exists(db):
-    c=Character()
+    c = Character()
     assert not db.exists("guild","user",c.name)
     db.store("guild", "user", c)
     assert db.exists("guild","user",c.name)
+
+def test_exists_opponent(db):
+    c = Character()
+    assert not db.exists("guild", None, c.name)
+    db.store("guild", "user", c)
+    assert db.exists("guild", None, c.name)
+
 
 def test_delete(db):
     c = Character()

@@ -68,9 +68,14 @@ class CharacterDB(object):
             return self._find_character(guild, user, name) is not None
 
     def retrieve(self, guild, user, name=None):
-        name_query=f"""AND name=:name COLLATE NOCASE""" if name else ''
+        if user is None and name is None:
+            raise RuntimeError("Can not retrieve a character without a name or a user")
+
+        name_query=f"""AND name=:name COLLATE NOCASE""" if name is not None else ''
+        user_query=f"""AND user=:user""" if user is not None else ''
+
         query = f"""SELECT Id, {", ".join(self.properties)} FROM character 
-            WHERE user=:user AND guild=:guild {name_query}
+            WHERE guild=:guild {user_query} {name_query}
             ORDER BY id DESC LIMIT 1"""
 
         cursor = self.connection.execute(query, dict(user=str(user), guild=str(guild), name=str(name)))
@@ -112,6 +117,29 @@ class CharacterDB(object):
             result[location] = result.get(location,[]) + [self._create_item(row[0], json.loads(row[1]) if row[1] else dict())]
         return result
 
+    def _find_character(self, guild, user, name):
+        user_query = f"""AND user=:user""" if user is not None else ''
+        query = f"""SELECT Id FROM character WHERE guild=:guild {user_query} AND name=:name COLLATE NOCASE ORDER BY Id DESC LIMIT 1"""
+        response = self.connection.execute(query, dict(user=str(user), guild=str(guild), name=str(name)))
+        if result := response.fetchone():
+            return result[0]
+        else:
+            return None
+
+    def _delete_character(self, cursor, idx):
+        return cursor.execute(f"""DELETE FROM character WHERE Id=?""", [idx])
+
+    def _delete_inventory(self, cursor, idx):
+        return cursor.execute(f"""DELETE FROM inventory WHERE character=?""", [idx])
+
+    def user(self, guild, name):
+        query = f"""SELECT user FROM character WHERE guild=:guild AND name=:name COLLATE NOCASE ORDER BY Id DESC LIMIT 1"""
+        response = self.connection.execute(query, dict(guild=str(guild), name=str(name)))
+        if result := response.fetchone():
+            return result[0]
+        else:
+            return None
+
     def delete(self, guild, user, name):
         idx = self._find_character(guild, user, name)
         if idx is None:
@@ -121,16 +149,3 @@ class CharacterDB(object):
             self._delete_inventory(cursor, idx)
         return idx
 
-    def _find_character(self, guild, user, name):
-        query = f"""SELECT Id FROM character WHERE user=:user AND guild=:guild AND name=:name COLLATE NOCASE ORDER BY Id DESC LIMIT 1"""
-        response = self.connection.execute(query, dict(user=str(user), guild=str(guild), name=str(name)))
-        result = response.fetchone()
-        if not result:
-            return None
-        return result[0]
-
-    def _delete_character(self, cursor, idx):
-        return cursor.execute(f"""DELETE FROM character WHERE Id=?""", [idx])
-
-    def _delete_inventory(self, cursor, idx):
-        return cursor.execute(f"""DELETE FROM inventory WHERE character=?""", [idx])

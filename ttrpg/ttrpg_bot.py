@@ -15,7 +15,7 @@ bot = commands.Bot(command_prefix='$', intents=intents)
 # startup
 @bot.event
 async def on_ready():
-    await bot.add_cog(GameCommands(bot))
+    await bot.add_cog(GameCommands(bot), override=True)
     print(f'{bot.user} has connected to Discord!')
     print(
         f'{bot.user} is connected to the following guild:\n'+
@@ -31,10 +31,12 @@ async def on_message(message):
 # handle all errors like argument parsing
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, discord.ClientException) or isinstance(error, commands.CommandError):
-        await ctx.send(f"Error: {error}")
+    if isinstance(error, discord.ClientException):
+        await ctx.send(f"{error}")
+    elif isinstance(error, commands.CommandError):
+        await ctx.send(f"{error}")
     else:
-        await ctx.send(f"Bot Error.")
+        await ctx.send(f"Internal Bot Error.")
         raise error
 
 bot.run(TOKEN)

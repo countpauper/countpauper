@@ -1,6 +1,7 @@
 from d20 import roll
 
 ability_dice = [
+    [1],
     [2],
     [4],
     [6],
@@ -30,13 +31,13 @@ class Dice(object):
 
     def __add__(self, other):
         if type(other) == Dice:
-            return Dice(*self.dice, *other.dice, bonus=other.flat)
+            return Dice(*self.dice, *other.dice, bonus=self.flat + other.flat)
         else:
             return Dice(*self.dice, bonus=self.flat+[other])
 
     def __sub__(self, other):
         if type(other) == Dice:
-            return Dice(*self.dice, *[-d for d in other.dice], bonus=[-b for b in other.flat])
+            return Dice(*self.dice, *[-d for d in other.dice], bonus=self.flat+[-b for b in other.flat])
         else:
             return Dice(*self.dice, bonus=self.flat+[-other])
 
@@ -73,4 +74,4 @@ class Dice(object):
 
     @staticmethod
     def for_ability(score):
-        return Dice(*ability_dice[score-1])
+        return Dice(*ability_dice[score])

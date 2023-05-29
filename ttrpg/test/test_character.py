@@ -65,6 +65,7 @@ def test_attack():
     assert Character(physical=2).attack_dice(1) == Dice(4)-2
     assert Character(physical=2).attack_dice(2) == Dice(4)-4
     assert Character(physical=2).attack_dice(3) == Dice(4)-6
+    assert Character(physical=2).attack_dice(1, 1) == Dice(4)-2+1
     assert Character(physical=3, inventory=[Weapon(enchantment=1)]).attack_dice() == Dice(6)+1
     assert Character(physical=3, inventory=[Weapon(heavy=True, enchantment=2)]).attack_dice() == Dice(6,4)+2
     assert Character(physical=3, inventory=[Weapon(), Weapon()]).attack_dice(1) == Dice(6)

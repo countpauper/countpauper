@@ -52,8 +52,10 @@ class GameCommands(commands.Cog):
             generate Bar 2 - Generate a level 2 character named Bar"""
 
         name = name or ctx.author.nick or ctx.author.name
-        if c := self.db.exists(ctx.guild, ctx.author, name):
+        if self.db.exists(ctx.guild, ctx.author, name):
             raise commands.CommandError(f"You already have a character named '{name}'. Retire first.")
+        elif self.db.exists(ctx.guild, None, name):
+            raise commands.CommandError(f"'{name}' already exists on {ctx.guild}. Chose another name.")
         c = Character.random_character(level)
         c.name = name
         c.color = str(ctx.author.color)
@@ -72,9 +74,11 @@ class GameCommands(commands.Cog):
             sheet foo - Show the sheet of your character foo."""
         if c := self.db.retrieve(ctx.guild, ctx.author, name):
             await ctx.send(embed=self.embed_sheet(c))
+            await ctx.message.delete()
+        elif name is None:
+            raise commands.CommandError(f"No character found for {ctx.author} on {ctx.guild}.")
         else:
-            await ctx.send(f"No character {name if name else ''} found for {ctx.author} on {ctx.guild}.")
-        await ctx.message.delete()
+            raise commands.CommandError(f"No character '{name}' found for {ctx.author} on {ctx.guild}.")
 
     @commands.command()
     async def retire(self, ctx, name):
@@ -87,5 +91,59 @@ class GameCommands(commands.Cog):
             self.db.delete(ctx.guild, ctx.author, name)
             await ctx.send(f"Your character {name} has been retired.")
             await ctx.message.delete()
-        except Exception as e:
+        except RuntimeError as e:
             raise commands.CommandError(*e.args)
+
+    @commands.command()
+    async def attack(self, ctx, *args):
+        """Delete a character
+        Syntax: attack [<attacker>] [<target>] [<bonus>]
+            attacker : name of your character to attack with
+            targer : name of the target to attack
+        Examples:
+            attack - Roll an attack with your current character without a target.
+            attack Bar - Attack Bar with your default character.
+            attack Foo Bar - Foo will attack Bar.
+            attack Bar 1 - Your default character will attack Bar with a +1 bonus.
+        """
+        if not args:
+            attacker_name, target_name, bonus = None, None, None
+        else:
+            try:
+                bonus=int(args[-1])
+                args=args[:-1]
+            except ValueError:
+                bonus = None
+
+            if not args:
+                attacker_name, target_name = None, None
+            elif len(args)==1:
+                attacker_name = None
+                target_name = args[0]   # check if its int first
+            else:
+                attacker_name, target_name = args[:2]
+
+        if attacker_name:
+            attacker = self.db.retrieve(ctx.guild, ctx.author, attacker_name)
+            if not attacker:
+                raise commands.CommandError(f"No character {attacker_name} found for {ctx.author} on {ctx.guild}.")
+        else: # default character
+            attacker = self.db.retrieve(ctx.guild, ctx.author)
+            if not attacker:
+                raise commands.CommandError(f"No character found for {ctx.author} on {ctx.guild}.")
+
+        if target_name:
+            owner = self.db.user(ctx.guild, target_name)
+            target = self.db.retrieve(ctx.guild, None, target_name)
+            if not target:
+                raise commands.CommandError(f"No target {target_name} found on {ctx.guild}.")
+        else:
+            target = None
+        if target:
+            result = attacker.attack(target, 0, bonus)
+            self.db.store(ctx.guild, owner, target)
+            await ctx.send(result)
+        else:
+            result = d20.roll(str(attacker.attack_dice(0, bonus)))
+            await ctx.send(f'**{attacker.name}** attacks: {result}')
+        await ctx.message.delete()

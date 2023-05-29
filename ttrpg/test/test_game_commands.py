@@ -1,8 +1,8 @@
 from game_commands import GameCommands
 from unittest.mock import Mock, MagicMock
-import asyncio
 import pytest
 from character import Character
+from discord.ext import commands
 
 class AsyncMock(Mock):
     async def __call__(self, *args, **kwargs):
@@ -54,6 +54,30 @@ async def test_generate(db, ctx):
     assert embed.thumbnail.url == ctx.author.display_avatar
 
 @pytest.mark.asyncio
+async def test_generate_duplicate(db, ctx):
+    c = Character()
+    db.store(ctx.guild, ctx.author, c)
+
+    bot = Mock()
+    g = GameCommands(bot, db)
+    with pytest.raises(commands.CommandError) as exc_info:
+        await g.generate(g, ctx, c.name)
+    assert exc_info.value.args[0] == f"You already have a character named '{c.name}'. Retire first."
+
+
+@pytest.mark.asyncio
+async def test_generate_existing(db, ctx):
+    c = Character()
+    db.store(ctx.guild, "baz", c)
+
+    bot = Mock()
+    g = GameCommands(bot, db)
+    with pytest.raises(commands.CommandError) as exc_info:
+        await g.generate(g, ctx, c.name)
+    assert exc_info.value.args[0] == f"'{c.name}' already exists on {ctx.guild}. Chose another name."
+
+
+@pytest.mark.asyncio
 async def test_sheet(db, ctx):
     c = Character()
     db.store(ctx.guild, ctx.author, c)
@@ -103,13 +127,15 @@ async def test_sheet(db, ctx):
     assert f"**SP:** {c.sp}" in embed.description
     assert embed.thumbnail.url is None
 
+
 @pytest.mark.asyncio
 async def test_no_sheet(db, ctx):
     bot = Mock()
     g = GameCommands(bot, db)
-    await g.sheet(g, ctx, "foo")
-    ctx.send.assert_called_once_with(f"No character foo found for {ctx.author} on {ctx.guild}.")
-    ctx.message.delete.assert_called_once_with()
+    with pytest.raises(commands.CommandError) as exc_info:
+        await g.sheet(g, ctx, "foo")
+    assert exc_info.value.args[0] == f"No character 'foo' found for {ctx.author} on {ctx.guild}."
+    ctx.message.delete.assert_not_called()
 
 @pytest.mark.asyncio
 async def test_retire(db, ctx):
@@ -121,3 +147,65 @@ async def test_retire(db, ctx):
     assert not db.exists(ctx.guild, ctx.author, c.name)
     ctx.send.assert_called_once_with(f"Your character {c.name} has been retired.")
     ctx.message.delete.assert_called_once_with()
+
+
+@pytest.mark.asyncio
+async def test_no_retire(db, ctx):
+    bot = Mock()
+    g = GameCommands(bot, db)
+    with pytest.raises(commands.CommandError) as exc_info:
+        await g.retire(g, ctx, "foo")
+    assert exc_info.value.args[0] == f"There is no character named 'foo' to retire."
+    ctx.message.delete.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_attack_with_default_character(db, ctx):
+    attacker = Character(name="Attacker", physical=0)
+    target = Character(name="Target", physical=0)
+    db.store(ctx.guild, ctx.author, attacker)
+    db.store(ctx.guild, "Opponent", target)
+    bot = Mock()
+    g = GameCommands(bot, db)
+    await g.attack(g, ctx, "target", "-1")
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once_with(f"{attacker.name} misses {target.name} (1 - 1 = `0` VS 1 = `1`)")
+
+
+@pytest.mark.asyncio
+async def test_attack_with_specific_character(db, ctx):
+    attacker = Character(name="Attacker", physical=0)
+    target = Character(name="Target", physical=0)
+    default_char = Character(name="Default")
+    db.store(ctx.guild, ctx.author, attacker)
+    db.store(ctx.guild, ctx.author, default_char)
+    db.store(ctx.guild, "Opponent", target)
+    bot = Mock()
+    g = GameCommands(bot, db)
+    await g.attack(g, ctx, "attacker", "target", "+1")
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once_with(f"{attacker.name} attacks (1 + 1 = `2` VS 1 = `1`) {target.name} (4/5)[-1]")
+    target = db.retrieve(ctx.guild, "Opponent", target.name)
+    assert target.hp.value == 4
+
+@pytest.mark.asyncio
+async def test_cant_attack_without_default_character(db, ctx):
+    db.store(ctx.guild, "Opponent", Character(name="Target"))
+    bot = Mock()
+    g = GameCommands(bot, db)
+    with pytest.raises(commands.CommandError) as exc_info:
+        await g.attack(g, ctx, "target")
+    assert exc_info.value.args[0] == f"No character found for {ctx.author} on {ctx.guild}."
+
+
+@pytest.mark.asyncio
+async def test_attack_without_target(db, ctx):
+    attacker = Character(name="Attacker", physical=0)
+    db.store(ctx.guild, ctx.author, attacker)
+    bot = Mock()
+    g = GameCommands(bot, db)
+    await g.attack(g, ctx)
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1 = `1`")
+
+

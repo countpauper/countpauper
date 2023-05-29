@@ -60,6 +60,7 @@ def test_add():
     assert Dice(6)+Dice(4) == Dice(6,4)
     assert Dice(10)+Dice(1) == Dice(10)+1
     assert Dice()+Dice(8) == Dice(8)
+    assert (Dice(2)+1)+(Dice(3)-1) == Dice(2,3)+1-1
     d = Dice(4)
     d += Dice(2)
     d += 1
