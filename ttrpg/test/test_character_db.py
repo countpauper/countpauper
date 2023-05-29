@@ -25,6 +25,17 @@ def test_character_stats(db):
     assert restored.color is None
 
 
+def test_update(db):
+    c = Character(name="foo")
+    db.store("guild","user", c)
+    c.physical = 99
+    db.store("guild", "user", c)
+    res = db.connection.execute("SELECT Count(Id) FROM character;")
+    assert res.fetchone()[0] == 1
+    c = db.retrieve("guild", "user", c.name)
+    assert c.physical == 99
+
+
 def test_retrieve_default_character(db):
     c = Character(name="foo", level=2, mental=3, social=4, physical=5)
     db.store("guild", "user", c)

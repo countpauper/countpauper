@@ -14,6 +14,7 @@ keep character up to date with database without having to store/restore the whol
     - What about those public properties like hp, portrait and all that. how to know "cache" is dirty
 [done] represent flat bonuses above 1 in Dice
 random characters and monsters above level 1
+level up command
 [done] organize commands in cogs (well, mostly game cog)
 Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handling
 character database dirty flags (props, inventory, skills) to optimize updates

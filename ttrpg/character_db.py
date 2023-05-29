@@ -31,13 +31,13 @@ class CharacterDB(object):
     def store(self, guild, user, c):
         with self.connection as con:
             properties = {p: c.get(p) for p in self.properties}
-            query = f"""REPLACE INTO character(user, guild, {", ".join(self.properties)}) VALUES 
-                (:user, :guild, {", ".join(f":{p}" for p in properties.keys())});"""
-            properties.update(dict(user=str(user), guild=str(guild)))
+            query = f"""REPLACE INTO character(id, user, guild, {", ".join(self.properties)}) VALUES 
+                (:id, :user, :guild, {", ".join(f":{p}" for p in properties.keys())});"""
+            properties.update(dict(user=str(user), guild=str(guild), id=c.id))
             cur = con.execute(query, properties)
-            idx = cur.lastrowid
-            cur = self._clear_inventory(cur, idx)
-            self._store_inventory(cur, idx, c)
+            c.id = cur.lastrowid
+            cur = self._clear_inventory(cur, c.id)
+            self._store_inventory(cur, c.id, c)
 
     @staticmethod
     def _encode_location(item, c):
@@ -93,20 +93,14 @@ class CharacterDB(object):
         else:
             return None
 
+    item_types = {cls.__name__: cls for cls in (Weapon, RangedWeapon, Shield, Armor, Equipment)}
+
     @staticmethod
     def _create_item(item, properties):
-        if item=='Weapon':
-            return Weapon(**properties)
-        elif item=='RangedWeapon':
-            return RangedWeapon(**properties)
-        elif item=='Shield':
-            return Shield(**properties)
-        elif item=='Armor':
-            return Armor(**properties)
-        elif item=='Equipment':
-            return Equipment(**properties)
+        if item_type := CharacterDB.item_types.get(item):
+            return item_type(**properties)
         else:
-            raise RuntimeError(f"Item type '{item}' unsupported.")
+            raise ValueError(f"Item type '{item}' unsupported.")
 
     def _retrieve_inventory(self, cursor, idx):
         query = f"""SELECT item, properties, location FROM inventory WHERE character=:id"""

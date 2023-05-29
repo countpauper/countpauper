@@ -35,6 +35,7 @@ class Counter(object):
 class Character(object):
 
     def __init__(self, **kwargs):
+        self.id = kwargs.get('id')
         self.name = kwargs.get('name','Nemo')
         self.level = kwargs.get('level', 1)
         self.size = kwargs.get('size', sizes['m'])
