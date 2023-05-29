@@ -33,7 +33,7 @@ class CharacterDB(object):
             properties = {p: c.get(p) for p in self.properties}
             query = f"""REPLACE INTO character(user, guild, {", ".join(self.properties)}) VALUES 
                 (:user, :guild, {", ".join(f":{p}" for p in properties.keys())});"""
-            properties.update(dict(user=user, guild=guild))
+            properties.update(dict(user=str(user), guild=str(guild)))
             cur = con.execute(query, properties)
             idx = cur.lastrowid
             cur = self._clear_inventory(cur, idx)
@@ -65,7 +65,7 @@ class CharacterDB(object):
         return cursor.execute(f"""DELETE FROM inventory WHERE character==?""", [idx])
 
     def exists(self, guild, user, name):
-        return self._find_character(guild, user, name) is not None
+            return self._find_character(guild, user, name) is not None
 
     def retrieve(self, guild, user, name=None):
         name_query=f"""AND name=:name COLLATE NOCASE""" if name else ''
@@ -73,7 +73,7 @@ class CharacterDB(object):
             WHERE user=:user AND guild=:guild {name_query}
             ORDER BY id DESC LIMIT 1"""
 
-        cursor = self.connection.execute(query, dict(user=user, guild=guild, name=name))
+        cursor = self.connection.execute(query, dict(user=str(user), guild=str(guild), name=str(name)))
         columns = [x[0] for x in cursor.description]
         if row := cursor.fetchone():
             record = {col: row[idx] for idx, col in enumerate(columns)}
@@ -123,7 +123,7 @@ class CharacterDB(object):
 
     def _find_character(self, guild, user, name):
         query = f"""SELECT Id FROM character WHERE user=:user AND guild=:guild AND name=:name COLLATE NOCASE ORDER BY Id DESC LIMIT 1"""
-        response = self.connection.execute(query, dict(user=user, guild=guild, name=name))
+        response = self.connection.execute(query, dict(user=str(user), guild=str(guild), name=str(name)))
         result = response.fetchone()
         if not result:
             return None

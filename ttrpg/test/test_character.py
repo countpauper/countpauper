@@ -2,6 +2,7 @@ from character import Character
 from items import Weapon, RangedWeapon, Shield, Armor, Equipment
 from dice import Dice
 
+
 def test_default():
     c = Character()
     assert c.level == 1

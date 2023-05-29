@@ -5,15 +5,6 @@ from items import *
 import pytest
 import os
 
-@pytest.fixture
-def db():
-    fn = f"{__name__}.db"
-    char_db = CharacterDB(fn)
-    yield char_db
-    char_db.close()
-    del char_db
-    os.remove(fn)
-
 def test_create_db(db):
     assert db
 
