@@ -182,11 +182,11 @@ async def test_attack_with_specific_character(db, ctx):
     db.store(ctx.guild, "Opponent", target)
     bot = Mock()
     g = GameCommands(bot, db)
-    await g.attack(g, ctx, "attacker", "target", "+1")
+    await g.attack(g, ctx, "Attacker", "target", "+1")
     ctx.message.delete.assert_called_with()
     ctx.send.assert_called_once_with(f"{attacker.name} attacks (1 + 1 = `2` VS 1 = `1`) {target.name} (4/5)[-1]")
     target = db.retrieve(ctx.guild, "Opponent", target.name)
-    assert target.hp.value == 4
+    assert target.hp == 4
 
 @pytest.mark.asyncio
 async def test_cant_attack_without_default_character(db, ctx):

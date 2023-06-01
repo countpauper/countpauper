@@ -8,7 +8,7 @@
 [done] database transactions and auto commit and use cursor.close() or with connection or something to refactor multi query atomic operations and make them efficient
 [done] unit tests for commands (split commands into testable units? or mock context?)
 [done] attack
-initial skills and random skill assignment
+initial skills and random skill assignment, two skill each for physical, mental, social
 keep character up to date with database without having to store/restore the whole time, even during test? like some sort of db cache and character is just a wrapper?
     - also from character test with some sort of event? or just the character that was retrieved keeps itself up to date?
     - What about those public properties like hp, portrait and all that. how to know "cache" is dirty

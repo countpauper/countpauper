@@ -1,72 +1,62 @@
 from sizes import sizes
-import random
 from items import *
 from dice import Dice
-
-class Counter(object):
-
-    def __init__(self, a, b=None):
-        if b is None:
-            self.max = self.value = max(0,int(a))
-        elif a is None:
-            self.max = self.value = max(0, int(b))
-        else:
-            self.max = max(0,int(b))
-            self.value = min(int(a), self.max)
-
-    def __str__(self):
-        return f'{self.value}/{self.max}'
-
-    def __add__(self, value):
-        return Counter(self.value + value, self.max)
-
-    def __sub__(self, value):
-        return Counter(self.value - value, self.max)
-
-    def __bool__(self):
-        return self.value > 0
-
-    def __eq__(self, other):
-        if type(other) == Counter:
-            return self.value == other.value and self.max == other.max
-        else:
-            return self.value == other
+from stats import *
 
 class Character(object):
+    id = Identifier("id")
+    color = Stat("color")
+    portrait = Stat('portrait')
+    name = Identifier("name")
+    level = Stat("level")
+    physical = Ability("physical")
+    mental = Ability("mental")
+    social = Ability("social")
+    hp = CounterStat('hp')
+    sp = CounterStat('sp')
+    mp = CounterStat('mp')
 
     def __init__(self, **kwargs):
-        self.id = kwargs.get('id')
-        self.name = kwargs.get('name','Nemo')
-        self.level = kwargs.get('level', 1)
-        self.size = kwargs.get('size', sizes['m'])
-        if type(self.size) == str:
-            self.size = sizes.get(self.size)
-        self.physical = kwargs.get('physical',self.size['physical'])
-        self.mental = kwargs.get('mental',1)
-        self.social = kwargs.get('social',1)
-        self.hp = Counter(kwargs.get('hp'), self.max_hp())
-        self.sp = Counter(kwargs.get('sp'), self.max_sp())
-        self.mp = Counter(kwargs.get('mp'), self.max_mp())
+        size = kwargs.get('size', sizes['m'])
+        if type(size) == str:
+            size = sizes.get(size)
+        self.stats = dict(id=None,
+                          name='Nemo',
+                          color=None,
+                          portrait=None,
+                          level=1,
+                          physical = size['physical'],
+                          mental=1,
+                          social=1
+        )
+        self.stats = {stat:kwargs.get(stat, value) for stat, value in self.stats.items()}
+        self.stats['hp'] = Counter(self.max_hp())
+        self.hp = kwargs.get('hp', self.hp)
+        self.stats['sp'] = Counter(self.max_sp())
+        self.sp = kwargs.get('sp', self.sp)
+        self.stats['mp'] = Counter(self.max_mp())
+        self.mp = kwargs.get('mp', self.mp)
+
         self.skills = kwargs.get('skills', [])
         self.inventory = kwargs.get('inventory',[])
         # TODO: find a way to put equipped status in a record, but still allow duplicate items and duplicate location
         # list of tuples? or dict with locations, then list of items there.
         self.held = dict(main=None, off=None) # TODO: less hands for paws, more hands for weird creatures
         self.worn = None
-        self.color = kwargs.get('color')
-        self.portrait = kwargs.get('portrait')
         if self.inventory:
             self.auto_equip()
 
-    def get(self, prop):
-        value = self.__getattribute__(prop)
-        if type(value) == Counter:
-            return value.value
-        else:
-            return value
+    def __getitem__(self, key):
+        return self.stats[key]
+
+    def __setitem__(self, key, value):
+        raise NotImplementedError("Not allowed (yet)")
+
+    def __delitem__(self, key):
+        raise NotImplementedError("Not allowed (yet)")
 
     def max_hp(self):
-        return 4+self.level
+        return 4 + self.level
 
     def max_sp(self):
         return self.mental
@@ -86,10 +76,11 @@ class Character(object):
             return f"{self.name} misses {enemy.name} ({attack_roll} VS {defense_roll})"
         else:
             enemy.damage(damage)
-            return f'{self.name} attacks ({attack_roll} VS {defense_roll}) {enemy.name} ({enemy.hp})[-{damage}]'
+            return f"{self.name} attacks ({attack_roll} VS {defense_roll}) {enemy.name} ({enemy['hp']})[-{damage}]"
 
     def damage(self, dmg):
-        self.hp -= dmg
+        hp = self.hp - int(dmg)
+        self.hp = hp
 
     def attack_dice(self, nr=0, bonus=None):
         result = Dice.for_ability(self.physical)
@@ -146,9 +137,9 @@ class Character(object):
 
     def __str__(self):
         return f"""{self.name}: Level {self.level}
-    {self.physical} Physical: {self.hp} HP
-    {self.mental} Mental: {self.sp} SP
-    {self.social} Social: {self.mp} MP
+    {self.physical} Physical: {self['hp']} HP
+    {self.mental} Mental: {self['sp']} SP
+    {self.social} Social: {self['mp']} MP
     Defense {self.defense_dice()} Attack {self.attack_dice()}
     Inventory[{self.carried()}/{self.capacity()}] {" ".join(str(i) for i in self.inventory) or "Empty"} 
     {" ".join(str(s) for s in self.skills)}"""

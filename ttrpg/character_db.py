@@ -30,11 +30,11 @@ class CharacterDB(object):
     # TODO: move database character link to another file
     def store(self, guild, user, c):
         with self.connection as con:
-            properties = {p: c.get(p) for p in self.properties}
-            query = f"""REPLACE INTO character(id, user, guild, {", ".join(self.properties)}) VALUES 
-                (:id, :user, :guild, {", ".join(f":{p}" for p in properties.keys())});"""
-            properties.update(dict(user=str(user), guild=str(guild), id=c.id))
-            cur = con.execute(query, properties)
+            columns=dict(user=str(user), guild=str(guild))
+            columns.update(c.stats)
+            query = f"""REPLACE INTO character ({", ".join(columns)}) VALUES 
+                ({", ".join(f":{p}" for p in columns)});"""
+            cur = con.execute(query, columns)
             c.id = cur.lastrowid
             cur = self._clear_inventory(cur, c.id)
             self._store_inventory(cur, c.id, c)

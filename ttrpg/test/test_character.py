@@ -27,17 +27,16 @@ def test_specific_abilities():
     assert Character(mental=5).mental == 5
     assert Character(social=6).social == 6
 
-
 def test_max_points():
-    assert Character(level=1, physical=3).hp.max == 5
-    assert Character(mental=5).sp.max == 5
-    assert Character(social=6).mp.max == 6
+    assert Character(level=1, physical=3).max_hp() == 5
+    assert Character(mental=5).max_sp() == 5
+    assert Character(social=6).max_mp() == 6
 
 
 def test_specific_points():
-    assert Character(hp=1).hp.value == 1
-    assert Character(sp=0).sp.value == 0
-    assert Character(social=4, mp=2).mp.value == 2
+    assert Character(hp=1).hp == 1
+    assert Character(sp=0).sp == 0
+    assert Character(social=4, mp=2).mp == 2
 
 def test_default_flavour():
     c = Character()
@@ -51,7 +50,7 @@ def test_status():
     assert c.alive()
     assert c.moralized()
     assert c.active()
-    c.damage(c.hp.value)
+    c.damage(c.hp)
     assert not c.alive()
     assert not c.active()
 
