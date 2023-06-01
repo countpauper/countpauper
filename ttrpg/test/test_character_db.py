@@ -1,9 +1,7 @@
-from character_db import CharacterDB
 from character import Character
 from items import *
-
+from effect import Effect
 import pytest
-import os
 
 def test_create_db(db):
     assert db
@@ -84,6 +82,14 @@ def test_inventory(db):
     assert c.off_hand().name == "shield"
     assert c.main_hand().name == "Golden Sword"
     assert len(c.item("Birch bow")) == 1
+
+def test_effects_not_persisted(db):
+    c=Character(name="Stronk", physical=5)
+    c.effects.append(Effect("stronger",1, dict(physical=dict(bonus=2))))
+    db.store("guild", "owner", c)
+    original=db.retrieve("guild", "owner", "Stronk")
+    assert c.physical == 7
+    assert original.physical == 5
 
 
 def test_exists(db):

@@ -17,15 +17,14 @@ class Item(object):
     def __str__(self):
         return self.name
 
+    def get_boni(self, stat):
+        return dict()
 
 class Armor(Item):
     def __init__(self, **props):
-        self.rating = props.get('rating',1)
-        self.enchantment = props.get('enchantment', 0)
+        self.rating = props.get('rating', 1)
+        self.enchantment = props.get('enchantment', None)
         self.name = props.get('name', ['shirt', 'gambeson', 'chainmail', 'brigandine', 'cuirass', 'plate'][self.rating])
-
-    def defense(self):
-        return self.rating + self.enchantment
 
     def weight(self):
         return self.rating
@@ -34,6 +33,14 @@ class Armor(Item):
         return dict(name=self.name,
                     rating=self.rating,
                     enchantment=self.enchantment)
+
+    def get_boni(self, stat):
+        base_boni = super(Armor, self).get_boni(stat)
+        if stat == 'defense':
+            base_boni['rating'] = self.rating
+            if self.enchantment:
+                base_boni['enchantment'] = self.enchantment
+        return base_boni
 
 class Weapon(Item):
     def __init__(self, **props):

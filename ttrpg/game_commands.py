@@ -34,7 +34,7 @@ class GameCommands(commands.Cog):
         if c.portrait:
             embed.set_thumbnail(url=c.portrait)
         embed.add_field(name=f"Inventory [{c.carried()}/{c.capacity()}]", value="\n".join(str(i) for i in c.inventory), inline=True)
-        embed.add_field(name="Skills", value="\n".join(str(s) for s in c.skills), inline=True)
+        embed.add_field(name="Skills", value="\n".join(str(s) for s in c.skill), inline=True)
         return embed
 
 

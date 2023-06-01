@@ -10,8 +10,7 @@ def test_default():
     assert c.mental == 1
     assert c.social == 1
     assert not c.inventory
-    assert not c.skills
-
+    assert not c.skill
 
 def test_default_physical():
     assert Character(size='xs').physical == 1
@@ -76,7 +75,7 @@ def test_auto_equip():
     assert Character(inventory=[Weapon(heavy=True), Weapon()]).off_hand() is None
     assert Character(inventory=[RangedWeapon(), Weapon()]).off_hand() is None
     assert type(Character(inventory=[Shield()]).off_hand()) == Shield
-    assert type(Character(inventory=[Armor()]).worn) == Armor
+    assert type(Character(inventory=[Armor()]).worn[0]) == Armor
 
 def test_str():
     assert str(Character(name='Foo', level=2, size='l', mental=3, hp=2, inventory=[Weapon(name="Testsword"),Shield()]))=="""Foo: Level 2

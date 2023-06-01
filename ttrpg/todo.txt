@@ -8,21 +8,26 @@
 [done] database transactions and auto commit and use cursor.close() or with connection or something to refactor multi query atomic operations and make them efficient
 [done] unit tests for commands (split commands into testable units? or mock context?)
 [done] attack
+[done] boni
+action points (stat) and $turn command
+automatic penalty for subsequent per turn and end turn command, also track action points?
+automatic tracking for dual wield switch (boolean) and reset per turn
+derived dice stat for attack and defend dice, add dice together with dice bonuses for items (and effects/skills)
 initial skills and random skill assignment, two skill each for physical, mental, social
+
 keep character up to date with database without having to store/restore the whole time, even during test? like some sort of db cache and character is just a wrapper?
-    - also from character test with some sort of event? or just the character that was retrieved keeps itself up to date?
-    - What about those public properties like hp, portrait and all that. how to know "cache" is dirty
+    - can probably do it with more Descriptors (although very layered) where the real value is straight in the database. Update one property at a time
+    - commit at the end of a command, all characters involved.
 [done] represent flat bonuses above 1 in Dice
 random characters and monsters above level 1
-level up command
+level up command, argument is ability to raise
 [done] organize commands in cogs (well, mostly game cog)
 Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handling
-character database dirty flags (props, inventory, skills) to optimize updates
-character worn can be a list for jewelry and multi part armor?
-attack with bonus
-automatic bonus for attacker per turn and end turn command, also track action points?
+[done] character worn can be a list for jewelry and multi part armor?
+jewelry (wearable item with bonuses)
 game commands more tests for user input handling and error reporting
-turn tracking (action points and attack penalty)
 item database with named types (Type+properties)
 position in character and database
 combat database (is that where to keep position? only allow targetting combat characters ? add channel to combat?)
+Add the random item system from the tactics game with the materials and stuff
+level bonus and penalty: extra stats and skills and loss of stats and skills, but which ? (just raising/lowering hp is lame)

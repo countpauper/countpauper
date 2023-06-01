@@ -20,6 +20,7 @@ def test_armor():
     assert str(Armor(rating=1))
     assert str(Armor(rating=2))
     assert str(Armor(rating=3))
+    assert Armor().get_boni('defense') == dict(rating=1)
 
 def test_weapon():
     assert str(Weapon())

@@ -5,7 +5,7 @@ from items import *
 import json
 
 class CharacterDB(object):
-    properties = ['name', 'color', 'portrait', 'level', 'physical', 'mental', 'social', 'hp', 'sp', 'mp']
+    persistent_stats = ['name', 'color', 'portrait', 'level', 'physical', 'mental', 'social', 'hp', 'sp', 'mp']
 
     def __init__(self, filename="ttrpg.db"):
         self.connection = sqlite3.connect(filename)
@@ -23,7 +23,7 @@ class CharacterDB(object):
         cur = self.connection.cursor()
         cur.executescript(f"""
             BEGIN;
-            CREATE TABLE IF NOT EXISTS character (Id INTEGER PRIMARY KEY, user, guild, {", ".join(self.properties)});
+            CREATE TABLE IF NOT EXISTS character (Id INTEGER PRIMARY KEY, user, guild, {", ".join(self.persistent_stats)});
             CREATE TABLE IF NOT EXISTS inventory (character, item, properties, location);
             COMMIT;""")
 
@@ -31,7 +31,8 @@ class CharacterDB(object):
     def store(self, guild, user, c):
         with self.connection as con:
             columns=dict(user=str(user), guild=str(guild))
-            columns.update(c.stats)
+            columns.update({stat:c[stat] for stat in self.persistent_stats})
+            columns['id'] = c.id
             query = f"""REPLACE INTO character ({", ".join(columns)}) VALUES 
                 ({", ".join(f":{p}" for p in columns)});"""
             cur = con.execute(query, columns)
@@ -45,7 +46,7 @@ class CharacterDB(object):
             return "main"
         elif c.off_hand() == item:
             return "off"
-        elif c.worn == item:
+        elif item in c.worn:
             return "worn"
         else:
             return None
@@ -74,7 +75,7 @@ class CharacterDB(object):
         name_query=f"""AND name=:name COLLATE NOCASE""" if name is not None else ''
         user_query=f"""AND user=:user""" if user is not None else ''
 
-        query = f"""SELECT Id, {", ".join(self.properties)} FROM character 
+        query = f"""SELECT Id, {", ".join(self.persistent_stats)} FROM character 
             WHERE guild=:guild {user_query} {name_query}
             ORDER BY id DESC LIMIT 1"""
 
@@ -86,7 +87,7 @@ class CharacterDB(object):
             inventory = self._retrieve_inventory(cursor, record['Id'])
 
             c.inventory = [i for location_items in inventory.values() for i in location_items]
-            c.worn = inventory.get('worn',[None])[0]
+            c.worn = inventory.get('worn', [])
             c.held['main'] = inventory.get('main', [None])[0]
             c.held['off'] = inventory.get('off', [None])[0]
             return c

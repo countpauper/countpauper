@@ -27,7 +27,7 @@ ability_dice = [
 class Dice(object):
     def __init__(self, *dice, bonus=[]):
         self.dice = list(d for d in dice if abs(d) > 1)
-        self.flat = bonus + list(d for d in dice if abs(d) <= 1)
+        self.flat = list(bonus) + list(d for d in dice if abs(d) <= 1)
 
     def __add__(self, other):
         if type(other) == Dice:

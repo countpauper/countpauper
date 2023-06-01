@@ -5,9 +5,9 @@ from stats import *
 
 class Character(object):
     id = Identifier("id")
-    color = Stat("color")
-    portrait = Stat('portrait')
     name = Identifier("name")
+    color = Property("color")
+    portrait = Property('portrait')
     level = Stat("level")
     physical = Ability("physical")
     mental = Ability("mental")
@@ -15,8 +15,11 @@ class Character(object):
     hp = CounterStat('hp')
     sp = CounterStat('sp')
     mp = CounterStat('mp')
+    defense = Stat("defense")
 
     def __init__(self, **kwargs):
+        self.effects = list()
+        self.worn = list()
         size = kwargs.get('size', sizes['m'])
         if type(size) == str:
             size = sizes.get(size)
@@ -27,7 +30,8 @@ class Character(object):
                           level=1,
                           physical = size['physical'],
                           mental=1,
-                          social=1
+                          social=1,
+                          defense=0
         )
         self.stats = {stat:kwargs.get(stat, value) for stat, value in self.stats.items()}
         self.stats['hp'] = Counter(self.max_hp())
@@ -37,12 +41,11 @@ class Character(object):
         self.stats['mp'] = Counter(self.max_mp())
         self.mp = kwargs.get('mp', self.mp)
 
-        self.skills = kwargs.get('skills', [])
+        self.skill = kwargs.get('skills', [])
         self.inventory = kwargs.get('inventory',[])
         # TODO: find a way to put equipped status in a record, but still allow duplicate items and duplicate location
         # list of tuples? or dict with locations, then list of items there.
         self.held = dict(main=None, off=None) # TODO: less hands for paws, more hands for weird creatures
-        self.worn = None
         if self.inventory:
             self.auto_equip()
 
@@ -56,17 +59,40 @@ class Character(object):
         raise NotImplementedError("Not allowed (yet)")
 
     def max_hp(self):
-        return 4 + self.level
+        return 4 + self.level + sum(self.get_boni('hp').values())
 
     def max_sp(self):
-        return self.mental
+        return self.mental + sum(self.get_boni('sp').values())
 
     def max_mp(self):
-        return self.social
+        return self.social + sum(self.get_boni('mp').values())
+
+    def max_ap(self):
+        return 3 +  sum(self.get_boni('ap').values())
+
+    def get_max(self, stat):
+        if stat=='hp':
+            return self.max_hp()
+        elif stat=='sp':
+            return self.max_sp()
+        elif stat=='mp':
+            return self.max_mp()
+        elif stat=='ap':
+            return self.max_ap()
+        else:
+            raise ValueError(f"Unknown counter {stat}")
+
+    def get_boni(self, stat):
+        boni = dict()
+        for e in self.effects:
+            boni.update(e.get_boni(stat))
+        for w in self.worn:
+            boni.update(w.get_boni(stat))
+        boni={k:v for k,v in boni.items() if v is not None}
+        return boni
 
     def defense_dice(self):
-        bonus = [self.worn.defense()] if self.worn else []
-        return Dice.for_ability(self.physical)+Dice(bonus=bonus)
+        return Dice.for_ability(self.physical)+Dice(bonus=self.get_boni('defense').values())
 
     def attack(self, enemy, number=0, bonus=None):
         attack_roll = self.attack_dice(number, bonus).roll()
@@ -132,7 +158,7 @@ class Character(object):
                 self.held['off'] = i
             if not self.worn:
                 if type(i) == Armor:
-                    self.worn = i
+                    self.worn = [i]
         return self
 
     def __str__(self):
@@ -142,10 +168,10 @@ class Character(object):
     {self.social} Social: {self['mp']} MP
     Defense {self.defense_dice()} Attack {self.attack_dice()}
     Inventory[{self.carried()}/{self.capacity()}] {" ".join(str(i) for i in self.inventory) or "Empty"} 
-    {" ".join(str(s) for s in self.skills)}"""
+    {" ".join(str(s) for s in self.skill)}"""
 
     def alive(self):
-        return bool(self.hp)
+        return bool(self.hp) and bool(self.level)
 
     def moralized(self):
         return bool(self.mp)

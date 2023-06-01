@@ -1,4 +1,4 @@
-class Stat(object):
+class Property(object):
     def __init__(self, name):
         self.name =  name
 
@@ -11,14 +11,27 @@ class Stat(object):
     def __delete__(self, instance):
         instance.stats.pop(self.name)
 
-class Identifier(Stat):
+class Stat(Property):
+    def __init__(self, name):
+        super(Stat,self).__init__(name)
+
+    def __get__(self, instance, owner):
+        boni = instance.get_boni(self.name)
+        return max(0, instance.stats.get(self.name) + sum(boni.values()))
+
+    def __set__(self, instance, value):
+        instance.stats[self.name] = value
+
+    def __delete__(self, instance):
+        instance.stats.pop(self.name)
+
+class Identifier(Property):
     def __init__(self, name):
         super(Identifier, self).__init__(name)
 
 class Ability(Stat):
     def __init__(self, name):
         super(Ability,self).__init__(name)
-
 
 class Counter(object):
     def __init__(self, max):
@@ -57,7 +70,9 @@ class CounterStat(Stat):
 
     def __get__(self, instance, owner):
         stat = instance.stats.get(self.name)
-        return stat.value
+        boni = instance.get_boni(self.name)
+        return min(max(0, stat.value + sum(boni.values())), instance.get_max(self.name))
+
 
     def __set__(self, instance, value):
         stat = instance.stats.get(self.name)
