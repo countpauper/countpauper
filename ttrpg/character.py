@@ -1,34 +1,34 @@
-from sizes import sizes
 from items import *
 from dice import Dice
 from stats import *
+from errors import GameError
 
 class Character(object):
     id = Identifier("id")
     name = Identifier("name")
     color = Property("color")
     portrait = Property('portrait')
-    level = Stat("level")
+    level = Stat("level", minimum=-3)
     physical = Ability("physical")
     mental = Ability("mental")
     social = Ability("social")
     hp = CounterStat('hp')
     sp = CounterStat('sp')
     mp = CounterStat('mp')
+    ap = CounterStat('ap')
     defense = Stat("defense")
+    default_ap = 3
+    default_hp = 4
 
     def __init__(self, **kwargs):
         self.effects = list()
         self.worn = list()
-        size = kwargs.get('size', sizes['m'])
-        if type(size) == str:
-            size = sizes.get(size)
         self.stats = dict(id=None,
                           name='Nemo',
                           color=None,
                           portrait=None,
                           level=1,
-                          physical = size['physical'],
+                          physical=1,
                           mental=1,
                           social=1,
                           defense=0
@@ -40,6 +40,8 @@ class Character(object):
         self.sp = kwargs.get('sp', self.sp)
         self.stats['mp'] = Counter(self.max_mp())
         self.mp = kwargs.get('mp', self.mp)
+        self.stats['ap'] = Counter(self.default_ap)
+        self.ap = kwargs.get('ap', self.ap)
 
         self.skill = kwargs.get('skills', [])
         self.inventory = kwargs.get('inventory',[])
@@ -58,8 +60,11 @@ class Character(object):
     def __delitem__(self, key):
         raise NotImplementedError("Not allowed (yet)")
 
+    def turn(self):
+        self['ap'].reset()
+
     def max_hp(self):
-        return 4 + self.level + sum(self.get_boni('hp').values())
+        return self.default_hp + self.level + sum(self.get_boni('hp').values())
 
     def max_sp(self):
         return self.mental + sum(self.get_boni('sp').values())
@@ -68,7 +73,7 @@ class Character(object):
         return self.social + sum(self.get_boni('mp').values())
 
     def max_ap(self):
-        return 3 +  sum(self.get_boni('ap').values())
+        return self.default_ap + sum(self.get_boni('ap').values())
 
     def get_max(self, stat):
         if stat=='hp':
@@ -94,15 +99,22 @@ class Character(object):
     def defense_dice(self):
         return Dice.for_ability(self.physical)+Dice(bonus=self.get_boni('defense').values())
 
-    def attack(self, enemy, number=0, bonus=None):
+    def attack(self, enemy=None, number=0, bonus=None):
+        if not self.ap:
+            raise GameError("Not enough action points")
+        self.ap -= 1
+
         attack_roll = self.attack_dice(number, bonus).roll()
-        defense_roll = enemy.defense_dice().roll()
-        damage = attack_roll.total - defense_roll.total
-        if damage < 0:
-            return f"{self.name} misses {enemy.name} ({attack_roll} VS {defense_roll})"
+        if enemy is not None:
+            defense_roll = enemy.defense_dice().roll()
+            damage = attack_roll.total - defense_roll.total
+            if damage < 0:
+                return f"{attack_roll} VS {defense_roll} misses {enemy.name}"
+            else:
+                enemy.damage(damage)
+                return f"{attack_roll} VS {defense_roll} hits {enemy.name} ({enemy['hp']})[-{damage}]"
         else:
-            enemy.damage(damage)
-            return f"{self.name} attacks ({attack_roll} VS {defense_roll}) {enemy.name} ({enemy['hp']})[-{damage}]"
+            return f"{attack_roll}"
 
     def damage(self, dmg):
         hp = self.hp - int(dmg)
@@ -179,54 +191,3 @@ class Character(object):
     def active(self):
         return self.alive() and self.moralized()
 
-
-    races = [dict(name='Imp', size='xs', social=3, mental=3),
-             dict(name='Fairy', size='xs', social=4, mental=2),
-             dict(name='Pixie', size='xs', social=2, mental=4),
-             dict(name='Halfling', size='s', social=3, mental=2),
-             dict(name='Gnome', size='s', social=2, mental=3),
-             dict(name='Dwarf', size='s', physical=3, mental=2, social=2),
-             dict(name='Orc', size='m', physical=4, mental=1, social=2),
-             dict(name='Elf', size='m', mental=3, social=1),
-             dict(name='Satyr', size='m', mental=1, social=3),
-             dict(name='Human', size='m', social=2, mental=2),
-             dict(name='Ogre', size='l')]
-
-    @staticmethod
-    def random_character(level=1):
-        assert level == 1 # not yet implemented
-        c=Character(**random.choice(Character.races))
-        c.obtain(c.random_equipment())
-        c.auto_equip()
-        return c
-
-    @staticmethod
-    def random_monster(level):
-        total_ability = 6+level
-        assert total_ability>=3 # minium ability. Lowest level would be -3
-        remaining_ability = total_ability-2 # reserve two for 1 each social and mental
-        size = random.choice([s for s in sizes.values() if s['physical'] < remaining_ability])
-        remaining_ability = total_ability - size['physical']
-        social_bonus = random.randint(0, remaining_ability)
-        mental_bonus = remaining_ability - social_bonus
-        return Character(name=f'{size["name"]} Monster', size=size, social=1+social_bonus, mental=1+mental_bonus)
-
-
-    def random_equipment(self):
-        capacity = self.physical
-        if capacity < 2:
-            weapon = random.choice([Weapon(), RangedWeapon()])
-        else:
-            weapon = random.choice([Weapon(), Weapon(heavy=True), RangedWeapon(), RangedWeapon(heavy=True)])
-        capacity -= weapon.weight()
-        if capacity and weapon.hands() == 1:
-            offhand = random.choice([Weapon(), Shield() if capacity else None, None])
-            capacity -= offhand.weight() if offhand else 0
-        else:
-            offhand = None
-        if capacity and (armor_rating := random.randint(0, min(capacity, 3))):
-            armor = Armor(rating=armor_rating)
-            capacity -= armor.weight()
-        else:
-            armor = None
-        return [i for i in (weapon, offhand, armor) if i]

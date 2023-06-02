@@ -1,4 +1,5 @@
 from items import *
+from error import GameError
 
 class Skill(object):
     def __init__(self):
@@ -20,7 +21,7 @@ class CrossCut(Skill):
             second_attack = actor.attack(target, 1)
             return f"{first_attack} and {second_attack}."
         else:   # TODO: specific exception types for skill execution
-            raise Exception("Precondition: You must be wielding two weapons")
+            raise GameError("Precondition: You must be wielding two weapons")
 
 class Parry(Skill):
     """Cover yourself against melee attacks with your weapons."""

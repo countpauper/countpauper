@@ -1,1 +1,1 @@
-abilities=['Phyiscal', 'Mental', 'Social']
+abilities = ('physical', 'mental', 'social')

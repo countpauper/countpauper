@@ -12,12 +12,13 @@ class Property(object):
         instance.stats.pop(self.name)
 
 class Stat(Property):
-    def __init__(self, name):
+    def __init__(self, name, minimum=0):
         super(Stat,self).__init__(name)
+        self.minimum = minimum
 
     def __get__(self, instance, owner):
         boni = instance.get_boni(self.name)
-        return max(0, instance.stats.get(self.name) + sum(boni.values()))
+        return max(self.minimum, instance.stats.get(self.name) + sum(boni.values()))
 
     def __set__(self, instance, value):
         instance.stats[self.name] = value
@@ -34,22 +35,22 @@ class Ability(Stat):
         super(Ability,self).__init__(name)
 
 class Counter(object):
-    def __init__(self, max):
-        self.max = max
-        self.value = self.max
+    def __init__(self, maximum):
+        self.maximum = maximum
+        self.value = self.maximum
 
     def __add__(self, increase):
-        result = Counter(self.max).value = self.value + increase
+        result = Counter(self.maximum).value = self.value + increase
         result.value = self.value + increase
         return result
 
     def __sub__(self, decrease):
-        result = Counter(self.max)
+        result = Counter(self.maximum)
         result.value = self.value - decrease
         return result
 
     def __str__(self):
-        return f'{self.value}/{self.max}'
+        return f'{self.value}/{self.maximum}'
 
     def __conform__(self, protocol):
         return self.value
@@ -59,9 +60,12 @@ class Counter(object):
 
     def __eq__(self, other):
         if type(other) == Counter:
-            return self.value == other.value and self.max == other.max
+            return self.value == other.value and self.maximum == other.maximum
         else:
             return self.value == other
+
+    def reset(self):
+        self.value = self.maximum
 
 class CounterStat(Stat):
     def __init__(self, name):

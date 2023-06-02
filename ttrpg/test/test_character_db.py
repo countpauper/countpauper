@@ -1,14 +1,16 @@
+import pytest
 from character import Character
 from items import *
 from effect import Effect
-import pytest
+from errors import CharacterUnknownError
 
 def test_create_db(db):
     assert db
 
 def test_character_stats(db):
     c = Character(name="foo", level=2, mental=3, social=4, physical=5)
-    db.store("guild","user", c)
+    c.hp, c.sp, c.mp, c.ap = 4, 1, 2, 0
+    db.store("guild", "user", c)
     restored = db.retrieve("guild", "user", "foo")
     assert id(c) != id(restored)
     assert restored.name == 'foo'
@@ -19,6 +21,7 @@ def test_character_stats(db):
     assert restored.hp == c.hp
     assert restored.mp == c.mp
     assert restored.sp == c.sp
+    assert restored.ap == c.ap
     assert restored.portrait is None
     assert restored.color is None
 
@@ -43,7 +46,7 @@ def test_retrieve_default_character(db):
 
 def test_cannot_retrieve_default_opponent(db):
     db.store("guild", "user", Character())
-    with pytest.raises(RuntimeError):
+    with pytest.raises(CharacterUnknownError):
         db.retrieve("guild", None)
 
 
@@ -83,13 +86,13 @@ def test_inventory(db):
     assert c.main_hand().name == "Golden Sword"
     assert len(c.item("Birch bow")) == 1
 
-def test_effects_not_persisted(db):
+def test_effects(db):
     c=Character(name="Stronk", physical=5)
     c.effects.append(Effect("stronger",1, dict(physical=dict(bonus=2))))
     db.store("guild", "owner", c)
-    original=db.retrieve("guild", "owner", "Stronk")
+    c=db.retrieve("guild", "owner", "Stronk")
+    assert c.effects
     assert c.physical == 7
-    assert original.physical == 5
 
 
 def test_exists(db):
@@ -107,7 +110,7 @@ def test_exists_opponent(db):
 
 def test_delete(db):
     c = Character()
-    with pytest.raises(RuntimeError):
+    with pytest.raises(CharacterUnknownError):
         db.delete("guild", "user", c.name)
     db.store("guild", "user", c)
     assert db.delete("guild", "user", c.name)

@@ -9,9 +9,11 @@
 [done] unit tests for commands (split commands into testable units? or mock context?)
 [done] attack
 [done] boni
-action points (stat) and $turn command
-automatic penalty for subsequent per turn and end turn command, also track action points?
+[done] action points (stat) and $turn command
+automatic penalty for subsequent per turn and end turn command
 automatic tracking for dual wield switch (boolean) and reset per turn
+instead of catching RuntimeExceptions and reraising as command exceptions, define GameError and handle that. CommandError = syntax, game error = rules
+
 derived dice stat for attack and defend dice, add dice together with dice bonuses for items (and effects/skills)
 initial skills and random skill assignment, two skill each for physical, mental, social
 
@@ -19,7 +21,7 @@ keep character up to date with database without having to store/restore the whol
     - can probably do it with more Descriptors (although very layered) where the real value is straight in the database. Update one property at a time
     - commit at the end of a command, all characters involved.
 [done] represent flat bonuses above 1 in Dice
-random characters and monsters above level 1
+[done] random characters and monsters above level 1
 level up command, argument is ability to raise
 [done] organize commands in cogs (well, mostly game cog)
 Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handling

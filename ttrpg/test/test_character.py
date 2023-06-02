@@ -1,25 +1,18 @@
+import pytest
+
 from character import Character
+from generate_character import random_character, random_monster
 from items import Weapon, RangedWeapon, Shield, Armor, Equipment
 from dice import Dice
-
 
 def test_default():
     c = Character()
     assert c.level == 1
-    assert c.physical == 3
+    assert c.physical == 1
     assert c.mental == 1
     assert c.social == 1
     assert not c.inventory
     assert not c.skill
-
-def test_default_physical():
-    assert Character(size='xs').physical == 1
-    assert Character(size='s').physical == 2
-    assert Character(size='m').physical == 3
-    assert Character(size='l').physical == 5
-    assert Character(size='xl').physical == 8
-    assert Character(size='xxl').physical == 13
-
 
 def test_specific_abilities():
     assert Character(physical=4).physical == 4
@@ -58,7 +51,7 @@ def test_defense():
     assert Character(physical=2).defense_dice() == Dice(4)
     assert Character(physical=3, inventory=[Armor(rating=2)]).defense_dice() == Dice(6)+2
 
-def test_attack():
+def test_attack_dice():
     assert Character(physical=6).attack_dice() == Dice(6,4)
     assert Character(physical=2).attack_dice(1) == Dice(4)-2
     assert Character(physical=2).attack_dice(2) == Dice(4)-4
@@ -67,6 +60,9 @@ def test_attack():
     assert Character(physical=3, inventory=[Weapon(enchantment=1)]).attack_dice() == Dice(6)+1
     assert Character(physical=3, inventory=[Weapon(heavy=True, enchantment=2)]).attack_dice() == Dice(6,4)+2
     assert Character(physical=3, inventory=[Weapon(), Weapon()]).attack_dice(1) == Dice(6)
+
+
+
 
 def test_auto_equip():
     assert Character(inventory=[Equipment(name='Test')]).main_hand() is None
@@ -77,8 +73,9 @@ def test_auto_equip():
     assert type(Character(inventory=[Shield()]).off_hand()) == Shield
     assert type(Character(inventory=[Armor()]).worn[0]) == Armor
 
+
 def test_str():
-    assert str(Character(name='Foo', level=2, size='l', mental=3, hp=2, inventory=[Weapon(name="Testsword"),Shield()]))=="""Foo: Level 2
+    assert str(Character(name='Foo', level=2, physical=5, mental=3, hp=2, inventory=[Weapon(name="Testsword"),Shield()]))=="""Foo: Level 2
     5 Physical: 2/6 HP
     3 Mental: 3/3 SP
     1 Social: 1/1 MP
@@ -88,7 +85,37 @@ def test_str():
 
 
 def test_random_character():
-    c = Character.random_character(1)
+    c = random_character(1)
     assert(c.physical + c.mental + c.social == 7)
     assert(c.level == 1)
     assert(c.name)
+    assert(c.carried() <= c.capacity())
+
+
+
+def test_random_leveled_character():
+    c = random_character(3)
+    assert(c.physical + c.mental + c.social == 9)
+    assert(c.level == 3)
+    assert(c.name)
+    assert(c.carried() <= c.capacity())
+
+
+def test_random_monster():
+    c = random_monster(5)
+    assert(c.physical + c.mental + c.social == 11)
+    assert(c.level == 5)
+    assert(c.name)
+
+
+def test_random_weak_monster():
+    c = random_monster(-3)
+    assert(c.physical+ c.mental + c.social == 3)
+    assert(c.physical>=0)
+    assert(c.mental>=0)
+    assert(c.social>=0)
+    assert(c.level == -3)
+    assert(c.name)
+
+    with pytest.raises(ValueError):
+        c=random_monster(-4)

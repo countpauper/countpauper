@@ -1,7 +1,9 @@
+from character import Character
+from generate_character import random_character
+from errors import CharacterUnknownError
+from character_db import CharacterDB
 from discord.ext import commands
 import discord
-from character_db import CharacterDB
-from character import Character
 import d20
 
 class GameCommands(commands.Cog):
@@ -56,13 +58,14 @@ class GameCommands(commands.Cog):
             raise commands.CommandError(f"You already have a character named '{name}'. Retire first.")
         elif self.db.exists(ctx.guild, None, name):
             raise commands.CommandError(f"'{name}' already exists on {ctx.guild}. Chose another name.")
-        c = Character.random_character(level)
+        c = random_character(level)
         c.name = name
         c.color = str(ctx.author.color)
         c.portrait = str(ctx.author.display_avatar)
         self.db.store(ctx.guild, ctx.author, c)
         await ctx.send(embed=self.embed_sheet(c))
         await ctx.message.delete()
+
 
     @commands.command()
     async def sheet(self, ctx, name=None):
@@ -75,10 +78,8 @@ class GameCommands(commands.Cog):
         if c := self.db.retrieve(ctx.guild, ctx.author, name):
             await ctx.send(embed=self.embed_sheet(c))
             await ctx.message.delete()
-        elif name is None:
-            raise commands.CommandError(f"No character found for {ctx.author} on {ctx.guild}.")
         else:
-            raise commands.CommandError(f"No character '{name}' found for {ctx.author} on {ctx.guild}.")
+            raise CharacterUnknownError(ctx.guild, ctx.author, name)
 
     @commands.command()
     async def retire(self, ctx, name):
@@ -87,12 +88,9 @@ class GameCommands(commands.Cog):
             name : name of the character to retire.
         Examples:
             retire foo - retire your character foo"""
-        try:
-            self.db.delete(ctx.guild, ctx.author, name)
-            await ctx.send(f"Your character {name} has been retired.")
-            await ctx.message.delete()
-        except RuntimeError as e:
-            raise commands.CommandError(*e.args)
+        self.db.delete(ctx.guild, ctx.author, name)
+        await ctx.send(f"Your character {name} has been retired.")
+        await ctx.message.delete()
 
     @commands.command()
     async def attack(self, ctx, *args):
@@ -122,28 +120,40 @@ class GameCommands(commands.Cog):
                 target_name = args[0]   # check if its int first
             else:
                 attacker_name, target_name = args[:2]
-
         if attacker_name:
             attacker = self.db.retrieve(ctx.guild, ctx.author, attacker_name)
             if not attacker:
-                raise commands.CommandError(f"No character {attacker_name} found for {ctx.author} on {ctx.guild}.")
+                raise CharacterUnknownError(ctx.guild, ctx.author, attacker_name)
+
         else: # default character
             attacker = self.db.retrieve(ctx.guild, ctx.author)
             if not attacker:
-                raise commands.CommandError(f"No character found for {ctx.author} on {ctx.guild}.")
+                raise CharacterUnknownError(ctx.guild, ctx.author)
 
         if target_name:
             owner = self.db.user(ctx.guild, target_name)
             target = self.db.retrieve(ctx.guild, None, target_name)
             if not target:
-                raise commands.CommandError(f"No target {target_name} found on {ctx.guild}.")
+                raise CharacterUnknownError(ctx.guild, None, target_name)
         else:
             target = None
         if target:
             result = attacker.attack(target, 0, bonus)
             self.db.store(ctx.guild, owner, target)
-            await ctx.send(result)
+            self.db.store(ctx.guild, ctx.author, attacker)
+            await ctx.send(f"**{attacker.name}** attacks: {result}")
         else:
-            result = d20.roll(str(attacker.attack_dice(0, bonus)))
-            await ctx.send(f'**{attacker.name}** attacks: {result}')
+            result = attacker.attack(None, 0, bonus)
+            self.db.store(ctx.guild, ctx.author, attacker)
+            await ctx.send(f"**{attacker.name}** attacks: {result}")
         await ctx.message.delete()
+
+    @commands.command()
+    async def turn(self, ctx, name=None):
+        if c := self.db.retrieve(ctx.guild, ctx.author, name):
+            c.turn()
+            self.db.store(ctx.guild, ctx.author, c)
+            await ctx.send(f"**{c.name}** ap: {c.ap}")
+            await ctx.message.delete()
+        else:
+            raise CharacterUnknownError(ctx.guild, ctx.author, name)

@@ -2,6 +2,7 @@
 import os
 import discord
 from discord.ext import commands
+from errors import *
 
 from game_commands import GameCommands
 

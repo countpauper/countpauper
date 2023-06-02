@@ -1,6 +1,6 @@
 import d20 as d20
 from character import Character
-
+from generate_character import *
 # This is a sample Python
 # script.
 
@@ -11,9 +11,9 @@ from character import Character
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    c = Character.random_character()
+    c = random_character()
     print(c)
-    m = Character().random_monster(1)
+    m = random_monster(1)
     print(m)
 
     while c.alive() and m.alive():

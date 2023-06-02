@@ -155,7 +155,7 @@ async def test_no_retire(db, ctx):
     g = GameCommands(bot, db)
     with pytest.raises(commands.CommandError) as exc_info:
         await g.retire(g, ctx, "foo")
-    assert exc_info.value.args[0] == f"There is no character named 'foo' to retire."
+    assert exc_info.value.args[0] == f"No character 'foo' found for {ctx.author} on {ctx.guild}."
     ctx.message.delete.assert_not_called()
 
 
@@ -169,7 +169,7 @@ async def test_attack_with_default_character(db, ctx):
     g = GameCommands(bot, db)
     await g.attack(g, ctx, "target", "-1")
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"{attacker.name} misses {target.name} (1 - 1 = `0` VS 1 = `1`)")
+    ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1 - 1 = `0` VS 1 = `1` misses {target.name}")
 
 
 @pytest.mark.asyncio
@@ -184,7 +184,7 @@ async def test_attack_with_specific_character(db, ctx):
     g = GameCommands(bot, db)
     await g.attack(g, ctx, "Attacker", "target", "+1")
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"{attacker.name} attacks (1 + 1 = `2` VS 1 = `1`) {target.name} (4/5)[-1]")
+    ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1 + 1 = `2` VS 1 = `1` hits {target.name} (4/5)[-1]")
     target = db.retrieve(ctx.guild, "Opponent", target.name)
     assert target.hp == 4
 
