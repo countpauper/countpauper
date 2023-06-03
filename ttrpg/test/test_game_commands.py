@@ -3,7 +3,7 @@ from unittest.mock import Mock, MagicMock
 import pytest
 from character import Character
 from items import MeleeWeapon, Armor
-from skills import Parry
+from skills import Parry, Riposte
 from effect import Effect
 from discord.ext import commands
 import discord
@@ -235,8 +235,27 @@ async def test_cant_attack_without_default_character(db, ctx):
 async def test_attack_without_target(db, ctx):
     attacker = Character(name="Attacker", physical=0)
     db.store(ctx.guild, ctx.author, attacker)
-    bot = Mock()
-    g = GameCommands(bot, db)
+    g = GameCommands(bot := Mock(), db)
     await g.attack(g, ctx)
     ctx.message.delete.assert_called_with()
     ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1 = `1`")
+
+
+@pytest.mark.asyncio
+async def test_skilll_list(db, ctx):
+    attacker = Character(name="Attacker", level=2, skill=[Parry, Riposte], inventory=[MeleeWeapon(name="axe")])
+    db.store(ctx.guild, ctx.author, attacker)
+    g = GameCommands(bot := Mock(), db)
+    await g.skill(g, ctx)
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once_with(f"**{attacker.name}** knows parry, riposte.")
+
+
+@pytest.mark.asyncio
+async def test_skilll_without_target(db, ctx):
+    attacker = Character(name="Attacker", skill=[Parry], inventory=[MeleeWeapon(name="axe")])
+    db.store(ctx.guild, ctx.author, attacker)
+    g = GameCommands(bot := Mock(), db)
+    await g.skill(g, ctx, "parry")
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once_with(f"**{attacker.name}** parries with an axe.")

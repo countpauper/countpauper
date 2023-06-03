@@ -1,6 +1,7 @@
 from character import Character
 from items import MeleeWeapon, RangedWeapon, Shield, Armor, Equipment
 from errors import GameError
+from skills import Parry
 from dice import Dice
 import pytest
 
@@ -111,3 +112,16 @@ def test_cant_lose():
         c.lose("practice", "cheese")
     assert c.carried() == 1
     assert c.main_hand().name == "practice"
+
+def test_execute_skill():
+    c=Character(skill=[Parry], inventory=[MeleeWeapon(name="sword")])
+    result = c.execute(Parry)
+    assert c.affected('parry')
+    assert c.ap == 2
+    assert result == f"""parries with a sword."""
+
+def test_unknow_skill():
+    c=Character(skill=[Parry])
+    with pytest.raises(GameError):
+        result = c.execute("knit")
+

@@ -1,7 +1,7 @@
 from items import *
 from effect import Effect
 from errors import GameError
-from language import camel_to_words
+from language import camel_to_words, indefinite_article
 
 
 class Skill(object):
@@ -45,9 +45,10 @@ class Parry(Skill):
 
     def __call__(self, *args, **kwargs):
         actor = args[0]
-        if type(actor.main()) == MeleeWeapon:
-            self.affect(Effect('parry', 1, dict(defense=dict(cover=1)), True))
-            return f"{actor.name.capitalize()} parries."
+        weapon = actor.main_hand()
+        if isinstance(weapon, MeleeWeapon):
+            actor.affect(Effect('parry', 1, dict(defense=dict(parry=1))), True)
+            return f"parries with {indefinite_article(weapon)} {weapon}."
         else:
             raise GameError("You must be wielding a melee weapon")
 

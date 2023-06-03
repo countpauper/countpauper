@@ -1,8 +1,10 @@
 from items import *
 from dice import Dice
 from stats import *
+from skills import Skill
 from effect import Effect
 from errors import GameError
+from language import plural
 
 class Character(object):
     id = Identifier("id")
@@ -134,15 +136,36 @@ class Character(object):
         self._act()
         return shield
 
+    def _find_skill(self, skill):
+        if type(skill)==str:
+            if match := [s for s in self.skill if Skill.name(s) == skill]:
+                skill = match[0]
+            else:
+                return None
+
+        if isinstance(skill, type) and issubclass(skill, Skill):
+            return skill()
+        else:
+            raise TypeError(f"No skill can be found based on {type(skill)}.")
+
+    def execute(self, skill, *targets):
+        if s := self._find_skill(skill):
+            self._check_cost(s.cost)
+            response = s(self, *targets)
+            self._cost(s.cost)
+            return response
+        else:
+            raise GameError(f"{skill} is not known by {self.name.capitalize()}.")
+
     def affect(self, effect, unique=False):
-        if unique and (duplicate:=self.find_effect(effect.name)):
-            raise GameError("You are already affected by {duplicate}.")
+        if unique and (duplicates := self.affected(effect.name)):
+            raise GameError(f"You are already affected by {duplicates[0]}.")
 
         # TODO: check for duplicates/conflicts
         # TODO create Effect from args? what if there are Effect types?
         self.effects.append(effect)
 
-    def find_effect(self, name):
+    def affected(self, name):
         return [e for e in self.effects if e.name == name]
 
     def damage(self, dmg):
@@ -151,7 +174,7 @@ class Character(object):
 
     def _check_cost(self, cost):
         if (ap:=cost.get('ap')) and self.ap < ap:
-            raise GameError(f"You need {ap} actions but you have {self['ap']}.")
+            raise GameError(f"You need {ap} {plural(ap, 'action')} but you have {self['ap']}.")
         if (sp:=cost.get('sp')) and self.sp < sp:
             raise GameError(f"You need {sp} power but you have {self['sp']}")
         if (mp:=cost.get('mp')) and self.mp < mp:
@@ -161,9 +184,20 @@ class Character(object):
             raise GameError(f"You need {hp} health but you have {self['hp']}.")
         return cost
 
+    def _cost(self, cost):
+        if ap:=cost.get('ap'):
+            self.ap -= ap
+        if sp:=cost.get('sp'):
+            self.sp -= sp
+        if mp:=cost.get('mp'):
+            self.mp -= mp
+        if hp:=cost.get('hp'):
+            self.hp -= hp
+
     def _act(self, ap=1):
-        self._check_cost(dict(ap=ap))
-        self.ap -= ap
+        cost = dict(ap=ap)
+        self._check_cost(cost)
+        self._cost(cost)
 
     def attack_dice(self, nr=0, bonus=None):
         result = Dice.for_ability(self.physical)

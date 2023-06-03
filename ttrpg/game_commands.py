@@ -130,6 +130,16 @@ class GameCommands(commands.Cog):
 
 
     @commands.command()
+    async def turn(self, ctx, name=None):
+        if c := self.db.retrieve(ctx.guild, ctx.author, name):
+            c.turn()
+            self.db.store(ctx.guild, ctx.author, c)
+            await ctx.send(f"**{c.name}** ap: {c.ap}")
+            await ctx.message.delete()
+        else:
+            raise CharacterUnknownError(ctx.guild, ctx.author, name)
+
+    @commands.command()
     async def attack(self, ctx, *args):
         """Delete a character
         Syntax: attack [<attacker>] [<target>] [<bonus>]
@@ -141,39 +151,22 @@ class GameCommands(commands.Cog):
             attack Foo Bar - Foo will attack Bar.
             attack Bar 1 - Your default character will attack Bar with a +1 bonus.
         """
-        if not args:
-            attacker_name, target_name, bonus = None, None, None
-        else:
+        attacker, args = self._optional_character_argument(ctx.guild, ctx.author, args)
+        bonus = None
+        if args:
             try:
                 bonus=int(args[-1])
                 args=args[:-1]
             except ValueError:
-                bonus = None
-
-            if not args:
-                attacker_name, target_name = None, None
-            elif len(args)==1:
-                attacker_name = None
-                target_name = args[0]   # check if its int first
-            else:
-                attacker_name, target_name = args[:2]
-        if attacker_name:
-            attacker = self.db.retrieve(ctx.guild, ctx.author, attacker_name)
-            if not attacker:
-                raise CharacterUnknownError(ctx.guild, ctx.author, attacker_name)
-
-        else: # default character
-            attacker = self.db.retrieve(ctx.guild, ctx.author)
-            if not attacker:
-                raise CharacterUnknownError(ctx.guild, ctx.author)
-
-        if target_name:
+                pass
+        if args:
+            target_name = args[0]
             owner = self.db.user(ctx.guild, target_name)
-            target = self.db.retrieve(ctx.guild, None, target_name)
+            target = self.db.retrieve(ctx.guild, owner, target_name)
             if not target:
                 raise CharacterUnknownError(ctx.guild, None, target_name)
         else:
-            target = None
+            target_name, target = "", None
         if target:
             result = attacker.attack(target, 0, bonus)
             self.db.store(ctx.guild, owner, target)
@@ -187,16 +180,6 @@ class GameCommands(commands.Cog):
 
 
     @commands.command()
-    async def turn(self, ctx, name=None):
-        if c := self.db.retrieve(ctx.guild, ctx.author, name):
-            c.turn()
-            self.db.store(ctx.guild, ctx.author, c)
-            await ctx.send(f"**{c.name}** ap: {c.ap}")
-            await ctx.message.delete()
-        else:
-            raise CharacterUnknownError(ctx.guild, ctx.author, name)
-
-    @commands.command()
     async def cover(self, ctx, name=None):
         if c := self.db.retrieve(ctx.guild, ctx.author, name):
             item = c.cover()
@@ -208,3 +191,19 @@ class GameCommands(commands.Cog):
             await ctx.message.delete()
         else:
             raise CharacterUnknownError(ctx.guild, ctx.author, name)
+
+
+    @commands.command()
+    async def skill(self, ctx, *args):
+        e, args = self._optional_character_argument(ctx.guild, ctx.author, args)
+        if not args:
+            await ctx.message.delete()
+            await ctx.send(f"""**{e.name.capitalize()}** knows {', '.join(Skill.name(s) for s in e.skill)}.""")
+        else:
+            targets=[self.db.retrieve(ctx.guild, None, arg) for arg in args[1:]]
+            result = e.execute(args[0], targets)
+            self.db.store(ctx.guild, ctx.author, e)
+            # TODO: store targets, if they are dirty (used) and need their owner when retrieving (simplify in attack as well)
+            await ctx.send(f"**{e.name}** {result}")    # TODO don't put name in result so it can be formatted
+            await ctx.message.delete()
+
