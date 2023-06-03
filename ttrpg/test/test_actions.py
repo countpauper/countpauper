@@ -1,6 +1,14 @@
 from character import Character
+from items import Shield
 from errors import GameError
+from dice import Dice
 import pytest
+
+def test_turn():
+    c = Character()
+    c.ap=0
+    c.turn()
+    assert c.ap == c.max_ap()
 
 
 def test_attack():
@@ -8,6 +16,7 @@ def test_attack():
     result = attacker.attack()
     assert attacker.ap == 2
     assert '1d4' in result
+
 
 def test_attack_target():
     attacker = Character()
@@ -27,8 +36,13 @@ def test_attack_no_ap():
         attacker.attack()
 
 
-def test_turn():
-    c = Character()
-    c.ap=0
-    c.turn()
-    assert c.ap == c.max_ap()
+
+def test_cover():
+    c = Character(physical=2, inventory=[Shield()])
+    c.auto_equip()
+    item = c.cover()
+    assert c.ap == 2
+    assert c.defense_dice() == Dice(4,1)
+    assert isinstance(item, Shield)
+    with pytest.raises(GameError):
+        c.cover()

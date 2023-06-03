@@ -6,3 +6,12 @@ class Effect(object):
 
     def get_boni(self, name):
         return self.boni.get(name, dict())
+
+    def turn(self):
+        if self.duration is None:
+            return True
+        self.duration -= 1
+        return self.duration > 0
+
+    def __str__(self):
+        return self.name

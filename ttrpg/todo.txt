@@ -10,26 +10,42 @@
 [done] attack
 [done] boni
 [done] action points (stat) and $turn command
-automatic penalty for subsequent per turn and end turn command
-automatic tracking for dual wield switch (boolean) and reset per turn
-instead of catching RuntimeExceptions and reraising as command exceptions, define GameError and handle that. CommandError = syntax, game error = rules
-
-derived dice stat for attack and defend dice, add dice together with dice bonuses for items (and effects/skills)
 initial skills and random skill assignment, two skill each for physical, mental, social
 
-keep character up to date with database without having to store/restore the whole time, even during test? like some sort of db cache and character is just a wrapper?
-    - can probably do it with more Descriptors (although very layered) where the real value is straight in the database. Update one property at a time
-    - commit at the end of a command, all characters involved.
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
 level up command, argument is ability to raise
+some command to enter/exit combat so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.
 [done] organize commands in cogs (well, mostly game cog)
+partial matching for taking and dropping items
+partial matching for finding database characters
 Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handling
 [done] character worn can be a list for jewelry and multi part armor?
+derived dice stat for attack and defend dice, add dice together with Dice bonuses for items (and effects/skills)
+    - all heavy weapons just have the Dice(4) bonus to attack
 jewelry (wearable item with bonuses)
+commands:
+use command: switch item main/offhand if appropriate, also wear armor. (3 ap?) maybe just use and also costs ap to use whatever or usable item in inventory is activated. may cost ap if destination is not empty
+move command: just costs an ap
+    set location to argument
+    compute distance for ap
+    only perform the move if the ap is sufficient, error with required ap (and plan) if not sufficient
+    move towards target's location if specified as argument
+    ? move away from target
+    argument for swim or climb
+    automatically get up if down and ap available
+    automatically disengage if ap available
 game commands more tests for user input handling and error reporting
+keep character up to date with database without having to store/restore the whole time, even during test? like some sort of db cache and character is just a wrapper?
+    - can probably do it with more Descriptors (although very layered) where the real value is straight in the database. Update one property at a time
+    - commit at the end of a command, all characters involved.
+automatic penalty for subsequent per turn and end turn command
+    - also automatic tracking for dual wield switch (boolean) and reset per turn
+    ? Does all this state really need to be persisted? or maybe it's an "effect", hidden effects ?
+
 item database with named types (Type+properties)
 position in character and database
 combat database (is that where to keep position? only allow targetting combat characters ? add channel to combat?)
 Add the random item system from the tactics game with the materials and stuff
 level bonus and penalty: extra stats and skills and loss of stats and skills, but which ? (just raising/lowering hp is lame)
+undo command that restores previous character state

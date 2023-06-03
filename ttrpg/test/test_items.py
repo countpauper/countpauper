@@ -1,15 +1,18 @@
 from items import *
 
+
 def test_equipment():
     assert Equipment(name="rope").weight() == 0
     assert str(Equipment(name="rope")) == "rope"
     assert Equipment(name="tent", heavy=True).weight() == 1
     assert Equipment(name="cheese").hands() == 0
 
+
 def test_shield():
     assert str(Shield()) == "shield"
     assert Shield().weight() == 1
     assert Shield().hands() == -1
+
 
 def test_armor():
     assert str(Armor(name='scale mail')) == 'scale mail'
@@ -22,6 +25,7 @@ def test_armor():
     assert str(Armor(rating=3))
     assert Armor().get_boni('defense') == dict(rating=1)
 
+
 def test_weapon():
     assert str(Weapon())
     assert str(Weapon(name="chakram")) == 'chakram'
@@ -31,6 +35,7 @@ def test_weapon():
     assert Weapon().reach() == 0
     assert Weapon(enchantment=2).bonus() == Dice()+2
 
+
 def test_heavy_weapon():
     assert str(Weapon(heavy=True))
     assert Weapon(heavy=True).hands() == 2
@@ -38,6 +43,7 @@ def test_heavy_weapon():
     assert Weapon(heavy=True).bonus() == Dice(4)
     assert Weapon(heavy=True).reach() == 0
     assert Weapon(heavy=True, enchantment=1).bonus() == Dice(4)+1
+
 
 def test_ranged_weapon():
     assert str(RangedWeapon())
@@ -47,3 +53,14 @@ def test_ranged_weapon():
     assert RangedWeapon().bonus() == Dice()
     assert RangedWeapon().reach() == 2
     assert RangedWeapon(heavy=True).reach() == 3
+
+
+def test_factory():
+    assert isinstance(ItemFactory("shield"), Shield)
+    assert isinstance(ItemFactory("sword"), Weapon)
+    assert ItemFactory("katana").heavy
+    assert isinstance(ItemFactory("crossbow"), RangedWeapon)
+    assert not ItemFactory("sling").heavy
+    assert isinstance(ItemFactory("gambeson"), Armor)
+    assert ItemFactory("brigandine").rating==3
+    assert isinstance(ItemFactory("crowbar"), Equipment)

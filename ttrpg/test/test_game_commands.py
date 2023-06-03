@@ -2,16 +2,20 @@ from game_commands import GameCommands
 from unittest.mock import Mock, MagicMock
 import pytest
 from character import Character
+from items import Weapon, Armor
+from effect import Effect
 from discord.ext import commands
+import discord
+
 
 class AsyncMock(Mock):
     async def __call__(self, *args, **kwargs):
         return super(AsyncMock, self).__call__(*args, **kwargs)
 
+
 @pytest.fixture
 def ctx():
     ctx = AsyncMock()
-    # TODO fixture for author and perhaps message
     ctx.message = AsyncMock()
     ctx.author = MagicMock()
     ctx.author.__str__.return_value = 'Foo#1234'
@@ -21,6 +25,7 @@ def ctx():
     ctx.guild = 'BarGuild'
     return ctx
 
+
 @pytest.mark.asyncio
 async def test_roll(ctx):
     bot = Mock()
@@ -28,6 +33,7 @@ async def test_roll(ctx):
     await g.roll(g, ctx, "1d1")
     ctx.message.delete.assert_called_once_with()
     ctx.send.assert_called_once_with(f"**{ctx.author}**: :game_die: 1d1 (**1**) = `1`")
+
 
 @pytest.mark.asyncio
 async def test_generate(db, ctx):
@@ -52,6 +58,7 @@ async def test_generate(db, ctx):
     assert f"**Mental:** {c.mental}" in embed.description
     assert f"**Social:** {c.social}" in embed.description
     assert embed.thumbnail.url == ctx.author.display_avatar
+
 
 @pytest.mark.asyncio
 async def test_generate_duplicate(db, ctx):
@@ -79,7 +86,9 @@ async def test_generate_existing(db, ctx):
 
 @pytest.mark.asyncio
 async def test_sheet(db, ctx):
-    c = Character()
+    c = Character(inventory=[Weapon(name="Practice Sword"), Armor(rating=1)])
+    c.effects.append(Effect(name="displayed"))
+
     db.store(ctx.guild, ctx.author, c)
 
     bot = Mock()
@@ -102,30 +111,23 @@ async def test_sheet(db, ctx):
     assert f"**MP:** {c.mp}" in embed.description
     assert f"**SP:** {c.sp}" in embed.description
     assert embed.thumbnail.url is None
+    assert embed.fields[0].name == f"Inventory [2/{c.capacity()}]"
+    assert embed.fields[0].value == "Practice Sword\ngambeson"
+    assert embed.fields[2].name == "Effects"
+    assert embed.fields[2].value == "displayed"
+
 
 @pytest.mark.asyncio
-async def test_sheet(db, ctx):
-    c = Character()
+async def test_sheet_flavour(db, ctx):
+    c = Character(color="#ABCDEF", portrait="http://portrait.com/face.jpg")
     db.store(ctx.guild, ctx.author, c)
-
     bot = Mock()
     g = GameCommands(bot, db)
     await g.sheet(g, ctx)
-
-    ctx.message.delete.assert_called_once_with()
     ctx.send.assert_called_once()
-
     embed = ctx.send.call_args[1].get('embed')
-    assert embed.title == c.name.capitalize()
-    assert embed.color is None
-    assert "**Level:** 1" in embed.description
-    assert f"**Physical:** {c.physical}" in embed.description
-    assert f"**Mental:** {c.mental}" in embed.description
-    assert f"**Social:** {c.social}" in embed.description
-    assert f"**HP:** {c.hp}" in embed.description
-    assert f"**MP:** {c.mp}" in embed.description
-    assert f"**SP:** {c.sp}" in embed.description
-    assert embed.thumbnail.url is None
+    assert embed.thumbnail.url is not c.portrait
+    assert embed.color == discord.Color.from_str('#ABCDEF')
 
 
 @pytest.mark.asyncio
@@ -136,6 +138,7 @@ async def test_no_sheet(db, ctx):
         await g.sheet(g, ctx, "foo")
     assert exc_info.value.args[0] == f"No character 'foo' found for {ctx.author} on {ctx.guild}."
     ctx.message.delete.assert_not_called()
+
 
 @pytest.mark.asyncio
 async def test_retire(db, ctx):
@@ -160,13 +163,39 @@ async def test_no_retire(db, ctx):
 
 
 @pytest.mark.asyncio
+async def test_take(db, ctx):
+    c = Character(physical=2)
+    db.store(ctx.guild, ctx.author, c)
+    g = GameCommands(bot := Mock(), db)
+    await g.take(g, ctx, "sword", "shield")
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once_with(f"**{c.name}** takes the sword and shield.")
+    c = db.retrieve(ctx.guild, ctx.author, c.name)
+    assert c.main_hand().name == "sword"
+    assert c.off_hand().name == "shield"
+
+@pytest.mark.asyncio
+async def test_drop(db, ctx):
+    c = Character(physical=2, inventory=[Weapon(name="sword"), Armor(rating=0)])
+    c.auto_equip()
+    assert c.main_hand()
+    assert c.worn
+    db.store(ctx.guild, ctx.author, c)
+    g = GameCommands(bot := Mock(), db)
+    await g.drop(g, ctx, c.name, "sword", "shirt")
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once_with(f"**{c.name}** drops the sword and shirt.")
+    c = db.retrieve(ctx.guild, ctx.author, c.name)
+    assert c.main_hand() is None
+    assert c.worn == []
+
+@pytest.mark.asyncio
 async def test_attack_with_default_character(db, ctx):
     attacker = Character(name="Attacker", physical=0)
     target = Character(name="Target", physical=0)
     db.store(ctx.guild, ctx.author, attacker)
     db.store(ctx.guild, "Opponent", target)
-    bot = Mock()
-    g = GameCommands(bot, db)
+    g = GameCommands(bot := Mock(), db)
     await g.attack(g, ctx, "target", "-1")
     ctx.message.delete.assert_called_with()
     ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1 - 1 = `0` VS 1 = `1` misses {target.name}")
@@ -188,6 +217,7 @@ async def test_attack_with_specific_character(db, ctx):
     target = db.retrieve(ctx.guild, "Opponent", target.name)
     assert target.hp == 4
 
+
 @pytest.mark.asyncio
 async def test_cant_attack_without_default_character(db, ctx):
     db.store(ctx.guild, "Opponent", Character(name="Target"))
@@ -207,5 +237,3 @@ async def test_attack_without_target(db, ctx):
     await g.attack(g, ctx)
     ctx.message.delete.assert_called_with()
     ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1 = `1`")
-
-

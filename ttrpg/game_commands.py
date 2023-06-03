@@ -1,6 +1,7 @@
 from character import Character
 from generate_character import random_character
 from errors import CharacterUnknownError
+from items import ItemFactory
 from character_db import CharacterDB
 from discord.ext import commands
 import discord
@@ -37,6 +38,7 @@ class GameCommands(commands.Cog):
             embed.set_thumbnail(url=c.portrait)
         embed.add_field(name=f"Inventory [{c.carried()}/{c.capacity()}]", value="\n".join(str(i) for i in c.inventory), inline=True)
         embed.add_field(name="Skills", value="\n".join(str(s) for s in c.skill), inline=True)
+        embed.add_field(name="Effects", value="\n".join(str(s) for s in c.effects), inline=True)
         return embed
 
 
@@ -91,6 +93,41 @@ class GameCommands(commands.Cog):
         self.db.delete(ctx.guild, ctx.author, name)
         await ctx.send(f"Your character {name} has been retired.")
         await ctx.message.delete()
+
+    def _optional_character_argument(self, guild, owner, args):
+        """Get the character from the specified guild and owner. Owner can be None.
+        Uses the first argument if it's the name of a character and returns the remaining arguments.
+        or returns the default character and all unused arguments."""
+        args=list(args)
+        if args and (c := self.db.retrieve(guild, owner, args[0])):
+            return c, args[1:]
+        elif c := self.db.retrieve(guild, owner, None):
+            return c, args
+        else:
+            raise CharacterUnknownError(guild, owner)
+
+    @commands.command()
+    async def take(self, ctx, *args):
+        c, args = self._optional_character_argument(ctx.guild, ctx.author, args)
+        if not args:
+            raise commands.CommandError("The item {c.name} will take is a required argument, which is missing.")
+        items = c.obtain(*args)
+        c.auto_equip()
+        self.db.store(ctx.guild, ctx.author, c)
+        await ctx.send(f"**{c.name}** takes the {' and '.join(str(item) for item in items)}.")
+        await ctx.message.delete()
+
+    @commands.command()
+    async def drop(self, ctx, *args):
+        c, args = self._optional_character_argument(ctx.guild, ctx.author, args)
+        if not args:
+            raise commands.CommandError("The item {c.name} will drop is a required argument, which is missing.")
+        items = c.lose(*args)
+        c.auto_equip()
+        self.db.store(ctx.guild, ctx.author, c)
+        await ctx.send(f"**{c.name}** drops the {' and '.join(str(item) for item in items)}.")
+        await ctx.message.delete()
+
 
     @commands.command()
     async def attack(self, ctx, *args):
@@ -148,12 +185,26 @@ class GameCommands(commands.Cog):
             await ctx.send(f"**{attacker.name}** attacks: {result}")
         await ctx.message.delete()
 
+
     @commands.command()
     async def turn(self, ctx, name=None):
         if c := self.db.retrieve(ctx.guild, ctx.author, name):
             c.turn()
             self.db.store(ctx.guild, ctx.author, c)
             await ctx.send(f"**{c.name}** ap: {c.ap}")
+            await ctx.message.delete()
+        else:
+            raise CharacterUnknownError(ctx.guild, ctx.author, name)
+
+    @commands.command()
+    async def cover(self, ctx, name=None):
+        if c := self.db.retrieve(ctx.guild, ctx.author, name):
+            item = c.cover()
+            self.db.store(ctx.guild, ctx.author, c)
+            if item:
+                await ctx.send(f"**{c.name}** seeks cover behind their {item}.")
+            else:
+                await ctx.send(f"**{c.name}** seeks cover nearby.")
             await ctx.message.delete()
         else:
             raise CharacterUnknownError(ctx.guild, ctx.author, name)

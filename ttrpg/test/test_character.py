@@ -3,7 +3,9 @@ import pytest
 from character import Character
 from generate_character import random_character, random_monster
 from items import Weapon, RangedWeapon, Shield, Armor, Equipment
+from errors import GameError
 from dice import Dice
+
 
 def test_default():
     c = Character()
@@ -14,10 +16,12 @@ def test_default():
     assert not c.inventory
     assert not c.skill
 
+
 def test_specific_abilities():
     assert Character(physical=4).physical == 4
     assert Character(mental=5).mental == 5
     assert Character(social=6).social == 6
+
 
 def test_max_points():
     assert Character(level=1, physical=3).max_hp() == 5
@@ -29,6 +33,7 @@ def test_specific_points():
     assert Character(hp=1).hp == 1
     assert Character(sp=0).sp == 0
     assert Character(social=4, mp=2).mp == 2
+
 
 def test_default_flavour():
     c = Character()
@@ -51,6 +56,7 @@ def test_defense():
     assert Character(physical=2).defense_dice() == Dice(4)
     assert Character(physical=3, inventory=[Armor(rating=2)]).defense_dice() == Dice(6)+2
 
+
 def test_attack_dice():
     assert Character(physical=6).attack_dice() == Dice(6,4)
     assert Character(physical=2).attack_dice(1) == Dice(4)-2
@@ -60,8 +66,6 @@ def test_attack_dice():
     assert Character(physical=3, inventory=[Weapon(enchantment=1)]).attack_dice() == Dice(6)+1
     assert Character(physical=3, inventory=[Weapon(heavy=True, enchantment=2)]).attack_dice() == Dice(6,4)+2
     assert Character(physical=3, inventory=[Weapon(), Weapon()]).attack_dice(1) == Dice(6)
-
-
 
 
 def test_auto_equip():
@@ -92,7 +96,6 @@ def test_random_character():
     assert(c.carried() <= c.capacity())
 
 
-
 def test_random_leveled_character():
     c = random_character(3)
     assert(c.physical + c.mental + c.social == 9)
@@ -119,3 +122,32 @@ def test_random_weak_monster():
 
     with pytest.raises(ValueError):
         c=random_monster(-4)
+
+
+def test_obtain():
+    c = Character(physical=2)
+    c.obtain("sword", Shield)
+    assert c.carried() == 2
+
+
+def test_obtain_over_capacity():
+    c = Character(physical=2)
+    with pytest.raises(GameError):
+        c.obtain("spear", Armor())
+
+
+def test_lose():
+    c = Character(inventory=[Weapon(name="practice"), Armor(rating=1)])
+    c.auto_equip()
+    c.lose("practice", Armor)
+    assert c.carried() == 0
+    assert c.main_hand() == None
+    assert c.worn == []
+
+def test_cant_lose():
+    c = Character(inventory=[Weapon(name="practice")])
+    c.auto_equip()
+    with pytest.raises(GameError):
+        c.lose("practice", "cheese")
+    assert c.carried() == 1
+    assert c.main_hand().name == "practice"

@@ -52,7 +52,7 @@ def _level_up(stats, level=None):
     result = stats.copy()
     while available > 0:
         ability = random.choice(abilities)
-        boost = available if available==1 else random.randrange(1, available)
+        boost = available if available == 1 else random.randrange(1, available)
         available -= boost
         result[ability] += boost
 
@@ -68,7 +68,7 @@ def random_character(level=1):
     stats['level'] = level
     stats = _level_up(stats, level)
     c = Character(**stats)
-    c.obtain(random_equipment(c.capacity()))
+    c.obtain(*random_equipment(c.capacity()))
     c.auto_equip()
     return c
 
