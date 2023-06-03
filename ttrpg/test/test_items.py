@@ -26,23 +26,23 @@ def test_armor():
     assert Armor().get_boni('defense') == dict(rating=1)
 
 
-def test_weapon():
-    assert str(Weapon())
-    assert str(Weapon(name="chakram")) == 'chakram'
-    assert Weapon().hands() == 1
-    assert Weapon().weight() == 1
-    assert Weapon().bonus() == Dice()
-    assert Weapon().reach() == 0
-    assert Weapon(enchantment=2).bonus() == Dice()+2
+def test_melee_weapon():
+    assert str(MeleeWeapon())
+    assert str(RangedWeapon(name="chakram")) == 'chakram'
+    assert MeleeWeapon().hands() == 1
+    assert MeleeWeapon().weight() == 1
+    assert MeleeWeapon().bonus() == Dice()
+    assert MeleeWeapon().reach() == 0
+    assert MeleeWeapon(enchantment=2).bonus() == Dice()+2
 
 
-def test_heavy_weapon():
-    assert str(Weapon(heavy=True))
-    assert Weapon(heavy=True).hands() == 2
-    assert Weapon(heavy=True).weight() == 2
-    assert Weapon(heavy=True).bonus() == Dice(4)
-    assert Weapon(heavy=True).reach() == 0
-    assert Weapon(heavy=True, enchantment=1).bonus() == Dice(4)+1
+def test_heavy_melee_weapon():
+    assert str(MeleeWeapon(heavy=True))
+    assert MeleeWeapon(heavy=True).hands() == 2
+    assert MeleeWeapon(heavy=True).weight() == 2
+    assert MeleeWeapon(heavy=True).bonus() == Dice(4)
+    assert MeleeWeapon(heavy=True).reach() == 0
+    assert MeleeWeapon(heavy=True, enchantment=1).bonus() == Dice(4)+1
 
 
 def test_ranged_weapon():

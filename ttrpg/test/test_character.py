@@ -2,7 +2,7 @@ import pytest
 
 from character import Character
 from generate_character import random_character, random_monster
-from items import Weapon, RangedWeapon, Shield, Armor, Equipment
+from items import MeleeWeapon, RangedWeapon, Shield, Armor, Equipment
 from errors import GameError
 from dice import Dice
 
@@ -63,23 +63,23 @@ def test_attack_dice():
     assert Character(physical=2).attack_dice(2) == Dice(4)-4
     assert Character(physical=2).attack_dice(3) == Dice(4)-6
     assert Character(physical=2).attack_dice(1, 1) == Dice(4)-2+1
-    assert Character(physical=3, inventory=[Weapon(enchantment=1)]).attack_dice() == Dice(6)+1
-    assert Character(physical=3, inventory=[Weapon(heavy=True, enchantment=2)]).attack_dice() == Dice(6,4)+2
-    assert Character(physical=3, inventory=[Weapon(), Weapon()]).attack_dice(1) == Dice(6)
+    assert Character(physical=3, inventory=[MeleeWeapon(enchantment=1)]).attack_dice() == Dice(6)+1
+    assert Character(physical=3, inventory=[MeleeWeapon(heavy=True, enchantment=2)]).attack_dice() == Dice(6,4)+2
+    assert Character(physical=3, inventory=[MeleeWeapon(), MeleeWeapon()]).attack_dice(1) == Dice(6)
 
 
 def test_auto_equip():
     assert Character(inventory=[Equipment(name='Test')]).main_hand() is None
-    assert type(Character(inventory=[Weapon()]).main_hand()) == Weapon
-    assert Character(inventory=[Weapon(name='Sword'), Weapon(name='Dagger')]).off_hand().name == 'Dagger'
-    assert Character(inventory=[Weapon(heavy=True), Weapon()]).off_hand() is None
-    assert Character(inventory=[RangedWeapon(), Weapon()]).off_hand() is None
+    assert type(Character(inventory=[MeleeWeapon()]).main_hand()) == MeleeWeapon
+    assert Character(inventory=[MeleeWeapon(name='Sword'), MeleeWeapon(name='Dagger')]).off_hand().name == 'Dagger'
+    assert Character(inventory=[MeleeWeapon(heavy=True), MeleeWeapon()]).off_hand() is None
+    assert Character(inventory=[RangedWeapon(), MeleeWeapon()]).off_hand() is None
     assert type(Character(inventory=[Shield()]).off_hand()) == Shield
     assert type(Character(inventory=[Armor()]).worn[0]) == Armor
 
 
 def test_str():
-    assert str(Character(name='Foo', level=2, physical=5, mental=3, hp=2, inventory=[Weapon(name="Testsword"),Shield()]))=="""Foo: Level 2
+    assert str(Character(name='Foo', level=2, physical=5, mental=3, hp=2, inventory=[MeleeWeapon(name="Testsword"),Shield()]))=="""Foo: Level 2
     5 Physical: 2/6 HP
     3 Mental: 3/3 SP
     1 Social: 1/1 MP
@@ -137,7 +137,7 @@ def test_obtain_over_capacity():
 
 
 def test_lose():
-    c = Character(inventory=[Weapon(name="practice"), Armor(rating=1)])
+    c = Character(inventory=[MeleeWeapon(name="practice"), Armor(rating=1)])
     c.auto_equip()
     c.lose("practice", Armor)
     assert c.carried() == 0
@@ -145,7 +145,7 @@ def test_lose():
     assert c.worn == []
 
 def test_cant_lose():
-    c = Character(inventory=[Weapon(name="practice")])
+    c = Character(inventory=[MeleeWeapon(name="practice")])
     c.auto_equip()
     with pytest.raises(GameError):
         c.lose("practice", "cheese")

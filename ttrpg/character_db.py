@@ -110,7 +110,7 @@ class CharacterDB(object):
         else:
             return None
 
-    item_types = {cls.__name__: cls for cls in (Weapon, RangedWeapon, Shield, Armor, Equipment)}
+    item_types = {cls.__name__: cls for cls in (MeleeWeapon, RangedWeapon, Shield, Armor, Equipment)}
 
     @staticmethod
     def _create_item(item, properties):

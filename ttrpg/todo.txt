@@ -24,7 +24,7 @@ Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handl
 derived dice stat for attack and defend dice, add dice together with Dice bonuses for items (and effects/skills)
     - all heavy weapons just have the Dice(4) bonus to attack
 jewelry (wearable item with bonuses)
-commands:
+indicate into embed field in sheet which item is main/off (dual wield or shield) and worn. emojis? but no armor emoji. Just use :shirt: and :ring: for accesories
 use command: switch item main/offhand if appropriate, also wear armor. (3 ap?) maybe just use and also costs ap to use whatever or usable item in inventory is activated. may cost ap if destination is not empty
 move command: just costs an ap
     set location to argument
@@ -41,6 +41,7 @@ keep character up to date with database without having to store/restore the whol
     - commit at the end of a command, all characters involved.
 automatic penalty for subsequent per turn and end turn command
     - also automatic tracking for dual wield switch (boolean) and reset per turn
+    - Crosscut skill should start with current attack penalty and all attack skills should increaase it
     ? Does all this state really need to be persisted? or maybe it's an "effect", hidden effects ?
 
 item database with named types (Type+properties)

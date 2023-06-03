@@ -73,7 +73,7 @@ def test_character_flavour(db):
 
 def test_inventory(db):
     c = Character(name="Rich", physical=6, inventory=[
-                  Weapon(name="Golden Sword", enchantment=1),
+                  MeleeWeapon(name="Golden Sword", enchantment=1),
                   RangedWeapon(heavy=True, name="Birch bow"),
                   Armor(name="Mithril Chainmail", rating=2),
                   Shield(),

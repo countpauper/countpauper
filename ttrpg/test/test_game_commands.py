@@ -2,7 +2,7 @@ from game_commands import GameCommands
 from unittest.mock import Mock, MagicMock
 import pytest
 from character import Character
-from items import Weapon, Armor
+from items import MeleeWeapon, Armor
 from effect import Effect
 from discord.ext import commands
 import discord
@@ -86,7 +86,7 @@ async def test_generate_existing(db, ctx):
 
 @pytest.mark.asyncio
 async def test_sheet(db, ctx):
-    c = Character(inventory=[Weapon(name="Practice Sword"), Armor(rating=1)])
+    c = Character(inventory=[MeleeWeapon(name="Practice Sword"), Armor(rating=1)])
     c.effects.append(Effect(name="displayed"))
 
     db.store(ctx.guild, ctx.author, c)
@@ -176,7 +176,7 @@ async def test_take(db, ctx):
 
 @pytest.mark.asyncio
 async def test_drop(db, ctx):
-    c = Character(physical=2, inventory=[Weapon(name="sword"), Armor(rating=0)])
+    c = Character(physical=2, inventory=[MeleeWeapon(name="sword"), Armor(rating=0)])
     c.auto_equip()
     assert c.main_hand()
     assert c.worn

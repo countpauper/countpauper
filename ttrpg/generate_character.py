@@ -27,12 +27,12 @@ races = [dict(name='Imp', size=sizes['xs'], social=3, mental=3),
 def random_equipment(capacity):
     # TODO take enchantment level (which is like (level-4)//2 or sommit) and generate enchanted weapons, armors and jewelry
     if capacity < 2:
-        weapon = random.choice([Weapon(), RangedWeapon(), None])
+        weapon = random.choice([MeleeWeapon(), RangedWeapon(), None])
     else:
-        weapon = random.choice([Weapon(), Weapon(heavy=True), RangedWeapon(), RangedWeapon(heavy=True), None])
+        weapon = random.choice([MeleeWeapon(), MeleeWeapon(heavy=True), RangedWeapon(), RangedWeapon(heavy=True), None])
     capacity -= weapon.weight() if weapon else 0
     if capacity and (not weapon or weapon.hands() == 1):
-        offhand = random.choice([Weapon() if weapon else None, Shield(), None])
+        offhand = random.choice([MeleeWeapon() if weapon else None, Shield(), None])
         capacity -= offhand.weight() if offhand else 0
     else:
         offhand = None

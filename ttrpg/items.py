@@ -55,8 +55,6 @@ class Weapon(Item):
     def __init__(self, **props):
         self.heavy = props.get('heavy', False)
         self.ability = props.get('ability','physical')
-        self.name = props.get('name',random.choice(heavy_melee_weapon_names) if self.heavy else \
-            random.choice(light_melee_weapon_names))
         self.enchantment = props.get('enchantment',0)
 
     def properties(self):
@@ -64,12 +62,6 @@ class Weapon(Item):
                     heavy=self.heavy,
                     ability=self.ability,
                     enchantment=self.enchantment)
-
-    def reach(self):
-        return 0
-
-    def hands(self):
-        return 1+self.heavy
 
     def weight(self):
         return 1+self.heavy
@@ -80,20 +72,30 @@ class Weapon(Item):
             d += self.enchantment
         return d
 
+class MeleeWeapon(Weapon):
+    def __init__(self, **props):
+        super(MeleeWeapon, self).__init__(**props)
+        self.name = props.get('name',random.choice(heavy_melee_weapon_names) if self.heavy else \
+            random.choice(light_melee_weapon_names))
+
+    def reach(self):
+        return 0
+
+    def hands(self):
+        return 1+self.heavy
+
 
 class RangedWeapon(Weapon):
     def __init__(self, **props):
-        heavy = props.get('heavy', False)
-        props['name'] = props.get('name', random.choice(heavy_ranged_weapon_names) if heavy \
-            else random.choice(light_ranged_weapon_names))
         super(RangedWeapon, self).__init__(**props)
+        self.name = props.get('name', random.choice(heavy_ranged_weapon_names) if self.heavy \
+            else random.choice(light_ranged_weapon_names))
 
     def hands(self):
         # NB no one handed ranged weapons like sling, because no trade off for shield, anyway need to load
         return 2
 
     def reach(self):
-        # TODO: not sure what the unit is. Units of theater of the mind here.
         if self.heavy:
             return 3
         else:
@@ -139,9 +141,9 @@ def ItemFactory(item, properties=dict()):
         if item == "shield":
             return Shield(**properties)
         if item in light_melee_weapon_names:
-            return Weapon(**properties)
+            return MeleeWeapon(**properties)
         elif item in heavy_melee_weapon_names:
-            return Weapon(heavy=True, **properties)
+            return MeleeWeapon(heavy=True, **properties)
         elif item in light_ranged_weapon_names:
             return RangedWeapon(**properties)
         elif item in heavy_ranged_weapon_names:
