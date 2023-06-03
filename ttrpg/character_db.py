@@ -109,7 +109,7 @@ class CharacterDB(object):
         name_query=f"""AND name=:name COLLATE NOCASE""" if name is not None else ''
         user_query=f"""AND user=:user""" if user is not None else ''
 
-        query = f"""SELECT id, {", ".join(self.persistent_stats)} FROM character 
+        query = f"""SELECT id, user, {", ".join(self.persistent_stats)} FROM character 
             WHERE guild=:guild {user_query} {name_query}
             ORDER BY id DESC LIMIT 1"""
 
@@ -175,9 +175,6 @@ class CharacterDB(object):
     def _delete_character(self, cursor, idx):
         return cursor.execute(f"""DELETE FROM character WHERE Id=?""", [idx])
 
-    def _delete_inventory(self, cursor, idx):
-        return cursor.execute(f"""DELETE FROM inventory WHERE character=?""", [idx])
-
     def user(self, guild, name):
         query = f"""SELECT user FROM character WHERE guild=:guild AND name=:name COLLATE NOCASE ORDER BY Id DESC LIMIT 1"""
         response = self.connection.execute(query, dict(guild=str(guild), name=str(name)))
@@ -192,6 +189,8 @@ class CharacterDB(object):
             raise CharacterUnknownError(guild, user, name)
         with self.connection as con:
             cursor = self._delete_character(con.cursor(), idx)
-            self._delete_inventory(cursor, idx)
+            cursor = self._clear_inventory(cursor, idx)
+            cursor = self._clear_skills(cursor, idx)
+            cursor = self._clear_effects(cursor, idx)
         return idx
 

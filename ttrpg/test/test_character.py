@@ -114,11 +114,11 @@ def test_cant_lose():
     assert c.main_hand().name == "practice"
 
 def test_execute_skill():
-    c=Character(skill=[Parry], inventory=[MeleeWeapon(name="sword")])
+    c = Character(skill=[Parry], inventory=[MeleeWeapon(name="sword")])
     result = c.execute(Parry)
     assert c.affected('parry')
     assert c.ap == 2
-    assert result == f"""parries with a sword."""
+    assert result == f"""parries with a sword"""
 
 def test_unknow_skill():
     c=Character(skill=[Parry])

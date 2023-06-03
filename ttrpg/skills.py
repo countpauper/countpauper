@@ -23,23 +23,26 @@ class Skill(object):
 
 
 class CrossCut(Skill):
-    """Attack with two weapons simultaneously."""
+    """Attack with two weapons simultaneously. Their attack dice are added."""
     def __init__(self):
-        self.cost = dict(ap=1, sp=1)
+        self.cost = dict(ap=2, sp=1)
 
     def __call__(self, *args, **kwargs):
-        actor = args[0]
-        target = args[1]
-        if type(actor.main()) == MeleeWeapon and type(actor.off())==MeleeWeapon:
-            # TODO: should be current subsquence attack penalty and increase by one, tripple crosscuts is possible but at minus a lot
-            first_attack = actor.attack(target, 0)
-            second_attack = actor.attack(target, 1)
-            return f"{first_attack} and {second_attack}."
-        else:   # TODO: specific exception types for skill execution
-            raise GameError("You must be wielding two melee weapons")
+        args = list(args)
+        actor = args.pop(0)
+        if isinstance(actor.main_hand(), MeleeWeapon) and isinstance(actor.off_hand(), MeleeWeapon):
+            attack_dice = actor.attack_dice(0) + actor.attack_dice(1)
+            if args:
+                target = args.pop(0)
+                result = actor.attack(target, attack_dice)
+                return f"crosscuts {target.Name()}: {result}."
+            else:
+                return f"crosscuts {attack_dice.roll()}"
+        else:   # TODO: specific exception types for skill preconditions
+            raise GameError("You must be wielding two melee weapons.")
 
 class Parry(Skill):
-    """Protect yourself against melee attacks with your weapons."""
+    """Protect yourself against melee attacks with your weapons. """
     def __init__(self):
         self.cost = dict(ap=1)
 
@@ -48,7 +51,7 @@ class Parry(Skill):
         weapon = actor.main_hand()
         if isinstance(weapon, MeleeWeapon):
             actor.affect(Effect('parry', 1, dict(defense=dict(parry=1))), True)
-            return f"parries with {indefinite_article(weapon)} {weapon}."
+            return f"parries with {indefinite_article(weapon)} {weapon}"
         else:
             raise GameError("You must be wielding a melee weapon")
 

@@ -3,6 +3,7 @@ from items import Shield
 from errors import GameError
 from dice import Dice
 import pytest
+import re
 
 def test_turn():
     c = Character()
@@ -15,16 +16,19 @@ def test_attack():
     attacker = Character(physical=2)
     result = attacker.attack()
     assert attacker.ap == 2
-    assert '1d4' in result
+    assert re.match(r"1d4 \(\d\) = \d", str(result))
+    assert result.damage() is None
 
 
 def test_attack_target():
     attacker = Character()
     target = Character()
     result = attacker.attack(target)
-    assert attacker.name in result
-    assert target.name in result
-    assert "hits" in result or "misses" in result
+    str_result=str(result)
+    if result.hit():
+        assert re.match(r"1d\d \(\d\) = \d VS 1d\d \(\d\) = \d hits for \d damage", str(result))
+    else:
+        assert re.match(r"1d\d \(\d\) = \d VS 1d\d \(\d\) = \d misses", str(result))
     assert attacker.ap == 2
 
 

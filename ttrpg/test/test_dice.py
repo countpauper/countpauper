@@ -1,7 +1,6 @@
-import d20
-
 from dice import Dice
-
+import d20
+import re
 
 def test_roll_one():
     d = Dice(6)
@@ -24,19 +23,19 @@ def test_roll_two_different():
 
 def test_roll_two_same():
     r = Dice(6, 6).roll()
-    assert len(r.expr.children)==1
-    assert r.expr.children[0].num==2
-    assert r.expr.children[0].size==6
+    assert len(r.expr.children) == 1
+    assert r.expr.children[0].num == 2
+    assert r.expr.children[0].size == 6
 
 
 def test_roll_with_bonus():
     r = (Dice(6)+2).roll()
-    assert r.expr.children[0].op=='+'
+    assert r.expr.children[0].op == '+'
     terms=r.expr.children[0].children
-    assert len(terms)==2
-    assert len(terms)==2
-    assert terms[0].num==1
-    assert type(terms[1])==d20.Literal
+    assert len(terms) == 2
+    assert len(terms) == 2
+    assert terms[0].num == 1
+    assert type(terms[1]) == d20.Literal
     assert terms[1].number == 2
 
 def test_none():
@@ -54,6 +53,12 @@ def test_str():
     assert str(Dice(8)-1) == '1d8-1'
     assert str(Dice(8, 1)) == '1d8+1'
     assert str(Dice(10,0)) == '1d10+0'
+
+
+def test_result_str():
+    assert str(Dice().roll()) == '0'
+    assert str(Dice(1).roll()) == '1'
+    assert re.match(r"1d4 \(\d\) = \d", str(Dice(4).roll()))
 
 
 def test_add():

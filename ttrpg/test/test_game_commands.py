@@ -3,7 +3,7 @@ from unittest.mock import Mock, MagicMock
 import pytest
 from character import Character
 from items import MeleeWeapon, Armor
-from skills import Parry, Riposte
+from skills import Parry, Riposte, CrossCut
 from effect import Effect
 from discord.ext import commands
 import discord
@@ -102,7 +102,7 @@ async def test_sheet(db, ctx):
     embed = ctx.send.call_args[1].get('embed')
 
     assert embed is not None
-    assert embed.title == c.name.capitalize()
+    assert embed.title == "Nemo"
     assert embed.color is None
     assert "**Level:** 1" in embed.description
     assert f"**Physical:** {c.physical}" in embed.description
@@ -139,7 +139,7 @@ async def test_no_sheet(db, ctx):
     g = GameCommands(bot, db)
     with pytest.raises(commands.CommandError) as exc_info:
         await g.sheet(g, ctx, "foo")
-    assert exc_info.value.args[0] == f"No character 'foo' found for {ctx.author} on {ctx.guild}."
+    assert exc_info.value.args[0] == f"No character named Foo found for {ctx.author} on {ctx.guild}."
     ctx.message.delete.assert_not_called()
 
 
@@ -161,7 +161,7 @@ async def test_no_retire(db, ctx):
     g = GameCommands(bot, db)
     with pytest.raises(commands.CommandError) as exc_info:
         await g.retire(g, ctx, "foo")
-    assert exc_info.value.args[0] == f"No character 'foo' found for {ctx.author} on {ctx.guild}."
+    assert exc_info.value.args[0] == f"No character named Foo found for {ctx.author} on {ctx.guild}."
     ctx.message.delete.assert_not_called()
 
 
@@ -194,20 +194,20 @@ async def test_drop(db, ctx):
 
 @pytest.mark.asyncio
 async def test_attack_with_default_character(db, ctx):
-    attacker = Character(name="Attacker", physical=0)
-    target = Character(name="Target", physical=0)
+    attacker = Character(name="attacker", physical=0)
+    target = Character(name="target", physical=0)
     db.store(ctx.guild, ctx.author, attacker)
     db.store(ctx.guild, "Opponent", target)
     g = GameCommands(bot := Mock(), db)
     await g.attack(g, ctx, "target", "-1")
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1 - 1 = `0` VS 1 = `1` misses {target.name}")
+    ctx.send.assert_called_once_with(f"**Attacker** attacks Target: 1 - 1 = 0 VS 1 misses.")
 
 
 @pytest.mark.asyncio
 async def test_attack_with_specific_character(db, ctx):
-    attacker = Character(name="Attacker", physical=0)
-    target = Character(name="Target", physical=0)
+    attacker = Character(name="attacker", physical=0)
+    target = Character(name="target", physical=0)
     default_char = Character(name="Default")
     db.store(ctx.guild, ctx.author, attacker)
     db.store(ctx.guild, ctx.author, default_char)
@@ -216,7 +216,7 @@ async def test_attack_with_specific_character(db, ctx):
     g = GameCommands(bot, db)
     await g.attack(g, ctx, "Attacker", "target", "+1")
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1 + 1 = `2` VS 1 = `1` hits {target.name} (4/5)[-1]")
+    ctx.send.assert_called_once_with(f"**Attacker** attacks Target [4/5]: 1 + 1 = 2 VS 1 hits for 1 damage.")
     target = db.retrieve(ctx.guild, "Opponent", target.name)
     assert target.hp == 4
 
@@ -238,7 +238,7 @@ async def test_attack_without_target(db, ctx):
     g = GameCommands(bot := Mock(), db)
     await g.attack(g, ctx)
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1 = `1`")
+    ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1.")
 
 
 @pytest.mark.asyncio
@@ -259,3 +259,17 @@ async def test_skilll_without_target(db, ctx):
     await g.skill(g, ctx, "parry")
     ctx.message.delete.assert_called_with()
     ctx.send.assert_called_once_with(f"**{attacker.name}** parries with an axe.")
+
+@pytest.mark.asyncio
+async def test_skilll_with_target(db, ctx):
+    attacker = Character(name="attacker", physical=2, skill=[CrossCut], inventory=[MeleeWeapon(), MeleeWeapon()])
+    db.store(ctx.guild, ctx.author, attacker)
+    target = Character(name="target", physical=0, level=-3)
+    db.store(ctx.guild, ctx.author, target)
+    g = GameCommands(bot := Mock(), db)
+    await g.skill(g, ctx, "attacker", "cross cut", "target")
+    ctx.message.delete.assert_called_with()
+    target = db.retrieve(ctx.guild, ctx.author, target.name)
+    assert target.hp == 0
+
+

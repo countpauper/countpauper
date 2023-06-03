@@ -1,4 +1,5 @@
-from d20 import roll
+import d20
+from d20 import roll, SimpleStringifier
 
 ability_dice = [
     [1],
@@ -23,6 +24,18 @@ ability_dice = [
     [12, 12, 10],
     [12, 12, 12]]
 
+
+class Stringifier(SimpleStringifier):
+    def _stringify(self, node):
+        if not node.kept:
+             return ''
+        return super()._stringify(node)
+
+    def _str_expression(self, node):
+        if len(node.children) == 1 and isinstance(node.roll, d20.Literal):
+            return f"{int(node.total)}"
+        else:
+            return f"{self._stringify(node.roll)} = {int(node.total)}"
 
 class Dice(object):
     def __init__(self, *dice, bonus=[]):
@@ -58,7 +71,7 @@ class Dice(object):
             return '0'
 
     def roll(self):
-        return roll(str(self))
+        return roll(str(self), stringifier=Stringifier())
 
     def minimum(self):
         return len([d for d in self.dice])+sum(self.flat)

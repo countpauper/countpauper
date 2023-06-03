@@ -6,6 +6,32 @@ from effect import Effect
 from errors import GameError
 from language import plural
 
+class Attack(object):
+    def __init__(self, attack, defense=None):
+        self.attack=attack
+        self.defense = defense
+
+    def damage(self):
+        if self.defense:
+            if self.attack.total>self.defense.total:
+                return self.attack.total - self.defense.total
+            else:
+                return 0
+        else:
+            return None
+
+    def hit(self):
+        return self.damage()
+
+    def __str__(self):
+        if self.defense:
+            if dmg := self.damage():
+                return f"{self.attack} VS {self.defense} hits for {dmg} damage"
+            else:
+                return f"{self.attack} VS {self.defense} misses"
+        else:
+            return f"{self.attack}"
+
 class Character(object):
     id = Identifier("id")
     name = Identifier("name")
@@ -36,6 +62,7 @@ class Character(object):
                           social=1,
                           defense=0
         )
+        self.user = kwargs.get('user')
         self.stats = {stat:kwargs.get(stat, value) for stat, value in self.stats.items()}
         self.stats['hp'] = Counter(self.max_hp())
         self.hp = kwargs.get('hp', self.hp)
@@ -53,6 +80,9 @@ class Character(object):
         self.held = dict()
         if self.inventory:
             self.auto_equip()
+
+    def Name(self):
+        return self.name.capitalize()
 
     def __getitem__(self, key):
         return self.stats[key]
@@ -112,20 +142,19 @@ class Character(object):
         self['ap'].reset()
         self.effects=[e for e in self.effects if e.turn()]
 
-    def attack(self, enemy=None, number=0, bonus=None):
+    def attack(self, target=None, attack_dice=None):
         self._act()
+        if attack_dice is None:
+            attack_dice = self.attack_dice()
 
-        attack_roll = self.attack_dice(number, bonus).roll()
-        if enemy is not None:
-            defense_roll = enemy.defense_dice().roll()
-            damage = attack_roll.total - defense_roll.total
-            if damage < 0:
-                return f"{attack_roll} VS {defense_roll} misses {enemy.name}"
-            else:
-                enemy.damage(damage)
-                return f"{attack_roll} VS {defense_roll} hits {enemy.name} ({enemy['hp']})[-{damage}]"
+        attack_roll = attack_dice.roll()
+        if target is not None:
+            defense_roll = target.defense_dice().roll()
+            result = Attack(attack_roll, defense_roll)
+            target.damage(result.damage())
+            return result
         else:
-            return f"{attack_roll}"
+            return Attack(attack=attack_roll)
 
     def cover(self):
         self._check_cost(dict(ap=1))    # NB : check beforehand to make it transactional
@@ -155,7 +184,7 @@ class Character(object):
             self._cost(s.cost)
             return response
         else:
-            raise GameError(f"{skill} is not known by {self.name.capitalize()}.")
+            raise GameError(f"{skill} is not known by {self.Name()}.")
 
     def affect(self, effect, unique=False):
         if unique and (duplicates := self.affected(effect.name)):
@@ -169,19 +198,23 @@ class Character(object):
         return [e for e in self.effects if e.name == name]
 
     def damage(self, dmg):
-        hp = self.hp - int(dmg)
-        self.hp = hp
+        if dmg:
+            hp = self.hp - int(dmg)
+            self.hp = hp
 
     def _check_cost(self, cost):
+        errors = []
         if (ap:=cost.get('ap')) and self.ap < ap:
-            raise GameError(f"You need {ap} {plural(ap, 'action')} but you have {self['ap']}.")
+            errors.append(f"you need {ap} {plural(ap, 'action')}, but you have {self['ap']}")
         if (sp:=cost.get('sp')) and self.sp < sp:
-            raise GameError(f"You need {sp} power but you have {self['sp']}")
+            errors.append(f"you need {sp} power, but you have {self['sp']}")
         if (mp:=cost.get('mp')) and self.mp < mp:
-            raise GameError(f"You need {mp} morale but you have {self['mp']}.")
+            errors.append(f"you need {mp} morale, but you have {self['mp']}")
         # TODO: allow this? is going to 0 then allowed?
         if (hp:=cost.get('hp')) and self.hp < hp:
-            raise GameError(f"You need {hp} health but you have {self['hp']}.")
+            errors.append(f"you need {hp} health, but you have {self['hp']}")
+        if errors:
+            raise GameError(" and ".join(errors).capitalize()+".")
         return cost
 
     def _cost(self, cost):

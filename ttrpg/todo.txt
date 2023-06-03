@@ -17,9 +17,10 @@ initial skills
     - two skill each for physical, mental, social
     - assign random skills based on stat balance (one for each stat over ~2)
     - monster skills (sets for each type, eg beast, dragon, undead?)
-
+    - One AoE attack and test command for some characters known, some not known
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
+rest command (resets hp, sp mp and ap and clears all effects with durations)
 level up command, argument is ability to raise
 some command to enter/exit combat so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.
 [done] organize commands in cogs (well, mostly game cog)

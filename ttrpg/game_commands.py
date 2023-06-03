@@ -31,7 +31,7 @@ class GameCommands(commands.Cog):
     **Social:** {c.social}, **MP:** {c.mp}
     **Attack:** {c.attack_dice()} **Defense:** {c.defense_dice()}"""
 
-        embed = discord.Embed(title=c.name.capitalize(),
+        embed = discord.Embed(title=c.Name(),
                       description=description,
                       color=None if c.color is None else discord.Color.from_str(c.color))
         if c.portrait:
@@ -168,14 +168,17 @@ class GameCommands(commands.Cog):
         else:
             target_name, target = "", None
         if target:
-            result = attacker.attack(target, 0, bonus)
+            result = attacker.attack(target, attacker.attack_dice(0, bonus))
             self.db.store(ctx.guild, owner, target)
             self.db.store(ctx.guild, ctx.author, attacker)
-            await ctx.send(f"**{attacker.name}** attacks: {result}")
+            if result.hit():
+                await ctx.send(f"**{attacker.Name()}** attacks {target.Name()} [{target['hp']}]: {result}.")
+            else:
+                await ctx.send(f"**{attacker.Name()}** attacks {target.Name()}: {result}.")
         else:
-            result = attacker.attack(None, 0, bonus)
+            result = attacker.attack(None, attacker.attack_dice(0, bonus))
             self.db.store(ctx.guild, ctx.author, attacker)
-            await ctx.send(f"**{attacker.name}** attacks: {result}")
+            await ctx.send(f"**{attacker.Name()}** attacks: {result}.")
         await ctx.message.delete()
 
 
@@ -198,12 +201,17 @@ class GameCommands(commands.Cog):
         e, args = self._optional_character_argument(ctx.guild, ctx.author, args)
         if not args:
             await ctx.message.delete()
-            await ctx.send(f"""**{e.name.capitalize()}** knows {', '.join(Skill.name(s) for s in e.skill)}.""")
+            await ctx.send(f"""**{e.Name()}** knows {', '.join(Skill.name(s) for s in e.skill)}.""")
         else:
-            targets=[self.db.retrieve(ctx.guild, None, arg) for arg in args[1:]]
-            result = e.execute(args[0], targets)
+            skill=args.pop(0)
+            targets={arg:self.db.retrieve(ctx.guild, None, arg) for arg in args}
+            if unknown:=[arg for arg, target in targets.items() if target is None]:
+                raise CharacterUnknownError(ctx.guild, None, *unknown)
+            result = e.execute(skill, *targets.values())
             self.db.store(ctx.guild, ctx.author, e)
+            for t in targets.values():
+                self.db.store(ctx.guild, t.user, t)
             # TODO: store targets, if they are dirty (used) and need their owner when retrieving (simplify in attack as well)
-            await ctx.send(f"**{e.name}** {result}")    # TODO don't put name in result so it can be formatted
+            await ctx.send(f"**{e.name}** {result}.")    # TODO don't put name in result so it can be formatted
             await ctx.message.delete()
 
