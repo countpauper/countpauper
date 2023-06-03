@@ -1,5 +1,6 @@
 from character import Character
 from items import *
+from skills import Skill
 import random
 from ability import abilities
 
@@ -45,6 +46,12 @@ def random_equipment(capacity):
     return [i for i in (weapon, offhand, armor) if i]
 
 
+def random_skills(character):
+    skills = Skill.all.copy()
+    random.shuffle(skills)
+    return skills[:character.level]
+
+
 def _level_up(stats, level=None):
     if level is None:
         level = stats['level']+1
@@ -69,6 +76,7 @@ def random_character(level=1):
     stats = _level_up(stats, level)
     c = Character(**stats)
     c.obtain(*random_equipment(c.capacity()))
+    c.skill=random_skills(c)
     c.auto_equip()
     return c
 

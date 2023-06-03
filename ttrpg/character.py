@@ -44,7 +44,7 @@ class Character(object):
         self.stats['ap'] = Counter(self.default_ap)
         self.ap = kwargs.get('ap', self.ap)
 
-        self.skill = kwargs.get('skills', [])
+        self.skill = kwargs.get('skill', [])
         self.inventory = kwargs.get('inventory',[])
         # TODO: find a way to put equipped status in a record, but still allow duplicate items and duplicate location
         # list of tuples? or dict with locations, then list of items there.
@@ -126,14 +126,21 @@ class Character(object):
             return f"{attack_roll}"
 
     def cover(self):
-        if self.find_effect('cover'):
-            raise GameError("You are already covered.")
-        self._act()
+        self._check_cost(dict(ap=1))    # NB : check beforehand to make it transactional
         cover, shield = 1, None
         if isinstance(self.off_hand(), Shield):
             shield = self.off_hand()
-        self.effects.append(Effect('cover', cover, dict(defense=dict(cover=1))))
+        self.affect(Effect('cover', cover, dict(defense=dict(cover=1))), True)
+        self._act()
         return shield
+
+    def affect(self, effect, unique=False):
+        if unique and (duplicate:=self.find_effect(effect.name)):
+            raise GameError("You are already affected by {duplicate}.")
+
+        # TODO: check for duplicates/conflicts
+        # TODO create Effect from args? what if there are Effect types?
+        self.effects.append(effect)
 
     def find_effect(self, name):
         return [e for e in self.effects if e.name == name]
@@ -142,10 +149,21 @@ class Character(object):
         hp = self.hp - int(dmg)
         self.hp = hp
 
+    def _check_cost(self, cost):
+        if (ap:=cost.get('ap')) and self.ap < ap:
+            raise GameError(f"You need {ap} actions but you have {self['ap']}.")
+        if (sp:=cost.get('sp')) and self.sp < sp:
+            raise GameError(f"You need {sp} power but you have {self['sp']}")
+        if (mp:=cost.get('mp')) and self.mp < mp:
+            raise GameError(f"You need {mp} morale but you have {self['mp']}.")
+        # TODO: allow this? is going to 0 then allowed?
+        if (hp:=cost.get('hp')) and self.hp < hp:
+            raise GameError(f"You need {hp} health but you have {self['hp']}.")
+        return cost
+
     def _act(self, ap=1):
-        if not self.ap:
-            raise GameError("Not enough action points")
-        self.ap -= 1
+        self._check_cost(dict(ap=ap))
+        self.ap -= ap
 
     def attack_dice(self, nr=0, bonus=None):
         result = Dice.for_ability(self.physical)
@@ -179,7 +197,7 @@ class Character(object):
         items = [ItemFactory(item) for item in items]
         item_weight = sum(i.weight() for i in items)
         if self.carried()+item_weight>self.capacity():
-            raise GameError(f"{', '.join(str(i) for i in items)} is too heavy to carry.")   # TODO: can be overloaded
+            raise GameError(f"{' and '.join(str(i) for i in items)} is too heavy to carry.")   # TODO: can be overloaded
         self.inventory += items
         return items
 
@@ -205,7 +223,7 @@ class Character(object):
     def lose(self, *items):
         def _error(argument):
             raise GameError(argument)
-        items = [self._find_item(item) or _error(f"No item {item} in the inventory") for item in items]
+        items = [self._find_item(item) or _error(f"No {item} found in the inventory of {self.name}.") for item in items]
         for item in items:
             self.inventory.remove(item)
             if self.main_hand() == item:

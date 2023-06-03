@@ -46,3 +46,4 @@ def test_cover():
     assert isinstance(item, Shield)
     with pytest.raises(GameError):
         c.cover()
+    assert c.ap == 2

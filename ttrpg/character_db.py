@@ -1,5 +1,6 @@
 from character import Character
 from items import *
+from skills import Skill
 from effect import Effect
 from errors import CharacterUnknownError
 import sqlite3
@@ -42,6 +43,8 @@ class CharacterDB(object):
             c.id = cur.lastrowid
             cur = self._clear_inventory(cur, c.id)
             cur = self._store_inventory(cur, c.id, c)
+            cur = self._clear_skills(cur, c.id)
+            cur = self._store_skills(cur, c.id, c.skill)
             cur = self._clear_effects(cur, c.id)
             cur = self._store_effects(cur, c.id, c.effects)
 
@@ -56,8 +59,11 @@ class CharacterDB(object):
         else:
             return None
 
+    def _clear(self, cursor, table, idx):
+        return cursor.execute(f"""DELETE FROM {table} WHERE character==?""", [idx])
+
     def _clear_inventory(self, cursor, idx):
-        return cursor.execute(f"""DELETE FROM inventory WHERE character==?""", [idx])
+        return self._clear(cursor, "inventory", idx)
 
     def _store_inventory(self, cursor, idx, c):
         item_values = [dict(item=type(item).__name__,
@@ -69,8 +75,20 @@ class CharacterDB(object):
                 ({int(idx)}, :item, :properties, :location)"""
         return cursor.executemany(query, item_values)
 
+
+    def _clear_skills(self, cursor, idx):
+        return self._clear(cursor, "skills", idx)
+
+    def _store_skills(self, cursor, idx, skills):
+        skill_values = [dict(skill=Skill.name(skill)) for skill in skills]
+        if not skill_values:
+            return cursor
+        query = f"""INSERT INTO skills (character, skill) VALUES 
+                ({int(idx)}, :skill)"""
+        return cursor.executemany(query, skill_values)
+
     def _clear_effects(self, cursor, idx):
-        return cursor.execute(f"""DELETE FROM effects WHERE character==?""", [idx])
+        return self._clear(cursor, "effects", idx)
 
     def _store_effects(self, cursor, idx, effects):
         effect_values = [dict(effect=e.name, duration = e.duration, parameters=json.dumps(e.boni)) for e in effects]
@@ -106,6 +124,7 @@ class CharacterDB(object):
             c.worn = inventory.get('worn', [])
             c.held['main'] = inventory.get('main', [None])[0]
             c.held['off'] = inventory.get('off', [None])[0]
+            c.skill = self._retrieve_skills(cursor, c.id)
             return c
         else:
             return None
@@ -126,6 +145,14 @@ class CharacterDB(object):
         while row:=response.fetchone():
             location = row[2]
             result[location] = result.get(location,[]) + [self._create_item(row[0], json.loads(row[1]) if row[1] else dict())]
+        return result
+
+    def _retrieve_skills(self, cursor, idx):
+        query = f"""SELECT skill FROM skills WHERE character=:id"""
+        response = cursor.execute(query, dict(id=idx))
+        result = list()
+        while row:=response.fetchone():
+            result.append(Skill.create(row[0]))
         return result
 
     def _retrieve_effects(self, cursor, idx):

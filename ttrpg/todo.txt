@@ -10,8 +10,13 @@
 [done] attack
 [done] boni
 [done] action points (stat) and $turn command
-initial skills and random skill assignment, two skill each for physical, mental, social
-
+initial skills
+    [done] random skill assignment
+    - execute skill command
+    - two skill each for physical, mental, social
+    - assign random skills based on stat balance (one for each stat over ~2)
+    - monster skills (sets for each type, eg beast, dragon, undead?)
+    
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
 level up command, argument is ability to raise

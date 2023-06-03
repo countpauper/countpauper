@@ -1,6 +1,7 @@
 import pytest
 from character import Character
 from items import *
+from skills import Parry
 from effect import Effect
 from errors import CharacterUnknownError
 
@@ -85,6 +86,14 @@ def test_inventory(db):
     assert c.off_hand().name == "shield"
     assert c.main_hand().name == "Golden Sword"
     assert len(c.item("Birch bow")) == 1
+
+def test_skills(db):
+    c = Character(skill=[Parry])
+    db.store("guild","user", c)
+    c = db.retrieve("guild", "user", c.name)
+    assert c.skill
+    assert c.skill[0] == Parry
+
 
 def test_effects(db):
     c=Character(name="Stronk", physical=5)

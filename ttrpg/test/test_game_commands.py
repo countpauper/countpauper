@@ -3,6 +3,7 @@ from unittest.mock import Mock, MagicMock
 import pytest
 from character import Character
 from items import MeleeWeapon, Armor
+from skills import Parry
 from effect import Effect
 from discord.ext import commands
 import discord
@@ -86,7 +87,7 @@ async def test_generate_existing(db, ctx):
 
 @pytest.mark.asyncio
 async def test_sheet(db, ctx):
-    c = Character(inventory=[MeleeWeapon(name="Practice Sword"), Armor(rating=1)])
+    c = Character(inventory=[MeleeWeapon(name="Practice Sword"), Armor(rating=1)], skill=[Parry])
     c.effects.append(Effect(name="displayed"))
 
     db.store(ctx.guild, ctx.author, c)
@@ -112,9 +113,11 @@ async def test_sheet(db, ctx):
     assert f"**SP:** {c.sp}" in embed.description
     assert embed.thumbnail.url is None
     assert embed.fields[0].name == f"Inventory [2/{c.capacity()}]"
-    assert embed.fields[0].value == "Practice Sword\ngambeson"
+    assert embed.fields[0].value == "Practice sword\nGambeson"
+    assert embed.fields[1].name == f"Skills"
+    assert embed.fields[1].value == "Parry"
     assert embed.fields[2].name == "Effects"
-    assert embed.fields[2].value == "displayed"
+    assert embed.fields[2].value == "Displayed"
 
 
 @pytest.mark.asyncio

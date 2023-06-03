@@ -1,7 +1,7 @@
 from character import Character
 from generate_character import random_character
 from errors import CharacterUnknownError
-from items import ItemFactory
+from skills import Skill
 from character_db import CharacterDB
 from discord.ext import commands
 import discord
@@ -36,9 +36,9 @@ class GameCommands(commands.Cog):
                       color=None if c.color is None else discord.Color.from_str(c.color))
         if c.portrait:
             embed.set_thumbnail(url=c.portrait)
-        embed.add_field(name=f"Inventory [{c.carried()}/{c.capacity()}]", value="\n".join(str(i) for i in c.inventory), inline=True)
-        embed.add_field(name="Skills", value="\n".join(str(s) for s in c.skill), inline=True)
-        embed.add_field(name="Effects", value="\n".join(str(s) for s in c.effects), inline=True)
+        embed.add_field(name=f"Inventory [{c.carried()}/{c.capacity()}]", value="\n".join(str(i).capitalize() for i in c.inventory), inline=True)
+        embed.add_field(name="Skills", value="\n".join(Skill.name(s).capitalize() for s in c.skill), inline=True)
+        embed.add_field(name="Effects", value="\n".join(str(s).capitalize() for s in c.effects), inline=True)
         return embed
 
 
