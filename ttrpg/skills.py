@@ -1,7 +1,7 @@
 from items import *
 from effect import Effect
 from errors import GameError
-from language import camel_to_words, indefinite_article
+from language import camel_to_words, indefinite_article, list_off
 
 
 class Skill(object):
@@ -15,17 +15,26 @@ class Skill(object):
         return camel_to_words(cls.__name__)
 
     @staticmethod
-    def create(name):
-        if match := [s for s in Skill.all if Skill.name(s) == name]:
-            return match[0]
+    def create(skill):
+        if type(skill)==str:
+            if match := [s for s in Skill.all if Skill.name(s) == skill]:
+                return Skill.create(match[0])
+            else:
+                raise ValueError(f"Unknown skill {skill}")
+        elif isinstance(skill, type) and issubclass(skill, Skill):
+            return skill()
+        elif isinstance(skill, Skill):
+            return skill
         else:
-            return None
+            raise TypeError(f"Cannot create skill by {type(skill)}.")
 
+    def __str__(self):
+        return self.name(self.__class__)
 
 class CrossCut(Skill):
     """Attack with two weapons simultaneously. Their attack dice are added."""
     def __init__(self):
-        self.cost = dict(ap=2, sp=1)
+        self.cost = dict(ap=1, sp=1)
 
     def __call__(self, *args, **kwargs):
         args = list(args)
@@ -72,5 +81,25 @@ class Disarm(Skill):
     """Ready a reaction to make someone drop their weapon after they miss you."""
     pass
 
-Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm]
+class Explosion(Skill):
+    """Hit everyone in the same location with an elemental attack."""
+    def __init__(self):
+        self.cost = dict(ap=1, sp=3)
+
+    def __call__(self, *args, **kwargs):
+        args = list(args)
+        actor = args.pop(0)
+        damage_roll = actor.mental_dice().roll()
+        target_result=[]
+        if targets:=args:
+            for target in targets:
+                save_roll = target.physical_dice().roll()
+                if (damage :=damage_roll.total-save_roll.total) > 0:
+                    target.damage(damage)
+                    target_result.append(f"{target.Name()}[{target['hp']}] hit ({save_roll}) for {damage} damage")
+                else:
+                    target_result.append(f"{target.Name()} evades ({save_roll})")
+        return f"explodes {damage_roll} {list_off(target_result)}"
+
+Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion]
 

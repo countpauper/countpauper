@@ -20,6 +20,7 @@ initial skills
         - familiar (summon. can be in combat? create in db. Keep it simple. Use one mp, it stays until the next rest)
         - harmony (1 defense to targets, max targets is social score)
     - assign random skills based on stat balance (one of matching ability for each stat over ~2)
+    - return embedable data from skills, attack
     - monster skills (sets for each type, eg beast, dragon, undead?)
     - One AoE attack and test command for some characters known, some not known
 [done] represent flat bonuses above 1 in Dice
@@ -28,6 +29,7 @@ rest command (resets hp, sp mp and ap and clears all effects with durations)
 level up command, argument is ability to raise
 some command to enter/exit combat so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.
 [done] organize commands in cogs (well, mostly game cog)
+find a way to inject d20 roll results into unit tests
 partial matching for taking and dropping items
 partial matching for finding database characters
 Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handling

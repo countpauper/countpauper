@@ -135,8 +135,11 @@ class Character(object):
         boni={k:v for k,v in boni.items() if v is not None}
         return boni
 
+    def physical_dice(self):
+        return Dice.for_ability(self.physical)
+
     def defense_dice(self):
-        return Dice.for_ability(self.physical)+Dice(bonus=self.get_boni('defense').values())
+        return self.physical_dice()+Dice(bonus=self.get_boni('defense').values())
 
     def turn(self):
         self['ap'].reset()
