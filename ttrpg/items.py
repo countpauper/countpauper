@@ -140,27 +140,33 @@ class Equipment(Item):
         return self.heavy
 
 
-def ItemFactory(item, properties=dict()):
+def ItemFactory(item, props=None):
+    if props is None:
+        props = dict()
     if isinstance(item, Item):
         return item
     elif isinstance(item, type) and issubclass(item, Item):
-        return item(**properties)
+        return item(**props)
     elif isinstance(item, str):
-        properties['name'] = item
+        props['name'] = props.get('name', item.lower())
         item = item.lower()
         if item == "shield":
-            return Shield(**properties)
-        if item in light_melee_weapon_names:
-            return MeleeWeapon(**properties)
+            return Shield(**props)
+        if item in light_melee_weapon_names or item == 'meleeweapon':
+            return MeleeWeapon(**props)
         elif item in heavy_melee_weapon_names:
-            return MeleeWeapon(heavy=True, **properties)
-        elif item in light_ranged_weapon_names:
-            return RangedWeapon(**properties)
+            return MeleeWeapon(heavy=True, **props)
+        elif item in light_ranged_weapon_names or item == 'rangedweapon':
+            return RangedWeapon(**props)
         elif item in heavy_ranged_weapon_names:
-            return RangedWeapon(heavy=True, **properties)
+            return RangedWeapon(heavy=True, **props)
+        elif item == 'equipment':
+            return Equipment(**props)
+        elif item == 'armor':
+            return Armor(**props)
         else:
             try:
-                armor_rating=list(armor_names.values()).index(item)
+                armor_rating = list(armor_names.values()).index(item)
                 return Armor(name=item, rating=armor_rating)
             except ValueError:
                 return Equipment(name=item)

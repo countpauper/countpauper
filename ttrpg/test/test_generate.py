@@ -1,4 +1,5 @@
 from generate_character import random_character, random_monster
+from skills import Skill
 import pytest
 
 
@@ -17,6 +18,7 @@ def test_random_leveled_character():
     assert(c.name)
     assert(c.carried() <= c.capacity())
     assert(len(c.skill) == c.level)
+    assert(isinstance(c.skill[0], Skill))
 
 def test_random_monster():
     c = random_monster(5)

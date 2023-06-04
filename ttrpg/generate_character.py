@@ -49,7 +49,7 @@ def random_equipment(capacity):
 def random_skills(character):
     skills = Skill.all.copy()
     random.shuffle(skills)
-    return skills[:character.level]
+    return [s() for s in skills[:character.level]]
 
 
 def _level_up(stats, level=None):

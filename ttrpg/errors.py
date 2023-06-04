@@ -1,5 +1,5 @@
 from discord.ext.commands import CommandError
-from language import plural
+from language import plural, list_off
 
 class GameError(CommandError):
     def __init__(self, *args):
@@ -11,7 +11,7 @@ class CharacterUnknownError(CommandError):
         if not names:
             super(CharacterUnknownError, self).__init__(f"No character found for {owner} on {guild}.")
         elif owner is None:
-            super(CharacterUnknownError, self).__init__(f"No {plural(len(names), 'character')} named {', '.join(names)} found on {guild}.")
+            super(CharacterUnknownError, self).__init__(f"No {plural(len(names), 'character')} named {list_off(names)} found on {guild}.")
         else:
-            super(CharacterUnknownError, self).__init__(f"No {plural(len(names), 'character')} named {', '.join(names)} found for {owner} on {guild}.")
+            super(CharacterUnknownError, self).__init__(f"No {plural(len(names), 'character')} named {list_off(names)} found for {owner} on {guild}.")
 

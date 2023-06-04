@@ -1,6 +1,5 @@
 from character import Character
-from items import *
-from skills import Skill
+from items import ItemFactory
 from effect import Effect
 from errors import CharacterUnknownError
 import sqlite3
@@ -80,7 +79,7 @@ class CharacterDB(object):
         return self._clear(cursor, "skills", idx)
 
     def _store_skills(self, cursor, idx, skills):
-        skill_values = [dict(skill=Skill.name(skill)) for skill in skills]
+        skill_values = [dict(skill=str(skill)) for skill in skills]
         if not skill_values:
             return cursor
         query = f"""INSERT INTO skills (character, skill) VALUES 
@@ -116,27 +115,19 @@ class CharacterDB(object):
         cursor = self.connection.execute(query, dict(user=str(user), guild=str(guild), name=str(name)))
         columns = [x[0] for x in cursor.description]
         if row := cursor.fetchone():
-            record = {col: row[idx] for idx, col in enumerate(columns)}
+            record = {col: row[nr] for nr, col in enumerate(columns)}
+            idx = record.get('id')
+            record['skill'] = self._retrieve_skills(cursor, idx)
+            inventory = self._retrieve_inventory(cursor, idx)
+            record['inventory'] = [i for location_items in inventory.values() for i in location_items]
             c = Character(**record)
-            inventory = self._retrieve_inventory(cursor, c.id)
             c.effects = self._retrieve_effects(cursor, c.id)
-            c.inventory = [i for location_items in inventory.values() for i in location_items]
             c.worn = inventory.get('worn', [])
             c.held['main'] = inventory.get('main', [None])[0]
             c.held['off'] = inventory.get('off', [None])[0]
-            c.skill = self._retrieve_skills(cursor, c.id)
             return c
         else:
             return None
-
-    item_types = {cls.__name__: cls for cls in (MeleeWeapon, RangedWeapon, Shield, Armor, Equipment)}
-
-    @staticmethod
-    def _create_item(item, properties):
-        if item_type := CharacterDB.item_types.get(item):
-            return item_type(**properties)
-        else:
-            raise ValueError(f"Item type '{item}' unsupported.")
 
     def _retrieve_inventory(self, cursor, idx):
         query = f"""SELECT item, properties, location FROM inventory WHERE character=:id"""
@@ -144,16 +135,13 @@ class CharacterDB(object):
         result = dict()
         while row:=response.fetchone():
             location = row[2]
-            result[location] = result.get(location,[]) + [self._create_item(row[0], json.loads(row[1]) if row[1] else dict())]
+            result[location] = result.get(location,[]) + [ItemFactory(row[0], json.loads(row[1]) if row[1] else dict())]
         return result
 
     def _retrieve_skills(self, cursor, idx):
         query = f"""SELECT skill FROM skills WHERE character=:id"""
         response = cursor.execute(query, dict(id=idx))
-        result = list()
-        while row:=response.fetchone():
-            result.append(Skill.create(row[0]))
-        return result
+        return [row[0] for row in response.fetchall()]
 
     def _retrieve_effects(self, cursor, idx):
         query = f"""SELECT effect, duration, parameters FROM effects WHERE character=:id"""

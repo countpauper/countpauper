@@ -52,3 +52,14 @@ def plural(amount, phrase):
         return phrase[:-2]+'ves'
     else:
         return phrase+'s'
+
+
+def list_off(items=None):
+    if not items:
+        return ""
+    items = tuple(items)
+    if len(items) == 1:
+        return str(items[0])
+    else:
+        oxford = ',' if 'and' in str(items[-1]) or ' ' in str(items[-2]) else ''
+        return ", ".join(str(i) for i in items[:-1])+f"{oxford} and {items[-1]}"

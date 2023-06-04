@@ -4,7 +4,7 @@ from stats import *
 from skills import Skill
 from effect import Effect
 from errors import GameError
-from language import plural
+from language import plural, list_off
 
 class Attack(object):
     def __init__(self, attack, defense=None):
@@ -73,8 +73,8 @@ class Character(object):
         self.stats['ap'] = Counter(self.default_ap)
         self.ap = kwargs.get('ap', self.ap)
 
-        self.skill = kwargs.get('skill', [])
-        self.inventory = kwargs.get('inventory',[])
+        self.skill = [Skill.create(s) for s in kwargs.get('skill', [])]
+        self.inventory = [ItemFactory(i) for i in kwargs.get('inventory',[])]
         # TODO: find a way to put equipped status in a record, but still allow duplicate items and duplicate location
         # list of tuples? or dict with locations, then list of items there.
         self.held = dict()
@@ -185,14 +185,16 @@ class Character(object):
         return shield
 
     def _find_skill(self, skill):
-        if type(skill)==str:
-            if match := [s for s in self.skill if Skill.name(s) == skill]:
-                skill = match[0]
+        if type(skill) == str:
+            if match := [s for s in self.skill if str(s) == skill]:
+                return match[0]
             else:
                 return None
-
-        if isinstance(skill, type) and issubclass(skill, Skill):
-            return skill()
+        elif isinstance(skill, type) and issubclass(skill, Skill):
+            if match := [s for s in self.skill if isinstance(s, skill)]:
+                return match[0]
+            else:
+                return None
         else:
             raise TypeError(f"No skill can be found based on {type(skill)}.")
 
@@ -233,7 +235,7 @@ class Character(object):
         if (hp:=cost.get('hp')) and self.hp < hp:
             errors.append(f"you need {hp} health, but you have {self['hp']}")
         if errors:
-            raise GameError(" and ".join(errors).capitalize()+".")
+            raise GameError(list_off(errors).capitalize()+".")
         return cost
 
     def _cost(self, cost):
@@ -268,7 +270,7 @@ class Character(object):
         items = [ItemFactory(item) for item in items]
         item_weight = sum(i.weight() for i in items)
         if self.carried()+item_weight>self.capacity():
-            raise GameError(f"{' and '.join(str(i) for i in items)} is too heavy to carry.")   # TODO: can be overloaded
+            raise GameError(f"{list_off(items)} is too heavy to carry.")   # TODO: can be overloaded
         self.inventory += items
         return items
 
@@ -334,8 +336,8 @@ class Character(object):
     {self.mental} Mental: {self['sp']} SP
     {self.social} Social: {self['mp']} MP
     Defense {self.defense_dice()} Attack {self.attack_dice()}
-    Inventory[{self.carried()}/{self.capacity()}] {" ".join(str(i) for i in self.inventory) or "Empty"} 
-    {" ".join(str(s) for s in self.skill)}"""
+    Inventory[{self.carried()}/{self.capacity()}]: {list_off(self.inventory) or "Empty"} 
+    Skills: {list_off(self.skill)}"""
 
 
 

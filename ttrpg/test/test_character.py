@@ -1,7 +1,7 @@
 from character import Character
 from items import MeleeWeapon, RangedWeapon, Shield, Armor, Equipment
 from errors import GameError
-from skills import Parry
+from skills import Parry, CrossCut
 from dice import Dice
 import pytest
 
@@ -77,13 +77,15 @@ def test_auto_equip():
 
 
 def test_str():
-    assert str(Character(name='Foo', level=2, physical=5, mental=3, hp=2, inventory=[MeleeWeapon(name="Testsword"),Shield()]))=="""Foo: Level 2
+    assert str(Character(name='Foo', level=2, physical=5, mental=3, hp=2,
+                         inventory=[MeleeWeapon(name="testsword"),Shield()],
+                         skill=["parry", CrossCut])) == """Foo: Level 2
     5 Physical: 2/6 HP
     3 Mental: 3/3 SP
     1 Social: 1/1 MP
     Defense 1d10 Attack 1d10
-    Inventory[2/5] Testsword shield 
-    """
+    Inventory[2/5]: testsword and shield 
+    Skills: parry and cross cut"""
 
 def test_obtain():
     c = Character(physical=2)

@@ -7,6 +7,7 @@ def test_camel_to_words():
     assert camel_to_words("CamelCase") == "camel case"
     assert camel_to_words("") == ""
 
+
 def test_indefinite_article():
     assert indefinite_article("cheese") == 'a'
     assert indefinite_article("ogre") == 'an'
@@ -16,6 +17,7 @@ def test_indefinite_article():
     assert indefinite_article(RuntimeError("error")) == 'an'
     with pytest.raises(ValueError):
         indefinite_article("")
+
 
 def test_plural_amount():
     assert plural(1, 'cheese') == 'cheese'
@@ -41,3 +43,12 @@ def test_plural_postfix():
     assert plural(2, 'stiff') == 'stiffs'
     assert plural(2, 'crisis') == 'crises'
     # TODO: exceptions. Words that don't change (sheep, moose) totally irregular (foot, child, die)
+
+
+def test_list_off():
+    assert list_off() == ""
+    assert list_off(["cheese"]) == "cheese"
+    assert list_off(("pickles", "cheese")) == "pickles and cheese"
+    assert list_off(("olives", "pickles", "cheese")) == "olives, pickles and cheese"
+    assert list_off(("olives", "pickles", "ham and cheese")) == "olives, pickles, and ham and cheese"
+    assert list_off(("olives", "two pickles", "cheese")) == "olives, two pickles, and cheese"

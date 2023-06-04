@@ -1,8 +1,8 @@
 class Effect(object):
-    def __init__(self, name, duration=1, boni=dict()):
+    def __init__(self, name, duration=1, boni=None):
         self.name = name
         self.duration = duration
-        self.boni = boni
+        self.boni = boni or dict()
 
     def get_boni(self, name):
         return self.boni.get(name, dict())

@@ -4,6 +4,7 @@ from errors import CharacterUnknownError
 from skills import Skill
 from character_db import CharacterDB
 from discord.ext import commands
+from language import list_off
 import discord
 import d20
 
@@ -37,8 +38,8 @@ class GameCommands(commands.Cog):
         if c.portrait:
             embed.set_thumbnail(url=c.portrait)
         embed.add_field(name=f"Inventory [{c.carried()}/{c.capacity()}]", value="\n".join(str(i).capitalize() for i in c.inventory), inline=True)
-        embed.add_field(name="Skills", value="\n".join(Skill.name(s).capitalize() for s in c.skill), inline=True)
-        embed.add_field(name="Effects", value="\n".join(str(s).capitalize() for s in c.effects), inline=True)
+        embed.add_field(name="Skills", value="\n".join(str(s).capitalize() for s in c.skill), inline=True)
+        embed.add_field(name="Effects", value="\n".join(str(e).capitalize() for e in c.effects), inline=True)
         return embed
 
 
@@ -114,7 +115,7 @@ class GameCommands(commands.Cog):
         items = c.obtain(*args)
         c.auto_equip()
         self.db.store(ctx.guild, ctx.author, c)
-        await ctx.send(f"**{c.name}** takes the {' and '.join(str(item) for item in items)}.")
+        await ctx.send(f"**{c.name}** takes the {list_off(items)}.")
         await ctx.message.delete()
 
     @commands.command()
@@ -125,7 +126,7 @@ class GameCommands(commands.Cog):
         items = c.lose(*args)
         c.auto_equip()
         self.db.store(ctx.guild, ctx.author, c)
-        await ctx.send(f"**{c.name}** drops the {' and '.join(str(item) for item in items)}.")
+        await ctx.send(f"**{c.name}** drops the {list_off(items)}.")
         await ctx.message.delete()
 
 
@@ -201,7 +202,7 @@ class GameCommands(commands.Cog):
         e, args = self._optional_character_argument(ctx.guild, ctx.author, args)
         if not args:
             await ctx.message.delete()
-            await ctx.send(f"""**{e.Name()}** knows {', '.join(Skill.name(s) for s in e.skill)}.""")
+            await ctx.send(f"""**{e.Name()}** knows {list_off(str(s).capitalize() for s in e.skill)}.""")
         else:
             skill=args.pop(0)
             targets={arg:self.db.retrieve(ctx.guild, None, arg) for arg in args}

@@ -87,7 +87,7 @@ async def test_generate_existing(db, ctx):
 
 @pytest.mark.asyncio
 async def test_sheet(db, ctx):
-    c = Character(inventory=[MeleeWeapon(name="Practice Sword"), Armor(rating=1)], skill=[Parry])
+    c = Character(inventory=[MeleeWeapon(name="Practice Sword"), Armor(rating=1)], skill=[Parry()])
     c.effects.append(Effect(name="displayed"))
 
     db.store(ctx.guild, ctx.author, c)
@@ -243,17 +243,17 @@ async def test_attack_without_target(db, ctx):
 
 @pytest.mark.asyncio
 async def test_skilll_list(db, ctx):
-    attacker = Character(name="Attacker", level=2, skill=[Parry, Riposte], inventory=[MeleeWeapon(name="axe")])
+    attacker = Character(name="Attacker", level=2, skill=[Parry(), Riposte()], inventory=[MeleeWeapon(name="axe")])
     db.store(ctx.guild, ctx.author, attacker)
     g = GameCommands(bot := Mock(), db)
     await g.skill(g, ctx)
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"**{attacker.name}** knows parry, riposte.")
+    ctx.send.assert_called_once_with(f"**{attacker.name}** knows Parry and Riposte.")
 
 
 @pytest.mark.asyncio
 async def test_skilll_without_target(db, ctx):
-    attacker = Character(name="Attacker", skill=[Parry], inventory=[MeleeWeapon(name="axe")])
+    attacker = Character(name="Attacker", skill=[Parry()], inventory=[MeleeWeapon(name="axe")])
     db.store(ctx.guild, ctx.author, attacker)
     g = GameCommands(bot := Mock(), db)
     await g.skill(g, ctx, "parry")
