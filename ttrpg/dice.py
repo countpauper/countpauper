@@ -43,16 +43,23 @@ class Dice(object):
         self.flat = list(bonus) + list(d for d in dice if abs(d) <= 1)
 
     def __add__(self, other):
-        if type(other) == Dice:
+        if other is None:
+            return self.copy()
+        if isinstance(other, Dice):
             return Dice(*self.dice, *other.dice, bonus=self.flat + other.flat)
         else:
             return Dice(*self.dice, bonus=self.flat+[other])
 
     def __sub__(self, other):
-        if type(other) == Dice:
+        if other is None:
+            return self.copy()
+        if isinstance(other, Dice):
             return Dice(*self.dice, *[-d for d in other.dice], bonus=self.flat+[-b for b in other.flat])
         else:
             return Dice(*self.dice, bonus=self.flat+[-other])
+
+    def copy(self):
+        return Dice(*self.dice, bonus=self.flat)
 
     def __str__(self):
         dice = self.dice

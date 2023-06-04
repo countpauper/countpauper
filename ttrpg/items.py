@@ -43,12 +43,12 @@ class Armor(Item):
                     enchantment=self.enchantment)
 
     def get_boni(self, stat):
-        base_boni = super(Armor, self).get_boni(stat)
+        boni = super(Armor, self).get_boni(stat)
         if stat == 'defense':
-            base_boni['rating'] = self.rating
+            boni['rating'] = self.rating
             if self.enchantment:
-                base_boni['enchantment'] = self.enchantment
-        return base_boni
+                boni['enchantment'] = self.enchantment
+        return boni
 
 
 class Weapon(Item):
@@ -66,11 +66,21 @@ class Weapon(Item):
     def weight(self):
         return 1+self.heavy
 
+    def get_boni(self, stat):
+        boni = super(Weapon, self).get_boni(stat)
+        if stat == 'attack':
+            if self.heavy:
+                boni['heavy'] = Dice(4)
+            if self.enchantment:
+                boni['enchantment'] = self.enchantment
+        return boni
+
     def bonus(self):
-        d=Dice(4) if self.heavy else Dice()
-        if self.enchantment:
-            d += self.enchantment
-        return d
+        result = Dice()
+        for bonus in self.get_boni("attack").values():
+            result += bonus
+        return result
+
 
 class MeleeWeapon(Weapon):
     def __init__(self, **props):

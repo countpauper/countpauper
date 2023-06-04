@@ -60,7 +60,7 @@ def test_attack_dice():
     assert Character(physical=2).attack_dice(1) == Dice(4)-2
     assert Character(physical=2).attack_dice(2) == Dice(4)-4
     assert Character(physical=2).attack_dice(3) == Dice(4)-6
-    assert Character(physical=2).attack_dice(1, 1) == Dice(4)-2+1
+    assert Character(physical=2).attack_dice(1) + 1 == Dice(4)-2+1
     assert Character(physical=3, inventory=[MeleeWeapon(enchantment=1)]).attack_dice() == Dice(6)+1
     assert Character(physical=3, inventory=[MeleeWeapon(heavy=True, enchantment=2)]).attack_dice() == Dice(6,4)+2
     assert Character(physical=3, inventory=[MeleeWeapon(), MeleeWeapon()]).attack_dice(1) == Dice(6)

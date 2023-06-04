@@ -13,9 +13,13 @@
 initial skills
     [done] random skill assignment
     [done] execute skill command
-    - execute targeted skill and persist targets
-    - two skill each for physical, mental, social
-    - assign random skills based on stat balance (one for each stat over ~2)
+    [done] execute targeted skill and persist targets
+    - two skill each for physical, mental, social (parry, crosscut done.
+        - Explosion (mental attack to all, elemental dmg. Does it ignore armor?)
+        - scare (mental damage vs social save, morale dmg)
+        - familiar (summon. can be in combat? create in db. Keep it simple. Use one mp, it stays until the next rest)
+        - harmony (1 defense to targets, max targets is social score)
+    - assign random skills based on stat balance (one of matching ability for each stat over ~2)
     - monster skills (sets for each type, eg beast, dragon, undead?)
     - One AoE attack and test command for some characters known, some not known
 [done] represent flat bonuses above 1 in Dice
@@ -30,6 +34,8 @@ Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handl
 [done] character worn can be a list for jewelry and multi part armor?
 derived dice stat for attack and defend dice, add dice together with Dice bonuses for items (and effects/skills)
     - all heavy weapons just have the Dice(4) bonus to attack
+    - refactor adding bonus dict of dice, instead add "remarks"/sources to the dice themselves and the get_boni() directly returns Dice.
+    - Add dice source remarks into the roll for clarity?
 jewelry (wearable item with bonuses)
 indicate into embed field in sheet which item is main/off (dual wield or shield) and worn. emojis? but no armor emoji. Just use :shirt: and :ring: for accesories
 use command: switch item main/offhand if appropriate, also wear armor. (3 ap?) maybe just use and also costs ap to use whatever or usable item in inventory is activated. may cost ap if destination is not empty

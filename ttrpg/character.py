@@ -142,6 +142,25 @@ class Character(object):
         self['ap'].reset()
         self.effects=[e for e in self.effects if e.turn()]
 
+    def attack_dice(self, nr=0):
+        result = Dice.for_ability(self.physical)
+        # TODO: add personal attack bonus (or penalty for subsequent attacks)
+        if nr == 1:   # check for dual wielding
+            if weapon:=self.off_hand():
+                result += weapon.bonus()
+            elif nr:
+                result += nr*-2
+        else:
+            if weapon:=self.main_hand():
+                result += weapon.bonus()
+            if nr:
+                result += nr*-2
+        return result
+
+    def mental_dice(self):
+        # TODO: refactor getting different attack dice with the right boni
+        return  Dice.for_ability(self.mental)
+
     def attack(self, target=None, attack_dice=None):
         self._act()
         if attack_dice is None:
@@ -232,21 +251,6 @@ class Character(object):
         self._check_cost(cost)
         self._cost(cost)
 
-    def attack_dice(self, nr=0, bonus=None):
-        result = Dice.for_ability(self.physical)
-        if nr == 1:   # check for dual wielding
-            if weapon:=self.off_hand():
-                result += weapon.bonus()
-            elif nr:
-                result += nr*-2
-        else:
-            if weapon:=self.main_hand():
-                result += weapon.bonus()
-            if nr:
-                result += nr*-2
-        if bonus is not None:
-            result+=bonus
-        return result
 
     def bodyweight(self):
         return self.size.weight

@@ -168,7 +168,7 @@ class GameCommands(commands.Cog):
         else:
             target_name, target = "", None
         if target:
-            result = attacker.attack(target, attacker.attack_dice(0, bonus))
+            result = attacker.attack(target, attacker.attack_dice(0) + bonus)
             self.db.store(ctx.guild, owner, target)
             self.db.store(ctx.guild, ctx.author, attacker)
             if result.hit():
@@ -176,7 +176,7 @@ class GameCommands(commands.Cog):
             else:
                 await ctx.send(f"**{attacker.Name()}** attacks {target.Name()}: {result}.")
         else:
-            result = attacker.attack(None, attacker.attack_dice(0, bonus))
+            result = attacker.attack(None, attacker.attack_dice(0) + bonus)
             self.db.store(ctx.guild, ctx.author, attacker)
             await ctx.send(f"**{attacker.Name()}** attacks: {result}.")
         await ctx.message.delete()
