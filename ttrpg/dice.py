@@ -42,6 +42,12 @@ class Dice(object):
         self.dice = list(d for d in dice if abs(d) > 1)
         self.flat = list(bonus) + list(d for d in dice if abs(d) <= 1)
 
+    fixed = None
+    @staticmethod
+    def fix(amount):
+        amount, Dice.fixed = Dice.fixed, amount
+        return amount
+
     def __add__(self, other):
         if other is None:
             return self.copy()
@@ -78,7 +84,16 @@ class Dice(object):
             return '0'
 
     def roll(self):
-        return roll(str(self), stringifier=Stringifier())
+        if Dice.fixed is None:
+            return roll(str(self), stringifier=Stringifier())
+        else:
+            value = Dice.fixed
+            if value == 'min':
+                value = self.minimum()
+            elif value == 'max':
+                value = self.maximum()
+            return roll(f"{value}", stringifier=Stringifier())
+
 
     def minimum(self):
         return len([d for d in self.dice])+sum(self.flat)

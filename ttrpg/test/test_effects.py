@@ -37,4 +37,4 @@ def test_level_drain():
 def test_brain_drain():
     c=Character(mental=2)
     c.affect(Effect("drain", None, dict(mental=dict(drained=-2))))
-    assert c.sp == 0
+    assert c.pp == 0

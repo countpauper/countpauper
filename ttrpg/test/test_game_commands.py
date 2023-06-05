@@ -110,7 +110,7 @@ async def test_sheet(db, ctx):
     assert f"**Social:** {c.social}" in embed.description
     assert f"**HP:** {c.hp}" in embed.description
     assert f"**MP:** {c.mp}" in embed.description
-    assert f"**SP:** {c.sp}" in embed.description
+    assert f"**PP:** {c.pp}" in embed.description
     assert embed.thumbnail.url is None
     assert embed.fields[0].name == f"Inventory [2/{c.capacity()}]"
     assert embed.fields[0].value == "Practice sword\nGambeson"

@@ -10,7 +10,7 @@ def test_create_db(db):
 
 def test_character_stats(db):
     c = Character(name="foo", level=2, mental=3, social=4, physical=5)
-    c.hp, c.sp, c.mp, c.ap = 4, 1, 2, 0
+    c.hp, c.pp, c.mp, c.ap = 4, 1, 2, 0
     db.store("guild", "user", c)
     restored = db.retrieve("guild", "user", "foo")
     assert id(c) != id(restored)
@@ -21,7 +21,7 @@ def test_character_stats(db):
     assert restored.physical == c.physical
     assert restored.hp == c.hp
     assert restored.mp == c.mp
-    assert restored.sp == c.sp
+    assert restored.pp == c.pp
     assert restored.ap == c.ap
     assert restored.portrait is None
     assert restored.color is None

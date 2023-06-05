@@ -8,7 +8,7 @@ class Skill(object):
     all = []
 
     def __init__(self):
-        self.cost = dict(ap=1)  # could be hp,sp,mp,ap or even gp
+        self.cost = dict(ap=1)  # could be hp,pp,mp,ap or even gp
 
     @staticmethod
     def name(cls):
@@ -34,7 +34,7 @@ class Skill(object):
 class CrossCut(Skill):
     """Attack with two weapons simultaneously. Their attack dice are added."""
     def __init__(self):
-        self.cost = dict(ap=1, sp=1)
+        self.cost = dict(ap=1, pp=1)
 
     def __call__(self, *args, **kwargs):
         args = list(args)
@@ -84,7 +84,7 @@ class Disarm(Skill):
 class Explosion(Skill):
     """Hit everyone in the same location with an elemental attack."""
     def __init__(self):
-        self.cost = dict(ap=1, sp=3)
+        self.cost = dict(ap=1, pp=3)
 
     def __call__(self, *args, **kwargs):
         args = list(args)
@@ -96,10 +96,10 @@ class Explosion(Skill):
                 save_roll = target.physical_dice().roll()
                 if (damage :=damage_roll.total-save_roll.total) > 0:
                     target.damage(damage)
-                    target_result.append(f"{target.Name()}[{target['hp']}] hit ({save_roll}) for {damage} damage")
+                    target_result.append(f"{target.Name()} [{target['hp']}] hit ({save_roll}) for {damage} damage")
                 else:
                     target_result.append(f"{target.Name()} evades ({save_roll})")
-        return f"explodes {damage_roll} {list_off(target_result)}"
+        return "\n  ".join([f"explodes ({damage_roll})"] + target_result)
 
 Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion]
 

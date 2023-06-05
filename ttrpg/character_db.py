@@ -6,7 +6,7 @@ import sqlite3
 import json
 
 class CharacterDB(object):
-    persistent_stats = ['name', 'color', 'portrait', 'level', 'physical', 'mental', 'social', 'hp', 'sp', 'mp', 'ap']
+    persistent_stats = ['name', 'color', 'portrait', 'level', 'physical', 'mental', 'social', 'hp', 'pp', 'mp', 'ap']
 
     def __init__(self, filename="ttrpg.db"):
         self.connection = sqlite3.connect(filename)

@@ -42,7 +42,7 @@ class Character(object):
     mental = Ability("mental")
     social = Ability("social")
     hp = CounterStat('hp')
-    sp = CounterStat('sp')
+    pp = CounterStat('pp')
     mp = CounterStat('mp')
     ap = CounterStat('ap')
     defense = Stat("defense")
@@ -66,8 +66,8 @@ class Character(object):
         self.stats = {stat:kwargs.get(stat, value) for stat, value in self.stats.items()}
         self.stats['hp'] = Counter(self.max_hp())
         self.hp = kwargs.get('hp', self.hp)
-        self.stats['sp'] = Counter(self.max_sp())
-        self.sp = kwargs.get('sp', self.sp)
+        self.stats['pp'] = Counter(self.max_pp())
+        self.pp = kwargs.get('pp', self.pp)
         self.stats['mp'] = Counter(self.max_mp())
         self.mp = kwargs.get('mp', self.mp)
         self.stats['ap'] = Counter(self.default_ap)
@@ -96,8 +96,8 @@ class Character(object):
     def max_hp(self):
         return self.default_hp + self.level + sum(self.get_boni('hp').values())
 
-    def max_sp(self):
-        return self.mental + sum(self.get_boni('sp').values())
+    def max_pp(self):
+        return self.mental + sum(self.get_boni('pp').values())
 
     def max_mp(self):
         return self.social + sum(self.get_boni('mp').values())
@@ -108,17 +108,20 @@ class Character(object):
     def alive(self):
         return bool(self.hp) and bool(self.level)
 
-    def moralized(self):
+    def motivated(self):
         return bool(self.mp)
 
+    def powerful(self):
+        return bool(self.pp)
+
     def active(self):
-        return self.alive() and self.moralized()
+        return self.alive() and self.motivated()
 
     def get_max(self, stat):
         if stat=='hp':
             return self.max_hp()
-        elif stat=='sp':
-            return self.max_sp()
+        elif stat=='pp':
+            return self.max_pp()
         elif stat=='mp':
             return self.max_mp()
         elif stat=='ap':
@@ -230,8 +233,8 @@ class Character(object):
         errors = []
         if (ap:=cost.get('ap')) and self.ap < ap:
             errors.append(f"you need {ap} {plural(ap, 'action')}, but you have {self['ap']}")
-        if (sp:=cost.get('sp')) and self.sp < sp:
-            errors.append(f"you need {sp} power, but you have {self['sp']}")
+        if (pp:=cost.get('pp')) and self.pp < pp:
+            errors.append(f"you need {pp} power, but you have {self['pp']}")
         if (mp:=cost.get('mp')) and self.mp < mp:
             errors.append(f"you need {mp} morale, but you have {self['mp']}")
         # TODO: allow this? is going to 0 then allowed?
@@ -244,8 +247,8 @@ class Character(object):
     def _cost(self, cost):
         if ap:=cost.get('ap'):
             self.ap -= ap
-        if sp:=cost.get('sp'):
-            self.sp -= sp
+        if pp:=cost.get('pp'):
+            self.pp -= pp
         if mp:=cost.get('mp'):
             self.mp -= mp
         if hp:=cost.get('hp'):
@@ -336,7 +339,7 @@ class Character(object):
     def __str__(self):
         return f"""{self.name}: Level {self.level}
     {self.physical} Physical: {self['hp']} HP
-    {self.mental} Mental: {self['sp']} SP
+    {self.mental} Mental: {self['pp']} PP
     {self.social} Social: {self['mp']} MP
     Defense {self.defense_dice()} Attack {self.attack_dice()}
     Inventory[{self.carried()}/{self.capacity()}]: {list_off(self.inventory) or "Empty"} 

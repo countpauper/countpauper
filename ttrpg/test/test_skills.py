@@ -29,7 +29,7 @@ def test_crosscut():
     c = Character(physical=2, mental=1, inventory=[MeleeWeapon(name='dagger')])
     t = Character(physical=0, name='target')
     skill = CrossCut()
-    assert skill.cost == dict(ap=1, sp=1)
+    assert skill.cost == dict(ap=1, pp=1)
     with pytest.raises(GameError):  # need to dual wield
         skill(c, t)
     c.obtain(MeleeWeapon(name='axe'))
@@ -38,15 +38,21 @@ def test_crosscut():
     assert re.match(r"crosscuts Target\: 2d4 \(\d, \d\) = \d VS 1 hits for \d damage.", result)
 
 
-def test_explosion():
+def test_explosion_resist(dice_min):
     c = Character(mental=3, inventory=[MeleeWeapon(name='dagger')])
     t = [Character(level=2, physical=0, name=f'target_{idx}') for idx in range(2)]
     skill = Explosion()
-    assert skill.cost == dict(ap=1, sp=3)
+    assert skill.cost == dict(ap=1, pp=3)
     result = skill(c, *t)
-    assert re.match(r"explodes 1d\d \(\d\) = \d Target_0( evades \(\d\))?(\[\d\/6\] hit \(\d\) for \d damage)?, and Target_1", result)
-    if 'hit' in result:
-        assert t[0].hp < t[0].max_hp()
-        assert t[0].hp == t[1].hp
-    else:
-        assert t[0].hp == t[0].max_hp()
+    assert result == f"explodes (1)\n  Target_0 evades (1)\n  Target_1 evades (1)"
+    assert t[0].hp == t[0].max_hp()
+
+def test_explosion_hit(dice_max):
+    c = Character(mental=3, inventory=[MeleeWeapon(name='dagger')])
+    t = [Character(level=1, physical=idx, name=f'target_{idx}') for idx in range(2)]
+    skill = Explosion()
+    assert skill.cost == dict(ap=1, pp=3)
+    result = skill(c, *t)
+    assert result == "explodes (6)\n  Target_0 [0/5] hit (1) for 5 damage\n  Target_1 [1/5] hit (2) for 4 damage"
+    assert t[0].hp == 0
+    assert t[1].hp == 1

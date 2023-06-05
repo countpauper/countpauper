@@ -28,7 +28,7 @@ class GameCommands(commands.Cog):
     def embed_sheet(c):
         description=f"""**Level:** {c.level}
     **Physical:** {c.physical}, **HP:** {c.hp}
-    **Mental:** {c.mental}, **SP:** {c.sp}
+    **Mental:** {c.mental}, **PP:** {c.pp}
     **Social:** {c.social}, **MP:** {c.mp}
     **Attack:** {c.attack_dice()} **Defense:** {c.defense_dice()}"""
 

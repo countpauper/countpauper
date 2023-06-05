@@ -1,6 +1,7 @@
 import pytest
 from character_db import CharacterDB
 import os
+from dice import Dice
 
 @pytest.fixture
 def db():
@@ -13,3 +14,15 @@ def db():
     char_db.close()
     del char_db
     os.remove(fn)
+
+@pytest.fixture
+def dice_min():
+    original = Dice.fix('min')
+    yield
+    Dice.fix(original)
+
+@pytest.fixture
+def dice_max():
+    original = Dice.fix('max')
+    yield
+    Dice.fix(original)

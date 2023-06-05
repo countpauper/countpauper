@@ -23,13 +23,13 @@ def test_specific_abilities():
 
 def test_max_points():
     assert Character(level=1, physical=3).max_hp() == 5
-    assert Character(mental=5).max_sp() == 5
+    assert Character(mental=5).max_pp() == 5
     assert Character(social=6).max_mp() == 6
 
 
 def test_specific_points():
     assert Character(hp=1).hp == 1
-    assert Character(sp=0).sp == 0
+    assert Character(pp=0).pp == 0
     assert Character(social=4, mp=2).mp == 2
 
 
@@ -43,7 +43,8 @@ def test_default_flavour():
 def test_status():
     c = Character()
     assert c.alive()
-    assert c.moralized()
+    assert c.motivated()
+    assert c.powerful()
     assert c.active()
     c.damage(c.hp)
     assert not c.alive()
@@ -81,7 +82,7 @@ def test_str():
                          inventory=[MeleeWeapon(name="testsword"),Shield()],
                          skill=["parry", CrossCut])) == """Foo: Level 2
     5 Physical: 2/6 HP
-    3 Mental: 3/3 SP
+    3 Mental: 3/3 PP
     1 Social: 1/1 MP
     Defense 1d10 Attack 1d10
     Inventory[2/5]: testsword and shield 

@@ -14,22 +14,25 @@ initial skills
     [done] random skill assignment
     [done] execute skill command
     [done] execute targeted skill and persist targets
+    [done] find a way to inject d20 roll results into unit tests to make the ability tweaking less finicky and results more predictable
+        [done] Try to override roller in dice with a minimum/maximum result (default is to call roll). preferably as a fixture that sets it back
+
     - two skill each for physical, mental, social (parry, crosscut done.
-        - Explosion (mental attack to all, elemental dmg. Does it ignore armor?)
+        [done] Explosion (mental attack to all, elemental dmg. Does it ignore armor?)
         - scare (mental damage vs social save, morale dmg)
         - familiar (summon. can be in combat? create in db. Keep it simple. Use one mp, it stays until the next rest)
         - harmony (1 defense to targets, max targets is social score)
-    - assign random skills based on stat balance (one of matching ability for each stat over ~2)
+    - assign random skills based on primary stat IF available points to use at least once  (one of matching ability for each stat over ~2)
     - return embedable data from skills, attack
-    - monster skills (sets for each type, eg beast, dragon, undead?)
+    - generate monster with skills (sets for each type, eg beast, dragon, undead?)
+        - pounce (aka charge, damage bonus depends on ... size? physical that's double)
     - One AoE attack and test command for some characters known, some not known
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
-rest command (resets hp, sp mp and ap and clears all effects with durations)
+rest command (resets hp, pp mp and ap and clears all effects with durations)
 level up command, argument is ability to raise
 some command to enter/exit combat so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.
 [done] organize commands in cogs (well, mostly game cog)
-find a way to inject d20 roll results into unit tests
 partial matching for taking and dropping items
 partial matching for finding database characters
 Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handling
