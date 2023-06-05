@@ -2,6 +2,7 @@ from items import *
 from dice import Dice
 from stats import *
 from skills import Skill
+from ability import Physical, Mental, Social
 from effect import Effect
 from errors import GameError
 from language import plural, list_off
@@ -118,13 +119,13 @@ class Character(object):
         return self.alive() and self.motivated()
 
     def get_max(self, stat):
-        if stat=='hp':
+        if stat == 'hp':
             return self.max_hp()
-        elif stat=='pp':
+        elif stat == 'pp':
             return self.max_pp()
-        elif stat=='mp':
+        elif stat == 'mp':
             return self.max_mp()
-        elif stat=='ap':
+        elif stat == 'ap':
             return self.max_ap()
         else:
             raise ValueError(f"Unknown counter {stat}")
@@ -149,23 +150,31 @@ class Character(object):
         self.effects=[e for e in self.effects if e.turn()]
 
     def attack_dice(self, nr=0):
-        result = Dice.for_ability(self.physical)
+        result = self.ability_dice(Physical)
         # TODO: add personal attack bonus (or penalty for subsequent attacks)
         if nr == 1:   # check for dual wielding
-            if weapon:=self.off_hand():
+            if weapon := self.off_hand():
                 result += weapon.bonus()
             elif nr:
                 result += nr*-2
         else:
-            if weapon:=self.main_hand():
+            if weapon := self.main_hand():
                 result += weapon.bonus()
             if nr:
                 result += nr*-2
         return result
 
-    def mental_dice(self):
-        # TODO: refactor getting different attack dice with the right boni
-        return  Dice.for_ability(self.mental)
+    def ability(self, ability):
+        if ability == Physical:
+            return self.physical
+        if ability == Mental:
+            return self.mental
+        if ability == Social:
+            return self.social
+        raise ValueError(f"Unknown ability {ability}")
+
+    def ability_dice(self, ability):
+        return Dice.for_ability(self.ability(ability))
 
     def attack(self, target=None, attack_dice=None):
         self._act()
@@ -207,6 +216,8 @@ class Character(object):
     def execute(self, skill, *targets):
         if s := self._find_skill(skill):
             self._check_cost(s.cost)
+            if not (ability_score:=self.ability(s.ability)):
+                raise GameError(f"Your {s.ability.name} is too low ({ability_score}) to {skill}.")
             response = s(self, *targets)
             self._cost(s.cost)
             return response
@@ -216,8 +227,6 @@ class Character(object):
     def affect(self, effect, unique=False):
         if unique and (duplicates := self.affected(effect.name)):
             raise GameError(f"You are already affected by {duplicates[0]}.")
-
-        # TODO: check for duplicates/conflicts
         # TODO create Effect from args? what if there are Effect types?
         self.effects.append(effect)
 

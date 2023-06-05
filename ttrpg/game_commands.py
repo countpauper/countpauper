@@ -1,7 +1,7 @@
 from character import Character
 from generate_character import random_character
 from errors import CharacterUnknownError
-from skills import Skill
+from ability import Physical, Mental, Social
 from character_db import CharacterDB
 from discord.ext import commands
 from language import list_off
@@ -27,9 +27,9 @@ class GameCommands(commands.Cog):
     @staticmethod
     def embed_sheet(c):
         description=f"""**Level:** {c.level}
-    **Physical:** {c.physical}, **HP:** {c.hp}
-    **Mental:** {c.mental}, **PP:** {c.pp}
-    **Social:** {c.social}, **MP:** {c.mp}
+    **Physical:** {c.physical} [{c.ability_dice(Physical)}], **HP:** {c.hp}
+    **Mental:** {c.mental} [{c.ability_dice(Mental)}], **PP:** {c.pp}
+    **Social:** {c.social} [{c.ability_dice(Social)}], **MP:** {c.mp}
     **Attack:** {c.attack_dice()} **Defense:** {c.defense_dice()}"""
 
         embed = discord.Embed(title=c.Name(),

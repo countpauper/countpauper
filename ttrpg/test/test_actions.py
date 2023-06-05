@@ -1,9 +1,11 @@
 from character import Character
-from items import Shield
+from items import Shield, MeleeWeapon
 from errors import GameError
+from skills import Parry
 from dice import Dice
 import pytest
 import re
+
 
 def test_turn():
     c = Character()
@@ -40,7 +42,6 @@ def test_attack_no_ap():
         attacker.attack()
 
 
-
 def test_cover():
     c = Character(physical=2, inventory=[Shield()])
     c.auto_equip()
@@ -51,3 +52,23 @@ def test_cover():
     with pytest.raises(GameError):
         c.cover()
     assert c.ap == 2
+
+
+def test_execute_skill():
+    c = Character(skill=[Parry], inventory=[MeleeWeapon(name="sword")])
+    result = c.execute(Parry)
+    assert c.affected('parry')
+    assert c.ap == 2
+    assert result == f"""parries with a sword"""
+
+
+def test_unknown_skill():
+    c=Character(skill=[Parry])
+    with pytest.raises(GameError):
+        result = c.execute("knit")
+
+
+def test_skill_ability_0():
+    c = Character(physical=0, skill=[Parry])
+    with pytest.raises(GameError):
+        c.execute(Parry)

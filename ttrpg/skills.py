@@ -1,5 +1,6 @@
 from items import *
 from effect import Effect
+from ability import Physical, Mental, Social
 from errors import GameError
 from language import camel_to_words, indefinite_article, list_off
 
@@ -31,10 +32,13 @@ class Skill(object):
     def __str__(self):
         return self.name(self.__class__)
 
+
 class CrossCut(Skill):
     """Attack with two weapons simultaneously. Their attack dice are added."""
     def __init__(self):
         self.cost = dict(ap=1, pp=1)
+        self.ability = Physical
+        self.offensive = True
 
     def __call__(self, *args, **kwargs):
         args = list(args)
@@ -44,16 +48,19 @@ class CrossCut(Skill):
             if args:
                 target = args.pop(0)
                 result = actor.attack(target, attack_dice)
-                return f"crosscuts {target.Name()}: {result}."
+                return f"crosscuts {target.Name()}: {result} [{target['hp']}]"
             else:
                 return f"crosscuts {attack_dice.roll()}"
         else:   # TODO: specific exception types for skill preconditions
             raise GameError("You must be wielding two melee weapons.")
 
+
 class Parry(Skill):
     """Protect yourself against melee attacks with your weapons. """
     def __init__(self):
         self.cost = dict(ap=1)
+        self.ability = Physical
+        self.offensive = False
 
     def __call__(self, *args, **kwargs):
         actor = args[0]
@@ -66,40 +73,77 @@ class Parry(Skill):
 
 
 class Riposte(Skill):
-    """After a missed attack while parrying, react with a counter attack."""
-    pass
+    """Prepare to hit with a counter attack, at full strength, after a missed attac."""
+    def __init__(self):
+        self.cost = dict(ap=1)
+        self.ability = Physical
+        self.offensive = True
 
 class Backstab(Skill):
-    """Roll an extra 1d6 damage against a character who can't see you."""
-    pass
+    """Attack with a 1d6 bonus against a character who is not engaged or covered."""
+    def __init__(self):
+        self.cost = dict(ap=1)
+        self.ability = Physical
+        self.offensive = True
 
 class Flank(Skill):
     """Attack with a bonus against an enemy that is engaged by someone else."""
-    pass
+    def __init__(self):
+        self.cost = dict(ap=1)
+        self.ability = Physical
+        self.offensive = True
 
 class Disarm(Skill):
     """Ready a reaction to make someone drop their weapon after they miss you."""
-    pass
+    def __init__(self):
+        self.cost = dict(ap=1)
+        self.ability = Physical
+        self.offensive = True
 
 class Explosion(Skill):
     """Hit everyone in the same location with an elemental attack."""
     def __init__(self):
         self.cost = dict(ap=1, pp=3)
+        self.ability = Mental
+        self.offensive = True
 
     def __call__(self, *args, **kwargs):
         args = list(args)
         actor = args.pop(0)
-        damage_roll = actor.mental_dice().roll()
+        damage_roll = actor.ability_dice(Mental).roll()
         target_result=[]
         if targets:=args:
             for target in targets:
-                save_roll = target.physical_dice().roll()
-                if (damage :=damage_roll.total-save_roll.total) > 0:
+                save_roll = target.ability_dice(Physical).roll()
+                if (damage := damage_roll.total-save_roll.total) > 0:
                     target.damage(damage)
                     target_result.append(f"{target.Name()} [{target['hp']}] hit ({save_roll}) for {damage} damage")
                 else:
                     target_result.append(f"{target.Name()} evades ({save_roll})")
         return "\n  ".join([f"explodes ({damage_roll})"] + target_result)
 
-Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion]
+
+class Frighten(Skill):
+    """Scare someone into losing morale points. They can overcome with their mental strength."""
+    def __init__(self):
+        self.cost = dict(ap=1, pp=1)
+        self.ability = Social
+        self.offensive = True
+
+    def __call__(self, *args, **kwargs):
+        args = list(args)
+        actor = args.pop(0)
+        damage_roll = actor.ability_dice(Social).roll()
+        if args:
+            target = args.pop(0)
+            save_roll = target.ability_dice(Mental).roll()
+            if (damage := damage_roll.total-save_roll.total) > 0:
+                target.mp -= damage
+                return f"frightens {target.Name()}: {damage_roll} VS {save_roll} for {damage} morale [{target['mp']}]"
+            else:
+                return f"attempts to frighten {target.Name()}: {damage_roll} VS {save_roll}"
+        else:
+            return f"frightens ({damage_roll.roll()})"
+
+Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion, Frighten]
 

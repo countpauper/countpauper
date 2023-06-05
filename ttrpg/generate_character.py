@@ -55,13 +55,13 @@ def random_skills(character):
 def _level_up(stats, level=None):
     if level is None:
         level = stats['level']+1
-    available = (6+level) - sum(stats[ability] for ability in abilities)
+    available = (6+level) - sum(stats[ability.name] for ability in abilities)
     result = stats.copy()
     while available > 0:
         ability = random.choice(abilities)
         boost = available if available == 1 else random.randrange(1, available)
         available -= boost
-        result[ability] += boost
+        result[ability.name] += boost
 
     # TODO: random skills and magic items if allowed. No magical cloak bears please
     return result

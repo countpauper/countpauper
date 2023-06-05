@@ -25,7 +25,7 @@ def test_repeat_parry():
     c=Character(physical=2, inventory=[MeleeWeapon(name='spear', heavy=True)])
     skill = Parry()
 
-def test_crosscut():
+def test_crosscut(dice_max):
     c = Character(physical=2, mental=1, inventory=[MeleeWeapon(name='dagger')])
     t = Character(physical=0, name='target')
     skill = CrossCut()
@@ -35,7 +35,7 @@ def test_crosscut():
     c.obtain(MeleeWeapon(name='axe'))
     c.auto_equip()
     result = skill(c, t)
-    assert re.match(r"crosscuts Target\: 2d4 \(\d, \d\) = \d VS 1 hits for \d damage.", result)
+    assert result == f"crosscuts Target: 8 VS 1 hits for 7 damage [-2/5]"
 
 
 def test_explosion_resist(dice_min):
@@ -56,3 +56,11 @@ def test_explosion_hit(dice_max):
     assert result == "explodes (6)\n  Target_0 [0/5] hit (1) for 5 damage\n  Target_1 [1/5] hit (2) for 4 damage"
     assert t[0].hp == 0
     assert t[1].hp == 1
+
+def test_frighten(dice_max):
+    c = Character(social=3)
+    t = Character(mental=1, social=2, name='target')
+    skill = Frighten()
+    assert skill.cost == dict(ap=1, pp=1)
+    result = skill(c, t)
+    assert result == "frightens Target: 6 VS 2 for 4 morale [-2/2]"

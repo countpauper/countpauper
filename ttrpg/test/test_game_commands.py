@@ -7,7 +7,7 @@ from skills import Parry, Riposte, CrossCut
 from effect import Effect
 from discord.ext import commands
 import discord
-
+import re
 
 class AsyncMock(Mock):
     async def __call__(self, *args, **kwargs):
@@ -104,13 +104,8 @@ async def test_sheet(db, ctx):
     assert embed is not None
     assert embed.title == "Nemo"
     assert embed.color is None
-    assert "**Level:** 1" in embed.description
-    assert f"**Physical:** {c.physical}" in embed.description
-    assert f"**Mental:** {c.mental}" in embed.description
-    assert f"**Social:** {c.social}" in embed.description
-    assert f"**HP:** {c.hp}" in embed.description
-    assert f"**MP:** {c.mp}" in embed.description
-    assert f"**PP:** {c.pp}" in embed.description
+    assert re.match(r"\*\*Level:\*\* \d\n\s+\*\*Physical\:\*\* \d \[1d\d\], \*\*HP\:\*\* \d\n\s+\*\*Mental:\*\* \d \[1d\d\], \*\*PP\:\*\* \d\n\s+\*\*Social:\*\* \d \[1d\d\], \*\*MP:\*\* \d\n\s+\*\*Attack:\*\* 1d\d \*\*Defense:\*\* 1d\d\+1",
+                    embed.description)
     assert embed.thumbnail.url is None
     assert embed.fields[0].name == f"Inventory [2/{c.capacity()}]"
     assert embed.fields[0].value == "Practice sword\nGambeson"

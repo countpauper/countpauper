@@ -19,7 +19,8 @@ initial skills
 
     - two skill each for physical, mental, social (parry, crosscut done.
         [done] Explosion (mental attack to all, elemental dmg. Does it ignore armor?)
-        - scare (mental damage vs social save, morale dmg)
+        - scare (social damage vs mental save (or reversed? but that's illusion), morale dmg)
+        - heal: mental damage die hp healed (max hp is like 13 so 2d12 is a lot? how to power that up?)
         - familiar (summon. can be in combat? create in db. Keep it simple. Use one mp, it stays until the next rest)
         - harmony (1 defense to targets, max targets is social score)
     - assign random skills based on primary stat IF available points to use at least once  (one of matching ability for each stat over ~2)
@@ -29,7 +30,12 @@ initial skills
     - One AoE attack and test command for some characters known, some not known
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
-rest command (resets hp, pp mp and ap and clears all effects with durations)
+rest command (resets hp, p  p mp and ap and clears all effects with durations)
+Check if can attack or motivated enough to offend for skills
+Reimplement actions (attack, cover) as "Free Skills". Don't add them to skills, just attack() = execute(Attack(), targets, bonus). Derive SKill from Action? Any passive skill?
+    - make cover a mental skill, it requires 1 mental ability. Make it defensive.
+    - make attacking a None skill, it doesn't require >0 physical. Make it offensive of course. It requires motivation
+
 level up command, argument is ability to raise
 some command to enter/exit combat so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.
 [done] organize commands in cogs (well, mostly game cog)
