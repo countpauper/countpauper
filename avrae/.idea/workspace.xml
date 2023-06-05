@@ -5,36 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../Math/.idea/Math.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/chance/math.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/inventory/help.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/inventory/tales prices.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/price_range.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/tokens.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/misc/ttrpg_dice.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ttrpg/.idea/ttrpg.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ttrpg/ability.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ttrpg/character.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ttrpg/items.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ttrpg/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ttrpg/scripts/dice_math.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ttrpg/sizes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Math/Solvers/function.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Solvers/function.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Debug.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Debug.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tactics/Engine/from_string.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/from_string.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/custom item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/sane item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/sane item prices.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/treasure_table.json" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/treasure_table.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/cast_cc.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/cast_cc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/exhaustion.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/exhaustion.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/gem_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/gem_script.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/levelHd.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/levelHd.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/march.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/march.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/math.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/math.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/twilight.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/twilight.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state/hud.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/hud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ttrpg/language.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ttrpg/language.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ttrpg/test/test_language.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ttrpg/test/test_language.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

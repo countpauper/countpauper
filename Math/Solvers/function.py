@@ -1,4 +1,5 @@
 from math import sqrt
+import numpy as np
 
 class Function:
 	pass
@@ -61,11 +62,7 @@ class Polynomial(Function):
 		if type(v)==float or type(v)==int:
 			return Polynomial([c * v for c in self.coefficients])
 		if type(v) == Polynomial:
-			coefficients=[0]*(len(self)+len(v))
-			for os, cs in enumerate(self.coefficients):
-				for ov, cv in enumerate(v.coefficients):
-					coefficients[os+ov] += cs * cv
-			return Polynomial(coefficients)
+			return Polynomial(np.convolve(self.coefficients, v.coefficients))
 		raise TypeError(type(v).__name__ + "is an invalid type to multiply a polynomial with")
 
 	def __pow__(self, n):
@@ -169,6 +166,7 @@ assert(Polynomial(1)-3 == Polynomial(-2))
 assert(Polynomial(1, 3) - Polynomial(1) == Polynomial(1,2))
 assert(Polynomial(2, 1)*-2.0 == Polynomial(-4, -2))
 assert(Polynomial(2, 1)**2.0 == Polynomial(4, 4, 1))
+assert(Polynomial(1, 2, 3)*Polynomial(4, 5) == Polynomial(4, 13, 22, 15))
 assert(Polynomial(2, 1)(Polynomial(3,2)) == Polynomial(6,5))
 assert(Polynomial(5).solve(4) == {})
 assert(Polynomial(3, -2).solve(7) == {3})

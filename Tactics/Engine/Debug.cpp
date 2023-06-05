@@ -28,8 +28,8 @@ void Log(std::wstring_view txt)
     }
     else
     {
-        OutputDebugString(txt.data());
-        OutputDebugString(L"\n");
+        OutputDebugStringW(txt.data());
+        OutputDebugStringW(L"\n");
     }
 }
 
