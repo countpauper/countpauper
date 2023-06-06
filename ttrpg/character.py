@@ -65,13 +65,13 @@ class Character(object):
         )
         self.user = kwargs.get('user')
         self.stats = {stat:kwargs.get(stat, value) for stat, value in self.stats.items()}
-        self.stats['hp'] = Counter(self.max_hp())
+        self.stats['hp'] = Counter(lambda: self.max_hp())
         self.hp = kwargs.get('hp', self.hp)
-        self.stats['pp'] = Counter(self.max_pp())
+        self.stats['pp'] = Counter(lambda: self.max_pp())
         self.pp = kwargs.get('pp', self.pp)
-        self.stats['mp'] = Counter(self.max_mp())
+        self.stats['mp'] = Counter(lambda: self.max_mp())
         self.mp = kwargs.get('mp', self.mp)
-        self.stats['ap'] = Counter(self.default_ap)
+        self.stats['ap'] = Counter(lambda: self.default_ap)
         self.ap = kwargs.get('ap', self.ap)
 
         self.skill = [Skill.create(s) for s in kwargs.get('skill', [])]
@@ -235,20 +235,19 @@ class Character(object):
 
     def damage(self, dmg):
         if dmg:
-            hp = self.hp - int(dmg)
-            self.hp = hp
+            self.hp -= int(dmg)
 
     def _check_cost(self, cost):
         errors = []
         if (ap:=cost.get('ap')) and self.ap < ap:
-            errors.append(f"you need {ap} {plural(ap, 'action')}, but you have {self['ap']}")
+            errors.append(f"you need {ap} {plural(ap, 'action')}, but you have {self.ap}")
         if (pp:=cost.get('pp')) and self.pp < pp:
-            errors.append(f"you need {pp} power, but you have {self['pp']}")
+            errors.append(f"you need {pp} power, but you have {self.pp}")
         if (mp:=cost.get('mp')) and self.mp < mp:
-            errors.append(f"you need {mp} morale, but you have {self['mp']}")
+            errors.append(f"you need {mp} morale, but you have {self.mp}")
         # TODO: allow this? is going to 0 then allowed?
         if (hp:=cost.get('hp')) and self.hp < hp:
-            errors.append(f"you need {hp} health, but you have {self['hp']}")
+            errors.append(f"you need {hp} health, but you have {self.hp}")
         if errors:
             raise GameError(list_off(errors).capitalize()+".")
         return cost
@@ -347,9 +346,9 @@ class Character(object):
 
     def __str__(self):
         return f"""{self.name}: Level {self.level}
-    {self.physical} Physical: {self['hp']} HP
-    {self.mental} Mental: {self['pp']} PP
-    {self.social} Social: {self['mp']} MP
+    {self.physical} Physical: {self.hp} HP
+    {self.mental} Mental: {self.pp} PP
+    {self.social} Social: {self.mp} MP
     Defense {self.defense_dice()} Attack {self.attack_dice()}
     Inventory[{self.carried()}/{self.capacity()}]: {list_off(self.inventory) or "Empty"} 
     Skills: {list_off(self.skill)}"""

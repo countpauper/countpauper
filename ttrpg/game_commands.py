@@ -173,7 +173,7 @@ class GameCommands(commands.Cog):
             self.db.store(ctx.guild, owner, target)
             self.db.store(ctx.guild, ctx.author, attacker)
             if result.hit():
-                await ctx.send(f"**{attacker.Name()}** attacks {target.Name()} [{target['hp']}]: {result}.")
+                await ctx.send(f"**{attacker.Name()}** attacks {target.Name()} [{target.hp}]: {result}.")
             else:
                 await ctx.send(f"**{attacker.Name()}** attacks {target.Name()}: {result}.")
         else:

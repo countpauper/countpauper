@@ -7,6 +7,8 @@ def test_parry():
     c=Character(physical=2, inventory=[])
     skill = Parry()
     assert skill.cost == dict(ap=1)
+    assert skill.ability == Physical
+    assert not skill.offensive
     with pytest.raises(GameError):  # need a weapon
         skill(c)
     c.obtain(MeleeWeapon(name='spear', heavy=True))
@@ -25,7 +27,13 @@ def test_repeat_parry():
     c=Character(physical=2, inventory=[MeleeWeapon(name='spear', heavy=True)])
     skill = Parry()
 
-def test_crosscut(dice_max):
+def test_crosscut():
+    skill = CrossCut()
+    assert skill.cost == dict(ap=1, pp=1)
+    assert skill.ability == Physical
+    assert skill.offensive
+
+def test_crosscut_hit(dice_max):
     c = Character(physical=2, mental=1, inventory=[MeleeWeapon(name='dagger')])
     t = Character(physical=0, name='target')
     skill = CrossCut()
@@ -35,14 +43,18 @@ def test_crosscut(dice_max):
     c.obtain(MeleeWeapon(name='axe'))
     c.auto_equip()
     result = skill(c, t)
-    assert result == f"crosscuts Target: 8 VS 1 hits for 7 damage [-2/5]"
+    assert result == f"crosscuts Target: 8 VS 1 hits for 7 damage [0/5]"
 
+def test_explosion():
+    skill = Explosion()
+    assert skill.cost == dict(ap=1, pp=3)
+    assert skill.ability == Mental
+    assert skill.offensive
 
 def test_explosion_resist(dice_min):
     c = Character(mental=3, inventory=[MeleeWeapon(name='dagger')])
     t = [Character(level=2, physical=0, name=f'target_{idx}') for idx in range(2)]
     skill = Explosion()
-    assert skill.cost == dict(ap=1, pp=3)
     result = skill(c, *t)
     assert result == f"explodes (1)\n  Target_0 evades (1)\n  Target_1 evades (1)"
     assert t[0].hp == t[0].max_hp()
@@ -62,5 +74,18 @@ def test_frighten(dice_max):
     t = Character(mental=1, social=2, name='target')
     skill = Frighten()
     assert skill.cost == dict(ap=1, pp=1)
+    assert skill.ability == Social
+    assert skill.offensive
     result = skill(c, t)
-    assert result == "frightens Target: 6 VS 2 for 4 morale [-2/2]"
+    assert result == "frightens Target: 6 VS 2 for 4 morale [0/2]"
+
+def test_heal(dice_max):
+    c = Character(mental=2)
+    t = Character(name='target', hp=2)
+    skill = Heal()
+    assert skill.cost == dict(ap=1, pp=1)
+    assert skill.ability == Mental
+    assert not skill.offensive
+    result = skill(c, t)
+    assert result == "heals Target: for 4 health [5/5]"
+    assert t.hp == 5

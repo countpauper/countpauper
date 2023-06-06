@@ -10,6 +10,7 @@ import re
 def test_turn():
     c = Character()
     c.ap=0
+    assert not c.ap
     c.turn()
     assert c.ap == c.max_ap()
 

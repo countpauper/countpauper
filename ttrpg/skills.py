@@ -48,7 +48,7 @@ class CrossCut(Skill):
             if args:
                 target = args.pop(0)
                 result = actor.attack(target, attack_dice)
-                return f"crosscuts {target.Name()}: {result} [{target['hp']}]"
+                return f"crosscuts {target.Name()}: {result} [{target.hp}]"
             else:
                 return f"crosscuts {attack_dice.roll()}"
         else:   # TODO: specific exception types for skill preconditions
@@ -117,7 +117,7 @@ class Explosion(Skill):
                 save_roll = target.ability_dice(Physical).roll()
                 if (damage := damage_roll.total-save_roll.total) > 0:
                     target.damage(damage)
-                    target_result.append(f"{target.Name()} [{target['hp']}] hit ({save_roll}) for {damage} damage")
+                    target_result.append(f"{target.Name()} [{target.hp}] hit ({save_roll}) for {damage} damage")
                 else:
                     target_result.append(f"{target.Name()} evades ({save_roll})")
         return "\n  ".join([f"explodes ({damage_roll})"] + target_result)
@@ -139,11 +139,29 @@ class Frighten(Skill):
             save_roll = target.ability_dice(Mental).roll()
             if (damage := damage_roll.total-save_roll.total) > 0:
                 target.mp -= damage
-                return f"frightens {target.Name()}: {damage_roll} VS {save_roll} for {damage} morale [{target['mp']}]"
+                return f"frightens {target.Name()}: {damage_roll} VS {save_roll} for {damage} morale [{target.mp}]"
             else:
                 return f"attempts to frighten {target.Name()}: {damage_roll} VS {save_roll}"
         else:
             return f"frightens ({damage_roll.roll()})"
 
-Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion, Frighten]
+class Heal(Skill):
+    """Heal someone, restoring their health by your mental ability dice."""
+    def __init__(self):
+        self.cost = dict(ap=1, pp=1)
+        self.ability = Mental
+        self.offensive = False
+
+    def __call__(self, *args, **kwargs):
+        args = list(args)
+        actor = args.pop(0)
+        heal_roll = actor.ability_dice(Mental).roll()
+        if args:
+            target = args.pop(0)
+            target.hp += heal_roll.total
+            return f"heals {target.Name()}: for {heal_roll} health [{target.hp}]"
+        else:
+            return f"heals ({heal_roll.roll()})"
+
+Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion, Frighten, Heal]
 
