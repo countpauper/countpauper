@@ -1,7 +1,8 @@
 from character import Character
 from items import MeleeWeapon, RangedWeapon, Shield, Armor, Equipment
 from errors import GameError
-from skills import Parry, CrossCut
+from skills import Parry, CrossCut, Heal
+from ability import *
 from dice import Dice
 import pytest
 
@@ -78,15 +79,15 @@ def test_auto_equip():
 
 
 def test_str():
-    assert str(Character(name='Foo', level=2, physical=5, mental=3, hp=2,
-                         inventory=[MeleeWeapon(name="testsword"),Shield()],
-                         skill=["parry", CrossCut])) == """Foo: Level 2
-    5 Physical: 2/6 HP
+    assert str(Character(name='Foo', level=3, physical=5, mental=3, hp=2,
+                         inventory=[MeleeWeapon(name="test sword"),Shield()],
+                         skill=["parry", CrossCut])) == """Foo: Level 3
+    5 Physical: 2/7 HP
     3 Mental: 3/3 PP
     1 Social: 1/1 MP
     Defense 1d10 Attack 1d10
-    Inventory[2/5]: testsword and shield 
-    Skills: parry and cross cut"""
+    Inventory [2/5]: test sword, and shield 
+    Skills [2/3]: parry and cross cut"""
 
 def test_obtain():
     c = Character(physical=2)
@@ -116,3 +117,26 @@ def test_cant_lose():
     assert c.carried() == 1
     assert c.main_hand().name == "practice"
 
+def test_level_up():
+    c=Character(physical=2,mental=1, social=3)
+    c.level_up(Social)
+    assert c.social  == 4
+    assert c.level == 2
+    c.level_up(Mental)
+    assert c.mental == 2
+    c.level_up("physical")
+    assert c.physical == 3
+    assert c.level == 4
+    assert c.hp == 8
+    with pytest.raises(ValueError):
+        c.level_up("cheese")
+
+def test_learn():
+    c = Character(level=2, skill=[CrossCut])
+    assert len(c.skill) == 1
+    with pytest.raises(GameError):
+        c.learn("cross cut")
+    assert isinstance(c.learn("parry"), Parry)
+    assert len(c.skill) == 2
+    with pytest.raises(GameError):
+        c.learn(Heal)

@@ -8,7 +8,7 @@ def indefinite_article(phrase):
         raise ValueError("Empty words don't have articles.")
     phrase = str(phrase)
     # TODO: some words start with a vowel, but phonetically don't like 'a one'
-    # TODO (not for this project) abreviations if the whole word is capitals or with periods
+    # TODO (not for this project) abbreviations if the whole word is capitals or with periods
     if phrase[0].isdigit():
         return ""
     elif phrase[0].isupper():

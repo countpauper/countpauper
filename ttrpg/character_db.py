@@ -30,7 +30,7 @@ class CharacterDB(object):
             CREATE TABLE IF NOT EXISTS effects (character, effect, duration, parameters);
             COMMIT;""")
 
-    # TODO: move database character link to another file
+
     def store(self, guild, user, c):
         with self.connection as con:
             columns=dict(user=str(user), guild=str(guild))

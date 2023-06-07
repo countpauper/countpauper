@@ -19,7 +19,7 @@ initial skills
 
     - two skill each for physical, mental, social (parry, crosscut done.
         [done] Explosion (mental attack to all, elemental dmg. Does it ignore armor?)
-        - scare (social damage vs mental save (or reversed? but that's illusion), morale dmg)
+        [done] scare (social damage vs mental save (or reversed? but that's illusion), morale dmg)
         - heal: mental damage die hp healed (max hp is like 13 so 2d12 is a lot? how to power that up?)
         - familiar (summon. can be in combat? create in db. Keep it simple. Use one mp, it stays until the next rest)
         - harmony (1 defense to targets, max targets is social score)

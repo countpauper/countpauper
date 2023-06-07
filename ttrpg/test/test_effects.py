@@ -29,7 +29,7 @@ def test_level_drain():
     c=Character(level=2)
     c.affect(Effect("drain", None, dict(level=dict(drained=-1))))
     assert c.level == 1
-    assert c.hp == 5    # TODO here and brain drain, need to cap CounterStat to maximum, but need to know how to get it
+    assert c.hp == 5
     c.affect(Effect("drain", None, dict(level=dict(drained_more=-1))))
     assert c.level == 0
     assert not c.alive()

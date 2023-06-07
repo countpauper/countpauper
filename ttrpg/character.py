@@ -65,19 +65,13 @@ class Character(object):
         )
         self.user = kwargs.get('user')
         self.stats = {stat:kwargs.get(stat, value) for stat, value in self.stats.items()}
-        self.stats['hp'] = Counter(lambda: self.max_hp())
-        self.hp = kwargs.get('hp', self.hp)
-        self.stats['pp'] = Counter(lambda: self.max_pp())
-        self.pp = kwargs.get('pp', self.pp)
-        self.stats['mp'] = Counter(lambda: self.max_mp())
-        self.mp = kwargs.get('mp', self.mp)
-        self.stats['ap'] = Counter(lambda: self.default_ap)
-        self.ap = kwargs.get('ap', self.ap)
+        self.stats['hp'] = Counter(kwargs.get('hp'), lambda: self.max_hp(), lambda: sum(self.get_boni('hp').values()))
+        self.stats['pp'] = Counter(kwargs.get('pp'), lambda: self.max_pp(), lambda: sum(self.get_boni('pp').values()))
+        self.stats['mp'] = Counter(kwargs.get('mp'), lambda: self.max_mp(), lambda: sum(self.get_boni('mp').values()))
+        self.stats['ap'] = Counter(kwargs.get('ap'), lambda: self.default_ap, lambda: sum(self.get_boni('ap').values()))
 
         self.skill = [Skill.create(s) for s in kwargs.get('skill', [])]
         self.inventory = [ItemFactory(i) for i in kwargs.get('inventory',[])]
-        # TODO: find a way to put equipped status in a record, but still allow duplicate items and duplicate location
-        # list of tuples? or dict with locations, then list of items there.
         self.held = dict()
         if self.inventory:
             self.auto_equip()
@@ -165,13 +159,14 @@ class Character(object):
         return result
 
     def ability(self, ability):
-        if ability == Physical:
+        if ability == Physical or ability == Physical.name:
             return self.physical
-        if ability == Mental:
+        if ability == Mental or ability == Mental.name:
             return self.mental
-        if ability == Social:
+        if ability == Social or ability == Social.name:
             return self.social
         raise ValueError(f"Unknown ability {ability}")
+
 
     def ability_dice(self, ability):
         return Dice.for_ability(self.ability(ability))
@@ -267,18 +262,40 @@ class Character(object):
         self._check_cost(cost)
         self._cost(cost)
 
-
-    def bodyweight(self):
-        return self.size.weight
-
-    def weight(self):
-        return self.bodweight() + self.carried()
-
     def carried(self):
+        """Weight carried."""
         return sum(i.weight() for i in self.inventory)
 
     def capacity(self):
+        """Maximum weight that can be carried without encumberance."""
         return self.physical
+
+    def memory(self):
+        """Maximum number of skilsl known."""
+        return self.level
+
+    def level_up(self, ability):
+        # TODO: apply as a level bonus effect so it can be removed on level drain, also the bonus hp and the max is just ... 4?
+        self.level += 1
+        self.hp += 1
+        if ability == Physical or ability == Physical.name:
+            self.physical += 1
+        elif ability == Mental or ability == Mental.name:
+            self.mental += 1
+        elif ability == Social or ability == Social.name:
+            self.social += 1
+        else:
+            raise ValueError(f"Unknown ability {ability}")
+        return self.level
+
+    def learn(self, skill):
+        if len(self.skill) >= self.memory():
+            raise GameError(f"{self.Name()} already knows {len(self.skill)}/{self.memory()} skills.")
+        skill = Skill.create(skill)
+        if any(isinstance(known_skill, type(skill)) for known_skill in self.skill):
+            raise GameError(f"{self.Name()} already knows {skill}.")
+        self.skill.append(skill)
+        return skill
 
     def obtain(self, *items):
         items = [ItemFactory(item) for item in items]
@@ -350,8 +367,8 @@ class Character(object):
     {self.mental} Mental: {self.pp} PP
     {self.social} Social: {self.mp} MP
     Defense {self.defense_dice()} Attack {self.attack_dice()}
-    Inventory[{self.carried()}/{self.capacity()}]: {list_off(self.inventory) or "Empty"} 
-    Skills: {list_off(self.skill)}"""
+    Inventory [{self.carried()}/{self.capacity()}]: {list_off(self.inventory) or "Empty"} 
+    Skills [{len(self.skill)}/{self.memory()}]: {list_off(self.skill)}"""
 
 
 

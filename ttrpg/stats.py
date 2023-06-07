@@ -37,34 +37,43 @@ class Ability(Stat):
         super(Ability,self).__init__(name)
 
 class Counter(object):
-    def __init__(self, a, b=None):
-        if b is None:
-            self._maximum = a
-            self._value = self.maximum() or 0
+    def __init__(self, value=None, maximum=None, temporary=0):
+        self._maximum = maximum
+        self._temporary = temporary
+        if value is None:
+            self._value = self.maximum()
         else:
-            self._maximum = b
-            self._value = a
-
-    def value(self):
-        if (m:= self.maximum()) is None:
-            return max(0, self._value)
-        else:
-            return max(0, min(self._value, m))
+            self._value = min(self.maximum(), max(0,value)) - self.temporary()
 
     def maximum(self):
         if self._maximum is None:
             return None
         elif isinstance(self._maximum, Callable):
-            return self._maximum()
+            return self._maximum() + self.temporary()
         else:
-            return self._maximum
+            return self._maximum + self.temporary()
+
+    def temporary(self):
+        if self._temporary is None:
+            return 0
+        elif isinstance(self._temporary, Callable):
+            return self._temporary()
+        else:
+            return self._temporary
+
+    def value(self):
+        v = max(0, self._value + self.temporary())
+        if (m := self.maximum()) is None:
+            return v
+        else:
+            return min(v, m)
 
     def __add__(self, increase):
-        result = Counter(self.value() + increase, self._maximum)
+        result = Counter(self.value() + increase, self._maximum, self._temporary)
         return result
 
     def __sub__(self, decrease):
-        result = Counter(self.value() - decrease, self._maximum)
+        result = Counter(self.value() - decrease, self._maximum, self._temporary)
         return result
 
     def __str__(self):
@@ -101,9 +110,9 @@ class CounterStat(Stat):
 
     def __get__(self, instance, owner):
         stat = instance.stats.get(self.name)
-        boni = instance.get_boni(self.name)
-        bonus_value = sum(boni.values())
-        return stat + bonus_value
+        #boni = instance.get_boni(self.name)
+        #bonus_value = sum(boni.values())
+        return stat
 
     def __set__(self, instance, value):
         if isinstance(value, Counter):
