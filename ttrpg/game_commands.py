@@ -1,7 +1,7 @@
 from character import Character
 from generate_character import random_character
 from errors import CharacterUnknownError
-from ability import Physical, Mental, Social
+from ability import Physical, Mental, Social, abilities
 from character_db import CharacterDB
 from discord.ext import commands
 from language import list_off
@@ -25,21 +25,24 @@ class GameCommands(commands.Cog):
         await ctx.message.delete()
 
     @staticmethod
-    def embed_sheet(c):
+    def embed_sheet(c, **kwargs):
         description=f"""**Level:** {c.level}
     **Physical:** {c.physical} [{c.ability_dice(Physical)}], **HP:** {c.hp}
     **Mental:** {c.mental} [{c.ability_dice(Mental)}], **PP:** {c.pp}
     **Social:** {c.social} [{c.ability_dice(Social)}], **MP:** {c.mp}
     **Attack:** {c.attack_dice()} **Defense:** {c.defense_dice()}"""
 
-        embed = discord.Embed(title=c.Name(),
+        embed = discord.Embed(title=kwargs.get('title', c.Name()),
                       description=description,
                       color=None if c.color is None else discord.Color.from_str(c.color))
         if c.portrait:
             embed.set_thumbnail(url=c.portrait)
-        embed.add_field(name=f"Inventory [{c.carried()}/{c.capacity()}]", value="\n".join(str(i).capitalize() for i in c.inventory), inline=True)
-        embed.add_field(name="Skills", value="\n".join(str(s).capitalize() for s in c.skill), inline=True)
-        embed.add_field(name="Effects", value="\n".join(str(e).capitalize() for e in c.effects), inline=True)
+        if kwargs.get('inventory', True):
+            embed.add_field(name=f"Inventory [{c.carried()}/{c.capacity()}]", value="\n".join(str(i).capitalize() for i in c.inventory), inline=True)
+        if kwargs.get('skills', True):
+            embed.add_field(name=f"Skills [{len(c.skill)}/{c.memory()}]", value="\n".join(str(s).capitalize() for s in c.skill), inline=True)
+        if kwargs.get('effects', True):
+            embed.add_field(name="Effects", value="\n".join(str(e).capitalize() for e in c.effects), inline=True)
         return embed
 
 
@@ -66,7 +69,7 @@ class GameCommands(commands.Cog):
         c.color = str(ctx.author.color)
         c.portrait = str(ctx.author.display_avatar)
         self.db.store(ctx.guild, ctx.author, c)
-        await ctx.send(embed=self.embed_sheet(c))
+        await ctx.send(embed=self.embed_sheet(c, title=f"New: {c.Name()}", effects=False))
         await ctx.message.delete()
 
 
@@ -115,7 +118,7 @@ class GameCommands(commands.Cog):
         items = c.obtain(*args)
         c.auto_equip()
         self.db.store(ctx.guild, ctx.author, c)
-        await ctx.send(f"**{c.name}** takes the {list_off(items)}.")
+        await ctx.send(f"**{c.Name()}** takes the {list_off(items)}. Carried [{c.carried()}/{c.capacity()}]")
         await ctx.message.delete()
 
     @commands.command()
@@ -126,8 +129,30 @@ class GameCommands(commands.Cog):
         items = c.lose(*args)
         c.auto_equip()
         self.db.store(ctx.guild, ctx.author, c)
-        await ctx.send(f"**{c.name}** drops the {list_off(items)}.")
+        await ctx.send(f"**{c.Name()}** drops the {list_off(items)}. Carried [{c.carried()}/{c.capacity()}]")
         await ctx.message.delete()
+
+    @commands.command()
+    async def level(self, ctx, *args):
+        c, args = self._optional_character_argument(ctx.guild, ctx.author, args)
+        if args:
+            c.level_up(args[0])
+            self.db.store(ctx.guild, ctx.author, c)
+            await ctx.send(embed=self.embed_sheet(c, title=f"{c.Name()} levels up to {c.level}!", inventory=False, effects=False))
+            await ctx.message.delete()
+        else:
+            raise commands.CommandError(f"You have to specify the ability to level up: {list_off(a.name for a in abilities)}")
+
+    @commands.command()
+    async def learn(self, ctx, *args):
+        c, args = self._optional_character_argument(ctx.guild, ctx.author, args)
+        if args:
+            skills = c.learn(*args)
+            self.db.store(ctx.guild, ctx.author, c)
+            await ctx.message.delete()
+            await ctx.send(f"**{c.Name()}** learns {list_off(skills)}.")
+        else:
+            raise commands.CommandError(f"You have to specify the ability to level up: {list_off(a.name for a in abilities)}")
 
 
     @commands.command()
@@ -162,8 +187,12 @@ class GameCommands(commands.Cog):
                 pass
         if args:
             target_name = args[0]
-            owner = self.db.user(ctx.guild, target_name)
-            target = self.db.retrieve(ctx.guild, owner, target_name)
+            if target_name.lower() == attacker.name:
+                owner = ctx.author
+                target = attacker
+            else:
+                owner = self.db.user(ctx.guild, target_name)
+                target = self.db.retrieve(ctx.guild, owner, target_name)
             if not target:
                 raise CharacterUnknownError(ctx.guild, None, target_name)
         else:
@@ -205,7 +234,7 @@ class GameCommands(commands.Cog):
             await ctx.send(f"""**{e.Name()}** knows {list_off(str(s).capitalize() for s in e.skill)}.""")
         else:
             skill=args.pop(0)
-            targets={arg:self.db.retrieve(ctx.guild, None, arg) for arg in args}
+            targets={arg:e if arg.lower()==e.name.lower() else self.db.retrieve(ctx.guild, None, arg) for arg in args}
             if unknown:=[arg for arg, target in targets.items() if target is None]:
                 raise CharacterUnknownError(ctx.guild, None, *unknown)
             result = e.execute(skill, *targets.values())

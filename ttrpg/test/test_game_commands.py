@@ -52,14 +52,16 @@ async def test_generate(db, ctx):
     embed = ctx.send.call_args_list[0][1].get('embed')
 
     assert embed is not None
-    assert embed.title == 'Baz'
+    assert embed.title == 'New: Baz'
     assert embed.color.value == int(ctx.author.color[1:], 16)
     assert "**Level:** 1" in embed.description
     assert f"**Physical:** {c.physical}" in embed.description
     assert f"**Mental:** {c.mental}" in embed.description
     assert f"**Social:** {c.social}" in embed.description
     assert embed.thumbnail.url == ctx.author.display_avatar
-
+    assert len(embed.fields) == 2
+    assert embed.fields[0].name.startswith("Inventory")
+    assert embed.fields[1].name.startswith("Skills")
 
 @pytest.mark.asyncio
 async def test_generate_duplicate(db, ctx):
@@ -109,7 +111,7 @@ async def test_sheet(db, ctx):
     assert embed.thumbnail.url is None
     assert embed.fields[0].name == f"Inventory [2/{c.capacity()}]"
     assert embed.fields[0].value == "Practice sword\nGambeson"
-    assert embed.fields[1].name == f"Skills"
+    assert embed.fields[1].name == "Skills [1/1]"
     assert embed.fields[1].value == "Parry"
     assert embed.fields[2].name == "Effects"
     assert embed.fields[2].value == "Displayed"
@@ -167,7 +169,7 @@ async def test_take(db, ctx):
     g = GameCommands(bot := Mock(), db)
     await g.take(g, ctx, "sword", "shield")
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"**{c.name}** takes the sword and shield.")
+    ctx.send.assert_called_once_with(f"**Nemo** takes the sword and shield. Carried [2/2]")
     c = db.retrieve(ctx.guild, ctx.author, c.name)
     assert c.main_hand().name == "sword"
     assert c.off_hand().name == "shield"
@@ -182,7 +184,7 @@ async def test_drop(db, ctx):
     g = GameCommands(bot := Mock(), db)
     await g.drop(g, ctx, c.name, "sword", "shirt")
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"**{c.name}** drops the sword and shirt.")
+    ctx.send.assert_called_once_with(f"**Nemo** drops the sword and shirt. Carried [0/2]")
     c = db.retrieve(ctx.guild, ctx.author, c.name)
     assert c.main_hand() is None
     assert c.worn == []
@@ -267,4 +269,30 @@ async def test_skilll_with_target(db, ctx):
     target = db.retrieve(ctx.guild, ctx.author, target.name)
     assert target.hp == 0
 
+
+@pytest.mark.asyncio
+async def test_level_up(db, ctx):
+    c = Character(name="leveler", physical=2)
+    db.store(ctx.guild, ctx.author, c)
+    g = GameCommands(bot := Mock(), db)
+    await g.level(g, ctx, "physical")
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once()
+    embed = ctx.send.call_args[1].get('embed')
+    assert embed.title == "Leveler levels up to 2!"
+    assert len(embed.fields)==1
+    assert embed.fields[0].name.startswith("Skills")
+    leveled = db.retrieve(ctx.guild, ctx.author, c.name)
+    assert leveled.level == 2
+    assert leveled.physical == 3
+
+
+@pytest.mark.asyncio
+async def test_learn(db, ctx):
+    c = Character(name="learner", level=2, mental=2)
+    db.store(ctx.guild, ctx.author, c)
+    g = GameCommands(bot := Mock(), db)
+    await g.learn(g, ctx, "heal", "explosion")
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once_with(f"**Learner** learns heal and explosion.")
 

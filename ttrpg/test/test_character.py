@@ -128,7 +128,7 @@ def test_level_up():
     assert c.physical == 3
     assert c.level == 4
     assert c.hp == 8
-    with pytest.raises(ValueError):
+    with pytest.raises(GameError):
         c.level_up("cheese")
 
 def test_learn():
@@ -136,7 +136,7 @@ def test_learn():
     assert len(c.skill) == 1
     with pytest.raises(GameError):
         c.learn("cross cut")
-    assert isinstance(c.learn("parry"), Parry)
+    assert isinstance(c.learn("parry")[0], Parry)
     assert len(c.skill) == 2
     with pytest.raises(GameError):
         c.learn(Heal)

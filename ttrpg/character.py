@@ -285,17 +285,17 @@ class Character(object):
         elif ability == Social or ability == Social.name:
             self.social += 1
         else:
-            raise ValueError(f"Unknown ability {ability}")
+            raise GameError(f"Unknown ability {ability} for leveling up.")
         return self.level
 
-    def learn(self, skill):
-        if len(self.skill) >= self.memory():
+    def learn(self, *new_skills):
+        if len(self.skill) + len(new_skills) > self.memory():
             raise GameError(f"{self.Name()} already knows {len(self.skill)}/{self.memory()} skills.")
-        skill = Skill.create(skill)
-        if any(isinstance(known_skill, type(skill)) for known_skill in self.skill):
-            raise GameError(f"{self.Name()} already knows {skill}.")
-        self.skill.append(skill)
-        return skill
+        new_skills = [Skill.create(skill) for skill in new_skills]
+        if known_skills:=[skill for skill in new_skills if any(isinstance(known_skill, type(skill)) for known_skill in self.skill)]:
+            raise GameError(f"{self.Name()} already knows {list_off(known_skills)}.")
+        self.skill += new_skills
+        return tuple(new_skills)
 
     def obtain(self, *items):
         items = [ItemFactory(item) for item in items]
