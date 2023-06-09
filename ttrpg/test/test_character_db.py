@@ -43,7 +43,15 @@ def test_retrieve_default_character(db):
     db.store("guild", "user", c)
     restored = db.retrieve("guild", "user")
     assert restored.name == 'foo'
+    assert restored.user == "user"
 
+def test_retrieve_by_id(db):
+    c = Character(name="foo", level=2, mental=3, social=4, physical=5)
+    db.store("guild", "user", c)
+    assert c.id == 1
+    restored = db.retrieve("guild", "user", c.id)
+    assert restored.name == 'foo'
+    assert restored.user == "user"
 
 def test_cannot_retrieve_default_opponent(db):
     db.store("guild", "user", Character())
@@ -61,6 +69,7 @@ def test_retrieve_opponent(db):
     db.store("guild", "opponent", c)
     restored = db.retrieve("guild", None, "foo")
     assert restored is not None
+    assert restored.user == "opponent"
 
 
 def test_character_flavour(db):
@@ -73,7 +82,7 @@ def test_character_flavour(db):
 
 
 def test_inventory(db):
-    c = Character(name="Rich", physical=6, inventory=[
+    c = Character(name="Rich", physical=7, inventory=[
                   MeleeWeapon(name="Golden Sword", enchantment=1),
                   RangedWeapon(heavy=True, name="Birch bow"),
                   Armor(name="Mithril Chainmail", rating=2),
@@ -82,6 +91,7 @@ def test_inventory(db):
     db.store("guild","user", c)
     c = db.retrieve("guild", "user", "Rich")
     assert c.carried() == 6
+    assert c.capacity() == 7
     assert c.defense_dice() == Dice(6,4)+2
     assert c.off_hand().name == "shield"
     assert c.main_hand().name == "Golden Sword"
@@ -103,6 +113,18 @@ def test_effects(db):
     assert c.effects
     assert c.physical == 7
 
+
+def test_allies(db):
+    c=Character(name="Friendly", social=3, allies=[Character(name="Buddy", level=-2, skill=[Parry])])
+    db.store("guild", "owner", c)
+    c = db.retrieve("guild", "owner")
+    assert c.name=="Friendly"
+    assert (buddy := c.ally("Buddy")) is not None
+    assert buddy.level == -2
+    assert isinstance(buddy.skill[0], Parry)
+    same_buddy = db.retrieve("guild", None, "Buddy")
+    assert same_buddy.level == -2
+    assert same_buddy.user == "owner"
 
 def test_exists(db):
     c = Character()

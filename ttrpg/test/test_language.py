@@ -52,3 +52,12 @@ def test_list_off():
     assert list_off(("olives", "pickles", "cheese")) == "olives, pickles and cheese"
     assert list_off(("olives", "pickles", "ham and cheese")) == "olives, pickles, and ham and cheese"
     assert list_off(("olives", "two pickles", "cheese")) == "olives, two pickles, and cheese"
+
+def test_possessive():
+    assert possessive("owner") == "owner's"
+    assert possessive("Claire") == "Claire's"
+    assert possessive("cats") == "cats'"
+    # TODO: how to detect singular    assert possessive("class") == "class's"
+    assert possessive("she") == "her"
+    assert possessive("I") == "my"
+    assert possessive("You") == "Your"

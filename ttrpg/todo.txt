@@ -20,27 +20,31 @@ initial skills
     - two skill each for physical, mental, social (parry, crosscut done.
         [done] Explosion (mental attack to all, elemental dmg. Does it ignore armor?)
         [done] scare (social damage vs mental save (or reversed? but that's illusion), morale dmg)
-        - heal: mental damage die hp healed (max hp is like 13 so 2d12 is a lot? how to power that up?)
-        - familiar (summon. can be in combat? create in db. Keep it simple. Use one mp, it stays until the next rest)
+        [done] heal: mental damage die hp healed (max hp is like 13 so 2d12 is a lot? how to power that up?)
+        [done] familiar (summon. can be in combat? create in db. Keep it simple. Use one mp, it stays until the next rest)
         - harmony (1 defense to targets, max targets is social score)
     - assign random skills based on primary stat IF available points to use at least once  (one of matching ability for each stat over ~2)
     - return embedable data from skills, attack
     - generate monster with skills (sets for each type, eg beast, dragon, undead?)
         - pounce (aka charge, damage bonus depends on ... size? physical that's double)
     - One AoE attack and test command for some characters known, some not known
+- show dice :four: :six: :eight: :keycap_ten:  :one::two: in sheet
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
-rest command (resets hp, p  p mp and ap and clears all effects with durations)
+rest command (resets hp, pp mp and ap and clears all effects with durations)
 Check if can attack or motivated enough to offend for skills
-Reimplement actions (attack, cover) as "Free Skills". Don't add them to skills, just attack() = execute(Attack(), targets, bonus). Derive SKill from Action? Any passive skill?
+Reimplement actions (attack, cover) as "Free Skills". Don't add them to skills, just attack() = execute(Attack(), targets, bonus). Derive SKill from Action? What about passive skill?
     - make cover a mental skill, it requires 1 mental ability. Make it defensive.
-    - make attacking a None skill, it doesn't require >0 physical. Make it offensive of course. It requires motivation
+    - make attacking a None skill, it doesn't require >0 physical (or does it? move dice over?). Make it offensive of course. It requires motivation
 
-level up command, argument is ability to raise
+[done] level up command, argument is ability to raise
 some command to enter/exit combat so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.
 [done] organize commands in cogs (well, mostly game cog)
 partial matching for taking and dropping items
 partial matching for finding database characters
+   - refactor implementation to self target without getting from database twice (executor==target) in skill/attack etc commands (now already needs
+   case insensitive matching between argument and easlier character name)
+    - track dirty flag in characters to see if they need stored (should be an optimization only)
 Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handling
 [done] character worn can be a list for jewelry and multi part armor?
 derived dice stat for attack and defend dice, add dice together with Dice bonuses for items (and effects/skills)
@@ -68,9 +72,14 @@ automatic penalty for subsequent per turn and end turn command
     - Crosscut skill should start with current attack penalty and all attack skills should increaase it
     ? Does all this state really need to be persisted? or maybe it's an "effect", hidden effects ?
 
+Upcast all skills
 item database with named types (Type+properties)
 position in character and database
 combat database (is that where to keep position? only allow targetting combat characters ? add channel to combat?)
 Add the random item system from the tactics game with the materials and stuff
 level bonus and penalty: extra stats and skills and loss of stats and skills, but which ? (just raising/lowering hp is lame)
+Make automated battles of N lower level characters agains 1 higher levels, ability and ability and so on
+    - Give all skills (and other Actions) an AI function to score being used on a target.
+    - Give the result in number of survivors and remaining total hp
+
 undo command that restores previous character state

@@ -53,19 +53,19 @@ def test_status():
 
 
 def test_defense():
-    assert Character(physical=2).defense_dice() == Dice(4)
-    assert Character(physical=3, inventory=[Armor(rating=2)]).defense_dice() == Dice(6)+2
+    assert Character(physical=3).defense_dice() == Dice(4)
+    assert Character(physical=3, inventory=[Armor(rating=2)]).defense_dice() == Dice(4)+2
 
 
 def test_attack_dice():
-    assert Character(physical=6).attack_dice() == Dice(6,4)
-    assert Character(physical=2).attack_dice(1) == Dice(4)-2
-    assert Character(physical=2).attack_dice(2) == Dice(4)-4
-    assert Character(physical=2).attack_dice(3) == Dice(4)-6
-    assert Character(physical=2).attack_dice(1) + 1 == Dice(4)-2+1
-    assert Character(physical=3, inventory=[MeleeWeapon(enchantment=1)]).attack_dice() == Dice(6)+1
-    assert Character(physical=3, inventory=[MeleeWeapon(heavy=True, enchantment=2)]).attack_dice() == Dice(6,4)+2
-    assert Character(physical=3, inventory=[MeleeWeapon(), MeleeWeapon()]).attack_dice(1) == Dice(6)
+    assert Character(physical=7).attack_dice() == Dice(6,4)
+    assert Character(physical=3).attack_dice(1) == Dice(4)-2
+    assert Character(physical=3).attack_dice(2) == Dice(4)-4
+    assert Character(physical=3).attack_dice(3) == Dice(4)-6
+    assert Character(physical=3).attack_dice(1) + 1 == Dice(4)-2+1
+    assert Character(physical=4, inventory=[MeleeWeapon(enchantment=1)]).attack_dice() == Dice(6)+1
+    assert Character(physical=4, inventory=[MeleeWeapon(heavy=True, enchantment=2)]).attack_dice() == Dice(6,4)+2
+    assert Character(physical=4, inventory=[MeleeWeapon(), MeleeWeapon()]).attack_dice(1) == Dice(6)
 
 
 def test_auto_equip():
@@ -81,13 +81,15 @@ def test_auto_equip():
 def test_str():
     assert str(Character(name='Foo', level=3, physical=5, mental=3, hp=2,
                          inventory=[MeleeWeapon(name="test sword"),Shield()],
-                         skill=["parry", CrossCut])) == """Foo: Level 3
+                         skill=["parry", CrossCut],
+                         allies=[Character(name="Ali")])) == """Foo: Level 3
     5 Physical: 2/7 HP
     3 Mental: 3/3 PP
     1 Social: 1/1 MP
-    Defense 1d10 Attack 1d10
+    Defense 1d8 Attack 1d8
     Inventory [2/5]: test sword, and shield 
-    Skills [2/3]: parry and cross cut"""
+    Skills [2/3]: parry and cross cut
+    Allies: Ali"""
 
 def test_obtain():
     c = Character(physical=2)
@@ -108,6 +110,7 @@ def test_lose():
     assert c.carried() == 0
     assert c.main_hand() == None
     assert c.worn == []
+
 
 def test_cant_lose():
     c = Character(inventory=[MeleeWeapon(name="practice")])
@@ -130,6 +133,7 @@ def test_level_up():
     assert c.hp == 8
     with pytest.raises(GameError):
         c.level_up("cheese")
+
 
 def test_learn():
     c = Character(level=2, skill=[CrossCut])

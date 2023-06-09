@@ -25,24 +25,31 @@ class GameCommands(commands.Cog):
         await ctx.message.delete()
 
     @staticmethod
+    def character_description(c):
+        return f"""**Level:** {c.level}
+**Physical:** {c.physical} [{c.ability_dice(Physical)}], **HP:** {c.hp}
+**Mental:** {c.mental} [{c.ability_dice(Mental)}], **PP:** {c.pp}
+**Social:** {c.social} [{c.ability_dice(Social)}], **MP:** {c.mp}
+**Attack:** {c.attack_dice()}, **Defense:** {c.defense_dice()}"""
+
+    @staticmethod
     def embed_sheet(c, **kwargs):
-        description=f"""**Level:** {c.level}
-    **Physical:** {c.physical} [{c.ability_dice(Physical)}], **HP:** {c.hp}
-    **Mental:** {c.mental} [{c.ability_dice(Mental)}], **PP:** {c.pp}
-    **Social:** {c.social} [{c.ability_dice(Social)}], **MP:** {c.mp}
-    **Attack:** {c.attack_dice()} **Defense:** {c.defense_dice()}"""
+        description=GameCommands.character_description(c)
 
         embed = discord.Embed(title=kwargs.get('title', c.Name()),
                       description=description,
                       color=None if c.color is None else discord.Color.from_str(c.color))
         if c.portrait:
             embed.set_thumbnail(url=c.portrait)
-        if kwargs.get('inventory', True):
+        if kwargs.get('inventory', True) and c.capacity():
             embed.add_field(name=f"Inventory [{c.carried()}/{c.capacity()}]", value="\n".join(str(i).capitalize() for i in c.inventory), inline=True)
-        if kwargs.get('skills', True):
+        if kwargs.get('skills', True) and c.skill:
             embed.add_field(name=f"Skills [{len(c.skill)}/{c.memory()}]", value="\n".join(str(s).capitalize() for s in c.skill), inline=True)
-        if kwargs.get('effects', True):
+        if kwargs.get('effects', True) and c.effects:
             embed.add_field(name="Effects", value="\n".join(str(e).capitalize() for e in c.effects), inline=True)
+        if kwargs.get('allies', True):
+            for ally in c.allies:
+                embed.add_field(name=ally.Name(), value=GameCommands.character_description(ally))
         return embed
 
 
@@ -138,7 +145,7 @@ class GameCommands(commands.Cog):
         if args:
             c.level_up(args[0])
             self.db.store(ctx.guild, ctx.author, c)
-            await ctx.send(embed=self.embed_sheet(c, title=f"{c.Name()} levels up to {c.level}!", inventory=False, effects=False))
+            await ctx.send(embed=self.embed_sheet(c, title=f"{c.Name()} levels up to {c.level}!", inventory=False, effects=False, allies=False))
             await ctx.message.delete()
         else:
             raise commands.CommandError(f"You have to specify the ability to level up: {list_off(a.name for a in abilities)}")

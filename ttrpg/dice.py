@@ -2,6 +2,7 @@ import d20
 from d20 import roll, SimpleStringifier
 
 ability_dice = [
+    [],
     [1],
     [2],
     [4],

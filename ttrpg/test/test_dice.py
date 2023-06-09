@@ -105,5 +105,6 @@ def test_fix_max(dice_max):
     assert Dice(4, 4, 6).roll().total == 14
 
 def test_for_ability():
-    assert Dice.for_ability(1) == Dice(2)
-    assert Dice.for_ability(20) == Dice(12,12,12)
+    assert Dice.for_ability(0) == Dice()
+    assert Dice.for_ability(2) == Dice(2)
+    assert Dice.for_ability(21) == Dice(12,12,12)

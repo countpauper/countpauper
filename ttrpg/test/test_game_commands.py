@@ -89,7 +89,7 @@ async def test_generate_existing(db, ctx):
 
 @pytest.mark.asyncio
 async def test_sheet(db, ctx):
-    c = Character(inventory=[MeleeWeapon(name="Practice Sword"), Armor(rating=1)], skill=[Parry()])
+    c = Character(physical=2, mental=2, social=1, inventory=[MeleeWeapon(name="Practice Sword"), Armor(rating=1)], skill=[Parry()])
     c.effects.append(Effect(name="displayed"))
 
     db.store(ctx.guild, ctx.author, c)
@@ -106,7 +106,7 @@ async def test_sheet(db, ctx):
     assert embed is not None
     assert embed.title == "Nemo"
     assert embed.color is None
-    assert re.match(r"\*\*Level:\*\* \d\n\s+\*\*Physical\:\*\* \d \[1d\d\], \*\*HP\:\*\* \d\/\d\n\s+\*\*Mental:\*\* \d \[1d\d\], \*\*PP\:\*\* \d\/\d\n\s+\*\*Social:\*\* \d \[1d\d\], \*\*MP\:\*\* \d\/\d\n\s+\*\*Attack:\*\* 1d\d \*\*Defense:\*\* 1d\d\+1",
+    assert re.match(r"\*\*Level:\*\* \d\n\*\*Physical\:\*\* \d \[1d\d\], \*\*HP\:\*\* \d\/\d\n\*\*Mental:\*\* \d \[1d\d\], \*\*PP\:\*\* \d\/\d\n\*\*Social:\*\* \d \[1], \*\*MP\:\*\* \d\/\d\n\*\*Attack:\*\* 1d\d, \*\*Defense:\*\* 1d\d\+1",
                     embed.description)
     assert embed.thumbnail.url is None
     assert embed.fields[0].name == f"Inventory [2/{c.capacity()}]"
@@ -116,6 +116,27 @@ async def test_sheet(db, ctx):
     assert embed.fields[2].name == "Effects"
     assert embed.fields[2].value == "Displayed"
 
+@pytest.mark.asyncio
+async def test_sheet_allies(db, ctx):
+    c = Character(social=3, allies=[
+        Character(name="Foo", physical=2,level=0, hp=0),
+        Character(name="Bar", mental=3, social=2, mp=2)
+    ])
+    db.store(ctx.guild, ctx.author, c)
+    bot = Mock()
+    g = GameCommands(bot, db)
+    await g.sheet(g, ctx)
+
+    ctx.message.delete.assert_called_once_with()
+    ctx.send.assert_called_once()
+    embed = ctx.send.call_args[1].get('embed')
+    assert (foo_field := ([field for field in embed.fields if field.name == "Foo"]+[None])[0]) is not None
+    assert (bar_field := ([field for field in embed.fields if field.name == "Foo"]+[None])[0]) is not None
+    assert foo_field.value == """**Level:** 0
+**Physical:** 2 [1d2], **HP:** 0/4
+**Mental:** 1 [1], **PP:** 1/1
+**Social:** 1 [1], **MP:** 1/1
+**Attack:** 1d2, **Defense:** 1d2"""
 
 @pytest.mark.asyncio
 async def test_sheet_flavour(db, ctx):
@@ -129,6 +150,18 @@ async def test_sheet_flavour(db, ctx):
     assert embed.thumbnail.url is not c.portrait
     assert embed.color == discord.Color.from_str('#ABCDEF')
 
+@pytest.mark.asyncio
+async def test_sheet_field_reduction(db, ctx):
+    c = Character(physical=0, skill=[])
+    db.store(ctx.guild, ctx.author, c)
+    bot = Mock()
+    g = GameCommands(bot, db)
+    await g.sheet(g, ctx)
+    ctx.send.assert_called_once()
+    embed = ctx.send.call_args[1].get('embed')
+    assert not any(field.name.lower().startswith("effect") for field in embed.fields)
+    assert not any(field.name.lower().startswith("skill") for field in embed.fields)
+    assert not any(field.name.lower().startswith("inventory") for field in embed.fields)
 
 @pytest.mark.asyncio
 async def test_no_sheet(db, ctx):
@@ -191,8 +224,8 @@ async def test_drop(db, ctx):
 
 @pytest.mark.asyncio
 async def test_attack_with_default_character(db, ctx):
-    attacker = Character(name="attacker", physical=0)
-    target = Character(name="target", physical=0)
+    attacker = Character(name="attacker")
+    target = Character(name="target")
     db.store(ctx.guild, ctx.author, attacker)
     db.store(ctx.guild, "Opponent", target)
     g = GameCommands(bot := Mock(), db)
@@ -203,8 +236,8 @@ async def test_attack_with_default_character(db, ctx):
 
 @pytest.mark.asyncio
 async def test_attack_with_specific_character(db, ctx):
-    attacker = Character(name="attacker", physical=0)
-    target = Character(name="target", physical=0)
+    attacker = Character(name="attacker")
+    target = Character(name="target")
     default_char = Character(name="Default")
     db.store(ctx.guild, ctx.author, attacker)
     db.store(ctx.guild, ctx.author, default_char)
@@ -230,7 +263,7 @@ async def test_cant_attack_without_default_character(db, ctx):
 
 @pytest.mark.asyncio
 async def test_attack_without_target(db, ctx):
-    attacker = Character(name="Attacker", physical=0)
+    attacker = Character(name="Attacker")
     db.store(ctx.guild, ctx.author, attacker)
     g = GameCommands(bot := Mock(), db)
     await g.attack(g, ctx)
@@ -272,7 +305,7 @@ async def test_skilll_with_target(db, ctx):
 
 @pytest.mark.asyncio
 async def test_level_up(db, ctx):
-    c = Character(name="leveler", physical=2)
+    c = Character(name="leveler", physical=2, skill=[Parry])
     db.store(ctx.guild, ctx.author, c)
     g = GameCommands(bot := Mock(), db)
     await g.level(g, ctx, "physical")
@@ -280,8 +313,8 @@ async def test_level_up(db, ctx):
     ctx.send.assert_called_once()
     embed = ctx.send.call_args[1].get('embed')
     assert embed.title == "Leveler levels up to 2!"
-    assert len(embed.fields)==1
-    assert embed.fields[0].name.startswith("Skills")
+    assert len(embed.fields) == 1
+    assert embed.fields[0].name == "Skills [1/2]"
     leveled = db.retrieve(ctx.guild, ctx.author, c.name)
     assert leveled.level == 2
     assert leveled.physical == 3

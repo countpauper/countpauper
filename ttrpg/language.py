@@ -63,3 +63,12 @@ def list_off(items=None):
     else:
         oxford = ',' if 'and' in str(items[-1]) or ' ' in str(items[-2]) else ''
         return ", ".join(str(i) for i in items[:-1])+f"{oxford} and {items[-1]}"
+
+irregular_possessive=dict(i="my", you="your", he="his", she="her", we="ours", they="their")
+def possessive(owner):
+    regular_possessive=f"{owner}'" if owner[-1] == "s" else f"{owner}'s"
+    possessive = irregular_possessive.get(owner.lower(), regular_possessive)
+    if owner[0].isupper() and owner != "I":
+        return possessive.capitalize()
+    else:
+        return possessive

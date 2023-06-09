@@ -1,7 +1,7 @@
 from items import *
 from dice import Dice
 from stats import *
-from skills import Skill
+from skill import Skill
 from ability import Physical, Mental, Social
 from effect import Effect
 from errors import GameError
@@ -72,6 +72,7 @@ class Character(object):
 
         self.skill = [Skill.create(s) for s in kwargs.get('skill', [])]
         self.inventory = [ItemFactory(i) for i in kwargs.get('inventory',[])]
+        self.allies = kwargs.get('allies', [])
         self.held = dict()
         if self.inventory:
             self.auto_equip()
@@ -361,6 +362,16 @@ class Character(object):
                 self.worn = [i]
         return self
 
+
+    def ally(self, name):
+        if match := [ally for ally in self.allies if ally.name.lower()==name.lower()]:
+            return match[0]
+        else:
+            return None
+
+    def summon(self, ally):
+        self.allies.append(ally)
+
     def __str__(self):
         return f"""{self.name}: Level {self.level}
     {self.physical} Physical: {self.hp} HP
@@ -368,7 +379,8 @@ class Character(object):
     {self.social} Social: {self.mp} MP
     Defense {self.defense_dice()} Attack {self.attack_dice()}
     Inventory [{self.carried()}/{self.capacity()}]: {list_off(self.inventory) or "Empty"} 
-    Skills [{len(self.skill)}/{self.memory()}]: {list_off(self.skill)}"""
+    Skills [{len(self.skill)}/{self.memory()}]: {list_off(self.skill) or "none"}
+    Allies: {list_off(a.Name() for a in self.allies) or "none"}"""
 
 
 

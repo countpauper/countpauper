@@ -24,18 +24,19 @@ class CharacterDB(object):
         cur = self.connection.cursor()
         cur.executescript(f"""
             BEGIN;
-            CREATE TABLE IF NOT EXISTS character (id INTEGER PRIMARY KEY, user, guild, {", ".join(self.persistent_stats)});
+            CREATE TABLE IF NOT EXISTS character (id INTEGER PRIMARY KEY, user, guild, master, {", ".join(self.persistent_stats)});
             CREATE TABLE IF NOT EXISTS inventory (character, item, properties, location);
             CREATE TABLE IF NOT EXISTS skills (character, skill);
             CREATE TABLE IF NOT EXISTS effects (character, effect, duration, parameters);
             COMMIT;""")
 
 
-    def store(self, guild, user, c):
+    def store(self, guild, user, c, master=None):
         with self.connection as con:
             columns=dict(user=str(user), guild=str(guild))
             columns.update({stat:c[stat] for stat in self.persistent_stats})
             columns['id'] = c.id
+            columns['master'] = master
             query = f"""REPLACE INTO character ({", ".join(columns)}) VALUES 
                 ({", ".join(f":{p}" for p in columns)});"""
             cur = con.execute(query, columns)
@@ -46,6 +47,8 @@ class CharacterDB(object):
             cur = self._store_skills(cur, c.id, c.skill)
             cur = self._clear_effects(cur, c.id)
             cur = self._store_effects(cur, c.id, c.effects)
+            for ally in c.allies:
+                self.store(guild, user, ally, master=c.id)
 
     @staticmethod
     def _encode_location(item, c):
@@ -101,18 +104,23 @@ class CharacterDB(object):
     def exists(self, guild, user, name):
             return self._find_character(guild, user, name) is not None
 
-    def retrieve(self, guild, user, name=None):
-        if user is None and name is None:
-            raise CharacterUnknownError(guild, user, name)
-
-        name_query=f"""AND name=:name COLLATE NOCASE""" if name is not None else ''
+    def retrieve(self, guild, user, identity=None):
+        if user is None and identity is None:
+            raise CharacterUnknownError(guild, user, identity)
+        if identity is None:
+            id_query = "AND master IS NULL"
+        elif isinstance(identity, int):
+            id_query=f"""AND id=:identity"""
+        elif identity is not None:
+            id_query=f"""AND name=:identity COLLATE NOCASE"""
+            identity = str(identity)
         user_query=f"""AND user=:user""" if user is not None else ''
 
         query = f"""SELECT id, user, {", ".join(self.persistent_stats)} FROM character 
-            WHERE guild=:guild {user_query} {name_query}
+            WHERE guild=:guild {user_query} {id_query}
             ORDER BY id DESC LIMIT 1"""
 
-        cursor = self.connection.execute(query, dict(user=str(user), guild=str(guild), name=str(name)))
+        cursor = self.connection.execute(query, dict(user=str(user), guild=str(guild), identity=identity))
         columns = [x[0] for x in cursor.description]
         if row := cursor.fetchone():
             record = {col: row[nr] for nr, col in enumerate(columns)}
@@ -120,6 +128,7 @@ class CharacterDB(object):
             record['skill'] = self._retrieve_skills(cursor, idx)
             inventory = self._retrieve_inventory(cursor, idx)
             record['inventory'] = [i for location_items in inventory.values() for i in location_items]
+            record['allies'] = self._retrieve_allies(cursor, idx)
             c = Character(**record)
             c.effects = self._retrieve_effects(cursor, c.id)
             c.worn = inventory.get('worn', [])
@@ -142,6 +151,11 @@ class CharacterDB(object):
         query = f"""SELECT skill FROM skills WHERE character=:id"""
         response = cursor.execute(query, dict(id=idx))
         return [row[0] for row in response.fetchall()]
+
+    def _retrieve_allies(self, cursor, idx):
+        query = f"""SELECT guild, user, id FROM character WHERE master=:id"""
+        response = cursor.execute(query, dict(id=idx))
+        return [self.retrieve(row[0], row[1], row[2]) for row in response.fetchall()]
 
     def _retrieve_effects(self, cursor, idx):
         query = f"""SELECT effect, duration, parameters FROM effects WHERE character=:id"""

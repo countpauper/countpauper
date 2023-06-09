@@ -1,36 +1,12 @@
+from skill import Skill
 from items import *
 from effect import Effect
+from character import Character
 from ability import Physical, Mental, Social
 from errors import GameError
-from language import camel_to_words, indefinite_article, list_off
+from language import indefinite_article, possessive
 
 
-class Skill(object):
-    all = []
-
-    def __init__(self):
-        self.cost = dict(ap=1)  # could be hp,pp,mp,ap or even gp
-
-    @staticmethod
-    def name(cls):
-        return camel_to_words(cls.__name__)
-
-    @staticmethod
-    def create(skill):
-        if type(skill)==str:
-            if match := [s for s in Skill.all if Skill.name(s) == skill]:
-                return Skill.create(match[0])
-            else:
-                raise ValueError(f"Unknown skill {skill}")
-        elif isinstance(skill, type) and issubclass(skill, Skill):
-            return skill()
-        elif isinstance(skill, Skill):
-            return skill
-        else:
-            raise TypeError(f"Cannot create skill by {type(skill)}.")
-
-    def __str__(self):
-        return self.name(self.__class__)
 
 
 class CrossCut(Skill):
@@ -107,9 +83,7 @@ class Explosion(Skill):
         self.ability = Mental
         self.offensive = True
 
-    def __call__(self, *args, **kwargs):
-        args = list(args)
-        actor = args.pop(0)
+    def __call__(self, actor, *args, **kwargs):
         damage_roll = actor.ability_dice(Mental).roll()
         target_result=[]
         if targets:=args:
@@ -130,12 +104,10 @@ class Frighten(Skill):
         self.ability = Social
         self.offensive = True
 
-    def __call__(self, *args, **kwargs):
-        args = list(args)
-        actor = args.pop(0)
+    def __call__(self, actor, *args, **kwargs):
         damage_roll = actor.ability_dice(Social).roll()
         if args:
-            target = args.pop(0)
+            target = args[0]    # TODO: more args is more pp?
             save_roll = target.ability_dice(Mental).roll()
             if (damage := damage_roll.total-save_roll.total) > 0:
                 target.mp -= damage
@@ -152,16 +124,51 @@ class Heal(Skill):
         self.ability = Mental
         self.offensive = False
 
-    def __call__(self, *args, **kwargs):
-        args = list(args)
-        actor = args.pop(0)
+    def __call__(self, actor, *args, **kwargs):
         heal_roll = actor.ability_dice(Mental).roll()
-        if args:
-            target = args.pop(0)
+        if args:    # TODO: more args is ? spread the heal? more pp?
+            target = args[0]
             target.hp += heal_roll.total
             return f"heals {target.Name()}: for {heal_roll} health [{target.hp}]"
         else:
             return f"heals ({heal_roll.roll()})"
 
-Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion, Frighten, Heal]
+# TODO: if Familiar gets this for free, free action and at range, why would a player take it? To upcast?
+# for now it's not in all skills
+class Encourage(Skill):
+    """Provide as bonus to an ally as a reaction. """
+    def __init__(self):
+        self.cost = dict(ap=1, mp=1)
+        self.ability = Social
+        self.offensive = False
+
+    def __call__(self, actor, *args, **kwargs):
+        pass
+
+
+class Familiar(Skill):
+    """Call your familiar to your side.
+
+    Your familiar can have any form, although your GM may limit the capabilties its form implies.
+    It has 0 physical, 0 mental and 3 social ability. This means it can not attack or speak or carry
+    anything with a weight.
+    Your familiar also has only one hitpoint,  will stay with you until the next time you rest.
+    The familiar has one ability: Encourage"""
+    def __init__(self):
+        self.cost = dict(ap=1, mp=1)
+        self.ability = Social
+        self.offensive = False
+
+    def __call__(self, actor, *args, **kwargs):
+        familiar_name = f"{possessive(actor.Name())} familiar"
+        if actor.ally(familiar_name):
+            raise GameError(f"{actor.Name()} already has a familiar.")
+        else:
+            familiar = Character(name=familiar_name, level=-3, physical=0, mental=0, social=3, skill=[Encourage])
+            actor.summon(familiar)
+            return "summons a familiar."
+
+
+
+Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion, Frighten, Heal, Familiar]
 
