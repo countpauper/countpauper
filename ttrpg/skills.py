@@ -11,11 +11,13 @@ from language import indefinite_article, possessive, list_off
 
 class CrossCut(Skill):
     """Attack with two weapons simultaneously. Their attack dice are added."""
+
+    cost = dict(ap=1, pp=1)
+    ability = Physical
+    offensive = True
+
     def __init__(self, actor):
         super(CrossCut, self).__init__(actor)
-        self.cost = dict(ap=1, pp=1)
-        self.ability = Physical
-        self.offensive = True
 
     def __call__(self, *args, **kwargs):
         args = list(args)
@@ -33,11 +35,13 @@ class CrossCut(Skill):
 
 class Parry(Skill):
     """Protect yourself against melee attacks with your weapons. """
+
+    cost = dict(ap=1)
+    ability = Physical
+    offensive = False
+
     def __init__(self, actor):
         super(Parry, self).__init__(actor)
-        self.cost = dict(ap=1)
-        self.ability = Physical
-        self.offensive = False
 
     def __call__(self, *args, **kwargs):
         weapon = self.actor.main_hand()
@@ -50,43 +54,52 @@ class Parry(Skill):
 
 class Riposte(Skill):
     """Prepare to hit with a counter attack, at full strength, after a missed attac."""
+
+    cost = dict(ap=1)
+    ability = Physical
+    offensive = True
+
     def __init__(self, actor):
         super(Riposte, self).__init__(actor)
-        self.cost = dict(ap=1)
-        self.ability = Physical
-        self.offensive = True
 
 class Backstab(Skill):
     """Attack with a 1d6 bonus against a character who is not engaged or covered."""
+
+    cost = dict(ap=1)
+    ability = Physical
+    offensive = True
+
     def __init__(self, actor):
         super(Backstab, self).__init__(actor)
-        self.cost = dict(ap=1)
-        self.ability = Physical
-        self.offensive = True
 
 class Flank(Skill):
     """Attack with a bonus against an enemy that is engaged by someone else."""
+    cost = dict(ap=1)
+    ability = Physical
+    offensive = True
+
     def __init__(self, actor):
         super(Flank, self).__init__(actor)
-        self.cost = dict(ap=1)
-        self.ability = Physical
-        self.offensive = True
 
 class Disarm(Skill):
     """Ready a reaction to make someone drop their weapon after they miss you."""
+
+    cost = dict(ap=1)
+    ability = Physical
+    offensive = True
+
     def __init__(self, actor):
         super(Disarm, self).__init__(actor)
-        self.cost = dict(ap=1)
-        self.ability = Physical
-        self.offensive = True
 
 class Explosion(Skill):
     """Hit everyone in the same location with an elemental attack."""
+
+    cost = dict(ap=1, pp=3)
+    ability = Mental
+    offensive = True
+
     def __init__(self, actor):
         super(Explosion, self).__init__(actor)
-        self.cost = dict(ap=1, pp=3)
-        self.ability = Mental
-        self.offensive = True
 
     def __call__(self, *args, **kwargs):
         damage_roll = self.actor.ability_dice(Mental).roll()
@@ -104,11 +117,13 @@ class Explosion(Skill):
 
 class Frighten(Skill):
     """Scare someone into losing morale points. They can overcome with their mental strength."""
+
+    cost = dict(ap=1, pp=1)
+    ability = Social
+    offensive = True
+
     def __init__(self, actor):
         super(Frighten, self).__init__(actor)
-        self.cost = dict(ap=1, pp=1)
-        self.ability = Social
-        self.offensive = True
 
     def __call__(self, *args, **kwargs):
         damage_roll = self.actor.ability_dice(Social).roll()
@@ -125,11 +140,14 @@ class Frighten(Skill):
 
 class Heal(Skill):
     """Heal someone, restoring their health by your mental ability dice."""
+
+    cost = dict(ap=1, pp=1)
+    ability = Mental
+    offensive = False
+
     def __init__(self, actor):
         super(Heal, self).__init__(actor)
-        self.cost = dict(ap=1, pp=1)
-        self.ability = Mental
-        self.offensive = False
+
 
     def __call__(self, *args, **kwargs):
         heal_roll = self.actor.ability_dice(Mental).roll()
@@ -144,11 +162,13 @@ class Heal(Skill):
 # for now it's not in all skills
 class Encourage(Skill):
     """Encourage your ally, to give them a bonus to their next dice roll."""
+
+    cost = dict(ap=1, mp=1)
+    ability = Social
+    offensive = False
+
     def __init__(self, actor):
         super(Encourage, self).__init__(actor)
-        self.cost = dict(ap=1, mp=1)
-        self.ability = Social
-        self.offensive = False
 
     def __call__(self, *args, **kwargs):
         targets = args
@@ -168,11 +188,14 @@ class Familiar(Skill):
     anything with a weight.
     Your familiar also has only one hitpoint,  will stay with you until the next time you rest.
     The familiar has one ability: Encourage"""
+
+    cost = dict(ap=1, mp=1)
+    ability = Social
+    offensive = False
+
     def __init__(self, actor):
         super(Familiar, self).__init__(actor)
-        self.cost = dict(ap=1, mp=1)
-        self.ability = Social
-        self.offensive = False
+
 
     def __call__(self, *args, **kwargs):
         familiar_name = f"{possessive(self.actor)} familiar"
@@ -185,11 +208,12 @@ class Familiar(Skill):
 
 class Harmony(Skill):
     """By instilling harmony in all your nearby allies, they work together as one. This will increase their defense by 1"""
+    cost = dict(ap=1, mp=1)
+    ability = Social
+    offensive = False
+
     def __init__(self, actor):
         super(Harmony, self).__init__(actor)
-        self.cost = dict(ap=1, mp=1)
-        self.ability = Social
-        self.offensive = False
 
     def __call__(self, *args, **kwargs):
         targets = args

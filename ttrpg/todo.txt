@@ -26,8 +26,8 @@ initial skills
         [done] harmony (1 defense to targets, max targets is social score)
         [done] pass actor of skill to constructor of it instead of __call__
 
-    - assign random skills based on primary stat IF available points to use at least once  (one of matching ability for each stat over ~2)
-    - return embedable data from skills, attack
+    [done]  assign random skills based on primary stat IF available points to use at least once  (one of matching ability for each stat over ~2)
+    - return embedable data from skills, attack. dicts, which are put in fields? Description is 'desc' field?
     - generate monster with skills (sets for each type, eg beast, dragon, undead?)
         - pounce (aka charge, damage bonus depends on ... size? physical that's double)
     - One AoE attack and test command for some characters known, some not known
@@ -47,7 +47,7 @@ Reimplement actions (attack, cover) as "Free Skills". Don't add them to skills, 
 some command to enter/exit combat so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.
 [done] organize commands in cogs (well, mostly game cog)
 partial matching for taking and dropping items
-partial matching for finding database characters
+partial matching for finding database characters (targets)
    - refactor implementation to self target without getting from database twice (executor==target) in skill/attack etc commands (now already needs
    case insensitive matching between argument and easlier character name)
     - track dirty flag in characters to see if they need stored (should be an optimization only)
@@ -57,6 +57,10 @@ derived dice stat for attack and defend dice, add dice together with Dice bonuse
     - all heavy weapons just have the Dice(4) bonus to attack
     - refactor adding bonus dict of dice, instead add "remarks"/sources to the dice themselves and the get_boni() directly returns Dice.
     - Add dice source remarks into the roll for clarity?
+help command which searches things for doc strings
+    Abilities
+    Skills (and other actions)
+generic command to execute skills
 jewelry (wearable item with bonuses)
 indicate into embed field in sheet which item is main/off (dual wield or shield) and worn. emojis? but no armor emoji. Just use :shirt: and :ring: for accesories
 use command: switch item main/offhand if appropriate, also wear armor. (3 ap?) maybe just use and also costs ap to use whatever or usable item in inventory is activated. may cost ap if destination is not empty

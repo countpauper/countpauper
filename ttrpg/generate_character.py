@@ -47,10 +47,15 @@ def random_equipment(capacity):
 
 
 def random_skills(character):
-    skills = Skill.all.copy()
-    random.shuffle(skills)
-    return [s(character) for s in skills[:character.level]]
-
+    ability_skill_amounts = { ability:max(0, character.ability(ability)-2) for ability in abilities }
+    skills = [s for s in Skill.all if character.approve_cost(s.cost)]
+    ability_skills={ability : [s for s in skills if s.ability==ability] for ability in ability_skill_amounts.keys()}
+    selected_skills = []
+    for ability, skills in ability_skills.items():
+        random.shuffle(skills)
+        selected_skills += skills[:ability_skill_amounts.get(ability, 0)]
+    random.shuffle(selected_skills)
+    return [s(character) for s in selected_skills[:character.level]]
 
 def _level_up(stats, level=None):
     if level is None:

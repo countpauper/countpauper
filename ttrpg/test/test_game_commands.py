@@ -59,9 +59,8 @@ async def test_generate(db, ctx):
     assert f"**Mental:** {c.mental}" in embed.description
     assert f"**Social:** {c.social}" in embed.description
     assert embed.thumbnail.url == ctx.author.display_avatar
-    assert len(embed.fields) == 2
-    assert embed.fields[0].name.startswith("Inventory")
-    assert embed.fields[1].name.startswith("Skills")
+    assert any(field.name.startswith("Skill") for field in embed.fields)
+    assert any(field.name.startswith("Inventory") for field in embed.fields)
 
 @pytest.mark.asyncio
 async def test_generate_duplicate(db, ctx):

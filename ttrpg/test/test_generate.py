@@ -1,5 +1,7 @@
-from generate_character import random_character, random_monster
+from generate_character import random_character, random_monster, random_skills
+from character import Character
 from skills import Skill
+from ability import Physical, Mental, Social
 import pytest
 
 
@@ -9,6 +11,16 @@ def test_random_character():
     assert(c.level == 1)
     assert(c.name)
     assert(c.carried() <= c.capacity())
+    for s in c.skill:
+        assert c.approve_cost(s.cost)
+
+def test_random_skills():
+    c = Character(physical=5, mental=1, social=3, level=3)
+    skills = random_skills(c)
+    assert len(skills) == c.level
+    assert len([s for s in skills if s.ability == Physical]) in {1, 2}
+    assert len([s for s in skills if s.ability == Mental]) == 0
+    assert len([s for s in skills if s.ability == Social]) in {0, 1}
 
 
 def test_random_leveled_character():

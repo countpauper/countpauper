@@ -167,7 +167,7 @@ class Character(object):
         return Dice.for_ability(self.ability(ability)) + self.get_boni("roll")
 
     def attack(self, target=None, attack_dice=None):
-        self._act()
+        self._check_cost(cost := dict(ap=1))
         if attack_dice is None:
             attack_dice = self.attack_dice()
 
@@ -176,17 +176,20 @@ class Character(object):
             defense_roll = target.defense_dice().roll()
             result = Attack(attack_roll, defense_roll)
             target.damage(result.damage())
+            self._cost(cost)
             return result
         else:
+            self._cost(cost)
             return Attack(attack=attack_roll)
 
     def cover(self):
-        self._check_cost(dict(ap=1))    # NB : check beforehand to make it transactional
+        cost = dict(ap=1)
+        self._check_cost(cost)
         cover, shield = 1, None
         if isinstance(self.off_hand(), Shield):
             shield = self.off_hand()
         self.affect(Effect('cover', cover, dict(defense=dict(cover=1))), True)
-        self._act()
+        self._cost(cost)
         return shield
 
     def _find_skill(self, skill):
@@ -205,7 +208,7 @@ class Character(object):
 
     def execute(self, skill, *targets):
         if s := self._find_skill(skill):
-            self._check_cost(s.cost)
+            self._check_cost(s.cost)  # NB : check beforehand to make it transactional
             if not (ability_score:=self.ability(s.ability)):
                 raise GameError(f"Your {s.ability.name} is too low ({ability_score}) to {skill}.")
             response = s(*targets)
@@ -227,7 +230,7 @@ class Character(object):
         if dmg:
             self.hp -= int(dmg)
 
-    def _check_cost(self, cost):
+    def _detect_cost_errors(self, cost):
         errors = []
         if (ap:=cost.get('ap')) and self.ap < ap:
             errors.append(f"you need {ap} {plural(ap, 'action')}, but you have {self.ap}")
@@ -238,9 +241,19 @@ class Character(object):
         # TODO: allow this? is going to 0 then allowed?
         if (hp:=cost.get('hp')) and self.hp < hp:
             errors.append(f"you need {hp} health, but you have {self.hp}")
+        return errors
+
+    @staticmethod
+    def _report_cost_errors(errors):
         if errors:
             raise GameError(list_off(errors).capitalize()+".")
-        return cost
+
+    def _check_cost(self, cost):
+        if approval:=self._detect_cost_errors(cost):    # NB : check beforehand to make it transactional
+            self._report_cost_errors(approval)
+
+    def approve_cost(self, cost):
+        return len(self._detect_cost_errors(cost)) == 0
 
     def _cost(self, cost):
         if ap:=cost.get('ap'):
@@ -251,11 +264,6 @@ class Character(object):
             self.mp -= mp
         if hp:=cost.get('hp'):
             self.hp -= hp
-
-    def _act(self, ap=1):
-        cost = dict(ap=ap)
-        self._check_cost(cost)
-        self._cost(cost)
 
     def carried(self):
         """Weight carried."""

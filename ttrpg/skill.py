@@ -2,10 +2,12 @@ from language import camel_to_words
 
 class Skill(object):
     all = []
+    cost = dict()
+    ability = None
+    offensive = None
 
     def __init__(self, actor):
         self.actor = actor
-        self.cost = dict(ap=1)  # could be hp,pp,mp,ap or even gp
 
     @classmethod
     def name(cls):
