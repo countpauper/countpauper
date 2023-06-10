@@ -54,15 +54,15 @@ def plural(amount, phrase):
         return phrase+'s'
 
 
-def list_off(items=None):
+def list_off(items=tuple()):
+    items = tuple(str(i) for i in items)
     if not items:
         return ""
-    items = tuple(items)
     if len(items) == 1:
-        return str(items[0])
+        return items[0]
     else:
-        oxford = ',' if 'and' in str(items[-1]) or ' ' in str(items[-2]) else ''
-        return ", ".join(str(i) for i in items[:-1])+f"{oxford} and {items[-1]}"
+        oxford = ',' if 'and' in items[-1] or ' ' in items[-2] else ''
+        return ", ".join(i for i in items[:-1])+f"{oxford} and {items[-1]}"
 
 irregular_possessive=dict(i="my", you="your", he="his", she="her", we="ours", they="their")
 def possessive(owner):

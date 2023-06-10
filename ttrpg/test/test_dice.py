@@ -72,6 +72,13 @@ def test_add():
     assert d == Dice(4, 2)+1
 
 
+def test_add_boni():
+    assert Dice(4) + dict() == Dice(4)
+    assert Dice(6) + dict(bonus=1) == Dice(6, 1)
+    assert Dice(8) + dict(a=2, b=3) == Dice(8, bonus=[2,3])
+    assert Dice(10) + dict(d=Dice(4, 1), e=2) == Dice(10, 4, bonus=[1,2])
+
+
 def test_sub():
     assert Dice(6)-Dice(4) == Dice(6,-4)
     assert Dice(10)-1 == Dice(10, -1)

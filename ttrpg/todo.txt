@@ -22,7 +22,10 @@ initial skills
         [done] scare (social damage vs mental save (or reversed? but that's illusion), morale dmg)
         [done] heal: mental damage die hp healed (max hp is like 13 so 2d12 is a lot? how to power that up?)
         [done] familiar (summon. can be in combat? create in db. Keep it simple. Use one mp, it stays until the next rest)
-        - harmony (1 defense to targets, max targets is social score)
+        [done] encourage
+        [done] harmony (1 defense to targets, max targets is social score)
+        - pass actor of skill to constructor of it instead of __call__
+
     - assign random skills based on primary stat IF available points to use at least once  (one of matching ability for each stat over ~2)
     - return embedable data from skills, attack
     - generate monster with skills (sets for each type, eg beast, dragon, undead?)
@@ -31,6 +34,8 @@ initial skills
 - show dice :four: :six: :eight: :keycap_ten:  :one::two: in sheet
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
+character to str just instead of Name(), repr for elaborate description
+portrait and color command
 rest command (resets hp, pp mp and ap and clears all effects with durations)
 Check if can attack or motivated enough to offend for skills
 Reimplement actions (attack, cover) as "Free Skills". Don't add them to skills, just attack() = execute(Attack(), targets, bonus). Derive SKill from Action? What about passive skill?

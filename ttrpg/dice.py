@@ -54,6 +54,11 @@ class Dice(object):
             return self.copy()
         if isinstance(other, Dice):
             return Dice(*self.dice, *other.dice, bonus=self.flat + other.flat)
+        elif isinstance(other, dict):
+            result = self
+            for v in other.values():
+                result += v
+            return result
         else:
             return Dice(*self.dice, bonus=self.flat+[other])
 

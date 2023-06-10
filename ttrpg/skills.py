@@ -3,8 +3,8 @@ from items import *
 from effect import Effect
 from character import Character
 from ability import Physical, Mental, Social
-from errors import GameError
-from language import indefinite_article, possessive
+from errors import GameError, TargetError
+from language import indefinite_article, possessive, list_off
 
 
 
@@ -136,15 +136,21 @@ class Heal(Skill):
 # TODO: if Familiar gets this for free, free action and at range, why would a player take it? To upcast?
 # for now it's not in all skills
 class Encourage(Skill):
-    """Provide as bonus to an ally as a reaction. """
+    """Encourage your ally, to give them a bonus to their next dice roll."""
     def __init__(self):
         self.cost = dict(ap=1, mp=1)
         self.ability = Social
         self.offensive = False
 
     def __call__(self, actor, *args, **kwargs):
-        pass
-
+        targets = args
+        if not targets:
+            raise TargetError("You need to encourage at least one ally.")
+        if actor in targets:
+            raise TargetError("You cannot encourage yourself.")
+        for target in targets:
+            target.affect(Effect("encouraged", 1, dict(roll=dict(encouraged=1))))
+        return f"encourages {list_off(tuple(t.Name() for t in targets))}"
 
 class Familiar(Skill):
     """Call your familiar to your side.
@@ -166,9 +172,22 @@ class Familiar(Skill):
         else:
             familiar = Character(name=familiar_name, level=-3, physical=0, mental=0, social=3, skill=[Encourage])
             actor.summon(familiar)
-            return "summons a familiar."
+            return "summons a familiar"
 
+class Harmony(Skill):
+    """By instilling harmony in all your nearby allies, they work together as one. This will increase their defense by 1"""
+    def __init__(self):
+        self.cost = dict(ap=1, mp=1)
+        self.ability = Social
+        self.offensive = False
 
+    def __call__(self, actor, *args, **kwargs):
+        targets = args
+        if len(targets) > actor.social:
+            raise TargetError("You can only harmonize as many allies as your social score.")
+        for target in targets:
+            target.affect(Effect("harmony", 1, dict(defense=dict(harmony=1))))
+        return f"harmonizes {list_off(targets)}"
 
-Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion, Frighten, Heal, Familiar]
+Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion, Frighten, Heal, Familiar, Encourage]
 

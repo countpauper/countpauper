@@ -1,6 +1,10 @@
 from discord.ext.commands import CommandError
 from language import plural, list_off
 
+class TargetError(CommandError):
+    def __init__(self, *args):
+        super(TargetError, self).__init__(*args)
+
 class GameError(CommandError):
     def __init__(self, *args):
         super(GameError, self).__init__(*args)

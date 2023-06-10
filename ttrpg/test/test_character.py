@@ -78,18 +78,21 @@ def test_auto_equip():
     assert type(Character(inventory=[Armor()]).worn[0]) == Armor
 
 
-def test_str():
-    assert str(Character(name='Foo', level=3, physical=5, mental=3, hp=2,
+def test_repr():
+    assert repr(Character(name='Foo', level=3, physical=5, mental=3, hp=2,
                          inventory=[MeleeWeapon(name="test sword"),Shield()],
                          skill=["parry", CrossCut],
                          allies=[Character(name="Ali")])) == """Foo: Level 3
-    5 Physical: 2/7 HP
-    3 Mental: 3/3 PP
-    1 Social: 1/1 MP
-    Defense 1d8 Attack 1d8
-    Inventory [2/5]: test sword, and shield 
-    Skills [2/3]: parry and cross cut
-    Allies: Ali"""
+5 Physical: 2/7 HP
+3 Mental: 3/3 PP
+1 Social: 1/1 MP
+Defense 1d8 Attack 1d8
+Inventory [2/5]: test sword, and shield 
+Skills [2/3]: parry and cross cut
+Allies: Ali"""
+
+def test_str():
+    assert str(Character(name="bar the brave")) == "Bar the brave"
 
 def test_obtain():
     c = Character(physical=2)

@@ -134,11 +134,8 @@ class Character(object):
         boni={k:v for k,v in boni.items() if v is not None}
         return boni
 
-    def physical_dice(self):
-        return Dice.for_ability(self.physical)
-
     def defense_dice(self):
-        return self.physical_dice()+Dice(bonus=self.get_boni('defense').values())
+        return self.ability_dice(Physical)+self.get_boni('defense')
 
     def turn(self):
         self['ap'].reset()
@@ -170,7 +167,7 @@ class Character(object):
 
 
     def ability_dice(self, ability):
-        return Dice.for_ability(self.ability(ability))
+        return Dice.for_ability(self.ability(ability)) + self.get_boni("roll")
 
     def attack(self, target=None, attack_dice=None):
         self._act()
@@ -373,14 +370,17 @@ class Character(object):
         self.allies.append(ally)
 
     def __str__(self):
+        return self.name.capitalize()
+
+    def __repr__(self):
         return f"""{self.name}: Level {self.level}
-    {self.physical} Physical: {self.hp} HP
-    {self.mental} Mental: {self.pp} PP
-    {self.social} Social: {self.mp} MP
-    Defense {self.defense_dice()} Attack {self.attack_dice()}
-    Inventory [{self.carried()}/{self.capacity()}]: {list_off(self.inventory) or "Empty"} 
-    Skills [{len(self.skill)}/{self.memory()}]: {list_off(self.skill) or "none"}
-    Allies: {list_off(a.Name() for a in self.allies) or "none"}"""
+{self.physical} Physical: {self.hp} HP
+{self.mental} Mental: {self.pp} PP
+{self.social} Social: {self.mp} MP
+Defense {self.defense_dice()} Attack {self.attack_dice()}
+Inventory [{self.carried()}/{self.capacity()}]: {list_off(self.inventory) or "Empty"} 
+Skills [{len(self.skill)}/{self.memory()}]: {list_off(self.skill) or "none"}
+Allies: {list_off(a.Name() for a in self.allies) or "none"}"""
 
 
 
