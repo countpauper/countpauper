@@ -66,6 +66,7 @@ def list_off(items=tuple()):
 
 irregular_possessive=dict(i="my", you="your", he="his", she="her", we="ours", they="their")
 def possessive(owner):
+    owner = str(owner)
     regular_possessive=f"{owner}'" if owner[-1] == "s" else f"{owner}'s"
     possessive = irregular_possessive.get(owner.lower(), regular_possessive)
     if owner[0].isupper() and owner != "I":

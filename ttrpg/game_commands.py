@@ -36,7 +36,7 @@ class GameCommands(commands.Cog):
     def embed_sheet(c, **kwargs):
         description=GameCommands.character_description(c)
 
-        embed = discord.Embed(title=kwargs.get('title', c.Name()),
+        embed = discord.Embed(title=kwargs.get('title', str(c)),
                       description=description,
                       color=None if c.color is None else discord.Color.from_str(c.color))
         if c.portrait:
@@ -49,7 +49,7 @@ class GameCommands(commands.Cog):
             embed.add_field(name="Effects", value="\n".join(str(e).capitalize() for e in c.effects), inline=True)
         if kwargs.get('allies', True):
             for ally in c.allies:
-                embed.add_field(name=ally.Name(), value=GameCommands.character_description(ally))
+                embed.add_field(name=str(ally), value=GameCommands.character_description(ally))
         return embed
 
 
@@ -76,7 +76,7 @@ class GameCommands(commands.Cog):
         c.color = str(ctx.author.color)
         c.portrait = str(ctx.author.display_avatar)
         self.db.store(ctx.guild, ctx.author, c)
-        await ctx.send(embed=self.embed_sheet(c, title=f"New: {c.Name()}", effects=False))
+        await ctx.send(embed=self.embed_sheet(c, title=f"New: {c}", effects=False))
         await ctx.message.delete()
 
 
@@ -125,7 +125,7 @@ class GameCommands(commands.Cog):
         items = c.obtain(*args)
         c.auto_equip()
         self.db.store(ctx.guild, ctx.author, c)
-        await ctx.send(f"**{c.Name()}** takes the {list_off(items)}. Carried [{c.carried()}/{c.capacity()}]")
+        await ctx.send(f"**{c}** takes the {list_off(items)}. Carried [{c.carried()}/{c.capacity()}]")
         await ctx.message.delete()
 
     @commands.command()
@@ -136,7 +136,7 @@ class GameCommands(commands.Cog):
         items = c.lose(*args)
         c.auto_equip()
         self.db.store(ctx.guild, ctx.author, c)
-        await ctx.send(f"**{c.Name()}** drops the {list_off(items)}. Carried [{c.carried()}/{c.capacity()}]")
+        await ctx.send(f"**{c}** drops the {list_off(items)}. Carried [{c.carried()}/{c.capacity()}]")
         await ctx.message.delete()
 
     @commands.command()
@@ -145,7 +145,7 @@ class GameCommands(commands.Cog):
         if args:
             c.level_up(args[0])
             self.db.store(ctx.guild, ctx.author, c)
-            await ctx.send(embed=self.embed_sheet(c, title=f"{c.Name()} levels up to {c.level}!", inventory=False, effects=False, allies=False))
+            await ctx.send(embed=self.embed_sheet(c, title=f"{c} levels up to {c.level}!", inventory=False, effects=False, allies=False))
             await ctx.message.delete()
         else:
             raise commands.CommandError(f"You have to specify the ability to level up: {list_off(a.name for a in abilities)}")
@@ -157,7 +157,7 @@ class GameCommands(commands.Cog):
             skills = c.learn(*args)
             self.db.store(ctx.guild, ctx.author, c)
             await ctx.message.delete()
-            await ctx.send(f"**{c.Name()}** learns {list_off(skills)}.")
+            await ctx.send(f"**{c}** learns {list_off(skills)}.")
         else:
             raise commands.CommandError(f"You have to specify the ability to level up: {list_off(a.name for a in abilities)}")
 
@@ -209,13 +209,13 @@ class GameCommands(commands.Cog):
             self.db.store(ctx.guild, owner, target)
             self.db.store(ctx.guild, ctx.author, attacker)
             if result.hit():
-                await ctx.send(f"**{attacker.Name()}** attacks {target.Name()} [{target.hp}]: {result}.")
+                await ctx.send(f"**{attacker}** attacks {target} [{target.hp}]: {result}.")
             else:
-                await ctx.send(f"**{attacker.Name()}** attacks {target.Name()}: {result}.")
+                await ctx.send(f"**{attacker}** attacks {target}: {result}.")
         else:
             result = attacker.attack(None, attacker.attack_dice(0) + bonus)
             self.db.store(ctx.guild, ctx.author, attacker)
-            await ctx.send(f"**{attacker.Name()}** attacks: {result}.")
+            await ctx.send(f"**{attacker}** attacks: {result}.")
         await ctx.message.delete()
 
 
@@ -238,7 +238,7 @@ class GameCommands(commands.Cog):
         e, args = self._optional_character_argument(ctx.guild, ctx.author, args)
         if not args:
             await ctx.message.delete()
-            await ctx.send(f"""**{e.Name()}** knows {list_off(str(s).capitalize() for s in e.skill)}.""")
+            await ctx.send(f"""**{e}** knows {list_off(str(s).capitalize() for s in e.skill)}.""")
         else:
             skill=args.pop(0)
             targets={arg:e if arg.lower()==e.name.lower() else self.db.retrieve(ctx.guild, None, arg) for arg in args}

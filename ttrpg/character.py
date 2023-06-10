@@ -70,15 +70,12 @@ class Character(object):
         self.stats['mp'] = Counter(kwargs.get('mp'), lambda: self.max_mp(), lambda: sum(self.get_boni('mp').values()))
         self.stats['ap'] = Counter(kwargs.get('ap'), lambda: self.default_ap, lambda: sum(self.get_boni('ap').values()))
 
-        self.skill = [Skill.create(s) for s in kwargs.get('skill', [])]
+        self.skill = [Skill.create(self, s) for s in kwargs.get('skill', [])]
         self.inventory = [ItemFactory(i) for i in kwargs.get('inventory',[])]
         self.allies = kwargs.get('allies', [])
         self.held = dict()
         if self.inventory:
             self.auto_equip()
-
-    def Name(self):
-        return self.name.capitalize()
 
     def __getitem__(self, key):
         return self.stats[key]
@@ -211,11 +208,11 @@ class Character(object):
             self._check_cost(s.cost)
             if not (ability_score:=self.ability(s.ability)):
                 raise GameError(f"Your {s.ability.name} is too low ({ability_score}) to {skill}.")
-            response = s(self, *targets)
+            response = s(*targets)
             self._cost(s.cost)
             return response
         else:
-            raise GameError(f"{skill} is not known by {self.Name()}.")
+            raise GameError(f"{skill} is not known by {self}.")
 
     def affect(self, effect, unique=False):
         if unique and (duplicates := self.affected(effect.name)):
@@ -288,10 +285,10 @@ class Character(object):
 
     def learn(self, *new_skills):
         if len(self.skill) + len(new_skills) > self.memory():
-            raise GameError(f"{self.Name()} already knows {len(self.skill)}/{self.memory()} skills.")
-        new_skills = [Skill.create(skill) for skill in new_skills]
+            raise GameError(f"{self} already knows {len(self.skill)}/{self.memory()} skills.")
+        new_skills = [Skill.create(self, skill) for skill in new_skills]
         if known_skills:=[skill for skill in new_skills if any(isinstance(known_skill, type(skill)) for known_skill in self.skill)]:
-            raise GameError(f"{self.Name()} already knows {list_off(known_skills)}.")
+            raise GameError(f"{self} already knows {list_off(known_skills)}.")
         self.skill += new_skills
         return tuple(new_skills)
 
@@ -380,7 +377,7 @@ class Character(object):
 Defense {self.defense_dice()} Attack {self.attack_dice()}
 Inventory [{self.carried()}/{self.capacity()}]: {list_off(self.inventory) or "Empty"} 
 Skills [{len(self.skill)}/{self.memory()}]: {list_off(self.skill) or "none"}
-Allies: {list_off(a.Name() for a in self.allies) or "none"}"""
+Allies: {list_off(self.allies) or "none"}"""
 
 
 

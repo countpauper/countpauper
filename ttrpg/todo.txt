@@ -24,7 +24,7 @@ initial skills
         [done] familiar (summon. can be in combat? create in db. Keep it simple. Use one mp, it stays until the next rest)
         [done] encourage
         [done] harmony (1 defense to targets, max targets is social score)
-        - pass actor of skill to constructor of it instead of __call__
+        [done] pass actor of skill to constructor of it instead of __call__
 
     - assign random skills based on primary stat IF available points to use at least once  (one of matching ability for each stat over ~2)
     - return embedable data from skills, attack
@@ -34,13 +34,14 @@ initial skills
 - show dice :four: :six: :eight: :keycap_ten:  :one::two: in sheet
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
-character to str just instead of Name(), repr for elaborate description
+[done] character to str just instead of Name(), repr for elaborate description
 portrait and color command
 rest command (resets hp, pp mp and ap and clears all effects with durations)
+    - clear familiar. Add as effect?
 Check if can attack or motivated enough to offend for skills
 Reimplement actions (attack, cover) as "Free Skills". Don't add them to skills, just attack() = execute(Attack(), targets, bonus). Derive SKill from Action? What about passive skill?
     - make cover a mental skill, it requires 1 mental ability. Make it defensive.
-    - make attacking a None skill, it doesn't require >0 physical (or does it? move dice over?). Make it offensive of course. It requires motivation
+    - make attacking a Physical skill, it requires >0 physical (does it? move dice over?). Make it offensive of course. It requires motivation
 
 [done] level up command, argument is ability to raise
 some command to enter/exit combat so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.

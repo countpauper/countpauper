@@ -61,3 +61,4 @@ def test_possessive():
     assert possessive("she") == "her"
     assert possessive("I") == "my"
     assert possessive("You") == "Your"
+    assert possessive(3) == "3's"

@@ -98,7 +98,7 @@ def test_inventory(db):
     assert len(c.item("Birch bow")) == 1
 
 def test_skills(db):
-    c = Character(skill=[Parry()])
+    c = Character(skill=[Parry])
     db.store("guild","user", c)
     c = db.retrieve("guild", "user", c.name)
     assert c.skill
