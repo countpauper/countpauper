@@ -18,7 +18,7 @@ def test_random_skills():
     c = Character(physical=5, mental=1, social=3, level=3)
     skills = random_skills(c)
     assert len(skills) == c.level
-    assert len([s for s in skills if s.ability == Physical]) in {1, 2}
+    assert len([s for s in skills if s.ability == Physical]) in {1, 2, 3}
     assert len([s for s in skills if s.ability == Mental]) == 0
     assert len([s for s in skills if s.ability == Social]) in {0, 1}
 

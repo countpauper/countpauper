@@ -30,7 +30,7 @@ initial skills
     - return embedable data from skills, attack. dicts, which are put in fields? Description is 'desc' field?
     - generate monster with skills (sets for each type, eg beast, dragon, undead?)
         - pounce (aka charge, damage bonus depends on ... size? physical that's double)
-    - One AoE attack and test command for some characters known, some not known
+    - One AoE attack and test command for some characters known, some not known (in db) to test generic target collection
 - show dice :four: :six: :eight: :keycap_ten:  :one::two: in sheet
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
@@ -39,12 +39,9 @@ portrait and color command
 rest command (resets hp, pp mp and ap and clears all effects with durations)
     - clear familiar. Add as effect?
 Check if can attack or motivated enough to offend for skills
-Reimplement actions (attack, cover) as "Free Skills". Don't add them to skills, just attack() = execute(Attack(), targets, bonus). Derive SKill from Action? What about passive skill?
-    - make cover a mental skill, it requires 1 mental ability. Make it defensive.
-    - make attacking a Physical skill, it requires >0 physical (does it? move dice over?). Make it offensive of course. It requires motivation
+[done] Reimplement actions (attack, cover) as "Free Skills". Don't add them to skills, just attack() = execute(Attack(), targets, bonus). Derive SKill from Action? What about passive skill?
 
 [done] level up command, argument is ability to raise
-some command to enter/exit combat so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.
 [done] organize commands in cogs (well, mostly game cog)
 partial matching for taking and dropping items
 partial matching for finding database characters (targets)
@@ -54,16 +51,31 @@ partial matching for finding database characters (targets)
 Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handling
 [done] character worn can be a list for jewelry and multi part armor?
 derived dice stat for attack and defend dice, add dice together with Dice bonuses for items (and effects/skills)
-    - all heavy weapons just have the Dice(4) bonus to attack
+    [done] all heavy weapons just have the Dice(4) bonus to attack
     - refactor adding bonus dict of dice, instead add "remarks"/sources to the dice themselves and the get_boni() directly returns Dice.
     - Add dice source remarks into the roll for clarity?
+automatic penalty for subsequent per turn and end turn command
+    - also automatic tracking for dual wield switch (boolean) and reset per turn
+    - Crosscut skill should start with current attack penalty and all attack skills should increaase it
+    ? Does all this state really need to be persisted? or maybe it's an "effect", hidden effects ?
 help command which searches things for doc strings
     Abilities
     Skills (and other actions)
-generic command to execute skills
+    Commands
+generic command to execute skills or even all defined actions
+    - what to do with skills with a camel case -> space
+Upcasts for all skills:
+    - command option to do it. any number argument?
+    - Modify existing skills
 jewelry (wearable item with bonuses)
 indicate into embed field in sheet which item is main/off (dual wield or shield) and worn. emojis? but no armor emoji. Just use :shirt: and :ring: for accesories
 use command: switch item main/offhand if appropriate, also wear armor. (3 ap?) maybe just use and also costs ap to use whatever or usable item in inventory is activated. may cost ap if destination is not empty
+
+
+=== Combat
+some command to enter/exit combat (in channel?) so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.
+combat database (is that where to keep position? only allow targetting combat characters ? add channel to combat?)
+position in character and database
 move command: just costs an ap
     set location to argument
     compute distance for ap
@@ -73,19 +85,13 @@ move command: just costs an ap
     argument for swim or climb
     automatically get up if down and ap available
     automatically disengage if ap available
-game commands more tests for user input handling and error reporting
+
+[done] game commands more tests for user input handling and error reporting
 keep character up to date with database without having to store/restore the whole time, even during test? like some sort of db cache and character is just a wrapper?
     - can probably do it with more Descriptors (although very layered) where the real value is straight in the database. Update one property at a time
     - commit at the end of a command, all characters involved.
-automatic penalty for subsequent per turn and end turn command
-    - also automatic tracking for dual wield switch (boolean) and reset per turn
-    - Crosscut skill should start with current attack penalty and all attack skills should increaase it
-    ? Does all this state really need to be persisted? or maybe it's an "effect", hidden effects ?
 
-Upcast all skills
 item database with named types (Type+properties)
-position in character and database
-combat database (is that where to keep position? only allow targetting combat characters ? add channel to combat?)
 Add the random item system from the tactics game with the materials and stuff
 level bonus and penalty: extra stats and skills and loss of stats and skills, but which ? (just raising/lowering hp is lame)
 Make automated battles of N lower level characters agains 1 higher levels, ability and ability and so on

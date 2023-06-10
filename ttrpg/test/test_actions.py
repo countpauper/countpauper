@@ -1,4 +1,5 @@
 from character import Character
+from actions import Attack, Cover
 from items import Shield, MeleeWeapon
 from errors import GameError
 from skills import Parry
@@ -17,42 +18,33 @@ def test_turn():
 
 def test_attack():
     attacker = Character(physical=3)
-    result = attacker.attack()
-    assert attacker.ap == 2
+    attack = Attack(attacker)
+    assert attack.cost['ap'] == 1
+    result = attack()
     assert re.match(r"1d4 \(\d\) = \d", str(result))
     assert result.damage() is None
-
 
 def test_attack_target():
     attacker = Character(physical=2)
     target = Character(physical=2)
-    result = attacker.attack(target)
-    str_result=str(result)
+    attack = Attack(attacker)
+    result = attack(target)
+
     if result.hit():
         assert re.match(r"1d\d \(\d\) = \d VS 1d\d \(\d\) = \d hits for \d damage", str(result))
     else:
         assert re.match(r"1d\d \(\d\) = \d VS 1d\d \(\d\) = \d misses", str(result))
-    assert attacker.ap == 2
-
-
-def test_attack_no_ap():
-    # TODO: attacker and target as fixtures?
-    attacker = Character()
-    attacker.ap=0
-    with pytest.raises(GameError):
-        attacker.attack()
-
 
 def test_cover():
     c = Character(physical=3, inventory=[Shield()])
     c.auto_equip()
-    item = c.cover()
-    assert c.ap == 2
+    cover = Cover(c)
+    assert cover.cost['ap'] == 1
+    result = cover()
     assert c.defense_dice() == Dice(4,1)
-    assert isinstance(item, Shield)
+    assert result == "seeks cover behind their shield"
     with pytest.raises(GameError):
-        c.cover()
-    assert c.ap == 2
+        cover()
 
 def test_too_weak_to_skill():
     c = Character(physical=0, skill=[Parry], inventory=[MeleeWeapon(name="sword")])

@@ -1,4 +1,5 @@
 from skill import Skill
+from actions import AttackResult
 from items import *
 from effect import Effect
 from character import Character
@@ -23,12 +24,15 @@ class CrossCut(Skill):
         args = list(args)
         if isinstance(self.actor.main_hand(), MeleeWeapon) and isinstance(self.actor.off_hand(), MeleeWeapon):
             attack_dice = self.actor.attack_dice(0) + self.actor.attack_dice(1)
+            attack_roll = attack_dice.roll()
             if args:
                 target = args.pop(0)
-                result = self.actor.attack(target, attack_dice)
-                return f"crosscuts {target}: {result} [{target.hp}]"
+                defense_roll = target.defense_dice().roll()
+                result = AttackResult(attack_roll, defense_roll)
+                target.damage(result.damage())
+                return f"crosscuts {target} [{target.hp}]: {result}"
             else:
-                return f"crosscuts {attack_dice.roll()}"
+                return f"crosscuts {attack_roll}"
         else:   # TODO: specific exception types for skill preconditions
             raise GameError("You must be wielding two melee weapons.")
 

@@ -6,32 +6,8 @@ from ability import Physical, Mental, Social
 from effect import Effect
 from errors import GameError
 from language import plural, list_off
+from actions import *
 
-class Attack(object):
-    def __init__(self, attack, defense=None):
-        self.attack=attack
-        self.defense = defense
-
-    def damage(self):
-        if self.defense:
-            if self.attack.total>self.defense.total:
-                return self.attack.total - self.defense.total
-            else:
-                return 0
-        else:
-            return None
-
-    def hit(self):
-        return self.damage()
-
-    def __str__(self):
-        if self.defense:
-            if dmg := self.damage():
-                return f"{self.attack} VS {self.defense} hits for {dmg} damage"
-            else:
-                return f"{self.attack} VS {self.defense} misses"
-        else:
-            return f"{self.attack}"
 
 class Character(object):
     id = Identifier("id")
@@ -166,32 +142,6 @@ class Character(object):
     def ability_dice(self, ability):
         return Dice.for_ability(self.ability(ability)) + self.get_boni("roll")
 
-    def attack(self, target=None, attack_dice=None):
-        self._check_cost(cost := dict(ap=1))
-        if attack_dice is None:
-            attack_dice = self.attack_dice()
-
-        attack_roll = attack_dice.roll()
-        if target is not None:
-            defense_roll = target.defense_dice().roll()
-            result = Attack(attack_roll, defense_roll)
-            target.damage(result.damage())
-            self._cost(cost)
-            return result
-        else:
-            self._cost(cost)
-            return Attack(attack=attack_roll)
-
-    def cover(self):
-        cost = dict(ap=1)
-        self._check_cost(cost)
-        cover, shield = 1, None
-        if isinstance(self.off_hand(), Shield):
-            shield = self.off_hand()
-        self.affect(Effect('cover', cover, dict(defense=dict(cover=1))), True)
-        self._cost(cost)
-        return shield
-
     def _find_skill(self, skill):
         if type(skill) == str:
             if match := [s for s in self.skill if str(s) == skill]:
@@ -206,16 +156,22 @@ class Character(object):
         else:
             raise TypeError(f"No skill can be found based on {type(skill)}.")
 
-    def execute(self, skill, *targets):
-        if s := self._find_skill(skill):
-            self._check_cost(s.cost)  # NB : check beforehand to make it transactional
-            if not (ability_score:=self.ability(s.ability)):
-                raise GameError(f"Your {s.ability.name} is too low ({ability_score}) to {skill}.")
-            response = s(*targets)
-            self._cost(s.cost)
-            return response
+    def execute(self, action, *targets, **kwargs):
+        if isinstance(action, Action):
+            pass
+        elif isinstance(action, type):
+            action = action(self)
+        elif skill := self._find_skill(action):
+            action = skill
         else:
-            raise GameError(f"{skill} is not known by {self}.")
+            raise GameError(f"{action} is not known by {self}.")
+
+        self._check_cost(action.cost)  # NB : check beforehand to make it transactional
+        if not (ability_score:=self.ability(action.ability)):
+            raise GameError(f"Your {action.ability.name} is too low ({ability_score}) to {action}.")
+        response = action(*targets, **kwargs)
+        self._cost(action.cost)
+        return response
 
     def affect(self, effect, unique=False):
         if unique and (duplicates := self.affected(effect.name)):

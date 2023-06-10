@@ -1,4 +1,5 @@
 from character import Character
+from actions import Cover, Attack
 from generate_character import random_character
 from errors import CharacterUnknownError
 from ability import Physical, Mental, Social, abilities
@@ -204,8 +205,9 @@ class GameCommands(commands.Cog):
                 raise CharacterUnknownError(ctx.guild, None, target_name)
         else:
             target_name, target = "", None
+        dice = attacker.attack_dice(0) + bonus
         if target:
-            result = attacker.attack(target, attacker.attack_dice(0) + bonus)
+            result = attacker.execute(Attack, target, attack_dice=dice)
             self.db.store(ctx.guild, owner, target)
             self.db.store(ctx.guild, ctx.author, attacker)
             if result.hit():
@@ -213,7 +215,7 @@ class GameCommands(commands.Cog):
             else:
                 await ctx.send(f"**{attacker}** attacks {target}: {result}.")
         else:
-            result = attacker.attack(None, attacker.attack_dice(0) + bonus)
+            result = attacker.execute(Attack, attack_dice=dice)
             self.db.store(ctx.guild, ctx.author, attacker)
             await ctx.send(f"**{attacker}** attacks: {result}.")
         await ctx.message.delete()
@@ -222,12 +224,9 @@ class GameCommands(commands.Cog):
     @commands.command()
     async def cover(self, ctx, name=None):
         if c := self.db.retrieve(ctx.guild, ctx.author, name):
-            item = c.cover()
+            result = c.execute(Cover)
             self.db.store(ctx.guild, ctx.author, c)
-            if item:
-                await ctx.send(f"**{c.name}** seeks cover behind their {item}.")
-            else:
-                await ctx.send(f"**{c.name}** seeks cover nearby.")
+            await ctx.send(f"**{c.name}** {result}.")
             await ctx.message.delete()
         else:
             raise CharacterUnknownError(ctx.guild, ctx.author, name)

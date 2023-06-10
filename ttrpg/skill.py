@@ -1,21 +1,10 @@
-from language import camel_to_words
+from actions import Action
 
-class Skill(object):
+class Skill(Action):
     all = []
-    cost = dict()
-    ability = None
-    offensive = None
 
     def __init__(self, actor):
-        self.actor = actor
-
-    @classmethod
-    def name(cls):
-        return camel_to_words(cls.__name__)
-
-    @classmethod
-    def help(cls):
-        return cls.__doc__
+        super(Skill, self).__init__(actor)
 
     @staticmethod
     def create(actor, skill):

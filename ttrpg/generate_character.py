@@ -47,7 +47,7 @@ def random_equipment(capacity):
 
 
 def random_skills(character):
-    ability_skill_amounts = { ability:max(0, character.ability(ability)-2) for ability in abilities }
+    ability_skill_amounts = { ability:max(0, character.ability(ability) - 2) for ability in abilities }
     skills = [s for s in Skill.all if character.approve_cost(s.cost)]
     ability_skills={ability : [s for s in skills if s.ability==ability] for ability in ability_skill_amounts.keys()}
     selected_skills = []

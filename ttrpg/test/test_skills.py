@@ -51,7 +51,7 @@ def test_crosscut_hit(dice_max):
     c.obtain(MeleeWeapon(name='axe'))
     c.auto_equip()
     result = skill(t)
-    assert result == f"crosscuts Target: 8 VS 1 hits for 7 damage [0/5]"
+    assert result == f"crosscuts Target [0/5]: 8 VS 1 hits for 7 damage"
 
 def test_explosion():
     skill = Explosion(None)
