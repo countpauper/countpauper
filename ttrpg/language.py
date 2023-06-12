@@ -73,3 +73,6 @@ def possessive(owner):
         return possessive.capitalize()
     else:
         return possessive
+
+def is_name(name):
+    return re.match(r"^([a-zA-Z'.-]+( [a-zA-Z'.-]+)*){2,30}$", str(name))

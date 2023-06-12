@@ -62,3 +62,13 @@ def test_possessive():
     assert possessive("I") == "my"
     assert possessive("You") == "Your"
     assert possessive(3) == "3's"
+
+def test_names():
+    assert is_name("Al")
+    assert is_name("Foo Bar")
+    assert is_name("Foo of Baz")
+    assert is_name("Velg'larn")
+    assert not is_name(23)
+    assert not is_name("http://bla")
+    assert not is_name("d6")
+    assert not is_name("pickles, and cheese")

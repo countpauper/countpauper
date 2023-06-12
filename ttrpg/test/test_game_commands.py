@@ -6,6 +6,7 @@ from items import MeleeWeapon, Armor
 from skills import Parry, Riposte, CrossCut
 from effect import Effect
 from discord.ext import commands
+from errors import CharacterUnknownError
 import discord
 import re
 
@@ -78,12 +79,21 @@ async def test_generate_duplicate(db, ctx):
 async def test_generate_existing(db, ctx):
     c = Character()
     db.store(ctx.guild, "baz", c)
-
-    bot = Mock()
-    g = GameCommands(bot, db)
+    g = GameCommands(bot := Mock(), db)
     with pytest.raises(commands.CommandError) as exc_info:
         await g.generate(g, ctx, c.name)
     assert exc_info.value.args[0] == f"'{c.name}' already exists on {ctx.guild}. Chose another name."
+
+@pytest.mark.asyncio
+async def test_generate_weird_names(db, ctx):
+    g = GameCommands(bot := Mock(), db)
+    with pytest.raises(commands.CommandError):
+        await g.generate(g, ctx, "..123")
+    ctx.author.nick = "4four20(:"
+    with pytest.raises(commands.CommandError):
+        await g.generate(g, ctx)
+
+
 
 
 @pytest.mark.asyncio
@@ -137,6 +147,7 @@ async def test_sheet_allies(db, ctx):
 **Social:** 1 [1], **MP:** 1/1
 **Attack:** 1d2, **Defense:** 1d2"""
 
+
 @pytest.mark.asyncio
 async def test_sheet_flavour(db, ctx):
     c = Character(color="#ABCDEF", portrait="http://portrait.com/face.jpg")
@@ -153,8 +164,7 @@ async def test_sheet_flavour(db, ctx):
 async def test_sheet_field_reduction(db, ctx):
     c = Character(physical=0, skill=[])
     db.store(ctx.guild, ctx.author, c)
-    bot = Mock()
-    g = GameCommands(bot, db)
+    g = GameCommands(bot := Mock(), db)
     await g.sheet(g, ctx)
     ctx.send.assert_called_once()
     embed = ctx.send.call_args[1].get('embed')
@@ -164,13 +174,28 @@ async def test_sheet_field_reduction(db, ctx):
 
 @pytest.mark.asyncio
 async def test_no_sheet(db, ctx):
-    bot = Mock()
-    g = GameCommands(bot, db)
+    g = GameCommands(bot := Mock(), db)
     with pytest.raises(commands.CommandError) as exc_info:
         await g.sheet(g, ctx, "foo")
     assert exc_info.value.args[0] == f"No character named Foo found for {ctx.author} on {ctx.guild}."
     ctx.message.delete.assert_not_called()
 
+@pytest.mark.asyncio
+async def test_get_portrait(db, ctx):
+    bot = Mock()
+    g = GameCommands(bot := Mock(), db)
+    with pytest.raises(CharacterUnknownError):
+        await g.portrait(g, ctx)
+    c = Character(name="Piotr", portrait="http://a.b/c.jpg")
+    db.store(ctx.guild, ctx.author, c)
+    await g.portrait(g, ctx, "Piotr")
+    ctx.message.delete.assert_called_once_with()
+    ctx.send.assert_called_once()
+    embed = ctx.send.call_args[1].get('embed')
+    assert embed.title == "Piotr's portrait."
+    assert embed.image.url.endswith("c.jpg")
+    with pytest.raises(commands.CommandError):
+        await g.portrait(g, ctx, "Pierre")
 
 @pytest.mark.asyncio
 async def test_retire(db, ctx):
@@ -257,7 +282,7 @@ async def test_cant_attack_without_default_character(db, ctx):
     g = GameCommands(bot, db)
     with pytest.raises(commands.CommandError) as exc_info:
         await g.attack(g, ctx, "target")
-    assert exc_info.value.args[0] == f"No character found for {ctx.author} on {ctx.guild}."
+    assert exc_info.value.args[0] == f"No character named Target found for {ctx.author} on {ctx.guild}."
 
 
 @pytest.mark.asyncio
