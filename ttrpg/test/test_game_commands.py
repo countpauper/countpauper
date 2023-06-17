@@ -34,8 +34,12 @@ def ctx():
     ctx.author.__str__.return_value = 'Foo#1234'
     ctx.author.color = '#123456'
     ctx.author.nick = 'baz'
+    ctx.author.id = 456
     ctx.author.display_avatar = "http://portrait.com/avatar.jpg"
-    ctx.guild = 'BarGuild'
+    ctx.guild = MagicMock()
+    ctx.guild.name = 'BarGuild'
+    ctx.guild.__str__.return_value = 'BarGuild'
+    ctx.guild.id = 123
     return ctx
 
 
@@ -54,7 +58,7 @@ async def test_generate(db, ctx):
     g = GameCommands(bot, db)
     await g.generate(g, ctx)
 
-    c = db.retrieve("BarGuild", "Foo#1234", "Baz")
+    c = db.retrieve(ctx.guild.id, ctx.author.id, "Baz")
     assert c is not None
 
     ctx.message.delete.assert_called_once_with()
@@ -76,7 +80,7 @@ async def test_generate(db, ctx):
 @pytest.mark.asyncio
 async def test_generate_duplicate(db, ctx):
     c = Character()
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
 
     bot = Mock()
     g = GameCommands(bot, db)
@@ -88,7 +92,7 @@ async def test_generate_duplicate(db, ctx):
 @pytest.mark.asyncio
 async def test_generate_existing(db, ctx):
     c = Character()
-    db.store(ctx.guild, "baz", c)
+    db.store(ctx.guild.id, 666, c)
     g = GameCommands(bot := Mock(), db)
     with pytest.raises(commands.CommandError) as exc_info:
         await g.generate(g, ctx, c.name)
@@ -111,7 +115,7 @@ async def test_sheet(db, ctx):
     c = Character(physical=2, mental=2, social=1, inventory=[MeleeWeapon(name="Practice Sword"), Armor(rating=1)], skill=[Parry])
     c.effects.append(Effect(name="displayed"))
 
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
 
     bot = Mock()
     g = GameCommands(bot, db)
@@ -141,7 +145,7 @@ async def test_sheet_allies(db, ctx):
         Character(name="Foo", physical=2,level=0, hp=0),
         Character(name="Bar", mental=3, social=2, mp=2)
     ])
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
     bot = Mock()
     g = GameCommands(bot, db)
     await g.sheet(g, ctx)
@@ -161,7 +165,7 @@ async def test_sheet_allies(db, ctx):
 @pytest.mark.asyncio
 async def test_sheet_flavour(db, ctx):
     c = Character(color="#ABCDEF", portrait="http://portrait.com/face.jpg")
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
     bot = Mock()
     g = GameCommands(bot, db)
     await g.sheet(g, ctx)
@@ -173,7 +177,7 @@ async def test_sheet_flavour(db, ctx):
 @pytest.mark.asyncio
 async def test_sheet_field_reduction(db, ctx):
     c = Character(physical=0, skill=[])
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
     g = GameCommands(bot := Mock(), db)
     await g.sheet(g, ctx)
     ctx.send.assert_called_once()
@@ -197,7 +201,7 @@ async def test_get_portrait(db, ctx):
     with pytest.raises(CharacterUnknownError):
         await g.portrait(g, ctx)
     c = Character(name="Piotr", portrait="http://a.b/c.jpg")
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
     await g.portrait(g, ctx, "Piotr")
     ctx.message.delete.assert_called_once_with()
     ctx.send.assert_called_once()
@@ -210,7 +214,7 @@ async def test_get_portrait(db, ctx):
 @pytest.mark.asyncio
 async def test_retire(db, ctx):
     c = Character()
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
     bot = Mock()
     g = GameCommands(bot, db)
     await g.retire(g, ctx, c.name)
@@ -232,12 +236,12 @@ async def test_no_retire(db, ctx):
 @pytest.mark.asyncio
 async def test_take(db, ctx):
     c = Character(physical=2)
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
     g = GameCommands(bot := Mock(), db)
     await g.take(g, ctx, "sword", "shield")
     ctx.message.delete.assert_called_with()
     ctx.send.assert_called_once_with(f"**Nemo** takes the sword and shield. Carried [2/2]")
-    c = db.retrieve(ctx.guild, ctx.author, c.name)
+    c = db.retrieve(ctx.guild.id, ctx.author.id, c.name)
     assert c.main_hand().name == "sword"
     assert c.off_hand().name == "shield"
 
@@ -247,12 +251,12 @@ async def test_drop(db, ctx):
     c.auto_equip()
     assert c.main_hand()
     assert c.worn
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
     g = GameCommands(bot := Mock(), db)
     await g.drop(g, ctx, c.name, "sword", "shirt")
     ctx.message.delete.assert_called_with()
     ctx.send.assert_called_once_with(f"**Nemo** drops the sword and shirt. Carried [0/2]")
-    c = db.retrieve(ctx.guild, ctx.author, c.name)
+    c = db.retrieve(ctx.guild.id, ctx.author.id, c.name)
     assert c.main_hand() is None
     assert c.worn == []
 
@@ -260,8 +264,8 @@ async def test_drop(db, ctx):
 async def test_attack_with_default_character(db, ctx, dice_min):
     attacker = Character(name="attacker")
     target = Character(name="target")
-    db.store(ctx.guild, ctx.author, attacker)
-    db.store(ctx.guild, "Opponent", target)
+    db.store(ctx.guild.id, ctx.author.id, attacker)
+    db.store(ctx.guild.id, 666, target)
     g = GameCommands(bot := Mock(), db)
     await g.attack(g, ctx, "target", "-1")
     ctx.message.delete.assert_called_with()
@@ -276,9 +280,9 @@ async def test_attack_with_specific_character(db, ctx):
     attacker = Character(name="attacker")
     target = Character(name="target")
     default_char = Character(name="Default")
-    db.store(ctx.guild, ctx.author, attacker)
-    db.store(ctx.guild, ctx.author, default_char)
-    db.store(ctx.guild, "Opponent", target)
+    db.store(ctx.guild.id, ctx.author.id, attacker)
+    db.store(ctx.guild.id, ctx.author.id, default_char)
+    db.store(ctx.guild.id, 666, target)
     bot = Mock()
     g = GameCommands(bot, db)
     await g.attack(g, ctx, "Attacker", "target", "+1")
@@ -287,13 +291,13 @@ async def test_attack_with_specific_character(db, ctx):
     assert(embed := ctx.sent_embed())
     assert embed.title == "Attacker attacks."
     assert embed.description == "1 + 1 = 2 VS Target 1: 1 health damage [4/5]."
-    target = db.retrieve(ctx.guild, "Opponent", target.name)
+    target = db.retrieve(ctx.guild.id, 666, target.name)
     assert target.hp == 4
 
 
 @pytest.mark.asyncio
 async def test_cant_attack_without_default_character(db, ctx):
-    db.store(ctx.guild, "Opponent", Character(name="Target"))
+    db.store(ctx.guild.id, 666, Character(name="Target"))
     bot = Mock()
     g = GameCommands(bot, db)
     with pytest.raises(commands.CommandError) as exc_info:
@@ -304,7 +308,7 @@ async def test_cant_attack_without_default_character(db, ctx):
 @pytest.mark.asyncio
 async def test_attack_without_target(db, ctx, dice_min):
     attacker = Character(name="Attacker", physical=2)
-    db.store(ctx.guild, ctx.author, attacker)
+    db.store(ctx.guild.id, ctx.author.id, attacker)
     g = GameCommands(bot := Mock(), db)
     await g.attack(g, ctx)
     ctx.message.delete.assert_called_with()
@@ -317,7 +321,7 @@ async def test_attack_without_target(db, ctx, dice_min):
 @pytest.mark.asyncio
 async def test_skilll_list(db, ctx):
     attacker = Character(name="Attacker", level=2, skill=[Parry, Riposte], inventory=[MeleeWeapon(name="axe")])
-    db.store(ctx.guild, ctx.author, attacker)
+    db.store(ctx.guild.id, ctx.author.id, attacker)
     g = GameCommands(bot := Mock(), db)
     await g.skill(g, ctx)
     ctx.message.delete.assert_called_with()
@@ -327,7 +331,7 @@ async def test_skilll_list(db, ctx):
 @pytest.mark.asyncio
 async def test_skilll_without_target(db, ctx):
     attacker = Character(name="Attacker", skill=[Parry], inventory=[MeleeWeapon(name="axe")])
-    db.store(ctx.guild, ctx.author, attacker)
+    db.store(ctx.guild.id, ctx.author.id, attacker)
     g = GameCommands(bot := Mock(), db)
     await g.skill(g, ctx, "parry")
     ctx.message.delete.assert_called_with()
@@ -340,9 +344,9 @@ async def test_skilll_without_target(db, ctx):
 @pytest.mark.asyncio
 async def test_skilll_with_target(db, ctx, dice_max):
     attacker = Character(name="attacker", physical=2, skill=[CrossCut], inventory=[MeleeWeapon(), MeleeWeapon()])
-    db.store(ctx.guild, ctx.author, attacker)
+    db.store(ctx.guild.id, ctx.author.id, attacker)
     target = Character(name="target", physical=0, level=-3)
-    db.store(ctx.guild, ctx.author, target)
+    db.store(ctx.guild.id, 666, target)
     g = GameCommands(bot := Mock(), db)
     await g.skill(g, ctx, "attacker", "cross cut", "target")
     ctx.message.delete.assert_called_with()
@@ -350,14 +354,14 @@ async def test_skilll_with_target(db, ctx, dice_max):
     assert(embed := ctx.sent_embed())
     assert embed.title == "Attacker cuts across."
     assert embed.description == "2 + 2 = 4 VS Target 0: 4 health damage [0/1]."
-    target = db.retrieve(ctx.guild, ctx.author, target.name)
+    target = db.retrieve(ctx.guild.id, 666, target.name)
     assert target.hp == 0
 
 
 @pytest.mark.asyncio
 async def test_level_up(db, ctx):
     c = Character(name="leveler", physical=2, skill=[Parry])
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
     g = GameCommands(bot := Mock(), db)
     await g.level(g, ctx, "physical")
     ctx.message.delete.assert_called_with()
@@ -366,7 +370,7 @@ async def test_level_up(db, ctx):
     assert embed.title == "Leveler levels up to 2!"
     assert len(embed.fields) == 1
     assert embed.fields[0].name == "Skills [1/2]"
-    leveled = db.retrieve(ctx.guild, ctx.author, c.name)
+    leveled = db.retrieve(ctx.guild.id, ctx.author.id, c.name)
     assert leveled.level == 2
     assert leveled.physical == 3
 
@@ -374,7 +378,7 @@ async def test_level_up(db, ctx):
 @pytest.mark.asyncio
 async def test_learn(db, ctx):
     c = Character(name="learner", level=2, mental=2)
-    db.store(ctx.guild, ctx.author, c)
+    db.store(ctx.guild.id, ctx.author.id, c)
     g = GameCommands(bot := Mock(), db)
     await g.learn(g, ctx, "heal", "explosion")
     ctx.message.delete.assert_called_with()

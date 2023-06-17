@@ -34,7 +34,7 @@ initial skills
         - pounce (aka charge, damage bonus depends on ... size? physical that's double)
     - One AoE attack and test command for some characters known, some not known (in db) to test generic target collection
 - show dice :four: :six: :eight: :keycap_ten:  :one::two: in sheet
-- store characters by guild and author id to prevent name changes messing things up. thanks discord
+[done] store characters by guild and author id to prevent name changes messing things up. thanks discord
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
 [done] character to str just instead of Name(), repr for elaborate description
