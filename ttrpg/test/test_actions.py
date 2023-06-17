@@ -44,7 +44,7 @@ def test_cover():
     assert cover.verb() == "seeks cover"
     result = cover()
     assert c.defense_dice() == Dice(4,1)
-    assert str(result) == "seeks cover behind their shield"
+    assert str(result) == "Nemo is protected by their shield"
     with pytest.raises(GameError):
         cover()
 
@@ -56,9 +56,9 @@ def test_too_weak_to_skill():
 def test_execute_skill():
     c = Character(physical=2, skill=[Parry], inventory=[MeleeWeapon(name="sword")])
     result = c.execute(Parry)
-    assert c.affected('parry')
+    assert c.affected('parrying')
     assert c.ap == 2
-    assert str(result) == f"""parries with a sword"""
+    assert str(result) == f"""Nemo is parrying with a sword"""
 
 
 def test_unknown_skill():

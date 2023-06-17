@@ -1,5 +1,5 @@
 from skill import Skill
-from actions import StrResult, RollResult
+from actions import StrResult, RollResult, EffectResult
 from items import *
 from effect import Effect
 from character import Character
@@ -56,8 +56,10 @@ class Parry(Skill):
     def __call__(self, *args, **kwargs):
         weapon = self.actor.main_hand()
         if isinstance(weapon, MeleeWeapon):
-            self.actor.affect(Effect('parry', 1, dict(defense=dict(parry=1))), True)
-            return StrResult(f"parries with {indefinite_article(weapon)} {weapon}")
+            result = EffectResult(Effect('parrying', 1, dict(defense=dict(parry=1)), description=f"parrying with {indefinite_article(weapon)} {weapon}"))
+            result.add(self.actor)
+            result.apply()
+            return result
         else:
             raise GameError("You must be wielding a melee weapon")
 
@@ -173,9 +175,10 @@ class Encourage(Skill):
             raise TargetError("You need to encourage at least one ally.")
         if self.actor in targets:
             raise TargetError("You cannot encourage yourself.")
-        for target in targets:
-            target.affect(Effect("encouraged", 1, dict(roll=dict(encouraged=1))))
-        return StrResult(f"{list_off(targets)} encouraged")
+        result = EffectResult(Effect("encouraged", 1, dict(roll=dict(encouraged=1))))
+        result.add(*targets)
+        result.apply()
+        return result
 
 class Familiar(Skill):
     """Call your familiar to your side.
@@ -216,9 +219,10 @@ class Harmony(Skill):
         targets = args
         if len(targets) > self.actor.social:
             raise TargetError("You can only harmonize as many allies as your social score.")
-        for target in targets:
-            target.affect(Effect("harmonized", 1, dict(defense=dict(harmony=1))))
-        return StrResult(f"{list_off(targets)} harmonized")
+        result = EffectResult(Effect("harmonized", 1, dict(defense=dict(harmony=1))))
+        result.add(*targets)
+        result.apply()
+        return result
 
 Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion, Frighten, Heal, Familiar, Encourage]
 

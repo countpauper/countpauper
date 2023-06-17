@@ -28,7 +28,8 @@ initial skills
 
     [done]  assign random skills based on primary stat IF available points to use at least once  (one of matching ability for each stat over ~2)
     [done] return embedable data from skills, attack. dicts, which are put in fields? Description is 'desc' field?
-    - return effect result instead of most string result
+    [done] return effect result instead of most string result
+    - summon result should be embedded with the summon's sheet
     - Character.__set_item__() find the right minimum/maximum for non counter types somehow
     - generate monster with skills (sets for each type, eg beast, dragon, undead?)
         - pounce (aka charge, damage bonus depends on ... size? physical that's double)

@@ -151,7 +151,7 @@ class GameCommands(commands.Cog):
             await ctx.message.delete()
         except CharacterUnknownError:
             raise CharacterUnknownError(ctx.guild, ctx.author, name)
-    
+
     def _optional_character_argument(self, ctx, args):
         """Get the character from the specified guild and owner. Owner can be None.
         Uses the first argument if it's the name of a character and returns the remaining arguments.
@@ -267,7 +267,7 @@ class GameCommands(commands.Cog):
         if c := self.retrieve_pc(ctx, name):
             result = c.execute(Cover)
             self.store_character(ctx, c)
-            await ctx.send(f"**{c.name}** {result}.")
+            await ctx.send(embed=self.embed_result(c, "seeks cover", result))
             await ctx.message.delete()
         else:
             raise CharacterUnknownError(ctx.guild, ctx.author, name)

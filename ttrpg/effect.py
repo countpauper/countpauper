@@ -1,6 +1,7 @@
 class Effect(object):
-    def __init__(self, name, duration=1, boni=None):
+    def __init__(self, name, duration=1, boni=None, description=""):
         self.name = name
+        self.description = description
         self.duration = duration
         self.boni = boni or dict()
 
@@ -14,4 +15,4 @@ class Effect(object):
         return self.duration > 0
 
     def __str__(self):
-        return self.name
+        return self.description or self.name

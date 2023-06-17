@@ -2,7 +2,7 @@ from game_commands import GameCommands
 from unittest.mock import Mock, MagicMock
 import pytest
 from character import Character
-from items import MeleeWeapon, Armor
+from items import MeleeWeapon, Armor, Shield
 from skills import Parry, Riposte, CrossCut
 from effect import Effect
 from discord.ext import commands
@@ -317,6 +317,22 @@ async def test_attack_without_target(db, ctx, dice_min):
     assert embed.title == "Attacker attacks."
     assert embed.description == "1."
 
+@pytest.mark.asyncio
+async def test_cover(db, ctx):
+    defender = Character(name="Defender", physical=1, level=2, skill=[], inventory=[Shield])
+    assert defender.defense == 0
+    db.store(ctx.guild.id, ctx.author.id, defender)
+    g = GameCommands(bot := Mock(), db)
+    await g.cover(g, ctx)
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once()
+    assert(embed := ctx.sent_embed())
+    assert embed.title == "Defender seeks cover."
+    assert embed.description == "Defender is protected by their shield."
+    c = db.retrieve(ctx.guild.id, ctx.author.id, defender.name)
+    assert c.defense == 1
+
+
 
 @pytest.mark.asyncio
 async def test_skilll_list(db, ctx):
@@ -338,7 +354,7 @@ async def test_skilll_without_target(db, ctx):
     ctx.send.assert_called_once()
     assert(embed := ctx.sent_embed())
     assert embed.title == "Attacker parries."
-    assert embed.description == "parries with an axe."
+    assert embed.description == "Attacker is parrying with an axe."
 
 
 @pytest.mark.asyncio

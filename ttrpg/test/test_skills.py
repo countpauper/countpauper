@@ -18,9 +18,9 @@ def test_parry():
     c.obtain(MeleeWeapon(name='spear', heavy=True))
     c.auto_equip()
     result = skill()
-    assert c.affected('parry')
+    assert c.affected('parrying')
     assert c.defense_dice() == Dice(4, 1)
-    assert str(result) == "parries with a spear"
+    assert str(result) == "Nemo is parrying with a spear"
 
     with pytest.raises(GameError):  # already done
         skill(c)
@@ -128,7 +128,7 @@ def test_encourage():
 
     t = Character(name='target', physical=2, mental=3, social=4)
     result = skill(t)
-    assert str(result) == "Target encouraged"
+    assert str(result) == "Target is encouraged"
     assert t.ability_dice(Physical) == Dice(2, 1)
     assert t.ability_dice(Mental) == Dice(4, 1)
     assert t.ability_dice(Social) == Dice(6, 1)
@@ -146,7 +146,7 @@ def test_harmony():
 
     t = [Character(name=f'target_{idx}', physical=1) for idx in range(3)]
     result= skill(*t[:2])
-    assert str(result) == "Target_0 and Target_1 harmonized"
+    assert str(result) == "Target_0 and Target_1 are harmonized"
     assert t[0].defense_dice() == Dice(1, 1)
     assert t[1].defense_dice() == Dice(1, 1)
     with pytest.raises(TargetError):
