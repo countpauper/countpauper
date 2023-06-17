@@ -1,5 +1,12 @@
 from typing import Callable
 
+stat_aliases = dict(
+    health='hp',
+    morale='mp',
+    power='pp',
+    action='ap'
+)
+
 class Property(object):
     def __init__(self, name):
         self.name =  name
@@ -23,7 +30,7 @@ class Stat(Property):
         return max(self.minimum, instance.stats.get(self.name) + sum(boni.values()))
 
     def __set__(self, instance, value):
-        instance.stats[self.name] = value
+        instance.stats[self.name] = max(self.minimum, value)
 
     def __delete__(self, instance):
         instance.stats.pop(self.name)
@@ -41,9 +48,9 @@ class Counter(object):
         self._maximum = maximum
         self._temporary = temporary
         if value is None:
-            self._value = self.maximum()
+            self.reset()
         else:
-            self._value = min(self.maximum(), max(0,value)) - self.temporary()
+            self.set(value)
 
     def maximum(self):
         if self._maximum is None:
@@ -67,6 +74,12 @@ class Counter(object):
             return v
         else:
             return min(v, m)
+
+    def set(self, value):
+        self._value = min(self.maximum(), max(0, value)) - self.temporary()
+
+    def lost(self):
+        return self.maximum() - self.value()
 
     def __add__(self, increase):
         result = Counter(self.value() + increase, self._maximum, self._temporary)
@@ -101,7 +114,7 @@ class Counter(object):
         return self.value() >= other
 
     def reset(self):
-        self._value = self.maximum()
+        self.set(self.maximum())
 
 class CounterStat(Stat):
     def __init__(self, name):

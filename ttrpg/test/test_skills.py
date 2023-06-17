@@ -20,7 +20,7 @@ def test_parry():
     result = skill()
     assert c.affected('parry')
     assert c.defense_dice() == Dice(4, 1)
-    assert result == "parries with a spear"
+    assert str(result) == "parries with a spear"
 
     with pytest.raises(GameError):  # already done
         skill(c)
@@ -51,7 +51,7 @@ def test_crosscut_hit(dice_max):
     c.obtain(MeleeWeapon(name='axe'))
     c.auto_equip()
     result = skill(t)
-    assert result == f"crosscuts Target [0/5]: 8 VS 1 hits for 7 damage"
+    assert str(result) == f"4 + 4 = 8 VS Target 1: 7 health damage [0/5]"
 
 def test_explosion():
     skill = Explosion(None)
@@ -59,13 +59,15 @@ def test_explosion():
     assert skill.ability == Mental
     assert skill.offensive
 
+
 def test_explosion_resist(dice_min):
     c = Character(mental=4, skill=[Explosion], inventory=[MeleeWeapon(name='dagger')])
     t = [Character(level=2, physical=1, name=f'target_{idx}') for idx in range(2)]
     skill = Explosion(c)
     result = skill(*t)
-    assert result == f"explodes (1)\n  Target_0 evades (1)\n  Target_1 evades (1)"
+    assert str(result) == f"1 VS\n  Target_0 1: evades\n  Target_1 1: evades"
     assert t[0].hp == t[0].max_hp()
+
 
 def test_explosion_hit(dice_max):
     c = Character(mental=4, skill=[Explosion], inventory=[MeleeWeapon(name='dagger')])
@@ -73,9 +75,10 @@ def test_explosion_hit(dice_max):
     skill = Explosion(c)
     assert skill.cost == dict(ap=1, pp=3)
     result = skill(*t)
-    assert result == "explodes (6)\n  Target_0 [0/5] hit (1) for 5 damage\n  Target_1 [1/5] hit (2) for 4 damage"
+    assert str(result) == "6 VS\n  Target_0 1: 5 health damage [0/5]\n  Target_1 2: 4 health damage [1/5]"
     assert t[0].hp == 0
     assert t[1].hp == 1
+
 
 def test_frighten(dice_max):
     c = Character(social=4, skill=[Frighten])
@@ -85,7 +88,8 @@ def test_frighten(dice_max):
     assert skill.ability == Social
     assert skill.offensive
     result = skill(t)
-    assert result == "frightens Target: 6 VS 2 for 4 morale [0/3]"
+    assert str(result) == "6 VS Target 2: 4 morale damage [0/3]"
+
 
 def test_heal(dice_max):
     c = Character(mental=3, skill=[Heal])
@@ -95,7 +99,7 @@ def test_heal(dice_max):
     assert skill.ability == Mental
     assert not skill.offensive
     result = skill(t)
-    assert result == "heals Target: for 4 health [5/5]"
+    assert str(result) == "4 VS Target : 4 health recovered [5/5]"
     assert t.hp == 5
 
 def test_familiar():
@@ -105,7 +109,7 @@ def test_familiar():
     assert skill.ability == Social
     assert not skill.offensive
     result = skill()
-    assert result == "summons a familiar"
+    assert str(result) == "summons a familiar"
     assert (f:=c.ally("Nemo's familiar")) is not None
     assert f.hp == 1
     assert f.pp == 0
@@ -124,7 +128,7 @@ def test_encourage():
 
     t = Character(name='target', physical=2, mental=3, social=4)
     result = skill(t)
-    assert result == "encourages Target"
+    assert str(result) == "Target encouraged"
     assert t.ability_dice(Physical) == Dice(2, 1)
     assert t.ability_dice(Mental) == Dice(4, 1)
     assert t.ability_dice(Social) == Dice(6, 1)
@@ -142,8 +146,8 @@ def test_harmony():
 
     t = [Character(name=f'target_{idx}', physical=1) for idx in range(3)]
     result= skill(*t[:2])
-    assert result == "harmonizes Target_0 and Target_1"
-    assert t[0].defense_dice() == Dice(1,1)
-    assert t[1].defense_dice() == Dice(1,1)
+    assert str(result) == "Target_0 and Target_1 harmonized"
+    assert t[0].defense_dice() == Dice(1, 1)
+    assert t[1].defense_dice() == Dice(1, 1)
     with pytest.raises(TargetError):
         skill(*t)

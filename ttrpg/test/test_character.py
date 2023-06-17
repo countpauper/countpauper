@@ -47,9 +47,66 @@ def test_status():
     assert c.motivated()
     assert c.powerful()
     assert c.active()
-    c.damage(c.hp)
+    c['hp'] = 0
     assert not c.alive()
     assert not c.active()
+
+
+def test_modify_health():
+    c = Character(level=1)
+    assert c.hp == 5
+    c['hp'] += 0
+    assert c.hp == 5
+    c['hp'] -= 1
+    assert c.hp == 4
+    c['health'] -= 2
+    assert c.hp == 2
+    c['hp'] -= 3
+    assert c.hp == 0
+    c['health'] += 2
+    assert c.hp == 2
+    c['hp'] = 3
+    assert c.hp == 3
+    assert str(c.hp) == "3/5"
+
+
+def test_modify_morale():
+    c = Character(social=3)
+    assert c.mp == 3
+    c["mp"] -= 1
+    assert c.mp == 2
+    c["morale"] -= 3
+    assert c.mp == 0
+
+
+def test_modify_power():
+    c = Character(mental=2)
+    assert c.pp == 2
+    c['pp'] -= 1
+    assert c.pp == 1
+    c['power'] -= 2
+    assert c.pp == 0
+
+def test_modify_ability():
+    c = Character(physical=2)
+    c['physical'] -= 1
+    assert c.physical == 1
+    c['physical'] -= 2
+    assert c.physical == 0
+    c['physical'] += 2
+    assert c.physical == 2
+    c['physical'] = 3
+    assert c.physical == 3
+    with pytest.raises(KeyError):
+        c['fisukal'] = 3
+
+def test_modify_action():
+    c = Character()
+    assert c.ap == 3
+    c['ap'] -= 1
+    assert c.ap == 2
+    c['action'] -= 3
+    assert c.ap == 0
 
 
 def test_defense():
@@ -94,6 +151,7 @@ Allies: Ali"""
 def test_str():
     assert str(Character(name="bar the brave")) == "Bar the brave"
 
+
 def test_obtain():
     c = Character(physical=2)
     c.obtain("sword", Shield)
@@ -122,6 +180,7 @@ def test_cant_lose():
         c.lose("practice", "cheese")
     assert c.carried() == 1
     assert c.main_hand().name == "practice"
+
 
 def test_level_up():
     c=Character(physical=2,mental=1, social=3)

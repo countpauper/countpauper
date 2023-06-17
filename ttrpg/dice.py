@@ -89,23 +89,26 @@ class Dice(object):
         else:
             return '0'
 
+    def __neg__(self):
+        return Dice(*[-d for d in self.dice], bonus=[-b for b in self.flat])
+
     def roll(self):
         if Dice.fixed is None:
             return roll(str(self), stringifier=Stringifier())
         else:
             value = Dice.fixed
             if value == 'min':
-                value = self.minimum()
+                return roll(str(self.minimum()), stringifier=Stringifier())
             elif value == 'max':
-                value = self.maximum()
+                return roll(str(self.maximum()), stringifier=Stringifier())
             return roll(f"{value}", stringifier=Stringifier())
 
 
     def minimum(self):
-        return len([d for d in self.dice])+sum(self.flat)
+        return Dice(bonus=[1 for _ in self.dice]+self.flat)
 
     def maximum(self):
-        return sum(d for d in self.dice)+sum(self.flat)
+        return Dice(bonus=[d for d in self.dice]+self.flat)
 
     def __eq__(self,other):
         if isinstance(other, Dice):

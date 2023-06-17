@@ -15,9 +15,20 @@ class AsyncMock(Mock):
         return super(AsyncMock, self).__call__(*args, **kwargs)
 
 
+class DiscordMock(AsyncMock):
+    def sent_embed(self):
+        args = self.send.call_args
+        for a in args:
+            if isinstance(a, dict) and (embed:=a.get('embed')):
+                return embed
+            elif isinstance(a, tuple) and (matches := [e for e in a if isinstance(e, discord.Embed)]):
+                return matches[0]
+        else:
+            return None
+
 @pytest.fixture
 def ctx():
-    ctx = AsyncMock()
+    ctx = DiscordMock()
     ctx.message = AsyncMock()
     ctx.author = MagicMock()
     ctx.author.__str__.return_value = 'Foo#1234'
@@ -50,9 +61,8 @@ async def test_generate(db, ctx):
     ctx.send.assert_called_once()
 
     # TODO refactor embed comparison, it's a dict
-    embed = ctx.send.call_args_list[0][1].get('embed')
+    assert(embed := ctx.sent_embed())
 
-    assert embed is not None
     assert embed.title == 'New: Baz'
     assert embed.color.value == int(ctx.author.color[1:], 16)
     assert "**Level:** 1" in embed.description
@@ -110,7 +120,7 @@ async def test_sheet(db, ctx):
     ctx.message.delete.assert_called_once_with()
     ctx.send.assert_called_once()
 
-    embed = ctx.send.call_args[1].get('embed')
+    assert(embed := ctx.sent_embed())
 
     assert embed is not None
     assert embed.title == "Nemo"
@@ -138,9 +148,9 @@ async def test_sheet_allies(db, ctx):
 
     ctx.message.delete.assert_called_once_with()
     ctx.send.assert_called_once()
-    embed = ctx.send.call_args[1].get('embed')
-    assert (foo_field := ([field for field in embed.fields if field.name == "Foo"]+[None])[0]) is not None
-    assert (bar_field := ([field for field in embed.fields if field.name == "Foo"]+[None])[0]) is not None
+    assert(embed := ctx.sent_embed())
+    assert(foo_field := ([field for field in embed.fields if field.name == "Foo"]+[None])[0]) is not None
+    assert(bar_field := ([field for field in embed.fields if field.name == "Foo"]+[None])[0]) is not None
     assert foo_field.value == """**Level:** 0
 **Physical:** 2 [1d2], **HP:** 0/4
 **Mental:** 1 [1], **PP:** 1/1
@@ -156,7 +166,7 @@ async def test_sheet_flavour(db, ctx):
     g = GameCommands(bot, db)
     await g.sheet(g, ctx)
     ctx.send.assert_called_once()
-    embed = ctx.send.call_args[1].get('embed')
+    assert(embed := ctx.sent_embed())
     assert embed.thumbnail.url is not c.portrait
     assert embed.color == discord.Color.from_str('#ABCDEF')
 
@@ -167,7 +177,7 @@ async def test_sheet_field_reduction(db, ctx):
     g = GameCommands(bot := Mock(), db)
     await g.sheet(g, ctx)
     ctx.send.assert_called_once()
-    embed = ctx.send.call_args[1].get('embed')
+    assert(embed := ctx.sent_embed())
     assert not any(field.name.lower().startswith("effect") for field in embed.fields)
     assert not any(field.name.lower().startswith("skill") for field in embed.fields)
     assert not any(field.name.lower().startswith("inventory") for field in embed.fields)
@@ -191,7 +201,7 @@ async def test_get_portrait(db, ctx):
     await g.portrait(g, ctx, "Piotr")
     ctx.message.delete.assert_called_once_with()
     ctx.send.assert_called_once()
-    embed = ctx.send.call_args[1].get('embed')
+    assert(embed := ctx.sent_embed())
     assert embed.title == "Piotr's portrait."
     assert embed.image.url.endswith("c.jpg")
     with pytest.raises(commands.CommandError):
@@ -247,7 +257,7 @@ async def test_drop(db, ctx):
     assert c.worn == []
 
 @pytest.mark.asyncio
-async def test_attack_with_default_character(db, ctx):
+async def test_attack_with_default_character(db, ctx, dice_min):
     attacker = Character(name="attacker")
     target = Character(name="target")
     db.store(ctx.guild, ctx.author, attacker)
@@ -255,7 +265,10 @@ async def test_attack_with_default_character(db, ctx):
     g = GameCommands(bot := Mock(), db)
     await g.attack(g, ctx, "target", "-1")
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"**Attacker** attacks Target: 1 - 1 = 0 VS 1 misses.")
+    ctx.send.assert_called_once()
+    assert(embed := ctx.sent_embed())
+    assert embed.title == "Attacker attacks."
+    assert embed.description == f"1 - 1 = 0 VS Target 1: miss."
 
 
 @pytest.mark.asyncio
@@ -270,7 +283,10 @@ async def test_attack_with_specific_character(db, ctx):
     g = GameCommands(bot, db)
     await g.attack(g, ctx, "Attacker", "target", "+1")
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"**Attacker** attacks Target [4/5]: 1 + 1 = 2 VS 1 hits for 1 damage.")
+    ctx.send.assert_called_once()
+    assert(embed := ctx.sent_embed())
+    assert embed.title == "Attacker attacks."
+    assert embed.description == "1 + 1 = 2 VS Target 1: 1 health damage [4/5]."
     target = db.retrieve(ctx.guild, "Opponent", target.name)
     assert target.hp == 4
 
@@ -286,13 +302,16 @@ async def test_cant_attack_without_default_character(db, ctx):
 
 
 @pytest.mark.asyncio
-async def test_attack_without_target(db, ctx):
-    attacker = Character(name="Attacker")
+async def test_attack_without_target(db, ctx, dice_min):
+    attacker = Character(name="Attacker", physical=2)
     db.store(ctx.guild, ctx.author, attacker)
     g = GameCommands(bot := Mock(), db)
     await g.attack(g, ctx)
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"**{attacker.name}** attacks: 1.")
+    ctx.send.assert_called_once()
+    assert(embed := ctx.sent_embed())
+    assert embed.title == "Attacker attacks."
+    assert embed.description == "1."
 
 
 @pytest.mark.asyncio
@@ -312,10 +331,14 @@ async def test_skilll_without_target(db, ctx):
     g = GameCommands(bot := Mock(), db)
     await g.skill(g, ctx, "parry")
     ctx.message.delete.assert_called_with()
-    ctx.send.assert_called_once_with(f"**{attacker.name}** parries with an axe.")
+    ctx.send.assert_called_once()
+    assert(embed := ctx.sent_embed())
+    assert embed.title == "Attacker parries."
+    assert embed.description == "parries with an axe."
+
 
 @pytest.mark.asyncio
-async def test_skilll_with_target(db, ctx):
+async def test_skilll_with_target(db, ctx, dice_max):
     attacker = Character(name="attacker", physical=2, skill=[CrossCut], inventory=[MeleeWeapon(), MeleeWeapon()])
     db.store(ctx.guild, ctx.author, attacker)
     target = Character(name="target", physical=0, level=-3)
@@ -323,6 +346,10 @@ async def test_skilll_with_target(db, ctx):
     g = GameCommands(bot := Mock(), db)
     await g.skill(g, ctx, "attacker", "cross cut", "target")
     ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once()
+    assert(embed := ctx.sent_embed())
+    assert embed.title == "Attacker cuts across."
+    assert embed.description == "2 + 2 = 4 VS Target 0: 4 health damage [0/1]."
     target = db.retrieve(ctx.guild, ctx.author, target.name)
     assert target.hp == 0
 
@@ -335,7 +362,7 @@ async def test_level_up(db, ctx):
     await g.level(g, ctx, "physical")
     ctx.message.delete.assert_called_with()
     ctx.send.assert_called_once()
-    embed = ctx.send.call_args[1].get('embed')
+    assert(embed := ctx.sent_embed())
     assert embed.title == "Leveler levels up to 2!"
     assert len(embed.fields) == 1
     assert embed.fields[0].name == "Skills [1/2]"

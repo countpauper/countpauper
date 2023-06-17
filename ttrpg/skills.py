@@ -1,5 +1,5 @@
 from skill import Skill
-from actions import AttackResult
+from actions import StrResult, RollResult
 from items import *
 from effect import Effect
 from character import Character
@@ -17,6 +17,10 @@ class CrossCut(Skill):
     ability = Physical
     offensive = True
 
+    @classmethod
+    def verb(cls):
+        return "cuts across"
+
     def __init__(self, actor):
         super(CrossCut, self).__init__(actor)
 
@@ -24,15 +28,13 @@ class CrossCut(Skill):
         args = list(args)
         if isinstance(self.actor.main_hand(), MeleeWeapon) and isinstance(self.actor.off_hand(), MeleeWeapon):
             attack_dice = self.actor.attack_dice(0) + self.actor.attack_dice(1)
-            attack_roll = attack_dice.roll()
+            result = RollResult(attack_dice.roll())
             if args:
                 target = args.pop(0)
                 defense_roll = target.defense_dice().roll()
-                result = AttackResult(attack_roll, defense_roll)
-                target.damage(result.damage())
-                return f"crosscuts {target} [{target.hp}]: {result}"
-            else:
-                return f"crosscuts {attack_roll}"
+                result.versus(target, defense_roll)
+            result.apply()
+            return result
         else:   # TODO: specific exception types for skill preconditions
             raise GameError("You must be wielding two melee weapons.")
 
@@ -44,6 +46,10 @@ class Parry(Skill):
     ability = Physical
     offensive = False
 
+    @classmethod
+    def verb(cls):
+        return "parries"
+
     def __init__(self, actor):
         super(Parry, self).__init__(actor)
 
@@ -51,7 +57,7 @@ class Parry(Skill):
         weapon = self.actor.main_hand()
         if isinstance(weapon, MeleeWeapon):
             self.actor.affect(Effect('parry', 1, dict(defense=dict(parry=1))), True)
-            return f"parries with {indefinite_article(weapon)} {weapon}"
+            return StrResult(f"parries with {indefinite_article(weapon)} {weapon}")
         else:
             raise GameError("You must be wielding a melee weapon")
 
@@ -106,18 +112,12 @@ class Explosion(Skill):
         super(Explosion, self).__init__(actor)
 
     def __call__(self, *args, **kwargs):
-        damage_roll = self.actor.ability_dice(Mental).roll()
-        target_result=[]
+        result = RollResult(self.actor.ability_dice(Mental).roll(), fail="evades")
         if targets:=args:
             for target in targets:
-                save_roll = target.ability_dice(Physical).roll()
-                if (damage := damage_roll.total-save_roll.total) > 0:
-                    target.damage(damage)
-                    target_result.append(f"{target} [{target.hp}] hit ({save_roll}) for {damage} damage")
-                else:
-                    target_result.append(f"{target} evades ({save_roll})")
-        return "\n  ".join([f"explodes ({damage_roll})"] + target_result)
-
+                result.versus(target, target.ability_dice(Physical).roll())
+        result.apply()
+        return result
 
 class Frighten(Skill):
     """Scare someone into losing morale points. They can overcome with their mental strength."""
@@ -130,17 +130,12 @@ class Frighten(Skill):
         super(Frighten, self).__init__(actor)
 
     def __call__(self, *args, **kwargs):
-        damage_roll = self.actor.ability_dice(Social).roll()
+        result = RollResult(self.actor.ability_dice(Social).roll(), "morale")
         if args:
             target = args[0]    # TODO: more args is more pp?
-            save_roll = target.ability_dice(Mental).roll()
-            if (damage := damage_roll.total-save_roll.total) > 0:
-                target.mp -= damage
-                return f"frightens {target}: {damage_roll} VS {save_roll} for {damage} morale [{target.mp}]"
-            else:
-                return f"attempts to frighten {target}: {damage_roll} VS {save_roll}"
-        else:
-            return f"frightens ({damage_roll.roll()})"
+            result.versus(target, target.ability_dice(Mental).roll())
+        result.apply()
+        return result
 
 class Heal(Skill):
     """Heal someone, restoring their health by your mental ability dice."""
@@ -152,15 +147,13 @@ class Heal(Skill):
     def __init__(self, actor):
         super(Heal, self).__init__(actor)
 
-
     def __call__(self, *args, **kwargs):
-        heal_roll = self.actor.ability_dice(Mental).roll()
+        result = RollResult(self.actor.ability_dice(Mental).roll(), fail="superfluous", negative=False)
         if args:    # TODO: more args is ? spread the heal? more pp?
             target = args[0]
-            target.hp += heal_roll.total
-            return f"heals {target}: for {heal_roll} health [{target.hp}]"
-        else:
-            return f"heals ({heal_roll.roll()})"
+            result.versus(target)
+        result.apply()
+        return result
 
 # TODO: if Familiar gets this for free, free action and at range, why would a player take it? To upcast?
 # for now it's not in all skills
@@ -182,7 +175,7 @@ class Encourage(Skill):
             raise TargetError("You cannot encourage yourself.")
         for target in targets:
             target.affect(Effect("encouraged", 1, dict(roll=dict(encouraged=1))))
-        return f"encourages {list_off(targets)}"
+        return StrResult(f"{list_off(targets)} encouraged")
 
 class Familiar(Skill):
     """Call your familiar to your side.
@@ -208,7 +201,7 @@ class Familiar(Skill):
         else:
             familiar = Character(name=familiar_name, level=-3, physical=0, mental=0, social=3, skill=[Encourage])
             self.actor.summon(familiar)
-            return "summons a familiar"
+            return StrResult("summons a familiar")
 
 class Harmony(Skill):
     """By instilling harmony in all your nearby allies, they work together as one. This will increase their defense by 1"""
@@ -224,8 +217,8 @@ class Harmony(Skill):
         if len(targets) > self.actor.social:
             raise TargetError("You can only harmonize as many allies as your social score.")
         for target in targets:
-            target.affect(Effect("harmony", 1, dict(defense=dict(harmony=1))))
-        return f"harmonizes {list_off(targets)}"
+            target.affect(Effect("harmonized", 1, dict(defense=dict(harmony=1))))
+        return StrResult(f"{list_off(targets)} harmonized")
 
 Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion, Frighten, Heal, Familiar, Encourage]
 

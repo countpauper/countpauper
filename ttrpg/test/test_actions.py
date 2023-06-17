@@ -20,29 +20,31 @@ def test_attack():
     attacker = Character(physical=3)
     attack = Attack(attacker)
     assert attack.cost['ap'] == 1
+    assert attack.verb() == "attacks"
     result = attack()
     assert re.match(r"1d4 \(\d\) = \d", str(result))
-    assert result.damage() is None
+    assert result.delta() == 0
 
 def test_attack_target():
     attacker = Character(physical=2)
-    target = Character(physical=2)
+    target = Character(physical=2, name="Target")
     attack = Attack(attacker)
     result = attack(target)
 
     if result.hit():
-        assert re.match(r"1d\d \(\d\) = \d VS 1d\d \(\d\) = \d hits for \d damage", str(result))
+        assert re.match(r"1d\d \(\d\) = \d VS Target 1d\d \(\d\) = \d\: \d health damage \[\d\/5\]", str(result))
     else:
-        assert re.match(r"1d\d \(\d\) = \d VS 1d\d \(\d\) = \d misses", str(result))
+        assert re.match(r"1d\d \(\d\) = \d VS Target 1d\d \(\d\) = \d\: miss", str(result))
 
 def test_cover():
     c = Character(physical=3, inventory=[Shield()])
     c.auto_equip()
     cover = Cover(c)
     assert cover.cost['ap'] == 1
+    assert cover.verb() == "seeks cover"
     result = cover()
     assert c.defense_dice() == Dice(4,1)
-    assert result == "seeks cover behind their shield"
+    assert str(result) == "seeks cover behind their shield"
     with pytest.raises(GameError):
         cover()
 
@@ -56,7 +58,7 @@ def test_execute_skill():
     result = c.execute(Parry)
     assert c.affected('parry')
     assert c.ap == 2
-    assert result == f"""parries with a sword"""
+    assert str(result) == f"""parries with a sword"""
 
 
 def test_unknown_skill():

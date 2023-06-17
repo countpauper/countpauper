@@ -79,6 +79,11 @@ def test_add_boni():
     assert Dice(10) + dict(d=Dice(4, 1), e=2) == Dice(10, 4, bonus=[1,2])
 
 
+def test_negate():
+    assert -Dice(4) == Dice(-4)
+    assert -Dice(1) == Dice(-1)
+    assert -(Dice(4)+3) == Dice(-4) - 3
+
 def test_sub():
     assert Dice(6)-Dice(4) == Dice(6,-4)
     assert Dice(10)-1 == Dice(10, -1)
@@ -89,19 +94,18 @@ def test_fix():
     assert Dice.fix(None) == 1
     assert Dice(20, 1).roll().total > 1
 
-
 def test_minimum():
-    assert Dice(6).minimum() == 1
-    assert Dice(4, -1).minimum() == 0
-    assert Dice(4, 6, 0).minimum() == 2
-    assert Dice(6, 6, 6).minimum() == 3
+    assert Dice(6).minimum() == Dice()+1
+    assert Dice(4, -1).minimum() == Dice(bonus=[1, -1])
+    assert Dice(4, 6, 0).minimum() == Dice(bonus=[1, 1, 0])
+    assert Dice(6, 6, 6).minimum().roll().total == 3
 
 
 def test_maximum():
-    assert Dice(6).maximum() == 6
-    assert Dice(4, -1).maximum() == 3
-    assert Dice(4, 6, 0).maximum() == 10
-    assert Dice(6, 6, 6).maximum() == 18
+    assert Dice(6).maximum() == Dice() + 6
+    assert Dice(4, -1).maximum() == Dice(bonus=[4, -1])
+    assert Dice(4, 6, 0).maximum() == Dice(bonus=[4, 6, 0])
+    assert Dice(6, 6, 6).maximum().roll().total == 18
 
 def test_fix_min(dice_min):
     assert Dice(6).roll().total == 1

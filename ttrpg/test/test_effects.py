@@ -22,7 +22,7 @@ def test_bonus_hp():
     c.affect(Effect("bhp", 1, dict(hp=dict(bonus=5))))
     assert c.hp == 10
     assert c.max_hp() == 10
-    c.damage(6)
+    c.hp -= 6
     assert c.alive()
 
 def test_level_drain():

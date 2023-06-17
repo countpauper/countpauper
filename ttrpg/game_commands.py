@@ -53,6 +53,13 @@ class GameCommands(commands.Cog):
                 embed.add_field(name=str(ally), value=GameCommands.character_description(ally))
         return embed
 
+    @staticmethod
+    def embed_result(c, verb, result):
+        description = f"{result}."
+        embed = discord.Embed(title=f"{c} {verb}.",
+                              description=description,
+                              color = None if c.color is None else discord.Color.from_str(c.color))
+        return embed
 
     @commands.command()
     async def generate(self, ctx, name=None, level=1):
@@ -200,6 +207,7 @@ class GameCommands(commands.Cog):
         else:
             raise CharacterUnknownError(ctx.guild, ctx.author, name)
 
+
     @commands.command()
     async def attack(self, ctx, *args):
         """Delete a character
@@ -236,15 +244,10 @@ class GameCommands(commands.Cog):
         if target:
             result = attacker.execute(Attack, target, attack_dice=dice)
             self.db.store(ctx.guild, owner, target)
-            self.db.store(ctx.guild, ctx.author, attacker)
-            if result.hit():
-                await ctx.send(f"**{attacker}** attacks {target} [{target.hp}]: {result}.")
-            else:
-                await ctx.send(f"**{attacker}** attacks {target}: {result}.")
         else:
             result = attacker.execute(Attack, attack_dice=dice)
-            self.db.store(ctx.guild, ctx.author, attacker)
-            await ctx.send(f"**{attacker}** attacks: {result}.")
+        self.db.store(ctx.guild, ctx.author, attacker)
+        await ctx.send(embed = self.embed_result(attacker, "attacks", result))
         await ctx.message.delete()
 
 
@@ -276,6 +279,5 @@ class GameCommands(commands.Cog):
             for t in targets.values():
                 self.db.store(ctx.guild, t.user, t)
             # TODO: store targets, if they are dirty (used) and need their owner when retrieving (simplify in attack as well)
-            await ctx.send(f"**{e.name}** {result}.")    # TODO don't put name in result so it can be formatted
+            await ctx.send(embed = self.embed_result(e, result.action.verb(), result))
             await ctx.message.delete()
-

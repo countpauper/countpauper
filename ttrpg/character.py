@@ -54,10 +54,20 @@ class Character(object):
             self.auto_equip()
 
     def __getitem__(self, key):
-        return self.stats[key]
+        return self.stats[stat_aliases.get(key, key)]
 
     def __setitem__(self, key, value):
-        raise NotImplementedError("Not allowed (yet)")
+        key = stat_aliases.get(key, key)
+        if (stat := self.stats.get(key)) is None:
+            raise KeyError(f"Unknown statistic {key}")
+        if isinstance(stat, Counter):
+            if isinstance(value, Counter):
+                self.stats[key] = value
+            else:
+                stat.set(value)
+        else:
+            self.stats[key] = max(0, value) # TODO assume minimum is 0 (for abilities) but it should be more configurable, also maximum
+
 
     def __delitem__(self, key):
         raise NotImplementedError("Not allowed (yet)")
@@ -87,13 +97,13 @@ class Character(object):
         return self.alive() and self.motivated()
 
     def get_max(self, stat):
-        if stat == 'hp':
+        if stat[0] == 'h':
             return self.max_hp()
-        elif stat == 'pp':
+        elif stat[0] == 'p':
             return self.max_pp()
-        elif stat == 'mp':
+        elif stat[0] == 'm':
             return self.max_mp()
-        elif stat == 'ap':
+        elif stat[0] == 'a':
             return self.max_ap()
         else:
             raise ValueError(f"Unknown counter {stat}")
@@ -170,6 +180,7 @@ class Character(object):
         if not (ability_score:=self.ability(action.ability)):
             raise GameError(f"Your {action.ability.name} is too low ({ability_score}) to {action}.")
         response = action(*targets, **kwargs)
+        response.action = action
         self._cost(action.cost)
         return response
 
@@ -181,10 +192,6 @@ class Character(object):
 
     def affected(self, name):
         return [e for e in self.effects if e.name == name]
-
-    def damage(self, dmg):
-        if dmg:
-            self.hp -= int(dmg)
 
     def _detect_cost_errors(self, cost):
         errors = []

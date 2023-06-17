@@ -27,15 +27,18 @@ initial skills
         [done] pass actor of skill to constructor of it instead of __call__
 
     [done]  assign random skills based on primary stat IF available points to use at least once  (one of matching ability for each stat over ~2)
-    - return embedable data from skills, attack. dicts, which are put in fields? Description is 'desc' field?
+    [done] return embedable data from skills, attack. dicts, which are put in fields? Description is 'desc' field?
+    - return effect result instead of most string result
+    - Character.__set_item__() find the right minimum/maximum for non counter types somehow
     - generate monster with skills (sets for each type, eg beast, dragon, undead?)
         - pounce (aka charge, damage bonus depends on ... size? physical that's double)
     - One AoE attack and test command for some characters known, some not known (in db) to test generic target collection
 - show dice :four: :six: :eight: :keycap_ten:  :one::two: in sheet
+- store characters by guild and author id to prevent name changes messing things up. thanks discord
 [done] represent flat bonuses above 1 in Dice
 [done] random characters and monsters above level 1
 [done] character to str just instead of Name(), repr for elaborate description
-portrait and color command
+[done]portrait command
 rest command (resets hp, pp mp and ap and clears all effects with durations)
     - clear familiar. Add as effect?
 Check if can attack or motivated enough to offend for skills
@@ -70,7 +73,7 @@ Upcasts for all skills:
 jewelry (wearable item with bonuses)
 indicate into embed field in sheet which item is main/off (dual wield or shield) and worn. emojis? but no armor emoji. Just use :shirt: and :ring: for accesories
 use command: switch item main/offhand if appropriate, also wear armor. (3 ap?) maybe just use and also costs ap to use whatever or usable item in inventory is activated. may cost ap if destination is not empty
-
+color command
 
 === Combat
 some command to enter/exit combat (in channel?) so action point tracking is disabled. forced when engaged/attacking? but also manual if first moving.
