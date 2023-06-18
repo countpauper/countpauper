@@ -29,7 +29,7 @@ initial skills
     [done]  assign random skills based on primary stat IF available points to use at least once  (one of matching ability for each stat over ~2)
     [done] return embedable data from skills, attack. dicts, which are put in fields? Description is 'desc' field?
     [done] return effect result instead of most string result
-    - summon result should be embedded with the summon's sheet
+    [done] summon result should be embedded with the summon's sheet
     - Character.__set_item__() find the right minimum/maximum for non counter types somehow
     - generate monster with skills (sets for each type, eg beast, dragon, undead?)
         - pounce (aka charge, damage bonus depends on ... size? physical that's double)
@@ -89,6 +89,12 @@ move command: just costs an ap
     argument for swim or climb
     automatically get up if down and ap available
     automatically disengage if ap available
+Run a http server with requests and serve up map images from embedded maps
+- simple image, figure out the global ip somehow? does discord api know the bots ip?
+- render a grid
+- render characters in the channel at their position
+- auto scale to number of characters/position ranges (+1?)
+
 
 [done] game commands more tests for user input handling and error reporting
 keep character up to date with database without having to store/restore the whole time, even during test? like some sort of db cache and character is just a wrapper?

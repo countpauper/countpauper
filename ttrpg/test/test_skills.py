@@ -1,5 +1,5 @@
-from character import Character
 from skills import *
+from dice import Dice
 import pytest
 from errors import *
 
@@ -109,8 +109,8 @@ def test_familiar():
     assert skill.ability == Social
     assert not skill.offensive
     result = skill()
-    assert str(result) == "summons a familiar"
-    assert (f:=c.ally("Nemo's familiar")) is not None
+    assert str(result) == "Nemo's familiar"
+    assert (f:= c.ally("Nemo's familiar")) is not None
     assert f.hp == 1
     assert f.pp == 0
     assert f.mp == 3

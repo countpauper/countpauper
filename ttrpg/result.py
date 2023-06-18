@@ -4,6 +4,9 @@ class Result(object):
     def __init__(self):
         pass
 
+    def details(self):
+        return dict()
+
 class StrResult(Result):    # TODO: perhaps an effect result where the description is the description of the effect
     def __init__(self, description):
         self.description = description
@@ -24,7 +27,7 @@ class EffectResult(Result):
         if self.targets:
             return f"{list_off(self.targets)} {'is' if len(self.targets)==1 else 'are'} {self.effect}"
         else:
-            return f"Noone is {self.effect}"
+            return f"no one is {self.effect}"
 
     def apply(self):
         for target in self.targets:
@@ -92,3 +95,22 @@ class RollResult(Result):
         else:
             return "\n  ".join([f"{self.roll} VS"]+[f"{target} {roll if roll else ''}: {self._effect(target)}" for target, roll in self.vs.items()])
 
+class SummonResult(Result):
+    def __init__(self, summoner):
+        self.summoner = summoner
+        self.summons = []
+
+    def summon(self, *characters):
+        self.summons += characters
+
+    def apply(self):
+        self.summoner.summon(*self.summons)
+
+    def __str__(self):
+        if self.summons:
+            return list_off(self.summons)
+        else:
+            return f"no one"
+
+    def details(self):
+        return {str(summon):repr(summon) for summon in self.summons}

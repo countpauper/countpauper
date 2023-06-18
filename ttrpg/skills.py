@@ -1,6 +1,6 @@
 from skill import Skill
-from actions import StrResult, RollResult, EffectResult
-from items import *
+from result import *
+from items import MeleeWeapon
 from effect import Effect
 from character import Character
 from ability import Physical, Mental, Social
@@ -16,10 +16,7 @@ class CrossCut(Skill):
     cost = dict(ap=1, pp=1)
     ability = Physical
     offensive = True
-
-    @classmethod
-    def verb(cls):
-        return "cuts across"
+    _verb = "cuts across"
 
     def __init__(self, actor):
         super(CrossCut, self).__init__(actor)
@@ -45,10 +42,7 @@ class Parry(Skill):
     cost = dict(ap=1)
     ability = Physical
     offensive = False
-
-    @classmethod
-    def verb(cls):
-        return "parries"
+    _verb = "parries"
 
     def __init__(self, actor):
         super(Parry, self).__init__(actor)
@@ -192,6 +186,7 @@ class Familiar(Skill):
     cost = dict(ap=1, mp=1)
     ability = Social
     offensive = False
+    _verb = "summons a familiar"
 
     def __init__(self, actor):
         super(Familiar, self).__init__(actor)
@@ -202,9 +197,10 @@ class Familiar(Skill):
         if self.actor.ally(familiar_name):
             raise GameError(f"{self.actor} already has a familiar.")
         else:
-            familiar = Character(name=familiar_name, level=-3, physical=0, mental=0, social=3, skill=[Encourage])
-            self.actor.summon(familiar)
-            return StrResult("summons a familiar")
+            result = SummonResult(self.actor)
+            result.summon(Character(name=familiar_name, level=-3, physical=0, mental=0, social=3, skill=[Encourage]))
+            result.apply()
+            return result
 
 class Harmony(Skill):
     """By instilling harmony in all your nearby allies, they work together as one. This will increase their defense by 1"""

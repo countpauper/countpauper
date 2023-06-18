@@ -334,8 +334,8 @@ class Character(object):
         else:
             return None
 
-    def summon(self, ally):
-        self.allies.append(ally)
+    def summon(self, *alies):
+        self.allies += alies
 
     def __str__(self):
         return self.name.capitalize()
