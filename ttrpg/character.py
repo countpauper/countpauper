@@ -53,20 +53,15 @@ class Character(object):
         if self.inventory:
             self.auto_equip()
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str):
         return self.stats[stat_aliases.get(key, key)]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value):
         key = stat_aliases.get(key, key)
         if (stat := self.stats.get(key)) is None:
             raise KeyError(f"Unknown statistic {key}")
-        if isinstance(stat, Counter):
-            if isinstance(value, Counter):
-                self.stats[key] = value
-            else:
-                stat.set(value)
-        else:
-            self.stats[key] = max(0, value) # TODO assume minimum is 0 (for abilities) but it should be more configurable, also maximum
+        stat = getattr(type(self), key)
+        stat.__set__(self, value)
 
 
     def __delitem__(self, key):

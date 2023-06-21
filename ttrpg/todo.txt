@@ -30,7 +30,7 @@ initial skills
     [done] return embedable data from skills, attack. dicts, which are put in fields? Description is 'desc' field?
     [done] return effect result instead of most string result
     [done] summon result should be embedded with the summon's sheet
-    - Character.__set_item__() find the right minimum/maximum for non counter types somehow
+    [done] Character.__set_item__() find the right minimum/maximum for non counter types somehow
     - generate monster with skills (sets for each type, eg beast, dragon, undead?)
         - pounce (aka charge, damage bonus depends on ... size? physical that's double)
     - One AoE attack and test command for some characters known, some not known (in db) to test generic target collection

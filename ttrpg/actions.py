@@ -19,7 +19,10 @@ class Action(object):
 
     @classmethod
     def verb(cls):
-        return cls.name()+"s"
+        if hasattr(cls, '_verb'):
+            return cls._verb
+        else:
+            return cls.name()+"s"
 
     @classmethod
     def help(cls):
@@ -29,10 +32,7 @@ class Cover(Action):
     cost = dict(ap=1)
     ability = Mental
     offensive = False
-
-    @classmethod
-    def verb(cls):
-        return "seeks cover"
+    _verb = "seeks cover"
 
     def __init__(self, actor):
         super(Cover, self).__init__(actor)

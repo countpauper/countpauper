@@ -26,8 +26,11 @@ class Stat(Property):
         self.minimum = minimum
 
     def __get__(self, instance, owner):
-        boni = instance.get_boni(self.name)
-        return max(self.minimum, instance.stats.get(self.name) + sum(boni.values()))
+        if instance is None:
+            return self
+        else:
+            boni = instance.get_boni(self.name)
+            return max(self.minimum, instance.stats.get(self.name) + sum(boni.values()))
 
     def __set__(self, instance, value):
         instance.stats[self.name] = max(self.minimum, value)
@@ -122,16 +125,19 @@ class CounterStat(Stat):
 
 
     def __get__(self, instance, owner):
-        stat = instance.stats.get(self.name)
-        #boni = instance.get_boni(self.name)
-        #bonus_value = sum(boni.values())
-        return stat
+        if instance is None:
+            return self
+        else:
+            stat = instance.stats.get(self.name)
+            #boni = instance.get_boni(self.name)
+            #bonus_value = sum(boni.values())
+            return stat
 
     def __set__(self, instance, value):
         if isinstance(value, Counter):
             instance.stats[self.name] = value
         else:
             stat = instance.stats.get(self.name)
-            instance.stats[self.name] = stat + (value - stat.value())
+            stat.set(value)
         return instance.stats[self.name]
 

@@ -68,6 +68,8 @@ class GameCommands(commands.Cog):
         embed = discord.Embed(title=f"{c} {verb}.",
                               description=description,
                               color = None if c.color is None else discord.Color.from_str(c.color))
+        for title, body in result.details().items():
+            embed.add_field(name=title, value=body, inline=len(body) < 42)
         return embed
 
     @commands.command()

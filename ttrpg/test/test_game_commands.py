@@ -3,7 +3,7 @@ from unittest.mock import Mock, MagicMock
 import pytest
 from character import Character
 from items import MeleeWeapon, Armor, Shield
-from skills import Parry, Riposte, CrossCut
+from skills import Parry, Riposte, CrossCut, Familiar
 from effect import Effect
 from discord.ext import commands
 from errors import CharacterUnknownError
@@ -333,7 +333,6 @@ async def test_cover(db, ctx):
     assert c.defense == 1
 
 
-
 @pytest.mark.asyncio
 async def test_skilll_list(db, ctx):
     attacker = Character(name="Attacker", level=2, skill=[Parry, Riposte], inventory=[MeleeWeapon(name="axe")])
@@ -355,6 +354,23 @@ async def test_skilll_without_target(db, ctx):
     assert(embed := ctx.sent_embed())
     assert embed.title == "Attacker parries."
     assert embed.description == "Attacker is parrying with an axe."
+
+
+@pytest.mark.asyncio
+async def test_skilll_with_details(db, ctx):
+    summoner = Character(name="summoner", social=2, skill=[Familiar])
+    db.store(ctx.guild.id, ctx.author.id, summoner)
+    g = GameCommands(bot := Mock(), db)
+    await g.skill(g, ctx, "summoner", "familiar")
+    ctx.message.delete.assert_called_with()
+    ctx.send.assert_called_once()
+    assert(embed := ctx.sent_embed())
+    assert embed.title == "Summoner summons a familiar."
+    assert embed.description == "Summoner's familiar."
+    assert len(embed.fields) == 1
+    assert embed.fields[0].name == "Summoner's familiar"
+    summoner = db.retrieve(ctx.guild.id, ctx.author.id, summoner.name)
+    assert str(summoner.allies[0]) == "Summoner's familiar"
 
 
 @pytest.mark.asyncio
