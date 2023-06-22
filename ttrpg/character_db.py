@@ -49,6 +49,8 @@ class CharacterDB(object):
             cur = self._store_effects(cur, c.id, c.effects)
             for ally in c.allies:
                 self.store(guild, user, ally, master=c.id)
+            ally_ids = [ally.id for ally in c.allies]
+            cur = self._clear_allies(cur, c.id, ally_ids)
 
     @staticmethod
     def _encode_location(item, c):
@@ -100,6 +102,9 @@ class CharacterDB(object):
                 ({int(idx)}, :effect, :duration, :parameters)"""
         return cursor.executemany(query, effect_values)
 
+    def _clear_allies(self, cursor, idx, remaining=[]):
+        remaining_clause=f""" AND id NOT IN ({','.join(['?']*len(remaining))})""" if remaining else ""
+        return cursor.execute(f"""DELETE FROM character WHERE master=? {remaining_clause}""", [idx]+remaining)
 
     def exists(self, guild, user, name):
             return self._find_character(guild, user, name) is not None
@@ -194,5 +199,6 @@ class CharacterDB(object):
             cursor = self._clear_inventory(cursor, idx)
             cursor = self._clear_skills(cursor, idx)
             cursor = self._clear_effects(cursor, idx)
+            cursor = self._clear_allies(cursor, idx)
         return idx
 

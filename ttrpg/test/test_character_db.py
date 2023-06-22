@@ -145,3 +145,26 @@ def test_delete(db):
         db.delete("guild", "user", c.name)
     db.store("guild", "user", c)
     assert db.delete("guild", "user", c.name)
+    assert not db.exists("guild", "user", c.name)
+
+def test_allies(db):
+    c=Character()
+    c.summon(Character(name="summon"))
+    c.summon(Character(name="simon"))
+    db.store("guild", "user", c)
+    assert db.exists("guild", "user", "summon")
+    assert db.exists("guild", "user", "simon")
+
+    c = db.retrieve("guild", "user", c.name)
+    assert c.ally("summon") is not None
+    assert c.ally("simon") is not None
+
+    c.allies.pop(1)
+    db.store("guild", "user", c)
+    assert db.exists("guild", "user", "summon")
+    assert not db.exists("guild", "user", "simon")
+    c = db.retrieve("guild", "user", c.name)
+    assert c.ally("simon") is None
+
+    db.delete("guild","user", c.name)
+    assert not db.exists("guild", "user", "summon`")
