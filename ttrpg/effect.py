@@ -9,10 +9,11 @@ class Effect(object):
         return self.boni.get(name, dict())
 
     def turn(self):
-        if self.duration is None:
+        if isinstance(self.duration, int):
+            self.duration -= 1
+            return self.duration > 0
+        else:
             return True
-        self.duration -= 1
-        return self.duration > 0
 
     def rest(self):
         if self.duration is None:
@@ -23,3 +24,7 @@ class Effect(object):
 
     def __str__(self):
         return self.description or self.name
+
+class Summoned(Effect):
+    def __init__(self, duration=1):
+        super(Summoned,self).__init__("summoned", duration=duration, description="A summoned creature will disappear eventually")

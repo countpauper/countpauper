@@ -96,15 +96,16 @@ class RollResult(Result):
             return "\n  ".join([f"{self.roll} VS"]+[f"{target} {roll if roll else ''}: {self._effect(target)}" for target, roll in self.vs.items()])
 
 class SummonResult(Result):
-    def __init__(self, summoner):
+    def __init__(self, summoner, duration=None):
         self.summoner = summoner
+        self.duration = duration
         self.summons = []
 
     def summon(self, *characters):
         self.summons += characters
 
     def apply(self):
-        self.summoner.summon(*self.summons)
+        self.summoner.summon(*self.summons, duration=self.duration)
 
     def __str__(self):
         if self.summons:

@@ -203,7 +203,7 @@ class Familiar(Skill):
         if self.actor.ally(familiar_name):
             raise GameError(f"{self.actor} already has a familiar.")
         else:
-            result = SummonResult(self.actor)
+            result = SummonResult(self.actor, duration='rest')
             result.summon(Character(name=familiar_name, level=-3, physical=0, mental=0, social=3, skill=[Encourage]))
             result.apply()
             return result

@@ -218,6 +218,15 @@ def test_turn():
     assert c.affected("long")
     assert not c.affected("short")
 
+def test_turn_ally():
+    c = Character(social=2)
+    c.summon(Character(name="traitor", ap=0), duration=2)
+    c.turn()
+    assert(traitor:=c.ally("traitor"))
+    assert traitor.ap == traitor.max_ap()
+    c.turn()
+    assert not c.ally('traitor')
+
 def test_rest():
     c = Character(hp=2, mental=2, pp=0, social=3, mp=1, ap=1)
     c.affect(Effect("short", duration=10))
@@ -229,3 +238,13 @@ def test_rest():
     assert c.ap == c.max_ap()
     assert not c.affected("short")
     assert c.affected("infinite")
+
+def test_rest_allies():
+    c=Character(social=3)
+    c.summon(Character(name='friend', hp=2, social=2, mp=0))
+    c.summon(Character(name='traitor'), duration="rest")
+    c.rest()
+    assert(friend:=c.ally('friend'))
+    assert friend.hp == 5
+    assert friend.mp == 2
+    assert not c.ally('traitor')

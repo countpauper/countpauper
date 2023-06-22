@@ -3,7 +3,7 @@ from dice import Dice
 from stats import *
 from skill import Skill
 from ability import Physical, Mental, Social
-from effect import Effect
+from effect import Effect, Summoned
 from errors import GameError
 from language import plural, list_off
 from actions import *
@@ -118,6 +118,9 @@ class Character(object):
     def turn(self):
         self['ap'].reset()
         self.effects=[e for e in self.effects if e.turn()]
+        for ally in self.allies:
+            ally.turn()
+        self._unsummon()
 
     def rest(self):
         self['hp'].reset()
@@ -125,6 +128,9 @@ class Character(object):
         self['mp'].reset()
         self['ap'].reset()
         self.effects = [e for e in self.effects if e.rest()]
+        for ally in self.allies:
+            ally.rest()
+        self._unsummon()
 
     def attack_dice(self, nr=0):
         result = self.ability_dice(Physical)
@@ -336,8 +342,15 @@ class Character(object):
         else:
             return None
 
-    def summon(self, *alies):
-        self.allies += alies
+    def summon(self, *allies, duration=None):
+        for ally in allies:
+            ally.affect(Summoned(duration))
+        self.allies += allies
+
+    def _unsummon(self):
+        unsummoned = [a for a in self.allies if not a.affected("summoned")]
+        self.allies=[a for a in self.allies if a not in unsummoned]
+        return unsummoned
 
     def __str__(self):
         return self.name.capitalize()

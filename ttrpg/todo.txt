@@ -42,8 +42,13 @@ initial skills
 [done]portrait command
 [done] rest command (resets hp, pp mp and ap and clears all effects with durations)
     - clear familiar. Add as effect? (to summon)
-    - rest also rests summons (and their effects)
-    - turn also turns summons (and their effects)
+    - clear unsummoned allies from database
+    [done] rest also rests summons (and their effects)
+    - summons in output embed (mini sheet with just counters and summon effect duration)
+    [done] turn also turns summons (and their effects)
+    - summons in output embed (mini sheet with just counters and summon effect duration)
+    - add unsummoned creatures in output embed one last time?
+
 Check if can attack or motivated enough to offend for skills
 [done] Reimplement actions (attack, cover) as "Free Skills". Don't add them to skills, just attack() = execute(Attack(), targets, bonus). Derive SKill from Action? What about passive skill?
 
