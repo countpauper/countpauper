@@ -11,6 +11,7 @@ class CharacterDB(object):
     def __init__(self, filename="ttrpg.db"):
         self.connection = sqlite3.connect(filename)
         self._create_table()
+        self._cache = dict()
 
     def close(self):
         if self.connection:
@@ -51,6 +52,7 @@ class CharacterDB(object):
                 self.store(guild, user, ally, master=c.id)
             ally_ids = [ally.id for ally in c.allies]
             cur = self._clear_allies(cur, c.id, ally_ids)
+            self._cache[c.id] = c
 
     @staticmethod
     def _encode_location(item, c):
@@ -130,6 +132,8 @@ class CharacterDB(object):
         if row := cursor.fetchone():
             record = {col: row[nr] for nr, col in enumerate(columns)}
             idx = record.get('id')
+            if c := self._cache.get(idx):
+                return c
             record['skill'] = self._retrieve_skills(cursor, idx)
             inventory = self._retrieve_inventory(cursor, idx)
             record['inventory'] = [i for location_items in inventory.values() for i in location_items]
@@ -139,6 +143,7 @@ class CharacterDB(object):
             c.worn = inventory.get('worn', [])
             c.held['main'] = inventory.get('main', [None])[0]
             c.held['off'] = inventory.get('off', [None])[0]
+            self._cache[idx] = c
             return c
         else:
             return None

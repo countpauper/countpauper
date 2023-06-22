@@ -41,12 +41,12 @@ initial skills
 [done] character to str just instead of Name(), repr for elaborate description
 [done]portrait command
 [done] rest command (resets hp, pp mp and ap and clears all effects with durations)
-    - clear familiar. Add as effect? (to summon)
-    - clear unsummoned allies from database
+    [done] clear familiar. Add as effect? (to summon)
+    [done] clear unsummoned allies from database
     [done] rest also rests summons (and their effects)
-    - summons in output embed (mini sheet with just counters and summon effect duration)
+    - summons in output (embed?) after rest (mini sheet with just counters and summon effect duration)
     [done] turn also turns summons (and their effects)
-    - summons in output embed (mini sheet with just counters and summon effect duration)
+    - summons in output (embed?) after turn (mini sheet with just counters and summon effect duration)
     - add unsummoned creatures in output embed one last time?
 
 Check if can attack or motivated enough to offend for skills
@@ -56,8 +56,11 @@ Check if can attack or motivated enough to offend for skills
 [done] organize commands in cogs (well, mostly game cog)
 partial matching for taking and dropping items
 partial matching for finding database characters (targets)
-   - refactor implementation to self target without getting from database twice (executor==target) in skill/attack etc commands (now already needs
+   [done] refactor implementation to self target without getting from database twice (executor==target) in skill/attack etc commands (now already needs
    case insensitive matching between argument and easlier character name)
+   [done] This should also fix the BUG when attacking own familiar (target's hp overwritten when storing attacker's ally)
+   [done] Might need a character cache
+   - flushed database cache at the end of every command. This could also auto store (dirty) characters?
     - track dirty flag in characters to see if they need stored (should be an optimization only)
 Cog specific error handling, https://guide.pycord.dev/popular-topics/error-handling
 [done] character worn can be a list for jewelry and multi part armor?

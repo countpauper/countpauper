@@ -35,16 +35,24 @@ class GameCommands(commands.Cog):
         await ctx.message.delete()
 
     @staticmethod
-    def character_description(c):
-        return f"""**Level:** {c.level}
-**Physical:** {c.physical} [{c.ability_dice(Physical)}], **HP:** {c.hp}
+    def character_description(c, **kwargs):
+        description = ""
+        if kwargs.get("level", True):
+            description += f"**Level:** {c.level}\n"
+        if kwargs.get("ability", True):
+            description += f"""**Physical:** {c.physical} [{c.ability_dice(Physical)}], **HP:** {c.hp}
 **Mental:** {c.mental} [{c.ability_dice(Mental)}], **PP:** {c.pp}
 **Social:** {c.social} [{c.ability_dice(Social)}], **MP:** {c.mp}
-**Attack:** {c.attack_dice()}, **Defense:** {c.defense_dice()}"""
+"""
+        else:
+            description += f"**HP:** {c.hp}, **PP:** {c.pp}, **MP:** {c.mp}, **AP:** {c.ap}\n"
+        if kwargs.get("dice", True):
+            description += f"**Attack:** {c.attack_dice()}, **Defense:** {c.defense_dice()}"
+        return description
 
     @staticmethod
     def embed_sheet(c, **kwargs):
-        description=GameCommands.character_description(c)
+        description=GameCommands.character_description(c, **kwargs)
 
         embed = discord.Embed(title=kwargs.get('title', str(c)),
                       description=description,
@@ -59,7 +67,7 @@ class GameCommands(commands.Cog):
             embed.add_field(name="Effects", value="\n".join(str(e).capitalize() for e in c.effects), inline=True)
         if kwargs.get('allies', True):
             for ally in c.allies:
-                embed.add_field(name=str(ally), value=GameCommands.character_description(ally))
+                embed.add_field(name=str(ally), value=GameCommands.character_description(ally, **kwargs))
         return embed
 
     @staticmethod
@@ -217,7 +225,8 @@ class GameCommands(commands.Cog):
         if c := self.retrieve_pc(ctx, name):
             c.turn()
             self.store_character(ctx, c)
-            await ctx.send(f"**{c}** ap: {c.ap}")
+            await ctx.send(embed=self.embed_sheet(c, title=f"{possessive(c)} turn", inventory=False, skills=False,
+                                                  ability=False, level=False, dice=False))
             await ctx.message.delete()
         else:
             raise CharacterUnknownError(ctx.guild, ctx.author, name)
@@ -227,7 +236,8 @@ class GameCommands(commands.Cog):
         if c := self.retrieve_pc(ctx, name):
             c.rest()
             self.store_character(ctx, c)
-            await ctx.send(f"**{c}** rests. HP: {c.hp} PP: {c.pp} MP: {c.mp} AP: {c.ap}")
+            await ctx.send(embed=self.embed_sheet(c, title=f"{c} rests", inventory=False, skills=False,
+                                                  ability=False, level=False, dice=False))
             await ctx.message.delete()
         else:
             raise CharacterUnknownError(ctx.guild, ctx.author, name)
@@ -254,10 +264,7 @@ class GameCommands(commands.Cog):
                 pass
         if args:
             target_name = args[0]
-            if target_name.lower() == attacker.name.lower():
-                target = attacker
-            else:
-                target = self.retrieve_target(ctx, target_name)
+            target = self.retrieve_target(ctx, target_name)
             if not target:
                 raise CharacterUnknownError(ctx.guild, None, target_name)
         else:

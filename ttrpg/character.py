@@ -186,7 +186,7 @@ class Character(object):
 
         self._check_cost(action.cost)  # NB : check beforehand to make it transactional
         if not (ability_score:=self.ability(action.ability)):
-            raise GameError(f"Your {action.ability.name} is too low ({ability_score}) to {action}.")
+            raise GameError(f"Your {action.ability.name} is too low ({ability_score}) to {action.name()}.")
         response = action(*targets, **kwargs)
         response.action = action
         self._cost(action.cost)
