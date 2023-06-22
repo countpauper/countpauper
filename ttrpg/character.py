@@ -119,6 +119,13 @@ class Character(object):
         self['ap'].reset()
         self.effects=[e for e in self.effects if e.turn()]
 
+    def rest(self):
+        self['hp'].reset()
+        self['pp'].reset()
+        self['mp'].reset()
+        self['ap'].reset()
+        self.effects = [e for e in self.effects if e.rest()]
+
     def attack_dice(self, nr=0):
         result = self.ability_dice(Physical)
         # TODO: add personal attack bonus (or penalty for subsequent attacks)

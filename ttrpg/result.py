@@ -19,7 +19,7 @@ class EffectResult(Result):
         self.effect = effect
         self.targets = list()
 
-    def add(self, *targets):
+    def target(self, *targets):
         self.targets += targets
         return self
 

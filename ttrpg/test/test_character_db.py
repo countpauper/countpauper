@@ -107,7 +107,7 @@ def test_skills(db):
 
 def test_effects(db):
     c=Character(name="Stronk", physical=5)
-    c.effects.append(Effect("stronger",1, dict(physical=dict(bonus=2))))
+    c.effects.append(Effect("stronger", boni=dict(physical=dict(bonus=2))))
     db.store("guild", "owner", c)
     c=db.retrieve("guild", "owner", "Stronk")
     assert c.effects

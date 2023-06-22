@@ -8,8 +8,6 @@ from errors import GameError, TargetError
 from language import indefinite_article, possessive, list_off
 
 
-
-
 class CrossCut(Skill):
     """Attack with two weapons simultaneously. Their attack dice are added."""
 
@@ -50,8 +48,8 @@ class Parry(Skill):
     def __call__(self, *args, **kwargs):
         weapon = self.actor.main_hand()
         if isinstance(weapon, MeleeWeapon):
-            result = EffectResult(Effect('parrying', 1, dict(defense=dict(parry=1)), description=f"parrying with {indefinite_article(weapon)} {weapon}"))
-            result.add(self.actor)
+            result = EffectResult(Effect('parrying', boni = dict(defense=dict(parry=1)), description=f"parrying with {indefinite_article(weapon)} {weapon}"))
+            result.target(self.actor)
             result.apply()
             return result
         else:
@@ -68,6 +66,7 @@ class Riposte(Skill):
     def __init__(self, actor):
         super(Riposte, self).__init__(actor)
 
+
 class Backstab(Skill):
     """Attack with a 1d6 bonus against a character who is not engaged or covered."""
 
@@ -78,6 +77,7 @@ class Backstab(Skill):
     def __init__(self, actor):
         super(Backstab, self).__init__(actor)
 
+
 class Flank(Skill):
     """Attack with a bonus against an enemy that is engaged by someone else."""
     cost = dict(ap=1)
@@ -86,6 +86,7 @@ class Flank(Skill):
 
     def __init__(self, actor):
         super(Flank, self).__init__(actor)
+
 
 class Disarm(Skill):
     """Ready a reaction to make someone drop their weapon after they miss you."""
@@ -96,6 +97,7 @@ class Disarm(Skill):
 
     def __init__(self, actor):
         super(Disarm, self).__init__(actor)
+
 
 class Explosion(Skill):
     """Hit everyone in the same location with an elemental attack."""
@@ -115,6 +117,7 @@ class Explosion(Skill):
         result.apply()
         return result
 
+
 class Frighten(Skill):
     """Scare someone into losing morale points. They can overcome with their mental strength."""
 
@@ -132,6 +135,7 @@ class Frighten(Skill):
             result.versus(target, target.ability_dice(Mental).roll())
         result.apply()
         return result
+
 
 class Heal(Skill):
     """Heal someone, restoring their health by your mental ability dice."""
@@ -151,6 +155,7 @@ class Heal(Skill):
         result.apply()
         return result
 
+
 # TODO: if Familiar gets this for free, free action and at range, why would a player take it? To upcast?
 # for now it's not in all skills
 class Encourage(Skill):
@@ -169,10 +174,11 @@ class Encourage(Skill):
             raise TargetError("You need to encourage at least one ally.")
         if self.actor in targets:
             raise TargetError("You cannot encourage yourself.")
-        result = EffectResult(Effect("encouraged", 1, dict(roll=dict(encouraged=1))))
-        result.add(*targets)
+        result = EffectResult(Effect("encouraged", boni=dict(roll=dict(encouraged=1))))
+        result.target(*targets)
         result.apply()
         return result
+
 
 class Familiar(Skill):
     """Call your familiar to your side.
@@ -215,10 +221,11 @@ class Harmony(Skill):
         targets = args
         if len(targets) > self.actor.social:
             raise TargetError("You can only harmonize as many allies as your social score.")
-        result = EffectResult(Effect("harmonized", 1, dict(defense=dict(harmony=1))))
-        result.add(*targets)
+        result = EffectResult(Effect("harmonized", boni=dict(defense=dict(harmony=1))))
+        result.target(*targets)
         result.apply()
         return result
+
 
 Skill.all = [CrossCut, Parry, Riposte, Backstab, Flank, Disarm, Explosion, Frighten, Heal, Familiar, Encourage]
 

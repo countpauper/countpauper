@@ -162,7 +162,7 @@ class CharacterDB(object):
         response = cursor.execute(query, dict(id=idx))
         effects = list()
         while row:=response.fetchone():
-            effects.append(Effect(row[0], row[1], json.loads(row[2])))
+            effects.append(Effect(row[0], duration=row[1], boni=json.loads(row[2])))
         return effects
 
     def _find_character(self, guild, user, name):

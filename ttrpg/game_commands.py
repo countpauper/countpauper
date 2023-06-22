@@ -171,7 +171,7 @@ class GameCommands(commands.Cog):
         if not c:
             raise commands
         if not args:
-            raise commands.CommandError("The item {c.name} will take is a required argument, which is missing.")
+            raise commands.CommandError("The item {c} will take is a required argument, which is missing.")
         items = c.obtain(*args)
         c.auto_equip()
         self.store_character(ctx, c)
@@ -182,7 +182,7 @@ class GameCommands(commands.Cog):
     async def drop(self, ctx, *args):
         c, args = self._optional_character_argument(ctx, args)
         if not args:
-            raise commands.CommandError("The item {c.name} will drop is a required argument, which is missing.")
+            raise commands.CommandError("The item {c} will drop is a required argument, which is missing.")
         items = c.lose(*args)
         c.auto_equip()
         self.store_character(ctx, c)
@@ -217,11 +217,20 @@ class GameCommands(commands.Cog):
         if c := self.retrieve_pc(ctx, name):
             c.turn()
             self.store_character(ctx, c)
-            await ctx.send(f"**{c.name}** ap: {c.ap}")
+            await ctx.send(f"**{c}** ap: {c.ap}")
             await ctx.message.delete()
         else:
             raise CharacterUnknownError(ctx.guild, ctx.author, name)
 
+    @commands.command()
+    async def rest(self, ctx, name=None):
+        if c := self.retrieve_pc(ctx, name):
+            c.rest()
+            self.store_character(ctx, c)
+            await ctx.send(f"**{c}** rests. HP: {c.hp} PP: {c.pp} MP: {c.mp} AP: {c.ap}")
+            await ctx.message.delete()
+        else:
+            raise CharacterUnknownError(ctx.guild, ctx.author, name)
 
     @commands.command()
     async def attack(self, ctx, *args):
@@ -245,7 +254,7 @@ class GameCommands(commands.Cog):
                 pass
         if args:
             target_name = args[0]
-            if target_name.lower() == attacker.name:
+            if target_name.lower() == attacker.name.lower():
                 target = attacker
             else:
                 target = self.retrieve_target(ctx, target_name)

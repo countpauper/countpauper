@@ -45,8 +45,8 @@ class Cover(Action):
             desc = f"protected by their {shield}"
         else:
             desc = f"covered"
-        result = EffectResult(Effect("covered", cover, dict(defense=dict(cover=1)), description=desc))
-        result.add(self.actor)
+        result = EffectResult(Effect("covered", boni=dict(defense=dict(cover=cover)), description=desc))
+        result.target(self.actor)
         result.apply()
         return result
 

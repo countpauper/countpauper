@@ -20,14 +20,14 @@ def test_get_and_set_ability():
 def test_buf_bonus():
     c = Character(physical=2)
     assert c.physical == 2
-    c.affect(Effect('buf',None, dict(physical=dict(buf=1))))
+    c.affect(Effect('buf', boni=dict(physical=dict(buf=1))))
     assert c.physical == 3
 
 
 def test_penalty_limit():
     c = Character(physical=2)
     assert c.physical == 2
-    c.affect(Effect('penalty',None, dict(physical=dict(test=-3))))
+    c.affect(Effect('penalty', boni=dict(physical=dict(test=-3))))
     assert c.physical == 0
 
 

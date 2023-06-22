@@ -3,6 +3,7 @@ from items import MeleeWeapon, RangedWeapon, Shield, Armor, Equipment
 from errors import GameError
 from skills import Parry, CrossCut, Heal
 from ability import *
+from effect import Effect
 from dice import Dice
 import pytest
 
@@ -206,3 +207,25 @@ def test_learn():
     assert len(c.skill) == 2
     with pytest.raises(GameError):
         c.learn(Heal)
+
+def test_turn():
+    c = Character(ap=1)
+    c.affect(Effect("long", duration=10))
+    c.affect(Effect("short", duration=1))
+    c.affect(Effect("infinite", duration=None))
+    c.turn()
+    assert c.ap == c.max_ap()
+    assert c.affected("long")
+    assert not c.affected("short")
+
+def test_rest():
+    c = Character(hp=2, mental=2, pp=0, social=3, mp=1, ap=1)
+    c.affect(Effect("short", duration=10))
+    c.affect(Effect("infinite", duration=None))
+    c.rest()
+    assert c.hp == c.max_hp()
+    assert c.pp == c.max_pp()
+    assert c.mp == c.max_mp()
+    assert c.ap == c.max_ap()
+    assert not c.affected("short")
+    assert c.affected("infinite")
