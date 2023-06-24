@@ -27,7 +27,7 @@ while stack:
 		top_key=stack_ref.split(key_sep)[-1]
 		# None for weighted tables that can have no result, like not having a tattoo or hair
 		if stack_value is None:
-			dbg.append('[{stack_ref}] none')
+			dbg.append(f'[{stack_ref}] none')
 			continue
 		if typeof(stack_value)=='str':
 			if not stack_value:
@@ -107,10 +107,15 @@ while stack:
 		elif typeof(stack_value)=='SafeList':
 			# lists are like even weighted tables. pick a random one
 			# TODO: could still check for arguments key:[{key:argument}]
-			idx=randint(len(stack_value))
-			next=stack_value[idx]
-			stack.append({stack_ref:next})
-			dbg.append(f'[{stack_ref}] `{idx}` / {len(stack_value)}')
+			if stack_value:
+				idx=randint(len(stack_value))
+				next=stack_value[idx]
+				stack.append({stack_ref:next})
+				dbg.append(f'[{stack_ref}] `{idx}` / {len(stack_value)}')
+			else:
+				next = None
+				stack.append({stack_ref:next})
+				dbg.append(f'["{stack_ref}"] empty list')
 		elif typeof(stack_value)=='SafeDict':
 			# all numeric keys are treated as a weighted table to roll on, values are thresholds
 			# it can be mixed with sub dicts
@@ -159,10 +164,26 @@ while stack:
 				dbg.append(f'[{stack_ref}] Empty')
 		else:
 			dbg.append('f[{stack_ref}] ? {typeof(stack_value)}')
+
+def limit_str(s, max_len=32):
+	s=str(s)
+	if len(s)<max_len:
+		return s
+	else:
+		s = s[:max_len-1]
+		s += "…"
+		if s.count('`')%2 == 1:
+			s+='`'
+		return s
+
 if dbg_break:
 	# generate the output
-	debugstr="\n".join(dbg)[:4096]
-	fields=[f'-f "{k}|{v}"' for k,v in fields.items()][:25]
+	nl="\n"
+	debugstr=nl.join(limit_str(dstr,64) for dstr in dbg)[:4096]
+	remaining_fields=list(fields.items())[24:]
+	fields = [f'-f "{k}|{limit_str(v,256)}"' for k, v in fields.items()][:24]
+	if remaining_fields:
+		fields.append(f'''-f "...|{nl.join(f'{k}=`{limit_str(v)}`' for k,v in list(remaining_fields))}"''')
 	return f'embed -title "NPC" -desc "{debugstr}" '+' '.join(fields)
 else:
 	if missing:
@@ -182,8 +203,8 @@ else:
 	for k,v in fields.items():
 		v=str(v)
 		var='{'+k+'}'
-		text=text.replace(var,v)
-		title=title.replace(var,v)
+		text=text.replace(var, v)
+		title=title.replace(var, v)
 		# capitalized field names get capitalized values
 		if v[0].islower():
 			var='{'+k.capitalize()+'}'

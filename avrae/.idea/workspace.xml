@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/ic/gen_npc_gen.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Math/Solvers/function.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Solvers/function.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/Debug.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/Debug.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tactics/Engine/from_string.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Tactics/Engine/from_string.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ttrpg/language.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ttrpg/language.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ttrpg/test/test_language.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ttrpg/test/test_language.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ic/npc_gen.json" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc_gen.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ic/npc_gen2.py" beforeDir="false" afterPath="$PROJECT_DIR$/ic/npc_gen2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +51,7 @@
       <recent name="C:\Users\maurits.fassaert\countpauper\avrae\hud" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.ttrpg_dice">
+  <component name="RunManager" selected="Python.gen_npc_gen">
     <configuration name="card_creator" type="PythonConfigurationType" factoryName="Python">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -68,27 +66,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/card_creator.py" />
       <option name="PARAMETERS" value="npc C:\Users\maurits.fassaert\Documents\dnd\wddh.txt" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="chance_py (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="avrae" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\build_analysis\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/chance" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/chance/chance_py.py" />
-      <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -117,20 +94,21 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="gem_script" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="gen_npc_gen" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="avrae" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\edsdl\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/misc" />
+      <option name="SDK_HOME" value="C:\Users\mauri\AppData\Local\Programs\Python\Python39\python.exe" />
+      <option name="SDK_NAME" value="Python 3.9" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ic" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/gem_script.py" />
-      <option name="PARAMETERS" value="50" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ic/gen_npc_gen.py" />
+      <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -151,6 +129,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dc/monster_converter.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="npc_gen2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="avrae" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ic" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ic/npc_gen2.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -183,19 +182,19 @@
     </configuration>
     <list>
       <item itemvalue="Python.card_creator" />
-      <item itemvalue="Python.chance_py (1)" />
+      <item itemvalue="Python.gen_npc_gen" />
+      <item itemvalue="Python.npc_gen2" />
       <item itemvalue="Python.csv2json" />
-      <item itemvalue="Python.gem_script" />
       <item itemvalue="Python.monster_converter" />
       <item itemvalue="Python.ttrpg_dice" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.gen_npc_gen" />
+        <item itemvalue="Python.npc_gen2" />
         <item itemvalue="Python.ttrpg_dice" />
         <item itemvalue="Python.csv2json" />
         <item itemvalue="Python.monster_converter" />
-        <item itemvalue="Python.gem_script" />
-        <item itemvalue="Python.chance_py (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -319,6 +318,11 @@
           <url>file://$PROJECT_DIR$/misc/ttrpg_dice.py</url>
           <line>45</line>
           <option name="timeStamp" value="93" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/ic/gen_npc_gen.py</url>
+          <line>39</line>
+          <option name="timeStamp" value="97" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
