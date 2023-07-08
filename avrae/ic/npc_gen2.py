@@ -3,6 +3,17 @@ args=argparse(&ARGS&)
 default_db='e8dfa775-0f63-4aaa-9869-4fab02edfbfc'
 dbs=load_json(get('generate_db','{}'))
 db=load_json(get_gvar(dbs.get('npc',default_db)))
+
+def is_uuid(s):
+	return typeof(v)=='str' and len(v)==36 and v.count('-')==4
+
+loaded=dict()
+for k,v in db.items():
+	if is_uuid(v):
+		sub_db = load_json(get_gvar(v))
+		db[k] = sub_db
+		loaded[k]=len(sub_db)
+
 fields={}
 ptr_prefix='@'
 # TODO: should be svar, with default is [gvar]
@@ -14,7 +25,7 @@ if dbg_break:=args.last('d'):
 	if dbg_break.isdecimal():
 		dbg_break=int(dbg_break)
 	else:
-		dbg_break=100
+		dbg_break=1000
 
 key_sep='.'
 while stack:
@@ -64,7 +75,7 @@ while stack:
 				prev_key=None
 				dbg_ptr = key_sep.join(pointer)
 				while pointer:
-					p=pointer.pop(0)
+					p=pointer.pop(0).strip()
 					# Highest priority is referring to a @key, prefixed explicitly for sharing
 					# eg @human_names -> @human_names:['foo'] would refer to ['foo']
 					if typeof(ref)=='SafeDict' and (pp:=f'@{p}') in ref:
@@ -86,19 +97,18 @@ while stack:
 						ref=chosen_ref[0]
 					# prev_key stays the same
 					else:
-						dbg.append(f'[{stack_ref}] missing **{p}** in `{dbg_ptr}`')
+						dbg.append(f'[{stack_ref}] missing **{p}** in `@{dbg_ptr}`')
 						ref=None
 						break
 				if ref:
 					stack.append({stack_ref:ref})
-					dbg.append(f'[{stack_ref}] {ref} {stack_value}=>`{dbg_ptr}`')
+					dbg.append(f'[{stack_ref}] {stack_value}=>`{dbg_ptr}`')
 
 			#  dice string detected. TODO: doesn't check for rr/ro/kh/kl
 			elif len(stack_value)>1 and all(c in '0123456789+-*/d()' for c in stack_value):
 				r = vroll(stack_value)
 				fields[top_key]=r.total
 				dbg.append(f'[{stack_ref}] {top_key}={r}')
-			# TODO: gvar detection
 
 			# a straight string field result, store it in fields
 			else:
@@ -142,9 +152,11 @@ while stack:
 								(typeof(vo)=='SafeList' and vo.lower() in vo)]:
 						stack.append({stack_ref:match[0]})
 						dbg.append(f'[{stack_ref}]: chose `{selection}`')
+						if top_key in missing:
+							missing.pop(top_key)
 					else:
 						missing[top_key] = selection
-						dbg.append(f'[{stack_ref}]: missing `{selection}`')
+						dbg.append(f'[{stack_ref}]: missing `{selection}` in `{dict_value.values()}`')
 				else:
 					rand_key=randint(max(decikeys))
 					mkeys=[rk for rk in decikeys if rk>rand_key]
@@ -179,7 +191,7 @@ def limit_str(s, max_len=32):
 if dbg_break:
 	# generate the output
 	nl="\n"
-	debugstr=nl.join(limit_str(dstr,64) for dstr in dbg)[:4096]
+	debugstr=nl.join(limit_str(dstr,256) for dstr in dbg)[:4096]
 	remaining_fields=list(fields.items())[24:]
 	fields = [f'-f "{k}|{limit_str(v,256)}"' for k, v in fields.items()][:24]
 	if remaining_fields:
@@ -200,16 +212,25 @@ else:
 	# Take the title and text field and replace the other field
 	title=fields.get('title','NPC')
 	text=fields.get('text', '{name} {surname} the {age} {gender} {race}.')
-	for k,v in fields.items():
-		v=str(v)
-		var='{'+k+'}'
-		text=text.replace(var, v)
-		title=title.replace(var, v)
-		# capitalized field names get capitalized values
-		if v[0].islower():
-			var='{'+k.capitalize()+'}'
-			text=text.replace(var, v.capitalize())
-			title=title.replace(var, v.capitalize())
+	def replace_vars(s, vars):
+		if '{' not in s:
+			return s
+		for k, v in vars.items():
+			if typeof(v)!='str':
+				continue
+			var = '{' + k + '}'
+			if var in s:
+				v = replace_vars(str(v), vars)
+				s = s.replace(var, v)
+			# capitalized field names get capitalized values
+			if v[0].islower():
+				var = '{' + k.capitalize() + '}'
+				s = s.replace(var, v.capitalize())
+		return s
+
+	text = replace_vars(text, fields)
+	title = replace_vars(title, fields)
+
 
 	# field for !npc
 	out_fields=[]

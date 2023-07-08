@@ -270,7 +270,7 @@ Then make it smart (like center above) and give the most appropriate location wh
 !generate npc
     * speech and mannerism tables like https://www.reddit.com/r/BehindTheTables/comments/7fde9p/npc_voices_table/
     * visual accesories like tattoos, jewelry, eyepatches.
-    - backstory rough generic categories from profession (farmer, merchant, priest, sage) and related goals/ideals.
+    * backstory rough generic categories from profession (farmer, merchant, priest, sage) and related goals/ideals.
 
 Group movement:
 *!march -approach a1 [current combatant or group]
