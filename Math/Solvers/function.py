@@ -10,7 +10,7 @@ class Function:
 #  Least squares fitting with a polynomial output
 #  Solve cubic polynomials
 #  Other types of functions like Reciprocal(Function) and Exponent(Function) ?
-
+# NB: Polynomial is an endo-functor
 class Polynomial(Function):
 	def __init__(self, *args):
 		if len(args) == 1 and hasattr(args[0], '__iter__'):
