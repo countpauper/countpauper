@@ -31,7 +31,7 @@
 #* replace vars in expression for custom attacks:
 
 # approach: cut expression into + terms (*/ later at lower level)
-# for each term determine the range and the expression governing the chance? or the change for each value in the range
+# for each term determine the range and the expression governing the chance? or the chance for each value in the range
 # it should recognize number and die size, ro, kh[1] and kl[1] at least (until generalized)
 # then iterate, starting with a 0,0 range and empty change array. One by one sum the min and max and multiply the chance
 # dict per term in array {term=str, min=int, max=int, p=[probability mass function]}
@@ -44,6 +44,10 @@
 # max dice math: https://math.stackexchange.com/questions/1696623/what-is-the-expected-value-of-the-largest-of-the-three-dice-rolls/
 # roller (seem to do it the hard way but good to compare): http://topps.diku.dk/torbenm/troll.msp
 # troll rolls: 4d6kh3 * 6 stats treshold 80: repeat a:=sum({6 # sum(largest 3 4d6)}) until a>=80
+
+
+# TODO: kh1 seems broken
+# is crit range taken from character?
 
 #### Parse configuration: svar > cvar > uvar
 config=load_json(get('Chance','{}'))

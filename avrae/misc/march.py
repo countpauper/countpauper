@@ -365,7 +365,7 @@ for name, mover in movers.items():
 	props=dict()
 	if mover.destination:
 		props[1]=CoordString(mover.destination[:2])
-		if (not mover.start and mover.destination[2]!=0) or (mover.destination[2] !=mover.start.z):
+		if (not mover.start and mover.destination[2]!=0) or (mover.start and mover.destination[2] !=mover.start.z):
 			props[5]=int(mover.destination[2]*ft_per_grid)
 	if mover.size and (not mover.start or mover.size!=mover.start.s):
 		props[2]=mover.size
