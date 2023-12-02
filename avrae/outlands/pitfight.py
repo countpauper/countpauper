@@ -6,9 +6,10 @@ rr,rt=cs["reroll"] if "reroll" in cs else None,10 if "talent" in cs and cs["tale
 cmd = f'{ctx.prefix}{ctx.alias}'
 title=name+" goes pit fighting!"
 text="Meta|"
-roll_args=argparse(a)
+roll_args=argparse(a, parse_ephem=False)
+dbg=""
 for idx, t in enumerate(p):
-	adv_dict=dict(adv=f'adv{idx+1}',dis=f'dis{idx+1}',ea=f'ea{idx+1}')
+	adv_dict=dict(adv=f'adv{idx+1}',dis=f'dis{idx+1}',eadv=f'eadv{idx+1}')
 	bonuses=roll_args.get(f'b{idx+1}')
 	if t.lower() in "athletics":
 		text+=f"\n**Athletics:** {vroll('+'.join([ch.skills.athletics.d20(roll_args.adv(boolwise=True, custom=adv_dict),rr,rt if ch.skills.athletics.prof>=1 else None)] + bonuses))}"
@@ -28,6 +29,8 @@ for idx, t in enumerate(p):
 			text=f"**Unknown attack or skill:**  {t}!"
 			title=name +" goes to improve their fighting skills."
 			break
+if dbg:
+	text+=f"\n{dbg}"
 </drac2>
 -title "{{title}}"
 -f "{{text}}"
