@@ -1,0 +1,9 @@
+if ! [ -d ".venv" ]; then
+    python3 -m venv .venv
+fi
+
+# Activate the virtual environment
+. .venv/bin/activate
+
+# Install Python dependencies
+pip install -r requirements.txt
