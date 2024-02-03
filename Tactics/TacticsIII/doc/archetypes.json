@@ -1,0 +1,65 @@
+{
+        "bruiser": [
+            "str",
+            "int",
+            "agi",
+            "con",
+            "wis"
+        ],
+        "fighter": [
+            "str",
+            "con",
+            "agi",
+            "int",
+            "wis"
+        ],
+        "tank": [
+            "con",
+            "str",
+            "agi",
+            "wis",
+            "int"
+        ],
+        "thief": [
+            "agi",
+            "int",
+            "str",
+            "wis",
+            "con"
+        ],
+        "monk": [
+            "agi",
+            "wis",
+            "str",
+            "con",
+            "int"
+        ],
+        "mage": [
+            "int",
+            "wis",
+            "agi",
+            "con",
+            "str"
+        ],
+        "priest": [
+            "wis",
+            "int",
+            "agi",
+            "con",
+            "str"
+        ],
+        "cleric": [
+            "wis",
+            "str",
+            "int",
+            "con",
+            "agi"
+        ],
+        "archer": [
+            "str",
+            "agi",
+            "int",
+            "wis",
+            "con"
+        ]
+    }

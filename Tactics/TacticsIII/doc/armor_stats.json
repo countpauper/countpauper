@@ -1,0 +1,32 @@
+{
+        "cloth": {
+            "weight": 0,
+            "defense": 0
+        },
+        "leather": {
+            "weight": 1,
+            "defense": 1
+        },
+        "chain": {
+            "weight": 2,
+            "defense": 2
+        },
+        "scale": {
+            "weight": 3,
+            "defense": 3
+        },
+        "plate": {
+            "weight": 4,
+            "defense": 4
+        },
+        "buckler": {
+            "weight": 1,
+            "defense": 1,
+            "hand": 1
+        },
+        "shield": {
+            "weight": 2,
+            "defense": 2,
+            "hand": 2
+        }
+    }

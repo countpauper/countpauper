@@ -1,0 +1,122 @@
+{
+        "str": {
+            "base": 2,
+            "range": [
+                0,
+                15
+            ],
+            "boost": [
+                "carry",
+                "athletics",
+                "damage",
+                "carry",
+                "damage",
+                "carry",
+                "athletics",
+                "carry",
+                "athletics",
+                "damage",
+                "athletics",
+                "carry",
+                "damage",
+                "athletics",
+                "damage"
+            ]
+        },
+        "agi": {
+            "base": 2,
+            "range": [
+                0,
+                15
+            ],
+            "boost": [
+                "speed",
+                "action",
+                "speed",
+                "dodge",
+                "reflex",
+                "dodge",
+                "speed",
+                "action",
+                "dodge",
+                "reflex",
+                "speed",
+                "dodge",
+                "reflex",
+                "dodge",
+                "action"
+            ]
+        },
+        "con": {
+            "base": 2,
+            "range": [
+                0,
+                15
+            ],
+            "boost": [
+                "hd",
+                "physical",
+                "endurance",
+                "hd",
+                "physical",
+                "endurance",
+                "hd",
+                "endurance",
+                "physical",
+                "endurance",
+                "hd",
+                "physical",
+                "endurance",
+                "hd",
+                "physical"
+            ]
+        },
+        "wis": {
+            "base": 2,
+            "range": [
+                0,
+                15
+            ],
+            "boost": [
+                "knowledge",
+                "mental",
+                "attune",
+                "knowledge",
+                "mental",
+                "attune",
+                "knowledge",
+                "mental",
+                "attune",
+                "knowledge",
+                "mental",
+                "attune",
+                "knowledge",
+                "mental",
+                "attune"
+            ]
+        },
+        "int": {
+            "base": 2,
+            "range": [
+                0,
+                15
+            ],
+            "boost": [
+                "skill",
+                "magic",
+                "crit",
+                "skill",
+                "magic",
+                "skill",
+                "crit",
+                "skill",
+                "magic",
+                "crit",
+                "magic",
+                "skill",
+                "crit",
+                "magic",
+                "crit"
+            ]
+        }
+    }

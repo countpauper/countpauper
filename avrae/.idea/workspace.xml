@@ -5,16 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e57250d-8db7-4d30-acaf-11b3eb572dca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../Math/functional programming/endo_functor_example.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Math/functional programming/monad.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Dependencies/FastSignals" beforeDir="false" afterPath="$PROJECT_DIR$/../Dependencies/FastSignals" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Math/Solvers/function.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Solvers/function.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/Damp spring.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/Damp spring.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/Forced.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/Forced.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/l0lweather.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/l0lweather.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/sin cos taylor.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/sin cos taylor.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/weather.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../Math/Engineering Math Jupyter/weather.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chance/chance.py" beforeDir="false" afterPath="$PROJECT_DIR$/chance/chance.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory/custom item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/custom item prices.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/sane item prices.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/sane item prices.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/treasure_table.json" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/treasure_table.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/march.py" beforeDir="false" afterPath="$PROJECT_DIR$/misc/march.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ttrpg/dice.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ttrpg/dice.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ttrpg/generate_character.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ttrpg/generate_character.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ttrpg/test/test_dice.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ttrpg/test/test_dice.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ttrpg/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ttrpg/todo.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

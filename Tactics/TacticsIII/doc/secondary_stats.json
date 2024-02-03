@@ -1,0 +1,103 @@
+{
+        "carry": {
+            "range": [
+                0,
+                5
+            ]
+        },
+        "athletics": {
+                "range": [
+                    0,
+                    5
+                ]
+            },
+        "dodge": {
+            "range": [
+                10,
+                15
+            ],
+            "base": 10,
+            "multiplier": 0.05
+        },
+        "crit": {
+            "range": [
+                0,
+                5
+            ],
+            "multiplier": 0.1
+        },
+        "skill": {
+            "base": 1,
+            "range": [
+                1,
+                6
+            ]
+        },
+        "knowledge": {
+            "base": 1,
+            "range": [
+                1,
+                6
+            ]
+        },
+        "speed": {
+            "base": 2,
+            "range": [
+                2,
+                6
+            ]
+        },
+        "action": {
+            "base": 1,
+            "range": [
+                1,
+                4
+            ]
+        },
+        "hd": {
+            "range": [
+                5,
+                10
+            ],
+            "multiplier": 1,
+            "base": 5
+        },
+        "endurance": {
+            "range": [ 0, 5 ]
+        },
+        "attune": {
+            "range": [ 0, 5 ]
+        },
+        "mental": {
+            "range": [
+                0,
+                5
+            ]
+        },
+        "physical": {
+            "range": [
+                0,
+                5
+            ]
+        },
+        "reflex": {
+            "range": [
+                0,
+                3
+            ]
+        },
+        "damage": {
+            "base": 0,
+            "range": [
+                0,
+                5
+            ]
+        },
+        "magic": {
+            "base": 5,
+            "range": [
+                5,
+                10
+            ]
+        }
+    }
