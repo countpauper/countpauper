@@ -1,3 +1,36 @@
+Big TODO/reason this project is stalled:
+The increasing die size mechanism doesn't scale well, especially at low stats or character
+that min/max. It is pretty easy for a defense score (even if based on just the stat #) to exceed the die size to the point
+there is 0% chance to hit or miss with a d4, d2 let alone a d1. Adding in flat bonuses from magic/items makes this worse. On
+the other hand not raising a stat at all makes it nearly impossible to defend against an attack because even rolling ones
+on three dice might beat a 3 point score. Despecializing might seem required for defense but still very ineffective
+statistically (putting 3 points in a defensive stat makes defending possible but still highly unlikely 3d6 vs 5 hits 98%
+So racing the main attack stat to maximum (15 I guess) is required, not a freedom, to keep up with same main stat but
+redundant against others. After that picking a 2nd stat feels forced. The whole game becomes rock paper scissors.
+
+Four levels of stats (0-3, dice 0, d1, d2, d4) are reserved for debuffed character, racial penalties and weak enemies that are supposed
+to pose a challenge in groups. They don't. A d4 will never hit a defense score of 5 which a player could easily have at level 1.
+
+Some high levels (>15) should be reserved for above player levels to provide the opposite end for bufs and strong  monsters
+that require a team to take on.
+There are 20 dice levels. Reserving 4+6 leaves very few levels for the players to advance in (~10) without forcing despecialization
+or only give one stat boost per level. If two stats are boosted a player would achieve max in two stats at only level 10.
+10 levels may be sort of ok for a small game.
+Adding extra levels on top just becomes a crazy amount of dice, which means a high lower limit (number of dice).
+
+Another option is to allow criticals to at least sometimes hit or miss, but it's hard to come up with a good criterion that
+is consistent with differenent dice. Rolling max on a d2/d4 is way too easy. Exploding dice gets complicated and hard to
+balance/AI.
+
+too few levels to expand in the existing dice range (up to 3d12) to even give 10 levels of progress without forcing despecialization.
+
+
+
+Adding flat bonuses like armor/magic items in makes this worse and for attack bonuses
+also may make it impossible to miss low defense stats.
+ma
+
+
 [done] retrieve inventory
 [done] handle command execution exceptions as user facing errors
 [done] unit test for dice

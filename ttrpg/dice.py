@@ -103,12 +103,24 @@ class Dice(object):
                 return roll(str(self.maximum()), stringifier=Stringifier())
             return roll(f"{value}", stringifier=Stringifier())
 
-
     def minimum(self):
         return Dice(bonus=[1 for _ in self.dice]+self.flat)
 
     def maximum(self):
         return Dice(bonus=[d for d in self.dice]+self.flat)
+
+    def pmf(self):
+        """probability mass function as dictionary result:chance"""
+        pmf={sum(self.flat):1.0}
+        for d in self.dice:
+            rollchance = 1.0 / d
+            new_pmf = dict()
+            for rollValue in range(1, d+1):
+                for value, chance in pmf.items():
+                    sumValue = value + rollValue
+                    new_pmf[sumValue] = new_pmf.get(sumValue,0) + (chance * rollchance)
+            pmf = new_pmf
+        return pmf
 
     def __eq__(self,other):
         if isinstance(other, Dice):

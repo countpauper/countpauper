@@ -5,24 +5,23 @@ import random
 from ability import abilities
 
 sizes=dict(
-    xs=dict(name='Extra Small', physical=1, weight=1),
-    s=dict(name='Small', physical=2, weight=2),
-    m=dict(name='Medium', physical=3, weight=3),
-    l=dict(name='Large', physical=5, weight=5),
-    xl=dict(name='Extra Large', physical=8, weight=8),
-    xxl=dict(name='Extra Extra Large', physical=13, weight=13))
+    xs=dict(name='Extra Small', physical=2, weight=1),
+    s=dict(name='Small', physical=3, weight=2),
+    m=dict(name='Medium', physical=5, weight=3),
+    l=dict(name='Large', physical=8, weight=5),
+    xl=dict(name='Extra Large', physical=13, weight=8),
+    xxl=dict(name='Extra Extra Large', physical=21, weight=13)) # TODO already out of dice range
 
-races = [dict(name='Imp', size=sizes['xs'], social=3, mental=3),
-         dict(name='Fairy', size=sizes['xs'], social=4, mental=2),
-         dict(name='Pixie', size=sizes['xs'], social=2, mental=4),
-         dict(name='Halfling', size=sizes['s'], social=3, mental=2),
-         dict(name='Gnome', size=sizes['s'], social=2, mental=3),
-         dict(name='Dwarf', size=sizes['s'], physical=3, mental=2, social=2),
-         dict(name='Orc', size=sizes['m'], physical=4, mental=1, social=2),
-         dict(name='Elf', size=sizes['m'], physical=2, mental=3, social=2),
-         dict(name='Satyr', size=sizes['m'], mental=1, social=3),
-         dict(name='Human', size=sizes['m'], social=2, mental=2),
-         dict(name='Ogre', size=sizes['l'], social=1, mental=1)]
+races = [dict(name='Imp', size=sizes['xs'], social=4, mental=6), # physical 2 = 12
+         dict(name='Pixie', size=sizes['xs'], social=4, mental=6), # physical 2 = 12
+         dict(name='Halfling', size=sizes['s'], social=6, mental=3), # + physical 3 = 12
+         dict(name='Gnome', size=sizes['s'], social=3, mental=6),   # +physical 3 = 12
+         dict(name='Dwarf', size=sizes['s'], physical=6, mental=4, social=2), # 12
+         dict(name='Orc', size=sizes['m'], physical=7, mental=2, social=3), # 12
+         dict(name='Elf', size=sizes['m'], mental=5, social=4, physical=3), # 12
+         dict(name='Satyr', size=sizes['m'], mental=3, social=4), # physical5 = 12
+         dict(name='Human', size=sizes['m'], social=4, mental=3), # physical 5 = 12
+         dict(name='Ogre', size=sizes['l'], social=2, mental=2)] # physical 8 = 12
 
 
 def random_equipment(capacity):

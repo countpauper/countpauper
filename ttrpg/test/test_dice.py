@@ -119,3 +119,10 @@ def test_for_ability():
     assert Dice.for_ability(0) == Dice()
     assert Dice.for_ability(2) == Dice(2)
     assert Dice.for_ability(21) == Dice(12,12,12)
+
+
+def test_pmf():
+    assert Dice().pmf() == {0:1}
+    assert Dice(2).pmf() == {1:0.5, 2:0.5}
+    assert Dice(8).pmf() == {v:0.125 for v in range(1,9)}
+    assert Dice(4, 4).pmf() == {2:0.0625, 3:0.125, 4:0.1875, 5:0.25, 6:0.1875, 7:0.125, 8:0.0625}
