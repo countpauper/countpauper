@@ -1,4 +1,4 @@
-#include <cstdint>
+#include <chrono>
 #pragma once
 namespace Engine
 {
@@ -9,7 +9,7 @@ public:
     Timer();
     double Seconds() const;
 private:
-    std::int64_t start;
+    std::chrono::time_point<std::chrono::high_resolution_clock> start;
 };
 
 }

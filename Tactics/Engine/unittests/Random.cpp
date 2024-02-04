@@ -1,14 +1,14 @@
-#include "pch.h"
+#include <gtest/gtest.h>
 #include <array>
 #include <numeric>
 #include <iostream>
-#include "Random.h"
+#include "Engine/Random.h"
 
 namespace Engine::Test
 {
 
-template<unsigned N>
-double minimum(std::array<double, N>& values)
+template<std::size_t N>
+double minimum(const std::array<double, N>& values)
 {
     return std::accumulate(values.begin(), values.end(), std::numeric_limits<double>::infinity(), [](double m, double v)
     {
@@ -16,8 +16,8 @@ double minimum(std::array<double, N>& values)
     });
 }
 
-template<unsigned N>
-double maximum(std::array<double, N>& values)
+template<std::size_t N>
+double maximum(const std::array<double, N>& values)
 {
     return std::accumulate(values.begin(), values.end(), -std::numeric_limits<double>::infinity(), [](double m, double v)
     {
@@ -25,8 +25,8 @@ double maximum(std::array<double, N>& values)
     });
 }
 
-template<unsigned N>
-double average(std::array<double, N>& values)
+template<std::size_t N>
+double average(const std::array<double, N>& values)
 {
     double sum = std::accumulate(values.begin(), values.end(), 0.0, [](double a, double v)
     {
@@ -35,8 +35,8 @@ double average(std::array<double, N>& values)
     return sum / static_cast<double>(N);
 }
 
-template<unsigned N>
-double stddev(std::array<double, N>& values)
+template<std::size_t N>
+double stddev(const std::array<double, N>& values)
 {
     double avg = average(values);
     double dev = std::accumulate(values.begin(), values.end(), 0.0, [avg](double d, double v)

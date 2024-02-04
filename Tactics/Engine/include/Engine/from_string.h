@@ -12,7 +12,7 @@ namespace Engine
 {
 
 template<typename T>
-T from_string(const std::string_view str)
+T from_string(std::string_view str)
 {
     T result;
     std::stringstream stream(std::string(str.data()));
@@ -22,11 +22,11 @@ T from_string(const std::string_view str)
     return result;
 }
 
-template<> std::string from_string(const std::string_view str);
-template<> bool from_string(const std::string_view str);
+template<> std::string from_string(std::string_view str);
+template<> bool from_string(std::string_view str);
 
 template <typename T>
-std::vector<T> from_strings(const std::string_view str, char delimiter)
+std::vector<T> from_strings(std::string_view str, char delimiter)
 {
     auto strs = Split(str, delimiter);
     std::vector<T> o(strs.size());
@@ -38,13 +38,13 @@ std::vector<T> from_strings(const std::string_view str, char delimiter)
 }
 
 template<typename T>
-T from_string(const std::string_view str, const std::map<const std::string_view, T>& mapping)
+T from_string(std::string_view str, const std::map<std::string_view, T>& mapping)
 {
     return mapping.at(str);
 }
 
 template <typename T>
-std::set<T> from_strings(const std::string_view str, wchar_t delimiter, const std::map<const std::string_view, T>& mapping)
+std::set<T> from_strings(std::string_view str, char delimiter, std::map<std::string_view, T>& mapping)
 {
     auto strs = Split(str, delimiter);
     std::set<T> o;

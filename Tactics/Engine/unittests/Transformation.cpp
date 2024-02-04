@@ -1,8 +1,8 @@
-#include "pch.h"
-#include "Matrix.h"
-#include "Quaternion.h"
-#include "Vector.h"
-#include "Geometry.h"
+#include <gtest/gtest.h>
+#include "Engine/Matrix.h"
+#include "Engine/Quaternion.h"
+#include "Engine/Vector.h"
+#include "Engine/Geometry.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test
@@ -66,16 +66,16 @@ TEST(Matrix, Multiplication)
 TEST(Matrix, InverseAffine)
 {
     Quaternion xrot(Vector(1, 0, 0), float(PI / 2));
-    auto matrix = xrot.Matrix()*Matrix::Translation(Vector(2, -3, 4));
+    auto matrix = xrot.AsMatrix()*Matrix::Translation(Vector(2, -3, 4));
 
     Vector v = Vector(1, -2, 0.5);
     auto v_transformed = matrix * v;
     auto inverse = matrix.Inverse() * v_transformed;
     EXPECT_3D_NEAR(inverse, v, 1e-12);
     
-    auto matrix2 = Matrix::Scale(Vector(0.2f,0.3f,0.4f)) * 
-        Matrix::Translation(Vector(-2, 3, -4)) * 
-        Quaternion(Vector(1, 0.5f, 0.5f), -0.3f).Matrix();
+    // auto matrix2 = Matrix::Scale(Vector(0.2f,0.3f,0.4f)) * 
+    //     Matrix::Translation(Vector(-2, 3, -4)) * 
+    //     Quaternion(Vector(1, 0.5f, 0.5f), -0.3f).AsMatrix();
     v_transformed = matrix * v;
     inverse = matrix.Inverse() * v_transformed;
     EXPECT_3D_NEAR(inverse, v, 1e-12);

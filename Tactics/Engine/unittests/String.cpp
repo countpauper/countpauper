@@ -1,7 +1,7 @@
-#include "pch.h"
+#include <gtest/gtest.h>
 #include <math.h>
-#include "from_string.h"
-#include "Utils.h"
+#include "Engine/from_string.h"
+#include "Engine/Utils.h"
 
 namespace Engine::Test
 {
@@ -57,7 +57,7 @@ TEST(String, String)
 TEST(String, Enum)
 {
     enum class TestEnum { First, Second };
-    std::map<const std::string_view, TestEnum> map({
+    const std::map<std::string_view, TestEnum> map({
         { "1st", TestEnum::First },
         { "2nd", TestEnum::Second }
         });
@@ -71,7 +71,7 @@ TEST(String, Split)
 {
     EXPECT_EQ(Engine::Split("1,2", ','), std::vector<std::string_view>({ "1", "2" }));
     EXPECT_EQ(Engine::Split("A B C", ' '), std::vector<std::string_view>({ "A", "B", "C" }));
-    EXPECT_EQ(Engine::SplitSet("c|a|c|b", '|'), std::set<std::string>({ "a", "b", "c" }));
+    EXPECT_EQ(Engine::SplitSet("c|a|c|b", '|'), std::set<std::string_view>({ "a", "b", "c" }));
 }
 
 TEST(String, Strip)

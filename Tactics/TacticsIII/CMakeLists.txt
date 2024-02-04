@@ -5,23 +5,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(tactics)
 
-file(GLOB MAIN_SOURCES *.cpp)
-add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
-
-include(CTest)
-enable_testing()
-
-add_subdirectory(game)
-add_subdirectory(../Engine ${CMAKE_BINARY_DIR}/Engine)
+file(GLOB SOURCES *.cpp)
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 #
 # Add subdirectories
 #
 set(DEPENDENCIES_DIR "../../Dependencies")
 if(BUILD_TESTS)
-        add_subdirectory("${DEPENDENCIES_DIR}/googletest/")
+        add_subdirectory("${DEPENDENCIES_DIR}/googletest/" ${CMAKE_BINARY_DIR}/googletest)
 endif()
 
-# add_subdirectory(game)
-#target_link_libraries(${PROJECT_NAME}
-#     engine)
+include(CTest)
+enable_testing()
+
+add_subdirectory(game)
+add_subdirectory(../Engine ${CMAKE_CURRENT_BINARY_DIR}/Engine)
+
+target_link_libraries(${PROJECT_NAME}
+     game
+     Engine)

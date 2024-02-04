@@ -95,4 +95,18 @@ OffscreenSurface::~OffscreenSurface()
 
 
 }
+#else 
+#include <cassert>
+
+namespace Engine
+{
+    // TODO separate file
+OffscreenSurface::OffscreenSurface() 
+{
+}
+
+OffscreenSurface::~OffscreenSurface()
+{
+}
+}
 #endif

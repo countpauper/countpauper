@@ -1,8 +1,8 @@
-#include "pch.h"
+#include <gtest/gtest.h>
 #include <iostream>
 #include <filesystem>
-#include "Image.h"
-#include "Utils.h"
+#include "Engine/Image.h"
+#include "Engine/Utils.h"
 
 namespace Engine::Test
 {

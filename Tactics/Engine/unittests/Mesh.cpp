@@ -1,10 +1,9 @@
-#include "pch.h"
-#include "Mesh.h"
-#include "AxisAlignedBoundingBox.h"
-#include "OffscreenSurface.h"
-#include "Matrix.h"
+#include <gtest/gtest.h>
+#include "Engine/Mesh.h"
+#include "Engine/AxisAlignedBoundingBox.h"
+#include "Engine/OffscreenSurface.h"
+#include "Engine/Matrix.h"
 #include "GTestGeometry.h"
-#include <gl/glew.h>
 
 namespace Engine::Test
 {

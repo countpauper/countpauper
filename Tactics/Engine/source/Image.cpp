@@ -5,6 +5,7 @@
 #include "Engine/Utils.h"
 #include "Engine/from_string.h"
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image.h>
 #include <stb_image_write.h>
 
@@ -141,13 +142,13 @@ unsigned Image::Data::Pixels() const
     return width * height;
 }
 
-void Image::Data::Read(const std::string_view filename)
+void Image::Data::Read(std::string_view filename)
 {
     Release();
 
     int w, h, c;
     Data result;
-    std::string fns(filename.data(), filename.size());
+    std::string fns = from_string<std::string>(filename);
     data = stbi_load(fns.c_str(), &w, &h, &c, STBI_default);
     if (!data)
     {
@@ -158,12 +159,12 @@ void Image::Data::Read(const std::string_view filename)
     channels = c;
 }
 
-void Image::Data::Write(const std::string_view filename) const
+void Image::Data::Write(std::string_view filename) const
 {
     std::string extension = UpperCase(filename.substr(filename.find_last_of('.'), std::string::npos));
     if (extension == ".PNG")
     {
-        std::string fns(filename.data(), filename.size());
+        std::string fns = from_string<std::string>(filename);
 
         if (!stbi_write_png(fns.c_str(), width, height, channels, data, width * channels))
         {

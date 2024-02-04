@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "Timer.h"
+#include <gtest/gtest.h>
+#include "Engine/Timer.h"
 #include <thread>
 
 namespace Engine::Test

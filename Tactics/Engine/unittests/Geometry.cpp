@@ -1,11 +1,11 @@
-#include "pch.h"
-#include "Geometry.h"
-#include "Coordinate.h"
-#include "Vector.h"
-#include "Line.h"
-#include "Plane.h"
-#include "Triangle.h"
-#include "AxisAlignedBoundingBox.h"
+#include <gtest/gtest.h>
+#include "Engine/Geometry.h"
+#include "Engine/Coordinate.h"
+#include "Engine/Vector.h"
+#include "Engine/Line.h"
+#include "Engine/Plane.h"
+#include "Engine/Triangle.h"
+#include "Engine/AxisAlignedBoundingBox.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test
@@ -101,7 +101,7 @@ TEST(Line, Section)
     EXPECT_3D_EQ(line.b, secondSection.b);
     EXPECT_3D_EQ(secondSection.a, firstSection.b)
     auto clippedSection = line.Section(Range(0.0, std::numeric_limits<double>::infinity()));
-    
+    EXPECT_EQ(clippedSection, line);
 
 }
 

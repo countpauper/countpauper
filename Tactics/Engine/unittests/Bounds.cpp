@@ -1,9 +1,9 @@
-#include "pch.h"
-#include "Range.h"
-#include "Vector.h"
-#include "AxisAlignedBoundingBox.h"
-#include "Matrix.h"
-#include "Geometry.h"
+#include <gtest/gtest.h>
+#include "Engine/Range.h"
+#include "Engine/Vector.h"
+#include "Engine/AxisAlignedBoundingBox.h"
+#include "Engine/Matrix.h"
+#include "Engine/Geometry.h"
 #include "GTestGeometry.h"
 
 

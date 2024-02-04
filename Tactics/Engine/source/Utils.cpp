@@ -33,13 +33,13 @@ std::vector<std::string_view> Split(std::string_view str, char delimiter)
 }
 
 
-std::set<std::string> SplitSet(const std::string_view str, wchar_t delimiter)
+std::set<std::string_view> SplitSet(std::string_view str, char delimiter)
 {
     auto splitVector = Split(str, delimiter);
-    return std::set<std::string>(splitVector.begin(), splitVector.end());
+    return std::set<std::string_view>(splitVector.begin(), splitVector.end());
 }
 
-std::string UpperCase(const std::string_view str)
+std::string UpperCase(std::string_view str)
 {
     std::string result(str.length(), '\x0');
     std::transform(str.begin(), str.end(), result.begin(), ::toupper);
@@ -69,7 +69,7 @@ std::string FormatDuration(std::chrono::milliseconds duration)
     return ss.str();
 }
 
-std::string_view Strip(const std::string_view str, const std::string_view trash)
+std::string_view Strip(std::string_view str, std::string_view trash)
 {
     auto start = str.find_first_not_of(trash);
     if (start == std::string::npos)

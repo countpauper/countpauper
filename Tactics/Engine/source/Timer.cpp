@@ -1,25 +1,18 @@
 #include "Engine/Timer.h"
-#ifdef WIN32
-#include <windows.h>
+#include <chrono>
 
 namespace Engine
 {
 
-Timer::Timer()
+Timer::Timer() : 
+    start(std::chrono::high_resolution_clock::now())
 {
-    LARGE_INTEGER largeInteger;
-    QueryPerformanceCounter(&largeInteger);
-    start = largeInteger.QuadPart;
 }
 
 double Timer::Seconds() const
 {
-    LARGE_INTEGER now, frequency;
-    QueryPerformanceCounter(&now);
-    int64_t difference = now.QuadPart - start;
-    QueryPerformanceFrequency(&frequency);
-    return difference * 1.0 / double(frequency.QuadPart);
+    const std::chrono::duration<double, std::ratio<1,1>> difference = std::chrono::high_resolution_clock::now() - start;
+    return difference.count();
 }
 
 }   // ::Engine
-#endif

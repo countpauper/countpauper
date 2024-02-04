@@ -1,7 +1,7 @@
-#include "pch.h"
+#include <gtest/gtest.h>
+#include "Engine/Color.h"
+#include "Engine/Maths.h"
 #include <math.h>
-#include "Color.h"
-#include "Maths.h"
 
 namespace Engine::Test
 {
@@ -31,7 +31,7 @@ TEST(Color, Multiply)
     EXPECT_EQ(color * 0.5, RGBA(50, 100,128, 40));
 
     RGBA no_color = color * -0.1;
-    EXPECT_EQ(color*-0.1, RGBA(0,0,0,40));
+    EXPECT_EQ(no_color, RGBA(0,0,0,40));
 }
 
 TEST(Color, Add)

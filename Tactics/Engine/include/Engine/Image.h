@@ -47,8 +47,8 @@ public:
         Data(unsigned width, unsigned height, float* floaData);
         ~Data();
 
-        void Write(const std::string_view filename) const;
-        void Read(const std::string_view filename);
+        void Write(std::string_view filename) const;
+        void Read(std::string_view filename);
         void Release();
 
         unsigned size() const;

@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "Maths.h"
+#include <gtest/gtest.h>
+#include "Engine/Maths.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test

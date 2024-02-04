@@ -1,10 +1,9 @@
-#include "pch.h"
+#include <gtest/gtest.h>
+#include "Engine/Effect.h"
+#include "GTestGeometry.h"
 #include <array>
 #include <numeric>
 #include <iostream>
-#include "Effect.h"
-#include "GTestGeometry.h"
-
 namespace Engine::Test
 {
   

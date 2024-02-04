@@ -25,6 +25,7 @@ public:
     Line Section(const Engine::Range<double>& range) const;
     Coordinate Project(const Coordinate& p) const;
     AABB Bounds() const;
+    bool operator==(const Line& rhs) const;
 };
 
 std::ostream& operator<<(std::ostream& s, const Line& line);

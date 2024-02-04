@@ -1,8 +1,8 @@
-#include "pch.h"
-#include "Quaternion.h"
-#include "Vector.h"
-#include "Geometry.h"
-#include "Matrix.h"
+#include <gtest/gtest.h>
+#include "Engine/Quaternion.h"
+#include "Engine/Vector.h"
+#include "Engine/Geometry.h"
+#include "Engine/Matrix.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test
@@ -41,9 +41,9 @@ TEST(Quaternion, Unit)
     EXPECT_FALSE(Quaternion(Vector(1, -1, 0), 1.0).IsNormalized());
     EXPECT_TRUE(Quaternion(Vector(1, -1, 0), 1.0).Normalized().IsNormalized());
 
-    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 0).Matrix().IsIdentity());
+    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 0).AsMatrix().IsIdentity());
     EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 1.0).IsNormalized());
-    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 1.0).Matrix().IsAffine());
+    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 1.0).AsMatrix().IsAffine());
 }
 
 TEST(Quaternion, RightHandedRotation)

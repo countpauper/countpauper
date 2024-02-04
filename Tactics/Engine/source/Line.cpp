@@ -63,6 +63,12 @@ AABB Line::Bounds() const
     return AABB(a, b);
 }
 
+bool Line::operator==(const Line& rhs) const
+{
+    return a == rhs.a && b == rhs.b;
+}
+
+
 std::ostream& operator<<(std::ostream& s, const Line& line)
 {
     s << line.a << "-" << line.b;

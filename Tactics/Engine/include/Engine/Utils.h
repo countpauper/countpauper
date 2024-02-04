@@ -12,8 +12,8 @@ namespace Engine
     std::vector<std::string_view> Split(std::string_view str, char delimiter);
     std::set<std::string_view> SplitSet(std::string_view str, char delimiter);
 	extern const std::string_view whitespace;
-    std::string_view Strip(const std::string_view, std::string_view trash = whitespace);
-    std::string UpperCase(const std::string_view str);
+    std::string_view Strip(std::string_view, std::string_view trash = whitespace);
+    std::string UpperCase(std::string_view str);
     std::string FormatDuration(double seconds);
     std::string FormatDuration(std::chrono::milliseconds);
 

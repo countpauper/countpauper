@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "UpdateFrequency.h"
+#include <gtest/gtest.h>
+#include "Engine/UpdateFrequency.h"
 
 namespace Engine::Test
 {
