@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.20.0)
-file(GLOB Engine_SRC "*.cpp")
+file(GLOB Engine_SRC "source/*.cpp")
 add_library(Engine ${Engine_SRC})
 target_compile_features(Engine PRIVATE cxx_std_17)
 set(DEPENDENCIES_DIR ../../Dependencies)
-target_include_directories(Engine PRIVATE 
+target_include_directories(Engine PUBLIC "include" PRIVATE 
      "${DEPENDENCIES_DIR}/libxml/include/libxml2" 
      "${DEPENDENCIES_DIR}/glew/include")
 
