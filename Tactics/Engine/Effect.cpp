@@ -1,6 +1,5 @@
-#include "stdafx.h"
 #include "Effect.h"
-#include <GL/glew.h>
+#include <GL/gl.h>
 #include "Drawing.h"
 #include "Random.h"
 #include "Image.h"
@@ -34,7 +33,7 @@ namespace Engine
 
     void Particles::Render() const
     {
-        Engine::Image::Bind bind(textures[L"flame_03"]);
+        Engine::Image::Bind bind(textures["flame_03"]);
 
         auto pm = Matrix::Projection();
         glPushMatrix();
@@ -121,13 +120,13 @@ namespace Engine
     }
 
 
-    void Particles::LoadTextures(std::wstring_view location)
+    void Particles::LoadTextures(std::string_view location)
     {
         for (const auto & entry : std::filesystem::directory_iterator(location))
         {
             if (!entry.is_regular_file())
                 continue;
-            if (UpperCase(entry.path().extension().c_str()) != L".PNG")
+            if (UpperCase(entry.path().extension().c_str()) != ".PNG")
                 continue;
 
             textures.emplace(std::make_pair(entry.path().stem(), Image(entry.path().c_str())));
@@ -136,6 +135,6 @@ namespace Engine
 
 
 Generator Effect::random;
-std::map<std::wstring, Image> Particles::textures;
+std::map<std::string, Image> Particles::textures;
 
 }

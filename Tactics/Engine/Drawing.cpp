@@ -1,10 +1,9 @@
-#include "stdafx.h"
 #include "Drawing.h"
 #include "Geometry.h"
 #include "Quaternion.h"
 #include "Vector.h"
 #include "Matrix.h"
-#include <gl/GL.h>
+#include <GL/gl.h>
 
 namespace Engine
 {

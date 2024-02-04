@@ -23,6 +23,6 @@ namespace Engine
         Vector BaryCentric(const Coordinate& c) const;
     };
 
-    std::wostream& operator<<(std::wostream& s, const Triangle& triangle);
+    std::ostream& operator<<(std::ostream& s, const Triangle& triangle);
 }
 #pragma once

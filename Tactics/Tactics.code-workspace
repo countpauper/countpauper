@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"path": "Tactics"
+		},
+		{
+			"path": "Doc"
+		},
+		{
+			"path": "Engine"
+		},
+		{
+			"path": "Game"
+		},
+		{
+			"path": "Physics"
+		},
+		{
+			"path": "TestEngine"
+		},
+		{
+			"path": "TestGame"
+		},
+		{
+			"path": "TestPhysics"
+		}
+	],
+	"settings": {}
+}

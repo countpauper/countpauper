@@ -1,7 +1,8 @@
-#include "stdafx.h"
 #include "Quaternion.h"
 #include "Vector.h"
 #include "Matrix.h"
+#include <cmath>
+#include <limits>
 
 namespace Engine
 {
@@ -76,7 +77,7 @@ bool Quaternion::IsNormalized() const
 
 }
 
-Matrix Quaternion::Matrix() const
+Matrix Quaternion::AsMatrix() const
 {   // https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation#Quaternion-derived_rotation_matrix
     double wsqr = w * w; // can be optimized more probably by precomupting 2* xsqr and 2xy 2xz and so on
     double xsqr = x * x;

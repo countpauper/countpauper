@@ -203,12 +203,5 @@ std::ostream& operator<<(std::ostream& s, const Range<T>& range)
     return s;
 }
 
-template<typename T>
-std::wostream& operator<<(std::wostream& s, const Range<T>& range)
-{
-    s << "[" << range.begin << " ... " << range.end << "]";
-    return s;
-}
-
-//TODO, see if ... is a good idea template<typename T> std::wistream& operator>>(std::wistream& s, Range<T>& range)
+//TODO, see if ... is a good idea template<typename T> std::istream& operator>>(std::istream& s, Range<T>& range)
 }

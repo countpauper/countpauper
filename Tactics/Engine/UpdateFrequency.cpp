@@ -1,5 +1,6 @@
-#include "stdafx.h"
 #include "UpdateFrequency.h"
+#include <stdexcept>
+#include <cmath>
 
 namespace Engine
 {

@@ -17,7 +17,7 @@ namespace Engine
         {
         public:
             Interface() = default;
-            virtual void Parse(const std::vector<std::wstring>& str, T& dest) const = 0;
+            virtual void Parse(const std::vector<std::string>& str, T& dest) const = 0;
             virtual unsigned Columns() const = 0;
         };
 
@@ -31,7 +31,7 @@ namespace Engine
                 fn(fn)
             {
             }
-            void Parse(const std::vector<std::wstring>& str, C& dest) const override
+            void Parse(const std::vector<std::string>& str, C& dest) const override
             {
                 T v = from_string<T>(str.front());
                 (dest.*fn)(v);
@@ -45,17 +45,17 @@ namespace Engine
         class String : public Interface<C>
         {
         public:
-            String(std::wstring C::*member) :
+            String(std::string C::*member) :
                 member(member)
             {
             }
-            void Parse(const std::vector<std::wstring>& str, C& dest) const override
+            void Parse(const std::vector<std::string>& str, C& dest) const override
             {
                 (&dest)->*member = str.front();
             }
             unsigned Columns() const override { return 1; }
         private:
-            std::wstring C::*member;
+            std::string C::*member;
         };
 
         template<class C, typename T>
@@ -66,7 +66,7 @@ namespace Engine
                 member(member)
             {
             }
-            void Parse(const std::vector<std::wstring>& str, C& dest) const override
+            void Parse(const std::vector<std::string>& str, C& dest) const override
             {
                 if (!str.front().empty())
                     (&dest)->*member =  from_string<T>(str.front());
@@ -83,19 +83,19 @@ namespace Engine
         class Enumeration : public Interface<T>
         {
         public:
-            Enumeration(EnumT T::*member, const std::map<const std::wstring_view, EnumT>& values) :
+            Enumeration(EnumT T::*member, const std::map<const std::string_view, EnumT>& values) :
                 member(member),
                 values(values)
             {
             }
-            void Parse(const std::vector<std::wstring>& str, T& dest) const override
+            void Parse(const std::vector<std::string>& str, T& dest) const override
             {
                 (&dest)->*member = values.at(str.front());
             }
             unsigned Columns() const override { return 1; }
         private:
             EnumT T::*member;
-            const std::map<const std::wstring_view, EnumT>& values;
+            const std::map<const std::string_view, EnumT>& values;
         };
 
         template<class T, class StructT>
@@ -107,13 +107,13 @@ namespace Engine
                 adapters(adapters)
             {
             }
-            void Parse(const std::vector<std::wstring>& str, T& dest) const override
+            void Parse(const std::vector<std::string>& str, T& dest) const override
             {
                 unsigned index = 0;
                 for (auto adapter : adapters)
                 {
                     unsigned columns = adapter->Columns();
-                    std::vector<std::wstring> subItems(str.begin() + index, str.begin() + index + columns);
+                    std::vector<std::string> subItems(str.begin() + index, str.begin() + index + columns);
                     adapter->Parse(subItems, (&dest)->*member);
                     index += columns;
                 }
@@ -139,9 +139,9 @@ namespace Engine
                 elementAdapter(elementAdapter)
             {
             }
-            void Parse(const std::vector<std::wstring>& str, C& dest) const override
+            void Parse(const std::vector<std::string>& str, C& dest) const override
             {
-                auto elements = Split(str.front(), L'|');
+                auto elements = Split(str.front(), '|');
                 for (auto& elementStr : elements)
                 {
                     ((&dest)->*member).insert(from_string<T>(elementStr));
@@ -165,24 +165,24 @@ namespace Engine
                 adapters(adapters)
             {
             }
-            void Parse(const std::vector<std::wstring>& str, C& dest) const override
+            void Parse(const std::vector<std::string>& str, C& dest) const override
             {
-                auto braces = Engine::Strip(str.front(), L" \t\r");
-                if ((braces.front() != L'(') || (braces.back() != L')'))
+                auto braces = Engine::Strip(str.front(), " \t\r");
+                if ((braces.front() != '(') || (braces.back() != ')'))
                     throw std::runtime_error("Sequences should be braced");
 
-                auto elements = Split(braces.substr(1,braces.size()-2), L'|');
+                auto elements = Split(braces.substr(1,braces.size()-2), '|');
                 ((&dest)->*member).resize(elements.size());
                 auto it = ((&dest)->*member).begin();
                 for (auto& elementStr : elements)
                 {
                     unsigned index = 0;
-                    auto subItems = Split(elementStr, L':');
+                    auto subItems = Split(elementStr, ':');
                     StructT& item = *it;
                     for (auto adapter : adapters)
                     {
                         unsigned columns = adapter->Columns();
-                        std::vector<std::wstring> subItems(subItems.begin() + index, subItems.begin() + index + columns);
+                        std::vector<std::string> subItems(subItems.begin() + index, subItems.begin() + index + columns);
                         adapter->Parse(subItems, item);
                         index += columns;
                     }
@@ -202,11 +202,11 @@ namespace Engine
         class Pointer : public Interface<T>
         {
         public:
-            Pointer(unsigned offset, const std::map<std::wstring_view, T*> values) :
+            Pointer(unsigned offset, const std::map<std::string_view, T*> values) :
                 Interface(offset)
             {
             }
-            void Parse(const std::wstring& str, BYTE* dest) const override
+            void Parse(const std::string& str, BYTE* dest) const override
             {
 
             }
@@ -219,7 +219,7 @@ namespace Engine
         {
         public:
             Optional(unsigned offset, Interface& type);
-            void Parse(const std::wstring& str, BYTE* dest) override;
+            void Parse(const std::string& str, BYTE* dest) override;
         };
         */
     }
@@ -230,7 +230,7 @@ namespace Engine
     class CSV
     {
     public:
-        CSV(std::wistream& file, std::vector<Adapter::Interface<T>*> columns) :
+        CSV(std::istream& file, std::vector<Adapter::Interface<T>*> columns) :
             file(file),
             columns(columns)
         {
@@ -242,14 +242,14 @@ namespace Engine
             {
                 wchar_t buffer[65536];
                 file.getline(buffer, 65536);
-                std::vector<std::wstring> lineAndRemark = Split(buffer, L'#');
+                std::vector<std::string> lineAndRemark = Split(buffer, '#');
                 if (lineAndRemark.empty())
                     continue;
-                auto line = Strip(lineAndRemark.at(0),L" \t\r");
+                auto line = Strip(lineAndRemark.at(0), " \t\r");
                 if (line.empty())
                     continue;
                 result.push_back(T());
-                std::vector<std::wstring> items = Split(line, L',');
+                std::vector<std::string> items = Split(line, ',');
                 for (auto column : columns)
                 {
                     unsigned columnReq = column->Columns();
@@ -263,7 +263,7 @@ namespace Engine
         }
  
     private:
-        std::wistream& file;
+        std::istream& file;
         std::vector<Adapter::Interface<T>*> columns;
     };
 

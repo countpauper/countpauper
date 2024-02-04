@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#include <gl/GLew.h>
+#include <GL/gl.h>
 #include "Light.h"
 
 namespace Engine

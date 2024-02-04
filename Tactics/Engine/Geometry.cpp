@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "Geometry.h"
+#include <cmath>
 
 namespace Engine
 {

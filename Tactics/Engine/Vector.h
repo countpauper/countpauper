@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ostream>
+#include <istream>
+
 namespace Engine
 {
 
@@ -55,7 +58,6 @@ Vector operator-(const Coordinate& a, const Coordinate& b);
 Vector operator*(const Matrix& m, const Vector& v);
 
 std::ostream& operator<<(std::ostream& s, const Vector& vector);
-std::wostream& operator<<(std::wostream& s, const Vector& vector);
-std::wistream& operator>>(std::wistream& s, Vector& vector);
+std::istream& operator>>(std::istream& s, Vector& vector);
 
 } // ::Engine

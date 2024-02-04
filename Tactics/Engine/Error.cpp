@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include <gl/GLew.h>
+#include <GL/gl.h>
+#include <stdexcept>
 #include "Error.h"
 
 namespace Engine

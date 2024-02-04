@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Plane.h"
 #include "Coordinate.h"
 #include "Line.h"

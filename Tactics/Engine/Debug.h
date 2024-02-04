@@ -7,7 +7,6 @@
 namespace Engine::Debug
 {
     void Log(std::string_view txt);
-    void Log(std::wstring_view txt);
     class LogStream
     {
     public:
@@ -30,10 +29,10 @@ namespace Engine::Debug
 	class Timer final
 	{
 	public:
-        Timer(std::wstring_view desc);
+        Timer(std::string_view desc);
         ~Timer();
 	private:
-        std::wstring description;
+        std::string description;
         Engine::Timer timer;
     };
 }

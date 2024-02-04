@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#include "Vector.h"
+
 #include "Coordinate.h"
 #include "Line.h"
 #include "Plane.h"
@@ -133,13 +132,7 @@ std::ostream& operator<<(std::ostream& s, const Vector& v)
     return s << c;
 }
 
-std::wostream& operator<<(std::wostream& s, const Vector& v)
-{
-    Coordinate c(v.x, v.y, v.z);
-    return s << c;
-}
-
-std::wistream& operator>>(std::wistream& s, Vector& v)
+std::istream& operator>>(std::istream& s, Vector& v)
 {
     Coordinate c;
     s >> c;

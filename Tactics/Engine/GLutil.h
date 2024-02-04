@@ -1,8 +1,8 @@
 #pragma once
-#include <GL/GL.h>
+#include <GL/gl.h>
 template<typename T> T glGet(GLenum what)
 {
-    static_assert(false); // invalid type
+    //static_assert(false); // invalid type
     return T();
 }
 

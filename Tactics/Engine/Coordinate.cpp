@@ -1,9 +1,9 @@
-#include "stdafx.h"
 #include "Coordinate.h"
 #include "Vector.h"
 #include "Matrix.h"
 #include "from_string.h"
 #include <ostream>
+#include <istream>
 #include "Utils.h"
 
 namespace Engine
@@ -81,18 +81,14 @@ std::ostream& operator<<(std::ostream& s, const Coordinate& coordinate)
     return s;
 }
 
-std::wostream& operator<<(std::wostream& s, const Coordinate& coordinate)
-{
-    s << L"(" << coordinate.x << L"," << coordinate.y << L"," << coordinate.z << L")";
-    return s;
-}
 
-std::wistream& operator>>(std::wistream& s, Coordinate& coordinate)
+std::istream& operator>>(std::istream& s, Coordinate& coordinate)
 {
-    std::wstring str;
-    s >> Engine::Skip(Engine::whitespace) >> Engine::ReadChar(L'(') >> Engine::ReadUntil(L')', str);
+    std::string str;
+    
+    s >> Engine::Skip(Engine::whitespace) >> Engine::ReadChar('(') >> Engine::ReadUntil(')', str);
 
-    auto value_strings= Split(str, L',');
+    auto value_strings= Split(str, ',');
     if (value_strings.size()>3)
         throw std::runtime_error("Invalid vector format, too many dimensions");
     if (value_strings.size() >= 1)

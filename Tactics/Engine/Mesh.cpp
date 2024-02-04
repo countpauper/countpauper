@@ -1,13 +1,14 @@
-#include "stdafx.h"
+#include <GL/glew.h>
+#include <GL/gl.h>
 #include "Mesh.h"
 #include "Geometry.h"
 #include "Matrix.h"
 #include "AxisAlignedBoundingBox.h"
 #include "Quaternion.h"
 #include "Triangle.h"
-#include <GL/glew.h>
 #include "GLutil.h"
 #include <array>
+#include <cassert>
 #include "Plane.h"
 
 namespace Engine
@@ -253,7 +254,7 @@ void Mesh::InvalidateTriangles()
 }
 template<typename T, typename U> constexpr size_t offsetOf(U T::*member)
 {
-    return (BYTE*)&((T*)nullptr->*member) - (BYTE*)nullptr;
+    return (std::byte*)&((T*)nullptr->*member) - (std::byte*)nullptr;
 }
 
 void Mesh::Validate() const

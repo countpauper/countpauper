@@ -1,6 +1,6 @@
-#include "stdafx.h"
-
-#include <debugapi.h>
+#if defined(WIN32) 
+ #include <debugapi.h>
+#endif 
 #include <iostream>
 #include "Debug.h"
 
@@ -9,28 +9,20 @@ namespace Engine::Debug
 
 void Log(std::string_view txt)
 {
+    #if defined(WIN32) 
     if (GetConsoleWindow())
     {
         std::cout << txt.data() << std::endl;
     }
     else
     {
+
         OutputDebugStringA(txt.data());
         OutputDebugStringA("\n");
     }
-}
-
-void Log(std::wstring_view txt)
-{
-    if (GetConsoleWindow())
-    {
-        std::wcout << txt.data() << std::endl;
-    }
-    else
-    {
-        OutputDebugStringW(txt.data());
-        OutputDebugStringW(L"\n");
-    }
+    #else 
+        std::cout << txt.data() << std::endl;
+    #endif 
 }
 
 LogStream Log()
@@ -48,7 +40,7 @@ LogStream::~LogStream()
     Log(s.str());
 }
 
-Timer::Timer(std::wstring_view desc) :
+Timer::Timer(std::string_view desc) :
     description(desc.data())
 {
 }
@@ -56,7 +48,7 @@ Timer::Timer(std::wstring_view desc) :
 Timer::~Timer()
 {
     auto t = timer.Seconds();
-    Log(description + L" : " + std::to_wstring(t * 1000.0) + L"ms");
+    Log(description + " : " + std::to_string(t * 1000.0) + "ms");
 }
 
 }

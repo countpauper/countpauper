@@ -1,7 +1,6 @@
-#include "stdafx.h"
 #include "Color.h"
 #include <cmath>
-#include <gl/GL.h>
+#include <GL/gl.h>
 
 namespace Engine
 {

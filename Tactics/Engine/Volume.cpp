@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Volume.h"
 #include "Coordinate.h"
 #include "Matrix.h"
@@ -53,7 +52,7 @@ AABB Cylinder::GetBoundingBox() const
 {
     AABB box(Coordinate(0, -1, -1), Vector(1, 2, 2));   // TODO transform
     box *= Matrix::Scale(scale);
-    box *= orientation.Matrix();
+    box *= orientation.AsMatrix();
     box *= Matrix::Translation(origin);
 
     return box;
@@ -63,7 +62,7 @@ double Cylinder::Distance(const Coordinate& p) const
 {
     // inverse transform to x-axis aligned cylinder : a=origin (0,0,0)
     Coordinate tp = p - origin;
-    tp *= orientation.Conjugate().Matrix();
+    tp *= orientation.Conjugate().AsMatrix();
     // scale is not inversed, because it can't handle 0 sizes and the result will need to be transformed back in a weird way. Instead the unit cylinder is scaled
     double dy = scale.y, dz = scale.z;
     auto coefficient = tp.x / scale.x;

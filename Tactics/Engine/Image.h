@@ -11,8 +11,8 @@ class Image
 {
 public:
     Image();
-    explicit Image(const std::wstring_view fn);
-    void Load(const std::wstring_view fn);
+    explicit Image(const std::string_view fn);
+    void Load(const std::string_view fn);
 private:
     class Texture
     {
@@ -42,13 +42,13 @@ public:
     struct Data
     {
         Data();
-        explicit Data(const std::wstring_view fileName);
+        explicit Data(const std::string_view fileName);
         Data(unsigned width, unsigned height, unsigned channels = 1);
         Data(unsigned width, unsigned height, float* floaData);
         ~Data();
 
-        void Write(const std::wstring_view filename) const;
-        void Read(const std::wstring_view filename);
+        void Write(const std::string_view filename) const;
+        void Read(const std::string_view filename);
         void Release();
 
         unsigned size() const;

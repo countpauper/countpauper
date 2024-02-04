@@ -17,7 +17,7 @@ struct Quaternion
     Quaternion Conjugate() const;
     Quaternion operator-();
     bool operator==(const Quaternion& o)const;
-    Matrix Matrix() const;
+    Matrix AsMatrix() const;
     double x, y, z, w;
     static Quaternion Identity();
     static Quaternion Shortest(const Vector& a, const Vector& b);

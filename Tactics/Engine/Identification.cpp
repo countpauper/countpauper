@@ -1,5 +1,6 @@
-#include "stdafx.h"
 #include "Identification.h"
+#include <limits>
+#include <stdexcept>
 
 namespace Engine
 {

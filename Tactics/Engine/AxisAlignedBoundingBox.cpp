@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "AxisAlignedBoundingBox.h"
 #include "Vector.h"
 #include "Range.h"
@@ -6,7 +5,7 @@
 #include "Matrix.h"
 #include "Drawing.h"
 #include <array>
-#include <gl/GL.h>
+#include <GL/gl.h>
 #include "GLutil.h"
 
 namespace Engine

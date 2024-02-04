@@ -3,6 +3,8 @@
 #include "Vector.h"
 #include <type_traits>
 #include <functional>
+#include <limits>
+#include <math.h>
 
 // NB Named maths.h because otherwise the release build gets confused with stdlib math.h
 namespace Engine

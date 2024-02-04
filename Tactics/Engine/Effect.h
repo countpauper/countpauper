@@ -42,9 +42,9 @@ namespace Engine
         Matrix m;
         std::unique_ptr<class Effect> effect;
         std::vector<Particle> particles;   
-        static void LoadTextures(const std::wstring_view location);
+        static void LoadTextures(const std::string_view location);
     private:
-        static std::map<std::wstring, class Image> textures;
+        static std::map<std::string, class Image> textures;
     };
 
     class Effect

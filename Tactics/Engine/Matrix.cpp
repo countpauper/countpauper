@@ -1,14 +1,17 @@
-#include "stdafx.h"
 #include "Matrix.h"
 #include "Coordinate.h"
 #include "Vector.h"
-#include <gl/GL.h>
+#include <GL/gl.h>
+#include <initializer_list>
+#include <cassert>
+#include <cstring>
+#include <cmath>
 
 namespace Engine
 {
 
 
-Matrix::Matrix(const std::initializer_list<double>& v)
+Matrix::Matrix(std::initializer_list<double> v)
 {
     unsigned i = 0;
     for (const auto& element : v)

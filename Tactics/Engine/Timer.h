@@ -1,3 +1,4 @@
+#include <cstdint>
 #pragma once
 namespace Engine
 {
@@ -8,7 +9,7 @@ public:
     Timer();
     double Seconds() const;
 private:
-    int64_t start;
+    std::int64_t start;
 };
 
 }

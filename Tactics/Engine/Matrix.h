@@ -1,4 +1,5 @@
 #pragma once
+#include <initializer_list>
 
 namespace Engine
 {
@@ -11,7 +12,7 @@ struct Matrix
     Matrix() = default;
     Matrix(const Matrix&) = default;
     // Column major matrix { } initialization  
-    Matrix(const std::initializer_list<double>& v);
+    Matrix(std::initializer_list<double> v);
     Matrix(const Vector& x, const Vector& y, const Vector& z, const Vector& t);
 
     Matrix& operator=(const Matrix&) = default;

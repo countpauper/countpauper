@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Line.h"
 #include "Maths.h"
 #include "Vector.h"
@@ -64,9 +63,9 @@ AABB Line::Bounds() const
     return AABB(a, b);
 }
 
-std::wostream& operator<<(std::wostream& s, const Line& line)
+std::ostream& operator<<(std::ostream& s, const Line& line)
 {
-    s << line.a << L"-" << line.b;
+    s << line.a << "-" << line.b;
     return s;
 }
 

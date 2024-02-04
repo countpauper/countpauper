@@ -16,7 +16,7 @@ namespace Engine
         void Zoom(double factor);
         void Drag(double dx, double dz);
         void FinishDrag(double dx, double dz);
-        void Key(WPARAM key);
+        void Key(unsigned key);
     protected:
         Coordinate position;
         Coordinate target;

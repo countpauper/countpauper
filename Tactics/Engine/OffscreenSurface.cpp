@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "OffscreenSurface.h"
+#ifdef WIN32
 #include <windows.h>
 #include "GL/glew.h"
 
@@ -9,7 +9,7 @@ namespace Engine
 OffscreenSurface::OffscreenSurface() :
     m_glRC(0)
 {
-    TCHAR szWindowClass[] = L"Offscreen";
+    TCHAR szWindowClass[] = "Offscreen";
     HINSTANCE moduleHandle = GetModuleHandle(NULL);
     WNDCLASSEX wcex;
     ATOM classRegistration = GetClassInfoEx(moduleHandle, szWindowClass, &wcex);
@@ -33,7 +33,7 @@ OffscreenSurface::OffscreenSurface() :
     }
 
 
-    HWND hWnd = CreateWindow(szWindowClass, L"Offscreen Surface", WS_DISABLED,
+    HWND hWnd = CreateWindow(szWindowClass, "Offscreen Surface", WS_DISABLED,
         0, 1, 0, 1, NULL, NULL, moduleHandle, NULL);
     if (!hWnd)
     {
@@ -93,4 +93,6 @@ OffscreenSurface::~OffscreenSurface()
     wglMakeCurrent(NULL, NULL);
 }
 
+
 }
+#endif

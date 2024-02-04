@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#include <gl/GL.h>
+#include <GL/gl.h>
 #include "Image.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -8,6 +7,8 @@
 #include "Error.h"
 #include "Utils.h"
 #include "from_string.h"
+
+using errno_t = int;
 
 namespace Engine
 {
@@ -24,7 +25,7 @@ Image::Texture::~Texture()
     glDeleteTextures(1, &id);
 }
 
-Image::Image(const std::wstring_view fn) :
+Image::Image(const std::string_view fn) :
     Image()
 {
     Load(fn);
@@ -62,7 +63,7 @@ Image::Bind::~Bind()
         texture->Unbind();
 }
 
-void Image::Load(const std::wstring_view fn)
+void Image::Load(const std::string_view fn)
 {
     texture = std::make_shared<Texture>();
 
@@ -92,7 +93,7 @@ Image::Data::Data() :
 {
 }
 
-Image::Data::Data(const std::wstring_view fileName) :
+Image::Data::Data(const std::string_view fileName) :
     Data()
 {
     Read(fileName);
@@ -111,7 +112,7 @@ Image::Data::Data(unsigned width, unsigned height, float* floatData) :
 {
     for (unsigned i = 0; i < width*height; ++i)
     {
-        data[i] = unsigned char(std::min(255.0f, floatData[i] * 255.0f));
+        data[i] = static_cast<unsigned char>(std::min(255.0f, floatData[i] * 255.0f));
     }
 }
 
@@ -140,13 +141,13 @@ unsigned Image::Data::Pixels() const
     return width * height;
 }
 
-void Image::Data::Read(const std::wstring_view filename)
+void Image::Data::Read(const std::string_view filename)
 {
     Release();
 
     int w, h, c;
     Data result;
-    std::string fns = from_string<std::string>(filename);
+    std::string fns(filename.data(), filename.size());
     data = stbi_load(fns.c_str(), &w, &h, &c, STBI_default);
     if (!data)
     {
@@ -157,17 +158,16 @@ void Image::Data::Read(const std::wstring_view filename)
     channels = c;
 }
 
-void Image::Data::Write(const std::wstring_view filename) const
+void Image::Data::Write(const std::string_view filename) const
 {
-    std::wstring extension = UpperCase(filename.substr(filename.find_last_of('.'), std::string::npos));
-    if (extension == L".PNG")
+    std::string extension = UpperCase(filename.substr(filename.find_last_of('.'), std::string::npos));
+    if (extension == ".PNG")
     {
-        std::string fns = from_string<std::string>(filename);
+        std::string fns(filename.data(), filename.size());
 
         if (!stbi_write_png(fns.c_str(), width, height, channels, data, width * channels))
         {
-            errno_t err;
-            _get_errno(&err);
+            errno_t err = errno;
             throw std::runtime_error("Failed to write image " + fns);
         }
     }
@@ -178,10 +178,10 @@ void Image::Data::Write(const std::wstring_view filename) const
 }
 
 /*
-void Image::Write(const std::wstring& filename, unsigned width, unsigned height, Engine::RGBA data[])
+void Image::Write(const std::string& filename, unsigned width, unsigned height, Engine::RGBA data[])
 {
-    std::wstring extension = UpperCase(filename.substr(filename.find_last_of('.'), std::string::npos));
-    if (extension == L".PNG")
+    std::string extension = UpperCase(filename.substr(filename.find_last_of('.'), std::string::npos));
+    if (extension == ".PNG")
     {
         stbi_write_png(from_string<std::string>(filename).c_str(), width, height, 4, data, width * sizeof(RGBA));
     }
@@ -191,7 +191,7 @@ void Image::Write(const std::wstring& filename, unsigned width, unsigned height,
     }
 }
 
-void Image::Write(const std::wstring& filename, unsigned width, unsigned height, float data[])
+void Image::Write(const std::string& filename, unsigned width, unsigned height, float data[])
 {
     std::unique_ptr<RGBA[]> recode = std::make_unique<RGBA[]>(width*height);
     for (unsigned i = 0; i < width*height; ++i)

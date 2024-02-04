@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "Timer.h"
+#ifdef WIN32
 #include <windows.h>
 
 namespace Engine
@@ -22,3 +22,4 @@ double Timer::Seconds() const
 }
 
 }   // ::Engine
+#endif

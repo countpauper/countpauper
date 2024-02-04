@@ -1,19 +1,21 @@
-#include "stdafx.h"
 #include "Text.h"
 #include "from_string.h"
-#include <gl/GL.h>
+#include <GL/gl.h>
+#include <algorithm>
+#include <cassert>
 #include <algorithm>
 
 namespace Engine
 {
  
     unsigned Font::nextBase = 1000;
-    Font& Font::basic = Font();
+    Font Font::basic;
 
     Font::Font() :
         base(nextBase),
         height(16)
     {
+        #ifdef WIN32
         auto hdc = GetDC(nullptr);
         HFONT font = CreateFont(height, 0, 0, 0,
             FW_NORMAL, FALSE, FALSE, FALSE,
@@ -25,6 +27,9 @@ namespace Engine
         wglUseFontBitmaps(hdc, 0, 127, base);
         nextBase += 128;    // TODO can be optimized to 100 main characters (32 to 128-32)
         ReleaseDC(nullptr, hdc);
+        #else 
+        assert(false);
+        #endif
     }
 
     void Font::Select() const
@@ -40,11 +45,7 @@ namespace Engine
     void glText(const std::string& text)
     {
         glRasterPos3i(0, 0, 0); // set start position
-        glCallLists(static_cast<GLsizei>(std::min({ 65535ull, text.size() })), GL_UNSIGNED_BYTE, text.c_str());
+        glCallLists(static_cast<GLsizei>(std::min( 65535UL, text.size() )), GL_UNSIGNED_BYTE, text.c_str());
     }
 
-    void glText(const std::wstring& text)
-    {
-        glText(from_string<std::string>(text));
-    }
 }

@@ -1,11 +1,12 @@
-#include "stdafx.h"
-#include <gl/GL.h>
+#include <GL/gl.h>
 #include "Camera.h"
 #include "Geometry.h"
 #include "Coordinate.h"
 #include "Quaternion.h"
 #include "Vector.h"
 #include <iostream>
+#include <cmath>
+#include <cassert>
 #include "Matrix.h"
 
 namespace Engine
@@ -49,8 +50,9 @@ namespace Engine
         dragz = 0;
     }
 
-    void Camera::Key(WPARAM key)
+    void Camera::Key(unsigned key)
     {
+        #ifdef WIN32
         auto shift = GetKeyState(VK_SHIFT)&0x8000;
         if (shift == 0)
         {
@@ -98,6 +100,9 @@ namespace Engine
                 rotation.y += 5;
             }
         }
+        #else 
+        assert(false); // no platform independent implementation yet
+        #endif
     }
     PerspectiveCamera::PerspectiveCamera() :
         fov(90)    // makes scale = 1

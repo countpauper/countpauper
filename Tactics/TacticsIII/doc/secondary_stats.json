@@ -1,103 +1,77 @@
 {
         "carry": {
-            "range": [
-                0,
-                5
-            ]
+            "description": "Weapon size requirement and adds to total carrying capacity",
+            "range": [ 0, 5 ]
         },
         "athletics": {
-                "range": [
-                    0,
-                    5
-                ]
+            "description": "Jump distance. Jump height is 1+ half. Also used for or certain physical skills",
+            "range": [ 0, 5 ]
             },
         "dodge": {
-            "range": [
-                10,
-                15
-            ],
+            "description": "Base chance to be missed by an attack at normal distance, in the open, ideal range",
+            "range": [ 10,  15 ],
             "base": 10,
             "multiplier": 0.05
         },
         "crit": {
-            "range": [
-                0,
-                5
-            ],
+            "description": "Chance that an attack or skill ignores resistance and doubles effect",
+            "range": [ 0, 5 ],
             "multiplier": 0.1
         },
         "skill": {
+            "description": "number of remembered active special actions or spells",
             "base": 1,
-            "range": [
-                1,
-                6
-            ]
+            "range": [ 1, 6 ]
         },
         "knowledge": {
+            "description": "number of trained passive abilities",
             "base": 1,
-            "range": [
-                1,
-                6
-            ]
+            "range": [ 1, 6 ]
         },
         "speed": {
+            "description": "number of movement points per action",
             "base": 2,
-            "range": [
-                2,
-                6
-            ]
+            "range": [ 2, 6 ]
         },
         "action": {
+            "description": "number of action points per turn",
             "base": 1,
-            "range": [
-                1,
-                4
-            ]
+            "range": [ 1, 4 ]
         },
         "hd": {
-            "range": [
-                5,
-                10
-            ],
+            "description": "number of hitpoints per level",
+            "range": [ 5, 10 ],
             "multiplier": 1,
             "base": 5
         },
         "endurance": {
+            "description": "armor weight requirement and adds to total carrying capacity",
             "range": [ 0, 5 ]
         },
         "attune": {
+            "description": "number of simultaneous active magic items",
             "range": [ 0, 5 ]
         },
         "mental": {
-            "range": [
-                0,
-                5
-            ]
+            "description": "resist illusion and enchantment spells, reducing their power on hit and every turn",
+            "range": [ 0, 5 ]
         },
         "physical": {
-            "range": [
-                0,
-                5
-            ]
+            "description": "resist abjuration spells and poison damage",
+            "range": [ 0, 5 ]
         },
         "reflex": {
-            "range": [
-                0,
-                3
-            ]
+            "description": "resist initial effect of area of effect spells",
+            "range": [ 0, 3 ]
         },
         "damage": {
+            "description": "bonus to damage with each attack that hits",
             "base": 0,
-            "range": [
-                0,
-                5
-            ]
+            "range": [ 0, 5 ]
         },
         "magic": {
+            "description": "damage of each magical or wand attack or power of each magical spell ",
             "base": 5,
-            "range": [
-                5,
-                10
-            ]
+            "range": [ 5, 10 ]
         }
     }

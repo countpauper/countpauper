@@ -27,6 +27,6 @@ public:
     AABB Bounds() const;
 };
 
-std::wostream& operator<<(std::wostream& s, const Line& line);
+std::ostream& operator<<(std::ostream& s, const Line& line);
 
 }

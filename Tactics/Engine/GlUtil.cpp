@@ -1,6 +1,5 @@
-#include "stdafx.h"
 #include "GLUtil.h"
-#include <gl/GL.h> 
+#include <GL/gl.h> 
 #include <utility>
 
 template<> int glGet(GLenum what)

@@ -1,8 +1,9 @@
-#include "stdafx.h"
 #include "Triangle.h"
 #include "Plane.h"
 #include "Line.h"
 #include "Vector.h"
+#include <cassert>
+
 
 namespace Engine
 {
@@ -105,9 +106,9 @@ double Triangle::Distance(const Coordinate& p) const
 }
 
 
-std::wostream& operator<<(std::wostream& s, const Triangle& triangle)
+std::ostream& operator<<(std::ostream& s, const Triangle& triangle)
 {
-    s << triangle.a << L"-" << triangle.b << L"-" << triangle.c;
+    s << triangle.a << "-" << triangle.b << "-" << triangle.c;
     return s;
 }
 
