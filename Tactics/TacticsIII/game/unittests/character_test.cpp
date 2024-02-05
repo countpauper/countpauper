@@ -1,11 +1,23 @@
 #include <gtest/gtest.h>
+#include "Game/Character.h"
 
-namespace Engine::Test
+namespace Game::Test
 {
 
-TEST(Character, Test)
+TEST(Character, Level)
 {
-    EXPECT_TRUE(true);
+    Race penguin("penguin");
+    Character c("flo", penguin);
+
+    EXPECT_EQ(c.Stat(Stat::Level), 1);
+}
+
+TEST(Character, RaceBonus)
+{
+    Race orc("orc");
+    Character c("foe", orc);
+
+    EXPECT_EQ(c.Stat(Stat::Str), 4);
 }
 
 }

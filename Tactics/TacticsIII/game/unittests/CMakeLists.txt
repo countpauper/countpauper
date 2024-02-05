@@ -14,6 +14,7 @@ add_executable(${EXE_NAME} ${SOURCES} ${HEADERS})
 
 target_link_libraries(${EXE_NAME} PUBLIC
 #    Engine
+    Game
     gtest_main
     gmock_main
 )

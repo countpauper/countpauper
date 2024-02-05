@@ -70,6 +70,6 @@ private:
 // Loaded from JSON each Stat is defined by a name and which bonuses it gives to other stats at a certain level.
 // This level has to be recursively queried from the character along with all its bonuses
 // percentages are in whole %
-std::map<Stat::Id, Stat> stats;
+static std::map<Stat::Id, Stat> stats;
 
 }

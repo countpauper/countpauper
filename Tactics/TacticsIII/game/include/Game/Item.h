@@ -1,7 +1,7 @@
-#pramga once
+#pragma once
 #include "Game/Stat.h"
 #include <map>
-#Include <string>
+#include <string>
 
 namespace Game
 {
