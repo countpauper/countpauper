@@ -126,10 +126,10 @@ namespace Engine
         {
             if (!entry.is_regular_file())
                 continue;
-            if (UpperCase(entry.path().extension().c_str()) != ".PNG")
+            if (UpperCase(entry.path().extension().string()) != ".PNG")
                 continue;
 
-            textures.emplace(std::make_pair(entry.path().stem(), Image(entry.path().c_str())));
+            textures.emplace(std::make_pair(entry.path().stem().string(), Image(entry.path().string())));
         }
     }
 

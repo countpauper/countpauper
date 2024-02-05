@@ -20,7 +20,7 @@ namespace Engine
         HFONT font = CreateFont(height, 0, 0, 0,
             FW_NORMAL, FALSE, FALSE, FALSE,
             ANSI_CHARSET, 0,
-            0, 0, 0, L"Arial"); // can only use true type fonts 
+            0, 0, 0, "Arial"); // can only use true type fonts 
         //  this one is 40 points in size
         SelectObject(hdc, font);
 
@@ -45,7 +45,7 @@ namespace Engine
     void glText(const std::string& text)
     {
         glRasterPos3i(0, 0, 0); // set start position
-        glCallLists(static_cast<GLsizei>(std::min( 65535UL, text.size() )), GL_UNSIGNED_BYTE, text.c_str());
+        glCallLists(static_cast<GLsizei>(std::min( static_cast<std::size_t>(65535), text.size() )), GL_UNSIGNED_BYTE, text.c_str());
     }
 
 }

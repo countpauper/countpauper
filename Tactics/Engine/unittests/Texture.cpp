@@ -13,9 +13,9 @@ namespace Engine::Test
         {
             if (!entry.is_regular_file())
                 continue;
-            if (UpperCase(entry.path().extension().c_str()) != ".PNG")
+            if (UpperCase(entry.path().extension().string()) != ".PNG")
                 continue;
-            Image::Data data(entry.path().c_str());
+            Image::Data data(entry.path().string());
             Image::Data luminAlpha(data.width, data.height, 2);
             for (unsigned p = 0; p < data.Pixels(); ++p)
             {
@@ -24,7 +24,7 @@ namespace Engine::Test
                 luminAlpha.data[p * 2 + 1] = pixel;
             }
             auto newPath = std::filesystem::path(folder) / "LuminAlpha" / entry.path().filename();
-            luminAlpha.Write(newPath.c_str());
+            luminAlpha.Write(newPath.string());
         }
     }
 }

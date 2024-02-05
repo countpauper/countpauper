@@ -190,5 +190,6 @@ if __name__ == "__main__":
 TODO in a separate script
 # function to export the stats table, but flip it around from requested stat trace back to dependency with a single table each
 # enumerate each of them an integer id too, to match the C representation and link using that instead of string
-# some special stats (HD) here may get something hardcoded like the multiplier id
-# make a list of tertiary stats with special things like hands, weight, resistances, see the C interface
+# make a list of tertiary stats with special things like hp, hands, weight, resistances, see the C interface
+# some special stats (HD) here may get something hardcoded like the multiplier id or in the original json the multiplier is a string stat name instead of id
+# or special carrying capacity is the sum of two

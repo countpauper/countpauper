@@ -9,20 +9,7 @@ namespace Engine::Debug
 
 void Log(std::string_view txt)
 {
-    #if defined(WIN32) 
-    if (GetConsoleWindow())
-    {
-        std::cout << txt.data() << std::endl;
-    }
-    else
-    {
-
-        OutputDebugStringA(txt.data());
-        OutputDebugStringA("\n");
-    }
-    #else 
-        std::cout << txt.data() << std::endl;
-    #endif 
+    std::cout << txt.data() << std::endl;
 }
 
 LogStream Log()

@@ -1,6 +1,7 @@
 #include "Engine/OffscreenSurface.h"
 #ifdef WIN32
 #include <windows.h>
+#include <stdexcept>
 #include "GL/glew.h"
 
 namespace Engine
