@@ -5,9 +5,6 @@
 		},
 		{
 			"path": "Engine"
-		},
-		{
-			"path": "TestEngine"
 		}
 	],
 	"settings": {
