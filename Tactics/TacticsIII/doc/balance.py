@@ -3,7 +3,7 @@ import random
 import json
 
 
-##################### Load data 
+##################### Load data
 primary_stats=json.load(open("primary_stats.json"))
 secondary_stats=json.load(open("secondary_stats.json"))
 archetypes=json.load(open("archetypes.json"))
@@ -12,7 +12,7 @@ armor_stats=json.load(open("armor_stats.json"))
 race_stats=json.load(open("race_stats.json"))
 
 
-################ Test data 
+################ Test data
 
 def test_primary_table_length(stats, req, key="table"):
         return [f"length of {key} in {name} is not {req}" for name, stat in stats.items() if len(stat.get(key,[])) != req]
@@ -29,7 +29,7 @@ def compute_range(boost, base, primary_stats):
 
 def test_secondary_range(primary_stats, seconadry_stats):
         return [f"range of {secondary} is {computed_range} but should be {range}"
-                for secondary, stats in seconadry_stats.items() 
+                for secondary, stats in seconadry_stats.items()
                         if (computed_range:=compute_range(secondary, stats.get("base", 0), primary_stats.values())) != (range:=stats.get("range"))]
 def test_stats():
         return (test_primary_table_length(primary_stats, 15, "boost") +
@@ -43,7 +43,7 @@ def test_stats():
 
 
 
-################### BUILD characters 
+################### BUILD characters
 
 def build_stat_tables():
         result = dict()
@@ -76,7 +76,7 @@ def build_primary_stats(race_stats, build_plan):
                                 stats["level"] += 1
                                 result.append(dict(stats))
                                 break
-        
+
         return result
 
 def derive_secondary_stats(primary_stat, stat_tables):
@@ -89,12 +89,12 @@ def derive_secondary_stats(primary_stat, stat_tables):
                 result.update(stat_tables.get(primary)[level])
         return result
 
-# TODO this is a very rough heuristic where equipment is selected to account for defense and attack 
-# this could be according to a strategy (favor defense/offense range/melee attack/combat)                    
+# TODO this is a very rough heuristic where equipment is selected to account for defense and attack
+# this could be according to a strategy (favor defense/offense range/melee attack/combat)
 def derive_combat_stats(stats):
-        weapon_weight = stats.get("carry")  
-        armor_weight = stats.get("endurance") 
-        shield_weight = 0                       # TODO would have to downscale weapon 
+        weapon_weight = stats.get("carry")
+        armor_weight = stats.get("endurance")
+        shield_weight = 0                       # TODO would have to downscale weapon
         enchantment = stats.get("attune")
         # assume all magic items are + defense or + damage
         defense_enchantment = enchantment // 2
@@ -116,25 +116,25 @@ def build_character(race, archetype, build, stat_tables=None):
         astat=archetypes.get(archetype)
         build=builds.get(build)
         primary_stats_per_level=build_stats(rstat["stat_bonus"], build_plan(astat, build), stat_tables)
-        return primary_stats_per_level         
+        return primary_stats_per_level
 
-################# Simulate combat 
+################# Simulate combat
 
 def compute_DPR(attacker, defender):
         offense = attacker.get("offense")
         defense = attacker.get("defense")
         crit = attacker.get("crit")
         dodge = defender.get("dodge")
-        hit = 1.0 - dodge # TODO: can a crit miss? it seems weak currently 
+        hit = 1.0 - dodge # TODO: can a crit miss? it seems weak currently
         actions = attacker.get("action")  # TODO: lose an action to a faster attacker if using ranged
-        # Attack formula. 
-        # Hit chance = 0.5 - dodge (range and such not taken into account. 
-        # Normal hit damage = offense - defense 
+        # Attack formula.
+        # Hit chance = 0.5 - dodge (range and such not taken into account.
+        # Normal hit damage = offense - defense
         # Crit damage = 2* offense - defense (ignoring defense is too weak against casters unless that's the rock paper scissor fighter -> caster -> thief)
-        return actions * ((1-crit) * (offense - defense) + crit * (2*offense))  * hit 
+        return actions * ((1-crit) * (offense - defense) + crit * (2*offense))  * hit
 
 
-############### Render results 
+############### Render results
 
 
 row_width = 7
@@ -147,7 +147,7 @@ def format_table(table):
         return "\t".join(header) + nl + nl.join(format_stats(lvl_stats) for lvl_stats in table)
 
 nl="\n"
-if __name__ == "__main__":  
+if __name__ == "__main__":
         if test_result := test_stats():
                 print(f"tests failed: {nl.join(test_result)}")
                 exit()
@@ -158,7 +158,7 @@ if __name__ == "__main__":
         # for stat,table in stat_tables.items():
         #         print(f"{stat}:")
         #         print(format_table(table))
-        
+
         fighter = build_character("human", "fighter", "balanced", stat_tables)
         thief = build_character("human", "thief", "balanced", stat_tables)
 
@@ -172,7 +172,7 @@ if __name__ == "__main__":
                 level = fighter_stats.get("level")
                 fighter_dpr = compute_DPR(fighter_stats, thief_stats)
                 fighter_hp = fighter_stats.get("hp")
-        
+
                 thief_dpr = compute_DPR(thief_stats, fighter_stats)
                 thief_hp = thief_stats.get("hp")
 
@@ -183,6 +183,12 @@ if __name__ == "__main__":
                         win_hp = fighter_hp - (thief_survival * thief_dpr)
                 else:
                         win_hp = (fighter_survival * fighter_dpr) - thief_hp
-               
+
                 print(f"[{level}] {thief_hp} hp / DPR {fighter_dpr:.2f} = {thief_survival:.2f} rounds == VS == {fighter_hp} hp / DPR {thief_dpr:.2f} = {fighter_survival:.2f} rounds  {'WIN' if win_hp>0 else 'LOSE'} ({abs(win_hp):.0f}hp)")
-                
+
+
+TODO in a separate script
+# function to export the stats table, but flip it around from requested stat trace back to dependency with a single table each
+# enumerate each of them an integer id too, to match the C representation and link using that instead of string
+# some special stats (HD) here may get something hardcoded like the multiplier id
+# make a list of tertiary stats with special things like hands, weight, resistances, see the C interface

@@ -12,6 +12,7 @@ class Stat
 public:
         enum Id
         {
+                None,
                 Level,
 
                 Str,
@@ -22,6 +23,7 @@ public:
                 Agi,
                 Speed,
                 AP,
+                Dodge,
                 Reflex,
 
                 Con,
@@ -46,19 +48,28 @@ public:
                 Weight,
                 Capacity,
                 HP,     // this is a tricky one, multiplication
+
+                BluntResist, // is defense? or derived from defense stat and more
+                SharpResist, // is defense?
+                FireResist,
+                ColdResist,
+                LightningResist,
+                PoisonResist, // includes acid?
         };
 
         int Bonus(Id stat);
 private:
-        Id id;
-        int maximum;
         std::string name;
-        std::map<Id, std::vector<int>> bonusPerLevel;
+        std::string description;
+        Id dependency;
+        std::vector<int> perLevel;      // if dependency is not None
+        Id multiplier;                  // 1 if None
+        int maximum;
 };
 
 // Loaded from JSON each Stat is defined by a name and which bonuses it gives to other stats at a certain level.
 // This level has to be recursively queried from the character along with all its bonuses
 // percentages are in whole %
-std::vector<Stat> stats;
+std::map<Stat::Id, Stat> stats;
 
 }

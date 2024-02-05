@@ -22,11 +22,11 @@
         "buckler": {
             "weight": 1,
             "defense": 1,
-            "hand": 1
+            "hand": -1
         },
         "shield": {
             "weight": 2,
             "defense": 2,
-            "hand": 2
+            "hand": -1
         }
     }
