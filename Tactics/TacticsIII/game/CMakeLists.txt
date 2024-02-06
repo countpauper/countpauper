@@ -4,6 +4,8 @@ get_filename_component(MODULE ${CMAKE_CURRENT_LIST_DIR} NAME)
 
 add_library(${MODULE} STATIC ${MODULE_SOURCES})
 target_include_directories(${MODULE} PUBLIC ${MODULE_INCLUDE_DIR})
+target_link_libraries(${MODULE} PUBLIC
+        Engine)
 
 if(BUILD_TESTS)
         add_subdirectory(unittests)

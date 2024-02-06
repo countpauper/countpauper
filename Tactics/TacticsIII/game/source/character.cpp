@@ -36,7 +36,7 @@ StatDescriptor Character::Stat(Stat::Id id) const
         }
         else
         {
-                result.Contribute("", definition[id].Compute(*this));
+                result = definition[id].Compute(*this);
         }
         // TODO: add all other
         result.Contribute(race.Name(), race.Bonus(id));

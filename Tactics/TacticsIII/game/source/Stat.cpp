@@ -6,6 +6,12 @@ namespace Game
 
 Stat::Stat() = default;
 
+Stat::Stat(std::string_view name, std::string_view description)
+        : name(name)
+        , description(description)
+{
+}
+
 Stat::Stat(std::string_view name, std::string_view description, Id dependency, std::initializer_list<int> table, int multiplier)
         : name(name)
         , description(description)
@@ -25,7 +31,7 @@ Stat::Stat(std::string_view name, std::string_view description, Stat::Id depende
 {
 }
 
-int Stat::Compute(const Character& c) const
+StatDescriptor Stat::Compute(const Character& c) const
 {
         auto left = 0;
         if (dependency)
@@ -50,27 +56,26 @@ int Stat::Compute(const Character& c) const
                         left = table[left];
                 }
         }
-
-        int total = left;   // TODO: operand and operator
+        StatDescriptor result(range);
         if (op && operand)
         {
                 auto right = c.Stat(operand).Total();
                 switch(op)
                 {
                         case Multiply:
-                                total *= right;
+                                result.Contribute(Character::definition[dependency].name, left * right * multiplier);
                                 break;
                         case Add:
-                                total += right;
+                                result.Contribute(Character::definition[dependency].name, left * multiplier);
+                                result.Contribute(Character::definition[operand].name, right * multiplier);
                                 break;
                         default:
-                                total = right;
                                 break;
                 }
+        } else {
+                result.Contribute(Character::definition[dependency].name, left * multiplier);
         }
-        // TOD: min and max should be applied after spell/item bonuses
-        // how? stuff in StatDescriptor, because it also needs to be described anyway?
-        return std::max(minimum, std::min(maximum, total * multiplier));
+        return result;
 }
 
 }

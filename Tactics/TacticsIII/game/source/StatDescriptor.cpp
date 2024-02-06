@@ -5,7 +5,10 @@
 namespace Game
 {
 
-StatDescriptor::StatDescriptor() = default;
+StatDescriptor::StatDescriptor(Engine::Range<int> range) :
+        range(range)
+{
+}
 
 void StatDescriptor::Contribute(std::string_view source, int value, bool skip0)
 {
@@ -16,11 +19,12 @@ void StatDescriptor::Contribute(std::string_view source, int value, bool skip0)
 
 int StatDescriptor::Total() const
 {
-        return std::accumulate(contributions.begin(), contributions.end(), 0,
+        auto total = std::accumulate(contributions.begin(), contributions.end(), 0,
                 [](int v, const decltype(contributions)::value_type& contrib)
                 {
                         return v + contrib.second;
                 });
+        return range.Clip(total);
 }
 
 std::string StatDescriptor::Description() const
@@ -29,12 +33,14 @@ std::string StatDescriptor::Description() const
 
         for(const auto& contrib : contributions)
         {
-                if (contrib.second>=0) {
-                        if (!stream.tellp()) {
-                                stream << "+";
+                if (contrib.second >= 0) {
+                        if (stream.tellp()) {
+                                stream << " + ";
                         }
+                        stream << contrib.second;
+                } else {
+                        stream << " - " -contrib.second;
                 }
-                stream << contrib.second;
 
                 if (!contrib.first.empty()) {
                         stream << "[" << contrib.first << "]";

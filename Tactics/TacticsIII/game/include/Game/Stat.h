@@ -4,6 +4,8 @@
 #include <vector>
 #include <limits>
 #include <initializer_list>
+#include "Game/StatDescriptor.h"
+#include "Engine/Range.h"
 
 namespace Game
 {
@@ -18,7 +20,7 @@ public:
                 Level,
 
                 Str,
-                Carry,
+                Lift,
                 Damage,
                 Athletics,
 
@@ -68,12 +70,13 @@ public:
         };
 
         Stat();
+        Stat(std::string_view name, std::string_view description);
         Stat(std::string_view name, std::string_view description, Id dependency,
                 std::initializer_list<int> table= {}, int multiplier=1);
         Stat(std::string_view name, std::string_view description, Id dependency,
                 Operator op, Id operand);
 
-        int Compute(const class Character& c) const;
+        StatDescriptor Compute(const class Character& c) const;
 private:
         std::string name;
         std::string description;
@@ -83,8 +86,7 @@ private:
         Id operand = Stat::None;          // 1 if None, with operand add could also be added, then none is 0
         int multiplier = 1;
 
-        int minimum = 0; // might be negative for resists
-        int maximum = std::numeric_limits<int>::max();
+        Engine::Range<int> range{0, std::numeric_limits<int>::max()};
 };
 
 

@@ -19,8 +19,8 @@ endif()
 include(CTest)
 enable_testing()
 
-add_subdirectory(Game)
 add_subdirectory(../Engine ${CMAKE_CURRENT_BINARY_DIR}/Engine)
+add_subdirectory(Game)
 
 target_link_libraries(${PROJECT_NAME}
      Game
