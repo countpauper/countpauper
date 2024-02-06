@@ -61,9 +61,12 @@ public:
 private:
         std::string name;
         std::string description;
-        Id dependency;
-        std::vector<int> perLevel;      // if dependency is not None
-        Id multiplier;                  // 1 if None
+        Id dependency = Stat::None;     // If None then it's a primary stat
+        std::vector<int> perLevel;      // Only if dependency is not None. If empty then it's linear with dependency
+        // TODO operand, multiply or add at least
+        Id operand=Stat::None;          // 1 if None, with operand add could also be added, then none is 0
+        int multiplier = 1;
+
         int maximum;
 };
 

@@ -6,18 +6,18 @@ namespace Game::Test
 
 TEST(Character, Level)
 {
-    Race penguin("penguin");
+    Race penguin("penguin", {});
     Character c("flo", penguin);
 
-    EXPECT_EQ(c.Stat(Stat::Level), 1);
+    EXPECT_EQ(c.Stat(Stat::Level).Total(), 1);
 }
 
 TEST(Character, RaceBonus)
 {
-    Race orc("orc");
+    Race orc("orc", {{Stat::Str, 2}});
     Character c("foe", orc);
 
-    EXPECT_EQ(c.Stat(Stat::Str), 4);
+    EXPECT_EQ(c.Stat(Stat::Str).Total(), 4);
 }
 
 }

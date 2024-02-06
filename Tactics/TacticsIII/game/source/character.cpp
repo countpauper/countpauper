@@ -23,19 +23,24 @@ void Level(Stat::Id stat, int amount)
 
 }
 
-int Character::Stat(Stat::Id id) const
+StatDescriptor Character::Stat(Stat::Id id) const
 {
+        StatDescriptor result;
+
         auto it = primaryStats.find(id);
+        int base = 0;
+
         if (it!=primaryStats.end())
         {
-                // TODO: add race bonus
-                return it->second;
+                result.Contribute("", it->second, false);
         }
         else
         {
-                // TODO: FInd singleton stat list and derive
-                return 0;
+                // TODO: Find singleton stat list and derive
         }
+        // TODO: add all other
+        result.Contribute(race.Name(), race.Bonus(id));
+        return result;
 }
 
 
