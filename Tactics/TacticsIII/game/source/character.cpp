@@ -18,9 +18,9 @@ Character::Character(std::string_view name, const Race& race) :
 
 }
 
-void Level(Stat::Id stat, int amount)
+void Character::Level(Stat::Id stat, int amount)
 {
-
+        primaryStats[stat] += amount;
 }
 
 StatDescriptor Character::Stat(Stat::Id id) const
@@ -36,12 +36,13 @@ StatDescriptor Character::Stat(Stat::Id id) const
         }
         else
         {
-                // TODO: Find singleton stat list and derive
+                result.Contribute("", definition[id].Compute(*this));
         }
         // TODO: add all other
         result.Contribute(race.Name(), race.Bonus(id));
         return result;
 }
 
+StatDefinition Character::definition;
 
 }

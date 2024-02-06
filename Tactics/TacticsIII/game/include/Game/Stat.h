@@ -2,6 +2,8 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <limits>
+#include <initializer_list>
 
 namespace Game
 {
@@ -12,7 +14,7 @@ class Stat
 public:
         enum Id
         {
-                None,
+                None = 0,
                 Level,
 
                 Str,
@@ -41,6 +43,7 @@ public:
                 Crit,
                 Magic,
 
+                Reach,
                 Range,
                 Defense,
                 Offense,
@@ -57,22 +60,33 @@ public:
                 PoisonResist, // includes acid?
         };
 
-        int Bonus(Id stat);
+        enum Operator
+        {
+                Nop = 0,
+                Add,
+                Multiply
+        };
+
+        Stat();
+        Stat(std::string_view name, std::string_view description, Id dependency,
+                std::initializer_list<int> table= {}, int multiplier=1);
+        Stat(std::string_view name, std::string_view description, Id dependency,
+                Operator op, Id operand);
+
+        int Compute(const class Character& c) const;
 private:
         std::string name;
         std::string description;
         Id dependency = Stat::None;     // If None then it's a primary stat
-        std::vector<int> perLevel;      // Only if dependency is not None. If empty then it's linear with dependency
-        // TODO operand, multiply or add at least
-        Id operand=Stat::None;          // 1 if None, with operand add could also be added, then none is 0
+        std::vector<int> table;         // Only if dependency is not None. If empty then it's linear with dependency
+        Operator op = Operator::Nop;
+        Id operand = Stat::None;          // 1 if None, with operand add could also be added, then none is 0
         int multiplier = 1;
 
-        int maximum;
+        int minimum = 0; // might be negative for resists
+        int maximum = std::numeric_limits<int>::max();
 };
 
-// Loaded from JSON each Stat is defined by a name and which bonuses it gives to other stats at a certain level.
-// This level has to be recursively queried from the character along with all its bonuses
-// percentages are in whole %
-static std::map<Stat::Id, Stat> stats;
+
 
 }

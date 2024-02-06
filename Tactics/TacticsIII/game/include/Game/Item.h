@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/Stat.h"
+#include "Game/StatDefinition.h"
 #include <map>
 #include <string>
 
@@ -10,6 +10,7 @@ class Item
 {
 public:
         Item();
+        static StatDefinition definition;
 private:
         std::string name;
         std::map<Stat::Id, int> bonus;
