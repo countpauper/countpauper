@@ -4,12 +4,12 @@
 #include <vector>
 #include <limits>
 #include <initializer_list>
+#include "Game/Json.h"
 #include "Game/StatDescriptor.h"
 #include "Engine/Range.h"
 
 namespace Game
 {
-
 
 class Stat
 {
@@ -70,13 +70,14 @@ public:
         };
 
         Stat();
-        Stat(std::string_view name, std::string_view description);
+        explicit Stat(std::string_view name, std::string_view description=std::string_view());
         Stat(std::string_view name, std::string_view description, Id dependency,
                 std::initializer_list<int> table= {}, int multiplier=1);
         Stat(std::string_view name, std::string_view description, Id dependency,
                 Operator op, Id operand);
-
-        StatDescriptor Compute(const class Character& c) const;
+        void Load(const json& j, const class StatDefinition& dependencies);
+        StatDescriptor Compute(const class Statted& c) const;
+        std::string_view Name() const;
 private:
         std::string name;
         std::string description;

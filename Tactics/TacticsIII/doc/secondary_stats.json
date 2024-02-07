@@ -1,5 +1,5 @@
 {
-        "carry": {
+        "lift": {
             "description": "Weapon size requirement and adds to total carrying capacity",
             "range": [ 0, 5 ]
         },

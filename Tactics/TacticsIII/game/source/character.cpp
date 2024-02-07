@@ -23,7 +23,7 @@ void Character::Level(Stat::Id stat, int amount)
         primaryStats[stat] += amount;
 }
 
-StatDescriptor Character::Stat(Stat::Id id) const
+StatDescriptor Character::Get(Stat::Id id) const
 {
         StatDescriptor result;
 
@@ -41,6 +41,11 @@ StatDescriptor Character::Stat(Stat::Id id) const
         // TODO: add all other
         result.Contribute(race.Name(), race.Bonus(id));
         return result;
+}
+
+const StatDefinition& Character::Definition() const
+{
+        return Character::definition;
 }
 
 StatDefinition Character::definition;

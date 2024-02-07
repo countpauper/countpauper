@@ -1,5 +1,8 @@
 #include "Game/Stat.h"
-#include "Game/Character.h"
+#include "Game/Statted.h"
+#include "Game/StatDefinition.h"
+#include <nlohmann/json.hpp>
+#include <optional>
 
 namespace Game
 {
@@ -31,12 +34,46 @@ Stat::Stat(std::string_view name, std::string_view description, Stat::Id depende
 {
 }
 
-StatDescriptor Stat::Compute(const Character& c) const
+template<typename T>
+std::optional<T> GetMaybe(const json& j, std::string_view key)
+{
+        auto it = j.find(key);
+        if (it == j.end())
+        {
+                return std::optional<T>();
+        }
+         else
+        {
+                return it.value().template get<T>();
+        }
+}
+
+template<typename T>
+T GetOr(const json& j, std::string_view key, T&& alternative=T())
+{
+        auto it = j.find(key);
+        if (it == j.end()) {
+                return std::move(alternative);
+        } else {
+                return it.value().template get<T>();
+        }
+}
+
+void Stat::Load(const json& j, const StatDefinition& dependencies)
+{       // TODO: this is pretty clost to ns::from_json
+        description = GetOr(j, "description", std::string());
+        if (auto dependName = GetMaybe<std::string>(j, "Depends"))
+        {
+                this->dependency = dependencies.Find(*dependName);
+        }
+}
+
+StatDescriptor Stat::Compute(const Statted& object) const
 {
         auto left = 0;
         if (dependency)
         {
-                left = c.Stat(dependency).Total();      // TODO: add this to a STatDescriptor output ?
+                left = object.Get(dependency).Total();      // TODO: add this to a STatDescriptor output ?
         }
         if (!table.empty())
         {
@@ -59,23 +96,29 @@ StatDescriptor Stat::Compute(const Character& c) const
         StatDescriptor result(range);
         if (op && operand)
         {
-                auto right = c.Stat(operand).Total();
+                auto right = object.Get(operand).Total();
                 switch(op)
                 {
                         case Multiply:
-                                result.Contribute(Character::definition[dependency].name, left * right * multiplier);
+                                result.Contribute(object.Definition().at(dependency).name, left * right * multiplier);
                                 break;
                         case Add:
-                                result.Contribute(Character::definition[dependency].name, left * multiplier);
-                                result.Contribute(Character::definition[operand].name, right * multiplier);
+                                result.Contribute(object.Definition().at(dependency).name, left * multiplier);
+                                result.Contribute(object.Definition().at(operand).name, right * multiplier);
                                 break;
                         default:
                                 break;
                 }
         } else {
-                result.Contribute(Character::definition[dependency].name, left * multiplier);
+                result.Contribute(object.Definition().at(dependency).name, left * multiplier);
         }
         return result;
 }
+
+std::string_view Stat::Name() const
+{
+        return name;
+}
+
 
 }

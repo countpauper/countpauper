@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <functional>
+#include "Game/Statted.h"
 #include "Game/StatDefinition.h"
 #include "Game/Race.h"
 #include "Game/Item.h"
@@ -10,7 +11,7 @@ namespace Game
 {
 
 
-class Character
+class Character : public Statted
 {
 public:
         Character(std::string_view name, const Race& race);
@@ -27,7 +28,8 @@ public:
         // If multiple spells or enchantments increase the same stat, only the highest is applied (of each or either?)
         // If multiple splles or enchantments decrease the same stat, only the lowest is applied (of each or either ?)
         // No stat can go over its maximum and no stat can go under 0 or its clipped
-        StatDescriptor Stat(Stat::Id id) const;
+        StatDescriptor Get(Stat::Id id) const override;
+        const StatDefinition& Definition() const override;
 
         static StatDefinition definition;
 private:

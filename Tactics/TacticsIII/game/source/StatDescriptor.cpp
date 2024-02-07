@@ -5,6 +5,11 @@
 namespace Game
 {
 
+StatDescriptor::StatDescriptor(int v)
+{
+        Contribute("", v);
+}
+
 StatDescriptor::StatDescriptor(Engine::Range<int> range) :
         range(range)
 {
