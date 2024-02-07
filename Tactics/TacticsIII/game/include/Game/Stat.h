@@ -16,57 +16,57 @@ class Stat
 public:
         enum Id
         {
-                None = 0,
-                Level,
+                none = 0,
+                level,
 
-                Str,
-                Lift,
-                Damage,
-                Athletics,
+                str,
+                lift,
+                damage,
+                athletics,
 
-                Agi,
-                Speed,
-                AP,
-                Dodge,
-                Reflex,
+                agi,
+                speed,
+                ap,
+                dodge,
+                reflex,
 
-                Con,
-                Endurance,
-                HD,
-                Physical,
+                con,
+                endurance,
+                hd,
+                physical,
 
-                Wis,
-                Knowledge,
-                Mental,
-                Attune,
+                wis,
+                knowledge,
+                mental,
+                attune,
 
-                Int,
-                Skill,
-                Crit,
-                Magic,
+                intel,
+                skill,
+                crit,
+                magic,
 
-                Reach,
-                Range,
-                Defense,
-                Offense,
-                Hands,
-                Weight,
-                Capacity,
-                HP,     // this is a tricky one, multiplication
+                reach,
+                range,
+                defense,
+                offense,
+                hands,
+                weight,
+                capacity,
+                hp,     // this is a tricky one, multiplication
 
-                BluntResist, // is defense? or derived from defense stat and more
-                SharpResist, // is defense?
-                FireResist,
-                ColdResist,
-                LightningResist,
-                PoisonResist, // includes acid?
+                blunt_resist, // is defense? or derived from defense stat and more
+                sharp_resist, // is defense?
+                fire_resist,
+                cold_resist,
+                lightnin_rResist,
+                poison_resist, // includes acid?
         };
 
         enum Operator
         {
-                Nop = 0,
-                Add,
-                Multiply
+                nop = 0,
+                add,
+                multiply
         };
 
         Stat();
@@ -81,13 +81,13 @@ public:
 private:
         std::string name;
         std::string description;
-        Id dependency = Stat::None;     // If None then it's a primary stat
+        Id dependency = Stat::none;     // If None then it's a primary stat
         std::vector<int> table;         // Only if dependency is not None. If empty then it's linear with dependency
-        Operator op = Operator::Nop;
-        Id operand = Stat::None;          // 1 if None, with operand add could also be added, then none is 0
+        Operator op = Operator::nop;
+        Id operand = Stat::none;          // 1 if None, with operand add could also be added, then none is 0
         int multiplier = 1;
 
-        Engine::Range<int> range{0, std::numeric_limits<int>::max()};
+        Engine::Range<int> limit{0, std::numeric_limits<int>::max()};
 };
 
 

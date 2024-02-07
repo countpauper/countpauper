@@ -7,12 +7,12 @@ Character::Character(std::string_view name, const Race& race) :
         name(name),
         race(race),
         primaryStats{
-                {Stat::Level, 1},
-                {Stat::Str, 2},
-                {Stat::Agi, 2},
-                {Stat::Con, 2},
-                {Stat::Wis, 2},
-                {Stat::Int, 2}
+                {Stat::level, 1},
+                {Stat::str, 2},
+                {Stat::agi, 2},
+                {Stat::con, 2},
+                {Stat::wis, 2},
+                {Stat::intel, 2}
         }
 {
 

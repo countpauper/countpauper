@@ -10,8 +10,8 @@ StatDescriptor::StatDescriptor(int v)
         Contribute("", v);
 }
 
-StatDescriptor::StatDescriptor(Engine::Range<int> range) :
-        range(range)
+StatDescriptor::StatDescriptor(Engine::Range<int> limit) :
+        limit(limit)
 {
 }
 
@@ -29,7 +29,7 @@ int StatDescriptor::Total() const
                 {
                         return v + contrib.second;
                 });
-        return range.Clip(total);
+        return limit.Clip(total);
 }
 
 std::string StatDescriptor::Description() const

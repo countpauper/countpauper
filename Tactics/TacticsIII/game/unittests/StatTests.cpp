@@ -15,7 +15,7 @@ TEST(Stat, define_primary_stat)
         "Strength":{ "Id":2 }
 }
         )""");
-        EXPECT_EQ(def[Stat::Str].Name(), "Strength");
+        EXPECT_EQ(def[Stat::str].Name(), "Strength");
 }
 
 TEST(Stat, define_secondary_stat)
@@ -24,15 +24,15 @@ TEST(Stat, define_secondary_stat)
         def.Load(R"""(
 {
         "Strength":{ "Id":2 },
-        "Damage":{ "Id": 4, "Depends":"Strength" }
+        "Damage":{ "Id": 4, "Depends":"Strength", "table":[1,1,2,2,3,3] }
 }
         )""");
-        EXPECT_EQ(def[Stat::Damage].Name(), "Damage");
+        EXPECT_EQ(def[Stat::damage].Name(), "Damage");
 
         MockStatted mock;
-        EXPECT_CALL(mock, Get(Stat::Str)).WillOnce(Return(StatDescriptor(5)));
+        EXPECT_CALL(mock, Get(Stat::str)).WillOnce(Return(StatDescriptor(4)));
         EXPECT_CALL(mock, Definition()).WillRepeatedly(ReturnRef(def));
-        EXPECT_EQ(def[Stat::Damage].Compute(mock).Total(), 5);
+        EXPECT_EQ(def[Stat::damage].Compute(mock).Total(), 3);
 
 }
 

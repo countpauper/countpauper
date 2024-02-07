@@ -32,7 +32,7 @@ Stat::Id StatDefinition::Find(std::string_view name) const
                         return stat.first;
                 }
         }
-        return Stat::Id::None;
+        return Stat::Id::none;
 }
 
 }

@@ -20,6 +20,8 @@ include(CTest)
 enable_testing()
 
 add_subdirectory(../Engine ${CMAKE_CURRENT_BINARY_DIR}/Engine)
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory("${DEPENDENCIES_DIR}/json/" ${CMAKE_BINARY_DIR}/json)
 add_subdirectory(Game)
 
 target_link_libraries(${PROJECT_NAME}

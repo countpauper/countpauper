@@ -61,10 +61,49 @@ T GetOr(const json& j, std::string_view key, T&& alternative=T())
 
 void Stat::Load(const json& j, const StatDefinition& dependencies)
 {       // TODO: this is pretty clost to ns::from_json
+
+        // TODO: this can be refactored
         description = GetOr(j, "description", std::string());
         if (auto dependName = GetMaybe<std::string>(j, "Depends"))
         {
-                this->dependency = dependencies.Find(*dependName);
+                dependency = dependencies.Find(*dependName);
+        } else {
+                dependency = Stat::none;
+        }
+        table = GetOr(j, "table", std::vector<int>());
+
+        auto limitVector = GetOr(j, "range", std::vector<int>());
+        if (limitVector.size() >= 2)
+        {
+                limit.begin = limitVector.front();
+                limit.end = limitVector.back();
+        }
+
+        op = Operator::nop;
+        operand = Stat::none;
+        auto addIt = j.find("+");
+        if (addIt != j.end())
+        {
+                op = Operator::add;
+                operand = dependencies.Find(addIt.value().template get<std::string>());
+        }
+        auto mulIt = j.find("*");
+        if (mulIt != j.end())
+        {
+                const auto& operandValue = mulIt.value();
+                if (operandValue.is_number_integer())
+                {
+                        // would just add it to the table then?
+                        operandValue.get_to(multiplier);
+                        operand = Stat::none;
+                }
+                else if (operandValue.is_string())
+                {
+                        assert(operand == Stat::none);  // already used by add?
+                        operand = dependencies.Find(operandValue.template get<std::string>());
+                        multiplier = 1;
+                }
+
         }
 }
 
@@ -93,16 +132,16 @@ StatDescriptor Stat::Compute(const Statted& object) const
                         left = table[left];
                 }
         }
-        StatDescriptor result(range);
+        StatDescriptor result(limit);
         if (op && operand)
         {
                 auto right = object.Get(operand).Total();
                 switch(op)
                 {
-                        case Multiply:
+                        case multiply:
                                 result.Contribute(object.Definition().at(dependency).name, left * right * multiplier);
                                 break;
-                        case Add:
+                        case add:
                                 result.Contribute(object.Definition().at(dependency).name, left * multiplier);
                                 result.Contribute(object.Definition().at(operand).name, right * multiplier);
                                 break;
