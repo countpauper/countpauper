@@ -33,15 +33,15 @@ Stat::Stat(std::string_view name, std::string_view description, Stat::Id depende
         , operand(operand)
 {
 }
-
-void Stat::Load(const json& j, const StatDefinition& dependencies)
-{       // TODO: this is pretty clost to ns::from_json
+Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependencies) :
+        name(name)
+{       // TODO: this is pretty close to ns::from_json
 
         // TODO: this can be refactored
         description = get_value_or(j, "description", std::string());
         if (auto dependName = try_get<std::string>(j, "Depends"))
         {
-                dependency = dependencies.Find(*dependName);
+                dependency = dependencies.Identify(*dependName);
         } else {
                 dependency = Stat::none;
         }
@@ -59,7 +59,7 @@ void Stat::Load(const json& j, const StatDefinition& dependencies)
         if (auto addOperand = try_get<std::string>(j, "+"))
         {
                 op = Operator::add;
-                operand = dependencies.Find(*addOperand);
+                operand = dependencies.Identify(*addOperand);
         }
         if (auto mulOperand = try_get<json>(j, "*"))
         {
@@ -67,15 +67,14 @@ void Stat::Load(const json& j, const StatDefinition& dependencies)
                 {
                         // would just add it to the table then?
                         mulOperand->get_to(multiplier);
-                        operand = Stat::none;
                 }
                 else if (mulOperand->is_string())
                 {
                         assert(operand == Stat::none);  // already used by add?
-                        operand = dependencies.Find(mulOperand->template get<std::string>());
+                        operand = dependencies.Identify(mulOperand->template get<std::string>());
                         multiplier = 1;
+                        op = Stat::multiply;
                 }
-
         }
 }
 

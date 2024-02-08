@@ -46,6 +46,13 @@ std::string UpperCase(std::string_view str)
     return result;
 }
 
+std::string LowerCase(std::string_view str)
+{
+    std::string result(str.length(), '\x0');
+    std::transform(str.begin(), str.end(), result.begin(), ::tolower);
+    return result;
+}
+
 std::string FormatDuration(double seconds)
 {
     if (seconds >=0)

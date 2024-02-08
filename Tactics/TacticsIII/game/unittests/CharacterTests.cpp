@@ -45,7 +45,7 @@ TEST(Character, hitpoints_are_multiplied)
     EXPECT_EQ(c.Get(Stat::hp).Description(), "24[Hit Dice]");
 }
 
-TEST(Character, capacity_is_carried)
+TEST(Character, capacity_is_lifted_with_endurance)
 {
     Character::definition.clear();
     Race race("troll", {{Stat::con, 2}} );

@@ -14,6 +14,7 @@ namespace Engine
 	extern const std::string_view whitespace;
     std::string_view Strip(std::string_view, std::string_view trash = whitespace);
     std::string UpperCase(std::string_view str);
+    std::string LowerCase(std::string_view str);
     std::string FormatDuration(double seconds);
     std::string FormatDuration(std::chrono::milliseconds);
 

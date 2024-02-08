@@ -86,10 +86,14 @@ TEST(String, Strip)
 
 TEST(String, UpperCase)
 {
-    EXPECT_EQ("UPP3RC4SE", Engine::UpperCase("Upp3rC4se"));
-    EXPECT_EQ("O0O", Engine::UpperCase("o0o"));
+    EXPECT_EQ(Engine::UpperCase("Upp3rC4se"), "UPP3RC4SE");
+    EXPECT_EQ(Engine::UpperCase("o0o"), "O0O");
 }
 
+TEST(String, LowerCase)
+{
+    EXPECT_EQ(Engine::LowerCase("L0WeRC4$E"), "l0werc4$e");
+}
 
 TEST(String, Duration)
 {

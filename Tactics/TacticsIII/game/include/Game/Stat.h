@@ -58,7 +58,7 @@ public:
                 sharp_resist, // is defense?
                 fire_resist,
                 cold_resist,
-                lightnin_rResist,
+                lightning_resist,
                 poison_resist, // includes acid?
         };
 
@@ -75,7 +75,7 @@ public:
                 std::initializer_list<int> table= {}, int multiplier=1);
         Stat(std::string_view name, std::string_view description, Id dependency,
                 Operator op, Id operand);
-        void Load(const json& j, const class StatDefinition& dependencies);
+        Stat(std::string_view name, const json& j, const class StatDefinition& dependencies);
         StatDescriptor Compute(const class Statted& c) const;
         std::string_view Name() const;
 private:
