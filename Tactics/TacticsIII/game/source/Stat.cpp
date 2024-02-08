@@ -34,45 +34,20 @@ Stat::Stat(std::string_view name, std::string_view description, Stat::Id depende
 {
 }
 
-template<typename T>
-std::optional<T> GetMaybe(const json& j, std::string_view key)
-{
-        auto it = j.find(key);
-        if (it == j.end())
-        {
-                return std::optional<T>();
-        }
-         else
-        {
-                return it.value().template get<T>();
-        }
-}
-
-template<typename T>
-T GetOr(const json& j, std::string_view key, T&& alternative=T())
-{
-        auto it = j.find(key);
-        if (it == j.end()) {
-                return std::move(alternative);
-        } else {
-                return it.value().template get<T>();
-        }
-}
-
 void Stat::Load(const json& j, const StatDefinition& dependencies)
 {       // TODO: this is pretty clost to ns::from_json
 
         // TODO: this can be refactored
-        description = GetOr(j, "description", std::string());
-        if (auto dependName = GetMaybe<std::string>(j, "Depends"))
+        description = get_value_or(j, "description", std::string());
+        if (auto dependName = try_get<std::string>(j, "Depends"))
         {
                 dependency = dependencies.Find(*dependName);
         } else {
                 dependency = Stat::none;
         }
-        table = GetOr(j, "table", std::vector<int>());
+        table = get_value_or(j, "table", std::vector<int>());
 
-        auto limitVector = GetOr(j, "range", std::vector<int>());
+        auto limitVector = get_value_or(j, "range", std::vector<int>());
         if (limitVector.size() >= 2)
         {
                 limit.begin = limitVector.front();
@@ -81,26 +56,23 @@ void Stat::Load(const json& j, const StatDefinition& dependencies)
 
         op = Operator::nop;
         operand = Stat::none;
-        auto addIt = j.find("+");
-        if (addIt != j.end())
+        if (auto addOperand = try_get<std::string>(j, "+"))
         {
                 op = Operator::add;
-                operand = dependencies.Find(addIt.value().template get<std::string>());
+                operand = dependencies.Find(*addOperand);
         }
-        auto mulIt = j.find("*");
-        if (mulIt != j.end())
+        if (auto mulOperand = try_get<json>(j, "*"))
         {
-                const auto& operandValue = mulIt.value();
-                if (operandValue.is_number_integer())
+                if (mulOperand->is_number_integer())
                 {
                         // would just add it to the table then?
-                        operandValue.get_to(multiplier);
+                        mulOperand->get_to(multiplier);
                         operand = Stat::none;
                 }
-                else if (operandValue.is_string())
+                else if (mulOperand->is_string())
                 {
                         assert(operand == Stat::none);  // already used by add?
-                        operand = dependencies.Find(operandValue.template get<std::string>());
+                        operand = dependencies.Find(mulOperand->template get<std::string>());
                         multiplier = 1;
                 }
 

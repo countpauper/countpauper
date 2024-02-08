@@ -38,6 +38,7 @@ TEST(Character, hitpoints_are_multiplied)
     Race race("troll", {{Stat::con, 2}} );
     Character c("bar", race);
     c.Level(Stat::level, 3);
+    Character::definition[Stat::con] = Stat("Con", "");
     Character::definition[Stat::hp] = Stat("Hitpoints", "", Stat::hd, Stat::multiply, Stat::level);
     Character::definition[Stat::hd] = Stat("Hit Dice", "", Stat::con, {4,4,5,5,6,6,7,7});
     EXPECT_EQ(c.Get(Stat::hp).Total(), 24);
@@ -50,6 +51,8 @@ TEST(Character, capacity_is_carried)
     Race race("troll", {{Stat::con, 2}} );
     Character c("bar", race);
     c.Level(Stat::level, 3);
+    Character::definition[Stat::con] = Stat("Con", "");
+    Character::definition[Stat::str] = Stat("Str", "");
     Character::definition[Stat::capacity] = Stat("Capacity", "", Stat::lift, Stat::add, Stat::endurance);
     Character::definition[Stat::endurance] = Stat("Endurance", "", Stat::con, {1,1,2,2,2,3,3});
     Character::definition[Stat::lift] = Stat("Lift", "", Stat::str, {1,1,1,2,2,3,3});
