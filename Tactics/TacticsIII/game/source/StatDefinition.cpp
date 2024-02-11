@@ -54,7 +54,7 @@ std::map<Stat::Id, std::string_view> StatDefinition::statNames =
 
         { Stat::con, "constitution" },
         { Stat::endurance, "endurance" },
-        { Stat::hp, "hitpoints" },
+        { Stat::health, "health" },
         { Stat::physical, "physical" },
 
         { Stat::wis, "wisdom" },
@@ -67,13 +67,14 @@ std::map<Stat::Id, std::string_view> StatDefinition::statNames =
         { Stat::crit, "critical chance" },
         { Stat::magic, "magic" },
 
-        { Stat::reach, "reach" },
-        { Stat::range, "range" },
         { Stat::defense, "defense" },
         { Stat::offense, "offense" },
+        { Stat::hp, "hitpoints" },
+        { Stat::reach, "reach" },
+        { Stat::range, "range" },
         { Stat::hands, "hands" },
         { Stat::weight, "weight" },
-        { Stat::capacity, "capacity" },
+        { Stat::carry, "carry" },
 
         { Stat::blunt_resist, "blunt resistance" },
         { Stat::sharp_resist, "resist resistance" },

@@ -1,10 +1,11 @@
 {
-        "str": {
+        "strength": {
             "base": 2,
             "range": [
                 0,
                 15
             ],
+            "description":"Increases how much a character carry, or the size of the weapon or shield they can wield. It also provided a bonus to damage, jump distance and physical skills",
             "boost": [
                 "lift",
                 "athletics",
@@ -23,12 +24,13 @@
                 "damage"
             ]
         },
-        "agi": {
+        "agility": {
             "base": 2,
             "range": [
                 0,
                 15
             ],
+            "description":"Increases how fast a character is both in movement and actions per turn. It determined the chance to dodge an attack or area effect.",
             "boost": [
                 "speed",
                 "action",
@@ -47,36 +49,38 @@
                 "action"
             ]
         },
-        "con": {
+        "constitution": {
             "base": 2,
             "range": [
                 0,
                 15
             ],
+            "description":"Increases the number of hitpoints gained per level, resistance to physical spell effects, the amount that can be carried or the weight of armor that can be worn." ,
             "boost": [
-                "hd",
+                "health",
                 "physical",
                 "endurance",
-                "hd",
+                "health",
                 "physical",
                 "endurance",
-                "hd",
+                "health",
                 "endurance",
                 "physical",
                 "endurance",
-                "hd",
+                "health",
                 "physical",
                 "endurance",
-                "hd",
+                "health",
                 "physical"
             ]
         },
-        "wis": {
+        "wisdom": {
             "base": 2,
             "range": [
                 0,
                 15
             ],
+            "description":"increases the amount of training the character can receive, how many magical items it can use and resistance to mind magic.",
             "boost": [
                 "knowledge",
                 "mental",
@@ -95,12 +99,13 @@
                 "attune"
             ]
         },
-        "int": {
+        "intelligence": {
             "base": 2,
             "range": [
                 0,
                 15
             ],
+            "description":"Increases the number of skills that can be remembered, the strength of magic and the chance to score a critical hit or effect",
             "boost": [
                 "skill",
                 "magic",

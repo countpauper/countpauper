@@ -3,32 +3,37 @@
             "stat_bonus": {
                 "str": 1,
                 "wis": 1,
-                "con": 1
+                "con": 1,
+                "hands": 2
             }
         },
         "elf": {
             "stat_bonus": {
                 "wis": 2,
-                "agi": 1
+                "agi": 1,
+                "hands": 2
             }
         },
         "troll": {
             "stat_bonus": {
                 "str": 1,
-                "con": 2
+                "con": 2,
+                "hands": 2
             }
         },
         "gnome": {
             "stat_bonus": {
                 "int": 2,
-                "agi": 1
+                "agi": 1,
+                "hands": 2
             }
         },
         "human": {
             "stat_bonus": {
                 "str": 1,
                 "int": 1,
-                "agi": 1
+                "agi": 1,
+                "hands": 2
             }
         }
     }

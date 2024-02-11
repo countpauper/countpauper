@@ -32,7 +32,7 @@ public:
 
                 con,
                 endurance,
-                hd,
+                health,
                 physical,
 
                 wis,
@@ -45,14 +45,14 @@ public:
                 crit,
                 magic,
 
-                reach,
-                range,
                 defense,
                 offense,
+                hp,     // this is a tricky one, multiplication
+                reach,
+                range,
                 hands,
                 weight,
-                capacity,
-                hp,     // this is a tricky one, multiplication
+                carry,
 
                 blunt_resist, // is defense? or derived from defense stat and more
                 sharp_resist, // is defense?

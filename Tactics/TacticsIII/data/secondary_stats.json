@@ -11,12 +11,12 @@
             "description": "Base chance to be missed by an attack at normal distance, in the open, ideal range",
             "range": [ 10,  15 ],
             "base": 10,
-            "multiplier": 0.05
+            "multiplier": 5
         },
         "crit": {
             "description": "Chance that an attack or skill ignores resistance and doubles effect",
             "range": [ 0, 5 ],
-            "multiplier": 0.1
+            "multiplier": 10
         },
         "skill": {
             "description": "number of remembered active special actions or spells",
@@ -38,7 +38,7 @@
             "base": 1,
             "range": [ 1, 4 ]
         },
-        "hd": {
+        "health": {
             "description": "number of hitpoints per level",
             "range": [ 5, 10 ],
             "multiplier": 1,

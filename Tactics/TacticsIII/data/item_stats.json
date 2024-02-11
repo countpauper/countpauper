@@ -1,0 +1,17 @@
+{
+        "reach":{"description":"the distance at which a melee attack can hit a target"},
+        "range":{"description":"the distance at which a ranged attack can hit a target"},
+        "hold":{"description":"the number of hands needed to wield the item"},
+        "defense":{"description":"the amount of protection the item grants to blunt and sharp damage"},
+        "offense":{"description":"the amount of blunt or sharp damage a hit causes"},
+        "weight":{"description":"the amount of carrying capacitiy and endurance or lift needed to wear or wield the item"},
+        "enchantment":{"description":"the amount of attunement need to wield the item"},
+        "price":{"description":"the price to buy the item"},
+        "rarity":{"description":"the chance to find this item"},
+        "blunt resistance":{"description":"the amount of blunt damage resisted", "integer":true},
+        "sharp resistance":{"description":"the amount of sharp damage resisted", "integer":true},
+        "fire resistance":{"description":"the amount of fire damage resisted", "integer":true},
+        "cold resistance":{"description":"the amount of cold damage resisted", "integer":true},
+        "lightning resistance":{"description":"the amount of lightning damage resisted", "integer":true},
+        "poison resistance":{"description":"the amount of poison damage resisted", "integer":true}
+}

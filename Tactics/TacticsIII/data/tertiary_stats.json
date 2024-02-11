@@ -1,0 +1,15 @@
+{
+        "hitpoints":
+        {
+                "depends": "health",
+                "*": "level",
+                "description":"The amount of damage taken before being knocked out"
+        },
+        "carry":
+        {
+                "depends": "lift",
+                "+": "endurance",
+                "description": "The amount of weight that can be carried"
+        }
+
+}

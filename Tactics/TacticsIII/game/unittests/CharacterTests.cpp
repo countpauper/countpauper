@@ -39,8 +39,8 @@ TEST(Character, hitpoints_are_multiplied)
     Character c("bar", race);
     c.Level(Stat::level, 3);
     Character::definition[Stat::con] = Stat("Con", "");
-    Character::definition[Stat::hp] = Stat("Hitpoints", "", Stat::hd, Stat::multiply, Stat::level);
-    Character::definition[Stat::hd] = Stat("Hit Dice", "", Stat::con, {4,4,5,5,6,6,7,7});
+    Character::definition[Stat::hp] = Stat("Hitpoints", "", Stat::health, Stat::multiply, Stat::level);
+    Character::definition[Stat::health] = Stat("Hit Dice", "", Stat::con, {4,4,5,5,6,6,7,7});
     EXPECT_EQ(c.Get(Stat::hp).Total(), 24);
     EXPECT_EQ(c.Get(Stat::hp).Description(), "24[Hit Dice]");
 }
@@ -53,11 +53,11 @@ TEST(Character, capacity_is_lifted_with_endurance)
     c.Level(Stat::level, 3);
     Character::definition[Stat::con] = Stat("Con", "");
     Character::definition[Stat::str] = Stat("Str", "");
-    Character::definition[Stat::capacity] = Stat("Capacity", "", Stat::lift, Stat::add, Stat::endurance);
+    Character::definition[Stat::carry] = Stat("Capacity", "", Stat::lift, Stat::add, Stat::endurance);
     Character::definition[Stat::endurance] = Stat("Endurance", "", Stat::con, {1,1,2,2,2,3,3});
     Character::definition[Stat::lift] = Stat("Lift", "", Stat::str, {1,1,1,2,2,3,3});
-    EXPECT_EQ(c.Get(Stat::capacity).Total(), 3);
-    EXPECT_EQ(c.Get(Stat::capacity).Description(), "1[Lift] + 2[Endurance]");
+    EXPECT_EQ(c.Get(Stat::carry).Total(), 3);
+    EXPECT_EQ(c.Get(Stat::carry).Description(), "1[Lift] + 2[Endurance]");
 }
 
 }
