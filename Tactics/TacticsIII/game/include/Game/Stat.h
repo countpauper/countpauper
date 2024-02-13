@@ -39,9 +39,10 @@ public:
                 knowledge,
                 mental,
                 attune,
+                focus,
 
                 intel,
-                skill,
+                technique,
                 crit,
                 magic,
 

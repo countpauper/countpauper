@@ -54,8 +54,8 @@ def derive_combat_stats(stats):
         defense_enchantment = enchantment // 2
         offense_enchantment = enchantment - defense_enchantment
         stats["defense"] = armor_weight + shield_weight + defense_enchantment
-        stats["offense"] = 2 + 2 * weapon_weight + stats.get("damage") + offense_enchantment
-        stats["hp"] = stats.get("hd") * stats.get("level")
+        stats["offense"] = 4 + weapon_weight + stats.get("damage") + offense_enchantment
+        stats["hp"] = stats.get("level") + stats.get("health")
         return stats
 
 def build_stats(race_stats, build_plan, stat_tables=None):
@@ -76,19 +76,19 @@ def build_character(race, archetype, build, stat_tables=None):
 
 def compute_DPR(attacker, defender):
         offense = attacker.get("offense")
-        defense = attacker.get("defense")
-        crit = attacker.get("crit")
-        dodge = defender.get("dodge")
-        hit = 1.0 - dodge # TODO: can a crit miss? it seems weak currently
+        defense = defender.get("defense")
+        crit = attacker.get("crit")/100.0
+        dodge = defender.get("dodge")/100.0
         actions = attacker.get("action")  # TODO: lose an action to a faster attacker if using ranged
+        techniques = min(actions, attacker.get("technique"))
+        bonus_dmg = max(0, attacker.get("magic") - defender.get("physical"))
         # Attack formula.
-        # Hit chance = 0.5 - dodge (range and such not taken into account.
-        # Normal hit damage = offense - defense
-        # Crit damage = 2* offense - defense (ignoring defense is too weak against casters unless that's the rock paper scissor fighter -> caster -> thief)
-        return actions * ((1-crit) * (offense - defense) + crit * (2*offense))  * hit
-
-
-
+        crit_chance = crit * (1-dodge)
+        miss_chance = dodge * (1-crit)
+        hit_chance = 1-(crit_chance + miss_chance)
+        hit_dmg = max(0, offense - defense)
+        crit_dmg= max(0, 2*offense)
+        return actions * (crit_chance * crit_dmg + hit_chance * hit_dmg) + (hit_chance* techniques * bonus_dmg)
 
 if __name__ == "__main__":
         stat_tables = build_stat_tables()
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         for level in range(0, 10):
                 fighter_stats = fighter[level]
                 thief_stats = thief[level]
-                level = fighter_stats.get("level")
+
                 fighter_dpr = compute_DPR(fighter_stats, thief_stats)
                 fighter_hp = fighter_stats.get("hp")
 

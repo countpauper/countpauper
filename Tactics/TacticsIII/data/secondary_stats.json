@@ -9,8 +9,8 @@
             },
         "dodge": {
             "description": "Base chance to be missed by an attack at normal distance, in the open, ideal range",
-            "range": [ 10,  15 ],
-            "base": 10,
+            "range": [ 4,  9 ],
+            "base": 4,
             "multiplier": 5
         },
         "crit": {
@@ -18,15 +18,18 @@
             "range": [ 0, 5 ],
             "multiplier": 10
         },
-        "skill": {
+        "technique": {
             "description": "number of remembered active special actions or spells",
-            "base": 1,
-            "range": [ 1, 6 ]
+            "range": [ 0, 5 ]
         },
         "knowledge": {
             "description": "number of trained passive abilities",
             "base": 1,
-            "range": [ 1, 6 ]
+            "range": [ 1, 3 ]
+        },
+        "focus" : {
+            "description": "reduces cooldown by one action",
+            "range": [0, 3]
         },
         "speed": {
             "description": "number of movement points per action",
@@ -40,9 +43,9 @@
         },
         "health": {
             "description": "number of hitpoints per level",
-            "range": [ 5, 10 ],
-            "multiplier": 1,
-            "base": 5
+            "range": [ 1, 6 ],
+            "multiplier": 5,
+            "base": 1
         },
         "endurance": {
             "description": "armor weight requirement and adds to total carrying capacity",
@@ -50,7 +53,8 @@
         },
         "attune": {
             "description": "number of simultaneous active magic items",
-            "range": [ 0, 5 ]
+            "range": [ 1, 6 ],
+            "base": 1
         },
         "mental": {
             "description": "resist illusion and enchantment spells, reducing their power on hit and every turn",

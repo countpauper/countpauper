@@ -46,7 +46,7 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
                 dependency = Stat::none;
         }
         table = get_value_or(j, "table", std::vector<int>());
-        if (get_value_or(j, "table", false ))
+        if (get_value_or(j, "integer", false ))
         {
                 limit = Engine::Range<int>::max();
         }

@@ -80,23 +80,23 @@
                 0,
                 15
             ],
-            "description":"increases the amount of training the character can receive, how many magical items it can use and resistance to mind magic.",
+            "description":"increases the speed at which a character can switch techniques, how many magical items it can use and resistance to mind magic.",
             "boost": [
-                "knowledge",
+                "mental",
+                "attune",
+                "focus",
                 "mental",
                 "attune",
                 "knowledge",
                 "mental",
                 "attune",
-                "knowledge",
+                "focus",
                 "mental",
                 "attune",
                 "knowledge",
                 "mental",
                 "attune",
-                "knowledge",
-                "mental",
-                "attune"
+                "focus"
             ]
         },
         "intelligence": {
@@ -105,20 +105,20 @@
                 0,
                 15
             ],
-            "description":"Increases the number of skills that can be remembered, the strength of magic and the chance to score a critical hit or effect",
+            "description":"Increases the number of techniques that can be employed, the strength of magic and the chance to score a critical hit or effect",
             "boost": [
-                "skill",
+                "technique",
                 "magic",
                 "crit",
-                "skill",
+                "technique",
                 "magic",
-                "skill",
+                "technique",
                 "crit",
-                "skill",
+                "technique",
                 "magic",
                 "crit",
                 "magic",
-                "skill",
+                "technique",
                 "crit",
                 "magic",
                 "crit"

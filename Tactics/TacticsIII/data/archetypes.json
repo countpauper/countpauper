@@ -1,65 +1,65 @@
 {
         "bruiser": [
-            "str",
-            "int",
-            "agi",
-            "con",
-            "wis"
+            "strength",
+            "intelligence",
+            "agility",
+            "constitution",
+            "wisdom"
         ],
         "fighter": [
-            "str",
-            "con",
-            "agi",
-            "int",
-            "wis"
+            "strength",
+            "constitution",
+            "agility",
+            "intelligence",
+            "wisdom"
         ],
         "tank": [
-            "con",
-            "str",
-            "agi",
-            "wis",
-            "int"
+            "constitution",
+            "strength",
+            "agility",
+            "wisdom",
+            "intelligence"
         ],
         "thief": [
-            "agi",
-            "int",
-            "str",
-            "wis",
-            "con"
+            "agility",
+            "intelligence",
+            "strength",
+            "wisdom",
+            "constitution"
         ],
         "monk": [
-            "agi",
-            "wis",
-            "str",
-            "con",
-            "int"
+            "agility",
+            "wisdom",
+            "strength",
+            "constitution",
+            "intelligence"
         ],
         "mage": [
-            "int",
-            "wis",
-            "agi",
-            "con",
-            "str"
+            "intelligence",
+            "wisdom",
+            "agility",
+            "constitution",
+            "strength"
         ],
         "priest": [
-            "wis",
-            "int",
-            "agi",
-            "con",
-            "str"
+            "wisdom",
+            "intelligence",
+            "agility",
+            "constitution",
+            "strength"
         ],
         "cleric": [
-            "wis",
-            "str",
-            "int",
-            "con",
-            "agi"
+            "wisdom",
+            "strength",
+            "intelligence",
+            "constitution",
+            "agility"
         ],
         "archer": [
-            "str",
-            "agi",
-            "int",
-            "wis",
-            "con"
+            "strength",
+            "agility",
+            "intelligence",
+            "wisdom",
+            "constitution"
         ]
     }

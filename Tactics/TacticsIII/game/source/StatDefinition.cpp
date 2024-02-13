@@ -61,9 +61,10 @@ std::map<Stat::Id, std::string_view> StatDefinition::statNames =
         { Stat::knowledge, "knowledge" },
         { Stat::mental, "mental" },
         { Stat::attune, "attunement" },
+        { Stat::focus, "focus" },
 
         { Stat::intel, "intelligence" },
-        { Stat::skill, "skill" },
+        { Stat::technique, "technique" },
         { Stat::crit, "critical chance" },
         { Stat::magic, "magic" },
 
