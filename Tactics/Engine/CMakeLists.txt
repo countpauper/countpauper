@@ -6,6 +6,7 @@ set(DEPENDENCIES_DIR ../../Dependencies)
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(GLUT REQUIRED)
 add_subdirectory("${DEPENDENCIES_DIR}/Stb" "${CMAKE_CURRENT_BINARY_DIR}/Stb")
 
 target_include_directories(Engine PUBLIC "include" PRIVATE 
@@ -14,6 +15,7 @@ target_include_directories(Engine PUBLIC "include" PRIVATE
 
 target_link_libraries(Engine 
         Stb
+        GLUT::GLUT
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES})
 

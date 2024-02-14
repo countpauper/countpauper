@@ -48,12 +48,12 @@ def derive_secondary_stats(primary_stat, stat_tables):
 def derive_combat_stats(stats):
         weapon_weight = stats.get("lift")
         armor_weight = stats.get("endurance")
-        shield_weight = 0                       # TODO would have to downscale weapon
         enchantment = stats.get("attune")
         # assume all magic items are + defense or + damage
         defense_enchantment = enchantment // 2
         offense_enchantment = enchantment - defense_enchantment
-        stats["defense"] = armor_weight + shield_weight + defense_enchantment
+        stats["defense"] = armor_weight + defense_enchantment
+        stats["block"] = armor_weight * 5
         stats["offense"] = 4 + weapon_weight + stats.get("damage") + offense_enchantment
         stats["hp"] = stats.get("level") + stats.get("health")
         return stats
@@ -78,7 +78,8 @@ def compute_DPR(attacker, defender):
         offense = attacker.get("offense")
         defense = defender.get("defense")
         crit = attacker.get("crit")/100.0
-        dodge = defender.get("dodge")/100.0
+        block = defender.get("block")/100.0
+        dodge = defender.get("dodge")/100.0 + block
         actions = attacker.get("action")  # TODO: lose an action to a faster attacker if using ranged
         techniques = min(actions, attacker.get("technique"))
         bonus_dmg = max(0, attacker.get("magic") - defender.get("physical"))

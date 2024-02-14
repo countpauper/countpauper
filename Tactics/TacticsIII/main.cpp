@@ -1,6 +1,13 @@
 #include <cstdio>
+#include <GL/glut.h>
+#include "Engine/Window.h"
+#include "Engine/Application.h"
 
-int main(void)
+
+int main(int argc, char**argv)
 {
-        printf("Hello world!");
+    Engine::Application app(argc, argv);
+    Engine::Window window;
+
+    app.Run();
 }

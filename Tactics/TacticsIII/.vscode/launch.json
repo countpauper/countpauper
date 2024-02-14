@@ -9,7 +9,7 @@
                         "type": "cppdbg",
                         "request": "launch",
                         "program": "${workspaceFolder}/build/tactics",
-                        "args": [],
+                        "args": ["-gldebug", "-geometry", "1000x750"],
                         "stopAtEntry": false,
                         "cwd": "${fileDirname}",
                         "environment": [],

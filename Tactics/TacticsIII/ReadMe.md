@@ -3,7 +3,7 @@
 
 ## To build in windows
 * Install [MinGW](https://www.mingw-w64.org/)
-* Install FreeGLUT from MinGW with `pacman -S mingw-w64-x86_64-freeglut`
+* Install FreeGLUT from MinGW with `pacman -S mingw-w64-ucrt-x86_64-freeglut`
 * Install GLEW with `pacman -S mingw-w64-ucrt-x86_64-glew`
 * vscode with the recommended extensions
 
