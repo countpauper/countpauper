@@ -1,9 +1,7 @@
-#include "pch.h"
-#include "Physics/Position.h"
+#include <gtest/gtest.h>
+#include "Engine/Position.h"
 
-namespace  Physics
-{
-namespace Test
+namespace Engine::Test
 {
 
 TEST(Position, Bool)
@@ -30,4 +28,3 @@ TEST(Position, ManhattanDistance)
 }
 
 }
-}  // Test

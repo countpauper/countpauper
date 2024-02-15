@@ -3,14 +3,14 @@
 #include "Size.h"
 #include "Engine/Range.h"
 
-namespace Physics
+namespace Engine
 {
 
 class Box
 {
 public:
     Box() : Box(Size()) {} 
-    Box(const Engine::Range<int>& x, const Engine::Range<int>& y, const Engine::Range<int>& z);
+    Box(const Range<int>& x, const Range<int>& y, const Range<int>& z);
     Box(const Position& from, const Position& to);
     Box(const Position& from, const Size& extent) : Box(from, from + extent) {}
     explicit Box(const Size& extent) : Box(Position(0, 0, 0), extent) {}
@@ -31,9 +31,9 @@ public:
     Box& operator|=(const Position& p);
     Box& operator|=(const Box& b);
 
-    Engine::Range<int> x;
-    Engine::Range<int> y;
-    Engine::Range<int> z;
+    Range<int> x;
+    Range<int> y;
+    Range<int> z;
 
 
     static const Box empty;
@@ -48,5 +48,5 @@ Box operator+(const Box& a, const Position& translation);
 std::ostream& operator<<(std::ostream& os, const Box& box);
 std::wostream& operator<<(std::wostream& os, const Box& box);
 
-}   // ::Game
+}   // ::Engine
 

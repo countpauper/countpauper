@@ -1,9 +1,8 @@
-#include "stdafx.h"
 #include <sstream>
 #include "Engine/Maths.h"
-#include "Physics/Position.h"
+#include "Engine/Position.h"
 
-namespace Physics
+namespace Engine
 {
 
     Position::Position() : x(0), y(0), z(0)
@@ -22,12 +21,12 @@ namespace Physics
 
     float Position::Size() const
     {
-        return std::sqrtf(Engine::Sqr(float(x)) + Engine::Sqr(float(y))+Engine::Sqr(float(z)));
+        return std::sqrt(Engine::Sqr(float(x)) + Engine::Sqr(float(y))+Engine::Sqr(float(z)));
     }
 
     float Position::Distance(const Position& other) const
     {
-        return std::sqrtf(Engine::Sqr(float(other.x - x)) + Engine::Sqr(float(other.y - y)) + Engine::Sqr(float(other.z -z)));
+        return std::sqrt(Engine::Sqr(float(other.x - x)) + Engine::Sqr(float(other.y - y)) + Engine::Sqr(float(other.z -z)));
     }
 
     Position& Position::operator+=(const Position& delta)
@@ -96,4 +95,4 @@ namespace Physics
         }
         return false;
     }
-} // ::Game
+}

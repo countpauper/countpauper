@@ -1,7 +1,7 @@
 #pragma once
 #include "Position.h"
 
-namespace Physics
+namespace Engine
 {
     struct Size : Position
     {
@@ -19,5 +19,5 @@ namespace Physics
 
     Size operator+(const Size& a, const Size& b);
     Size operator+(const Size& a, int s);
-}   // ::Physics
+}   // ::Engine
 

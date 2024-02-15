@@ -1,16 +1,15 @@
-#include "stdafx.h"
-#include "Box.h"
+#include "Engine/Box.h"
 
-namespace Physics
+namespace Engine
 {
 
-const Box Box::empty(Engine::Range<int>(0,0), Engine::Range<int>(0,0), Engine::Range<int>(0,0));
-const Box Box::all(Engine::Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
-    Engine::Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
-    Engine::Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
+const Box Box::empty(Range<int>(0,0), Range<int>(0,0), Range<int>(0,0));
+const Box Box::all(Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
+    Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
+    Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
 
 
-Box::Box(const Engine::Range<int>& x, const Engine::Range<int>& y, const Engine::Range<int>& z) :
+Box::Box(const Range<int>& x, const Range<int>& y, const Range<int>& z) :
     x(x),
     y(y),
     z(z)

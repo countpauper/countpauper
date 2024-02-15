@@ -1,7 +1,6 @@
-#include "stdafx.h"
-#include "Physics/Size.h"
+#include "Engine/Size.h"
 
-namespace Physics
+namespace Engine
 {
 Size operator+(const Size& a, const Size& b)
 {
@@ -17,4 +16,4 @@ Size operator+(const Size& a, int s)
     return a + Size(s, s, s);
 }
 
-} // ::Game
+}

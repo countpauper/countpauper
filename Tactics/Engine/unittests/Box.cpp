@@ -1,20 +1,19 @@
-#include "pch.h"
+#include <gtest/gtest.h>
 #include <sstream>
-#include "Physics/Box.h"
+
+#include "Engine/Box.h"
 #include "Engine/Range.h"
 
-namespace Physics
-{
-namespace Test
+namespace Engine::Test
 {
 
 TEST(Box, Size)
 {
     EXPECT_EQ(1, Box(Position(0, 0, 0), Position(1, 1, 1)).Volume());
     EXPECT_EQ(Size(1, 1, 1), Box(Position(0, 0, 0), Position(1, 1, 1)).Extent());
-    EXPECT_EQ(Engine::Range(-1, 0), Box(Position(-1, 1, 3), Position(0, 2, 4)).x);
-    EXPECT_EQ(Engine::Range(1, 2), Box(Position(-1, 1, 3), Position(0, 2, 4)).y);
-    EXPECT_EQ(Engine::Range(3, 4), Box(Position(-1, 1, 3), Position(0, 2, 4)).z);
+    EXPECT_EQ(Range(-1, 0), Box(Position(-1, 1, 3), Position(0, 2, 4)).x);
+    EXPECT_EQ(Range(1, 2), Box(Position(-1, 1, 3), Position(0, 2, 4)).y);
+    EXPECT_EQ(Range(3, 4), Box(Position(-1, 1, 3), Position(0, 2, 4)).z);
     // no expectations yet for size and extent of flipped bounding boxes 
 }
 
@@ -43,5 +42,4 @@ TEST(Box, Include)
     EXPECT_TRUE((box | Position(2, 2, 2))[Position(1, 1, 1)]);
 }
 
-}
 }

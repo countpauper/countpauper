@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-namespace Physics
+namespace Engine
 {
     struct Position 
     {
@@ -25,5 +25,5 @@ namespace Physics
     Position operator-(const Position& a, const Position& b);
     std::ostream& operator<<(std::ostream& stream, const Position& position);
     std::wostream& operator<<(std::wostream& stream, const Position& position);
-}   // ::Physics
+}   // ::Engine
 
