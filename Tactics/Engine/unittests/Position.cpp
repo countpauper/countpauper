@@ -7,7 +7,7 @@ namespace Engine::Test
 TEST(Position, Bool)
 {
     EXPECT_FALSE(Position());
-    EXPECT_TRUE(Position(1, 0, 0));
+    EXPECT_TRUE((Position{1, 0, 0}));
 }
 
 TEST(Position, Size)

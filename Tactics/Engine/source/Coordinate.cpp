@@ -12,7 +12,7 @@ namespace Engine
 
 const Coordinate Coordinate::origin { 0,0,0 };
 
-Coordinate& Coordinate::operator+=(const Vector& v)
+Coordinate& Coordinate::operator+=(Vector v)
 {
     x += v.x;
     y += v.y;
@@ -20,7 +20,7 @@ Coordinate& Coordinate::operator+=(const Vector& v)
     return *this;
 }
 
-Coordinate& Coordinate::operator-=(const Vector& v)
+Coordinate& Coordinate::operator-=(Vector v)
 {
     x -= v.x;
     y -= v.y;
@@ -42,7 +42,7 @@ Coordinate& Coordinate::operator*=(const Matrix& transformation)
     return *this;
 }
 
-bool Coordinate::operator==(const Coordinate& other) const
+bool Coordinate::operator==(Coordinate other) const
 {
     return x == other.x &&
         y == other.y &&
@@ -50,22 +50,22 @@ bool Coordinate::operator==(const Coordinate& other) const
 }
 
 
-Coordinate operator*(const Coordinate& c, double factor)
+Coordinate operator*(Coordinate c, double factor)
 {
     return Coordinate(c) *= factor;
 }
 
-Coordinate operator+(const Coordinate& c, const Vector& v)
+Coordinate operator+(Coordinate c, Vector v)
 {
     return Coordinate(c) += v;
 }
-Coordinate operator-(const Coordinate& c, const Vector& v)
+Coordinate operator-(Coordinate c, Vector v)
 {
     return Coordinate(c) -= v;
 }
 
 
-Coordinate operator*(const Matrix& m, const Coordinate& v)
+Coordinate operator*(const Matrix& m, Coordinate v)
 {
     double w = v.x * m[0][3] + v.y * m[1][3] + v.z * m[2][3] + m[3][3];
     return Coordinate(
@@ -75,7 +75,7 @@ Coordinate operator*(const Matrix& m, const Coordinate& v)
     );
 }
 
-std::ostream& operator<<(std::ostream& s, const Coordinate& coordinate)
+std::ostream& operator<<(std::ostream& s, Coordinate coordinate)
 {
     s << "(" << coordinate.x << "," << coordinate.y << "," << coordinate.z << ")";
     return s;

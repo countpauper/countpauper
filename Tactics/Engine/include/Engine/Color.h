@@ -25,7 +25,7 @@ namespace Engine
         bool IsOpaque() const;
         operator bool() const { return IsVisible(); }
         RGBA operator*=(double factor);
-        RGBA operator+=(const RGBA& other);
+        RGBA operator+=(RGBA other);
         RGBA Translucent(double factor) const;
 
         static RGBA transparent;
@@ -36,6 +36,6 @@ namespace Engine
         static RGBA blue;
     };
 
-    RGBA operator*(const RGBA& color, double factor);
-    RGBA operator+(const RGBA& a, const RGBA& b);
+    RGBA operator*(RGBA color, double factor);
+    RGBA operator+(RGBA a, RGBA b);
 }   // ::Engine

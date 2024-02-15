@@ -21,43 +21,41 @@ struct Vector
         z(z)
     {
     }
-    Vector(const Vector& v) = default;
-    explicit Vector(const Coordinate& c);
+    explicit Vector(Coordinate c);
     explicit Vector(const Line& l);
     explicit Vector(const Plane& p);
 
-    Vector& operator=(const Vector& o);
     operator bool() const;
     double Length() const;
     double LengthSquared() const;
     Vector Normal() const;
-    Vector Cross(const Vector& o) const;
+    Vector Cross(Vector o) const;
 
-    bool operator==(const Vector& o) const;
+    bool operator==(Vector o) const;
     Vector& operator*=(double factor);
     Vector& operator/=(double factor);
-    Vector& operator+=(const Vector& v);
-    Vector& operator-=(const Vector& v);
+    Vector& operator+=(Vector v);
+    Vector& operator-=(Vector v);
     Vector operator-() const;
     Vector& operator*=(const Matrix& m);
     Vector& operator*=(const Quaternion& m);
 
-    double Dot(const Vector& v) const;
+    double Dot(Vector v) const;
 
     double x;
     double y;
     double z;
     static const Vector zero;
 };
-Vector operator*(const Vector& v, double factor);
-Vector operator/(const Vector& v, double factor);
-Vector operator*(const Vector& v, double factor);
-Vector operator+(const Vector& a, const Vector& b);
-Vector operator-(const Vector& a, const Vector& b);
-Vector operator-(const Coordinate& a, const Coordinate& b);
-Vector operator*(const Matrix& m, const Vector& v);
+Vector operator*(Vector v, double factor);
+Vector operator/(Vector v, double factor);
+Vector operator*(Vector v, double factor);
+Vector operator+(Vector a, Vector b);
+Vector operator-(Vector a, Vector b);
+Vector operator-(Coordinate a, Coordinate b);
+Vector operator*(const Matrix& m, Vector v);
 
-std::ostream& operator<<(std::ostream& s, const Vector& vector);
+std::ostream& operator<<(std::ostream& s, Vector vector);
 std::istream& operator>>(std::istream& s, Vector& vector);
 
 } // ::Engine

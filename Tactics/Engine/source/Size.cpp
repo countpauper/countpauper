@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-Size operator+(const Size& a, const Size& b)
+Size operator+(Size a, Size b)
 {
     Size o = a;
     o.x += b.x;
@@ -11,7 +11,7 @@ Size operator+(const Size& a, const Size& b)
     return o;
 }
 
-Size operator+(const Size& a, int s)
+Size operator+(Size a, int s)
 {
     return a + Size(s, s, s);
 }

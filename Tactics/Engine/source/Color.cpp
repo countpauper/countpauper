@@ -30,7 +30,7 @@ namespace Engine
         return *this;
     }
 
-    RGBA RGBA::operator+=(const RGBA& other)
+    RGBA RGBA::operator+=(RGBA other)
     {
         double newAlpha = std::min(255, a+other.a);
         double wa = a / newAlpha;
@@ -52,13 +52,13 @@ namespace Engine
         return result;
     }
 
-    RGBA operator*(const RGBA& color, double factor)
+    RGBA operator*(RGBA color, double factor)
     {
         RGBA result(color);
         return result *= factor;
     }
 
-    RGBA operator+(const RGBA& a, const RGBA& b)
+    RGBA operator+(RGBA a, RGBA b)
     {
         RGBA result(a);
         return result += b;

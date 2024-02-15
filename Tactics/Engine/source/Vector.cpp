@@ -9,7 +9,7 @@ namespace Engine
 {
 
 
-Vector::Vector(const Coordinate& c) :
+Vector::Vector(Coordinate c) :
     x(c.x),
     y(c.y),
     z(c.z)
@@ -26,13 +26,6 @@ Vector::Vector(const Plane& p) :
 {
 }
 
-Vector& Vector::operator=(const Vector& o)
-{
-    x = o.x;
-    y = o.y;
-    z = o.z;
-    return *this;
-}
 Vector::operator bool() const
 {
     return x != 0 || y != 0 || z != 0;
@@ -55,7 +48,7 @@ Vector Vector::Normal() const
     return Vector(x / l, y / l, z / l);
 }
 
-Vector Vector::Cross(const Vector& o) const
+Vector Vector::Cross(Vector o) const
 {
     return Vector(
         y*o.z - z * o.y,
@@ -65,7 +58,7 @@ Vector Vector::Cross(const Vector& o) const
 }
 
 
-bool Vector::operator==(const Vector& o) const
+bool Vector::operator==(Vector o) const
 {
     return x == o.x && y == o.y && z == o.z;
 }
@@ -86,7 +79,7 @@ Vector& Vector::operator/=(double divisor)
     return *this;
 }
 
-Vector& Vector::operator+=(const Vector& v)
+Vector& Vector::operator+=(Vector v)
 {
     x += v.x;
     y += v.y;
@@ -94,7 +87,7 @@ Vector& Vector::operator+=(const Vector& v)
     return *this;
 }
 
-Vector& Vector::operator-=(const Vector& v)
+Vector& Vector::operator-=(Vector v)
 {
     x -= v.x;
     y -= v.y;
@@ -119,14 +112,14 @@ Vector Vector::operator-() const
     return Vector(-x, -y, -z);
 }
 
-double Vector::Dot(const Vector& v) const
+double Vector::Dot(Vector v) const
 {
     return x * v.x + y * v.y + z * v.z;
 }
 
 const Vector Vector::zero(0, 0, 0);
 
-std::ostream& operator<<(std::ostream& s, const Vector& v)
+std::ostream& operator<<(std::ostream& s, Vector v)
 {
     Coordinate c(v.x, v.y, v.z);
     return s << c;
@@ -141,32 +134,32 @@ std::istream& operator>>(std::istream& s, Vector& v)
 }
 
 
-Vector operator*(const Vector& v, double factor)
+Vector operator*(Vector v, double factor)
 {
     return Vector(v) *= factor;
 }
 
-Vector operator/(const Vector& v, double factor)
+Vector operator/(Vector v, double factor)
 {
     return Vector(v) /= factor;
 }
 
-Vector operator+(const Vector& a, const Vector& b)
+Vector operator+(Vector a, Vector b)
 {
     return Vector(a) += b;
 }
 
-Vector operator-(const Vector& a, const Vector& b)
+Vector operator-(Vector a, Vector b)
 {
     return Vector(a) -= b;
 }
 
-Vector operator-(const Coordinate& a, const Coordinate& b)
+Vector operator-(Coordinate a, Coordinate b)
 {
     return Vector(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
-Vector operator*(const Matrix& m, const Vector& v)
+Vector operator*(const Matrix& m, Vector v)
 {
     double w = v.x * m[0][3] + v.y * m[1][3] + v.z * m[2][3] + m[3][3];
     return Vector(

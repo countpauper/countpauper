@@ -12,7 +12,7 @@ namespace Engine
     {
     }
 
-    unsigned Position::ManDistance(const Position& other) const
+    unsigned Position::ManDistance(Position other) const
     {
         return std::abs(other.x - x) +
             std::abs(other.y - y) +
@@ -24,19 +24,19 @@ namespace Engine
         return std::sqrt(Engine::Sqr(float(x)) + Engine::Sqr(float(y))+Engine::Sqr(float(z)));
     }
 
-    float Position::Distance(const Position& other) const
+    float Position::Distance(Position other) const
     {
         return std::sqrt(Engine::Sqr(float(other.x - x)) + Engine::Sqr(float(other.y - y)) + Engine::Sqr(float(other.z -z)));
     }
 
-    Position& Position::operator+=(const Position& delta)
+    Position& Position::operator+=(Position delta)
     {
         x += delta.x;
         y += delta.y;
         z += delta.z;
         return *this;
     }
-    Position& Position::operator-=(const Position& delta)
+    Position& Position::operator-=(Position delta)
     {
         x -= delta.x;
         y -= delta.y;
@@ -48,39 +48,39 @@ namespace Engine
         return x != 0 || y != 0 || z != 0;
     }
 
-    Position operator+(const Position& a, const Position& b)
+    Position operator+(Position a, Position b)
     {
         Position o(a);
         o += b;
         return o;
     }
-    Position operator-(const Position& a, const Position& b)
+    Position operator-(Position a, Position b)
     {
         Position o(a);
         o -= b;
         return o;
     }
 
-    std::ostream& operator<<(std::ostream& stream, const Position& position)
+    std::ostream& operator<<(std::ostream& stream, Position position)
     {
         stream << "(" << position.x << ", " << position.y << ", " << position.z << ")";
         return stream;
     }
-    std::wostream& operator<<(std::wostream& stream, const Position& position)
+    std::wostream& operator<<(std::wostream& stream, Position position)
     {
         stream << L"(" << position.x << L", " << position.y << L", " << position.z << L")";
         return stream;
     }
-    bool operator==(const Position& a, const Position& b)
+    bool operator==(Position a, Position b)
     {
         return a.x == b.x && a.y == b.y && a.z == b.z;
     }
-    bool operator!=(const Position& a, const Position& b)
+    bool operator!=(Position a, Position b)
     {
         return !operator==(a, b);
     }
 
-    bool operator<(const Position& a, const Position& b)
+    bool operator<(Position a, Position b)
     {
         if (a.z > b.z)
             return false;

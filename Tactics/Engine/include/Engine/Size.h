@@ -11,13 +11,13 @@ namespace Engine
         {
         }
         explicit Size(int s) : Size(s, s, s) {}
-        explicit Size(const Position& p) : Position(p)
+        explicit Size(Position p) : Position(p)
         {
         }
         int Volume() const { return x * y * z; }
     };
 
-    Size operator+(const Size& a, const Size& b);
-    Size operator+(const Size& a, int s);
+    Size operator+(Size a, Size b);
+    Size operator+(Size a, int s);
 }   // ::Engine
 

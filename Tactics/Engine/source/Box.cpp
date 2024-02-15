@@ -9,13 +9,13 @@ const Box Box::all(Range<int>(std::numeric_limits<int>::min(), std::numeric_limi
     Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
 
 
-Box::Box(const Range<int>& x, const Range<int>& y, const Range<int>& z) :
+Box::Box(Range<int> x, Range<int> y, Range<int> z) :
     x(x),
     y(y),
     z(z)
 {
 }
-Box::Box(const Position& from, const Position& to) :
+Box::Box(Position from, Position to) :
     x(from.x, to.x),
     y(from.y, to.y),
     z(from.z, to.z)
@@ -46,7 +46,7 @@ Size Box::Extent() const
     return Size(x.Size(), y.Size(), z.Size());
 }
 
-bool Box::Contains(const Position& position) const
+bool Box::Contains(Position position) const
 {
     return x[position.x] &&
         y[position.y] &&
@@ -58,7 +58,7 @@ Box& Box::Grow(int amount)
     return *this;
 }
 
-Box& Box::Grow(const Size& amount)
+Box& Box::Grow(Size amount)
 {
     x.Grow(amount.x);
     y.Grow(amount.y);
@@ -66,7 +66,7 @@ Box& Box::Grow(const Size& amount)
     return *this;
 }
 
-Box& Box::operator+=(const Position& translation)
+Box& Box::operator+=(Position translation)
 {
     x += translation.x;
     y += translation.y;
@@ -74,14 +74,14 @@ Box& Box::operator+=(const Position& translation)
     return *this;
 }
 
-Position Box::Clip(const Position& position) const
+Position Box::Clip(Position position) const
 {
     return Position(x.Clip(position.x),
         y.Clip(position.y),
         z.Clip(position.z));
 }
 
-Box& Box::operator|=(const Position& p)
+Box& Box::operator|=(Position p)
 {
     x |= p.x;
     y |= p.y;
@@ -89,7 +89,7 @@ Box& Box::operator|=(const Position& p)
     return *this;
 }
 
-Box& Box::operator|=(const Box& b)
+Box& Box::operator|=(Box b)
 {
     x |= b.x;
     y |= b.y;
@@ -97,12 +97,12 @@ Box& Box::operator|=(const Box& b)
     return *this;
 }
 
-Box operator|(const Box& a, const Box& b)
+Box operator|(Box a, Box b)
 {
     return Box(a) |= b;
 }
 
-Box operator&(const Box& a, const Box& b)
+Box operator&(Box a, Box b)
 {
     return Box(
         a.x & b.x,
@@ -110,27 +110,27 @@ Box operator&(const Box& a, const Box& b)
         a.z & b.z);
 }
 
-Box operator|(const Box& a, const Position& p)
+Box operator|(Box a, Position p)
 {
     return Box(a) |= p;
 }
 
-Box operator+(const Box& a, const Size& s)
+Box operator+(Box a, Size s)
 {
     return Box(a) += s;
 }
 
-Box operator+(const Box& a, const Position& translation)
+Box operator+(Box a, Position translation)
 {
     return Box(a) += translation;
 }
 
-std::ostream& operator<<(std::ostream& os, const Box& box)
+std::ostream& operator<<(std::ostream& os, Box box)
 {
     os << box.Start() << "-" << box.End();
     return os;
 }
-std::wostream& operator<<(std::wostream& os, const Box& box)
+std::wostream& operator<<(std::wostream& os, Box box)
 {
     os << box.Start() << "-" << box.End();
     return os;

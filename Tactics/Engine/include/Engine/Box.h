@@ -10,10 +10,10 @@ class Box
 {
 public:
     Box() : Box(Size()) {} 
-    Box(const Range<int>& x, const Range<int>& y, const Range<int>& z);
-    Box(const Position& from, const Position& to);
-    Box(const Position& from, const Size& extent) : Box(from, from + extent) {}
-    explicit Box(const Size& extent) : Box(Position(0, 0, 0), extent) {}
+    Box(Range<int> x, Range<int> y, Range<int> z);
+    Box(Position from, Position to);
+    Box(Position from, Size extent) : Box(from, from + extent) {}
+    explicit Box(Size extent) : Box(Position(0, 0, 0), extent) {}
     Position Start() const;
     Position End() const;
     int Volume() const;
@@ -21,15 +21,15 @@ public:
 
     operator bool() const { return !Empty(); }
     bool Empty() const;
-    bool Contains(const Position& position) const;
-    bool operator[](const Position& position) { return Contains(position); }
+    bool Contains(Position position) const;
+    bool operator[](Position position) { return Contains(position); }
     Box& Grow(int amount);
-    Box& Grow(const Size& amount);
-    Box& operator+=(const Size& amount) { return Grow(amount); }
-    Box& operator+=(const Position& translation);
-    Position Clip(const Position& position) const;
-    Box& operator|=(const Position& p);
-    Box& operator|=(const Box& b);
+    Box& Grow(Size amount);
+    Box& operator+=(Size amount) { return Grow(amount); }
+    Box& operator+=(Position translation);
+    Position Clip(Position position) const;
+    Box& operator|=(Position p);
+    Box& operator|=(Box b);
 
     Range<int> x;
     Range<int> y;
@@ -40,13 +40,13 @@ public:
     static const Box all;
 };
 
-Box operator|(const Box& a, const Box& b);
-Box operator&(const Box& a, const Box& b);
-Box operator|(const Box& a, const Position& p);
-Box operator+(const Box& a, const Size& s);
-Box operator+(const Box& a, const Position& translation);
-std::ostream& operator<<(std::ostream& os, const Box& box);
-std::wostream& operator<<(std::wostream& os, const Box& box);
+Box operator|(Box a, Box b);
+Box operator&(Box a, Box b);
+Box operator|(Box a, Position p);
+Box operator+(Box a, Size s);
+Box operator+(Box a, Position translation);
+std::ostream& operator<<(std::ostream& os, Box box);
+std::wostream& operator<<(std::wostream& os, Box box);
 
 }   // ::Engine
 

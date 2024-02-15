@@ -4,6 +4,7 @@ add_library(Engine ${Engine_SRC})
 target_compile_features(Engine PRIVATE cxx_std_17)
 set(DEPENDENCIES_DIR ../../Dependencies)
 
+project(Engine)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLUT REQUIRED)

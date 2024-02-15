@@ -14,11 +14,11 @@ struct Coordinate final
         z(z)
     {
     }
-    Coordinate& operator+=(const Vector& v);
-    Coordinate& operator-=(const Vector& v);
+    Coordinate& operator+=(Vector v);
+    Coordinate& operator-=(Vector v);
     Coordinate& operator*=(double factor);
     Coordinate& operator*=(const Matrix& transformation);
-    bool operator==(const Coordinate& other) const;
+    bool operator==(Coordinate other) const;
 
     double x;
     double y;
@@ -26,14 +26,14 @@ struct Coordinate final
     static const Coordinate origin;
 };
 
-Coordinate operator*(const Coordinate& c, double factor);
-Coordinate operator+(const Coordinate& c, const Vector& v);
-Coordinate operator-(const Coordinate& c, const Vector& v);
-Coordinate operator*(const Matrix& m, const Coordinate& v);
+Coordinate operator*(Coordinate c, double factor);
+Coordinate operator+(Coordinate c, Vector v);
+Coordinate operator-(Coordinate c, Vector v);
+Coordinate operator*(const Matrix& m, Coordinate v);
 
-std::ostream& operator<<(std::ostream& s, const Coordinate& coordinate);
+std::ostream& operator<<(std::ostream& s, Coordinate coordinate);
 std::istream& operator>>(std::istream& s, Coordinate& coordinate);
 
-Vector operator-(const Coordinate& a, const Coordinate& b);
+Vector operator-(Coordinate a, Coordinate b);
 
 } // ::Engine
