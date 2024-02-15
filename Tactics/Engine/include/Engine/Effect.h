@@ -44,7 +44,7 @@ namespace Engine
         std::vector<Particle> particles;   
         static void LoadTextures(const std::string_view location);
     private:
-        static std::map<std::string, class Image> textures;
+        static std::map<std::string, class Texture> textures;
     };
 
     class Effect

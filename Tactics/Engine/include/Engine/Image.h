@@ -7,57 +7,33 @@ namespace Engine
 
 struct RGBA;
 
-class Image
+class Image final
 {
 public:
-    Image();
-    explicit Image(const std::string_view fn);
-    void Load(const std::string_view fn);
+    Image() = default;
+    Image(unsigned width, unsigned height, unsigned channels);
+    Image(unsigned width, unsigned height, float* floatData);
+    ~Image();
+    explicit Image(std::string_view fn);
+    unsigned Width() const;
+    unsigned Height() const;
+    unsigned Channels() const;
+    unsigned Pixels() const;
+    unsigned SizeBytes() const;
+    
+    void Write(std::string_view filename) const;
+    const uint8_t* operator*() const;
+    uint8_t* operator*();
+    const uint8_t& operator[](unsigned offset) const;
+    uint8_t& operator[](unsigned offset);
+    operator bool() const;
 private:
-    class Texture
-    {
-    public:
-        Texture();
-        ~Texture();
-        void Bind() const;
-        void Unbind() const;
-    private:
-        unsigned id;
-    };
-    std::shared_ptr<Texture> texture;
-public:
-    class Bind
-    {
-    public:
-        Bind(const Image& image);
-        Bind(const Bind& other) = delete;
-        Bind& operator=(const Bind& other) = delete;
-        Bind(Bind&& other);
-        ~Bind();
-    private:
-        Bind(std::shared_ptr<Texture> texture);
-        std::shared_ptr<Texture> texture;
-    };
+    void Read(std::string_view fn);
 
-    struct Data
-    {
-        Data();
-        explicit Data(const std::string_view fileName);
-        Data(unsigned width, unsigned height, unsigned channels = 1);
-        Data(unsigned width, unsigned height, float* floaData);
-        ~Data();
-
-        void Write(std::string_view filename) const;
-        void Read(std::string_view filename);
-        void Release();
-
-        unsigned size() const;
-        unsigned Pixels() const;
-
-        unsigned width;
-        unsigned height;
-        unsigned channels;
-        uint8_t* data;
-    };
+    void Release();
+    unsigned width = 0;
+    unsigned height = 0;
+    unsigned channels = 0;
+    uint8_t* data = nullptr;
 };
 }//::Engine

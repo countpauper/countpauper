@@ -14,93 +14,14 @@ using errno_t = int;
 namespace Engine
 {
 
-Image::Image() = default;
-
-Image::Texture::Texture()
-{
-    glGenTextures(1, &id);
-}
-
-Image::Texture::~Texture()
-{
-    glDeleteTextures(1, &id);
-}
-
-Image::Image(const std::string_view fn) :
+Image::Image(std::string_view fn) :
     Image()
 {
-    Load(fn);
+    Read(fn);
 }
 
-void Image::Texture::Bind() const
-{
-    glBindTexture(GL_TEXTURE_2D, id);
-}
-void Image::Texture::Unbind() const
-{
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
 
-Image::Bind::Bind(const Image& image) :
-    Bind(image.texture)
-{
-}
-
-Image::Bind::Bind(std::shared_ptr<Texture> texture) :
-    texture(texture)
-{
-    if (texture)
-        texture->Bind();
-}
-
-Image::Bind::Bind(Bind&& other) :
-    texture(other.texture)
-{
-    other.texture.reset();
-}
-Image::Bind::~Bind()
-{
-    if (texture)
-        texture->Unbind();
-}
-
-void Image::Load(const std::string_view fn)
-{
-    texture = std::make_shared<Texture>();
-
-    Data data(fn);
-    std::string fns = from_string<std::string>(fn);
-    Bind bind(*this);
-    if (data.channels==4)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, data.width, data.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data);
-    else if (data.channels == 3)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, data.width, data.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data.data);
-    else if (data.channels == 2)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8_ALPHA8, data.width, data.height, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, data.data);
-    else if (data.channels == 1)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE8, data.width, data.height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data.data);
-    else
-        throw std::runtime_error("Unsupported image format");
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_MAX_LEVEL, 0);
-    CheckGLError();
-}
-
-Image::Data::Data() :
-    data(nullptr),
-    width(0),
-    height(0),
-    channels(0)
-{
-}
-
-Image::Data::Data(const std::string_view fileName) :
-    Data()
-{
-    Read(fileName);
-}
-
-Image::Data::Data(unsigned width, unsigned height, unsigned channels) :
+Image::Image(unsigned width, unsigned height, unsigned channels) :
     width(width),
     height(height),
     channels(channels),
@@ -108,8 +29,8 @@ Image::Data::Data(unsigned width, unsigned height, unsigned channels) :
 {
 }
 
-Image::Data::Data(unsigned width, unsigned height, float* floatData) :
-    Data(width, height, 1)
+Image::Image(unsigned width, unsigned height, float* floatData) :
+    Image(width, height, 1)
 {
     for (unsigned i = 0; i < width*height; ++i)
     {
@@ -117,12 +38,39 @@ Image::Data::Data(unsigned width, unsigned height, float* floatData) :
     }
 }
 
-Image::Data::~Data()
+Image::~Image()
 {
     Release();
 }
 
-void Image::Data::Release()
+
+unsigned Image::Width() const
+{
+    return width;
+}
+
+unsigned Image::Height() const
+{
+    return height;
+}
+
+unsigned Image::Channels() const
+{
+    return channels;
+}
+
+
+unsigned Image::Pixels() const
+{
+    return width * height;
+}
+
+unsigned Image::SizeBytes() const
+{
+    return Pixels() * channels;
+}
+
+void Image::Release()
 {
     if (data)
         stbi_image_free(data);
@@ -132,22 +80,11 @@ void Image::Data::Release()
     channels = 0;
 }
 
-unsigned Image::Data::size() const
-{
-    return width * height*channels;
-}
-
-unsigned Image::Data::Pixels() const
-{
-    return width * height;
-}
-
-void Image::Data::Read(std::string_view filename)
+void Image::Read(std::string_view filename)
 {
     Release();
 
     int w, h, c;
-    Data result;
     std::string fns = from_string<std::string>(filename);
     data = stbi_load(fns.c_str(), &w, &h, &c, STBI_default);
     if (!data)
@@ -159,7 +96,32 @@ void Image::Data::Read(std::string_view filename)
     channels = c;
 }
 
-void Image::Data::Write(std::string_view filename) const
+Image::operator bool() const
+{
+    return data != nullptr;
+}
+
+const uint8_t* Image::operator*() const
+{
+    return data;
+}
+
+uint8_t* Image::operator*()
+{
+    return data;
+}
+
+const uint8_t& Image::operator[](unsigned offset) const
+{
+    return data[offset];
+}
+
+uint8_t& Image::operator[](unsigned offset)
+{
+    return data[offset];
+}
+
+void Image::Write(std::string_view filename) const
 {
     std::string extension = UpperCase(filename.substr(filename.find_last_of('.'), std::string::npos));
     if (extension == ".PNG")

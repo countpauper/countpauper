@@ -1,7 +1,7 @@
 #include "Engine/Effect.h"
 #include "Engine/Drawing.h"
 #include "Engine/Random.h"
-#include "Engine/Image.h"
+#include "Engine/Texture.h"
 #include "Engine/Utils.h"
 #include <filesystem>
 #include <GL/gl.h>
@@ -33,7 +33,7 @@ namespace Engine
 
     void Particles::Render() const
     {
-        Engine::Image::Bind bind(textures["flame_03"]);
+        auto bind = textures["flame_03"].Bind();
 
         auto pm = Matrix::Projection();
         glPushMatrix();
@@ -135,6 +135,6 @@ namespace Engine
 
 
 Generator Effect::random;
-std::map<std::string, Image> Particles::textures;
+std::map<std::string, Texture> Particles::textures;
 
 }
