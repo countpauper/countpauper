@@ -75,7 +75,7 @@ std::map<Stat::Id, std::string_view> StatDefinition::statNames =
         { Stat::range, "range" },
         { Stat::hands, "hands" },
         { Stat::weight, "weight" },
-        { Stat::carry, "carry" },
+        { Stat::wield, "wield" },
 
         { Stat::blunt_resist, "blunt resistance" },
         { Stat::sharp_resist, "resist resistance" },

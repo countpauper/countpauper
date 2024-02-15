@@ -53,7 +53,7 @@ public:
                 range,
                 hands,
                 weight,
-                carry,
+                wield,
 
                 blunt_resist, // is defense? or derived from defense stat and more
                 sharp_resist, // is defense?

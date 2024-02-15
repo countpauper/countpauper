@@ -32,32 +32,18 @@ TEST(Character, secondary_stat_is_derived_from_primary)
     EXPECT_EQ(c.Get(Stat::damage).Description(), "1[Strength]");
 }
 
-TEST(Character, hitpoints_are_multiplied)
+TEST(Character, hitpoints_are_added)
 {
     Character::definition.clear();
-    Race race("troll", {{Stat::con, 2}} );
+    Race race("troll", {{Stat::con, 2}} );  // 2 + 2 = 4 con
     Character c("bar", race);
-    c.Level(Stat::level, 3);
+    c.Level(Stat::level, 2); // 1 + 2 = 3 level
     Character::definition[Stat::con] = Stat("Con", "");
-    Character::definition[Stat::hp] = Stat("Hitpoints", "", Stat::health, Stat::multiply, Stat::level);
-    Character::definition[Stat::health] = Stat("Hit Dice", "", Stat::con, {4,4,5,5,6,6,7,7});
-    EXPECT_EQ(c.Get(Stat::hp).Total(), 24);
-    EXPECT_EQ(c.Get(Stat::hp).Description(), "24[Hit Dice]");
-}
-
-TEST(Character, capacity_is_lifted_with_endurance)
-{
-    Character::definition.clear();
-    Race race("troll", {{Stat::con, 2}} );
-    Character c("bar", race);
-    c.Level(Stat::level, 3);
-    Character::definition[Stat::con] = Stat("Con", "");
-    Character::definition[Stat::str] = Stat("Str", "");
-    Character::definition[Stat::carry] = Stat("Capacity", "", Stat::lift, Stat::add, Stat::endurance);
-    Character::definition[Stat::endurance] = Stat("Endurance", "", Stat::con, {1,1,2,2,2,3,3});
-    Character::definition[Stat::lift] = Stat("Lift", "", Stat::str, {1,1,1,2,2,3,3});
-    EXPECT_EQ(c.Get(Stat::carry).Total(), 3);
-    EXPECT_EQ(c.Get(Stat::carry).Description(), "1[Lift] + 2[Endurance]");
+    Character::definition[Stat::level] = Stat("Level", "");
+    Character::definition[Stat::hp] = Stat("Hitpoints", "", Stat::level, Stat::add, Stat::health);
+    Character::definition[Stat::health] = Stat("Health", "", Stat::con, {0,0,5,5,10,10,15,15});
+    EXPECT_EQ(c.Get(Stat::hp).Total(), 3+10);
+    EXPECT_EQ(c.Get(Stat::hp).Description(), "3[Level] + 10[Health]");
 }
 
 }
