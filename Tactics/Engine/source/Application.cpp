@@ -12,6 +12,7 @@ Application::Application(int argc, char** argv)
 
 void Application::Run()
 {
+    glutSetCursor(GLUT_CURSOR_CROSSHAIR);
     glutMainLoop();
 
 }

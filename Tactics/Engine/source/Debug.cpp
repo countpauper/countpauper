@@ -2,14 +2,18 @@
  #include <debugapi.h>
 #endif 
 #include <iostream>
+#include <cstdio>
 #include "Engine/Debug.h"
 
 namespace Engine::Debug
 {
 
-void Log(std::string_view txt)
+static Engine::Timer startup;
+
+template<>
+void Log(const char* s)
 {
-    std::cout << txt.data() << std::endl;
+    printf("%.3f %s\n", startup.Seconds(), s);
 }
 
 LogStream Log()
@@ -24,7 +28,7 @@ LogStream::LogStream(LogStream&& o)
 
 LogStream::~LogStream()
 {
-    Log(s.str());
+    Log(s.str().c_str());
 }
 
 Timer::Timer(std::string_view desc) :
@@ -35,7 +39,7 @@ Timer::Timer(std::string_view desc) :
 Timer::~Timer()
 {
     auto t = timer.Seconds();
-    Log(description + " : " + std::to_string(t * 1000.0) + "ms");
+    Log("%*.s: %dms", description.size(), description.data(), t * 1000.0);
 }
 
 }

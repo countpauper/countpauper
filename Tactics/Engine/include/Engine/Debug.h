@@ -6,7 +6,17 @@
 
 namespace Engine::Debug
 {
-    void Log(std::string_view txt);
+    template<typename... T>
+    void Log(const char* s, T... parameters)
+    {
+        static char lineBuffer[1024];
+        int length = snprintf(lineBuffer,sizeof(lineBuffer), s, std::forward<T>(parameters)...);
+        Log(lineBuffer);
+    }
+
+    template<>
+    void Log(const char* s);
+
     class LogStream
     {
     public:

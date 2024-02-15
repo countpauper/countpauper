@@ -1,4 +1,5 @@
 #include "Engine/Window.h"
+#include "Engine/Debug.h"
 #include <GL/glut.h>
 
 namespace Engine
@@ -34,6 +35,8 @@ Window::Window()
 
     //Call "display" function
     glutDisplayFunc(Display);
+    glutMouseFunc(Mouse);
+    glutKeyboardFunc(Key);
 }
 
 Window::~Window()
@@ -61,6 +64,24 @@ void Window::Display(void)
 
     // Don't wait start processing buffered OpenGL routines
     glFlush();
+}
+
+void Window::Key(unsigned char key,  int x, int y)
+{
+    Debug::Log("Key(%d @ %d, %d)", key, x, y);
+}
+
+void Window::Mouse(int button, int state, int x, int y)
+{
+    Debug::Log("Mouse(%d, %s, %d @ %d, %d, )", button, state== GLUT_UP?"up":"down", glutGetModifiers(), x,y);
+}
+
+
+void Window::SetTitle(const char* title)
+{
+        glutSetWindow(handle);
+        glutSetWindowTitle(title);
+        glutSetIconTitle(title);
 }
 
 void Window::Fullscreen()
