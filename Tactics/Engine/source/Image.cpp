@@ -3,6 +3,7 @@
 #include "Engine/Color.h"
 #include "Engine/Error.h"
 #include "Engine/Utils.h"
+#include "Engine/Position.h"
 #include "Engine/from_string.h"
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -119,6 +120,27 @@ const uint8_t& Image::operator[](unsigned offset) const
 uint8_t& Image::operator[](unsigned offset)
 {
     return data[offset];
+}
+
+RGBA Image::operator[](const Position& position) const
+{
+    unsigned offset = (position.x + position.y * width) * channels;
+    switch(channels)
+    {
+    case 0:
+        return RGBA::transparent;
+    case 1:
+        return RGBA(data[offset], data[offset], data[offset]);  // grayscale
+    case 2:
+        return RGBA(data[offset], data[offset], data[offset], data[offset+1]);  // lumin alpha
+    case 3:
+        return RGBA(data[offset], data[offset+1], data[offset+2]); // RGB
+    case 4:
+        return RGBA(data[offset], data[offset+1], data[offset+2], data[offset+3]); // RGBA
+    default:
+        assert(false); // unimplemented channel to RGBA conversion
+        return RGBA::transparent;
+    }
 }
 
 void Image::Write(std::string_view filename) const

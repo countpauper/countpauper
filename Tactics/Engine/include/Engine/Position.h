@@ -6,7 +6,7 @@ namespace Engine
     struct Position 
     {
         Position();
-        Position(int x, int y, int z);
+        Position(int x, int y, int z=0);
         int x;
         int y;
         int z;

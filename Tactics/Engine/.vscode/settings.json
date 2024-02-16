@@ -1,0 +1,14 @@
+{
+    "editor.tabCompletion": "on",
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "files.exclude": {
+            "**/build/": true,
+            "CMakeCache.txt":true
+    },
+    "cmake.configureSettings":{
+            "BUILD_TESTS": true
+    },
+
+
+}

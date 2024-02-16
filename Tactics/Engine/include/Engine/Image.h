@@ -2,8 +2,12 @@
 
 #include <string>
 #include <memory>
+#include "Engine/Color.h"
+
 namespace Engine
 {
+
+class Position;
 
 struct RGBA;
 
@@ -26,6 +30,7 @@ public:
     uint8_t* operator*();
     const uint8_t& operator[](unsigned offset) const;
     uint8_t& operator[](unsigned offset);
+    RGBA operator[](const Position& position) const;
     operator bool() const;
 private:
     void Read(std::string_view fn);

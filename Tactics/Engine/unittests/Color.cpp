@@ -26,24 +26,22 @@ TEST(Color, Multiply)
     RGBA color(10, 20, 30, 40);
 
     color *= 10.0;
-    EXPECT_EQ(color, RGBA(100, 200, 255, 40));
-
-    EXPECT_EQ(color * 0.5, RGBA(50, 100,128, 40));
-
-    RGBA no_color = color * -0.1;
-    EXPECT_EQ(no_color, RGBA(0,0,0,40));
+    EXPECT_EQ(color, RGBA(10, 20, 30, 255));
+    EXPECT_EQ(color * 0.5, RGBA(10, 20, 30, 128));
+    EXPECT_EQ(color*-0.1,  RGBA(10, 20, 30, 0));
 }
 
 TEST(Color, Add)
 {
     EXPECT_EQ(RGBA(100, 0, 0) + RGBA(0, 100, 0), RGBA(100, 100, 0));
+    EXPECT_EQ(RGBA(100, 0, 0, 128) + RGBA(0, 100, 0, 128), RGBA(50, 50, 0));
 }
 
 TEST(Color, Lerp)
 {
-    EXPECT_EQ(Lerp(RGBA(100, 0, 0), RGBA(0, 100, 0), 0.5), RGBA(50, 50, 0));
-    EXPECT_EQ(Lerp(RGBA(100, 0, 0, 128), RGBA(0, 100, 0, 128), 0.5), RGBA(50, 50, 0));
-    EXPECT_EQ(Lerp(RGBA(100, 0, 0, 100), RGBA(0, 100, 0, 100), 0.5), RGBA(50, 50, 0, 200));
+    EXPECT_EQ(Lerp(RGBA(100, 0, 0), RGBA(0, 100, 0), 0.5), RGBA(50, 50, 0, 255));
+    EXPECT_EQ(Lerp(RGBA(100, 0, 0, 128), RGBA(0, 100, 0, 128), 0.5), RGBA(50, 50, 0, 128));
+    EXPECT_EQ(Lerp(RGBA(100, 0, 0, 100), RGBA(0, 100, 0, 50), 0.5), RGBA(66, 33, 0, 75));
 }
 
 TEST(Color, Translucent)
@@ -60,6 +58,14 @@ TEST(Color, Translucent)
 
     RGBA transparent = color.Translucent(-2.0);
     EXPECT_EQ(0, transparent.a);
+}
+
+TEST(Color, HSV)
+{
+    EXPECT_EQ(HSVA(RGBA::red), HSVA(0, 255, 255, 255));
+    EXPECT_EQ(HSVA(RGBA::green), HSVA(85, 255, 255));
+    EXPECT_EQ(HSVA(RGBA::blue), HSVA(171, 255, 255));
+    EXPECT_EQ(HSVA(RGBA(160, 160, 49)), HSVA(43, 176, 160));
 }
 
 }

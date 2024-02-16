@@ -20,7 +20,7 @@ namespace Engine
         Vector movement;
         double size = 1;
         double age = 0;
-        RGBA color;
+        RGBA color{0};
 
         void Despawn();
         bool IsSpawned() const;

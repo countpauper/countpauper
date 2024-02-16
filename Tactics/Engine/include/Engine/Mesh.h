@@ -28,7 +28,7 @@ public:
         Coordinate c;
         Vector n;
         TextureCoordinate t;
-        RGBA color;
+        RGBA color{0};
     };
 
     struct Triangle
