@@ -109,11 +109,11 @@ RGBA RGBA::red{255, 0, 0};
 RGBA RGBA::green{0, 255, 0};
 RGBA RGBA::blue{0, 0, 255};
 
-HSVA::HSVA(Component h, Component s, Component v, Component a) :
-    h(h),
-    s(s),
-    v(v),
-    a(a)
+HSVA::HSVA(float hue, float saturation, float value, float alpha) :
+    h(std::round(hue * 255.0 / 360.0)),
+    s(std::round(saturation * 255.0)),
+    v(std::round(value * 255.0)),
+    a(std::round(alpha * 255.0))
 {
 }
 
@@ -148,6 +148,12 @@ HSVA::HSVA(RGBA rgba)
     {
         s = int(255 * chroma) / v;
     }
+}
+
+
+float HSVA::Value() const
+{
+    return v/255.0;
 }
 
 

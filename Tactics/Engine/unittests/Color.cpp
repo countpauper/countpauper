@@ -62,10 +62,10 @@ TEST(Color, Translucent)
 
 TEST(Color, HSV)
 {
-    EXPECT_EQ(HSVA(RGBA::red), HSVA(0, 255, 255, 255));
-    EXPECT_EQ(HSVA(RGBA::green), HSVA(85, 255, 255));
-    EXPECT_EQ(HSVA(RGBA::blue), HSVA(171, 255, 255));
-    EXPECT_EQ(HSVA(RGBA(160, 160, 49)), HSVA(43, 176, 160));
+    EXPECT_EQ(HSVA(RGBA::red), HSVA(0, 1.0, 1.0, 1.0));
+    EXPECT_EQ(HSVA(RGBA::green), HSVA(120, 1.0, 1.0));
+    EXPECT_EQ(HSVA(RGBA::blue), HSVA(241, 1.0, 1.0));
+    EXPECT_EQ(HSVA(RGBA(160, 160, 50)), HSVA(60, 0.688, 0.627));
 }
 
 }

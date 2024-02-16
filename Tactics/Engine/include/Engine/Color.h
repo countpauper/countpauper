@@ -36,11 +36,13 @@ namespace Engine
 
     struct HSVA
     {
-        using Component = uint8_t;
-        Component h = 0, s = 0, v = 0, a = 0;
-        HSVA(Component h, Component s, Component v, Component a = 255);
+        // hue = degrees, saturation, value and alpha is fraction 0.0 to 1.0
+        HSVA(float hue, float saturation, float value, float alpha = 1.0);
         explicit HSVA(RGBA rgba);
         bool operator==(HSVA other) const;
-
+        float Value() const;
+    private:
+        using Component = uint8_t;
+        Component h = 0, s = 0, v = 0, a = 0;
     };
 }   // ::Engine
