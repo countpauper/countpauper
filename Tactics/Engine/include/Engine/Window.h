@@ -15,6 +15,7 @@ public:
 private:
 
         static void Mouse(int button, int state, int x, int y);
+        static void SpecialKey(int key,  int x, int y);
         static void Key(unsigned char key,  int x, int y);
         static void Display();
         static Window* CurrentWindow();

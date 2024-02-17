@@ -1,4 +1,6 @@
 #include <GL/gl.h>
+#include <GL/glut.h>
+
 #include "Engine/Camera.h"
 #include "Engine/Geometry.h"
 #include "Engine/Coordinate.h"
@@ -50,60 +52,67 @@ namespace Engine
         dragz = 0;
     }
 
-    void Camera::Key(unsigned key)
+    bool Camera::Key(unsigned char key, unsigned modifiers)
     {
-        #ifdef WIN32
-        auto shift = GetKeyState(VK_SHIFT)&0x8000;
-        if (shift == 0)
+        if (modifiers & GLUT_ACTIVE_SHIFT)
         {
-            if (key == VK_UP)
+            if (key == GLUT_KEY_UP)
             {
                 Move(Engine::Vector(0, 1, 0));
+                return true;
             }
-            else if (key == VK_DOWN)
+            else if (key == GLUT_KEY_DOWN)
             {
                 Move(Engine::Vector(0, -1, 0));
+                return true;
             }
-            else if (key == VK_LEFT)
+            else if (key == GLUT_KEY_LEFT)
             {
                 Move(Engine::Vector(-1, 0, 0));
+                return true;
             }
-            else if (key == VK_RIGHT)
+            else if (key == GLUT_KEY_RIGHT)
             {
                 Move(Engine::Vector(1, 0, 0));
+                return true;
             }
-            else if (key == VK_ADD)
+            else if (key == '+')
             {
                 zoom *= 1.1f;
+                return true;
             }
-            else if (key == VK_SUBTRACT)
+            else if (key == '-')
             {
                 zoom/= 1.1f;
+                return true;
             }
         }
         else
         {
-            if (key == VK_UP)
+            if (key == GLUT_KEY_UP)
             {
                 rotation.x += 5;
+                return true;
             }
-            else if (key == VK_DOWN)
+            else if (key == GLUT_KEY_DOWN)
             {
                 rotation.x -= 5;
+                return true;
             }
-            else if (key == VK_LEFT)
+            else if (key == GLUT_KEY_LEFT)
             {
                 rotation.y -= 5;
+                return true;
             }
-            else if (key == VK_RIGHT)
+            else if (key == GLUT_KEY_RIGHT)
             {
                 rotation.y += 5;
+                return true;
             }
         }
-        #else 
-        assert(false); // no platform independent implementation yet
-        #endif
+        return false;
     }
+
     PerspectiveCamera::PerspectiveCamera() :
         fov(90)    // makes scale = 1
     {
@@ -112,6 +121,8 @@ namespace Engine
 
     void PerspectiveCamera::Render() const
     {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
         GLdouble equation[4];
         glGetClipPlane(GL_CLIP_PLANE1, equation);
         double scale = zoom * double(1.0 / tan(fov* 0.5f * PI / 180.0f));
@@ -122,7 +133,7 @@ namespace Engine
         // default glDepthFunc(GL_LESS);
 
         // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/building-basic-perspective-projection-matrix
-        
+
         Matrix m = Matrix::Perspective(n, f) * Matrix::Scale(Vector(scale, scale, 1));
         glMultMatrixd(&m.data());
 /** /
@@ -146,6 +157,7 @@ namespace Engine
         }
 
         */
+        glMatrixMode(GL_MODELVIEW);
     }
 
     TopCamera::TopCamera()
@@ -155,6 +167,8 @@ namespace Engine
 
     void TopCamera::Render() const
     {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
         glScaled(zoom, zoom, zoom);
         //glTranslatef(dragx - position.x, -position.y, dragz - position.z);
         glTranslated(dragx - target.x, -target.y, dragz - 1.0f);
@@ -162,6 +176,7 @@ namespace Engine
         glClearDepth(1);
         glDepthFunc(GL_LESS);
         glRotated(-90, 1.0, 0.0, 0.0);
+        glMatrixMode(GL_MODELVIEW);
     }
 
 }

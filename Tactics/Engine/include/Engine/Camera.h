@@ -16,7 +16,10 @@ namespace Engine
         void Zoom(double factor);
         void Drag(double dx, double dz);
         void FinishDrag(double dx, double dz);
-        void Key(unsigned key);
+        // Key is ascii if >=32 or GLUT_KEY_X if <32
+        // modifiers is a bit mask of GLUT_ACTIVE_
+        // returns true if handled
+        bool Key(unsigned char key, unsigned modifiers);
     protected:
         Coordinate position;
         Coordinate target;

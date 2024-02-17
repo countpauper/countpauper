@@ -47,6 +47,7 @@ Window::Window()
     glutDisplayFunc(Display);
     glutMouseFunc(Mouse);
     glutKeyboardFunc(Key);
+    glutSpecialFunc(SpecialKey);
 }
 
 Window::~Window()
@@ -92,14 +93,50 @@ void Window::Display(void)
     glFlush();
 }
 
+
+void Window::SpecialKey(int key,  int x, int y)
+{
+    Debug::Log("Special Key(%d @ %d, %d)", key, x, y);
+    Window& window = *CurrentWindow();
+    if (window.GetScene().GetCamera().Key(key, glutGetModifiers()))
+    {
+        glutPostRedisplay();
+    }
+}
+
 void Window::Key(unsigned char key,  int x, int y)
 {
-    Debug::Log("Key(%d @ %d, %d)", key, x, y);
+    Debug::Log("Key(%c(%d) @ %d, %d)", key, key, x, y);
+    Window& window = *CurrentWindow();
+    if (window.GetScene().GetCamera().Key(key, glutGetModifiers()))
+    {
+        glutPostRedisplay();
+    }
 }
 
 void Window::Mouse(int button, int state, int x, int y)
 {
     Debug::Log("Mouse(%d, %s, %d @ %d, %d, )", button, state== GLUT_UP?"up":"down", glutGetModifiers(), x,y);
+    Window& window = *CurrentWindow();
+    if (button==GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        window.GetScene().GetCamera().Drag(x, y);
+    }
+    else if (button==GLUT_LEFT_BUTTON && state == GLUT_UP)
+    {
+        // Way too fast window.GetScene().GetCamera().FinishDrag(x, y);
+        // glutPostRedisplay();
+    }
+    else if (button==3 && state == GLUT_UP)
+    {
+        window.GetScene().GetCamera().Zoom(0.909090909);
+        glutPostRedisplay();
+    }
+    else if (button==4 && state == GLUT_UP)
+    {
+        window.GetScene().GetCamera().Zoom(1.1);
+        glutPostRedisplay();
+    }
 }
 
 

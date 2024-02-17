@@ -1,4 +1,5 @@
 #include "Engine/Scene.h"
+#include "Engine/Mesh.h"
 #include <GL/gl.h>
 
 namespace Engine
@@ -26,8 +27,14 @@ Prop& Scene::Add(Mesh& mesh, Coordinate loc, Quaternion ori)
     return *props.back();
 }
 
+Camera& Scene::GetCamera()
+{
+    return camera;
+}
+
 void Scene::Render() const
 {
+    camera.Render();
     for(const auto& prop: props)
     {
         prop->Render();
