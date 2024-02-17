@@ -35,7 +35,7 @@ void Mesh::Render() const
     if (glGet<int>(GL_RENDER_MODE) == GL_SELECT)
     {
         RenderSelection();
-    } 
+    }
     else if (glIsEnabled(GL_BLEND))
     {
         RenderTranslucent();
@@ -58,7 +58,7 @@ void Mesh::RenderOpaque() const
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     /* Last minute generate
-    glEnableClientState(GL_VERTEX_ARRAY); 
+    glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
     assert(3 * sizeof(GLdouble) == sizeof(Vertex::c));
@@ -169,7 +169,7 @@ void Mesh::SetName(uint32_t name)
 }
 
 void Mesh::SetColor(RGBA color)
-{   
+{
     Invalidate();   // also triangles due to opaque/translucent separation
     for (auto& v : vertices)
     {
@@ -270,7 +270,7 @@ void Mesh::GenerateVertexBuffer() const
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-  
+
     glEnableClientState(GL_VERTEX_ARRAY);
 
     assert(3 * sizeof(GLdouble) == sizeof(Vertex::c));
@@ -318,7 +318,7 @@ void Mesh::GenerateIndexBuffer() const
     }
     opaqueTrianglesBuffered = opaqueTriangles.size();
     translucentTrianglesBuffered = translucentTriangles.size();
-        
+
     glGenBuffers(1, &opaqueTriangleBuffer);
     glGenBuffers(1, &translucentTriangleBuffer);
 
@@ -380,8 +380,8 @@ Box::Box()
     uint32_t vi = 0, ti = 0;
     for (const auto & face : faces)
     {
-        // 1-0 
-        // |\| 
+        // 1-0
+        // |\|
         // 2_3
         triangles[ti++] = Triangle{ vi, vi + 1, vi + 3 };
         triangles[ti++] = Triangle{ vi + 2, vi + 3, vi + 1 };

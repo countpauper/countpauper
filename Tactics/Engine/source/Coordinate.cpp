@@ -3,6 +3,7 @@
 #include "Engine/Matrix.h"
 #include "Engine/from_string.h"
 #include "Engine/Utils.h"
+#include <GL/gl.h>
 #include <ostream>
 #include <istream>
 
@@ -64,6 +65,10 @@ Coordinate operator-(Coordinate c, Vector v)
     return Coordinate(c) -= v;
 }
 
+void Coordinate::Render() const
+{
+    glTranslated(x, y, z);
+}
 
 Coordinate operator*(const Matrix& m, Coordinate v)
 {
@@ -85,7 +90,7 @@ std::ostream& operator<<(std::ostream& s, Coordinate coordinate)
 std::istream& operator>>(std::istream& s, Coordinate& coordinate)
 {
     std::string str;
-    
+
     s >> Engine::Skip(Engine::whitespace) >> Engine::ReadChar('(') >> Engine::ReadUntil(')', str);
 
     auto value_strings= Split(str, ',');

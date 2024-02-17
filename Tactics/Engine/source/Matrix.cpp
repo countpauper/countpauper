@@ -81,7 +81,7 @@ Matrix Matrix::Inverse() const
         result[0][0] = m[0][0];  result[1][0] = m[0][1]; result[2][0] = m[0][2];
         result[0][1] = m[1][0];  result[1][1] = m[1][1]; result[2][1] = m[1][2];
         result[0][2] = m[2][0];  result[1][2] = m[2][1]; result[2][2] = m[2][2];
-        // rotate and inverse the translation 
+        // rotate and inverse the translation
         result[3][0] = -(result[0][0] * m[3][0] + result[1][0] * m[3][1] + result[2][0] * m[3][2]);
         result[3][1] = -(result[0][1] * m[3][0] + result[1][1] * m[3][1] + result[2][1] * m[3][2]);
         result[3][2] = -(result[0][2] * m[3][0] + result[1][2] * m[3][1] + result[2][2] * m[3][2]);
@@ -258,7 +258,6 @@ Matrix Matrix::Orthogonalize() const
     Vector y = Y() - (X() * 0.5*xyerror);
     Vector z = x.Cross(y);
     return Matrix(x, y, z, Translation());
-
 }
 
 Matrix& Matrix::operator*=(const Matrix& o)
@@ -271,6 +270,12 @@ Matrix& Matrix::operator*=(const Matrix& o)
 const double& Matrix::data() const
 {
     return m[0][0];
+}
+
+
+void Matrix::Render() const
+{
+    glMultMatrixd(&m[0][0]);
 }
 
 /*
@@ -328,7 +333,6 @@ Matrix Matrix::Projection()
     assert(sizeof(double) == sizeof(GLdouble));
     glGetDoublev(GL_PROJECTION_MATRIX, &matrix[0][0]);
     return matrix;
-
 }
 
 Matrix Matrix::Identity()

@@ -18,7 +18,7 @@ Quaternion::Quaternion(double x, double y, double z, double w) :
 }
 
 
-Quaternion::Quaternion(const Vector& axis, double angle) : 
+Quaternion::Quaternion(const Vector& axis, double angle) :
     w(cos(angle/2))
 {
     double sinHalfAngle = sin(angle / 2);
@@ -81,7 +81,7 @@ Matrix Quaternion::AsMatrix() const
 {   // https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation#Quaternion-derived_rotation_matrix
     double wsqr = w * w; // can be optimized more probably by precomupting 2* xsqr and 2xy 2xz and so on
     double xsqr = x * x;
-    double ysqr = y * y; 
+    double ysqr = y * y;
     double zsqr = z * z;
     // column major like opengl  m[col][row]
     return Engine::Matrix{
@@ -106,6 +106,11 @@ Quaternion Quaternion::Shortest(const Vector& a, const Vector& b)
 
     auto cross = an.Cross(bn);
     return Quaternion{ cross.x, cross.y, cross.z, 1+dot }.Normalized();
+}
+
+void Quaternion::Render() const
+{
+    AsMatrix().Render();
 }
 
 Vector operator*(const Quaternion& q, const Vector& v)

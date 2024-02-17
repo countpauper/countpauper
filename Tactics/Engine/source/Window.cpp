@@ -1,5 +1,6 @@
 #include "Engine/Window.h"
 #include "Engine/Debug.h"
+#include <GL/glew.h>
 #include <GL/glut.h>
 
 namespace Engine
@@ -7,6 +8,12 @@ namespace Engine
 
 void init(void)
 {
+    GLenum err =glewInit();
+    if (err != GL_NO_ERROR)
+    {
+        throw std::runtime_error("Failed to initialize GLEW");
+    }
+
     //select clearing (background) color
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -16,6 +23,7 @@ void init(void)
     glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
 }
 
+std::map<int, Window*> Window::allWindows;
 
 Window::Window()
 {
@@ -30,6 +38,8 @@ Window::Window()
 
         //Create the window
     handle = glutCreateWindow(nullptr);
+    allWindows[handle] = this;
+
     //Call init (initialise GLUT
     init();
 
@@ -43,8 +53,22 @@ Window::~Window()
 {
         if (handle)
         {
-                glutDestroyWindow(handle);
+            allWindows.erase(handle);
+            glutDestroyWindow(handle);
         }
+}
+
+Window* Window::CurrentWindow()
+{
+    int currentHandle = glutGetWindow();
+    auto it = allWindows.find(currentHandle);
+    if (it == allWindows.end()) {
+        return nullptr;
+    }
+    else
+    {
+        return it->second;
+    }
 }
 
 void Window::Display(void)
@@ -52,8 +76,9 @@ void Window::Display(void)
     //Clear all pixels
     glClear(GL_COLOR_BUFFER_BIT);
 
+    CurrentWindow()->GetScene().Render();
+/*
     //draw white polygon (rectangle) with corners at
-    // (0.25, 0.25, 0.0) and (0.75, 0.75, 0.0)
     glColor3f(1.0,1.0,0.0);
     glBegin(GL_POLYGON);
         glVertex3f(0.25, 0.25, 0.0);
@@ -61,6 +86,7 @@ void Window::Display(void)
         glVertex3f(0.75, 0.75, 0.0);
         glVertex3f(0.25, 0.60, 0.0);
     glEnd();
+*/
 
     // Don't wait start processing buffered OpenGL routines
     glFlush();
@@ -90,6 +116,10 @@ void Window::Fullscreen()
         glutFullScreen();
 }
 
+Scene& Window::GetScene()
+{
+    return scene;
+}
 
 
 }

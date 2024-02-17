@@ -21,6 +21,7 @@ struct Quaternion
     double x, y, z, w;
     static Quaternion Identity();
     static Quaternion Shortest(const Vector& a, const Vector& b);
+    void Render() const;
 private:
     double SquareMagnitude() const;
     static const double precision; // 1e-12;

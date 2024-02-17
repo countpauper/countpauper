@@ -11,7 +11,7 @@ struct Matrix
 {
     Matrix() = default;
     Matrix(const Matrix&) = default;
-    // Column major matrix { } initialization  
+    // Column major matrix { } initialization
     Matrix(std::initializer_list<double> v);
     Matrix(const Vector& x, const Vector& y, const Vector& z, const Vector& t);
 
@@ -43,6 +43,8 @@ struct Matrix
     Matrix NormalScale() const;
     Matrix Orthogonalize() const;
     Matrix& operator*=(const Matrix& o);
+    void Render() const;
+
     static Matrix Projection();
     static Matrix Identity();
     static Matrix Scale(const Vector& scale);

@@ -2,7 +2,7 @@
 #ifdef WIN32
 #include <windows.h>
 #include <stdexcept>
-#include "GL/glew.h"
+#include <GL/glew.h>
 
 namespace Engine
 {
@@ -55,7 +55,7 @@ OffscreenSurface::OffscreenSurface() :
 
 
     int pf = ChoosePixelFormat(hDC, &pfd);
-    if (pf == 0) 
+    if (pf == 0)
     {
         ReleaseDC(hWnd, hDC);
         DestroyWindow(hWnd);
@@ -96,13 +96,13 @@ OffscreenSurface::~OffscreenSurface()
 
 
 }
-#else 
+#else
 #include <cassert>
 
 namespace Engine
 {
     // TODO separate file
-OffscreenSurface::OffscreenSurface() 
+OffscreenSurface::OffscreenSurface()
 {
 }
 

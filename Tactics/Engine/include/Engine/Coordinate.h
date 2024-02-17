@@ -19,6 +19,7 @@ struct Coordinate final
     Coordinate& operator*=(double factor);
     Coordinate& operator*=(const Matrix& transformation);
     bool operator==(Coordinate other) const;
+    void Render() const;
 
     double x;
     double y;
