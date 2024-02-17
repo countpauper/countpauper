@@ -60,7 +60,17 @@ TEST(Color, Translucent)
     EXPECT_EQ(0, transparent.a);
 }
 
-TEST(Color, HSV)
+
+TEST(Color, HSVencoding)
+{
+    HSVA color(60.0, 0.25, 0.75, 0.8);
+    EXPECT_NEAR(color.Hue(), 60.0, 1.0);
+    EXPECT_NEAR(color.Saturation(), 0.25, 0.01);
+    EXPECT_NEAR(color.Value(), 0.75, 0.01);
+    EXPECT_NEAR(color.Alpha(), 0.8, 0.01);
+}
+
+TEST(Color, RGBtoHSV)
 {
     EXPECT_EQ(HSVA(RGBA::red), HSVA(0, 1.0, 1.0, 1.0));
     EXPECT_EQ(HSVA(RGBA::green), HSVA(120, 1.0, 1.0));

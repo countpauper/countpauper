@@ -11,7 +11,7 @@
                         "program": "${workspaceFolder}/build/tactics",
                         "args": ["-gldebug", "-geometry", "1000x750"],
                         "stopAtEntry": false,
-                        "cwd": "${fileDirname}",
+                        "cwd": "${workspaceFolder}",
                         "environment": [],
                         "externalConsole": false,
                         "MIMode": "gdb",

@@ -40,7 +40,10 @@ namespace Engine
         HSVA(float hue, float saturation, float value, float alpha = 1.0);
         explicit HSVA(RGBA rgba);
         bool operator==(HSVA other) const;
+        float Hue() const;
+        float Saturation() const;
         float Value() const;
+        float Alpha() const;
     private:
         using Component = uint8_t;
         Component h = 0, s = 0, v = 0, a = 0;
