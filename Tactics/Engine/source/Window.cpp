@@ -1,5 +1,6 @@
 #include "Engine/Window.h"
 #include "Engine/Debug.h"
+#include "Engine/Color.h"
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <assert.h>
@@ -7,7 +8,7 @@
 namespace Engine
 {
 
-void init(void)
+void Window::Init(void)
 {
     GLenum err =glewInit();
     if (err != GL_NO_ERROR)
@@ -52,10 +53,8 @@ Window::Window()
     handle = glutCreateWindow(nullptr);
     allWindows[handle] = this;
 
-    //Call init (initialise GLUT
-    init();
-
-    //Call "display" function
+    Init();
+    // Hook functions, TODO: this should be done once for all windows
     glutDisplayFunc(Display);
     glutMouseFunc(Mouse);
     glutKeyboardFunc(Key);
@@ -86,22 +85,16 @@ Window* Window::CurrentWindow()
 
 void Window::Display(void)
 {
+    Window& window = *CurrentWindow();
+    window.Render();
+}
+
+void Window::Render()
+{
     //Clear all pixels
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
     CurrentWindow()->GetScene().Render();
-/*
-    //draw white polygon (rectangle) with corners at
-    glColor3f(1.0,1.0,0.0);
-    glBegin(GL_POLYGON);
-        glVertex3f(0.25, 0.25, 0.0);
-        glVertex3f(0.75, 0.25, 0.0);
-        glVertex3f(0.75, 0.75, 0.0);
-        glVertex3f(0.25, 0.60, 0.0);
-    glEnd();
-*/
-
     // Don't wait start processing buffered OpenGL routines
     glFlush();
 }
@@ -110,6 +103,7 @@ void Window::Display(void)
 void Window::SpecialKey(int key,  int x, int y)
 {
     Debug::Log("Special Key(%d @ %d, %d)", key, x, y);
+    assert(key<256); // upper byte used for ascii
     Window& window = *CurrentWindow();
     if (window.GetScene().GetCamera().Key(key, glutGetModifiers()))
     {
@@ -121,7 +115,12 @@ void Window::Key(unsigned char key,  int x, int y)
 {
     Debug::Log("Key(%c(%d) @ %d, %d)", key, key, x, y);
     Window& window = *CurrentWindow();
-    if (window.GetScene().GetCamera().Key(key, glutGetModifiers()))
+    window.OnKey(std::uint16_t(key) << 8, x, y);
+}
+
+void Window::OnKey(std::uint16_t  key,  int x, int y)
+{
+    if (scene.GetCamera().Key(key, glutGetModifiers()))
     {
         glutPostRedisplay();
     }
@@ -131,23 +130,49 @@ void Window::Mouse(int button, int state, int x, int y)
 {
     Debug::Log("Mouse(%d, %s, %d @ %d, %d, )", button, state== GLUT_UP?"up":"down", glutGetModifiers(), x,y);
     Window& window = *CurrentWindow();
-    if (button==GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    window.OnMouse(button, state, x, y);
+}
+
+
+Engine::Coordinate Window::Screen2View(int x, int y) const
+{
+    glutSetWindow(handle);
+    int width = glutGet(GLUT_WINDOW_WIDTH);
+    int height = glutGet(GLUT_WINDOW_HEIGHT);
+    if (width<=0 || height<=0 )
     {
-        window.GetScene().GetCamera().Drag(x, y);
+        return Coordinate();
     }
-    else if (button==GLUT_LEFT_BUTTON && state == GLUT_UP)
+    return Engine::Coordinate(
+        -1.0 + 2.0 * x / width,
+        1.0 + -2.0 * y / height,
+        0
+    );
+}
+
+void Window::OnMouse(int button, int state, int x, int y)
+{
+    auto viewPosition = Screen2View(x, y);
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
     {
-        // Way too fast window.GetScene().GetCamera().FinishDrag(x, y);
-        // glutPostRedisplay();
+        auto [prop, name ] = scene.Select(viewPosition);
+        if (prop)
+        {
+            Engine::Debug::Log("Selected %.*s.%d", prop->Name().size(), prop->Name().data(), name);
+        }
+        else
+        {
+            Engine::Debug::Log("Selected nothing at %f, %f", viewPosition.x, viewPosition.y);
+        }
     }
-    else if (button==3 && state == GLUT_UP)
+    if (button==3 && state == GLUT_UP)
     {
-        window.GetScene().GetCamera().Zoom(0.909090909);
+        scene.GetCamera().Zoom(0.909090909);
         glutPostRedisplay();
     }
     else if (button==4 && state == GLUT_UP)
     {
-        window.GetScene().GetCamera().Zoom(1.1);
+        scene.GetCamera().Zoom(1.1);
         glutPostRedisplay();
     }
 }

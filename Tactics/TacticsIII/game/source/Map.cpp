@@ -4,6 +4,7 @@
 #include "Engine/Debug.h"
 #include "Engine/Maths.h"
 #include "Game/Material.h"
+#include <cassert>
 
 namespace Game
 {
@@ -85,51 +86,36 @@ void Map::GenerateMesh()
     {
         int x = idx % size.x;
         int y = idx / size.x;
+
+        unsigned vertidx = mesh.vertices.size();
+        Engine::Coordinate coordinates[]{
+            Engine::Coordinate(x, y, grid.level),
+            Engine::Coordinate(x+1, y, grid.level),
+            Engine::Coordinate(x+1, y+1, grid.level),
+            Engine::Coordinate(x, y+1, grid.level)
+        };
+        Engine::Quad quad(coordinates);
+
         float brightness = grid.level / float(size.z);
         brightness = 0.2 + brightness*0.8;
-
         auto groundColor = grid.ground->color;
         auto vertexColor = Engine::Lerp(Engine::RGBA::black, groundColor, brightness);
-        unsigned vertidx = mesh.vertices.size();
-        mesh.vertices.emplace_back(Engine::Mesh::Vertex{
-            Engine::Coordinate(x, y, grid.level),
-            up,
-            Engine::Mesh::TextureCoordinate{0, 0, 0},
-            vertexColor
-        });
-
-        mesh.vertices.emplace_back(Engine::Mesh::Vertex{
-            Engine::Coordinate(x+1, y, grid.level),
-            up,
-            Engine::Mesh::TextureCoordinate{1, 0, 0},
-            vertexColor
-        });
-
-        mesh.vertices.emplace_back(Engine::Mesh::Vertex{
-            Engine::Coordinate(x+1, y+1, grid.level),
-            up,
-            Engine::Mesh::TextureCoordinate{1, 1, 0},
-            vertexColor
-        });
-
-        mesh.vertices.emplace_back(Engine::Mesh::Vertex{
-            Engine::Coordinate(x, y+1, grid.level),
-            up,
-            Engine::Mesh::TextureCoordinate{0, 1, 0},
-            vertexColor
-        });
-
-        mesh.triangles.push_back({vertidx, vertidx+1, vertidx +2});
-        mesh.triangles.push_back({vertidx, vertidx+2, vertidx +3});
+        quad.SetColor(vertexColor);
+        quad.SetName(idx);
+        mesh += quad;
 
         if (x > 0 )
         {
             Grid& neighbourGrid = grids[idx-1];
             if (neighbourGrid.level != grid.level)
             {
+                // TODO add as a quad here too with its own normal and texture coordinates when adding light,
+                //  then fake lighting can be removed as that's the complication now to recompute
                 unsigned neighbourVertexIdx = vertidx - 4;
                 mesh.triangles.push_back({vertidx, vertidx+3, neighbourVertexIdx +1});
+                mesh.names.push_back(idx);
                 mesh.triangles.push_back({vertidx+3, neighbourVertexIdx +2, neighbourVertexIdx +1});
+                mesh.names.push_back(idx);
             }
         }
         if (y >0 )
@@ -139,13 +125,15 @@ void Map::GenerateMesh()
             {
                 unsigned neighbourVertexIdx = vertidx - (4 * size.x);
                 mesh.triangles.push_back({vertidx+1, vertidx+0, neighbourVertexIdx +3});
+                mesh.names.push_back(idx);
                 mesh.triangles.push_back({vertidx+1, neighbourVertexIdx+3, neighbourVertexIdx +2});
+                mesh.names.push_back(idx);
             }
         }
-        Engine::Debug::Log("Grid[%d] added at (%d, %d)", idx, x, y);
 
         ++idx;
     }
+    assert(mesh.names.size() == mesh.triangles.size());
 }
 
 }

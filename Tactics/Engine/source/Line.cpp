@@ -1,3 +1,4 @@
+#include <GL/gl.h>
 #include "Engine/Line.h"
 #include "Engine/Maths.h"
 #include "Engine/Vector.h"
@@ -22,7 +23,7 @@ double Line::ProjectionCoefficient(const Coordinate& p) const
     Engine::Vector v = p - a;
     double length_squared = LengthSquared();
     if (length_squared == 0)
-        return 0;   // project on point a==b 
+        return 0;   // project on point a==b
     return Vector(*this).Dot(v) / length_squared;
 }
 
@@ -51,6 +52,14 @@ Coordinate Line::Project(const Coordinate& p) const
         return Coordinate::origin+Lerp(Vector(a), Vector(b), interpolation_factor);
     }
 }
+
+void Line::Render() const
+{
+    glBegin(GL_LINES);
+        glVertex3d(a.x, a.y, a.z);
+        glVertex3d(b.x, b.y, b.z);
+    glEnd();
+}
 double Line::Distance(const Coordinate& p) const
 {
     Coordinate projection = Project(p);
@@ -66,6 +75,57 @@ AABB Line::Bounds() const
 bool Line::operator==(const Line& rhs) const
 {
     return a == rhs.a && b == rhs.b;
+}
+
+Line& Line::operator*=(const Matrix& transformation)
+{
+    a *= transformation;
+    b *= transformation;
+    return *this;
+}
+
+
+Line& Line::operator*=(Quaternion q)
+{
+    auto va = q * Vector(a);
+    a = Coordinate(va.x, va.y, va.z);
+    auto vb = q * Vector(b);
+    b = Coordinate(vb.x, vb.y, vb.z);
+    return *this;
+}
+
+Line& Line::operator+=(Vector v)
+{
+    a += v;
+    b += v;
+    return *this;
+}
+Line& Line::operator-=(Vector v)
+{
+    a -= v;
+    b -= v;
+    return *this;
+}
+
+
+Line operator*(const Matrix& transformation, Line line)
+{
+    return line*=transformation;
+}
+
+Line operator*(Quaternion q, Line line)
+{
+    return line *= q;
+}
+
+Line operator+(Line line, Vector v)
+{
+    return line+=v;
+}
+
+Line operator-(Line line, Vector v)
+{
+    return line -= v;
 }
 
 

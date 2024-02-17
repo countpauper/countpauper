@@ -8,6 +8,8 @@
 #include "Engine/Triangle.h"
 #include "Engine/GLutil.h"
 #include "Engine/Plane.h"
+#include "Engine/Triangle.h"
+
 #include <array>
 #include <cassert>
 
@@ -176,6 +178,30 @@ void Mesh::SetColor(RGBA color)
         v.color = color;
     }
 }
+
+std::pair<double, uint32_t> Mesh::Intersection(const Line& line) const
+{
+    // TODO: optimize by checking the intersection of the line with the axis aligned bounding box
+    unsigned idx = 0;
+    double nearest = std::numeric_limits<double>::max();
+    unsigned best = names.size();
+    for(auto triangle : triangles)
+    {
+        Engine::Triangle t(vertices[triangle.vertex[0]].c,
+            vertices[triangle.vertex[1]].c,
+            vertices[triangle.vertex[2]].c);
+        double distance = t.Intersection(line);
+        if (distance>=0.0 && distance < nearest) // nb could be nan
+        {
+            nearest = distance;
+            best = idx;
+        }
+        ++idx;
+    }
+    uint32_t name = (best < names.size()) ? names[best] : 0;
+    return std::make_pair(nearest, name);
+}
+
 double Mesh::Distance(const Coordinate& p) const
 {
     double minDistance = std::numeric_limits<double>::infinity();
@@ -203,7 +229,7 @@ Mesh& Mesh::operator+=(const Mesh& addition)
     assert(vertices.size() < std::numeric_limits<uint32_t>::max());
     uint32_t vertexOffset = uint32_t(vertices.size());
     vertices.insert(vertices.end(), addition.vertices.begin(), addition.vertices.end());
-    assert(names.empty() == addition.names.empty()); // no functionality to add unnamed to named
+    assert(triangles.empty() || addition.triangles.empty() || names.empty() == addition.names.empty()); // no functionality to add unnamed to named
     names.insert(names.end(), addition.names.begin(), addition.names.end());
     for (const auto& t : addition.triangles)
     {
@@ -336,6 +362,19 @@ void Mesh::GenerateIndexBuffer() const
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+
+Quad::Quad(Coordinate coords[4])
+{
+    Vector normal = Plane(coords[0], coords[1], coords[2]).Normalized().normal;
+    vertices.emplace_back(Vertex{ coords[0], normal, TextureCoordinate{0,0,0}, RGBA::white});
+    vertices.emplace_back(Vertex{ coords[1], normal, TextureCoordinate{0,0,0}, RGBA::white});
+    vertices.emplace_back(Vertex{ coords[2], normal, TextureCoordinate{0,0,0}, RGBA::white});
+    vertices.emplace_back(Vertex{ coords[3], normal, TextureCoordinate{0,0,0}, RGBA::white});
+
+    triangles.emplace_back(Triangle{0, 1, 2});
+    triangles.emplace_back(Triangle{0, 2, 3});
+}
+
 Box::Box(const Vector& size)
     : Box()
 {
@@ -391,7 +430,7 @@ Box::Box()
         double angle = 0;
         for (const auto& t : texCoords)
         {
-            vertices[vi].c = faceCenter + Quaternion(face.normal, angle) * diagonal;
+            vertices[vi].c = faceCenter + (Quaternion(face.normal, angle) * diagonal);
             vertices[vi].n = face.normal;
             vertices[vi].color = RGBA::white;
             // test vertices[vi].color = RGBA(face.normal.x*127+127, face.normal.y*127+127, face.normal.z*127+127);

@@ -13,6 +13,12 @@ namespace Engine
 
 const Coordinate Coordinate::origin { 0,0,0 };
 
+
+double Coordinate::Distance(Coordinate other) const
+{
+    return (*this - other).Length();
+}
+
 Coordinate& Coordinate::operator+=(Vector v)
 {
     x += v.x;

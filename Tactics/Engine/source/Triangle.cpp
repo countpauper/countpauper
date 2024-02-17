@@ -15,7 +15,7 @@ double Triangle::Surface() const
     Vector ac = c - a;
     double d = ab.Dot(ac);
     if (d == 0) // perpendicular at a
-        return ab.Length()*ac.Length()*0.5; 
+        return ab.Length()*ac.Length()*0.5;
     d/= ab.LengthSquared();
     Coordinate p = a+ab * d;
     return 0.5 * (p - c).Length() * (b - a).Length();
@@ -98,11 +98,43 @@ double Triangle::Distance(const Coordinate& p) const
     else
     {   // All>0, all should be <=1.0 too
         assert(barycentric.x <= 1.0 && barycentric.y <= 1.0 && barycentric.z <= 1.0);
-        // If it projects into the triangle a negative value is returned if the point is behind the triangle 
+        // If it projects into the triangle a negative value is returned if the point is behind the triangle
         // this allows at least convex meshes to determine if the point is inside the mesh when all distance<=0
         return sign * (pp - p).Length();
     }
 
+}
+
+
+float Triangle::Intersection(const Line& line) const
+{
+    Plane plane(*this);
+    if (!plane)
+    {
+        assert(false); // I guess the line could still intersect the sliver
+        return std::numeric_limits<float>::quiet_NaN();
+    }
+    double fraction = plane.Intersection(line);
+    if (std::isnan(fraction)) {
+        return fraction;
+    }
+    Coordinate P = line.a + Vector(line) * std::abs(fraction);
+    Vector bary = BaryCentric(P);
+    Vector directBary = BaryCentric(line.a);
+    Vector bBary = BaryCentric(line.b);
+
+    if (bary.x<0 || bary.x>1 || bary.y<0 || bary.y > 1)
+    {
+        return std::numeric_limits<float>::quiet_NaN();
+    }
+    if (fraction > 0 )
+    {
+        return P.Distance(line.a);
+    }
+    else
+    {
+        return -P.Distance(line.a);
+    }
 }
 
 

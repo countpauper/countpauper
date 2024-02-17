@@ -63,7 +63,7 @@ struct Range
         return *this;
     }
     Range& operator-=(T v) { return operator+=(-v); }
-    Range& operator*=(T v) 
+    Range& operator*=(T v)
     {
         begin *= v;
         end *= v;
@@ -118,7 +118,7 @@ struct Range
         else
             return (begin + end) / 2;
     }
-   
+
     T Middle(std::false_type) const
     {
         return (begin + end) / 2;
@@ -128,7 +128,7 @@ struct Range
     T begin;
     T end;
 
-   
+
     bool infinite() const
     {
         return std::isinf(begin) || std::isinf(end);
@@ -153,6 +153,11 @@ struct Range
     static constexpr Range null()
     {
         return Range(0, 0);
+    }
+
+    static constexpr Range empty()
+    {
+        return Range(std::numeric_limits<T>::max(), std::numeric_limits<T>::min());
     }
 };
 

@@ -22,9 +22,9 @@ target_link_libraries(Engine
 
 if(BUILD_TESTS)
         include(CTest)
-        #if (NOT GOOGLETEST_VERSION)
-        #        add_subdirectory("${DEPENDENCIES_DIR}/googletest/" ${CMAKE_CURRENT_BINARY_DIR}/googletest)
-        #endif()
+        if (NOT TARGET gtest)
+                add_subdirectory("${DEPENDENCIES_DIR}/googletest/" ${CMAKE_CURRENT_BINARY_DIR}/googletest)
+        endif()
         enable_testing()
         add_subdirectory(unittests)
 endif()

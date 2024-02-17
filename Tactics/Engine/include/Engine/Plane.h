@@ -7,6 +7,7 @@ namespace Engine
 
 struct Coordinate;
 struct Line;
+struct Triangle;
 
 struct Plane : public IVolume, public Clone<Plane>
 {
@@ -19,6 +20,7 @@ struct Plane : public IVolume, public Clone<Plane>
     Plane(const Coordinate& origin, const Vector& n);
     Plane(const Coordinate& origin, const Vector& span1, const Vector& span2);
     Plane(const Coordinate& a, const Coordinate& b, const Coordinate& c);
+    Plane(const Triangle& t);
 
     Plane& Normalize();
     Plane Normalized() const;
@@ -33,8 +35,9 @@ struct Plane : public IVolume, public Clone<Plane>
     double Distance(const Coordinate& c) const override;
     double Volume() const override { return std::numeric_limits<double>::infinity(); }
     bool IsParallel(const Line& line) const;
-    Coordinate Intersection(const Line& line) const;
-    Engine::Vector normal;  // does not need to be normalized 
+    // NaN if parallel or no intersection. Otherwise fraction 0...1 is fraction = fraction * Vector(Line) where intersection is
+    double Intersection(const Line& line) const;
+    Engine::Vector normal;  // does not need to be normalized
     double d;
 
     static Plane null;

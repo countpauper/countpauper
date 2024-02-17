@@ -52,7 +52,7 @@ namespace Engine
         dragz = 0;
     }
 
-    bool Camera::Key(unsigned char key, unsigned modifiers)
+    bool Camera::Key(std::uint16_t key, unsigned modifiers)
     {
         if (modifiers & GLUT_ACTIVE_SHIFT)
         {
@@ -76,12 +76,12 @@ namespace Engine
                 Move(Engine::Vector(1, 0, 0));
                 return true;
             }
-            else if (key == '+')
+            else if (key == int('+')<<8)
             {
                 zoom *= 1.1f;
                 return true;
             }
-            else if (key == '-')
+            else if (key == int('-')<<8) // smiley
             {
                 zoom/= 1.1f;
                 return true;
@@ -118,13 +118,10 @@ namespace Engine
     {
     }
 
-
     void PerspectiveCamera::Render() const
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        GLdouble equation[4];
-        glGetClipPlane(GL_CLIP_PLANE1, equation);
         double scale = zoom * double(1.0 / tan(fov* 0.5f * PI / 180.0f));
         double n = 10.0;  // 1.0 wastes a lot of depth buffer
         double f = 100.0; // pretty much how much of the map is visible in grids
@@ -135,7 +132,7 @@ namespace Engine
         // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/building-basic-perspective-projection-matrix
 
         Matrix m = Matrix::Perspective(n, f) * Matrix::Scale(Vector(scale, scale, 1));
-        glMultMatrixd(&m.data());
+        m.Render();
 /** /
         // ortho projection
         glScaled(0.1*zoom, 0.1*zoom, 0.01*zoom);
@@ -164,6 +161,8 @@ namespace Engine
     {
         zoom = 0.1f;
     }
+
+
 
     void TopCamera::Render() const
     {

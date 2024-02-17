@@ -42,12 +42,13 @@ public:
 
     Mesh& operator*=(const Matrix& transformation);
 
-    std::vector<Vertex> vertices; 
+    std::vector<Vertex> vertices;
     std::vector<Triangle> triangles;
 
     std::vector<uint32_t> names;    // same size as triangles. not together due to glDrawElements
     void SetName(uint32_t name);
     void SetColor(RGBA color);
+    std::pair<double, uint32_t> Intersection(const Line& line) const;
 
     Mesh& operator+=(const Mesh& addition);
     double Distance(const Coordinate& p) const override;
@@ -66,6 +67,13 @@ private:
     void RenderSelection() const;
     void RenderOpaque() const;
     void RenderTranslucent() const;
+};
+
+
+class Quad : public Mesh
+{
+public:
+    Quad(Coordinate coords[4]);
 };
 
 class Box: public Mesh

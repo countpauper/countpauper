@@ -1,5 +1,5 @@
 #pragma once
-
+#include <cstdint>
 #include "Coordinate.h"
 #include "Vector.h"
 
@@ -17,10 +17,10 @@ namespace Engine
         void Zoom(double factor);
         void Drag(double dx, double dz);
         void FinishDrag(double dx, double dz);
-        // Key is ascii if >=32 or GLUT_KEY_X if <32
+        // Key is a GLUT special key if the top byte is 0 and ascii if the bottom byte is 0
         // modifiers is a bit mask of GLUT_ACTIVE_
         // returns true if handled
-        bool Key(unsigned char key, unsigned modifiers);
+        bool Key(std::uint16_t key, unsigned modifiers);
     protected:
         Vector vertical{0, 0, 1};
         Coordinate position;

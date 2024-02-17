@@ -2,6 +2,7 @@
 #include "Engine/Coordinate.h"
 #include "Engine/Line.h"
 #include "Engine/Maths.h"
+#include "Engine/Triangle.h"
 #include "Engine/AxisAlignedBoundingBox.h"
 
 namespace Engine
@@ -12,13 +13,18 @@ namespace Engine
         d(-Vector(origin).Dot(n))
     {
     }
-    Plane::Plane(const Coordinate& origin, const Engine::Vector& span1, const Engine::Vector& span2) : 
+    Plane::Plane(const Coordinate& origin, const Engine::Vector& span1, const Engine::Vector& span2) :
         Plane(origin, span1.Cross(span2))    // cross product
     {
     }
 
     Plane::Plane(const Coordinate& a, const Coordinate& b, const Coordinate& c) :
-        Plane(a, b-a, c-a)  // ccw is front face 
+        Plane(a, b-a, c-a)  // ccw is front face
+    {
+    }
+
+    Plane::Plane(const Triangle& t) :
+        Plane(t.a, t.b, t.c)
     {
     }
 
@@ -94,15 +100,21 @@ namespace Engine
         return dot == 0;
     }
 
-    Coordinate Plane::Intersection(const Line& line) const
+    double Plane::Intersection(const Line& line) const
     {
-        double dot = Vector(line).Cross(normal);
-        if (dot < std::numeric_limits<double>::epsilon())
-            throw std::runtime_error("Line is parallel to plane");
-        Vector lineVector(line);
-        double aDot = lineVector.Cross(normal);
-        double interpolationFactor = aDot / dot;
-        return line.a + lineVector * interpolationFactor;
+        double normaldot = Vector(line).Dot(normal);
+        if (std::abs(normaldot) < std::numeric_limits<double>::epsilon())
+            return std::numeric_limits<double>::quiet_NaN();
+        // P is projection vector from line.a to a point on the plane
+        Vector P =  normal * -NormalDistance(line.a) / normal.LengthSquared();
+        double projectiondot = P.Dot(normal);
+        double fraction = projectiondot / normaldot;
+        if ((fraction<0) || (fraction>1))
+            return std::numeric_limits<double>::quiet_NaN();
+        if (normaldot < 0 )
+            return fraction;    // a is above the plane
+        else
+            return -fraction;   // a is behind the plane
     }
 
     Plane& Plane::Normalize()

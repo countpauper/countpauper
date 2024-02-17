@@ -14,6 +14,8 @@ struct Coordinate final
         z(z)
     {
     }
+    double Distance(Coordinate other) const;
+
     Coordinate& operator+=(Vector v);
     Coordinate& operator-=(Vector v);
     Coordinate& operator*=(double factor);

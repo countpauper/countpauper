@@ -129,6 +129,15 @@ TEST(Plane, XY)
     EXPECT_FALSE(Plane::xy.Above(Coordinate(0, 0, -1)));
 }
 
+TEST(Plane, XYIntersection)
+{
+    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, -6))), 0.25);
+    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,-6), Coordinate(0, 0, 2))), -0.75);
+    EXPECT_TRUE(std::isnan(Plane::xy.Intersection(Line(Coordinate(0,1,2), Coordinate(1, 0, 2)))));
+    EXPECT_TRUE(std::isnan(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 1)))));
+    EXPECT_TRUE(std::isnan(Plane::xy.Intersection(Line(Coordinate(0,0,-2), Coordinate(0, 0, -4)))));
+}
+
 
 TEST(Plane, Diagonal)
 {
@@ -137,7 +146,7 @@ TEST(Plane, Diagonal)
     // as long as it's clockwise the same, the plane is the same
     EXPECT_EQ(Plane(Coordinate(0, 0, 1), Coordinate(1, 0, 0), Coordinate(0, 1, 0)), plane);
     EXPECT_EQ(Plane(Coordinate(0, 1, 0), Coordinate(0, 0, 1), Coordinate(1, 0, 0)), plane);
-    // flipped direction is flipped plane 
+    // flipped direction is flipped plane
     EXPECT_EQ(Plane(Coordinate(1, 0, 0), Coordinate(0, 0, 1), Coordinate(0, 1, 0)), -plane);
 
     EXPECT_EQ(plane.Distance(Coordinate(1, 0, 0)), 0);
@@ -147,7 +156,7 @@ TEST(Plane, Diagonal)
     EXPECT_3D_EQ(plane.Project(Coordinate::origin), Vector(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0));
 }
 
-TEST(Plane, DoubleXYAt1)
+TEST(Plane, NotNormalXYAt1)
 {
     Plane xy2(Coordinate(1,1,1), Vector(0, 0, 2));
     EXPECT_TRUE(xy2.Above(Coordinate(1, 1, 1.1)));
@@ -163,6 +172,9 @@ TEST(Plane, DoubleXYAt1)
     EXPECT_TRUE(xy2.GetBoundingBox().y.infinite());
     EXPECT_FALSE(xy2.GetBoundingBox().Contains(Coordinate(1, 1, 1.1)));
     EXPECT_TRUE(xy2.GetBoundingBox().Contains(Coordinate(0, 0, 0.9)));
+
+    EXPECT_EQ(xy2.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 0))), 0.5);
+
 }
 
 
@@ -229,6 +241,12 @@ TEST(Triangle, Distance)
     EXPECT_EQ(1, xzTriangle.Distance(Coordinate(3, 0, 1))); // in front of third vertex
     EXPECT_EQ(0, xzTriangle.Distance(Coordinate(0, 0, 2.5))); // on first edge
     EXPECT_EQ(-2, xzTriangle.Distance(Coordinate(0, -2, 2))); // near first edege
+}
+
+TEST(Triangle, Intersection)
+{
+    Triangle xyTriangle(Coordinate(1, 4, 0), Coordinate(3, 0, 0), Coordinate(0, 3, 0));
+    EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(2,1,2), Coordinate(2,1,-1))), 0.666, 0.01);
 }
 
 }

@@ -16,7 +16,7 @@ Vector::Vector(Coordinate c) :
 {
 }
 
-Vector::Vector(const Line& l) : 
+Vector::Vector(const Line& l) :
     Vector(l.b - l.a)
 {
 }
@@ -168,6 +168,7 @@ Vector operator*(const Matrix& m, Vector v)
         v.x * m[0][2] + v.y * m[1][2] + v.z * m[2][2] + m[3][2]
     ) / w;
 }
+
 
 }
 

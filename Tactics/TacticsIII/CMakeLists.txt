@@ -13,7 +13,9 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 #
 set(DEPENDENCIES_DIR "../../Dependencies")
 if(BUILD_TESTS)
-        add_subdirectory("${DEPENDENCIES_DIR}/googletest/" ${CMAKE_BINARY_DIR}/googletest)
+        if (NOT TARGET gtest)
+                add_subdirectory("${DEPENDENCIES_DIR}/googletest/" ${CMAKE_BINARY_DIR}/googletest)
+        endif()
 endif()
 
 include(CTest)

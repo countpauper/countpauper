@@ -67,6 +67,8 @@ TEST(Range, consts)
     EXPECT_TRUE(Range<double>::infinity() | -10000.0);
     EXPECT_EQ(0, Range<double>::null().Size());
     EXPECT_FALSE(Range<double>::null() | 0);
+    EXPECT_FALSE(Range<double>::empty());
+    EXPECT_FALSE(Range<int>::empty());
 }
 
 TEST(Range, Inclusion)
@@ -84,7 +86,7 @@ TEST(AABB, Size)
     EXPECT_EQ(Range(-1, 0), AABB(Coordinate(-1, 1, 3), Coordinate(0, 2, 4)).X());
     EXPECT_EQ(Range(1, 2), AABB(Coordinate(-1, 1, 3), Coordinate(0, 2, 4)).Y());
     EXPECT_EQ(Range(3, 4), AABB(Coordinate(-1, 1, 3), Coordinate(0, 2, 4)).Z());
-    // no expectations yet for size and extent of flipped bounding boxes 
+    // no expectations yet for size and extent of flipped bounding boxes
 }
 
 TEST(AABB, Expand)
@@ -103,7 +105,7 @@ TEST(AABB, Expand)
 TEST(AABB, Include)
 {
     AABB box(Coordinate::origin, Coordinate(1, 1, 1));
-    
+
     EXPECT_TRUE((box | Coordinate(2, 2, 2))[Coordinate(1.5, 1.5, 1.5)]);
 }
 
