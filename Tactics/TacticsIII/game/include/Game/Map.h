@@ -1,5 +1,7 @@
 #pragma once
 #include "Engine/Size.h"
+#include "Engine/Mesh.h"
+
 #include "Game/Material.h"
 #include <vector>
 
@@ -15,6 +17,7 @@ class Map
 public:
     explicit Map(Engine::Size size);
     Map(const Engine::Image& data, int height);
+    Engine::Mesh& GetMesh();
 private:
     struct Grid
     {
@@ -25,8 +28,11 @@ private:
         const Material* gas = nullptr;
     };
 
+    void GenerateMesh();
+
     Engine::Size size;
     std::vector<Grid> grids;
+    Engine::Mesh mesh;
 };
 
 }

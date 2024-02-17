@@ -13,6 +13,6 @@ int main(int argc, char**argv)
     Game::Map map( Engine::Image("data/map20.png"), 16);
     window.SetTitle("Tactics III");
     Engine::Box box(1.0);
-    auto& prop = window.GetScene().Add(box, Engine::Coordinate());
+    auto& prop = window.GetScene().Add(map.GetMesh(), Engine::Coordinate());
     app.Run();
 }

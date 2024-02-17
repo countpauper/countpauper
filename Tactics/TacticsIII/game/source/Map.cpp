@@ -9,8 +9,9 @@ namespace Game
 
 Map::Map(Engine::Size size) :
     size(size),
-    grids(size.Volume())
+    grids(size.x * size.y)
 {
+    GenerateMesh();
 }
 
 const Material* FindMaterial(Engine::HSVA color)
@@ -39,7 +40,8 @@ const Material* FindMaterial(Engine::HSVA color)
 }
 
 Map::Map(const Engine::Image& data, int height) :
-    Map(Engine::Size{int(data.Width()), int(data.Height()/4), height})
+    size{int(data.Width()), int(data.Height()/4), height},
+    grids(size.x * size.y)
 {
     for(unsigned y=0; y<size.y; ++y)
     {
@@ -64,6 +66,80 @@ Map::Map(const Engine::Image& data, int height) :
                 grid.level, grid.liquidity);
             */
         }
+    }
+    GenerateMesh();
+}
+
+Engine::Mesh& Map::GetMesh()
+{
+    return mesh;
+}
+
+void Map::GenerateMesh()
+{
+    int idx = 0;
+    Engine::Vector up(0, 0, 1);
+
+    for(const auto& grid: grids)
+    {
+        int x = idx % size.x;
+        int y = idx / size.x;
+
+        unsigned vertidx = mesh.vertices.size();
+        mesh.vertices.emplace_back(Engine::Mesh::Vertex{
+            Engine::Coordinate(x, y, grid.level),
+            up,
+            Engine::Mesh::TextureCoordinate{0, 0, 0},
+            grid.ground->color
+        });
+
+        mesh.vertices.emplace_back(Engine::Mesh::Vertex{
+            Engine::Coordinate(x+1, y, grid.level),
+            up,
+            Engine::Mesh::TextureCoordinate{1, 0, 0},
+            grid.ground->color
+        });
+
+        mesh.vertices.emplace_back(Engine::Mesh::Vertex{
+            Engine::Coordinate(x+1, y+1, grid.level),
+            up,
+            Engine::Mesh::TextureCoordinate{1, 1, 0},
+            grid.ground->color
+        });
+
+        mesh.vertices.emplace_back(Engine::Mesh::Vertex{
+            Engine::Coordinate(x, y+1, grid.level),
+            up,
+            Engine::Mesh::TextureCoordinate{0, 1, 0},
+            grid.ground->color
+        });
+
+        mesh.triangles.push_back({vertidx, vertidx+1, vertidx +2});
+        mesh.triangles.push_back({vertidx, vertidx+2, vertidx +3});
+
+        if (x > 0 )
+        {
+            Grid& neighbourGrid = grids[idx-1];
+            if (neighbourGrid.level != grid.level)
+            {   // todo: with backface culling, flip it around if neighbourlevel is higher
+                unsigned neighbourVertexIdx = vertidx - 4;
+                //mesh.triangles.push_back({vertidx, vertidx+3, neighbourVertexIdx +1});
+                //mesh.triangles.push_back({vertidx+3, neighbourVertexIdx +2, neighbourVertexIdx +1});
+            }
+        }
+        if (y >0 )
+        {
+            Grid& neighbourGrid = grids[idx - size.x];
+            if (neighbourGrid.level != grid.level)
+            {
+                unsigned neighbourVertexIdx = vertidx - 4 * size.x;
+                mesh.triangles.push_back({vertidx+1, vertidx+0, neighbourVertexIdx +2});
+                mesh.triangles.push_back({vertidx +1, neighbourVertexIdx+2, neighbourVertexIdx +3});
+            }
+        }
+        Engine::Debug::Log("Grid[%d] added at (%d, %d)", idx, x, y);
+
+        ++idx;
     }
 }
 
