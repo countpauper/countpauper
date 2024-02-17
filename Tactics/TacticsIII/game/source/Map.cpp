@@ -120,22 +120,16 @@ void Map::GenerateMesh()
         if (x > 0 )
         {
             Grid& neighbourGrid = grids[idx-1];
-            if (neighbourGrid.level != grid.level)
-            {   // todo: with backface culling, flip it around if neighbourlevel is higher
-                unsigned neighbourVertexIdx = vertidx - 4;
-                //mesh.triangles.push_back({vertidx, vertidx+3, neighbourVertexIdx +1});
-                //mesh.triangles.push_back({vertidx+3, neighbourVertexIdx +2, neighbourVertexIdx +1});
-            }
+            unsigned neighbourVertexIdx = vertidx - 4;
+            mesh.triangles.push_back({vertidx, vertidx+3, neighbourVertexIdx +1});
+            mesh.triangles.push_back({vertidx+3, neighbourVertexIdx +2, neighbourVertexIdx +1});
         }
         if (y >0 )
         {
             Grid& neighbourGrid = grids[idx - size.x];
-            if (neighbourGrid.level != grid.level)
-            {
-                unsigned neighbourVertexIdx = vertidx - 4 * size.x;
-                mesh.triangles.push_back({vertidx+1, vertidx+0, neighbourVertexIdx +2});
-                mesh.triangles.push_back({vertidx +1, neighbourVertexIdx+2, neighbourVertexIdx +3});
-            }
+            unsigned neighbourVertexIdx = vertidx - (4 * size.x);
+            mesh.triangles.push_back({vertidx+1, vertidx+0, neighbourVertexIdx +3});
+            mesh.triangles.push_back({vertidx+1, neighbourVertexIdx+3, neighbourVertexIdx +2});
         }
         Engine::Debug::Log("Grid[%d] added at (%d, %d)", idx, x, y);
 

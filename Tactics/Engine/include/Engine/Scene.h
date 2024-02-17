@@ -29,6 +29,7 @@ public:
     Camera& GetCamera();
 private:
     PerspectiveCamera camera;
+    // TODO: lights
     std::vector<std::unique_ptr<Prop>> props;
 };
 

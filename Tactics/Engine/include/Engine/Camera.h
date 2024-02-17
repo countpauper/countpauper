@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Coordinate.h"
+#include "Vector.h"
 
 namespace Engine
 {
@@ -21,6 +22,7 @@ namespace Engine
         // returns true if handled
         bool Key(unsigned char key, unsigned modifiers);
     protected:
+        Vector vertical{0, 0, 1};
         Coordinate position;
         Coordinate target;
         Coordinate rotation;

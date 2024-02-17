@@ -16,7 +16,7 @@ namespace Engine
     Camera::Camera() :
         position(Coordinate::origin),
         target(0, 0, 0),
-        rotation(0 ,180, 0),
+        rotation(-45 , 0, 0),
         zoom(1.0f),
         dragx(0),
         dragz(0)
@@ -58,12 +58,12 @@ namespace Engine
         {
             if (key == GLUT_KEY_UP)
             {
-                Move(Engine::Vector(0, 1, 0));
+                Move(vertical);
                 return true;
             }
             else if (key == GLUT_KEY_DOWN)
             {
-                Move(Engine::Vector(0, -1, 0));
+                Move(-vertical);
                 return true;
             }
             else if (key == GLUT_KEY_LEFT)
@@ -101,12 +101,12 @@ namespace Engine
             }
             else if (key == GLUT_KEY_LEFT)
             {
-                rotation.y -= 5;
+                rotation -= (vertical * 5.0);
                 return true;
             }
             else if (key == GLUT_KEY_RIGHT)
             {
-                rotation.y += 5;
+                rotation += (vertical * 5.0);
                 return true;
             }
         }

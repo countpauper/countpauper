@@ -2,6 +2,7 @@
 #include "Engine/Debug.h"
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include <assert.h>
 
 namespace Engine
 {
@@ -17,10 +18,21 @@ void init(void)
     //select clearing (background) color
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
-    //initialize viewing values
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+    //glEnable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    GLboolean writeMask = false;
+    glGetBooleanv(GL_DEPTH_WRITEMASK, &writeMask);
+    assert(writeMask);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+    //glEnable(GL_BLEND);    // TODO: first render non alpha tiles, then alpha tiles with depth test
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Lighting makes it nice but dark
+    //glEnable(GL_LIGHTING);
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
 
 std::map<int, Window*> Window::allWindows;
@@ -75,7 +87,8 @@ Window* Window::CurrentWindow()
 void Window::Display(void)
 {
     //Clear all pixels
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
     CurrentWindow()->GetScene().Render();
 /*
