@@ -2,6 +2,7 @@
 #include "Engine/Image.h"
 #include "Engine/Geometry.h"
 #include "Engine/Debug.h"
+#include "Engine/Maths.h"
 #include "Game/Material.h"
 
 namespace Game
@@ -84,34 +85,38 @@ void Map::GenerateMesh()
     {
         int x = idx % size.x;
         int y = idx / size.x;
+        float brightness = grid.level / float(size.z);
+        brightness = 0.2 + brightness*0.8;
 
+        auto groundColor = grid.ground->color;
+        auto vertexColor = Engine::Lerp(Engine::RGBA::black, groundColor, brightness);
         unsigned vertidx = mesh.vertices.size();
         mesh.vertices.emplace_back(Engine::Mesh::Vertex{
             Engine::Coordinate(x, y, grid.level),
             up,
             Engine::Mesh::TextureCoordinate{0, 0, 0},
-            grid.ground->color
+            vertexColor
         });
 
         mesh.vertices.emplace_back(Engine::Mesh::Vertex{
             Engine::Coordinate(x+1, y, grid.level),
             up,
             Engine::Mesh::TextureCoordinate{1, 0, 0},
-            grid.ground->color
+            vertexColor
         });
 
         mesh.vertices.emplace_back(Engine::Mesh::Vertex{
             Engine::Coordinate(x+1, y+1, grid.level),
             up,
             Engine::Mesh::TextureCoordinate{1, 1, 0},
-            grid.ground->color
+            vertexColor
         });
 
         mesh.vertices.emplace_back(Engine::Mesh::Vertex{
             Engine::Coordinate(x, y+1, grid.level),
             up,
             Engine::Mesh::TextureCoordinate{0, 1, 0},
-            grid.ground->color
+            vertexColor
         });
 
         mesh.triangles.push_back({vertidx, vertidx+1, vertidx +2});
@@ -120,16 +125,22 @@ void Map::GenerateMesh()
         if (x > 0 )
         {
             Grid& neighbourGrid = grids[idx-1];
-            unsigned neighbourVertexIdx = vertidx - 4;
-            mesh.triangles.push_back({vertidx, vertidx+3, neighbourVertexIdx +1});
-            mesh.triangles.push_back({vertidx+3, neighbourVertexIdx +2, neighbourVertexIdx +1});
+            if (neighbourGrid.level != grid.level)
+            {
+                unsigned neighbourVertexIdx = vertidx - 4;
+                mesh.triangles.push_back({vertidx, vertidx+3, neighbourVertexIdx +1});
+                mesh.triangles.push_back({vertidx+3, neighbourVertexIdx +2, neighbourVertexIdx +1});
+            }
         }
         if (y >0 )
         {
             Grid& neighbourGrid = grids[idx - size.x];
-            unsigned neighbourVertexIdx = vertidx - (4 * size.x);
-            mesh.triangles.push_back({vertidx+1, vertidx+0, neighbourVertexIdx +3});
-            mesh.triangles.push_back({vertidx+1, neighbourVertexIdx+3, neighbourVertexIdx +2});
+            if (neighbourGrid.level != grid.level)
+            {
+                unsigned neighbourVertexIdx = vertidx - (4 * size.x);
+                mesh.triangles.push_back({vertidx+1, vertidx+0, neighbourVertexIdx +3});
+                mesh.triangles.push_back({vertidx+1, neighbourVertexIdx+3, neighbourVertexIdx +2});
+            }
         }
         Engine::Debug::Log("Grid[%d] added at (%d, %d)", idx, x, y);
 
