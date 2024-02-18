@@ -106,26 +106,65 @@ double Triangle::Distance(const Coordinate& p) const
 }
 
 
-float Triangle::Intersection(const Line& line) const
+double Triangle::Intersection(const Line& line) const
 {
+    constexpr double epsilon = std::numeric_limits<double>::epsilon();
+    constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+    Vector ray_vector = Vector(line).Normal();
+    Vector edge1 = b - a;
+    Vector edge2 = c - a;
+    Vector ray_cross_e2 = ray_vector.Cross(edge2);
+    double det = edge1.Dot(ray_cross_e2);
+
+    if (det > -epsilon && det < epsilon)
+        return nan;    // This ray is parallel to this triangle.
+
+    double inv_det = 1.0 / det;
+    Vector s = line.a - a;
+    double u = inv_det * s.Dot(ray_cross_e2);
+
+    if (u < 0 || u > 1)
+        return nan;
+
+    Vector s_cross_e1 = s.Cross(edge1);
+    double v = inv_det * ray_vector.Dot(s_cross_e1);
+
+    if (v < 0 || u + v > 1)
+        return nan;
+
+    // At this stage we can compute t to find out where the intersection point is on the line.
+    double t = inv_det * edge2.Dot(s_cross_e1);
+
+    if (t >= 0) // ray intersection
+    {
+        Coordinate out_intersection_point = line.a + ray_vector * t;
+        //return true;
+        return t;
+    }
+    else // This means that there is a line intersection but not a ray intersection.
+        return nan;
+
+/** old implementation for reference
+
+
     Plane plane(*this);
     if (!plane)
     {
         assert(false); // I guess the line could still intersect the sliver
-        return std::numeric_limits<float>::quiet_NaN();
+        return std::numeric_limits<double>::quiet_NaN();
     }
+    // TODO https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+    // can be used to optimize without computng the plane intersection
     double fraction = plane.Intersection(line);
     if (std::isnan(fraction)) {
         return fraction;
     }
     Coordinate P = line.a + Vector(line) * std::abs(fraction);
     Vector bary = BaryCentric(P);
-    Vector directBary = BaryCentric(line.a);
-    Vector bBary = BaryCentric(line.b);
 
-    if (bary.x<0 || bary.x>1 || bary.y<0 || bary.y > 1)
+    if (bary.x<0 || bary.y<0 || bary.x + bary.y > 1)
     {
-        return std::numeric_limits<float>::quiet_NaN();
+        return std::numeric_limits<double>::quiet_NaN();
     }
     if (fraction > 0 )
     {
@@ -135,6 +174,7 @@ float Triangle::Intersection(const Line& line) const
     {
         return -P.Distance(line.a);
     }
+*/
 }
 
 

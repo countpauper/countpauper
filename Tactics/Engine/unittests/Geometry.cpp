@@ -245,8 +245,11 @@ TEST(Triangle, Distance)
 
 TEST(Triangle, Intersection)
 {
-    Triangle xyTriangle(Coordinate(1, 4, 0), Coordinate(3, 0, 0), Coordinate(0, 3, 0));
-    EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(2,1,2), Coordinate(2,1,-1))), 0.666, 0.01);
+    Triangle xyTriangle(Coordinate(0, 2, 0), Coordinate(3, 0, 0), Coordinate(1, 4, 0));
+    EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(2,1,2), Coordinate(2,1,-1))), 2.0, 0.01);
+    EXPECT_EQ(xyTriangle.Intersection(Line(Coordinate(1,2,1.5), Coordinate(1,2,0))), 1.5);
+    EXPECT_EQ(xyTriangle.Intersection(Line(Coordinate(1,2,0), Coordinate(1,2,-2))), 0.0);
+    EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(1,2,1), Coordinate(0,2,0))), sqrt(2), 0.00001);
 }
 
 }
