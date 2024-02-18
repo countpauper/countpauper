@@ -9,6 +9,8 @@
 #include "Engine/GLutil.h"
 #include "Engine/Plane.h"
 #include "Engine/Triangle.h"
+#include "Engine/Debug.h"
+#include "Engine/Error.h"
 
 #include <array>
 #include <cassert>
@@ -48,12 +50,29 @@ void Mesh::Render() const
     }
 }
 
+template<typename T, typename U> constexpr size_t offsetOf(U T::*member)
+{
+    return (std::byte*)&((T*)nullptr->*member) - (std::byte*)nullptr;
+}
+
+void Mesh::SetupVertexPointers()
+{
+    assert(3 * sizeof(GLdouble) == sizeof(Vertex::c));
+    glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::c));
+    glTexCoordPointer(3, GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::t));
+    glNormalPointer(GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::n));
+    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (void*)offsetOf(&Vertex::color));
+}
+
 void Mesh::RenderOpaque() const
 {
     if (!opaqueTrianglesBuffered)
         return;
 
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    //glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, 0, 0);
+    SetupVertexPointers();
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, opaqueTriangleBuffer);
     glDrawElements(GL_TRIANGLES, 3 * opaqueTrianglesBuffered, GL_UNSIGNED_INT, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -109,6 +128,7 @@ glBegin(GL_TRIANGLES);
     }
     glEnd();
 */
+    CheckGLError();
 }
 
 void Mesh::RenderTranslucent() const
@@ -117,6 +137,7 @@ void Mesh::RenderTranslucent() const
         return;
 
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    SetupVertexPointers();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, translucentTriangleBuffer);
     glDrawElements(GL_TRIANGLES, 3 * translucentTrianglesBuffered, GL_UNSIGNED_INT, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -182,6 +203,8 @@ void Mesh::SetColor(RGBA color)
 std::pair<double, uint32_t> Mesh::Intersection(const Line& line) const
 {
     // TODO: optimize by checking the intersection of the line with the axis aligned bounding box
+    // but optimize the AABB by precomputing in Validate() and reset in Invalidate()
+    // and make vertices private, provide operator[] etc
     unsigned idx = 0;
     double nearest = std::numeric_limits<double>::max();
     unsigned best = names.size();
@@ -278,10 +301,7 @@ void Mesh::InvalidateTriangles()
         translucentTrianglesBuffered = 0;
     }
 }
-template<typename T, typename U> constexpr size_t offsetOf(U T::*member)
-{
-    return (std::byte*)&((T*)nullptr->*member) - (std::byte*)nullptr;
-}
+
 
 void Mesh::Validate() const
 {
@@ -298,17 +318,10 @@ void Mesh::GenerateVertexBuffer() const
     glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
     glEnableClientState(GL_VERTEX_ARRAY);
-
-    assert(3 * sizeof(GLdouble) == sizeof(Vertex::c));
-    glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::c));
+    SetupVertexPointers();
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(3, GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::t));
-
     glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::n));
-
     glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (void*)offsetOf(&Vertex::color));
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -363,13 +376,13 @@ void Mesh::GenerateIndexBuffer() const
 }
 
 
-Quad::Quad(Coordinate coords[4])
+Quad::Quad(Coordinate a, Coordinate b, Coordinate c, Coordinate d)
 {
-    Vector normal = Plane(coords[0], coords[1], coords[2]).Normalized().normal;
-    vertices.emplace_back(Vertex{ coords[0], normal, TextureCoordinate{0,0,0}, RGBA::white});
-    vertices.emplace_back(Vertex{ coords[1], normal, TextureCoordinate{0,0,0}, RGBA::white});
-    vertices.emplace_back(Vertex{ coords[2], normal, TextureCoordinate{0,0,0}, RGBA::white});
-    vertices.emplace_back(Vertex{ coords[3], normal, TextureCoordinate{0,0,0}, RGBA::white});
+    Vector normal = Plane(a, b, c).Normalized().normal;
+    vertices.emplace_back(Vertex{ a, normal, TextureCoordinate{0,0,0}, RGBA::white});
+    vertices.emplace_back(Vertex{ b, normal, TextureCoordinate{0,0,0}, RGBA::white});
+    vertices.emplace_back(Vertex{ c, normal, TextureCoordinate{0,0,0}, RGBA::white});
+    vertices.emplace_back(Vertex{ d, normal, TextureCoordinate{0,0,0}, RGBA::white});
 
     triangles.emplace_back(Triangle{0, 1, 2});
     triangles.emplace_back(Triangle{0, 2, 3});
@@ -391,58 +404,14 @@ Box::Box(const AABB& bounds) :
 
 Box::Box()
 {
-    struct Face
-    {
-        Vector normal;
-        Vector diagonal;
-        double clock;
-    };
-    std::array<Face, 6> faces =
-    {
-        Face{ Vector( 1, 0, 0), Vector( 0, 1, 1), 0.5 },
-        Face{ Vector( 0, 1, 0), Vector( 1, 0, 1), 0.5 },
-        Face{ Vector( 0, 0, 1), Vector( 1, 1 ,0), 0.5 },
-        Face{ Vector(-1, 0, 0), Vector( 0,-1,-1), 0.5 },
-        Face{ Vector( 0,-1, 0), Vector(-1, 0,-1), 0.5 },
-        Face{ Vector( 0, 0,-1), Vector(-1,-1, 0), 0.5 },
-    };
-    std::array<TextureCoordinate, 4> texCoords =
-    {
-        TextureCoordinate{ 0.0, 0.0, 0.0 },
-        TextureCoordinate{ 0.0, 1.0, 0.0 },
-        TextureCoordinate{ 1.0, 1.0, 0.0 },
-        TextureCoordinate{ 1.0, 0.0, 0.0 }
-    };
-
-    vertices.resize(faces.size() * 4);
-    triangles.resize(faces.size() * 2);
-    uint32_t vi = 0, ti = 0;
-    for (const auto & face : faces)
-    {
-        // 1-0
-        // |\|
-        // 2_3
-        triangles[ti++] = Triangle{ vi, vi + 1, vi + 3 };
-        triangles[ti++] = Triangle{ vi + 2, vi + 3, vi + 1 };
-
-        Coordinate faceCenter = Coordinate::origin + face.normal;
-        Vector diagonal = face.diagonal;
-        double angle = 0;
-        for (const auto& t : texCoords)
-        {
-            vertices[vi].c = faceCenter + (Quaternion(face.normal, angle) * diagonal);
-            vertices[vi].n = face.normal;
-            vertices[vi].color = RGBA::white;
-            // test vertices[vi].color = RGBA(face.normal.x*127+127, face.normal.y*127+127, face.normal.z*127+127);
-            vertices[vi].t = t;
-            ++vi;
-            angle += PI * face.clock; // CCW
-        }
-        //  check ccw triangle facing in normal directon
-        //assert(Plane(vertices[triangles[ti - 2].vertex[0]].c, vertices[triangles[ti - 2].vertex[1]].c, vertices[triangles[ti - 2].vertex[2]].c).normal.Dot(face.normal) > 0);
-        //assert(Plane(vertices[triangles[ti - 1].vertex[0]].c, vertices[triangles[ti - 1].vertex[1]].c, vertices[triangles[ti - 1].vertex[2]].c).normal.Dot(face.normal) > 0);
-
-    }
+    Coordinate a(0,0,0), b(0,0,1), c(0,1,1), d(0,1,0),
+        e(1,0,0), f(1,0,1), g(1,1,1), h(1,1,0);
+    (*this) += Quad(a, b, c, d); // x = 0
+    (*this) += Quad(h, g, f, e); // x = 1
+    (*this) += Quad(a, e, f, b); // y = 0
+    (*this) += Quad(c, g, h, d); // y = 1
+    (*this) += Quad(a, d, h, e);    // z = 0
+    (*this) += Quad(b, f, g, c);    // z = 1
 }
 
 }

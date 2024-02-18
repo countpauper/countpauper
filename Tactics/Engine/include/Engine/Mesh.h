@@ -64,6 +64,7 @@ private:
     mutable uint32_t vertexBuffer, opaqueTriangleBuffer, translucentTriangleBuffer;
     mutable uint32_t opaqueTrianglesBuffered, translucentTrianglesBuffered;
 
+    static void SetupVertexPointers();
     void RenderSelection() const;
     void RenderOpaque() const;
     void RenderTranslucent() const;
@@ -73,7 +74,7 @@ private:
 class Quad : public Mesh
 {
 public:
-    Quad(Coordinate coords[4]);
+    Quad(Coordinate a, Coordinate b, Coordinate c, Coordinate d);
 };
 
 class Box: public Mesh

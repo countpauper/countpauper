@@ -58,7 +58,6 @@ Map::Map(const Engine::Image& data, int height) :
             grid.liquidity = (height * levelPixel.b / 255) - grid.level;
             // TODO: green is gas level
             grid.ground = FindMaterial(materialPixel);
-
             grid.liquid = FindMaterial(Engine::HSVA(liquidPixel));
             grid.gas = FindMaterial(Engine::HSVA(gasPixel));
 
@@ -72,9 +71,31 @@ Map::Map(const Engine::Image& data, int height) :
     GenerateMesh();
 }
 
+
+
 Engine::Mesh& Map::GetMesh()
 {
     return mesh;
+}
+
+Map::Grid& Map::operator[](Position pos)
+{
+    return grids[pos.x + pos.y * size.x];
+}
+
+const Map::Grid& Map::operator[](Position pos) const
+{
+    return grids[pos.x + pos.y * size.x];
+}
+
+Engine::Coordinate Map::GroundCoord(Position pos) const
+{
+    auto& grid = (*this)[pos];
+    return Engine::Coordinate(
+        pos.x + 0.5,
+        pos.y + 0.5,
+        grid.level
+    );
 }
 
 void Map::GenerateMesh()
@@ -88,14 +109,12 @@ void Map::GenerateMesh()
         int y = idx / size.x;
 
         unsigned vertidx = mesh.vertices.size();
-        Engine::Coordinate coordinates[]{
+        Engine::Quad quad(
             Engine::Coordinate(x, y, grid.level),
             Engine::Coordinate(x+1, y, grid.level),
             Engine::Coordinate(x+1, y+1, grid.level),
             Engine::Coordinate(x, y+1, grid.level)
-        };
-        Engine::Quad quad(coordinates);
-
+        );
         float brightness = grid.level / float(size.z);
         brightness = 0.2 + brightness*0.8;
         auto groundColor = grid.ground->color;

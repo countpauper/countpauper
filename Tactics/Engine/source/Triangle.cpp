@@ -138,7 +138,10 @@ double Triangle::Intersection(const Line& line) const
     double t = inv_det * edge2.Dot(s_cross_e1);
 
     if (t >= 0) // ray intersection
-        return t;
+        if (det > 0)
+            return t;
+        else
+            return -t;
     else // This means that there is a line intersection but not a ray intersection.
         return nan;
 }
