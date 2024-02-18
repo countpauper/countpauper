@@ -250,6 +250,8 @@ TEST(Triangle, Intersection)
     EXPECT_EQ(xyTriangle.Intersection(Line(Coordinate(1,2,1.5), Coordinate(1,2,0))), 1.5);
     EXPECT_EQ(xyTriangle.Intersection(Line(Coordinate(1,2,0), Coordinate(1,2,-2))), 0.0);
     EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(1,2,1), Coordinate(0,2,0))), sqrt(2), 0.00001);
+    EXPECT_TRUE(std::isnan(xyTriangle.Intersection(Line(Coordinate(1,2,1), Coordinate(0,2,1))))) << "parallel line intersected the triangle";
+    EXPECT_TRUE(std::isnan(xyTriangle.Intersection(Line(Coordinate(1,1,1), Coordinate(1,1,-1))))) << "line didn't miss the triangle";
 }
 
 }
