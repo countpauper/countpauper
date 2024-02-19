@@ -71,7 +71,10 @@ Map::Map(const Engine::Image& data, int height) :
     GenerateMesh();
 }
 
-
+std::string_view Map::Name() const
+{
+    return "map";
+}
 
 Engine::Mesh& Map::GetMesh()
 {

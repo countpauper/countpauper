@@ -3,6 +3,7 @@
 #include "Engine/Color.h"
 #include <GL/glew.h>
 #include <GL/glut.h>
+#undef GetObject
 #include <assert.h>
 
 namespace Engine
@@ -155,10 +156,11 @@ void Window::OnMouse(int button, int state, int x, int y)
     auto viewPosition = Screen2View(x, y);
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
     {
-        auto [prop, name ] = scene.Select(viewPosition);
+        auto [prop, sub ] = scene.Select(viewPosition);
         if (prop)
         {
-            Engine::Debug::Log("Selected %.*s.%d", prop->Name().size(), prop->Name().data(), name);
+            auto name = (*prop)->Name();
+            Engine::Debug::Log("Selected %.*s.%d", name.size(), name.data(), sub);
         }
         else
         {

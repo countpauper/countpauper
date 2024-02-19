@@ -6,37 +6,9 @@
 namespace Engine
 {
 
-Prop::Prop(std::string_view name, Mesh& mesh, Coordinate loc, Quaternion ori) :
-    name(name),
-    mesh(mesh),
-    location(loc),
-    orientation(ori)
+Prop& Scene::Add(Prop&& prop)
 {
-
-}
-void Prop::Render() const
-{
-    glPushMatrix();
-    location.Render();
-    orientation.Render();
-    mesh.Render();
-    glPopMatrix();
-}
-
-std::string_view Prop::Name() const
-{
-    return std::string_view(name.data(), name.size());
-}
-
-std::pair<double, std::uint32_t> Prop::Intersection(const Line& line) const
-{
-    auto localLine = orientation.Conjugate() * (line - Vector(location));
-    return mesh.Intersection(localLine);
-}
-
-Prop& Scene::Add(std::string_view name, Mesh& mesh, Coordinate loc, Quaternion ori)
-{
-    props.emplace_back(std::make_unique<Prop>(name, mesh, loc, ori));
+    props.emplace_back(std::make_unique<Prop>(std::move(prop)));
     return *props.back();
 }
 

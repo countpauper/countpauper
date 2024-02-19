@@ -6,15 +6,17 @@
 #include "Game/Race.h"
 #include "Game/Item.h"
 #include "Game/StatDescriptor.h"
+#include "Engine/Object.h"
 
 namespace Game
 {
 
-
-class Character : public Statted
+class Creature :
+        public Statted,
+        public Engine::Object
 {
 public:
-        Character(std::string_view name, const Race& race);
+        Creature(std::string_view name, const Race& race);
 
         void Level(Stat::Id stat, int amount);
 
@@ -30,7 +32,7 @@ public:
         // No stat can go over its maximum and no stat can go under 0 or its clipped
         StatDescriptor Get(Stat::Id id) const override;
         const StatDefinition& Definition() const override;
-
+        std::string_view Name() const override;
         static StatDefinition definition;
 private:
         std::string name;

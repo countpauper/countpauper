@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Size.h"
 #include "Engine/Mesh.h"
-
+#include "Engine/Object.h"
 #include "Game/Material.h"
 #include <vector>
 
@@ -12,7 +12,7 @@ namespace Engine
 
 namespace Game
 {
-class Map
+class Map : public Engine::Object
 {
 public:
     struct Position
@@ -21,6 +21,7 @@ public:
     };
     explicit Map(Engine::Size size);
     Map(const Engine::Image& data, int height);
+    std::string_view Name() const override;
     Engine::Mesh& GetMesh();
     Engine::Coordinate GroundCoord(Position pos) const;
 private:
