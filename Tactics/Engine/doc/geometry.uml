@@ -38,5 +38,7 @@ Point ...|> IGeometry
 Line ...|> IGeometry
 Cylinder ...|> IVolume
 CompundVolume ...|> IVolume
-CompundVolume *--> IVolime
+CompundVolume *--> IVolume
+Light ...|> IRendition
+Effect ...|> IRendition
 @enduml

@@ -1,0 +1,26 @@
+@startuml
+
+
+
+class Creature {
+}
+
+class Avatar {
+   selected: bool
+}
+
+
+package Engine {
+    interface Object
+    package UI {
+        class Bus {
+            Post(Message, data)
+            Subscribe(Message, fn)
+        }
+        class Scene
+        class Window
+        Scene o--> Bus
+        Window o--> Bus
+    }
+}
+@enduml

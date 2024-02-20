@@ -1,0 +1,36 @@
+@startuml
+
+
+class Creature {
+  name: string
+}
+
+class Race {
+    name: string
+    bonus: <stat, int>
+}
+
+class Item {
+   name: string
+   bonus: <stat, int>
+}
+
+class Stat {
+    name : string
+    description : string
+    limit: Range
+}
+
+Creature o--> "6 primary" Stat
+
+class Dependency {
+   table: int[]
+   operator: enum
+}
+Stat *--> "*" Dependency
+Dependency o--> Stat
+
+Creature o--> "1" Race
+Creature o--> "*" Item
+
+@enduml

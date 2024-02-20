@@ -13,7 +13,7 @@ int main(int argc, char**argv)
 {
     Engine::Application app(argc, argv);
     Engine::Window window;
-    Game::Map map( Engine::Image("data/map20.png"), 16);
+    Game::Map map( Engine::Image("data/map20.png"));
 
     Engine::Box charMesh;
     charMesh *= Engine::Matrix::Scale({0.75, 0.75, 1.75}) * Engine::Matrix::Translation({-0.5, -0.5, 0.0});

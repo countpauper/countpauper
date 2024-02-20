@@ -20,7 +20,7 @@ public:
         int x, y;
     };
     explicit Map(Engine::Size size);
-    Map(const Engine::Image& data, int height);
+    Map(const Engine::Image& data);
     std::string_view Name() const override;
     Engine::Mesh& GetMesh();
     Engine::Coordinate GroundCoord(Position pos) const;

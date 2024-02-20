@@ -41,8 +41,8 @@ const Material* FindMaterial(Engine::HSVA color)
     return result;
 }
 
-Map::Map(const Engine::Image& data, int height) :
-    size{int(data.Width()), int(data.Height()/4), height},
+Map::Map(const Engine::Image& data) :
+    size{int(data.Width()), int(data.Height()/4), 16},
     grids(size.x * size.y)
 {
     for(unsigned y=0; y<size.y; ++y)
@@ -54,8 +54,8 @@ Map::Map(const Engine::Image& data, int height) :
             Engine::HSVA materialPixel(data[Engine::Position(x, y + size.y)]);
             Engine::HSVA liquidPixel(data[Engine::Position(x, y + 2 * size.y)]);
             Engine::HSVA gasPixel(data[Engine::Position(x, y+ 3*size.y)]);
-            grid.level = height *  levelPixel.r / 255;
-            grid.liquidity = (height * levelPixel.b / 255) - grid.level;
+            grid.level =  levelPixel.r;
+            grid.liquidity = levelPixel.b - grid.level;
             // TODO: green is gas level
             grid.ground = FindMaterial(materialPixel);
             grid.liquid = FindMaterial(Engine::HSVA(liquidPixel));
@@ -105,20 +105,20 @@ void Map::GenerateMesh()
 {
     int idx = 0;
     Engine::Vector up(0, 0, 1);
-
+    static constexpr int subheight = 16;
     for(const auto& grid: grids)
     {
         int x = idx % size.x;
         int y = idx / size.x;
-
+        double height = double(grid.level)/ subheight;
         unsigned vertidx = mesh.vertices.size();
         Engine::Quad quad(
-            Engine::Coordinate(x, y, grid.level),
-            Engine::Coordinate(x+1, y, grid.level),
-            Engine::Coordinate(x+1, y+1, grid.level),
-            Engine::Coordinate(x, y+1, grid.level)
+            Engine::Coordinate(x, y, height),
+            Engine::Coordinate(x+1, y, height),
+            Engine::Coordinate(x+1, y+1, height),
+            Engine::Coordinate(x, y+1, height)
         );
-        float brightness = grid.level / float(size.z);
+        float brightness = height / float(size.z);
         brightness = 0.2 + brightness*0.8;
         auto groundColor = grid.ground->color;
         auto vertexColor = Engine::Lerp(Engine::RGBA::black, groundColor, brightness);
