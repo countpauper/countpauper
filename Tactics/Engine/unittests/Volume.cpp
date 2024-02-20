@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "Engine/Volume.h"
-#include "Engine/Mesh.h"
-#include "Engine/Matrix.h"
-#include "Engine/AxisAlignedBoundingBox.h"
+#include "Engine/Geometry/Volume.h"
+#include "Engine/Geometry/Mesh.h"
+#include "Engine/Geometry/Matrix.h"
+#include "Engine/Geometry/AxisAlignedBoundingBox.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test
@@ -82,7 +82,7 @@ TEST(Cylinder, AxisAligned)
 {
     Coordinate b(1, 0, 0);
     Cylinder c(Line(Coordinate::origin, b), 1, 1);
-    EXPECT_DOUBLE_EQ(1.0*2.0*2.0, c.GetBoundingBox().Volume()); 
+    EXPECT_DOUBLE_EQ(1.0*2.0*2.0, c.GetBoundingBox().Volume());
     EXPECT_EQ(0, c.Distance(Coordinate::origin));
     EXPECT_EQ(0.0, c.Distance(b));
     EXPECT_EQ(0.0, c.Distance(Coordinate(0, 1, 0)));
@@ -102,7 +102,7 @@ TEST(Cylinder, Turned)
 {
     Line axis(Coordinate::origin, Coordinate(2, 0, 0));
     Cylinder c(axis, 1, 1);
-    EXPECT_3D_EQ(Vector(2,2,2), c.GetBoundingBox().Extent()); 
+    EXPECT_3D_EQ(Vector(2,2,2), c.GetBoundingBox().Extent());
 
     EXPECT_3D_EQ(c.Axis().a, axis.a);
     EXPECT_3D_NEAR(c.Axis().b, axis.b, 1e-12);

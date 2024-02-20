@@ -6,7 +6,7 @@
 #include "Game/Race.h"
 #include "Game/Item.h"
 #include "Game/StatDescriptor.h"
-#include "Engine/Object.h"
+#include "Engine/UI/Object.h"
 
 namespace Game
 {

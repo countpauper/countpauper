@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
-#include "Engine/Image.h"
+#include "Engine/File/Image.h"
 #include <filesystem>
 
 namespace Engine::Test
 {
-  
+
     TEST(Image, Empty)
     {
         Image notAnImage;

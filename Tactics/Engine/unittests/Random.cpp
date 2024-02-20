@@ -2,7 +2,7 @@
 #include <array>
 #include <numeric>
 #include <iostream>
-#include "Engine/Random.h"
+#include "Engine/Utility/Random.h"
 
 namespace Engine::Test
 {

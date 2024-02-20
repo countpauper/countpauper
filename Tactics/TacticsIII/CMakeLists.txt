@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(tactics)
 
-file(GLOB SOURCES *.cpp)
+file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 #
@@ -22,8 +22,6 @@ include(CTest)
 enable_testing()
 
 add_subdirectory(../Engine ${CMAKE_CURRENT_BINARY_DIR}/Engine)
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory("${DEPENDENCIES_DIR}/json/" ${CMAKE_BINARY_DIR}/json)
 add_subdirectory(Game)
 
 

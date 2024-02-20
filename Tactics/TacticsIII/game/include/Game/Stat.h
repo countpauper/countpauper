@@ -6,7 +6,7 @@
 #include <initializer_list>
 #include "Game/Json.h"
 #include "Game/StatDescriptor.h"
-#include "Engine/Range.h"
+#include "Engine/Utility/Range.h"
 
 namespace Game
 {

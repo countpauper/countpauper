@@ -1,10 +1,10 @@
 #include <GL/glut.h>
-#include "Engine/Window.h"
-#include "Engine/Application.h"
-#include "Engine/Image.h"
-#include "Engine/Mesh.h"
-#include "Engine/Scene.h"
-#include "Engine/Matrix.h"
+#include "Engine/UI/Window.h"
+#include "Engine/UI/Application.h"
+#include "Engine/File/Image.h"
+#include "Engine/Geometry/Mesh.h"
+#include "Engine/UI/Scene.h"
+#include "Engine/Geometry/Matrix.h"
 #include "Game/Map.h"
 #include "Game/Creature.h"
 #include "Game/Race.h"
@@ -14,13 +14,18 @@ int main(int argc, char**argv)
     Engine::Application app(argc, argv);
     Engine::Window window;
     Game::Map map( Engine::Image("data/map20.png"), 16);
+
     Engine::Box charMesh;
     charMesh *= Engine::Matrix::Scale({0.75, 0.75, 1.75}) * Engine::Matrix::Translation({-0.5, -0.5, 0.0});
     charMesh.SetColor(Engine::RGBA::red);
+
     window.SetTitle("Tactics III");
-    auto& mapProp = window.GetScene().Add(Engine::Prop{&map, map.GetMesh(), Engine::Coordinate()});
+    window.GetScene().Add(Engine::Prop{&map, map.GetMesh(), Engine::Coordinate()});
     Game::Race elf("elf");
+    // Todo: props are more like objects themselves and override position and orientation and render?
+    // then make Mesh based objects and Avatars are those but with a link to a creature, but can be selected and such
+    // objects also have mouse/keyboard input and selection as sort ModelView
     Game::Creature c("velglarn", elf);
-    auto& p1 = window.GetScene().Add(Engine::Prop{&c, charMesh, map.GroundCoord({2,3})});
+    window.GetScene().Add(Engine::Prop{&c, charMesh, map.GroundCoord({2,3})});
     app.Run();
 }

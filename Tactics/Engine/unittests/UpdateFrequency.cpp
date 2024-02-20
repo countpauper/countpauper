@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "Engine/UpdateFrequency.h"
+#include "Engine/Utility/UpdateFrequency.h"
 
 namespace Engine::Test
 {

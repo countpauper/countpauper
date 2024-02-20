@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 
-#include "Engine/Box.h"
-#include "Engine/Range.h"
+#include "Engine/Geometry/Box.h"
+#include "Engine/Utility/Range.h"
 
 namespace Engine::Test
 {
@@ -14,7 +14,7 @@ TEST(Box, Size)
     EXPECT_EQ(Range(-1, 0), Box(Position(-1, 1, 3), Position(0, 2, 4)).x);
     EXPECT_EQ(Range(1, 2), Box(Position(-1, 1, 3), Position(0, 2, 4)).y);
     EXPECT_EQ(Range(3, 4), Box(Position(-1, 1, 3), Position(0, 2, 4)).z);
-    // no expectations yet for size and extent of flipped bounding boxes 
+    // no expectations yet for size and extent of flipped bounding boxes
 }
 
 TEST(Box, Grow)

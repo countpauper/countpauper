@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "Engine/Position.h"
+#include "Engine/Geometry/Position.h"
 
 namespace Engine::Test
 {

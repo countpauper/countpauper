@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
-#include "Engine/Effect.h"
+#include "Engine/Rendering/Effect.h"
 #include "GTestGeometry.h"
 #include <array>
 #include <numeric>
 #include <iostream>
 namespace Engine::Test
 {
-  
+
     TEST(Effect, Cloud)
     {
         ParticleEffect<Cloud> cloud(1);

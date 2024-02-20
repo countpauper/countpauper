@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 project(EngineTest CXX)
 add_compile_options(-Wall -Wextra -pedantic -Werror)
 
-file(GLOB SOURCES "*.cpp")
+file(GLOB SOURCES CONFIGURE_DEPENDS "*.cpp")
 file(GLOB HEADERS "*.h")
 set(EXE_NAME ${PROJECT_NAME})
 add_executable(${EXE_NAME} ${SOURCES} ${HEADERS})

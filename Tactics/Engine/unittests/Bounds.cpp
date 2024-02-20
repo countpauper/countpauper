@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-#include "Engine/Range.h"
-#include "Engine/Vector.h"
-#include "Engine/AxisAlignedBoundingBox.h"
-#include "Engine/Matrix.h"
-#include "Engine/Geometry.h"
+#include "Engine/Utility/Range.h"
+#include "Engine/Geometry/Vector.h"
+#include "Engine/Geometry/AxisAlignedBoundingBox.h"
+#include "Engine/Geometry/Matrix.h"
+#include "Engine/Geometry/Geometry.h"
 #include "GTestGeometry.h"
 
 

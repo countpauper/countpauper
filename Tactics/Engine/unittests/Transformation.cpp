@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "Engine/Matrix.h"
-#include "Engine/Quaternion.h"
-#include "Engine/Vector.h"
-#include "Engine/Geometry.h"
+#include "Engine/Geometry/Matrix.h"
+#include "Engine/Geometry/Quaternion.h"
+#include "Engine/Geometry/Vector.h"
+#include "Engine/Geometry/Geometry.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test
@@ -54,7 +54,7 @@ TEST(Matrix, Multiplication)
     EXPECT_EQ(154, o[1][1]);
     EXPECT_EQ(0, o[0][2]);
 
-    l *= r; 
+    l *= r;
     EXPECT_EQ(58,  l[0][0]);
     EXPECT_EQ(64,  l[1][0]);
     EXPECT_EQ(139, l[0][1]);
@@ -72,9 +72,9 @@ TEST(Matrix, InverseAffine)
     auto v_transformed = matrix * v;
     auto inverse = matrix.Inverse() * v_transformed;
     EXPECT_3D_NEAR(inverse, v, 1e-12);
-    
-    // auto matrix2 = Matrix::Scale(Vector(0.2f,0.3f,0.4f)) * 
-    //     Matrix::Translation(Vector(-2, 3, -4)) * 
+
+    // auto matrix2 = Matrix::Scale(Vector(0.2f,0.3f,0.4f)) *
+    //     Matrix::Translation(Vector(-2, 3, -4)) *
     //     Quaternion(Vector(1, 0.5f, 0.5f), -0.3f).AsMatrix();
     v_transformed = matrix * v;
     inverse = matrix.Inverse() * v_transformed;

@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "Engine/Quaternion.h"
-#include "Engine/Vector.h"
-#include "Engine/Geometry.h"
-#include "Engine/Matrix.h"
+#include "Engine/Geometry/Quaternion.h"
+#include "Engine/Geometry/Vector.h"
+#include "Engine/Geometry/Geometry.h"
+#include "Engine/Geometry/Matrix.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test
@@ -68,10 +68,10 @@ TEST(Quaternion, Multiplication)
 {
     Quaternion xrot(Vector(1, 0, 0), PI * 0.5);
     Quaternion yrot(Vector(0, 1, 0), PI * 0.5);
-    
+
     Vector v(1, 0, 0);
     // http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/transforms/index.htm
-    // (q1*q2) * v =  (q2*v) * q1 
+    // (q1*q2) * v =  (q2*v) * q1
     EXPECT_EQ((yrot*(xrot*v)), ((yrot*xrot)*v));
     EXPECT_EQ((xrot*(yrot*v)), ((xrot*yrot)*v));
 }

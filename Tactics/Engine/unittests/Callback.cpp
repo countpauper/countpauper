@@ -2,7 +2,7 @@
 #include <array>
 #include <numeric>
 #include <iostream>
-#include "Engine/Callback.h"
+#include "Engine/Utility/Callback.h"
 
 namespace Engine::Test
 {
@@ -57,9 +57,9 @@ TEST(Callback, CallbackArguments)
 TEST(Callback, CallbackException)
 {
 	Engine::Callback<> c;
-	auto connection = c.connect([]() 
-	{ 
-		throw std::runtime_error("Test"); 
+	auto connection = c.connect([]()
+	{
+		throw std::runtime_error("Test");
 	});
 	EXPECT_THROW(c(), std::runtime_error);
 	connection.disconnect();

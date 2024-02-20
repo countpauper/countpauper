@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <math.h>
-#include "Engine/from_string.h"
-#include "Engine/Utils.h"
+#include "Engine/Utility/from_string.h"
+#include "Engine/Utility/Utils.h"
 
 namespace Engine::Test
 {

@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "Engine/Mesh.h"
-#include "Engine/AxisAlignedBoundingBox.h"
-#include "Engine/OffscreenSurface.h"
-#include "Engine/Matrix.h"
+#include "Engine/Geometry/Mesh.h"
+#include "Engine/Geometry/AxisAlignedBoundingBox.h"
+#include "Engine/Rendering/OffscreenSurface.h"
+#include "Engine/Geometry/Matrix.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test
