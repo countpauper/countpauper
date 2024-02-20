@@ -19,6 +19,7 @@ target_include_directories(Engine PUBLIC "include" PRIVATE
 target_link_libraries(Engine
         Stb
         GLUT::GLUT
+        nlohmann_json::nlohmann_json
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES})
 

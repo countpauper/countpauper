@@ -2,9 +2,10 @@
 #include <nlohmann/json.hpp>
 #include <optional>
 
+using json = nlohmann::json;
+
 namespace Engine
 {
-using json = nlohmann::json;
 
 template<typename T>
 std::optional<T> try_get(const json& j, std::string_view key)

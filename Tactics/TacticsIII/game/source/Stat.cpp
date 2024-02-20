@@ -38,19 +38,19 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
 {       // TODO: this is pretty close to ns::from_json
 
         // TODO: this can be refactored
-        description = get_value_or(j, "description", std::string());
-        if (auto dependName = try_get<std::string>(j, "Depends"))
+        description = Engine::get_value_or(j, "description", std::string());
+        if (auto dependName = Engine::try_get<std::string>(j, "Depends"))
         {
                 dependency = dependencies.Identify(*dependName);
         } else {
                 dependency = Stat::none;
         }
-        table = get_value_or(j, "table", std::vector<int>());
-        if (get_value_or(j, "integer", false ))
+        table = Engine::get_value_or(j, "table", std::vector<int>());
+        if (Engine::get_value_or(j, "integer", false ))
         {
                 limit = Engine::Range<int>::max();
         }
-        auto limitVector = get_value_or(j, "range", std::vector<int>());
+        auto limitVector = Engine::get_value_or(j, "range", std::vector<int>());
         if (limitVector.size() >= 2)
         {
                 limit.begin = limitVector.front();
@@ -59,12 +59,12 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
 
         op = Operator::nop;
         operand = Stat::none;
-        if (auto addOperand = try_get<std::string>(j, "+"))
+        if (auto addOperand = Engine::try_get<std::string>(j, "+"))
         {
                 op = Operator::add;
                 operand = dependencies.Identify(*addOperand);
         }
-        if (auto mulOperand = try_get<json>(j, "*"))
+        if (auto mulOperand = Engine::try_get<json>(j, "*"))
         {
                 if (mulOperand->is_number_integer())
                 {
