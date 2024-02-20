@@ -1,9 +1,10 @@
 #include "Engine/Geometry/Volume.h"
 #include "Engine/Geometry/Coordinate.h"
 #include "Engine/Geometry/Matrix.h"
-#include "Engine/Geometry/Geometry.h"
+#include "Engine/Geometry/Angles.h"
 #include "Engine/Geometry/AxisAlignedBoundingBox.h"
 #include <numeric>
+#include <cassert>
 
 namespace Engine
 {
@@ -15,6 +16,15 @@ AABB Point::GetBoundingBox() const
 double Point::Distance(const Coordinate& p) const
 {
     return (c - p).Length();
+}
+
+double Point::Intersection(const Line& line) const
+{
+    assert(false); // TODO
+    // Probably just check if the point is colinear with the line
+    // between a and b and then the distance from a
+    // but it needs a unit test
+    return std::numeric_limits<double>::signaling_NaN();
 }
 
 AABB Sphere::GetBoundingBox() const
@@ -32,6 +42,12 @@ double Sphere::Distance(const Coordinate& p) const
 double Sphere::Volume() const
 {
     return radius * radius * radius * PI * 4.0 / 3.0;
+}
+
+double Sphere::Intersection(const Line& line) const
+{
+    assert(false); // TODO
+    return std::numeric_limits<double>::signaling_NaN();
 }
 
 Cylinder::Cylinder() :
@@ -139,6 +155,11 @@ double Cylinder::Volume() const
     return Engine::PI * scale.y * scale.z * scale.z;
 }
 
+double Cylinder::Intersection(const Line& line) const
+{
+    assert(false); // TODO
+    return std::numeric_limits<double>::signaling_NaN();
+}
 
 CompoundVolume::CompoundVolume(const std::vector<std::reference_wrapper<const IVolume>>& vols)
 {
@@ -155,6 +176,14 @@ CompoundVolume::CompoundVolume(const CompoundVolume& other)
         volumes.push_back(v);
     }
 }
+
+double CompoundVolume::Intersection(const Line& line) const
+{
+    assert(false); // TODO
+    // Probably just take the minimum of all intersections
+    return std::numeric_limits<double>::signaling_NaN();
+}
+
 
 AABB Intersection::GetBoundingBox() const
 {

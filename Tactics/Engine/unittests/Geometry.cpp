@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "Engine/Geometry/Geometry.h"
+#include "Engine/Geometry/Angles.h"
 #include "Engine/Geometry/Coordinate.h"
 #include "Engine/Geometry/Vector.h"
 #include "Engine/Geometry/Line.h"
@@ -131,8 +131,8 @@ TEST(Plane, XY)
 
 TEST(Plane, XYIntersection)
 {
-    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, -6))), 0.25);
-    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,-6), Coordinate(0, 0, 2))), -0.75);
+    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, -6))), 2);
+    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,-6), Coordinate(0, 0, 2))), -6);
     EXPECT_TRUE(std::isnan(Plane::xy.Intersection(Line(Coordinate(0,1,2), Coordinate(1, 0, 2)))));
     EXPECT_TRUE(std::isnan(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 1)))));
     EXPECT_TRUE(std::isnan(Plane::xy.Intersection(Line(Coordinate(0,0,-2), Coordinate(0, 0, -4)))));
@@ -173,7 +173,7 @@ TEST(Plane, NotNormalXYAt1)
     EXPECT_FALSE(xy2.GetBoundingBox().Contains(Coordinate(1, 1, 1.1)));
     EXPECT_TRUE(xy2.GetBoundingBox().Contains(Coordinate(0, 0, 0.9)));
 
-    EXPECT_EQ(xy2.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 0))), 0.5);
+    EXPECT_EQ(xy2.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 0))), 1);
 
 }
 

@@ -48,7 +48,8 @@ public:
     std::vector<uint32_t> names;    // same size as triangles. not together due to glDrawElements
     void SetName(uint32_t name);
     void SetColor(RGBA color);
-    std::pair<double, uint32_t> Intersection(const Line& line) const;
+    std::pair<double, uint32_t> NamedIntersection(const Line& line) const;
+    double Intersection(const Line& line) const;
 
     Mesh& operator+=(const Mesh& addition);
     double Distance(const Coordinate& p) const override;

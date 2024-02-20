@@ -7,6 +7,7 @@
 #include "Engine/Utility/GLutil.h"
 #include <array>
 #include <GL/gl.h>
+#include <cassert>
 
 namespace Engine
 {
@@ -66,6 +67,14 @@ bool AABB::Contains(const Coordinate& p) const
 Coordinate AABB::Clip(const Coordinate& p) const
 {
     return Coordinate(x.Clip(p.x), y.Clip(p.y), z.Clip(p.z));
+}
+
+double AABB::Intersection(const Line& line) const
+{
+    assert(false); // TODO
+    // Possibly just check if line a is inside or both
+    // and if a or b is outside intersect with the six planes
+    return std::numeric_limits<double>::signaling_NaN();
 }
 
 

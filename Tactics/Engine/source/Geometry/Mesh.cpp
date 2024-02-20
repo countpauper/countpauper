@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include "Engine/Geometry/Mesh.h"
-#include "Engine/Geometry/Geometry.h"
+#include "Engine/Geometry/Angles.h"
 #include "Engine/Geometry/Matrix.h"
 #include "Engine/Geometry/AxisAlignedBoundingBox.h"
 #include "Engine/Geometry/Quaternion.h"
@@ -200,7 +200,7 @@ void Mesh::SetColor(RGBA color)
     }
 }
 
-std::pair<double, uint32_t> Mesh::Intersection(const Line& line) const
+std::pair<double, uint32_t> Mesh::NamedIntersection(const Line& line) const
 {
     // TODO: optimize by checking the intersection of the line with the axis aligned bounding box
     // but optimize the AABB by precomputing in Validate() and reset in Invalidate()
@@ -223,6 +223,11 @@ std::pair<double, uint32_t> Mesh::Intersection(const Line& line) const
     }
     uint32_t name = (best < names.size()) ? names[best] : 0;
     return std::make_pair(nearest, name);
+}
+
+double Mesh::Intersection(const Line& line) const
+{
+    return NamedIntersection(line).first;
 }
 
 double Mesh::Distance(const Coordinate& p) const
@@ -391,13 +396,13 @@ Quad::Quad(Coordinate a, Coordinate b, Coordinate c, Coordinate d)
 Box::Box(const Vector& size)
     : Box()
 {
-    (*this) *= Matrix::Scale(size*0.5);
+    (*this) *= Matrix::Scale(size);
 }
 
 Box::Box(const AABB& bounds) :
     Box()
 {
-    (*this) *= Matrix::Scale(bounds.Extent()*0.5);
+    (*this) *= Matrix::Scale(bounds.Extent());
     (*this) *= Matrix::Translation(Engine::Vector(bounds.Center()));
 }
 

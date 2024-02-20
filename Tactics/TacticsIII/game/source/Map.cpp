@@ -1,6 +1,6 @@
 #include "Game/Map.h"
 #include "Engine/File/Image.h"
-#include "Engine/Geometry/Geometry.h"
+#include "Engine/Geometry/Angles.h"
 #include "Engine/UI/Debug.h"
 #include "Engine/Utility/Maths.h"
 #include "Game/Material.h"

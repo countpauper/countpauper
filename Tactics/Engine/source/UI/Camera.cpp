@@ -2,7 +2,7 @@
 #include <GL/glut.h>
 
 #include "Engine/UI/Camera.h"
-#include "Engine/Geometry/Geometry.h"
+#include "Engine/Geometry/Angles.h"
 #include "Engine/Geometry/Coordinate.h"
 #include "Engine/Geometry/Quaternion.h"
 #include "Engine/Geometry/Vector.h"

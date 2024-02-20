@@ -33,7 +33,7 @@ Object* Prop::operator->()
 std::pair<double, std::uint32_t> Prop::Intersection(const Line& line) const
 {
     auto localLine = orientation.Conjugate() * (line - Vector(location));
-    return mesh.Intersection(localLine);
+    return mesh.NamedIntersection(localLine);
 }
 
 }

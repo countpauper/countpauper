@@ -27,7 +27,7 @@ TEST_F(Mesh, BoxVolume)
     Box cube(2.0);
     EXPECT_NEAR(8.0, cube.GetBoundingBox().Volume(), precision);
     // and exact distance to surface
-    Coordinate center(0, 0, 0);
+    Coordinate center(1, 1, 1);
     EXPECT_EQ(-1.0, cube.Distance(center));
     EXPECT_EQ(-0.5, cube.Distance(center + Vector(0.5, 0, 0)));
     EXPECT_EQ(-0.25, cube.Distance(center + Vector(0, 0.75, -0.75)));

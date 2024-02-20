@@ -49,20 +49,20 @@ TEST(Volume, InfiniteAABox)
 TEST(Volume, Box)
 {
     Box b(Vector(2, 3, 4));
-    b *= Matrix::Translation(Vector(1, 1.5, 2)); // Box is centered around 0,0,0
     b *= Matrix::Translation(Vector(1, -1, 0 )); // [1,3],[-1,2],[0,4]
-    EXPECT_3D_EQ(Vector(2,3,4), b.GetBoundingBox().Extent());
+    EXPECT_EQ(b.GetBoundingBox(), AABB(Coordinate(1,-1,0), Coordinate(3,2,4)));
+    EXPECT_3D_EQ(b.GetBoundingBox().Extent(), Vector(2,3,4));
     // On corners
-    EXPECT_DOUBLE_EQ(0, b.Distance(Coordinate(1, -1, 4)));
-    EXPECT_DOUBLE_EQ(0, b.Distance(Coordinate(3, 2, 0)));
+    EXPECT_DOUBLE_EQ(b.Distance(Coordinate(1, -1, 4)), 0);
+    EXPECT_DOUBLE_EQ(b.Distance(Coordinate(3, 2, 0)), 0);
     // On faces
-    EXPECT_DOUBLE_EQ(0, b.Distance(Coordinate(2, -1, 0)));
-    EXPECT_DOUBLE_EQ(0, b.Distance(Coordinate(3, 0, 4)));
+    EXPECT_DOUBLE_EQ(b.Distance(Coordinate(2, -1, 0)), 0);
+    EXPECT_DOUBLE_EQ(b.Distance(Coordinate(3, 0, 4)), 0);
     // Outside
-    EXPECT_DOUBLE_EQ(1, b.Distance(Coordinate(0, 0, 2)));
-    EXPECT_DOUBLE_EQ(2, b.Distance(Coordinate(2, 4, 3)));
+    EXPECT_DOUBLE_EQ(b.Distance(Coordinate(0, 0, 2)), 1);
+    EXPECT_DOUBLE_EQ(b.Distance(Coordinate(2, 4, 3)), 2);
     // Inside
-    EXPECT_DOUBLE_EQ(-1, b.Distance(Coordinate(2, 0, 2)));
+    EXPECT_DOUBLE_EQ(b.Distance(Coordinate(2, 0, 2)), -1);
 }
 
 TEST(Cylinder, Nul)

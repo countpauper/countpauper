@@ -35,6 +35,7 @@ namespace Engine
 
         bool Contains(const Coordinate& p) const;
         Coordinate Clip(const Coordinate& p) const;
+        double Intersection(const Line& line) const override;
 
         void Render();
 

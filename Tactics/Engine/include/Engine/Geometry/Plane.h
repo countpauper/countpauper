@@ -9,7 +9,7 @@ struct Coordinate;
 struct Line;
 struct Triangle;
 
-struct Plane : public IVolume, public Clone<Plane>
+struct Plane : public IGeometry, public Clone<Plane>
 {
     // a*normal.x + b*normal.y + c*normal.z + d = 0;
     Plane(const Engine::Vector& n, double d) :
@@ -33,10 +33,8 @@ struct Plane : public IVolume, public Clone<Plane>
     bool Above(const Coordinate& c) const;
     AABB GetBoundingBox() const override;
     double Distance(const Coordinate& c) const override;
-    double Volume() const override { return std::numeric_limits<double>::infinity(); }
     bool IsParallel(const Line& line) const;
-    // NaN if parallel or no intersection. Otherwise fraction 0...1 is fraction = fraction * Vector(Line) where intersection is
-    double Intersection(const Line& line) const;
+    double Intersection(const Line& line) const override;
     Engine::Vector normal;  // does not need to be normalized
     double d;
 

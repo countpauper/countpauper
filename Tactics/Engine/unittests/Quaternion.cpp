@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "Engine/Geometry/Quaternion.h"
 #include "Engine/Geometry/Vector.h"
-#include "Engine/Geometry/Geometry.h"
+#include "Engine/Geometry/Angles.h"
 #include "Engine/Geometry/Matrix.h"
 #include "GTestGeometry.h"
 

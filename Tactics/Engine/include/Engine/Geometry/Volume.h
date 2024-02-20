@@ -3,6 +3,7 @@
 #include "Engine/Geometry/Quaternion.h"
 #include "Engine/Geometry/Line.h"
 #include "Engine/Utility/Clone.h"
+#include "Engine/Geometry/Geometry.h"
 #include <any>
 #include <vector>
 
@@ -11,20 +12,15 @@ namespace Engine
 
 struct AABB;
 
-class IVolume
+class IVolume : public IGeometry
 {
 public:
-    // bounding box around volume, no points outside this bounding box are inside the volume
-    virtual AABB GetBoundingBox() const = 0;
-    // Distance from a point to the volume. distance==0 means the surface of the volume. distance<0 means inside the volume
-    virtual double Distance(const Coordinate& p) const = 0;
-    // Check whether the volume contains a point
     bool Contains(const Coordinate& p) const { return Distance(p) <= 0; }
     virtual double Volume() const = 0;
 };
 
 
-class Point : public IVolume, public Clone<Point>
+class Point : public IGeometry, public Clone<Point>
 {
 public:
     Point(const Coordinate& c) :
@@ -32,7 +28,7 @@ public:
     {}
     AABB GetBoundingBox() const override;
     double Distance(const Coordinate& p) const override;
-    double Volume() const override { return 0.0; }
+    double Intersection(const Line& line) const override;
 private:
     Coordinate c;
 };
@@ -48,6 +44,7 @@ public:
     AABB  GetBoundingBox() const override;
     double Distance(const Coordinate& p) const override;
     double Volume() const override;
+    double Intersection(const Line& line) const override;
 private:
     Coordinate center;
     double radius;
@@ -63,6 +60,7 @@ public:
     Line Axis() const;
     Cylinder Slice(const Engine::Range<double>& range) const;
     double Volume() const override;
+    double Intersection(const Line& line) const override;
 private:
     Vector scale;
     Vector origin;
@@ -76,6 +74,7 @@ public:
     CompoundVolume() = default;
     CompoundVolume(const std::vector<std::reference_wrapper<const IVolume>>& vols);
     CompoundVolume(const CompoundVolume& o);
+    double Intersection(const Line& line) const override;
 protected:
     std::vector<Engine::clone_ptr<IVolume>> volumes;
 };

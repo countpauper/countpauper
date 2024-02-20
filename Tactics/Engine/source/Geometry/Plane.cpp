@@ -102,6 +102,9 @@ namespace Engine
 
     double Plane::Intersection(const Line& line) const
     {
+        // TODO: this can probably be optimized with a
+        // method similar to Triangle, just don't check the limtis on u and v
+
         double normaldot = Vector(line).Dot(normal);
         if (std::abs(normaldot) < std::numeric_limits<double>::epsilon())
             return std::numeric_limits<double>::quiet_NaN();
@@ -112,9 +115,9 @@ namespace Engine
         if ((fraction<0) || (fraction>1))
             return std::numeric_limits<double>::quiet_NaN();
         if (normaldot < 0 )
-            return fraction;    // a is above the plane
+            return fraction * line.Length();    // a is above the plane
         else
-            return -fraction;   // a is behind the plane
+            return -fraction * line.Length();   // a is behind the plane
     }
 
     Plane& Plane::Normalize()
