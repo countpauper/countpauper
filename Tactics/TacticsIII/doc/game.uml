@@ -1,9 +1,24 @@
 @startuml
 
+class StatDescriptor {
+   total: int
+   description : string
+}
+
+class StatDefintition {
+
+}
+interface Statted
+{
+   Get(stat) : StatDescriptor
+}
+
 
 class Creature {
   name: string
 }
+
+Creature ...|> Statted
 
 class Race {
     name: string
@@ -27,10 +42,14 @@ class Dependency {
    table: int[]
    operator: enum
 }
+
+
+StatDescriptor ---- Statted
+Statted o--> "singleton" StatDefintition
 Stat *--> "*" Dependency
 Dependency o--> Stat
 
 Creature o--> "1" Race
 Creature o--> "*" Item
-
+StatDefintition *---> Stat
 @enduml
