@@ -1,8 +1,8 @@
-#include "Engine/Rendering/Drawing.h"
-#include "Engine/Geometry/Angles.h"
-#include "Engine/Geometry/Quaternion.h"
-#include "Engine/Geometry/Vector.h"
-#include "Engine/Geometry/Matrix.h"
+#include "Rendering/Drawing.h"
+#include "Geometry/Angles.h"
+#include "Geometry/Quaternion.h"
+#include "Geometry/Vector.h"
+#include "Geometry/Matrix.h"
 #include <GL/gl.h>
 
 namespace Engine

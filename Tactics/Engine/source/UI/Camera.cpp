@@ -1,12 +1,12 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
 
-#include "Engine/UI/Camera.h"
-#include "Engine/Geometry/Angles.h"
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Geometry/Quaternion.h"
-#include "Engine/Geometry/Vector.h"
-#include "Engine/Geometry/Matrix.h"
+#include "UI/Camera.h"
+#include "Geometry/Angles.h"
+#include "Geometry/Coordinate.h"
+#include "Geometry/Quaternion.h"
+#include "Geometry/Vector.h"
+#include "Geometry/Matrix.h"
 #include <iostream>
 #include <cmath>
 #include <cassert>

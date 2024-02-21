@@ -1,8 +1,8 @@
 #include "Game/Map.h"
-#include "Engine/File/Image.h"
-#include "Engine/Geometry/Angles.h"
-#include "Engine/UI/Debug.h"
-#include "Engine/Utility/Maths.h"
+#include "File/Image.h"
+#include "Geometry/Angles.h"
+#include "UI/Debug.h"
+#include "Utility/Maths.h"
 #include "Game/Material.h"
 #include <cassert>
 

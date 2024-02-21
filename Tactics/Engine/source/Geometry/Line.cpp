@@ -1,8 +1,8 @@
 #include <GL/gl.h>
-#include "Engine/Geometry/Line.h"
-#include "Engine/Utility/Maths.h"
-#include "Engine/Geometry/Vector.h"
-#include "Engine/Geometry/AxisAlignedBoundingBox.h"
+#include "Geometry/Line.h"
+#include "Utility/Maths.h"
+#include "Geometry/Vector.h"
+#include "Geometry/AxisAlignedBoundingBox.h"
 #include <sstream>
 
 namespace Engine

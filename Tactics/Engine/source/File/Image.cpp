@@ -1,10 +1,10 @@
 #include <GL/gl.h>
-#include "Engine/File/Image.h"
-#include "Engine/Rendering/Color.h"
-#include "Engine/Utility/Error.h"
-#include "Engine/Utility/Utils.h"
-#include "Engine/Geometry/Position.h"
-#include "Engine/Utility/from_string.h"
+#include "File/Image.h"
+#include "Rendering/Color.h"
+#include "Utility/Error.h"
+#include "Utility/Utils.h"
+#include "Geometry/Position.h"
+#include "Utility/from_string.h"
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image.h>

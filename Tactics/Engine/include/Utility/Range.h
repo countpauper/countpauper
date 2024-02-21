@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Utility/Maths.h"
+#include "Geometry/Coordinate.h"
+#include "Utility/Maths.h"
 #include <algorithm>
 #include <type_traits>
 

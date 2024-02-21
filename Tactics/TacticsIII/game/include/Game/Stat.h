@@ -4,9 +4,9 @@
 #include <vector>
 #include <limits>
 #include <initializer_list>
-#include "Engine/File/Json.h"
+#include "File/Json.h"
 #include "Game/StatDescriptor.h"
-#include "Engine/Utility/Range.h"
+#include "Utility/Range.h"
 
 namespace Game
 {

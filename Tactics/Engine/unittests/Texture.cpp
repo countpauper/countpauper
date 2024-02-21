@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <filesystem>
-#include "Engine/File/Image.h"
-#include "Engine/Utility/Utils.h"
+#include "File/Image.h"
+#include "Utility/Utils.h"
 
 namespace Engine::Test
 {

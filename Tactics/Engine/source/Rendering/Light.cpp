@@ -1,4 +1,4 @@
-#include "Engine/Rendering/Light.h"
+#include "Rendering/Light.h"
 #include <GL/gl.h>
 
 namespace Engine

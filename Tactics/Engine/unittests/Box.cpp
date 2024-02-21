@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 
-#include "Engine/Geometry/Box.h"
-#include "Engine/Utility/Range.h"
+#include "Geometry/Box.h"
+#include "Utility/Range.h"
 
 namespace Engine::Test
 {

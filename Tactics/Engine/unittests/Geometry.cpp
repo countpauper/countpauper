@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
-#include "Engine/Geometry/Angles.h"
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Geometry/Vector.h"
-#include "Engine/Geometry/Line.h"
-#include "Engine/Geometry/Plane.h"
-#include "Engine/Geometry/Triangle.h"
-#include "Engine/Geometry/AxisAlignedBoundingBox.h"
+#include "Geometry/Angles.h"
+#include "Geometry/Coordinate.h"
+#include "Geometry/Vector.h"
+#include "Geometry/Line.h"
+#include "Geometry/Plane.h"
+#include "Geometry/Triangle.h"
+#include "Geometry/AxisAlignedBoundingBox.h"
 #include "GTestGeometry.h"
 
 namespace Engine::Test

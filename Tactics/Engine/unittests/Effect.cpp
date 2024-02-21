@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "Engine/Rendering/Effect.h"
+#include "Rendering/Effect.h"
 #include "GTestGeometry.h"
 #include <array>
 #include <numeric>

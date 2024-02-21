@@ -1,6 +1,6 @@
-#include "Engine/UI/Window.h"
-#include "Engine/UI/Debug.h"
-#include "Engine/Rendering/Color.h"
+#include "UI/Window.h"
+#include "UI/Debug.h"
+#include "Rendering/Color.h"
 #include <GL/glew.h>
 #include <GL/glut.h>
 #undef GetObject

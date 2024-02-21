@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Utility/Range.h"
-#include "Engine/Geometry/Volume.h"
+#include "Geometry/Coordinate.h"
+#include "Utility/Range.h"
+#include "Geometry/Volume.h"
 
 namespace Engine
 {

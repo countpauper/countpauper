@@ -1,7 +1,7 @@
-#include "Engine/UI/Scene.h"
-#include "Engine/Geometry/Mesh.h"
+#include "UI/Scene.h"
+#include "Geometry/Mesh.h"
 #include <GL/gl.h>
-#include "Engine/Geometry/Matrix.h"
+#include "Geometry/Matrix.h"
 
 #undef GetObjectA // Thanks windows.h
 

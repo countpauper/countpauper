@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "Engine/Rendering/Color.h"
-#include "Engine/Utility/Maths.h"
+#include "Rendering/Color.h"
+#include "Utility/Maths.h"
 #include <math.h>
 
 namespace Engine::Test

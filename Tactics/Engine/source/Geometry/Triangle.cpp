@@ -1,7 +1,7 @@
-#include "Engine/Geometry/Triangle.h"
-#include "Engine/Geometry/Plane.h"
-#include "Engine/Geometry/Line.h"
-#include "Engine/Geometry/Vector.h"
+#include "Geometry/Triangle.h"
+#include "Geometry/Plane.h"
+#include "Geometry/Line.h"
+#include "Geometry/Vector.h"
 #include <cassert>
 
 

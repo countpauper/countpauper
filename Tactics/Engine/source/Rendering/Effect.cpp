@@ -1,8 +1,8 @@
-#include "Engine/Rendering/Effect.h"
-#include "Engine/Rendering/Drawing.h"
-#include "Engine/Utility/Random.h"
-#include "Engine/Rendering/Texture.h"
-#include "Engine/Utility/Utils.h"
+#include "Rendering/Effect.h"
+#include "Rendering/Drawing.h"
+#include "Utility/Random.h"
+#include "Rendering/Texture.h"
+#include "Utility/Utils.h"
 #include <filesystem>
 #include <GL/gl.h>
 

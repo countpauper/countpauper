@@ -1,7 +1,7 @@
 #pragma once
-#include "Engine/Geometry/Size.h"
-#include "Engine/Geometry/Mesh.h"
-#include "Engine/UI/Object.h"
+#include "Geometry/Size.h"
+#include "Geometry/Mesh.h"
+#include "UI/Object.h"
 #include "Game/Material.h"
 #include <vector>
 

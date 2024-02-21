@@ -1,16 +1,16 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include "Engine/Geometry/Mesh.h"
-#include "Engine/Geometry/Angles.h"
-#include "Engine/Geometry/Matrix.h"
-#include "Engine/Geometry/AxisAlignedBoundingBox.h"
-#include "Engine/Geometry/Quaternion.h"
-#include "Engine/Geometry/Triangle.h"
-#include "Engine/Utility/GLutil.h"
-#include "Engine/Geometry/Plane.h"
-#include "Engine/Geometry/Triangle.h"
-#include "Engine/UI/Debug.h"
-#include "Engine/Utility/Error.h"
+#include "Geometry/Mesh.h"
+#include "Geometry/Angles.h"
+#include "Geometry/Matrix.h"
+#include "Geometry/AxisAlignedBoundingBox.h"
+#include "Geometry/Quaternion.h"
+#include "Geometry/Triangle.h"
+#include "Utility/GLutil.h"
+#include "Geometry/Plane.h"
+#include "Geometry/Triangle.h"
+#include "UI/Debug.h"
+#include "Utility/Error.h"
 
 #include <array>
 #include <cassert>

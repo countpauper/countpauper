@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Rendering/Color.h"
+#include "Rendering/Color.h"
 #include <string>
 namespace Game
 {

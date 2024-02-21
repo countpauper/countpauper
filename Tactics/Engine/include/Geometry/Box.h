@@ -1,7 +1,7 @@
 #pragma once
-#include "Engine/Geometry/Position.h"
-#include "Engine/Geometry/Size.h"
-#include "Engine/Utility/Range.h"
+#include "Geometry/Position.h"
+#include "Geometry/Size.h"
+#include "Utility/Range.h"
 
 namespace Engine
 {

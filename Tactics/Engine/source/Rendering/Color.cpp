@@ -1,4 +1,4 @@
-#include "Engine/Rendering/Color.h"
+#include "Rendering/Color.h"
 #include <cmath>
 #include <GL/gl.h>
 

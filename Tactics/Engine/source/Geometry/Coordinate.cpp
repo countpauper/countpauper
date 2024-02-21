@@ -1,8 +1,8 @@
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Geometry/Vector.h"
-#include "Engine/Geometry/Matrix.h"
-#include "Engine/Utility/from_string.h"
-#include "Engine/Utility/Utils.h"
+#include "Geometry/Coordinate.h"
+#include "Geometry/Vector.h"
+#include "Geometry/Matrix.h"
+#include "Utility/from_string.h"
+#include "Utility/Utils.h"
 #include <GL/gl.h>
 #include <ostream>
 #include <istream>

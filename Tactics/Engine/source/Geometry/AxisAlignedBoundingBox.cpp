@@ -1,10 +1,10 @@
-#include "Engine/Geometry/AxisAlignedBoundingBox.h"
-#include "Engine/Geometry/Vector.h"
-#include "Engine/Utility/Range.h"
-#include "Engine/Geometry/Line.h"
-#include "Engine/Geometry/Matrix.h"
-#include "Engine/Rendering/Drawing.h"
-#include "Engine/Utility/GLutil.h"
+#include "Geometry/AxisAlignedBoundingBox.h"
+#include "Geometry/Vector.h"
+#include "Utility/Range.h"
+#include "Geometry/Line.h"
+#include "Geometry/Matrix.h"
+#include "Rendering/Drawing.h"
+#include "Utility/GLutil.h"
 #include <array>
 #include <GL/gl.h>
 #include <cassert>

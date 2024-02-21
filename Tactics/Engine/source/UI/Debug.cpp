@@ -3,7 +3,7 @@
 #endif
 #include <iostream>
 #include <cstdio>
-#include "Engine/UI/Debug.h"
+#include "UI/Debug.h"
 
 namespace Engine::Debug
 {

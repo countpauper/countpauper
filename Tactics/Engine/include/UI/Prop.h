@@ -1,10 +1,10 @@
 #pragma once
 #include <cstdint>
-#include "Engine/UI/Object.h"
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Geometry/Quaternion.h"
-#include "Engine/UI/Camera.h"
-#include "Engine/Utility/Range.h"
+#include "UI/Object.h"
+#include "Geometry/Coordinate.h"
+#include "Geometry/Quaternion.h"
+#include "UI/Camera.h"
+#include "Utility/Range.h"
 
 #undef GetObjectA // Thanks windows.h
 namespace Engine

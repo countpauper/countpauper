@@ -6,7 +6,7 @@ class StatDescriptor {
 }
 
 class StatDefintition {
-
+  Load(fn)
 }
 interface Statted
 {
@@ -45,11 +45,13 @@ class Dependency {
 
 
 StatDescriptor ---- Statted
-Statted o--> "singleton" StatDefintition
+Statted o--> "<<singleton>>" StatDefintition
 Stat *--> "*" Dependency
 Dependency o--> Stat
 
 Creature o--> "1" Race
 Creature o--> "*" Item
 StatDefintition *---> Stat
+
+Item ..|> Statted
 @enduml

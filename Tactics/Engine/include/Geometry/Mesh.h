@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Engine/Geometry/Vector.h"
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Rendering/Color.h"
-#include "Engine/Geometry/Volume.h"
-#include "Engine/Rendering/IRendition.h"
+#include "Geometry/Vector.h"
+#include "Geometry/Coordinate.h"
+#include "Rendering/Color.h"
+#include "Geometry/Volume.h"
+#include "Rendering/IRendition.h"
 #include <vector>
 #include <set>
 

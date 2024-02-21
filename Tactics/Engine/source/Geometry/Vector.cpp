@@ -1,9 +1,9 @@
 
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Geometry/Line.h"
-#include "Engine/Geometry/Plane.h"
-#include "Engine/Geometry/Matrix.h"
-#include "Engine/Geometry/Quaternion.h"
+#include "Geometry/Coordinate.h"
+#include "Geometry/Line.h"
+#include "Geometry/Plane.h"
+#include "Geometry/Matrix.h"
+#include "Geometry/Quaternion.h"
 
 namespace Engine
 {

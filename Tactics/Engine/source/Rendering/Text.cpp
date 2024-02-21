@@ -1,5 +1,5 @@
-#include "Engine/Rendering/Text.h"
-#include "Engine/Utility/from_string.h"
+#include "Rendering/Text.h"
+#include "Utility/from_string.h"
 #include <GL/gl.h>
 #include <algorithm>
 #include <cassert>

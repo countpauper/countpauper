@@ -2,7 +2,7 @@
 
 #include <string>
 #include <memory>
-#include "Engine/Rendering/Color.h"
+#include "Rendering/Color.h"
 
 namespace Engine
 {

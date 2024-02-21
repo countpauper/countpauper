@@ -1,7 +1,7 @@
 #include <GL/gl.h>
 #include <stdexcept>
-#include "Engine/Rendering/Texture.h"
-#include "Engine/Utility/Error.h"
+#include "Rendering/Texture.h"
+#include "Utility/Error.h"
 
 namespace Engine
 {

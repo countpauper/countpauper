@@ -1,6 +1,6 @@
-#include "Engine/Geometry/Matrix.h"
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Geometry/Vector.h"
+#include "Geometry/Matrix.h"
+#include "Geometry/Coordinate.h"
+#include "Geometry/Vector.h"
 #include <GL/gl.h>
 #include <initializer_list>
 #include <cassert>

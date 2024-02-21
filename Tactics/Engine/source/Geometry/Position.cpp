@@ -1,6 +1,6 @@
 #include <sstream>
-#include "Engine/Utility/Maths.h"
-#include "Engine/Geometry/Position.h"
+#include "Utility/Maths.h"
+#include "Geometry/Position.h"
 
 namespace Engine
 {

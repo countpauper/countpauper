@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Geometry/Vector.h"
+#include "Geometry/Coordinate.h"
+#include "Geometry/Vector.h"
 
 namespace Engine
 {

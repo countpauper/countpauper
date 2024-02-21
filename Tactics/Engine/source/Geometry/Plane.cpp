@@ -1,9 +1,9 @@
-#include "Engine/Geometry/Plane.h"
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Geometry/Line.h"
-#include "Engine/Utility/Maths.h"
-#include "Engine/Geometry/Triangle.h"
-#include "Engine/Geometry/AxisAlignedBoundingBox.h"
+#include "Geometry/Plane.h"
+#include "Geometry/Coordinate.h"
+#include "Geometry/Line.h"
+#include "Utility/Maths.h"
+#include "Geometry/Triangle.h"
+#include "Geometry/AxisAlignedBoundingBox.h"
 
 namespace Engine
 {

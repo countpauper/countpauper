@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Engine/Geometry/Coordinate.h"
-#include "Engine/Rendering/Color.h"
-#include "Engine/Geometry/Vector.h"
-#include "Engine/Geometry/Matrix.h"
-#include "Engine/Utility/Random.h"
-#include "Engine/Geometry/AxisAlignedBoundingBox.h"
-#include "Engine/Rendering/IRendition.h"
+#include "Geometry/Coordinate.h"
+#include "Rendering/Color.h"
+#include "Geometry/Vector.h"
+#include "Geometry/Matrix.h"
+#include "Utility/Random.h"
+#include "Geometry/AxisAlignedBoundingBox.h"
+#include "Rendering/IRendition.h"
 #include <vector>
 #include <map>
 #include <memory>

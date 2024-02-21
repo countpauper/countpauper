@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Engine/Rendering/Color.h"
-#include "Engine/Rendering/IRendition.h"
-#include "Engine/Geometry/Coordinate.h"
+#include "Rendering/Color.h"
+#include "Rendering/IRendition.h"
+#include "Geometry/Coordinate.h"
 
 namespace Engine
 {

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Engine/Geometry/Quaternion.h"
-#include "Engine/Geometry/Line.h"
-#include "Engine/Utility/Clone.h"
-#include "Engine/Geometry/Geometry.h"
+#include "Geometry/Quaternion.h"
+#include "Geometry/Line.h"
+#include "Utility/Clone.h"
+#include "Geometry/Geometry.h"
 #include <any>
 #include <vector>
 

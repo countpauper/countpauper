@@ -2,8 +2,8 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
-#include "Engine/UI/Prop.h"
-#include "Engine/UI/Camera.h"
+#include "UI/Prop.h"
+#include "UI/Camera.h"
 
 namespace Engine
 {
