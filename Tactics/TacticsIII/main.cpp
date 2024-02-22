@@ -9,10 +9,11 @@
 #include "Game/Creature.h"
 #include "Game/Race.h"
 #include "UI/Avatar.h"
+#include "Utility/Singleton.h"
 
 int main(int argc, char**argv)
 {
-    Engine::Application app(argc, argv);
+    Engine::Singleton<Engine::Application> app(argc, argv);
     Engine::Window window;
     Game::Map map( Engine::Image("data/map20.png"));
 
@@ -29,5 +30,5 @@ int main(int argc, char**argv)
     Game::Creature c("velglarn", elf);
     Game::Avatar a(c);
     window.GetScene().Add(Engine::Prop{&a, charMesh, map.GroundCoord({2,3})});
-    app.Run();
+    app->Run();
 }

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Utility/Singleton.h"
+#include "UI/Bus.h"
+
 namespace Engine
 {
 
