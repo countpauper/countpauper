@@ -8,6 +8,7 @@
 #include "Game/Map.h"
 #include "Game/Creature.h"
 #include "Game/Race.h"
+#include "UI/Avatar.h"
 
 int main(int argc, char**argv)
 {
@@ -26,6 +27,7 @@ int main(int argc, char**argv)
     // then make Mesh based objects and Avatars are those but with a link to a creature, but can be selected and such
     // objects also have mouse/keyboard input and selection as sort ModelView
     Game::Creature c("velglarn", elf);
-    window.GetScene().Add(Engine::Prop{&c, charMesh, map.GroundCoord({2,3})});
+    Game::Avatar a(c);
+    window.GetScene().Add(Engine::Prop{&a, charMesh, map.GroundCoord({2,3})});
     app.Run();
 }

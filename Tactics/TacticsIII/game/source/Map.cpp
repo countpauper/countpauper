@@ -97,7 +97,7 @@ Engine::Coordinate Map::GroundCoord(Position pos) const
     return Engine::Coordinate(
         pos.x + 0.5,
         pos.y + 0.5,
-        grid.level
+        float(grid.level) / subheight
     );
 }
 
@@ -105,7 +105,7 @@ void Map::GenerateMesh()
 {
     int idx = 0;
     Engine::Vector up(0, 0, 1);
-    static constexpr int subheight = 16;
+
     for(const auto& grid: grids)
     {
         int x = idx % size.x;

@@ -37,6 +37,8 @@ private:
     void GenerateMesh();
     Grid& operator[](Position pos);
     const Grid& operator[](Position pos) const;
+
+    static constexpr int subheight = 16;
     Engine::Size size;
     std::vector<Grid> grids;
     Engine::Mesh mesh;
