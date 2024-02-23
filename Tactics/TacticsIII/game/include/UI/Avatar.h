@@ -13,7 +13,7 @@ class Avatar :
         public Engine::Passenger
 {
 public:
-    explicit Avatar(Map& map, Creature& c);
+    explicit Avatar(Map& map, Creature& c, Engine::Position pos);
     std::string_view Name() const override;
     void OnMessage(const Engine::Message& message);
     Engine::Coordinate GetLocation() const override;

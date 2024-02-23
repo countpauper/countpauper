@@ -21,8 +21,8 @@ struct KeyPressed : Message
 
 struct ClickOn : Message
 {
-    ClickOn(const class Object& obj, std::uint16_t sub) : object(obj), sub(sub) {}
-    const Object& object;
+    ClickOn(const class Object* obj, std::uint16_t sub) : object(obj), sub(sub) {}
+    const Object* object;
     std::uint16_t sub;
 };
 

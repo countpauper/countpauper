@@ -170,12 +170,12 @@ void Window::OnMouse(int button, int state, int x, int y)
         {
             auto name = prop->Name();
             Engine::Debug::Log("Selected %.*s.%d", name.size(), name.data(), sub);
-            app->bus.Post(ClickOn(*prop, sub));
         }
         else
         {
             Engine::Debug::Log("Selected nothing at %f, %f", viewPosition.x, viewPosition.y);
         }
+        app->bus.Post(ClickOn(prop, sub));
     }
     if (button==3 && state == GLUT_UP)
     {

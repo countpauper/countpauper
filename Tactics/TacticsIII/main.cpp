@@ -23,8 +23,13 @@ int main(int argc, char**argv)
     // Todo: props are more like objects themselves and override position and orientation and render?
     // then make Mesh based objects and Avatars are those but with a link to a creature, but can be selected and such
     // objects also have mouse/keyboard input and selection as sort ModelView
-    Game::Creature c("velglarn", elf);
-    Game::Avatar a(map, c);
+    Game::Creature c("Velg'larn", elf);
+    Game::Avatar a(map, c, {3, 2});
     window.GetScene().Add(a);
+
+    Game::Creature c2("Elg'caress", elf);
+    Game::Avatar a2(map, c2, {5, 8});
+    window.GetScene().Add(a2);
+
     app->Run();
 }
