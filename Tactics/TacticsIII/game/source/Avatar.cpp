@@ -7,10 +7,10 @@
 namespace Game
 {
 
-Avatar::Avatar(Map& map, Creature& c, Engine::Position pos) :
+Avatar::Avatar(std::string_view name, const  Game::Race& race, Map& map, Engine::Position pos) :
     Scenery(mesh),
     map(map),
-    creature(c),
+    creature(name, race),
     position(pos)
 {
     mesh += Engine::Box(Engine::Vector(0.75, 0.75, 1.75));
