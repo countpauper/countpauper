@@ -4,6 +4,7 @@
 
 namespace Engine
 {
+
 class Window
 {
 public:

@@ -6,9 +6,9 @@
 namespace Engine
 {
 
-Prop& Scene::Add(Prop&& prop)
+Scenery& Scene::Add(Scenery& prop)
 {
-    props.emplace_back(std::make_unique<Prop>(std::move(prop)));
+    props.emplace_back(&prop);
     return *props.back();
 }
 
@@ -17,17 +17,17 @@ Camera& Scene::GetCamera()
     return camera;
 }
 
-std::pair<Prop*, uint32_t> Scene::Select(Coordinate c) const
+std::pair<Scenery*, uint32_t> Scene::Select(Coordinate c) const
 {
     Line ray(c - Vector(0,0,1), c + Vector(0,0,1));
     ray *= Matrix::Projection().Inverse();
     return Hit(ray);
 }
 
-std::pair<Prop*, std::uint32_t> Scene::Hit(const Line& line) const
+std::pair<Scenery*, std::uint32_t> Scene::Hit(const Line& line) const
 {
     double nearest = std::numeric_limits<float>::max();
-    Prop* result = nullptr;
+    Scenery* result = nullptr;
     std::uint32_t resultName = 0;
 
     for(const auto& prop : props)
@@ -36,7 +36,7 @@ std::pair<Prop*, std::uint32_t> Scene::Hit(const Line& line) const
         if (distance< nearest)
         {
             nearest = distance;
-            result = prop.get();
+            result = prop;
             resultName = name;
         }
     }

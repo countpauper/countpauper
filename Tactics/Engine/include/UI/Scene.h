@@ -2,7 +2,7 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
-#include "UI/Prop.h"
+#include "UI/Scenery.h"
 #include "UI/Camera.h"
 
 namespace Engine
@@ -13,15 +13,15 @@ class Scene
 {
 public:
     Scene() = default;
-    Prop& Add(Prop&& prop);
+    Scenery& Add(Scenery& prop);
     void Render() const;
     Camera& GetCamera();
-    std::pair<Prop*, std::uint32_t> Select(Coordinate c) const;
-    std::pair<Prop*, std::uint32_t> Hit(const Line& line) const;
+    std::pair<Scenery*, std::uint32_t> Select(Coordinate c) const;
+    std::pair<Scenery*, std::uint32_t> Hit(const Line& line) const;
 private:
     PerspectiveCamera camera;
     // TODO: lights
-    std::vector<std::unique_ptr<Prop>> props;
+    std::vector<Scenery*> props;
 };
 
 }

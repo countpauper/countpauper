@@ -10,6 +10,7 @@ namespace Game
 {
 
 Map::Map(Engine::Size size) :
+    Scenery(mesh),
     size(size),
     grids(size.x * size.y)
 {
@@ -42,6 +43,7 @@ const Material* FindMaterial(Engine::HSVA color)
 }
 
 Map::Map(const Engine::Image& data) :
+    Scenery(mesh),
     size{int(data.Width()), int(data.Height()/4), 16},
     grids(size.x * size.y)
 {
@@ -81,24 +83,29 @@ Engine::Mesh& Map::GetMesh()
     return mesh;
 }
 
-Map::Grid& Map::operator[](Position pos)
+Map::Grid& Map::operator[](Engine::Position pos)
 {
     return grids[pos.x + pos.y * size.x];
 }
 
-const Map::Grid& Map::operator[](Position pos) const
+const Map::Grid& Map::operator[](Engine::Position pos) const
 {
     return grids[pos.x + pos.y * size.x];
 }
 
-Engine::Coordinate Map::GroundCoord(Position pos) const
+Engine::Coordinate Map::GroundCoord(Engine::Position pos) const
 {
     auto& grid = (*this)[pos];
     return Engine::Coordinate(
         pos.x + 0.5,
         pos.y + 0.5,
-        float(grid.level) / subheight
+        float(grid.level) / subheight + pos.z
     );
+}
+
+Engine::Size Map::GetSize() const
+{
+    return size;
 }
 
 void Map::GenerateMesh()

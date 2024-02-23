@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-
 #include "UI/Bus.h"
+#include "UI/WindowMessages.h"
 
 using namespace ::testing;
 
@@ -29,7 +29,7 @@ TEST(Bus, MessageIsDeliveredOnlyToSubscriber)
     MockPassenger other;
     Bus bus;
     bus.Subscribe(passenger, {MessageType<Click>()});
-    bus.Subscribe(other, {MessageType<Key>()});
+    bus.Subscribe(other, {MessageType<KeyPressed>()});
     EXPECT_CALL(passenger, OnMessage(MessageOfType(&typeid(Click))));
     EXPECT_CALL(other, OnMessage(_));
     std::stringstream ss;

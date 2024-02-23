@@ -162,8 +162,6 @@ namespace Engine
         zoom = 0.1f;
     }
 
-
-
     void TopCamera::Render() const
     {
         glMatrixMode(GL_PROJECTION);

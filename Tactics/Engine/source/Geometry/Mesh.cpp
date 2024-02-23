@@ -193,11 +193,11 @@ void Mesh::SetName(uint32_t name)
 
 void Mesh::SetColor(RGBA color)
 {
-    Invalidate();   // also triangles due to opaque/translucent separation
     for (auto& v : vertices)
     {
         v.color = color;
     }
+    Invalidate();   // also triangles due to opaque/translucent separation
 }
 
 std::pair<double, uint32_t> Mesh::NamedIntersection(const Line& line) const

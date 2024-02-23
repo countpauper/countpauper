@@ -1,7 +1,8 @@
 #pragma once
 #include "Geometry/Size.h"
 #include "Geometry/Mesh.h"
-#include "UI/Object.h"
+#include "Geometry/Position.h"
+#include "UI/Scenery.h"
 #include "Game/Material.h"
 #include <vector>
 
@@ -12,18 +13,15 @@ namespace Engine
 
 namespace Game
 {
-class Map : public Engine::Object
+class Map : public Engine::Scenery
 {
 public:
-    struct Position
-    {
-        int x, y;
-    };
     explicit Map(Engine::Size size);
     Map(const Engine::Image& data);
     std::string_view Name() const override;
     Engine::Mesh& GetMesh();
-    Engine::Coordinate GroundCoord(Position pos) const;
+    Engine::Coordinate GroundCoord(Engine::Position pos) const;
+    Engine::Size GetSize() const;
 private:
     struct Grid
     {
@@ -35,8 +33,8 @@ private:
     };
 
     void GenerateMesh();
-    Grid& operator[](Position pos);
-    const Grid& operator[](Position pos) const;
+    Grid& operator[](Engine::Position pos);
+    const Grid& operator[](Engine::Position pos) const;
 
     static constexpr int subheight = 16;
     Engine::Size size;

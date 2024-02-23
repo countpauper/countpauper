@@ -1,6 +1,9 @@
 #include "UI/Window.h"
 #include "UI/Debug.h"
 #include "Rendering/Color.h"
+#include "UI/WindowMessages.h"
+#include "Utility/Singleton.h"
+#include "UI/Application.h"
 #include <GL/glew.h>
 #include <GL/glut.h>
 #undef GetObject
@@ -8,6 +11,8 @@
 
 namespace Engine
 {
+
+Singleton<Application> app;
 
 void Window::Init(void)
 {
@@ -106,10 +111,7 @@ void Window::SpecialKey(int key,  int x, int y)
     Debug::Log("Special Key(%d @ %d, %d)", key, x, y);
     assert(key<256); // upper byte used for ascii
     Window& window = *CurrentWindow();
-    if (window.GetScene().GetCamera().Key(key, glutGetModifiers()))
-    {
-        glutPostRedisplay();
-    }
+    window.OnKey(key, x, y);
 }
 
 void Window::Key(unsigned char key,  int x, int y)
@@ -119,11 +121,16 @@ void Window::Key(unsigned char key,  int x, int y)
     window.OnKey(std::uint16_t(key) << 8, x, y);
 }
 
-void Window::OnKey(std::uint16_t  key,  int x, int y)
+void Window::OnKey(std::uint16_t key,  int x, int y)
 {
-    if (scene.GetCamera().Key(key, glutGetModifiers()))
+    std::uint16_t modifiers = glutGetModifiers();
+    if (scene.GetCamera().Key(key, modifiers))
     {
         glutPostRedisplay();
+    }
+    else
+    {
+        app->bus.Post(KeyPressed(key, modifiers));
     }
 }
 
@@ -153,14 +160,17 @@ Engine::Coordinate Window::Screen2View(int x, int y) const
 
 void Window::OnMouse(int button, int state, int x, int y)
 {
+    app->bus.Post(Click(button, x, y));
+
     auto viewPosition = Screen2View(x, y);
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
     {
         auto [prop, sub ] = scene.Select(viewPosition);
         if (prop)
         {
-            auto name = (*prop)->Name();
+            auto name = prop->Name();
             Engine::Debug::Log("Selected %.*s.%d", name.size(), name.data(), sub);
+            app->bus.Post(ClickOn(*prop, sub));
         }
         else
         {
@@ -169,11 +179,13 @@ void Window::OnMouse(int button, int state, int x, int y)
     }
     if (button==3 && state == GLUT_UP)
     {
+        app->bus.Post(ScrollWheel(false));
         scene.GetCamera().Zoom(0.909090909);
         glutPostRedisplay();
     }
     else if (button==4 && state == GLUT_UP)
     {
+        app->bus.Post(ScrollWheel(true));
         scene.GetCamera().Zoom(1.1);
         glutPostRedisplay();
     }

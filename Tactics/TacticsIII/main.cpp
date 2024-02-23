@@ -17,18 +17,14 @@ int main(int argc, char**argv)
     Engine::Window window;
     Game::Map map( Engine::Image("data/map20.png"));
 
-    Engine::Box charMesh;
-    charMesh *= Engine::Matrix::Scale({0.75, 0.75, 1.75}) * Engine::Matrix::Translation({-0.5, -0.5, 0.0});
-    charMesh.SetColor(Engine::RGBA::red);
-
     window.SetTitle("Tactics III");
-    window.GetScene().Add(Engine::Prop{&map, map.GetMesh(), Engine::Coordinate()});
+    window.GetScene().Add(map);
     Game::Race elf("elf");
     // Todo: props are more like objects themselves and override position and orientation and render?
     // then make Mesh based objects and Avatars are those but with a link to a creature, but can be selected and such
     // objects also have mouse/keyboard input and selection as sort ModelView
     Game::Creature c("velglarn", elf);
-    Game::Avatar a(c);
-    window.GetScene().Add(Engine::Prop{&a, charMesh, map.GroundCoord({2,3})});
+    Game::Avatar a(map, c);
+    window.GetScene().Add(a);
     app->Run();
 }

@@ -6,23 +6,20 @@
 #include "UI/Camera.h"
 #include "Utility/Range.h"
 
-#undef GetObjectA // Thanks windows.h
 namespace Engine
 {
 class Mesh;
 
-class Prop
+class Scenery : public Object
 {
 public:
-    Prop(Object* object, Mesh& mesh, Coordinate loc, Quaternion ori= Quaternion::Identity());
+    explicit Scenery(Mesh& mesh);
     void Render() const;
     std::pair<double, std::uint32_t> Intersection(const Line& line) const;
-    Object* operator->();
+    virtual Coordinate GetLocation() const;
+    virtual Quaternion GetOrientation() const;
 private:
-    Object* object;
     Mesh& mesh;
-    Coordinate location;
-    Quaternion orientation;
 };
 
 
