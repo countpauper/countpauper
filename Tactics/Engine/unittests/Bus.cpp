@@ -31,7 +31,7 @@ TEST(Bus, MessageIsDeliveredOnlyToSubscriber)
     bus.Subscribe(passenger, {MessageType<Click>()});
     bus.Subscribe(other, {MessageType<KeyPressed>()});
     EXPECT_CALL(passenger, OnMessage(MessageOfType(&typeid(Click))));
-    EXPECT_CALL(other, OnMessage(_));
+    EXPECT_CALL(other, OnMessage(_)).Times(0);
     std::stringstream ss;
     bus.Post(Click{1,2,3});
 }

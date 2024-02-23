@@ -2,6 +2,7 @@
 #include "Geometry/Mesh.h"
 #include "Geometry/AxisAlignedBoundingBox.h"
 #include "Rendering/OffscreenSurface.h"
+#include "Rendering/Color.h"
 #include "Geometry/Matrix.h"
 #include "GTestGeometry.h"
 
@@ -38,7 +39,6 @@ TEST_F(Mesh, BoxVolume)
         EXPECT_DOUBLE_EQ(0, cube.Distance(center+dir)) << dir;
         EXPECT_DOUBLE_EQ(1, cube.Distance(center + dir * 2.0)) << dir;
     }
-
 }
 
 TEST_F(Mesh, Render)
@@ -61,6 +61,41 @@ TEST_F(Mesh, Translate)
     Box cube(1.0);
     cube *= Matrix::Translation(Engine::Vector(1, 1, 1));
     EXPECT_FALSE(cube.GetBoundingBox().Contains(Engine::Coordinate::origin));
+}
+
+TEST_F(Mesh, Color)
+{
+    Box cube;
+    cube.SetColor(RGBA::red);
+    EXPECT_TRUE(all_of(cube.vertices.begin(), cube.vertices.end(), [](const Engine::Mesh::Vertex& v)
+    {
+        return v.color == RGBA::red;
+    }));
+}
+
+TEST_F(Mesh, ColorNamed)
+{
+    Engine::Mesh mesh;
+    Box cube;
+    cube.SetColor(RGBA::white);
+    cube.SetName(1);
+    mesh += cube;
+    Box otherCube(2.0);
+    otherCube.SetColor(RGBA::red);
+    otherCube.SetName(2);
+    mesh += otherCube;
+
+    mesh.SetColor(2, RGBA::green);
+    ASSERT_FALSE(all_of(mesh.vertices.begin(), mesh.vertices.end(), [](const Engine::Mesh::Vertex& v)
+    {
+        return v.color == RGBA::green;
+    }));
+
+    mesh.SetColor(RGBA::green);
+    EXPECT_TRUE(all_of(mesh.vertices.begin(), mesh.vertices.end(), [](const Engine::Mesh::Vertex& v)
+    {
+        return v.color == RGBA::green;
+    }));
 }
 
 }

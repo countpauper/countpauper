@@ -14,8 +14,14 @@ Avatar::Avatar(std::string_view name, const  Game::Race& race, Map& map, Engine:
     position(pos)
 {
     mesh += Engine::Box(Engine::Vector(0.75, 0.75, 1.75));
-    mesh *= Engine::Matrix::Translation({-0.5, -0.5, 0.0});
+    mesh *= Engine::Matrix::Translation({-0.375, -0.375, 0.0});
     mesh.SetColor(Engine::RGBA::red);
+    mesh.SetName(0);
+    Engine::Box selection(Engine::Vector(0.90, 0.90, 0.05));
+    selection *= Engine::Matrix::Translation({-0.45, -0.45, 0.0});
+    selection.SetName(1);
+    selection.SetColor(Engine::RGBA::transparent);
+    mesh += selection;
 
     Engine::Application::Get().bus.Subscribe(*this, {
             Engine::MessageType<Engine::ClickOn>(),
@@ -31,7 +37,7 @@ void Avatar::OnMessage(const Engine::Message& message)
         {
             selected = true;
             Engine::Application::Get().bus.Post(Selected(this));
-            mesh.SetColor(Engine::RGBA::white);
+            mesh.SetColor(1, Engine::RGBA::white);
         }
         else if ((clickOn->object == &map) && (selected))
         {
@@ -45,7 +51,7 @@ void Avatar::OnMessage(const Engine::Message& message)
         if (selection->avatar != this)
         {
             selected = false;
-            mesh.SetColor(Engine::RGBA::red);
+            mesh.SetColor(1, Engine::RGBA::transparent);
         }
     }
 }

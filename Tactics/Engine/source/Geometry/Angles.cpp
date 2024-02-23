@@ -1,5 +1,6 @@
 #include "Geometry/Angles.h"
 #include <cmath>
+#include <cassert>
 
 namespace Engine
 {
@@ -32,6 +33,23 @@ namespace Engine
         return pow(radius, 3) * PI * 4.0 / 3.0;
     }
 
-
+    std::pair<double, double> FaceYawPitch(Vector direction, Vector yawAxis)
+    {
+        if (yawAxis.z)
+        {
+            return std::make_pair(
+                atan2(direction.x, direction.y),
+                asin(direction.z)
+            );
+        }
+        else
+        {
+            assert(!yawAxis.x);
+            return std::make_pair(
+                -atan2(direction.x, direction.z),
+                asin(direction.y)
+            );
+        }
+    }
 }
 

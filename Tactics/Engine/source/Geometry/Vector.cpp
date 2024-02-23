@@ -48,6 +48,11 @@ Vector Vector::Normal() const
     return Vector(x / l, y / l, z / l);
 }
 
+bool Vector::IsNormalized() const
+{
+    return std::abs(1.0 - LengthSquared()) < 10.0 * std::numeric_limits<double>::epsilon();
+}
+
 Vector Vector::Cross(Vector o) const
 {
     return Vector(

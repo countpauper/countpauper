@@ -13,15 +13,7 @@
 
 namespace Engine
 {
-    Camera::Camera() :
-        position(Coordinate::origin),
-        target(0, 0, 0),
-        rotation(-45 , 0, 0),
-        zoom(1.0f),
-        dragx(0),
-        dragz(0)
-    {
-    }
+    Camera::Camera() =default;
 
     void Camera::Move(const Coordinate& newPosition)
     {
@@ -31,86 +23,29 @@ namespace Engine
     {
         position += offset;
     }
-    void Camera::Face(const Coordinate& newTarget)
-    {
-        target = newTarget;
-    }
+
     void Camera::Zoom(double factor)
     {
         zoom *= factor;
     }
-    void Camera::Drag(double dx, double dz)
-    {
-        dragx = dx;
-        dragz = dz;
-    }
-    void Camera::FinishDrag(double dx, double dz)
-    {
-        position.x -= dx;
-        position.z -= dz;
-        dragx = 0;
-        dragz = 0;
-    }
 
-    bool Camera::Key(std::uint16_t key, unsigned modifiers)
+    void Camera::Face(Coordinate target)
     {
-        if (modifiers & GLUT_ACTIVE_SHIFT)
+        auto vector = target - position;
+        if (vector)
         {
-            if (key == GLUT_KEY_UP)
+            auto [yaw, pitch] = FaceYawPitch(vector.Normal(), vertical);
+            rotation.x = Engine::Rad2Deg(pitch);
+            if (vertical.z)
             {
-                Move(vertical);
-                return true;
+                rotation.z = Engine::Rad2Deg(yaw);
             }
-            else if (key == GLUT_KEY_DOWN)
+            else
             {
-                Move(-vertical);
-                return true;
-            }
-            else if (key == GLUT_KEY_LEFT)
-            {
-                Move(Engine::Vector(-1, 0, 0));
-                return true;
-            }
-            else if (key == GLUT_KEY_RIGHT)
-            {
-                Move(Engine::Vector(1, 0, 0));
-                return true;
-            }
-            else if (key == int('+')<<8)
-            {
-                zoom *= 1.1f;
-                return true;
-            }
-            else if (key == int('-')<<8) // smiley
-            {
-                zoom/= 1.1f;
-                return true;
+                assert(!vertical.x);
+                rotation.y = Engine::Rad2Deg(yaw);
             }
         }
-        else
-        {
-            if (key == GLUT_KEY_UP)
-            {
-                rotation.x += 5;
-                return true;
-            }
-            else if (key == GLUT_KEY_DOWN)
-            {
-                rotation.x -= 5;
-                return true;
-            }
-            else if (key == GLUT_KEY_LEFT)
-            {
-                rotation -= (vertical * 5.0);
-                return true;
-            }
-            else if (key == GLUT_KEY_RIGHT)
-            {
-                rotation += (vertical * 5.0);
-                return true;
-            }
-        }
-        return false;
     }
 
     PerspectiveCamera::PerspectiveCamera() :
@@ -137,23 +72,11 @@ namespace Engine
         // ortho projection
         glScaled(0.1*zoom, 0.1*zoom, 0.01*zoom);
 /**/
-        glTranslated(dragx-position.x, -position.y, dragz-position.z-n);
+        glTranslated(-position.x, -position.y, -position.z);
         glRotated(rotation.x, 1, 0, 0);
         glRotated(rotation.y, 0, 1, 0);
         glRotated(rotation.z, 0, 0, 1);
-        /* Facing doesn't work right
-        auto vector = target - position;
-        if (vector)
-        {
-            double xAngle = atan2(vector.y, vector.z);
-            auto yVector = vector;
-            yVector.x = 0;
-            double yAngle = atan2(vector.x, yVector.Length());
-            glRotated(Engine::Rad2Deg(yAngle), 0, 1, 0);
-            glRotated(Engine::Rad2Deg(xAngle), 1, 0, 0);
-        }
 
-        */
         glMatrixMode(GL_MODELVIEW);
     }
 
@@ -167,13 +90,99 @@ namespace Engine
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glScaled(zoom, zoom, zoom);
-        //glTranslatef(dragx - position.x, -position.y, dragz - position.z);
-        glTranslated(dragx - target.x, -target.y, dragz - 1.0f);
+        glTranslated(-position.x, -position.y, - 1.0f);
         glDepthRange(0, 1);
         glClearDepth(1);
         glDepthFunc(GL_LESS);
         glRotated(-90, 1.0, 0.0, 0.0);
         glMatrixMode(GL_MODELVIEW);
     }
+
+    bool FreeCamera::Key(std::uint16_t key, unsigned modifiers)
+    {
+        if (modifiers & GLUT_ACTIVE_SHIFT)
+        {
+            if (key == GLUT_KEY_UP)
+            {
+                rotation.x += 5;
+                return true;
+            }
+            else if (key == GLUT_KEY_DOWN)
+            {
+                rotation.x -= 5;
+                return true;
+            }
+            else if (key == GLUT_KEY_LEFT)
+            {
+                rotation -= (vertical * 5.0);
+                return true;
+            }
+            else if (key == GLUT_KEY_RIGHT)
+            {
+                rotation += (vertical * 5.0);
+                return true;
+            }
+        }
+        else
+        {
+            if (key == GLUT_KEY_UP)
+            {
+                Move(vertical);
+                return true;
+            }
+            else if (key == GLUT_KEY_DOWN)
+            {
+                Move(-vertical);
+                return true;
+            }
+            else if (key == GLUT_KEY_PAGE_UP)
+            {
+                Vector dir = vertical.Cross(Vector(1,0,0));
+                Move(dir);
+                return true;
+            }
+            else if (key == GLUT_KEY_PAGE_DOWN)
+            {
+                Vector dir = vertical.Cross(Vector(1,0,0));
+                Move(-dir);
+                return true;
+            }
+            else if (key == GLUT_KEY_LEFT)
+            {
+                Move(Engine::Vector(-1, 0, 0));
+                return true;
+            }
+            else if (key == GLUT_KEY_RIGHT)
+            {
+                Move(Engine::Vector(1, 0, 0));
+                return true;
+            }
+            else if (key == int('+')<<8)
+            {
+                zoom *= 1.1f;
+                return true;
+            }
+            else if (key == int('-')<<8) // smiley
+            {
+                zoom/= 1.1f;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void TrackingCamera::Track(const Coordinate& newTarget)
+    {
+        target = newTarget;
+        Face(target);
+    }
+
+    bool TrackingCamera::Key(std::uint16_t key, unsigned modifiers)
+    {
+        // TODO: TrackingCamera behaves differently with keys. Only can move around, up down and closer/further (scroll)
+        // when moving or changing target, orientation is recomputed
+        return false;
+    }
+
 
 }

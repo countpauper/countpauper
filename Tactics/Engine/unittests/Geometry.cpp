@@ -2,6 +2,7 @@
 #include "Geometry/Angles.h"
 #include "Geometry/Coordinate.h"
 #include "Geometry/Vector.h"
+#include "Geometry/Quaternion.h"
 #include "Geometry/Line.h"
 #include "Geometry/Plane.h"
 #include "Geometry/Triangle.h"
@@ -46,7 +47,7 @@ TEST(Geometry, Coordinate)
 
 const double maxError = 0.001;
 
-TEST(Geometry, Degrees)
+TEST(Angles, Degrees)
 {
     EXPECT_EQ(Engine::Rad2Deg(0), 0);
     EXPECT_NEAR(Engine::Rad2Deg(Engine::PI), 180, maxError);
@@ -55,7 +56,7 @@ TEST(Geometry, Degrees)
 }
 
 
-TEST(Geometry, Turn)
+TEST(Angles, Turn)
 {
     double halfpi = Engine::PI * 0.5;
     EXPECT_NEAR(Engine::ShortestTurn(0, halfpi), halfpi, maxError);
@@ -64,6 +65,17 @@ TEST(Geometry, Turn)
     EXPECT_NEAR(Engine::ShortestTurn(halfpi, Engine::PI), halfpi, maxError);
     EXPECT_NEAR(Engine::ShortestTurn(0.75*Engine::PI, -0.75*Engine::PI), halfpi, maxError);
     EXPECT_NEAR(Engine::ShortestTurn(-0.75*Engine::PI, 0.75*Engine::PI), -halfpi, maxError);
+}
+
+TEST(Angles, FaceYawPitch)
+{
+    EXPECT_EQ(FaceYawPitch(Vector(0,1,0),  Vector(0,0,1)), std::make_pair(0.0, 0.0));
+    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(0,0,1), 2.0) * Vector(0, 1, 0)), std::make_pair(-2.0, 0.0));
+    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(1,0,0), -1.0) * Vector(0, 1, 0)), std::make_pair(0.0, 1.0));
+    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(0,0,1), -0.5) *
+                        Quaternion(Vector(1,0,0), 1.0) * Vector(0, 1, 0)), std::make_pair(0.5, -1.0));
+    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(0,1,0), -0.5) *
+                        Quaternion(Vector(1,0,0), 1.0) * Vector(0, 0, 1), Vector(0,1,0)), std::make_pair(0.5, -1.0));
 }
 
 TEST(Line, Length)

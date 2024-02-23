@@ -179,14 +179,14 @@ void Window::OnMouse(int button, int state, int x, int y)
     }
     if (button==3 && state == GLUT_UP)
     {
-        app->bus.Post(ScrollWheel(false));
-        scene.GetCamera().Zoom(0.909090909);
+        app->bus.Post(ScrollWheel(true));
+        scene.GetCamera().Zoom(1.1);
         glutPostRedisplay();
     }
     else if (button==4 && state == GLUT_UP)
     {
-        app->bus.Post(ScrollWheel(true));
-        scene.GetCamera().Zoom(1.1);
+        app->bus.Post(ScrollWheel(false));
+        scene.GetCamera().Zoom(0.909090909);
         glutPostRedisplay();
     }
 }

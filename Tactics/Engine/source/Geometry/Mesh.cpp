@@ -186,6 +186,12 @@ AABB Mesh::GetBoundingBox() const
     return box;
 }
 
+
+bool Mesh::IsNamed() const
+{
+    return triangles.empty() || !names.empty();
+}
+
 void Mesh::SetName(uint32_t name)
 {
     names.resize(triangles.size(), name);
@@ -196,6 +202,26 @@ void Mesh::SetColor(RGBA color)
     for (auto& v : vertices)
     {
         v.color = color;
+    }
+    Invalidate();   // also triangles due to opaque/translucent separation
+}
+
+void Mesh::SetColor(uint32_t name, RGBA color)
+{
+    if (!IsNamed())
+    {
+        throw std::runtime_error("Color selection set to a mesh without names");
+    }
+    unsigned tri = 0;
+    for(auto n: names)
+    {
+        if (n == name)
+        {
+            const Triangle& triangle = triangles[tri];
+            for(auto v : triangle.vertex)
+                vertices[v].color = color;
+        }
+        ++tri;
     }
     Invalidate();   // also triangles due to opaque/translucent separation
 }
@@ -257,7 +283,7 @@ Mesh& Mesh::operator+=(const Mesh& addition)
     assert(vertices.size() < std::numeric_limits<uint32_t>::max());
     uint32_t vertexOffset = uint32_t(vertices.size());
     vertices.insert(vertices.end(), addition.vertices.begin(), addition.vertices.end());
-    assert(triangles.empty() || addition.triangles.empty() || names.empty() == addition.names.empty()); // no functionality to add unnamed to named
+    assert(triangles.empty() || IsNamed() == addition.IsNamed()); // no functionality to add unnamed to named
     names.insert(names.end(), addition.names.begin(), addition.names.end());
     for (const auto& t : addition.triangles)
     {

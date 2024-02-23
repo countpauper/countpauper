@@ -46,8 +46,12 @@ public:
     std::vector<Triangle> triangles;
 
     std::vector<uint32_t> names;    // same size as triangles. not together due to glDrawElements
+
+    bool IsNamed() const;
+
     void SetName(uint32_t name);
     void SetColor(RGBA color);
+    void SetColor(uint32_t name, RGBA color);
     std::pair<double, uint32_t> NamedIntersection(const Line& line) const;
     double Intersection(const Line& line) const;
 

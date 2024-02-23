@@ -29,6 +29,7 @@ struct Vector
     double Length() const;
     double LengthSquared() const;
     Vector Normal() const;
+    bool IsNormalized() const;
     Vector Cross(Vector o) const;
 
     bool operator==(Vector o) const;

@@ -3,6 +3,7 @@
 #include "Geometry/Matrix.h"
 #include <cmath>
 #include <limits>
+#include <cassert>
 
 namespace Engine
 {
@@ -98,13 +99,13 @@ Quaternion Quaternion::Identity()
 
 Quaternion Quaternion::Shortest(const Vector& a, const Vector& b)
 {
-    Vector an = a.Normal();
-    Vector bn = b.Normal();
-    auto dot = an.Dot(bn);
+    assert(a.IsNormalized());
+    assert(b.IsNormalized());
+    auto dot = a.Dot(b);
     if (dot >= 1.0 - std::numeric_limits<double>::epsilon())
         return Quaternion::Identity();
 
-    auto cross = an.Cross(bn);
+    auto cross = a.Cross(b);
     return Quaternion{ cross.x, cross.y, cross.z, 1+dot }.Normalized();
 }
 
