@@ -49,7 +49,7 @@ Coordinate& Coordinate::operator*=(const Matrix& transformation)
     return *this;
 }
 
-bool Coordinate::operator==(Coordinate other) const
+bool Coordinate::operator==(const Coordinate& other) const
 {
     return x == other.x &&
         y == other.y &&

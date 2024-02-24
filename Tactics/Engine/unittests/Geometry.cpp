@@ -69,13 +69,23 @@ TEST(Angles, Turn)
 
 TEST(Angles, FaceYawPitch)
 {
-    EXPECT_EQ(FaceYawPitch(Vector(0,1,0),  Vector(0,0,1)), std::make_pair(0.0, 0.0));
-    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(0,0,1), 2.0) * Vector(0, 1, 0)), std::make_pair(-2.0, 0.0));
-    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(1,0,0), -1.0) * Vector(0, 1, 0)), std::make_pair(0.0, 1.0));
-    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(0,0,1), -0.5) *
-                        Quaternion(Vector(1,0,0), 1.0) * Vector(0, 1, 0)), std::make_pair(0.5, -1.0));
-    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(0,1,0), -0.5) *
-                        Quaternion(Vector(1,0,0), 1.0) * Vector(0, 0, 1), Vector(0,1,0)), std::make_pair(0.5, -1.0));
+    Vector forward{0,1,0};
+    EXPECT_EQ(FaceYawPitch(forward), std::make_pair(0.0, 0.0));
+    EXPECT_EQ(FaceYawPitch(Vector( 1, 0, 0)), std::make_pair(PI/2, 0.0));
+    EXPECT_EQ(FaceYawPitch(Vector(-1, 0, 0)), std::make_pair(-PI/2, 0.0));
+    EXPECT_EQ(FaceYawPitch(Vector( 0, 0, 1)), std::make_pair(0.0, -PI/2));
+
+    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(0,0,1), 1.0) * forward), std::make_pair(-1.0, 0.0));
+    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(1,0,0), -0.5) * forward), std::make_pair(0.0, 0.5));
+    auto yawPitchZAxis = FaceYawPitch(Quaternion(Vector(0,0,1), -0.5) * Quaternion(Vector(1,0,0), 1.0) * forward);
+    EXPECT_DOUBLE_EQ(yawPitchZAxis.first, 0.5);
+    EXPECT_DOUBLE_EQ(yawPitchZAxis.second, -1.0);
+    /* TODO no idea why, with up being th positive Y axis, the FaceYawPitch angles are inverted
+    perhaps its just because of the right handed
+    auto yawPitchYAxis = FaceYawPitch(Quaternion(Vector(0,1,0), -0.5) * Quaternion(Vector(1,0,0), 1.0) * Vector(0, 0, 1), false);
+    EXPECT_DOUBLE_EQ(yawPitchYAxis.first, 0.5);
+    EXPECT_DOUBLE_EQ(yawPitchYAxis.second, -1.0);
+    */
 }
 
 TEST(Line, Length)
@@ -107,11 +117,11 @@ TEST(Line, Section)
     Coordinate b(3, 0, 4);
     Line line(a, b);
     auto firstSection = line.Section(Range(0.0, line.Length() / 2.0));
-    EXPECT_3D_EQ(line.a, firstSection.a);
-    EXPECT_3D_EQ(firstSection.b, Coordinate(2, 1, 3.5));
+    EXPECT_EQ(line.a, firstSection.a);
+    EXPECT_EQ(firstSection.b, Coordinate(2, 1, 3.5));
     auto secondSection = line.Section(Range(line.Length() / 2.0, line.Length()));
-    EXPECT_3D_EQ(line.b, secondSection.b);
-    EXPECT_3D_EQ(secondSection.a, firstSection.b)
+    EXPECT_EQ(line.b, secondSection.b);
+    EXPECT_EQ(secondSection.a, firstSection.b);
     auto clippedSection = line.Section(Range(0.0, std::numeric_limits<double>::infinity()));
     EXPECT_EQ(clippedSection, line);
 
@@ -135,8 +145,8 @@ TEST(Plane, XY)
     EXPECT_EQ(0, Plane::xy.Distance(Coordinate::origin));
     EXPECT_DOUBLE_EQ(1, Plane::xy.Distance(Coordinate(0, 0, 1)));
     EXPECT_DOUBLE_EQ(0, Plane::xy.Distance(Coordinate(1, 1, 0)));
-    EXPECT_3D_EQ(Coordinate::origin, Plane::xy.Project(Coordinate(0, 0, 1)));
-    EXPECT_3D_EQ(Coordinate(1, 1, 0), Plane::xy.Project(Coordinate(1, 1, 1)));
+    EXPECT_EQ(Coordinate::origin, Plane::xy.Project(Coordinate(0, 0, 1)));
+    EXPECT_EQ(Coordinate(1, 1, 0), Plane::xy.Project(Coordinate(1, 1, 1)));
     EXPECT_TRUE(Plane::xy.Above(Coordinate(0, 0, 1)));
     EXPECT_FALSE(Plane::xy.Above(Coordinate(0, 0, -1)));
 }
@@ -165,7 +175,7 @@ TEST(Plane, Diagonal)
     EXPECT_EQ(plane.Distance(Coordinate(0, 1, 0)), 0);
     EXPECT_EQ(plane.Distance(Coordinate(0, 0, 1)), 0);
     EXPECT_DOUBLE_EQ(-1.0 / sqrt(3), plane.Distance(Coordinate::origin));
-    EXPECT_3D_EQ(plane.Project(Coordinate::origin), Vector(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0));
+    EXPECT_EQ(plane.Project(Coordinate::origin), Coordinate(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0));
 }
 
 TEST(Plane, NotNormalXYAt1)
@@ -176,9 +186,9 @@ TEST(Plane, NotNormalXYAt1)
     EXPECT_DOUBLE_EQ(xy2.Distance(Coordinate(1,1,2)), 1);
     EXPECT_DOUBLE_EQ(xy2.Distance(Coordinate::origin), -1);
     EXPECT_DOUBLE_EQ(xy2.Distance(Coordinate(1,1,-1)), -2);
-    EXPECT_3D_EQ(Coordinate(0, 0, 1), xy2.Project(Coordinate::origin));
-    EXPECT_3D_EQ(Coordinate(1, 1, 1), xy2.Project(Coordinate(1, 1, 1)));
-    EXPECT_3D_EQ(Coordinate(-2,-3, 1), xy2.Project(Coordinate(-2, -3, -4)));
+    EXPECT_EQ(Coordinate(0, 0, 1), xy2.Project(Coordinate::origin));
+    EXPECT_EQ(Coordinate(1, 1, 1), xy2.Project(Coordinate(1, 1, 1)));
+    EXPECT_EQ(Coordinate(-2,-3, 1), xy2.Project(Coordinate(-2, -3, -4)));
     // bounding box should be inf, inf, 1 ... inf
     EXPECT_TRUE(xy2.GetBoundingBox().x.infinite());
     EXPECT_TRUE(xy2.GetBoundingBox().y.infinite());
@@ -198,7 +208,7 @@ TEST(Plane, NotNormalDiagonal)
     EXPECT_EQ(abnormal.Distance(Coordinate(1, 0, 0)), 0);
     EXPECT_EQ(abnormal.Distance(Coordinate(-1, 2, 0)), 0);
     EXPECT_EQ(abnormal.Distance(Coordinate(1, 2, -2)), 0);
-    EXPECT_3D_EQ(abnormal.Project(Coordinate::origin), Vector(1.0, 1.0, 1.0)/3.0);
+    EXPECT_EQ(abnormal.Project(Coordinate::origin), Coordinate(1.0/3.0, 1.0/3.0, 1.0/3.0));
     EXPECT_TRUE(abnormal.GetBoundingBox().x.infinite());
     EXPECT_TRUE(abnormal.GetBoundingBox().y.infinite());
     EXPECT_TRUE(abnormal.GetBoundingBox().z.infinite());

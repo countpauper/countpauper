@@ -122,11 +122,11 @@ TEST(AABB, Transform)
 {
     AABB box(Coordinate::origin, Coordinate(1, 1, 1));
 
-    EXPECT_3D_EQ(Vector(2,1,1), (Matrix::Scale(Vector(2, 1, 1)) * box).Extent()); // 0,0,0 ... 2,1,1
-    EXPECT_3D_EQ(Vector(1, 1, 1),(Matrix::XRot(PI * 0.5) * box).Extent()); // 0,-1,0 ... 1,0,1
-    EXPECT_3D_EQ(Vector(sqrt(2), 1, sqrt(2)),(Matrix::YRot(PI * 0.25) * box).Extent()); // 0, 0, -sqrt(2)/2 ....sqrt(2),1, sqrt(2)/2  = sqrt(2)*sqrt(2) * 1
-    EXPECT_3D_EQ(Coordinate(100.5, 200.5, 300.5),(Matrix::Translation(Vector(100, 200, 300))* box).Center());
-    EXPECT_3D_EQ(Vector(1, 1, 1), (Matrix::Translation(Vector(1, 2, 3)) * box).Extent());
+    EXPECT_EQ(Vector(2,1,1), (Matrix::Scale(Vector(2, 1, 1)) * box).Extent()); // 0,0,0 ... 2,1,1
+    EXPECT_EQ(Vector(1, 1, 1),(Matrix::XRot(PI * 0.5) * box).Extent()); // 0,-1,0 ... 1,0,1
+    EXPECT_EQ(Vector(sqrt(2), 1, sqrt(2)),(Matrix::YRot(PI * 0.25) * box).Extent()); // 0, 0, -sqrt(2)/2 ....sqrt(2),1, sqrt(2)/2  = sqrt(2)*sqrt(2) * 1
+    EXPECT_EQ(Coordinate(100.5, 200.5, 300.5),(Matrix::Translation(Vector(100, 200, 300))* box).Center());
+    EXPECT_EQ(Vector(1, 1, 1), (Matrix::Translation(Vector(1, 2, 3)) * box).Extent());
 }
 
 }

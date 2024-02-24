@@ -13,6 +13,7 @@ Game::Game(Engine::Scene& scene) :
 {
     scene.Add(map);
     scene.GetCamera().Move(Engine::Coordinate(map.GetSize().x/2, -1, map.GetSize().z));
+//    static_cast<Engine::TrackingCamera&>(scene.GetCamera()).Track(map.GroundCoord(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0)));
     scene.GetCamera().Face(map.GroundCoord(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0)));
     avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", elf, map, Engine::Position{3, 2})));
     scene.Add(*avatars.back());

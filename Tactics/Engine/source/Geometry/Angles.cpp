@@ -33,21 +33,20 @@ namespace Engine
         return pow(radius, 3) * PI * 4.0 / 3.0;
     }
 
-    std::pair<double, double> FaceYawPitch(Vector direction, Vector yawAxis)
+    std::pair<double, double> FaceYawPitch(Vector direction, bool yawAxisZ)
     {
-        if (yawAxis.z)
+        if (yawAxisZ)
         {
             return std::make_pair(
                 atan2(direction.x, direction.y),
-                asin(direction.z)
+                asin(-direction.z)
             );
         }
         else
         {
-            assert(!yawAxis.x);
             return std::make_pair(
-                -atan2(direction.x, direction.z),
-                asin(direction.y)
+                atan2(direction.x, direction.z),
+                asin(-direction.y)
             );
         }
     }

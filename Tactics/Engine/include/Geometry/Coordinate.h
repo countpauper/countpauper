@@ -20,7 +20,7 @@ struct Coordinate final
     Coordinate& operator-=(Vector v);
     Coordinate& operator*=(double factor);
     Coordinate& operator*=(const Matrix& transformation);
-    bool operator==(Coordinate other) const;
+    bool operator==(const Coordinate& other) const;
     void Render() const;
 
     double x;

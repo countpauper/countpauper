@@ -9,5 +9,5 @@ namespace Engine
     double Deg2Rad(double rad);
     double ShortestTurn(double from, double to);
 
-    std::pair<double, double> FaceYawPitch(Vector direction, Vector yawAxis=Vector(0,0,1));
+    std::pair<double, double> FaceYawPitch(Vector direction, bool yawAxisZ=true);
 }

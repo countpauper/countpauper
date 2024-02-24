@@ -19,7 +19,7 @@ struct Mesh : public ::testing::Test
 TEST_F(Mesh, BoundingBox)
 {
     Box cube(1.0);
-    EXPECT_3D_EQ(Vector(1.0, 1.0, 1.0), cube.GetBoundingBox().Extent());
+    EXPECT_EQ(Vector(1.0, 1.0, 1.0), cube.GetBoundingBox().Extent());
     EXPECT_TRUE(cube.GetBoundingBox().Contains(Engine::Coordinate::origin));
 }
 
@@ -53,7 +53,7 @@ TEST_F(Mesh, Scale)
 {
     Box cube(1.0);
     cube *= Matrix::Scale(Engine::Vector(2, 2, 2));
-    EXPECT_3D_EQ(Vector(2,2,2), cube.GetBoundingBox().Extent());
+    EXPECT_EQ(Vector(2,2,2), cube.GetBoundingBox().Extent());
 }
 
 TEST_F(Mesh, Translate)

@@ -34,16 +34,16 @@ namespace Engine
         auto vector = target - position;
         if (vector)
         {
-            auto [yaw, pitch] = FaceYawPitch(vector.Normal(), vertical);
-            rotation.x = Engine::Rad2Deg(pitch);
+            auto [yaw, pitch] = FaceYawPitch(vector.Normal(), vertical.z == 1);
+            rotation.x = pitch;
             if (vertical.z)
             {
-                rotation.z = Engine::Rad2Deg(yaw);
+                rotation.z =yaw;
             }
             else
             {
                 assert(!vertical.x);
-                rotation.y = Engine::Rad2Deg(yaw);
+                rotation.y = yaw;
             }
         }
     }
@@ -53,11 +53,32 @@ namespace Engine
     {
     }
 
+    /* seems to be correct,
+    Matrix GLAxisAngle(Vector axis, double angle)
+    {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glRotated(Rad2Deg(angle), axis.x, axis.y, axis.z);
+        return Matrix::Projection();
+    }
+
+    void TestAxisAngle(Vector axis, double angle)
+    {
+        auto glX = GLAxisAngle(axis, angle);
+        Matrix mX;
+        if (axis.y==1.0)
+            mX = Matrix::YRot(angle);
+
+        auto qX = Quaternion(axis, angle).AsMatrix();
+    }
+        TestAxisAngle(Vector(0,1,0), -0.5);
+    */
+
     void PerspectiveCamera::Render() const
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        double scale = zoom * double(1.0 / tan(fov* 0.5f * PI / 180.0f));
+        double scale = zoom * double(1.0 / tan(Deg2Rad(fov* 0.5f)));
         double n = 10.0;  // 1.0 wastes a lot of depth buffer
         double f = 100.0; // pretty much how much of the map is visible in grids
         // default glClearDepth(1);
@@ -68,14 +89,13 @@ namespace Engine
 
         Matrix m = Matrix::Perspective(n, f) * Matrix::Scale(Vector(scale, scale, 1));
         m.Render();
-/** /
-        // ortho projection
-        glScaled(0.1*zoom, 0.1*zoom, 0.01*zoom);
-/**/
+
+        // Not sure why but everything (order, direction=sign) needs to be reversed from the position
+        // if the camera man. I suppose because of the camera moves left, the world seems to move right?
+        glRotated(Rad2Deg(-rotation.x), 1, 0, 0);
+        glRotated(Rad2Deg(-rotation.y), 0, 1, 0);
+        glRotated(Rad2Deg(-rotation.z), 0, 0, 1);
         glTranslated(-position.x, -position.y, -position.z);
-        glRotated(rotation.x, 1, 0, 0);
-        glRotated(rotation.y, 0, 1, 0);
-        glRotated(rotation.z, 0, 0, 1);
 
         glMatrixMode(GL_MODELVIEW);
     }
@@ -100,26 +120,27 @@ namespace Engine
 
     bool FreeCamera::Key(std::uint16_t key, unsigned modifiers)
     {
+        static constexpr double rotationSpeed = 0.05;
         if (modifiers & GLUT_ACTIVE_SHIFT)
         {
             if (key == GLUT_KEY_UP)
             {
-                rotation.x += 5;
+                rotation.x += rotationSpeed;
                 return true;
             }
             else if (key == GLUT_KEY_DOWN)
             {
-                rotation.x -= 5;
+                rotation.x -= rotationSpeed;
                 return true;
             }
             else if (key == GLUT_KEY_LEFT)
             {
-                rotation -= (vertical * 5.0);
+                rotation += (vertical * rotationSpeed);
                 return true;
             }
             else if (key == GLUT_KEY_RIGHT)
             {
-                rotation += (vertical * 5.0);
+                rotation -= (vertical * rotationSpeed);
                 return true;
             }
         }
@@ -127,34 +148,36 @@ namespace Engine
         {
             if (key == GLUT_KEY_UP)
             {
-                Move(vertical);
+                Vector dir = Vector(-sin(rotation.z), cos(rotation.z), 0);
+                Move(dir);
                 return true;
             }
             else if (key == GLUT_KEY_DOWN)
             {
-                Move(-vertical);
-                return true;
-            }
-            else if (key == GLUT_KEY_PAGE_UP)
-            {
-                Vector dir = vertical.Cross(Vector(1,0,0));
+                Vector dir = -Vector(-sin(rotation.z), cos(rotation.z), 0);
                 Move(dir);
-                return true;
-            }
-            else if (key == GLUT_KEY_PAGE_DOWN)
-            {
-                Vector dir = vertical.Cross(Vector(1,0,0));
-                Move(-dir);
-                return true;
-            }
-            else if (key == GLUT_KEY_LEFT)
-            {
-                Move(Engine::Vector(-1, 0, 0));
                 return true;
             }
             else if (key == GLUT_KEY_RIGHT)
             {
-                Move(Engine::Vector(1, 0, 0));
+                Vector dir = Vector(cos(rotation.z), sin(rotation.z), 0);
+                Move(dir);
+                return true;
+            }
+            else if (key == GLUT_KEY_LEFT)
+            {
+                Vector dir = -Vector(cos(rotation.z), sin(rotation.z), 0);
+                Move(dir);
+                return true;
+            }
+            else if (key == GLUT_KEY_PAGE_UP)
+            {
+                Move(vertical);
+                return true;
+            }
+            else if (key == GLUT_KEY_PAGE_DOWN)
+            {
+                Move(-vertical);
                 return true;
             }
             else if (key == int('+')<<8)
@@ -179,8 +202,58 @@ namespace Engine
 
     bool TrackingCamera::Key(std::uint16_t key, unsigned modifiers)
     {
-        // TODO: TrackingCamera behaves differently with keys. Only can move around, up down and closer/further (scroll)
-        // when moving or changing target, orientation is recomputed
+
+        if (modifiers!=0)
+            return false;
+
+        if (key == GLUT_KEY_UP)
+        {
+            Move(vertical);
+            Face(target);
+            return true;
+        }
+        else if (key == GLUT_KEY_DOWN)
+        {
+            Move(-vertical);
+            Face(target);
+            return true;
+        }
+        else if (key == GLUT_KEY_PAGE_UP)
+        {
+            Vector dir = vertical.Cross(Vector(1,0,0));
+            Move(dir);
+            Face(target);
+            return true;
+        }
+        else if (key == GLUT_KEY_PAGE_DOWN)
+        {
+            Vector dir = vertical.Cross(Vector(1,0,0));
+            Move(-dir);
+            Face(target);
+            return true;
+        }
+        else if (key == GLUT_KEY_LEFT)
+        {
+            Move(Engine::Vector(-1, 0, 0));
+            Face(target);
+            return true;
+        }
+        else if (key == GLUT_KEY_RIGHT)
+        {
+            Move(Engine::Vector(1, 0, 0));
+            Face(target);
+            return true;
+        }
+        else if (key == int('+')<<8)
+        {
+            zoom *= 1.1f;
+            return true;
+        }
+        else if (key == int('-')<<8) // smiley
+        {
+            zoom/= 1.1f;
+            return true;
+        }
         return false;
     }
 

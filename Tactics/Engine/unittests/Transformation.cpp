@@ -90,7 +90,7 @@ TEST(Matrix, InversePerspective)
     auto inverse = matrix.Inverse() * v;
     auto identity = matrix * matrix.Inverse();
     ASSERT_TRUE(identity.IsIdentity());
-    EXPECT_3D_EQ(Vector(1, -2, 0.5), inverse);
+    EXPECT_EQ(Vector(1, -2, 0.5), inverse);
 }
 
 }
