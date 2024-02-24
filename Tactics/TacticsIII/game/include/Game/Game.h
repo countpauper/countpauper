@@ -17,6 +17,9 @@ class Game
 public:
     explicit Game(Engine::Scene& scene);
 private:
+    void Focus(Engine::Position pos);
+
+    Engine::Scene& scene;
     ::Game::Race elf;
     Map map;
     std::vector<std::unique_ptr<Avatar>> avatars;
