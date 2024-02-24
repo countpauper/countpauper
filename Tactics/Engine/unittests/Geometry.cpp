@@ -73,19 +73,18 @@ TEST(Angles, FaceYawPitch)
     EXPECT_EQ(FaceYawPitch(forward), std::make_pair(0.0, 0.0));
     EXPECT_EQ(FaceYawPitch(Vector( 1, 0, 0)), std::make_pair(PI/2, 0.0));
     EXPECT_EQ(FaceYawPitch(Vector(-1, 0, 0)), std::make_pair(-PI/2, 0.0));
-    EXPECT_EQ(FaceYawPitch(Vector( 0, 0, 1)), std::make_pair(0.0, -PI/2));
+    EXPECT_EQ(FaceYawPitch(Vector( 0, 0, 1)), std::make_pair(0.0, PI/2));
 
     EXPECT_EQ(FaceYawPitch(Quaternion(Vector(0,0,1), 1.0) * forward), std::make_pair(-1.0, 0.0));
-    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(1,0,0), -0.5) * forward), std::make_pair(0.0, 0.5));
+    EXPECT_EQ(FaceYawPitch(Quaternion(Vector(1,0,0), -0.5) * forward), std::make_pair(0.0, -0.5));
     auto yawPitchZAxis = FaceYawPitch(Quaternion(Vector(0,0,1), -0.5) * Quaternion(Vector(1,0,0), 1.0) * forward);
     EXPECT_DOUBLE_EQ(yawPitchZAxis.first, 0.5);
-    EXPECT_DOUBLE_EQ(yawPitchZAxis.second, -1.0);
-    /* TODO no idea why, with up being th positive Y axis, the FaceYawPitch angles are inverted
-    perhaps its just because of the right handed
+    EXPECT_DOUBLE_EQ(yawPitchZAxis.second, 1.0);
+/*  // TODO no idea why the sign of these angles doesn't match or why yaw is inverted but pitch is not in the tests above
     auto yawPitchYAxis = FaceYawPitch(Quaternion(Vector(0,1,0), -0.5) * Quaternion(Vector(1,0,0), 1.0) * Vector(0, 0, 1), false);
-    EXPECT_DOUBLE_EQ(yawPitchYAxis.first, 0.5);
+    EXPECT_DOUBLE_EQ(yawPitchYAxis.first, -0.5);
     EXPECT_DOUBLE_EQ(yawPitchYAxis.second, -1.0);
-    */
+*/
 }
 
 TEST(Line, Length)

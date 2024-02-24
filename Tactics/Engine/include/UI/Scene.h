@@ -19,7 +19,7 @@ public:
     std::pair<Scenery*, std::uint32_t> Select(Coordinate c) const;
     std::pair<Scenery*, std::uint32_t> Hit(const Line& line) const;
 private:
-    FreeCamera camera;
+    TrackingCamera camera;
     // TODO: lights
     std::vector<Scenery*> props;
 };

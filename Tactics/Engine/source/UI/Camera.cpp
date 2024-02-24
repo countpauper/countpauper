@@ -7,6 +7,7 @@
 #include "Geometry/Quaternion.h"
 #include "Geometry/Vector.h"
 #include "Geometry/Matrix.h"
+#include "UI/Debug.h"
 #include <iostream>
 #include <cmath>
 #include <cassert>
@@ -38,13 +39,16 @@ namespace Engine
             rotation.x = pitch;
             if (vertical.z)
             {
-                rotation.z =yaw;
+                rotation.z = yaw;
             }
             else
             {
                 assert(!vertical.x);
                 rotation.y = yaw;
             }
+            Debug::Log("Face (%.3f, %.3f, %.3f) yaw=%.1f, pitch=%.1f, distance %.3f",
+                vector.x, vector.y, vector.z,
+                Rad2Deg(yaw), Rad2Deg(pitch), vector.Length());
         }
     }
 
@@ -52,27 +56,6 @@ namespace Engine
         fov(90)    // makes scale = 1
     {
     }
-
-    /* seems to be correct,
-    Matrix GLAxisAngle(Vector axis, double angle)
-    {
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glRotated(Rad2Deg(angle), axis.x, axis.y, axis.z);
-        return Matrix::Projection();
-    }
-
-    void TestAxisAngle(Vector axis, double angle)
-    {
-        auto glX = GLAxisAngle(axis, angle);
-        Matrix mX;
-        if (axis.y==1.0)
-            mX = Matrix::YRot(angle);
-
-        auto qX = Quaternion(axis, angle).AsMatrix();
-    }
-        TestAxisAngle(Vector(0,1,0), -0.5);
-    */
 
     void PerspectiveCamera::Render() const
     {
@@ -92,9 +75,9 @@ namespace Engine
 
         // Not sure why but everything (order, direction=sign) needs to be reversed from the position
         // if the camera man. I suppose because of the camera moves left, the world seems to move right?
-        glRotated(Rad2Deg(-rotation.x), 1, 0, 0);
-        glRotated(Rad2Deg(-rotation.y), 0, 1, 0);
-        glRotated(Rad2Deg(-rotation.z), 0, 0, 1);
+        glRotated(Rad2Deg(rotation.x), 1, 0, 0);
+        glRotated(Rad2Deg(rotation.y), 0, 1, 0);
+        glRotated(Rad2Deg(rotation.z), 0, 0, 1);
         glTranslated(-position.x, -position.y, -position.z);
 
         glMatrixMode(GL_MODELVIEW);
@@ -125,22 +108,22 @@ namespace Engine
         {
             if (key == GLUT_KEY_UP)
             {
-                rotation.x += rotationSpeed;
+                rotation.x -= rotationSpeed;
                 return true;
             }
             else if (key == GLUT_KEY_DOWN)
             {
-                rotation.x -= rotationSpeed;
+                rotation.x += rotationSpeed;
                 return true;
             }
             else if (key == GLUT_KEY_LEFT)
             {
-                rotation += (vertical * rotationSpeed);
+                rotation -= (vertical * rotationSpeed);
                 return true;
             }
             else if (key == GLUT_KEY_RIGHT)
             {
-                rotation -= (vertical * rotationSpeed);
+                rotation += (vertical * rotationSpeed);
                 return true;
             }
         }
@@ -148,25 +131,25 @@ namespace Engine
         {
             if (key == GLUT_KEY_UP)
             {
-                Vector dir = Vector(-sin(rotation.z), cos(rotation.z), 0);
+                Vector dir = Vector(sin(rotation.z), cos(rotation.z), 0);
                 Move(dir);
                 return true;
             }
             else if (key == GLUT_KEY_DOWN)
             {
-                Vector dir = -Vector(-sin(rotation.z), cos(rotation.z), 0);
+                Vector dir = -Vector(sin(-rotation.z), cos(-rotation.z), 0);
                 Move(dir);
                 return true;
             }
             else if (key == GLUT_KEY_RIGHT)
             {
-                Vector dir = Vector(cos(rotation.z), sin(rotation.z), 0);
+                Vector dir = Vector(cos(-rotation.z), sin(-rotation.z), 0);
                 Move(dir);
                 return true;
             }
             else if (key == GLUT_KEY_LEFT)
             {
-                Vector dir = -Vector(cos(rotation.z), sin(rotation.z), 0);
+                Vector dir = -Vector(cos(-rotation.z), sin(-rotation.z), 0);
                 Move(dir);
                 return true;
             }
@@ -208,39 +191,41 @@ namespace Engine
 
         if (key == GLUT_KEY_UP)
         {
-            Move(vertical);
+            Vector dir = Vector(sin(rotation.z), cos(rotation.z), 0);
+            Move(dir);
             Face(target);
             return true;
         }
         else if (key == GLUT_KEY_DOWN)
         {
-            Move(-vertical);
-            Face(target);
-            return true;
-        }
-        else if (key == GLUT_KEY_PAGE_UP)
-        {
-            Vector dir = vertical.Cross(Vector(1,0,0));
+            Vector dir = -Vector(sin(-rotation.z), cos(-rotation.z), 0);
             Move(dir);
-            Face(target);
-            return true;
-        }
-        else if (key == GLUT_KEY_PAGE_DOWN)
-        {
-            Vector dir = vertical.Cross(Vector(1,0,0));
-            Move(-dir);
-            Face(target);
-            return true;
-        }
-        else if (key == GLUT_KEY_LEFT)
-        {
-            Move(Engine::Vector(-1, 0, 0));
             Face(target);
             return true;
         }
         else if (key == GLUT_KEY_RIGHT)
         {
-            Move(Engine::Vector(1, 0, 0));
+            Vector dir = Vector(cos(-rotation.z), sin(-rotation.z), 0);
+            Move(dir);
+            Face(target);
+            return true;
+        }
+        else if (key == GLUT_KEY_LEFT)
+        {
+            Vector dir = -Vector(cos(-rotation.z), sin(-rotation.z), 0);
+            Move(dir);
+            Face(target);
+            return true;
+        }
+        else if (key == GLUT_KEY_PAGE_UP)
+        {
+            Move(vertical);
+            Face(target);
+            return true;
+        }
+        else if (key == GLUT_KEY_PAGE_DOWN)
+        {
+            Move(-vertical);
             Face(target);
             return true;
         }
@@ -254,6 +239,7 @@ namespace Engine
             zoom/= 1.1f;
             return true;
         }
+
         return false;
     }
 

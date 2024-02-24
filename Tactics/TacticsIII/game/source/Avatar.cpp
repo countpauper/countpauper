@@ -35,9 +35,8 @@ void Avatar::OnMessage(const Engine::Message& message)
     {
         if (clickOn->object == this)
         {
-            selected = true;
-            Engine::Application::Get().bus.Post(Selected(this));
-            mesh.SetColor(1, Engine::RGBA::white);
+            selected = !selected;
+            Engine::Application::Get().bus.Post(Selected(selected ? this: nullptr));
         }
         else if ((clickOn->object == &map) && (selected))
         {
@@ -50,8 +49,11 @@ void Avatar::OnMessage(const Engine::Message& message)
     {
         if (selection->avatar != this)
         {
-            selected = false;
             mesh.SetColor(1, Engine::RGBA::transparent);
+        }
+        else
+        {
+            mesh.SetColor(1, Engine::RGBA::white);
         }
     }
 }

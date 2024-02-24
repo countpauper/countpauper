@@ -39,7 +39,7 @@ namespace Engine
         {
             return std::make_pair(
                 atan2(direction.x, direction.y),
-                asin(-direction.z)
+                asin(direction.z)
             );
         }
         else
