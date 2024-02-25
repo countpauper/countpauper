@@ -1,5 +1,6 @@
 #include "UI/Window.h"
 #include "UI/Debug.h"
+#include "Logging.h"
 #include "Rendering/Color.h"
 #include "UI/WindowMessages.h"
 #include "Utility/Singleton.h"
@@ -13,7 +14,6 @@ namespace Engine
 {
 
 Singleton<Application> app;
-
 void Window::Init(void)
 {
     GLenum err =glewInit();
@@ -108,7 +108,7 @@ void Window::Render()
 
 void Window::SpecialKey(int key,  int x, int y)
 {
-    Debug::Log<true>("Special Key(%d @ %d, %d)", key, x, y);
+    Logging::Log<UiLogging, Logging::Info>("Special Key(%d @ %d, %d)", key, x, y);
     assert(key<256); // upper byte used for ascii
     Window& window = *CurrentWindow();
     window.OnKey(key, x, y);
@@ -116,7 +116,7 @@ void Window::SpecialKey(int key,  int x, int y)
 
 void Window::Key(unsigned char key,  int x, int y)
 {
-    Debug::Log<true>("Key(%c(%d) @ %d, %d)", key, key, x, y);
+    Logging::Log<UiLogging, Logging::Info>("Key(%c(%d) @ %d, %d)", key, key, x, y);
     Window& window = *CurrentWindow();
     window.OnKey(std::uint16_t(key) << 8, x, y);
 }
@@ -136,7 +136,7 @@ void Window::OnKey(std::uint16_t key,  int x, int y)
 
 void Window::Mouse(int button, int state, int x, int y)
 {
-    Debug::Log<true>("Mouse(%d, %s, %d @ %d, %d, )", button, state== GLUT_UP?"up":"down", glutGetModifiers(), x,y);
+    Logging::Log<UiLogging, Logging::Info>("Mouse(%d, %s, %d @ %d, %d, )", button, state== GLUT_UP?"up":"down", glutGetModifiers(), x,y);
     Window& window = *CurrentWindow();
     window.OnMouse(button, state, x, y);
 }
@@ -169,11 +169,11 @@ void Window::OnMouse(int button, int state, int x, int y)
         if (prop)
         {
             auto name = prop->Name();
-            Debug::Log<true>("Selected %.*s.%d", name.size(), name.data(), sub);
+            Logging::Log<UiLogging, Logging::Info>("Selected %.*s.%d", name.size(), name.data(), sub);
         }
         else
         {
-            Debug::Log<true>("Selected nothing at %f, %f", viewPosition.x, viewPosition.y);
+            Logging::Log<UiLogging, Logging::Info>("Selected nothing at %f, %f", viewPosition.x, viewPosition.y);
         }
         app->bus.Post(ClickOn(prop, sub));
     }

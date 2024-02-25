@@ -7,7 +7,8 @@
 #include "Geometry/Quaternion.h"
 #include "Geometry/Vector.h"
 #include "Geometry/Matrix.h"
-#include "UI/Debug.h"
+#include "UI/Logging.h"
+#include "Logging.h"
 #include <iostream>
 #include <cmath>
 #include <cassert>
@@ -46,7 +47,7 @@ namespace Engine
                 assert(!vertical.x);
                 rotation.y = yaw;
             }
-            Debug::Log<true>("Face (%.3f, %.3f, %.3f) yaw=%.1f, pitch=%.1f, distance %.3f",
+            Logging::Log<UiLogging, Logging::Debug>("Face (%.3f, %.3f, %.3f) yaw=%.1f, pitch=%.1f, distance %.3f",
                 vector.x, vector.y, vector.z,
                 Rad2Deg(yaw), Rad2Deg(pitch), vector.Length());
         }

@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
+#include "UI/Logging.h"
 #include "UI/Debug.h"
-#include <filesystem>
 
-namespace Engine::Debug::Test
+namespace Engine::Logging::Test
 {
 
     TEST(Logging, TimerLogs)
@@ -23,6 +23,11 @@ namespace Engine::Debug::Test
         Log<false>("logging %s shown", "not");
     }
 
-
+    TEST(LogLevel, LogNoParameters)
+    {
+        constexpr Level testCategory = Info;
+        Log<testCategory, Info>("info  shown");
+        Log<testCategory, Debug>("Debug not shown");
+    }
 
 }

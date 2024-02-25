@@ -1,36 +1,7 @@
-#if defined(WIN32)
- #include <debugapi.h>
-#endif
-#include <iostream>
-#include <cstdio>
 #include "UI/Debug.h"
 
-namespace Engine::Debug
+namespace Engine::Logging
 {
-
-static Engine::Timer startup;
-
-
-Logit<true>::Logit(const char* s)
-{
-    printf("%.3f %s", startup.Seconds(), s);
-}
-
-
-LogStream Log()
-{
-    return LogStream();
-}
-
-LogStream::LogStream(LogStream&& o)
-{
-    s << o.s.str();
-}
-
-LogStream::~LogStream()
-{
-    Log<true>(s.str().c_str());
-}
 
 Timer::Timer(std::string_view desc) :
     description(desc.data())
