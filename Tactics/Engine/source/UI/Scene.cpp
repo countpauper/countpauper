@@ -8,8 +8,8 @@ namespace Engine
 
 Scenery& Scene::Add(Scenery& prop)
 {
-    props.emplace_back(&prop);
-    return *props.back();
+    scenery.emplace_back(&prop);
+    return *scenery.back();
 }
 
 Camera& Scene::GetCamera()
@@ -30,13 +30,13 @@ std::pair<Scenery*, std::uint32_t> Scene::Hit(const Line& line) const
     Scenery* result = nullptr;
     std::uint32_t resultName = 0;
 
-    for(const auto& prop : props)
+    for(const auto& obj : scenery)
     {
-        auto [distance, name] = prop->Intersection(line);
+        auto [distance, name] = obj->Intersection(line);
         if (distance< nearest)
         {
             nearest = distance;
-            result = prop;
+            result = obj;
             resultName = name;
         }
     }
@@ -46,9 +46,9 @@ std::pair<Scenery*, std::uint32_t> Scene::Hit(const Line& line) const
 void Scene::Render() const
 {
     camera.Render();
-    for(const auto& prop: props)
+    for(const auto& obj: scenery)
     {
-        prop->Render();
+        obj->Render();
     }
 }
 

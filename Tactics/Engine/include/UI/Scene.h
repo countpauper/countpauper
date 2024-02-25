@@ -21,7 +21,7 @@ public:
 private:
     TrackingCamera camera;
     // TODO: lights
-    std::vector<Scenery*> props;
+    std::vector<Scenery*> scenery;
 };
 
 }

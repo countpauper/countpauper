@@ -18,5 +18,5 @@ namespace Engine
     };
 
 
-    void glText(const std::string& text);
+    void glText(std::string_view);
 }

@@ -1,7 +1,6 @@
 #include "Rendering/Text.h"
-#include "Utility/from_string.h"
 #include <GL/gl.h>
-#include <algorithm>
+#include <GL/glut.h>
 #include <cassert>
 #include <algorithm>
 
@@ -42,10 +41,13 @@ namespace Engine
         return height;
     }
 
-    void glText(const std::string& text)
+    void glText(std::string_view text)
     {
         glRasterPos3i(0, 0, 0); // set start position
-        glCallLists(static_cast<GLsizei>(std::min( static_cast<std::size_t>(65535), text.size() )), GL_UNSIGNED_BYTE, text.c_str());
+        for(auto c : text)
+        {
+            glutBitmapCharacter( GLUT_BITMAP_TIMES_ROMAN_24, c);
+        }
     }
 
 }

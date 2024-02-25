@@ -46,7 +46,7 @@ namespace Engine
                 assert(!vertical.x);
                 rotation.y = yaw;
             }
-            Debug::Log("Face (%.3f, %.3f, %.3f) yaw=%.1f, pitch=%.1f, distance %.3f",
+            Debug::Log<true>("Face (%.3f, %.3f, %.3f) yaw=%.1f, pitch=%.1f, distance %.3f",
                 vector.x, vector.y, vector.z,
                 Rad2Deg(yaw), Rad2Deg(pitch), vector.Length());
         }

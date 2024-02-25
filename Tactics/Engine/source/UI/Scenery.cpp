@@ -2,7 +2,7 @@
 #include "Geometry/Mesh.h"
 #include <GL/gl.h>
 #include "Geometry/Matrix.h"
-
+#include "Rendering/Text.h"
 namespace Engine
 {
 
@@ -16,6 +16,7 @@ void Scenery::Render() const
     glPushMatrix();
     GetLocation().Render();
     GetOrientation().Render();
+    glText(Name());
     mesh.Render();
     glPopMatrix();
 }
