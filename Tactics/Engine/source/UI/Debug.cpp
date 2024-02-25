@@ -10,13 +10,12 @@ namespace Engine::Debug
 
 static Engine::Timer startup;
 
-/*
-template<typename ET>
-Logit<std::true_type>::Logit(const char* s)
+
+Logit<true>::Logit(const char* s)
 {
-    printf("%.3f %s\n", startup.Seconds(), s);
+    printf("%.3f %s", startup.Seconds(), s);
 }
-*/
+
 
 LogStream Log()
 {
@@ -30,7 +29,7 @@ LogStream::LogStream(LogStream&& o)
 
 LogStream::~LogStream()
 {
-    Logit<std::true_type>(s.str().c_str());
+    Log<true>(s.str().c_str());
 }
 
 Timer::Timer(std::string_view desc) :
@@ -41,7 +40,7 @@ Timer::Timer(std::string_view desc) :
 Timer::~Timer()
 {
     auto t = timer.Seconds();
-    LogParams<true> log("%*.s: %dms", description.size(), description.data(), t * 1000.0);
+    Log<true>("%.*s: %.3fms", description.size(), description.data(), t * 1000.0);
 }
 
 }
