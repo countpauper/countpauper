@@ -6,16 +6,63 @@
 
 namespace Engine::Debug
 {
-    template<typename... T>
+    enum LogLevel
+    {
+        Trace=0,
+        Debug=1,
+        Info=2,
+        Warning=3,
+        Error=4,
+        Fatal=5
+    };
+
+
+    template<typename ET>
+    struct Logit
+    {
+        Logit(const char* s)
+        {
+        }
+
+    };
+    template<>
+    struct Logit<std::true_type>
+    {
+        Logit(const char* s)
+        {
+            printf(s);  // TODO: return timer use an internal logbuffer to sprintf to
+        }
+    };
+
+    template<bool ET, typename Enable, typename... T>
+    struct LogParams;
+
+    template<bool ET, typename... T>
+    struct LogParams<ET, typename std::enable_if_t<ET>, T...>
+    {
+        LogParams(const char* s, T... parameters)
+        {
+            static char lineBuffer[1024];
+            int length = snprintf(lineBuffer,sizeof(lineBuffer), s, std::forward<T>(parameters)...);
+            Logit<std::true_type> log(lineBuffer);
+        }
+    };
+
+    template<bool ET, typename... T>
+    struct LogParams<ET, typename std::enable_if_t<!ET>, T...>
+    {
+        LogParams(const char* s, T... parameters) {}
+    };
+
+
+    template<bool ET, typename...T>
+    struct LogParams : public detail::A_impl<T, void, Args...> {};
+
+    template<bool ET, typename... T>
     void Log(const char* s, T... parameters)
     {
-        static char lineBuffer[1024];
-        int length = snprintf(lineBuffer,sizeof(lineBuffer), s, std::forward<T>(parameters)...);
-        Log(lineBuffer);
+        //LogParams<true, int> log(s, std::forward<T>(parameters)...);
     }
-
-    template<>
-    void Log(const char* s);
 
     class LogStream
     {

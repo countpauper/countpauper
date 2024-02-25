@@ -108,7 +108,7 @@ void Window::Render()
 
 void Window::SpecialKey(int key,  int x, int y)
 {
-    Debug::Log("Special Key(%d @ %d, %d)", key, x, y);
+    Debug::Log<true>("Special Key(%d @ %d, %d)", key, x, y);
     assert(key<256); // upper byte used for ascii
     Window& window = *CurrentWindow();
     window.OnKey(key, x, y);
@@ -116,7 +116,7 @@ void Window::SpecialKey(int key,  int x, int y)
 
 void Window::Key(unsigned char key,  int x, int y)
 {
-    Debug::Log("Key(%c(%d) @ %d, %d)", key, key, x, y);
+    Debug::Log<true>("Key(%c(%d) @ %d, %d)", key, key, x, y);
     Window& window = *CurrentWindow();
     window.OnKey(std::uint16_t(key) << 8, x, y);
 }
@@ -136,7 +136,7 @@ void Window::OnKey(std::uint16_t key,  int x, int y)
 
 void Window::Mouse(int button, int state, int x, int y)
 {
-    Debug::Log("Mouse(%d, %s, %d @ %d, %d, )", button, state== GLUT_UP?"up":"down", glutGetModifiers(), x,y);
+    Debug::Log<true>("Mouse(%d, %s, %d @ %d, %d, )", button, state== GLUT_UP?"up":"down", glutGetModifiers(), x,y);
     Window& window = *CurrentWindow();
     window.OnMouse(button, state, x, y);
 }
@@ -169,11 +169,11 @@ void Window::OnMouse(int button, int state, int x, int y)
         if (prop)
         {
             auto name = prop->Name();
-            Engine::Debug::Log("Selected %.*s.%d", name.size(), name.data(), sub);
+            Debug::Log<true>("Selected %.*s.%d", name.size(), name.data(), sub);
         }
         else
         {
-            Engine::Debug::Log("Selected nothing at %f, %f", viewPosition.x, viewPosition.y);
+            Debug::Log<true>("Selected nothing at %f, %f", viewPosition.x, viewPosition.y);
         }
         app->bus.Post(ClickOn(prop, sub));
     }
