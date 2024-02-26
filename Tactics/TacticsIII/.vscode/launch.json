@@ -31,14 +31,14 @@
                 {
                         "name": "(ctest) Launch",
                         "type": "cppdbg",
-                        "cwd": "${workspaceFolder}",
+                        "cwd": "${cmake.testWorkingDirectory}",
                         "request": "launch",
                         "program": "${cmake.testProgram}",
                         "args": [ "${cmake.testArgs}" ]
                 },
                 {
                         "name": "Python Debugger: Current File",
-                        "type": "python",
+                        "type": "debugpy",
                         "request": "launch",
                         "program": "${file}",
                         "console": "integratedTerminal",

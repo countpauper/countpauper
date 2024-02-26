@@ -7,6 +7,7 @@
 #include "UI/Bus.h"
 namespace Game
 {
+class Counter;
 
 class Avatar :
         public Engine::Scenery,
@@ -23,6 +24,7 @@ private:
     Engine::Position position;
     Creature creature;
     bool selected = false;
+    std::map<Counter*, int> counters;
 };
 
 }

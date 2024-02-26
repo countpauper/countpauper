@@ -13,6 +13,7 @@ int main(int argc, char**argv)
 {
     Engine::Singleton<Engine::Application> app(argc, argv);
     Engine::Window window;
+
     window.SetTitle("Tactics III");
 
     Game::Game game(window.GetScene());

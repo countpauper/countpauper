@@ -15,7 +15,6 @@ Creature::Creature(std::string_view name, const Race& race) :
         {Stat::intel, 2}
     }
 {
-
 }
 
 void Creature::Level(Stat::Id stat, int amount)
