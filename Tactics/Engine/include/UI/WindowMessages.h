@@ -14,8 +14,9 @@ struct Click : Message
 
 struct KeyPressed : Message
 {
-    KeyPressed(std::uint16_t code, std::uint16_t mods) : key(code), modifiers(mods) {}
-    std::uint16_t key;
+    KeyPressed(std::uint8_t code, unsigned char ascii, std::uint16_t mods) : code(code), ascii(ascii), modifiers(mods) {}
+    std::uint8_t code;
+    unsigned char ascii;
     std::uint16_t modifiers;
 };
 
@@ -30,6 +31,12 @@ struct ScrollWheel : Message
 {
     ScrollWheel(bool up) : up(up) {}
     bool up;
+};
+
+struct Redraw : Message
+{
+    Redraw(class Object* obj=nullptr) : object(obj) {}
+    class Object* object;
 };
 
 }

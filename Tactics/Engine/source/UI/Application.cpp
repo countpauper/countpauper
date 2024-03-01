@@ -30,7 +30,7 @@ void Application::OnMessage(const Message& message)
 {
     if (auto key = dynamic_cast<const KeyPressed*>(&message))
     {
-        if (key->key == 27 * 256)
+        if (key->ascii == 27)
         {
             glutLeaveMainLoop();
         }

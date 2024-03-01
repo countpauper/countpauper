@@ -5,6 +5,8 @@
 #include "UI/WindowMessages.h"
 #include "Utility/Singleton.h"
 #include "UI/Application.h"
+#include "Rendering/Text.h"
+
 #include <GL/glew.h>
 #include <GL/glut.h>
 #undef GetObject
@@ -14,6 +16,7 @@ namespace Engine
 {
 
 Singleton<Application> app;
+
 void Window::Init(void)
 {
     GLenum err =glewInit();
@@ -46,6 +49,9 @@ std::map<int, Window*> Window::allWindows;
 
 Window::Window()
 {
+    Application::Get().bus.Subscribe(*this, {
+            MessageType<Redraw>()
+        });
     //Set Display Mode
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 
@@ -65,6 +71,7 @@ Window::Window()
     glutMouseFunc(Mouse);
     glutKeyboardFunc(Key);
     glutSpecialFunc(SpecialKey);
+
 }
 
 Window::~Window()
@@ -97,41 +104,51 @@ void Window::Display(void)
 
 void Window::Render()
 {
+    glutUseLayer(GLUT_NORMAL);
     //Clear all pixels
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     CurrentWindow()->GetScene().Render();
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glScaled(1.0, -1.0, 1.0);
+    glTranslated(-1.0, -0.9,0.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glText("User interface");
     // Don't wait start processing buffered OpenGL routines
     glFlush();
 }
 
+void Window::OnMessage(const Engine::Message& message)
+{
+    if (auto redraw = message.Cast<Redraw>())
+    {
+        glutPostRedisplay();
+        glutPostOverlayRedisplay();
+    }
+}
 
 void Window::SpecialKey(int key,  int x, int y)
 {
     Logging::Log<UiLogging, Logging::Info>("Special Key(%d @ %d, %d)", key, x, y);
     assert(key<256); // upper byte used for ascii
     Window& window = *CurrentWindow();
-    window.OnKey(key, x, y);
+    window.OnKey(key, 0, x, y);
 }
 
 void Window::Key(unsigned char key,  int x, int y)
 {
     Logging::Log<UiLogging, Logging::Info>("Key(%c(%d) @ %d, %d)", key, key, x, y);
     Window& window = *CurrentWindow();
-    window.OnKey(std::uint16_t(key) << 8, x, y);
+    window.OnKey(0, key, x, y);
 }
 
-void Window::OnKey(std::uint16_t key,  int x, int y)
+void Window::OnKey(std::uint8_t code, unsigned char ascii, int x, int y)
 {
     std::uint16_t modifiers = glutGetModifiers();
-    if (scene.GetCamera().Key(key, modifiers))
-    {
-        glutPostRedisplay();
-    }
-    else
-    {
-        app->bus.Post(KeyPressed(key, modifiers));
-    }
+    app->bus.Post(KeyPressed(code, ascii, modifiers));
 }
 
 void Window::Mouse(int button, int state, int x, int y)
@@ -177,17 +194,15 @@ void Window::OnMouse(int button, int state, int x, int y)
         }
         app->bus.Post(ClickOn(prop, sub));
     }
+    // TODO bus
     if (button==3 && state == GLUT_UP)
     {
         app->bus.Post(ScrollWheel(true));
-        scene.GetCamera().Zoom(1.1);
-        glutPostRedisplay();
+
     }
     else if (button==4 && state == GLUT_UP)
     {
         app->bus.Post(ScrollWheel(false));
-        scene.GetCamera().Zoom(0.909090909);
-        glutPostRedisplay();
     }
 }
 

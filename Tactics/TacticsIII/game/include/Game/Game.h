@@ -21,11 +21,14 @@ private:
     void Focus(Engine::Position pos);
     void Focus(Engine::Coordinate coord);
     void OnMessage(const Engine::Message& message);
+    void Next();
 
     Engine::Scene& scene;
     ::Game::Race elf;
     Map map;
     std::vector<std::unique_ptr<Avatar>> avatars;
+    unsigned turn=0;
+    unsigned round=0;
 };
 
 }

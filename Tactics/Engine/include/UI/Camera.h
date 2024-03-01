@@ -2,6 +2,7 @@
 #include <cstdint>
 #include "Geometry/Coordinate.h"
 #include "Geometry/Vector.h"
+#include "UI/Bus.h"
 
 namespace Engine
 {
@@ -14,8 +15,8 @@ namespace Engine
         void Move(const Coordinate& newPosition);
         void Move(const Vector& offset);
         void Zoom(double factor);
-        virtual bool Key(std::uint16_t key, unsigned modifiers) = 0;
         void Face(Coordinate target);
+        void Turn(const Vector& delta);
     protected:
         Vector vertical{0, 0, 1};
         Coordinate position{0,0,0};
@@ -24,7 +25,9 @@ namespace Engine
     };
 
 
-    class PerspectiveCamera : public Camera
+    class PerspectiveCamera :
+        public Camera,
+        public Passenger
     {
     public:
         PerspectiveCamera();
@@ -45,17 +48,16 @@ namespace Engine
     class FreeCamera : public PerspectiveCamera
     {
     public:
-        // Key is a GLUT special key if the top byte is 0 and ascii if the bottom byte is 0
-        // modifiers is a bit mask of GLUT_ACTIVE_
-        // returns true if handled
-        bool Key(std::uint16_t key, unsigned modifiers) override;
+        FreeCamera();
+        void OnMessage(const Message& message) override;
     };
 
     class TrackingCamera : public PerspectiveCamera
     {
     public:
+        TrackingCamera();
         void Track(const Coordinate& newPosition);
-        bool Key(std::uint16_t key, unsigned modifiers);
+        void OnMessage(const Message& message) override;
     private:
         Coordinate target{0,0,0};
     };

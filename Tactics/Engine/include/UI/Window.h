@@ -1,11 +1,12 @@
 #pragma once
 #include "UI/Scene.h"
+#include "UI/Bus.h"
 #include <map>
 
 namespace Engine
 {
 
-class Window
+class Window : public Passenger
 {
 public:
     Window();
@@ -16,8 +17,9 @@ public:
 private:
     void Init();
     void OnMouse(int button, int state, int x, int y);
-    void OnKey(std::uint16_t key,  int x, int y);
+    void OnKey(std::uint8_t code, unsigned char ascii,  int x, int y);
     void Render();
+    void OnMessage(const Message& message);
     Engine::Coordinate Screen2View(int x, int y) const;
 
     static void Mouse(int button, int state, int x, int y);

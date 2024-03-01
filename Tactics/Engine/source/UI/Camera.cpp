@@ -8,6 +8,8 @@
 #include "Geometry/Vector.h"
 #include "Geometry/Matrix.h"
 #include "UI/Logging.h"
+#include "UI/WindowMessages.h"
+#include "UI/Application.h"
 #include "Logging.h"
 #include <iostream>
 #include <cmath>
@@ -17,18 +19,26 @@ namespace Engine
 {
     Camera::Camera() =default;
 
+    static void PostRedraw()
+    {
+        Application::Get().bus.Post(Redraw());
+    }
+
     void Camera::Move(const Coordinate& newPosition)
     {
         position = newPosition;
+        PostRedraw();
     }
     void Camera::Move(const Vector& offset)
     {
         position += offset;
+        PostRedraw();
     }
 
     void Camera::Zoom(double factor)
     {
         zoom *= factor;
+        PostRedraw();
     }
 
     void Camera::Face(Coordinate target)
@@ -51,6 +61,13 @@ namespace Engine
                 vector.x, vector.y, vector.z,
                 Rad2Deg(yaw), Rad2Deg(pitch), vector.Length());
         }
+        PostRedraw();
+    }
+
+    void Camera::Turn(const Vector& delta)
+    {
+        rotation += delta;
+        PostRedraw();
     }
 
     PerspectiveCamera::PerspectiveCamera() :
@@ -102,80 +119,99 @@ namespace Engine
         glMatrixMode(GL_MODELVIEW);
     }
 
-    bool FreeCamera::Key(std::uint16_t key, unsigned modifiers)
+    FreeCamera::FreeCamera()
     {
-        static constexpr double rotationSpeed = 0.05;
-        if (modifiers & GLUT_ACTIVE_SHIFT)
+        Application::Get().bus.Subscribe(*this, {
+                MessageType<KeyPressed>(),
+                MessageType<ScrollWheel>()
+        });
+    }
+
+    void FreeCamera::OnMessage(const Message& message)
+    {
+        if (auto key = message.Cast<KeyPressed>())
         {
-            if (key == GLUT_KEY_UP)
+            static constexpr double rotationSpeed = 0.05;
+            if (key->modifiers & GLUT_ACTIVE_SHIFT)
             {
-                rotation.x -= rotationSpeed;
-                return true;
+                if (key->code == GLUT_KEY_UP)
+                {
+                    Turn({-rotationSpeed, 0, 0});
+                }
+                else if (key->code == GLUT_KEY_DOWN)
+                {
+                    Turn({+rotationSpeed, 0, 0});
+
+                }
+                else if (key->code == GLUT_KEY_LEFT)
+                {
+                    Turn(vertical * -rotationSpeed);
+               }
+                else if (key->code == GLUT_KEY_RIGHT)
+                {
+                    Turn(vertical * rotationSpeed);
+                }
             }
-            else if (key == GLUT_KEY_DOWN)
+            else
             {
-                rotation.x += rotationSpeed;
-                return true;
-            }
-            else if (key == GLUT_KEY_LEFT)
-            {
-                rotation -= (vertical * rotationSpeed);
-                return true;
-            }
-            else if (key == GLUT_KEY_RIGHT)
-            {
-                rotation += (vertical * rotationSpeed);
-                return true;
+                if (key->code == GLUT_KEY_UP)
+                {
+                    Vector dir = Vector(sin(rotation.z), cos(rotation.z), 0);
+                    Move(dir);
+                }
+                else if (key->code == GLUT_KEY_DOWN)
+                {
+                    Vector dir = -Vector(sin(-rotation.z), cos(-rotation.z), 0);
+                    Move(dir);
+                }
+                else if (key->code == GLUT_KEY_RIGHT)
+                {
+                    Vector dir = Vector(cos(-rotation.z), sin(-rotation.z), 0);
+                    Move(dir);
+                }
+                else if (key->code == GLUT_KEY_LEFT)
+                {
+                    Vector dir = -Vector(cos(-rotation.z), sin(-rotation.z), 0);
+                    Move(dir);
+                }
+                else if (key->code == GLUT_KEY_PAGE_UP)
+                {
+                    Move(vertical);
+                }
+                else if (key->code == GLUT_KEY_PAGE_DOWN)
+                {
+                    Move(-vertical);
+                }
+                else if (key->ascii == '+')
+                {
+                    Zoom(1.1);
+                }
+                else if (key->ascii == '-') // smiley
+                {
+                    Zoom(1.0 / 1.1);
+                }
             }
         }
-        else
+        else if (auto scroll = message.Cast<ScrollWheel>())
         {
-            if (key == GLUT_KEY_UP)
+            if (scroll->up)
             {
-                Vector dir = Vector(sin(rotation.z), cos(rotation.z), 0);
-                Move(dir);
-                return true;
+                Zoom(1.1);
             }
-            else if (key == GLUT_KEY_DOWN)
+            else
             {
-                Vector dir = -Vector(sin(-rotation.z), cos(-rotation.z), 0);
-                Move(dir);
-                return true;
-            }
-            else if (key == GLUT_KEY_RIGHT)
-            {
-                Vector dir = Vector(cos(-rotation.z), sin(-rotation.z), 0);
-                Move(dir);
-                return true;
-            }
-            else if (key == GLUT_KEY_LEFT)
-            {
-                Vector dir = -Vector(cos(-rotation.z), sin(-rotation.z), 0);
-                Move(dir);
-                return true;
-            }
-            else if (key == GLUT_KEY_PAGE_UP)
-            {
-                Move(vertical);
-                return true;
-            }
-            else if (key == GLUT_KEY_PAGE_DOWN)
-            {
-                Move(-vertical);
-                return true;
-            }
-            else if (key == int('+')<<8)
-            {
-                zoom *= 1.1f;
-                return true;
-            }
-            else if (key == int('-')<<8) // smiley
-            {
-                zoom/= 1.1f;
-                return true;
+                Zoom(1.0/ 1.1);
             }
         }
-        return false;
+    }
+
+
+    TrackingCamera::TrackingCamera()
+    {
+        Application::Get().bus.Subscribe(*this, {
+                MessageType<KeyPressed>(),
+                MessageType<ScrollWheel>()
+        });
     }
 
     void TrackingCamera::Track(const Coordinate& newTarget)
@@ -184,64 +220,67 @@ namespace Engine
         Face(target);
     }
 
-    bool TrackingCamera::Key(std::uint16_t key, unsigned modifiers)
+    void TrackingCamera::OnMessage(const Message& message)
     {
+        if (auto key = message.Cast<KeyPressed>())
+        {
+            if (key->modifiers!=0)
+                return;
 
-        if (modifiers!=0)
-            return false;
-
-        if (key == GLUT_KEY_UP)
-        {
-            Vector dir = Vector(sin(rotation.z), cos(rotation.z), 0);
-            Move(dir);
-            Face(target);
-            return true;
+            if (key->code == GLUT_KEY_UP)
+            {
+                Vector dir = Vector(sin(rotation.z), cos(rotation.z), 0);
+                Move(dir);
+                Face(target);
+            }
+            else if (key->code == GLUT_KEY_DOWN)
+            {
+                Vector dir = -Vector(sin(-rotation.z), cos(-rotation.z), 0);
+                Move(dir);
+                Face(target);
+            }
+            else if (key->code == GLUT_KEY_RIGHT)
+            {
+                Vector dir = Vector(cos(-rotation.z), sin(-rotation.z), 0);
+                Move(dir);
+                Face(target);
+            }
+            else if (key->code == GLUT_KEY_LEFT)
+            {
+                Vector dir = -Vector(cos(-rotation.z), sin(-rotation.z), 0);
+                Move(dir);
+                Face(target);
+            }
+            else if (key->code == GLUT_KEY_PAGE_UP)
+            {
+                Move(vertical);
+                Face(target);
+            }
+            else if (key->code == GLUT_KEY_PAGE_DOWN)
+            {
+                Move(-vertical);
+                Face(target);
+            }
+            else if (key->ascii == '+')
+            {
+                Zoom(1.1);
+            }
+            else if (key->ascii == '-') // smiley
+            {
+                Zoom(1.0 / 1.1);
+            }
         }
-        else if (key == GLUT_KEY_DOWN)
+        else if (auto scroll = message.Cast<ScrollWheel>())
         {
-            Vector dir = -Vector(sin(-rotation.z), cos(-rotation.z), 0);
-            Move(dir);
-            Face(target);
-            return true;
+            if (scroll->up)
+            {
+                Zoom(1.1);
+            }
+            else
+            {
+                Zoom(1.0/ 1.1);
+            }
         }
-        else if (key == GLUT_KEY_RIGHT)
-        {
-            Vector dir = Vector(cos(-rotation.z), sin(-rotation.z), 0);
-            Move(dir);
-            Face(target);
-            return true;
-        }
-        else if (key == GLUT_KEY_LEFT)
-        {
-            Vector dir = -Vector(cos(-rotation.z), sin(-rotation.z), 0);
-            Move(dir);
-            Face(target);
-            return true;
-        }
-        else if (key == GLUT_KEY_PAGE_UP)
-        {
-            Move(vertical);
-            Face(target);
-            return true;
-        }
-        else if (key == GLUT_KEY_PAGE_DOWN)
-        {
-            Move(-vertical);
-            Face(target);
-            return true;
-        }
-        else if (key == int('+')<<8)
-        {
-            zoom *= 1.1f;
-            return true;
-        }
-        else if (key == int('-')<<8) // smiley
-        {
-            zoom/= 1.1f;
-            return true;
-        }
-
-        return false;
     }
 
 
