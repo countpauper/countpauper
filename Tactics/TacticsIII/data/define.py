@@ -46,13 +46,14 @@ if __name__ == "__main__":
                 stats[stat] = {prop:value for prop,value in props.items() if prop in ['range']}
                 for secondary, table in transpose_tables(stat_tables[stat]).items():
                         props=dict(depends=stat)
-                        if mul := secondary_stats[secondary].get("multiplier"):
-                                props["mul"] = mul
+                        secondary_stat = secondary_stats[secondary]
+                        if mul := secondary_stat.get("multiplier"):
                                 table=[int(v/mul) for v in table]
                         props["table"] = table;
+                        props.update(secondary_stats[secondary])
                         stats[secondary] = props
         stats.update(tertiary_stats)
-        stats.update(item_stats)
-        with open('character.json', 'w') as f:
+        # stats.update(item_stats)
+        with open('creature.json', 'w') as f:
                 json.dump(stats, f)
 

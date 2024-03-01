@@ -83,19 +83,19 @@
             "description":"increases the speed at which a character can switch techniques, how many magical items it can use and resistance to mind magic.",
             "boost": [
                 "mental",
-                "attune",
+                "attunement",
                 "focus",
                 "mental",
-                "attune",
+                "attunement",
                 "knowledge",
                 "mental",
-                "attune",
+                "attunement",
                 "focus",
                 "mental",
-                "attune",
+                "attunement",
                 "knowledge",
                 "mental",
-                "attune",
+                "attunement",
                 "focus"
             ]
         },
@@ -109,19 +109,19 @@
             "boost": [
                 "technique",
                 "magic",
-                "crit",
+                "critical chance",
                 "technique",
                 "magic",
                 "technique",
-                "crit",
+                "critical chance",
                 "technique",
                 "magic",
-                "crit",
+                "critical chance",
                 "magic",
                 "technique",
-                "crit",
+                "critical chance",
                 "magic",
-                "crit"
+                "critical chance"
             ]
         }
     }

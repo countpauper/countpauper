@@ -9,63 +9,89 @@ using namespace ::testing;
 
 TEST(Stat, define_primary_stat)
 {
-        StatDefinition def;
-        def.Load(R"""(
+    StatDefinition def;
+    def.Parse(R"""(
 {
-        "Strength":{ }
+        "Strength":{ "description":"It's how much you're stronk"}
 }
-        )""");
-        EXPECT_EQ(def[Stat::str].Name(), "Strength");
+    )""");
+    EXPECT_EQ(def[Stat::str].Name(), "Strength");
+    EXPECT_TRUE(def[Stat::str].Description().find("stronk")!=std::string::npos);
 }
 
 TEST(Stat, define_secondary_stat)
 {
-        StatDefinition def;
-        def.Load(R"""(
-        {
-                "Strength":{},
-                "Damage":{ "Depends":"Strength", "table":[1,1,2,2,3,3] }
-        }
-        )""");
-        EXPECT_EQ(def[Stat::damage].Name(), "Damage");
+    StatDefinition def;
+    def.Parse(R"""(
+    {
+            "Strength":{},
+            "Damage":{ "Depends":"Strength", "Table":[1,1,2,2,3,3] }
+    }
+    )""");
+    EXPECT_EQ(def[Stat::damage].Name(), "Damage");
 
-        MockStatted mock;
-        EXPECT_CALL(mock, Get(Stat::str)).WillOnce(Return(StatDescriptor(4)));
-        EXPECT_CALL(mock, Definition()).WillRepeatedly(ReturnRef(def));
-        EXPECT_EQ(def[Stat::damage].Compute(mock).Total(), 3);
+    MockStatted mock;
+    EXPECT_CALL(mock, Get(Stat::str)).WillOnce(Return(StatDescriptor(4)));
+    EXPECT_CALL(mock, Definition()).WillRepeatedly(ReturnRef(def));
+    EXPECT_EQ(def[Stat::damage].Compute(mock).Total(), 3);
 }
 
 TEST(Stat, define_multiplied_stat)
 {
-        StatDefinition def;
-        def.Load(R"""(
-        {
-                "Agility":{ },
-                "Dodge":{ "Depends":"Agility", "table":[10,11,12,12,13,13], "*":5 }
-        }
-        )""");
-        MockStatted mock;
-        EXPECT_CALL(mock, Get(Stat::agi)).WillOnce(Return(StatDescriptor(3)));
-        EXPECT_CALL(mock, Definition()).WillRepeatedly(ReturnRef(def));
-        EXPECT_EQ(def[Stat::dodge].Compute(mock).Total(), 60);
+    StatDefinition def;
+    def.Parse(R"""(
+    {
+            "Agility":{ },
+            "Dodge":{ "Depends":"Agility", "Table":[10,11,12,12,13,13], "*":5 }
+    }
+    )""");
+    MockStatted mock;
+    EXPECT_CALL(mock, Get(Stat::agi)).WillOnce(Return(StatDescriptor(3)));
+    EXPECT_CALL(mock, Definition()).WillRepeatedly(ReturnRef(def));
+    EXPECT_EQ(def[Stat::dodge].Compute(mock).Total(), 60);
 }
 
 TEST(Stat, define_stat_multiplied_by_stat)
 {
-        StatDefinition def;
-        def.Load(R"""(
-        {
-                "Level":{ },
-                "Constitution":{ },
-                "Hitpoints":{ "Depends":"Constitution", "table":[5, 5, 5, 6, 6], "*":"Level" }
-        }
-        )""");
-        MockStatted mock;
-        EXPECT_CALL(mock, Get(Stat::level)).WillOnce(Return(StatDescriptor(2)));
-        EXPECT_CALL(mock, Get(Stat::con)).WillOnce(Return(StatDescriptor(3)));
-        EXPECT_CALL(mock, Definition()).WillRepeatedly(ReturnRef(def));
-        EXPECT_EQ(def[Stat::hp].Compute(mock).Total(), 12);
+    StatDefinition def;
+    def.Parse(R"""(
+    {
+            "Level":{ },
+            "Constitution":{ },
+            "Hitpoints":{ "Depends":"Constitution", "Table":[5, 5, 5, 6, 6], "*":"Level" }
+    }
+    )""");
+    MockStatted mock;
+    EXPECT_CALL(mock, Get(Stat::level)).WillOnce(Return(StatDescriptor(2)));
+    EXPECT_CALL(mock, Get(Stat::con)).WillOnce(Return(StatDescriptor(3)));
+    EXPECT_CALL(mock, Definition()).WillRepeatedly(ReturnRef(def));
+    EXPECT_EQ(def[Stat::hp].Compute(mock).Total(), 12);
 }
 
+TEST(Stat, define_unknown_stat_throws)
+{
+    StatDefinition def;
+    EXPECT_THROW(def.Parse(R"""(
+{
+        "Fubar":{ "description":"It's not a real stat"}
+}
+    )"""), std::runtime_error);;
+}
+
+TEST(Stat, define_counter)
+{
+    StatDefinition def;
+    def.Parse(R"""(
+{
+    "Hitpoints": {
+        "counter": {
+        }
+    }
+}
+
+    )""");
+    EXPECT_EQ(def.GetCounters().size(), 1);
+    EXPECT_EQ(def.GetCounters().front()->Name(), "Hitpoints");
+}
 
 }

@@ -24,7 +24,6 @@ private:
     Engine::Position position;
     Creature creature;
     bool selected = false;
-    std::map<Counter*, int> counters;
 };
 
 }

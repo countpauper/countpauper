@@ -13,7 +13,7 @@ race_stats=json.load(open("race_stats.json"))
 
 ################ Test data
 
-def test_primary_table_length(stats, req, key="table"):
+def test_primary_table_length(stats, req, key="Table"):
         return [f"length of {key} in {name} is not {req}" for name, stat in stats.items() if len(stat.get(key,[])) != req]
 
 
@@ -29,7 +29,7 @@ def compute_range(boost, base, primary_stats):
 def test_secondary_range(primary_stats, seconadry_stats):
         return [f"range of {secondary} is {computed_range} but should be {range}"
                 for secondary, stats in seconadry_stats.items()
-                        if (computed_range:=compute_range(secondary, stats.get("base", 0), primary_stats.values())) != (range:=stats.get("range"))]
+                        if (computed_range:=compute_range(secondary, stats.get("base", 0), primary_stats.values())) != (range:=stats.get("Range"))]
 def test_stats():
         return (test_primary_table_length(primary_stats, 15, "boost") +
                 test_secondaries_exist(primary_stats, secondary_stats.keys()) +

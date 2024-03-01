@@ -1,6 +1,7 @@
 #include "Game/Stat.h"
 #include "Game/Statted.h"
 #include "Game/StatDefinition.h"
+#include "Game/Counter.h"
 #include <nlohmann/json.hpp>
 #include <optional>
 
@@ -39,7 +40,7 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
 
         // TODO: this can be refactored
         description = Engine::get_value_or(j, "description", std::string());
-        if (auto dependName = Engine::try_get<std::string>(j, "Depends"))
+        if (auto dependName = Engine::try_get<std::string>(j, "depends"))
         {
                 dependency = dependencies.Identify(*dependName);
         } else {
@@ -81,12 +82,14 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
         }
 }
 
+Stat::~Stat() = default;
+
 StatDescriptor Stat::Compute(const Statted& object) const
 {
         auto left = 0;
         if (dependency)
         {
-                left = object.Get(dependency).Total();      // TODO: add this to a STatDescriptor output ?
+                left = object.Get(dependency).Total();      // TODO: add this to a StatDescriptor output ?
         }
         if (!table.empty())
         {
@@ -122,9 +125,12 @@ StatDescriptor Stat::Compute(const Statted& object) const
                         default:
                                 break;
                 }
-        } else {
-                result.Contribute(object.Definition().at(dependency).name, left * multiplier);
         }
+        else if (dependency)
+                result.Contribute(object.Definition().at(dependency).name, left * multiplier);
+        else
+            // NB this could cause infinite recursion, unless object is mocked or its a primary stat
+            return object.Get(object.Definition().Identify(Name()));
         return result;
 }
 
@@ -133,5 +139,10 @@ std::string_view Stat::Name() const
         return name;
 }
 
+
+std::string_view Stat::Description() const
+{
+        return description;
+}
 
 }

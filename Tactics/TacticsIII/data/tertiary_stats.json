@@ -3,6 +3,7 @@
         {
                 "depends": "health",
                 "*": "level",
-                "description":"The amount of damage taken before being knocked out"
+                "description":"The amount of damage taken before being knocked out",
+                "counter": {"reset":"battle"}
         }
 }

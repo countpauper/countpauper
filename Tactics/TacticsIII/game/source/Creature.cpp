@@ -15,6 +15,10 @@ Creature::Creature(std::string_view name, const Race& race) :
         {Stat::intel, 2}
     }
 {
+    for(auto counter: Definition().GetCounters())
+    {
+        countersUsed[counter] = 0;
+    }
 }
 
 void Creature::Level(Stat::Id stat, int amount)
@@ -50,6 +54,18 @@ StatDescriptor Creature::Get(Stat::Id id) const
 const StatDefinition& Creature::Definition() const
 {
     return Creature::definition;
+}
+
+unsigned Creature::CounterAvailable(Stat::Id stat) const
+{
+    for(const auto counter: countersUsed)
+    {
+        if (counter.first->ForStat(&Definition().at(stat)))
+        {
+            return counter.first->Available(counter.second, *this);
+        }
+    }
+    return 0;
 }
 
 StatDefinition Creature::definition;

@@ -9,7 +9,6 @@ class Effect
 private:
         class Spell& spell;
         int power;
-
 };
 
 }

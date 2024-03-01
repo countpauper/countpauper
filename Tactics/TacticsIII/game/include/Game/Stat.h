@@ -10,7 +10,6 @@
 
 namespace Game
 {
-
 class Stat
 {
 public:
@@ -71,6 +70,7 @@ public:
         };
 
         Stat();
+        ~Stat();
         explicit Stat(std::string_view name, std::string_view description=std::string_view());
         Stat(std::string_view name, std::string_view description, Id dependency,
                 std::initializer_list<int> table= {}, int multiplier=1);
@@ -79,6 +79,7 @@ public:
         Stat(std::string_view name, const json& j, const class StatDefinition& dependencies);
         StatDescriptor Compute(const class Statted& c) const;
         std::string_view Name() const;
+        std::string_view Description() const;
 private:
         std::string name;
         std::string description;
@@ -87,7 +88,6 @@ private:
         Operator op = Operator::nop;
         Id operand = Stat::none;          // 1 if None, with operand add could also be added, then none is 0
         int multiplier = 1;
-
         Engine::Range<int> limit{0, std::numeric_limits<int>::max()};
 };
 

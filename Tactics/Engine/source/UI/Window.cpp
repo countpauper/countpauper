@@ -194,15 +194,16 @@ void Window::OnMouse(int button, int state, int x, int y)
 
 void Window::SetTitle(const char* title)
 {
-        glutSetWindow(handle);
-        glutSetWindowTitle(title);
-        glutSetIconTitle(title);
+    glutSetWindow(handle);
+    glutSetWindowTitle(title);
+    glutSetIconTitle(title);
+
 }
 
 void Window::Fullscreen()
 {
-        glutSetWindow(handle);
-        glutFullScreen();
+    glutSetWindow(handle);
+    glutFullScreen();
 }
 
 Scene& Window::GetScene()

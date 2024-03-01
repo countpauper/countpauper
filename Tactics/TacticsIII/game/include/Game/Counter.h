@@ -1,10 +1,12 @@
 #pragma once
-#include "Game/Stat.h"
 #include "Utility/Range.h"
+#include "File/Json.h"
 
 namespace Game
 {
 class Statted;
+class Stat;
+
 class Counter
 {
 public:
@@ -16,16 +18,17 @@ public:
         turn = 3,
         action = 4
     };
-    Counter(std::string_view name, Stat::Id maxStat=Stat::none, Counter::Reset reset=Reset::never, bool resetToMax=true);
-    Engine::Range<int> GetRange(const Statted& creature) const;
+    Counter(std::string_view name, const Stat* maxStat=nullptr, Counter::Reset reset=Reset::never, bool resetToMax=true);
+    Counter(const Stat& maxStat, const json& j);
+    unsigned Available(int used, const Statted& stats) const;
     bool ResetWhen(Reset) const;
-    int ResetTo(const Statted& creature) const;
     std::string_view Name() const;
+    bool ForStat(const Stat* stat) const;
 private:
-    std::string_view name;
+    std::string name;
     Reset resetAt;
     bool resetToMax;
-    Stat::Id maxStat;
+    const Stat* maxStat;
 };
 
 }

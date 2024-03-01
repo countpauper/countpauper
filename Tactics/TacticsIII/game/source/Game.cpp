@@ -5,6 +5,7 @@
 #include "UI/Scene.h"
 #include "UI/Application.h"
 #include "UI/GameMessages.h"
+#include <fstream>
 
 namespace Game
 {
@@ -14,6 +15,8 @@ Game::Game(Engine::Scene& scene) :
     elf("elf"),
     map(Engine::Image("data/map20.png"))
 {
+    std::ifstream defFile("data/creature.json");
+    Creature::definition.Load(defFile);
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<Selected>()

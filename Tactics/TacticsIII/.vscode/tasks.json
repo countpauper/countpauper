@@ -1,34 +1,43 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-		{
-			"type": "cmake",
-			"label": "CMake: build",
-			"command": "build",
-			"presentation": {
-				"clear": true,
-				"focus": true,
-				"reveal": "always"
-			},
-			"targets": [
-				"ALL_BUILD"
-			],
-			"group": "build",
-			"problemMatcher": [
-				"$gcc"
-			],
-			"detail": "CMake template build task"
-		},
-                {
-                        "type": "cmake",
-                        "label": "CMake: test",
-                        "command": "test",
-                        "problemMatcher": [],
-                        "detail": "CMake run all tests",
-                        "group": {
-                                "kind": "test",
-                                "isDefault": true
-                        }
-                }
-	]
+        {
+            "type": "cmake",
+            "label": "CMake: build",
+            "command": "build",
+            "presentation": {
+                "clear": true,
+                "focus": true,
+                "reveal": "always"
+            },
+            "targets": [
+                "ALL_BUILD"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "CMake template build task"
+        },
+        {
+            "type": "cmake",
+            "label": "CMake: test",
+            "command": "test",
+            "problemMatcher": [],
+            "detail": "CMake run all tests",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Generate Data",
+            "command": "python define.py",
+            "options": {
+                "cwd": "data"
+            },
+            "problemMatcher": []
+        }
+    ]
 }
