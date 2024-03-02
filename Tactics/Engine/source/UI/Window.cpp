@@ -6,6 +6,7 @@
 #include "Utility/Singleton.h"
 #include "UI/Application.h"
 #include "Rendering/Text.h"
+#include "Geometry/Coordinate.h"
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -109,15 +110,18 @@ void Window::Render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     CurrentWindow()->GetScene().Render();
-
+    CurrentWindow()->GetHUD().Render();
+/*
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glScaled(1.0, -1.0, 1.0);
-    glTranslated(-1.0, -0.9,0.0);
+    glScaled(2.0, -2.0, 1.0);       // make positive y go down
+    glTranslated(-0.5, -0.5, -1.0); // top left and front of z-buffer
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glText("User interface");
+    glText("User\ninterface");
     // Don't wait start processing buffered OpenGL routines
+*/
     glFlush();
 }
 
@@ -159,19 +163,25 @@ void Window::Mouse(int button, int state, int x, int y)
 }
 
 
-Engine::Coordinate Window::Screen2View(int x, int y) const
+Engine::Vector Window::PixelScale() const
 {
     glutSetWindow(handle);
     int width = glutGet(GLUT_WINDOW_WIDTH);
     int height = glutGet(GLUT_WINDOW_HEIGHT);
-    if (width<=0 || height<=0 )
-    {
-        return Coordinate();
-    }
-    return Engine::Coordinate(
-        -1.0 + 2.0 * x / width,
-        1.0 + -2.0 * y / height,
-        0
+    return Vector{
+        width>=0 ? 1.0 / width : 0.0 ,
+        height>=0 ? 1.0 / height : 0.0,
+         0};
+}
+
+Coordinate Window::Screen2View(int x, int y) const
+{
+    glutSetWindow(handle);
+    Vector pixel = PixelScale();
+    return Coordinate(
+        -1.0 + 2.0 * x * pixel.x,
+        1.0 + -2.0 * y * pixel.y,
+        0 * pixel.z
     );
 }
 
@@ -180,6 +190,8 @@ void Window::OnMouse(int button, int state, int x, int y)
     app->bus.Post(Click(button, x, y));
 
     auto viewPosition = Screen2View(x, y);
+    auto control = hud.Click(viewPosition);
+
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
     {
         auto [prop, sub ] = scene.Select(viewPosition);
@@ -225,6 +237,12 @@ Scene& Window::GetScene()
 {
     return scene;
 }
+
+HUD& Window::GetHUD()
+{
+    return hud;
+}
+
 
 
 }

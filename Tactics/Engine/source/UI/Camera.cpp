@@ -17,7 +17,10 @@
 
 namespace Engine
 {
-    Camera::Camera() =default;
+    Camera::Camera() :
+        projection(Matrix::Identity())
+    {
+    }
 
     static void PostRedraw()
     {
@@ -70,6 +73,11 @@ namespace Engine
         PostRedraw();
     }
 
+    Matrix Camera::Projection() const
+    {
+        return projection;
+    }
+
     PerspectiveCamera::PerspectiveCamera() :
         fov(90)    // makes scale = 1
     {
@@ -97,7 +105,7 @@ namespace Engine
         glRotated(Rad2Deg(rotation.y), 0, 1, 0);
         glRotated(Rad2Deg(rotation.z), 0, 0, 1);
         glTranslated(-position.x, -position.y, -position.z);
-
+        projection = Matrix::Projection();  // TODO can just compute it
         glMatrixMode(GL_MODELVIEW);
     }
 
@@ -116,6 +124,7 @@ namespace Engine
         glClearDepth(1);
         glDepthFunc(GL_LESS);
         glRotated(-90, 1.0, 0.0, 0.0);
+        projection = Matrix::Projection();  // TODO can just compute it
         glMatrixMode(GL_MODELVIEW);
     }
 

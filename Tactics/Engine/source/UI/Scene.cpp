@@ -20,7 +20,7 @@ Camera& Scene::GetCamera()
 std::pair<Scenery*, uint32_t> Scene::Select(Coordinate c) const
 {
     Line ray(c - Vector(0,0,1), c + Vector(0,0,1));
-    ray *= Matrix::Projection().Inverse();
+    ray *= camera.Projection().Inverse();
     return Hit(ray);
 }
 

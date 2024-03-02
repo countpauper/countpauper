@@ -272,7 +272,6 @@ const double& Matrix::data() const
     return m[0][0];
 }
 
-
 void Matrix::Render() const
 {
     glMultMatrixd(&m[0][0]);

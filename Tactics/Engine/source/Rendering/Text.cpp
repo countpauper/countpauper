@@ -3,6 +3,7 @@
 #include <GL/glut.h>
 #include <cassert>
 #include <algorithm>
+#include "UI/Window.h"
 
 namespace Engine
 {
@@ -43,10 +44,17 @@ namespace Engine
 
     void glText(std::string_view text)
     {
-        glRasterPos3i(0, 0, 0); // set start position
+        auto pixel = Window::CurrentWindow()->PixelScale();
+        float lineHeight = 24.0 * pixel.y;
+        unsigned line = 1;
+        glRasterPos3f(0, lineHeight * line, 0); // set start position
         for(auto c : text)
         {
-            glutBitmapCharacter( GLUT_BITMAP_TIMES_ROMAN_24, c);
+            if (c=='\n') {
+                glRasterPos3f(0, ++line * lineHeight, 0);
+            }
+            else
+                glutBitmapCharacter( GLUT_BITMAP_TIMES_ROMAN_24, c);
         }
     }
 

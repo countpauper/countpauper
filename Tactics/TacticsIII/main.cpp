@@ -19,7 +19,8 @@ int main(int argc, char**argv)
 
         window.SetTitle("Tactics III");
         Game::Game game(window.GetScene());
-
+        Engine::Label lbl("User\nInterface\nLabel");
+        window.GetHUD().push_back(&lbl);
         app->Run();
     }
     catch(const std::exception& ex)
