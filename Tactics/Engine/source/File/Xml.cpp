@@ -1,5 +1,5 @@
 #include "File/Xml.h"
-#include "Utility/Utils.h"
+#include "Utility/String.h"
 #include <string>
 
 namespace Engine

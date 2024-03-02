@@ -72,7 +72,6 @@ Window::Window()
     glutMouseFunc(Mouse);
     glutKeyboardFunc(Key);
     glutSpecialFunc(SpecialKey);
-
 }
 
 Window::~Window()
@@ -162,7 +161,6 @@ void Window::Mouse(int button, int state, int x, int y)
     window.OnMouse(button, state, x, y);
 }
 
-
 Engine::Vector Window::PixelScale() const
 {
     glutSetWindow(handle);
@@ -191,6 +189,9 @@ void Window::OnMouse(int button, int state, int x, int y)
 
     auto viewPosition = Screen2View(x, y);
     auto control = hud.Click(viewPosition);
+
+    if (control)
+        return; // TODO bus it ? for now at least don't check the scene below it
 
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
     {

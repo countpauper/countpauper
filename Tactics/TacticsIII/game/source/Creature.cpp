@@ -31,6 +31,11 @@ std::string_view Creature::Name() const
     return name;
 }
 
+const Race& Creature::GetRace() const
+{
+    return race;
+}
+
 StatDescriptor Creature::Get(Stat::Id id) const
 {
     StatDescriptor result;

@@ -2,7 +2,7 @@
 #include "File/Image.h"
 #include "Rendering/Color.h"
 #include "Utility/Error.h"
-#include "Utility/Utils.h"
+#include "Utility/String.h"
 #include "Geometry/Position.h"
 #include "Utility/from_string.h"
 #define STB_IMAGE_IMPLEMENTATION

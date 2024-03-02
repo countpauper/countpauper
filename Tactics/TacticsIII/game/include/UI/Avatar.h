@@ -16,6 +16,7 @@ class Avatar :
 public:
     Avatar(std::string_view name, const Game::Race& race, Map& map, Engine::Position pos);
     std::string_view Name() const override;
+    std::string Sheet() const;
     void OnMessage(const Engine::Message& message);
     Engine::Coordinate GetLocation() const override;
     void Select(bool on);

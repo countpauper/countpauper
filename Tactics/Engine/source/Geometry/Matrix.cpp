@@ -1,6 +1,7 @@
 #include "Geometry/Matrix.h"
 #include "Geometry/Coordinate.h"
 #include "Geometry/Vector.h"
+#include "Geometry/Quaternion.h"
 #include <GL/gl.h>
 #include <initializer_list>
 #include <cassert>
@@ -264,6 +265,12 @@ Matrix& Matrix::operator*=(const Matrix& o)
 {
     Multiply(*this, Matrix(*this), o);
 
+    return *this;
+}
+
+Matrix& Matrix::operator*=(const Quaternion& q)
+{
+    Multiply(*this, Matrix(*this), q.AsMatrix());
     return *this;
 }
 

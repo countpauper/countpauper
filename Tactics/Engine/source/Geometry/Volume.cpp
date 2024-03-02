@@ -60,7 +60,7 @@ Cylinder::Cylinder() :
 Cylinder::Cylinder(const Line& axis, double dy, double dz) :
     scale(axis.Length(), dy, dz),  // unit cylinder unit length and unit radius in both directions
     origin(axis.a),
-    orientation(scale.x>0 ? Quaternion::Shortest(Vector(1, 0, 0), Vector(axis).Normal()) : Quaternion::Identity())
+    orientation(scale.x>0 ? Quaternion::Shortest(Vector::X, Vector(axis).Normal()) : Quaternion::Identity())
 {
 }
 

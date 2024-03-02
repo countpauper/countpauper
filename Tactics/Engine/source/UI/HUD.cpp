@@ -6,6 +6,18 @@
 namespace Engine
 {
 
+Control::Control(std::string_view name) :
+    name(name)
+{
+}
+
+Control* Control::FindControl(std::string_view path)
+{
+    if (path==name)
+        return this;
+    else
+        return nullptr;
+}
 
 void Controls::Render() const
 {
@@ -30,11 +42,34 @@ Control* Controls::Click(Coordinate pos) const
     return nullptr;
 }
 
-HUD::HUD()
+Control* Controls::FindControl(std::string_view path)
+{
+    auto remainingPath = path;
+    if (!name.empty()) {
+        if (path.substr(0, name.size()) == name &&
+            path.size() >= name.size()+1 &&
+            path[name.size()] == pathSeparator)
+        {
+            auto remainingPath = path.substr(path.size()+1);
+        }
+        else
+            return nullptr;
+    }
+
+    for(auto control: *this)
+    {
+        if (auto found = control->FindControl(remainingPath))
+            return found;
+    }
+    return nullptr;
+}
+
+HUD::HUD() :
+    Controls("")
 {
     projection = Matrix::Identity();
-    projection *= Matrix::Scale({2.0, -2.0, 1.0});
-    projection.SetTranslation({-1.0, 1.0, -1.0});
+    projection *= Matrix::Scale({2.0, -2.0, 1.0});  // make positive y go down and XY 0...1
+    projection.SetTranslation({-1.0, 1.0, -1.0}); // top left and front of Z-buffer
 }
 
 void HUD::Render() const
@@ -42,8 +77,6 @@ void HUD::Render() const
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     projection.Render();
-    //glScaled(2.0, -2.0, 1.0);       // make positive y go down
-    //glTranslated(-0.5, -0.5, -1.0); // top left and front of z-buffer
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -55,14 +88,15 @@ Control* HUD::Click(Coordinate pos) const
     return Controls::Click(projection.Inverse() * pos);
 }
 
-Label::Label(std::string_view text) :
+Label::Label(std::string_view name, std::string_view text) :
+    Control(name),
     text(text)
 {
 }
 
-void Label::SetText(std::string_view text)
+void Label::SetText(std::string_view newText)
 {
-    text=text;
+    text=newText;
 }
 
 void Label::Render() const

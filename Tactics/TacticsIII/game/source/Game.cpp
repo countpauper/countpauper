@@ -6,6 +6,8 @@
 #include "UI/Application.h"
 #include "UI/GameMessages.h"
 #include "UI/WindowMessages.h"
+#include "UI/Window.h"
+#include "UI/HUD.h"
 #include <fstream>
 
 namespace Game
@@ -58,6 +60,8 @@ void Game::OnMessage(const Engine::Message& message)
         if (selected->avatar)
         {
             Focus(selected->avatar->GetLocation());
+            auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("lbl");
+            lbl->SetText(selected->avatar->Sheet());
         }
         else
         {

@@ -65,7 +65,7 @@ TEST(Matrix, Multiplication)
 
 TEST(Matrix, InverseAffine)
 {
-    Quaternion xrot(Vector(1, 0, 0), float(PI / 2));
+    Quaternion xrot(Vector::X, float(PI / 2));
     auto matrix = xrot.AsMatrix()*Matrix::Translation(Vector(2, -3, 4));
 
     Vector v = Vector(1, -2, 0.5);

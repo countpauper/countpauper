@@ -25,7 +25,7 @@ TEST(Stat, define_secondary_stat)
     def.Parse(R"""(
     {
             "Strength":{},
-            "Damage":{ "Depends":"Strength", "Table":[1,1,2,2,3,3] }
+            "Damage":{ "depends":"Strength", "table":[1,1,2,2,3,3] }
     }
     )""");
     EXPECT_EQ(def[Stat::damage].Name(), "Damage");
@@ -42,7 +42,7 @@ TEST(Stat, define_multiplied_stat)
     def.Parse(R"""(
     {
             "Agility":{ },
-            "Dodge":{ "Depends":"Agility", "Table":[10,11,12,12,13,13], "*":5 }
+            "Dodge":{ "depends":"Agility", "table":[10,11,12,12,13,13], "*":5 }
     }
     )""");
     MockStatted mock;
@@ -58,7 +58,7 @@ TEST(Stat, define_stat_multiplied_by_stat)
     {
             "Level":{ },
             "Constitution":{ },
-            "Hitpoints":{ "Depends":"Constitution", "Table":[5, 5, 5, 6, 6], "*":"Level" }
+            "Hitpoints":{ "depends":"Constitution", "table":[5, 5, 5, 6, 6], "*":"Level" }
     }
     )""");
     MockStatted mock;

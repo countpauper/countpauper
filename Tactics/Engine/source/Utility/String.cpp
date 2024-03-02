@@ -1,4 +1,4 @@
-#include "Utility/Utils.h"
+#include "Utility/String.h"
 #include <sstream>
 #include <ctype.h>
 #include <iomanip>
@@ -43,6 +43,26 @@ std::string UpperCase(std::string_view str)
 {
     std::string result(str.length(), '\x0');
     std::transform(str.begin(), str.end(), result.begin(), ::toupper);
+    return result;
+}
+
+std::string TitleCase(std::string_view str)
+{
+    std::string result(str.length(), '\x0');
+    bool upperNext = true;
+    std::size_t idx = 0;
+    for(auto c: str)
+    {
+        if (upperNext)
+        {
+            result[idx++] = ::toupper(c);
+        }
+        else
+        {
+            result[idx++] = ::tolower(c);
+        }
+        upperNext = std::isspace(c);
+    }
     return result;
 }
 

@@ -17,10 +17,7 @@
 
 namespace Engine
 {
-    Camera::Camera() :
-        projection(Matrix::Identity())
-    {
-    }
+    Camera::Camera() = default;
 
     static void PostRedraw()
     {
@@ -75,7 +72,7 @@ namespace Engine
 
     Matrix Camera::Projection() const
     {
-        return projection;
+        return Matrix::Identity();
     }
 
     PerspectiveCamera::PerspectiveCamera() :
@@ -83,48 +80,57 @@ namespace Engine
     {
     }
 
-    void PerspectiveCamera::Render() const
+    Matrix PerspectiveCamera::Projection() const
     {
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
         double scale = zoom * double(1.0 / tan(Deg2Rad(fov* 0.5f)));
         double n = 10.0;  // 1.0 wastes a lot of depth buffer
         double f = 100.0; // pretty much how much of the map is visible in grids
-        // default glClearDepth(1);
-        // default glDepthRange(0, 1);
-        // default glDepthFunc(GL_LESS);
+
 
         // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/building-basic-perspective-projection-matrix
 
         Matrix m = Matrix::Perspective(n, f) * Matrix::Scale(Vector(scale, scale, 1));
-        m.Render();
+        m *= Quaternion(Vector::X, rotation.x);
+        m *= Quaternion(Vector::Y, rotation.y);
+        m *= Quaternion(Vector::Z, rotation.z);
+        m *= Matrix::Translation(-Vector(position));
+        return m;
+    }
 
-        // Not sure why but everything (order, direction=sign) needs to be reversed from the position
-        // if the camera man. I suppose because of the camera moves left, the world seems to move right?
-        glRotated(Rad2Deg(rotation.x), 1, 0, 0);
-        glRotated(Rad2Deg(rotation.y), 0, 1, 0);
-        glRotated(Rad2Deg(rotation.z), 0, 0, 1);
-        glTranslated(-position.x, -position.y, -position.z);
-        projection = Matrix::Projection();  // TODO can just compute it
-        glMatrixMode(GL_MODELVIEW);
+    void PerspectiveCamera::Render() const
+    {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        Projection().Render();
+        // default glClearDepth(1);
+        // default glDepthRange(0, 1);
+        // default glDepthFunc(GL_LESS);
+       glMatrixMode(GL_MODELVIEW);
     }
 
     TopCamera::TopCamera()
     {
         zoom = 0.1f;
+        position = Coordinate(0, 0, 1.0);
+    }
+
+
+    Matrix TopCamera::Projection() const
+    {
+        Matrix m = Matrix::Scale({zoom, zoom, zoom});
+        m*= Matrix::Translation(-Vector(position));
+        m *= Quaternion(Vector::X, M_PI/-2);
+        return m; // untested rewrite
     }
 
     void TopCamera::Render() const
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glScaled(zoom, zoom, zoom);
-        glTranslated(-position.x, -position.y, - 1.0f);
+        Projection().Render();
         glDepthRange(0, 1);
         glClearDepth(1);
         glDepthFunc(GL_LESS);
-        glRotated(-90, 1.0, 0.0, 0.0);
-        projection = Matrix::Projection();  // TODO can just compute it
         glMatrixMode(GL_MODELVIEW);
     }
 

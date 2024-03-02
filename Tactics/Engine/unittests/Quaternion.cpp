@@ -21,14 +21,14 @@ TEST(Quaternion, Identity)
 
 TEST(Quaternion, Rotate)
 {
-    Quaternion xrot(Vector(1, 0, 0), PI * 0.5);
+    Quaternion xrot(Vector::X, PI * 0.5);
     Vector v(0, 2, 0);
     EXPECT_DOUBLE_EQ(2, (xrot*v).z);
 }
 
 TEST(Quaternion, Inverse)
 {
-    Quaternion xrot(Vector(1, 0, 0), PI * 0.5);
+    Quaternion xrot(Vector::X, PI * 0.5);
     Vector v(0, 2, 0);
     EXPECT_DOUBLE_EQ(-2, (-xrot*v).z);
 }
@@ -36,30 +36,30 @@ TEST(Quaternion, Inverse)
 
 TEST(Quaternion, Unit)
 {
-    EXPECT_TRUE(Quaternion(Vector(0, 0, 0), 0).IsNormalized());
-    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 0).IsNormalized());
+    EXPECT_TRUE(Quaternion(Vector::zero, 0).IsNormalized());
+    EXPECT_TRUE(Quaternion(Vector::X, 0).IsNormalized());
 
     EXPECT_FALSE(Quaternion(Vector(1, -1, 0), 1.0).IsNormalized());
     EXPECT_TRUE(Quaternion(Vector(1, -1, 0), 1.0).Normalized().IsNormalized());
 
-    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 0).AsMatrix().IsIdentity());
-    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 1.0).IsNormalized());
-    EXPECT_TRUE(Quaternion(Vector(1, 0, 0), 1.0).AsMatrix().IsAffine());
+    EXPECT_TRUE(Quaternion(Vector::X, 0).AsMatrix().IsIdentity());
+    EXPECT_TRUE(Quaternion(Vector::X, 1.0).IsNormalized());
+    EXPECT_TRUE(Quaternion(Vector::X, 1.0).AsMatrix().IsAffine());
 }
 
 TEST(Quaternion, RightHandedRotation)
 {
-    Quaternion xrot(Vector(1, 0, 0), PI * 0.5);
+    Quaternion xrot(Vector::X, PI * 0.5);
     EXPECT_DOUBLE_EQ( 1, (xrot * Vector(1, 1, 1)).x);
     EXPECT_DOUBLE_EQ(-1, (xrot * Vector(1, 1, 1)).y);
     EXPECT_DOUBLE_EQ( 1, (xrot * Vector(1, 1, 1)).z);
 
-    Quaternion yrot(Vector(0, 1, 0), PI * 0.5);
+    Quaternion yrot(Vector::Y, PI * 0.5);
     EXPECT_DOUBLE_EQ( 1, (yrot * Vector(1, 1, 1)).x);
     EXPECT_DOUBLE_EQ( 1, (yrot * Vector(1, 1, 1)).y);
     EXPECT_DOUBLE_EQ(-1, (yrot * Vector(1, 1, 1)).z);
 
-    Quaternion zrot(Vector(0, 0, 1), PI * 0.5);
+    Quaternion zrot(Vector::Z, PI * 0.5);
     EXPECT_DOUBLE_EQ(-1, (zrot * Vector(1, 1, 1)).x);
     EXPECT_DOUBLE_EQ( 1, (zrot * Vector(1, 1, 1)).y);
     EXPECT_DOUBLE_EQ( 1, (zrot * Vector(1, 1, 1)).z);
@@ -67,8 +67,8 @@ TEST(Quaternion, RightHandedRotation)
 
 TEST(Quaternion, Multiplication)
 {
-    Quaternion xrot(Vector(1, 0, 0), PI * 0.5);
-    Quaternion yrot(Vector(0, 1, 0), PI * 0.5);
+    Quaternion xrot(Vector::X, PI * 0.5);
+    Quaternion yrot(Vector::Y, PI * 0.5);
 
     Vector v(1, 0, 0);
     // http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/transforms/index.htm
@@ -79,14 +79,14 @@ TEST(Quaternion, Multiplication)
 
 TEST(Quaternion, Shortest)
 {
-    EXPECT_3D_EQ(Quaternion::Shortest(Vector(1, 0, 0), Vector(0, 0, 1)) * Vector(1, 0, 0), Vector(0, 0, 1));
-    EXPECT_3D_EQ(Quaternion::Shortest(Vector(1, 0, 0), Vector(0, 1, 0)) * Vector(1, 0, 0), Vector(0, 1, 0));
-    EXPECT_3D_EQ(Quaternion::Shortest(Vector(1, 0, 0), Vector(0, 0, 1)) * Vector(2, 0, 0), Vector(0, 0, 2));
-    EXPECT_EQ(Quaternion::Shortest(Vector(0, 0, 1), Vector(0, 0, 1)), Quaternion::Identity());
+    EXPECT_3D_EQ(Quaternion::Shortest(Vector::X, Vector::Z) * Vector::X, Vector::Z);
+    EXPECT_3D_EQ(Quaternion::Shortest(Vector::X, Vector::Y) * Vector::X, Vector::Y);
+    EXPECT_3D_EQ(Quaternion::Shortest(Vector::X, Vector::Z) * Vector(2, 0, 0), Vector(0, 0, 2));
+    EXPECT_EQ(Quaternion::Shortest(Vector::Z, Vector::Z), Quaternion::Identity());
 
     Quaternion rot(Vector(0, 2, 3), PI*0.5);
     rot.Normalize();
-    auto shortest = Quaternion::Shortest(Vector(1, 0, 0), rot * Vector(1, 0, 0));
+    auto shortest = Quaternion::Shortest(Vector::X, rot * Vector::X);
     EXPECT_DOUBLE_EQ(shortest.x, rot.x);
     EXPECT_DOUBLE_EQ(shortest.y, rot.y);
     EXPECT_DOUBLE_EQ(shortest.z, rot.z);

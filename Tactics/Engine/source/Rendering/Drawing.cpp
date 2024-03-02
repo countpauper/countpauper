@@ -55,7 +55,7 @@ namespace Engine
 
     void glDrawArrow(const Vector& v, double size, double angle)
     {
-        Vector cameraFacing = TransformBillboard(Vector(0, 0, 1)).Normal();
+        Vector cameraFacing = TransformBillboard(Vector::X).Normal();
         Vector leftArrow = v - Quaternion(cameraFacing, angle) * (v * size);
         Vector rightArrow = v - Quaternion(cameraFacing, -angle) * (v * size);
         glBegin(GL_LINES);

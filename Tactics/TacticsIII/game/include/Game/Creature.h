@@ -32,9 +32,11 @@ public:
     StatDescriptor Get(Stat::Id id) const override;
     const StatDefinition& Definition() const override;
     std::string_view Name() const;
+    const Race& GetRace() const;
     static StatDefinition definition;
 
     unsigned CounterAvailable(Stat::Id) const;
+
 private:
     std::string name;
     const Race& race;

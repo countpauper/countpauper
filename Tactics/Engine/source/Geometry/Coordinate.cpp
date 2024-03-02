@@ -2,7 +2,7 @@
 #include "Geometry/Vector.h"
 #include "Geometry/Matrix.h"
 #include "Utility/from_string.h"
-#include "Utility/Utils.h"
+#include "Utility/String.h"
 #include <GL/gl.h>
 #include <ostream>
 #include <istream>

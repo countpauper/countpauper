@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <math.h>
 #include "Utility/from_string.h"
-#include "Utility/Utils.h"
+#include "Utility/String.h"
 
 namespace Engine::Test
 {
@@ -93,6 +93,11 @@ TEST(String, UpperCase)
 TEST(String, LowerCase)
 {
     EXPECT_EQ(Engine::LowerCase("L0WeRC4$E"), "l0werc4$e");
+}
+
+TEST(String, TitleCase)
+{
+    EXPECT_EQ(Engine::TitleCase("tiT'le c4se"), "Tit'le C4se");
 }
 
 TEST(String, Duration)

@@ -10,10 +10,20 @@ namespace Engine
 class Control
 {
 public:
+    explicit Control(std::string_view name);
     virtual void Render() const = 0;
     virtual Control* Click(Coordinate pos) const = 0;
+    template<class Type>
+    Type* Find(std::string_view path)
+    {
+        return dynamic_cast<Type*>(FindControl(path));
+    }
+    virtual Control* FindControl(std::string_view path);
+
     bool shown = true;
     bool enabled = true;
+protected:
+    std::string name;
 };
 
 class Controls :
@@ -21,9 +31,13 @@ class Controls :
     public std::vector<Control*>
 {
 public:
+    using Control::Control;
     using std::vector<Control*>::vector;
-    void Render() const override;
-    Control* Click(Coordinate pos) const override;
+    void Render() const;
+    Control* Click(Coordinate pos) const;
+    virtual Control* FindControl(std::string_view path);
+private:
+    static constexpr char pathSeparator = '.';
 };
 
 class HUD : public Controls
@@ -39,7 +53,7 @@ private:
 class Label : public Control
 {
 public:
-    explicit Label(std::string_view text="");
+    Label(std::string_view name, std::string_view text="");
     void SetText(std::string_view text);
     // TODO set font, color, use default font
     void Render() const override;

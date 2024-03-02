@@ -2,7 +2,7 @@
 #include "Rendering/Drawing.h"
 #include "Utility/Random.h"
 #include "Rendering/Texture.h"
-#include "Utility/Utils.h"
+#include "Utility/String.h"
 #include <filesystem>
 #include <GL/gl.h>
 

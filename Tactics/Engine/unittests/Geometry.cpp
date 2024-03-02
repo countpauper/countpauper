@@ -30,7 +30,7 @@ TEST(Geometry, Vector)
     EXPECT_EQ(Vector(2, -4, 0), Vector(1, -2, 0) * 2.0);
     EXPECT_EQ(Vector(1, -2, 0), Vector(2, -4, 0) / 2.0);
 
-    EXPECT_EQ(Vector(0, 0, 1), Vector(1, 0, 0).Cross(Vector(0, 1, 0)));
+    EXPECT_EQ(Vector::Z, Vector::X.Cross(Vector::Y));
     EXPECT_GT(0.0, Vector(1, 1, 0).Cross(Vector(1, -1, 0)).z);
     EXPECT_EQ(Vector(0, 0, -0.5), Vector(0.5, 0, 0).Cross(Vector(0, -1, 0)));
 }
@@ -140,7 +140,7 @@ TEST(Plane, Null)
 TEST(Plane, XY)
 {
     EXPECT_TRUE(Plane::xy);
-    EXPECT_EQ(Plane::xy, Plane(Coordinate::origin, Vector(1, 0, 0), Vector(0, 1, 0)));
+    EXPECT_EQ(Plane::xy, Plane(Coordinate::origin, Vector::X, Vector::Y));
     EXPECT_EQ(0, Plane::xy.Distance(Coordinate::origin));
     EXPECT_DOUBLE_EQ(1, Plane::xy.Distance(Coordinate(0, 0, 1)));
     EXPECT_DOUBLE_EQ(0, Plane::xy.Distance(Coordinate(1, 1, 0)));

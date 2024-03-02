@@ -43,6 +43,7 @@ struct Matrix
     Matrix NormalScale() const;
     Matrix Orthogonalize() const;
     Matrix& operator*=(const Matrix& o);
+    Matrix& operator*=(const class Quaternion& q);
     void Render() const;
 
     static Matrix Projection();

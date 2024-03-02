@@ -2,7 +2,7 @@
 #include <iostream>
 #include <filesystem>
 #include "File/Image.h"
-#include "Utility/Utils.h"
+#include "Utility/String.h"
 
 namespace Engine::Test
 {

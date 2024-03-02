@@ -123,6 +123,9 @@ double Vector::Dot(Vector v) const
 }
 
 const Vector Vector::zero(0, 0, 0);
+const Vector Vector::X(1, 0, 0);
+const Vector Vector::Y(0, 1, 0);
+const Vector Vector::Z(0, 0, 1);
 
 std::ostream& operator<<(std::ostream& s, Vector v)
 {

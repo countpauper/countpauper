@@ -157,9 +157,9 @@ namespace Engine
 
 
 Plane Plane::null(Vector::zero, 0);
-Plane Plane::xy(Vector(0, 0, 1), 0);
-Plane Plane::xz(Vector(0, 1, 0), 0);
-Plane Plane::yz(Vector(1, 0, 0), 0);
+Plane Plane::xy(Vector::Z, 0);
+Plane Plane::xz(Vector::Y, 0);
+Plane Plane::yz(Vector::X, 0);
 
 
 }

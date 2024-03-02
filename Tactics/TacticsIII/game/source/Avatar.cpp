@@ -3,6 +3,7 @@
 #include "UI/WindowMessages.h"
 #include "Geometry/Matrix.h"
 #include "UI/GameMessages.h"
+#include "Utility/String.h"
 
 namespace Game
 {
@@ -74,6 +75,16 @@ Engine::Coordinate Avatar::GetLocation() const
 std::string_view Avatar::Name() const
 {
     return creature.Name();
+}
+
+
+std::string Avatar::Sheet() const
+{
+    std::stringstream ss;
+    ss << Name() << std::endl;
+    ss << Engine::TitleCase(creature.GetRace().Name()).c_str() << " " << creature.Get(Stat::level).Total() << std::endl;
+    ss << "HP:" << creature.CounterAvailable(Stat::hp) << " AP:" << creature.CounterAvailable(Stat::ap);
+    return ss.str();
 }
 
 }

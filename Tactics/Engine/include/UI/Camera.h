@@ -18,13 +18,12 @@ namespace Engine
         void Zoom(double factor);
         void Face(Coordinate target);
         void Turn(const Vector& delta);
-        Matrix Projection() const;
+        virtual Matrix Projection() const;
     protected:
         Vector vertical{0, 0, 1};
         Coordinate position{0,0,0};
         Coordinate rotation{0,0,0};
         double zoom = 1.0;
-        mutable Matrix projection;
     };
 
 
@@ -34,6 +33,7 @@ namespace Engine
     {
     public:
         PerspectiveCamera();
+        Matrix Projection() const override;
         void Render() const override;
         float fov;
     };
@@ -42,6 +42,7 @@ namespace Engine
     {
     public:
         TopCamera();
+        Matrix Projection() const override;
         void Render() const override;
     };
 

@@ -6,7 +6,7 @@
 #include <set>
 #include <iterator>
 #include <algorithm>
-#include "Utility/Utils.h"
+#include "Utility/String.h"
 
 namespace Engine
 {
