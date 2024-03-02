@@ -39,7 +39,6 @@ void Window::Init(void)
     glFrontFace(GL_CCW);
     //glEnable(GL_BLEND);    // TODO: first render non alpha tiles, then alpha tiles with depth test
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     // Lighting makes it nice but dark
     //glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);

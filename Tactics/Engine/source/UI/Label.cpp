@@ -1,6 +1,6 @@
 #include "UI/Label.h"
 #include "Rendering/Text.h"
-
+#include "GL/gl.h"
 namespace Engine
 {
 
@@ -19,6 +19,10 @@ void Label::Render() const
 {
     if (!shown)
         return;
+    if (IsEnabled())
+        enabledColor.Render();
+    else
+        disabledColor.Render();
     glText(text.c_str());
 }
 

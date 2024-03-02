@@ -7,6 +7,7 @@
 #include "UI/GameMessages.h"
 #include "UI/WindowMessages.h"
 #include "UI/Window.h"
+#include "UI/Label.h"
 #include "UI/HUD.h"
 #include <fstream>
 

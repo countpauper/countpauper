@@ -1,6 +1,7 @@
 #include "UI/HUD.h"
 #include "Geometry/Vector.h"
 #include <GL/gl.h>
+#include "Utility/GLutil.h"
 
 namespace Engine
 {
@@ -8,6 +9,7 @@ namespace Engine
 HUD::HUD() :
     Controls("")
 {
+    parent = this;    // root is its own parent
     projection = Matrix::Identity();
     projection *= Matrix::Scale({2.0, -2.0, 1.0});  // make positive y go down and XY 0...1
     projection.SetTranslation({-1.0, 1.0, -1.0}); // top left and front of Z-buffer
@@ -21,6 +23,7 @@ void HUD::Render() const
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    glTemporary blend(GL_BLEND, true);
     Controls::Render();
 }
 

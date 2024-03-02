@@ -20,10 +20,52 @@ void Controls::Render() const
 {
     if (!shown)
         return;
-    for(auto control: *this)
+    for(auto child: children)
     {
-        control->Render();
+        child->Render();
     }
+}
+
+
+void Control::Show()
+{
+    shown = true;
+}
+
+void Control::Hide()
+{
+    shown = false;
+}
+void Control::Enable()
+{
+    enabled = true;
+}
+
+void Control::Disable()
+{
+    enabled = false;
+}
+
+bool Control::IsShown() const
+{
+    return shown && parent &&
+        (parent == this || parent->IsShown());
+}
+
+bool Control::IsEnabled() const
+{
+    return enabled && parent &&
+        (parent==this || parent->IsEnabled()); // TODO recurse;
+}
+
+
+
+void Controls::Add(Control& control)
+{
+    if (control.parent)
+        throw std::runtime_error("Control reparented");
+    children.push_back(&control);
+    control.parent = this;
 }
 
 Control* Controls::Click(Coordinate pos) const
@@ -31,9 +73,9 @@ Control* Controls::Click(Coordinate pos) const
     if (!enabled || !shown)
         return nullptr;
 
-    for(auto control: *this)
+    for(auto child: children)
     {
-        auto hit = control->Click(pos);
+        auto hit = child->Click(pos);
         return hit;
     }
     return nullptr;
@@ -53,9 +95,9 @@ Control* Controls::FindControl(std::string_view path)
             return nullptr;
     }
 
-    for(auto control: *this)
+    for(auto child: children)
     {
-        if (auto found = control->FindControl(remainingPath))
+        if (auto found = child->FindControl(remainingPath))
             return found;
     }
     return nullptr;

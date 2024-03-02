@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "UI/Control.h"
+#include "Rendering/Color.h"
 
 namespace Engine
 {
@@ -13,6 +14,9 @@ public:
     // TODO set font, color, use default font
     void Render() const override;
     Control* Click(Coordinate pos) const override { return nullptr; }
+
+    RGBA enabledColor = RGBA::white;
+    RGBA disabledColor = RGBA::white.Translucent(0.5);
 private:
     std::string text;
 };

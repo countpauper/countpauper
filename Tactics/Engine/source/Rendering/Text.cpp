@@ -47,6 +47,8 @@ namespace Engine
         auto pixel = Window::CurrentWindow()->PixelScale();
         float lineHeight = 24.0 * pixel.y;
         unsigned line = 1;
+        //glDisable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D,0);
         glRasterPos3f(0, lineHeight * line, 0); // set start position
         for(auto c : text)
         {

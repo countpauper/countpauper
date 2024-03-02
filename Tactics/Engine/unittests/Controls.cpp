@@ -22,7 +22,7 @@ TEST(Controls, FindSubControl)
 {
     MockControl ctrl("bar");
     Controls controls("foo");
-    controls.push_back(&ctrl);
+    controls.Add(ctrl);
     EXPECT_EQ(controls.FindControl("foo.bar"), &ctrl);
     EXPECT_EQ(controls.FindControl("foo.baz"), nullptr);
     EXPECT_EQ(controls.FindControl("baz.bar"), nullptr);
@@ -32,7 +32,7 @@ TEST(Controls, FindAnonymousSubControl)
 {
     MockControl ctrl("bar");
     Controls controls("");
-    controls.push_back(&ctrl);
+    controls.Add(ctrl);
     EXPECT_EQ(controls.FindControl("bar"), &ctrl);
 }
 

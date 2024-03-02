@@ -18,24 +18,32 @@ public:
     }
     virtual Control* FindControl(std::string_view path);
 
+    bool IsShown() const;
+    bool IsEnabled() const;
+    void Show();
+    void Hide();
+    void Enable();
+    void Disable();
+protected:
+    friend class Controls;
+    const Control* parent=nullptr;
+    std::string name;
     bool shown = true;
     bool enabled = true;
-protected:
-    std::string name;
 };
 
 class Controls :
-    public Control,
-    public std::vector<Control*>
+    public Control
 {
 public:
     using Control::Control;
-    using std::vector<Control*>::vector;
+    void Add(Control& control);
     void Render() const;
     Control* Click(Coordinate pos) const;
     virtual Control* FindControl(std::string_view path);
 private:
     static constexpr char pathSeparator = '.';
+    std::vector<Control*> children;
 };
 
 }
