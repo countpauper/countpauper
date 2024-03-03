@@ -24,9 +24,11 @@ Game::Game(Engine::Scene& scene) :
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<Selected>(),
+        Engine::MessageType<Engine::ClickOn>(),
         Engine::MessageType<Engine::KeyPressed>()
     });
     scene.Add(map);
+    scene.Add(plan);
     scene.GetCamera().Move(Engine::Coordinate(map.GetSize().x/2, -1, map.GetSize().z));
 
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
@@ -56,7 +58,19 @@ void Game::Focus(Engine::Coordinate coord)
 
 void Game::OnMessage(const Engine::Message& message)
 {
-    if (auto selected = message.Cast<Selected>())
+    if (auto clickOn = message.Cast<Engine::ClickOn>())
+    {
+        if (clickOn->object == &map)
+        {
+            auto mapSize = map.GetSize();
+            Engine::Position desination(
+                    clickOn->sub % mapSize.x,
+                    clickOn->sub / mapSize.x,
+                    0);
+            plan = Plan::Move(Current(), map, desination);
+        }
+    }
+    else if (auto selected = message.Cast<Selected>())
     {
         if (selected->avatar)
         {
@@ -70,6 +84,8 @@ void Game::OnMessage(const Engine::Message& message)
         }
     } else if (auto key = message.Cast<Engine::KeyPressed>())
     {
+        plan.Execute();
+        plan = Plan();
         if (key->ascii == 13)
         {
             Next();
@@ -77,16 +93,21 @@ void Game::OnMessage(const Engine::Message& message)
     }
 }
 
+Avatar& Game::Current() const
+{
+    return *avatars[turn];
+}
+
 void Game::Next()
 {
-    avatars[turn]->Select(false);
+    Current().Select(false);
     turn++;
     if (turn>=avatars.size())
     {
         turn = 0;
         ++round;
     }
-    avatars[turn]->Select(true);
+    Current().Select(true);
 }
 
 

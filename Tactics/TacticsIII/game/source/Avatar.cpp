@@ -25,27 +25,13 @@ Avatar::Avatar(std::string_view name, const  Game::Race& race, Map& map, Engine:
     mesh += selection;
 
     Engine::Application::Get().bus.Subscribe(*this, {
-            Engine::MessageType<Engine::ClickOn>(),
             Engine::MessageType<Game::Selected>()
         });
 }
 
 void Avatar::OnMessage(const Engine::Message& message)
 {
-    if (auto clickOn = message.Cast<Engine::ClickOn>())
-    {
-        if (clickOn->object == this)
-        {
-            // Select();
-        }
-        else if ((clickOn->object == &map) && (selected))
-        {
-            auto mapSize = map.GetSize();
-            position.x = clickOn->sub % mapSize.x;
-            position.y = clickOn->sub / mapSize.x;
-        }
-    }
-    else if (auto selection = message.Cast<Selected>())
+    if (auto selection = message.Cast<Selected>())
     {
         if (selection->avatar != this)
         {
@@ -65,6 +51,22 @@ void Avatar::Select(bool on)
         return;
     selected = on;
     Engine::Application::Get().bus.Post(Selected(selected ? this: nullptr));
+}
+
+
+void Avatar::Move(Engine::Position destination)
+{
+    position = destination;
+}
+
+Engine::Position Avatar::Position() const
+{
+    return position;
+}
+
+const Creature& Avatar::GetCreature() const
+{
+    return creature;
 }
 
 Engine::Coordinate Avatar::GetLocation() const

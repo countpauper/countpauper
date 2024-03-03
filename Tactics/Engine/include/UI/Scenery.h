@@ -14,7 +14,7 @@ class Scenery : public Object
 {
 public:
     explicit Scenery(Mesh& mesh);
-    void Render() const;
+    virtual void Render() const;
     std::pair<double, std::uint32_t> Intersection(const Line& line) const;
     virtual Coordinate GetLocation() const;
     virtual Quaternion GetOrientation() const;
