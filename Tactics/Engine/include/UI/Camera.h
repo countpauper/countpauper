@@ -26,7 +26,6 @@ namespace Engine
         double zoom = 1.0;
     };
 
-
     class PerspectiveCamera :
         public Camera,
         public Passenger

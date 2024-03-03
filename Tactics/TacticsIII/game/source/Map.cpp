@@ -5,6 +5,7 @@
 #include "Utility/Maths.h"
 #include "Game/Material.h"
 #include <cassert>
+#include <span>
 
 namespace Game
 {
@@ -26,17 +27,15 @@ const Material* FindMaterial(Engine::HSVA color)
     float nearest = std::numeric_limits<float>::max();
     const Material* result = nullptr;
     float findHue = Engine::Deg2Rad(color.Hue());
-    // TODO: std::span would be nicer here but C++20 doesn't run in the debugger
-    for(int i =0; i< sizeof(Material::all)/sizeof(Material::all[0]); ++i)
+    for(auto material: std::span(Material::all))
     {
-        const Material& material = *Material::all[i];
-        Engine::HSVA materialColor(material.color);
+        Engine::HSVA materialColor(material->color);
         float distance = std::abs(Engine::ShortestTurn(findHue, Engine::Deg2Rad(materialColor.Hue()))) +
             std::abs(color.Saturation() - materialColor.Saturation());
         if (distance < nearest)
         {
             nearest = distance;
-            result = &material;
+            result = material;
         }
     }
     return result;

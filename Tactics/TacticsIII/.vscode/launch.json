@@ -13,7 +13,8 @@
                         "stopAtEntry": false,
                         "cwd": "${workspaceFolder}",
                         "environment": [],
-                        "externalConsole": false,
+                        // With this false, gdb will exit  with code 0xc0000139 if C++20 or C++23 is used. Weird
+                        "externalConsole": true,
                         "MIMode": "gdb",
                         "setupCommands": [
                             {
