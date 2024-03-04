@@ -8,7 +8,6 @@
 namespace Engine::Astar
 {
 
-
 template<typename T>
 std::vector<T> ConstructPath(T current, const std::unordered_map<T, T>& previous)
 {
@@ -21,7 +20,6 @@ std::vector<T> ConstructPath(T current, const std::unordered_map<T, T>& previous
             break;
         current = it->second;
     }
-    std::reverse(result.begin(), result.end());
     return result;
 }
 
@@ -46,13 +44,16 @@ bool UpdateOpen(std::multimap<Score, std::pair<T,Score>>& open, T found, Score s
 }
 
 template<typename T, typename Score=double>
-std::vector<T> Plan(T from, T to, std::function<Score(T,T)> score, std::function<std::vector<T>(T)> neighbours)
+std::vector<T> Plan(T from, std::span<T> destinations, std::function<Score(T,T)> score, std::function<std::vector<T>(T)> neighbours)
 {
     // a sorted map where the key is  cumulative Score to get to T + cost(T, to)
-    // and the value is T and the score to get to T,
-     std::multimap<Score, std::pair<T,Score>> open{
-        {score(from, to), std::make_pair(from, 0)}
-    };
+    // and the value is T and the score to get from T
+    // the search direction is reversed to allow multiple targets
+    std::multimap<Score, std::pair<T,Score>> open;
+    for(auto to : destinations)
+    {
+        open.insert(std::make_pair(score(to, from), std::make_pair(to, 0)));
+    }
     // path trace back for reconstruction at the end
     std::unordered_map<T, T> previous;
     // closed list to prevent infinite loops
@@ -60,12 +61,12 @@ std::vector<T> Plan(T from, T to, std::function<Score(T,T)> score, std::function
     while(!open.empty())
     {
         auto head = *open.begin();
-        if (head.second.first == to)
+        auto current = head.second.first;
+        if (current == from)
         {
-            return ConstructPath(to, previous);
+            return ConstructPath(from, previous);
         }
         open.erase(open.begin());
-        auto current = head.second.first;
         closed.insert(current);
         for(auto neighbour : neighbours(current))
         {
@@ -73,7 +74,7 @@ std::vector<T> Plan(T from, T to, std::function<Score(T,T)> score, std::function
                 continue;
             Score neighbourCost = head.second.second +
                 score(current, neighbour);
-            Score neighbourScore = neighbourCost + score(neighbour, to);
+            Score neighbourScore = neighbourCost + score(neighbour, from);
             if (UpdateOpen(open, neighbour, neighbourScore))
             {
                 open.insert(std::make_pair(neighbourScore, std::make_pair(neighbour, neighbourCost)));
@@ -84,4 +85,10 @@ std::vector<T> Plan(T from, T to, std::function<Score(T,T)> score, std::function
     return std::vector<T>(); // failuire
 }
 
+
+template<typename T, typename Score=double>
+std::vector<T> Plan(T from, T to, std::function<Score(T,T)> score, std::function<std::vector<T>(T)> neighbours)
+{
+    return Plan(from, std::span(&to, 1), score, neighbours);
+}
 }

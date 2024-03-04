@@ -35,6 +35,8 @@ static uint8_t map[] {
 };
 auto manhattan = [](Position a, Position b) -> int
 {
+    // this is admissable (doesnt over estimate) even with 8 way movement
+    // because diagonals also cost manhattan distance (2)
     return std::abs(a.x - b.x) + std::abs(a.y - b.y);
 };
 auto neighbours = [](Position p) -> std::vector<Position>
@@ -94,4 +96,15 @@ TEST(AI, HardAstar)
     EXPECT_EQ((Astar::Plan<Position, int>({5,0}, {3,0}, manhattan, neighbours)), exepectedPath);
 }
 
+TEST(AI, MultipleDestinations)
+{
+    std::vector<Position> exepectedPath{
+        {0,0},
+        {0,1},
+        {1,2},
+        {2,2}
+    };
+    Position destinations[] {{3,2},{2,2}};
+    EXPECT_EQ((Astar::Plan<Position, int>({0,0}, destinations, manhattan, neighbours)), exepectedPath);
+}
 }
