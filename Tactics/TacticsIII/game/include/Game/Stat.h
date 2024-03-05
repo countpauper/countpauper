@@ -48,6 +48,8 @@ public:
                 defense,
                 offense,
                 hp,     // this is a tricky one, multiplication
+                jump,
+
                 reach,
                 range,
                 hands,

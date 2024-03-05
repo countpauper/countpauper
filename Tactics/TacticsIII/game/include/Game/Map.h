@@ -21,6 +21,8 @@ public:
     std::string_view Name() const override;
     Engine::Mesh& GetMesh();
     Engine::Coordinate GroundCoord(Engine::Position pos) const;
+    int GroundHeight(Engine::Position pos) const;
+    const Material& GetMaterial(Engine::Position pos) const;
     Engine::Size GetSize() const;
 private:
     struct Grid

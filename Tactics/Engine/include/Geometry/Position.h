@@ -1,9 +1,10 @@
 #pragma once
 #include <iostream>
 
+
 namespace Engine
 {
-    struct Position 
+    struct Position
     {
         Position();
         Position(int x, int y, int z=0);
@@ -27,3 +28,12 @@ namespace Engine
     std::wostream& operator<<(std::wostream& stream, Position position);
 }   // ::Engine
 
+
+template<>
+struct std::hash<Engine::Position>
+{
+    size_t operator()(const Engine::Position &p) const
+    {
+        return p.x + p.y*256 + p.z*65536;
+    }
+};

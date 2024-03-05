@@ -14,7 +14,7 @@ class Avatar :
         public Engine::Passenger
 {
 public:
-    Avatar(std::string_view name, const Game::Race& race, Map& map, Engine::Position pos);
+    Avatar(std::string_view name, const Race& race, Map& map, Engine::Position pos);
     std::string_view Name() const override;
     std::string Sheet() const;
     void OnMessage(const Engine::Message& message);

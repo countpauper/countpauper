@@ -27,4 +27,14 @@ TEST(Position, ManhattanDistance)
     EXPECT_EQ(3, Position(0, 1, 0).ManDistance(Position(0, -1, -1)));
 }
 
+TEST(Position, Hash)
+{
+    Position p(0,1,0);
+    Position same(0,1,0);
+    Position other(1, 0, 0);
+    EXPECT_EQ(std::hash<Position>()(p), std::hash<Position>()(same));
+    EXPECT_NE(std::hash<Position>()(p), std::hash<Position>()(other));
 }
+
+}
+

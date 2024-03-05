@@ -18,6 +18,8 @@ class Game : public Engine::Passenger
 {
 public:
     explicit Game(Engine::Scene& scene);
+    const Map& GetMap() const;
+    bool Obstacle(Engine::Position at, const Avatar* except=nullptr) const;
 private:
     Avatar& Current() const;
     void Focus(Engine::Position pos);
@@ -26,7 +28,7 @@ private:
     void Next();
 
     Engine::Scene& scene;
-    ::Game::Race elf;
+    Race elf;
     Map map;
     Plan plan;
     std::vector<std::unique_ptr<Avatar>> avatars;

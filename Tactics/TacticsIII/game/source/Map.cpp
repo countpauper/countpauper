@@ -1,3 +1,4 @@
+#include "Game/Game.h"
 #include "Game/Map.h"
 #include "File/Image.h"
 #include "Geometry/Angles.h"
@@ -90,6 +91,22 @@ Map::Grid& Map::operator[](Engine::Position pos)
 const Map::Grid& Map::operator[](Engine::Position pos) const
 {
     return grids[pos.x + pos.y * size.x];
+}
+
+
+int Map::GroundHeight(Engine::Position pos) const
+{
+    const auto& grid = (*this)[pos];
+    return Engine::Position(pos.x, pos.y, grid.level / subheight);
+}
+
+const Material& Map::GetMaterial(Engine::Position pos) const
+{
+    const auto& grid = (*this)[pos];
+    if (grid.liquidity)
+        return *grid.liquid;
+    else
+        return *grid.ground;
 }
 
 Engine::Coordinate Map::GroundCoord(Engine::Position pos) const

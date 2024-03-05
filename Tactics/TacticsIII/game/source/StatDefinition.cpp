@@ -99,6 +99,8 @@ std::map<Stat::Id, std::string_view> StatDefinition::statNames =
     { Stat::defense, "defense" },
     { Stat::offense, "offense" },
     { Stat::hp, "hitpoints" },
+    { Stat::jump, "jump"},
+
     { Stat::reach, "reach" },
     { Stat::range, "range" },
     { Stat::hands, "hands" },

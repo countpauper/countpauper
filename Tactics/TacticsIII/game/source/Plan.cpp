@@ -1,5 +1,7 @@
 #include "Game/Plan.h"
+#include "Game/Game.h"
 #include "UI/Avatar.h"
+#include "AI/Astar.h"
 #include "Geometry/Line.h"
 #include <numeric>
 #include <GL/gl.h>
@@ -12,30 +14,58 @@ Action::Action(Avatar& actor) :
 {
 }
 
-Move::Move(Avatar& actor, const Map& map, Engine::Position destination) :
+Move::Move(Avatar& actor, const Game& game, Engine::Position destination) :
     Action(actor),
-    map(map),
-    destination(destination)
+    map(game.GetMap())
 {
-
+    auto cost = [](Engine::Position from, Engine::Position to) -> float
+    {
+        return from.Distance(to);
+    };
+    auto neighbours = [&game, &actor](Engine::Position at)
+    {
+        // TODO Return of Direction?
+        Engine::Position neighbourVectors[] {{1,0,0}, {-1,0,0}, {0,1,0},{0,-1,0}};
+        const auto& map = game.GetMap();
+        std::vector<Engine::Position> result;
+        int jumpHeight = 1+ actor.GetCreature().Get(Stat::jump).Total() / 2;
+        for(auto nVec : std::span(neighbourVectors))
+        {
+            auto to = at + nVec;
+            int deltaHeight = map.GroundHeight(to) - map.GroundHeight(at);
+            if (deltaHeight > jumpHeight)
+                continue;
+            if (game.Obstacle(to, &actor))
+                continue;
+            result.push_back(to);
+        }
+        return result;
+    };
+    path = Engine::Astar::Plan<Engine::Position, float>(actor.Position(), destination, cost, neighbours);
 }
 
 void Move::Render() const
 {
+    auto prev = actor.GetLocation();
     glColor3d(1.0, 1.0, 1.0);
-    Engine::Line line(actor.GetLocation(), map.GroundCoord(destination));
-    line += Engine::Vector::Z;
-    line.Render();
+    for(auto p: path)
+    {
+        auto next = map.GroundCoord(p);
+        Engine::Line line(prev, next);
+        line += Engine::Vector::Z;
+        line.Render();
+        prev = next;
+    }
 }
 
 void Move::Execute() const
 {
-    actor.Move(destination);
+    actor.Move(path.back());
 }
 
 unsigned Move::AP() const
 {
-    auto grids = actor.Position().ManDistance(destination);
+    auto grids = path.size();
     auto speed = actor.GetCreature().Get(Stat::speed).Total();
     return (grids+(speed-1)) / speed;
 }
@@ -85,10 +115,10 @@ void Plan::Execute()
         action->Execute();
 }
 
-Plan Plan::Move(Avatar& actor, const Map& map, Engine::Position destination)
+Plan Plan::Move(Avatar& actor, const Game& game, Engine::Position destination)
 {
     Plan result;
-    result.actions.emplace_back(std::move(std::make_unique<Game::Move>(actor, map, destination)));
+    result.actions.emplace_back(std::move(std::make_unique<::Game::Move>(actor, game, destination)));
     return result;
 }
 

@@ -5,5 +5,10 @@
                 "*": "level",
                 "description":"The amount of damage taken before being knocked out",
                 "counter": {"reset":"battle"}
+        },
+        "jump":
+        {
+            "depends": "athletics",
+            "description":"The maximum jump distance in grids. The height is half+1."
         }
 }

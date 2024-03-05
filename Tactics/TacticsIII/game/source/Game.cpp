@@ -39,6 +39,24 @@ Game::Game(Engine::Scene& scene) :
     avatars[turn]->Select(true);
 }
 
+const Map& Game::GetMap() const
+{
+    return map;
+}
+
+bool Game::Obstacle(Engine::Position at, const Avatar* except) const
+{
+    for(const auto& avatar : avatars)
+    {
+        if (avatar.get() == except)
+            continue;
+        if (avatar->Position() == at)
+            return true;
+    }
+    // TODO: objects, size &  height (use Bounds)
+    return false;
+}
+
 void Game::Focus(Engine::Position pos)
 {
     Focus(map.GroundCoord(pos));
@@ -67,7 +85,7 @@ void Game::OnMessage(const Engine::Message& message)
                     clickOn->sub % mapSize.x,
                     clickOn->sub / mapSize.x,
                     0);
-            plan = Plan::Move(Current(), map, desination);
+            plan = Plan::Move(Current(), *this, desination);
         }
     }
     else if (auto selected = message.Cast<Selected>())
@@ -84,10 +102,10 @@ void Game::OnMessage(const Engine::Message& message)
         }
     } else if (auto key = message.Cast<Engine::KeyPressed>())
     {
-        plan.Execute();
-        plan = Plan();
         if (key->ascii == 13)
         {
+            plan.Execute();
+            plan = Plan();
             Next();
         }
     }
