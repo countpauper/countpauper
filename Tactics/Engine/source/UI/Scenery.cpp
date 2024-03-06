@@ -16,7 +16,6 @@ void Scenery::Render() const
     glPushMatrix();
     GetLocation().Render();
     GetOrientation().Render();
-    glText(Name());
     mesh.Render();
     glPopMatrix();
 }

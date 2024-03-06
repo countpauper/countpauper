@@ -37,12 +37,29 @@ Move::Move(Avatar& actor, const Game& game, Engine::Position destination) :
     path = Engine::Astar::Plan<Engine::Position, float>(actor.Position(), destination, cost, neighbours);
 }
 
+std::vector<Engine::Position>::const_iterator Move::Reachable() const
+{
+    unsigned grids = actor.GetCreature().Get(Stat::speed).Total() *
+        actor.GetCreature().CounterAvailable(Stat::ap);
+    if (grids>=path.size())
+    {
+        return path.end() - 1;
+    }
+    else
+    {
+        return path.begin()+grids;  // assuming all are normal speed;
+    }
+}
+
 void Move::Render() const
 {
     auto prev = actor.GetLocation();
     glColor3d(1.0, 1.0, 1.0);
+    auto it = path.begin();
     for(auto p: path)
     {
+        if (it++ > Reachable())
+            glColor3d(0.9, 0.2, 0.2);
         auto next = map.GroundCoord(p);
         Engine::Line line(prev, next);
         line += Engine::Vector::Z;
@@ -53,7 +70,7 @@ void Move::Render() const
 
 void Move::Execute() const
 {
-    actor.Move(path.back());
+    actor.Move(*Reachable());
 }
 
 unsigned Move::AP() const

@@ -18,6 +18,7 @@ public:
 private:
     const Map& map;
     std::vector<Engine::Position> path;
+    decltype(path)::const_iterator Reachable() const;
 };
 
 
