@@ -37,13 +37,15 @@ class Controls :
 {
 public:
     using Control::Control;
+    Controls() : Control("") {} 
     void Add(Control& control);
     void Render() const;
     Control* Click(Coordinate pos) const;
     virtual Control* FindControl(std::string_view path);
+protected:
+    std::vector<Control*> children;
 private:
     static constexpr char pathSeparator = '.';
-    std::vector<Control*> children;
 };
 
 }

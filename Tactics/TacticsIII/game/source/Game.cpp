@@ -87,7 +87,7 @@ void Game::OnMessage(const Engine::Message& message)
                     0);
             plan = Plan::Move(Current(), *this, desination);
             // TODO: other label and a splitter
-            auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("lbl");
+            auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
             lbl->SetText(plan.Description());
 
         }
@@ -97,7 +97,7 @@ void Game::OnMessage(const Engine::Message& message)
         if (selected->avatar)
         {
             Focus(selected->avatar->GetLocation());
-            auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("lbl");
+            auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("left_lbl");
             lbl->SetText(selected->avatar->Sheet());
         }
         else
