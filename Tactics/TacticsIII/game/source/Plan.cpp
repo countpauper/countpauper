@@ -3,6 +3,7 @@
 #include "UI/Avatar.h"
 #include "AI/Astar.h"
 #include "Geometry/Line.h"
+#include "Utility/String.h"
 #include <numeric>
 #include <GL/gl.h>
 
@@ -70,6 +71,12 @@ unsigned Move::AP() const
     return (grids+(speed-1)) / speed;
 }
 
+std::string Move::Description() const
+{
+    std::stringstream ss;
+    ss << "Move " << path.back();
+    return ss.str();
+}
 
 Plan::Plan() :
     Scenery(mesh)
@@ -98,7 +105,22 @@ void Plan::Render() const
 
 std::string_view Plan::Name() const
 {
-    return "Plan"; // TODO could be specific plan description
+    return "Plan";
+}
+
+std::string Plan::Description() const
+{
+    std::stringstream ss;
+    for(const auto& act: actions)
+    {
+        if (ss.tellg())
+        {
+            ss << "\n";
+        }
+        ss << act->AP() << "AP: ";
+        ss << act->Description();
+    }
+    return ss.str();
 }
 
 unsigned Plan::AP() const

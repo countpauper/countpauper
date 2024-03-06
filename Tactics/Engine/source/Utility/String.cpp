@@ -39,6 +39,18 @@ std::set<std::string_view> SplitSet(std::string_view str, char delimiter)
     return std::set<std::string_view>(splitVector.begin(), splitVector.end());
 }
 
+std::string Join(std::span<std::string_view> strs, std::string_view separator)
+{
+    std::string out="";
+    for(auto str: strs)
+    {
+        if (!out.empty())
+            out.append(separator);
+        out.append(str);
+    }
+    return out;
+}
+
 std::string UpperCase(std::string_view str)
 {
     std::string result(str.length(), '\x0');

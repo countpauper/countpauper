@@ -74,6 +74,13 @@ TEST(String, Split)
     EXPECT_EQ(Engine::SplitSet("c|a|c|b", '|'), std::set<std::string_view>({ "a", "b", "c" }));
 }
 
+TEST(String, Join)
+{
+    std::string_view strs[]{"foo","","bar"};
+    EXPECT_EQ(Engine::Join(strs), "foobar");
+    EXPECT_EQ(Engine::Join(strs,", "), "foo, , bar");
+}
+
 TEST(String, Strip)
 {
     EXPECT_EQ(Engine::Strip("123", " \t\r\n"), "123");

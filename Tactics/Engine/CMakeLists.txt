@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 file(GLOB_RECURSE Engine_SRC CONFIGURE_DEPENDS "source/*.cpp" )
 add_library(Engine ${Engine_SRC})
-target_compile_features(Engine PRIVATE cxx_std_17)
+target_compile_features(Engine PRIVATE cxx_std_23)
 set(DEPENDENCIES_DIR ../../Dependencies)
 
 project(Engine)

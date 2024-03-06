@@ -18,6 +18,7 @@ public:
     virtual void Render() const = 0;
     virtual unsigned AP() const = 0;
     virtual void Execute() const = 0;
+    virtual std::string Description() const = 0;
 protected:
     Avatar& actor;
 };
@@ -29,6 +30,7 @@ public:
     void Render() const override;
     void Execute() const override;
     unsigned AP() const override;
+    std::string Description() const override;
 private:
     const Map& map;
     std::vector<Engine::Position> path;
@@ -46,6 +48,8 @@ public:
 
     void Render() const override;
     std::string_view Name() const;
+    std::string Description() const;
+
     unsigned AP() const;
     void Execute();
 
@@ -56,6 +60,7 @@ private:
     // TODO: plans may be a chance tree instead. if the first action is a provoked reaction that might ko the actor, then that's also a possible execution.
     // same for the actions of the actor itself that are chance based
     std::vector<std::unique_ptr<Action>> actions;
+    std::string description;
 };
 
 

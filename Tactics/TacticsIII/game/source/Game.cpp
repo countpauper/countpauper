@@ -86,6 +86,10 @@ void Game::OnMessage(const Engine::Message& message)
                     clickOn->sub / mapSize.x,
                     0);
             plan = Plan::Move(Current(), *this, desination);
+            // TODO: other label and a splitter
+            auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("lbl");
+            lbl->SetText(plan.Description());
+
         }
     }
     else if (auto selected = message.Cast<Selected>())
