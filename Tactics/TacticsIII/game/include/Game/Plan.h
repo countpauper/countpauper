@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
+#include <string>
 #include <memory>
+#include "Game/Action.h"
 #include "Geometry/Position.h"
 #include "Geometry/Mesh.h"
 #include "UI/Scenery.h"
@@ -9,33 +11,6 @@ namespace Game
 {
 class Avatar;
 class Game;
-class Map;
-
-class Action
-{
-public:
-    Action(Avatar& actor);
-    virtual void Render() const = 0;
-    virtual unsigned AP() const = 0;
-    virtual void Execute() const = 0;
-    virtual std::string Description() const = 0;
-protected:
-    Avatar& actor;
-};
-
-class Move : public Action
-{
-public:
-    Move(Avatar& actor, const Game& game, Engine::Position destination);
-    void Render() const override;
-    void Execute() const override;
-    unsigned AP() const override;
-    std::string Description() const override;
-private:
-    const Map& map;
-    std::vector<Engine::Position> path;
-};
-
 
 class Plan : public Engine::Scenery
 {
