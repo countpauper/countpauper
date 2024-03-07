@@ -26,7 +26,7 @@ private:
     void Focus(Engine::Coordinate coord);
     void OnMessage(const Engine::Message& message);
     void Next();
-
+    void Changed();
     Engine::Scene& scene;
     Race elf;
     Map map;

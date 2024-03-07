@@ -110,7 +110,11 @@ void Game::OnMessage(const Engine::Message& message)
         {
             plan.Execute();
             plan = Plan();
-            Next();
+            if (Current().GetCreature().CounterAvailable(Stat::ap) == 0)
+                Next();
+            else
+                Current().GetCreature().Reset(Counter::Reset::action);
+            Changed();
         }
     }
 }
@@ -129,7 +133,14 @@ void Game::Next()
         turn = 0;
         ++round;
     }
+    Current().GetCreature().Reset(Counter::Reset::turn);
     Current().Select(true);
+}
+
+
+void Game::Changed()
+{
+        Engine::Application::Get().bus.Post(Engine::Redraw(&Current()));
 }
 
 

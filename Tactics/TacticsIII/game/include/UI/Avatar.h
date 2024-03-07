@@ -22,7 +22,7 @@ public:
     void Select(bool on);
     void Move(Engine::Position destination);
     Engine::Position Position() const;
-    const Creature& GetCreature() const;
+    Creature& GetCreature();
 private:
     Engine::Mesh mesh;
     Map& map;

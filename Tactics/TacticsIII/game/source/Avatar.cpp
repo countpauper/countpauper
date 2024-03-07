@@ -64,7 +64,7 @@ Engine::Position Avatar::Position() const
     return position;
 }
 
-const Creature& Avatar::GetCreature() const
+Creature& Avatar::GetCreature()
 {
     return creature;
 }

@@ -63,15 +63,37 @@ const StatDefinition& Creature::Definition() const
 
 unsigned Creature::CounterAvailable(Stat::Id stat) const
 {
-    for(const auto counter: countersUsed)
+    auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
     {
-        if (counter.first->ForStat(&Definition().at(stat)))
-        {
-            return counter.first->Available(counter.second, *this);
-        }
-    }
-    return 0;
+        return counter.first->ForStat(&Definition().at(stat));
+    });
+    if (counterIt == countersUsed.end())
+       return 0;
+    return counterIt->first->Available(counterIt->second, *this);
 }
+
+void Creature::Cost(Stat::Id stat, unsigned cost)
+{
+    auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
+    {
+        return counter.first->ForStat(&Definition().at(stat));
+    });
+    if (counterIt == countersUsed.end())
+        return; // throw?
+
+    // range check and clip or throw?
+    counterIt->second += cost;
+}
+
+void Creature::Reset(Counter::Reset at)
+{
+    for(auto& counter : countersUsed)
+    {
+        if (counter.first->ResetWhen(at))
+            counter.second = 0;
+    }
+}
+
 
 StatDefinition Creature::definition;
 

@@ -71,6 +71,7 @@ void Move::Render() const
 void Move::Execute() const
 {
     actor.Move(*Reachable());
+    actor.GetCreature().Cost(Stat::ap, AP());
 }
 
 unsigned Move::AP() const

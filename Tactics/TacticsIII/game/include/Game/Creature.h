@@ -36,14 +36,14 @@ public:
     static StatDefinition definition;
 
     unsigned CounterAvailable(Stat::Id) const;
-
+    void Cost(Stat::Id counter, unsigned cost);
+    void Reset(Counter::Reset at);
 private:
     std::string name;
     const Race& race;
     std::vector<std::reference_wrapper<Item>> inventory;
     std::map<Stat::Id, int> primaryStats;  // level, str, agi,
     std::map<const Counter*, int> countersUsed;
-
     // TODO: knowledge, skills, actions, effects
 
     // Loaded from JSON each Stat is defined by a name and which bonuses it gives to other stats at a certain level.
