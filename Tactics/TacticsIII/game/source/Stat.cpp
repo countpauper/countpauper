@@ -51,12 +51,12 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
         {
                 limit = Engine::Range<int>::max();
         }
-        auto limitVector = Engine::get_value_or(j, "range", std::vector<int>());
-        if (limitVector.size() >= 2)
+        else
         {
-                limit.begin = limitVector.front();
-                limit.end = limitVector.back();
+            limit = Engine::Range<int>(0, std::numeric_limits<int>::max());
         }
+        limit.begin = Engine::get_value_or(j, "min", limit.begin);
+        limit.end = Engine::get_value_or(j, "max", limit.end);
 
         op = Operator::nop;
         operand = Stat::none;
@@ -130,7 +130,7 @@ StatDescriptor Stat::Compute(const Statted& object) const
                 result.Contribute(object.Definition().at(dependency).name, left * multiplier);
         else
             // NB this could cause infinite recursion, unless object is mocked or its a primary stat
-            return object.Get(object.Definition().Identify(Name()));
+            result.Contribute("Mock", object.Get(object.Definition().Identify(Name())).Total());
         return result;
 }
 
@@ -139,10 +139,14 @@ std::string_view Stat::Name() const
         return name;
 }
 
-
 std::string_view Stat::Description() const
 {
         return description;
+}
+
+Engine::Range<int> Stat::Limit() const
+{
+    return limit;
 }
 
 }

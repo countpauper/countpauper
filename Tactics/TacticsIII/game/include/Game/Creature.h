@@ -42,9 +42,10 @@ private:
     std::string name;
     const Race& race;
     std::vector<std::reference_wrapper<Item>> inventory;
-    std::map<Stat::Id, int> primaryStats;  // level, str, agi,
     std::map<const Counter*, int> countersUsed;
-    // TODO: knowledge, skills, actions, effects
+    std::vector<std::unique_ptr<Item>> items;
+
+    // TODO: effects(bonuses) knowledge (with bonuses), actions, skills(extra actions)
 
     // Loaded from JSON each Stat is defined by a name and which bonuses it gives to other stats at a certain level.
     // This level has to be recursively queried from the character along with all its bonuses

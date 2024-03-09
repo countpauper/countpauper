@@ -1,10 +1,7 @@
 {
         "strength": {
             "base": 2,
-            "range": [
-                0,
-                15
-            ],
+            "max": 15,
             "description":"Increases how much a character carry, or the size of the weapon or shield they can wield. It also provided a bonus to damage, jump distance and physical skills",
             "boost": [
                 "lift",
@@ -26,10 +23,7 @@
         },
         "agility": {
             "base": 2,
-            "range": [
-                0,
-                15
-            ],
+            "max": 15,
             "description":"Increases how fast a character is both in movement and actions per turn. It determined the chance to dodge an attack or area effect.",
             "boost": [
                 "speed",
@@ -51,10 +45,7 @@
         },
         "constitution": {
             "base": 2,
-            "range": [
-                0,
-                15
-            ],
+            "max": 15,
             "description":"Increases the number of hitpoints gained per level, resistance to physical spell effects, the amount that can be carried or the weight of armor that can be worn." ,
             "boost": [
                 "health",
@@ -76,10 +67,7 @@
         },
         "wisdom": {
             "base": 2,
-            "range": [
-                0,
-                15
-            ],
+            "max": 15,
             "description":"increases the speed at which a character can switch techniques, how many magical items it can use and resistance to mind magic.",
             "boost": [
                 "mental",
@@ -101,10 +89,7 @@
         },
         "intelligence": {
             "base": 2,
-            "range": [
-                0,
-                15
-            ],
+            "max": 15,
             "description":"Increases the number of techniques that can be employed, the strength of magic and the chance to score a critical hit or effect",
             "boost": [
                 "technique",
@@ -123,5 +108,12 @@
                 "magic",
                 "critical chance"
             ]
+        },
+        "level": {
+            "base": 1,
+            "max": 10,
+            "description":"Level is just how cool you are.",
+            "boost": []
         }
+
     }

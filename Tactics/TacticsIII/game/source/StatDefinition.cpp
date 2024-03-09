@@ -2,6 +2,7 @@
 #include "Utility/String.h"
 #include <nlohmann/json.hpp>
 #include <iostream>
+#include <fstream>
 
 namespace Game
 {
@@ -12,6 +13,13 @@ void StatDefinition::Load(std::istream& s)
     json parsed = json::parse(s);
     Define(parsed);
 }
+
+void StatDefinition::Load(const char* filename)
+{
+    std::ifstream defFile(filename);
+    Load(defFile);
+}
+
 
 void StatDefinition::Parse(std::string_view data)
 {
@@ -100,15 +108,20 @@ std::map<Stat::Id, std::string_view> StatDefinition::statNames =
     { Stat::offense, "offense" },
     { Stat::hp, "hitpoints" },
     { Stat::jump, "jump"},
+    { Stat::block, "block" },
 
     { Stat::reach, "reach" },
     { Stat::range, "range" },
     { Stat::hands, "hands" },
+    { Stat::hold, "hold" },
     { Stat::weight, "weight" },
     { Stat::wield, "wield" },
+    { Stat::enchantment, "enchantment" },
+    { Stat::price, "price" },
+    { Stat::rarity, "rarity" },
 
     { Stat::blunt_resist, "blunt resistance" },
-    { Stat::sharp_resist, "resist resistance" },
+    { Stat::sharp_resist, "sharp resistance" },
     { Stat::fire_resist, "fire resistance" },
     { Stat::cold_resist, "cold resistance" },
     { Stat::lightning_resist, "lightning resistance" },

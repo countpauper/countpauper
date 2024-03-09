@@ -18,7 +18,7 @@ public:
     std::string_view Name() const override;
     std::string Sheet() const;
     void OnMessage(const Engine::Message& message);
-    Engine::Coordinate GetLocation() const override;
+    Engine::Coordinate GetCoordinate() const override;
     void Select(bool on);
     void Move(Engine::Position destination);
     Engine::Position Position() const;

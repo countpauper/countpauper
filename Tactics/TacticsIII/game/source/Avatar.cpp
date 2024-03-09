@@ -69,7 +69,7 @@ Creature& Avatar::GetCreature()
     return creature;
 }
 
-Engine::Coordinate Avatar::GetLocation() const
+Engine::Coordinate Avatar::GetCoordinate() const
 {
     return map.GroundCoord(position);
 }

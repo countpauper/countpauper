@@ -73,6 +73,12 @@ Plan Plan::Move(Avatar& actor, const Game& game, Engine::Position destination)
     return result;
 }
 
+Plan Plan::Attack(Avatar& actor, const Game& game, Avatar& target)
+{
+    Plan result;
+    result.actions.emplace_back(std::move(std::make_unique<::Game::Move>(actor, game, target.Position(), actor.GetCreature().Get(Stat::reach).Total())));
+    return result;
+}
 
 
 }

@@ -3,11 +3,31 @@
 #include "AI/Astar.h"
 #include "Geometry/Line.h"
 #include <GL/gl.h>
+#include "Geometry/IntBox.h"
 
 namespace Game
 {
 
-Move::Move(Avatar& actor, const Game& game, Engine::Position destination) :
+std::vector<Engine::Position> Approach(const Map& map, Engine::Position center, unsigned distance)
+{
+    if (distance==0)
+        return {center};
+        
+    // Not the most efficient algorithm but with a small map it should be fine
+    Engine::IntBox box(center);
+    box.Grow(distance);
+    std::vector<Engine::Position> result;
+    for(auto p : box)
+    {
+        if (std::round(p.Distance(center)) == distance)
+        {
+            result.push_back(p);
+        }
+    }
+    return result;
+}
+
+Move::Move(Avatar& actor, const Game& game, Engine::Position destination, unsigned distance) :
     Action(actor),
     map(game.GetMap())
 {
@@ -34,7 +54,8 @@ Move::Move(Avatar& actor, const Game& game, Engine::Position destination) :
         }
         return result;
     };
-    path = Engine::Astar::Plan<Engine::Position, float>(actor.Position(), destination, cost, neighbours);
+    std::vector destinations = Approach(map, destination, distance);
+    path = Engine::Astar::Plan<Engine::Position, float>(actor.Position(), destinations, cost, neighbours);
 }
 
 std::vector<Engine::Position>::const_iterator Move::Reachable() const
@@ -53,7 +74,7 @@ std::vector<Engine::Position>::const_iterator Move::Reachable() const
 
 void Move::Render() const
 {
-    auto prev = actor.GetLocation();
+    auto prev = actor.GetCoordinate();
     glColor3d(1.0, 1.0, 1.0);
     auto it = path.begin();
     for(auto p: path)
@@ -83,6 +104,9 @@ unsigned Move::AP() const
 
 std::string Move::Description() const
 {
+    if (path.empty()) {
+        return "Don't move";
+    }
     std::stringstream ss;
     ss << "Move " << path.back();
     return ss.str();

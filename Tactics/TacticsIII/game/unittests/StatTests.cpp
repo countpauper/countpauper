@@ -51,6 +51,20 @@ TEST(Stat, define_multiplied_stat)
     EXPECT_EQ(def[Stat::dodge].Compute(mock).Total(), 60);
 }
 
+
+
+TEST(Stat, define_stat_with_limit)
+{
+    StatDefinition def;
+    def.Parse(R"""(
+    {
+            "Reach":{"min": 1}}
+    )""");
+
+    MockStatted mock;
+    EXPECT_EQ(def[Stat::reach].Compute(mock).Total(), 1);
+}
+
 TEST(Stat, define_stat_multiplied_by_stat)
 {
     StatDefinition def;
@@ -88,7 +102,6 @@ TEST(Stat, define_counter)
         }
     }
 }
-
     )""");
     EXPECT_EQ(def.GetCounters().size(), 1);
     EXPECT_EQ(def.GetCounters().front()->Name(), "Hitpoints");

@@ -7,6 +7,8 @@ namespace Game::Test
 TEST(Creature, level_is_default_1)
 {
     Race penguin("penguin");
+    Creature::definition.clear();
+    Creature::definition[Stat::level] = Stat("Level");
     Creature c("flo", penguin);
 
     EXPECT_EQ(c.Get(Stat::level).Total(), 1);
@@ -16,6 +18,7 @@ TEST(Creature, level_is_default_1)
 TEST(Creature, race_gives_bonus)
 {
     Race orc("orc", {{Stat::str, 2}});
+    Creature::definition[Stat::str] = Stat("Strength");
     Creature c("foe", orc);
 
     EXPECT_EQ(c.Get(Stat::str).Total(), 4);

@@ -1,29 +1,31 @@
 #include "Game/Creature.h"
+#include "Game/Unarmed.h"
 
 namespace Game
 {
 
 Creature::Creature(std::string_view name, const Race& race) :
-    name(name),
-    race(race),
-    primaryStats{
+    Statted({
         {Stat::level, 1},
         {Stat::str, 2},
         {Stat::agi, 2},
         {Stat::con, 2},
         {Stat::wis, 2},
         {Stat::intel, 2}
-    }
+    }),
+    name(name),
+    race(race)
 {
     for(auto counter: Definition().GetCounters())
     {
         countersUsed[counter] = 0;
     }
+    items.push_back(std::make_unique<Unarmed>());
 }
 
 void Creature::Level(Stat::Id stat, int amount)
 {
-    primaryStats[stat] += amount;
+    stats[stat] += amount;
 }
 
 std::string_view Creature::Name() const
@@ -38,20 +40,24 @@ const Race& Creature::GetRace() const
 
 StatDescriptor Creature::Get(Stat::Id id) const
 {
-    StatDescriptor result;
+    StatDescriptor result = Statted::Get(id);
 
-    auto it = primaryStats.find(id);
-    int base = 0;
-
-    if (it!=primaryStats.end())
+    if (!result)
     {
-        result.Contribute("", it->second, false);
+        for(const auto& item : items)
+        {
+            result = item->Get(id);
+            if (result)
+            {
+                break;
+            }
+        }
     }
-    else
+    if (!result)
     {
         result = definition[id].Compute(*this);
     }
-    // TODO: add all other
+    // TODO: add all other bonuses from items and magic
     result.Contribute(race.Name(), race.Bonus(id));
     return result;
 }

@@ -16,7 +16,7 @@ public:
     explicit Scenery(Mesh& mesh);
     virtual void Render() const;
     std::pair<double, std::uint32_t> Intersection(const Line& line) const;
-    virtual Coordinate GetLocation() const;
+    virtual Coordinate GetCoordinate() const;
     virtual Quaternion GetOrientation() const;
 private:
     Mesh& mesh;

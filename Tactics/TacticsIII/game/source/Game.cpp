@@ -9,7 +9,6 @@
 #include "UI/Window.h"
 #include "UI/Label.h"
 #include "UI/HUD.h"
-#include <fstream>
 
 namespace Game
 {
@@ -19,8 +18,9 @@ Game::Game(Engine::Scene& scene) :
     elf("elf"),
     map(Engine::Image("data/map20.png"))
 {
-    std::ifstream defFile("data/creature.json");
-    Creature::definition.Load(defFile);
+    Creature::definition.Load("data/creature.json");
+    Item::definition.Load("data/item_stats.json");
+
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<Selected>(),
@@ -89,14 +89,19 @@ void Game::OnMessage(const Engine::Message& message)
             // TODO: other label and a splitter
             auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
             lbl->SetText(plan.Description());
-
+            return;
+        }
+        auto target = dynamic_cast<const Avatar*>(clickOn->object);
+        if (target && target!=& Current())
+        {
+            plan = Plan::Attack(Current(), *this, const_cast<Avatar&>(*target));
         }
     }
     else if (auto selected = message.Cast<Selected>())
     {
         if (selected->avatar)
         {
-            Focus(selected->avatar->GetLocation());
+            Focus(selected->avatar->GetCoordinate());
             auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("left_lbl");
             lbl->SetText(selected->avatar->Sheet());
         }
@@ -136,7 +141,6 @@ void Game::Next()
     Current().GetCreature().Reset(Counter::Reset::turn);
     Current().Select(true);
 }
-
 
 void Game::Changed()
 {

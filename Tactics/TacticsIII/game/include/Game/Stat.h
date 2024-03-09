@@ -49,12 +49,17 @@ public:
                 offense,
                 hp,     // this is a tricky one, multiplication
                 jump,
+                block,
 
                 reach,
                 range,
+                hold,
                 hands,
                 weight,
                 wield,
+                enchantment,
+                price,
+                rarity,
 
                 blunt_resist, // is defense? or derived from defense stat and more
                 sharp_resist, // is defense?
@@ -82,6 +87,7 @@ public:
         StatDescriptor Compute(const class Statted& c) const;
         std::string_view Name() const;
         std::string_view Description() const;
+        Engine::Range<int> Limit() const;
 private:
         std::string name;
         std::string description;

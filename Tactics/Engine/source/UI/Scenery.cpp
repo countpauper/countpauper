@@ -14,13 +14,13 @@ Scenery::Scenery(Mesh& mesh) :
 void Scenery::Render() const
 {
     glPushMatrix();
-    GetLocation().Render();
+    GetCoordinate().Render();
     GetOrientation().Render();
     mesh.Render();
     glPopMatrix();
 }
 
-Coordinate Scenery::GetLocation() const
+Coordinate Scenery::GetCoordinate() const
 {
     return Coordinate::origin;
 }
@@ -32,7 +32,7 @@ Quaternion Scenery::GetOrientation() const
 
 std::pair<double, std::uint32_t> Scenery::Intersection(const Line& line) const
 {
-    auto localLine = GetOrientation().Conjugate() * (line - Vector(GetLocation()));
+    auto localLine = GetOrientation().Conjugate() * (line - Vector(GetCoordinate()));
     return mesh.NamedIntersection(localLine);
 }
 

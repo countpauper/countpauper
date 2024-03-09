@@ -10,5 +10,9 @@
         {
             "depends": "athletics",
             "description":"The maximum jump distance in grids. The height is half+1."
+        },
+        "hands":
+        {
+            "description":"The amount of items that can be held."
         }
 }
