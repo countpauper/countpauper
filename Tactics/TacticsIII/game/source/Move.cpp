@@ -12,14 +12,14 @@ std::vector<Engine::Position> Approach(const Map& map, Engine::Position center, 
 {
     if (distance==0)
         return {center};
-        
+
     // Not the most efficient algorithm but with a small map it should be fine
     Engine::IntBox box(center);
     box.Grow(distance);
     std::vector<Engine::Position> result;
     for(auto p : box)
     {
-        if (std::round(p.Distance(center)) == distance)
+        if (std::round(p.Distance(center) - distance) == 0)
         {
             result.push_back(p);
         }
@@ -38,7 +38,7 @@ Move::Move(Avatar& actor, const Game& game, Engine::Position destination, unsign
     auto neighbours = [&game, &actor](Engine::Position at)
     {
         // TODO Return of Direction?
-        Engine::Position neighbourVectors[] {{1,0,0}, {-1,0,0}, {0,1,0},{0,-1,0}};
+        Engine::Position neighbourVectors[] {{1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}};
         const auto& map = game.GetMap();
         std::vector<Engine::Position> result;
         int jumpHeight = 1+ actor.GetCreature().Get(Stat::jump).Total() / 2;
@@ -97,7 +97,7 @@ void Move::Execute() const
 
 unsigned Move::AP() const
 {
-    auto grids = path.size();
+    auto grids = -1 + path.size();
     auto speed = actor.GetCreature().Get(Stat::speed).Total();
     return (grids+(speed-1)) / speed;
 }

@@ -78,6 +78,7 @@ void Game::OnMessage(const Engine::Message& message)
 {
     if (auto clickOn = message.Cast<Engine::ClickOn>())
     {
+        auto target = dynamic_cast<const Avatar*>(clickOn->object);
         if (clickOn->object == &map)
         {
             auto mapSize = map.GetSize();
@@ -86,16 +87,13 @@ void Game::OnMessage(const Engine::Message& message)
                     clickOn->sub / mapSize.x,
                     0);
             plan = Plan::Move(Current(), *this, desination);
-            // TODO: other label and a splitter
-            auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
-            lbl->SetText(plan.Description());
-            return;
         }
-        auto target = dynamic_cast<const Avatar*>(clickOn->object);
-        if (target && target!=& Current())
+        else if (target && target!=& Current())
         {
             plan = Plan::Attack(Current(), *this, const_cast<Avatar&>(*target));
         }
+        auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
+        lbl->SetText(plan.Description());
     }
     else if (auto selected = message.Cast<Selected>())
     {
