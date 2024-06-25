@@ -2,19 +2,20 @@ import pygame
 import math
 # import numpy    # TODO use numpy or pygame.math
 
-def regular_polygon(n, normal=(0,0,1)):
-    """Create a polygon, descibred as an n by 3 matrix, with equal sides and angles for each edge.
-    The polygon starts at angle 0 and is counter clockwise"""
-    # TODO 
-    pass
+def regular_polygon(n):
+    """Create a polygon in the XY plane, descibred as an n by 3 matrix, with equal sides and angles for each edge.
+    The polygon starts at angle 0, is counter clockwise, and it fits inside a bounding circle with radius 1 centered at 0,0"""
+    return [(math.sin(2*math.pi * i / float(n)), math.cos(2*math.pi * i / float(n))) for i in range(n)]
 
 def hexagon():
-    return [(0.5,0),
-            (1.0,0.25),
-            (1.0,0.75),
-            (0.5,1.0),
-            (0.0,0.75),
-            (0,0.25)]
+    hex = regular_polygon(6)
+    return hex
+    # return [(0.5,0),
+    #         (1.0,0.25),
+    #         (1.0,0.75),
+    #         (0.5,1.0),
+    #         (0.0,0.75),
+    #         (0,0.25)]
 
 def translate(shape, t):
     x,y=t
@@ -27,9 +28,6 @@ def scale(shape, s):
 def rotate(points, a):
     pass
 
-# TODO replace with above
-def transform(points, t, s):
-    return translate(scale(points, s), t)
 
 def project(plane, point):
     """Return the projection of a point on a plane"""
@@ -45,14 +43,9 @@ def inside(shape, point):
     pass 
 
 def draw_hexagon(surface, boundingbox):
-    # TODO: create a hexagon (regular polygon(6, a)) where a is determined by horizontal or vertical 
-    # Scale it to the bounding box (or rotate it by a)
-    # Draw this 
-    pygame.draw.rect(surface,(0,255,255),boundingbox, 1)
-
-    hex = hexagon()
+    hex = scale(translate(hexagon(), (1,1)), (0.5,0.5))
     x, y, w, h = boundingbox
-    transformed_polygon = transform(hex, (x,y), (w,h))
+    transformed_polygon = translate(scale(hex, (w,h)), (x,y))
     pygame.draw.polygon(surface,(255,255,255),transformed_polygon,1)
                 
 
@@ -61,8 +54,12 @@ def draw_hex_grid(surface, grids, horizontal=False):
     line_step = (0.75, math.sqrt(3)*0.5) if horizontal else (math.sqrt(3)*0.5, 0.75) 
     required_size=line_step[0] * grids[0], line_step[1] * grids[1]
     scale = min(size[0]/required_size[0], size[1]/required_size[1])
-    # TODO: with uneven grids in the horizonta/vertical direction offset the uneven, else the even 
-    offset=0, line_step[0] / 2.0
+    # hexagon with a bounding circle of 1.0 has its flattened side 1-sqrt(3)/2 inside the radius. 
+    # This offset puts the vertical (sharp side up) hexagon flush against the left edge of the surface
+    off_center = -(1-0.5 * math.sqrt(3))
+    # Because the hexagon is rescaled from a 1.0 radius -1...+1 circle to 0.5 radius (0...1) this offset has to be halved as well 
+    off_center/=2 
+    offset = off_center, off_center + line_step[0]/2.0
 
     for grid_x in range(0,grids[0]):
         for grid_y in range(0, grids[1]):
