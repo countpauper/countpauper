@@ -3,7 +3,19 @@ import pygame
 from shape import hexagon
 
 class HexGrid:
+    def _make(horizontal):
+        hex = hexagon()
+        if horizontal:
+            hex = hex.counter_clockwise()
+        return (hex + (1,1)) * (0.5, 0.5)
+
     def __init__(self, grids, horizontal=False):
+        """A hexgrid consists of a set of indexed shapes. 
+        grids: the width and height in hexagons. 
+        NB: Every uneven row (if vertical) or column(if horizontal) has one less
+            i,e. a 4x3 vertical hex grid will be 3 rows of 4,3,4 
+        horizontal: the sharp end of the hexagon is along the X-axis. By default it's along the Y-axis."""
+
         line_step = pygame.Vector2(math.sqrt(3)*0.5, 0.75) 
         if horizontal:
             line_step = line_step[1], line_step[0]
@@ -18,23 +30,18 @@ class HexGrid:
         offset = off_center, off_center + line_step[horizontal]/2.0
 
         self.hex = dict()
-
-        for grid_x in range(0, grids[0]):       # TODO one less if horizontal and even
-            y=0
-            for grid_y in range(0, grids[1]):   # TODO less if vertical and even 
-                if horizontal:
+        if horizontal:
+            for grid_x in range(0, grids[0]):
+                for grid_y in range(0, grids[1] - (1 if grid_x&1 else 0)):
                     x = grid_x * line_step[0]
                     y = (offset[grid_x & 1] + grid_y * line_step[1])
-                else:
+                    self.hex[(grid_x, grid_y)] = HexGrid._make(horizontal) + (x,y)
+        else:
+            for grid_y in range(0, grids[1]): 
+                for grid_x in range(0, grids[0]  - (1 if grid_y&1 else 0)):      
                     x = (offset[grid_y & 1] + grid_x * line_step[0])
                     y = grid_y * line_step[1]
-
-                hex = hexagon()
-                if horizontal:
-                    hex = hex.counter_clockwise()
-                hex = (hex + (1,1)) * (0.5, 0.5)
-                transformed_polygon = hex + (x,y)
-                self.hex[(grid_x, grid_y)] = transformed_polygon
+                    self.hex[(grid_x, grid_y)] = HexGrid._make(horizontal) + (x,y)
 
     def draw(self, surface, color):
         size=surface.get_size()
