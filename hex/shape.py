@@ -39,11 +39,22 @@ class Shape:
         """Return the normal vector and offset of all pointsr in the shape, assuming they are coplanar"""
         pass
 
+    def is_closed(self):
+        # TODO: could define line shape that is not closed explicitly
+        return len(self.points) >= 3
+    
     def inside(self, point):
-        """ Return whether the project of a point on the plane of the shape is "inside" a counter clockwise convex 2d shape"""
-        # TODO: dunder for in
-        # TODO dot products all negative = inside 
-        pass 
+        """ Return whether the project of a point on the plane of the shape is "inside" a closed shape.
+        This assumes the shape is convex and 2d"""
+        # TODO: unit test 
+        if not self.is_closed():
+            return False
+        vectors = [self.points[n + 1] - self.points[n] for n in range(0, len(self.points)-1)]
+        vectors.append(self.points[0] - self.points[-1])
+        return all(v.dot(point) <= 0.0 for v in vectors)
+
+    def __contains__(self, point):
+        return self.inside(point)
 
     def draw(self, surface, outline_color, line_width=1):
         pygame.draw.polygon(surface, outline_color, self.points, line_width)
