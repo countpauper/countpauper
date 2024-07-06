@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal",
-            "args": "-bg background.png -s 30x4 -z 0.25 -o 0,250 -c 128,225,250 -l 2"
+            "args": "-bg background.png -s 30x4 -z 0.25 -o 0,250 -c 128,225,250 -l 2 -d hex.yaml"
         },
         {
             "name": "Python Debugger: Current File",

@@ -1,12 +1,15 @@
 import pygame
 from hex_grid import HexGrid
 import argparse
+import yaml
 
 # define a main function
-def main(*, background="", zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,255), line_width=1, **args):
-    # TODO: argparser: background image and size
+def main(*, background="", zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,255), line_width=1, data=None, **args):
     # TODO: json or something contains name, description, random tables and so on (hue) at hex
     # TODO: fog of war ? 
+
+    if data:
+        grid_data = yaml.safe_load(data)
 
     pygame.init()
     icon = pygame.image.load("hex.jpg")
@@ -31,11 +34,12 @@ def main(*, background="", zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,25
                 pygame.quit()
                 exit(0)
             elif event.type == pygame.MOUSEBUTTONUP:
-                pos = pygame.mouse.get_pos()
+                pos = pygame.mouse.get_pos() - offset
                 scale = grid.scale(screen)
                 hex_pos = pygame.Vector2(pos[0]/scale, pos[1]/scale)
                 hex_coord = grid.pick(hex_pos)
-                print(f"Click at {pos} = {hex_pos}, {hex_coord}") 
+                data_grid = ([grid_name for grid_name, grid_props in grid_data["grids"].items() if tuple(grid_props['coord']) in hex_coord]+[None])[0]
+                print(f"Click at {pos} = {hex_pos}, {hex_coord} {data_grid}") 
         pygame.display.update()
 
 def vector_argument(arg, splitter=",",  dim=2, bounds=None):
@@ -70,6 +74,8 @@ if __name__=="__main__":
                             help="Color of the hex grid as (R,G,B) with each channel 0-255")
     parser.add_argument("-l", "--line_width", default=1, required=False, type=int,
                         help="Line width of the hex grid")
+    parser.add_argument("-d", "--data", default=None, required=False, type=argparse.FileType('r'),
+                        help="A yaml file containg descriptions for each grid, random tables and more")
     
     # color of the hex grid perhaps line witdh where 0 = invisible as well 
     parser.add_argument("-o","--offset", type=coord_argument, required=False, default=(0,0),
