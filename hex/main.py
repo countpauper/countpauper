@@ -3,13 +3,51 @@ from hex_grid import HexGrid
 import argparse
 import yaml
 
+import webcolors
+
+class DataModel:
+    def __init__(self, file=None):
+        if file:
+            file_data = yaml.safe_load(file)
+        else:
+            file_data = dict()
+
+        self.tables = file_data.get("tables", [])
+        self.grid = DataModel.parse_grid(file_data.get("grid", dict()))
+
+    
+    @staticmethod
+    def parse_grid(grid):
+        for k, v in grid.items():
+            v.update(dict(name=k, 
+                          coord=tuple(v.get("coord", ())),
+                          color=tuple(webcolors.name_to_rgb(color)) if (color:=v.get("color")) else None
+                          ))
+        return grid
+
+
+    def __getitem__(self, coord):
+        name, props = ([(name, props) for name, props in self.grid.items() if props.get('coord') == coord] + [(None, dict())])[0]
+        if name is None:
+            raise IndexError(f"Grid at {coord} is not in the data model")
+        props.update(dict(name=name))
+        return props
+
+
+    def colors(self, alpha=255):
+        return {grid["coord"]: (*color, alpha) for grid in self.grid.values() if (color:=grid.get("color"))}
+
+
 # define a main function
 def main(*, background="", zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,255), line_width=1, data=None, **args):
-    # TODO: json or something contains name, description, random tables and so on (hue) at hex
-    # TODO: fog of war ? 
+    # TODO more more grid properties (hue to fill the hex with alpha)
+    # TODO: select the hex and redraw with a thicker outline? 
+    # TODO: render description on screen 
+    # TODO: yaml extend with random tables
+    # TODO: location of party is left click and information right separate events (random table) to move into from peeking ahead
+    # TODO: fog of war blacks out unknown hexes 
 
-    if data:
-        grid_data = yaml.safe_load(data)
+    grid_data = DataModel(data)
 
     pygame.init()
     icon = pygame.image.load("hex.jpg")
@@ -25,9 +63,11 @@ def main(*, background="", zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,25
     screen.blit(scaled_bg,((0,0),(screen.size)))
 
     grid = HexGrid(size, False)
+                       
+    # colorize_grid(grid, grid_data["grids"])
     offset=pygame.Vector2(offset) * zoom
     screen_rect = (offset, pygame.Vector2(screen.size)-offset)
-    grid.draw(screen.subsurface(screen_rect), color, line_width)
+    grid.draw(screen.subsurface(screen_rect), color, line_width, grid_data.colors(50))
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -37,10 +77,16 @@ def main(*, background="", zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,25
                 pos = pygame.mouse.get_pos() - offset
                 scale = grid.scale(screen)
                 hex_pos = pygame.Vector2(pos[0]/scale, pos[1]/scale)
-                hex_coord = grid.pick(hex_pos)
-                data_grid = ([grid_name for grid_name, grid_props in grid_data["grids"].items() if tuple(grid_props['coord']) in hex_coord]+[None])[0]
+                if hex_coord := (grid.pick(hex_pos)+[None])[0]:
+                    try:
+                        data_grid = grid_data[hex_coord]
+                    except IndexError:
+                        data_grid = None
+                else:
+                    data_grid = None
                 print(f"Click at {pos} = {hex_pos}, {hex_coord} {data_grid}") 
         pygame.display.update()
+
 
 def vector_argument(arg, splitter=",",  dim=2, bounds=None):
     result = arg.split(splitter)
@@ -51,11 +97,14 @@ def vector_argument(arg, splitter=",",  dim=2, bounds=None):
         raise argparse.ArgumentError(f"Faulty vector argument {arg}. Each scalar should be within bounds.")
     return result 
 
+
 def coord_argument(arg):
     return vector_argument(arg)
 
+
 def size_argument(arg):
     return vector_argument(arg, "x", bounds=range(0,1000))
+
 
 def color_argument(arg):
     return vector_argument(arg, bounds=range(0,256), dim=3)

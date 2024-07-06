@@ -1,4 +1,5 @@
 import pygame 
+import pygame.gfxdraw
 import math
 
 
@@ -62,8 +63,21 @@ class Shape:
     def __contains__(self, point):
         return self.inside(point)
 
-    def draw(self, surface, outline_color, line_width=1):
-        pygame.draw.polygon(surface, outline_color, self.points, line_width)
+    def draw(self, surface, outline_color, line_width=1, fill_color=None):
+        if surface.get_flags() & pygame.SRCALPHA:
+            if line_width > 0:
+                pygame.draw.polygon(surface, outline_color, self.points, line_width)
+            if fill_color:
+                pygame.draw.polygon(surface, fill_color, self.points, 0)
+        else:
+            if line_width:=1:
+                pygame.gfxdraw.aapolygon(surface, self.points, outline_color)
+            elif line_width > 1:
+                assert(len(outline_color)==3)   # TODO gfxdraw doesnt support line width but is needed for alpha on this surface
+                pygame.draw.polygon(surface, outline_color, self.points, line_width)
+            if fill_color:
+                pygame.gfxdraw.filled_polygon(surface, self.points, fill_color)
+
 
     @staticmethod
     def regular_polygon(n, angle=0):

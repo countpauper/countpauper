@@ -47,9 +47,12 @@ class HexGrid:
     def scale(self, surface):
         size=surface.get_size()
         return min(size[0]/self.required_size[0], size[1]/self.required_size[1])
+    
+    def __getitem__(self, coord):
+        return self.hex[coord]
 
-    def draw(self, surface, color, line_width=1):
+    def draw(self, surface, color, line_width=1, fill_color=dict()):
         scale = self.scale(surface)
-        for h in self.hex.values():
+        for c, h in self.hex.items():
             h  *= scale
-            h.draw(surface, color, line_width)
+            h.draw(surface, color, line_width, fill_color.get(c))
