@@ -43,9 +43,15 @@ class HexGrid:
                     y = grid_y * line_step[1]
                     self.hex[(grid_x, grid_y)] = HexGrid._make(horizontal) + (x,y)
 
-    def draw(self, surface, color):
+    def pick(self, pos):
+        return [coord for coord, hex in self.hex.items() if hex.inside(pos)]    
+    
+    def scale(self, surface):
         size=surface.get_size()
-        scale = min(size[0]/self.required_size[0], size[1]/self.required_size[1])
+        return min(size[0]/self.required_size[0], size[1]/self.required_size[1])
+
+    def draw(self, surface, color):
+        scale = self.scale(surface)
         for h in self.hex.values():
-            h  = h * scale
+            h  *= scale
             h.draw(surface, color)

@@ -1,6 +1,10 @@
 import pygame 
 import math
 
+
+def dot(a,b):
+    return a[0]*b[1]-a[1]*b[0]
+
 class Shape:
     def __init__(self, points):
         self.points = points
@@ -43,15 +47,17 @@ class Shape:
         # TODO: could define line shape that is not closed explicitly
         return len(self.points) >= 3
     
+
     def inside(self, point):
         """ Return whether the project of a point on the plane of the shape is "inside" a closed shape.
         This assumes the shape is convex and 2d"""
         # TODO: unit test 
         if not self.is_closed():
             return False
-        vectors = [self.points[n + 1] - self.points[n] for n in range(0, len(self.points)-1)]
-        vectors.append(self.points[0] - self.points[-1])
-        return all(v.dot(point) <= 0.0 for v in vectors)
+
+        return all(
+            (self.points[(n + 1)%len(self.points)] - p).cross(
+                point - p) < 0 for n,p in enumerate(self.points))
 
     def __contains__(self, point):
         return self.inside(point)
