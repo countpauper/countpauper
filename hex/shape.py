@@ -65,12 +65,12 @@ class Shape:
     def draw(self, surface, outline_color, line_width=1):
         pygame.draw.polygon(surface, outline_color, self.points, line_width)
 
-    @classmethod
-    def regular_polygon(c, n):
+    @staticmethod
+    def regular_polygon(n, angle=0):
         """Create a polygon in the XY plane, descibred as an n by 3 matrix, with equal sides and angles for each edge.
-        The polygon starts at angle 0, is counter clockwise, and it fits inside a bounding circle with radius 1 centered at 0,0"""
-        return Shape([pygame.Vector2(math.sin(2*math.pi * i / float(n)), math.cos(2*math.pi * i / float(n))) for i in range(n)])
+        The polygon starts at the give nangle (default 0), is counter clockwise, and it fits inside a bounding circle with radius 1 centered at 0,0"""
+        return Shape([pygame.Vector2(math.sin(angle + 2*math.pi * i / float(n)), math.cos(angle + 2*math.pi * i / float(n))) for i in range(n)])
 
-def hexagon():
-    return Shape.regular_polygon(6)
+def hexagon(angle=0):
+    return Shape.regular_polygon(6, angle)
 

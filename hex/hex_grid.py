@@ -4,9 +4,7 @@ from shape import hexagon
 
 class HexGrid:
     def _make(horizontal):
-        hex = hexagon()
-        if horizontal:
-            hex = hex.counter_clockwise()
+        hex = hexagon(math.pi * -0.5 if horizontal else 0)
         return (hex + (1,1)) * (0.5, 0.5)
 
     def __init__(self, grids, horizontal=False):
@@ -50,8 +48,8 @@ class HexGrid:
         size=surface.get_size()
         return min(size[0]/self.required_size[0], size[1]/self.required_size[1])
 
-    def draw(self, surface, color):
+    def draw(self, surface, color, line_width=1):
         scale = self.scale(surface)
         for h in self.hex.values():
             h  *= scale
-            h.draw(surface, color)
+            h.draw(surface, color, line_width)
