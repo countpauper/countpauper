@@ -51,12 +51,13 @@ def main(*, background=None, zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,
                 pos = pygame.mouse.get_pos() - grid.offset   # TODO let grid use offset and scale
                 scale = grid.scale(screen)
                 hex_pos = pygame.Vector2(pos[0]/scale, pos[1]/scale)
-                if hex_coord := (grid.pick(hex_pos)+[None])[0]:
-                    if last_highlighted != hex_coord:
-                        invalidated = False
-                        if last_highlighted:
-                            grid[last_highlighted].tool_tip = None
-                        last_highlighted = hex_coord
+                hex_coord = (grid.pick(hex_pos)+[None])[0]
+                if last_highlighted != hex_coord:
+                    invalidated = False
+                    if last_highlighted:
+                        grid[last_highlighted].tool_tip = None
+                    last_highlighted = hex_coord
+                    if hex_coord:
                         try:
                             data_grid = grid_data[hex_coord]
                             print(f"At {pos} = {hex_pos} = {hex_coord} {data_grid}")

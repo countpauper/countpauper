@@ -28,7 +28,7 @@ class Matrix2:
                         self.row(2).dot(o.column(2)))
 
 
-    def _mul_vector(self, v):
+    def _mul_vector2(self, v):
         w = self[0,2]*v[0]+self[0,2]*v[1]+self[2,2]
         return pygame.Vector2(self[0,0]*v[0] + self[1,0]*v[1] + self[2,0],
                               self[0,1]*v[0] + self[1,1]*v[1] + self[2,1]) / w
@@ -43,20 +43,35 @@ class Matrix2:
     def rotation(self):
         x = pygame.Vector2(self[0, 0], self[0, 1])
         y = pygame.Vector2(self[1, 0], self[1, 1])
-        xdot = x[0] # pygame.Vector2(1,0).dot(x) or dot product between identity matrix X axis and this
-        ydot = y[1] # pygame.Vector2(0,1).dot(y) or angle between identiy matrix Y axis and this matrix
-        avg  = (xdot+ydot)/(x.length()+y.length())  # weighted average normalization
-        return math.acos(avg)
+        xcross = pygame.Vector2(1,0).cross(x) 
+        ycross = pygame.Vector2(0,1).cross(y) 
+        # compute separate angles between rotates x and y then average
+        #xasin = xcross / x.length()
+        #yasin = ycross / y.length()
+        #xtheta = math.asin(xasin)
+        #ytheta = math.asin(yasin)
+        #return (xtheta+ytheta)*0.5
+        # vs weighted average by length of the axis, before the asin
+        asin = (xcross+ycross) / (x.length() + y.length())
+        return math.asin(asin)
     
+    def skewed(self):
+        return pygame.Vector2(math.atan2(self[1,0],self[0,0]),
+                              math.atan2(self[0,1],self[1,1]))
+
     def __mul__(self, o):
         if type(o) is Matrix2:
             return self._mul_matrix(o)
         if type(o) is pygame.Vector2:
-            return self._mul_vector(o)
-    
+            return self._mul_vector2(o)
+        if type(o) is pygame.Vector3:
+            raise NotImplemented("Matrix multiplication of 2D homogenous vectors is not yet implemented.")
+        else:
+            return self.__mul__(pygame.Vector2(o))
+         
     def __eq__(self, o):
         return self.coef == o.coef
-
+        
     @staticmethod
     def identity():
         return Matrix2(1,0,0, 0,1,0, 0,0,1)
@@ -74,9 +89,10 @@ class Matrix2:
             return Matrix2(1,0,0, 0,1,0, 0,0,1/s[0])
         elif len(s)==2:
             return Matrix2(s[0],0,0, 0,s[1],0, 0,0,1)
+        elif len(s)==3:
+            return Matrix2(s[0],0,0, s[1],0,0, 0,0,1.0/s[2])
         else:
-            # TODO: what would a 3d scale be on 2d. THe third one is a perspective uniform scale in 2,2 ? 
-            raise TypeError("Scale must be a scalar or a 2d scale")
+            raise ValueError("Scale must be a 1D 2D or 3D vector")
 
     @staticmethod
     def rotate(a):
@@ -84,3 +100,19 @@ class Matrix2:
                       math.sin(a),  math.cos(a),    0,
                       0,            0,              1)
     
+    @staticmethod
+    def clockwise():
+        return Matrix2.rotate(math.pi * -0.5)
+
+    @staticmethod
+    def counter_clockwise():
+        return Matrix2.rotate(math.pi * 0.5)
+
+    @staticmethod
+    def flip(horizontal=False, vertical=False):
+        return Matrix2.scale(-1.0 if horizontal else 1.0, -1.0 if vertical else 1.0)
+
+    @staticmethod
+    def skew(ax, ay=0):
+        return Matrix2(1,math.tan(ax),0, math.tan(ay),1,0, 0,0,1 )
+        

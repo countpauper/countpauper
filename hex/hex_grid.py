@@ -1,7 +1,7 @@
 import math
 import pygame
 from shape import hexagon
-
+from matrix import Matrix2
 
 def render_text(surface, pos, text, size=24, color=(255,255,255), halign=-1, valign=-1):
     """Render some text in the system font
@@ -27,8 +27,7 @@ class Hex:
             self.shape = hexagon(math.pi * -0.5) 
         else:
             self.shape = hexagon(0)
-        self.shape = (self.shape + (1.1)) * 0.5
-        self.shape += offset
+        self.shape = self.shape * Matrix2.translate(1, 1) * Matrix2.scale(0.5) * Matrix2.translate(*offset)
         self.tool_tip = None
         self.line_color = (255,255,255)
         self.line_width = 1
