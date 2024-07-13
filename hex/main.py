@@ -1,53 +1,22 @@
 import pygame
 from hex_grid import HexGrid
+from hex_map import HexMap
 import argparse
-import yaml
 
-import webcolors
-
-class DataModel:
-    def __init__(self, file=None):
-        if file:
-            file_data = yaml.safe_load(file)
-        else:
-            file_data = dict()
-
-        self.tables = file_data.get("tables", [])
-        self.grid = DataModel.parse_grid(file_data.get("grid", dict()))
-
-    
-    @staticmethod
-    def parse_grid(grid):
-        for k, v in grid.items():
-            v.update(dict(name=k, 
-                          coord=tuple(v.get("coord", ())),
-                          color=tuple(webcolors.name_to_rgb(color)) if (color:=v.get("color")) else None
-                          ))
-        return grid
+def render(surface, background, grid):
+    surface.blit(background,((0,0),(surface.size)))
+    screen_rect = (grid.offset, pygame.Vector2(surface.size)-grid.offset)
+    grid.draw(surface.subsurface(screen_rect))
+    pygame.display.update()
 
 
-    def __getitem__(self, coord):
-        name, props = ([(name, props) for name, props in self.grid.items() if props.get('coord') == coord] + [(None, dict())])[0]
-        if name is None:
-            raise IndexError(f"Grid at {coord} is not in the data model")
-        props.update(dict(name=name))
-        return props
-
-
-    def colors(self, alpha=255):
-        return {grid["coord"]: (*color, alpha) for grid in self.grid.values() if (color:=grid.get("color"))}
-
-
-# define a main function
-def main(*, background="", zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,255), line_width=1, data=None, **args):
-    # TODO more more grid properties (hue to fill the hex with alpha)
-    # TODO: select the hex and redraw with a thicker outline? 
-    # TODO: render description on screen 
+def main(*, background=None, zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,255), line_width=1, data=None, **args):
+    # TODO: select the clicked hex and redraw with a thicker outline? 
     # TODO: yaml extend with random tables
     # TODO: location of party is left click and information right separate events (random table) to move into from peeking ahead
     # TODO: fog of war blacks out unknown hexes 
-
-    grid_data = DataModel(data)
+    # TODO: edit box to change the yaml and save it again?
+    grid_data = HexMap(data)
 
     pygame.init()
     icon = pygame.image.load("hex.jpg")
@@ -60,32 +29,46 @@ def main(*, background="", zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,25
     else:
         scaled_bg = bg_image
     screen = pygame.display.set_mode(scaled_bg.size) 
-    screen.blit(scaled_bg,((0,0),(screen.size)))
 
     grid = HexGrid(size, False)
-                       
-    # colorize_grid(grid, grid_data["grids"])
-    offset=pygame.Vector2(offset) * zoom
-    screen_rect = (offset, pygame.Vector2(screen.size)-offset)
-    grid.draw(screen.subsurface(screen_rect), color, line_width, grid_data.colors(50))
+    for hex in grid:
+        hex.line_width = line_width
+        hex.line_color = color
+    for coord, color in grid_data.colors(50 if background else 255).items():
+        grid[coord].fill_color = color
+
+    last_highlighted = None
+    grid.offset=pygame.Vector2(offset) * zoom
+    render(screen, scaled_bg, grid)
+
     while True:
+        invalidated = True
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit(0)
-            elif event.type == pygame.MOUSEBUTTONUP:
-                pos = pygame.mouse.get_pos() - offset
+            elif event.type == pygame.MOUSEMOTION:
+                pos = pygame.mouse.get_pos() - grid.offset   # TODO let grid use offset and scale
                 scale = grid.scale(screen)
                 hex_pos = pygame.Vector2(pos[0]/scale, pos[1]/scale)
                 if hex_coord := (grid.pick(hex_pos)+[None])[0]:
-                    try:
-                        data_grid = grid_data[hex_coord]
-                    except IndexError:
+                    if last_highlighted != hex_coord:
+                        invalidated = False
+                        if last_highlighted:
+                            grid[last_highlighted].tool_tip = None
+                        last_highlighted = hex_coord
+                        try:
+                            data_grid = grid_data[hex_coord]
+                            print(f"At {pos} = {hex_pos} = {hex_coord} {data_grid}")
+                            grid[hex_coord].tool_tip = str(data_grid)
+                        except IndexError:
+                            data_grid = None
+                            print(f"At {pos} = {hex_pos} = {hex_coord}") 
+                    else:
                         data_grid = None
-                else:
-                    data_grid = None
-                print(f"Click at {pos} = {hex_pos}, {hex_coord} {data_grid}") 
-        pygame.display.update()
+        
+        if invalidated:
+            render(screen, scaled_bg, grid)
 
 
 def vector_argument(arg, splitter=",",  dim=2, bounds=None):

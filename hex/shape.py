@@ -67,7 +67,7 @@ class Shape:
         if surface.get_flags() & pygame.SRCALPHA:
             if line_width > 0:
                 pygame.draw.polygon(surface, outline_color, self.points, line_width)
-            if fill_color:
+            if self.is_closed() and fill_color:
                 pygame.draw.polygon(surface, fill_color, self.points, 0)
         else:
             if line_width:=1:
@@ -75,10 +75,18 @@ class Shape:
             elif line_width > 1:
                 assert(len(outline_color)==3)   # TODO gfxdraw doesnt support line width but is needed for alpha on this surface
                 pygame.draw.polygon(surface, outline_color, self.points, line_width)
-            if fill_color:
+            if self.is_closed() and fill_color:
                 pygame.gfxdraw.filled_polygon(surface, self.points, fill_color)
 
 
+    def boundingbox(self):
+        return (min(p[0] for p in self.points), min(p[1] for p in self.points),
+                max(p[0] for p in self.points), max(p[1] for p in self.points))                
+    
+    def center(self):
+        left, top, right,bottom = self.boundingbox()
+        return (left+right)*0.5, (top+bottom)*0.5
+    
     @staticmethod
     def regular_polygon(n, angle=0):
         """Create a polygon in the XY plane, descibred as an n by 3 matrix, with equal sides and angles for each edge.

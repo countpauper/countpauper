@@ -1,7 +1,8 @@
-grids:
+grid:
   Bottle and Jug:
     coord: [15,3]
     description: Stuff happens here that is bad.
   Prison:
     coord: [4,2]
+    color: orange
     description: Bad guys get sent here.

@@ -2,10 +2,47 @@ import math
 import pygame
 from shape import hexagon
 
+
+def render_text(surface, pos, text, size=24, color=(255,255,255), halign=-1, valign=-1):
+    """Render some text in the system font
+    surface: surface to render on 
+    pos: position of the text, The position further depends on the alignment 
+    size: Font size 
+    color: color to render the font in
+    halign: horizontal align. -1: left (default) 0: center, 1:right
+    valign: vertical align: -1: top(default), 0: center, 1: bottom
+    When top left aligned the position is the top left corner of the font, 
+    When center aligned the position is the center of the text."""
+    font = pygame.font.SysFont(None, size)
+    metrics = font.metrics(text)
+    width = sum(m[-1] for m in metrics)
+    align_offset=pygame.Vector2((halign*-0.5 - 0.5) * width, 
+                                (valign*-0.5 - 0.5) * font.get_height())
+    img = font.render(text, True, color)
+    # debuw pygame.draw.rect(surface,(255,0,0),(pos,(width, font.get_height())))
+    surface.blit(img, pos+align_offset)
+
+class Hex:
+    def __init__(self, horizontal, offset):
+        if horizontal:
+            self.shape = hexagon(math.pi * -0.5) 
+        else:
+            self.shape = hexagon(0)
+        self.shape = (self.shape + (1.1)) * 0.5
+        self.shape += offset
+        self.tool_tip = None
+        self.line_color = (255,255,255)
+        self.line_width = 1
+        self.fill_color = None
+
+    def draw(self, surface, scale):
+        shape = self.shape * scale
+        shape.draw(surface, self.line_color, self.line_width, self.fill_color)
+        if self.tool_tip:
+            tip_pos = shape.center() + pygame.Vector2(0, -0.25*scale) # position title in top triangle (if vertical)
+            render_text(surface, tip_pos, self.tool_tip, halign=0, valign=0)
+
 class HexGrid:
-    def _make(horizontal):
-        hex = hexagon(math.pi * -0.5 if horizontal else 0)
-        return (hex + (1,1)) * (0.5, 0.5)
 
     def __init__(self, grids, horizontal=False):
         """A hexgrid consists of a set of indexed shapes. 
@@ -33,26 +70,30 @@ class HexGrid:
                 for grid_y in range(0, grids[1] - (1 if grid_x&1 else 0)):
                     x = grid_x * line_step[0]
                     y = (offset[grid_x & 1] + grid_y * line_step[1])
-                    self.hex[(grid_x, grid_y)] = HexGrid._make(horizontal) + (x,y)
+                    self.hex[(grid_x, grid_y)] = Hex(horizontal, (x,y))
         else:
             for grid_y in range(0, grids[1]): 
                 for grid_x in range(0, grids[0]  - (1 if grid_y&1 else 0)):      
                     x = (offset[grid_y & 1] + grid_x * line_step[0])
                     y = grid_y * line_step[1]
-                    self.hex[(grid_x, grid_y)] = HexGrid._make(horizontal) + (x,y)
+                    self.hex[(grid_x, grid_y)] = Hex(horizontal, (x,y))
 
     def pick(self, pos):
-        return [coord for coord, hex in self.hex.items() if hex.inside(pos)]    
+        return [coord for coord, hex in self.hex.items() if hex.shape.inside(pos)]    
     
     def scale(self, surface):
         size=surface.get_size()
         return min(size[0]/self.required_size[0], size[1]/self.required_size[1])
     
-    def __getitem__(self, coord):
-        return self.hex[coord]
+    def __getitem__(self, idx):
+        if type(idx) is int:
+            return list(self.hex.values())[idx]
+        else:
+            return self.hex[idx]
 
-    def draw(self, surface, color, line_width=1, fill_color=dict()):
+
+
+    def draw(self, surface):
         scale = self.scale(surface)
         for c, h in self.hex.items():
-            h  *= scale
-            h.draw(surface, color, line_width, fill_color.get(c))
+            h.draw(surface, scale)
