@@ -19,7 +19,6 @@ def render_text(surface, pos, text, size=24, color=(255,255,255), halign=-1, val
     align_offset=pygame.Vector2((halign*-0.5 - 0.5) * width, 
                                 (valign*-0.5 - 0.5) * font.get_height())
     img = font.render(text, True, color)
-    # debuw pygame.draw.rect(surface,(255,0,0),(pos,(width, font.get_height())))
     surface.blit(img, pos+align_offset)
 
 class Hex:
@@ -90,8 +89,6 @@ class HexGrid:
             return list(self.hex.values())[idx]
         else:
             return self.hex[idx]
-
-
 
     def draw(self, surface):
         scale = self.scale(surface)
