@@ -62,6 +62,9 @@ class Matrix2:
     def __eq__(self, o):
         return np.array_equal(self.coef, o.coef)
         
+    def inverse(self):
+        return Matrix2(np.linalg.inv(self.coef))
+    
     @staticmethod
     def identity():
         return Matrix2(1,0,0, 0,1,0, 0,0,1)

@@ -74,3 +74,10 @@ def test_multiply_matrix():
     # first rotate, then translate in the new orientation: translation is also rotated
     assert right_mul.translation() == Vector2(-1, 2)
     assert right_mul.rotation() == math.pi / 2
+
+def test_matrix_inverse():
+    m = Matrix2.translate(1,2).inverse()
+    assert m.translation() == Vector2(-1,-2)
+    m = Matrix2.rotate(0.8).inverse()
+    assert m.rotation() == -0.8
+

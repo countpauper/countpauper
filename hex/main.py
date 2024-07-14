@@ -1,12 +1,13 @@
 import pygame
 from hex_grid import HexGrid
 from hex_map import HexMap
+from matrix import Matrix2
 import argparse
 
-def render(surface, background, grid):
+def render(surface, background, grid, matrix):
     surface.blit(background,((0,0),(surface.size)))
-    screen_rect = (grid.offset, pygame.Vector2(surface.size)-grid.offset)
-    grid.draw(surface.subsurface(screen_rect))
+    # screen_rect = (grid.offset, pygame.Vector2(surface.size)-grid.offset)
+    grid.draw(surface, matrix)
     pygame.display.update()
 
 
@@ -38,8 +39,8 @@ def main(*, background=None, zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,
         grid[coord].fill_color = color
 
     last_highlighted = None
-    grid.offset=pygame.Vector2(offset) * zoom
-    render(screen, scaled_bg, grid)
+    grid_matrix = Matrix2.translate(offset[0]*zoom, offset[1]*zoom)    # TODO zoom in here, scale to screen rect all that 
+    render(screen, scaled_bg, grid, grid_matrix)
 
     while True:
         invalidated = True
@@ -48,7 +49,7 @@ def main(*, background=None, zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,
                 pygame.quit()
                 exit(0)
             elif event.type == pygame.MOUSEMOTION:
-                pos = pygame.mouse.get_pos() - grid.offset   # TODO let grid use offset and scale, ie give it a matrix
+                pos = grid_matrix.inverse() * pygame.mouse.get_pos()   # TODO let grid use offset and scale, ie give it a matrix
                 scale = grid.scale(screen)
                 hex_pos = pygame.Vector2(pos[0]/scale, pos[1]/scale)
                 hex_coord = (grid.pick(hex_pos)+[None])[0]
@@ -69,7 +70,7 @@ def main(*, background=None, zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,
                         data_grid = None
         
         if invalidated:
-            render(screen, scaled_bg, grid)
+            render(screen, scaled_bg, grid, grid_matrix)
 
 
 def vector_argument(arg, splitter=",",  dim=2, bounds=None):

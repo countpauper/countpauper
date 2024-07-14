@@ -33,11 +33,11 @@ class Hex:
         self.line_width = 1
         self.fill_color = None
 
-    def draw(self, surface, scale):
-        shape = self.shape * scale
+    def draw(self, surface, matrix):
+        shape = self.shape * matrix
         shape.draw(surface, self.line_color, self.line_width, self.fill_color)
         if self.tool_tip:
-            tip_pos = shape.center() + pygame.Vector2(0, -0.25*scale) # position title in top triangle (if vertical)
+            tip_pos = shape.center() + pygame.Vector2(0, -0.25*matrix.scaling()[1]) # position title in top triangle (if vertical)
             render_text(surface, tip_pos, self.tool_tip, halign=0, valign=0)
 
 class HexGrid:
@@ -89,7 +89,7 @@ class HexGrid:
         else:
             return self.hex[idx]
 
-    def draw(self, surface):
-        scale = self.scale(surface)
+    def draw(self, surface, matrix):
+        matrix *= Matrix2.scale(self.scale(surface))
         for c, h in self.hex.items():
-            h.draw(surface, scale)
+            h.draw(surface, matrix)
