@@ -1,48 +1,38 @@
 import pygame 
 import math
+import numpy as np
 
 class Matrix2:
     def __init__(self, *coefficients):
-        self.coef = coefficients if coefficients else (1,0,0, 0,1,0, 0,0,1)
+        if coefficients:
+            if len(coefficients)==1:
+                self.coef = np.array(coefficients[0])
+            else:
+                self.coef = np.asarray(coefficients).reshape(3,3) 
+        else:
+            self.coef = np.asarray(((1,0,0), (0,1,0), (0,0,1)))
 
     def __getitem__(self, idx):
-        return self.coef[idx[0] + idx[1]*3]
-    
-    def row(self, row_idx):
-        return pygame.Vector3(self[0, row_idx], self[1, row_idx], self[2,row_idx])
-    
-    def column(self, col_idx):
-        return pygame.Vector3(self[col_idx, 0], self[col_idx, 1], self[col_idx, 2])
+        return self.coef[idx]
     
     def _mul_matrix(self, o):
-        return Matrix2( self.row(0).dot(o.column(0)),
-                        self.row(0).dot(o.column(1)),
-                        self.row(0).dot(o.column(2)),
-
-                        self.row(1).dot(o.column(0)),
-                        self.row(1).dot(o.column(1)),
-                        self.row(1).dot(o.column(2)),
-
-                        self.row(2).dot(o.column(0)),
-                        self.row(2).dot(o.column(1)),
-                        self.row(2).dot(o.column(2)))
-
+        return Matrix2(np.matmul(self.coef, o.coef))
 
     def _mul_vector2(self, v):
-        w = self[0,2]*v[0]+self[0,2]*v[1]+self[2,2]
-        return pygame.Vector2(self[0,0]*v[0] + self[1,0]*v[1] + self[2,0],
-                              self[0,1]*v[0] + self[1,1]*v[1] + self[2,1]) / w
+        w = self[2,0]*v[0]+self[2,0]*v[1]+self[2,2]
+        return pygame.Vector2(self[0,0]*v[0] + self[0,1]*v[1] + self[0,2],
+                              self[1,0]*v[0] + self[1,1]*v[1] + self[1,2]) / w
 
     def translation(self):
-        return pygame.Vector2(self[2, 0]/self[2,2], self[2, 1]/self[2,2])
+        return pygame.Vector2(self[0, 2]/self[2,2], self[1, 2]/self[2,2])
     
     def scaling(self):
         return pygame.Vector2(math.sqrt(self[0,0]*self[0,0] + self[0,1]*self[0,1]),
                               math.sqrt(self[0,1]*self[0,1] + self[1,1]*self[1,1])) / self[2,2]
     
     def rotation(self):
-        x = pygame.Vector2(self[0, 0], self[0, 1])
-        y = pygame.Vector2(self[1, 0], self[1, 1])
+        x = pygame.Vector2(self[0, 0], self[1, 0])
+        y = pygame.Vector2(self[0, 1], self[1, 1])
         xcross = pygame.Vector2(1,0).cross(x) 
         ycross = pygame.Vector2(0,1).cross(y) 
         # compute separate angles between rotates x and y then average
@@ -56,8 +46,8 @@ class Matrix2:
         return math.asin(asin)
     
     def skewed(self):
-        return pygame.Vector2(math.atan2(self[1,0],self[0,0]),
-                              math.atan2(self[0,1],self[1,1]))
+        return pygame.Vector2(math.atan2(self[0,1],self[0,0]),
+                              math.atan2(self[1,0],self[1,1]))
 
     def __mul__(self, o):
         if type(o) is Matrix2:
@@ -70,7 +60,7 @@ class Matrix2:
             return self.__mul__(pygame.Vector2(o))
          
     def __eq__(self, o):
-        return self.coef == o.coef
+        return np.array_equal(self.coef, o.coef)
         
     @staticmethod
     def identity():

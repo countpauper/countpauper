@@ -2,3 +2,4 @@ pytest
 pygame-ce
 pyyaml
 webcolors
+numpy

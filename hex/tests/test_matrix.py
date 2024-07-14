@@ -66,6 +66,7 @@ def test_multiply_matrix():
     mr = Matrix2.rotate(math.pi/2)
     # first translate in identity, then rotate. translation stays the same 
     left_mul = mt * mr 
+    assert left_mul.coef.shape == (3,3)
     assert left_mul.translation() == Vector2(2,1)
     assert left_mul.rotation() == math.pi / 2
 

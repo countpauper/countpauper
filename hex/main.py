@@ -48,7 +48,7 @@ def main(*, background=None, zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,
                 pygame.quit()
                 exit(0)
             elif event.type == pygame.MOUSEMOTION:
-                pos = pygame.mouse.get_pos() - grid.offset   # TODO let grid use offset and scale
+                pos = pygame.mouse.get_pos() - grid.offset   # TODO let grid use offset and scale, ie give it a matrix
                 scale = grid.scale(screen)
                 hex_pos = pygame.Vector2(pos[0]/scale, pos[1]/scale)
                 hex_coord = (grid.pick(hex_pos)+[None])[0]
