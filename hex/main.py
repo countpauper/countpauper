@@ -39,39 +39,42 @@ def main(*, background=None, zoom=1.0, size=(4,3), offset=(0,0), color=(255,255,
         grid[coord].fill_color = color
 
     last_highlighted = None
-    grid_matrix = Matrix2.translate(offset[0]*zoom, offset[1]*zoom)    # TODO zoom in here, scale to screen rect all that 
+    grid_matrix = Matrix2.translate(offset[0]*zoom, offset[1]*zoom)    
+    # TODO: this is a bit if an ugly formula. Some sort of render context/viewport could fix this and also use subsurface (again)
+    grid_matrix *= Matrix2.scale(min(
+        (screen.size[0]-offset[0]*zoom) / grid.required_size[0], 
+        (screen.size[1]-offset[1]*zoom) / grid.required_size[1]))
+
     render(screen, scaled_bg, grid, grid_matrix)
 
     while True:
-        invalidated = True
+        invalidated = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit(0)
             elif event.type == pygame.MOUSEMOTION:
-                pos = grid_matrix.inverse() * pygame.mouse.get_pos()   # TODO let grid use offset and scale, ie give it a matrix
-                scale = grid.scale(screen)
-                hex_pos = pygame.Vector2(pos[0]/scale, pos[1]/scale)
+                mouse_pos = pygame.mouse.get_pos()
+                hex_pos = grid_matrix.inverse() * mouse_pos   
                 hex_coord = (grid.pick(hex_pos)+[None])[0]
                 if last_highlighted != hex_coord:
-                    invalidated = False
+                    invalidated = True
                     if last_highlighted:
                         grid[last_highlighted].tool_tip = None
                     last_highlighted = hex_coord
                     if hex_coord:
                         try:
                             data_grid = grid_data[hex_coord]
-                            print(f"At {pos} = {hex_pos} = {hex_coord} {data_grid}")
+                            print(f"At {mouse_pos} = {hex_pos} = {hex_coord} {data_grid}")
                             grid[hex_coord].tool_tip = str(data_grid)
                         except IndexError:
                             data_grid = None
-                            print(f"At {pos} = {hex_pos} = {hex_coord}") 
+                            print(f"At {mouse_pos} = {hex_pos} = {hex_coord}") 
                     else:
                         data_grid = None
         
         if invalidated:
             render(screen, scaled_bg, grid, grid_matrix)
-
 
 def vector_argument(arg, splitter=",",  dim=2, bounds=None):
     result = arg.split(splitter)

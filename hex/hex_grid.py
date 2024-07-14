@@ -78,11 +78,7 @@ class HexGrid:
 
     def pick(self, pos):
         return [coord for coord, hex in self.hex.items() if hex.shape.inside(pos)]    
-    
-    def scale(self, surface):
-        size=surface.get_size()
-        return min(size[0]/self.required_size[0], size[1]/self.required_size[1])
-    
+        
     def __getitem__(self, idx):
         if type(idx) is int:
             return list(self.hex.values())[idx]
@@ -90,6 +86,5 @@ class HexGrid:
             return self.hex[idx]
 
     def draw(self, surface, matrix):
-        matrix *= Matrix2.scale(self.scale(surface))
         for c, h in self.hex.items():
             h.draw(surface, matrix)
