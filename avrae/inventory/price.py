@@ -40,7 +40,7 @@ def format_url(item):
 	url_name = base_name.lower()
 	url_name= direct_replace.get(remove_enclosed(item.lower()), url_name)
 	url_name=remove_enclosed(url_name).strip()
-	url_name = url_name.replace(' ', '-')
+	url_name = url_name.replace(' ', '-').replace("'","")
 	base_url="https://www.dndbeyond.com/equipment/" if item in mundane else "https://www.dndbeyond.com/magic-items/"
 	return base_url+url_name
 

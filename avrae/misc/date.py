@@ -1,5 +1,6 @@
 !alias date embed <drac2>
-G=get('DateGvar',"1665221a-908a-40e9-ac8b-24ce938dfe09")
+v='DateGvar'
+G=get_svar(v, get(v,"1665221a-908a-40e9-ac8b-24ce938dfe09"))
 g,n=load_json(get_gvar(G)),'\n'
 h,C='&1&'in'help?'and not'&1&'=='p','&1&'in'custom'
 H=get_gvar('75ff3ec8-9b12-4adf-b8a8-d55565d57c38').split('##############')
