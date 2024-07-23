@@ -89,7 +89,7 @@
     <ClInclude Include="Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GLutil.h">
+    <ClInclude Include="GLUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OffscreenSurface.h">

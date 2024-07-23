@@ -90,7 +90,7 @@
     <ClInclude Include="from_string.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Drawing.h" />
-    <ClInclude Include="GLutil.h" />
+    <ClInclude Include="GLUtil.h" />
     <ClInclude Include="GTestGeometry.h" />
     <ClInclude Include="Identification.h" />
     <ClInclude Include="Image.h" />

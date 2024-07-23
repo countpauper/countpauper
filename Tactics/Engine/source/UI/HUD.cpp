@@ -1,7 +1,7 @@
 #include "UI/HUD.h"
 #include "Geometry/Vector.h"
 #include <GL/gl.h>
-#include "Utility/GLutil.h"
+#include "Utility/GLUtil.h"
 
 namespace Engine
 {

@@ -4,7 +4,7 @@
 #include "Geometry/Line.h"
 #include "Geometry/Matrix.h"
 #include "Rendering/Drawing.h"
-#include "Utility/GLutil.h"
+#include "Utility/GLUtil.h"
 #include <array>
 #include <GL/gl.h>
 #include <cassert>

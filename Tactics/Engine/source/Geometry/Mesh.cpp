@@ -6,7 +6,7 @@
 #include "Geometry/AxisAlignedBoundingBox.h"
 #include "Geometry/Quaternion.h"
 #include "Geometry/Triangle.h"
-#include "Utility/GLutil.h"
+#include "Utility/GLUtil.h"
 #include "Geometry/Plane.h"
 #include "Geometry/Triangle.h"
 #include "UI/Debug.h"
