@@ -69,6 +69,18 @@ Creature& Avatar::GetCreature()
     return creature;
 }
 
+const Creature& Avatar::GetCreature() const
+{
+    return creature;
+}
+
+double Avatar::HitChance(const Avatar& target) const
+{
+    int hitScore = target.GetCreature().Get(Stat::dodge) + target.GetCreature().Get(Stat::block);    // TODO: front
+
+    return 1.0;
+}
+
 Engine::Coordinate Avatar::GetCoordinate() const
 {
     return map.GroundCoord(position);

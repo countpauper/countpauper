@@ -23,6 +23,8 @@ public:
     void Move(Engine::Position destination);
     Engine::Position Position() const;
     Creature& GetCreature();
+    const Creature& GetCreature() const;
+    double HitChance(const Avatar& target) const;
 private:
     Engine::Mesh mesh;
     Map& map;

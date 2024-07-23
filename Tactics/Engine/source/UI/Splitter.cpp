@@ -21,7 +21,7 @@ void Splitter::Render() const
     if (horizontal)
     {
         glPushMatrix();
-        glScaled(split, 1.0, 0.0);
+        glScaled(split, 1.0, 1.0);
         children.front()->Render();
         glPopMatrix();
 
@@ -34,7 +34,7 @@ void Splitter::Render() const
     else
     {
         glPushMatrix();
-        glScaled(1.0, split, 0.0);
+        glScaled(1.0, split, 1.0);
         children.front()->Render();
         glPopMatrix();
 

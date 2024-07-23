@@ -17,6 +17,14 @@ namespace Engine
         static unsigned nextBase;
     };
 
+    enum class Align
+    {
+        bottom=-1,
+        right=-1,
+        center=0,
+        left=1,
+        top=1
+    };
 
-    void glText(std::string_view);
+    void glText(std::string_view, Align horizontal = Align::left, Align vertical = Align::top);
 }

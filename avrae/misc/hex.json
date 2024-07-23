@@ -1,0 +1,38 @@
+[
+    {
+        "1-4": "-",
+        "5-6": "blocked",
+        "7": {
+            "1-2": "mundane vendor",
+            "3": "magique shoppe",
+            "4": "gambling den",
+            "5-6": "carousing",
+            "7": "place of worship",
+            "8": "research",
+            "9": "fight pit",
+            "10": "crafting"
+        },
+        "8-9": {
+            "1-2": "obstacle",
+            "3-4": "razorvines",
+            "5": "razorvines with blights",
+            "6": "trap",
+            "7": "poison gas",
+            "8": "mind effect",
+            "9": "portal",
+            "10": "symbol"
+        },
+        "10": {
+            "1": "toll 2d12 each",
+            "2": "humanoid settlement",
+            "3": "demihuman settlement",
+            "4": "planar settlement",
+            "5": "dabi",
+            "6": "dead faction",
+            "7": "undead",
+            "8": "cranium rats",
+            "9": "ruler",
+            "10": "hag"
+        }
+    }
+]

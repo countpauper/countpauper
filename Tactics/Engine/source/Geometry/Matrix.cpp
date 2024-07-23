@@ -43,7 +43,6 @@ Matrix Matrix::Rotation() const
         m[2][0] / xl,  m[2][1] / yl, m[2][2] / zl, 0,
         0,             0,            0,            1
     };
-
 }
 
 bool Matrix::IsAffine() const
@@ -325,11 +324,12 @@ Vector Matrix::Translation() const
     return Vector(m[3][0], m[3][1], m[3][2]);
 }
 
-void Matrix::SetTranslation(const Vector& translation)
+Matrix& Matrix::SetTranslation(const Vector& translation)
 {
     m[3][0] = translation.x;
     m[3][1] = translation.y;
     m[3][2] = translation.z;
+    return *this;
 }
 
 
@@ -338,6 +338,14 @@ Matrix Matrix::Projection()
     Matrix matrix;
     assert(sizeof(double) == sizeof(GLdouble));
     glGetDoublev(GL_PROJECTION_MATRIX, &matrix[0][0]);
+    return matrix;
+}
+
+Matrix Matrix::ModelView()
+{
+    Matrix matrix;
+    assert(sizeof(double) == sizeof(GLdouble));
+    glGetDoublev(GL_MODELVIEW_MATRIX, &matrix[0][0]);
     return matrix;
 }
 
@@ -408,8 +416,6 @@ Matrix Matrix::Perspective(double n, double f)
     matrix[3][2] = -f * n / (f - n);
     return matrix;
 }
-
-
 
 
 Matrix operator*(const Matrix& l, const Matrix& r)

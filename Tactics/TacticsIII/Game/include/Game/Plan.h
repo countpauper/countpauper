@@ -26,7 +26,7 @@ public:
     std::string Description() const;
 
     unsigned AP() const;
-    void Execute();
+    std::string Execute();
 
     // TODO: helpers to create an attack plan, flee (move) plan, spell/technique plan, dodge, ready and so on plan for UI and AI level
     static Plan Move(Avatar& actor, const Game& game, Engine::Position destination);

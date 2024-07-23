@@ -9,6 +9,7 @@ namespace Engine::Test
 
 TEST(IntBox, Size)
 {
+    EXPECT_EQ(IntBox(Position(1, 1, 1)).Volume(), 1);
     EXPECT_EQ(IntBox(Position(0, 0, 0), Position(1, 1, 1)).Volume(), 1);
     EXPECT_EQ(IntBox(Position(0, 0, 0), Position(1, 1, 1)).Extent(), Size(1, 1, 1));
     EXPECT_EQ(IntBox(Position(-1, 1, 3), Position(0, 2, 4)).x, Range(-1, 0));

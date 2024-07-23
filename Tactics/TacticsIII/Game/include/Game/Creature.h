@@ -36,7 +36,7 @@ public:
     static StatDefinition definition;
 
     unsigned CounterAvailable(Stat::Id) const;
-    void Cost(Stat::Id counter, unsigned cost);
+    unsigned Cost(Stat::Id counter, unsigned cost, bool truncate=false);
     void Reset(Counter::Reset at);
 private:
     std::string name;

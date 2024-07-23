@@ -35,7 +35,7 @@ struct Matrix
     Vector Z() const;
     Vector Scale() const;
     Vector Translation() const;
-    void SetTranslation(const Vector& translation);
+    Matrix& SetTranslation(const Vector& translation);
     Matrix Rotation() const;
     bool IsAffine() const;
     bool IsIdentity() const;
@@ -47,6 +47,7 @@ struct Matrix
     void Render() const;
 
     static Matrix Projection();
+    static Matrix ModelView();
     static Matrix Identity();
     static Matrix Scale(const Vector& scale);
     static Matrix XRot(double angle);

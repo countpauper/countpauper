@@ -22,7 +22,10 @@ int main(int argc, char**argv)
         Engine::Label lbl("left_lbl", "Select an avatar");
         Engine::Label lbl2("right_lbl", "Make a plan");
         Engine::Splitter splitter(lbl, lbl2);
-        window.GetHUD().Add(splitter);
+        Engine::Label lbl3("log_lbl", "");
+        lbl3.vertical_align = Engine::Align::bottom;
+        Engine::Splitter splitter2(splitter, lbl3, 0.75, false);
+        window.GetHUD().Add(splitter2);
         Game::Game game(window.GetScene());
         app->Run();
     }

@@ -89,10 +89,15 @@ void Move::Render() const
     }
 }
 
-void Move::Execute() const
+void Move::Execute(std::ostream& log) const
 {
-    actor.Move(*Reachable());
-    actor.GetCreature().Cost(Stat::ap, AP());
+    auto ap = AP();
+    if (ap)
+    {
+        actor.Move(*Reachable());
+        actor.GetCreature().Cost(Stat::ap, ap, true);
+        log << actor.Name() << " moves to " << *Reachable() << std::endl;
+    }
 }
 
 unsigned Move::AP() const

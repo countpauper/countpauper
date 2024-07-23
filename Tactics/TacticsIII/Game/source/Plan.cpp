@@ -61,10 +61,12 @@ unsigned Plan::AP() const
     });
 }
 
-void Plan::Execute()
+std::string Plan::Execute()
 {
-   for(const auto& action: actions)
-        action->Execute();
+    std::stringstream s;
+    for(const auto& action: actions)
+        action->Execute(s);
+    return s.str();
 }
 
 Plan Plan::Move(Avatar& actor, const Game& game, Engine::Position destination)

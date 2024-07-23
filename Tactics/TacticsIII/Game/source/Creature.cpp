@@ -53,7 +53,7 @@ StatDescriptor Creature::Get(Stat::Id id) const
             }
         }
     }
-    if (!result)
+    if ((!result) && (id))
     {
         result = definition[id].Compute(*this);
     }
@@ -78,17 +78,21 @@ unsigned Creature::CounterAvailable(Stat::Id stat) const
     return counterIt->first->Available(counterIt->second, *this);
 }
 
-void Creature::Cost(Stat::Id stat, unsigned cost)
+unsigned Creature::Cost(Stat::Id stat, unsigned cost, bool truncate)
 {
     auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
     {
         return counter.first->ForStat(&Definition().at(stat));
     });
     if (counterIt == countersUsed.end())
-        return; // throw?
-
-    // range check and clip or throw?
+        return 0;
+    auto available = counterIt->first->Available(counterIt->second, *this);
+    if (truncate)
+        cost = std::min(cost, available);
+    else if (cost > available)
+        return 0;
     counterIt->second += cost;
+    return cost;
 }
 
 void Creature::Reset(Counter::Reset at)

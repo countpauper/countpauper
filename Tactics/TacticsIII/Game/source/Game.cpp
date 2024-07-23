@@ -111,7 +111,10 @@ void Game::OnMessage(const Engine::Message& message)
     {
         if (key->ascii == 13)
         {
-            plan.Execute();
+            auto desc = plan.Execute();
+            auto log = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("log_lbl");
+            log->AddText(desc);
+
             plan = Plan();
             if (Current().GetCreature().CounterAvailable(Stat::ap) == 0)
                 Next();
