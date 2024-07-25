@@ -122,11 +122,6 @@ double Vector::Dot(Vector v) const
     return x * v.x + y * v.y + z * v.z;
 }
 
-const Vector Vector::zero(0, 0, 0);
-const Vector Vector::X(1, 0, 0);
-const Vector Vector::Y(0, 1, 0);
-const Vector Vector::Z(0, 0, 1);
-
 std::ostream& operator<<(std::ostream& s, Vector v)
 {
     Coordinate c(v.x, v.y, v.z);

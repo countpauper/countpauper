@@ -96,7 +96,7 @@ namespace Engine
 
     bool Plane::IsParallel(const Line& line) const
     {
-        double dot = Vector(line).Cross(normal);
+        double dot = Vector(line).Dot(normal);
         return dot == 0;
     }
 
@@ -137,13 +137,13 @@ namespace Engine
 
     Plane::operator bool() const
     {
-        return normal;
+        return bool(normal);
     }
 
     bool Plane::operator==(const Plane& other) const
     {
-        auto dot = normal.Cross(other.normal);
-        if (dot != 0)
+        auto cross = normal.Cross(other.normal);
+        if (bool(cross))
             return false;
         if (d == 0 && other.d == 0)
             return true;
@@ -154,12 +154,5 @@ namespace Engine
     {
         return Plane(-normal, -d);
     }
-
-
-Plane Plane::null(Vector::zero, 0);
-Plane Plane::xy(Vector::Z, 0);
-Plane Plane::xz(Vector::Y, 0);
-Plane Plane::yz(Vector::X, 0);
-
 
 }

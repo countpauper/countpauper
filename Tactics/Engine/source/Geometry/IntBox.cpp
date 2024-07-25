@@ -4,10 +4,6 @@
 namespace Engine
 {
 
-const IntBox IntBox::empty(Range<int>(0,0), Range<int>(0,0), Range<int>(0,0));
-const IntBox IntBox::all(Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
-    Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()),
-    Range<int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
 
 
 IntBox::IntBox(Range<int> x, Range<int> y, Range<int> z) :

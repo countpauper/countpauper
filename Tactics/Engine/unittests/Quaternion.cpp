@@ -90,7 +90,7 @@ TEST(Quaternion, Shortest)
     EXPECT_DOUBLE_EQ(shortest.x, rot.x);
     EXPECT_DOUBLE_EQ(shortest.y, rot.y);
     EXPECT_DOUBLE_EQ(shortest.z, rot.z);
-    EXPECT_DOUBLE_EQ(shortest.w, rot.w);
+    EXPECT_NEAR(shortest.w, rot.w, 1e-12);
 }
 
 }

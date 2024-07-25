@@ -342,6 +342,8 @@ void Mesh::Validate() const
 
 void Mesh::GenerateVertexBuffer() const
 {
+    int err = glGetError();
+
     if (vertexBuffer)
         return;
     glGenBuffers(1, &vertexBuffer);
@@ -433,6 +435,7 @@ Box::Box(const AABB& bounds) :
 }
 
 
+// TODO: this could also just be a static const
 Box::Box()
 {
     Coordinate a(0,0,0), b(0,0,1), c(0,1,1), d(0,1,0),

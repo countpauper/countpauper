@@ -2,7 +2,7 @@
 
 #include <ostream>
 #include <istream>
-
+#include <limits>
 namespace Engine
 {
 
@@ -25,7 +25,7 @@ struct Vector
     explicit Vector(const Line& l);
     explicit Vector(const Plane& p);
 
-    operator bool() const;
+    explicit operator bool() const;
     double Length() const;
     double LengthSquared() const;
     Vector Normal() const;

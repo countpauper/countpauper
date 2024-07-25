@@ -11,7 +11,6 @@ namespace Engine
 {
 
 
-const Coordinate Coordinate::origin { 0,0,0 };
 
 
 double Coordinate::Distance(Coordinate other) const
