@@ -94,6 +94,7 @@ void Game::OnMessage(const Engine::Message& message)
         }
         auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
         lbl->SetText(plan.Description());
+        Changed();
     }
     else if (auto selected = message.Cast<Selected>())
     {
@@ -107,6 +108,7 @@ void Game::OnMessage(const Engine::Message& message)
         {
              Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
         }
+        Changed();
     } else if (auto key = message.Cast<Engine::KeyPressed>())
     {
         if (key->ascii == 13)

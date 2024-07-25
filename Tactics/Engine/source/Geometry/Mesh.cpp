@@ -52,7 +52,8 @@ void Mesh::Render() const
 
 template<typename T, typename U> constexpr size_t offsetOf(U T::*member)
 {
-    return (std::byte*)&((T*)nullptr->*member) - (std::byte*)nullptr;
+    T* v;
+    return (std::byte*)&(v->*member) - (std::byte*)v;
 }
 
 void Mesh::SetupVertexPointers()
@@ -342,8 +343,6 @@ void Mesh::Validate() const
 
 void Mesh::GenerateVertexBuffer() const
 {
-    int err = glGetError();
-
     if (vertexBuffer)
         return;
     glGenBuffers(1, &vertexBuffer);

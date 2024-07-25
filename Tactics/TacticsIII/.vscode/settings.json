@@ -1,6 +1,7 @@
 {
         "editor.tabCompletion": "on",
         "files.insertFinalNewline": true,
+        "files.eol": "\n",
         "files.trimTrailingWhitespace": true,
         "files.exclude": {
                 "**/build/": true,

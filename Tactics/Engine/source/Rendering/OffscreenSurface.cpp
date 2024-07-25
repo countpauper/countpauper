@@ -42,7 +42,9 @@ OffscreenSurface::OffscreenSurface() :
         throw std::runtime_error("Failed to create offscreen window");
     }
     ShowWindow(hWnd, SW_HIDE);
-
+    // for windows refactor, the hidden window would be the "Display"
+    // THe chosen pixelformat descriptor the "Config" (need a DC for each surface?)
+    //
     HDC hDC = GetDC(hWnd);
     PIXELFORMATDESCRIPTOR pfd;
     memset(&pfd, 0, sizeof(pfd));
@@ -54,10 +56,10 @@ OffscreenSurface::OffscreenSurface() :
     pfd.cStencilBits = 8;
     pfd.cDepthBits = 24;
 
-
     int pf = ChoosePixelFormat(hDC, &pfd);
     if (pf == 0)
     {
+
         ReleaseDC(hWnd, hDC);
         DestroyWindow(hWnd);
         throw std::runtime_error("Failed to choose offscreen surface format");
@@ -76,7 +78,7 @@ OffscreenSurface::OffscreenSurface() :
         DestroyWindow(hWnd);
         throw std::runtime_error("Failed to create offscreen OpenGL context");
     }
-    m_display = nullptr; // TODO, remember window or DC if they are not destroyed?
+    m_display = hWnd;
     m_surface = glRC;
 
     wglMakeCurrent(hDC, (HGLRC)m_surface);
