@@ -11,7 +11,12 @@ namespace Engine::Test
 
 struct Mesh : public ::testing::Test
 {
-    Mesh() = default;
+    Mesh() :
+        surface(display, 1,1)
+    {
+
+    }
+    Display display;
     OffscreenSurface surface;
     const double precision = 1e-12;
 };

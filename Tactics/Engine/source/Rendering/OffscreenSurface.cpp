@@ -10,6 +10,7 @@ namespace Engine
 OffscreenSurface::OffscreenSurface() :
     m_glRC(0)
 {
+
     TCHAR szWindowClass[] = "Offscreen";
     HINSTANCE moduleHandle = GetModuleHandle(NULL);
     WNDCLASSEX wcex;
@@ -100,7 +101,7 @@ OffscreenSurface::~OffscreenSurface()
 }
 #else
 #include <cassert>
-
+#include <limits>
 #include <EGL/egl.h>
 #include <stdexcept>
 #include <GL/glew.h>
@@ -108,64 +109,124 @@ OffscreenSurface::~OffscreenSurface()
 
 namespace Engine
 {
-// TODO separate file
-OffscreenSurface::OffscreenSurface()
+
+Display::Display() :
+    m_display(nullptr)
 {
-static const EGLint configAttribs[] = {
+    // TODO: separate open gl application/hidden window from surface for wgl and egl
+    // Initialize EGL
+    m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if (m_display == EGL_NO_DISPLAY) {
+        throw std::runtime_error("No default EGL display is found.");
+    }
+    EGLint major, minor;
+    EGLBoolean result = eglInitialize(m_display, &major, &minor);
+    if (!result)
+    {
+        m_display = EGL_NO_DISPLAY;
+        throw std::runtime_error("Failed to initialize the default EGL display.");
+    }
+    if (!eglBindAPI(EGL_OPENGL_API))
+    {
+        throw std::runtime_error("Failed to initialize OpenGL for the display.");
+    }
+}
+
+DisplayHandle Display::GetHandle() const
+{
+    return m_display;
+}
+
+PixelFormat Display::GetConfig(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, uint8_t depth) const
+{
+    const  EGLint configAttribs[] = {
         EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
-        EGL_BLUE_SIZE, 8,
-        EGL_GREEN_SIZE, 8,
-        EGL_RED_SIZE, 8,
-        EGL_DEPTH_SIZE, 8,
+        EGL_RED_SIZE, red,
+        EGL_GREEN_SIZE, green,
+        EGL_BLUE_SIZE, blue,
+        EGL_ALPHA_SIZE, alpha,
+        EGL_DEPTH_SIZE, depth,
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
         EGL_NONE
     };
+    // Choose the first EGL configuration that matches our requirements
+    EGLint numConfigs = 0;
+    EGLConfig eglCfg = nullptr;
+    if (!eglChooseConfig(m_display, configAttribs, &eglCfg, 1, &numConfigs))
+        throw std::runtime_error("Failed to configure the desired pixel format");
+    if (numConfigs==0)
+        throw std::runtime_error("The desired pixel format is not available");
+    return eglCfg;
+}
 
+Display::~Display()
+{
+    if (m_display!= EGL_NO_DISPLAY)
+    {
+        eglTerminate(m_display);
+    }
+}
+
+OffscreenSurface::OffscreenSurface(const Display& display, unsigned width, unsigned height, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, uint8_t depth) :
+    m_display(display)
+{
+    if ((width > std::numeric_limits<int>::max()) ||
+        (height > std::numeric_limits<int>::max()))
+    {
+        throw std::invalid_argument("Offscreen surface extends to big");
+    }
+    auto config = m_display.GetConfig(red, green, blue, alpha, depth);
     // Set the desired pixel buffer configuration
-    static const EGLint pbufferAttribs[] = {
-        EGL_WIDTH, static_cast<int>(100),   // TODO: configurable?
-        EGL_HEIGHT, static_cast<int>(100),
+    const EGLint pbufferAttribs[] = {
+        EGL_WIDTH, static_cast<int>(width),
+        EGL_HEIGHT, static_cast<int>(height),
         EGL_NONE,
     };
 
-    // TODO: separate open gl application/hidden window from surface for wgl and egl
-    // Initialize EGL
-    EGLDisplay eglDpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    EGLint major, minor;
-    EGLBoolean result = eglInitialize(eglDpy, &major, &minor);
-    EGLint err = eglGetError();
-    m_display = eglDpy;
-
-    // Choose the first EGL configuration that matches our requirements
-    EGLint numConfigs;
-    static EGLConfig eglCfg;
-    result = eglChooseConfig(eglDpy, configAttribs, &eglCfg, 1, &numConfigs);
-    err = eglGetError();
-
-    result = eglBindAPI(EGL_OPENGL_API);
-    err = eglGetError();
     // Create a pixel buffer surface
-    EGLSurface eglSurf = eglCreatePbufferSurface(eglDpy, eglCfg, pbufferAttribs);
-    m_surface = eglSurf;
+    m_surface = eglCreatePbufferSurface(display.GetHandle(), config, pbufferAttribs);
 
-    EGLContext context = eglCreateContext(eglDpy, eglCfg, EGL_NO_CONTEXT, nullptr);
-    result = eglMakeCurrent(eglDpy, eglSurf, eglSurf, context);
-    err = eglGetError();
+    m_context = eglCreateContext(m_display.GetHandle(), config, EGL_NO_CONTEXT, nullptr);
+    if (m_context == EGL_NO_CONTEXT)
+    {
+        Destroy();
+        throw std::runtime_error("Failed to create an OpenGL Context for an offscreen surface");
+    }
+
+    if (!eglMakeCurrent(m_display.GetHandle(), m_surface, m_surface, m_context))
+    {
+        Destroy();
+        throw std::runtime_error("Failed to create ");
+
+    }
 
     // TODO: neither the linux nor the window implementation should bre responsible for glew, move to the app part
     GLenum glewError = glewInit();
     if ((GLEW_OK != glewError) && (GLEW_ERROR_NO_GLX_DISPLAY != glewError))
     {
-        eglDestroySurface((EGLDisplay)m_display, (EGLSurface)m_surface);
-        m_surface = nullptr;
+        Destroy();
         throw std::runtime_error("Failed to initialize GLEW");
     }
 }
 
 OffscreenSurface::~OffscreenSurface()
 {
-    // TODO eglDestroyContext(m_context);
-    eglDestroySurface((EGLDisplay)m_display, (EGLSurface)m_surface);
+    Destroy();
 }
+
+void OffscreenSurface::Destroy()
+{
+    if (m_context!=EGL_NO_CONTEXT)
+    {
+        eglDestroyContext(m_display.GetHandle(), m_context);
+        m_context = EGL_NO_CONTEXT;
+    }
+    if (m_surface!=EGL_NO_SURFACE)
+    {
+        eglDestroySurface(m_display.GetHandle(), m_surface);
+        m_surface = EGL_NO_SURFACE;
+    }
+}
+
 }
 #endif
