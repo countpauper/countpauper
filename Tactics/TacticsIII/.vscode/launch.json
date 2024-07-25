@@ -9,12 +9,14 @@
                         "type": "cppdbg",
                         "request": "launch",
                         "program": "${workspaceFolder}/build/tactics",
+                        "cwd": "${workspaceFolder}",
                         "args": ["-gldebug", "-geometry", "1000x750"],
                         "stopAtEntry": false,
-                        "cwd": "${workspaceFolder}",
                         "environment": [],
                         // With this false, gdb will exit  with code 0xc0000139 if C++20 or C++23 is used. Weird
-                        "externalConsole": true,
+                        "windows": {
+                                "externalConsole": true
+                        },
                         "MIMode": "gdb",
                         "setupCommands": [
                             {
@@ -35,7 +37,7 @@
                         "cwd": "${cmake.testWorkingDirectory}",
                         "request": "launch",
                         "program": "${cmake.testProgram}",
-                        "args": [ "${cmake.testArgs}" ]
+                        "args": [ "${cmake.testArgs}" ],
                 },
                 {
                         "name": "Python Debugger: Current File",
