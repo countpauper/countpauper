@@ -28,7 +28,7 @@ namespace Engine
         nextBase += 128;    // TODO can be optimized to 100 main characters (32 to 128-32)
         ReleaseDC(nullptr, hdc);
         #else
-        assert(false);
+        // nothing needed it seems
         #endif
     }
 

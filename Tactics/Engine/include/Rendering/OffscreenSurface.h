@@ -10,7 +10,8 @@ public:
     OffscreenSurface();
     ~OffscreenSurface();
 private:
-    void* m_glRC;
+    void* m_display; // Render context for windows, display for egl
+    void *m_surface;
 };
 
 }

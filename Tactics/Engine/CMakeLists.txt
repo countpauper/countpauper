@@ -5,7 +5,7 @@ target_compile_features(Engine PRIVATE cxx_std_23)
 set(DEPENDENCIES_DIR ../../Dependencies)
 
 project(Engine)
-find_package(OpenGL REQUIRED)
+find_package(OpenGL REQUIRED COMPONENTS OpenGL EGL)
 find_package(GLEW REQUIRED)
 find_package(GLUT REQUIRED)
 add_subdirectory("${DEPENDENCIES_DIR}/Stb" "${CMAKE_CURRENT_BINARY_DIR}/Stb")
@@ -20,6 +20,7 @@ target_link_libraries(Engine
         Stb
         GLUT::GLUT
         nlohmann_json::nlohmann_json
+        OpenGL::EGL
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES})
 
