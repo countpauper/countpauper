@@ -109,17 +109,6 @@ void Window::Render()
 
     CurrentWindow()->GetScene().Render();
     CurrentWindow()->GetHUD().Render();
-/*
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glScaled(2.0, -2.0, 1.0);       // make positive y go down
-    glTranslated(-0.5, -0.5, -1.0); // top left and front of z-buffer
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glText("User\ninterface");
-    // Don't wait start processing buffered OpenGL routines
-*/
     glFlush();
 }
 

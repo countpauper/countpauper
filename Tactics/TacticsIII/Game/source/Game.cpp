@@ -150,6 +150,4 @@ void Game::Changed()
         Engine::Application::Get().bus.Post(Engine::Redraw(&Current()));
 }
 
-
-
 }

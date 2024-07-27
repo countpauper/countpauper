@@ -43,7 +43,16 @@ class Dependency {
    operator: enum
 }
 
+class Avatar
 
+Avatar *--> Creature
+package Engine {
+   package UI {
+      class Scenery
+   }
+}
+
+Avatar --|> Engine.UI.Scenery
 StatDescriptor ---- Statted
 Statted o--> "<<singleton>>" StatDefintition
 Stat *--> "*" Dependency

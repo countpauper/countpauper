@@ -24,7 +24,6 @@ void Label::AddText(std::string_view newText)
 
 void Label::Render() const
 {
-
     if (!shown)
         return;
     if (IsEnabled())

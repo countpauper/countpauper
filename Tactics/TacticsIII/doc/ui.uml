@@ -11,16 +11,55 @@ class Avatar {
 
 
 package Engine {
-    interface Object
+    interface Object {
+        <<read only>>
+        +name: string
+    }
+
+    class Mesh
+
     package UI {
         class Bus {
-            Post(Message, data)
-            Subscribe(Message, fn)
+            + Post(Message, data)
+            + Subscribe(Message, fn)
         }
         class Scene
+        class Scenery {
+            + Render()
+            + Intersection(Line): double
+            <<read only>>
+            + Coordinate :Coordinate
+            + Orientation: Quaternion
+        }
+
+        class Control {
+            + Render()
+            + Click(Coordinate): Control*
+            + Find<Type>(path): Control*
+            + enabled: bool
+            + shown: bool
+            + name: string
+        }
+        class Controls
+        Controls *--> "*" Control
+
+        class Hud {
+            + Render()
+            + Click(Coordinate): Control*
+            - projection: Matrix
+        }
+
         class Window
         Scene o--> Bus
         Window o--> Bus
+        Window *--> "1" Scene
+        Window *--> "1" Hud
+        Hud --|> Controls
+        Controls --|> Control
+        Scene *--> "*" Scenery
+        Scenery ..|> Object
+        Scenery o--> "1" Mesh
+
     }
 }
 @enduml
