@@ -27,7 +27,7 @@ Coordinate Scenery::GetCoordinate() const
 
 Quaternion Scenery::GetOrientation() const
 {
-    return Quaternion::Identity();
+    return Quaternion::Identity;
 }
 
 std::pair<double, std::uint32_t> Scenery::Intersection(const Line& line) const

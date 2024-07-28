@@ -3,6 +3,8 @@
 #include "Geometry/IntBox.h"
 #include "Geometry/Plane.h"
 #include "Geometry/Vector.h"
+#include "Geometry/Quaternion.h"
+
 namespace Engine
 {
 
@@ -18,6 +20,9 @@ const Vector Vector::zero(0, 0, 0);
 const Vector Vector::X(1, 0, 0);
 const Vector Vector::Y(0, 1, 0);
 const Vector Vector::Z(0, 0, 1);
+
+const Quaternion Quaternion::Identity(0, 0, 0, 1);
+
 
 Plane Plane::null(Vector::zero, 0);
 Plane Plane::xy(Vector::Z, 0);

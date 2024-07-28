@@ -12,7 +12,7 @@ namespace Engine::Test
 
 TEST(Quaternion, Identity)
 {
-    Quaternion identity = Quaternion::Identity();
+    Quaternion identity = Quaternion::Identity;
     Vector v(1, 2, 3);
     EXPECT_EQ(v.x, (identity * v).x);
     EXPECT_EQ(v.y, (identity * v).y);
@@ -82,7 +82,7 @@ TEST(Quaternion, Shortest)
     EXPECT_3D_EQ(Quaternion::Shortest(Vector::X, Vector::Z) * Vector::X, Vector::Z);
     EXPECT_3D_EQ(Quaternion::Shortest(Vector::X, Vector::Y) * Vector::X, Vector::Y);
     EXPECT_3D_EQ(Quaternion::Shortest(Vector::X, Vector::Z) * Vector(2, 0, 0), Vector(0, 0, 2));
-    EXPECT_EQ(Quaternion::Shortest(Vector::Z, Vector::Z), Quaternion::Identity());
+    EXPECT_EQ(Quaternion::Shortest(Vector::Z, Vector::Z), Quaternion::Identity);
 
     Quaternion rot(Vector(0, 2, 3), PI*0.5);
     rot.Normalize();

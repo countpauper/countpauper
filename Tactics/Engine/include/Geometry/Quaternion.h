@@ -19,7 +19,7 @@ struct Quaternion
     bool operator==(const Quaternion& o)const;
     Matrix AsMatrix() const;
     double x, y, z, w;
-    static Quaternion Identity();
+    static const Quaternion Identity;
     static Quaternion Shortest(const Vector& a, const Vector& b);
     void Render() const;
 private:
