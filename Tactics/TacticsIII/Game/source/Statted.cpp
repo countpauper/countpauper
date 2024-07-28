@@ -17,7 +17,7 @@ StatDescriptor Statted::Get(Stat::Id id) const
         return StatDescriptor();
     }
     StatDescriptor result(Definition().at(id).Limit());
-    result.Contribute("", it->second, false);
+    result.Contribute(Name(), it->second, false);
     return result;
 }
 

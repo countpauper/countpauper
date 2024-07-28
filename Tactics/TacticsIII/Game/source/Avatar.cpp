@@ -76,7 +76,7 @@ const Creature& Avatar::GetCreature() const
 
 double Avatar::HitChance(const Avatar& target) const
 {
-    int hitScore = target.GetCreature().Get(Stat::dodge) + target.GetCreature().Get(Stat::block);    // TODO: front
+    auto hitScore = target.GetCreature().Get(Stat::dodge) + target.GetCreature().Get(Stat::block);    // TODO: front
 
     return 1.0;
 }

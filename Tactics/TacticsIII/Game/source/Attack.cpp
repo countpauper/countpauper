@@ -31,11 +31,11 @@ void Attack::Execute(std::ostream& log) const
         return;
     }
 
-    int damage =  actor.GetCreature().Get(Stat::offense) - target.GetCreature().Get(Stat::defense);
-    if ( damage > 0 )
+    auto damage =  actor.GetCreature().Get(Stat::offense) - target.GetCreature().Get(Stat::defense);
+    if ( damage.Total() > 0 )
     {
-        target.GetCreature().Cost(Stat::hp, damage);
-        log << actor.Name() << " deals " << target.Name() << " " << damage << "Damage Type" << std::endl;
+        target.GetCreature().Cost(Stat::hp, damage.Total());
+        log << actor.Name() << " deals " << target.Name() << " " << damage.Description() << " Damage" << std::endl;
     }
     else
     {

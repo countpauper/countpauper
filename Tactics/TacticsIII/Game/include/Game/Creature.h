@@ -31,7 +31,7 @@ public:
     // No stat can go over its maximum and no stat can go under 0 or its clipped (actually resistance could be negative)
     StatDescriptor Get(Stat::Id id) const override;
     const StatDefinition& Definition() const override;
-    std::string_view Name() const;
+    std::string_view Name() const override;
     const Race& GetRace() const;
     static StatDefinition definition;
 

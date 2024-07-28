@@ -129,8 +129,13 @@ StatDescriptor Stat::Compute(const Statted& object) const
         else if (dependency)
                 result.Contribute(object.Definition().at(dependency).name, left * multiplier);
         else
-            // NB this could cause infinite recursion, unless object is mocked or its a primary stat
-            result.Contribute("Mock", object.Get(object.Definition().Identify(Name())).Total());
+        {
+                // NB this could cause infinite recursion, unless object is mocked or its a primary stat
+                auto mockStat = object.Get(object.Definition().Identify(Name()));
+                if (mockStat.IsValid())
+                            result.Contribute("Mock", mockStat.Total());
+
+        }
         return result;
 }
 

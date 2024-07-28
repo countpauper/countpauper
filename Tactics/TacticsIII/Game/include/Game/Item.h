@@ -13,6 +13,7 @@ class Item :
 public:
     Item();
     static StatDefinition definition;
+    std::string_view Name() const override;
     StatDescriptor Get(Stat::Id id) const;
     const StatDefinition& Definition() const;
 protected:

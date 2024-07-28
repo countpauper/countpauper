@@ -20,7 +20,6 @@ void StatDefinition::Load(const char* filename)
     Load(defFile);
 }
 
-
 void StatDefinition::Parse(std::string_view data)
 {
     json parsed = json::parse(data);
@@ -38,11 +37,11 @@ void StatDefinition::Define(json& parsed)
         {
             throw std::runtime_error("Unknown stat: " + name);
         }
-        emplace(id, Stat(name, stat, *this));
-
+        auto stat_place = emplace(id, Stat(name, stat, *this));
+        assert(stat_place.second);  // duplicate state id
         if (auto counterDefinition = Engine::try_get<json>(stat, "counter"))
         {
-                counters.emplace_back(rbegin()->second, *counterDefinition);
+                counters.emplace_back(stat_place.first->second, *counterDefinition);
         }
     }
 }

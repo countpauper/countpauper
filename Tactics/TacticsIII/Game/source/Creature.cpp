@@ -42,18 +42,18 @@ StatDescriptor Creature::Get(Stat::Id id) const
 {
     StatDescriptor result = Statted::Get(id);
 
-    if (!result)
+    if (!result.IsValid())
     {
         for(const auto& item : items)
         {
             result = item->Get(id);
-            if (result)
+            if (result.IsValid())
             {
                 break;
             }
         }
     }
-    if ((!result) && (id))
+    if ((!result.IsValid()) && (id))
     {
         result = definition[id].Compute(*this);
     }

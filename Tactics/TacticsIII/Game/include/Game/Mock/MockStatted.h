@@ -16,7 +16,9 @@ public:
     {
         definition.insert(stats);
         ON_CALL(*this, Definition()).WillByDefault(::testing::ReturnRef(definition));
+        ON_CALL(*this, Name()).WillByDefault(::testing::Return("Mock"));
     }
+    MOCK_METHOD(std::string_view, Name, (), (const override));
     MOCK_METHOD(StatDescriptor, Get, (Stat::Id id), (const override));
     MOCK_METHOD(const class StatDefinition&,  Definition, (), (const override));
 
