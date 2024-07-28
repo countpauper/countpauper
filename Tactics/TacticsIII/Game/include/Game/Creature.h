@@ -37,6 +37,8 @@ public:
 
     unsigned CounterAvailable(Stat::Id) const;
     unsigned Cost(Stat::Id counter, unsigned cost, bool truncate=false);
+    void Damage(unsigned hitpoints);
+    bool IsKO() const;
     void Reset(Counter::Reset at);
 private:
     std::string name;

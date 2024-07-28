@@ -34,8 +34,16 @@ void Attack::Execute(std::ostream& log) const
     auto damage =  actor.GetCreature().Get(Stat::offense) - target.GetCreature().Get(Stat::defense);
     if ( damage.Total() > 0 )
     {
-        target.GetCreature().Cost(Stat::hp, damage.Total());
-        log << actor.Name() << " deals " << target.Name() << " " << damage.Description() << " Damage" << std::endl;
+        auto& targetCreature = target.GetCreature();
+        targetCreature.Damage(damage.Total());
+        if (targetCreature.IsKO())
+        {
+            log << actor.Name() << " knocks " << target.Name() << " out with " << damage.Description() << " Damage" << std::endl;
+        }
+        else
+        {
+            log << actor.Name() << " deals " << target.Name() << " " << damage.Description() << " Damage" << std::endl;
+        }
     }
     else
     {

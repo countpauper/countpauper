@@ -4,6 +4,7 @@
 #include "Geometry/Matrix.h"
 #include "UI/GameMessages.h"
 #include "Utility/String.h"
+#include "Geometry/Angles.h"
 
 namespace Game
 {
@@ -59,6 +60,11 @@ void Avatar::Move(Engine::Position destination)
     position = destination;
 }
 
+void Avatar::Prone()
+{
+    prone = true;
+}
+
 Engine::Position Avatar::Position() const
 {
     return position;
@@ -84,6 +90,14 @@ double Avatar::HitChance(const Avatar& target) const
 Engine::Coordinate Avatar::GetCoordinate() const
 {
     return map.GroundCoord(position);
+}
+
+Engine::Quaternion Avatar::GetOrientation() const
+{
+    if (prone)
+        return Engine::Quaternion(Engine::Vector::Y, Engine::PI/2);
+    else    // TODO: add a facing here
+        return Engine::Quaternion::Identity;
 }
 
 std::string_view Avatar::Name() const

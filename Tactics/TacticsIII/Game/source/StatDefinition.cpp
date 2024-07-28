@@ -59,6 +59,20 @@ Stat::Id StatDefinition::Identify(std::string_view name) const
     return Stat::Id::none;
 }
 
+Counter& StatDefinition::Count(Stat::Id id, Counter::Reset reset, bool resetToMax)
+{
+    auto stat = find(id);
+    if (stat==end())
+    {
+        counters.emplace_back("unknown", nullptr, reset, resetToMax);
+    }
+    else
+    {
+        counters.emplace_back(statNames[id], &stat->second, reset, resetToMax);
+    }
+    return counters.back();
+}
+
 std::vector<const Counter*> StatDefinition::GetCounters() const
 {
     std::vector<const Counter*> result;

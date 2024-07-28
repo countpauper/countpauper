@@ -95,6 +95,17 @@ unsigned Creature::Cost(Stat::Id stat, unsigned cost, bool truncate)
     return cost;
 }
 
+
+void Creature::Damage(unsigned hitpoints)
+{
+    Cost(Stat::hp, hitpoints, true);
+}
+
+bool Creature::IsKO() const
+{
+    return CounterAvailable(Stat::hp) <= 0;
+}
+
 void Creature::Reset(Counter::Reset at)
 {
     for(auto& counter : countersUsed)
