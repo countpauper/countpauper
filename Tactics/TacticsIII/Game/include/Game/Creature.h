@@ -48,6 +48,15 @@ public:
             return dynamic_cast<const CT*>(c.get()) != nullptr;
         }) != conditions.end();
     }
+    template<class CT>
+    void Apply()
+    {
+        if (!Is<CT>())
+        {
+            conditions.emplace_back(std::make_unique<CT>());
+        }
+    }
+    std::vector<std::reference_wrapper<const Condition>> Conditions() const;
     void Reset(Counter::Reset at);
 private:
     std::string name;

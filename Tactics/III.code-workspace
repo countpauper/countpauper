@@ -8,6 +8,7 @@
 		}
 	],
 	"settings": {
+		"C_Cpp.autoAddFileAssociations": false
 	},
 	"extensions": {
 		"recommendations": [

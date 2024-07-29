@@ -107,9 +107,20 @@ bool Creature::Damage(unsigned hitpoints)
     {
         return false;
     }
-    conditions.emplace_back(std::make_unique<Downed>());
-    conditions.emplace_back(std::make_unique<KO>());
+    Apply<Downed>();
+    Apply<KO>();
     return true;
+}
+
+std::vector<std::reference_wrapper<const Condition>> Creature::Conditions() const
+{
+    std::vector<std::reference_wrapper<const Condition>> result;
+    std::transform(conditions.begin(), conditions.end(), std::back_inserter(result),
+    [](const decltype(conditions)::value_type& c)
+    {
+        return std::reference_wrapper<const Condition>(*c);
+    });
+    return result;
 }
 
 void Creature::Reset(Counter::Reset at)

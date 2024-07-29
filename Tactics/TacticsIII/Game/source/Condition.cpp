@@ -26,12 +26,14 @@ int Condition::Contribution(Stat::Id stat) const
 KO::KO() :
     Condition("KO")
 {
-    bonus[Stat::ap] = -255;
+    bonus[Stat::ap] = std::numeric_limits<int>::min();
 }
 
 Downed::Downed() :
     Condition("Downed")
 {
+    bonus[Stat::speed] = -2;
+    bonus[Stat::dodge] = -5;
 }
 
 }
