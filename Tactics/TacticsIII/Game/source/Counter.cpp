@@ -6,7 +6,7 @@
 namespace Game
 {
 
-Counter::Counter(std::string_view name, const Stat* maxStat, Counter::Reset reset, bool resetTo) :
+Counter::Counter(std::string_view name, Stat::Id maxStat, Counter::Reset reset, bool resetTo) :
     name(name),
     maxStat(maxStat),
     resetAt(reset),
@@ -14,11 +14,11 @@ Counter::Counter(std::string_view name, const Stat* maxStat, Counter::Reset rese
 {
 }
 
-Counter::Counter(const Stat& maxStat, const json& j) :
-    maxStat(&maxStat)
+Counter::Counter(Stat::Id maxStat, const json& j, std::string_view defaultName) :
+    name(Engine::get_value_or(j, "name", defaultName)),
+    resetToMax(!Engine::get_value_or(j, "reset_to_min", false)),
+    maxStat(maxStat)
 {
-        name = Engine::get_value_or(j, "name", maxStat.Name());
-        resetToMax = !Engine::get_value_or(j, "reset_to_min", false);
         std::string resetAtStr = Engine::get_value_or<std::string>(j, "reset", "battle");
         resetAt = Engine::from_string(resetAtStr, std::map<std::string_view, Reset>{
             {"never", Reset::never},
@@ -35,7 +35,7 @@ unsigned Counter::Available(int used, const Statted& stats) const
     if (!maxStat)
         return std::numeric_limits<unsigned>::max();
 
-    int max = maxStat->Compute(stats).Total();
+    int max = stats.Get(maxStat).Total();
     if (used >= max)
     {
         return 0;
@@ -48,7 +48,7 @@ unsigned Counter::Available(int used, const Statted& stats) const
 
 bool Counter::ResetWhen(Reset when) const
 {
-    if (maxStat == nullptr)
+    if (maxStat == Stat::Id::none)
         return false;
     return static_cast<int>(when) <= static_cast<int>(resetAt);
 }
@@ -58,7 +58,7 @@ std::string_view Counter::Name() const
     return name;
 }
 
-bool Counter::ForStat(const Stat* stat) const
+bool Counter::ForStat(Stat::Id stat) const
 {
     return maxStat == stat;
 }

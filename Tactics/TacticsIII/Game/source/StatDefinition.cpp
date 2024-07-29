@@ -41,7 +41,7 @@ void StatDefinition::Define(json& parsed)
         assert(stat_place.second);  // duplicate state id
         if (auto counterDefinition = Engine::try_get<json>(stat, "counter"))
         {
-                counters.emplace_back(stat_place.first->second, *counterDefinition);
+                counters.emplace_back(id, *counterDefinition, name);
         }
     }
 }
@@ -59,17 +59,23 @@ Stat::Id StatDefinition::Identify(std::string_view name) const
     return Stat::Id::none;
 }
 
+Stat::Id StatDefinition::Identify(const Stat* stat) const
+{
+    if (!stat)
+        return Stat::Id::none;
+    auto it = std::find_if(begin(), end(), [stat](const value_type& itStat)
+    {
+        return &itStat.second == stat;
+    });
+    if (it!=end())
+        return it->first;
+    else
+        throw std::runtime_error(std::string("Stat ") + std::string(stat->Name()) + " not found in the stat definition.");
+}
+
 Counter& StatDefinition::Count(Stat::Id id, Counter::Reset reset, bool resetToMax)
 {
-    auto stat = find(id);
-    if (stat==end())
-    {
-        counters.emplace_back("unknown", nullptr, reset, resetToMax);
-    }
-    else
-    {
-        counters.emplace_back(statNames[id], &stat->second, reset, resetToMax);
-    }
+    counters.emplace_back(statNames[id], id, reset, resetToMax);
     return counters.back();
 }
 

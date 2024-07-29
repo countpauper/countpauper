@@ -57,6 +57,10 @@ StatDescriptor Creature::Get(Stat::Id id) const
     {
         result = definition[id].Compute(*this);
     }
+    for(const auto& c : conditions)
+    {
+        result = result.Contribute(c->Name(), c->Contribution(id));
+    }
     // TODO: add all other bonuses from items and magic
     result.Contribute(race.Name(), race.Bonus(id));
     return result;
@@ -71,7 +75,7 @@ unsigned Creature::CounterAvailable(Stat::Id stat) const
 {
     auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
     {
-        return counter.first->ForStat(&Definition().at(stat));
+        return counter.first->ForStat(stat);
     });
     if (counterIt == countersUsed.end())
        return 0;
@@ -82,7 +86,7 @@ unsigned Creature::Cost(Stat::Id stat, unsigned cost, bool truncate)
 {
     auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
     {
-        return counter.first->ForStat(&Definition().at(stat));
+        return counter.first->ForStat(stat);
     });
     if (counterIt == countersUsed.end())
         return 0;
@@ -96,14 +100,16 @@ unsigned Creature::Cost(Stat::Id stat, unsigned cost, bool truncate)
 }
 
 
-void Creature::Damage(unsigned hitpoints)
+bool Creature::Damage(unsigned hitpoints)
 {
     Cost(Stat::hp, hitpoints, true);
-}
-
-bool Creature::IsKO() const
-{
-    return CounterAvailable(Stat::hp) <= 0;
+    if (CounterAvailable(Stat::hp))
+    {
+        return false;
+    }
+    conditions.emplace_back(std::make_unique<Downed>());
+    conditions.emplace_back(std::make_unique<KO>());
+    return true;
 }
 
 void Creature::Reset(Counter::Reset at)

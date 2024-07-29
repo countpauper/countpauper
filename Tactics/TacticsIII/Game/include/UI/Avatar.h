@@ -23,7 +23,6 @@ public:
     Engine::Quaternion GetOrientation() const override;
     void Select(bool on);
     void Move(Engine::Position destination);
-    void Prone();
     Engine::Position Position() const;
     Creature& GetCreature();
     const Creature& GetCreature() const;
@@ -34,7 +33,6 @@ private:
     Engine::Position position;
     Creature creature;
     bool selected = false;
-    bool prone =false;
 };
 
 }

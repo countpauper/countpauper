@@ -13,6 +13,8 @@ public:
     void Load(const char* filename);
     void Parse(std::string_view data);
     Stat::Id Identify(std::string_view name) const;
+    Stat::Id Identify(const Stat* stat) const;
+
     Counter& Count(Stat::Id id, Counter::Reset reset=Counter::Reset::never, bool resetToMax=true);
     std::vector<const Counter*> GetCounters() const;
 private:

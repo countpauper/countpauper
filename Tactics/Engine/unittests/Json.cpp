@@ -28,5 +28,17 @@ TEST(JSon, ValueOr)
         EXPECT_EQ(Engine::get_value_or<int>(parsed, "Bar", 3), 3);
 }
 
+TEST(JSon, MustGet)
+{
+        json parsed = json::parse(R"""(
+{
+        "Foo": 5
+}
+        )""");
+
+        EXPECT_EQ(Engine::must_get<int>(parsed, "Foo"), 5);
+        EXPECT_THROW(Engine::must_get<int>(parsed, "Bar"), std::runtime_error);
+}
+
 
 }

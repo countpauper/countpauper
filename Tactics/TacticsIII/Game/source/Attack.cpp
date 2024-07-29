@@ -35,8 +35,7 @@ void Attack::Execute(std::ostream& log) const
     if ( damage.Total() > 0 )
     {
         auto& targetCreature = target.GetCreature();
-        targetCreature.Damage(damage.Total());
-        if (targetCreature.IsKO())
+        if (targetCreature.Damage(damage.Total()))
         {
             log << actor.Name() << " knocks " << target.Name() << " out with " << damage.Description() << " Damage" << std::endl;
         }

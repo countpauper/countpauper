@@ -60,10 +60,6 @@ void Avatar::Move(Engine::Position destination)
     position = destination;
 }
 
-void Avatar::Prone()
-{
-    prone = true;
-}
 
 Engine::Position Avatar::Position() const
 {
@@ -94,7 +90,7 @@ Engine::Coordinate Avatar::GetCoordinate() const
 
 Engine::Quaternion Avatar::GetOrientation() const
 {
-    if (prone)
+    if (creature.Is<Downed>())
         return Engine::Quaternion(Engine::Vector::Y, Engine::PI/2);
     else    // TODO: add a facing here
         return Engine::Quaternion::Identity;
@@ -104,7 +100,6 @@ std::string_view Avatar::Name() const
 {
     return creature.Name();
 }
-
 
 std::string Avatar::Sheet() const
 {

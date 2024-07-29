@@ -66,10 +66,10 @@ TEST(Creature, damage_reduces_hitpoints)
     c.Level(Stat::level, 1);
     ASSERT_EQ(c.CounterAvailable(Stat::hp), 2);
     c.Damage(1);
-    EXPECT_FALSE(c.IsKO());
+    EXPECT_FALSE(c.Is<KO>());
     EXPECT_EQ(c.CounterAvailable(Stat::hp), 1);
     c.Damage(2);
-    EXPECT_TRUE(c.IsKO());
+    EXPECT_TRUE(c.Is<KO>());
     EXPECT_EQ(c.CounterAvailable(Stat::hp), 0);
 }
 

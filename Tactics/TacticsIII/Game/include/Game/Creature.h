@@ -5,6 +5,7 @@
 #include "Game/StatDefinition.h"
 #include "Game/Race.h"
 #include "Game/Item.h"
+#include "Game/Condition.h"
 #include "Game/StatDescriptor.h"
 #include "UI/Object.h"
 
@@ -37,8 +38,16 @@ public:
 
     unsigned CounterAvailable(Stat::Id) const;
     unsigned Cost(Stat::Id counter, unsigned cost, bool truncate=false);
-    void Damage(unsigned hitpoints);
-    bool IsKO() const;
+    bool Damage(unsigned hitpoints);
+
+    template<class CT>
+    bool Is() const
+    {
+        return std::find_if(conditions.begin(), conditions.end(), [](const std::unique_ptr<Condition>& c)
+        {
+            return dynamic_cast<const CT*>(c.get()) != nullptr;
+        }) != conditions.end();
+    }
     void Reset(Counter::Reset at);
 private:
     std::string name;
@@ -46,6 +55,7 @@ private:
     std::vector<std::reference_wrapper<Item>> inventory;
     std::map<const Counter*, int> countersUsed;
     std::vector<std::unique_ptr<Item>> items;
+    std::vector<std::unique_ptr<Condition>> conditions;
 
     // TODO: effects(bonuses) knowledge (with bonuses), actions, skills(extra actions)
 
