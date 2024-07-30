@@ -55,7 +55,7 @@ StatDescriptor Creature::Get(Stat::Id id) const
     }
     if ((!result.IsValid()) && (id))
     {
-        result = definition[id].Compute(*this);
+        result = definition.at(id).Compute(*this);
     }
     for(const auto& c : conditions)
     {

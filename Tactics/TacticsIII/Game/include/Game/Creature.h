@@ -51,6 +51,7 @@ public:
     template<class CT>
     void Apply()
     {
+        // TODO: power level that replaces
         if (!Is<CT>())
         {
             conditions.emplace_back(std::make_unique<CT>());
@@ -63,7 +64,7 @@ private:
     const Race& race;
     std::vector<std::reference_wrapper<Item>> inventory;
     std::map<const Counter*, int> countersUsed;
-    std::vector<std::unique_ptr<Item>> items;
+    std::vector<std::unique_ptr<Item>> items;  // TODO: item db should be externally owned
     std::vector<std::unique_ptr<Condition>> conditions;
 
     // TODO: effects(bonuses) knowledge (with bonuses), actions, skills(extra actions)

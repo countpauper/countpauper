@@ -10,12 +10,14 @@ class StatDefintition {
 }
 interface Statted
 {
-   Get(stat) : StatDescriptor
+   + Get(stat) : StatDescriptor
+   # stats: <Stat, int>
 }
 
 
 class Creature {
   name: string
+  used: <Counter, unsigned>
 }
 
 Creature ...|> Statted
@@ -35,8 +37,20 @@ class Stat {
     description : string
     limit: Range
 }
+class Counter {
+   name: string
+   resetAt: enum
+   resetToMax: bool
+}
+Counter o--> "max" Stat
+
+class Condition {
+   name: string
+   bonus: <stat, int>
+}
 
 Creature o--> "6 primary" Stat
+Creature *--> "*" Condition
 
 class Dependency {
    table: int[]
@@ -46,12 +60,6 @@ class Dependency {
 class Avatar
 
 Avatar *--> Creature
-package Engine {
-   package UI {
-      class Scenery
-   }
-}
-
 Avatar --|> Engine.UI.Scenery
 StatDescriptor ---- Statted
 Statted o--> "<<singleton>>" StatDefintition
@@ -60,7 +68,8 @@ Dependency o--> Stat
 
 Creature o--> "1" Race
 Creature o--> "*" Item
-StatDefintition *---> Stat
+StatDefintition *---> "*" Stat
+StatDefintition *--> "* id" Counter
 
 Item ..|> Statted
 @enduml

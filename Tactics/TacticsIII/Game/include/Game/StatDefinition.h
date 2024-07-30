@@ -14,6 +14,7 @@ public:
     void Parse(std::string_view data);
     Stat::Id Identify(std::string_view name) const;
     Stat::Id Identify(const Stat* stat) const;
+    std::string_view Name(Stat::Id) const;
 
     Counter& Count(Stat::Id id, Counter::Reset reset=Counter::Reset::never, bool resetToMax=true);
     std::vector<const Counter*> GetCounters() const;

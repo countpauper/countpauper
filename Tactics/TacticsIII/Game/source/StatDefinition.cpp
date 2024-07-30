@@ -59,6 +59,12 @@ Stat::Id StatDefinition::Identify(std::string_view name) const
     return Stat::Id::none;
 }
 
+
+std::string_view StatDefinition::Name(Stat::Id id) const
+{
+    return statNames.at(id);
+}
+
 Stat::Id StatDefinition::Identify(const Stat* stat) const
 {
     if (!stat)

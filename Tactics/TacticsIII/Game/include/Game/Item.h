@@ -19,7 +19,6 @@ public:
 protected:
     std::string name;
     std::map<Stat::Id, int> bonus;
-    std::map<Stat::Id, int> enchantment;
 };
 
 }

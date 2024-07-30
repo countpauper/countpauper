@@ -46,4 +46,16 @@ TEST(Counter, available)
     EXPECT_EQ(counter.Available(6, stats), 0);
 }
 
+TEST(Counter, available_follows_max)
+{
+    MockStatted stats;
+    EXPECT_CALL(stats, Get(Stat::ap)).WillOnce(Return(StatDescriptor(3)));
+    Counter counter("actions", Stat::Id::ap);
+    EXPECT_EQ(counter.Available(0, stats), 3);
+    EXPECT_CALL(stats, Get(Stat::ap)).WillOnce(Return(StatDescriptor(1)));
+    EXPECT_EQ(counter.Available(0, stats), 1);
+
+    EXPECT_CALL(stats, Get(Stat::ap)).WillOnce(Return(StatDescriptor(1)));
+    EXPECT_EQ(counter.Available(2, stats), 0);
+}
 }
