@@ -82,7 +82,7 @@ Plan Plan::Attack(Avatar& actor, const Game& game, Avatar& target)
     result.actions.emplace_back(std::move(std::make_unique<::Game::Move>(actor, game, target.Position(), actor.GetCreature().Get(Stat::reach).Total())));
     int attacks = actor.GetCreature().CounterAvailable(Stat::ap) - result.AP();
     for(int attack = 0; attack<attacks; ++attack)
-        result.actions.emplace_back(std::move(std::make_unique<::Game::Attack>(actor, game, target)));
+        result.actions.emplace_back(std::move(std::make_unique<::Game::Attack>(actor, target)));
     return result;
 }
 

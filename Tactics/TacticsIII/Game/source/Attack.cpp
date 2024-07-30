@@ -7,7 +7,7 @@
 namespace Game
 {
 
-Attack::Attack(Avatar& actor, const Game& game, Avatar& target) :
+Attack::Attack(Avatar& actor, Avatar& target) :
     Action(actor),
     target(target)
 {

@@ -5,15 +5,14 @@
 #include "UI/GameMessages.h"
 #include "Utility/String.h"
 #include "Geometry/Angles.h"
+#include "Game/Map.h"
 
 namespace Game
 {
 
-Avatar::Avatar(std::string_view name, const  Game::Race& race, Map& map, Engine::Position pos) :
+Avatar::Avatar(std::string_view name, const Race& race) :
     Scenery(mesh),
-    map(map),
-    creature(name, race),
-    position(pos)
+    creature(name, race)
 {
     mesh += Engine::Box(Engine::Vector(0.75, 0.75, 1.75));
     mesh *= Engine::Matrix::Translation({-0.375, -0.375, 0.0});
@@ -55,9 +54,10 @@ void Avatar::Select(bool on)
 }
 
 
-void Avatar::Move(Engine::Position destination)
+void Avatar::Move(const Map& map, Engine::Position destination)
 {
     position = destination;
+    coordinate = map.GroundCoord(position);
 }
 
 
@@ -85,7 +85,7 @@ double Avatar::HitChance(const Avatar& target) const
 
 Engine::Coordinate Avatar::GetCoordinate() const
 {
-    return map.GroundCoord(position);
+    return coordinate;
 }
 
 Engine::Quaternion Avatar::GetOrientation() const

@@ -94,7 +94,7 @@ void Move::Execute(std::ostream& log) const
     auto ap = AP();
     if (ap)
     {
-        actor.Move(*Reachable());
+        actor.Move(map, *Reachable());
         actor.GetCreature().Cost(Stat::ap, ap, true);
         log << actor.Name() << " moves to " << *Reachable() << std::endl;
     }
