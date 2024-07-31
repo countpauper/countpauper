@@ -13,20 +13,14 @@ Creature::Creature(std::string_view name, const Race& race) :
         {Stat::wis, 2},
         {Stat::intel, 2}
     }),
+    Counted(static_cast<Statted&>(*this)),
     name(name),
     race(race)
 {
-    for(auto counter: Definition().GetCounters())
-    {
-        countersUsed[counter] = 0;
-    }
+    InitializeCounters();
     items.push_back(std::make_unique<Unarmed>());
 }
 
-void Creature::Level(Stat::Id stat, int amount)
-{
-    stats[stat] += amount;
-}
 
 std::string_view Creature::Name() const
 {
@@ -57,16 +51,23 @@ StatDescriptor Creature::Get(Stat::Id id) const
     // Compute secondary stat
     if ((!result.IsValid()) && (id))
     {
-        result = definition.at(id).Compute(*this);
+        auto it = definition.find(id);
+        if (it!=definition.end())
+        {
+            result = it->second.Compute(*this);
+        }
     }
 
-    // Add bonuses
-    for(const auto& c : conditions)
+    if (result.IsValid())
     {
-        result = result.Contribute(c->Name(), c->Contribution(id));
+        // Add bonuses
+        for(const auto& c : conditions)
+        {
+            result = result.Contribute(c->Name(), c->Contribution(id));
+        }
+        // TODO: add all other bonuses from items and magic
+        result.Contribute(race.Name(), race.Bonus(id));
     }
-    // TODO: add all other bonuses from items and magic
-    result.Contribute(race.Name(), race.Bonus(id));
     return result;
 }
 
@@ -75,37 +76,8 @@ const StatDefinition& Creature::Definition() const
     return Creature::definition;
 }
 
-unsigned Creature::Available(Stat::Id stat) const
-{
-    auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
-    {
-        return counter.first->ForStat(stat);
-    });
-    if (counterIt == countersUsed.end())
-       return 0;
-    return counterIt->first->Available(counterIt->second, *this);
-}
 
-unsigned Creature::Cost(Stat::Id stat, unsigned cost, bool truncate)
-{
-    auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
-    {
-        return counter.first->ForStat(stat);
-    });
-    if (counterIt == countersUsed.end())
-        return 0;
-    auto available = counterIt->first->Available(counterIt->second, *this);
-    if (truncate)
-        cost = std::min(cost, available);
-    else if (cost > available)
-        return 0;
-    counterIt->second += cost;
-    OnCounter(stat, available - cost);
-    return cost;
-}
-
-
-void Creature::OnCounter(Stat::Id stat, unsigned remaining)
+void Creature::OnCount(Stat::Id stat, unsigned remaining)
 {
     if (stat == Stat::hp && remaining == 0)
     {
@@ -124,19 +96,6 @@ std::vector<std::reference_wrapper<const Condition>> Creature::Conditions() cons
     });
     return result;
 }
-
-void Creature::Reset(Counter::Reset at)
-{
-    for(auto& counter : countersUsed)
-    {
-        if (counter.first->ResetWhen(at))
-        {
-            counter.second = 0;
-            OnCounter(counter.first->MaxStat(), counter.first->Available(0, *this));
-        }
-    }
-}
-
 
 StatDefinition Creature::definition;
 

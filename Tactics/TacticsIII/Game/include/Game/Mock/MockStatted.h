@@ -22,10 +22,6 @@ public:
     MOCK_METHOD(StatDescriptor, Get, (Stat::Id id), (const override));
     MOCK_METHOD(const class StatDefinition&,  Definition, (), (const override));
 
-    MOCK_METHOD(unsigned, Available, (Stat::Id), (const override));
-    MOCK_METHOD(unsigned, Cost, (Stat::Id counter, unsigned cost, bool truncate), (override));
-    MOCK_METHOD(void, Reset, (Counter::Reset at), (override));
-
     StatDefinition definition;
 };
 

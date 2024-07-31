@@ -16,10 +16,7 @@ public:
     virtual std::string_view Name() const = 0;
     virtual StatDescriptor Get(Stat::Id id) const;
     virtual const class StatDefinition& Definition() const = 0;
-
-    virtual unsigned Available(Stat::Id) const = 0;
-    virtual unsigned Cost(Stat::Id counter, unsigned cost, bool truncate=false) = 0;
-    virtual void Reset(Counter::Reset at) = 0;
+    virtual void Level(Stat::Id stat, int amount);
 protected:
     std::map<Stat::Id, int> stats;
 };

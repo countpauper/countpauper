@@ -21,4 +21,9 @@ StatDescriptor Statted::Get(Stat::Id id) const
     return result;
 }
 
+void Statted::Level(Stat::Id stat, int amount)
+{
+    stats[stat] += amount;
+}
+
 }

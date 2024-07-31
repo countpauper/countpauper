@@ -8,18 +8,27 @@ class StatDescriptor {
 class StatDefintition {
   Load(fn)
 }
+
+interface Counted
+{
+   + Cost(stat, unsigned)
+   + Available(stat)
+   + Reset(at)
+   # used: <Counter, unsigned>
+}
+
 interface Statted
 {
    + Get(stat) : StatDescriptor
    # stats: <Stat, int>
 }
-
+Counted o--> "1" Statted
 
 class Creature {
   name: string
-  used: <Counter, unsigned>
 }
 
+Creature ...|> Counted
 Creature ...|> Statted
 
 class Race {
@@ -71,5 +80,5 @@ Creature o--> "*" Item
 StatDefintition *---> "*" Stat
 StatDefintition *--> "* id" Counter
 
-Item ..|> Statted
+Item ..|> Counter
 @enduml

@@ -76,6 +76,17 @@ const Statted& Avatar::GetStats() const
     return creature;
 }
 
+
+Counted& Avatar::GetCounts()
+{
+    return creature;
+}
+
+const Counted& Avatar::GetCounts() const
+{
+    return creature;
+}
+
 double Avatar::HitChance(const Avatar& target) const
 {
     auto hitScore = target.GetStats().Get(Stat::dodge) + target.GetStats().Get(Stat::block);    // TODO: front

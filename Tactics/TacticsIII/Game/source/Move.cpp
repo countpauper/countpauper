@@ -61,7 +61,7 @@ Move::Move(Avatar& actor, const Game& game, Engine::Position destination, unsign
 std::vector<Engine::Position>::const_iterator Move::Reachable() const
 {
     unsigned grids = actor.GetStats().Get(Stat::speed).Total() *
-        actor.GetStats().Available(Stat::ap);
+        actor.GetCounts().Available(Stat::ap);
     if (grids>=path.size())
     {
         return path.end() - 1;
@@ -95,7 +95,7 @@ void Move::Execute(std::ostream& log) const
     if (ap)
     {
         actor.Move(map, *Reachable());
-        actor.GetStats().Cost(Stat::ap, ap, true);
+        actor.GetCounts().Cost(Stat::ap, ap, true);
         log << actor.Name() << " moves to " << *Reachable() << std::endl;
     }
 }

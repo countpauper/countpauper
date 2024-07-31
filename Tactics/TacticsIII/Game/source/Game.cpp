@@ -120,10 +120,10 @@ void Game::OnMessage(const Engine::Message& message)
             log->AddText(desc);
 
             plan = Plan();
-            if (Current().GetStats().Available(Stat::ap) == 0)
+            if (Current().GetCounts().Available(Stat::ap) == 0)
                 Next();
             else
-                Current().GetStats().Reset(Counter::Reset::action);
+                Current().GetCounts().Reset(Counter::Reset::action);
             Changed();
         }
     }
@@ -143,7 +143,7 @@ void Game::Next()
         turn = 0;
         ++round;
     }
-    Current().GetStats().Reset(Counter::Reset::turn);
+    Current().GetCounts().Reset(Counter::Reset::turn);
     Current().Select(true);
 }
 

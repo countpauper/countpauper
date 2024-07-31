@@ -23,7 +23,7 @@ void Attack::Render() const
 
 void Attack::Execute(std::ostream& log) const
 {
-    actor.GetStats().Cost(Stat::ap, AP());
+    actor.GetCounts().Cost(Stat::ap, AP());
     auto chance = actor.HitChance(target);
     if (chance < Engine::Random().Chance())
     {
@@ -34,8 +34,7 @@ void Attack::Execute(std::ostream& log) const
     auto damage =  actor.GetStats().Get(Stat::offense) - target.GetStats().Get(Stat::defense);
     if ( damage.Total() > 0 )
     {
-        auto& targetCreature = target.GetStats();
-        targetCreature.Cost(Stat::hp, damage.Total(), true);
+        target.GetCounts().Cost(Stat::hp, damage.Total(), true);
         log << actor.Name() << " deals " << target.Name() << " " << damage.Description() << " Damage" << std::endl;
     }
     else

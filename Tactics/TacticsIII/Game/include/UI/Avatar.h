@@ -26,6 +26,8 @@ public:
     Engine::Position Position() const;
     Statted& GetStats();
     const Statted& GetStats() const;
+    Counted& GetCounts();
+    const Counted& GetCounts() const;
     double HitChance(const Avatar& target) const;
 private:
     Engine::Mesh mesh;
