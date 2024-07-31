@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "Game/Attack.h"
-#include "UI/Avatar.h"
+#include "Game/Mock/MockActor.h"
 #include "CreatureDefinition.h"
 
 namespace Game::Test
@@ -9,10 +9,8 @@ using namespace ::testing;
 
 TEST(Action, attack)
 {
-    Race race("goblin");
-
-    Avatar attacker("a", race);
-    Avatar target("t", race);
+    MockActor attacker("a");
+    MockActor target("t");
     Attack action(attacker, target);
     EXPECT_EQ(action.Description(), "Attack t");
     EXPECT_EQ(action.AP(), 1);

@@ -66,10 +66,17 @@ class Dependency {
    operator: enum
 }
 
-class Avatar
+interface Actor {
+   position
+   Move(position, Map)
+}
 
-Avatar *--> Creature
-Avatar --|> Engine.UI.Scenery
+Actor *--> "appearance" Engine.UI.Scenery
+Actor *--> Statted
+Actor *--> Counted
+
+class Avatar
+Avatar ...|> Actor
 StatDescriptor ---- Statted
 Statted o--> "<<singleton>>" StatDefintition
 Stat *--> "*" Dependency
