@@ -10,7 +10,7 @@ class Game;
 class Move : public Action
 {
 public:
-    Move(Avatar& actor, const Game& game, Engine::Position destination, unsigned distance=0);
+    Move(Actor& actor, const Game& game, Engine::Position destination, unsigned distance=0);
     void Render() const override;
     void Execute(std::ostream& log) const override;
     unsigned AP() const override;

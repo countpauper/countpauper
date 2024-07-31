@@ -61,6 +61,11 @@ void Avatar::Move(const Map& map, Engine::Position destination)
 }
 
 
+const Engine::Scenery& Avatar::GetAppearance() const
+{
+    return *this;
+}
+
 Engine::Position Avatar::Position() const
 {
     return position;
@@ -85,13 +90,6 @@ Counted& Avatar::GetCounts()
 const Counted& Avatar::GetCounts() const
 {
     return creature;
-}
-
-double Avatar::HitChance(const Avatar& target) const
-{
-    auto hitScore = target.GetStats().Get(Stat::dodge) + target.GetStats().Get(Stat::block);    // TODO: front
-
-    return 1.0;
 }
 
 Engine::Coordinate Avatar::GetCoordinate() const

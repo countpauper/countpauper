@@ -27,7 +27,7 @@ std::vector<Engine::Position> Approach(const Map& map, Engine::Position center, 
     return result;
 }
 
-Move::Move(Avatar& actor, const Game& game, Engine::Position destination, unsigned distance) :
+Move::Move(Actor& actor, const Game& game, Engine::Position destination, unsigned distance) :
     Action(actor),
     map(game.GetMap())
 {
@@ -74,7 +74,7 @@ std::vector<Engine::Position>::const_iterator Move::Reachable() const
 
 void Move::Render() const
 {
-    auto prev = actor.GetCoordinate();
+    auto prev = actor.GetAppearance().GetCoordinate();
     glColor3d(1.0, 1.0, 1.0);
     auto it = path.begin();
     for(auto p: path)
@@ -96,7 +96,7 @@ void Move::Execute(std::ostream& log) const
     {
         actor.Move(map, *Reachable());
         actor.GetCounts().Cost(Stat::ap, ap, true);
-        log << actor.Name() << " moves to " << *Reachable() << std::endl;
+        log << actor.GetAppearance().Name() << " moves to " << *Reachable() << std::endl;
     }
 }
 

@@ -3,7 +3,7 @@
 namespace Game
 {
 
-Action::Action(Avatar& actor) :
+Action::Action(Actor& actor) :
     actor(actor)
 {
 }

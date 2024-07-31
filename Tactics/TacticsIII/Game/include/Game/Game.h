@@ -19,7 +19,7 @@ class Game : public Engine::Passenger
 public:
     explicit Game(Engine::Scene& scene);
     const Map& GetMap() const;
-    bool Obstacle(Engine::Position at, const Avatar* except=nullptr) const;
+    bool Obstacle(Engine::Position at, const Actor* except=nullptr) const;
 private:
     Avatar& Current() const;
     void Focus(Engine::Position pos);

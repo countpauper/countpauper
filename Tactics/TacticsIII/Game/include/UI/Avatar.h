@@ -1,9 +1,10 @@
 #pragma once
-#include "UI/Scenery.h"
+#include "Game/Actor.h"
 #include "Game/Creature.h"
 #include "Game/Race.h"
 #include "Geometry/Position.h"
 #include "Geometry/Mesh.h"
+#include "UI/Scenery.h"
 #include "UI/Bus.h"
 
 namespace Game
@@ -11,8 +12,9 @@ namespace Game
 class Counter;
 
 class Avatar :
-        public Engine::Scenery,
-        public Engine::Passenger
+    public Engine::Scenery,
+    public Actor,
+    public Engine::Passenger
 {
 public:
     Avatar(std::string_view name, const Race& race);
@@ -22,13 +24,14 @@ public:
     Engine::Coordinate GetCoordinate() const override;
     Engine::Quaternion GetOrientation() const override;
     void Select(bool on);
-    void Move(const class Map& map, Engine::Position destination);
-    Engine::Position Position() const;
-    Statted& GetStats();
-    const Statted& GetStats() const;
-    Counted& GetCounts();
-    const Counted& GetCounts() const;
-    double HitChance(const Avatar& target) const;
+    void Move(const class Map& map, Engine::Position destination) override;
+
+    const Engine::Scenery& GetAppearance() const override;
+    Engine::Position Position() const override;
+    Statted& GetStats() override;
+    const Statted& GetStats() const override;
+    Counted& GetCounts() override;
+    const Counted& GetCounts() const override;
 private:
     Engine::Mesh mesh;
     Engine::Position position;

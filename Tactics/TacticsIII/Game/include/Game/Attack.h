@@ -7,13 +7,13 @@ namespace Game
 class Attack : public Action
 {
 public:
-    Attack(Avatar& actor, Avatar& target);
+    Attack(Actor& actor, Actor& target);
     void Render() const override;
     void Execute(std::ostream& log) const override;
     unsigned AP() const override;
     std::string Description() const override;
 private:
-    Avatar& target;
+    Actor& target;
 };
 
 

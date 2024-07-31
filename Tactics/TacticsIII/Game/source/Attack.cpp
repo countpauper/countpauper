@@ -7,7 +7,7 @@
 namespace Game
 {
 
-Attack::Attack(Avatar& actor, Avatar& target) :
+Attack::Attack(Actor& actor, Actor& target) :
     Action(actor),
     target(target)
 {
@@ -16,18 +16,27 @@ Attack::Attack(Avatar& actor, Avatar& target) :
 void Attack::Render() const
 {
     glColor3d(1.0, 1.0, 0.0);
-    Engine::Line line(actor.GetCoordinate(), target.GetCoordinate());
+    Engine::Line line(actor.GetAppearance().GetCoordinate(), target.GetAppearance().GetCoordinate());
     line += Engine::Vector::Z;
     line.Render();
 }
 
+// TODO: shoul;d still include map and be collected with more free functions or utility functions of actor
+
+double HitChance(const Actor& actor, const Actor& target)
+{
+    auto hitScore = target.GetStats().Get(Stat::dodge) + target.GetStats().Get(Stat::block);    // TODO: front
+    return 1.0;
+}
+
+
 void Attack::Execute(std::ostream& log) const
 {
     actor.GetCounts().Cost(Stat::ap, AP());
-    auto chance = actor.HitChance(target);
+    auto chance = HitChance(actor, target);
     if (chance < Engine::Random().Chance())
     {
-        log << actor.Name() << "misses " << target.Name(); // TODO: this hit chance should be specified in miss, block, parry obstacle
+        log << actor.GetAppearance().Name() << "misses " << target.GetAppearance().Name(); // TODO: this hit chance should be specified in miss, block, parry obstacle
         return;
     }
 
@@ -35,11 +44,11 @@ void Attack::Execute(std::ostream& log) const
     if ( damage.Total() > 0 )
     {
         target.GetCounts().Cost(Stat::hp, damage.Total(), true);
-        log << actor.Name() << " deals " << target.Name() << " " << damage.Description() << " Damage" << std::endl;
+        log << actor.GetAppearance().Name() << " deals " << target.GetAppearance().Name() << " " << damage.Description() << " Damage" << std::endl;
     }
     else
     {
-        log << actor.Name() << " deals " << target.Name() << " a glancing blow" << std::endl;
+        log << actor.GetAppearance().Name() << " deals " << target.GetAppearance().Name() << " a glancing blow" << std::endl;
     }
 }
 
@@ -50,7 +59,7 @@ unsigned Attack::AP() const
 
 std::string Attack::Description() const
 {
-    return std::string("Attack ") + std::string(target.Name());
+    return std::string("Attack ") + std::string(target.GetAppearance().Name());
 }
 
 }

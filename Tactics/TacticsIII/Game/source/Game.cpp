@@ -46,7 +46,7 @@ const Map& Game::GetMap() const
     return map;
 }
 
-bool Game::Obstacle(Engine::Position at, const Avatar* except) const
+bool Game::Obstacle(Engine::Position at, const Actor* except) const
 {
     for(const auto& avatar : avatars)
     {
