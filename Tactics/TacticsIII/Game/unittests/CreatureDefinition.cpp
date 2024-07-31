@@ -6,21 +6,22 @@
 namespace Game::Test
 {
 
-CreatureDefinition::CreatureDefinition()
+Definition::Definition(StatDefinition& def) :
+    definition(def)
 {
-    Creature::definition.clear();
+    definition.clear();
 }
 
-CreatureDefinition& CreatureDefinition::Define(Stat::Id stat, Stat::Id dependency, float multiplier)
+Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, float multiplier)
 {
     Ensure(dependency);
     if (dependency == Stat::Id::none)
     {
-            Creature::definition[stat] = Stat(Creature::definition.Name(stat));
+            definition[stat] = Stat(definition.Name(stat));
     }
     else if (multiplier == std::floor(multiplier))
     {
-        Creature::definition[stat] = Stat(Creature::definition.Name(stat), std::string_view(), dependency, {}, int(multiplier));
+        definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, {}, int(multiplier));
     }
     else
     {
@@ -37,40 +38,46 @@ CreatureDefinition& CreatureDefinition::Define(Stat::Id stat, Stat::Id dependenc
             int(9*multiplier),
             int(10*multiplier)
         };
-        Creature::definition[stat] = Stat(Creature::definition.Name(stat), std::string_view(), dependency, table, 1);
+        definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, table, 1);
     }
     last = stat;
     return *this;
 }
 
-CreatureDefinition& CreatureDefinition::Define(Stat::Id stat, Stat::Id dependency, Stat::Operator op, Stat::Id operand)
+Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, Stat::Operator op, Stat::Id operand)
 {
     Ensure(dependency);
     Ensure(operand);
-    Creature::definition[stat] = Stat(Creature::definition.Name(stat), std::string_view(), dependency, op, operand);
+    definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, op, operand);
     last = stat;
     return *this;
 }
 
-CreatureDefinition& CreatureDefinition::Define(Stat::Id stat, int value)
+Definition& Definition::Define(Stat::Id stat, int value)
 {
-    Creature::definition[stat] = Stat(Creature::definition.Name(stat), std::string_view(), Stat::Id::none, {value});
+    definition[stat] = Stat(definition.Name(stat), std::string_view(), Stat::Id::none, {value});
     last = stat;
     return *this;
 }
 
-CreatureDefinition& CreatureDefinition::Count()
+Definition& Definition::Count()
 {
-    Creature::definition.Count(last);
+    definition.Count(last);
     return *this;
 }
 
-void CreatureDefinition::Ensure(Stat::Id id)
+void Definition::Ensure(Stat::Id id)
 {
-    if ((id != Stat::Id::none) && (Creature::definition.count(id)==0))
+    if ((id != Stat::Id::none) && (definition.count(id)==0))
     {
-        Creature::definition[id] = Stat(Creature::definition.Name(id), std::string_view());
+        definition[id] = Stat(definition.Name(id), std::string_view());
     }
+}
+
+
+CreatureDefinition::CreatureDefinition() :
+    Definition(Creature::definition)
+{
 }
 
 }

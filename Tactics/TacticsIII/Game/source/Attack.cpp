@@ -36,7 +36,7 @@ void Attack::Execute(std::ostream& log) const
     auto chance = HitChance(actor, target);
     if (chance < Engine::Random().Chance())
     {
-        log << actor.GetAppearance().Name() << "misses " << target.GetAppearance().Name(); // TODO: this hit chance should be specified in miss, block, parry obstacle
+        log << actor.GetAppearance().Name() << "misses " << target.GetAppearance().Name() << std::endl;  // TODO: this hit chance should be specified in miss, block, parry obstacle
         return;
     }
 
@@ -44,7 +44,7 @@ void Attack::Execute(std::ostream& log) const
     if ( damage.Total() > 0 )
     {
         target.GetCounts().Cost(Stat::hp, damage.Total(), true);
-        log << actor.GetAppearance().Name() << " deals " << target.GetAppearance().Name() << " " << damage.Description() << " Damage" << std::endl;
+        log << actor.GetAppearance().Name() << " deals " << damage.Description() << " damage to " << target.GetAppearance().Name() << std::endl;
     }
     else
     {

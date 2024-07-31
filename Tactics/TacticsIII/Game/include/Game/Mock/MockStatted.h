@@ -8,15 +8,19 @@
 
 namespace Game::Test
 {
+using namespace ::testing;
 
 class MockStatted : public Statted
 {
 public:
-    MockStatted(std::initializer_list<std::pair<const Stat::Id, Stat>> stats={})
+    MockStatted()
     {
-        definition.insert(stats);
         ON_CALL(*this, Definition()).WillByDefault(::testing::ReturnRef(definition));
         ON_CALL(*this, Name()).WillByDefault(::testing::Return("Mock"));
+        ON_CALL(*this, Get(_)).WillByDefault(Invoke([this](Stat::Id id )
+        {
+            return Statted::Get(id);
+        }));
     }
     MOCK_METHOD(std::string_view, Name, (), (const override));
     MOCK_METHOD(StatDescriptor, Get, (Stat::Id id), (const override));
