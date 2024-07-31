@@ -66,19 +66,19 @@ Engine::Position Avatar::Position() const
     return position;
 }
 
-Creature& Avatar::GetCreature()
+Statted& Avatar::GetStats()
 {
     return creature;
 }
 
-const Creature& Avatar::GetCreature() const
+const Statted& Avatar::GetStats() const
 {
     return creature;
 }
 
 double Avatar::HitChance(const Avatar& target) const
 {
-    auto hitScore = target.GetCreature().Get(Stat::dodge) + target.GetCreature().Get(Stat::block);    // TODO: front
+    auto hitScore = target.GetStats().Get(Stat::dodge) + target.GetStats().Get(Stat::block);    // TODO: front
 
     return 1.0;
 }
@@ -118,7 +118,7 @@ std::string Avatar::Sheet() const
     std::stringstream ss;
     ss << Name() << std::endl;
     ss << Engine::TitleCase(creature.GetRace().Name()).c_str() << " " << creature.Get(Stat::level).Total() << std::endl;
-    ss << "HP:" << creature.CounterAvailable(Stat::hp) << " AP:" << creature.CounterAvailable(Stat::ap) << std::endl;
+    ss << "HP:" << creature.Available(Stat::hp) << " AP:" << creature.Available(Stat::ap) << std::endl;
     ss << ConditionList(creature);
     return ss.str();
 }

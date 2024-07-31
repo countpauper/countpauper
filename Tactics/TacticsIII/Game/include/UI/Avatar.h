@@ -24,8 +24,8 @@ public:
     void Select(bool on);
     void Move(const class Map& map, Engine::Position destination);
     Engine::Position Position() const;
-    Creature& GetCreature();
-    const Creature& GetCreature() const;
+    Statted& GetStats();
+    const Statted& GetStats() const;
     double HitChance(const Avatar& target) const;
 private:
     Engine::Mesh mesh;

@@ -48,7 +48,7 @@ TEST(Creature, hitpoints_are_added)
     Creature c("bar", race);
     c.Level(Stat::level, 2); // 1 + 2 = 3 level
     EXPECT_EQ(c.Get(Stat::hp).Total(), 3+10);
-    EXPECT_EQ(c.CounterAvailable(Stat::hp), c.Get(Stat::hp).Total());
+    EXPECT_EQ(c.Available(Stat::hp), c.Get(Stat::hp).Total());
     EXPECT_EQ(c.Get(Stat::hp).Description(), "3[level] + 10[health]");
 }
 
@@ -61,13 +61,13 @@ TEST(Creature, damage_reduces_hitpoints)
     Creature c("fop", race);
     c.Level(Stat::level, 1);
 
-    ASSERT_EQ(c.CounterAvailable(Stat::hp), 2);
-    c.Damage(1);
+    ASSERT_EQ(c.Available(Stat::hp), 2);
+    c.Cost(Stat::Id::hp, 1, true);
     EXPECT_FALSE(c.Is<KO>());
-    EXPECT_EQ(c.CounterAvailable(Stat::hp), 1);
-    c.Damage(2);
+    EXPECT_EQ(c.Available(Stat::hp), 1);
+    EXPECT_EQ(c.Cost(Stat::Id::hp, 2, true), 1);
     EXPECT_TRUE(c.Is<KO>());
-    EXPECT_EQ(c.CounterAvailable(Stat::hp), 0);
+    EXPECT_EQ(c.Available(Stat::hp), 0);
 }
 
 }

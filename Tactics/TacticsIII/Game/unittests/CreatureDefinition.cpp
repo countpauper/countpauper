@@ -52,6 +52,13 @@ CreatureDefinition& CreatureDefinition::Define(Stat::Id stat, Stat::Id dependenc
     return *this;
 }
 
+CreatureDefinition& CreatureDefinition::Define(Stat::Id stat, int value)
+{
+    Creature::definition[stat] = Stat(Creature::definition.Name(stat), std::string_view(), Stat::Id::none, {value});
+    last = stat;
+    return *this;
+}
+
 CreatureDefinition& CreatureDefinition::Count()
 {
     Creature::definition.Count(last);

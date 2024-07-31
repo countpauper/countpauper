@@ -82,6 +82,14 @@ TEST(Stat, define_stat_multiplied_by_stat)
     EXPECT_EQ(def[Stat::hp].Compute(mock).Total(), 12);
 }
 
+TEST(Stat, constant_stat)
+{
+    Stat constat("const", "", Stat::Id::none, {3});
+    MockStatted mock;
+    EXPECT_CALL(mock, Get(_)).Times(0);
+    EXPECT_EQ(constat.Compute(mock).Total(), 3);
+}
+
 TEST(Stat, define_unknown_stat_throws)
 {
     StatDefinition def;

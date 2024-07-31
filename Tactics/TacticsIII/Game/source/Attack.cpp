@@ -23,7 +23,7 @@ void Attack::Render() const
 
 void Attack::Execute(std::ostream& log) const
 {
-    actor.GetCreature().Cost(Stat::ap, AP());
+    actor.GetStats().Cost(Stat::ap, AP());
     auto chance = actor.HitChance(target);
     if (chance < Engine::Random().Chance())
     {
@@ -31,18 +31,12 @@ void Attack::Execute(std::ostream& log) const
         return;
     }
 
-    auto damage =  actor.GetCreature().Get(Stat::offense) - target.GetCreature().Get(Stat::defense);
+    auto damage =  actor.GetStats().Get(Stat::offense) - target.GetStats().Get(Stat::defense);
     if ( damage.Total() > 0 )
     {
-        auto& targetCreature = target.GetCreature();
-        if (targetCreature.Damage(damage.Total()))
-        {
-            log << actor.Name() << " knocks " << target.Name() << " out with " << damage.Description() << " Damage" << std::endl;
-        }
-        else
-        {
-            log << actor.Name() << " deals " << target.Name() << " " << damage.Description() << " Damage" << std::endl;
-        }
+        auto& targetCreature = target.GetStats();
+        targetCreature.Cost(Stat::hp, damage.Total(), true);
+        log << actor.Name() << " deals " << target.Name() << " " << damage.Description() << " Damage" << std::endl;
     }
     else
     {

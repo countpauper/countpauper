@@ -25,6 +25,7 @@ public:
     bool ResetWhen(Reset) const;
     std::string_view Name() const;
     bool ForStat(Stat::Id stat) const;
+    Stat::Id MaxStat() const;
 private:
     std::string name;
     Reset resetAt;

@@ -41,7 +41,7 @@ Move::Move(Avatar& actor, const Game& game, Engine::Position destination, unsign
         Engine::Position neighbourVectors[] {{1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}};
         const auto& map = game.GetMap();
         std::vector<Engine::Position> result;
-        int jumpHeight = 1+ actor.GetCreature().Get(Stat::jump).Total() / 2;
+        int jumpHeight = 1+ actor.GetStats().Get(Stat::jump).Total() / 2;
         for(auto nVec : std::span(neighbourVectors))
         {
             auto to = at + nVec;
@@ -60,8 +60,8 @@ Move::Move(Avatar& actor, const Game& game, Engine::Position destination, unsign
 
 std::vector<Engine::Position>::const_iterator Move::Reachable() const
 {
-    unsigned grids = actor.GetCreature().Get(Stat::speed).Total() *
-        actor.GetCreature().CounterAvailable(Stat::ap);
+    unsigned grids = actor.GetStats().Get(Stat::speed).Total() *
+        actor.GetStats().Available(Stat::ap);
     if (grids>=path.size())
     {
         return path.end() - 1;
@@ -95,7 +95,7 @@ void Move::Execute(std::ostream& log) const
     if (ap)
     {
         actor.Move(map, *Reachable());
-        actor.GetCreature().Cost(Stat::ap, ap, true);
+        actor.GetStats().Cost(Stat::ap, ap, true);
         log << actor.Name() << " moves to " << *Reachable() << std::endl;
     }
 }
@@ -103,7 +103,7 @@ void Move::Execute(std::ostream& log) const
 unsigned Move::AP() const
 {
     auto grids = -1 + path.size();
-    auto speed = actor.GetCreature().Get(Stat::speed).Total();
+    auto speed = actor.GetStats().Get(Stat::speed).Total();
     return (grids+(speed-1)) / speed;
 }
 

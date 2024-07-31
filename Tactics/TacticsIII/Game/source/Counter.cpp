@@ -58,9 +58,14 @@ std::string_view Counter::Name() const
     return name;
 }
 
+Stat::Id Counter::MaxStat() const
+{
+    return maxStat;
+}
+
 bool Counter::ForStat(Stat::Id stat) const
 {
-    return maxStat == stat;
+    return MaxStat() == stat;
 }
 
 }

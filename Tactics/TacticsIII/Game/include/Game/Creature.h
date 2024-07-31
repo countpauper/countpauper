@@ -36,9 +36,9 @@ public:
     const Race& GetRace() const;
     static StatDefinition definition;
 
-    unsigned CounterAvailable(Stat::Id) const;
-    unsigned Cost(Stat::Id counter, unsigned cost, bool truncate=false);
-    bool Damage(unsigned hitpoints);
+    unsigned Available(Stat::Id) const override;
+    unsigned Cost(Stat::Id counter, unsigned cost, bool truncate=false) override;
+    void Reset(Counter::Reset at) override;
 
     template<class CT>
     bool Is() const
@@ -58,8 +58,9 @@ public:
         }
     }
     std::vector<std::reference_wrapper<const Condition>> Conditions() const;
-    void Reset(Counter::Reset at);
 private:
+    void OnCounter(Stat::Id stat, unsigned remaining);
+
     std::string name;
     const Race& race;
     std::vector<std::reference_wrapper<Item>> inventory;

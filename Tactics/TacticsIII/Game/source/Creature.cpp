@@ -40,8 +40,9 @@ const Race& Creature::GetRace() const
 
 StatDescriptor Creature::Get(Stat::Id id) const
 {
+    // Get primary stat
     StatDescriptor result = Statted::Get(id);
-
+    // Get item stat
     if (!result.IsValid())
     {
         for(const auto& item : items)
@@ -53,10 +54,13 @@ StatDescriptor Creature::Get(Stat::Id id) const
             }
         }
     }
+    // Compute secondary stat
     if ((!result.IsValid()) && (id))
     {
         result = definition.at(id).Compute(*this);
     }
+
+    // Add bonuses
     for(const auto& c : conditions)
     {
         result = result.Contribute(c->Name(), c->Contribution(id));
@@ -71,7 +75,7 @@ const StatDefinition& Creature::Definition() const
     return Creature::definition;
 }
 
-unsigned Creature::CounterAvailable(Stat::Id stat) const
+unsigned Creature::Available(Stat::Id stat) const
 {
     auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
     {
@@ -96,20 +100,18 @@ unsigned Creature::Cost(Stat::Id stat, unsigned cost, bool truncate)
     else if (cost > available)
         return 0;
     counterIt->second += cost;
+    OnCounter(stat, available - cost);
     return cost;
 }
 
 
-bool Creature::Damage(unsigned hitpoints)
+void Creature::OnCounter(Stat::Id stat, unsigned remaining)
 {
-    Cost(Stat::hp, hitpoints, true);
-    if (CounterAvailable(Stat::hp))
+    if (stat == Stat::hp && remaining == 0)
     {
-        return false;
+        Apply<Downed>();
+        Apply<KO>();
     }
-    Apply<Downed>();
-    Apply<KO>();
-    return true;
 }
 
 std::vector<std::reference_wrapper<const Condition>> Creature::Conditions() const
@@ -128,7 +130,10 @@ void Creature::Reset(Counter::Reset at)
     for(auto& counter : countersUsed)
     {
         if (counter.first->ResetWhen(at))
+        {
             counter.second = 0;
+            OnCounter(counter.first->MaxStat(), counter.first->Available(0, *this));
+        }
     }
 }
 
