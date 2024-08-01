@@ -110,17 +110,6 @@ std::string_view Avatar::Name() const
     return creature.Name();
 }
 
-std::string ConditionList(const Creature& creature)
-{
-    const auto& conditions = creature.Conditions();
-    std::vector<std::string_view> condition_names;
-    std::transform(conditions.begin(), conditions.end(), std::back_insert_iterator(condition_names),
-    [](const std::reference_wrapper<const Condition>&  c)
-    {
-        return c.get().Name();
-    });
-    return Engine::Join(condition_names, ", ");
-}
 
 std::string Avatar::Sheet() const
 {
@@ -128,7 +117,7 @@ std::string Avatar::Sheet() const
     ss << Name() << std::endl;
     ss << Engine::TitleCase(creature.GetRace().Name()).c_str() << " " << creature.Get(Stat::level).Total() << std::endl;
     ss << "HP:" << creature.Available(Stat::hp) << " AP:" << creature.Available(Stat::ap) << std::endl;
-    ss << ConditionList(creature);
+    ss << creature.Conditions::Description();
     return ss.str();
 }
 

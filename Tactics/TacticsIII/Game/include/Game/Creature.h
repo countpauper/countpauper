@@ -6,7 +6,7 @@
 #include "Game/StatDefinition.h"
 #include "Game/Race.h"
 #include "Game/Item.h"
-#include "Game/Condition.h"
+#include "Game/Conditions.h"
 #include "UI/Object.h"
 
 namespace Game
@@ -14,7 +14,8 @@ namespace Game
 
 class Creature :
     public Statistics,
-    public Counters
+    public Counters,
+    public Conditions
 {
 public:
     Creature(std::string_view name, const Race& race);
@@ -35,24 +36,6 @@ public:
     const Race& GetRace() const;
     static StatDefinition definition;
 
-    template<class CT>
-    bool Is() const
-    {
-        return std::find_if(conditions.begin(), conditions.end(), [](const std::unique_ptr<Condition>& c)
-        {
-            return dynamic_cast<const CT*>(c.get()) != nullptr;
-        }) != conditions.end();
-    }
-    template<class CT>
-    void Apply()
-    {
-        // TODO: power level that replaces
-        if (!Is<CT>())
-        {
-            conditions.emplace_back(std::make_unique<CT>());
-        }
-    }
-    std::vector<std::reference_wrapper<const Condition>> Conditions() const;
 private:
     void OnCount(Stat::Id stat, unsigned remaining) override;
 
@@ -60,7 +43,6 @@ private:
     const Race& race;
     std::vector<std::reference_wrapper<Item>> inventory;
     std::vector<std::unique_ptr<Item>> items;  // TODO: item db should be externally owned
-    std::vector<std::unique_ptr<Condition>> conditions;
 
     // TODO: effects(bonuses) knowledge (with bonuses), actions, skills(extra actions)
 

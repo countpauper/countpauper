@@ -20,9 +20,7 @@ interface Statted
 class Statistics {
    # stats: <Stat, int>
 }
-Statistics ..|> Statted
 
-Counted o--> "1" Statted
 
 class Creature {
   name: string
@@ -45,22 +43,29 @@ class Condition {
    bonus: <stat, int>
 }
 
+class Conditions {
+
+}
+
 interface Actor {
    position
    Move(position, Map)
 }
 
+Statistics ..|> Statted
+Counted o--> "1" Statted
 Actor *--> "appearance" Engine.UI.Scenery
 Actor o--> Statted
 Actor o--> Counted
 Counters ..|> Counted
+Conditions *--> "*" Condition
 
 Creature o--> "6 primary" Stat
-Creature *--> "*" Condition
 Creature ...|> Counted
 Creature ...|> Statted
 Creature *--> Counters
 Creature *--> Statistics
+Creature --|> Conditions
 
 class Avatar
 Avatar ...|> Actor

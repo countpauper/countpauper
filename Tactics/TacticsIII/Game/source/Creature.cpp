@@ -61,10 +61,7 @@ StatDescriptor Creature::Get(Stat::Id id) const
     if (result.IsValid())
     {
         // Add bonuses
-        for(const auto& c : conditions)
-        {
-            result = result.Contribute(c->Name(), c->Contribution(id));
-        }
+        result = Conditions::Contribute(id, result);
         // TODO: add all other bonuses from items and magic
         result.Contribute(race.Name(), race.Bonus(id));
     }
@@ -84,17 +81,6 @@ void Creature::OnCount(Stat::Id stat, unsigned remaining)
         Apply<Downed>();
         Apply<KO>();
     }
-}
-
-std::vector<std::reference_wrapper<const Condition>> Creature::Conditions() const
-{
-    std::vector<std::reference_wrapper<const Condition>> result;
-    std::transform(conditions.begin(), conditions.end(), std::back_inserter(result),
-    [](const decltype(conditions)::value_type& c)
-    {
-        return std::reference_wrapper<const Condition>(*c);
-    });
-    return result;
 }
 
 StatDefinition Creature::definition;
