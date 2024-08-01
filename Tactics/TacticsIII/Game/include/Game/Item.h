@@ -1,6 +1,6 @@
 #pragma once
 #include "Game/StatDefinition.h"
-#include "Game/Statted.h"
+#include "Game/Statistics.h"
 #include "Game/Counter.h"
 #include <map>
 #include <string>
@@ -9,7 +9,7 @@ namespace Game
 {
 
 class Item :
-    public Statted
+    public Statistics
 {
 public:
     Item();

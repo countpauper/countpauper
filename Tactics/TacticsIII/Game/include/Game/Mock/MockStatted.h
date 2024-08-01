@@ -1,7 +1,7 @@
 #pragma once
 #include <gmock/gmock.h>
 
-#include "Game/Statted.h"
+#include "Game/Statistics.h"
 #include "Game/Stat.h"
 #include "Game/StatDescriptor.h"
 #include "Game/StatDefinition.h"
@@ -10,7 +10,7 @@ namespace Game::Test
 {
 using namespace ::testing;
 
-class MockStatted : public Statted
+class MockStatted : public Statistics
 {
 public:
     MockStatted()
@@ -19,7 +19,7 @@ public:
         ON_CALL(*this, Name()).WillByDefault(::testing::Return("Mock"));
         ON_CALL(*this, Get(_)).WillByDefault(Invoke([this](Stat::Id id )
         {
-            return Statted::Get(id);
+            return Statistics::Get(id);
         }));
     }
     MOCK_METHOD(std::string_view, Name, (), (const override));

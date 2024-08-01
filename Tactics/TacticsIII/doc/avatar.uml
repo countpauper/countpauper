@@ -1,0 +1,77 @@
+@startuml
+
+
+interface Counted
+{
+   + Cost(stat, unsigned)
+   + Available(stat)
+   + Reset(at)
+}
+
+class Counters {
+   # used: <Counter, unsigned>
+}
+
+interface Statted
+{
+   + Get(stat) : StatDescriptor
+   + Level(stat, amount)
+}
+class Statistics {
+   # stats: <Stat, int>
+}
+Statistics ..|> Statted
+
+Counted o--> "1" Statted
+
+class Creature {
+  name: string
+}
+
+class Race {
+    name: string
+    bonus: <stat, int>
+}
+
+class Counter {
+   name: string
+   resetAt: enum
+   resetToMax: bool
+}
+Counter o--> "max" Stat
+
+class Condition {
+   name: string
+   bonus: <stat, int>
+}
+
+interface Actor {
+   position
+   Move(position, Map)
+}
+
+Actor *--> "appearance" Engine.UI.Scenery
+Actor o--> Statted
+Actor o--> Counted
+Counters ..|> Counted
+
+Creature o--> "6 primary" Stat
+Creature *--> "*" Condition
+Creature ...|> Counted
+Creature ...|> Statted
+Creature *--> Counters
+Creature *--> Statistics
+
+class Avatar
+Avatar ...|> Actor
+Statted o--> "<<singleton>>" StatDefintition
+
+Creature o--> "1" Race
+Creature o--> "*" Item
+StatDefintition *---> "*" Stat
+StatDefintition *--> "* id" Counter
+
+Item ..|> Counter
+
+Avatar *--> Creature
+@enduml

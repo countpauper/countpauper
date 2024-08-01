@@ -1,4 +1,4 @@
-#include "Game/Counted.h"
+#include "Game/Counters.h"
 #include "Game/StatDefinition.h"
 
 namespace Game

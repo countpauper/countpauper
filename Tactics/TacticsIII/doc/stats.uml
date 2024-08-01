@@ -1,0 +1,50 @@
+@startuml
+
+class StatDescriptor {
+   total: int
+   description : string
+}
+
+class StatDefintition {
+  Load(fn)
+}
+
+
+interface Statted
+{
+   + Get(stat) : StatDescriptor
+   + Level(stat, amount)
+}
+class Statistics {
+   # stats: <Stat, int>
+}
+
+class Stat {
+    name : string
+    description : string
+    limit: Range
+}
+class Counter {
+   name: string
+   resetAt: enum
+   resetToMax: bool
+}
+Counter o--> "max" Stat
+
+class Dependency {
+   table: int[]
+   operator: enum
+}
+
+
+StatDescriptor ---- Statted
+Statted o--> "<<singleton>>" StatDefintition
+Stat *--> "*" Dependency
+Dependency o--> Stat
+
+StatDefintition *---> "*" Stat
+StatDefintition *--> "* id" Counter
+
+Statistics ..|> Statted
+Statistics --> Stat
+@enduml

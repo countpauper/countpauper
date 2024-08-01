@@ -12,7 +12,7 @@ std::string_view Item::Name() const
 
 StatDescriptor Item::Get(Stat::Id id) const
 {
-    return Statted::Get(id);
+    return Statistics::Get(id);
 }
 
 StatDefinition Item::definition;

@@ -5,7 +5,7 @@ namespace Game
 {
 
 Creature::Creature(std::string_view name, const Race& race) :
-    Statted({
+    Statistics({
         {Stat::level, 1},
         {Stat::str, 2},
         {Stat::agi, 2},
@@ -35,7 +35,7 @@ const Race& Creature::GetRace() const
 StatDescriptor Creature::Get(Stat::Id id) const
 {
     // Get primary stat
-    StatDescriptor result = Statted::Get(id);
+    StatDescriptor result = Statistics::Get(id);
     // Get item stat
     if (!result.IsValid())
     {

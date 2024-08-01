@@ -1,19 +1,19 @@
 #pragma once
 #include <string>
 #include <functional>
-#include "Game/Counted.h"
+#include "Game/Counters.h"
+#include "Game/Statistics.h"
 #include "Game/StatDefinition.h"
 #include "Game/Race.h"
 #include "Game/Item.h"
 #include "Game/Condition.h"
-#include "Game/StatDescriptor.h"
 #include "UI/Object.h"
 
 namespace Game
 {
 
 class Creature :
-    public Statted,
+    public Statistics,
     public Counters
 {
 public:

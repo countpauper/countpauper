@@ -1,69 +1,19 @@
 @startuml
 
-class StatDescriptor {
-   total: int
-   description : string
+interface World {
+   bool Obstacle(Position, Actor except)
 }
 
-class StatDefintition {
-  Load(fn)
+class Game {
+
 }
 
-interface Counted
-{
-   + Cost(stat, unsigned)
-   + Available(stat)
-   + Reset(at)
-   # used: <Counter, unsigned>
+interface HeightMap {
+   Height(Position): int
 }
 
-interface Statted
-{
-   + Get(stat) : StatDescriptor
-   # stats: <Stat, int>
-}
-Counted o--> "1" Statted
-
-class Creature {
-  name: string
-}
-
-Creature ...|> Counted
-Creature ...|> Statted
-
-class Race {
-    name: string
-    bonus: <stat, int>
-}
-
-class Item {
-   name: string
-   bonus: <stat, int>
-}
-
-class Stat {
-    name : string
-    description : string
-    limit: Range
-}
-class Counter {
-   name: string
-   resetAt: enum
-   resetToMax: bool
-}
-Counter o--> "max" Stat
-
-class Condition {
-   name: string
-   bonus: <stat, int>
-}
-
-Creature o--> "6 primary" Stat
-Creature *--> "*" Condition
-
-class Dependency {
-   table: int[]
-   operator: enum
+class Map {
+   + size
 }
 
 interface Actor {
@@ -72,20 +22,16 @@ interface Actor {
 }
 
 Actor *--> "appearance" Engine.UI.Scenery
-Actor *--> Statted
-Actor *--> Counted
 
+World o--> HeightMap
+Game ...|> World
+Game *---> Map
+Map ..|> HeightMap
 class Avatar
 Avatar ...|> Actor
-StatDescriptor ---- Statted
-Statted o--> "<<singleton>>" StatDefintition
-Stat *--> "*" Dependency
-Dependency o--> Stat
-
-Creature o--> "1" Race
-Creature o--> "*" Item
-StatDefintition *---> "*" Stat
-StatDefintition *--> "* id" Counter
-
-Item ..|> Counter
+Game *--> "*" Avatar
+Map ...|> Engine.UI.Scenery
+Avatar ...|> Engine.UI.Scenery
+Game o--> Engine.UI.Scene
+Engine.UI.Scene o--> "*" Engine.UI.Scenery
 @enduml
