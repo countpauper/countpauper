@@ -3,6 +3,7 @@
 #include "Geometry/Mesh.h"
 #include "Geometry/Position.h"
 #include "UI/Scenery.h"
+#include "Game/HeightMap.h"
 #include "Game/Material.h"
 #include <vector>
 
@@ -13,17 +14,21 @@ namespace Engine
 
 namespace Game
 {
-class Map : public Engine::Scenery
+
+class Map :
+    public Engine::Scenery,
+    public HeightMap
 {
 public:
     explicit Map(Engine::Size size);
     Map(const Engine::Image& data);
     std::string_view Name() const override;
     Engine::Mesh& GetMesh();
-    Engine::Coordinate GroundCoord(Engine::Position pos) const;
-    int GroundHeight(Engine::Position pos) const;
-    const Material& GetMaterial(Engine::Position pos) const;
-    Engine::Size GetSize() const;
+    // Height Map
+    Engine::Size GetSize() const override;
+    Engine::Coordinate GroundCoord(Engine::Position pos) const override;
+    int GroundHeight(Engine::Position pos) const override;
+    const Material& GetMaterial(Engine::Position pos) const override;
 private:
     struct Grid
     {

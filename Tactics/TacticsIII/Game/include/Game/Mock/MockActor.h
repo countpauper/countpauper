@@ -13,11 +13,9 @@ using namespace ::testing;
 class MockActor : public Actor
 {
 public:
-    MockActor() :
-
-        counts(stats)
+    MockActor()
     {
-        ON_CALL(*this, Move(_, _)).WillByDefault(Invoke([this](const class Map&, Engine::Position destination)
+        ON_CALL(*this, Move(_, _)).WillByDefault(Invoke([this](const class HeightMap&, Engine::Position destination)
         {
             ON_CALL(*this, Position()).WillByDefault(Return(destination));
         }));
@@ -35,7 +33,7 @@ public:
         EXPECT_CALL(stats, Name()).WillRepeatedly(Return(name));
     }
 
-    MOCK_METHOD(void, Move, (const class Map& map, Engine::Position destination), (override));
+    MOCK_METHOD(void, Move, (const class HeightMap& map, Engine::Position destination), (override));
     MOCK_METHOD(Engine::Position, Position, (), (const override));
 
     const Engine::Scenery& GetAppearance() const override { return appearance; }

@@ -1,9 +1,9 @@
 #pragma once
 #include "Game/Map.h"
-#include "Game/Race.h"
 #include "UI/Avatar.h"
 #include "UI/Bus.h"
 #include "Game/Plan.h"
+#include "Game/World.h"
 #include <memory>
 
 namespace Engine
@@ -14,12 +14,14 @@ namespace Engine
 namespace Game
 {
 
-class Game : public Engine::Passenger
+class Game :
+    public Engine::Passenger,
+    public World
 {
 public:
     explicit Game(Engine::Scene& scene);
-    const Map& GetMap() const;
-    bool Obstacle(Engine::Position at, const Actor* except=nullptr) const;
+    const HeightMap& GetMap() const override;
+    bool Obstacle(Engine::Position at, const Actor* except=nullptr) const override;
 private:
     Avatar& Current() const;
     void Focus(Engine::Position pos);

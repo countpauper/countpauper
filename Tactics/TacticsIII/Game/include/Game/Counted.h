@@ -9,12 +9,24 @@ namespace Game
 class Counted
 {
 public:
-    explicit Counted(Statted& stats);
     virtual ~Counted() = default;
+    virtual unsigned Available(Stat::Id) const = 0;
+    virtual unsigned Cost(Stat::Id counter, unsigned cost, bool truncate=false) = 0;
+    virtual void Reset(Counter::Reset at) = 0;
+protected:
+    virtual void OnCount(Stat::Id, unsigned ) {}
+private:
+};
 
-    unsigned Available(Stat::Id) const ;
-    unsigned Cost(Stat::Id counter, unsigned cost, bool truncate=false);
-    void Reset(Counter::Reset at);
+class Counters : public Counted
+{
+public:
+    explicit Counters(Statted& stats);
+    virtual ~Counters() = default;
+
+    unsigned Available(Stat::Id) const override;
+    unsigned Cost(Stat::Id counter, unsigned cost, bool truncate=false) override;
+    void Reset(Counter::Reset at) override;
 protected:
     void InitializeCounters();
     virtual void OnCount(Stat::Id, unsigned ) {}

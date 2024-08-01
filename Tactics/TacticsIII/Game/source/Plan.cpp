@@ -69,17 +69,17 @@ std::string Plan::Execute()
     return s.str();
 }
 
-Plan Plan::Move(Avatar& actor, const Game& game, Engine::Position destination)
+Plan Plan::Move(Avatar& actor, const World& world, Engine::Position destination)
 {
     Plan result;
-    result.actions.emplace_back(std::move(std::make_unique<::Game::Move>(actor, game, destination)));
+    result.actions.emplace_back(std::move(std::make_unique<::Game::Move>(actor, world, destination)));
     return result;
 }
 
-Plan Plan::Attack(Avatar& actor, const Game& game, Avatar& target)
+Plan Plan::Attack(Avatar& actor, const World& world, Avatar& target)
 {
     Plan result;
-    result.actions.emplace_back(std::move(std::make_unique<::Game::Move>(actor, game, target.Position(), actor.GetStats().Get(Stat::reach).Total())));
+    result.actions.emplace_back(std::move(std::make_unique<::Game::Move>(actor, world, target.Position(), actor.GetStats().Get(Stat::reach).Total())));
     int attacks = actor.GetCounts().Available(Stat::ap) - result.AP();
     for(int attack = 0; attack<attacks; ++attack)
         result.actions.emplace_back(std::move(std::make_unique<::Game::Attack>(actor, target)));

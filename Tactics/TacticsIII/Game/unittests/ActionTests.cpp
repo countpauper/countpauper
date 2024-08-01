@@ -1,11 +1,35 @@
 #include <gtest/gtest.h>
 #include "Game/Attack.h"
+#include "Game/Move.h"
 #include "Game/Mock/MockActor.h"
+#include "Game/Mock/MockWorld.h"
 #include "CreatureDefinition.h"
 
 namespace Game::Test
 {
 using namespace ::testing;
+
+
+TEST(Action, move)
+{
+    MockActor actor("a");
+    EXPECT_CALL(actor.stats, Get(Stat::speed)).WillRepeatedly(Return(StatDescriptor(2)));
+    EXPECT_CALL(actor.stats, Get(Stat::jump)).WillRepeatedly(Return(StatDescriptor(1)));
+    EXPECT_CALL(actor.stats, Get(Stat::ap)).WillRepeatedly(Return(StatDescriptor(1)));
+    EXPECT_CALL(actor.counts, Available(Stat::ap)).WillRepeatedly(Return(1));
+
+    NiceMock<MockWorld> world;
+    Move action(actor, world, Engine::Position(1,1,0));
+    EXPECT_EQ(action.Description(), "Move (1, 1, 0)");
+    EXPECT_EQ(action.AP(), 1);
+
+    std::stringstream log;
+    EXPECT_CALL(actor, Move(_,Engine::Position(1,1,0)));
+    EXPECT_CALL(actor.counts, Cost(Stat::ap, 1, true));
+    action.Execute(log);
+    EXPECT_EQ(log.str(), "a moves to (1, 1, 0)\n");
+
+}
 
 TEST(Action, attack)
 {

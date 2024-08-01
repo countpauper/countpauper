@@ -41,7 +41,7 @@ Game::Game(Engine::Scene& scene) :
     avatars[turn]->Select(true);
 }
 
-const Map& Game::GetMap() const
+const HeightMap& Game::GetMap() const
 {
     return map;
 }

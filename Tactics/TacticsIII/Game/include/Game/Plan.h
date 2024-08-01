@@ -10,7 +10,7 @@
 namespace Game
 {
 class Avatar;
-class Game;
+class World;
 
 class Plan : public Engine::Scenery
 {
@@ -29,8 +29,8 @@ public:
     std::string Execute();
 
     // TODO: helpers to create an attack plan, flee (move) plan, spell/technique plan, dodge, ready and so on plan for UI and AI level
-    static Plan Move(Avatar& actor, const Game& game, Engine::Position destination);
-    static Plan Attack(Avatar& actor, const Game& game, Avatar& target);
+    static Plan Move(Avatar& actor, const World& world, Engine::Position destination);
+    static Plan Attack(Avatar& actor, const World& world, Avatar& target);
 private:
     Engine::Mesh mesh;
     // TODO: plans may be a chance tree instead. if the first action is a provoked reaction that might ko the actor, then that's also a possible execution.

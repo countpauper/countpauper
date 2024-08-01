@@ -13,7 +13,7 @@ Creature::Creature(std::string_view name, const Race& race) :
         {Stat::wis, 2},
         {Stat::intel, 2}
     }),
-    Counted(static_cast<Statted&>(*this)),
+    Counters(static_cast<Statted&>(*this)),
     name(name),
     race(race)
 {

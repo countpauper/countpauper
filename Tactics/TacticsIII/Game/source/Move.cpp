@@ -1,5 +1,8 @@
 #include "Game/Move.h"
-#include "Game/Game.h"
+#include "Game/World.h"
+#include "Game/Stat.h"
+#include "Game/Actor.h"
+#include "Game/HeightMap.h"
 #include "AI/Astar.h"
 #include "Geometry/Line.h"
 #include <GL/gl.h>
@@ -8,7 +11,7 @@
 namespace Game
 {
 
-std::vector<Engine::Position> Approach(const Map& map, Engine::Position center, unsigned distance)
+std::vector<Engine::Position> Approach(const HeightMap& map, Engine::Position center, unsigned distance)
 {
     if (distance==0)
         return {center};
@@ -27,19 +30,19 @@ std::vector<Engine::Position> Approach(const Map& map, Engine::Position center, 
     return result;
 }
 
-Move::Move(Actor& actor, const Game& game, Engine::Position destination, unsigned distance) :
+Move::Move(Actor& actor, const World& world, Engine::Position destination, unsigned distance) :
     Action(actor),
-    map(game.GetMap())
+    map(world.GetMap())
 {
     auto cost = [](Engine::Position from, Engine::Position to) -> float
     {
         return from.Distance(to);
     };
-    auto neighbours = [&game, &actor](Engine::Position at)
+    auto neighbours = [&world, &actor](Engine::Position at)
     {
         // TODO Return of Direction?
         Engine::Position neighbourVectors[] {{1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}};
-        const auto& map = game.GetMap();
+        const auto& map = world.GetMap();
         std::vector<Engine::Position> result;
         int jumpHeight = 1+ actor.GetStats().Get(Stat::jump).Total() / 2;
         for(auto nVec : std::span(neighbourVectors))
@@ -48,7 +51,7 @@ Move::Move(Actor& actor, const Game& game, Engine::Position destination, unsigne
             int deltaHeight = map.GroundHeight(to) - map.GroundHeight(at);
             if (deltaHeight > jumpHeight)
                 continue;
-            if (game.Obstacle(to, &actor))
+            if (world.Obstacle(to, &actor))
                 continue;
             result.push_back(to);
         }

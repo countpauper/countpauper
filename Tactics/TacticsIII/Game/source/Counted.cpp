@@ -4,12 +4,12 @@
 namespace Game
 {
 
-Counted::Counted(Statted& stats)  :
+Counters::Counters(Statted& stats)  :
     stats(stats)
 {
 }
 
-void Counted::InitializeCounters()
+void Counters::InitializeCounters()
 {   // post constructor because virtual method Definition() is used
     for(auto counter: stats.Definition().GetCounters())
     {
@@ -17,7 +17,7 @@ void Counted::InitializeCounters()
     }
 }
 
-unsigned Counted::Available(Stat::Id stat) const
+unsigned Counters::Available(Stat::Id stat) const
 {
     auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
     {
@@ -28,7 +28,7 @@ unsigned Counted::Available(Stat::Id stat) const
     return counterIt->first->Available(counterIt->second, stats);
 }
 
-unsigned Counted::Cost(Stat::Id stat, unsigned cost, bool truncate)
+unsigned Counters::Cost(Stat::Id stat, unsigned cost, bool truncate)
 {
     auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
     {
@@ -46,9 +46,7 @@ unsigned Counted::Cost(Stat::Id stat, unsigned cost, bool truncate)
     return cost;
 }
 
-
-
-void Counted::Reset(Counter::Reset at)
+void Counters::Reset(Counter::Reset at)
 {
     for(auto& counter : countersUsed)
     {

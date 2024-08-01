@@ -14,7 +14,7 @@ namespace Game
 
 class Creature :
     public Statted,
-    public Counted
+    public Counters
 {
 public:
     Creature(std::string_view name, const Race& race);

@@ -54,7 +54,7 @@ void Avatar::Select(bool on)
 }
 
 
-void Avatar::Move(const Map& map, Engine::Position destination)
+void Avatar::Move(const HeightMap& map, Engine::Position destination)
 {
     position = destination;
     coordinate = map.GroundCoord(position);
