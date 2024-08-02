@@ -38,6 +38,16 @@
                 "cwd": "data"
             },
             "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "Generate Items",
+            "command": "python generate_items.py",
+            "options": {
+                "cwd": "data"
+            },
+            "problemMatcher": []
         }
+
     ]
 }

@@ -32,12 +32,13 @@ Game::Game(Engine::Scene& scene) :
     scene.GetCamera().Move(Engine::Coordinate(map.GetSize().x/2, -1, map.GetSize().z));
 
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
-    avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", elf)));
-    avatars.back()->Move(map, Engine::Position{3, 2});
-    scene.Add(*avatars.back());
-    avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", elf)));
-    avatars.back()->Move(map, Engine::Position{5, 8});
-    scene.Add(*avatars.back());
+    auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", elf)));
+    velglarn->Move(map, Engine::Position{3, 2});
+    //TODO velglarn->Equip()
+    scene.Add(*velglarn);
+    auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", elf)));
+    elgcaress->Move(map, Engine::Position{5, 8});
+    scene.Add(*elgcaress);
     avatars[turn]->Select(true);
 }
 

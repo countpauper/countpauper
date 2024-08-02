@@ -6,11 +6,6 @@ def read_csv(file):
     reader = csv.DictReader(file)
     return [row for row in reader]
 
-def group_materials(table):
-    result = dict()
-    for material in  "any", "cloth", "leather", "metal", "wood":
-        result[material] = [row for row in table if row.get('Material').lower() == material]
-    return result
 
 translate_table = dict(
     blunt="blunt resistance",
@@ -21,6 +16,8 @@ translate_table = dict(
     lightning="lightning resistance"
 )
 
+match_columns="material",
+
 def translate_bonus_key(key):
     return translate_table.get(key.lower(), key.lower())
 
@@ -30,14 +27,9 @@ def bonify(table, columns, custom_columns=dict()):
             {translate_bonus_key(row.get(col)):val for col, val_col in custom_columns.items() if (val := row.get(val_col))}
             for row in table]
 
-def bonify_all(table, columns, custom_columns):
-    """Convert the rows of all materials to bonus dicts"""
-    return {material: bonify(rows, columns, custom_columns) for material, rows in table.items()}
-
 armor = bonify(read_csv(open("armor.csv")), ("Name", "Rarity", "Price", "Hands", "Material", "Weight", "Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold"))
-armor_material = bonify_all(group_materials(read_csv(open("armor material.csv"))), ("Prefix", "Rarity", "Price", "Weight","Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold"), {"B1":"V1"})
-armor_bonus = bonify_all(group_materials(read_csv(open("armor bonus.csv"))),("Prefix", "Postfix", "Rarity", "Price", "Weight"), {"B1": "V1", "B2": "V2", "B3":"V3"})
-
+armor_material = bonify(read_csv(open("armor material.csv")), ("Prefix", "Rarity", "Price", "Material", "Weight","Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold"), {"B1":"V1"})
+armor_bonus = bonify(read_csv(open("armor bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Material", "Weight"), {"B1": "V1", "B2": "V2", "B3":"V3"})
 
 
 def select_random(table):
@@ -48,6 +40,9 @@ def select_random(table):
 def select(table, **filter):
     return [row for row in table if all(row.get(k).lower() == v.lower() for k,v in filter.items())]
 
+def match(item, bonus, columns):
+    return all(bonus.get(col)=="Any" or
+               item.get(col) == bonus.get(col) for col in columns)
 
 def combine(*stats):
     result = dict()
@@ -75,18 +70,21 @@ def combine(*stats):
 
 def generate_random_item(items, materials, boni):
     item = select_random(items)
-    applicable_materials = materials.get('any',[]) + materials.get(item.get("material").lower(), [])
+    applicable_materials = [material for material in materials if match(item, material, match_columns)]
     material = select_random(applicable_materials)
-    applicable_boni = boni.get('any',[]) + boni.get(item.get("material").lower(), [])
+    applicable_boni = [bonus for bonus in boni if match(item, material, match_columns)]
     bonus = select_random(applicable_boni)
     return combine(item, material, bonus)
 
 def generate_all_items(items, materials, boni):
     result = []
     for item in items:
-        for material in materials.get('any',[]) + materials.get(item.get("material").lower(), []):
-            for bonus in [None] +boni.get('any',[]) + boni.get(item.get("material").lower(), []):
-                result.append(combine(item, material, bonus))
+        for material in materials:
+            if match(item, material, match_columns):
+                result.append(combine(item, material))
+                for bonus in boni:
+                    if match(item, bonus, match_columns):
+                        result.append(combine(item, material, bonus))
     return result
 
 nl='\n'
