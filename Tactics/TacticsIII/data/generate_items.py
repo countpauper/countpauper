@@ -13,10 +13,11 @@ def bonify(table, columns, custom_columns=dict()):
             for row in table]
 
 tag_columns = "tags","restrictions"
+rarity_factor = 1000.0
 
 def column_correct(column, value, item):
-    if column=="rarity":
-        return float(value) * 0.01
+    if value[-1] == "%":
+        return int(float(value[:-1]) * rarity_factor/ 100.0)
     if value.isdigit():
         return int(value)
     elif value[0]=='-' and value[1:].isdigit():
@@ -45,7 +46,7 @@ weapon_material = type_correct(bonify(read_csv(open("weapon material.csv")), ("P
 weapon_bonus = type_correct(bonify(read_csv(open("weapon bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Attument", "Weight", "Restrictions"), {"B1": "V1", "B2": "V2", "Penalty":"V3"}))
 
 def select_random(table):
-    rarities = [row.get("rarity", 0) for row in table]
+    rarities = [row.get("rarity", 0)/rarity_factor for row in table]
     defaultRarity = 1.0 - sum(rarities)
     return random.choices([None] + table, [defaultRarity] + rarities)[0]
 
@@ -85,7 +86,7 @@ def combine(*stats):
             elif k in tag_columns:
                 result[k] = result.get(k, v)
             elif k == "rarity":
-                rarity *= float(v)
+                rarity *= float(v)/rarity_factor
             elif k == 'stat':
                 result[k] = v
             elif k == 'damage type':

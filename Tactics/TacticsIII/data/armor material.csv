@@ -1,25 +1,25 @@
-Name,Rarity,Weight,Price,Restrictions,Element,B1,V1,Sharp Resistance,Blunt Resistance,Fire Resistance,Poison Resistance,Lightning Resistance,Cold Resistance,Total value,Total cost,Difference
-*Steel,60,,-2,Metal,,,,,,,,-2,,-2,-2,0
-Mithril,8,-1,1,Metal,Air,,,1,,,,-2,,0,0,0
-Adamantine,8,1,3,Metal,Stone,,,2,1,,,-2,,4,4,0
-Obsidian,8,,2,Metal,Fire,,,,-1,4,,,,2,2,0
-Ironwood,8,,3,Metal,Nature,Physical,1,-1,,-1,2,2,,3,3,0
-Electrum,8,1,3,Metal,Water,Attune,1,-1,-1,2,1,1,2,4,4,0
-*Leather,65,,0,Leather,,,,,,,,,,0,0,0
-Elephant,10,1,1,Leather,Stone,Physical,1,,,,,,,2,2,0
-Demon,8,1,2,Leather,Air,,,,,2,,,1,3,3,0
-Dragon Scale,5,1,3,Leather,Fire,,,,,4,,,,4,4,0
-Unicorn,5,1,3,Leather,Nature,Mental,1,,,,1,1,,4,4,0
-Mermaid Scale,7,,3,Leather,Water,,,1,,,,-1,2,3,3,0
-*Linen,55,,0,Cloth,,,,,,,,,,0,0,0
-Spidersilk,8,-1,3,Cloth,Nature,Reflex,1,,,-1,1,,,2,2,0
-Fairy hair,7,,4,Cloth,Air,,,,,,1,2,1,4,4,0
-Fur,10,,2,Cloth,Water,,,,,,,,2,2,2,0
-Lace,10,,3,Cloth,Fire,Magic,2,,,,,,-1,3,3,0
-Steelwool,10,1,4,Cloth,Stone,,,1,1,,,,1,5,5,0
-*Oak,50,,,Wood,None,,,,,-1,,,,-1,0,-1
-Fossilized,10,1,,Wood,Stone,,,1,,-1,,,,1,1,0
-Yew,30,-1,-1,Wood,Water,,,-1,,,,,,-2,-2,0
-Treant,5,,2,Wood,Nature,,,,,-1,3,,,2,2,0
-Ebony,10,,3,Wood,Fire,,,,,3,,,,3,3,0
-Yggdrasil,5,,4,Wood,Air,,,,,-1,3,2,,4,4,0
+Name,Rarity,,Weight,Price,Restrictions,Element,B1,V1,Sharp Resistance,Blunt Resistance,Fire Resistance,Poison Resistance,Lightning Resistance,Cold Resistance,Total value,Total cost,Difference
+*Steel,"60.00%",,,-2,Metal,,,,,,,,-2,,-2,-2,0
+Mithril,"8.00%",,-1,1,Metal,Air,,,1,,,,-2,,0,0,0
+Adamantine,"8.00%",,1,3,Metal,Stone,,,2,1,,,-2,,4,4,0
+Obsidian,"8.00%",,,2,Metal,Fire,,,,-1,4,,,,2,2,0
+Ironwood,"8.00%",,,3,Metal,Nature,Physical,1,-1,,-1,2,2,,3,3,0
+Electrum,"8.00%",,1,3,Metal,Water,Attune,1,-1,-1,2,1,1,2,4,4,0
+*Leather,"65.00%",,,0,Leather,,,,,,,,,,0,0,0
+Elephant,"10.00%",,1,1,Leather,Stone,Physical,1,,,,,,,2,2,0
+Demon,"8.00%",,1,2,Leather,Air,,,,,2,,,1,3,3,0
+Dragon Scale,"5.00%",,1,3,Leather,Fire,,,,,4,,,,4,4,0
+Unicorn,"5.00%",,1,3,Leather,Nature,Mental,1,,,,1,1,,4,4,0
+Mermaid Scale,"7.00%",,,3,Leather,Water,,,1,,,,-1,2,3,3,0
+*Linen,"55.00%",,,0,Cloth,,,,,,,,,,0,0,0
+Spidersilk,"8.00%",,-1,3,Cloth,Nature,Reflex,1,,,-1,1,,,2,2,0
+Fairy hair,"7.00%",,,4,Cloth,Air,,,,,,1,2,1,4,4,0
+Fur,"10.00%",,,2,Cloth,Water,,,,,,,,2,2,2,0
+Lace,"10.00%",,,3,Cloth,Fire,Magic,2,,,,,,-1,3,3,0
+Steelwool,"10.00%",,1,4,Cloth,Stone,,,1,1,,,,1,5,5,0
+*Oak,"50.00%",,,,Wood,None,,,,,-1,,,,-1,0,-1
+Fossilized,"10.00%",,1,,Wood,Stone,,,1,,-1,,,,1,1,0
+Yew,"30.00%",,-1,-1,Wood,Water,,,-1,,,,,,-2,-2,0
+Treant,"5.00%",,,2,Wood,Nature,,,,,-1,3,,,2,2,0
+Ebony,"10.00%",,,3,Wood,Fire,,,,,3,,,,3,3,0
+Yggdrasil,"5.00%",,,4,Wood,Air,,,,,-1,3,2,,4,4,0
