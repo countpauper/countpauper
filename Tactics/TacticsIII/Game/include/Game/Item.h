@@ -8,6 +8,32 @@
 namespace Game
 {
 
+enum class Restrictions
+{
+    none = 0,
+    // material
+    cloth,
+    leather,
+    metal,
+    wood,
+    // element
+    air,
+    stone,
+    fire,
+    nature,
+    water,
+    // damage (that is not an element)
+    sharp,
+    blunt,
+    cold,
+    poison,
+    lightning,
+    // weapon type
+    melee,
+    ranged,
+    thrown
+};
+
 class Item :
     public Statistics
 {

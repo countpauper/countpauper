@@ -67,6 +67,13 @@ public:
                 cold_resist,
                 lightning_resist,
                 poison_resist, // includes acid?
+
+                blunt_damage,
+                sharp_damage,
+                fire_damage,
+                cold_damage,
+                lightning_damage,
+                poison_damage
         };
 
         enum Operator

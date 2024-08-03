@@ -1,0 +1,29 @@
+Name,Rarity,Price,Weight,Material,Type,Damage Type,Stat,Damage,Reach,Range,Hold,Load,Value,Cost,Balance
+Fist,0,0,0,Cloth,Melee,Blunt,damage,1,1,,1,,2,1,1
+Dagger,8,1,1,Metal,Melee,Sharp,damage,2,1,3,1,,3,3,0
+Club,4,1,1,Wood,Melee,Blunt,damage,2,1,,1,,3,3,0
+Spear,5,1,2,Metal,Melee,Sharp,damage,2,2,4,1,,4,4,0
+Whip,3,1,1,Leather,Melee,Sharp,damage,1,2,,1,,3,3,0
+Staff,5,2,2,Wood,Melee,Blunt,damage,4,2,,2,,6,6,0
+Sword,7,2,2,Metal,Melee,Sharp,damage,4,1,,1,,5,5,0
+Axe,5,2,2,Metal,Melee,Sharp,damage,4,1,4,1,,"5,333333333",5,"0,3333333333"
+Mace,5,2,2,Metal,Melee,Blunt,damage,4,1,,1,,5,5,0
+Longsword,5,3,3,Metal,Melee,Sharp,damage,6,1,,1,,7,7,0
+Flail,4,3,3,Metal,Melee,Blunt,damage,6,1,,1,,7,7,0
+Greatsword,3,3,4,Metal,Melee,Sharp,damage,8,1,,2,,9,9,0
+Maul,2,3,4,Metal,Melee,Blunt,damage,8,1,3,2,,9,9,0
+Polearm,3,3,3,Metal,Melee,Sharp,damage,6,2,,2,,8,8,0
+Oversized Sword,2,4,6,Metal,Melee,Sharp,damage,10,2,,2,,12,12,0
+Pike,4,2,2,Wood,Melee,Sharp,damage,2,3,,2,,5,6,-1
+Javelin,6,1,1,Wood,Ranged,Sharp,damage,2,1,5,1,,"3,666666667",3,"0,6666666667"
+Sling,5,2,1,Leather,Ranged,Blunt,damage,3,,5,1,,"4,666666667",4,"0,6666666667"
+Bow,6,2,2,Wood,Ranged,Sharp,damage,4,,6,2,,6,6,0
+Longbow,4,3,3,Wood,Ranged,Sharp,damage,6,,7,2,,"8,333333333",8,"0,3333333333"
+Crossbow,3,4,3,Wood,Ranged,Sharp,none,8,,7,2,1,"10,33333333",10,"0,3333333333"
+Ballista,2,4,6,Wood,Ranged,Sharp,none,10,,8,2,1,"12,66666667",13,"-0,3333333333"
+Pistol,2,7,1,Metal,Ranged,Blunt,none,9,,6,1,1,11,10,1
+Rifle,2,6,2,Metal,Ranged,Blunt,none,10,,8,2,1,"12,66666667",11,"1,666666667"
+Wand,2,5,1,Wood,Ranged,Fire,magic,5,,5,1,,"6,666666667",7,"-0,3333333333"
+Wand,1,5,1,Wood,Ranged,Cold,magic,5,,5,1,,"6,666666667",7,"-0,3333333333"
+Wand,1,5,1,Metal,Ranged,Lightning,magic,5,,5,1,,"6,666666667",7,"-0,3333333333"
+Wand,1,5,1,Leather,Ranged,Poison,magic,5,,5,1,,"6,666666667",7,"-0,3333333333"

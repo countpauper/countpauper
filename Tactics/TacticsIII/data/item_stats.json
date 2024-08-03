@@ -15,5 +15,12 @@
         "fire resistance":{"description":"the amount of fire damage resisted", "integer":true},
         "cold resistance":{"description":"the amount of cold damage resisted", "integer":true},
         "lightning resistance":{"description":"the amount of lightning damage resisted", "integer":true},
-        "poison resistance":{"description":"the amount of poison damage resisted", "integer":true}
+        "poison resistance":{"description":"the amount of poison damage resisted", "integer":true},
+        "blunt damage":{"description":"the amount of blunt damage done", "integer":true},
+        "sharp damage":{"description":"the amount of sharp damage done", "integer":true},
+        "fire damage":{"description":"the amount of fire damage done", "integer":true},
+        "cold damage":{"description":"the amount of cold damage done", "integer":true},
+        "lightning damage":{"description":"the amount of lightning damage done", "integer":true},
+        "poison damage":{"description":"the amount of poison damage done", "integer":true}
+
 }

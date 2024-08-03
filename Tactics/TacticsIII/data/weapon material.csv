@@ -1,0 +1,19 @@
+Prefix,Rarity,Weight,Price,Material,Element,B1,V1,Sharp Damage,Blunt Damage,Fire Damage,Poison Damage,Lightning Damage,Cold Damage,Total Value,Total cost,Difference
+*Steel,40,,0,Metal,,,,,,,,,,0,0,0
+Mithril,15,-1,3,Metal,Air,Offense,1,,,,,1,,2,2,0
+Adamantine,15,,3,Metal,Stone,Range,1,,2,,,,,3,3,0
+Obsidian,10,,3,Metal,Fire,,,,,3,,,,3,3,0
+Ironwood,10,,2,Metal,Nature,,,,,,2,,,2,2,0
+Electrum,10,,4,Metal,Water,,,,,,,,4,4,4,0
+*Leather,40,,0,Leather,,,,,,,,,,0,0,0
+Elephant,20,,2,Leather,Stone,Offense,1,,1,,,,,2,2,0
+Demon,8,,4,Leather,Air,Range,1,,,,,3,,4,4,0
+Dragon Scale,7,,3,Leather,Fire,,,,,3,,,,3,3,0
+Unicorn,15,-1,5,Leather,Nature,Reach,1,,,,3,,,4,4,0
+Mermaid Scale,10,,3,Leather,Water,,,,,,,,3,3,3,0
+*Oak,40,,0,Wood,None,,,,,,,,,0,0,0
+Fossilized,10,1,2,Wood,Stone,,,,3,,,,,3,3,0
+Yew,15,,2,Wood,Water,Offense,2,,,,,,,2,2,0
+Treant,10,,5,Wood,Nature,Reload,-1,,,,4,,,5,5,0
+Ebony,15,,2,Wood,Fire,,,,,2,,,,2,2,0
+Yggdrasil,10,,4,Wood,Air,Reload,-1,,,,,3,,4,4,0
