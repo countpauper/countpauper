@@ -3,7 +3,7 @@
 #include "Game/Move.h"
 #include "Game/Mock/MockActor.h"
 #include "Game/Mock/MockWorld.h"
-#include "CreatureDefinition.h"
+#include "Definition.h"
 
 namespace Game::Test
 {

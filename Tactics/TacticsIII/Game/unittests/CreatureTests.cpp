@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "Game/Creature.h"
-#include "CreatureDefinition.h"
+#include "Definition.h"
 
 namespace Game::Test
 {

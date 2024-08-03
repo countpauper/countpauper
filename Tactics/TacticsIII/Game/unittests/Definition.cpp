@@ -1,4 +1,4 @@
-#include "CreatureDefinition.h"
+#include "Definition.h"
 #include "Game/Creature.h"
 #include <cmath>
 
