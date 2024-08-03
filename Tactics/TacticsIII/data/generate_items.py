@@ -22,7 +22,7 @@ def column_correct(column, value, item):
         return int(value)
     elif value[0]=='-' and value[1:].isdigit():
         return int(value)
-    elif not item and column in tag_columns:
+    elif column in tag_columns:
         if value.lower()=="any" or value=="":
             return None
         else:

@@ -35,15 +35,12 @@ public:
     std::string_view Name() const override;
     const Race& GetRace() const;
     static StatDefinition definition;
-
 private:
     void OnCount(Stat::Id stat, unsigned remaining) override;
 
     std::string name;
     const Race& race;
-    std::vector<std::reference_wrapper<Item>> inventory;
-    std::vector<std::unique_ptr<Item>> items;  // TODO: item db should be externally owned
-
+    std::vector<std::reference_wrapper<const Item>> inventory;
     // TODO: effects(bonuses) knowledge (with bonuses), actions, skills(extra actions)
 
     // Loaded from JSON each Stat is defined by a name and which bonuses it gives to other stats at a certain level.

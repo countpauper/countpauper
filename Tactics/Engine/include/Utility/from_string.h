@@ -44,13 +44,13 @@ T from_string(std::string_view str, const std::map<std::string_view, T>& mapping
 }
 
 template <typename T>
-std::set<T> from_strings(std::string_view str, char delimiter, std::map<std::string_view, T>& mapping)
+std::set<T> from_strings(std::string_view str, char delimiter, const std::map<std::string_view, T>& mapping)
 {
     auto strs = Split(str, delimiter);
     std::set<T> o;
     std::transform(strs.begin(), strs.end(), std::inserter(o,o.begin()), [&mapping](std::string_view str)
     {
-        return Engine::from_string<T>(str,mapping);
+        return Engine::from_string<T>(str, mapping);
     });
     return o;
 }

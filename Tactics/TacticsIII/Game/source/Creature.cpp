@@ -18,7 +18,7 @@ Creature::Creature(std::string_view name, const Race& race) :
     race(race)
 {
     InitializeCounters();
-    items.push_back(std::make_unique<Unarmed>());
+    inventory.emplace_back(race.GetUnarmed());
 }
 
 
@@ -39,9 +39,9 @@ StatDescriptor Creature::Get(Stat::Id id) const
     // Get item stat
     if (!result.IsValid())
     {
-        for(const auto& item : items)
+        for(const auto& item : inventory)
         {
-            result = item->Get(id);
+            result = item.get().Get(id);
             if (result.IsValid())
             {
                 break;

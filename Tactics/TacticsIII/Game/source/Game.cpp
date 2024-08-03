@@ -2,6 +2,7 @@
 #include "Game/Map.h"
 #include "UI/Avatar.h"
 #include "Game/Game.h"
+#include "Game/ItemDatabase.h"
 #include "UI/Scene.h"
 #include "UI/Application.h"
 #include "UI/GameMessages.h"
@@ -13,6 +14,8 @@
 namespace Game
 {
 
+ItemDatabase items;
+
 Game::Game(Engine::Scene& scene) :
     scene(scene),
     elf("elf"),
@@ -20,7 +23,7 @@ Game::Game(Engine::Scene& scene) :
 {
     Creature::definition.Load("data/creature.json");
     Item::definition.Load("data/item_stats.json");
-
+    items.Load("data/items.json");
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<Selected>(),
@@ -34,7 +37,8 @@ Game::Game(Engine::Scene& scene) :
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
     auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", elf)));
     velglarn->Move(map, Engine::Position{3, 2});
-    //TODO velglarn->Equip()
+    //velglarn->Equip(*items.Find("Dagger"));
+
     scene.Add(*velglarn);
     auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", elf)));
     elgcaress->Move(map, Engine::Position{5, 8});
