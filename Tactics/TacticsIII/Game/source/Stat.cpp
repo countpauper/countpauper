@@ -16,11 +16,11 @@ Stat::Stat(std::string_view name, std::string_view description)
 {
 }
 
-Stat::Stat(std::string_view name, std::string_view description, Id dependency, std::initializer_list<int> table, int multiplier)
+Stat::Stat(std::string_view name, std::string_view description, Id dependency, std::span<int> table, int multiplier)
         : name(name)
         , description(description)
         , dependency(dependency)
-        , table(table)
+        , table(table.begin(), table.end())
         , multiplier(multiplier)
 {
 }

@@ -3,7 +3,7 @@
 #include <map>
 #include <vector>
 #include <limits>
-#include <initializer_list>
+#include <span>
 #include "File/Json.h"
 #include "Game/StatDescriptor.h"
 #include "Utility/Range.h"
@@ -87,7 +87,7 @@ public:
         ~Stat();
         explicit Stat(std::string_view name, std::string_view description=std::string_view());
         Stat(std::string_view name, std::string_view description, Id dependency,
-                std::initializer_list<int> table= {}, int multiplier=1);
+                std::span<int> table= {}, int multiplier=1);
         Stat(std::string_view name, std::string_view description, Id dependency,
                 Operator op, Id operand);
         Stat(std::string_view name, const json& j, const class StatDefinition& dependencies);

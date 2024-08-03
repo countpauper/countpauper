@@ -25,7 +25,7 @@ Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, float multipl
     }
     else
     {
-        std::initializer_list<int> table={
+        int table[] {
             int(0*multiplier),
             int(1*multiplier),
             int(2*multiplier),
@@ -55,7 +55,8 @@ Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, Stat::Operato
 
 Definition& Definition::Define(Stat::Id stat, int value)
 {
-    definition[stat] = Stat(definition.Name(stat), std::string_view(), Stat::Id::none, {value});
+    int table[1] = { value };
+    definition[stat] = Stat(definition.Name(stat), std::string_view(), Stat::Id::none, table);
     last = stat;
     return *this;
 }

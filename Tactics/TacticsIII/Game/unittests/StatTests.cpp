@@ -84,10 +84,11 @@ TEST(Stat, define_stat_multiplied_by_stat)
 
 TEST(Stat, constant_stat)
 {
-    Stat constat("const", "", Stat::Id::none, {3});
+    int table[] = { 3 };
+    Stat constant("const", "", Stat::Id::none, table);
     MockStatted mock;
     EXPECT_CALL(mock, Get(_)).Times(0);
-    EXPECT_EQ(constat.Compute(mock).Total(), 3);
+    EXPECT_EQ(constant.Compute(mock).Total(), 3);
 }
 
 TEST(Stat, define_unknown_stat_throws)
