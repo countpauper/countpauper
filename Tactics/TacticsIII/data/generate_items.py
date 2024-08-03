@@ -6,20 +6,13 @@ def read_csv(file):
     reader = csv.DictReader(file)
     return [row for row in reader]
 
-
-translate_table = dict(
-)
-
-match_columns="material","type","damage type"
-
-def translate_bonus_key(key):
-    return translate_table.get(key.lower(), key.lower())
-
 def bonify(table, columns, custom_columns=dict()):
     """Convert and filter rows of to bonus dicts"""
-    return [{translate_bonus_key(col):val for col in columns if (val := row.get(col))} |
-            {translate_bonus_key(row.get(col)):val for col, val_col in custom_columns.items() if (val := row.get(val_col))}
+    return [{col.lower():val for col in columns if (val := row.get(col))} |
+            {row.get(col).lower():val for col, val_col in custom_columns.items() if (val := row.get(val_col))}
             for row in table]
+
+tag_columns = "tags","restrictions"
 
 def column_correct(column, value, item):
     if column=="rarity":
@@ -28,9 +21,9 @@ def column_correct(column, value, item):
         return int(value)
     elif value[0]=='-' and value[1:].isdigit():
         return int(value)
-    elif not item and column in match_columns:
-        if value.lower()=="any":
-            return []
+    elif not item and column in tag_columns:
+        if value.lower()=="any" or value=="":
+            return None
         else:
             return [v.lower().strip() for v in value.split("|")]
     else:
@@ -43,13 +36,13 @@ def type_correct(table, item=False):
     return result
 
 
-armors = type_correct(bonify(read_csv(open("armor.csv")), ("Name", "Rarity", "Price", "Hands", "Material", "Weight", "Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold")), True)
-armor_material = type_correct(bonify(read_csv(open("armor material.csv")), ("Prefix", "Rarity", "Price", "Material", "Weight","Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold"), {"B1":"V1"}))
-armor_bonus = type_correct(bonify(read_csv(open("armor bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Material", "Weight"), {"B1": "V1", "B2": "V2", "B3":"V3"}))
+armors = type_correct(bonify(read_csv(open("armors.csv")), ("Name", "Rarity", "Price", "Hands", "Weight", "Tags", "Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold")), True)
+armor_material = type_correct(bonify(read_csv(open("armor material.csv")), ("Prefix", "Rarity", "Price", "Restrictions", "Weight","Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold"), {"B1":"V1"}))
+armor_bonus = type_correct(bonify(read_csv(open("armor bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Restrictions", "Weight"), {"B1": "V1", "B2": "V2", "B3":"V3"}))
 
-weapons = type_correct(bonify(read_csv(open("weapons.csv")), ("Name", "Rarity", "Price", "Hands", "Reach", "Range", "Load", "Material", "Type", "Weight", "Damage Type", "Stat", "Damage")), True)
-weapon_material = type_correct(bonify(read_csv(open("weapon material.csv")), ("Prefix", "Rarity", "Price", "Material", "Weight","Sharp Damage", "Blunt Damage", "Fire Damage", "Poison Damage", "Lightning Damage", "Cold"), {"B1":"V1"}))
-weapon_bonus = type_correct(bonify(read_csv(open("weapon bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Attument", "Material", "Damage Type", "Type",   "Weight"), {"B1": "V1", "B2": "V2", "Penalty":"V3"}))
+weapons = type_correct(bonify(read_csv(open("weapons.csv")), ("Name", "Rarity", "Price", "Hands", "Reach", "Range", "Load", "Weight", "Tags", "Damage Type", "Stat", "Damage")), True)
+weapon_material = type_correct(bonify(read_csv(open("weapon material.csv")), ("Prefix", "Rarity", "Price", "Weight", "Restrictions", "Sharp Damage", "Blunt Damage", "Fire Damage", "Poison Damage", "Lightning Damage", "Cold"), {"B1":"V1"}))
+weapon_bonus = type_correct(bonify(read_csv(open("weapon bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Attument", "Weight", "Restrictions"), {"B1": "V1", "B2": "V2", "Penalty":"V3"}))
 
 def select_random(table):
     rarities = [row.get("rarity", 0) for row in table]
@@ -59,9 +52,12 @@ def select_random(table):
 def select(table, **filter):
     return [row for row in table if all(row.get(k).lower() == v.lower() for k,v in filter.items())]
 
-def match(item, bonus, columns):
-    return all(not bonus.get(col, []) or
-               item.get(col,"") in bonus.get(col,[]) for col in columns)
+def match(item, bonus):
+    tags = item.get("tags")
+    restrictions = bonus.get("restrictions")
+    if restrictions is None:
+        return True
+    return all(r in tags for r in restrictions)
 
 def specify_damage(item):
     if (damage_type:=item.get("damage type")) and (damage:=item.get("damage")):
@@ -86,12 +82,14 @@ def combine(*stats):
             elif k == "postfix":
                 if v[0] != "*":
                     name+= " " + v
-            elif k in match_columns:
+            elif k in tag_columns:
                 result[k] = result.get(k, v)
             elif k == "rarity":
                 rarity *= float(v)
             elif k == 'stat':
                 result[k] = v
+            elif k == 'damage type':
+                pass
             else:
                 result[k] = result.get(k, 0) + v
     result = specify_damage(result)
@@ -99,9 +97,9 @@ def combine(*stats):
 
 def generate_random_item(items, materials, boni):
     item = select_random(items)
-    applicable_materials = [material for material in materials if match(item, material, match_columns)]
+    applicable_materials = [material for material in materials if match(item, material)]
     material = select_random(applicable_materials)
-    applicable_boni = [bonus for bonus in boni if match(item, bonus, match_columns)]
+    applicable_boni = [bonus for bonus in boni if match(item, bonus)]
     bonus = select_random(applicable_boni)
     return combine(item, material, bonus)
 
@@ -110,10 +108,10 @@ def generate_all_items(items, materials, boni):
     result = []
     for item in items:
         for material in materials:
-            if match(item, material, match_columns):
+            if match(item, material):
                 result.append(combine(item, material))
                 for bonus in boni:
-                    if match(item, bonus, match_columns):
+                    if match(item, bonus):
                         result.append(combine(item, material, bonus))
     return result
 

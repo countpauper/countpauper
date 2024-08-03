@@ -1,14 +1,14 @@
-Prefix,Postfix,Rarity,Attunement,Price,Damage Type,Material,Type,B1,V1,B2,V2,Penalty,V3,Total Value,Total Cost,Balance
-Sharp,,10,,1,Sharp,Metal,Melee,Sharp Damage ,1,,,,,1,1,0
-Serrated,,5,,2,Sharp,Metal,Melee,Sharp Damage,2,,,,,2,2,0
-Poisoned,,3,,2,,Any,Any,Poison Damage,2,,,,,2,2,0
-Toxic,,2,,2,,Any,Any,Poison Damage,3,,,Poison Resistance,-1,3,3,0
-Flaming,,4,,2,Blunt,Any,Any,Fire Damage,2,,,,,2,2,0
-Spiked,,5,,1,Blunt,Any,Melee,Sharp Damage,1,,,,,1,1,0
-Heavy,,8,,0,Blunt,Any,Any,Damage,1,,,Weight,1,1,1,0
-Rusty ,,10,,-1,,Metal,Any,Damage,-1,,,,,-1,-1,0
-Blunt,,8,,0,Sharp,Any,Melee,Sharp Damage,-1,Blunt Damage,1,,,0,0,0
-Cracked,,10,,-1,,Wood,Any,Damage,-1,,,,,-1,-1,0
-Oiled,,0,,0,,Wood,Any,,,,,Fire Resistance,-1,0,1,-1
-Coiled,,5,,1,,Leather,Any,Damage,1,,,,,1,1,0
-,of the battle mage,10,1,1,Fire|Cold|Poison|Lightning,Any,Ranged,Range,2,,,,,2,2,0
+Prefix,Postfix,Rarity,Attunement,Price,Damage Type,Material,Type,Restrictions,B1,V1,B2,V2,Penalty,V3,Total Value,Total Cost,Balance
+Sharp,,10,,1,Sharp,Metal,Melee,Metal|Melee|Sharp,Sharp Damage ,1,,,,,1,1,0
+Serrated,,5,,2,Sharp,Metal,Melee,Metal|Melee|Sharp,Sharp Damage,2,,,,,2,2,0
+Poisoned,,3,,2,,,,,Poison Damage,2,,,,,2,2,0
+Toxic,,2,,2,,,,,Poison Damage,3,,,Poison Resistance,-1,3,3,0
+Flaming,,4,,2,Blunt,,,Blunt,Fire Damage,2,,,,,2,2,0
+Spiked,,5,,1,Blunt,,Melee,Blunt|Melee,Sharp Damage,1,,,,,1,1,0
+Heavy,,8,,0,Blunt,,,Blunt,Damage,1,,,Weight,1,1,1,0
+Rusty ,,10,,-1,,Metal,,Metal,Damage,-1,,,,,-1,-1,0
+Blunt,,8,,0,Sharp,,Melee,Sharp|Melee,Sharp Damage,-1,Blunt Damage,1,,,0,0,0
+Cracked,,10,,-1,,Wood,,Wood,Damage,-1,,,,,-1,-1,0
+Oiled,,0,,0,,Wood,,Wood,,,,,Fire Resistance,-1,0,1,-1
+Coiled,,5,,1,,Leather,,Leather,Damage,1,,,,,1,1,0
+,of the battle mage,10,1,1,Fire|Cold|Poison|Lightning,,Ranged,Ranged|Fire|Cold|Poison|Lightning,Range,2,,,,,2,2,0

@@ -1,0 +1,12 @@
+Name,Rarity,Price,Hands,Tags,Weight,Sharp,Blunt,Fire,Poison,Lightning,Cold
+Robe,10,1,,Cloth|Armor,0,,,,,,
+Jerkin,15,1,,Leather|Armor,0,,,,,,
+Cuirass,10,2,,Leather|Armor,1,1,1,,,,
+Gambeson,8,2,,Cloth|Armor,1,1,1,,,,
+Mail,15,3,,Metal|Armor,2,2,2,,,,
+Brigadine,7,3,,Leather|Armor,2,2,2,,,,
+Scale,10,5,,Metal|Armor,3,3,3,,,,
+Plate,5,7,,Metal|Armor,4,4,4,,,,
+Buckler,8,1,-1,Metal|Shield,1,1,1,,,,
+Kite Shield,7,2,-1,Metal|Shield,2,2,2,,,,
+Tower Shield,5,3,-1,Wood|Shield,3,3,3,,,,

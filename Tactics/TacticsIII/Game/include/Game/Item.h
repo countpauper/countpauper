@@ -28,6 +28,9 @@ enum class Restrictions
     cold,
     poison,
     lightning,
+    // armor type
+    armor,
+    shield,
     // weapon type
     melee,
     ranged,
