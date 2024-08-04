@@ -14,7 +14,7 @@ class Item :
     public Statistics
 {
 public:
-    Item();
+    explicit Item(std::string_view name="", Restrictions tags={});
     explicit Item(const nlohmann::json& data);
     static StatDefinition definition;
     std::string_view Name() const override;

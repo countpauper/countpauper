@@ -4,8 +4,13 @@ namespace Game
 {
 
 using json = nlohmann::json;
-Item::Item() = default;
 
+
+Item::Item(std::string_view name, Restrictions tags) :
+    name(name),
+    tags(tags)
+{
+}
 
 Item::Item(const json& data) :
     name(Engine::must_get<std::string_view>(data, "name")),

@@ -1,9 +1,9 @@
-#include "Game/Equipped.h"
+#include "Game/Equipments.h"
 
 namespace Game
 {
 
-bool Equipped::Unequip(const Equipment& item)
+bool Equipments::Unequip(const Equipment& item)
 {
     auto it = std::find_if(equipped.begin(), equipped.end(), [&item](const Equipment& e)
     {
@@ -15,7 +15,7 @@ bool Equipped::Unequip(const Equipment& item)
     return true;
 }
 
-unsigned Equipped::Unequip(const Restrictions filter)
+unsigned Equipments::Unequip(const Restrictions filter)
 {
     return std::erase_if(equipped, [filter](const Equipment& e)
     {
@@ -23,14 +23,14 @@ unsigned Equipped::Unequip(const Restrictions filter)
     });
 }
 
-void Equipped::Equip(const Equipment& equipment)
+void Equipments::Equip(const Equipment& equipment)
 {
     Restrictions exclude = equipment.GetItem().Excludes();
     Unequip(exclude);
     equipped.emplace_back(std::move(equipment));
 }
 
-StatDescriptor Equipped::GetItemStat(Stat::Id id, Restrictions filter) const
+StatDescriptor Equipments::GetItemStat(Stat::Id id, const Restrictions& filter) const
 {
     StatDescriptor result;
     // TODO: could check if it's a valid stat in Item::definition
@@ -44,6 +44,24 @@ StatDescriptor Equipped::GetItemStat(Stat::Id id, Restrictions filter) const
                 return result;
         }
     }
+    return result;
+}
+
+std::vector<const Equipment*> Equipments::GetEquipped(const Restrictions& filter) const
+{
+    std::vector<const Equipment*> result;
+    result.reserve(equipped.size());
+
+    std::transform(equipped.begin(), equipped.end(), std::back_inserter(result),
+        [](const Equipment& e)
+    {
+        return &e;
+    });
+    std::erase_if(result, [filter](const Equipment* e)
+    {
+        return !e->GetItem().Match(filter);
+    });
+    result.shrink_to_fit();
     return result;
 }
 

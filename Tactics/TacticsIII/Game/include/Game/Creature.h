@@ -6,7 +6,7 @@
 #include "Game/StatDefinition.h"
 #include "Game/Race.h"
 #include "Game/Conditions.h"
-#include "Game/Equipped.h"
+#include "Game/Equipments.h"
 #include "UI/Object.h"
 
 namespace Game
@@ -16,7 +16,7 @@ class Creature :
     public Statistics,
     public Counters,
     public Conditions,
-    public Equipped
+    public Equipments
 {
 public:
     Creature(std::string_view name, const Race& race);

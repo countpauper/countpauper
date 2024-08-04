@@ -4,7 +4,7 @@
 #include "Game/Actor.h"
 #include "MockStatted.h"
 #include "MockCounted.h"
-#include "Game/Equipped.h"
+#include "MockEquipped.h"
 #include "UI/Mock/MockScenery.h"
 
 namespace Game::Test
@@ -48,7 +48,7 @@ public:
     Engine::Test::MockScenery appearance;
     MockStatted stats;
     MockCounted counts;
-    Equipped equipment;    // TODO mock
+    MockEquipped equipment;    // TODO mock
 };
 
 }

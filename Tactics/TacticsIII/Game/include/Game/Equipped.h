@@ -4,16 +4,17 @@
 
 namespace Game
 {
+
+
 class Equipped
 {
 public:
-    Equipped() = default;
-    void Equip(const Equipment& equipment);
-    bool Unequip(const Equipment& item);
-    unsigned Unequip(const Restrictions filter);
-    StatDescriptor GetItemStat(Stat::Id id, Restrictions filter=Restrictions()) const;
-protected:
-    std::vector<Equipment> equipped;
+    virtual ~Equipped() = default;
+    virtual void Equip(const Equipment& equipment) = 0;
+    virtual bool Unequip(const Equipment& item) = 0;
+    virtual unsigned Unequip(const Restrictions filter) = 0;
+    virtual std::vector<const Equipment*> GetEquipped(const Restrictions& filter) const = 0;
+    virtual StatDescriptor GetItemStat(Stat::Id id, const Restrictions& filter=Restrictions()) const = 0;
 };
 
 }
