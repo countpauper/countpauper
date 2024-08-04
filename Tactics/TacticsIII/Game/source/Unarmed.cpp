@@ -13,6 +13,8 @@ Unarmed::Unarmed()
     stats[Stat::enchantment] = 0;
     stats[Stat::price] = 0;
     stats[Stat::rarity] = 0;
+
+    tags = Restrictions{Restriction::melee, Restriction::unarmed, Restriction::blunt};
 }
 
 }

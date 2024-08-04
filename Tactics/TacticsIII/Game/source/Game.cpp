@@ -3,6 +3,7 @@
 #include "UI/Avatar.h"
 #include "Game/Game.h"
 #include "Game/ItemDatabase.h"
+#include "Game/Equipment.h"
 #include "UI/Scene.h"
 #include "UI/Application.h"
 #include "UI/GameMessages.h"
@@ -37,7 +38,7 @@ Game::Game(Engine::Scene& scene) :
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
     auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", elf)));
     velglarn->Move(map, Engine::Position{3, 2});
-    //velglarn->Equip(*items.Find("Dagger"));
+    velglarn->Equip(Equipment(*items.Find("dagger")));
 
     scene.Add(*velglarn);
     auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", elf)));

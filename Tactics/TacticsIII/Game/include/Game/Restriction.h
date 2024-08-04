@@ -31,7 +31,8 @@ enum class Restriction
     shield,
     melee,
     ranged,
-    thrown
+    thrown,
+    unarmed
 };
 
 // TODO: this should be a conjunction of disjunctions where items in a category are disjunction

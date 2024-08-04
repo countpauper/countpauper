@@ -60,6 +60,10 @@ void Avatar::Move(const HeightMap& map, Engine::Position destination)
     coordinate = map.GroundCoord(position);
 }
 
+void Avatar::Equip(const Equipment& equipment)
+{
+    creature.Equip(equipment);
+}
 
 const Engine::Scenery& Avatar::GetAppearance() const
 {

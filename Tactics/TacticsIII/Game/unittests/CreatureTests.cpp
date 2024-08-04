@@ -70,4 +70,20 @@ TEST(Creature, damage_reduces_hitpoints)
     EXPECT_EQ(c.Available(Stat::hp), 0);
 }
 
+TEST(Creature, equip_weapon)
+{
+    Definition itemDef(Item::definition);
+    itemDef.Define(Stat::offense);
+
+    Race race("goblin");
+    Creature c("baz", race);
+    EXPECT_EQ(c.Get(Stat::offense).Total(), 1);
+    Item weapon;
+    weapon.Set(Stat::offense, 3);
+    weapon.Set(Stat::hold, 1);
+    c.Equip(Equipment(weapon));
+    EXPECT_EQ(c.Get(Stat::offense).Total(), 3);
+}
+
+
 }

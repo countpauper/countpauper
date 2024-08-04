@@ -16,10 +16,10 @@ TEST(Item, LoadNameAndStat)
 })""");
 
     Definition def(Item::definition);
-    def.Define(Stat::damage);
+    def.Define(Stat::offense);
     Item item(json);
     EXPECT_EQ(item.Name(), "Test");
-    EXPECT_EQ(item.Get(Stat::damage).Total(), 3);
+    EXPECT_EQ(item.Get(Stat::offense).Total(), 3);
 }
 
 TEST(Item, RetrictionConjunction)

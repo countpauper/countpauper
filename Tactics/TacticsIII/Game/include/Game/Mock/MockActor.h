@@ -35,6 +35,7 @@ public:
 
     MOCK_METHOD(void, Move, (const class HeightMap& map, Engine::Position destination), (override));
     MOCK_METHOD(Engine::Position, Position, (), (const override));
+    MOCK_METHOD(void, Equip, (const Equipment& equipment), (override));
 
     const Engine::Scenery& GetAppearance() const override { return appearance; }
     Statted& GetStats() { return stats; }

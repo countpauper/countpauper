@@ -25,6 +25,7 @@ public:
     Engine::Quaternion GetOrientation() const override;
     void Select(bool on);
     void Move(const class HeightMap& map, Engine::Position destination) override;
+    void Equip(const Equipment& equipment) override;
 
     const Engine::Scenery& GetAppearance() const override;
     Engine::Position Position() const override;

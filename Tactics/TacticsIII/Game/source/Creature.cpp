@@ -18,7 +18,7 @@ Creature::Creature(std::string_view name, const Race& race) :
     race(race)
 {
     InitializeCounters();
-    inventory.emplace_back(race.GetUnarmed());
+    inventory.emplace_back(Equipment(race.GetUnarmed()));
 }
 
 
@@ -32,6 +32,33 @@ const Race& Creature::GetRace() const
     return race;
 }
 
+bool Creature::Unequip(const Equipment& item)
+{
+    auto it = std::find_if(inventory.begin(), inventory.end(), [&item](const Equipment& e)
+    {
+        return &e == &item;
+    });
+    if (it == inventory.end())
+        return false;
+    inventory.erase(it);
+    return true;
+}
+
+unsigned Creature::Unequip(const Restrictions filter)
+{
+    return std::erase_if(inventory, [filter](const Equipment& e)
+    {
+        return e.GetItem().Match(filter);
+    });
+}
+
+void Creature::Equip(const Equipment& equipment)
+{
+    Restrictions exclude = equipment.GetItem().Exclusive();
+    Unequip(exclude);
+    inventory.emplace_back(std::move(equipment));
+}
+
 StatDescriptor Creature::Get(Stat::Id id) const
 {
     // Get primary stat
@@ -39,9 +66,9 @@ StatDescriptor Creature::Get(Stat::Id id) const
     // Get item stat
     if (!result.IsValid())
     {
-        for(const auto& item : inventory)
+        for(const auto& equipment : inventory)
         {
-            result = item.get().Get(id);
+            result = equipment.Get(id);
             if (result.IsValid())
             {
                 break;

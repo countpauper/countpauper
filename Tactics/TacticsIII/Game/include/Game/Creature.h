@@ -5,8 +5,8 @@
 #include "Game/Statistics.h"
 #include "Game/StatDefinition.h"
 #include "Game/Race.h"
-#include "Game/Item.h"
 #include "Game/Conditions.h"
+#include "Game/Equipment.h"
 #include "UI/Object.h"
 
 namespace Game
@@ -33,6 +33,10 @@ public:
     StatDescriptor Get(Stat::Id id) const override;
     const StatDefinition& Definition() const override;
     std::string_view Name() const override;
+    void Equip(const Equipment& equipment);
+    bool Unequip(const Equipment& item);
+    unsigned Unequip(const Restrictions filter);
+
     const Race& GetRace() const;
     static StatDefinition definition;
 private:
@@ -40,7 +44,7 @@ private:
 
     std::string name;
     const Race& race;
-    std::vector<std::reference_wrapper<const Item>> inventory;
+    std::vector<Equipment> inventory;
     // TODO: effects(bonuses) knowledge (with bonuses), actions, skills(extra actions)
 
     // Loaded from JSON each Stat is defined by a name and which bonuses it gives to other stats at a certain level.

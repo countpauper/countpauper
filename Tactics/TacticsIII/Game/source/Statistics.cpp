@@ -21,6 +21,11 @@ StatDescriptor Statistics::Get(Stat::Id id) const
     return result;
 }
 
+void Statistics::Set(Stat::Id id, int value)
+{
+    stats[id] = value;
+}
+
 void Statistics::Level(Stat::Id stat, int amount)
 {
     stats[stat] += amount;
