@@ -12,7 +12,7 @@ TEST(Item, LoadNameAndStat)
 {
     auto json = nlohmann::json::parse(R"""({
         "name":"Test",
-        "damage": 3
+        "offense": 3
 })""");
 
     Definition def(Item::definition);

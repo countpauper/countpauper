@@ -45,4 +45,9 @@ const Item& Equipment::GetItem() const
     return *item;
 }
 
+std::string Equipment::Name() const
+{
+    return std::string(item->Name());    // TODO: add pre and postfixes of materials and bonus
+}
+
 }

@@ -18,8 +18,9 @@ public:
     virtual const Statted& GetStats() const = 0;
     virtual Counted& GetCounts() = 0;
     virtual const Counted& GetCounts() const = 0;
+    virtual const class Equipped& GetEquipment() const = 0;
+    virtual class Equipped& GetEquipment() = 0;
 
-    virtual void Equip(const class Equipment& item) = 0;
 };
 
 }

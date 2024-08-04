@@ -25,7 +25,6 @@ public:
     Engine::Quaternion GetOrientation() const override;
     void Select(bool on);
     void Move(const class HeightMap& map, Engine::Position destination) override;
-    void Equip(const Equipment& equipment) override;
 
     const Engine::Scenery& GetAppearance() const override;
     Engine::Position Position() const override;
@@ -33,6 +32,8 @@ public:
     const Statted& GetStats() const override;
     Counted& GetCounts() override;
     const Counted& GetCounts() const override;
+    const class Equipped& GetEquipment() const override;
+    class Equipped& GetEquipment() override;
 private:
     Engine::Mesh mesh;
     Engine::Position position;

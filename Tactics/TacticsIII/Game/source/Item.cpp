@@ -30,11 +30,19 @@ bool Item::Match(const Restrictions& restrictions) const
     return Game::Match(tags, restrictions);
 }
 
-Restrictions Item::Exclusive() const
+Restrictions Item::Excludes() const
 {
     if (Match({Restriction::melee}))
     {
-        return Restrictions{Restriction::melee};
+        return Restrictions{Restriction::unarmed, Restriction::ranged};
+    }
+    else if (Match({Restriction::unarmed}))
+    {
+        return Restrictions{Restriction::melee, Restriction::ranged};
+    }
+    else if (Match({Restriction::ranged}))
+    {
+        return Restrictions{Restriction::unarmed, Restriction::melee};
     }
     else if (Match({Restriction::armor}))
     {

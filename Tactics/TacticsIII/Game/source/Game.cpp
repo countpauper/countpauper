@@ -38,7 +38,7 @@ Game::Game(Engine::Scene& scene) :
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
     auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", elf)));
     velglarn->Move(map, Engine::Position{3, 2});
-    velglarn->Equip(Equipment(*items.Find("dagger")));
+    velglarn->GetEquipment().Equip(Equipment(*items.Find("dagger")));
 
     scene.Add(*velglarn);
     auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", elf)));

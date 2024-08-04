@@ -4,6 +4,7 @@
 #include "Game/Actor.h"
 #include "MockStatted.h"
 #include "MockCounted.h"
+#include "Game/Equipped.h"
 #include "UI/Mock/MockScenery.h"
 
 namespace Game::Test
@@ -35,18 +36,19 @@ public:
 
     MOCK_METHOD(void, Move, (const class HeightMap& map, Engine::Position destination), (override));
     MOCK_METHOD(Engine::Position, Position, (), (const override));
-    MOCK_METHOD(void, Equip, (const Equipment& equipment), (override));
 
     const Engine::Scenery& GetAppearance() const override { return appearance; }
     Statted& GetStats() { return stats; }
     const Statted& GetStats() const { return stats; }
     Counted& GetCounts() { return counts; }
     const Counted& GetCounts() const { return counts; }
+    const Equipped& GetEquipment() const { return equipment; }
+    Equipped& GetEquipment() { return equipment; }
 
     Engine::Test::MockScenery appearance;
     MockStatted stats;
     MockCounted counts;
-
+    Equipped equipment;    // TODO mock
 };
 
 }

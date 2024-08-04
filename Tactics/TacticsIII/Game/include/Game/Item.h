@@ -21,7 +21,7 @@ public:
     StatDescriptor Get(Stat::Id id) const;
     const StatDefinition& Definition() const;
     bool Match(const Restrictions& restictions) const;
-    Restrictions Exclusive() const;
+    Restrictions Excludes() const;
 protected:
     std::string name;
     Restrictions tags;
