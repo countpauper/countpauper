@@ -1,4 +1,4 @@
-Name,Rarity,Price,Hands,Tags,Weight,Sharp,Blunt,Fire,Poison,Lightning,Cold
+Name,Rarity,Price,Hands,Tags,Weight,Sharp Resistance,Blunt  Resistance,Heat  Resistance,Poison Resistance,Lightning Resistance,Cold Resistance
 Robe,"10.00%",1,,Cloth|Armor,0,,,,,,
 Jerkin,"15.00%",1,,Leather|Armor,0,,,,,,
 Cuirass,"10.00%",2,,Leather|Armor,1,1,1,,,,

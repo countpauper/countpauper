@@ -63,14 +63,14 @@ public:
 
                 blunt_resist, // is defense? or derived from defense stat and more
                 sharp_resist, // is defense?
-                fire_resist,
+                heat_resist,
                 cold_resist,
                 lightning_resist,
                 poison_resist, // includes acid?
 
                 blunt_damage,
                 sharp_damage,
-                fire_damage,
+                heat_damage,
                 cold_damage,
                 lightning_damage,
                 poison_damage

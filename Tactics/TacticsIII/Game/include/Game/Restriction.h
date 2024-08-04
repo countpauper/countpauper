@@ -1,5 +1,6 @@
 #pragma once
 #include <set>
+#include <nlohmann/json_fwd.hpp>
 
 namespace Game
 {
@@ -8,31 +9,36 @@ enum class Restriction
 {
     none = 0,
     // material
-    cloth,
+    cloth=0x10,
     leather,
     metal,
     wood,
     // element
-    air,
-    stone,
+    stone=0x20,
+    water,
     fire,
     nature,
-    water,
-    // damage (that is not an element)
-    sharp,
+    air,
+    // damage
+    sharp=0x30,
     blunt,
     cold,
+    heat,
     poison,
     lightning,
-    // base type
-    weapon,
-    armor,
+    // weapon or armor type
+    armor=0x40,
     shield,
-    // weapon type
     melee,
     ranged,
     thrown
 };
+
+// TODO: this should be a conjunction of disjunctions where items in a category are disjunction
 using Restrictions = std::set<Restriction>;
+
+bool Match(const Restrictions& tags, const Restrictions& restrictions);
+
+Restrictions ParseRestrictions(const nlohmann::json& data, std::string_view tag);
 
 }

@@ -1,4 +1,4 @@
-Name,Rarity,,Weight,Price,Restrictions,Element,B1,V1,Sharp Resistance,Blunt Resistance,Fire Resistance,Poison Resistance,Lightning Resistance,Cold Resistance,Total value,Total cost,Difference
+Name,Rarity,,Weight,Price,Restrictions,Element,B1,V1,Sharp Resistance,Blunt Resistance,Heat Resistance,Poison Resistance,Lightning Resistance,Cold Resistance,Total value,Total cost,Difference
 *Steel,"60.00%",,,-2,Metal,,,,,,,,-2,,-2,-2,0
 Mithril,"8.00%",,-1,1,Metal,Air,,,1,,,,-2,,0,0,0
 Adamantine,"8.00%",,1,3,Metal,Stone,,,2,1,,,-2,,4,4,0

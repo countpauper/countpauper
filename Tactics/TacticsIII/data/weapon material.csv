@@ -1,4 +1,4 @@
-Prefix,Rarity,Weight,Price,Restrictions,Element,B1,V1,Sharp Damage,Blunt Damage,Fire Damage,Poison Damage,Lightning Damage,Cold Damage,Total Value,Total cost,Difference
+Prefix,Rarity,Weight,Price,Restrictions,Element,B1,V1,Sharp Damage,Blunt Damage,Heat Damage,Poison Damage,Lightning Damage,Cold Damage,Total Value,Total cost,Difference
 *Steel,"40.00%",,0,Metal,,,,,,,,,,0,0,0
 Mithril,"15.00%",-1,3,Metal,Air,Offense,1,,,,,1,,2,2,0
 Adamantine,"15.00%",,3,Metal,Stone,Range,1,,2,,,,,3,3,0

@@ -147,14 +147,14 @@ std::map<Stat::Id, std::string_view> StatDefinition::statNames =
 
     { Stat::blunt_resist, "blunt resistance" },
     { Stat::sharp_resist, "sharp resistance" },
-    { Stat::fire_resist, "fire resistance" },
+    { Stat::heat_resist, "heat resistance" },
     { Stat::cold_resist, "cold resistance" },
     { Stat::lightning_resist, "lightning resistance" },
     { Stat::poison_resist, "poison resistance" },
 
     { Stat::blunt_damage, "blunt damage" },
     { Stat::sharp_damage, "sharp damage" },
-    { Stat::fire_damage, "fire damage" },
+    { Stat::heat_damage, "heat damage" },
     { Stat::cold_damage, "cold damage" },
     { Stat::lightning_damage, "lightning damage" },
     { Stat::poison_damage, "poison damage" }

@@ -20,9 +20,10 @@ public:
     std::string_view Name() const override;
     StatDescriptor Get(Stat::Id id) const;
     const StatDefinition& Definition() const;
+    bool Match(const Restrictions& restictions) const;
 protected:
     std::string name;
-    Restrictions restrictions;
+    Restrictions tags;
     std::map<Stat::Id, int> bonus;
 };
 

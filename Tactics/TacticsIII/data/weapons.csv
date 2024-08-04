@@ -23,7 +23,7 @@ Crossbow,"3.00%",4,3,Wood,Ranged,Sharp,Wood|Ranged|Sharp,none,8,,7,2,1,"10,33333
 Ballista,"2.00%",4,6,Wood,Ranged,Sharp,Wood|Ranged|Sharp,none,10,,8,2,1,"12,66666667",13,"-0,3333333333"
 Pistol,"2.00%",7,1,Metal,Ranged,Blunt,Metal|Ranged|Blunt,none,9,,6,1,1,11,10,1
 Rifle,"2.00%",6,2,Metal,Ranged,Blunt,Metal|Ranged|Blunt,none,10,,8,2,1,"12,66666667",11,"1,666666667"
-Wand,"2.00%",5,1,Wood,Ranged,Fire,Wood|Ranged|Fire,magic,5,,5,1,,"6,666666667",7,"-0,3333333333"
+Wand,"2.00%",5,1,Wood,Ranged,Heat,Wood|Ranged|Heat,magic,5,,5,1,,"6,666666667",7,"-0,3333333333"
 Wand,"1.00%",5,1,Wood,Ranged,Cold,Wood|Ranged|Cold,magic,5,,5,1,,"6,666666667",7,"-0,3333333333"
 Wand,"1.00%",5,1,Metal,Ranged,Lightning,Metal|Ranged|Lightning,magic,5,,5,1,,"6,666666667",7,"-0,3333333333"
 Wand,"1.00%",5,1,Leather,Ranged,Poison,Leather|Ranged|Poison,magic,5,,5,1,,"6,666666667",7,"-0,3333333333"
