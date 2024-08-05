@@ -37,6 +37,7 @@ Equipment& Equipment::operator=(Equipment&& o)
 
 StatDescriptor Equipment::Get(Stat::Id id) const
 {
+    // TODO: add material and bonus
     return item->Get(id);
 }
 

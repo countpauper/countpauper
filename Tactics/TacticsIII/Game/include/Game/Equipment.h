@@ -17,6 +17,7 @@ public:
     Equipment(Equipment&& o);
     Equipment& operator=(const Equipment& o);
     Equipment& operator=(Equipment&& o);
+
     StatDescriptor Get(Stat::Id id) const;
     const Item& GetItem() const;
     std::string Name() const;

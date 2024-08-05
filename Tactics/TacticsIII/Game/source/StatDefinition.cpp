@@ -97,6 +97,20 @@ std::vector<const Counter*> StatDefinition::GetCounters() const
     return result;
 }
 
+StatDescriptor StatDefinition::GetPrimaryDescriptor(Stat::Id id) const
+{
+    auto it = find(id);
+    if (it==end())
+    {
+        return StatDescriptor();
+    }
+    if (!it->second.IsPrimary())
+    {
+        return StatDescriptor();
+    }
+    return StatDescriptor(it->second.Limit());
+}
+
 std::map<Stat::Id, std::string_view> StatDefinition::statNames =
 {
     { Stat::none, "none" },

@@ -25,6 +25,7 @@ TEST(Item, LoadNameAndStat)
 TEST(Item, RetrictionConjunction)
 {
     EXPECT_TRUE(Match(Restrictions{Restriction::melee}, Restrictions{}));
+    EXPECT_FALSE(Match(Restrictions{Restriction::melee}, Restrictions{Restriction::none}));
     EXPECT_TRUE(Match(Restrictions{Restriction::melee}, Restrictions{Restriction::melee}));
     EXPECT_FALSE(Match(Restrictions{Restriction::melee}, Restrictions{Restriction::ranged}));
     EXPECT_TRUE(Match(Restrictions{Restriction::melee, Restriction::thrown}, Restrictions{Restriction::melee}));

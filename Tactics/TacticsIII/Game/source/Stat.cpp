@@ -159,4 +159,11 @@ Engine::Range<int> Stat::Limit() const
     return limit;
 }
 
+bool Stat::IsPrimary() const
+{
+    return dependency == Stat::none;
+
+}
+
+
 }

@@ -11,13 +11,16 @@ Statistics::Statistics(std::initializer_list<std::pair<const Stat::Id, int>> sta
 
 StatDescriptor Statistics::Get(Stat::Id id) const
 {
-    auto it = stats.find(id);
-    if (it==stats.end())
+    StatDescriptor result = Definition().GetPrimaryDescriptor(id);
+    if (!result.IsValid())
     {
-        return StatDescriptor();
+        return result;
     }
-    StatDescriptor result(Definition().at(id).Limit());
-    result.Contribute(Name(), it->second, false);
+    auto it = stats.find(id);
+    if (it != stats.end())
+    {
+        result.Contribute(Name(), it->second, false);
+    }
     return result;
 }
 

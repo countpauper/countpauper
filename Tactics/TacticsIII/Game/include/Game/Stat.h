@@ -95,6 +95,7 @@ public:
         std::string_view Name() const;
         std::string_view Description() const;
         Engine::Range<int> Limit() const;
+        bool IsPrimary() const;
 private:
         std::string name;
         std::string description;

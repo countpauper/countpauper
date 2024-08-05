@@ -22,6 +22,7 @@ public:
     const StatDefinition& Definition() const;
     bool Match(const Restrictions& restictions) const;
     Restrictions Excludes() const;
+    bool operator==(const Item& o) const;
 protected:
     std::string name;
     Restrictions tags;

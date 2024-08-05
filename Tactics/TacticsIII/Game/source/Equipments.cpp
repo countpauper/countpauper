@@ -32,16 +32,27 @@ void Equipments::Equip(const Equipment& equipment)
 
 StatDescriptor Equipments::GetItemStat(Stat::Id id, const Restrictions& filter) const
 {
-    StatDescriptor result;
-    // TODO: could check if it's a valid stat in Item::definition
-    // TODO: context (main hand attack, offhand attack, attacked from the front or not)
+    StatDescriptor result = Item::definition.GetPrimaryDescriptor(id);
+    if (!result.IsValid())
+    {
+        return result;
+    }
     for(const auto& e : equipped)
     {
         if (e.GetItem().Match(filter))
         {
-            result = e.Get(id);
-            if (result.IsValid())   // TODO: add multiple armor bonuses for shueld+armor if applicable
-                return result;
+            StatDescriptor itemResult = e.Get(id);
+            if (itemResult.IsValid())
+            {
+                if (result.IsValid())
+                {
+                    result.Contribute(e.Name(), itemResult.Total());
+                }
+                else
+                {
+                    result = itemResult;
+                }
+            }
         }
     }
     return result;

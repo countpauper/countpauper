@@ -12,6 +12,14 @@ Item::Item(std::string_view name, Restrictions tags) :
 {
 }
 
+bool Item::operator==(const Item& o) const
+{
+    return name == o.name &&
+        tags == o.tags &&
+        stats == o.stats;
+}
+
+
 Item::Item(const json& data) :
     name(Engine::must_get<std::string_view>(data, "name")),
     tags(ParseRestrictions(data, "tags"))
@@ -27,7 +35,18 @@ std::string_view Item::Name() const
 
 StatDescriptor Item::Get(Stat::Id id) const
 {
-    return Statistics::Get(id);
+    // Get primary stat
+    StatDescriptor result = Statistics::Get(id);
+    // Compute secondary stat
+    if ((!result.IsValid()) && (id))
+    {
+        auto it = definition.find(id);
+        if (it!=definition.end())
+        {
+            result = it->second.Compute(*this);
+        }
+    }
+    return result;
 }
 
 bool Item::Match(const Restrictions& restrictions) const
@@ -59,7 +78,7 @@ Restrictions Item::Excludes() const
     }
     else
     {
-        return Restrictions();
+        return Restrictions({Restriction::none});
     }
 }
 

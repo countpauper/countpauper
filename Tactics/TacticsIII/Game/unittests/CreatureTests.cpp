@@ -83,7 +83,7 @@ TEST(Creature, equip_weapon)
     weapon.Set(Stat::hold, 1);
     c.Equip(Equipment(weapon));
     EXPECT_EQ(c.Get(Stat::offense).Total(), 3);
-    EXPECT_EQ(c.GetEquipped({Restriction::melee})[0]->GetItem().Name(), weapon.Name());
+    EXPECT_EQ(c.GetEquipped({Restriction::melee}).front()->GetItem(), weapon);
 }
 
 
