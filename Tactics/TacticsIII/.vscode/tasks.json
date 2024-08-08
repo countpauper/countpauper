@@ -13,7 +13,10 @@
             "targets": [
                 "ALL_BUILD"
             ],
-            "group": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "problemMatcher": [
                 "$gcc"
             ],
@@ -25,14 +28,11 @@
             "command": "test",
             "problemMatcher": [],
             "detail": "CMake run all tests",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            }
+            "group": "build"
         },
         {
             "type": "shell",
-            "label": "Generate Data",
+            "label": "Generate Stats",
             "command": "python define.py",
             "options": {
                 "cwd": "data"
@@ -48,6 +48,5 @@
             },
             "problemMatcher": []
         }
-
     ]
 }

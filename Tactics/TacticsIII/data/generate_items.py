@@ -64,7 +64,6 @@ def specify_damage(item):
     if (damage_type:=item.get("damage type")) and (damage:=item.get("damage")):
         dt_name=f'{damage_type} damage'
         item[dt_name] = item.get(dt_name, 0) + damage
-        del item["damage"]
     return item
 
 def combine(*stats):
