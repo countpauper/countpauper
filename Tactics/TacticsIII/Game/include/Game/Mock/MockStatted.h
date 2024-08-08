@@ -3,7 +3,7 @@
 
 #include "Game/Statistics.h"
 #include "Game/Stat.h"
-#include "Game/StatDescriptor.h"
+#include "Game/Computation.h"
 #include "Game/StatDefinition.h"
 
 namespace Game::Test
@@ -23,7 +23,7 @@ public:
         }));
     }
     MOCK_METHOD(std::string_view, Name, (), (const override));
-    MOCK_METHOD(StatDescriptor, Get, (Stat::Id id), (const override));
+    MOCK_METHOD(Computation, Get, (Stat::Id id), (const override));
     MOCK_METHOD(const class StatDefinition&,  Definition, (), (const override));
 
     StatDefinition definition;

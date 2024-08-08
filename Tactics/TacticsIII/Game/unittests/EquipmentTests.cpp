@@ -41,7 +41,7 @@ TEST(Equipment, Stats)
     Item item("Test", {Restriction::metal});
     item.Set(Stat::range, 5);
     equip.Equip(Equipment(item));
-    EXPECT_FALSE(equip.GetItemStat(Stat::reach).IsValid());
+    EXPECT_FALSE(bool(equip.GetItemStat(Stat::reach)));
     EXPECT_EQ(equip.GetItemStat(Stat::range).Total(), 5);
     EXPECT_EQ(equip.GetItemStat(Stat::range, {Restriction::cloth}).Total(), 0);
     EXPECT_EQ(equip.GetItemStat(Stat::range, {Restriction::metal}).Total(), 5);

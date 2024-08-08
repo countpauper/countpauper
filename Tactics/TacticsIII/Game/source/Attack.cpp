@@ -28,18 +28,16 @@ double HitChance(const Actor& actor, const Actor& target)
     return 1.0;
 }
 
-StatDescriptor ComputeDamage(const StatDescriptor& offense, const StatDescriptor& defense)
+Computation ComputeDamage(const Computation& offense, const Computation& defense)
 {
-    StatDescriptor result = offense;
-    result -= defense;
-    return result;
+    return offense - defense;
 }
 
-StatDescriptor ComputeDamage(const StatsDescriptor& offense, const StatsDescriptor& defense)
+Computation ComputeDamage(const Computations& offense, const Computations& defense)
 {
-    StatDescriptor result(Engine::Range<int>(0,std::numeric_limits<int>::max()));
-    result.Contribute("sharp", ComputeDamage(offense.at(Stat::sharp_damage), defense.at(Stat::sharp_resist)).Total());
-    result.Contribute("blunt", ComputeDamage(offense.at(Stat::blunt_damage), defense.at(Stat::blunt_resist)).Total());
+    Computation result(Engine::Range<int>(0,std::numeric_limits<int>::max()));
+    result += ComputeDamage(offense.at(Stat::sharp_damage), defense.at(Stat::sharp_resist));
+    result += ComputeDamage(offense.at(Stat::blunt_damage), defense.at(Stat::blunt_resist));
     return result;
 }
 

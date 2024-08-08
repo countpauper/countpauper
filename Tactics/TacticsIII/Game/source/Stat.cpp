@@ -84,62 +84,60 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
 
 Stat::~Stat() = default;
 
-StatDescriptor Stat::Compute(const Statted& object) const
+Computation Stat::Compute(const Statted& object) const
 {
-        auto left = 0;
+        Computation result(limit);
         if (dependency)
         {
-                left = object.Get(dependency).Total();      // TODO: add this to a StatDescriptor output ?
+                result += object.Get(dependency);
         }
         if (!table.empty())
         {
-                // TODO table[0] is base, which doesnt matter much except for StatDescriptor
+                // TODO table[0] is base, which doesnt matter much except for Computation
                 // especially dodge 50% is just base and the rest 5% is 50+25[agi]
                 // HD might be 5+2[con]
-                if (left > table.size())
+                auto index = result.Total();
+                if (index >= table.size())
                 {
-                        left = table.back();
+                        result = Computation(table.back(), result.Description());
                 }
-                else if (left <= 0)
+                else if (index <= 0)
                 {
-                        left = table.front();
+                        result = Computation(table.front(), result.Description());
                 }
                 else
                 {
-                        left = table[left];
+                        result = Computation(table.at(index), result.Description());
                 }
         }
-        StatDescriptor result(limit);
         if (op != Operator::nop && operand !=Stat::none)
         {
-                auto right = object.Get(operand).Total();
+                auto right = object.Get(operand);
                 switch(op)
                 {
                         case Operator::multiply:
-                                result.Contribute(object.Definition().at(dependency).name, left * right * multiplier);
+                                result *= right;
                                 break;
                         case Operator::add:
-                                result.Contribute(object.Definition().at(dependency).name, left * multiplier);
-                                result.Contribute(object.Definition().at(operand).name, right * multiplier);
+                                result += right;
                                 break;
                         default:
                                 break;
                 }
         }
-        else if (dependency)
-                result.Contribute(object.Definition().at(dependency).name, left * multiplier);
-        else if (auto mockId = object.Definition().Identify(Name()))
-        {
-                // NB this could cause infinite recursion, unless object is mocked or its a primary stat
+        if (multiplier != 1)
+                result *= Computation(multiplier, name);
 
-                auto mockStat = object.Get(mockId);
-                if (mockStat.IsValid())
-                            result.Contribute("Mock", mockStat.Total());
-
-        }
-        else
+        if (result.empty())
         {
-                result.Contribute("constant", left);
+                if (auto mockId = object.Definition().Identify(Name()))
+                {
+                        // NB this could cause infinite recursion, unless object is mocked or its a primary stat
+
+                        auto mockStat = object.Get(mockId);
+                        if (!mockStat.empty())
+                                result = mockStat;
+                }
         }
         return result;
 }

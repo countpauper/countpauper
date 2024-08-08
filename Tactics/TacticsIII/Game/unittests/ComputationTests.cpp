@@ -15,7 +15,7 @@ TEST(Computation, empty)
 
 TEST(Computation, constant)
 {
-    Computation c("test", 3);
+    Computation c(3, "test");
     EXPECT_FALSE(c.empty());
     EXPECT_EQ(c.Description(), "3[test]");
     EXPECT_EQ(c.Total(), 3);
@@ -23,8 +23,8 @@ TEST(Computation, constant)
 
 TEST(Computation, add)
 {
-    Computation a("a", 3);
-    Computation b("b", 2);
+    Computation a(3, "a");
+    Computation b(2, "b");
     auto c = a + b;
 
     EXPECT_FALSE(c.empty());
@@ -34,8 +34,8 @@ TEST(Computation, add)
 
 TEST(Computation, subtract)
 {
-    Computation a("a", 3);
-    Computation b("b", 2);
+    Computation a(3, "a");
+    Computation b(2, "b");
     auto c = a - b;
 
     EXPECT_FALSE(c.empty());
@@ -45,8 +45,8 @@ TEST(Computation, subtract)
 
 TEST(Computation, multiply)
 {
-    Computation a("a", 3);
-    Computation b("b", 2);
+    Computation a(3, "a");
+    Computation b(2, "b");
     auto c = a * b;
 
     EXPECT_FALSE(c.empty());
@@ -56,8 +56,8 @@ TEST(Computation, multiply)
 
 TEST(Computation, nested_multiply)
 {
-    Computation a("a", 3);
-    Computation b = Computation("b", 2) - Computation("c", 1);
+    Computation a(3, "a");
+    Computation b = Computation(2, "b") - Computation(1, "c");
     auto c = a * b;
 
     EXPECT_FALSE(c.empty());
@@ -65,9 +65,20 @@ TEST(Computation, nested_multiply)
     EXPECT_EQ(c.Total(), 3);
 }
 
+TEST(Computation, limit)
+{   // TODO: this limit is a remnamnt  from stat specific descriptors, which were computations
+    // preferably upper and lower bound operators are used if there's a mechanism to keep these add the end as operands are appended
+    Computation limited(Engine::Range<int>(0,5));
+    limited += Computation(7, "a");
+    EXPECT_EQ(limited.Total(), 4);  // NB range is exclusive on the maximum
+    limited -= Computation(10, "b");
+    EXPECT_EQ(limited.Total(), 0);
+}
+
+
 TEST(Computation, lower_bound)
 {
-    auto c = Computation("a", -1) >= Computation("limit", 0);
+    auto c = Computation(-1, "a") >= Computation(0, "limit");
 
 
     EXPECT_FALSE(c.empty());
@@ -77,7 +88,7 @@ TEST(Computation, lower_bound)
 
 TEST(Computation, not_lower_bound)
 {
-    auto c = Computation("a", 3) >= Computation("limit", 1);
+    auto c = Computation(3, "a") >= Computation(1, "limit");
 
     EXPECT_FALSE(c.empty());
     EXPECT_EQ(c.Description(), "3[a]");

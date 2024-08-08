@@ -32,17 +32,17 @@ const Race& Creature::GetRace() const
     return race;
 }
 
-StatDescriptor Creature::Get(Stat::Id id) const
+Computation Creature::Get(Stat::Id id) const
 {
     // Get primary stat
-    StatDescriptor result = Statistics::Get(id);
+    Computation result = Statistics::Get(id);
     // Get item stat
-    if (!result.IsValid())
+    if (!result)
     {
         result = GetItemStat(id);
     }
     // Compute secondary stat
-    if ((!result.IsValid()) && (id))
+    if ((result.empty()) && (id))
     {
         auto it = definition.find(id);
         if (it!=definition.end())
@@ -51,12 +51,12 @@ StatDescriptor Creature::Get(Stat::Id id) const
         }
     }
 
-    if (result.IsValid())
+    if (!result.empty())
     {
         // Add bonuses
-        result = Conditions::Contribute(id, result);
+        result += Conditions::Boni(id);
         // TODO: add all other bonuses from items and magic
-        result.Contribute(race.Name(), race.Bonus(id));
+        result += race.Bonus(id);
     }
     return result;
 }

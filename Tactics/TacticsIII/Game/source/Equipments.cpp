@@ -30,10 +30,10 @@ void Equipments::Equip(const Equipment& equipment)
     equipped.emplace_back(std::move(equipment));
 }
 
-StatDescriptor Equipments::GetItemStat(Stat::Id id, const Restrictions& filter) const
+Computation Equipments::GetItemStat(Stat::Id id, const Restrictions& filter) const
 {
-    StatDescriptor result = Item::definition.GetPrimaryDescriptor(id);
-    if (!result.IsValid())
+    Computation result = Item::definition.GetPrimaryStat(id);
+    if (!result.empty())
     {
         return result;
     }
@@ -41,18 +41,8 @@ StatDescriptor Equipments::GetItemStat(Stat::Id id, const Restrictions& filter) 
     {
         if (e.GetItem().Match(filter))
         {
-            StatDescriptor itemResult = e.Get(id);
-            if (itemResult.IsValid())
-            {
-                if (result.IsValid())
-                {
-                    result.Contribute(e.Name(), itemResult.Total());
-                }
-                else
-                {
-                    result = itemResult;
-                }
-            }
+            Computation itemResult = e.Get(id);
+            result += itemResult;
         }
     }
     return result;

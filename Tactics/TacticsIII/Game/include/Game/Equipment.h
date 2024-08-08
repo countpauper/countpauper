@@ -18,7 +18,7 @@ public:
     Equipment& operator=(const Equipment& o);
     Equipment& operator=(Equipment&& o);
 
-    StatDescriptor Get(Stat::Id id) const;
+    Computation Get(Stat::Id id) const;
     const Item& GetItem() const;
     std::string Name() const;
 protected:

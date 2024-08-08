@@ -12,7 +12,7 @@ public:
     Condition() = default;
     virtual ~Condition() = default;
     std::string_view Name() const;
-    int Contribution(Stat::Id stat) const;
+    Computation Bonus(Stat::Id stat) const;
 protected:
     Condition(std::string_view name);
     std::string_view name;

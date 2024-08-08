@@ -36,7 +36,7 @@ TEST(Creature, secondary_stat_is_derived_from_primary)
     def.Define(Stat::damage, Stat::str, 1.0/2);
 
     EXPECT_EQ(c.Get(Stat::damage).Total(), 1);
-    EXPECT_EQ(c.Get(Stat::damage).Description(), "1[strength]");
+    EXPECT_EQ(c.Get(Stat::damage).Description(), "1[2[strength]]");
 }
 
 TEST(Creature, hitpoints_are_added)
@@ -49,7 +49,7 @@ TEST(Creature, hitpoints_are_added)
     c.Level(Stat::level, 2); // 1 + 2 = 3 level
     EXPECT_EQ(c.Get(Stat::hp).Total(), 3+10);
     EXPECT_EQ(c.Available(Stat::hp), c.Get(Stat::hp).Total());
-    EXPECT_EQ(c.Get(Stat::hp).Description(), "3[level] + 10[health]");
+    EXPECT_EQ(c.Get(Stat::hp).Description(), "3[level] + 10[2[constitution] + 2[troll]]");
 }
 
 TEST(Creature, damage_reduces_hitpoints)

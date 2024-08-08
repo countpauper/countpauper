@@ -11,7 +11,7 @@ class Statistics : public Statted
 public:
     Statistics() = default;
     Statistics(std::initializer_list<std::pair<const Stat::Id, int>> stats);
-    StatDescriptor Get(Stat::Id id) const override;
+    Computation Get(Stat::Id id) const override;
     void Level(Stat::Id stat, int amount) override;
     void Set(Stat::Id id, int value);
     void Load(const nlohmann::json& data);

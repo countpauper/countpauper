@@ -27,19 +27,18 @@ TEST(Condition, down_reduces_speed)
 {
     Conditions conditions;
     conditions.Apply<Downed>();
-    StatDescriptor desc(5);
-    auto& newDesc = conditions.Contribute(Stat::speed, desc);
-    EXPECT_LT(newDesc.Total(), 5);
+    auto bonus = conditions.Boni(Stat::speed);
+    EXPECT_LT(bonus.Total(), 5);
 }
 
 TEST(Condition, ko_zeros_action_points)
 {
     Conditions conditions;
     conditions.Apply<KO>();
-    StatDescriptor desc(Engine::Range<int>(0, 1000));
-    desc.Contribute("Test", 10);
-    auto& newDesc = conditions.Contribute(Stat::ap, desc);
-    EXPECT_EQ(newDesc.Total(), 0);
+    Computation ap(Engine::Range<int>(0, 1000));
+    ap += Computation(10);
+    ap += conditions.Boni(Stat::ap);
+    EXPECT_EQ(ap.Total(), 0);
 }
 
 }

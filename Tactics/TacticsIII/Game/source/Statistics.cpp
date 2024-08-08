@@ -9,25 +9,21 @@ Statistics::Statistics(std::initializer_list<std::pair<const Stat::Id, int>> sta
 {
 }
 
-StatDescriptor Statistics::Get(Stat::Id id) const
+Computation Statistics::Get(Stat::Id id) const
 {
-    StatDescriptor result = Definition().GetPrimaryDescriptor(id);
-    if (!result.IsValid())
-    {
-        return result;
-    }
+    Computation result = Definition().GetPrimaryStat(id);
     auto it = stats.find(id);
     if (it != stats.end())
     {
-        result.Contribute(Name(), it->second, false);
+        result += Computation(it->second, Definition().at(id).Name());
     }
     return result;
 }
 
 
-StatsDescriptor Statted::Get(std::initializer_list<Stat::Id> stats) const
+Computations Statted::Get(std::initializer_list<Stat::Id> stats) const
 {
-    StatsDescriptor result;
+    Computations result;
     for(auto id: stats)
     {
         result.emplace(std::make_pair(id, Get(id)));

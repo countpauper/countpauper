@@ -18,7 +18,7 @@ public:
 
     Counter& Count(Stat::Id id, Counter::Reset reset=Counter::Reset::never, bool resetToMax=true);
     std::vector<const Counter*> GetCounters() const;
-    StatDescriptor GetPrimaryDescriptor(Stat::Id id) const;
+    Computation GetPrimaryStat(Stat::Id id) const;
 private:
     void Define(json& parsed);
     std::vector<Counter> counters;

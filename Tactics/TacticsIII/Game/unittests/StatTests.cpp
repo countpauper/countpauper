@@ -31,7 +31,7 @@ TEST(Stat, define_secondary_stat)
     EXPECT_EQ(def[Stat::damage].Name(), "Damage");
 
     MockStatted mock;
-    EXPECT_CALL(mock, Get(Stat::str)).WillOnce(Return(StatDescriptor(4)));
+    EXPECT_CALL(mock, Get(Stat::str)).WillOnce(Return(Computation(4, "Mock Str")));
     EXPECT_CALL(mock, Definition()).WillRepeatedly(ReturnRef(def));
     EXPECT_EQ(def[Stat::damage].Compute(mock).Total(), 3);
 }
@@ -46,7 +46,7 @@ TEST(Stat, define_multiplied_stat)
     }
     )""");
     MockStatted mock;
-    EXPECT_CALL(mock, Get(Stat::agi)).WillOnce(Return(StatDescriptor(3)));
+    EXPECT_CALL(mock, Get(Stat::agi)).WillOnce(Return(Computation(3,"Mock Agi")));
     EXPECT_CALL(mock, Definition()).WillRepeatedly(ReturnRef(def));
     EXPECT_EQ(def[Stat::dodge].Compute(mock).Total(), 60);
 }
@@ -76,8 +76,8 @@ TEST(Stat, define_stat_multiplied_by_stat)
     }
     )""");
     MockStatted mock;
-    EXPECT_CALL(mock, Get(Stat::level)).WillOnce(Return(StatDescriptor(2)));
-    EXPECT_CALL(mock, Get(Stat::con)).WillOnce(Return(StatDescriptor(3)));
+    EXPECT_CALL(mock, Get(Stat::level)).WillOnce(Return(Computation(2, "Mock2")));
+    EXPECT_CALL(mock, Get(Stat::con)).WillOnce(Return(Computation(3, "Mock3")));
     EXPECT_CALL(mock, Definition()).WillRepeatedly(ReturnRef(def));
     EXPECT_EQ(def[Stat::hp].Compute(mock).Total(), 12);
 }

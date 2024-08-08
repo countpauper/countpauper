@@ -28,7 +28,7 @@ public:
             conditions.emplace_back(std::make_unique<CT>());
         }
     }
-    StatDescriptor& Contribute(Stat::Id id, StatDescriptor& result) const;
+    Computation Boni(Stat::Id id) const;
     std::string Description() const;
 private:
     std::vector<std::unique_ptr<Condition>> conditions;

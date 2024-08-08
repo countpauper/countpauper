@@ -14,7 +14,7 @@ class Counters {
 
 interface Statted
 {
-   + Get(stat) : StatDescriptor
+   + Get(stat) : Computation
    + Level(stat, amount)
 }
 class Statistics {

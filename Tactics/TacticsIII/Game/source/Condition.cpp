@@ -13,13 +13,13 @@ std::string_view Condition::Name() const
     return name;
 }
 
-int Condition::Contribution(Stat::Id stat) const
+Computation Condition::Bonus(Stat::Id stat) const
 {
     auto it = bonus.find(stat);
     if (it!=bonus.end())
-        return it->second;
+        return Computation(it->second, Name());
     else
-        return 0;
+        return Computation();
 }
 
 

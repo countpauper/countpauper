@@ -1,8 +1,6 @@
 @startuml
 
-class StatDescriptor {
-   total: int
-   description : string
+class Computation {
 }
 
 class StatDefintition {
@@ -12,7 +10,7 @@ class StatDefintition {
 
 interface Statted
 {
-   + Get(stat) : StatDescriptor
+   + Get(stat) : Computation
    + Level(stat, amount)
 }
 class Statistics {
@@ -37,7 +35,7 @@ class Dependency {
 }
 
 
-StatDescriptor ---- Statted
+Computation ---- Statted
 Statted o--> "<<singleton>>" StatDefintition
 Stat *--> "*" Dependency
 Dependency o--> Stat

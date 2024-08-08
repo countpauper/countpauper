@@ -4,11 +4,12 @@
 namespace Game
 {
 
-StatDescriptor& Conditions::Contribute(Stat::Id id, StatDescriptor& result) const
+Computation Conditions::Boni(Stat::Id id) const
 {
+    Computation result;
     for(const auto& c : conditions)
     {
-        result = result.Contribute(c->Name(), c->Contribution(id));
+        result += c->Bonus(id);
     }
     return result;
 }

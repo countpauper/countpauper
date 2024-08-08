@@ -5,7 +5,7 @@
 #include <limits>
 #include <span>
 #include "File/Json.h"
-#include "Game/StatDescriptor.h"
+#include "Game/Computation.h"
 #include "Utility/Range.h"
 #include "Game/Operator.h"
 
@@ -86,7 +86,7 @@ public:
         Stat(std::string_view name, std::string_view description, Id dependency,
                 Operator op, Id operand);
         Stat(std::string_view name, const json& j, const class StatDefinition& dependencies);
-        StatDescriptor Compute(const class Statted& c) const;
+        Computation Compute(const class Statted& c) const;
         std::string_view Name() const;
         std::string_view Description() const;
         Engine::Range<int> Limit() const;

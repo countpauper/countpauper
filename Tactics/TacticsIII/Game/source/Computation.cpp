@@ -6,10 +6,15 @@
 namespace Game
 {
 
-Computation::Computation(std::string_view description, int value) :
+Computation::Computation(int value, std::string_view description) :
     operations{
         {std::string(description), Operator::add, value}
     }
+{
+}
+
+Computation::Computation(Engine::Range<int> limit) :
+    limit(limit)
 {
 }
 
@@ -68,7 +73,7 @@ int Computation::Total() const
     {
         result = op(result);
     }
-    return result;
+    return limit.Clip(result);
 }
 
 std::string Computation::Description() const

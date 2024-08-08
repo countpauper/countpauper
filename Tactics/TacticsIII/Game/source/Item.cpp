@@ -33,12 +33,12 @@ std::string_view Item::Name() const
     return name;
 }
 
-StatDescriptor Item::Get(Stat::Id id) const
+Computation Item::Get(Stat::Id id) const
 {
     // Get primary stat
-    StatDescriptor result = Statistics::Get(id);
+    Computation result = Statistics::Get(id);
     // Compute secondary stat
-    if ((!result.IsValid()) && (id))
+    if ((result.empty()) && (id))
     {
         auto it = definition.find(id);
         if (it!=definition.end())

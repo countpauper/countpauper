@@ -13,9 +13,9 @@ using namespace ::testing;
 TEST(Action, move)
 {
     MockActor actor("a");
-    EXPECT_CALL(actor.stats, Get(Stat::speed)).WillRepeatedly(Return(StatDescriptor(2)));
-    EXPECT_CALL(actor.stats, Get(Stat::jump)).WillRepeatedly(Return(StatDescriptor(1)));
-    EXPECT_CALL(actor.stats, Get(Stat::ap)).WillRepeatedly(Return(StatDescriptor(1)));
+    EXPECT_CALL(actor.stats, Get(Stat::speed)).WillRepeatedly(Return(Computation(2)));
+    EXPECT_CALL(actor.stats, Get(Stat::jump)).WillRepeatedly(Return(Computation(1)));
+    EXPECT_CALL(actor.stats, Get(Stat::ap)).WillRepeatedly(Return(Computation(1)));
     EXPECT_CALL(actor.counts, Available(Stat::ap)).WillRepeatedly(Return(1));
 
     NiceMock<MockWorld> world;
@@ -39,12 +39,12 @@ TEST(Action, attack)
     EXPECT_EQ(action.Description(), "Attack t");
     EXPECT_EQ(action.AP(), 1);
 
-    EXPECT_CALL(attacker.stats, Get(Stat::offense)).WillRepeatedly(Return(StatDescriptor(1)));
-    EXPECT_CALL(attacker.stats, Get(Stat::ap)).WillRepeatedly(Return(StatDescriptor(1)));
-    EXPECT_CALL(target.stats, Get(Stat::hp)).WillRepeatedly(Return(StatDescriptor(1)));
-    EXPECT_CALL(target.stats, Get(Stat::block)).WillRepeatedly(Return(StatDescriptor(0)));
-    EXPECT_CALL(target.stats, Get(Stat::defense)).WillRepeatedly(Return(StatDescriptor(0)));
-    EXPECT_CALL(target.stats, Get(Stat::dodge)).WillRepeatedly(Return(StatDescriptor(0)));
+    EXPECT_CALL(attacker.stats, Get(Stat::offense)).WillRepeatedly(Return(Computation(1)));
+    EXPECT_CALL(attacker.stats, Get(Stat::ap)).WillRepeatedly(Return(Computation(1)));
+    EXPECT_CALL(target.stats, Get(Stat::hp)).WillRepeatedly(Return(Computation(1)));
+    EXPECT_CALL(target.stats, Get(Stat::block)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(target.stats, Get(Stat::defense)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(target.stats, Get(Stat::dodge)).WillRepeatedly(Return(Computation(0)));
 
     std::stringstream log;
     action.Execute(log);

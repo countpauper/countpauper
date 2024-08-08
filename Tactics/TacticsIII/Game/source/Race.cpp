@@ -15,13 +15,13 @@ std::string_view Race::Name() const
     return name;
 }
 
-int Race::Bonus(Stat::Id id) const
+Computation Race::Bonus(Stat::Id id) const
 {
     auto it = boni.find(id);
     if (it == boni.end()) {
-            return 0;
+            return Computation();
     }
-    return it->second;
+    return Computation(it->second, Name());
 }
 
 const Item& Race::GetUnarmed() const
