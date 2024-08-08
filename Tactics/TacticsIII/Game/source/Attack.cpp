@@ -21,14 +21,27 @@ void Attack::Render() const
     line.Render();
 }
 
-// TODO: shoul;d still include map and be collected with more free functions or utility functions of actor
-
+// TODO: should still include map and be collected with more free functions or utility functions of actor
 double HitChance(const Actor& actor, const Actor& target)
 {
     auto hitScore = target.GetStats().Get(Stat::dodge) + target.GetStats().Get(Stat::block);    // TODO: front
     return 1.0;
 }
 
+StatDescriptor ComputeDamage(const StatDescriptor& offense, const StatDescriptor& defense)
+{
+    StatDescriptor result = offense;
+    result -= defense;
+    return result;
+}
+
+StatDescriptor ComputeDamage(const StatsDescriptor& offense, const StatsDescriptor& defense)
+{
+    StatDescriptor result(Engine::Range<int>(0,std::numeric_limits<int>::max()));
+    result.Contribute("sharp", ComputeDamage(offense.at(Stat::sharp_damage), defense.at(Stat::sharp_resist)).Total());
+    result.Contribute("blunt", ComputeDamage(offense.at(Stat::blunt_damage), defense.at(Stat::blunt_resist)).Total());
+    return result;
+}
 
 void Attack::Execute(std::ostream& log) const
 {
@@ -40,7 +53,9 @@ void Attack::Execute(std::ostream& log) const
         return;
     }
 
-    auto damage =  actor.GetStats().Get(Stat::offense) - target.GetStats().Get(Stat::defense);
+    auto offense = actor.GetStats().Get({Stat::sharp_damage, Stat::blunt_damage}); // TODO: rest
+    auto defense = target.GetStats().Get({Stat::sharp_resist, Stat::blunt_resist});
+    auto damage = ComputeDamage(offense, defense);
     if ( damage.Total() > 0 )
     {
         target.GetCounts().Cost(Stat::hp, damage.Total(), true);

@@ -44,7 +44,7 @@ Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, float multipl
     return *this;
 }
 
-Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, Stat::Operator op, Stat::Id operand)
+Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, Operator op, Stat::Id operand)
 {
     Ensure(dependency);
     Ensure(operand);

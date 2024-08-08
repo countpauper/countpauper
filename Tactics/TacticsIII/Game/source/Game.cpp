@@ -43,6 +43,8 @@ Game::Game(Engine::Scene& scene) :
     scene.Add(*velglarn);
     auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", elf)));
     elgcaress->Move(map, Engine::Position{5, 8});
+    elgcaress->GetEquipment().Equip(Equipment(*items.Find("club")));
+
     scene.Add(*elgcaress);
     avatars[turn]->Select(true);
 }

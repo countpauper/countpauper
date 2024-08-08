@@ -26,7 +26,7 @@ Stat::Stat(std::string_view name, std::string_view description, Id dependency, s
 }
 
 Stat::Stat(std::string_view name, std::string_view description, Stat::Id dependency,
-        Stat::Operator op, Stat::Id operand)
+        Operator op, Stat::Id operand)
         : name(name)
         , description(description)
         , dependency(dependency)
@@ -77,7 +77,7 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
                         assert(operand == Stat::none);  // already used by add?
                         operand = dependencies.Identify(mulOperand->template get<std::string>());
                         multiplier = 1;
-                        op = Stat::multiply;
+                        op = Operator::multiply;
                 }
         }
 }
@@ -110,15 +110,15 @@ StatDescriptor Stat::Compute(const Statted& object) const
                 }
         }
         StatDescriptor result(limit);
-        if (op && operand)
+        if (op != Operator::nop && operand !=Stat::none)
         {
                 auto right = object.Get(operand).Total();
                 switch(op)
                 {
-                        case multiply:
+                        case Operator::multiply:
                                 result.Contribute(object.Definition().at(dependency).name, left * right * multiplier);
                                 break;
-                        case add:
+                        case Operator::add:
                                 result.Contribute(object.Definition().at(dependency).name, left * multiplier);
                                 result.Contribute(object.Definition().at(operand).name, right * multiplier);
                                 break;

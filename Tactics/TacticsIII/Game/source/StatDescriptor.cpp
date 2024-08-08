@@ -16,11 +16,18 @@ StatDescriptor::StatDescriptor(int value) :
     Contribute("", value);
 }
 
+StatDescriptor& StatDescriptor::Contribute(const StatDescriptor& descriptor)
+{
+    if (!descriptor.IsValid())
+        return *this;
+    return Contribute(descriptor.Description(), descriptor.Total());
+}
+
 StatDescriptor& StatDescriptor::Contribute(std::string_view source, int value, bool skip0)
 {
     if (skip0 && value==0)
             return *this;
-    contributions.emplace_back(source, value);
+    operations.emplace_back(std::string(source), Operator::add, value);
     return *this;
 }
 

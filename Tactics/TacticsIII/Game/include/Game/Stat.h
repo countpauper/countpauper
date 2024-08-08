@@ -7,6 +7,7 @@
 #include "File/Json.h"
 #include "Game/StatDescriptor.h"
 #include "Utility/Range.h"
+#include "Game/Operator.h"
 
 namespace Game
 {
@@ -76,12 +77,6 @@ public:
                 poison_damage
         };
 
-        enum Operator
-        {
-                nop = 0,
-                add,
-                multiply
-        };
 
         Stat();
         ~Stat();

@@ -42,7 +42,7 @@ TEST(Creature, secondary_stat_is_derived_from_primary)
 TEST(Creature, hitpoints_are_added)
 {
     CreatureDefinition def;
-    def.Define(Stat::health, Stat::con, 2.5).Define(Stat::hp, Stat::level, Stat::add, Stat::health).Count();
+    def.Define(Stat::health, Stat::con, 2.5).Define(Stat::hp, Stat::level, Operator::add, Stat::health).Count();
 
     Race race("troll", {{Stat::con, 2}} );  // 2 + 2 = 4 con
     Creature c("bar", race);

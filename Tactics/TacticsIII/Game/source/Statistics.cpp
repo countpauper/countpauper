@@ -24,6 +24,17 @@ StatDescriptor Statistics::Get(Stat::Id id) const
     return result;
 }
 
+
+StatsDescriptor Statted::Get(std::initializer_list<Stat::Id> stats) const
+{
+    StatsDescriptor result;
+    for(auto id: stats)
+    {
+        result.emplace(std::make_pair(id, Get(id)));
+    }
+    return result;
+}
+
 void Statistics::Set(Stat::Id id, int value)
 {
     stats[id] = value;
