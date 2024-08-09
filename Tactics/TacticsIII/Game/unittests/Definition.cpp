@@ -12,16 +12,16 @@ Definition::Definition(StatDefinition& def) :
     definition.clear();
 }
 
-Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, float multiplier)
+Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, float multiplier, const Restrictions& restricted)
 {
     Ensure(dependency);
     if (dependency == Stat::Id::none)
     {
-            definition[stat] = Stat(definition.Name(stat));
+            definition[stat] = Stat(definition.Name(stat), "", restricted);
     }
     else if (multiplier == std::floor(multiplier))
     {
-        definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, {}, int(multiplier));
+        definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, {}, int(multiplier), restricted);
     }
     else
     {
@@ -38,25 +38,25 @@ Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, float multipl
             int(9*multiplier),
             int(10*multiplier)
         };
-        definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, table, 1);
+        definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, table, 1, restricted);
     }
     last = stat;
     return *this;
 }
 
-Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, Operator op, Stat::Id operand)
+Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, Operator op, Stat::Id operand, const Restrictions& restricted)
 {
     Ensure(dependency);
     Ensure(operand);
-    definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, op, operand);
+    definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, op, operand, restricted);
     last = stat;
     return *this;
 }
 
-Definition& Definition::Define(Stat::Id stat, int value)
+Definition& Definition::Define(Stat::Id stat, int value, const Restrictions& restricted)
 {
     int table[1] = { value };
-    definition[stat] = Stat(definition.Name(stat), std::string_view(), Stat::Id::none, table);
+    definition[stat] = Stat(definition.Name(stat), std::string_view(), Stat::Id::none, table, 1, restricted);
     last = stat;
     return *this;
 }

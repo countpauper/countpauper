@@ -9,7 +9,7 @@ Statistics::Statistics(std::initializer_list<std::pair<const Stat::Id, int>> sta
 {
 }
 
-Computation Statistics::Get(Stat::Id id) const
+Computation Statistics::Get(Stat::Id id, const Restrictions&) const
 {
     Computation result = Definition().GetPrimaryStat(id);
     auto it = stats.find(id);
@@ -21,12 +21,12 @@ Computation Statistics::Get(Stat::Id id) const
 }
 
 
-Computations Statted::Get(std::initializer_list<Stat::Id> stats) const
+Computations Statted::Get(std::initializer_list<Stat::Id> stats, const Restrictions& restricted) const
 {
     Computations result;
     for(auto id: stats)
     {
-        result.emplace(std::make_pair(id, Get(id)));
+        result.emplace(std::make_pair(id, Get(id, restricted)));
     }
     return result;
 }

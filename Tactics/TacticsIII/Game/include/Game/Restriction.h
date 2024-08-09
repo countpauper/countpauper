@@ -35,11 +35,20 @@ enum class Restriction
     unarmed
 };
 
-// TODO: this should be a conjunction of disjunctions where items in a category are disjunction
-using Restrictions = std::set<Restriction>;
+class Restrictions
+{
+public:
+    Restrictions() = default;
+    Restrictions(std::initializer_list<Restriction> init);
+    explicit Restrictions(const nlohmann::json& data);
+    bool Match(const Restrictions& tags) const;
+    bool Contains(Restriction tag) const;
+    bool operator==(const Restrictions& o) const;
+    static Restrictions Parse(const nlohmann::json& data, std::string_view tag);
+private:
+    unsigned Categories() const;
+    std::set<Restriction> elements;
+};
 
-bool Match(const Restrictions& tags, const Restrictions& restrictions);
-
-Restrictions ParseRestrictions(const nlohmann::json& data, std::string_view tag);
 
 }

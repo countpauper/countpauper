@@ -30,7 +30,7 @@ void Equipments::Equip(const Equipment& equipment)
     equipped.emplace_back(std::move(equipment));
 }
 
-Computation Equipments::GetItemStat(Stat::Id id, const Restrictions& filter) const
+Computation Equipments::Get(Stat::Id id, const Restrictions& filter) const
 {
     Computation result = Item::definition.GetPrimaryStat(id);
     if (!result.empty())
@@ -41,7 +41,7 @@ Computation Equipments::GetItemStat(Stat::Id id, const Restrictions& filter) con
     {
         if (e.GetItem().Match(filter))
         {
-            Computation itemResult = e.Get(id);
+            Computation itemResult = e.Get(id, filter);
             result += itemResult;
         }
     }

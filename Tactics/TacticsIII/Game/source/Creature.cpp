@@ -32,14 +32,14 @@ const Race& Creature::GetRace() const
     return race;
 }
 
-Computation Creature::Get(Stat::Id id) const
+Computation Creature::Get(Stat::Id id, const Restrictions& restrict) const
 {
     // Get primary stat
-    Computation result = Statistics::Get(id);
+    Computation result = Statistics::Get(id, restrict);
     // Get item stat
     if (!result)
     {
-        result = GetItemStat(id);
+        result = Equipments::Get(id, restrict);
     }
     // Compute secondary stat
     if ((result.empty()) && (id))
@@ -47,7 +47,7 @@ Computation Creature::Get(Stat::Id id) const
         auto it = definition.find(id);
         if (it!=definition.end())
         {
-            result = it->second.Compute(*this);
+            result = it->second.Compute(*this, restrict);
         }
     }
 

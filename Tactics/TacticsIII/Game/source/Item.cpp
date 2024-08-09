@@ -22,7 +22,7 @@ bool Item::operator==(const Item& o) const
 
 Item::Item(const json& data) :
     name(Engine::must_get<std::string_view>(data, "name")),
-    tags(ParseRestrictions(data, "tags"))
+    tags(Restrictions::Parse(data, "tags"))
 {
     Statistics::Load(data);
     // TODO: load non item stats as bonuses
@@ -33,17 +33,20 @@ std::string_view Item::Name() const
     return name;
 }
 
-Computation Item::Get(Stat::Id id) const
+Computation Item::Get(Stat::Id id, const Restrictions& restricted) const
 {
+    if (!Match(restricted))
+        return Computation(0, Name());
+
     // Get primary stat
-    Computation result = Statistics::Get(id);
+    Computation result = Statistics::Get(id, restricted);
     // Compute secondary stat
     if ((result.empty()) && (id))
     {
         auto it = definition.find(id);
         if (it!=definition.end())
         {
-            result = it->second.Compute(*this);
+            result = it->second.Compute(*this, restricted);
         }
     }
     return result;
@@ -51,28 +54,28 @@ Computation Item::Get(Stat::Id id) const
 
 bool Item::Match(const Restrictions& restrictions) const
 {
-    return Game::Match(tags, restrictions);
+    return restrictions.Match(tags);
 }
 
 Restrictions Item::Excludes() const
 {
-    if (Match({Restriction::melee}))
+    if (tags.Contains(Restriction::melee))
     {
         return Restrictions{Restriction::unarmed, Restriction::ranged};
     }
-    else if (Match({Restriction::unarmed}))
+    else if (tags.Contains(Restriction::unarmed))
     {
         return Restrictions{Restriction::melee, Restriction::ranged};
     }
-    else if (Match({Restriction::ranged}))
+    else if (tags.Contains(Restriction::ranged))
     {
         return Restrictions{Restriction::unarmed, Restriction::melee};
     }
-    else if (Match({Restriction::armor}))
+    else if (tags.Contains(Restriction::armor))
     {
         return Restrictions{Restriction::armor};
     }
-    else if (Match({Restriction::shield}))
+    else if (tags.Contains(Restriction::shield))
     {
         return Restrictions{Restriction::shield};
     }

@@ -36,42 +36,62 @@ unsigned Category(Restriction restriction)
     return 1<<(unsigned(restriction)>>8);
 }
 
-unsigned Categorize(const Restrictions restrictions)
+unsigned Restrictions::Categories() const
 {
     unsigned categories = 0;
-    for(auto restriction: restrictions)
+    for(auto restriction: elements)
     {
         categories |= Category(restriction);
     }
     return categories;
 }
 
-bool Match(const Restrictions& tags, const Restrictions& restrictions)
+
+Restrictions Restrictions::Parse(const json& data, std::string_view tag)
 {
-    unsigned requiedCategories = Categorize(restrictions);
-    unsigned matchedCategories = 0;
-    for(auto restriction: restrictions)
+    const auto& restrictionData = Engine::try_get<json>(data, tag);
+    if (!restrictionData)
     {
-        if (tags.count(restriction) != 0)
+        return Restrictions();
+    }
+    return Restrictions(*restrictionData);
+}
+
+Restrictions::Restrictions(std::initializer_list<Restriction> init) :
+    elements(init)
+{
+}
+
+Restrictions::Restrictions(const json& data)
+{
+    for(auto restriction : data)
+    {
+        auto restictionLabel = restriction.get<std::string_view>();
+        elements.insert(Engine::from_string(restictionLabel, restrictionMapping));
+    }
+}
+
+bool Restrictions::Contains(Restriction tag) const
+{
+    return elements.count(tag)!=0;
+}
+
+bool Restrictions::operator==(const Restrictions& o) const
+{
+    return elements == o.elements;
+}
+
+bool Restrictions::Match(const Restrictions& tags) const
+{
+    unsigned requiedCategories = Categories();
+    unsigned matchedCategories = 0;
+    for(auto restriction: elements)
+    {
+        if (tags.Contains(restriction) != 0)
             matchedCategories |= Category(restriction);
     }
     return requiedCategories == matchedCategories;
 }
 
-Restrictions ParseRestrictions(const json& data, std::string_view tag)
-{
-    Restrictions result;
-    const auto& restrictionData = Engine::try_get<json>(data, tag);
-    if (!restrictionData)
-    {
-        return result;
-    }
-    for(auto restriction : *restrictionData)
-    {
-        auto restictionLabel = restriction.get<std::string_view>();
-        result.insert(Engine::from_string(restictionLabel, restrictionMapping));
-    }
-    return result;
-}
 
 }

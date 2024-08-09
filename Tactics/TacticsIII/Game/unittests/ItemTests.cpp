@@ -24,20 +24,31 @@ TEST(Item, LoadNameAndStat)
 
 TEST(Item, RetrictionConjunction)
 {
-    EXPECT_TRUE(Match(Restrictions{Restriction::melee}, Restrictions{}));
-    EXPECT_FALSE(Match(Restrictions{Restriction::melee}, Restrictions{Restriction::none}));
-    EXPECT_TRUE(Match(Restrictions{Restriction::melee}, Restrictions{Restriction::melee}));
-    EXPECT_FALSE(Match(Restrictions{Restriction::melee}, Restrictions{Restriction::ranged}));
-    EXPECT_TRUE(Match(Restrictions{Restriction::melee, Restriction::thrown}, Restrictions{Restriction::melee}));
+    EXPECT_TRUE(Restrictions().Match({Restriction::melee}));
+    EXPECT_FALSE(Restrictions({Restriction::none}).Match({Restriction::melee}));
+    EXPECT_TRUE(Restrictions({Restriction::melee}).Match({Restriction::melee}));
+    EXPECT_FALSE(Restrictions({Restriction::ranged}).Match({Restriction::melee}));
+    EXPECT_TRUE(Restrictions({Restriction::melee}).Match({Restriction::melee, Restriction::thrown}));
 }
 
 TEST(Item, RetrictionDisjunction)
 {
     // the restrictions consist of a conjunction over all mentioned categories but a disjunction of the options in each
-    EXPECT_TRUE(Match(Restrictions{Restriction::armor, Restriction::leather}, Restrictions{Restriction::leather, Restriction::cloth}));
+    EXPECT_TRUE(Restrictions({Restriction::leather, Restriction::cloth}).Match({Restriction::armor, Restriction::leather}));
 
 }
 
+TEST(Item, DamageType)
+{
+    Definition def(Item::definition);
+    def.Define(Stat::sharp_damage, Stat::damage, 1, {Restriction::sharp});
+    def.Define(Stat::blunt_damage, Stat::damage, 1, {Restriction::blunt});
+    Item item("weapon", {Restriction::melee, Restriction::blunt});
+    item.Set(Stat::damage, 2);
+    EXPECT_EQ(item.Get(Stat::sharp_damage).Total(), 0);
+    EXPECT_EQ(item.Get(Stat::blunt_damage).Total(), 2);
+
+}
 TEST(Item, LoadRetrictions)
 {
     auto json = nlohmann::json::parse(R"""({

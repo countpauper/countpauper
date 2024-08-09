@@ -10,30 +10,34 @@ namespace Game
 
 Stat::Stat() = default;
 
-Stat::Stat(std::string_view name, std::string_view description)
+Stat::Stat(std::string_view name, std::string_view description, const Restrictions& restricted)
         : name(name)
         , description(description)
+        , resricted(restricted)
 {
 }
 
-Stat::Stat(std::string_view name, std::string_view description, Id dependency, std::span<int> table, int multiplier)
+Stat::Stat(std::string_view name, std::string_view description, Id dependency, std::span<int> table, int multiplier, const Restrictions& restricted)
         : name(name)
         , description(description)
         , dependency(dependency)
         , table(table.begin(), table.end())
         , multiplier(multiplier)
+        , resricted(restricted)
 {
 }
 
 Stat::Stat(std::string_view name, std::string_view description, Stat::Id dependency,
-        Operator op, Stat::Id operand)
+        Operator op, Stat::Id operand, const Restrictions& restricted)
         : name(name)
         , description(description)
         , dependency(dependency)
         , op(op)
         , operand(operand)
+        , resricted(restricted)
 {
 }
+
 Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependencies) :
         name(name)
 {       // TODO: this is pretty close to ns::from_json
@@ -80,16 +84,17 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
                         op = Operator::multiply;
                 }
         }
+        resricted = Restrictions::Parse(j, "if");
 }
 
 Stat::~Stat() = default;
 
-Computation Stat::Compute(const Statted& object) const
+Computation Stat::Compute(const Statted& object, const Restrictions& restricted) const
 {
         Computation result(limit);
         if (dependency)
         {
-                result += object.Get(dependency);
+                result += object.Get(dependency, resricted);
         }
         if (!table.empty())
         {
@@ -112,7 +117,7 @@ Computation Stat::Compute(const Statted& object) const
         }
         if (op != Operator::nop && operand !=Stat::none)
         {
-                auto right = object.Get(operand);
+                auto right = object.Get(operand, resricted);
                 switch(op)
                 {
                         case Operator::multiply:
@@ -127,18 +132,19 @@ Computation Stat::Compute(const Statted& object) const
         }
         if (multiplier != 1)
                 result *= Computation(multiplier, name);
-
+/*
         if (result.empty())
         {
                 if (auto mockId = object.Definition().Identify(Name()))
                 {
                         // NB this could cause infinite recursion, unless object is mocked or its a primary stat
 
-                        auto mockStat = object.Get(mockId);
+                        auto mockStat = object.Get(mockId, restricted);
                         if (!mockStat.empty())
                                 result = mockStat;
                 }
         }
+*/
         return result;
 }
 

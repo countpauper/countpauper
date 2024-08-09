@@ -35,10 +35,10 @@ Equipment& Equipment::operator=(Equipment&& o)
     return *this;
 }
 
-Computation Equipment::Get(Stat::Id id) const
+Computation Equipment::Get(Stat::Id id, const Restrictions& restricted) const
 {
     // TODO: add material and bonus
-    return item->Get(id);
+    return item->Get(id, restricted);
 }
 
 const Item& Equipment::GetItem() const

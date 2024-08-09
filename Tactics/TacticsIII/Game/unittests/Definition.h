@@ -8,9 +8,9 @@ class Definition
 {
 public:
     Definition(StatDefinition& def);
-    Definition& Define(Stat::Id stat, Stat::Id dependency=Stat::Id::none, float multiplier=1.0);
-    Definition& Define(Stat::Id stat, Stat::Id dependency, Operator op, Stat::Id operand);
-    Definition& Define(Stat::Id stat, int value);
+    Definition& Define(Stat::Id stat, Stat::Id dependency=Stat::Id::none, float multiplier=1.0, const Restrictions& restrict={});
+    Definition& Define(Stat::Id stat, Stat::Id dependency, Operator op, Stat::Id operand , const Restrictions& restrict={});
+    Definition& Define(Stat::Id stat, int value, const Restrictions& restrict={});
     Definition& Count();
 private:
     void Ensure(Stat::Id id);

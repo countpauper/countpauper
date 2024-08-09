@@ -13,7 +13,7 @@ public:
     bool Unequip(const Equipment& item) override;
     unsigned Unequip(const Restrictions filter) override;
     std::vector<const Equipment*> GetEquipped(const Restrictions& filter={}) const override;
-    Computation GetItemStat(Stat::Id id, const Restrictions& filter={}) const override;
+    Computation Get(Stat::Id id, const Restrictions& filter={}) const override;
 protected:
     std::vector<Equipment> equipped;
 };
