@@ -35,6 +35,23 @@ int Operation::operator()(int input) const
     }
 }
 
+bool Operation::Redundant() const
+{
+    switch(op)
+    {
+        case Operator::add:
+            return value == 0;
+        case Operator::multiply:
+            return value == 1;
+        case Operator::lower_bound:
+            return value == std::numeric_limits<int>::min();
+        case Operator::upper_bound:
+            return value == std::numeric_limits<int>::max();
+        default:
+            throw std::runtime_error("Unimplemented redundancy "+std::to_string(unsigned(op)));
+
+    }
+}
 
 std::ostream& operator<<(std::ostream& s, const Operation& operation)
 {
@@ -138,6 +155,15 @@ Computation& Computation::operator*=(const Computation& o)
     return append(Operator::multiply, o);
 }
 
+
+Computation& Computation::Simplify()
+{
+    std::erase_if(operations, [](const Operation& o)
+    {
+        return o.Redundant();
+    });
+    return *this;
+}
 
 Computation& Computation::append(Operator op, const Computation& o)
 {

@@ -28,22 +28,27 @@ double HitChance(const Actor& actor, const Actor& target)
     return 1.0;
 }
 
-Computation ComputeDamage(const Computation& offense, const Computation& defense)
+int ComputeDamage(const Computation& offense, const Computation& defense)
 {
-    return offense - defense;
+    return (offense - defense).Total();
 }
 
 Computation ComputeDamage(const Computations& offense, const Computations& defense)
 {
     Computation result(Engine::Range<int>(0,std::numeric_limits<int>::max()));
-    result += ComputeDamage(offense.at(Stat::sharp_damage), defense.at(Stat::sharp_resist));
-    result += ComputeDamage(offense.at(Stat::blunt_damage), defense.at(Stat::blunt_resist));
+    result += Computation(ComputeDamage(offense.at(Stat::sharp_damage), defense.at(Stat::sharp_resist)), "sharp");
+    result += Computation(ComputeDamage(offense.at(Stat::blunt_damage), defense.at(Stat::blunt_resist)), "blubt");
+    result.Simplify();
     return result;
 }
 
 void Attack::Execute(std::ostream& log) const
 {
-    actor.GetCounts().Cost(Stat::ap, AP());
+    if (!actor.GetCounts().Cost(Stat::ap, AP()))
+    {
+        log << actor.GetAppearance().Name() << " does not have enough AP (" << AP() << ") to attack " << target.GetAppearance().Name();
+        return;
+    }
     auto chance = HitChance(actor, target);
     if (chance < Engine::Random().Chance())
     {

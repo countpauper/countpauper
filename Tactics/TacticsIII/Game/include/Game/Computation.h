@@ -14,6 +14,7 @@ struct Operation
     Operator op;
     int value;
     int operator()(int value) const;
+    bool Redundant() const;
 };
 
 std::ostream& operator<<(std::ostream& s, const Operation& op);
@@ -32,6 +33,7 @@ public:
     Computation& operator+=(const Computation& o);
     Computation& operator-=(const Computation& o);
     Computation& operator*=(const Computation& o);
+    Computation& Simplify();
 protected:
     Operation AsValue(Operator op) const;
     Engine::Range<int> limit = Engine::Range<int>::max();
