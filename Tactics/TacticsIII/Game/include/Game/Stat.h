@@ -48,7 +48,7 @@ public:
                 magic,
 
                 defense,
-                offense,
+                offense,        // unused for now, damage is used for character and item
                 hp,     // this is a tricky one, multiplication
                 jump,
                 block,

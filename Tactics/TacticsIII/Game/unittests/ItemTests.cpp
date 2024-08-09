@@ -12,14 +12,14 @@ TEST(Item, LoadNameAndStat)
 {
     auto json = nlohmann::json::parse(R"""({
         "name":"Test",
-        "offense": 3
+        "damage": 3
 })""");
 
     Definition def(Item::definition);
-    def.Define(Stat::offense);
+    def.Define(Stat::damage);
     Item item(json);
     EXPECT_EQ(item.Name(), "Test");
-    EXPECT_EQ(item.Get(Stat::offense).Total(), 3);
+    EXPECT_EQ(item.Get(Stat::damage).Total(), 3);
 }
 
 TEST(Item, RetrictionConjunction)

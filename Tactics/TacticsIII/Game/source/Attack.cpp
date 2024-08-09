@@ -37,7 +37,7 @@ Computation ComputeDamage(const Computations& offense, const Computations& defen
 {
     Computation result(Engine::Range<int>(0,std::numeric_limits<int>::max()));
     result += Computation(ComputeDamage(offense.at(Stat::sharp_damage), defense.at(Stat::sharp_resist)), "sharp");
-    result += Computation(ComputeDamage(offense.at(Stat::blunt_damage), defense.at(Stat::blunt_resist)), "blubt");
+    result += Computation(ComputeDamage(offense.at(Stat::blunt_damage), defense.at(Stat::blunt_resist)), "blunt");
     result.Simplify();
     return result;
 }

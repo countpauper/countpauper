@@ -8,7 +8,7 @@ Unarmed::Unarmed()
     name="Unarmed";
     stats[Stat::reach] = 1;
     stats[Stat::hold] = 0;
-    stats[Stat::offense] = 1;
+    stats[Stat::damage] = 1;
     stats[Stat::wield] = 0;
     stats[Stat::enchantment] = 0;
     stats[Stat::price] = 0;

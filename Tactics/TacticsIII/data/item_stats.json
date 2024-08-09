@@ -4,7 +4,7 @@
         "hold":{"description":"the number of hands needed to wield the item", "max": 2},
         "block":{"description":"the chance to avoid an attack by blocking with a shield or weapon"},
         "defense":{"description":"the amount of protection the item grants to blunt and sharp damage"},
-        "offense":{"description":"the amount of blunt or sharp damage a hit causes"},
+        "damage":{"description":"the amount of blunt or sharp damage a hit causes"},
         "weight":{"description":"the amount of endurance needed to wear an item"},
         "wield":{"description":"the amount of lift needed to wield an item"},
         "enchantment":{"description":"the amount of attunement need to wield the item"},
@@ -16,8 +16,17 @@
         "cold resistance":{"description":"the amount of cold damage resisted", "integer":true},
         "lightning resistance":{"description":"the amount of lightning damage resisted", "integer":true},
         "poison resistance":{"description":"the amount of poison damage resisted", "integer":true},
-        "blunt damage":{"description":"the amount of blunt damage done", "integer":true},
-        "sharp damage":{"description":"the amount of sharp damage done", "integer":true},
+        "blunt damage":
+        {
+                "description":"the amount of blunt damage done",
+                "depends": "damage",
+                "if":["blunt"]
+        },
+        "sharp damage":{
+                "description":"the amount of sharp damage done",
+                "depends": "damage",
+                "if":["sharp"]
+        },
         "heat damage":{"description":"the amount of heat damage done", "integer":true},
         "cold damage":{"description":"the amount of cold damage done", "integer":true},
         "lightning damage":{"description":"the amount of lightning damage done", "integer":true},
