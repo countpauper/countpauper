@@ -73,16 +73,16 @@ TEST(Creature, damage_reduces_hitpoints)
 TEST(Creature, equip_weapon)
 {
     Definition itemDef(Item::definition);
-    itemDef.Define(Stat::damage);
+    itemDef.Define(Stat::offense);
 
     Race race("goblin");
     Creature c("baz", race);
-    EXPECT_EQ(c.Get(Stat::damage).Total(), 1);
+    EXPECT_EQ(c.Get(Stat::offense).Total(), 1);
     Item weapon("Test", {Restriction::melee});
-    weapon.Set(Stat::damage, 3);
+    weapon.Set(Stat::offense, 3);
     weapon.Set(Stat::hold, 1);
     c.Equip(Equipment(weapon));
-    EXPECT_EQ(c.Get(Stat::damage).Total(), 3);
+    EXPECT_EQ(c.Get(Stat::offense).Total(), 3);
     EXPECT_EQ(c.GetEquipped({Restriction::melee}).front()->GetItem(), weapon);
 }
 

@@ -48,8 +48,8 @@ public:
                 magic,
 
                 defense,
-                offense,        // unused for now, damage is used for character and item
-                hp,     // this is a tricky one, multiplication
+                offense,
+                hp,
                 jump,
                 block,
 
@@ -68,7 +68,7 @@ public:
                 heat_resist,
                 cold_resist,
                 lightning_resist,
-                poison_resist, // includes acid?
+                poison_resist, // includes acid
 
                 blunt_damage,
                 sharp_damage,

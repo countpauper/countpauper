@@ -41,10 +41,10 @@ TEST(Item, RetrictionDisjunction)
 TEST(Item, DamageType)
 {
     Definition def(Item::definition);
-    def.Define(Stat::sharp_damage, Stat::damage, 1, {Restriction::sharp});
-    def.Define(Stat::blunt_damage, Stat::damage, 1, {Restriction::blunt});
+    def.Define(Stat::sharp_damage, Stat::offense, 1, {Restriction::sharp});
+    def.Define(Stat::blunt_damage, Stat::offense, 1, {Restriction::blunt});
     Item item("weapon", {Restriction::melee, Restriction::blunt});
-    item.Set(Stat::damage, 2);
+    item.Set(Stat::offense, 2);
     EXPECT_EQ(item.Get(Stat::sharp_damage).Total(), 0);
     EXPECT_EQ(item.Get(Stat::blunt_damage).Total(), 2);
 

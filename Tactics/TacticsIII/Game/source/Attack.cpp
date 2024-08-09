@@ -56,7 +56,7 @@ void Attack::Execute(std::ostream& log) const
         return;
     }
 
-    auto offense = actor.GetStats().Get({Stat::sharp_damage, Stat::blunt_damage}); // TODO: rest
+    auto offense = actor.GetStats().Get({Stat::sharp_damage, Stat::blunt_damage}, {Restriction::melee, Restriction::ranged, Restriction::unarmed}); // TODO: rest
     auto defense = target.GetStats().Get({Stat::sharp_resist, Stat::blunt_resist});
     auto damage = ComputeDamage(offense, defense);
     if ( damage.Total() > 0 )

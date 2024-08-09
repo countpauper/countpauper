@@ -19,12 +19,12 @@
         "blunt damage":
         {
                 "description":"the amount of blunt damage done",
-                "depends": "damage",
+                "depends": "offense",
                 "if":["blunt"]
         },
         "sharp damage":{
                 "description":"the amount of sharp damage done",
-                "depends": "damage",
+                "depends": "offense",
                 "if":["sharp"]
         },
         "heat damage":{"description":"the amount of heat damage done", "integer":true},

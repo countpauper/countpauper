@@ -41,7 +41,7 @@ armors = type_correct(bonify(read_csv(open("armors.csv")), ("Name", "Rarity", "P
 armor_material = type_correct(bonify(read_csv(open("armor material.csv")), ("Prefix", "Rarity", "Price", "Restrictions", "Weight","Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold"), {"B1":"V1"}))
 armor_bonus = type_correct(bonify(read_csv(open("armor bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Restrictions", "Weight"), {"B1": "V1", "B2": "V2", "B3":"V3"}))
 
-weapons = type_correct(bonify(read_csv(open("weapons.csv")), ("Name", "Rarity", "Price", "Hands", "Reach", "Range", "Load", "Weight", "Tags", "Damage Type", "Stat", "Damage")), True)
+weapons = type_correct(bonify(read_csv(open("weapons.csv")), ("Name", "Rarity", "Price", "Hands", "Reach", "Range", "Load", "Weight", "Tags", "Damage Type", "Stat", "Offense")), True)
 weapon_material = type_correct(bonify(read_csv(open("weapon material.csv")), ("Prefix", "Rarity", "Price", "Weight", "Restrictions", "Sharp Damage", "Blunt Damage", "Fire Damage", "Poison Damage", "Lightning Damage", "Cold"), {"B1":"V1"}))
 weapon_bonus = type_correct(bonify(read_csv(open("weapon bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Attument", "Weight", "Restrictions"), {"B1": "V1", "B2": "V2", "Penalty":"V3"}))
 
@@ -61,9 +61,9 @@ def match(item, bonus):
     return all(r in tags for r in restrictions)
 
 def specify_damage(item):
-    if (damage_type:=item.get("damage type")) and (damage:=item.get("damage")):
+    if (damage_type:=item.get("damage type")) and (offense:=item.get("offense")):
         dt_name=f'{damage_type} damage'
-        item[dt_name] = item.get(dt_name, 0) + damage
+        item[dt_name] = item.get(dt_name, 0) + offense
     return item
 
 def combine(*stats):
