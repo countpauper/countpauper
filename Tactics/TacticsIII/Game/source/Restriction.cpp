@@ -81,6 +81,12 @@ bool Restrictions::operator==(const Restrictions& o) const
     return elements == o.elements;
 }
 
+Restrictions& Restrictions::operator|=(Restriction add)
+{
+    elements.insert(add);
+    return *this;
+}
+
 bool Restrictions::Match(const Restrictions& tags) const
 {
     unsigned requiedCategories = Categories();

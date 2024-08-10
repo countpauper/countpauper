@@ -42,6 +42,7 @@ private:
 
     std::string name;
     const Race& race;
+    Restrictions tags;
     // TODO: effects(bonuses) knowledge (with bonuses), actions, skills(extra actions)
 
     // Loaded from JSON each Stat is defined by a name and which bonuses it gives to other stats at a certain level.

@@ -13,14 +13,14 @@ TEST(Item, LoadNameAndStat)
 {
     auto json = nlohmann::json::parse(R"""({
         "name":"Test",
-        "damage": 3
+        "offense": 3
 })""");
 
     Definition def(Item::definition);
-    def.Define(Stat::damage);
+    def.Define(Stat::offense);
     Item item(json);
     EXPECT_EQ(item.Name(), "Test");
-    EXPECT_EQ(item.Get(Stat::damage).Total(), 3);
+    EXPECT_EQ(item.Get(Stat::offense).Total(), 3);
 }
 
 TEST(Item, RetrictionConjunction)
@@ -77,5 +77,22 @@ TEST(Item, LoadRetrictions)
     EXPECT_FALSE(item.Match({Restriction::ranged}));
 }
 
+TEST(Item, OffenseBonus)
+{
+    auto json = nlohmann::json::parse(R"""({
+        "name":"Weapon",
+        "tags":["melee", "blunt"],
+        "offense": 3,
+        "stat": "damage"
+})""");
+
+    Definition def(Item::definition);
+    def.Define(Stat::offense);
+    Item item(json);
+    MockBoni creature;
+    EXPECT_CALL(creature, Bonus(Stat::offense)).WillOnce(Return(Computation()));
+    EXPECT_CALL(creature, Bonus(Stat::damage)).WillOnce(Return(Computation(2, "damage")));
+    EXPECT_EQ(item.Get(Stat::offense, &creature, {Restriction::melee}).Total(), 5);
+}
 
 }

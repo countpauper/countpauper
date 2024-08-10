@@ -1,5 +1,6 @@
 #include "Game/Item.h"
 #include "Game/Boni.h"
+#include "Game/Creature.h"
 
 namespace Game
 {
@@ -7,10 +8,12 @@ namespace Game
 using json = nlohmann::json;
 
 
-Item::Item(std::string_view name, Restrictions tags) :
+Item::Item(std::string_view name, Restrictions tags, Stat::Id offenseBonus) :
     name(name),
-    tags(tags)
+    tags(tags),
+    offenseBonus(offenseBonus)
 {
+    tags |= Restriction::item;
 }
 
 bool Item::operator==(const Item& o) const
@@ -26,6 +29,8 @@ Item::Item(const json& data) :
     tags(Restrictions::Parse(data, "tags"))
 {
     Statistics::Load(data);
+    auto offenseBonusStr = Engine::get_value_or<std::string_view>(data,"stat", "none");
+    offenseBonus = Creature::definition.Identify(offenseBonusStr);
     // TODO: load non item stats as bonuses
 }
 
@@ -55,7 +60,11 @@ Computation Item::Get(Stat::Id id, const class Boni* extraBoni, const Restrictio
                 result += extraBoni->Bonus(id);
         }
     }
-
+    // Add Creature's damage or magic to weapon offense
+    if ((id == Stat::offense) && (offenseBonus!=Stat::none) && (extraBoni))
+    {
+        result += extraBoni->Bonus(offenseBonus);
+    }
     return result;
 }
 

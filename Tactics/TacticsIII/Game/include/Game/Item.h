@@ -14,7 +14,7 @@ class Item :
     public Statistics
 {
 public:
-    explicit Item(std::string_view name="", Restrictions tags={});
+    explicit Item(std::string_view name="", Restrictions tags={}, Stat::Id offenseBonus = Stat::none);
     explicit Item(const nlohmann::json& data);
     static StatDefinition definition;
     std::string_view Name() const override;
@@ -26,6 +26,7 @@ public:
 protected:
     std::string name;
     Restrictions tags;
+    Stat::Id offenseBonus;
     std::map<Stat::Id, int> bonus;
 };
 

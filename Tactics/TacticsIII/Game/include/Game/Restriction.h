@@ -8,6 +8,8 @@ namespace Game
 enum class Restriction
 {
     none = 0,
+    creature = 0x01,
+    item = 0x02,
     // material
     cloth=0x10,
     leather,
@@ -44,6 +46,7 @@ public:
     bool Match(const Restrictions& tags) const;
     bool Contains(Restriction tag) const;
     bool operator==(const Restrictions& o) const;
+    Restrictions& operator|=(Restriction add);
     static Restrictions Parse(const nlohmann::json& data, std::string_view tag);
 private:
     unsigned Categories() const;

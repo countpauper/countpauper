@@ -18,6 +18,7 @@ Creature::Creature(std::string_view name, const Race& race) :
     name(name),
     race(race)
 {
+    tags |= Restriction::creature;
     InitializeCounters();
     Equip(Equipment(race.GetUnarmed()));
 }
@@ -44,11 +45,7 @@ public:
     }
     Computation Bonus(Stat::Id stat) const
     {
-        if (stat == Stat::offense)
-        {
-            return creature.Get(Stat::damage); // TODO could be magic, could have still extra boni from external restrictions too?
-        }
-        return Computation();
+        return creature.Get(stat, nullptr, {Restriction::creature});
     }
 protected:
     const Creature& creature;
@@ -56,6 +53,9 @@ protected:
 
 Computation Creature::Get(Stat::Id id, const Game::Boni* extraBoni, const Restrictions& restrict) const
 {
+    if (!restrict.Match(tags))
+        return Computation(0, Name());
+
     // Get primary stat
     Computation result = Statistics::Get(id, extraBoni, restrict);
     // Get item stat
