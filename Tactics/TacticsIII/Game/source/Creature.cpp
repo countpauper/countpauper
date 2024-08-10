@@ -1,6 +1,7 @@
 #include "Game/Creature.h"
 #include "Game/Unarmed.h"
 #include "Game/Boni.h"
+#include "Game/ParentBoni.h"
 
 namespace Game
 {
@@ -34,35 +35,19 @@ const Race& Creature::GetRace() const
     return race;
 }
 
-// TODO: this is a bit hacky and/or it would have to pass original extraBoni, restrictions but more importantly items need to get
-// the correct creature stat (damage/magic/none) for offense based on the item. It's not up to this class to decide how they map
-class ItemBoni : public Boni
-{
-public:
-    explicit ItemBoni(const Creature& creature) :
-        creature(creature)
-    {
-    }
-    Computation Bonus(Stat::Id stat) const
-    {
-        return creature.Get(stat, nullptr, {Restriction::creature});
-    }
-protected:
-    const Creature& creature;
-};
 
 Computation Creature::Get(Stat::Id id, const Game::Boni* extraBoni, const Restrictions& restrict) const
 {
     if (!restrict.Match(tags))
-        return Computation(0, Name());
-
+    {
+        ParentBoni boni(*this, extraBoni, restrict & Restriction::creature);
+        return Equipments::Get(id, &boni, restrict);
+    }
     // Get primary stat
     Computation result = Statistics::Get(id, extraBoni, restrict);
     // Get item stat
     if (!result)
     {
-        ItemBoni boni(*this); // TODO: also pass extraBoni? what are they? player or group or location boni?
-        result = Equipments::Get(id, &boni, restrict);
     }
     // Compute secondary stat
     if ((result.empty()) && (id))

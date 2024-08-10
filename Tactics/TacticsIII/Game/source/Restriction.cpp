@@ -87,6 +87,34 @@ Restrictions& Restrictions::operator|=(Restriction add)
     return *this;
 }
 
+std::size_t Restrictions::ClearCategory(unsigned category)
+{
+    return std::erase_if(elements, [category](Restriction r)
+    {
+        return Category(r) == category;
+    });
+}
+
+Restrictions& Restrictions::operator&=(Restriction add)
+{
+    // More restrictive, remove others in this category
+    ClearCategory(Category(add));
+    elements.insert(add);
+    return *this;
+}
+
+Restrictions operator|(const Restrictions& a, Restriction b)
+{
+    Restrictions out(a);
+    return out |= b;
+}
+
+Restrictions operator&(const Restrictions& a, Restriction b)
+{
+    Restrictions out(a);
+    return out &= b;
+}
+
 bool Restrictions::Match(const Restrictions& tags) const
 {
     unsigned requiedCategories = Categories();

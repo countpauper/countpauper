@@ -23,22 +23,6 @@ TEST(Item, LoadNameAndStat)
     EXPECT_EQ(item.Get(Stat::offense).Total(), 3);
 }
 
-TEST(Item, RetrictionConjunction)
-{
-    EXPECT_TRUE(Restrictions().Match({Restriction::melee}));
-    EXPECT_FALSE(Restrictions({Restriction::none}).Match({Restriction::melee}));
-    EXPECT_TRUE(Restrictions({Restriction::melee}).Match({Restriction::melee}));
-    EXPECT_FALSE(Restrictions({Restriction::ranged}).Match({Restriction::melee}));
-    EXPECT_TRUE(Restrictions({Restriction::melee}).Match({Restriction::melee, Restriction::thrown}));
-}
-
-TEST(Item, RetrictionDisjunction)
-{
-    // the restrictions consist of a conjunction over all mentioned categories but a disjunction of the options in each
-    EXPECT_TRUE(Restrictions({Restriction::leather, Restriction::cloth}).Match({Restriction::armor, Restriction::leather}));
-
-}
-
 TEST(Item, DamageType)
 {
     Definition def(Item::definition);

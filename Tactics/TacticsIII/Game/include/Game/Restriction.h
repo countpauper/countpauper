@@ -47,11 +47,16 @@ public:
     bool Contains(Restriction tag) const;
     bool operator==(const Restrictions& o) const;
     Restrictions& operator|=(Restriction add);
+    Restrictions& operator&=(Restriction add);
     static Restrictions Parse(const nlohmann::json& data, std::string_view tag);
 private:
     unsigned Categories() const;
+    std::size_t ClearCategory(unsigned category);
     std::set<Restriction> elements;
 };
+
+Restrictions operator&(const Restrictions& a, Restriction b);
+Restrictions operator|(const Restrictions& a, Restriction b);
 
 
 }
