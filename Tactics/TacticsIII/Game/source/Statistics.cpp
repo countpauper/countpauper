@@ -1,5 +1,6 @@
 #include "Game/Statistics.h"
 #include "Game/StatDefinition.h"
+#include "Game/Boni.h"
 
 namespace Game
 {
@@ -9,24 +10,26 @@ Statistics::Statistics(std::initializer_list<std::pair<const Stat::Id, int>> sta
 {
 }
 
-Computation Statistics::Get(Stat::Id id, const Restrictions&) const
+Computation Statistics::Get(Stat::Id id, const Boni* extraBoni, const Restrictions&) const
 {
     Computation result = Definition().GetPrimaryStat(id);
     auto it = stats.find(id);
     if (it != stats.end())
     {
         result += Computation(it->second, Definition().at(id).Name());
+        if (extraBoni)
+            result += extraBoni->Bonus(id);
     }
     return result;
 }
 
 
-Computations Statted::Get(std::initializer_list<Stat::Id> stats, const Restrictions& restricted) const
+Computations Statted::Get(std::initializer_list<Stat::Id> stats, const Boni* extraBoni, const Restrictions& restricted) const
 {
     Computations result;
     for(auto id: stats)
     {
-        result.emplace(std::make_pair(id, Get(id, restricted)));
+        result.emplace(std::make_pair(id, Get(id, extraBoni, restricted)));
     }
     return result;
 }

@@ -1,4 +1,5 @@
 #include "Game/Item.h"
+#include "Game/Boni.h"
 
 namespace Game
 {
@@ -33,22 +34,28 @@ std::string_view Item::Name() const
     return name;
 }
 
-Computation Item::Get(Stat::Id id, const Restrictions& restricted) const
+Computation Item::Get(Stat::Id id, const class Boni* extraBoni, const Restrictions& restricted) const
 {
     if (!Match(restricted))
         return Computation(0, Name());
 
     // Get primary stat
-    Computation result = Statistics::Get(id, restricted);
+    Computation result = Statistics::Get(id, extraBoni, restricted);
     // Compute secondary stat
     if ((result.empty()) && (id))
     {
         auto it = definition.find(id);
         if (it!=definition.end())
         {
-            result = it->second.Compute(*this, restricted);
+            result = it->second.Compute(*this, extraBoni, restricted);
+        }
+        if (result)
+        {
+            if (extraBoni)
+                result += extraBoni->Bonus(id);
         }
     }
+
     return result;
 }
 

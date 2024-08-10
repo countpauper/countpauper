@@ -43,8 +43,8 @@ TEST(Equipment, Stats)
     equip.Equip(Equipment(item));
     EXPECT_FALSE(bool(equip.Get(Stat::reach)));
     EXPECT_EQ(equip.Get(Stat::range).Total(), 5);
-    EXPECT_EQ(equip.Get(Stat::range, {Restriction::cloth}).Total(), 0);
-    EXPECT_EQ(equip.Get(Stat::range, {Restriction::metal}).Total(), 5);
+    EXPECT_EQ(equip.Get(Stat::range, nullptr, {Restriction::cloth}).Total(), 0);
+    EXPECT_EQ(equip.Get(Stat::range, nullptr, {Restriction::metal}).Total(), 5);
 }
 
 TEST(Equipment, StatContributions)
@@ -60,9 +60,9 @@ TEST(Equipment, StatContributions)
     item2.Set(Stat::weight, 2);
     equip.Equip(Equipment(item2));
 
-    EXPECT_EQ(equip.Get(Stat::weight, {}).Total(), 5);
-    EXPECT_EQ(equip.Get(Stat::weight, {Restriction::metal}).Total(), 3);
-    EXPECT_EQ(equip.Get(Stat::weight, {Restriction::leather}).Total(), 2);
+    EXPECT_EQ(equip.Get(Stat::weight).Total(), 5);
+    EXPECT_EQ(equip.Get(Stat::weight, nullptr, {Restriction::metal}).Total(), 3);
+    EXPECT_EQ(equip.Get(Stat::weight, nullptr, {Restriction::leather}).Total(), 2);
 }
 
 }

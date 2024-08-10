@@ -18,7 +18,7 @@ public:
     Equipment& operator=(const Equipment& o);
     Equipment& operator=(Equipment&& o);
 
-    Computation Get(Stat::Id id, const Restrictions& restricted={}) const;
+    Computation Get(Stat::Id id, const class Boni* extraBoni = nullptr, const Restrictions& restricted={}) const;
     const Item& GetItem() const;
     std::string Name() const;
 protected:

@@ -31,6 +31,7 @@ private:
     void Changed();
     Engine::Scene& scene;
     Race elf;
+    Race orc;
     Map map;
     Plan plan;
     std::vector<std::unique_ptr<Avatar>> avatars;

@@ -89,12 +89,12 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
 
 Stat::~Stat() = default;
 
-Computation Stat::Compute(const Statted& object, const Restrictions& restricted) const
+Computation Stat::Compute(const Statted& object, const class Boni* extraBoni, const Restrictions& restricted) const
 {
         Computation result(limit);
         if (dependency)
         {
-                result += object.Get(dependency, resricted);
+                result += object.Get(dependency, extraBoni, resricted);
         }
         if (!table.empty())
         {
@@ -117,7 +117,7 @@ Computation Stat::Compute(const Statted& object, const Restrictions& restricted)
         }
         if (op != Operator::nop && operand !=Stat::none)
         {
-                auto right = object.Get(operand, resricted);
+                auto right = object.Get(operand, extraBoni, resricted);
                 switch(op)
                 {
                         case Operator::multiply:
@@ -132,6 +132,7 @@ Computation Stat::Compute(const Statted& object, const Restrictions& restricted)
         }
         if (multiplier != 1)
                 result *= Computation(multiplier, name);
+
 /*
         if (result.empty())
         {

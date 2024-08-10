@@ -39,7 +39,7 @@ TEST(Counter, reset_when)
 TEST(Counter, available)
 {
     MockStatted stats;
-    EXPECT_CALL(stats, Get(Stat::hp, _)).WillRepeatedly(Return(Computation(5)));
+    EXPECT_CALL(stats, Get(Stat::hp, _, _)).WillRepeatedly(Return(Computation(5)));
     Counter counter("test", Stat::Id::hp);
     EXPECT_EQ(counter.Available(0, stats), 5);
     EXPECT_EQ(counter.Available(2, stats), 3);
@@ -49,13 +49,13 @@ TEST(Counter, available)
 TEST(Counter, available_follows_max)
 {
     MockStatted stats;
-    EXPECT_CALL(stats, Get(Stat::ap, _)).WillOnce(Return(Computation(3)));
+    EXPECT_CALL(stats, Get(Stat::ap, _, _)).WillOnce(Return(Computation(3)));
     Counter counter("actions", Stat::Id::ap);
     EXPECT_EQ(counter.Available(0, stats), 3);
-    EXPECT_CALL(stats, Get(Stat::ap, _)).WillOnce(Return(Computation(1)));
+    EXPECT_CALL(stats, Get(Stat::ap, _, _)).WillOnce(Return(Computation(1)));
     EXPECT_EQ(counter.Available(0, stats), 1);
 
-    EXPECT_CALL(stats, Get(Stat::ap, _)).WillOnce(Return(Computation(1)));
+    EXPECT_CALL(stats, Get(Stat::ap, _, _)).WillOnce(Return(Computation(1)));
     EXPECT_EQ(counter.Available(2, stats), 0);
 }
 }

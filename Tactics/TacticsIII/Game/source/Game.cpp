@@ -19,7 +19,8 @@ ItemDatabase items;
 
 Game::Game(Engine::Scene& scene) :
     scene(scene),
-    elf("elf"),
+    elf("elf", {{Stat::agi, 1}}),
+    orc("orc", {{Stat::str, 1}}),
     map(Engine::Image("data/map20.png"))
 {
     Creature::definition.Load("data/creature.json");
@@ -41,7 +42,7 @@ Game::Game(Engine::Scene& scene) :
     velglarn->GetEquipment().Equip(Equipment(*items.Find("dagger")));
 
     scene.Add(*velglarn);
-    auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", elf)));
+    auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", orc)));
     elgcaress->Move(map, Engine::Position{5, 8});
     elgcaress->GetEquipment().Equip(Equipment(*items.Find("club")));
 

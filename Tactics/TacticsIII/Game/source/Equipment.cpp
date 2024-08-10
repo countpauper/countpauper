@@ -35,10 +35,10 @@ Equipment& Equipment::operator=(Equipment&& o)
     return *this;
 }
 
-Computation Equipment::Get(Stat::Id id, const Restrictions& restricted) const
+Computation Equipment::Get(Stat::Id id, const class Boni* boni, const Restrictions& restricted) const
 {
-    // TODO: add material and bonus
-    return item->Get(id, restricted);
+    // TODO: add material and bonus and creature bonus but how are those added to dependency stats
+    return item->Get(id, boni, restricted);
 }
 
 const Item& Equipment::GetItem() const

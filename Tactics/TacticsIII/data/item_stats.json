@@ -4,7 +4,7 @@
         "hold":{"description":"the number of hands needed to wield the item", "max": 2},
         "block":{"description":"the chance to avoid an attack by blocking with a shield or weapon"},
         "defense":{"description":"the amount of protection the item grants to blunt and sharp damage"},
-        "damage":{"description":"the amount of blunt or sharp damage a hit causes"},
+        "offense":{"description":"the amount of blunt or sharp damage a hit causes"},
         "weight":{"description":"the amount of endurance needed to wear an item"},
         "wield":{"description":"the amount of lift needed to wield an item"},
         "enchantment":{"description":"the amount of attunement need to wield the item"},

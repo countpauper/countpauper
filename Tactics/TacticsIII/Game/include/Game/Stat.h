@@ -87,7 +87,7 @@ public:
         Stat(std::string_view name, std::string_view description, Id dependency,
                 Operator op, Id operand, const Restrictions& restrict={});
         Stat(std::string_view name, const json& j, const class StatDefinition& dependencies);
-        Computation Compute(const class Statted& c, const Restrictions& restricted={}) const;
+        Computation Compute(const class Statted& c, const class Boni* extraBoni=nullptr, const Restrictions& restricted={}) const;
         std::string_view Name() const;
         std::string_view Description() const;
         Engine::Range<int> Limit() const;

@@ -17,13 +17,13 @@ public:
     {
         ON_CALL(*this, Definition()).WillByDefault(::testing::ReturnRef(definition));
         ON_CALL(*this, Name()).WillByDefault(::testing::Return("Mock"));
-        ON_CALL(*this, Get(_, _)).WillByDefault(Invoke([this](Stat::Id id, const Restrictions& restrict )
+        ON_CALL(*this, Get(_, _, _)).WillByDefault(Invoke([this](Stat::Id id, const class Boni* boni, const Restrictions& restrict )
         {
-            return Statistics::Get(id, restrict);
+            return Statistics::Get(id, boni, restrict);
         }));
     }
     MOCK_METHOD(std::string_view, Name, (), (const override));
-    MOCK_METHOD(Computation, Get, (Stat::Id id, const Restrictions& restrict), (const override));
+    MOCK_METHOD(Computation, Get, (Stat::Id id, const class Boni* extraBoni, const Restrictions& restrict), (const override));
     MOCK_METHOD(const class StatDefinition&,  Definition, (), (const override));
 
     StatDefinition definition;

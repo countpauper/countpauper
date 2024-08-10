@@ -18,7 +18,7 @@ public:
     explicit Item(const nlohmann::json& data);
     static StatDefinition definition;
     std::string_view Name() const override;
-    Computation Get(Stat::Id id, const Restrictions& restricted={}) const;
+    Computation Get(Stat::Id id, const class Boni* extraBoni = nullptr, const Restrictions& restricted={}) const;
     const StatDefinition& Definition() const;
     bool Match(const Restrictions& restictions) const;
     Restrictions Excludes() const;

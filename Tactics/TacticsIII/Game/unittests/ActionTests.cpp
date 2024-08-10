@@ -13,9 +13,9 @@ using namespace ::testing;
 TEST(Action, move)
 {
     MockActor actor("a");
-    EXPECT_CALL(actor.stats, Get(Stat::speed, _)).WillRepeatedly(Return(Computation(2)));
-    EXPECT_CALL(actor.stats, Get(Stat::jump, _)).WillRepeatedly(Return(Computation(1)));
-    EXPECT_CALL(actor.stats, Get(Stat::ap, _)).WillRepeatedly(Return(Computation(1)));
+    EXPECT_CALL(actor.stats, Get(Stat::speed, _, _)).WillRepeatedly(Return(Computation(2)));
+    EXPECT_CALL(actor.stats, Get(Stat::jump, _, _)).WillRepeatedly(Return(Computation(1)));
+    EXPECT_CALL(actor.stats, Get(Stat::ap, _, _)).WillRepeatedly(Return(Computation(1)));
     EXPECT_CALL(actor.counts, Available(Stat::ap)).WillRepeatedly(Return(1));
 
     NiceMock<MockWorld> world;
@@ -39,13 +39,13 @@ TEST(Action, attack)
     EXPECT_EQ(action.Description(), "Attack t");
     EXPECT_EQ(action.AP(), 1);
 
-    EXPECT_CALL(target.stats, Get(Stat::block, _)).WillRepeatedly(Return(Computation(0)));
-    EXPECT_CALL(target.stats, Get(Stat::dodge, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(target.stats, Get(Stat::block, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(target.stats, Get(Stat::dodge, _, _)).WillRepeatedly(Return(Computation(0)));
 
-    EXPECT_CALL(attacker.stats, Get(Stat::sharp_damage, _)).WillRepeatedly(Return(Computation(2)));
-    EXPECT_CALL(attacker.stats, Get(Stat::blunt_damage, _)).WillRepeatedly(Return(Computation(0)));
-    EXPECT_CALL(target.stats, Get(Stat::blunt_resist, _)).WillRepeatedly(Return(Computation(0)));
-    EXPECT_CALL(target.stats, Get(Stat::sharp_resist, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(attacker.stats, Get(Stat::sharp_damage, _, _)).WillRepeatedly(Return(Computation(2)));
+    EXPECT_CALL(attacker.stats, Get(Stat::blunt_damage, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(target.stats, Get(Stat::blunt_resist, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(target.stats, Get(Stat::sharp_resist, _, _)).WillRepeatedly(Return(Computation(0)));
 
     EXPECT_CALL(attacker.counts, Cost(Stat::ap, 1, false)).WillOnce(Return(1));
     //EXPECT_CALL(target.counts, Available(Stat::hp)).WillOnce(Return(1));

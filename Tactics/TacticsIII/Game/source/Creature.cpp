@@ -1,5 +1,6 @@
 #include "Game/Creature.h"
 #include "Game/Unarmed.h"
+#include "Game/Boni.h"
 
 namespace Game
 {
@@ -32,14 +33,36 @@ const Race& Creature::GetRace() const
     return race;
 }
 
-Computation Creature::Get(Stat::Id id, const Restrictions& restrict) const
+// TODO: this is a bit hacky and/or it would have to pass original extraBoni, restrictions but more importantly items need to get
+// the correct creature stat (damage/magic/none) for offense based on the item. It's not up to this class to decide how they map
+class ItemBoni : public Boni
+{
+public:
+    explicit ItemBoni(const Creature& creature) :
+        creature(creature)
+    {
+    }
+    Computation Bonus(Stat::Id stat) const
+    {
+        if (stat == Stat::offense)
+        {
+            return creature.Get(Stat::damage); // TODO could be magic, could have still extra boni from external restrictions too?
+        }
+        return Computation();
+    }
+protected:
+    const Creature& creature;
+};
+
+Computation Creature::Get(Stat::Id id, const Game::Boni* extraBoni, const Restrictions& restrict) const
 {
     // Get primary stat
-    Computation result = Statistics::Get(id, restrict);
+    Computation result = Statistics::Get(id, extraBoni, restrict);
     // Get item stat
     if (!result)
     {
-        result = Equipments::Get(id, restrict);
+        ItemBoni boni(*this); // TODO: also pass extraBoni? what are they? player or group or location boni?
+        result = Equipments::Get(id, &boni, restrict);
     }
     // Compute secondary stat
     if ((result.empty()) && (id))
@@ -47,7 +70,7 @@ Computation Creature::Get(Stat::Id id, const Restrictions& restrict) const
         auto it = definition.find(id);
         if (it!=definition.end())
         {
-            result = it->second.Compute(*this, restrict);
+            result = it->second.Compute(*this, extraBoni, restrict);
         }
     }
 
@@ -57,6 +80,8 @@ Computation Creature::Get(Stat::Id id, const Restrictions& restrict) const
         result += Conditions::Boni(id);
         // TODO: add all other bonuses from items and magic
         result += race.Bonus(id);
+        if (extraBoni)
+            result += extraBoni->Bonus(id);
     }
     return result;
 }

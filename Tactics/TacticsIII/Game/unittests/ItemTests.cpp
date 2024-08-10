@@ -2,6 +2,7 @@
 #include "Game/ItemDatabase.h"
 #include "Game/Restriction.h"
 #include "Definition.h"
+#include "Game/Mock/MockBoni.h"
 #include <nlohmann/json.hpp>
 
 namespace Game::Test
@@ -47,8 +48,20 @@ TEST(Item, DamageType)
     item.Set(Stat::offense, 2);
     EXPECT_EQ(item.Get(Stat::sharp_damage).Total(), 0);
     EXPECT_EQ(item.Get(Stat::blunt_damage).Total(), 2);
-
 }
+
+TEST(Item, GetBoni)
+{
+    Definition def(Item::definition);
+    def.Define(Stat::price);
+
+    Item item("item", {});
+    item.Set(Stat::price, 3);
+    MockBoni boni;
+    EXPECT_CALL(boni, Bonus(Stat::price)).WillOnce(Return(Computation(-1)));
+    EXPECT_EQ(item.Get(Stat::price, &boni).Total(), 2);
+}
+
 TEST(Item, LoadRetrictions)
 {
     auto json = nlohmann::json::parse(R"""({
