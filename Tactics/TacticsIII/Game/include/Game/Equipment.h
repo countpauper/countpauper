@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/Item.h"
 #include "Game/Counters.h"
+#include "Game/ItemBonus.h"
 #include <map>
 #include <string>
 
@@ -12,7 +13,7 @@ class Equipment :
     public Counters
 {
 public:
-    explicit Equipment(const Item& item);
+    explicit Equipment(const Item& item, std::vector<ItemBonus> boni={});
     Equipment(const Equipment& o);
     Equipment(Equipment&& o);
     Equipment& operator=(const Equipment& o);
@@ -23,6 +24,7 @@ public:
     std::string Name() const;
 protected:
     const Item* item;
+    std::vector<ItemBonus> boni;
 };
 
 }

@@ -14,7 +14,7 @@ TEST(Race, bonus)
 
 TEST(Race, load_name_and_stats_from_json)
 {
-    auto json = nlohmann::json::parse(R"""({
+    auto races = Race::Parse(json::parse(R"""({
         "human": {
             "stats": {
                 "strength": 1,
@@ -23,9 +23,7 @@ TEST(Race, load_name_and_stats_from_json)
                 "hands": 2
             }
         }
-})""");
-
-    auto races = Race::Parse(json);
+})"""));
     ASSERT_EQ(races.size(), 1);
     const Race& human = races.front();
     EXPECT_EQ(human.Name(), "human");

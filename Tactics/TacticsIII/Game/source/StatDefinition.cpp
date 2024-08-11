@@ -1,5 +1,6 @@
 #include "Game/StatDefinition.h"
 #include <nlohmann/json.hpp>
+#include <cassert>
 
 namespace Game
 {
@@ -71,6 +72,19 @@ Computation StatDefinition::GetPrimaryStat(Stat::Id id) const
         return Computation();
     }
     return Computation(it->second.Limit());
+}
+
+std::map<Stat::Id, int> StatDefinition::LoadStats(const json& data) const
+{
+    std::map<Stat::Id, int> result;
+    assert(!empty() || data.empty());
+    for(const auto& statDefinition: *this)
+    {
+        const auto value = Engine::try_get<int>(data, Stat::Name(statDefinition.first));
+        if (value)
+            result[statDefinition.first] = *value;
+    }
+    return result;
 }
 
 }

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "Game/Equipments.h"
+#include "Game/ItemBonus.h"
 #include "Definition.h"
 
 namespace Game::Test
@@ -63,6 +64,21 @@ TEST(Equipment, stat_contribution)
     EXPECT_EQ(equip.Get(Stat::weight).Total(), 5);
     EXPECT_EQ(equip.Get(Stat::weight, nullptr, {Restriction::metal}).Total(), 3);
     EXPECT_EQ(equip.Get(Stat::weight, nullptr, {Restriction::leather}).Total(), 2);
+}
+
+TEST(Equipment, weapon_material)
+{
+    Definition def(Item::definition);
+    def.Define(Stat::offense);
+
+    Equipments equip;
+    Item item("Test", {});
+    ItemBonus material(json::parse(    R"""({
+                "prefix": "gold",
+                "offense": 2
+        })"""));
+    equip.Equip(Equipment(item, {material}));
+    EXPECT_EQ(equip.Get(Stat::offense).Total(), 2);
 }
 
 }

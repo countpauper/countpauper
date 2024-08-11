@@ -13,10 +13,10 @@ public:
     explicit StatDefinition(std::string_view data);
     void Parse(const json& parsed);
     Stat::Id Identify(const Stat* stat) const;
-
     Counter& Count(Stat::Id id, Counter::Reset reset=Counter::Reset::never, bool resetToMax=true);
     std::vector<const Counter*> GetCounters() const;
     Computation GetPrimaryStat(Stat::Id id) const;
+    std::map<Stat::Id, int> LoadStats(const json& data) const;
 private:
     std::vector<Counter> counters;
 };

@@ -13,7 +13,7 @@ Race::Race(std::string_view name, std::initializer_list<std::pair<const Stat::Id
 Race::Race(const std::string_view name, const nlohmann::json& raceData) :
     Race(name)
 {
-    const auto& bonusData = Engine::get_value_or<json>(raceData, "stats",json());
+    const auto& bonusData = Engine::get_value_or<json>(raceData, "stats", json());
     for(auto el: bonusData.items())
     {
         boni[Stat::Identify(el.key())] = el.value().get<int>();
@@ -46,7 +46,7 @@ std::vector<Race> Race::Parse(const json& data)
     for(auto el: data.items())
     {
         result.emplace_back(el.key(), el.value());
-    }   
+    }
     return result;
 }
 

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "Game/Creature.h"
+#include "Game/ItemBonus.h"
 #include "Definition.h"
 
 namespace Game::Test

@@ -48,15 +48,14 @@ TEST(Item, get_extra_bonus)
 
 TEST(Item, load_restrictions)
 {
-    auto json = nlohmann::json::parse(R"""({
-        "name":"Restricted",
-        "tags":["melee", "blunt"],
-        "offense": 3
-})""");
 
     Definition def(Item::definition);
     def.Define(Stat::offense);
-    Item item(json);
+    Item item(json::parse(R"""({
+        "name":"Restricted",
+        "tags":["melee", "blunt"],
+        "offense": 3
+})"""));
     EXPECT_TRUE(item.Match({Restriction::melee}));
     EXPECT_TRUE(item.Match({Restriction::blunt}));
     EXPECT_FALSE(item.Match({Restriction::ranged}));
@@ -64,16 +63,16 @@ TEST(Item, load_restrictions)
 
 TEST(Item, offense_bonus_is_taken_from_creature)
 {
-    auto json = nlohmann::json::parse(R"""({
+
+
+    Definition def(Item::definition);
+    def.Define(Stat::offense);
+    Item item(json::parse(R"""({
         "name":"Weapon",
         "tags":["melee", "blunt"],
         "offense": 3,
         "stat": "damage"
-})""");
-
-    Definition def(Item::definition);
-    def.Define(Stat::offense);
-    Item item(json);
+})"""));
     MockBoni creature;
     EXPECT_CALL(creature, Bonus(Stat::offense)).WillOnce(Return(Computation()));
     EXPECT_CALL(creature, Bonus(Stat::damage)).WillOnce(Return(Computation(2, "damage")));
