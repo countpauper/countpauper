@@ -160,4 +160,5 @@ bool Restrictions::Match(const Restrictions& tags) const
 }
 
 Restrictions Restrictions::material{ Restriction::cloth, Restriction::leather, Restriction::wood, Restriction::metal };
+Restrictions Restrictions::weapon {Restriction::melee, Restriction::ranged, Restriction::unarmed, Restriction::thrown };
 }

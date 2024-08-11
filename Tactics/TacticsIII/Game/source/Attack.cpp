@@ -38,6 +38,10 @@ Computation ComputeDamage(const Computations& offense, const Computations& defen
     Computation result(Engine::Range<int>(0,std::numeric_limits<int>::max()));
     result += Computation(ComputeDamage(offense.at(Stat::sharp_damage), defense.at(Stat::sharp_resist)), "sharp");
     result += Computation(ComputeDamage(offense.at(Stat::blunt_damage), defense.at(Stat::blunt_resist)), "blunt");
+    result += Computation(ComputeDamage(offense.at(Stat::heat_damage), defense.at(Stat::heat_resist)), "heat");
+    result += Computation(ComputeDamage(offense.at(Stat::cold_damage), defense.at(Stat::cold_resist)), "cold");
+    result += Computation(ComputeDamage(offense.at(Stat::lightning_damage), defense.at(Stat::lightning_resist)), "lightning");
+    result += Computation(ComputeDamage(offense.at(Stat::poison_damage), defense.at(Stat::poison_resist)), "poison");
     result.Simplify();
     return result;
 }
@@ -56,8 +60,9 @@ void Attack::Execute(std::ostream& log) const
         return;
     }
 
-    auto offense = actor.GetStats().Get({Stat::sharp_damage, Stat::blunt_damage}, nullptr, {Restriction::melee, Restriction::ranged, Restriction::unarmed}); // TODO: rest
-    auto defense = target.GetStats().Get({Stat::sharp_resist, Stat::blunt_resist});
+    auto offense = actor.GetStats().Get({Stat::sharp_damage, Stat::blunt_damage, Stat::heat_damage, Stat::cold_damage, Stat::lightning_damage, Stat::poison_damage},
+                            nullptr, Restrictions::weapon);
+    auto defense = target.GetStats().Get({Stat::sharp_resist, Stat::blunt_resist, Stat::heat_resist, Stat::cold_resist, Stat::lightning_resist, Stat::poison_resist});
     auto damage = ComputeDamage(offense, defense);
     if ( damage.Total() > 0 )
     {

@@ -58,6 +58,7 @@ public:
     Restrictions& operator^=(Restriction add);
     static Restrictions Parse(const nlohmann::json& data, std::string_view tag);
     static Restrictions material;
+    static Restrictions weapon;
 private:
     friend Restrictions operator&(const Restrictions& a, const Restrictions& b);
     unsigned Categories() const;
