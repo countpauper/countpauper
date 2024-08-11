@@ -36,12 +36,16 @@ Game::Game(Engine::Scene& scene) :
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
     auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", races.at(0))));
     velglarn->Move(map, Engine::Position{3, 2});
-    velglarn->GetEquipment().Equip(Equipment(*items.Find("dagger")));
+    const auto& dagger = *items.Find("dagger");
+    const ItemBonus* daggerMaterial = items.FindBonus(Restrictions({Restriction::material, Restriction::melee,dagger.GetMaterial()})).front();
+    velglarn->GetEquipment().Equip(Equipment(dagger, {daggerMaterial}));
 
     scene.Add(*velglarn);
     auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", races.at(2))));
     elgcaress->Move(map, Engine::Position{5, 8});
-    elgcaress->GetEquipment().Equip(Equipment(*items.Find("club")));
+    const auto& club = *items.Find("club");
+    const ItemBonus* clubMaterial = items.FindBonus(Restrictions({Restriction::material, Restriction::melee,club.GetMaterial()})).at(3);
+    elgcaress->GetEquipment().Equip(Equipment(club, {clubMaterial}));
 
     scene.Add(*elgcaress);
     avatars[turn]->Select(true);

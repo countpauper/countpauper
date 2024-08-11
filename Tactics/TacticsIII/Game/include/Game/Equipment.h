@@ -13,7 +13,7 @@ class Equipment :
     public Counters
 {
 public:
-    explicit Equipment(const Item& item, std::vector<ItemBonus> boni={});
+    explicit Equipment(const Item& item, std::vector<const ItemBonus*> boni={});
     Equipment(const Equipment& o);
     Equipment(Equipment&& o);
     Equipment& operator=(const Equipment& o);
@@ -24,7 +24,7 @@ public:
     std::string Name() const;
 protected:
     const Item* item;
-    std::vector<ItemBonus> boni;
+    std::vector<const ItemBonus*> boni;
 };
 
 }

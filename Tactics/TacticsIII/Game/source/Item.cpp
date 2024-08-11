@@ -101,6 +101,13 @@ Restrictions Item::Excludes() const
     }
 }
 
+Restriction Item::GetMaterial() const
+{
+    auto materials = tags & Restrictions::material;
+    return materials.at(0);
+}
+
+
 StatDefinition Item::definition;
 
 const StatDefinition& Item::Definition() const

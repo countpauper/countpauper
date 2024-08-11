@@ -3,7 +3,7 @@
 namespace Game
 {
 
-Equipment::Equipment(const Item& item, std::vector<ItemBonus> boni) :
+Equipment::Equipment(const Item& item, std::vector<const ItemBonus*> boni) :
     Counters(item),
     item(&item),
     boni(boni)
@@ -48,7 +48,7 @@ Computation Equipment::Get(Stat::Id id, const class Boni* extraBoni, const Restr
     // TODO: add material and bonus and creature bonus but how are those added to dependency stats
     auto result = item->Get(id, extraBoni, restricted);
     for(const auto& bonus: boni)
-        result += bonus.Bonus(id);
+        result += bonus->Bonus(id);
     return result;
 }
 

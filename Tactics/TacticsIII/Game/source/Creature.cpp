@@ -40,7 +40,7 @@ Computation Creature::Get(Stat::Id id, const Game::Boni* extraBoni, const Restri
 {
     if (!restrict.Match(tags))
     {
-        ParentBoni boni(*this, extraBoni, restrict & Restriction::creature);
+        ParentBoni boni(*this, extraBoni, restrict ^ Restriction::creature);
         return Equipments::Get(id, &boni, restrict);
     }
     // Get primary stat

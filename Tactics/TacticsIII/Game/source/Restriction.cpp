@@ -76,6 +76,18 @@ bool Restrictions::Contains(Restriction tag) const
     return elements.count(tag)!=0;
 }
 
+bool Restrictions::empty() const
+{
+    return elements.empty();
+}
+
+Restriction Restrictions::at(std::size_t index) const
+{
+    if (index >= elements.size())
+        return Restriction::none;
+    return *std::next(elements.begin(), index);
+}
+
 bool Restrictions::operator==(const Restrictions& o) const
 {
     return elements == o.elements;
@@ -87,6 +99,18 @@ Restrictions& Restrictions::operator|=(Restriction add)
     return *this;
 }
 
+Restrictions& Restrictions::operator|=(const Restrictions& add)
+{
+    elements.insert(add.elements.begin(), add.elements.end());
+    return *this;
+}
+
+Restrictions& Restrictions::operator&=(const Restrictions& b)
+{
+    *this = (*this) & b;
+    return *this;
+}
+
 std::size_t Restrictions::ClearCategory(unsigned category)
 {
     return std::erase_if(elements, [category](Restriction r)
@@ -95,9 +119,10 @@ std::size_t Restrictions::ClearCategory(unsigned category)
     });
 }
 
-Restrictions& Restrictions::operator&=(Restriction add)
+
+Restrictions& Restrictions::operator^=(Restriction add)
 {
-    // More restrictive, remove others in this category
+    // More restrictive union, remove others in this category
     ClearCategory(Category(add));
     elements.insert(add);
     return *this;
@@ -109,10 +134,17 @@ Restrictions operator|(const Restrictions& a, Restriction b)
     return out |= b;
 }
 
-Restrictions operator&(const Restrictions& a, Restriction b)
+Restrictions operator^(const Restrictions& a, Restriction b)
 {
     Restrictions out(a);
-    return out &= b;
+    return out ^= b;
+}
+
+Restrictions operator&(const Restrictions& a, const Restrictions& b)
+{
+    Restrictions out;
+    std::set_intersection(a.elements.begin(), a.elements.end(), b.elements.begin(), b.elements.end(), std::inserter(out.elements, out.elements.begin()));
+    return out;
 }
 
 bool Restrictions::Match(const Restrictions& tags) const
@@ -127,5 +159,5 @@ bool Restrictions::Match(const Restrictions& tags) const
     return requiedCategories == matchedCategories;
 }
 
-
+Restrictions Restrictions::material{ Restriction::cloth, Restriction::leather, Restriction::wood, Restriction::metal };
 }

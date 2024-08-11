@@ -13,12 +13,10 @@ public:
     ItemDatabase() = default;
     explicit ItemDatabase(const json& data);
     const Item* Find(std::string_view name) const;
+    std::vector<const ItemBonus*> FindBonus(const Restrictions& filter) const;
 private:
     std::vector<Item> items;
-    std::vector<ItemBonus> weaponMaterial;
-    std::vector<ItemBonus> weaponBonus;
-    std::vector<ItemBonus> armorMaterial;
-    std::vector<ItemBonus> armorBonus;
+    std::vector<ItemBonus> boni;
 };
 
 }

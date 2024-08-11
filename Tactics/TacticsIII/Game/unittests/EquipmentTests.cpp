@@ -77,7 +77,7 @@ TEST(Equipment, weapon_material)
                 "prefix": "gold",
                 "offense": 2
         })"""));
-    equip.Equip(Equipment(item, {material}));
+    equip.Equip(Equipment(item, {&material}));
     EXPECT_EQ(equip.Get(Stat::offense).Total(), 2);
 }
 
