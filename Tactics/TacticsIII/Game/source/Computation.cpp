@@ -35,6 +35,11 @@ int Operation::operator()(int input) const
     }
 }
 
+bool Operation::operator==(const Operation& o) const
+{
+    return op == o.op &&  value == o.value && description == o.description;
+}
+
 bool Operation::Redundant() const
 {
     switch(op)
@@ -153,6 +158,12 @@ Computation& Computation::operator*=(const Computation& o)
         return *this;
     }
     return append(Operator::multiply, o);
+}
+
+bool Computation::operator==(const Computation& o) const
+{
+    return limit == o.limit &&
+        operations == o.operations;
 }
 
 

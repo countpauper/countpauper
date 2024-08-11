@@ -17,11 +17,11 @@ Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, float multipl
     Ensure(dependency);
     if (dependency == Stat::Id::none)
     {
-            definition[stat] = Stat(definition.Name(stat), "", restricted);
+            definition[stat] = Stat(Stat::Name(stat), "", restricted);
     }
     else if (multiplier == std::floor(multiplier))
     {
-        definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, {}, int(multiplier), restricted);
+        definition[stat] = Stat(Stat::Name(stat), std::string_view(), dependency, {}, int(multiplier), restricted);
     }
     else
     {
@@ -38,7 +38,7 @@ Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, float multipl
             int(9*multiplier),
             int(10*multiplier)
         };
-        definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, table, 1, restricted);
+        definition[stat] = Stat(Stat::Name(stat), std::string_view(), dependency, table, 1, restricted);
     }
     last = stat;
     return *this;
@@ -48,7 +48,7 @@ Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, Operator op, 
 {
     Ensure(dependency);
     Ensure(operand);
-    definition[stat] = Stat(definition.Name(stat), std::string_view(), dependency, op, operand, restricted);
+    definition[stat] = Stat(Stat::Name(stat), std::string_view(), dependency, op, operand, restricted);
     last = stat;
     return *this;
 }
@@ -56,7 +56,7 @@ Definition& Definition::Define(Stat::Id stat, Stat::Id dependency, Operator op, 
 Definition& Definition::Define(Stat::Id stat, int value, const Restrictions& restricted)
 {
     int table[1] = { value };
-    definition[stat] = Stat(definition.Name(stat), std::string_view(), Stat::Id::none, table, 1, restricted);
+    definition[stat] = Stat(Stat::Name(stat), std::string_view(), Stat::Id::none, table, 1, restricted);
     last = stat;
     return *this;
 }
@@ -71,7 +71,7 @@ void Definition::Ensure(Stat::Id id)
 {
     if ((id != Stat::Id::none) && (definition.count(id)==0))
     {
-        definition[id] = Stat(definition.Name(id), std::string_view());
+        definition[id] = Stat(Stat::Name(id), std::string_view());
     }
 }
 

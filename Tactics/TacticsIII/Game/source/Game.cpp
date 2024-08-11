@@ -2,7 +2,6 @@
 #include "Game/Map.h"
 #include "UI/Avatar.h"
 #include "Game/Game.h"
-#include "Game/ItemDatabase.h"
 #include "Game/Equipment.h"
 #include "UI/Scene.h"
 #include "UI/Application.h"
@@ -15,17 +14,15 @@
 namespace Game
 {
 
-ItemDatabase items;
-
 Game::Game(Engine::Scene& scene) :
     scene(scene),
-    elf("elf", {{Stat::agi, 1}}),
-    orc("orc", {{Stat::str, 1}}),
+    races(Race::Parse(Engine::LoadJson("data/race_stats.json"))),
+    items(),
     map(Engine::Image("data/map20.png"))
 {
-    Creature::definition.Load("data/creature.json");
-    Item::definition.Load("data/item_stats.json");
-    items.Load("data/items.json");
+    Creature::definition.Parse(Engine::LoadJson("data/creature.json"));
+    Item::definition.Parse(Engine::LoadJson("data/item_stats.json"));
+    items = ItemDatabase(Engine::LoadJson("data/items.json"));
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<Selected>(),
@@ -37,12 +34,12 @@ Game::Game(Engine::Scene& scene) :
     scene.GetCamera().Move(Engine::Coordinate(map.GetSize().x/2, -1, map.GetSize().z));
 
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
-    auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", elf)));
+    auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", races.at(0))));
     velglarn->Move(map, Engine::Position{3, 2});
     velglarn->GetEquipment().Equip(Equipment(*items.Find("dagger")));
 
     scene.Add(*velglarn);
-    auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", orc)));
+    auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", races.at(2))));
     elgcaress->Move(map, Engine::Position{5, 8});
     elgcaress->GetEquipment().Equip(Equipment(*items.Find("club")));
 

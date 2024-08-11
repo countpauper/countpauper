@@ -77,12 +77,12 @@ TEST(Creature, equip_weapon)
 
     Race race("goblin");
     Creature c("baz", race);
-    EXPECT_EQ(c.Get(Stat::offense).Total(), 1);
+    EXPECT_EQ(c.Get(Stat::offense,nullptr, {Restriction::melee}).Total(), 1);
     Item weapon("Test", {Restriction::melee});
     weapon.Set(Stat::offense, 3);
     weapon.Set(Stat::hold, 1);
     c.Equip(Equipment(weapon));
-    EXPECT_EQ(c.Get(Stat::offense).Total(), 3);
+    EXPECT_EQ(c.Get(Stat::offense, nullptr, {Restriction::melee}).Total(), 3);
     EXPECT_EQ(c.GetEquipped({Restriction::melee}).front()->GetItem(), weapon);
 }
 

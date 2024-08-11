@@ -20,19 +20,12 @@ std::vector<Item> Parse(const json& data, std::string_view section)
     return result;
 }
 
-void ItemDatabase::Load(std::istream& s)
+ItemDatabase::ItemDatabase(const json& data)
 {
-    json parsed = json::parse(s);
-    auto weapons = Parse(parsed, "weapon");
+    auto weapons = Parse(data, "weapon");
     items = weapons;
-    auto armors = Parse(parsed, "armor");
+    auto armors = Parse(data, "armor");
     items.insert(items.end(), armors.begin(), armors.end());
-}
-
-void ItemDatabase::Load(const char* filename)
-{
-    std::ifstream dbFile(filename);
-    Load(dbFile);
 }
 
 const Item* ItemDatabase::Find(std::string_view name) const

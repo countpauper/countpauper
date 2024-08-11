@@ -27,8 +27,8 @@ private:
 class ItemDatabase
 {
 public:
-    void Load(std::istream& data);
-    void Load(const char* filename);
+    ItemDatabase() = default;
+    explicit ItemDatabase(const json& data);
     const Item* Find(std::string_view name) const;
 private:
     std::vector<Item> items;

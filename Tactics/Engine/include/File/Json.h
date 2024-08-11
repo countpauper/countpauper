@@ -30,7 +30,7 @@ T  must_get(const json& j, std::string_view key)
         auto it = j.find(key);
         if (it == j.end())
         {
-                throw std::runtime_error(std::string("Failed to get ") + std::string(key) + " from JSON");
+                throw std::invalid_argument(std::string("Failed to get ") + std::string(key) + " from JSON");
         }
          else
         {
@@ -51,5 +51,7 @@ T get_value_or(const json& j, std::string_view key, T alternative=T())
                 return alternative;
         }
 }
+
+json LoadJson(std::string_view filename);
 
 }

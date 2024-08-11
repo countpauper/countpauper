@@ -30,7 +30,7 @@ Item::Item(const json& data) :
 {
     Statistics::Load(data);
     auto offenseBonusStr = Engine::get_value_or<std::string_view>(data,"stat", "none");
-    offenseBonus = Creature::definition.Identify(offenseBonusStr);
+    offenseBonus = Stat::Identify(offenseBonusStr);
     // TODO: load non item stats as bonuses
 }
 

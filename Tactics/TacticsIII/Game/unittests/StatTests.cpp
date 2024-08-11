@@ -9,8 +9,7 @@ using namespace ::testing;
 
 TEST(Stat, define_primary_stat)
 {
-    StatDefinition def;
-    def.Parse(R"""(
+    StatDefinition def(R"""(
 {
         "Strength":{ "description":"It's how much you're stronk"}
 }
@@ -21,8 +20,7 @@ TEST(Stat, define_primary_stat)
 
 TEST(Stat, define_secondary_stat)
 {
-    StatDefinition def;
-    def.Parse(R"""(
+    StatDefinition def(R"""(
     {
             "Strength":{},
             "Damage":{ "depends":"Strength", "table":[1,1,2,2,3,3] }
@@ -38,8 +36,7 @@ TEST(Stat, define_secondary_stat)
 
 TEST(Stat, define_multiplied_stat)
 {
-    StatDefinition def;
-    def.Parse(R"""(
+    StatDefinition def(R"""(
     {
             "Agility":{ },
             "Dodge":{ "depends":"Agility", "table":[10,11,12,12,13,13], "*":5 }
@@ -55,8 +52,7 @@ TEST(Stat, define_multiplied_stat)
 
 TEST(Stat, define_stat_with_limit)
 {
-    StatDefinition def;
-    def.Parse(R"""(
+    StatDefinition def(R"""(
     {
             "Reach":{"min": 1}}
     )""");
@@ -67,8 +63,7 @@ TEST(Stat, define_stat_with_limit)
 
 TEST(Stat, define_stat_multiplied_by_stat)
 {
-    StatDefinition def;
-    def.Parse(R"""(
+    StatDefinition def(R"""(
     {
             "Level":{ },
             "Constitution":{ },
@@ -93,18 +88,16 @@ TEST(Stat, constant_stat)
 
 TEST(Stat, define_unknown_stat_throws)
 {
-    StatDefinition def;
-    EXPECT_THROW(def.Parse(R"""(
+    EXPECT_THROW(StatDefinition(R"""(
 {
         "Fubar":{ "description":"It's not a real stat"}
 }
-    )"""), std::runtime_error);;
+    )"""), std::invalid_argument);;
 }
 
 TEST(Stat, define_counter)
 {
-    StatDefinition def;
-    def.Parse(R"""(
+    StatDefinition def(R"""(
 {
     "Hitpoints": {
         "counter": {

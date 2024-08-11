@@ -4,6 +4,9 @@
 #include "UI/Bus.h"
 #include "Game/Plan.h"
 #include "Game/World.h"
+#include "Game/Race.h"
+#include "Game/ItemDatabase.h"
+#include <vector>
 #include <memory>
 
 namespace Engine
@@ -30,8 +33,8 @@ private:
     void Next();
     void Changed();
     Engine::Scene& scene;
-    Race elf;
-    Race orc;
+    std::vector<Race> races;
+    ItemDatabase items;
     Map map;
     Plan plan;
     std::vector<std::unique_ptr<Avatar>> avatars;

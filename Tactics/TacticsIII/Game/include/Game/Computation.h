@@ -14,6 +14,7 @@ struct Operation
     Operator op;
     int value;
     int operator()(int value) const;
+    bool operator==(const Operation& o) const;
     bool Redundant() const;
 };
 
@@ -33,6 +34,7 @@ public:
     Computation& operator+=(const Computation& o);
     Computation& operator-=(const Computation& o);
     Computation& operator*=(const Computation& o);
+    bool operator==(const Computation& o) const;
     Computation& Simplify();
 protected:
     Operation AsValue(Operator op) const;

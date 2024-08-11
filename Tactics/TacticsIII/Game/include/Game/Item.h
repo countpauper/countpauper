@@ -5,7 +5,7 @@
 #include "Game/Restriction.h"
 #include <map>
 #include <string>
-
+#include <nlohmann/json.hpp>
 
 namespace Game
 {

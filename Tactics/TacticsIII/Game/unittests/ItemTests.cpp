@@ -51,10 +51,11 @@ TEST(Item, LoadRetrictions)
     auto json = nlohmann::json::parse(R"""({
         "name":"Restricted",
         "tags":["melee", "blunt"],
-        "damage": 3
+        "offense": 3
 })""");
 
     Definition def(Item::definition);
+    def.Define(Stat::offense);
     Item item(json);
     EXPECT_TRUE(item.Match({Restriction::melee}));
     EXPECT_TRUE(item.Match({Restriction::blunt}));
