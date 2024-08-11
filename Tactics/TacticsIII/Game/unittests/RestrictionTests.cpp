@@ -6,7 +6,7 @@ namespace Game::Test
 {
 using namespace ::testing;
 
-TEST(Restriction, Parse)
+TEST(Restriction, parse)
 {
     auto json = nlohmann::json::parse(R"""({
         "restrict":["melee", "blunt"]
@@ -18,7 +18,7 @@ TEST(Restriction, Parse)
     EXPECT_EQ(noRestriction, Restrictions());
 }
 
-TEST(Restriction, MatchConjunction)
+TEST(Restriction, match_conjunction)
 {
     EXPECT_TRUE(Restrictions().Match({Restriction::melee}));
     EXPECT_FALSE(Restrictions({Restriction::none}).Match({Restriction::melee}));
@@ -27,19 +27,19 @@ TEST(Restriction, MatchConjunction)
     EXPECT_TRUE(Restrictions({Restriction::melee}).Match({Restriction::melee, Restriction::thrown}));
 }
 
-TEST(Restriction, MatchDisjunction)
+TEST(Restriction, match_disjunction_in_cattegory)
 {
     // the restrictions consist of a conjunction over all mentioned categories but a disjunction of the options in each
     EXPECT_TRUE(Restrictions({Restriction::leather, Restriction::cloth}).Match({Restriction::armor, Restriction::leather}));
 
 }
 
-TEST(Restriction, Or)
+TEST(Restriction, or_operator_is_inclusive_per_category)
 {
     EXPECT_EQ(Restrictions({Restriction::leather}) | Restriction::cloth, Restrictions({Restriction::leather, Restriction::cloth}));
 }
 
-TEST(Restriction, And)
+TEST(Restriction, and_operator_is_exclusive_per_category)
 {
     EXPECT_EQ(Restrictions({Restriction::melee}) & Restriction::ranged, Restrictions({Restriction::ranged}));
 }

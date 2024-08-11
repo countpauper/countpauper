@@ -9,7 +9,7 @@ namespace Game::Test
 {
 using namespace ::testing;
 
-TEST(Item, LoadNameAndStat)
+TEST(Item, load_name_and_stat)
 {
     auto json = nlohmann::json::parse(R"""({
         "name":"Test",
@@ -23,7 +23,7 @@ TEST(Item, LoadNameAndStat)
     EXPECT_EQ(item.Get(Stat::offense).Total(), 3);
 }
 
-TEST(Item, DamageType)
+TEST(Item, damage_type_is_offense)
 {
     Definition def(Item::definition);
     def.Define(Stat::sharp_damage, Stat::offense, 1, {Restriction::sharp});
@@ -34,7 +34,7 @@ TEST(Item, DamageType)
     EXPECT_EQ(item.Get(Stat::blunt_damage).Total(), 2);
 }
 
-TEST(Item, GetBoni)
+TEST(Item, get_extra_bonus)
 {
     Definition def(Item::definition);
     def.Define(Stat::price);
@@ -46,7 +46,7 @@ TEST(Item, GetBoni)
     EXPECT_EQ(item.Get(Stat::price, &boni).Total(), 2);
 }
 
-TEST(Item, LoadRetrictions)
+TEST(Item, load_restrictions)
 {
     auto json = nlohmann::json::parse(R"""({
         "name":"Restricted",
@@ -62,7 +62,7 @@ TEST(Item, LoadRetrictions)
     EXPECT_FALSE(item.Match({Restriction::ranged}));
 }
 
-TEST(Item, OffenseBonus)
+TEST(Item, offense_bonus_is_taken_from_creature)
 {
     auto json = nlohmann::json::parse(R"""({
         "name":"Weapon",

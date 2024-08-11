@@ -6,13 +6,13 @@ namespace Game::Test
 {
 using namespace ::testing;
 
-TEST(Race, Bonus)
+TEST(Race, bonus)
 {
     Race r("orc", {{Stat::str, 2}});
     EXPECT_EQ(r.Bonus(Stat::str), Computation(2, "orc"));
 }
 
-TEST(Race, LoadNameAndStat)
+TEST(Race, load_name_and_stats_from_json)
 {
     auto json = nlohmann::json::parse(R"""({
         "human": {

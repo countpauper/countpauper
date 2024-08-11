@@ -6,7 +6,7 @@ namespace Game::Test
 {
 using namespace ::testing;
 
-TEST(Equipment, Equip)
+TEST(Equipment, equip)
 {
     Equipments equip;
     Item item("Test", {});
@@ -14,7 +14,7 @@ TEST(Equipment, Equip)
     EXPECT_EQ(equip.GetEquipped().front()->GetItem(), item);
 }
 
-TEST(Equipment, Unequip)
+TEST(Equipment, unequip)
 {
     Equipments equip;
     Item item("Test", {});
@@ -23,7 +23,7 @@ TEST(Equipment, Unequip)
     EXPECT_TRUE(equip.GetEquipped().empty());
 }
 
-TEST(Equipment, UnequipByTag)
+TEST(Equipment, unequip_by_tag)
 {
     Equipments equip;
     Item item("Test", {Restriction::metal});
@@ -33,7 +33,7 @@ TEST(Equipment, UnequipByTag)
     EXPECT_TRUE(equip.GetEquipped().empty());
 }
 
-TEST(Equipment, Stats)
+TEST(Equipment, stats)
 {
     Definition def(Item::definition);
     def.Define(Stat::range);
@@ -47,7 +47,7 @@ TEST(Equipment, Stats)
     EXPECT_EQ(equip.Get(Stat::range, nullptr, {Restriction::metal}).Total(), 5);
 }
 
-TEST(Equipment, StatContributions)
+TEST(Equipment, stat_contribution)
 {
     Definition def(Item::definition);
     def.Define(Stat::weight);
