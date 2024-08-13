@@ -9,7 +9,7 @@ class Equipments : public Equipped
 {
 public:
     Equipments() = default;
-    void Equip(const Equipment& equipment) override;
+    const Equipment& Equip(const Equipment& equipment) override;
     bool Unequip(const Equipment& item) override;
     unsigned Unequip(const Restrictions filter) override;
     std::vector<const Equipment*> GetEquipped(const Restrictions& filter={}) const override;

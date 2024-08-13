@@ -13,6 +13,10 @@ public:
     virtual ~ItemBonus() = default;
     Computation Bonus(Stat::Id stat) const override;
     bool Match(const Restrictions& filter) const;
+    bool NameMatch(std::string_view name) const;
+    const std::string_view Prefix() const;
+    const std::string_view Postfix() const;
+
 private:
     std::string prefix;
     std::string postfix;

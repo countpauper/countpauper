@@ -10,7 +10,7 @@ ItemBonus::ItemBonus(const json& data, const Restrictions& extraTags) :
     postfix(Engine::get_value_or<std::string_view>(data, "postfix", "")),
     restrictions(Restrictions::Parse(data, "restrictions"))
 {
-    stats = Item::definition.LoadStats(data);
+    stats = Stat::LoadStats(data);
     restrictions |= extraTags;
 }
 
@@ -25,6 +25,21 @@ Computation ItemBonus::Bonus(Stat::Id stat) const
 bool ItemBonus::Match(const Restrictions& tags) const
 {
     return restrictions.Match(tags);
+}
+
+bool ItemBonus::NameMatch(std::string_view name) const
+{
+    return (prefix.find(name)!=std::string::npos || postfix.find(name)!=std::string::npos);
+}
+
+const std::string_view ItemBonus::Prefix() const
+{
+    return prefix;
+}
+
+const std::string_view ItemBonus::Postfix() const
+{
+    return postfix;
 }
 
 }

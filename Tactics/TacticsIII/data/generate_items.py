@@ -39,11 +39,10 @@ def type_correct(table, item=False):
 
 armors = type_correct(bonify(read_csv(open("armors.csv")), ("Name", "Rarity", "Price", "Hands", "Weight", "Tags", "Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold")), True)
 armor_material = type_correct(bonify(read_csv(open("armor material.csv")), ("Prefix", "Rarity", "Price", "Restrictions", "Weight","Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold"), {"B1":"V1"}))
-armor_bonus = type_correct(bonify(read_csv(open("armor bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Restrictions", "Weight"), {"B1": "V1", "B2": "V2", "B3":"V3"}))
-
 weapons = type_correct(bonify(read_csv(open("weapons.csv")), ("Name", "Rarity", "Price", "Hands", "Reach", "Range", "Load", "Weight", "Tags", "Damage Type", "Stat", "Offense")), True)
 weapon_material = type_correct(bonify(read_csv(open("weapon material.csv")), ("Prefix", "Rarity", "Price", "Weight", "Restrictions", "Sharp Damage", "Blunt Damage", "Fire Damage", "Poison Damage", "Lightning Damage", "Cold"), {"B1":"V1"}))
-weapon_bonus = type_correct(bonify(read_csv(open("weapon bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Attument", "Weight", "Restrictions"), {"B1": "V1", "B2": "V2", "Penalty":"V3"}))
+
+all_bonus = type_correct(bonify(read_csv(open("bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Attument", "Weight", "Restrictions"), {"B1": "V1", "B2": "V2", "Penalty":"V3"}))
 
 def select_random(table):
     rarities = [row.get("rarity", 0)/rarity_factor for row in table]
@@ -126,18 +125,18 @@ def format_item(item):
     return ", ".join(f"{k}: {v}" for k,v in item.items())
 
 if __name__ == "__main__":
-    all_armors = generate_all_items(armors, armor_material, armor_bonus)
+    all_armors = generate_all_items(armors, armor_material, all_bonus)
     for item in all_armors:
         print(format_item(item))
-    all_weapons = generate_all_items(weapons, weapon_material, weapon_bonus)
+    all_weapons = generate_all_items(weapons, weapon_material, all_bonus)
     for item in all_weapons:
         print(format_item(item))
 
-    print(f"Armor of the day (out of {len(all_armors)}): " + format_item(generate_random_item(armors, armor_material, armor_bonus)))
-    print(f"Weapon of the day (out of {len(all_weapons)}): " + format_item(generate_random_item(weapons, weapon_material, weapon_bonus)))
+    print(f"Armor of the day (out of {len(all_armors)}): " + format_item(generate_random_item(armors, armor_material, all_bonus)))
+    print(f"Weapon of the day (out of {len(all_weapons)}): " + format_item(generate_random_item(weapons, weapon_material, all_bonus)))
 
-    export = dict(armor=armors, armor_material=armor_material, armor_bonus = armor_bonus,
-                  weapon=weapons, weapon_material=weapon_material, weapon_bonus = weapon_bonus)
+    export = dict(armor=armors, armor_material=armor_material,
+                  weapon=weapons, weapon_material=weapon_material, bonus = all_bonus)
 
     with open('items.json', 'w') as f:
             json.dump(export, f)

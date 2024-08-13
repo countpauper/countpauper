@@ -72,13 +72,30 @@ TEST(Equipment, weapon_material)
     def.Define(Stat::offense);
 
     Equipments equip;
-    Item item("Test", {});
+    Item item("test", {});
     ItemBonus material(json::parse(    R"""({
-                "prefix": "gold",
+                "prefix": "unit",
                 "offense": 2
         })"""));
-    equip.Equip(Equipment(item, {&material}));
+    const auto& equipment = equip.Equip(Equipment(item, {&material}));
     EXPECT_EQ(equip.Get(Stat::offense).Total(), 2);
+    EXPECT_EQ(equipment.Name(), "unit test");
+}
+
+TEST(Equipment, weapon_bonus)
+{
+    Definition def(Item::definition);
+    def.Define(Stat::offense);
+
+    Equipments equip;
+    Item item("test", {});
+    ItemBonus bonus(json::parse(    R"""({
+                "postfix": "of testability",
+                "endurance": 2
+        })"""));
+    const auto& equipment = equip.Equip(Equipment(item, {&bonus}));
+    EXPECT_EQ(equip.Get(Stat::endurance).Total(), 2);
+    EXPECT_EQ(equipment.Name(), "test of testability");
 }
 
 }

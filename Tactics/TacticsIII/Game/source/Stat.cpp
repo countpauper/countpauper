@@ -173,7 +173,7 @@ bool Stat::IsPrimary() const
 
 }
 
-Stat::Id Stat::Identify(std::string_view name)
+Stat::Id Stat::TryIdentify(std::string_view name)
 {
     auto lowName = Engine::LowerCase(name);
     for(const auto& stat: statNames)
@@ -183,12 +183,35 @@ Stat::Id Stat::Identify(std::string_view name)
                 return stat.first;
         }
     }
-    throw std::invalid_argument(std::string("Unknown stat name:") + std::string(name));
+    return Stat::none;
+}
+
+Stat::Id Stat::Identify(std::string_view name)
+{
+    if (name.empty() || name=="none")
+        return Stat::none;
+    auto stat = TryIdentify(name);
+    if (stat==Stat::none)
+        throw std::invalid_argument(std::string("Unknown stat name:") + std::string(name));
+    return stat;
 }
 
 std::string_view Stat::Name(Stat::Id id)
 {
     return statNames.at(id);
+}
+
+std::map<Stat::Id, int> Stat::LoadStats(const json& statData)
+{
+    std::map<Stat::Id, int> result;
+    for(auto el: statData.items())
+    {
+        auto stat = TryIdentify(el.key());
+        if (stat == Stat::none)
+            continue;
+        result[stat] = el.value().get<int>();
+    }
+    return result;
 }
 
 std::map<Stat::Id, std::string_view> Stat::statNames =

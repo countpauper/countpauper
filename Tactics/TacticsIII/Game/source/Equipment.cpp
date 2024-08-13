@@ -1,4 +1,5 @@
 #include "Game/Equipment.h"
+#include "Utility/String.h"
 
 namespace Game
 {
@@ -59,7 +60,22 @@ const Item& Equipment::GetItem() const
 
 std::string Equipment::Name() const
 {
-    return std::string(item->Name());    // TODO: add pre and postfixes of materials and bonus
+    std::string result;
+    std::vector<std::string_view> nameParts;
+    for(const auto& bonus: boni)
+    {
+        auto prefix = bonus->Prefix();
+        if (!prefix.empty())
+            nameParts.push_back(prefix);
+    }
+    nameParts.push_back(item->Name());
+    for(const auto& bonus: boni)
+    {
+        auto postfix = bonus->Postfix();
+        if (!postfix.empty())
+            nameParts.push_back(postfix);
+    }
+    return Engine::Join(nameParts, " ");
 }
 
 }

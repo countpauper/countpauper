@@ -94,7 +94,10 @@ public:
     bool IsPrimary() const;
     static Stat::Id Identify(std::string_view name);
     static std::string_view Name(Stat::Id);
+    static std::map<Stat::Id, int> LoadStats(const json& statData);
 private:
+    static Stat::Id TryIdentify(std::string_view name);
+
     std::string name;
     std::string description;
     Restrictions resricted;

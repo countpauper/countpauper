@@ -44,8 +44,10 @@ Game::Game(Engine::Scene& scene) :
     auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", races.at(2))));
     elgcaress->Move(map, Engine::Position{5, 8});
     const auto& club = *items.Find("club");
-    const ItemBonus* clubMaterial = items.FindBonus(Restrictions({Restriction::material, Restriction::melee,club.GetMaterial()})).at(3);
-    elgcaress->GetEquipment().Equip(Equipment(club, {clubMaterial}));
+    const ItemBonus* clubMaterial = items.FindBonus(Restrictions({Restriction::material, Restriction::melee,club.GetMaterial()}), "treant").front();
+    const ItemBonus* clubBonus = items.FindBonus(Restrictions({Restriction::bonus, Restriction::melee, club.GetMaterial()}),"bear").front();
+
+    elgcaress->GetEquipment().Equip(Equipment(club, {clubMaterial, clubBonus}));
 
     scene.Add(*elgcaress);
     avatars[turn]->Select(true);

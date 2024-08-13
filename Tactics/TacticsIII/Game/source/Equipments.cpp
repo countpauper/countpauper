@@ -23,11 +23,11 @@ unsigned Equipments::Unequip(const Restrictions filter)
     });
 }
 
-void Equipments::Equip(const Equipment& equipment)
+const Equipment& Equipments::Equip(const Equipment& equipment)
 {
     Restrictions exclude = equipment.GetItem().Excludes();
     Unequip(exclude);
-    equipped.emplace_back(std::move(equipment));
+    return equipped.emplace_back(std::move(equipment));
 }
 
 Computation Equipments::Get(Stat::Id id, const class Boni* extraBoni, const Restrictions& filter) const
