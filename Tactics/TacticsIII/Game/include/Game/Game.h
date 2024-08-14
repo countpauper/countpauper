@@ -25,6 +25,7 @@ public:
     explicit Game(Engine::Scene& scene);
     const HeightMap& GetMap() const override;
     bool Obstacle(Engine::Position at, const Actor* except=nullptr) const override;
+    json Serialize() const;
 private:
     Avatar& Current() const;
     void Focus(Engine::Position pos);

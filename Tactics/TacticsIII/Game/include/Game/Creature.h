@@ -36,6 +36,7 @@ public:
     std::string_view Name() const override;
 
     const Race& GetRace() const;
+    json Serialize() const;
     static StatDefinition definition;
 private:
     void OnCount(Stat::Id stat, unsigned remaining) override;

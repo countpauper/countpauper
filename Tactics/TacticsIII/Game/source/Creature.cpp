@@ -35,6 +35,20 @@ const Race& Creature::GetRace() const
     return race;
 }
 
+json Creature::Serialize() const
+{
+    json result =  json::object({
+        {"name", Name()},
+        {"race", race.Name()},
+        {"stats", Statistics::Serialize()},
+        {"counters", Counters::Serialize()},
+        {"conditions", Conditions::Serialize()},
+        {"equipment", Equipments::Serialize()}
+
+    });
+    return result;
+}
+
 
 Computation Creature::Get(Stat::Id id, const Game::Boni* extraBoni, const Restrictions& restrict) const
 {

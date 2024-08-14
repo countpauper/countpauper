@@ -53,5 +53,6 @@ T get_value_or(const json& j, std::string_view key, T alternative=T())
 }
 
 json LoadJson(std::string_view filename);
+void SaveJson(const json& data, std::string_view filename);
 
 }

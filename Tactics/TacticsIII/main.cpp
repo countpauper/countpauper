@@ -5,6 +5,7 @@
 #include "Game/Game.h"
 #include "Game/Race.h"
 #include "Game/Creature.h"
+#include "File/Json.h"
 #include "UI/Label.h"
 #include "UI/Splitter.h"
 #include "Utility/Singleton.h"
@@ -27,7 +28,9 @@ int main(int argc, char**argv)
         Engine::Splitter splitter2(splitter, lbl3, 0.75, false);
         window.GetHUD().Add(splitter2);
         Game::Game game(window.GetScene());
+        Engine::SaveJson(game.Serialize(), "level.json");
         app->Run();
+        Engine::SaveJson(game.Serialize(), "savegame.json");
     }
     catch(const std::exception& ex)
     {

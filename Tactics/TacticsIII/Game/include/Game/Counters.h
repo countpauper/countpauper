@@ -19,6 +19,9 @@ public:
     unsigned Available(Stat::Id) const override;
     unsigned Cost(Stat::Id counter, unsigned cost, bool truncate=false) override;
     void Reset(Counter::Reset at) override;
+
+    void Deserialize(const json& data);
+    json Serialize() const;
 protected:
     void InitializeCounters();
     virtual void OnCount(Stat::Id, unsigned ) {}

@@ -22,6 +22,11 @@ Computation Condition::Bonus(Stat::Id stat) const
         return Computation();
 }
 
+std::pair<std::string_view, json> Condition::Serialize() const
+{
+    return std::make_pair(name, Stat::Serialize(bonus));
+}
+
 
 KO::KO() :
     Condition("KO")

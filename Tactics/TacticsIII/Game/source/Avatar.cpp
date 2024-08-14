@@ -132,4 +132,12 @@ std::string Avatar::Sheet() const
     return ss.str();
 }
 
+json Avatar::Serialize() const
+{
+    json result =  creature.Serialize();
+    result["position"] = json::array({position.x, position.y, position.z});
+    return result;
+}
+
+
 }

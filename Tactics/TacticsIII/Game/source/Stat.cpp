@@ -201,7 +201,7 @@ std::string_view Stat::Name(Stat::Id id)
     return statNames.at(id);
 }
 
-std::map<Stat::Id, int> Stat::LoadStats(const json& statData)
+std::map<Stat::Id, int> Stat::Deserialize(const json& statData)
 {
     std::map<Stat::Id, int> result;
     for(auto el: statData.items())
@@ -210,6 +210,16 @@ std::map<Stat::Id, int> Stat::LoadStats(const json& statData)
         if (stat == Stat::none)
             continue;
         result[stat] = el.value().get<int>();
+    }
+    return result;
+}
+
+json Stat::Serialize(const std::map<Stat::Id, int>& stats)
+{
+    auto result = json::object();
+    for(const auto& stat: stats)
+    {
+        result[Stat::Name(stat.first)] = stat.second;
     }
     return result;
 }

@@ -10,6 +10,12 @@ json LoadJson(std::string_view filename)
     return json::parse(file);
 }
 
+void SaveJson(const json& data, std::string_view filename)
+{
+    std::ofstream file(std::string(filename).c_str());
+    file << data;
+}
+
 template<>
 std::optional<json> try_get<json>(const json& j, std::string_view key)
 {

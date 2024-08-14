@@ -88,4 +88,18 @@ void Counters::Reset(Counter::Reset at)
 }
 
 
+void Counters::Deserialize(const json& data)
+{
+}
+
+json Counters::Serialize() const
+{
+    auto result = json::object();
+    for(const auto& c : countersUsed)
+    {
+        result[c.first->Name()] = c.second;
+    }
+    return result;
+}
+
 }

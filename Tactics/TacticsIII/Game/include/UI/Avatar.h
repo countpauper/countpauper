@@ -34,6 +34,8 @@ public:
     const Counted& GetCounts() const override;
     const class Equipped& GetEquipment() const override;
     class Equipped& GetEquipment() override;
+
+    json Serialize() const;
 private:
     Engine::Mesh mesh;
     Engine::Position position;

@@ -16,13 +16,12 @@ namespace Game
 
 Game::Game(Engine::Scene& scene) :
     scene(scene),
-    races(Race::Parse(Engine::LoadJson("data/race_stats.json"))),
-    items(),
+    races(Race::Parse(Engine::LoadJson("data/races.json"))),
+    items(Engine::LoadJson("data/items.json")),
     map(Engine::Image("data/map20.png"))
 {
     Creature::definition.Parse(Engine::LoadJson("data/creature.json"));
-    Item::definition.Parse(Engine::LoadJson("data/item_stats.json"));
-    items = ItemDatabase(Engine::LoadJson("data/items.json"));
+
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<Selected>(),
@@ -39,6 +38,9 @@ Game::Game(Engine::Scene& scene) :
     const auto& dagger = *items.Find("dagger");
     const ItemBonus* daggerMaterial = items.FindBonus(Restrictions({Restriction::material, Restriction::melee,dagger.GetMaterial()})).front();
     velglarn->GetEquipment().Equip(Equipment(dagger, {daggerMaterial}));
+    const auto& armor = *items.Find({Restriction::armor,Restriction::leather}).front();
+    const ItemBonus* armorMaterial = items.FindBonus(Restrictions({Restriction::armor, Restriction::material, armor.GetMaterial()}),"elephant").front();
+    velglarn->GetEquipment().Equip(Equipment(armor, {armorMaterial}));
 
     scene.Add(*velglarn);
     auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", races.at(2))));
@@ -162,6 +164,26 @@ void Game::Next()
 void Game::Changed()
 {
         Engine::Application::Get().bus.Post(Engine::Redraw(&Current()));
+}
+
+
+json Game::Serialize() const
+{
+    auto avatarArray = json::array();
+    for(const auto& avatarPtr : avatars)
+    {
+        avatarArray.push_back(avatarPtr->Serialize());
+    }
+    json result =  json::object({
+        {"map", map.Name()},
+        {"turn", turn},
+        {"round", round},
+        {"items", "items.json"},
+        {"races", "races.json"},
+        // TODO: stat definitions.json. If not text on load then it's an object with the whole thing
+        {"avatars", avatarArray}
+    });
+    return result;
 }
 
 }

@@ -44,10 +44,15 @@ void Statistics::Level(Stat::Id stat, int amount)
     stats[stat] += amount;
 }
 
-void Statistics::Load(const nlohmann::json& data)
+void Statistics::Deserialize(const nlohmann::json& data)
 {
     const auto& definition = Definition();
-    stats = definition.LoadStats(data);
+    stats = definition.Deserialize(data);
+}
+
+json Statistics::Serialize() const
+{
+    return Stat::Serialize(stats);
 }
 
 }

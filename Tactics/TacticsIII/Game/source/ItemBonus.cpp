@@ -10,7 +10,7 @@ ItemBonus::ItemBonus(const json& data, const Restrictions& extraTags) :
     postfix(Engine::get_value_or<std::string_view>(data, "postfix", "")),
     restrictions(Restrictions::Parse(data, "restrictions"))
 {
-    stats = Stat::LoadStats(data);
+    stats = Stat::Deserialize(data);
     restrictions |= extraTags;
 }
 
@@ -29,7 +29,22 @@ bool ItemBonus::Match(const Restrictions& tags) const
 
 bool ItemBonus::NameMatch(std::string_view name) const
 {
-    return (prefix.find(name)!=std::string::npos || postfix.find(name)!=std::string::npos);
+    return (Name().find(name)!=std::string::npos);
+}
+
+const std::string_view ItemBonus::Name() const
+{
+    // only implemented for item boni that stick to the postfix XOR prefix convention
+    if (prefix.empty())
+    {
+        assert(!postfix.empty());
+        return postfix;
+    }
+    else
+    {
+        assert(postfix.empty());
+        return prefix;
+    }
 }
 
 const std::string_view ItemBonus::Prefix() const

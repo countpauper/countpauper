@@ -28,7 +28,7 @@ Item::Item(const json& data) :
     name(Engine::must_get<std::string_view>(data, "name")),
     tags(Restrictions::Parse(data, "tags"))
 {
-    Statistics::Load(data);
+    Statistics::Deserialize(data);
     auto offenseBonusStr = Engine::get_value_or<std::string_view>(data,"stat", "none");
     offenseBonus = Stat::Identify(offenseBonusStr);
     // TODO: load non item stats as bonuses

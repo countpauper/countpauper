@@ -13,7 +13,7 @@ Race::Race(std::string_view name, std::initializer_list<std::pair<const Stat::Id
 Race::Race(const std::string_view name, const nlohmann::json& raceData) :
     Race(name)
 {
-    boni = Stat::LoadStats(Engine::get_value_or<json>(raceData, "stats", json()));
+    boni = Stat::Deserialize(Engine::get_value_or<json>(raceData, "stats", json()));
 }
 
 std::string_view Race::Name() const

@@ -78,4 +78,25 @@ std::string Equipment::Name() const
     return Engine::Join(nameParts, " ");
 }
 
+
+void Equipment::Deserialize(const json& data)
+{
+
+}
+
+json Equipment::Serialize() const
+{
+    auto modifiers = json::array();
+    for(const auto& bon: boni)
+    {
+        modifiers.push_back(bon->Name());
+    }
+    auto result = json::object({
+        {"item", item->Name() },
+        {"counters", Counters::Serialize()},
+        {"modifiers", modifiers}
+    });
+    return result;
+}
+
 }

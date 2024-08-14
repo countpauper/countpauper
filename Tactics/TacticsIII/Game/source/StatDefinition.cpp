@@ -74,7 +74,7 @@ Computation StatDefinition::GetPrimaryStat(Stat::Id id) const
     return Computation(it->second.Limit());
 }
 
-std::map<Stat::Id, int> StatDefinition::LoadStats(const json& data) const
+std::map<Stat::Id, int> StatDefinition::Deserialize(const json& data) const
 {
     std::map<Stat::Id, int> result;
     assert(!empty() || data.empty());

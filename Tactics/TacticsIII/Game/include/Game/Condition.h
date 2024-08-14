@@ -13,6 +13,7 @@ public:
     virtual ~Condition() = default;
     std::string_view Name() const;
     Computation Bonus(Stat::Id stat) const;
+    std::pair<std::string_view, json> Serialize() const;
 protected:
     Condition(std::string_view name);
     std::string_view name;

@@ -22,6 +22,8 @@ public:
     Computation Get(Stat::Id id, const class Boni* extraBoni = nullptr, const Restrictions& restricted={}) const;
     const Item& GetItem() const;
     std::string Name() const;
+    void Deserialize(const json& data);
+    json Serialize() const;
 protected:
     const Item* item;
     std::vector<const ItemBonus*> boni;

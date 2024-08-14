@@ -9,6 +9,7 @@ class Conditions
 {
 public:
     Conditions() = default;
+    virtual ~Conditions() = default;
 
     template<class CT>
     bool Is() const
@@ -30,6 +31,8 @@ public:
     }
     Computation Boni(Stat::Id id) const;
     std::string Description() const;
+    void Deserialize(const json& data);
+    json Serialize() const;
 private:
     std::vector<std::unique_ptr<Condition>> conditions;
 };

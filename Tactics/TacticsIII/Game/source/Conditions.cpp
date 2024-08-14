@@ -25,4 +25,20 @@ std::string Conditions::Description() const
     return Engine::Join(condition_names, ", ");
 }
 
+void Conditions::Deserialize(const json& data)
+{
+}
+
+json Conditions::Serialize() const
+{
+    auto result = json::object();
+
+    for(const auto& condition: conditions)
+    {
+        const auto& [key, value] = condition->Serialize();
+        result[key] = value;
+    }
+    return result;
+}
+
 }

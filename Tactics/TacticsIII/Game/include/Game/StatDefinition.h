@@ -16,7 +16,7 @@ public:
     Counter& Count(Stat::Id id, Counter::Reset reset=Counter::Reset::never, bool resetToMax=true);
     std::vector<const Counter*> GetCounters() const;
     Computation GetPrimaryStat(Stat::Id id) const;
-    std::map<Stat::Id, int> LoadStats(const json& data) const;
+    std::map<Stat::Id, int> Deserialize(const json& data) const;
 private:
     std::vector<Counter> counters;
 };

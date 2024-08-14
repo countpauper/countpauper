@@ -66,4 +66,18 @@ std::vector<const Equipment*> Equipments::GetEquipped(const Restrictions& filter
     return result;
 }
 
+void Equipments::Deserialize(const json& data)
+{
+}
+
+json Equipments::Serialize() const
+{
+    auto result = json::array();
+    for(const auto& equipment : equipped)
+    {
+        result.push_back(equipment.Serialize());
+    }
+    return result;
+}
+
 }
