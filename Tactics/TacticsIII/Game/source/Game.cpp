@@ -1,4 +1,3 @@
-#include "File/Image.h"
 #include "Game/Map.h"
 #include "UI/Avatar.h"
 #include "Game/Game.h"
@@ -14,14 +13,13 @@
 namespace Game
 {
 
-Game::Game(Engine::Scene& scene) :
+Game::Game(Engine::Scene& scene, const json& data) :
     scene(scene),
-    races(Race::Parse(Engine::LoadJson("data/races.json"))),
-    items(Engine::LoadJson("data/items.json")),
-    map(Engine::Image("data/map20.png"))
+    races(Race::Parse(Engine::LoadJson(Engine::get_value_or<std::string_view>(data, "races", "data/races.json")))),
+    items(Engine::LoadJson(Engine::get_value_or<std::string_view>(data, "items", "data/items.json"))),
+    map(Engine::get_value_or<std::string_view>(data, "map", "data/map20.png"))
 {
     Creature::definition.Parse(Engine::LoadJson("data/creature.json"));
-
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<Selected>(),
@@ -33,6 +31,9 @@ Game::Game(Engine::Scene& scene) :
     scene.GetCamera().Move(Engine::Coordinate(map.GetSize().x/2, -1, map.GetSize().z));
 
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
+
+
+
     auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", races.at(0))));
     velglarn->Move(map, Engine::Position{3, 2});
     const auto& dagger = *items.Find("dagger");
@@ -175,11 +176,11 @@ json Game::Serialize() const
         avatarArray.push_back(avatarPtr->Serialize());
     }
     json result =  json::object({
-        {"map", map.Name()},
+        {"map", map.FileName()},
         {"turn", turn},
         {"round", round},
-        {"items", "items.json"},
-        {"races", "races.json"},
+        {"items", "data/items.json"},
+        {"races", "data/races.json"},
         // TODO: stat definitions.json. If not text on load then it's an object with the whole thing
         {"avatars", avatarArray}
     });

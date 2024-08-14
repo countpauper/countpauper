@@ -2,6 +2,7 @@
 #include "Game/Map.h"
 #include "File/Image.h"
 #include "Geometry/Angles.h"
+#include "File/Image.h"
 #include "UI/Debug.h"
 #include "Utility/Maths.h"
 #include "Game/Material.h"
@@ -42,8 +43,14 @@ const Material* FindMaterial(Engine::HSVA color)
     return result;
 }
 
-Map::Map(const Engine::Image& data) :
+Map::Map(std::string_view filename) :
+    Map(filename, Engine::Image(filename))
+{
+}
+
+Map::Map(std::string_view filename, const Engine::Image& data) :
     Scenery(mesh),
+    filename(filename),
     size{int(data.Width()), int(data.Height()/4), 16},
     grids(size.x * size.y)
 {
@@ -76,6 +83,11 @@ Map::Map(const Engine::Image& data) :
 std::string_view Map::Name() const
 {
     return "map";
+}
+
+std::string_view Map::FileName() const
+{
+    return filename;
 }
 
 Engine::Mesh& Map::GetMesh()

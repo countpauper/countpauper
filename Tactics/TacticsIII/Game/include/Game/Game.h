@@ -22,7 +22,7 @@ class Game :
     public World
 {
 public:
-    explicit Game(Engine::Scene& scene);
+    explicit Game(Engine::Scene& scene, const json& data=json());
     const HeightMap& GetMap() const override;
     bool Obstacle(Engine::Position at, const Actor* except=nullptr) const override;
     json Serialize() const;
