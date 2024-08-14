@@ -4,10 +4,24 @@
 namespace Game
 {
 
-Counters::Counters(const Statted& stats)  :
+Counters::Counters(const StatDefinition& definition, const Statted& stats)  :
     stats(&stats)
 {
+    InitializeCounters(definition);
 }
+
+Counters::Counters(const StatDefinition& definition, const Statted& stats, const json& data) :
+    Counters(definition, stats)
+{
+    for(auto counter: countersUsed)
+    {
+        auto it = data.find(counter.first->Name());
+        if (it!=data.end())
+            counter.second = it.value();
+    }
+
+}
+
 
 Counters::Counters(const Counters& o) :
     stats(o.stats),
@@ -38,9 +52,9 @@ Counters& Counters::operator=(Counters&& o)
     return *this;
 }
 
-void Counters::InitializeCounters()
+void Counters::InitializeCounters(const StatDefinition& definition)
 {   // post constructor because virtual method Definition() is used
-    for(auto counter: stats->Definition().GetCounters())
+    for(auto counter: definition.GetCounters())
     {
         countersUsed[counter] = 0;
     }
@@ -56,15 +70,20 @@ unsigned Counters::Available(Stat::Id stat) const
        return 0;
     return counterIt->first->Available(counterIt->second, *stats);
 }
-
-unsigned Counters::Cost(Stat::Id stat, unsigned cost, bool truncate)
+Counters::AvailableMap::iterator Counters::Find(Stat::Id stat)
 {
-    auto counterIt = std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
+    return std::find_if(countersUsed.begin(), countersUsed.end(),[stat, this](const decltype(countersUsed)::value_type& counter)
     {
         return counter.first->ForStat(stat);
     });
+
+}
+unsigned Counters::Cost(Stat::Id stat, unsigned cost, bool truncate)
+{
+    auto counterIt = Find(stat);
     if (counterIt == countersUsed.end())
         return 0;
+
     auto available = counterIt->first->Available(counterIt->second, *stats);
     if (truncate)
         cost = std::min(cost, available);
@@ -87,10 +106,6 @@ void Counters::Reset(Counter::Reset at)
     }
 }
 
-
-void Counters::Deserialize(const json& data)
-{
-}
 
 json Counters::Serialize() const
 {

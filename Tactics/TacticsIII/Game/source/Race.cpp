@@ -36,14 +36,23 @@ const Item& Race::GetUnarmed() const
     return unarmed;
 }
 
-std::vector<Race> Race::Parse(const json& data)
+Races::Races(const json& data)
 {
-    std::vector<Race> result;
     for(auto el: data.items())
     {
-        result.emplace_back(el.key(), el.value());
+        emplace_back(el.key(), el.value());
     }
-    return result;
+}
+
+const Race* Races::Find(std::string_view name) const
+{
+    auto it = std::find_if(begin(), end(), [name](const Race& race)
+    {
+        return race.Name() == name;
+    });
+    if (it == end())
+        return nullptr;
+    return &(*it);
 }
 
 }

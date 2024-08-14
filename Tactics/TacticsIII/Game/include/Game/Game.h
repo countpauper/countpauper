@@ -34,13 +34,13 @@ private:
     void Next();
     void Changed();
     Engine::Scene& scene;
-    std::vector<Race> races;
+    Races races;
     ItemDatabase items;
     Map map;
     Plan plan;
-    std::vector<std::unique_ptr<Avatar>> avatars;
-    unsigned turn=0;
+    Avatars avatars;
     unsigned round=0;
+    unsigned turn=0;
 };
 
 }

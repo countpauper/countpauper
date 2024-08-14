@@ -17,6 +17,7 @@ class Avatar :
     public Engine::Passenger
 {
 public:
+    Avatar(const Races& races, const json& data);
     Avatar(std::string_view name, const Race& race);
     std::string_view Name() const override;
     std::string Sheet() const;
@@ -37,11 +38,16 @@ public:
 
     json Serialize() const;
 private:
+    void GenerateMesh();
+    void SubscribeBus();
+
     Engine::Mesh mesh;
     Engine::Position position;
     Engine::Coordinate coordinate;
     Creature creature;
     bool selected = false;
 };
+
+using Avatars = std::vector<std::unique_ptr<Avatar>>;
 
 }

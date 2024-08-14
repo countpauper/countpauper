@@ -5,7 +5,7 @@ namespace Game
 {
 
 Equipment::Equipment(const Item& item, std::vector<const ItemBonus*> boni) :
-    Counters(item),
+    Counters(Item::definition, item),
     item(&item),
     boni(boni)
 {

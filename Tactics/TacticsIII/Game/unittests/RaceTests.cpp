@@ -14,7 +14,7 @@ TEST(Race, bonus)
 
 TEST(Race, load_name_and_stats_from_json)
 {
-    auto races = Race::Parse(json::parse(R"""({
+    Races races(json::parse(R"""({
         "human": {
             "stats": {
                 "strength": 1,
@@ -28,6 +28,8 @@ TEST(Race, load_name_and_stats_from_json)
     const Race& human = races.front();
     EXPECT_EQ(human.Name(), "human");
     EXPECT_EQ(human.Bonus(Stat::str), Computation(1, "human"));
+    EXPECT_EQ(races.Find("human")->Name(), "human");
+    EXPECT_EQ(races.Find("marathon"), nullptr);
 }
 
 }

@@ -13,13 +13,27 @@
 namespace Game
 {
 
+Avatars DeserializeAvatars(const Races& races, const json& data)
+{
+    Avatars result;
+    for(auto avatarData : data)
+    {
+        result.emplace_back(std::move(std::make_unique<Avatar>(races, avatarData)));
+    }
+    return std::move(result);
+}
+
 Game::Game(Engine::Scene& scene, const json& data) :
     scene(scene),
-    races(Race::Parse(Engine::LoadJson(Engine::get_value_or<std::string_view>(data, "races", "data/races.json")))),
+    races(Engine::LoadJson(Engine::get_value_or<std::string_view>(data, "races", "data/races.json"))),
     items(Engine::LoadJson(Engine::get_value_or<std::string_view>(data, "items", "data/items.json"))),
-    map(Engine::get_value_or<std::string_view>(data, "map", "data/map20.png"))
+    map(Engine::get_value_or<std::string_view>(data, "map", "data/map20.png")),
+    round(Engine::get_value_or<unsigned>(data, "round", 0)),
+    turn(Engine::get_value_or<unsigned>(data, "turn", 0))
 {
     Creature::definition.Parse(Engine::LoadJson("data/creature.json"));
+    avatars = DeserializeAvatars(races, Engine::get_value_or(data, "avatars", json::array()));
+
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<Selected>(),
@@ -33,7 +47,7 @@ Game::Game(Engine::Scene& scene, const json& data) :
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
 
 
-
+/*
     auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", races.at(0))));
     velglarn->Move(map, Engine::Position{3, 2});
     const auto& dagger = *items.Find("dagger");
@@ -51,8 +65,12 @@ Game::Game(Engine::Scene& scene, const json& data) :
     const ItemBonus* clubBonus = items.FindBonus(Restrictions({Restriction::bonus, Restriction::melee, club.GetMaterial()}),"bear").front();
 
     elgcaress->GetEquipment().Equip(Equipment(club, {clubMaterial, clubBonus}));
-
     scene.Add(*elgcaress);
+*/
+    for(const auto& avatar: avatars)
+    {
+        scene.Add(*avatar);
+    }
     avatars[turn]->Select(true);
 }
 

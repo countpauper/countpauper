@@ -4,15 +4,34 @@
 #include "Geometry/Matrix.h"
 #include "UI/GameMessages.h"
 #include "Utility/String.h"
+#include "File/Json.h"
 #include "Geometry/Angles.h"
 #include "Game/Map.h"
 
 namespace Game
 {
 
+Avatar::Avatar(const Races& races, const json& data) :
+    Scenery(mesh),
+    creature(*races.Find(Engine::must_get<std::string_view>(data, "race")), data)
+{
+    if (auto posData = Engine::try_get<json>(data, "position"))
+    {
+        position = Engine::Position((*posData)[0], (*posData)[1], (*posData)[2]);
+    }
+    GenerateMesh();
+    SubscribeBus();
+}
+
 Avatar::Avatar(std::string_view name, const Race& race) :
     Scenery(mesh),
     creature(name, race)
+{
+    GenerateMesh();
+    SubscribeBus();
+}
+
+void Avatar::GenerateMesh()
 {
     mesh += Engine::Box(Engine::Vector(0.75, 0.75, 1.75));
     mesh *= Engine::Matrix::Translation({-0.375, -0.375, 0.0});
@@ -23,7 +42,10 @@ Avatar::Avatar(std::string_view name, const Race& race) :
     selection.SetName(1);
     selection.SetColor(Engine::RGBA::transparent);
     mesh += selection;
+}
 
+void Avatar::SubscribeBus()
+{
     Engine::Application::Get().bus.Subscribe(*this, {
             Engine::MessageType<Game::Selected>()
         });

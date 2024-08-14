@@ -46,9 +46,9 @@ public:
     Equipped& GetEquipment() { return equipment; }
 
     Engine::Test::MockScenery appearance;
-    MockStatted stats;
+    NiceMock<MockStatted> stats;
     MockCounted counts;
-    MockEquipped equipment;    // TODO mock
+    MockEquipped equipment;
 };
 
 }

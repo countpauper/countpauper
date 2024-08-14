@@ -17,10 +17,18 @@ public:
     Computation Bonus(Stat::Id id) const override;
     const class Item& GetUnarmed() const;
 
-    static std::vector<Race> Parse(const json& data);
 private:
     std::string name;
     std::map<Stat::Id, int> boni;
 };
+
+class Races : public std::vector<Race>
+{
+public:
+    Races() = default;
+    explicit Races(const json& data);
+    const Race* Find(std::string_view name) const;
+};
+
 
 }

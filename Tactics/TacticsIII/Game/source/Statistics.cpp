@@ -10,6 +10,11 @@ Statistics::Statistics(std::initializer_list<std::pair<const Stat::Id, int>> sta
 {
 }
 
+Statistics::Statistics(const StatDefinition& definition, const nlohmann::json& data) :
+    stats(definition.Deserialize(data))
+{
+}
+
 Computation Statistics::Get(Stat::Id id, const Boni* extraBoni, const Restrictions&) const
 {
     Computation result = Definition().GetPrimaryStat(id);
@@ -44,11 +49,6 @@ void Statistics::Level(Stat::Id stat, int amount)
     stats[stat] += amount;
 }
 
-void Statistics::Deserialize(const nlohmann::json& data)
-{
-    const auto& definition = Definition();
-    stats = definition.Deserialize(data);
-}
 
 json Statistics::Serialize() const
 {

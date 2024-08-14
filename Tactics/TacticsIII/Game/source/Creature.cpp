@@ -15,15 +15,24 @@ Creature::Creature(std::string_view name, const Race& race) :
         {Stat::wis, 2},
         {Stat::intel, 2}
     }),
-    Counters(static_cast<Statted&>(*this)),
+    Counters(definition, static_cast<Statted&>(*this)),
     name(name),
     race(race)
 {
     tags |= Restriction::creature;
-    InitializeCounters();
     Equip(Equipment(race.GetUnarmed()));
 }
 
+Creature::Creature(const Race& race, const json& data) :
+    Statistics(definition, Engine::must_get<json>(data, "stats")),
+    Counters(definition, static_cast<Statted&>(*this), data),
+    Conditions(),
+    Equipments(),
+    name(Engine::must_get<std::string_view>(data, "name")),
+    race(race)
+{
+
+}
 
 std::string_view Creature::Name() const
 {
