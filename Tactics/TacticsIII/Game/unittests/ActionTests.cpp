@@ -44,8 +44,17 @@ TEST(Action, attack)
 
     EXPECT_CALL(attacker.stats, Get(Stat::sharp_damage, _, _)).WillRepeatedly(Return(Computation(2)));
     EXPECT_CALL(attacker.stats, Get(Stat::blunt_damage, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(attacker.stats, Get(Stat::heat_damage, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(attacker.stats, Get(Stat::lightning_damage, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(attacker.stats, Get(Stat::cold_damage, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(attacker.stats, Get(Stat::poison_damage, _, _)).WillRepeatedly(Return(Computation(0)));
+
     EXPECT_CALL(target.stats, Get(Stat::blunt_resist, _, _)).WillRepeatedly(Return(Computation(0)));
     EXPECT_CALL(target.stats, Get(Stat::sharp_resist, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(target.stats, Get(Stat::heat_resist, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(target.stats, Get(Stat::cold_resist, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(target.stats, Get(Stat::lightning_resist, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(target.stats, Get(Stat::poison_resist, _, _)).WillRepeatedly(Return(Computation(0)));
 
     EXPECT_CALL(attacker.counts, Cost(Stat::ap, 1, false)).WillOnce(Return(1));
     //EXPECT_CALL(target.counts, Available(Stat::hp)).WillOnce(Return(1));
