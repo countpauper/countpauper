@@ -16,19 +16,20 @@ tag_columns = "tags","restrictions"
 rarity_factor = 1000.0
 
 def column_correct(column, value, item):
+    if value[0] == "*" and column in ("prefix", "postfix"):
+        return value[1:].lower().strip()
     if value[-1] == "%":
         return int(float(value[:-1]) * rarity_factor/ 100.0)
     if value.isdigit():
         return int(value)
-    elif value[0]=='-' and value[1:].isdigit():
+    if value[0]=='-' and value[1:].isdigit():
         return int(value)
-    elif column in tag_columns:
+    if column in tag_columns:
         if value.lower()=="any" or value=="":
             return None
         else:
             return [v.lower().strip() for v in value.split("|")]
-    else:
-        return value.lower().strip()
+    return value.lower().strip()
 
 def type_correct(table, item=False):
     result=list()
