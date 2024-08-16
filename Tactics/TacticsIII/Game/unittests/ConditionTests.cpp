@@ -41,4 +41,16 @@ TEST(Condition, ko_zeros_action_points)
     EXPECT_EQ(ap.Total(), 0);
 }
 
+
+TEST(Condition, serialize)
+{
+
+    Conditions conditions;
+    conditions.Apply<Downed>();
+    auto json = conditions.Serialize();
+    Conditions deserialized(json);
+    EXPECT_TRUE(deserialized.Is<Downed>());
+}
+
+
 }

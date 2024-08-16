@@ -209,7 +209,7 @@ std::map<Stat::Id, int> Stat::Deserialize(const json& statData)
         auto stat = TryIdentify(el.key());
         if (stat == Stat::none)
             continue;
-        result[stat] = el.value().get<int>();
+        result[stat] = el.value();
     }
     return result;
 }

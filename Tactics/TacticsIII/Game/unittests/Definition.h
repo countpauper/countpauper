@@ -7,7 +7,7 @@ namespace Game::Test
 class Definition
 {
 public:
-    Definition(StatDefinition& def);
+    explicit Definition(StatDefinition& def);
     Definition& Define(Stat::Id stat, Stat::Id dependency=Stat::Id::none, float multiplier=1.0, const Restrictions& restrict={});
     Definition& Define(Stat::Id stat, Stat::Id dependency, Operator op, Stat::Id operand , const Restrictions& restrict={});
     Definition& Define(Stat::Id stat, int value, const Restrictions& restrict={});

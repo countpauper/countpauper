@@ -10,11 +10,12 @@ class Condition
 {
 public:
     Condition() = default;
-    explicit Condition(std::string_view name, const json& data);
+    Condition(std::string_view name, const json& data);
     virtual ~Condition() = default;
     std::string_view Name() const;
     Computation Bonus(Stat::Id stat) const;
     std::pair<std::string_view, json> Serialize() const;
+    static std::unique_ptr<Condition> Deserialize(std::string_view name, const json& data);
 protected:
     Condition(std::string_view name);
     std::string_view name;

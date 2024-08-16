@@ -1,5 +1,6 @@
 #include "Definition.h"
 #include "Game/Creature.h"
+#include "Game/Mock/MockStatted.h"
 #include <cmath>
 
 
@@ -80,5 +81,8 @@ CreatureDefinition::CreatureDefinition() :
     Definition(Creature::definition)
 {
 }
+
+
+StatDefinition MockStatted::definition;
 
 }

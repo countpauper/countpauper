@@ -17,6 +17,7 @@ class Item :
 public:
     explicit Item(std::string_view name="", Restrictions tags={}, Stat::Id offenseBonus = Stat::none);
     explicit Item(const nlohmann::json& data);
+    Item(const Item& other);
     static StatDefinition definition;
     std::string_view Name() const override;
     Computation Get(Stat::Id id, const class Boni* extraBoni = nullptr, const Restrictions& restricted={}) const;

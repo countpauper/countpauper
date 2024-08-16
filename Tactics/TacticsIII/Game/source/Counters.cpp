@@ -13,7 +13,7 @@ Counters::Counters(const StatDefinition& definition, const Statted& stats)  :
 Counters::Counters(const StatDefinition& definition, const Statted& stats, const json& data) :
     Counters(definition, stats)
 {
-    for(auto counter: countersUsed)
+    for(auto& counter: countersUsed)
     {
         auto it = data.find(counter.first->Name());
         if (it!=data.end())

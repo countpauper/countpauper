@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "Game/Equipments.h"
 #include "Game/ItemBonus.h"
+#include "Game/ItemDatabase.h"
 #include "Definition.h"
 
 namespace Game::Test
@@ -96,6 +97,18 @@ TEST(Equipment, weapon_bonus)
     const auto& equipment = equip.Equip(Equipment(item, {&bonus}));
     EXPECT_EQ(equip.Get(Stat::endurance).Total(), 2);
     EXPECT_EQ(equipment.Name(), "test of testability");
+}
+
+
+TEST(Equipment, serialize)
+{
+    Equipments equip;
+    ItemDatabase db;
+    auto& item = db.Add(Item("Test", {}));
+    equip.Equip(Equipment(item));
+    auto serialized = equip.Serialize();
+    Equipments deserialized(db, serialized);
+    EXPECT_EQ(deserialized.GetEquipped().front()->GetItem(), item);
 }
 
 }

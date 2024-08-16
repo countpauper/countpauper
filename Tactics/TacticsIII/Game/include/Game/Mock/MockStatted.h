@@ -26,7 +26,7 @@ public:
     MOCK_METHOD(Computation, Get, (Stat::Id id, const class Boni* extraBoni, const Restrictions& restrict), (const override));
     MOCK_METHOD(const class StatDefinition&,  Definition, (), (const override));
 
-    StatDefinition definition;
+    static StatDefinition definition;
 };
 
 }

@@ -46,10 +46,16 @@ ItemDatabase::ItemDatabase(const json& data)
     boni.insert(boni.end(), armorMaterial.begin(), armorMaterial.end());
 }
 
+
+Item& ItemDatabase::Add(const Item& item)
+{
+    return items.emplace_back(item);
+}
+
 std::vector<const Item*> ItemDatabase::Find(Restrictions filter) const
 {
     std::vector<const Item*> result;
-   for(const auto& item : items)
+    for(const auto& item : items)
         if (item.Match(filter))
             result.push_back(&item);
     return result;

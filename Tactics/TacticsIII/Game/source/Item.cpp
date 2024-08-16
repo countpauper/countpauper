@@ -16,6 +16,14 @@ Item::Item(std::string_view name, Restrictions tags, Stat::Id offenseBonus) :
     tags |= Restriction::item;
 }
 
+Item::Item(const Item& other) :
+    name(other.name),
+    tags(other.tags),
+    offenseBonus(other.offenseBonus),
+    bonus(other.bonus)
+{
+}
+
 bool Item::operator==(const Item& o) const
 {
     return name == o.name &&

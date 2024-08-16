@@ -8,7 +8,7 @@ Conditions::Conditions(const json& data)
 {
     for(const auto& el: data.items())
     {
-        conditions.emplace_back(std::make_unique<Condition>(el.key(), el.value()));
+        conditions.emplace_back(Condition::Deserialize(el.key(), el.value()));
     }
 }
 
