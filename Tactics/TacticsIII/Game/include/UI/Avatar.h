@@ -17,7 +17,7 @@ class Avatar :
     public Engine::Passenger
 {
 public:
-    Avatar(const Races& races, const json& data);
+    Avatar(const HeightMap& map, const Races& races, const class ItemDatabase& items, const json& data);
     Avatar(std::string_view name, const Race& race);
     std::string_view Name() const override;
     std::string Sheet() const;

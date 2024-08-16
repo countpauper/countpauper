@@ -17,6 +17,7 @@ public:
     explicit ItemDatabase(const json& data);
     std::vector<const Item*> Find(Restrictions filter) const;
     const Item* Find(std::string_view name) const;
+    const Item& Get(std::string_view name) const;
     std::vector<const ItemBonus*> FindBonus(const Restrictions& filter, std::string_view name="") const;
 private:
     std::vector<Item> items;

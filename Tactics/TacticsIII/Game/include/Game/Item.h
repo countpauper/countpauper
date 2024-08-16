@@ -24,6 +24,7 @@ public:
     bool Match(const Restrictions& restictions) const;
     Restrictions Excludes() const;
     Restriction GetMaterial() const;
+    Restrictions GetTags() const;
     bool operator==(const Item& o) const;
 protected:
     std::string name;

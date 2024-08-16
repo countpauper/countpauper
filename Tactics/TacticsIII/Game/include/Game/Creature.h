@@ -20,7 +20,7 @@ class Creature :
 {
 public:
     Creature(std::string_view name, const Race& race);
-    Creature(const Race& race, const json& data);
+    Creature(const Race& race, const class ItemDatabase& items, const json& data);
 
     // Each stat is first found in the primary stats of this character or else in the derived stats
     // either way, afterwards modifiers are applied of

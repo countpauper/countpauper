@@ -62,12 +62,21 @@ const Item* ItemDatabase::Find(std::string_view name) const
     return nullptr;
 }
 
+const Item& ItemDatabase::Get(std::string_view name) const
+{
+    auto itemPtr = Find(name);
+    if (!itemPtr)
+        throw std::invalid_argument(std::string(name) +" not listed in the database");
+    return *itemPtr;
+}
+
+
 std::vector<const ItemBonus*> ItemDatabase::FindBonus(const Restrictions& filter, std::string_view name) const
 {
     std::vector<const ItemBonus*> result;
     for(const auto& bonus : boni)
-        if ((bonus.Match(filter)) &&
-            (bonus.NameMatch(name)))
+        if ((bonus.NameMatch(name)) &&
+            (bonus.Match(filter)))
             result.push_back(&bonus);
     return result;
 }

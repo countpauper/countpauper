@@ -1,7 +1,16 @@
 #include "Game/Equipments.h"
+#include "Game/ItemDatabase.h"
 
 namespace Game
 {
+
+Equipments::Equipments(const ItemDatabase& db, const json& data)
+{
+    for(const auto& el: data)
+    {
+        equipped.emplace_back(db, el);
+    }
+}
 
 bool Equipments::Unequip(const Equipment& item)
 {
@@ -66,9 +75,6 @@ std::vector<const Equipment*> Equipments::GetEquipped(const Restrictions& filter
     return result;
 }
 
-void Equipments::Deserialize(const json& data)
-{
-}
 
 json Equipments::Serialize() const
 {

@@ -28,7 +28,6 @@ int main(int argc, char**argv)
         Engine::Splitter splitter2(splitter, lbl3, 0.75, false);
         window.GetHUD().Add(splitter2);
         Game::Game game(window.GetScene(), Engine::LoadJson("level.json"));
-        Engine::SaveJson(game.Serialize(), "level.json");
         app->Run();
         Engine::SaveJson(game.Serialize(), "savegame.json");
     }

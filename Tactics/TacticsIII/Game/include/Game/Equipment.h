@@ -14,6 +14,7 @@ class Equipment :
 {
 public:
     explicit Equipment(const Item& item, std::vector<const ItemBonus*> boni={});
+    Equipment(const class ItemDatabase& db, const json& data);
     Equipment(const Equipment& o);
     Equipment(Equipment&& o);
     Equipment& operator=(const Equipment& o);
@@ -22,9 +23,10 @@ public:
     Computation Get(Stat::Id id, const class Boni* extraBoni = nullptr, const Restrictions& restricted={}) const;
     const Item& GetItem() const;
     std::string Name() const;
-    void Deserialize(const json& data);
     json Serialize() const;
 protected:
+    Equipment(const ItemDatabase& items, const Item& item, const json& data) ;
+
     const Item* item;
     std::vector<const ItemBonus*> boni;
 };

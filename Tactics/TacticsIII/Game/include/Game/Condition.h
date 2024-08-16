@@ -10,6 +10,7 @@ class Condition
 {
 public:
     Condition() = default;
+    explicit Condition(std::string_view name, const json& data);
     virtual ~Condition() = default;
     std::string_view Name() const;
     Computation Bonus(Stat::Id stat) const;

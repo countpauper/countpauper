@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Game/Condition.h"
+#include "File/Json.h"
 
 namespace Game
 {
@@ -9,6 +10,7 @@ class Conditions
 {
 public:
     Conditions() = default;
+    explicit Conditions(const json& data);
     virtual ~Conditions() = default;
 
     template<class CT>
@@ -31,7 +33,6 @@ public:
     }
     Computation Boni(Stat::Id id) const;
     std::string Description() const;
-    void Deserialize(const json& data);
     json Serialize() const;
 private:
     std::vector<std::unique_ptr<Condition>> conditions;

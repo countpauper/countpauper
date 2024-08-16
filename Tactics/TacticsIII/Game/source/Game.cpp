@@ -13,12 +13,12 @@
 namespace Game
 {
 
-Avatars DeserializeAvatars(const Races& races, const json& data)
+Avatars DeserializeAvatars(const HeightMap& map, const Races& races, const ItemDatabase& items, const json& data)
 {
     Avatars result;
     for(auto avatarData : data)
     {
-        result.emplace_back(std::move(std::make_unique<Avatar>(races, avatarData)));
+        result.emplace_back(std::move(std::make_unique<Avatar>(map, races, items, avatarData)));
     }
     return std::move(result);
 }
@@ -32,7 +32,7 @@ Game::Game(Engine::Scene& scene, const json& data) :
     turn(Engine::get_value_or<unsigned>(data, "turn", 0))
 {
     Creature::definition.Parse(Engine::LoadJson("data/creature.json"));
-    avatars = DeserializeAvatars(races, Engine::get_value_or(data, "avatars", json::array()));
+    avatars = DeserializeAvatars(map, races, items, Engine::get_value_or(data, "avatars", json::array()));
 
     Engine::Application::Get().bus.Subscribe(*this,
     {
@@ -45,7 +45,6 @@ Game::Game(Engine::Scene& scene, const json& data) :
     scene.GetCamera().Move(Engine::Coordinate(map.GetSize().x/2, -1, map.GetSize().z));
 
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
-
 
 /*
     auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", races.at(0))));
@@ -67,6 +66,7 @@ Game::Game(Engine::Scene& scene, const json& data) :
     elgcaress->GetEquipment().Equip(Equipment(club, {clubMaterial, clubBonus}));
     scene.Add(*elgcaress);
 */
+
     for(const auto& avatar: avatars)
     {
         scene.Add(*avatar);

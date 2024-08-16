@@ -28,6 +28,7 @@ public:
     Races() = default;
     explicit Races(const json& data);
     const Race* Find(std::string_view name) const;
+    const Race& Get(std::string_view name) const;
 };
 
 

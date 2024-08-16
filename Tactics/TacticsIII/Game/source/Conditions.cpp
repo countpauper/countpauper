@@ -4,6 +4,15 @@
 namespace Game
 {
 
+Conditions::Conditions(const json& data)
+{
+    for(const auto& el: data.items())
+    {
+        conditions.emplace_back(std::make_unique<Condition>(el.key(), el.value()));
+    }
+}
+
+
 Computation Conditions::Boni(Stat::Id id) const
 {
     Computation result;
@@ -25,9 +34,6 @@ std::string Conditions::Description() const
     return Engine::Join(condition_names, ", ");
 }
 
-void Conditions::Deserialize(const json& data)
-{
-}
 
 json Conditions::Serialize() const
 {

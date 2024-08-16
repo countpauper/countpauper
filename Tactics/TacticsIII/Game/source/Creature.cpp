@@ -23,11 +23,11 @@ Creature::Creature(std::string_view name, const Race& race) :
     Equip(Equipment(race.GetUnarmed()));
 }
 
-Creature::Creature(const Race& race, const json& data) :
+Creature::Creature(const Race& race, const class ItemDatabase& items, const json& data) :
     Statistics(definition, Engine::must_get<json>(data, "stats")),
     Counters(definition, static_cast<Statted&>(*this), data),
-    Conditions(),
-    Equipments(),
+    Conditions(Engine::get_value_or<json>(data, "conditions")),
+    Equipments(items, Engine::get_value_or<json>(data, "equipment")),
     name(Engine::must_get<std::string_view>(data, "name")),
     race(race)
 {

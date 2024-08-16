@@ -8,6 +8,13 @@ Condition::Condition(std::string_view name) :
 {
 }
 
+Condition::Condition(std::string_view name, const json& data) :
+    Condition(name)
+{
+    bonus = Stat::Deserialize(data);
+}
+
+
 std::string_view Condition::Name() const
 {
     return name;

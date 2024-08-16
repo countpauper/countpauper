@@ -1,1 +1,85 @@
-{"avatars":[{"conditions":{},"counters":{"abilities":0,"actions":0,"attunement":0,"hitpoints":0,"techniques":0},"equipment":[],"name":"Velg'larn","position":[3,2,0],"race":"elf","stats":{"agility":2,"constitution":2,"intelligence":2,"level":1,"strength":2,"wisdom":2}},{"conditions":{},"counters":{"abilities":0,"actions":0,"attunement":0,"hitpoints":0,"techniques":0},"equipment":[],"name":"Elg'caress","position":[5,8,0],"race":"human","stats":{"agility":2,"constitution":2,"intelligence":2,"level":1,"strength":2,"wisdom":2}}],"items":"data/items.json","map":"data/map20.png","races":"data/races.json","round":0,"turn":0}
+{
+    "avatars": [
+        {
+            "conditions": {},
+            "counters": {
+                "abilities": 0,
+                "actions": 0,
+                "attunement": 0,
+                "hitpoints": 0,
+                "techniques": 0
+            },
+            "equipment": [
+                {
+                    "counters": {},
+                    "item": "dagger",
+                    "modifiers": [
+                        "steel"
+                    ]
+                },
+                {
+                    "counters": {},
+                    "item": "jerkin",
+                    "modifiers": [
+                        "elephant"
+                    ]
+                }
+            ],
+            "name": "Velg'larn",
+            "position": [
+                3,
+                2,
+                0
+            ],
+            "race": "elf",
+            "stats": {
+                "agility": 2,
+                "constitution": 2,
+                "intelligence": 2,
+                "level": 1,
+                "strength": 2,
+                "wisdom": 2
+            }
+        },
+        {
+            "conditions": {},
+            "counters": {
+                "abilities": 0,
+                "actions": 0,
+                "attunement": 0,
+                "hitpoints": 0,
+                "techniques": 0
+            },
+            "equipment": [
+                {
+                    "counters": {},
+                    "item": "club",
+                    "modifiers": [
+                        "treant",
+                        "of the bear"
+                    ]
+                }
+            ],
+            "name": "Elg'caress",
+            "position": [
+                5,
+                8,
+                0
+            ],
+            "race": "human",
+            "stats": {
+                "agility": 2,
+                "constitution": 2,
+                "intelligence": 2,
+                "level": 1,
+                "strength": 2,
+                "wisdom": 2
+            }
+        }
+    ],
+    "items": "data/items.json",
+    "map": "data/map20.png",
+    "races": "data/races.json",
+    "round": 0,
+    "turn": 0
+}

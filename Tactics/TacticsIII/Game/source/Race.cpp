@@ -55,4 +55,12 @@ const Race* Races::Find(std::string_view name) const
     return &(*it);
 }
 
+const Race& Races::Get(std::string_view name) const
+{
+    auto racePtr = Find(name);
+    if (!racePtr)
+        throw std::invalid_argument(std::string(name)+" is not a known race");
+    return *racePtr;
+}
+
 }

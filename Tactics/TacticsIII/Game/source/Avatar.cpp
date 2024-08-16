@@ -11,13 +11,13 @@
 namespace Game
 {
 
-Avatar::Avatar(const Races& races, const json& data) :
+Avatar::Avatar(const HeightMap& map,  const Races& races, const ItemDatabase& items, const json& data) :
     Scenery(mesh),
-    creature(*races.Find(Engine::must_get<std::string_view>(data, "race")), data)
+    creature(races.Get(Engine::must_get<std::string_view>(data, "race")), items, data)
 {
     if (auto posData = Engine::try_get<json>(data, "position"))
     {
-        position = Engine::Position((*posData)[0], (*posData)[1], (*posData)[2]);
+        Move(map, Engine::Position((*posData)[0], (*posData)[1], (*posData)[2]));
     }
     GenerateMesh();
     SubscribeBus();

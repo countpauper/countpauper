@@ -103,8 +103,13 @@ Restrictions Item::Excludes() const
 
 Restriction Item::GetMaterial() const
 {
-    auto materials = tags & Restrictions::material;
+    auto materials = GetTags() & Restrictions::material;
     return materials.at(0);
+}
+
+Restrictions Item::GetTags() const
+{
+    return tags;
 }
 
 
