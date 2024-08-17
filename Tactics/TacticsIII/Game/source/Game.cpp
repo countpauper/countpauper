@@ -45,28 +45,6 @@ Game::Game(Engine::Scene& scene, const json& data) :
     scene.GetCamera().Move(Engine::Coordinate(map.GetSize().x/2, -1, map.GetSize().z));
 
     Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
-
-/*
-    auto& velglarn = avatars.emplace_back(std::move(std::make_unique<Avatar>("Velg'larn", races.at(0))));
-    velglarn->Move(map, Engine::Position{3, 2});
-    const auto& dagger = *items.Find("dagger");
-    const ItemBonus* daggerMaterial = items.FindBonus(Restrictions({Restriction::material, Restriction::melee,dagger.GetMaterial()})).front();
-    velglarn->GetEquipment().Equip(Equipment(dagger, {daggerMaterial}));
-    const auto& armor = *items.Find({Restriction::armor,Restriction::leather}).front();
-    const ItemBonus* armorMaterial = items.FindBonus(Restrictions({Restriction::armor, Restriction::material, armor.GetMaterial()}),"elephant").front();
-    velglarn->GetEquipment().Equip(Equipment(armor, {armorMaterial}));
-
-    scene.Add(*velglarn);
-    auto& elgcaress = avatars.emplace_back(std::move(std::make_unique<Avatar>("Elg'caress", races.at(2))));
-    elgcaress->Move(map, Engine::Position{5, 8});
-    const auto& club = *items.Find("club");
-    const ItemBonus* clubMaterial = items.FindBonus(Restrictions({Restriction::material, Restriction::melee,club.GetMaterial()}), "treant").front();
-    const ItemBonus* clubBonus = items.FindBonus(Restrictions({Restriction::bonus, Restriction::melee, club.GetMaterial()}),"bear").front();
-
-    elgcaress->GetEquipment().Equip(Equipment(club, {clubMaterial, clubBonus}));
-    scene.Add(*elgcaress);
-*/
-
     for(const auto& avatar: avatars)
     {
         scene.Add(*avatar);
@@ -144,7 +122,8 @@ void Game::OnMessage(const Engine::Message& message)
              Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
         }
         Changed();
-    } else if (auto key = message.Cast<Engine::KeyPressed>())
+    }
+    else if (auto key = message.Cast<Engine::KeyPressed>())
     {
         if (key->ascii == 13)
         {
@@ -158,6 +137,10 @@ void Game::OnMessage(const Engine::Message& message)
             else
                 Current().GetCounts().Reset(Counter::Reset::action);
             Changed();
+        }
+        else if (key->code == 2)
+        {
+            Engine::SaveJson(Serialize(), "savegame.json");
         }
     }
 }
