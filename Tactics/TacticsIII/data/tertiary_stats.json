@@ -13,7 +13,6 @@
         },
         "hands":
         {
-            "description":"The amount of items that can be held.",
-            "counter": {"reset":"never"}
+            "description":"The amount of items that can be held."
         }
 }

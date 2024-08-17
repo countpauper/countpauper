@@ -117,22 +117,33 @@ bool Equipment::CanEquip(const Creature& creature) const
     return EquipLimits(creature).empty();
 }
 
+struct Limit
+{
+    Stat::Id itemCost;
+    Restrictions itemFilter;
+    Stat::Id creatureCapacity;
+};
+
+
 std::vector<Stat::Id> Equipment::EquipLimits(const Creature& creature) const
 {
-    auto excludes = item->Excludes();
-    static const std::map<Stat::Id, Stat::Id> limitStats {
-        {Stat::hold, Stat::hands},
-        {Stat::weight, Stat::lift},
-        {Stat::enchantment, Stat::attune}
+    static const Limit limits[]={
+        {Stat::hold, Restrictions(), Stat::hands},
+        {Stat::weight, Restrictions::weapon, Stat::lift},
+        {Stat::weight, Restrictions({Restriction::armor}), Stat::endurance},
+        {Stat::enchantment, Restrictions(), Stat::attune}
     };
+    auto excludes = item->Excludes();
     std::vector<Stat::Id> result;
-    for(const auto& limit: limitStats)
+    for(const auto& limit: std::span(limits))
     {
-        auto required = creature.GetTotal(limit.first, excludes);
-        required += item->Get(limit.first);
-        auto available = creature.Available(limit.second);
-        if (required.Total() > available)
-            result.push_back(limit.second);
+        if (!item->Match(limit.itemFilter))
+            continue;
+        auto required = creature.GetTotal(limit.itemCost, limit.itemFilter, excludes);
+        required += item->Get(limit.itemCost, nullptr, limit.itemFilter);
+        auto available = creature.Get(limit.creatureCapacity);
+        if (required.Total() > available.Total())
+            result.push_back(limit.creatureCapacity);
     }
     return result;
 }

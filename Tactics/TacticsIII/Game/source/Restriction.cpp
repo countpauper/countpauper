@@ -134,6 +134,12 @@ Restrictions operator|(const Restrictions& a, Restriction b)
     return out |= b;
 }
 
+Restrictions operator|(const Restrictions& a, const Restrictions& b)
+{
+    Restrictions out(a);
+    return out |= b;
+}
+
 Restrictions operator^(const Restrictions& a, Restriction b)
 {
     Restrictions out(a);

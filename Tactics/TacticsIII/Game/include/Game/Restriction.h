@@ -68,6 +68,7 @@ private:
 
 Restrictions operator&(const Restrictions& a, const Restrictions& b);
 Restrictions operator|(const Restrictions& a, Restriction b);
+Restrictions operator|(const Restrictions& a, const Restrictions& b);
 Restrictions operator^(const Restrictions& a, Restriction b);
 
 

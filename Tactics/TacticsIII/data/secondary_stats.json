@@ -1,8 +1,7 @@
 {
         "lift": {
             "description": "Weapon size requirement and adds to total carrying capacity",
-            "range": [ 0, 5 ],
-            "counter": {"reset":"never"}
+            "range": [ 0, 5 ]
         },
         "athletics": {
             "description": "Jump distance. Jump height is 1+ half. Also used for or certain physical skills",
@@ -69,7 +68,6 @@
             "description": "number of simultaneous active magic items",
             "range": [ 1, 6 ],
             "base": 1,
-            "counter": {"reset":"never"},
             "max": 10
         },
         "mental": {

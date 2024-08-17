@@ -33,11 +33,13 @@ unsigned Equipments::Unequip(const Restrictions filter)
     });
 }
 
-Computation Equipments::GetTotal(Stat::Id stat, Restrictions exclude) const
+Computation Equipments::GetTotal(Stat::Id stat, const Restrictions& include, const Restrictions& exclude) const
 {
     Computation sum;
     for(const auto& e : equipped)
     {
+        if (!e.GetItem().Match(include))
+            continue;
         if (e.GetItem().Match(exclude))
             continue;
         sum += Computation(e.Get(stat).Total(), e.Name());
