@@ -4,28 +4,28 @@
                 "strength": 1,
                 "wisdom": 1,
                 "constitution": 1,
-                "hands": 2
+                "hands": 0
             }
         },
         "elf": {
             "stats": {
                 "wisdom": 2,
                 "agility": 1,
-                "hands": 2
+                "hands": 0
             }
         },
         "troll": {
             "stats": {
                 "strength": 1,
                 "constitution": 2,
-                "hands": 2
+                "hands": 0
             }
         },
         "gnome": {
             "stats": {
                 "intelligence": 2,
                 "agility": 1,
-                "hands": 2
+                "hands": 0
             }
         },
         "human": {
@@ -33,7 +33,7 @@
                 "strength": 1,
                 "intelligence": 1,
                 "agility": 1,
-                "hands": 2
+                "hands": 0
             }
         }
     }

@@ -17,6 +17,7 @@ Item::Item(std::string_view name, Restrictions tags, Stat::Id offenseBonus) :
 }
 
 Item::Item(const Item& other) :
+    Statistics(other),
     name(other.name),
     tags(other.tags),
     offenseBonus(other.offenseBonus),

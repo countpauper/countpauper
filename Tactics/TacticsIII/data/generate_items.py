@@ -38,9 +38,9 @@ def type_correct(table, item=False):
     return result
 
 
-armors = type_correct(bonify(read_csv(open("armors.csv")), ("Name", "Rarity", "Price", "Hands", "Weight", "Tags", "Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold")), True)
+armors = type_correct(bonify(read_csv(open("armors.csv")), ("Name", "Rarity", "Price", "Hold", "Weight", "Tags", "Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold")), True)
 armor_material = type_correct(bonify(read_csv(open("armor material.csv")), ("Prefix", "Rarity", "Price", "Restrictions", "Weight","Sharp", "Blunt", "Fire", "Poison", "Lightning", "Cold"), {"B1":"V1"}))
-weapons = type_correct(bonify(read_csv(open("weapons.csv")), ("Name", "Rarity", "Price", "Hands", "Reach", "Range", "Load", "Weight", "Tags", "Damage Type", "Stat", "Offense")), True)
+weapons = type_correct(bonify(read_csv(open("weapons.csv")), ("Name", "Rarity", "Price", "Hold", "Reach", "Range", "Load", "Weight", "Tags", "Damage Type", "Stat", "Offense")), True)
 weapon_material = type_correct(bonify(read_csv(open("weapon material.csv")), ("Prefix", "Rarity", "Price", "Weight", "Restrictions", "Sharp Damage", "Blunt Damage", "Fire Damage", "Poison Damage", "Lightning Damage", "Cold"), {"B1":"V1"}))
 
 all_bonus = type_correct(bonify(read_csv(open("bonus.csv")),("Prefix", "Postfix", "Rarity", "Price", "Attument", "Weight", "Restrictions"), {"B1": "V1", "B2": "V2", "Penalty":"V3"}))

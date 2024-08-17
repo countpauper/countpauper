@@ -38,7 +38,8 @@
                 "intelligence": 2,
                 "level": 1,
                 "strength": 2,
-                "wisdom": 2
+                "wisdom": 2,
+                "hands": 2
             }
         },
         {
@@ -73,7 +74,8 @@
                 "intelligence": 2,
                 "level": 1,
                 "strength": 2,
-                "wisdom": 2
+                "wisdom": 2,
+                "hands": 2
             }
         }
     ],

@@ -35,13 +35,13 @@ public:
     Computation Get(Stat::Id id, const class Boni* extraBoni = nullptr, const Restrictions& restricted={}) const override;
     const StatDefinition& Definition() const override;
     std::string_view Name() const override;
+    const Equipment& Equip(const Equipment& equipment) override;
 
     const Race& GetRace() const;
     json Serialize() const;
     static StatDefinition definition;
 private:
     void OnCount(Stat::Id stat, unsigned remaining) override;
-
     std::string name;
     const Race& race;
     Restrictions tags;

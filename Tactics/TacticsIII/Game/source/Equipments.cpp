@@ -1,5 +1,6 @@
 #include "Game/Equipments.h"
 #include "Game/ItemDatabase.h"
+#include <cassert>
 
 namespace Game
 {
@@ -30,6 +31,18 @@ unsigned Equipments::Unequip(const Restrictions filter)
     {
         return e.GetItem().Match(filter);
     });
+}
+
+Computation Equipments::GetTotal(Stat::Id stat, Restrictions exclude) const
+{
+    Computation sum;
+    for(const auto& e : equipped)
+    {
+        if (e.GetItem().Match(exclude))
+            continue;
+        sum += Computation(e.Get(stat).Total(), e.Name());
+    }
+    return sum.Simplify();
 }
 
 const Equipment& Equipments::Equip(const Equipment& equipment)

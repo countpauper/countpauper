@@ -16,6 +16,8 @@ public:
     const Equipment& Equip(const Equipment& equipment) override;
     bool Unequip(const Equipment& item) override;
     unsigned Unequip(const Restrictions filter) override;
+    Computation GetTotal(Stat::Id stat, Restrictions exclude) const override;
+
     std::vector<const Equipment*> GetEquipped(const Restrictions& filter={}) const override;
     Computation Get(Stat::Id id, const class Boni* extraBoni = nullptr, const Restrictions& filter={}) const override;
     json Serialize() const;

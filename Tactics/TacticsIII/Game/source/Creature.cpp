@@ -13,7 +13,8 @@ Creature::Creature(std::string_view name, const Race& race) :
         {Stat::agi, 2},
         {Stat::con, 2},
         {Stat::wis, 2},
-        {Stat::intel, 2}
+        {Stat::intel, 2},
+        {Stat::hands, 2}
     }),
     Counters(definition, static_cast<Statted&>(*this)),
     name(name),
@@ -68,10 +69,6 @@ Computation Creature::Get(Stat::Id id, const Game::Boni* extraBoni, const Restri
     }
     // Get primary stat
     Computation result = Statistics::Get(id, extraBoni, restrict);
-    // Get item stat
-    if (!result)
-    {
-    }
     // Compute secondary stat
     if ((result.empty()) && (id))
     {
@@ -107,6 +104,12 @@ void Creature::OnCount(Stat::Id stat, unsigned remaining)
         Apply<Downed>();
         Apply<KO>();
     }
+}
+
+const Equipment& Creature::Equip(const Equipment& equipment)
+{
+    assert(equipment.CanEquip(*this));
+    return Equipments::Equip(equipment);
 }
 
 StatDefinition Creature::definition;

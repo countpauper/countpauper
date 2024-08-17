@@ -1,6 +1,7 @@
 #include "Game/Equipment.h"
 #include "Utility/String.h"
 #include "Game/ItemDatabase.h"
+#include "Game/Creature.h"
 
 namespace Game
 {
@@ -109,6 +110,31 @@ std::string Equipment::Name() const
             nameParts.push_back(postfix);
     }
     return Engine::Join(nameParts, " ");
+}
+
+bool Equipment::CanEquip(const Creature& creature) const
+{
+    return EquipLimits(creature).empty();
+}
+
+std::vector<Stat::Id> Equipment::EquipLimits(const Creature& creature) const
+{
+    auto excludes = item->Excludes();
+    static const std::map<Stat::Id, Stat::Id> limitStats {
+        {Stat::hold, Stat::hands},
+        {Stat::weight, Stat::lift},
+        {Stat::enchantment, Stat::attune}
+    };
+    std::vector<Stat::Id> result;
+    for(const auto& limit: limitStats)
+    {
+        auto required = creature.GetTotal(limit.first, excludes);
+        required += item->Get(limit.first);
+        auto available = creature.Available(limit.second);
+        if (required.Total() > available)
+            result.push_back(limit.second);
+    }
+    return result;
 }
 
 json Equipment::Serialize() const

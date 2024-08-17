@@ -50,6 +50,8 @@ Game::Game(Engine::Scene& scene, const json& data) :
         scene.Add(*avatar);
     }
     avatars[turn]->Select(true);
+    const Item& offhand = items.Get("dagger");
+    avatars.at(0)->GetEquipment().Equip(Equipment(offhand));
 }
 
 const HeightMap& Game::GetMap() const
