@@ -26,7 +26,7 @@ public:
     std::string_view FileName() const;
     Engine::Mesh& GetMesh();
     // Height Map
-    Engine::Size GetSize() const override;
+    Engine::IntBox GetBounds() const override;
     Engine::Coordinate GroundCoord(Engine::Position pos) const override;
     int GroundHeight(Engine::Position pos) const override;
     const Material& GetMaterial(Engine::Position pos) const override;

@@ -131,9 +131,9 @@ Engine::Coordinate Map::GroundCoord(Engine::Position pos) const
     );
 }
 
-Engine::Size Map::GetSize() const
+Engine::IntBox Map::GetBounds() const
 {
-    return size;
+    return Engine::IntBox(size);
 }
 
 void Map::GenerateMesh()

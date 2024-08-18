@@ -46,8 +46,19 @@ Computation ComputeDamage(const Computations& offense, const Computations& defen
     return result;
 }
 
+
+bool Attack::CanDo() const
+{
+    if (actor.GetCounts().Available(Stat::ap) <  AP())
+    {
+        return false;
+    }
+    return true;
+}
+
 void Attack::Execute(std::ostream& log) const
 {
+    assert(CanDo());
     if (!actor.GetCounts().Cost(Stat::ap, AP()))
     {
         log << actor.GetAppearance().Name() << " does not have enough AP (" << AP() << ") to attack " << target.GetAppearance().Name();

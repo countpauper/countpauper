@@ -48,6 +48,9 @@ Move::Move(Actor& actor, const World& world, Engine::Position destination, unsig
         for(auto nVec : std::span(neighbourVectors))
         {
             auto to = at + nVec;
+            if (!world.GetMap().GetBounds().Contains(to))
+                continue;
+
             int deltaHeight = map.GroundHeight(to) - map.GroundHeight(at);
             if (deltaHeight > jumpHeight)
                 continue;
@@ -92,8 +95,19 @@ void Move::Render() const
     }
 }
 
+
+bool Move::CanDo() const
+{
+    if (Reachable() == path.begin())
+    {   // no speed, no ap or no path
+        return false;
+    }
+    return true;
+}
+
 void Move::Execute(std::ostream& log) const
 {
+    assert(CanDo());
     auto ap = AP();
     if (ap)
     {

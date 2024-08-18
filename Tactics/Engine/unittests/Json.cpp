@@ -37,7 +37,7 @@ TEST(JSon, MustGet)
         )""");
 
         EXPECT_EQ(Engine::must_get<int>(parsed, "Foo"), 5);
-        EXPECT_THROW(Engine::must_get<int>(parsed, "Bar"), std::runtime_error);
+        EXPECT_THROW(Engine::must_get<int>(parsed, "Bar"), std::invalid_argument);
 }
 
 

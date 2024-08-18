@@ -42,9 +42,9 @@ Game::Game(Engine::Scene& scene, const json& data) :
     });
     scene.Add(map);
     scene.Add(plan);
-    scene.GetCamera().Move(Engine::Coordinate(map.GetSize().x/2, -1, map.GetSize().z));
+    scene.GetCamera().Move(Engine::Coordinate(map.GetBounds().x.Middle(), -1, map.GetBounds().z.end));
 
-    Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
+    Focus(Engine::Position(map.GetBounds().x.Middle(), map.GetBounds().y.Middle(), 0));
     for(const auto& avatar: avatars)
     {
         scene.Add(*avatar);
@@ -96,12 +96,12 @@ void Game::OnMessage(const Engine::Message& message)
         auto target = dynamic_cast<const Avatar*>(clickOn->object);
         if (clickOn->object == &map)
         {
-            auto mapSize = map.GetSize();
-            Engine::Position desination(
-                    clickOn->sub % mapSize.x,
-                    clickOn->sub / mapSize.x,
+            auto bounds = map.GetBounds();
+            Engine::Position destination(
+                    clickOn->sub % bounds.x.Size() + bounds.x.begin,
+                    clickOn->sub / bounds.x.Size() + bounds.y.begin,
                     0);
-            plan = Plan::Move(Current(), *this, desination);
+            plan = Plan::Move(Current(), *this, destination);
         }
         else if (target && target!=& Current())
         {
@@ -121,7 +121,7 @@ void Game::OnMessage(const Engine::Message& message)
         }
         else
         {
-             Focus(Engine::Position(map.GetSize().x / 2, map.GetSize().y / 2, 0));
+             Focus(Engine::Position(map.GetBounds().x.Middle(), map.GetBounds().y.Middle(), 0));
         }
         Changed();
     }

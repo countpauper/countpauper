@@ -16,9 +16,9 @@ public:
     }
     MockMap(Engine::Size size) : MockMap()
     {
-        EXPECT_CALL(*this, GetSize()).WillRepeatedly(Return(size));
+        EXPECT_CALL(*this, GetBounds()).WillRepeatedly(Return(Engine::IntBox(size)));
     }
-    MOCK_METHOD(Engine::Size, GetSize, (), (const override));
+    MOCK_METHOD(Engine::IntBox, GetBounds, (), (const override));
     MOCK_METHOD(Engine::Coordinate, GroundCoord, (Engine::Position pos), (const override));
     MOCK_METHOD(int, GroundHeight, (Engine::Position pos), (const override));
     MOCK_METHOD(const Material&, GetMaterial, (Engine::Position pos), (const override));

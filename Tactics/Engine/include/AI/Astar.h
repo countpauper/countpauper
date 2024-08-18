@@ -82,7 +82,7 @@ std::vector<T> Plan(T from, std::span<T> destinations, std::function<Score(T,T)>
             }
         }
     }
-    return std::vector<T>(); // failuire
+    return std::vector<T>(); // failure
 }
 
 

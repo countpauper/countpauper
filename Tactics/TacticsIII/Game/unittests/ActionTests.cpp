@@ -22,6 +22,7 @@ TEST(Action, move)
     Move action(actor, world, Engine::Position(1,1,0));
     EXPECT_EQ(action.Description(), "Move (1, 1, 0)");
     EXPECT_EQ(action.AP(), 1);
+    EXPECT_TRUE(action.CanDo());
 
     std::stringstream log;
     EXPECT_CALL(actor, Move(_,Engine::Position(1,1,0)));
