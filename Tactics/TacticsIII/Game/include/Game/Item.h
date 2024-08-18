@@ -15,7 +15,7 @@ class Item :
     public Statistics
 {
 public:
-    explicit Item(std::string_view name="", Restrictions tags={}, Stat::Id offenseBonus = Stat::none);
+    explicit Item(std::string_view name="", Restrictions tags={}, Stat::Id offenseBonus = Stat::none, Stats stats=Stats());
     explicit Item(const nlohmann::json& data);
     Item(const Item& other);
     static StatDefinition definition;

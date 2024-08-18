@@ -5,7 +5,9 @@
 namespace Game
 {
 
-class Equipments : public Equipped
+class Equipments :
+    public Equipped,
+    public virtual Boni
 {
 public:
     Equipments() = default;
@@ -17,9 +19,10 @@ public:
     bool Unequip(const Equipment& item) override;
     unsigned Unequip(const Restrictions filter) override;
     Computation GetTotal(Stat::Id stat, const Restrictions& include, const Restrictions& exclude) const override;
+    Computation Bonus(Stat::Id id) const override;
 
     std::vector<const Equipment*> GetEquipped(const Restrictions& filter={}) const override;
-    Computation Get(Stat::Id id, const class Boni* extraBoni = nullptr, const Restrictions& filter={}) const override;
+    Computation Get(Stat::Id id, const class Boni* extraBoni = nullptr, const Restrictions& filter={}) const;
     json Serialize() const;
 protected:
     std::vector<Equipment> equipped;

@@ -87,6 +87,16 @@ Computation Equipment::Get(Stat::Id id, const class Boni* extraBoni, const Restr
     return result;
 }
 
+Computation Equipment::Bonus(Stat::Id id) const
+{
+    Computation sum;
+    for(auto bonus : boni)
+    {
+        sum += bonus->Bonus(id);
+    }
+    return sum.Simplify();
+}
+
 const Item& Equipment::GetItem() const
 {
     return *item;
@@ -112,9 +122,9 @@ std::string Equipment::Name() const
     return Engine::Join(nameParts, " ");
 }
 
-bool Equipment::CanEquip(const Creature& creature) const
+bool Equipment::CanEquip(const Statted& stats) const
 {
-    return EquipLimits(creature).empty();
+    return EquipLimits(stats).empty();
 }
 
 struct Limit
@@ -125,8 +135,10 @@ struct Limit
 };
 
 
-std::vector<Stat::Id> Equipment::EquipLimits(const Creature& creature) const
+std::vector<Stat::Id> Equipment::EquipLimits(const Statted& stats) const
 {
+    const auto* boni = dynamic_cast<const Boni*>(&stats);
+
     static const Limit limits[]={
         {Stat::hold, Restrictions(), Stat::hands},
         {Stat::weight, Restrictions::weapon, Stat::lift},
@@ -139,9 +151,10 @@ std::vector<Stat::Id> Equipment::EquipLimits(const Creature& creature) const
     {
         if (!item->Match(limit.itemFilter))
             continue;
-        auto required = creature.GetTotal(limit.itemCost, limit.itemFilter, excludes);
-        required += item->Get(limit.itemCost, nullptr, limit.itemFilter);
-        auto available = creature.Get(limit.creatureCapacity);
+        auto required = stats.Get(limit.itemCost, boni, limit.itemFilter);
+        //required -= stats.Get(limit.itemCost, boni, limit.itemFilter | excludes);
+        required += Get(limit.itemCost, boni, limit.itemFilter);  // TODO can this preexisting bonus be found/multiplied by 0 instead?
+        auto available = stats.Get(limit.creatureCapacity);
         if (required.Total() > available.Total())
             result.push_back(limit.creatureCapacity);
     }

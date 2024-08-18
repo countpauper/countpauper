@@ -10,7 +10,8 @@ class Statistics : public Statted
 {
 public:
     Statistics() = default;
-    Statistics(std::initializer_list<std::pair<const Stat::Id, int>> stats);
+    using Stats = std::initializer_list<std::pair<const Stat::Id, int>>;
+    Statistics(Stats stats);
     Statistics(const StatDefinition& definition, const json& data);
     virtual ~Statistics() = default;
     Computation Get(Stat::Id id, const class Boni* boni = nullptr, const Restrictions& restricted={}) const override;

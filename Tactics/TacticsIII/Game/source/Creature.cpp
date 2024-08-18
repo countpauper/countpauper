@@ -81,14 +81,17 @@ Computation Creature::Get(Stat::Id id, const Game::Boni* extraBoni, const Restri
 
     if (!result.empty())
     {
-        // Add bonuses
-        result += Conditions::Boni(id);
-        // TODO: add all other bonuses from items and magic
-        result += race.Bonus(id);
+        // Add own bonuses
+        result += Bonus(id);
         if (extraBoni)
             result += extraBoni->Bonus(id);
     }
     return result;
+}
+
+Computation Creature::Bonus(Stat::Id id) const
+{
+    return race.Bonus(id) + Equipments::Bonus(id) + Conditions::Bonus(id);
 }
 
 const StatDefinition& Creature::Definition() const

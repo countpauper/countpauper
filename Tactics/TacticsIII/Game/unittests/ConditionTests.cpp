@@ -27,7 +27,7 @@ TEST(Condition, down_reduces_speed)
 {
     Conditions conditions;
     conditions.Apply<Downed>();
-    auto bonus = conditions.Boni(Stat::speed);
+    auto bonus = conditions.Bonus(Stat::speed);
     EXPECT_LT(bonus.Total(), 5);
 }
 
@@ -37,7 +37,7 @@ TEST(Condition, ko_zeros_action_points)
     conditions.Apply<KO>();
     Computation ap(Engine::Range<int>(0, 1000));
     ap += Computation(10);
-    ap += conditions.Boni(Stat::ap);
+    ap += conditions.Bonus(Stat::ap);
     EXPECT_EQ(ap.Total(), 0);
 }
 

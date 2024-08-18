@@ -13,7 +13,7 @@ Conditions::Conditions(const json& data)
 }
 
 
-Computation Conditions::Boni(Stat::Id id) const
+Computation Conditions::Bonus(Stat::Id id) const
 {
     Computation result;
     for(const auto& c : conditions)

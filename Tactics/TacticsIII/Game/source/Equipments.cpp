@@ -47,6 +47,17 @@ Computation Equipments::GetTotal(Stat::Id stat, const Restrictions& include, con
     return sum.Simplify();
 }
 
+Computation Equipments::Bonus(Stat::Id id) const
+{
+    Computation sum;
+    for(const auto& e : equipped)
+    {
+        sum += e.Bonus(id);
+    }
+    return sum.Simplify();
+}
+
+
 const Equipment& Equipments::Equip(const Equipment& equipment)
 {
     Restrictions exclude = equipment.GetItem().Excludes();
@@ -66,7 +77,8 @@ Computation Equipments::Get(Stat::Id id, const class Boni* extraBoni, const Rest
         if (e.GetItem().Match(filter))
         {
             Computation itemResult = e.Get(id, extraBoni, filter);
-            result += itemResult;
+            if (itemResult)
+                result += Computation(itemResult.Total(), e.Name());
         }
     }
     return result;

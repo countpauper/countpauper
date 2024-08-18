@@ -7,12 +7,14 @@
 #include "Game/Race.h"
 #include "Game/Conditions.h"
 #include "Game/Equipments.h"
+#include "Game/Boni.h"
 #include "UI/Object.h"
 
 namespace Game
 {
 
 class Creature :
+    public virtual Boni,
     public Statistics,
     public Counters,
     public Conditions,
@@ -36,6 +38,7 @@ public:
     const StatDefinition& Definition() const override;
     std::string_view Name() const override;
     const Equipment& Equip(const Equipment& equipment) override;
+    Computation Bonus(Stat::Id id) const override;
 
     const Race& GetRace() const;
     json Serialize() const;

@@ -8,7 +8,8 @@ namespace Game
 using json = nlohmann::json;
 
 
-Item::Item(std::string_view name, Restrictions tags, Stat::Id offenseBonus) :
+Item::Item(std::string_view name, Restrictions tags, Stat::Id offenseBonus, Stats stats) :
+    Statistics(stats),
     name(name),
     tags(tags),
     offenseBonus(offenseBonus)

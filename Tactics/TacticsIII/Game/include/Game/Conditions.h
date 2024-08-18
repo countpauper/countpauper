@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
 #include "Game/Condition.h"
+#include "Game/Boni.h"
 #include "File/Json.h"
 
 namespace Game
 {
 
-class Conditions
+class Conditions : public virtual Boni
 {
 public:
     Conditions() = default;
@@ -31,7 +32,7 @@ public:
             conditions.emplace_back(std::make_unique<CT>());
         }
     }
-    Computation Boni(Stat::Id id) const;
+    Computation Bonus(Stat::Id id) const override;
     std::string Description() const;
     json Serialize() const;
 private:

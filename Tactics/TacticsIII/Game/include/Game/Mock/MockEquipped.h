@@ -18,7 +18,6 @@ public:
     MOCK_METHOD(Computation, GetTotal, (Stat::Id stat, const Restrictions& include, const Restrictions& exclude), (const override));
 
     MOCK_METHOD(std::vector<const Equipment*>, GetEquipped, (const Restrictions& filter), (const override));
-    MOCK_METHOD(Computation, Get, (Stat::Id id, const class Boni* extraBoni, const Restrictions& filter), (const override));
 };
 
 }
