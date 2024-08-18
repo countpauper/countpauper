@@ -4,12 +4,7 @@
 namespace Game
 {
 
-Requirement::Requirement(Stat::Id stat, int actual, Operator op, int required) :
-    Requirement(stat, Computation(actual), op, required)
-{
-}
-
-Requirement::Requirement(Stat::Id stat, const Computation& actual, Operator op, int required) :
+Requirement::Requirement(Stat::Id stat, const Computation& actual, Operator op, const Computation& required) :
     stat(stat),
     actual(actual),
     op(op),
@@ -22,17 +17,17 @@ Requirement::operator bool() const
     switch(op)
     {
         case not_equal:
-            return actual.Total() != required;
+            return actual.Total() != required.Total();
         case equal:
-            return actual.Total() == required;
+            return actual.Total() == required.Total();
         case less:
-            return actual.Total() < required ;
+            return actual.Total() < required.Total();
         case less_equal:
-            return actual.Total() <= required;
+            return actual.Total() <= required.Total();
         case greater:
-            return actual.Total() > required;
+            return actual.Total() > required.Total();
         case greater_equal:
-            return actual.Total() >= required;
+            return actual.Total() >= required.Total();
         default:
             assert(false); // unimplemented
             return false;
@@ -87,7 +82,7 @@ std::string Requirement::Description() const
 {
     if (bool(*this))
     {
-        return std::string(Stat::Name(stat)) + "(" + actual.Description() + " = " + std::to_string(actual.Total()) + ") is " + std::string(Describe(op)) + " " + std::to_string(required);
+        return std::string(Stat::Name(stat)) + "(" + actual.Description() +") is " + std::string(Describe(op)) + " " + required.Description();
     }
     else
     {

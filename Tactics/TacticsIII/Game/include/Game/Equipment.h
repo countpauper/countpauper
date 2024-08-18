@@ -3,6 +3,7 @@
 #include "Game/Counters.h"
 #include "Game/ItemBonus.h"
 #include "Game/Boni.h"
+#include "Game/Requirement.h"
 #include <map>
 #include <string>
 
@@ -27,11 +28,10 @@ public:
 
     const Item& GetItem() const;
     std::string Name() const;
-    bool CanEquip(const Statted& stats) const;
+    Requirements CanEquip(const Statted& stats) const;
     json Serialize() const;
 protected:
     Equipment(const ItemDatabase& items, const Item& item, const json& data) ;
-    std::vector<Stat::Id> EquipLimits(const Statted& stats) const;
 
     const Item* item;
     std::vector<const ItemBonus*> boni;

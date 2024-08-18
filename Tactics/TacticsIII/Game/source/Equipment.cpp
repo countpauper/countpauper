@@ -122,11 +122,6 @@ std::string Equipment::Name() const
     return Engine::Join(nameParts, " ");
 }
 
-bool Equipment::CanEquip(const Statted& stats) const
-{
-    return EquipLimits(stats).empty();
-}
-
 struct Limit
 {
     Stat::Id itemCost;
@@ -135,7 +130,7 @@ struct Limit
 };
 
 
-std::vector<Stat::Id> Equipment::EquipLimits(const Statted& stats) const
+Requirements Equipment::CanEquip(const Statted& stats) const
 {
     const auto* boni = dynamic_cast<const Boni*>(&stats);
 
@@ -146,7 +141,7 @@ std::vector<Stat::Id> Equipment::EquipLimits(const Statted& stats) const
         {Stat::enchantment, Restrictions(), Stat::attune}
     };
     auto unequip = item->Swap();
-    std::vector<Stat::Id> result;
+    Requirements result;
     for(const auto& limit: std::span(limits))
     {
         if (!item->Match(limit.itemFilter))
@@ -155,8 +150,7 @@ std::vector<Stat::Id> Equipment::EquipLimits(const Statted& stats) const
         required -= stats.Get(limit.itemCost, boni, unequip);
         required += Get(limit.itemCost, boni, limit.itemFilter);  // TODO can this preexisting bonus be found/multiplied by 0 instead?
         auto available = stats.Get(limit.creatureCapacity);
-        if (required.Total() > available.Total())
-            result.push_back(limit.creatureCapacity);
+        result.emplace_back(limit.itemCost, available, Requirement::greater_equal, required);
     }
     return result;
 }

@@ -51,7 +51,7 @@ Requirements Attack::CanDo() const
 {
     return {
         Requirement(Stat::ap, actor.GetCounts().Available(Stat::ap), Requirement::less_equal, AP()),
-        Requirement(Stat::reach, actor.GetStats().Get(Stat::reach), Requirement::greater_equal, actor.Position().ManDistance(target.Position()))
+        Requirement(Stat::reach, actor.GetStats().Get(Stat::reach), Requirement::greater_equal, Computation(actor.Position().ManDistance(target.Position())))
     };
 }
 

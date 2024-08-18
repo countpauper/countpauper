@@ -25,7 +25,8 @@ class Computation
 public:
     Computation() = default;
     explicit Computation(Engine::Range<int> limit);
-    explicit Computation(int value, std::string_view description="");
+    Computation(int constant);
+    Computation(int value, std::string_view description);
     virtual int Total() const;
     std::string Description() const;
     bool empty() const;
@@ -36,6 +37,7 @@ public:
     Computation& operator*=(const Computation& o);
     bool operator==(const Computation& o) const;
     Computation& Simplify();
+    bool IsConstant() const;
 protected:
     Operation AsValue(Operator op) const;
     Engine::Range<int> limit = Engine::Range<int>::max();

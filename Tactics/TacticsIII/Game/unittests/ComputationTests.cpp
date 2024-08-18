@@ -13,11 +13,21 @@ TEST(Computation, empty)
     EXPECT_EQ(c.Total(), 0);
 }
 
-TEST(Computation, constant)
+TEST(Computation, value)
 {
     Computation c(3, "test");
     EXPECT_FALSE(c.empty());
+    EXPECT_FALSE(c.IsConstant());
     EXPECT_EQ(c.Description(), "3[test]");
+    EXPECT_EQ(c.Total(), 3);
+}
+
+TEST(Computation, constatn)
+{
+    Computation c(3);
+    EXPECT_FALSE(c.empty());
+    EXPECT_TRUE(c.IsConstant());
+    EXPECT_EQ(c.Description(), "3");
     EXPECT_EQ(c.Total(), 3);
 }
 

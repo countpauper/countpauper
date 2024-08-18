@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Game/Stat.h"
 #include "Game/Computation.h"
 #include <vector>
@@ -18,8 +20,7 @@ public:
         greater = 4,
         greater_equal = 5,
     };
-    Requirement(Stat::Id stat, int actual, Operator op, int required);
-    Requirement(Stat::Id stat, const Computation& actual, Operator op, int required);
+    Requirement(Stat::Id stat, const Computation& actual, Operator op, const Computation& required);
     operator bool() const;
     Requirement operator!() const;
     std::string Description() const;
@@ -28,7 +29,7 @@ private:
     Stat::Id stat;
     Operator op;
     Computation actual;
-    int required;
+    Computation required;
 };
 
 

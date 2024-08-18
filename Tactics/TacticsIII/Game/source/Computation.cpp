@@ -6,6 +6,12 @@
 namespace Game
 {
 
+
+Computation::Computation(int constant) :
+    Computation(constant, "")
+{
+}
+
 Computation::Computation(int value, std::string_view description) :
     operations{
         {std::string(description), Operator::add, value}
@@ -100,6 +106,11 @@ int Computation::Total() const
 
 std::string Computation::Description() const
 {
+    if (IsConstant())
+    {
+        return std::to_string(Total());
+    }
+
     std::stringstream stream;
 
     for(const auto& op: operations)
@@ -166,7 +177,6 @@ bool Computation::operator==(const Computation& o) const
         operations == o.operations;
 }
 
-
 Computation& Computation::Simplify()
 {
     std::erase_if(operations, [](const Operation& o)
@@ -174,6 +184,11 @@ Computation& Computation::Simplify()
         return o.Redundant();
     });
     return *this;
+}
+
+bool Computation::IsConstant() const
+{
+    return operations.size() == 1 && operations.front().op == Operator::add && operations.front().description.empty();
 }
 
 Computation& Computation::append(Operator op, const Computation& o)
