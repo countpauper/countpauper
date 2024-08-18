@@ -23,7 +23,7 @@ public:
     Computation Get(Stat::Id id, const class Boni* extraBoni = nullptr, const Restrictions& restricted={}) const;
     const StatDefinition& Definition() const;
     bool Match(const Restrictions& restictions) const;
-    Restrictions Excludes() const;
+    Restrictions Swap() const;
     Restriction GetMaterial() const;
     Restrictions GetTags() const;
     bool operator==(const Item& o) const;

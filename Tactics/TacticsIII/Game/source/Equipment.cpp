@@ -145,14 +145,14 @@ std::vector<Stat::Id> Equipment::EquipLimits(const Statted& stats) const
         {Stat::weight, Restrictions({Restriction::armor}), Stat::endurance},
         {Stat::enchantment, Restrictions(), Stat::attune}
     };
-    auto excludes = item->Excludes();
+    auto unequip = item->Swap();
     std::vector<Stat::Id> result;
     for(const auto& limit: std::span(limits))
     {
         if (!item->Match(limit.itemFilter))
             continue;
         auto required = stats.Get(limit.itemCost, boni, limit.itemFilter);
-        //required -= stats.Get(limit.itemCost, boni, limit.itemFilter | excludes);
+        required -= stats.Get(limit.itemCost, boni, unequip);
         required += Get(limit.itemCost, boni, limit.itemFilter);  // TODO can this preexisting bonus be found/multiplied by 0 instead?
         auto available = stats.Get(limit.creatureCapacity);
         if (required.Total() > available.Total())

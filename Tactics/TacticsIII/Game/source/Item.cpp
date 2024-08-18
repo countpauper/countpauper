@@ -83,7 +83,7 @@ bool Item::Match(const Restrictions& restrictions) const
     return restrictions.Match(tags);
 }
 
-Restrictions Item::Excludes() const
+Restrictions Item::Swap() const
 {
     if (tags.Contains(Restriction::melee))
     {

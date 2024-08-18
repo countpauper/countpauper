@@ -137,6 +137,11 @@ TEST(Equipment, CanEquipNaked)
     EXPECT_CALL(creature, Get(Stat::weight, &creature, Restrictions::weapon)).WillOnce(Return(Computation(0)));
     EXPECT_CALL(creature, Get(Stat::enchantment, &creature, Restrictions())).WillOnce(Return(Computation(0)));
 
+    Restrictions unequip({Restriction::ranged, Restriction::unarmed});
+    EXPECT_CALL(creature, Get(Stat::hold, &creature, unequip)).WillOnce(Return(Computation(0)));
+    EXPECT_CALL(creature, Get(Stat::weight, &creature, unequip)).WillOnce(Return(Computation(0)));
+    EXPECT_CALL(creature, Get(Stat::enchantment, &creature, unequip)).WillOnce(Return(Computation(0)));
+
     EXPECT_CALL(creature, Get(Stat::hands, nullptr, _)).WillOnce(Return(Computation(2)));
     EXPECT_CALL(creature, Get(Stat::lift, nullptr, _)).WillOnce(Return(Computation(2)));
     EXPECT_CALL(creature, Get(Stat::attune, nullptr, _)).WillOnce(Return(Computation(0)));
@@ -158,6 +163,11 @@ TEST(Equipment, CanNotEquipHandsFull)
     EXPECT_CALL(creature, Get(Stat::weight, &creature, Restrictions::weapon)).WillOnce(Return(Computation(1)));
     EXPECT_CALL(creature, Get(Stat::enchantment, &creature, Restrictions())).WillOnce(Return(Computation(0)));
 
+    Restrictions unequip({Restriction::ranged, Restriction::unarmed});
+    EXPECT_CALL(creature, Get(Stat::hold, &creature, unequip)).WillOnce(Return(Computation(0)));
+    EXPECT_CALL(creature, Get(Stat::weight, &creature, unequip)).WillOnce(Return(Computation(0)));
+    EXPECT_CALL(creature, Get(Stat::enchantment, &creature, unequip)).WillOnce(Return(Computation(0)));
+
     EXPECT_CALL(creature, Get(Stat::hands, nullptr, _)).WillOnce(Return(Computation(2)));
     EXPECT_CALL(creature, Get(Stat::lift, nullptr, _)).WillOnce(Return(Computation(2)));
     EXPECT_CALL(creature, Get(Stat::attune, nullptr, _)).WillOnce(Return(Computation(0)));
@@ -175,8 +185,12 @@ TEST(Equipment, CanNotEquipHeavyArmor)
     def.Define(Stat::enchantment);
     MockCreature creature;
     EXPECT_CALL(creature, Get(Stat::hold, &creature, Restrictions())).WillOnce(Return(Computation(0)));
-    EXPECT_CALL(creature, Get(Stat::weight, &creature, Restrictions({Restriction::armor}))).WillOnce(Return(Computation(0)));
+    EXPECT_CALL(creature, Get(Stat::weight, &creature, Restrictions({Restriction::armor}))).WillRepeatedly(Return(Computation(0)));
     EXPECT_CALL(creature, Get(Stat::enchantment, &creature, Restrictions())).WillOnce(Return(Computation(0)));
+
+    Restrictions unequip({Restriction::armor});
+    EXPECT_CALL(creature, Get(Stat::hold, &creature, unequip)).WillOnce(Return(Computation(0)));
+    EXPECT_CALL(creature, Get(Stat::enchantment, &creature, unequip)).WillOnce(Return(Computation(0)));
 
     EXPECT_CALL(creature, Get(Stat::hands, nullptr, _)).WillOnce(Return(Computation(0)));
     EXPECT_CALL(creature, Get(Stat::endurance, nullptr, _)).WillOnce(Return(Computation(1)));
@@ -187,6 +201,33 @@ TEST(Equipment, CanNotEquipHeavyArmor)
     Equipments equip;
     EXPECT_FALSE(Equipment(armor).CanEquip(creature));
 }
+
+TEST(Equipment, CanSwapWeapon)
+{
+    Definition def(Item::definition);
+    def.Define(Stat::weight);
+    def.Define(Stat::hold);
+    def.Define(Stat::enchantment);
+    MockCreature creature;
+    EXPECT_CALL(creature, Get(Stat::hold, &creature, Restrictions())).WillOnce(Return(Computation(2)));
+    EXPECT_CALL(creature, Get(Stat::weight, &creature, Restrictions::weapon)).WillOnce(Return(Computation(1)));
+    EXPECT_CALL(creature, Get(Stat::enchantment, &creature, Restrictions())).WillOnce(Return(Computation(0)));
+
+    Restrictions unequip({Restriction::ranged, Restriction::unarmed});
+    EXPECT_CALL(creature, Get(Stat::hold, &creature, unequip)).WillOnce(Return(Computation(2)));
+    EXPECT_CALL(creature, Get(Stat::weight, &creature, unequip)).WillOnce(Return(Computation(1)));
+    EXPECT_CALL(creature, Get(Stat::enchantment, &creature, unequip)).WillOnce(Return(Computation(0)));
+
+    EXPECT_CALL(creature, Get(Stat::hands, nullptr, _)).WillOnce(Return(Computation(2)));
+    EXPECT_CALL(creature, Get(Stat::lift, nullptr, _)).WillOnce(Return(Computation(2)));
+    EXPECT_CALL(creature, Get(Stat::attune, nullptr, _)).WillOnce(Return(Computation(0)));
+
+    EXPECT_CALL(creature, Bonus(_)).WillRepeatedly(Return(Computation()));
+    Item weapon("weapon", Restrictions({Restriction::melee}), Stat::damage, {{Stat::weight, 1}, {Stat::hold, 1}});
+    Equipments equip;
+    EXPECT_TRUE(Equipment(weapon).CanEquip(creature));
+}
+
 
 TEST(Equipment, serialize)
 {

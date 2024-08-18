@@ -60,8 +60,8 @@ Computation Equipments::Bonus(Stat::Id id) const
 
 const Equipment& Equipments::Equip(const Equipment& equipment)
 {
-    Restrictions exclude = equipment.GetItem().Excludes();
-    Unequip(exclude);
+    Restrictions swap = equipment.GetItem().Swap();
+    Unequip(swap);
     return equipped.emplace_back(std::move(equipment));
 }
 
