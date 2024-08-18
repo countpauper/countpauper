@@ -47,13 +47,12 @@ Computation ComputeDamage(const Computations& offense, const Computations& defen
 }
 
 
-bool Attack::CanDo() const
+Requirements Attack::CanDo() const
 {
-    if (actor.GetCounts().Available(Stat::ap) <  AP())
-    {
-        return false;
-    }
-    return true;
+    return {
+        Requirement(Stat::ap, actor.GetCounts().Available(Stat::ap), Requirement::less_equal, AP()),
+        Requirement(Stat::reach, actor.GetStats().Get(Stat::reach), Requirement::greater_equal, actor.Position().ManDistance(target.Position()))
+    };
 }
 
 void Attack::Execute(std::ostream& log) const

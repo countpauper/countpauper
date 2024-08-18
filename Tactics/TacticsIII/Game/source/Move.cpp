@@ -96,13 +96,12 @@ void Move::Render() const
 }
 
 
-bool Move::CanDo() const
+Requirements Move::CanDo() const
 {
-    if (Reachable() == path.begin())
-    {   // no speed, no ap or no path
-        return false;
-    }
-    return true;
+    return {
+        Requirement(Stat::ap, actor.GetCounts().Available(Stat::ap), Requirement::greater_equal, AP()),
+        Requirement(Stat::speed, actor.GetStats().Get(Stat::speed), Requirement::not_equal, 0)
+    };
 }
 
 void Move::Execute(std::ostream& log) const
