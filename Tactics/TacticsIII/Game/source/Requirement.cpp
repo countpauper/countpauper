@@ -1,5 +1,6 @@
 #include "Game/Requirement.h"
 #include "Game/Computation.h"
+#include "Utility/String.h"
 
 namespace Game
 {
@@ -32,6 +33,14 @@ Requirement::operator bool() const
             assert(false); // unimplemented
             return false;
     }
+}
+
+bool Requirement::operator==(const Requirement& o) const
+{
+    return stat == o.stat &&
+        actual == o.actual &&
+        op == o.op &&
+        required == o.required;
 }
 
 Requirement Requirement::operator!() const
@@ -82,7 +91,7 @@ std::string Requirement::Description() const
 {
     if (bool(*this))
     {
-        return std::string(Stat::Name(stat)) + "(" + actual.Description() +") is " + std::string(Describe(op)) + " " + required.Description();
+        return Engine::TitleCase(Stat::Name(stat)) + " (" + actual.Description() +") is " + std::string(Describe(op)) + " " + required.Description();
     }
     else
     {

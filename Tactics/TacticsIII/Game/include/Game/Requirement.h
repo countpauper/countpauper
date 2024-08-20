@@ -22,6 +22,7 @@ public:
     };
     Requirement(Stat::Id stat, const Computation& actual, Operator op, const Computation& required);
     operator bool() const;
+    bool operator==(const Requirement& req) const;
     Requirement operator!() const;
     std::string Description() const;
 private:

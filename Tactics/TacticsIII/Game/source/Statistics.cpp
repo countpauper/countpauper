@@ -21,7 +21,7 @@ Computation Statistics::Get(Stat::Id id, const Boni* extraBoni, const Restrictio
     auto it = stats.find(id);
     if (it != stats.end())
     {
-        result += Computation(it->second, Definition().at(id).Name());
+        result += Computation(it->second, Stat::Name(id));
         if (extraBoni)
             result += extraBoni->Bonus(id);
     }
