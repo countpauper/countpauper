@@ -41,6 +41,10 @@ public:
     Requirements(std::initializer_list<Requirement> init);
 
     operator bool() const;
+    Requirements Failed() const;
+    Requirements Succeeded() const;
+
+    std::string Description() const;
 };
 
 }

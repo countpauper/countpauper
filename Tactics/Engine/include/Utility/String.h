@@ -20,6 +20,7 @@ namespace Engine
     std::string FormatDuration(double seconds);
     std::string FormatDuration(std::chrono::milliseconds);
     std::string Join(std::span<std::string_view> strs, std::string_view separator="");
+    std::string Join(std::span<std::string> strs, std::string_view separator="");
 
     template<class T>
     std::string ToString(const T& object)

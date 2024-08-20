@@ -9,8 +9,8 @@ TEST(Requirement, not_equal)
 {
     EXPECT_TRUE(Requirement(Stat::none, 1, Requirement::not_equal, 0));
     EXPECT_FALSE(Requirement(Stat::none, 1, Requirement::not_equal, 1));
-    EXPECT_EQ(Requirement(Stat::ap, 3, Requirement::not_equal, 2).Description(), "Action (3) is not equal to 2");
-    EXPECT_EQ(Requirement(Stat::ap, 3, Requirement::not_equal, 3).Description(), "Action (3) is equal to 3");
+    EXPECT_EQ(Requirement(Stat::ap, 3, Requirement::not_equal, 2).Description(), "Action (3) is not 2");
+    EXPECT_EQ(Requirement(Stat::ap, 3, Requirement::not_equal, 3).Description(), "Action (3) is 3");
     EXPECT_TRUE((!Requirement(Stat::none, 2, Requirement::not_equal, 3)) == Requirement(Stat::none, 2, Requirement::equal, 3));
 }
 
@@ -18,8 +18,8 @@ TEST(Requirement, equal)
 {
     EXPECT_TRUE(Requirement(Stat::none, 1, Requirement::equal, 1));
     EXPECT_FALSE(Requirement(Stat::none, 1, Requirement::equal, 0));
-    EXPECT_EQ(Requirement(Stat::ap, 3, Requirement::equal, 3).Description(), "Action (3) is equal to 3");
-    EXPECT_EQ(Requirement(Stat::ap, 3, Requirement::equal, 2).Description(), "Action (3) is not equal to 2");
+    EXPECT_EQ(Requirement(Stat::ap, 3, Requirement::equal, 3).Description(), "Action (3) is 3");
+    EXPECT_EQ(Requirement(Stat::ap, 3, Requirement::equal, 2).Description(), "Action (3) is not 2");
     EXPECT_TRUE((!Requirement(Stat::none, 2, Requirement::equal, 3)) == Requirement(Stat::none, 2, Requirement::not_equal, 3));
 }
 
@@ -61,7 +61,6 @@ TEST(Requirement, greater_equal)
     EXPECT_TRUE((!Requirement(Stat::none, 2, Requirement::greater_equal, 3)) == Requirement(Stat::none, 2, Requirement::less, 3));
 }
 
-
 TEST(Requirement, requirements_are_a_conjunection)
 {
     Requirements reqs{
@@ -69,7 +68,8 @@ TEST(Requirement, requirements_are_a_conjunection)
         Requirement(Stat::hp, 4, Requirement::less, 3)
     };
     EXPECT_FALSE(reqs);
-
+    EXPECT_EQ(reqs.Description(), "Action (1) is more than 0, but Hitpoints (4) is not less than 3");
+    EXPECT_EQ(reqs.Failed(), Requirements({reqs.back()}));
 }
 }
 

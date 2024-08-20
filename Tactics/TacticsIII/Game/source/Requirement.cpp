@@ -70,17 +70,17 @@ std::string_view Requirement::Describe(Operator op)
     switch(op)
     {
         case not_equal:
-            return "not equal to";
+            return "is not";
         case equal:
-            return "equal to";
+            return "is";
         case less:
-            return "less than";
+            return "is less than";
         case less_equal:
-            return "not more than";
+            return "is not more than";
         case greater:
-            return "more than";
+            return "is more than";
         case greater_equal:
-            return "not less than";
+            return "is not less than";
         default:
             assert(false); // unimplemented
             return "";
@@ -91,7 +91,7 @@ std::string Requirement::Description() const
 {
     if (bool(*this))
     {
-        return Engine::TitleCase(Stat::Name(stat)) + " (" + actual.Description() +") is " + std::string(Describe(op)) + " " + required.Description();
+        return Engine::TitleCase(Stat::Name(stat)) + " (" + actual.Description() +") " + std::string(Describe(op)) + " " + required.Description();
     }
     else
     {
@@ -115,6 +115,54 @@ Requirements::operator bool() const
     return true;
 }
 
+
+Requirements Requirements::Failed() const
+{
+    Requirements result;
+    std::copy_if(begin(), end(), std::back_inserter(result), [](const Requirement& req)
+    {
+        return !bool(req);
+    });
+    return result;
+}
+
+Requirements Requirements::Succeeded() const
+{
+    Requirements result;
+    std::copy_if(begin(), end(), std::back_inserter(result), [](const Requirement& req)
+    {
+        return bool(req);
+    });
+    return result;
+
+}
+
+std::string Requirements::Description() const
+{
+    auto failed = Failed();
+    auto succeeded = Succeeded();
+    std::vector<std::string> failStrings, successStrings;
+    std::transform(failed.begin(), failed.end(), std::back_inserter(failStrings), [](const Requirement& req)
+    {
+        return req.Description();
+    });
+    std::transform(succeeded.begin(), succeeded.end(), std::back_inserter(successStrings), [](const Requirement& req)
+    {
+        return req.Description();
+    });
+    if (failed.empty())
+    {
+        return Engine::Join(successStrings, " and ");
+    }
+    else if (successStrings.empty())
+    {
+        return Engine::Join(failStrings, " and ");
+    }
+    else
+    {
+        return Engine::Join(successStrings, "and ")+", but "+Engine::Join(failStrings, " and ");
+    }
+}
 
 
 }

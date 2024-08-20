@@ -51,6 +51,18 @@ std::string Join(std::span<std::string_view> strs, std::string_view separator)
     return out;
 }
 
+std::string Join(std::span<std::string> strs, std::string_view separator)
+{
+    std::vector<std::string_view> views;
+    views.reserve(strs.size());
+    std::transform(strs.begin(), strs.end(), std::back_inserter(views),
+    [](const std::string& s)
+    {
+        return std::string_view(s);
+    });
+    return Join(views, separator);
+}
+
 std::string UpperCase(std::string_view str)
 {
     std::string result(str.length(), '\x0');

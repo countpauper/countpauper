@@ -30,6 +30,23 @@ TEST(Action, move)
     EXPECT_CALL(actor.counts, Cost(Stat::ap, 1, true));
     action.Execute(log);
     EXPECT_EQ(log.str(), "a moves to (1, 1, 0)\n");
+}
+
+TEST(Action, cant_move)
+{
+    MockActor actor("b");
+    EXPECT_CALL(actor.stats, Get(Stat::speed, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(actor.stats, Get(Stat::jump, _, _)).WillRepeatedly(Return(Computation(0)));
+    EXPECT_CALL(actor.stats, Get(Stat::ap, _, _)).WillRepeatedly(Return(Computation(1)));
+    EXPECT_CALL(actor.counts, Available(Stat::ap)).WillRepeatedly(Return(1));
+    NiceMock<MockWorld> world;
+
+    Move action(actor, world, Engine::Position(1,1,0));
+    EXPECT_FALSE(action.CanDo());
+    std::stringstream log;
+    action.Execute(log);
+    EXPECT_EQ(log.str(), "b can't move, because Speed (0) is 0\n");
+
 
 }
 

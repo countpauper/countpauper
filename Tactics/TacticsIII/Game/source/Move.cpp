@@ -106,7 +106,12 @@ Requirements Move::CanDo() const
 
 void Move::Execute(std::ostream& log) const
 {
-    assert(CanDo());
+    auto can = CanDo();
+    if (!can)
+    {
+        log << actor.GetAppearance().Name() << " can't move, because " << can.Failed().Description() << std::endl;
+        return;
+    }
     auto ap = AP();
     if (ap)
     {
@@ -120,6 +125,8 @@ unsigned Move::AP() const
 {
     auto grids = -1 + path.size();
     auto speed = actor.GetStats().Get(Stat::speed).Total();
+    if (speed == 0)
+        return 0;   // it takes 0 AP to not move (no CanDo)
     return (grids+(speed-1)) / speed;
 }
 
