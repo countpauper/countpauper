@@ -42,7 +42,6 @@ private:
     void SubscribeBus();
 
     Engine::Mesh mesh;
-    Engine::Position position;
     Engine::Coordinate coordinate;
     Creature creature;
     bool selected = false;

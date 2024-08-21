@@ -45,7 +45,7 @@ TEST(Action, cant_move)
     EXPECT_FALSE(action.CanDo());
     std::stringstream log;
     action.Execute(log);
-    EXPECT_EQ(log.str(), "b can't move, because Speed (0) is 0\n");
+    EXPECT_EQ(log.str(), "b can't move, because speed (0) is 0\n");
 
 
 }
@@ -85,9 +85,27 @@ TEST(Action, attack)
 
     std::stringstream log;
     action.Execute(log);
-    //EXPECT_EQ(attacker.GetCounts().Available(Stat::Id::ap), 0);
-    //EXPECT_EQ(target.GetCounts().Available(Stat::Id::hp), 0);
     EXPECT_EQ(log.str(), "a deals 2[sharp] damage to t\n");
+}
+
+
+TEST(Action, cant_attack)
+{
+    MockActor attacker("a");
+    MockActor target("t");
+
+    EXPECT_CALL(attacker, Position()).WillRepeatedly(Return(Engine::Position(0,0,0)));
+    EXPECT_CALL(attacker.stats, Get(Stat::reach, _, _)).WillRepeatedly(Return(Computation(1)));
+    EXPECT_CALL(target, Position()).WillRepeatedly(Return(Engine::Position(2,0,0)));
+
+    EXPECT_CALL(attacker.counts, Available(Stat::ap)).WillRepeatedly(Return(1));
+    EXPECT_CALL(attacker.counts, Cost(_, _, _)).Times(0);
+
+    Attack action(attacker, target);
+    EXPECT_FALSE(action.CanDo());
+    std::stringstream log;
+    action.Execute(log);
+    EXPECT_EQ(log.str(), "a can't attack t, because reach (1) is less than 2\n");
 }
 
 }

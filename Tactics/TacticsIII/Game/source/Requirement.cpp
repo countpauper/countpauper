@@ -91,7 +91,7 @@ std::string Requirement::Description() const
 {
     if (bool(*this))
     {
-        return Engine::TitleCase(Stat::Name(stat)) + " (" + actual.Description() +") " + std::string(Describe(op)) + " " + required.Description();
+        return std::string(Stat::Name(stat)) + " (" + actual.Description() +") " + std::string(Describe(op)) + " " + required.Description();
     }
     else
     {

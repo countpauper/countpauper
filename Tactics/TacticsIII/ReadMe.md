@@ -23,8 +23,7 @@ code III.code-workspace
 ## To build in linux
 
 ```
-sudo apt-get install freeglut3-dev
-sudo apt-get install libglew-dev
+sudo apt-get install freeglut3-dev libglew-dev
 mkdir build
 cd build
 cmake ..

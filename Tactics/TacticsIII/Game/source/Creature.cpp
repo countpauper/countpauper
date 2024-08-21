@@ -32,13 +32,23 @@ Creature::Creature(const Race& race, const class ItemDatabase& items, const json
     name(Engine::must_get<std::string_view>(data, "name")),
     race(race)
 {
-
 }
 
 std::string_view Creature::Name() const
 {
     return name;
 }
+
+Engine::Position Creature::GetPosition() const
+{
+    return position;
+}
+
+const Engine::Position& Creature::SetPosition(Engine::Position pos)
+{
+    return position = pos;
+}
+
 
 const Race& Creature::GetRace() const
 {
@@ -49,6 +59,7 @@ json Creature::Serialize() const
 {
     json result =  json::object({
         {"name", Name()},
+        {"position", json::array({position.x, position.y, position.z})},
         {"race", race.Name()},
         {"stats", Statistics::Serialize()},
         {"counters", Counters::Serialize()},

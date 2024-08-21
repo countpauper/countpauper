@@ -119,6 +119,10 @@ void Move::Execute(std::ostream& log) const
         actor.GetCounts().Cost(Stat::ap, ap, true);
         log << actor.GetAppearance().Name() << " moves to " << *Reachable() << std::endl;
     }
+    else
+    {
+        log << actor.GetAppearance().Name() << " stays ";
+    }
 }
 
 unsigned Move::AP() const

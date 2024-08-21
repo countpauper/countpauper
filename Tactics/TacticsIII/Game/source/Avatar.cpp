@@ -78,8 +78,7 @@ void Avatar::Select(bool on)
 
 void Avatar::Move(const HeightMap& map, Engine::Position destination)
 {
-    position = destination;
-    coordinate = map.GroundCoord(position);
+    coordinate = map.GroundCoord(creature.SetPosition(destination));
 }
 
 
@@ -90,7 +89,7 @@ const Engine::Scenery& Avatar::GetAppearance() const
 
 Engine::Position Avatar::Position() const
 {
-    return position;
+    return creature.GetPosition();
 }
 
 Statted& Avatar::GetStats()
@@ -157,7 +156,6 @@ std::string Avatar::Sheet() const
 json Avatar::Serialize() const
 {
     json result =  creature.Serialize();
-    result["position"] = json::array({position.x, position.y, position.z});
     return result;
 }
 

@@ -57,12 +57,15 @@ Requirements Attack::CanDo() const
 
 void Attack::Execute(std::ostream& log) const
 {
-    assert(CanDo());
-    if (!actor.GetCounts().Cost(Stat::ap, AP()))
+    auto can = CanDo();
+    if (!can)
     {
-        log << actor.GetAppearance().Name() << " does not have enough AP (" << AP() << ") to attack " << target.GetAppearance().Name();
+        log << actor.GetAppearance().Name() << " can't attack " << target.GetAppearance().Name() << ", because " <<
+            can.Failed().Description() << std::endl;
         return;
     }
+    actor.GetCounts().Cost(Stat::ap, AP());
+
     auto chance = HitChance(actor, target);
     if (chance < Engine::Random().Chance())
     {
