@@ -3,7 +3,8 @@
 namespace Game
 {
 Delta::Delta(Actor& parent) :
-    parent(&parent)
+    parent(&parent),
+    map(nullptr)
 {
 }
 
@@ -81,6 +82,7 @@ const Statted& Delta::GetStats() const
 
 Computation Delta::Get(Stat::Id id, const class Boni* boni, const Restrictions& restricted) const
 {
+    assert(false); // TODO: local storage that overrides ... when leveling?
     return parent->GetStats().Get(id, boni, restricted);
 }
 
@@ -91,6 +93,7 @@ const class StatDefinition& Delta::Definition() const
 
 void Delta::Level(Stat::Id stat, int amount)
 {
+    assert(false); // TODO: raise
 }
 
 Counted& Delta::GetCounts()
@@ -114,14 +117,17 @@ unsigned Delta::Available(Stat::Id id) const
 
 unsigned Delta::Cost(Stat::Id counter, unsigned cost, bool truncate)
 {
-    // TODO: truncate, but need to know range
+    if (truncate)
+    {
+        cost = std::min(cost, Available(counter));
+    }
     counterDelta[counter] = counterDelta[counter] - cost;
     return cost;
 }
 
 void Delta::Reset(Counter::Reset at)
 {
-    // TODO determine which counter deltas need to be removed as delta
+    assert(false); // TODO determine which counter deltas need to be removed as delta
 }
 
 const Equipped& Delta::GetEquipment() const
@@ -136,21 +142,25 @@ class Equipped& Delta::GetEquipment()
 
 const Equipment& Delta::Equip(const Equipment& equipment)
 {
+    assert(false); // TODO: keep a list of new equipment
     return equipment;
 }
 
 bool Delta::Unequip(const Equipment& item)
 {
+    assert(false); // TODO: keep a list of old equipment
     return false;
 }
 
 unsigned Delta::Unequip(const Restrictions filter)
 {
+    assert(false); // TODO
     return 0;
 }
 
 std::vector<const Equipment*> Delta::GetEquipped(const Restrictions& filter) const
 {
+    assert(false); // TODO
     return {};
 }
 

@@ -45,10 +45,9 @@ TEST(Action, cant_move)
     Move action(actor, world, Engine::Position(1,1,0));
     EXPECT_FALSE(action.CanDo());
     std::stringstream log;
-    action.Execute(log);
+    auto deltas = action.Execute(log);
+    EXPECT_TRUE(deltas.empty());
     EXPECT_EQ(log.str(), "b can't move, because speed (0) is 0\n");
-
-
 }
 
 TEST(Action, attack)
@@ -80,13 +79,15 @@ TEST(Action, attack)
     EXPECT_CALL(target.stats, Get(Stat::poison_resist, _, _)).WillRepeatedly(Return(Computation(0)));
 
     EXPECT_CALL(attacker.counts, Available(Stat::ap)).WillRepeatedly(Return(1));
-    EXPECT_CALL(attacker.counts, Cost(Stat::ap, 1, false)).WillOnce(Return(1));
-    //EXPECT_CALL(target.counts, Available(Stat::hp)).WillOnce(Return(1));
-    EXPECT_CALL(target.counts, Cost(Stat::hp, 2, true)).WillOnce(Return(1));
 
     std::stringstream log;
-    action.Execute(log);
+    auto deltas = action.Execute(log);
     EXPECT_EQ(log.str(), "a deals 2[sharp] damage to t\n");
+    ASSERT_EQ(deltas.size(), 2);
+    const auto& deltaAttacker = deltas[0];
+    const auto& deltaTarget = deltas[1];
+    EXPECT_EQ(deltaAttacker.Available(Stat::ap), 0);
+    EXPECT_EQ(deltaTarget.Available(Stat::hp), 0);
 }
 
 
@@ -105,7 +106,8 @@ TEST(Action, cant_attack)
     Attack action(attacker, target);
     EXPECT_FALSE(action.CanDo());
     std::stringstream log;
-    action.Execute(log);
+    auto deltas = action.Execute(log);
+    EXPECT_TRUE(deltas.empty());
     EXPECT_EQ(log.str(), "a can't attack t, because reach (1) is less than 2\n");
 }
 
