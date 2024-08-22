@@ -15,7 +15,6 @@ public:
     MOCK_METHOD(const Equipment&, Equip, (const Equipment& equipment), (override));
     MOCK_METHOD(bool, Unequip, (const Equipment& item), (override));
     MOCK_METHOD(unsigned, Unequip, (const Restrictions filter), (override));
-    MOCK_METHOD(Computation, GetTotal, (Stat::Id stat, const Restrictions& include, const Restrictions& exclude), (const override));
 
     MOCK_METHOD(std::vector<const Equipment*>, GetEquipped, (const Restrictions& filter), (const override));
 };

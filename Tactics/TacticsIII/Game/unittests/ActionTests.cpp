@@ -26,10 +26,11 @@ TEST(Action, move)
     EXPECT_TRUE(action.CanDo());
 
     std::stringstream log;
-    EXPECT_CALL(actor, Move(_,Engine::Position(1,1,0)));
-    EXPECT_CALL(actor.counts, Cost(Stat::ap, 1, true));
-    action.Execute(log);
+    auto delta = action.Execute(log).front();
     EXPECT_EQ(log.str(), "a moves to (1, 1, 0)\n");
+    EXPECT_EQ(delta.Position(), Engine::Position(1,1,0));
+    EXPECT_EQ(delta.Available(Stat::ap), 0);
+
 }
 
 TEST(Action, cant_move)

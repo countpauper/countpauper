@@ -55,14 +55,14 @@ Requirements Attack::CanDo() const
     };
 }
 
-void Attack::Execute(std::ostream& log) const
+std::vector<Delta> Attack::Execute(std::ostream& log) const
 {
     auto can = CanDo();
     if (!can)
     {
         log << actor.GetAppearance().Name() << " can't attack " << target.GetAppearance().Name() << ", because " <<
             can.Failed().Description() << std::endl;
-        return;
+        return {};
     }
     actor.GetCounts().Cost(Stat::ap, AP());
 
@@ -70,7 +70,7 @@ void Attack::Execute(std::ostream& log) const
     if (chance < Engine::Random().Chance())
     {
         log << actor.GetAppearance().Name() << "misses " << target.GetAppearance().Name() << std::endl;  // TODO: this hit chance should be specified in miss, block, parry obstacle
-        return;
+        return {};
     }
 
     auto offense = actor.GetStats().Get({Stat::sharp_damage, Stat::blunt_damage, Stat::heat_damage, Stat::cold_damage, Stat::lightning_damage, Stat::poison_damage},
@@ -86,6 +86,7 @@ void Attack::Execute(std::ostream& log) const
     {
         log << actor.GetAppearance().Name() << " deals " << target.GetAppearance().Name() << " a glancing blow" << std::endl;
     }
+    return {};
 }
 
 unsigned Attack::AP() const

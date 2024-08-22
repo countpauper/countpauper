@@ -82,7 +82,7 @@ void Avatar::Move(const HeightMap& map, Engine::Position destination)
 }
 
 
-const Engine::Scenery& Avatar::GetAppearance() const
+const Engine::Object& Avatar::GetAppearance() const
 {
     return *this;
 }

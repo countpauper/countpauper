@@ -104,25 +104,27 @@ Requirements Move::CanDo() const
     };
 }
 
-void Move::Execute(std::ostream& log) const
+std::vector<Delta> Move::Execute(std::ostream& log) const
 {
     auto can = CanDo();
     if (!can)
     {
         log << actor.GetAppearance().Name() << " can't move, because " << can.Failed().Description() << std::endl;
-        return;
+        return {};
     }
     auto ap = AP();
+    Delta dActor(actor);
     if (ap)
     {
-        actor.Move(map, *Reachable());
-        actor.GetCounts().Cost(Stat::ap, ap, true);
+        dActor.Move(map, *Reachable());
+        dActor.GetCounts().Cost(Stat::ap, ap, true);
         log << actor.GetAppearance().Name() << " moves to " << *Reachable() << std::endl;
     }
     else
     {
         log << actor.GetAppearance().Name() << " stays ";
     }
+    return { dActor };
 }
 
 unsigned Move::AP() const

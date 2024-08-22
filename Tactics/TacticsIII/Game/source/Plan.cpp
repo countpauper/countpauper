@@ -65,7 +65,14 @@ std::string Plan::Execute()
 {
     std::stringstream s;
     for(const auto& action: actions)
-        action->Execute(s);
+    {
+        auto deltas = action->Execute(s);
+        // TODO: in the future the plan will be made on deltas and only the final deltas need to be applied
+        for(auto& delta: deltas)
+        {
+            delta.Apply();
+        }
+    }
     return s.str();
 }
 

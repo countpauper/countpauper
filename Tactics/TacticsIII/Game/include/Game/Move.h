@@ -13,7 +13,7 @@ public:
     Move(Actor& actor, const World& world, Engine::Position destination, unsigned distance=0);
     void Render() const override;
     Requirements CanDo() const override;
-    void Execute(std::ostream& log) const override;
+    std::vector<Delta> Execute(std::ostream& log) const override;
     unsigned AP() const override;
     std::string Description() const override;
 private:

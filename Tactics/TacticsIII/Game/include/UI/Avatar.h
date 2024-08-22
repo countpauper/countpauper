@@ -27,7 +27,7 @@ public:
     void Select(bool on);
     void Move(const class HeightMap& map, Engine::Position destination) override;
 
-    const Engine::Scenery& GetAppearance() const override;
+    const Engine::Object& GetAppearance() const override;
     Engine::Position Position() const override;
     Statted& GetStats() override;
     const Statted& GetStats() const override;

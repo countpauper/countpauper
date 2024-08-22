@@ -12,13 +12,11 @@ class Equipments :
 public:
     Equipments() = default;
     explicit Equipments(const class ItemDatabase& db, const json& data);
-
     virtual ~Equipments() = default;
 
     const Equipment& Equip(const Equipment& equipment) override;
     bool Unequip(const Equipment& item) override;
     unsigned Unequip(const Restrictions filter) override;
-    Computation GetTotal(Stat::Id stat, const Restrictions& include, const Restrictions& exclude) const override;
     Computation Bonus(Stat::Id id) const override;
 
     std::vector<const Equipment*> GetEquipped(const Restrictions& filter={}) const override;
