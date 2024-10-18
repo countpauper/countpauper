@@ -1,0 +1,103 @@
+## math
+
+### For unit testing, import dependencies
+try:
+    from math import *
+except "FeatureNotAvailable":
+    pass
+
+e =  2.718281828459045
+pi = 3.141592653589793
+_rad2deg = 180/pi
+nan = float('nan')
+
+def isnan(x):
+    return x is nan
+
+def isclose(a,b, rel_tol=1e-9):
+    if rel_tol < 0:
+        return False
+   
+    if a==b:
+        return True
+    diff = abs(a-b)
+    return diff <= abs(rel_tol * (a + b) / 2) 
+      
+def sqrt2(x):
+    if x<0:
+        return nan
+    return sqrt(x)
+
+#NB Not like math prod since the default start value is one 
+# and the first arguments are not iterable but iteration is done over all arguments 
+def prod(*values):
+    result = 1
+    for v in values:
+        result *= v
+    return result
+
+#NB not the same as built in pow except when called with 2 arguments.
+#  Doesn't take 3 weird arguments but 1 iterable and computes the power sequentially
+# the default value is 1 so with no args it's 1^1
+def pow(*args):
+    if not args:
+        return 1
+    result = args[0]
+    for p in args[1:]:
+        result **= p
+    return result
+
+def __TaylorLn(x):
+    if x==1:
+        return 0
+    iterations = 20+2*int(x)
+    result = 0
+    A = (x-1) / (x+1)
+    for i in range(iterations):
+        k = 2*i + 1
+        result += A**k / k 
+    return 2.0 * result
+
+def _base10_exp(x):
+    return int(f'{x:e}'.split('e')[1])
+
+def log(x, base=None):
+    if x <= 0:
+        return nan
+    if base is None:
+        # __TaylorLn converges for x<1
+        # because log(a*b) = log(a)+log(b) bigger x are split 
+        # into their mantissa and base 10 exponent
+        exp = _base10_exp(x)
+        if exp:
+            mantissa = x / 10**exp
+            # The mantissa's log is computed 
+            log10 = 2.302585092994046 
+            mantissa_log = __TaylorLn(mantissa)
+            exp_log = exp*log10
+            return mantissa_log+exp_log
+        else:
+            return __TaylorLn(x)
+    else:
+        return log(x)/log(base)
+    
+def factorial(n):
+    if n<=1:
+        return 1
+    n = int(floor(n))
+    return prod(*range(2,n+1))
+
+def degrees(rad):
+    return rad * _rad2deg
+
+def radians(deg):
+    return deg / _rad2deg
+
+        
+def _NormalizeRad(r):
+    extra = floor(r/pi)
+    return r - extra * pi
+
+def __TaylorSin(x):
+    iterations = 10
+    result = 0

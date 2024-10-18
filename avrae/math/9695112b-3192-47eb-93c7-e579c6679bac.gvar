@@ -1,0 +1,194 @@
+try:
+    import math
+    from avrae import * 
+except "FeatureNotAvailable":
+    using(math="5f72a0b9-57c3-4223-a7a4-272e57b9bfc3")
+
+
+### Parse
+ops={
+    '-':'sub',
+    '+':'sum',
+    '/':'div',
+    '*':'prod',
+    '^':'pow',
+    ',':'tuple',
+    }
+
+def parse_lhs_brackets(s):
+    "Find matching open close brackets and returns brackets_enclosed, remaining or False, Remaining."
+    pos=0
+    if s[pos]!='(':
+        return False, s 
+    depth = 1
+    while depth:
+        close=s.find(')',pos+1)
+        open=s.find('(',pos+1)
+        if close < 0:
+            err(f"Unmatched brace in {s}")
+        elif open < 0 or open > close:
+            depth-=1
+            pos = close
+        else: # open < close:
+            pos = open
+            depth+=1
+    return s[1:pos],s[pos+1:]
+
+def parse_rhs_brackets(s):
+    open = s.find('(')
+    if open < 1:
+        return s, False, ""
+    else:
+        brace_str, remaining=parse_lhs_brackets(s[open:])
+        return s[:open], f"({brace_str})", remaining
+
+def parse_fn(s):
+    "Parse fn(args) to a dict(fn=args),remaining or False,remaining"
+    fn, args, remaining = parse_rhs_brackets(s)
+    if args is not False and fn.isidentifier():
+        return {fn:parse(args)}, remaining
+    else:
+        return False, s
+
+def parse_op(s):
+    for op, fn in ops.items():
+        if op in s:
+            terms = s.split(op)
+            if any(not t for t in terms):
+                err(f"Missing term in s")
+            return {fn:[parse(term) for term in terms]}
+    return False
+ 
+def parse_remaining(c, remaining):
+    if not remaining:
+        return c
+    for op, fn in ops.items():
+        if remaining[0]==op:
+            return {fn:[c,parse(remaining[1:])]}
+    # default to product
+    return dict(prod=parse(c))
+
+consts=dict(pi=math.pi,e=math.e)
+def parse_value(s):
+    if s in consts:
+        return consts[s]
+    if s.isdecimal():
+        return int(s)
+    else:
+        return float(s)
+
+def parse(s):
+    if s[0]=='-':
+        return dict(neg=parse(s[1:]))
+    braced_str, remaining = parse_lhs_brackets(s)
+    if braced_str:
+        return parse_remaining(parse(braced_str), remaining)
+    fn, remaining = parse_fn(s)
+    if fn:
+        return parse_remaining(fn, remaining)
+    premaining, braced_str, remaining = parse_rhs_brackets(s)
+    if braced_str and premaining[-1] in ops:
+        return parse_remaining(
+                parse(premaining[:-1]), 
+                premaining[-1]+braced_str+remaining)
+
+    if op := parse_op(s):
+        return op
+    return parse_value(s)
+
+
+### Compute
+numeric_types = ("int", "float")
+ListType = 'SafeList'
+
+def compute_args(arg):
+    if typeof(arg) == ListType:
+        result = [compute(a) for a in arg]
+    else:
+        result = compute(arg)
+        if typeof(result) != ListType:
+            result = [ result ]
+    if any(typeof(a) not in numeric_types for a in result):
+        err(f"nested tuple in {arg}")
+    else:
+        return result
+
+def compute_fn(fn, arg):
+    cargs = compute_args(arg)
+    if fn=='sum':
+        return sum(cargs)
+    elif fn=='sub':
+        return cargs[0] - sum(cargs[1:])
+    elif fn=='prod':
+        return math.prod(cargs)
+    elif fn=='div':
+        return cargs[0]/sum(cargs[1:]) 
+    elif fn=='pow':
+        return math.pow(*cargs)
+    elif fn=='neg':
+        return -cargs[0] 
+    elif fn=='tuple':
+        return cargs
+    elif fn=="sqrt":
+        return math.sqrt2(*cargs)
+    elif fn=="log":
+        return math.log(*cargs)
+    elif fn=='deg':
+        return math.degrees(*cargs)
+    elif fn=='rad':
+        return math.radians(*cargs)
+    elif fn=="sin":
+        return math.sin(*cargs)
+    elif fn=="cos":
+        return math.cos(*cargs)
+    elif fn=="tan":
+        return math.tan(*cargs)
+    elif fn=="atan":
+        return math.atan(*cargs)
+    elif fn=="factorial":
+        return math.factorial(*cargs)
+    else:
+        return f"Unknown function {fn}"
+        
+def compute(c):
+    if typeof(c)=='SafeDict':
+        result = [compute_fn(fn, args) for fn, args in c.items()]
+        return result[0] if len(result)==1 else result
+    else:
+        return c
+
+### Present 
+reverse_ops = { v:k for k,v in ops.items() }
+
+def present_sequence(fn, args):
+    operator = reverse_ops[fn]
+    return f"({f' {operator} '.join(args)})"
+    
+def present_fn(fn, arg):
+    if typeof(arg) == ListType:
+        pargs = [present_with_brackets(a) for a in arg]
+    else:
+        pargs = [present_with_brackets(arg)]
+    if fn in reverse_ops:
+        return present_sequence(fn, pargs)
+    return f"{fn}( {', '.join(str(a) for a in pargs)} )"
+
+def strip_brackets(s):
+    while s and  s[0]=="(" and s[-1]==")":
+        s = s[1:-1]
+    return s
+
+def present_with_brackets(c):
+    if typeof(c)=='SafeDict':
+        result =  [present_fn(fn, cargs) for fn, cargs in c.items()]
+        if len(result)==1:
+            result = result[0]
+        return result;
+    else:
+        return str(c)
+
+def present(c):
+    result = present_with_brackets(c)
+    if typeof(result)=='str':
+        result = strip_brackets(result)
+    return result
