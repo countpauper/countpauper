@@ -1,0 +1,96 @@
+<drac2>
+table=load_yaml(get_gvar('7b9457fc-3dfa-44f6-a0a2-794388ca9a28'))
+
+# add shorthands, because yaml requires escaping and unescaping is more complex
+table["'"]=dict(inch=1)
+table["''"]=dict(foot=1)
+
+plural=dict(foot='feet',
+	inch='inches',
+	mile='miles',
+	yard='yards',
+	lb='lbs', 
+	ounce='ounces', 
+	liter='liters',
+	litre='litres',
+	gallon='gallons',
+	minute='minutes', 
+	hour='hours', 
+	day='days',
+	week='weeks',
+	fortnight='fortnights')
+
+arg="""&*&""".strip()
+sep=', '
+syntax = f'`{ctx.prefix}{ctx.alias} [<value>]<unit>`, where units is one of {sep.join(f"`{u}`" for u in table.keys())}'
+if not arg:
+	return f"echo You didn't specify a value or unit. Use {syntax}."
+
+for singular, multiple in plural.items():
+	arg = arg.replace(multiple, singular)
+
+def flatten(l):
+	result=list()
+	for i in l:
+		if typeof(i)=='SafeList':
+			result += i 
+		else:
+			result.append(i)
+	return result
+
+def compute(v, coefficient):
+	if typeof(coefficient) == 'SafeList':
+		# compute n degree polynomial, where n is len(coefficient)+1 
+		return sum(c * v**p for p, c in enumerate(coefficient))
+	else:
+		return v * coefficient
+
+def convert(value, unit, coefficient):
+	if coefficient == 1:
+		ref = table[unit]
+		return flatten([convert(value, u, c) for u, c in ref.items()])
+	converted = compute(v, coefficient)
+	if abs(converted)<0.1 and typeof(coefficient)=='float':
+		return None
+	if abs(converted) < 2:
+		return f"{converted:.2f} {u}"
+	else:
+		return f"{converted:.2f} {plural.get(u,u)}"
+
+def match_unit(arg, unit):
+	if arg.endswith(u):
+	 	return True
+	if len(unit)==1:	# single letter units need to match
+	 	return False
+	if arg.lower().endswith(u):
+		return True
+	return False
+
+def oxford_join(conjunction, values):
+	if not values:
+		return ""
+	elif len(values)==1:
+		return values[0]
+	elif len(values)==2:
+		return f"{values[0]} {conjunction} {values[1]}"
+	else:
+		return f"{', '.join(values[:-1])}, {conjunction} {values[-1]}"
+
+# TODO: parse all input units and if they all have an overlapping output unit add them together uscase: 5ft 4 inch = meter/cm
+# TODO: for the output unit if total<1 and another output unit has total>1 then use that use case: 3cm = 1.2 inch, don't mention feet (?) but mostly:
+# TODO: if there's a fraction left after whole units and another conversion is available use that? use case 166cm = 5ft 5 inch
+for u, conv in table.items():
+	if match_unit(arg, u):
+		v=arg[:-len(u)].strip().replace(',','')
+		if v=='':
+			v='1'
+		if v.replace('.','').isdecimal():
+			v=float(v)
+			conversions = flatten([convert(v, u, c) for u, c in conv.items()])
+			if conversions := [c for c in conversions if c is not None]:
+				return f"echo **{arg}** is {oxford_join('or', conversions)}"
+			else:
+				return f"echo No valid conversion for **{arg}**"
+			
+return f'echo Unit of `{arg}` is not recognized. Use {syntax}.'
+</drac2>

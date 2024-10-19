@@ -141,7 +141,7 @@ def compute_fn(fn, arg):
     elif fn=='tuple':
         return cargs
     elif fn=="sqrt":
-        return math.sqrt2(*cargs)
+        return math.squareroot(*cargs)
     elif fn=="log":
         return math.log(*cargs)
     elif fn=='deg':
@@ -162,6 +162,8 @@ def compute_fn(fn, arg):
         return math.factorial(*cargs)
     elif fn=="comb":
         return math.comb(cargs[0], cargs[1])
+    elif fn=='norm':
+        return math.hypot(*cargs)
     else:
         return f"Unknown function {fn}"
         

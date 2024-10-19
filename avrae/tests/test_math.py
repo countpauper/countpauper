@@ -7,6 +7,11 @@ def test_nan():
     assert math.isnan(math.nan)
     assert not math.isnan(1)
 
+def test_isinf():
+    assert not math.isinf(1)
+    assert math.isinf(math.inf)
+    assert not math.isinf(-math.inf)
+    
 def test_isclose():
     assert math.isclose(1, 1)
     assert math.isclose(1, 1.0000000000001)
@@ -16,10 +21,10 @@ def test_isclose():
     assert math.isclose(0, 100, math.inf)
     
 def test_sqrt():
-    assert math.sqrt2(4) == 2
-    assert math.sqrt2(0) == 0
-    assert math.isnan(math.sqrt2(-1))
-    assert math.sqrt(math.inf) == math.inf
+    assert math.squareroot(4) == 2
+    assert math.squareroot(0) == 0
+    assert math.isnan(math.squareroot(-1))
+    assert math.squareroot(math.inf) == math.inf
 
 def test_prod():
     assert math.prod() == 1
@@ -134,3 +139,8 @@ def test_dist():
     assert math.dist((1, 0), [2, 0]) == 1
     assert math.isclose(math.dist((0, 1, 0), (2, 3, -4)),4.898979485566356)
     assert math.dist((0, 1), (-math.inf, 2)) == math.inf
+
+def test_hypot():
+    assert math.hypot() == 0
+    assert math.hypot(2,0) == 2
+    assert math.hypot(3,4) == 5

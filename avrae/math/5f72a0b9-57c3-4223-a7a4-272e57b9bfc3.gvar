@@ -1,4 +1,6 @@
-## math
+## math library for avrae
+## By Velglarn#4688, countpauper@gmail.com
+## Documentation: https://github.com/countpauper/countpauper/tree/master/avrae/math/math_lib.md
 
 ### For unit testing, import dependencies
 try:
@@ -28,7 +30,7 @@ def isclose(a,b, rel_tol=1e-9, abs_tol=0):
     diff = abs(a-b)
     return diff <= abs(rel_tol * (a + b) / 2) or diff < abs_tol
       
-def sqrt2(x):
+def squareroot(x):
     if x<0:
         return nan
     return sqrt(x)
@@ -225,5 +227,8 @@ def atan2(y,x):
             return nan
 
 def dist(p, q):
-    # TODO unit test 1d 2d 3d
     return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
+
+def hypot(*coordinates):
+    return sqrt(sum(p**2 for p in coordinates))
+
