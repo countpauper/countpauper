@@ -3,25 +3,28 @@
 ### For unit testing, import dependencies
 try:
     from math import *
+    from avrae import * 
 except "FeatureNotAvailable":
     pass
 
 e =  2.718281828459045
 pi = 3.141592653589793
-_rad2deg = 180/pi
+tau = pi * 2.0
+inf = float('inf')
 nan = float('nan')
+_rad2deg = 180/pi
 
 def isnan(x):
     return x is nan
 
-def isclose(a,b, rel_tol=1e-9):
-    if rel_tol < 0:
+def isclose(a,b, rel_tol=1e-9, abs_tol=0):
+    if rel_tol < 0 or abs_tol < 0:
         return False
    
     if a==b:
         return True
     diff = abs(a-b)
-    return diff <= abs(rel_tol * (a + b) / 2) 
+    return diff <= abs(rel_tol * (a + b) / 2) or diff < abs_tol
       
 def sqrt2(x):
     if x<0:
@@ -87,6 +90,24 @@ def factorial(n):
     n = int(floor(n))
     return prod(*range(2,n+1))
 
+def comb(n, k):    
+    if n<0 or k<0:
+        err("binomial coefficient not defined for negative input")
+    if k > n:
+        return 0
+    # Pascal's triangle method may require some memory and is O(nk)
+    # But straight up n! / k! * (n-k)! has numeric issues for larger n
+    C=list()
+    for i in range(0, n+1):
+        Ci = list()
+        for j in range(0, min(i, k)+1):
+            if j == 0 or j == i:
+                Ci.append(1) 
+            else:
+                Ci.append(C[i-1][j-1] + C[i-1][j])
+        C.append(Ci)
+    return C[n][k];
+
 def degrees(rad):
     return rad * _rad2deg
 
@@ -95,9 +116,105 @@ def radians(deg):
 
         
 def _NormalizeRad(r):
-    extra = floor(r/pi)
-    return r - extra * pi
+    extra = floor(r/tau) if r > 0 else ceil(r/tau)
+    return r - extra * tau
 
 def __TaylorSin(x):
+    if x==0:
+        return 0
     iterations = 10
     result = 0
+    factorial_div = 1.0
+    power = 1
+    for i in range(iterations):
+        power = 1+i*2
+        if i%2==0:
+            result += x**power / factorial_div
+        else:
+            result -= x**power / factorial_div 
+        factorial_div *= (power+1)*(power+2)
+    return result
+
+
+def sin(x):
+    return __TaylorSin(_NormalizeRad(x))
+
+
+def __TaylorCos(x):
+    if x==0:
+        return 1        
+    iterations = 10
+    result=1    # start with first because factorial(0) == 1 
+    factorial_div = 2.0
+    for i in range(iterations):
+        power = (i+1)*2
+        if i%2==0:
+            result -= x**power / factorial_div
+        else:
+            result += x**power / factorial_div
+        factorial_div *= (power+1) * (power+2)
+    return result
+
+def cos(x):
+    return __TaylorCos(_NormalizeRad(x))
+
+def tan(x):
+    cosx = cos(x)
+    sinx = sin(x)
+    if cosx==0:
+        if sinx>=0:
+            return inf
+        else:
+            return -inf
+    else:
+        return sinx/cosx
+
+def __NewtonAtan(x):
+    if x==0:
+        return 0
+    
+    # if abs(x)>1 convergence is slow use the atan(x) + atan(1/x) = +/-pi/2 identity
+    if x > 1:
+        return (pi/2) - __NewtonAtan(1/x)
+    elif x < -1:
+        return -(pi/2) - __NewtonAtan(1/x)
+    
+    # heuristic to optimize number of iterations required for accurate convergence (<1e-9) 
+    # based on size of x
+    iterations = 10+int(abs(x)*20)
+    
+    # Newton's accelerated atan convergence series 
+    # see:  https://en.wikipedia.org/wiki/Arctangent_series
+    Cx = 1.0/sqrt(1+x*x)
+    Sx = x*Cx
+    mul = 1
+    A = Sx
+    result = mul * A
+    for i in range(1, iterations+1):
+        mul*= (i*2)/(i*2.0+1.0)
+        A *= Sx * Sx        
+        result += mul * A
+    return Cx * result
+
+def atan(x):
+    return __NewtonAtan(x)
+
+def atan2(y,x):
+    if x > 0:
+        return atan(y/x)
+    elif x < 0:
+        if y >= 0:
+            return atan(y/x) + pi
+        else:
+            return atan(y/x) - pi
+    else:   # x==0
+        if y > 0:
+            return pi/2
+        elif y<0:
+            return -pi/2
+        else:
+            return nan
+
+def dist(p, q):
+    # TODO unit test 1d 2d 3d
+    return sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))

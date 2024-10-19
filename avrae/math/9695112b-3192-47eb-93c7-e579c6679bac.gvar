@@ -124,7 +124,7 @@ def compute_fn(fn, arg):
     elif fn=='div':
         return cargs[0]/sum(cargs[1:]) 
     elif fn=='pow':
-        return math.pow(*cargs)
+         return math.pow(*cargs)
     elif fn=='neg':
         return -cargs[0] 
     elif fn=='tuple':
@@ -145,8 +145,12 @@ def compute_fn(fn, arg):
         return math.tan(*cargs)
     elif fn=="atan":
         return math.atan(*cargs)
+    elif fn=="atan2":
+        return math.atan2(*cargs)
     elif fn=="factorial":
         return math.factorial(*cargs)
+    elif fn=="comb":
+        return math.comb(cargs[0], cargs[1])
     else:
         return f"Unknown function {fn}"
         
@@ -171,7 +175,7 @@ def present_fn(fn, arg):
         pargs = [present_with_brackets(arg)]
     if fn in reverse_ops:
         return present_sequence(fn, pargs)
-    return f"{fn}( {', '.join(str(a) for a in pargs)} )"
+    return f"{fn}( {', '.join(strip_brackets(str(a)) for a in pargs)} )"
 
 def strip_brackets(s):
     while s and  s[0]=="(" and s[-1]==")":
