@@ -45,12 +45,12 @@ def prod(*values):
 
 #NB not the same as built in pow except when called with 2 arguments.
 #  Doesn't take 3 weird arguments but 1 iterable and computes the power sequentially
-# the default value is 1 so with no args it's 1^1
-def pow(*args):
-    if not args:
+# the default value is 1 so with no arguments it's 1^1
+def pow(*powers):
+    if not powers:
         return 1
-    result = args[0]
-    for p in args[1:]:
+    result = powers[0]
+    for p in powers[1:]:
         result **= p
     return result
 

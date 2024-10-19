@@ -1,11 +1,21 @@
 <drac2>
 using(function="9695112b-3192-47eb-93c7-e579c6679bac")
+
+beta = ctx.alias=='bcalc'
+
 input="""&*&"""
 
-input = input.replace(" ","")
 computation = function.parse(input)
-result = function.compute(computation)
-if ctx.alias=='bcalc':
+
+if beta:
+    try:
+        result = function.compute(computation)
+    except:
+        return f"echo Failed to compute `{dump_json(computation)}`"
+else:
+        result = function.compute(computation)
+
+if beta:
     return f"echo `{dump_json(computation)}` : {function.present(computation)} = {result}"
 else:
     return f"echo {function.present(computation)} = {result}"

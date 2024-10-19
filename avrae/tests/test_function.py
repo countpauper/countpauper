@@ -8,22 +8,24 @@ fn=import_gvar("math/9695112b-3192-47eb-93c7-e579c6679bac.gvar", "fn")
 def test_parse_numeric():
     assert fn.parse("3") == 3
     assert fn.parse("-1.0") == dict(neg=1.0)
-    # TODO gets parsed as (5.4e) - (1) assert fn.parse("5.4e-1") == 0.54
-    # To fix, may have to preparse the whole string and replace all e+ and e-  (and E+/-) with a marker
-    # then right before float conversion reverse those markers
-    # BUT beware of e being the constant e. It's only for e after a digit or period
+    assert fn.parse("5.4e-1") == 0.54
+    assert fn.parse("3.0E+2") == 300.0
 
 def test_parse_constants():
     assert fn.parse("pi") == math.pi
     assert fn.parse("e+1") == dict(sum=[math.e,1])
 
 def test_parse_operators():
-    assert fn.parse(" 3 * 4") == dict(prod=[3,4])
-    assert fn.parse("1+2+0") == dict(sum=[1,2,0])
-    assert fn.parse("1+2*3") == dict(sum=[1,dict(prod=[2,3])])
-    assert fn.parse("2^3") == dict(pow=[2,3])
-    assert fn.parse("3-1-2") == dict(sub=[3,1,2])
-    assert fn.parse("100/10") == dict(div=[100,10])
+    assert fn.parse(" 3 * 4") == dict(prod=[3, 4])
+    assert fn.parse("1+2+0") == dict(sum=[1, 2, 0])
+    assert fn.parse("1+2*3") == dict(sum=[1 ,dict(prod=[2,3])])
+    assert fn.parse("2^3") == dict(pow=[2, 3])
+    assert fn.parse("3-1-2") == dict(sub=[3, 1, 2])
+    assert fn.parse("1+2e+1") == dict(sum=[1, 20])
+    assert fn.parse("3*-2") == dict(prod=[3, dict(neg=2)])
+    assert fn.parse("2--1") == dict(sub=[2, dict(neg=1)])
+    assert fn.parse("2^2^-1") == dict(pow=[2, 2, dict(neg=1)])
+    assert fn.parse("100/10") == dict(div=[100, 10])
     with pytest.raises(RuntimeError):
         assert fn.parse("3+2+")
 
@@ -61,6 +63,7 @@ def test_compute_nested():
     assert fn.compute(dict(sum=[3,dict(div=[4,2])])) == 5.0
     assert fn.compute(dict(prod=[dict(sub=[4, 2]), 3])) == 6
     assert fn.compute(json.loads("""{"prod": [{"sub": [4, 2]}, 3]}""")) == 6
+    assert fn.compute(dict(pow=[2, 2, dict(neg=1)])) == 0.25
 
 def test_compute_constants():
     assert fn.compute(2) == 2

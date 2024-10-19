@@ -1,0 +1,12 @@
+**Math** 
+
+Some geeky utilities, for those who are into numbers. 
+
+https://avrae.io/dashboard/workshop/671352fcaa8fe0a8d3fe37bb
+
+* `!math` - No need to grab your calculator. Compute the trajectory of that dragon's flight path straight from avrae 
+* `!convert` - Convert back and forth from various units with a simple syntax. `!convert 30ft` and figure out how much that really is. 
+
+The math alias is a wrapper around the gvar math library. Find out how to use it to make 
+other mathematically correct aliases by reading the docs: 
+https://github.com/countpauper/countpauper/blob/master/avrae/math/math_lib.md

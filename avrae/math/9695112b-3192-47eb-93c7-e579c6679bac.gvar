@@ -7,14 +7,16 @@ except "FeatureNotAvailable":
 
 
 ### Parse
+sub_minus="−"
 ops={
     ',':'tuple',
-    '-':'sub',
+    sub_minus:'sub',
     '+':'sum',
     '/':'div',
     '*':'prod',
     '^':'pow',
     }
+
 
 def parse_lhs_brackets(s):
     "Find matching open close brackets and returns brackets_enclosed, remaining or False, Remaining."
@@ -53,11 +55,11 @@ def simplify(expression):
     return expression
 
 def parse_fn(s):
-    "Parse fn(args) to a dict(fn=args),remaining or False,remaining"
-    fn, args, remaining = parse_rhs_brackets(s)
-    if args is not False and fn.isidentifier():
-        parsed_args = simplify(parse(args))
-        return {fn:parsed_args}, remaining
+    "Parse fn(params) to a dict(fn=params),remaining or False,remaining"
+    fn, params, remaining = parse_rhs_brackets(s)
+    if params is not False and fn.isidentifier():
+        parsed_params = simplify(parse(params))
+        return {fn:parsed_params}, remaining
     else:
         return False, s
 
@@ -66,7 +68,7 @@ def parse_op(s):
         if op in s:
             terms = s.split(op)
             if any(not t for t in terms):
-                err(f"Missing term in s")
+                err(f"Missing term in {s}")
             return {fn:[parse(term) for term in terms]}
     return False
  
@@ -79,6 +81,10 @@ def parse_remaining(c, remaining):
     # default to product
     return dict(prod=parse(c))
 
+def parse_preparsed_float(s):
+    s = s.replace("e","e-").replace("E","e+")
+    return float(s)
+    
 consts=dict(pi=math.pi,e=math.e)
 def parse_value(s):
     if s in consts:
@@ -86,9 +92,57 @@ def parse_value(s):
     if s.isdecimal():
         return int(s)
     else:
-        return float(s)
+        return parse_preparsed_float(s)
+
+
+# To avoid confusion between negating and subtracting, all `-` are replaced with 
+# a similar looking unicode negative sign under the right conditions
+def prescan_negative(s):
+    result=""
+    before_neg=",-+/*^("
+    negative=True # if true next minus would be a negative
+    for c in s:
+        if c=="-" and not negative:
+            result+= sub_minus
+            negative = True
+        else:
+            negative=c in before_neg
+            result += c
+    return result
+
+def find_one_of(s, options, pos=0):
+    found = [s.find(option, pos) for option in options]
+    best = len(s)
+    best_idx = None
+    for idx, f in enumerate(found):
+        if f>0 and f<best:
+            best = f
+            best_idx = idx
+    return best, best_idx
+ 
+# To avoid confusion between floating points with exponents, e.g 1.4e+3 
+# and +/- operators, all + or minus signs after an e or E are replaced
+# with just the e for e- and E for E+ 
+# Right before float conversion they will be converted back 
+def prescan_exponents(s):
+    result=s
+    before_exponent="0123456789."
+    pos = 0
+    while pos>=0:
+        next_pos, option = find_one_of(result, ("e+",'E+', 'e-','E-'), pos)
+        if option is None:
+            return result
+        if result[next_pos-1] in before_exponent:
+            replacement = "Ee"[option // 2]
+            result = result[:next_pos] + replacement + result[next_pos+2:]
+        pos = next_pos+2
+    return result
 
 def parse(s):
+    s=str(s).replace(" ","")
+    s=prescan_exponents(s)
+    s=prescan_negative(s)
+
     if s[0]=='-':
         return dict(neg=parse(s[1:]))
     braced_str, remaining = parse_lhs_brackets(s)
@@ -169,7 +223,7 @@ def compute_fn(fn, arg):
         
 def compute(c):
     if typeof(c)=='SafeDict':
-        result = [compute_fn(fn, args) for fn, args in c.items()]
+        result = [compute_fn(fn, a) for fn, a in c.items()]
         return simplify(result)
     else:
         return c
@@ -177,9 +231,9 @@ def compute(c):
 ### Present 
 reverse_ops = { v:k for k,v in ops.items() }
 
-def present_sequence(fn, args):
+def present_sequence(fn, params):
     operator = reverse_ops[fn]
-    return f"({f' {operator} '.join(args)})"
+    return f"({f' {operator} '.join(params)})"
     
 def present_fn(fn, arg):
     if typeof(arg) == ListType:
