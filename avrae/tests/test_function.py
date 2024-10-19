@@ -1,6 +1,7 @@
 import pytest
 from gvar import import_gvar
 import math
+import json
 
 fn=import_gvar("math/9695112b-3192-47eb-93c7-e579c6679bac.gvar", "fn")
 
@@ -17,7 +18,7 @@ def test_parse_constants():
     assert fn.parse("e+1") == dict(sum=[math.e,1])
 
 def test_parse_operators():
-    assert fn.parse("3*4") == dict(prod=[3,4])
+    assert fn.parse(" 3 * 4") == dict(prod=[3,4])
     assert fn.parse("1+2+0") == dict(sum=[1,2,0])
     assert fn.parse("1+2*3") == dict(sum=[1,dict(prod=[2,3])])
     assert fn.parse("2^3") == dict(pow=[2,3])
@@ -28,9 +29,10 @@ def test_parse_operators():
 
 def test_parse_functions():
     assert fn.parse("log(3)") == dict(log=3)
-    assert fn.parse("sum(1,2,3)") == dict(sum=dict(tuple=[1,2,3]))
+    assert fn.parse("sum(1,2,3)") == dict(sum=[1,2,3])
     assert fn.parse("sin(3.14)+2") == dict(sum=[dict(sin=3.14), 2])
     assert fn.parse("1-cos(1.57)") == dict(sub=[1, dict(cos=1.57)])
+    assert fn.parse("log(10*10, 10)") == dict(log=[dict(prod=[10,10]),10])
 
 def test_parse_brackets():
     assert fn.parse("(3)") == 3
@@ -57,6 +59,8 @@ def test_compute_operators():
                       
 def test_compute_nested():
     assert fn.compute(dict(sum=[3,dict(div=[4,2])])) == 5.0
+    assert fn.compute(dict(prod=[dict(sub=[4, 2]), 3])) == 6
+    assert fn.compute(json.loads("""{"prod": [{"sub": [4, 2]}, 3]}""")) == 6
 
 def test_compute_constants():
     assert fn.compute(2) == 2
@@ -74,6 +78,7 @@ def test_present_constants():
 def test_present_functions():
     assert fn.present(dict(sqrt=5.0)) == "sqrt( 5.0 )"
     assert fn.present(dict(log=[9,3])) == "log( 9, 3 )"
+    assert fn.present(dict(neg=[1])) == "-1"
 
 def test_present_operators():
     assert fn.present(dict(sum=[1,3, -1])) == "1 + 3 + -1"

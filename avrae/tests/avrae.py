@@ -1,4 +1,5 @@
 ### Avrae built in emulation for unit testing gvars
+import math
 
 def typeof(v):
     if type(v)==list:
@@ -10,3 +11,7 @@ def typeof(v):
     
 def err(msg):
     raise RuntimeError(msg)
+
+sqrt = math.sqrt
+ceil = math.ceil
+floor = math.floor

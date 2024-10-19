@@ -1,18 +1,19 @@
 try:
-    import math
     from avrae import * 
+    from gvar import * 
+    math = import_gvar("math/5f72a0b9-57c3-4223-a7a4-272e57b9bfc3.gvar", "math")
 except "FeatureNotAvailable":
     using(math="5f72a0b9-57c3-4223-a7a4-272e57b9bfc3")
 
 
 ### Parse
 ops={
+    ',':'tuple',
     '-':'sub',
     '+':'sum',
     '/':'div',
     '*':'prod',
     '^':'pow',
-    ',':'tuple',
     }
 
 def parse_lhs_brackets(s):
@@ -42,11 +43,21 @@ def parse_rhs_brackets(s):
         brace_str, remaining=parse_lhs_brackets(s[open:])
         return s[:open], f"({brace_str})", remaining
 
+def simplify(expression):
+    if typeof(expression)=='SafeDict':
+        if len(expression)==1 and (t := expression.get("tuple")):
+            return t
+    if typeof(expression) == 'SafeList' or typeof(expression) == 'tuple':
+        if len(expression)==1:
+            return expression[0]
+    return expression
+
 def parse_fn(s):
     "Parse fn(args) to a dict(fn=args),remaining or False,remaining"
     fn, args, remaining = parse_rhs_brackets(s)
     if args is not False and fn.isidentifier():
-        return {fn:parse(args)}, remaining
+        parsed_args = simplify(parse(args))
+        return {fn:parsed_args}, remaining
     else:
         return False, s
 
@@ -120,7 +131,7 @@ def compute_fn(fn, arg):
     elif fn=='sub':
         return cargs[0] - sum(cargs[1:])
     elif fn=='prod':
-        return math.prod(cargs)
+        return math.prod(*cargs)
     elif fn=='div':
         return cargs[0]/sum(cargs[1:]) 
     elif fn=='pow':
@@ -157,7 +168,7 @@ def compute_fn(fn, arg):
 def compute(c):
     if typeof(c)=='SafeDict':
         result = [compute_fn(fn, args) for fn, args in c.items()]
-        return result[0] if len(result)==1 else result
+        return simplify(result)
     else:
         return c
 
@@ -175,6 +186,9 @@ def present_fn(fn, arg):
         pargs = [present_with_brackets(arg)]
     if fn in reverse_ops:
         return present_sequence(fn, pargs)
+    if fn=='neg':
+        return f"-{strip_brackets(str(pargs[0]))}"
+    
     return f"{fn}( {', '.join(strip_brackets(str(a)) for a in pargs)} )"
 
 def strip_brackets(s):
@@ -185,9 +199,7 @@ def strip_brackets(s):
 def present_with_brackets(c):
     if typeof(c)=='SafeDict':
         result =  [present_fn(fn, cargs) for fn, cargs in c.items()]
-        if len(result)==1:
-            result = result[0]
-        return result;
+        return simplify(result);
     else:
         return str(c)
 

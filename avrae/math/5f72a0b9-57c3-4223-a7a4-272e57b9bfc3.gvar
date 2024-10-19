@@ -2,7 +2,6 @@
 
 ### For unit testing, import dependencies
 try:
-    from math import *
     from avrae import * 
 except "FeatureNotAvailable":
     pass
@@ -15,7 +14,10 @@ nan = float('nan')
 _rad2deg = 180/pi
 
 def isnan(x):
-    return x is nan
+    return not (x == x)
+
+def isinf(x):
+    return x == inf
 
 def isclose(a,b, rel_tol=1e-9, abs_tol=0):
     if rel_tol < 0 or abs_tol < 0:
@@ -68,6 +70,8 @@ def log(x, base=None):
     if x <= 0:
         return nan
     if base is None:
+        if isinf(x):
+            return inf
         # __TaylorLn converges for x<1
         # because log(a*b) = log(a)+log(b) bigger x are split 
         # into their mantissa and base 10 exponent
@@ -87,6 +91,8 @@ def log(x, base=None):
 def factorial(n):
     if n<=1:
         return 1
+    if isinf(n):
+        return inf
     n = int(floor(n))
     return prod(*range(2,n+1))
 
@@ -95,6 +101,9 @@ def comb(n, k):
         err("binomial coefficient not defined for negative input")
     if k > n:
         return 0
+    if isinf(n):
+        return inf
+    
     # Pascal's triangle method may require some memory and is O(nk)
     # But straight up n! / k! * (n-k)! has numeric issues for larger n
     C=list()
@@ -113,9 +122,10 @@ def degrees(rad):
 
 def radians(deg):
     return deg / _rad2deg
-
         
 def _NormalizeRad(r):
+    if isinf(r) or isinf(-r):
+        err("Domain error: infinity radians.")
     extra = floor(r/tau) if r > 0 else ceil(r/tau)
     return r - extra * tau
 
@@ -138,7 +148,6 @@ def __TaylorSin(x):
 
 def sin(x):
     return __TaylorSin(_NormalizeRad(x))
-
 
 def __TaylorCos(x):
     if x==0:

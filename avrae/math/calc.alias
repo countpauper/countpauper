@@ -4,9 +4,10 @@ input="""&*&"""
 
 input = input.replace(" ","")
 computation = function.parse(input)
-# return f"echo `{dump_json(computation)}`"
 result = function.compute(computation)
-
-return f"echo {function.present(computation)} = {result}"
+if ctx.alias=='bcalc':
+    return f"echo `{dump_json(computation)}` : {function.present(computation)} = {result}"
+else:
+    return f"echo {function.present(computation)} = {result}"
 
 </drac2>
