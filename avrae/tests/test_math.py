@@ -11,6 +11,8 @@ def test_isinf():
     assert not math.isinf(1)
     assert math.isinf(math.inf)
     assert not math.isinf(-math.inf)
+    assert math.isfinite(0)
+    assert not math.isfinite(-math.inf)
     
 def test_isclose():
     assert math.isclose(1, 1)
@@ -58,7 +60,12 @@ def test_comb():
     assert math.comb(math.inf, 3) == math.inf
     assert math.comb(100, math.inf) == 0
 
-    
+def test_perm():
+    assert math.perm(3) == 6
+    assert math.perm(3, 1) == 3
+    assert math.perm(4, 2) == 12
+    assert math.perm(10, 5) == 30240
+
 def test_ln():
     assert math.isnan(math.log(0))
     assert math.isnan(math.log(-1))
@@ -144,3 +151,26 @@ def test_hypot():
     assert math.hypot() == 0
     assert math.hypot(2,0) == 2
     assert math.hypot(3,4) == 5
+
+def test_modf():
+    assert math.modf(0) == (0, 0)
+    assert math.modf(2) == (0, 2)
+    assert math.modf(2.3) == (pytest.approx(0.3), 2.0)
+    assert math.modf(-2.4) == (pytest.approx(-0.4), -2.0)
+
+def test_gcd():
+    assert math.gcd() == 0
+    assert math.gcd(-4) == -4
+    assert math.gcd(-4, 2) == 2 
+    assert math.gcd(8, 8) == 8
+    assert math.gcd(4, 2) == 2
+    assert math.gcd(34,1649) == 17
+    assert math.gcd(194, 1649) == 97
+    assert math.gcd(100, 20, 5) == 5
+
+def test_lcm():
+    assert math.lcm() == 1
+    assert math.lcm(3) == 3
+    assert math.lcm(15,10) == 30
+    assert math.lcm(-21, 6) == 42
+

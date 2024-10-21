@@ -1,12 +1,14 @@
 **Math** 
 
-Some geeky utilities, for those who are into numbers. 
+Some geeky utilities, for those who are into D&D for the numbers. 
 
 https://avrae.io/dashboard/workshop/671352fcaa8fe0a8d3fe37bb
 
-* `!math` - No need to grab your calculator. Compute the trajectory of that dragon's flight path straight from avrae 
-* `!convert` - Convert back and forth from various units with a simple syntax. `!convert 30ft` and figure out how much that really is. 
+:mortar_board:  `!math` - No need to grab your calculator. Compute the trajectory of that dragon's flight path straight from Avrae. Simple math, functions, trigonometry and even some statistics and geometry. For instance to compute the distance 4  grids down and target 15ft up in the air `!math norm(20,0,15)`
+:straight_ruler:  `!convert` - Convert back and forth from various units with a simple syntax. `!convert 120ft` and figure out how much that really is. Supports distance, weight, time, volume, temperature and angles.
 
-The math alias is a wrapper around the gvar math library. Find out how to use it to make 
-other mathematically correct aliases by reading the docs: 
+**Math Library**
+
+The `!math` alias is a wrapper around the gvar math library. Find out how to use it to make 
+other mathematically sound aliases by reading the docs: 
 https://github.com/countpauper/countpauper/blob/master/avrae/math/math_lib.md

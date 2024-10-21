@@ -11,14 +11,17 @@ Compute simple equations and functions.
 **Supported Functions** 
 * `sqrt(x)` - square root
 * `log(x)` - natural logarithm
-* `log(x, y)` - base-*y* logarithm of x
-* `sin(x)` - sine 
-* `cos(x)` - cosine 
-* `tan(x)` - tangent 
+* `log(x, y)` - base-`y` logarithm of `x`
+* `sin(x)` - sine
+* `cos(x)` - cosine
+* `tan(x)` - tangent
 * `atan(x)` - arctangent
 * `atan2(y,x)` - Compute angle of vector.
 * `factorial(n)` - n!
-* `comb(n, k)` - Binomial coefficient n over k
+* `comb(n, k)` - Binomial coefficient `n` over `k` is the numbers of ways to choose `k` from `n` items where order doesn't matter.
+* `perm(n, k)` - Permutations, ways to choose `k` from `n` items where the order matters.
+* `gcd(*args)` - Greatest common divisor of all `args`. 
+* `lcm(*args)` - Lowest common multiple of all `args`.
 * `rad(degrees)` - Convert degrees to radians
 * `deg(radians)` - Convert radians to degrees
 * `norm(x[, ...])` - Compute the length of a vector

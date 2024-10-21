@@ -47,15 +47,18 @@ Most functions have the same interface with the following exceptions:
 The following constants are defined: `pi`, `tau`, `e`, `inf` and `nan`.
 
 ## isnan
-`isnan(x): bool` - determine if *x* is [not a number](https://en.wikipedia.org/wiki/NaN). 
+`isnan(x): bool` - determine if `x` is [not a number](https://en.wikipedia.org/wiki/NaN). 
 Most functions will return NaN if the input is NaN. Some may return NaN also for input that leads to invalid results e.g. 0/0 or inf/inf.
 
 *example:* `math.isnan(math.nan) == True`
 
 ## isinf 
-`isinf(x): bool` - determine if *x* is infinite. Equivallent to `x == float('inf)`. This will return False for negative infinity. Use `ifinf(-x)` to determine that.
+`isinf(x): bool` - determine if `x` is infinite. Equivallent to `x == float('inf)`. This will return False for negative infinity. Use `ifinf(-x)` to determine that.
 
 *example:* `math.isinf(math.inf) == True`
+
+## isfinite 
+`isfinite(x): bool` - determine if `x` if finite. This will return False for positive *and* negative ifninity.
 
 ## isclose 
 `isclose(a,b, rel_tol=1e-9, abs_tol=0): bool` - Determine if `a` and `b` are nearly the same. Due to floating point precision and cumulative numerical errors or polynomial approximation some results may not be exactly as expected. 
@@ -92,9 +95,26 @@ The computation complexity of this function is O(n) and beware that for relative
 ## comb
 `comb(n, k): int` - Compute the [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient) n over k. 
 
-The computation complexity of this function is O(n*k).
+The computational complexity of this function is O(n*k).
 
 *example:* `math.comb(4,2) == 6`
+
+## perm
+`perm(n, k = None): int` - Compute the number of permutations of k items to choose from n. 
+
+The computational complexity of this function is O(n*k + k)
+
+*example:* `math.perm(4, 2) == 12`
+
+## gcd 
+`gcd(*args)` - Compute the greatest common divisor of all arguments. Defaults to 0 for no arguments. 
+
+The computational complexity of this function is O(n log2 v) where v is the smallest number in args and n is the number of arguments.
+
+## lcm 
+`lcm(*args)` - Compute the lowest common multiple of all arguments. Defaults to 1 for no arguments.
+
+The computational complexity is O(n + n log2 v).
 
 ## degrees
 `degrees(rad): float` - Convert radians to degrees
@@ -138,6 +158,9 @@ For all but the trivial inputs this will use `atan` and the same considerations 
 
 *example:* `dist((0,0,1), (0,1,0)) == sqrt(2)`
 
+## modf(x)
+`modf(x): (remainder, integer)` - Split a rational number `x` into its remainder and integral part. Both are signed the same as `x`.
+  
 # Development
 
 ## TODO 
@@ -145,12 +168,10 @@ The following functions are not implemented yet, either because they are easily 
 
 Roughly in order of priority:
 
-* Statistics functions: `perm`. Could be useful for dice statistics.
-* Multiples and divisor: `gcd`, `lcm`. Could be useful for dividing loot or something.
 * Trigonometric functions: `acos`, `asin` - Can be computed from atan if really needed. 
-* Power and logarithmic functions: `cbrt`, `exp`, `exp2`, `expm1`, `log1p`, `log2`, `log10` - These can be emulated with the `**` operator or the `log` function, although likely with worse accuracy or performance than possible.
+* Power and logarithmic functions: `cbrt`, `exp`, `exp2`, `expm1`, `log1p`, `log2`, `log10` - These can be emulated with the `**` operator or the `log` function, although likely with worse accuracy or performance than a dedicated algorithm.
 * Numeric functions: `fma`, `fsum`, `sumprod`,`isqrt`, `remainder`, `fmod` - Easily badly implemented if needed.
-* Floating point functions: `copysign`, `fmod`,  `frexp`, `ldexp`,   `modf`, `isfinite`, `isqrt`, `nextafter`, `trunc`, `ulp` - If your messing with floating points at this level you probably did something wrong. 
+* Floating point functions: `copysign`,  `frexp`, `ldexp`, `isqrt`, `nextafter`, `trunc`, `ulp` - If you're messing with floating points at this level you probably did something wrong.
 * Special functions: All of them. Maybe be useful for advanced statistics. 
 * Hyperbolic functions: All of them. Could be useful for computing magic missile trajectories ;) 
 

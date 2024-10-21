@@ -216,6 +216,12 @@ def compute_fn(fn, arg):
         return math.factorial(*cargs)
     elif fn=="comb":
         return math.comb(cargs[0], cargs[1])
+    elif fn=='perm':
+        return math.perm(cargs[0], cargs[1])
+    elif fn=='gcd':
+        return math.gcd(*cargs)
+    elif fn=='lcm':
+        return math.lcm(*cargs)
     elif fn=='norm':
         return math.hypot(*cargs)
     else:

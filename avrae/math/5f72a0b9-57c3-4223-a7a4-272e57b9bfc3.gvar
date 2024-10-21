@@ -21,14 +21,17 @@ def isnan(x):
 def isinf(x):
     return x == inf
 
-def isclose(a,b, rel_tol=1e-9, abs_tol=0):
+def isfinite(x):
+    return not isinf(abs(x))
+
+def isclose(arga, argb, rel_tol=1e-9, abs_tol=0):
     if rel_tol < 0 or abs_tol < 0:
         return False
    
-    if a==b:
+    if arga==argb:
         return True
-    diff = abs(a-b)
-    return diff <= abs(rel_tol * (a + b) / 2) or diff < abs_tol
+    diff = abs(arga-argb)
+    return diff <= abs(rel_tol * (arga + argb) / 2) or diff < abs_tol
       
 def squareroot(x):
     if x<0:
@@ -119,6 +122,42 @@ def comb(n, k):
         C.append(Ci)
     return C[n][k];
 
+def perm(n, k=None):
+    if k is None:
+        return factorial(n)
+    else:
+        return comb(n,k) * factorial(k)
+
+def modf(v):
+    n = floor(v) if v>=0 else ceil(v)
+    return (v - n, n)
+
+#  https://en.wikipedia.org/wiki/Euclidean_algorithm
+def _GcdEuclid(arg_a, arg_b):
+    while arg_b:
+        arg_a, arg_b = arg_b, arg_a % arg_b
+    return arg_a
+
+def gcd(*numbers):
+    if not numbers:
+        return 0
+    if len(numbers) == 1:
+        return numbers[0]
+    numbers = [abs(n) for n in numbers]
+    numbers.sort() 
+    remaining=numbers[2:]
+    result =_GcdEuclid(numbers[0], numbers[1])
+    while result!=1 and remaining:
+        result = _GcdEuclid(result, remaining.pop(0))
+    return result
+
+def lcm(*numbers):
+    if not numbers:
+        return 1
+    if len(numbers) == 1:
+        return numbers[0]
+    return int(abs((numbers[0]/gcd(*numbers))) * prod(*numbers[1:]))
+ 
 def degrees(rad):
     return rad * _rad2deg
 
