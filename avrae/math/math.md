@@ -17,6 +17,8 @@ Compute simple equations and functions.
 * `tan(x)` - tangent
 * `atan(x)` - arctangent
 * `atan2(y,x)` - Compute angle of vector.
+* `asin(x)` - arcsine
+* `acos(x)` - arccosine
 * `factorial(n)` - n!
 * `comb(n, k)` - Binomial coefficient `n` over `k` is the numbers of ways to choose `k` from `n` items where order doesn't matter.
 * `perm(n, k)` - Permutations, ways to choose `k` from `n` items where the order matters.
@@ -27,5 +29,5 @@ Compute simple equations and functions.
 * `norm(x[, ...])` - Compute the length of a vector
 
 **Constants**
-* `pi`, `e`, `inf`
+* `pi`, `e`, `inf`, `π`
 * integer and floating point numbers. e.g `1`, `0.1`, `1.0e-1`.

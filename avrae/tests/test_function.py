@@ -14,7 +14,8 @@ def test_parse_numeric():
 def test_parse_constants():
     assert fn.parse("pi") == math.pi
     assert fn.parse("e+1") == dict(sum=[math.e,1])
-
+    assert fn.parse("π") == math.pi
+    
 def test_parse_operators():
     assert fn.parse(" 3 * 4") == dict(prod=[3, 4])
     assert fn.parse("1+2+0") == dict(sum=[1, 2, 0])

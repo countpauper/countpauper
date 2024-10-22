@@ -13,7 +13,7 @@ def test_isinf():
     assert not math.isinf(-math.inf)
     assert math.isfinite(0)
     assert not math.isfinite(-math.inf)
-    
+
 def test_isclose():
     assert math.isclose(1, 1)
     assert math.isclose(1, 1.0000000000001)
@@ -126,6 +126,7 @@ def test_atan():
     assert math.isclose(math.atan(-4), -1.3258176636680326, rel_tol=1e-9)
     assert math.isclose(math.atan(10e9), math.pi/2, rel_tol=1e-9)
     assert math.atan(-math.inf) == -math.pi/2
+    assert math.atan(1e-4) == pytest.approx(9.999999966666667e-05, abs=1e-6)
     
 def test_atan2():
     assert math.atan2(0,  1) == 0
@@ -140,6 +141,25 @@ def test_atan2():
     assert math.isclose(math.atan2(12, -34), 2.8023000391357487)
     assert math.atan2(0, math.inf) == 0
 
+def test_asin():
+    assert math.asin(0) == 0
+    assert math.asin(1) == math.pi/2
+    assert math.asin(-1) == -math.pi/2
+    assert math.asin(0.9999) == pytest.approx(1.5566540733173846)
+    assert math.asin(-0.9999) == pytest.approx(-1.5566540733173846)
+    assert math.asin(math.sqrt(2)*0.5) == pytest.approx(math.pi/4)
+    assert math.isnan(math.asin(2))
+    assert math.isnan(math.asin(-2))
+
+def test_asos():
+    assert math.acos(1) == 0.0
+    assert math.acos(0.9999) == pytest.approx(0.014142253477512098)
+    assert math.acos(-0.9999) == pytest.approx(3.127450400112281)
+    assert math.acos(-1) == math.pi
+    assert math.acos(0) == math.pi/2
+    assert math.isnan(math.acos(2))
+    assert math.isnan(math.acos(-2))
+    
 def test_dist():
     assert math.dist((),()) == 0
     assert math.dist((0,),(0,)) == 0
