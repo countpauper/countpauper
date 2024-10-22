@@ -136,17 +136,29 @@ The computational complexity is O(n + n log2 v).
 `tan(x): float` - Approximate the tangent of *x* (rad).
 
 ## atan
-`atan(x): float` - Compute the arctangent of *x*. 
+`atan(x): float` - Compute the arctangent of `x`. 
 
 This approximation converges slowly when abs(x) is closer to 1. For that reason the number of instructions peaks around those values and accuracy may fluctuate over the input range.
 
-## atan
+## atan2
 `atan2(y,x): float` - Compute the angle of the vector (x,y). 
 This assumes a right handed coordinate system with the positive x-axis being angle 0.
 
 For all but the trivial inputs this will use `atan` and the same considerations for performance and accuracy applies. 
 
 *example:* `atan2(1,0) == pi/2`
+
+## asin
+`asin(x): float` - Compute arcsine of `x`.
+
+This is based on the `atan` implementation so the same performance and accuracy limitations apply, except the most iterations are needed near x = ±π/2.
+Additionally the result may be less accurate near 1.0 and -1.0
+
+## acos 
+`acos(x): float` - Compute arccosine of `x`.
+
+This is based on the `atan` implementation so the same performance and accuracy limitations apply, except most iterations are needed near x=0
+Additionally the result may be less accurate near -1.0.
 
 ## hypot
 `hypot(*coordinates): float` - Compute the norm or length of the vector.
@@ -168,14 +180,13 @@ The following functions are not implemented yet, either because they are easily 
 
 Roughly in order of priority:
 
-* Trigonometric functions: `acos`, `asin` - Can be computed from atan if really needed. 
 * Power and logarithmic functions: `cbrt`, `exp`, `exp2`, `expm1`, `log1p`, `log2`, `log10` - These can be emulated with the `**` operator or the `log` function, although likely with worse accuracy or performance than a dedicated algorithm.
 * Numeric functions: `fma`, `fsum`, `sumprod`,`isqrt`, `remainder`, `fmod` - Easily badly implemented if needed.
 * Floating point functions: `copysign`,  `frexp`, `ldexp`, `isqrt`, `nextafter`, `trunc`, `ulp` - If you're messing with floating points at this level you probably did something wrong.
 * Special functions: All of them. Maybe be useful for advanced statistics. 
 * Hyperbolic functions: All of them. Could be useful for computing magic missile trajectories ;) 
 
-## PRs 
+## PRs
 
 If you want to contribute a PR, be aware that the math functions (and calc alias) are unit tested  
 and modifications/additions must also be. The unit tests are developed from VSCode with pytest and a virtual environment with 

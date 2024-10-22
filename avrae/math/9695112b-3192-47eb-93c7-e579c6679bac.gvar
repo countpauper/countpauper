@@ -85,7 +85,7 @@ def parse_preparsed_float(s):
     s = s.replace("e","e-").replace("E","e+")
     return float(s)
     
-consts=dict(pi=math.pi,e=math.e)
+consts=dict(pi=math.pi,e=math.e,π=math.pi)
 def parse_value(s):
     if s in consts:
         return consts[s]
@@ -212,6 +212,10 @@ def compute_fn(fn, arg):
         return math.atan(*cargs)
     elif fn=="atan2":
         return math.atan2(*cargs)
+    elif fn=='asin':
+        return math.asin(cargs[0])
+    elif fn=='acos':
+        return math.acos(cargs[0])
     elif fn=="factorial":
         return math.factorial(*cargs)
     elif fn=="comb":
