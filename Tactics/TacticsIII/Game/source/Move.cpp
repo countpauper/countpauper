@@ -11,18 +11,16 @@
 namespace Game
 {
 
-std::vector<Engine::Position> Approach(const HeightMap& map, Engine::Position center, unsigned distance)
+std::vector<Engine::Position> Approach(const World& world,  Actor& actor, Engine::Position center, unsigned distance)
 {
-    if (distance==0)
-        return {center};
-
     // Not the most efficient algorithm but with a small map it should be fine
     Engine::IntBox box(center);
     box.Grow(distance);
     std::vector<Engine::Position> result;
     for(auto p : box)
     {
-        if (std::round(p.Distance(center) - distance) == 0)
+        if ((std::round(p.Distance(center) - distance) == 0) &&
+            (!world.Obstacle(p, &actor)))
         {
             result.push_back(p);
         }
@@ -60,7 +58,7 @@ Move::Move(World& world, Actor& actor, Engine::Position destination, unsigned di
         }
         return result;
     };
-    std::vector destinations = Approach(map, destination, distance);
+    std::vector destinations = Approach(world, actor, destination, distance);
     path = Engine::Astar::Plan<Engine::Position, float>(actor.Position(), destinations, cost, neighbours);
 }
 
@@ -116,7 +114,7 @@ std::vector<Delta> Move::Execute(std::ostream& log) const
     Delta dActor(actor);
     if (ap)
     {
-        dActor.Move(world.GetMap(), *Reachable());
+        dActor.Move(world, *Reachable());
         dActor.GetCounts().Cost(Stat::ap, ap, true);
         log << actor.GetAppearance().Name() << " moves to " << *Reachable() << std::endl;
     }

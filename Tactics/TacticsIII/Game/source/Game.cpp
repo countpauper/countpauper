@@ -13,12 +13,12 @@
 namespace Game
 {
 
-Avatars DeserializeAvatars(const HeightMap& map, const Races& races, const ItemDatabase& items, const json& data)
+Avatars DeserializeAvatars(const World& world, const Races& races, const ItemDatabase& items, const json& data)
 {
     Avatars result;
     for(auto avatarData : data)
     {
-        result.emplace_back(std::move(std::make_unique<Avatar>(map, races, items, avatarData)));
+        result.emplace_back(std::move(std::make_unique<Avatar>(world, races, items, avatarData)));
     }
     return std::move(result);
 }
@@ -32,7 +32,7 @@ Game::Game(Engine::Scene& scene, const json& data) :
     turn(Engine::get_value_or<unsigned>(data, "turn", 0))
 {
     Creature::definition.Parse(Engine::LoadJson("data/creature.json"));
-    avatars = DeserializeAvatars(map, races, items, Engine::get_value_or(data, "avatars", json::array()));
+    avatars = DeserializeAvatars(*this, races, items, Engine::get_value_or(data, "avatars", json::array()));
 
     Engine::Application::Get().bus.Subscribe(*this,
     {

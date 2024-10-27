@@ -24,7 +24,7 @@ public:
 
     void Apply();
 
-    void Move(const class HeightMap& map, Engine::Position destination) override;
+    void Move(const class World& world, Engine::Position destination) override;
     Engine::Position Position() const override;
 
 
@@ -55,7 +55,7 @@ public:
 
 public:
     Actor* parent;
-    const class HeightMap* map;
+    const class World* world;
     Engine::Position position;
     std::map<Stat::Id, int> counterDelta;
 };

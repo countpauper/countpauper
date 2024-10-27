@@ -17,7 +17,7 @@ class Avatar :
     public Engine::Passenger
 {
 public:
-    Avatar(const HeightMap& map, const Races& races, const class ItemDatabase& items, const json& data);
+    Avatar(const World& world, const Races& races, const class ItemDatabase& items, const json& data);
     Avatar(std::string_view name, const Race& race);
     std::string_view Name() const override;
     std::string Sheet() const;
@@ -25,7 +25,7 @@ public:
     Engine::Coordinate GetCoordinate() const override;
     Engine::Quaternion GetOrientation() const override;
     void Select(bool on);
-    void Move(const class HeightMap& map, Engine::Position destination) override;
+    void Move(const World& world, Engine::Position destination) override;
 
     const Engine::Object& GetAppearance() const override;
     Engine::Position Position() const override;

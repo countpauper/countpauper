@@ -7,17 +7,18 @@
 #include "File/Json.h"
 #include "Geometry/Angles.h"
 #include "Game/Map.h"
+#include "Game/World.h"
 
 namespace Game
 {
 
-Avatar::Avatar(const HeightMap& map,  const Races& races, const ItemDatabase& items, const json& data) :
+Avatar::Avatar(const World& world, const Races& races, const ItemDatabase& items, const json& data) :
     Scenery(mesh),
     creature(races.Get(Engine::must_get<std::string_view>(data, "race")), items, data)
 {
     if (auto posData = Engine::try_get<json>(data, "position"))
     {
-        Move(map, Engine::Position((*posData)[0], (*posData)[1], (*posData)[2]));
+        Move(world, Engine::Position((*posData)[0], (*posData)[1], (*posData)[2]));
     }
     GenerateMesh();
     SubscribeBus();
@@ -76,9 +77,9 @@ void Avatar::Select(bool on)
 }
 
 
-void Avatar::Move(const HeightMap& map, Engine::Position destination)
+void Avatar::Move(const World& world, Engine::Position destination)
 {
-    coordinate = map.GroundCoord(creature.SetPosition(destination));
+    coordinate = world.GetMap().GroundCoord(creature.SetPosition(destination));
 }
 
 

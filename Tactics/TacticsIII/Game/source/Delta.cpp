@@ -4,13 +4,13 @@ namespace Game
 {
 Delta::Delta(Actor& parent) :
     parent(&parent),
-    map(nullptr)
+    world(nullptr)
 {
 }
 
 Delta::Delta(const Delta& other) :
     parent(other.parent),
-    map(other.map),
+    world(other.world),
     position(other.position),
     counterDelta(other.counterDelta)
 {
@@ -20,7 +20,7 @@ Delta& Delta::operator=(const Delta& other)
 {
     parent = other.parent;
     position = other.position;
-    map = other.map;
+    world = other.world;
     counterDelta = other.counterDelta;
     return *this;
 }
@@ -32,8 +32,8 @@ const Engine::Object& Delta::GetAppearance() const
 
 void Delta::Apply()
 {
-    if (map)
-        parent->Move(*map, position);
+    if (world)
+        parent->Move(*world, position);
     for(const auto& dCounter : counterDelta)
         parent->GetCounts().Cost(dCounter.first, -dCounter.second, true);
 
@@ -59,9 +59,9 @@ Engine::Quaternion Delta::GetOrientation() const
 }
 
 
-void Delta::Move(const class HeightMap& map, Engine::Position destination)
+void Delta::Move(const class World& world, Engine::Position destination)
 {
-    this->map = &map;
+    this->world = &world;
     position = destination; // TODO: could be a Vector instead
 }
 
