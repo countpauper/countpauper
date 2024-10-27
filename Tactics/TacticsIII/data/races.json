@@ -5,28 +5,32 @@
                 "wisdom": 1,
                 "constitution": 1,
                 "hands": 0
-            }
+            },
+            "size":[1,1,1]
         },
         "elf": {
             "stats": {
                 "wisdom": 2,
                 "agility": 1,
                 "hands": 0
-            }
+            },
+            "size":[1,1,2]
         },
         "troll": {
             "stats": {
                 "strength": 1,
                 "constitution": 2,
                 "hands": 0
-            }
+            },
+            "size":[1,1,3]
         },
         "gnome": {
             "stats": {
                 "intelligence": 2,
                 "agility": 1,
                 "hands": 0
-            }
+            },
+            "size":[1,1,1]
         },
         "human": {
             "stats": {
@@ -34,6 +38,7 @@
                 "intelligence": 1,
                 "agility": 1,
                 "hands": 0
-            }
+            },
+            "size":[1,1,2]
         }
     }

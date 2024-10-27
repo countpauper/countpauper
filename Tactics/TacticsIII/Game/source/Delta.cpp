@@ -70,6 +70,13 @@ Engine::Position Delta::Position() const
     return position;
 }
 
+
+Engine::Size Delta::Size() const
+{
+    assert(false); // TODO: local storage that overrides when shape changing
+    return parent->Size();
+}
+
 Statted& Delta::GetStats()
 {
     return *this;

@@ -4,6 +4,7 @@
 #include <string>
 #include <initializer_list>
 #include <nlohmann/json.hpp>
+#include "Geometry/Size.h"
 
 namespace Game
 {
@@ -16,9 +17,10 @@ public:
     std::string_view Name() const;
     Computation Bonus(Stat::Id id) const override;
     const class Item& GetUnarmed() const;
-
+    Engine::Size GetSize() const;
 private:
     std::string name;
+    Engine::Size size;
     std::map<Stat::Id, int> boni;
 };
 

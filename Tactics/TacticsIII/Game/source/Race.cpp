@@ -6,7 +6,8 @@ namespace Game
 
 Race::Race(std::string_view name, std::initializer_list<std::pair<const Stat::Id, int>> boni) :
     name(name),
-    boni(boni)
+    boni(boni),
+    size(1)
 {
 }
 
@@ -14,6 +15,19 @@ Race::Race(const std::string_view name, const nlohmann::json& raceData) :
     Race(name)
 {
     boni = Stat::Deserialize(Engine::get_value_or<json>(raceData, "stats", json()));
+    auto sizeVector = Engine::get_value_or<std::vector<int>>(raceData, "size", {});
+    if (sizeVector.size()>=3)
+    {
+        size = Engine::Size(sizeVector[0], sizeVector[1], sizeVector[2]);
+    }
+    else if (sizeVector.size()==0)
+    {
+        size = Engine::Size(1);
+    }
+    else
+    {
+        size = Engine::Size(sizeVector[0]);
+    }
 }
 
 std::string_view Race::Name() const
@@ -35,6 +49,12 @@ const Item& Race::GetUnarmed() const
     static Unarmed unarmed;
     return unarmed;
 }
+
+Engine::Size Race::GetSize() const
+{
+    return size;
+}
+
 
 Races::Races(const json& data)
 {

@@ -41,6 +41,7 @@ public:
     const Equipment& Equip(const Equipment& equipment) override;
     Computation Bonus(Stat::Id id) const override;
     Engine::Position GetPosition() const;
+    Engine::Size GetSize() const;
     const Engine::Position& SetPosition(Engine::Position pos);
     const Race& GetRace() const;
     json Serialize() const;

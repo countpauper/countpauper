@@ -44,6 +44,11 @@ Engine::Position Creature::GetPosition() const
     return position;
 }
 
+Engine::Size Creature::GetSize() const
+{
+    return race.GetSize();
+}
+
 const Engine::Position& Creature::SetPosition(Engine::Position pos)
 {
     return position = pos;

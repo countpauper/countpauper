@@ -29,6 +29,7 @@ public:
 
     const Engine::Object& GetAppearance() const override;
     Engine::Position Position() const override;
+    Engine::Size Size() const override;
     Statted& GetStats() override;
     const Statted& GetStats() const override;
     Counted& GetCounts() override;
