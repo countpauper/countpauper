@@ -1,4 +1,5 @@
 #include "Game/Condition.h"
+#include "Utility/Singleton.h"
 
 namespace Game
 {
@@ -13,7 +14,6 @@ Condition::Condition(std::string_view name, const json& data) :
 {
     bonus = Stat::Deserialize(data);
 }
-
 
 std::string_view Condition::Name() const
 {
@@ -53,6 +53,8 @@ std::unique_ptr<Condition> Condition::Deserialize(std::string_view name, const j
 }
 
 
+
+
 KO::KO() :
     Condition("KO")
 {
@@ -64,6 +66,24 @@ Downed::Downed() :
 {
     bonus[Stat::speed] = -2;
     bonus[Stat::dodge] = -5;
+}
+
+
+Engine::Singleton<KO> ko;
+Engine::Singleton<Downed> downed;
+
+std::set<const Condition*> Condition::all{&*ko, &*downed};
+
+const Condition* Condition::Find(std::string_view name)
+{
+    for(const auto* condition : all)
+    {
+        if (condition->Name() == name)
+        {
+            return condition;
+        }
+    }
+    return nullptr;
 }
 
 }

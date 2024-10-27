@@ -3,6 +3,7 @@
 #include "Game/Condition.h"
 #include "Game/Boni.h"
 #include "File/Json.h"
+#include "Utility/Singleton.h"
 
 namespace Game
 {
@@ -17,26 +18,31 @@ public:
     template<class CT>
     bool Is() const
     {
-        return std::find_if(conditions.begin(), conditions.end(), [](const std::unique_ptr<Condition>& c)
+        return std::find_if(conditions.begin(), conditions.end(), [](const decltype(conditions)::value_type& c)
         {
-            return dynamic_cast<const CT*>(c.get()) != nullptr;
+            return dynamic_cast<const CT*>(c.first) != nullptr;
         }) != conditions.end();
     }
 
-    template<class CT>
-    void Apply()
+    void Apply(const Condition& condition, unsigned level = 1)
     {
-        // TODO: power level that replaces lower
-        if (!Is<CT>())
+        auto [it, inserted] = conditions.insert(std::make_pair(&condition,level));
+        if (!inserted)
         {
-            conditions.emplace_back(std::make_unique<CT>());
+            it->second = std::max(level, it->second);
         }
     }
+    template<class CT>
+    void Apply(unsigned level = 1)
+    {
+        Apply(*Engine::Singleton<CT>(), level);
+    }
+
     Computation Bonus(Stat::Id id) const override;
     std::string Description() const;
     json Serialize() const;
 private:
-    std::vector<std::unique_ptr<Condition>> conditions;
+    std::map<const Condition*, unsigned> conditions;
 };
 
 }

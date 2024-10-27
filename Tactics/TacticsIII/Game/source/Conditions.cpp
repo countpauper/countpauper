@@ -8,7 +8,7 @@ Conditions::Conditions(const json& data)
 {
     for(const auto& el: data.items())
     {
-        conditions.emplace_back(Condition::Deserialize(el.key(), el.value()));
+        conditions.emplace(std::make_pair(Condition::Find(el.key()), el.value()));
     }
 }
 
@@ -18,7 +18,9 @@ Computation Conditions::Bonus(Stat::Id id) const
     Computation result;
     for(const auto& c : conditions)
     {
-        result += c->Bonus(id);
+        // NB: Powers is not factored in here. Some conditions (spell effects)
+        // will downgrade when their power is diminished (by time/healing)
+        result += c.first->Bonus(id);
     }
     return result;
 }
@@ -29,7 +31,7 @@ std::string Conditions::Description() const
     std::transform(conditions.begin(), conditions.end(), std::back_insert_iterator(condition_names),
     [](const decltype(conditions)::value_type&  c)
     {
-        return c->Name();
+        return c.first->Name();
     });
     return Engine::Join(condition_names, ", ");
 }
@@ -41,8 +43,7 @@ json Conditions::Serialize() const
 
     for(const auto& condition: conditions)
     {
-        const auto& [key, value] = condition->Serialize();
-        result[key] = value;
+        result[condition.first->Name()] = condition.second;
     }
     return result;
 }

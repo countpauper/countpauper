@@ -23,7 +23,7 @@ public:
 
     static T& Get()
     {
-        return Construct(true);
+        return Construct();
     }
 
     static void Reset()
