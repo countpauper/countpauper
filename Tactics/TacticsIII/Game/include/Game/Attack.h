@@ -7,7 +7,7 @@ namespace Game
 class Attack : public Action
 {
 public:
-    Attack(Actor& actor, Actor& target);
+    Attack(World& world, Actor& actor, Actor& target);
     void Render() const override;
     Requirements CanDo() const override;
     std::vector<Delta> Execute(std::ostream& log) const override;

@@ -20,7 +20,7 @@ TEST(Action, move)
 
     NiceMock<MockWorld> world;
     EXPECT_CALL(world.map, GetBounds()).WillRepeatedly(Return(Engine::IntBox(Engine::Size(2,2,2))));
-    Move action(actor, world, Engine::Position(1,1,0));
+    Move action(world, actor, Engine::Position(1,1,0));
     EXPECT_EQ(action.Description(), "Move (1, 1, 0)");
     EXPECT_EQ(action.AP(), 1);
     EXPECT_TRUE(action.CanDo());
@@ -42,7 +42,7 @@ TEST(Action, cant_move)
     EXPECT_CALL(actor.counts, Available(Stat::ap)).WillRepeatedly(Return(1));
     NiceMock<MockWorld> world;
 
-    Move action(actor, world, Engine::Position(1,1,0));
+    Move action(world, actor, Engine::Position(1,1,0));
     EXPECT_FALSE(action.CanDo());
     std::stringstream log;
     auto deltas = action.Execute(log);
@@ -52,9 +52,10 @@ TEST(Action, cant_move)
 
 TEST(Action, attack)
 {
+    NiceMock<MockWorld> world;
     MockActor attacker("a");
     MockActor target("t");
-    Attack action(attacker, target);
+    Attack action(world, attacker, target);
     EXPECT_EQ(action.Description(), "Attack t");
     EXPECT_EQ(action.AP(), 1);
 
@@ -93,6 +94,7 @@ TEST(Action, attack)
 
 TEST(Action, cant_attack)
 {
+    NiceMock<MockWorld> world;
     MockActor attacker("a");
     MockActor target("t");
 
@@ -103,7 +105,7 @@ TEST(Action, cant_attack)
     EXPECT_CALL(attacker.counts, Available(Stat::ap)).WillRepeatedly(Return(1));
     EXPECT_CALL(attacker.counts, Cost(_, _, _)).Times(0);
 
-    Attack action(attacker, target);
+    Attack action(world, attacker, target);
     EXPECT_FALSE(action.CanDo());
     std::stringstream log;
     auto deltas = action.Execute(log);

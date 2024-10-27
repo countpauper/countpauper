@@ -30,14 +30,14 @@ std::vector<Engine::Position> Approach(const HeightMap& map, Engine::Position ce
     return result;
 }
 
-Move::Move(Actor& actor, const World& world, Engine::Position destination, unsigned distance) :
-    Action(actor),
-    map(world.GetMap())
+Move::Move(World& world, Actor& actor, Engine::Position destination, unsigned distance) :
+    Action(world, actor)
 {
     auto cost = [](Engine::Position from, Engine::Position to) -> float
     {
         return from.Distance(to);
     };
+    const auto& map = world.GetMap();
     auto neighbours = [&world, &actor](Engine::Position at)
     {
         // TODO Return of Direction?
@@ -48,7 +48,7 @@ Move::Move(Actor& actor, const World& world, Engine::Position destination, unsig
         for(auto nVec : std::span(neighbourVectors))
         {
             auto to = at + nVec;
-            if (!world.GetMap().GetBounds().Contains(to))
+            if (!map.GetBounds().Contains(to))
                 continue;
 
             int deltaHeight = map.GroundHeight(to) - map.GroundHeight(at);
@@ -87,7 +87,7 @@ void Move::Render() const
     {
         if (it++ > Reachable())
             glColor3d(0.9, 0.2, 0.2);
-        auto next = map.GroundCoord(p);
+        auto next = world.GetMap().GroundCoord(p);
         Engine::Line line(prev, next);
         line += Engine::Vector::Z;
         line.Render();
@@ -116,7 +116,7 @@ std::vector<Delta> Move::Execute(std::ostream& log) const
     Delta dActor(actor);
     if (ap)
     {
-        dActor.Move(map, *Reachable());
+        dActor.Move(world.GetMap(), *Reachable());
         dActor.GetCounts().Cost(Stat::ap, ap, true);
         log << actor.GetAppearance().Name() << " moves to " << *Reachable() << std::endl;
     }

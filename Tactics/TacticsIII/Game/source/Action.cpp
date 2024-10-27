@@ -3,7 +3,8 @@
 namespace Game
 {
 
-Action::Action(Actor& actor) :
+Action::Action(World& world, Actor& actor) :
+    world(world),
     actor(actor)
 {
 }

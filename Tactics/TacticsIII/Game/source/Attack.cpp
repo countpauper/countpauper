@@ -7,8 +7,8 @@
 namespace Game
 {
 
-Attack::Attack(Actor& actor, Actor& target) :
-    Action(actor),
+Attack::Attack(World& world, Actor& actor, Actor& target) :
+    Action(world, actor),
     target(target)
 {
 }

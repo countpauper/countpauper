@@ -101,11 +101,11 @@ void Game::OnMessage(const Engine::Message& message)
                     clickOn->sub % bounds.x.Size() + bounds.x.begin,
                     clickOn->sub / bounds.x.Size() + bounds.y.begin,
                     0);
-            plan = Plan::Move(Current(), *this, destination);
+            plan = Plan::Move(*this, Current(), destination);
         }
         else if (target && target!=& Current())
         {
-            plan = Plan::Attack(Current(), *this, const_cast<Avatar&>(*target));
+            plan = Plan::Attack(*this, Current(), const_cast<Avatar&>(*target));
         }
         auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
         lbl->SetText(plan.Description());
