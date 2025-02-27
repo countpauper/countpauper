@@ -1,9 +1,9 @@
 import argparse 
-import ijson 
-import json
+import orjson
 import gzip
 from aabb import AABB
 import cProfile
+from io import TextIOWrapper
 
 
 def match(record, **kwargs):
@@ -12,28 +12,15 @@ def match(record, **kwargs):
 def coord_tuple(coords):
     return tuple(coords.get(axis) for axis in "xyz")
 
-def query_file_items(file, query, action, **kwargs):    
-    array_prefix='item'
-    rows, matches = 0,0
-    result = None
-    for record in ijson.items(file, array_prefix, use_float=False):
-        rows += 1 
-        if query(record):
-            matches += 1
-            if result := action(record, **kwargs):
-                return result
-        if rows % 100000 == 0:
-            print(f"{matches}/{rows}")
-    return result 
-
 def query_file_lines(file, query, action, **kwargs):    
     rows, matches = 0,0
     result = None
-    for chunk in file: 
-        line = chunk.decode("utf8").strip(" \n,")
+    for line in file: 
+        line = line.strip(" \n\t,")
         if line[0:1] in "[]":
             continue
-        record = json.loads(line)
+        # record = partial_json(line, ["id64", "name", "coords.x", "coords.y", "coords.z"])
+        record = orjson.loads(line)
         rows += 1 
         if query(record):
             matches += 1
@@ -46,11 +33,12 @@ def query_file_lines(file, query, action, **kwargs):
 def query_systems(file, query, action, **kwargs):
     if type(file)==str:
         if file.endswith(".json.gz"):
-            with gzip.open(file, 'rb') as f:
-                return query_file_lines(f, query, action, **kwargs)
+            with gzip.open(file, 'rb') as zip_file:
+                with TextIOWrapper(zip_file, encoding='utf-8') as text_file:
+                    return query_file_lines(text_file, query, action, **kwargs)
         elif file.endswith(".json"):
-            with open(file, "r") as f:
-                return query_file_lines(f, query, action, **kwargs)
+            with open(file, "r") as text_file:
+                return query_file_lines(text_file, query, action, **kwargs)
         else:
             raise RuntimeError(f"Unsupported input file type {file}. only .json and .json.gz are supported")
     return query_file_lines(file, query, action, columns=None)
@@ -82,19 +70,20 @@ def print_csv(outfile, record):
     
 def print_json(outfile, record):
     if outfile.tell()>3:
-        outfile.write(",\n")
-    outfile.write(f"\t{json.dumps(record)}")
-    
+        outfile.write(b",\n")
+    outfile.write(b"\t")
+    outfile.write(orjson.dumps(record))
+
 def print_systems(filename, outfile, query):
     if outfile.endswith(".csv"):
         with open(args.outfile, 'w') as f:
             f.write("id,x,y,z,name\n")
             query_systems(filename, query, lambda x: print_csv(f, flatten(x)))
     elif outfile.endswith(".json"):
-        with open(args.outfile, 'w') as f:
-            f.write("[\n")
+        with open(args.outfile, 'wb') as f:
+            f.write(b"[\n")
             query_systems(filename, query, lambda x: print_json(f, x))
-            f.write("\n]\n")
+            f.write(b"\n]\n")
     else:
         raise RuntimeError(f"Unsupported output format {outfile}")
 
