@@ -80,8 +80,23 @@ def flatten(record):
 def print_csv(outfile, record):
     outfile.write(",".join(str(record.get(k)) for k in ["id64","x","y","z","name"])+'\n')
     
+def print_json(outfile, record):
+    if outfile.tell()>3:
+        outfile.write(",\n")
+    outfile.write(f"\t{json.dumps(record)}")
+    
 def print_systems(filename, outfile, query):
-    query_systems(filename, query, lambda x: print_csv(outfile, flatten(x)))
+    if outfile.endswith(".csv"):
+        with open(args.outfile, 'w') as f:
+            f.write("id,x,y,z,name\n")
+            query_systems(filename, query, lambda x: print_csv(f, flatten(x)))
+    elif outfile.endswith(".json"):
+        with open(args.outfile, 'w') as f:
+            f.write("[\n")
+            query_systems(filename, query, lambda x: print_json(f, x))
+            f.write("\n]\n")
+    else:
+        raise RuntimeError(f"Unsupported output format {outfile}")
 
 def is_coordinate_string(s):
     return s.count(",") == 2
@@ -105,7 +120,7 @@ if __name__=="__main__":
                         epilog='countpauper@gmail.com')
 
     parser.add_argument('filename', help='json file containing systems')  # TODO support .json.gz
-    parser.add_argument('outfile', default='cropped_systems.csv', nargs='?', help='File to write cropped systems to') # TODO: support json as well
+    parser.add_argument('outfile', default='cropped_systems.json', nargs='?', help='File to write cropped systems to') # TODO: support json as well
     parser.add_argument('center', default='0,0,0', nargs='?', help='system name or coordinates in ly') # TODO or system id   
     parser.add_argument('range', default=1000, nargs='?', help='manhatten distance range from center in ly') 
     # TODO radius to fine tune further. if used range will be set to radius as well
@@ -123,14 +138,5 @@ if __name__=="__main__":
         print(f"System {args.center} not found")
 
     bounding_box = AABB( ((v - args.range, v + args.range) for v in center))
-    with open(args.outfile, 'w') as f:
-        f.write("id,x,y,z,name\n")
-        box = print_systems(args.filename, f, lambda record: bounding_box.inside(coord_tuple(record.get("coords"))))
+    print_systems(args.filename, args.outfile, lambda record: bounding_box.inside(coord_tuple(record.get("coords"))))
     
-    # slow json output
-    #cropped = find_systems(args.filename,  lambda record: bounding_box.inside(coord_tuple(record.get("coords"))))
-    #print(f"{len(cropped)} systems in {bounding_box}")
-    #cropped = sanitize(cropped)
-    
-    #with open("cropped_systems.json", 'w') as of:  
-    #    json.dump(cropped, of)
