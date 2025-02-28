@@ -5,12 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Current File",
+            "name": "Python Debug crop_systems.py",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
+            "program": "crop_systems.py",
             "console": "integratedTerminal",
-            "args": ["~/Downloads/systems_1month.json.gz"]
+            "args": ["~/Downloads/systems_1day.json", "-col", "id64", "-col", "coord,name"]
         }
     ]
 }
