@@ -16,37 +16,49 @@ pemdas=[ # list of priorities with dictionaries of separtor:function
     ]
 all_ops = [op for ops in pemdas for op in ops]
 
-def parse_lhs_brackets(s):
-    "Find matching open close brackets and returns brackets_enclosed, remaining or False, Remaining."
+# Find matching open close brackets "(substring)remaining 
+#    and returns substring, remaining 
+#   or (False, input) if the input does not start with a bracket
+# nested brackets are skipped and will be part of the substring
+def parse_lhs_brackets(input):
     pos=0
-    if s[pos]!='(':
-        return False, s 
+    if input[pos]!='(':
+        return False, input
     depth = 1
     while depth:
-        close=s.find(')',pos+1)
-        open=s.find('(',pos+1)
+        close=input.find(')',pos+1)
+        open=input.find('(',pos+1)
         if close < 0:
-            err(f"Unmatched brace in {s}")
+            err(f"Unmatched brace in {input}")
         elif open < 0 or open > close:
             depth-=1
             pos = close
         else: # open < close:
             pos = open
             depth+=1
-    return s[1:pos],s[pos+1:]
+    return input[1:pos],input[pos+1:]
 
-def parse_rhs_brackets(s):
-    open = s.find('(')
+# Find the brackets enclosed arguments of a function eg fn(a)+3
+# will return a tuple (fn, a, +3) if the brackets are found
+# if no brackets are found it will return input, False, "" 
+def parse_rhs_brackets(input):
+    open = input.find('(')
     if open < 1:
-        return s, False, ""
+        return input, False, ""
     else:
-        brace_str, remaining=parse_lhs_brackets(s[open:])
-        return s[:open], f"({brace_str})", remaining
+        brace_str, remaining=parse_lhs_brackets(input[open:])
+        return input[:open], f"({brace_str})", remaining
 
+# the `,` operator creates a tuple function. For the arguments of a function with multiple operands
+# this is resolved into a list of arguments with just the operands. 
+# eg fn(tuple(1,2,3)) => fn(1,2,3)
+# if the expression is already a list of tupple but it only has one argument it is flattened to a single element 
+# this makes the final computation result more intuitive for the user
+# this supports the , as a full fledged operator 
 def simplify(expression):
     if typeof(expression)=='SafeDict':
         if len(expression)==1 and (t := expression.get("tuple")):
-            return t
+            expression = t
     if typeof(expression) == 'SafeList' or typeof(expression) == 'tuple':
         if len(expression)==1:
             return expression[0]
@@ -61,17 +73,21 @@ def parse_fn(s):
     else:
         return False, s
 
+# get the operand of an expresison in the form dict(operator=operands)
 def expression_operator(expression):
     if typeof(expression) == 'SafeDict':
         return list(expression.keys())[0]
     return None
 
+# get the operands of an expresison in the form dict(operator=operands)
 def expression_operands(expression):
     if typeof(expression) == 'SafeDict':
         return list(expression.values())[0]
     else:
         return expression
     
+# due to recursive operator parsing, expressions like sum(a,sum(sum(b,c),d)) might be generated
+# to simplify them, they are flattend to sum(a,b,c,d)
 def flatten_expression(expression):
     if op:=expression_operator(expression):
         combined_operands = []
@@ -84,6 +100,11 @@ def flatten_expression(expression):
     else:
         return expression
 
+# splitting an input string left to right is done in reverse priority order
+# so the right most operand of any in the dict of operators is found (eg '*' or '/')
+# then the left hand side and right hand side are recursively parsed 
+# and the final result is the fn(left, right) where fn is the function for the right most operand 
+# so when computing, left and right are computed first, then the lowest priority operand 
 def operator_split_left_to_right(input, operators):
     last, idx = None, None
     for op in operators:
@@ -102,6 +123,8 @@ def operator_split_left_to_right(input, operators):
         err(f"Missing operand right of {last} in {input}")
     return flatten_expression({operators[last]:[parse(left), parse(right)]})
 
+# Parse a string for operators. This turns a string input like a+b into an  expression sum(a,b)
+# which is represented as a dict with one element dict(sum=[a,b])
 def parse_op(s):
     for ops in pemdas: 
         # because mul/div and sum/sub have equal priority
@@ -122,8 +145,9 @@ def parse_remaining(c, remaining):
     # default to product
     return dict(prod=parse(c))
 
+# reverse the preparaion of prescan_exponents where negative exponents are deonated with an e 
+# and positive with an E to avoid confusion with negative values and operators
 def parse_preparsed_float(s):
-
     s = s.replace("e","e-").replace("E","e+")
     return float(s)
     
@@ -180,6 +204,9 @@ def prescan_exponents(s):
         pos = next_pos+2
     return result
 
+# Parse a user input string to a function expression expressed as a recursive 
+# dictionary dict(fn=[argument1, argument2, ...]). Each argument can be another expression
+# the resulting function expression can be computed with the compute(...) function below 
 def parse(s):
     s=str(s).replace(" ","").replace("\n","").replace("\t","")
     s=prescan_exponents(s)
@@ -300,14 +327,19 @@ def present_fn(fn, arg):
     return f"{fn}( {', '.join(strip_brackets(str(a)) for a in pargs)} )"
 
 def strip_brackets(s):
-    while s and  s[0]=="(" and s[-1]==")":
-        s = s[1:-1]
+    while s:
+        brackets, remaining = parse_lhs_brackets(s)
+        if brackets and not remaining:
+            s = brackets 
+        else:
+            break
     return s
 
+    
 def present_with_brackets(c):
     if typeof(c)=='SafeDict':
         result =  [present_fn(fn, cargs) for fn, cargs in c.items()]
-        return simplify(result);
+        return simplify(result)
     else:
         return str(c)
 
