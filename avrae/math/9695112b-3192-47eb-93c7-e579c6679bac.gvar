@@ -7,16 +7,14 @@ except "FeatureNotAvailable":
 
 
 ### Parse
-sub_minus="−"
-ops={
-    ',':'tuple',
-    sub_minus:'sub',
-    '+':'sum',
-    '/':'div',
-    '*':'prod',
-    '^':'pow',
-    }
-
+sub_minus="−" # special unicode hyphen from preparsing with prescan_negative to distinguish from negative numbers
+pemdas=[ # list of priorities with dictionaries of separtor:function
+    {',':'tuple'},
+    {sub_minus:'sub','+':'sum'},
+    {'/':'div','*':'prod', '÷':'div','⋅':'mul'},
+    {'^':'pow'},
+    ]
+all_ops = [op for ops in pemdas for op in ops]
 
 def parse_lhs_brackets(s):
     "Find matching open close brackets and returns brackets_enclosed, remaining or False, Remaining."
@@ -63,25 +61,69 @@ def parse_fn(s):
     else:
         return False, s
 
+def expression_operator(expression):
+    if typeof(expression) == 'SafeDict':
+        return list(expression.keys())[0]
+    return None
+
+def expression_operands(expression):
+    if typeof(expression) == 'SafeDict':
+        return list(expression.values())[0]
+    else:
+        return expression
+    
+def flatten_expression(expression):
+    if op:=expression_operator(expression):
+        combined_operands = []
+        for operand in expression_operands(expression):
+            if expression_operator(operand)==op:
+                combined_operands += expression_operands(operand)
+            else:
+                combined_operands.append(operand)
+        return {op:combined_operands}
+    else:
+        return expression
+
+def operator_split_left_to_right(input, operators):
+    last, idx = None, None
+    for op in operators:
+        op_idx = input.rfind(op)
+        if op_idx>=0 and (not idx or op_idx>idx):
+            last, idx = op, op_idx
+    if not last: 
+        return input
+    # if any(not t for t in terms):
+    #     err(f"Missing term in {s}")
+    left = input[:idx]
+    if not left:
+        err(f"Missing operand left of {last} in {input}")
+    right = input[idx+1:]
+    if not right:
+        err(f"Missing operand right of {last} in {input}")
+    return flatten_expression({operators[last]:[parse(left), parse(right)]})
+
 def parse_op(s):
-    for op, fn in ops.items():
-        if op in s:
-            terms = s.split(op)
-            if any(not t for t in terms):
-                err(f"Missing term in {s}")
-            return {fn:[parse(term) for term in terms]}
+    for ops in pemdas: 
+        # because mul/div and sum/sub have equal priority
+        # we split low to high priority: first comma, then sub or sub, then mul or div, then exp left to right  
+        if any(op in s for op in ops):
+            if split_term := operator_split_left_to_right(s, ops):
+                return split_term 
     return False
+
  
 def parse_remaining(c, remaining):
     if not remaining:
         return c
-    for op, fn in ops.items():
-        if remaining[0]==op:
-            return {fn:[c,parse(remaining[1:])]}
+    for ops in pemdas: 
+        for op, fn in ops.items():
+            if remaining[0]==op:
+                return {fn:[c,parse(remaining[1:])]}
     # default to product
     return dict(prod=parse(c))
 
 def parse_preparsed_float(s):
+
     s = s.replace("e","e-").replace("E","e+")
     return float(s)
     
@@ -139,7 +181,7 @@ def prescan_exponents(s):
     return result
 
 def parse(s):
-    s=str(s).replace(" ","")
+    s=str(s).replace(" ","").replace("\n","").replace("\t","")
     s=prescan_exponents(s)
     s=prescan_negative(s)
 
@@ -152,7 +194,7 @@ def parse(s):
     if fn:
         return parse_remaining(fn, remaining)
     premaining, braced_str, remaining = parse_rhs_brackets(s)
-    if braced_str and premaining[-1] in ops:
+    if braced_str and premaining[-1] in all_ops:
         return parse_remaining(
                 parse(premaining[:-1]), 
                 premaining[-1]+braced_str+remaining)
@@ -239,7 +281,7 @@ def compute(c):
         return c
 
 ### Present 
-reverse_ops = { v:k for k,v in ops.items() }
+reverse_ops = { v:k for ops in pemdas for k,v in ops.items() }
 
 def present_sequence(fn, params):
     operator = reverse_ops[fn]

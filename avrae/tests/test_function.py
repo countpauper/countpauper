@@ -30,6 +30,11 @@ def test_parse_operators():
     with pytest.raises(RuntimeError):
         assert fn.parse("3+2+")
 
+def test_pemdas():
+    assert fn.parse("5-3+2") == dict(sum=[dict(sub=[5,3]),2])
+    assert fn.parse("500/4*1.25") == dict(prod=[dict(div=[500,4]),1.25])
+    assert fn.parse("100-2/5*30+4") == dict(sum=[dict(sub=[100,dict(prod=[dict(div=[2,5]),30])]),4])
+
 def test_parse_functions():
     assert fn.parse("log(3)") == dict(log=3)
     assert fn.parse("sum(1,2,3)") == dict(sum=[1,2,3])
