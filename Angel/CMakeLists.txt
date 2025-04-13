@@ -12,10 +12,8 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 # Add subdirectories
 #
 set(DEPENDENCIES_DIR "../Dependencies")
-if(BUILD_TESTS)
-        if (NOT TARGET gtest)
-                add_subdirectory("${DEPENDENCIES_DIR}/googletest/" ${CMAKE_BINARY_DIR}/googletest)
-        endif()
+if (NOT TARGET gtest)
+        add_subdirectory("${DEPENDENCIES_DIR}/googletest/" ${CMAKE_BINARY_DIR}/googletest)
 endif()
 
 include(CTest)
@@ -23,7 +21,6 @@ enable_testing()
 
 add_subdirectory(Parser)
 add_subdirectory(Logic)
-
 
 target_link_libraries(${PROJECT_NAME}
      Parser

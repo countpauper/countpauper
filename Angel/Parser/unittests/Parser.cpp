@@ -4,8 +4,6 @@
 #include "Logic/Sequence.h"
 #include "Logic/Boolean.h"
 
-#pragma warning(disable:4566)	// google test can't represent unicode
-
 namespace Angel::Parser::Test
 {
 

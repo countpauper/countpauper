@@ -9,6 +9,4 @@ target_link_libraries(${MODULE} PUBLIC
     Logic
 )
 
-if(BUILD_TESTS)
-        add_subdirectory(unittests)
-endif()
+add_subdirectory(unittests)

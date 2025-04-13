@@ -4,7 +4,7 @@ enable_testing()
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-project(GameTest CXX)
+project(LogicTest CXX)
 add_compile_options(-Wall -Wextra -pedantic -Werror)
 
 file(GLOB SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/*.cpp")

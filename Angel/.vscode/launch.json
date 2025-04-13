@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "(ctest) Launch",
+            "type": "cppdbg",
+            "cwd": "${cmake.testWorkingDirectory}",
+            "request": "launch",
+            "program": "${cmake.testProgram}",
+            "args": [ "${cmake.testArgs}". "-v" ],
+        }
+    ]
+}

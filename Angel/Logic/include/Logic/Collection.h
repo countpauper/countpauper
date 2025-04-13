@@ -12,7 +12,7 @@ namespace Logic
 class Collection : public Expression
 {
 public:
-    Object Compute(const Knowledge& known) const
+    Object Compute([[maybe_unused]] const Knowledge& known) const
     {
         // Just return a copy. Or compute all members? 
         return Copy();
