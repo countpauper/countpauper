@@ -83,6 +83,7 @@ def test_present_constants():
     assert fn.present(3) == "3"
     assert fn.present(-1.5) == "-1.5"
     assert fn.present([1,2]) == "[1, 2]"
+    assert fn.present((1,3)) == "1, 3"
 
 def test_present_functions():
     assert fn.present(dict(sqrt=5.0)) == "sqrt( 5.0 )"
@@ -92,5 +93,6 @@ def test_present_functions():
 def test_present_operators():
     assert fn.present(dict(sum=[1,3, -1])) == "1 + 3 + -1"
     assert fn.present(dict(prod=[3,dict(sum=[4,2])])) == "3 * (4 + 2)"
+    assert fn.present(dict(prod=[dict(sum=[1,3]),dict(sum=[4,2])])) == "(1 + 3) * (4 + 2)"
     # TODO strip, or rather skip, brackets based on parent and operator relative precedence 
-    # assert fn.present(dict(sum=[3,dict(prod=[4,2])])) == "3 + 4 * 2"
+    #assert fn.present(dict(sum=[3,dict(prod=[4,2])])) == "3 + 4 * 2"
