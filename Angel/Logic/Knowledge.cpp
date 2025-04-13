@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Knowledge.h"
 #include "Set.h"
 #include "Clause.h"

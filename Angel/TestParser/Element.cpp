@@ -1,4 +1,4 @@
-#include "pch.h"
+#include <gtest/gtest.h>
 #include "Parser/LogicParser.h"
 #include "Logic/Predicate.h"
 #include "Logic/Sequence.h"

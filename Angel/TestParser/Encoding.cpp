@@ -1,4 +1,4 @@
-#include "pch.h"
+#include <gtest/gtest.h>
 #include "Parser/StringEncoding.h"
 
 #pragma warning(disable:4566)	// google test can't represent unicode

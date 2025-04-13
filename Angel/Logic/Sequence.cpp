@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Sequence.h"
 #include "Boolean.h"
 #include "Set.h"

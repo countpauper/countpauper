@@ -1,5 +1,5 @@
 #pragma once
-#include "stdafx.h"
+
 #include "Element.h"
 #include "Knowledge.h"
 #include <assert.h>

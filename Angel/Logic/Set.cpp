@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Set.h"
 #include <algorithm>
 #include "Sequence.h"

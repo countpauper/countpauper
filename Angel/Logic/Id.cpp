@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Id.h"
 #include "Boolean.h"
 #include <iostream>

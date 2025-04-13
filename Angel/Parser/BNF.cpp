@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "BNF.h"
+﻿#include "BNF.h"
 #include "Parser.h"
 #include "StringEncoding.h"
 #include <regex>

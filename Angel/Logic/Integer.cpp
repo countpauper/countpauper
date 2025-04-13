@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Integer.h"
 #include "Boolean.h"
 

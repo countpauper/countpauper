@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <algorithm>
 #include "Predicate.h"
 #include "Boolean.h"

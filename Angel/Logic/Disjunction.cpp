@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Disjunction.h"
 #include "Boolean.h"
 #include "Knowledge.h"

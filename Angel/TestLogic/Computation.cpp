@@ -1,4 +1,4 @@
-#include "pch.h"
+#include <gtest/gtest.h>
 #include "Logic/Knowledge.h"
 #include "Logic/Conjunction.h"
 #include "Logic/Boolean.h"

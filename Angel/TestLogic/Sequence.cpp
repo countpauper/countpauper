@@ -1,4 +1,4 @@
-#include "pch.h"
+#include <gtest/gtest.h>
 #include "Logic/Sequence.h"
 #include "Logic/Knowledge.h"
 #include "Logic/Id.h"
