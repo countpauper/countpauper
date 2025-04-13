@@ -1,0 +1,34 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        {
+            "type": "cmake",
+            "label": "CMake: build",
+            "command": "build",
+            "presentation": {
+                "clear": true,
+                "focus": true,
+                "reveal": "always"
+            },
+            "targets": [
+                "ALL_BUILD"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "CMake template build task"
+        },
+        {
+            "type": "cmake",
+            "label": "CMake: test",
+            "command": "test",
+            "problemMatcher": [],
+            "detail": "CMake run all tests",
+            "group": "build"
+        }
+    ]
+}

@@ -1,6 +1,6 @@
-#include "Sequence.h"
-#include "Boolean.h"
-#include "Set.h"
+#include "Logic/Sequence.h"
+#include "Logic/Boolean.h"
+#include "Logic/Set.h"
 
 namespace Angel::Logic
 {

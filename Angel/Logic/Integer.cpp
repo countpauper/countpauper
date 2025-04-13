@@ -1,5 +1,5 @@
-#include "Integer.h"
-#include "Boolean.h"
+#include "Logic/Integer.h"
+#include "Logic/Boolean.h"
 
 namespace Angel
 {

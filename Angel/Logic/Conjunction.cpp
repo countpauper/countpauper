@@ -1,6 +1,6 @@
-#include "Conjunction.h"
-#include "Boolean.h"
-#include "Knowledge.h"
+#include "Logic/Conjunction.h"
+#include "Logic/Boolean.h"
+#include "Logic/Knowledge.h"
 
 namespace Angel
 {

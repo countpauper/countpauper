@@ -1,5 +1,5 @@
-#include "Id.h"
-#include "Boolean.h"
+#include "Logic/Id.h"
+#include "Logic/Boolean.h"
 #include <iostream>
 
 namespace Angel

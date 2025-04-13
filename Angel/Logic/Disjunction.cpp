@@ -1,6 +1,6 @@
-#include "Disjunction.h"
-#include "Boolean.h"
-#include "Knowledge.h"
+#include "Logic/Disjunction.h"
+#include "Logic/Boolean.h"
+#include "Logic/Knowledge.h"
 
 namespace Angel::Logic
 {

@@ -3,7 +3,7 @@
 #include <map>
 #include <ctype.h>
 #include <algorithm>
-#include "Parser.h"
+#include "Parser/Parser.h"
 #include "Parser/Syntax.h"
 #include "Parser/Parser.h"
 #include "Logic/Predicate.h"
@@ -14,7 +14,7 @@
 #include "Logic/Set.h"
 #include "Logic/Clause.h"
 #include "Logic/Object.h"
-#include "LogicParser.h"
+#include "Parser/LogicParser.h"
 #include "Parser/Errors.h"
 
 namespace Angel
@@ -238,7 +238,7 @@ Logic::Knowledge Parse(const std::string& text)
     auto match = BNF::Parse(BNF::knowledge,  text.c_str());
     if (!match.remaining.empty())
     {
-        std::string trailing(match.remaining.data(), std::min(match.remaining.size(), 20U));
+        std::string trailing(match.remaining.data(), std::min(match.remaining.size(), 20ULL));
         throw SyntaxError(std::string("Trailing data after clause at: '") + trailing + "'");
     }
     return std::any_cast<Logic::Knowledge>(match.tokens);

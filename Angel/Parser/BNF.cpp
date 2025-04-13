@@ -1,6 +1,6 @@
-﻿#include "BNF.h"
-#include "Parser.h"
-#include "StringEncoding.h"
+﻿#include "Parser/BNF.h"
+#include "Parser/Parser.h"
+#include "Parser/StringEncoding.h"
 #include <regex>
 #include <numeric>
 

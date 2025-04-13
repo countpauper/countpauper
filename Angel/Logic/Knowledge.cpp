@@ -1,6 +1,6 @@
-#include "Knowledge.h"
-#include "Set.h"
-#include "Clause.h"
+#include "Logic/Knowledge.h"
+#include "Logic/Set.h"
+#include "Logic/Clause.h"
 
 namespace Angel
 {

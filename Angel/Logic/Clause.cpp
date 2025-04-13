@@ -1,5 +1,5 @@
-#include "Clause.h"
-#include "Knowledge.h"
+#include "Logic/Clause.h"
+#include "Logic/Knowledge.h"
 
 namespace Angel
 {

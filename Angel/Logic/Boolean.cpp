@@ -1,6 +1,5 @@
-#include "stdafx.h"
-#include "Boolean.h"
-#include "Integer.h"
+#include "Logic/Boolean.h"
+#include "Logic/Integer.h"
 
 namespace Angel::Logic
 {

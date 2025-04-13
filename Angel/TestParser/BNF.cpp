@@ -1,4 +1,4 @@
-#include "pch.h"
+#include <gtest/gtest.h>
 #include "Parser/BNF.h"
 #include "Parser/Parser.h"
 

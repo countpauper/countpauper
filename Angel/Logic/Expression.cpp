@@ -1,5 +1,5 @@
-#include "Expression.h"
-#include "Object.h"
+#include "Logic/Expression.h"
+#include "Logic/Object.h"
 
 namespace Angel
 {

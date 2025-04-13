@@ -1,7 +1,7 @@
-#include "Object.h"
-#include "Boolean.h"
-#include "Integer.h"
-#include "Id.h"
+#include "Logic/Object.h"
+#include "Logic/Boolean.h"
+#include "Logic/Integer.h"
+#include "Logic/Id.h"
 
 namespace Angel
 {

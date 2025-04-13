@@ -1,7 +1,7 @@
-#include "Set.h"
+#include "Logic/Set.h"
+#include "Logic/Sequence.h"
+#include "Logic/Boolean.h"
 #include <algorithm>
-#include "Sequence.h"
-#include "Boolean.h"
 
 namespace Angel
 {

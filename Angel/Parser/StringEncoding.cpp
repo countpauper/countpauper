@@ -1,7 +1,6 @@
 #include "Parser/StringEncoding.h"
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <atlstr.h>
+#include <exception>
+
 
 namespace Angel::Parser
 {
@@ -10,6 +9,7 @@ namespace Angel::Parser
     {
         if (utf8.empty()) return std::wstring(); // nothing to do
         std::wstring ws;
+        /* TODO port to STL or just don't use wstring
         int cc = 0;
         // get length (cc) of the new widechar excluding the \0 terminator first
         if ((cc = MultiByteToWideChar(CP_UTF8, 0, utf8.data(), utf8.size() + 1, NULL, 0)) > 0)
@@ -23,12 +23,14 @@ namespace Angel::Parser
         {
             throw std::exception("Failed to convert");
         }
+        */
         return ws;
     }
 
     std::string to_utf8(const std::wstring_view& ws)
     {
         if (ws.empty()) return ""; // nothing to do
+        /* TODO port to STL
         CStringA utf8;
         int cc = 0;
         // get length (cc) of the new multibyte string excluding the \0 terminator first
@@ -46,6 +48,8 @@ namespace Angel::Parser
             throw std::exception("Failed to convert");
         }
         return utf8.GetBuffer();
+        */
+       return std::string();
     }
 
 }

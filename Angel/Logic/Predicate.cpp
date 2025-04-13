@@ -1,11 +1,9 @@
 #include <algorithm>
-#include "Predicate.h"
-#include "Boolean.h"
-#include "Knowledge.h"
+#include "Logic/Predicate.h"
+#include "Logic/Boolean.h"
+#include "Logic/Knowledge.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 Predicate::Predicate(const Predicate& other) :
@@ -88,5 +86,4 @@ Object predicate(const std::string& name, Sequence&& arguments)
 	return Create<Predicate>(Id(name), std::move(arguments));
 }
 
-}
 }

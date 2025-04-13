@@ -1,8 +1,8 @@
 #include <algorithm>
-#include "Namespace.h"
-#include "Disjunction.h"
-#include "Knowledge.h"
-#include "Set.h"
+#include "Logic/Namespace.h"
+#include "Logic/Disjunction.h"
+#include "Logic/Knowledge.h"
+#include "Logic/Set.h"
 
 namespace Angel
 {

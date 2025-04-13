@@ -1,4 +1,4 @@
-#include "Operator.h"
+#include "Logic/Operator.h"
 
 namespace Angel::Logic
 {

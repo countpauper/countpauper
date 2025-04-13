@@ -1,7 +1,5 @@
-#pragma once
-
-#include "Element.h"
-#include "Knowledge.h"
+#include "Logic/Element.h"
+#include "Logic/Knowledge.h"
 #include <assert.h>
 
 namespace Angel::Logic
