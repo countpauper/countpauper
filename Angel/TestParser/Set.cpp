@@ -13,7 +13,7 @@ namespace Test
 TEST(TestSet, Empty)
 {
     Logic::Object set;
-    std::wstringstream s("{} ");
+    std::stringstream s("{} ");
     s >> set;
 
 	EXPECT_EQ(set, Logic::set());
@@ -23,7 +23,7 @@ TEST(TestSet, Empty)
 TEST(TestSet, Single)
 {
     Logic::Object set;
-    std::wstringstream s("{ cat}");
+    std::stringstream s("{ cat}");
     s >> set;
 
     EXPECT_EQ(set, Logic::set(Logic::id("cat")));
@@ -33,7 +33,7 @@ TEST(TestSet, Single)
 TEST(TestSet, Multiple)
 {
     Logic::Object set;
-    std::wstringstream s("{ cat, dog, cat } ");
+    std::stringstream s("{ cat, dog, cat } ");
     s >> set;
 
     EXPECT_EQ(set, Logic::set(Logic::id("cat"), Logic::id("dog")));
@@ -42,7 +42,7 @@ TEST(TestSet, Multiple)
 TEST(TestSet, Nested)
 {
     Logic::Object set;
-    std::wstringstream s("{ {cat, dog }, cat}");
+    std::strinstream s("{ {cat, dog }, cat}");
     s >> set;
 
 	EXPECT_EQ(set, Logic::set(

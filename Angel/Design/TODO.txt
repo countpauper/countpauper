@@ -1,4 +1,4 @@
-- remove wstring and platform dependenty conversion 
+* remove wstring and platform dependenty conversion 
 - move, build & fix unit tests
 - Redesign the parser 
 - 

@@ -1,6 +1,5 @@
 ﻿#include "Parser/BNF.h"
 #include "Parser/Parser.h"
-#include "Parser/StringEncoding.h"
 #include <regex>
 #include <numeric>
 
@@ -23,15 +22,11 @@ PossibleMatch Literal::Parse(const std::string_view data, const Progress&) const
 
 PossibleMatch RegularExpression::Parse(const std::string_view data, const Progress&) const
 {
-
-    std::wstring wdata = from_utf8(data);
-    std::wstring wexpression = from_utf8(expression);
-    std::wregex  wexpr(wexpression);
-    std::wsmatch match;
-    if (std::regex_search(wdata, match, wexpr, std::regex_constants::match_continuous))
+    std::regex expr(expression);
+    std::cmatch match;
+    if (std::regex_search(data.begin(), data.end(), match, expr, std::regex_constants::match_continuous))
     {
-        std::string match_str = to_utf8(match.str(0));
-        return Match(data.substr(match_str.size()));
+        return Match(data.substr(match.str(0).size()));
     }
 
     return PossibleMatch();
