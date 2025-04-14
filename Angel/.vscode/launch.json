@@ -6,7 +6,7 @@
             "cwd": "${cmake.testWorkingDirectory}",
             "request": "launch",
             "program": "${cmake.testProgram}",
-            "args": [ "${cmake.testArgs}". "-v" ],
+            "args": [ "${cmake.testArgs}", "-v" ],
         }
     ]
 }

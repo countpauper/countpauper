@@ -120,7 +120,8 @@ Rule::Rule(const std::string_view n, const Expression& e) :
     expression(e),
     construct(PassToken)
 {
-    Declare::Define(*this);
+    // TODO can't do `this`, it's not yet constructed all the way 
+    // Declare::Define(*this);
 }
 
 Rule::Rule(const std::string_view n, const Expression& e, ParseFn p) :

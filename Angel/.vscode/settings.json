@@ -1,3 +1,7 @@
 {
-    "C_Cpp.autoAddFileAssociations": false
+    "C_Cpp.autoAddFileAssociations": false,
+    "cmake.configureArgs": [
+        "-DBUILD_WITH_TESTS=ON",
+        "-DCMAKE_BUILD_TYPE=Debug"
+    ]
 }

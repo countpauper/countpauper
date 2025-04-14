@@ -16,8 +16,10 @@ if (NOT TARGET gtest)
         add_subdirectory("${DEPENDENCIES_DIR}/googletest/" ${CMAKE_BINARY_DIR}/googletest)
 endif()
 
-include(CTest)
-enable_testing()
+if(BUILD_WITH_TESTS)
+        include(CTest)
+        enable_testing()
+endif()
 
 add_subdirectory(Parser)
 add_subdirectory(Logic)

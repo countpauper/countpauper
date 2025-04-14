@@ -18,7 +18,10 @@ target_link_libraries(${EXE_NAME} PUBLIC
     gmock_main
 )
 
-add_test(
-        NAME ${PROJECT_NAME}
-        COMMAND ${EXE_NAME}
-)
+#add_test(
+#        NAME ${PROJECT_NAME}
+#        COMMAND ${EXE_NAME}
+#)
+
+include(GoogleTest)
+gtest_discover_tests(ParserTest)

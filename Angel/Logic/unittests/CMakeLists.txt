@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(LogicTest CXX)
-add_compile_options(-Wall -Wextra -pedantic -Werror)
+add_compile_options(-Wall -Wextra -pedantic -Werror -DCMAKE_BUILD_TYPE=Debug)
 
 file(GLOB SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/*.cpp")
 file(GLOB HEADERS "*.h")
@@ -18,7 +18,10 @@ target_link_libraries(${EXE_NAME} PUBLIC
     gmock_main
 )
 
-add_test(
-        NAME ${PROJECT_NAME}
-        COMMAND ${EXE_NAME}
-)
+#add_test(
+#        NAME ${PROJECT_NAME}
+#        COMMAND ${EXE_NAME}
+#)
+
+include(GoogleTest)
+gtest_discover_tests(${PROJECT_NAME})

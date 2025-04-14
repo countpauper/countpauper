@@ -5,13 +5,8 @@
 #include "Logic/Boolean.h"
 #include "Logic/Integer.h"
 
-namespace Angel
+namespace Angel::Parser::Test
 {
-namespace Parser
-{
-namespace Test
-{
-
 
 TEST(TestElement, Id)
 {
@@ -52,7 +47,6 @@ TEST(TestElement, Integer)
     EXPECT_EQ(id, Logic::id("cat_2"));
 }
 
-}
-}
+
 }
 
