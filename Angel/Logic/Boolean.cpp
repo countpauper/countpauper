@@ -28,7 +28,7 @@ std::size_t Boolean::Hash() const
     return truth;
 }
 
-Object Boolean::Compute(const Knowledge& known) const
+Object Boolean::Infer(const Knowledge& known) const
 {
     return boolean(truth);
 }

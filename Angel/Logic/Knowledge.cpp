@@ -35,7 +35,7 @@ Object Knowledge::Query(const Object& o) const
 
 Object Knowledge::Query(const Expression& e) const
 {
-    return e.Compute(*this);
+    return e.Infer(*this);
 }
 
 Object Knowledge::Match(const Expression& e) const

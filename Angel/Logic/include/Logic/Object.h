@@ -34,7 +34,7 @@ public:
 	Object Match(const Expression& other) const;
     const Expression& operator*() const;
     const Expression* operator->() const;
-    Object Compute(const Knowledge& knowledge) const;
+    Object Infer(const Knowledge& knowledge) const;
 	template<class C>
     C* As() const { return dynamic_cast<C*>(expr.get()); }
     template<class C>

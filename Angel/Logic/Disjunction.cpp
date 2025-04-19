@@ -56,11 +56,11 @@ Object Disjunction::Match(const Expression& other) const
     return boolean(other == *this);
 }
 
-Object Disjunction::Compute(const Knowledge& knowledge) const
+Object Disjunction::Infer(const Knowledge& knowledge) const
 {
     for (const auto& condition : operands)
     {
-        auto truth = condition.Compute(knowledge);
+        auto truth = condition.Infer(knowledge);
         if (truth)
             return truth;
     }
@@ -77,7 +77,7 @@ Object Disjunction::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (t == typeid(Boolean))
     {
-        return Compute(k);
+        return Infer(k);
     }
     throw CastException<Disjunction>(t);
 }

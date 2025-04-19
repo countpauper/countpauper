@@ -77,9 +77,9 @@ Object Object::Match(const Expression& other) const
 	return expr->Match(other);
 }
 
-Object Object::Compute(const Knowledge& knowledge) const
+Object Object::Infer(const Knowledge& knowledge) const
 {
-    return expr->Compute(knowledge);
+    return expr->Infer(knowledge);
 }
 
 const Expression& Object::operator*() const

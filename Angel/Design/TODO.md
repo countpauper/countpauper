@@ -1,0 +1,44 @@
+- [ ] Get back up 
+-    [x] remove wstring and platform dependenty conversion 
+-    [x] move, build
+-    [ ] Fix logic unit tests
+-    [ ] Clear distinction between language casts and operators (equal) and C++ operators/bool? Perhaps equal is the same (same type & value) but Cast is not implicit unless infering/matching
+-    [ ] Dedesign polymorphic Expression with std::variant 
+-    [ ] Refactror Object away 
+- [ ] Redesign the parser 
+-   [ ] 
+- [ ] Prolog 
+-   [ ] Parsing enough for axioms
+-   [ ] Parsing enough for clauses
+-   [ ] query horn clause 
+-   [ ] Parsing enough for predicates
+-   [ ] Query predicate  
+-   [ ] Parse variables 
+-   [ ] Variable clauses with substitution 
+-   [ ] Query with variable and return hypotheses
+- [ ] Functional 
+-   [ ] define constants 
+-   [ ] define lambdas 
+-   [ ] integer math
+-   [ ] query lambda
+-   [ ] sets 
+-   [ ] Membership operator x @ {x,y}
+- Python
+-   [ ] namespaces
+-   [ ] Indexing sequences (not sets)  [x,y,z][1]
+-   [ ] ranges [x:y] 
+-   [ ] infinite ranges [:y]
+-   [ ] range slicing
+-   [ ] For each operator *[x,y]
+-   [ ] Make knowledge and namespace expressions 
+- [ ] Advanced
+-   [ ] Add floating points and conversions
+-   [ ] For any operator `@` while infering 
+-   [ ] For any & each operators also while matching 
+-   [ ] Other SFINAE type matching or even some concept like syntax 
+- [ ] Native functions
+-    [ ] Add native cast functions (int, float, str)
+-    [ ] Add native collections functions (size, empty)
+-    [ ] Add native collection casts
+-    [ ] print / trace 
+-    [ ] Import of custom native functions (eg math)

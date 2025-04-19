@@ -15,7 +15,7 @@
 namespace Angel::Logic
 {
 
-Object Expression::Compute(const Knowledge& known) const
+Object Expression::Infer(const Knowledge& known) const
 {
     return Object(); 
 }

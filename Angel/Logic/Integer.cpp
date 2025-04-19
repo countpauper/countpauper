@@ -47,7 +47,7 @@ long Integer::operator*() const
 	return value;
 }
 
-Object Integer::Compute(const Knowledge& known) const
+Object Integer::Infer(const Knowledge& known) const
 {
     return integer(value);
 }

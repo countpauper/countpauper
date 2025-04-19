@@ -78,16 +78,16 @@ Object Predicate::Match(const Expression& expr) const
 	return boolean(false);
 }
 
-Object Predicate::Compute(const Knowledge& known) const
+Object Predicate::Infer(const Knowledge& known) const
 {
     auto match = known.Match(*this);
-    return match.Compute(known);
+    return match.Infer(known);
 }
 
 Object Predicate::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (typeid(t) == typeid(Boolean))
-        return Compute(k);
+        return Infer(k);
     throw CastException<Predicate>(t);
 }
 

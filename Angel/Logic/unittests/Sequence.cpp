@@ -23,7 +23,7 @@ TEST(TestSequence, Construction)
 	EXPECT_EQ(single.size(), 1);
     EXPECT_EQ(single.front(), id("ginny"));
 
-	Sequence cats(boolean("ginny"), boolean("max"));
+	Sequence cats(id("ginny"), id("max"));
 	EXPECT_EQ(cats.size(), 2);
 
 	Sequence seq(sequence(id("ginny"), id("max")));

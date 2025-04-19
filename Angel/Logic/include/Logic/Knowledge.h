@@ -7,7 +7,9 @@ namespace Angel
 namespace Logic
 {
 
-// Knowledge is a set of exprs organized in namespaces
+// Knowledge is a tree of expressions organized in namespaces
+// TODO: it should itself be an expression and namespaces as well 
+// They are not exactly a conjunction, because they may also include functions 
 class Knowledge
 {
 public:

@@ -61,9 +61,9 @@ Object Clause::Match(const Expression& value) const
 	return boolean(false);
 }
 
-Object Clause::Compute(const Knowledge& known) const
+Object Clause::Infer(const Knowledge& known) const
 {
-    assert(false); // Compute the expression and then return the predicate? What if the expression is false?  
+    assert(false); // Infer the expression and then return the predicate? What if the expression is false?  
     return Object();
 }
 
@@ -77,7 +77,7 @@ Object Clause::Copy() const
 Object Clause::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (typeid(t) == typeid(Boolean))
-        return Compute(k);
+        return Infer(k);
     throw CastException<Clause>(t);
 }
 

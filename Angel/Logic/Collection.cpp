@@ -3,9 +3,9 @@
 namespace Angel::Logic
 {
 
-Object Collection::Compute([[maybe_unused]] const Knowledge& known) const
+Object Collection::Infer([[maybe_unused]] const Knowledge& known) const
 {
-    // Just return a copy. Or compute all members? 
+    // Just return a copy. Or Infer all members? 
     return Copy();
 }
 

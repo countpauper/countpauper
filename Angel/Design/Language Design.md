@@ -48,7 +48,7 @@ Technically each function has a list of arguments of a size 0 or more. An axioma
 `cat()` is equivalent to `cat`.
 
 ## Clause
-a predicate is true if it is implied and it's antecedent is true. The predicate implied is 
+a predicate is true if it is implied and its antecedent is true. The predicate implied is 
 separated from it's condition with the `:` operator. This means the implication is true if the 
 conditions are true. 
 New knowledge (the set of statements that are true) can be infered from this during a query. 
@@ -243,7 +243,7 @@ f(X): X+2
 pi: 3.141592
 ```
 
-## Conveting number to and from boolean. 
+## Converting number to and from boolean. 
 Functional integer and floating point functions can be mixed into the boolean inference engine using comparison operators. 
 There is no implicit conversion, to avoid inference erros. 
 ```
@@ -284,6 +284,8 @@ set results in a set, but subtracting a set from a list results in a list.
 * `size(X)` - returns the number of elements in the collection 
 * `set(X)` - Create a set of the collection or element X
 * `list(X)` - Create a list of the collection or element X 
+* `iterable(X)` - Return true if X is iterable (sets, strings, and sequences)
+* `indexed(X)` - Return true if X is indexed (strings, sequences)
 These could also be in an optionally imported `colllection` library to reduce name clashes 
 
 ## String operators 
@@ -422,7 +424,7 @@ but it would be hard to not try to match ginny and fail and decide she's not a c
 (not sure if the assumptions should take the form of a conjunction or a collection)
 
 ## Prolog like head tail matching
-If needed to iterate to  apply functors on collections. 
+If needed to iterate to  apply functors on collections.
 ```
 cats([H|T]) : cat(H) & cats(T)
 cats([])
@@ -431,12 +433,38 @@ cat(ginny)
 cats([max,ginny])?
 > true
 ```
+Instead of this syntax, python slicing may be more consistent.
+The problem here may be that cats should only match with collections. A type check would work, but make it makes 
+it squarely the user's problem.
+```
+cats(CATS) : indexed(CATS) & cat(CATS[0]) & cast(CATS[1:])
+``` 
+
+Both of these still leave the problem of an empty list, which the prolog syntax seems to automatically match. Of course 
+this can also be handled, but it seems verbose 
+```
+cats(CATS) : indexed(CATS) & size(CATS) & cat(CATS[0]) & cast(CATS[1:])
+```
+
+A slightly more intuitive syntax may be to define the [] postfix to require the type to be indexable. 
+type matching (like C++ templates?) is a bit of an odd one out of the language however and then why 
+wouldn't it count for other types like floating points, strings, predicates. 
+THis also stil leaves the empty sequence problem.
+```
+cats(CATS[]) : cat(CATS[0]) & cast(CATS[1:])
+```
+
+Perhaps the for each operator `*` can SFINAE match when an expression is iterable. This also leaves it open for Sets, 
+because the indexed solution is a stronger prerequisite than iterable.  
+```
+cats(*CAT) : cat(CAT)
+```
+or maybe `cat(CATS) : cat(*CATS)` or both. The former has the advantage that it can SFINAE match iterable types before the conditions.
 
 ## For each 
 Iteration with head tail is slow. It would be more efficient to have a way to express for each. In first order logic
-this would be close to All x or there is an X. The `*` operator could be used as prefix to express for each. The 
-`@` operator to many for any. 
-
+this would be close to All x or there is an X. The `*` operator could be used as prefix to express "for each". The 
+`@` operator to mean "for any". With a little extra rigor this could make the language fully equivalent with first order logic.
 
 ```
 cat(ginny)
@@ -570,11 +598,3 @@ read_config(File) : read(File+'.json`) | read(File+'.yaml`)
 X @ [-1,1]
 ```
 
-# Priority list 
-- Parsing enough for axioms
-- Axiom and query 
-- Parsing enough for horn clauses 
-- query horn clause 
-= Parsing enough for predicates 
-- Parse variables 
-- query with variable and return 

@@ -38,7 +38,7 @@ std::size_t Id::Hash() const
     return hasher(name);
 }
 
-Object Id::Compute(const Knowledge& known) const
+Object Id::Infer(const Knowledge& known) const
 {
     return id(name);
 }
@@ -47,7 +47,7 @@ Object Id::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (t == typeid(Id))
     {
-        return Compute(k);
+        return Infer(k);
     }
     else if (t == typeid(Boolean))
     {

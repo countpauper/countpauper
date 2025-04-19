@@ -22,12 +22,12 @@ public:
     Expression() = default;
     virtual ~Expression() = default;
     // Try to resolve this Expression to an Elemental type in its preferred return type
-    // Will return a copy for Elements and a computed result for Operators 
+    // Will return a copy for Elements and a compute result for Operators 
     // for logical queries it will query the knowledge for truth and return a boolean (or unresolved conditions ?) 
-    virtual Object Compute(const Knowledge& known) const = 0;
+    virtual Object Infer(const Knowledge& known) const = 0;
 
     // Convert an element to the given type 
-    // Non-elements are computed first
+    // Non-elements are infered first
     template<class _T>
     Object Cast(const Knowledge& k) const { return Cast(typeid(_T), k); }
     

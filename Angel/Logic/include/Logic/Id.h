@@ -16,7 +16,7 @@ public:
 	bool operator==(const Id& id) const;
 	bool operator==(const Expression& value) const override;
     std::size_t Hash() const override;
-    Object Compute(const Knowledge& known) const;
+    Object Infer(const Knowledge& known) const;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
 private:

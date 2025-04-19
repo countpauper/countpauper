@@ -12,7 +12,7 @@ namespace Logic
 class Collection : public Expression
 {
 public:
-    Object Compute([[maybe_unused]] const Knowledge& known) const;
+    Object Infer([[maybe_unused]] const Knowledge& known) const;
 };
 
 }

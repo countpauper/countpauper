@@ -13,7 +13,7 @@ class Knowledge;
 // An Operator is the basis of all functions
 // the Operators construct a hierachy of Objects by combining one or more of them with an operation
 
-class Operator : public Expression // TODO: objects also expressions that just return themselves when computed? 
+class Operator : public Expression // TODO: objects also expressions that just return themselves when infered? 
 {
 public:
     Operator() = default;
