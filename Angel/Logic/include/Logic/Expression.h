@@ -1,9 +1,7 @@
 #pragma once
 #include "Object.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 template<class _From>
@@ -37,18 +35,20 @@ public:
     virtual Object Copy() const = 0;
 
     // operator bool returns true if the value trivially converts to true 
-    virtual operator bool() const = 0;
+    explicit virtual operator bool() const = 0;
     // Two elements are equal if they are the same type *and* the same value 
     // Two check if two elements of different types can be cast to the same type, compare two Objects 
     // which will use Match 
     virtual bool operator==(const Expression& other) const = 0;
     bool operator!=(const Expression& other) const { return !operator==(other); }
     virtual Object Match(const Expression& other) const = 0;
-    virtual std::string String() const = 0;
+    operator std::string() const;
 protected:
     friend class Object;
     virtual Object Cast(const std::type_info& t, const Knowledge& k) const = 0;
 };
+std::ostream& operator<<(std::ostream& os, const Angel::Logic::Expression& e);
+
 
 }
-}
+

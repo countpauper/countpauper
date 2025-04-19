@@ -3,9 +3,7 @@
 #include <memory>
 #include <string>
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 class Knowledge;
@@ -31,7 +29,8 @@ public:
 	bool null() const;
     bool operator==(const Object& other) const;
     bool operator!=(const Object& other) const { return !operator==(other); }
-	
+	operator std::string() const;
+
 	Object Match(const Expression& other) const;
     const Expression& operator*() const;
     const Expression* operator->() const;
@@ -47,12 +46,15 @@ private:
 	std::unique_ptr<Expression> expr;
 };
 
+
+std::ostream& operator<<(std::ostream& s, const Object& o);
+
 template<class T, typename... Args>
 Object Create(Args&&... args)
 {
 	return Object(std::make_unique<T>(std::forward<Args>(args)...));
 }
-}
+
 }
 
 namespace std

@@ -27,12 +27,20 @@ bool Clause::operator==(const Expression& value) const
 	return false;
 }
 
-std::string Clause::String() const
-{
-    // TODO: if condition is true it could just be the predicate. But then it would be indistinguishable if the type is in question. Perhaps it should be equivalent and operator== should also support that
-    return predicate.String() + ":" + condition->String();
-}
 
+std::ostream& operator<<(std::ostream& os, const Clause& clause)
+{
+    const auto* trivalCondition = clause.condition.As<Boolean>();
+    if (trivalCondition && *trivalCondition)
+    {
+        os << clause.predicate;
+    }
+    else 
+    {
+        os << clause.predicate << " : " << clause.condition;
+    }
+    return os;
+}
 
 Object Clause::Match(const Expression& value) const
 {

@@ -52,18 +52,21 @@ bool Sequence::operator==(const Expression& other) const
     return false;
 }
 
-std::string Sequence::String() const
+std::ostream& operator<<(std::ostream& os, const Sequence& seq)
 {
-    std::string result;
-    for (const auto& element: *this)
+    bool first = true;
+    os << "(";
+    for (const auto& element : seq)
     {
-        if (!result.empty())
-            result += ",";
-        result += element->String();
+        if (first)
+            first = false;
+        else
+            os << " , ";
+        os << element;
     }
-    return "("+result+")";
+    os << ")";
+    return os;
 }
-
 
 Object Sequence::Copy() const
 {

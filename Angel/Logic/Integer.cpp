@@ -30,9 +30,10 @@ bool Integer::operator==(const Expression& other) const
 	return false;
 }
 
-std::string Integer::String() const
+std::ostream& operator<<(std::ostream& os, const Integer& integer)
 {
-    return std::to_string(value);
+    os << integer.value;
+    return os;
 }
 
 long Integer::operator*() const

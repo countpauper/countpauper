@@ -23,10 +23,12 @@ public:
     bool operator==(const Expression& other) const override;
     Object Compute(const Knowledge& known) const override;
     Object Match(const Expression& other) const override;
-    std::string String() const override;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
+    friend std::ostream& operator<<(std::ostream& os, const Conjunction& );
 };
+
+std::ostream& operator<<(std::ostream& os, const Conjunction& );
 
 template<class ...Args>
 Object conjunction(Args... args)

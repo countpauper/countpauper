@@ -147,7 +147,7 @@ std::string DescribeType(const std::any& tokens)
     else if (tokens.type() == typeid(Logic::Object))
     {
         const auto& obj = std::any_cast<Logic::Object>(tokens);
-        return obj->String();
+        return std::string(obj);
     }
     else if (tokens.type() == typeid(std::vector<std::any>))
     {

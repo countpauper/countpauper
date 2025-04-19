@@ -21,16 +21,18 @@ bool Disjunction::operator==(const Expression& other) const
     return false;
 }
 
-std::string Disjunction::String() const
+std::ostream& operator<<(std::ostream& os, const Disjunction& element)
 {
-    std::string result;
-    for (const auto& condition : operands)
+    bool first = true;
+    for (const auto& condition : element.operands)
     {
-        if (!result.empty())
-            result += "|";
-        result += condition->String();
+        if (first)
+            first = false;
+        else
+            os << " | ";
+        os << condition;
     }
-    return result;
+    return os;
 }
 
 Object Disjunction::Simplify() const

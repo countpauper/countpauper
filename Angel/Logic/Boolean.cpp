@@ -23,14 +23,6 @@ bool Boolean::operator==(const Expression& other) const
 	return false;
 }
 
-std::string Boolean::String() const
-{
-    if (truth)
-        return "true";
-    else
-        return "false";
-}
-
 Object Boolean::Compute(const Knowledge& known) const
 {
     return boolean(truth);
@@ -66,9 +58,13 @@ Object Boolean::Cast(const std::type_info& t, const Knowledge& k) const
     throw CastException<Boolean>(t);
 }
 
-Object boolean(bool v)
+std::ostream& operator<<(std::ostream& os, const Boolean& element)
 {
-	return Create<Boolean>(v);
+    if (element.truth)
+        os << "true";
+    else
+        os << "false";
+    return os;
 }
 
 Object boolean(const std::string_view v)
@@ -80,6 +76,12 @@ Object boolean(const std::string_view v)
     else
         throw std::invalid_argument(std::string("Unrecognized boolean value:") + std::string(v));
 }
+
+Object boolean(bool v)
+{
+	return Create<Boolean>(v);
+}
+
 
 
 }

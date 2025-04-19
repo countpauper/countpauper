@@ -32,13 +32,15 @@ public:
     Object Copy() const override;
     operator bool() const override;
     bool operator==(const Expression& other) const override;
-    std::string String() const override;
     Object Match(const Expression& other) const override;
 	void Add(Object&& value);
 	void Merge(Set&& other);
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
+	friend std::ostream& operator<<(std::ostream& os, const Set& set);	
 };
+
+std::ostream& operator<<(std::ostream& os, const Set& set);
 
 Object set();
 Object set(Sequence&& seq);

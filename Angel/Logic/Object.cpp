@@ -2,13 +2,13 @@
 #include "Logic/Boolean.h"
 #include "Logic/Integer.h"
 #include "Logic/Id.h"
+#include "Logic/Expression.h"
+#include <sstream>
 
 namespace Angel
 {
 namespace Logic
 {
-
-
 
 Object::Object(const std::string& tag)
 {
@@ -100,6 +100,22 @@ size_t Object::Hash() const
 Object Object::Cast(const std::type_info& t, const Knowledge& knowledge) const
 {
     return expr->Cast(t, knowledge);
+}
+
+std::ostream& operator<<(std::ostream& os, const Object& o)
+{
+    if (o.null())
+        os << "null";
+    else 
+        os << *o;
+    return os;
+}
+
+Object::operator std::string() const
+{
+    std::stringstream s;
+    s << *this;
+    return s.str();
 }
 
 }

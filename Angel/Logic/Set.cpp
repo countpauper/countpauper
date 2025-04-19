@@ -68,16 +68,20 @@ bool Set::operator==(const Expression& other) const
 	return false;
 }
 
-std::string Set::String() const
+std::ostream& operator<<(std::ostream& os, const Set& set)
 {
-    std::string result;
-    for (const auto& element : *this)
+    bool first = true;
+    os << "{";
+    for (const auto& element : set)
     {
-        if (!result.empty())
-            result += "&";
-        result += element->String();
+        if (first)
+            first = false;
+        else
+            os << " , ";
+        os << element;
     }
-    return "{"+result+"}";
+    os << "}";
+    return os;
 }
 
 Object Set::Match(const Expression& expr) const

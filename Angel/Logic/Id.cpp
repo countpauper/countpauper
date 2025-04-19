@@ -31,11 +31,6 @@ bool Id::operator==(const Expression& other) const
 	return false;
 }
 
-std::string Id::String() const
-{
-    return name;
-}
-
 Object Id::Compute(const Knowledge& known) const
 {
     return id(name);
@@ -54,6 +49,11 @@ Object Id::Cast(const std::type_info& t, const Knowledge& k) const
     throw CastException<Id>(t);
 }
 
+std::ostream& operator<<(std::ostream& os, const Id& id)
+{
+    os << id.name.c_str();
+    return os;
+}
 
 Object id(const std::string_view name)
 {

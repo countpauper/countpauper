@@ -30,14 +30,17 @@ public:
     Sequence(Sequence&& other);
     operator bool() const override;
     bool operator==(const Expression& other) const override;
-    std::string String() const override;
     Object Copy() const override;
     void Add(Object&& value);
     void Merge(Sequence&& other);
     Object Match(const Expression& other) const override;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
+    friend std::ostream& operator<<(std::ostream& os, const Sequence& );
+
 };
+
+std::ostream& operator<<(std::ostream& os, const Sequence& );
 
 Object sequence();
 Object sequence(Sequence&& seq);

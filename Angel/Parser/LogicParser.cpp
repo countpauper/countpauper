@@ -280,11 +280,6 @@ std::istream& operator>>(std::istream& s, Logic::Object& o)
 }
 }
 
-std::ostream& operator<<(std::ostream& s, const Angel::Logic::Object& o)
-{
-    s << o->String();
-    return s;
-}
 
 
 
