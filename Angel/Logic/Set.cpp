@@ -54,7 +54,10 @@ Object Set::Copy() const
     return Create<Set>(*this);
 }
 
-
+Set::operator bool() const
+{
+    return !empty();
+}
 bool Set::operator==(const Expression& other) const
 {
 	if (auto set = dynamic_cast<const Set*>(&other))

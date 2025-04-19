@@ -36,6 +36,11 @@ public:
     // Make a copy of the same type
     virtual Object Copy() const = 0;
 
+    // operator bool returns true if the value trivially converts to true 
+    virtual operator bool() const = 0;
+    // Two elements are equal if they are the same type *and* the same value 
+    // Two check if two elements of different types can be cast to the same type, compare two Objects 
+    // which will use Match 
     virtual bool operator==(const Expression& other) const = 0;
     bool operator!=(const Expression& other) const { return !operator==(other); }
     virtual Object Match(const Expression& other) const = 0;

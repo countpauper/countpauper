@@ -14,10 +14,12 @@ Namespace::Namespace(const Id& id) :
 {
 }
 
-void Namespace::Add(Clause&& c)
+size_t Namespace::Add(Clause&& c)
 {
-    if (!Contains(c))
-        contents.emplace_back(std::move(c));
+    if (Contains(c))
+        return 0;
+    contents.emplace_back(std::move(c));
+    return 1; 
 }
 
 Object Namespace::Match(const Expression& e) const
@@ -35,11 +37,14 @@ Object Namespace::Match(const Expression& e) const
 
 bool Namespace::Contains(const Expression& e) const
 {
-    auto match = Match(e);
-    return match.Trivial();
+    for (auto& c : contents)
+	{
+        if (c == e) {
+            return true;
+        }
+    }
+    return false;
 }
-
-
 
 size_t Namespace::Clauses() const
 {

@@ -28,6 +28,7 @@ public:
     Sequence(const Sequence&);
     Sequence& operator=(const Sequence&) = delete;
     Sequence(Sequence&& other);
+    operator bool() const override;
     bool operator==(const Expression& other) const override;
     std::string String() const override;
     Object Copy() const override;

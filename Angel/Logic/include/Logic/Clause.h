@@ -14,6 +14,7 @@ class Clause : public Expression
 {
 public:
 	explicit Clause(Predicate&& predicate, Object&& condition = boolean(true));
+    operator bool() const override;
 	bool operator==(const Expression& other) const override;
     std::string String() const override;
     Object Match(const Expression& other) const override;

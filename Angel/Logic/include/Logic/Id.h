@@ -12,6 +12,7 @@ class Id : public Element
 {
 public:
 	explicit Id(const std::string& name);
+    operator bool() const override;
 	bool operator==(const Id& id) const;
 	bool operator==(const Expression& value) const override;
     std::string String() const override;

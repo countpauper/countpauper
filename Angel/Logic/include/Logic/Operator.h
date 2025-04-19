@@ -48,6 +48,7 @@ class Nary : public Operator
 public:
     Nary() = default;
     void Add(Object&& value);
+    operator bool() const override;
 protected:
     using Operands = std::unordered_set<Object>;
     Nary(const Operands& other);

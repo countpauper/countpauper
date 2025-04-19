@@ -29,6 +29,12 @@ Predicate::Predicate(const std::string& tag, Sequence&& arguments) :
 	arguments(std::move(arguments))
 {
 }
+
+Predicate::operator bool() const
+{
+    return true;
+}
+
 bool Predicate::operator==(const Expression& other) const
 {
 	if (auto predicate = dynamic_cast<const Predicate*>(&other))

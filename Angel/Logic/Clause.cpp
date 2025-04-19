@@ -12,6 +12,10 @@ Clause::Clause(Predicate&& predicate, Object&& condition) :
 {
 }
 
+Clause::operator bool() const
+{
+    return bool(predicate);
+}
 
 bool Clause::operator==(const Expression& value) const
 {
@@ -35,24 +39,12 @@ Object Clause::Match(const Expression& value) const
 	if (auto query = dynamic_cast<const Predicate*>(&value))
 	{
         auto predicateMatch = predicate.Match(*query);
-        // TODO: non trivial predicate match with variable argumentss
-        if (predicateMatch.Trivial())
-        {
-            // Can't just query it, there won't be a single matching conjunction.
-            // Need to Compute it (or =cast it to boolean) which would then require iterating
-            // TODO: might just want to copy it and lazy compute it later? Is that lazy or slow? 
-            return Object(condition);
-        }
-        else
-            return predicateMatch;
+        // TODO: non trivial predicate match with variable arguments
+               return predicateMatch;
 	}
     else if (auto clause = dynamic_cast<const Clause*>(&value))
     {
-        auto predicateMatch = predicate.Match(clause->predicate);
-        if (predicateMatch.Trivial())
-        {
-            return condition->Match(*(clause->condition));
-        }
+        return predicate.Match(clause->predicate);
     }
 	return boolean(false);
 }

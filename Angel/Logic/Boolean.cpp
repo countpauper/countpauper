@@ -9,16 +9,16 @@ Boolean::Boolean(bool v) :
 {
 }
 
+Boolean::operator bool() const 
+{
+    return truth;
+}
+
 bool Boolean::operator==(const Expression& other) const
 {
 	if (auto boolean = dynamic_cast<const Boolean*>(&other))
 	{
 		return truth == boolean->truth;
-	}
-    // TODO: else cast to Boolean, then do ti
-	else if (auto integer = dynamic_cast<const Integer*>(&other))
-	{
-		return truth == (**integer != 0);
 	}
 	return false;
 }

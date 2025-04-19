@@ -12,15 +12,15 @@ Knowledge::Knowledge() :
 {
 }
 
-void Knowledge::Know(Object&& e)
+size_t Knowledge::Know(Object&& e)
 {
     if (auto* c = e.As<Clause>())
     {
-        root.Add(std::move(*c));
+        return root.Add(std::move(*c));
     }
     else if (auto* predicate = e.As<Predicate>())
     {
-        root.Add(Clause(std::move(*predicate)));
+        return root.Add(Clause(std::move(*predicate)));
     }
     else
     {
@@ -45,7 +45,18 @@ Object Knowledge::Match(const Expression& e) const
 
 bool Knowledge::Knows(const Object& e) const
 {
-    return root.Contains(*e);
+    if (auto* c = e.As<Clause>())
+    {
+        return  root.Contains(*c);
+    }
+    else if (auto* predicate = e.As<Predicate>())
+    {
+        return root.Contains(Clause(std::move(*predicate)));
+    }
+    else
+    {
+        return false;
+    }
 }
 
 size_t Knowledge::Clauses() const

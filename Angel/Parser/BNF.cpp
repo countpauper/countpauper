@@ -120,7 +120,8 @@ Rule::Rule(const std::string_view n, const Expression& e) :
     expression(e),
     construct(PassToken)
 {
-    // TODO can't do `this`, it's not yet constructed all the way 
+    // TODO can't do `this`
+    // Declare singleton is not yet constructed? 
     // Declare::Define(*this);
 }
 

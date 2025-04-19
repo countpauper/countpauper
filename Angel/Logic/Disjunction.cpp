@@ -59,7 +59,7 @@ Object Disjunction::Compute(const Knowledge& knowledge) const
     for (const auto& condition : operands)
     {
         auto truth = condition.Compute(knowledge);
-        if (truth.Trivial())
+        if (truth)
             return truth;
     }
     return boolean(false);

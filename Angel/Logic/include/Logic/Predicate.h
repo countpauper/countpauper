@@ -15,6 +15,7 @@ public:
     Predicate(const Id& id, Sequence&& arguments = Sequence());
     Predicate(const std::string& name, Sequence&& arguments=Sequence());
     Predicate(Predicate&& other);
+    operator bool() const override;
 	bool operator==(const Expression& other) const override;
     std::string String() const override;
     Object Copy() const override;

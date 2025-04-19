@@ -11,6 +11,11 @@ Integer::Integer(long value) :
 {
 }
 
+Integer::operator bool() const
+{
+    return value!=0;
+}
+
 bool Integer::operator==(const Integer& integer) const
 {
 	return value== integer.value;
@@ -21,12 +26,6 @@ bool Integer::operator==(const Expression& other) const
 	if (auto integer= dynamic_cast<const Integer*>(&other))
 	{
 		return operator==(*integer);
-	}
-    // standard, same type ==, else cast to my type, then check that expr ?
-
-	else if (auto boolean = dynamic_cast<const Boolean*>(&other))
-	{
-		return **boolean == (value != 0);
 	}
 	return false;
 }

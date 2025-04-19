@@ -28,9 +28,10 @@ public:
 	Object& operator=(Object&& other);
 
 	operator bool() const;
-	bool Trivial() const;
+	bool null() const;
     bool operator==(const Object& other) const;
     bool operator!=(const Object& other) const { return !operator==(other); }
+	
 	Object Match(const Expression& other) const;
     const Expression& operator*() const;
     const Expression* operator->() const;

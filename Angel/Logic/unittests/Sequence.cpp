@@ -12,12 +12,14 @@ TEST(TestSequence, Construction)
 {
 	Sequence empty;
 	EXPECT_EQ(empty.size(), 0);
+	EXPECT_FALSE(empty);
 
 	Sequence voidSequence((Object()));	// most vexing parse
 	EXPECT_EQ(voidSequence.size(), 0);
 
 
 	Sequence single(id("ginny"));
+	EXPECT_TRUE(single);
 	EXPECT_EQ(single.size(), 1);
     EXPECT_EQ(single.front(), id("ginny"));
 

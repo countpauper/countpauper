@@ -12,14 +12,15 @@ TEST(TestSet, Construction)
 {
 	Set empty;
 	EXPECT_EQ(empty.size(), 0);
+	EXPECT_FALSE(empty);
 
 	Set voidSet{ Object() };
 	EXPECT_EQ(voidSet.size(), 0);
 
-
 	Set single(id("ginny"));
 	EXPECT_EQ(single.size(), 1);
-
+	EXPECT_TRUE(single);
+	
 	Set cats(id("ginny"), id("max"));
 	EXPECT_EQ(cats.size(), 2);
 

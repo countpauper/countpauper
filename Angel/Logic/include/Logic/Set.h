@@ -30,6 +30,7 @@ public:
 
 	Set& operator=(const Set&) = delete;
     Object Copy() const override;
+    operator bool() const override;
     bool operator==(const Expression& other) const override;
     std::string String() const override;
     Object Match(const Expression& other) const override;

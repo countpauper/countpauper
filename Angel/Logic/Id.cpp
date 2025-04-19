@@ -12,6 +12,11 @@ Id::Id(const std::string& name) :
 {
 }
 
+Id::operator bool() const
+{
+    return true;
+}
+
 bool Id::operator==(const Id& id) const
 {
 	return name == id.name;

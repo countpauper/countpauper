@@ -30,6 +30,11 @@ Sequence::Sequence(const Sequence& other)
     }
 }
 
+Sequence::operator bool() const
+{
+    return !empty();
+}
+
 bool Sequence::operator==(const Expression& other) const
 {
     if (auto seq = dynamic_cast<const Sequence*>(&other))
@@ -78,7 +83,7 @@ Object Sequence::Match(const Expression& expr) const
             auto elementMatch = e.Match(**it);
             // TODO: return a conjunction of the results if they are not elemental? Variables? 
             // non lazy? still lazy for trivial? 
-            if (!elementMatch.Trivial())
+            if (!elementMatch)
                 return boolean(false);
             ++it;	// TODO: zip
         }

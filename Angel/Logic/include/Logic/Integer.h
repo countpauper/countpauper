@@ -14,6 +14,7 @@ class Integer : public Element
 {
 public:
 	explicit Integer(long value);
+    operator bool() const override;
 	bool operator==(const Integer& value) const;
 	bool operator==(const Expression& value) const override;
     std::string String() const override;

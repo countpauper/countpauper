@@ -8,6 +8,8 @@ namespace Angel
 namespace Logic
 {
 
+
+
 Object::Object(const std::string& tag)
 {
 	if (tag.empty())
@@ -53,22 +55,25 @@ Object& Object::operator=(Object&& other)
 
 Object::operator bool() const
 {
-	return expr.get();
+	if (null()) 
+		return false;
+	return bool(*expr);
 }
 
-bool Object::Trivial() const
+bool Object::null() const 
 {
-	return operator==(boolean(true));
+	return !expr.get();
 }
-
 
 bool Object::operator==(const Object& other) const
 {
-	return expr && other && *expr == *other.expr;
+	return Match(*other);
 }
 
 Object Object::Match(const Expression& other) const
 {
+	if (null())
+		return boolean(false);
 	return expr->Match(other);
 }
 
@@ -87,7 +92,6 @@ const Expression* Object::operator->() const
     return expr.get();
 }
 
-
 size_t Object::Hash() const
 {
 	return reinterpret_cast<size_t>(expr.get());
@@ -97,8 +101,6 @@ Object Object::Cast(const std::type_info& t, const Knowledge& knowledge) const
 {
     return expr->Cast(t, knowledge);
 }
-
-
 
 }
 }
