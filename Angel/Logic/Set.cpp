@@ -68,6 +68,14 @@ bool Set::operator==(const Expression& other) const
 	return false;
 }
 
+std::size_t Set::Hash() const
+{
+    std::size_t result = 0; 
+    for(const auto& o: *this)
+        result ^ std::hash<Object>()(o);
+    return result;
+}
+
 std::ostream& operator<<(std::ostream& os, const Set& set)
 {
     bool first = true;

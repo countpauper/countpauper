@@ -44,6 +44,10 @@ bool Predicate::operator==(const Expression& other) const
 	return false;
 }
 
+std::size_t Predicate::Hash() const
+{
+    return id.Hash() ^ arguments.Hash();
+}
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)
 {

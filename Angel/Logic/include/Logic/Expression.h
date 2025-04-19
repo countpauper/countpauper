@@ -33,7 +33,7 @@ public:
     
     // Make a copy of the same type
     virtual Object Copy() const = 0;
-
+    virtual std::size_t Hash() const = 0;
     // operator bool returns true if the value trivially converts to true 
     explicit virtual operator bool() const = 0;
     // Two elements are equal if they are the same type *and* the same value 
@@ -50,5 +50,17 @@ protected:
 std::ostream& operator<<(std::ostream& os, const Angel::Logic::Expression& e);
 
 
+}
+
+namespace std
+{
+	template <>
+	struct hash<Angel::Logic::Expression>
+	{
+		size_t operator()(const Angel::Logic::Expression& e) const
+		{
+			return typeid(e).hash_code() ^ e.Hash();
+		}
+	};
 }
 

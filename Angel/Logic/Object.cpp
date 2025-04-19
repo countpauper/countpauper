@@ -94,7 +94,12 @@ const Expression* Object::operator->() const
 
 size_t Object::Hash() const
 {
-	return reinterpret_cast<size_t>(expr.get());
+	if (null())
+		return 0;
+	else 
+	{
+		return std::hash<Angel::Logic::Expression>()(*expr);
+	}
 }
 
 Object Object::Cast(const std::type_info& t, const Knowledge& knowledge) const

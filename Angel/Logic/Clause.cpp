@@ -27,6 +27,10 @@ bool Clause::operator==(const Expression& value) const
 	return false;
 }
 
+std::size_t Clause::Hash() const
+{
+    return predicate.Hash() ^ condition.Hash();
+}
 
 std::ostream& operator<<(std::ostream& os, const Clause& clause)
 {

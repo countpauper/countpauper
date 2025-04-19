@@ -21,6 +21,7 @@ bool Integer::operator==(const Integer& integer) const
 	return value== integer.value;
 }
 
+
 bool Integer::operator==(const Expression& other) const
 {
 	if (auto integer= dynamic_cast<const Integer*>(&other))
@@ -28,6 +29,11 @@ bool Integer::operator==(const Expression& other) const
 		return operator==(*integer);
 	}
 	return false;
+}
+
+std::size_t Integer::Hash() const
+{
+    return value;
 }
 
 std::ostream& operator<<(std::ostream& os, const Integer& integer)

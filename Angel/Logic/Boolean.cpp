@@ -23,6 +23,11 @@ bool Boolean::operator==(const Expression& other) const
 	return false;
 }
 
+std::size_t Boolean::Hash() const
+{
+    return truth;
+}
+
 Object Boolean::Compute(const Knowledge& known) const
 {
     return boolean(truth);
@@ -33,7 +38,6 @@ bool Boolean::operator*() const
 	return truth;
 }
 
-
 std::optional<bool> Boolean::Parse(const std::string& tag)
 {
 	if (tag == "true")
@@ -43,7 +47,6 @@ std::optional<bool> Boolean::Parse(const std::string& tag)
 	else
 		return std::optional<bool>();
 }
-
 
 Object Boolean::Cast(const std::type_info& t, const Knowledge& k) const
 {

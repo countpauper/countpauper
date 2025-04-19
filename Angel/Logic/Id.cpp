@@ -1,6 +1,7 @@
 #include "Logic/Id.h"
 #include "Logic/Boolean.h"
 #include <iostream>
+#include <unordered_map>
 
 namespace Angel
 {
@@ -29,6 +30,12 @@ bool Id::operator==(const Expression& other) const
 		return name == id->name;
 	}
 	return false;
+}
+
+std::size_t Id::Hash() const
+{
+    std::hash<std::string> hasher;
+    return hasher(name);
 }
 
 Object Id::Compute(const Knowledge& known) const

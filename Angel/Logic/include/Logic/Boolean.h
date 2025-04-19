@@ -15,6 +15,8 @@ public:
 	bool operator==(const Expression& other) const override;
     bool operator*() const;
     operator bool() const;
+    std::size_t Hash() const override;
+
     Object Compute(const Knowledge& known) const;
 	static std::optional<bool> Parse(const std::string& tag);
 protected:

@@ -30,6 +30,8 @@ public:
     Sequence(Sequence&& other);
     operator bool() const override;
     bool operator==(const Expression& other) const override;
+    std::size_t Hash() const override;
+    
     Object Copy() const override;
     void Add(Object&& value);
     void Merge(Sequence&& other);

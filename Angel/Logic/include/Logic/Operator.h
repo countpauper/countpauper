@@ -26,6 +26,7 @@ class Unary : public Operator
 public:
     Unary() = default;
     Unary(Object&& operand) : operand(std::move(operand)) {}
+    std::size_t Hash() const override;
 protected:
     Object operand;
 };
@@ -36,6 +37,7 @@ class Binary : public Operator
 public:
     Binary() = default;
     Binary(Object&& left, Object&& right) : left(std::move(left)), right(std::move(right)) {}
+    std::size_t Hash() const override;
 protected:
     Object left;
     Object right;
@@ -49,6 +51,7 @@ public:
     Nary() = default;
     void Add(Object&& value);
     operator bool() const override;
+    std::size_t Hash() const override;
 protected:
     using Operands = std::unordered_set<Object>;
     Nary(const Operands& other);

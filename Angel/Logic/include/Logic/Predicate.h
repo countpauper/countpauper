@@ -17,6 +17,7 @@ public:
     Predicate(Predicate&& other);
     operator bool() const override;
 	bool operator==(const Expression& other) const override;
+    std::size_t Hash() const override;
     Object Copy() const override;
     Object Match(const Expression& other) const override;
     Object Compute(const Knowledge& known) const override;

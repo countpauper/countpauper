@@ -39,7 +39,7 @@ public:
     C* As() const { return dynamic_cast<C*>(expr.get()); }
     template<class C>
     Object Cast(const Knowledge& knowledge) const { return Cast(typeid(C), knowledge); } 
-    size_t Hash() const;
+    std::size_t Hash() const;
 private:
     friend class Expression;
     Object Cast(const std::type_info& t, const Knowledge& knowledge) const;
