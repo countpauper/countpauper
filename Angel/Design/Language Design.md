@@ -390,14 +390,36 @@ so infinite slices to the end.
 ```
 
 ## The boolean math is very prolog like so far, but  
-Clauses (functions) don't just return boolean 
+Clauses (functions) don't just return boolean. In fact all clauses are functions that 
+can either return boolean or (falsey) other types like integers, floating point, ranges, containers, strings. 
+What matter is where that value finally ends up. Does it end up:
+- In a query it will be cast to boolean to determine if there's a match or another match should be tried. 
+- In an assignment, the variable is assigned that value 
+- In a comparison operator, it becomes boolean. 
 ``` 
 f(X): X+2
 f(1)?
 > 3
 ```
 
- 
+## Errors
+While matching any error language is returned (as std::expectation). If it is part of a match 
+the match fails (MFINAE). If it is part of another operation the error is propagated to the query. 
+Some debug statements could "catch" intermedtiate errors and tracing will log them as well. 
+
+```
+f(X): X[1] + 2
+f([cheese])?
+> Index out of range [cheese][1]
+f(4)?
+> Integer 4 is not indexed. 
+f(X): X+2
+trace, f(4)?
+... f(4): 4[1]+2 # Integer 4 is not indexed.
+... f(4): 4+2  
+> 6 
+```
+
 ## axioms are used as variable assignment with that 
 Equivalence operator `=` is not used because legs = 4, but 4 is not equivalent to legs. 
 ```
@@ -454,12 +476,12 @@ THis also stil leaves the empty sequence problem.
 cats(CATS[]) : cat(CATS[0]) & cast(CATS[1:])
 ```
 
-Perhaps the for each operator `*` can SFINAE match when an expression is iterable. This also leaves it open for Sets, 
+Perhaps the for each operator `*` can MFINAE match when an expression is iterable. This also leaves it open for Sets, 
 because the indexed solution is a stronger prerequisite than iterable.  
 ```
 cats(*CAT) : cat(CAT)
 ```
-or maybe `cat(CATS) : cat(*CATS)` or both. The former has the advantage that it can SFINAE match iterable types before the conditions.
+or maybe `cat(CATS) : cat(*CATS)` or both. The former has the advantage that it can MFINAE match iterable types before the conditions.
 
 ## For each 
 Iteration with head tail is slow. It would be more efficient to have a way to express for each. In first order logic
@@ -572,8 +594,83 @@ print(X): $callback_print  # will do nothing but write X to stdout
 break: $callback_trace     # will interrupt executing and break into a debugger with the current state inspectable with queries and modifiable with additional axioms. 
 resume: $callback_resume   # if the inference is currently interrupted by a break, it will continue running and be true. If not currently running it will be false  
 trace(X): $callback_trace  # enable (true) or disable logging of the progress (state changes) of the inference at each step. 
+catch(X): $callback_catch  # an error in the scope is matched with X and ignored if it matches. 
 ```
 The trace syntax will prepend each knew predicate with `...` which is also used in this document to illustrate the inner working. 
+
+## Regular expressions 
+Regular expressions can match with strings. If the regular expression matches it returns to a true-ish value.
+If there are captures in there, they are assigned to a sequence that is not empty. If there are no captures, the result is not a sequence but simply true. If the regular expression does not match it simply evaulated to false. 
+
+Regular expressions can also match strings in sequences. TBD: regex matching can be indicated with an approximate
+match prefix operator, eg `^`.
+```
+f(^"(pre|post)fix") 
+f("prefix")?
+> [pre]
+```
+if somehow functions can be defined that are used during matching, that would be even more flexible and save an 
+operator, because they are running out fast and make readability harder.
+
+```
+f(regex("(pre|post)fix"))
+f("postfix")?
+> [post]
+```
+TBD: why would this result in the captured sequence. By default this predicate is just true because it 
+matches. See below. Perhaps this is a bad idea and functional is enough, but then what is the syntax of the regex function? `f(X): regex(X,"(pre|post)fix")` makes the responsibility of matching a bit vague. 
+On the other hand, with the previous syntax, what can the conditions do with the result of the match? Nothing 
+it would still have to be `f(X=regex(".+))` or something weirder `f(regex(X,".+"))`, why would either of those even match? For returning it's fine, but for functional or logical programming not.
+1. Why does the predicate being matches, match with the first (only, why first) argument of the match predicate
+1. Why does the result of an unconditional predicate returns that result by default 
+1. How can that result be injected into further conditions? 
+1. How would it match with comparison operators? 
+1. How is this related to the foreach/for any operator matching? 
+```
+1: f(cat(X,Y)): legs(X)
+2: f(size(X)) # VS f(X): size(X)
+3: read_json(regex(".+\.json")): read(_) # proposed here to use a default variable _, which in python/prolog instead means: who cares
+4: real_sqrt(X>=0): sqrt(X) # why match with X? is X>=0 the same as greater_equal(X,0)? 
+5. cats(@X): cat(X) 
+```
+TLDR: this may be a dead end idea. 
+
+# Where queries
+Other partial/substitution matching could function like a sql WHERE clause where the rows are tested/ handled one by one. Working title of the built in function if `where`. 
+```
+f(where(name=="ginny"))
+```
+Of course `IN` syntax is already available through @ 
+It's unclear what this accomplishes or requires (TBD)
+- It requires structured types with properties/columns that can be matched with the lambda as a sort of sub knowledge (only `name` and other columns are defined in each row) 
+- The query input should be a whole data set, `f(read('cats.csv'))`.
+- The arguments to the where functions are a sort of lambda.
+- The output is a sequence of all matching rows. 
+
+Also here, why not 
+```
+where(@X): name(X)==ginny
+```
+If properties/columns is such a good idea, perhaps using a `.` operator is sufficient. 
+
+## Matching functions 
+During the matching phase, there are several options of what is in the parentheses: 
+1. A constant like an id or integer that matches eg `f(ginny)`
+1. A variable that matches multiple constants eg `f(X)` 
+1. A typed variable eg `f(X[])` or `f(list(X))`, this is already close to: 
+1. A new (built in) predicate that must be true to match eg `f(cat(X))` 
+1. The meta here is that predicate arguments here can also be predicated `bool(cat(ginny))`
+
+For the functional programming aspect, the default result of predicate with no conditions 
+should not be the default condition `true` but the result of the match. This is already seen for regex.
+That would also mean that 
+```
+f(size(X))
+f([1,2])?
+> 2
+# this is equivalent to f(X): size(X)
+```
+Errors when matching (probably even more so then when querying results) are MFINAE. 
 
 ## File access
 ```
@@ -583,7 +680,7 @@ import(X): $callback_import # Read a file with the name X, parse it and add all 
 Perhaps also: reading&writing to files/streams gpios, serial or sockets. 
 
 Most of these evaluate to true. A function that errors before having any side effect (eg eof when reading) evaluates to false.
-This allows repeating options similar to SFINAE to attempt to achieve the desired effect or unhappy flow. 
+This allows repeating options similar, using MFINAE, attempt to achieve the desired effect or unhappy flow. 
 Of course if succesful the side effect will have occurred and there is no way to turn it back usuaully (as in RAII),
 so it is best to rely on lazy evaluation for pre conditions and put the side effect clause at the end. For this 
 reason evaluation is lazy. This can also be used as a monadic way to attempt side effects. 

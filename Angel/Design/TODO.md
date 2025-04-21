@@ -6,7 +6,8 @@
 -    [ ] Dedesign polymorphic Expression with std::variant 
 -    [ ] Refactror Object away 
 - [ ] Redesign the parser 
--   [ ] 
+-   [ ] Disjunction and Conjunction are examples of NAry-operators 
+-   [ ] Sequences and sets perhaps as well (collections) with the , operator 
 - [ ] Prolog 
 -   [ ] Parsing enough for axioms
 -   [ ] Parsing enough for clauses
@@ -35,7 +36,7 @@
 -   [ ] Add floating points and conversions
 -   [ ] For any operator `@` while infering 
 -   [ ] For any & each operators also while matching 
--   [ ] Other SFINAE type matching or even some concept like syntax 
+-   [ ] Other MFINAE type matching or even some concept like syntax 
 - [ ] Native functions
 -    [ ] Add native cast functions (int, float, str)
 -    [ ] Add native collections functions (size, empty)
