@@ -2,6 +2,7 @@
 -    [x] remove wstring and platform dependenty conversion 
 -    [x] move, build
 -    [ ] Fix logic unit tests
+-    [ ] Recursively match and infer clauses, can't return a disjunction of all matched predicates. they won't have the same scope
 -    [ ] Clear distinction between language casts and operators (equal) and C++ operators/bool? Perhaps equal is the same (same type & value) but Cast is not implicit unless infering/matching
 -    [ ] Dedesign polymorphic Expression with std::variant 
 -    [ ] Refactror Object away 
@@ -17,12 +18,16 @@
 -   [ ] Parse variables 
 -   [ ] Variable clauses with substitution 
 -   [ ] Query with variable and return hypotheses
+-   [ ] Sequences for valence 2+ predicates 
+-   [ ] Tautology protection cat: cat (or longer) is an error 
 - [ ] Functional 
 -   [ ] define constants 
 -   [ ] define lambdas 
--   [ ] integer math
+-   [ ] integer operators `+-*/^` 
 -   [ ] query lambda
+-   [ ] lists 
 -   [ ] sets 
+-   [ ] set and list operators `&|+`
 -   [ ] Membership operator x @ {x,y}
 - Python
 -   [ ] namespaces
@@ -37,9 +42,20 @@
 -   [ ] For any operator `@` while infering 
 -   [ ] For any & each operators also while matching 
 -   [ ] Other MFINAE type matching or even some concept like syntax 
+-   [ ] pairs 
+-   [ ] Derive Clause from Pair and namespace from sequence
+-   [ ] dicts 
+-   [ ] dict access with `[]`
+-   [ ] dict access with `.`
 - [ ] Native functions
--    [ ] Add native cast functions (int, float, str)
+-    [ ] Add native cast functions (id, int, float, str, list, set, dict)
 -    [ ] Add native collections functions (size, empty)
 -    [ ] Add native collection casts
--    [ ] print / trace 
+-    [ ] print
+-    [ ] trace 
+- [ ] Custom functions
 -    [ ] Import of custom native functions (eg math)
+-    [ ] string functions 
+-    [ ] file functions 
+-    [ ] json parsing & dumping 
+

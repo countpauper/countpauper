@@ -33,7 +33,7 @@ public:
     operator bool() const override;
     bool operator==(const Expression& other) const override;
     std::size_t Hash() const override;
-    Object Match(const Expression& other) const override;
+    Match Matching(const Expression& other) const override;
 	void Add(Object&& value);
 	void Merge(Set&& other);
 protected:

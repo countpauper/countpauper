@@ -22,17 +22,19 @@ size_t Namespace::Add(Clause&& c)
     return 1; 
 }
 
-Object Namespace::Match(const Expression& e) const
+
+
+Matches Namespace::FindMatches(const Expression& e) const
 {
-    Disjunction result;
-	for (auto& c : contents)
+    Matches result; 
+	for (const auto& c : contents)
 	{
-        Object match = c.Match(e);
-        if (match!=boolean(false))  // optimization, but only works because empty result is also false
-            result.Add(std::move(match));
+        Match m = c.Matching(e);
+        if (m)
+            result.emplace(std::make_pair(&c, std::move(*m)));
 	}
 
-    return result.Simplify();
+    return result;
 }
 
 bool Namespace::Contains(const Expression& e) const

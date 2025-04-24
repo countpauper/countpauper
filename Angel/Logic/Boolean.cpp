@@ -28,11 +28,6 @@ std::size_t Boolean::Hash() const
     return truth;
 }
 
-Object Boolean::Infer(const Knowledge& known) const
-{
-    return boolean(truth);
-}
-
 bool Boolean::operator*() const
 {
 	return truth;

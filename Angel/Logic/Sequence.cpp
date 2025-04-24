@@ -81,27 +81,29 @@ Object Sequence::Copy() const
     return Create<Sequence>(*this);
 }
 
-Object Sequence::Match(const Expression& expr) const
+Match Sequence::Matching(const Expression& expr) const
 {
+    Variables substitutions;
     if (auto seq = dynamic_cast<const Sequence*>(&expr))
     {
         if (size() != seq->size())
-            return boolean(false);
+            return NoMatch;
         Sequence matchedSequence;
         auto it = seq->begin();
         for (const auto& e : *this)
         {
-            auto elementMatch = e.Match(**it);
+            auto elementMatch = e->Matching(**it);
             // TODO: return a conjunction of the results if they are not elemental? Variables? 
             // non lazy? still lazy for trivial? 
             if (!elementMatch)
-                return boolean(false);
+                return NoMatch;
+            substitutions.insert(elementMatch->begin(), elementMatch->end());
             ++it;	// TODO: zip
         }
-        return boolean(true);
+        return Match(substitutions);
     }
     // TODO: cast array to sequence then match?
-    return boolean(false);
+    return NoMatch;
 }
 
 Object Sequence::Cast(const std::type_info& t, const Knowledge& k) const

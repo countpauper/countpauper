@@ -1,5 +1,7 @@
 #pragma once
 #include "Object.h"
+#include "Match.h"
+#include <cstddef>
 
 namespace Angel::Logic
 {
@@ -22,9 +24,9 @@ public:
     Expression() = default;
     virtual ~Expression() = default;
     // Try to resolve this Expression to an Elemental type in its preferred return type
-    // Will return a copy for Elements and a compute result for Operators 
-    // for logical queries it will query the knowledge for truth and return a boolean (or unresolved conditions ?) 
-    virtual Object Infer(const Knowledge& known) const = 0;
+    // Will return a copy for Elements compute a result for Operators 
+    // for predicates  it will query the knowledge for truth and return a boolean (or unresolved conditions ?) 
+    virtual Object Infer(const Knowledge& known, const Variables& substitutions) const = 0;
 
     // Convert an element to the given type 
     // Non-elements are infered first
@@ -37,11 +39,10 @@ public:
     // operator bool returns true if the value trivially converts to true 
     explicit virtual operator bool() const = 0;
     // Two elements are equal if they are the same type *and* the same value 
-    // Two check if two elements of different types can be cast to the same type, compare two Objects 
-    // which will use Match 
     virtual bool operator==(const Expression& other) const = 0;
     bool operator!=(const Expression& other) const { return !operator==(other); }
-    virtual Object Match(const Expression& other) const = 0;
+    
+    virtual Match Matching(const Expression& other) const = 0;
     operator std::string() const;
 protected:
     friend class Object;

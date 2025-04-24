@@ -1,7 +1,7 @@
 #pragma once
 #include "Object.h"
 #include "Expression.h"
-#include <unordered_set>
+#include <vector>
 
 namespace Angel
 {
@@ -18,6 +18,7 @@ class Operator : public Expression // TODO: objects also expressions that just r
 public:
     Operator() = default;
     virtual ~Operator() = default;
+    Match Matching(const Expression& other) const;    
 };
 
 // The Unary Operator performs a function on a single Object
@@ -44,7 +45,7 @@ protected:
 };
 
 // TODO: Narys are colllections, not owners of a set, sequences are narys with a collection operator, 
-// The N-ary Operator performs a function on a set of zero or more Objects, which typically have a symetric relation 
+// The N-ary Operator performs a function on a sequence of zero or more Objects, which typically have a symetric relation 
 class Nary : public Operator
 {
 public:
@@ -53,7 +54,7 @@ public:
     operator bool() const override;
     std::size_t Hash() const override;
 protected:
-    using Operands = std::unordered_set<Object>;
+    using Operands = std::vector<Object>;
     Nary(const Operands& other);
     Operands operands;
 };

@@ -20,7 +20,6 @@ public:
     std::size_t Hash() const override;
     long operator*() const;
 	static std::optional <long> Parse(const std::string& tag);
-    Object Infer(const Knowledge& known) const;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
 private:

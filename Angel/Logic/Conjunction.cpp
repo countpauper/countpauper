@@ -44,16 +44,11 @@ std::ostream& operator<<(std::ostream& os, const Conjunction& element)
     return os;
 }
 
-Object Conjunction::Match(const Expression& other) const
-{
-    return boolean(other == *this);
-}
-
-Object Conjunction::Infer(const Knowledge& knowledge) const
+Object Conjunction::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
     for (const auto& condition : operands)
     {
-        auto truth = condition.Infer(knowledge);
+        auto truth = condition.Infer(knowledge, substitutions);
         if (!truth)
             return truth;
     }
@@ -70,7 +65,7 @@ Object Conjunction::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (t == typeid(Boolean))
     {
-        return Infer(k);
+        return Infer(k, Variables());
     }
     throw CastException<Conjunction>(t);
 }

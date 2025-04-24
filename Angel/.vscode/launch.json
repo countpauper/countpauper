@@ -7,6 +7,23 @@
             "request": "launch",
             "program": "${cmake.testProgram}",
             "args": [ "${cmake.testArgs}", "-v" ],
+            "setupCommands": [
+                { "text": "-enable-pretty-printing", "description": "enable pretty printing in watch window" }
+            ]        
+        },
+        {
+            "name": "testmate Launch",
+            "type": "gdb",
+            "MIMode": "gdb",
+            "request": "launch",
+            "program": "${exec}",
+            "args": "${argsArray}",
+            "setupCommands": [
+                { 
+                    "text": "-enable-pretty-printing", 
+                    "description": "enable pretty printing in watch window" 
+                }
+            ]        
         }
     ]
 }

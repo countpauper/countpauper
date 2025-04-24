@@ -10,25 +10,6 @@ namespace Angel
 namespace Logic
 {
 
-Object::Object(const std::string& tag)
-{
-	if (tag.empty())
-	{
-		return;
-	}
-	else if (auto boolean = Boolean::Parse(tag))
-	{
-        expr = std::make_unique<Boolean>(*boolean);
-	}
-	else if (auto integer = Integer::Parse(tag))
-	{
-        expr = std::make_unique<Integer>(*integer);
-	}
-	else
-	{
-        expr = std::make_unique<Id>(tag);
-	}
-}
 
 Object::Object(const Object& other) :
     Object(other->Copy())
@@ -67,19 +48,12 @@ bool Object::null() const
 
 bool Object::operator==(const Object& other) const
 {
-	return Match(*other);
+	return expr->operator==(*other);
 }
 
-Object Object::Match(const Expression& other) const
+Object Object::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
-	if (null())
-		return boolean(false);
-	return expr->Match(other);
-}
-
-Object Object::Infer(const Knowledge& knowledge) const
-{
-    return expr->Infer(knowledge);
+    return expr->Infer(knowledge, substitutions);
 }
 
 const Expression& Object::operator*() const

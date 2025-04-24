@@ -51,16 +51,12 @@ Object Disjunction::Simplify() const
     }
 
 }
-Object Disjunction::Match(const Expression& other) const
-{
-    return boolean(other == *this);
-}
 
-Object Disjunction::Infer(const Knowledge& knowledge) const
+Object Disjunction::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
     for (const auto& condition : operands)
     {
-        auto truth = condition.Infer(knowledge);
+        auto truth = condition.Infer(knowledge, substitutions);
         if (truth)
             return truth;
     }
@@ -77,7 +73,7 @@ Object Disjunction::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (t == typeid(Boolean))
     {
-        return Infer(k);
+        return Infer(k, Variables());
     }
     throw CastException<Disjunction>(t);
 }

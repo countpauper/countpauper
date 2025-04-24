@@ -15,10 +15,6 @@
 namespace Angel::Logic
 {
 
-Object Expression::Infer(const Knowledge& known) const
-{
-    return Object(); 
-}
 
 Expression::operator std::string() const
 {

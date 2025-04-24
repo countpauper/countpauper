@@ -67,27 +67,27 @@ Object Predicate::Copy() const
     return Create<Predicate>(*this);
 }
 
-Object Predicate::Match(const Expression& expr) const
+Match Predicate::Matching(const Expression& expr) const
 {
 	if (auto predicate = dynamic_cast<const Predicate*>(&expr))
 	{
         if (id != predicate->id)
-            return boolean(false);;
-		return arguments.Match(predicate->arguments);
+            return NoMatch;
+		return arguments.Matching(predicate->arguments);
 	}
-	return boolean(false);
+	return NoMatch;
 }
 
-Object Predicate::Infer(const Knowledge& known) const
+Object Predicate::Infer(const Knowledge& known, const Variables& substitutions) const
 {
     auto match = known.Match(*this);
-    return match.Infer(known);
+    return match.Infer(known, substitutions);
 }
 
 Object Predicate::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (typeid(t) == typeid(Boolean))
-        return Infer(k);
+        return Infer(k, Variables());
     throw CastException<Predicate>(t);
 }
 

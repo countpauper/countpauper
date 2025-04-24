@@ -92,23 +92,25 @@ std::ostream& operator<<(std::ostream& os, const Set& set)
     return os;
 }
 
-Object Set::Match(const Expression& expr) const
+Match Set::Matching(const Expression& expr) const
 {
+    /*
+    Variables substitutions;
 	if (auto set = dynamic_cast<const Set*>(&expr))
 	{
 		for (const auto& e : *this)
 		{
 			if (!std::none_of(set->begin(), set->end(), [&e](const Object& ov)
 			{
-				return e.Match(*ov);
+				return e.Matching(*ov); // TODO: should accumulate all of the matching variables
 			}))
 			{
-                return boolean(false);
+                return NoMatch;
 			}
 		}
-		return boolean(true);
-	}
-	return boolean(false);
+		return Match(substitutions);
+	}*/
+    	return NoMatch;
 }
 
 Object Set::Cast(const std::type_info& t, const Knowledge& k) const

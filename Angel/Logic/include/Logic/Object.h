@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <map>
 
 namespace Angel::Logic
 {
@@ -19,8 +20,7 @@ public:
     {
     }
 
-	Object(const std::string& tag);
-    explicit Object(const Object& other);
+    Object(const Object& other);
 	Object& operator=(const Object& other);
 	Object(Object&& other);
 	Object& operator=(Object&& other);
@@ -31,10 +31,9 @@ public:
     bool operator!=(const Object& other) const { return !operator==(other); }
 	operator std::string() const;
 
-	Object Match(const Expression& other) const;
     const Expression& operator*() const;
     const Expression* operator->() const;
-    Object Infer(const Knowledge& knowledge) const;
+    Object Infer(const Knowledge& knowledge, const std::map<std::string, Object>& substitutions={}) const;
 	template<class C>
     C* As() const { return dynamic_cast<C*>(expr.get()); }
     template<class C>

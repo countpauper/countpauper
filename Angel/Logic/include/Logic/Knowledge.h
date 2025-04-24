@@ -15,12 +15,12 @@ class Knowledge
 public:
 	Knowledge();
     size_t Know(Object&& e);
-	Object Query(const Object& e) const;
-    Object Query(const Expression& e) const;
+	Object Query(const Object& e, const Variables& substitutions=Variables()) const;
     Object Match(const Expression& e) const;
 	bool Knows(const Object& e) const;
 	size_t Clauses() const;
 private:
+	Object Query(const Expression& e, const Variables& substitutions) const;
 	Namespace root;
 };
 

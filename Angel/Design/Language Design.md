@@ -79,6 +79,25 @@ true
 > true
 ```
 
+The hypothesis is instantiated left to right, so a repeat of a variable (or a predicate that includes it) already has to be a literal match
+```
+same(X,X)
+```
+
+## Matching predicates
+This may not be a very useful feature, but arguments of axioms can again be predicates with literal or variable 
+arguments. 
+
+```
+derivative(sqr(X)):2*X
+```
+
+In that case a variable predicate identifier may be useful
+```
+animal(cat)
+animal(fish)
+taxonomy(X(_)): animal(X)|plant(X)
+```
 
 ## Query 
 Queries are predicates postfixed with the `?` operator. These queries start inference. 
@@ -230,6 +249,19 @@ cat(ginny)?
 > error 
 ```
 
+## Sequences 
+The `,` is the sequence operator that appends or inserts elements to a sequence (tuple in python). 
+If it is a sequence of queries, then the result is of course a sequence of responses, although they share the same hypothesis.
+Sometimes a sequence consists of imperative functions. In this document for instance it 
+is used to enable trace as `trace,f(2)`. Since the scope of this sequence is shared the scoped trace function remains 
+active while infering `f(X)`. Of course this can also be used with variables `X=2,f(X)`. The final result of the sequence 
+operator is just the concatenated sequence, which can be an argument for a predicate `()` list `[]` or set `{}` operator 
+to turn into a specific other type. The set operator checks if all items are pairs to turn it into a dictionary. 
+
+The terminating `,` is ignored, which allows making a sequence of one element `a,`. This is not needed for the predicate, 
+list or set operators, which require a sequence and will automatically expand elemental types into a sequence of 1. 
+
+
 ## Non-boolean values 
 So far all functions have returned a boolean type value, true or false. Functions can also return non boolean values of 
 different types: 
@@ -242,6 +274,20 @@ All they have to do is to define a clause that itself returns a non boolean valu
 f(X): X+2
 pi: 3.141592
 ```
+
+
+## Structural types 
+Angel is not an object oriented language. Still, similar to python, structured type are supported and are 
+basically nested dictionaries. The dictionary is a set of pairs and `:` is the pair operator. A clause is 
+then essentially a pair of predicate and a clause. A namespace is however not a dictionary, because these 
+predicates do not need to be unique and they are ordered by priority. It is technically more a list of pairs. 
+```
+X={a:1, b:2}
+```
+The keys can be any elemental type. With strings they can contain spaces. They can also be integers making 
+effectively a sparse array, which can be accessed with the access operator `X[a]`.
+By default however they are identifiers (equivalent to enums). Dictionaries with 
+identifiers can also be accessed with the `.` operator: `X.a`. 
 
 ## Converting number to and from boolean. 
 Functional integer and floating point functions can be mixed into the boolean inference engine using comparison operators. 
@@ -276,6 +322,7 @@ it is upgraded to a single element set.
 * `|` - conjunection: the collection  with the elements that are either in the left or the right hand side 
 * `+` - a collection with the elments of the right hand side added to the list of the elements of the left hand side 
 * `-` - subtraction:  the collection, with the elements of the left hand side that are NOT in the right hand side. 
+* `[x]` - access: extract one element of a collection identified with index or key `x`.  
 The type of the resulting collection is the same as the type of the left hand side, so eg subtracting a list from a 
 set results in a set, but subtracting a set from a list results in a list.
 
@@ -298,12 +345,12 @@ Slicing can be used to access sub strings or individual characters.
 ## String functions 
 A string module could add other common string functions:
 * `upper(X)` and `lower(X)`
-* `isupper(X)` and `islower(X)`
-* `strip(X, Y)` 
-* `replace(X,Y)` 
-* `format(X,[args])`
-* `regex(x, expr)`
-* `wildcard(W, M)` 
+* `isupper(X)` and `islower(X)` 
+* `strip(X, Y)` - Returns a string where all Y are removed from the ends of X
+* `replace(S, {X:Y})` - returns a string where all x are replaced by Y 
+* `format(X,[args])` - returns a formated string 
+* `regex(X, expr)` - returns true or false or a non empty list of captures
+* `wildcard(W, M)` - returns true or false if it matches
 
 ## Summation
 A summation evaluates to the sum of its elements
@@ -589,88 +636,16 @@ e: 2.7182818284590452353602874713527
 ```
 
 ## Some built ins could have side effects to help with debugging 
-```
-print(X): $callback_print  # will do nothing but write X to stdout
-break: $callback_trace     # will interrupt executing and break into a debugger with the current state inspectable with queries and modifiable with additional axioms. 
-resume: $callback_resume   # if the inference is currently interrupted by a break, it will continue running and be true. If not currently running it will be false  
-trace(X): $callback_trace  # enable (true) or disable logging of the progress (state changes) of the inference at each step. 
-catch(X): $callback_catch  # an error in the scope is matched with X and ignored if it matches. 
-```
-The trace syntax will prepend each knew predicate with `...` which is also used in this document to illustrate the inner working. 
 
-## Regular expressions 
-Regular expressions can match with strings. If the regular expression matches it returns to a true-ish value.
-If there are captures in there, they are assigned to a sequence that is not empty. If there are no captures, the result is not a sequence but simply true. If the regular expression does not match it simply evaulated to false. 
+`print(X)`: $callback_print  # will do nothing but write X to stdout
+`trace(X)`: $callback_trace  # enable (true) or disable logging of the progress (state changes) of the inference at each step. This is scoped so beyond the sequence or conjuncion in which it first appears it is automatically turned off.
+`break`: $callback_trace     # will interrupt executing and break into a debugger with the current hypothesis inspectable with queries and modifiable with additional axioms. For instance `print(X),trace,resume`.
+`resume`: $callback_resume   # if the inference is currently interrupted by a break, it will continue running and be true. If not currently running it will be false  
+`catch(X)`: $callback_catch  # an error in the scope is matched with `X` and ignored if it matches. This is scoped so if the error 
+occurs after the query infering the catch it is no longer active.  
 
-Regular expressions can also match strings in sequences. TBD: regex matching can be indicated with an approximate
-match prefix operator, eg `^`.
-```
-f(^"(pre|post)fix") 
-f("prefix")?
-> [pre]
-```
-if somehow functions can be defined that are used during matching, that would be even more flexible and save an 
-operator, because they are running out fast and make readability harder.
+The trace syntax will prepend each knew query or hypothesis modification with `...` which is also used in this document to illustrate the inner working. 
 
-```
-f(regex("(pre|post)fix"))
-f("postfix")?
-> [post]
-```
-TBD: why would this result in the captured sequence. By default this predicate is just true because it 
-matches. See below. Perhaps this is a bad idea and functional is enough, but then what is the syntax of the regex function? `f(X): regex(X,"(pre|post)fix")` makes the responsibility of matching a bit vague. 
-On the other hand, with the previous syntax, what can the conditions do with the result of the match? Nothing 
-it would still have to be `f(X=regex(".+))` or something weirder `f(regex(X,".+"))`, why would either of those even match? For returning it's fine, but for functional or logical programming not.
-1. Why does the predicate being matches, match with the first (only, why first) argument of the match predicate
-1. Why does the result of an unconditional predicate returns that result by default 
-1. How can that result be injected into further conditions? 
-1. How would it match with comparison operators? 
-1. How is this related to the foreach/for any operator matching? 
-```
-1: f(cat(X,Y)): legs(X)
-2: f(size(X)) # VS f(X): size(X)
-3: read_json(regex(".+\.json")): read(_) # proposed here to use a default variable _, which in python/prolog instead means: who cares
-4: real_sqrt(X>=0): sqrt(X) # why match with X? is X>=0 the same as greater_equal(X,0)? 
-5. cats(@X): cat(X) 
-```
-TLDR: this may be a dead end idea. 
-
-# Where queries
-Other partial/substitution matching could function like a sql WHERE clause where the rows are tested/ handled one by one. Working title of the built in function if `where`. 
-```
-f(where(name=="ginny"))
-```
-Of course `IN` syntax is already available through @ 
-It's unclear what this accomplishes or requires (TBD)
-- It requires structured types with properties/columns that can be matched with the lambda as a sort of sub knowledge (only `name` and other columns are defined in each row) 
-- The query input should be a whole data set, `f(read('cats.csv'))`.
-- The arguments to the where functions are a sort of lambda.
-- The output is a sequence of all matching rows. 
-
-Also here, why not 
-```
-where(@X): name(X)==ginny
-```
-If properties/columns is such a good idea, perhaps using a `.` operator is sufficient. 
-
-## Matching functions 
-During the matching phase, there are several options of what is in the parentheses: 
-1. A constant like an id or integer that matches eg `f(ginny)`
-1. A variable that matches multiple constants eg `f(X)` 
-1. A typed variable eg `f(X[])` or `f(list(X))`, this is already close to: 
-1. A new (built in) predicate that must be true to match eg `f(cat(X))` 
-1. The meta here is that predicate arguments here can also be predicated `bool(cat(ginny))`
-
-For the functional programming aspect, the default result of predicate with no conditions 
-should not be the default condition `true` but the result of the match. This is already seen for regex.
-That would also mean that 
-```
-f(size(X))
-f([1,2])?
-> 2
-# this is equivalent to f(X): size(X)
-```
-Errors when matching (probably even more so then when querying results) are MFINAE. 
 
 ## File access
 ```

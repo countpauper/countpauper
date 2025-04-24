@@ -28,19 +28,27 @@ size_t Knowledge::Know(Object&& e)
     }
 }
 
-Object Knowledge::Query(const Object& o) const
+Object Knowledge::Query(const Object& o, const Variables& substitutions) const
 {
-    return Query(*o);
+    return Query(*o, substitutions);
 }
 
-Object Knowledge::Query(const Expression& e) const
+Object Knowledge::Query(const Expression& e, const Variables& substitutions) const
 {
-    return e.Infer(*this);
+    return e.Infer(*this, substitutions);
 }
 
 Object Knowledge::Match(const Expression& e) const
 {
-    return root.Match(e);
+    for(const auto& match: root.FindMatches(e))
+    {
+        auto result = match.first->Infer(*this, match.second);
+        if (result) 
+        {
+            return result;
+        }
+    } 
+    return boolean(false);
 }
 
 bool Knowledge::Knows(const Object& e) const

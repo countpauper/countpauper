@@ -12,10 +12,17 @@ Object Element::Copy() const
     return Cast(typeid(*this), none);
 }
 
-
-Object Element::Match(const Expression& other) const
+Match Element::Matching(const Expression& other) const
 {
-    return boolean((*this) == other);
+    if(other == *this) 
+        return IsMatch;
+    else
+        return NoMatch;    
+}
+
+Object Element::Infer(const Knowledge& known, const Variables&) const
+{
+    return Copy();
 }
 
 }

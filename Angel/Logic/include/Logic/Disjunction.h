@@ -17,8 +17,7 @@ public:
     }
     Object Copy() const override;
     bool operator==(const Expression& other) const override;
-    Object Infer(const Knowledge& known) const override;
-    Object Match(const Expression& other) const override;
+    Object Infer(const Knowledge& known, const Variables& substitutions) const override;
     // An empty disjunction is false
     // a single element disjunction is equivalent to the first element
     // otherwise create an object of itself

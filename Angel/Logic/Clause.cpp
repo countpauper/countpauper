@@ -46,27 +46,25 @@ std::ostream& operator<<(std::ostream& os, const Clause& clause)
     return os;
 }
 
-Object Clause::Match(const Expression& value) const
+
+Match Clause::Matching(const Expression& other) const
 {
-	if (auto query = dynamic_cast<const Predicate*>(&value))
+	if (auto query = dynamic_cast<const Predicate*>(&other))
 	{
-        auto predicateMatch = predicate.Match(*query);
-        // TODO: non trivial predicate match with variable arguments
-               return predicateMatch;
-	}
-    else if (auto clause = dynamic_cast<const Clause*>(&value))
-    {
-        return predicate.Match(clause->predicate);
+        return predicate.Matching(*query);
     }
-	return boolean(false);
+    else if (auto clause = dynamic_cast<const Clause*>(&other))
+    {
+        return predicate.Matching(clause->predicate);
+    }
+    return NoMatch;
 }
 
-Object Clause::Infer(const Knowledge& known) const
+
+Object Clause::Infer(const Knowledge& known, const Variables& substitutions) const
 {
-    assert(false); // Infer the expression and then return the predicate? What if the expression is false?  
-    return Object();
+    return known.Query(condition, substitutions);
 }
-
 
 Object Clause::Copy() const
 {
@@ -77,7 +75,7 @@ Object Clause::Copy() const
 Object Clause::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (typeid(t) == typeid(Boolean))
-        return Infer(k);
+        return Infer(k, Variables());
     throw CastException<Clause>(t);
 }
 

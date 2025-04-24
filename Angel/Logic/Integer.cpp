@@ -47,11 +47,6 @@ long Integer::operator*() const
 	return value;
 }
 
-Object Integer::Infer(const Knowledge& known) const
-{
-    return integer(value);
-}
-
 Object Integer::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (t == typeid(Boolean))

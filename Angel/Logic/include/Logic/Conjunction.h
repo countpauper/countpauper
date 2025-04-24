@@ -21,8 +21,7 @@ public:
     }
     Object Copy() const override;
     bool operator==(const Expression& other) const override;
-    Object Infer(const Knowledge& known) const override;
-    Object Match(const Expression& other) const override;
+    Object Infer(const Knowledge& known, const Variables& substitutions) const override;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
     friend std::ostream& operator<<(std::ostream& os, const Conjunction& );
