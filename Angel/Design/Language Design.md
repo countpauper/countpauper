@@ -256,7 +256,7 @@ Sometimes a sequence consists of imperative functions. In this document for inst
 is used to enable trace as `trace,f(2)`. Since the scope of this sequence is shared the scoped trace function remains 
 active while infering `f(X)`. Of course this can also be used with variables `X=2,f(X)`. The final result of the sequence 
 operator is just the concatenated sequence, which can be an argument for a predicate `()` list `[]` or set `{}` operator 
-to turn into a specific other type. The set operator checks if all items are pairs to turn it into a dictionary. 
+to turn into a specific other type. The set operator checks if all items are associations to turn it into a dictionary. 
 
 The terminating `,` is ignored, which allows making a sequence of one element `a,`. This is not needed for the predicate, 
 list or set operators, which require a sequence and will automatically expand elemental types into a sequence of 1. 
@@ -278,9 +278,9 @@ pi: 3.141592
 
 ## Structural types 
 Angel is not an object oriented language. Still, similar to python, structured type are supported and are 
-basically nested dictionaries. The dictionary is a set of pairs and `:` is the pair operator. A clause is 
-then essentially a pair of predicate and a clause. A namespace is however not a dictionary, because these 
-predicates do not need to be unique and they are ordered by priority. It is technically more a list of pairs. 
+basically nested dictionaries. The dictionary is a set of associationss and `:` is the association (aka pair) operator. A clause is 
+then essentially an association of predicate and a clause. A namespace is however not a dictionary, because these 
+predicates do not need to be unique and they are ordered by priority. It is technically more a list of associations. 
 ```
 X={a:1, b:2}
 ```

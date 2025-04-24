@@ -10,6 +10,13 @@ Match Operator::Matching(const Expression& other) const
     // then match with that
     return NoMatch;
 }
+
+const Object* Operator::Condition() const
+{
+    assert(false); // how did this get matched? 
+    return nullptr;
+}
+
 std::size_t Unary::Hash() const
 {
     return operand.Hash();

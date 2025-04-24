@@ -1,9 +1,9 @@
 - [ ] Get back up 
 -    [x] remove wstring and platform dependenty conversion 
 -    [x] move, build
--    [ ] Fix logic unit tests
--    [ ] Recursively match and infer clauses, can't return a disjunction of all matched predicates. they won't have the same scope
--    [ ] Clear distinction between language casts and operators (equal) and C++ operators/bool? Perhaps equal is the same (same type & value) but Cast is not implicit unless infering/matching
+-    [x] Fix logic unit tests
+-    [x] Recursively match and infer clauses, can't return a disjunction of all matched predicates. they won't have the same scope
+-    [x] Clear distinction between language casts and operators (equal) and C++ operators/bool? Perhaps equal is the same (same type & value) but Cast is not implicit unless infering/matching
 -    [ ] Dedesign polymorphic Expression with std::variant 
 -    [ ] Refactror Object away 
 - [ ] Redesign the parser 
@@ -36,7 +36,8 @@
 -   [ ] infinite ranges [:y]
 -   [ ] range slicing
 -   [ ] For each operator *[x,y]
--   [ ] Make knowledge and namespace expressions 
+-   [ ] Make knowledge and namespace expressions, clauses associations 
+-   [ ] Sub namespaces
 - [ ] Advanced
 -   [ ] Add floating points and conversions
 -   [ ] For any operator `@` while infering 

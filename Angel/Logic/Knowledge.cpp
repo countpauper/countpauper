@@ -12,19 +12,19 @@ Knowledge::Knowledge() :
 {
 }
 
-size_t Knowledge::Know(Object&& e)
+size_t Knowledge::Know(Object&& o)
 {
-    if (auto* c = e.As<Clause>())
+    if (const auto* pred = o.As<Predicate>())
     {
-        return root.Add(std::move(*c));
+        return root.Add(std::move(o));
     }
-    else if (auto* predicate = e.As<Predicate>())
+    else if (const auto* clause = o.As<Clause>())
     {
-        return root.Add(Clause(std::move(*predicate)));
+        return root.Add(std::move(o));
     }
-    else
+    else 
     {
-        throw std::invalid_argument(std::string("Only Clauses can be known, not ") + typeid(*e).name());
+        throw std::invalid_argument("Only clauses and predicates can be known");
     }
 }
 
@@ -42,7 +42,10 @@ Object Knowledge::Match(const Expression& e) const
 {
     for(const auto& match: root.FindMatches(e))
     {
-        auto result = match.first->Infer(*this, match.second);
+        auto condition = (*match.first)->Condition();
+        if (!condition)
+            return boolean(true);
+        auto result = condition->Infer(*this, match.second);
         if (result) 
         {
             return result;
@@ -51,25 +54,14 @@ Object Knowledge::Match(const Expression& e) const
     return boolean(false);
 }
 
-bool Knowledge::Knows(const Object& e) const
+bool Knowledge::Knows(const Object& o) const
 {
-    if (auto* c = e.As<Clause>())
-    {
-        return  root.Contains(*c);
-    }
-    else if (auto* predicate = e.As<Predicate>())
-    {
-        return root.Contains(Clause(std::move(*predicate)));
-    }
-    else
-    {
-        return false;
-    }
+    return  root.Contains(o);
 }
 
 size_t Knowledge::Clauses() const
 {
-	return root.Clauses();
+	return root.Size();
 }
 
 }

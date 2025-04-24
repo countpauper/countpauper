@@ -35,14 +35,26 @@ public:
     
     // Make a copy of the same type
     virtual Object Copy() const = 0;
+    // Hash that distinguishes items of different type and value in that type
     virtual std::size_t Hash() const = 0;
-    // operator bool returns true if the value trivially converts to true 
+    // operator bool returns true if the value is not nullish
+    // this can be done without Inference
     explicit virtual operator bool() const = 0;
-    // Two elements are equal if they are the same type *and* the same value 
+    // Two elements are equivalent if they are the same type *and* the same value
+    // they must have the same hash  
     virtual bool operator==(const Expression& other) const = 0;
     bool operator!=(const Expression& other) const { return !operator==(other); }
-    
+    // Return a true Match, containing the requires substitutions (both ways)
+    // if this expression matches the other. 
+    // For elements: Match if they are equivalent
+    // For variables: They always match and become a substitution
+    // For collections: match is all elements match both ways. 
+    // For predicates& clauses: Match if the id matches and all arguments match 
     virtual Match Matching(const Expression& other) const = 0;
+    // Return whether this expresion has a condition that must be inferred 
+    // if nullptr there is no condition. 
+    virtual const Object* Condition() const = 0;
+    // Conert the expression to a string, 
     operator std::string() const;
 protected:
     friend class Object;

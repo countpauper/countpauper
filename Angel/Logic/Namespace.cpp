@@ -14,11 +14,11 @@ Namespace::Namespace(const Id& id) :
 {
 }
 
-size_t Namespace::Add(Clause&& c)
+size_t Namespace::Add(Object&& o)
 {
-    if (Contains(c))
+    if (Contains(o))
         return 0;
-    contents.emplace_back(std::move(c));
+    emplace_back(std::move(o));
     return 1; 
 }
 
@@ -27,30 +27,13 @@ size_t Namespace::Add(Clause&& c)
 Matches Namespace::FindMatches(const Expression& e) const
 {
     Matches result; 
-	for (const auto& c : contents)
+	for (const auto& o : *this)
 	{
-        Match m = c.Matching(e);
+        Match m = o->Matching(e);
         if (m)
-            result.emplace(std::make_pair(&c, std::move(*m)));
+            result.emplace(std::make_pair(&o, std::move(*m)));
 	}
-
     return result;
-}
-
-bool Namespace::Contains(const Expression& e) const
-{
-    for (auto& c : contents)
-	{
-        if (c == e) {
-            return true;
-        }
-    }
-    return false;
-}
-
-size_t Namespace::Clauses() const
-{
-	return contents.size();
 }
 
 }

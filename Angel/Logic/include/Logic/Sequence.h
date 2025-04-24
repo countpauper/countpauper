@@ -34,6 +34,8 @@ public:
     
     Object Copy() const override;
     void Add(Object&& value);
+	bool Contains(const Object& e) const;
+    std::size_t Size() const;
     void Merge(Sequence&& other);
     Match Matching(const Expression& other) const override;
 protected:

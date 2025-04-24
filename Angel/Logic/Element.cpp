@@ -20,6 +20,11 @@ Match Element::Matching(const Expression& other) const
         return NoMatch;    
 }
 
+const Object* Element::Condition() const
+{
+    return nullptr;
+}
+
 Object Element::Infer(const Knowledge& known, const Variables&) const
 {
     return Copy();

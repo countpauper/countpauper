@@ -78,6 +78,11 @@ Match Predicate::Matching(const Expression& expr) const
 	return NoMatch;
 }
 
+const Object* Predicate::Condition() const
+{
+	return nullptr;
+}
+
 Object Predicate::Infer(const Knowledge& known, const Variables& substitutions) const
 {
     auto match = known.Match(*this);

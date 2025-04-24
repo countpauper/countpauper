@@ -13,6 +13,7 @@ class Collection : public Expression
 {
 public:
     Object Infer([[maybe_unused]] const Knowledge& known, const Variables& substitutions) const;
+    const Object* Condition() const override;
 };
 
 }

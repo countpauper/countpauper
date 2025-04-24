@@ -18,7 +18,8 @@ class Operator : public Expression // TODO: objects also expressions that just r
 public:
     Operator() = default;
     virtual ~Operator() = default;
-    Match Matching(const Expression& other) const;    
+    Match Matching(const Expression& other) const;
+    const Object* Condition() const override;
 };
 
 // The Unary Operator performs a function on a single Object

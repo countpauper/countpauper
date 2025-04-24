@@ -9,4 +9,9 @@ Object Collection::Infer([[maybe_unused]] const Knowledge& known, const Variable
     return Copy();
 }
 
+const Object* Collection::Condition() const
+{
+    return nullptr;
+}
+
 }

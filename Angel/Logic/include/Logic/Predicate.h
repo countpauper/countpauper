@@ -20,6 +20,7 @@ public:
     std::size_t Hash() const override;
     Object Copy() const override;
     Match Matching(const Expression& other) const override;
+    const Object* Condition() const override;
     Object Infer(const Knowledge& known, const Variables& substitutions) const override;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;

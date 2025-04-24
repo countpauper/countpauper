@@ -11,18 +11,14 @@ namespace Logic
 class Clause;
 
 // A namespace is a collection of Knowledge Objects 
-class Namespace
+class Namespace : public Sequence
 {
 public:
 	explicit Namespace(const Id& id);
-	size_t Add(Clause&& e);   // TODO: is it a collection? 
+	size_t Add(Object&& o); 
 	Matches FindMatches(const Expression& e) const;
-	bool Contains(const Expression& e) const;
-	size_t Clauses() const;
 private:
-    Id id;
-	std::vector<Clause> contents;   // TODO make a unique, sorted container for performance, but it requires operator< or hash of clauses (and they could be equal except for conditions)
-};
+    Id id;};
 
 
 }

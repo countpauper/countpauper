@@ -13,6 +13,6 @@ using Match = std::optional<Variables>;
 static const Match IsMatch=Match(Variables());
 static const Match NoMatch=Match();
 
-using Matches=std::map<const class Clause*, Variables>;
+using Matches=std::map<const Object*, Variables>;
 
 }

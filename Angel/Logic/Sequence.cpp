@@ -132,6 +132,22 @@ void Sequence::Add(Object&& value)
     }
 }
 
+bool Sequence::Contains(const Object& o) const
+{
+    for (const auto& content : *this)
+	{
+        if (content == o) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::size_t Sequence::Size() const
+{
+    return size();
+}
+
 void Sequence::Merge(Sequence&& other)
 {
     for (auto& o : other)

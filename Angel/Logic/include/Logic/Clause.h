@@ -18,6 +18,7 @@ public:
 	bool operator==(const Expression& other) const override;
     std::size_t Hash() const override;
     Match Matching(const Expression& other) const override;
+    const Object* Condition() const override;
     Object Copy() const override;
     Object Infer(const Knowledge& known, const Variables& substitutions) const override;
 protected:

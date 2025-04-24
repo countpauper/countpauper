@@ -60,6 +60,10 @@ Match Clause::Matching(const Expression& other) const
     return NoMatch;
 }
 
+const Object* Clause::Condition() const
+{
+    return &condition;
+}
 
 Object Clause::Infer(const Knowledge& known, const Variables& substitutions) const
 {
