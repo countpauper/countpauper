@@ -47,15 +47,15 @@ std::ostream& operator<<(std::ostream& os, const Clause& clause)
 }
 
 
-Match Clause::Matching(const Expression& other) const
+Match Clause::Matching(const Expression& other, const Variables& substitutions) const
 {
 	if (auto query = dynamic_cast<const Predicate*>(&other))
 	{
-        return predicate.Matching(*query);
+        return predicate.Matching(*query, substitutions);
     }
     else if (auto clause = dynamic_cast<const Clause*>(&other))
     {
-        return predicate.Matching(clause->predicate);
+        return predicate.Matching(clause->predicate, substitutions);
     }
     return NoMatch;
 }

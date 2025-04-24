@@ -4,7 +4,7 @@
 namespace Angel::Logic
 {
 
-Match Operator::Matching(const Expression& other) const
+Match Operator::Matching(const Expression& other, const Variables& substitutions) const
 {
     assert(false); // the only way to match is to first Infer the Element 
     // then match with that

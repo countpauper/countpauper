@@ -18,7 +18,7 @@ class Operator : public Expression // TODO: objects also expressions that just r
 public:
     Operator() = default;
     virtual ~Operator() = default;
-    Match Matching(const Expression& other) const;
+    Match Matching(const Expression& other, const Variables& substitutions) const;
     const Object* Condition() const override;
 };
 

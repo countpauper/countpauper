@@ -12,7 +12,7 @@ Object Element::Copy() const
     return Cast(typeid(*this), none);
 }
 
-Match Element::Matching(const Expression& other) const
+Match Element::Matching(const Expression& other, const Variables&) const
 {
     if(other == *this) 
         return IsMatch;

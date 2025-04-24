@@ -50,7 +50,7 @@ public:
     // For variables: They always match and become a substitution
     // For collections: match is all elements match both ways. 
     // For predicates& clauses: Match if the id matches and all arguments match 
-    virtual Match Matching(const Expression& other) const = 0;
+    virtual Match Matching(const Expression& other, const Variables& substitutions) const = 0;
     // Return whether this expresion has a condition that must be inferred 
     // if nullptr there is no condition. 
     virtual const Object* Condition() const = 0;

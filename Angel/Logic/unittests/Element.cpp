@@ -17,11 +17,13 @@ TEST(TestElement, Boolean)
 	EXPECT_EQ(std::string(boolean(true)), "true");
 	EXPECT_EQ(std::string(boolean(false)), "false");
 	EXPECT_TRUE(boolean("true"));
-	EXPECT_FALSE(boolean("false"));
+	EXPECT_FALSE(boolean(false));
 }
 
 TEST(TestElement, Integer)
 {
+	EXPECT_FALSE(integer(0));
+	EXPECT_TRUE(integer(1));
 	EXPECT_EQ(Logic::Integer(3), Logic::Integer(3));
 	EXPECT_NE(Logic::Integer(2), Logic::Integer(-3));
 	EXPECT_NE(Logic::Integer(1), Logic::Boolean(true));
@@ -29,6 +31,19 @@ TEST(TestElement, Integer)
 	Knowledge k;
 	EXPECT_TRUE(k.Query(integer(1)));
 	EXPECT_FALSE(k.Query(integer(0)));
+}
+
+TEST(TestElement, Id)
+{
+	EXPECT_FALSE(id(""));
+	EXPECT_TRUE(id("test"));
+	EXPECT_EQ(Logic::Id("test"), Logic::Id("test"));
+	EXPECT_NE(Logic::Id("test"), Logic::Id("icle"));
+	EXPECT_NE(Logic::Id("test"), Logic::Boolean(true));
+
+	Knowledge k;
+	EXPECT_TRUE(k.Query(id("test")));
+	EXPECT_FALSE(k.Query(id("")));
 }
 
 }

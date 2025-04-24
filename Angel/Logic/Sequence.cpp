@@ -81,9 +81,9 @@ Object Sequence::Copy() const
     return Create<Sequence>(*this);
 }
 
-Match Sequence::Matching(const Expression& expr) const
+Match Sequence::Matching(const Expression& expr, const Variables& substitutions) const
 {
-    Variables substitutions;
+    Variables newSubstitutions = substitutions;
     if (auto seq = dynamic_cast<const Sequence*>(&expr))
     {
         if (size() != seq->size())
@@ -92,15 +92,15 @@ Match Sequence::Matching(const Expression& expr) const
         auto it = seq->begin();
         for (const auto& e : *this)
         {
-            auto elementMatch = e->Matching(**it);
+            auto elementMatch = e->Matching(**it, newSubstitutions);
             // TODO: return a conjunction of the results if they are not elemental? Variables? 
             // non lazy? still lazy for trivial? 
             if (!elementMatch)
                 return NoMatch;
-            substitutions.insert(elementMatch->begin(), elementMatch->end());
+                newSubstitutions.insert(elementMatch->begin(), elementMatch->end());
             ++it;	// TODO: zip
         }
-        return Match(substitutions);
+        return Match(newSubstitutions);
     }
     // TODO: cast array to sequence then match?
     return NoMatch;

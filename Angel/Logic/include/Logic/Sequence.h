@@ -37,7 +37,7 @@ public:
 	bool Contains(const Object& e) const;
     std::size_t Size() const;
     void Merge(Sequence&& other);
-    Match Matching(const Expression& other) const override;
+    Match Matching(const Expression& other, const Variables& substitutions) const override;
 protected:
     Object Cast(const std::type_info& t, const Knowledge& k) const override;
     friend std::ostream& operator<<(std::ostream& os, const Sequence& );

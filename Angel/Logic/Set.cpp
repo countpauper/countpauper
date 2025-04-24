@@ -92,7 +92,7 @@ std::ostream& operator<<(std::ostream& os, const Set& set)
     return os;
 }
 
-Match Set::Matching(const Expression& expr) const
+Match Set::Matching(const Expression& expr, const Variables& substitutions) const
 {
     /*
     Variables substitutions;

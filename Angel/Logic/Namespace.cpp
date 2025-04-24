@@ -29,7 +29,7 @@ Matches Namespace::FindMatches(const Expression& e) const
     Matches result; 
 	for (const auto& o : *this)
 	{
-        Match m = o->Matching(e);
+        Match m = o->Matching(e, {});
         if (m)
             result.emplace(std::make_pair(&o, std::move(*m)));
 	}

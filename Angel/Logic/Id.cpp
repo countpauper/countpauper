@@ -3,19 +3,17 @@
 #include <iostream>
 #include <unordered_map>
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
-Id::Id(const std::string& name) :
+Id::Id(const std::string_view name) :
 	name(name)
 {
 }
 
 Id::operator bool() const
 {
-    return true;
+    return !name.empty();
 }
 
 bool Id::operator==(const Id& id) const
@@ -63,5 +61,4 @@ Object id(const std::string_view name)
 }
 
 
-}
 }

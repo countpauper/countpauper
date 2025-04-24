@@ -67,13 +67,13 @@ Object Predicate::Copy() const
     return Create<Predicate>(*this);
 }
 
-Match Predicate::Matching(const Expression& expr) const
+Match Predicate::Matching(const Expression& expr, const Variables& substitutions) const
 {
 	if (auto predicate = dynamic_cast<const Predicate*>(&expr))
 	{
-        if (id != predicate->id)
+        if (!id.Matching(predicate->id, {})) // Variable predicate names not (yet) supported
             return NoMatch;
-		return arguments.Matching(predicate->arguments);
+		return arguments.Matching(predicate->arguments, substitutions);
 	}
 	return NoMatch;
 }
