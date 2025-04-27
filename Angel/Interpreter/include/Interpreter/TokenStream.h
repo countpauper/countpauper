@@ -1,11 +1,11 @@
 #pragma once 
 
-#include "Interpreter/Tokens.h"
 #include "interpreter/SourceSpan.h"
 #include <deque>
 
 namespace Interpreter 
 {
+class Token;
 
 struct InputToken {
     const Token* token;

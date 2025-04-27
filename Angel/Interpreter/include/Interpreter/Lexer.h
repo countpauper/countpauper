@@ -1,13 +1,13 @@
 #pragma once 
 
 #include "Interpreter/TokenStream.h"
-#include <set>
+#include "Interpreter/Lexicon.h"
 #include <deque>
+#include <istream>
 
 namespace Interpreter 
 {
 
-using Lexicon = std::set<const Token*>;
 
 class Lexer
 {

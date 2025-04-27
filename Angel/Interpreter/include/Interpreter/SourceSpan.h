@@ -1,5 +1,8 @@
 #pragma once 
 
+#include <cstddef>
+
+
 namespace Interpreter 
 {
     struct SourceSpan {

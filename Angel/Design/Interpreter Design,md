@@ -49,6 +49,9 @@ from source code. The grammar source code should follow the standard [BNF notati
 <rule> ::= <symbol> | <token> 
 ```
 
+Literal tokens are surrounded by double quotes `"`. Regular expression can be distinguished 
+by using single quotes `'`.
+
 ## Traceability and error reporting 
 The lexer, parser and binder each add a reference to the input source code. This can be used to generate errors.
 This reference consists of an offset from the start of the input. From a multi line source code this offset can be converted back to a line number and column for convenient lookup for the user.
@@ -87,11 +90,9 @@ Grammar::Syntax root(tokens);
 
 Tokens are a variant of all token types as terms are variants of other expression types. See #grammar.
 ```
-using Token=std::variant<Regex, Literal, In>
+using Token=std::variant<Regex, Literal>
 ```
 * `Literal(s)`: The input string has to start with that entire string `s` 
-* `In(s)`: The input string has to start with one of the characters. This is equivalent, but faster, than 
-`Regex("[s]")`
 * `Regex(s)`: Use the regular expression parser. The default C++ one is slow but used until it is the bottle neck.
 
 The output of the lexer will then be a sequence of all tokens in the form:

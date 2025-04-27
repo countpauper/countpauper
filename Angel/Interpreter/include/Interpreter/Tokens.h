@@ -6,13 +6,7 @@
 namespace Interpreter 
 {
 
-class Term 
-{
-public:
-    virtual ~Term() = default;
-};
-
-class Token : public Term 
+class Token
 {
 public:
     virtual bool IsEpsilon() const = 0;

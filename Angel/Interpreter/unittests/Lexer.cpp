@@ -1,6 +1,7 @@
 #include "Interpreter/Lexer.h"
 #include "Interpreter/Tokens.h"
 #include "Interpreter/Error.h"
+#include "Interpreter/Syntax.h"
 #include <gtest/gtest.h>
 
 namespace Interpreter::Test
@@ -42,6 +43,17 @@ TEST(Lexer, NotAmbiguous)
     EXPECT_EQ(lexer.Process(">=")[0], InputToken({&greq, 0, 2}));
     EXPECT_EQ(lexer.Process("=>")[0], InputToken({&eq, 0, 1}));
     EXPECT_EQ(lexer.Process(">")[0], InputToken({&gr, 0, 1}));
+}
+
+TEST(Lexer, Lexicon)
+{
+    Syntax emptySyntax;
+    EXPECT_EQ(emptySyntax.GetLexicon().size(), 0);
+    Syntax syntax {
+        Rule{"operator", {Literal("<")}},
+        Rule{"operator", {Literal(">")}},
+    };
+    EXPECT_EQ(syntax.GetLexicon().size(), 2);
 
 }
 
