@@ -1,0 +1,30 @@
+@startuml
+
+split
+  -[hidden]->
+  start
+split again
+  -[hidden]->
+  :source; <<input>>
+split again 
+   -[hidden]->
+  :lexicon;  <<input>>
+end split
+:lexer;
+split
+   :tokens; <<output>>
+split again
+  -[hidden]->
+  :grammar;  <<input>>
+end split
+:parser; 
+split 
+   :rules; <<output>>
+split again
+   -[hidden]->
+   :binding; <<input>>
+end split
+:generator;
+:AST; <<output>>  
+stop
+@enduml

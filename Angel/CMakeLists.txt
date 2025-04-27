@@ -21,9 +21,9 @@ if(BUILD_WITH_TESTS)
         enable_testing()
 endif()
 
-add_subdirectory(Parser)
+add_subdirectory(Interpreter)
 add_subdirectory(Logic)
 
 target_link_libraries(${PROJECT_NAME}
-     Parser
+     Interpreter
      Logic)

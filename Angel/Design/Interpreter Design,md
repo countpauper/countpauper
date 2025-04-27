@@ -1,0 +1,238 @@
+# Interpeter  
+
+The interpreter is primarily intended to interpret the Angel languages described in [Language Design](Language%20Design.md). 
+The interpreter should still be a generic interpreter. For this purpose its consists of the following layers:
+1. An intermediate syntax language wth the same expression as [Backus Naur Form](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form)
+1. A lexer language that tokenizes whitespace, compound operators and ids using a priority list
+1. One more parsers for this language, the first of which will be a [LL(1) parser](https://en.wikipedia.org/wiki/LL_parser).
+1. A binding that converts succesfully parsed rules to an abstract syntax tree through callbacks.
+
+```plantuml
+@startuml
+
+split
+  -[hidden]->
+  start
+split again
+  -[hidden]->
+  :source; <<input>>
+split again 
+   -[hidden]->
+  :gammar;  <<input>>
+end split
+:lexer;
+split
+   :tokens; <<output>>
+split again
+  -[hidden]->
+  :grammar;  <<input>>
+end split
+:parser; 
+split 
+   :rules; <<output>>
+split again
+   -[hidden]->
+   :binding; <<input>>
+end split
+:generator;
+:AST; <<output>>  
+stop
+@enduml
+
+```
+## Bootrapping 
+The lexicon, grammar and bindings are first defined as constexpr C++ source code. This helps with unit tests.
+They are also each an abstract syntax tree (very simple for the lexicon and binding), which can be generated 
+from source code. The grammar source code should follow the standard [BNF notation](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form#BNF_representation_of_itself). 
+
+```
+<rule> ::= <symbol> | <token> 
+```
+
+## Traceability and error reporting 
+The lexer, parser and binder each add a reference to the input source code. This can be used to generate errors.
+This reference consists of an offset from the start of the input. From a multi line source code this offset can be converted back to a line number and column for convenient lookup for the user.
+
+## Streaming 
+The lexer and binder are linear. For linear parsers it's possible that each activity in the diagram runs in
+parallel. This allows handling huge files and improving the speed by using multiple cores. At first this 
+optimization is not necessary, but it's something to keep in mind when designing the interfaces between 
+these activities. 
+As the input lexicon, grammar and bindings are constant, they are not a shared resource for parallelizing. 
+
+Since the generator creating the syntax tree still needs the text that was parsed, the source file 
+must remain readable with random access (for instance in memory) or parsed tokens must retain copies. 
+
+## Lexicon and lexer 
+The lexicon is a simple grammar that generates tokens. This has the following advantages:
+1. It simplifies the grammar by separating trivial parsing of additional or optional white space. 
+1. The lexer can also already tokenize basic types like integers, quoted strings and identifiers. 
+1. It detects simple syntax errors early. 
+1. For LL(1) parsers it allows tokens to consist of more than one character, eg additional white space or compound
+operators like `>=`. 
+
+The lexicon in C++ consists of simple BNF rules where the symbol is the type of token. The BNF type 
+must be one of the token types: `Literal` or `Regex`. 
+This lexicon can simply be added to the grammar and a parser engine will automatically scan and filter 
+the grammar for all token types. 
+Since i
+
+```C++
+Grammar::Regex whitespace("\s+");
+Grammar::Literal geq(">=");
+Grammar::Regex integer("[+-]?[0-9]{1,10}");
+Grammar::Disjunction tokens({whitespace, geq, integer});
+Grammar::Syntax root(tokens);
+```
+
+Tokens are a variant of all token types as terms are variants of other expression types. See #grammar.
+```
+using Token=std::variant<Regex, Literal, In>
+```
+* `Literal(s)`: The input string has to start with that entire string `s` 
+* `In(s)`: The input string has to start with one of the characters. This is equivalent, but faster, than 
+`Regex("[s]")`
+* `Regex(s)`: Use the regular expression parser. The default C++ one is slow but used until it is the bottle neck.
+
+The output of the lexer will then be a sequence of all tokens in the form:
+``` 
+struct SourceSpan {
+    size_t from;
+    size_t length;
+};
+
+struct InputToken {
+    const Token* token;
+    SourceSpan reference; 
+};
+
+class TokenStream {
+    TokenStream& operator<<(TokenStream& ts, const InputToken& token);
+    TokenStream& operator>>(TokenStream& ts, InputToken& token);
+private:
+    std::deque<InputToken> tokens;
+};
+```
+
+### Lexical priority 
+In Backus Naur Form there is no priority of rules. Still when lexing multiple tokens can match. For instance 
+a floating point values `+23.0` could also match an integer, the `.` operator and another integer. Only in the 
+context of the grammar could it be clear that the `.` operator, indicating structure indexing, is not applicable 
+here. Instead the lexer will prefer tokens that greedily match the most characters at each step. 
+The same happens when matching quotes strings. `"23"` will tokenize as a quotes string, and not as two `"` and an integer.
+
+### Optional whitespace
+Optional whitespace can exist between pretty much each token. Adding this to the grammar will double 
+the complexity and halve the speed of the parsing. 
+Optional whitespace can't easily be distinguished from 
+grammatically signficant whitespace during lexing because they look exactly the same. The grammatical context 
+matters. 
+One option may be to have an interpreter meta option to remove all whitespace tokens for languages where 
+whitespace is never signficant. This would be a lexer post precessing step.
+
+### Line ends 
+Line ends are part of the grammar and the lexicon. They may not be grammatically significant for the 
+grammar (eg json) or just synonymous with other white space. For instance the grammar could tokenize
+all whitespace as above or
+```
+Regex eol("[ \t]*([\r]*\n)+");
+Regex space("[ \t]+");
+```
+
+### End of file 
+At the end of the file a built in `eof` token is written to the token stream. This will indicate to the 
+parser that it can also end and distinguish, in a streaming solution, between the explicit end of the stream 
+and a temporary latency. 
+
+### Epsilon
+The epsilon, in the form of an empty string literal or a regeular expression that may match with the empty 
+string, is possible. It should not result from the lexer, because it consumes 0 characters from the input 
+stream. The lexer will check this and if only an epsilon token matches it will give an error instead. 
+The epsilon token may still exist in the grammar 
+
+## Grammar and parser 
+### Grammar types 
+The grammar is defined in types that match the BNF syntax:  
+* `rule`: Define a symbol as another expressions. One rule is selected by the interpret as the root.
+* `expression`: A disjunction of lists
+* `list`: A sequence of terms
+* `term`: A token or or symbol. Symbol is named `rule-name` in the BNF grammar, but has a more 
+defined meaning related to the parser algorithm.  
+* `token`: A literal character sequence. Token is named `literal` in the BNF grammar, but has a 
+more defined meaning related to the lexer and parser interface. 
+* `epsilon`: A token that matches the empty string. 
+
+This grammar has a strict hierachy without infinite recursion. There are no expression terms. 
+Separate rules must be used. Also in C++ this type hierachy is enforced.
+
+### Expression options 
+Expressions are a disjunction of options. In BNF syntax these are indicated with the `|`. As with 
+the horn clauses in the Angel language this is equivalent to a set of production rules with each option.
+`S :== a | b` can be split over two separate rules  for symbol S as:
+```
+S` ::= a
+S` ::= b
+``` 
+
+In the BNF source code the `|` operator can still be defined, but in the C++ syntax the expression 
+therefore does not exist. When generating the C++ AST these become separate rules.
+
+### Parsing 
+Several parser algorithms are possible as long as they take the token stream as input and generate a symbol stream as output. The symbol stream format is 
+```
+struct Symbol
+{
+   const Symbol* symbol;
+   SourceSpan source;
+};
+```
+### LL(1) Parser 
+
+The LL(1) parser will be the first parser and should be an efficient, linear time, parser provided the grammar 
+meets the requirements. During construction the parser takes the grammar and checks it while creating the table.
+It may fail if the requirement that it's an LLR-Grammar are not met, meaning it's unambiguous. 
+1. It's not left recursive ie no rule S::= <S> <e> 
+2. In the parser table there is only one production rule for each symbol/token combination. 
+
+This is checked when creating the grammar. For each production rule encountered the first condition is checked. When 
+assigning a production rule in the table, if it's not empty, the construction fails. 
+
+After the table is created, the [parsing algorithm](https://en.wikipedia.org/wiki/LL_parser#Parsing_procedure) is fairly simple. It needs 
+1. The table `T`
+1. A stack `S` that starts with the root rule 
+1. The input token stream `I`
+1. The output symbol stream `O`
+
+The algorithm then iterates over the following pseudo code: 
+```
+while token:=I.peek() != eof:
+  while not S.empty():
+    term=S.pop()
+    if term == token:
+      break
+    else if term.epsilon():
+      pass
+    else:
+      rule = T[symbol(term), token]
+      S.push(rule.expression)
+      O.push(rule)
+  else:
+    break # remaining stream
+```
+
+## Creating the Abstract Syntax Tree (AST) 
+
+The interpreter will creating a tree out of the symbol stream. 
+
+
+The binding definition links some rules to a callback which takes a string. 
+It will be called with the section of the input source code that is matched by that rule and 
+with the output of the nested callbacks. Because this is typesafe with the interpreter's AST, for 
+instance `Object` in this case, it can only be defined in C++.  
+```
+Object callback(Symbol& symbol, Object nested)
+```
+
+Other rules may not generate anything meaningful 
+
+

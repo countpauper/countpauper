@@ -4,18 +4,25 @@
 -    [x] Fix logic unit tests
 -    [x] Recursively match and infer clauses, can't return a disjunction of all matched predicates. they won't have the same scope
 -    [x] Clear distinction between language casts and operators (equal) and C++ operators/bool? Perhaps equal is the same (same type & value) but Cast is not implicit unless infering/matching
--    [ ] Dedesign polymorphic Expression with std::variant 
--    [ ] Refactror Object away 
+-    [ ] Redesign polymorphic Expression with std::variant ?
+-    [ ] Refactor Object away 
 - [ ] Redesign the parser 
 -   [ ] Disjunction and Conjunction are examples of NAry-operators 
 -   [ ] Sequences and sets perhaps as well (collections) with the , operator 
-- [ ] Prolog 
+-   [ ] Define constexpr context free grammar 
+-   [ ] Find a way for the production rules to produce
+-   [ ] Check the grammer for constraints of LL(1): left recursion 
+-   [ ] Unit tests for simple grammers to create first/follow table
+-   [ ] Implement LL(1) https://www.geeksforgeeks.org/types-of-parsers-in-compiler-design/
+-   [ ] Consider LL(n)
+-   [ ] Clean up old parser 
 -   [ ] Parsing enough for axioms
 -   [ ] Parsing enough for clauses
--   [ ] query horn clause 
 -   [ ] Parsing enough for predicates
--   [ ] Query predicate  
 -   [ ] Parse variables 
+- [ ] Prolog 
+-   [ ] query horn clause 
+-   [ ] Query predicate  
 -   [ ] Variable clauses with substitution 
 -   [ ] Query with variable and return hypotheses
 -   [ ] Sequences for valence 2+ predicates 
@@ -38,6 +45,10 @@
 -   [ ] For each operator *[x,y]
 -   [ ] Make knowledge and namespace expressions, clauses associations 
 -   [ ] Sub namespaces
+-   [ ] Figure out numpy like stuff. 
+-   [ ] Multi dimensional arrays (as a separate collection type)?
+-   [ ] More advanced ranges, with step ?  
+-   [ ] Apply functions on sequences, sets and arrays with for each 
 - [ ] Advanced
 -   [ ] Add floating points and conversions
 -   [ ] For any operator `@` while infering 
