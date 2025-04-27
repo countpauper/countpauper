@@ -1,7 +1,7 @@
 #pragma once 
 
 #include "interpreter/SourceSpan.h"
-#include <deque>
+#include "Interpreter/ObjectStream.h"
 
 namespace Interpreter 
 {
@@ -13,13 +13,6 @@ struct InputToken {
     bool operator==(const InputToken& other) const { return token == other.token && reference == other.reference; }
 };
 
-class TokenStream {
-public:
-    TokenStream& operator<<(const InputToken& token);
-    TokenStream& operator>>(InputToken& token);
-    std::deque<InputToken> Flush(); 
-private:
-    std::deque<InputToken> tokens;
-};
+using TokenStream = InfiniteObjectStream<InputToken>;
 
 };

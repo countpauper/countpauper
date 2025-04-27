@@ -22,6 +22,11 @@ std::size_t Literal::Match(const std::string_view input) const
         return 0;
 }
 
+Literal::operator std::string() const
+{
+    return std::format("\"{}\"", match.c_str());
+}
+
 bool Literal::operator==(const Token& other) const
 {
     if (const Literal* o = dynamic_cast<const Literal*>(&other))
@@ -31,6 +36,7 @@ bool Literal::operator==(const Token& other) const
 }
 
 Regex::Regex(std::string_view match):
+    match(match),
     expression(match.data(), match.size(), 
         std::regex_constants::ECMAScript | 
         std::regex_constants::optimize | 
@@ -40,7 +46,7 @@ Regex::Regex(std::string_view match):
 
 bool Regex::IsEpsilon() const
 {
-    return false;
+    return match.empty();
 }
 
 std::size_t Regex::Match(const std::string_view input) const
@@ -52,5 +58,19 @@ std::size_t Regex::Match(const std::string_view input) const
     else 
         return 0;
 }
+
+Regex::operator std::string() const
+{
+    return std::format("'{}'", match.c_str());
+}
+
+bool Regex::operator==(const Token& other) const
+{
+    if (const Regex* o = dynamic_cast<const Regex*>(&other))
+        return o->match == match;
+    else
+        return false;
+}
+
 
 }

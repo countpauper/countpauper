@@ -2,6 +2,7 @@
 
 #include "Tokens.h"
 #include "Lexicon.h"
+#include "SourceSpan.h"
 #include <string>
 #include <list>
 #include <variant>
@@ -9,15 +10,24 @@
 
 namespace Interpreter 
 {
-    using Symbol = std::string;
+    struct Symbol 
+    {
+        std::string name;
+        operator std::string() const;
+    };
+
     class Rule; 
 
     using Term = std::variant<Symbol, Literal, Regex>; 
+    std::string to_string(const Term& term);
+
     using Terms = std::vector<Term>;
     struct Rule
     {
-        Symbol name;
+        std::string name;
         Terms terms;
+        SourceSpan location = {0,0}; // set if loaded from source else 0,0
+        operator std::string() const;
     };
 
     class Syntax : public std::list<Rule>
@@ -37,7 +47,7 @@ namespace Interpreter
         private:
             LookupTable::const_iterator b, e;    
         };
-        Range Lookup(const Symbol& symbol) const;
+        Range Lookup(const std::string_view symbol) const;
     private:
         void CreateLookup();
         LookupTable lookup;

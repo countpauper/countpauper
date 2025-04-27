@@ -11,11 +11,15 @@ TEST(Syntax, EmptyLookup)
     EXPECT_TRUE(emptyLookup.empty());
 }
 
+TEST(Syntax, Rule)
+{
+    EXPECT_EQ(std::string(Rule({"S", {Literal("a"), Symbol("S")}})), "S::=\"a\" <S>");
+}
 TEST(Syntax, Lookup)
 {
     Syntax syntax {
-        Rule{"operator", {Literal("<")}},
-        Rule{"operator", {Literal(">")}},
+        Rule("operator", {Literal("<")}),
+        Rule("operator", {Literal(">")}),
     };
     EXPECT_EQ(syntax.Lookup("operator").size(), 2);
     EXPECT_TRUE(syntax.Lookup("floperator").empty());

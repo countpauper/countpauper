@@ -1,7 +1,37 @@
 #include "Interpreter/Syntax.h"
+#include <numeric>
+#include <type_traits>
+#include <variant>
 
 namespace Interpreter 
 {
+
+Symbol::operator std::string() const
+{
+    return std::format("<{}>", name);
+}
+
+// helper type for the visitor #4
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
+// explicit deduction guide (not needed as of C++20)
+template<class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
+
+std::string to_string(const Term& term)
+{
+    return std::visit( [](auto&& arg) { return std::string(arg); }, term);
+}
+
+Rule::operator std::string() const 
+{
+    std::string termstr;
+    std::for_each(terms.begin(), terms.end(), [&termstr](const Term& term)
+    {
+        termstr += to_string(term) + " ";
+    });
+    return std::format("{}::={}", name, termstr.substr(0, termstr.size()-1));
+}
 
 Syntax::Syntax(std::initializer_list<Rule> rules) :
     std::list<Rule>(rules)
@@ -24,7 +54,7 @@ void Syntax::CreateLookup()
     }
 }
 
-Syntax::Range Syntax::Lookup(const Symbol& symbol) const
+Syntax::Range Syntax::Lookup(const std::string_view symbol) const
 {
     return Range(lookup.equal_range(symbol));
 }

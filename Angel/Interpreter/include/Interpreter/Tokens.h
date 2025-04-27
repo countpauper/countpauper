@@ -21,6 +21,7 @@ public:
     std::size_t Match(const std::string_view input) const;
     bool operator==(const Token& other) const;
     bool operator!=(const Token& other) const { return !this->operator==(other); }
+    operator std::string() const;
 private:
     std::string match;
 };
@@ -31,7 +32,11 @@ public:
     Regex(std::string_view match);
     bool IsEpsilon() const;
     std::size_t Match(const std::string_view input) const;
+    operator std::string() const;
+    bool operator==(const Token& other) const;
+    bool operator!=(const Token& other) const { return !this->operator==(other); }
 private:
+    std::string match;
     std::regex expression;
 };
 
