@@ -24,4 +24,25 @@ TEST(Lexer, Literal)
     EXPECT_THROW(lexer.Process("dog"), Error);
 }
 
+TEST(Lexer, Regex)
+{
+    Regex whitespace("\\s+");
+    Lexer lexer({&whitespace});
+    EXPECT_EQ(lexer.Process("")[0], InputToken({nullptr, 0, 0}));
+    EXPECT_EQ(lexer.Process("\t ")[0], InputToken({&whitespace, 0, 2}));
+    EXPECT_THROW(lexer.Process("not space"), Error);
+}
+
+TEST(Lexer, NotAmbiguous)
+{
+    Literal greq(">=");
+    Literal gr(">");
+    Literal eq("=");
+    Lexer lexer({ &gr, &eq, &greq });
+    EXPECT_EQ(lexer.Process(">=")[0], InputToken({&greq, 0, 2}));
+    EXPECT_EQ(lexer.Process("=>")[0], InputToken({&eq, 0, 1}));
+    EXPECT_EQ(lexer.Process(">")[0], InputToken({&gr, 0, 1}));
+
+}
+
 }

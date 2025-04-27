@@ -153,6 +153,7 @@ The epsilon token may still exist in the grammar
 ## Grammar and parser 
 ### Grammar types 
 The grammar is defined in types that match the BNF syntax:  
+* `syntax`: A set of productin rules
 * `rule`: Define a symbol as another expressions. One rule is selected by the interpret as the root.
 * `expression`: A disjunction of lists
 * `list`: A sequence of terms
@@ -222,17 +223,22 @@ while token:=I.peek() != eof:
 
 ## Creating the Abstract Syntax Tree (AST) 
 
-The interpreter will creating a tree out of the symbol stream. 
+The interpreter will create a tree out of the symbol stream. This tree is highly application specific. 
+It is the transition between the generic interpreter interface and the application specific model. 
 
-
-The binding definition links some rules to a callback which takes a string. 
-It will be called with the section of the input source code that is matched by that rule and 
-with the output of the nested callbacks. Because this is typesafe with the interpreter's AST, for 
-instance `Object` in this case, it can only be defined in C++.  
 ```
-Object callback(Symbol& symbol, Object nested)
+void Produce(const Symbol& symbol, void* context) = 0;
 ```
+The application can implement a generator and sequentially build up it's model as a member variable or 
+in some external storage. 
 
-Other rules may not generate anything meaningful 
+The callback is called whenever a production rule is complete and since they form a tree, the callback order 
+will be from leaves to root. 
+
+TBD: there are skips to branches. How does the generator keep track? What information can the interpreter 
+give to indicate the location in the tree? Pass the whole stack ? 
+
+## Alternative generators 
+Languages can have additional generators for things like static code analysis or reflection. 
 
 
