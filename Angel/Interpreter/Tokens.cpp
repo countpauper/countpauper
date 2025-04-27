@@ -22,23 +22,33 @@ std::size_t Literal::Match(const std::string_view input) const
         return 0;
 }
 
+bool Literal::operator==(const Token& other) const
+{
+    if (const Literal* o = dynamic_cast<const Literal*>(&other))
+        return o->match == match;
+    else
+        return false;
+}
 
 Regex::Regex(std::string_view match):
-    match(match)
+    expression(match.data(), match.size(), 
+        std::regex_constants::ECMAScript | 
+        std::regex_constants::optimize | 
+        std::regex_constants::nosubs)
 {
 }
 
 bool Regex::IsEpsilon() const
 {
-    return match.empty();
+    return false;
 }
 
 std::size_t Regex::Match(const std::string_view input) const
 {
-    std::regex expr(match);
     std::cmatch result;
-    if (std::regex_search(input.begin(), input.end(), result, expr, std::regex_constants::match_continuous))
-        return result.str(0).size();
+    if (std::regex_search(input.begin(), input.end(), result, expression, 
+            std::regex_constants::match_continuous | std::regex_constants::match_not_null))
+        return result.length();
     else 
         return 0;
 }

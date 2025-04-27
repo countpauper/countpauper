@@ -10,16 +10,22 @@ TEST(Tokens, Literal)
     EXPECT_FALSE(Literal("cat").IsEpsilon());
     EXPECT_EQ(Literal("cat").Match("catharsis"), 3);
     EXPECT_FALSE(Literal("cat").Match("scat"));
+    EXPECT_TRUE(epsilon.IsEpsilon());
+    EXPECT_EQ(Literal(""), epsilon);
+    EXPECT_EQ(Literal("cat"), Literal("cat"));
+    EXPECT_NE(Literal("cat"), Literal("catharsis"));
 }
 
 
 
 TEST(Tokens, Regex)
 {
-    EXPECT_FALSE(Literal(".+").IsEpsilon());
-    EXPECT_FALSE(Literal(".*").IsEpsilon());
+    EXPECT_FALSE(Regex("").IsEpsilon());
+    EXPECT_FALSE(Regex(".+").IsEpsilon());
+    EXPECT_FALSE(Regex(".*").IsEpsilon());
     EXPECT_FALSE(Regex("[0-9]*").Match("cat"));
-    EXPECT_EQ(Regex("[0-9]+").Match("123/"), 3);
+    EXPECT_EQ(Regex("[0-9]+").Match("123/4"), 3);
+    EXPECT_EQ(Regex("\\s+").Match("\r\ncat"), 2);
 }
 
 

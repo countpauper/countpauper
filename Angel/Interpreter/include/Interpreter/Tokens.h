@@ -1,11 +1,18 @@
 #pragma once 
 #include <string>
 #include <variant> 
+#include <regex>
 
 namespace Interpreter 
 {
 
-class Token 
+class Term 
+{
+public:
+    virtual ~Term() = default;
+};
+
+class Token : public Term 
 {
 public:
     virtual bool IsEpsilon() const = 0;
@@ -18,6 +25,8 @@ public:
     Literal(std::string_view match) ;
     bool IsEpsilon() const;
     std::size_t Match(const std::string_view input) const;
+    bool operator==(const Token& other) const;
+    bool operator!=(const Token& other) const { return !this->operator==(other); }
 private:
     std::string match;
 };
@@ -29,8 +38,9 @@ public:
     bool IsEpsilon() const;
     std::size_t Match(const std::string_view input) const;
 private:
-    std::string match;
+    std::regex expression;
 };
 
+static const Literal epsilon("");
 
 }
