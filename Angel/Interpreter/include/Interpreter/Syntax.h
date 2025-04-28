@@ -7,6 +7,7 @@
 #include <list>
 #include <variant>
 #include <map>
+#include <ranges>
 
 namespace Interpreter 
 {
@@ -33,9 +34,9 @@ namespace Interpreter
     class Syntax : public std::list<Rule>
     {
     public:
-        explicit Syntax(std::initializer_list<Rule> rules={});
+        explicit Syntax(std::initializer_list<Rule> rules={}, const std::string_view start="");
         using LookupTable = std::multimap<std::string_view, const Terms*>;
-        
+        /* 
         class Range
         {
         public:
@@ -47,9 +48,13 @@ namespace Interpreter
         private:
             LookupTable::const_iterator b, e;    
         };
-        Range Lookup(const std::string_view symbol) const;
+        */
+
+        std::ranges::subrange<LookupTable::const_iterator> Lookup(const std::string_view symbol) const;
+        std::string Start() const;
     private:
         void CreateLookup();
+        std::string start;
         LookupTable lookup;
     };
 }

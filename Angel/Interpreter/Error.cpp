@@ -14,4 +14,9 @@ const char* Error::what() const noexcept
 }
 
 
+SourceSpan Error::Location() const
+{
+    return location;
+}
+
 }

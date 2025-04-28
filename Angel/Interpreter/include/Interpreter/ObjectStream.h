@@ -4,7 +4,7 @@
 namespace Interpreter 
 {
 
-// In infinite object stream uses all available memory as a buffer
+// An infinite object stream uses all available memory as a buffer
 // as opposed to a cirular stream
 template<class T>   // T is the object type, which must be copyable
 class InfiniteObjectStream 

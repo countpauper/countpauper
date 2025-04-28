@@ -8,11 +8,10 @@
 namespace Interpreter 
 {
 
-
 class Lexer
 {
 public:
-    Lexer(const Lexicon& lexicon, std::size_t buffer=1024);
+    Lexer(const class Lexicon& lexicon, std::size_t buffer=1024);
     void Process(std::istream& is, TokenStream& os);
     std::deque<InputToken> Process(const std::string_view input);
 public: 

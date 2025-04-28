@@ -33,9 +33,14 @@ Rule::operator std::string() const
     return std::format("{}::={}", name, termstr.substr(0, termstr.size()-1));
 }
 
-Syntax::Syntax(std::initializer_list<Rule> rules) :
-    std::list<Rule>(rules)
+Syntax::Syntax(std::initializer_list<Rule> rules, const std::string_view start) :
+    std::list<Rule>(rules),
+    start(start)
 {
+    if (start.empty() && rules.size()>0)
+    {
+        this->start = rules.begin()->name;
+    }
     CreateLookup();
 }
 
@@ -54,11 +59,19 @@ void Syntax::CreateLookup()
     }
 }
 
-Syntax::Range Syntax::Lookup(const std::string_view symbol) const
+std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::Lookup(const std::string_view symbol) const
 {
-    return Range(lookup.equal_range(symbol));
+    auto [first, last] = lookup.equal_range(symbol); 
+    return std::ranges::subrange(first, last);
+
 }
 
+std::string Syntax::Start() const
+{
+    return start;
+}
+
+/*
 Syntax::Range::Range(std::pair<LookupTable::const_iterator, LookupTable::const_iterator> it) :
     b(it.first),
     e(it.second)
@@ -83,4 +96,6 @@ Syntax::LookupTable::const_iterator Syntax::Range::end() const
 {
     return e;
 }
+*/
+
 }

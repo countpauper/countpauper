@@ -21,7 +21,8 @@ TEST(Syntax, Lookup)
         Rule("operator", {Literal("<")}),
         Rule("operator", {Literal(">")}),
     };
-    EXPECT_EQ(syntax.Lookup("operator").size(), 2);
+    auto lookup  = syntax.Lookup("operator");
+    EXPECT_EQ(std::distance(lookup.cbegin(), lookup.cend()), 2);
     EXPECT_TRUE(syntax.Lookup("floperator").empty());
 }
 
