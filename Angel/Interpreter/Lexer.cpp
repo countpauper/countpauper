@@ -30,25 +30,25 @@ void Lexer::Process(std::istream& is, TokenStream& os)
         FillBuffer(is);
         if (buffer.empty())
             break;
-        const Token* best = nullptr;
+        hash_t best = 0;
         std::size_t bestConsumed = 0;
-        for(const Token* token : lexicon)
+        for(auto tokenPair : lexicon)
         {
-            auto consumed = token->Match(buffer);
+            auto consumed = tokenPair.second->Match(buffer);
             if (consumed>bestConsumed) {
-                best = token;
+                best = tokenPair.first;
                 bestConsumed = consumed;
             }
         }
-        if (!best) 
+        if (bestConsumed == 0) 
         {
             throw Error("Unkown token", SourceSpan{location, buffer.size()});
         }
-        os << InputToken{best, location, bestConsumed};
+        os << InputToken(best, location, bestConsumed);
         buffer.erase(0, bestConsumed);
         location += bestConsumed;
     }
-    os << InputToken { nullptr, location, 0 };
+    os << InputToken(); // end token
 }
     
 std::deque<InputToken> Lexer::Process(const std::string_view input)

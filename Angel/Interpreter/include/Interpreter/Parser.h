@@ -13,7 +13,7 @@ class Syntax;
 
 struct OutputSymbol
 {
-    const std::string_view symbol;
+    std::string_view symbol;
     SourceSpan location;
 };
 

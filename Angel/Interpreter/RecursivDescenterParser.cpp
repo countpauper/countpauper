@@ -27,6 +27,7 @@ std::vector<std::string> Parser::ParseIt(const std::string_view source)
     Lexer(lexicon).Process(sourcestream, tokens);
     SymbolStream os;
     Parse(tokens, os);
+    //auto symbols =  std::ranges::views::istream<OutputSymbol>(os) | std::views::transform([](const OutputSymbol& symbol)
     auto symbols =  os.Flush() | std::views::transform([](const OutputSymbol& symbol)
     {
         return std::string(symbol.symbol);
@@ -45,7 +46,7 @@ void RecursiveDescentParser::Parse(TokenStream& is, SymbolStream& os)
 {
     auto root = syntax.Start();
     auto input = is.Flush();
-    assert(input.back().token == nullptr); // skip end
+    assert(input.back().token == 0); // skip end
     auto it = input.begin();
     auto output = Recurse(root, it, input.end()-1);
     if (output.empty())
@@ -85,7 +86,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view
             auto subResult = Recurse(subSymbol->name, it, to); 
             if (subResult.empty())
                 return subResult;
-            for(auto i : subResult)
+            for(const auto& i : subResult)
                 result.emplace_back(i);
         }
         else if (const Literal* token = std::get_if<Literal>(&term))    // TODO also regex
@@ -94,7 +95,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view
             {
                 if (it==to)
                     return std::vector<OutputSymbol>();
-                if (*token != *it->token) 
+                if (token->Hash() != it->token) 
                     return std::vector<OutputSymbol>();
                 ++it;
             }
@@ -105,7 +106,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view
             {
                 if (it==to)
                     return std::vector<OutputSymbol>();
-                if (*token != *it->token) 
+                if (token->Hash() != it->token) 
                     return std::vector<OutputSymbol>();
                 ++it;
             }

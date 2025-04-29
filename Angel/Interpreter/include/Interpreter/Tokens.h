@@ -6,11 +6,14 @@
 namespace Interpreter 
 {
 
+using hash_t = std::size_t;
+
 class Token
 {
 public:
     virtual bool IsEpsilon() const = 0;
     virtual std::size_t Match(const std::string_view input) const = 0;
+    virtual hash_t Hash() const = 0;
 };
 
 class Literal : public Token
@@ -22,6 +25,7 @@ public:
     bool operator==(const Token& other) const;
     bool operator!=(const Token& other) const { return !this->operator==(other); }
     operator std::string() const;
+    hash_t Hash() const override;
 private:
     std::string match;
 };
@@ -35,6 +39,7 @@ public:
     operator std::string() const;
     bool operator==(const Token& other) const;
     bool operator!=(const Token& other) const { return !this->operator==(other); }
+    hash_t Hash() const override;
 private:
     std::string match;
     std::regex expression;

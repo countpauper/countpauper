@@ -35,6 +35,12 @@ bool Literal::operator==(const Token& other) const
         return false;
 }
 
+hash_t Literal::Hash() const
+{
+    std::hash<std::string> hasher;
+    return typeid(Literal).hash_code() ^ hasher(match);
+}
+
 Regex::Regex(std::string_view match):
     match(match),
     expression(match.data(), match.size(), 
@@ -71,6 +77,14 @@ bool Regex::operator==(const Token& other) const
     else
         return false;
 }
+
+hash_t Regex::Hash() const
+{
+    std::hash<std::string> hasher;
+    return typeid(Regex).hash_code() ^ hasher(match);
+}
+
+
 
 
 }

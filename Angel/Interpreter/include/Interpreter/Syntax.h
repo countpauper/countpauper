@@ -36,20 +36,6 @@ namespace Interpreter
     public:
         explicit Syntax(std::initializer_list<Rule> rules={}, const std::string_view start="");
         using LookupTable = std::multimap<std::string_view, const Terms*>;
-        /* 
-        class Range
-        {
-        public:
-            Range(std::pair<LookupTable::const_iterator, LookupTable::const_iterator> it);
-            bool empty() const;
-            std::size_t size() const;
-            LookupTable::const_iterator begin() const;
-            LookupTable::const_iterator end() const;
-        private:
-            LookupTable::const_iterator b, e;    
-        };
-        */
-
         std::ranges::subrange<LookupTable::const_iterator> Lookup(const std::string_view symbol) const;
         std::string Start() const;
     private:
