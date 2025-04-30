@@ -17,7 +17,7 @@ TEST(Lexer, Empty)
 
 TEST(Lexer, Literal)
 {
-    Literal cat("cat");
+    Term cat{Literal("cat")};
     Lexer lexer(Lexicon{&cat});
     EXPECT_EQ(lexer.Process("")[0], InputToken(InputToken()));
     EXPECT_EQ(lexer.Process("cat")[0], InputToken(cat, 0, 3));
@@ -27,7 +27,7 @@ TEST(Lexer, Literal)
 
 TEST(Lexer, Regex)
 {
-    Regex whitespace("\\s+");
+    Term whitespace = Regex("\\s+");
     Lexer lexer(Lexicon{&whitespace});
     EXPECT_EQ(lexer.Process("")[0], InputToken());
     EXPECT_EQ(lexer.Process("\t ")[0], InputToken(whitespace, 0, 2));
@@ -36,9 +36,9 @@ TEST(Lexer, Regex)
 
 TEST(Lexer, NotAmbiguous)
 {
-    Literal greq(">=");
-    Literal gr(">");
-    Literal eq("=");
+    Term greq = Literal(">=");
+    Term gr = Literal(">");
+    Term eq = Literal("=");
     Lexer lexer(Lexicon{ &gr, &eq, &greq });
     EXPECT_EQ(lexer.Process(">=")[0], InputToken(greq, 0, 2));
     EXPECT_EQ(lexer.Process("=>")[0], InputToken(eq, 0, 1));

@@ -5,11 +5,11 @@
 namespace Interpreter 
 {
 
-Lexicon::Lexicon(std::initializer_list<const Token*> tokens)
+Lexicon::Lexicon(std::initializer_list<const Term*> terms)
 {
-    for(auto token: tokens)
+    for(const auto& term: terms)
     {
-        auto ins = emplace(token->Hash(), token);
+        auto ins = emplace(std::hash<Term>()(*term), term);
         assert(ins.second); // hash must be unique
     }
 }
@@ -18,17 +18,8 @@ void ExtendLexicon(Lexicon& lexicon, const Rule& rule)
 {
     for(const auto& term : rule.terms)
     {
-        // TODO also put symbols in 
-        if (auto literal = get_if<Literal>(&term))
-        {
-            [[maybe_unused]] auto ins = lexicon.emplace(literal->Hash(), literal);
-            assert(ins.second || *literal == *ins.first->second);
-        }
-        else if (auto regex = get_if<Regex>(&term))
-        {
-            [[maybe_unused]] auto ins = lexicon.emplace(regex->Hash(), regex);
-            assert(ins.second || *regex == *ins.first->second);
-        }
+        [[maybe_unused]] auto ins = lexicon.emplace(std::hash<Term>()(term), &term);
+        // TODO operator == for terms assert(ins.second || *literal == *ins.first->second);
     }
 }
 

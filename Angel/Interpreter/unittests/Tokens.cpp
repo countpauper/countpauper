@@ -15,7 +15,7 @@ TEST(Tokens, Literal)
     EXPECT_EQ(Literal("cat"), Literal("cat"));
     EXPECT_NE(Literal("cat"), Literal("catharsis"));
     EXPECT_EQ(std::string(Literal("cat")), "\"cat\"");
-    EXPECT_NE(Literal("cat").Hash(), Literal("catharsis").Hash());
+    EXPECT_NE(std::hash<Literal>()(Literal("cat")), std::hash<Literal>()(Literal("catharsis")));
 }
 
 
@@ -30,7 +30,7 @@ TEST(Tokens, Regex)
     EXPECT_EQ(Regex("\\s+").Match("\r\ncat"), 2);
     EXPECT_EQ(Regex("[abc]"), Regex("[abc]"));
     EXPECT_EQ(std::string(Regex("cat")), "'cat'");
-    EXPECT_NE(Regex("()").Hash(), Literal("()").Hash());
+    EXPECT_NE(std::hash<Regex>()(Regex("()")), std::hash<Literal>()(Literal("()")));
 }
 
 

@@ -13,7 +13,7 @@ namespace Interpreter
   // with that the token and symbol stream would be a hash + source stream [token stream done] 
   // that can go to a char/bytes stream and that stream can be a view 
   // this also avoids dangling references. The hashes are "references" to the dictionary 
-  // that can be persisted as they aren't runtime pointer
+  // t  hat can be persisted as they aren't runtime pointer
 
 /*
     template<typename _Val, typename _Traits>

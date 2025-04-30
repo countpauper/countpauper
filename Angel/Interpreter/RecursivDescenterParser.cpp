@@ -89,24 +89,24 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view
             for(const auto& i : subResult)
                 result.emplace_back(i);
         }
-        else if (const Literal* token = std::get_if<Literal>(&term))    // TODO also regex
+        else if (const Literal* literal = std::get_if<Literal>(&term))
         {
-            if (!token->IsEpsilon())
+            if (!literal->IsEpsilon())
             {
                 if (it==to)
                     return std::vector<OutputSymbol>();
-                if (token->Hash() != it->token) 
+                if (std::hash<Term>()(term) != it->token) 
                     return std::vector<OutputSymbol>();
                 ++it;
             }
         } 
-        else if (const Regex* token = std::get_if<Regex>(&term))    // TODO also regex
+        else if (const Regex* regex = std::get_if<Regex>(&term))    // TODO also regex
         {
-            if (!token->IsEpsilon())
+            if (!regex->IsEpsilon())
             {
                 if (it==to)
                     return std::vector<OutputSymbol>();
-                if (token->Hash() != it->token) 
+                if (std::hash<Term>()(term) != it->token) 
                     return std::vector<OutputSymbol>();
                 ++it;
             }

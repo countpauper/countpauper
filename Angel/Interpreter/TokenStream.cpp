@@ -16,9 +16,6 @@ InputToken::InputToken(hash_t token, size_t from, size_t length) :
 {
 }
 
-InputToken::InputToken(const Token& token, size_t from, size_t length) : 
-    InputToken(token.Hash(), from, length)
-{
-}
+
 
 }

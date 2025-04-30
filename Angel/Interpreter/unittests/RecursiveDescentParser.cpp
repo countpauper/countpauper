@@ -11,8 +11,25 @@
 namespace Interpreter 
 {
 
-
 TEST(RecursiveDescenterParser, ParseLiteral)
+{    
+    Syntax syntax{
+        {"S", {Literal("s")}}
+    };
+    RecursiveDescentParser parser(syntax);
+    EXPECT_EQ(parser.ParseIt("s"), std::vector<std::string>({"S"}));
+}
+
+TEST(RecursiveDescenterParser, ParseRegex)
+{    
+    Syntax syntax{
+        {"S", {Regex("[0-9]+")}}
+    };
+    RecursiveDescentParser parser(syntax);
+    EXPECT_EQ(parser.ParseIt("123"), std::vector<std::string>({"S"}));
+}
+    
+TEST(RecursiveDescenterParser, ParseSymbol)
 {    
     Syntax syntax{
         {"S", {Literal("b"), Symbol("F")}},
@@ -23,7 +40,7 @@ TEST(RecursiveDescenterParser, ParseLiteral)
     EXPECT_EQ(parser.ParseIt("bo"), std::vector<std::string>({"S", "F"}));
 }
 
-TEST(RecursiveDescenterParser, ParseRegex)
+TEST(RecursiveDescenterParser, ParseRegexRule)
 {    
     Syntax syntax{
         {"S", {Literal("b"), Symbol("F")}},

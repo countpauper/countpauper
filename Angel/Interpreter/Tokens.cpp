@@ -4,7 +4,7 @@
 namespace Interpreter
 {
 
-Literal::Literal(std::string_view match):
+Literal::Literal(const std::string_view match):
     match(match)
 {
 }
@@ -27,21 +27,12 @@ Literal::operator std::string() const
     return std::format("\"{}\"", match.c_str());
 }
 
-bool Literal::operator==(const Token& other) const
+bool Literal::operator==(const Literal& other) const
 {
-    if (const Literal* o = dynamic_cast<const Literal*>(&other))
-        return o->match == match;
-    else
-        return false;
+    return other.match == match;
 }
 
-hash_t Literal::Hash() const
-{
-    std::hash<std::string> hasher;
-    return typeid(Literal).hash_code() ^ hasher(match);
-}
-
-Regex::Regex(std::string_view match):
+Regex::Regex(const std::string_view match):
     match(match),
     expression(match.data(), match.size(), 
         std::regex_constants::ECMAScript | 
@@ -70,21 +61,44 @@ Regex::operator std::string() const
     return std::format("'{}'", match.c_str());
 }
 
-bool Regex::operator==(const Token& other) const
+bool Regex::operator==(const Regex& other) const
 {
-    if (const Regex* o = dynamic_cast<const Regex*>(&other))
-        return o->match == match;
-    else
-        return false;
+    return other.match == match;
 }
 
-hash_t Regex::Hash() const
+std::size_t Symbol::Match(const std::string_view) const 
+{ 
+    return 0; 
+}
+
+std::size_t TokenMatch(const Term& token, const std::string_view input)
+{
+    auto matcher = [&input](const auto& obj) { return obj.Match(input); };
+    return std::visit(matcher, token);
+}
+
+}
+
+namespace std
+{
+
+
+size_t hash<Interpreter::Literal>::operator()(const Interpreter::Literal& l) noexcept 
 {
     std::hash<std::string> hasher;
-    return typeid(Regex).hash_code() ^ hasher(match);
+    return typeid(Interpreter::Literal).hash_code() ^ hasher(l.match);
+}
+
+size_t hash<Interpreter::Regex>::operator()(const Interpreter::Regex& r) noexcept 
+{
+    std::hash<std::string> hasher;
+    return typeid(Interpreter::Regex).hash_code() ^ hasher(r.match);
 }
 
 
-
-
+size_t hash<Interpreter::Symbol>::operator()(const Interpreter::Symbol& s) noexcept 
+{
+    std::hash<std::string> hasher;
+    return typeid(Interpreter::Symbol).hash_code() ^ hasher(s.name);
+}
 }

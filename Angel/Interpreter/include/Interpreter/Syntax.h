@@ -11,15 +11,7 @@
 
 namespace Interpreter 
 {
-    struct Symbol 
-    {
-        std::string name;
-        operator std::string() const;
-    };
 
-    class Rule; 
-
-    using Term = std::variant<Symbol, Literal, Regex>; 
     std::string to_string(const Term& term);
 
     using Terms = std::vector<Term>;
