@@ -72,10 +72,16 @@ struct Symbol
 
 static const Literal epsilon("");
 
-using Token = std::variant<Literal, Regex>; 
+using Token = std::variant<std::monostate, Literal, Regex>; 
 using Term = std::variant<Literal, Regex, Symbol>;
 
-std::size_t TokenMatch(const Term& token, const std::string_view input);
+template<typename T>
+concept is_token = std::is_constructible_v<Token, T>;  // instead if is_same_v<T, Literal> || etc
+template<typename T>
+concept is_term = std::is_constructible_v<Term, T>; 
+
+std::size_t Match(const Term& term, const std::string_view input);
+bool IsEpsilon(const Token& token);
 
 }
 

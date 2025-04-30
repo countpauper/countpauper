@@ -72,6 +72,8 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view
     return std::vector<OutputSymbol>();
 }
 
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+
 
 std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view name, const Terms& terms, 
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
@@ -81,40 +83,36 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view
     auto it = from;
     for(const Term& term: terms)
     {
-        if (const Symbol* subSymbol = std::get_if<Symbol>(&term))
+        auto match =  std::visit( overloaded
         {
-            auto subResult = Recurse(subSymbol->name, it, to); 
-            if (subResult.empty())
-                return subResult;
-            for(const auto& i : subResult)
-                result.emplace_back(i);
-        }
-        else if (const Literal* literal = std::get_if<Literal>(&term))
-        {
-            if (!literal->IsEpsilon())
-            {
+            [&it, &to, this, &result]( const Symbol& subSymbol )
+            { 
+                auto subResult = Recurse(subSymbol.name, it, to); 
+                if (subResult.empty())
+                    return false;
+                for(const auto& i : subResult)
+                    result.emplace_back(i);
+                return true;
+            },
+            [&it, &to, this] <is_token _Token>(const _Token& token )
+            { 
+                if (IsEpsilon(token))
+                    return true;
                 if (it==to)
-                    return std::vector<OutputSymbol>();
-                if (std::hash<Term>()(term) != it->token) 
-                    return std::vector<OutputSymbol>();
+                    return false;
+                if (std::hash<Term>()(token) != it->token) 
+                    return false;
                 ++it;
+                return true;
+            },
+            []( auto&  ) 
+            { 
+                return false;
             }
-        } 
-        else if (const Regex* regex = std::get_if<Regex>(&term))    // TODO also regex
-        {
-            if (!regex->IsEpsilon())
-            {
-                if (it==to)
-                    return std::vector<OutputSymbol>();
-                if (std::hash<Term>()(term) != it->token) 
-                    return std::vector<OutputSymbol>();
-                ++it;
-            }
-        } 
-        else 
-        {
+        }, term); 
+
+        if (!match) 
             return std::vector<OutputSymbol>();
-        }
     }
     result[0].location.length = it->reference.from - from->reference.from;
     from = it;

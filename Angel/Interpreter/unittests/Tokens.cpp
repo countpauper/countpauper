@@ -6,7 +6,7 @@ namespace Interpreter::Test
 
 TEST(Tokens, Literal)
 {
-    EXPECT_TRUE(Literal("").IsEpsilon());
+    EXPECT_TRUE(IsEpsilon(Literal("")));
     EXPECT_FALSE(Literal("cat").IsEpsilon());
     EXPECT_EQ(Literal("cat").Match("catharsis"), 3);
     EXPECT_FALSE(Literal("cat").Match("scat"));
@@ -16,13 +16,14 @@ TEST(Tokens, Literal)
     EXPECT_NE(Literal("cat"), Literal("catharsis"));
     EXPECT_EQ(std::string(Literal("cat")), "\"cat\"");
     EXPECT_NE(std::hash<Literal>()(Literal("cat")), std::hash<Literal>()(Literal("catharsis")));
+    static_assert(is_token<Literal>);
+    static_assert(is_term<Literal>);
+    static_assert(!is_token<int>);
 }
-
-
 
 TEST(Tokens, Regex)
 {
-    EXPECT_TRUE(Regex("").IsEpsilon());
+    EXPECT_TRUE(IsEpsilon(Regex("")));
     EXPECT_FALSE(Regex(".+").IsEpsilon());
     EXPECT_FALSE(Regex(".*").IsEpsilon());
     EXPECT_FALSE(Regex("[0-9]*").Match("cat"));
@@ -31,6 +32,8 @@ TEST(Tokens, Regex)
     EXPECT_EQ(Regex("[abc]"), Regex("[abc]"));
     EXPECT_EQ(std::string(Regex("cat")), "'cat'");
     EXPECT_NE(std::hash<Regex>()(Regex("()")), std::hash<Literal>()(Literal("()")));
+    static_assert(is_token<Regex>);
+    static_assert(is_term<Regex>);
 }
 
 

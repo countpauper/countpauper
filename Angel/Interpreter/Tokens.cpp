@@ -71,11 +71,23 @@ std::size_t Symbol::Match(const std::string_view) const
     return 0; 
 }
 
-std::size_t TokenMatch(const Term& token, const std::string_view input)
+std::size_t Match(const Term& token, const std::string_view input)
 {
     auto matcher = [&input](const auto& obj) { return obj.Match(input); };
     return std::visit(matcher, token);
 }
+
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+
+bool IsEpsilon(const Token& token)
+{
+    return std::visit(overloaded{
+        [](std::monostate) { return false; },
+        [](const auto& obj) { return obj.IsEpsilon(); }
+
+    }, token);
+}
+
 
 }
 
