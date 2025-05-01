@@ -1,6 +1,6 @@
 #include "Interpreter/Lexer.h"
 #include "Interpreter/Error.h"
-#include "Interpreter/Tokens.h"
+#include "Interpreter/Terms.h"
 #include <sstream>
 
 namespace Interpreter 
@@ -48,7 +48,7 @@ void Lexer::Process(std::istream& is, TokenStream& os)
         buffer.erase(0, bestConsumed);
         location += bestConsumed;
     }
-    os << InputToken(); // end token
+    os << InputToken(0, location, 0); // end token
 }
     
 std::deque<InputToken> Lexer::Process(const std::string_view input)

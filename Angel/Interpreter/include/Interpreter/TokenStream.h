@@ -2,7 +2,8 @@
 
 #include "interpreter/SourceSpan.h"
 #include "Interpreter/ObjectStream.h"
-#include "Interpreter/Tokens.h"
+#include "Interpreter/Terms.h"
+
 namespace Interpreter 
 {
 

@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "Tokens.h"
+#include "Terms.h"
 #include "Lexicon.h"
 #include "SourceSpan.h"
 #include <string>
@@ -11,9 +11,6 @@
 
 namespace Interpreter 
 {
-
-    std::string to_string(const Term& term);
-
     using Terms = std::vector<Term>;
     struct Rule
     {
@@ -21,18 +18,19 @@ namespace Interpreter
         Terms terms;
         SourceSpan location = {0,0}; // set if loaded from source else 0,0
         operator std::string() const;
+        hash_t Hash() const;
     };
 
     class Syntax : public std::list<Rule>
     {
     public:
-        explicit Syntax(std::initializer_list<Rule> rules={}, const std::string_view start="");
-        using LookupTable = std::multimap<std::string_view, const Terms*>;
-        std::ranges::subrange<LookupTable::const_iterator> Lookup(const std::string_view symbol) const;
-        std::string Start() const;
+        explicit Syntax(std::initializer_list<Rule> rules={}, hash_t start=0);
+        using LookupTable = std::multimap<hash_t, const Terms*>;
+        std::ranges::subrange<LookupTable::const_iterator> Lookup(hash_t symbol) const;
+        hash_t Start() const;
     private:
         void CreateLookup();
-        std::string start;
+        hash_t start;
         LookupTable lookup;
     };
 }

@@ -1,5 +1,5 @@
 #include "Interpreter/TokenStream.h"
-#include "Interpreter/Tokens.h"
+#include "Interpreter/Terms.h"
 
 
 namespace Interpreter

@@ -1,5 +1,5 @@
 #include "Interpreter/Lexer.h"
-#include "Interpreter/Tokens.h"
+#include "Interpreter/Terms.h"
 #include "Interpreter/Error.h"
 #include "Interpreter/Syntax.h"
 #include <gtest/gtest.h>
@@ -52,7 +52,7 @@ TEST(Lexer, Lexicon)
         Rule{"operator", {Literal("<"), Symbol("cat")}},
         Rule{"cat",      {Literal(">")}},
     };
-    EXPECT_EQ(Lexicon(syntax).size(), 2);
+    EXPECT_EQ(Lexicon(syntax).size(), 3);
 
 }
 

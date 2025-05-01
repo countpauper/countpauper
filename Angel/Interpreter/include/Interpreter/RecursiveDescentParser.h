@@ -14,9 +14,9 @@ public:
     void Parse(TokenStream& is, SymbolStream& os) override;
 private:
     using InputIterator = std::deque<InputToken>::iterator;
-    std::vector<OutputSymbol> Recurse(const std::string_view rule, 
+    std::vector<OutputSymbol> Recurse(hash_t rule, 
         InputIterator& from,InputIterator to);
-    std::vector<OutputSymbol> Recurse(const std::string_view, const Terms& terms, 
+    std::vector<OutputSymbol> Recurse(hash_t symbol, const Terms& terms, 
         InputIterator& from,InputIterator to);
     };
 

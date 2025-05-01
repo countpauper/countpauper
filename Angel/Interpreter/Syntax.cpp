@@ -18,11 +18,6 @@ struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
-std::string to_string(const Term& term)
-{
-    return std::visit( [](auto&& arg) { return std::string(arg); }, term);
-}
-
 Rule::operator std::string() const 
 {
     std::string termstr;
@@ -33,14 +28,18 @@ Rule::operator std::string() const
     return std::format("{}::={}", name, termstr.substr(0, termstr.size()-1));
 }
 
-Syntax::Syntax(std::initializer_list<Rule> rules, const std::string_view start) :
+hash_t Rule::Hash() const 
+{ 
+    return std::hash<Term>()(Symbol(name)); 
+}
+
+Syntax::Syntax(std::initializer_list<Rule> rules, hash_t start) :
     std::list<Rule>(rules),
     start(start)
 {
-    if (start.empty() && rules.size()>0)
-    {
-        this->start = rules.begin()->name;
-    }
+    if (!start && rules.size()>0)
+        this->start = rules.begin()->Hash();
+
     CreateLookup();
 }
 
@@ -55,18 +54,18 @@ void Syntax::CreateLookup()
         // Since the list is a public base class (to simplify inherting container interface)
         // this is not guaranteed as the user of the syntax may erase elements after constrution 
         // which would make the lookup table invalid.
-        lookup.emplace(rule.name, &rule.terms);
+        lookup.emplace(rule.Hash(), &rule.terms);
     }
 }
 
-std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::Lookup(const std::string_view symbol) const
+std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::Lookup(hash_t symbol) const
 {
     auto [first, last] = lookup.equal_range(symbol); 
     return std::ranges::subrange(first, last);
 
 }
 
-std::string Syntax::Start() const
+hash_t Syntax::Start() const
 {
     return start;
 }

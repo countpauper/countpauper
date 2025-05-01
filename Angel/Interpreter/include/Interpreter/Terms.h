@@ -85,21 +85,26 @@ bool IsEpsilon(const Token& token);
 
 }
 
-template <>
-struct std::hash<Interpreter::Literal>
+namespace std
 {
-    std::size_t operator()(const Interpreter::Literal& l) noexcept ;
+template <>
+struct hash<Interpreter::Literal>
+{
+    size_t operator()(const Interpreter::Literal& l) noexcept ;
 };
 
 template <>
-struct std::hash<Interpreter::Regex>
+struct hash<Interpreter::Regex>
 {
-    std::size_t operator()(const Interpreter::Regex& l) noexcept ;
+    size_t operator()(const Interpreter::Regex& l) noexcept ;
 };
 
 
 template <>
-struct std::hash<Interpreter::Symbol>
+struct hash<Interpreter::Symbol>
 {
-    std::size_t operator()(const Interpreter::Symbol& s) noexcept ;
+    size_t operator()(const Interpreter::Symbol& s) noexcept ;
 };
+
+string to_string(const Interpreter::Term& term);
+}

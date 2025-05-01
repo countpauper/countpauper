@@ -1,4 +1,4 @@
-#include "Interpreter/Tokens.h"
+#include "Interpreter/Terms.h"
 #include <regex>
 
 namespace Interpreter
@@ -112,5 +112,13 @@ size_t hash<Interpreter::Symbol>::operator()(const Interpreter::Symbol& s) noexc
 {
     std::hash<std::string> hasher;
     return typeid(Interpreter::Symbol).hash_code() ^ hasher(s.name);
+}
+
+
+string to_string(const Interpreter::Term& term)
+{
+    return visit(
+        [](const auto& obj) { return string(obj); },
+        term);
 }
 }

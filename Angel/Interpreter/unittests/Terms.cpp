@@ -1,12 +1,19 @@
-#include "Interpreter/Tokens.h"
+#include "Interpreter/Terms.h"
 #include <gtest/gtest.h>
 
 namespace Interpreter::Test
 {
 
-TEST(Tokens, Literal)
+TEST(Terms, Term)
 {
-    EXPECT_TRUE(IsEpsilon(Literal("")));
+    static_assert(sizeof(Term)<=128);   // TODO could be smaller without regex precompiling
+
+    Term term = Literal("cat");
+    EXPECT_EQ(std::to_string(term), "\"cat\"");
+}
+
+TEST(Terms, Literal)
+{
     EXPECT_FALSE(Literal("cat").IsEpsilon());
     EXPECT_EQ(Literal("cat").Match("catharsis"), 3);
     EXPECT_FALSE(Literal("cat").Match("scat"));
@@ -21,9 +28,8 @@ TEST(Tokens, Literal)
     static_assert(!is_token<int>);
 }
 
-TEST(Tokens, Regex)
+TEST(Terms, Regex)
 {
-    EXPECT_TRUE(IsEpsilon(Regex("")));
     EXPECT_FALSE(Regex(".+").IsEpsilon());
     EXPECT_FALSE(Regex(".*").IsEpsilon());
     EXPECT_FALSE(Regex("[0-9]*").Match("cat"));
@@ -36,5 +42,13 @@ TEST(Tokens, Regex)
     static_assert(is_term<Regex>);
 }
 
+
+TEST(Terms, EpsilonIsNothing)
+{
+    EXPECT_TRUE(IsEpsilon(epsilon));
+    EXPECT_TRUE(IsEpsilon(Regex("")));
+    EXPECT_TRUE(IsEpsilon(Literal("")));
+    EXPECT_EQ(epsilon.Match("cheese"), 0);
+}
 
 }

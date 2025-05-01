@@ -13,7 +13,7 @@ class Syntax;
 
 struct OutputSymbol
 {
-    std::string_view symbol;
+    hash_t symbol;
     SourceSpan location;
 };
 

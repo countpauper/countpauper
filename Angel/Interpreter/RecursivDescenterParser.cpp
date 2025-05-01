@@ -28,9 +28,9 @@ std::vector<std::string> Parser::ParseIt(const std::string_view source)
     SymbolStream os;
     Parse(tokens, os);
     //auto symbols =  std::ranges::views::istream<OutputSymbol>(os) | std::views::transform([](const OutputSymbol& symbol)
-    auto symbols =  os.Flush() | std::views::transform([](const OutputSymbol& symbol)
+    auto symbols =  os.Flush() | std::views::transform([&lexicon](const OutputSymbol& symbol)
     {
-        return std::string(symbol.symbol);
+        return std::to_string(*lexicon[symbol.symbol]);
     });
 
     return std::vector<std::string>(symbols.begin(), symbols.end());
@@ -57,7 +57,7 @@ void RecursiveDescentParser::Parse(TokenStream& is, SymbolStream& os)
     }
 }
 
-std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view symbol, 
+std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol,
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
 {
     auto rules = syntax.Lookup(symbol);
@@ -75,11 +75,11 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 
 
-std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view name, const Terms& terms, 
+std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol, const Terms& terms, 
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
 {
     std::vector<OutputSymbol> result;
-    result.emplace_back(name, from->reference);
+    result.emplace_back(symbol, from->reference);
     auto it = from;
     for(const Term& term: terms)
     {
@@ -87,7 +87,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(const std::string_view
         {
             [&it, &to, this, &result]( const Symbol& subSymbol )
             { 
-                auto subResult = Recurse(subSymbol.name, it, to); 
+                auto subResult = Recurse(std::hash<Term>()(subSymbol), it, to); 
                 if (subResult.empty())
                     return false;
                 for(const auto& i : subResult)
