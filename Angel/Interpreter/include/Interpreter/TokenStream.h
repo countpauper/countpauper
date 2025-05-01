@@ -24,6 +24,6 @@ struct InputToken
     bool operator==(const InputToken& other) const { return token == other.token && reference == other.reference; }
 };
 
-using TokenStream = InfiniteObjectStream<InputToken>;
+using TokenStream = Fifo<InputToken>;
 
 };

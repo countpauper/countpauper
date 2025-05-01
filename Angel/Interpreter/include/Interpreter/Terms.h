@@ -68,6 +68,8 @@ struct Symbol
     std::string name;
     operator std::string() const;
     std::size_t Match(const std::string_view input) const;
+    bool operator==(const Symbol& other) const;
+    bool operator!=(const Symbol& other) const { return !this->operator==(other); }
 };
 
 static const Literal epsilon("");

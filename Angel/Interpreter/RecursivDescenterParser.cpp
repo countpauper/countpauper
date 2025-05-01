@@ -27,13 +27,28 @@ std::vector<std::string> Parser::ParseIt(const std::string_view source)
     Lexer(lexicon).Process(sourcestream, tokens);
     SymbolStream os;
     Parse(tokens, os);
-    //auto symbols =  std::ranges::views::istream<OutputSymbol>(os) | std::views::transform([](const OutputSymbol& symbol)
-    auto symbols =  os.Flush() | std::views::transform([&lexicon](const OutputSymbol& symbol)
+    //auto symbols =  std::ranges::views::istream<OutputSymbol>(os) | std::views::transform([&lexicon](const OutputSymbol& symbol)
+    
+    
+    /*auto symbols =  os.View() | std::views::transform([&lexicon](const OutputSymbol& symbol)
     {
         return std::to_string(*lexicon[symbol.symbol]);
     });
 
-    return std::vector<std::string>(symbols.begin(), symbols.end());
+    //  return std::vector<std::string>(symbols.begin(), symbols.end());
+    std::vector<std::string> result;
+    for(const auto& symbol: symbols)
+    {
+        result.emplace_back(symbol);
+    }
+*/
+    std::vector<std::string> result;
+    for(auto symbol : os.View())
+    {
+        result.emplace_back(std::to_string(*lexicon[symbol.symbol]));
+    }
+    return result;
+
 }
 
 RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
@@ -44,7 +59,7 @@ RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
 
 void RecursiveDescentParser::Parse(TokenStream& is, SymbolStream& os)
 {
-    auto root = syntax.Start();
+    auto root = syntax.Root();
     auto input = is.Flush();
     assert(input.back().token == 0); // skip end
     auto it = input.begin();
@@ -65,7 +80,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol,
     {
         // TODO: use a subrange instead of from to or perhaps std::views::istream<InputToken>
         // altough that range is also only single pass 
-        std::vector<OutputSymbol> result = Recurse(rule.first, *rule.second, from, to);
+        std::vector<OutputSymbol> result = Recurse(rule.first, rule.second->terms, from, to);
         if (!result.empty())
             return result;
     }

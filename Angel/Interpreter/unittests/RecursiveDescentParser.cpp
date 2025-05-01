@@ -17,7 +17,7 @@ TEST(RecursiveDescenterParser, ParseLiteral)
         {"S", {Literal("s")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("s"), std::vector<std::string>({"S"}));
+    EXPECT_EQ(parser.ParseIt("s"), std::vector<std::string>({"<S>"}));
 }
 
 TEST(RecursiveDescenterParser, ParseRegex)
@@ -26,7 +26,7 @@ TEST(RecursiveDescenterParser, ParseRegex)
         {"S", {Regex("[0-9]+")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("123"), std::vector<std::string>({"S"}));
+    EXPECT_EQ(parser.ParseIt("123"), std::vector<std::string>({"<S>"}));
 }
     
 TEST(RecursiveDescenterParser, ParseSymbol)
@@ -37,7 +37,7 @@ TEST(RecursiveDescenterParser, ParseSymbol)
         {"F", {Literal("o")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("bo"), std::vector<std::string>({"S", "F"}));
+    EXPECT_EQ(parser.ParseIt("bo"), std::vector<std::string>({"<S>", "<F>"}));
 }
 
 TEST(RecursiveDescenterParser, ParseRegexRule)
@@ -48,7 +48,7 @@ TEST(RecursiveDescenterParser, ParseRegexRule)
         {"F", {Regex("x+")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("b0x"), std::vector<std::string>({"S", "F", "F"}));
+    EXPECT_EQ(parser.ParseIt("b0x"), std::vector<std::string>({"<S>", "<F>", "<F>"}));
 }
 
 TEST(RecursiveDescenterParser, ParseMiddleRecursion)
@@ -59,7 +59,7 @@ TEST(RecursiveDescenterParser, ParseMiddleRecursion)
         {"F", {Literal("o")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("bob"), std::vector<std::string>({"S", "F"}));
+    EXPECT_EQ(parser.ParseIt("bob"), std::vector<std::string>({"<S>", "<F>"}));
 }
 
 TEST(RecursiveDescenterParser, ParseEpsilon)
@@ -70,7 +70,7 @@ TEST(RecursiveDescenterParser, ParseEpsilon)
         {"F", {epsilon}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("bo"), std::vector<std::string>({"S", "F", "F"}));
+    EXPECT_EQ(parser.ParseIt("bo"), std::vector<std::string>({"<S>", "<F>", "<F>"}));
 }
 
 TEST(RecursiveDescenterParser, Fail)

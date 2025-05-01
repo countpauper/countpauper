@@ -25,7 +25,7 @@ Rule::operator std::string() const
     {
         termstr += to_string(term) + " ";
     });
-    return std::format("{}::={}", name, termstr.substr(0, termstr.size()-1));
+    return std::format("{}::={}", std::string(name), termstr.substr(0, termstr.size()-1));
 }
 
 hash_t Rule::Hash() const 
@@ -33,13 +33,16 @@ hash_t Rule::Hash() const
     return std::hash<Term>()(Symbol(name)); 
 }
 
-Syntax::Syntax(std::initializer_list<Rule> rules, hash_t start) :
-    std::list<Rule>(rules),
-    start(start)
+Syntax::Syntax(std::initializer_list<Rule> rules, const std::string_view start) :
+    std::list<Rule>(rules)
 {
-    if (!start && rules.size()>0)
-        this->start = rules.begin()->Hash();
-
+    if (!start.empty()) {
+        root = std::hash<Term>()(Symbol(std::string(start)));
+    }
+    else if (!empty())
+    {
+        this->root = front().Hash();
+    }
     CreateLookup();
 }
 
@@ -54,7 +57,7 @@ void Syntax::CreateLookup()
         // Since the list is a public base class (to simplify inherting container interface)
         // this is not guaranteed as the user of the syntax may erase elements after constrution 
         // which would make the lookup table invalid.
-        lookup.emplace(rule.Hash(), &rule.terms);
+        lookup.emplace(rule.Hash(), &rule);
     }
 }
 
@@ -65,9 +68,9 @@ std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::Lookup(hash_t
 
 }
 
-hash_t Syntax::Start() const
+hash_t Syntax::Root() const
 {
-    return start;
+    return root;
 }
 
 /*

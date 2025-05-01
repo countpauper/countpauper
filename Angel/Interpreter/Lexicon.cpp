@@ -19,12 +19,13 @@ void ExtendLexicon(Lexicon& lexicon, const Rule& rule)
     for(const auto& term : rule.terms)
     {
         [[maybe_unused]] auto ins = lexicon.emplace(std::hash<Term>()(term), &term);
-        // TODO operator == for terms assert(ins.second || *literal == *ins.first->second);
+        assert(ins.second || term == *ins.first->second);
     }
 }
 
 Lexicon::Lexicon(const Syntax& syntax)
 {
+    AddRoot(syntax);
     std::for_each(syntax.begin(), syntax.end(),[this](const Rule& rule)
     {
         ExtendLexicon(*this, rule);
@@ -32,4 +33,14 @@ Lexicon::Lexicon(const Syntax& syntax)
 
 }
 
+void Lexicon::AddRoot(const Syntax& syntax)
+{
+    if (syntax.empty())
+        return;
+
+    auto roots = syntax.Lookup(syntax.Root());
+    root = Symbol(roots.front().second->name);
+    emplace(syntax.Root(), &root.value());
+
+}
 }

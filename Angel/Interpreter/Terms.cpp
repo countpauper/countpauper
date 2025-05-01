@@ -70,6 +70,10 @@ std::size_t Symbol::Match(const std::string_view) const
 { 
     return 0; 
 }
+bool Symbol::operator==(const Symbol& other) const
+{
+    return name == other.name;
+}
 
 std::size_t Match(const Term& token, const std::string_view input)
 {

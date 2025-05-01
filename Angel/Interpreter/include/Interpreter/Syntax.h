@@ -24,13 +24,13 @@ namespace Interpreter
     class Syntax : public std::list<Rule>
     {
     public:
-        explicit Syntax(std::initializer_list<Rule> rules={}, hash_t start=0);
-        using LookupTable = std::multimap<hash_t, const Terms*>;
+        explicit Syntax(std::initializer_list<Rule> rules={}, const std::string_view start="");
+        using LookupTable = std::multimap<hash_t, const Rule*>;
         std::ranges::subrange<LookupTable::const_iterator> Lookup(hash_t symbol) const;
-        hash_t Start() const;
+        hash_t Root() const;
     private:
         void CreateLookup();
-        hash_t start;
         LookupTable lookup;
+        hash_t root;
     };
 }

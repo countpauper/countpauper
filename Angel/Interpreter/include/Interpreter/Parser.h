@@ -17,7 +17,7 @@ struct OutputSymbol
     SourceSpan location;
 };
 
-using SymbolStream = InfiniteObjectStream<OutputSymbol>; 
+using SymbolStream = Fifo<OutputSymbol>; 
 
 class Parser 
 {
