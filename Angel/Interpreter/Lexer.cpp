@@ -57,7 +57,7 @@ std::deque<InputToken> Lexer::Process(const std::string_view input)
     is << input;     // C++ 26 can take a string_view as constructor argument
     TokenStream os;
     Process(is, os);
-    return os.Flush();
+    return os.Dump();   // must return a copy and no a view, stream is going out of scope
 }
 
 }

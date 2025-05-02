@@ -17,7 +17,7 @@ private:
     std::vector<OutputSymbol> Recurse(hash_t rule, 
         InputIterator& from,InputIterator to);
     std::vector<OutputSymbol> Recurse(hash_t symbol, const Terms& terms, 
-        InputIterator& from,InputIterator to);
+        InputIterator& from, InputIterator to);
     };
 
 }

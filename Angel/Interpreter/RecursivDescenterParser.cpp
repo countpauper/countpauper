@@ -18,7 +18,7 @@ Parser::Parser(const Syntax& syntax) :
 {
 }
 
-std::vector<std::string> Parser::ParseIt(const std::string_view source)
+std::string Parser::ParseIt(const std::string_view source)
 {
     TokenStream tokens;
     std::stringstream sourcestream;
@@ -27,25 +27,12 @@ std::vector<std::string> Parser::ParseIt(const std::string_view source)
     Lexer(lexicon).Process(sourcestream, tokens);
     SymbolStream os;
     Parse(tokens, os);
-    //auto symbols =  std::ranges::views::istream<OutputSymbol>(os) | std::views::transform([&lexicon](const OutputSymbol& symbol)
-    
-    
-    /*auto symbols =  os.View() | std::views::transform([&lexicon](const OutputSymbol& symbol)
-    {
-        return std::to_string(*lexicon[symbol.symbol]);
-    });
-
-    //  return std::vector<std::string>(symbols.begin(), symbols.end());
-    std::vector<std::string> result;
-    for(const auto& symbol: symbols)
-    {
-        result.emplace_back(symbol);
-    }
-*/
-    std::vector<std::string> result;
+    std::string result;
     for(auto symbol : os.View())
     {
-        result.emplace_back(std::to_string(*lexicon[symbol.symbol]));
+        if (!result.empty())
+            result += " ";
+        result += std::to_string(*lexicon[symbol.symbol]);
     }
     return result;
 
@@ -60,9 +47,9 @@ RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
 void RecursiveDescentParser::Parse(TokenStream& is, SymbolStream& os)
 {
     auto root = syntax.Root();
-    auto input = is.Flush();
-    assert(input.back().token == 0); // skip end
+    auto input = is.Dump();
     auto it = input.begin();
+    assert(input.back().token == 0); // skip end
     auto output = Recurse(root, it, input.end()-1);
     if (output.empty())
         throw Error("Unexpected token", it->reference);
@@ -78,8 +65,6 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol,
     auto rules = syntax.Lookup(symbol);
     for(const auto& rule: rules)
     {
-        // TODO: use a subrange instead of from to or perhaps std::views::istream<InputToken>
-        // altough that range is also only single pass 
         std::vector<OutputSymbol> result = Recurse(rule.first, rule.second->terms, from, to);
         if (!result.empty())
             return result;
