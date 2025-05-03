@@ -4,6 +4,7 @@
 #include "Interpreter/Syntax.h"
 #include "Interpreter/Lexer.h"
 #include "Interpreter/Error.h"
+#include "Interpreter/Utils.h"
 #include <sstream>
 #include <ranges>
 #include <assert.h>
@@ -41,8 +42,9 @@ std::string Parser::ParseIt(const std::string_view source)
 RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
     Parser(syntax)
 {
+    if (syntax.IsLeftRecursive())
+        throw std::runtime_error("Left recursion in syntax may cause infite recursion during recursive descent");
 }
-
 
 void RecursiveDescentParser::Parse(TokenStream& is, SymbolStream& os)
 {
@@ -72,8 +74,6 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol,
     return std::vector<OutputSymbol>();
 }
 
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-
 
 std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol, const Terms& terms, 
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
@@ -83,7 +83,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol, const T
     auto it = from;
     for(const Term& term: terms)
     {
-        auto match =  std::visit( overloaded
+        auto match =  std::visit( overloaded_visit
         {
             [&it, &to, this, &result]( const Symbol& subSymbol )
             { 

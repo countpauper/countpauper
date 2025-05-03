@@ -91,7 +91,15 @@ TEST(RecursiveDescenterParser, Fail)
     }
 }
 
-// TODO test source reference  with range
+TEST(RecursiveDescenterParser, InfiniteRecursionIsPrevented)
+{ 
+    Syntax syntax{
+        {"S", {Symbol("F"), Literal("end")}},
+        {"F", {epsilon, Symbol("S"), Literal("oops")}}
+    };
+    EXPECT_THROW(RecursiveDescentParser parser(syntax), std::runtime_error);
+
+}
 
 
 }

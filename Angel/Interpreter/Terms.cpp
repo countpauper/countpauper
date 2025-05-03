@@ -1,4 +1,5 @@
 #include "Interpreter/Terms.h"
+#include "Interpreter/Utils.h"
 #include <regex>
 
 namespace Interpreter
@@ -75,17 +76,20 @@ bool Symbol::operator==(const Symbol& other) const
     return name == other.name;
 }
 
+Symbol::operator std::string() const
+{
+    return std::format("<{}>", name);
+}
+
 std::size_t Match(const Term& token, const std::string_view input)
 {
     auto matcher = [&input](const auto& obj) { return obj.Match(input); };
     return std::visit(matcher, token);
 }
 
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-
 bool IsEpsilon(const Token& token)
 {
-    return std::visit(overloaded{
+    return std::visit(overloaded_visit{
         [](std::monostate) { return false; },
         [](const auto& obj) { return obj.IsEpsilon(); }
 

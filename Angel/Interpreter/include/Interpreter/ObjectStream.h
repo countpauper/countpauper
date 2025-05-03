@@ -125,7 +125,7 @@ public:
     }
 private:
     std::deque<T> objects;
-    iostate state;
+    iostate state = goodbit;
 };
 
 static_assert(std::input_iterator<FifoRange<int, Fifo<int>>::Iterator>);

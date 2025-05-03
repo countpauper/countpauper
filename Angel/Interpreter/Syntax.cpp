@@ -1,37 +1,11 @@
 #include "Interpreter/Syntax.h"
-#include <numeric>
+#include "Interpreter/Utils.h"
 #include <type_traits>
 #include <variant>
+#include <cassert>
 
 namespace Interpreter 
 {
-
-Symbol::operator std::string() const
-{
-    return std::format("<{}>", name);
-}
-
-// helper type for the visitor #4
-template<class... Ts>
-struct overloaded : Ts... { using Ts::operator()...; };
-// explicit deduction guide (not needed as of C++20)
-template<class... Ts>
-overloaded(Ts...) -> overloaded<Ts...>;
-
-Rule::operator std::string() const 
-{
-    std::string termstr;
-    std::for_each(terms.begin(), terms.end(), [&termstr](const Term& term)
-    {
-        termstr += to_string(term) + " ";
-    });
-    return std::format("{}::={}", std::string(symbol), termstr.substr(0, termstr.size()-1));
-}
-
-hash_t Rule::SymbolHash() const 
-{ 
-    return std::hash<Term>()(Symbol(symbol)); 
-}
 
 Syntax::Syntax(std::initializer_list<Rule> input, const std::string_view start) 
 {
@@ -80,31 +54,53 @@ hash_t Syntax::Root() const
     return root;
 }
 
-/*
-Syntax::Range::Range(std::pair<LookupTable::const_iterator, LookupTable::const_iterator> it) :
-    b(it.first),
-    e(it.second)
+const Term* FindLeftSymbolOrNotEpsilon(const Rule& rule)
 {
-
-}
-bool Syntax::Range::empty() const
-{
-    return size() == 0;
-}
-std::size_t Syntax::Range::size() const
-{
-    return std::distance(begin(), end());
+    return rule.FindLeft([](const Term& term)
+    {
+        return std::visit(overloaded_visit{
+            [](const Symbol&) { return true; },
+            [](const Token& token) { return !IsEpsilon(token); }
+        }, term);
+    });
 }
 
-Syntax::LookupTable::const_iterator Syntax::Range::begin() const
+bool Syntax::CheckLeftRecursive(SyntaxPath& path) const 
 {
-    return b;
+    assert(!path.empty());
+    for(const auto& rule: Lookup(path.back()))
+    {
+        if (rule.second.terms.empty())
+            continue;
+        auto left = FindLeftSymbolOrNotEpsilon(rule.second);
+        if (!left)
+            continue;
+
+        if (std::visit(overloaded_visit{
+            [this, &path](const Symbol& term) 
+            {
+                hash_t termHash = std::hash<Term>()(term);
+                if (std::find(path.begin(), path.end(), termHash)!=path.end())
+                    return true;
+                path.push_back(termHash);
+                auto result = CheckLeftRecursive(path);
+                assert(!path.empty() && path.back() == termHash);
+                path.pop_back();
+                return result; 
+            },
+            [](const Token&) { return false; }}
+            , *left)) 
+            return true;
+    }
+    return false;
 }
 
-Syntax::LookupTable::const_iterator Syntax::Range::end() const
+bool Syntax::IsLeftRecursive() const
 {
-    return e;
+    SyntaxPath path;
+    path.push_back(Root());
+    return CheckLeftRecursive(path);
+
 }
-*/
 
 }

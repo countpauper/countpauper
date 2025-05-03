@@ -1,25 +1,12 @@
 #pragma once 
 
-#include "Terms.h"
-#include "Lexicon.h"
-#include "SourceSpan.h"
+#include "Rule.h"
 #include <string>
-#include <list>
-#include <variant>
 #include <map>
 #include <ranges>
 
 namespace Interpreter 
 {
-    using Terms = std::vector<Term>;
-    struct Rule
-    {
-        std::string symbol;
-        Terms terms;
-        SourceSpan location = {0,0}; // set if loaded from source else 0,0
-        operator std::string() const;
-        hash_t SymbolHash() const;
-    };
 
     class Syntax 
     {
@@ -47,7 +34,11 @@ namespace Interpreter
         std::ranges::subrange<LookupTable::const_iterator> Lookup(hash_t symbol) const;
         std::ranges::subrange<LookupTable::const_iterator> operator[](hash_t symbol) const;
         hash_t Root() const;
+
+        bool IsLeftRecursive() const;
     private:
+        using SyntaxPath = std::deque<hash_t>;
+        bool CheckLeftRecursive(SyntaxPath& symbol) const;
         void CreateLookup();
         LookupTable lookup;
         hash_t root;
