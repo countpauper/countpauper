@@ -19,15 +19,13 @@ struct InputToken
         InputToken(std::hash<T>()(token), from, length)
     {
     }
-    operator std::string() const 
-    {
-        return std::format("%x [%d-%d]", token, reference.from, reference.from + reference.length);
-    }
+    operator std::string() const;
+    bool operator==(const InputToken& other) const;
+
     hash_t token;
     SourceSpan reference; 
-    bool operator==(const InputToken& other) const { return token == other.token && reference == other.reference; }
 };
 
 using TokenStream = Fifo<InputToken>;
-
+static_assert(StreamExtractableWithEof<TokenStream, InputToken>);
 };

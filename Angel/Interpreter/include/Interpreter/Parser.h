@@ -18,6 +18,7 @@ struct OutputSymbol
 };
 
 using SymbolStream = Fifo<OutputSymbol>; 
+static_assert(StreamExtractableWithEof<SymbolStream, OutputSymbol>);
 
 class Parser 
 {

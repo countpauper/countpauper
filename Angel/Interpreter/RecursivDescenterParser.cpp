@@ -31,6 +31,8 @@ std::string Parser::ParseIt(const std::string_view source)
     std::string result;
     for(auto symbol : os.View())
     {
+        if (symbol.location.length == 0)
+            continue;
         if (!result.empty())
             result += " ";
         result += std::to_string(*lexicon[symbol.symbol]);
@@ -67,9 +69,17 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol,
     auto rules = syntax.Lookup(symbol);
     for(const auto& rule: rules)
     {
+        printf("%s {\n", rule.second.symbol.c_str());
         std::vector<OutputSymbol> result = Recurse(rule.first, rule.second.terms, from, to);
-        if (!result.empty())
+        if (!result.empty()) 
+        {
+            printf("} %s pass\n", rule.second.symbol.c_str());
             return result;
+        }
+        else 
+        {
+            printf("} %s fail\n", rule.second.symbol.c_str());
+        }
     }
     return std::vector<OutputSymbol>();
 }

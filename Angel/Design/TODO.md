@@ -9,13 +9,15 @@
 - [ ] Redesign the parser 
 -   [ ] Disjunction and Conjunction are examples of NAry-operators 
 -   [ ] Sequences and sets perhaps as well (collections) with the , operator 
--   [ ] Define constexpr context free grammar 
+-   [x] Define constexpr context free grammar
+-   [x] Recursive descent parser  
 -   [ ] Find a way for the production rules to produce
--   [ ] Check the grammer for constraints of LL(1): left recursion 
--   [ ] Unit tests for simple grammers to create first/follow table
+-   [x] Check the grammar for constraints of LL(1): left recursion 
+-   [ ] Unit tests for simple grammars to create first/follow table
 -   [ ] Implement LL(1) https://www.geeksforgeeks.org/types-of-parsers-in-compiler-design/
 -   [ ] Consider LL(n)
 -   [ ] Clean up old parser 
+-   [ ] Optional: extend BNF with elipsis `...` (also in its own) that repeats a rules terms until failure (and generates each in sequence instead of in tr)
 -   [ ] Parsing enough for axioms
 -   [ ] Parsing enough for clauses
 -   [ ] Parsing enough for predicates

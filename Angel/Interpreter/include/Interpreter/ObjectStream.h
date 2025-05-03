@@ -5,9 +5,10 @@
 
 namespace Interpreter 
 {
-template <typename T>
-concept StreamWithEof = requires(const T& t) {
-    { t.eof() } -> std::same_as<bool>;
+
+template<typename _S>
+concept StreamWithEof = requires(const _S& s) {
+    { s.eof() } -> std::convertible_to<bool>;
 };
 
 template <typename S, typename T>
@@ -19,16 +20,14 @@ template <typename S, typename T>
 concept StreamExtractableWithEof =
 StreamWithEof<S> && StreamExtractable<S, T>;
 
-  
-
-
-
 template<typename T, typename S>
 class FifoRange
 {
   S& stream;
 public:
-  explicit FifoRange(S& stream) : stream(stream) {}
+  explicit FifoRange(S& stream) requires StreamExtractableWithEof<S,T> : 
+    stream(stream) 
+  {}
 
   class Iterator
   {
@@ -86,16 +85,6 @@ template<class T>   // T is the object type, which must be copyable
 class Fifo : public std::ios_base
 {
 public:
-    bool eof() const 
-    { 
-      return state & eofbit; 
-    }
-
-    void setstate(iostate flags)
-    {
-      state |= flags;
-    }
-
     Fifo<T>& operator<<(const T& object)
     {
         objects.push_back(object);
@@ -122,6 +111,16 @@ public:
     std::deque<T> Dump()
     {
         return std::move(objects);
+    }
+
+    bool eof() const 
+    { 
+      return state & eofbit; 
+    }
+
+    void setstate(iostate flags)
+    {
+      state |= flags;
     }
 private:
     std::deque<T> objects;
