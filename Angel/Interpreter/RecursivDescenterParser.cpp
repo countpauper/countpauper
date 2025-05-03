@@ -2,44 +2,15 @@
 
 #include "Interpreter/RecursiveDescentParser.h"
 #include "Interpreter/Syntax.h"
-#include "Interpreter/Lexer.h"
 #include "Interpreter/Error.h"
 #include "Interpreter/Utils.h"
+#include "Interpreter/Logging.h"
 #include <sstream>
 #include <ranges>
 #include <assert.h>
 
 namespace Interpreter 
 {
-    
-
-
-Parser::Parser(const Syntax& syntax) :
-    syntax(syntax)
-{
-}
-
-std::string Parser::ParseIt(const std::string_view source)
-{
-    TokenStream tokens;
-    std::stringstream sourcestream;
-    sourcestream << source;
-    Lexicon lexicon(syntax);
-    Lexer(lexicon).Process(sourcestream, tokens);
-    SymbolStream os;
-    Parse(tokens, os);
-    std::string result;
-    for(auto symbol : os.View())
-    {
-        if (symbol.location.length == 0)
-            continue;
-        if (!result.empty())
-            result += " ";
-        result += std::to_string(*lexicon[symbol.symbol]);
-    }
-    return result;
-
-}
 
 RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
     Parser(syntax)
@@ -48,12 +19,19 @@ RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
         throw std::runtime_error("Left recursion in syntax may cause infite recursion during recursive descent");
 }
 
+static int tab;
+std::string Tab() 
+{
+    return std::string(tab, ' ');
+}
+
 void RecursiveDescentParser::Parse(TokenStream& is, SymbolStream& os)
 {
     auto root = syntax.Root();
     auto input = is.Dump();
     auto it = input.begin();
     assert(input.back().token == 0); // skip end
+    tab = 0;
     auto output = Recurse(root, it, input.end()-1);
     if (output.empty())
         throw Error("Unexpected token", it->reference);
@@ -69,16 +47,18 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol,
     auto rules = syntax.Lookup(symbol);
     for(const auto& rule: rules)
     {
-        printf("%s {\n", rule.second.symbol.c_str());
+        Logging::Log<Logging::INFO>("{}{}[", Tab(), rule.second.symbol);
+        tab++;
         std::vector<OutputSymbol> result = Recurse(rule.first, rule.second.terms, from, to);
+        tab--;
         if (!result.empty()) 
         {
-            printf("} %s pass\n", rule.second.symbol.c_str());
+            Logging::Log<Logging::INFO>("{}] pass", Tab());
             return result;
         }
         else 
         {
-            printf("} %s fail\n", rule.second.symbol.c_str());
+            Logging::Log<Logging::INFO>("{}] fail", Tab());
         }
     }
     return std::vector<OutputSymbol>();
