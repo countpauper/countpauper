@@ -25,47 +25,54 @@ Rule::operator std::string() const
     {
         termstr += to_string(term) + " ";
     });
-    return std::format("{}::={}", std::string(name), termstr.substr(0, termstr.size()-1));
+    return std::format("{}::={}", std::string(symbol), termstr.substr(0, termstr.size()-1));
 }
 
-hash_t Rule::Hash() const 
+hash_t Rule::SymbolHash() const 
 { 
-    return std::hash<Term>()(Symbol(name)); 
+    return std::hash<Term>()(Symbol(symbol)); 
 }
 
-Syntax::Syntax(std::initializer_list<Rule> rules, const std::string_view start) :
-    std::list<Rule>(rules)
+Syntax::Syntax(std::initializer_list<Rule> input, const std::string_view start) 
 {
     if (!start.empty()) {
         root = std::hash<Term>()(Symbol(std::string(start)));
     }
-    else if (!empty())
+    else if (input.size())
     {
-        this->root = front().Hash();
+        this->root = input.begin()->SymbolHash();
     }
-    CreateLookup();
+    for(const auto& rule:input)
+    {
+        lookup.emplace(rule.SymbolHash(), std::move(rule));
+    }
 }
 
-void Syntax::CreateLookup() 
+
+bool Syntax::empty() const
 {
-    lookup.clear();
-    for(const Rule& rule: *this)
-    {   // NB: this is a somewhat risky optimization. The lookup creates views on the strings
-        // As long as the rules list is made, it has allocated these strings and they should not 
-        // move and can be referenced. If an element is removed, the string view will contain 
-        // a dangling pointer. 
-        // Since the list is a public base class (to simplify inherting container interface)
-        // this is not guaranteed as the user of the syntax may erase elements after constrution 
-        // which would make the lookup table invalid.
-        lookup.emplace(rule.Hash(), &rule);
-    }
+    return lookup.empty();
+}
+
+Syntax::iterator Syntax::begin() const
+{
+    return iterator(lookup.begin());
+}
+
+Syntax::iterator Syntax::end() const
+{
+    return iterator(lookup.end());
 }
 
 std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::Lookup(hash_t symbol) const
 {
     auto [first, last] = lookup.equal_range(symbol); 
     return std::ranges::subrange(first, last);
+}
 
+std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::operator[](hash_t symbol) const
+{
+    return Lookup(symbol);
 }
 
 hash_t Syntax::Root() const

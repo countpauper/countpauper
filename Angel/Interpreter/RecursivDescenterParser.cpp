@@ -65,7 +65,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol,
     auto rules = syntax.Lookup(symbol);
     for(const auto& rule: rules)
     {
-        std::vector<OutputSymbol> result = Recurse(rule.first, rule.second->terms, from, to);
+        std::vector<OutputSymbol> result = Recurse(rule.first, rule.second.terms, from, to);
         if (!result.empty())
             return result;
     }

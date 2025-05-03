@@ -124,32 +124,9 @@ public:
         return std::move(objects);
     }
 private:
-/*
-    template<typename FT>
-    friend Fifo<FT>& operator<<(Fifo<FT>& fifo, const FT& object);
-    template<typename FT>
-    friend Fifo<FT>& operator>>(Fifo<FT>& fifo, FT& object);
-*/  
     std::deque<T> objects;
     iostate state;
 };
-
-/*
-template<typename T>
-Fifo<T>& operator<<(Fifo<T>& fifo, const T& object)
-{
-    fifo.objects.push_back(object);
-    return fifo;
-}
-
-template<typename T>
-Fifo<T>& operator>>(Fifo<T>& fifo, T& object)
-{
-    object = fifo.objects[0];
-    fifo.objects.pop_front();
-    return fifo;
-}
-*/
 
 static_assert(std::input_iterator<FifoRange<int, Fifo<int>>::Iterator>);
 static_assert(std::ranges::input_range<FifoRange<int, Fifo<int>>>);

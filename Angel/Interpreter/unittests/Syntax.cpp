@@ -21,7 +21,7 @@ TEST(Syntax, Lookup)
         Rule("operator", {Literal("<")}),
         Rule("operator", {Literal(">")}),
     };
-    auto lookup  = syntax.Lookup(syntax.front().Hash());
+    auto lookup  = syntax.Lookup(syntax.Root());
     EXPECT_EQ(std::distance(lookup.cbegin(), lookup.cend()), 2);
     EXPECT_TRUE(syntax.Lookup(123456).empty());
 }

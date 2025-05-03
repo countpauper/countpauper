@@ -39,7 +39,7 @@ void Lexicon::AddRoot(const Syntax& syntax)
         return;
 
     auto roots = syntax.Lookup(syntax.Root());
-    root = Symbol(roots.front().second->name);
+    root = Symbol(roots.front().second.symbol);
     emplace(syntax.Root(), &root.value());
 
 }
