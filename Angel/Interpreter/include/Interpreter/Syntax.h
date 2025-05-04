@@ -36,6 +36,7 @@ namespace Interpreter
         hash_t Root() const;
 
         bool IsLeftRecursive() const;
+        bool IsAmbiguous(size_t tokenDepth) const;
     private:
         using SyntaxPath = std::deque<hash_t>;
         bool CheckLeftRecursive(SyntaxPath& symbol) const;

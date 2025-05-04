@@ -60,7 +60,7 @@ const Term* FindLeftSymbolOrNotEpsilon(const Rule& rule)
     {
         return std::visit(overloaded_visit{
             [](const Symbol&) { return true; },
-            [](const Token& token) { return !IsEpsilon(token); }
+            []<is_token _Token>(const _Token& token ) { return !IsEpsilon(token); }
         }, term);
     });
 }
@@ -103,4 +103,8 @@ bool Syntax::IsLeftRecursive() const
 
 }
 
+bool Syntax::IsAmbiguous(size_t tokenDepth) const
+{
+    return false;
+}
 }

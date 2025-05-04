@@ -4,32 +4,40 @@
 
 // This file defines the Backus Naur Form using the C++ Syntax 
 // it is as this example of BNF itself using the BNF: https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form#BNF_representation_of_itself
-// with three exception: 
-//  1 single quotes strings are regular expression tokens
+// with the following modiciations: 
+//  1 single 'quotes' strings indicate regular expression tokens
 //  2 rule names and literal strings can contain any unicode character over 128 
 //  3 To help the lexer, literal strings, regexes and rule names are one token including opening and closing quotes or brackets
-
+//  4 The original form was ambiguous using <expression> ::= <list> | <list> <opt-whitespace> "|" <opt-whitespace> <expression> 
+//     with similar patterns for rules and list.
+//     this was rewritten in a nearly equivalent way using epsilon 
+//     <expression> ::= <list> <expression-tail>.
+//     The difference is that an explicit separator is needed to indicate continuation of the sequence. 
+//     For rules this is the line end, expressions already used |.
+//     Lists do not have such a separator and therefore can also be empty (epsilon). 
 namespace Interpreter 
 {
 
 Syntax BNF
 {
     //   <syntax> ::= <rule> | <rule> <syntax>
-    Rule("syntax", {Symbol("rule")}),
-    Rule("syntax", {Symbol("rule"), Symbol("Syntax")}),
+    Rule("syntax", {Symbol("rule"), Symbol("syntax-tail")}),
+    Rule("syntax-tail", {Symbol("line-end"), Symbol("rule"), Symbol("syntax-tail")}),  
+    Rule("syntax-tail", {epsilon}),
     //   <rule> ::= <opt-whitespace> "<" <rule-name> ">" <opt-whitespace> "::=" <opt-whitespace> <expression> <line-end>
-    Rule("rule",   {Symbol("opt-whitespace"), Symbol("rule-name"), Symbol("opt-whitespace"), Literal("::="), Symbol("opt-whitespace"), Symbol("expression"), Symbol("line-end") }),
+    Rule("rule",   {Symbol("opt-whitespace"), Symbol("rule-name"), Symbol("opt-whitespace"), Literal("::="), Symbol("opt-whitespace"), Symbol("expression")}),
     //   <opt-whitespace> ::= " " <opt-whitespace> | ""
     Rule("opt-whitespace", {Regex("[ \\t]+")}),
     Rule("opt-whitespace", {epsilon}),
     // <expression> ::= <list> | <list> <opt-whitespace> "|" <opt-whitespace> <expression>
-    Rule("expression", {Symbol("list")}),
-    Rule("expression", {Symbol("list"), Symbol("opt-whitespace"), Literal("|"), Symbol("opt-whitespace"), Symbol("expression")}),
+    Rule("expression", {Symbol("list"), Symbol("expression-tail")}),
+    Rule("expression-tail", {Symbol("opt-whitespace"), Literal("|"), Symbol("opt-whitespace"), Symbol("list"), Symbol("expression-tail")}),
+    Rule("expression-tail", {epsilon}),
     // <line-end> ::= <opt-whitespace> <EOL> | <line-end> <line-end>
     Rule("line-end", {Regex("(\\s*\\n)+")}),    // NB avoiding self recursion here as well 
     // <list> ::= <term> | <term> <opt-whitespace> <list>
-    Rule("list", {Symbol("term")}),
     Rule("list", {Symbol("term"), Symbol("opt-whitespace"), Symbol("list")}),
+    Rule("list", {epsilon}),
     // <term> ::= <literal> | "<" <rule-name> ">"
     Rule("term", {Symbol("literal")}),
     Rule("term", {Symbol("rule-name")}),

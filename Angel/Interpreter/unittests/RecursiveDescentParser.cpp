@@ -70,7 +70,19 @@ TEST(RecursiveDescenterParser, ParseEpsilon)
         {"F", {epsilon}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("bo"), "<S> <F> <F>");
+    EXPECT_EQ(parser.ParseIt("bo"), "<S> <F>");
+}
+
+
+TEST(RecursiveDescenterParser, HeadTail)
+{
+    Syntax syntax{
+        {"S", {Symbol("F"), Literal("h")}},
+        {"F", {Literal("a")}},
+        {"F", {Literal("a"), Symbol("F")}}
+    };
+    RecursiveDescentParser parser(syntax);
+    EXPECT_EQ(parser.ParseIt("aah"), "<S> <F> <F>");
 }
 
 TEST(RecursiveDescenterParser, Fail)
