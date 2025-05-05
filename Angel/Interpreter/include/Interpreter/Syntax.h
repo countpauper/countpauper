@@ -13,7 +13,7 @@ namespace Interpreter
     public:
 
         explicit Syntax(std::initializer_list<Rule> rules={}, const std::string_view start="");
-        using LookupTable = std::multimap<hash_t, Rule>;
+        using LookupTable = std::multimap<Symbol, Rule>;
         
         class iterator 
         {
@@ -31,19 +31,17 @@ namespace Interpreter
         bool empty() const;
         iterator begin() const;
         iterator end() const;
-        std::ranges::subrange<LookupTable::const_iterator> Lookup(hash_t symbol) const;
-        std::ranges::subrange<LookupTable::const_iterator> operator[](hash_t symbol) const;
-        hash_t Root() const;
+        std::ranges::subrange<LookupTable::const_iterator> Lookup(Symbol symbol) const;
+        std::ranges::subrange<LookupTable::const_iterator> operator[](Symbol symbol) const;
+        Symbol Root() const;
 
         bool IsLeftRecursive() const;
     private:
-        using SyntaxPath = std::deque<hash_t>;
+        using SyntaxPath = std::deque<Symbol>;
         bool CheckLeftRecursive(SyntaxPath& symbol) const;
-        bool CheckAmbiguous(hash_t symbol, size_t tokenDepth) const;
-        std::vector<hash_t> FindTokens(const Rule& rule, size_t maxTokens) const;
         void CreateLookup();
         LookupTable lookup;
-        hash_t root;
+        Symbol root;
     };
 
     static_assert(std::input_iterator<Syntax::iterator>);

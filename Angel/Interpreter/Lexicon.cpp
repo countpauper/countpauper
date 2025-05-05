@@ -35,12 +35,12 @@ Lexicon::Lexicon(const Syntax& syntax)
 
 void Lexicon::AddRoot(const Syntax& syntax)
 {
-    if (syntax.empty())
-        return;
-
-    auto roots = syntax.Lookup(syntax.Root());
-    root = Symbol(roots.front().second.symbol);
-    emplace(syntax.Root(), &root.value());
-
+    const auto& syntaxRoot = syntax.Root();
+    if (syntaxRoot)
+    {
+        root = syntaxRoot;
+        emplace(syntaxRoot.Hash(), &root.value());
+    }
 }
+
 }

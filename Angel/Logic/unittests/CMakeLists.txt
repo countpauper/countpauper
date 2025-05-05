@@ -14,7 +14,7 @@ add_executable(${EXE_NAME} ${SOURCES} ${HEADERS})
 
 target_link_libraries(${EXE_NAME} PUBLIC
     Logic
-    gtest_main
+    GTest::gtest_main
     gmock_main
 )
 

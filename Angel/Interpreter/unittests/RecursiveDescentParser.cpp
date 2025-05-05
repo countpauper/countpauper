@@ -1,10 +1,10 @@
 
 #include "Interpreter/RecursiveDescentParser.h"
-
 #include "Interpreter/Syntax.h"
 #include "Interpreter/TokenStream.h"
 #include "Interpreter/Lexer.h"
 #include "Interpreter/Error.h"
+#include "RangerMatcher.h"
 #include <sstream>
 #include <gtest/gtest.h>
 
@@ -17,7 +17,7 @@ TEST(RecursiveDescenterParser, ParseLiteral)
         {"S", {Literal("s")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("s"), "<S>");
+    EXPECT_THAT(parser.ParseIt("s"), RangeEq({Symbol("S")}));
 }
 
 TEST(RecursiveDescenterParser, ParseRegex)
@@ -26,7 +26,7 @@ TEST(RecursiveDescenterParser, ParseRegex)
         {"S", {Regex("[0-9]+")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("123"), "<S>");
+    EXPECT_THAT(parser.ParseIt("123"), RangeEq({Symbol("S")}));
 }
     
 TEST(RecursiveDescenterParser, ParseSymbol)
@@ -37,7 +37,7 @@ TEST(RecursiveDescenterParser, ParseSymbol)
         {"F", {Literal("o")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("bo"), "<S> <F>");
+    EXPECT_THAT(parser.ParseIt("bo"), RangeEq({Symbol("S"),Symbol("F")}));
 }
 
 TEST(RecursiveDescenterParser, ParseRegexRule)
@@ -48,7 +48,7 @@ TEST(RecursiveDescenterParser, ParseRegexRule)
         {"F", {Regex("x+")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("b0x"), "<S> <F> <F>");
+    EXPECT_THAT(parser.ParseIt("b0x"), RangeEq({Symbol("S"),Symbol("F"),Symbol("F")}));
 }
 
 TEST(RecursiveDescenterParser, ParseMiddleRecursion)
@@ -59,7 +59,7 @@ TEST(RecursiveDescenterParser, ParseMiddleRecursion)
         {"F", {Literal("o")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("bob"), "<S> <F>");
+    EXPECT_THAT(parser.ParseIt("bob"), RangeEq({Symbol("S"),Symbol("F")}));
 }
 
 TEST(RecursiveDescenterParser, ParseEpsilon)
@@ -70,7 +70,7 @@ TEST(RecursiveDescenterParser, ParseEpsilon)
         {"F", {epsilon}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("bo"), "<S> <F>");
+    EXPECT_THAT(parser.ParseIt("bo"), RangeEq({Symbol("S"),Symbol("F")}));
 }
 
 

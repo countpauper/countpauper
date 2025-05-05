@@ -12,9 +12,10 @@ file(GLOB HEADERS "*.h")
 set(EXE_NAME ${PROJECT_NAME})
 add_executable(${EXE_NAME} ${SOURCES} ${HEADERS})
 
+
 target_link_libraries(${EXE_NAME} PUBLIC
     Interpreter
-    gtest_main
+    GTest::gtest_main
     gmock_main
 )
 

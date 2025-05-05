@@ -23,59 +23,59 @@ StreamWithEof<S> && StreamExtractable<S, T>;
 template<typename T, typename S>
 class FifoRange
 {
-  S& stream;
+    S& stream;
 public:
-  explicit FifoRange(S& stream) requires StreamExtractableWithEof<S,T> : 
-    stream(stream) 
-  {}
+    explicit FifoRange(S& stream) requires StreamExtractableWithEof<S,T> : 
+        stream(stream) 
+    {}
 
-  class Iterator
-  {
-      T value;
-      S* stream = nullptr;
-  public:
-      using difference_type = std::ptrdiff_t;
-      using value_type = T;
-  
-      Iterator() = default;
-      explicit Iterator(S& stream) : 
+    class Iterator
+    {
+        T value;
+        S* stream = nullptr;
+    public:
+        using difference_type = std::ptrdiff_t;
+        using value_type = T;
+
+        Iterator() = default;
+        explicit Iterator(S& stream) : 
         stream(&stream)
-      {
-        stream >> value;
-      }
-      const T& operator*() const
-      {
-        return value;
-      }
-   
-      Iterator& operator++()
-      {
-        if (stream)
-          (*stream) >> value;
-        return *this;
-      }
-  
-      Iterator& operator++(int) 
-      { 
-        auto tmp(*this);
-        ++*this;  
-        return tmp; 
-      }
-      bool operator==(const Iterator& other) const 
-      { 
-        if (stream == other.stream) 
-          return true;
-        else if (!stream)
-          return other.stream->eof();
-        else if (!other.stream)
-          return stream->eof();
-        else 
-          return false;
-      }
-      bool operator!=(const Iterator& other) const { return !(*this == other); }
-  };
-  Iterator begin() const { return Iterator(stream); }
-  Iterator end() const { return Iterator(); }
+        {
+            stream >> value;
+        }
+        const T& operator*() const
+        {
+            return value;
+        }
+
+        Iterator& operator++()
+        {
+            if (stream)
+            (*stream) >> value;
+            return *this;
+        }
+    
+        Iterator& operator++(int) 
+        { 
+            auto tmp(*this);
+            ++*this;  
+            return tmp; 
+        }
+        bool operator==(const Iterator& other) const 
+        { 
+            if (stream == other.stream) 
+                return true;
+            else if (!stream)
+                return other.stream->eof();
+            else if (!other.stream)
+                return stream->eof();
+            else 
+                return false;
+        }
+        bool operator!=(const Iterator& other) const { return !(*this == other); }
+    };
+    Iterator begin() const { return Iterator(stream); }
+    Iterator end() const { return Iterator(); }
 };
 
  
@@ -85,6 +85,13 @@ template<class T>   // T is the object type, which must be copyable
 class Fifo : public std::ios_base
 {
 public:
+    Fifo() = default;
+    Fifo(std::initializer_list<T> objects)
+    {
+        for(const auto& object: objects)
+            (*this) << object;
+    }
+    
     Fifo<T>& operator<<(const T& object)
     {
         objects.push_back(object);
@@ -93,20 +100,20 @@ public:
     
     Fifo<T>& operator>>(T& object)
     {
-      if (objects.empty())
-        setstate(eofbit);
-      else 
-      {
-        object = objects[0];
-        objects.pop_front();
-      }
-      return *this;
+        if (objects.empty())
+            setstate(eofbit);
+        else 
+        {
+            object = objects[0];
+            objects.pop_front();
+        }
+        return *this;
     }
 
     using Range = FifoRange<T, Fifo<T>>; 
     Range View() 
     {
-      return Range(*this);
+        return Range(*this);
     } 
     std::deque<T> Dump()
     {
@@ -115,12 +122,12 @@ public:
 
     bool eof() const 
     { 
-      return state & eofbit; 
+        return state & eofbit; 
     }
 
     void setstate(iostate flags)
     {
-      state |= flags;
+        state |= flags;
     }
 private:
     std::deque<T> objects;

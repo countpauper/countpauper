@@ -1,4 +1,6 @@
 #pragma once 
+
+#include "Interpreter/Symbol.h"
 #include <string>
 #include <regex>
 #include <variant>
@@ -63,15 +65,6 @@ private:
     std::regex expression;
 };
 
-struct Symbol 
-{
-    std::string name;
-    operator std::string() const;
-    std::size_t Match(const std::string_view input) const;
-    bool operator==(const Symbol& other) const;
-    bool operator!=(const Symbol& other) const { return !this->operator==(other); }
-};
-
 static const Literal epsilon("");
 
 using Token = std::variant<std::monostate, Literal, Regex>; 
@@ -101,12 +94,6 @@ struct hash<Interpreter::Regex>
     size_t operator()(const Interpreter::Regex& l) noexcept ;
 };
 
-
-template <>
-struct hash<Interpreter::Symbol>
-{
-    size_t operator()(const Interpreter::Symbol& s) noexcept ;
-};
 
 string to_string(const Interpreter::Term& term);
 }

@@ -60,7 +60,6 @@ TEST(Lexer, Lexicon)
         Rule{"cat",      {Literal(">")}},
     };
     EXPECT_EQ(Lexicon(syntax).size(), 4);
-
 }
 
 }

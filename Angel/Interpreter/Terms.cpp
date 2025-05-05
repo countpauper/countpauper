@@ -67,19 +67,6 @@ bool Regex::operator==(const Regex& other) const
     return other.match == match;
 }
 
-std::size_t Symbol::Match(const std::string_view) const 
-{ 
-    return 0; 
-}
-bool Symbol::operator==(const Symbol& other) const
-{
-    return name == other.name;
-}
-
-Symbol::operator std::string() const
-{
-    return std::format("<{}>", name);
-}
 
 std::size_t Match(const Term& token, const std::string_view input)
 {
@@ -115,18 +102,11 @@ size_t hash<Interpreter::Regex>::operator()(const Interpreter::Regex& r) noexcep
     return typeid(Interpreter::Regex).hash_code() ^ hasher(r.match);
 }
 
-
-size_t hash<Interpreter::Symbol>::operator()(const Interpreter::Symbol& s) noexcept 
-{
-    std::hash<std::string> hasher;
-    return typeid(Interpreter::Symbol).hash_code() ^ hasher(s.name);
-}
-
-
 string to_string(const Interpreter::Term& term)
 {
     return visit(
         [](const auto& obj) { return string(obj); },
         term);
 }
+
 }

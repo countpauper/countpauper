@@ -41,13 +41,13 @@ void RecursiveDescentParser::Parse(TokenStream& is, SymbolStream& os)
     }
 }
 
-std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol,
+std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol,
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
 {
     auto rules = syntax.Lookup(symbol);
     for(const auto& rule: rules)
     {
-        Logging::Log<Logging::INFO>("{}{}[", Tab(), rule.second.symbol);
+        Logging::Log<Logging::INFO>("{}{}[", Tab(), std::string(rule.second.symbol));
         tab++;
         std::vector<OutputSymbol> result = Recurse(rule.first, rule.second.terms, from, to);
         tab--;
@@ -65,7 +65,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol,
 }
 
 
-std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol, const Terms& terms, 
+std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const Terms& terms, 
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
 {
     std::vector<OutputSymbol> result;
@@ -77,7 +77,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(hash_t symbol, const T
         {
             [&it, &to, this, &result]( const Symbol& subSymbol )
             { 
-                auto subResult = Recurse(std::hash<Term>()(subSymbol), it, to); 
+                auto subResult = Recurse(subSymbol, it, to); 
                 if (subResult.empty())
                     return false;
                 for(const auto& i : subResult)

@@ -8,7 +8,7 @@ namespace Interpreter
 {
     
 
-class SymbolStringGenerator
+class SymbolGenerator
 {   // TODO: base generator interface or concept to iterate? 
     // TODO: pass source, This output will show it as symbol{source range}? 
     // TODO: hide hash optimization. lexicon shouldn't be needed here. 
@@ -16,22 +16,20 @@ class SymbolStringGenerator
     //   in debug symbols are string, no hashing needed 
     //   With that maybe symbols can be taken out of the lexicon again 
 public:
-    SymbolStringGenerator(Lexicon& lexicon, SymbolStream& stream) :
+    SymbolGenerator(Lexicon& lexicon, SymbolStream& stream) :
         lexicon(lexicon),
         stream(stream)
     {
     }
 
-    std::string operator()() const
+    Symbols operator()() const
     {
-        std::string result;
-        for(auto symbol : stream.View())
+        Symbols result;
+        for(auto element : stream.View())
         {
-            if (symbol.location.length == 0)
+            if (element.location.length == 0)
                 continue;
-            if (!result.empty())
-                result += " ";
-            result += std::to_string(*lexicon[symbol.symbol]);
+            result.push_back(element.symbol);
         }
         return result;
     }
@@ -45,7 +43,7 @@ Parser::Parser(const Syntax& syntax) :
 {
 }
 
-std::string Parser::ParseIt(const std::string_view source)
+Symbols Parser::ParseIt(const std::string_view source)
 {
     TokenStream tokens;
     std::stringstream sourcestream;
@@ -54,7 +52,7 @@ std::string Parser::ParseIt(const std::string_view source)
     Lexer(lexicon).Process(sourcestream, tokens);
     SymbolStream os;
     Parse(tokens, os);
-    return SymbolStringGenerator(lexicon, os)();
+    return SymbolGenerator(lexicon, os)();
 }
 
 }

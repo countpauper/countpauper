@@ -7,14 +7,17 @@ namespace Interpreter::Test
 TEST(Syntax, EmptyLookup)
 {
     Syntax emptySyntax;
-    auto emptyLookup = emptySyntax.Lookup(123456);
+    auto emptyLookup = emptySyntax.Lookup("cheese");
     EXPECT_TRUE(emptyLookup.empty());
 }
 
 TEST(Syntax, Rule)
 {
-    EXPECT_EQ(std::string(Rule({"S", {Literal("a"), Symbol("S")}})), "S::=\"a\" <S>");
+#ifndef NDEBUG
+    EXPECT_EQ(std::string(Rule({"S", {Literal("a"), Symbol("S")}})), "<S>::=\"a\" <S>");
+#endif
 }
+
 TEST(Syntax, Lookup)
 {
     Syntax syntax {
@@ -23,7 +26,7 @@ TEST(Syntax, Lookup)
     };
     auto lookup  = syntax.Lookup(syntax.Root());
     EXPECT_EQ(std::distance(lookup.cbegin(), lookup.cend()), 2);
-    EXPECT_TRUE(syntax.Lookup(123456).empty());
+    EXPECT_TRUE(syntax.Lookup("pickle").empty());
 }
 
 }

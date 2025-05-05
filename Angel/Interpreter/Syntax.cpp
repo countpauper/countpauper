@@ -10,15 +10,15 @@ namespace Interpreter
 Syntax::Syntax(std::initializer_list<Rule> input, const std::string_view start) 
 {
     if (!start.empty()) {
-        root = std::hash<Term>()(Symbol(std::string(start)));
+        root = Symbol(start);
     }
     else if (input.size())
     {
-        this->root = input.begin()->SymbolHash();
+        this->root = input.begin()->symbol;
     }
     for(const auto& rule:input)
     {
-        lookup.emplace(rule.SymbolHash(), std::move(rule));
+        lookup.emplace(rule.symbol, std::move(rule));
     }
 }
 
@@ -38,18 +38,18 @@ Syntax::iterator Syntax::end() const
     return iterator(lookup.end());
 }
 
-std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::Lookup(hash_t symbol) const
+std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::Lookup(Symbol symbol) const
 {
     auto [first, last] = lookup.equal_range(symbol); 
     return std::ranges::subrange(first, last);
 }
 
-std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::operator[](hash_t symbol) const
+std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::operator[](Symbol symbol) const
 {
     return Lookup(symbol);
 }
 
-hash_t Syntax::Root() const
+Symbol Syntax::Root() const
 {
     return root;
 }
@@ -77,14 +77,13 @@ bool Syntax::CheckLeftRecursive(SyntaxPath& path) const
             continue;
 
         if (std::visit(overloaded_visit{
-            [this, &path](const Symbol& term) 
+            [this, &path](const Symbol& symbol) 
             {
-                hash_t termHash = std::hash<Term>()(term);
-                if (std::find(path.begin(), path.end(), termHash)!=path.end())
+                if (std::find(path.begin(), path.end(), symbol)!=path.end())
                     return true;
-                path.push_back(termHash);
+                path.push_back(symbol);
                 auto result = CheckLeftRecursive(path);
-                assert(!path.empty() && path.back() == termHash);
+                assert(!path.empty() && path.back() == symbol);
                 path.pop_back();
                 return result; 
             },
@@ -100,7 +99,6 @@ bool Syntax::IsLeftRecursive() const
     SyntaxPath path;
     path.push_back(Root());
     return CheckLeftRecursive(path);
-
 }
 
 }
