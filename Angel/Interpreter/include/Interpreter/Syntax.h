@@ -36,10 +36,11 @@ namespace Interpreter
         hash_t Root() const;
 
         bool IsLeftRecursive() const;
-        bool IsAmbiguous(size_t tokenDepth) const;
     private:
         using SyntaxPath = std::deque<hash_t>;
         bool CheckLeftRecursive(SyntaxPath& symbol) const;
+        bool CheckAmbiguous(hash_t symbol, size_t tokenDepth) const;
+        std::vector<hash_t> FindTokens(const Rule& rule, size_t maxTokens) const;
         void CreateLookup();
         LookupTable lookup;
         hash_t root;

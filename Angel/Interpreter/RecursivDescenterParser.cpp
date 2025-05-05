@@ -17,8 +17,6 @@ RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
 {
     if (syntax.IsLeftRecursive())
         throw std::runtime_error("Left recursion in syntax may cause infite recursion during recursive descent.");
-    if (syntax.IsAmbiguous(1))
-        throw std::runtime_error("Ambiguity may cause the recursive descent parser to fail prematurely.");
 }
 
 static int tab;

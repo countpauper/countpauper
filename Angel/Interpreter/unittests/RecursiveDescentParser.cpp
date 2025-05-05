@@ -74,7 +74,7 @@ TEST(RecursiveDescenterParser, ParseEpsilon)
 }
 
 
-TEST(RecursiveDescenterParser, HeadTail)
+TEST(RecursiveDescenterParser, NonDeterministicFails)
 {
     Syntax syntax{
         {"S", {Symbol("F"), Literal("h")}},
@@ -82,7 +82,7 @@ TEST(RecursiveDescenterParser, HeadTail)
         {"F", {Literal("a"), Symbol("F")}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_EQ(parser.ParseIt("aah"), "<S> <F> <F>");
+    EXPECT_THROW(parser.ParseIt("aah"), Error);
 }
 
 TEST(RecursiveDescenterParser, Fail)

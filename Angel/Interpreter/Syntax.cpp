@@ -103,8 +103,4 @@ bool Syntax::IsLeftRecursive() const
 
 }
 
-bool Syntax::IsAmbiguous(size_t tokenDepth) const
-{
-    return false;
-}
 }
