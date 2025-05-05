@@ -29,19 +29,38 @@ public:
         stream(stream) 
     {}
 
+    class Sentinel;
     class Iterator
     {
+        friend Sentinel;
+        S* stream;
         T value;
-        S* stream = nullptr;
     public:
+
         using difference_type = std::ptrdiff_t;
         using value_type = T;
 
-        Iterator() = default;
-        explicit Iterator(S& stream) : 
-        stream(&stream)
+        explicit Iterator(S& s) : 
+            stream(&s)
         {
-            stream >> value;
+            *stream >> value;
+        }
+        // Because the fifo can only be iterated forward once, the 
+        // iterator can not be copied. The front of the fifo is what the iterator is pointing at
+        Iterator(const Iterator&) = delete;
+        Iterator& operator=(const Iterator&) = delete;
+        Iterator(Iterator&& o)
+        {
+            std::swap(value, o.value);
+            std::swap(stream, o.stream);
+        }
+        Iterator& operator=(Iterator&& o)
+        {
+            stream = nullptr;
+            value = T();
+            std::swap(value, o.value);
+            std::swap(stream, o.stream);
+            return *this;
         }
         const T& operator*() const
         {
@@ -63,19 +82,41 @@ public:
         }
         bool operator==(const Iterator& other) const 
         { 
-            if (stream == other.stream) 
-                return true;
-            else if (!stream)
-                return other.stream->eof();
-            else if (!other.stream)
-                return stream->eof();
-            else 
-                return false;
+            return (stream == other.stream); 
         }
         bool operator!=(const Iterator& other) const { return !(*this == other); }
     };
-    Iterator begin() const { return Iterator(stream); }
-    Iterator end() const { return Iterator(); }
+
+    class Sentinel
+    {
+        friend class Iterator;
+        S* stream = nullptr;
+    public:
+        Sentinel() = default;
+        explicit Sentinel(S& s) : 
+            stream(&s)
+        {
+        }
+        Sentinel(const Sentinel& o) : stream(o.stream) {} 
+        Sentinel& opererator(const Sentinel& o) { stream = o.stream; return *this; }
+        bool operator==(const Sentinel& other) const 
+        { 
+            return stream == other.stream;
+        }
+
+        bool operator==(const Iterator& it) const 
+        { 
+            if (stream != it.stream)
+                return false;
+            else
+                return it.stream->eof(); 
+        }
+
+        bool operator!=(const Sentinel& other) const { return !(*this == other); }
+    };
+
+    Iterator begin() { return Iterator(stream); }
+    Sentinel end() { return Sentinel(stream); }
 };
 
  
@@ -91,7 +132,7 @@ public:
         for(const auto& object: objects)
             (*this) << object;
     }
-    
+
     Fifo<T>& operator<<(const T& object)
     {
         objects.push_back(object);

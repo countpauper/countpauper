@@ -9,7 +9,7 @@ namespace Interpreter
 TEST(Grammar, GeneratorRule)
 {
     std::stringstream source("bla");
-    SymbolStream parse{{Symbol("rule-name"),0,3}};
+    SymbolStream parse{{Symbol("syntax"),0,3}, {Symbol("rule"),0,3}, {Symbol("rule-name"),0,3}};
     GrammarGenerator generator;
     const auto& syntax = generator(source, parse);
     EXPECT_EQ(syntax.Root(), Symbol("bla"));
