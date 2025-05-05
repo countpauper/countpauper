@@ -13,8 +13,7 @@ public:
     explicit Lexicon(std::initializer_list<const Term*> tokens);
     explicit Lexicon(const class Syntax& syntax);
 private:
-    void AddRoot(const Syntax& syntax);
-    std::optional<Term> root;
+
 };
 
 }

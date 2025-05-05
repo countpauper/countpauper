@@ -59,7 +59,7 @@ TEST(Lexer, Lexicon)
         Rule{"operator", {Literal("<"), Symbol("cat")}},
         Rule{"cat",      {Literal(">")}},
     };
-    EXPECT_EQ(Lexicon(syntax).size(), 4);
+    EXPECT_EQ(Lexicon(syntax).size(), 2);
 }
 
 }
