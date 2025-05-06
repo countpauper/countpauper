@@ -67,10 +67,10 @@ TEST(RecursiveDescenterParser, ParseEpsilon)
     Syntax syntax{
         {"S", {Literal("b"), Symbol("F")}},
         {"F", {Literal("o"), Symbol("F")}},
-        {"F", {epsilon}}
+        {"F", {Epsilon()}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_THAT(parser.ParseIt("bo"), RangeEq({Symbol("S"),Symbol("F")}));
+    EXPECT_THAT(parser.ParseIt("bo"), RangeEq({Symbol("S"),Symbol("F"),Symbol("F")}));
 }
 
 
@@ -90,7 +90,7 @@ TEST(RecursiveDescenterParser, Fail)
     Syntax syntax{
         {"S", {Literal("b"), Symbol("F")}},
         {"F", {Literal("o"), Symbol("F")}},
-        {"F", {epsilon}}
+        {"F", {Epsilon()}}
     };
     RecursiveDescentParser parser(syntax);
     try 
@@ -107,7 +107,7 @@ TEST(RecursiveDescenterParser, InfiniteRecursionIsPrevented)
 { 
     Syntax syntax{
         {"S", {Symbol("F"), Literal("end")}},
-        {"F", {epsilon, Symbol("S"), Literal("oops")}}
+        {"F", {Epsilon(), Symbol("S"), Literal("oops")}}
     };
     EXPECT_THROW(RecursiveDescentParser parser(syntax), std::runtime_error);
 

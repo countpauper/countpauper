@@ -28,4 +28,32 @@ namespace Logging
     Log( std::format_string<Args...>, Args&&...)
     {
     }
+
+
+class Tabber
+{
+public:
+    Tabber& operator++()
+    {
+        tabs ++;
+        return *this;
+    }
+    Tabber& operator--()
+    {
+        tabs--;
+        return *this;
+    }
+    Tabber& operator=(int tab)
+    {
+        tabs = tab;
+        return *this;
+    }
+    operator::std::string() 
+    {
+        return std::string(tabs, ' ');
+    }
+private:
+    int tabs = 0;
+};
+
 }

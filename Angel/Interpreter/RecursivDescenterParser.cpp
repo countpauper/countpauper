@@ -19,11 +19,7 @@ RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
         throw std::runtime_error("Left recursion in syntax may cause infite recursion during recursive descent.");
 }
 
-static int tab;
-std::string Tab() 
-{
-    return std::string(tab, ' ');
-}
+static Logging::Tabber tab;
 
 void RecursiveDescentParser::Parse(TokenStream& is, SymbolStream& os)
 {
@@ -47,18 +43,18 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol,
     auto rules = syntax.Lookup(symbol);
     for(const auto& rule: rules)
     {
-        Logging::Log<Logging::INFO>("{}{}[", Tab(), std::string(rule.second.symbol));
-        tab++;
+        Logging::Log<Logging::INFO>("{}{}[", std::string(tab), std::string(rule.second.symbol));
+        ++tab;
         std::vector<OutputSymbol> result = Recurse(rule.first, rule.second.terms, from, to);
-        tab--;
+        --tab;
         if (!result.empty()) 
         {
-            Logging::Log<Logging::INFO>("{}] pass", Tab());
+            Logging::Log<Logging::INFO>("{}] pass", std::string(tab));
             return result;
         }
         else 
         {
-            Logging::Log<Logging::INFO>("{}] fail", Tab());
+            Logging::Log<Logging::INFO>("{}] fail", std::string(tab));
         }
     }
     return std::vector<OutputSymbol>();
@@ -69,8 +65,9 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
 {
     std::vector<OutputSymbol> result;
-    result.emplace_back(symbol, from->reference);
     auto it = from;
+    result.emplace_back(symbol, from->reference);
+
     for(const Term& term: terms)
     {
         auto match =  std::visit( overloaded_visit
@@ -84,10 +81,14 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
                     result.emplace_back(i);
                 return true;
             },
+            [&result, &it] (const Epsilon& epsilon)
+            {
+                if (epsilon.GetSymbol())
+                    result.emplace_back(OutputSymbol{epsilon.GetSymbol(), {it->reference.from, 0}});
+                return true;
+            },
             [&it, &to, this] <is_token _Token>(const _Token& token )
             { 
-                if (IsEpsilon(token))
-                    return true;
                 if (it==to)
                     return false;
                 if (std::hash<Term>()(token) != it->token) 

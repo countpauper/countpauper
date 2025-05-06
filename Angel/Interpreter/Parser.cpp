@@ -27,7 +27,9 @@ public:
         Symbols result;
         for(auto element : stream.View())
         {
-            if (element.location.length == 0)
+            if (!element.symbol)
+                continue;
+            if (element.symbol == Symbol("opt-whitespace"))
                 continue;
             result.push_back(element.symbol);
         }

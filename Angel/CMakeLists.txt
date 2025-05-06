@@ -8,7 +8,7 @@ project(angel)
 file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         add_compile_definitions("NDEBUG")
 endif()
 #

@@ -13,8 +13,9 @@ namespace Interpreter
     public:
 
         explicit Syntax(std::initializer_list<Rule> rules={}, const std::string_view start="");
+        Syntax(Syntax&& other);
+
         using LookupTable = std::multimap<Symbol, Rule>;
-        
         class iterator 
         {
         public:
@@ -34,7 +35,12 @@ namespace Interpreter
         std::ranges::subrange<LookupTable::const_iterator> Lookup(Symbol symbol) const;
         std::ranges::subrange<LookupTable::const_iterator> operator[](Symbol symbol) const;
         Symbol Root() const;
-
+        template< class... Args >
+        void emplace(Args&&... args )
+        {
+            Rule rule(std::forward<Args>(args)...);
+            lookup.emplace(rule.symbol, std::move(rule));
+        }
         bool IsLeftRecursive() const;
     private:
         using SyntaxPath = std::deque<Symbol>;

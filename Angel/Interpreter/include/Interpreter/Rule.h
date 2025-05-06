@@ -15,6 +15,7 @@ namespace Interpreter
         Symbol symbol;
         Terms terms;
         SourceSpan location = {0,0}; // set if loaded from source else 0,0
+
         operator std::string() const;
         const Term* FindLeft(std::function<bool(const Term&)> predicate) const;
     };

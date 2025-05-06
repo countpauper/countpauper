@@ -22,6 +22,12 @@ Syntax::Syntax(std::initializer_list<Rule> input, const std::string_view start)
     }
 }
 
+Syntax::Syntax(Syntax&& other)
+{
+    std::swap(root, other.root);
+    std::swap(lookup, other.lookup);
+}
+
 
 bool Syntax::empty() const
 {
@@ -60,7 +66,8 @@ const Term* FindLeftSymbolOrNotEpsilon(const Rule& rule)
     {
         return std::visit(overloaded_visit{
             [](const Symbol&) { return true; },
-            []<is_token _Token>(const _Token& token ) { return !IsEpsilon(token); }
+            [](const Epsilon&) { return false; },
+            []<is_token _Token>(const _Token& token ) { return true; }
         }, term);
     });
 }

@@ -96,6 +96,13 @@ hash_t SymbolHash(const std::string_view name)
         return std::format("<{}>", name);
     }
 #endif
+
+std::ostream& operator<<(std::ostream& os, const Symbol& s)
+{
+    os << std::string(s).c_str();
+    return os;
+}
+
 }
 
 namespace std

@@ -23,21 +23,21 @@ Syntax BNF
     //   <syntax> ::= <rule> | <rule> <syntax>
     Rule("syntax", {Symbol("rule"), Symbol("syntax-tail")}),
     Rule("syntax-tail", {Symbol("line-end"), Symbol("rule"), Symbol("syntax-tail")}),  
-    Rule("syntax-tail", {epsilon}),
+    Rule("syntax-tail", {Epsilon("syntax-end")}),
     //   <rule> ::= <opt-whitespace> "<" <rule-name> ">" <opt-whitespace> "::=" <opt-whitespace> <expression> <line-end>
     Rule("rule",   {Symbol("opt-whitespace"), Symbol("rule-name"), Symbol("opt-whitespace"), Literal("::="), Symbol("opt-whitespace"), Symbol("expression")}),
     //   <opt-whitespace> ::= " " <opt-whitespace> | ""
     Rule("opt-whitespace", {Regex("[ \\t]+")}),
-    Rule("opt-whitespace", {epsilon}),
+    Rule("opt-whitespace", {Epsilon()}),
     // <expression> ::= <list> | <list> <opt-whitespace> "|" <opt-whitespace> <expression>
     Rule("expression", {Symbol("list"), Symbol("expression-tail")}),
     Rule("expression-tail", {Symbol("opt-whitespace"), Literal("|"), Symbol("opt-whitespace"), Symbol("list"), Symbol("expression-tail")}),
-    Rule("expression-tail", {epsilon}),
+    Rule("expression-tail", {Epsilon("expression-end")}),
     // <line-end> ::= <opt-whitespace> <EOL> | <line-end> <line-end>
     Rule("line-end", {Regex("(\\s*\\n)+")}),    // NB avoiding self recursion here as well 
     // <list> ::= <term> | <term> <opt-whitespace> <list>
     Rule("list", {Symbol("term"), Symbol("opt-whitespace"), Symbol("list")}),
-    Rule("list", {epsilon}),
+    Rule("list", {Epsilon("list-end")}),
     // <term> ::= <literal> | "<" <rule-name> ">"
     Rule("term", {Symbol("literal")}),
     Rule("term", {Symbol("rule-name")}),

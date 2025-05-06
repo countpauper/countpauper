@@ -30,6 +30,8 @@ struct Symbol
     bool operator!=(const Symbol& other) const { return !this->operator==(other); }
 };
 
+std::ostream& operator<<(std::ostream& os, const Symbol& s);
+
 using Symbols = std::vector<Symbol>;
 
 }

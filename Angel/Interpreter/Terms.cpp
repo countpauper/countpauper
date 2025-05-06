@@ -8,11 +8,8 @@ namespace Interpreter
 Literal::Literal(const std::string_view match):
     match(match)
 {
-}
-
-bool Literal::IsEpsilon() const
-{
-    return match.empty();
+    if (match.empty())
+        throw std::invalid_argument("Literal token can not be empty. Use Epsilon.");
 }
 
 std::size_t Literal::Match(const std::string_view input) const
@@ -40,11 +37,8 @@ Regex::Regex(const std::string_view match):
         std::regex_constants::optimize | 
         std::regex_constants::nosubs)
 {
-}
-
-bool Regex::IsEpsilon() const
-{
-    return match.empty();
+    if (match.empty())
+        throw std::invalid_argument("Regex token can not be empty. Use Epsilon.");
 }
 
 std::size_t Regex::Match(const std::string_view input) const
@@ -74,13 +68,32 @@ std::size_t Match(const Term& token, const std::string_view input)
     return std::visit(matcher, token);
 }
 
-bool IsEpsilon(const Token& token)
+Epsilon::Epsilon(const std::string_view symbol) :
+    symbol(symbol)
 {
-    return std::visit(overloaded_visit{
-        [](std::monostate) { return false; },
-        [](const auto& obj) { return obj.IsEpsilon(); }
+}
 
-    }, token);
+const Symbol& Epsilon::GetSymbol() const
+{
+    return symbol;
+}
+
+std::size_t Epsilon::Match(const std::string_view input) const
+{
+    return 0;
+}
+
+Epsilon::operator std::string() const
+{
+    if (symbol)
+        return std::format("ε{}", std::string(symbol));
+    else
+        return "ε";
+}
+
+bool Epsilon::operator==(const Epsilon& other) const
+{
+    return other.symbol == symbol;
 }
 
 
@@ -100,6 +113,12 @@ size_t hash<Interpreter::Regex>::operator()(const Interpreter::Regex& r) noexcep
 {
     std::hash<std::string> hasher;
     return typeid(Interpreter::Regex).hash_code() ^ hasher(r.match);
+}
+
+size_t hash<Interpreter::Epsilon>::operator()(const Interpreter::Epsilon& e) noexcept 
+{
+    std::hash<std::string> hasher;
+    return typeid(Interpreter::Epsilon).hash_code() ^ e.symbol.Hash();
 }
 
 string to_string(const Interpreter::Term& term)
