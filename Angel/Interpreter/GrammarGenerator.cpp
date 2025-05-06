@@ -1,16 +1,10 @@
 #include "Interpreter/GrammarGenerator.h"
 #include "Interpreter/Error.h"
+#include "Interpreter/Utils.h"
 
 namespace Interpreter
 {
 
-std::string Extract(std::istream& source, SourceSpan location)
-{
-    std::string result(location.length, '?');
-    source.seekg(location.from);
-    source.read(result.data(), location.length);
-    return result;
-}
 
 Terms GenerateTerms(std::istream& source, SymbolStream& parse)
 {
@@ -21,15 +15,15 @@ Terms GenerateTerms(std::istream& source, SymbolStream& parse)
         parse >> input;
         if (input.symbol == Symbol("rule-name"))
         {   
-            result.emplace_back(Symbol(Extract(source, input.location.sub(1,-1))));
+            result.emplace_back(Symbol(Unclose(input.location.extract(source), '<','>')));
         }
         else if (input.symbol == Symbol("Literal"))
         {
-            result.emplace_back(Literal(Extract(source, input.location.sub(1,-1))));
+            result.emplace_back(Literal(Unclose(input.location.extract(source), '"')));
         }
         else if (input.symbol == Symbol("Regex"))
         {
-            result.emplace_back(Regex(Extract(source, input.location.sub(1,-1))));
+            result.emplace_back(Regex(Unclose(input.location.extract(source), '\'')));
         }
         else if (input.symbol == Symbol("list-end"))
         {
@@ -52,7 +46,7 @@ Syntax GrammarGenerator::operator()(std::istream& source, SymbolStream& parse) c
         parse >> input;
         if (input.symbol == Symbol("rule-name"))
         {
-            name = Symbol(Extract(source, input.location));
+            name = Symbol(Unclose(input.location.extract(source), '<', '>'));
         }
         else if (input.symbol == Symbol("list"))
         {

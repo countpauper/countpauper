@@ -8,10 +8,10 @@ namespace Interpreter
 
 TEST(Grammar, GeneratorRule)
 {
-    std::stringstream source("bla");
-    SymbolStream parse{{Symbol("syntax"),0,3}, {Symbol("rule"),0,3}, {Symbol("rule-name"),0,3}, 
-        {Symbol("expression"), 3,0}, {Symbol("list"), 3,0}, 
-        {Symbol("list-end"), 3,0}, {Symbol("expession-end"), 3,0}, {Symbol("syntax-end"), 3,0}};
+    std::stringstream source("<bla>");
+    SymbolStream parse{{Symbol("syntax"),0,5}, {Symbol("rule"),0, 5}, {Symbol("rule-name"),0,5}, 
+        {Symbol("expression"), 5,0}, {Symbol("list"), 5,0}, 
+        {Symbol("list-end"), 5,0}, {Symbol("expession-end"), 5,0}, {Symbol("syntax-end"), 5,0}};
     GrammarGenerator generator;
     const auto& syntax = generator(source, parse);
     EXPECT_EQ(syntax.Root(), Symbol("bla"));
@@ -19,11 +19,11 @@ TEST(Grammar, GeneratorRule)
 
 TEST(Grammar, GeneratorTerms)
 {
-    std::stringstream source("nr::= \"23\"");
-    SymbolStream parse{{Symbol("syntax"),0,10}, {Symbol("rule"),0,10}, {Symbol("rule-name"),0,2}, 
-        {Symbol("expression"), 2, 8}, {Symbol("list"), 2, 8},
-            {Symbol("Literal"), 6, 4},
-        {Symbol("list-end"), 10, 0}, {Symbol("expession-end"), 10, 0}, {Symbol("syntax-end"), 10, 0}};
+    std::stringstream source("<nr>::= \"23\"");
+    SymbolStream parse{{Symbol("syntax"),0,12}, {Symbol("rule"),0,12}, {Symbol("rule-name"),0,4}, 
+        {Symbol("expression"), 4, 8}, {Symbol("list"), 4, 8},
+            {Symbol("Literal"), 8, 4},
+        {Symbol("list-end"), 12, 0}, {Symbol("expession-end"), 12, 0}, {Symbol("syntax-end"), 12, 0}};
     GrammarGenerator generator;
     const auto& syntax = generator(source, parse);
     EXPECT_FALSE(syntax["nr"].empty());

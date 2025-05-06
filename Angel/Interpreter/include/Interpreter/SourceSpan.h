@@ -1,21 +1,41 @@
 #pragma once 
 
 #include <cstddef>
-#include <algorithm>
+#include <iostream>
 
 namespace Interpreter 
 {
     struct SourceSpan {
         size_t from = 0;
         size_t length = 0;
-        bool operator==(const SourceSpan& o) const { return from == o.from && length == o.length; }
-        SourceSpan sub(long offset, long newLength) const 
-        { 
-            size_t newStart = std::max(0L, offset + static_cast<long>(from));
-            long maxLength = (from+length - newStart);
-            if (newLength<0)
-                newLength = std::max(0L, static_cast<long>(length) + newLength -1);
-            return SourceSpan(newStart, std::min(newLength, maxLength));
-        }
+
+        size_t size() const;
+        bool empty() const;
+        operator std::string() const;
+        bool operator==(const SourceSpan& o) const;
+        bool operator!=(const SourceSpan& o) const { return !(*this == o); }
+        SourceSpan sub(std::ptrdiff_t offset, std::ptrdiff_t newLength) const;
+        std::string extract(std::istream& s) const;
+        class iterator
+        {
+        public:
+            using difference_type = std::ptrdiff_t;
+            using value_type = std::size_t;
+    
+            explicit iterator(value_type i) ;
+            value_type operator*() const;
+            iterator& operator++();
+            iterator operator++(int) ;
+            bool operator==(const iterator& other) const;
+            bool operator!=(const iterator& other) const { return !(*this == other); }
+        private:
+            value_type idx;
+        };
+    
+        iterator begin() const;
+        iterator end() const;
+        
     };    
+
+    std::ostream& operator<<(std::ostream& os, const SourceSpan& span);
 }
