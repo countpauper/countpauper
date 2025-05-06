@@ -37,7 +37,7 @@ void RecursiveDescentParser::Parse(TokenStream& is, SymbolStream& os)
     }
 }
 
-std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol,
+std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol,
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
 {
     auto rules = syntax.Lookup(symbol);
@@ -45,7 +45,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol,
     {
         Logging::Log<Logging::INFO>("{}{}[", std::string(tab), std::string(rule.second.symbol));
         ++tab;
-        std::vector<OutputSymbol> result = Recurse(rule.first, rule.second.terms, from, to);
+        std::vector<ParsedSymbol> result = Recurse(rule.first, rule.second.terms, from, to);
         --tab;
         if (!result.empty()) 
         {
@@ -57,17 +57,15 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol,
             Logging::Log<Logging::INFO>("{}] fail", std::string(tab));
         }
     }
-    return std::vector<OutputSymbol>();
+    return std::vector<ParsedSymbol>();
 }
 
 
-std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const Terms& terms, 
+std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const Terms& terms, 
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
 {
-    std::vector<OutputSymbol> result;
+    std::vector<ParsedSymbol> result;
     auto it = from;
-    result.emplace_back(symbol, from->reference);
-
     for(const Term& term: terms)
     {
         auto match =  std::visit( overloaded_visit
@@ -84,7 +82,7 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
             [&result, &it] (const Epsilon& epsilon)
             {
                 if (epsilon.GetSymbol())
-                    result.emplace_back(OutputSymbol{epsilon.GetSymbol(), {it->reference.from, 0}});
+                    result.emplace_back(ParsedSymbol{epsilon.GetSymbol(), {it->reference.from, 0}});
                 return true;
             },
             [&it, &to, this] <is_token _Token>(const _Token& token )
@@ -103,10 +101,14 @@ std::vector<OutputSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
         }, term); 
 
         if (!match) {
-            return std::vector<OutputSymbol>();
+            if (!result.empty())
+            //TODO: figure out how opt-whitespace triggers this. because without it the Dump() of the stream is no longer neccessary
+            //    throw Error("Grammar is not deterministic", from->reference);
+                return std::vector<ParsedSymbol>();
+            return result;
         }
     }
-    result[0].location.length = it->reference.from - from->reference.from;
+    result.insert(result.begin(), ParsedSymbol{symbol, from->reference.from, it->reference.from - from->reference.from});
     from = it;
     return result;
 }

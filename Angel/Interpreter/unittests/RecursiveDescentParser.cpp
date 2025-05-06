@@ -34,10 +34,10 @@ TEST(RecursiveDescenterParser, ParseSymbol)
     Syntax syntax{
         {"S", {Literal("b"), Symbol("F")}},
         {"F", {Literal("o"), Symbol("F")}},
-        {"F", {Literal("o")}}
+        {"F", {Epsilon()}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_THAT(parser.ParseIt("bo"), RangeEq({Symbol("S"),Symbol("F")}));
+    EXPECT_THAT(parser.ParseIt("bo"), RangeEq({Symbol("S"),Symbol("F"),Symbol("F")}));
 }
 
 TEST(RecursiveDescenterParser, ParseRegexRule)

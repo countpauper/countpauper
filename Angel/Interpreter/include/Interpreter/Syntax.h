@@ -40,6 +40,7 @@ namespace Interpreter
             value_type* operator->() { return &reinterpret_cast<LookupTable::iterator&>(wrapped)->second; }
         };
         bool empty() const;
+        std::size_t size() const;
         const_iterator begin() const;
         const_iterator end() const;
         iterator begin();

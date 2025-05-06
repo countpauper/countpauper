@@ -6,12 +6,12 @@
 
 namespace Interpreter 
 {
-    struct OutputSymbol
+    struct ParsedSymbol
     {
         Symbol symbol;
         SourceSpan location;
     };
     
-    using SymbolStream = Fifo<OutputSymbol>; 
-    static_assert(StreamExtractableWithEof<SymbolStream, OutputSymbol>);    
+    using SymbolStream = Fifo<ParsedSymbol>; 
+    static_assert(StreamExtractableWithEof<SymbolStream, ParsedSymbol>);    
 }

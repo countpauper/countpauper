@@ -34,6 +34,11 @@ bool Syntax::empty() const
     return lookup.empty();
 }
 
+std::size_t Syntax::size() const
+{
+    return lookup.size();
+}
+
 Syntax::const_iterator Syntax::begin() const
 {
     return const_iterator(lookup.begin());

@@ -12,41 +12,51 @@ std::string Extract(std::istream& source, SourceSpan location)
     return result;
 }
 
+Terms GenerateTerms(std::istream& source, SymbolStream& parse)
+{
+    Terms result;
+    ParsedSymbol input;
+    while(!parse.eof())
+    {
+        parse >> input;
+        if (input.symbol == Symbol("rule-name"))
+        {   
+            result.emplace_back(Symbol(Extract(source, input.location.sub(1,-1))));
+        }
+        else if (input.symbol == Symbol("Literal"))
+        {
+            result.emplace_back(Literal(Extract(source, input.location.sub(1,-1))));
+        }
+        else if (input.symbol == Symbol("Regex"))
+        {
+            result.emplace_back(Regex(Extract(source, input.location.sub(1,-1))));
+        }
+        else if (input.symbol == Symbol("list-end"))
+        {
+            break;
+        }
+    }
+    return result;
+
+}   
+
 Syntax GrammarGenerator::operator()(std::istream& source, SymbolStream& parse) const
 {
     source.exceptions(source.badbit|source.failbit|source.eofbit);
 
     Syntax result;
     Symbol name;
-    Syntax::iterator rule = result.end(); 
-    for(const auto& symbol : parse.View())
+    ParsedSymbol input; 
+    while(!parse.eof())
     {
-        if (symbol.symbol == Symbol("rule-name"))
+        parse >> input;
+        if (input.symbol == Symbol("rule-name"))
         {
-            if (rule==result.end())
-            {
-                name = Symbol(Extract(source, symbol.location));
-            }
-            else
-            {
-                rule->terms.emplace_back(Symbol(Extract(source, symbol.location)));
-            }
+            name = Symbol(Extract(source, input.location));
         }
-        else if (symbol.symbol == Symbol("list"))
+        else if (input.symbol == Symbol("list"))
         {
-            rule = result.emplace(name, Terms());
-        }
-        else if (symbol.symbol == Symbol("list-end"))
-        {
-            rule = result.end();
-        }
-        else if (symbol.symbol == Symbol("Literal"))
-        {
-            rule->terms.emplace_back(Literal(Extract(source, symbol.location)));
-        }
-        else if (symbol.symbol == Symbol("Regex"))
-        {
-            rule->terms.emplace_back(Regex(Extract(source, symbol.location)));
+            result.emplace(name, GenerateTerms(source, parse));
         }
     }
     return std::move(result);

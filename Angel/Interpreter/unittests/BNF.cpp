@@ -80,7 +80,8 @@ TEST(BNF, List)
                     Symbol("expression-tail"), Symbol("expression-end"), 
                 Symbol("syntax-tail"), Symbol("syntax-end")
         }));
-}       
+}     
+
 TEST(BNF, Unicode)
 {
     RecursiveDescentParser parser(BNF);
@@ -92,6 +93,21 @@ TEST(BNF, Unicode)
                             Symbol("term"),Symbol("literal"), Symbol("string"),
                         Symbol("list"), 
                             Symbol("term"),Symbol("literal"),Symbol("regex"),
+                        Symbol("list"), Symbol("list-end"), 
+                    Symbol("expression-tail"), Symbol("expression-end"), 
+                Symbol("syntax-tail"), Symbol("syntax-end")
+        }));
+}
+
+TEST(BNF, Epsilon)
+{
+    RecursiveDescentParser parser(BNF);
+    EXPECT_THAT(parser.ParseIt("<epsilon>::= \"\""),  
+        RangeEq({Symbol("syntax"),
+                    Symbol("rule"), Symbol("rule-name"),
+                    Symbol("expression"),
+                        Symbol("list"),
+                            Symbol("term"),Symbol("literal"), Symbol("epsilon"),
                         Symbol("list"), Symbol("list-end"), 
                     Symbol("expression-tail"), Symbol("expression-end"), 
                 Symbol("syntax-tail"), Symbol("syntax-end")
