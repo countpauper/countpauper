@@ -17,6 +17,7 @@ namespace Interpreter
         SourceSpan location = {0,0}; // set if loaded from source else 0,0
 
         operator std::string() const;
+        operator bool() const;
         const Term* FindLeft(std::function<bool(const Term&)> predicate) const;
     };
 

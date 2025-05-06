@@ -14,6 +14,11 @@ Rule::operator std::string() const
     return std::format("{}::={}", std::string(symbol), termstr.substr(0, termstr.size()-1));
 }
 
+Rule::operator bool() const
+{
+    return bool(symbol);
+}
+
 const Term* Rule::FindLeft(std::function<bool(const Term&)> predicate) const
 {  
     auto it = std::find_if(terms.begin(), terms.end(), predicate);

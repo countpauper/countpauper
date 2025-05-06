@@ -4,88 +4,51 @@
 namespace Interpreter
 {
 
-class Expectation
+std::string Extract(std::istream& source, SourceSpan location)
 {
-public:
-    explicit Expectation(const std::string_view name) :
-        name(name)
-    {
-    }
-    std::string name;
-};
-
-Expectation Expect(const std::string_view s)
-{
-    return Expectation(s);
+    std::string result(location.length, '?');
+    source.seekg(location.from);
+    source.read(result.data(), location.length);
+    return result;
 }
-
-SymbolStream& operator>>(SymbolStream& is, const Expectation& e)
-{
-    OutputSymbol input;
-    is >> input;
-    if (Symbol(e.name) != input.symbol)
-        throw Error(std::format("Unexpected symbol {} instead of {}", std::string(input.symbol), e.name), input.location);
-
-    return is;
-}
-
-/*
-SymbolStream& operator>>(SymbolStream& is, Rule& rule)
-{
-    is >> Expect("rule");
-    return is;
-}
-
-SymbolStream& operator>>(SymbolStream& is, Syntax& syntax)
-{
-    Rule rule;
-    Condition syntax_tail("syntax-tail");
-    is >> Expect("syntax");
-    do {
-        Source rule_name(is, "rule-name");
-        is >> rule_name >> Expect("expression");
-        Condition expression_tail("expression-tail");
-        do 
-        {
-            is >> Expect("list");
-            Condition list_tail("list-tail")
-            do 
-            {
-                is >> Expect("term");
-                Option is_literal("rule-name", "literal");
-                is >> is_literal;
-                if (is_literal)
-                {
-
-                }
-                else 
-                {
-                    Source symbol_name()
-                    rule.terms.push_back(Symbol())
-                }
-            } while(list_tail);
-        } while (expression_tail);
-
-        syntax.emplace(rule);
-        is >> syntax_tail >> Maybe("line-end")
-    } while (tail);
-
-    return is;
-}
-
-*/
 
 Syntax GrammarGenerator::operator()(std::istream& source, SymbolStream& parse) const
 {
-    Syntax result;
-    parse >> Expect("syntax");
+    source.exceptions(source.badbit|source.failbit|source.eofbit);
 
-    /*
-    auto rules = SequenceGenerator(source, parse, "syntax", "syntax-tail", "syntax-end");
-     
-    Syntax result = SyntaxGenerator(source, parse);
-    parse >> result;
-*/
+    Syntax result;
+    Symbol name;
+    Syntax::iterator rule = result.end(); 
+    for(const auto& symbol : parse.View())
+    {
+        if (symbol.symbol == Symbol("rule-name"))
+        {
+            if (rule==result.end())
+            {
+                name = Symbol(Extract(source, symbol.location));
+            }
+            else
+            {
+                rule->terms.emplace_back(Symbol(Extract(source, symbol.location)));
+            }
+        }
+        else if (symbol.symbol == Symbol("list"))
+        {
+            rule = result.emplace(name, Terms());
+        }
+        else if (symbol.symbol == Symbol("list-end"))
+        {
+            rule = result.end();
+        }
+        else if (symbol.symbol == Symbol("Literal"))
+        {
+            rule->terms.emplace_back(Literal(Extract(source, symbol.location)));
+        }
+        else if (symbol.symbol == Symbol("Regex"))
+        {
+            rule->terms.emplace_back(Regex(Extract(source, symbol.location)));
+        }
+    }
     return std::move(result);
  }
 

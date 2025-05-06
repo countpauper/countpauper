@@ -34,15 +34,26 @@ bool Syntax::empty() const
     return lookup.empty();
 }
 
-Syntax::iterator Syntax::begin() const
+Syntax::const_iterator Syntax::begin() const
+{
+    return const_iterator(lookup.begin());
+}
+
+Syntax::const_iterator Syntax::end() const
+{
+    return const_iterator(lookup.end());
+}
+
+Syntax::iterator Syntax::begin()
 {
     return iterator(lookup.begin());
 }
 
-Syntax::iterator Syntax::end() const
+Syntax::iterator Syntax::end()
 {
     return iterator(lookup.end());
 }
+
 
 std::ranges::subrange<Syntax::LookupTable::const_iterator> Syntax::Lookup(Symbol symbol) const
 {

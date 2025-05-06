@@ -16,30 +16,45 @@ namespace Interpreter
         Syntax(Syntax&& other);
 
         using LookupTable = std::multimap<Symbol, Rule>;
-        class iterator 
+        class const_iterator 
         {
         public:
             using difference_type = std::ptrdiff_t;
             using value_type = Rule;
-            iterator(LookupTable::const_iterator it) : wrapped(it) {}
-            iterator& operator++() { wrapped++; return *this; }
-            iterator operator++(int) { auto tmp = *this; ++wrapped; return tmp;  }
+            const_iterator(LookupTable::const_iterator it) : wrapped(it) {}
+            const_iterator& operator++() { wrapped++; return *this; }
+            const_iterator operator++(int) { auto tmp = *this; ++wrapped; return tmp;  }
             const value_type& operator*() const { return wrapped->second; }
-            bool operator==(const iterator& o) const { return wrapped == o.wrapped; }
-        private:
+            const value_type* operator->() const { return &wrapped->second; }
+            bool operator==(const const_iterator& o) const { return wrapped == o.wrapped; }
+        protected:
             LookupTable::const_iterator wrapped;
         };
+        class iterator : public const_iterator
+        {
+        public:
+            iterator(LookupTable::iterator it) : const_iterator(it) {}
+            iterator& operator++() { wrapped++; return *this; }
+            iterator operator++(int) { auto tmp = *this; ++wrapped; return tmp;  }
+            value_type& operator*() { return reinterpret_cast<LookupTable::iterator&>(wrapped)->second; }
+            value_type* operator->() { return &reinterpret_cast<LookupTable::iterator&>(wrapped)->second; }
+        };
         bool empty() const;
-        iterator begin() const;
-        iterator end() const;
+        const_iterator begin() const;
+        const_iterator end() const;
+        iterator begin();
+        iterator end();
         std::ranges::subrange<LookupTable::const_iterator> Lookup(Symbol symbol) const;
         std::ranges::subrange<LookupTable::const_iterator> operator[](Symbol symbol) const;
         Symbol Root() const;
         template< class... Args >
-        void emplace(Args&&... args )
+        iterator emplace(Args&&... args )
         {
             Rule rule(std::forward<Args>(args)...);
-            lookup.emplace(rule.symbol, std::move(rule));
+            auto it = lookup.emplace(rule.symbol, std::move(rule));
+            if (!root)
+                root = it->first;
+            return iterator(it);
         }
         bool IsLeftRecursive() const;
     private:
@@ -50,5 +65,5 @@ namespace Interpreter
         Symbol root;
     };
 
-    static_assert(std::input_iterator<Syntax::iterator>);
+    static_assert(std::input_iterator<Syntax::const_iterator>);
 }
