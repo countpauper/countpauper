@@ -1,0 +1,19 @@
+<knowledge> ::= <axiom> <axioms>
+<axioms> ::= <axiom> <axioms>
+<axioms> ::= "" 
+<axiom> ::= <predicate> <terms> 
+<terms> ::= ":" <computation>
+<terms> ::= ""
+<predicate> ::= <id> <arguments>
+<arguments> ::= "(" <sequence> ")"
+<arguments> ::= "" 
+<computation> :: <value> <operand> 
+<operand> ::= <operator> <computation>
+<operator> ::= '+-*/&|^,'
+<value> ::= <integer>
+<value> ::= <id> 
+<value> ::= <float>
+<value> ::= <set> 
+<value> ::= <string> 
+# TODO allow comments in the grammar grammar # also after the rule 
+

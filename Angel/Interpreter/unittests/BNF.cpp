@@ -12,13 +12,48 @@ TEST(BNF, Rule)
     RecursiveDescentParser parser(BNF);
     EXPECT_THAT(parser.ParseIt("<a> ::= <b>"), 
         RangeEq({Symbol("syntax"), 
-                    Symbol("rule"),  Symbol("rule-name"), 
+                    Symbol("line"), Symbol("rule"),  Symbol("rule-name"), 
                         Symbol("expression"), 
                             Symbol("list"), 
                                 Symbol("term"), Symbol("rule-name"), 
                             Symbol("list"), Symbol("list-end"), 
                         Symbol("expression-tail"), Symbol("expression-end"), 
+                    Symbol("remark"),
                 Symbol("syntax-tail"), Symbol("syntax-end")
+        }));
+}
+
+TEST(BNF, TrailingRemark)
+{
+    RecursiveDescentParser parser(BNF);
+    EXPECT_THAT(parser.ParseIt("<a>::=<b> # this is remarkable"), 
+        RangeEq({Symbol("syntax"), 
+                    Symbol("line"), Symbol("rule"),  Symbol("rule-name"), 
+                        Symbol("expression"), 
+                            Symbol("list"), 
+                                Symbol("term"), Symbol("rule-name"), 
+                            Symbol("list"), Symbol("list-end"), 
+                        Symbol("expression-tail"), Symbol("expression-end"), 
+                    Symbol("remark"),
+                Symbol("syntax-tail"),Symbol("syntax-end")
+        }));
+}
+
+TEST(BNF, LeadingRemark)
+{
+    RecursiveDescentParser parser(BNF);
+    EXPECT_THAT(parser.ParseIt("# this rules\n<a>::=<b>"), 
+        RangeEq({Symbol("syntax"), 
+                    Symbol("line"), Symbol("remark"),
+                Symbol("syntax-tail"),
+                    Symbol("line"), Symbol("rule"),  Symbol("rule-name"), 
+                        Symbol("expression"), 
+                            Symbol("list"), 
+                                Symbol("term"), Symbol("rule-name"), 
+                            Symbol("list"), Symbol("list-end"), 
+                        Symbol("expression-tail"), Symbol("expression-end"), 
+                    Symbol("remark"),
+                Symbol("syntax-tail"),Symbol("syntax-end")
         }));
 }
 
@@ -27,19 +62,22 @@ TEST(BNF, Rules)
     RecursiveDescentParser parser(BNF);
     EXPECT_THAT(parser.ParseIt("<a> ::= <b> \r\n\n<b> ::= \"l\"\n"),
         RangeEq({Symbol("syntax"), 
-                    Symbol("rule"), Symbol("rule-name"),
+                    Symbol("line"), Symbol("rule"), Symbol("rule-name"),
                     Symbol("expression"), 
                         Symbol("list"), 
                             Symbol("term"),Symbol("rule-name"),
                         Symbol("list"), Symbol("list-end"), 
                     Symbol("expression-tail"), Symbol("expression-end"), 
-                Symbol("syntax-tail"),Symbol("line-end"),
-                    Symbol("rule"),Symbol("rule-name"),
+                    Symbol("remark"),
+                Symbol("syntax-tail"),
+                    Symbol("line"), Symbol("rule"),Symbol("rule-name"),
                     Symbol("expression"),
                         Symbol("list"),
                             Symbol("term"),Symbol("literal"),Symbol("string"), 
                         Symbol("list"), Symbol("list-end"), 
                     Symbol("expression-tail"), Symbol("expression-end"), 
+                    Symbol("remark"),
+                Symbol("syntax-tail"), Symbol("line"), Symbol("remark"), 
                 Symbol("syntax-tail"), Symbol("syntax-end")
         }));        
 }
@@ -49,7 +87,7 @@ TEST(BNF, Expression)
     RecursiveDescentParser parser(BNF);
     EXPECT_THAT(parser.ParseIt("<a>::=\"l\" | <b>\n"), 
         RangeEq({Symbol("syntax"),
-                    Symbol("rule"),Symbol("rule-name"),
+                    Symbol("line"), Symbol("rule"),Symbol("rule-name"),
                     Symbol("expression"),
                         Symbol("list"),
                             Symbol("term"),Symbol("literal"),Symbol("string"),
@@ -59,6 +97,8 @@ TEST(BNF, Expression)
                             Symbol("term"), Symbol("rule-name"),
                         Symbol("list"), Symbol("list-end"), 
                     Symbol("expression-tail"), Symbol("expression-end"), 
+                    Symbol("remark"),
+                Symbol("syntax-tail"), Symbol("line"), Symbol("remark"), 
                 Symbol("syntax-tail"), Symbol("syntax-end")
             }));
     EXPECT_THROW(parser.ParseIt("<a>:==<b>|\n"), Error);
@@ -70,7 +110,7 @@ TEST(BNF, List)
     RecursiveDescentParser parser(BNF);
     EXPECT_THAT(parser.ParseIt("<a>::=\"l\" <b>"), 
         RangeEq({Symbol("syntax"),
-                    Symbol("rule"), Symbol("rule-name"),
+                    Symbol("line"), Symbol("rule"), Symbol("rule-name"),
                     Symbol("expression"),
                         Symbol("list"),
                             Symbol("term"),Symbol("literal"),Symbol("string"),
@@ -78,6 +118,7 @@ TEST(BNF, List)
                             Symbol("term"),Symbol("rule-name"),
                         Symbol("list"), Symbol("list-end"), 
                     Symbol("expression-tail"), Symbol("expression-end"), 
+                    Symbol("remark"),
                 Symbol("syntax-tail"), Symbol("syntax-end")
         }));
 }     
@@ -85,9 +126,9 @@ TEST(BNF, List)
 TEST(BNF, Unicode)
 {
     RecursiveDescentParser parser(BNF);
-    EXPECT_THAT(parser.ParseIt("<日本語>::= \"(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧\" '😄|😁'\n"),  
+    EXPECT_THAT(parser.ParseIt("<日本語>::= \"(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧\" '😄|😁' # ข้อคิดเห็น\n"),  
         RangeEq({Symbol("syntax"),
-                    Symbol("rule"), Symbol("rule-name"),
+                    Symbol("line"), Symbol("rule"), Symbol("rule-name"),
                     Symbol("expression"),
                         Symbol("list"),
                             Symbol("term"),Symbol("literal"), Symbol("string"),
@@ -95,7 +136,10 @@ TEST(BNF, Unicode)
                             Symbol("term"),Symbol("literal"),Symbol("regex"),
                         Symbol("list"), Symbol("list-end"), 
                     Symbol("expression-tail"), Symbol("expression-end"), 
-                Symbol("syntax-tail"), Symbol("syntax-end")
+                    Symbol("remark"), 
+                Symbol("syntax-tail"), 
+                    Symbol("line"), Symbol("remark"), Symbol("syntax-tail"),
+                Symbol("syntax-end")
         }));
 }
 
@@ -104,12 +148,13 @@ TEST(BNF, Epsilon)
     RecursiveDescentParser parser(BNF);
     EXPECT_THAT(parser.ParseIt("<epsilon>::= \"\""),  
         RangeEq({Symbol("syntax"),
-                    Symbol("rule"), Symbol("rule-name"),
+                    Symbol("line"), Symbol("rule"), Symbol("rule-name"),
                     Symbol("expression"),
                         Symbol("list"),
                             Symbol("term"),Symbol("literal"), Symbol("epsilon"),
                         Symbol("list"), Symbol("list-end"), 
                     Symbol("expression-tail"), Symbol("expression-end"), 
+                    Symbol("remark"),
                 Symbol("syntax-tail"), Symbol("syntax-end")
         }));
 }
