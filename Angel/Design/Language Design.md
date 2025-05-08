@@ -1,10 +1,40 @@
 # Goal 
 Angel is a programming language that combines the best of: 
-prolog: declarative logic, solving, matching
-python: ranges, preparsing into 
-functional: all user defined functions are pure, higher order functions 
+prolog: declarative logic, solving queries, matching
+python: ranges, slicing, built-in and library binding, interactive console 
+functional: all user defined clauses are pure, higher order functions that aren't evaluated until queried.   
 The goal is to make a scientific programming language that can model the knowledge of a certain 
 domain and reason to answer queries. 
+
+# Interface 
+## Interaction 
+The default unit of interaction is a statement with a knowledge set. This can be a new predicate, which is added to the knowledge 
+or a query if it is postfixed with a question mark instead of a condition. This results in the output of the query 
+with the hypothesis of variable instantiations. The knowledge starts by default with some built in functions, 
+the most essential of which is import(), which will parse the source code in the filename string fn and add all 
+predicates in it to the root knowledge (as a side effect?). 
+If there are any queries in there the output of them could also be added to the knowledge, although this would be weird to have the same behavior in an interaction with the user, as the answer may change as other knowledge is entered. It would also require the hypothesis to be added or even instanced to the predicate(s). Instead queries results could always be printed to the console (stdout). 
+The queries are stored in the knowledge with a special query marker (boolean or special term). They are only executed at the end of a parser so order doesn't matter.
+
+## Console 
+The default application for these interactions is a python console like app where standard input is read and when enter is pressed 
+it is one interaction. This requires a newline to not be significant whitespace for parsing. Alternatively like pythong the 
+enter is added to the input and only accepted as a new interaction with the result parsers succesfully, eg 
+`predicate(bla):\n` doesnt parse because of a missing condition. This can still be added for convenience but is less essential. 
+It may require implementation of backspace and cursors, otherwise the user could get stuck in an unparsable input `predicate(bla:\n`.
+Perhaps double enter or ctrl-enter (as python) should force finalize the input. 
+Every input is parsed into a separate knowledge. It's predicated are added to the root namespace and it's queries executed. 
+
+## Command line 
+The console application should interpret each argument that does not start with `-` as statement. Files can be executed with the 
+`angel import("fn")`. All queries and `print("")` built in statements would be written to standard output. 
+Interpretation errors are written toe stderr and language errors should probably be as well. 
+
+Options starting with `-` or `--` are reserved for options, although no options are known yet. 
+
+If after parsing the command line there is no single query to execute, the options and knowledge is remembered and interactive mode is 
+started automatically. The `--interactive` option will force this.  
+
 
 # Use Cases 
 The use cases below do not yet form a coherent and complete specification of the language. 
@@ -13,7 +43,8 @@ will emerge during development and be added here or directly as unit tests. Thes
 tests will form the true specification of the language.  
 
 ## Axiomatic predicates
-an axiom is considered true if it is contained in the knowledge
+an axiom is considered true if it is contained in the knowledge. 
+
 ```
 cat
 cat? 
@@ -22,9 +53,11 @@ mouse?
 > false
 ```
 An axiom it added to the list of "facts" of the namespace.
-It is equivalent to `cat: true`, any non defined axiom is `false` 
+It is equivalent to `cat: true`, any non defined axiom is by default `false`. Defining an axiom is then 
+like assigning a value to an id or even more technically it's creating a key:value pair and each knowledge is a dictionary 
+or structure. Commas are optional.
 
-## functional predicates
+## predicate arguments
 A function is true if its label and all arguments match, else it is false
 ```
 cat(ginny) 
@@ -65,15 +98,25 @@ cat(ginny)?
 > true
 ```
 
+## Variables 
+
+Variables are preceded with `$` to distinguish them from axioms, which serve as a sort of enums that are 
+true as soon as they are used once. Requiring the first letter to be a capital, like prolog, wouldn't 
+work with unicode as not all languages have capitals and it would be very difficult to define in a regular expression. 
+
+## Anonymous variable 
+The anonymous variable, `_` in python and prolog, is instead simply defined as `$`. Any match assigned to this variable is 
+immediately discarded and not instantiated in subsequent statements. 
+
 ## Clauses with variable arguments 
 These define a generic case. The variables have the scope of that clause. When matching the query, 
 the equivalence is added to the hypothesis and while matching the other predicates in that clause 
 it will be used to instantiate variable predicates.
 ```
-cat(X): hairy(X)
+cat($X): hairy($X)
 hairy(ginny)
 cat(ginny)?
-... X=ginny 
+... $X=ginny 
 ... hairy(ginny)?
 true
 > true
@@ -81,7 +124,7 @@ true
 
 The hypothesis is instantiated left to right, so a repeat of a variable (or a predicate that includes it) already has to be a literal match
 ```
-same(X,X)
+same($X,$X)
 ```
 
 ## Matching predicates
@@ -89,14 +132,14 @@ This may not be a very useful feature, but arguments of axioms can again be pred
 arguments. 
 
 ```
-derivative(sqr(X)):2*X
+derivative(sqr($X)):2*X
 ```
 
 In that case a variable predicate identifier may be useful
 ```
 animal(cat)
 animal(fish)
-taxonomy(X(_)): animal(X)|plant(X)
+taxonomy($X(_)): animal($X)|plant($X)
 ```
 
 ## Query 
@@ -115,7 +158,7 @@ If the query contains one or more variable, the inference engine returns the val
 for which the query is true.  
 ```
 cat(ginny)
-cat(X)? 
+cat($X)? 
 > X = ginny 
 ```
 Each variable in a query has scope of the query. If the query evaluates to true  
@@ -131,14 +174,16 @@ because technically they would make everything true.
 TODO: warning? or ignore
 
 ```
-X 
-X(ginny): X=cat 
+$X 
+$X(ginny): X=cat 
 ```
 
 ## Namespace 
-A namespace is a *set* of predicates, so their order does not matter but they are unique. 
+A namespace is a clause, whose predicat is the name and the argument is a *set* of predicates, 
+so their order does not matter but they are unique. 
 By default each axiom is added to the root namespace, but to separate domains of knowledge,
 while still allowing them to refer to each other, a namespace can be wrapped around this set 
+
 ```music: 
 {
    composer(bach)
@@ -149,9 +194,19 @@ Within the namespace, predicates can be matched. If the predicate is not found t
 checked, until the root namespace. Predicates across namespace can be matched by using the `.` operator 
 to navigate to a namespace. 
 ```
-music.composer(X)?
+music.composer($X)?
 > X = bach
 ```
+This use of the `.` operator is in general used to access the elements in a set or a map 
+```
+cat: {ginny, max}
+fuzzy: {ginny: true, cheese:false}
+cat.ginny? 
+> true
+fuzzy.cheese? false 
+
+```
+
 
 ## Integers 
 integers match if they are evaluate to equal
@@ -197,12 +252,12 @@ cat(ginny)?
 ```
 This is a valid use case, because it can be used to avoid code duplication for shared conditions in a clause.
 ```
-cat(X) & fuzball(X) : hairy(X) 
+cat($X) & fuzball($X) : hairy($X) 
 ```
 converted to: 
 ```
-cat(X): hairy(X)
-fuzball(x): hairy(X)
+cat($X): hairy($X)
+fuzball($x): hairy($X)
 ```
 
 ### Disjunction axioms
@@ -211,12 +266,12 @@ TODO:  unlike conjunction axioms, it's not clear how to convery this to horn cla
 If it was `xor` then each one could be converted to a horn clause by postulating that the other elements of the 
 disjunction must then be false. There is no xor operator defined yet, but for this example assume it is `||` 
 ```
-cat(X) || dog(X) : hairy(X)
+cat($X) || dog($X) : hairy($X)
 ```
 converted to 
 ```
-cat(X): hairy(X) & ~dog(X)
-dog(X): hairy(X) & ~cat(X) 
+cat($X): hairy($X) & ~dog($X)
+dog($X): hairy($X) & ~cat($X) 
 ```
 
 More complex compinations of conjunections, disjunctions and negations could be implied 
@@ -229,7 +284,7 @@ there to the source location is useful.
 ## Negations 
 The `~` operator is used. 
 ```
-cat(x): ~dog(X) 
+cat($x): ~dog($X) 
 ```
 
 ## Negation predicates
@@ -244,7 +299,7 @@ because paradoxes can be written this way that can only be "resolved" by priorit
 ```
 cat(ginny)
 hairy(ginny)
-~cat(X): hairy(X)
+~cat($X): hairy($X)
 cat(ginny)?
 > error 
 ```
@@ -282,7 +337,7 @@ basically nested dictionaries. The dictionary is a set of associationss and `:` 
 then essentially an association of predicate and a clause. A namespace is however not a dictionary, because these 
 predicates do not need to be unique and they are ordered by priority. It is technically more a list of associations. 
 ```
-X={a:1, b:2}
+$X={a:1, b:2}
 ```
 The keys can be any elemental type. With strings they can contain spaces. They can also be integers making 
 effectively a sparse array, which can be accessed with the access operator `X[a]`.
@@ -293,24 +348,24 @@ identifiers can also be accessed with the `.` operator: `X.a`.
 Functional integer and floating point functions can be mixed into the boolean inference engine using comparison operators. 
 There is no implicit conversion, to avoid inference erros. 
 ```
-greater(X,Y): X>Y
-equal(X,Y): X=Y
+greater($X,$Y): $X>$Y
+equal($X,$Y): $X=$Y
 ```
 
 ## Integer and floating point operators 
 Of course all basic integer and floating point operators `+-*/^` are supported, as well as negation. These of course obey PEMDAS 
 and if either of the operands is floating point then the other operand is cast to floating point as part of the operation 
 ``` 
-f(X): X-0.5
+f($X): $X-0.5
 f(3)?
 > 2.5
 ```
 
 ## built in integer and floating point operators 
-* `float(X)` - casts a value to float whether it is boolean, integer, already float or string. 
-* `int(x)` - casts a value to an integer whether it is boolean, float, already integer or string. 
-* `bool(X)` - casts a value to a boolean, including collections if they are not empty.
-* `str(X)` - converts the value to a string in such a form that it would convert back with the functions above.
+* `float($X)` - casts a value to float whether it is boolean, integer, already float or string. 
+* `int($x)` - casts a value to an integer whether it is boolean, float, already integer or string. 
+* `bool($X)` - casts a value to a boolean, including collections if they are not empty.
+* `str($X)` - converts the value to a string in such a form that it would convert back with the functions above.
 More functions may be imported as a math module, see below.
 
 ## Collection operators 
@@ -327,12 +382,12 @@ The type of the resulting collection is the same as the type of the left hand si
 set results in a set, but subtracting a set from a list results in a list.
 
 ## built in collection functions 
-* `empty(X)` - returns true if the collection is 0 elements
-* `size(X)` - returns the number of elements in the collection 
-* `set(X)` - Create a set of the collection or element X
-* `list(X)` - Create a list of the collection or element X 
-* `iterable(X)` - Return true if X is iterable (sets, strings, and sequences)
-* `indexed(X)` - Return true if X is indexed (strings, sequences)
+* `empty($X)` - returns true if the collection is 0 elements
+* `size($X)` - returns the number of elements in the collection 
+* `set($X)` - Create a set of the collection or element X
+* `list($X)` - Create a list of the collection or element X 
+* `iterable($X)` - Return true if X is iterable (sets, strings, and sequences)
+* `indexed($X)` - Return true if X is indexed (strings, sequences)
 These could also be in an optionally imported `colllection` library to reduce name clashes 
 
 ## String operators 
@@ -344,13 +399,13 @@ Slicing can be used to access sub strings or individual characters.
 
 ## String functions 
 A string module could add other common string functions:
-* `upper(X)` and `lower(X)`
-* `isupper(X)` and `islower(X)` 
-* `strip(X, Y)` - Returns a string where all Y are removed from the ends of X
-* `replace(S, {X:Y})` - returns a string where all x are replaced by Y 
-* `format(X,[args])` - returns a formated string 
-* `regex(X, expr)` - returns true or false or a non empty list of captures
-* `wildcard(W, M)` - returns true or false if it matches
+* `upper($X)` and `lower($X)`
+* `isupper($X)` and `islower($X)` 
+* `strip($X, $Y)` - Returns a string where all Y are removed from the ends of X
+* `replace($S, {$X:$Y})` - returns a string where all x are replaced by Y 
+* `format($X,[args])` - returns a formated string 
+* `regex($X, expr)` - returns true or false or a non empty list of captures
+* `wildcard($W, $M)` - returns true or false if it matches
 
 ## Summation
 A summation evaluates to the sum of its elements
@@ -363,7 +418,7 @@ cat(ginny)?
 
 ## Equations are true if the equation is true
 ```
-cat(X) : legs(X,Y), Y=4
+cat($X) : legs($X,$Y), $Y=4
 legs(ginny, 4)
 cat(ginny)?
 > true
@@ -372,7 +427,7 @@ cat(ginny)?
 ## Equations can be inequal. they are true if the value is in range
 Inequal equations 
 ```
-cat(X) : legs(X,Y) Y>3
+cat($X) : legs($X,$Y) Y>3
 legs(ginny,4)
 cat(ginny)?
 > true
@@ -380,17 +435,17 @@ cat(ginny)?
 ## Query variables 
 ```
 cat(ginny)
-cat(X)?
+cat($X)?
 X=ginny
 ```
-How it works is `cat(X)` **hypothesizes** `X=ginny`. This hypothesis remains until there is a contradiction, in which 
+How it works is `cat($X)` **hypothesizes** `$X=ginny`. This hypothesis remains until there is a contradiction, in which 
 case it backtracks like prolog and tries another hypothesis if one is available.
 
 
 ## Sequences = ordered non-unique collection 
 you can use the @ operator to check membership of a collection 
 ```
-cat(X) : X @ [ginny,max])
+cat($X) : $X @ [ginny,max])
 cat(ginny)?
 > true
 ```
@@ -444,7 +499,7 @@ What matter is where that value finally ends up. Does it end up:
 - In an assignment, the variable is assigned that value 
 - In a comparison operator, it becomes boolean. 
 ``` 
-f(X): X+2
+f($X): $X+2
 f(1)?
 > 3
 ```
@@ -455,12 +510,12 @@ the match fails (MFINAE). If it is part of another operation the error is propag
 Some debug statements could "catch" intermedtiate errors and tracing will log them as well. 
 
 ```
-f(X): X[1] + 2
+f($X): $X[1] + 2
 f([cheese])?
 > Index out of range [cheese][1]
 f(4)?
 > Integer 4 is not indexed. 
-f(X): X+2
+f($X): $X+2
 trace, f(4)?
 ... f(4): 4[1]+2 # Integer 4 is not indexed.
 ... f(4): 4+2  
@@ -471,7 +526,7 @@ trace, f(4)?
 Equivalence operator `=` is not used because legs = 4, but 4 is not equivalent to legs. 
 ```
 legs: 4
-cat(X): legs>=3
+cat($X): legs>=3
 cat(ginny)?
 > true
 ```
@@ -487,7 +542,7 @@ but it would be hard to not try to match ginny and fail and decide she's not a c
 
 ## Sequence/range matching 
 ```
-[X,Y,Z] = [max, ginny, gizmo]
+[$X,$Y,$Z] = [max, ginny, gizmo]
 > X=max & Y=ginny & Z=gizmo 
 ```
 (not sure if the assumptions should take the form of a conjunction or a collection)
@@ -558,9 +613,9 @@ cats(X)?
 
 ## Queries can return hypothesis if it isn't entirely fulfilled
 ```
-f(X):X+2
+f(X):$X+2
 f(Y)?
-> Y = X+2
+> Y = $X+2
 ```
 
 ## Clauses are a disjunction so multiple matches can be a disjunction
@@ -576,23 +631,23 @@ cat?
 ```
 cat(max)
 cat(ginny)
-cat(X) ? 
+cat($X) ? 
 > X @ [max,ginny]
 ```
 This is flattened to equivalence `X=` by default because of the built in logic that `X@[Y]` is true if and only if `X=Y`
 
 ## With math the match can also be a range 
 ```
-f(X): X^2
+f(X): $X^2
 
-f(Y) & Y @ [4:25]
+f($Y) & $Y @ [4:25]
 > X @ [2:5]
 ```
 ## variables can be functions, to support lambda/higher order functions 
 ```
 map([], _)
-map(S, F): S=[H|T], [F(H)|map(T,F)]
-f(X): X*2
+map($S, $F): $S=[$H|$T], [$F($H)|map($T,$F)]
+f($X): $X*2
 map(f, [0,1,2])?
 [0,2,4]
 ```
@@ -601,7 +656,7 @@ map(f, [0,1,2])?
 Besides the clause operator `:` there is also an equivalence operator `=`, which works like implication both ways. 
 After parsing this is turned into a horn clause by replacing `A=B` with `A:B` and `B:A`.
 ```
-hairy(X) = cat(X)
+hairy($X) = cat($X)
 hairy(ginny)
 cat(ginny)? 
 > true 
@@ -609,22 +664,22 @@ cat(ginny)?
 
 ## Some set theory and math axioms are built in to help simplify
 ```
-(X @ [Y]) = (X=Y) # if Y is the only element of a set and X is in it, then X must be Y
-(X >= Y) = (X @ [Y:]) # if X>=Y then X is an element of the range starting at Y (similar for > < and <=)
+($X @ [$Y]) = ($X=$Y) # if Y is the only element of a set and X is in it, then X must be Y
+($X >= $Y) = ($X @ [$Y:]) # if X>=Y then X is an element of the range starting at Y (similar for > < and <=)
 ```
 
 ## Some math function are built in (or can be imported in a namespace) 
 Since they are ineffcient (hopefully not impossible) to implement in Angel 
 they trigger a C callback 
 ```
-math.sin(X): $callback_sin 
-math.sin(pi)
+math.sin($X): $callback_sin 
+math.sin($pi)
 > 0 
 ```
 
-* `math.floor(x)` - rounds down a floating point value and returns it as an integer if it is in range 
-* `math.ceil(x)` - same but rounds up 
-* `math.round(x)` - same but rounds to the nearest integer
+* `math.floor($x)` - rounds down a floating point value and returns it as an integer if it is in range 
+* `math.ceil($x)` - same but rounds up 
+* `math.round($x)` - same but rounds to the nearest integer
 Basically everything in the python math module. Other useful modules may be added for statistics. 
 The Angel library should provide a runtime loadable library format that can be imported and add this knowledge in a namespace. 
 

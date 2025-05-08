@@ -1,19 +1,28 @@
 <knowledge> ::= <axiom> <axioms>
-<axioms> ::= <axiom> <axioms>
-<axioms> ::= "" 
-<axiom> ::= <predicate> <terms> 
-<terms> ::= ":" <computation>
-<terms> ::= ""
+# TODO <namsepace>  
+<axioms> ::= <req-space> <axiom> <axioms> | ""
+<axiom> ::= <predicate> <space> <terms> 
+<terms> ::= ":" <value> | "?" | ""
 <predicate> ::= <id> <arguments>
-<arguments> ::= "(" <sequence> ")"
-<arguments> ::= "" 
-<computation> :: <value> <operand> 
-<operand> ::= <operator> <computation>
-<operator> ::= '+-*/&|^,'
-<value> ::= <integer>
-<value> ::= <id> 
-<value> ::= <float>
-<value> ::= <set> 
-<value> ::= <string> 
-# TODO allow comments in the grammar grammar # also after the rule 
-
+<arguments> ::= "(" <sequence> ")" | ""
+<sequence> ::= <expression> <sequence-next>
+<sequence-next> ::= <space> "," <space> <expression> <sequence-next> | ""
+<expression> :: <value> <operand>
+<operand> ::= <space> <operator> <space> <value> <operand> | ""
+<operator> ::= '[+-*/&|^@<>=]|>=|<='
+<value> ::= <element> | "(" <space> <expression> <space> ")" | <negation> | <negative>
+# TODO indexation [ ], lists, sets and ranges value:value 
+<negation> ::= "~" <space> <value>
+<negative> ::= "-" <space> <value> 
+<element> ::= <integer>
+<element> ::= <id>  # NB: true and false are predefined ids with a value 
+<element> ::= <float>
+<element> ::= <set> 
+<element> ::= <string> 
+<element> ::= <variable> 
+<integer> ::= '[+-]?[0-9]+' 
+<float> ::= '[-+]?(([0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)|(inf)|(nan))'
+<id> ::= '([^\x00-\x7F]|[A-Za-z_])([^\x00-\x7F]|\w)*'
+<variable> ::= "$" <id>
+<space> ::= <req-space> | "" 
+<req-space> ::= '\s'+

@@ -42,7 +42,7 @@ TEST(BNF, TrailingRemark)
 TEST(BNF, LeadingRemark)
 {
     RecursiveDescentParser parser(BNF);
-    EXPECT_THAT(parser.ParseIt("# this rules\n<a>::=<b>"), 
+    EXPECT_THAT(parser.ParseIt("  # this rules\n <a>::=<b>"), 
         RangeEq({Symbol("syntax"), 
                     Symbol("line"), Symbol("remark"),
                 Symbol("syntax-tail"),
