@@ -3,9 +3,7 @@
 #include "Id.h"
 #include "Clause.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 class Clause;
@@ -18,8 +16,8 @@ public:
 	size_t Add(Object&& o); 
 	Matches FindMatches(const Expression& e) const;
 private:
-    Id id;};
+    Id id;
+};
 
 
-}
 }

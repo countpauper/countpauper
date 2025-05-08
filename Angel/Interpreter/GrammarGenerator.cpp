@@ -6,7 +6,7 @@ namespace Interpreter
 {
 
 
-Terms GenerateTerms(std::istream& source, SymbolStream& parse)
+Terms GenerateTerms(Source& source, SymbolStream& parse)
 {
     Terms result;
     ParsedSymbol input;
@@ -34,7 +34,7 @@ Terms GenerateTerms(std::istream& source, SymbolStream& parse)
 
 }   
 
-Syntax GrammarGenerator::operator()(std::istream& source, SymbolStream& parse) const
+Syntax GrammarGenerator::operator()(Source& source, SymbolStream& parse) const
 {
     source.exceptions(source.badbit|source.failbit|source.eofbit);
 

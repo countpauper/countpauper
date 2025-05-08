@@ -1,7 +1,7 @@
 #include "Interpreter/Parser.h"
 #include <gtest/gtest.h>
 
-namespace Interpreter 
+namespace Interpreter::Test
 {
 
 TEST(LLParser, Parse)

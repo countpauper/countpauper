@@ -8,7 +8,7 @@
 #include <sstream>
 #include <gtest/gtest.h>
 
-namespace Interpreter 
+namespace Interpreter::Test
 {
 
 TEST(RecursiveDescenterParser, ParseLiteral)

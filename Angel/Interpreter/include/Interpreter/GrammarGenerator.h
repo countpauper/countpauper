@@ -2,13 +2,14 @@
 #include <iostream>
 #include "Interpreter/SymbolStream.h"
 #include "Interpreter/Syntax.h"
+#include "Interpreter/Source.h"
 
 namespace Interpreter 
 {
 class GrammarGenerator 
 {
 public:
-    Syntax operator()(std::istream& source, SymbolStream& parse) const;
+    Syntax operator()(Source& source, SymbolStream& parse) const;
 };
 
 }

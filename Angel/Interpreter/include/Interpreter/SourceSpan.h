@@ -5,9 +5,14 @@
 
 namespace Interpreter 
 {
-    struct SourceSpan {
+    struct SourceSpan 
+    {
         size_t from = 0;
         size_t length = 0;
+        // Soure source = nullptr;
+        // TODO: a Source itself should be a class that wraps source text (on disk or in memory)
+        // and the SourceSpan should refer to that specific source as well as the span.
+        // extract() should take from that specific source. 
 
         size_t size() const;
         bool empty() const;
@@ -15,7 +20,7 @@ namespace Interpreter
         bool operator==(const SourceSpan& o) const;
         bool operator!=(const SourceSpan& o) const { return !(*this == o); }
         SourceSpan sub(std::ptrdiff_t offset, std::ptrdiff_t newLength) const;
-        std::string extract(std::istream& s) const;
+        std::string extract(class Source& s) const;
         class iterator
         {
         public:

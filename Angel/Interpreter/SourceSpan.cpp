@@ -1,4 +1,5 @@
 #include "Interpreter/SourceSpan.h"
+#include "Interpreter/Source.h"
 #include <string>
 #include <algorithm>
 
@@ -35,7 +36,7 @@ SourceSpan SourceSpan::sub(std::ptrdiff_t offset, std::ptrdiff_t newLength) cons
 }
 
 
-std::string SourceSpan::extract(std::istream& stream) const
+std::string SourceSpan::extract(Source& stream) const
 {
     std::string result(length, '\x0');
     stream.seekg(from);

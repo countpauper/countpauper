@@ -1,9 +1,11 @@
 #include "Interpreter/SourceSpan.h"
+#include "Interpreter/Source.h"
 #include "Interpreter/Utils.h"
 #include <gtest/gtest.h>
 
-namespace Interpreter 
+namespace Interpreter::Test 
 {
+
 
 TEST(SourceSpan, Empty)
 {
@@ -41,7 +43,7 @@ TEST(SourceSpan, Sub)
 
 TEST(SourceSpan, Extract)
 {
-    std::stringstream s("Extract");
+    Source s("Extract");
     EXPECT_EQ(SourceSpan(0,5).extract(s), "Extra");
     EXPECT_EQ(SourceSpan(4,4).extract(s), "act");
     EXPECT_EQ(SourceSpan(10,3).extract(s), "");

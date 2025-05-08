@@ -26,7 +26,7 @@ endif()
 
 add_subdirectory(Interpreter)
 add_subdirectory(Logic)
+# add_subdirectory(Engine)
 
 target_link_libraries(${PROJECT_NAME}
-     Interpreter
-     Logic)
+        Logic)

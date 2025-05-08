@@ -673,7 +673,7 @@ Since they are ineffcient (hopefully not impossible) to implement in Angel
 they trigger a C callback 
 ```
 math.sin($X): $callback_sin 
-math.sin($pi)
+math.sin(pi)
 > 0 
 ```
 
@@ -684,11 +684,32 @@ Basically everything in the python math module. Other useful modules may be adde
 The Angel library should provide a runtime loadable library format that can be imported and add this knowledge in a namespace. 
 
 
-## Some universal constants are also defined that way 
+## Built in constants
+
+Some universal constants are also defined that way. Since ids can be unicode, the unicode for common mathematical 
+and physical constants can also be used. 
 ```
+true: 1
+false: 0
 pi: 3.1415926535897932384626433832795
+π: 3.1415926535897932384626433832795
+tau: 2*pi
 e: 2.7182818284590452353602874713527
+∅: {}
+inf: inf # defined to the floating point value 
+nan: nan # defined to the floating point value 
+∞: inf
+½ = 0.5
 ```
+
+## Imaginary numbers
+
+TBD: imaginary numbers could be supported if `i` was defined as the imaginary number 0+1i. This would claim the popular
+iterator place holder, but then that would be $i and loops are not easily defined. 
+Like upgrading integers to floats if one operand is float, the next upgrade could be imaginary. Automatic 
+downgrades to float when the imaginary part becomes 0 again might improve performance. 
+All built in math functions and operators should support imaginary numbers. The i postfix on integer and floating 
+point constants could also indicate imaginary. 
 
 ## Some built ins could have side effects to help with debugging 
 
