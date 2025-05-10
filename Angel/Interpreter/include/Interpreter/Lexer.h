@@ -13,8 +13,8 @@ class Lexer
 {
 public:
     Lexer(const class Lexicon& lexicon);
-    void Process(Source& src, TokenStream& os);
-    std::deque<InputToken> Process(Source& src);
+    void Process(const Source& src, TokenStream& os);
+    std::deque<InputToken> Process(const Source& src);
 public: 
     Lexicon lexicon;
 };

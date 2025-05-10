@@ -11,7 +11,7 @@ Lexer::Lexer(const Lexicon& lexicon) :
 {
 }
 
-void Lexer::Process(Source& src, TokenStream& os)
+void Lexer::Process(const Source& src, TokenStream& os)
 {
     std::size_t location = 0;
     while(location<src.size())
@@ -36,7 +36,7 @@ void Lexer::Process(Source& src, TokenStream& os)
     os << InputToken(0, {location, 0, &src}); // end token
 }
     
-std::deque<InputToken> Lexer::Process(Source& src)
+std::deque<InputToken> Lexer::Process(const Source& src)
 {
     TokenStream os;
     Process(src, os);

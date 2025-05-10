@@ -9,7 +9,7 @@ class Grammar
 {
 public:
     explicit Grammar(const Syntax& form);
-    Syntax Parse(Source& src);
+    Syntax Parse(const Source& src);
 private:
     const Syntax& form;
 };

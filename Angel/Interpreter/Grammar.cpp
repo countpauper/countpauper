@@ -11,7 +11,7 @@ Grammar::Grammar(const Interpreter::Syntax& form) :
 
 }
 
-Syntax Grammar::Parse(Source& src)
+Syntax Grammar::Parse(const Source& src)
 {
     RecursiveDescentParser parser(form);
     SymbolStream symbols;

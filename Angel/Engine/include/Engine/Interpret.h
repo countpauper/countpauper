@@ -7,6 +7,6 @@
 namespace Angel::Engine
 {
 
-std::vector<Logic::Predicate> Interpret(Interpreter::Source& source, Logic::Knowledge& knowledge ); 
+std::vector<Logic::Predicate> Interpret(const Interpreter::Source& source, Logic::Knowledge& knowledge ); 
 
 }

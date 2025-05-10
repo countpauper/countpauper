@@ -54,17 +54,6 @@ TEST(SourceSpan, Extract)
     EXPECT_THROW(SourceSpan(10,3, &s).extract(), std::ios_base::failure);
 }
 
-
-TEST(SourceSpan, Iterate)
-{
-    SourceSpan span(3,4);
-    for(auto idx : span)
-    {
-        EXPECT_TRUE(idx>=span.from);
-        EXPECT_TRUE(idx<span.from + span.length);
-    }
-}
-
 TEST(Utils, Unclose)
 {
     EXPECT_EQ(Unclose("\"literal\"", '"'), "literal");

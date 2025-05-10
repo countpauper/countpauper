@@ -4,6 +4,7 @@
 #include "Interpreter/TokenStream.h"
 #include "Interpreter/Lexer.h"
 #include "Interpreter/Error.h"
+#include "Interpreter/Source.h"
 #include "RangerMatcher.h"
 #include <sstream>
 #include <gtest/gtest.h>
@@ -93,13 +94,14 @@ TEST(RecursiveDescenterParser, Fail)
         {"F", {Epsilon()}}
     };
     RecursiveDescentParser parser(syntax);
+    Source source("bot");
     try 
     {
-        parser.ParseIt("bot");
+        parser.ParseIt(source);
     } 
     catch(const Error& e)
     {
-        EXPECT_EQ(e.Location(), SourceSpan({2,1}));
+        EXPECT_EQ(e.Location(), SourceSpan(2,1, &source));
     }
 }
 

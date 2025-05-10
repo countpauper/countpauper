@@ -6,5 +6,5 @@
 
 namespace Interpreter 
 {
-    Syntax GenerateGrammar(Source& source, SymbolStream& parse);
+    Syntax GenerateGrammar(const Source& source, SymbolStream& parse);
 }

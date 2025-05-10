@@ -42,11 +42,8 @@ Terms GenerateTerms(SymbolStream& parse)
 
 }   
 
-Syntax GenerateGrammar(Source& source, SymbolStream& parse)
+Syntax GenerateGrammar(const Source& source, SymbolStream& parse)
 {
-    source.clear();
-    source.exceptions(source.badbit|source.failbit|source.eofbit);
-
     Syntax result;
     Symbol name;
     ParsedSymbol input; 

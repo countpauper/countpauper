@@ -6,6 +6,7 @@
 namespace Interpreter 
 {
 
+
 Source::Source(const std::string_view data) :
     std::istringstream(std::string(data))
 {
@@ -17,12 +18,17 @@ Source::Source(const std::string_view data) :
         name = std::format("{} bytes of input", data.size());
 }
 
+Source::Source(const char* data) : 
+    Source(std::string_view(data))
+{
+}
+
 std::size_t Source::size() const
 {
     return this->rdbuf()->view().size();
 }
 
-SourceSpan Source::span(std::size_t from, std::size_t length)
+SourceSpan Source::span(std::size_t from, std::size_t length) const
 {
     length = std::min(length, size()-from);
     return SourceSpan{from, length, this};

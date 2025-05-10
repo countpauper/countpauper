@@ -9,7 +9,7 @@ namespace Angel::Engine
 {
 
 
-void GenerateKnowledge(Interpreter::Source& source, Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge)
+void GenerateKnowledge(const Interpreter::Source& source, Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge)
 {
     Interpreter::ParsedSymbol input; 
     while(!parse.eof())
@@ -22,7 +22,7 @@ void GenerateKnowledge(Interpreter::Source& source, Interpreter::SymbolStream& p
     }
 }
 
-std::vector<Logic::Predicate> Interpret(Interpreter::Source& source, Logic::Knowledge& knowledge )
+std::vector<Logic::Predicate> Interpret(const Interpreter::Source& source, Logic::Knowledge& knowledge )
 {
     std::vector<Logic::Predicate> queries;
     // TODO: this can be a constructor of the engine interpreter 

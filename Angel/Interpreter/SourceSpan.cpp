@@ -46,53 +46,21 @@ std::string SourceSpan::extract() const
     if (!source)
         throw std::runtime_error(std::format("Can't extract {} bytes from null source", length));
 
-    source->clear();
+    // The Source is const and its position and flags are changed
+    // but the contents itself is not and the position is restored. 
+    // stream flags should not be restored as they indicate read failure status
+    // NB: this might be misleading with multithreaded reading, as it is not atomic yet
+    std::istream& stream = const_cast<std::istream&>(*static_cast<const std::istream*>(source));
+    stream.clear();
 
     std::string result(length, '\x0');
-    source->seekg(from);
-    source->read(result.data(), length);
-    result.erase(result.begin() + source->gcount(), result.end());
+    auto original = stream.tellg();
+    stream.seekg(from);
+    stream.read(result.data(), length);
+    stream.seekg(original);
+    result.erase(result.begin() + stream.gcount(), result.end());
     return result;
 }
-
-SourceSpan::iterator SourceSpan::begin() const
-{
-    return iterator(from);
-}
-
-SourceSpan::iterator SourceSpan::end() const
-{
-    return iterator(from+length);
-}
-
-
-SourceSpan::iterator::iterator(value_type i) :
-    idx(i) 
-{
-}
-
-SourceSpan::iterator::value_type SourceSpan::iterator::operator*() const
-{
-    return idx;
-}
-
-SourceSpan::iterator& SourceSpan::iterator::operator++()
-{
-    ++idx;
-    return *this;
-}
-
-SourceSpan::iterator SourceSpan::iterator::operator++(int) 
-{ 
-    auto tmp(*this);
-    ++*this;  
-    return tmp; 
-}
-bool SourceSpan::iterator::operator==(const iterator& other) const 
-{ 
-    return (idx == other.idx); 
-}
-
 
 std::ostream& operator<<(std::ostream& os, const SourceSpan& span)
 {

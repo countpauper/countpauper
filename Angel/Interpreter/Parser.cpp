@@ -42,7 +42,7 @@ Parser::Parser(const Syntax& syntax) :
 {
 }
 
-void Parser::Parse(Source& src, SymbolStream& os)
+void Parser::Parse(const Source& src, SymbolStream& os)
 {
     TokenStream tokens;
     Lexer(lexicon).Process(src, tokens);
@@ -50,11 +50,10 @@ void Parser::Parse(Source& src, SymbolStream& os)
 }
 
 
-Symbols Parser::ParseIt(const std::string_view source)
+Symbols Parser::ParseIt(const Source& source)
 {
-    Source src(source);
     SymbolStream os;
-    Parse(src, os);
+    Parse(source, os);
     return SymbolGenerator(lexicon, os)();
 }
 

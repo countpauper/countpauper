@@ -1,6 +1,7 @@
 #include "Interpreter/BNF.h"
 #include "Interpreter/RecursiveDescentParser.h"
 #include "Interpreter/Error.h"
+#include "Interpreter/Source.h"
 #include "RangerMatcher.h"
 #include <gtest/gtest.h>
 

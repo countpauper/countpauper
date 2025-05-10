@@ -15,8 +15,8 @@ class Parser
 public:
     virtual ~Parser() = default;
     virtual void ParseTokens(TokenStream& is, SymbolStream& os) = 0;
-    void Parse(Source& src, SymbolStream& os);
-    Symbols ParseIt(const std::string_view source);
+    void Parse(const Source& src, SymbolStream& os);
+    Symbols ParseIt(const Source& src);
 protected:
     Parser(const Syntax& syntax);
     const Syntax& syntax;
