@@ -1,5 +1,6 @@
 #pragma once 
 #include <sstream>
+#include <filesystem>
 
 namespace Interpreter 
 {
@@ -7,10 +8,13 @@ namespace Interpreter
 class Source : public std::istringstream
 {
 public:
-    Source(const std::string_view data) :
-        std::istringstream(std::string(data))
-    {
-    }
+    Source(const std::string_view data="");
+};
+
+class FileSource : public Source
+{
+public:
+    FileSource(std::filesystem::path file);
 };
 
 }

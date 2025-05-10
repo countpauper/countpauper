@@ -17,13 +17,21 @@ Terms GenerateTerms(Source& source, SymbolStream& parse)
         {   
             result.emplace_back(Symbol(Unclose(input.location.extract(source), '<','>')));
         }
-        else if (input.symbol == Symbol("Literal"))
+        else if (input.symbol == Symbol("literal"))
         {
-            result.emplace_back(Literal(Unclose(input.location.extract(source), '"')));
+            std::string literal = Unclose(input.location.extract(source), '"');
+            if (literal.empty())
+                result.emplace_back(Epsilon()); // TODO named epsilon
+            else   
+                result.emplace_back(Literal(literal));
         }
-        else if (input.symbol == Symbol("Regex"))
+        else if (input.symbol == Symbol("regex"))
         {
-            result.emplace_back(Regex(Unclose(input.location.extract(source), '\'')));
+            std::string expression = Unclose(input.location.extract(source), '\'');
+            if (expression.empty())
+                result.emplace_back(Epsilon()); // TODO named epsilon
+            else
+                result.emplace_back(Regex(expression));
         }
         else if (input.symbol == Symbol("list-end"))
         {
@@ -34,8 +42,9 @@ Terms GenerateTerms(Source& source, SymbolStream& parse)
 
 }   
 
-Syntax GrammarGenerator::operator()(Source& source, SymbolStream& parse) const
+Syntax GenerateGrammar(Source& source, SymbolStream& parse)
 {
+    source.clear();
     source.exceptions(source.badbit|source.failbit|source.eofbit);
 
     Syntax result;

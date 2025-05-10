@@ -21,7 +21,8 @@ RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
 
 static Logging::Tabber tab;
 
-void RecursiveDescentParser::Parse(TokenStream& is, SymbolStream& os)
+
+void RecursiveDescentParser::ParseTokens(TokenStream& is, SymbolStream& os)
 {
     auto root = syntax.Root();
     auto input = is.Dump();
@@ -103,7 +104,7 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
         if (!match) {
             if (!result.empty())
             //TODO: figure out how opt-whitespace triggers this. because without it the Dump() of the stream is no longer neccessary
-            //    throw Error("Grammar is not deterministic", from->reference);
+            //    throw Error(std::format("Grammar is not deterministic in {}", std::string(symbol)), from->reference);
                 return std::vector<ParsedSymbol>();
             return result;
         }

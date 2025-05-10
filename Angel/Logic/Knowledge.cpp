@@ -56,12 +56,17 @@ Object Knowledge::Match(const Expression& e) const
 
 bool Knowledge::Knows(const Object& o) const
 {
-    return  root.Contains(o);
+    return root.Contains(o);
 }
 
-size_t Knowledge::Clauses() const
+size_t Knowledge::size() const
 {
-	return root.Size();
+	return root.size();
+}
+
+bool Knowledge::empty() const 
+{
+    return root.empty();
 }
 
 }

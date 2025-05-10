@@ -6,10 +6,5 @@
 
 namespace Interpreter 
 {
-class GrammarGenerator 
-{
-public:
-    Syntax operator()(Source& source, SymbolStream& parse) const;
-};
-
+    Syntax GenerateGrammar(Source& source, SymbolStream& parse);
 }

@@ -22,12 +22,12 @@ void Lexer::FillBuffer(std::istream& is)
     buffer.resize(pos + read); 
 }
 
-void Lexer::Process(std::istream& is, TokenStream& os)
+void Lexer::Process(Source& src, TokenStream& os)
 {
     std::size_t location = 0;
     while(true)
     {
-        FillBuffer(is);
+        FillBuffer(src);
         if (buffer.empty())
             break;
         hash_t best = 0;
@@ -53,10 +53,9 @@ void Lexer::Process(std::istream& is, TokenStream& os)
     
 std::deque<InputToken> Lexer::Process(const std::string_view input)
 {
-    std::stringstream is;
-    is << input;     // C++ 26 can take a string_view as constructor argument
+    Source src(input);
     TokenStream os;
-    Process(is, os);
+    Process(src, os);
     return os.Dump();   // must return a copy and no a view, stream is going out of scope
 }
 

@@ -11,10 +11,6 @@ namespace Interpreter
 class SymbolGenerator
 {   // TODO: base generator interface or concept to iterate? 
     // TODO: pass source, This output will show it as symbol{source range}? 
-    // TODO: hide hash optimization. lexicon shouldn't be needed here. 
-    //   In release Symbols *are* hash (original name is lost)
-    //   in debug symbols are string, no hashing needed 
-    //   With that maybe symbols can be taken out of the lexicon again 
 public:
     SymbolGenerator(Lexicon& lexicon, SymbolStream& stream) :
         lexicon(lexicon),
@@ -41,19 +37,24 @@ private:
 };
 
 Parser::Parser(const Syntax& syntax) :
-    syntax(syntax)
+    syntax(syntax),
+    lexicon(syntax)
 {
 }
 
-Symbols Parser::ParseIt(const std::string_view source)
+void Parser::Parse(Source& src, SymbolStream& os)
 {
     TokenStream tokens;
-    std::stringstream sourcestream;
-    sourcestream << source;
-    Lexicon lexicon(syntax);
-    Lexer(lexicon).Process(sourcestream, tokens);
+    Lexer(lexicon).Process(src, tokens);
+    ParseTokens(tokens, os);
+}
+
+
+Symbols Parser::ParseIt(const std::string_view source)
+{
+    Source src(source);
     SymbolStream os;
-    Parse(tokens, os);
+    Parse(src, os);
     return SymbolGenerator(lexicon, os)();
 }
 

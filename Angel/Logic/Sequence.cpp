@@ -143,11 +143,6 @@ bool Sequence::Contains(const Object& o) const
     return false;
 }
 
-std::size_t Sequence::Size() const
-{
-    return size();
-}
-
 void Sequence::Merge(Sequence&& other)
 {
     for (auto& o : other)
