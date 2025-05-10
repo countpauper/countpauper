@@ -19,7 +19,10 @@ bool SourceSpan::empty() const
 
 SourceSpan::operator std::string() const
 {
-    return std::format("{}:{}", from, length);
+    if (source)
+        return std::format("{}[{}:{}]", source->Name(), from, length);
+    else
+        return std::format("[{}:{}]", from, length);
 }
 
 bool SourceSpan::operator==(const SourceSpan& o) const 
@@ -46,20 +49,7 @@ std::string SourceSpan::extract() const
     if (!source)
         throw std::runtime_error(std::format("Can't extract {} bytes from null source", length));
 
-    // The Source is const and its position and flags are changed
-    // but the contents itself is not and the position is restored. 
-    // stream flags should not be restored as they indicate read failure status
-    // NB: this might be misleading with multithreaded reading, as it is not atomic yet
-    std::istream& stream = const_cast<std::istream&>(*static_cast<const std::istream*>(source));
-    stream.clear();
-
-    std::string result(length, '\x0');
-    auto original = stream.tellg();
-    stream.seekg(from);
-    stream.read(result.data(), length);
-    stream.seekg(original);
-    result.erase(result.begin() + stream.gcount(), result.end());
-    return result;
+    return source->Read(from, length);
 }
 
 std::ostream& operator<<(std::ostream& os, const SourceSpan& span)

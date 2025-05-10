@@ -7,14 +7,18 @@
 namespace Interpreter 
 {
 
-class Source : public std::istringstream
+class Source 
 {
 public:
     Source(const std::string_view data="");
     Source(const char* data);
-    SourceSpan span(std::size_t from=0, std::size_t length=-1) const;
     std::size_t size() const;
+    SourceSpan span(std::size_t from=0, std::size_t length=-1) const;
+    
+    std::string Read(std::size_t from=0, std::size_t length=-1) const;
+    std::string Name() const;
 protected:
+    std::string buffer;
     std::string name;
 };
 

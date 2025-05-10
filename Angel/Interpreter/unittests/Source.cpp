@@ -50,8 +50,9 @@ TEST(SourceSpan, Extract)
     Source s("Extract");
     EXPECT_EQ(SourceSpan(1,0).extract(), "");
     EXPECT_EQ(SourceSpan(0,5, &s).extract(), "Extra");
-    EXPECT_THROW(SourceSpan(4,4, &s).extract(), std::ios_base::failure);
-    EXPECT_THROW(SourceSpan(10,3, &s).extract(), std::ios_base::failure);
+    // These aren't clipped. If clipping is needed, call SourceSpan.sub() first
+    EXPECT_THROW(SourceSpan(4,4, &s).extract(), std::out_of_range);
+    EXPECT_THROW(SourceSpan(10,3, &s).extract(), std::out_of_range);
 }
 
 TEST(Utils, Unclose)
