@@ -1,5 +1,6 @@
 #include "Interpreter/Terms.h"
 #include "Interpreter/Utils.h"
+#include "Interpreter/Source.h"
 #include <regex>
 
 namespace Interpreter
@@ -12,9 +13,11 @@ Literal::Literal(const std::string_view match):
         throw std::invalid_argument("Literal token can not be empty. Use Epsilon.");
 }
 
-std::size_t Literal::Match(const std::string_view input) const
+std::size_t Literal::Match(SourceSpan src) const
 {
-    if (input.starts_with(match))
+    std::string srcStrart = src.sub(0, match.size()).extract();
+
+    if (match == srcStrart)
         return match.size();
     else
         return 0;
@@ -41,10 +44,12 @@ Regex::Regex(const std::string_view match):
         throw std::invalid_argument("Regex token can not be empty. Use Epsilon.");
 }
 
-std::size_t Regex::Match(const std::string_view input) const
+std::size_t Regex::Match(SourceSpan src) const
 {
     std::cmatch result;
-    if (std::regex_search(input.begin(), input.end(), result, expression, 
+    std::string srcString = src.extract(); // TODO optimize with iterator, this copies a lot of source
+
+    if (std::regex_search(srcString.c_str(), result, expression, 
             std::regex_constants::match_continuous | std::regex_constants::match_not_null))
         return result.length();
     else 
@@ -62,9 +67,9 @@ bool Regex::operator==(const Regex& other) const
 }
 
 
-std::size_t Match(const Term& token, const std::string_view input)
+std::size_t Match(const Term& token, SourceSpan src)
 {
-    auto matcher = [&input](const auto& obj) { return obj.Match(input); };
+    auto matcher = [&src](const auto& obj) { return obj.Match(src); };
     return std::visit(matcher, token);
 }
 
@@ -78,7 +83,7 @@ const Symbol& Epsilon::GetSymbol() const
     return symbol;
 }
 
-std::size_t Epsilon::Match(const std::string_view input) const
+std::size_t Epsilon::Match(SourceSpan) const
 {
     return 0;
 }

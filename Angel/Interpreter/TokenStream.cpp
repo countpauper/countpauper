@@ -10,9 +10,9 @@ InputToken::InputToken() :
 {
 }
 
-InputToken::InputToken(hash_t token, size_t from, size_t length) :
+InputToken::InputToken(hash_t token, SourceSpan ref) :
     token(token),
-    reference(from, length)
+    reference(ref)
 {
 }
 

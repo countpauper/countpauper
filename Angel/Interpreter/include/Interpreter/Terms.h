@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "Interpreter/Symbol.h"
+#include "Interpreter/SourceSpan.h"
 #include <string>
 #include <regex>
 #include <variant>
@@ -19,7 +20,7 @@ class Literal
 {
 public:
     Literal(const std::string_view match) ;
-    std::size_t Match(const std::string_view input) const;
+    std::size_t Match(SourceSpan src) const;
     bool operator==(const Literal& other) const;
     bool operator!=(const Literal& other) const { return !this->operator==(other); }
     operator std::string() const;
@@ -32,7 +33,7 @@ class Regex
 {
 public:
     Regex(const std::string_view match);
-    std::size_t Match(const std::string_view input) const;
+    std::size_t Match(SourceSpan src) const;
     operator std::string() const;
     bool operator==(const Regex& other) const;
     bool operator!=(const Regex& other) const { return !this->operator==(other); }
@@ -47,7 +48,7 @@ class Epsilon
 public:
     Epsilon() = default;
     Epsilon(const std::string_view symbol);
-    std::size_t Match(const std::string_view input) const;
+    std::size_t Match(SourceSpan src) const;
     operator std::string() const;
     bool operator==(const Epsilon& other) const;
     bool operator!=(const Epsilon& other) const { return !this->operator==(other); }
@@ -65,7 +66,7 @@ concept is_token = std::is_constructible_v<Token, T>;  // instead if is_same_v<T
 template<typename T>
 concept is_term = std::is_constructible_v<Term, T>; 
 
-std::size_t Match(const Term& term, const std::string_view input);
+std::size_t Match(const Term& term, SourceSpan src);
 
 }
 

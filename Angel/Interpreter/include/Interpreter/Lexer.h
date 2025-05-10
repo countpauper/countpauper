@@ -12,14 +12,11 @@ namespace Interpreter
 class Lexer
 {
 public:
-    Lexer(const class Lexicon& lexicon, std::size_t buffer=1024);
+    Lexer(const class Lexicon& lexicon);
     void Process(Source& src, TokenStream& os);
-    std::deque<InputToken> Process(const std::string_view input);
+    std::deque<InputToken> Process(Source& src);
 public: 
-    void FillBuffer(std::istream& is);
     Lexicon lexicon;
-    std::size_t buffer_size;
-    std::string buffer;
 };
 
 };

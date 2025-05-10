@@ -83,7 +83,7 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
             [&result, &it] (const Epsilon& epsilon)
             {
                 if (epsilon.GetSymbol())
-                    result.emplace_back(ParsedSymbol{epsilon.GetSymbol(), {it->reference.from, 0}});
+                    result.emplace_back(ParsedSymbol{epsilon.GetSymbol(), it->reference.sub(0,0)});
                 return true;
             },
             [&it, &to, this] <is_token _Token>(const _Token& token )
@@ -109,7 +109,7 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
             return result;
         }
     }
-    result.insert(result.begin(), ParsedSymbol{symbol, from->reference.from, it->reference.from - from->reference.from});
+    result.insert(result.begin(), ParsedSymbol{symbol, from->reference.sub(0, it->reference.from - from->reference.from)});
     from = it;
     return result;
 }

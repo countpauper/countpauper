@@ -6,35 +6,21 @@
 namespace Interpreter 
 {
 
-Lexer::Lexer(const Lexicon& lexicon, std::size_t buffer) :
-    lexicon(lexicon),
-    buffer_size(buffer)
+Lexer::Lexer(const Lexicon& lexicon) :
+    lexicon(lexicon)
 {
-}
-
-void Lexer::FillBuffer(std::istream& is)
-{
-    auto pos = buffer.size();
-    auto missing = buffer_size - pos - 1;
-    buffer.append("\x0", missing);
-    is.read(buffer.data() + pos, missing);
-    auto read = is.gcount();
-    buffer.resize(pos + read); 
 }
 
 void Lexer::Process(Source& src, TokenStream& os)
 {
     std::size_t location = 0;
-    while(true)
+    while(location<src.size())
     {
-        FillBuffer(src);
-        if (buffer.empty())
-            break;
         hash_t best = 0;
         std::size_t bestConsumed = 0;
         for(auto tokenPair : lexicon)
         {
-            auto consumed = Match(*tokenPair.second, buffer);
+            auto consumed = Match(*tokenPair.second, src.span(location));
             if (consumed>bestConsumed) {
                 best = tokenPair.first;
                 bestConsumed = consumed;
@@ -42,18 +28,16 @@ void Lexer::Process(Source& src, TokenStream& os)
         }
         if (bestConsumed == 0) 
         {
-            throw Error("Unkown token", SourceSpan{location, buffer.size()});
+            throw Error("Unkown token", src.span(location, src.size()-location));
         }
-        os << InputToken(best, location, bestConsumed);
-        buffer.erase(0, bestConsumed);
+        os << InputToken(best, src.span(location, bestConsumed));
         location += bestConsumed;
     }
-    os << InputToken(0, location, 0); // end token
+    os << InputToken(0, {location, 0, &src}); // end token
 }
     
-std::deque<InputToken> Lexer::Process(const std::string_view input)
+std::deque<InputToken> Lexer::Process(Source& src)
 {
-    Source src(input);
     TokenStream os;
     Process(src, os);
     return os.Dump();   // must return a copy and no a view, stream is going out of scope

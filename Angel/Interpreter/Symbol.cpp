@@ -41,7 +41,7 @@ hash_t SymbolHash(const std::string_view name)
         return label != SymbolHash("");
     }
 
-    std::size_t Symbol::Match(const std::string_view) const 
+    std::size_t Symbol::Match(SourceSpan) const 
     { 
         return 0; 
     }
@@ -82,7 +82,7 @@ hash_t SymbolHash(const std::string_view name)
         return !name.empty();
     }
 
-    std::size_t Symbol::Match(const std::string_view) const 
+    std::size_t Symbol::Match(SourceSpan) const 
     { 
         return 0; 
     }

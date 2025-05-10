@@ -5,10 +5,14 @@
 
 namespace Interpreter 
 {
+    class Source;
+
     struct SourceSpan 
     {
         size_t from = 0;
         size_t length = 0;
+        Source* source = nullptr;
+
         // Soure source = nullptr;
         // TODO: a Source itself should be a class that wraps source text (on disk or in memory)
         // and the SourceSpan should refer to that specific source as well as the span.
@@ -20,7 +24,7 @@ namespace Interpreter
         bool operator==(const SourceSpan& o) const;
         bool operator!=(const SourceSpan& o) const { return !(*this == o); }
         SourceSpan sub(std::ptrdiff_t offset, std::ptrdiff_t newLength) const;
-        std::string extract(class Source& s) const;
+        std::string extract() const;
         class iterator
         {
         public:

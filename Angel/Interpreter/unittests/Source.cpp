@@ -27,6 +27,8 @@ TEST(SourceSpan, Equal)
     EXPECT_EQ(SourceSpan(0,1), SourceSpan(0,1));
     EXPECT_NE(SourceSpan(0,2), SourceSpan(0,1));
     EXPECT_NE(SourceSpan(1,1), SourceSpan(0,1));
+    Source a, b;
+    EXPECT_NE(SourceSpan(0,1,&a), SourceSpan(0,1,&b));
 }
 
 TEST(SourceSpan, Sub)
@@ -39,14 +41,17 @@ TEST(SourceSpan, Sub)
     EXPECT_EQ(SourceSpan(2, 2).sub(-3, 3), SourceSpan(0, 3));
     EXPECT_EQ(SourceSpan(2, 2).sub(0, -1), SourceSpan(2, 1));
     EXPECT_EQ(SourceSpan(3, 3).sub(1, -3), SourceSpan(4, 0));
+    Source cat("cat");
+    EXPECT_EQ(cat.span(0,3), SourceSpan(0, 3, &cat));
 }
 
 TEST(SourceSpan, Extract)
 {
     Source s("Extract");
-    EXPECT_EQ(SourceSpan(0,5).extract(s), "Extra");
-    EXPECT_EQ(SourceSpan(4,4).extract(s), "act");
-    EXPECT_EQ(SourceSpan(10,3).extract(s), "");
+    EXPECT_EQ(SourceSpan(1,0).extract(), "");
+    EXPECT_EQ(SourceSpan(0,5, &s).extract(), "Extra");
+    EXPECT_THROW(SourceSpan(4,4, &s).extract(), std::ios_base::failure);
+    EXPECT_THROW(SourceSpan(10,3, &s).extract(), std::ios_base::failure);
 }
 
 

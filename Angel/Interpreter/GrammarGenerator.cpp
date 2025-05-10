@@ -6,7 +6,7 @@ namespace Interpreter
 {
 
 
-Terms GenerateTerms(Source& source, SymbolStream& parse)
+Terms GenerateTerms(SymbolStream& parse)
 {
     Terms result;
     ParsedSymbol input;
@@ -15,11 +15,11 @@ Terms GenerateTerms(Source& source, SymbolStream& parse)
         parse >> input;
         if (input.symbol == Symbol("rule-name"))
         {   
-            result.emplace_back(Symbol(Unclose(input.location.extract(source), '<','>')));
+            result.emplace_back(Symbol(Unclose(input.location.extract(), '<','>')));
         }
         else if (input.symbol == Symbol("literal"))
         {
-            std::string literal = Unclose(input.location.extract(source), '"');
+            std::string literal = Unclose(input.location.extract(), '"');
             if (literal.empty())
                 result.emplace_back(Epsilon()); // TODO named epsilon
             else   
@@ -27,7 +27,7 @@ Terms GenerateTerms(Source& source, SymbolStream& parse)
         }
         else if (input.symbol == Symbol("regex"))
         {
-            std::string expression = Unclose(input.location.extract(source), '\'');
+            std::string expression = Unclose(input.location.extract(), '\'');
             if (expression.empty())
                 result.emplace_back(Epsilon()); // TODO named epsilon
             else
@@ -55,11 +55,11 @@ Syntax GenerateGrammar(Source& source, SymbolStream& parse)
         parse >> input;
         if (input.symbol == Symbol("rule-name"))
         {
-            name = Symbol(Unclose(input.location.extract(source), '<', '>'));
+            name = Symbol(Unclose(input.location.extract(), '<', '>'));
         }
         else if (input.symbol == Symbol("list"))
         {
-            result.emplace(name, GenerateTerms(source, parse));
+            result.emplace(name, GenerateTerms(parse));
         }
     }
     return std::move(result);

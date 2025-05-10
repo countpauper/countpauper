@@ -11,15 +11,13 @@ namespace Angel::Engine
 
 void GenerateKnowledge(Interpreter::Source& source, Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge)
 {
-    source.clear();
-    source.exceptions(source.badbit|source.failbit|source.eofbit);
     Interpreter::ParsedSymbol input; 
     while(!parse.eof())
     {
         parse >> input;
         if (input.symbol == Interpreter::Symbol("predicate"))
         {
-            knowledge.Know(Logic::predicate(input.location.extract(source)));
+            knowledge.Know(Logic::predicate(input.location.extract()));
         }
     }
 }

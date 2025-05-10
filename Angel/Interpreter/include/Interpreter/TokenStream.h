@@ -12,11 +12,11 @@ using hash_t=std::size_t;
 struct InputToken 
 {
     InputToken();
-    explicit InputToken(hash_t token, size_t from, size_t length);
+    explicit InputToken(hash_t token, SourceSpan ref);
 
     template<typename T>
-    explicit InputToken(const T& token, size_t from, size_t length) :
-        InputToken(std::hash<T>()(token), from, length)
+    explicit InputToken(const T& token, SourceSpan ref) :
+        InputToken(std::hash<T>()(token), ref)
     {
     }
     operator std::string() const;

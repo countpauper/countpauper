@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "Interpreter/Symbol.h"
+#include "Interpreter/SourceSpan.h"
 #include <string>
 #include <regex>
 #include <variant>
@@ -22,7 +22,7 @@ struct Symbol
     Symbol(const std::string_view name);
     operator std::string() const;
     hash_t Hash() const;
-    std::size_t Match(const std::string_view input) const;
+    std::size_t Match(SourceSpan src) const;
     bool operator<(const Symbol& other) const;
     operator bool() const;
 

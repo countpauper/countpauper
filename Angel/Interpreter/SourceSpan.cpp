@@ -2,6 +2,7 @@
 #include "Interpreter/Source.h"
 #include <string>
 #include <algorithm>
+#include <cassert>
 
 namespace Interpreter 
 {
@@ -23,7 +24,7 @@ SourceSpan::operator std::string() const
 
 bool SourceSpan::operator==(const SourceSpan& o) const 
 { 
-    return from == o.from && length == o.length; 
+    return from == o.from && length == o.length && source == o.source;
 }
 
 SourceSpan SourceSpan::sub(std::ptrdiff_t offset, std::ptrdiff_t newLength) const 
@@ -32,16 +33,25 @@ SourceSpan SourceSpan::sub(std::ptrdiff_t offset, std::ptrdiff_t newLength) cons
     std::ptrdiff_t maxLength = (from+length - newStart);
     if (newLength<0)
         newLength = std::max(0LL, static_cast<std::ptrdiff_t>(length) + newLength);
-    return SourceSpan(newStart, std::min(newLength, maxLength));
+    newLength = std::min(newLength, maxLength);
+    assert(!source || newStart + newLength <= source->size());
+    return SourceSpan{static_cast<std::size_t>(newStart), static_cast<std::size_t>(newLength), source};
 }
 
 
-std::string SourceSpan::extract(Source& stream) const
+std::string SourceSpan::extract() const
 {
+    if (length==0)
+        return std::string();
+    if (!source)
+        throw std::runtime_error(std::format("Can't extract {} bytes from null source", length));
+
+    source->clear();
+
     std::string result(length, '\x0');
-    stream.seekg(from);
-    stream.read(result.data(), length);
-    result.erase(result.begin() + stream.gcount(), result.end());
+    source->seekg(from);
+    source->read(result.data(), length);
+    result.erase(result.begin() + source->gcount(), result.end());
     return result;
 }
 

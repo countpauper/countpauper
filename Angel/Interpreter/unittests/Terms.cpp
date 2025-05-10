@@ -1,4 +1,5 @@
 #include "Interpreter/Terms.h"
+#include "Interpreter/Source.h"
 #include <gtest/gtest.h>
 
 namespace Interpreter::Test
@@ -14,8 +15,8 @@ TEST(Terms, Term)
 
 TEST(Terms, Literal)
 {
-    EXPECT_EQ(Literal("cat").Match("catharsis"), 3);
-    EXPECT_FALSE(Literal("cat").Match("scat"));
+    EXPECT_EQ(Literal("cat").Match(Source("catharsis").span()), 3);
+    EXPECT_FALSE(Literal("cat").Match(Source("scat").span()));
     EXPECT_EQ(Literal("cat"), Literal("cat"));
     EXPECT_NE(Literal("cat"), Literal("catharsis"));
     EXPECT_THROW(Literal(""), std::invalid_argument);
@@ -28,9 +29,9 @@ TEST(Terms, Literal)
 
 TEST(Terms, Regex)
 {
-    EXPECT_FALSE(Regex("[0-9]*").Match("cat"));
-    EXPECT_EQ(Regex("[0-9]+").Match("123/4"), 3);
-    EXPECT_EQ(Regex("\\s+").Match("\r\ncat"), 2);
+    EXPECT_FALSE(Regex("[0-9]*").Match(Source("cat").span()));
+    EXPECT_EQ(Regex("[0-9]+").Match(Source("123/4").span()), 3);
+    EXPECT_EQ(Regex("\\s+").Match(Source("\r\ncat").span()), 2);
     EXPECT_EQ(Regex("[abc]"), Regex("[abc]"));
     EXPECT_THROW(Regex(""), std::invalid_argument);
 
@@ -43,7 +44,7 @@ TEST(Terms, Regex)
 
 TEST(Terms, Epsilon)
 {
-    EXPECT_EQ(Epsilon("cat").Match("cat"), 0);
+    EXPECT_EQ(Epsilon("cat").Match(Source("cat").span()), 0);
     EXPECT_EQ(std::string(Epsilon()), "ε");
     EXPECT_EQ(Epsilon("cat"), Epsilon("cat"));
     EXPECT_EQ(Epsilon("cat").GetSymbol(), Symbol("cat"));

@@ -12,9 +12,9 @@ namespace Interpreter::Test
 TEST(Grammar, GenerateRule)
 {
     Source source("<bla>");
-    SymbolStream parse{{Symbol("syntax"),0,5}, {Symbol("rule"),0, 5}, {Symbol("rule-name"),0,5}, 
-        {Symbol("expression"), 5,0}, {Symbol("list"), 5,0}, 
-        {Symbol("list-end"), 5,0}, {Symbol("expession-end"), 5,0}, {Symbol("syntax-end"), 5,0}};
+    SymbolStream parse{{Symbol("syntax"),0,5, &source}, {Symbol("rule"),0, 5, &source}, {Symbol("rule-name"),0,5, &source}, 
+        {Symbol("expression"), 5,0, &source}, {Symbol("list"), 5,0, &source}, 
+        {Symbol("list-end"), 5,0, &source}, {Symbol("expession-end"), 5,0, &source}, {Symbol("syntax-end"), 5,0, &source}};
     const auto& syntax = GenerateGrammar(source, parse);
     EXPECT_EQ(syntax.Root(), Symbol("bla"));
 }
@@ -22,8 +22,8 @@ TEST(Grammar, GenerateRule)
 TEST(Grammar, GenerateTerms)
 {
     Source  source("<nr>::= \"23\"");
-    SymbolStream parse{{Symbol("syntax"),0,12}, {Symbol("rule"),0,12}, {Symbol("rule-name"),0,4}, 
-        {Symbol("expression"), 8, 4}, {Symbol("list"), 8, 4}, {Symbol("literal"), 8, 4},
+    SymbolStream parse{{Symbol("syntax"),0,12}, {Symbol("rule"),0,12}, {Symbol("rule-name"),0,4, &source}, 
+        {Symbol("expression"), 8, 4}, {Symbol("list"), 8, 4}, {Symbol("literal"), 8, 4, &source},
         {Symbol("list-end"), 12, 0}, {Symbol("expession-end"), 12, 0}, {Symbol("syntax-end"), 12, 0}};
     const auto& syntax = GenerateGrammar(source, parse);
     EXPECT_FALSE(syntax["nr"].empty());
@@ -33,8 +33,8 @@ TEST(Grammar, GenerateTerms)
 TEST(Grammar, GenerateRegex)
 {
     Source  source("<reg> ::='\\s+'");
-    SymbolStream parse{{Symbol("syntax"),0,14}, {Symbol("rule"),0,14}, {Symbol("rule-name"),0,5}, 
-        {Symbol("expression"), 9, 5}, {Symbol("list"), 9, 5}, {Symbol("regex"), 9, 5},
+    SymbolStream parse{{Symbol("syntax"),0,14}, {Symbol("rule"),0,14}, {Symbol("rule-name"),0,5, &source}, 
+        {Symbol("expression"), 9, 5}, {Symbol("list"), 9, 5}, {Symbol("regex"), 9, 5, &source},
         {Symbol("list-end"), 14, 0}, {Symbol("expession-end"), 14, 0}, {Symbol("syntax-end"), 14, 0}};
     const auto& syntax = GenerateGrammar(source, parse);
     EXPECT_FALSE(syntax["reg"].empty());
@@ -45,8 +45,8 @@ TEST(Grammar, GenerateRegex)
 TEST(Grammar, GenerateEpsilon)
 {
     Source  source("<ep>::= \"\"");
-    SymbolStream parse{{Symbol("syntax"),0,12}, {Symbol("rule"),0,12}, {Symbol("rule-name"),0,4}, 
-        {Symbol("expression"), 8, 4}, {Symbol("list"), 8, 4}, {Symbol("literal"), 8, 2},
+    SymbolStream parse{{Symbol("syntax"),0,12}, {Symbol("rule"),0,12}, {Symbol("rule-name"),0,4, &source}, 
+        {Symbol("expression"), 8, 4}, {Symbol("list"), 8, 4}, {Symbol("literal"), 8, 2, &source},
         {Symbol("list-end"), 10, 0}, {Symbol("expession-end"), 10, 0}, {Symbol("syntax-end"), 10, 0}};
     const auto& syntax = GenerateGrammar(source, parse);
     EXPECT_FALSE(syntax["ep"].empty());

@@ -15,30 +15,38 @@ inline auto RangeEq(std::initializer_list<T> ilist) {
     return RangeEqVector(std::vector<T>(ilist));
 }
 
+
+static Source empty("");
+static Source cat("cat");
+Source whitespace("\t ");
+
 TEST(Lexer, Empty)
 {
     Lexer lexer(Lexicon{});
-    EXPECT_THAT(lexer.Process(""), RangeEq({ InputToken() }));
-    EXPECT_THROW(lexer.Process("cat"), Error);
+    EXPECT_THAT(lexer.Process(empty), RangeEq({ InputToken{0,{0,0,&empty} }}));
+    EXPECT_THROW(lexer.Process(cat), Error);
 }
 
 
 TEST(Lexer, Literal)
 {
-    Term cat{Literal("cat")};
-    Lexer lexer(Lexicon{&cat});
-    EXPECT_THAT(lexer.Process(""), RangeEq({ InputToken() }));
-    EXPECT_THAT(lexer.Process("cat"), RangeEq({InputToken(cat, 0, 3), InputToken(0, 3, 0) }));
-    EXPECT_THROW(lexer.Process("dog"), Error);
+    Term term{Literal("cat")};
+    Lexer lexer(Lexicon{&term});
+
+    EXPECT_THAT(lexer.Process(empty), RangeEq({ InputToken(0,{0,0,&empty}) }));
+    EXPECT_THAT(lexer.Process(cat), RangeEq({InputToken(term, {0, 3, &cat}), InputToken(0, {3, 0, &cat}) }));
+    EXPECT_THROW(lexer.Process(whitespace), Error);
 }
 
 TEST(Lexer, Regex)
 {
-    Term whitespace = Regex("\\s+");
-    Lexer lexer(Lexicon{&whitespace});
-    EXPECT_THAT(lexer.Process(""), RangeEq({InputToken()}));
-    EXPECT_THAT(lexer.Process("\t "), RangeEq({InputToken(whitespace, 0, 2), InputToken(0,2,0)}));
-    EXPECT_THROW(lexer.Process("not space"), Error);
+    Term term = Regex("\\s+");
+    Lexer lexer(Lexicon{&term});
+    EXPECT_THAT(lexer.Process(empty), RangeEq({InputToken(0, empty.span(0,0))}));
+    EXPECT_THAT(lexer.Process(whitespace), RangeEq(
+        {InputToken(term, whitespace.span(0,2)), 
+        InputToken(0,whitespace.span(2,0))}));
+    EXPECT_THROW(lexer.Process(cat), Error);
 }
 
 TEST(Lexer, NotAmbiguous)
@@ -47,9 +55,19 @@ TEST(Lexer, NotAmbiguous)
     Term gr = Literal(">");
     Term eq = Literal("=");
     Lexer lexer(Lexicon{ &gr, &eq, &greq });
-    EXPECT_THAT(lexer.Process(">="), RangeEq({InputToken(greq, 0, 2), InputToken(0,2,0)}));
-    EXPECT_THAT(lexer.Process("=>"), RangeEq({InputToken(eq, 0, 1), InputToken(gr,1,1), InputToken(0,2,0)}));
-    EXPECT_THAT(lexer.Process(">"), RangeEq({InputToken(gr, 0, 1), InputToken(0,1,0)}));
+    Source srcGreq(">=");
+    EXPECT_THAT(lexer.Process(srcGreq), RangeEq({
+        InputToken(greq, srcGreq.span(0, 2)), 
+        InputToken(0, srcGreq.span(2,0))}));
+    Source srcEqgr("=>");
+    EXPECT_THAT(lexer.Process(srcEqgr), RangeEq({
+        InputToken(eq, srcEqgr.span(0,1)), 
+        InputToken(gr, srcEqgr.span(1,1)), 
+        InputToken(0, srcEqgr.span(2,0))}));
+    Source srcGr(">");
+    EXPECT_THAT(lexer.Process(srcGr), RangeEq({
+        InputToken(gr, srcGr.span(0,1)), 
+        InputToken(0, srcGr.span(1,0))}));
 }
 
 TEST(Lexer, Lexicon)
