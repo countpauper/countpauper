@@ -1,6 +1,6 @@
-<knowledge> ::= <axiom> <axioms>
+<knowledge> ::= <axiom> <space> <axioms>
 # TODO <namsepace>  
-<axioms> ::= <req-space> <axiom> <axioms> | ""
+<axioms> ::= "," <space> <axiom> <axioms> | ""
 <axiom> ::= <predicate> <space> <terms> 
 <terms> ::= ":" <value> | <query> | ""
 <query> ::= "?"
