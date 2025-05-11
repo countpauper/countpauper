@@ -4,21 +4,22 @@
 -    [x] Fix logic unit tests
 -    [x] Recursively match and infer clauses, can't return a disjunction of all matched predicates. they won't have the same scope
 -    [x] Clear distinction between language casts and operators (equal) and C++ operators/bool? Perhaps equal is the same (same type & value) but Cast is not implicit unless infering/matching
--    [ ] Redesign polymorphic Expression with std::variant ?
+-    [ ] Redesign polymorphic Expression with std::variant ? (expessions would get big? or op + vector)
 -    [ ] Refactor Object away 
 - [ ] Redesign the parser 
--   [ ] Disjunction and Conjunction are examples of NAry-operators 
+-   [ ] Knowledge is a set of clauses, clauses are pairs predicate: expression
+-   [ ] Disjunction and Conjunction are examples of NAry-operators (are they also expressions?)
 -   [ ] Sequences and sets perhaps as well (collections) with the , operator 
 -   [x] Define constexpr context free grammar
 -   [x] Recursive descent parser  
--   [ ] Find a way for the production rules to produce
+-   [x] Find a way for the production rules to produce
 -   [x] Check the grammar for constraints of LL(1): left recursion 
 -   [ ] Unit tests for simple grammars to create first/follow table
 -   [ ] Implement LL(1) https://www.geeksforgeeks.org/types-of-parsers-in-compiler-design/
 -   [ ] Consider LL(n)
--   [ ] Clean up old parser 
+-   [x] Clean up old parser 
 -   [ ] Optional: extend BNF with elipsis `...` (also in its own) that repeats a rules terms until failure (and generates each in sequence instead of in tr)
--   [ ] Parsing enough for axioms
+-   [x] Parsing enough for axioms
 -   [ ] Parsing enough for clauses
 -   [ ] Parsing enough for predicates
 -   [ ] Parse variables 
