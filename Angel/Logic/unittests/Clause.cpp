@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include "Logic/Knowledge.h"
 #include "Logic/Predicate.h"
-#include "Logic/Sequence.h"
 #include "Logic/Clause.h"
 #include "Logic/Conjunction.h"
 

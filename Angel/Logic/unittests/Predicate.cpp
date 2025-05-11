@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "Logic/Knowledge.h"
 #include "Logic/Predicate.h"
-#include "Logic/Sequence.h"
+#include "Logic/List.h"
 
 namespace Angel::Logic::Test
 {

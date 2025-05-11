@@ -1,6 +1,7 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Set.h"
 #include "Logic/Clause.h"
+#include <variant>
 
 namespace Angel::Logic
 {
@@ -12,12 +13,19 @@ Knowledge::Knowledge() :
 
 size_t Knowledge::Know(Object&& o)
 {
-    // TODO pairs go in as a pair, but predicates, clauses and namespaces only 
-    auto insert = root.emplace(std::make_pair(Node(std::move(o)), Node(Boolean(true))));
-    if (insert.second) {
-        return 1;
-    } else {
-        return 0;
+    if (auto* predicate = std::get_if<Predicate>(&o))
+    {
+        auto insert = root.emplace(std::make_pair(Node(std::move(o)), Node(Boolean(true))));
+        if (insert.second) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    // TODO pairs go in as a pair, clauses and namespaces only, so left needs to be a predicate or axiom 
+    else 
+    {
+        throw std::invalid_argument("Only clauses and namespaces can be Known.");
     }
 }
 

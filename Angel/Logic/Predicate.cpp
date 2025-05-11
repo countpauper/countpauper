@@ -26,9 +26,9 @@ Predicate::Predicate(const Id& id, Sequence&& arguments)
 
 */
 
-Predicate::Predicate(const std::string& tag/*, Sequence&& arguments*/) 
+Predicate::Predicate(const std::string& tag, List&& arguments) 
 	: id(tag)
-//	, arguments(std::move(arguments))
+	, arguments(std::move(arguments))
 {
 }
 
@@ -37,25 +37,25 @@ Predicate::operator bool() const
     return true;
 }
 
-bool Predicate::operator==(const Predicate& other) const
+bool Predicate::operator==(const Predicate& rhs) const
 {
-	return id == other.id/* && arguments == predicate->arguments*/;
+	return id == rhs.id && arguments == rhs.arguments;
 }
 
 
 std::size_t Predicate::Hash() const
 {
-    return id.Hash() /*^ arguments.Hash()*/;
+    return id.Hash() ^ arguments.Hash();
 }
 
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)
 {
-/*	if (predicate.arguments)
+	if (predicate.arguments)
 	{
 		os << predicate.id << predicate.arguments;
 	}
-	else */
+	else
 	{
 		os << predicate.id;
 	}

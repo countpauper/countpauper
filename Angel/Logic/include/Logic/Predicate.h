@@ -1,6 +1,6 @@
 #pragma once
-#include "Id.h"
-
+#include "Logic/Id.h"
+#include "Logic/List.h"
 namespace Angel::Logic
 {
 
@@ -12,7 +12,7 @@ public:
 //    Predicate(const Predicate& other);
 //    Predicate(const Id& id, Sequence&& arguments = Sequence());
 //    Predicate(Predicate&& other);
-    Predicate(const std::string& name /*, Sequence&& arguments=Sequence()*/);
+    explicit Predicate(const std::string& name , List&& arguments={});
 
     operator bool() const;
     bool operator==(const Predicate& other) const;
@@ -28,9 +28,7 @@ protected:
 private:
     friend std::ostream& operator<<(std::ostream& os, const Predicate& );
     Id id;
-/*
-	Sequence arguments;
-*/
+	List arguments;
 };
 
 std::ostream& operator<<(std::ostream& os, const Predicate& );

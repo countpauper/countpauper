@@ -5,7 +5,6 @@
 #include "Logic/Id.h"
 #include "Logic/Predicate.h"
 #include "Logic/Clause.h"
-#include "Logic/Sequence.h"
 #include "Logic/Set.h"
 #include "Logic/Conjunction.h"
 #include "Logic/Disjunction.h"

@@ -1,91 +1,10 @@
 #include "Logic/Set.h"
-#include "Logic/Sequence.h"
+#include "Logic/Object.h"
 #include "Logic/Boolean.h"
 #include <algorithm>
-
+#include <iostream>
 namespace Angel::Logic
 {
-
-    /*
-Set::Set() = default;
-
-Set::Set(const Set& set)
-{
-    for (const auto& si : set)
-        emplace(si->Copy());
-}
-
-
-Set::Set(Set&& other) :
-    std::unordered_set<Object>(std::move(other))
-{
-}
-
-Set::Set(Sequence&& seq)
-{
-    for (auto& si : seq)
-        emplace(std::move(si));
-}
-
-*/
-
-/*  // this is weird, either added as element or cast implicity?
-Set::Set(Object&& value)
-{
-	if (auto array = value.As<Sequence>())
-	{
-		for (auto& e : *array)
-		{
-			emplace(std::move(e));
-		}
-	}
-	else if (value)
-	{
-		emplace(std::move(value));
-	}
-}
-*/
-
-
-/*
-Object Set::Copy() const
-{
-    return Create<Set>(*this);
-}
-
-Set::operator bool() const
-{
-    return !empty();
-}
-*/
-
-bool Set::operator==(const Set& rhs) const
-{
-    return size() == rhs.size() &&
-        std::equal(begin(), end(),
-                      rhs.begin());
-}
-
-/*
-
-
-std::ostream& operator<<(std::ostream& os, const Set& set)
-{
-    bool first = true;
-    os << "{";
-    for (const auto& element : set)
-    {
-        if (first)
-            first = false;
-        else
-            os << " , ";
-        os << element;
-    }
-    os << "}";
-    return os;
-}
-
-*/
 
 Set::Set(std::initializer_list<Node> setItems)
 {
@@ -94,7 +13,6 @@ Set::Set(std::initializer_list<Node> setItems)
         emplace(std::make_pair(std::move(item),Boolean(false)));
     }
 }
-
 
 const Node* Set::Find(const Node& o) const
 {
@@ -111,6 +29,13 @@ Set::operator bool() const
     return !empty();
 }
 
+bool Set::operator==(const Set& rhs) const
+{
+    return size() == rhs.size() &&
+        std::equal(begin(), end(),
+                      rhs.begin());
+}
+
 std::size_t Set::Hash() const
 {
     std::size_t result = typeid(decltype(*this)).hash_code();
@@ -122,6 +47,21 @@ std::size_t Set::Hash() const
     return result;
 }
 
+std::ostream& operator<<(std::ostream& os, const Set& set)
+{
+    os << "{";
+    bool first = true;
+    for(const auto& node: set)
+    {
+        if (!first)
+            os << ",";
+        os << node.first.value << ":" << node.second.value;
+        first = false;
+    }
+
+    os << "}";
+    return os;
+}
     /*
 Match Set::Matching(const Expression& expr, const Variables& substitutions) const
 {

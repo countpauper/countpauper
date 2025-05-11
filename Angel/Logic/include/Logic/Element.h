@@ -8,8 +8,6 @@
 namespace Angel::Logic
 {
 
-
 using Element = std::variant<Boolean, Integer, Id, Variable>;
-
 
 }
