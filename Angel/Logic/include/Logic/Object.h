@@ -6,6 +6,7 @@
 #include <variant>
 #include <vector>
 #include <map>
+#include <type_traits>
 
 
 namespace Angel::Logic
@@ -83,12 +84,36 @@ struct Node;
 class List : public Collection<Node>
 {
 public:
+	explicit List(std::initializer_list<Node> setItems);
+    template<typename T> 
+    explicit List(std::initializer_list<T> items)
+    {
+        for(auto&& item: items)
+        {
+            emplace_back(item);
+        }
+    }
+    bool operator==(const List& rhs) const;
     Node operator[](const int idx);
     std::size_t Hash() const;
 };
 
 using Object = std::variant<Boolean,  Integer, Id, Variable, Predicate, List, Set>; 
 
+template<class... Ts> struct overloaded_visit : Ts... { using Ts::operator()...; };
+
+template<typename T> 
+requires(!std::is_same_v<Object, T>) 
+bool operator==(const Object& left, const T& right)
+{
+    return std::visit(overloaded_visit{
+        [&right](const T& lv)
+        {
+            return lv == right;
+        }, 
+        [](const auto&) { return false; }   
+        },left);
+}
 struct Node {
     Object value;
     bool operator<(const Node&o) const;

@@ -48,20 +48,21 @@ std::size_t Predicate::Hash() const
     return id.Hash() /*^ arguments.Hash()*/;
 }
 
-/*
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)
 {
-	if (predicate.arguments)
+/*	if (predicate.arguments)
 	{
 		os << predicate.id << predicate.arguments;
 	}
-	else 
+	else */
 	{
 		os << predicate.id;
 	}
     return os;
 }
+
+/*
 
 Object Predicate::Copy() const
 {

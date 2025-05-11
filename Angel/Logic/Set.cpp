@@ -57,23 +57,17 @@ Set::operator bool() const
 {
     return !empty();
 }
-bool Set::operator==(const Expression& other) const
+*/
+
+bool Set::operator==(const Set& rhs) const
 {
-	if (auto set = dynamic_cast<const Set*>(&other))
-	{
-		return std::operator==(static_cast<const std::unordered_set<Object>&>(*this),
-			static_cast<const std::unordered_set<Object>&>(*set));
-	}
-	return false;
+    return size() == rhs.size() &&
+        std::equal(begin(), end(),
+                      rhs.begin());
 }
 
-std::size_t Set::Hash() const
-{
-    std::size_t result = 0; 
-    for(const auto& o: *this)
-        result ^ std::hash<Object>()(o);
-    return result;
-}
+/*
+
 
 std::ostream& operator<<(std::ostream& os, const Set& set)
 {

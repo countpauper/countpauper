@@ -96,6 +96,17 @@ Object::operator std::string() const
 }
 
 */
+List::List(std::initializer_list<Node> listItems) :
+    std::vector<Node>(listItems)
+{
+}
+
+bool List::operator==(const List& rhs) const
+{
+    if (size()!=rhs.size())
+        return false;
+    return std::equal(begin(), end(), rhs.begin());
+}
 
 std::size_t List::Hash() const
 {

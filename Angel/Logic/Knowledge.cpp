@@ -23,7 +23,7 @@ size_t Knowledge::Know(Object&& o)
 
 Object Knowledge::Query(const Object& o, const Variables& substitutions) const
 {
-    return Boolean(false); // Query(*o, substitutions);
+    return o;
 }
 
 /*
