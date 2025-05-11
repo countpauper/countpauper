@@ -3,11 +3,10 @@
 #include "Logic/Boolean.h"
 #include <algorithm>
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
+    /*
 Set::Set() = default;
 
 Set::Set(const Set& set)
@@ -28,7 +27,7 @@ Set::Set(Sequence&& seq)
         emplace(std::move(si));
 }
 
-
+*/
 
 /*  // this is weird, either added as element or cast implicity?
 Set::Set(Object&& value)
@@ -48,7 +47,7 @@ Set::Set(Object&& value)
 */
 
 
-
+/*
 Object Set::Copy() const
 {
     return Create<Set>(*this);
@@ -92,9 +91,47 @@ std::ostream& operator<<(std::ostream& os, const Set& set)
     return os;
 }
 
+*/
+
+Set::Set(std::initializer_list<Node> setItems)
+{
+    for(const auto& item: setItems)
+    {
+        emplace(std::make_pair(std::move(item),Boolean(false)));
+    }
+}
+
+
+const Node* Set::Find(const Node& o) const
+{
+    for(const auto &pair : *this)
+    {
+        if (pair.first.value == o.value)
+            return &pair.second;
+    }
+    return nullptr;
+}
+
+Set::operator bool() const
+{
+    return !empty();
+}
+
+std::size_t Set::Hash() const
+{
+    std::size_t result = typeid(decltype(*this)).hash_code();
+    std::hash<Node> hasher;
+    for(const auto& pair: *this)
+    {
+        result ^= hasher(pair.first) ^ hasher(pair.second);
+    }
+    return result;
+}
+
+    /*
 Match Set::Matching(const Expression& expr, const Variables& substitutions) const
 {
-    /*
+
     Variables substitutions;
 	if (auto set = dynamic_cast<const Set*>(&expr))
 	{
@@ -109,7 +146,7 @@ Match Set::Matching(const Expression& expr, const Variables& substitutions) cons
 			}
 		}
 		return Match(substitutions);
-	}*/
+	}
     	return NoMatch;
 }
 
@@ -154,6 +191,6 @@ Object set(Set&& s, Object&& o)
     result.As<Set>()->Add(std::move(o));
     return std::move(result);
 }
+*/
 
-}
 }

@@ -2,14 +2,10 @@
 #include "Logic/Boolean.h"
 #include "Logic/Knowledge.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
-
-
-
+/*
 Conjunction::Conjunction(const Operands& value) :
     Nary(value)
 {
@@ -70,5 +66,6 @@ Object Conjunction::Cast(const std::type_info& t, const Knowledge& k) const
     throw CastException<Conjunction>(t);
 }
 
-}
+*/
+
 }

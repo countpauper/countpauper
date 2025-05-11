@@ -15,7 +15,7 @@
 namespace Angel::Logic
 {
 
-
+/*
 Expression::operator std::string() const
 {
     std::stringstream s;
@@ -70,6 +70,7 @@ std::ostream& operator<<(std::ostream& os, const Expression& e)
     }
     return os;
 }
+*/
 
 }
 

@@ -4,12 +4,10 @@
 #include "Object.h"
 #include "AllTrue.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
-
+/*
 // A sequence is an unordered collection of Objects
 // The text format is <Object>, <Object> 
 // TODO: make Sequence an NAry ?
@@ -57,6 +55,6 @@ Object sequence(Args... args)
 {
     return Object(std::make_unique<Sequence>(std::forward<Args>(args)...));
 }
+*/
 
-}
 }

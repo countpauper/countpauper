@@ -3,6 +3,7 @@
 
 namespace Angel::Logic
 {
+/*
     class Sequence;
     class Set;
 
@@ -34,6 +35,6 @@ Object conjunction(Args... args)
 {
     return Create<Conjunction>(std::forward<Args>(args)...);
 }
-
+*/
 
 }

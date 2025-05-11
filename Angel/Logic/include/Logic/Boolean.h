@@ -1,7 +1,6 @@
 #pragma once
 
-#include <optional>
-#include "Logic/Object.h"
+#include <string>
 
 namespace Angel::Logic
 {
@@ -11,14 +10,14 @@ class Boolean
 {
 public:
 	explicit Boolean(bool v);
+	explicit Boolean(const std::string& tag);
 	bool operator==(const Boolean& other) const;
     bool operator*() const;
     operator bool() const;
     std::size_t Hash() const;
-
-	static std::optional<bool> Parse(const std::string& tag);
+    operator std::string() const;
 protected:
-    Object Cast(const std::type_info& t, const Knowledge& k) const;
+    // Object Cast(const std::type_info& t, const Knowledge& k) const;
 private:
     friend std::ostream& operator<<(std::ostream& os, const Boolean& );
 	bool truth;
@@ -26,7 +25,7 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const Boolean& );
 
-
+/*
 Object boolean(bool v);
 Object boolean(const std::string_view v);
 
@@ -37,5 +36,6 @@ requires std::convertible_to<T, const std::string_view>
 Object boolean(T&& v) {  
     return boolean(std::string_view(v));
 }  
+*/
 
 }

@@ -1,14 +1,22 @@
 #pragma once
-#include <unordered_set>
-#include "Collection.h"
-#include "Object.h"
-#include "AllTrue.h"
 
-namespace Angel
-{
-namespace Logic
+#include "Logic/Element.h"
+#include <map>
+
+namespace Angel::Logic
 {
 
+class Node;
+class Set : public std::map<Node, Node>
+{
+public:
+	Set() = default;
+	Set(std::initializer_list<Node> setItems);
+	const Node* Find(const Node& o) const;
+	operator bool() const;
+	std::size_t Hash() const;
+};
+	/*
 class Sequence;
 
 class Set : public Collection, public std::unordered_set<Object>
@@ -54,6 +62,6 @@ Object set(Args... args)
 {
 	return Create<Set>(std::forward<Args>(args)...);
 }
+*/
 
-}
 }

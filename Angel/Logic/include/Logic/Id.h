@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include "Object.h"
 
 namespace Angel
 {
@@ -15,7 +14,7 @@ public:
 	bool operator==(const Id& id) const;
     std::size_t Hash() const;
 protected:
-    Object Cast(const std::type_info& t, const Knowledge& k) const;
+    // Object Cast(const std::type_info& t, const Knowledge& k) const;
 private:
     friend std::ostream& operator<<(std::ostream& os, const Id& id);
     std::string name;
@@ -23,7 +22,7 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const Id& id);
 
-Object id(const std::string_view name);
+// Object id(const std::string_view name);
 
 }
 }

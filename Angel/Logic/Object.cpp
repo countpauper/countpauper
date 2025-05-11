@@ -5,12 +5,10 @@
 #include "Logic/Expression.h"
 #include <sstream>
 
-namespace Angel
+namespace Angel::Logic
 {
-namespace Logic
-{
-
-
+    
+/*
 Object::Object(const Object& other) :
     Object(other->Copy())
 {
@@ -97,5 +95,45 @@ Object::operator std::string() const
     return s.str();
 }
 
+*/
+
+std::size_t List::Hash() const
+{
+    std::size_t result = typeid(decltype(*this)).hash_code();
+    std::hash<Node> hasher;
+    for(const auto& n: *this)
+    {
+        result ^= hasher(n);
+    }
+    return result;
 }
+
+bool Node::operator<(const Node&o) const
+{
+    std::hash<Node> hasher; 
+    return hasher(*this) < hasher(o);
+}
+
+bool Node::operator==(const Node& o) const
+{
+    return value == o.value;
+}
+}
+
+
+namespace std
+{
+
+size_t hash<Angel::Logic::Node>::operator()(const Angel::Logic::Node& n) const
+{
+    std::hash<Angel::Logic::Object> hasher;
+    return hasher(n.value);
+}
+
+size_t hash<Angel::Logic::Object>::operator()(const Angel::Logic::Object& o) const
+{
+    return std::visit([](const auto& obj) { return obj.Hash(); }, o);
+}
+
+
 }

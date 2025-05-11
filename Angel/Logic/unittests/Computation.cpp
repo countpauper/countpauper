@@ -6,7 +6,7 @@
 
 namespace Angel::Logic::Test
 {
-
+/*/
 TEST(TestComputation, Conjunctions)
 {
     Knowledge k;
@@ -20,6 +20,7 @@ TEST(TestComputation, Conjunctions)
     k.Know(predicate("cat", Sequence()));
     EXPECT_TRUE(conjunction(predicate("cat")).Infer(k));
 }
+*/
 
 }
 

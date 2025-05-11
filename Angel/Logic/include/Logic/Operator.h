@@ -3,11 +3,10 @@
 #include "Expression.h"
 #include <vector>
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
+/*
 class Knowledge;
 
 // An Operator is the basis of all functions
@@ -60,7 +59,6 @@ protected:
     Operands operands;
 };
 
+*/
 
-
-}
 }

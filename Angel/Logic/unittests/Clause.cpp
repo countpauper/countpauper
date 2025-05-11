@@ -7,7 +7,7 @@
 
 namespace Angel::Logic::Test
 {
-
+/*
 	TEST(TestClause, Trivial)
 	{
 		Knowledge k;
@@ -66,5 +66,6 @@ namespace Angel::Logic::Test
 		EXPECT_TRUE(k.Query(predicate("cats", Sequence(id("ginny"), id("max")))));
 	}
 
+*/
 
 }

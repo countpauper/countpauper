@@ -4,11 +4,10 @@
 #include "Boolean.h"
 #include "Expression.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
+    /*
 // A clause is a pair (TODO: rename) expresion that specifies that a predicate is true if all of the array of its conditions is true
 class Clause
 {
@@ -33,5 +32,6 @@ std::ostream& operator<<(std::ostream& os, const Clause& );
 
 Object clause(Predicate&& id, Object&& condition = boolean(true));
 
-}
+*/
+
 }

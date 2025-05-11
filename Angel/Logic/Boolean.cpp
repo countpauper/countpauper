@@ -1,6 +1,9 @@
 #include "Logic/Boolean.h"
 #include "Logic/Integer.h"
 #include "Logic/CastException.h"
+#include <format>
+#include <stdexcept>
+#include <iostream>
 
 namespace Angel::Logic
 {
@@ -10,6 +13,17 @@ Boolean::Boolean(bool v) :
 {
 }
 
+Boolean::Boolean(const std::string& tag)
+{
+	if (tag == "true")
+		truth = true;
+	else if (tag == "false")
+		truth = false;
+	else
+        throw std::invalid_argument(std::format("Invalid Boolean value `{}`", tag));
+}
+
+
 Boolean::operator bool() const 
 {
     return truth;
@@ -17,7 +31,12 @@ Boolean::operator bool() const
 
 std::size_t Boolean::Hash() const
 {
-    return truth;
+    return typeid(decltype(*this)).hash_code() ^ truth;
+}
+
+bool Boolean::operator==(const Boolean& other) const
+{
+    return truth == other.truth;
 }
 
 bool Boolean::operator*() const
@@ -25,16 +44,8 @@ bool Boolean::operator*() const
 	return truth;
 }
 
-std::optional<bool> Boolean::Parse(const std::string& tag)
-{
-	if (tag == "true")
-		return true;
-	else if (tag == "false")
-		return false;
-	else
-		return std::optional<bool>();
-}
 
+/*
 Object Boolean::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (t == typeid(Boolean))
@@ -47,16 +58,23 @@ Object Boolean::Cast(const std::type_info& t, const Knowledge& k) const
     }
     throw CastException<Boolean>(t);
 }
+*/
+
+Boolean::operator std::string() const
+{
+    if (truth)
+        return "true";
+    else
+        return "false";    
+}
 
 std::ostream& operator<<(std::ostream& os, const Boolean& element)
 {
-    if (element.truth)
-        os << "true";
-    else
-        os << "false";
+    os << std::string(element);
     return os;
 }
 
+/*
 Object boolean(const std::string_view v)
 {
     if (v == "true")
@@ -71,6 +89,7 @@ Object boolean(bool v)
 {
 	return Create<Boolean>(v);
 }
+*/
 
 
 

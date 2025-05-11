@@ -7,7 +7,7 @@
 
 namespace Angel::Logic::Test
 {
-
+/*
 TEST(TestSequence, Construction)
 {
 	Sequence empty;
@@ -45,6 +45,8 @@ TEST(TestSequence, Compare)
 	Sequence ba(id("max"), id("ginny"));
 	EXPECT_NE(ab, ba);
 }
+	*/
+
 
 }
 

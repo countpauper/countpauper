@@ -1,11 +1,10 @@
 #include "Logic/Clause.h"
 #include "Logic/Knowledge.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
+    /*
 Clause::Clause(Predicate&& predicate, Object&& condition) :
 	predicate(std::move(predicate)),
 	condition(std::move(condition))
@@ -87,6 +86,5 @@ Object clause(Predicate&& predicate, Object&& condition)
 {
 	return Create<Clause>(std::move(predicate), std::move(condition));
 }
-
-}
+*/
 }

@@ -2,42 +2,31 @@
 #include "Logic/Set.h"
 #include "Logic/Clause.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 Knowledge::Knowledge() :
-	root(Id(""))
+	root()
 {
 }
 
 size_t Knowledge::Know(Object&& o)
 {
-    if (const auto* pred = o.As<Predicate>())
-    {
-        return root.Add(std::move(o));
-    }
-    else if (const auto* clause = o.As<Clause>())
-    {
-        return root.Add(std::move(o));
-    }
-    else 
-    {
-        throw std::invalid_argument("Only clauses and predicates can be known");
+    // TODO pairs go in as a pair, but predicates, clauses and namespaces only 
+    auto insert = root.emplace(std::make_pair(Node(std::move(o)), Node(Boolean(true))));
+    if (insert.second) {
+        return 1;
+    } else {
+        return 0;
     }
 }
 
 Object Knowledge::Query(const Object& o, const Variables& substitutions) const
 {
-    return Query(*o, substitutions);
+    return Boolean(false); // Query(*o, substitutions);
 }
 
-Object Knowledge::Query(const Expression& e, const Variables& substitutions) const
-{
-    return e.Infer(*this, substitutions);
-}
-
+/*
 Object Knowledge::Match(const Expression& e) const
 {
     for(const auto& match: root.FindMatches(e))
@@ -53,10 +42,12 @@ Object Knowledge::Match(const Expression& e) const
     } 
     return boolean(false);
 }
+*/
 
 bool Knowledge::Knows(const Object& o) const
 {
-    return root.Contains(o);
+    return root.Find(Node{o}) != nullptr;
+
 }
 
 size_t Knowledge::size() const
@@ -69,5 +60,4 @@ bool Knowledge::empty() const
     return root.empty();
 }
 
-}
 }

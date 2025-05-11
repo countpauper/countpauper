@@ -6,6 +6,7 @@
 namespace Angel::Logic
 {
 
+/*
 class Clause;
 
 // A namespace is a collection of Knowledge Objects 
@@ -18,6 +19,6 @@ public:
 private:
     Id id;
 };
-
+*/
 
 }

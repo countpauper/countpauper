@@ -9,7 +9,8 @@ namespace Angel
 namespace Logic
 {
 
-Namespace::Namespace(const Id& id) :
+    /*
+    Namespace::Namespace(const Id& id) :
 	id(id)
 {
 }
@@ -35,6 +36,7 @@ Matches Namespace::FindMatches(const Expression& e) const
 	}
     return result;
 }
+*/
 
 }
 }

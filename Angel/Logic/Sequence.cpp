@@ -5,6 +5,7 @@
 namespace Angel::Logic
 {
 
+    /*
 Sequence::Sequence()
 {
 }
@@ -179,5 +180,6 @@ Object sequence(Object&& left, Sequence&& right)
     result.As<Sequence>()->Merge(std::move(right));
     return result;
 }
+*/
 
 }

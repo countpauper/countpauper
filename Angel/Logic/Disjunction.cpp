@@ -5,6 +5,7 @@
 namespace Angel::Logic
 {
 
+    /*
 Disjunction::Disjunction(Disjunction&& value) :
     Disjunction(std::move(value.operands))
 {
@@ -77,5 +78,6 @@ Object Disjunction::Cast(const std::type_info& t, const Knowledge& k) const
     }
     throw CastException<Disjunction>(t);
 }
+*/
 
 }

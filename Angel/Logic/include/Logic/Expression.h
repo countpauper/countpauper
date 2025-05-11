@@ -1,11 +1,13 @@
 #pragma once
-#include "Object.h"
-#include "Match.h"
+#include "Logic/Object.h"
+#include "Logic/Match.h"
 #include <cstddef>
 
+/*
 namespace Angel::Logic
 {
 
+class Knowledge;
 
 // An expression is a subclass of hierarchical exprs consisting of Functions (branches) or exprs (leafs)
 //
@@ -70,4 +72,5 @@ namespace std
 		}
 	};
 }
+*/
 

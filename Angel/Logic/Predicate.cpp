@@ -5,7 +5,7 @@
 
 namespace Angel::Logic
 {
-
+/*
 Predicate::Predicate(const Predicate& other) :
     Predicate(other.id, Sequence(other.arguments))
 {
@@ -18,15 +18,17 @@ Predicate::Predicate(Predicate&& other) :
 {
 }
 
-Predicate::Predicate(const Id& id, Sequence&& arguments) :
-	id(id),
-	arguments(std::move(arguments))
+Predicate::Predicate(const Id& id, Sequence&& arguments) 
+	: id(id)
+	, arguments(std::move(arguments))
 {
 }
 
-Predicate::Predicate(const std::string& tag, Sequence&& arguments) :
-	id(tag),
-	arguments(std::move(arguments))
+*/
+
+Predicate::Predicate(const std::string& tag/*, Sequence&& arguments*/) 
+	: id(tag)
+//	, arguments(std::move(arguments))
 {
 }
 
@@ -35,19 +37,18 @@ Predicate::operator bool() const
     return true;
 }
 
-bool Predicate::operator==(const Expression& other) const
+bool Predicate::operator==(const Predicate& other) const
 {
-	if (auto predicate = dynamic_cast<const Predicate*>(&other))
-	{
-		return id == predicate->id && arguments == predicate->arguments;
-	}
-	return false;
+	return id == other.id/* && arguments == predicate->arguments*/;
 }
+
 
 std::size_t Predicate::Hash() const
 {
-    return id.Hash() ^ arguments.Hash();
+    return id.Hash() /*^ arguments.Hash()*/;
 }
+
+/*
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)
 {
@@ -105,5 +106,6 @@ Object predicate(const std::string& name, Sequence&& arguments)
 {
 	return Create<Predicate>(Id(name), std::move(arguments));
 }
+*/
 
 }

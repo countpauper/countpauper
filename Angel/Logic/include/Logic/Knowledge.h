@@ -1,6 +1,7 @@
 #pragma once
-#include "Namespace.h"
-#include "Object.h"
+//#include "Logic/Namespace.h"
+#include "Logic/Object.h"
+#include "Logic/Match.h"
 
 namespace Angel
 {
@@ -16,13 +17,11 @@ public:
 	Knowledge();
     size_t Know(Object&& e);
 	Object Query(const Object& e, const Variables& substitutions=Variables()) const;
-    Object Match(const Expression& e) const;
 	bool Knows(const Object& e) const;
 	size_t size() const;
 	bool empty() const;
 private:
-	Object Query(const Expression& e, const Variables& substitutions) const;
-	Namespace root;
+	Set root;
 };
 
 

@@ -4,6 +4,7 @@
 namespace Angel::Logic
 {
 
+    /*
 // A Disjunction is a logical operator, which is True, if at least one of its elements are True
 class Disjunction : public Nary
 {
@@ -34,5 +35,6 @@ Object disjunction(Args... args)
 {
     return Create<Disjunction>(std::forward<Args>(args)...);
 }
+*/
 
 }

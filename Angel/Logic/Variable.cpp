@@ -20,14 +20,6 @@ bool Variable::operator==(const Variable& var) const
 	return name == var.name;
 }
 
-bool Variable::operator==(const Expression& other) const
-{
-	if (auto var = dynamic_cast<const Variable*>(&other))
-	{
-		return *this == *var;
-	}
-	return false;
-}
 
 std::size_t Variable::Hash() const
 {
@@ -35,6 +27,7 @@ std::size_t Variable::Hash() const
     return hasher(name);
 }
 
+/*
 Object Variable::Copy() const
 {
     return var(name);
@@ -75,6 +68,8 @@ Object Variable::Cast(const std::type_info& t, const Knowledge& k) const
 {
     throw CastException<Variable>(t);
 }
+*/
+
 
 std::ostream& operator<<(std::ostream& os, const Variable& id)
 {
@@ -82,10 +77,12 @@ std::ostream& operator<<(std::ostream& os, const Variable& id)
     return os;
 }
 
+/*
 Object var(const std::string_view name)
 {
 	return Create<Variable>(name);
 }
+*/
 
 }
 
