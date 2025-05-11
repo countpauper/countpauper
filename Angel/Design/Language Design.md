@@ -179,7 +179,7 @@ $X(ginny): X=cat
 ```
 
 ## Namespace 
-A namespace is a clause, whose predicat is the name and the argument is a *set* of predicates, 
+A namespace is a clause (pair), whose predicate (key) is the name and the argument is a *set* of predicates, 
 so their order does not matter but they are unique. 
 By default each axiom is added to the root namespace, but to separate domains of knowledge,
 while still allowing them to refer to each other, a namespace can be wrapped around this set 
@@ -197,7 +197,11 @@ to navigate to a namespace.
 music.composer($X)?
 > X = bach
 ```
-This use of the `.` operator is in general used to access the elements in a set or a map 
+This use of the `.` operator is in general used to access the elements in a set or a map. Every set is a map that can 
+be accessed with this operator. Like namespaces the default value is true and accessing a set element that is not 
+in it evaluates to false, just like an undefined axiom. This automatically functions as set presence test and the 
+@ operator may not even be needed for this (but still for lists). 
+
 ```
 cat: {ginny, max}
 fuzzy: {ginny: true, cheese:false}
@@ -377,7 +381,8 @@ it is upgraded to a single element set.
 * `|` - conjunection: the collection  with the elements that are either in the left or the right hand side 
 * `+` - a collection with the elments of the right hand side added to the list of the elements of the left hand side 
 * `-` - subtraction:  the collection, with the elements of the left hand side that are NOT in the right hand side. 
-* `[x]` - access: extract one element of a collection identified with index or key `x`.  
+* `[x]` - access: extract or slice element(s) of a sequential container identified with index `x`, range `x:y`, sequence `x,y,z` or key `x`.
+* `.` - set access: the right hand is the key and it returns the value in a map or true if the key is in the set, else false.  
 The type of the resulting collection is the same as the type of the left hand side, so eg subtracting a list from a 
 set results in a set, but subtracting a set from a list results in a list.
 
