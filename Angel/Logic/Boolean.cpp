@@ -1,5 +1,6 @@
 #include "Logic/Boolean.h"
 #include "Logic/Integer.h"
+#include "Logic/CastException.h"
 
 namespace Angel::Logic
 {
@@ -12,15 +13,6 @@ Boolean::Boolean(bool v) :
 Boolean::operator bool() const 
 {
     return truth;
-}
-
-bool Boolean::operator==(const Expression& other) const
-{
-	if (auto boolean = dynamic_cast<const Boolean*>(&other))
-	{
-		return truth == boolean->truth;
-	}
-	return false;
 }
 
 std::size_t Boolean::Hash() const
