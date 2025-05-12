@@ -17,18 +17,12 @@ public:
     std::size_t Hash() const;
     long operator*() const;
 	static Integer Parse(const std::string& tag);
-protected:
-    // Object Cast(const std::type_info& t, const Knowledge& k) const;
 private:
 	friend std::ostream& operator<<(std::ostream& os, const Integer& );
 	long value;
 };
 
 std::ostream& operator<<(std::ostream& os, const Integer& );
-/*
-Object integer(long value);
-Object integer(const std::string_view value);
-*/
 
 }
 }

@@ -51,24 +51,6 @@ Object Knowledge::Query(const Object& o, const Variables& substitutions) const
     return o;   // TODO: compute 
 }
 
-/*
-Object Knowledge::Match(const Expression& e) const
-{
-    for(const auto& match: root.FindMatches(e))
-    {
-        auto condition = (*match.first)->Condition();
-        if (!condition)
-            return boolean(true);
-        auto result = condition->Infer(*this, match.second);
-        if (result) 
-        {
-            return result;
-        }
-    } 
-    return boolean(false);
-}
-*/
-
 bool Knowledge::Knows(const Object& o) const
 {
     return root.Find(Node{o}) != nullptr;

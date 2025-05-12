@@ -27,33 +27,10 @@ std::size_t Id::Hash() const
     return hasher(name);
 }
 
-/*
-
-Object Id::Cast(const std::type_info& t, const Knowledge& k) const
-{
-    if (t == typeid(Id))
-    {
-        return id(name);
-    }
-    else if (t == typeid(Boolean))
-    {
-        return boolean(true);
-    }
-    throw CastException<Id>(t);
-}
-*/
-
 std::ostream& operator<<(std::ostream& os, const Id& id)
 {
     os << id.name.c_str();
     return os;
 }
-
-/*
-Object id(const std::string_view name)
-{
-	return Create<Id>(std::string(name));
-}
-*/
 
 }

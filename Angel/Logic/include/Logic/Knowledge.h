@@ -1,5 +1,5 @@
 #pragma once
-//#include "Logic/Namespace.h"
+
 #include "Logic/Object.h"
 #include "Logic/Match.h"
 
@@ -8,9 +8,9 @@ namespace Angel
 namespace Logic
 {
 
-// Knowledge is a tree of expressions organized in namespaces
-// TODO: it should itself be an expression and namespaces as well 
-// They are not exactly a conjunction, because they may also include functions 
+// Knowledge is a tree of clauses organized in namespaces
+// A clause is a pair of a predicate and an expression 
+// TODO: it should itself be an expression (Set?)  
 class Knowledge
 {
 public:
