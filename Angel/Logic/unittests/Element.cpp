@@ -8,8 +8,8 @@ namespace Angel::Logic::Test
 
 TEST(TestElement, Boolean)
 {
-	EXPECT_EQ(Logic::Boolean(false), Logic::Boolean(false));
-	EXPECT_EQ(Logic::Boolean(true), Logic::Boolean(true));
+	EXPECT_EQ(Logic::Boolean(false), Boolean(false));
+	EXPECT_EQ(Logic::Boolean(true), Boolean(true));
 	EXPECT_EQ(std::string(Boolean(true)), "true");
 	EXPECT_EQ(std::string(Boolean(false)), "false");
 	EXPECT_TRUE(Boolean("true"));
@@ -21,8 +21,8 @@ TEST(TestElement, ComputeBooleanReturnsConstant)
 	Object b = Boolean(true);
 	EXPECT_EQ(b, Boolean(true));
 	Knowledge k;
-	EXPECT_EQ(k.Compute(Boolean(true)), Object(Boolean(true)));
-	EXPECT_EQ(k.Compute(Boolean(false)), Object(Boolean(false)));
+	EXPECT_EQ(k.Compute(Boolean(true)), Boolean(true));
+	EXPECT_EQ(k.Compute(Boolean(false)), Boolean(false));
 }
 
 TEST(TestElement, Integer)

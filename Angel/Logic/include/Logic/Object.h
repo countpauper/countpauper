@@ -6,6 +6,7 @@
 #include "Logic/List.h"
 #include "Logic/CastException.h"
 #include "Logic/VariantUtils.h"
+#include "Logic/Conjunction.h"
 #include <variant>
 #include <vector>
 #include <map>
@@ -14,19 +15,18 @@
 namespace Angel::Logic
 {
 
-using VariantObject = std::variant<Boolean,  Integer, Id, Variable, Predicate, List, Set>; 
+using ObjectVariant = std::variant<Boolean,  Integer, Id, Variable, Predicate, List, Set, Conjunction>; 
 
-class Object : public VariantObject
+class Object : public ObjectVariant
 {
 public:
     template<typename T>
-    requires is_alternative<T, VariantObject>
+    requires is_alternative<T, ObjectVariant>
     Object(const T& v) :
-        VariantObject(v)
+        ObjectVariant(v)
     {
     }
-    Object(const Object& n);
-
+    Object(const Object& o);
 
     template<typename T>
     const std::optional<T> TryCast() const
@@ -55,7 +55,7 @@ public:
         throw CastException(AlternativeTypeInfo(), typeid(T));
 
     }
-    Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
+    Element Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
 
     template<typename T> 
     requires(!std::is_same_v<Object, T>) 

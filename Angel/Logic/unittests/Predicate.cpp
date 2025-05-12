@@ -15,21 +15,21 @@ TEST(TestPredicate, Construction)
 TEST(TestPredicate, Valence0)
 {
 	Knowledge k;
-	EXPECT_EQ(k.Query(Predicate("cat")), Boolean(false));
+	EXPECT_EQ(Predicate("cat").Compute(k), Boolean(false));
 	k.Know(Predicate("cat"));
-	EXPECT_EQ(k.Query(Predicate("cat")), Boolean(true));
-	EXPECT_EQ(k.Query(Predicate("dog")), Boolean(false));
+	EXPECT_EQ(Predicate("cat").Compute(k), Boolean(true));
+	EXPECT_EQ(Predicate("dog").Compute(k), Boolean(false));
 
 }
 
 TEST(TestPredicate, Valence1)
 {
 	Knowledge k;
-	EXPECT_EQ(k.Query(Predicate("cat", List{Id("ginny")})), Boolean(false));
+	EXPECT_EQ(Predicate("cat", List{Id("ginny")}).Compute(k), Boolean(false));
 	k.Know(Predicate("cat", List{Id("ginny")}));
-	EXPECT_EQ(k.Query(Predicate("cat", List{Id("ginny")})), Boolean(true));
-	EXPECT_EQ(k.Query(Predicate("cat", List{Id("woofer")})), Boolean(false));
-	EXPECT_EQ(k.Query(Predicate("dog", List{Id("ginny")})), Boolean(false));
+	EXPECT_EQ(Predicate("cat", List{Id("ginny")}).Compute(k), Boolean(true));
+	EXPECT_EQ(Predicate("cat", List{Id("woofer")}).Compute(k), Boolean(false));
+	EXPECT_EQ(Predicate("dog", List{Id("ginny")}).Compute(k), Boolean(false));
 }
 
 }

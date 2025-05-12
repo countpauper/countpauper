@@ -52,7 +52,7 @@ mouse?
 ```
 An axiom it added to the list of "facts" of the namespace.
 It is equivalent to `cat: true`, any non defined axiom is by default `false`. Defining an axiom is then 
-like assigning a value to an id or even more technically it's creating a key:value pair and each knowledge is a dictionary 
+like assigning a value to an id or even more technically it's creating a key:value association and each knowledge is a dictionary 
 or structure. Commas are optional.
 
 ## predicate arguments

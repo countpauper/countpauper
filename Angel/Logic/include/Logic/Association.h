@@ -8,7 +8,7 @@ namespace Angel::Logic
 {
 
     /*
-// A clause is a pair (TODO: rename) expresion that specifies that a predicate is true if all of the array of its conditions is true
+// A clause is an association (TODO: rename) expresion that specifies that a predicate is true if all of the array of its conditions is true
 class Clause
 {
 public:

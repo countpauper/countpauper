@@ -1,70 +1,69 @@
 #include <gtest/gtest.h>
 #include "Logic/Knowledge.h"
 #include "Logic/Predicate.h"
-#include "Logic/Clause.h"
+#include "Logic/Association.h"
 #include "Logic/Conjunction.h"
 
 namespace Angel::Logic::Test
 {
-/*
 	TEST(TestClause, Trivial)
 	{
 		Knowledge k;
-		k.Know(clause(Predicate("cat")));
-		EXPECT_TRUE(k.Query(predicate("cat")));
-		EXPECT_FALSE(k.Query(predicate("dog")));
+		k.Know(Predicate("cat"));
+		EXPECT_EQ(Predicate("cat").Compute(k), Boolean(true));
+		EXPECT_EQ(Predicate("dog").Compute(k), Boolean(false));
 	}
 
 	TEST(TestClause, Condition)
 	{
 		Knowledge k;
-		k.Know(clause(Predicate("cat"), predicate("ginny")));
-		EXPECT_FALSE(k.Query(predicate("cat")));
-		k.Know(predicate("ginny"));
-		EXPECT_TRUE(k.Query(predicate("cat")));
+		k.Know(Predicate("cat"), Predicate("ginny"));
+		EXPECT_EQ(Predicate("cat").Compute(k), Boolean(false));
+		k.Know(Predicate("ginny"));
+		EXPECT_EQ(Predicate("cat").Compute(k), Boolean(true));
 	}
 
 	TEST(TestClause, Conjunction)
 	{
 		Knowledge k;
-		k.Know(clause(Predicate("cat"), conjunction(predicate("fuzzy"), predicate("noisy"))));
-		k.Know(clause(Predicate("hamster"), conjunction(predicate("fuzzy"), predicate("quiet"))));
-		EXPECT_FALSE(k.Query(predicate("cat")));
-		EXPECT_FALSE(k.Query(predicate("hamster")));
-		k.Know(predicate("fuzzy"));
-		k.Know(predicate("noisy"));
-		EXPECT_TRUE(k.Query(predicate("cat")));
-		EXPECT_FALSE(k.Query(predicate("hamster")));
+		k.Know(Predicate("cat"), Conjunction{Predicate("fuzzy"), Predicate("noisy")});
+		k.Know(Predicate("hamster"), Conjunction{Predicate("fuzzy"), Predicate("quiet")});
+		EXPECT_EQ(k.Compute(Predicate("cat")), Boolean(false));
+		EXPECT_EQ(k.Compute(Predicate("hamster")), Boolean(false));
+		k.Know(Predicate("fuzzy"));
+		k.Know(Predicate("noisy"));
+		EXPECT_EQ(k.Compute(Predicate("cat")), Boolean(true));
+		EXPECT_EQ(k.Compute(Predicate("hamster")), Boolean(false));
 	}
 
-	TEST(TestClause, Predicate1Ary)
+	TEST(TestClause, PredicateValence1)
 	{
 		Knowledge k;
-		k.Know(clause(Predicate("cat", Sequence(id("ginny"))),
-            predicate("fuzzy", Sequence(id("ginny")))));
-		k.Know(clause(Predicate("cat", Sequence(id("woofer"))),
-            predicate("fuzzy", Sequence(id("woofer")))));
-		EXPECT_FALSE(k.Query(predicate("cat", Sequence(id("ginny")))));
-		k.Know(predicate("fuzzy", Sequence(id("ginny"))));
+		k.Know(Predicate("cat", List{Id("ginny")}),
+            Predicate("fuzzy", List{Id("ginny")}));
+		k.Know(Predicate("cat", List{Id("woofer")}),
+            Predicate("fuzzy", List{Id("woofer")}));
+		EXPECT_EQ(k.Compute(Predicate("cat", List{Id("ginny")})), Boolean(false));
+		k.Know(Predicate("fuzzy", List{Id("ginny")}));
 
-		EXPECT_TRUE(k.Query(predicate("cat", Sequence(id("ginny")))));
-		EXPECT_FALSE(k.Query(predicate("cat", Sequence(id("woofer")))));
+		EXPECT_EQ(Predicate("cat", List{Id("ginny")}).Compute(k), Boolean(true));
+		EXPECT_EQ(Predicate("cat", List{Id("woofer")}).Compute(k), Boolean(false));
 	}
 
-	TEST(TestClause, Predicate2Ary)
+	TEST(TestClause, PredicateValence2)
 	{
 		Knowledge k;
-		k.Know(clause(Predicate("cats", Sequence(id("ginny"), id("max"))),
-            conjunction(predicate("cat", Sequence(id("ginny"))),
-				predicate("cat", Sequence(id("max"))))));
-		EXPECT_FALSE(k.Query(predicate("cats", Sequence(id("ginny"), id("max")))));
+		k.Know(Predicate("cats", List{Id("ginny"), Id("max")}),
+				Conjunction{
+            		Predicate("cat", List{Id("ginny")}),
+					Predicate("cat", List{Id("max")}) });
+		EXPECT_EQ(Predicate("cats", List{Id("ginny"), Id("max")}).Compute(k), Boolean(false));
 
-		k.Know(predicate("cat", Sequence(id("ginny"))));
-		k.Know(predicate("cat", Sequence(id("max"))));
+		k.Know(Predicate("cat", List{Id("ginny")}));
+		k.Know(Predicate("cat", List{Id("max")}));
 
-		EXPECT_TRUE(k.Query(predicate("cats", Sequence(id("ginny"), id("max")))));
+		EXPECT_EQ(Predicate("cats", List{Id("ginny"), Id("max")}).Compute(k), Boolean(true));
 	}
 
-*/
 
 }

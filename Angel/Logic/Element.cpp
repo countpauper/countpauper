@@ -5,5 +5,16 @@
 namespace Angel::Logic
 {
 
+Element::operator bool() const
+{
+    return std::visit(overloaded_visit{
+        [](std::monostate) {
+            return false;
+        },
+        [](const auto& e) {
+            return bool(e);
+        }
+    }, *this);
+}
 }
 

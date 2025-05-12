@@ -6,10 +6,6 @@
 namespace Angel::Logic
 {
     
-List::List(std::initializer_list<Object> listItems) :
-    std::vector<Object>(listItems)
-{
-}
 
 List::operator bool() const
 {
@@ -18,9 +14,7 @@ List::operator bool() const
 
 bool List::operator==(const List& rhs) const
 {
-    if (size()!=rhs.size())
-        return false;
-    return std::equal(begin(), end(), rhs.begin());
+    return Collection::operator==(rhs);
 }
 
 Match List::Matches(const List& list) const
@@ -45,19 +39,12 @@ Match List::Matches(const List& list) const
 
 std::size_t List::Hash() const
 {
-    std::size_t result = typeid(decltype(*this)).hash_code();
-    std::hash<Object> hasher;
-    for(const auto& n: *this)
-    {
-        result ^= hasher(n);
-    }
-    return result;
+    return typeid(decltype(*this)).hash_code() ^  Collection::Hash();
 }
 
 
 std::ostream& operator<<(std::ostream& os, const List& list)
 {
-    os << "(";
     bool first = true;
     for(const auto& obj: list)
     {
@@ -66,8 +53,6 @@ std::ostream& operator<<(std::ostream& os, const List& list)
         os << obj;
         first = false;
     }
-
-    os << ")";
     return os;
 }
 }

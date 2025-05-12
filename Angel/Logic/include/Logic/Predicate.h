@@ -2,6 +2,7 @@
 #include "Logic/Id.h"
 #include "Logic/List.h"
 #include "Logic/Match.h"
+#include "Logic/Element.h"
 
 namespace Angel::Logic
 {
@@ -20,8 +21,7 @@ public:
     bool operator==(const Predicate& other) const;
     std::size_t Hash() const;
     Match Matches(const Predicate& other) const;
-    Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
-
+    Element Compute(const class Knowledge& knowledge, const Variables& substitutions={}) const;
 private:
     friend std::ostream& operator<<(std::ostream& os, const Predicate& );
     Id id;

@@ -17,10 +17,10 @@ Set::Set(std::initializer_list<Object> setItems)
 // TODO: this is weird now
 const Object* Set::Find(const Object& o) const
 {
-    for(const auto &pair : *this)
+    for(const auto &association : *this)
     {
-        if (pair.first == o)
-            return &pair.second;
+        if (association.first == o)
+            return &association.second;
     }
     return nullptr;
 }
@@ -41,9 +41,9 @@ std::size_t Set::Hash() const
 {
     std::size_t result = typeid(decltype(*this)).hash_code();
     std::hash<Object> hasher;
-    for(const auto& pair: *this)
+    for(const auto& association: *this)
     {
-        result ^= hasher(pair.first) ^ hasher(pair.second);
+        result ^= hasher(association.first) ^ hasher(association.second);
     }
     return result;
 }

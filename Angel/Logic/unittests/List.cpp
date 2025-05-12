@@ -23,9 +23,6 @@ TEST(TestList, Construction)
 
 	List seq{List{Id("ginny"), Id("max")}};
 	EXPECT_EQ(seq.size(), 1);
-   
-    Knowledge k;
-	EXPECT_THROW(k.Know(List{Id("table"), Id("moon"), Id("hope")}), std::invalid_argument);
 }
 
 

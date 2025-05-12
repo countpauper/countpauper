@@ -26,8 +26,6 @@ TEST(TestSet, Construction)
 	Set seq_set({List{Id("ginny"), Id("max")}});
 	EXPECT_EQ(seq_set.size(), 1);
 
-	Knowledge k;
-    EXPECT_THROW(k.Know(Set{Id("table"), Id("moon"), Id("hope")}), std::invalid_argument);
 }
 
 TEST(TestSet, List)

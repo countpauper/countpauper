@@ -6,6 +6,13 @@
 
 namespace Angel::Logic::Test
 {
+
+TEST(TestConjunction, Construction)
+{
+    EXPECT_TRUE(Conjunction{}.empty());
+    EXPECT_EQ(Conjunction{Boolean(false)}.size(), 1);    
+}
+
 /*/
 TEST(TestComputation, Conjunctions)
 {

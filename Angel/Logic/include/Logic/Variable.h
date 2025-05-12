@@ -27,6 +27,5 @@ private:
 
 
 std::ostream& operator<<(std::ostream& os, const Variable& id);
-//Object var(const std::string_view name);
 
 }

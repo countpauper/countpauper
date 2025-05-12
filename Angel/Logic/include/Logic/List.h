@@ -1,27 +1,17 @@
 #pragma once
 #include "Logic/Match.h"
-#include <vector>
+#include "Logic/Collection.h"
 #include <iostream>
 
 namespace Angel::Logic
 {
 
-class Object;
-
 // A list is an ordered non-unique collection of objects (wrapped in nodes)
-class List : public std::vector<Object>
+class List : public Collection
 {
 public:
-    List() = default;
-	List(std::initializer_list<Object> setItems);
-    template<typename T> 
-    explicit List(std::initializer_list<T> items)
-    {
-        for(auto&& item: items)
-        {
-            emplace_back(item);
-        }
-    }
+    using Collection::Collection;
+
     bool operator==(const List& rhs) const;
     operator bool() const;
     Match Matches(const List& other) const;

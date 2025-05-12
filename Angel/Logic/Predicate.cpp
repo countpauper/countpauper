@@ -50,17 +50,21 @@ Match Predicate::Matches(const Predicate& predicate) const
 	return arguments.Matches(predicate.arguments);
 }
 
-Object Predicate::Compute(const Knowledge& knowledge, const Variables& substitutions) const
+Element Predicate::Compute(const Knowledge& knowledge, const Variables& substitutions) const
 {
-	return knowledge.Query(*this);
+	// TODO this should return a disjunction or all expressions and then compute that somehow but 
+	// the first truish element is the result 
+	if (knowledge.Matches(*this))
+		return Boolean(true);
+	else
+		return Boolean(false); 
 }
-
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)
 {
 	if (predicate.arguments)
 	{
-		os << predicate.id << predicate.arguments;
+		os << predicate.id << "(" << predicate.arguments << ")";
 	}
 	else
 	{

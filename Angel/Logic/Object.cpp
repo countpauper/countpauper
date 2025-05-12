@@ -5,21 +5,36 @@
 #include "Logic/Expression.h"
 #include "Logic/Knowledge.h"
 #include <sstream>
+#include <cassert>
 
 namespace Angel::Logic
 {
 
-Object::Object(const Object& n) :
-    VariantObject(n)
+Object::Object(const Object& o) :
+    ObjectVariant(o)
 {
 }
 
-Object Object::Compute(const class Knowledge& knowledge, const Variables& substitutions) const
+Element Object::Compute(const class Knowledge& knowledge, const Variables& vars) const
 {
     return std::visit(overloaded_visit{
-        [&knowledge](const Predicate& predicate) { return knowledge.Query(predicate); },
-        [&knowledge](const Id& id) { return bool(id)? knowledge.Query(Predicate(id)) : Boolean(false); },
-        [](const auto& obj) { return Object(obj); }
+        [&knowledge, &vars](const Id& id) { 
+            return id ? Predicate(id).Compute(knowledge, vars) : Boolean(false);
+        },   // TODO id compute implement like this
+        [](const List&) -> Element {
+            assert(false && "TODO: can't compute a container to an element. Take size? ");
+            return Boolean(false);
+        }, 
+        [](const Set&) -> Element {
+            assert(false && "TODO: can't compute a container to an element. Take size? ");
+            return Boolean(false);
+        }, 
+        []<IsElement T>(const T& element) -> Element {
+            return element; 
+        },
+        [&knowledge, &vars](const auto& obj) -> Element {
+            return obj.Compute(knowledge, vars);
+        }
     }, *this);
 }
 

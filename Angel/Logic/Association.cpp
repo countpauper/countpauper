@@ -1,4 +1,4 @@
-#include "Logic/Clause.h"
+#include "Logic/Association.h"
 #include "Logic/Knowledge.h"
 
 namespace Angel::Logic
