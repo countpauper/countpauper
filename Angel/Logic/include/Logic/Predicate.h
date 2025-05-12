@@ -19,7 +19,8 @@ public:
     operator bool() const;
     bool operator==(const Predicate& other) const;
     std::size_t Hash() const;
-    Match Matches(const Predicate& other, const Variables& substitutions) const;
+    Match Matches(const Predicate& other) const;
+    Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
 
 private:
     friend std::ostream& operator<<(std::ostream& os, const Predicate& );

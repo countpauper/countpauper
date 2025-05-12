@@ -2,6 +2,7 @@
 #include "Logic/Set.h"
 #include "Logic/Clause.h"
 #include <variant>
+#include <cassert>
 
 namespace Angel::Logic
 {
@@ -29,26 +30,31 @@ size_t Knowledge::Know(Object&& o)
     }
 }
 
-Object Knowledge::Query(const Object& o, const Variables& substitutions) const
+Object Knowledge::Compute(const Object& expression) const
 {
-    if (const auto queryPredicate = o.TryCast<Predicate>())
+    Variables vars;
+    return expression.Compute(*this, vars);
+}
+
+Object Knowledge::Query(const Predicate& queryPredicate) const
+{
+    for(const auto& pair: root)
     {
-        for(const auto& pair: root)
+        if (const auto* predicate = std::get_if<Predicate>(&pair.first))
         {
-            if (const auto* predicate = std::get_if<Predicate>(&pair.first))
+            auto match = predicate->Matches(queryPredicate);
+            if (match)
             {
-                Variables vars;
-                auto match = predicate->Matches(*queryPredicate, vars);
-                if (match)
-                {
-                    // TODO: compute with vars
-                    return pair.second;
-                }
+                // TODO: compute with vars
+                return pair.second.Compute(*this, *match);
             }
         }
-        return Boolean(false);
+        else 
+        {
+            assert(false && "Only predicate keys are allowed in knowledge");
+        }
     }
-    return o;   // TODO: compute 
+    return Boolean(false);
 }
 
 bool Knowledge::Knows(const Object& o) const

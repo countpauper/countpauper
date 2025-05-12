@@ -23,7 +23,7 @@ bool List::operator==(const List& rhs) const
     return std::equal(begin(), end(), rhs.begin());
 }
 
-Match List::Matches(const List& list, const Variables& substitutions) const
+Match List::Matches(const List& list) const
 {
     if (size()!=list.size())
         return NoMatch; // TODO: head|tail matching or whatever could happen here 

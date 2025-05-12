@@ -24,7 +24,7 @@ public:
     }
     bool operator==(const List& rhs) const;
     operator bool() const;
-    Match Matches(const List& other, const Variables& substitutions) const;
+    Match Matches(const List& other) const;
     std::size_t Hash() const;
 };
 

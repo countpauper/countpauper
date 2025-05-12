@@ -8,11 +8,6 @@ namespace Angel::Logic::Test
 
 TEST(TestElement, Boolean)
 {
-	Object b = Boolean(true);
-	EXPECT_EQ(b, Boolean(true));
-	Knowledge k;
-	EXPECT_EQ(k.Query(Boolean(true)), Object(Boolean(true)));
-	EXPECT_EQ(k.Query(Boolean(false)), Object(Boolean(false)));
 	EXPECT_EQ(Logic::Boolean(false), Logic::Boolean(false));
 	EXPECT_EQ(Logic::Boolean(true), Logic::Boolean(true));
 	EXPECT_EQ(std::string(Boolean(true)), "true");
@@ -21,15 +16,27 @@ TEST(TestElement, Boolean)
 	EXPECT_FALSE(Boolean(false));
 }
 
+TEST(TestElement, ComputeBooleanReturnsConstant)
+{
+	Object b = Boolean(true);
+	EXPECT_EQ(b, Boolean(true));
+	Knowledge k;
+	EXPECT_EQ(k.Compute(Boolean(true)), Object(Boolean(true)));
+	EXPECT_EQ(k.Compute(Boolean(false)), Object(Boolean(false)));
+}
+
 TEST(TestElement, Integer)
 {
 	EXPECT_FALSE(Integer(0));
 	EXPECT_TRUE(Integer(1));
 	EXPECT_EQ(Integer(3), Integer(3));
 	EXPECT_NE(Integer(2), Integer(-3));
+}
 
+TEST(TestElement, ComputeIntegerReturnsConstant)
+{
 	Knowledge k;
-	EXPECT_EQ(k.Query(Integer(1)), Integer(1));
+	EXPECT_EQ(k.Compute(Integer(1)), Integer(1));
 }
 
 TEST(TestElement, Id)
@@ -38,10 +45,13 @@ TEST(TestElement, Id)
 	EXPECT_TRUE(Id("test"));
 	EXPECT_EQ(Logic::Id("test"), Logic::Id("test"));
 	EXPECT_NE(Logic::Id("test"), Logic::Id("icle"));
+}
 
+TEST(TestElement, ComputeIdQueriesPredicate)
+{
 	Knowledge k;
-	EXPECT_EQ(k.Query(Id("test")), Boolean(false));
-	EXPECT_EQ(k.Query(Id("")), Boolean(false));
+	EXPECT_EQ(k.Compute(Id("test")), Boolean("false"));
+	EXPECT_EQ(k.Compute(Id("")), Boolean(false));
 }
 
 }

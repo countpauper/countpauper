@@ -6,6 +6,12 @@
 namespace Angel::Logic::Test
 {
 
+TEST(TestPredicate, Construction)
+{
+	EXPECT_THROW(Predicate(""), std::invalid_argument);
+	EXPECT_NE(Predicate("test"), Predicate("Test"));
+}
+
 TEST(TestPredicate, Valence0)
 {
 	Knowledge k;
@@ -13,6 +19,7 @@ TEST(TestPredicate, Valence0)
 	k.Know(Predicate("cat"));
 	EXPECT_EQ(k.Query(Predicate("cat")), Boolean(true));
 	EXPECT_EQ(k.Query(Predicate("dog")), Boolean(false));
+
 }
 
 TEST(TestPredicate, Valence1)

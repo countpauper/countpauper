@@ -16,7 +16,8 @@ class Knowledge
 public:
 	Knowledge();
     size_t Know(Object&& e);
-	Object Query(const Object& e, const Variables& substitutions=Variables()) const;
+	Object Compute(const Object& o) const;
+	Object Query(const Predicate& p) const;
 	bool Knows(const Object& e) const;
 	size_t size() const;
 	bool empty() const;

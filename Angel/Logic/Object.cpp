@@ -3,6 +3,7 @@
 #include "Logic/Integer.h"
 #include "Logic/Id.h"
 #include "Logic/Expression.h"
+#include "Logic/Knowledge.h"
 #include <sstream>
 
 namespace Angel::Logic
@@ -11,6 +12,15 @@ namespace Angel::Logic
 Object::Object(const Object& n) :
     VariantObject(n)
 {
+}
+
+Object Object::Compute(const class Knowledge& knowledge, const Variables& substitutions) const
+{
+    return std::visit(overloaded_visit{
+        [&knowledge](const Predicate& predicate) { return knowledge.Query(predicate); },
+        [&knowledge](const Id& id) { return bool(id)? knowledge.Query(Predicate(id)) : Boolean(false); },
+        [](const auto& obj) { return Object(obj); }
+    }, *this);
 }
 
 bool Object::operator<(const Object&o) const

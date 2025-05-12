@@ -9,16 +9,14 @@ domain and reason to answer queries.
 # Interface 
 ## Interaction 
 The default unit of interaction is a statement with a knowledge set. This can be a new predicate, which is added to the knowledge 
-or a query if it is postfixed with a question mark instead of a condition. This results in the output of the query 
-with the hypothesis of variable instantiations. The knowledge starts by default with some built in functions, 
+or a query if it is postfixed with a question mark instead of a condition. This is an interactive/command line only pre-parse.
+This results in the output of the query with the hypothesis of variable instantiations. The knowledge starts by default with some built in functions, 
 the most essential of which is import(), which will parse the source code in the filename string fn and add all 
 predicates in it to the root knowledge (as a side effect?). 
-If there are any queries in there the output of them could also be added to the knowledge, although this would be weird to have the same behavior in an interaction with the user, as the answer may change as other knowledge is entered. It would also require the hypothesis to be added or even instanced to the predicate(s). Instead queries results could always be printed to the console (stdout). 
-The queries are stored in the knowledge with a special query marker (boolean or special term). They are only executed at the end of a parser so order doesn't matter.
 
 ## Console 
 The default application for these interactions is a python console like app where standard input is read and when enter is pressed 
-it is one interaction. This requires a newline to not be significant whitespace for parsing. Alternatively like pythong the 
+it is one interaction. This requires a newline to not be significant whitespace for parsing. Alternatively like python the 
 enter is added to the input and only accepted as a new interaction with the result parsers succesfully, eg 
 `predicate(bla):\n` doesnt parse because of a missing condition. This can still be added for convenience but is less essential. 
 It may require implementation of backspace and cursors, otherwise the user could get stuck in an unparsable input `predicate(bla:\n`.
@@ -27,8 +25,8 @@ Every input is parsed into a separate knowledge. It's predicated are added to th
 
 ## Command line 
 The console application should interpret each argument that does not start with `-` as statement. Files can be executed with the 
-`angel import("fn")`. All queries and `print("")` built in statements would be written to standard output. 
-Interpretation errors are written toe stderr and language errors should probably be as well. 
+`angel import("fn")`. All `print("")` built in statements would be written to standard output. 
+Interpretation errors are written to stderr and language errors should probably be as well. 
 
 Options starting with `-` or `--` are reserved for options, although no options are known yet. 
 

@@ -55,6 +55,7 @@ public:
         throw CastException(AlternativeTypeInfo(), typeid(T));
 
     }
+    Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
 
     template<typename T> 
     requires(!std::is_same_v<Object, T>) 

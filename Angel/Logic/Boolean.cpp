@@ -13,7 +13,7 @@ Boolean::Boolean(bool v) :
 {
 }
 
-Boolean::Boolean(const std::string& tag)
+Boolean::Boolean(const std::string_view tag)
 {
 	if (tag == "true")
 		truth = true;

@@ -12,6 +12,8 @@ Predicate::Predicate(const Id& id, List&& arguments)
 	: id(id)
 	, arguments(std::move(arguments))
 {
+	if (!id)
+		throw std::invalid_argument("Predicate identity can not be empty.");
 }
 
 Predicate::Predicate(const std::string& tag, List&& arguments) 
@@ -41,11 +43,16 @@ std::size_t Predicate::Hash() const
 }
 
 
-Match Predicate::Matches(const Predicate& predicate, const Variables& substitutions) const
+Match Predicate::Matches(const Predicate& predicate) const
 {
 	if (id != predicate.id) // Variable predicate names not (yet) supported
 		return NoMatch;
-	return arguments.Matches(predicate.arguments, substitutions);
+	return arguments.Matches(predicate.arguments);
+}
+
+Object Predicate::Compute(const Knowledge& knowledge, const Variables& substitutions) const
+{
+	return knowledge.Query(*this);
 }
 
 

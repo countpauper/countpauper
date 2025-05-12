@@ -10,7 +10,8 @@ class Boolean
 {
 public:
 	explicit Boolean(bool v);
-	explicit Boolean(const std::string& tag);
+	explicit Boolean(const std::string_view tag);
+    explicit Boolean(const char* tag) : Boolean(std::string_view(tag)) {}
 	bool operator==(const Boolean& other) const;
     bool operator*() const;
     operator bool() const;

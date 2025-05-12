@@ -2,8 +2,7 @@
 # TODO <namsepace>  
 <axioms> ::= "," <space> <axiom> <axioms> | ""
 <axiom> ::= <predicate> <space> <terms> 
-<terms> ::= ":" <value> | <query> | ""
-<query> ::= "?"
+<terms> ::= ":" <value> |  ""
 <predicate> ::= <id> <arguments>
 <arguments> ::= "(" <sequence> ")" | ""
 <sequence> ::= <expression> <sequence-next>
