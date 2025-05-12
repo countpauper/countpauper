@@ -17,18 +17,16 @@ Predicate::Predicate(Predicate&& other) :
     arguments(std::move(other.arguments))
 {
 }
+*/
 
-Predicate::Predicate(const Id& id, Sequence&& arguments) 
+Predicate::Predicate(const Id& id, List&& arguments) 
 	: id(id)
 	, arguments(std::move(arguments))
 {
 }
 
-*/
-
 Predicate::Predicate(const std::string& tag, List&& arguments) 
-	: id(tag)
-	, arguments(std::move(arguments))
+	: Predicate(Id(tag), std::move(arguments))
 {
 }
 
@@ -46,6 +44,14 @@ bool Predicate::operator==(const Predicate& rhs) const
 std::size_t Predicate::Hash() const
 {
     return id.Hash() ^ arguments.Hash();
+}
+
+
+Match Predicate::Matches(const Predicate& predicate, const Variables& substitutions) const
+{
+	if (id != predicate.id) // Variable predicate names not (yet) supported
+		return NoMatch;
+	return arguments.Matches(predicate.arguments, substitutions);
 }
 
 
@@ -69,16 +75,6 @@ Object Predicate::Copy() const
     return Create<Predicate>(*this);
 }
 
-Match Predicate::Matching(const Expression& expr, const Variables& substitutions) const
-{
-	if (auto predicate = dynamic_cast<const Predicate*>(&expr))
-	{
-        if (!id.Matching(predicate->id, {})) // Variable predicate names not (yet) supported
-            return NoMatch;
-		return arguments.Matching(predicate->arguments, substitutions);
-	}
-	return NoMatch;
-}
 
 const Object* Predicate::Condition() const
 {

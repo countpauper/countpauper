@@ -5,6 +5,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Set.h"
 #include "Logic/List.h"
+#include "Logic/CastException.h"
 #include <variant>
 #include <vector>
 #include <map>
@@ -29,6 +30,34 @@ bool operator==(const Object& left, const T& right)
         }, 
         [](const auto&) { return false; }   
         },left);
+}
+
+template<typename T>
+const std::optional<T> TryCast(const Object& o)
+{
+    auto same = std::get_if<T>(&o);  // TODO really cast 
+    if (same)
+        return std::optional<T>(*same);
+    else
+        return std::optional<T>();
+}
+
+template<>
+const std::optional<Predicate> TryCast<Predicate>(const Object& o);
+
+template<typename T>
+const T Cast(const Object& o)
+{
+    auto maybe = TryCast<T>(o);
+    if (maybe)
+        return *maybe;
+    else 
+    {
+        std::visit([](const auto& obj)
+        {
+            throw CastException<decltype(obj)>(typeid(T)); return T();
+        }, o);
+    }
 }
 
 struct Node {

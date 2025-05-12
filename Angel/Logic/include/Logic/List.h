@@ -1,5 +1,6 @@
 #pragma once
 #include "Logic/Node.h"
+#include "Logic/Match.h"
 #include <vector>
 #include <iostream>
 
@@ -22,7 +23,7 @@ public:
     }
     bool operator==(const List& rhs) const;
     operator bool() const;
-    Node operator[](const int idx);
+    Match Matches(const List& other, const Variables& substitutions) const;
     std::size_t Hash() const;
 };
 

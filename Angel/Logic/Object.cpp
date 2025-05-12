@@ -16,6 +16,19 @@ std::ostream& operator<<(std::ostream& s, const Object& o)
     }, o);
     return s;
 }
+
+template<>
+const std::optional<Predicate> TryCast<Predicate>(const Object& o)
+{
+    auto same = std::get_if<Predicate>(&o);  // TODO really cast 
+    if (same)
+        return std::optional<Predicate>(*same);
+
+    return std::visit(overloaded_visit{
+        [](const Id& id) { return std::optional<Predicate>(Predicate(id)); },
+        [](const auto&) { return std::optional<Predicate>(); }
+    }, o);
+}
 }
 
 

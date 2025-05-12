@@ -31,7 +31,24 @@ size_t Knowledge::Know(Object&& o)
 
 Object Knowledge::Query(const Object& o, const Variables& substitutions) const
 {
-    return o;
+    if (const auto queryPredicate = TryCast<Predicate>(o))
+    {
+        for(const auto& pair: root)
+        {
+            if (const auto* predicate = std::get_if<Predicate>(&pair.first.value))
+            {
+                Variables vars;
+                auto match = predicate->Matches(*queryPredicate, vars);
+                if (match)
+                {
+                    // TODO: compute with vars
+                    return pair.second.value;
+                }
+            }
+        }
+        return Boolean(false);
+    }
+    return o;   // TODO: compute 
 }
 
 /*

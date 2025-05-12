@@ -11,6 +11,11 @@ List::List(std::initializer_list<Node> listItems) :
 {
 }
 
+List::operator bool() const
+{
+    return !empty();
+}
+
 bool List::operator==(const List& rhs) const
 {
     if (size()!=rhs.size())
@@ -18,11 +23,25 @@ bool List::operator==(const List& rhs) const
     return std::equal(begin(), end(), rhs.begin());
 }
 
-List::operator bool() const
+Match List::Matches(const List& list, const Variables& substitutions) const
 {
-    return !empty();
+    if (size()!=list.size())
+        return NoMatch; // TODO: head|tail matching or whatever could happen here 
+    auto lit = list.begin();
+    Variables vars;
+    for(auto it=begin(); it!=end(); ++it, ++lit)
+    {
+        if (it->value != lit->value)
+            return NoMatch; // TODO should match each node, variable substituations etc
+        /*
+        auto match = it->value.Match(lit->value);
+        if (!match)
+            return match;
+        vars.insert(*match);
+        */
+    }
+    return vars;
 }
-
 
 std::size_t List::Hash() const
 {
@@ -38,7 +57,7 @@ std::size_t List::Hash() const
 
 std::ostream& operator<<(std::ostream& os, const List& list)
 {
-    os << "[";
+    os << "(";
     bool first = true;
     for(const auto& node: list)
     {
@@ -48,7 +67,7 @@ std::ostream& operator<<(std::ostream& os, const List& list)
         first = false;
     }
 
-    os << "]";
+    os << ")";
     return os;
 }
 }

@@ -5,26 +5,25 @@
 
 namespace Angel::Logic::Test
 {
-/*
-TEST(TestPredicate, 0ary)
+
+TEST(TestPredicate, Valence0)
 {
 	Knowledge k;
-	EXPECT_FALSE(k.Query(predicate("cat")));
-	k.Know(predicate("cat"));
-	EXPECT_TRUE(k.Query(predicate("cat")));
-	EXPECT_FALSE(k.Query(predicate("dog")));
+	EXPECT_EQ(k.Query(Predicate("cat")), Boolean(false));
+	k.Know(Predicate("cat"));
+	EXPECT_EQ(k.Query(Predicate("cat")), Boolean(true));
+	EXPECT_EQ(k.Query(Predicate("dog")), Boolean(false));
 }
 
-TEST(TestPredicate, 1ary)
+TEST(TestPredicate, Valence1)
 {
 	Knowledge k;
-	EXPECT_FALSE(k.Query(predicate("cat", Sequence(id("ginny")))));
-	k.Know(predicate("cat", Sequence(id("ginny"))));
-	EXPECT_TRUE(k.Query(predicate("cat", Sequence(id("ginny")))));
-	EXPECT_FALSE(k.Query(predicate("cat", Sequence(id("woofer")))));
-	EXPECT_FALSE(k.Query(predicate("dog", Sequence(id("ginny")))));
+	EXPECT_EQ(k.Query(Predicate("cat", List{Id("ginny")})), Boolean(false));
+	k.Know(Predicate("cat", List{Id("ginny")}));
+	EXPECT_EQ(k.Query(Predicate("cat", List{Id("ginny")})), Boolean(true));
+	EXPECT_EQ(k.Query(Predicate("cat", List{Id("woofer")})), Boolean(false));
+	EXPECT_EQ(k.Query(Predicate("dog", List{Id("ginny")})), Boolean(false));
 }
-*/
 
 }
 
