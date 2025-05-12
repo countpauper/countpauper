@@ -16,7 +16,7 @@ TEST(TestList, Construction)
 	List single{Id("ginny")};
 	EXPECT_TRUE(single);
 	EXPECT_EQ(single.size(), 1);
-    EXPECT_EQ(single.front().value, Id("ginny"));
+    EXPECT_EQ(single.front(), Id("ginny"));
 
 	List cats{Id("ginny"), Id("max")};
 	EXPECT_EQ(cats.size(), 2);

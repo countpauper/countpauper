@@ -1,18 +1,18 @@
 #pragma once
 
 #include "Logic/Element.h"
-#include "Logic/Node.h"
 #include <map>
 
 namespace Angel::Logic
 {
 
-class Node;
-class Set : public std::map<Node, Node>
+class Object;
+
+class Set : public std::map<Object, Object>
 {
 public:
 	Set() = default;
-	Set(std::initializer_list<Node> setItems);
+	Set(std::initializer_list<Object> setItems);
 	template<typename T> 
 	Set(std::initializer_list<T> setItems)
 	{
@@ -21,7 +21,7 @@ public:
 			emplace(std::make_pair(std::move(item), Boolean(true)));
 		}
 	}
-	const Node* Find(const Node& o) const;
+	const Object* Find(const Object& o) const;
 	operator bool() const;
 	std::size_t Hash() const;
 	bool operator==(const Set& rhs) const;

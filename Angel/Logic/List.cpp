@@ -6,8 +6,8 @@
 namespace Angel::Logic
 {
     
-List::List(std::initializer_list<Node> listItems) :
-    std::vector<Node>(listItems)
+List::List(std::initializer_list<Object> listItems) :
+    std::vector<Object>(listItems)
 {
 }
 
@@ -31,7 +31,7 @@ Match List::Matches(const List& list, const Variables& substitutions) const
     Variables vars;
     for(auto it=begin(); it!=end(); ++it, ++lit)
     {
-        if (it->value != lit->value)
+        if (*it != *lit)
             return NoMatch; // TODO should match each node, variable substituations etc
         /*
         auto match = it->value.Match(lit->value);
@@ -46,7 +46,7 @@ Match List::Matches(const List& list, const Variables& substitutions) const
 std::size_t List::Hash() const
 {
     std::size_t result = typeid(decltype(*this)).hash_code();
-    std::hash<Node> hasher;
+    std::hash<Object> hasher;
     for(const auto& n: *this)
     {
         result ^= hasher(n);
@@ -59,11 +59,11 @@ std::ostream& operator<<(std::ostream& os, const List& list)
 {
     os << "(";
     bool first = true;
-    for(const auto& node: list)
+    for(const auto& obj: list)
     {
         if (!first)
             os << ",";
-        os << node.value;
+        os << obj;
         first = false;
     }
 

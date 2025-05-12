@@ -6,7 +6,7 @@
 namespace Angel::Logic
 {
 
-Set::Set(std::initializer_list<Node> setItems)
+Set::Set(std::initializer_list<Object> setItems)
 {
     for(const auto& item: setItems)
     {
@@ -14,11 +14,12 @@ Set::Set(std::initializer_list<Node> setItems)
     }
 }
 
-const Node* Set::Find(const Node& o) const
+// TODO: this is weird now
+const Object* Set::Find(const Object& o) const
 {
     for(const auto &pair : *this)
     {
-        if (pair.first.value == o.value)
+        if (pair.first == o)
             return &pair.second;
     }
     return nullptr;
@@ -39,7 +40,7 @@ bool Set::operator==(const Set& rhs) const
 std::size_t Set::Hash() const
 {
     std::size_t result = typeid(decltype(*this)).hash_code();
-    std::hash<Node> hasher;
+    std::hash<Object> hasher;
     for(const auto& pair: *this)
     {
         result ^= hasher(pair.first) ^ hasher(pair.second);
@@ -55,7 +56,7 @@ std::ostream& operator<<(std::ostream& os, const Set& set)
     {
         if (!first)
             os << ",";
-        os << node.first.value << ":" << node.second.value;
+        os << node.first << ":" << node.second;
         first = false;
     }
 

@@ -8,9 +8,15 @@
 namespace Angel::Logic
 {
 
-Object::Object(const Node& n) :
-    Object(n.value)
+Object::Object(const Object& n) :
+    VariantObject(n)
 {
+}
+
+bool Object::operator<(const Object&o) const
+{
+    std::hash<Object> hasher; 
+    return hasher(*this) < hasher(o);
 }
 
 std::ostream& operator<<(std::ostream& s, const Object& o)
@@ -39,12 +45,6 @@ const std::optional<Predicate> Object::TryCast<Predicate>() const
 
 namespace std
 {
-
-size_t hash<Angel::Logic::Node>::operator()(const Angel::Logic::Node& n) const
-{
-    std::hash<Angel::Logic::Object> hasher;
-    return hasher(n.value);
-}
 
 size_t hash<Angel::Logic::Object>::operator()(const Angel::Logic::Object& o) const
 {

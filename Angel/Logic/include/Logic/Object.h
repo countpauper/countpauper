@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Logic/Node.h"
 #include "Logic/Element.h"
 #include "Logic/Predicate.h"
 #include "Logic/Set.h"
@@ -26,7 +25,7 @@ public:
         VariantObject(v)
     {
     }
-    Object(const Node& n);
+    Object(const Object& n);
 
 
     template<typename T>
@@ -69,25 +68,21 @@ public:
             [](const auto&) { return false; }   
             },*this);
     }
+
+    bool operator<(const Object&o) const;
 };
 
 template<>
 const std::optional<Predicate> Object::TryCast<Predicate>() const;
-
-struct Node {
-    Object value;
-    bool operator<(const Node&o) const;
-    bool operator==(const Node& o) const;
-};
 
 std::ostream& operator<<(std::ostream& s, const Object& o);
 }
 
 namespace std
 {
-    template <>
+	template <>
 	struct hash<Angel::Logic::Object>
 	{
-		size_t operator()(const Angel::Logic::Object& o) const;
+		size_t operator()(const Angel::Logic::Object& n) const;
 	};
 }

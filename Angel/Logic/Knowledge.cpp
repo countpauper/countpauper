@@ -15,7 +15,7 @@ size_t Knowledge::Know(Object&& o)
 {
     if (auto* predicate = std::get_if<Predicate>(&o))
     {
-        auto insert = root.emplace(std::make_pair(Node(std::move(o)), Node(Boolean(true))));
+        auto insert = root.emplace(std::make_pair(std::move(o), Object(Boolean(true))));
         if (insert.second) {
             return 1;
         } else {
@@ -35,14 +35,14 @@ Object Knowledge::Query(const Object& o, const Variables& substitutions) const
     {
         for(const auto& pair: root)
         {
-            if (const auto* predicate = std::get_if<Predicate>(&pair.first.value))
+            if (const auto* predicate = std::get_if<Predicate>(&pair.first))
             {
                 Variables vars;
                 auto match = predicate->Matches(*queryPredicate, vars);
                 if (match)
                 {
                     // TODO: compute with vars
-                    return pair.second.value;
+                    return pair.second;
                 }
             }
         }
@@ -53,7 +53,7 @@ Object Knowledge::Query(const Object& o, const Variables& substitutions) const
 
 bool Knowledge::Knows(const Object& o) const
 {
-    return root.Find(Node{o}) != nullptr;
+    return root.Find(o) != nullptr;
 
 }
 

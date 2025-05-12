@@ -1,5 +1,4 @@
 #pragma once
-#include "Logic/Node.h"
 #include "Logic/Match.h"
 #include <vector>
 #include <iostream>
@@ -7,12 +6,14 @@
 namespace Angel::Logic
 {
 
+class Object;
+
 // A list is an ordered non-unique collection of objects (wrapped in nodes)
-class List : public std::vector<Node>
+class List : public std::vector<Object>
 {
 public:
     List() = default;
-	List(std::initializer_list<Node> setItems);
+	List(std::initializer_list<Object> setItems);
     template<typename T> 
     explicit List(std::initializer_list<T> items)
     {

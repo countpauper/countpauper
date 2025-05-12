@@ -1,15 +1,6 @@
 #pragma once
 
-#include "Logic/Node.h"
-#include "Logic/Element.h"
-#include "Logic/Predicate.h"
-#include "Logic/Set.h"
-#include "Logic/List.h"
-#include "Logic/CastException.h"
 #include <variant>
-#include <vector>
-#include <map>
-#include <type_traits>
 
 namespace Angel::Logic
 {

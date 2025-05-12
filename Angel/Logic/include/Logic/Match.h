@@ -1,6 +1,5 @@
 #pragma once 
 
-#include "Logic/Node.h"
 #include <map>
 #include <optional>
 #include <string>
@@ -8,7 +7,9 @@
 namespace Angel::Logic 
 {
     
-using Variables = std::map<std::string, Node>;
+class Object;
+
+using Variables = std::map<std::string, Object>;
 
 using Match = std::optional<Variables>;
 static const Match IsMatch=Match(Variables());
