@@ -2,22 +2,11 @@
 #include "Logic/Predicate.h"
 #include "Logic/Boolean.h"
 #include "Logic/Knowledge.h"
+#include "Logic/Object.h"
 
 namespace Angel::Logic
 {
-/*
-Predicate::Predicate(const Predicate& other) :
-    Predicate(other.id, Sequence(other.arguments))
-{
 
-}
-
-Predicate::Predicate(Predicate&& other) :
-    id(other.id),
-    arguments(std::move(other.arguments))
-{
-}
-*/
 
 Predicate::Predicate(const Id& id, List&& arguments) 
 	: id(id)
@@ -27,6 +16,11 @@ Predicate::Predicate(const Id& id, List&& arguments)
 
 Predicate::Predicate(const std::string& tag, List&& arguments) 
 	: Predicate(Id(tag), std::move(arguments))
+{
+}
+
+Predicate::Predicate(const Object& o) :
+	Predicate(o.Cast<Predicate>())
 {
 }
 

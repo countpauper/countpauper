@@ -6,65 +6,78 @@
 #include "Logic/Set.h"
 #include "Logic/List.h"
 #include "Logic/CastException.h"
+#include "Logic/VariantUtils.h"
 #include <variant>
 #include <vector>
 #include <map>
 #include <type_traits>
 
-
 namespace Angel::Logic
 {
 
-using Object = std::variant<Boolean,  Integer, Id, Variable, Predicate, List, Set>; 
+using VariantObject = std::variant<Boolean,  Integer, Id, Variable, Predicate, List, Set>; 
 
-template<class... Ts> struct overloaded_visit : Ts... { using Ts::operator()...; };
-
-template<typename T> 
-requires(!std::is_same_v<Object, T>) 
-bool operator==(const Object& left, const T& right)
+class Object : public VariantObject
 {
-    return std::visit(overloaded_visit{
-        [&right](const T& lv)
+public:
+    template<typename T>
+    requires is_alternative<T, VariantObject>
+    Object(const T& v) :
+        VariantObject(v)
+    {
+    }
+    Object(const Node& n);
+
+
+    template<typename T>
+    const std::optional<T> TryCast() const
+    {
+        auto same = std::get_if<T>(this);  // TODO really cast 
+        if (same)
+            return std::optional<T>(*same);
+        else
+            return std::optional<T>();
+    }
+
+    const std::type_info& AlternativeTypeInfo() const 
+    {
+        return *std::visit([](const auto& obj)
         {
-            return lv == right;
-        }, 
-        [](const auto&) { return false; }   
-        },left);
-}
+            return &typeid(decltype(obj)); 
+        }, *this);        
+    }
 
-template<typename T>
-const std::optional<T> TryCast(const Object& o)
-{
-    auto same = std::get_if<T>(&o);  // TODO really cast 
-    if (same)
-        return std::optional<T>(*same);
-    else
-        return std::optional<T>();
-}
+    template<typename T>
+    const T Cast() const
+    {
+        auto maybe = TryCast<T>();
+        if (maybe)
+            return *maybe;
+        throw CastException(AlternativeTypeInfo(), typeid(T));
+
+    }
+
+    template<typename T> 
+    requires(!std::is_same_v<Object, T>) 
+    bool operator==(const T& rhs) const
+    {
+        return std::visit(overloaded_visit{
+            [&rhs](const T& lv)
+            {
+                return lv == rhs;
+            }, 
+            [](const auto&) { return false; }   
+            },*this);
+    }
+};
 
 template<>
-const std::optional<Predicate> TryCast<Predicate>(const Object& o);
-
-template<typename T>
-const T Cast(const Object& o)
-{
-    auto maybe = TryCast<T>(o);
-    if (maybe)
-        return *maybe;
-    else 
-    {
-        std::visit([](const auto& obj)
-        {
-            throw CastException<decltype(obj)>(typeid(T)); return T();
-        }, o);
-    }
-}
+const std::optional<Predicate> Object::TryCast<Predicate>() const;
 
 struct Node {
     Object value;
     bool operator<(const Node&o) const;
     bool operator==(const Node& o) const;
-
 };
 
 std::ostream& operator<<(std::ostream& s, const Object& o);

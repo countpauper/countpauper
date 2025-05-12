@@ -6,6 +6,7 @@
 namespace Angel::Logic
 {
 
+class Object;
 
 class Predicate
 {
@@ -13,7 +14,8 @@ public:
     Predicate() : id("") {}
     explicit Predicate(const Id& id, List&& arguments={});
     explicit Predicate(const std::string& name , List&& arguments={});
-
+    explicit Predicate(const Object& o);
+    
     operator bool() const;
     bool operator==(const Predicate& other) const;
     std::size_t Hash() const;
@@ -24,6 +26,7 @@ private:
     Id id;
 	List arguments;
 };
+
 
 std::ostream& operator<<(std::ostream& os, const Predicate& );
 

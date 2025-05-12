@@ -8,6 +8,11 @@
 namespace Angel::Logic
 {
 
+Object::Object(const Node& n) :
+    Object(n.value)
+{
+}
+
 std::ostream& operator<<(std::ostream& s, const Object& o)
 {
     std::visit([&s](const auto& obj)
@@ -18,16 +23,16 @@ std::ostream& operator<<(std::ostream& s, const Object& o)
 }
 
 template<>
-const std::optional<Predicate> TryCast<Predicate>(const Object& o)
+const std::optional<Predicate> Object::TryCast<Predicate>() const
 {
-    auto same = std::get_if<Predicate>(&o);  // TODO really cast 
+    auto same = std::get_if<Predicate>(this);  // TODO really cast 
     if (same)
         return std::optional<Predicate>(*same);
 
     return std::visit(overloaded_visit{
         [](const Id& id) { return std::optional<Predicate>(Predicate(id)); },
         [](const auto&) { return std::optional<Predicate>(); }
-    }, o);
+    }, *this);
 }
 }
 

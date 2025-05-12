@@ -31,7 +31,7 @@ size_t Knowledge::Know(Object&& o)
 
 Object Knowledge::Query(const Object& o, const Variables& substitutions) const
 {
-    if (const auto queryPredicate = TryCast<Predicate>(o))
+    if (const auto queryPredicate = o.TryCast<Predicate>())
     {
         for(const auto& pair: root)
         {
