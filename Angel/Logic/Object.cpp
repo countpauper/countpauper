@@ -15,24 +15,22 @@ Object::Object(const Object& o) :
 {
 }
 
-Element Object::Compute(const class Knowledge& knowledge, const Variables& vars) const
+Object Object::Compute(const class Knowledge& knowledge, const Variables& vars) const
 {
     return std::visit(overloaded_visit{
         [&knowledge, &vars](const Id& id) { 
             return id ? Predicate(id).Compute(knowledge, vars) : Boolean(false);
-        },   // TODO id compute implement like this
-        [](const List&) -> Element {
-            assert(false && "TODO: can't compute a container to an element. Take size? ");
-            return Boolean(false);
+        },   
+        [](const List& list) -> Object {
+            return list;   // TODO: compute and substitute each item
         }, 
-        [](const Set&) -> Element {
-            assert(false && "TODO: can't compute a container to an element. Take size? ");
-            return Boolean(false);
+        [](const Set& set) -> Object {
+            return set;     // TODO: compute and substitute each item
         }, 
-        []<IsElement T>(const T& element) -> Element {
+        []<IsElement T>(const T& element) -> Object {
             return element; 
         },
-        [&knowledge, &vars](const auto& obj) -> Element {
+        [&knowledge, &vars](const auto& obj) -> Object {
             return obj.Compute(knowledge, vars);
         }
     }, *this);
@@ -53,6 +51,13 @@ std::ostream& operator<<(std::ostream& s, const Object& o)
     return s;
 }
 
+std::string to_string(const Object& o)
+{
+    std::stringstream ss;
+    ss << o;
+    return ss.str();
+}
+
 template<>
 const std::optional<Predicate> Object::TryCast<Predicate>() const
 {
@@ -65,6 +70,21 @@ const std::optional<Predicate> Object::TryCast<Predicate>() const
         [](const auto&) { return std::optional<Predicate>(); }
     }, *this);
 }
+
+template<>
+const std::optional<Integer> Object::TryCast<Integer>() const
+{
+    auto same = std::get_if<Integer>(this);
+    if (same)
+        return std::optional<Integer>(*same);
+
+    return std::visit(overloaded_visit{
+        [](const Boolean& b) { return std::optional<Integer>(b?1:0); },
+        [](const auto&) { return std::optional<Integer>(); }
+    }, *this);
+}
+
+
 }
 
 

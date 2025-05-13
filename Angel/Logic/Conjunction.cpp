@@ -10,14 +10,14 @@ bool Conjunction::operator==(const Conjunction& rhs) const
     return Collection::operator==(rhs);
 }
 
-// TODO: Compute should return an element
-Element Conjunction::Compute(const Knowledge& k, const Variables& substitutions) const
+Object Conjunction::Compute(const Knowledge& k, const Variables& substitutions) const
 {
     for(const auto& item: *this)
     {
-        auto element = k.Compute(item);
-        if (!element)
-            return Boolean(false); // or just element? true & 0 == 0?
+        auto object = k.Compute(item);
+        auto isTrue = object.Cast<Boolean>();
+        if (!isTrue)
+            return isTrue; // or just object? true & 0 == 0?
     }
     return Boolean(true);
 }

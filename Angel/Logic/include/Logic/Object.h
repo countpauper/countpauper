@@ -5,8 +5,9 @@
 #include "Logic/Set.h"
 #include "Logic/List.h"
 #include "Logic/CastException.h"
-#include "Logic/VariantUtils.h"
 #include "Logic/Conjunction.h"
+#include "Logic/Summation.h"
+#include "Logic/VariantUtils.h"
 #include <variant>
 #include <vector>
 #include <map>
@@ -15,7 +16,9 @@
 namespace Angel::Logic
 {
 
-using ObjectVariant = std::variant<Boolean,  Integer, Id, Variable, Predicate, List, Set, Conjunction>; 
+using ObjectVariant = std::variant<Boolean,  Integer, Id, Variable, Predicate, 
+    List, Set, 
+    Conjunction, Summation>; 
 
 class Object : public ObjectVariant
 {
@@ -55,7 +58,7 @@ public:
         throw CastException(AlternativeTypeInfo(), typeid(T));
 
     }
-    Element Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
+    Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
 
     template<typename T> 
     requires(!std::is_same_v<Object, T>) 
@@ -73,10 +76,12 @@ public:
     bool operator<(const Object&o) const;
 };
 
-template<>
-const std::optional<Predicate> Object::TryCast<Predicate>() const;
+template<> const std::optional<Predicate> Object::TryCast<>() const;
+template<> const std::optional<Integer> Object::TryCast<>() const;
 
 std::ostream& operator<<(std::ostream& s, const Object& o);
+
+std::string to_string(const Object& o);
 }
 
 namespace std

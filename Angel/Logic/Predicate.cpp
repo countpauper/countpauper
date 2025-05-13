@@ -36,12 +36,10 @@ bool Predicate::operator==(const Predicate& rhs) const
 	return id == rhs.id && arguments == rhs.arguments;
 }
 
-
 std::size_t Predicate::Hash() const
 {
     return id.Hash() ^ arguments.Hash();
 }
-
 
 Match Predicate::Matches(const Predicate& predicate) const
 {
@@ -50,14 +48,16 @@ Match Predicate::Matches(const Predicate& predicate) const
 	return arguments.Matches(predicate.arguments);
 }
 
-Element Predicate::Compute(const Knowledge& knowledge, const Variables& substitutions) const
+Object Predicate::Compute(const Knowledge& knowledge, const Variables& substitutions) const
 {
-	// TODO this should return a disjunction or all expressions and then compute that somehow but 
-	// the first truish element is the result 
-	if (knowledge.Matches(*this))
-		return Boolean(true);
-	else
-		return Boolean(false); 
+	auto matches = knowledge.Matches(*this);
+	for(const auto& association: matches)
+	{
+		if (association.second == Boolean(false))
+			continue;
+		return association.second;
+	}
+	return Boolean(false);
 }
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)

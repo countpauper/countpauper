@@ -177,8 +177,8 @@ $X(ginny): X=cat
 ```
 
 ## Namespace 
-A namespace is a clause, whose predicat is the name and the argument is a *set* of predicates, 
-so their order does not matter but they are unique. 
+A namespace is a clause, whose predicate is the name and the argument is a *set* of clauses, 
+so their order does not matter but the predicates in the namespace are unique. 
 By default each axiom is added to the root namespace, but to separate domains of knowledge,
 while still allowing them to refer to each other, a namespace can be wrapped around this set 
 
@@ -205,6 +205,31 @@ fuzzy.cheese? false
 
 ```
 
+## Namespace arguments 
+The predicate of a namespace can also have arguments. If these are variables, then when matching they are 
+substituted over the whole namespace. Somehow this should then reduce the valence when matching. 
+
+```
+genre($Music): {
+   loves($f, $Music): fan($f, $Music)
+}
+genre(rock).fan(max)
+genre(rock).loves(john)?
+> true 
+```
+
+If the namespace arguments are not variable, the matching can go the other way around. There 
+doesn't seem to be much of a use case, besides defining a set of axioms that share an argument 
+with a little less duplication. It's a bit like a C++ template.
+
+```
+genre(rock): {
+   fan(lizzy)
+}
+
+> genre($X).fan(lizzy)?
+X@[rock]
+```
 
 ## Integers 
 integers match if they are evaluate to equal
@@ -529,11 +554,14 @@ cat(ginny)?
 > true
 ```
 
-## id axiomas are like enums 
+## id arguments are like enums, id axioms are valence 0 predicates 
 ```
 cat: ginny 
 cat ? 
 > ginny 
+
+cat(ginny)
+
 ```
 but it would be hard to not try to match ginny and fail and decide she's not a cat.
 

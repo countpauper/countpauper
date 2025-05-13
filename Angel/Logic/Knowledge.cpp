@@ -22,26 +22,29 @@ size_t Knowledge::Know(Predicate&& key, Object&& expression)
     }
 }
 
-Element Knowledge::Compute(const Object& expression) const
+Object Knowledge::Compute(const Object& expression) const
 {
     Variables vars;
     return expression.Compute(*this, vars);
 }
 
-Match Knowledge::Matches(const Predicate& query) const
+Set Knowledge::Matches(const Predicate& query) const
 {
+    Set result;
     for(const auto& association: root)
     {
         if (const auto* predicate = std::get_if<Predicate>(&association.first))
         {
             auto match = predicate->Matches(query);
-            if ((match) && (association.second.Compute(*this, *match)))
-                return match;                
+            if (match) 
+            {
+                result.emplace(association.first, association.second.Compute(*this, *match));
+            }
         }
         else 
             assert(false && "Only predicate keys are allowed in knowledge");
     } 
-    return NoMatch;
+    return result;
 }
 
 

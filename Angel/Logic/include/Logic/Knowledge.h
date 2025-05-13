@@ -16,8 +16,8 @@ class Knowledge
 public:
 	Knowledge();
     size_t Know(Predicate&& key, Object&& value=Boolean(true));
-	Match Matches(const Predicate& predicate) const;
-	Element Compute(const Object& o) const;
+	Set Matches(const Predicate& predicate) const;
+	Object Compute(const Object& o) const;
 	bool Knows(const Object& e) const;
 	size_t size() const;
 	bool empty() const;

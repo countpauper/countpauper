@@ -6,7 +6,7 @@ namespace Angel::Logic
 
 // A variable is a sub category of Expression that can be assigned a value 
 // on the first match as a substitution and subsequently provide that value 
-// when matched a second time 
+// when matched again
 class Variable 
 {
 public:
