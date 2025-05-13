@@ -13,7 +13,7 @@ class Clause
 {
 public:
 	explicit Clause(Predicate&& predicate, Expression&& condition = boolean(true));
-    operator bool() const override;
+    explicit operator bool() const override;
 	bool operator==(const Clause& other) const;
     std::size_t Hash() const;
     Match Matching(const Expression& other, const Variables& substitutions) const;

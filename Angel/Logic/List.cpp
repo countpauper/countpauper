@@ -17,6 +17,17 @@ bool List::operator==(const List& rhs) const
     return Collection::operator==(rhs);
 }
 
+Object List::Compute(const Knowledge& knowledge, const Variables& substitutions) const
+{
+    List result;
+    std::transform(begin(), end(), std::back_inserter(result), 
+        [&knowledge, &substitutions](const Object& o)
+        {
+            return o.Compute(knowledge, substitutions);
+        });
+    return result;
+}
+
 Match List::Matches(const List& list) const
 {
     if (size()!=list.size())
@@ -46,6 +57,7 @@ std::size_t List::Hash() const
 std::ostream& operator<<(std::ostream& os, const List& list)
 {
     bool first = true;
+    os << "[";
     for(const auto& obj: list)
     {
         if (!first)
@@ -53,6 +65,7 @@ std::ostream& operator<<(std::ostream& os, const List& list)
         os << obj;
         first = false;
     }
+    os << "]";
     return os;
 }
 }

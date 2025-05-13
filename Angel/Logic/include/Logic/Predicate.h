@@ -17,7 +17,7 @@ public:
     explicit Predicate(const std::string& name , List&& arguments={});
     explicit Predicate(const Object& o);
     
-    operator bool() const;
+    explicit operator bool() const;
     bool operator==(const Predicate& other) const;
     std::size_t Hash() const;
     Match Matches(const Predicate& other) const;

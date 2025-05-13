@@ -5,7 +5,7 @@
 namespace Angel::Logic::Test
 {
 
-TEST(TestElement, KnowSomething)
+TEST(Knowledge, KnowSomething)
 {
     Knowledge k;
     EXPECT_EQ(k.Know(Predicate("ginny")), 1);
@@ -13,7 +13,7 @@ TEST(TestElement, KnowSomething)
     EXPECT_TRUE(k.Knows(Predicate("ginny")));
 }
 
-TEST(TestElement, AlreadyKnows)
+TEST(Knowledge, AlreadyKnows)
 {
     Knowledge k;
     EXPECT_EQ(k.Know(Predicate("ginny")), 1);

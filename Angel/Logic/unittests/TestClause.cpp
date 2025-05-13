@@ -6,7 +6,7 @@
 
 namespace Angel::Logic::Test
 {
-	TEST(TestClause, Trivial)
+	TEST(Clause, Trivial)
 	{
 		Knowledge k;
 		k.Know(Predicate("cat"));
@@ -14,7 +14,7 @@ namespace Angel::Logic::Test
 		EXPECT_EQ(Predicate("dog").Compute(k), Boolean(false));
 	}
 
-	TEST(TestClause, Condition)
+	TEST(Clause, Condition)
 	{
 		Knowledge k;
 		k.Know(Predicate("cat"), Predicate("ginny"));
@@ -23,7 +23,7 @@ namespace Angel::Logic::Test
 		EXPECT_EQ(Predicate("cat").Compute(k), Boolean(true));
 	}
 
-	TEST(TestClause, Conjunction)
+	TEST(Clause, Conjunction)
 	{
 		Knowledge k;
 		k.Know(Predicate("cat"), Conjunction{Predicate("fuzzy"), Predicate("noisy")});
@@ -36,7 +36,7 @@ namespace Angel::Logic::Test
 		EXPECT_EQ(k.Compute(Predicate("hamster")), Boolean(false));
 	}
 
-	TEST(TestClause, PredicateValence1)
+	TEST(Clause, PredicateValence1)
 	{
 		Knowledge k;
 		k.Know(Predicate("cat", List{Id("ginny")}),
@@ -50,7 +50,7 @@ namespace Angel::Logic::Test
 		EXPECT_EQ(Predicate("cat", List{Id("woofer")}).Compute(k), Boolean(false));
 	}
 
-	TEST(TestClause, PredicateValence2)
+	TEST(Clause, PredicateValence2)
 	{
 		Knowledge k;
 		k.Know(Predicate("cats", List{Id("ginny"), Id("max")}),

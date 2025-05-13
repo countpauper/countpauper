@@ -10,7 +10,7 @@ class Id
 {
 public:
 	explicit Id(const std::string_view name);
-    operator bool() const;
+    explicit operator bool() const;
 	bool operator==(const Id& id) const;
     std::size_t Hash() const;
 private:

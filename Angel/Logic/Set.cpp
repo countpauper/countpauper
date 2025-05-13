@@ -10,7 +10,7 @@ Set::Set(std::initializer_list<Object> setItems)
 {
     for(const auto& item: setItems)
     {
-        emplace(std::make_pair(std::move(item),Boolean(false)));
+        emplace(std::make_pair(std::move(item),Boolean(true)));
     }
 }
 
@@ -35,6 +35,26 @@ bool Set::operator==(const Set& rhs) const
     return size() == rhs.size() &&
         std::equal(begin(), end(),
                       rhs.begin());
+}
+
+
+Object Set::Compute(const Knowledge& knowledge, const Variables& substitutions) const
+{
+    Set result;
+    for(const std::pair<Object,Object> item: *this)
+    {
+        // NB right side computed get lost here if the first side is now duplicated 
+        // eg {X+1: cheese, X*2:pickles} with X=1 becomes {2:cheese} (or pickles perhaps)
+        // this might be what is desired or maybe some expression makes more sense 
+        // {2: cheese | pickles}. 
+        // For cases where these are sets, which are true 2: true|true is still 2:true 
+        // for cases where these are clauses eg legs(X+1): max legs(X*2): ginny, 
+        // this disjunction also seems to make sense legs(2): max | ginny, if we are 
+        // hypothesizing that both have 2 legs 
+        result.emplace(item.first.Compute(knowledge, substitutions),
+            item.second.Compute(knowledge,substitutions));
+    }
+    return result;
 }
 
 std::size_t Set::Hash() const

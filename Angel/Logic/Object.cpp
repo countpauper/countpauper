@@ -18,15 +18,6 @@ Object::Object(const Object& o) :
 Object Object::Compute(const class Knowledge& knowledge, const Variables& vars) const
 {
     return std::visit(overloaded_visit{
-        [&knowledge, &vars](const Id& id) { 
-            return id ? Predicate(id).Compute(knowledge, vars) : Boolean(false);
-        },   
-        [](const List& list) -> Object {
-            return list;   // TODO: compute and substitute each item
-        }, 
-        [](const Set& set) -> Object {
-            return set;     // TODO: compute and substitute each item
-        }, 
         []<IsElement T>(const T& element) -> Object {
             return element; 
         },

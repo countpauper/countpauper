@@ -108,8 +108,8 @@ immediately discarded and not instantiated in subsequent statements.
 
 ## Clauses with variable arguments 
 These define a generic case. The variables have the scope of that clause. When matching the query, 
-the equivalence is added to the hypothesis and while matching the other predicates in that clause 
-it will be used to instantiate variable predicates.
+the instantiation is added to the hypothesis and while matching the other predicates in that clause 
+it will be used to substitute variable predicates.
 ```
 cat($X): hairy($X)
 hairy(ginny)
@@ -165,6 +165,31 @@ TODO: is there a point if the result is not a boolean? what if it's a falsey val
 
 If the query has multiple variables, there may be multiple combinations of values for which the query is true. 
 
+## Multiple hypotheses 
+Multiple predicates may match, which means multiple hypothes are possible. The hypotheses are basically a disjunction. 
+From the one original substitution, additional variables may be added to that hypotheses or even disjunctions. 
+
+Simple disjunctions can be simplified to set membership
+```
+cat(ginny)
+cat(gizmo)
+cat($X)?
+> X @ [ginny, gizmo]
+```
+
+## Occam's razor and hypothesis priority 
+When multiple matches are possible, the match(es) with the least amount of substitutions are used. 
+This is also used to implement recursion and logical induction. 
+```
+fibonachi(1)
+fibonachi(X) : Y+Z = X &  fibonachi(Y) & fibonachi(Z)
+> fibonachi(1)
+true
+```
+In this case the first clause matches and the second one does not. This prevents infinite recursion, trying to 
+match endless X values.
+How the inference engine generates valid Y and Z (integers) in this case to make Y+Z=X true is not yet determined.
+
 ## Variable predicates
 
 Seemingly have no purpose, perhaps with predicates. Mostly they seem harmful 
@@ -175,6 +200,8 @@ TODO: warning? or ignore
 $X 
 $X(ginny): X=cat 
 ```
+
+## Variable instantiation and priority of matching 
 
 ## Namespace 
 A namespace is a clause, whose predicate is the name and the argument is a *set* of clauses, 
@@ -554,16 +581,15 @@ cat(ginny)?
 > true
 ```
 
-## id arguments are like enums, id axioms are valence 0 predicates 
+## id arguments are like enums
 ```
-cat: ginny 
-cat ? 
-> ginny 
-
-cat(ginny)
-
+cat(ginny) 
+cat(X) ? 
+> X=ginny 
 ```
-but it would be hard to not try to match ginny and fail and decide she's not a cat.
+
+These ids are not predicated without axioms, because they don't have to be computed and matched to be true.
+They are elements.
 
 
 ## Sequence/range matching 

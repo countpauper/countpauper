@@ -8,7 +8,7 @@
 namespace Angel::Logic::Test
 {
 
-TEST(TestSet, Construction)
+TEST(Set, Construction)
 {
 	Set empty;
 	EXPECT_EQ(empty.size(), 0);
@@ -28,14 +28,14 @@ TEST(TestSet, Construction)
 
 }
 
-TEST(TestSet, List)
+TEST(Set, List)
 {
 	List list{ Set({Id("cat")}), Set({Id("dog")}) };
 	EXPECT_EQ(list.size(), 2);
 	EXPECT_NE(list, List({Id("cat"), Id("dog")}));
 }
 
-TEST(TestSet, Compare)
+TEST(Set, Compare)
 {
 	Set a{Id("ginny")};
 	Set b{Id("ginny")};
@@ -51,5 +51,11 @@ TEST(TestSet, Compare)
 	EXPECT_NE(b, ba);
 }
 
+
+TEST(Set, Compute)
+{
+	Knowledge k;
+ 	EXPECT_EQ(k.Compute(Set{Summation{Integer(2), Integer(3)}, Integer(5)}), (Set{Integer(5)}));
+}
 
 }

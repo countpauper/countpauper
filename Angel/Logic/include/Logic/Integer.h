@@ -12,7 +12,7 @@ class Integer
 {
 public:
 	explicit Integer(long value);
-    operator bool() const;
+    explicit operator bool() const;
 	bool operator==(const Integer& value) const;
     std::size_t Hash() const;
     long operator*() const;

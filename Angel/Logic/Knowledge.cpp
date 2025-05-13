@@ -31,13 +31,19 @@ Object Knowledge::Compute(const Object& expression) const
 Set Knowledge::Matches(const Predicate& query) const
 {
     Set result;
+    std::size_t bestMatch = std::numeric_limits<std::size_t>::max();
     for(const auto& association: root)
     {
         if (const auto* predicate = std::get_if<Predicate>(&association.first))
         {
             auto match = predicate->Matches(query);
-            if (match) 
-            {
+            if (match)
+            {   // Matches with least substitutions take precedence. 
+                // See the Occam's razor section in language design
+                if (match->size()>bestMatch)
+                    continue;
+                if (match->size()<bestMatch)
+                    result.clear();
                 result.emplace(association.first, association.second.Compute(*this, *match));
             }
         }

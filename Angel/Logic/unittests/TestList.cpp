@@ -7,7 +7,7 @@
 namespace Angel::Logic::Test
 {
 
-TEST(TestList, Construction)
+TEST(List, Construction)
 {
 	List empty;
 	EXPECT_EQ(empty.size(), 0);
@@ -26,9 +26,8 @@ TEST(TestList, Construction)
 }
 
 
-TEST(TestList, Compare)
+TEST(List, Compare)
 {
-
 	List a{Id("ginny")};
 	List b{Id("ginny")};
 	EXPECT_EQ(a, b);
@@ -36,6 +35,19 @@ TEST(TestList, Compare)
 	List ab{Id("ginny"), Id("max")};
 	List ba{Id("max"), Id("ginny")};
 	EXPECT_NE(ab, ba);
+}
+
+
+TEST(List, to_string)
+{
+	EXPECT_EQ(to_string(List{Id("ginny")}), "[ginny]");
+	EXPECT_EQ(to_string(List{Id("ginny"), Id("gizmo")}), "[ginny,gizmo]");
+}
+
+TEST(List, Compute)
+{
+	Knowledge k;
+	EXPECT_EQ(k.Compute(List{Summation{Integer(2), Integer(3)}}), (List{Integer(5)}));
 }
 
 }

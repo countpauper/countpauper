@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Logic/Element.h"
+#include "Logic/Match.h"
 #include <map>
 
 namespace Angel::Logic
@@ -22,7 +23,8 @@ public:
 		}
 	}
 	const Object* Find(const Object& o) const;
-	operator bool() const;
+    Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
+	explicit operator bool() const;
 	std::size_t Hash() const;
 	bool operator==(const Set& rhs) const;
 };

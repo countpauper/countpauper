@@ -50,7 +50,8 @@ Match Predicate::Matches(const Predicate& predicate) const
 
 Object Predicate::Compute(const Knowledge& knowledge, const Variables& substitutions) const
 {
-	auto matches = knowledge.Matches(*this);
+	Predicate computed(id, std::get<List>(arguments.Compute(knowledge, substitutions)));
+	auto matches = knowledge.Matches(computed);
 	for(const auto& association: matches)
 	{
 		if (association.second == Boolean(false))
@@ -64,7 +65,16 @@ std::ostream& operator<<(std::ostream& os, const Predicate& predicate)
 {
 	if (predicate.arguments)
 	{
-		os << predicate.id << "(" << predicate.arguments << ")";
+		os << predicate.id << "(";
+		bool first = true;
+		for(const auto& arg: predicate.arguments)
+		{
+			if (!first)
+				os << ",";
+			os << arg;
+			first = false;
+		}
+		os << ")";
 	}
 	else
 	{
@@ -72,42 +82,5 @@ std::ostream& operator<<(std::ostream& os, const Predicate& predicate)
 	}
     return os;
 }
-
-/*
-
-Object Predicate::Copy() const
-{
-    return Create<Predicate>(*this);
-}
-
-
-const Object* Predicate::Condition() const
-{
-	return nullptr;
-}
-
-Object Predicate::Infer(const Knowledge& known, const Variables& substitutions) const
-{
-    auto match = known.Match(*this);
-    return match.Infer(known, substitutions);
-}
-
-Object Predicate::Cast(const std::type_info& t, const Knowledge& k) const
-{
-    if (typeid(t) == typeid(Boolean))
-        return Infer(k, Variables());
-    throw CastException<Predicate>(t);
-}
-
-Object predicate(const Id& id, Sequence&& arguments)
-{
-	return Create<Predicate>(id, std::move(arguments));
-}
-
-Object predicate(const std::string& name, Sequence&& arguments)
-{
-	return Create<Predicate>(Id(name), std::move(arguments));
-}
-*/
 
 }

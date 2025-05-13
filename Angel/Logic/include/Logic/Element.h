@@ -23,7 +23,7 @@ public:
         ElementVariant(v)
     {
     }
-    operator bool() const;
+    explicit operator bool() const;
 };
 
 }

@@ -6,7 +6,7 @@
 namespace Angel::Logic::Test
 {
 
-TEST(TestVariable, Expression)
+TEST(Variable, Expression)
 {
     EXPECT_FALSE(Variable(""));
     EXPECT_TRUE(Variable("Test"));
@@ -14,7 +14,7 @@ TEST(TestVariable, Expression)
 	EXPECT_NE(Variable("Test"), Variable("Icle"));
 }
 
-TEST(TestVariable, Query)
+TEST(Variable, Query)
 {
 	//Knowledge k;
 	// TODO: this should return true and an (empty) set of all knowledge?
@@ -24,7 +24,7 @@ TEST(TestVariable, Query)
 }
 
 /*
-TEST(TestVariable, Matching)
+TEST(Variable, Matching)
 {
 	EXPECT_TRUE(Variable("X").Matching(Integer(1), {}));
     Variables substituted = {{"Y",integer(2)}};

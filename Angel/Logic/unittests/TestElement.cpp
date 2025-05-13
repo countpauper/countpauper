@@ -6,7 +6,7 @@
 namespace Angel::Logic::Test
 {
 
-TEST(TestElement, Boolean)
+TEST(Element, Boolean)
 {
 	EXPECT_EQ(Logic::Boolean(false), Boolean(false));
 	EXPECT_EQ(Logic::Boolean(true), Boolean(true));
@@ -16,7 +16,7 @@ TEST(TestElement, Boolean)
 	EXPECT_FALSE(Boolean(false));
 }
 
-TEST(TestElement, ComputeBooleanReturnsConstant)
+TEST(Element, ComputeBooleanReturnsConstant)
 {
 	Object b = Boolean(true);
 	EXPECT_EQ(b, Boolean(true));
@@ -25,7 +25,7 @@ TEST(TestElement, ComputeBooleanReturnsConstant)
 	EXPECT_EQ(k.Compute(Boolean(false)), Boolean(false));
 }
 
-TEST(TestElement, Integer)
+TEST(Element, Integer)
 {
 	EXPECT_FALSE(Integer(0));
 	EXPECT_TRUE(Integer(1));
@@ -33,7 +33,7 @@ TEST(TestElement, Integer)
 	EXPECT_NE(Integer(2), Integer(-3));
 }
 
-TEST(TestElement, ComputeIntegerReturnsConstant)
+TEST(Element, ComputeIntegerReturnsConstant)
 {
 	Knowledge k;
 	EXPECT_EQ(k.Compute(Integer(1)), Integer(1));
@@ -47,11 +47,11 @@ TEST(TestElement, Id)
 	EXPECT_NE(Logic::Id("test"), Logic::Id("icle"));
 }
 
-TEST(TestElement, ComputeIdQueriesPredicate)
+TEST(Element, ComputeIdReturnsConstant)
 {
 	Knowledge k;
-	EXPECT_EQ(k.Compute(Id("test")), Boolean("false"));
-	EXPECT_EQ(k.Compute(Id("")), Boolean(false));
+	EXPECT_EQ(k.Compute(Id("test")), Id("test"));
+	EXPECT_EQ(k.Compute(Id("")), Id(""));
 }
 
 }

@@ -14,7 +14,7 @@ public:
     explicit Boolean(const char* tag) : Boolean(std::string_view(tag)) {}
 	bool operator==(const Boolean& other) const;
     bool operator*() const;
-    operator bool() const;
+    explicit operator bool() const;
     std::size_t Hash() const;
     operator std::string() const;
 private:
