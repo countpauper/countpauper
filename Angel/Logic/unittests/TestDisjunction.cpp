@@ -20,6 +20,7 @@ TEST(Disjunction, Conjunctions)
     EXPECT_EQ((Disjunction{Boolean(true)}).Infer(k), Boolean(true));
     EXPECT_EQ((Disjunction{Boolean(true), Boolean(false)}).Infer(k), Boolean(true));
     EXPECT_EQ((Disjunction{Disjunction{Boolean(true)}}).Infer(k), Boolean(true));
+    EXPECT_EQ((Disjunction{Disjunction{Boolean(false), Integer(3), Integer(2)}}).Infer(k), Integer(3));
 }
 
 TEST(Disjunction, Nest)

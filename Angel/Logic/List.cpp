@@ -1,4 +1,5 @@
 #include "Logic/List.h"
+#include "Logic/Expression.h"
 #include "Logic/Object.h"
 #include <typeinfo>
 #include <iostream>
@@ -21,16 +22,16 @@ Object List::Infer(const Knowledge& knowledge, const Variables& substitutions) c
 {
     List result;
     std::transform(begin(), end(), std::back_inserter(result), 
-        [&knowledge, &substitutions](const Object& o)
+        [&knowledge, &substitutions](const Expression& item)
         {
-            return o.Infer(knowledge, substitutions);
+            return item.Infer(knowledge, substitutions);
         });
     return result;
 }
 
-Match List::Matches(const Object& o, const Variables& variables) const
+Match List::Matches(const Expression& expression, const Variables& variables) const
 {
-    const List* list = std::get_if<List>(&o);
+    const List* list = std::get_if<List>(&expression);
     if (!list)
         return NoMatch;
 

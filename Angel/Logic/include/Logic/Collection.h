@@ -5,14 +5,15 @@
 namespace Angel::Logic
 {
 
+class Expression;
 class Object;
 
 // A collection is a base ordered container of non-unique objects (wrapped in nodes)
-class Collection : public std::vector<Object>
+class Collection : public std::vector<Expression>
 {
 public:
     Collection() = default;
-	Collection(std::initializer_list<Object> setItems);
+	Collection(std::initializer_list<Expression> setItems);
     template<typename T> 
     Collection(std::initializer_list<T> items)
     {

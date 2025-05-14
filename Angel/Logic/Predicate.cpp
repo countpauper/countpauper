@@ -2,7 +2,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Boolean.h"
 #include "Logic/Knowledge.h"
-#include "Logic/Object.h"
+#include "Logic/Expression.h"
 
 namespace Angel::Logic
 {
@@ -21,11 +21,6 @@ Predicate::Predicate(const std::string& tag, List&& arguments)
 {
 }
 
-Predicate::Predicate(const Object& o) :
-	Predicate(o.Cast<Predicate>())
-{
-}
-
 Predicate::operator bool() const
 {
     return true;
@@ -41,9 +36,9 @@ std::size_t Predicate::Hash() const
     return id.Hash() ^ arguments.Hash();
 }
 
-Match Predicate::Matches(const Object& object, const Variables& vars) const
+Match Predicate::Matches(const Expression& inferred, const Variables& vars) const
 {
-	const auto* predicate = std::get_if<Predicate>(&object);
+	const auto* predicate = std::get_if<Predicate>(&inferred);
 	if (!predicate)
 		return NoMatch;
 	
@@ -60,7 +55,7 @@ Object Predicate::Infer(const Knowledge& knowledge, const Variables& substitutio
 	{
 		if (association.second == Boolean(false))
 			continue;
-		return association.second;
+		return association.second.Infer(knowledge, substitutions);
 	}
 	return Boolean(false);
 }

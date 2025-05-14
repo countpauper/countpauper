@@ -1,5 +1,5 @@
 #include "Logic/Collection.h"
-#include "Logic/Object.h"
+#include "Logic/Expression.h"
 
 #include <typeinfo>
 #include <iostream>
@@ -7,8 +7,8 @@
 namespace Angel::Logic
 {
 
-Collection::Collection(std::initializer_list<Object> items) :
-    std::vector<Object>(items)
+Collection::Collection(std::initializer_list<Expression> items) :
+    std::vector<Expression>(items)
 {
 }
 
@@ -26,7 +26,7 @@ bool Collection::operator==(const Collection& rhs) const
 std::size_t Collection::Hash() const
 {
     std::size_t result = 0;
-    std::hash<Object> hasher;
+    std::hash<Expression> hasher;
     for(const auto& n: *this)
     {
         result ^= hasher(n);

@@ -5,6 +5,7 @@
 
 namespace Angel::Logic
 {
+class Object;
 
 // A list is an ordered non-unique collection of objects (wrapped in nodes)
 class List : public Collection
@@ -15,7 +16,7 @@ public:
     bool operator==(const List& rhs) const;
     explicit operator bool() const;
     Object Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
-    Match Matches(const Object& other, const Variables& variables) const;
+    Match Matches(const Expression& other, const Variables& variables) const;
     std::size_t Hash() const;
 };
 

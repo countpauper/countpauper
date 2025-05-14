@@ -10,7 +10,7 @@ bool Summation::operator==(const Summation& rhs) const
     return Collection::operator==(rhs);
 }
 
-Match Summation::Matches(const Object& object, const Variables& vars) const
+Match Summation::Matches(const Expression&, const Variables& vars) const
 {
     // TODO: Summation matches with mathematical simplication
     // X+1 matches 3 if X is 2 
@@ -22,12 +22,12 @@ Match Summation::Matches(const Object& object, const Variables& vars) const
 Object Summation::Infer(const Knowledge& k, const Variables& substitutions) const
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing
-    // this can, for instance, be done by accumulating an Object and making Objects implement operator+(Object) etc
+    // this can, for instance, be done by accumulating an Expression and making Objects implement operator+(Expression) etc
     long value = std::accumulate(begin(), end(), 0L,
-        [&k, &substitutions](long accumulated, const Object& item)
+        [&k, &substitutions](long accumulated, const Expression& item)
         {
-            auto object = k.Infer(item);
-            auto value = object.Cast<Integer>();
+            auto inferred = k.Infer(item);
+            auto value = inferred.Cast<Integer>();
             return accumulated += *value;
         });
     return Integer(value);

@@ -18,7 +18,7 @@ TEST(Element, Boolean)
 
 TEST(Element, ComputeBooleanReturnsConstant)
 {
-	Object b = Boolean(true);
+	Expression b = Boolean(true);
 	EXPECT_EQ(b, Boolean(true));
 	Knowledge k;
 	EXPECT_EQ(k.Infer(Boolean(true)), Boolean(true));

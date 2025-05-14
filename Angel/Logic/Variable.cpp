@@ -1,5 +1,6 @@
 #include "Logic/Variable.h"
 #include "Logic/Boolean.h"
+#include "Logic/Expression.h"
 #include "Logic/Object.h"
 #include <iostream>
 
@@ -32,74 +33,23 @@ Object Variable::Infer(const class Knowledge& k, const Variables& substitutions)
 {
     auto it = substitutions.find(name);
     if (it!=substitutions.end())
-        return it->second;
+        return it->second.Infer(k, substitutions);
     return Boolean(true);
 }
 
-Match Variable::Matches(const Object& o, const Variables& variables) const
+Match Variable::Matches(const Expression& e, const Variables& variables) const
 {
     auto it = variables.find(name);
     if (it==variables.end())
-        return Variables{{name, o}};
-    return it->second.Matches(o, variables);
+        return Variables{{name, e}};
+    return it->second.Matches(e, variables);
 }
-
-/*
-Object Variable::Copy() const
-{
-    return var(name);
-}
-
-Match Variable::Matching(const Expression& other, const Variables& substitutions) const
-{
-    auto it = substitutions.find(name);
-    if (it!=substitutions.end())
-    {
-        return it->second->Matching(other, substitutions); 
-    }
-    else 
-    {
-        return Match(Variables{{name, Object(other.Copy())}});
-    }
-}
-
-const Object* Variable::Condition() const
-{
-    return nullptr;
-}
-
-Object Variable::Infer(const Knowledge& known, const Variables& substitutions) const
-{
-    auto it = substitutions.find(name);
-    if (it!=substitutions.end())
-    {
-        return it->second.Infer(known, substitutions);
-    }
-    else 
-    {
-        return boolean(false);
-    }
-}
-
-Object Variable::Cast(const std::type_info& t, const Knowledge& k) const
-{
-    throw CastException<Variable>(t);
-}
-*/
-
 
 std::ostream& operator<<(std::ostream& os, const Variable& id)
 {
-    os << id.name.c_str();
+    os << "$" << id.name.c_str();
     return os;
 }
-
-/*
-Object var(const std::string_view name)
-{
-	return Create<Variable>(name);
-}
-*/
 
 }
 

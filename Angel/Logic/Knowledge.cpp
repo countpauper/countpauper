@@ -12,7 +12,7 @@ Knowledge::Knowledge() :
 {
 }
 
-size_t Knowledge::Know(Predicate&& key, Object&& expression)
+size_t Knowledge::Know(Predicate&& key, Expression&& expression)
 {
     auto insert = root.emplace(std::make_pair(std::move(key), std::move(expression)));
     if (insert.second) {
@@ -22,7 +22,7 @@ size_t Knowledge::Know(Predicate&& key, Object&& expression)
     }
 }
 
-Object Knowledge::Infer(const Object& expression) const
+Object Knowledge::Infer(const Expression& expression) const
 {
     Variables vars;
     return expression.Infer(*this, vars);
@@ -54,9 +54,9 @@ Set Knowledge::Matches(const Predicate& query) const
 }
 
 
-bool Knowledge::Knows(const Object& o) const
+bool Knowledge::Knows(const Expression& e) const
 {
-    return root.Find(o) != nullptr;
+    return root.Find(e) != nullptr;
 }
 
 size_t Knowledge::size() const

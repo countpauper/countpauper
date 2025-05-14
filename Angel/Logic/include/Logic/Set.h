@@ -7,13 +7,14 @@
 namespace Angel::Logic
 {
 
+class Expression;
 class Object;
 
-class Set : public std::map<Object, Object>
+class Set : public std::map<Expression, Expression>
 {
 public:
 	Set() = default;
-	Set(std::initializer_list<Object> setItems);
+	Set(std::initializer_list<Expression> setItems);
 	template<typename T> 
 	Set(std::initializer_list<T> setItems)
 	{
@@ -22,8 +23,8 @@ public:
 			emplace(std::make_pair(std::move(item), Boolean(true)));
 		}
 	}
-	const Object* Find(const Object& o) const;
-    Match Matches(const Object& other, const Variables& variables) const;
+	const Expression* Find(const Expression& key) const;
+    Match Matches(const Expression& other, const Variables& variables) const;
     Object Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 	explicit operator bool() const;
 	std::size_t Hash() const;

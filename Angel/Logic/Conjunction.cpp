@@ -11,7 +11,7 @@ bool Conjunction::operator==(const Conjunction& rhs) const
     return Collection::operator==(rhs);
 }
 
-Match Conjunction::Matches(const Object& object, const Variables& vars) const
+Match Conjunction::Matches(const Expression&, const Variables& vars) const
 {
     // TODO: Conjunctions match with logical simplication
     // true & X matches true if X is true. 
@@ -22,10 +22,10 @@ Object Conjunction::Infer(const Knowledge& k, const Variables& substitutions) co
 {
     for(const auto& item: *this)
     {
-        auto object = k.Infer(item);
-        auto isTrue = object.Cast<Boolean>();
+        auto inferred = k.Infer(item);
+        auto isTrue = inferred.Cast<Boolean>();
         if (!isTrue)
-            return isTrue; // or just object? true & 0 == 0?
+            return isTrue; // or just inferred? true & 0 == 0?
     }
     return Boolean(true);
 }
@@ -34,7 +34,6 @@ std::size_t Conjunction::Hash() const
 {
     return typeid(decltype(*this)).hash_code() ^ Collection::Hash();
 }
-
 
 std::ostream& operator<<(std::ostream& os, const Conjunction& list)
 {

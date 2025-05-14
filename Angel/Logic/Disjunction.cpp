@@ -11,7 +11,7 @@ bool Disjunction::operator==(const Disjunction& rhs) const
     return Collection::operator==(rhs);
 }
 
-Match Disjunction::Matches(const Object& object, const Variables& vars) const
+Match Disjunction::Matches(const Expression&, const Variables& vars) const
 {
     // TODO: Disjunction match with logical simplication
     // false & X matches true if X is true. 
@@ -22,10 +22,10 @@ Object Disjunction::Infer(const Knowledge& k, const Variables& substitutions) co
 {
     for(const auto& item: *this)
     {
-        auto object = k.Infer(item);
-        auto isTrue = object.Cast<Boolean>();
+        Object inferred = k.Infer(item);
+        auto isTrue = inferred.Cast<Boolean>();
         if (isTrue)
-            return isTrue; // or just object? false | 1 == 1?
+            return inferred;
     }
     return Boolean(false);
 }

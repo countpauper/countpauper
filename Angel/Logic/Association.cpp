@@ -5,7 +5,7 @@ namespace Angel::Logic
 {
 
     /*
-Clause::Clause(Predicate&& predicate, Object&& condition) :
+Clause::Clause(Predicate&& predicate, Expression&& condition) :
 	predicate(std::move(predicate)),
 	condition(std::move(condition))
 {
@@ -59,7 +59,7 @@ Match Clause::Matching(const Expression& other, const Variables& substitutions) 
     return NoMatch;
 }
 
-const Object* Clause::Condition() const
+const Expression* Clause::Condition() const
 {
     return &condition;
 }
@@ -69,20 +69,20 @@ Object Clause::Infer(const Knowledge& known, const Variables& substitutions) con
     return known.Query(condition, substitutions);
 }
 
-Object Clause::Copy() const
+Expression Clause::Copy() const
 {
-    return clause(Predicate(predicate), Object(std::move(condition->Copy())));
+    return clause(Predicate(predicate), Expression(std::move(condition->Copy())));
 }
 
 
-Object Clause::Cast(const std::type_info& t, const Knowledge& k) const
+Expression Clause::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (typeid(t) == typeid(Boolean))
         return Infer(k, Variables());
     throw CastException<Clause>(t);
 }
 
-Object clause(Predicate&& predicate, Object&& condition)
+Expression clause(Predicate&& predicate, Expression&& condition)
 {
 	return Create<Clause>(std::move(predicate), std::move(condition));
 }

@@ -5,7 +5,7 @@
 -    [*] Recursively match and infer clauses, can't return a disjunction of all matched predicates. they won't have the same scope
 -    [*] Clear distinction between language casts and operators (equal) and C++ operators/bool? Perhaps equal is the same (same type & value) but Cast is not implicit unless infering/matching
 -    [*] Redesign polymorphic Expression with std::variant ? (expessions would get big? or op + vector)
--    [x] Refactor Object away 
+-    [x] Refactor Object away (renamed to expression)
 - [ ] Redesign the parser 
 -   [*] Knowledge is a set of clauses, clauses are pairs predicate: expression
 -   [x] Disjunction and Conjunction are examples of NAry-operators (are they also expressions?)

@@ -7,9 +7,9 @@
 namespace Angel::Logic 
 {
     
-class Object;
+class Expression;
 
-using Variables = std::map<std::string, Object>;
+using Variables = std::map<std::string, Expression>;
 using Match = std::optional<Variables>;
 static const Match IsMatch=Match(Variables());
 static const Match NoMatch=Match();

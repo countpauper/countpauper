@@ -46,7 +46,7 @@ bool Boolean::operator*() const
 
 
 /*
-Object Boolean::Cast(const std::type_info& t, const Knowledge& k) const
+Expression Boolean::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (t == typeid(Boolean))
     {
@@ -75,7 +75,7 @@ std::ostream& operator<<(std::ostream& os, const Boolean& element)
 }
 
 /*
-Object boolean(const std::string_view v)
+Expression boolean(const std::string_view v)
 {
     if (v == "true")
         return boolean(true);
@@ -85,7 +85,7 @@ Object boolean(const std::string_view v)
         throw std::invalid_argument(std::string("Unrecognized boolean value:") + std::string(v));
 }
 
-Object boolean(bool v)
+Expression boolean(bool v)
 {
 	return Create<Boolean>(v);
 }

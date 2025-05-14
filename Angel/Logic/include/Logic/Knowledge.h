@@ -15,10 +15,10 @@ class Knowledge
 {
 public:
 	Knowledge();
-    size_t Know(Predicate&& key, Object&& value=Boolean(true));
+    size_t Know(Predicate&& key, Expression&& value=Boolean(true));
 	Set Matches(const Predicate& predicate) const;
-	Object Infer(const Object& o) const;
-	bool Knows(const Object& e) const;
+	Object Infer(const Expression& e) const;
+	bool Knows(const Expression& e) const;
 	size_t size() const;
 	bool empty() const;
 private:

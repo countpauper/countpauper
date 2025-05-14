@@ -1,4 +1,4 @@
-#include "Logic/Object.h"
+#include "Logic/Expression.h"
 #include "Logic/Boolean.h"
 #include "Logic/Integer.h"
 #include "Logic/Id.h"
@@ -10,30 +10,30 @@
 namespace Angel::Logic
 {
 
-Object::Object(const Object& o) :
-    ObjectVariant(o)
+Expression::Expression(const Expression& e) :
+    ExpressionVariant(e)
 {
 }
 
-Match Object::Matches(const Object& o, const Variables& subs) const 
+Match Expression::Matches(const Expression& e, const Variables& subs) const 
 {
     return std::visit(overloaded_visit{
-        [&o, &subs, this]<IsElement T>(const T& element) -> Match {
-            const auto* var = std::get_if<Variable>(&o);
+        [&e, &subs, this]<IsElement T>(const T& element) -> Match {
+            const auto* var = std::get_if<Variable>(&e);
             // TODO this could be Variable::Matches()
             if (var)
                 return var->Matches(*this, subs);
-            if (o==element)
+            if (e==element)
                 return IsMatch;            
             return NoMatch; 
         },
-        [&o, &subs](const auto& obj) -> Match 
+        [&e, &subs](const auto& obj) -> Match 
         {
-            return obj.Matches(o, subs);
+            return obj.Matches(e, subs);
         }},   *this);    
 }
 
-Object Object::Infer(const class Knowledge& knowledge, const Variables& vars) const
+Object Expression::Infer(const class Knowledge& knowledge, const Variables& vars) const
 {
     return std::visit(overloaded_visit{
         []<IsElement T>(const T& element) -> Object {
@@ -45,30 +45,30 @@ Object Object::Infer(const class Knowledge& knowledge, const Variables& vars) co
     }, *this);
 }
 
-bool Object::operator<(const Object&o) const
+bool Expression::operator<(const Expression& e) const
 {
-    std::hash<Object> hasher; 
-    return hasher(*this) < hasher(o);
+    std::hash<Expression> hasher; 
+    return hasher(*this) < hasher(e);
 }
 
-std::ostream& operator<<(std::ostream& s, const Object& o)
+std::ostream& operator<<(std::ostream& s, const Expression& e)
 {
     std::visit([&s](const auto& obj)
     {
         s << obj;
-    }, o);
+    }, e);
     return s;
 }
 
-std::string to_string(const Object& o)
+std::string to_string(const Expression& e)
 {
     std::stringstream ss;
-    ss << o;
+    ss << e;
     return ss.str();
 }
 
 template<>
-const std::optional<Predicate> Object::TryCast<Predicate>() const
+const std::optional<Predicate> Expression::TryCast<Predicate>() const
 {
     auto same = std::get_if<Predicate>(this);  // TODO really cast 
     if (same)
@@ -81,7 +81,7 @@ const std::optional<Predicate> Object::TryCast<Predicate>() const
 }
 
 template<>
-const std::optional<Integer> Object::TryCast<Integer>() const
+const std::optional<Integer> Expression::TryCast<Integer>() const
 {
     auto same = std::get_if<Integer>(this);
     if (same)
@@ -100,9 +100,9 @@ const std::optional<Integer> Object::TryCast<Integer>() const
 namespace std
 {
 
-size_t hash<Angel::Logic::Object>::operator()(const Angel::Logic::Object& o) const
+size_t hash<Angel::Logic::Expression>::operator()(const Angel::Logic::Expression& e) const
 {
-    return std::visit([](const auto& obj) { return obj.Hash(); }, o);
+    return std::visit([](const auto& obj) { return obj.Hash(); }, e);
 }
 
 

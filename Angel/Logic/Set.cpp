@@ -1,4 +1,5 @@
 #include "Logic/Set.h"
+#include "Logic/Expression.h"
 #include "Logic/Object.h"
 #include "Logic/Boolean.h"
 #include <algorithm>
@@ -6,7 +7,7 @@
 namespace Angel::Logic
 {
 
-Set::Set(std::initializer_list<Object> setItems)
+Set::Set(std::initializer_list<Expression> setItems)
 {
     for(const auto& item: setItems)
     {
@@ -15,11 +16,11 @@ Set::Set(std::initializer_list<Object> setItems)
 }
 
 // TODO: this is weird now
-const Object* Set::Find(const Object& o) const
+const Expression* Set::Find(const Expression& e) const
 {
     for(const auto &association : *this)
     {
-        if (association.first == o)
+        if (association.first == e)
             return &association.second;
     }
     return nullptr;
@@ -37,9 +38,9 @@ bool Set::operator==(const Set& rhs) const
                       rhs.begin());
 }
 
-Match Set::Matches(const Object& o, const Variables& variables) const
+Match Set::Matches(const Expression& e, const Variables& variables) const
 {
-    const Set* set = std::get_if<Set>(&o);
+    const Set* set = std::get_if<Set>(&e);
     if (!set)
         return NoMatch;
         
@@ -56,7 +57,7 @@ Match Set::Matches(const Object& o, const Variables& variables) const
 Object Set::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
     Set result;
-    for(const std::pair<Object,Object> item: *this)
+    for(const std::pair<Expression, Expression> item: *this)
     {
         // NB right side computed get lost here if the first side is now duplicated 
         // eg {X+1: cheese, X*2:pickles} with X=1 becomes {2:cheese} (or pickles perhaps)
@@ -75,7 +76,7 @@ Object Set::Infer(const Knowledge& knowledge, const Variables& substitutions) co
 std::size_t Set::Hash() const
 {
     std::size_t result = typeid(decltype(*this)).hash_code();
-    std::hash<Object> hasher;
+    std::hash<Expression> hasher;
     for(const auto& association: *this)
     {
         result ^= hasher(association.first) ^ hasher(association.second);
@@ -143,23 +144,6 @@ void Set::Merge(Set&& other)
 {
 	while(!other.empty())
 		insert(std::move(other.extract(other.begin())));
-}
-
-Object set()
-{
-	return Create<Set>();
-}
-
-Object set(Sequence&& seq)
-{
-    return Create<Set>(std::move(seq));
-}
-
-Object set(Set&& s, Object&& o)
-{
-    auto result = Create<Set>(std::move(s));
-    result.As<Set>()->Add(std::move(o));
-    return std::move(result);
 }
 */
 

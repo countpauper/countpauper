@@ -3,6 +3,7 @@
 #include "Logic/Match.h"
 #include "Logic/Element.h"
 #include <iostream>
+
 namespace Angel::Logic
 {
 
@@ -13,7 +14,7 @@ class Conjunction : public Collection
 {
 public:
     using Collection::Collection;
-    Match Matches(const Object& object, const Variables& vars) const;
+    Match Matches(const Expression& expression, const Variables& vars) const;
     Object Infer(const class Knowledge& k, const Variables& substitutions={}) const;
     bool operator==(const Conjunction& other) const;
     std::size_t Hash() const;
