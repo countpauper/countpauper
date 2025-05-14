@@ -1,28 +1,28 @@
 #pragma once
-#include "Namespace.h"
-#include "Object.h"
+
+#include "Logic/Object.h"
+#include "Logic/Match.h"
 
 namespace Angel
 {
 namespace Logic
 {
 
-// Knowledge is a tree of expressions organized in namespaces
-// TODO: it should itself be an expression and namespaces as well 
-// They are not exactly a conjunction, because they may also include functions 
+// Knowledge is a tree of clauses organized in namespaces
+// A clause is a pair of a predicate and an expression 
+// TODO: it should itself be an expression (Set?)  
 class Knowledge
 {
 public:
 	Knowledge();
-    size_t Know(Object&& e);
-	Object Query(const Object& e, const Variables& substitutions=Variables()) const;
-    Object Match(const Expression& e) const;
+    size_t Know(Predicate&& key, Object&& value=Boolean(true));
+	Set Matches(const Predicate& predicate) const;
+	Object Compute(const Object& o) const;
 	bool Knows(const Object& e) const;
 	size_t size() const;
 	bool empty() const;
 private:
-	Object Query(const Expression& e, const Variables& substitutions) const;
-	Namespace root;
+	Set root;
 };
 
 

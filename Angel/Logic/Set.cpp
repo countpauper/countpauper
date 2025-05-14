@@ -1,100 +1,107 @@
 #include "Logic/Set.h"
-#include "Logic/Sequence.h"
+#include "Logic/Object.h"
 #include "Logic/Boolean.h"
 #include <algorithm>
-
-namespace Angel
-{
-namespace Logic
+#include <iostream>
+namespace Angel::Logic
 {
 
-Set::Set() = default;
-
-Set::Set(const Set& set)
+Set::Set(std::initializer_list<Object> setItems)
 {
-    for (const auto& si : set)
-        emplace(si->Copy());
+    for(const auto& item: setItems)
+    {
+        emplace(std::make_pair(std::move(item),Boolean(true)));
+    }
 }
 
-
-Set::Set(Set&& other) :
-    std::unordered_set<Object>(std::move(other))
+// TODO: this is weird now
+const Object* Set::Find(const Object& o) const
 {
-}
-
-Set::Set(Sequence&& seq)
-{
-    for (auto& si : seq)
-        emplace(std::move(si));
-}
-
-
-
-/*  // this is weird, either added as element or cast implicity?
-Set::Set(Object&& value)
-{
-	if (auto array = value.As<Sequence>())
-	{
-		for (auto& e : *array)
-		{
-			emplace(std::move(e));
-		}
-	}
-	else if (value)
-	{
-		emplace(std::move(value));
-	}
-}
-*/
-
-
-
-Object Set::Copy() const
-{
-    return Create<Set>(*this);
+    for(const auto &association : *this)
+    {
+        if (association.first == o)
+            return &association.second;
+    }
+    return nullptr;
 }
 
 Set::operator bool() const
 {
     return !empty();
 }
-bool Set::operator==(const Expression& other) const
+
+bool Set::operator==(const Set& rhs) const
 {
-	if (auto set = dynamic_cast<const Set*>(&other))
-	{
-		return std::operator==(static_cast<const std::unordered_set<Object>&>(*this),
-			static_cast<const std::unordered_set<Object>&>(*set));
-	}
-	return false;
+    return size() == rhs.size() &&
+        std::equal(begin(), end(),
+                      rhs.begin());
+}
+
+Match Set::Matches(const Object& o, const Variables& variables) const
+{
+    const Set* set = std::get_if<Set>(&o);
+    if (!set)
+        return NoMatch;
+        
+    // TODO: implement, but how and what behavior 
+    // {ginny, max} should match {max, ginny}
+    // {ginny, $X, gizmo } should match {max, ginny, $Y} with $X = max & $Y = gizmo 
+    // should be the same size at least, barring some sort of |Tail syntax 
+    // so all items should be attempted to match with another and then that one should be out
+    if (size()!=set->size())
+        return NoMatch; // TODO: head|tail matching or whatever could happen here
+    return NoMatch;
+}
+
+Object Set::Compute(const Knowledge& knowledge, const Variables& substitutions) const
+{
+    Set result;
+    for(const std::pair<Object,Object> item: *this)
+    {
+        // NB right side computed get lost here if the first side is now duplicated 
+        // eg {X+1: cheese, X*2:pickles} with X=1 becomes {2:cheese} (or pickles perhaps)
+        // this might be what is desired or maybe some expression makes more sense 
+        // {2: cheese | pickles}. 
+        // For cases where these are sets, which are true 2: true|true is still 2:true 
+        // for cases where these are clauses eg legs(X+1): max legs(X*2): ginny, 
+        // this disjunction also seems to make sense legs(2): max | ginny, if we are 
+        // hypothesizing that both have 2 legs 
+        result.emplace(item.first.Compute(knowledge, substitutions),
+            item.second.Compute(knowledge,substitutions));
+    }
+    return result;
 }
 
 std::size_t Set::Hash() const
 {
-    std::size_t result = 0; 
-    for(const auto& o: *this)
-        result ^ std::hash<Object>()(o);
+    std::size_t result = typeid(decltype(*this)).hash_code();
+    std::hash<Object> hasher;
+    for(const auto& association: *this)
+    {
+        result ^= hasher(association.first) ^ hasher(association.second);
+    }
     return result;
 }
 
 std::ostream& operator<<(std::ostream& os, const Set& set)
 {
-    bool first = true;
     os << "{";
-    for (const auto& element : set)
+    bool first = true;
+    for(const auto& node: set)
     {
-        if (first)
-            first = false;
-        else
-            os << " , ";
-        os << element;
+        if (!first)
+            os << ",";
+        os << node.first << ":" << node.second;
+        first = false;
     }
+
     os << "}";
     return os;
 }
-
+    /*
 Match Set::Matching(const Expression& expr, const Variables& substitutions) const
 {
-    /*
+
     Variables substitutions;
 	if (auto set = dynamic_cast<const Set*>(&expr))
 	{
@@ -109,7 +116,7 @@ Match Set::Matching(const Expression& expr, const Variables& substitutions) cons
 			}
 		}
 		return Match(substitutions);
-	}*/
+	}
     	return NoMatch;
 }
 
@@ -154,6 +161,6 @@ Object set(Set&& s, Object&& o)
     result.As<Set>()->Add(std::move(o));
     return std::move(result);
 }
+*/
 
-}
 }

@@ -9,16 +9,14 @@ domain and reason to answer queries.
 # Interface 
 ## Interaction 
 The default unit of interaction is a statement with a knowledge set. This can be a new predicate, which is added to the knowledge 
-or a query if it is postfixed with a question mark instead of a condition. This results in the output of the query 
-with the hypothesis of variable instantiations. The knowledge starts by default with some built in functions, 
+or a query if it is postfixed with a question mark instead of a condition. This is an interactive/command line only pre-parse.
+This results in the output of the query with the hypothesis of variable instantiations. The knowledge starts by default with some built in functions, 
 the most essential of which is import(), which will parse the source code in the filename string fn and add all 
 predicates in it to the root knowledge (as a side effect?). 
-If there are any queries in there the output of them could also be added to the knowledge, although this would be weird to have the same behavior in an interaction with the user, as the answer may change as other knowledge is entered. It would also require the hypothesis to be added or even instanced to the predicate(s). Instead queries results could always be printed to the console (stdout). 
-The queries are stored in the knowledge with a special query marker (boolean or special term). They are only executed at the end of a parser so order doesn't matter.
 
 ## Console 
 The default application for these interactions is a python console like app where standard input is read and when enter is pressed 
-it is one interaction. This requires a newline to not be significant whitespace for parsing. Alternatively like pythong the 
+it is one interaction. This requires a newline to not be significant whitespace for parsing. Alternatively like python the 
 enter is added to the input and only accepted as a new interaction with the result parsers succesfully, eg 
 `predicate(bla):\n` doesnt parse because of a missing condition. This can still be added for convenience but is less essential. 
 It may require implementation of backspace and cursors, otherwise the user could get stuck in an unparsable input `predicate(bla:\n`.
@@ -27,8 +25,8 @@ Every input is parsed into a separate knowledge. It's predicated are added to th
 
 ## Command line 
 The console application should interpret each argument that does not start with `-` as statement. Files can be executed with the 
-`angel import("fn")`. All queries and `print("")` built in statements would be written to standard output. 
-Interpretation errors are written toe stderr and language errors should probably be as well. 
+`angel import("fn")`. All `print("")` built in statements would be written to standard output. 
+Interpretation errors are written to stderr and language errors should probably be as well. 
 
 Options starting with `-` or `--` are reserved for options, although no options are known yet. 
 
@@ -54,7 +52,7 @@ mouse?
 ```
 An axiom it added to the list of "facts" of the namespace.
 It is equivalent to `cat: true`, any non defined axiom is by default `false`. Defining an axiom is then 
-like assigning a value to an id or even more technically it's creating a key:value pair and each knowledge is a dictionary 
+like assigning a value to an id or even more technically it's creating a key:value association and each knowledge is a dictionary 
 or structure. Commas are optional.
 
 ## predicate arguments
@@ -110,8 +108,8 @@ immediately discarded and not instantiated in subsequent statements.
 
 ## Clauses with variable arguments 
 These define a generic case. The variables have the scope of that clause. When matching the query, 
-the equivalence is added to the hypothesis and while matching the other predicates in that clause 
-it will be used to instantiate variable predicates.
+the instantiation is added to the hypothesis and while matching the other predicates in that clause 
+it will be used to substitute variable predicates.
 ```
 cat($X): hairy($X)
 hairy(ginny)
@@ -167,6 +165,57 @@ TODO: is there a point if the result is not a boolean? what if it's a falsey val
 
 If the query has multiple variables, there may be multiple combinations of values for which the query is true. 
 
+## Multiple hypotheses 
+Multiple predicates may match, which means multiple hypothes are possible. The hypotheses are basically a disjunction. 
+From the one original substitution, additional variables may be added to that hypotheses or even disjunctions. 
+
+Simple disjunctions can be simplified to set membership
+```
+cat(ginny)
+cat(gizmo)
+cat($X)?
+> X @ [ginny, gizmo]
+```
+
+## Occam's razor and hypothesis priority 
+When multiple matches are possible, the match(es) with the least amount of substitutions are used. 
+This is also used to implement recursion and logical induction. 
+```
+fibonachi(1)
+fibonachi(X) : Y+Z = X & Y>0 & Z>0 & fibonachi(Y) & fibonachi(Z)
+> fibonachi(1)
+true
+```
+In this case the first clause matches and the second one does not. This prevents infinite recursion, trying to 
+match endless X values.
+How the inference engine generates valid Y and Z (integers) in this case to make Y+Z=X true is not yet determined.
+
+
+## Expression matching and math 
+
+When matching Y=X+2, perhaps X will be known and the summation expression can be computed and Y instantiated (1+2, Y=3).
+In another case the matching will be the other way around. This is still solvable and should match. If Y is known (3) then 
+the expression can be inverted. X=3-2: X=1. 
+This math is relatively simple for most exprssions. Inverting an expression to get the unknown variable on the left side 
+should be doable for +- */ ^ and even sqrt, using imaginray numbers. 
+
+## Expression matching and logic
+For logical expressions this should also be possible. This is (probably) trying to write complex logical expressions like 
+A&B -> C|D into horn clauses. Usually the expressions are already written as horn clauses but when for instance matching lists
+[X] [hairy&Y], if Y is known X can be true if hairy is true and Y. If X is known to be true, Y must also be true and vice versa.
+
+## Hypothesis ranges 
+Also set theory can be used to narrow down a hypothesis. This involves the set operators `>`,`<` and `@` as well as 
+subsets, intersections and so on. 
+`X>0 & X<4`, After the second expression, for the conjjnction to be true, X has to be in the open range `<0:4>`. If a second unknown is introduced `X>0 & X<Y` this may be matched with X=4. This then says something about Y: `Y>4`. 
+
+## Hypthesis 
+Also make design, expression, object, element and their functions 
+There may need to be expression containers that can be computed and object containers that can be matched. 
+But still the problem is matching expression containers and then needing to compute while matching 
+[$X+2, ginny] match [4, ginny] IF $X is 2. But also ... (this is where the actual math inference comes in)
+that could be the hypothesis if $X is as of yet unknown. because $X+2 = 4 : $X=4-2 
+
 ## Variable predicates
 
 Seemingly have no purpose, perhaps with predicates. Mostly they seem harmful 
@@ -178,9 +227,11 @@ $X
 $X(ginny): X=cat 
 ```
 
+## Variable instantiation and priority of matching 
+
 ## Namespace 
 A namespace is a clause (pair), whose predicate (key) is the name and the argument is a *set* of predicates, 
-so their order does not matter but they are unique. 
+so their order does not matter but the predicates in the namespace are unique 
 By default each axiom is added to the root namespace, but to separate domains of knowledge,
 while still allowing them to refer to each other, a namespace can be wrapped around this set 
 
@@ -211,6 +262,31 @@ fuzzy.cheese? false
 
 ```
 
+## Namespace arguments 
+The predicate of a namespace can also have arguments. If these are variables, then when matching they are 
+substituted over the whole namespace. Somehow this should then reduce the valence when matching. 
+
+```
+genre($Music): {
+   loves($f, $Music): fan($f, $Music)
+}
+genre(rock).fan(max)
+genre(rock).loves(john)?
+> true 
+```
+
+If the namespace arguments are not variable, the matching can go the other way around. There 
+doesn't seem to be much of a use case, besides defining a set of axioms that share an argument 
+with a little less duplication. It's a bit like a C++ template.
+
+```
+genre(rock): {
+   fan(lizzy)
+}
+
+> genre($X).fan(lizzy)?
+X@[rock]
+```
 
 ## Integers 
 integers match if they are evaluate to equal
@@ -220,6 +296,13 @@ legs(4)
 cat(ginny)?
 > true
 ```
+
+## Ranges 
+Rangers are collections, like sets and lists, but they are contiguous. This allows them to be expressed with 
+a start and an end as `[a..b]`. Ranges can be inclusive or exclusive on either end `<a..b]` or infinite `[a..]`.
+Membership `@` can be computed on ranges. The for-each or for-any operators will iterate over all numbers in 
+the range, but only if the size is not infinite. The size is infinite if either end is ifinite or if the set contains
+floating points. In those cases iteration with for-each or for-any will result in an error. 
 
 ## Conjunction 
 A conjunection if expressions is true if all its elements are true. The & operator is used for conjunection. A conjunection is false as soon as one element is false. This is avaluated in a lazy way for performance and for axioms with side effects 
@@ -536,13 +619,15 @@ cat(ginny)?
 > true
 ```
 
-## id axiomas are like enums 
+## id arguments are like enums
 ```
-cat: ginny 
-cat ? 
-> ginny 
+cat(ginny) 
+cat(X) ? 
+> X=ginny 
 ```
-but it would be hard to not try to match ginny and fail and decide she's not a cat.
+
+These ids are not predicated without axioms, because they don't have to be computed and matched to be true.
+They are elements.
 
 
 ## Sequence/range matching 

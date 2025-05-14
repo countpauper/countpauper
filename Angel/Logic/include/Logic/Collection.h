@@ -1,20 +1,30 @@
 #pragma once
-#include "Expression.h"
-#include <assert.h>
+#include <vector>
+#include <initializer_list>
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
-// A colllection is a sub category of exprs consisting of multiple sub exprs
-// for instance Sequence, Set are Collections
-class Collection : public Expression
+class Object;
+
+// A collection is a base ordered container of non-unique objects (wrapped in nodes)
+class Collection : public std::vector<Object>
 {
 public:
-    Object Infer([[maybe_unused]] const Knowledge& known, const Variables& substitutions) const;
-    const Object* Condition() const override;
+    Collection() = default;
+	Collection(std::initializer_list<Object> setItems);
+    template<typename T> 
+    Collection(std::initializer_list<T> items)
+    {
+        for(auto&& item: items)
+        {
+            emplace_back(item);
+        }
+    }
+    ~Collection();
+protected:
+    bool operator==(const Collection& rhs) const;
+    std::size_t Hash() const;
 };
 
-}
 }

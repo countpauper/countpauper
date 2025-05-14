@@ -1,62 +1,62 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Set.h"
-#include "Logic/Clause.h"
+#include "Logic/Association.h"
+#include <variant>
+#include <cassert>
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 Knowledge::Knowledge() :
-	root(Id(""))
+	root()
 {
 }
 
-size_t Knowledge::Know(Object&& o)
+size_t Knowledge::Know(Predicate&& key, Object&& expression)
 {
-    if (const auto* pred = o.As<Predicate>())
-    {
-        return root.Add(std::move(o));
-    }
-    else if (const auto* clause = o.As<Clause>())
-    {
-        return root.Add(std::move(o));
-    }
-    else 
-    {
-        throw std::invalid_argument("Only clauses and predicates can be known");
+    auto insert = root.emplace(std::make_pair(std::move(key), std::move(expression)));
+    if (insert.second) {
+        return 1;
+    } else {
+        return 0;
     }
 }
 
-Object Knowledge::Query(const Object& o, const Variables& substitutions) const
+Object Knowledge::Compute(const Object& expression) const
 {
-    return Query(*o, substitutions);
+    Variables vars;
+    return expression.Compute(*this, vars);
 }
 
-Object Knowledge::Query(const Expression& e, const Variables& substitutions) const
+Set Knowledge::Matches(const Predicate& query) const
 {
-    return e.Infer(*this, substitutions);
-}
-
-Object Knowledge::Match(const Expression& e) const
-{
-    for(const auto& match: root.FindMatches(e))
+    Set result;
+    std::size_t bestMatch = std::numeric_limits<std::size_t>::max();
+    for(const auto& association: root)
     {
-        auto condition = (*match.first)->Condition();
-        if (!condition)
-            return boolean(true);
-        auto result = condition->Infer(*this, match.second);
-        if (result) 
+        if (const auto* predicate = std::get_if<Predicate>(&association.first))
         {
-            return result;
+            auto match = predicate->Matches(query, {});
+            if (match)
+            {   // Matches with least substitutions take precedence. 
+                // See the Occam's razor section in language design
+                if (match->size()>bestMatch)
+                    continue;
+                if (match->size()<bestMatch)
+                    result.clear();
+                result.emplace(association.first, association.second.Compute(*this, *match));
+            }
         }
+        else 
+            assert(false && "Only predicate keys are allowed in knowledge");
     } 
-    return boolean(false);
+    return result;
 }
+
 
 bool Knowledge::Knows(const Object& o) const
 {
-    return root.Contains(o);
+    return root.Find(o) != nullptr;
 }
 
 size_t Knowledge::size() const
@@ -69,5 +69,4 @@ bool Knowledge::empty() const
     return root.empty();
 }
 
-}
 }

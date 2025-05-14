@@ -5,30 +5,16 @@
 namespace Angel::Logic
 {
 
-Object Element::Copy() const
+Element::operator bool() const
 {
-    // Elements can be copied by casting them to themselves with no knowledge;
-    Knowledge none;
-    return Cast(typeid(*this), none);
+    return std::visit(overloaded_visit{
+        [](std::monostate) {
+            return false;
+        },
+        [](const auto& e) {
+            return bool(e);
+        }
+    }, *this);
 }
-
-Match Element::Matching(const Expression& other, const Variables&) const
-{
-    if(other == *this) 
-        return IsMatch;
-    else
-        return NoMatch;    
-}
-
-const Object* Element::Condition() const
-{
-    return nullptr;
-}
-
-Object Element::Infer(const Knowledge& known, const Variables&) const
-{
-    return Copy();
-}
-
 }
 

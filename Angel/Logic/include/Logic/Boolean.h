@@ -1,42 +1,27 @@
 #pragma once
 
-#include <optional>
-#include "Object.h"
-#include "Element.h"
+#include <string>
 
 namespace Angel::Logic
 {
 
 // Boolean is an element that is simply true, or false
-class Boolean : public Element
+class Boolean 
 {
 public:
 	explicit Boolean(bool v);
-	bool operator==(const Expression& other) const override;
+	explicit Boolean(const std::string_view tag);
+    explicit Boolean(const char* tag) : Boolean(std::string_view(tag)) {}
+	bool operator==(const Boolean& other) const;
     bool operator*() const;
-    operator bool() const;
-    std::size_t Hash() const override;
-
-	static std::optional<bool> Parse(const std::string& tag);
-protected:
-    Object Cast(const std::type_info& t, const Knowledge& k) const override;
+    explicit operator bool() const;
+    std::size_t Hash() const;
+    operator std::string() const;
 private:
     friend std::ostream& operator<<(std::ostream& os, const Boolean& );
 	bool truth;
 };
 
 std::ostream& operator<<(std::ostream& os, const Boolean& );
-
-
-Object boolean(bool v);
-Object boolean(const std::string_view v);
-
-// This templated function is needed because otherwise boolean("false")
-// prioritizes a cast from const char* to bool, making it boolean(true)
-template <typename T>  
-requires std::convertible_to<T, const std::string_view>  
-Object boolean(T&& v) {  
-    return boolean(std::string_view(v));
-}  
 
 }

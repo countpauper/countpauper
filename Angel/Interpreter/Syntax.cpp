@@ -110,8 +110,11 @@ bool Syntax::CheckLeftRecursive(SyntaxPath& path) const
                 path.pop_back();
                 return result; 
             },
-            [](const Token&) { return false; }}
-            , *left)) 
+            [](const Token&) 
+            { 
+                return false; 
+            }
+            } , *left)) 
             return true;
     }
     return false;

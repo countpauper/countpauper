@@ -1,74 +1,52 @@
 #include "Logic/Conjunction.h"
 #include "Logic/Boolean.h"
+#include "Logic/Object.h"
 #include "Logic/Knowledge.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
-
-
-
-Conjunction::Conjunction(const Operands& value) :
-    Nary(value)
+bool Conjunction::operator==(const Conjunction& rhs) const
 {
+    return Collection::operator==(rhs);
 }
 
-Conjunction::Conjunction(Conjunction&& value) :
-    Conjunction(std::move(value.operands))
+Match Conjunction::Matches(const Object& object, const Variables& vars) const
 {
+    // TODO: Conjunctions match with logical simplication
+    // true & X matches true if X is true. 
+    return NoMatch;
 }
 
-bool Conjunction::operator==(const Expression& other) const
+Object Conjunction::Compute(const Knowledge& k, const Variables& substitutions) const
 {
-    // TODO: could be in Nary if the type was the same 
-    if (auto conjunction = dynamic_cast<const Conjunction*>(&other))
+    for(const auto& item: *this)
     {
-        return operands == conjunction->operands;
+        auto object = k.Compute(item);
+        auto isTrue = object.Cast<Boolean>();
+        if (!isTrue)
+            return isTrue; // or just object? true & 0 == 0?
     }
-    return false;
+    return Boolean(true);
 }
 
-std::ostream& operator<<(std::ostream& os, const Conjunction& element)
+std::size_t Conjunction::Hash() const
+{
+    return typeid(decltype(*this)).hash_code() ^ Collection::Hash();
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Conjunction& list)
 {
     bool first = true;
-    for (const auto& condition : element.operands)
+    for(const auto& obj: list)
     {
-        if (first)
-            first = false;
-        else
-            os << " & ";
-        os << condition;
+        if (!first)
+            os << "&";
+        os << obj;
+        first = false;
     }
     return os;
 }
 
-Object Conjunction::Infer(const Knowledge& knowledge, const Variables& substitutions) const
-{
-    for (const auto& condition : operands)
-    {
-        auto truth = condition.Infer(knowledge, substitutions);
-        if (!truth)
-            return truth;
-    }
-    return boolean(true);
-}
-
-
-Object Conjunction::Copy() const
-{
-    return Create<Conjunction>(operands);
-}
-
-Object Conjunction::Cast(const std::type_info& t, const Knowledge& k) const
-{
-    if (t == typeid(Boolean))
-    {
-        return Infer(k, Variables());
-    }
-    throw CastException<Conjunction>(t);
-}
-
-}
 }

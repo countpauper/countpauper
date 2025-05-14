@@ -1,17 +1,37 @@
 #include "Logic/Collection.h"
+#include "Logic/Object.h"
+
+#include <typeinfo>
+#include <iostream>
 
 namespace Angel::Logic
 {
 
-Object Collection::Infer([[maybe_unused]] const Knowledge& known, const Variables&) const
+Collection::Collection(std::initializer_list<Object> items) :
+    std::vector<Object>(items)
 {
-    // Just return a copy. Or Infer all members? 
-    return Copy();
 }
 
-const Object* Collection::Condition() const
+Collection::~Collection()
 {
-    return nullptr;
+}
+
+bool Collection::operator==(const Collection& rhs) const
+{
+    if (size()!=rhs.size())
+        return false;
+    return std::equal(begin(), end(), rhs.begin());
+}
+
+std::size_t Collection::Hash() const
+{
+    std::size_t result = 0;
+    std::hash<Object> hasher;
+    for(const auto& n: *this)
+    {
+        result ^= hasher(n);
+    }
+    return result;
 }
 
 }

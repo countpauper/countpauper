@@ -3,99 +3,107 @@
 #include "Logic/Integer.h"
 #include "Logic/Id.h"
 #include "Logic/Expression.h"
+#include "Logic/Knowledge.h"
 #include <sstream>
+#include <cassert>
 
-namespace Angel
+namespace Angel::Logic
 {
-namespace Logic
-{
 
-
-Object::Object(const Object& other) :
-    Object(other->Copy())
+Object::Object(const Object& o) :
+    ObjectVariant(o)
 {
 }
 
-Object& Object::operator=(const Object& other)
+Match Object::Matches(const Object& o, const Variables& subs) const 
 {
-    expr.reset();
-    expr = std::move(other.expr->Copy().expr);
-    return *this;
+    return std::visit(overloaded_visit{
+        [&o, &subs, this]<IsElement T>(const T& element) -> Match {
+            const auto* var = std::get_if<Variable>(&o);
+            // TODO this could be Variable::Matches()
+            if (var)
+                return var->Matches(*this, subs);
+            if (o==element)
+                return IsMatch;            
+            return NoMatch; 
+        },
+        [&o, &subs](const auto& obj) -> Match 
+        {
+            return obj.Matches(o, subs);
+        }},   *this);    
 }
 
-Object::Object(Object&& other) :
-    expr(std::move(other.expr))
+Object Object::Compute(const class Knowledge& knowledge, const Variables& vars) const
 {
+    return std::visit(overloaded_visit{
+        []<IsElement T>(const T& element) -> Object {
+            return element; 
+        },
+        [&knowledge, &vars](const auto& obj) -> Object {
+            return obj.Compute(knowledge, vars);
+        }
+    }, *this);
 }
 
-Object& Object::operator=(Object&& other)
+bool Object::operator<(const Object&o) const
 {
-    expr = std::move(other.expr);
-	return *this;
+    std::hash<Object> hasher; 
+    return hasher(*this) < hasher(o);
 }
 
-Object::operator bool() const
+std::ostream& operator<<(std::ostream& s, const Object& o)
 {
-	if (null()) 
-		return false;
-	return bool(*expr);
+    std::visit([&s](const auto& obj)
+    {
+        s << obj;
+    }, o);
+    return s;
 }
 
-bool Object::null() const 
+std::string to_string(const Object& o)
 {
-	return !expr.get();
+    std::stringstream ss;
+    ss << o;
+    return ss.str();
 }
 
-bool Object::operator==(const Object& other) const
+template<>
+const std::optional<Predicate> Object::TryCast<Predicate>() const
 {
-	return expr->operator==(*other);
+    auto same = std::get_if<Predicate>(this);  // TODO really cast 
+    if (same)
+        return std::optional<Predicate>(*same);
+
+    return std::visit(overloaded_visit{
+        [](const Id& id) { return std::optional<Predicate>(Predicate(id)); },
+        [](const auto&) { return std::optional<Predicate>(); }
+    }, *this);
 }
 
-Object Object::Infer(const Knowledge& knowledge, const Variables& substitutions) const
+template<>
+const std::optional<Integer> Object::TryCast<Integer>() const
 {
-    return expr->Infer(knowledge, substitutions);
+    auto same = std::get_if<Integer>(this);
+    if (same)
+        return std::optional<Integer>(*same);
+
+    return std::visit(overloaded_visit{
+        [](const Boolean& b) { return std::optional<Integer>(b?1:0); },
+        [](const auto&) { return std::optional<Integer>(); }
+    }, *this);
 }
 
-const Expression& Object::operator*() const
-{
-    return *expr;
-}
-
-const Expression* Object::operator->() const
-{
-    return expr.get();
-}
-
-size_t Object::Hash() const
-{
-	if (null())
-		return 0;
-	else 
-	{
-		return std::hash<Angel::Logic::Expression>()(*expr);
-	}
-}
-
-Object Object::Cast(const std::type_info& t, const Knowledge& knowledge) const
-{
-    return expr->Cast(t, knowledge);
-}
-
-std::ostream& operator<<(std::ostream& os, const Object& o)
-{
-    if (o.null())
-        os << "null";
-    else 
-        os << *o;
-    return os;
-}
-
-Object::operator std::string() const
-{
-    std::stringstream s;
-    s << *this;
-    return s.str();
-}
 
 }
+
+
+namespace std
+{
+
+size_t hash<Angel::Logic::Object>::operator()(const Angel::Logic::Object& o) const
+{
+    return std::visit([](const auto& obj) { return obj.Hash(); }, o);
+}
+
+
 }

@@ -1,0 +1,38 @@
+@startuml
+
+class Element <<variant, concept>> {
+
+}
+
+Boolean --|> Element
+Integer --|> Element 
+Float --|> Element
+Imaginary --|> Element
+Identifier --|> Element
+String --|> Element
+Variable --|> Element 
+
+class Object <<variant>> {
+}
+Element --|> Object
+Sequence --|> Object
+Set --|> Object 
+Range --|> Object
+Pair --> Object
+
+
+List --|> Sequence 
+Summation --|> Sequence 
+Division --|> Sequence 
+Predicate --|> Sequence 
+
+Set *--> "*" Object
+Sequence *--> "*" Object
+Predicate *--> Identifier
+Pair *--> "left" Element
+Pair *--> "right" Object 
+Range *--> "from" Element
+Range *--> "to" Element 
+
+
+@enduml

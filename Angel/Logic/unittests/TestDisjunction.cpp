@@ -1,0 +1,46 @@
+#include <gtest/gtest.h>
+#include "Logic/Knowledge.h"
+#include "Logic/Disjunction.h"
+#include "Logic/Boolean.h"
+#include "Logic/Predicate.h"
+
+namespace Angel::Logic::Test
+{
+
+TEST(Disjunction, Construction)
+{
+    EXPECT_TRUE(Disjunction{}.empty());
+    EXPECT_EQ(Disjunction{Boolean(false)}.size(), 1);    
+}
+
+TEST(Disjunction, Conjunctions)
+{
+    Knowledge k;
+    EXPECT_EQ(Disjunction{}.Compute(k), Boolean(false));
+    EXPECT_EQ((Disjunction{Boolean(true)}).Compute(k), Boolean(true));
+    EXPECT_EQ((Disjunction{Boolean(true), Boolean(false)}).Compute(k), Boolean(true));
+    EXPECT_EQ((Disjunction{Disjunction{Boolean(true)}}).Compute(k), Boolean(true));
+}
+
+TEST(Disjunction, Nest)
+{
+    Knowledge k;
+    EXPECT_EQ((Disjunction{Disjunction{Boolean(false)}, Disjunction{Boolean(true)}}).Compute(k), Boolean(true));
+    EXPECT_EQ((Disjunction{Predicate("cat")}).Compute(k), Boolean(false));
+}
+
+TEST(Disjunction, Inference)
+{
+    Knowledge k;
+    k.Know(Predicate("cat"));
+    EXPECT_EQ((Disjunction{Predicate("cat")}).Compute(k), Boolean(true));
+}
+
+TEST(Disjunction, to_string)
+{
+    EXPECT_EQ(to_string(Disjunction{Boolean(true)}), "true");
+    EXPECT_EQ(to_string(Disjunction{Boolean(true), Boolean(false)}), "true|false");
+}
+
+}
+

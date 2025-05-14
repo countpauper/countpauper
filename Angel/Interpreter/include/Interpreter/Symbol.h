@@ -24,7 +24,7 @@ struct Symbol
     hash_t Hash() const;
     std::size_t Match(SourceSpan src) const;
     bool operator<(const Symbol& other) const;
-    operator bool() const;
+    explicit operator bool() const;
 
     bool operator==(const Symbol& other) const;
     bool operator!=(const Symbol& other) const { return !this->operator==(other); }

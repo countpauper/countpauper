@@ -34,7 +34,7 @@ void GenerateKnowledge(const Interpreter::Source& source, Interpreter::SymbolStr
         parse >> input;
         if (input.symbol == Interpreter::Symbol("predicate"))
         {
-            knowledge.Know(Logic::predicate(input.location.extract()));
+            knowledge.Know(Logic::Predicate(input.location.extract()));
         }
     }
 }

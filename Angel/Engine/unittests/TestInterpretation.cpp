@@ -13,8 +13,8 @@ TEST(Interpretation, Axiom)
 
     EXPECT_TRUE(interpreter.Interpret(source, k).empty());
     EXPECT_FALSE(k.empty());
-    EXPECT_TRUE(k.Knows(Logic::predicate("cat")));
-    EXPECT_FALSE(k.Knows(Logic::predicate("fish")));
+    EXPECT_TRUE(k.Knows(Logic::Predicate("cat")));
+    EXPECT_FALSE(k.Knows(Logic::Predicate("fish")));
 }
 
 TEST(Interpretation, Axioms)
@@ -24,8 +24,8 @@ TEST(Interpretation, Axioms)
     AngelInterpreter interpreter;
 
     EXPECT_TRUE(interpreter.Interpret(source, k).empty());
-    EXPECT_TRUE(k.Knows(Logic::predicate("cat")));
-    EXPECT_TRUE(k.Knows(Logic::predicate("fish")));
+    EXPECT_TRUE(k.Knows(Logic::Predicate("cat")));
+    EXPECT_TRUE(k.Knows(Logic::Predicate("fish")));
 }
 
 }

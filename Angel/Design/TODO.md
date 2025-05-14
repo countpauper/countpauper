@@ -1,41 +1,44 @@
 - [ ] Get back up 
--    [x] remove wstring and platform dependenty conversion 
--    [x] move, build
--    [x] Fix logic unit tests
--    [x] Recursively match and infer clauses, can't return a disjunction of all matched predicates. they won't have the same scope
--    [x] Clear distinction between language casts and operators (equal) and C++ operators/bool? Perhaps equal is the same (same type & value) but Cast is not implicit unless infering/matching
--    [ ] Redesign polymorphic Expression with std::variant ? started a branch variant_logic
-     [ ] Solve problem: circular depdency between expressions variants that are containers and contain them needs at least extra heap allocation indirection, even with type erasure. It's a bit besides the point then 
--    [ ] Refactor Object away 
+-    [*] remove wstring and platform dependenty conversion 
+-    [*] move, build
+-    [*] Fix logic unit tests
+-    [*] Recursively match and infer clauses, can't return a disjunction of all matched predicates. they won't have the same scope
+-    [*] Clear distinction between language casts and operators (equal) and C++ operators/bool? Perhaps equal is the same (same type & value) but Cast is not implicit unless infering/matching
+-    [*] Redesign polymorphic Expression with std::variant ? (expessions would get big? or op + vector)
+-    [x] Refactor Object away 
 - [ ] Redesign the parser 
--   [ ] Knowledge is a set of clauses, clauses are pairs predicate: expression
--   [ ] Disjunction and Conjunction are examples of NAry-operators (are they also expressions?)
--   [ ] Sequences and sets perhaps as well (collections) with the , operator 
--   [x] Define constexpr context free grammar
--   [x] Recursive descent parser  
--   [x] Find a way for the production rules to produce
--   [x] Check the grammar for constraints of LL(1): left recursion 
+-   [*] Knowledge is a set of clauses, clauses are pairs predicate: expression
+-   [x] Disjunction and Conjunction are examples of NAry-operators (are they also expressions?)
+-   [x] Sequences and sets perhaps as well (collections) with the , operator 
+-   [*] Define constexpr context free grammar
+-   [*] Recursive descent parser  
+-   [*] Find a way for the production rules to produce
+-   [*] Check the grammar for constraints of LL(1): left recursion 
 -   [ ] Unit tests for simple grammars to create first/follow table
 -   [ ] Implement LL(1) https://www.geeksforgeeks.org/types-of-parsers-in-compiler-design/
 -   [ ] Consider LL(n)
--   [x] Clean up old parser 
+-   [*] Clean up old parser 
 -   [ ] Optional: extend BNF with elipsis `...` (also in its own) that repeats a rules terms until failure (and generates each in sequence instead of in tr)
--   [x] Parsing enough for axioms
+-   [*] Parsing enough for axioms
 -   [ ] Parsing enough for clauses
 -   [ ] Parsing enough for predicates
+-   [ ] Parse set of axioms
 -   [ ] Parse variables 
+-   [ ] Parse conjunctions 
 - [ ] Prolog 
--   [ ] query horn clause 
--   [ ] Query predicate  
+-   [*] query horn clause 
+-   [*] Query predicate  
 -   [ ] Variable clauses with substitution 
 -   [ ] Query with variable and return hypotheses
--   [ ] Sequences for valence 2+ predicates 
+-   [*] Sequences for valence 2+ predicates
+-   [*] Disjunctions
+-   [ ] Negation  
 -   [ ] Tautology protection cat: cat (or longer) is an error 
 - [ ] Functional 
 -   [ ] define constants 
--   [ ] define lambdas 
+-   [ ] define (non boolean) functions 
 -   [ ] integer operators `+-*/^` 
--   [ ] query lambda
+-   [ ] query functions
 -   [ ] lists 
 -   [ ] sets 
 -   [ ] set and list operators `&|+`
@@ -58,11 +61,12 @@
 -   [ ] For any operator `@` while infering 
 -   [ ] For any & each operators also while matching 
 -   [ ] Other MFINAE type matching or even some concept like syntax 
--   [ ] pairs 
--   [ ] Derive Clause from Pair and namespace from sequence
--   [ ] dicts 
+-   [ ] free pairs `a:b` 
+-   [ ] Derive Clause from Pair 
+-   [ ] Namespace from `axiom:{set,}`
+-   [ ] dicts work as structs 
 -   [ ] dict access with `[]`
--   [ ] dict access with `.`
+-   [ ] set access with `.`
 - [ ] Native functions
 -    [ ] Add native cast functions (id, int, float, str, list, set, dict)
 -    [ ] Add native collections functions (size, empty)

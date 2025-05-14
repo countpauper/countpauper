@@ -1,20 +1,13 @@
 #pragma once
-#include "Object.h"
-#include "Match.h"
+#include "Logic/Object.h"
+#include "Logic/Match.h"
 #include <cstddef>
 
+/*
 namespace Angel::Logic
 {
 
-template<class _From>
-class CastException : public std::runtime_error
-{
-public:
-    CastException(const std::type_info& to) :
-        std::runtime_error((std::string("Can not Cast from ") + typeid(_From).name() + " to " + to.name()))
-    {
-    }
-};
+class Knowledge;
 
 // An expression is a subclass of hierarchical exprs consisting of Functions (branches) or exprs (leafs)
 //
@@ -59,6 +52,9 @@ public:
 protected:
     friend class Object;
     virtual Object Cast(const std::type_info& t, const Knowledge& k) const = 0;
+
+    std::vector<Element> elements; 
+
 };
 std::ostream& operator<<(std::ostream& os, const Angel::Logic::Expression& e);
 
@@ -76,4 +72,5 @@ namespace std
 		}
 	};
 }
+*/
 

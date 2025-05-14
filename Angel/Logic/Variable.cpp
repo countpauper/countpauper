@@ -1,5 +1,6 @@
 #include "Logic/Variable.h"
 #include "Logic/Boolean.h"
+#include "Logic/Object.h"
 #include <iostream>
 
 namespace Angel::Logic
@@ -20,14 +21,6 @@ bool Variable::operator==(const Variable& var) const
 	return name == var.name;
 }
 
-bool Variable::operator==(const Expression& other) const
-{
-	if (auto var = dynamic_cast<const Variable*>(&other))
-	{
-		return *this == *var;
-	}
-	return false;
-}
 
 std::size_t Variable::Hash() const
 {
@@ -35,6 +28,23 @@ std::size_t Variable::Hash() const
     return hasher(name);
 }
 
+Object Variable::Compute(const class Knowledge& k, const Variables& substitutions) const
+{
+    auto it = substitutions.find(name);
+    if (it!=substitutions.end())
+        return it->second;
+    return Boolean(true);
+}
+
+Match Variable::Matches(const Object& o, const Variables& variables) const
+{
+    auto it = variables.find(name);
+    if (it==variables.end())
+        return Variables{{name, o}};
+    return it->second.Matches(o, variables);
+}
+
+/*
 Object Variable::Copy() const
 {
     return var(name);
@@ -75,6 +85,8 @@ Object Variable::Cast(const std::type_info& t, const Knowledge& k) const
 {
     throw CastException<Variable>(t);
 }
+*/
+
 
 std::ostream& operator<<(std::ostream& os, const Variable& id)
 {
@@ -82,10 +94,12 @@ std::ostream& operator<<(std::ostream& os, const Variable& id)
     return os;
 }
 
+/*
 Object var(const std::string_view name)
 {
 	return Create<Variable>(name);
 }
+*/
 
 }
 

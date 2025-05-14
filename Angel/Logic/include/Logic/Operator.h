@@ -3,11 +3,10 @@
 #include "Expression.h"
 #include <vector>
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
+/*
 class Knowledge;
 
 // An Operator is the basis of all functions
@@ -52,7 +51,7 @@ class Nary : public Operator
 public:
     Nary() = default;
     void Add(Object&& value);
-    operator bool() const override;
+    explicit operator bool() const override;
     std::size_t Hash() const override;
 protected:
     using Operands = std::vector<Object>;
@@ -60,7 +59,6 @@ protected:
     Operands operands;
 };
 
+*/
 
-
-}
 }

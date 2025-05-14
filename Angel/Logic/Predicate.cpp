@@ -2,31 +2,27 @@
 #include "Logic/Predicate.h"
 #include "Logic/Boolean.h"
 #include "Logic/Knowledge.h"
+#include "Logic/Object.h"
 
 namespace Angel::Logic
 {
 
-Predicate::Predicate(const Predicate& other) :
-    Predicate(other.id, Sequence(other.arguments))
-{
 
+Predicate::Predicate(const Id& id, List&& arguments) 
+	: id(id)
+	, arguments(std::move(arguments))
+{
+	if (!id)
+		throw std::invalid_argument("Predicate identity can not be empty.");
 }
 
-Predicate::Predicate(Predicate&& other) :
-    id(other.id),
-    arguments(std::move(other.arguments))
-{
-}
-
-Predicate::Predicate(const Id& id, Sequence&& arguments) :
-	id(id),
-	arguments(std::move(arguments))
+Predicate::Predicate(const std::string& tag, List&& arguments) 
+	: Predicate(Id(tag), std::move(arguments))
 {
 }
 
-Predicate::Predicate(const std::string& tag, Sequence&& arguments) :
-	id(tag),
-	arguments(std::move(arguments))
+Predicate::Predicate(const Object& o) :
+	Predicate(o.Cast<Predicate>())
 {
 }
 
@@ -35,13 +31,9 @@ Predicate::operator bool() const
     return true;
 }
 
-bool Predicate::operator==(const Expression& other) const
+bool Predicate::operator==(const Predicate& rhs) const
 {
-	if (auto predicate = dynamic_cast<const Predicate*>(&other))
-	{
-		return id == predicate->id && arguments == predicate->arguments;
-	}
-	return false;
+	return id == rhs.id && arguments == rhs.arguments;
 }
 
 std::size_t Predicate::Hash() const
@@ -49,61 +41,50 @@ std::size_t Predicate::Hash() const
     return id.Hash() ^ arguments.Hash();
 }
 
+Match Predicate::Matches(const Object& object, const Variables& vars) const
+{
+	const auto* predicate = std::get_if<Predicate>(&object);
+	if (!predicate)
+		return NoMatch;
+	
+	if (id != predicate->id) // Variable predicate names not (yet) supported
+		return NoMatch;
+	return arguments.Matches(predicate->arguments, vars);
+}
+
+Object Predicate::Compute(const Knowledge& knowledge, const Variables& substitutions) const
+{
+	Predicate computed(id, std::get<List>(arguments.Compute(knowledge, substitutions)));
+	auto matches = knowledge.Matches(computed);
+	for(const auto& association: matches)
+	{
+		if (association.second == Boolean(false))
+			continue;
+		return association.second;
+	}
+	return Boolean(false);
+}
+
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)
 {
 	if (predicate.arguments)
 	{
-		os << predicate.id << predicate.arguments;
+		os << predicate.id << "(";
+		bool first = true;
+		for(const auto& arg: predicate.arguments)
+		{
+			if (!first)
+				os << ",";
+			os << arg;
+			first = false;
+		}
+		os << ")";
 	}
-	else 
+	else
 	{
 		os << predicate.id;
 	}
     return os;
-}
-
-Object Predicate::Copy() const
-{
-    return Create<Predicate>(*this);
-}
-
-Match Predicate::Matching(const Expression& expr, const Variables& substitutions) const
-{
-	if (auto predicate = dynamic_cast<const Predicate*>(&expr))
-	{
-        if (!id.Matching(predicate->id, {})) // Variable predicate names not (yet) supported
-            return NoMatch;
-		return arguments.Matching(predicate->arguments, substitutions);
-	}
-	return NoMatch;
-}
-
-const Object* Predicate::Condition() const
-{
-	return nullptr;
-}
-
-Object Predicate::Infer(const Knowledge& known, const Variables& substitutions) const
-{
-    auto match = known.Match(*this);
-    return match.Infer(known, substitutions);
-}
-
-Object Predicate::Cast(const std::type_info& t, const Knowledge& k) const
-{
-    if (typeid(t) == typeid(Boolean))
-        return Infer(k, Variables());
-    throw CastException<Predicate>(t);
-}
-
-Object predicate(const Id& id, Sequence&& arguments)
-{
-	return Create<Predicate>(id, std::move(arguments));
-}
-
-Object predicate(const std::string& name, Sequence&& arguments)
-{
-	return Create<Predicate>(Id(name), std::move(arguments));
 }
 
 }

@@ -4,8 +4,7 @@
 #include "Logic/Integer.h"
 #include "Logic/Id.h"
 #include "Logic/Predicate.h"
-#include "Logic/Clause.h"
-#include "Logic/Sequence.h"
+#include "Logic/Association.h"
 #include "Logic/Set.h"
 #include "Logic/Conjunction.h"
 #include "Logic/Disjunction.h"
@@ -15,7 +14,7 @@
 namespace Angel::Logic
 {
 
-
+/*
 Expression::operator std::string() const
 {
     std::stringstream s;
@@ -70,6 +69,7 @@ std::ostream& operator<<(std::ostream& os, const Expression& e)
     }
     return os;
 }
+*/
 
 }
 

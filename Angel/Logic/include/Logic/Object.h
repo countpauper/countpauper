@@ -1,59 +1,89 @@
 #pragma once
 
-#include <memory>
-#include <string>
+#include "Logic/Element.h"
+#include "Logic/Predicate.h"
+#include "Logic/Set.h"
+#include "Logic/List.h"
+#include "Logic/CastException.h"
+#include "Logic/Conjunction.h"
+#include "Logic/Disjunction.h"
+#include "Logic/Summation.h"
+#include "Logic/VariantUtils.h"
+#include <variant>
+#include <vector>
 #include <map>
+#include <type_traits>
 
 namespace Angel::Logic
 {
 
-class Knowledge;
-class Expression;
+using ObjectVariant = std::variant<Boolean,  Integer, Id, Variable, Predicate, 
+    List, Set, 
+    Conjunction, Disjunction, Summation>; 
 
-// An object is a variadic instance of any type of expr
-class Object final
+class Object : public ObjectVariant
 {
 public:
-    Object() = default;
-    explicit Object(std::unique_ptr<Expression>&& v) :
-        expr(std::move(v))
+    template<typename T>
+    requires is_alternative<T, ObjectVariant>
+    Object(const T& v) :
+        ObjectVariant(v)
     {
     }
+    Object(const Object& o);
 
-    Object(const Object& other);
-	Object& operator=(const Object& other);
-	Object(Object&& other);
-	Object& operator=(Object&& other);
+    template<typename T>
+    const std::optional<T> TryCast() const
+    {
+        auto same = std::get_if<T>(this);
+        if (same)
+            return std::optional<T>(*same);
+        else
+            return std::optional<T>();
+    }
 
-	operator bool() const;
-	bool null() const;
-    bool operator==(const Object& other) const;
-    bool operator!=(const Object& other) const { return !operator==(other); }
-	operator std::string() const;
+    const std::type_info& AlternativeTypeInfo() const 
+    {
+        return *std::visit([](const auto& obj)
+        {
+            return &typeid(decltype(obj)); 
+        }, *this);        
+    }
 
-    const Expression& operator*() const;
-    const Expression* operator->() const;
-    Object Infer(const Knowledge& knowledge, const std::map<std::string, Object>& substitutions={}) const;
-	template<class C>
-    C* As() const { return dynamic_cast<C*>(expr.get()); }
-    template<class C>
-    Object Cast(const Knowledge& knowledge) const { return Cast(typeid(C), knowledge); } 
-    std::size_t Hash() const;
-private:
-    friend class Expression;
-    Object Cast(const std::type_info& t, const Knowledge& knowledge) const;
-	std::unique_ptr<Expression> expr;
+    template<typename T>
+    const T Cast() const
+    {
+        auto maybe = TryCast<T>();
+        if (maybe)
+            return *maybe;
+        throw CastException(AlternativeTypeInfo(), typeid(T));
+
+    }
+    Match Matches(const Object& o, const Variables& substitutions) const;
+    Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
+
+    template<typename T> 
+    requires(!std::is_same_v<Object, T>) 
+    bool operator==(const T& rhs) const
+    {
+        return std::visit(overloaded_visit{
+            [&rhs](const T& lv)
+            {
+                return lv == rhs;
+            }, 
+            [](const auto&) { return false; }   
+            },*this);
+    }
+
+    bool operator<(const Object&o) const;
 };
 
+template<> const std::optional<Predicate> Object::TryCast<>() const;
+template<> const std::optional<Integer> Object::TryCast<>() const;
 
 std::ostream& operator<<(std::ostream& s, const Object& o);
 
-template<class T, typename... Args>
-Object Create(Args&&... args)
-{
-	return Object(std::make_unique<T>(std::forward<Args>(args)...));
-}
-
+std::string to_string(const Object& o);
 }
 
 namespace std
@@ -61,9 +91,6 @@ namespace std
 	template <>
 	struct hash<Angel::Logic::Object>
 	{
-		size_t operator()(const Angel::Logic::Object& e) const
-		{
-			return e.Hash();
-		}
+		size_t operator()(const Angel::Logic::Object& n) const;
 	};
 }
