@@ -11,6 +11,13 @@ bool Conjunction::operator==(const Conjunction& rhs) const
     return Collection::operator==(rhs);
 }
 
+Match Conjunction::Matches(const Object& object, const Variables& vars) const
+{
+    // TODO: Conjunctions match with logical simplication
+    // true & X matches true if X is true. 
+    return NoMatch;
+}
+
 Object Conjunction::Compute(const Knowledge& k, const Variables& substitutions) const
 {
     for(const auto& item: *this)

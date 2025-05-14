@@ -10,6 +10,15 @@ bool Summation::operator==(const Summation& rhs) const
     return Collection::operator==(rhs);
 }
 
+Match Summation::Matches(const Object& object, const Variables& vars) const
+{
+    // TODO: Summation matches with mathematical simplication
+    // X+1 matches 3 if X is 2 
+    // all unknown variables need to be found and the remaining expression(s) needs to be computed. 
+    // if any are ranges, then the result might be a different range 
+    return NoMatch;
+}
+
 Object Summation::Compute(const Knowledge& k, const Variables& substitutions) const
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing

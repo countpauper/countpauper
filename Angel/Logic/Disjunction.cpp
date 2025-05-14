@@ -1,83 +1,52 @@
 #include "Logic/Disjunction.h"
 #include "Logic/Boolean.h"
+#include "Logic/Object.h"
 #include "Logic/Knowledge.h"
 
 namespace Angel::Logic
 {
 
-    /*
-Disjunction::Disjunction(Disjunction&& value) :
-    Disjunction(std::move(value.operands))
+bool Disjunction::operator==(const Disjunction& rhs) const
 {
+    return Collection::operator==(rhs);
 }
 
-
-bool Disjunction::operator==(const Expression& other) const
+Match Disjunction::Matches(const Object& object, const Variables& vars) const
 {
-    // TODO: could be in Nary if the type was the same 
-    if (auto conjunction = dynamic_cast<const Disjunction*>(&other))
+    // TODO: Disjunction match with logical simplication
+    // false & X matches true if X is true. 
+    return NoMatch;
+}
+
+Object Disjunction::Compute(const Knowledge& k, const Variables& substitutions) const
+{
+    for(const auto& item: *this)
     {
-        return operands == conjunction->operands;
+        auto object = k.Compute(item);
+        auto isTrue = object.Cast<Boolean>();
+        if (isTrue)
+            return isTrue; // or just object? false | 1 == 1?
     }
-    return false;
+    return Boolean(false);
 }
 
-std::ostream& operator<<(std::ostream& os, const Disjunction& element)
+std::size_t Disjunction::Hash() const
+{
+    return typeid(decltype(*this)).hash_code() ^ Collection::Hash();
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Disjunction& list)
 {
     bool first = true;
-    for (const auto& condition : element.operands)
+    for(const auto& obj: list)
     {
-        if (first)
-            first = false;
-        else
-            os << " | ";
-        os << condition;
+        if (!first)
+            os << "|";
+        os << obj;
+        first = false;
     }
     return os;
 }
-
-Object Disjunction::Simplify() const
-{
-    if (operands.empty())
-    {
-        return boolean(false);
-    }
-    else if (operands.size() == 1)
-    {
-        return Object(std::move(*operands.begin()));
-    }
-    else
-    {
-        return Copy();
-    }
-
-}
-
-Object Disjunction::Infer(const Knowledge& knowledge, const Variables& substitutions) const
-{
-    for (const auto& condition : operands)
-    {
-        auto truth = condition.Infer(knowledge, substitutions);
-        if (truth)
-            return truth;
-    }
-    return boolean(false);
-}
-
-
-Object Disjunction::Copy() const
-{
-    return Create<Disjunction>(operands);
-}
-
-Object Disjunction::Cast(const std::type_info& t, const Knowledge& k) const
-{
-    if (t == typeid(Boolean))
-    {
-        return Infer(k, Variables());
-    }
-    throw CastException<Disjunction>(t);
-}
-*/
 
 }

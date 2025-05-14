@@ -27,9 +27,6 @@ Match Object::Matches(const Object& o, const Variables& subs) const
                 return IsMatch;            
             return NoMatch; 
         },
-        // TODO: Expressions should be a different variant with only compute and no match/cast
-        [](const Summation&) -> Match { return NoMatch; },
-        [](const Conjunction&) -> Match { return NoMatch; },
         [&o, &subs](const auto& obj) -> Match 
         {
             return obj.Matches(o, subs);

@@ -6,6 +6,7 @@
 #include "Logic/List.h"
 #include "Logic/CastException.h"
 #include "Logic/Conjunction.h"
+#include "Logic/Disjunction.h"
 #include "Logic/Summation.h"
 #include "Logic/VariantUtils.h"
 #include <variant>
@@ -18,7 +19,7 @@ namespace Angel::Logic
 
 using ObjectVariant = std::variant<Boolean,  Integer, Id, Variable, Predicate, 
     List, Set, 
-    Conjunction, Summation>; 
+    Conjunction, Disjunction, Summation>; 
 
 class Object : public ObjectVariant
 {
@@ -34,7 +35,7 @@ public:
     template<typename T>
     const std::optional<T> TryCast() const
     {
-        auto same = std::get_if<T>(this);  // TODO really cast 
+        auto same = std::get_if<T>(this);
         if (same)
             return std::optional<T>(*same);
         else

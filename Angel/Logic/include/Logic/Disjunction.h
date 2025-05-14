@@ -1,40 +1,25 @@
 #pragma once
-#include "Operator.h"
-
+#include "Logic/Collection.h"
+#include "Logic/Match.h"
+#include "Logic/Element.h"
+#include <iostream>
 namespace Angel::Logic
 {
 
-    /*
-// A Disjunction is a logical operator, which is True, if at least one of its elements are True
-class Disjunction : public Nary
+// A Disjunction is a logical operator, which is true, if any of its elements is True
+// It is currently a Collection (ordered, non-unique) because the ordering is used to determine lazy evaulation
+// but technically it could be ordered and unique. 
+class Disjunction : public Collection 
 {
 public:
-    Disjunction() = default;
-    explicit Disjunction(Disjunction&& value);
-    template<class ...Args>
-    explicit Disjunction(Args... args) 
-    {
-        operands = Operands(std::forward<Args>(args)...);
-    }
-    Object Copy() const override;
-    bool operator==(const Expression& other) const override;
-    Object Infer(const Knowledge& known, const Variables& substitutions) const override;
-    // An empty disjunction is false
-    // a single element disjunction is equivalent to the first element
-    // otherwise create an object of itself
-    Object Simplify() const;
-protected:
-    Object Cast(const std::type_info& t, const Knowledge& k) const override;
-    friend std::ostream& operator<<(std::ostream& os, const Disjunction&);
+    using Collection::Collection;
+    Match Matches(const Object& object, const Variables& vars) const;
+    Object Compute(const class Knowledge& k, const Variables& substitutions={}) const;
+    bool operator==(const Disjunction& other) const;
+    std::size_t Hash() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Disjunction& );
 
-template<class ...Args>
-Object disjunction(Args... args)
-{
-    return Create<Disjunction>(std::forward<Args>(args)...);
-}
-*/
 
 }
