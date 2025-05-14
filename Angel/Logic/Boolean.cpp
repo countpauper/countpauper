@@ -23,6 +23,11 @@ Boolean::Boolean(const std::string_view tag)
         throw std::invalid_argument(std::format("Invalid Boolean value `{}`", tag));
 }
 
+Boolean::Boolean(const Integer& i) :
+    Boolean(*i != 0)
+{
+}
+
 
 Boolean::operator bool() const 
 {
@@ -56,7 +61,7 @@ Expression Boolean::Cast(const std::type_info& t, const Knowledge& k) const
     {
         return integer(truth ? 1 : 0);
     }
-    throw CastException<Boolean>(t);
+    throw CastException(typeid(*this), t);
 }
 */
 

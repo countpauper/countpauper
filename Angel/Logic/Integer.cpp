@@ -14,6 +14,11 @@ Integer::Integer(long value) :
 {
 }
 
+Integer::Integer(const Boolean& b) :
+    value(*b)
+{
+}
+
 Integer::operator bool() const
 {
     return value!=0;

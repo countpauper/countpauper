@@ -131,7 +131,7 @@ Object Set::Cast(const std::type_info& t, const Knowledge& k) const
     {
         return Object(); // TODO: copy all members 
     }
-    throw CastException<Set>(t);
+    throw CastException(typeid(*this), t);
 }
 
 void Set::Add(Object&& value)

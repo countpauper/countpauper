@@ -13,11 +13,7 @@ public:
         std::runtime_error(std::format("Can not Cast from {} to {} ", from.name(), to.name()))
     {
     }
-    template<class _From>
-    CastException(const std::type_info& to) :
-        CastException(typeid(_From), to)
-    {
-    }
+
 };
 
 

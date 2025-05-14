@@ -41,8 +41,19 @@ public:
             return std::optional<T>(*same);
         else
         {
-
-            return std::optional<T>();
+            return std::visit(overloaded_visit{
+                // Automatically cast any alternative that has a constructor that 
+                // takes another alternative const& as its sole argument
+                [this](const auto& castee) 
+                requires std::is_constructible_v<T, decltype(castee)>
+                {
+                    return std::optional<T>(castee);
+                },
+                [](const auto& obj) 
+                {
+                    return std::optional<T>();
+                }
+            }, *this);
         }
     }
     const std::type_info& AlternativeTypeInfo() const 
@@ -80,9 +91,6 @@ public:
 
     bool operator<(const Expression&o) const;
 };
-
-template<> const std::optional<Predicate> Expression::TryCast<>() const;
-template<> const std::optional<Integer> Expression::TryCast<>() const;
 
 std::ostream& operator<<(std::ostream& s, const Expression& e);
 

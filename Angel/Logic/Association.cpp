@@ -79,7 +79,7 @@ Expression Clause::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (typeid(t) == typeid(Boolean))
         return Infer(k, Variables());
-    throw CastException<Clause>(t);
+    throw CastException(typeid(*this), t);
 }
 
 Expression clause(Predicate&& predicate, Expression&& condition)

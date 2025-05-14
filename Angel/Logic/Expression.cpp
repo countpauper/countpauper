@@ -67,33 +67,6 @@ std::string to_string(const Expression& e)
     return ss.str();
 }
 
-template<>
-const std::optional<Predicate> Expression::TryCast<Predicate>() const
-{
-    auto same = std::get_if<Predicate>(this);  // TODO really cast 
-    if (same)
-        return std::optional<Predicate>(*same);
-
-    return std::visit(overloaded_visit{
-        [](const Id& id) { return std::optional<Predicate>(Predicate(id)); },
-        [](const auto&) { return std::optional<Predicate>(); }
-    }, *this);
-}
-
-template<>
-const std::optional<Integer> Expression::TryCast<Integer>() const
-{
-    auto same = std::get_if<Integer>(this);
-    if (same)
-        return std::optional<Integer>(*same);
-
-    return std::visit(overloaded_visit{
-        [](const Boolean& b) { return std::optional<Integer>(b?1:0); },
-        [](const auto&) { return std::optional<Integer>(); }
-    }, *this);
-}
-
-
 }
 
 

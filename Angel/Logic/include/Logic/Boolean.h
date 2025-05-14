@@ -12,6 +12,7 @@ public:
 	explicit Boolean(bool v);
 	explicit Boolean(const std::string_view tag);
     explicit Boolean(const char* tag) : Boolean(std::string_view(tag)) {}
+    explicit Boolean(const class Integer& i);
 	bool operator==(const Boolean& other) const;
     bool operator*() const;
     explicit operator bool() const;
