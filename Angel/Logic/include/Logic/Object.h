@@ -60,7 +60,7 @@ public:
 
     }
     Match Matches(const Object& o, const Variables& substitutions) const;
-    Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
+    Object Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 
     template<typename T> 
     requires(!std::is_same_v<Object, T>) 

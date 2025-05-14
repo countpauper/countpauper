@@ -17,13 +17,13 @@ bool List::operator==(const List& rhs) const
     return Collection::operator==(rhs);
 }
 
-Object List::Compute(const Knowledge& knowledge, const Variables& substitutions) const
+Object List::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
     List result;
     std::transform(begin(), end(), std::back_inserter(result), 
         [&knowledge, &substitutions](const Object& o)
         {
-            return o.Compute(knowledge, substitutions);
+            return o.Infer(knowledge, substitutions);
         });
     return result;
 }

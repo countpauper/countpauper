@@ -16,7 +16,7 @@ public:
     bool operator==(const Variable& id) const;
     std::size_t Hash() const;
     Match Matches(const Object& other, const Variables& variables) const;
-    Object Compute(const class Knowledge& k, const Variables& substitutions) const;
+    Object Infer(const class Knowledge& k, const Variables& substitutions) const;
 
 //    Object Cast(const std::type_info& t, const Knowledge& k) const override;
 

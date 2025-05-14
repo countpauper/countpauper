@@ -52,9 +52,9 @@ Match Predicate::Matches(const Object& object, const Variables& vars) const
 	return arguments.Matches(predicate->arguments, vars);
 }
 
-Object Predicate::Compute(const Knowledge& knowledge, const Variables& substitutions) const
+Object Predicate::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
-	Predicate computed(id, std::get<List>(arguments.Compute(knowledge, substitutions)));
+	Predicate computed(id, std::get<List>(arguments.Infer(knowledge, substitutions)));
 	auto matches = knowledge.Matches(computed);
 	for(const auto& association: matches)
 	{

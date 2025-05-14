@@ -18,11 +18,11 @@ Match Disjunction::Matches(const Object& object, const Variables& vars) const
     return NoMatch;
 }
 
-Object Disjunction::Compute(const Knowledge& k, const Variables& substitutions) const
+Object Disjunction::Infer(const Knowledge& k, const Variables& substitutions) const
 {
     for(const auto& item: *this)
     {
-        auto object = k.Compute(item);
+        auto object = k.Infer(item);
         auto isTrue = object.Cast<Boolean>();
         if (isTrue)
             return isTrue; // or just object? false | 1 == 1?

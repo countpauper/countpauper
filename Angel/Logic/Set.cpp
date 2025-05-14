@@ -53,7 +53,7 @@ Match Set::Matches(const Object& o, const Variables& variables) const
     return NoMatch;
 }
 
-Object Set::Compute(const Knowledge& knowledge, const Variables& substitutions) const
+Object Set::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
     Set result;
     for(const std::pair<Object,Object> item: *this)
@@ -66,8 +66,8 @@ Object Set::Compute(const Knowledge& knowledge, const Variables& substitutions) 
         // for cases where these are clauses eg legs(X+1): max legs(X*2): ginny, 
         // this disjunction also seems to make sense legs(2): max | ginny, if we are 
         // hypothesizing that both have 2 legs 
-        result.emplace(item.first.Compute(knowledge, substitutions),
-            item.second.Compute(knowledge,substitutions));
+        result.emplace(item.first.Infer(knowledge, substitutions),
+            item.second.Infer(knowledge,substitutions));
     }
     return result;
 }

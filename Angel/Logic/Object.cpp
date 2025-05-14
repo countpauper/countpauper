@@ -33,14 +33,14 @@ Match Object::Matches(const Object& o, const Variables& subs) const
         }},   *this);    
 }
 
-Object Object::Compute(const class Knowledge& knowledge, const Variables& vars) const
+Object Object::Infer(const class Knowledge& knowledge, const Variables& vars) const
 {
     return std::visit(overloaded_visit{
         []<IsElement T>(const T& element) -> Object {
             return element; 
         },
         [&knowledge, &vars](const auto& obj) -> Object {
-            return obj.Compute(knowledge, vars);
+            return obj.Infer(knowledge, vars);
         }
     }, *this);
 }

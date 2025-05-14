@@ -14,7 +14,7 @@ public:
 
     bool operator==(const List& rhs) const;
     explicit operator bool() const;
-    Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
+    Object Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
     Match Matches(const Object& other, const Variables& variables) const;
     std::size_t Hash() const;
 };

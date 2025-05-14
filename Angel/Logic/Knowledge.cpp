@@ -22,10 +22,10 @@ size_t Knowledge::Know(Predicate&& key, Object&& expression)
     }
 }
 
-Object Knowledge::Compute(const Object& expression) const
+Object Knowledge::Infer(const Object& expression) const
 {
     Variables vars;
-    return expression.Compute(*this, vars);
+    return expression.Infer(*this, vars);
 }
 
 Set Knowledge::Matches(const Predicate& query) const
@@ -44,7 +44,7 @@ Set Knowledge::Matches(const Predicate& query) const
                     continue;
                 if (match->size()<bestMatch)
                     result.clear();
-                result.emplace(association.first, association.second.Compute(*this, *match));
+                result.emplace(association.first, association.second.Infer(*this, *match));
             }
         }
         else 

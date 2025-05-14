@@ -19,14 +19,14 @@ Match Summation::Matches(const Object& object, const Variables& vars) const
     return NoMatch;
 }
 
-Object Summation::Compute(const Knowledge& k, const Variables& substitutions) const
+Object Summation::Infer(const Knowledge& k, const Variables& substitutions) const
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing
     // this can, for instance, be done by accumulating an Object and making Objects implement operator+(Object) etc
     long value = std::accumulate(begin(), end(), 0L,
         [&k, &substitutions](long accumulated, const Object& item)
         {
-            auto object = k.Compute(item);
+            auto object = k.Infer(item);
             auto value = object.Cast<Integer>();
             return accumulated += *value;
         });

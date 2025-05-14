@@ -44,10 +44,10 @@ TEST(List, to_string)
 	EXPECT_EQ(to_string(List{Id("ginny"), Id("gizmo")}), "[ginny,gizmo]");
 }
 
-TEST(List, Compute)
+TEST(List, Infer)
 {
 	Knowledge k;
-	EXPECT_EQ(k.Compute(List{Summation{Integer(2), Integer(3)}}), (List{Integer(5)}));
+	EXPECT_EQ(k.Infer(List{Summation{Integer(2), Integer(3)}}), (List{Integer(5)}));
 }
 
 }

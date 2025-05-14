@@ -20,10 +20,10 @@ TEST(Variable, Query)
 	// TODO: to be defined what the hypothesis is. either the whole root namespace 
 	// or some predefined universal set that could be anything
 	// for the anonyomous variable the hyptohesis is elided 
-	EXPECT_EQ(k.Compute(Variable("Test")), Boolean(true));
-	EXPECT_EQ(k.Compute(Variable("")), Boolean(true));
+	EXPECT_EQ(k.Infer(Variable("Test")), Boolean(true));
+	EXPECT_EQ(k.Infer(Variable("")), Boolean(true));
 	Variables vars{{"Test", Integer(4)}};
-	EXPECT_EQ(Variable("Test").Compute(k, vars), Integer(4));
+	EXPECT_EQ(Variable("Test").Infer(k, vars), Integer(4));
 }
 
 TEST(Variable, Matching)

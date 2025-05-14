@@ -52,10 +52,10 @@ TEST(Set, Compare)
 }
 
 
-TEST(Set, Compute)
+TEST(Set, Infer)
 {
 	Knowledge k;
- 	EXPECT_EQ(k.Compute(Set{Summation{Integer(2), Integer(3)}, Integer(5)}), (Set{Integer(5)}));
+ 	EXPECT_EQ(k.Infer(Set{Summation{Integer(2), Integer(3)}, Integer(5)}), (Set{Integer(5)}));
 }
 
 }

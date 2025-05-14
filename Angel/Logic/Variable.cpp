@@ -28,7 +28,7 @@ std::size_t Variable::Hash() const
     return hasher(name);
 }
 
-Object Variable::Compute(const class Knowledge& k, const Variables& substitutions) const
+Object Variable::Infer(const class Knowledge& k, const Variables& substitutions) const
 {
     auto it = substitutions.find(name);
     if (it!=substitutions.end())

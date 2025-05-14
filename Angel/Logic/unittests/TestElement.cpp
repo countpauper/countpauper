@@ -21,8 +21,8 @@ TEST(Element, ComputeBooleanReturnsConstant)
 	Object b = Boolean(true);
 	EXPECT_EQ(b, Boolean(true));
 	Knowledge k;
-	EXPECT_EQ(k.Compute(Boolean(true)), Boolean(true));
-	EXPECT_EQ(k.Compute(Boolean(false)), Boolean(false));
+	EXPECT_EQ(k.Infer(Boolean(true)), Boolean(true));
+	EXPECT_EQ(k.Infer(Boolean(false)), Boolean(false));
 }
 
 TEST(Element, Integer)
@@ -36,7 +36,7 @@ TEST(Element, Integer)
 TEST(Element, ComputeIntegerReturnsConstant)
 {
 	Knowledge k;
-	EXPECT_EQ(k.Compute(Integer(1)), Integer(1));
+	EXPECT_EQ(k.Infer(Integer(1)), Integer(1));
 }
 
 TEST(TestElement, Id)
@@ -50,8 +50,8 @@ TEST(TestElement, Id)
 TEST(Element, ComputeIdReturnsConstant)
 {
 	Knowledge k;
-	EXPECT_EQ(k.Compute(Id("test")), Id("test"));
-	EXPECT_EQ(k.Compute(Id("")), Id(""));
+	EXPECT_EQ(k.Infer(Id("test")), Id("test"));
+	EXPECT_EQ(k.Infer(Id("")), Id(""));
 }
 
 }

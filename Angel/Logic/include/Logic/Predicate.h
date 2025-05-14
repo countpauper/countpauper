@@ -21,7 +21,7 @@ public:
     bool operator==(const Predicate& other) const;
     std::size_t Hash() const;
     Match Matches(const Object& object, const Variables& vars) const;
-    Object Compute(const class Knowledge& knowledge, const Variables& substitutions={}) const;
+    Object Infer(const class Knowledge& knowledge, const Variables& substitutions={}) const;
 private:
     friend std::ostream& operator<<(std::ostream& os, const Predicate& );
     Id id;

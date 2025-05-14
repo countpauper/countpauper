@@ -17,7 +17,7 @@ public:
 	Knowledge();
     size_t Know(Predicate&& key, Object&& value=Boolean(true));
 	Set Matches(const Predicate& predicate) const;
-	Object Compute(const Object& o) const;
+	Object Infer(const Object& o) const;
 	bool Knows(const Object& e) const;
 	size_t size() const;
 	bool empty() const;

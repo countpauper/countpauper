@@ -16,24 +16,24 @@ TEST(Disjunction, Construction)
 TEST(Disjunction, Conjunctions)
 {
     Knowledge k;
-    EXPECT_EQ(Disjunction{}.Compute(k), Boolean(false));
-    EXPECT_EQ((Disjunction{Boolean(true)}).Compute(k), Boolean(true));
-    EXPECT_EQ((Disjunction{Boolean(true), Boolean(false)}).Compute(k), Boolean(true));
-    EXPECT_EQ((Disjunction{Disjunction{Boolean(true)}}).Compute(k), Boolean(true));
+    EXPECT_EQ(Disjunction{}.Infer(k), Boolean(false));
+    EXPECT_EQ((Disjunction{Boolean(true)}).Infer(k), Boolean(true));
+    EXPECT_EQ((Disjunction{Boolean(true), Boolean(false)}).Infer(k), Boolean(true));
+    EXPECT_EQ((Disjunction{Disjunction{Boolean(true)}}).Infer(k), Boolean(true));
 }
 
 TEST(Disjunction, Nest)
 {
     Knowledge k;
-    EXPECT_EQ((Disjunction{Disjunction{Boolean(false)}, Disjunction{Boolean(true)}}).Compute(k), Boolean(true));
-    EXPECT_EQ((Disjunction{Predicate("cat")}).Compute(k), Boolean(false));
+    EXPECT_EQ((Disjunction{Disjunction{Boolean(false)}, Disjunction{Boolean(true)}}).Infer(k), Boolean(true));
+    EXPECT_EQ((Disjunction{Predicate("cat")}).Infer(k), Boolean(false));
 }
 
 TEST(Disjunction, Inference)
 {
     Knowledge k;
     k.Know(Predicate("cat"));
-    EXPECT_EQ((Disjunction{Predicate("cat")}).Compute(k), Boolean(true));
+    EXPECT_EQ((Disjunction{Predicate("cat")}).Infer(k), Boolean(true));
 }
 
 TEST(Disjunction, to_string)
