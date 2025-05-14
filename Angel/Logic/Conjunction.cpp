@@ -1,5 +1,6 @@
 #include "Logic/Conjunction.h"
 #include "Logic/Boolean.h"
+#include "Logic/Object.h"
 #include "Logic/Knowledge.h"
 
 namespace Angel::Logic

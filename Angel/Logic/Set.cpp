@@ -37,6 +37,21 @@ bool Set::operator==(const Set& rhs) const
                       rhs.begin());
 }
 
+Match Set::Matches(const Object& o, const Variables& variables) const
+{
+    const Set* set = std::get_if<Set>(&o);
+    if (!set)
+        return NoMatch;
+        
+    // TODO: implement, but how and what behavior 
+    // {ginny, max} should match {max, ginny}
+    // {ginny, $X, gizmo } should match {max, ginny, $Y} with $X = max & $Y = gizmo 
+    // should be the same size at least, barring some sort of |Tail syntax 
+    // so all items should be attempted to match with another and then that one should be out
+    if (size()!=set->size())
+        return NoMatch; // TODO: head|tail matching or whatever could happen here
+    return NoMatch;
+}
 
 Object Set::Compute(const Knowledge& knowledge, const Variables& substitutions) const
 {

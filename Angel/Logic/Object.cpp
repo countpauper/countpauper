@@ -15,6 +15,27 @@ Object::Object(const Object& o) :
 {
 }
 
+Match Object::Matches(const Object& o, const Variables& subs) const 
+{
+    return std::visit(overloaded_visit{
+        [&o, &subs, this]<IsElement T>(const T& element) -> Match {
+            const auto* var = std::get_if<Variable>(&o);
+            // TODO this could be Variable::Matches()
+            if (var)
+                return var->Matches(*this, subs);
+            if (o==element)
+                return IsMatch;            
+            return NoMatch; 
+        },
+        // TODO: Expressions should be a different variant with only compute and no match/cast
+        [](const Summation&) -> Match { return NoMatch; },
+        [](const Conjunction&) -> Match { return NoMatch; },
+        [&o, &subs](const auto& obj) -> Match 
+        {
+            return obj.Matches(o, subs);
+        }},   *this);    
+}
+
 Object Object::Compute(const class Knowledge& knowledge, const Variables& vars) const
 {
     return std::visit(overloaded_visit{

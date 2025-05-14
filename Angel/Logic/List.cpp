@@ -28,22 +28,22 @@ Object List::Compute(const Knowledge& knowledge, const Variables& substitutions)
     return result;
 }
 
-Match List::Matches(const List& list) const
+Match List::Matches(const Object& o, const Variables& variables) const
 {
-    if (size()!=list.size())
+    const List* list = std::get_if<List>(&o);
+    if (!list)
+        return NoMatch;
+
+    if (size()!=list->size())
         return NoMatch; // TODO: head|tail matching or whatever could happen here 
-    auto lit = list.begin();
-    Variables vars;
+    auto lit = list->begin();
+    Variables vars = variables;
     for(auto it=begin(); it!=end(); ++it, ++lit)
     {
-        if (*it != *lit)
-            return NoMatch; // TODO should match each node, variable substituations etc
-        /*
-        auto match = it->value.Match(lit->value);
-        if (!match)
-            return match;
-        vars.insert(*match);
-        */
+        auto itemMatch = it->Matches(*lit, vars);
+        if (!itemMatch)
+            return NoMatch;
+        vars.insert(itemMatch->begin(), itemMatch->end());
     }
     return vars;
 }

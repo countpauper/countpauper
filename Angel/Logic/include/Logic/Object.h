@@ -58,6 +58,7 @@ public:
         throw CastException(AlternativeTypeInfo(), typeid(T));
 
     }
+    Match Matches(const Object& o, const Variables& substitutions) const;
     Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
 
     template<typename T> 

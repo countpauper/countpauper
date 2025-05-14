@@ -36,7 +36,7 @@ Set Knowledge::Matches(const Predicate& query) const
     {
         if (const auto* predicate = std::get_if<Predicate>(&association.first))
         {
-            auto match = predicate->Matches(query);
+            auto match = predicate->Matches(query, {});
             if (match)
             {   // Matches with least substitutions take precedence. 
                 // See the Occam's razor section in language design

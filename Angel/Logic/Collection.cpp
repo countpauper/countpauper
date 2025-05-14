@@ -7,7 +7,6 @@
 namespace Angel::Logic
 {
 
-    
 Collection::Collection(std::initializer_list<Object> items) :
     std::vector<Object>(items)
 {

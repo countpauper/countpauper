@@ -182,13 +182,39 @@ When multiple matches are possible, the match(es) with the least amount of subst
 This is also used to implement recursion and logical induction. 
 ```
 fibonachi(1)
-fibonachi(X) : Y+Z = X &  fibonachi(Y) & fibonachi(Z)
+fibonachi(X) : Y+Z = X & Y>0 & Z>0 & fibonachi(Y) & fibonachi(Z)
 > fibonachi(1)
 true
 ```
 In this case the first clause matches and the second one does not. This prevents infinite recursion, trying to 
 match endless X values.
 How the inference engine generates valid Y and Z (integers) in this case to make Y+Z=X true is not yet determined.
+
+
+## Expression matching and math 
+
+When matching Y=X+2, perhaps X will be known and the summation expression can be computed and Y instantiated (1+2, Y=3).
+In another case the matching will be the other way around. This is still solvable and should match. If Y is known (3) then 
+the expression can be inverted. X=3-2: X=1. 
+This math is relatively simple for most exprssions. Inverting an expression to get the unknown variable on the left side 
+should be doable for +- */ ^ and even sqrt, using imaginray numbers. 
+
+## Expression matching and logic
+For logical expressions this should also be possible. This is (probably) trying to write complex logical expressions like 
+A&B -> C|D into horn clauses. Usually the expressions are already written as horn clauses but when for instance matching lists
+[X] [hairy&Y], if Y is known X can be true if hairy is true and Y. If X is known to be true, Y must also be true and vice versa.
+
+## Hypothesis ranges 
+Also set theory can be used to narrow down a hypothesis. This involves the set operators `>`,`<` and `@` as well as 
+subsets, intersections and so on. 
+`X>0 & X<4`, After the second expression, for the conjjnction to be true, X has to be in the open range `<0:4>`. If a second unknown is introduced `X>0 & X<Y` this may be matched with X=4. This then says something about Y: `Y>4`. 
+
+## Hypthesis 
+Also make design, expression, object, element and their functions 
+There may need to be expression containers that can be computed and object containers that can be matched. 
+But still the problem is matching expression containers and then needing to compute while matching 
+[$X+2, ginny] match [4, ginny] IF $X is 2. But also ... (this is where the actual math inference comes in)
+that could be the hypothesis if $X is as of yet unknown. because $X+2 = 4 : $X=4-2 
 
 ## Variable predicates
 
@@ -266,6 +292,13 @@ legs(4)
 cat(ginny)?
 > true
 ```
+
+## Ranges 
+Rangers are collections, like sets and lists, but they are contiguous. This allows them to be expressed with 
+a start and an end as `[a..b]`. Ranges can be inclusive or exclusive on either end `<a..b]` or infinite `[a..]`.
+Membership `@` can be computed on ranges. The for-each or for-any operators will iterate over all numbers in 
+the range, but only if the size is not infinite. The size is infinite if either end is ifinite or if the set contains
+floating points. In those cases iteration with for-each or for-any will result in an error. 
 
 ## Conjunction 
 A conjunection if expressions is true if all its elements are true. The & operator is used for conjunection. A conjunection is false as soon as one element is false. This is avaluated in a lazy way for performance and for axioms with side effects 

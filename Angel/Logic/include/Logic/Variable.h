@@ -1,4 +1,5 @@
 #pragma once
+#include "Logic/Match.h"
 #include <string>
 
 namespace Angel::Logic
@@ -14,6 +15,9 @@ public:
     explicit virtual operator bool() const;
     bool operator==(const Variable& id) const;
     std::size_t Hash() const;
+    Match Matches(const Object& other, const Variables& variables) const;
+    Object Compute(const class Knowledge& k, const Variables& substitutions) const;
+
 //    Object Cast(const std::type_info& t, const Knowledge& k) const override;
 
 //    Object Copy() const override;

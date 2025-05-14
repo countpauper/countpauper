@@ -1,5 +1,6 @@
 #include "Logic/Variable.h"
 #include "Logic/Boolean.h"
+#include "Logic/Object.h"
 #include <iostream>
 
 namespace Angel::Logic
@@ -25,6 +26,22 @@ std::size_t Variable::Hash() const
 {
     std::hash<std::string> hasher;
     return hasher(name);
+}
+
+Object Variable::Compute(const class Knowledge& k, const Variables& substitutions) const
+{
+    auto it = substitutions.find(name);
+    if (it!=substitutions.end())
+        return it->second;
+    return Boolean(true);
+}
+
+Match Variable::Matches(const Object& o, const Variables& variables) const
+{
+    auto it = variables.find(name);
+    if (it==variables.end())
+        return Variables{{name, o}};
+    return it->second.Matches(o, variables);
 }
 
 /*

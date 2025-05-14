@@ -23,6 +23,7 @@ public:
 		}
 	}
 	const Object* Find(const Object& o) const;
+    Match Matches(const Object& other, const Variables& variables) const;
     Object Compute(const class Knowledge& knowledge, const Variables& substitutions) const;
 	explicit operator bool() const;
 	std::size_t Hash() const;

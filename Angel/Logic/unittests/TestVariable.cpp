@@ -16,20 +16,21 @@ TEST(Variable, Expression)
 
 TEST(Variable, Query)
 {
-	//Knowledge k;
-	// TODO: this should return true and an (empty) set of all knowledge?
-	//EXPECT_EQ(k.Query(Variable("Test")), Boolean(true));
-	// TODO: this is the anonymous variable and should return true and no hypothesis
-	//EXPECT_EQ(k.Query(Variable("")), Boolean(true));
+	Knowledge k;
+	// TODO: to be defined what the hypothesis is. either the whole root namespace 
+	// or some predefined universal set that could be anything
+	// for the anonyomous variable the hyptohesis is elided 
+	EXPECT_EQ(k.Compute(Variable("Test")), Boolean(true));
+	EXPECT_EQ(k.Compute(Variable("")), Boolean(true));
+	Variables vars{{"Test", Integer(4)}};
+	EXPECT_EQ(Variable("Test").Compute(k, vars), Integer(4));
 }
 
-/*
 TEST(Variable, Matching)
 {
-	EXPECT_TRUE(Variable("X").Matching(Integer(1), {}));
-    Variables substituted = {{"Y",integer(2)}};
-	EXPECT_FALSE(Variable("Y").Matching(Integer(1), substituted) );
-	EXPECT_TRUE(Variable("Y").Matching(Integer(2), substituted) );
+	EXPECT_TRUE(Variable("X").Matches(Integer(1), {}));
+    Variables substituted = {{"Y",Integer(2)}};
+	EXPECT_FALSE(Variable("Y").Matches(Integer(1), substituted) );
+	EXPECT_TRUE(Variable("Y").Matches(Integer(2), substituted) );
 }
-*/
 }

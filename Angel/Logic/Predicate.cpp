@@ -41,11 +41,15 @@ std::size_t Predicate::Hash() const
     return id.Hash() ^ arguments.Hash();
 }
 
-Match Predicate::Matches(const Predicate& predicate) const
+Match Predicate::Matches(const Object& object, const Variables& vars) const
 {
-	if (id != predicate.id) // Variable predicate names not (yet) supported
+	const auto* predicate = std::get_if<Predicate>(&object);
+	if (!predicate)
 		return NoMatch;
-	return arguments.Matches(predicate.arguments);
+	
+	if (id != predicate->id) // Variable predicate names not (yet) supported
+		return NoMatch;
+	return arguments.Matches(predicate->arguments, vars);
 }
 
 Object Predicate::Compute(const Knowledge& knowledge, const Variables& substitutions) const
