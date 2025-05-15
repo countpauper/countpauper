@@ -42,18 +42,24 @@ Parser::Parser(const Syntax& syntax) :
 {
 }
 
-void Parser::Parse(const Source& src, SymbolStream& os)
+void Parser::Parse(const Source& src, SymbolStream& os, const std::string_view start)
 {
     TokenStream tokens;
     Lexer(lexicon).Process(src, tokens);
-    ParseTokens(tokens, os);
+    Symbol startSymbol;
+    if (start.empty())
+        startSymbol = syntax.Root();
+    else
+        startSymbol = Symbol(start);
+
+    ParseTokens(tokens, os, startSymbol);
 }
 
 
-Symbols Parser::ParseIt(const Source& source)
+Symbols Parser::ParseIt(const Source& source, const std::string_view start)
 {
     SymbolStream os;
-    Parse(source, os);
+    Parse(source, os, start);
     return SymbolGenerator(lexicon, os)();
 }
 

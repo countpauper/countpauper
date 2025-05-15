@@ -14,9 +14,9 @@ class Parser
 {
 public:
     virtual ~Parser() = default;
-    virtual void ParseTokens(TokenStream& is, SymbolStream& os) = 0;
-    void Parse(const Source& src, SymbolStream& os);
-    Symbols ParseIt(const Source& src);
+    virtual void ParseTokens(TokenStream& is, SymbolStream& os, Symbol start) = 0;
+    void Parse(const Source& src, SymbolStream& os, const std::string_view start="");
+    Symbols ParseIt(const Source& src, const std::string_view start="");
 protected:
     Parser(const Syntax& syntax);
     const Syntax& syntax;
@@ -27,7 +27,7 @@ class LLParser : public Parser
 {
 public:
     LLParser(const class Syntax& syntax, unsigned k);
-    void ParseTokens(TokenStream& is, SymbolStream& os) override;
+    void ParseTokens(TokenStream& is, SymbolStream& os, Symbol start) override;
 private:
 };
 

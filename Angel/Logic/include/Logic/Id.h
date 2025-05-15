@@ -9,7 +9,7 @@ namespace Logic
 class Id
 {
 public:
-	explicit Id(const std::string_view name);
+	explicit Id(const std::string_view name="");
     explicit operator bool() const;
 	bool operator==(const Id& id) const;
     std::size_t Hash() const;

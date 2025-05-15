@@ -13,7 +13,8 @@ class AngelInterpreter
 {
 public:
     AngelInterpreter();
-    std::vector<Logic::Predicate> Interpret(const ::Interpreter::Source& source, Logic::Knowledge& knowledge ); 
+    void Interpret(const ::Interpreter::Source& source, Logic::Knowledge& knowledge ); 
+    Logic::Expression InterpretExpression(const ::Interpreter::Source& source);
 private:
     Interpreter::Syntax syntax;
     Interpreter::RecursiveDescentParser parser;

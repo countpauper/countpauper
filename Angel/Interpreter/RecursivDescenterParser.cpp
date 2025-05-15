@@ -22,14 +22,13 @@ RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
 static Logging::Tabber tab;
 
 
-void RecursiveDescentParser::ParseTokens(TokenStream& is, SymbolStream& os)
+void RecursiveDescentParser::ParseTokens(TokenStream& is, SymbolStream& os, Symbol start)
 {
-    auto root = syntax.Root();
     auto input = is.Dump();
     auto it = input.begin();
     assert(input.back().token == 0); // skip end
     tab = 0;
-    auto output = Recurse(root, it, input.end()-1);
+    auto output = Recurse(start, it, input.end()-1);
     if (output.empty())
         throw Error("Unexpected token", it->reference);
     for(const auto& symbol : output)

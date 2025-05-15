@@ -28,7 +28,7 @@ void Lexer::Process(const Source& src, TokenStream& os)
         }
         if (bestConsumed == 0) 
         {
-            throw Error("Unkown token", src.span(location, src.size()-location));
+            throw Error("Unknown token", src.span(location, src.size()-location));
         }
         os << InputToken(best, src.span(location, bestConsumed));
         location += bestConsumed;

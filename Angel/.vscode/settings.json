@@ -4,5 +4,6 @@
         "-DBUILD_WITH_TESTS=ON",
         "-DCMAKE_BUILD_TYPE=Debug"
     ],
-    "plantuml.diagramsRoot": "Design"
+    "plantuml.diagramsRoot": "Design",
+    "testMate.cpp.test.workingDirectory": "${command:cmake.buildDirectory}",
 }
