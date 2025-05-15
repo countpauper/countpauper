@@ -1,14 +1,14 @@
 <knowledge> ::= <axiom> <space> <axioms>
 # TODO <namsepace>  
-<axioms> ::= "," <space> <axiom> <axioms> | ""
+<axioms> ::= "," <space> <axiom> <axioms> | ε-axioms
 <axiom> ::= <predicate> <space> <terms> 
-<terms> ::= ":" <value> |  ""
+<terms> ::= ":" <value> | ε-terms
 <predicate> ::= <id> <space> <arguments>
 <arguments> ::= "(" <sequence> ")" | ""
 <sequence> ::= <expression> <sequence-next>
-<sequence-next> ::= <space> "," <space> <expression> <sequence-next> | ""
+<sequence-next> ::= <space> "," <space> <expression> <sequence-next> | ε-sequence
 <expression> ::= <value> <operand>
-<operand> ::= <space> <operator> <space> <value> <operand> | ""
+<operand> ::= <space> <operator> <space> <value> <operand> | ε-expression
 <operator> ::= '([+\-*\/&\^@]|!=|>=|<=)'
 <value> ::= <element> | "(" <space> <expression> <space> ")" | <negation> | <negative>
 # TODO indexation [ ], lists, sets and ranges value:value 

@@ -54,8 +54,8 @@ static const Syntax BNF
     // <character> ::= <letter> | <digit> | <symbol> 
     // <character1> := <character> | "'"
     Rule("literal", {Regex(R"regex("(\\"|[^"\n])+")regex")}),
-    Rule("epsilon", {Literal("\"\"") }),
-    Rule("epsilon", {Literal("ε")}),
+    Rule("epsilon", {Literal("\"\"") }),    // silent epsilon, not in symbol stream
+    Rule("epsilon", {Regex(R"regex(ε([^\x00-\x7F]|\w|\-|_)*)regex")}), // named epsilon
     // <text2> ::= "" | <character2> <text2>
     // <character2> ::= <character> | '"'
     Rule("regex", {Regex(R"regex('(\\'|[^'\n])*')regex")}),

@@ -38,7 +38,7 @@ Logic::Predicate GeneratePredicate( Interpreter::SymbolStream& parse)
         {
             id = Logic::Id(input.location.extract());
         }
-        else if (input.symbol == Interpreter::Symbol::epsilon)
+        else if (input.symbol == Interpreter::Symbol("-terms"))
         {
             break;
         }
