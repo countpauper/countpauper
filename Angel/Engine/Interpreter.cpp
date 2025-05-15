@@ -38,6 +38,10 @@ Logic::Predicate GeneratePredicate( Interpreter::SymbolStream& parse)
         {
             id = Logic::Id(input.location.extract());
         }
+        else if (input.symbol == Interpreter::Symbol::epsilon)
+        {
+            break;
+        }
     }
     assert(id); // error handling needed?
     return Logic::Predicate(id);

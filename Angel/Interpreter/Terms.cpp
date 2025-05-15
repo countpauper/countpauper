@@ -66,14 +66,13 @@ bool Regex::operator==(const Regex& other) const
     return other.match == match;
 }
 
-
 std::size_t Match(const Term& token, SourceSpan src)
 {
     auto matcher = [&src](const auto& obj) { return obj.Match(src); };
     return std::visit(matcher, token);
 }
 
-Epsilon::Epsilon(const std::string_view symbol) :
+Epsilon::Epsilon(const Symbol& symbol) :
     symbol(symbol)
 {
 }
@@ -90,7 +89,7 @@ std::size_t Epsilon::Match(SourceSpan) const
 
 Epsilon::operator std::string() const
 {
-    if (symbol)
+    if (symbol!=Symbol::epsilon)
         return std::format("ε{}", std::string(symbol));
     else
         return "ε";

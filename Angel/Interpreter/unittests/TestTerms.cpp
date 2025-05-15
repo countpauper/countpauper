@@ -45,9 +45,12 @@ TEST(Terms, Regex)
 TEST(Terms, Epsilon)
 {
     EXPECT_EQ(Epsilon("cat").Match(Source("cat").span()), 0);
-    EXPECT_EQ(std::string(Epsilon()), "ε");
     EXPECT_EQ(Epsilon("cat"), Epsilon("cat"));
     EXPECT_EQ(Epsilon("cat").GetSymbol(), Symbol("cat"));
+    EXPECT_EQ(Epsilon(Symbol::epsilon).GetSymbol(), Symbol::epsilon);
+
+    EXPECT_EQ(std::string(Epsilon("cat")), "ε<cat>");
+    EXPECT_EQ(std::string(Epsilon(Symbol::epsilon)), "ε");
 
     static_assert(is_token<Epsilon>);
     static_assert(is_term<Epsilon>);

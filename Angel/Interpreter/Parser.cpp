@@ -9,8 +9,7 @@ namespace Interpreter
     
 
 class SymbolGenerator
-{   // TODO: base generator interface or concept to iterate? 
-    // TODO: pass source, This output will show it as symbol{source range}? 
+{  
 public:
     SymbolGenerator(Lexicon& lexicon, SymbolStream& stream) :
         lexicon(lexicon),

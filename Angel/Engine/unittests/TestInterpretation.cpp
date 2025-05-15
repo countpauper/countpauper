@@ -28,4 +28,11 @@ TEST(Interpretation, Axioms)
     EXPECT_TRUE(k.Knows(Logic::Predicate("fish")));
 }
 
+TEST(Interpretation, Query)
+{
+    AngelInterpreter interpreter;
+    Interpreter::Source source("cat");
+    EXPECT_EQ(interpreter.InterpretExpression("cat"), Logic::Predicate("cat"));
+}
+
 }

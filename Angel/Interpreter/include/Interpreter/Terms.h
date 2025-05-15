@@ -47,7 +47,7 @@ class Epsilon
 {
 public:
     Epsilon() = default;
-    Epsilon(const std::string_view symbol);
+    Epsilon(const Symbol& symbol);
     std::size_t Match(SourceSpan src) const;
     operator std::string() const;
     bool operator==(const Epsilon& other) const;

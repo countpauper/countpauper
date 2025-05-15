@@ -50,7 +50,7 @@ TEST(Grammar, GenerateEpsilon)
         {Symbol("list-end"), 10, 0}, {Symbol("expession-end"), 10, 0}, {Symbol("syntax-end"), 10, 0}};
     const auto& syntax = GenerateGrammar(source, parse);
     EXPECT_FALSE(syntax["ep"].empty());
-    EXPECT_EQ(syntax["ep"].front().second.terms.front(), Term(Epsilon()));
+    EXPECT_EQ(syntax["ep"].front().second.terms.front(), Term(Epsilon(Symbol::epsilon)));
 }
 
 TEST(Grammar, FromSource)

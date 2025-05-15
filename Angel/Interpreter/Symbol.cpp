@@ -97,6 +97,8 @@ hash_t SymbolHash(const std::string_view name)
     }
 #endif
 
+const Symbol Symbol::epsilon("ε");
+
 std::ostream& operator<<(std::ostream& os, const Symbol& s)
 {
     os << std::string(s).c_str();

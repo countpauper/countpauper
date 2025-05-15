@@ -1,6 +1,7 @@
 #include "Interpreter/GrammarGenerator.h"
 #include "Interpreter/Error.h"
 #include "Interpreter/Utils.h"
+#include <cassert>
 
 namespace Interpreter
 {
@@ -21,7 +22,7 @@ Terms GenerateTerms(SymbolStream& parse)
         {
             std::string literal = Unclose(input.location.extract(), '"');
             if (literal.empty())
-                result.emplace_back(Epsilon()); // TODO named epsilon
+                result.emplace_back(Epsilon(Symbol::epsilon));
             else   
                 result.emplace_back(Literal(literal));
         }
@@ -29,9 +30,17 @@ Terms GenerateTerms(SymbolStream& parse)
         {
             std::string expression = Unclose(input.location.extract(), '\'');
             if (expression.empty())
-                result.emplace_back(Epsilon()); // TODO named epsilon
+                result.emplace_back(Epsilon(Symbol::epsilon));
             else
                 result.emplace_back(Regex(expression));
+        }
+        else if (input.symbol == Symbol("epsilon"))
+        {
+            std::string name = Unclose(input.location.extract(), '"');
+            if (name.empty())
+                result.emplace_back(Epsilon(Symbol::epsilon));
+            else
+                result.emplace_back(Epsilon(Symbol(name)));
         }
         else if (input.symbol == Symbol("list-end"))
         {

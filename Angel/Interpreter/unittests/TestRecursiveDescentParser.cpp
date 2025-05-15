@@ -68,10 +68,10 @@ TEST(RecursiveDescenterParser, ParseEpsilon)
     Syntax syntax{
         {"S", {Literal("b"), Symbol("F")}},
         {"F", {Literal("o"), Symbol("F")}},
-        {"F", {Epsilon()}}
+        {"F", {Epsilon(Symbol::epsilon)}}
     };
     RecursiveDescentParser parser(syntax);
-    EXPECT_THAT(parser.ParseIt("bo"), RangeEq({Symbol("S"),Symbol("F"),Symbol("F")}));
+    EXPECT_THAT(parser.ParseIt("bo"), RangeEq({Symbol("S"),Symbol("F"),Symbol("F"), Symbol::epsilon}));
 }
 
 

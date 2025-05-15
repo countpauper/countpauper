@@ -3,7 +3,7 @@
 <axioms> ::= "," <space> <axiom> <axioms> | ""
 <axiom> ::= <predicate> <space> <terms> 
 <terms> ::= ":" <value> |  ""
-<predicate> ::= <id> <arguments>
+<predicate> ::= <id> <space> <arguments>
 <arguments> ::= "(" <sequence> ")" | ""
 <sequence> ::= <expression> <sequence-next>
 <sequence-next> ::= <space> "," <space> <expression> <sequence-next> | ""

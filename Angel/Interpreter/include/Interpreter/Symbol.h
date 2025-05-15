@@ -26,6 +26,7 @@ struct Symbol
     bool operator<(const Symbol& other) const;
     explicit operator bool() const;
 
+    static const Symbol epsilon;
     bool operator==(const Symbol& other) const;
     bool operator!=(const Symbol& other) const { return !this->operator==(other); }
 };
