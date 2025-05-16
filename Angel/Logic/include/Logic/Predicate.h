@@ -13,6 +13,9 @@ class Predicate
 {
 public:
     Predicate() : id("") {}
+    Predicate(const Predicate& o) = default;
+    Predicate(Predicate&& o);
+    Predicate& operator=(const Predicate& o);
     explicit Predicate(const Id& id, List&& arguments={});
     explicit Predicate(const std::string& name , List&& arguments={});
     

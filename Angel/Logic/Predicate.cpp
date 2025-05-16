@@ -7,6 +7,19 @@
 namespace Angel::Logic
 {
 
+Predicate::Predicate(Predicate&& o) :
+	id()
+{
+	std::swap(id, o.id);
+	std::swap(arguments, o.arguments);
+}
+
+Predicate& Predicate::operator=(const Predicate& o)
+{
+	id = o.id;
+	arguments = o.arguments;
+	return *this;
+}
 
 Predicate::Predicate(const Id& id, List&& arguments) 
 	: id(id)
@@ -23,7 +36,7 @@ Predicate::Predicate(const std::string& tag, List&& arguments)
 
 Predicate::operator bool() const
 {
-    return true;
+    return bool(id);
 }
 
 bool Predicate::operator==(const Predicate& rhs) const

@@ -13,6 +13,7 @@ class Integer
 public:
 	explicit Integer(long value);
 	explicit Integer(const class Boolean& b);
+	explicit Integer(const std::string_view s);
     explicit operator bool() const;
 	bool operator==(const Integer& value) const;
     std::size_t Hash() const;

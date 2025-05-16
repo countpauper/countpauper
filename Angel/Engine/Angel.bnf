@@ -2,24 +2,24 @@
 # TODO <namsepace>  
 <axioms> ::= "," <space> <axiom> <axioms> | ε-axioms
 <axiom> ::= <predicate> <space> <terms> 
-<terms> ::= ":" <value> | ε-terms
+<terms> ::= ":" <expression> | ε-terms
 <predicate> ::= <id> <space> <arguments>
 <arguments> ::= "(" <sequence> ")" | ""
 <sequence> ::= <expression> <sequence-next>
 <sequence-next> ::= <space> "," <space> <expression> <sequence-next> | ε-sequence
 <expression> ::= <value> <operand>
 <operand> ::= <space> <operator> <space> <value> <operand> | ε-expression
-<operator> ::= '([+\-*\/&\^@]|!=|>=|<=)'
-<value> ::= <element> | "(" <space> <expression> <space> ")" | <negation> | <negative>
+<operator> ::= '(!=|>=|<=|[+\-*\/&\|\^@\.<>=])'
+<value> ::= <object> | "(" <space> <expression> <space> ")" | <negation> | <negative>
 # TODO indexation [ ], lists, sets and ranges value:value 
 <negation> ::= "~" <space> <value>
 <negative> ::= "-" <space> <value> 
-<element> ::= <integer>
-<element> ::= <id>  # NB: true and false are predefined ids with a value 
-<element> ::= <float>
-<element> ::= <set> 
-<element> ::= <string> 
-<element> ::= <variable> 
+<object> ::= <integer>
+<object> ::= <predicate>  # NB: true and false are predefined ids with a value 
+<object> ::= <float>
+<object> ::= <set> 
+<object> ::= <string> 
+<object> ::= <variable> 
 <integer> ::= '[+-]?[0-9]+' 
 <float> ::= '[-+]?(([0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)|(inf)|(nan))'
 <id> ::= '([^\x00-\x7F]|[A-Za-z_])([^\x00-\x7F]|\w|\_)*'

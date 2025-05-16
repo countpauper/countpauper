@@ -22,7 +22,7 @@
 -   [*] Parsing enough for axioms
 -   [ ] Parsing enough for clauses
 -   [ ] Parsing enough for predicates
--   [ ] Parse set of axioms
+-   [*] Parse set of axioms
 -   [ ] Parse variables 
 -   [ ] Parse conjunctions 
 - [ ] Prolog 

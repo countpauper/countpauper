@@ -14,6 +14,7 @@ TEST(Element, Boolean)
 	EXPECT_EQ(std::string(Boolean(false)), "false");
 	EXPECT_TRUE(Boolean("true"));
 	EXPECT_FALSE(Boolean(false));
+	EXPECT_THROW(Boolean("False"), std::invalid_argument);	
 }
 
 TEST(Element, ComputeBooleanReturnsConstant)
@@ -31,6 +32,10 @@ TEST(Element, Integer)
 	EXPECT_TRUE(Integer(1));
 	EXPECT_EQ(Integer(3), Integer(3));
 	EXPECT_NE(Integer(2), Integer(-3));
+	EXPECT_EQ(Integer("5"), Integer(5));
+	EXPECT_EQ(Integer("-4"), Integer(-4));
+	EXPECT_THROW(Integer("3b"), std::invalid_argument);	
+	EXPECT_THROW(Integer("9876543210"), std::out_of_range);	
 }
 
 TEST(Element, ComputeIntegerReturnsConstant)

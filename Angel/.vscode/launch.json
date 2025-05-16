@@ -6,8 +6,6 @@
             "cwd": "${command:cmake.launchTargetDirectory}",
             "request": "launch",
             "program": "${command:cmake.launchTargetPath}",
-            "la"
-            "args": [ ],
             "setupCommands": [
                 { "text": "-enable-pretty-printing", "description": "enable pretty printing in watch window" }
             ]        
