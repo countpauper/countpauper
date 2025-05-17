@@ -60,14 +60,9 @@ bool Knowledge::Knows(const Expression& e) const
     return root.Find(e) != nullptr;
 }
 
-size_t Knowledge::size() const
+const Set& Knowledge::Root() const
 {
-	return root.size();
-}
-
-bool Knowledge::empty() const 
-{
-    return root.empty();
+    return root;
 }
 
 void Knowledge::AddDefaults()

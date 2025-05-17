@@ -4,9 +4,7 @@
 #include <stdexcept> 
 #include <iostream>
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 Integer::Integer(long value) :
@@ -60,5 +58,4 @@ long Integer::operator*() const
 	return value;
 }
 
-}
 }

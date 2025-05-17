@@ -1,6 +1,6 @@
 
-#include <gtest/gtest.h>
 #include "Engine/Interpreter.h"
+#include <gtest/gtest.h>
 
 namespace Angel::Engine::Test
 {
@@ -12,7 +12,7 @@ TEST(Interpretation, Axiom)
     AngelInterpreter interpreter;
 
     interpreter.Interpret(source, k);
-    EXPECT_FALSE(k.empty());
+    EXPECT_FALSE(k.Root().empty());
     EXPECT_TRUE(k.Knows(Logic::Predicate("cat")));
     EXPECT_FALSE(k.Knows(Logic::Predicate("fish")));
 }

@@ -25,6 +25,15 @@ Individual::operator bool() const
     return bool(content);
 }
 
+
+std::size_t Individual::size() const
+{
+    if (content)
+        return 1;
+    else    
+        return 0;
+}
+
 const Expression& Individual::operator*() const
 {
     return *content;

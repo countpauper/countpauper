@@ -1,4 +1,5 @@
 #include "Engine/Interpreter.h"
+#include "Engine/Defaults.h"
 #include "Interpreter/Source.h"
 #include "Interpreter/Error.h"
 #include <iostream>
@@ -12,6 +13,7 @@ int IOLoop(const std::string_view prompt="")
 {
 	Engine::AngelInterpreter interpreter; 
 	Logic::Knowledge knowledge;
+	Engine::AddDefaults(knowledge);
     while (true)    // ctrl-C to exit
 	{
 		std::cout << prompt;

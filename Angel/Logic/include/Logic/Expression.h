@@ -11,6 +11,7 @@
 #include "Logic/VariantUtils.h"
 #include "Logic/Operator.h"
 #include "Logic/Negative.h"
+#include "Logic/Function.h"
 #include <variant>
 #include <vector>
 #include <map>
@@ -20,9 +21,11 @@ namespace Angel::Logic
 {
 class Object;
 
-using ExpressionVariant = std::variant<Boolean,  Integer, Id, Variable, Predicate, 
-    List, Set, 
-    Negative,
+using ExpressionVariant = std::variant<
+    Function,      
+    Boolean,  Integer, Id, Variable, String,
+    Predicate, List, Set, 
+    Negative, 
     Conjunction, Disjunction, Summation>; 
 
 class Expression : public ExpressionVariant
@@ -97,8 +100,8 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& s, const Expression& e);
-
 std::string to_string(const Expression& e);
+
 }
 
 namespace std

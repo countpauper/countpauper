@@ -21,10 +21,10 @@
 -   [ ] Optional: extend BNF with elipsis `...` (also in its own) that repeats a rules terms until failure (and generates each in sequence instead of in tr)
 -   [*] Parsing enough for axioms
 -   [ ] Parsing enough for clauses
--   [ ] Parsing enough for predicates
+-   [ ] Parsing enough for predicates with arguments
 -   [*] Parse set of axioms
 -   [ ] Parse variables 
--   [ ] Parse conjunctions 
+-   [*] Parse conjunctions 
 - [ ] Prolog 
 -   [*] query horn clause 
 -   [*] Query predicate  
@@ -33,7 +33,13 @@
 -   [*] Sequences for valence 2+ predicates
 -   [*] Disjunctions
 -   [ ] Negation  
--   [ ] Tautology protection cat: cat (or longer) is an error 
+-   [ ] Tautology protection cat: cat (or longer) is an error
+- [ ] Console and built in commands
+-   [ ] IO
+-   [ ] help and help($topic)
+-   [ ] delete
+-   [ ] print  
+-   [ ] trace 
 - [ ] Functional 
 -   [ ] define constants 
 -   [ ] define (non boolean) functions 
@@ -41,7 +47,7 @@
 -   [ ] query functions
 -   [ ] lists 
 -   [ ] sets 
--   [ ] set and list operators `&|+`
+-   [ ] set and list operators `&|+-`
 -   [ ] Membership operator x @ {x,y}
 - Python
 -   [ ] namespaces

@@ -12,6 +12,7 @@ public:
     Individual& operator=(const Individual& rhs);
     explicit Individual(Expression&& e);
     explicit operator bool() const;
+    std::size_t size() const;
     const Expression& operator*() const;
     const Expression* operator->() const;
     std::size_t Hash() const;

@@ -98,13 +98,13 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse)
             //    that operation is the first argument of the new one for that operator
             // if the same: eg a/b * c same as lower  
             //  
-            Logic::Operator nextOperator{input.location.extract()};
+            Logic::Operator nextOperator{input.location.extract(), 2};
             assert(!ope || nextOperator == ope); // not yet implemented 
             ope = nextOperator;
         }
         if (input.symbol == Interpreter::Symbol("unary-operator"))
         {
-            unary_ops.push(Logic::Operator(input.location.extract()));
+            unary_ops.push(Logic::Operator(input.location.extract(), 1));
         }
         else if (input.symbol == Interpreter::Symbol("object"))
         {   // TODO: prefixed values and braces

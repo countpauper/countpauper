@@ -14,7 +14,7 @@ namespace Logging
     constexpr std::ostream* DEBUG = nullptr;
 #else 
     constexpr std::ostream* INFO = &std::cout;
-    constexpr std::ostream* DEBUG = &std::cout;
+    constexpr std::ostream* DEBUG = nullptr;
 #endif
     template<std::ostream* s, class... Args>
     inline typename std::enable_if_t<s!=nullptr>

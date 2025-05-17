@@ -453,6 +453,8 @@ f(3)?
 * `int($x)` - casts a value to an integer whether it is boolean, float, already integer or string. 
 * `bool($X)` - casts a value to a boolean, including collections if they are not empty.
 * `str($X)` - converts the value to a string in such a form that it would convert back with the functions above.
+* `is_float($X)` etc. - true if the type of the argument matches the built in. 
+* `type($X)` - returns an id with the type name of the argument. `int`, `float` `string`, `bool`, `predicate` etc. 
 More functions may be imported as a math module, see below.
 
 ## Collection operators 
@@ -533,11 +535,16 @@ case it backtracks like prolog and tries another hypothesis if one is available.
 ## Sequences = ordered non-unique collection 
 you can use the @ operator to check membership of a collection 
 ```
-cat($X) : $X @ [ginny,max])
+cat($X) : $X @ [ginny,max]
 cat(ginny)?
 > true
 ```
 How it works: hypothesize `X=ginny`, `ginny @ {ginny,max}` is true because ginny is an element of that collection. 
+
+## Sequence operations 
+Subsequent operators `|` and `&` and mathematical operators like `+` and `*` are grouped in a single operation expression. 
+Comparison operators like `>`, `<=`, and `!=` can be as well, which then effectively determines if all elements are 
+sorted, inverse sorted and or unique.  With matching variables may be inserted `5<$x<7<$Y`. 
 
 ## Indexing 
 When using an integer index on an ordered collection a single element is used. Unordered collections like sets support 
@@ -675,6 +682,16 @@ cats(*CAT) : cat(CAT)
 ```
 or maybe `cat(CATS) : cat(*CATS)` or both. The former has the advantage that it can MFINAE match iterable types before the conditions.
 
+The tail can then also be matched, like python variable arguments, by matching the remaining unmatched collection elements: 
+```
+cats([ginny, max, *others]) : ~dogs(others)
+```
+or even more like python to create valance-(x+n) predicates `cats(ginny, *others)`. The anonymous match `*` can be used
+to discard the tail. It can possibly even match the middle of ordered lists `cats(ginny, *, max)`. For unordered
+collections it already doesn't matter where the `*` is, it'll match any arguments not explicitly matched.
+
+This functions by `*` being the prefix for a a special type of variable that is a container of the same type as the container being matched.  
+
 ## For each 
 Iteration with head tail is slow. It would be more efficient to have a way to express for each. In first order logic
 this would be close to All x or there is an X. The `*` operator could be used as prefix to express "for each". The 
@@ -803,12 +820,14 @@ point constants could also indicate imaginary.
 
 ## Some built ins could have side effects to help with debugging 
 
-`print(X)`: $callback_print  # will do nothing but write X to stdout
-`trace(X)`: $callback_trace  # enable (true) or disable logging of the progress (state changes) of the inference at each step. This is scoped so beyond the sequence or conjuncion in which it first appears it is automatically turned off.
+`print($X)`: $callback_print  # will do nothing but write X to stdout
+`help($X)` : $callback_help  # prints the documentation of a predicate with matching or with id %x. If it's a built in or an automatic description for user predicates. If it's a namespace it shows all predicates in the namespace.
+`help()` : prints the contents of the root namespace.
+`delete($X)` : Delete all functions matching the predicate $X.
+`trace`/`traceing`: $callback_trace  # Sets the tracing variable to boolean $X to enable or disable logging of the progress (state changes) of the inference at each step. This is scoped (variable) so beyond the sequence or conjuncion in which it first appears it is automatically turned off. 
 `break`: $callback_trace     # will interrupt executing and break into a debugger with the current hypothesis inspectable with queries and modifiable with additional axioms. For instance `print(X),trace,resume`.
 `resume`: $callback_resume   # if the inference is currently interrupted by a break, it will continue running and be true. If not currently running it will be false  
-`catch(X)`: $callback_catch  # an error in the scope is matched with `X` and ignored if it matches. This is scoped so if the error 
-occurs after the query infering the catch it is no longer active.  
+`catch($X)`: $callback_catch  # an error in the scope is matched with `X` and ignored if it matches. This is scoped so if the error occurs after the query infering the catch it is no longer active.  
 
 The trace syntax will prepend each knew query or hypothesis modification with `...` which is also used in this document to illustrate the inner working. 
 
@@ -836,3 +855,14 @@ read_config(File) : read(File+'.json`) | read(File+'.yaml`)
 X @ [-1,1]
 ```
 
+## Threading 
+
+The user shouldn't think about threading. The inference engine should be implemented with a  
+(configurable) number of threads. 
+
+Usually the knowledge is accessed read only and the state of inference is on stack, so multiple hypotheses 
+threads can access it at once. Instead of straight forward recursively infering predicates, all predicates in a conjunction or disjunction, all elements in a for each/for any or all hypotheses in a match, can be added to a queue to prove. This queue can then be inferred on multiple threads. Of course these queue items 
+should also be cancelable by the inferer, so when a counter example is found all redundant hypotheses are 
+cut short. 
+
+A small number of built in functions modify the knowledge. Commands like `import` or `delete`. To do this they need write access to the knowledge. When they do they should lock the knowledge. This will block the inference queue until they are done. 

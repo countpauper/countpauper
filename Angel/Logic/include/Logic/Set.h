@@ -29,6 +29,9 @@ public:
 	explicit operator bool() const;
 	std::size_t Hash() const;
 	bool operator==(const Set& rhs) const;
+
+    static constexpr bool unique=true;
+    static constexpr bool ordered=false;
 };
 
 std::ostream& operator<<(std::ostream& os, const Set& set);

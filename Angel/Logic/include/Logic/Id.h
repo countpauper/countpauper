@@ -1,9 +1,7 @@
 #pragma once
 #include <string>
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 class Id
@@ -20,5 +18,4 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const Id& id);
 
-}
 }

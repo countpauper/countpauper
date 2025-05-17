@@ -2,9 +2,7 @@
 #include <string>
 
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 // An integer is a whole number element, the size depends on the CPU type
@@ -26,5 +24,4 @@ private:
 
 std::ostream& operator<<(std::ostream& os, const Integer& );
 
-}
 }

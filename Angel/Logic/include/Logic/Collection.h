@@ -1,12 +1,14 @@
 #pragma once
 #include <vector>
 #include <initializer_list>
+#include "Logic/Operator.h"
 
 namespace Angel::Logic
 {
 
 class Expression;
 class Object;
+
 
 // A collection is a base ordered container of non-unique objects (wrapped in nodes)
 class Collection : public std::vector<Expression>
@@ -28,5 +30,8 @@ public:
 protected:
     bool operator==(const Collection& rhs) const;
 };
+
+template < typename T >
+concept IsCollection = std::derived_from<T, Collection> && !IsOperation<T>;
 
 }

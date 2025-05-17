@@ -26,6 +26,7 @@ TEST(Set, Construction)
 	Set seq_set({List{Id("ginny"), Id("max")}});
 	EXPECT_EQ(seq_set.size(), 1);
 
+	// TODO: should be a set static_assert(Logic::IsCollection<Set>);
 }
 
 TEST(Set, List)

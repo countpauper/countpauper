@@ -3,9 +3,7 @@
 #include "Logic/Object.h"
 #include "Logic/Match.h"
 
-namespace Angel
-{
-namespace Logic
+namespace Angel::Logic
 {
 
 // Knowledge is a tree of clauses organized in namespaces
@@ -19,13 +17,11 @@ public:
 	Set Matches(const Predicate& predicate) const;
 	Object Infer(const Expression& e) const;
 	bool Knows(const Expression& e) const;
-	size_t size() const;
-	bool empty() const;
+	const Set& Root() const;
 private:
 	void AddDefaults();
 	Set root;
 };
 
 
-}
 }
