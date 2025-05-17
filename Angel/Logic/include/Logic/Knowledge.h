@@ -22,6 +22,7 @@ public:
 	size_t size() const;
 	bool empty() const;
 private:
+	void AddDefaults();
 	Set root;
 };
 

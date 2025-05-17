@@ -6,10 +6,11 @@
 
 namespace Angel::Logic
 {
-
+\
 Knowledge::Knowledge() :
 	root()
 {
+    AddDefaults();
 }
 
 size_t Knowledge::Know(Predicate&& key, Expression&& expression)
@@ -40,9 +41,9 @@ Set Knowledge::Matches(const Predicate& query) const
             if (match)
             {   // Matches with least substitutions take precedence. 
                 // See the Occam's razor section in language design
-                if (match->size()>bestMatch)
+                if (match->size() > bestMatch)
                     continue;
-                if (match->size()<bestMatch)
+                if (match->size() < bestMatch)
                     result.clear();
                 result.emplace(association.first, association.second.Infer(*this, *match));
             }
@@ -67,6 +68,12 @@ size_t Knowledge::size() const
 bool Knowledge::empty() const 
 {
     return root.empty();
+}
+
+void Knowledge::AddDefaults()
+{
+    Know(Predicate("true"), Boolean(true));
+    Know(Predicate("false"), Boolean(false));
 }
 
 }

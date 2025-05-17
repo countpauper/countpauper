@@ -12,6 +12,25 @@
 namespace Interpreter::Test
 {
 
+TEST(RecursiveDescenterParser, ParseEmpty)
+{    
+    Syntax syntax{
+        {"S", {Literal("s")}},
+        {"S", {Epsilon()}}
+    };
+    RecursiveDescentParser parser(syntax);
+    EXPECT_THAT(parser.ParseIt(""), RangeEq({Symbol("S")}));
+}
+
+TEST(RecursiveDescenterParser, ParseNotEmpty)
+{    
+    Syntax syntax{
+        {"S", {Literal("s")}}
+    };
+    RecursiveDescentParser parser(syntax);
+    EXPECT_THROW(parser.ParseIt(""), Error);
+}
+
 TEST(RecursiveDescenterParser, ParseLiteral)
 {    
     Syntax syntax{
