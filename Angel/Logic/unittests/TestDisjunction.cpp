@@ -11,7 +11,7 @@ TEST(Disjunction, Construction)
 {
     EXPECT_TRUE(Disjunction{}.empty());
     EXPECT_EQ(Disjunction{Boolean(false)}.size(), 1);    
-    EXPECT_EQ(Expression("|", {Boolean(true), Boolean(false)}), (Disjunction{Boolean(true), Boolean(false)}));   
+    EXPECT_EQ(Expression(Operator(L'|'), {Boolean(true), Boolean(false)}), (Disjunction{Boolean(true), Boolean(false)}));   
 }
 
 TEST(Disjunction, Conjunctions)

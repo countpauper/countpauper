@@ -38,9 +38,9 @@ TEST(Interpretation, Query)
 TEST(Interpretation, Expression)
 {
     AngelInterpreter interpreter;
-    Interpreter::Source source("1+2");
+    Interpreter::Source source("-1+2");
     EXPECT_EQ(interpreter.InterpretExpression(source), (
-        Logic::Summation{Logic::Integer(1), Logic::Integer(2)}));
+        Logic::Summation{Logic::Negative(Logic::Integer(1)), Logic::Integer(2)}));
 }
 
 }

@@ -10,12 +10,14 @@
 <expression> ::= <value> <operand>
 <operand> ::= <space> <binary-operator> <space> <value> <operand> | ε-expression
 <numerical-unary-operator> ::= '[+-]'
-<numerical-binary-operator> ::= '[\*\/^]' | <numerical-unary-operator> 
-<logical-unary-operator> ::= "~"
+<star-operator> ::= "*"
+<numerical-binary-operator> ::= '[\/^]' | <numerical-unary-operator> | <star-operator>
+<logical-unary-operator> ::= '[~¬]'
 <logical-binary-operator> ::= '[&\|]'
-<comparator> ::= '(!=|>=|<=|[<>=])'
-<set-unary-operator> ::= "@"
-<set-binary-operator> ::= '[.@]' | <unary-set-operator>
+<comparator> ::= '(!=|>=|<=|[<>=≠≥≤])'
+<set-either-operator> ::= "@"
+<set-unary-operator> ::= '[∃∀]' | <set-either-operator> | <star-operator>
+<set-binary-operator> ::= '[.∈]' | <unary-either-operator>
 <binary-operator> ::= <numerical-binary-operator> | <logical-binary-operator> | <comparator> | <set-binary-operator> 
 <unary-operator> ::= <numerical-unary-operator> | <logical-unary-operator> | <set-unary-operator>
 <value> ::= <unary-operator> <value> | <object> | "(" <space> <expression> <space> ")" 

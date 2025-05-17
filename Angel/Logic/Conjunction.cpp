@@ -30,11 +30,6 @@ Object Conjunction::Infer(const Knowledge& k, const Variables& substitutions) co
     return Boolean(true);
 }
 
-std::size_t Conjunction::Hash() const
-{
-    return typeid(decltype(*this)).hash_code() ^ Collection::Hash();
-}
-
 std::ostream& operator<<(std::ostream& os, const Conjunction& conjunction)
 {
     bool first = true;

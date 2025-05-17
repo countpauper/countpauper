@@ -9,6 +9,8 @@
 #include "Logic/Disjunction.h"
 #include "Logic/Summation.h"
 #include "Logic/VariantUtils.h"
+#include "Logic/Operator.h"
+#include "Logic/Negative.h"
 #include <variant>
 #include <vector>
 #include <map>
@@ -20,6 +22,7 @@ class Object;
 
 using ExpressionVariant = std::variant<Boolean,  Integer, Id, Variable, Predicate, 
     List, Set, 
+    Negative,
     Conjunction, Disjunction, Summation>; 
 
 class Expression : public ExpressionVariant
@@ -32,7 +35,7 @@ public:
     {
     }
     Expression(const Expression& e);
-    Expression(const std::string_view ope, Collection&& operands);
+    Expression(const Operator ope, Collection&& operands);
 
     template<typename T>
     const std::optional<T> TryCast() const

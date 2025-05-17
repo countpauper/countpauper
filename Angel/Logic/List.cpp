@@ -49,12 +49,6 @@ Match List::Matches(const Expression& expression, const Variables& variables) co
     return vars;
 }
 
-std::size_t List::Hash() const
-{
-    return typeid(decltype(*this)).hash_code() ^  Collection::Hash();
-}
-
-
 std::ostream& operator<<(std::ostream& os, const List& list)
 {
     bool first = true;

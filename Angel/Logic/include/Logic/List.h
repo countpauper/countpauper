@@ -17,7 +17,6 @@ public:
     explicit operator bool() const;
     Object Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
     Match Matches(const Expression& other, const Variables& variables) const;
-    std::size_t Hash() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const List& list);

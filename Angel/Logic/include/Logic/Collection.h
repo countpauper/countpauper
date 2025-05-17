@@ -24,9 +24,9 @@ public:
         }
     }
     ~Collection();
+    std::size_t Hash() const;
 protected:
     bool operator==(const Collection& rhs) const;
-    std::size_t Hash() const;
 };
 
 }

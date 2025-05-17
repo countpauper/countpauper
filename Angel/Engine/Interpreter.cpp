@@ -60,7 +60,7 @@ Logic::Object GenerateObject(Interpreter::SymbolStream& parse)
     {
         return Logic::Boolean(input.location.extract());
     }
-    else if (input.symbol == Interpreter::Symbol("integer"))
+    else if (input.symbol == Interpreter::Symbol("positive-integer"))
     {
         return Logic::Integer(input.location.extract());
     }
@@ -72,14 +72,14 @@ Logic::Object GenerateObject(Interpreter::SymbolStream& parse)
     {
         throw std::runtime_error(std::format("Unexpected object type {}", std::string(input.symbol)));
     }
-
 }
 
 Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse)
 {
     Interpreter::ParsedSymbol input;
     Logic::Collection operands;
-    std::string ope;
+    Logic::Operator ope;
+    std::stack<Logic::Operator> unary_ops;
     while(!parse.eof())
     {   
         parse >> input;
@@ -94,13 +94,23 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse)
             //    that operation is the first argument of the new one for that operator
             // if the same: eg a/b * c same as lower  
             //  
-            std::string nextOperator = input.location.extract();
-            assert(ope.empty() || nextOperator == ope); // not yet implemented 
+            Logic::Operator nextOperator{input.location.extract()};
+            assert(!ope || nextOperator == ope); // not yet implemented 
             ope = nextOperator;
+        }
+        if (input.symbol == Interpreter::Symbol("unary-operator"))
+        {
+            unary_ops.push(Logic::Operator(input.location.extract()));
         }
         else if (input.symbol == Interpreter::Symbol("object"))
         {   // TODO: prefixed values and braces
-            operands.emplace_back(GenerateObject(parse));
+            Logic::Expression newOparand = GenerateObject(parse);
+            while (!unary_ops.empty())
+            {
+                newOparand = Logic::Expression(unary_ops.top(), { newOparand });
+                unary_ops.pop();
+            }
+            operands.emplace_back(std::move(newOparand));
         }
         else if (input.symbol == Interpreter::Symbol("-expression"))
         {

@@ -1,0 +1,23 @@
+#pragma once 
+#include <memory>
+
+namespace Angel::Logic
+{
+class Expression;
+
+class Individual
+{
+public: 
+    Individual(const Individual& o);
+    Individual& operator=(const Individual& rhs);
+    explicit Individual(Expression&& e);
+    explicit operator bool() const;
+    const Expression& operator*() const;
+    const Expression* operator->() const;
+    std::size_t Hash() const;
+protected:
+    bool operator==(const Individual& other) const;
+    std::unique_ptr<Expression> content;
+};
+
+}

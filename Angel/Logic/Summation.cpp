@@ -33,11 +33,6 @@ Object Summation::Infer(const Knowledge& k, const Variables& substitutions) cons
     return Integer(value);
 }
 
-std::size_t Summation::Hash() const
-{
-    return typeid(decltype(*this)).hash_code() ^ Collection::Hash();
-}
-
 std::ostream& operator<<(std::ostream& os, const Summation& sum)
 {
     bool first = true;

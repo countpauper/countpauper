@@ -2,6 +2,7 @@
 #include "Logic/Collection.h"
 #include "Logic/Match.h"
 #include "Logic/Element.h"
+#include "Logic/Operator.h"
 #include <iostream>
 
 namespace Angel::Logic
@@ -17,9 +18,8 @@ public:
     Match Matches(const Expression& expression, const Variables& vars) const;
     Object Infer(const class Knowledge& k, const Variables& substitutions={}) const;
     bool operator==(const Conjunction& other) const;
-    std::size_t Hash() const;
 
-    static constexpr std::string_view ope="&";
+    constexpr static Operator ope {L'&'};
 };
 
 std::ostream& operator<<(std::ostream& os, const Conjunction& );

@@ -75,7 +75,7 @@ Object Set::Infer(const Knowledge& knowledge, const Variables& substitutions) co
 
 std::size_t Set::Hash() const
 {
-    std::size_t result = typeid(decltype(*this)).hash_code();
+    std::size_t result = std::numeric_limits<std::size_t>::max();
     std::hash<Expression> hasher;
     for(const auto& association: *this)
     {

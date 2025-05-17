@@ -11,7 +11,7 @@ TEST(Conjunction, Construction)
 {
     EXPECT_TRUE(Conjunction{}.empty());
     EXPECT_EQ(Conjunction{Boolean(false)}.size(), 1);
-    EXPECT_EQ(Expression("&", {Boolean(true), Boolean(false)}), (Conjunction{Boolean(true), Boolean(false)}));   
+    EXPECT_EQ(Expression(Operator(L'&'), {Boolean(true), Boolean(false)}), (Conjunction{Boolean(true), Boolean(false)}));   
 }
 
 TEST(Conjunction, Conjunctions)

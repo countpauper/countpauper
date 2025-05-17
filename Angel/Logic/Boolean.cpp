@@ -36,7 +36,7 @@ Boolean::operator bool() const
 
 std::size_t Boolean::Hash() const
 {
-    return typeid(decltype(*this)).hash_code() ^ truth;
+    return truth;
 }
 
 bool Boolean::operator==(const Boolean& other) const
