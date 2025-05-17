@@ -15,6 +15,32 @@ Expression::Expression(const Expression& e) :
 {
 }
 
+
+template <typename... Ts>
+ExpressionVariant make_operation(const std::string_view ope, Collection&& operands) 
+{
+    if (ope.empty())
+    {
+        assert(operands.size()==1);
+        return operands.front();        
+    }
+    Logic::Expression result = Logic::Boolean(false);
+    bool found = false;
+    
+    ((!found && (found = (Ts::ope == ope)) 
+        ? (result.emplace<Ts>(std::move(operands)), true) 
+        : false), ...);
+    
+    if (!found) throw std::invalid_argument(std::format("Invalid operator {}", ope));
+    return result;
+}
+
+
+Expression::Expression(const std::string_view ope, Collection&& operands) : 
+    ExpressionVariant(make_operation<Summation, Disjunction, Conjunction>(ope, std::move(operands)))
+{
+}
+
 Match Expression::Matches(const Expression& e, const Variables& subs) const 
 {
     return std::visit(overloaded_visit{

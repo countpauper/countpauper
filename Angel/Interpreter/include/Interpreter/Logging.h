@@ -4,6 +4,7 @@
 #include <string>
 #include <ctime>
 #include <iomanip>
+
 namespace Logging 
 {
     constexpr std::ostream* ERROR = &std::clog;
@@ -13,7 +14,7 @@ namespace Logging
     constexpr std::ostream* DEBUG = nullptr;
 #else 
     constexpr std::ostream* INFO = &std::cout;
-    constexpr std::ostream* DEBUG = nullptr;
+    constexpr std::ostream* DEBUG = &std::cout;
 #endif
     template<std::ostream* s, class... Args>
     inline typename std::enable_if_t<s!=nullptr>
@@ -30,30 +31,30 @@ namespace Logging
     }
 
 
-class Tabber
-{
-public:
-    Tabber& operator++()
+    class Tabber
     {
-        tabs ++;
-        return *this;
-    }
-    Tabber& operator--()
-    {
-        tabs--;
-        return *this;
-    }
-    Tabber& operator=(int tab)
-    {
-        tabs = tab;
-        return *this;
-    }
-    operator::std::string() 
-    {
-        return std::string(tabs, ' ');
-    }
-private:
-    int tabs = 0;
-};
+    public:
+        Tabber& operator++()
+        {
+            tabs ++;
+            return *this;
+        }
+        Tabber& operator--()
+        {
+            tabs--;
+            return *this;
+        }
+        Tabber& operator=(int tab)
+        {
+            tabs = tab;
+            return *this;
+        }
+        operator::std::string() 
+        {
+            return std::string(tabs, ' ');
+        }
+    private:
+        int tabs = 0;
+    };
 
 }

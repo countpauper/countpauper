@@ -38,14 +38,14 @@ std::size_t Summation::Hash() const
     return typeid(decltype(*this)).hash_code() ^ Collection::Hash();
 }
 
-std::ostream& operator<<(std::ostream& os, const Summation& list)
+std::ostream& operator<<(std::ostream& os, const Summation& sum)
 {
     bool first = true;
-    for(const auto& obj: list)
+    for(const auto& obj: sum)
     {
         auto s = to_string(obj);
         if ((!first) && (!s.empty()) && (s.front()!='-'))
-            os << "+";
+            os << sum.ope;
         os << s;
         first = false;
     }

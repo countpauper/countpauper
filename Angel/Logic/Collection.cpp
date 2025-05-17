@@ -12,6 +12,11 @@ Collection::Collection(std::initializer_list<Expression> items) :
 {
 }
 
+Collection::Collection(std::vector<Expression>&& items) :
+    std::vector<Expression>(std::move(items))
+{
+}
+
 Collection::~Collection()
 {
 }

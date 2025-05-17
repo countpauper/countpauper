@@ -36,13 +36,13 @@ std::size_t Disjunction::Hash() const
 }
 
 
-std::ostream& operator<<(std::ostream& os, const Disjunction& list)
+std::ostream& operator<<(std::ostream& os, const Disjunction& disjunction)
 {
     bool first = true;
-    for(const auto& obj: list)
+    for(const auto& obj: disjunction)
     {
         if (!first)
-            os << "|";
+            os << disjunction.ope;
         os << obj;
         first = false;
     }

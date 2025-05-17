@@ -8,20 +8,26 @@
 <sequence> ::= <expression> <sequence-next>
 <sequence-next> ::= <space> "," <space> <expression> <sequence-next> | ε-sequence
 <expression> ::= <value> <operand>
-<operand> ::= <space> <operator> <space> <value> <operand> | ε-expression
-<operator> ::= '(!=|>=|<=|[+\-*\/&\|\^@\.<>=])'
-<value> ::= <object> | "(" <space> <expression> <space> ")" | <negation> | <negative>
+<operand> ::= <space> <binary-operator> <space> <value> <operand> | ε-expression
+<numerical-unary-operator> ::= '[+-]'
+<numerical-binary-operator> ::= '[\*\/^]' | <numerical-unary-operator> 
+<logical-unary-operator> ::= "~"
+<logical-binary-operator> ::= '[&\|]'
+<comparator> ::= '(!=|>=|<=|[<>=])'
+<set-unary-operator> ::= "@"
+<set-binary-operator> ::= '[.@]' | <unary-set-operator>
+<binary-operator> ::= <numerical-binary-operator> | <logical-binary-operator> | <comparator> | <set-binary-operator> 
+<unary-operator> ::= <numerical-unary-operator> | <logical-unary-operator> | <set-unary-operator>
+<value> ::= <unary-operator> <value> | <object> | "(" <space> <expression> <space> ")" 
 # TODO indexation [ ], lists, sets and ranges value:value 
-<negation> ::= "~" <space> <value>
-<negative> ::= "-" <space> <value> 
-<object> ::= <integer>
+<object> ::= <positive-integer>
 <object> ::= <predicate>  # NB: true and false are predefined ids with a value 
-<object> ::= <float>
+<object> ::= <positive-float>
 <object> ::= <set> 
 <object> ::= <string> 
 <object> ::= <variable> 
-<integer> ::= '[+-]?[0-9]+' 
-<float> ::= '[-+]?(([0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)|(inf)|(nan))'
+<positive-integer> ::= '[0-9]+' 
+<positive-float> ::= '(([0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)|(inf)|(nan))'
 <id> ::= '([^\x00-\x7F]|[A-Za-z_])([^\x00-\x7F]|\w|\_)*'
 <variable> ::= "$" <id>
 <space> ::= <req-space> | "" 

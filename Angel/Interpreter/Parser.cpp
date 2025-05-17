@@ -3,6 +3,7 @@
 #include "Interpreter/Parser.h"
 #include "Interpreter/Syntax.h"
 #include "Interpreter/Lexer.h"
+#include "Interpreter/Error.h"
 
 namespace Interpreter 
 {
@@ -41,6 +42,16 @@ Parser::Parser(const Syntax& syntax) :
 {
 }
 
+void CheckTrailing(const Source& src, TokenStream& tokens)
+{
+    InputToken trailing;
+    tokens >> trailing;
+    if (!tokens.eof())
+    {
+        throw Error("Trailing tokens", src.span().sub(trailing.reference.from));
+    }
+}
+
 void Parser::Parse(const Source& src, SymbolStream& os, const std::string_view start)
 {
     TokenStream tokens;
@@ -52,6 +63,7 @@ void Parser::Parse(const Source& src, SymbolStream& os, const std::string_view s
         startSymbol = Symbol(start);
 
     ParseTokens(tokens, os, startSymbol);
+    CheckTrailing(src, tokens);
 }
 
 

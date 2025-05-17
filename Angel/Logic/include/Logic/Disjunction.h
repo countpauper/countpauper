@@ -17,6 +17,8 @@ public:
     Object Infer(const class Knowledge& k, const Variables& substitutions={}) const;
     bool operator==(const Disjunction& other) const;
     std::size_t Hash() const;
+
+    static constexpr std::string_view ope="|";
 };
 
 std::ostream& operator<<(std::ostream& os, const Disjunction& );

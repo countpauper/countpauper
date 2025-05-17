@@ -13,7 +13,8 @@ class Collection : public std::vector<Expression>
 {
 public:
     Collection() = default;
-	Collection(std::initializer_list<Expression> setItems);
+	Collection(std::initializer_list<Expression> items);
+	explicit Collection(std::vector<Expression>&& items);
     template<typename T> 
     Collection(std::initializer_list<T> items)
     {

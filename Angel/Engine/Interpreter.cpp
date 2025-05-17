@@ -48,27 +48,6 @@ Logic::Predicate GeneratePredicate( Interpreter::SymbolStream& parse)
     return Logic::Predicate(id);
 }
 
-enum class Operator
-{
-    none,
-    access,
-    member,
-    power,
-    multiplication,
-    division,
-    summation, 
-    subtraction,
-    conjunction,
-    disjunction,
-    equality,
-    inequality,
-    greater,
-    lower,
-    greater_equal,
-    lower_equal
-};
-
-
 Logic::Object GenerateObject(Interpreter::SymbolStream& parse)
 {
     Interpreter::ParsedSymbol input; 
@@ -98,21 +77,38 @@ Logic::Object GenerateObject(Interpreter::SymbolStream& parse)
 
 Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse)
 {
-    std::vector<std::pair<Operator, Logic::Object>> operands; 
-    Interpreter::ParsedSymbol input; 
+    Interpreter::ParsedSymbol input;
+    Logic::Collection operands;
+    std::string ope;
     while(!parse.eof())
     {   
         parse >> input;
-        if (input.symbol == Interpreter::Symbol("object"))
+        if (input.symbol == Interpreter::Symbol("binary-operator"))
+        {
+            // TODO if new operator is different, determine precedence. 
+            // if higher: eg a+ b * ... 
+            //    the last object is the start of a new operations 
+            //    this operation is appended to the existing operation as its new last element 
+            // if lower:   a*b + ...
+            //    the last object is appended to the existing operation
+            //    that operation is the first argument of the new one for that operator
+            // if the same: eg a/b * c same as lower  
+            //  
+            std::string nextOperator = input.location.extract();
+            assert(ope.empty() || nextOperator == ope); // not yet implemented 
+            ope = nextOperator;
+        }
+        else if (input.symbol == Interpreter::Symbol("object"))
         {   // TODO: prefixed values and braces
-            operands.push_back(std::make_pair(Operator::none, GenerateObject(parse)));
+            operands.emplace_back(GenerateObject(parse));
         }
         else if (input.symbol == Interpreter::Symbol("-expression"))
         {
-            return operands.front().second;
+            return Logic::Expression(ope, std::move(operands));
         }
+
     }
-    return operands.front().second;
+    return Logic::Expression(ope, std::move(operands));
 }
 
 void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge)

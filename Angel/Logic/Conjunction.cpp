@@ -35,13 +35,13 @@ std::size_t Conjunction::Hash() const
     return typeid(decltype(*this)).hash_code() ^ Collection::Hash();
 }
 
-std::ostream& operator<<(std::ostream& os, const Conjunction& list)
+std::ostream& operator<<(std::ostream& os, const Conjunction& conjunction)
 {
     bool first = true;
-    for(const auto& obj: list)
+    for(const auto& obj: conjunction)
     {
         if (!first)
-            os << "&";
+            os << conjunction.ope;
         os << obj;
         first = false;
     }

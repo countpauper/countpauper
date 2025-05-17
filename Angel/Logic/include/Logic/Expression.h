@@ -32,6 +32,7 @@ public:
     {
     }
     Expression(const Expression& e);
+    Expression(const std::string_view ope, Collection&& operands);
 
     template<typename T>
     const std::optional<T> TryCast() const

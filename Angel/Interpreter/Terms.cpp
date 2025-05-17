@@ -89,7 +89,7 @@ std::size_t Epsilon::Match(SourceSpan) const
 
 Epsilon::operator std::string() const
 {
-    if (symbol!=Symbol::epsilon)
+    if (symbol && symbol!=Symbol::epsilon)
         return std::format("ε{}", std::string(symbol));
     else
         return "ε";
@@ -110,19 +110,19 @@ namespace std
 size_t hash<Interpreter::Literal>::operator()(const Interpreter::Literal& l) noexcept 
 {
     std::hash<std::string> hasher;
-    return typeid(Interpreter::Literal).hash_code() ^ hasher(l.match);
+    return hasher(l.match);
 }
 
 size_t hash<Interpreter::Regex>::operator()(const Interpreter::Regex& r) noexcept 
 {
     std::hash<std::string> hasher;
-    return typeid(Interpreter::Regex).hash_code() ^ hasher(r.match);
+    return hasher(r.match);
 }
 
 size_t hash<Interpreter::Epsilon>::operator()(const Interpreter::Epsilon& e) noexcept 
 {
     std::hash<std::string> hasher;
-    return typeid(Interpreter::Epsilon).hash_code() ^ e.symbol.Hash();
+    return e.symbol.Hash();
 }
 
 string to_string(const Interpreter::Term& term)

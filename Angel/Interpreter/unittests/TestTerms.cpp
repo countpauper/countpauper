@@ -36,7 +36,6 @@ TEST(Terms, Regex)
     EXPECT_THROW(Regex(""), std::invalid_argument);
 
     EXPECT_EQ(std::string(Regex("cat")), "'cat'");
-    EXPECT_NE(std::hash<Regex>()(Regex("()")), std::hash<Literal>()(Literal("()")));
     
     static_assert(is_token<Regex>);
     static_assert(is_term<Regex>);
@@ -56,4 +55,14 @@ TEST(Terms, Epsilon)
     static_assert(is_term<Epsilon>);
 }
 
+TEST(Terms, Hash)
+{
+    std::hash<Term> hasher;
+    EXPECT_EQ(hasher(Literal("cat")), hasher(Literal("cat")));
+    EXPECT_NE(hasher(Literal("cat")), hasher(Literal("Cat")));
+    EXPECT_NE(hasher(Regex("()")), hasher(Literal("()")));
+    EXPECT_NE(hasher(Literal("cat")), hasher(Epsilon("cat")));
+
+
+}
 }

@@ -6,6 +6,15 @@
 namespace Angel::Logic::Test
 {
 
+TEST(Summation, Construction)
+{
+    EXPECT_TRUE(Summation{}.empty());
+    EXPECT_EQ((Summation{Integer(3)}), Summation({Integer(3)}));
+    EXPECT_NE((Summation{Integer(3)}), Summation({Integer(3), Integer(2)}));
+    EXPECT_EQ(Expression("+", {Integer(-2), Integer(-1)}), (Summation{Integer(-2), Integer(-1)}));   
+}
+
+
 TEST(Summation, Summations)
 {
     Knowledge k;

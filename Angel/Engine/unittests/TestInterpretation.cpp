@@ -32,7 +32,15 @@ TEST(Interpretation, Query)
 {
     AngelInterpreter interpreter;
     Interpreter::Source source("cat");
-    EXPECT_EQ(interpreter.InterpretExpression("cat"), Logic::Predicate("cat"));
+    EXPECT_EQ(interpreter.InterpretExpression(source), Logic::Predicate("cat"));
+}
+
+TEST(Interpretation, Expression)
+{
+    AngelInterpreter interpreter;
+    Interpreter::Source source("1+2");
+    EXPECT_EQ(interpreter.InterpretExpression(source), (
+        Logic::Summation{Logic::Integer(1), Logic::Integer(2)}));
 }
 
 }
