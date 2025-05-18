@@ -8,12 +8,12 @@ namespace Angel::Engine::Test
 TEST(Interpretation, Axiom)
 {
     Logic::Knowledge k; 
-    Interpreter::Source source("cat");
+    Interpreter::Source source("cat(fish)");
     AngelInterpreter interpreter;
 
     interpreter.Interpret(source, k);
     EXPECT_FALSE(k.Root().empty());
-    EXPECT_TRUE(k.Knows(Logic::Predicate("cat")));
+    EXPECT_TRUE(k.Knows(Logic::Predicate("cat", {Logic::Predicate("fish")})));
     EXPECT_FALSE(k.Knows(Logic::Predicate("fish")));
 }
 

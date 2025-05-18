@@ -6,6 +6,9 @@
 namespace Angel::Logic
 {
 
+// TODO: this whole operator could be constexpr and templated for number of operands 
+// except (perhaps) the std::string_view lookup of the operator code based on tag + operands. 
+// that could be a free function unless the constexpr version of std::string_view 
 class Operator 
 {
 public:
@@ -19,7 +22,6 @@ protected:
         op{.sw{tag, operands, 0}}
     {
     }
-
     Operator(const std::string_view tags, uint8_t operands);
 private:
     // low 2 bytes = wchar_t opreator, byte 3 = 0 termination, 's just the signle character tag's unicode. 

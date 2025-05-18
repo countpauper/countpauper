@@ -3,9 +3,9 @@
 # TODO <namsepace>  
 <axioms> ::= "," <space> <axiom> <axioms> | ε-axioms
 <axiom> ::= <predicate> <space> <terms> 
-<terms> ::= ":" <expression> | ε-terms
+<terms> ::= ":" <space> <expression> | ε-terms
 <predicate> ::= <id> <space> <arguments>
-<arguments> ::= "(" <sequence> ")" | ε-predicate
+<arguments> ::= "(" <space> <sequence> <space> ")" ε-predicate | ε-predicate
 <sequence> ::= <expression> <sequence-next>
 <sequence-next> ::= <space> "," <space> <expression> <sequence-next> | ε-sequence
 <expression> ::= <value> <operand>

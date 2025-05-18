@@ -28,10 +28,14 @@ AngelInterpreter::AngelInterpreter() :
 {
 }
 
+Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse);
+
+
 Logic::Predicate GeneratePredicate( Interpreter::SymbolStream& parse)
 {
     Interpreter::ParsedSymbol input; 
     Logic::Id id;
+    Logic::List args;
     while(!parse.eof())
     {    
         parse >> input;
@@ -39,17 +43,17 @@ Logic::Predicate GeneratePredicate( Interpreter::SymbolStream& parse)
         {
             id = Logic::Id(input.location.extract());
         }
-        else if (input.symbol == Interpreter::Symbol("-predicate"))
+        else if (input.symbol == Interpreter::Symbol("expression"))
         {
-            break;
+            args.push_back(GenerateExpression(parse));
         }
-        else if (input.symbol == Interpreter::Symbol("-terms"))
+        else if (input.symbol == Interpreter::Symbol("-predicate"))
         {
             break;
         }
     }
     assert(id); // error handling needed?
-    return Logic::Predicate(id);
+    return Logic::Predicate(id, std::move(args));
 }
 
 Logic::Object GenerateObject(Interpreter::SymbolStream& parse)
