@@ -16,7 +16,7 @@ public:
     Match Matches(const Expression& expression, const Variables& vars) const;
     Object Infer(const class Knowledge& k, const Variables& substitutions) const;
     bool operator==(const Negative& other) const;
-    constexpr static Operator ope{L'-'};
+    constexpr static UnaryOperator ope{L'-'};
 };
 
 std::ostream& operator<<(std::ostream& os, const Negative& );

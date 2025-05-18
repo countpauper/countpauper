@@ -4,18 +4,32 @@
 namespace Angel::Logic::Test
 {
 
-TEST(Operator, Construction)
+TEST(Operator, ConstructBinary)
 {
-    EXPECT_FALSE(Operator());
-    EXPECT_TRUE(Operator(L'+'));
-    EXPECT_EQ(Operator(L'&'), Operator("&", 2));
-    EXPECT_EQ(Operator(L'¬'), Operator("~", 1));
+    EXPECT_FALSE(BinaryOperator());
+    EXPECT_TRUE(BinaryOperator(L'+'));
+    EXPECT_EQ(BinaryOperator(L'&'), BinaryOperator("&"));
+    EXPECT_NE(BinaryOperator(L'-'), UnaryOperator('-'));
 }
+
+TEST(Operator, ConstructUnary)
+{
+    EXPECT_FALSE(UnaryOperator());
+    EXPECT_TRUE(UnaryOperator(L'+'));
+    EXPECT_EQ(UnaryOperator(L'¬'), UnaryOperator("~"));
+}
+
 
 TEST(Operator, String)
 {
-    EXPECT_EQ(std::string(Operator(L'&')), "&");
-    EXPECT_EQ(std::string(Operator("!=", 2)), "≠");
+    EXPECT_EQ(std::string(BinaryOperator(L'&')), "&");
+    EXPECT_EQ(std::string(BinaryOperator("!=")), "≠");
+}
+
+TEST(Operator, Description)
+{
+    EXPECT_EQ(BinaryOperator(L'|').Description(), "or");
+    EXPECT_EQ(UnaryOperator("@").Description(), "any of");
 }
 
 TEST(Operator, Precedence)

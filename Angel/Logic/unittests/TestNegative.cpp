@@ -11,7 +11,7 @@ TEST(Negative, Construction)
     EXPECT_TRUE(bool(Negative(Integer(0))));
     EXPECT_EQ(Negative(Integer(3)), Negative(Integer(3)));
     EXPECT_NE(Negative(Integer(3)), Negative(Integer(-3)));
-    EXPECT_EQ(Expression(Operator(L'-'), {Integer(-2)}), Negative(Integer(-2)));
+    EXPECT_EQ(Expression(UnaryOperator(L'-'), {Integer(-2)}), Negative(Integer(-2)));
 }
 
 

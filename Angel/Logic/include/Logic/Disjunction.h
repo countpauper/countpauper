@@ -18,7 +18,7 @@ public:
     Object Infer(const class Knowledge& k, const Variables& substitutions={}) const;
     bool operator==(const Disjunction& other) const;
 
-    static constexpr Operator ope{L'|'};
+    static constexpr BinaryOperator ope{L'|'};
 };
 
 std::ostream& operator<<(std::ostream& os, const Disjunction& );

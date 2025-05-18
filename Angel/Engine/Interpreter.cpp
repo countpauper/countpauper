@@ -82,8 +82,8 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse)
 {
     Interpreter::ParsedSymbol input;
     Logic::Collection operands;
-    Logic::Operator ope;
-    std::stack<Logic::Operator> unary_ops;
+    Logic::BinaryOperator ope;
+    std::stack<Logic::UnaryOperator> unary_ops;
     while(!parse.eof())
     {   
         parse >> input;
@@ -98,13 +98,13 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse)
             //    that operation is the first argument of the new one for that operator
             // if the same: eg a/b * c same as lower  
             //  
-            Logic::Operator nextOperator{input.location.extract(), 2};
+            Logic::BinaryOperator nextOperator{input.location.extract()};
             assert(!ope || nextOperator == ope); // not yet implemented 
             ope = nextOperator;
         }
         if (input.symbol == Interpreter::Symbol("unary-operator"))
         {
-            unary_ops.push(Logic::Operator(input.location.extract(), 1));
+            unary_ops.push(Logic::UnaryOperator(input.location.extract()));
         }
         else if (input.symbol == Interpreter::Symbol("object"))
         {   // TODO: prefixed values and braces
