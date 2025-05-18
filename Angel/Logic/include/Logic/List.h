@@ -22,6 +22,8 @@ public:
     static constexpr bool ordered=true;
 };
 
+using Bag = List;  // TODO bag is unordered, but for now just use this
+
 std::ostream& operator<<(std::ostream& os, const List& list);
 
 }

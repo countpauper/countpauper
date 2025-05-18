@@ -26,6 +26,7 @@ public:
         }
     }
     ~Collection();
+    Expression Get(const Expression& key) const;
     std::size_t Hash() const;
 protected:
     bool operator==(const Collection& rhs) const;

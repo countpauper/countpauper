@@ -3,6 +3,7 @@
 #include "Logic/Boolean.h"
 #include "Logic/Knowledge.h"
 #include "Logic/Expression.h"
+#include <cassert>
 
 namespace Angel::Logic
 {
@@ -64,11 +65,18 @@ Object Predicate::Infer(const Knowledge& knowledge, const Variables& substitutio
 {
 	Predicate computed(id, std::get<List>(arguments.Infer(knowledge, substitutions)));
 	auto matches = knowledge.Matches(computed);
-	for(const auto& association: matches)
+	for(const auto& item: matches)
 	{
-		if (association.second == Boolean(false))
+		// TODO: this bag of associations may be slow comapaed to a 
+		// std::map<const Predicate*, Expression> if we even need to predicate 
+		// technically it should also be a disjunction for further processing. Here we just 
+		// reimplement disjunction 
+		const auto* association = std::get_if<Association>(&item);
+		assert(association); // shouldn't have added that while matching
+		if (association->Right() == Boolean(false))
 			continue;
-		return association.second.Infer(knowledge, substitutions);
+		// TODO: it's inferred already but not an object. anyway, get rid of Objects
+		return association->Right().Infer(knowledge, substitutions);
 	}
 	return Boolean(false);
 }

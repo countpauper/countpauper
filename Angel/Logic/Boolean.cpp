@@ -1,6 +1,7 @@
 #include "Logic/Boolean.h"
 #include "Logic/Integer.h"
 #include "Logic/CastException.h"
+#include "Logic/Collection.h"
 #include <format>
 #include <stdexcept>
 #include <iostream>
@@ -28,6 +29,10 @@ Boolean::Boolean(const Integer& i) :
 {
 }
 
+Boolean::Boolean(const Collection& c) :
+    Boolean(!c.empty())
+{
+}
 
 Boolean::operator bool() const 
 {

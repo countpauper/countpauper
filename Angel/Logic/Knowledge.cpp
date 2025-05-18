@@ -15,12 +15,12 @@ Knowledge::Knowledge() :
 
 size_t Knowledge::Know(Predicate&& key, Expression&& expression)
 {
-    auto insert = root.emplace(std::make_pair(std::move(key), std::move(expression)));
-    if (insert.second) {
-        return 1;
-    } else {
+    Association association{std::move(key), std::move(expression)};
+    auto it = std::find(root.begin(), root.end(), association);
+    if (it!=root.end())
         return 0;
-    }
+    root.emplace_back(std::move(association));
+    return 1;
 }
 
 Object Knowledge::Infer(const Expression& expression) const
@@ -29,13 +29,15 @@ Object Knowledge::Infer(const Expression& expression) const
     return expression.Infer(*this, vars);
 }
 
-Set Knowledge::Matches(const Predicate& query) const
+Bag Knowledge::Matches(const Predicate& query) const
 {
-    Set result;
+    Bag result;
     std::size_t bestMatch = std::numeric_limits<std::size_t>::max();
-    for(const auto& association: root)
+    for(const auto& item: root)
     {
-        if (const auto* predicate = std::get_if<Predicate>(&association.first))
+        const Association& association = item.Cast<Association>();
+        Expression lhs = association.Left();
+        if (const auto* predicate = std::get_if<Predicate>(&lhs))
         {
             auto match = predicate->Matches(query, {});
             if (match)
@@ -45,7 +47,7 @@ Set Knowledge::Matches(const Predicate& query) const
                     continue;
                 if (match->size() < bestMatch)
                     result.clear();
-                result.emplace(association.first, association.second.Infer(*this, *match));
+                result.emplace_back(Association{std::move(lhs), association.Right().Infer(*this, *match)});
             }
         }
         else 
@@ -57,10 +59,10 @@ Set Knowledge::Matches(const Predicate& query) const
 
 bool Knowledge::Knows(const Expression& e) const
 {
-    return root.Find(e) != nullptr;
+    return *root.Get(e).Cast<Boolean>();
 }
 
-const Set& Knowledge::Root() const
+const Bag& Knowledge::Root() const
 {
     return root;
 }

@@ -28,6 +28,33 @@ bool Collection::operator==(const Collection& rhs) const
     return std::equal(begin(), end(), rhs.begin());
 }
 
+Expression Collection::Get(const Expression& key) const
+{
+    // TODO: Lists should return Lists of values, the order is not 
+    // terribly useful, since indices are missing, but still it's nicer
+    Bag values;
+    bool return_list = false;
+    for(const auto &item : *this)
+    {
+        const auto* assocation = std::get_if<Association>(&item);
+        if (assocation)
+        {
+            auto maybeRight = assocation->Get(key);
+            if (maybeRight != Boolean(false))
+            {
+                values.emplace_back(assocation->Right());
+                return_list = true;
+            }            
+        }
+        else if (item == key)
+            values.emplace_back(Boolean(true));
+    }
+    if (return_list)
+        return values;
+    else
+        return Integer(values.size());
+}
+
 std::size_t Collection::Hash() const
 {
     std::size_t result = 0;

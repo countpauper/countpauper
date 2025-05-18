@@ -16,7 +16,7 @@ Set::Set(std::initializer_list<Expression> setItems)
 }
 
 // TODO: this is weird now
-const Expression* Set::Find(const Expression& e) const
+const Expression* Set::Get(const Expression& e) const
 {
     for(const auto &association : *this)
     {

@@ -11,8 +11,8 @@ domain and reason to answer queries.
 The default unit of interaction is a statement with a knowledge set. This can be a new predicate, which is added to the knowledge 
 or a query if it is postfixed with a question mark instead of a condition. This is an interactive/command line only pre-parse.
 This results in the output of the query with the hypothesis of variable instantiations. The knowledge starts by default with some built in functions, 
-the most essential of which is import(), which will parse the source code in the filename string fn and add all 
-predicates in it to the root knowledge (as a side effect?). 
+the most essential of which is parse(), which will parse the source code in the string and add all 
+predicates in it to the root knowledge as a side effect.
 
 ## Console 
 The default application for these interactions is a python console like app where standard input is read and when enter is pressed 
@@ -50,13 +50,13 @@ cat?
 mouse?
 > false
 ```
-An axiom it added to the list of "facts" of the namespace.
+An axiom it added to the list of known "facts" of the namespace.
 It is equivalent to `cat: true`, any non defined axiom is by default `false`. Defining an axiom is then 
-like assigning a value to an id or even more technically it's creating a key:value association and each knowledge is a dictionary 
-or structure. Commas are optional.
+like assigning a value to a predicate or even more technically it's creating a key:value association and each knowledge is a 
+list of associations of which the key is a predicate. Commas are not needed when parsing axioms.
 
 ## predicate arguments
-A function is true if its label and all arguments match, else it is false
+An axiom without terms is true if its label and all arguments match, else it is false.
 ```
 cat(ginny) 
 cat(ginny)?
@@ -66,7 +66,7 @@ cat(gizmo)?
 ```
 
 ## functions with valance>1
-A function can have multiple arguments, separates by the collection operator `,`. 
+A predicate can have multiple arguments, separates by the collection operator `,`. 
 ```
 color(car, blue)
 color(car, green)? 
@@ -75,13 +75,14 @@ color(tree, blue)>
 > false 
 ```
 
-Technically each function has a list of arguments of a size 0 or more. An axiomatic, so 
+Technically each predicate has a list of arguments of a size 0 or more. An axiomatic, so 
 `cat()` is equivalent to `cat`.
 
 ## Clause
 a predicate is true if it is implied and its antecedent is true. The predicate implied is 
 separated from it's condition with the `:` operator. This means the implication is true if the 
-conditions are true. 
+conditions are true. This operator creates an association between the axiom on the
+left and the antecedent on the right. 
 New knowledge (the set of statements that are true) can be infered from this during a query. 
 If the implication MATCHES the query, the query is recursively replaced by the condition. 
 If the condition is a conjunction, each element will be queried in turn until the entire query 
@@ -98,17 +99,16 @@ cat(ginny)?
 
 ## Variables 
 
-Variables are preceded with `$` to distinguish them from axioms, which serve as a sort of enums that are 
-true as soon as they are used once. Requiring the first letter to be a capital, like prolog, wouldn't 
+Variables are preceded with `$` to distinguish them from axioms. Requiring the first letter to be a capital, like prolog, wouldn't 
 work with unicode as not all languages have capitals and it would be very difficult to define in a regular expression. 
 
 ## Anonymous variable 
 The anonymous variable, `_` in python and prolog, is instead simply defined as `$`. Any match assigned to this variable is 
 immediately discarded and not instantiated in subsequent statements. 
 
-## Clauses with variable arguments 
+## Clauses with variables as arguments 
 These define a generic case. The variables have the scope of that clause. When matching the query, 
-the instantiation is added to the hypothesis and while matching the other predicates in that clause 
+the instantiation is added to the hypothesis and while matching the antecadent predicates in that clause 
 it will be used to substitute variable predicates.
 ```
 cat($X): hairy($X)
@@ -142,7 +142,7 @@ taxonomy($X(_)): animal($X)|plant($X)
 
 ## Query 
 Queries are predicates postfixed with the `?` operator. These queries start inference. 
-It will try to match that predicate until it is proven evaluate to `true`, else `false` 
+It will try to match that predicate until it is proven evaluate to an elemental value like `true`, `false`, or an integer. 
 The query set can expand or change when matching closes until resolved, but as soon as the list of 
 knowledge evaluates to a value (true, false, an integer or a collection of such) inference is complete. 
 
@@ -161,7 +161,6 @@ cat($X)?
 ```
 Each variable in a query has scope of the query. If the query evaluates to true  
 then these variables will have collected ALL the conditions under which that constant is true 
-TODO: is there a point if the result is not a boolean? what if it's a falsey value like 0? 
 
 If the query has multiple variables, there may be multiple combinations of values for which the query is true. 
 
@@ -189,7 +188,6 @@ true
 In this case the first clause matches and the second one does not. This prevents infinite recursion, trying to 
 match endless X values.
 How the inference engine generates valid Y and Z (integers) in this case to make Y+Z=X true is not yet determined.
-
 
 ## Expression matching and math 
 
@@ -230,9 +228,15 @@ $X(ginny): X=cat
 ## Variable instantiation and priority of matching 
 
 ## Namespace 
-A namespace is a clause (pair), whose predicate (key) is the name and the argument is a *set* of predicates, 
-so their order does not matter but the predicates in the namespace are unique 
-By default each axiom is added to the root namespace, but to separate domains of knowledge,
+A namespace is a clause (pair), whose predicate (key) is the name and the antecedent is a bag of clauses, 
+so their order does not matter but the predicates in the namespace do not have to be unique. 
+Equal clauses imply a disjunction of the antecedents.
+```
+cat: short_hair
+cat: maine_coon
+```
+
+By default each clause is added to the root namespace, but to separate domains of knowledge,
 while still allowing them to refer to each other, a namespace can be wrapped around this set 
 
 ```music: 
@@ -242,24 +246,84 @@ while still allowing them to refer to each other, a namespace can be wrapped aro
 }
 ```
 Within the namespace, predicates can be matched. If the predicate is not found the parent namespace is 
-checked, until the root namespace. Predicates across namespace can be matched by using the `.` operator 
-to navigate to a namespace. 
+checked, until the root namespace. Predicates across child namespace can be matched by using the `.` operator 
+to access the namespace. 
 ```
 music.composer($X)?
 > X = bach
 ```
-This use of the `.` operator is in general used to access the elements in a set or a map. Every set is a map that can 
-be accessed with this operator. Like namespaces the default value is true and accessing a set element that is not 
-in it evaluates to false, just like an undefined axiom. This automatically functions as set presence test and the 
-@ operator may not even be needed for this (but still for lists). 
+
+## Association operator `.` 
+This use of the `.` operator is in general used to access the right hand side of an association in a container.
+Every container can be associative its elements are associations and the value can 
+be accessed with this operator. 
+
+Any item in a container that is not an association behaves as if it's right side is `true` and every 
+value that is not in the container acts as if it's right side is `false`. The `.` operator can thereore
+also be used to test if an item is in the container. For a non unique container it will return the count of equal items. 
+
+If an assocation is in a container, which matches, unique containers will return the value. If it doesn't matches
+`false` is returned. For non-unique containers all right sides of assocations with matching left sides are 
+returned in the same container type as the parent (eg bag or list).
+
+In the rare use cases that the non-unique container is mixed assocition and single elements. the 
+return value will be a list with the right hand side of all matching assoications and `true` for each 
+other item that is equal to the requested key. 
+```
+cats: [ginny, gizmo]
+> cats.ginny? 
+1
+``` 
+
+## Association operator `.` 
+
+The association itself is also a container. The operator `.` isn't very useful. Matching can be used 
+to isolate the left or right hand side. The `.` operator is more like a `get_if`. 
+```
+association: cat: ginny 
+association.cat?
+ginny 
+association.dog? 
+false
+```
+
+## Assigning assocation values. 
+To use the `.` operator to create structural data, the right hand side also needs to be assignable.
+This assinging is not done with the `=` operator, which is for matching. It's done by creating 
+a new association with the `:` operator. 
+
+If the `.` matches an association in a non-unique container, a reference is returned. This reference 
+will allow assignment (is this still functional?).
+This is close to learning new clauses. Knowledge clauses however do not need to be unique, so 
+they can be appended to the knowledge. In unique sets the old association is removed. 
 
 ```
-cat: {ginny, max}
-fuzzy: {ginny: true, cheese:false}
-cat.ginny? 
-> true
-fuzzy.cheese? false 
+pets: {ginny:cat}
+pets.ginny: dog 
+```
 
+
+## False value associations 
+For unique containers, adding an assoication for which the value is false is equivalent to removing the element.
+As only one key can exist, setting the value to false will remove it and its size will decrease. 
+```
+cats:{ginny, gizmo}
+cats.ginny: false 
+> cats.ginny? 
+false
+> size(cats)?
+1
+```
+
+For non-unique containers, the `.` operator returns a list of all values and adding a `false` value 
+will result in the `.` operator containing one or more `false` values. 
+```
+cats:[ginny, gizmo]
+cats.ginny: false 
+> cats.ginny? 
+[true, false]
+cats?
+[ginny, gizmo, ginny:false]
 ```
 
 ## Namespace arguments 
@@ -391,6 +455,23 @@ cat(ginny)?
 > error 
 ```
 
+## Negated collections 
+Negation is a logical operator, so a negated collection negates the collection membership. 
+It's impractical to create a set with all elements not in a set, because there can be (nearly) infinite. 
+Instated when a negated set is inferred, it is returned as the negated set. 
+
+Subsequent operations can apply the negation, for instance negated set membership is equivalent and 
+transformed to negated membership
+```
+dogs: {pluto, laika}
+cat($X):$X.~dogs
+> cat(ginny)?
+... cat(ginny)
+... ginny.~dogs
+... ~ginny.dogs 
+true 
+```
+
 ## Sequences 
 The `,` is the sequence operator that appends or inserts elements to a sequence (tuple in python). 
 If it is a sequence of queries, then the result is of course a sequence of responses, although they share the same hypothesis.
@@ -417,18 +498,17 @@ f(X): X+2
 pi: 3.141592
 ```
 
-
 ## Structural types 
 Angel is not an object oriented language. Still, similar to python, structured type are supported and are 
-basically nested dictionaries. The dictionary is a set of associationss and `:` is the association (aka pair) operator. A clause is 
+basically nested dictionaries. The dictionary is a set of associations and `:` is the association (aka pair) operator. A clause is 
 then essentially an association of predicate and a clause. A namespace is however not a dictionary, because these 
-predicates do not need to be unique and they are ordered by priority. It is technically more a list of associations. 
+predicates do not need to be unique. It is a non-unique unordered (ie bag) of associations. 
 ```
 $X={a:1, b:2}
 ```
-The keys can be any elemental type. With strings they can contain spaces. They can also be integers making 
+The keys can be any expression type. With strings they can contain spaces. They can also be integers making 
 effectively a sparse array, which can be accessed with the access operator `X[a]`.
-By default however they are identifiers (equivalent to enums). Dictionaries with 
+By default however they are identifiers (equivalent to enums, predicates without arguments). Dictionaries with 
 identifiers can also be accessed with the `.` operator: `X.a`. 
 
 ## Converting number to and from boolean. 
@@ -461,13 +541,12 @@ More functions may be imported as a math module, see below.
 
 Collections support operators as well. If either the left or the right hand side is singular and the other is not 
 it is upgraded to a single element set. 
-* `@` - element off, converts to True if the left operarand is part of (if singular) or a subset of (if a collection) of the right operator 
-* `&` - disjunction: the collection, with the elements that are both in the left and the right hand side. 
-* `|` - conjunection: the collection  with the elements that are either in the left or the right hand side 
-* `+` - a collection with the elments of the right hand side added to the list of the elements of the left hand side 
+* `.` - element access, converts to True if the left operarand is part of (if singular) or a subset of (if a collection) of the right operator 
+* `&` - intersection: the collection, with the elements that are both in the left and the right hand side. 
+* `|` - union: the collection  with the elements that are either in the left or the right hand side 
+* `+` - a collection with the elements of the right hand side added to the list of the elements of the left hand side.  
 * `-` - subtraction:  the collection, with the elements of the left hand side that are NOT in the right hand side. 
 * `[x]` - access: extract or slice element(s) of a sequential container identified with index `x`, range `x:y`, sequence `x,y,z` or key `x`.
-* `.` - set access: the right hand is the key and it returns the value in a map or true if the key is in the set, else false.  
 The type of the resulting collection is the same as the type of the left hand side, so eg subtracting a list from a 
 set results in a set, but subtracting a set from a list results in a list.
 
@@ -476,13 +555,13 @@ set results in a set, but subtracting a set from a list results in a list.
 * `size($X)` - returns the number of elements in the collection 
 * `set($X)` - Create a set of the collection or element X
 * `list($X)` - Create a list of the collection or element X 
-* `iterable($X)` - Return true if X is iterable (sets, strings, and sequences)
-* `indexed($X)` - Return true if X is indexed (strings, sequences)
+* `iterable($X)` - Return true if X is iterable (sets, strings, lists, bags)
+* `ordered($X)` - Return true if X is ordered and can therefore be indexed (strings, list)
 These could also be in an optionally imported `colllection` library to reduce name clashes 
 
 ## String operators 
 Strings are a lot like lists of characters, except that conjunctions and disjunctions make little sense. 
-* `@` - if the left hand substring is in the right hand, it returns true 
+* `.` - if the right hand substring is in the left hand, it returns the position, else `false`.  
 * `+` - concatenates two strings
 * `-` - removes all characters of the right hand side from the string.
 Slicing can be used to access sub strings or individual characters. 

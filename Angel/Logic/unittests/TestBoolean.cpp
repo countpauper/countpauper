@@ -24,6 +24,8 @@ TEST(Boolean, Cast)
 
 	EXPECT_EQ(Boolean(Integer(0)), Boolean(false));
 	EXPECT_EQ(Boolean(Integer(-1)), Boolean(true));
+	EXPECT_EQ(Boolean(List{}), Boolean(false));
+	EXPECT_EQ(Boolean(List{Boolean(false)}), Boolean(true));
 }
 
 

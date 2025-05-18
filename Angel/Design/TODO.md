@@ -1,3 +1,12 @@
+## Quick todo 
+
+Predicate::matches return disjunction of matches (oncomputed)? 
+Test Association 
+Test again if now the same predicate key can be known twice 
+Make bag a real thing I guess, with same List::Get and most other behavior, just not ordered so no indexing 
+
+
+## Backlog 
 - [ ] Get back up 
 -    [*] remove wstring and platform dependenty conversion 
 -    [*] move, build

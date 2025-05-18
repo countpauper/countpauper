@@ -52,5 +52,16 @@ TEST(List, Infer)
 	EXPECT_EQ(k.Infer(List{Summation{Integer(2), Integer(3)}}), (List{Integer(5)}));
 }
 
+TEST(List, Get)
+{
+	EXPECT_EQ(List().Get(Id("ginny")), Integer(0));
+	EXPECT_EQ((List{Id("ginny"), Id("ginny")}).Get(Id("ginny")), Integer(2));
+	EXPECT_EQ((List{
+		Association{Id("ginny"), Integer(1)},
+		Association{Id("gizmo"), Integer(2)},
+		Association{Id("ginny"), Integer(3)},
+		Id("ginny")}).Get(Id("ginny")), (List{Integer(1), Integer(3), Boolean(true)}));
+}
+
 }
 

@@ -49,6 +49,7 @@ Match List::Matches(const Expression& expression, const Variables& variables) co
     return vars;
 }
 
+
 std::ostream& operator<<(std::ostream& os, const List& list)
 {
     bool first = true;

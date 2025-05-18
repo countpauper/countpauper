@@ -38,6 +38,10 @@ std::string Description(const Logic::Expression& e)
                 C::ordered?"ordered":"unordered", 
                 collection.size()); 
         },
+        [](const Logic::Association& a) -> std::string
+        {
+            return std::format("{} : {}", Description(a.Left()), Description(a.Right()));
+        },
         [&e](const Logic::Predicate& p) -> std::string
         {
             return std::format("if {}", Logic::to_string(e));
@@ -64,7 +68,7 @@ Logic::Object Help(const Logic::Knowledge& k, const Logic::Variables& vars)
     std::stringstream ss; 
     for(const auto& know : root)
     {
-        ss << know.first << " " << Description(know.second) << std::endl;
+        ss << Description(know) << std::endl;
     }
     return Logic::String(ss.str());
 }

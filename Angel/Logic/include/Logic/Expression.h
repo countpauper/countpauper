@@ -12,6 +12,7 @@
 #include "Logic/Operator.h"
 #include "Logic/Negative.h"
 #include "Logic/Function.h"
+#include "Logic/Association.h"
 #include <variant>
 #include <vector>
 #include <map>
@@ -24,7 +25,7 @@ class Object;
 using ExpressionVariant = std::variant<
     Function,      
     Boolean,  Integer, Id, Variable, String,
-    Predicate, List, Set, 
+    Predicate, List, Set, Association,
     Negative, 
     Conjunction, Disjunction, Summation>; 
 

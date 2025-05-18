@@ -29,7 +29,6 @@ TEST(Knowledge, Defaults)
     Knowledge k;
     EXPECT_EQ(k.Root().size(), 2); 
     EXPECT_TRUE(k.Knows(Predicate("true")));
-    EXPECT_EQ(k.Know(Predicate("false")), 0);
     EXPECT_EQ(k.Infer(Predicate("false")), Boolean(false));
 }
 

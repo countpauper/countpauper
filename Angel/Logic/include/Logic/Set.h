@@ -23,7 +23,7 @@ public:
 			emplace(std::make_pair(std::move(item), Boolean(true)));
 		}
 	}
-	const Expression* Find(const Expression& key) const;
+	const Expression* Get(const Expression& key) const;
     Match Matches(const Expression& other, const Variables& variables) const;
     Object Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 	explicit operator bool() const;
