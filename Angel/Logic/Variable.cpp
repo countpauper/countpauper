@@ -22,11 +22,15 @@ bool Variable::operator==(const Variable& var) const
 	return name == var.name;
 }
 
-
 std::size_t Variable::Hash() const
 {
     std::hash<std::string> hasher;
     return hasher(name);
+}
+
+std::string_view Variable::Name() const
+{
+    return name;
 }
 
 Object Variable::Infer(const class Knowledge& k, const Variables& substitutions) const

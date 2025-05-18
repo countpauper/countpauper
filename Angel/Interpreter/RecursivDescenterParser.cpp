@@ -5,6 +5,7 @@
 #include "Interpreter/Error.h"
 #include "Interpreter/Utils.h"
 #include "Interpreter/Logging.h"
+#include "Interpreter/Source.h"
 #include <sstream>
 #include <ranges>
 #include <assert.h>
@@ -40,21 +41,26 @@ void RecursiveDescentParser::ParseTokens(TokenStream& is, SymbolStream& os, Symb
 std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol,
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
 {
+    RecursiveDescentParser::InputIterator it = from;
     auto rules = syntax.Lookup(symbol);
     for(const auto& rule: rules)
     {
-        Logging::Log<Logging::DEBUG>("{:4}{}{}[", from->reference.from, std::string(tab), std::string(rule.second.symbol));
+        Logging::Log<Logging::DEBUG>("{:4}{}{}[", it->reference.from, std::string(tab), std::string(rule.second.symbol));
         ++tab;
-        std::vector<ParsedSymbol> result = Recurse(rule.first, rule.second.terms, from, to);
+        std::vector<ParsedSymbol> result = Recurse(rule.first, rule.second.terms, it, to);
         --tab;
         if (!result.empty()) 
         {
-            Logging::Log<Logging::DEBUG>("{:4}{}] pass", from->reference.from, std::string(tab));
+            Logging::Log<Logging::DEBUG>("{:4}{}] pass {} [{}:{}] {} terms", it->reference.from, std::string(tab),
+                 std::string(result.front().symbol), result.front().location.from, result.front().location.length,
+                    result.size()-1);
+            from = it;
             return result;
         }
         else 
         {
-            Logging::Log<Logging::DEBUG>("{:4}{}] fail", from->reference.from, std::string(tab));
+            Logging::Log<Logging::DEBUG>("{:4}{}] fail {}", from->reference.from, std::string(tab),
+                std::string(symbol));
         }
     }
     return std::vector<ParsedSymbol>();
@@ -65,7 +71,8 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
     RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
 {
     std::vector<ParsedSymbol> result;
-    auto it = from;
+    RecursiveDescentParser::InputIterator it = from;
+    std::size_t start = from->reference.from;
     for(const Term& term: terms)
     {
         auto match =  std::visit( overloaded_visit
@@ -110,7 +117,7 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
             return result;
         }
     }
-    result.insert(result.begin(), ParsedSymbol{symbol, from->reference.sub(0, it->reference.from - from->reference.from)});
+    result.insert(result.begin(), ParsedSymbol{symbol, from->reference.source->span().sub(from->reference.from, it->reference.from - from->reference.from)});
     from = it;
     return result;
 }

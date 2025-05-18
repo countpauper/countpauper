@@ -16,6 +16,7 @@ public:
     explicit virtual operator bool() const;
     bool operator==(const Variable& id) const;
     std::size_t Hash() const;
+    std::string_view Name() const;
     Match Matches(const Expression& expression, const Variables& variables) const;
     Object Infer(const class Knowledge& k, const Variables& substitutions) const;
 private: 

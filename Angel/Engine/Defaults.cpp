@@ -42,6 +42,10 @@ std::string Description(const Logic::Expression& e)
         {
             return std::format("if {}", Logic::to_string(e));
         },
+        [&e](const Logic::Variable& v) -> std::string
+        {
+            return std::format("${}", v.Name());
+        },
         [&e](const auto& obj) 
         {
             return std::string("TODO Description for ")+Logic::to_string(e);

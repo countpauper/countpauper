@@ -60,6 +60,23 @@ TEST(RecursiveDescenterParser, ParseSymbol)
     EXPECT_THAT(parser.ParseIt("bo"), RangeEq({Symbol("S"),Symbol("F"),Symbol("F")}));
 }
 
+TEST(RecursiveDescenterParser, ReferenceNestedSymbol)
+{    
+    Syntax syntax{
+        {"S", {Literal("$"), Symbol("F")}},
+        {"F", {Literal("o"), Symbol("F")}},
+        {"F", {Epsilon()}}
+    };
+    RecursiveDescentParser parser(syntax);
+    SymbolStream os;
+    Source src("$o");
+    parser.Parse(src, os);
+    ParsedSymbol symbol;
+    os >> symbol;
+    EXPECT_EQ(symbol.symbol, "S");
+    EXPECT_EQ(symbol.location, (SourceSpan{0, 2, &src}));
+}
+
 TEST(RecursiveDescenterParser, ParseRegexRule)
 {    
     Syntax syntax{
@@ -122,6 +139,17 @@ TEST(RecursiveDescenterParser, Fail)
     {
         EXPECT_EQ(e.Location(), SourceSpan(2,1, &source));
     }
+}
+
+TEST(RecursiveDescenterParser, InMediasRes)
+{ 
+    Syntax syntax{
+        {"S", {Literal("b"), Symbol("F")}},
+        {"F", {Literal("o"), Symbol("F")}},
+        {"F", {Epsilon()}}
+    };
+    RecursiveDescentParser parser(syntax);
+    EXPECT_THAT(parser.ParseIt("oo", "F"), RangeEq({Symbol("F"),Symbol("F"), Symbol("F")}));
 }
 
 TEST(RecursiveDescenterParser, InfiniteRecursionIsPrevented)
