@@ -3,6 +3,7 @@
 #include "Interpreter/BNF.h"
 #include "Interpreter/SymbolStream.h"
 #include "Interpreter/Source.h"
+#include "Logic/Expression.h"
 #include <format>
 #include <unistd.h>
 #include <cassert>
@@ -31,7 +32,7 @@ AngelInterpreter::AngelInterpreter() :
 Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allowId=false);
 
 
-Logic::Object GeneratePredicateOrId( Interpreter::SymbolStream& parse, bool allowId)
+Logic::Expression GeneratePredicateOrId( Interpreter::SymbolStream& parse, bool allowId)
 {
     Interpreter::ParsedSymbol input; 
     Logic::Id id;
@@ -65,7 +66,7 @@ Logic::Object GeneratePredicateOrId( Interpreter::SymbolStream& parse, bool allo
         return id;
 }
 
-Logic::Object GenerateObject(Interpreter::SymbolStream& parse, bool allowId)
+Logic::Expression GenerateObject(Interpreter::SymbolStream& parse, bool allowId)
 {
     Interpreter::ParsedSymbol input; 
     parse >> input; 

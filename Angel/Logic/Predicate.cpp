@@ -61,7 +61,7 @@ Match Predicate::Matches(const Expression& inferred, const Variables& vars) cons
 	return arguments.Matches(predicate->arguments, vars);
 }
 
-Object Predicate::Infer(const Knowledge& knowledge, const Variables& substitutions) const
+Expression Predicate::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
 	Predicate computed(id, std::get<List>(arguments.Infer(knowledge, substitutions)));
 	auto matches = knowledge.Matches(computed);

@@ -1,4 +1,5 @@
 #include "Logic/Knowledge.h"
+#include "Logic/Expression.h"
 #include "Logic/Association.h"
 #include "Logic/Disjunction.h"
 #include <variant>
@@ -22,8 +23,12 @@ size_t Knowledge::Know(Predicate&& key, Expression&& expression)
     root.emplace_back(std::move(association));
     return 1;
 }
+size_t Knowledge::Know(Predicate&& key)
+{
+    return Know(std::move(key), Boolean(true));
+}
 
-Object Knowledge::Infer(const Expression& expression) const
+Expression Knowledge::Infer(const Expression& expression) const
 {
     Variables vars;
     return expression.Infer(*this, vars);

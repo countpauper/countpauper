@@ -51,12 +51,12 @@ std::string Description(const Logic::Expression& e)
         },
         [&e](const auto& obj) 
         {
-            return std::string("TODO Description for ")+Logic::to_sthring(e);
+            return std::string("TODO Description for ")+Logic::to_string(e);
         }
     }, e);
 }
 
-Logic::Object Help(const Logic::Knowledge& k, const Logic::Variables& vars)
+Logic::Expression Help(const Logic::Knowledge& k, const Logic::Variables& vars)
 {
     if (!vars.empty())
         return Logic::Boolean(false);   // help($F) not yet implemented, todo: should throw Angel exception
@@ -72,7 +72,7 @@ Logic::Object Help(const Logic::Knowledge& k, const Logic::Variables& vars)
     return Logic::String(ss.str());
 }
 
-Logic::Object Delete(const Logic::Knowledge& k, const Logic::Variables& var)
+Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Variables& var)
 {
     // TODO: implement, also how if knowledge is constant. 
     // this is likely one of the view functions that will change the knowledge besides : 

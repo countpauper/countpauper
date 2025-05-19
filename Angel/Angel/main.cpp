@@ -1,5 +1,6 @@
 #include "Engine/Interpreter.h"
 #include "Engine/Defaults.h"
+#include "Logic/Expression.h"
 #include "Interpreter/Source.h"
 #include "Interpreter/Error.h"
 #include <iostream>

@@ -1,7 +1,6 @@
 #include "Logic/Variable.h"
 #include "Logic/Boolean.h"
 #include "Logic/Expression.h"
-#include "Logic/Object.h"
 #include <iostream>
 
 namespace Angel::Logic
@@ -33,7 +32,7 @@ std::string_view Variable::Name() const
     return name;
 }
 
-Object Variable::Infer(const class Knowledge& k, const Variables& substitutions) const
+Expression Variable::Infer(const class Knowledge& k, const Variables& substitutions) const
 {
     auto it = substitutions.find(name);
     if (it!=substitutions.end())

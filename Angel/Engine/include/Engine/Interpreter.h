@@ -1,7 +1,6 @@
 #pragma once 
 
 #include "Logic/Knowledge.h"
-#include "Logic/Predicate.h"
 #include "Interpreter/Syntax.h"
 #include "Interpreter/RecursiveDescentParser.h"
 #include "Interpreter/Source.h"

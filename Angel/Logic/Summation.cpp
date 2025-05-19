@@ -1,7 +1,9 @@
 #include "Logic/Summation.h"
 #include "Logic/Integer.h"
 #include "Logic/Knowledge.h"
+#include "Logic/Expression.h"
 #include <numeric>
+
 namespace Angel::Logic
 {
 
@@ -19,7 +21,7 @@ Match Summation::Matches(const Expression&, const Variables& vars) const
     return NoMatch;
 }
 
-Object Summation::Infer(const Knowledge& k, const Variables& substitutions) const
+Expression Summation::Infer(const Knowledge& k, const Variables& substitutions) const
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing
     // this can, for instance, be done by accumulating an Expression and making Objects implement operator+(Expression) etc

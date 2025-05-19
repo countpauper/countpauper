@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include "Logic/Knowledge.h"
 #include "Logic/Variable.h"
-#include "Logic/Integer.h"
+#include "Logic/Expression.h"
+#include <gtest/gtest.h>
 
 namespace Angel::Logic::Test
 {

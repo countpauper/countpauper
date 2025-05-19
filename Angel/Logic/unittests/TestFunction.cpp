@@ -1,5 +1,6 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Function.h"
+#include "Logic/Expression.h"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -13,7 +14,7 @@ TEST(Function, Construction)
     EXPECT_TRUE(bool(Function(callback.AsStdFunction(), "test")));
     EXPECT_EQ(Function(callback.AsStdFunction(), "test"), Function(callback.AsStdFunction(), "another test"));
     EXPECT_EQ(Function(callback.AsStdFunction(), "test"), Function(callback.AsStdFunction(), "another test"));
-    Function::Callback anotherCallback = [](const Knowledge&, const Variables&) -> Object
+    Function::Callback anotherCallback = [](const Knowledge&, const Variables&) -> Expression
     {
         return Boolean(false);
     };

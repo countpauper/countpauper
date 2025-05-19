@@ -7,14 +7,13 @@
 namespace Angel::Logic
 {
 class Expression;
-class Object;
 class Negative : public Individual
 {
 public: 
     using Individual::Individual;
 
     Match Matches(const Expression& expression, const Variables& vars) const;
-    Object Infer(const class Knowledge& k, const Variables& substitutions) const;
+    Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
     bool operator==(const Negative& other) const;
     constexpr static UnaryOperator ope{L'-'};
 };

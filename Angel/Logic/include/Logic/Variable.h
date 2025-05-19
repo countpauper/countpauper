@@ -4,7 +4,7 @@
 
 namespace Angel::Logic
 {
-class Object;
+class Expression;
 
 // A variable is a sub category of Expression that can be assigned a value 
 // on the first match as a substitution and subsequently provide that value 
@@ -18,7 +18,7 @@ public:
     std::size_t Hash() const;
     std::string_view Name() const;
     Match Matches(const Expression& expression, const Variables& variables) const;
-    Object Infer(const class Knowledge& k, const Variables& substitutions) const;
+    Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
 private: 
     friend std::ostream& operator<<(std::ostream& os, const Variable& var);
     std::string name;

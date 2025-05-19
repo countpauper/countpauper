@@ -7,7 +7,6 @@ namespace Angel::Logic
 {
 
 class Expression;
-class Object;
 
 
 // A collection is a base ordered container of non-unique objects (wrapped in nodes)

@@ -1,5 +1,5 @@
 #include "Logic/Function.h"
-#include "Logic/Object.h"
+#include "Logic/Expression.h"
 
 namespace Angel::Logic
 {
@@ -20,7 +20,7 @@ Match Function::Matches(const Expression& expression, const Variables& vars) con
     return NoMatch; 
 }
 
-Object Function::Infer(const class Knowledge& k, const Variables& substitutions) const
+Expression Function::Infer(const class Knowledge& k, const Variables& substitutions) const
 {
     return callback(k, substitutions);
 }

@@ -1,9 +1,7 @@
 #include <gtest/gtest.h>
 #include "Logic/Association.h"
 #include "Logic/Knowledge.h"
-#include "Logic/Id.h"
-#include "Logic/Boolean.h"
-#include "Logic/Integer.h"
+#include "Logic/Expression.h"
 
 namespace Angel::Logic::Test
 {

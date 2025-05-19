@@ -20,7 +20,6 @@
 
 namespace Angel::Logic
 {
-class Object;
 
 using ExpressionVariant = std::variant<
     Function,      
@@ -82,7 +81,7 @@ public:
 
     }
     Match Matches(const Expression& e, const Variables& substitutions) const;
-    Object Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
+    Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 
     template<typename T> 
     requires(!std::is_same_v<Expression, T>) 

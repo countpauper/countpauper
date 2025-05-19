@@ -2,7 +2,7 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Predicate.h"
 #include "Logic/Association.h"
-#include "Logic/Conjunction.h"
+#include "Logic/Expression.h"
 
 namespace Angel::Logic::Test
 {

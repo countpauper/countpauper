@@ -5,7 +5,7 @@
 
 namespace Angel::Logic
 {
-class Object;
+class Expression;
 
 // A list is an ordered non-unique collection of objects (wrapped in nodes)
 class List : public Collection
@@ -15,7 +15,7 @@ public:
 
     bool operator==(const List& rhs) const;
     explicit operator bool() const;
-    Object Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
+    Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
     Match Matches(const Expression& other, const Variables& variables) const;
 
     static constexpr bool unique=false;

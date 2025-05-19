@@ -1,5 +1,5 @@
 #include "Logic/Negative.h"
-#include "Logic/Object.h"
+#include "Logic/Expression.h"
 
 namespace Angel::Logic
 {
@@ -10,7 +10,7 @@ Match Negative::Matches(const Expression& expression, const Variables& vars) con
     return NoMatch;
 }
 
-Object Negative::Infer(const class Knowledge& k, const Variables& substitutions) const
+Expression Negative::Infer(const class Knowledge& k, const Variables& substitutions) const
 {
     auto value = content->Infer(k, substitutions);
     auto intValue = value.Cast<Integer>();

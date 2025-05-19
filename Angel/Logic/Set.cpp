@@ -1,9 +1,9 @@
 #include "Logic/Set.h"
 #include "Logic/Expression.h"
-#include "Logic/Object.h"
 #include "Logic/Boolean.h"
 #include <algorithm>
 #include <iostream>
+
 namespace Angel::Logic
 {
 
@@ -54,7 +54,7 @@ Match Set::Matches(const Expression& e, const Variables& variables) const
     return NoMatch;
 }
 
-Object Set::Infer(const Knowledge& knowledge, const Variables& substitutions) const
+Expression Set::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
     Set result;
     for(const std::pair<Expression, Expression> item: *this)
@@ -108,7 +108,7 @@ Match Set::Matching(const Expression& expr, const Variables& substitutions) cons
 	{
 		for (const auto& e : *this)
 		{
-			if (!std::none_of(set->begin(), set->end(), [&e](const Object& ov)
+			if (!std::none_of(set->begin(), set->end(), [&e](const Expression& ov)
 			{
 				return e.Matching(*ov); // TODO: should accumulate all of the matching variables
 			}))
@@ -121,7 +121,7 @@ Match Set::Matching(const Expression& expr, const Variables& substitutions) cons
     	return NoMatch;
 }
 
-Object Set::Cast(const std::type_info& t, const Knowledge& k) const
+Expression Set::Cast(const std::type_info& t, const Knowledge& k) const
 {
     if (t == typeid(Boolean))
     {
@@ -129,12 +129,12 @@ Object Set::Cast(const std::type_info& t, const Knowledge& k) const
     }
     else if (t == typeid(Sequence))
     {
-        return Object(); // TODO: copy all members 
+        return Expression(); // TODO: copy all members 
     }
     throw CastException(typeid(*this), t);
 }
 
-void Set::Add(Object&& value)
+void Set::Add(Expression&& value)
 {
 	if (value)
 		insert(std::move(value));

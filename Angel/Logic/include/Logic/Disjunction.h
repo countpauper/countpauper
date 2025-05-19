@@ -15,7 +15,7 @@ class Disjunction : public Collection
 public:
     using Collection::Collection;
     Match Matches(const Expression& expression, const Variables& vars) const;
-    Object Infer(const class Knowledge& k, const Variables& substitutions={}) const;
+    Expression Infer(const class Knowledge& k, const Variables& substitutions={}) const;
     bool operator==(const Disjunction& other) const;
 
     static constexpr BinaryOperator ope{L'|'};

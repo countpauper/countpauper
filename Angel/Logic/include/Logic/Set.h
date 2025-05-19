@@ -8,7 +8,6 @@ namespace Angel::Logic
 {
 
 class Expression;
-class Object;
 
 class Set : public std::map<Expression, Expression>
 {
@@ -25,7 +24,7 @@ public:
 	}
 	const Expression* Get(const Expression& key) const;
     Match Matches(const Expression& other, const Variables& variables) const;
-    Object Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
+    Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 	explicit operator bool() const;
 	std::size_t Hash() const;
 	bool operator==(const Set& rhs) const;

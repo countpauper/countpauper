@@ -1,7 +1,7 @@
 #include "Logic/Disjunction.h"
 #include "Logic/Boolean.h"
-#include "Logic/Object.h"
 #include "Logic/Knowledge.h"
+#include "Logic/Expression.h"
 
 namespace Angel::Logic
 {
@@ -18,11 +18,11 @@ Match Disjunction::Matches(const Expression&, const Variables& vars) const
     return NoMatch;
 }
 
-Object Disjunction::Infer(const Knowledge& k, const Variables& substitutions) const
+Expression Disjunction::Infer(const Knowledge& k, const Variables& substitutions) const
 {
     for(const auto& item: *this)
     {
-        Object inferred = k.Infer(item);
+        Expression inferred = k.Infer(item);
         auto isTrue = inferred.Cast<Boolean>();
         if (isTrue)
             return inferred;

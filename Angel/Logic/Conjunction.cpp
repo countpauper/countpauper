@@ -1,7 +1,7 @@
 #include "Logic/Conjunction.h"
 #include "Logic/Boolean.h"
-#include "Logic/Object.h"
 #include "Logic/Knowledge.h"
+#include "Logic/Expression.h"
 
 namespace Angel::Logic
 {
@@ -18,7 +18,7 @@ Match Conjunction::Matches(const Expression&, const Variables& vars) const
     return NoMatch;
 }
 
-Object Conjunction::Infer(const Knowledge& k, const Variables& substitutions) const
+Expression Conjunction::Infer(const Knowledge& k, const Variables& substitutions) const
 {
     for(const auto& item: *this)
     {

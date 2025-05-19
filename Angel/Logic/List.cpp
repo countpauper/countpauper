@@ -1,6 +1,5 @@
 #include "Logic/List.h"
 #include "Logic/Expression.h"
-#include "Logic/Object.h"
 #include <typeinfo>
 #include <iostream>
 
@@ -18,7 +17,7 @@ bool List::operator==(const List& rhs) const
     return Collection::operator==(rhs);
 }
 
-Object List::Infer(const Knowledge& knowledge, const Variables& substitutions) const
+Expression List::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
     List result;
     std::transform(begin(), end(), std::back_inserter(result), 

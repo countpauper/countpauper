@@ -1,5 +1,6 @@
 #include "Logic/Element.h"
 #include "Logic/Knowledge.h"
+#include "Logic/Expression.h"
 #include <assert.h>
 
 namespace Angel::Logic

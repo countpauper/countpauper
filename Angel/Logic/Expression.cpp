@@ -80,13 +80,13 @@ Match Expression::Matches(const Expression& e, const Variables& subs) const
         }},   *this);    
 }
 
-Object Expression::Infer(const class Knowledge& knowledge, const Variables& vars) const
+Expression Expression::Infer(const class Knowledge& knowledge, const Variables& vars) const
 {
     return std::visit(overloaded_visit{
-        []<IsElement T>(const T& element) -> Object {
+        []<IsElement T>(const T& element) -> Expression {
             return element; 
         },
-        [&knowledge, &vars](const auto& obj) -> Object {
+        [&knowledge, &vars](const auto& obj) -> Expression {
             return obj.Infer(knowledge, vars);
         }
     }, *this);
