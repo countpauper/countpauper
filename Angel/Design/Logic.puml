@@ -12,27 +12,61 @@ Identifier --|> Element
 String --|> Element
 Variable --|> Element 
 
-class Object <<variant>> {
+class Expression <<variant, concept>> {
+    Infer(Knowledge) : Expression
+    Matches(Expression, Variables): Match
+    
 }
-Element --|> Object
-Sequence --|> Object
-Set --|> Object 
-Range --|> Object
-Pair --> Object
 
+Element --|> Expression
+Predicate --|> Expression 
+Container  --|> Expression 
+Operation --|> Expression 
 
-List --|> Sequence 
-Summation --|> Sequence 
-Division --|> Sequence 
-Predicate --|> Sequence 
+class Container {
+    size
+    Get(Expression): Expression
+}
 
-Set *--> "*" Object
-Sequence *--> "*" Object
-Predicate *--> Identifier
-Pair *--> "left" Element
-Pair *--> "right" Object 
-Range *--> "from" Element
-Range *--> "to" Element 
+Pair --|> Container
+Collection --|> Container 
+
+class List {
+    <<ordered>>
+    <<non-unique>
+}
+class Bag {
+    <<unordered>>
+    <<non-unique>>
+} 
+class Set {
+    <<unordered>>
+    <<unique>>
+}
+Set --|> Collection
+List --|> Sequence
+List --|> Collection
+Sequence --|> Collection
+Bag --|> Collection
+
+Association --|> Pair
+Range --|> Pair
+
+Operation --|> Sequence 
+
+Summation --|> Operation 
+Division --|> Operation 
+Multiplication --|> Operation 
+Conjunction --|> Operation 
+Disjunection --|> Operation 
+
+Collection *--> "*" Expresion
+
+Predicate *--> "1 name" Identifier
+Predicate *--> "1 arguments" List
+
+Pair *--> "1 left" Expression
+Pair *--> "1 right" Expression 
 
 
 @enduml

@@ -8,28 +8,42 @@ namespace Angel::Logic
 
 class Expression;
 
-class Association
-{
+class Pair 
+{   // TODO: a Range is another type of Pair
 public:
-    Association(const Association& o);
-    Association(Association&& o); 
-    Association(Expression&& lhs, Expression&& rhs);
-    Association& operator=(const Association& o);
-    Association& operator=(Association&& o);
-
+    Pair(Expression&& lhs, Expression&& rhs);
     explicit operator bool() const;
     std::size_t size() const;
     const Expression& Left() const;
     const Expression& Right() const;
+    std::size_t Hash() const;
+protected:
+    Pair(const Pair& o);
+    Pair(Pair&& o); 
+    Pair& operator=(const Pair& o);
+    Pair& operator=(Pair&& o);
+    bool operator==(const Pair& o) const;
+
+    std::unique_ptr<Expression> lhs;
+    std::unique_ptr<Expression> rhs;
+};
+
+class Association : public Pair
+{
+public:
+    Association(const Association& o): Pair(o) {}
+    Association(Association&& o) : Pair(std::move(o)) {}
+    using Pair::Pair;
+
+    Association& operator=(const Association& o);
+    Association& operator=(Association&& o);
+
     Match Matches(const Expression& expression, const Variables& vars) const;
     Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
     Expression Get(const Expression& key) const;
-    bool operator==(const Association& other) const;
-    std::size_t Hash() const;
+    bool operator==(const Association& other) const { return Pair::operator==(other); }
+
     constexpr static BinaryOperator ope{L':'};
-private:
-    std::unique_ptr<Expression> lhs;
-    std::unique_ptr<Expression> rhs;
 };
 
 

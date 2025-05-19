@@ -7,22 +7,64 @@ namespace Angel::Logic
 
 class Expression;
 
-Association::Association(const Association& o) : 
+Pair::Pair(const Pair& o) : 
     lhs(std::make_unique<Expression>(*o.lhs)),
     rhs(std::make_unique<Expression>(*o.rhs))
 {
 }
 
-Association::Association(Association&& o) : 
+Pair::Pair(Pair&& o) : 
     lhs(std::move(o.lhs)),
     rhs(std::move(o.rhs))
 {
 }
 
-Association::Association(Expression&& lhs, Expression&& rhs) : 
+Pair::Pair(Expression&& lhs, Expression&& rhs) : 
     lhs(std::make_unique<Expression>(std::move(lhs))),
     rhs(std::make_unique<Expression>(std::move(rhs)))
 {
+}
+
+Pair::operator bool() const
+{
+    return bool(lhs);
+}
+
+std::size_t Pair::size() const
+{
+    return static_cast<std::size_t>(bool(lhs)) + 
+        static_cast<std::size_t>(bool(rhs));
+}
+
+const Expression& Pair::Left() const
+{
+    return *lhs;
+}
+
+const Expression& Pair::Right() const
+{
+    return *rhs;
+}
+
+bool Pair::operator==(const Pair& other) const
+{
+    if (!lhs && bool(other.lhs))
+        return false;
+    if (!rhs && bool(other.rhs))
+        return false;
+    return Left() == other.Left() && 
+        Right() == other.Right();
+}
+
+std::size_t Pair::Hash() const
+{
+    std::hash<Expression> hasher;
+    std::size_t result = 0;
+    if (lhs)
+        result ^= hasher(*lhs);
+    if (rhs)
+        result ^= hasher(*rhs);
+    return result;
 }
 
 Association& Association::operator=(const Association& o)
@@ -39,26 +81,6 @@ Association& Association::operator=(Association&& o)
     std::swap(lhs, o.lhs);
     std::swap(rhs, o.rhs);
     return *this;
-}
-Association::operator bool() const
-{
-    return bool(lhs);
-}
-
-std::size_t Association::size() const
-{
-    return static_cast<std::size_t>(bool(lhs)) + 
-        static_cast<std::size_t>(bool(rhs));
-}
-
-const Expression& Association::Left() const
-{
-    return *lhs;
-}
-
-const Expression& Association::Right() const
-{
-    return *rhs;
 }
 
 
@@ -85,30 +107,9 @@ Expression Association::Get(const Expression& key) const
         return Boolean(false);
 }
 
-bool Association::operator==(const Association& other) const
-{
-    if (!lhs && bool(other.lhs))
-        return false;
-    if (!rhs && bool(other.rhs))
-        return false;
-    return Left() == other.Left() && 
-        Right() == other.Right();
-}
-
-std::size_t Association::Hash() const
-{
-    std::hash<Expression> hasher;
-    std::size_t result = 0;
-    if (lhs)
-        result ^= hasher(*lhs);
-    if (rhs)
-        result ^= hasher(*rhs);
-    return result;
-}
-
 std::ostream& operator<<(std::ostream& os, const Association& a)
 {
-    os << a.Left() << ":" << a.Right();
+    os << a.Left() << a.ope << a.Right();
     return os;
 }
 

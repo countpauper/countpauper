@@ -98,6 +98,15 @@ bool Expression::operator<(const Expression& e) const
     return hasher(*this) < hasher(e);
 }
 
+const std::type_info& Expression::AlternativeTypeId() const 
+{
+    return *std::visit([](const auto& obj)
+    {
+        return &typeid(decltype(obj)); 
+    }, *this);        
+}
+
+
 std::ostream& operator<<(std::ostream& s, const Expression& e)
 {
     std::visit([&s](const auto& obj)

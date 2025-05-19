@@ -63,13 +63,7 @@ public:
             }, *this);
         }
     }
-    const std::type_info& AlternativeTypeInfo() const 
-    {
-        return *std::visit([](const auto& obj)
-        {
-            return &typeid(decltype(obj)); 
-        }, *this);        
-    }
+
 
     template<typename T>
     const T Cast() const
@@ -77,7 +71,7 @@ public:
         auto maybe = TryCast<T>();
         if (maybe)
             return *maybe;
-        throw CastException(AlternativeTypeInfo(), typeid(T));
+        throw CastException(AlternativeTypeId(), typeid(T));
 
     }
     Match Matches(const Expression& e, const Variables& substitutions) const;
@@ -97,6 +91,9 @@ public:
     }
 
     bool operator<(const Expression&o) const;
+private:
+    const std::type_info& AlternativeTypeId() const;
+
 };
 
 std::ostream& operator<<(std::ostream& s, const Expression& e);
