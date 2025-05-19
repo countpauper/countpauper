@@ -28,14 +28,15 @@ AngelInterpreter::AngelInterpreter() :
 {
 }
 
-Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse);
+Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allowId=false);
 
 
-Logic::Predicate GeneratePredicate( Interpreter::SymbolStream& parse)
+Logic::Object GeneratePredicateOrId( Interpreter::SymbolStream& parse, bool allowId)
 {
     Interpreter::ParsedSymbol input; 
     Logic::Id id;
     Logic::List args;
+    bool hasArguments = false;
     while(!parse.eof())
     {    
         parse >> input;
@@ -43,9 +44,14 @@ Logic::Predicate GeneratePredicate( Interpreter::SymbolStream& parse)
         {
             id = Logic::Id(input.location.extract());
         }
+        else if (input.symbol == Interpreter::Symbol("sequence"))
+        {
+            hasArguments = true;
+        }
         else if (input.symbol == Interpreter::Symbol("expression"))
         {
-            args.push_back(GenerateExpression(parse));
+            hasArguments = true;
+            args.push_back(GenerateExpression(parse, true));
         }
         else if (input.symbol == Interpreter::Symbol("-predicate"))
         {
@@ -53,16 +59,19 @@ Logic::Predicate GeneratePredicate( Interpreter::SymbolStream& parse)
         }
     }
     assert(id); // error handling needed?
-    return Logic::Predicate(id, std::move(args));
+    if ((hasArguments) || (!allowId))
+        return Logic::Predicate(id, std::move(args));
+    else
+        return id;
 }
 
-Logic::Object GenerateObject(Interpreter::SymbolStream& parse)
+Logic::Object GenerateObject(Interpreter::SymbolStream& parse, bool allowId)
 {
     Interpreter::ParsedSymbol input; 
     parse >> input; 
     if (input.symbol == Interpreter::Symbol("predicate"))
     {
-        return GeneratePredicate(parse);
+        return GeneratePredicateOrId(parse, allowId);
     }
     else if (input.symbol == Interpreter::Symbol("boolean"))
     {
@@ -82,7 +91,7 @@ Logic::Object GenerateObject(Interpreter::SymbolStream& parse)
     }
 }
 
-Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse)
+Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allowId)
 {
     Interpreter::ParsedSymbol input;
     Logic::Collection operands;
@@ -112,7 +121,7 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse)
         }
         else if (input.symbol == Interpreter::Symbol("object"))
         {   // TODO: prefixed values and braces
-            Logic::Expression newOparand = GenerateObject(parse);
+            Logic::Expression newOparand = GenerateObject(parse, allowId);
             while (!unary_ops.empty())
             {
                 newOparand = Logic::Expression(unary_ops.top(), { newOparand });
@@ -139,7 +148,8 @@ void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge
         if (input.symbol == Interpreter::Symbol("predicate"))
         {
             assert(!predicate && "Generate predicated was not moved to knowledge");
-            predicate = GeneratePredicate(parse);
+            auto expression = GeneratePredicateOrId(parse, false);
+            predicate = *std::get_if<Logic::Predicate>(&expression);
         }    
         else if (input.symbol == Interpreter::Symbol("axioms") || 
                  input.symbol == Interpreter::Symbol("-axioms"))
@@ -177,13 +187,10 @@ void AngelInterpreter::Interpret(const Interpreter::Source& source, Logic::Knowl
     GenerateKnowledge(source, os, knowledge);
 }    
 
-Logic::Expression AngelInterpreter::InterpretExpression(const ::Interpreter::Source& source)
+Logic::Expression AngelInterpreter::InterpretQuery(const ::Interpreter::Source& source)
 {
     Interpreter::SymbolStream os;
-    parser.Parse(source, os, "expression");  // TODO parse expression instead of single predicate
-    Interpreter::ParsedSymbol startSymbol;
-    os >> startSymbol;
-    assert(startSymbol.symbol == Interpreter::Symbol("expression"));  // error handling needed?
+    parser.Parse(source, os, "query");  // TODO parse expression instead of single predicate
     return GenerateExpression(os);
 }
 

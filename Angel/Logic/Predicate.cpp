@@ -65,6 +65,8 @@ Object Predicate::Infer(const Knowledge& knowledge, const Variables& substitutio
 {
 	Predicate computed(id, std::get<List>(arguments.Infer(knowledge, substitutions)));
 	auto matches = knowledge.Matches(computed);
+	return matches.Infer(knowledge,substitutions);
+/*
 	for(const auto& item: matches)
 	{
 		// TODO: this bag of associations may be slow comapaed to a 
@@ -79,6 +81,7 @@ Object Predicate::Infer(const Knowledge& knowledge, const Variables& substitutio
 		return association->Right().Infer(knowledge, substitutions);
 	}
 	return Boolean(false);
+*/
 }
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)

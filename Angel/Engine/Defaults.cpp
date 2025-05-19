@@ -19,7 +19,7 @@ std::string Description(const Logic::Expression& e)
     return std::visit(Logic::overloaded_visit{
          [&e]<Logic::IsElement T>(const T& element) -> std::string 
          {
-            return std::string("= ") + Logic::to_string(e);
+            return Logic::to_string(e);
         },
         [](const Logic::Function& fn)
         {
@@ -29,7 +29,6 @@ std::string Description(const Logic::Expression& e)
         {
             return std::format("{} with {} terms", operation.ope.Description(), operation.size()); 
         },
-
         // TODO (before collection) all operators if they have an ope
         []<Logic::IsCollection C>(const C& collection) -> std::string 
         {
@@ -44,7 +43,7 @@ std::string Description(const Logic::Expression& e)
         },
         [&e](const Logic::Predicate& p) -> std::string
         {
-            return std::format("if {}", Logic::to_string(e));
+            return Logic::to_string(e);
         },
         [&e](const Logic::Variable& v) -> std::string
         {
@@ -52,7 +51,7 @@ std::string Description(const Logic::Expression& e)
         },
         [&e](const auto& obj) 
         {
-            return std::string("TODO Description for ")+Logic::to_string(e);
+            return std::string("TODO Description for ")+Logic::to_sthring(e);
         }
     }, e);
 }

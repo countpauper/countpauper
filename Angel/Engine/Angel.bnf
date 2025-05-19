@@ -1,13 +1,14 @@
 <knowledge> ::= <axiom> <space> <axioms>
 <knowledge> ::= ""
+<query>::=<expression> <space> "?"
 # TODO <namsepace>  
 <axioms> ::= "," <space> <axiom> <axioms> | ε-axioms
 <axiom> ::= <predicate> <space> <terms> 
 <terms> ::= ":" <space> <expression> | ε-terms
 <predicate> ::= <id> <space> <arguments>
 <arguments> ::= "(" <space> <sequence> <space> ")" ε-predicate | ε-predicate
-<sequence> ::= <expression> <sequence-next>
-<sequence-next> ::= <space> "," <space> <expression> <sequence-next> | ε-sequence
+<sequence> ::= <expression> <space> <sequence-next> | ε-sequence
+<sequence-next> ::= "," <space> <expression> <sequence-next> | ε-sequence
 <expression> ::= <value> <operand>
 <operand> ::= <space> <binary-operator> <space> <value> <operand> | ε-expression
 <numerical-unary-operator> ::= '[+-]'

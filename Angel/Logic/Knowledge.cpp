@@ -1,6 +1,6 @@
 #include "Logic/Knowledge.h"
-#include "Logic/Set.h"
 #include "Logic/Association.h"
+#include "Logic/Disjunction.h"
 #include <variant>
 #include <cassert>
 
@@ -29,9 +29,9 @@ Object Knowledge::Infer(const Expression& expression) const
     return expression.Infer(*this, vars);
 }
 
-Bag Knowledge::Matches(const Predicate& query) const
+Expression Knowledge::Matches(const Predicate& query) const
 {
-    Bag result;
+    std::vector<Expression> result;
     std::size_t bestMatch = std::numeric_limits<std::size_t>::max();
     for(const auto& item: root)
     {
@@ -46,14 +46,22 @@ Bag Knowledge::Matches(const Predicate& query) const
                 if (match->size() > bestMatch)
                     continue;
                 if (match->size() < bestMatch)
+                {
+                    bestMatch = match->size();
                     result.clear();
-                result.emplace_back(Association{std::move(lhs), association.Right().Infer(*this, *match)});
+                }
+                result.emplace_back( association.Right().Infer(*this, *match));
             }
         }
         else 
             assert(false && "Only predicate keys are allowed in knowledge");
     } 
-    return result;
+    if (result.empty())
+        return Boolean(false);
+    else if (result.size()==1)
+        return std::move(result.front());
+    else
+        return Disjunction(std::move(result));
 }
 
 

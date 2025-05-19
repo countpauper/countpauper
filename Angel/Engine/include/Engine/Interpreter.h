@@ -14,7 +14,7 @@ class AngelInterpreter
 public:
     AngelInterpreter();
     void Interpret(const ::Interpreter::Source& source, Logic::Knowledge& knowledge ); 
-    Logic::Expression InterpretExpression(const ::Interpreter::Source& source);
+    Logic::Expression InterpretQuery(const ::Interpreter::Source& source);
 private:
     Interpreter::Syntax syntax;
     Interpreter::RecursiveDescentParser parser;

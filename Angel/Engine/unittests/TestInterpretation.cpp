@@ -13,7 +13,7 @@ TEST(Interpretation, Axiom)
 
     interpreter.Interpret(source, k);
     EXPECT_FALSE(k.Root().empty());
-    EXPECT_TRUE(k.Knows(Logic::Predicate("cat", {Logic::Predicate("fish")})));
+    EXPECT_TRUE(k.Knows(Logic::Predicate("cat", {Logic::Id("fish")})));
     EXPECT_FALSE(k.Knows(Logic::Predicate("fish")));
 }
 
@@ -31,15 +31,15 @@ TEST(Interpretation, Axioms)
 TEST(Interpretation, Query)
 {
     AngelInterpreter interpreter;
-    Interpreter::Source source("cat");
-    EXPECT_EQ(interpreter.InterpretExpression(source), Logic::Predicate("cat"));
+    Interpreter::Source source("cat ?");
+    EXPECT_EQ(interpreter.InterpretQuery(source), Logic::Predicate("cat"));
 }
 
 TEST(Interpretation, Expression)
 {
     AngelInterpreter interpreter;
-    Interpreter::Source source("-1+2");
-    EXPECT_EQ(interpreter.InterpretExpression(source), (
+    Interpreter::Source source("-1+2?");
+    EXPECT_EQ(interpreter.InterpretQuery(source), (
         Logic::Summation{Logic::Negative(Logic::Integer(1)), Logic::Integer(2)}));
 }
 

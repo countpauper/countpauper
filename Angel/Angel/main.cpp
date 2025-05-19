@@ -22,15 +22,14 @@ int IOLoop(const std::string_view prompt="")
 			break;
 		try 
 		{
-			if (line.back() == '?')
+			Interpreter::Source src(line);
+			try 
 			{
-				line.pop_back();
-				Interpreter::Source src(line);
-				Logic::Expression query = interpreter.InterpretExpression(src);
+				Logic::Expression query = interpreter.InterpretQuery(src);
 				auto response = knowledge.Infer(query);
 				std::cout << response << std::endl;
 			} 
-			else 
+			catch(Interpreter::Error&)
 			{
 				Interpreter::Source src(line);
 				interpreter.Interpret(src, knowledge);

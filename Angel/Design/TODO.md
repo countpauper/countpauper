@@ -1,10 +1,6 @@
 ## Quick todo 
 
-Predicate::matches return disjunction of matches (oncomputed)? 
-Test Association 
-Test again if now the same predicate key can be known twice 
-Make bag a real thing I guess, with same List::Get and most other behavior, just not ordered so no indexing 
-
+Get rid of object
 
 ## Backlog 
 - [ ] Get back up 
@@ -29,45 +25,48 @@ Make bag a real thing I guess, with same List::Get and most other behavior, just
 -   [*] Clean up old parser 
 -   [ ] Optional: extend BNF with elipsis `...` (also in its own) that repeats a rules terms until failure (and generates each in sequence instead of in tr)
 -   [*] Parsing enough for axioms
--   [ ] Parsing enough for clauses
--   [ ] Parsing enough for predicates with arguments
+-   [*] Parsing enough for clauses
+-   [*] Parsing enough for predicates with arguments
 -   [*] Parse set of axioms
--   [ ] Parse variables 
+-   [*] Parse variables 
 -   [*] Parse conjunctions 
 - [ ] Prolog 
 -   [*] query horn clause 
 -   [*] Query predicate  
--   [ ] Variable clauses with substitution 
+-   [*] Variable clauses with substitution 
 -   [ ] Query with variable and return hypotheses
 -   [*] Sequences for valence 2+ predicates
 -   [*] Disjunctions
--   [ ] Negation  
+-   [*] Negation  
 -   [ ] Tautology protection cat: cat (or longer) is an error
 - [ ] Console and built in commands
--   [ ] IO
--   [ ] help and help($topic)
--   [ ] delete
+-   [*] help 
+-   [ ] help($topic)
+-   [ ] delete clauses
 -   [ ] print  
 -   [ ] trace 
+-   [ ] file IO
+-   [ ] UI / stdin/out IO 
 - [ ] Functional 
--   [ ] define constants 
+-   [*] define constants 
 -   [ ] define (non boolean) functions 
 -   [ ] integer operators `+-*/^` 
 -   [ ] query functions
 -   [ ] lists 
 -   [ ] sets 
 -   [ ] set and list operators `&|+-`
--   [ ] Membership operator x @ {x,y}
+-   [*] Membership operator x.{x,y} (done for List)
 - Python
 -   [ ] namespaces
--   [ ] Indexing sequences (not sets)  [x,y,z][1]
+-   [ ] Indexing lists (not sets, only)  [x,y,z][1]
 -   [ ] ranges [x:y] 
 -   [ ] infinite ranges [:y]
 -   [ ] range slicing
 -   [ ] For each operator *[x,y]
--   [ ] Make knowledge and namespace expressions, clauses associations 
+-   [ ] Assigning a free clause association is a lambda `l: sqr(n):n*n`  
+-   [*] Make knowledge and namespace expressions, clauses associations 
 -   [ ] Sub namespaces
--   [ ] Figure out numpy like stuff. 
+-   [ ] Figure out numpy like stuff. Is using @ * to multiply or fn() all items in a container sufficient?  
 -   [ ] Multi dimensional arrays (as a separate collection type)?
 -   [ ] More advanced ranges, with step ?  
 -   [ ] Apply functions on sequences, sets and arrays with for each 
@@ -78,10 +77,11 @@ Make bag a real thing I guess, with same List::Get and most other behavior, just
 -   [ ] Other MFINAE type matching or even some concept like syntax 
 -   [ ] free pairs `a:b` 
 -   [ ] Derive Clause from Pair 
--   [ ] Namespace from `axiom:{set,}`
+-   [ ] Namespace from `axiom:{set,}` preferably without the comma 
 -   [ ] dicts work as structs 
 -   [ ] dict access with `[]`
--   [ ] set access with `.`
+-   [ ] set access with `.` (list done, full feature for unique) 
+-   [ ] Bag as unordered list if it has any advantages for speed and such 
 - [ ] Native functions
 -    [ ] Add native cast functions (id, int, float, str, list, set, dict)
 -    [ ] Add native collections functions (size, empty)

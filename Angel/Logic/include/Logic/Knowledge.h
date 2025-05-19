@@ -14,7 +14,7 @@ class Knowledge
 public:
 	Knowledge();
     size_t Know(Predicate&& key, Expression&& value=Boolean(true));
-	Bag Matches(const Predicate& predicate) const;
+	Expression Matches(const Predicate& predicate) const;
 	Object Infer(const Expression& e) const;
 	bool Knows(const Expression& e) const;
 	const Bag& Root() const;
