@@ -6,6 +6,7 @@
 namespace Angel::Logic
 {
 class Expression;
+class Association;
 
 // Knowledge is a tree of clauses organized in namespaces
 // A clause is a pair of a predicate and an expression 
@@ -14,8 +15,8 @@ class Knowledge
 {
 public:
 	Knowledge();
-    size_t Know(Predicate&& key);
-    size_t Know(Predicate&& key, Expression&& value);
+	explicit Knowledge(std::initializer_list<Expression> knowledge);
+    size_t Know(Expression&& clause);
 	Expression Matches(const Predicate& predicate) const;
 	Expression Infer(const Expression& e) const;
 	bool Knows(const Expression& e) const;

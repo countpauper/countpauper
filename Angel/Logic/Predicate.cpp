@@ -54,10 +54,10 @@ Match Predicate::Matches(const Expression& inferred, const Variables& vars) cons
 {
 	const auto* predicate = std::get_if<Predicate>(&inferred);
 	if (!predicate)
-		return NoMatch;
+		return Boolean(false);
 	
 	if (id != predicate->id) // Variable predicate names not (yet) supported
-		return NoMatch;
+		return Boolean(false);
 	return arguments.Matches(predicate->arguments, vars);
 }
 
@@ -65,23 +65,7 @@ Expression Predicate::Infer(const Knowledge& knowledge, const Variables& substit
 {
 	Predicate computed(id, std::get<List>(arguments.Infer(knowledge, substitutions)));
 	auto matches = knowledge.Matches(computed);
-	return matches.Infer(knowledge,substitutions);
-/*
-	for(const auto& item: matches)
-	{
-		// TODO: this bag of associations may be slow comapaed to a 
-		// std::map<const Predicate*, Expression> if we even need to predicate 
-		// technically it should also be a disjunction for further processing. Here we just 
-		// reimplement disjunction 
-		const auto* association = std::get_if<Association>(&item);
-		assert(association); // shouldn't have added that while matching
-		if (association->Right() == Boolean(false))
-			continue;
-		// TODO: it's inferred already but not an object. anyway, get rid of Objects
-		return association->Right().Infer(knowledge, substitutions);
-	}
-	return Boolean(false);
-*/
+	return matches;
 }
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)

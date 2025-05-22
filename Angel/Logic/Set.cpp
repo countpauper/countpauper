@@ -8,17 +8,28 @@ namespace Angel::Logic
 {
 
 Set::Set(std::initializer_list<Expression> setItems)
-{
-    for(const auto& item: setItems)
+{  
+    for(auto item: setItems)    // copy not great for performance
     {
-        emplace(std::make_pair(std::move(item),Boolean(true)));
+        Add(std::move(item));
     }
 }
 
-// TODO: this is weird now
+void Set::Add(Expression&& other)
+{
+    if (auto* association = std::get_if<Association>(&other))
+    {
+        items.emplace(association->Left(), association->Right());
+    }
+    else 
+    {
+        items.emplace(std::move(other), Boolean(true));
+    }
+}
+
 const Expression* Set::Get(const Expression& e) const
 {
-    for(const auto &association : *this)
+    for(const auto& association: items)
     {
         if (association.first == e)
             return &association.second;
@@ -26,9 +37,14 @@ const Expression* Set::Get(const Expression& e) const
     return nullptr;
 }
 
+std::size_t Set::size() const
+{
+    return items.size();
+}
+
 Set::operator bool() const
 {
-    return !empty();
+    return !items.empty();
 }
 
 bool Set::operator==(const Set& rhs) const
@@ -42,7 +58,7 @@ Match Set::Matches(const Expression& e, const Variables& variables) const
 {
     const Set* set = std::get_if<Set>(&e);
     if (!set)
-        return NoMatch;
+        return Boolean(false);
         
     // TODO: implement, but how and what behavior 
     // {ginny, max} should match {max, ginny}
@@ -50,14 +66,14 @@ Match Set::Matches(const Expression& e, const Variables& variables) const
     // should be the same size at least, barring some sort of |Tail syntax 
     // so all items should be attempted to match with another and then that one should be out
     if (size()!=set->size())
-        return NoMatch; // TODO: head|tail matching or whatever could happen here
-    return NoMatch;
+        return Boolean(false); // TODO: head|tail matching or whatever could happen here
+    return Boolean(false);
 }
 
 Expression Set::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
     Set result;
-    for(const std::pair<Expression, Expression> item: *this)
+    for(const auto& item: items)
     {
         // NB right side computed get lost here if the first side is now duplicated 
         // eg {X+1: cheese, X*2:pickles} with X=1 becomes {2:cheese} (or pickles perhaps)
@@ -67,7 +83,7 @@ Expression Set::Infer(const Knowledge& knowledge, const Variables& substitutions
         // for cases where these are clauses eg legs(X+1): max legs(X*2): ginny, 
         // this disjunction also seems to make sense legs(2): max | ginny, if we are 
         // hypothesizing that both have 2 legs 
-        result.emplace(item.first.Infer(knowledge, substitutions),
+        result.items.emplace(item.first.Infer(knowledge, substitutions),
             item.second.Infer(knowledge,substitutions));
     }
     return result;
@@ -77,12 +93,52 @@ std::size_t Set::Hash() const
 {
     std::size_t result = std::numeric_limits<std::size_t>::max();
     std::hash<Expression> hasher;
-    for(const auto& association: *this)
+    for(const auto& association: items)
     {
         result ^= hasher(association.first) ^ hasher(association.second);
     }
     return result;
 }
+
+
+Set::iterator::iterator(Inner::const_iterator i) :
+    it(i)
+{
+}
+
+Expression Set::iterator::operator*() const
+{
+    if (it->second == Boolean(true))
+        return it->first;
+    else
+        return Association{Expression(it->first), Expression(it->second)};
+}
+
+Set::iterator& Set::iterator::operator++()
+{
+    it++;
+    return *this;
+}
+Set::iterator Set::iterator::operator++(int)
+{
+    return Set::iterator(++it);
+}
+
+bool Set::iterator::operator==(const Set::iterator& rhs) const
+{
+    return it == rhs.it;
+}
+
+Set::iterator Set::begin() const
+{
+    return iterator(items.begin());
+}
+
+Set::iterator Set::end() const
+{
+    return iterator(items.end());
+}
+
 
 std::ostream& operator<<(std::ostream& os, const Set& set)
 {
@@ -92,59 +148,12 @@ std::ostream& operator<<(std::ostream& os, const Set& set)
     {
         if (!first)
             os << ",";
-        os << node.first << ":" << node.second;
+        os << node;
         first = false;
     }
 
     os << "}";
     return os;
 }
-    /*
-Match Set::Matching(const Expression& expr, const Variables& substitutions) const
-{
-
-    Variables substitutions;
-	if (auto set = dynamic_cast<const Set*>(&expr))
-	{
-		for (const auto& e : *this)
-		{
-			if (!std::none_of(set->begin(), set->end(), [&e](const Expression& ov)
-			{
-				return e.Matching(*ov); // TODO: should accumulate all of the matching variables
-			}))
-			{
-                return NoMatch;
-			}
-		}
-		return Match(substitutions);
-	}
-    	return NoMatch;
-}
-
-Expression Set::Cast(const std::type_info& t, const Knowledge& k) const
-{
-    if (t == typeid(Boolean))
-    {
-        return boolean(!empty());
-    }
-    else if (t == typeid(Sequence))
-    {
-        return Expression(); // TODO: copy all members 
-    }
-    throw CastException(typeid(*this), t);
-}
-
-void Set::Add(Expression&& value)
-{
-	if (value)
-		insert(std::move(value));
-}
-
-void Set::Merge(Set&& other)
-{
-	while(!other.empty())
-		insert(std::move(other.extract(other.begin())));
-}
-*/
 
 }

@@ -7,7 +7,7 @@ namespace Angel::Logic
 Match Negative::Matches(const Expression& expression, const Variables& vars) const
 {
     // TODO: need to compute with remaining variables, then compare 
-    return NoMatch;
+    return Boolean(false);
 }
 
 Expression Negative::Infer(const class Knowledge& k, const Variables& substitutions) const

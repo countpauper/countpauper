@@ -15,14 +15,14 @@ Match Disjunction::Matches(const Expression&, const Variables& vars) const
 {
     // TODO: Disjunction match with logical simplication
     // false & X matches true if X is true. 
-    return NoMatch;
+    return Boolean(false);
 }
 
 Expression Disjunction::Infer(const Knowledge& k, const Variables& substitutions) const
 {
     for(const auto& item: *this)
     {
-        Expression inferred = k.Infer(item);
+        Expression inferred = item.Infer(k, substitutions);
         auto isTrue = inferred.Cast<Boolean>();
         if (isTrue)
             return inferred;

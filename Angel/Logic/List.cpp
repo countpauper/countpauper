@@ -32,18 +32,20 @@ Match List::Matches(const Expression& expression, const Variables& variables) co
 {
     const List* list = std::get_if<List>(&expression);
     if (!list)
-        return NoMatch;
+        return Boolean(false);
 
     if (size()!=list->size())
-        return NoMatch; // TODO: head|tail matching or whatever could happen here 
+        return Boolean(false); // TODO: head|tail matching or whatever could happen here 
     auto lit = list->begin();
     Variables vars = variables;
     for(auto it=begin(); it!=end(); ++it, ++lit)
     {
         auto itemMatch = it->Matches(*lit, vars);
-        if (!itemMatch)
-            return NoMatch;
-        vars.insert(itemMatch->begin(), itemMatch->end());
+        if (itemMatch==Boolean(false))
+            return std::move(itemMatch); // early out 
+        if (itemMatch==Boolean(true))   
+            continue;   // trivial 
+        vars.emplace_back(std::move(itemMatch));
     }
     return vars;
 }

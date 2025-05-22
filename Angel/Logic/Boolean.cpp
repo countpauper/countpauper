@@ -1,7 +1,6 @@
 #include "Logic/Boolean.h"
-#include "Logic/Integer.h"
 #include "Logic/CastException.h"
-#include "Logic/Collection.h"
+#include "Logic/Expression.h"
 #include <format>
 #include <stdexcept>
 #include <iostream>
@@ -34,6 +33,12 @@ Boolean::Boolean(const Collection& c) :
 {
 }
 
+Boolean::Boolean(const Set& s) :
+    Boolean(s.size()>0)
+{
+}
+
+
 Boolean::operator bool() const 
 {
     return truth;
@@ -53,22 +58,6 @@ bool Boolean::operator*() const
 {
 	return truth;
 }
-
-
-/*
-Expression Boolean::Cast(const std::type_info& t, const Knowledge& k) const
-{
-    if (t == typeid(Boolean))
-    {
-        return boolean(truth);
-    }
-    else if (t == typeid(Integer))
-    {
-        return integer(truth ? 1 : 0);
-    }
-    throw CastException(typeid(*this), t);
-}
-*/
 
 Boolean::operator std::string() const
 {

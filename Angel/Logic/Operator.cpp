@@ -152,4 +152,16 @@ std::ostream& operator<<(std::ostream& os, const Operator& op)
     return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const BinaryOperator& op)
+{
+    os << Operator(op);
+    return os;
+}
+
+
+std::ostream& operator<<(std::ostream& os, const UnaryOperator& op)
+{
+    os << Operator(op);
+    return os;
+}
 }

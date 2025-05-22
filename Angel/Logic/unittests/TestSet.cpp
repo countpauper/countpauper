@@ -24,7 +24,11 @@ TEST(Set, Construction)
 	Set seq_set({List{Id("ginny"), Id("max")}});
 	EXPECT_EQ(seq_set.size(), 1);
 
-	// TODO: should be a set static_assert(Logic::IsCollection<Set>);
+	Set association_set{Association{Id("ginny"), Id("cat")}, 
+		Association{Id("ginny"), Id("dog")}};
+	EXPECT_EQ(association_set.size(), 1);
+
+	// TODO: should be a set static_assert(Logic::IsContainer<Set>);
 }
 
 TEST(Set, List)

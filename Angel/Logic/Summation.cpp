@@ -18,7 +18,7 @@ Match Summation::Matches(const Expression&, const Variables& vars) const
     // X+1 matches 3 if X is 2 
     // all unknown variables need to be found and the remaining expression(s) needs to be computed. 
     // if any are ranges, then the result might be a different range 
-    return NoMatch;
+    return Boolean(false);
 }
 
 Expression Summation::Infer(const Knowledge& k, const Variables& substitutions) const
@@ -28,7 +28,7 @@ Expression Summation::Infer(const Knowledge& k, const Variables& substitutions) 
     long value = std::accumulate(begin(), end(), 0L,
         [&k, &substitutions](long accumulated, const Expression& item)
         {
-            auto inferred = k.Infer(item);
+            auto inferred = item.Infer(k, substitutions);
             auto value = inferred.Cast<Integer>();
             return accumulated += *value;
         });

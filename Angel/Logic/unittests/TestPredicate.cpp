@@ -12,24 +12,33 @@ TEST(Predicate, Construction)
 	EXPECT_NE(Predicate("test"), Predicate("Test"));
 }
 
-TEST(Predicate, Valence0)
+TEST(Predicate, Valence0IsNotKnown)
 {
 	Knowledge k;
-	EXPECT_EQ(Predicate("cat").Infer(k), Boolean(false));
-	k.Know(Predicate("cat"));
-	EXPECT_EQ(Predicate("cat").Infer(k), Boolean(true));
-	EXPECT_EQ(Predicate("dog").Infer(k), Boolean(false));
+	EXPECT_EQ(k.Infer(Predicate("cat")), Boolean(false));
+}
+	
+TEST(Predicate, Valence0IsKnownOrNot)
+{
+	Knowledge k { Predicate("cat")};
+	EXPECT_EQ(k.Infer(Predicate("cat")), Boolean(true));
+	EXPECT_EQ(k.Infer(Predicate("dog")), Boolean(false));
 
 }
 
-TEST(Predicate, Valence1)
+TEST(Predicate, Valence1isNoTKnown)
 {
 	Knowledge k;
-	EXPECT_EQ(Predicate("cat", List{Id("ginny")}).Infer(k), Boolean(false));
+	EXPECT_EQ(k.Infer(Predicate("cat", List{Id("ginny")})), Boolean(false));
+}
+
+TEST(Predicate, Valence1IsKnownOrNot)
+{
+	Knowledge k;
 	k.Know(Predicate("cat", List{Id("ginny")}));
-	EXPECT_EQ(Predicate("cat", List{Id("ginny")}).Infer(k), Boolean(true));
-	EXPECT_EQ(Predicate("cat", List{Id("woofer")}).Infer(k), Boolean(false));
-	EXPECT_EQ(Predicate("dog", List{Id("ginny")}).Infer(k), Boolean(false));
+	EXPECT_EQ(k.Infer(Predicate("cat", List{Id("ginny")})), Boolean(true));
+	EXPECT_EQ(k.Infer(Predicate("cat", List{Id("woofer")})), Boolean(false));
+	EXPECT_EQ(k.Infer(Predicate("dog", List{Id("ginny")})), Boolean(false));
 }
 
 TEST(Predicate, to_string)
@@ -42,8 +51,8 @@ TEST(Predicate, Infer)
 {
 	Knowledge k;
 	k.Know(Predicate("legs", List{Integer(4)}));
-	EXPECT_EQ(Predicate("legs", List{Summation{Integer(2), Boolean(false)}}).Infer(k), Boolean(false));
-	EXPECT_EQ(Predicate("legs", List{Summation{Integer(2), Integer(2)}}).Infer(k), Boolean(true));
+	EXPECT_EQ(k.Infer(Predicate("legs", List{Summation{Integer(2), Boolean(false)}})), Boolean(false));
+	EXPECT_EQ(k.Infer(Predicate("legs", List{Summation{Integer(2), Integer(2)}})), Boolean(true));
 }
 
 }

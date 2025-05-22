@@ -21,19 +21,18 @@ TEST(Summation, Construction)
 TEST(Summation, Summations)
 {
     Knowledge k;
-    EXPECT_EQ(Summation{}.Infer(k), Integer(0));
-    EXPECT_EQ((Summation{Integer(2)}).Infer(k), Integer(2));
-    EXPECT_EQ((Summation{Integer(2), Integer(3)}).Infer(k), Integer(5));
-    EXPECT_EQ((Summation{Integer(2), Integer(-3)}).Infer(k), Integer(-1));
-    EXPECT_EQ((Summation{Boolean(true), Integer(2)}).Infer(k), Integer(3));
-    EXPECT_EQ((Summation{Summation{Integer(2)}}).Infer(k), Integer(2));
+    EXPECT_EQ(k.Infer(Summation{}), Integer(0));
+    EXPECT_EQ(k.Infer(Summation{Integer(2)}), Integer(2));
+    EXPECT_EQ(k.Infer(Summation{Integer(2), Integer(3)}), Integer(5));
+    EXPECT_EQ(k.Infer(Summation{Integer(2), Integer(-3)}), Integer(-1));
+    EXPECT_EQ(k.Infer(Summation{Boolean(true), Integer(2)}), Integer(3));
+    EXPECT_EQ(k.Infer(Summation{Summation{Integer(2)}}), Integer(2));
 }
 
 TEST(Summation, Inference)
 {
-    Knowledge k;
-    k.Know(Predicate("cat"), Integer(2));
-    EXPECT_EQ((Summation{Integer(4), Predicate("cat")}).Infer(k), Integer(6));
+    Knowledge k { Association(Predicate("cat"), Integer(2)) };
+    EXPECT_EQ(k.Infer(Summation{Integer(4), Predicate("cat")}), Integer(6));
 }
 
 TEST(Summation, to_string)

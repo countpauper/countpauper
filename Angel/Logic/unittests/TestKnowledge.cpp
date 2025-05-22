@@ -37,17 +37,17 @@ TEST(Knowledge, Matches)
     EXPECT_EQ(k.Matches(Predicate("ginny")), Boolean(false));
     k.Know(Predicate("ginny"));
     EXPECT_EQ(k.Matches(Predicate("ginny")), Boolean(true));
-    k.Know(Predicate("ginny"), Predicate("cat"));
+    k.Know(Association{Predicate("ginny"), Predicate("cat")});
 //  If this is desired, then instead of inferring, at least Matches should substitute variables 
 //    along the clause. Without (paritally) computing operations this is anyway not possible
 //    EXPECT_EQ(k.Matches(Predicate("ginny")), (Disjunction{Boolean(true), Predicate("cat")}));
-    EXPECT_EQ(k.Matches(Predicate("ginny")), (Disjunction{Boolean(true), Boolean(false)}));
+    EXPECT_EQ(k.Matches(Predicate("ginny")), Boolean(true));
 }
 
 TEST(Knowledge, MatchVariables)
 {
-    Knowledge k;
-    k.Know(Predicate("fuzzy",{Variable("X")}), Predicate("cat", {Variable("X")}));
+    Knowledge k{
+       Association(Predicate("fuzzy",{Variable("X")}), Predicate("cat", {Variable("X")}))};
     EXPECT_EQ(k.Matches(Predicate("fuzzy",{Id("ginny")})), Boolean(false));
     k.Know(Predicate("cat",{Id("ginny")}));
     EXPECT_EQ(k.Matches(Predicate("fuzzy",{Id("ginny")})), Boolean(true));

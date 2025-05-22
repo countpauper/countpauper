@@ -53,7 +53,7 @@ ExpressionVariant make_operation(const Operator ope, Collection&& operands)
     if (operands.size()==1) 
         return make_unary_operation<Negative>(ope, std::move(operands[0]));
     else 
-        return make_binary_operation<Summation, Disjunction, Conjunction>(ope, std::move(operands));
+        return make_binary_operation<Summation, Disjunction, Conjunction, Equation>(ope, std::move(operands));
 }
 
 
@@ -67,12 +67,11 @@ Match Expression::Matches(const Expression& e, const Variables& subs) const
     return std::visit(overloaded_visit{
         [&e, &subs, this]<IsElement T>(const T& element) -> Match {
             const auto* var = std::get_if<Variable>(&e);
-            // TODO this could be Variable::Matches()
             if (var)
-                return var->Matches(*this, subs);
+                return var->Matches(*this, subs, true);
             if (e==element)
-                return IsMatch;            
-            return NoMatch; 
+                return Boolean(true);            
+            return Boolean(false); 
         },
         [&e, &subs](const auto& obj) -> Match 
         {
@@ -90,6 +89,15 @@ Expression Expression::Infer(const class Knowledge& knowledge, const Variables& 
             return obj.Infer(knowledge, vars);
         }
     }, *this);
+}
+
+bool Expression::operator==(const Expression& rhs) const
+{
+    return std::visit(
+        [this](const auto& rho)
+        {
+            return operator==(rho);
+        }, rhs);
 }
 
 bool Expression::operator<(const Expression& e) const

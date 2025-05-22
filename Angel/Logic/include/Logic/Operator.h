@@ -68,7 +68,9 @@ public:
 };
 
 
-std::ostream& operator<<(std::ostream& os, const Operator& list);
+std::ostream& operator<<(std::ostream& os, const Operator& op);
+std::ostream& operator<<(std::ostream& os, const BinaryOperator& op);
+std::ostream& operator<<(std::ostream& os, const UnaryOperator& op);
 
 template < typename T >
 concept IsOperation = std::derived_from<decltype(T::ope), Operator>;

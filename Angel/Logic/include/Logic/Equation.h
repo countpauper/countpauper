@@ -8,20 +8,18 @@
 namespace Angel::Logic
 {
 
-// A Summation is a mathemetatical operator, which returns all values added together
-// It is currently a Collection (ordered, non-unique), but technically it could be unordered 
-class Summation : public Collection 
+class Equation : public Collection 
 {
 public:
     using Collection::Collection;
     Match Matches(const Expression& expression, const Variables& vars) const;
     Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
-    bool operator==(const Summation& other) const;
+    bool operator==(const Equation& other) const;
 
-    constexpr static BinaryOperator ope{L'+'};
+    constexpr static BinaryOperator ope {L'='};
 };
 
-std::ostream& operator<<(std::ostream& os, const Summation& );
+std::ostream& operator<<(std::ostream& os, const Equation& );
 
 
 }

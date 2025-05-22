@@ -2,6 +2,7 @@
 #include "Logic/Boolean.h"
 #include "Logic/Expression.h"
 #include <iostream>
+#include <cassert>
 
 namespace Angel::Logic
 {
@@ -34,18 +35,44 @@ std::string_view Variable::Name() const
 
 Expression Variable::Infer(const class Knowledge& k, const Variables& substitutions) const
 {
-    auto it = substitutions.find(name);
-    if (it!=substitutions.end())
-        return it->second.Infer(k, substitutions);
-    return Boolean(true);
+    for(const auto& condition : substitutions)
+    {
+        if (const auto* equation = std::get_if<Equation>(&condition))
+        {
+            assert(equation->size()==2); // not determined what to do with long equations or unequations 
+            if (equation->front() == *this)
+            {
+                return equation->back();
+            }
+            if (equation->back() == *this)
+            {
+                return equation->front();
+            }
+        }
+    }
+    return *this;
 }
 
-Match Variable::Matches(const Expression& e, const Variables& variables) const
+Match Variable::Matches(const Expression& e, const Variables& variables, bool reverse) const
 {
-    auto it = variables.find(name);
-    if (it==variables.end())
-        return Variables{{name, e}};
-    return it->second.Matches(e, variables);
+    for(const auto& condition : variables)
+    {
+        if (const auto* equation = std::get_if<Equation>(&condition))
+        {
+            if (equation->front() == *this)
+            {   
+                return Boolean(equation->back() == e);
+            }
+            if (equation->back() == *this)
+            {
+                return Boolean(equation->front() == e);
+            }
+        }
+    }
+    if (reverse)
+        return Equation{*this, e};
+    else
+        return Equation{e, *this};
 }
 
 std::ostream& operator<<(std::ostream& os, const Variable& id)

@@ -84,10 +84,10 @@ Association& Association::operator=(Association&& o)
 }
 
 
-Match Association::Matches(const Expression& expression, const Variables& vars) const
+Expression Association::Matches(const Expression& expression, const Variables& vars) const
 {
     // TODO what does it mean? does only lhs need to match? 
-    return NoMatch;
+    return Boolean(false);
 
 }
 

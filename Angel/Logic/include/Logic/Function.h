@@ -1,10 +1,12 @@
 #pragma once
-#include <functional>
 #include "Logic/Match.h"
+#include <functional>
+#include <string>
 
 namespace Angel::Logic
 {
 class Knowledge;
+class Expression;
 
 class Function
 {

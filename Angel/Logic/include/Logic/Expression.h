@@ -13,6 +13,7 @@
 #include "Logic/Negative.h"
 #include "Logic/Function.h"
 #include "Logic/Association.h"
+#include "Logic/Equation.h"
 #include <variant>
 #include <vector>
 #include <map>
@@ -26,7 +27,8 @@ using ExpressionVariant = std::variant<
     Boolean,  Integer, Id, Variable, String,
     Predicate, List, Set, Association,
     Negative, 
-    Conjunction, Disjunction, Summation>; 
+    Conjunction, Disjunction, Summation,
+    Equation>; 
 
 class Expression : public ExpressionVariant
 {
@@ -89,7 +91,7 @@ public:
             [](const auto&) { return false; }   
             },*this);
     }
-
+    bool operator==(const Expression& rhs) const;
     bool operator<(const Expression&o) const;
 private:
     const std::type_info& AlternativeTypeId() const;
