@@ -33,6 +33,7 @@
 <positive-integer> ::= '[0-9]+' 
 <positive-float> ::= '(([0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)|(inf)|(nan))'
 <id> ::= '([^\x00-\x7F]|[A-Za-z_])([^\x00-\x7F]|\w|\_)*'
-<variable> ::= "$" <id> | <star-operator> <id> 
+<anonymous_id> ::= <id> | εanonmous
+<variable> ::= "$" <anonymous_id> | <star-operator> <anonymous_id> 
 <space> ::= <req-space> | "" 
 <req-space> ::= '\s+'

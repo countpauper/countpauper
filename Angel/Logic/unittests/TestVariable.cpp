@@ -32,6 +32,11 @@ TEST(Variable, Matching)
 	EXPECT_EQ(Variable("Y").Matches(Integer(2), substituted), Boolean(true) );
 }
 
+TEST(Variable, MatchAnonymous)
+{
+	EXPECT_EQ(Variable("").Matches(Integer(1), {}), Boolean(true));
+}
+
 TEST(Variable, Hypothesis)
 {
 	Knowledge k{

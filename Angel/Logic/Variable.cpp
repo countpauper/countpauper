@@ -69,10 +69,13 @@ Match Variable::Matches(const Expression& e, const Variables& variables, bool re
             }
         }
     }
-    if (reverse)
-        return Equation{*this, e};
+    if (*this)
+        if (reverse)
+            return Equation{*this, e};
+        else
+            return Equation{e, *this};
     else
-        return Equation{e, *this};
+        return Boolean(true);   // anonymous
 }
 
 std::ostream& operator<<(std::ostream& os, const Variable& id)

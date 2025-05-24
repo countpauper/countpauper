@@ -1,5 +1,16 @@
 ## Quick todo 
-
+- Anyonomous variable 
+- Generic simplify of expressions instead of just hypothesis:
+    - Operators with one element: just the element 
+    - Conjunction or disjunctions of elements: quick infer
+    - Associations with true antecedent: just true 
+- Instead of optional<Expression>, consider null expression (default constructed), but handle adding it 
+    - Use the monostate? Or an explicit Null() type
+    - It's boolean false. 
+    - Adding to any operation or collection is a nop
+    - An association with either side nop is itself a null? For now assert  
+    - test that casting is always a fail 
+    - NB: This is not a user facing null, just an optimization for std::optional<Expression>
 ## Backlog 
 - [ ] Get back up 
 -    [*] remove wstring and platform dependenty conversion 
