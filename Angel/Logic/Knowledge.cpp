@@ -134,6 +134,7 @@ Expression Knowledge::Matches(const Predicate& query) const
                 bestMatch = hypothesis.size();
                 hypotheses = Set(); // clear worse hypotheses
             }
+
             auto valueResult = association.Right().Infer(*this, hypothesis);
             if (valueResult==Boolean(false))
                 continue;

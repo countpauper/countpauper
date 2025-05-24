@@ -1,11 +1,9 @@
 ## Quick todo 
-- Generic simplify of expressions instead of just hypothesis:
-    - Operators with one element: just the element 
-    - Conjunction or disjunctions of elements: quick infer
-    - Associations with true antecedent: just true 
+
+Make std::get_if helpers in expression to Get<T> GetIf<T> and to check Is<T> and replace all std::get_if(&) std::get
 
 ## Backlog 
-- [ ] Get back up 
+- [*] Get back up 
 -    [*] remove wstring and platform dependenty conversion 
 -    [*] move, build
 -    [*] Fix logic unit tests

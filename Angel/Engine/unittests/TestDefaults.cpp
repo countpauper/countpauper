@@ -10,8 +10,14 @@ TEST(Defaults, Help)
 {
     Logic::Knowledge k;
     AddDefaults(k);
-    auto help = Logic::to_string(k.Infer(Logic::Predicate("help")));
-    EXPECT_TRUE(help.find("help") != help.npos);
+    auto help = k.Infer(Logic::Predicate("help"));
+    EXPECT_TRUE(Logic::to_string(help).find("help") != std::string::npos);
+
+    EXPECT_THROW(k.Infer(Logic::Predicate("help", {Logic::Id("cheese")})), std::runtime_error);
+
+    auto details = k.Infer(Logic::Predicate("help", {Logic::Id("help")}));
+    EXPECT_TRUE(Logic::to_string(details).find("looking") != std::string::npos);
+
 }
 
 }

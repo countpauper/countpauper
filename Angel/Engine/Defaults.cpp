@@ -14,7 +14,7 @@
 namespace Angel::Engine
 {
 
-std::string Description(const Logic::Expression& e)
+std::string Summary(const Logic::Expression& e)
 {
     return std::visit(Logic::overloaded_visit{
          [&e]<Logic::IsElement T>(const T& element) -> std::string 
@@ -39,7 +39,7 @@ std::string Description(const Logic::Expression& e)
         },
         [](const Logic::Association& a) -> std::string
         {
-            return std::format("{} : {}", Description(a.Left()), Description(a.Right()));
+            return std::format("{} : {}", Summary(a.Left()), Summary(a.Right()));
         },
         [&e](const Logic::Predicate& p) -> std::string
         {
@@ -56,20 +56,60 @@ std::string Description(const Logic::Expression& e)
     }, e);
 }
 
+
+std::string Description(const Logic::Expression& e)
+{
+    return std::visit(Logic::overloaded_visit{
+        [](const Logic::Function& fn)
+        {
+            return std::string(fn.Documentation());
+        },
+        [&e](const auto& obj) 
+        {
+            return Logic::to_string(e);
+        }
+    }, e);
+}
+
 Logic::Expression Help(const Logic::Knowledge& k, const Logic::Variables& vars)
 {
-    if (!vars.empty())
-        return Logic::Boolean(false);   // help($F) not yet implemented, todo: should throw Angel exception
-    auto root = k.Root();
-    if (root.empty())
-        return Logic::String("The namespace is empty");
-
-    std::stringstream ss; 
-    for(const auto& know : root)
+    Logic::Variable var("topic");
+    auto topic = var.Infer(k, vars);
+    if (topic == var)
     {
-        ss << Description(know) << std::endl;
+        auto root = k.Root();
+        if (root.empty())
+            return Logic::String("The namespace is empty");
+
+        std::stringstream ss; 
+        for(const auto& know : root)
+        {
+            ss << Summary(know) << std::endl;
+        }
+        return Logic::String(ss.str());
+    } 
+    else 
+    {
+        Logic::Predicate predicate = topic.Cast<Logic::Predicate>();
+        auto matches = k.Matches(predicate);
+        if (matches == Logic::Boolean(false)) 
+        {
+            throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(topic)));
+        }
+        std::stringstream ss; 
+        if(const auto* set = std::get_if<Logic::Set>(&matches))
+        {
+            for(const auto& match: *set)
+            {
+                ss << Description(match) << std::endl;
+            }
+        }
+        else 
+        {
+            ss << Description(matches);
+        }
+        return Logic::String(ss.str());
     }
-    return Logic::String(ss.str());
 }
 
 Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Variables& var)
@@ -83,7 +123,7 @@ Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Variables& var)
 void AddDefaults(Logic::Knowledge& knowledge)
 {
     knowledge.Know(Logic::Association{Logic::Predicate("help"), Logic::Function(Help, 
-        "List contents of the root namespace.")});
+        "You're looking at it.")});
     knowledge.Know(Logic::Association{Logic::Predicate("help", {Logic::Variable("topic")}), Logic::Function(Help, 
         "Describe the function matching the $topic.")});
     knowledge.Know(Logic::Association{Logic::Predicate("delete", {Logic::Variable("predicate")}), Logic::Function(Delete, 
