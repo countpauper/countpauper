@@ -1,7 +1,8 @@
 #pragma once
+#include "Logic/Operator.h"
 #include <vector>
 #include <initializer_list>
-#include "Logic/Operator.h"
+#include <variant>
 
 namespace Angel::Logic
 {
@@ -27,11 +28,12 @@ public:
     ~Collection();
     Expression Get(const Expression& key) const;
     std::size_t Hash() const;
-protected:
     bool operator==(const Collection& rhs) const;
 };
 
 template < typename T >
 concept IsCollection = std::derived_from<T, Collection> && !IsOperation<T>;
+
+
 
 }

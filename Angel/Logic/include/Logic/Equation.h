@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Collection.h"
+#include "Logic/FlatCollection.h"
 #include "Logic/Match.h"
 #include "Logic/Element.h"
 #include "Logic/Operator.h"
@@ -8,10 +8,10 @@
 namespace Angel::Logic
 {
 
-class Equation : public Collection 
+class Equation : public FlatCollection<Equation> 
 {
 public:
-    using Collection::Collection;
+    using FlatCollection<Equation>::FlatCollection;
     Match Matches(const Expression& expression, const Variables& vars) const;
     Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
     bool operator==(const Equation& other) const;

@@ -9,7 +9,7 @@ namespace Angel::Logic
 
 bool Summation::operator==(const Summation& rhs) const
 {
-    return Collection::operator==(rhs);
+    return FlatCollection<Summation>::operator==(rhs);
 }
 
 Match Summation::Matches(const Expression&, const Variables& vars) const

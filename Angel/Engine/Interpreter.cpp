@@ -162,7 +162,7 @@ void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge
         else if (input.symbol == Interpreter::Symbol("expression"))
         {
             Logic::Expression terms = GenerateExpression(parse);
-            knowledge.Know(std::move(predicate), std::move(terms));
+            knowledge.Know(Logic::Association{std::move(predicate), std::move(terms)});
             return;
         }
     }

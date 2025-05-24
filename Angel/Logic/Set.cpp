@@ -121,7 +121,9 @@ Set::iterator& Set::iterator::operator++()
 }
 Set::iterator Set::iterator::operator++(int)
 {
-    return Set::iterator(++it);
+    Set::iterator ret(it);
+    ++it; 
+    return ret;
 }
 
 bool Set::iterator::operator==(const Set::iterator& rhs) const

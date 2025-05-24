@@ -23,6 +23,7 @@ TEST(Integer, Cast)
 {
 	EXPECT_EQ(Integer(Boolean(false)), Integer(0));
 	EXPECT_EQ(Integer(Boolean(true)), Integer(1));
+	EXPECT_EQ(Expression(Boolean(false)).Cast(typeid(Integer)), Integer(0));
 }
 
 TEST(Integer, Infer)

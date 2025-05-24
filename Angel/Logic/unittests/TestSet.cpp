@@ -38,6 +38,17 @@ TEST(Set, List)
 	EXPECT_NE(list, List({Id("cat"), Id("dog")}));
 }
 
+TEST(Set, Iteration)
+{
+	Set cats{Id("ginny")};
+	EXPECT_EQ(*cats.begin(), Id("ginny"));
+	EXPECT_NE(cats.begin(), cats.end());
+	auto it = cats.begin();
+	++it;
+	EXPECT_EQ(it, cats.end());
+
+}
+
 TEST(Set, Compare)
 {
 	Set a{Id("ginny")};

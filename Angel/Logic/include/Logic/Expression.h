@@ -74,8 +74,9 @@ public:
         if (maybe)
             return *maybe;
         throw CastException(AlternativeTypeId(), typeid(T));
-
     }
+    Expression Cast(const std::type_info& rtt) const;
+
     Match Matches(const Expression& e, const Variables& substitutions) const;
     Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 
@@ -93,9 +94,7 @@ public:
     }
     bool operator==(const Expression& rhs) const;
     bool operator<(const Expression&o) const;
-private:
     const std::type_info& AlternativeTypeId() const;
-
 };
 
 std::ostream& operator<<(std::ostream& s, const Expression& e);

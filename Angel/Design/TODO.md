@@ -1,6 +1,7 @@
 ## Quick todo 
 
-Get rid of object
+Unit tests for equation 
+Check if other expressions over-Infer
 
 ## Backlog 
 - [ ] Get back up 

@@ -164,6 +164,39 @@ then these variables will have collected ALL the conditions under which that con
 
 If the query has multiple variables, there may be multiple combinations of values for which the query is true. 
 
+## Query logic 
+Any query returns the set of possible results. If a query result is unconditional (or rather the condition is always true), the set just contains values, for instance boolean logic. If the set only contains one element it can be simplified to that element or one or more mathematical solutions (like solutions to a 2nd order function).
+
+If variables in the query are instantiated during the matching, those become the antecedent for that value. The instantiation is in the form of an equation, which is true if the variable is equal to the instanced value.
+```
+cat(ginny)
+> cat($X)?
+true: $X=ginny # this reads as: cat($X) is true if $X=ginny
+```
+If there are multiple variables instanced they are a conjunction of conditions for the left hand side of the association. 
+```
+legs(ginny,4)
+> legs($X, $Y)?
+true: $X=ginny & $Y=4
+```
+Like the hypothesis, the namespace is also a set of associations, but still multiple matches can have the same result. 
+When that happens, their hypotheses are a disjunction.
+```
+legs(ginny,4)
+legs(lucky,3)
+legs(snek,0): cat(snek)
+> legs($X, $Y)?
+true: ($X=ginny & $Y=4) | ($X=lucky&$Y=3)
+```
+Matches that are false do not have to be added to the hypothesis, as any non match is automatically assumed to be false. For boolean axioms there is then never a st with multiple entries. For non-boolean logic however multiple values are possible.
+```
+legs(ginny):4
+legs(gizmo):4
+legs(lucky):3
+> legs($X)?
+{4:$X=ginny|$X=gizmo, 3:$X=lucky}
+```
+
 ## Multiple hypotheses 
 Multiple predicates may match, which means multiple hypothes are possible. The hypotheses are basically a disjunction. 
 From the one original substitution, additional variables may be added to that hypotheses or even disjunctions. 
@@ -366,7 +399,19 @@ Rangers are collections, like sets and lists, but they are contiguous. This allo
 a start and an end as `[a..b]`. Ranges can be inclusive or exclusive on either end `<a..b]` or infinite `[a..]`.
 Membership `@` can be computed on ranges. The for-each or for-any operators will iterate over all numbers in 
 the range, but only if the size is not infinite. The size is infinite if either end is ifinite or if the set contains
-floating points. In those cases iteration with for-each or for-any will result in an error. 
+floating points. In those cases iteration with for-each or for-any will result in an error.
+Ranges are also a pair, like associations, of a begin and an end. On top of a begin and end, the range also has 
+a few properties
+* Includes begin
+* Included end 
+If both begin and end are integer, then all elements in the range are integer. If both begin and end are imaginary 
+then all elements are imaginary and the contents is a rectangle on the complex plane. 
+Perhaps a range of N-dimnensional vectors is also allowed this way.
+
+## Operations 
+Operations are a class of expressions that consist of 0 or more elements and an operation. These operations can be any of the supported logical, mathematical, or comparsion operations like `|&+-*/<>=`.
+Unlike nested operations of the same type are equivalent to concatenated operations. Of course different operations can be
+nested using `()` in the syntax or precedence. 
 
 ## Conjunction 
 A conjunection if expressions is true if all its elements are true. The & operator is used for conjunection. A conjunection is false as soon as one element is false. This is avaluated in a lazy way for performance and for axioms with side effects 

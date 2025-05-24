@@ -82,12 +82,12 @@ Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Variables& var)
 
 void AddDefaults(Logic::Knowledge& knowledge)
 {
-    knowledge.Know(Logic::Predicate("help"), Logic::Function(Help, 
-        "List contents of the root namespace."));
-    knowledge.Know(Logic::Predicate("help", {Logic::Variable("topic")}), Logic::Function(Help, 
-        "Describe the function matching the $topic."));
-    knowledge.Know(Logic::Predicate("delete", {Logic::Variable("predicate")}), Logic::Function(Delete, 
-        "Remove all the functions matching the $predicate."));
+    knowledge.Know(Logic::Association{Logic::Predicate("help"), Logic::Function(Help, 
+        "List contents of the root namespace.")});
+    knowledge.Know(Logic::Association{Logic::Predicate("help", {Logic::Variable("topic")}), Logic::Function(Help, 
+        "Describe the function matching the $topic.")});
+    knowledge.Know(Logic::Association{Logic::Predicate("delete", {Logic::Variable("predicate")}), Logic::Function(Delete, 
+        "Remove all the functions matching the $predicate.")});
 }
 
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Collection.h"
+#include "Logic/FlatCollection.h"
 #include "Logic/Match.h"
 #include "Logic/Element.h"
 #include "Logic/Operator.h"
@@ -10,10 +10,10 @@ namespace Angel::Logic
 // A Disjunction is a logical operator, which is true, if any of its elements is True
 // It is currently a Collection (ordered, non-unique) because the ordering is used to determine lazy evaulation
 // but technically it could be ordered and unique. 
-class Disjunction : public Collection 
+class Disjunction : public FlatCollection<Disjunction> 
 {
 public:
-    using Collection::Collection;
+    using FlatCollection<Disjunction>::FlatCollection;
     Match Matches(const Expression& expression, const Variables& vars) const;
     Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
     bool operator==(const Disjunction& other) const;

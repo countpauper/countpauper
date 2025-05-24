@@ -62,6 +62,60 @@ Expression::Expression(const Operator ope, Collection&& operands) :
 {
 }
 
+
+/*
+template <typename T, typename... Ts>
+constexpr Expression CastRecursion(const Expression&e, const std::type_info& rtt) 
+{
+    if (typeid(T)==rtt)
+    {
+        return Cast<T>(e);
+    }
+    return CastRecursion<Ts...>(e, rtt);
+}
+
+constexpr Expression CastRecursion(const Expression&e, const std::type_info& rtt) {
+    throw CastException(e.AlternativeTypeId(), rtt);
+}
+*/
+
+template <std::size_t idx>
+constexpr Expression CastIterate(const Expression&e, const std::type_info& rtt) 
+{
+    if constexpr (idx < std::variant_size_v<ElementVariant>)
+    {
+        if (typeid(std::variant_alternative_t<idx, ElementVariant>) == rtt)
+        {
+            return e.Cast<std::variant_alternative_t<idx, ElementVariant>>();
+        }
+        else 
+        {
+            return CastIterate<idx+1>(e, rtt);
+        }
+    }
+    throw CastException(e.AlternativeTypeId(), rtt); 
+}
+
+Expression Expression::Cast(const std::type_info& rtt) const
+{
+    return CastIterate<0>(*this, rtt);
+
+/*
+    if (typeid(Boolean)==rtt)
+    {
+        return Cast<Boolean>();
+    }
+    else if (typeid(Integer)==rtt)
+    {
+        return Cast<Integer>();
+    }
+    else 
+    {
+        throw CastException(AlternativeTypeId(), rtt);
+    }
+*/
+}
+
 Match Expression::Matches(const Expression& e, const Variables& subs) const 
 {
     return std::visit(overloaded_visit{

@@ -28,6 +28,7 @@ TEST(Boolean, Cast)
 	EXPECT_EQ(Boolean(Integer(-1)), Boolean(true));
 	EXPECT_EQ(Boolean(List{}), Boolean(false));
 	EXPECT_EQ(Boolean(List{Boolean(false)}), Boolean(true));
+	EXPECT_EQ(Expression(Integer(1)).Cast(typeid(Boolean)), Boolean(true));
 }
 
 
