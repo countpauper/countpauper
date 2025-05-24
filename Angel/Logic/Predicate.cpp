@@ -59,7 +59,7 @@ Expression Predicate::Simplify() const
 
 Match Predicate::Matches(const Expression& inferred, const Variables& vars) const
 {
-	const auto* predicate = std::get_if<Predicate>(&inferred);
+	const auto* predicate = inferred.GetIf<Predicate>();
 	if (!predicate)
 		return Boolean(false);
 	

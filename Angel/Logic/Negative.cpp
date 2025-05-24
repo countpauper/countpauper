@@ -6,7 +6,7 @@ namespace Angel::Logic
 
 Expression Negative::Simplify() const
 {
-    if (const Negative* neg = std::get_if<Negative>(content.get())) 
+    if (const Negative* neg = content->GetIf<Negative>()) 
     {
         return (*neg)->Simplify();
     }

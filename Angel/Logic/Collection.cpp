@@ -36,7 +36,7 @@ Expression Collection::Get(const Expression& key) const
     bool return_list = false;
     for(const auto &item : *this)
     {
-        const auto* assocation = std::get_if<Association>(&item);
+        const auto* assocation = item.GetIf<Association>();
         if (assocation)
         {
             auto maybeRight = assocation->Get(key);

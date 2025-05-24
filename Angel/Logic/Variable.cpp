@@ -42,7 +42,7 @@ Expression Variable::Infer(const class Knowledge& k, const Variables& substituti
 {
     for(const auto& condition : substitutions)
     {
-        if (const auto* equation = std::get_if<Equation>(&condition))
+        if (const auto* equation = condition.GetIf<Equation>())
         {
             assert(equation->size()==2); // not determined what to do with long equations or unequations 
             if (equation->front() == *this)
@@ -62,7 +62,7 @@ Match Variable::Matches(const Expression& e, const Variables& variables, bool re
 {
     for(const auto& condition : variables)
     {
-        if (const auto* equation = std::get_if<Equation>(&condition))
+        if (const auto* equation = condition.GetIf<Equation>())
         {
             if (equation->front() == *this)
             {   

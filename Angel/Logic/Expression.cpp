@@ -130,7 +130,7 @@ Match Expression::Matches(const Expression& e, const Variables& subs) const
         },
         [&e, &subs, this]<IsElement T>(const T& element) -> Match 
         {
-            const auto* var = std::get_if<Variable>(&e);
+            const auto* var = e.GetIf<Variable>();
             if (var)
                 return var->Matches(*this, subs, true);
             if (e==element)

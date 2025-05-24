@@ -97,7 +97,7 @@ Logic::Expression Help(const Logic::Knowledge& k, const Logic::Variables& vars)
             throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(topic)));
         }
         std::stringstream ss; 
-        if(const auto* set = std::get_if<Logic::Set>(&matches))
+        if(const auto* set = matches.GetIf<Logic::Set>())
         {
             for(const auto& match: *set)
             {

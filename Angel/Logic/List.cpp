@@ -36,7 +36,7 @@ Expression List::Simplify() const
 
 Match List::Matches(const Expression& expression, const Variables& variables) const
 {
-    const List* list = std::get_if<List>(&expression);
+    const List* list = expression.GetIf<List>();
     if (!list)
         return Boolean(false);
 

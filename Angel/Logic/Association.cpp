@@ -87,7 +87,7 @@ Expression Association::Simplify() const
 {
     auto lhSimple = lhs->Simplify();
     auto rhSimple = rhs->Simplify();
-    if (std::get_if<Predicate>(&lhSimple))
+    if (lhSimple.Is<Predicate>())
     {
         if (rhSimple == Boolean(true))
             return lhSimple;

@@ -17,7 +17,7 @@ Set::Set(std::initializer_list<Expression> setItems)
 
 void Set::Add(Expression&& other)
 {
-    if (auto* association = std::get_if<Association>(&other))
+    if (auto* association = other.GetIf<Association>())
     {
         items.emplace(association->Left(), association->Right());
     }
@@ -75,7 +75,7 @@ Expression Set::Simplify() const
 
 Match Set::Matches(const Expression& e, const Variables& variables) const
 {
-    const Set* set = std::get_if<Set>(&e);
+    const Set* set = e.GetIf<Set>();
     if (!set)
         return Boolean(false);
         

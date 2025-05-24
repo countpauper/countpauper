@@ -25,16 +25,16 @@ Knowledge::Knowledge(std::initializer_list<Expression> knowledge)
 
 size_t Knowledge::Know(Expression&& clause)
 {
-    if (auto* predicate = std::get_if<Predicate>(&clause))
+    if (auto* predicate = clause.GetIf<Predicate>())
     {
         return Know(Association{std::move(*predicate), Boolean(true)});
     }
-    else if (auto* association = std::get_if<Association>(&clause))
+    else if (auto* association = clause.GetIf<Association>())
     {
         auto it = std::find(root.begin(), root.end(), clause);
         if (it!=root.end())
             return 0;
-        if (!std::get_if<Predicate>(&association->Left()))
+        if (!association->Left().Is<Predicate>())
         {
             throw std::invalid_argument("Clauses must have a predicate on the left hand side");
         }
@@ -59,9 +59,9 @@ Variables LeftVariablesOnly(Variables& substitutions)
     Variables result;
     for(const auto& sub : substitutions)
     {
-        if (const auto* equation = std::get_if<Equation>(&sub))
+        if (const auto* equation = sub.GetIf<Equation>())
         {
-            if (std::get_if<Variable>(&equation->front()))
+            if (equation->front().Is<Variable>())
             {
                 result.emplace_back(std::move(*equation));
             }
@@ -112,7 +112,7 @@ Expression Knowledge::Matches(const Predicate& query) const
     {
         const Association& association = item.Cast<Association>();
         Expression lhs = association.Left();
-        if (const auto* predicate = std::get_if<Predicate>(&lhs))
+        if (const auto* predicate = lhs.GetIf<Predicate>())
         {
             Conjunction hypothesis;
             const auto& match = predicate->Matches(query, {});
@@ -122,7 +122,7 @@ Expression Knowledge::Matches(const Predicate& query) const
             {
                 
             }
-            else if (const auto* conj = std::get_if<Conjunction>(&match))
+            else if (const auto* conj = match.GetIf<Conjunction>())
             {
                 hypothesis = *conj;
             }

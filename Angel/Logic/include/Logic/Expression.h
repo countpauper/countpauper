@@ -46,6 +46,23 @@ public:
     Expression(const Operator ope, Collection&& operands);
 
     template<typename T>
+    bool Is() const
+    {
+        return std::get_if<T>(this) != nullptr;
+    }
+
+    template<typename T>
+    const T* GetIf() const 
+    {
+        return std::get_if<T>(this);
+    }
+
+    template<typename T> 
+    const T& Get() const 
+    {
+        return std::get<T>(*this);
+    }
+    template<typename T>
     const std::optional<T> TryCast() const
     {
         auto same = std::get_if<T>(this);

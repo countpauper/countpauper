@@ -150,7 +150,7 @@ void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge
         {
             assert(!predicate && "Generate predicated was not moved to knowledge");
             auto expression = GeneratePredicateOrId(parse, false);
-            predicate = *std::get_if<Logic::Predicate>(&expression);
+            predicate = expression.Get<Logic::Predicate>();
         }    
         else if (input.symbol == Interpreter::Symbol("axioms") || 
                  input.symbol == Interpreter::Symbol("-axioms"))
