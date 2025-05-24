@@ -89,6 +89,12 @@ Match Set::Matches(const Expression& e, const Variables& variables) const
     return Boolean(false);
 }
 
+Set Set::Substitute(const Variables& substitutions) const
+{
+    return *this;
+}
+
+
 Expression Set::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
     Set result;

@@ -105,11 +105,12 @@ protected:
 
     T SimplifyItems() const
     {
-        T simplified; 
-        simplified.items.reserve(size());
-        std::transform(begin(), end(), std::back_inserter(simplified), Simplify);
-        
-        return simplified;   
+        return T(items.SimplifyItems()); 
+    }
+
+    T SubstituteItems(const Variables& substitutions) const
+    {
+        return T(items.SubstituteItems(substitutions));
     }
 private:
     Collection items;

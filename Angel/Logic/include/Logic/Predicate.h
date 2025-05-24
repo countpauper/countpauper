@@ -24,6 +24,7 @@ public:
     std::size_t Hash() const;
     Expression Simplify() const;
     Match Matches(const Expression& expression, const Variables& vars) const;
+    Predicate Substitute(const Variables& substitutions) const;
     Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 private:
     friend std::ostream& operator<<(std::ostream& os, const Predicate& );

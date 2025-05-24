@@ -58,22 +58,27 @@ Expression Variable::Infer(const class Knowledge& k, const Variables& substituti
     return *this;
 }
 
-Match Variable::Matches(const Expression& e, const Variables& variables, bool reverse) const
+Expression Variable::Substitute(const Variables& substitutions) const
 {
-    for(const auto& condition : variables)
+    for(const auto& condition : substitutions)
     {
         if (const auto* equation = condition.GetIf<Equation>())
         {
             if (equation->front() == *this)
             {   
-                return Boolean(equation->back() == e);
+                return equation->back();
             }
             if (equation->back() == *this)
             {
-                return Boolean(equation->front() == e);
+                return equation->front();
             }
         }
     }
+    return *this;
+}
+
+Match Variable::Matches(const Expression& e, const Variables& variables, bool reverse) const
+{
     if (*this)
         if (reverse)
             return Equation{*this, e};

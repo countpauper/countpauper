@@ -106,7 +106,6 @@ Expression Expression::Simplify() const
         },
         [this](const Function& f) -> Expression 
         {
-            assert(false);  // does this happen? 
             return *this;
         },
         [this](const auto& obj)
@@ -115,10 +114,27 @@ Expression Expression::Simplify() const
         }},   *this);      
 }
 
-Expression Simplify(const Expression& e)
+Expression Expression::Substitute(const Variables& substitutions) const
 {
-    return e.Simplify();
+    return std::visit(overloaded_visit{
+        [](std::monostate)  
+        {
+            return Expression();
+        },
+        [this]<IsElement T>(const T& element)   -> Expression 
+        {
+            return *this;
+        },
+        [this](const Function& f) -> Expression 
+        {
+            return *this;
+        },
+        [&substitutions](const auto& obj) -> Expression
+        {
+            return obj.Substitute(substitutions);
+        }},   *this);      
 }
+
 
 Match Expression::Matches(const Expression& e, const Variables& subs) const 
 {

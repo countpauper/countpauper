@@ -103,7 +103,6 @@ Expression SimplifyHypotheses(Set& hypotheses)
         return std::move(hypotheses);
 }
 
-
 Expression Knowledge::Matches(const Predicate& query) const
 {
     Set hypotheses;
@@ -135,7 +134,8 @@ Expression Knowledge::Matches(const Predicate& query) const
                 hypotheses = Set(); // clear worse hypotheses
             }
 
-            auto valueResult = association.Right().Infer(*this, hypothesis);
+            auto valueResult = association.Right().Substitute(hypothesis);
+            valueResult = valueResult.Simplify();
             if (valueResult==Boolean(false))
                 continue;
             auto current = hypotheses.Pop(valueResult);

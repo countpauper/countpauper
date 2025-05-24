@@ -68,11 +68,16 @@ Match Predicate::Matches(const Expression& inferred, const Variables& vars) cons
 	return arguments.Matches(predicate->arguments, vars);
 }
 
+Predicate Predicate::Substitute(const Variables& substitutions) const
+{
+    return Predicate(id, arguments.Substitute(substitutions));
+}
+
 Expression Predicate::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
 	Predicate computed(id, std::get<List>(arguments.Infer(knowledge, substitutions)));
 	auto matches = knowledge.Matches(computed);
-	return matches;
+	return knowledge.Infer(matches);
 }
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)

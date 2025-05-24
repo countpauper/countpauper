@@ -16,6 +16,7 @@ public:
     using FlatCollection<Summation>::FlatCollection;
     Expression Simplify() const;
     Match Matches(const Expression& expression, const Variables& vars) const;
+    Summation Substitute(const Variables& substitutions) const;
     Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
     bool operator==(const Summation& other) const;
 

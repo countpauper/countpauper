@@ -19,6 +19,12 @@ Match Negative::Matches(const Expression& expression, const Variables& vars) con
     return Boolean(false);
 }
 
+
+Negative Negative::Substitute(const Variables& substitutions) const
+{
+    return Negative(content->Substitute(substitutions));
+}
+
 Expression Negative::Infer(const class Knowledge& k, const Variables& substitutions) const
 {
     auto value = content->Infer(k, substitutions);

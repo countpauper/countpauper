@@ -31,6 +31,11 @@ Match Summation::Matches(const Expression&, const Variables& vars) const
     return Boolean(false);
 }
 
+Summation Summation::Substitute(const Variables& substitutions) const
+{
+    return SubstituteItems(substitutions);
+}
+
 Expression Summation::Infer(const Knowledge& k, const Variables& substitutions) const
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing

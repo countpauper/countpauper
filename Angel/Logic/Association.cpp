@@ -95,6 +95,11 @@ Expression Association::Simplify() const
     return Association(std::move(lhSimple), std::move(rhSimple));
 }
 
+Association Association::Substitute(const Variables& substitutions) const
+{
+    return *this;
+}
+
 Expression Association::Matches(const Expression& expression, const Variables& vars) const
 {
     // TODO what does it mean? does only lhs need to match? 

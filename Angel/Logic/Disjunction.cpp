@@ -30,6 +30,11 @@ Match Disjunction::Matches(const Expression&, const Variables& vars) const
     return Boolean(false);
 }
 
+Disjunction Disjunction::Substitute(const Variables& substitutions) const
+{
+    return *this;
+}
+
 Expression Disjunction::Infer(const Knowledge& k, const Variables& substitutions) const
 {
     for(const auto& item: *this)

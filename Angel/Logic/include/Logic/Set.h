@@ -30,6 +30,7 @@ public:
 	Expression Pop(const Expression& e);
     Expression Simplify() const;
     Match Matches(const Expression& other, const Variables& variables) const;
+    Set Substitute(const Variables& substitutions) const;
     Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 	explicit operator bool() const;
 	std::size_t Hash() const;

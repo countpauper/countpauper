@@ -16,8 +16,9 @@ public:
     bool operator==(const List& rhs) const;
     explicit operator bool() const;
     Expression Simplify() const;
-    Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
     Match Matches(const Expression& other, const Variables& variables) const;
+    List Substitute(const Variables& substitutions) const;
+    Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 
     static constexpr bool unique=false;
     static constexpr bool ordered=true;

@@ -34,6 +34,12 @@ Expression List::Simplify() const
     return List(SimplifyItems());
 }
 
+
+List List::Substitute(const Variables& substitutions) const
+{
+    return List(SubstituteItems(substitutions));
+}
+
 Match List::Matches(const Expression& expression, const Variables& variables) const
 {
     const List* list = expression.GetIf<List>();

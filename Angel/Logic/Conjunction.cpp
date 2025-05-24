@@ -28,6 +28,11 @@ Match Conjunction::Matches(const Expression&, const Variables& vars) const
     return Boolean(false);
 }
 
+Conjunction Conjunction::Substitute(const Variables& substitutions) const
+{
+    return *this;
+}
+
 Expression Conjunction::Infer(const Knowledge& k, const Variables& substitutions) const
 {
     for(const auto& item: *this)

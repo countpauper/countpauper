@@ -9,8 +9,9 @@ namespace Angel::Logic
 {
 
 class Expression;
-Expression Simplify(const Expression& e);
+using Variables = class Conjunction;
 
+template<typename T> class FlatCollection;
 
 // A collection is a base ordered container of non-unique objects (wrapped in nodes)
 class Collection : public std::vector<Expression>
@@ -32,14 +33,18 @@ public:
     std::size_t Hash() const;
     bool operator==(const Collection& rhs) const;
 protected:
-    Collection SimplifyItems() const 
-    {
-        Collection simplified; 
-        simplified.reserve(size());
-        std::transform(begin(), end(), std::back_inserter(simplified), Simplify);
-        return simplified;   
+    // template<typename T>
+    // friend T FlatCollection<T>::SimplifyItems() const;
 
-    }
+    // template<typename T>
+    // friend T FlatCollection<T>::SubstituteItems(const Variables&) const;
+
+    template<typename U>
+    friend class FlatCollection;
+
+    Collection SimplifyItems() const;
+    Collection SubstituteItems(const Variables& substitutions) const;
+    
 };
 
 template < typename T >

@@ -19,6 +19,7 @@ public:
     std::string_view Name() const;
     Expression Simplify() const;
     Match Matches(const Expression& expression, const Variables& variables, bool reverse=false) const;
+    Expression Substitute(const Variables& substitutions) const;
     Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
 private: 
     friend std::ostream& operator<<(std::ostream& os, const Variable& var);

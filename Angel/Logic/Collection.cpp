@@ -55,6 +55,28 @@ Expression Collection::Get(const Expression& key) const
         return Integer(values.size());
 }
 
+Collection Collection::SimplifyItems() const 
+{
+    Collection simplified; 
+    simplified.reserve(size());
+    std::transform(begin(), end(), std::back_inserter(simplified), [](const Expression& e)
+    {
+        return e.Simplify();
+    });
+    return simplified;   
+}
+
+Collection Collection::SubstituteItems(const Variables& substitutions) const
+{
+    Collection substitute; 
+    substitute.reserve(size());
+    std::transform(begin(), end(), std::back_inserter(substitute), [&substitutions](const Expression& e)
+    {
+        return e.Substitute(substitutions);
+    });
+    return substitute;   
+}
+
 std::size_t Collection::Hash() const
 {
     std::size_t result = 0;
