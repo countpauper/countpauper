@@ -50,6 +50,13 @@ std::size_t Predicate::Hash() const
     return id.Hash() ^ arguments.Hash();
 }
 
+
+Expression Predicate::Simplify() const
+{
+    return *this;   
+}
+
+
 Match Predicate::Matches(const Expression& inferred, const Variables& vars) const
 {
 	const auto* predicate = std::get_if<Predicate>(&inferred);

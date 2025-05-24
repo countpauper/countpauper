@@ -11,6 +11,16 @@ bool Conjunction::operator==(const Conjunction& rhs) const
     return FlatCollection<Conjunction>::operator==(rhs);
 }
 
+Expression Conjunction::Simplify() const
+{
+    if (empty())
+        return Boolean(true);
+    else if (size()==1)
+        return front().Simplify();
+    else 
+        return SimplifyItems();  
+}
+
 Match Conjunction::Matches(const Expression&, const Variables& vars) const
 {
     // TODO: Conjunctions match with logical simplication

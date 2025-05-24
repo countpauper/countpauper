@@ -4,6 +4,15 @@
 namespace Angel::Logic
 {
 
+Expression Negative::Simplify() const
+{
+    if (const Negative* neg = std::get_if<Negative>(content.get())) 
+    {
+        return (*neg)->Simplify();
+    }
+    return Negative{content->Simplify()};
+}
+
 Match Negative::Matches(const Expression& expression, const Variables& vars) const
 {
     // TODO: need to compute with remaining variables, then compare 

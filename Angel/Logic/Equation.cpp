@@ -11,6 +11,21 @@ bool Equation::operator==(const Equation& rhs) const
     return FlatCollection<Equation>::operator==(rhs);
 }
 
+Expression Equation::Simplify() const
+{
+    // TODO: perhaps could simplify all items and if they are 
+    // the same (after casting) then just return true. if they can't be 
+    // trivally cast or simplified to the same type (eg predicates, variables) 
+    // then return the original 
+    return *this;   
+}
+
+// forward declared free simplify function for use in std::transform etc, like in FlatCollection
+Expression ExpressionSimplifier(const Expression& e)
+{
+    return e.Simplify();
+}
+
 Match Equation::Matches(const Expression&, const Variables& vars) const
 {
     // TODO: Equaiton match with logical simplication

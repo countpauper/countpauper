@@ -23,6 +23,7 @@ namespace Angel::Logic
 {
 
 using ExpressionVariant = std::variant<
+    std::monostate,
     Function,      
     Boolean,  Integer, Id, Variable, String,
     Predicate, List, Set, Association,
@@ -33,6 +34,8 @@ using ExpressionVariant = std::variant<
 class Expression : public ExpressionVariant
 {
 public:
+    Expression() = default;
+    
     template<typename T>
     requires is_alternative<T, ExpressionVariant>
     Expression(const T& v) :
@@ -58,7 +61,7 @@ public:
                 {
                     return std::optional<T>(castee);
                 },
-                [](const auto& obj) 
+                [](const auto&) 
                 {
                     return std::optional<T>();
                 }
@@ -75,9 +78,10 @@ public:
             return *maybe;
         throw CastException(AlternativeTypeId(), typeid(T));
     }
-    std::optional<Expression> TryCast(const std::type_info& rtt) const;
+    Expression TryCast(const std::type_info& rtt) const;
     Expression Cast(const std::type_info& rtt) const;
 
+    Expression Simplify() const;
     Match Matches(const Expression& e, const Variables& substitutions) const;
     Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 
@@ -86,6 +90,10 @@ public:
     bool operator==(const T& rhs) const
     {
         return std::visit(overloaded_visit{
+            [](std::monostate)
+            {
+                return false;
+            },
             [&rhs](const T& lv)
             {
                 return lv == rhs;
@@ -93,6 +101,7 @@ public:
             [](const auto&) { return false; }   
             },*this);
     }
+    explicit operator bool() const;
     bool operator==(const Expression& rhs) const;
     bool operator<(const Expression&o) const;
     const std::type_info& AlternativeTypeId() const;

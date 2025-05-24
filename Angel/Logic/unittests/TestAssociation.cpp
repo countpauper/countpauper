@@ -36,6 +36,12 @@ TEST(Association, to_string)
 	EXPECT_EQ(to_string(Association{Id("ginny"), Id("gizmo")}), "ginny:gizmo");
 }
 
+TEST(Association, Simplify)
+{
+	EXPECT_EQ(Association(Predicate("ginny"), Conjunction{}).Simplify(), Predicate("ginny"));
+	EXPECT_EQ(Association(Integer(1), Boolean(true)).Simplify(), Association(Integer(1), Boolean(true)));
+}
+
 TEST(Association, Infer)
 {
 	Knowledge k;

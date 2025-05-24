@@ -3,11 +3,13 @@
 #include <vector>
 #include <initializer_list>
 #include <variant>
+#include <algorithm>
 
 namespace Angel::Logic
 {
 
 class Expression;
+Expression Simplify(const Expression& e);
 
 
 // A collection is a base ordered container of non-unique objects (wrapped in nodes)
@@ -29,6 +31,15 @@ public:
     Expression Get(const Expression& key) const;
     std::size_t Hash() const;
     bool operator==(const Collection& rhs) const;
+protected:
+    Collection SimplifyItems() const 
+    {
+        Collection simplified; 
+        simplified.reserve(size());
+        std::transform(begin(), end(), std::back_inserter(simplified), Simplify);
+        return simplified;   
+
+    }
 };
 
 template < typename T >

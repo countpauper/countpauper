@@ -12,6 +12,16 @@ bool Summation::operator==(const Summation& rhs) const
     return FlatCollection<Summation>::operator==(rhs);
 }
 
+Expression Summation::Simplify() const
+{
+    if (empty())
+        return Integer(0);
+    else if (size()==1)
+        return front().Simplify();
+    return SimplifyItems();
+    // TODO could maybe sum them all if they are all elements
+}
+
 Match Summation::Matches(const Expression&, const Variables& vars) const
 {
     // TODO: Summation matches with mathematical simplication

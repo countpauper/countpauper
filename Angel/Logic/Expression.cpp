@@ -62,25 +62,8 @@ Expression::Expression(const Operator ope, Collection&& operands) :
 {
 }
 
-
-/*
-template <typename T, typename... Ts>
-constexpr Expression CastRecursion(const Expression&e, const std::type_info& rtt) 
-{
-    if (typeid(T)==rtt)
-    {
-        return Cast<T>(e);
-    }
-    return CastRecursion<Ts...>(e, rtt);
-}
-
-constexpr Expression CastRecursion(const Expression&e, const std::type_info& rtt) {
-    throw CastException(e.AlternativeTypeId(), rtt);
-}
-*/
-
 template <std::size_t idx>
-constexpr std::optional<Expression> CastIterate(const Expression&e, const std::type_info& rtt) 
+constexpr Expression CastIterate(const Expression&e, const std::type_info& rtt) 
 {
     if constexpr (idx < std::variant_size_v<ElementVariant>)
     {
@@ -93,27 +76,60 @@ constexpr std::optional<Expression> CastIterate(const Expression&e, const std::t
             return CastIterate<idx+1>(e, rtt);
         }
     }
-    return std::optional<Expression>();
+    return Expression();
 }
 
-std::optional<Expression> Expression::TryCast(const std::type_info& rtt) const
+Expression Expression::TryCast(const std::type_info& rtt) const
 {
     return CastIterate<0>(*this, rtt);
 }
 
 Expression Expression::Cast(const std::type_info& rtt) const
 {
-    std::optional<Expression> result = CastIterate<0>(*this, rtt);
-    if (result.has_value()) 
-        return *result;
+    Expression result = CastIterate<0>(*this, rtt);
+    if (result) 
+        return result;
     else 
         throw CastException(AlternativeTypeId(), rtt); 
+}
+
+Expression Expression::Simplify() const
+{
+    return std::visit(overloaded_visit{
+        [](std::monostate)  
+        {
+            return Expression();
+        },
+        [this]<IsElement T>(const T& element)   -> Expression 
+        {
+            return *this;
+        },
+        [this](const Function& f) -> Expression 
+        {
+            assert(false);  // does this happen? 
+            return *this;
+        },
+        [this](const auto& obj)
+        {
+            return obj.Simplify();
+        }},   *this);      
+}
+
+Expression Simplify(const Expression& e)
+{
+    return e.Simplify();
 }
 
 Match Expression::Matches(const Expression& e, const Variables& subs) const 
 {
     return std::visit(overloaded_visit{
-        [&e, &subs, this]<IsElement T>(const T& element) -> Match {
+        [](std::monostate) -> Match 
+        {
+            assert(false);  // should never be matching against null-expression
+            return Boolean(false);
+        },
+        [&e, &subs, this]<IsElement T>(const T& element) -> Match 
+        {
             const auto* var = std::get_if<Variable>(&e);
             if (var)
                 return var->Matches(*this, subs, true);
@@ -130,6 +146,10 @@ Match Expression::Matches(const Expression& e, const Variables& subs) const
 Expression Expression::Infer(const class Knowledge& knowledge, const Variables& vars) const
 {
     return std::visit(overloaded_visit{
+        [this](std::monostate)
+        {
+            return *this;
+        },
         []<IsElement T>(const T& element) -> Expression {
             return element; 
         },
@@ -139,12 +159,23 @@ Expression Expression::Infer(const class Knowledge& knowledge, const Variables& 
     }, *this);
 }
 
+Expression::operator bool() const
+{
+    static_assert(std::is_same_v<std::variant_alternative_t<0, ExpressionVariant>, std::monostate>);
+    return index() != 0;
+}
+
 bool Expression::operator==(const Expression& rhs) const
 {
-    return std::visit(
+    return std::visit(overloaded_visit{
+        [this](std::monostate)
+        {
+            return !bool(*this);
+        },
         [this](const auto& rho)
         {
             return operator==(rho);
+        }
         }, rhs);
 }
 
@@ -165,9 +196,15 @@ const std::type_info& Expression::AlternativeTypeId() const
 
 std::ostream& operator<<(std::ostream& s, const Expression& e)
 {
-    std::visit([&s](const auto& obj)
-    {
-        s << obj;
+    std::visit(overloaded_visit{
+        [&s](std::monostate)
+        {
+            s << "null";
+        },   
+        [&s](const auto& obj)
+        {
+            s << obj;
+        } 
     }, e);
     return s;
 }
@@ -181,13 +218,19 @@ std::string to_string(const Expression& e)
 
 }
 
-
 namespace std
 {
 
 size_t hash<Angel::Logic::Expression>::operator()(const Angel::Logic::Expression& e) const
 {
-    return std::visit([](const auto& obj) { return obj.Hash(); }, e);
+    return std::visit(Angel::Logic::overloaded_visit{
+        [](std::monostate mono) -> size_t 
+        { 
+            std::hash<std::monostate> hasher;
+            return hasher(mono);
+        }, 
+        [](const auto& obj) { return obj.Hash(); } 
+    },  e);
 }
 
 

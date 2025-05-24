@@ -11,6 +11,18 @@ bool Disjunction::operator==(const Disjunction& rhs) const
     return FlatCollection<Disjunction>::operator==(rhs);
 }
 
+Expression Disjunction::Simplify() const
+{
+    if (empty())
+        return Boolean(false);
+    else if (size()==1)
+        return front().Simplify();
+    else 
+        return SimplifyItems();
+    // TODO: could simplify all Boolean(true) to true or all Boolean(false) 
+    //  perhaps even after casting 
+}
+
 Match Disjunction::Matches(const Expression&, const Variables& vars) const
 {
     // TODO: Disjunction match with logical simplication

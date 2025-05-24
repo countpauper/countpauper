@@ -33,6 +33,11 @@ std::string_view Variable::Name() const
     return name;
 }
 
+Expression Variable::Simplify() const
+{
+    return *this;   
+}
+
 Expression Variable::Infer(const class Knowledge& k, const Variables& substitutions) const
 {
     for(const auto& condition : substitutions)

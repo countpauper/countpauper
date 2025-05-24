@@ -70,7 +70,7 @@ Variables LeftVariablesOnly(Variables& substitutions)
     return result;
 }
 
-Expression Hypothesis(Expression value, std::optional<Expression>& current, Variables& substitutions)
+Expression Hypothesis(Expression value, Expression& current, Variables& substitutions)
 {   // variables in the query end up in the substitutions as $Var = value 
     // variables in the axiom that are matched to the query as value = $var 
     // this is done through the `reverse` option in Variable::Matches, which is used 
@@ -78,25 +78,16 @@ Expression Hypothesis(Expression value, std::optional<Expression>& current, Vari
     // The query's variables are in scope of the query, so those are "returned".
     // The axiom's variables are in scope of the axiom so they are omitted from the hypothesis
 
-    // The current hypothesis is added as a disjunction if it has it
-    auto left = LeftVariablesOnly(substitutions);
-    if (left.empty())
-        return std::move(value);     // replace any current because of ockam's razor 
+    // The current hypothesis is added as a disjunction
     if (value == Boolean(false))
         if (current)    
-            return *current;
+            return std::move(current);
         else
-            return std::move(value);    
-    if (left.size()==1)
-        if (current)
-            return Association{std::move(value), Disjunction{std::move(*current), std::move(left.front())}};
-        else
-            return Association{std::move(value), std::move(left.front())};
-    else
-        if (current)
-            return Association{std::move(value), Disjunction{std::move(*current), std::move(left)}};
-        else
-            return Association{std::move(value), std::move(left)};
+            return std::move(value);  
+    auto left = LeftVariablesOnly(substitutions);
+    // TODO: perhaps should compare with current (if disjunction all) conjunctions. 
+    // ockam's razor should discard them or left depending on size
+    return Association{std::move(value), Disjunction{std::move(current), std::move(left)}}.Simplify();
 }
 
 Expression SimplifyHypotheses(Set& hypotheses)

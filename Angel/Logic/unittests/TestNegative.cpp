@@ -14,6 +14,11 @@ TEST(Negative, Construction)
     EXPECT_EQ(Expression(UnaryOperator(L'-'), {Integer(-2)}), Negative(Integer(-2)));
 }
 
+TEST(Negative, Simplify)
+{
+    EXPECT_EQ(Negative(Expression(Negative(Summation{Integer(2)}))).Simplify(), Integer(2));
+    EXPECT_EQ(Negative(Summation{Integer(3)}).Simplify(), Negative(Integer(3)));
+}
 
 TEST(Negative, Negations)
 {

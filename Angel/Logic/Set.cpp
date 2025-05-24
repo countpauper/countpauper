@@ -37,7 +37,7 @@ const Expression* Set::Get(const Expression& e) const
     return nullptr;
 }
 
-std::optional<Expression> Set::Pop(const Expression& e) 
+Expression Set::Pop(const Expression& e) 
 {
     for(auto it = items.begin(); it!=items.end(); ++it)
     {
@@ -48,7 +48,7 @@ std::optional<Expression> Set::Pop(const Expression& e)
             return std::move(result);
         }
     }
-    return std::optional<Expression>();
+    return Expression();
 }
 
 std::size_t Set::size() const
@@ -66,6 +66,11 @@ bool Set::operator==(const Set& rhs) const
     return size() == rhs.size() &&
         std::equal(begin(), end(),
                       rhs.begin());
+}
+
+Expression Set::Simplify() const
+{
+    return *this;   
 }
 
 Match Set::Matches(const Expression& e, const Variables& variables) const

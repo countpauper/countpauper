@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
 #include "Logic/Knowledge.h"
 #include "Logic/Expression.h"
+#include <gtest/gtest.h>
 
 namespace Angel::Logic::Test
 {

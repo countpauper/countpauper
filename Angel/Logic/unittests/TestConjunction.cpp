@@ -10,6 +10,7 @@ namespace Angel::Logic::Test
 TEST(Conjunction, Construction)
 {
     EXPECT_TRUE(Conjunction{}.empty());
+    EXPECT_TRUE(Conjunction{Expression()}.empty());
     EXPECT_EQ(Conjunction{Boolean(false)}.size(), 1);
     EXPECT_EQ(Expression(BinaryOperator(L'&'), {Boolean(true), Boolean(false)}), (Conjunction{Boolean(true), Boolean(false)}));   
 
@@ -31,6 +32,13 @@ TEST(Conjunction, Nest)
     Knowledge k;
     EXPECT_EQ(k.Infer(Conjunction{Conjunction{Boolean(false)}, Conjunction{Boolean(true)}}), Boolean(false));
     EXPECT_EQ(k.Infer(Conjunction{Predicate("cat")}), Boolean(false));
+}
+
+
+TEST(Conjunction, Simplify)
+{
+    EXPECT_EQ((Conjunction{}).Simplify(), Boolean(true));
+    EXPECT_EQ((Conjunction{Boolean(false)}).Simplify(), Boolean(false));
 }
 
 TEST(Conjunction, Inference)

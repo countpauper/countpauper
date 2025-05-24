@@ -27,7 +27,8 @@ public:
 
 	std::size_t size() const;
 	const Expression* Get(const Expression& key) const;
-	std::optional<Expression> Pop(const Expression& e);
+	Expression Pop(const Expression& e);
+    Expression Simplify() const;
     Match Matches(const Expression& other, const Variables& variables) const;
     Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 	explicit operator bool() const;

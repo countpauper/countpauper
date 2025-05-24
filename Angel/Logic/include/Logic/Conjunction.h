@@ -15,6 +15,7 @@ class Conjunction : public FlatCollection<Conjunction>
 {
 public:
     using FlatCollection<Conjunction>::FlatCollection;
+    Expression Simplify() const;
     Match Matches(const Expression& expression, const Variables& vars) const;
     Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
     bool operator==(const Conjunction& other) const;

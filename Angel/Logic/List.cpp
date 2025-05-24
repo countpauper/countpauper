@@ -28,6 +28,12 @@ Expression List::Infer(const Knowledge& knowledge, const Variables& substitution
     return result;
 }
 
+
+Expression List::Simplify() const
+{
+    return List(SimplifyItems());
+}
+
 Match List::Matches(const Expression& expression, const Variables& variables) const
 {
     const List* list = std::get_if<List>(&expression);

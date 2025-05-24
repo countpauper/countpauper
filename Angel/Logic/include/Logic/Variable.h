@@ -17,6 +17,7 @@ public:
     bool operator==(const Variable& id) const;
     std::size_t Hash() const;
     std::string_view Name() const;
+    Expression Simplify() const;
     Match Matches(const Expression& expression, const Variables& variables, bool reverse=false) const;
     Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
 private: 

@@ -22,6 +22,7 @@ public:
     explicit operator bool() const;
     bool operator==(const Predicate& other) const;
     std::size_t Hash() const;
+    Expression Simplify() const;
     Match Matches(const Expression& expression, const Variables& vars) const;
     Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 private:

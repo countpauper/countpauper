@@ -12,6 +12,7 @@ class Negative : public Individual
 public: 
     using Individual::Individual;
 
+    Expression Simplify() const;
     Match Matches(const Expression& expression, const Variables& vars) const;
     Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
     bool operator==(const Negative& other) const;

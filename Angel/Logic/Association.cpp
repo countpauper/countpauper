@@ -83,6 +83,17 @@ Association& Association::operator=(Association&& o)
     return *this;
 }
 
+Expression Association::Simplify() const
+{
+    auto lhSimple = lhs->Simplify();
+    auto rhSimple = rhs->Simplify();
+    if (std::get_if<Predicate>(&lhSimple))
+    {
+        if (rhSimple == Boolean(true))
+            return lhSimple;
+    }
+    return Association(std::move(lhSimple), std::move(rhSimple));
+}
 
 Expression Association::Matches(const Expression& expression, const Variables& vars) const
 {

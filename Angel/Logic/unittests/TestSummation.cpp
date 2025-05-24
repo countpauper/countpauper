@@ -29,6 +29,12 @@ TEST(Summation, Summations)
     EXPECT_EQ(k.Infer(Summation{Summation{Integer(2)}}), Integer(2));
 }
 
+TEST(Summation, Simplify)
+{
+    EXPECT_EQ((Summation{}).Simplify(), Integer(0));
+    EXPECT_EQ((Summation{Integer(2)}).Simplify(), Integer(2));
+}
+
 TEST(Summation, Inference)
 {
     Knowledge k { Association(Predicate("cat"), Integer(2)) };

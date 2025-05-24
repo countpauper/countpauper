@@ -1,16 +1,9 @@
 ## Quick todo 
-- Anyonomous variable 
 - Generic simplify of expressions instead of just hypothesis:
     - Operators with one element: just the element 
     - Conjunction or disjunctions of elements: quick infer
     - Associations with true antecedent: just true 
-- Instead of optional<Expression>, consider null expression (default constructed), but handle adding it 
-    - Use the monostate? Or an explicit Null() type
-    - It's boolean false. 
-    - Adding to any operation or collection is a nop
-    - An association with either side nop is itself a null? For now assert  
-    - test that casting is always a fail 
-    - NB: This is not a user facing null, just an optimization for std::optional<Expression>
+
 ## Backlog 
 - [ ] Get back up 
 -    [*] remove wstring and platform dependenty conversion 
@@ -47,7 +40,6 @@
 -   [*] Sequences for valence 2+ predicates
 -   [*] Disjunctions
 -   [*] Negation  
--   [ ] Tautology protection cat: cat (or longer) is an error
 - [ ] Console and built in commands
 -   [*] help 
 -   [ ] help($topic)
@@ -59,8 +51,8 @@
 - [ ] Functional 
 -   [*] define constants 
 -   [ ] define (non boolean) functions 
--   [ ] integer operators `+-*/^` 
 -   [ ] query functions
+-   [ ] integer operators `+-*/^` 
 -   [ ] lists 
 -   [ ] sets 
 -   [ ] set and list operators `&|+-`
@@ -68,27 +60,28 @@
 - Python
 -   [ ] namespaces
 -   [ ] Indexing lists (not sets, only)  [x,y,z][1]
--   [ ] ranges [x:y] 
--   [ ] infinite ranges [:y]
+-   [ ] ranges [x..y] 
+-   [ ] infinite ranges [..y]
+-   [ ] More advanced ranges, with step ?  (syntax?) x..y*3 is step 3 but to from x*3 to y*3 ? 
+-   [ ] Even more advanced with functional filter, eg even or fibonachi 
 -   [ ] range slicing
--   [ ] For each operator *[x,y]
--   [ ] Assigning a free clause association is a lambda `l: sqr(n):n*n`  
+-   [ ] For each operator *x..y
+-   [ ] Assigning a free clause association is a lambda `l: sqr(n):n*n`.   
 -   [*] Make knowledge and namespace expressions, clauses associations 
 -   [ ] Sub namespaces
 -   [ ] Figure out numpy like stuff. Is using @ * to multiply or fn() all items in a container sufficient?  
 -   [ ] Multi dimensional arrays (as a separate collection type)?
--   [ ] More advanced ranges, with step ?  
 -   [ ] Apply functions on sequences, sets and arrays with for each 
 - [ ] Advanced
+-   [ ] Tautology protection cat: cat (or longer) is an error
 -   [ ] Add floating points and conversions
 -   [ ] For any operator `@` while infering 
 -   [ ] For any & each operators also while matching 
 -   [ ] Other MFINAE type matching or even some concept like syntax 
 -   [ ] free pairs `a:b` 
--   [ ] Derive Clause from Pair 
+-   [ ] Derive Clause from Pair or make an isClause() helper?
 -   [ ] Namespace from `axiom:{set,}` preferably without the comma 
 -   [ ] dicts work as structs 
--   [ ] dict access with `[]`
 -   [ ] set access with `.` (list done, full feature for unique) 
 -   [ ] Bag as unordered list if it has any advantages for speed and such 
 - [ ] Native functions

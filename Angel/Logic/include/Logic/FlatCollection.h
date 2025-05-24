@@ -1,8 +1,10 @@
 #pragma once 
 #include "Logic/Collection.h"
+#include <algorithm>
 
 namespace Angel::Logic
 {
+Expression Simplify(const Expression& e);
 
 // A flat collection can't contain itself as a type and will automatically attempt 
 // all elements. 
@@ -10,6 +12,8 @@ template<typename T>
 class FlatCollection
 {
 public: 
+    using value_type = Expression;
+
     FlatCollection() = default;
 	FlatCollection(std::initializer_list<Expression> items)
     {
@@ -49,6 +53,8 @@ public:
     }
     void push_back(const Expression& exp)
     {
+        if (!bool(exp))
+            return;
         if (const T* same = std::get_if<T>(&exp))
         {
             push_back(*same);
@@ -66,6 +72,8 @@ public:
 
     void emplace_back(Expression&& exp)
     {
+        if (!bool(exp))
+            return;
         if (T* same = std::get_if<T>(&exp))
         {
             emplace_back(std::move(*same));
@@ -75,6 +83,8 @@ public:
             items.emplace_back(exp);
         }
     }
+
+
 
     // template<class... Args >
     // void emplace_back( Args&&... args )
@@ -91,6 +101,16 @@ public:
     const Expression& back() const { return items.back(); }
     bool operator==(const FlatCollection<T>& rhs) const { return items.operator==(rhs.items); }
     std::size_t Hash() const { return items.Hash(); }
+protected:
+
+    T SimplifyItems() const
+    {
+        T simplified; 
+        simplified.items.reserve(size());
+        std::transform(begin(), end(), std::back_inserter(simplified), Simplify);
+        
+        return simplified;   
+    }
 private:
     Collection items;
 };

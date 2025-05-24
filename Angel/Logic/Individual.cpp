@@ -14,11 +14,25 @@ Individual::Individual(const Individual& o) :
     content(std::make_unique<Expression>(*o.content))
 {
 }
+
+Individual::Individual(Individual&& o) :
+    content(std::move(o.content))
+{
+}
+
 Individual& Individual::operator=(const Individual& rhs)
 {
     content = std::make_unique<Expression>(*rhs.content);
     return *this;
 }
+
+Individual& Individual::operator=(Individual&& rhs)
+{
+    content.reset();
+    std::swap(content, rhs.content);
+    return *this;
+}
+
 
 Individual::operator bool() const
 {

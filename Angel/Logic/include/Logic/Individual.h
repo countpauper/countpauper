@@ -9,7 +9,9 @@ class Individual
 {
 public: 
     Individual(const Individual& o);
+    Individual(Individual&& o);
     Individual& operator=(const Individual& rhs);
+    Individual& operator=(Individual&& rhs);
     explicit Individual(Expression&& e);
     explicit operator bool() const;
     std::size_t size() const;
