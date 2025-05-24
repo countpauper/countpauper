@@ -70,22 +70,33 @@ Variables LeftVariablesOnly(Variables& substitutions)
     return result;
 }
 
-Expression Hypothesis(Expression value, Variables& substitutions)
+Expression Hypothesis(Expression value, std::optional<Expression>& current, Variables& substitutions)
 {   // variables in the query end up in the substitutions as $Var = value 
     // variables in the axiom that are matched to the query as value = $var 
     // this is done through the `reverse` option in Variable::Matches, which is used 
     // while matching values to variables instead of matching variables to values.
     // The query's variables are in scope of the query, so those are "returned".
-    // The axiom's variables are in scope of the axiom so they are omitted from the hypothesis.
+    // The axiom's variables are in scope of the axiom so they are omitted from the hypothesis
+
+    // The current hypothesis is added as a disjunction if it has it
     auto left = LeftVariablesOnly(substitutions);
     if (left.empty())
-        return std::move(value);
+        return std::move(value);     // replace any current because of ockam's razor 
     if (value == Boolean(false))
-        return std::move(value);
+        if (current)    
+            return *current;
+        else
+            return std::move(value);    
     if (left.size()==1)
-        return Association{std::move(value), std::move(left.front())};
+        if (current)
+            return Association{std::move(value), Disjunction{std::move(*current), std::move(left.front())}};
+        else
+            return Association{std::move(value), std::move(left.front())};
     else
-        return Association{std::move(value), std::move(left)};
+        if (current)
+            return Association{std::move(value), Disjunction{std::move(*current), std::move(left)}};
+        else
+            return Association{std::move(value), std::move(left)};
 }
 
 Expression SimplifyHypotheses(Set& hypotheses)
@@ -135,9 +146,8 @@ Expression Knowledge::Matches(const Predicate& query) const
             auto valueResult = association.Right().Infer(*this, hypothesis);
             if (valueResult==Boolean(false))
                 continue;
-            assert(!hypotheses.Get(valueResult)); // disjunction extension not yet implemented
-            
-            hypotheses.Add(Hypothesis(valueResult, hypothesis));
+            auto current = hypotheses.Pop(valueResult);
+            hypotheses.Add(Hypothesis(valueResult, current, hypothesis));
         }
         else 
             assert(false && "Only predicate keys are allowed in knowledge");

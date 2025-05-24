@@ -53,4 +53,15 @@ TEST(Knowledge, MatchVariables)
     EXPECT_EQ(k.Matches(Predicate("fuzzy",{Id("ginny")})), Boolean(true));
 }
 
+TEST(Knowledge, MatchDisjunction)
+{
+    Knowledge k{
+       Predicate("cat",{Id("gizmo")}), 
+       Predicate("cat",{Id("ginny")}) };
+    EXPECT_EQ(k.Matches(Predicate("cat",{Variable("X")})),
+        Association(Boolean(true), Disjunction{
+            Equation{Variable("X"), Id("gizmo")},
+            Equation{Variable("X"), Id("ginny")}}));
+}
+
 }

@@ -37,6 +37,20 @@ const Expression* Set::Get(const Expression& e) const
     return nullptr;
 }
 
+std::optional<Expression> Set::Pop(const Expression& e) 
+{
+    for(auto it = items.begin(); it!=items.end(); ++it)
+    {
+        if (it->first==e)
+        {
+            Expression result(std::move(it->second));
+            items.erase(it);
+            return std::move(result);
+        }
+    }
+    return std::optional<Expression>();
+}
+
 std::size_t Set::size() const
 {
     return items.size();

@@ -3,6 +3,7 @@
 #include "Logic/Element.h"
 #include "Logic/Match.h"
 #include <map>
+#include <optional>
 
 namespace Angel::Logic
 {
@@ -26,6 +27,7 @@ public:
 
 	std::size_t size() const;
 	const Expression* Get(const Expression& key) const;
+	std::optional<Expression> Pop(const Expression& e);
     Match Matches(const Expression& other, const Variables& variables) const;
     Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
 	explicit operator bool() const;

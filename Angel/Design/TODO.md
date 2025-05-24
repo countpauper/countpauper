@@ -1,8 +1,5 @@
 ## Quick todo 
 
-Unit tests for equation 
-Check if other expressions over-Infer
-
 ## Backlog 
 - [ ] Get back up 
 -    [*] remove wstring and platform dependenty conversion 
@@ -35,7 +32,7 @@ Check if other expressions over-Infer
 -   [*] query horn clause 
 -   [*] Query predicate  
 -   [*] Variable clauses with substitution 
--   [ ] Query with variable and return hypotheses
+-   [*] Query with variable and return hypotheses
 -   [*] Sequences for valence 2+ predicates
 -   [*] Disjunctions
 -   [*] Negation  

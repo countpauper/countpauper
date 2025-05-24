@@ -80,7 +80,7 @@ constexpr Expression CastRecursion(const Expression&e, const std::type_info& rtt
 */
 
 template <std::size_t idx>
-constexpr Expression CastIterate(const Expression&e, const std::type_info& rtt) 
+constexpr std::optional<Expression> CastIterate(const Expression&e, const std::type_info& rtt) 
 {
     if constexpr (idx < std::variant_size_v<ElementVariant>)
     {
@@ -93,27 +93,21 @@ constexpr Expression CastIterate(const Expression&e, const std::type_info& rtt)
             return CastIterate<idx+1>(e, rtt);
         }
     }
-    throw CastException(e.AlternativeTypeId(), rtt); 
+    return std::optional<Expression>();
+}
+
+std::optional<Expression> Expression::TryCast(const std::type_info& rtt) const
+{
+    return CastIterate<0>(*this, rtt);
 }
 
 Expression Expression::Cast(const std::type_info& rtt) const
 {
-    return CastIterate<0>(*this, rtt);
-
-/*
-    if (typeid(Boolean)==rtt)
-    {
-        return Cast<Boolean>();
-    }
-    else if (typeid(Integer)==rtt)
-    {
-        return Cast<Integer>();
-    }
+    std::optional<Expression> result = CastIterate<0>(*this, rtt);
+    if (result.has_value()) 
+        return *result;
     else 
-    {
-        throw CastException(AlternativeTypeId(), rtt);
-    }
-*/
+        throw CastException(AlternativeTypeId(), rtt); 
 }
 
 Match Expression::Matches(const Expression& e, const Variables& subs) const 

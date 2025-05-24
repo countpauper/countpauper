@@ -75,6 +75,7 @@ public:
             return *maybe;
         throw CastException(AlternativeTypeId(), typeid(T));
     }
+    std::optional<Expression> TryCast(const std::type_info& rtt) const;
     Expression Cast(const std::type_info& rtt) const;
 
     Match Matches(const Expression& e, const Variables& substitutions) const;
