@@ -15,7 +15,9 @@ public:
     explicit operator bool() const;
     std::size_t size() const;
     const Expression& Left() const;
+    Expression& Left();
     const Expression& Right() const;
+    Expression& Right();
     std::size_t Hash() const;
 protected:
     Pair(const Pair& o);

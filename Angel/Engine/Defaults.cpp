@@ -92,21 +92,14 @@ Logic::Expression Help(const Logic::Knowledge& k, const Logic::Variables& vars)
     {
         Logic::Predicate predicate = topic.Cast<Logic::Predicate>();
         auto matches = k.Matches(predicate);
-        if (matches == Logic::Boolean(false)) 
+        if (matches.empty()) 
         {
             throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(topic)));
         }
         std::stringstream ss; 
-        if(const auto* set = matches.GetIf<Logic::Set>())
+        for(const auto& match: matches)
         {
-            for(const auto& match: *set)
-            {
-                ss << Description(match) << std::endl;
-            }
-        }
-        else 
-        {
-            ss << Description(matches);
+            ss << Description(match) << std::endl;
         }
         return Logic::String(ss.str());
     }

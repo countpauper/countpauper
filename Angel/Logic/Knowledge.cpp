@@ -54,58 +54,10 @@ Expression Knowledge::Infer(const Expression& expression) const
     return expression.Infer(*this, vars);
 }
 
-Variables LeftVariablesOnly(Variables& substitutions)
+
+Bag Knowledge::Matches(const Predicate& query) const
 {
-    Variables result;
-    for(const auto& sub : substitutions)
-    {
-        if (const auto* equation = sub.GetIf<Equation>())
-        {
-            if (equation->front().Is<Variable>())
-            {
-                result.emplace_back(std::move(*equation));
-            }
-        }
-    }
-    return result;
-}
-
-Expression Hypothesis(Expression value, Expression& current, Variables& substitutions)
-{   // variables in the query end up in the substitutions as $Var = value 
-    // variables in the axiom that are matched to the query as value = $var 
-    // this is done through the `reverse` option in Variable::Matches, which is used 
-    // while matching values to variables instead of matching variables to values.
-    // The query's variables are in scope of the query, so those are "returned".
-    // The axiom's variables are in scope of the axiom so they are omitted from the hypothesis
-
-    // The current hypothesis is added as a disjunction
-    if (value == Boolean(false))
-        if (current)    
-            return std::move(current);
-        else
-            return std::move(value);  
-    auto left = LeftVariablesOnly(substitutions);
-    // TODO: perhaps should compare with current (if disjunction all) conjunctions. 
-    // ockam's razor should discard them or left depending on size
-    return Association{std::move(value), Disjunction{std::move(current), std::move(left)}}.Simplify();
-}
-
-Expression SimplifyHypotheses(Set& hypotheses)
-{
-    if (hypotheses.size()==0)
-        return Boolean(false);
-    else if (hypotheses.size()==1)
-    {
-        const auto& single = *hypotheses.begin();
-        return single;
-    }
-    else
-        return std::move(hypotheses);
-}
-
-Expression Knowledge::Matches(const Predicate& query) const
-{
-    Set hypotheses;
+    Bag hypotheses;
     std::size_t bestMatch = std::numeric_limits<std::size_t>::max();
     for(const auto& item: root)
     {
@@ -131,20 +83,21 @@ Expression Knowledge::Matches(const Predicate& query) const
             if (hypothesis.size() < bestMatch)
             {
                 bestMatch = hypothesis.size();
-                hypotheses = Set(); // clear worse hypotheses
+                hypotheses = Bag(); // clear worse hypotheses
             }
 
-            auto valueResult = association.Right().Substitute(hypothesis);
-            valueResult = valueResult.Simplify();
+            auto valueResult =  association.Right().Simplify();
             if (valueResult==Boolean(false))
                 continue;
-            auto current = hypotheses.Pop(valueResult);
-            hypotheses.Add(Hypothesis(valueResult, current, hypothesis));
+            if (hypothesis.empty())
+                hypotheses.emplace_back(std::move(valueResult));
+            else
+                hypotheses.emplace_back(Association(std::move(valueResult), std::move(hypothesis)));
         }
         else 
             assert(false && "Only predicate keys are allowed in knowledge");
     } 
-    return SimplifyHypotheses(hypotheses);
+    return hypotheses;
 }
 
 

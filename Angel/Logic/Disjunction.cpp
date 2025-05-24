@@ -32,7 +32,7 @@ Match Disjunction::Matches(const Expression&, const Variables& vars) const
 
 Disjunction Disjunction::Substitute(const Variables& substitutions) const
 {
-    return *this;
+    return SubstituteItems(substitutions);
 }
 
 Expression Disjunction::Infer(const Knowledge& k, const Variables& substitutions) const

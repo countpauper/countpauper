@@ -42,6 +42,12 @@ TEST(Association, Simplify)
 	EXPECT_EQ(Association(Integer(1), Boolean(true)).Simplify(), Association(Integer(1), Boolean(true)));
 }
 
+TEST(Association, Substitute)
+{
+	EXPECT_EQ(Association(Predicate("ginny"), Variable("C")).Substitute(Conjunction{Equation{Variable("C"), Id("gizmo")}}),
+		Association(Predicate("ginny"), Id("gizmo")));
+}
+
 TEST(Association, Infer)
 {
 	Knowledge k;

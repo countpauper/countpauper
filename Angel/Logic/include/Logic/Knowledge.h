@@ -17,7 +17,7 @@ public:
 	Knowledge();
 	explicit Knowledge(std::initializer_list<Expression> knowledge);
     size_t Know(Expression&& clause);
-	Expression Matches(const Predicate& predicate) const;
+	Bag Matches(const Predicate& predicate) const;
 	Expression Infer(const Expression& e) const;
 	bool Knows(const Expression& e) const;
 	const Bag& Root() const;

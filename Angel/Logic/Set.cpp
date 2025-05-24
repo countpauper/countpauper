@@ -56,6 +56,12 @@ std::size_t Set::size() const
     return items.size();
 }
 
+bool Set::empty() const
+{
+    return items.empty();
+}
+
+
 Set::operator bool() const
 {
     return !items.empty();
@@ -70,7 +76,12 @@ bool Set::operator==(const Set& rhs) const
 
 Expression Set::Simplify() const
 {
-    return *this;   
+    Set simplified; 
+    for(const auto item: items)
+    {
+        simplified.Add(Association(item.first.Simplify(), item.second.Simplify()).Simplify());
+    }
+    return simplified;   
 }
 
 Match Set::Matches(const Expression& e, const Variables& variables) const
@@ -91,7 +102,12 @@ Match Set::Matches(const Expression& e, const Variables& variables) const
 
 Set Set::Substitute(const Variables& substitutions) const
 {
-    return *this;
+    Set substitute; 
+    for(const auto item: items)
+    {
+        substitute.Add(Association(item.first.Substitute(substitutions), item.second.Substitute(substitutions)).Simplify());
+    }
+    return substitute;   
 }
 
 

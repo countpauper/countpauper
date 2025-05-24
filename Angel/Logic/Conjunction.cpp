@@ -30,7 +30,7 @@ Match Conjunction::Matches(const Expression&, const Variables& vars) const
 
 Conjunction Conjunction::Substitute(const Variables& substitutions) const
 {
-    return *this;
+    return SubstituteItems(substitutions);
 }
 
 Expression Conjunction::Infer(const Knowledge& k, const Variables& substitutions) const

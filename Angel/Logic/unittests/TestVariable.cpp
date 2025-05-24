@@ -32,6 +32,17 @@ TEST(Variable, Matching)
 	EXPECT_EQ(Variable("Y").Matches(Integer(2), substituted), Boolean(true) );
 }
 
+TEST(Variable, Substitute)
+{
+	EXPECT_EQ(Variable("B").Substitute(Conjunction{
+			Equation{Variable("A"), Integer(3)},
+			Equation{Variable("B"), Integer(2)}
+		}),
+		Integer(2));
+	EXPECT_EQ(Variable("A").Substitute(Conjunction{Equation{Variable("B"), Integer(2)}}),
+		Variable("A"));
+}
+
 TEST(Variable, MatchAnonymous)
 {
 	EXPECT_EQ(Variable("").Matches(Integer(1), {}), Boolean(true));

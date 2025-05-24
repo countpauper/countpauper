@@ -26,6 +26,7 @@ public:
 	void Add(Expression&& other);
 
 	std::size_t size() const;
+	bool empty() const;
 	const Expression* Get(const Expression& key) const;
 	Expression Pop(const Expression& e);
     Expression Simplify() const;

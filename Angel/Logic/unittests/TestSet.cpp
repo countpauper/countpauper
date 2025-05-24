@@ -65,6 +65,17 @@ TEST(Set, Compare)
 	EXPECT_NE(b, ba);
 }
 
+TEST(Set, Simplify)
+{
+    EXPECT_EQ((Set{}).Simplify(), Set());
+    EXPECT_EQ((Set{Association(Id("ginny"), Conjunction{})}).Simplify(), (Set{Id("ginny")}));
+}
+
+TEST(Set, Substitute)
+{
+	EXPECT_EQ((Set{Boolean(true), Variable("I")}).Substitute(Conjunction{Equation{Variable("I"), Integer(3)}}),
+		(Set{Boolean(true), Integer(3)}));
+}
 
 TEST(Set, Infer)
 {

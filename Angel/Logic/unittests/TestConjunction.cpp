@@ -41,6 +41,12 @@ TEST(Conjunction, Simplify)
     EXPECT_EQ((Conjunction{Boolean(false)}).Simplify(), Boolean(false));
 }
 
+TEST(Conjunction, Substitute)
+{
+	EXPECT_EQ((Conjunction{Id("ginny"), Variable("C")}).Substitute(Conjunction{Equation{Variable("C"), Id("gizmo")}}),
+		(Conjunction{Id("ginny"), Id("gizmo")}));
+}
+
 TEST(Conjunction, Inference)
 {
     Knowledge k;

@@ -33,10 +33,9 @@ Match Equation::Matches(const Expression&, const Variables& vars) const
     return Boolean(false);
 }
 
-
 Equation Equation::Substitute(const Variables& substitutions) const
 {
-    return *this;
+    return SubstituteItems(substitutions);
 }
 
 Expression Equation::Infer(const Knowledge& k, const Variables& substitutions) const

@@ -34,6 +34,12 @@ TEST(Equation, Nest)
     //     (Equation{Integer(1), Integer(2)}));
 }
 
+TEST(Equation, Substitute)
+{
+	EXPECT_EQ((Equation{Integer(3), Variable("S")}).Substitute(Conjunction{Equation{Variable("S"), String("three")}}),
+		(Equation{Integer(3), String("three")}));
+}
+
 TEST(Equation, Inference)
 {
     Knowledge k;

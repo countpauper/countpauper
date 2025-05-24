@@ -47,6 +47,12 @@ TEST(Predicate, to_string)
 	EXPECT_EQ(to_string(Predicate("cat", List{Id("ginny")})), "cat(ginny)");
 }
 
+TEST(Predicate, Substitute)
+{
+	EXPECT_EQ(Predicate("cat", {Variable("C")}).Substitute(Conjunction{Equation{Variable("C"), Id("ginny")}}),
+		Predicate("cat", {Id("ginny")}));
+}
+
 TEST(Predicate, Infer)
 {
 	Knowledge k;

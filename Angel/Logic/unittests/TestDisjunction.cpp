@@ -40,6 +40,12 @@ TEST(Disjunction, Simplify)
     EXPECT_EQ((Disjunction{Boolean(true)}).Simplify(), Boolean(true));
 }
 
+TEST(Disjunction, Substitute)
+{
+	EXPECT_EQ((Disjunction{Integer(3), Variable("B")}).Substitute(Conjunction{Equation{Variable("B"), Boolean(false)}}),
+		(Disjunction{Integer(3), Boolean(false)}));
+}
+
 TEST(Disjunction, Inference)
 {
     Knowledge k;

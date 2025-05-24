@@ -34,32 +34,32 @@ TEST(Knowledge, Defaults)
 TEST(Knowledge, Matches)
 {
     Knowledge k;
-    EXPECT_EQ(k.Matches(Predicate("ginny")), Boolean(false));
+    EXPECT_TRUE(k.Matches(Predicate("ginny")).empty());
     k.Know(Predicate("ginny"));
-    EXPECT_EQ(k.Matches(Predicate("ginny")), Boolean(true));
+    EXPECT_EQ(k.Matches(Predicate("ginny")).size(), 1);
     k.Know(Association{Predicate("ginny"), Predicate("cat")});
 //  If this is desired, then instead of inferring, at least Matches should substitute variables 
 //    along the clause. Without (paritally) computing operations this is anyway not possible
 //    EXPECT_EQ(k.Matches(Predicate("ginny")), (Disjunction{Boolean(true), Predicate("cat")}));
-    EXPECT_EQ(k.Matches(Predicate("ginny")), (Set{Boolean(true), Predicate("cat")}));
+    EXPECT_EQ(k.Matches(Predicate("ginny")), (Bag{Boolean(true), Predicate("cat")}));
 }
 
 TEST(Knowledge, MatchVariables)
 {
     Knowledge k{
        Association(Predicate("fuzzy",{Variable("X")}), Predicate("cat", {Variable("X")}))};
-    EXPECT_EQ(k.Matches(Predicate("fuzzy",{Id("ginny")})), Predicate("cat", {Id("ginny")}));
+    EXPECT_EQ(k.Matches(Predicate("fuzzy",{Id("ginny")})).front(), 
+        (Association(Predicate("cat", {Variable("X")}), Conjunction{Equation{Id("ginny"), Variable("X")}})));
 }
 
-TEST(Knowledge, MatchDisjunction)
+TEST(Knowledge, MultipleMatches)
 {
     Knowledge k{
        Predicate("cat",{Id("gizmo")}), 
        Predicate("cat",{Id("ginny")}) };
     EXPECT_EQ(k.Matches(Predicate("cat",{Variable("X")})),
-        Association(Boolean(true), Disjunction{
-            Equation{Variable("X"), Id("gizmo")},
-            Equation{Variable("X"), Id("ginny")}}));
+        (Bag{Association(Boolean(true), Conjunction{Equation{Variable("X"), Id("gizmo")}}),
+            Association(Boolean(true), Conjunction{Equation{Variable("X"), Id("ginny")}})}));
 }
 
 }

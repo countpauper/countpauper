@@ -35,6 +35,12 @@ TEST(Summation, Simplify)
     EXPECT_EQ((Summation{Integer(2)}).Simplify(), Integer(2));
 }
 
+TEST(Summation, Substitute)
+{
+	EXPECT_EQ((Summation{Integer(-2), Variable("I")}).Substitute(Conjunction{Equation{Variable("I"), Integer(3)}}),
+		(Summation{Integer(-2), Integer(3)}));
+}
+
 TEST(Summation, Inference)
 {
     Knowledge k { Association(Predicate("cat"), Integer(2)) };

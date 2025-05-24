@@ -45,6 +45,18 @@ TEST(List, to_string)
 	EXPECT_EQ(to_string(List{Id("ginny"), Id("gizmo")}), "[ginny,gizmo]");
 }
 
+TEST(List, Simplify)
+{
+    EXPECT_EQ((List{}).Simplify(), List());
+    EXPECT_EQ((List{Conjunction{}}).Simplify(), (List{Boolean(true)}));
+}
+
+TEST(List, Substitute)
+{
+	EXPECT_EQ((List{Boolean(true), Variable("I")}).Substitute(Conjunction{Equation{Variable("I"), Integer(3)}}),
+		(List{Boolean(true), Integer(3)}));
+}
+
 TEST(List, Infer)
 {
 	Knowledge k;

@@ -41,7 +41,17 @@ const Expression& Pair::Left() const
     return *lhs;
 }
 
+Expression& Pair::Left()
+{
+    return *lhs;
+}
+
 const Expression& Pair::Right() const
+{
+    return *rhs;
+}
+
+Expression& Pair::Right()
 {
     return *rhs;
 }
@@ -97,7 +107,7 @@ Expression Association::Simplify() const
 
 Association Association::Substitute(const Variables& substitutions) const
 {
-    return *this;
+    return Association(lhs->Substitute(substitutions), rhs->Substitute(substitutions));
 }
 
 Expression Association::Matches(const Expression& expression, const Variables& vars) const

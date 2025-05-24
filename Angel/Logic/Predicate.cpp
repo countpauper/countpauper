@@ -73,11 +73,69 @@ Predicate Predicate::Substitute(const Variables& substitutions) const
     return Predicate(id, arguments.Substitute(substitutions));
 }
 
+Variables LeftVariablesOnly(Variables& substitutions)
+{
+    Variables result;
+    for(const auto& sub : substitutions)
+    {
+        if (const auto* equation = sub.GetIf<Equation>())
+        {
+            if (equation->front().Is<Variable>())
+            {
+                result.emplace_back(std::move(*equation));
+            }
+        }
+    }
+    return result;
+}
+
+Expression Hypothesis(Expression&& value, Expression&& current, Variables&& substitutions)
+{   // variables in the query end up in the substitutions as $Var = value 
+    // variables in the axiom that are matched to the query as value = $var 
+    // this is done through the `reverse` option in Variable::Matches, which is used 
+    // while matching values to variables instead of matching variables to values.
+    // The query's variables are in scope of the query, so those are "returned".
+    // The axiom's variables are in scope of the axiom so they are omitted from the hypothesis
+
+    // The current hypothesis is added as a disjunction
+    if (value == Boolean(false))
+        if (current)    
+            return std::move(current);
+        else
+            return std::move(value);  
+    auto left = LeftVariablesOnly(substitutions);
+    // TODO: perhaps should compare with current (if disjunction all) conjunctions. 
+    // ockam's razor should discard them or left depending on size
+    return Association{std::move(value), Disjunction{std::move(current), std::move(left)}}.Simplify();
+}
+
 Expression Predicate::Infer(const Knowledge& knowledge, const Variables& substitutions) const
 {
 	Predicate computed(id, std::get<List>(arguments.Infer(knowledge, substitutions)));
-	auto matches = knowledge.Matches(computed);
-	return knowledge.Infer(matches);
+	Set result;
+	auto hypotheses = knowledge.Matches(computed);
+
+	for(auto hypothesis: hypotheses)
+	{
+		Expression value;
+		Variables conditions;
+		if (auto* association = hypothesis.GetIf<Association>())
+		{
+			conditions = association->Right().Get<Conjunction>();
+			value = association->Left().Infer(knowledge, conditions);
+		}
+		else 
+		{
+			value = hypothesis.Infer(knowledge, {});
+		}
+		Expression current = result.Pop(value);
+		result.Add(Hypothesis(std::move(value), std::move(current), std::move(conditions)));
+	}
+	if (result.empty())
+		return Boolean(false);
+	if (result.size()==1)
+		return *result.begin();
+	return result;
 }
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)
