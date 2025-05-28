@@ -6,4 +6,5 @@
     ],
     "plantuml.diagramsRoot": "Design",
     "testMate.cpp.test.workingDirectory": "${command:cmake.buildDirectory}",
+    "testMate.cpp.debug.configTemplate": "name:testmate Launch"
 }

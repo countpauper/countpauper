@@ -22,3 +22,6 @@ cd build
 cmake ..
 cmake --build
 ```
+
+## Pretty printing 
+Pretty printers for gdb for Logic types are included in prettyprint.py. These are loaded with a setupCommands when debugging the console or test mate tests from vscode.

@@ -1,15 +1,40 @@
 {
     "configurations": [
         {
+            "name": "testmate Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${exec}",      
+            "MIMode": "gdb",
+            "miDebuggerArgs": "-ex echo TESSST", // \"'${workspaceFolder//\\\\//}'/.gdbinit\" -ex pwd",
+            "setupCommands": [
+                { 
+                    "text": "-enable-pretty-printing", 
+                    "description": "enable pretty printing in watch window" 
+                },
+                {
+                    "text": "source ${workspaceFolder}/prettyprint.py",
+                    "description": "load custom pretty printer implementations" 
+                }
+            ]        
+        },
+        {
             "name": "Console",
             "type": "cppdbg",
             "cwd": "${command:cmake.launchTargetDirectory}",
             "request": "launch",
             "program": "${command:cmake.launchTargetPath}",
+            "MIMode": "gdb",
             "setupCommands": [
-                { "text": "-enable-pretty-printing", "description": "enable pretty printing in watch window" }
+                { 
+                    "text": "-enable-pretty-printing", 
+                    "description": "enable pretty printing in watch window" 
+                },
+                {
+                    "text": "source ${workspaceFolder}/prettyprint.py",
+                    "description": "load custom pretty printer implementations" 
+                }
             ]        
-
         },
         {
             "name": "(ctest) Launch",
@@ -18,21 +43,10 @@
             "program": "${cmake.testProgram}",
             "args": [ "${cmake.testArgs}", "-v" ],
             "setupCommands": [
-                { "text": "-enable-pretty-printing", "description": "enable pretty printing in watch window" }
-            ]        
-        },
-        {
-            "name": "testmate Launch",
-            "type": "gdb",
-            "MIMode": "gdb",
-            "request": "launch",
-            "program": "${exec}",
-            "args": "${argsArray}",
-            "setupCommands": [
                 { 
                     "text": "-enable-pretty-printing", 
                     "description": "enable pretty printing in watch window" 
-                }
+                }          
             ]        
         }
     ]
