@@ -71,42 +71,62 @@ std::string Description(const Logic::Expression& e)
     }, e);
 }
 
+Logic::String HelpList(const Logic::Knowledge& k)
+{
+    auto root = k.Root();
+    if (root.empty())
+        return Logic::String("The namespace is empty");
+
+    std::stringstream ss; 
+    for(const auto& know : root)
+    {
+        ss << Summary(know) << std::endl;
+    }
+    return Logic::String(ss.str());
+}
+
+Logic::Predicate MakeSignature(const Logic::Id& id, Logic::Substitutions args)
+{
+    Logic::Variable var("args");
+    Logic::List arglist = var.Substitute(args).Get<Logic::List>();
+    return Logic::Predicate(id, std::move(arglist));
+}
+
+Logic::String HelpTopic(const Logic::Knowledge& k, const Logic::Id& id)
+{
+    auto matches = k.Matches(Logic::Predicate(id, {Logic::Tuple("args")}));
+    if (matches.empty())
+    {
+        throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(id)));
+    }
+    std::stringstream ss; 
+    for(const auto& match: matches)
+    {
+        if (const auto* antecedent_args = match.GetIf<Logic::Association>())
+        {
+            auto predicate = MakeSignature(id, antecedent_args->Right().Get<Logic::Conjunction>());
+            ss << predicate << "\t" << Description(antecedent_args->Left()) << std::endl;
+        }
+        else 
+        {
+            ss << Logic::Predicate(id) << "\t" << Description(match) << std::endl;
+        }
+    }
+    return Logic::String(ss.str());
+}
+
 Logic::Expression Help(const Logic::Knowledge& k, const Logic::Substitutions& args)
 {
     Logic::Variable arg("topic");
     auto topic = arg.Infer(k, args);
     if (topic == arg)
     {
-        auto root = k.Root();
-        if (root.empty())
-            return Logic::String("The namespace is empty");
-
-        std::stringstream ss; 
-        for(const auto& know : root)
-        {
-            ss << Summary(know) << std::endl;
-        }
-        return Logic::String(ss.str());
+        return HelpList(k);
     } 
     else 
     {
         Logic::Id id = topic.Get<Logic::Id>();
-        // TODO: Tuple/Varariable at least match remaining list and set. Later also middle. 
-        // maybe rename variable to proposal/proposition and variable for a number of them 
-        // Check other terminonolgy. Hypothesis maybe more accurately thesis also check https://en.wikipedia.org/wiki/First-order_logic
-        // The various Get() should use Match to see what they return, not just equivalence 
-        // and match should (eventually) support the `.` operation. 
-        auto matches = k.Root().Matches(Logic::Predicate(id, {Logic::Tuple("args")}),{});
-        if (matches==Logic::Boolean(false)) 
-        {
-            throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(topic)));
-        }
-        std::stringstream ss; 
-        for(const auto& match: matches.Get<Logic::Bag>())
-        {
-            ss << Description(match) << std::endl;
-        }
-        return Logic::String(ss.str());
+        return HelpTopic(k, id);
     }
 }
 
@@ -121,7 +141,7 @@ Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Substitutions& 
 void AddDefaults(Logic::Knowledge& knowledge)
 {
     knowledge.Know(Logic::Association{Logic::Predicate("help"), Logic::Function(Help, 
-        "You're looking at it.")});
+        "List all functions.")});
     knowledge.Know(Logic::Association{Logic::Predicate("help", {Logic::Variable("topic")}), Logic::Function(Help, 
         "Describe the function matching the $topic.")});
     knowledge.Know(Logic::Association{Logic::Predicate("delete", {Logic::Variable("predicate")}), Logic::Function(Delete, 

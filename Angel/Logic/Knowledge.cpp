@@ -73,7 +73,7 @@ Bag Knowledge::Matches(const Predicate& query) const
             {
                 
             }
-            else if (const auto* conj = match.GetIf<Conjunction>())
+            else if (const auto* conj = match.GetIf<Conjunction>())https://en.wikipedia.org/wiki/Haskell#Code_examples
             {
                 hypothesis = *conj;
             }

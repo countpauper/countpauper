@@ -4,6 +4,8 @@ help(help($)) acts weird, and help(cat($)) also seems to infer cat instead of ju
 I guess there's still deep matching and it's trying to see what you really need help on by inferring 
 the argument 
 
+Rename Tuple to VariableS (now that it's free? Or too similar. Need Tuple for something else? 
+
 ## Backlog 
 - [*] Get back up 
 -    [*] remove wstring and platform dependenty conversion 
@@ -13,7 +15,7 @@ the argument
 -    [*] Clear distinction between language casts and operators (equal) and C++ operators/bool? Perhaps equal is the same (same type & value) but Cast is not implicit unless infering/matching
 -    [*] Redesign polymorphic Expression with std::variant ? (expessions would get big? or op + vector)
 -    [x] Refactor Object away (renamed to expression)
-- [ ] Redesign the parser 
+- [*] Redesign the parser 
 -   [*] Knowledge is a set of clauses, clauses are pairs predicate: expression
 -   [x] Disjunction and Conjunction are examples of NAry-operators (are they also expressions?)
 -   [x] Sequences and sets perhaps as well (collections) with the , operator 
@@ -21,11 +23,7 @@ the argument
 -   [*] Recursive descent parser  
 -   [*] Find a way for the production rules to produce
 -   [*] Check the grammar for constraints of LL(1): left recursion 
--   [ ] Unit tests for simple grammars to create first/follow table
--   [ ] Implement LL(1) https://www.geeksforgeeks.org/types-of-parsers-in-compiler-design/
--   [ ] Consider LL(n)
--   [*] Clean up old parser 
--   [ ] Optional: extend BNF with elipsis `...` (also in its own) that repeats a rules terms until failure (and generates each in sequence instead of in tr)
+in sequence instead of in tr)
 -   [*] Parsing enough for axioms
 -   [*] Parsing enough for clauses
 -   [*] Parsing enough for predicates with arguments
@@ -46,14 +44,17 @@ the argument
 -   [ ] delete clauses (lock knowledge? Special Functions with write access?)
 -   [ ] print  
 -   [ ] trace 
+-   [ ] break ? 
 - [ ] Functional 
 -   [*] define constants 
 -   [ ] define (non boolean) functions 
 -   [ ] query functions
 -   [ ] integer operators `+-*/^` 
--   [ ] lists 
+-   [*] lists
 -   [ ] sets to the same level as lists (equality, var&tuple matching, operator. etc)
 -   [ ] set and list operators `&|+-` (if both side containers?) 
+-   [ ] Be able to implement factorial like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples
+-   [ ] Be able to implement quicksort like Hashell https://en.wikipedia.org/wiki/Haskell#Code_examples (x:xs means [x]+xs if xs is a list or as used here to split head:tail
 -   [*] Membership operator x.{x,y} (done for List)
 - Python
 -   [ ] namespaces
@@ -81,18 +82,23 @@ the argument
 -   [ ] Derive Clause from Pair or make an isClause() helper?
 -   [ ] Lambdas are free clauses
 -   [ ] Namespace from `axiom:{set,}` preferably without the comma when parsing. Are commas ever needed for collections? for arguments?
--   [ ] dicts work as structs 
+-   [ ] dicts (sets of associations) work as structs
 -   [ ] set access with `.` (list done, full feature for unique) 
 -   [ ] Bag as unordered list if it has any advantages for speed and such 
 -   [ ] Optimization: Reduce copies when matching and inferring and add references to known knowledge 
 -   [ ] Optimization: Also pass references to ranges, eg when slicing lists, matching with Tuple etc until a copy is necessary. 
 - [ ] Native functions
 -    [ ] Add native cast functions (id, int, float, str, list, set, dict)
--    [ ] Add native collections functions (size, empty)
+-    [ ] Add native collections functions (size, empty, ordered, unique)
 -    [ ] Add native collection casts
 -    [ ] file IO
 -    [ ] UI / stdin/out IO 
-- [ ] Custom functions
+- [ ] LL Parser
+-   [ ] Unit tests for simple grammars to create first/follow table
+-   [ ] Implement LL(1) https://www.geeksforgeeks.org/types-of-parsers-in-compiler-design/
+-   [ ] Consider LL(n)
+-   [*] Clean up old parser 
+-   [ ] Optional: extend BNF with elipsis `...` (also in its own) that repeats a rules terms until failure (and generates each - [ ] Custom functions
 -    [ ] Import of custom native functions (eg math)
 -    [ ] string functions 
 -    [ ] file functions 
