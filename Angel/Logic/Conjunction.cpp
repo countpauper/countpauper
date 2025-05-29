@@ -13,12 +13,18 @@ bool Conjunction::operator==(const Conjunction& rhs) const
 
 Expression Conjunction::Simplify() const
 {
-    if (empty())
+    Conjunction simpler = SimplifyItems();
+    simpler.erase(Boolean(true));
+    for(const auto& item: simpler)
+    {
+        if (item == Boolean(false))
+            return item;
+    }
+     if (simpler.empty())
         return Boolean(true);
-    else if (size()==1)
-        return front().Simplify();
-    else 
-        return SimplifyItems();  
+    else if (simpler.size()==1)
+        return simpler.front();
+    return simpler;
 }
 
 Match Conjunction::Matches(const Expression&, const Variables& vars) const

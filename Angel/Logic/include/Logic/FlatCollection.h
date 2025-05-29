@@ -84,6 +84,11 @@ public:
         }
     }
 
+    std::size_t erase(const Expression& e)
+    {
+        return std::erase(items, e);
+    }
+
 
 
     // template<class... Args >

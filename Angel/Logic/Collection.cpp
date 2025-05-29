@@ -3,6 +3,7 @@
 
 #include <typeinfo>
 #include <iostream>
+#include <cassert>
 
 namespace Angel::Logic
 {
@@ -16,6 +17,15 @@ Collection::Collection(std::vector<Expression>&& items) :
     std::vector<Expression>(std::move(items))
 {
 }
+
+Collection::Collection(Collection_subrange items)
+{
+    reserve(std::ranges::size(items));
+    for (auto&& e : items) {
+        emplace_back(e);
+    }    
+}
+
 
 Collection::~Collection()
 {
@@ -46,8 +56,20 @@ Expression Collection::Get(const Expression& key) const
                 return_list = true;
             }            
         }
-        else if (item == key)
-            values.emplace_back(Boolean(true));
+        else
+        {
+            auto match = item.Matches(key, {});
+            if (match==Boolean(true))
+            {
+                values.emplace_back(Boolean(true));
+            }
+            else if (match!=Boolean(false))
+            {
+                // adding the hypothesis now? what does [1, 2].$V do? $V=1|$V=2?
+                values.emplace_back(match);
+                return_list = true; 
+            }
+        }
     }
     if (return_list)
         return values;
@@ -70,11 +92,86 @@ Collection Collection::SubstituteItems(const Variables& substitutions) const
 {
     Collection substitute; 
     substitute.reserve(size());
-    std::transform(begin(), end(), std::back_inserter(substitute), [&substitutions](const Expression& e)
+    for(const auto& item: *this)
     {
-        return e.Substitute(substitutions);
-    });
+        if (const Tuple* tuple = item.GetIf<Tuple>())
+        {
+            auto tupstitution = tuple->Substitute(substitutions);
+            if (const List* insert = tupstitution.GetIf<List>()) // TODO could be other containers
+            {
+                substitute.insert(substitute.end(), insert->begin(), insert->end());
+            }
+            else
+            {   // insert the unsubstituted tuple 
+                substitute.emplace_back(std::move(tupstitution));
+            }
+        }
+        else 
+        {
+            substitute.emplace_back(item.Substitute(substitutions));
+        }
+    }
     return substitute;   
+}
+
+Match Collection::Matches(Collection_subrange range, const Variables& variables) const
+{
+    auto range_it = range.begin();
+    const_iterator it = begin();
+    Variables vars;
+    while(it!=end() || range_it!=range.end())
+    {
+        Expression itemMatch;
+        if (it!=end())
+        {
+            if (const auto* this_tuple = it->GetIf<Tuple>())
+            {
+                assert(it+1 == end());   // for now * can only be at end
+                vars.emplace_back(this_tuple->Matches(Collection_subrange(range_it, range.end()), vars, false));
+                range_it=range.end();  
+                ++it;
+                continue;
+            }
+        }
+
+        if (range_it!=range.end())
+        {
+            if (const auto* list_tuple = range_it->GetIf<Tuple>())
+            {
+                assert(range_it+1 == range.end());   // for now * can only be at end
+                vars.emplace_back(list_tuple->Matches(Collection_subrange(it, end()), vars, true));
+                it = end(); // TODO could be partial, perhaps tuple match should return integer or (set) exactly which matched
+                ++range_it;
+                continue;
+            }
+        }
+
+        if (it==end())
+        {
+            if (range_it==range.end())
+            {
+                break;
+            }
+            else 
+            {
+                return Boolean(false); // length mismatch
+            }
+        }
+        else if (range_it==range.end())
+        {
+            return Boolean(false); // length mismatch
+        }
+        else 
+        {
+            auto itemMatch = it->Matches(*range_it, vars);
+            if (itemMatch == Boolean(false))
+                return itemMatch;
+            else if (itemMatch != Boolean(true))
+                vars.emplace_back(std::move(itemMatch));
+            ++it; ++range_it; 
+        }
+    }
+    return vars;
 }
 
 std::size_t Collection::Hash() const

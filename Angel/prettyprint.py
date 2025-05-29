@@ -51,7 +51,7 @@ def angel_printer(val):
         elif logic_type == "String":
             return SimplePrinter(val.type, val["name"])    
         elif logic_type == "Tuple":
-            return SimplePrinter(val.type, val["value"])  
+            return SimplePrinter(val.type, val["name"])  
         #elif logic_type == "Expression":
         #    print(f"Expression: type = {val.type}")
         # elif logic_type == "Association":

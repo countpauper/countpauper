@@ -12,33 +12,46 @@ TEST(Predicate, Construction)
 	EXPECT_NE(Predicate("test"), Predicate("Test"));
 }
 
-TEST(Predicate, Valence0IsNotKnown)
+TEST(Predicate, Valence0IsFalseIfNothingKnown)
 {
 	Knowledge k;
 	EXPECT_EQ(k.Infer(Predicate("cat")), Boolean(false));
 }
 	
-TEST(Predicate, Valence0IsKnownOrNot)
+TEST(Predicate, Valence0IsTrueIfKown)
 {
 	Knowledge k { Predicate("cat")};
 	EXPECT_EQ(k.Infer(Predicate("cat")), Boolean(true));
-	EXPECT_EQ(k.Infer(Predicate("dog")), Boolean(false));
-
 }
 
-TEST(Predicate, Valence1isNoTKnown)
+TEST(Predicate, Valence0IsFalseIfUnknown)
+{
+	Knowledge k { Predicate("cat")};
+	EXPECT_EQ(k.Infer(Predicate("dog")), Boolean(false));
+}
+
+TEST(Predicate, Valence1isNotKnown)
 {
 	Knowledge k;
 	EXPECT_EQ(k.Infer(Predicate("cat", List{Id("ginny")})), Boolean(false));
 }
 
-TEST(Predicate, Valence1IsKnownOrNot)
+TEST(Predicate, Valence1IsTrueIfKnown)
 {
-	Knowledge k;
-	k.Know(Predicate("cat", List{Id("ginny")}));
+	Knowledge k { Predicate("cat", List{Id("ginny")}) };
 	EXPECT_EQ(k.Infer(Predicate("cat", List{Id("ginny")})), Boolean(true));
-	EXPECT_EQ(k.Infer(Predicate("cat", List{Id("woofer")})), Boolean(false));
+}
+
+TEST(Predicate, Valence1IsFalsePredicateUnknown)
+{
+	Knowledge k { Predicate("cat", List{Id("ginny")}) };
 	EXPECT_EQ(k.Infer(Predicate("dog", List{Id("ginny")})), Boolean(false));
+}
+
+TEST(Predicate, Valence1IsFalseIfArgumentUnknown)
+{
+	Knowledge k { Predicate("cat", List{Id("ginny")}) };
+	EXPECT_EQ(k.Infer(Predicate("cat", List{Id("woofer")})), Boolean(false));
 }
 
 TEST(Predicate, to_string)

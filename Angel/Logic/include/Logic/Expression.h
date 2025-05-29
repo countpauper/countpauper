@@ -4,16 +4,18 @@
 #include "Logic/Predicate.h"
 #include "Logic/Set.h"
 #include "Logic/List.h"
-#include "Logic/CastException.h"
+#include "Logic/Negative.h"
 #include "Logic/Conjunction.h"
 #include "Logic/Disjunction.h"
 #include "Logic/Summation.h"
-#include "Logic/VariantUtils.h"
-#include "Logic/Operator.h"
-#include "Logic/Negative.h"
+#include "Logic/Equation.h"
 #include "Logic/Function.h"
 #include "Logic/Association.h"
-#include "Logic/Equation.h"
+#include "Logic/Variable.h"
+#include "Logic/Tuple.h"
+#include "Logic/Operator.h"
+#include "Logic/CastException.h"
+#include "Logic/VariantUtils.h"
 #include <variant>
 #include <vector>
 #include <map>
@@ -25,7 +27,8 @@ namespace Angel::Logic
 using ExpressionVariant = std::variant<
     std::monostate,
     Function,      
-    Boolean,  Integer, Id, Variable, String,
+    Boolean,  Integer, Id, String,
+    Variable, Tuple, 
     Predicate, List, Set, Association,
     Negative, 
     Conjunction, Disjunction, Summation,

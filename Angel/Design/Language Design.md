@@ -287,26 +287,37 @@ music.composer($X)?
 ```
 
 ## Association operator `.` 
-This use of the `.` operator is in general used to access the right hand side of an association in a container.
+This use of the `.` operator is in general used to access the right hand side of an association in a container. THe right hand side can be any expression and it is _matched_ to the container on the left.
+
 Every container can be associative its elements are associations and the value can 
 be accessed with this operator. 
+```
+cats: [ginny, gizmo]
+> cats.ginny? 
+1
+``` 
 
 Any item in a container that is not an association behaves as if it's right side is `true` and every 
 value that is not in the container acts as if it's right side is `false`. The `.` operator can thereore
-also be used to test if an item is in the container. For a non unique container it will return the count of equal items. 
+also be used to test if an item is in the container. For a non unique container it will return the container of matching items. 
 
-If an assocation is in a container, which matches, unique containers will return the value. If it doesn't matches
+If an assocation is in a container, which matches, unique containers will return the value. If there is no match
 `false` is returned. For non-unique containers all right sides of assocations with matching left sides are 
 returned in the same container type as the parent (eg bag or list).
 
 In the rare use cases that the non-unique container is mixed assocition and single elements. the 
 return value will be a list with the right hand side of all matching assoications and `true` for each 
 other item that is equal to the requested key. 
+
+Because there may be multiple matches even for unique containers, the `.` operator may result in a set 
+of results for those as well. If the right hand side is an element then a single result will be returned. 
+
 ```
-cats: [ginny, gizmo]
-> cats.ginny? 
-1
-``` 
+cats: {fuzzy(ginny), hairy(gizmo), hairy(max) }
+> cats.hairy($)?
+{hairy(gizmo), hairy(max)}
+```
+This is exactly how normal matching works when infering expressions. 
 
 ## Association operator `.` 
 

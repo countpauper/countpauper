@@ -9,7 +9,9 @@ namespace Angel::Logic
 {
 
 class Expression;
+using Match = Expression;
 using Variables = class Conjunction;
+using Collection_subrange = std::ranges::subrange<std::vector<Expression>::const_iterator, std::vector<Expression>::const_iterator>;
 
 template<typename T> class FlatCollection;
 
@@ -18,8 +20,9 @@ class Collection : public std::vector<Expression>
 {
 public:
     Collection() = default;
-	Collection(std::initializer_list<Expression> items);
+    explicit Collection(Collection_subrange items);
 	explicit Collection(std::vector<Expression>&& items);
+	Collection(std::initializer_list<Expression> items);
     template<typename T> 
     Collection(std::initializer_list<T> items)
     {
@@ -30,6 +33,7 @@ public:
     }
     ~Collection();
     Expression Get(const Expression& key) const;
+    Match Matches(Collection_subrange range, const Variables& variables) const;
     std::size_t Hash() const;
     bool operator==(const Collection& rhs) const;
 protected:
@@ -46,6 +50,7 @@ protected:
     Collection SubstituteItems(const Variables& substitutions) const;
     
 };
+
 
 template < typename T >
 concept IsCollection = std::derived_from<T, Collection> && !IsOperation<T>;

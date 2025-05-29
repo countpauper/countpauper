@@ -96,7 +96,7 @@ Match Set::Matches(const Expression& e, const Variables& variables) const
     // should be the same size at least, barring some sort of |Tail syntax 
     // so all items should be attempted to match with another and then that one should be out
     if (size()!=set->size())
-        return Boolean(false); // TODO: head|tail matching or whatever could happen here
+        return Boolean(false); // TODO: tuple matching or whatever could happen instead.
     return Boolean(false);
 }
 

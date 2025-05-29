@@ -13,14 +13,18 @@ bool Disjunction::operator==(const Disjunction& rhs) const
 
 Expression Disjunction::Simplify() const
 {
-    if (empty())
+    Disjunction simpler = SimplifyItems();
+    simpler.erase(Boolean(false));
+    for(const auto& item: simpler)
+    {
+        if (item == Boolean(true))
+            return item;
+    }
+     if (simpler.empty())
         return Boolean(false);
-    else if (size()==1)
-        return front().Simplify();
-    else 
-        return SimplifyItems();
-    // TODO: could simplify all Boolean(true) to true or all Boolean(false) 
-    //  perhaps even after casting 
+    else if (simpler.size()==1)
+        return simpler.front();
+    return simpler;
 }
 
 Match Disjunction::Matches(const Expression&, const Variables& vars) const
@@ -30,10 +34,9 @@ Match Disjunction::Matches(const Expression&, const Variables& vars) const
     return Boolean(false);
 }
 
-Disjunction Disjunction::Substitute(const Variables& substitutions) const
+Expression Disjunction::Substitute(const Variables& substitutions) const
 {
-    return SubstituteItems(substitutions);
-}
+    return SubstituteItems(substitutions);}
 
 Expression Disjunction::Infer(const Knowledge& k, const Variables& substitutions) const
 {

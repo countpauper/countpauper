@@ -5,6 +5,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Function.h"
 #include "Logic/String.h"
+#include "Logic/Tuple.h"
 #include "Logic/VariantUtils.h"
 #include "Logic/Element.h"
 #include "Logic/Operator.h"
@@ -56,7 +57,6 @@ std::string Summary(const Logic::Expression& e)
     }, e);
 }
 
-
 std::string Description(const Logic::Expression& e)
 {
     return std::visit(Logic::overloaded_visit{
@@ -90,14 +90,19 @@ Logic::Expression Help(const Logic::Knowledge& k, const Logic::Variables& vars)
     } 
     else 
     {
-        Logic::Predicate predicate = topic.Cast<Logic::Predicate>();
-        auto matches = k.Matches(predicate);
-        if (matches.empty()) 
+        Logic::Id id = topic.Get<Logic::Id>();
+        // TODO: Tuple/Varariable at least match remaining list and set. Later also middle. 
+        // maybe rename variable to proposal/proposition and variable for a number of them 
+        // Check other terminonolgy. Hypothesis maybe more accurately thesis also check https://en.wikipedia.org/wiki/First-order_logic
+        // The various Get() should use Match to see what they return, not just equivalence 
+        // and match should (eventually) support the `.` operation. 
+        auto matches = k.Root().Get(Logic::Predicate(id, {Logic::Tuple("args")}));
+        if (matches==Logic::Boolean(false)) 
         {
             throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(topic)));
         }
         std::stringstream ss; 
-        for(const auto& match: matches)
+        for(const auto& match: matches.Get<Logic::Bag>())
         {
             ss << Description(match) << std::endl;
         }

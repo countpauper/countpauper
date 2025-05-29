@@ -39,12 +39,6 @@ TEST(List, Compare)
 }
 
 
-TEST(List, to_string)
-{
-	EXPECT_EQ(to_string(List{Id("ginny")}), "[ginny]");
-	EXPECT_EQ(to_string(List{Id("ginny"), Id("gizmo")}), "[ginny,gizmo]");
-}
-
 TEST(List, Simplify)
 {
     EXPECT_EQ((List{}).Simplify(), List());
@@ -55,6 +49,14 @@ TEST(List, Substitute)
 {
 	EXPECT_EQ((List{Boolean(true), Variable("I")}).Substitute(Conjunction{Equation{Variable("I"), Integer(3)}}),
 		(List{Boolean(true), Integer(3)}));
+}
+
+TEST(List, Matches)
+{
+	EXPECT_EQ((List{Integer(3)}).Matches(List{Integer(3)}, {}).Simplify(), Boolean(true));	
+	EXPECT_EQ((List{Integer(2)}).Matches(List{Integer(4)}, {}).Simplify(), Boolean(false));	
+	EXPECT_EQ((List{Integer(2)}).Matches(List{Integer(2), Integer(4)}, {}), Boolean(false));
+	EXPECT_EQ((List{Integer(2),Integer(3)}).Matches(List{Integer(2)}, {}), Boolean(false));	
 }
 
 TEST(List, Infer)
@@ -72,6 +74,13 @@ TEST(List, Get)
 		Association{Id("gizmo"), Integer(2)},
 		Association{Id("ginny"), Integer(3)},
 		Id("ginny")}).Get(Id("ginny")), (List{Integer(1), Integer(3), Boolean(true)}));
+}
+
+
+TEST(List, to_string)
+{
+	EXPECT_EQ(to_string(List{Id("ginny")}), "[ginny]");
+	EXPECT_EQ(to_string(List{Id("ginny"), Id("gizmo")}), "[ginny,gizmo]");
 }
 
 }

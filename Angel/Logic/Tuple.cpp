@@ -1,4 +1,4 @@
-#include "Logic/Variable.h"
+#include "Logic/Tuple.h"
 #include "Logic/Expression.h"
 #include <iostream>
 #include <cassert>
@@ -6,38 +6,38 @@
 namespace Angel::Logic
 {
 
-Variable::Variable(const std::string_view name) :
+Tuple::Tuple(const std::string_view name) :
 	name(name)
 {
 }
 
-Variable::operator bool() const
+Tuple::operator bool() const
 {
     return !name.empty();
 }
 
-bool Variable::operator==(const Variable& var) const
+bool Tuple::operator==(const Tuple& var) const
 {
 	return name == var.name;
 }
 
-std::size_t Variable::Hash() const
+std::size_t Tuple::Hash() const
 {
     std::hash<std::string> hasher;
     return hasher(name);
 }
 
-std::string_view Variable::Name() const
+std::string_view Tuple::Name() const
 {
     return name;
 }
 
-Expression Variable::Simplify() const
+Expression Tuple::Simplify() const
 {
     return *this;   
 }
 
-Expression Variable::Substitute(const Variables& substitutions) const
+Expression Tuple::Substitute(const Variables& substitutions) const
 {
     for(const auto& condition : substitutions)
     {
@@ -56,11 +56,39 @@ Expression Variable::Substitute(const Variables& substitutions) const
     return *this;
 }
 
-Match Variable::Matches(const Expression& e, const Variables& variables, bool reverse) const
+Match Tuple::Matches(Collection_subrange range, const Variables& variables, bool reverse) const
 {
     auto substitute = Substitute(variables);
-    if (const auto* stillVar = substitute.GetIf<Variable>())
+    if (const auto* stillVar = substitute.GetIf<Tuple>())
     {
+        if (*stillVar)
+            if (reverse)
+                return Equation{*stillVar, List(range)};
+            else 
+                return Equation{List(range), *stillVar};
+        else
+            return Boolean(true);   // anonymous tuple 
+    }
+    else 
+    {
+        if (const List* list = substitute.GetIf<List>())
+        {
+            return list->Collection::Matches(range, variables);
+        }
+        else 
+        {
+            assert(false); // unimplemented;
+            return Boolean(false);
+        }
+    }  
+}
+
+Match Tuple::Matches(const Expression& e, const Variables& variables, bool reverse) const
+{
+    auto substitute = Substitute(variables);
+    if (const auto* stillVar = substitute.GetIf<Tuple>())
+    {
+        return Boolean(false);
         if (*stillVar)
             if (reverse)
                 return Equation{*stillVar, e};
@@ -76,7 +104,7 @@ Match Variable::Matches(const Expression& e, const Variables& variables, bool re
 }
 
 
-Expression Variable::Infer(const class Knowledge& k, const Variables& substitutions) const
+Expression Tuple::Infer(const class Knowledge& k, const Variables& substitutions) const
 {
     for(const auto& condition : substitutions)
     {
@@ -98,9 +126,9 @@ Expression Variable::Infer(const class Knowledge& k, const Variables& substituti
 
 
 
-std::ostream& operator<<(std::ostream& os, const Variable& id)
+std::ostream& operator<<(std::ostream& os, const Tuple& id)
 {
-    os << "$" << id.Name();
+    os << "*" << id.Name();
     return os;
 }
 

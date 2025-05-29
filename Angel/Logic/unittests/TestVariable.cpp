@@ -23,11 +23,15 @@ TEST(Variable, Query)
 	EXPECT_EQ(Variable("Test").Infer(k, vars), Integer(4));
 }
 
-TEST(Variable, Matching)
+TEST(Variable, MatchingHypothesis)
 {
 	EXPECT_EQ(Variable("X").Matches(Integer(1), {}), (Equation{Integer(1), Variable("X")}));
 	EXPECT_EQ(Expression(Integer("2")).Matches(Variable("Y"), {}), (Equation{Variable("Y"), Integer(2)}));
-    Variables substituted {Equation{Variable("Y"),Integer(2)}};
+}
+
+TEST(Variable, MatchingSubstitution)
+{
+	Variables substituted {Equation{Variable("Y"),Integer(2)}};
 	EXPECT_EQ(Variable("Y").Matches(Integer(1), substituted), Boolean(false) );
 	EXPECT_EQ(Variable("Y").Matches(Integer(2), substituted), Boolean(true) );
 }

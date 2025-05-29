@@ -38,6 +38,11 @@ TEST(Disjunction, Simplify)
 {
     EXPECT_EQ((Disjunction{}).Simplify(), Boolean(false));
     EXPECT_EQ((Disjunction{Boolean(true)}).Simplify(), Boolean(true));
+    EXPECT_EQ((Disjunction{Predicate("maybe"), Boolean(false)}).Simplify(), Predicate("maybe"));
+    EXPECT_EQ((Disjunction{Predicate("maybe"), Boolean(true)}).Simplify(), Boolean(true));
+    EXPECT_EQ((Disjunction{Boolean(false), Boolean(false)}).Simplify(), Boolean(false));
+    EXPECT_EQ((Disjunction{Boolean(true), Boolean(false)}).Simplify(), Boolean(true));
+
 }
 
 TEST(Disjunction, Substitute)

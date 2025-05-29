@@ -78,13 +78,15 @@ Variables LeftVariablesOnly(Variables& substitutions)
     Variables result;
     for(const auto& sub : substitutions)
     {
-        if (const auto* equation = sub.GetIf<Equation>())
-        {
-            if (equation->front().Is<Variable>())
-            {
-                result.emplace_back(std::move(*equation));
-            }
-        }
+        const auto& equation = sub.Get<Equation>();
+		if (equation.front().Is<Variable>())
+		{
+			result.emplace_back(std::move(equation));
+		}
+		else if (equation.front().Is<Tuple>())
+		{
+			result.emplace_back(std::move(equation));
+		}
     }
     return result;
 }

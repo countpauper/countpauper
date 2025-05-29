@@ -66,7 +66,7 @@ Bag Knowledge::Matches(const Predicate& query) const
         if (const auto* predicate = lhs.GetIf<Predicate>())
         {
             Conjunction hypothesis;
-            const auto& match = predicate->Matches(query, {});
+            auto match = predicate->Matches(query, {});
             if (match == Boolean(false))
                 continue;
             if (match == Boolean(true))
@@ -76,6 +76,10 @@ Bag Knowledge::Matches(const Predicate& query) const
             else if (const auto* conj = match.GetIf<Conjunction>())
             {
                 hypothesis = *conj;
+            }
+            else if (const auto* eq = match.GetIf<Equation>())
+            {
+                hypothesis = Conjunction{*eq};
             }
 
             if (hypothesis.size() > bestMatch)

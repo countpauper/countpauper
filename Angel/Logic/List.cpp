@@ -2,6 +2,7 @@
 #include "Logic/Expression.h"
 #include <typeinfo>
 #include <iostream>
+#include <cassert>
 
 namespace Angel::Logic
 {
@@ -45,21 +46,9 @@ Match List::Matches(const Expression& expression, const Variables& variables) co
     const List* list = expression.GetIf<List>();
     if (!list)
         return Boolean(false);
+    auto substituted = list->Substitute(variables);
 
-    if (size()!=list->size())
-        return Boolean(false); // TODO: head|tail matching or whatever could happen here 
-    auto lit = list->begin();
-    Variables vars = variables;
-    for(auto it=begin(); it!=end(); ++it, ++lit)
-    {
-        auto itemMatch = it->Matches(*lit, vars);
-        if (itemMatch==Boolean(false))
-            return std::move(itemMatch); // early out 
-        if (itemMatch==Boolean(true))   
-            continue;   // trivial 
-        vars.emplace_back(std::move(itemMatch));
-    }
-    return vars;
+    return Collection::Matches(Collection_subrange(substituted.begin(), substituted.end()), variables);
 }
 
 

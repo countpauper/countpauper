@@ -38,7 +38,11 @@ TEST(Conjunction, Nest)
 TEST(Conjunction, Simplify)
 {
     EXPECT_EQ((Conjunction{}).Simplify(), Boolean(true));
-    EXPECT_EQ((Conjunction{Boolean(false)}).Simplify(), Boolean(false));
+    EXPECT_EQ((Conjunction{Predicate("maybe"), Boolean(true)}).Simplify(), Predicate("maybe"));
+    EXPECT_EQ((Conjunction{Predicate("maybe"), Boolean(false)}).Simplify(), Boolean(false));
+    EXPECT_EQ((Conjunction{Boolean(true), Boolean(true)}).Simplify(), Boolean(true));
+    EXPECT_EQ((Conjunction{Boolean(true), Boolean(false)}).Simplify(), Boolean(false));
+
 }
 
 TEST(Conjunction, Substitute)

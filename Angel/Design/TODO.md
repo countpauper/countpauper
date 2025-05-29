@@ -1,6 +1,8 @@
 ## Quick todo 
 
-Make std::get_if helpers in expression to Get<T> GetIf<T> and to check Is<T> and replace all std::get_if(&) std::get
+help(help($)) acts weird, and help(cat($)) also seems to infer cat instead of just matching it. 
+I guess there's still deep matching and it's trying to see what you really need help on by inferring 
+the argument 
 
 ## Backlog 
 - [*] Get back up 
@@ -52,8 +54,8 @@ Make std::get_if helpers in expression to Get<T> GetIf<T> and to check Is<T> and
 -   [ ] query functions
 -   [ ] integer operators `+-*/^` 
 -   [ ] lists 
--   [ ] sets 
--   [ ] set and list operators `&|+-`
+-   [ ] sets to the same level as lists (equality, var&tuple matching, operator. etc)
+-   [ ] set and list operators `&|+-` (if both side containers?) 
 -   [*] Membership operator x.{x,y} (done for List)
 - Python
 -   [ ] namespaces
@@ -74,7 +76,7 @@ Make std::get_if helpers in expression to Get<T> GetIf<T> and to check Is<T> and
 -   [ ] Tautology protection cat: cat (or longer) is an error
 -   [ ] Add floating points and conversions
 -   [ ] For any operator `@` while infering 
--   [ ] For any & each operators also while matching 
+-   [ ] For any & each operators also while matching (each sort of done with Tuple I guess)
 -   [ ] Other MFINAE type matching or even some concept like syntax 
 -   [ ] free pairs `a:b` 
 -   [ ] Derive Clause from Pair or make an isClause() helper?
@@ -82,6 +84,8 @@ Make std::get_if helpers in expression to Get<T> GetIf<T> and to check Is<T> and
 -   [ ] dicts work as structs 
 -   [ ] set access with `.` (list done, full feature for unique) 
 -   [ ] Bag as unordered list if it has any advantages for speed and such 
+-   [ ] Optimization: Reduce copies when matching and inferring and add references to known knowledge 
+-   [ ] Optimization: Also pass references to ranges, eg when slicing lists, matching with Tuple etc until a copy is necessary. 
 - [ ] Native functions
 -    [ ] Add native cast functions (id, int, float, str, list, set, dict)
 -    [ ] Add native collections functions (size, empty)
