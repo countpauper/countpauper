@@ -23,6 +23,15 @@ TEST(Knowledge, AlreadyKnows)
     EXPECT_EQ(k.Root().size(), defaultSize+1);
 }
 
+
+TEST(Knowledge, Forget)
+{
+    Knowledge k { Predicate("ginny") };
+    auto originalSize = k.Root().size();
+    EXPECT_EQ(k.Forget(Predicate("ginny")), 1);
+    EXPECT_EQ(k.Root().size(), originalSize-1);
+}
+
 TEST(Knowledge, Defaults)
 {
     Knowledge k;

@@ -115,18 +115,32 @@ Logic::String HelpTopic(const Logic::Knowledge& k, const Logic::Id& id)
     return Logic::String(ss.str());
 }
 
+Logic::Expression GetArg(const Logic::Substitutions& args, const std::string_view name)
+{
+    Logic::Knowledge dummy;
+    Logic::Variable arg(name);
+    auto value = arg.Infer(dummy, args);
+    if (value == arg)
+    {
+        return Logic::Expression();
+    }
+    else 
+    {
+        return value;
+    }
+}
+
 Logic::Expression Help(const Logic::Knowledge& k, const Logic::Substitutions& args)
 {
-    Logic::Variable arg("topic");
-    auto topic = arg.Infer(k, args);
-    if (topic == arg)
-    {
-        return HelpList(k);
-    } 
-    else 
+    Logic::Expression topic = GetArg(args, "topic");
+    if (topic)
     {
         Logic::Id id = topic.Get<Logic::Id>();
         return HelpTopic(k, id);
+    } 
+    else 
+    {
+        return HelpList(k);
     }
 }
 
@@ -135,7 +149,18 @@ Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Substitutions& 
     // TODO: implement, also how if knowledge is constant. 
     // this is likely one of the view functions that will change the knowledge besides : 
     // import and parse(<coude> )
-    return Logic::Boolean(false);
+
+    Logic::Expression target = GetArg(args, "id");
+    if (target)
+    {
+        Logic::Knowledge& readAccess = k.Lock();
+        return Logic::Integer(readAccess.Forget(Logic::Predicate(target.Get<Logic::Id>(), Logic::List{Logic::Tuple("")})));
+    }
+    else 
+    {
+        throw std::invalid_argument("Delete must provide an id");
+    }
+    return Logic::Integer(0);
 }
 
 void AddDefaults(Logic::Knowledge& knowledge)
@@ -144,8 +169,8 @@ void AddDefaults(Logic::Knowledge& knowledge)
         "List all functions.")});
     knowledge.Know(Logic::Association{Logic::Predicate("help", {Logic::Variable("topic")}), Logic::Function(Help, 
         "Describe the function matching the $topic.")});
-    knowledge.Know(Logic::Association{Logic::Predicate("delete", {Logic::Variable("predicate")}), Logic::Function(Delete, 
-        "Remove all the functions matching the $predicate.")});
+    knowledge.Know(Logic::Association{Logic::Predicate("delete", {Logic::Variable("id")}), Logic::Function(Delete, 
+        "Remove all the functions matching the $id.")});
 }
 
 }

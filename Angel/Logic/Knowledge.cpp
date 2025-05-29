@@ -48,12 +48,20 @@ size_t Knowledge::Know(Expression&& clause)
 
 }
 
+size_t Knowledge::Forget(const Predicate& match)
+{
+    return std::erase_if(root, [&match](const Expression& item)
+    {
+        const Association& clause = item.Get<Association>();
+        return clause.Left().Matches(match, {}).Simplify() != Boolean(false);
+    });
+}
+
 Expression Knowledge::Infer(const Expression& expression) const
 {
     Substitutions subs;
     return expression.Infer(*this, subs);
 }
-
 
 Bag Knowledge::Matches(const Predicate& query) const
 {
@@ -61,45 +69,41 @@ Bag Knowledge::Matches(const Predicate& query) const
     std::size_t bestMatch = std::numeric_limits<std::size_t>::max();
     for(const auto& item: root)
     {
-        const Association& association = item.Cast<Association>();
-        Expression lhs = association.Left();
-        if (const auto* predicate = lhs.GetIf<Predicate>())
+        const Association& clause = item.Get<Association>();
+        Expression lhs = clause.Left();
+        const auto& predicate = lhs.Get<Predicate>();
+        Conjunction hypothesis;
+        auto match = predicate.Matches(query, {});
+        if (match == Boolean(false))
+            continue;
+        if (match == Boolean(true))
         {
-            Conjunction hypothesis;
-            auto match = predicate->Matches(query, {});
-            if (match == Boolean(false))
-                continue;
-            if (match == Boolean(true))
-            {
-                
-            }
-            else if (const auto* conj = match.GetIf<Conjunction>())https://en.wikipedia.org/wiki/Haskell#Code_examples
-            {
-                hypothesis = *conj;
-            }
-            else if (const auto* eq = match.GetIf<Equation>())
-            {
-                hypothesis = Conjunction{*eq};
-            }
-
-            if (hypothesis.size() > bestMatch)
-                continue;
-            if (hypothesis.size() < bestMatch)
-            {
-                bestMatch = hypothesis.size();
-                hypotheses = Bag(); // clear worse hypotheses
-            }
-
-            auto valueResult =  association.Right().Simplify();
-            if (valueResult==Boolean(false))
-                continue;
-            if (hypothesis.empty())
-                hypotheses.emplace_back(std::move(valueResult));
-            else
-                hypotheses.emplace_back(Association(std::move(valueResult), std::move(hypothesis)));
+            
         }
-        else 
-            assert(false && "Only predicate keys are allowed in knowledge");
+        else if (const auto* conj = match.GetIf<Conjunction>())
+        {
+            hypothesis = *conj;
+        }
+        else if (const auto* eq = match.GetIf<Equation>())
+        {
+            hypothesis = Conjunction{*eq};
+        }
+
+        if (hypothesis.size() > bestMatch)
+            continue;
+        if (hypothesis.size() < bestMatch)
+        {
+            bestMatch = hypothesis.size();
+            hypotheses = Bag(); // clear worse hypotheses
+        }
+
+        auto valueResult =  clause.Right().Simplify();
+        if (valueResult==Boolean(false))
+            continue;
+        if (hypothesis.empty())
+            hypotheses.emplace_back(std::move(valueResult));
+        else
+            hypotheses.emplace_back(Association(std::move(valueResult), std::move(hypothesis)));
     } 
     return hypotheses;
 }
@@ -114,6 +118,14 @@ const Bag& Knowledge::Root() const
 {
     return root;
 }
+
+Knowledge& Knowledge::Lock() const
+{
+    // TODO: when using concurrent read access, flush and block read queue before locking
+    // and unlock with a Lock() destructor. Also count locks before releading read queue.
+    return const_cast<Knowledge&>(*this);
+}
+
 
 void Knowledge::AddDefaults()
 {

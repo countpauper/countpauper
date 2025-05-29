@@ -40,8 +40,8 @@ in sequence instead of in tr)
 -   [*] Negation  
 - [ ] Console and built in commands useful for debugging
 -   [*] help 
--   [ ] help($topic)
--   [ ] delete clauses (lock knowledge? Special Functions with write access?)
+-   [*] help($topic)
+-   [*] delete clauses (lock knowledge? Special Functions with write access?)
 -   [ ] print  
 -   [ ] trace 
 -   [ ] break ? 

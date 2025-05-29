@@ -19,4 +19,16 @@ TEST(Defaults, Help)
     EXPECT_TRUE(Logic::to_string(details).find("Describe the function") != std::string::npos);
 }
 
+TEST(Defaults, Delete)
+{
+    Logic::Knowledge k { 
+        Logic::Predicate("evil"),
+        Logic::Predicate("good")
+    };
+    AddDefaults(k);
+    EXPECT_EQ(k.Infer(Logic::Predicate("delete", {Logic::Id("evil")})), Logic::Integer(1));
+    EXPECT_FALSE(k.Knows(Logic::Predicate("evil")));
+    EXPECT_TRUE(k.Knows(Logic::Predicate("good")));
+}
+
 }
