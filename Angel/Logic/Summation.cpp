@@ -14,12 +14,28 @@ bool Summation::operator==(const Summation& rhs) const
 
 Expression Summation::Simplify() const
 {
-    if (empty())
+    Summation simple = SimplifyItems();
+    long sum = 0;
+    auto it = simple.begin();
+    while(it!=simple.end())
+    {
+        auto integer = it->TryCast<Integer>();        
+        if (integer)
+        {
+            sum += **integer;
+            it = simple.erase(it);
+        }
+        else 
+            ++it;
+    }
+    if (sum)
+        simple.push_back(Integer(sum));
+    if (simple.empty())
         return Integer(0);
-    else if (size()==1)
-        return front().Simplify();
-    return SimplifyItems();
-    // TODO could maybe sum them all if they are all elements
+    else if (simple.size()==1)
+        return simple.front();
+    else
+        return std::move(simple);
 }
 
 Expression Summation::Matches(const Expression&, const Substitutions& substitutions) const

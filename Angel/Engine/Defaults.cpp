@@ -117,9 +117,8 @@ Logic::String HelpTopic(const Logic::Knowledge& k, const Logic::Id& id)
 
 Logic::Expression GetArg(const Logic::Substitutions& args, const std::string_view name)
 {
-    Logic::Knowledge dummy;
     Logic::Variable arg(name);
-    auto value = arg.Infer(dummy, args);
+    auto value = arg.Substitute(args);
     if (value == arg)
     {
         return Logic::Expression();
@@ -154,7 +153,7 @@ Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Substitutions& 
     if (target)
     {
         Logic::Knowledge& readAccess = k.Lock();
-        return Logic::Integer(readAccess.Forget(Logic::Predicate(target.Get<Logic::Id>(), Logic::List{Logic::Tuple("")})));
+        return Logic::Integer(readAccess.Forget(target.Cast<Logic::Predicate>()));
     }
     else 
     {

@@ -42,6 +42,8 @@ def angel_printer(val):
         logic_type = type_str[len(ns_prefix):]
         if logic_type == "Operator":
             return OperatorPrinter(val)
+        elif logic_type == "Id":
+            return SimplePrinter(val.type, val["name"])
         elif logic_type == "Integer":
             return SimplePrinter(val.type, val["value"])
         elif logic_type == "Boolean":

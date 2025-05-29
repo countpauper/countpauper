@@ -89,7 +89,10 @@ public:
         return std::erase(items, e);
     }
 
-
+    Collection::const_iterator erase(Collection::const_iterator it)
+    {
+        return items.erase(it);
+    }
 
     // template<class... Args >
     // void emplace_back( Args&&... args )

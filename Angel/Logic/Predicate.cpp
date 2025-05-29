@@ -65,7 +65,7 @@ Expression Predicate::Matches(const Expression& inferred, const Substitutions& s
 	
 	if (id != predicate->id) // Variable predicate names not (yet) supported
 		return Boolean(false);
-	return arguments.Matches(predicate->arguments, substitutions);
+	return arguments.Simplify().Matches(predicate->arguments.Simplify(), substitutions);
 }
 
 Predicate Predicate::Substitute(const Substitutions& substitutions) const
@@ -113,9 +113,9 @@ Expression Hypothesis(Expression&& value, Expression&& current, Substitutions&& 
 
 Expression Predicate::Infer(const Knowledge& knowledge, const Substitutions& substitutions) const
 {
-	Predicate computed(id, std::get<List>(arguments.Infer(knowledge, substitutions)));
+	Predicate simple(id, std::get<List>(arguments.Substitute(substitutions).Simplify()));
 	Set result;
-	auto hypotheses = knowledge.Matches(computed);
+	auto hypotheses = knowledge.Matches(simple);
 
 	for(auto hypothesis: hypotheses)
 	{

@@ -17,7 +17,6 @@ TEST(Summation, Construction)
 
 }
 
-
 TEST(Summation, Summations)
 {
     Knowledge k;
@@ -33,12 +32,22 @@ TEST(Summation, Simplify)
 {
     EXPECT_EQ((Summation{}).Simplify(), Integer(0));
     EXPECT_EQ((Summation{Integer(2)}).Simplify(), Integer(2));
+    EXPECT_EQ((Summation{Integer(3), Integer(3)}).Simplify(), Integer(6));
 }
+
 
 TEST(Summation, Substitute)
 {
 	EXPECT_EQ((Summation{Integer(-2), Variable("I")}).Substitute(Conjunction{Equation{Variable("I"), Integer(3)}}),
 		(Summation{Integer(-2), Integer(3)}));
+}
+
+TEST(Summation, MatchArgument)
+{
+	EXPECT_EQ(Predicate("sum", {Summation{Integer(1), Integer(2)}}).Matches(
+                Predicate("sum", {Integer(3)}),{}).Simplify(), Boolean(true));
+	EXPECT_EQ(Predicate("sum", {Integer(-4)}).Matches(
+                Predicate("sum", {Summation{Integer(-5), Boolean(true)}}),{}).Simplify(), Boolean(true));
 }
 
 TEST(Summation, Inference)

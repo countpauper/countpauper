@@ -1,9 +1,5 @@
 ## Quick todo 
 
-help(help($)) acts weird, and help(cat($)) also seems to infer cat instead of just matching it. 
-I guess there's still deep matching and it's trying to see what you really need help on by inferring 
-the argument 
-
 Rename Tuple to VariableS (now that it's free? Or too similar. Need Tuple for something else? 
 
 ## Backlog 
