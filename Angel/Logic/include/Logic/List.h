@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Match.h"
+#include "Logic/Substitution.h"
 #include "Logic/Collection.h"
 #include <iostream>
 
@@ -16,9 +16,9 @@ public:
     bool operator==(const List& rhs) const;
     explicit operator bool() const;
     Expression Simplify() const;
-    Match Matches(const Expression& other, const Variables& variables) const;
-    List Substitute(const Variables& substitutions) const;
-    Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
+    Expression Matches(const Expression& other, const Substitutions& substitutions) const;
+    List Substitute(const Substitutions& substitutions) const;
+    Expression Infer(const class Knowledge& knowledge, const Substitutions& substitutions) const;
 
     static constexpr bool unique=false;
     static constexpr bool ordered=true;

@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Match.h"
+#include "Logic/Substitution.h"
 #include <string>
 
 namespace Angel::Logic
@@ -18,9 +18,9 @@ public:
     std::size_t Hash() const;
     std::string_view Name() const;
     Expression Simplify() const;
-    Match Matches(const Expression& expression, const Variables& variables, bool reverse=false) const;
-    Expression Substitute(const Variables& substitutions) const;
-    Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
+    Expression Matches(const Expression& expression, const Substitutions& substitutions, bool reverse=false) const;
+    Expression Substitute(const Substitutions& substitutions) const;
+    Expression Infer(const class Knowledge& k, const Substitutions& substitutions) const;
 private: 
     std::string name;
 };

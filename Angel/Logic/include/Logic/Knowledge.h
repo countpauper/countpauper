@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Logic/Match.h"
 #include "Logic/Predicate.h"
 
 namespace Angel::Logic

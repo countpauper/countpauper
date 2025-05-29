@@ -19,8 +19,8 @@ TEST(Variable, Query)
 	Knowledge k;
 	EXPECT_EQ(k.Infer(Variable("Test")), Variable("Test"));
 	EXPECT_EQ(k.Infer(Variable("")), Variable(""));
-	Variables vars{Equation{Variable("Test"), Integer(4)}};
-	EXPECT_EQ(Variable("Test").Infer(k, vars), Integer(4));
+	Substitutions subs{Equation{Variable("Test"), Integer(4)}};
+	EXPECT_EQ(Variable("Test").Infer(k, subs), Integer(4));
 }
 
 TEST(Variable, MatchingHypothesis)
@@ -31,7 +31,7 @@ TEST(Variable, MatchingHypothesis)
 
 TEST(Variable, MatchingSubstitution)
 {
-	Variables substituted {Equation{Variable("Y"),Integer(2)}};
+	Substitutions substituted {Equation{Variable("Y"),Integer(2)}};
 	EXPECT_EQ(Variable("Y").Matches(Integer(1), substituted), Boolean(false) );
 	EXPECT_EQ(Variable("Y").Matches(Integer(2), substituted), Boolean(true) );
 }

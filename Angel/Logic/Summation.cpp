@@ -22,7 +22,7 @@ Expression Summation::Simplify() const
     // TODO could maybe sum them all if they are all elements
 }
 
-Match Summation::Matches(const Expression&, const Variables& vars) const
+Expression Summation::Matches(const Expression&, const Substitutions& substitutions) const
 {
     // TODO: Summation matches with mathematical simplication
     // X+1 matches 3 if X is 2 
@@ -31,12 +31,12 @@ Match Summation::Matches(const Expression&, const Variables& vars) const
     return Boolean(false);
 }
 
-Summation Summation::Substitute(const Variables& substitutions) const
+Summation Summation::Substitute(const Substitutions& substitutions) const
 {
     return SubstituteItems(substitutions);
 }
 
-Expression Summation::Infer(const Knowledge& k, const Variables& substitutions) const
+Expression Summation::Infer(const Knowledge& k, const Substitutions& substitutions) const
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing
     // this can, for instance, be done by accumulating an Expression and making Objects implement operator+(Expression) etc

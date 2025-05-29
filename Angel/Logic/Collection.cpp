@@ -88,7 +88,7 @@ Collection Collection::SimplifyItems() const
     return simplified;   
 }
 
-Collection Collection::SubstituteItems(const Variables& substitutions) const
+Collection Collection::SubstituteItems(const Substitutions& substitutions) const
 {
     Collection substitute; 
     substitute.reserve(size());
@@ -114,11 +114,11 @@ Collection Collection::SubstituteItems(const Variables& substitutions) const
     return substitute;   
 }
 
-Match Collection::Matches(Collection_subrange range, const Variables& variables) const
+Expression Collection::Matches(Collection_subrange range, const Substitutions& substitutions) const
 {
     auto range_it = range.begin();
     const_iterator it = begin();
-    Variables vars;
+    Substitutions vars;
     while(it!=end() || range_it!=range.end())
     {
         Expression itemMatch;

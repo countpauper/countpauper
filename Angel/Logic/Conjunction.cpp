@@ -27,19 +27,19 @@ Expression Conjunction::Simplify() const
     return simpler;
 }
 
-Match Conjunction::Matches(const Expression&, const Variables& vars) const
+Expression Conjunction::Matches(const Expression&, const Substitutions& substitutions) const
 {
     // TODO: Conjunctions match with logical simplication
     // true & X matches true if X is true. 
     return Boolean(false);
 }
 
-Conjunction Conjunction::Substitute(const Variables& substitutions) const
+Conjunction Conjunction::Substitute(const Substitutions& substitutions) const
 {
     return SubstituteItems(substitutions);
 }
 
-Expression Conjunction::Infer(const Knowledge& k, const Variables& substitutions) const
+Expression Conjunction::Infer(const Knowledge& k, const Substitutions& substitutions) const
 {
     for(const auto& item: *this)
     {

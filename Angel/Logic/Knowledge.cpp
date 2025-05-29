@@ -50,8 +50,8 @@ size_t Knowledge::Know(Expression&& clause)
 
 Expression Knowledge::Infer(const Expression& expression) const
 {
-    Variables vars;
-    return expression.Infer(*this, vars);
+    Substitutions subs;
+    return expression.Infer(*this, subs);
 }
 
 

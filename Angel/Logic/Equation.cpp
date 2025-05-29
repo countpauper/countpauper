@@ -26,19 +26,19 @@ Expression ExpressionSimplifier(const Expression& e)
     return e.Simplify();
 }
 
-Match Equation::Matches(const Expression&, const Variables& vars) const
+Expression Equation::Matches(const Expression&, const Substitutions& substitutions) const
 {
     // TODO: Equaiton match with logical simplication
     // true & X matches true if X is true. 
     return Boolean(false);
 }
 
-Equation Equation::Substitute(const Variables& substitutions) const
+Equation Equation::Substitute(const Substitutions& substitutions) const
 {
     return SubstituteItems(substitutions);
 }
 
-Expression Equation::Infer(const Knowledge& k, const Variables& substitutions) const
+Expression Equation::Infer(const Knowledge& k, const Substitutions& substitutions) const
 {
     if (size()<2)
         return Boolean(true);

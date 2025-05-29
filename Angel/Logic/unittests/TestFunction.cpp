@@ -14,7 +14,7 @@ TEST(Function, Construction)
     EXPECT_TRUE(bool(Function(callback.AsStdFunction(), "test")));
     EXPECT_EQ(Function(callback.AsStdFunction(), "test"), Function(callback.AsStdFunction(), "another test"));
     EXPECT_EQ(Function(callback.AsStdFunction(), "test"), Function(callback.AsStdFunction(), "another test"));
-    Function::Callback anotherCallback = [](const Knowledge&, const Variables&) -> Expression
+    Function::Callback anotherCallback = [](const Knowledge&, const Substitutions&) -> Expression
     {
         return Boolean(false);
     };

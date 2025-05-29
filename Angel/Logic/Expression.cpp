@@ -114,7 +114,7 @@ Expression Expression::Simplify() const
         }},   *this);      
 }
 
-Expression Expression::Substitute(const Variables& substitutions) const
+Expression Expression::Substitute(const Substitutions& substitutions) const
 {
     return std::visit(overloaded_visit{
         [](std::monostate)  
@@ -136,15 +136,15 @@ Expression Expression::Substitute(const Variables& substitutions) const
 }
 
 
-Match Expression::Matches(const Expression& e, const Variables& subs) const 
+Expression Expression::Matches(const Expression& e, const Substitutions& subs) const 
 {
     return std::visit(overloaded_visit{
-        [](std::monostate) -> Match 
+        [](std::monostate) -> Expression 
         {
             assert(false);  // should never be matching against null-expression
             return Boolean(false);
         },
-        [&e, &subs, this]<IsElement T>(const T& element) -> Match 
+        [&e, &subs, this]<IsElement T>(const T& element) -> Expression 
         {
             const auto* var = e.GetIf<Variable>();
             if (var)
@@ -153,13 +153,13 @@ Match Expression::Matches(const Expression& e, const Variables& subs) const
                 return Boolean(true);            
             return Boolean(false); 
         },
-        [&e, &subs](const auto& obj) -> Match 
+        [&e, &subs](const auto& obj) 
         {
             return obj.Matches(e, subs);
         }},   *this);    
 }
 
-Expression Expression::Infer(const class Knowledge& knowledge, const Variables& vars) const
+Expression Expression::Infer(const class Knowledge& knowledge, const Substitutions& substitutions) const
 {
     return std::visit(overloaded_visit{
         [this](std::monostate)
@@ -169,8 +169,8 @@ Expression Expression::Infer(const class Knowledge& knowledge, const Variables& 
         []<IsElement T>(const T& element) -> Expression {
             return element; 
         },
-        [&knowledge, &vars](const auto& obj) -> Expression {
-            return obj.Infer(knowledge, vars);
+        [&knowledge, &substitutions](const auto& obj) -> Expression {
+            return obj.Infer(knowledge, substitutions);
         }
     }, *this);
 }

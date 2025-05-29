@@ -113,7 +113,7 @@ protected:
         return T(items.SimplifyItems()); 
     }
 
-    T SubstituteItems(const Variables& substitutions) const
+    T SubstituteItems(const Substitutions& substitutions) const
     {
         return T(items.SubstituteItems(substitutions));
     }

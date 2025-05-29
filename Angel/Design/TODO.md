@@ -40,14 +40,12 @@ the argument
 -   [*] Sequences for valence 2+ predicates
 -   [*] Disjunctions
 -   [*] Negation  
-- [ ] Console and built in commands
+- [ ] Console and built in commands useful for debugging
 -   [*] help 
 -   [ ] help($topic)
--   [ ] delete clauses
+-   [ ] delete clauses (lock knowledge? Special Functions with write access?)
 -   [ ] print  
 -   [ ] trace 
--   [ ] file IO
--   [ ] UI / stdin/out IO 
 - [ ] Functional 
 -   [*] define constants 
 -   [ ] define (non boolean) functions 
@@ -80,7 +78,8 @@ the argument
 -   [ ] Other MFINAE type matching or even some concept like syntax 
 -   [ ] free pairs `a:b` 
 -   [ ] Derive Clause from Pair or make an isClause() helper?
--   [ ] Namespace from `axiom:{set,}` preferably without the comma 
+-   [ ] Lambdas are free clauses
+-   [ ] Namespace from `axiom:{set,}` preferably without the comma when parsing. Are commas ever needed for collections? for arguments?
 -   [ ] dicts work as structs 
 -   [ ] set access with `.` (list done, full feature for unique) 
 -   [ ] Bag as unordered list if it has any advantages for speed and such 
@@ -90,8 +89,8 @@ the argument
 -    [ ] Add native cast functions (id, int, float, str, list, set, dict)
 -    [ ] Add native collections functions (size, empty)
 -    [ ] Add native collection casts
--    [ ] print
--    [ ] trace 
+-    [ ] file IO
+-    [ ] UI / stdin/out IO 
 - [ ] Custom functions
 -    [ ] Import of custom native functions (eg math)
 -    [ ] string functions 

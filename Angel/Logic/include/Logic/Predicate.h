@@ -1,7 +1,7 @@
 #pragma once
 #include "Logic/Id.h"
 #include "Logic/List.h"
-#include "Logic/Match.h"
+#include "Logic/Substitution.h"
 #include "Logic/Element.h"
 
 namespace Angel::Logic
@@ -23,9 +23,9 @@ public:
     bool operator==(const Predicate& other) const;
     std::size_t Hash() const;
     Expression Simplify() const;
-    Match Matches(const Expression& expression, const Variables& vars) const;
-    Predicate Substitute(const Variables& substitutions) const;
-    Expression Infer(const class Knowledge& knowledge, const Variables& substitutions) const;
+    Expression Matches(const Expression& expression, const Substitutions& substitions) const;
+    Predicate Substitute(const Substitutions& substitutions) const;
+    Expression Infer(const class Knowledge& knowledge, const Substitutions& substitutions) const;
 private:
     friend std::ostream& operator<<(std::ostream& os, const Predicate& );
     Id id;

@@ -37,7 +37,7 @@ Expression Variable::Simplify() const
     return *this;   
 }
 
-Expression Variable::Substitute(const Variables& substitutions) const
+Expression Variable::Substitute(const Substitutions& substitutions) const
 {
     for(const auto& condition : substitutions)
     {
@@ -56,9 +56,9 @@ Expression Variable::Substitute(const Variables& substitutions) const
     return *this;
 }
 
-Match Variable::Matches(const Expression& e, const Variables& variables, bool reverse) const
+Expression Variable::Matches(const Expression& e, const Substitutions& substitutions, bool reverse) const
 {
-    auto substitute = Substitute(variables);
+    auto substitute = Substitute(substitutions);
     if (const auto* stillVar = substitute.GetIf<Variable>())
     {
         if (*stillVar)
@@ -71,12 +71,12 @@ Match Variable::Matches(const Expression& e, const Variables& variables, bool re
     }
     else 
     {
-        return substitute.Matches(e, variables);
+        return substitute.Matches(e, substitutions);
     }
 }
 
 
-Expression Variable::Infer(const class Knowledge& k, const Variables& substitutions) const
+Expression Variable::Infer(const class Knowledge& k, const Substitutions& substitutions) const
 {
     for(const auto& condition : substitutions)
     {
@@ -85,11 +85,11 @@ Expression Variable::Infer(const class Knowledge& k, const Variables& substituti
             assert(equation->size()==2); // not determined what to do with long equations or unequations 
             if (equation->front() == *this)
             {
-                return equation->back();
+                return equation->back().Infer(k, substitutions);
             }
             if (equation->back() == *this)
             {
-                return equation->front();
+                return equation->front().Infer(k, substitutions);
             }
         }
     }

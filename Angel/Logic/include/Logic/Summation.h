@@ -1,6 +1,6 @@
 #pragma once
 #include "Logic/FlatCollection.h"
-#include "Logic/Match.h"
+#include "Logic/Substitution.h"
 #include "Logic/Element.h"
 #include "Logic/Operator.h"
 #include <iostream>
@@ -15,9 +15,9 @@ class Summation : public FlatCollection<Summation>
 public:
     using FlatCollection<Summation>::FlatCollection;
     Expression Simplify() const;
-    Match Matches(const Expression& expression, const Variables& vars) const;
-    Summation Substitute(const Variables& substitutions) const;
-    Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
+    Expression Matches(const Expression& expression, const Substitutions& substitutions) const;
+    Summation Substitute(const Substitutions& substitutions) const;
+    Expression Infer(const class Knowledge& k, const Substitutions& substitutions) const;
     bool operator==(const Summation& other) const;
 
     constexpr static BinaryOperator ope{L'+'};

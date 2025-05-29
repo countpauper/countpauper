@@ -84,7 +84,7 @@ Expression Set::Simplify() const
     return simplified;   
 }
 
-Match Set::Matches(const Expression& e, const Variables& variables) const
+Expression Set::Matches(const Expression& e, const Substitutions& substitutions) const
 {
     const Set* set = e.GetIf<Set>();
     if (!set)
@@ -100,7 +100,7 @@ Match Set::Matches(const Expression& e, const Variables& variables) const
     return Boolean(false);
 }
 
-Set Set::Substitute(const Variables& substitutions) const
+Set Set::Substitute(const Substitutions& substitutions) const
 {
     Set substitute; 
     for(const auto item: items)
@@ -111,7 +111,7 @@ Set Set::Substitute(const Variables& substitutions) const
 }
 
 
-Expression Set::Infer(const Knowledge& knowledge, const Variables& substitutions) const
+Expression Set::Infer(const Knowledge& knowledge, const Substitutions& substitutions) const
 {
     Set result;
     for(const auto& item: items)

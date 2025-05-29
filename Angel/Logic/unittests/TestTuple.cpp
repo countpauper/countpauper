@@ -19,8 +19,8 @@ TEST(Tuple, Query)
 	Knowledge k;
 	EXPECT_EQ(k.Infer(Tuple("Test")), Tuple("Test"));
 	EXPECT_EQ(k.Infer(Tuple("")), Tuple(""));
-	Variables vars{Equation{Tuple("Test"), List{Integer(2),Integer(3)}}};
-	EXPECT_EQ(Tuple("Test").Infer(k, vars), (List{Integer(2),Integer(3)}));
+	Substitutions subs{Equation{Tuple("Test"), List{Integer(2),Integer(3)}}};
+	EXPECT_EQ(Tuple("Test").Infer(k, subs), (List{Integer(2),Integer(3)}));
 }
 
 TEST(Tuple, MatchingHypothesis)
@@ -33,7 +33,7 @@ TEST(Tuple, MatchingHypothesis)
 
 TEST(Tuple, MatchingSubstitution)
 {
-	Variables substituted {Equation{Tuple("Y"),List{Integer(2), Integer(3)}}};
+	Substitutions substituted {Equation{Tuple("Y"),List{Integer(2), Integer(3)}}};
 	EXPECT_EQ((List{Integer(1), Integer(3)}).Matches(List{Tuple("Y")}, substituted).Simplify(), Boolean(false) );
 	EXPECT_EQ((List{Integer(2), Integer(3)}).Matches(List{Tuple("Y")}, substituted).Simplify(), Boolean(true) );
 	EXPECT_EQ((List{Integer(1), Integer(2), Integer(3)}).Matches(List{Integer(1), Tuple("Y")}, substituted).Simplify(), Boolean(true) );

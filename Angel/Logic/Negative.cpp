@@ -13,19 +13,19 @@ Expression Negative::Simplify() const
     return Negative{content->Simplify()};
 }
 
-Match Negative::Matches(const Expression& expression, const Variables& vars) const
+Expression Negative::Matches(const Expression& expression, const Substitutions& substitutions) const
 {
     // TODO: need to compute with remaining variables, then compare 
     return Boolean(false);
 }
 
 
-Negative Negative::Substitute(const Variables& substitutions) const
+Negative Negative::Substitute(const Substitutions& substitutions) const
 {
     return Negative(content->Substitute(substitutions));
 }
 
-Expression Negative::Infer(const class Knowledge& k, const Variables& substitutions) const
+Expression Negative::Infer(const class Knowledge& k, const Substitutions& substitutions) const
 {
     auto value = content->Infer(k, substitutions);
     auto intValue = value.Cast<Integer>();

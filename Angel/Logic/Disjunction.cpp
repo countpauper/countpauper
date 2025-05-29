@@ -27,18 +27,18 @@ Expression Disjunction::Simplify() const
     return simpler;
 }
 
-Match Disjunction::Matches(const Expression&, const Variables& vars) const
+Expression Disjunction::Matches(const Expression&, const Substitutions& substitutions) const
 {
     // TODO: Disjunction match with logical simplication
     // false & X matches true if X is true. 
     return Boolean(false);
 }
 
-Expression Disjunction::Substitute(const Variables& substitutions) const
+Expression Disjunction::Substitute(const Substitutions& substitutions) const
 {
     return SubstituteItems(substitutions);}
 
-Expression Disjunction::Infer(const Knowledge& k, const Variables& substitutions) const
+Expression Disjunction::Infer(const Knowledge& k, const Substitutions& substitutions) const
 {
     for(const auto& item: *this)
     {

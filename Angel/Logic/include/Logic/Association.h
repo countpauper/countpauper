@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Match.h"
+#include "Logic/Substitution.h"
 #include "Logic/Operator.h"
 #include <memory>
 
@@ -41,9 +41,9 @@ public:
     Association& operator=(Association&& o);
 
     Expression Simplify() const;
-    Match Matches(const Expression& expression, const Variables& vars) const;
-    Association Substitute(const Variables& substitutions) const;
-    Expression Infer(const class Knowledge& k, const Variables& substitutions) const;
+    Expression Matches(const Expression& expression, const Substitutions& substitutions) const;
+    Association Substitute(const Substitutions& substitutions) const;
+    Expression Infer(const class Knowledge& k, const Substitutions& substitutions) const;
     Expression Get(const Expression& key) const;
     bool operator==(const Association& other) const { return Pair::operator==(other); }
 

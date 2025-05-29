@@ -105,19 +105,19 @@ Expression Association::Simplify() const
     return Association(std::move(lhSimple), std::move(rhSimple));
 }
 
-Association Association::Substitute(const Variables& substitutions) const
+Association Association::Substitute(const Substitutions& substitutions) const
 {
     return Association(lhs->Substitute(substitutions), rhs->Substitute(substitutions));
 }
 
-Expression Association::Matches(const Expression& expression, const Variables& vars) const
+Expression Association::Matches(const Expression& expression, const Substitutions& substitutions) const
 {
     // TODO what does it mean? does only lhs need to match? 
     return Boolean(false);
 
 }
 
-Expression Association::Infer(const class Knowledge& k, const Variables& substitutions) const
+Expression Association::Infer(const class Knowledge& k, const Substitutions& substitutions) const
 {
     return Association{
         std::move(*lhs),

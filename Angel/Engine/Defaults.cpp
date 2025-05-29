@@ -1,7 +1,7 @@
 #include "Engine/Defaults.h"
 #include "Logic/Knowledge.h"
 #include "Logic/Expression.h"
-#include "Logic/Match.h"
+#include "Logic/Substitution.h"
 #include "Logic/Predicate.h"
 #include "Logic/Function.h"
 #include "Logic/String.h"
@@ -71,11 +71,11 @@ std::string Description(const Logic::Expression& e)
     }, e);
 }
 
-Logic::Expression Help(const Logic::Knowledge& k, const Logic::Variables& vars)
+Logic::Expression Help(const Logic::Knowledge& k, const Logic::Substitutions& args)
 {
-    Logic::Variable var("topic");
-    auto topic = var.Infer(k, vars);
-    if (topic == var)
+    Logic::Variable arg("topic");
+    auto topic = arg.Infer(k, args);
+    if (topic == arg)
     {
         auto root = k.Root();
         if (root.empty())
@@ -96,7 +96,7 @@ Logic::Expression Help(const Logic::Knowledge& k, const Logic::Variables& vars)
         // Check other terminonolgy. Hypothesis maybe more accurately thesis also check https://en.wikipedia.org/wiki/First-order_logic
         // The various Get() should use Match to see what they return, not just equivalence 
         // and match should (eventually) support the `.` operation. 
-        auto matches = k.Root().Get(Logic::Predicate(id, {Logic::Tuple("args")}));
+        auto matches = k.Root().Matches(Logic::Predicate(id, {Logic::Tuple("args")}),{});
         if (matches==Logic::Boolean(false)) 
         {
             throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(topic)));
@@ -110,7 +110,7 @@ Logic::Expression Help(const Logic::Knowledge& k, const Logic::Variables& vars)
     }
 }
 
-Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Variables& var)
+Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Substitutions& args)
 {
     // TODO: implement, also how if knowledge is constant. 
     // this is likely one of the view functions that will change the knowledge besides : 

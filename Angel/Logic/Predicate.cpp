@@ -57,7 +57,7 @@ Expression Predicate::Simplify() const
 }
 
 
-Match Predicate::Matches(const Expression& inferred, const Variables& vars) const
+Expression Predicate::Matches(const Expression& inferred, const Substitutions& substitutions) const
 {
 	const auto* predicate = inferred.GetIf<Predicate>();
 	if (!predicate)
@@ -65,17 +65,17 @@ Match Predicate::Matches(const Expression& inferred, const Variables& vars) cons
 	
 	if (id != predicate->id) // Variable predicate names not (yet) supported
 		return Boolean(false);
-	return arguments.Matches(predicate->arguments, vars);
+	return arguments.Matches(predicate->arguments, substitutions);
 }
 
-Predicate Predicate::Substitute(const Variables& substitutions) const
+Predicate Predicate::Substitute(const Substitutions& substitutions) const
 {
     return Predicate(id, arguments.Substitute(substitutions));
 }
 
-Variables LeftVariablesOnly(Variables& substitutions)
+Substitutions LeftVariablesOnly(Substitutions& substitutions)
 {
-    Variables result;
+    Substitutions result;
     for(const auto& sub : substitutions)
     {
         const auto& equation = sub.Get<Equation>();
@@ -91,7 +91,7 @@ Variables LeftVariablesOnly(Variables& substitutions)
     return result;
 }
 
-Expression Hypothesis(Expression&& value, Expression&& current, Variables&& substitutions)
+Expression Hypothesis(Expression&& value, Expression&& current, Substitutions&& substitutions)
 {   // variables in the query end up in the substitutions as $Var = value 
     // variables in the axiom that are matched to the query as value = $var 
     // this is done through the `reverse` option in Variable::Matches, which is used 
@@ -111,7 +111,7 @@ Expression Hypothesis(Expression&& value, Expression&& current, Variables&& subs
     return Association{std::move(value), Disjunction{std::move(current), std::move(left)}}.Simplify();
 }
 
-Expression Predicate::Infer(const Knowledge& knowledge, const Variables& substitutions) const
+Expression Predicate::Infer(const Knowledge& knowledge, const Substitutions& substitutions) const
 {
 	Predicate computed(id, std::get<List>(arguments.Infer(knowledge, substitutions)));
 	Set result;
@@ -120,7 +120,7 @@ Expression Predicate::Infer(const Knowledge& knowledge, const Variables& substit
 	for(auto hypothesis: hypotheses)
 	{
 		Expression value;
-		Variables conditions;
+		Substitutions conditions;
 		if (auto* association = hypothesis.GetIf<Association>())
 		{
 			conditions = association->Right().Get<Conjunction>();
