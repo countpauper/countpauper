@@ -63,4 +63,21 @@ TEST(Variable, Hypothesis)
 	}));
 }
 
+TEST(Variable, InferValue)
+{
+	Knowledge k;
+	Substitutions subs {Equation{Variable("X"),Integer(24)},
+						Equation{Integer(25), Variable("Y")}};
+	EXPECT_EQ(Variable("X").Infer(k, subs), Integer(24));	
+	EXPECT_EQ(Variable("Y").Infer(k, subs), Integer(25));	
+}
+
+TEST(Variable, InferVariable)
+{
+	Knowledge k;
+	Substitutions subs {Equation{Variable("X"),Integer(2)}};
+	EXPECT_EQ(Variable("Y").Infer(k, subs), Variable("Y"));	
+	EXPECT_EQ(Variable("").Infer(k, subs), Variable(""));	
+}
+
 }

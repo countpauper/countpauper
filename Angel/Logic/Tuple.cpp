@@ -43,11 +43,12 @@ Expression Tuple::Substitute(const Substitutions& substitutions) const
     {
         if (const auto* equation = condition.GetIf<Equation>())
         {
-            if (equation->front() == *this)
+            assert(equation->size() == 2); // not yet implemented multi equation or error for single equation
+            if (equation->front() == Variable(name))
             {   
                 return equation->back().Substitute(substitutions);
             }
-            if (equation->back() == *this)
+            if (equation->back() == Variable(name))
             {
                 return equation->front().Substitute(substitutions);
             }
@@ -63,9 +64,9 @@ Expression Tuple::Matches(Collection_subrange range, const Substitutions& substi
     {
         if (*stillVar)
             if (reverse)
-                return Equation{*stillVar, List(range)};
+                return Equation{Variable(name), List(range)};
             else 
-                return Equation{List(range), *stillVar};
+                return Equation{List(range), Variable(name)};
         else
             return Boolean(true);   // anonymous tuple 
     }
@@ -88,12 +89,11 @@ Expression Tuple::Matches(const Expression& e, const Substitutions& substitution
     auto substitute = Substitute(substitutions);
     if (const auto* stillVar = substitute.GetIf<Tuple>())
     {
-        return Boolean(false);
         if (*stillVar)
             if (reverse)
-                return Equation{*stillVar, e};
+                return Equation{Variable(name), e};
             else
-                return Equation{e, *stillVar};
+                return Equation{e, Variable(name)};
         else
             return Boolean(true);   // anonymous
     }
@@ -111,11 +111,11 @@ Expression Tuple::Infer(const class Knowledge& k, const Substitutions& substitut
         if (const auto* equation = condition.GetIf<Equation>())
         {
             assert(equation->size()==2); // not determined what to do with long equations or unequations 
-            if (equation->front() == *this)
+            if (equation->front() == Variable(name))
             {
                 return equation->back().Infer(k, substitutions);
             }
-            if (equation->back() == *this)
+            if (equation->back() == Variable(name))
             {
                 return equation->front().Infer(k, substitutions);
             }

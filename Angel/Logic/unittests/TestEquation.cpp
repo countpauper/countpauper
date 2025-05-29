@@ -21,8 +21,6 @@ TEST(Equation, Construction)
 TEST(Equation, Equations)
 {
     Knowledge k;
-    EXPECT_EQ(k.Infer(Equation{}), Boolean(true));
-    EXPECT_EQ(k.Infer(Equation{Integer(1)}), Boolean(true));
     EXPECT_EQ(k.Infer(Equation{Integer(1), Integer(2)}), Boolean(false));
     EXPECT_EQ(k.Infer(Equation{Integer(1), Boolean(true)}), Boolean(true));
 }
@@ -34,6 +32,14 @@ TEST(Equation, Nest)
     //     (Equation{Integer(1), Integer(2)}));
 }
 
+TEST(Equation, MatchEquationIsTheSameAsMatchExpression)
+{
+    EXPECT_EQ((Equation{Integer(3)}).Matches(Integer(3), {}).Simplify(), Boolean(true));
+    EXPECT_EQ((Equation{Integer(1)}).Matches(Integer(2), {}).Simplify(), Boolean(false));
+    EXPECT_EQ((Equation{Integer(-1)}).Matches(Variable("X"), {}), (Equation{Variable("X"), Integer(-1)}));
+    
+}
+
 TEST(Equation, Substitute)
 {
 	EXPECT_EQ((Equation{Integer(3), Variable("S")}).Substitute(Conjunction{Equation{Variable("S"), String("three")}}),
@@ -42,9 +48,8 @@ TEST(Equation, Substitute)
 
 TEST(Equation, Inference)
 {
-    Knowledge k;
-    k.Know(Predicate("cat"));
-    EXPECT_EQ(k.Infer(Equation{Predicate("cat")}), Boolean(true));
+    Knowledge k { Predicate("cat") };
+    EXPECT_EQ(k.Infer(Equation{Predicate("cat"), Boolean(true)}), Boolean(true));
 }
 
 TEST(Equation, to_string)

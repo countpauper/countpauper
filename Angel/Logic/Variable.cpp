@@ -82,7 +82,10 @@ Expression Variable::Infer(const class Knowledge& k, const Substitutions& substi
     {
         if (const auto* equation = condition.GetIf<Equation>())
         {
-            assert(equation->size()==2); // not determined what to do with long equations or unequations 
+            // not determined what to do with long equations or unequations 
+            // if any item in the equation is the variable another can be inferred.
+            // this could have a preference: elements highest, oprations middle, variables last
+            assert(equation->size()==2); 
             if (equation->front() == *this)
             {
                 return equation->back().Infer(k, substitutions);

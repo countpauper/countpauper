@@ -661,11 +661,59 @@ cat(ginny)?
 ```
 cat(ginny)
 cat($X)?
-X=ginny
+X=$ginny
 ```
-How it works is `cat($X)` **hypothesizes** `$X=ginny`. This hypothesis remains until there is a contradiction, in which 
-case it backtracks like prolog and tries another hypothesis if one is available.
+How it works is `cat(X)` **hypothesizes** `ginny=X`. This hypothesis remains until there is a contradiction, in which 
+case it backtracks like prolog and tries another hypothesis if one is available. 
 
+## Query operators 
+The default comparison operator for matching arguments is `=`. It hypotesises a single value for which 
+the equation is true, but other comparison opeartors can be used as prefix. .
+
+## Prefix comparison operators without variables. 
+With or without variables, prefix comparison operators can be used when matching 
+```
+positive(>0)
+> positive(-1)
+false
+```
+The queried argument is filled in as the left hand side and if it's true it matches. If the right hand side is an Variable it 
+becomes part of the hypothesis. If the query is a variable it also becomes part of the hypthesis. 
+```
+positive(>0)
+> positive($X)
+true: $X>0
+```
+or 
+```
+cat(@{max,ginny})
+> cat(max)?
+... true:max@{max,ginny}
+true 
+> cat($C)?
+$C@{max,ginny}
+```
+
+### Tuples
+When matching containers, instead of the single element variable the tuple variable prefix `*` can 
+be used. 
+```
+cat(*x): cat(*X)
+cat(ginny, itsybitsy)
+> cat(ginny)?
+... X=[ginny,itsybitsy]
+... cat(ginny) & cat(itsybitsy)
+... ... cat(ginny)?
+... true
+... ... cat(itsybitsy)?
+... false
+false 
+```
+This hypothesis that the variable $X is a container that matches the remaining elements in the container (could be empty).
+The type of container is the same as the container being matched.
+
+### Tuple substitutions 
+Any variable that contains a container can be substituted to match multiple elements. This is the inverse of the tuple. 
 
 ## Sequences = ordered non-unique collection 
 you can use the @ operator to check membership of a collection 

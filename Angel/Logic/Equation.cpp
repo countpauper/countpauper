@@ -2,6 +2,7 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Expression.h"
 #include <ranges>
+#include <cassert>
 
 namespace Angel::Logic
 {
@@ -26,11 +27,12 @@ Expression ExpressionSimplifier(const Expression& e)
     return e.Simplify();
 }
 
-Expression Equation::Matches(const Expression&, const Substitutions& substitutions) const
+Expression Equation::Matches(const Expression& exp, const Substitutions& substitutions) const
 {
+    assert(size()==1);  // single element equations can be matched but not inferred. Predicate argument only
     // TODO: Equaiton match with logical simplication
     // true & X matches true if X is true. 
-    return Boolean(false);
+    return front().Matches(exp, substitutions);
 }
 
 Equation Equation::Substitute(const Substitutions& substitutions) const
@@ -40,8 +42,7 @@ Equation Equation::Substitute(const Substitutions& substitutions) const
 
 Expression Equation::Infer(const Knowledge& k, const Substitutions& substitutions) const
 {
-    if (size()<2)
-        return Boolean(true);
+    assert(size()>1);   // single element equations can't be inferred only matched
     Expression first = front().Infer(k, substitutions);
     for(const auto& item: *this | std::views::drop(1))
     {

@@ -85,7 +85,7 @@ Substitutions LeftVariablesOnly(Substitutions& substitutions)
 		}
 		else if (equation.front().Is<Tuple>())
 		{
-			result.emplace_back(std::move(equation));
+			assert(false); // tuples should not be in the hypothesis
 		}
     }
     return result;

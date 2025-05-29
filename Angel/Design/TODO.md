@@ -58,6 +58,7 @@ the argument
 - Python
 -   [ ] namespaces
 -   [ ] Indexing lists (not sets, only)  [x,y,z][1]
+-   [ ] Add floating points and conversions
 -   [ ] ranges [x..y] 
 -   [ ] infinite ranges [..y]
 -   [ ] More advanced ranges, with step ?  (syntax?) x..y*3 is step 3 but to from x*3 to y*3 ? 
@@ -72,7 +73,7 @@ the argument
 -   [ ] Apply functions on sequences, sets and arrays with for each 
 - [ ] Advanced
 -   [ ] Tautology protection cat: cat (or longer) is an error
--   [ ] Add floating points and conversions
+-   [ ] Prefix comparators for matching. 
 -   [ ] For any operator `@` while infering 
 -   [ ] For any & each operators also while matching (each sort of done with Tuple I guess)
 -   [ ] Other MFINAE type matching or even some concept like syntax 
