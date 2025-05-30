@@ -210,7 +210,7 @@ cat($X)?
 ```
 
 ## Occam's razor and hypothesis priority 
-When multiple matches are possible, the match(es) with the least amount of substitutions are used. 
+When multiple matches are possible, the match(es) with the least amount of hypothesis are used. 
 This is also used to implement recursion and logical induction. 
 ```
 fibonachi(1)
@@ -712,7 +712,7 @@ false
 This hypothesis that the variable $X is a container that matches the remaining elements in the container (could be empty).
 The type of container is the same as the container being matched.
 
-### Tuple substitutions 
+### Tuple hypothesis 
 Any variable that contains a container can be substituted to match multiple elements. This is the inverse of the tuple. 
 
 ## Sequences = ordered non-unique collection 
@@ -723,6 +723,17 @@ cat(ginny)?
 > true
 ```
 How it works: hypothesize `X=ginny`, `ginny @ {ginny,max}` is true because ginny is an element of that collection. 
+
+## Hypothesis while inferring
+
+Variable hypotheses can be generated while matching, but also while inferring the antecedent of a clause. 
+The scope of these variables is from the moment they are hypothesized until the end of the clause being inferred
+or in other words, all expressions inferred to prove the predicate share that hypothesis. 
+
+```
+cat($X):= $LEGS = 4 & legs($X,$LEGS)
+cat($X) := legs($X,$LEGS) & $LEGS=4 # equivalent
+```
 
 ## Sequence operations 
 Subsequent operators `|` and `&` and mathematical operators like `+` and `*` are grouped in a single operation expression. 

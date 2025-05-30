@@ -6,6 +6,6 @@ namespace Angel::Logic
     
 class Conjunction;
 class Expression;
-using Substitutions = Conjunction;
+using Hypothesis = Conjunction;
 
 }

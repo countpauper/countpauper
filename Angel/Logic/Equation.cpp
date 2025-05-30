@@ -27,32 +27,32 @@ Expression ExpressionSimplifier(const Expression& e)
     return e.Simplify();
 }
 
-Expression Equation::Matches(const Expression& exp, const Substitutions& substitutions) const
+Expression Equation::Matches(const Expression& exp, const Hypothesis& hypothesis) const
 {
     assert(size()==1);  // single element equations can be matched but not inferred. Predicate argument only
     // TODO: Equaiton match with logical simplication
     // true & X matches true if X is true. 
-    return front().Matches(exp, substitutions);
+    return front().Matches(exp, hypothesis);
 }
 
-Equation Equation::Substitute(const Substitutions& substitutions) const
+Equation Equation::Substitute(const Hypothesis& hypothesis) const
 {
-    return SubstituteItems(substitutions);
+    return SubstituteItems(hypothesis);
 }
 
-Expression Equation::Infer(const Knowledge& k, const Substitutions& substitutions) const
+Expression Equation::Infer(const Knowledge& k, Hypothesis& hypothesis) const
 {
     assert(size()>1);   // single element equations can't be inferred only matched
-    Expression first = front().Infer(k, substitutions);
+    Expression first = front().Infer(k, hypothesis);
     for(const auto& item: *this | std::views::drop(1))
     {
-        auto inferred = item.Infer(k, substitutions);
+        auto inferred = item.Infer(k, hypothesis);
         auto cast = inferred.Cast(first.AlternativeTypeId());
         // TODO: is matching the same as being equal? 
         // or do they have to be the same type or castable to the same type left or right way around
         // and how does order (not) matter then?  "23" = 23 = 23.0 those should pbly not be automatically equal 
         // but integer and float? 23.0=23   and 23=23.0 ? 
-        // at least substitutions would have to be done here. 
+        // at least hypothesis would have to be done here. 
         if (first != cast)
             return Boolean(false);
     }

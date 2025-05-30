@@ -37,29 +37,29 @@ Expression Tuple::Simplify() const
     return *this;   
 }
 
-Expression Tuple::Substitute(const Substitutions& substitutions) const
+Expression Tuple::Substitute(const Hypothesis& hypothesis) const
 {
-    for(const auto& condition : substitutions)
+    for(const auto& condition : hypothesis)
     {
         if (const auto* equation = condition.GetIf<Equation>())
         {
             assert(equation->size() == 2); // not yet implemented multi equation or error for single equation
             if (equation->front() == Variable(name))
             {   
-                return equation->back().Substitute(substitutions);
+                return equation->back().Substitute(hypothesis);
             }
             if (equation->back() == Variable(name))
             {
-                return equation->front().Substitute(substitutions);
+                return equation->front().Substitute(hypothesis);
             }
         }
     }
     return *this;
 }
 
-Expression Tuple::Matches(Collection_subrange range, const Substitutions& substitutions, bool reverse) const
+Expression Tuple::Matches(Collection_subrange range, const Hypothesis& hypothesis, bool reverse) const
 {
-    auto substitute = Substitute(substitutions);
+    auto substitute = Substitute(hypothesis);
     if (const auto* stillVar = substitute.GetIf<Tuple>())
     {
         if (*stillVar)
@@ -74,7 +74,7 @@ Expression Tuple::Matches(Collection_subrange range, const Substitutions& substi
     {
         if (const List* list = substitute.GetIf<List>())
         {
-            return list->Collection::Matches(range, substitutions);
+            return list->Collection::Matches(range, hypothesis);
         }
         else 
         {
@@ -84,9 +84,9 @@ Expression Tuple::Matches(Collection_subrange range, const Substitutions& substi
     }  
 }
 
-Expression Tuple::Matches(const Expression& e, const Substitutions& substitutions, bool reverse) const
+Expression Tuple::Matches(const Expression& e, const Hypothesis& hypothesis, bool reverse) const
 {
-    auto substitute = Substitute(substitutions);
+    auto substitute = Substitute(hypothesis);
     if (const auto* stillVar = substitute.GetIf<Tuple>())
     {
         if (*stillVar)
@@ -99,25 +99,25 @@ Expression Tuple::Matches(const Expression& e, const Substitutions& substitution
     }
     else 
     {
-        return substitute.Matches(e, substitutions);
+        return substitute.Matches(e, hypothesis);
     }
 }
 
 
-Expression Tuple::Infer(const class Knowledge& k, const Substitutions& substitutions) const
+Expression Tuple::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
 {
-    for(const auto& condition : substitutions)
+    for(const auto& condition : hypothesis)
     {
         if (const auto* equation = condition.GetIf<Equation>())
         {
             assert(equation->size()==2); // not determined what to do with long equations or unequations 
             if (equation->front() == Variable(name))
             {
-                return equation->back().Infer(k, substitutions);
+                return equation->back().Infer(k, hypothesis);
             }
             if (equation->back() == Variable(name))
             {
-                return equation->front().Infer(k, substitutions);
+                return equation->front().Infer(k, hypothesis);
             }
         }
     }

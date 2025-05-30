@@ -18,13 +18,13 @@ bool List::operator==(const List& rhs) const
     return Collection::operator==(rhs);
 }
 
-Expression List::Infer(const Knowledge& knowledge, const Substitutions& substitutions) const
+Expression List::Infer(const Knowledge& knowledge, Hypothesis& hypothesis) const
 {
     List result;
     std::transform(begin(), end(), std::back_inserter(result), 
-        [&knowledge, &substitutions](const Expression& item)
+        [&knowledge, &hypothesis](const Expression& item)
         {
-            return item.Infer(knowledge, substitutions);
+            return item.Infer(knowledge, hypothesis);
         });
     return result;
 }
@@ -36,19 +36,19 @@ Expression List::Simplify() const
 }
 
 
-List List::Substitute(const Substitutions& substitutions) const
+List List::Substitute(const Hypothesis& hypothesis) const
 {
-    return List(SubstituteItems(substitutions));
+    return List(SubstituteItems(hypothesis));
 }
 
-Expression List::Matches(const Expression& expression, const Substitutions& substitutions) const
+Expression List::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     const List* list = expression.GetIf<List>();
     if (!list)
         return Boolean(false);
-    auto substituted = list->Substitute(substitutions);
+    auto substituted = list->Substitute(hypothesis);
 
-    return Collection::Matches(Collection_subrange(substituted.begin(), substituted.end()), substitutions);
+    return Collection::Matches(Collection_subrange(substituted.begin(), substituted.end()), hypothesis);
 }
 
 

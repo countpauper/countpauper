@@ -57,7 +57,7 @@ Expression Predicate::Simplify() const
 }
 
 
-Expression Predicate::Matches(const Expression& inferred, const Substitutions& substitutions) const
+Expression Predicate::Matches(const Expression& inferred, const Hypothesis& hypothesis) const
 {
 	const auto* predicate = inferred.GetIf<Predicate>();
 	if (!predicate)
@@ -65,18 +65,21 @@ Expression Predicate::Matches(const Expression& inferred, const Substitutions& s
 	
 	if (id != predicate->id) // Variable predicate names not (yet) supported
 		return Boolean(false);
-	return arguments.Simplify().Matches(predicate->arguments.Simplify(), substitutions);
+	return arguments.Simplify().Matches(predicate->arguments.Simplify(), hypothesis);
 }
 
-Predicate Predicate::Substitute(const Substitutions& substitutions) const
+Predicate Predicate::Substitute(const Hypothesis& hypothesis) const
 {
-    return Predicate(id, arguments.Substitute(substitutions));
+    return Predicate(id, arguments.Substitute(hypothesis));
 }
 
-Substitutions LeftVariablesOnly(Substitutions& substitutions)
+Hypothesis LeftVariablesOnly(const Hypothesis& hypothesis)
 {
-    Substitutions result;
-    for(const auto& sub : substitutions)
+	// TODO: input does not need to be const. Would be more performant if erase in place
+	// on the other hand keeping output hypothesis and infer context separate might
+	// remove the whole left/right hack
+    Hypothesis result;
+    for(const auto& sub : hypothesis)
     {
         const auto& equation = sub.Get<Equation>();
 		if (equation.front().Is<Variable>())
@@ -91,8 +94,8 @@ Substitutions LeftVariablesOnly(Substitutions& substitutions)
     return result;
 }
 
-Expression Hypothesis(Expression&& value, Expression&& current, Substitutions&& substitutions)
-{   // variables in the query end up in the substitutions as $Var = value 
+Expression ExtendResult(Expression&& value, Expression&& current, Hypothesis&& hypothesis)
+{   // variables in the query end up in the hypothesis as $Var = value 
     // variables in the axiom that are matched to the query as value = $var 
     // this is done through the `reverse` option in Variable::Matches, which is used 
     // while matching values to variables instead of matching variables to values.
@@ -105,33 +108,33 @@ Expression Hypothesis(Expression&& value, Expression&& current, Substitutions&& 
             return std::move(current);
         else
             return std::move(value);  
-    auto left = LeftVariablesOnly(substitutions);
+    auto left = LeftVariablesOnly(hypothesis);
     // TODO: perhaps should compare with current (if disjunction all) conjunctions. 
     // ockam's razor should discard them or left depending on size
     return Association{std::move(value), Disjunction{std::move(current), std::move(left)}}.Simplify();
 }
 
-Expression Predicate::Infer(const Knowledge& knowledge, const Substitutions& substitutions) const
+Expression Predicate::Infer(const Knowledge& knowledge, Hypothesis& originalHypothesis) const
 {
-	Predicate simple(id, std::get<List>(arguments.Substitute(substitutions).Simplify()));
+	Predicate simple(id, std::get<List>(arguments.Substitute(originalHypothesis).Simplify()));
 	Set result;
 	auto hypotheses = knowledge.Matches(simple);
 
-	for(auto hypothesis: hypotheses)
+	for(auto option: hypotheses)
 	{
 		Expression value;
-		Substitutions conditions;
-		if (auto* association = hypothesis.GetIf<Association>())
+		Hypothesis conditions;
+		if (auto* association = option.GetIf<Association>())
 		{
 			conditions = association->Right().Get<Conjunction>();
 			value = association->Left().Infer(knowledge, conditions);
 		}
 		else 
 		{
-			value = hypothesis.Infer(knowledge, {});
+			value = knowledge.Infer(option);
 		}
 		Expression current = result.Pop(value);
-		result.Add(Hypothesis(std::move(value), std::move(current), std::move(conditions)));
+		result.Add(ExtendResult(std::move(value), std::move(current), std::move(conditions)));
 	}
 	if (result.empty())
 		return Boolean(false);

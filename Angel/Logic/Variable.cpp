@@ -37,28 +37,28 @@ Expression Variable::Simplify() const
     return *this;   
 }
 
-Expression Variable::Substitute(const Substitutions& substitutions) const
+Expression Variable::Substitute(const Hypothesis& hypothesis) const
 {
-    for(const auto& condition : substitutions)
+    for(const auto& condition : hypothesis)
     {
         if (const auto* equation = condition.GetIf<Equation>())
         {
             if (equation->front() == *this)
             {   
-                return equation->back().Substitute(substitutions);
+                return equation->back().Substitute(hypothesis);
             }
             if (equation->back() == *this)
             {
-                return equation->front().Substitute(substitutions);
+                return equation->front().Substitute(hypothesis);
             }
         }
     }
     return *this;
 }
 
-Expression Variable::Matches(const Expression& e, const Substitutions& substitutions, bool reverse) const
+Expression Variable::Matches(const Expression& e, const Hypothesis& hypothesis, bool reverse) const
 {
-    auto substitute = Substitute(substitutions);
+    auto substitute = Substitute(hypothesis);
     if (const auto* stillVar = substitute.GetIf<Variable>())
     {
         if (*stillVar)
@@ -71,14 +71,14 @@ Expression Variable::Matches(const Expression& e, const Substitutions& substitut
     }
     else 
     {
-        return substitute.Matches(e, substitutions);
+        return substitute.Matches(e, hypothesis);
     }
 }
 
 
-Expression Variable::Infer(const class Knowledge& k, const Substitutions& substitutions) const
+Expression Variable::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
 {
-    for(const auto& condition : substitutions)
+    for(const auto& condition : hypothesis)
     {
         if (const auto* equation = condition.GetIf<Equation>())
         {
@@ -88,11 +88,11 @@ Expression Variable::Infer(const class Knowledge& k, const Substitutions& substi
             assert(equation->size()==2); 
             if (equation->front() == *this)
             {
-                return equation->back().Infer(k, substitutions);
+                return equation->back().Infer(k, hypothesis);
             }
             if (equation->back() == *this)
             {
-                return equation->front().Infer(k, substitutions);
+                return equation->front().Infer(k, hypothesis);
             }
         }
     }

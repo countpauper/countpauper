@@ -114,7 +114,7 @@ Expression Expression::Simplify() const
         }},   *this);      
 }
 
-Expression Expression::Substitute(const Substitutions& substitutions) const
+Expression Expression::Substitute(const Hypothesis& hypothesis) const
 {
     return std::visit(overloaded_visit{
         [](std::monostate)  
@@ -129,14 +129,14 @@ Expression Expression::Substitute(const Substitutions& substitutions) const
         {
             return *this;
         },
-        [&substitutions](const auto& obj) -> Expression
+        [&hypothesis](const auto& obj) -> Expression
         {
-            return obj.Substitute(substitutions);
+            return obj.Substitute(hypothesis);
         }},   *this);      
 }
 
 
-Expression Expression::Matches(const Expression& e, const Substitutions& subs) const 
+Expression Expression::Matches(const Expression& e, const Hypothesis& hypothesis) const 
 {
     return std::visit(overloaded_visit{
         [](std::monostate) -> Expression 
@@ -144,22 +144,22 @@ Expression Expression::Matches(const Expression& e, const Substitutions& subs) c
             assert(false);  // should never be matching against null-expression
             return Boolean(false);
         },
-        [&e, &subs, this]<IsElement T>(const T& element) -> Expression 
+        [&e, &hypothesis, this]<IsElement T>(const T& element) -> Expression 
         {
             const auto* var = e.GetIf<Variable>();
             if (var)
-                return var->Matches(*this, subs, true);
+                return var->Matches(*this, hypothesis, true);
             if (e==element)
                 return Boolean(true);            
             return Boolean(false); 
         },
-        [&e, &subs](const auto& obj) 
+        [&e, &hypothesis](const auto& obj) 
         {
-            return obj.Matches(e, subs);
+            return obj.Matches(e, hypothesis);
         }},   *this);    
 }
 
-Expression Expression::Infer(const class Knowledge& knowledge, const Substitutions& substitutions) const
+Expression Expression::Infer(const class Knowledge& knowledge, Hypothesis& hypothesis) const
 {
     return std::visit(overloaded_visit{
         [this](std::monostate)
@@ -169,8 +169,8 @@ Expression Expression::Infer(const class Knowledge& knowledge, const Substitutio
         []<IsElement T>(const T& element) -> Expression {
             return element; 
         },
-        [&knowledge, &substitutions](const auto& obj) -> Expression {
-            return obj.Infer(knowledge, substitutions);
+        [&knowledge, &hypothesis](const auto& obj) -> Expression {
+            return obj.Infer(knowledge, hypothesis);
         }
     }, *this);
 }

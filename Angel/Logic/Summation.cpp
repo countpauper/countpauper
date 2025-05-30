@@ -38,7 +38,7 @@ Expression Summation::Simplify() const
         return std::move(simple);
 }
 
-Expression Summation::Matches(const Expression&, const Substitutions& substitutions) const
+Expression Summation::Matches(const Expression&, const Hypothesis& hypothesis) const
 {
     // TODO: Summation matches with mathematical simplication
     // X+1 matches 3 if X is 2 
@@ -47,19 +47,19 @@ Expression Summation::Matches(const Expression&, const Substitutions& substituti
     return Boolean(false);
 }
 
-Summation Summation::Substitute(const Substitutions& substitutions) const
+Summation Summation::Substitute(const Hypothesis& hypothesis) const
 {
-    return SubstituteItems(substitutions);
+    return SubstituteItems(hypothesis);
 }
 
-Expression Summation::Infer(const Knowledge& k, const Substitutions& substitutions) const
+Expression Summation::Infer(const Knowledge& k, Hypothesis& hypothesis) const
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing
     // this can, for instance, be done by accumulating an Expression and making Objects implement operator+(Expression) etc
     long value = std::accumulate(begin(), end(), 0L,
-        [&k, &substitutions](long accumulated, const Expression& item)
+        [&k, &hypothesis](long accumulated, const Expression& item)
         {
-            auto inferred = item.Infer(k, substitutions);
+            auto inferred = item.Infer(k, hypothesis);
             auto value = inferred.Cast<Integer>();
             return accumulated += *value;
         });

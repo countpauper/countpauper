@@ -84,7 +84,7 @@ Expression Set::Simplify() const
     return simplified;   
 }
 
-Expression Set::Matches(const Expression& e, const Substitutions& substitutions) const
+Expression Set::Matches(const Expression& e, const Hypothesis& hypothesis) const
 {
     const Set* set = e.GetIf<Set>();
     if (!set)
@@ -100,18 +100,18 @@ Expression Set::Matches(const Expression& e, const Substitutions& substitutions)
     return Boolean(false);
 }
 
-Set Set::Substitute(const Substitutions& substitutions) const
+Set Set::Substitute(const Hypothesis& hypothesis) const
 {
     Set substitute; 
     for(const auto item: items)
     {
-        substitute.Add(Association(item.first.Substitute(substitutions), item.second.Substitute(substitutions)).Simplify());
+        substitute.Add(Association(item.first.Substitute(hypothesis), item.second.Substitute(hypothesis)).Simplify());
     }
     return substitute;   
 }
 
 
-Expression Set::Infer(const Knowledge& knowledge, const Substitutions& substitutions) const
+Expression Set::Infer(const Knowledge& knowledge, Hypothesis& hypothesis) const
 {
     Set result;
     for(const auto& item: items)
@@ -124,8 +124,8 @@ Expression Set::Infer(const Knowledge& knowledge, const Substitutions& substitut
         // for cases where these are clauses eg legs(X+1): max legs(X*2): ginny, 
         // this disjunction also seems to make sense legs(2): max | ginny, if we are 
         // hypothesizing that both have 2 legs 
-        result.items.emplace(item.first.Infer(knowledge, substitutions),
-            item.second.Infer(knowledge,substitutions));
+        result.items.emplace(item.first.Infer(knowledge, hypothesis),
+            item.second.Infer(knowledge,hypothesis));
     }
     return result;
 }

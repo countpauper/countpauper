@@ -1,7 +1,7 @@
 #include "Engine/Defaults.h"
 #include "Logic/Knowledge.h"
 #include "Logic/Expression.h"
-#include "Logic/Substitution.h"
+#include "Logic/Hypothesis.h"
 #include "Logic/Predicate.h"
 #include "Logic/Function.h"
 #include "Logic/String.h"
@@ -85,7 +85,7 @@ Logic::String HelpList(const Logic::Knowledge& k)
     return Logic::String(ss.str());
 }
 
-Logic::Predicate MakeSignature(const Logic::Id& id, Logic::Substitutions args)
+Logic::Predicate MakeSignature(const Logic::Id& id, Logic::Hypothesis args)
 {
     Logic::Variable var("args");
     Logic::List arglist = var.Substitute(args).Get<Logic::List>();
@@ -115,7 +115,7 @@ Logic::String HelpTopic(const Logic::Knowledge& k, const Logic::Id& id)
     return Logic::String(ss.str());
 }
 
-Logic::Expression GetArg(const Logic::Substitutions& args, const std::string_view name)
+Logic::Expression GetArg(const Logic::Hypothesis& args, const std::string_view name)
 {
     Logic::Variable arg(name);
     auto value = arg.Substitute(args);
@@ -129,7 +129,7 @@ Logic::Expression GetArg(const Logic::Substitutions& args, const std::string_vie
     }
 }
 
-Logic::Expression Help(const Logic::Knowledge& k, const Logic::Substitutions& args)
+Logic::Expression Help(const Logic::Knowledge& k, Logic::Hypothesis& args)
 {
     Logic::Expression topic = GetArg(args, "topic");
     if (topic)
@@ -143,12 +143,8 @@ Logic::Expression Help(const Logic::Knowledge& k, const Logic::Substitutions& ar
     }
 }
 
-Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Substitutions& args)
+Logic::Expression Delete(const Logic::Knowledge& k, Logic::Hypothesis& args)
 {
-    // TODO: implement, also how if knowledge is constant. 
-    // this is likely one of the view functions that will change the knowledge besides : 
-    // import and parse(<coude> )
-
     Logic::Expression target = GetArg(args, "id");
     if (target)
     {
@@ -162,6 +158,20 @@ Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Substitutions& 
     return Logic::Integer(0);
 }
 
+Logic::Expression Print(const Logic::Knowledge& k, Logic::Hypothesis& args)
+{
+    Logic::Expression target = GetArg(args, "omething");
+    std::cout << target.Infer(k, args);
+    return Logic::Boolean(true);
+}
+
+
+Logic::Expression Trace(const Logic::Knowledge& k, Logic::Hypothesis& args)
+{
+    return Logic::Boolean(false);
+}
+
+
 void AddDefaults(Logic::Knowledge& knowledge)
 {
     knowledge.Know(Logic::Association{Logic::Predicate("help"), Logic::Function(Help, 
@@ -170,6 +180,12 @@ void AddDefaults(Logic::Knowledge& knowledge)
         "Describe the function matching the $topic.")});
     knowledge.Know(Logic::Association{Logic::Predicate("delete", {Logic::Variable("id")}), Logic::Function(Delete, 
         "Remove all the functions matching the $id.")});
+    knowledge.Know(Logic::Association{Logic::Predicate("print", {Logic::Variable("omething")}), Logic::Function(Print, 
+        "Write $omething to the standard output immediately.")});
+    knowledge.Know(Logic::Association{Logic::Predicate("trace"), Logic::Function(Trace, 
+        "Trace whenever any predicate is inferred with the arguments and hypothesis.")});        
+    knowledge.Know(Logic::Association{Logic::Predicate("trace", {Logic::Variable("predicate")}), Logic::Function(Trace, 
+        "Print whenever a matching predicate is inferred with the arguments and hypothesis.")});        
 }
 
 }

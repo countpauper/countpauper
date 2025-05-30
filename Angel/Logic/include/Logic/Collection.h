@@ -9,7 +9,7 @@ namespace Angel::Logic
 {
 
 class Expression;
-using Substitutions = class Conjunction;
+using Hypothesis = class Conjunction;
 using Collection_subrange = std::ranges::subrange<std::vector<Expression>::const_iterator, std::vector<Expression>::const_iterator>;
 
 template<typename T> class FlatCollection;
@@ -32,7 +32,7 @@ public:
     }
     ~Collection();
     Expression Get(const Expression& key) const;
-    Expression Matches(Collection_subrange range, const Substitutions& substitutions) const;
+    Expression Matches(Collection_subrange range, const Hypothesis& hypothesis) const;
     std::size_t Hash() const;
     bool operator==(const Collection& rhs) const;
 protected:
@@ -40,7 +40,7 @@ protected:
     friend class FlatCollection;
 
     Collection SimplifyItems() const;
-    Collection SubstituteItems(const Substitutions& substitutions) const;
+    Collection SubstituteItems(const Hypothesis& hypothesis) const;
     
 };
 

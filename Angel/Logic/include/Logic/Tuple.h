@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Substitution.h"
+#include "Logic/Hypothesis.h"
 #include <string>
 #include <vector>
 #include <ranges>
@@ -20,10 +20,10 @@ public:
     std::size_t Hash() const;
     std::string_view Name() const;
     Expression Simplify() const;
-    Expression Matches(Collection_subrange range, const Substitutions& substituions, bool reverse=false) const;
-    Expression Matches(const Expression& expression, const Substitutions& substitutions, bool reverse=false) const;
-    Expression Substitute(const Substitutions& substitutions) const;
-    Expression Infer(const class Knowledge& k, const Substitutions& substitutions) const;
+    Expression Matches(Collection_subrange range, const Hypothesis& substituions, bool reverse=false) const;
+    Expression Matches(const Expression& expression, const Hypothesis& hypothesis, bool reverse=false) const;
+    Expression Substitute(const Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& k, Hypothesis& hypothesis) const;
 private: 
     std::string name;
 };

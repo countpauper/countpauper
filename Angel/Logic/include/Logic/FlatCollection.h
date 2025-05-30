@@ -116,9 +116,9 @@ protected:
         return T(items.SimplifyItems()); 
     }
 
-    T SubstituteItems(const Substitutions& substitutions) const
+    T SubstituteItems(const Hypothesis& hypothesis) const
     {
-        return T(items.SubstituteItems(substitutions));
+        return T(items.SubstituteItems(hypothesis));
     }
 private:
     Collection items;

@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Substitution.h"
+#include "Logic/Hypothesis.h"
 #include <functional>
 #include <string>
 
@@ -11,13 +11,13 @@ class Expression;
 class Function
 {
 public:
-    using CallbackT = Expression(const Knowledge& k, const Substitutions& args);
+    using CallbackT = Expression(const Knowledge& k, Hypothesis& args);
     using Callback = std::function<CallbackT>;
 
     explicit Function(Callback cb, const std::string_view doc);
 
-    Expression Matches(const Expression& expression, const Substitutions& substitutions) const;
-    Expression Infer(const class Knowledge& k, const Substitutions& substitutions) const;
+    Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& k, Hypothesis& hypothesis) const;
     explicit operator bool() const;
 	bool operator==(const Function& other) const;
     std::string_view Documentation() const;

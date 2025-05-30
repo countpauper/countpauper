@@ -27,22 +27,23 @@ Expression Disjunction::Simplify() const
     return simpler;
 }
 
-Expression Disjunction::Matches(const Expression&, const Substitutions& substitutions) const
+Expression Disjunction::Matches(const Expression&, const Hypothesis& hypothesis) const
 {
     // TODO: Disjunction match with logical simplication
     // false & X matches true if X is true. 
     return Boolean(false);
 }
 
-Expression Disjunction::Substitute(const Substitutions& substitutions) const
+Expression Disjunction::Substitute(const Hypothesis& hypothesis) const
 {
-    return SubstituteItems(substitutions);}
+    return SubstituteItems(hypothesis);
+}
 
-Expression Disjunction::Infer(const Knowledge& k, const Substitutions& substitutions) const
+Expression Disjunction::Infer(const Knowledge& k, Hypothesis& hypothesis) const
 {
     for(const auto& item: *this)
     {
-        Expression inferred = item.Infer(k, substitutions);
+        Expression inferred = item.Infer(k, hypothesis);
         auto isTrue = inferred.Cast<Boolean>();
         if (isTrue)
             return inferred;

@@ -35,7 +35,7 @@ SourceSpan SourceSpan::sub(std::ptrdiff_t offset, std::ptrdiff_t newLength) cons
     std::ptrdiff_t newStart = std::max(0LL, offset + static_cast<std::ptrdiff_t>(from));
     std::ptrdiff_t maxLength = (from+length - newStart);
     if (newLength<0)
-        newLength = std::max(0LL, static_cast<std::ptrdiff_t>(length) + newLength);
+        newLength = std::max(0LL, static_cast<std::ptrdiff_t>(length) - offset + newLength);
     newLength = std::min(newLength, maxLength);
     assert(!source || newStart + newLength <= source->size());
     return SourceSpan{static_cast<std::size_t>(newStart), static_cast<std::size_t>(newLength), source};

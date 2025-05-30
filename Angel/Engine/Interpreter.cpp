@@ -86,6 +86,10 @@ Logic::Expression GenerateObject(Interpreter::SymbolStream& parse, bool allowId)
     {
         return Logic::Variable(input.location.sub(1).extract());
     }
+    else if (input.symbol == Interpreter::Symbol("string"))
+    {
+        return Logic::String(input.location.sub(1,-1).extract());
+    }
     else 
     {
         throw std::runtime_error(std::format("Unexpected object type {}", std::string(input.symbol)));

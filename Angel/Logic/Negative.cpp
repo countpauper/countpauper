@@ -6,28 +6,33 @@ namespace Angel::Logic
 
 Expression Negative::Simplify() const
 {
-    if (const Negative* neg = content->GetIf<Negative>()) 
+    auto simple = content->Simplify();
+    if (const Negative* neg = simple.GetIf<Negative>()) 
     {
         return (*neg)->Simplify();
     }
-    return Negative{content->Simplify()};
+    else if (const Integer* integer = simple.GetIf<Integer>())
+    {
+        return Integer(-**integer);
+    }
+    return Negative{std::move(simple)};
 }
 
-Expression Negative::Matches(const Expression& expression, const Substitutions& substitutions) const
+Expression Negative::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     // TODO: need to compute with remaining variables, then compare 
     return Boolean(false);
 }
 
 
-Negative Negative::Substitute(const Substitutions& substitutions) const
+Negative Negative::Substitute(const Hypothesis& hypothesis) const
 {
-    return Negative(content->Substitute(substitutions));
+    return Negative(content->Substitute(hypothesis));
 }
 
-Expression Negative::Infer(const class Knowledge& k, const Substitutions& substitutions) const
+Expression Negative::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
 {
-    auto value = content->Infer(k, substitutions);
+    auto value = content->Infer(k, hypothesis);
     auto intValue = value.Cast<Integer>();
     return Integer(- *intValue);
 }

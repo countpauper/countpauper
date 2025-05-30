@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Logic/Element.h"
-#include "Logic/Substitution.h"
+#include "Logic/Hypothesis.h"
 #include <map>
 #include <optional>
 
@@ -30,9 +30,9 @@ public:
 	const Expression* Get(const Expression& key) const;
 	Expression Pop(const Expression& e);
     Expression Simplify() const;
-    Expression Matches(const Expression& other, const Substitutions& substitions) const;
-    Set Substitute(const Substitutions& substitutions) const;
-    Expression Infer(const class Knowledge& knowledge, const Substitutions& substitutions) const;
+    Expression Matches(const Expression& other, const Hypothesis& substitions) const;
+    Set Substitute(const Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& knowledge, Hypothesis& hypothesis) const;
 	explicit operator bool() const;
 	std::size_t Hash() const;
 	bool operator==(const Set& rhs) const;

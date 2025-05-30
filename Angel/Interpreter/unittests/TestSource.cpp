@@ -39,7 +39,7 @@ TEST(SourceSpan, Sub)
     EXPECT_EQ(SourceSpan(2, 2).sub(1, 3), SourceSpan(3,1));
     EXPECT_EQ(SourceSpan(3, 2).sub(-2, 3), SourceSpan(1,3));
     EXPECT_EQ(SourceSpan(2, 2).sub(-3, 3), SourceSpan(0, 3));
-    EXPECT_EQ(SourceSpan(2, 2).sub(0, -1), SourceSpan(2, 1));
+    EXPECT_EQ(SourceSpan(2, 4).sub(1, -1), SourceSpan(3, 2));
     EXPECT_EQ(SourceSpan(3, 3).sub(1, -3), SourceSpan(4, 0));
     Source cat("cat");
     EXPECT_EQ(cat.span(0,3), SourceSpan(0, 3, &cat));

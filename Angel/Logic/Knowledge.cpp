@@ -59,8 +59,8 @@ size_t Knowledge::Forget(const Predicate& match)
 
 Expression Knowledge::Infer(const Expression& expression) const
 {
-    Substitutions subs;
-    return expression.Infer(*this, subs);
+    Hypothesis hypothesis;
+    return expression.Infer(*this, hypothesis);
 }
 
 Bag Knowledge::Matches(const Predicate& query) const

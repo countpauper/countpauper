@@ -88,7 +88,7 @@ Collection Collection::SimplifyItems() const
     return simplified;   
 }
 
-Collection Collection::SubstituteItems(const Substitutions& substitutions) const
+Collection Collection::SubstituteItems(const Hypothesis& hypothesis) const
 {
     Collection substitute; 
     substitute.reserve(size());
@@ -96,7 +96,7 @@ Collection Collection::SubstituteItems(const Substitutions& substitutions) const
     {
         if (const Tuple* tuple = item.GetIf<Tuple>())
         {
-            auto tupstitution = tuple->Substitute(substitutions);
+            auto tupstitution = tuple->Substitute(hypothesis);
             if (const List* insert = tupstitution.GetIf<List>()) // TODO could be other containers
             {
                 substitute.insert(substitute.end(), insert->begin(), insert->end());
@@ -108,17 +108,17 @@ Collection Collection::SubstituteItems(const Substitutions& substitutions) const
         }
         else 
         {
-            substitute.emplace_back(item.Substitute(substitutions));
+            substitute.emplace_back(item.Substitute(hypothesis));
         }
     }
     return substitute;   
 }
 
-Expression Collection::Matches(Collection_subrange range, const Substitutions& substitutions) const
+Expression Collection::Matches(Collection_subrange range, const Hypothesis& hypothesis) const
 {
     auto range_it = range.begin();
     const_iterator it = begin();
-    Substitutions vars;
+    Hypothesis vars;
     while(it!=end() || range_it!=range.end())
     {
         Expression itemMatch;

@@ -27,23 +27,23 @@ Expression Conjunction::Simplify() const
     return simpler;
 }
 
-Expression Conjunction::Matches(const Expression&, const Substitutions& substitutions) const
+Expression Conjunction::Matches(const Expression&, const Hypothesis& hypothesis) const
 {
     // TODO: Conjunctions match with logical simplication
     // true & X matches true if X is true. 
     return Boolean(false);
 }
 
-Conjunction Conjunction::Substitute(const Substitutions& substitutions) const
+Conjunction Conjunction::Substitute(const Hypothesis& hypothesis) const
 {
-    return SubstituteItems(substitutions);
+    return SubstituteItems(hypothesis);
 }
 
-Expression Conjunction::Infer(const Knowledge& k, const Substitutions& substitutions) const
+Expression Conjunction::Infer(const Knowledge& k, Hypothesis& hypothesis) const
 {
     for(const auto& item: *this)
     {
-        auto inferred = item.Infer(k, substitutions);
+        auto inferred = item.Infer(k, hypothesis);
         auto isTrue = inferred.Cast<Boolean>();
         if (!isTrue)
             return isTrue; // or just inferred? true & 0 == 0?

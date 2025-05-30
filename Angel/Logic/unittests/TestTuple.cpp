@@ -19,7 +19,7 @@ TEST(Tuple, Query)
 	Knowledge k;
 	EXPECT_EQ(k.Infer(Tuple("Test")), Tuple("Test"));
 	EXPECT_EQ(k.Infer(Tuple("")), Tuple(""));
-	Substitutions subs{Equation{Variable("Test"), List{Integer(2),Integer(3)}}};
+	Hypothesis subs{Equation{Variable("Test"), List{Integer(2),Integer(3)}}};
 	EXPECT_EQ(Tuple("Test").Infer(k, subs), (List{Integer(2),Integer(3)}));
 }
 
@@ -33,7 +33,7 @@ TEST(Tuple, MatchingHypothesis)
 
 TEST(Tuple, MatchingSubstitution)
 {
-	Substitutions substituted {Equation{Variable("Y"),List{Integer(2), Integer(3)}}};
+	Hypothesis substituted {Equation{Variable("Y"),List{Integer(2), Integer(3)}}};
 	EXPECT_EQ((List{Integer(1), Integer(3)}).Matches(List{Tuple("Y")}, substituted).Simplify(), Boolean(false) );
 	EXPECT_EQ((List{Integer(2), Integer(3)}).Matches(List{Tuple("Y")}, substituted).Simplify(), Boolean(true) );
 	EXPECT_EQ((List{Integer(1), Integer(2), Integer(3)}).Matches(List{Integer(1), Tuple("Y")}, substituted).Simplify(), Boolean(true) );
@@ -71,7 +71,7 @@ TEST(Tuple, Hypothesis)
 TEST(Tuple, InferValue)
 {
 	Knowledge k;
-	Substitutions subs {Equation{Variable("X"),List{Integer(24)}},
+	Hypothesis subs {Equation{Variable("X"),List{Integer(24)}},
 						Equation{Set{Integer(25)},Variable("Y")}};
 	EXPECT_EQ(Tuple("X").Infer(k, subs), (List{Integer(24)}));	
 	EXPECT_EQ(Tuple("Y").Infer(k, subs), (Set{Integer(25)}));	
@@ -80,7 +80,7 @@ TEST(Tuple, InferValue)
 TEST(Tuple, InferVariable)
 {
 	Knowledge k;
-	Substitutions subs {Equation{Variable("X"), (List{Integer(2)})}};
+	Hypothesis subs {Equation{Variable("X"), (List{Integer(2)})}};
 	EXPECT_EQ(Tuple("Y").Infer(k, subs), Tuple("Y"));	
 	EXPECT_EQ(Tuple("").Infer(k, subs), Tuple(""));	
 }

@@ -105,23 +105,23 @@ Expression Association::Simplify() const
     return Association(std::move(lhSimple), std::move(rhSimple));
 }
 
-Association Association::Substitute(const Substitutions& substitutions) const
+Association Association::Substitute(const Hypothesis& hypothesis) const
 {
-    return Association(lhs->Substitute(substitutions), rhs->Substitute(substitutions));
+    return Association(lhs->Substitute(hypothesis), rhs->Substitute(hypothesis));
 }
 
-Expression Association::Matches(const Expression& expression, const Substitutions& substitutions) const
+Expression Association::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     // TODO what does it mean? does only lhs need to match? 
     return Boolean(false);
 
 }
 
-Expression Association::Infer(const class Knowledge& k, const Substitutions& substitutions) const
+Expression Association::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
 {
     return Association{
         std::move(*lhs),
-        rhs->Infer(k, substitutions)
+        rhs->Infer(k, hypothesis)
     };
 }
 

@@ -38,7 +38,7 @@ in sequence instead of in tr)
 -   [*] help 
 -   [*] help($topic)
 -   [*] delete clauses (lock knowledge? Special Functions with write access?)
--   [ ] print  
+-   [*] print  
 -   [ ] trace 
 -   [ ] break ? 
 - [ ] Functional 

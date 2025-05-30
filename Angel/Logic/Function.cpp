@@ -15,14 +15,14 @@ Function::Function(Callback cb, const std::string_view doc) :
         throw std::invalid_argument("Function documentation should at least include a short description");
 }
 
-Expression Function::Matches(const Expression& expression, const Substitutions& substitutions) const
+Expression Function::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     return Boolean(false); 
 }
 
-Expression Function::Infer(const class Knowledge& k, const Substitutions& substitutions) const
+Expression Function::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
 {
-    return callback(k, substitutions);
+    return callback(k, hypothesis);
 }
 
 Function::operator bool() const
