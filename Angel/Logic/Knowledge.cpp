@@ -2,6 +2,7 @@
 #include "Logic/Expression.h"
 #include "Logic/Association.h"
 #include "Logic/Disjunction.h"
+#include "Logic/Trace.h"
 #include <variant>
 #include <cassert>
 
@@ -60,9 +61,25 @@ size_t Knowledge::Forget(const Predicate& match)
 Expression Knowledge::Infer(const Expression& expression) const
 {
     Hypothesis hypothesis;
-    return expression.Infer(*this, hypothesis);
+    Trace trace;
+    return expression.Infer(*this, hypothesis, trace);
 }
 
+Hypothesis GetAntecedent(Expression&& match)
+{
+    if (match == Boolean(true))
+    {
+        return Hypothesis();            
+    }
+    
+    if (const auto* conj = match.GetIf<Conjunction>())
+    {
+        return std::move(*conj);
+    }
+    
+    assert(match.Is<Equation>());   // unexpected match antecdent;
+    return Hypothesis{std::move(match)};
+}
 Bag Knowledge::Matches(const Predicate& query) const
 {
     Bag hypotheses;
@@ -72,23 +89,10 @@ Bag Knowledge::Matches(const Predicate& query) const
         const Association& clause = item.Get<Association>();
         Expression lhs = clause.Left();
         const auto& predicate = lhs.Get<Predicate>();
-        Conjunction hypothesis;
         auto match = predicate.Matches(query, {});
         if (match == Boolean(false))
             continue;
-        if (match == Boolean(true))
-        {
-            
-        }
-        else if (const auto* conj = match.GetIf<Conjunction>())
-        {
-            hypothesis = *conj;
-        }
-        else if (const auto* eq = match.GetIf<Equation>())
-        {
-            hypothesis = Conjunction{*eq};
-        }
-
+        Hypothesis hypothesis = GetAntecedent(std::move(match));
         if (hypothesis.size() > bestMatch)
             continue;
         if (hypothesis.size() < bestMatch)

@@ -14,6 +14,7 @@ public:
     Pair(Expression&& lhs, Expression&& rhs);
     explicit operator bool() const;
     std::size_t size() const;
+    std::size_t Assumptions() const;
     const Expression& Left() const;
     Expression& Left();
     const Expression& Right() const;
@@ -43,7 +44,7 @@ public:
     Expression Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
     Association Substitute(const Hypothesis& hypothesis) const;
-    Expression Infer(const class Knowledge& k, Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     Expression Get(const Expression& key) const;
     bool operator==(const Association& other) const { return Pair::operator==(other); }
 

@@ -2,6 +2,7 @@
 #include "Logic/Expression.h"
 #include "Logic/Boolean.h"
 #include <algorithm>
+#include <numeric>
 #include <iostream>
 
 namespace Angel::Logic
@@ -84,6 +85,14 @@ Expression Set::Simplify() const
     return simplified;   
 }
 
+std::size_t Set::Assumptions() const
+{
+    return std::accumulate(begin(), end(), 0U, [](std::size_t assumptions, const Expression& item)
+    {
+        return assumptions + item.Assumptions();
+    });    
+}
+
 Expression Set::Matches(const Expression& e, const Hypothesis& hypothesis) const
 {
     const Set* set = e.GetIf<Set>();
@@ -111,7 +120,7 @@ Set Set::Substitute(const Hypothesis& hypothesis) const
 }
 
 
-Expression Set::Infer(const Knowledge& knowledge, Hypothesis& hypothesis) const
+Expression Set::Infer(const Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const
 {
     Set result;
     for(const auto& item: items)
@@ -124,8 +133,8 @@ Expression Set::Infer(const Knowledge& knowledge, Hypothesis& hypothesis) const
         // for cases where these are clauses eg legs(X+1): max legs(X*2): ginny, 
         // this disjunction also seems to make sense legs(2): max | ginny, if we are 
         // hypothesizing that both have 2 legs 
-        result.items.emplace(item.first.Infer(knowledge, hypothesis),
-            item.second.Infer(knowledge,hypothesis));
+        result.items.emplace(item.first.Infer(knowledge, hypothesis, trace),
+            item.second.Infer(knowledge,hypothesis, trace));
     }
     return result;
 }

@@ -20,7 +20,7 @@ public:
     Expression Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis, bool reverse=false) const;
     Expression Substitute(const Hypothesis& hypothesis) const;
-    Expression Infer(const class Knowledge& k, Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
 private: 
     std::string name;
 };

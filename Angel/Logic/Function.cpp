@@ -20,9 +20,9 @@ Expression Function::Matches(const Expression& expression, const Hypothesis& hyp
     return Boolean(false); 
 }
 
-Expression Function::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
+Expression Function::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    return callback(k, hypothesis);
+    return callback(k, hypothesis, trace);
 }
 
 Function::operator bool() const

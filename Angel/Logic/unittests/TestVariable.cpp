@@ -1,6 +1,7 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Variable.h"
 #include "Logic/Expression.h"
+#include "Logic/Trace.h"
 #include <gtest/gtest.h>
 
 namespace Angel::Logic::Test
@@ -17,10 +18,11 @@ TEST(Variable, Expression)
 TEST(Variable, Query)
 {
 	Knowledge k;
+	Trace trace;
 	EXPECT_EQ(k.Infer(Variable("Test")), Variable("Test"));
 	EXPECT_EQ(k.Infer(Variable("")), Variable(""));
 	Hypothesis subs{Equation{Variable("Test"), Integer(4)}};
-	EXPECT_EQ(Variable("Test").Infer(k, subs), Integer(4));
+	EXPECT_EQ(Variable("Test").Infer(k, subs, trace), Integer(4));
 }
 
 TEST(Variable, MatchingHypothesis)
@@ -66,18 +68,20 @@ TEST(Variable, Hypothesis)
 TEST(Variable, InferValue)
 {
 	Knowledge k;
+	Trace trace;
 	Hypothesis subs {Equation{Variable("X"),Integer(24)},
 						Equation{Integer(25), Variable("Y")}};
-	EXPECT_EQ(Variable("X").Infer(k, subs), Integer(24));	
-	EXPECT_EQ(Variable("Y").Infer(k, subs), Integer(25));	
+	EXPECT_EQ(Variable("X").Infer(k, subs, trace), Integer(24));	
+	EXPECT_EQ(Variable("Y").Infer(k, subs, trace), Integer(25));	
 }
 
 TEST(Variable, InferVariable)
 {
 	Knowledge k;
+	Trace trace;
 	Hypothesis subs {Equation{Variable("X"),Integer(2)}};
-	EXPECT_EQ(Variable("Y").Infer(k, subs), Variable("Y"));	
-	EXPECT_EQ(Variable("").Infer(k, subs), Variable(""));	
+	EXPECT_EQ(Variable("Y").Infer(k, subs, trace), Variable("Y"));	
+	EXPECT_EQ(Variable("").Infer(k, subs, trace), Variable(""));	
 }
 
 }

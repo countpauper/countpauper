@@ -14,7 +14,7 @@ TEST(Function, Construction)
     EXPECT_TRUE(bool(Function(callback.AsStdFunction(), "test")));
     EXPECT_EQ(Function(callback.AsStdFunction(), "test"), Function(callback.AsStdFunction(), "another test"));
     EXPECT_EQ(Function(callback.AsStdFunction(), "test"), Function(callback.AsStdFunction(), "another test"));
-    Function::Callback anotherCallback = [](const Knowledge&, const Hypothesis&) -> Expression
+    Function::Callback anotherCallback = [](const Knowledge&, const Hypothesis&, Trace&) -> Expression
     {
         return Boolean(false);
     };
@@ -27,7 +27,7 @@ TEST(Function, Callback)
 {
     MockFunction<Function::CallbackT> callback;
     Knowledge k;
-    EXPECT_CALL(callback, Call(Ref(k),_)).WillRepeatedly(Return(Integer(3)));
+    EXPECT_CALL(callback, Call(Ref(k),_,_)).WillRepeatedly(Return(Integer(3)));
     EXPECT_EQ(k.Infer(Function(callback.AsStdFunction(), "call me")), Integer(3));
 }
 

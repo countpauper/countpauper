@@ -2,7 +2,7 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Equation.h"
 #include "Logic/Expression.h"
-
+#include "Logic/Trace.h"
 
 namespace Angel::Logic::Test
 {
@@ -40,6 +40,7 @@ TEST(Equation, MatchEquationIsTheSameAsMatchExpression)
     
 }
 
+
 TEST(Equation, Substitute)
 {
 	EXPECT_EQ((Equation{Integer(3), Variable("S")}).Substitute(Conjunction{Equation{Variable("S"), String("three")}}),
@@ -50,6 +51,15 @@ TEST(Equation, Inference)
 {
     Knowledge k { Predicate("cat") };
     EXPECT_EQ(k.Infer(Equation{Predicate("cat"), Boolean(true)}), Boolean(true));
+}
+
+TEST(Equation, AssumptionBecomesHypothesisWhenInferred)
+{
+    Hypothesis hypothesis;
+    Knowledge k;
+    Trace trace;
+    EXPECT_EQ((Equation{Variable("X"), Integer(2)}).Infer(k, hypothesis, trace), 
+        Association(Boolean(true), Equation{Variable("X"), Integer(2)}));
 }
 
 TEST(Equation, to_string)

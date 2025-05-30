@@ -3,6 +3,7 @@
 #include "Logic/Boolean.h"
 #include "Logic/Knowledge.h"
 #include "Logic/Expression.h"
+#include "Logic/Trace.h"
 #include <cassert>
 
 namespace Angel::Logic
@@ -56,6 +57,10 @@ Expression Predicate::Simplify() const
     return *this;   
 }
 
+std::size_t Predicate::Assumptions() const
+{
+	return arguments.Assumptions();
+}
 
 Expression Predicate::Matches(const Expression& inferred, const Hypothesis& hypothesis) const
 {
@@ -114,9 +119,10 @@ Expression ExtendResult(Expression&& value, Expression&& current, Hypothesis&& h
     return Association{std::move(value), Disjunction{std::move(current), std::move(left)}}.Simplify();
 }
 
-Expression Predicate::Infer(const Knowledge& knowledge, Hypothesis& originalHypothesis) const
+Expression Predicate::Infer(const Knowledge& knowledge, const Hypothesis& originalHypothesis, Trace& trace) const
 {
 	Predicate simple(id, std::get<List>(arguments.Substitute(originalHypothesis).Simplify()));
+	trace(simple);
 	Set result;
 	auto hypotheses = knowledge.Matches(simple);
 
@@ -127,11 +133,12 @@ Expression Predicate::Infer(const Knowledge& knowledge, Hypothesis& originalHypo
 		if (auto* association = option.GetIf<Association>())
 		{
 			conditions = association->Right().Get<Conjunction>();
-			value = association->Left().Infer(knowledge, conditions);
+			value = association->Left().Infer(knowledge, conditions, trace);
 		}
 		else 
-		{
-			value = knowledge.Infer(option);
+		{ 
+			Hypothesis newHypothesis;
+			value = option.Infer(knowledge, newHypothesis, trace);
 		}
 		Expression current = result.Pop(value);
 		result.Add(ExtendResult(std::move(value), std::move(current), std::move(conditions)));

@@ -76,7 +76,7 @@ Expression Variable::Matches(const Expression& e, const Hypothesis& hypothesis, 
 }
 
 
-Expression Variable::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
+Expression Variable::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     for(const auto& condition : hypothesis)
     {
@@ -88,11 +88,11 @@ Expression Variable::Infer(const class Knowledge& k, Hypothesis& hypothesis) con
             assert(equation->size()==2); 
             if (equation->front() == *this)
             {
-                return equation->back().Infer(k, hypothesis);
+                return equation->back().Infer(k, hypothesis, trace);
             }
             if (equation->back() == *this)
             {
-                return equation->front().Infer(k, hypothesis);
+                return equation->front().Infer(k, hypothesis, trace);
             }
         }
     }

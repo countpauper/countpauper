@@ -4,6 +4,7 @@
 #include <typeinfo>
 #include <iostream>
 #include <cassert>
+#include <numeric>
 
 namespace Angel::Logic
 {
@@ -37,6 +38,15 @@ bool Collection::operator==(const Collection& rhs) const
         return false;
     return std::equal(begin(), end(), rhs.begin());
 }
+
+std::size_t Collection::Assumptions() const
+{
+    return std::accumulate(begin(), end(), 0U, [](std::size_t assumptions, const Expression& item)
+    {
+        return assumptions + item.Assumptions();
+    });
+}
+
 
 Expression Collection::Get(const Expression& key) const
 {

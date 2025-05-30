@@ -52,14 +52,14 @@ Summation Summation::Substitute(const Hypothesis& hypothesis) const
     return SubstituteItems(hypothesis);
 }
 
-Expression Summation::Infer(const Knowledge& k, Hypothesis& hypothesis) const
+Expression Summation::Infer(const Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing
     // this can, for instance, be done by accumulating an Expression and making Objects implement operator+(Expression) etc
     long value = std::accumulate(begin(), end(), 0L,
-        [&k, &hypothesis](long accumulated, const Expression& item)
+        [&k, &hypothesis, &trace](long accumulated, const Expression& item)
         {
-            auto inferred = item.Infer(k, hypothesis);
+            auto inferred = item.Infer(k, hypothesis, trace);
             auto value = inferred.Cast<Integer>();
             return accumulated += *value;
         });

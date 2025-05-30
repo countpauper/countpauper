@@ -30,9 +30,10 @@ public:
 	const Expression* Get(const Expression& key) const;
 	Expression Pop(const Expression& e);
     Expression Simplify() const;
+	std::size_t Assumptions() const;
     Expression Matches(const Expression& other, const Hypothesis& substitions) const;
     Set Substitute(const Hypothesis& hypothesis) const;
-    Expression Infer(const class Knowledge& knowledge, Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
 	explicit operator bool() const;
 	std::size_t Hash() const;
 	bool operator==(const Set& rhs) const;

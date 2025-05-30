@@ -17,7 +17,7 @@ public:
     Expression Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
     Summation Substitute(const Hypothesis& hypothesis) const;
-    Expression Infer(const class Knowledge& k, Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     bool operator==(const Summation& other) const;
 
     constexpr static BinaryOperator ope{L'+'};

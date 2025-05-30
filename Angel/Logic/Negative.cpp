@@ -30,9 +30,9 @@ Negative Negative::Substitute(const Hypothesis& hypothesis) const
     return Negative(content->Substitute(hypothesis));
 }
 
-Expression Negative::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
+Expression Negative::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    auto value = content->Infer(k, hypothesis);
+    auto value = content->Infer(k, hypothesis, trace);
     auto intValue = value.Cast<Integer>();
     return Integer(- *intValue);
 }

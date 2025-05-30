@@ -15,7 +15,7 @@ public:
     Expression Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& substutions) const;
     Negative Substitute(const Hypothesis& hypothesis) const;
-    Expression Infer(const class Knowledge& k, Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     bool operator==(const Negative& other) const;
     constexpr static UnaryOperator ope{L'-'};
 };

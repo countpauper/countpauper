@@ -104,7 +104,7 @@ Expression Tuple::Matches(const Expression& e, const Hypothesis& hypothesis, boo
 }
 
 
-Expression Tuple::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
+Expression Tuple::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     for(const auto& condition : hypothesis)
     {
@@ -113,11 +113,11 @@ Expression Tuple::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
             assert(equation->size()==2); // not determined what to do with long equations or unequations 
             if (equation->front() == Variable(name))
             {
-                return equation->back().Infer(k, hypothesis);
+                return equation->back().Infer(k, hypothesis, trace);
             }
             if (equation->back() == Variable(name))
             {
-                return equation->front().Infer(k, hypothesis);
+                return equation->front().Infer(k, hypothesis, trace);
             }
         }
     }

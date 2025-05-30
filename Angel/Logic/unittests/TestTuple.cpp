@@ -1,6 +1,7 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Tuple.h"
 #include "Logic/Expression.h"
+#include "Logic/Trace.h"
 #include <gtest/gtest.h>
 
 namespace Angel::Logic::Test
@@ -17,10 +18,11 @@ TEST(Tuple, Expression)
 TEST(Tuple, Query)
 {
 	Knowledge k;
+	Trace trace;
 	EXPECT_EQ(k.Infer(Tuple("Test")), Tuple("Test"));
 	EXPECT_EQ(k.Infer(Tuple("")), Tuple(""));
 	Hypothesis subs{Equation{Variable("Test"), List{Integer(2),Integer(3)}}};
-	EXPECT_EQ(Tuple("Test").Infer(k, subs), (List{Integer(2),Integer(3)}));
+	EXPECT_EQ(Tuple("Test").Infer(k, subs, trace), (List{Integer(2),Integer(3)}));
 }
 
 TEST(Tuple, MatchingHypothesis)
@@ -71,18 +73,20 @@ TEST(Tuple, Hypothesis)
 TEST(Tuple, InferValue)
 {
 	Knowledge k;
+	Trace trace;
 	Hypothesis subs {Equation{Variable("X"),List{Integer(24)}},
 						Equation{Set{Integer(25)},Variable("Y")}};
-	EXPECT_EQ(Tuple("X").Infer(k, subs), (List{Integer(24)}));	
-	EXPECT_EQ(Tuple("Y").Infer(k, subs), (Set{Integer(25)}));	
+	EXPECT_EQ(Tuple("X").Infer(k, subs, trace), (List{Integer(24)}));	
+	EXPECT_EQ(Tuple("Y").Infer(k, subs, trace), (Set{Integer(25)}));	
 }
 
 TEST(Tuple, InferVariable)
 {
 	Knowledge k;
+	Trace trace;
 	Hypothesis subs {Equation{Variable("X"), (List{Integer(2)})}};
-	EXPECT_EQ(Tuple("Y").Infer(k, subs), Tuple("Y"));	
-	EXPECT_EQ(Tuple("").Infer(k, subs), Tuple(""));	
+	EXPECT_EQ(Tuple("Y").Infer(k, subs, trace), Tuple("Y"));	
+	EXPECT_EQ(Tuple("").Infer(k, subs, trace), Tuple(""));	
 }
 
 }

@@ -51,6 +51,7 @@ public:
     {
         items.insert(items.end(), same.begin(), same.end());
     }
+
     void push_back(const Expression& exp)
     {
         if (!bool(exp))
@@ -93,6 +94,8 @@ public:
     {
         return items.erase(it);
     }
+
+    std::size_t Assumptions() const { return items.Assumptions(); }
 
     // template<class... Args >
     // void emplace_back( Args&&... args )

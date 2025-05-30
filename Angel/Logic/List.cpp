@@ -18,13 +18,13 @@ bool List::operator==(const List& rhs) const
     return Collection::operator==(rhs);
 }
 
-Expression List::Infer(const Knowledge& knowledge, Hypothesis& hypothesis) const
+Expression List::Infer(const Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const
 {
     List result;
     std::transform(begin(), end(), std::back_inserter(result), 
-        [&knowledge, &hypothesis](const Expression& item)
+        [&knowledge, &hypothesis, &trace](const Expression& item)
         {
-            return item.Infer(knowledge, hypothesis);
+            return item.Infer(knowledge, hypothesis, trace);
         });
     return result;
 }

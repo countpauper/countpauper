@@ -48,6 +48,12 @@ std::size_t Individual::size() const
         return 0;
 }
 
+
+std::size_t Individual::Assumptions() const
+{
+    return content->Assumptions();
+}
+
 const Expression& Individual::operator*() const
 {
     return *content;

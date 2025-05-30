@@ -39,11 +39,11 @@ Conjunction Conjunction::Substitute(const Hypothesis& hypothesis) const
     return SubstituteItems(hypothesis);
 }
 
-Expression Conjunction::Infer(const Knowledge& k, Hypothesis& hypothesis) const
+Expression Conjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     for(const auto& item: *this)
     {
-        auto inferred = item.Infer(k, hypothesis);
+        auto inferred = item.Infer(k, hypothesis, trace);
         auto isTrue = inferred.Cast<Boolean>();
         if (!isTrue)
             return isTrue; // or just inferred? true & 0 == 0?

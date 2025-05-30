@@ -39,11 +39,11 @@ Expression Disjunction::Substitute(const Hypothesis& hypothesis) const
     return SubstituteItems(hypothesis);
 }
 
-Expression Disjunction::Infer(const Knowledge& k, Hypothesis& hypothesis) const
+Expression Disjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     for(const auto& item: *this)
     {
-        Expression inferred = item.Infer(k, hypothesis);
+        Expression inferred = item.Infer(k, hypothesis, trace);
         auto isTrue = inferred.Cast<Boolean>();
         if (isTrue)
             return inferred;

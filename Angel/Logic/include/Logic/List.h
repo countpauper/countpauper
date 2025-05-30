@@ -18,7 +18,7 @@ public:
     Expression Simplify() const;
     Expression Matches(const Expression& other, const Hypothesis& hypothesis) const;
     List Substitute(const Hypothesis& hypothesis) const;
-    Expression Infer(const class Knowledge& knowledge, Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
 
     static constexpr bool unique=false;
     static constexpr bool ordered=true;

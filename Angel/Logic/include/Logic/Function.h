@@ -11,13 +11,13 @@ class Expression;
 class Function
 {
 public:
-    using CallbackT = Expression(const Knowledge& k, Hypothesis& args);
+    using CallbackT = Expression(const Knowledge& k, const Hypothesis& args, Trace& trace);
     using Callback = std::function<CallbackT>;
 
     explicit Function(Callback cb, const std::string_view doc);
 
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
-    Expression Infer(const class Knowledge& k, Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     explicit operator bool() const;
 	bool operator==(const Function& other) const;
     std::string_view Documentation() const;

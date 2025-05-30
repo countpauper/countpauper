@@ -36,6 +36,12 @@ std::size_t Pair::size() const
         static_cast<std::size_t>(bool(rhs));
 }
 
+std::size_t Pair::Assumptions() const
+{
+    return Left().Assumptions() + Right().Assumptions();
+}
+
+
 const Expression& Pair::Left() const
 {
     return *lhs;
@@ -117,11 +123,11 @@ Expression Association::Matches(const Expression& expression, const Hypothesis& 
 
 }
 
-Expression Association::Infer(const class Knowledge& k, Hypothesis& hypothesis) const
+Expression Association::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     return Association{
         std::move(*lhs),
-        rhs->Infer(k, hypothesis)
+        rhs->Infer(k, hypothesis, trace)
     };
 }
 

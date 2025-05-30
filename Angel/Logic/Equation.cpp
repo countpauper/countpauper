@@ -21,6 +21,7 @@ Expression Equation::Simplify() const
     return *this;   
 }
 
+
 // forward declared free simplify function for use in std::transform etc, like in FlatCollection
 Expression ExpressionSimplifier(const Expression& e)
 {
@@ -40,13 +41,16 @@ Equation Equation::Substitute(const Hypothesis& hypothesis) const
     return SubstituteItems(hypothesis);
 }
 
-Expression Equation::Infer(const Knowledge& k, Hypothesis& hypothesis) const
+Expression Equation::Infer(const Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     assert(size()>1);   // single element equations can't be inferred only matched
-    Expression first = front().Infer(k, hypothesis);
+    if (Assumptions()) {
+        return Association(Boolean(true), *this);
+    }
+    Expression first = front().Infer(k, hypothesis, trace);
     for(const auto& item: *this | std::views::drop(1))
     {
-        auto inferred = item.Infer(k, hypothesis);
+        auto inferred = item.Infer(k, hypothesis, trace);
         auto cast = inferred.Cast(first.AlternativeTypeId());
         // TODO: is matching the same as being equal? 
         // or do they have to be the same type or castable to the same type left or right way around

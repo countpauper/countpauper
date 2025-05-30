@@ -31,6 +31,7 @@ public:
         }
     }
     ~Collection();
+    std::size_t Assumptions() const;
     Expression Get(const Expression& key) const;
     Expression Matches(Collection_subrange range, const Hypothesis& hypothesis) const;
     std::size_t Hash() const;

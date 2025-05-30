@@ -9,6 +9,7 @@
 #include "Logic/VariantUtils.h"
 #include "Logic/Element.h"
 #include "Logic/Operator.h"
+#include "Logic/Trace.h"
 #include <cassert>
 #include <sstream>
 
@@ -129,7 +130,7 @@ Logic::Expression GetArg(const Logic::Hypothesis& args, const std::string_view n
     }
 }
 
-Logic::Expression Help(const Logic::Knowledge& k, Logic::Hypothesis& args)
+Logic::Expression Help(const Logic::Knowledge& k, const Logic::Hypothesis& args, Logic::Trace& trace)
 {
     Logic::Expression topic = GetArg(args, "topic");
     if (topic)
@@ -143,7 +144,7 @@ Logic::Expression Help(const Logic::Knowledge& k, Logic::Hypothesis& args)
     }
 }
 
-Logic::Expression Delete(const Logic::Knowledge& k, Logic::Hypothesis& args)
+Logic::Expression Delete(const Logic::Knowledge& k, const Logic::Hypothesis& args, Logic::Trace& trace)
 {
     Logic::Expression target = GetArg(args, "id");
     if (target)
@@ -158,17 +159,18 @@ Logic::Expression Delete(const Logic::Knowledge& k, Logic::Hypothesis& args)
     return Logic::Integer(0);
 }
 
-Logic::Expression Print(const Logic::Knowledge& k, Logic::Hypothesis& args)
+Logic::Expression Print(const Logic::Knowledge& k, const Logic::Hypothesis& args, Logic::Trace& trace)
 {
     Logic::Expression target = GetArg(args, "omething");
-    std::cout << target.Infer(k, args);
+    std::cout << target.Infer(k, args, trace);
     return Logic::Boolean(true);
 }
 
 
-Logic::Expression Trace(const Logic::Knowledge& k, Logic::Hypothesis& args)
+Logic::Expression Trace(const Logic::Knowledge& k, const Logic::Hypothesis& args, Logic::Trace& trace)
 {
-    return Logic::Boolean(false);
+    trace.SetVerbosity(1);
+    return Logic::Boolean(true);
 }
 
 

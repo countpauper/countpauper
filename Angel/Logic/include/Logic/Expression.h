@@ -102,9 +102,10 @@ public:
     Expression Cast(const std::type_info& rtt) const;
 
     Expression Simplify() const;
+    std::size_t Assumptions() const;
     Expression Substitute(const Hypothesis& hypothesis) const;
     Expression Matches(const Expression& e, const Hypothesis& hypothesis) const;
-    Expression Infer(const class Knowledge& knowledge, Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
 
     template<typename T> 
     requires(!std::is_same_v<Expression, T>) 

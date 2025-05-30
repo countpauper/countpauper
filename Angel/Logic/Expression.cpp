@@ -111,8 +111,40 @@ Expression Expression::Simplify() const
         [this](const auto& obj)
         {
             return obj.Simplify();
-        }},   *this);      
+        }}, *this);      
 }
+
+std::size_t Expression::Assumptions() const
+{
+    return std::visit(overloaded_visit{
+        [](std::monostate)
+        {
+            assert(false); // should not exist here. Assumptions are undefined pbly
+            return 0ULL;
+        },
+        [this]<IsElement T>(const T& element)
+        {
+            return 0ULL;
+        },
+        [this](const Function&)
+        {
+            return 0ULL;
+        },
+        [this](const Variable&)
+        {
+            return 1ULL;
+        },
+        [this](const Tuple&) 
+        {
+            return 1ULL;
+        },
+        [this](const auto& obj)
+        {
+            return obj.Assumptions();
+        }}, *this);
+
+}
+
 
 Expression Expression::Substitute(const Hypothesis& hypothesis) const
 {
@@ -159,7 +191,7 @@ Expression Expression::Matches(const Expression& e, const Hypothesis& hypothesis
         }},   *this);    
 }
 
-Expression Expression::Infer(const class Knowledge& knowledge, Hypothesis& hypothesis) const
+Expression Expression::Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const
 {
     return std::visit(overloaded_visit{
         [this](std::monostate)
@@ -169,8 +201,8 @@ Expression Expression::Infer(const class Knowledge& knowledge, Hypothesis& hypot
         []<IsElement T>(const T& element) -> Expression {
             return element; 
         },
-        [&knowledge, &hypothesis](const auto& obj) -> Expression {
-            return obj.Infer(knowledge, hypothesis);
+        [&knowledge, &hypothesis, &trace](const auto& obj) -> Expression {
+            return obj.Infer(knowledge, hypothesis, trace);
         }
     }, *this);
 }
