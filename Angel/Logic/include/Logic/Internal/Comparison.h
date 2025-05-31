@@ -6,8 +6,9 @@
 
 namespace Angel::Logic
 {
+
 template<class T>
-class Operation : public FlatCollection<T>
+class Comparison : public FlatCollection<T>
 {
 public:
     using FlatCollection<T>::FlatCollection;

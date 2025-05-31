@@ -5,7 +5,6 @@
 namespace Angel::Logic
 {
 
-
 template<BinaryOperator OP> Integer& operate(Integer& lhs, const Integer& rhs);
 template<> Integer& operate<BinaryOperator{L'+'}>(Integer& lhs, const Integer& rhs);
 template<> Integer& operate<BinaryOperator{L'-'}>(Integer& lhs, const Integer& rhs);
@@ -13,7 +12,7 @@ template<> Integer& operate<BinaryOperator{L'*'}>(Integer& lhs, const Integer& r
 template<> Integer& operate<BinaryOperator{L'/'}>(Integer& lhs, const Integer& rhs);
 template<> Integer& operate<BinaryOperator{L'^'}>(Integer& lhs, const Integer& rhs);
 
-template<typename T> 
+template<class T> 
 Expression Operation<T>::Simplify() const
 {
     T simple = FlatCollection<T>::SimplifyItems();
@@ -40,7 +39,7 @@ Expression Operation<T>::Simplify() const
         return std::move(simple);
 }    
 
-template<typename T>
+template<class T>
 Expression Operation<T>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     // TODO: Operation matches with mathematical simplication
@@ -52,7 +51,7 @@ Expression Operation<T>::Matches(const Expression& expression, const Hypothesis&
 
 
 
-template<typename T>
+template<class T>
 Expression Operation<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing
@@ -66,7 +65,7 @@ Expression Operation<T>::Infer(const class Knowledge& k, const Hypothesis& hypot
     return value;
 }    
 
-template<typename T>
+template<class T>
 std::ostream& operator<<(std::ostream& os, const Operation<T>& operation)
 {
     bool first = true;

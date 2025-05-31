@@ -145,3 +145,4 @@ namespace std
 
 // Template implementations that depend on Expression and are therefore forward declared
 #include "Logic/Internal/IntOperation.h"
+#include "Logic/Internal/IntComparison.h"

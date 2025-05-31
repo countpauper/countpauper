@@ -1,27 +1,17 @@
 #pragma once
-#include "Logic/Internal/FlatCollection.h"
-#include "Logic/Hypothesis.h"
-#include "Logic/Element.h"
 #include "Logic/Operator.h"
+#include "Logic/Internal/Comparison.h"
 #include <iostream>
 
 namespace Angel::Logic
 {
 
-class Equation : public FlatCollection<Equation> 
+class Equation : public Comparison<Equation> 
 {
 public:
-    using FlatCollection<Equation>::FlatCollection;
-    Expression Simplify() const;
-    Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
-    Equation Substitute(const Hypothesis& hypothesis) const;
-    Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
-    bool operator==(const Equation& other) const;
-
+    using Comparison<Equation>::Comparison;
+    bool operator==(const Equation& rhs) const { return Comparison<Equation>::operator==(rhs); }
     constexpr static BinaryOperator ope {L'='};
 };
-
-std::ostream& operator<<(std::ostream& os, const Equation& );
-
 
 }

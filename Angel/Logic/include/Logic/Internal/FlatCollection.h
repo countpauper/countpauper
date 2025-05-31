@@ -1,6 +1,7 @@
 #pragma once 
 #include "Logic/Internal/Collection.h"
 #include <algorithm>
+#include <ranges>
 
 namespace Angel::Logic
 {
@@ -42,9 +43,23 @@ public:
                 emplace_back(std::move(item));
             }
         }
-
     }
 
+    template <std::ranges::input_range R>
+	explicit FlatCollection(R items)
+    {
+        for(auto& item: items)
+        {
+            if (const T* same = std::get_if<T>(&item))
+            {
+                push_back(*same);
+            }
+            else 
+            {
+                push_back(item);
+            }
+        }
+    }
     ~FlatCollection() = default;
 
     void push_back(const T& same)
@@ -123,7 +138,7 @@ protected:
     {
         return T(items.SubstituteItems(hypothesis));
     }
-private:
+protected:
     Collection items;
 };
 

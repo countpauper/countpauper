@@ -16,7 +16,8 @@
 namespace Angel::Engine
 {
 
-// TODO: move to Logic along with #include "internal/VariantUtils.h" but where? 
+// TODO: move to Logic along with #include "internal/VariantUtils.h" 
+// member of Expression? 
 std::string Summary(const Logic::Expression& e)
 {
     return std::visit(Logic::overloaded_visit{
