@@ -1,6 +1,8 @@
 ## Quick todo 
 
-Rename Tuple to VariableS (now that it's free? Or too similar. Need Tuple for something else? 
+Negation can go if it's just a single element subtraction (start at 0) A-B would hae to be a nagation -A,B though
+Boolean negation might still be an Individual so it's not like Negative is a very special type of unary operator. 
+
 
 ## Backlog 
 - [*] Get back up 
@@ -39,14 +41,16 @@ in sequence instead of in tr)
 -   [*] help($topic)
 -   [*] delete clauses (lock knowledge? Special Functions with write access?)
 -   [*] print  
--   [ ] trace 
--   [ ] break ? 
-- [ ] Functional 
+-   [*] trace 
+-   [ ] break  
+- [ ] Arithmetic 
 -   [*] define constants 
--   [ ] define (non boolean) functions 
+-   [*] define arithmetic (non boolean) functions 
 -   [ ] query functions
--   [ ] integer operators `+-*/^` 
+-   [ ] integer operators `+-*/^`
+-   [ ] Inequality comparison, at least < for sort, perhaps != 
 -   [*] lists
+-  [ ] Functional 
 -   [ ] sets to the same level as lists (equality, var&tuple matching, operator. etc)
 -   [ ] set and list operators `&|+-` (if both side containers?) 
 -   [ ] Be able to implement factorial like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples
@@ -54,7 +58,7 @@ in sequence instead of in tr)
 -   [*] Membership operator x.{x,y} (done for List)
 - Python
 -   [ ] namespaces
--   [ ] Indexing lists (not sets, only)  [x,y,z][1]
+-   [ ] Indexing lists (not sets, only ordered/indexible)  [x,y,z][1]
 -   [ ] Add floating points and conversions
 -   [ ] ranges [x..y] 
 -   [ ] infinite ranges [..y]
@@ -69,7 +73,7 @@ in sequence instead of in tr)
 -   [ ] Multi dimensional arrays (as a separate collection type)?
 -   [ ] Apply functions on sequences, sets and arrays with for each 
 - [ ] Advanced
--   [ ] Tautology protection cat: cat (or longer) is an error
+-   [ ] Tautology protection cat: cat (or longer) is an error (use trace, check linked list for equal)
 -   [ ] Prefix comparators for matching. 
 -   [ ] For any operator `@` while infering 
 -   [ ] For any & each operators also while matching (each sort of done with Tuple I guess)

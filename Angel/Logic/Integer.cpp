@@ -3,6 +3,8 @@
 #include <string>
 #include <stdexcept> 
 #include <iostream>
+#include <cmath>
+#include <cassert>
 
 namespace Angel::Logic
 {
@@ -41,6 +43,37 @@ bool Integer::operator==(const Integer& integer) const
 	return value== integer.value;
 }
 
+Integer Integer::operator+=(const Integer& o)
+{
+    value += o.value;
+    return *this;    
+}
+
+Integer Integer::operator-=(const Integer& o)
+{
+    value -= o.value;
+    return *this;    
+}
+
+Integer Integer::operator*=(const Integer& o)
+{
+    value *= o.value;
+    return *this;    
+}
+
+Integer Integer::operator/=(const Integer& o)
+{
+    value /= o.value;
+    return *this;    
+}
+
+Integer Integer::operator^=(const Integer& o)
+{
+    double result = std::pow(double(value), o.value);
+    assert(result<std::numeric_limits<long>::max());    // auttomatic conversion on overflow not yet implemented
+    value = result;
+    return *this;    
+}
 
 std::size_t Integer::Hash() const
 {

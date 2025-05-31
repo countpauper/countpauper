@@ -61,5 +61,15 @@ namespace Angel::Logic::Test
 		EXPECT_EQ(k.Infer(Predicate("cats", List{Id("ginny"), Id("max")})), Boolean(true));
 	}
 
+	TEST(Clause, NumericConstant)
+	{
+		Knowledge k{Association(Predicate("c"), Integer(299'792'458))};
+		EXPECT_EQ(k.Infer(Predicate("c")), Integer(299'792'458));
+	}
 
+	TEST(Clause, Arithmetic)
+	{
+		Knowledge k{Association(Predicate("plustwo", {Variable("X")}), Summation{Variable("X"), Integer(2)})};
+		EXPECT_EQ(k.Infer(Predicate("plustwo", {Integer(-3)})), Integer(-1));
+	}	
 }

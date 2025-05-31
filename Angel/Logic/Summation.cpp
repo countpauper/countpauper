@@ -15,21 +15,21 @@ bool Summation::operator==(const Summation& rhs) const
 Expression Summation::Simplify() const
 {
     Summation simple = SimplifyItems();
-    long sum = 0;
+    Integer sum(0);
     auto it = simple.begin();
     while(it!=simple.end())
     {
         auto integer = it->TryCast<Integer>();        
         if (integer)
         {
-            sum += **integer;
+            sum += *integer;
             it = simple.erase(it);
         }
         else 
             ++it;
     }
     if (sum)
-        simple.push_back(Integer(sum));
+        simple.push_back(sum);
     if (simple.empty())
         return Integer(0);
     else if (simple.size()==1)
@@ -56,14 +56,13 @@ Expression Summation::Infer(const Knowledge& k, const Hypothesis& hypothesis, Tr
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing
     // this can, for instance, be done by accumulating an Expression and making Objects implement operator+(Expression) etc
-    long value = std::accumulate(begin(), end(), 0L,
-        [&k, &hypothesis, &trace](long accumulated, const Expression& item)
+    Integer value = std::accumulate(begin(), end(), Integer(0),
+        [&k, &hypothesis, &trace](Integer accumulated, const Expression& item)
         {
             auto inferred = item.Infer(k, hypothesis, trace);
-            auto value = inferred.Cast<Integer>();
-            return accumulated += *value;
+            return accumulated += inferred.Cast<Integer>();
         });
-    return Integer(value);
+    return value;
 }
 
 std::ostream& operator<<(std::ostream& os, const Summation& sum)

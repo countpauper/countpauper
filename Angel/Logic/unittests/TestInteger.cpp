@@ -19,6 +19,16 @@ TEST(Integer, Construction)
 	EXPECT_THROW(Integer("9876543210"), std::out_of_range);	
 }
 
+TEST(Integer, Arithmetic)
+{
+	Integer i(3);
+	EXPECT_EQ(i+=Integer(2), Integer(5));
+	EXPECT_EQ(i-=Integer(3), Integer(2));
+	EXPECT_EQ(i*=Integer(3), Integer(6));
+	EXPECT_EQ(i/=Integer(2), Integer(3));
+	EXPECT_EQ(i^=Integer(2), Integer(9));
+}
+
 TEST(Integer, Cast)
 {
 	EXPECT_EQ(Integer(Boolean(false)), Integer(0));

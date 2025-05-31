@@ -11,7 +11,9 @@ void Trace::SetVerbosity(unsigned level)
     verbosity = level;
 }
 
-void Trace::operator()(const Predicate& predicate)
+Trace::Trace(const Trace& parent, const Predicate& predicate) : 
+    parent(&parent),
+    verbosity(parent.verbosity)
 {
     if (verbosity)
     {

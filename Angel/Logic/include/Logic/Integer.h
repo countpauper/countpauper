@@ -14,6 +14,12 @@ public:
 	explicit Integer(const std::string_view s);
     explicit operator bool() const;
 	bool operator==(const Integer& value) const;
+	Integer operator+=(const Integer& o);
+	Integer operator-=(const Integer& o);
+	Integer operator*=(const Integer& o);
+	Integer operator/=(const Integer& o);
+	Integer operator^=(const Integer& o);
+	
     std::size_t Hash() const;
     long operator*() const;
 	static Integer Parse(const std::string& tag);
