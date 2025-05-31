@@ -16,8 +16,8 @@ template<class T>
 Expression Operation<T>::Simplify() const
 {
     T simple = FlatCollection<T>::SimplifyItems();
-    Integer constant(T::initial);
     auto it = simple.begin();
+    Integer constant(T::initial);
     while(it!=simple.end())
     {
         auto integer = it->template TryCast <Integer>();        
@@ -56,6 +56,7 @@ Expression Operation<T>::Infer(const class Knowledge& k, const Hypothesis& hypot
 {
     // TODO: float and imaginary and upgrade when needed, also when overflowing
     // this can, for instance, be done by accumulating an Expression and making Objects implement operator+(Expression) etc
+    
     Integer value = std::accumulate(FlatCollection<T>::begin(), FlatCollection<T>::end(), Integer(0),
         [&k, &hypothesis, &trace](Integer accumulated, const Expression& item)
         {

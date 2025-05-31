@@ -85,6 +85,12 @@ in sequence instead of in tr)
 -   [ ] dicts (sets of associations) work as structs
 -   [ ] set access with `.` (list done, full feature for unique) 
 -   [ ] Bag as unordered list if it has any advantages for speed and such 
+-   [ ] ^ ⊕ is XOR (only one of the whole set is true) and ** ↑ (like python & knuth ) for power
+-   [ ] Down arrow notation for built in logarithm (invser of up). Non unicode notation tbd perhaps \/ or // 
+-   [ ] ! postfix operator for factorial 
+-   [ ] sqrt prefix operator but what is the non unicode ? Implemented as shortcut for exponent(x, 0.5) 
+-   [ ] square and cube uncide postfix for exponent(x,2) and exponent(x,3) 
+-   [ ] Also on output of exponentiation, shorcuts for 2 operands and the 2nd is 0.5, 2 or 3
 -   [ ] Optimization: Reduce copies when matching and inferring and add references to known knowledge 
 -   [ ] Optimization: Also pass references to ranges, eg when slicing lists, matching with Tuple etc until a copy is necessary. 
 - [ ] Native functions

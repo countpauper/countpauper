@@ -12,7 +12,7 @@ TEST(Disjunction, Construction)
     EXPECT_TRUE(Disjunction{}.empty());
     EXPECT_TRUE(Disjunction{Expression()}.empty());
     EXPECT_EQ(Disjunction{Boolean(false)}.size(), 1);    
-    EXPECT_EQ(Expression(BinaryOperator(L'|'), {Boolean(true), Boolean(false)}), (Disjunction{Boolean(true), Boolean(false)}));   
+    EXPECT_EQ(Expression(BinaryOperator(L'∨'), {Boolean(true), Boolean(false)}), (Disjunction{Boolean(true), Boolean(false)}));   
 
 	static_assert(Logic::IsOperation<Disjunction>);
 }
@@ -61,7 +61,7 @@ TEST(Disjunction, Inference)
 TEST(Disjunction, to_string)
 {
     EXPECT_EQ(to_string(Disjunction{Boolean(true)}), "true");
-    EXPECT_EQ(to_string(Disjunction{Boolean(true), Boolean(false)}), "true|false");
+    EXPECT_EQ(to_string(Disjunction{Boolean(true), Boolean(false)}), "true∨false");
 }
 
 }

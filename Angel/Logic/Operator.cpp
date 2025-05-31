@@ -9,9 +9,9 @@
 namespace Angel::Logic
 {
 
-constexpr uint32_t make_code(wchar_t unicode, uint8_t operands)
+constexpr uint32_t make_code(wchar_t unicode, uint8_t operands, bool postfix=false)
 {
-    return static_cast<uint32_t>(unicode) | static_cast<uint32_t>(operands)<<16; 
+    return static_cast<uint32_t>(unicode) | static_cast<uint32_t>(operands&3)<<16 | (postfix?(1<<18):0); 
 }
 
 static const Operator::Definition opdef[]{
@@ -22,11 +22,14 @@ static const Operator::Definition opdef[]{
     {make_code(L'+', 2), 0, "",    "add"},
     {make_code(L'-', 2), 0, "",    "subtract"},
     {make_code(L'-', 1), 0, "",    "negative"},
-    {make_code(L'&', 2), 0, "",    "and"},
-    {make_code(L'|', 2), 0, "",    "or"},
+    {make_code(L'↑', 2), 0, "**",  "exponent"},
+    {make_code(L'↓', 2), 0, "//",  "logarithm"},
+    {make_code(L'∧', 2), 0, "&",   "and"},
+    {make_code(L'∨', 2), 0, "|",   "or"},
+    {make_code(L'⊕',2), 0, "^",   "xor"},
     {make_code(L'¬', 1), 0, "~",   "not"},
     {make_code(L'≠', 2), 0, "!=",  "not equal"},
-    {make_code(L'>', 2), 0, "",    "grearer"},
+    {make_code(L'>', 2), 0, "",    "greater"},
     {make_code(L'<', 2), 0, "",    "lesser"},
     {make_code(L'≥', 2), 0, ">=",  "greater or equal"},
     {make_code(L'≤', 2), 0, "<=",  "lesser or equal"},
@@ -34,35 +37,12 @@ static const Operator::Definition opdef[]{
     {make_code(L'∀', 2), 0, "*",   "all of"},
     {make_code(L'∃', 1), 0, "@",   "any of"},
     {make_code(L'.', 2), 0, "",    "item"},
+    {make_code(L'√', 1), 0, "",    "square root"},
+    {make_code(L'²', 1, true), 0, "", "squared"},
+    {make_code(L'³', 1, true), 0, "", "cubed"},
+    {make_code(L'!', 1, true), 0, "", "factorial"},
     {                0,  0, "",    "none"} // 0 terminated
 };
-
-
-/*
-static const Operator::Definition opdef[]{
-    {.code{.sw{L'^', 0, 2}}, .precedence=0, .altTag="",    .description="power"},
-    {.code{.sw{L'*', 0, 2}}, .precedence=0, .altTag="",    .description="multiply"},
-    {.code{.sw{L'÷', 0, 2}}, .precedence=0, .altTag="/",   .description="divide"},
-    {.code{.sw{L'+', 0, 1}}, .precedence=0, .altTag="",    .description="positive"},
-    {.code{.sw{L'+', 0, 2}}, .precedence=0, .altTag="",    .description="add"},
-    {.sw{L'-', 0, 2}, .precedence=0, .altTag="",    .description="subtract"},
-    {.sw{L'-', 0, 1}, .precedence=0, .altTag="",    .description="negative"},
-    {.sw{L'&', 0, 2}, .precedence=0, .altTag="",    .description="and"},
-    {.sw{L'|', 0, 2}, .precedence=0, .altTag="",    .description="or"},
-    {.sw{L'¬', 0, 1}, .precedence=0, .altTag="~",   .description="not"},
-    {.sw{L'≠', 0, 2}, .precedence=0, .altTag="!=",  .description="not equal"},
-    {.sw{L'>', 0, 2}, .precedence=0, .altTag="",    .description="grearer"},
-    {.sw{L'<', 0, 2}, .precedence=0, .altTag="",    .description="lesser"},
-    {.sw{L'≥', 0, 2}, .precedence=0, .altTag=">=",  .description="greater or equal"},
-    {.sw{L'≤', 0, 2}, .precedence=0, .altTag="<=",  .description="lesser or equal"},
-    {.sw{L'∈', 0, 2}, .precedence=0, .altTag="@",   .description="element of"},
-    {.sw{L'∀', 0, 2}, .precedence=0, .altTag="*",   .description="all of"},
-    {.sw{L'∃', 0, 1}, .precedence=0, .altTag="@",   .description="any of"},
-    {.sw{L'.', 0, 2}, .precedence=0, .altTag="",    .description="item"},
-    {.code {      0}, .precedence=0, .altTag="",    .description="none"} // 0 terminated
-};
-
-*/
 static const Operator::Definition& FindDefinition(uint32_t id)
 {
     unsigned i;

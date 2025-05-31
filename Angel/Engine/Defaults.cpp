@@ -6,7 +6,6 @@
 #include "Logic/Function.h"
 #include "Logic/String.h"
 #include "Logic/Tuple.h"
-#include "Logic/Internal/VariantUtils.h"
 #include "Logic/Element.h"
 #include "Logic/Operator.h"
 #include "Logic/Trace.h"
@@ -16,63 +15,6 @@
 namespace Angel::Engine
 {
 
-// TODO: move to Logic along with #include "internal/VariantUtils.h" 
-// member of Expression? 
-std::string Summary(const Logic::Expression& e)
-{
-    return std::visit(Logic::overloaded_visit{
-         [&e]<Logic::IsElement T>(const T& element) -> std::string 
-         {
-            return Logic::to_string(e);
-        },
-        [](const Logic::Function& fn)
-        {
-            return std::string(fn.ShortDescription());
-        },
-        []<Logic::IsOperation Op>(const Op& operation) -> std::string 
-        {
-            return std::format("{} with {} terms", operation.ope.Description(), operation.size()); 
-        },
-        // TODO (before collection) all operators if they have an ope
-        []<Logic::IsCollection C>(const C& collection) -> std::string 
-        {
-            return std::format("{} {} collection {} items", 
-                C::unique?"unique":"non-unique",
-                C::ordered?"ordered":"unordered", 
-                collection.size()); 
-        },
-        [](const Logic::Association& a) -> std::string
-        {
-            return std::format("{} : {}", Summary(a.Left()), Summary(a.Right()));
-        },
-        [&e](const Logic::Predicate& p) -> std::string
-        {
-            return Logic::to_string(e);
-        },
-        [&e](const Logic::Variable& v) -> std::string
-        {
-            return std::format("${}", v.Name());
-        },
-        [&e](const auto& obj) 
-        {
-            return std::string("TODO Description for ")+Logic::to_string(e);
-        }
-    }, e);
-}
-
-std::string Description(const Logic::Expression& e)
-{
-    return std::visit(Logic::overloaded_visit{
-        [](const Logic::Function& fn)
-        {
-            return std::string(fn.Documentation());
-        },
-        [&e](const auto& obj) 
-        {
-            return Logic::to_string(e);
-        }
-    }, e);
-}
 
 Logic::String HelpList(const Logic::Knowledge& k)
 {
@@ -83,7 +25,7 @@ Logic::String HelpList(const Logic::Knowledge& k)
     std::stringstream ss; 
     for(const auto& know : root)
     {
-        ss << Summary(know) << std::endl;
+        ss << know.Summary() << std::endl;
     }
     return Logic::String(ss.str());
 }
@@ -108,11 +50,11 @@ Logic::String HelpTopic(const Logic::Knowledge& k, const Logic::Id& id)
         if (const auto* antecedent_args = match.GetIf<Logic::Association>())
         {
             auto predicate = MakeSignature(id, antecedent_args->Right().Get<Logic::Conjunction>());
-            ss << predicate << "\t" << Description(antecedent_args->Left()) << std::endl;
+            ss << predicate << "\t" << antecedent_args->Left().Documentation() << std::endl;
         }
         else 
         {
-            ss << Logic::Predicate(id) << "\t" << Description(match) << std::endl;
+            ss << Logic::Predicate(id) << "\t" << match.Documentation() << std::endl;
         }
     }
     return Logic::String(ss.str());

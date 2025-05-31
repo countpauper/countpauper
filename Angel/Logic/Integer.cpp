@@ -69,8 +69,9 @@ Integer Integer::operator/=(const Integer& o)
 
 Integer Integer::operator^=(const Integer& o)
 {
+    assert(o.value>=0); // automatic conversion to double when dividing not yet implemented
     double result = std::pow(double(value), o.value);
-    assert(result<std::numeric_limits<long>::max());    // auttomatic conversion on overflow not yet implemented
+    assert(result<std::numeric_limits<long>::max());    // automatic conversion on overflow not yet implemented
     value = result;
     return *this;    
 }

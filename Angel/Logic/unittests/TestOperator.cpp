@@ -8,7 +8,7 @@ TEST(Operator, ConstructBinary)
 {
     EXPECT_FALSE(BinaryOperator());
     EXPECT_TRUE(BinaryOperator(L'+'));
-    EXPECT_EQ(BinaryOperator(L'&'), BinaryOperator("&"));
+    EXPECT_EQ(BinaryOperator(L'∧'), BinaryOperator("&"));
     EXPECT_NE(BinaryOperator(L'-'), UnaryOperator('-'));
 }
 
@@ -28,7 +28,7 @@ TEST(Operator, String)
 
 TEST(Operator, Description)
 {
-    EXPECT_EQ(BinaryOperator(L'|').Description(), "or");
+    EXPECT_EQ(BinaryOperator(L'∨').Description(), "or");
     EXPECT_EQ(UnaryOperator("@").Description(), "any of");
 }
 

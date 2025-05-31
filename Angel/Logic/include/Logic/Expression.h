@@ -127,6 +127,10 @@ public:
     bool operator==(const Expression& rhs) const;
     bool operator<(const Expression&o) const;
     const std::type_info& AlternativeTypeId() const;
+
+    std::string Summary() const;
+    std::string Documentation() const;
+
 };
 
 std::ostream& operator<<(std::ostream& s, const Expression& e);

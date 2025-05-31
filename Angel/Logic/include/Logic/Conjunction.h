@@ -21,7 +21,7 @@ public:
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     bool operator==(const Conjunction& other) const;
 
-    constexpr static BinaryOperator ope {L'&'};
+    constexpr static BinaryOperator ope {L'∧'};
 };
 
 std::ostream& operator<<(std::ostream& os, const Conjunction& );

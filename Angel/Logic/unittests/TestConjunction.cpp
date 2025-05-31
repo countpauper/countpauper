@@ -12,7 +12,7 @@ TEST(Conjunction, Construction)
     EXPECT_TRUE(Conjunction{}.empty());
     EXPECT_TRUE(Conjunction{Expression()}.empty());
     EXPECT_EQ(Conjunction{Boolean(false)}.size(), 1);
-    EXPECT_EQ(Expression(BinaryOperator(L'&'), {Boolean(true), Boolean(false)}), (Conjunction{Boolean(true), Boolean(false)}));   
+    EXPECT_EQ(Expression(BinaryOperator(L'∧'), {Boolean(true), Boolean(false)}), (Conjunction{Boolean(true), Boolean(false)}));   
 
 
 	static_assert(Logic::IsOperation<Conjunction>);
@@ -61,7 +61,7 @@ TEST(Conjunction, Inference)
 TEST(Conjunction, to_string)
 {
     EXPECT_EQ(to_string(Conjunction{Boolean(true)}), "true");
-    EXPECT_EQ(to_string(Conjunction{Boolean(true), Boolean(false)}), "true&false");
+    EXPECT_EQ(to_string(Conjunction{Boolean(true), Boolean(false)}), "true∧false");
 }
 
 }

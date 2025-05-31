@@ -240,7 +240,61 @@ const std::type_info& Expression::AlternativeTypeId() const
         return &typeid(decltype(obj)); 
     }, *this);        
 }
+std::string Expression::Summary() const
+{
+    return std::visit(Logic::overloaded_visit{
+         [this]<Logic::IsElement T>(const T& element) -> std::string 
+         {
+            return Logic::to_string(*this);
+        },
+        [](const Logic::Function& fn)
+        {
+            return std::string(fn.ShortDescription());
+        },
+        []<Logic::IsOperation Op>(const Op& operation) -> std::string 
+        {
+            return std::format("{} with {} terms", operation.ope.Description(), operation.size()); 
+        },
+        // TODO (before collection) all operators if they have an ope
+        []<Logic::IsCollection C>(const C& collection) -> std::string 
+        {
+            return std::format("{} {} collection {} items", 
+                C::unique?"unique":"non-unique",
+                C::ordered?"ordered":"unordered", 
+                collection.size()); 
+        },
+        [](const Logic::Association& a) -> std::string
+        {
+            return std::format("{} : {}", a.Left().Summary(), a.Right().Summary());
+        },
+        [this](const Logic::Predicate& p) -> std::string
+        {
+            return Logic::to_string(*this);
+        },
+        [](const Logic::Variable& v) -> std::string
+        {
+            return std::format("${}", v.Name());
+        },
+        [this](const auto& obj) 
+        {
+            return std::string("TODO Description for ")+Logic::to_string(*this);
+        }
+    }, *this);
+}
 
+std::string Expression::Documentation() const
+{
+    return std::visit(Logic::overloaded_visit{
+        [](const Logic::Function& fn)
+        {
+            return std::string(fn.Documentation());
+        },
+        [this](const auto& obj) 
+        {
+            return Logic::to_string(*this);
+        }
+    }, *this);
+}
 
 std::ostream& operator<<(std::ostream& s, const Expression& e)
 {
