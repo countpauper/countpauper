@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/FlatCollection.h"
+#include "Logic/Internal/FlatCollection.h"
 #include "Logic/Hypothesis.h"
 #include "Logic/Element.h"
 #include "Logic/Operator.h"

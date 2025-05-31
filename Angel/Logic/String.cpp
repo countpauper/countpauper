@@ -1,7 +1,7 @@
 #include "Logic/String.h"
 #include "Logic/Element.h"
-#include "Logic/VariantUtils.h"
 #include "Logic/Expression.h"
+#include "Logic/Internal/VariantUtils.h"
 #include <sstream>
 
 namespace Angel::Logic

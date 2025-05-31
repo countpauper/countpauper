@@ -6,7 +6,7 @@
 #include "Logic/Function.h"
 #include "Logic/String.h"
 #include "Logic/Tuple.h"
-#include "Logic/VariantUtils.h"
+#include "Logic/Internal/VariantUtils.h"
 #include "Logic/Element.h"
 #include "Logic/Operator.h"
 #include "Logic/Trace.h"
@@ -16,6 +16,7 @@
 namespace Angel::Engine
 {
 
+// TODO: move to Logic along with #include "internal/VariantUtils.h" but where? 
 std::string Summary(const Logic::Expression& e)
 {
     return std::visit(Logic::overloaded_visit{

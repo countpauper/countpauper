@@ -4,7 +4,7 @@
 #include "Logic/Id.h"
 #include "Logic/String.h"
 #include "Logic/Variable.h"
-#include "Logic/VariantUtils.h"
+#include "Logic/Internal/VariantUtils.h"
 #include <variant>
 
 namespace Angel::Logic

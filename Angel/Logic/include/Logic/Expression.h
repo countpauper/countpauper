@@ -15,7 +15,7 @@
 #include "Logic/Tuple.h"
 #include "Logic/Operator.h"
 #include "Logic/CastException.h"
-#include "Logic/VariantUtils.h"
+#include "Logic/Internal/VariantUtils.h"
 #include <variant>
 #include <vector>
 #include <map>
@@ -142,3 +142,6 @@ namespace std
 		size_t operator()(const Angel::Logic::Expression& n) const;
 	};
 }
+
+// Template implementations that depend on Expression and are therefore forward declared
+#include "Logic/Internal/IntOperation.h"

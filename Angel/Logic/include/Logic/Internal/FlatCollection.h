@@ -1,5 +1,5 @@
 #pragma once 
-#include "Logic/Collection.h"
+#include "Logic/Internal/Collection.h"
 #include <algorithm>
 
 namespace Angel::Logic

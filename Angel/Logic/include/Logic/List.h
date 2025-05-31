@@ -1,6 +1,6 @@
 #pragma once
 #include "Logic/Hypothesis.h"
-#include "Logic/Collection.h"
+#include "Logic/Internal/Collection.h"
 #include <iostream>
 
 namespace Angel::Logic

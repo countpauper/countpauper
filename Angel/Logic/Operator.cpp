@@ -1,4 +1,6 @@
 #include "Logic/Operator.h"
+#include "Logic/Integer.h"
+#include "Logic/Internal/IntOperation.h"
 #include <locale>
 #include <codecvt>
 #include <format>
@@ -123,8 +125,40 @@ unsigned Operator::Precedence() const
     return FindDefinition(op.id).precedence;
 }
 
+template<>
+Integer& operate<BinaryOperator{L'+'}>(Integer& lhs, const Integer& rhs)
+{
+    lhs+=rhs;
+    return lhs;
+}
 
+template<>
+Integer& operate<BinaryOperator{L'-'}>(Integer& lhs, const Integer& rhs)
+{
+    lhs-=rhs;
+    return lhs;
+}
 
+template<>
+Integer& operate<BinaryOperator{L'*'}>(Integer& lhs, const Integer& rhs)
+{
+    lhs*=rhs;
+    return lhs;
+}
+
+template<>
+Integer& operate<BinaryOperator{L'/'}>(Integer& lhs, const Integer& rhs)
+{
+    lhs/=rhs;
+    return lhs;
+}
+
+template<>
+Integer& operate<BinaryOperator{L'^'}>(Integer& lhs, const Integer& rhs)
+{
+    lhs^=rhs;
+    return lhs;
+}
 
 UnaryOperator::UnaryOperator() : 
     Operator(0,0)

@@ -35,8 +35,8 @@ private:
             uint8_t reserved;
         } sw;
     };
-    Code op;
 public: 
+    Code op;
     struct Definition
     {
         Code code;

@@ -1,4 +1,4 @@
-#include "Logic/Collection.h"
+#include "Logic/Internal/Collection.h"
 #include "Logic/Expression.h"
 
 #include <typeinfo>
