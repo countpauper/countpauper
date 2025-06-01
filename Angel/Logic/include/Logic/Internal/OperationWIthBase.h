@@ -1,13 +1,12 @@
 #pragma once
 #include "Logic/Internal/FlatCollection.h"
-#include "Logic/Hypothesis.h"
 #include <iostream>
 
 namespace Angel::Logic
 {
 
 template<class T>
-class Operation : public FlatCollection<T>
+class OperationWithBase : public FlatCollection<T>
 {
 public:
     using FlatCollection<T>::FlatCollection;

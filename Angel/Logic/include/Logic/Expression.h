@@ -8,6 +8,7 @@
 #include "Logic/Conjunction.h"
 #include "Logic/Disjunction.h"
 #include "Logic/Summation.h"
+#include "Logic/Subtraction.h"
 #include "Logic/Equation.h"
 #include "Logic/Function.h"
 #include "Logic/Association.h"
@@ -31,7 +32,8 @@ using ExpressionVariant = std::variant<
     Variable, Tuple, 
     Predicate, List, Set, Association,
     Negative, 
-    Conjunction, Disjunction, Summation,
+    Conjunction, Disjunction, 
+    Summation, Subtraction,
     Equation>; 
 
 class Expression : public ExpressionVariant
@@ -47,6 +49,7 @@ public:
     }
     Expression(const Expression& e);
     Expression(const Operator ope, Collection&& operands);
+    Expression& operator=(const Expression& e);
 
     template<typename T>
     bool Is() const
@@ -149,4 +152,5 @@ namespace std
 
 // Template implementations that depend on Expression and are therefore forward declared
 #include "Logic/Internal/IntOperation.h"
+#include "Logic/Internal/IntOperationWithBase.h"
 #include "Logic/Internal/IntComparison.h"

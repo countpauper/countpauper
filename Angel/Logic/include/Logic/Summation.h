@@ -1,5 +1,6 @@
 #pragma once
 #include "Logic/Operator.h"
+#include "Logic/Integer.h"
 #include "Internal/Operation.h"
 #include <iostream>
 
@@ -13,8 +14,10 @@ class Summation : public Operation<Summation>
 public:
     using Operation<Summation>::Operation;
     bool operator==(const Summation& rhs) const { return Operation<Summation>::operator==(rhs);}
-    constexpr static long initial = 0;
+    static const Integer initial;
     constexpr static BinaryOperator ope{L'+'};
 };
+
+std::ostream& operator<<(std::ostream& os, const Summation& summation);
 
 }

@@ -53,13 +53,19 @@ ExpressionVariant make_operation(const Operator ope, Collection&& operands)
     if (operands.size()==1) 
         return make_unary_operation<Negative>(ope, std::move(operands[0]));
     else 
-        return make_binary_operation<Summation, Disjunction, Conjunction, Equation>(ope, std::move(operands));
+        return make_binary_operation<Summation, Subtraction, Disjunction, Conjunction, Equation>(ope, std::move(operands));
 }
 
 
 Expression::Expression(const Operator ope, Collection&& operands) : 
     ExpressionVariant(make_operation(ope, std::move(operands)))
 {
+}
+
+Expression& Expression::operator=(const Expression& e)
+{
+    ExpressionVariant::operator=(e);
+    return *this;
 }
 
 template <std::size_t idx>

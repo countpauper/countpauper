@@ -45,10 +45,7 @@ protected:
     
 };
 
-
 template < typename T >
 concept IsCollection = std::derived_from<T, Collection> && !IsOperation<T>;
-
-
 
 }

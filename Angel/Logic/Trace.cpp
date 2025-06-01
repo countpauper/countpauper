@@ -21,4 +21,5 @@ Trace::Trace(const Trace& parent, const Predicate& predicate) :
     }
 }
 
+
 }

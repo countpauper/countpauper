@@ -1,8 +1,7 @@
-## Quick todo 
-
-Negation can go if it's just a single element subtraction (start at 0) A-B would hae to be a nagation -A,B though
-Boolean negation might still be an Individual so it's not like Negative is a very special type of unary operator. 
-
+## Quick todo / Rafactor
+- [ ] Rewrite disjunction & conjunction as an Operation<> (although early out? Multiply also early out on 0? exponent on 1 or 0?)
+- [ ] Predicate arguments are all single element comparisons and if they're not then it's shorthand for Equation{e}.
+    Matching a predicate (or any list/container) is making a conjunction of these where the matched argument is filled in as second argument. These can be simplified to boolean or a hypothesis with remaining variables (or predicates)
 
 ## Backlog 
 - [*] Get back up 
@@ -46,14 +45,14 @@ in sequence instead of in tr)
 - [ ] Arithmetic 
 -   [*] define constants 
 -   [*] define arithmetic (non boolean) functions 
--   [ ] query functions
 -   [ ] integer operators `+-*/^`
--   [ ] Inequality comparison, at least < for sort, perhaps != 
--   [*] lists
+-   [ ] Inequality comparison, at least < for sort, perhaps != (should be easy in Expression at least)
 -  [ ] Functional 
+-   [*] lists
 -   [ ] sets to the same level as lists (equality, var&tuple matching, operator. etc)
--   [ ] set and list operators `&|+-` (if both side containers?) 
 -   [ ] Be able to implement factorial like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples
+    - [ ] With inequality match `factorial(<2): 1`
+-   [ ] set and list operators `&|+-` (if both side containers?) 
 -   [ ] Be able to implement quicksort like Hashell https://en.wikipedia.org/wiki/Haskell#Code_examples (x:xs means [x]+xs if xs is a list or as used here to split head:tail
 -   [*] Membership operator x.{x,y} (done for List)
 - Python
@@ -81,6 +80,9 @@ in sequence instead of in tr)
 -   [ ] free pairs `a:b` 
 -   [ ] Derive Clause from Pair or make an isClause() helper?
 -   [ ] Lambdas are free clauses
+-   [ ] [Fold expressions](https://wiki.haskell.org/Fold): `[list] + ...` means add all elements in the list (right fold) ... + [list] for left. For all binary operators. (NB left or right does not mean iterate backwards. Just order of recursion and applying the operator. Might also need an initial value same as operators with base or for empty lists. 3 ^ [list]...
+-   [ ] Syntax for applying functions(lambdas?) (with two arguments?) `f(*[list], ...)` ? The `*` is for each but what would 
+it mean if it was omitted? In this case the user may have to supply the empty list case
 -   [ ] Namespace from `axiom:{set,}` preferably without the comma when parsing. Are commas ever needed for collections? for arguments?
 -   [ ] dicts (sets of associations) work as structs
 -   [ ] set access with `.` (list done, full feature for unique) 
