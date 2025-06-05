@@ -76,6 +76,10 @@ Integer Integer::operator^=(const Integer& o)
     return *this;    
 }
 
+bool Integer::operator<(const Integer& rhs) const
+{
+    return value < rhs.value;
+}
 std::size_t Integer::Hash() const
 {
     return value;

@@ -74,7 +74,9 @@ in sequence instead of in tr)
 - [ ] Advanced
 -   [ ] Tautology protection cat: cat (or longer) is an error (use trace, check linked list for equal)
 -   [ ] Prefix comparators for matching. 
--   [ ] For any operator `@` while infering 
+-   [ ] For any operator `@` while infering  
+-   [ ] Unary for any (element of) operator when matching
+-   [ ] Superset and subset operators  ⊆  ⊇  . Not sure what the ascii version is yet. maybe |= and &= ? 
 -   [ ] For any & each operators also while matching (each sort of done with Tuple I guess)
 -   [ ] Other MFINAE type matching or even some concept like syntax 
 -   [ ] free pairs `a:b` 

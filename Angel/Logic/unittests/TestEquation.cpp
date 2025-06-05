@@ -18,6 +18,16 @@ TEST(Equation, Construction)
 	static_assert(Logic::IsOperation<Equation>);
 }
 
+TEST(Equation, Simplify)
+{
+    EXPECT_EQ((Equation{Id("cat")}).Simplify(), (Equation{Id("cat")}));
+    EXPECT_EQ((Equation{Boolean(false), Boolean(true)}).Simplify(), Boolean(false));
+    EXPECT_EQ((Equation{Integer(3), Integer(3)}).Simplify(), Boolean(true));
+    EXPECT_EQ((Equation{Variable("y"), Integer(3)}).Simplify(), (Equation{Variable("y"), Integer(3)}));
+    EXPECT_EQ((Equation{Integer(1), Variable("n"), Integer(2)}).Simplify(), Boolean(false));
+    EXPECT_EQ((Equation{Id("cat"), Id("cat"), Variable("CAT")}).Simplify(),(Equation{Id("cat"), Variable("CAT")}));
+}
+
 TEST(Equation, Equations)
 {
     Knowledge k;
@@ -27,9 +37,8 @@ TEST(Equation, Equations)
 
 TEST(Equation, Nest)
 {
-
-    // EXPECT_EQ((Equation{Integer(1), Equation{Integer(2)}}), 
-    //     (Equation{Integer(1), Integer(2)}));
+    EXPECT_EQ((Equation{Integer(1), Equation{Integer(2)}}), 
+        (Equation{Integer(1), Integer(2)}));
 }
 
 TEST(Equation, MatchEquationIsTheSameAsMatchExpression)
@@ -37,7 +46,7 @@ TEST(Equation, MatchEquationIsTheSameAsMatchExpression)
     EXPECT_EQ((Equation{Integer(3)}).Matches(Integer(3), {}).Simplify(), Boolean(true));
     EXPECT_EQ((Equation{Integer(1)}).Matches(Integer(2), {}).Simplify(), Boolean(false));
     EXPECT_EQ((Equation{Integer(-1)}).Matches(Variable("X"), {}), (Equation{Variable("X"), Integer(-1)}));
-    
+    EXPECT_EQ((Equation{Integer(-1)}).Matches(Variable("X"), {}).Simplify(), (Equation{Variable("X"), Integer(-1)})); 
 }
 
 
@@ -64,7 +73,7 @@ TEST(Equation, AssumptionBecomesHypothesisWhenInferred)
 
 TEST(Equation, to_string)
 {
-    EXPECT_EQ(to_string(Equation{Integer(1)}), "1");
+    EXPECT_EQ(to_string(Equation{Integer(1)}), "=1");
     EXPECT_EQ(to_string(Equation{Variable("X"), Boolean(false)}), "$X=false");
 }
 

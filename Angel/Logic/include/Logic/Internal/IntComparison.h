@@ -7,18 +7,50 @@
 namespace Angel::Logic
 {
 
-template<BinaryOperator OP> bool compare(Expression& lhs, const Expression& rhs);
-template<> bool compare<BinaryOperator{L'='}>(Expression& lhs, const Expression& rhs);
+template<BinaryOperator OP> bool compare(const Expression& lhs, const Expression& rhs);
+template<> bool compare<BinaryOperator{L'='}>(const Expression& lhs, const Expression& rhs);
+template<> bool compare<BinaryOperator{L'≠'}>(const Expression& lhs, const Expression& rhs);
+template<> bool compare<BinaryOperator{L'<'}>(const Expression& lhs, const Expression& rhs);
+template<> bool compare<BinaryOperator{L'≤'}>(const Expression& lhs, const Expression& rhs);
+template<> bool compare<BinaryOperator{L'>'}>(const Expression& lhs, const Expression& rhs);
+template<> bool compare<BinaryOperator{L'≥'}>(const Expression& lhs, const Expression& rhs);
+
+template<class T> 
+Expression SimplifyRange(T& container, Collection::const_iterator from, Collection::const_iterator to, unsigned assumptions)
+{
+
+    auto next = from+1;
+    if ((from==to) || (next == to))
+        return container;
+
+    if (next->Assumptions()>0)
+        return SimplifyRange(container, next+1, to, assumptions+1);
+    if (from->Assumptions()>0)
+        return SimplifyRange(container, from+1, to, assumptions+1);
+    if (compare<T::ope>(*from, *next))
+    {
+        if (next+1 == to)
+        {
+            if (assumptions==0)
+                return Boolean(true);
+            else
+                return container;
+        }
+        else 
+            return SimplifyRange(container, container.erase(from), to, assumptions);
+    }
+    return Boolean(false);
+}
+
 
 template<class T> 
 Expression Comparison<T>::Simplify() const
 {
-    // TODO: comparison of constants
-    T simple = FlatCollection<T>::SimplifyItems();
-    return simple;  
+    auto simple = FlatCollection<T>::SimplifyItems();
+    return SimplifyRange(simple, simple.begin(), simple.end(), 0);
 } 
 
-template<typename T>
+template<class T>
 Expression Comparison<T>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     assert(FlatCollection<T>::size()==1);  // single element equations can be matched but not inferred. Predicate argument only
@@ -27,7 +59,7 @@ Expression Comparison<T>::Matches(const Expression& expression, const Hypothesis
     return FlatCollection<T>::front().Matches(expression, hypothesis);
 }
 
-template<typename T>
+template<class T>
 Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     assert(FlatCollection<T>::size()>1);   // single element equations can't be inferred only matched
@@ -52,10 +84,10 @@ Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypo
 
 // TODO: Generalize with operation 
 template<class T>
-std::ostream& operator<<(std::ostream& os, const Comparison<T>& conjunction)
+std::ostream& operator<<(std::ostream& os, const Comparison<T>& comparison)
 {
-    bool first = true;
-    for(const auto& obj: conjunction)
+    bool first = comparison.size()>1;
+    for(const auto& obj: comparison)
     {
         if (!first)
             os << T::ope;

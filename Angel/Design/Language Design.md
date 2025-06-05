@@ -125,6 +125,73 @@ The hypothesis is instantiated left to right, so a repeat of a variable (or a pr
 same($X,$X)
 ```
 
+## Matching comparators 
+The arguments of the predicate of a clause are theoratically comparators. Matching is the same as infering a comparison. 
+The default comparison is equality. `cat(ginny)` is equivalent (short hand for) `cat(=ginny)`. What technically happens 
+when matching is that the comparison is instantiated. `ginny=ginny` and then computed. 
+
+Mathching variables is then instaniating the comparison including the variable. This can only be solved with a hypothesis 
+```
+cat($X)
+> cat(ginny)?
+... ginny=$X  ``` instantiate the comparison 
+... true : ginny=$x  # result of computing ginny=$X 
+ginny=$x # hypothesis 
+```
+
+## Arithmetic comparators 
+Comparitors `>` `>=` `<` `<=` `!=` can be explicitly used in clause predicates as well. The comparison will be 
+with those operators 
+``` 
+large(>100)
+> large(1)?
+... 1>100
+... false # result of the comparison, no other matches so: 
+false
+```
+Again with undefined variables the arithmetic comparator becomes part of the hypothesis 
+
+## Collection operators 
+ALso the collection operators can be used. The simplest is the `@` any of, or in this case: member of compartor 
+will match with any of the following set. 
+```
+cat(@[ginny, gizmo])
+> cat(ginny)?
+... ginny @ [ginny, gizmo]
+... true 
+true 
+```
+If the collection is a variable `@CATS` then ginny will then be hypothesized to be one of the $CATS. 
+
+If the passed argument is itself a collection, the subset or superset operators can also be used. 
+
+## All of operator 
+THe all of operator is a little special in this regard. Since of course one argument can not match all of a collection
+with more than one argument, multiple sequential arguments will be matched. This is not the same as matching two 
+collections as that can be done with the equal, subset, and superset comparators.
+The resulting syntax and behavior is a lot like pythons variable arguments and if the variable is a tuple it will be 
+assigned these variable arguments 
+
+```
+friends(*{ginny, max})
+> friends(max, ginny)? 
+... [max,ginny]*{ginny,max}?
+... true 
+```
+or
+```
+friendly(ginny)
+friendly(max)
+friends(*F): friendly(*F)
+> friends(ginny,max)? 
+... true: $F=[ginny,max]
+... friendly(ginny)
+... ... true 
+... friendly(gizmo)
+... ... true
+true 
+```
+
 ## Matching predicates
 This may not be a very useful feature, but arguments of axioms can again be predicates with literal or variable 
 arguments. 

@@ -140,11 +140,42 @@ Integer& operate<BinaryOperator{L'^'}>(Integer& lhs, const Integer& rhs)
     return lhs;
 }
 
-template<> 
-bool compare<BinaryOperator{L'='}>(Expression& lhs, const Expression& rhs)
+template<>
+bool compare<BinaryOperator{L'='}>(const Expression& lhs, const Expression& rhs)
 {
     return lhs == rhs;
 }
+ 
+template<> 
+bool compare<BinaryOperator{L'≠'}>(const Expression& lhs, const Expression& rhs)
+{
+    return lhs != rhs;
+}
+
+template<> 
+bool compare<BinaryOperator{L'<'}>(const Expression& lhs, const Expression& rhs)
+{
+    return lhs < rhs;
+}
+
+template<> 
+bool compare<BinaryOperator{L'≤'}>(const Expression& lhs, const Expression& rhs)
+{
+    return lhs <= rhs;
+}
+
+template<> 
+bool compare<BinaryOperator{L'>'}>(const Expression& lhs, const Expression& rhs)
+{
+    return lhs > rhs;
+}
+
+template<> 
+bool compare<BinaryOperator{L'≥'}>(const Expression& lhs, const Expression& rhs)
+{
+    return lhs >= rhs;
+}
+
 
 UnaryOperator::UnaryOperator() : 
     Operator(0,0)

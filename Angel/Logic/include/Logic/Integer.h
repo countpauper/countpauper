@@ -19,7 +19,8 @@ public:
 	Integer operator*=(const Integer& o);
 	Integer operator/=(const Integer& o);
 	Integer operator^=(const Integer& o);
-	
+	bool operator<(const Integer& rhs) const;
+
     std::size_t Hash() const;
     long operator*() const;
 	static Integer Parse(const std::string& tag);

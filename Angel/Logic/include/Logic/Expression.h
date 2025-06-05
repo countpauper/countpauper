@@ -10,6 +10,7 @@
 #include "Logic/Summation.h"
 #include "Logic/Subtraction.h"
 #include "Logic/Equation.h"
+#include "Logic/Ordering.h"
 #include "Logic/Function.h"
 #include "Logic/Association.h"
 #include "Logic/Variable.h"
@@ -21,6 +22,15 @@
 #include <vector>
 #include <map>
 #include <type_traits>
+
+namespace std
+{
+	template <>
+	struct hash<Angel::Logic::Expression>
+	{
+		size_t operator()(const Angel::Logic::Expression& n) const;
+	};
+}
 
 namespace Angel::Logic
 {
@@ -34,7 +44,12 @@ using ExpressionVariant = std::variant<
     Negative, 
     Conjunction, Disjunction, 
     Summation, Subtraction,
-    Equation>; 
+    Equation, Lesser, LesserEqual, Greater, GreaterEqual>;  
+
+template <typename T, typename O>
+concept is_ordered = requires(const T& a, const O& b) {
+    { a < b } -> std::convertible_to<bool>;
+};
 
 class Expression : public ExpressionVariant
 {
@@ -110,6 +125,8 @@ public:
     Expression Matches(const Expression& e, const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
 
+    explicit operator bool() const;
+
     template<typename T> 
     requires(!std::is_same_v<Expression, T>) 
     bool operator==(const T& rhs) const
@@ -126,9 +143,34 @@ public:
             [](const auto&) { return false; }   
             },*this);
     }
-    explicit operator bool() const;
     bool operator==(const Expression& rhs) const;
-    bool operator<(const Expression&o) const;
+ 
+    template<typename T> 
+    bool operator<(const T& rhs) const
+    {
+        return std::visit(overloaded_visit{
+            [](std::monostate)
+            {
+                return false;
+            },
+            [&rhs](const auto& lhs)
+            requires is_ordered<decltype(lhs), T>
+            {
+                return lhs < rhs; 
+            }, 
+            [this, &rhs](const auto& obj) 
+            { 
+                std::hash<Expression> hasher;
+                return hasher(*this) < hasher(rhs);
+            }   
+            },*this);
+    }
+
+    bool operator<(const Expression& o) const;
+    inline bool operator<=(const Expression& o) const { return *this==o || *this<o; }
+    inline bool operator>(const Expression& o) const { return !(*this>=o); }
+    inline bool operator>=(const Expression& o) const { return !(*this<o); }
+
     const std::type_info& AlternativeTypeId() const;
 
     std::string Summary() const;
@@ -141,14 +183,7 @@ std::string to_string(const Expression& e);
 
 }
 
-namespace std
-{
-	template <>
-	struct hash<Angel::Logic::Expression>
-	{
-		size_t operator()(const Angel::Logic::Expression& n) const;
-	};
-}
+
 
 // Template implementations that depend on Expression and are therefore forward declared
 #include "Logic/Internal/IntOperation.h"

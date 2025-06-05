@@ -53,7 +53,8 @@ ExpressionVariant make_operation(const Operator ope, Collection&& operands)
     if (operands.size()==1) 
         return make_unary_operation<Negative>(ope, std::move(operands[0]));
     else 
-        return make_binary_operation<Summation, Subtraction, Disjunction, Conjunction, Equation>(ope, std::move(operands));
+        return make_binary_operation<Summation, Subtraction, Disjunction, Conjunction, 
+            Equation, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
 }
 
 
