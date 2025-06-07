@@ -9,6 +9,7 @@ TEST(Expression, DefaultExpressionIsNull)
     EXPECT_FALSE(Expression());
     EXPECT_EQ(Expression(), Expression());
     EXPECT_EQ(to_string(Expression()), "null");
+    ASSERT_TRUE(Expression().IsConstant());
 }
 
 TEST(Expression, CantCastNull)

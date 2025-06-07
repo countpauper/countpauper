@@ -15,10 +15,77 @@ template<> bool compare<BinaryOperator{L'≤'}>(const Expression& lhs, const Exp
 template<> bool compare<BinaryOperator{L'>'}>(const Expression& lhs, const Expression& rhs);
 template<> bool compare<BinaryOperator{L'≥'}>(const Expression& lhs, const Expression& rhs);
 
+
+template<BinaryOperator OP>
+bool IsPotentiallyOrdered(const Expression& left, const Expression& right)
+{
+    if ((!bool(left)) || (!bool(right)))
+        return true;
+
+    if (left.IsConstant() && right.IsConstant())
+        return compare<OP>(left, right);
+    return false;
+}
+
+bool IsRedundantComparisson(const Expression& left, const Expression& right);
+
+// This is a tricky algorithm. The caller iterates over the element
+// 1.  the order of all non variables needs to be determined. if any of them are not ordered left to
+// right then the result is false. 
+// 2. Any constant that is redundant is removed these are: 
+//      .1 Constants between two constants 
+//      .2 Constants between an end and a constant
+// 3. If all items are removed except the constant start and the constant end, then true is returned. 
+template<class T> 
+Expression Simplify(T&& container)
+{
+    if (container.size()<=1)
+        return std::move(container);
+    Expression lastConstant; 
+    bool all = true;
+
+    for(auto it = container.begin(); it!=container.end();)
+    {
+        if (!IsPotentiallyOrdered<T::ope>(lastConstant, *it))
+            return Boolean(false);
+        if (!it->Assumptions())
+            lastConstant = *it;
+        bool prevRedundant= false; 
+        if (it!=container.begin()) 
+        {
+            auto prev = it-1;
+            prevRedundant = IsRedundantComparisson(*prev, *it);
+            all &= !prevRedundant;            
+        } else 
+        {
+            prevRedundant = true;
+        }
+        auto next = it+1;
+        bool nextRedundant = false;
+        if (next!=container.end())
+        {
+            nextRedundant = IsRedundantComparisson(*it, *next);
+            all &= !nextRedundant;
+        }
+        else 
+        {
+            nextRedundant = true;
+        }
+        if (prevRedundant && nextRedundant)
+            container.erase(it);
+        else 
+            ++it;
+    }
+    if (all) {
+        return Boolean(true);
+    } else 
+        return std::move(container);
+}
+
+/*
 template<class T> 
 Expression SimplifyRange(T& container, Collection::const_iterator from, Collection::const_iterator to, unsigned assumptions)
 {
-
     auto next = from+1;
     if ((from==to) || (next == to))
         return container;
@@ -41,13 +108,14 @@ Expression SimplifyRange(T& container, Collection::const_iterator from, Collecti
     }
     return Boolean(false);
 }
+*/
 
 
 template<class T> 
 Expression Comparison<T>::Simplify() const
 {
     auto simple = FlatCollection<T>::SimplifyItems();
-    return SimplifyRange(simple, simple.begin(), simple.end(), 0);
+    return Angel::Logic::Simplify<T>(std::move(simple));
 } 
 
 template<class T>

@@ -126,7 +126,6 @@ std::size_t Expression::Assumptions() const
     return std::visit(overloaded_visit{
         [](std::monostate)
         {
-            assert(false); // should not exist here. Assumptions are undefined pbly
             return 0ULL;
         },
         [this]<IsElement T>(const T& element)

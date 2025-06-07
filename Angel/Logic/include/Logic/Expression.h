@@ -121,6 +121,7 @@ public:
 
     Expression Simplify() const;
     std::size_t Assumptions() const;
+    inline bool IsConstant() const { return Assumptions() == 0; }
     Expression Substitute(const Hypothesis& hypothesis) const;
     Expression Matches(const Expression& e, const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;

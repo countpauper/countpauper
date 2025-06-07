@@ -2,6 +2,8 @@
 - [ ] Rewrite disjunction & conjunction as an Operation<> (although early out? Multiply also early out on 0? exponent on 1 or 0?)
 - [ ] Predicate arguments are all single element comparisons and if they're not then it's shorthand for Equation{e}.
     Matching a predicate (or any list/container) is making a conjunction of these where the matched argument is filled in as second argument. These can be simplified to boolean or a hypothesis with remaining variables (or predicates)
+- [ ] Make compare operators Comparators and functors that return a bool on two expressions instead of the compare<OP> functions
+- [ ] Make the binary (and unary) operators also Operate() functors
 
 ## Backlog 
 - [*] Get back up 

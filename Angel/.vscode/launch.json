@@ -6,7 +6,7 @@
             "request": "launch",
             "program": "${exec}",      
             "MIMode": "gdb",
-            "miDebuggerArgs": "-ex echo TESSST", // \"'${workspaceFolder//\\\\//}'/.gdbinit\" -ex pwd",
+            "miDebuggerArgs": "", // \"'${workspaceFolder//\\\\//}'/.gdbinit\" -ex pwd",
             "setupCommands": [
                 { 
                     "text": "-enable-pretty-printing", 
