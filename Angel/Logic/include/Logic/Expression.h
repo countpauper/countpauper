@@ -43,7 +43,7 @@ using ExpressionVariant = std::variant<
     Predicate, List, Set, Association,
     Negative, 
     Conjunction, Disjunction, 
-    Summation, Subtraction,
+    Summation,  Subtraction,
     Equation, Lesser, LesserEqual, Greater, GreaterEqual>;  
 
 template <typename T, typename O>
@@ -51,7 +51,7 @@ concept is_ordered = requires(const T& a, const O& b) {
     { a < b } -> std::convertible_to<bool>;
 };
 
-class Expression : public ExpressionVariant
+class Expression
 {
 public:
     Expression() = default;
@@ -59,7 +59,7 @@ public:
     template<typename T>
     requires is_alternative<T, ExpressionVariant>
     Expression(const T& v) :
-        ExpressionVariant(v)
+        value(v)
     {
     }
     Expression(const Expression& e);
@@ -69,24 +69,30 @@ public:
     template<typename T>
     bool Is() const
     {
-        return std::get_if<T>(this) != nullptr;
+        return std::get_if<T>(&value) != nullptr;
     }
 
     template<typename T>
     const T* GetIf() const 
     {
-        return std::get_if<T>(this);
+        return std::get_if<T>(&value);
+    }
+    
+    template<typename T>
+    T* GetIf() 
+    {
+        return std::get_if<T>(&value);
     }
 
     template<typename T> 
     const T& Get() const 
     {
-        return std::get<T>(*this);
+        return std::get<T>(value);
     }
     template<typename T>
     const std::optional<T> TryCast() const
     {
-        auto same = std::get_if<T>(this);
+        auto same = std::get_if<T>(&value);
         if (same)
             return std::optional<T>(*same);
         else
@@ -103,7 +109,7 @@ public:
                 {
                     return std::optional<T>();
                 }
-            }, *this);
+            }, value);
         }
     }
 
@@ -127,6 +133,7 @@ public:
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
 
     explicit operator bool() const;
+    std::size_t Hash() const;
 
     template<typename T> 
     requires(!std::is_same_v<Expression, T>) 
@@ -142,7 +149,7 @@ public:
                 return lv == rhs;
             }, 
             [](const auto&) { return false; }   
-            },*this);
+            },value);
     }
     bool operator==(const Expression& rhs) const;
  
@@ -164,7 +171,7 @@ public:
                 std::hash<Expression> hasher;
                 return hasher(*this) < hasher(rhs);
             }   
-            },*this);
+            },value);
     }
 
     bool operator<(const Expression& o) const;
@@ -177,6 +184,9 @@ public:
     std::string Summary() const;
     std::string Documentation() const;
 
+    friend std::ostream& operator<<(std::ostream& s, const Expression& e);
+private:
+    ExpressionVariant value;
 };
 
 std::ostream& operator<<(std::ostream& s, const Expression& e);
@@ -190,3 +200,4 @@ std::string to_string(const Expression& e);
 #include "Logic/Internal/IntOperation.h"
 #include "Logic/Internal/IntOperationWithBase.h"
 #include "Logic/Internal/IntComparison.h"
+#include "Logic/Internal/IntFlatCollection.h"

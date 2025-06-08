@@ -11,17 +11,15 @@ namespace Angel::Logic
 {
 
 Expression::Expression(const Expression& e) :
-    ExpressionVariant(e)
+    value(e.value)
 {
 }
 
 template <typename... Ts>
 ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand) 
 {
-    if (!ope)
-        return std::move(operand);
-        
-    Logic::Expression result = Logic::Boolean(false);
+       
+    Logic::ExpressionVariant result;
     bool found = false;
     
     ((!found && (found = (Ts::ope == ope)) 
@@ -35,7 +33,7 @@ ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand)
 template <typename... Ts>
 ExpressionVariant make_binary_operation(const Operator ope, Collection&& operands) 
 {
-    Logic::Expression result = Logic::Boolean(false);
+    Logic::ExpressionVariant result;
     bool found = false;
     
     ((!found && (found = (Ts::ope == ope)) 
@@ -59,13 +57,13 @@ ExpressionVariant make_operation(const Operator ope, Collection&& operands)
 
 
 Expression::Expression(const Operator ope, Collection&& operands) : 
-    ExpressionVariant(make_operation(ope, std::move(operands)))
+    value(make_operation(ope, std::move(operands)))
 {
 }
 
 Expression& Expression::operator=(const Expression& e)
 {
-    ExpressionVariant::operator=(e);
+    value = e.value;
     return *this;
 }
 
@@ -118,7 +116,7 @@ Expression Expression::Simplify() const
         [this](const auto& obj)
         {
             return obj.Simplify();
-        }}, *this);      
+        }}, value);      
 }
 
 std::size_t Expression::Assumptions() const
@@ -147,7 +145,7 @@ std::size_t Expression::Assumptions() const
         [this](const auto& obj)
         {
             return obj.Assumptions();
-        }}, *this);
+        }}, value);
 
 }
 
@@ -170,7 +168,7 @@ Expression Expression::Substitute(const Hypothesis& hypothesis) const
         [&hypothesis](const auto& obj) -> Expression
         {
             return obj.Substitute(hypothesis);
-        }},   *this);      
+        }}, value);      
 }
 
 
@@ -194,7 +192,7 @@ Expression Expression::Matches(const Expression& e, const Hypothesis& hypothesis
         [&e, &hypothesis](const auto& obj) 
         {
             return obj.Matches(e, hypothesis);
-        }},   *this);    
+        }}, value);    
 }
 
 Expression Expression::Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const
@@ -210,13 +208,13 @@ Expression Expression::Infer(const class Knowledge& knowledge, const Hypothesis&
         [&knowledge, &hypothesis, &trace](const auto& obj) -> Expression {
             return obj.Infer(knowledge, hypothesis, trace);
         }
-    }, *this);
+    }, value);
 }
 
 Expression::operator bool() const
 {
     static_assert(std::is_same_v<std::variant_alternative_t<0, ExpressionVariant>, std::monostate>);
-    return index() != 0;
+    return value.index() != 0;
 }
 
 bool Expression::operator==(const Expression& rhs) const
@@ -230,7 +228,7 @@ bool Expression::operator==(const Expression& rhs) const
         {
             return operator==(rho);
         }
-        }, rhs);
+        }, rhs.value);
 }
 
 bool Expression::operator<(const Expression& e) const
@@ -244,7 +242,7 @@ const std::type_info& Expression::AlternativeTypeId() const
     return *std::visit([](const auto& obj)
     {
         return &typeid(decltype(obj)); 
-    }, *this);        
+    }, value);        
 }
 std::string Expression::Summary() const
 {
@@ -285,7 +283,7 @@ std::string Expression::Summary() const
         {
             return std::string("TODO Description for ")+Logic::to_string(*this);
         }
-    }, *this);
+    }, value);
 }
 
 std::string Expression::Documentation() const
@@ -299,7 +297,19 @@ std::string Expression::Documentation() const
         {
             return Logic::to_string(*this);
         }
-    }, *this);
+    }, value);
+}
+
+std::size_t Expression::Hash() const 
+{
+    return std::visit(Angel::Logic::overloaded_visit{
+        [](std::monostate mono) -> size_t 
+        { 
+            std::hash<std::monostate> hasher;
+            return hasher(mono);
+        }, 
+        [](const auto& obj) { return obj.Hash(); } 
+    },  value);
 }
 
 std::ostream& operator<<(std::ostream& s, const Expression& e)
@@ -313,7 +323,7 @@ std::ostream& operator<<(std::ostream& s, const Expression& e)
         {
             s << obj;
         } 
-    }, e);
+    }, e.value);
     return s;
 }
 
@@ -331,15 +341,7 @@ namespace std
 
 size_t hash<Angel::Logic::Expression>::operator()(const Angel::Logic::Expression& e) const
 {
-    return std::visit(Angel::Logic::overloaded_visit{
-        [](std::monostate mono) -> size_t 
-        { 
-            std::hash<std::monostate> hasher;
-            return hasher(mono);
-        }, 
-        [](const auto& obj) { return obj.Hash(); } 
-    },  e);
+    return e.Hash();
 }
-
 
 }

@@ -17,7 +17,7 @@ bool Expression::operator==(const Expression& rhs) const
         {
             return operator==(rho);
         }
-        }, rhs);
+        }, rhs.value);
 }
 
 
@@ -32,7 +32,7 @@ bool Expression::operator<(const Expression& rhs) const
         {
             return (*this) < rho;
         }
-        }, rhs);
+        }, rhs.value);
 }
 
 }

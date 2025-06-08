@@ -121,7 +121,8 @@ Expression ExtendResult(Expression&& value, Expression&& current, Hypothesis&& h
 
 Expression Predicate::Infer(const Knowledge& knowledge, const Hypothesis& originalHypothesis, Trace& parentTrace) const
 {
-	Predicate simple(id, std::get<List>(arguments.Substitute(originalHypothesis).Simplify()));
+	List args = arguments.Substitute(originalHypothesis).Simplify().Get<List>();
+	Predicate simple(id, std::move(args));
 	Trace trace(parentTrace, simple);
 	Set result;
 	auto hypotheses = knowledge.Matches(simple);
