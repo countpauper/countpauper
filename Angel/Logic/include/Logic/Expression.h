@@ -35,10 +35,19 @@ namespace std
 namespace Angel::Logic
 {
 
+using ContainerVariant = std::variant<List, Set, Association>;
+using OperationVariant = std::variant<
+    Negative,    
+    Conjunction, Disjunction,
+     Summation, Subtraction>;
+
+using ComparisonVariant = std::variant<
+    Equation, Lesser, LesserEqual, Greater, GreaterEqual>;
+
 using ExpressionVariant = std::variant<
     std::monostate,
     Function,      
-    Boolean,  Integer, Id, String,
+    Element,
     Variable, Tuple, 
     Predicate, List, Set, Association,
     Negative, 
@@ -62,6 +71,13 @@ public:
         ExpressionVariant(v)
     {
     }
+    template<typename T>
+    requires is_alternative<T, ElementVariant>
+    Expression(const T& v) :
+        ExpressionVariant(Element(v))
+    {
+    }
+
     Expression(const Expression& e);
     Expression(const Operator ope, Collection&& operands);
     Expression& operator=(const Expression& e);
@@ -86,7 +102,7 @@ public:
     template<typename T>
     const std::optional<T> TryCast() const
     {
-        auto same = std::get_if<T>(this);
+        auto same = GetIf<T>();
         if (same)
             return std::optional<T>(*same);
         else

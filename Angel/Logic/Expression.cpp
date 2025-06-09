@@ -107,7 +107,7 @@ Expression Expression::Simplify() const
         {
             return Expression();
         },
-        [this]<IsElement T>(const T& element)   -> Expression 
+        [this](const Element& element)   -> Expression 
         {
             return *this;
         },
@@ -128,7 +128,7 @@ std::size_t Expression::Assumptions() const
         {
             return 0ULL;
         },
-        [this]<IsElement T>(const T& element)
+        [this](const Element& element)
         {
             return 0ULL;
         },
@@ -159,7 +159,7 @@ Expression Expression::Substitute(const Hypothesis& hypothesis) const
         {
             return Expression();
         },
-        [this]<IsElement T>(const T& element)   -> Expression 
+        [this](const Element& element)   -> Expression 
         {
             return *this;
         },
@@ -182,7 +182,7 @@ Expression Expression::Matches(const Expression& e, const Hypothesis& hypothesis
             assert(false);  // should never be matching against null-expression
             return Boolean(false);
         },
-        [&e, &hypothesis, this]<IsElement T>(const T& element) -> Expression 
+        [&e, &hypothesis, this](const Element& element) -> Expression 
         {
             const auto* var = e.GetIf<Variable>();
             if (var)
@@ -204,7 +204,7 @@ Expression Expression::Infer(const class Knowledge& knowledge, const Hypothesis&
         {
             return *this;
         },
-        []<IsElement T>(const T& element) -> Expression {
+        [](const Element& element) -> Expression {
             return element; 
         },
         [&knowledge, &hypothesis, &trace](const auto& obj) -> Expression {
@@ -249,7 +249,7 @@ const std::type_info& Expression::AlternativeTypeId() const
 std::string Expression::Summary() const
 {
     return std::visit(Logic::overloaded_visit{
-         [this]<Logic::IsElement T>(const T& element) -> std::string 
+         [this](const Element& element) -> std::string 
          {
             return Logic::to_string(*this);
         },
