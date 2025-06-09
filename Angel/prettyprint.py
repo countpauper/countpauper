@@ -1,60 +1,16 @@
 import gdb 
 import traceback
-import sys
 
-variants=None
-
-def short_str(o, length):
-    s = str(o)
-    if len(s)<=length:
-        return s
-    else:
-        return f"{s[:length-1]}…"
-
-def find_sub(val, name, index=0, tabs=0):
-    t = val.type
-    if t.name == name:  # find by type name
-        index-=1
-        if index<0:
-            return val, index
-    if t.is_scalar:
-        return None, index
-    for f in t.fields():
-        #print(f"{' '*tabs}Found field {short_str(f.name,40)} of type {short_str(f.type,40)}[{f.type.code}] in {short_str(t, 40)} #{index}")
-        if f.name == name:   # find by field name 
-            index -= 1
-            if index<0:
-                return val[f], index
-        if f.name is None:
-            #print(f"{' '*tabs}Skipping one field of type {f.type} base={f.is_base_class} artificial={f.artificial}")
-            continue
-        v, index = find_sub(val[f], name, index, tabs+1)
-        if v is not None:
-            return v, index
-    return None, index
+ns_prefix = 'Angel::Logic::'
 
 class ExpressionPrinter:
     def __init__(self, val):
-        index_field,_ = find_sub(val, "_M_index")
-        self.index = int(str(index_field).split(" ")[0])
-        self.val,_ = find_sub(val, "_M_storage", self.index-1)
-        if not self.val:
-            #print(f"ExpressionPrinter storage #{self.index} not found")
-            pass
-        elif self.val.type.name == "std::monostate": 
-            #print(f"ExpressionPrinter storage with no value at #{self.index}")
-            self.val = None
-        else:
-            #print(f"ExpressionPrinter storage {self.val} of type {self.val.type}={self.val.type.code}")
-            pass
+        self.val = val 
     
     def to_string(self):
-        # Access data members through GDB's Python API
-        #return gdb.execute(f'print my_object[{self.val}]', to_string=True)
-        if self.val:
-            return f"{self.val}"
-        else:
-            return f"{variants[self.index]}(<unknown>)"
+        obj_addr = int(self.val.address)
+        result = gdb.parse_and_eval(f"{ns_prefix}to_string(*({ns_prefix}Expression*){obj_addr})")
+        return str(result).strip("\"")
 
 class OperatorPrinter:
     def __init__(self, val):
@@ -69,8 +25,6 @@ class OperatorPrinter:
     def display_hint(self):
         return None # "string"
 
-ns_prefix = 'Angel::Logic::'
-
 
 class SimplePrinter:
     def __init__(self, typ, value):
@@ -84,21 +38,8 @@ class SimplePrinter:
     def display_hint(self):
         return None     
 
-def expression_variants():
-    alternatives=[]
-    exp_type = gdb.lookup_type(f"{ns_prefix}ExpressionVariant")
-    exp_var_type = exp_type.strip_typedefs()
-    # TODO for some reason  exp_var_type.template_argument(n) gives a syntax error so doing it the hard way 
-    header = "std::variant<"
-    alt_list = exp_var_type.name[len(header):-1]
-    alternatives = [alt[len(ns_prefix):] for alt in alt_list.split(", ")]
-    alternatives[0] = "Null"    # std::monostate
-    return alternatives
-
 def angel_printer(val):
     try: 
-        global variants
-        variants = expression_variants() 
         type_str = str(val.type)
         if type_str.startswith(ns_prefix):
             logic_type = type_str[len(ns_prefix):]
