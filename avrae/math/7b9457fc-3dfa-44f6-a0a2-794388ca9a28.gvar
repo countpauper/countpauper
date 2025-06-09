@@ -33,6 +33,7 @@ yard:
 # weight
 lb:
   kg: 0.45359290943563974
+  oz: 16
 kg:
   lb: 2.20462
   oz : 35.274
@@ -45,15 +46,19 @@ oz:
 # volume
 gal:
   L: 3.78541
+  pint: 8
 gallon:
   gal: L
 L:
-  gallon: 0.26417217685798894
+  gallon: 0.26417217685798894 
+  pint: 1.759754
+pint:
+  gal: 0.125
+  quart: 0.5
+  L: 0.5682612
 quart:
   liter: 0.9463525
   gallon: 0.25
-liter:
-  L: 1
 litre:
   L: 1
 # time
