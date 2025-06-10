@@ -169,7 +169,7 @@ public:
 
     bool operator<(const Expression& o) const;
     inline bool operator<=(const Expression& o) const { return *this==o || *this<o; }
-    inline bool operator>(const Expression& o) const { return !(*this>=o); }
+    inline bool operator>(const Expression& o) const { return !(*this<=o); }
     inline bool operator>=(const Expression& o) const { return !(*this<o); }
 
     const std::type_info& AlternativeTypeId() const;

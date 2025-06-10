@@ -45,8 +45,9 @@ TEST(Equation, MatchEquationIsTheSameAsMatchExpression)
 {
     EXPECT_EQ((Equation{Integer(3)}).Matches(Integer(3), {}).Simplify(), Boolean(true));
     EXPECT_EQ((Equation{Integer(1)}).Matches(Integer(2), {}).Simplify(), Boolean(false));
-    EXPECT_EQ((Equation{Integer(-1)}).Matches(Variable("X"), {}), (Equation{Variable("X"), Integer(-1)}));
-    EXPECT_EQ((Equation{Integer(-1)}).Matches(Variable("X"), {}).Simplify(), (Equation{Variable("X"), Integer(-1)})); 
+    EXPECT_EQ((Equation{Integer(-1)}).Matches(Variable("X"), {}).Simplify(), (Equation{Variable("X"), Integer(-1)}));
+    EXPECT_EQ((Equation{Integer(-1)}).Matches(Variable("X"), {Equation{Variable("X"), Integer(2)}}).Simplify(), 
+        Boolean(false));
 }
 
 

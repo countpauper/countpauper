@@ -24,7 +24,7 @@ bool IsPotentiallyOrdered(const Expression& left, const Expression& right)
 
     if (left.IsConstant() && right.IsConstant())
         return compare<OP>(left, right);
-    return false;
+    return true;
 }
 
 bool IsRedundantComparisson(const Expression& left, const Expression& right);
@@ -42,7 +42,7 @@ Expression Simplify(T&& container)
     if (container.size()<=1)
         return std::move(container);
     Expression lastConstant; 
-    bool all = true;
+    bool allConst = true;
 
     for(auto it = container.begin(); it!=container.end();)
     {
@@ -50,33 +50,33 @@ Expression Simplify(T&& container)
             return Boolean(false);
         if (!it->Assumptions())
             lastConstant = *it;
+        else
+            allConst = false;
+
+        bool hasPrev = it!=container.begin(); 
         bool prevRedundant= false; 
-        if (it!=container.begin()) 
+        if (hasPrev) 
         {
             auto prev = it-1;
-            prevRedundant = IsRedundantComparisson(*prev, *it);
-            all &= !prevRedundant;            
-        } else 
-        {
-            prevRedundant = true;
+            prevRedundant = IsRedundantComparisson(*prev, *it);    
         }
         auto next = it+1;
+        bool hasNext = next!=container.end(); 
         bool nextRedundant = false;
-        if (next!=container.end())
+        if (hasNext)
         {
             nextRedundant = IsRedundantComparisson(*it, *next);
-            all &= !nextRedundant;
         }
-        else 
-        {
-            nextRedundant = true;
-        }
-        if (prevRedundant && nextRedundant)
+        bool erase = false; 
+        erase |= !hasPrev && nextRedundant;
+        erase |= prevRedundant && nextRedundant;
+        erase |= prevRedundant && !hasNext;
+        if (erase)
             container.erase(it);
         else 
             ++it;
     }
-    if (all) {
+    if (allConst) {
         return Boolean(true);
     } else 
         return std::move(container);
@@ -121,10 +121,12 @@ Expression Comparison<T>::Simplify() const
 template<class T>
 Expression Comparison<T>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
-    assert(FlatCollection<T>::size()==1);  // single element equations can be matched but not inferred. Predicate argument only
-    // TODO: Equation match with logical simplication
-    // true & X matches true if X is true. 
-    return FlatCollection<T>::front().Matches(expression, hypothesis);
+    auto substituted = Substitute(hypothesis);
+    assert(substituted.size()==1);  // single element equations can be matched but not inferred. Predicate argument only
+    Hypothesis newHypothesis(hypothesis);
+    substituted.items.insert(substituted.begin(), expression.Substitute(hypothesis));
+    newHypothesis.emplace_back(std::move(substituted));
+    return newHypothesis;
 }
 
 template<class T>

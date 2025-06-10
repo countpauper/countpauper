@@ -41,9 +41,11 @@ TEST(Ordering, Simplify)
 TEST(Ordering, MatchUnaryOrderingIsTrueIfMatchIsOrdered)
 {
     EXPECT_EQ((LesserEqual{Integer(3)}).Matches(Integer(3), {}).Simplify(), Boolean(true));
-    EXPECT_EQ((Greater{Integer(3)}).Matches(Integer(4), {}).Simplify(), Boolean(false));
+    EXPECT_EQ((Greater{Integer(4)}).Matches(Integer(3), {}).Simplify(), Boolean(false));
     EXPECT_EQ((LesserEqual{Integer(1)}).Matches(Integer(2), {}).Simplify(), Boolean(false));
-    EXPECT_EQ((Lesser{Integer(-1)}).Matches(Variable("X"), {}).Simplify(), (Lesser{Variable("X"), Integer(-1)}));
+    EXPECT_EQ((Lesser{Integer(-1)}).Matches(Variable("X"), {}).Simplify(), (Lesser{ Variable("X"), Integer(-1) }));
+    EXPECT_EQ((Lesser{Integer(2)}).Matches(Variable("X"), {Greater{Variable("X"), Integer(0)}}).Simplify(), 
+        (Conjunction{Greater{Variable("X"), Integer(0)}, Lesser{ Variable("X"), Integer(2) }}));
 }
 
 
