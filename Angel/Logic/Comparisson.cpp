@@ -1,4 +1,4 @@
-#include "Logic/Internal/IntComparison.h"
+#include "Logic/Internal/ComparisonImpl.h"
 
 namespace Angel::Logic
 {

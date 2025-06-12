@@ -100,7 +100,7 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
 {
     Interpreter::ParsedSymbol input;
     Logic::Collection operands;
-    Logic::BinaryOperator ope;
+    Logic::Operator ope;
     std::stack<Logic::UnaryOperator> unary_ops;
     while(!parse.eof())
     {   
@@ -120,9 +120,9 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
             assert(!ope || nextOperator == ope); // not yet implemented 
             ope = nextOperator;
         }
-        if (input.symbol == Interpreter::Symbol("unary-operator"))
+        if (input.symbol == Interpreter::Symbol("prefix-operator"))
         {
-            unary_ops.push(Logic::UnaryOperator(input.location.extract()));
+            unary_ops.push(Logic::PrefixOperator(input.location.extract()));
         }
         else if (input.symbol == Interpreter::Symbol("object"))
         {   // TODO: prefixed values and braces

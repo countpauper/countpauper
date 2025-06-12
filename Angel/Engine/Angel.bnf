@@ -11,18 +11,18 @@
 <sequence-next> ::= "," <space> <expression> <sequence-next> | ε-sequence
 <expression> ::= <value> <operand>
 <operand> ::= <space> <binary-operator> <space> <value> <operand> | ε-expression
-<numerical-unary-operator> ::= '[+-]'
+<numerical-prefix-operator> ::= '[+-]'
 <star-operator> ::= "*"
-<numerical-binary-operator> ::= '[\/^]' | <numerical-unary-operator> | <star-operator>
-<logical-unary-operator> ::= '[~¬]'
+<numerical-binary-operator> ::= '[\/^]' | <numerical-prefix-operator> | <star-operator>
+<logical-prefix-operator> ::= '[~¬]'
 <logical-binary-operator> ::= '[&\|]'
 <comparator> ::= '(!=|>=|<=|[<>=≠≥≤])'
 <set-either-operator> ::= "@"
-<set-unary-operator> ::= '[∃∀]' | <set-either-operator> | <star-operator>
-<set-binary-operator> ::= '[.∈]' | <unary-either-operator>
+<set-prefix-operator> ::= '[∃∀]' | <set-either-operator> | <star-operator>
+<set-binary-operator> ::= '[.∈]' | <set-either-operator>
 <binary-operator> ::= <numerical-binary-operator> | <logical-binary-operator> | <comparator> | <set-binary-operator> 
-<unary-operator> ::= <numerical-unary-operator> | <logical-unary-operator> | <set-unary-operator>
-<value> ::= <unary-operator> <value> | <object> | "(" <space> <expression> <space> ")" 
+<prefix-operator> ::= <numerical-prefix-operator> | <logical-prefix-operator> | <set-prefix-operator>
+<value> ::= <prefix-operator> <value> | <object> | "(" <space> <expression> <space> ")" 
 # TODO indexation [ ], lists, sets and ranges value:value 
 <object> ::= <positive-integer>
 <object> ::= <predicate>  # NB: true and false are predefined ids with a value 

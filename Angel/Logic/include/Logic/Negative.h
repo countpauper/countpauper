@@ -1,7 +1,7 @@
 #pragma once 
 #include "Logic/Hypothesis.h"
 #include "Logic/Individual.h"
-#include "Logic/Operator.h"
+#include "Logic/Unary.h"
 #include <memory>
 
 namespace Angel::Logic
@@ -17,7 +17,7 @@ public:
     Negative Substitute(const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     bool operator==(const Negative& other) const;
-    constexpr static UnaryOperator ope{L'-'};
+    constexpr static PrefixOperator ope{L'-'};
 };
 
 std::ostream& operator<<(std::ostream& os, const Negative& );

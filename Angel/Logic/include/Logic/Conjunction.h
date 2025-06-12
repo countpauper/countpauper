@@ -2,7 +2,7 @@
 #include "Logic/Internal/FlatCollection.h"
 #include "Logic/Hypothesis.h"
 #include "Logic/Element.h"
-#include "Logic/Operator.h"
+#include "Logic/Binary.h"
 #include <iostream>
 
 namespace Angel::Logic

@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Operator.h"
+#include "Logic/Binary.h"
 #include "Internal/OperationWithBase.h"
 #include "Logic/Integer.h"
 #include <iostream>

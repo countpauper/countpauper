@@ -6,71 +6,44 @@
 namespace Angel::Logic
 {
 
-// TODO: this whole operator could be constexpr and templated for number of operands 
-// except (perhaps) the std::string_view lookup of the operator code based on tag + operands. 
-// that could be a free function unless the constexpr version of std::string_view 
+class Expression;
 class Operator 
 {
 public:
-    bool operator==(const Operator& rhs) const;
+    constexpr Operator() : Operator(L'\000',0) {};
+    constexpr bool operator==(const Operator& rhs) const { return op.id == rhs.op.id; }
     explicit operator bool() const;
     operator std::string() const;
     const std::string_view Description() const;
     unsigned Precedence() const;
+    uint32_t Id() const { return op.id; }
+    unsigned Operands() const { return op.sw.operands; }
+    bool Postfix() const { return op.sw.postfix; }
 protected:
-    constexpr explicit Operator(const wchar_t tag, uint8_t operands) :
-        op{.sw{tag, operands, 0}}
+    constexpr explicit Operator(const wchar_t tag, uint8_t operands, bool postfix=false) :
+        op{.sw{tag, operands, postfix, 0, 0}}
     {
     }
     Operator(const std::string_view tags, uint8_t operands);
 private:
-    // low 2 bytes = wchar_t opreator, byte 3 = 0 termination, 's just the signle character tag's unicode. 
     union Code
     {
         uint32_t id;
         struct __attribute__ ((packed)) 
         {
             wchar_t unicode; // 1 unicode char in the Basic Multilingual Plane.
-            uint8_t operands;
-            uint8_t reserved;
+            uint8_t operands:2; // noperator 0, unary, binary. TODO 3 for multiary as opposed to strictly binary . and : ? 
+            bool postfix:1;
+            uint8_t reserved:5;
+            uint8_t reserved2;
         } sw;
     };
 public: 
     Code op;
-    struct Definition
-    {
-        Code code;
-        std::int32_t precedence;
-        std::string_view altTag;
-        std::string_view description;
-    };
-
-};
-
-class UnaryOperator : public Operator 
-{
-public: 
-    static constexpr unsigned operands = 1;
-
-    UnaryOperator();
-    constexpr explicit UnaryOperator(const wchar_t tag) : Operator(tag, operands)  {}
-    UnaryOperator(const std::string_view tag);
-private:
-};
-
-class BinaryOperator : public Operator 
-{
-public: 
-    static constexpr unsigned operands = 2;
-    BinaryOperator();
-    constexpr explicit BinaryOperator(const wchar_t tag) : Operator(tag, operands) {}
-    BinaryOperator(const std::string_view tag);
 };
 
 
 std::ostream& operator<<(std::ostream& os, const Operator& op);
-std::ostream& operator<<(std::ostream& os, const BinaryOperator& op);
-std::ostream& operator<<(std::ostream& os, const UnaryOperator& op);
 
 template < typename T >
 concept IsOperation = std::derived_from<decltype(T::ope), Operator>;

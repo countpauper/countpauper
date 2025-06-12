@@ -1,6 +1,6 @@
 #pragma once
 #include "Logic/Hypothesis.h"
-#include "Logic/Operator.h"
+#include "Logic/Binary.h"
 #include <memory>
 
 namespace Angel::Logic

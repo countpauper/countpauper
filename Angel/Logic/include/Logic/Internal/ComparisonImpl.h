@@ -1,5 +1,6 @@
 #pragma once
 #include "Logic/Expression.h"
+#include "Logic/Internal/Compare.h"
 #include "Logic/Internal/Comparison.h"
 #include "Logic/Association.h"
 #include <cassert>
@@ -7,23 +8,14 @@
 namespace Angel::Logic
 {
 
-template<BinaryOperator OP> bool compare(const Expression& lhs, const Expression& rhs);
-template<> bool compare<BinaryOperator{L'='}>(const Expression& lhs, const Expression& rhs);
-template<> bool compare<BinaryOperator{L'≠'}>(const Expression& lhs, const Expression& rhs);
-template<> bool compare<BinaryOperator{L'<'}>(const Expression& lhs, const Expression& rhs);
-template<> bool compare<BinaryOperator{L'≤'}>(const Expression& lhs, const Expression& rhs);
-template<> bool compare<BinaryOperator{L'>'}>(const Expression& lhs, const Expression& rhs);
-template<> bool compare<BinaryOperator{L'≥'}>(const Expression& lhs, const Expression& rhs);
-
-
-template<BinaryOperator OP>
+template<Comparator OP>
 bool IsPotentiallyOrdered(const Expression& left, const Expression& right)
 {
     if ((!bool(left)) || (!bool(right)))
         return true;
 
     if (left.IsConstant() && right.IsConstant())
-        return compare<OP>(left, right);
+        return OP(left, right);
     return true;
 }
 
@@ -82,35 +74,6 @@ Expression Simplify(T&& container)
         return std::move(container);
 }
 
-/*
-template<class T> 
-Expression SimplifyRange(T& container, Collection::const_iterator from, Collection::const_iterator to, unsigned assumptions)
-{
-    auto next = from+1;
-    if ((from==to) || (next == to))
-        return container;
-
-    if (next->Assumptions()>0)
-        return SimplifyRange(container, next+1, to, assumptions+1);
-    if (from->Assumptions()>0)
-        return SimplifyRange(container, from+1, to, assumptions+1);
-    if (compare<T::ope>(*from, *next))
-    {
-        if (next+1 == to)
-        {
-            if (assumptions==0)
-                return Boolean(true);
-            else
-                return container;
-        }
-        else 
-            return SimplifyRange(container, container.erase(from), to, assumptions);
-    }
-    return Boolean(false);
-}
-*/
-
-
 template<class T> 
 Expression Comparison<T>::Simplify() const
 {
@@ -146,7 +109,7 @@ Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypo
         // and how does order (not) matter then?  "23" = 23 = 23.0 those should pbly not be automatically equal 
         // but integer and float? 23.0=23   and 23=23.0 ? 
         // at least hypothesis would have to be done here. 
-        if (!compare<T::ope>(first, cast))
+        if (!T::ope(first, cast))
             return Boolean(false);
     }
     return Boolean(true);

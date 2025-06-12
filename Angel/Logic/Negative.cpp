@@ -13,7 +13,7 @@ Expression Negative::Simplify() const
     }
     else if (const Integer* integer = simple.GetIf<Integer>())
     {
-        return Integer(-**integer);
+        return ope(*integer);
     }
     return Negative{std::move(simple)};
 }
@@ -33,8 +33,7 @@ Negative Negative::Substitute(const Hypothesis& hypothesis) const
 Expression Negative::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     auto value = content->Infer(k, hypothesis, trace);
-    auto intValue = value.Cast<Integer>();
-    return Integer(- *intValue);
+    return ope(value);
 }
 
 bool Negative::operator==(const Negative& other) const

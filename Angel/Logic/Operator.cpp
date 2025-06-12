@@ -1,6 +1,8 @@
 #include "Logic/Operator.h"
+#include "Logic/Comparator.h"
 #include "Logic/Integer.h"
-#include "Logic/Internal/IntOperation.h"
+#include "Logic/Internal/OperationImpl.h"
+#include "Logic/Internal/ComparisonImpl.h"
 #include <locale>
 #include <codecvt>
 #include <format>
@@ -14,41 +16,50 @@ constexpr uint32_t make_code(wchar_t unicode, uint8_t operands, bool postfix=fal
     return static_cast<uint32_t>(unicode) | static_cast<uint32_t>(operands&3)<<16 | (postfix?(1<<18):0); 
 }
 
-static const Operator::Definition opdef[]{
-    {make_code(L'^', 2), 0, "",    "power"},
-    {make_code(L'*', 2), 0, "",    "multiply"},
-    {make_code(L'÷', 2), 0, "/",   "divide"},
-    {make_code(L'+', 1), 0, "",    "positive"},
-    {make_code(L'+', 2), 0, "",    "add"},
-    {make_code(L'-', 2), 0, "",    "subtract"},
-    {make_code(L'-', 1), 0, "",    "negative"},
-    {make_code(L'↑', 2), 0, "**",  "exponent"},
-    {make_code(L'↓', 2), 0, "//",  "logarithm"},
-    {make_code(L'∧', 2), 0, "&",   "and"},
-    {make_code(L'∨', 2), 0, "|",   "or"},
-    {make_code(L'⊕',2), 0, "^",   "xor"},
-    {make_code(L'¬', 1), 0, "~",   "not"},
-    {make_code(L'≠', 2), 0, "!=",  "not equal"},
-    {make_code(L'>', 2), 0, "",    "greater"},
-    {make_code(L'<', 2), 0, "",    "lesser"},
-    {make_code(L'≥', 2), 0, ">=",  "greater or equal"},
-    {make_code(L'≤', 2), 0, "<=",  "lesser or equal"},
-    {make_code(L'∈', 2), 0, "@",   "element of"},
-    {make_code(L'∀', 2), 0, "*",   "all of"},
-    {make_code(L'∃', 1), 0, "@",   "any of"},
-    {make_code(L'.', 2), 0, "",    "item"},
-    {make_code(L'√', 1), 0, "",    "square root"},
-    {make_code(L'²', 1, true), 0, "", "squared"},
-    {make_code(L'³', 1, true), 0, "", "cubed"},
-    {make_code(L'!', 1, true), 0, "", "factorial"},
-    {                0,  0, "",    "none"} // 0 terminated
+struct Definition
+{
+    Operator op;
+    std::int32_t precedence;
+    std::string_view altTag;
+    std::string_view description;
 };
-static const Operator::Definition& FindDefinition(uint32_t id)
+
+static constexpr Definition opdef[]{
+    {BinaryOperator(L'^'),  0, "",    "power"},
+    {BinaryOperator(L'*'),  0, "",    "multiply"},
+    {BinaryOperator(L'÷'),  0, "/",   "divide"},
+    {PrefixOperator(L'+'),  0, "",    "positive"},
+    {BinaryOperator(L'+'),  0, "",    "add"},
+    {BinaryOperator(L'-'),  0, "",    "subtract"},
+    {PrefixOperator(L'-'),  0, "",    "negative"},
+    {BinaryOperator(L'↑'),  0, "**",  "exponent"},
+    {BinaryOperator(L'↓'),  0, "//",  "logarithm"},
+    {BinaryOperator(L'∧'),  0, "&",   "and"},
+    {BinaryOperator(L'∨'),  0, "|",   "or"},
+    {BinaryOperator(L'⊕'), 0, "^",   "xor"},
+    {PrefixOperator(L'¬'),  0, "~",   "not"},
+    {Comparator(L'≠'),      0, "!=",  "not equal"},
+    {Comparator(L'>'),      0, "",    "greater"},
+    {Comparator(L'<'),      0, "",    "lesser"},
+    {Comparator(L'≥'),      0, ">=",  "greater or equal"},
+    {Comparator(L'≤'),      0, "<=",  "lesser or equal"},
+    {Comparator(L'∈'),      0, "@",   "element of"},
+    {Comparator(L'∀'),      0, "*",   "all of"},
+    {PrefixOperator(L'∃'),   0, "@",   "any of"},
+    {BinaryOperator(L'.'),      0, "",    "item"},
+    {PrefixOperator(L'√'),   0, "",    "square root"},
+    {PostfixOperator(L'²'), 0, "", "squared"},
+    {PostfixOperator(L'³'), 0, "", "cubed"},
+    {PostfixOperator(L'!'), 0, "", "factorial"},
+    {Operator(),            0, "",    "none"} // 0 terminated
+};
+
+static const Definition& FindDefinition(uint32_t id)
 {
     unsigned i;
-    for(i=0;opdef[i].code.id; ++i)
+    for(i=0;opdef[i].op.Id(); ++i)
     {
-        if (opdef[i].code.id == id)
+        if (opdef[i].op.Id() == id)
             return opdef[i];
     }
     return opdef[i];
@@ -60,15 +71,14 @@ static const uint32_t FindId(const std::string_view tag, unsigned operands)
     if (tag.empty())
         return 0;
 
-    std::wstring wtag = wchar_conv.from_bytes(tag.begin(), tag.end());
-    for(unsigned i=0;opdef[i].code.id; ++i)
+    for(unsigned i=0;opdef[i].op.Id(); ++i)
     {
-        if (operands!=opdef[i].code.sw.operands)
+        if (operands!=opdef[i].op.Operands())
             continue;
-        if (opdef[i].code.sw.unicode == wtag[0])
-            return opdef[i].code.id;
+        if (tag.size()==1 && std::string(opdef[i].op)==tag)
+            return opdef[i].op.Id();
         if (opdef[i].altTag == tag) 
-            return opdef[i].code.id;
+            return opdef[i].op.Id();
     }
     throw std::invalid_argument(std::format("Undefined operator {}", tag));
 }
@@ -77,11 +87,6 @@ Operator::Operator(const std::string_view tag, uint8_t operands) :
     op{.id{FindId(tag, operands)}}
 {
     static_assert(sizeof(op) == 4);
-}
-
-bool Operator::operator==(const Operator& rhs) const
-{
-    return op.id == rhs.op.id;
 }
 
 Operator::operator bool() const
@@ -105,92 +110,11 @@ unsigned Operator::Precedence() const
     return FindDefinition(op.id).precedence;
 }
 
-template<>
-Integer& operate<BinaryOperator{L'+'}>(Integer& lhs, const Integer& rhs)
-{
-    lhs+=rhs;
-    return lhs;
-}
-
-template<>
-Integer& operate<BinaryOperator{L'-'}>(Integer& lhs, const Integer& rhs)
-{
-    lhs-=rhs;
-    return lhs;
-}
-
-template<>
-Integer& operate<BinaryOperator{L'*'}>(Integer& lhs, const Integer& rhs)
-{
-    lhs*=rhs;
-    return lhs;
-}
-
-template<>
-Integer& operate<BinaryOperator{L'/'}>(Integer& lhs, const Integer& rhs)
-{
-    lhs/=rhs;
-    return lhs;
-}
-
-template<>
-Integer& operate<BinaryOperator{L'^'}>(Integer& lhs, const Integer& rhs)
-{
-    lhs^=rhs;
-    return lhs;
-}
-
-template<>
-bool compare<BinaryOperator{L'='}>(const Expression& lhs, const Expression& rhs)
-{
-    return lhs == rhs;
-}
- 
-template<> 
-bool compare<BinaryOperator{L'≠'}>(const Expression& lhs, const Expression& rhs)
-{
-    return lhs != rhs;
-}
-
-template<> 
-bool compare<BinaryOperator{L'<'}>(const Expression& lhs, const Expression& rhs)
-{
-    return lhs < rhs;
-}
-
-template<> 
-bool compare<BinaryOperator{L'≤'}>(const Expression& lhs, const Expression& rhs)
-{
-    return lhs <= rhs;
-}
-
-template<> 
-bool compare<BinaryOperator{L'>'}>(const Expression& lhs, const Expression& rhs)
-{
-    return lhs > rhs;
-}
-
-template<> 
-bool compare<BinaryOperator{L'≥'}>(const Expression& lhs, const Expression& rhs)
-{
-    return lhs >= rhs;
-}
-
-
-UnaryOperator::UnaryOperator() : 
-    Operator(0,0)
-{        
-}
-
 UnaryOperator::UnaryOperator(const std::string_view tag) :
     Operator(tag, operands)
 {
 }
 
-BinaryOperator::BinaryOperator() : 
-    Operator(0,0)
-{        
-}
 
 BinaryOperator::BinaryOperator(const std::string_view tag) :
     Operator(tag, operands)
@@ -208,7 +132,6 @@ std::ostream& operator<<(std::ostream& os, const BinaryOperator& op)
     os << Operator(op);
     return os;
 }
-
 
 std::ostream& operator<<(std::ostream& os, const UnaryOperator& op)
 {

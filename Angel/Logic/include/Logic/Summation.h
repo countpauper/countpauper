@@ -1,7 +1,7 @@
 #pragma once
-#include "Logic/Operator.h"
-#include "Logic/Integer.h"
 #include "Internal/Operation.h"
+#include "Logic/Binary.h"
+#include "Logic/Integer.h"
 #include <iostream>
 
 namespace Angel::Logic

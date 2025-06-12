@@ -1,6 +1,7 @@
 #pragma once
 #include "Logic/Expression.h"
-#include "Logic/Internal/Operate.h"
+#include "Logic/Internal/UnaryImpl.h"
+#include "Logic/Internal/BinaryImpl.h"
 #include <numeric>
 
 namespace Angel::Logic
@@ -11,13 +12,13 @@ Expression Operation<T>::Simplify() const
 {
     T simple = FlatCollection<T>::SimplifyItems();
     auto it = simple.begin();
-    Integer constant(T::initial);
+    Expression constant(T::initial);
     while(it!=simple.end())
     {
         auto integer = it->template TryCast <Integer>();        
         if (integer)
         {
-            operate<T::ope>(constant, *integer);
+            constant = T::ope(constant, *integer);
             it = simple.erase(it);
         }
         else 
@@ -51,11 +52,11 @@ Expression Operation<T>::Infer(const class Knowledge& k, const Hypothesis& hypot
     // TODO: float and imaginary and upgrade when needed, also when overflowing
     // this can, for instance, be done by accumulating an Expression and making Objects implement operator+(Expression) etc
     
-    Integer value = std::accumulate(FlatCollection<T>::begin(), FlatCollection<T>::end(), Integer(0),
-        [&k, &hypothesis, &trace](Integer accumulated, const Expression& item)
+    Expression value = std::accumulate(FlatCollection<T>::begin(), FlatCollection<T>::end(), Expression(Integer(0)),
+        [&k, &hypothesis, &trace](Expression accumulated, const Expression& item)
         {
             auto inferred = item.Infer(k, hypothesis, trace);
-            return operate<T::ope>(accumulated, inferred.template Cast<Integer>());
+            return T::ope(accumulated, inferred);
         });
     return value;
 }    
