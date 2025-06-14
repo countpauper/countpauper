@@ -14,7 +14,8 @@ TEST(Ordering, Construction)
     EXPECT_EQ(Expression(BinaryOperator(L'>'), {Integer(1), Boolean(false)}), 
         (Greater{Integer(1), Boolean(false)}));   
 
-	static_assert(Logic::IsOperation<GreaterEqual>);
+	static_assert(Logic::is_operation<GreaterEqual>);
+	static_assert(Logic::is_ordering<GreaterEqual>);
 }
 
 TEST(Ordering, Order)

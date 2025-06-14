@@ -29,7 +29,7 @@ constexpr Expression operate<BinaryOperator{L'-'}>(const Expression& lhs, const 
 }
 
 template<>
-constexpr Expression operate<BinaryOperator{L'*'}>(const Expression& lhs, const Expression& rhs)
+constexpr Expression operate<BinaryOperator{L'⋅'}>(const Expression& lhs, const Expression& rhs)
 {
     auto lhInt = lhs.Cast<Integer>();
     auto rhInt = rhs.Cast<Integer>();
@@ -38,7 +38,7 @@ constexpr Expression operate<BinaryOperator{L'*'}>(const Expression& lhs, const 
 }
 
 template<>
-constexpr Expression operate<BinaryOperator{L'/'}>(const Expression& lhs, const Expression& rhs)
+constexpr Expression operate<BinaryOperator{L'÷'}>(const Expression& lhs, const Expression& rhs)
 {
     auto lhInt = lhs.Cast<Integer>();
     auto rhInt = rhs.Cast<Integer>();
@@ -81,7 +81,7 @@ constexpr Expression dispatch_operator(Operator op, const Expression& lhs, const
 
 constexpr Expression BinaryOperator::operator()(const Expression& lhs, const Expression& rhs) const
 {
-    return dispatch_operator<L"+-*/↑">(*this, lhs, rhs);
+    return dispatch_operator<L"+-⋅÷↑">(*this, lhs, rhs);
 }
 
 }

@@ -13,8 +13,7 @@ TEST(Summation, Construction)
     EXPECT_NE((Summation{Integer(3)}), Summation({Integer(3), Integer(2)}));
     EXPECT_EQ(Expression(BinaryOperator(L'+'), {Integer(-2), Integer(-1)}), (Summation{Integer(-2), Integer(-1)}));   
 
-	static_assert(Logic::IsOperation<Summation>);
-
+	static_assert(Logic::is_operation<Summation>);
 }
 
 TEST(Summation, Summations)

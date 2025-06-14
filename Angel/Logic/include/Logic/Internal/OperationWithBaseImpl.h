@@ -2,6 +2,7 @@
 #include "Logic/Expression.h"
 #include "Logic/Internal/BinaryImpl.h"
 #include <numeric>
+#include <cassert>
 
 namespace Angel::Logic
 {
@@ -10,11 +11,11 @@ template<class T>
 Expression OperationWithBase<T>::Simplify() const
 {
     T simple = FlatCollection<T>::SimplifyItems();
-    if (simple.empty())
-        return T::initial;
+    assert(!simple.empty());    // must have base, TODO: catch at construction
+
     auto it = simple.begin();
     auto const_base = it->template TryCast<Integer>();
-    Expression constant(T::initial);
+    Expression constant;
     if (const_base)
     {
         constant = *const_base;
@@ -25,7 +26,10 @@ Expression OperationWithBase<T>::Simplify() const
         auto integer = it->template TryCast <Integer>();        
         if (integer)
         {
-            constant = T::ope(constant, *integer);
+            if (constant)
+                constant = T::ope(constant, *integer);
+            else
+                constant = *integer;
             it = simple.erase(it);
         }
         else 
@@ -33,7 +37,7 @@ Expression OperationWithBase<T>::Simplify() const
     }
     if (const_base)
         simple.front() = constant;
-    else if (constant!=T::initial) 
+    else if (constant) 
         simple.push_back(constant);
     if (simple.size()==1)
         return simple.front();
@@ -54,9 +58,8 @@ Expression OperationWithBase<T>::Matches(const Expression& expression, const Hyp
 template<class T>
 Expression OperationWithBase<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    if (FlatCollection<T>::empty()) {
-        return Integer(T::initial);
-    }
+    assert(!FlatCollection<T>::empty());    // must have base, TODO: catch at construction
+
     Expression value = std::accumulate(FlatCollection<T>::begin()+1, FlatCollection<T>::end(), 
         FlatCollection<T>::front(),
         [&k, &hypothesis, &trace](const Expression& accumulated, const Expression& item)

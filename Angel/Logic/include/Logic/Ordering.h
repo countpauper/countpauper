@@ -20,5 +20,7 @@ using LesserEqual = Ordering<Comparator{L'≤'}>;
 using Greater = Ordering<Comparator{L'>'}>;
 using GreaterEqual = Ordering<Comparator{L'≥'}>;
 
+template < typename T >
+concept is_ordering = std::derived_from<decltype(T::ope), Comparator>;
 
 }

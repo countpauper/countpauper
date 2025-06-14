@@ -90,14 +90,15 @@ Bag Knowledge::Matches(const Predicate& query) const
         Expression lhs = clause.Left();
         const auto& predicate = lhs.Get<Predicate>();
         auto match = predicate.Matches(query, {});
-        if (match == Boolean(false))
+        if (match.Simplify() == Boolean(false))
             continue;
         Hypothesis hypothesis = GetAntecedent(std::move(match));
-        if (hypothesis.size() > bestMatch)
+        auto assumptions = hypothesis.Assumptions().size();
+        if (assumptions > bestMatch)
             continue;
         if (hypothesis.size() < bestMatch)
         {
-            bestMatch = hypothesis.size();
+            bestMatch = assumptions;
             hypotheses = Bag(); // clear worse hypotheses
         }
 

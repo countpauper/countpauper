@@ -20,6 +20,7 @@ public:
         return FlatCollection<T>::SubstituteItems(hypothesis);
     }
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
+    bool HasLeftAssumption() const;
 };
 
 }

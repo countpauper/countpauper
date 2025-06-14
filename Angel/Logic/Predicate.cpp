@@ -78,7 +78,28 @@ Predicate Predicate::Substitute(const Hypothesis& hypothesis) const
     return Predicate(id, arguments.Substitute(hypothesis));
 }
 
-Hypothesis LeftVariablesOnly(const Hypothesis& hypothesis)
+
+bool IsQueryHypothesis(const Expression& e)
+{
+	return std::visit(overloaded_visit{
+        []<Logic::is_ordering C>(const C& comparison)
+		{
+			return comparison.HasLeftAssumption();
+		}, 
+		[](const auto&) { return false; }   
+		}, e);
+
+}
+
+// When a query matches with a predicate there can be four cases per argument
+// 1. both are constant (and match)
+// 2. the query has a variable. The caller is querying what it was matched with for the hypothesis to be true. It's like a return value  
+// 3. The predicate has a variable. A generic case. The antecedent uses it to determine if it is true for the iput.
+// 4. Both the query and the predicate have a variable. TBD what this would do
+// Because the caller of the query provided the hypothesis in case 3, it does nnot need to be returned. 
+// during matches these hypothesis end up with the variable on the right input = $ARG and are filtered out here 
+// In case 2 the hypothesis has the variable on the left $ARG<input. These are kept 
+Hypothesis QueryHypothesisOnly(const Hypothesis& hypothesis)
 {
 	// TODO: input does not need to be const. Would be more performant if erase in place
 	// on the other hand keeping output hypothesis and infer context separate might
@@ -86,14 +107,9 @@ Hypothesis LeftVariablesOnly(const Hypothesis& hypothesis)
     Hypothesis result;
     for(const auto& sub : hypothesis)
     {
-        const auto& equation = sub.Get<Equation>();
-		if (equation.front().Is<Variable>())
+		if (IsQueryHypothesis(sub))
 		{
-			result.emplace_back(std::move(equation));
-		}
-		else if (equation.front().Is<Tuple>())
-		{
-			assert(false); // tuples should not be in the hypothesis
+			result.push_back(sub);
 		}
     }
     return result;
@@ -113,7 +129,7 @@ Expression ExtendResult(Expression&& value, Expression&& current, Hypothesis&& h
             return std::move(current);
         else
             return std::move(value);  
-    auto left = LeftVariablesOnly(hypothesis);
+    auto left = QueryHypothesisOnly(hypothesis);
     // TODO: perhaps should compare with current (if disjunction all) conjunctions. 
     // ockam's razor should discard them or left depending on size
     return Association{std::move(value), Disjunction{std::move(current), std::move(left)}}.Simplify();

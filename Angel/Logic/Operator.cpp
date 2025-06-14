@@ -26,7 +26,7 @@ struct Definition
 
 static constexpr Definition opdef[]{
     {BinaryOperator(L'^'),  0, "",    "power"},
-    {BinaryOperator(L'*'),  0, "",    "multiply"},
+    {BinaryOperator(L'⋅'),  0, "*",   "multiply"},
     {BinaryOperator(L'÷'),  0, "/",   "divide"},
     {PrefixOperator(L'+'),  0, "",    "positive"},
     {BinaryOperator(L'+'),  0, "",    "add"},
@@ -138,4 +138,5 @@ std::ostream& operator<<(std::ostream& os, const UnaryOperator& op)
     os << Operator(op);
     return os;
 }
+
 }

@@ -10,6 +10,7 @@ template<class T>
 class Operation : public FlatCollection<T>
 {
 public:
+    
     using FlatCollection<T>::FlatCollection;
 
     Expression Simplify() const;
@@ -19,6 +20,12 @@ public:
         return FlatCollection<T>::SubstituteItems(hypothesis);
     }
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
+protected:
+    using BaseType = Operation<T>;
 };
+
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Operation<T>& operation);
 
 }

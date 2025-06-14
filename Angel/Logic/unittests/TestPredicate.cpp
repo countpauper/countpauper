@@ -54,6 +54,14 @@ TEST(Predicate, Valence1IsFalseIfArgumentUnknown)
 	EXPECT_EQ(k.Infer(Predicate("cat", List{Id("woofer")})), Boolean(false));
 }
 
+
+TEST(Predicate, ArgumentInequality)
+{
+	Knowledge k { Predicate("one", List{Lesser{Integer(2)}}) };
+	EXPECT_EQ(k.Infer(Predicate("one", List{Integer(2)})), Boolean(false));
+	EXPECT_EQ(k.Infer(Predicate("one", List{Integer(1)})), Boolean(true));
+}
+
 TEST(Predicate, to_string)
 {
 	EXPECT_EQ(to_string(Predicate("gizmo", List{})), "gizmo");

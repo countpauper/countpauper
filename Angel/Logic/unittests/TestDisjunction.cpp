@@ -14,7 +14,7 @@ TEST(Disjunction, Construction)
     EXPECT_EQ(Disjunction{Boolean(false)}.size(), 1);    
     EXPECT_EQ(Expression(BinaryOperator(L'∨'), {Boolean(true), Boolean(false)}), (Disjunction{Boolean(true), Boolean(false)}));   
 
-	static_assert(Logic::IsOperation<Disjunction>);
+	static_assert(Logic::is_operation<Disjunction>);
 }
 
 TEST(Disjunction, Conjunctions)

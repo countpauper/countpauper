@@ -8,19 +8,18 @@ namespace Angel::Logic::Test
 
 TEST(Subtraction, Construction)
 {
-    EXPECT_TRUE(Subtraction{}.empty());
-    EXPECT_EQ((Subtraction{Integer(3)}), Subtraction({Integer(3)}));
+    EXPECT_EQ((Subtraction{Integer(3)}), Subtraction({Integer(3)}));    
     EXPECT_NE((Subtraction{Integer(3)}), Subtraction({Integer(3), Integer(2)}));
     EXPECT_EQ(Expression(BinaryOperator(L'-'), {Integer(-2), Integer(-1)}), (Subtraction{Integer(-2), Integer(-1)}));   
 
-	static_assert(Logic::IsOperation<Subtraction>);
+	static_assert(Logic::is_operation<Subtraction>);
 
 }
 
 TEST(Subtraction, Subtractions)
 {
     Knowledge k;
-    EXPECT_EQ(k.Infer(Subtraction{}), Integer(0));
+
     EXPECT_EQ(k.Infer(Subtraction{Integer(2)}), Integer(2));
     EXPECT_EQ(k.Infer(Subtraction{Integer(2), Integer(3)}), Integer(-1));
     EXPECT_EQ(k.Infer(Subtraction{Integer(2), Integer(-3)}), Integer(5));
@@ -30,7 +29,6 @@ TEST(Subtraction, Subtractions)
 
 TEST(Subtraction, Simplify)
 {
-    EXPECT_EQ((Subtraction{}).Simplify(), Integer(0));
     EXPECT_EQ((Subtraction{Integer(2)}).Simplify(), Integer(2));
     EXPECT_EQ((Subtraction{Integer(3), Integer(3)}).Simplify(), Integer(0));
 }

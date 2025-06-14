@@ -13,11 +13,11 @@ class Summation : public Operation<Summation>
 {
 public:
     using Operation<Summation>::Operation;
-    bool operator==(const Summation& rhs) const { return Operation<Summation>::operator==(rhs);}
+    bool operator==(const Summation& rhs) const { return BaseType::operator==(rhs);}
     static const Integer initial;
     constexpr static BinaryOperator ope{L'+'};
 };
 
-std::ostream& operator<<(std::ostream& os, const Summation& summation);
+std::ostream& operator<<(std::ostream& os, const Summation& operation);
 
 }

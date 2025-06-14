@@ -53,7 +53,7 @@ ExpressionVariant make_operation(const Operator ope, Collection&& operands)
     if (operands.size()==1) 
         return make_unary_operation<Negative>(ope, std::move(operands[0]));
     else 
-        return make_binary_operation<Summation, Subtraction, Disjunction, Conjunction, 
+        return make_binary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction, 
             Equation, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
 }
 
@@ -257,12 +257,12 @@ std::string Expression::Summary() const
         {
             return std::string(fn.ShortDescription());
         },
-        []<Logic::IsOperation Op>(const Op& operation) -> std::string 
+        []<Logic::is_operation Op>(const Op& operation) -> std::string 
         {
             return std::format("{} with {} terms", operation.ope.Description(), operation.size()); 
         },
         // TODO (before collection) all operators if they have an ope
-        []<Logic::IsCollection C>(const C& collection) -> std::string 
+        []<Logic::is_collection C>(const C& collection) -> std::string 
         {
             return std::format("{} {} collection {} items", 
                 C::unique?"unique":"non-unique",

@@ -5,8 +5,6 @@ namespace Angel::Logic
 {
 
 
-const Integer Subtraction::initial(0);
-
 std::ostream& operator<<(std::ostream& os, const Subtraction& subtraction)
 {
     bool first = true;

@@ -10,7 +10,7 @@ class OperationWithBase : public FlatCollection<T>
 {
 public:
     using FlatCollection<T>::FlatCollection;
-
+    
     Expression Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
     T Substitute(const Hypothesis& hypothesis) const
@@ -18,6 +18,8 @@ public:
         return FlatCollection<T>::SubstituteItems(hypothesis);
     }
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
+protected:
+    using BaseType = OperationWithBase<T>;
 };
 
 }

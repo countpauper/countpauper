@@ -17,7 +17,7 @@ TEST(Operator, ConstructBinary)
     EXPECT_TRUE(BinaryOperator(L'+'));
     EXPECT_EQ(BinaryOperator(L'∧'), BinaryOperator("&"));
     EXPECT_NE(BinaryOperator(L'-'), PrefixOperator(L'-'));
-    EXPECT_EQ(BinaryOperator(L'*').Operands(), 2);
+    EXPECT_EQ(BinaryOperator(L'⋅').Operands(), 2);
 
     static_assert(sizeof(BinaryOperator)==4);
 }

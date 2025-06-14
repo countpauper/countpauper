@@ -46,5 +46,5 @@ public:
 std::ostream& operator<<(std::ostream& os, const Operator& op);
 
 template < typename T >
-concept IsOperation = std::derived_from<decltype(T::ope), Operator>;
+concept is_operation = std::derived_from<decltype(T::ope), Operator>;
 }

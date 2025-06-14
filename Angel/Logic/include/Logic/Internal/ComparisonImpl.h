@@ -82,6 +82,14 @@ Expression Comparison<T>::Simplify() const
 } 
 
 template<class T>
+bool Comparison<T>::HasLeftAssumption() const
+{
+    if (FlatCollection<T>::empty())
+        return false;
+    return !FlatCollection<T>::front().Assumptions().empty();
+}
+
+template<class T>
 Expression Comparison<T>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     auto substituted = Substitute(hypothesis);

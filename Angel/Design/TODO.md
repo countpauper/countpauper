@@ -26,8 +26,8 @@
 -   [*] Parse set of axioms
 -   [*] Parse variables 
 -   [*] Parse conjunctions 
--   [ ] Parse list 
--   [ ] Parse set
+-   [*] Parse list 
+-   [*] Parse set
 - [ ] Prolog 
 -   [*] query horn clause 
 -   [*] Query predicate  
@@ -51,8 +51,8 @@
 -  [ ] Functional 
 -   [*] lists
 -   [*] sets to the same level as lists (equality, var&tuple matching, operator. etc)
--   [ ] Be able to implement factorial like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples
-    - [ ] With inequality match `factorial(<2): 1`
+-   [*] Be able to implement factorial like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples
+    - [*] With inequality match `factorial(<2): 1`
 -   [ ] List operators - + & | 
 -   [ ] set on list and list on set operators `&|+-` (if both side containers?) 
 -   [ ] Be able to implement quicksort like Hashell https://en.wikipedia.org/wiki/Haskell#Code_examples (x:xs means [x]+xs if xs is a list or as used here to split head:tail

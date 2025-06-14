@@ -14,8 +14,8 @@ TEST(Equation, Construction)
     EXPECT_EQ(Expression(BinaryOperator(L'='), {Integer(1), Boolean(false)}), 
         (Equation{Integer(1), Boolean(false)}));   
 
-
-	static_assert(Logic::IsOperation<Equation>);
+	static_assert(Logic::is_operation<Equation>);
+	static_assert(Logic::is_ordering<Equation>);
 }
 
 TEST(Equation, Simplify)

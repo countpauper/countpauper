@@ -9,6 +9,8 @@
 #include "Logic/Disjunction.h"
 #include "Logic/Summation.h"
 #include "Logic/Subtraction.h"
+#include "Logic/Multiplication.h"
+#include "Logic/Division.h"
 #include "Logic/Equation.h"
 #include "Logic/Ordering.h"
 #include "Logic/Function.h"
@@ -20,9 +22,6 @@
 #include "Logic/Internal/VariantUtils.h"
 #include "Logic/Hash.h"
 #include <variant>
-#include <vector>
-#include <map>
-#include <type_traits>
 
 namespace Angel::Logic
 {
@@ -35,7 +34,7 @@ using ExpressionVariant = std::variant<
     Predicate, List, Set, Association,
     Negative, 
     Conjunction, Disjunction, 
-    Summation, Subtraction,
+    Summation, Subtraction, Multiplication, Division,
     Equation, Lesser, LesserEqual, Greater, GreaterEqual>;  
 
 template <typename T, typename O>

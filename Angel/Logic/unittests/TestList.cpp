@@ -23,7 +23,7 @@ TEST(List, Construction)
 	List seq{List{Id("ginny"), Id("max")}};
 	EXPECT_EQ(seq.size(), 1);
 
-	static_assert(Logic::IsCollection<List>);
+	static_assert(Logic::is_collection<List>);
 }
 
 
