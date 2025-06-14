@@ -1,5 +1,6 @@
 #pragma once
 #include "Logic/Operator.h"
+#include "Logic/Hypothesis.h"
 #include <vector>
 #include <initializer_list>
 #include <variant>
@@ -7,9 +8,6 @@
 
 namespace Angel::Logic
 {
-
-class Expression;
-using Hypothesis = class Conjunction;
 using Collection_subrange = std::ranges::subrange<std::vector<Expression>::const_iterator, std::vector<Expression>::const_iterator>;
 
 template<typename T> class FlatCollection;
@@ -31,7 +29,7 @@ public:
         }
     }
     ~Collection();
-    std::size_t Assumptions() const;
+    Set Assumptions() const;
     Expression Get(const Expression& key) const;
     Expression Matches(Collection_subrange range, const Hypothesis& hypothesis) const;
     std::size_t Hash() const;

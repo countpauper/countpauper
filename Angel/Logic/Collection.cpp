@@ -39,9 +39,9 @@ bool Collection::operator==(const Collection& rhs) const
     return std::equal(begin(), end(), rhs.begin());
 }
 
-std::size_t Collection::Assumptions() const
+Set Collection::Assumptions() const
 {
-    return std::accumulate(begin(), end(), 0U, [](std::size_t assumptions, const Expression& item)
+    return std::accumulate(begin(), end(), Set{}, [](const Set& assumptions, const Expression& item)
     {
         return assumptions + item.Assumptions();
     });

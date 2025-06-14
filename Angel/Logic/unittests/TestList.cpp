@@ -59,6 +59,16 @@ TEST(List, Matches)
 	EXPECT_EQ((List{Integer(2),Integer(3)}).Matches(List{Integer(2)}, {}), Boolean(false));	
 }
 
+
+TEST(List, MatchesVariable)
+{
+	EXPECT_EQ((List{Integer(2),Integer(3)}).Matches(List{Variable("X"), Integer(3)}, {}).Simplify(), 
+		(Equation{Variable("X"), Integer(2)}));	
+	EXPECT_EQ((List{Tuple("L")}).Matches(List{Boolean(true), Id("ginny")}, {}).Simplify(), 
+		(Equation{List{Boolean(true), Id("ginny")}, Variable("L")}));	
+	EXPECT_EQ((List{Integer(0),Tuple("L")}).Matches(List{Integer(0), Boolean(false)}, {}).Simplify(), 
+		(Equation{List{Boolean(false)}, Variable("L")}));	
+}
 TEST(List, Infer)
 {
 	Knowledge k;

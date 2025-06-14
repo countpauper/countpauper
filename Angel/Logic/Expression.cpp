@@ -115,34 +115,34 @@ Expression Expression::Simplify() const
         {
             return *this;
         },
-        [this](const auto& obj)
+        [this](const auto& obj) -> Expression
         {
             return obj.Simplify();
         }}, *this);      
 }
 
-std::size_t Expression::Assumptions() const
+Set Expression::Assumptions() const
 {
     return std::visit(overloaded_visit{
         [](std::monostate)
         {
-            return 0ULL;
+            return Set{};
         },
         [this]<IsElement T>(const T& element)
         {
-            return 0ULL;
+            return Set{};
         },
         [this](const Function&)
         {
-            return 0ULL;
+            return Set{};
         },
-        [this](const Variable&)
+        [this](const Variable& v)
         {
-            return 1ULL;
+            return Set{v};
         },
-        [this](const Tuple&) 
+        [this](const Tuple& t) 
         {
-            return 1ULL;
+            return Set{t};
         },
         [this](const auto& obj)
         {

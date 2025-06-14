@@ -49,7 +49,7 @@ std::size_t Individual::size() const
 }
 
 
-std::size_t Individual::Assumptions() const
+Set Individual::Assumptions() const
 {
     return content->Assumptions();
 }

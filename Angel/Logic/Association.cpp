@@ -36,7 +36,7 @@ std::size_t Pair::size() const
         static_cast<std::size_t>(bool(rhs));
 }
 
-std::size_t Pair::Assumptions() const
+Set Pair::Assumptions() const
 {
     return Left().Assumptions() + Right().Assumptions();
 }

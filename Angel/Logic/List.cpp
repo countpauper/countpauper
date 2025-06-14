@@ -30,7 +30,7 @@ Expression List::Infer(const Knowledge& knowledge, const Hypothesis& hypothesis,
 }
 
 
-Expression List::Simplify() const
+List List::Simplify() const
 {
     return List(SimplifyItems());
 }

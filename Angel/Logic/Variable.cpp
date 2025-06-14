@@ -32,7 +32,7 @@ std::string_view Variable::Name() const
     return name;
 }
 
-Expression Variable::Simplify() const
+Variable Variable::Simplify() const
 {
     return *this;   
 }

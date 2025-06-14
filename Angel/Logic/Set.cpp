@@ -16,26 +16,54 @@ Set::Set(std::initializer_list<Expression> setItems)
     }
 }
 
-void Set::Add(Expression&& other)
+unsigned Set::Add(Expression&& other)
 {
     if (auto* association = other.GetIf<Association>())
     {
-        items.emplace(association->Left(), association->Right());
+        auto result = items.emplace(association->Left(), association->Right());
+        if (!result.second)
+        {
+            result.first->second = std::move(association->Right());
+            return 0;
+        }
+        else 
+            return 1;
     }
     else 
     {
-        items.emplace(std::move(other), Boolean(true));
+        auto result = items.emplace(std::move(other), Boolean(true));
+        return result.second;
     }
 }
 
-const Expression* Set::Get(const Expression& e) const
+
+unsigned Set::Remove(const Expression& e)
+{
+    if (auto* association = e.GetIf<Association>())
+    {
+        auto it = items.find(association->Left());
+        if (it == items.end())
+            return 0;
+        if (it->second != association->Right())
+            return 0;
+        items.erase(it);
+        return 1;
+    }
+    else 
+    {
+        return items.erase(e);
+    }
+}
+
+
+Expression Set::Get(const Expression& e) const
 {
     for(const auto& association: items)
     {
         if (association.first == e)
-            return &association.second;
+            return association.second;
     }
-    return nullptr;
+    return Boolean(false);
 }
 
 Expression Set::Pop(const Expression& e) 
@@ -70,12 +98,76 @@ Set::operator bool() const
 
 bool Set::operator==(const Set& rhs) const
 {
-    return size() == rhs.size() &&
-        std::equal(begin(), end(),
-                      rhs.begin());
+    if (size() != rhs.size())
+        return false; 
+    for(const auto& e:items)
+    {
+        if (rhs.Get(e.first) != e.second) 
+            return false;
+    }
+    return true;
 }
 
-Expression Set::Simplify() const
+Set& Set::operator+=(const Set& rhs)
+{
+    for(auto item: rhs)
+    {
+        Add(std::move(item));
+    }
+    return *this;
+}
+
+Set& Set::operator-=(const Set& rhs)
+{
+    for(const auto& item: rhs)
+    {
+        Remove(item);
+    }
+    return *this;
+}
+
+Set& Set::operator&=(const Set& rhs)
+{
+    for(auto it = items.begin(); it!=items.end();)
+    {
+        auto rhsIt = rhs.items.find(it->first);
+        if (rhsIt==rhs.items.end()) 
+            it = items.erase(it);
+        else if (it->second!=rhsIt->second)
+            it = items.erase(it);
+        else 
+            ++it;
+    }
+    return *this;
+}
+
+Set& Set::operator|=(const Set& rhs)
+{
+    return operator+=(rhs);
+}
+
+Set operator+(Set lhs, const Set& rhs) 
+{ 
+    return lhs += rhs; 
+}
+
+Set operator-(Set lhs, const Set& rhs)
+{
+    return lhs -= rhs;
+}
+
+Set operator&(Set lhs, const Set& rhs)
+{
+    return lhs &= rhs;
+}
+
+Set operator|(Set lhs, const Set& rhs)
+{
+    return lhs |= rhs;
+}
+
+
+Set Set::Simplify() const
 {
     Set simplified; 
     for(const auto item: items)
@@ -85,28 +177,74 @@ Expression Set::Simplify() const
     return simplified;   
 }
 
-std::size_t Set::Assumptions() const
+Set Set::Assumptions() const
 {
-    return std::accumulate(begin(), end(), 0U, [](std::size_t assumptions, const Expression& item)
+    return std::accumulate(begin(), end(), Set{}, [](const Set& assumptions, const Expression& item)
     {
         return assumptions + item.Assumptions();
     });    
 }
 
+Expression Set::MakeHypothesis(const Set& constants, bool reversed) const
+{
+    // then match variables in other to constants in this and move to hypothesis in reverse
+    if (empty())
+        return Boolean(constants.empty());
+    if (size()>1)
+        if (reversed)
+            return Equation{constants, *this};
+        else
+            return Equation{*this, constants};
+    assert(items.begin()->second == Boolean(true));
+    const auto& var = items.begin()->first;
+    if (const auto* singleVar = var.GetIf<Variable>()) 
+    {
+        if (constants.size()!=1)
+            return Boolean(false);  // too many
+        else 
+            if (reversed)
+                return Equation{*constants.begin(), var};
+            else 
+                return Equation{var, *constants.begin()};
+    }
+    else if (const auto* tuple = var.GetIf<Tuple>())
+    {
+        if (reversed)
+            return Equation{constants, var};
+        else 
+            return Equation{var, constants};
+    }
+    assert(false); // MakeHypothesis should only be called on a set of variable expressions
+    return Boolean(false);
+}
+
+
 Expression Set::Matches(const Expression& e, const Hypothesis& hypothesis) const
 {
     const Set* set = e.GetIf<Set>();
     if (!set)
-        return Boolean(false);
-        
-    // TODO: implement, but how and what behavior 
-    // {ginny, max} should match {max, ginny}
-    // {ginny, $X, gizmo } should match {max, ginny, $Y} with $X = max & $Y = gizmo 
-    // should be the same size at least, barring some sort of |Tail syntax 
-    // so all items should be attempted to match with another and then that one should be out
-    if (size()!=set->size())
-        return Boolean(false); // TODO: tuple matching or whatever could happen instead.
-    return Boolean(false);
+    {
+        assert(!e.Is<List>() && !e.Is<Bag>());   // unimplemented other containers.
+        return Boolean(false);  
+    }   
+    auto simplified = Substitute(hypothesis).Simplify();
+    auto other = set->Substitute(hypothesis).Simplify();
+    // first remove all duplicates (inclunding matching var)
+    auto duplicates = simplified & other; 
+    simplified -= duplicates;
+    other -= duplicates;
+
+    // then match variables to constants and move to hypothesis 
+    Set simplifiedAssumptions = simplified.Assumptions();
+    Set otherAssumptions = other.Assumptions();
+    
+    simplified -= simplifiedAssumptions;
+    other -= otherAssumptions;
+
+    Hypothesis newHypothesis;
+    newHypothesis.push_back(simplifiedAssumptions.MakeHypothesis(other, false));
+    newHypothesis.push_back(otherAssumptions.MakeHypothesis(simplified, true));
+    return newHypothesis.Simplify();
 }
 
 Set Set::Substitute(const Hypothesis& hypothesis) const

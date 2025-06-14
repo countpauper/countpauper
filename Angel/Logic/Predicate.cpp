@@ -57,7 +57,7 @@ Expression Predicate::Simplify() const
     return *this;   
 }
 
-std::size_t Predicate::Assumptions() const
+Set Predicate::Assumptions() const
 {
 	return arguments.Assumptions();
 }
@@ -121,7 +121,7 @@ Expression ExtendResult(Expression&& value, Expression&& current, Hypothesis&& h
 
 Expression Predicate::Infer(const Knowledge& knowledge, const Hypothesis& originalHypothesis, Trace& parentTrace) const
 {
-	Predicate simple(id, std::get<List>(arguments.Substitute(originalHypothesis).Simplify()));
+	Predicate simple(id, arguments.Substitute(originalHypothesis).Simplify());
 	Trace trace(parentTrace, simple);
 	Set result;
 	auto hypotheses = knowledge.Matches(simple);

@@ -14,7 +14,7 @@ public:
     Pair(Expression&& lhs, Expression&& rhs);
     explicit operator bool() const;
     std::size_t size() const;
-    std::size_t Assumptions() const;
+    Set Assumptions() const;
     const Expression& Left() const;
     Expression& Left();
     const Expression& Right() const;

@@ -23,7 +23,7 @@ public:
     bool operator==(const Predicate& other) const;
     std::size_t Hash() const;
     Expression Simplify() const;
-    std::size_t Assumptions() const;
+    Set Assumptions() const;
     Expression Matches(const Expression& expression, const Hypothesis& substitions) const;
     Predicate Substitute(const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;

@@ -6,111 +6,30 @@
 namespace Angel::Logic
 {
 Expression Simplify(const Expression& e);
+class Set;
 
 // A flat collection can't contain itself as a type and will automatically attempt 
 // all elements. 
-template<typename T>
+template<class T>
 class FlatCollection
 {
 public: 
     using value_type = Expression;
 
     FlatCollection() = default;
-	FlatCollection(std::initializer_list<Expression> items)
-    {
-        for(const auto& item: items)
-        {
-            if (const T* same = std::get_if<T>(&item))
-            {
-                push_back(*same);
-            }
-            else 
-            {
-                push_back(item);
-            }
-        }
-    }
-	explicit FlatCollection(std::vector<Expression>&& items)
-    {
-        for(auto& item: items)
-        {
-            if (const T* same = std::get_if<T>(&item))
-            {
-                emplace_back(std::move(*same));
-            }
-            else 
-            {
-                emplace_back(std::move(item));
-            }
-        }
-    }
+	FlatCollection(std::initializer_list<Expression> items);
+	explicit FlatCollection(std::vector<Expression>&& items);
 
     template <std::ranges::input_range R>
-	explicit FlatCollection(R items)
-    {
-        for(auto& item: items)
-        {
-            if (const T* same = std::get_if<T>(&item))
-            {
-                push_back(*same);
-            }
-            else 
-            {
-                push_back(item);
-            }
-        }
-    }
+	explicit FlatCollection(R items);
     ~FlatCollection() = default;
 
-    void push_back(const T& same)
-    {
-        items.insert(items.end(), same.begin(), same.end());
-    }
+    void push_back(const T& same);
+    void push_back(const Expression& exp);
+    void emplace_back(T&& same);
+    void emplace_back(Expression&& exp);
 
-    void push_back(const Expression& exp)
-    {
-        if (!bool(exp))
-            return;
-        if (const T* same = std::get_if<T>(&exp))
-        {
-            push_back(*same);
-        }
-        else 
-        {
-            items.push_back(exp);
-        }
-    }
-
-    void emplace_back(T&& same)
-    {
-        items.insert(items.end(), same.begin(), same.end());
-    }
-
-    void emplace_back(Expression&& exp)
-    {
-        if (!bool(exp))
-            return;
-        if (T* same = std::get_if<T>(&exp))
-        {
-            emplace_back(std::move(*same));
-        }
-        else 
-        {
-            items.emplace_back(exp);
-        }
-    }
-
-    std::size_t erase(const Expression& e)
-    {
-        return std::erase(items, e);
-    }
-
-    Collection::const_iterator erase(Collection::const_iterator it)
-    {
-        return items.erase(it);
-    }
-
-    std::size_t Assumptions() const { return items.Assumptions(); }
+    Set Assumptions() const;
 
     // template<class... Args >
     // void emplace_back( Args&&... args )
@@ -118,6 +37,8 @@ public:
     //     return items.emplace(std::forward<Args>(args)...);
     // }
 
+    std::size_t erase(const Expression& e) { return std::erase(items, e); }
+    Collection::const_iterator erase(Collection::const_iterator it) { return items.erase(it); }
     std::size_t size() const { return items.size(); }
     bool empty() const { return items.empty(); }
     Collection::const_iterator begin() const { return items.begin(); }

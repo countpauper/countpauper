@@ -32,7 +32,7 @@ std::string_view Tuple::Name() const
     return name;
 }
 
-Expression Tuple::Simplify() const
+Tuple Tuple::Simplify() const
 {
     return *this;   
 }

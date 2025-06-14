@@ -19,7 +19,7 @@ public:
     bool operator==(const Tuple& id) const;
     std::size_t Hash() const;
     std::string_view Name() const;
-    Expression Simplify() const;
+    Tuple Simplify() const;
     Expression Matches(Collection_subrange range, const Hypothesis& substituions, bool reverse=false) const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis, bool reverse=false) const;
     Expression Substitute(const Hypothesis& hypothesis) const;

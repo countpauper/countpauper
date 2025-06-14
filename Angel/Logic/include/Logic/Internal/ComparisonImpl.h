@@ -40,7 +40,7 @@ Expression Simplify(T&& container)
     {
         if (!IsPotentiallyOrdered<T::ope>(lastConstant, *it))
             return Boolean(false);
-        if (!it->Assumptions())
+        if (it->IsConstant())
             lastConstant = *it;
         else
             allConst = false;
@@ -96,7 +96,7 @@ template<class T>
 Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     assert(FlatCollection<T>::size()>1);   // single element equations can't be inferred only matched
-    if (FlatCollection<T>::Assumptions()) {
+    if (!FlatCollection<T>::Assumptions().empty()) {
         return Association(Boolean(true), T(FlatCollection<T>::items));
     }
     Expression first = FlatCollection<T>::front().Infer(k, hypothesis, trace);

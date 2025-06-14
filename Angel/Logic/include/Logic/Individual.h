@@ -4,6 +4,7 @@
 namespace Angel::Logic
 {
 class Expression;
+class Set;
 
 class Individual
 {
@@ -15,7 +16,7 @@ public:
     explicit Individual(Expression&& e);
     explicit operator bool() const;
     std::size_t size() const;
-    std::size_t Assumptions() const;
+    Set Assumptions() const;
     const Expression& operator*() const;
     const Expression* operator->() const;
     std::size_t Hash() const;

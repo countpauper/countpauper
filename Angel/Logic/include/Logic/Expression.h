@@ -18,19 +18,11 @@
 #include "Logic/Operator.h"
 #include "Logic/CastException.h"
 #include "Logic/Internal/VariantUtils.h"
+#include "Logic/Hash.h"
 #include <variant>
 #include <vector>
 #include <map>
 #include <type_traits>
-
-namespace std
-{
-	template <>
-	struct hash<Angel::Logic::Expression>
-	{
-		size_t operator()(const Angel::Logic::Expression& n) const;
-	};
-}
 
 namespace Angel::Logic
 {
@@ -120,8 +112,8 @@ public:
     Expression Cast(const std::type_info& rtt) const;
 
     Expression Simplify() const;
-    std::size_t Assumptions() const;
-    inline bool IsConstant() const { return Assumptions() == 0; }
+    Set Assumptions() const;
+    inline bool IsConstant() const { return Assumptions().empty(); }
     Expression Substitute(const Hypothesis& hypothesis) const;
     Expression Matches(const Expression& e, const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
@@ -184,9 +176,8 @@ std::string to_string(const Expression& e);
 
 }
 
-
-
 // Template implementations that depend on Expression and are therefore forward declared
 #include "Logic/Internal/OperationImpl.h"
+#include "Logic/Internal/FlatCollectionImpl.h"
 #include "Logic/Internal/OperationWithBaseImpl.h"
 #include "Logic/Internal/ComparisonImpl.h"

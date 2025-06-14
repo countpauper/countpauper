@@ -15,7 +15,7 @@ public:
 
     bool operator==(const List& rhs) const;
     explicit operator bool() const;
-    Expression Simplify() const;
+    List Simplify() const;
     Expression Matches(const Expression& other, const Hypothesis& hypothesis) const;
     List Substitute(const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
