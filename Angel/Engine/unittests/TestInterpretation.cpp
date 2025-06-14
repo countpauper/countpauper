@@ -45,4 +45,25 @@ TEST(Interpretation, Expression)
         Logic::Summation{Logic::Negative(Logic::Integer(1)), Logic::Integer(2)}));
 }
 
+TEST(Interpretation, List)
+{
+    Logic::Knowledge k; 
+    AngelInterpreter interpreter;
+    Interpreter::Source source("l:[-1,2]");
+    interpreter.Interpret(source, k);
+    EXPECT_EQ(k.Infer(Logic::Predicate("l")), 
+        (Logic::List{Logic::Negative(Logic::Integer(1)), Logic::Integer(2)}).Simplify());
+}
+
+
+TEST(Interpretation, Set)
+{
+    Logic::Knowledge k; 
+    AngelInterpreter interpreter;
+    Interpreter::Source source("s:{ginny, gizmo}");
+    interpreter.Interpret(source, k);
+    EXPECT_EQ(k.Infer(Logic::Predicate("s")), (Logic::Set{Logic::Id("ginny"), Logic::Id("gizmo")}));
+}
+
+
 }

@@ -5,6 +5,7 @@
 #include "Logic/Hash.h"
 #include <unordered_map>
 #include <optional>
+#include <vector> 
 
 namespace Angel::Logic
 {
@@ -14,14 +15,8 @@ class Set
 public:
 	Set() = default;
 	Set(std::initializer_list<Expression> setItems);
-	template<typename T> 
-	Set(std::initializer_list<T> setItems)
-	{
-		for(auto&& item: setItems)
-		{
-			Add(std::move(item));
-		}
-	}
+	explicit Set(std::vector<Expression>&& items);	
+	
 	unsigned Add(Expression&& other);
 	unsigned Remove(const Expression& e);
 	std::size_t size() const;

@@ -24,7 +24,6 @@ Expression Negative::Matches(const Expression& expression, const Hypothesis& hyp
     return Boolean(false);
 }
 
-
 Negative Negative::Substitute(const Hypothesis& hypothesis) const
 {
     return Negative(content->Substitute(hypothesis));

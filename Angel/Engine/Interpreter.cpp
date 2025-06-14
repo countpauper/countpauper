@@ -30,7 +30,7 @@ AngelInterpreter::AngelInterpreter() :
 }
 
 Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allowId=false);
-
+std::vector<Logic::Expression> GenerateSequence(Interpreter::SymbolStream& parse);
 
 Logic::Expression GeneratePredicateOrId( Interpreter::SymbolStream& parse, bool allowId)
 {
@@ -47,12 +47,9 @@ Logic::Expression GeneratePredicateOrId( Interpreter::SymbolStream& parse, bool 
         }
         else if (input.symbol == Interpreter::Symbol("sequence"))
         {
+            assert(!hasArguments);  // double arguments is weird 
             hasArguments = true;
-        }
-        else if (input.symbol == Interpreter::Symbol("expression"))
-        {
-            hasArguments = true;
-            args.push_back(GenerateExpression(parse, true));
+            args = Logic::List(std::move(GenerateSequence(parse)));
         }
         else if (input.symbol == Interpreter::Symbol("-predicate"))
         {
@@ -89,6 +86,18 @@ Logic::Expression GenerateObject(Interpreter::SymbolStream& parse, bool allowId)
     else if (input.symbol == Interpreter::Symbol("string"))
     {
         return Logic::String(input.location.sub(1,-1).extract());
+    }
+    else if (input.symbol == Interpreter::Symbol("container"))
+    {    
+        return GenerateObject(parse, allowId);
+    }
+    else if (input.symbol == Interpreter::Symbol("list"))
+    {
+        return Logic::List(GenerateSequence(parse));
+    }
+    else if (input.symbol == Interpreter::Symbol("set"))
+    {
+        return Logic::Set(GenerateSequence(parse));
     }
     else 
     {
@@ -142,6 +151,26 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
     }
     return Logic::Expression(ope, std::move(operands));
 }
+
+std::vector<Logic::Expression> GenerateSequence(Interpreter::SymbolStream& parse)
+{
+    std::vector<Logic::Expression> result;
+    Interpreter::ParsedSymbol input;
+    while(!parse.eof())
+    {      
+        parse >> input;
+        if (input.symbol == Interpreter::Symbol("expression"))
+        {
+            result.push_back(GenerateExpression(parse, true));
+        }
+        else if (input.symbol == Interpreter::Symbol("-sequence"))
+        {
+            break;
+        }
+    }
+    return result;
+}
+
 
 void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge)
 {

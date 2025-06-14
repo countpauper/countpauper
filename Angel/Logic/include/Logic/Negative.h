@@ -7,6 +7,7 @@
 namespace Angel::Logic
 {
 class Expression;
+class Integer;
 class Negative : public Individual
 {
 public: 

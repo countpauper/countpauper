@@ -16,6 +16,14 @@ Set::Set(std::initializer_list<Expression> setItems)
     }
 }
 
+
+Set::Set(std::vector<Expression>&& setItems)
+{
+    for(auto& item: setItems)
+    {
+        Add(std::move(item));
+    }
+}	
 unsigned Set::Add(Expression&& other)
 {
     if (auto* association = other.GetIf<Association>())

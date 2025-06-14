@@ -30,11 +30,15 @@
 <object> ::= <set> 
 <object> ::= <string> 
 <object> ::= <variable> 
+<object> ::= <container>
 <positive-integer> ::= '[0-9]+' 
 <positive-float> ::= '(([0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)|(inf)|(nan))'
 <string> ::= '\"([^"\\]|\\\"|\\\\)*\"'
 <id> ::= '([^\x00-\x7F]|[A-Za-z_])([^\x00-\x7F]|\w|\_)*'
 <anonymous_id> ::= <id> | εanonmous
 <variable> ::= "$" <anonymous_id> | <star-operator> <anonymous_id> 
+<container> ::= <list> | <set> 
+<list> ::= "[" <space> <sequence> "]"
+<set> ::= "{" <space> <sequence> "}"
 <space> ::= <req-space> | "" 
 <req-space> ::= '\s+'
