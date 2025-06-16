@@ -138,8 +138,13 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
             Logic::Expression newOparand = GenerateObject(parse, allowId);
             while (!unary_ops.empty())
             {
-                newOparand = Logic::Expression(unary_ops.top(), { newOparand });
+                auto op = unary_ops.top();
                 unary_ops.pop();
+                const auto* id = newOparand.GetIf<Logic::Id>();
+                if (op==Logic::PrefixOperator(L'∀') && id)
+                    newOparand = Logic::Tuple(std::string(*id));
+                else 
+                    newOparand = Logic::Expression(op, { newOparand });
             }
             operands.emplace_back(std::move(newOparand));
         }

@@ -27,9 +27,15 @@ std::size_t Id::Hash() const
     return hasher(name);
 }
 
+Id::operator std::string() const
+{
+    return name;
+}
+
+
 std::ostream& operator<<(std::ostream& os, const Id& id)
 {
-    os << id.name.c_str();
+    os << std::string(id).c_str();
     return os;
 }
 

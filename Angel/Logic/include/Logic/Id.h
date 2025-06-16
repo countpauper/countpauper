@@ -11,8 +11,8 @@ public:
     explicit operator bool() const;
 	bool operator==(const Id& id) const;
     std::size_t Hash() const;
+    operator std::string() const;
 private:
-    friend std::ostream& operator<<(std::ostream& os, const Id& id);
     std::string name;
 };
 

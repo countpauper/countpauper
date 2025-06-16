@@ -45,7 +45,7 @@ static constexpr Definition opdef[]{
     {Comparator(L'≥'),      0, ">=",  "greater or equal"},
     {Comparator(L'≤'),      0, "<=",  "lesser or equal"},
     {Comparator(L'∈'),      0, "@",   "element of"},
-    {Comparator(L'∀'),      0, "*",   "all of"},
+    {PrefixOperator(L'∀'),  0, "*",   "all of"},
     {PrefixOperator(L'∃'),  0, "@",   "any of"},
     {BinaryOperator(L'.'),  0, "",    "item"},
     {PrefixOperator(L'√'),  0, "",    "square root"},
