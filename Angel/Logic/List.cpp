@@ -18,6 +18,49 @@ bool List::operator==(const List& rhs) const
     return Collection::operator==(rhs);
 }
 
+
+List& List::operator+=(const List& rhs)
+{
+    Collection::operator+=(rhs);
+    return *this;
+}
+List& List::operator-=(const List& rhs)
+{
+    Collection::operator-=(rhs);
+    return *this;
+}
+List& List::operator&=(const List& rhs)
+{
+    Collection::operator&=(rhs);
+    return *this;
+}
+List& List::operator|=(const List& rhs)
+{
+    Collection::operator|=(rhs);
+    return *this;
+}
+
+List operator+(List lhs, const List& rhs) 
+{ 
+    return lhs += rhs; 
+}
+
+List operator-(List lhs, const List& rhs)
+{
+    return lhs -= rhs;
+}
+
+List operator&(List lhs, const List& rhs)
+{
+    return lhs &= rhs;
+}
+
+List operator|(List lhs, const List& rhs)
+{
+    return lhs |= rhs;
+}
+
+
 Expression List::Infer(const Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const
 {
     List result;

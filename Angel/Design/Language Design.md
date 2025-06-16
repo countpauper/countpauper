@@ -139,9 +139,8 @@ cat($X)
 ginny=$x # hypothesis 
 ```
 
-## Arithmetic comparators 
-Comparitors `>` `>=` `<` `<=` `!=` can be explicitly used in clause predicates as well. The comparison will be 
-with those operators 
+## Arithmetic unary comparators 
+Comparitors `>` `>=` `<` `<=` `!=` can be explicitly used in clause predicates as well. The comparison will be with the specific operator.
 ``` 
 large(>100)
 > large(1)?
@@ -150,6 +149,34 @@ large(>100)
 false
 ```
 Again with undefined variables the arithmetic comparator becomes part of the hypothesis 
+
+
+## Unary Comparators as antecedent 
+If the unary comparator is the right hand side of a pair, it is considered the antecedent for the left 
+hand side. The comparison is between the left and right hand side. 
+```
+$A:>2 # $A if $A>2
+```
+This is left as a pair unless $A is instantiated and the pair is added to a collection. Then the antecdent 
+can be computed and only if it is true, the left hand side is added.
+This allows this construction to be used as a quick filter 
+```
+A=[1,2,3]
+> [*A:>2]?
+... [1:1>2, 2:2>2, 3:3>3]
+... [1:false, 2:false, 3:true]
+[3]
+```
+
+## Non comparator filters 
+TBD perhaps for non unary comparator filter, the anonyous placeholder variable can be used 
+```
+[cheese:is_food($)]
+```
+Does that make sense? 
+
+To add an association to a collection, a nested pair may need to be used. Eg `[1:cheese:is_food($Nr:$)]`
+
 
 ## Collection operators 
 ALso the collection operators can be used. The simplest is the `@` any of, or in this case: member of compartor 
@@ -501,17 +528,29 @@ noisy(ginny)
 cat(ginny)?
 > true
 ```
+If all earlier elements are true, the last element is returned as the truth value. Normally this is 
+also true, but in some cases this can be used to return a conditional non boolean value, for instance 
+as a pair. `[$A:=65 & "a"]` This will add the pair 65:"a" to the list if $A $is the ascii code for "A".
+if it i snot the antecdent will be false and not added. If it is true it will be added with the
+right hand pair "a' which is trueish.
+
 
 ## Disjunction 
 A disjunction is true if at least one of its elements is true. 
 The `|` operator is used for disjunction and and lazy evaluation continues inference as soon as the first element of the 
-disjunction is found to be true.
+disjunction is found to be trueish. In that case it is returned.
 ```
 cat(ginny): noisy(ginny) | shy(ginny)
 shy(ginny)
 cat(ginny)?
 > true
 ```
+Even if it's not a boolean, but trueish, it is returned as is. 
+```
+> false|3?
+3
+```
+
 
 ### Conjunction axioms 
 

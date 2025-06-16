@@ -25,6 +25,7 @@ struct Definition
 };
 
 static constexpr Definition opdef[]{
+    {BinaryOperator(L'←'),  0, ":",   "with/if"},
     {BinaryOperator(L'^'),  0, "",    "power"},
     {BinaryOperator(L'⋅'),  0, "*",   "multiply"},
     {BinaryOperator(L'÷'),  0, "/",   "divide"},
@@ -45,12 +46,12 @@ static constexpr Definition opdef[]{
     {Comparator(L'≤'),      0, "<=",  "lesser or equal"},
     {Comparator(L'∈'),      0, "@",   "element of"},
     {Comparator(L'∀'),      0, "*",   "all of"},
-    {PrefixOperator(L'∃'),   0, "@",   "any of"},
-    {BinaryOperator(L'.'),      0, "",    "item"},
-    {PrefixOperator(L'√'),   0, "",    "square root"},
-    {PostfixOperator(L'²'), 0, "", "squared"},
-    {PostfixOperator(L'³'), 0, "", "cubed"},
-    {PostfixOperator(L'!'), 0, "", "factorial"},
+    {PrefixOperator(L'∃'),  0, "@",   "any of"},
+    {BinaryOperator(L'.'),  0, "",    "item"},
+    {PrefixOperator(L'√'),  0, "",    "square root"},
+    {PostfixOperator(L'²'), 0, "",    "squared"},
+    {PostfixOperator(L'³'), 0, "",    "cubed"},
+    {PostfixOperator(L'!'), 0, "",    "factorial"},
     {Operator(),            0, "",    "none"} // 0 terminated
 };
 

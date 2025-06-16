@@ -47,8 +47,8 @@ public:
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     Expression Get(const Expression& key) const;
     bool operator==(const Association& other) const { return Pair::operator==(other); }
-
-    constexpr static BinaryOperator ope{L':'};
+    bool IsClause() const;
+    constexpr static BinaryOperator ope{L'←'};
 };
 
 

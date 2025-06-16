@@ -31,13 +31,19 @@ public:
     ~Collection();
     Set Assumptions() const;
     Expression Get(const Expression& key) const;
+    unsigned Add(const Expression& key);
+    unsigned Remove(const Expression& key);
     Expression Matches(Collection_subrange range, const Hypothesis& hypothesis) const;
     std::size_t Hash() const;
     bool operator==(const Collection& rhs) const;
+	Collection& operator+=(const Collection& rhs);
+	Collection& operator-=(const Collection& rhs);
+	Collection& operator&=(const Collection rhs);
+	Collection& operator|=(const Collection rhs);
 protected:
     template<typename U>
     friend class FlatCollection;
-
+    const_iterator Find(const Expression& key) const;
     Collection SimplifyItems() const;
     Collection SubstituteItems(const Hypothesis& hypothesis) const;
     

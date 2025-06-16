@@ -34,6 +34,7 @@ TEST(Association, to_string)
 {
 	EXPECT_EQ(to_string(Association{Id("ginny"), Integer(4)}), "ginny:4");
 	EXPECT_EQ(to_string(Association{Id("ginny"), Id("gizmo")}), "ginny:gizmo");
+	EXPECT_EQ(to_string(Association{Predicate("cat"), Id("gizmo")}), "cat←gizmo");
 }
 
 TEST(Association, Simplify)
@@ -46,6 +47,18 @@ TEST(Association, Substitute)
 {
 	EXPECT_EQ(Association(Predicate("ginny"), Variable("C")).Substitute(Conjunction{Equation{Variable("C"), Id("gizmo")}}),
 		Association(Predicate("ginny"), Id("gizmo")));
+}
+
+
+TEST(Association, Matches)
+{
+	EXPECT_EQ(Association(Id("legs"), Integer(4)).Matches(Id("legs"),{}), Integer(4));
+	EXPECT_EQ(Association(Predicate("legs", {Variable("C")}), Integer(4)).Matches(
+			Predicate("legs", {Id("ginny")}), {Equation{Variable("C"), Id("ginny")}}), 
+			Integer(4));
+	EXPECT_EQ(Association(Id("ginny"), Integer(1)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{Boolean(true), Boolean(true)}));	
+	EXPECT_EQ(Association(Id("gizmo"), Integer(2)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{Boolean(false), Boolean(false)}));	
+	EXPECT_EQ(Association(Id("ginny"), Integer(3)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{Boolean(true), Boolean(false)}));	
 }
 
 TEST(Association, Infer)

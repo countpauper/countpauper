@@ -36,6 +36,9 @@ TEST(List, Compare)
 	List ab{Id("ginny"), Id("max")};
 	List ba{Id("max"), Id("ginny")};
 	EXPECT_NE(ab, ba);
+	List aa{Id("ginny"), Id("ginny")};
+	EXPECT_NE(a,aa);
+	EXPECT_NE(aa,a);
 }
 
 
@@ -86,6 +89,94 @@ TEST(List, Get)
 		Id("ginny")}).Get(Id("ginny")), (List{Integer(1), Integer(3), Boolean(true)}));
 }
 
+
+
+TEST(List, Add)
+{
+	List a{Id("ginny")};
+	EXPECT_EQ(a.Add(Id("ginny")), 1);
+	EXPECT_EQ(a.size(), 2);
+	EXPECT_EQ(a.Add(Id("gizmo")), 1);
+	EXPECT_EQ(a.size(), 3);
+}
+
+TEST(List, Concatenate)
+{
+	List a{Id("ginny")};
+	List b{Id("ginny"), Id("gizmo")};
+	EXPECT_EQ(a+b, (List{Id("ginny"), Id("ginny"), Id("gizmo")}));
+}
+
+TEST(List, Remove)
+{
+	List a{Id("ginny")};
+	EXPECT_EQ(a.Remove(Id("gizmo")), 0);
+	EXPECT_EQ(a.size(), 1);
+	EXPECT_EQ(a.Remove(Id("ginny")), 1);
+	EXPECT_EQ(a.size(), 0);
+}
+
+TEST(List, RemoveAssociation)
+{
+	List a{Association(Id("ginny"), Integer(2))};
+	EXPECT_EQ(a.Remove(Id("gizmo")), 0);
+	EXPECT_EQ(a.size(), 1);
+	EXPECT_EQ(a.Remove(Association(Id("ginny"), Integer(-2))), 0);
+	EXPECT_EQ(a.Remove(Id("ginny")), 1);
+	EXPECT_EQ(a.size(), 0);
+}
+
+TEST(List, Delete)
+{
+	List a{Id("ginny")};
+	List b{Id("gizmo")};
+	EXPECT_EQ(a-b, a);
+	EXPECT_EQ(a-a, List{});
+}
+
+TEST(List, DeleteExactAmount)
+{
+	List a{Id("ginny"), Id("ginny"), Id("ginny")};
+	List b{Id("ginny"), Id("gizmo") ,Id("ginny")};
+	EXPECT_EQ(a-b, (List{Id("ginny")}));
+}
+
+TEST(List, Union)
+{
+	List a{Id("ginny"), Id("gizmo")};
+	List b{Id("max"), Id("gizmo")};
+	EXPECT_EQ(a|b, (List{Id("ginny"), Id("gizmo"), Id("max")}));
+}
+
+
+TEST(List, UnionElementCountIsMax)
+{
+	List none{};
+	List one{Integer(1)};
+	List two{Integer(1),Integer(1)};
+	List three{Integer(1),Integer(1),Integer(1)};
+	EXPECT_EQ(two|one, two);
+	EXPECT_EQ(two|three, three);
+	EXPECT_EQ(one|none, one);
+}
+
+TEST(List, Intersection)
+{
+	List a{Id("ginny"), Id("gizmo")};
+	List b{Id("max"), Id("gizmo")};
+	EXPECT_EQ(a&b, (List{Id("gizmo")}));
+}
+
+TEST(List, IntersectionElementCountIsMin)
+{
+	List none{};
+	List one{Integer(1)};
+	List two{Integer(1),Integer(1)};
+	List three{Integer(1),Integer(1),Integer(1)};
+	EXPECT_EQ(two&one, one);
+	EXPECT_EQ(two&three, two);
+	EXPECT_EQ(one&none, none);
+}
 
 TEST(List, to_string)
 {

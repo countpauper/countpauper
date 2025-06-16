@@ -27,7 +27,6 @@ Collection::Collection(Collection_subrange items)
     }    
 }
 
-
 Collection::~Collection()
 {
 }
@@ -39,6 +38,50 @@ bool Collection::operator==(const Collection& rhs) const
     return std::equal(begin(), end(), rhs.begin());
 }
 
+Collection& Collection::operator+=(const Collection& rhs)
+{
+    insert(end(), rhs.begin(), rhs.end());
+    return *this;
+}
+
+Collection& Collection::operator-=(const Collection& rhs)
+{
+    for(const auto& rh_item: rhs)
+    {
+        Remove(rh_item);
+    }
+    return *this;
+}
+
+Collection& Collection::operator&=(Collection rhs)
+{
+    for(auto it=begin(); it!=end();)
+    {
+        auto rhit = rhs.Find(*it);
+        if (rhit!=rhs.end())
+        {
+            rhs.erase(rhit);
+            ++it;
+        }
+        else 
+            it = erase(it);
+    }
+    return *this;
+}
+
+Collection& Collection::operator|=(Collection rhs)
+{
+    for(auto it=begin(); it!=end();++it)
+    {
+        auto rhit = rhs.Find(*it);
+        if (rhit!=rhs.end())
+        {
+            rhs.erase(rhit);
+        }
+    }
+    return operator+=(rhs);
+}
+
 Set Collection::Assumptions() const
 {
     return std::accumulate(begin(), end(), Set{}, [](const Set& assumptions, const Expression& item)
@@ -47,6 +90,18 @@ Set Collection::Assumptions() const
     });
 }
 
+Collection::const_iterator Collection::Find(const Expression& key) const
+{
+    return std::find_if(begin(), end(), [&key](const value_type& item)
+    {
+        if (item == key)
+            return true;
+        else if (const auto* association = item.GetIf<Association>())
+            return association->Left() == key;
+        else 
+            return false;
+    }); 
+}
 
 Expression Collection::Get(const Expression& key) const
 {
@@ -85,6 +140,21 @@ Expression Collection::Get(const Expression& key) const
         return values;
     else
         return Integer(values.size());
+}
+
+
+unsigned Collection::Add(const Expression& key)
+{
+    push_back(key);
+    return 1;
+}
+unsigned Collection::Remove(const Expression& key)
+{
+    auto it = Find(key);
+    if (it==end())
+        return 0;
+    erase(it);
+    return 1;
 }
 
 Collection Collection::SimplifyItems() const 

@@ -28,6 +28,8 @@
 -   [*] Parse conjunctions 
 -   [*] Parse list 
 -   [*] Parse set
+-   [ ] Parse errors and query exception workaround ends in ? 
+-   [ ] parse *tuple
 - [ ] Prolog 
 -   [*] query horn clause 
 -   [*] Query predicate  
@@ -53,9 +55,20 @@
 -   [*] sets to the same level as lists (equality, var&tuple matching, operator. etc)
 -   [*] Be able to implement factorial like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples
     - [*] With inequality match `factorial(<2): 1`
--   [ ] List operators - + & | 
+-   [*] List operators - + & |
+-   [ ] Some way to filter. Using boolean associations seems appropriate as false means out `[*($V @ input: $V<2)]` or even better [*in:<2]
+        [ ]  associations with a single argument comparison will apply to the left side when simplifying. 3:<2 is 3 or 3:false, which is not added to the list
+        [ ] Add associations to list (and sets) checks false of right hand side          
+        [ ] associatons with a tuple will apply the associations to all elements of the tuple 
+        [ ] Test conjunction & disjunction return the last/first truish value as is
+        [ ] Tuples in a set are more generator if there are operators with them. Eg *x+2 is also [x0+2, x1+2,...]
+- [ ] /cheese shows an image of cheese 
+Sort code: 
+quicksort([]): []
+quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
+
 -   [ ] set on list and list on set operators `&|+-` (if both side containers?) 
--   [ ] Be able to implement quicksort like Hashell https://en.wikipedia.org/wiki/Haskell#Code_examples (x:xs means [x]+xs if xs is a list or as used here to split head:tail
+-   [ ] Be able to implement quicksort like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples (x:xs means [x]+xs if xs is a list or as used here to split head:tail
 -   [*] Membership operator x.{x,y} (done for List)
 
 - Python

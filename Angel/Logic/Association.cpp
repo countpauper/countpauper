@@ -27,7 +27,7 @@ Pair::Pair(Expression&& lhs, Expression&& rhs) :
 
 Pair::operator bool() const
 {
-    return bool(lhs);
+    return bool(lhs) && rhs->Simplify() != Boolean(false);
 }
 
 std::size_t Pair::size() const
@@ -118,9 +118,15 @@ Association Association::Substitute(const Hypothesis& hypothesis) const
 
 Expression Association::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
-    // TODO what does it mean? does only lhs need to match? 
-    return Boolean(false);
-
+    if (const auto* other = expression.GetIf<Association>())
+    {
+        return Hypothesis{lhs->Matches(other->Left(), hypothesis), rhs->Matches(other->Right(),hypothesis)};
+    }
+    else 
+    {
+        Association simple = Substitute(hypothesis);
+        return simple.Get(expression);
+    }
 }
 
 Expression Association::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
@@ -139,9 +145,17 @@ Expression Association::Get(const Expression& key) const
         return Boolean(false);
 }
 
+bool Association::IsClause() const
+{
+    return Left().Is<Predicate>();
+}
+
 std::ostream& operator<<(std::ostream& os, const Association& a)
 {
-    os << a.Left() << a.ope << a.Right();
+    if (a.IsClause())
+        os << a.Left() << a.ope << a.Right();
+    else 
+        os << a.Left() << ':' << a.Right();
     return os;
 }
 

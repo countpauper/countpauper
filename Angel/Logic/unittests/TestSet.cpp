@@ -46,7 +46,6 @@ TEST(Set, Iteration)
 	auto it = cats.begin();
 	++it;
 	EXPECT_EQ(it, cats.end());
-
 }
 
 TEST(Set, Add)
@@ -100,7 +99,7 @@ TEST(Set, Union)
 	EXPECT_EQ(a|b, (Set{Id("ginny"), Id("gizmo"), Id("max")}));
 }
 
-TEST(Set, Intersetion)
+TEST(Set, Intersection)
 {
 	Set a{Id("ginny"), Id("gizmo")};
 	Set b{Id("max"), Id("gizmo")};
