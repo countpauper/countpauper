@@ -201,24 +201,36 @@ void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge
     }
 }
 
-void GenerateKnowledge(const Interpreter::Source& source, Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge)
+std::size_t GenerateKnowledge(const Interpreter::Source& source, Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge)
 {
     Interpreter::ParsedSymbol input; 
+    std::size_t count = 0;
     while(!parse.eof())
     {
         parse >> input;
+        if (input.symbol == Interpreter::Symbol("knowledge"))
+        {
+            if (input.location.length < source.size())
+            {
+                throw std::runtime_error(std::format("Trailing input at {}: {}",
+                    input.location.length, 
+                    source.span(input.location.length).extract()));
+            }
+        }
         if (input.symbol == Interpreter::Symbol("axiom"))
         {
             GenerateAxiom(parse, knowledge);
+            ++count;
         }
     }
+    return count;
 }
 
-void AngelInterpreter::Interpret(const Interpreter::Source& source, Logic::Knowledge& knowledge )
+std::size_t AngelInterpreter::Interpret(const Interpreter::Source& source, Logic::Knowledge& knowledge )
 {
     Interpreter::SymbolStream os;
     parser.Parse(source, os);
-    GenerateKnowledge(source, os, knowledge);
+    return GenerateKnowledge(source, os, knowledge);
 }    
 
 Logic::Expression AngelInterpreter::InterpretQuery(const ::Interpreter::Source& source)

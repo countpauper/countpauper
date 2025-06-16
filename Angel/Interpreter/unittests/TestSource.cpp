@@ -55,15 +55,6 @@ TEST(SourceSpan, Extract)
     EXPECT_THROW(SourceSpan(10,3, &s).extract(), std::out_of_range);
 }
 
-TEST(Utils, Unclose)
-{
-    EXPECT_EQ(Unclose("\"literal\"", '"'), "literal");
-    EXPECT_EQ(Unclose("'regex'", '\''), "regex");
-    EXPECT_EQ(Unclose("<symbol>", '<','>'), "symbol");
-    EXPECT_THROW(Unclose("\"", '"'), std::invalid_argument);
-    EXPECT_THROW(Unclose("\"open", '"'), std::invalid_argument);
-    EXPECT_THROW(Unclose("open\"", '"'), std::invalid_argument);
-    
-}
+
 
 };

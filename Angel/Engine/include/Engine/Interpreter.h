@@ -12,7 +12,7 @@ class AngelInterpreter
 {
 public:
     AngelInterpreter();
-    void Interpret(const ::Interpreter::Source& source, Logic::Knowledge& knowledge ); 
+    std::size_t Interpret(const ::Interpreter::Source& source, Logic::Knowledge& knowledge ); 
     Logic::Expression InterpretQuery(const ::Interpreter::Source& source);
 private:
     Interpreter::Syntax syntax;

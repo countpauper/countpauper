@@ -28,7 +28,7 @@
 -   [*] Parse conjunctions 
 -   [*] Parse list 
 -   [*] Parse set
--   [ ] Parse errors and query exception workaround ends in ? 
+-   [*] Parse errors and query exception workaround ends in ? 
 -   [ ] parse *tuple
 - [ ] Prolog 
 -   [*] query horn clause 

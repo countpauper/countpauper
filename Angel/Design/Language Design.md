@@ -1011,6 +1011,16 @@ siblings([ron, ginny])
 siblings([gizmo, ginny])?
 > false 
 ```
+
+In these situations the existential prefix operators `*` and `@`  are used when matching. They generate a collection or disjunction of all possible matches. They can also be used in associations with collections, like tuples 
+
+```
+> *[1,2,3]:<=2  # This is equivalent to [*NRS:<=2]  when $NRS=[1,2,3]
+[2,3]
+> @[1,2,3]:<=2  # this is equivalent to [@NRS:<=2] 
+[2] # only one element matches, early out   
+```
+
 ## Also assumption assignment
 .... (same knowledge as above)
 ```

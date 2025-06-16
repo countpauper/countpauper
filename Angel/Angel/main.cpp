@@ -3,6 +3,7 @@
 #include "Logic/Expression.h"
 #include "Interpreter/Source.h"
 #include "Interpreter/Error.h"
+#include "Interpreter/Utils.h"
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -24,13 +25,13 @@ int IOLoop(const std::string_view prompt="")
 		try 
 		{
 			Interpreter::Source src(line);
-			try 
+			if (Interpreter::rtrim(line).back()=='?')
 			{
 				Logic::Expression query = interpreter.InterpretQuery(src);
 				auto response = knowledge.Infer(query);
 				std::cout << response << std::endl;
 			} 
-			catch(Interpreter::Error&)
+			else 
 			{
 				Interpreter::Source src(line);
 				interpreter.Interpret(src, knowledge);
