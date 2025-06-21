@@ -21,19 +21,19 @@ TEST(Variable, Query)
 	Trace trace;
 	EXPECT_EQ(k.Infer(Variable("Test")), Variable("Test"));
 	EXPECT_EQ(k.Infer(Variable("")), Variable(""));
-	Hypothesis subs{Equation{Variable("Test"), Integer(4)}};
+	Hypothesis subs{Equal{Variable("Test"), Integer(4)}};
 	EXPECT_EQ(Variable("Test").Infer(k, subs, trace), Integer(4));
 }
 
 TEST(Variable, MatchingHypothesis)
 {
-	EXPECT_EQ(Variable("X").Matches(Integer(1), {}), (Equation{Integer(1), Variable("X")}));
-	EXPECT_EQ(Expression(Integer("2")).Matches(Variable("Y"), {}), (Equation{Variable("Y"), Integer(2)}));
+	EXPECT_EQ(Variable("X").Matches(Integer(1), {}), (Equal{Integer(1), Variable("X")}));
+	EXPECT_EQ(Expression(Integer("2")).Matches(Variable("Y"), {}), (Equal{Variable("Y"), Integer(2)}));
 }
 
 TEST(Variable, MatchingSubstitution)
 {
-	Hypothesis substituted {Equation{Variable("Y"),Integer(2)}};
+	Hypothesis substituted {Equal{Variable("Y"),Integer(2)}};
 	EXPECT_EQ(Variable("Y").Matches(Integer(1), substituted), Boolean(false) );
 	EXPECT_EQ(Variable("Y").Matches(Integer(2), substituted), Boolean(true) );
 }
@@ -41,11 +41,11 @@ TEST(Variable, MatchingSubstitution)
 TEST(Variable, Substitute)
 {
 	EXPECT_EQ(Variable("B").Substitute(Conjunction{
-			Equation{Variable("A"), Integer(3)},
-			Equation{Variable("B"), Integer(2)}
+			Equal{Variable("A"), Integer(3)},
+			Equal{Variable("B"), Integer(2)}
 		}),
 		Integer(2));
-	EXPECT_EQ(Variable("A").Substitute(Conjunction{Equation{Variable("B"), Integer(2)}}),
+	EXPECT_EQ(Variable("A").Substitute(Conjunction{Equal{Variable("B"), Integer(2)}}),
 		Variable("A"));
 }
 
@@ -61,7 +61,7 @@ TEST(Variable, Hypothesis)
 	};
 	EXPECT_EQ(k.Infer(Predicate("cat", { Variable("C")})), (Association{
 		Boolean(true),
-		Equation{Variable("C"), Id("ginny")}
+		Equal{Variable("C"), Id("ginny")}
 	}));
 }
 
@@ -69,8 +69,8 @@ TEST(Variable, InferValue)
 {
 	Knowledge k;
 	Trace trace;
-	Hypothesis subs {Equation{Variable("X"),Integer(24)},
-						Equation{Integer(25), Variable("Y")}};
+	Hypothesis subs {Equal{Variable("X"),Integer(24)},
+						Equal{Integer(25), Variable("Y")}};
 	EXPECT_EQ(Variable("X").Infer(k, subs, trace), Integer(24));	
 	EXPECT_EQ(Variable("Y").Infer(k, subs, trace), Integer(25));	
 }
@@ -79,7 +79,7 @@ TEST(Variable, InferVariable)
 {
 	Knowledge k;
 	Trace trace;
-	Hypothesis subs {Equation{Variable("X"),Integer(2)}};
+	Hypothesis subs {Equal{Variable("X"),Integer(2)}};
 	EXPECT_EQ(Variable("Y").Infer(k, subs, trace), Variable("Y"));	
 	EXPECT_EQ(Variable("").Infer(k, subs, trace), Variable(""));	
 }

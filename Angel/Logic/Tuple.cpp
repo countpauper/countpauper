@@ -41,7 +41,7 @@ Expression Tuple::Substitute(const Hypothesis& hypothesis) const
 {
     for(const auto& condition : hypothesis)
     {
-        if (const auto* equation = condition.GetIf<Equation>())
+        if (const auto* equation = condition.GetIf<Equal>())
         {
             assert(equation->size() == 2); // not yet implemented multi equation or error for single equation
             if (equation->front() == Variable(name))
@@ -64,9 +64,9 @@ Expression Tuple::Matches(Collection_subrange range, const Hypothesis& hypothesi
     {
         if (*stillVar)
             if (reverse)
-                return Equation{Variable(name), List(range)};
+                return Equal{Variable(name), List(range)};
             else 
-                return Equation{List(range), Variable(name)};
+                return Equal{List(range), Variable(name)};
         else
             return Boolean(true);   // anonymous tuple 
     }
@@ -91,9 +91,9 @@ Expression Tuple::Matches(const Expression& e, const Hypothesis& hypothesis, boo
     {
         if (*stillVar)
             if (reverse)
-                return Equation{Variable(name), e};
+                return Equal{Variable(name), e};
             else
-                return Equation{e, Variable(name)};
+                return Equal{e, Variable(name)};
         else
             return Boolean(true);   // anonymous
     }
@@ -108,7 +108,7 @@ Expression Tuple::Infer(const class Knowledge& k, const Hypothesis& hypothesis, 
 {
     for(const auto& condition : hypothesis)
     {
-        if (const auto* equation = condition.GetIf<Equation>())
+        if (const auto* equation = condition.GetIf<Equal>())
         {
             assert(equation->size()==2); // not determined what to do with long equations or unequations 
             if (equation->front() == Variable(name))

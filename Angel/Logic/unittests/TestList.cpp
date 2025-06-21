@@ -23,7 +23,7 @@ TEST(List, Construction)
 	List seq{List{Id("ginny"), Id("max")}};
 	EXPECT_EQ(seq.size(), 1);
 
-	static_assert(Logic::is_collection<List>);
+	static_assert(Logic::is_container<List>);
 }
 
 
@@ -50,8 +50,22 @@ TEST(List, Simplify)
 
 TEST(List, Substitute)
 {
-	EXPECT_EQ((List{Boolean(true), Variable("I")}).Substitute(Conjunction{Equation{Variable("I"), Integer(3)}}),
+	EXPECT_EQ((List{Boolean(true), Variable("I")}).Substitute(Conjunction{Equal{Variable("I"), Integer(3)}}),
 		(List{Boolean(true), Integer(3)}));
+}
+
+TEST(List, Substituple)
+{
+	EXPECT_EQ((List{Boolean(true), Tuple("T")}).Substitute(Conjunction{
+		Equal{Variable("T"), List{Integer(2), Id("three")}}}),
+		(List{Boolean(true), Integer(2), Id("three")}));
+}
+
+TEST(List, SubstitupleFiltered)
+{
+	EXPECT_EQ((List{Integer(0), Association(Tuple("T"), LesserEqual{Integer(2)}).Substitute(Hypothesis{
+		Equal{Variable("T"), List{Boolean(true), Integer(2), Integer(3)}}})}),
+		(List{Integer(0), Boolean(true), Integer(2)}));
 }
 
 TEST(List, Matches)
@@ -66,11 +80,11 @@ TEST(List, Matches)
 TEST(List, MatchesVariable)
 {
 	EXPECT_EQ((List{Integer(2),Integer(3)}).Matches(List{Variable("X"), Integer(3)}, {}).Simplify(), 
-		(Equation{Variable("X"), Integer(2)}));	
+		(Equal{Variable("X"), Integer(2)}));	
 	EXPECT_EQ((List{Tuple("L")}).Matches(List{Boolean(true), Id("ginny")}, {}).Simplify(), 
-		(Equation{List{Boolean(true), Id("ginny")}, Variable("L")}));	
+		(Equal{List{Boolean(true), Id("ginny")}, Variable("L")}));	
 	EXPECT_EQ((List{Integer(0),Tuple("L")}).Matches(List{Integer(0), Boolean(false)}, {}).Simplify(), 
-		(Equation{List{Boolean(false)}, Variable("L")}));	
+		(Equal{List{Boolean(false)}, Variable("L")}));	
 }
 TEST(List, Infer)
 {

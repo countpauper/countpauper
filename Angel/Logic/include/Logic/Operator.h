@@ -18,10 +18,11 @@ public:
     unsigned Precedence() const;
     uint32_t Id() const { return op.id; }
     unsigned Operands() const { return op.sw.operands; }
-    bool Postfix() const { return op.sw.postfix; }
+    bool IsPostfix() const { return op.sw.postfix; }
+    bool IsComparator() const { return op.sw.comparison; }
 protected:
-    constexpr explicit Operator(const wchar_t tag, uint8_t operands, bool postfix=false) :
-        op{.sw{tag, operands, postfix, 0, 0}}
+    constexpr explicit Operator(const wchar_t tag, uint8_t operands, bool postfix=false, bool comparator=false) :
+        op{.sw{tag, operands, postfix, comparator, 0, 0}}
     {
     }
     Operator(const std::string_view tags, uint8_t operands);
@@ -34,7 +35,8 @@ private:
             wchar_t unicode; // 1 unicode char in the Basic Multilingual Plane.
             uint8_t operands:2; // noperator 0, unary, binary. TODO 3 for multiary as opposed to strictly binary . and : ? 
             bool postfix:1;
-            uint8_t reserved:5;
+            bool comparison:1;
+            uint8_t reserved:4;
             uint8_t reserved2;
         } sw;
     };

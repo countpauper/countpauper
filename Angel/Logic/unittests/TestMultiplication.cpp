@@ -37,7 +37,7 @@ TEST(Multiplication, Simplify)
 
 TEST(Multiplication, Substitute)
 {
-	EXPECT_EQ((Multiplication{Integer(-2), Variable("I")}).Substitute(Conjunction{Equation{Variable("I"), Integer(3)}}),
+	EXPECT_EQ((Multiplication{Integer(-2), Variable("I")}).Substitute(Conjunction{Equal{Variable("I"), Integer(3)}}),
 		(Multiplication{Integer(-2), Integer(3)}));
 }
 

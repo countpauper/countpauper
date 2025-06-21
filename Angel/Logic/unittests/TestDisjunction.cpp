@@ -47,7 +47,7 @@ TEST(Disjunction, Simplify)
 
 TEST(Disjunction, Substitute)
 {
-	EXPECT_EQ((Disjunction{Integer(3), Variable("B")}).Substitute(Conjunction{Equation{Variable("B"), Boolean(false)}}),
+	EXPECT_EQ((Disjunction{Integer(3), Variable("B")}).Substitute(Conjunction{Equal{Variable("B"), Boolean(false)}}),
 		(Disjunction{Integer(3), Boolean(false)}));
 }
 

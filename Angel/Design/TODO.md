@@ -1,7 +1,7 @@
 ## Quick todo / Rafactor
 - [ ] Rewrite disjunction & conjunction as an Operation<> (although early out? Multiply also early out on 0? exponent on 1 or 0?)
-- [ ] Predicate arguments are all single element comparisons and if they're not then it's shorthand for Equation{e}.
-    Matching a predicate (or any list/container) is making a conjunction of these where the matched argument is filled in as second argument. These can be simplified to boolean or a hypothesis with remaining variables (or predicates)
+- [ ] Implement Simplify(..)  as infer without knowledge (optional). Probably rename as well as it doesn't always infer.
+      Only predicates really rely on the knowledge to match and will return themselves ("Simfplified") otherwise.  
 
 ## Backlog 
 - [*] Get back up 
@@ -29,7 +29,7 @@
 -   [*] Parse list 
 -   [*] Parse set
 -   [*] Parse errors and query exception workaround ends in ? 
--   [ ] parse *tuple
+-   [*] parse *tuple
 - [ ] Prolog 
 -   [*] query horn clause 
 -   [*] Query predicate  
@@ -89,6 +89,25 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [ ] Apply functions on sequences, sets and arrays with for each 
 - [ ] Advanced
 -   [ ] Tautology protection cat: cat (or longer) is an error (use trace, check linked list for equal)
+        Maybe it works automatically due to a (new/adjusted) inference engine:
+        1. Match the query and generate a new query, replacing the predicates with the antecedents 
+        2. Check if the result is the same as the query (loop protection and stop condition if no more predicates)
+        (2b) if tracing this new result/query is what is printed 
+        3. If not infer again, replacing each predicate with new antecedents.         
+Example: 
+```
+> quicksort([1,5,3,2])
+... quicksort([])+[1]+quicksort([5,3,2]) # antedent of first query 
+... []+[1]+quicksort([3,2])+[5]+quicksort([]) # base case antecedent and antecedent of tail query
+... [1]+quicksort([2])+[3]+quicksort([])+[5]+[] 
+... [1]+quicksort([])+[2]+quicksort([])+[3]+[]+[5]
+... [1]+[]+[2]+[]+[3,5] # no predicates, but can still be simplified
+... [1,2,3,5]
+[1,2,3,5] # cant be simplified further, is the answer 
+```
+This is more clear and more lazy evaluation functional than tracing into branches. The query might get big but 
+then the stack is reset every time. For performance the importing thing is what is easiest to paralelize
+
 -   [ ] Prefix comparators for matching. 
 -   [ ] For any operator `@` while infering  
 -   [ ] Unary for any (element of) operator when matching

@@ -37,7 +37,7 @@ TEST(Summation, Simplify)
 
 TEST(Summation, Substitute)
 {
-	EXPECT_EQ((Summation{Integer(-2), Variable("I")}).Substitute(Conjunction{Equation{Variable("I"), Integer(3)}}),
+	EXPECT_EQ((Summation{Integer(-2), Variable("I")}).Substitute(Conjunction{Equal{Variable("I"), Integer(3)}}),
 		(Summation{Integer(-2), Integer(3)}));
 }
 

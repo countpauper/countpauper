@@ -103,11 +103,16 @@ Expression Association::Simplify() const
 {
     auto lhSimple = lhs->Simplify();
     auto rhSimple = rhs->Simplify();
-    if (lhSimple.Is<Predicate>())
+    if (rhSimple.GetOperator().IsComparator() && rhSimple.size()==1)
+    {
+        rhSimple = rhSimple.Matches(lhSimple, {}).Simplify();
+    }
+    if (IsClause())
     {
         if (rhSimple == Boolean(true))
             return lhSimple;
     }
+
     return Association(std::move(lhSimple), std::move(rhSimple));
 }
 

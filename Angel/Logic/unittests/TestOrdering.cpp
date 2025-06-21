@@ -11,7 +11,7 @@ TEST(Ordering, Construction)
 {
     EXPECT_TRUE(Lesser{}.empty());
     EXPECT_EQ(LesserEqual{Integer(1)}.size(), 1);
-    EXPECT_EQ(Expression(BinaryOperator(L'>'), {Integer(1), Boolean(false)}), 
+    EXPECT_EQ(Expression(Comparator(L'>'), {Integer(1), Boolean(false)}), 
         (Greater{Integer(1), Boolean(false)}));   
 
 	static_assert(Logic::is_operation<GreaterEqual>);
@@ -21,8 +21,8 @@ TEST(Ordering, Construction)
 TEST(Ordering, Order)
 {
     Knowledge k;
-    EXPECT_EQ(k.Infer(Equation{Integer(1), Integer(2)}), Boolean(false));
-    EXPECT_EQ(k.Infer(Equation{Integer(1), Boolean(true)}), Boolean(true));
+    EXPECT_EQ(k.Infer(Equal{Integer(1), Integer(2)}), Boolean(false));
+    EXPECT_EQ(k.Infer(Equal{Integer(1), Boolean(true)}), Boolean(true));
 }
 
 TEST(Ordering, Simplify)
@@ -52,7 +52,7 @@ TEST(Ordering, MatchUnaryOrderingIsTrueIfMatchIsOrdered)
 
 TEST(Ordering, Substitute)
 {
-	EXPECT_EQ((Lesser{Integer(3), Variable("S")}).Substitute(Conjunction{Equation{Variable("S"), String("three")}}),
+	EXPECT_EQ((Lesser{Integer(3), Variable("S")}).Substitute(Conjunction{Equal{Variable("S"), String("three")}}),
 		(Lesser{Integer(3), String("three")}));
 }
 

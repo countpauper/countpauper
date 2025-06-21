@@ -22,7 +22,7 @@ TEST(Negative, Simplify)
 
 TEST(Negative, Substitute)
 {
-	EXPECT_EQ(Negative(Variable("P")).Substitute(Conjunction{Equation{Variable("P"), Integer(3)}}),
+	EXPECT_EQ(Negative(Variable("P")).Substitute(Conjunction{Equal{Variable("P"), Integer(3)}}),
 		Negative(Integer(3)));
 }
 

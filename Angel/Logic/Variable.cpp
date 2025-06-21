@@ -41,7 +41,7 @@ Expression Variable::Substitute(const Hypothesis& hypothesis) const
 {
     for(const auto& condition : hypothesis)
     {
-        if (const auto* equation = condition.GetIf<Equation>())
+        if (const auto* equation = condition.GetIf<Equal>())
         {
             if (equation->front() == *this)
             {   
@@ -63,9 +63,9 @@ Expression Variable::Matches(const Expression& e, const Hypothesis& hypothesis, 
     {
         if (*stillVar)
             if (reverse)
-                return Equation{*stillVar, e};
+                return Equal{*stillVar, e};
             else
-                return Equation{e, *stillVar};
+                return Equal{e, *stillVar};
         else
             return Boolean(true);   // anonymous
     }
@@ -80,7 +80,7 @@ Expression Variable::Infer(const class Knowledge& k, const Hypothesis& hypothesi
 {
     for(const auto& condition : hypothesis)
     {
-        if (const auto* equation = condition.GetIf<Equation>())
+        if (const auto* equation = condition.GetIf<Equal>())
         {
             // not determined what to do with long equations or unequations 
             // if any item in the equation is the variable another can be inferred.

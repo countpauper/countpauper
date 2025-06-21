@@ -58,7 +58,7 @@ TEST(Knowledge, MatchVariables)
     Knowledge k{
        Association(Predicate("fuzzy",{Variable("X")}), Predicate("cat", {Variable("X")}))};
     EXPECT_EQ(k.Matches(Predicate("fuzzy",{Id("ginny")})).front(), 
-        (Association(Predicate("cat", {Variable("X")}), Conjunction{Equation{Id("ginny"), Variable("X")}})));
+        (Association(Predicate("cat", {Variable("X")}), Conjunction{Equal{Id("ginny"), Variable("X")}})));
 }
 
 TEST(Knowledge, MultipleMatches)
@@ -67,8 +67,8 @@ TEST(Knowledge, MultipleMatches)
        Predicate("cat",{Id("gizmo")}), 
        Predicate("cat",{Id("ginny")}) };
     EXPECT_EQ(k.Matches(Predicate("cat",{Variable("X")})),
-        (Bag{Association(Boolean(true), Conjunction{Equation{Variable("X"), Id("gizmo")}}),
-            Association(Boolean(true), Conjunction{Equation{Variable("X"), Id("ginny")}})}));
+        (Bag{Association(Boolean(true), Conjunction{Equal{Variable("X"), Id("gizmo")}}),
+            Association(Boolean(true), Conjunction{Equal{Variable("X"), Id("ginny")}})}));
 }
 
 }

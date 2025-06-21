@@ -2,7 +2,6 @@
 #include "Logic/Boolean.h"
 #include "Logic/Integer.h"
 #include "Logic/Id.h"
-#include "Logic/Expression.h"
 #include "Logic/Knowledge.h"
 #include <sstream>
 #include <cassert>
@@ -15,58 +14,47 @@ Expression::Expression(const Expression& e) :
 {
 }
 
-template <typename... Ts>
-ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand) 
-{
-    if (!ope)
-        return std::move(operand);
-        
-    Logic::Expression result = Logic::Boolean(false);
-    bool found = false;
-    
-    ((!found && (found = (Ts::ope == ope)) 
-        ? (result.emplace<Ts>(std::move(operand)), true) 
-        : false), ...);
-    
-    if (!found) throw std::invalid_argument(std::format("Invalid unary operator {}", std::string(ope)));
-    return result;
-}
-
-template <typename... Ts>
-ExpressionVariant make_binary_operation(const Operator ope, Collection&& operands) 
-{
-    Logic::Expression result = Logic::Boolean(false);
-    bool found = false;
-    
-    ((!found && (found = (Ts::ope == ope)) 
-        ? (result.emplace<Ts>(std::move(operands)), true) 
-        : false), ...);
-    
-    if (!found) throw std::invalid_argument(std::format("Invalid binary operator {}", std::string(ope)));
-    return result;
-}
-
-ExpressionVariant make_operation(const Operator ope, Collection&& operands)
-{
-    if (operands.empty())
-        throw std::invalid_argument(std::format("Not enough operands for operator {}", std::string(ope)));
-    if (operands.size()==1) 
-        return make_unary_operation<Negative>(ope, std::move(operands[0]));
-    else 
-        return make_binary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction, 
-            Equation, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
-}
-
-
-Expression::Expression(const Operator ope, Collection&& operands) : 
-    ExpressionVariant(make_operation(ope, std::move(operands)))
-{
-}
 
 Expression& Expression::operator=(const Expression& e)
 {
     ExpressionVariant::operator=(e);
     return *this;
+}
+
+Operator Expression::GetOperator() const
+{
+    return std::visit(overloaded_visit{
+        [this]<is_operation T>(const T& operation) -> Operator
+        {
+            return T::ope;
+        },
+        [this](const auto& obj)
+        {
+            return Operator();
+        }}, *this);   
+}
+
+bool Expression::IsComparison() const 
+{
+    return GetOperator().IsComparator();
+}
+
+
+std::size_t Expression::size() const
+{
+    return std::visit(overloaded_visit{
+        [this]<is_container CT>(const CT& container)
+        {
+            return container.size();
+        },
+        [this]<is_operation OT>(const OT& operation)
+        {
+            return operation.size();
+        },
+        [this](const auto& obj)
+        {
+            return 0ULL;
+        }}, *this);   
 }
 
 template <std::size_t idx>
@@ -261,8 +249,7 @@ std::string Expression::Summary() const
         {
             return std::format("{} with {} terms", operation.ope.Description(), operation.size()); 
         },
-        // TODO (before collection) all operators if they have an ope
-        []<Logic::is_collection C>(const C& collection) -> std::string 
+        []<Logic::is_container C>(const C& collection) -> std::string 
         {
             return std::format("{} {} collection {} items", 
                 C::unique?"unique":"non-unique",

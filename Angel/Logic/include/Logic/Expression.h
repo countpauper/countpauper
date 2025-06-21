@@ -11,7 +11,6 @@
 #include "Logic/Subtraction.h"
 #include "Logic/Multiplication.h"
 #include "Logic/Division.h"
-#include "Logic/Equation.h"
 #include "Logic/Ordering.h"
 #include "Logic/Function.h"
 #include "Logic/Association.h"
@@ -35,12 +34,21 @@ using ExpressionVariant = std::variant<
     Negative, 
     Conjunction, Disjunction, 
     Summation, Subtraction, Multiplication, Division,
-    Equation, Lesser, LesserEqual, Greater, GreaterEqual>;  
+    Equal, Unequal, Lesser, LesserEqual, Greater, GreaterEqual>;  
 
 template <typename T, typename O>
 concept is_ordered = requires(const T& a, const O& b) {
     { a < b } -> std::convertible_to<bool>;
 };
+
+
+template <typename T>
+concept has_size = requires(const T& a) {
+    { a.size() } -> std::convertible_to<std::size_t>;
+};
+
+template<class T>
+concept is_container = has_size<T> && !is_operation<T>;
 
 class Expression : public ExpressionVariant
 {
@@ -57,12 +65,12 @@ public:
     Expression(const Operator ope, Collection&& operands);
     Expression& operator=(const Expression& e);
 
-    template<typename T>
+    template<class... Types>
     bool Is() const
     {
-        return std::get_if<T>(this) != nullptr;
+        return (std::holds_alternative<Types>(*this) || ...);
     }
-
+        
     template<typename T>
     const T* GetIf() const 
     {
@@ -109,6 +117,9 @@ public:
     }
     Expression TryCast(const std::type_info& rtt) const;
     Expression Cast(const std::type_info& rtt) const;
+    Operator GetOperator() const;
+    bool IsComparison() const;
+    std::size_t size() const;   // 0 for non containers and non operations
 
     Expression Simplify() const;
     Set Assumptions() const;
@@ -170,12 +181,16 @@ public:
 
 };
 
+
+
+
 std::ostream& operator<<(std::ostream& s, const Expression& e);
 std::string to_string(const Expression& e);
 
 }
 
 // Template implementations that depend on Expression and are therefore forward declared
+#include "Logic/Internal/ExpressionImpl.h"
 #include "Logic/Internal/OperationImpl.h"
 #include "Logic/Internal/FlatCollectionImpl.h"
 #include "Logic/Internal/OperationWithBaseImpl.h"

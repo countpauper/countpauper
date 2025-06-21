@@ -98,7 +98,6 @@ bool Set::empty() const
     return items.empty();
 }
 
-
 Set::operator bool() const
 {
     return !items.empty();
@@ -200,9 +199,9 @@ Expression Set::MakeHypothesis(const Set& constants, bool reversed) const
         return Boolean(constants.empty());
     if (size()>1)
         if (reversed)
-            return Equation{constants, *this};
+            return Equal{constants, *this};
         else
-            return Equation{*this, constants};
+            return Equal{*this, constants};
     assert(items.begin()->second == Boolean(true));
     const auto& var = items.begin()->first;
     if (const auto* singleVar = var.GetIf<Variable>()) 
@@ -211,16 +210,16 @@ Expression Set::MakeHypothesis(const Set& constants, bool reversed) const
             return Boolean(false);  // too many
         else 
             if (reversed)
-                return Equation{*constants.begin(), var};
+                return Equal{*constants.begin(), var};
             else 
-                return Equation{var, *constants.begin()};
+                return Equal{var, *constants.begin()};
     }
     else if (const auto* tuple = var.GetIf<Tuple>())
     {
         if (reversed)
-            return Equation{constants, var};
+            return Equal{constants, var};
         else 
-            return Equation{var, constants};
+            return Equal{var, constants};
     }
     assert(false); // MakeHypothesis should only be called on a set of variable expressions
     return Boolean(false);
@@ -232,7 +231,7 @@ Expression Set::Matches(const Expression& e, const Hypothesis& hypothesis) const
     const Set* set = e.GetIf<Set>();
     if (!set)
     {
-        assert(!e.Is<List>() && !e.Is<Bag>());   // unimplemented other containers.
+        assert(!(e.Is<List, Bag>()));   // unimplemented other containers.
         return Boolean(false);  
     }   
     auto simplified = Substitute(hypothesis).Simplify();

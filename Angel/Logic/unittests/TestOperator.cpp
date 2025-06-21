@@ -46,7 +46,7 @@ TEST(Operator, ConstrucComparator)
     EXPECT_EQ(Comparator(L'≥'), Comparator(">="));
     EXPECT_NE(Comparator(L'<'), Comparator("<="));
     EXPECT_EQ(Comparator(L'=').Operands(), 2);
-
+    EXPECT_TRUE(Comparator(L'<').IsComparator());
     static_assert(sizeof(Comparator)==4);
 }
 

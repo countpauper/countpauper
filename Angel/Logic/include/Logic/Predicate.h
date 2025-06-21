@@ -20,6 +20,7 @@ public:
     explicit Predicate(const std::string& name , List&& arguments={});
     
     explicit operator bool() const;
+    std::size_t Valence() const;
     bool operator==(const Predicate& other) const;
     std::size_t Hash() const;
     Expression Simplify() const;

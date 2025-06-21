@@ -35,7 +35,7 @@ TEST(Division, Simplify)
 
 TEST(Division, Substitute)
 {
-	EXPECT_EQ((Division{Integer(-2), Variable("I")}).Substitute(Conjunction{Equation{Variable("I"), Integer(3)}}),
+	EXPECT_EQ((Division{Integer(-2), Variable("I")}).Substitute(Conjunction{Equal{Variable("I"), Integer(3)}}),
 		(Division{Integer(-2), Integer(3)}));
 }
 

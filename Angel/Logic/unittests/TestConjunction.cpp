@@ -46,7 +46,7 @@ TEST(Conjunction, Simplify)
 
 TEST(Conjunction, Substitute)
 {
-	EXPECT_EQ((Conjunction{Id("ginny"), Variable("C")}).Substitute(Conjunction{Equation{Variable("C"), Id("gizmo")}}),
+	EXPECT_EQ((Conjunction{Id("ginny"), Variable("C")}).Substitute(Conjunction{Equal{Variable("C"), Id("gizmo")}}),
 		(Conjunction{Id("ginny"), Id("gizmo")}));
 }
 

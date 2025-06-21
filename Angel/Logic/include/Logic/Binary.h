@@ -11,6 +11,8 @@ public:
     constexpr explicit BinaryOperator(const wchar_t tag) : Operator(tag, operands) {}
     BinaryOperator(const std::string_view tag);
     constexpr Expression operator()(const Expression& lhs, const Expression& rhs) const;
+protected:
+    constexpr explicit BinaryOperator(const wchar_t tag, bool comparator) : Operator(tag, operands, false, comparator) {}
 };
 
 std::ostream& operator<<(std::ostream& os, const BinaryOperator& op);

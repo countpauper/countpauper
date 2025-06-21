@@ -70,7 +70,7 @@ TEST(Predicate, to_string)
 
 TEST(Predicate, Substitute)
 {
-	EXPECT_EQ(Predicate("cat", {Variable("C")}).Substitute(Conjunction{Equation{Variable("C"), Id("ginny")}}),
+	EXPECT_EQ(Predicate("cat", {Variable("C")}).Substitute(Conjunction{Equal{Variable("C"), Id("ginny")}}),
 		Predicate("cat", {Id("ginny")}));
 }
 

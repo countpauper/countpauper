@@ -15,6 +15,8 @@ public:
     constexpr static Comparator ope = O;
 };
 
+using Equal = Ordering<Comparator{L'='}>;
+using Unequal = Ordering<Comparator{L'≠'}>;
 using Lesser = Ordering<Comparator{L'<'}>;
 using LesserEqual = Ordering<Comparator{L'≤'}>;
 using Greater = Ordering<Comparator{L'>'}>;

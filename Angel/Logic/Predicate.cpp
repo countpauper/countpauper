@@ -46,6 +46,11 @@ bool Predicate::operator==(const Predicate& rhs) const
 	return id == rhs.id && arguments == rhs.arguments;
 }
 
+std::size_t Predicate::Valence() const 
+{
+	return arguments.size();
+}
+
 std::size_t Predicate::Hash() const
 {
     return id.Hash() ^ arguments.Hash();

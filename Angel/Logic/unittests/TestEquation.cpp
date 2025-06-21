@@ -1,81 +1,81 @@
 #include <gtest/gtest.h>
 #include "Logic/Knowledge.h"
-#include "Logic/Equation.h"
+#include "Logic/Ordering.h"
 #include "Logic/Expression.h"
 #include "Logic/Trace.h"
 
 namespace Angel::Logic::Test
 {
 
-TEST(Equation, Construction)
+TEST(Equal, Construction)
 {
-    EXPECT_TRUE(Equation{}.empty());
-    EXPECT_EQ(Equation{Integer(1)}.size(), 1);
+    EXPECT_TRUE(Equal{}.empty());
+    EXPECT_EQ(Equal{Integer(1)}.size(), 1);
     EXPECT_EQ(Expression(BinaryOperator(L'='), {Integer(1), Boolean(false)}), 
-        (Equation{Integer(1), Boolean(false)}));   
+        (Equal{Integer(1), Boolean(false)}));   
 
-	static_assert(Logic::is_operation<Equation>);
-	static_assert(Logic::is_ordering<Equation>);
+	static_assert(Logic::is_operation<Equal>);
+	static_assert(Logic::is_ordering<Equal>);
 }
 
-TEST(Equation, Simplify)
+TEST(Equal, Simplify)
 {
-    EXPECT_EQ((Equation{Id("cat")}).Simplify(), (Equation{Id("cat")}));
-    EXPECT_EQ((Equation{Boolean(false), Boolean(true)}).Simplify(), Boolean(false));
-    EXPECT_EQ((Equation{Integer(3), Integer(3)}).Simplify(), Boolean(true));
-    EXPECT_EQ((Equation{Variable("y"), Integer(3)}).Simplify(), (Equation{Variable("y"), Integer(3)}));
-    EXPECT_EQ((Equation{Integer(1), Variable("n"), Integer(2)}).Simplify(), Boolean(false));
-    EXPECT_EQ((Equation{Id("cat"), Id("cat"), Variable("CAT")}).Simplify(),(Equation{Id("cat"), Variable("CAT")}));
+    EXPECT_EQ((Equal{Id("cat")}).Simplify(), (Equal{Id("cat")}));
+    EXPECT_EQ((Equal{Boolean(false), Boolean(true)}).Simplify(), Boolean(false));
+    EXPECT_EQ((Equal{Integer(3), Integer(3)}).Simplify(), Boolean(true));
+    EXPECT_EQ((Equal{Variable("y"), Integer(3)}).Simplify(), (Equal{Variable("y"), Integer(3)}));
+    EXPECT_EQ((Equal{Integer(1), Variable("n"), Integer(2)}).Simplify(), Boolean(false));
+    EXPECT_EQ((Equal{Id("cat"), Id("cat"), Variable("CAT")}).Simplify(),(Equal{Id("cat"), Variable("CAT")}));
 }
 
-TEST(Equation, Equations)
+TEST(Equal, Equals)
 {
     Knowledge k;
-    EXPECT_EQ(k.Infer(Equation{Integer(1), Integer(2)}), Boolean(false));
-    EXPECT_EQ(k.Infer(Equation{Integer(1), Boolean(true)}), Boolean(true));
+    EXPECT_EQ(k.Infer(Equal{Integer(1), Integer(2)}), Boolean(false));
+    EXPECT_EQ(k.Infer(Equal{Integer(1), Boolean(true)}), Boolean(true));
 }
 
-TEST(Equation, Nest)
+TEST(Equal, Nest)
 {
-    EXPECT_EQ((Equation{Integer(1), Equation{Integer(2)}}), 
-        (Equation{Integer(1), Integer(2)}));
+    EXPECT_EQ((Equal{Integer(1), Equal{Integer(2)}}), 
+        (Equal{Integer(1), Integer(2)}));
 }
 
-TEST(Equation, MatchEquationIsTheSameAsMatchExpression)
+TEST(Equal, MatchEqualIsTheSameAsMatchExpression)
 {
-    EXPECT_EQ((Equation{Integer(3)}).Matches(Integer(3), {}).Simplify(), Boolean(true));
-    EXPECT_EQ((Equation{Integer(1)}).Matches(Integer(2), {}).Simplify(), Boolean(false));
-    EXPECT_EQ((Equation{Integer(-1)}).Matches(Variable("X"), {}).Simplify(), (Equation{Variable("X"), Integer(-1)}));
-    EXPECT_EQ((Equation{Integer(-1)}).Matches(Variable("X"), {Equation{Variable("X"), Integer(2)}}).Simplify(), 
+    EXPECT_EQ((Equal{Integer(3)}).Matches(Integer(3), {}).Simplify(), Boolean(true));
+    EXPECT_EQ((Equal{Integer(1)}).Matches(Integer(2), {}).Simplify(), Boolean(false));
+    EXPECT_EQ((Equal{Integer(-1)}).Matches(Variable("X"), {}).Simplify(), (Equal{Variable("X"), Integer(-1)}));
+    EXPECT_EQ((Equal{Integer(-1)}).Matches(Variable("X"), {Equal{Variable("X"), Integer(2)}}).Simplify(), 
         Boolean(false));
 }
 
 
-TEST(Equation, Substitute)
+TEST(Equal, Substitute)
 {
-	EXPECT_EQ((Equation{Integer(3), Variable("S")}).Substitute(Conjunction{Equation{Variable("S"), String("three")}}),
-		(Equation{Integer(3), String("three")}));
+	EXPECT_EQ((Equal{Integer(3), Variable("S")}).Substitute(Conjunction{Equal{Variable("S"), String("three")}}),
+		(Equal{Integer(3), String("three")}));
 }
 
-TEST(Equation, Inference)
+TEST(Equal, Inference)
 {
     Knowledge k { Predicate("cat") };
-    EXPECT_EQ(k.Infer(Equation{Predicate("cat"), Boolean(true)}), Boolean(true));
+    EXPECT_EQ(k.Infer(Equal{Predicate("cat"), Boolean(true)}), Boolean(true));
 }
 
-TEST(Equation, AssumptionBecomesHypothesisWhenInferred)
+TEST(Equal, AssumptionBecomesHypothesisWhenInferred)
 {
     Hypothesis hypothesis;
     Knowledge k;
     Trace trace;
-    EXPECT_EQ((Equation{Variable("X"), Integer(2)}).Infer(k, hypothesis, trace), 
-        Association(Boolean(true), Equation{Variable("X"), Integer(2)}));
+    EXPECT_EQ((Equal{Variable("X"), Integer(2)}).Infer(k, hypothesis, trace), 
+        Association(Boolean(true), Equal{Variable("X"), Integer(2)}));
 }
 
-TEST(Equation, to_string)
+TEST(Equal, to_string)
 {
-    EXPECT_EQ(to_string(Equation{Integer(1)}), "=1");
-    EXPECT_EQ(to_string(Equation{Variable("X"), Boolean(false)}), "$X=false");
+    EXPECT_EQ(to_string(Equal{Integer(1)}), "=1");
+    EXPECT_EQ(to_string(Equal{Variable("X"), Boolean(false)}), "$X=false");
 }
 
 }

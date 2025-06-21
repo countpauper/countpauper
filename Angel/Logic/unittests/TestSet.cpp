@@ -28,7 +28,7 @@ TEST(Set, Construction)
 		Association{Id("ginny"), Id("dog")}};
 	EXPECT_EQ(association_set.size(), 1);
 
-	// TODO static_assert(Logic::IsContainer<Set>);
+	static_assert(is_container<Set>);
 }
 
 TEST(Set, List)
@@ -130,8 +130,22 @@ TEST(Set, Simplify)
 
 TEST(Set, Substitute)
 {
-	EXPECT_EQ((Set{Boolean(true), Variable("I")}).Substitute(Conjunction{Equation{Variable("I"), Integer(3)}}),
+	EXPECT_EQ((Set{Boolean(true), Variable("I")}).Substitute(Conjunction{Equal{Variable("I"), Integer(3)}}),
 		(Set{Boolean(true), Integer(3)}));
+}
+
+TEST(Set, Substituple)
+{
+	EXPECT_EQ((Set{Boolean(true), Tuple("T")}).Substitute(Conjunction{
+		Equal{Variable("T"), List{Id("three"), Integer(2)}}}),
+		(Set{Boolean(true), Integer(2), Id("three")}));
+}
+
+TEST(Set, SubstitupleFiltered)
+{
+	EXPECT_EQ((Set{Integer(0), Association(Tuple("T"), LesserEqual{Integer(2)}).Substitute(Conjunction{
+		Equal{Variable("T"), List{Boolean(true), Integer(2), Integer(3)}}})}),
+		(Set{Integer(0), Boolean(true), Integer(2)}));
 }
 
 TEST(Set, Matches)
@@ -146,11 +160,11 @@ TEST(Set, Matches)
 TEST(Set, MatchesVariable)
 {
 	EXPECT_EQ((Set{Integer(3), Integer(2)}).Matches(Set{Variable("X"), Integer(3)}, {}).Simplify(), 
-		(Equation{Integer(2), Variable("X")}));	
+		(Equal{Integer(2), Variable("X")}));	
 	EXPECT_EQ((Set{Tuple("L")}).Matches(Set{Boolean(true), Id("ginny")}, {}).Simplify(), 
-		(Equation{Tuple("L"), Set{Boolean(true), Id("ginny")} }));	
+		(Equal{Tuple("L"), Set{Boolean(true), Id("ginny")} }));	
 	EXPECT_EQ((Set{Integer(0),Tuple("L")}).Matches(Set{Boolean(false), Integer(0)}, {}).Simplify(), 
-		(Equation{Tuple("L"), Set{Boolean(false)} }));	
+		(Equal{Tuple("L"), Set{Boolean(false)} }));	
 }
 
 

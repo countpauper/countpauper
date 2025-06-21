@@ -77,7 +77,7 @@ Hypothesis GetAntecedent(Expression&& match)
         return std::move(*conj);
     }
     
-    assert(match.Is<Equation>());   // unexpected match antecdent;
+    assert(match.IsComparison());   // unexpected match antecdent;
     return Hypothesis{std::move(match)};
 }
 Bag Knowledge::Matches(const Predicate& query) const

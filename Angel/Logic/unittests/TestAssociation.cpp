@@ -43,18 +43,24 @@ TEST(Association, Simplify)
 	EXPECT_EQ(Association(Integer(1), Boolean(true)).Simplify(), Association(Integer(1), Boolean(true)));
 }
 
-TEST(Association, Substitute)
+TEST(Association, SimplifyComparison)
 {
-	EXPECT_EQ(Association(Predicate("ginny"), Variable("C")).Substitute(Conjunction{Equation{Variable("C"), Id("gizmo")}}),
-		Association(Predicate("ginny"), Id("gizmo")));
+	EXPECT_EQ(Association(Variable("X"), Lesser{Integer(0)}).Simplify(), Association(Variable("X"), Lesser{Variable("X"), Integer(0)}));
+	EXPECT_EQ(Association(Integer(3), Equal{Integer(3)}).Simplify(), Association(Integer(3), Boolean(true)));
 }
 
+
+TEST(Association, Substitute)
+{
+	EXPECT_EQ(Association(Predicate("ginny"), Variable("C")).Substitute(Conjunction{Equal{Variable("C"), Id("gizmo")}}),
+		Association(Predicate("ginny"), Id("gizmo")));
+}
 
 TEST(Association, Matches)
 {
 	EXPECT_EQ(Association(Id("legs"), Integer(4)).Matches(Id("legs"),{}), Integer(4));
 	EXPECT_EQ(Association(Predicate("legs", {Variable("C")}), Integer(4)).Matches(
-			Predicate("legs", {Id("ginny")}), {Equation{Variable("C"), Id("ginny")}}), 
+			Predicate("legs", {Id("ginny")}), {Equal{Variable("C"), Id("ginny")}}), 
 			Integer(4));
 	EXPECT_EQ(Association(Id("ginny"), Integer(1)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{Boolean(true), Boolean(true)}));	
 	EXPECT_EQ(Association(Id("gizmo"), Integer(2)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{Boolean(false), Boolean(false)}));	
@@ -67,6 +73,7 @@ TEST(Association, Infer)
 	EXPECT_EQ(k.Infer(Association{Id("five"), Summation{Integer(2), Integer(3)}}), 
         (Association{Id("five"), Integer(5)}));
 }
+
 
 TEST(Association, Get)
 {

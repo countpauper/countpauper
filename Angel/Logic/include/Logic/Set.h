@@ -67,4 +67,5 @@ Set operator&(Set lhs, const Set& rhs);
 Set operator|(Set lhs, const Set& rhs);
 std::ostream& operator<<(std::ostream& os, const Set& set);
 
+
 }
