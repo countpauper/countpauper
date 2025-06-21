@@ -1,6 +1,7 @@
 #pragma once
 #include "Logic/Operator.h"
 #include "Logic/Hypothesis.h"
+#include "Logic/Operator.h"
 #include <vector>
 #include <initializer_list>
 #include <variant>
@@ -31,7 +32,7 @@ public:
     ~Collection();
     Set Assumptions() const;
     Expression Get(const Expression& key) const;
-    unsigned Add(const Expression& key);
+    unsigned Add(Expression&& key);
     unsigned Remove(const Expression& key);
     Expression Matches(Collection_subrange range, const Hypothesis& hypothesis) const;
     std::size_t Hash() const;

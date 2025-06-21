@@ -44,13 +44,13 @@ Expression Tuple::Substitute(const Hypothesis& hypothesis) const
         if (const auto* equation = condition.GetIf<Equal>())
         {
             assert(equation->size() == 2); // not yet implemented multi equation or error for single equation
-            if (equation->front() == Variable(name))
+            if (equation->front() == Variable(name) || equation->front() == *this)
             {   
-                return equation->back().Substitute(hypothesis);
+                return All(equation->back().Substitute(hypothesis));
             }
-            if (equation->back() == Variable(name))
+            if (equation->back() == Variable(name) || equation->back() == *this)
             {
-                return equation->front().Substitute(hypothesis);
+                return All(equation->front().Substitute(hypothesis));
             }
         }
     }
@@ -103,28 +103,14 @@ Expression Tuple::Matches(const Expression& e, const Hypothesis& hypothesis, boo
     }
 }
 
-
 Expression Tuple::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    for(const auto& condition : hypothesis)
-    {
-        if (const auto* equation = condition.GetIf<Equal>())
-        {
-            assert(equation->size()==2); // not determined what to do with long equations or unequations 
-            if (equation->front() == Variable(name))
-            {
-                return equation->back().Infer(k, hypothesis, trace);
-            }
-            if (equation->back() == Variable(name))
-            {
-                return equation->front().Infer(k, hypothesis, trace);
-            }
-        }
-    }
-    return *this;
+    auto substituted = Substitute(hypothesis);
+    if (const auto* stillVar = substituted.GetIf<Tuple>())
+        return substituted;
+    else
+        return substituted.Infer(k, hypothesis, trace);
 }
-
-
 
 std::ostream& operator<<(std::ostream& os, const Tuple& id)
 {

@@ -5,6 +5,7 @@ namespace Angel::Logic
 {
 
 class Expression;
+class Container;
 }
 
 namespace std

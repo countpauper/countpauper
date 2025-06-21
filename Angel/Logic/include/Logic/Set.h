@@ -35,22 +35,22 @@ public:
 	Set& operator-=(const Set& rhs);
 	Set& operator&=(const Set& rhs);
 	Set& operator|=(const Set& rhs);
-	class iterator
+	class const_iterator
 	{
 	public:
 		Expression operator*() const;
-		iterator& operator++();
-		iterator operator++(int);
-        bool operator==(const iterator& rhs) const; 
+		const_iterator& operator++();
+		const_iterator operator++(int);
+        bool operator==(const const_iterator& rhs) const; 
 	friend class Set;
 
 	private:
 		using Inner = std::unordered_map<Expression,Expression>; 
-		iterator(Inner::const_iterator i);
+		const_iterator(Inner::const_iterator i);
 		Inner::const_iterator it; 
 	};
-	iterator begin() const;
-	iterator end() const;
+	const_iterator begin() const;
+	const_iterator end() const;
     static constexpr bool unique=true;
     static constexpr bool ordered=false;
 

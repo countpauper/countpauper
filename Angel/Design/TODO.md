@@ -1,7 +1,19 @@
 ## Quick todo / Rafactor
+
 - [ ] Rewrite disjunction & conjunction as an Operation<> (although early out? Multiply also early out on 0? exponent on 1 or 0?)
 - [ ] Implement Simplify(..)  as infer without knowledge (optional). Probably rename as well as it doesn't always infer.
       Only predicates really rely on the knowledge to match and will return themselves ("Simfplified") otherwise.  
+       ORRR do the iterative infer described in tautalogy protection below. 
+       In that case there may be no knowledge to pass 
+- [ ] And isn't substitute just infering a variable with a hypothesis? The only time this should be done early is when matching and then the argument has to be inferred first anyway. Try to remove it altogether. 
+- [ ] $Variable is a Value/Ref operator with an Id content (none for anonymous) 
+   - [ ] Tuple wholy replaced by All(Id), BaseClass ValueOperator
+- [ ] Find out how big Logic/Angel/Tests are in release really and why, try to optimize for size 
+        - [ ] Make a base LogicVariant with all the basic Is<> GetIf<> const and not const, operator== and Hash etc
+        - [ ] Maybe operation is one type and the operator the sub variant
+        - [*] Maybe containers are one type and unique+ordered the sub variant
+        - [ ] Elements even, if for no other reason than to fix pretty printing ?
+- [ ] Rename Collection to Sequence or even reuse Tuple
 
 ## Backlog 
 - [*] Get back up 
@@ -84,7 +96,11 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [ ] Assigning a free clause association is a lambda `l: sqr(n):n*n`.   
 -   [*] Make knowledge and namespace expressions, clauses associations 
 -   [ ] Sub namespaces
--   [ ] Figure out numpy like stuff. Is using @ * to multiply or fn() all items in a container sufficient?  
+-   [ ] Scalar operators on containers [1,2]+2 = [1+1,2+1]
+-   [ ] Scalar operators on ranges are applied to the limits (1..2)*2 = 2..4
+-   [ ] Scalar operator on an all/any is all/any of its operands all([1,2])+2 = all([1+2,2+2]) (precedence correction)
+-   [ ] All of and any of element in a comparison is a conjunection, disjunction respectively. 
+-   [ ] Multiple all of/any of in a  comparison is a matrix conjunction/disjunction @[1,2]<@[3,4] = 1<3&1<4&2<3&2<4
 -   [ ] Multi dimensional arrays (as a separate collection type)?
 -   [ ] Apply functions on sequences, sets and arrays with for each 
 - [ ] Advanced
@@ -94,6 +110,10 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
         2. Check if the result is the same as the query (loop protection and stop condition if no more predicates)
         (2b) if tracing this new result/query is what is printed 
         3. If not infer again, replacing each predicate with new antecedents.         
+      The implementation might be strange though. Each iteration needs to Recursively infer operands(incl arguments)
+       except predicates that still need to be matched, but with multiple equal assumption matches returned as a disjunction. 
+       What if there are predicates in arguments that need to be recursively or iteratively inferred before mathcing? 
+
 Example: 
 ```
 > quicksort([1,5,3,2])
@@ -108,7 +128,7 @@ Example:
 This is more clear and more lazy evaluation functional than tracing into branches. The query might get big but 
 then the stack is reset every time. For performance the importing thing is what is easiest to paralelize
 
--   [ ] Prefix comparators for matching. 
+-   [x] Prefix comparators for matching. 
 -   [ ] For any operator `@` while infering  
 -   [ ] Unary for any (element of) operator when matching
 -   [ ] Superset and subset operators  ⊆  ⊇  . Not sure what the ascii version is yet. maybe |= and &= ? 
@@ -130,6 +150,7 @@ it mean if it was omitted? In this case the user may have to supply the empty li
 -   [ ] sqrt prefix operator but what is the non unicode ? Implemented as shortcut for exponent(x, 0.5) 
 -   [ ] square and cube uncide postfix for exponent(x,2) and exponent(x,3) 
 -   [ ] Also on output of exponentiation, shorcuts for 2 operands and the 2nd is 0.5, 2 or 3
+-   [ ] Variable operators `$$X` and `$*X` etc
 -   [ ] Optimization: Reduce copies when matching and inferring and add references to known knowledge 
 -   [ ] Optimization: Also pass references to ranges, eg when slicing lists, matching with Tuple etc until a copy is necessary. 
 - [ ] Native functions

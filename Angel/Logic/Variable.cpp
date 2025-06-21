@@ -43,14 +43,15 @@ Expression Variable::Substitute(const Hypothesis& hypothesis) const
     {
         if (const auto* equation = condition.GetIf<Equal>())
         {
-            if (equation->front() == *this)
+            if (equation->front() == *this || equation->front() == Tuple(name))
             {   
                 return equation->back().Substitute(hypothesis);
             }
-            if (equation->back() == *this)
+            if (equation->back() == *this || equation->back() == Tuple(name))
             {
                 return equation->front().Substitute(hypothesis);
             }
+        
         }
     }
     return *this;

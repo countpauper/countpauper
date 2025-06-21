@@ -125,6 +125,20 @@ The hypothesis is instantiated left to right, so a repeat of a variable (or a pr
 same($X,$X)
 ```
 
+## Variable operators 
+In a sense variables aren't a type, but the `$` is a prefix operator, which means "the value of". This applies both 
+when matching (The value of X goes here) and when substituting (use the value of X). 
+Normally the operand is an identifier, but technically it's also possible to have another variable as operand
+for instance `$$X`. If `$X` is then hypothesized to be a specific identifier, `$$X` would be the variable value of that. 
+It creates an interesting meta programming option although it's not clear what the use case is.  The value of non-identifiers
+would not be defined and a runtime error in most cases. 
+
+The all `*` and any `@` operators work the same, in fact that's what led to this, except that if X is a list then all of or 
+any of the values in that list are matched or substituted. This means that `*$L` is also possible where `$L` is the name of a 
+list. Conversely `$*L` where L is a list of identifiers becomes a list of variables with those identifiers. 
+`$L=[X,Y] ⇔ $*L=[$X, $Y]`. 
+
+
 ## Matching comparators 
 The arguments of the predicate of a clause are theoratically comparators. Matching is the same as infering a comparison. 
 The default comparison is equality. `cat(ginny)` is equivalent (short hand for) `cat(=ginny)`. What technically happens 
@@ -501,14 +515,14 @@ cat(ginny)?
 
 ## Ranges 
 Rangers are collections, like sets and lists, but they are contiguous. This allows them to be expressed with 
-a start and an end as `[a..b]`. Ranges can be inclusive or exclusive on either end `<a..b]` or infinite `[a..]`.
+a start and an end as `a..b`. Ranges can be inclusive or exclusive on either end `<a..b]` or infinite `a..`.
 Membership `@` can be computed on ranges. The for-each or for-any operators will iterate over all numbers in 
 the range, but only if the size is not infinite. The size is infinite if either end is ifinite or if the set contains
 floating points. In those cases iteration with for-each or for-any will result in an error.
 Ranges are also a pair, like associations, of a begin and an end. On top of a begin and end, the range also has 
 a few properties
-* Includes begin
-* Included end 
+* Open/Closed begin
+* Open/Closed end 
 If both begin and end are integer, then all elements in the range are integer. If both begin and end are imaginary 
 then all elements are imaginary and the contents is a rectangle on the complex plane. 
 Perhaps a range of N-dimnensional vectors is also allowed this way.
@@ -841,7 +855,7 @@ cat($X):= $LEGS = 4 & legs($X,$LEGS)
 cat($X) := legs($X,$LEGS) & $LEGS=4 # equivalent
 ```
 
-## Sequence operations 
+## N-ary operations 
 Subsequent operators `|` and `&` and mathematical operators like `+` and `*` are grouped in a single operation expression. 
 Comparison operators like `>`, `<=`, and `!=` can be as well, which then effectively determines if all elements are 
 sorted, inverse sorted and or unique.  With matching variables may be inserted `5<$x<7<$Y`. 
@@ -860,31 +874,69 @@ this by first being converted to a list.
 > [max,gizmo]
 ```
 
-## Slicing 
-When using a range index, multiple elements are used
+## Slicing with interval
+When using an interval  index, multiple elements are used
 ```
-[1,2,3][1:2]
+[1,2,3][1..2]
 > [2,3]
 ```
-## Infinite range 
-When not specifying a value for a range index, that side is infinite. Any slice is clipped to the size of the collection, 
+## Infinite interval
+When not specifying a value for an interval, that side is infinite. Any slice is clipped to the size of the collection, 
 so infinite slices to the end. 
 ```
-[1,2,3][1:]
+[1,2,3][1..]
 > [2,3]
 ```
 
-## Exclusive range
-`< >` brackets are used for exclusive. This is less important, but it is needed for the equivalance of `X>3 = X@<3:> 
+## Open interval 
+`< >` brackets are used when the limits are excluded. 
+This is less important, but it is needed for the equivalance of `X>3 = X@<3..
+For inclusive no brackets are needed at all. 
+NB It's a bit strange that the brackets are reversed from the comparator while in a way it's the range starting at a number >3.
 ```
-[1,2,3][1,2>
+[1,2,3][1..2>
 > [2]
 ```
+
 ## @ operator also works on ranges
 ```
 2 @ [2:]
 > true
 ```
+
+## Container operators 
+Containers can be merged with `+`, removed with `-`, unioned with `|` and intersectioned with `&`.
+For unique containers `+` and `|` are the same.
+For non unique containers, `|` and `&` will keep find duplicates. With `|` the maximum duplicates of 
+all operands is taken and for `&` the minimum. 
+
+## Container left hand side with scalars. 
+The left hand type is leading. A scalar operator, with a scalar right hand side, but a container left hand side 
+will apply the operation to each element. `[1,2]+1` = `[1+1,2+1]` 
+A scalar left hand side with a container right hand side is a cast error or the same. 
+Logical operations are also included here `[cat(ginny)]&fuzzy(max) = `[cat(ginny)&fuzzy(max)]`
+
+## All of and any off operators on operations 
+Normally when the all of or any of operator is used, it has less precedence. `*[1,2]+1` = `*[1+1,2+1]`
+Even if it has precedence, the inference moves the operator outwards. `(*[1,2])+1` = `*[1+1,2+1]`. 
+
+## Right hand side all of 
+if the left hand side is a scalar operation, the all of operation makes it n-ary: `3+*[1,2] = 3+1+2`. 
+The any operator does somsething similar although it mostly makes sense for logical operations 
+cat&@{girl, boy} = cat&girl | cat&boy.
+
+## Random idea about any operator. 
+Since on mathematics 3+@[1,2] is 3+1 or 3+2 or whatever, this could be interesting for matching but 
+when interfering it just yields multiple answers that are equally possible. The code paths could 
+split here if somehow this leads to a match or comparison later down the line. If it's purely 
+mathematical however it could be used to generate a random solution. Sometimes 3+@[1,2] would be 4, sometimes 5.
+Together with intervals it's even a relatively nice ay to generate random numbers in that interval, 
+whether integer or float and with sets of ids it could choose a random element. 
+
+## All of/any of comparisons 
+If the operator is a comparison, the result becomes a conjunction or disjunction instead 
+`@[1,2]<2 = 1<2 | 2<2`  
+THis also works for the `@` binary operator so `@[1,2]@[2,3] = 1@[2,3] | 2@[2,3]`
 
 ## The boolean math is very prolog like so far, but  
 Clauses (functions) don't just return boolean. In fact all clauses are functions that 

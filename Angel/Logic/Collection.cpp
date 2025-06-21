@@ -143,10 +143,38 @@ Expression Collection::Get(const Expression& key) const
 }
 
 
-unsigned Collection::Add(const Expression& key)
+unsigned Collection::Add(Expression&& key)
 {
-    push_back(key);
-    return 1;
+    if (Association* association = key.GetIf<Association>())
+    {
+        assert(!association->Right().Is<All>()); // not implemented; 
+        if (association->Right().Simplify() == Boolean(false))
+            return 0;
+        if (All* all = association->Left().GetIf<All>())
+        {
+            unsigned total = 0;
+            for(auto subItem: *all)
+            {
+                total += Add(Association(std::move(subItem), std::move(association->Right())));
+            }
+            return total;            
+        }          
+    }
+    if (const All* all = key.GetIf<All>())
+    {
+        unsigned total = 0;
+        for(auto subItem: *all)
+        {
+            total += Add(std::move(subItem));
+        }
+        return total;
+    }
+    else 
+    {
+        push_back(key);
+        return 1;
+    }
+
 }
 unsigned Collection::Remove(const Expression& key)
 {
@@ -174,22 +202,8 @@ Collection Collection::SubstituteItems(const Hypothesis& hypothesis) const
     substitute.reserve(size());
     for(const auto& item: *this)
     {
-        if (const Tuple* tuple = item.GetIf<Tuple>())
-        {
-            auto tupstitution = tuple->Substitute(hypothesis);
-            if (const List* insert = tupstitution.GetIf<List>()) // TODO could be other containers
-            {
-                substitute.insert(substitute.end(), insert->begin(), insert->end());
-            }
-            else
-            {   // insert the unsubstituted tuple 
-                substitute.emplace_back(std::move(tupstitution));
-            }
-        }
-        else 
-        {
-            substitute.emplace_back(item.Substitute(hypothesis));
-        }
+        auto substituted = item.Substitute(hypothesis);
+        substitute.Add(std::move(substituted));
     }
     return substitute;   
 }

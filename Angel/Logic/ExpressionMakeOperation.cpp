@@ -40,7 +40,10 @@ ExpressionVariant make_operation(const Operator ope, Collection&& operands)
     if (operands.empty())
         throw std::invalid_argument(std::format("Not enough operands for operator {}", std::string(ope)));
     if (operands.size()==1) 
-        return make_unary_operation<Negative>(ope, std::move(operands[0]));
+        if (ope==All::ope)
+            return Container(All(std::move(operands[0])));
+        else
+            return make_unary_operation<Negative>(ope, std::move(operands[0]));
     else 
         return make_binary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction, 
             Equal, Unequal, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));

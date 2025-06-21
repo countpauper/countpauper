@@ -63,8 +63,9 @@ TEST(List, Substituple)
 
 TEST(List, SubstitupleFiltered)
 {
-	EXPECT_EQ((List{Integer(0), Association(Tuple("T"), LesserEqual{Integer(2)}).Substitute(Hypothesis{
-		Equal{Variable("T"), List{Boolean(true), Integer(2), Integer(3)}}})}),
+	List original{Integer(0), Association(Tuple("T"), LesserEqual{Integer(2)})};
+	Hypothesis substitution{Equal{Variable("T"), List{Boolean(true), Integer(2), Integer(3)}}};
+	EXPECT_EQ(original.Substitute(substitution),
 		(List{Integer(0), Boolean(true), Integer(2)}));
 }
 

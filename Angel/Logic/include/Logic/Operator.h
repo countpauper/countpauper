@@ -44,9 +44,10 @@ public:
     Code op;
 };
 
+template < typename T >
+concept is_operation = std::derived_from<decltype(T::ope), Operator>;
 
 std::ostream& operator<<(std::ostream& os, const Operator& op);
 
-template < typename T >
-concept is_operation = std::derived_from<decltype(T::ope), Operator>;
+
 }

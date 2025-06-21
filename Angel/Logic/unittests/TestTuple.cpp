@@ -22,7 +22,7 @@ TEST(Tuple, Query)
 	EXPECT_EQ(k.Infer(Tuple("Test")), Tuple("Test"));
 	EXPECT_EQ(k.Infer(Tuple("")), Tuple(""));
 	Hypothesis subs{Equal{Variable("Test"), List{Integer(2),Integer(3)}}};
-	EXPECT_EQ(Tuple("Test").Infer(k, subs, trace), (List{Integer(2),Integer(3)}));
+	EXPECT_EQ(Tuple("Test").Infer(k, subs, trace), (All(List{Integer(2),Integer(3)})));
 }
 
 TEST(Tuple, MatchingHypothesis)
@@ -43,11 +43,18 @@ TEST(Tuple, MatchingSubstitution)
 
 TEST(Tuple, Substitute)
 {
-	EXPECT_EQ(Tuple("B").Substitute(Conjunction{
+	EXPECT_THROW(Tuple("B").Substitute(Conjunction{
 			Equal{Variable("A"), Integer(3)},
 			Equal{Variable("B"), Integer(2)}
-		}),
-		Integer(2));
+		}), std::invalid_argument);
+	EXPECT_EQ(Tuple("V").Substitute(Conjunction{
+			Equal{Variable("V"), List{Integer(2), Integer(4)}}}),
+			All(List{Integer(2), Integer(4)}));
+
+	EXPECT_EQ(Tuple("T").Substitute(Conjunction{
+			Equal{Tuple("T"), List{Integer(-1), Integer(3)}}}),
+			All(List{Integer(-1), Integer(3)}));
+	
 	EXPECT_EQ(Tuple("A").Substitute(Conjunction{Equal{Tuple("B"), Integer(2)}}),
 		Tuple("A"));
 }
@@ -74,8 +81,8 @@ TEST(Tuple, InferValue)
 	Trace trace;
 	Hypothesis subs {Equal{Variable("X"),List{Integer(24)}},
 						Equal{Set{Integer(25)},Variable("Y")}};
-	EXPECT_EQ(Tuple("X").Infer(k, subs, trace), (List{Integer(24)}));	
-	EXPECT_EQ(Tuple("Y").Infer(k, subs, trace), (Set{Integer(25)}));	
+	EXPECT_EQ(Tuple("X").Infer(k, subs, trace), (All(List{Integer(24)})));	
+	EXPECT_EQ(Tuple("Y").Infer(k, subs, trace), (All(Set{Integer(25)})));	
 }
 
 TEST(Tuple, InferVariable)

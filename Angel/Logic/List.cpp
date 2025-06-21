@@ -78,7 +78,6 @@ List List::Simplify() const
     return List(SimplifyItems());
 }
 
-
 List List::Substitute(const Hypothesis& hypothesis) const
 {
     return List(SubstituteItems(hypothesis));

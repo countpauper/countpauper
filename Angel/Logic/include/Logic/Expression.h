@@ -2,8 +2,7 @@
 
 #include "Logic/Element.h"
 #include "Logic/Predicate.h"
-#include "Logic/Set.h"
-#include "Logic/List.h"
+#include "Logic/Container.h"
 #include "Logic/Negative.h"
 #include "Logic/Conjunction.h"
 #include "Logic/Disjunction.h"
@@ -29,8 +28,8 @@ using ExpressionVariant = std::variant<
     std::monostate,
     Function,      
     Boolean,  Integer, Id, String,
-    Variable, Tuple, 
-    Predicate, List, Set, Association,
+    Variable, Tuple, Container,
+    Predicate, Association,
     Negative, 
     Conjunction, Disjunction, 
     Summation, Subtraction, Multiplication, Division,
@@ -40,15 +39,6 @@ template <typename T, typename O>
 concept is_ordered = requires(const T& a, const O& b) {
     { a < b } -> std::convertible_to<bool>;
 };
-
-
-template <typename T>
-concept has_size = requires(const T& a) {
-    { a.size() } -> std::convertible_to<std::size_t>;
-};
-
-template<class T>
-concept is_container = has_size<T> && !is_operation<T>;
 
 class Expression : public ExpressionVariant
 {
@@ -61,20 +51,66 @@ public:
         ExpressionVariant(v)
     {
     }
+
+    template<typename T>
+    requires is_alternative<T, ContainerVariant>
+    Expression(const T& v) :
+        ExpressionVariant(Container(v))
+    {
+    }    
     Expression(const Expression& e);
     Expression(const Operator ope, Collection&& operands);
     Expression& operator=(const Expression& e);
 
-    template<class... Types>
+    template<class CT>
+    requires is_alternative<CT, Container>
     bool Is() const
     {
-        return (std::holds_alternative<Types>(*this) || ...);
+        auto container = GetIf<Container>();
+        return (container) && container->Is<CT>();
     }
-        
+
+    template<class T>
+    requires is_alternative<T, Expression>
+    bool Is() const
+    {
+        return std::holds_alternative<T>(*this);
+    }
+         
+    template<typename CT>
+    requires is_alternative<CT, ContainerVariant>
+    const CT* GetIf() const 
+    {
+        auto container = GetIf<Container>();
+        if (!container)
+            return nullptr;
+        return container->GetIf<CT>();
+    }
+    template<typename CT>
+    requires is_alternative<CT, ContainerVariant>
+    CT* GetIf() 
+    {
+        auto container = GetIf<Container>();
+        if (!container)
+            return nullptr;
+        return container->GetIf<CT>();
+    }
     template<typename T>
     const T* GetIf() const 
     {
         return std::get_if<T>(this);
+    }
+    template<typename T>
+    T* GetIf() 
+    {
+        return std::get_if<T>(this);
+    }
+
+    template<typename CT>
+    requires is_alternative<CT, ContainerVariant>
+    const CT& Get() const 
+    {
+        return Get<Container>().Get<CT>();
     }
 
     template<typename T> 
@@ -85,25 +121,26 @@ public:
     template<typename T>
     const std::optional<T> TryCast() const
     {
-        auto same = std::get_if<T>(this);
+        auto same = GetIf<T>();
         if (same)
             return std::optional<T>(*same);
-        else
-        {
-            return std::visit(overloaded_visit{
-                // Automatically cast any alternative that has a constructor that 
-                // takes another alternative const& as its sole argument
-                [this](const auto& castee) 
-                requires std::is_constructible_v<T, decltype(castee)>
-                {
-                    return std::optional<T>(castee);
-                },
-                [](const auto&) 
-                {
-                    return std::optional<T>();
-                }
-            }, *this);
-        }
+        return std::visit(overloaded_visit{
+            // Automatically cast any alternative that has a constructor that 
+            // takes another alternative const& as its sole argument
+            [this](const auto& castee) 
+            requires std::is_constructible_v<T, decltype(castee)>
+            {
+                return std::optional<T>(castee);
+            },
+            [this](const Container& container)
+            {
+                return container.TryCast<T>();
+            },
+            [](const auto&) 
+            {
+                return std::optional<T>();
+            }
+        }, *this);
     }
 
 
@@ -130,8 +167,21 @@ public:
 
     explicit operator bool() const;
 
+    template<typename CT> 
+    requires is_alternative<CT, ContainerVariant>
+    bool operator==(const CT& rhs) const
+    {
+        return std::visit(overloaded_visit{
+            [&rhs](const Container& container)
+            {
+                return container == rhs;
+            }, 
+            [](const auto&) { return false; }   
+        }, *this);
+    }
+
     template<typename T> 
-    requires(!std::is_same_v<Expression, T>) 
+    requires is_alternative<T, ExpressionVariant>
     bool operator==(const T& rhs) const
     {
         return std::visit(overloaded_visit{

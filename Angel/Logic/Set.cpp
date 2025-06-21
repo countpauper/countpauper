@@ -28,6 +28,19 @@ unsigned Set::Add(Expression&& other)
 {
     if (auto* association = other.GetIf<Association>())
     {
+        if (association->Right().Simplify() == Boolean(false))
+            return 0;
+
+        assert(!association->Right().Is<All>()); // not implemented yet
+        if (auto* all = association->Left().GetIf<All>())
+        {
+            unsigned total = 0;
+            for(auto subItem: *all)
+            {
+                total += Add(Association(std::move(subItem), std::move(association->Right())));
+            }
+            return total;
+        }
         auto result = items.emplace(association->Left(), association->Right());
         if (!result.second)
         {
@@ -36,6 +49,15 @@ unsigned Set::Add(Expression&& other)
         }
         else 
             return 1;
+    }
+    else if (auto* all = other.GetIf<All>())
+    {
+        unsigned total = 0;
+        for(auto subItem: *all)
+        {
+            total += Add(std::move(subItem));
+        }       
+        return total;
     }
     else 
     {
@@ -231,7 +253,6 @@ Expression Set::Matches(const Expression& e, const Hypothesis& hypothesis) const
     const Set* set = e.GetIf<Set>();
     if (!set)
     {
-        assert(!(e.Is<List, Bag>()));   // unimplemented other containers.
         return Boolean(false);  
     }   
     auto simplified = Substitute(hypothesis).Simplify();
@@ -296,12 +317,12 @@ std::size_t Set::Hash() const
 }
 
 
-Set::iterator::iterator(Inner::const_iterator i) :
+Set::const_iterator::const_iterator(Inner::const_iterator i) :
     it(i)
 {
 }
 
-Expression Set::iterator::operator*() const
+Expression Set::const_iterator::operator*() const
 {
     if (it->second == Boolean(true))
         return it->first;
@@ -309,31 +330,31 @@ Expression Set::iterator::operator*() const
         return Association{Expression(it->first), Expression(it->second)};
 }
 
-Set::iterator& Set::iterator::operator++()
+Set::const_iterator& Set::const_iterator::operator++()
 {
     it++;
     return *this;
 }
-Set::iterator Set::iterator::operator++(int)
+Set::const_iterator Set::const_iterator::operator++(int)
 {
-    Set::iterator ret(it);
+    Set::const_iterator ret(it);
     ++it; 
     return ret;
 }
 
-bool Set::iterator::operator==(const Set::iterator& rhs) const
+bool Set::const_iterator::operator==(const Set::const_iterator& rhs) const
 {
     return it == rhs.it;
 }
 
-Set::iterator Set::begin() const
+Set::const_iterator Set::begin() const
 {
-    return iterator(items.begin());
+    return const_iterator(items.begin());
 }
 
-Set::iterator Set::end() const
+Set::const_iterator Set::end() const
 {
-    return iterator(items.end());
+    return const_iterator(items.end());
 }
 
 
