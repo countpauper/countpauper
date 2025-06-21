@@ -14,7 +14,6 @@ Expression::Expression(const Expression& e) :
 {
 }
 
-
 Expression& Expression::operator=(const Expression& e)
 {
     ExpressionVariant::operator=(e);
@@ -39,11 +38,10 @@ bool Expression::IsComparison() const
     return GetOperator().IsComparator();
 }
 
-
 std::size_t Expression::size() const
 {
     return std::visit(overloaded_visit{
-        [this]<is_container CT>(const CT& container)
+        [this](const Container& container)
         {
             return container.size();
         },
@@ -249,12 +247,9 @@ std::string Expression::Summary() const
         {
             return std::format("{} with {} terms", operation.ope.Description(), operation.size()); 
         },
-        []<Logic::is_container C>(const C& collection) -> std::string 
+        [](const Container& container) -> std::string 
         {
-            return std::format("{} {} collection {} items", 
-                C::unique?"unique":"non-unique",
-                C::ordered?"ordered":"unordered", 
-                collection.size()); 
+            return container.Summary();
         },
         [](const Logic::Association& a) -> std::string
         {
@@ -324,7 +319,10 @@ size_t hash<Angel::Logic::Expression>::operator()(const Angel::Logic::Expression
             std::hash<std::monostate> hasher;
             return hasher(mono);
         }, 
-        [](const auto& obj) { return obj.Hash(); } 
+        [](const auto& obj) 
+        { 
+            return obj.Hash(); 
+        } 
     },  e);
 }
 

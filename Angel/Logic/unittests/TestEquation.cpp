@@ -11,7 +11,7 @@ TEST(Equal, Construction)
 {
     EXPECT_TRUE(Equal{}.empty());
     EXPECT_EQ(Equal{Integer(1)}.size(), 1);
-    EXPECT_EQ(Expression(BinaryOperator(L'='), {Integer(1), Boolean(false)}), 
+    EXPECT_EQ(Expression(Comparator(L'='), {Integer(1), Boolean(false)}), 
         (Equal{Integer(1), Boolean(false)}));   
 
 	static_assert(Logic::is_operation<Equal>);

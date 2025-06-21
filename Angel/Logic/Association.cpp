@@ -118,6 +118,13 @@ Expression Association::Simplify() const
 
 Association Association::Substitute(const Hypothesis& hypothesis) const
 {
+    auto lhSubstitute = lhs->Substitute(hypothesis);
+    auto rhsSubstitue = rhs->Substitute(hypothesis);
+    if (const All* lhAll = lhSubstitute.GetIf<All>())
+    {
+        // TODO: iterate over all and make an all associations 
+        // *[A]:b becomes *[A:b]  ? I guess this is a lot the same for other non set operators *[A,B]+2 = [A+2, B+2]
+    }
     return Association(lhs->Substitute(hypothesis), rhs->Substitute(hypothesis));
 }
 

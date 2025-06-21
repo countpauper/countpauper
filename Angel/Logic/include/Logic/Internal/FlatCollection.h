@@ -8,8 +8,9 @@ namespace Angel::Logic
 Expression Simplify(const Expression& e);
 class Set;
 
-// A flat collection can't contain itself as a type and will automatically attempt 
-// all elements. 
+// A flat collection can't contain another flatcollection of the same T type. 
+// When one is pushed_back, it will instead append all its elements.
+// This is useful for operations where, for instance, (A+(B+C)) == A+B+C 
 template<class T>
 class FlatCollection
 {

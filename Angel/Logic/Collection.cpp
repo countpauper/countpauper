@@ -174,6 +174,20 @@ Collection Collection::SubstituteItems(const Hypothesis& hypothesis) const
     substitute.reserve(size());
     for(const auto& item: *this)
     {
+        /*
+        auto substituted = item.Substitute(hypothesis);
+        if (const All* all = item.GetIf<All>())
+        {
+            for(auto subItem: all)
+            {
+                substitute.emplace_back(subItem);
+            }
+        }
+        else 
+        {
+            substitute.emplace_back(substituted);
+        }
+        */
         if (const Tuple* tuple = item.GetIf<Tuple>())
         {
             auto tupstitution = tuple->Substitute(hypothesis);
@@ -185,11 +199,9 @@ Collection Collection::SubstituteItems(const Hypothesis& hypothesis) const
             {   // insert the unsubstituted tuple 
                 substitute.emplace_back(std::move(tupstitution));
             }
+            continue;
         }
-        else 
-        {
-            substitute.emplace_back(item.Substitute(hypothesis));
-        }
+        substitute.emplace_back(item.Substitute(hypothesis));
     }
     return substitute;   
 }

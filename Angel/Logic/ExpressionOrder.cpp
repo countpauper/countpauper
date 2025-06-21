@@ -2,10 +2,11 @@
 #include "Logic/Knowledge.h"
 
 // File split so Expression.obj doesn't get too big due to templates
+// Can be split further
 namespace Angel::Logic
 {
 
-bool Expression::operator==(const Expression& rhs) const
+bool Expression::operator<(const Expression& rhs) const
 {
     return std::visit(overloaded_visit{
         [this](std::monostate)
@@ -14,7 +15,7 @@ bool Expression::operator==(const Expression& rhs) const
         },
         [this](const auto& rho)
         {
-            return operator==(rho);
+            return (*this) < rho;
         }
         }, rhs);
 }

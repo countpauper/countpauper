@@ -1,6 +1,7 @@
 #pragma once
 #include "Logic/Operator.h"
 #include "Logic/Hypothesis.h"
+#include "Logic/Operator.h"
 #include <vector>
 #include <initializer_list>
 #include <variant>

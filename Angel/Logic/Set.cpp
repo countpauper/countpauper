@@ -231,7 +231,6 @@ Expression Set::Matches(const Expression& e, const Hypothesis& hypothesis) const
     const Set* set = e.GetIf<Set>();
     if (!set)
     {
-        assert(!(e.Is<List, Bag>()));   // unimplemented other containers.
         return Boolean(false);  
     }   
     auto simplified = Substitute(hypothesis).Simplify();
