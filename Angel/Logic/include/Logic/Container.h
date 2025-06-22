@@ -3,101 +3,23 @@
 #include "Logic/Set.h"
 #include "Logic/List.h"
 #include "Logic/All.h"
-#include "Internal/VariantUtils.h"
-#include "Logic/CastException.h"
+#include "Internal/Variant.h"
 #include <variant>
 
 
 namespace Angel::Logic
 {
 
-using ContainerVariant = std::variant<
+using ContainerVariant = Variant<
     List, Set, All>;  
-
-class const_container_iterator 
-{
-public:
-    std::variant<std::monostate, List::const_iterator, Set::const_iterator> internal;
-    Expression operator*() const;
-    const_container_iterator& operator++();
-    const_container_iterator operator++(int);
-    operator bool() const;
-    bool operator==(const const_container_iterator& other) const;
-    bool operator!=(const const_container_iterator& other) const;
-};
-
+class const_container_iterator;
 
 class Container : public ContainerVariant
 {
 public:
-    template<typename T>
-    requires is_alternative<T, ContainerVariant>
-    explicit Container(const T& v) :
-        ContainerVariant(v)
-    {
-    }
+    using ContainerVariant::ContainerVariant;
+
     Container& operator=(const Container& e);
-    std::size_t Hash() const;
-    
-    // TODO: Make LogicVariant helper wrapper 
-    template<class... Types>
-    bool Is() const
-    {
-        return (std::holds_alternative<Types>(*this) || ...);
-    }
-        
-    template<typename T>
-    requires is_alternative<T, Container>
-    const T* GetIf() const 
-    {
-        return std::get_if<T>(this);
-    }
-    template<typename T>
-    requires is_alternative<T, Container>
-    T* GetIf() 
-    {
-        return std::get_if<T>(this);
-    }
-    template<typename T> T* GetIf() const { return nullptr; };
-
-    template<typename T> 
-    const T& Get() const 
-    {
-        return std::get<T>(*this);
-    }
-
-    template<typename T>
-    const std::optional<T> TryCast() const
-    {
-        auto same = GetIf<T>();
-        if (same)
-            return std::optional<T>(*same);
-        return std::visit(overloaded_visit{
-            // Automatically cast any alternative that has a constructor that 
-            // takes another alternative const& as its sole argument
-            [this](const auto& castee) 
-            requires std::is_constructible_v<T, decltype(castee)>
-            {
-                return std::optional<T>(castee);
-            },
-            [](const auto&) 
-            {
-                return std::optional<T>();
-            }
-        }, *this);
-    }
-
-
-    template<typename T>
-    const T Cast() const
-    {
-        auto maybe = TryCast<T>();
-        if (maybe)
-            return *maybe;
-        throw CastException(AlternativeTypeId(), typeid(T));
-    }
-    Expression TryCast(const std::type_info& rtt) const;
-    Expression Cast(const std::type_info& rtt) const;
 
     std::size_t size() const;
 
@@ -141,8 +63,6 @@ public:
     inline bool operator<=(const Container& o) const { return *this==o || *this<o; }
     inline bool operator>(const Container& o) const { return !(*this<=o); }
     inline bool operator>=(const Container& o) const { return !(*this<o); }
-
-    const std::type_info& AlternativeTypeId() const;
     std::string Summary() const;
 };
 

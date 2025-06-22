@@ -1,5 +1,6 @@
 #include "Logic/Container.h"
 #include "Logic/Expression.h"
+#include "Logic/Internal/container_iterator.h"
 #include <sstream>
 #include <cassert>
 
@@ -12,16 +13,6 @@ Container& Container::operator=(const Container& e)
     return *this;
 }
 
-std::size_t Container::Hash() const
-{
-    return std::visit(
-        [this](const auto& obj)
-        {
-            return obj.Hash();
-        }, *this);       
-}
-
-
 std::size_t Container::size() const
 {
     return std::visit(
@@ -30,39 +21,6 @@ std::size_t Container::size() const
             return obj.size();
         }, *this);   
 }
-
-/*
-template <std::size_t idx>
-constexpr Container CastIterate(const Container&e, const std::type_info& rtt) 
-{
-    if constexpr (idx < std::variant_size_v<ElementVariant>)
-    {
-        if (typeid(std::variant_alternative_t<idx, ElementVariant>) == rtt)
-        {
-            return e.Cast<std::variant_alternative_t<idx, ElementVariant>>();
-        }
-        else 
-        {
-            return CastIterate<idx+1>(e, rtt);
-        }
-    }
-    return Container();
-}
-
-Container Container::TryCast(const std::type_info& rtt) const
-{
-    return CastIterate<0>(*this, rtt);
-}
-
-Container Container::Cast(const std::type_info& rtt) const
-{
-    Container result = CastIterate<0>(*this, rtt);
-    if (result) 
-        return result;
-    else 
-        throw CastException(AlternativeTypeId(), rtt); 
-}
-*/
 
 Container Container::Simplify() const
 {
@@ -82,7 +40,6 @@ Set Container::Assumptions() const
         }, *this);
 
 }
-
 
 Container Container::Substitute(const Hypothesis& hypothesis) const
 {
@@ -145,14 +102,6 @@ const_container_iterator Container::end() const
 bool Container::operator<(const Container& o) const
 {
     return Hash() < o.Hash();
-}
-
-const std::type_info& Container::AlternativeTypeId() const 
-{
-    return *std::visit([](const auto& obj)
-    {
-        return &typeid(decltype(obj)); 
-    }, *this);        
 }
 
 std::string Container::Summary() const

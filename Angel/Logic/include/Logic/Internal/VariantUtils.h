@@ -5,7 +5,6 @@
 
 namespace Angel::Logic
 {
-
 // Use with std::visit to provide a set of explicitly typed alternatives
 // or variants with a subset of alternatives
 template<class... Ts> struct overloaded_visit : Ts... { using Ts::operator()...; };

@@ -201,8 +201,7 @@ Expression Expression::Infer(const class Knowledge& knowledge, const Hypothesis&
 
 Expression::operator bool() const
 {
-    static_assert(std::is_same_v<std::variant_alternative_t<0, ExpressionVariant>, std::monostate>);
-    return index() != 0;
+    return !std::holds_alternative<std::monostate>(*this);
 }
 
 bool Expression::operator<(const Expression& e) const
@@ -211,13 +210,6 @@ bool Expression::operator<(const Expression& e) const
     return hasher(*this) < hasher(e);
 }
 
-const std::type_info& Expression::AlternativeTypeId() const 
-{
-    return *std::visit([](const auto& obj)
-    {
-        return &typeid(decltype(obj)); 
-    }, *this);        
-}
 std::string Expression::Summary() const
 {
     return std::visit(Logic::overloaded_visit{

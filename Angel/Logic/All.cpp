@@ -1,5 +1,6 @@
 #include "Logic/All.h"
 #include "Logic/Expression.h"
+#include "Logic/Internal/container_iterator.h"
 
 namespace Angel::Logic
 {

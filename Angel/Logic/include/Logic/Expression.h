@@ -17,14 +17,14 @@
 #include "Logic/Tuple.h"
 #include "Logic/Operator.h"
 #include "Logic/CastException.h"
-#include "Logic/Internal/VariantUtils.h"
+#include "Logic/Internal/Variant.h"
 #include "Logic/Hash.h"
 #include <variant>
 
 namespace Angel::Logic
 {
 
-using ExpressionVariant = std::variant<
+using ExpressionVariant = Variant<
     std::monostate,
     Function,      
     Boolean,  Integer, Id, String,
@@ -45,12 +45,7 @@ class Expression : public ExpressionVariant
 public:
     Expression() = default;
     
-    template<typename T>
-    requires is_alternative<T, ExpressionVariant>
-    Expression(const T& v) :
-        ExpressionVariant(v)
-    {
-    }
+    using ExpressionVariant::ExpressionVariant;
 
     template<typename T>
     requires is_alternative<T, ContainerVariant>
@@ -69,14 +64,8 @@ public:
         auto container = GetIf<Container>();
         return (container) && container->Is<CT>();
     }
+    using ExpressionVariant::Is;
 
-    template<class T>
-    requires is_alternative<T, Expression>
-    bool Is() const
-    {
-        return std::holds_alternative<T>(*this);
-    }
-         
     template<typename CT>
     requires is_alternative<CT, ContainerVariant>
     const CT* GetIf() const 
@@ -95,16 +84,8 @@ public:
             return nullptr;
         return container->GetIf<CT>();
     }
-    template<typename T>
-    const T* GetIf() const 
-    {
-        return std::get_if<T>(this);
-    }
-    template<typename T>
-    T* GetIf() 
-    {
-        return std::get_if<T>(this);
-    }
+
+    using ExpressionVariant::GetIf;
 
     template<typename CT>
     requires is_alternative<CT, ContainerVariant>
@@ -113,36 +94,16 @@ public:
         return Get<Container>().Get<CT>();
     }
 
-    template<typename T> 
-    const T& Get() const 
-    {
-        return std::get<T>(*this);
-    }
+    using ExpressionVariant::Get;
+
     template<typename T>
     const std::optional<T> TryCast() const
     {
-        auto same = GetIf<T>();
-        if (same)
-            return std::optional<T>(*same);
-        return std::visit(overloaded_visit{
-            // Automatically cast any alternative that has a constructor that 
-            // takes another alternative const& as its sole argument
-            [this](const auto& castee) 
-            requires std::is_constructible_v<T, decltype(castee)>
-            {
-                return std::optional<T>(castee);
-            },
-            [this](const Container& container)
-            {
-                return container.TryCast<T>();
-            },
-            [](const auto&) 
-            {
-                return std::optional<T>();
-            }
-        }, *this);
+        if (const auto* container = GetIf<Container>())
+            return container->TryCast<T>();
+        else
+            return ExpressionVariant::TryCast<T>();
     }
-
 
     template<typename T>
     const T Cast() const
@@ -179,23 +140,8 @@ public:
             [](const auto&) { return false; }   
         }, *this);
     }
+    using ExpressionVariant::operator==;
 
-    template<typename T> 
-    requires is_alternative<T, ExpressionVariant>
-    bool operator==(const T& rhs) const
-    {
-        return std::visit(overloaded_visit{
-            [](std::monostate)
-            {
-                return false;
-            },
-            [&rhs](const T& lv)
-            {
-                return lv == rhs;
-            }, 
-            [](const auto&) { return false; }   
-            },*this);
-    }
     bool operator==(const Expression& rhs) const;
  
     template<typename T> 
@@ -223,8 +169,6 @@ public:
     inline bool operator<=(const Expression& o) const { return *this==o || *this<o; }
     inline bool operator>(const Expression& o) const { return !(*this<=o); }
     inline bool operator>=(const Expression& o) const { return !(*this<o); }
-
-    const std::type_info& AlternativeTypeId() const;
 
     std::string Summary() const;
     std::string Documentation() const;
