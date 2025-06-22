@@ -1,6 +1,7 @@
 #include "Logic/Set.h"
 #include "Logic/Expression.h"
 #include "Logic/Boolean.h"
+#include "ContainerImpl.h"
 #include <algorithm>
 #include <numeric>
 #include <iostream>
@@ -26,46 +27,19 @@ Set::Set(std::vector<Expression>&& setItems)
 }	
 unsigned Set::Add(Expression&& other)
 {
-    if (auto* association = other.GetIf<Association>())
+    return AddToContainer(std::move(other), [this](Expression&& item)
     {
-        if (association->Right().Simplify() == Boolean(false))
-            return 0;
-        if (association->Right().Simplify() == Boolean(true))
-            return Add(std::move(association->Left()));
-
-        assert(!association->Right().Is<All>()); // not implemented yet
-        if (auto* all = association->Left().GetIf<All>())
+        if (auto* association=item.GetIf<Association>())
         {
-            unsigned total = 0;
-            for(auto subItem: *all)
-            {
-                total += Add(Association(std::move(subItem), std::move(association->Right())).Simplify());
-            }
-            return total;
-        }
-        auto result = items.emplace(association->Left(), association->Right());
-        if (!result.second)
-        {
+            auto result = items.emplace(association->Left(), association->Right());
+            if (result.second)
+                return 1;
             result.first->second = std::move(association->Right());
             return 0;
         }
-        else 
-            return 1;
-    }
-    else if (auto* all = other.GetIf<All>())
-    {
-        unsigned total = 0;
-        for(auto subItem: *all)
-        {
-            total += Add(std::move(subItem));
-        }       
-        return total;
-    }
-    else 
-    {
-        auto result = items.emplace(std::move(other), Boolean(true));
-        return result.second;
-    }
+        auto result = items.emplace(std::move(item), Boolean(true));
+        return result.second?1:0;        
+    });
 }
 
 
