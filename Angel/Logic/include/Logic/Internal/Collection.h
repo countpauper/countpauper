@@ -4,8 +4,6 @@
 #include "Logic/Operator.h"
 #include <vector>
 #include <initializer_list>
-#include <variant>
-#include <algorithm>
 
 namespace Angel::Logic
 {

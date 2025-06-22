@@ -150,12 +150,14 @@ unsigned Collection::Add(Expression&& key)
         assert(!association->Right().Is<All>()); // not implemented; 
         if (association->Right().Simplify() == Boolean(false))
             return 0;
+        if (association->Right().Simplify() == Boolean(true))
+            return Add(std::move(association->Left()));
         if (All* all = association->Left().GetIf<All>())
         {
             unsigned total = 0;
             for(auto subItem: *all)
             {
-                total += Add(Association(std::move(subItem), std::move(association->Right())));
+                total += Add(Association(std::move(subItem), std::move(association->Right())).Simplify());
             }
             return total;            
         }          

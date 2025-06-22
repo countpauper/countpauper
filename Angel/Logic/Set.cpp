@@ -30,6 +30,8 @@ unsigned Set::Add(Expression&& other)
     {
         if (association->Right().Simplify() == Boolean(false))
             return 0;
+        if (association->Right().Simplify() == Boolean(true))
+            return Add(std::move(association->Left()));
 
         assert(!association->Right().Is<All>()); // not implemented yet
         if (auto* all = association->Left().GetIf<All>())
@@ -37,7 +39,7 @@ unsigned Set::Add(Expression&& other)
             unsigned total = 0;
             for(auto subItem: *all)
             {
-                total += Add(Association(std::move(subItem), std::move(association->Right())));
+                total += Add(Association(std::move(subItem), std::move(association->Right())).Simplify());
             }
             return total;
         }
