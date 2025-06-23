@@ -687,6 +687,18 @@ effectively a sparse array, which can be accessed with the access operator `X[a]
 By default however they are identifiers (equivalent to enums, predicates without arguments). Dictionaries with 
 identifiers can also be accessed with the `.` operator: `X.a`. 
 
+## Ordering 
+For sorted containers (Is set sorted or unordered)? and in general for the ordering operators, all expressions should be 
+ordered. This is first done between types with a hash with the top bits divided in categories. The lower provide an order 
+within the category, but on hash collisions they should provide ordering operators, mainly `<` to resolve it. 
+
+The categories: 
+* Numbers: All converted to floating point, then hashed to 48 bit
+* Ids & Strings/Variables: some categories for unicode high bits for the first character, more precision around ASCII
+* Containers: Very rough binary space partition for elements. The  bits and then the top 8 bits of the sub ordering
+* Predicates: Top 16 bits of the string id and 8 bits valence
+* Operators: Same encoding as containers for operands, but each first their operation precedence score 
+
 ## Converting number to and from boolean. 
 Functional integer and floating point functions can be mixed into the boolean inference engine using comparison operators. 
 There is no implicit conversion, to avoid inference erros. 

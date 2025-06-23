@@ -129,6 +129,7 @@ This is more clear and more lazy evaluation functional than tracing into branche
 then the stack is reset every time. For performance the importing thing is what is easiest to paralelize
 
 -   [x] Prefix comparators for matching. 
+-   [ ] Total ordering of Expressions with Hash 
 -   [ ] For any operator `@` while infering  
 -   [ ] Unary for any (element of) operator when matching
 -   [ ] Superset and subset operators  ⊆  ⊇  . Not sure what the ascii version is yet. maybe |= and &= ? 
