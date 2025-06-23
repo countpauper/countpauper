@@ -17,6 +17,7 @@ public:
     Individual& operator=(Individual&& rhs);
     explicit operator bool() const;
     std::size_t size() const;
+    bool empty() const;
     Set Assumptions() const;
     const Expression& operator*() const;
     const Expression* operator->() const;

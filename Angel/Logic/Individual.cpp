@@ -6,12 +6,12 @@ namespace Angel::Logic
 {
 
 Individual::Individual(Expression&& e) :
-    content(std::make_unique<Expression>(std::move(e)))
+    content(bool(e)?std::make_unique<Expression>(std::move(e)):nullptr)
 {
 }
 
 Individual::Individual(const Individual& o) :
-    content(std::make_unique<Expression>(*o.content))
+    content(o.empty()?nullptr:std::make_unique<Expression>(*o.content))
 {
 }
 
@@ -36,18 +36,22 @@ Individual& Individual::operator=(Individual&& rhs)
 
 Individual::operator bool() const
 {
-    return bool(content);
+    return !empty();
 }
 
 
 std::size_t Individual::size() const
 {
-    if (content)
-        return 1;
-    else    
+    if (empty())
         return 0;
+    else    
+        return 1;
 }
 
+bool Individual::empty() const
+{
+    return !bool(content);
+}
 
 Set Individual::Assumptions() const
 {
@@ -74,8 +78,10 @@ std::size_t Individual::Hash() const
 
 bool Individual::operator==(const Individual& other) const
 {
-    if (!content)
-        return !other.content;
+    if (empty())
+        return other.empty();
+    if (other.empty())
+        return false;
     return *content == *other.content;
 }
 

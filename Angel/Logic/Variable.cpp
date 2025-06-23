@@ -7,29 +7,18 @@ namespace Angel::Logic
 {
 
 Variable::Variable(const std::string_view name) :
-	name(name)
+	Individual(name.empty()?Expression():Id(name))
 {
-}
-
-Variable::operator bool() const
-{
-    return !name.empty();
 }
 
 bool Variable::operator==(const Variable& var) const
 {
-	return name == var.name;
+	return Individual::operator==(var);
 }
 
 std::size_t Variable::Hash() const
 {
-    std::hash<std::string> hasher;
-    return hasher(name);
-}
-
-std::string_view Variable::Name() const
-{
-    return name;
+    return Individual::Hash() ^ typeid(*this).hash_code();
 }
 
 Variable Variable::Simplify() const
@@ -39,6 +28,15 @@ Variable Variable::Simplify() const
 
 Expression Variable::Substitute(const Hypothesis& hypothesis) const
 {
+    if (empty())
+        return *this;   // anonymous
+
+    const auto* id = (*this)->Substitute(hypothesis).GetIf<Id>();
+    if (!id)
+        return *this;   // variable variable 
+
+    std::string name(*id);
+
     for(const auto& condition : hypothesis)
     {
         if (const auto* equation = condition.GetIf<Equal>())
@@ -62,13 +60,12 @@ Expression Variable::Matches(const Expression& e, const Hypothesis& hypothesis, 
     auto substitute = Substitute(hypothesis);
     if (const auto* stillVar = substitute.GetIf<Variable>())
     {
-        if (*stillVar)
-            if (reverse)
-                return Equal{*stillVar, e};
-            else
-                return Equal{e, *stillVar};
-        else
+        if (stillVar->empty())
             return Boolean(true);   // anonymous
+        if (reverse)
+            return Equal{*stillVar, e};
+        else
+            return Equal{e, *stillVar};
     }
     else 
     {
@@ -100,11 +97,11 @@ Expression Variable::Infer(const class Knowledge& k, const Hypothesis& hypothesi
     return *this;
 }
 
-
-
-std::ostream& operator<<(std::ostream& os, const Variable& id)
+std::ostream& operator<<(std::ostream& os, const Variable& var)
 {
-    os << "$" << id.Name();
+    os << "$";
+    if (var)
+        os << to_string(*var);
     return os;
 }
 

@@ -18,6 +18,7 @@ public:
     Negative Substitute(const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     bool operator==(const Negative& other) const;
+    std::size_t Hash() const;
     constexpr static PrefixOperator ope{L'-'};
 };
 

@@ -40,6 +40,12 @@ bool Negative::operator==(const Negative& other) const
     return Individual::operator==(other);
 }
 
+
+std::size_t Negative::Hash() const
+{
+    return Individual::Hash() ^ typeid(*this).hash_code();
+}
+
 std::ostream& operator<<(std::ostream& os, const Negative& neg)
 {
     os << neg.ope << *neg;

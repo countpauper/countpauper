@@ -237,9 +237,9 @@ std::string Expression::Summary() const
         {
             return Logic::to_string(*this);
         },
-        [](const Logic::Variable& v) -> std::string
+        [this](const Logic::Variable& v) -> std::string
         {
-            return std::format("${}", v.Name());
+             return Logic::to_string(*this);
         },
         [this](const auto& obj) 
         {

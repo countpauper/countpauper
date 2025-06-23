@@ -6,7 +6,7 @@
        ORRR do the iterative infer described in tautalogy protection below. 
        In that case there may be no knowledge to pass 
 - [ ] And isn't substitute just infering a variable with a hypothesis? The only time this should be done early is when matching and then the argument has to be inferred first anyway. Try to remove it altogether. 
-- [ ] $Variable is a Value/Ref operator with an Id content (none for anonymous) 
+- [*] $Variable is a Value/Ref operator with an Id content (none for anonymous) 
    - [ ] Tuple wholy replaced by All(Id), BaseClass ValueOperator
 - [ ] Find out how big Logic/Angel/Tests are in release really and why, try to optimize for size 
         - [ ] Make a base LogicVariant with all the basic Is<> GetIf<> const and not const, operator== and Hash etc
