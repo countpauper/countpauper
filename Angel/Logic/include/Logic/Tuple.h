@@ -9,7 +9,6 @@ namespace Angel::Logic
 class Expression;
 using Collection_subrange = std::ranges::subrange<std::vector<Expression>::const_iterator, std::vector<Expression>::const_iterator>;
 
-
 // A Tuple is a sub category of Expression that can be match with a sequence of values
 class Tuple
 {

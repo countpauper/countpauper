@@ -1,6 +1,7 @@
 #pragma once
 #include "Logic/Hypothesis.h"
 #include "Logic/Individual.h"
+#include "Logic/Unary.h"
 #include <string>
 
 namespace Angel::Logic
@@ -14,12 +15,14 @@ class Variable  : public Individual
 {
 public:
     explicit Variable(const std::string_view name);
+    using Individual::Individual;
     bool operator==(const Variable& var) const;
     std::size_t Hash() const;
     Variable Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis, bool reverse=false) const;
     Expression Substitute(const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
+    constexpr static PrefixOperator ope{L'$'};
 };
 
 

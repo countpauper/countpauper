@@ -99,7 +99,7 @@ Expression Variable::Infer(const class Knowledge& k, const Hypothesis& hypothesi
 
 std::ostream& operator<<(std::ostream& os, const Variable& var)
 {
-    os << "$";
+    os << var.ope;
     if (var)
         os << to_string(*var);
     return os;

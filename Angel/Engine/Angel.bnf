@@ -18,10 +18,10 @@
 <logical-binary-operator> ::= '[&\|]'
 <comparator> ::= '(!=|>=|<=|[<>=≠≥≤])'
 <set-either-operator> ::= "@"
-<set-prefix-operator> ::= '[∃∀]' | <set-either-operator> | <star-operator>
+<value-prefix-operator> ::= '[∃∀\$]' | <set-either-operator> | <star-operator>
 <set-binary-operator> ::= '[.∈]' | <set-either-operator>
 <binary-operator> ::= <numerical-binary-operator> | <logical-binary-operator> | <comparator> | <set-binary-operator> 
-<prefix-operator> ::= <numerical-prefix-operator> | <logical-prefix-operator> | <set-prefix-operator>
+<prefix-operator> ::= <numerical-prefix-operator> | <logical-prefix-operator> | <value-prefix-operator>
 <value> ::= <prefix-operator> <value> | <object> | "(" <space> <expression> <space> ")" 
 # TODO indexation [ ], lists, sets and ranges value:value 
 <object> ::= <positive-integer>
@@ -35,8 +35,8 @@
 <positive-float> ::= '(([0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)|(inf)|(nan))'
 <string> ::= '\"([^"\\]|\\\"|\\\\)*\"'
 <id> ::= '([^\x00-\x7F]|[A-Za-z_])([^\x00-\x7F]|\w|\_)*'
-<anonymous_id> ::= <id> | εanonmous
-<variable> ::= "$" <anonymous_id> | <star-operator> <anonymous_id> 
+<variable_id> ::= <id> | <variable> | εanonymous
+<variable> ::= <value-prefix-operator> <variable_id>
 <container> ::= <list> | <set> 
 <list> ::= "[" <space> <sequence> "]"
 <set> ::= "{" <space> <sequence> "}"

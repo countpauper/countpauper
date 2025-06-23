@@ -7,12 +7,13 @@
 namespace Angel::Logic::Test
 {
 
-TEST(Variable, Expression)
+TEST(Variable, Construction)
 {
     EXPECT_FALSE(Variable(""));
     EXPECT_TRUE(Variable("Test"));
 	EXPECT_EQ(Variable("Test"), Variable("Test"));
 	EXPECT_NE(Variable("Test"), Variable("Icle"));
+    EXPECT_EQ(Expression(PrefixOperator(L'$'), {Id("Test")}), Variable("Test"));
 }
 
 TEST(Variable, Query)
