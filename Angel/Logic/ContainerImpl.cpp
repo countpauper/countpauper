@@ -16,6 +16,9 @@ unsigned AddToContainer(Expression&& item, std::function<unsigned(Expression&&)>
             return AddToContainer(std::move(association->Left()), addOne);
         if (All* all = association->Left().GetIf<All>())
         {
+            if (all->GetVariable())
+                return addOne(*all);
+
             unsigned total = 0;
             for(auto subItem: *all)
             {
@@ -26,6 +29,9 @@ unsigned AddToContainer(Expression&& item, std::function<unsigned(Expression&&)>
     }
     if (const All* all = item.GetIf<All>())
     {
+        if (all->GetVariable())
+            return addOne(*all);
+
         unsigned total = 0;
         for(auto subItem: *all)
         {

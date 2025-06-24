@@ -8,6 +8,7 @@
 - [ ] And isn't substitute just infering a variable with a hypothesis? The only time this should be done early is when matching and then the argument has to be inferred first anyway. Try to remove it altogether. 
 - [*] $Variable is a Value/Ref operator with an Id content (none for anonymous) 
    - [ ] Tuple wholy replaced by All(Id), BaseClass ValueOperator
+   - [ ] Matching of All with List should be generalized to matching two sub containers with const_container_iterator (All  Set match?)
 - [ ] Find out how big Logic/Angel/Tests are in release really and why, try to optimize for size 
         - [ ] Make a base LogicVariant with all the basic Is<> GetIf<> const and not const, operator== and Hash etc
         - [ ] Maybe operation is one type and the operator the sub variant

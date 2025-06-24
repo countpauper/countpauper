@@ -82,9 +82,9 @@ TEST(List, MatchesVariable)
 {
 	EXPECT_EQ((List{Integer(2),Integer(3)}).Matches(List{Variable("X"), Integer(3)}, {}).Simplify(), 
 		(Equal{Variable("X"), Integer(2)}));	
-	EXPECT_EQ((List{Tuple("L")}).Matches(List{Boolean(true), Id("ginny")}, {}).Simplify(), 
+	EXPECT_EQ((List{All("L")}).Matches(List{Boolean(true), Id("ginny")}, {}).Simplify(), 
 		(Equal{List{Boolean(true), Id("ginny")}, Variable("L")}));	
-	EXPECT_EQ((List{Integer(0),Tuple("L")}).Matches(List{Integer(0), Boolean(false)}, {}).Simplify(), 
+	EXPECT_EQ((List{Integer(0),All("L")}).Matches(List{Integer(0), Boolean(false)}, {}).Simplify(), 
 		(Equal{List{Boolean(false)}, Variable("L")}));	
 }
 TEST(List, Infer)

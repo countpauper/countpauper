@@ -194,10 +194,10 @@ Expression Collection::Matches(Collection_subrange range, const Hypothesis& hypo
         Expression itemMatch;
         if (it!=end())
         {
-            if (const auto* this_tuple = it->GetIf<Tuple>())
+            if (const auto* this_all = it->GetIf<All>())
             {
                 assert(it+1 == end());   // for now * can only be at end
-                vars.emplace_back(this_tuple->Matches(Collection_subrange(range_it, range.end()), vars, false));
+                vars.emplace_back(this_all->Matches(Collection_subrange(range_it, range.end()), vars, false));
                 range_it=range.end();  
                 ++it;
                 continue;
@@ -206,10 +206,10 @@ Expression Collection::Matches(Collection_subrange range, const Hypothesis& hypo
 
         if (range_it!=range.end())
         {
-            if (const auto* list_tuple = range_it->GetIf<Tuple>())
+            if (const auto* list_all = range_it->GetIf<All>())
             {
                 assert(range_it+1 == range.end());   // for now * can only be at end
-                vars.emplace_back(list_tuple->Matches(Collection_subrange(it, end()), vars, true));
+                vars.emplace_back(list_all->Matches(Collection_subrange(it, end()), vars, true));
                 it = end(); // TODO could be partial, perhaps tuple match should return integer or (set) exactly which matched
                 ++range_it;
                 continue;
