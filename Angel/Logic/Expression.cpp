@@ -126,10 +126,6 @@ Set Expression::Assumptions() const
         {
             return Set{v};
         },
-        [this](const Tuple& t) 
-        {
-            return Set{t};
-        },
         [this](const auto& obj)
         {
             return obj.Assumptions();

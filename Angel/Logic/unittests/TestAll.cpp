@@ -25,7 +25,7 @@ TEST(All, Simplify)
 
 TEST(All, Substitute)
 {
-	EXPECT_EQ(Tuple("P").Substitute(Conjunction{Equal{Variable("P"), List{Integer(3)}}}),
+	EXPECT_EQ(All("P").Substitute(Conjunction{Equal{Variable("P"), List{Integer(3)}}}),
 		All(List{Integer(3)}));
 }
 

@@ -5,7 +5,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Function.h"
 #include "Logic/String.h"
-#include "Logic/Tuple.h"
+#include "Logic/All.h"
 #include "Logic/Element.h"
 #include "Logic/Operator.h"
 #include "Logic/Trace.h"
@@ -39,7 +39,7 @@ Logic::Predicate MakeSignature(const Logic::Id& id, Logic::Hypothesis args)
 
 Logic::String HelpTopic(const Logic::Knowledge& k, const Logic::Id& id)
 {
-    auto matches = k.Matches(Logic::Predicate(id, {Logic::Tuple("args")}));
+    auto matches = k.Matches(Logic::Predicate(id, {Logic::All("args")}));
     if (matches.empty())
     {
         throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(id)));

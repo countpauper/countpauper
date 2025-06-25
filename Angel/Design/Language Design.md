@@ -827,6 +827,7 @@ $C@{max,ginny}
 ```
 
 ### Tuples
+Tuples are the All operator applied to a variable Id. 
 When matching containers, instead of the single element variable the tuple variable prefix `*` can 
 be used. 
 ```

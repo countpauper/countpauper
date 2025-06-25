@@ -32,6 +32,7 @@ public:
     bool operator==(const All& other) const;
     std::size_t size() const;
     std::optional<Variable> GetVariable() const;
+    Set Assumptions() const;
     const_container_iterator begin() const;
     const_container_iterator end() const;
     constexpr static PrefixOperator ope{L'∀'};

@@ -159,6 +159,15 @@ std::optional<Variable> All::GetVariable() const
     return std::optional<Variable>();
 }
 
+Set All::Assumptions() const
+{
+    auto v = GetVariable();
+    if (v)
+        return Set{*this};
+    else
+        return Individual::Assumptions(); 
+}
+
 const_container_iterator All::begin() const
 {
     if (!content)

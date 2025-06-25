@@ -142,7 +142,7 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
                 unary_ops.pop();
                 const auto* id = newOparand.GetIf<Logic::Id>();
                 if (op==Logic::PrefixOperator(L'∀') && id)
-                    newOparand = Logic::Tuple(std::string(*id));
+                    newOparand = Logic::All(std::string(*id));
                 else 
                     newOparand = Logic::Expression(op, { newOparand });
             }

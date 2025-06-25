@@ -54,16 +54,16 @@ TEST(List, Substitute)
 		(List{Boolean(true), Integer(3)}));
 }
 
-TEST(List, Substituple)
+TEST(List, SubstiteAll)
 {
-	EXPECT_EQ((List{Boolean(true), Tuple("T")}).Substitute(Conjunction{
+	EXPECT_EQ((List{Boolean(true), All("T")}).Substitute(Conjunction{
 		Equal{Variable("T"), List{Integer(2), Id("three")}}}),
 		(List{Boolean(true), Integer(2), Id("three")}));
 }
 
-TEST(List, SubstitupleFiltered)
+TEST(List, SubstiteAllFiltered)
 {
-	List original{Integer(0), Association(Tuple("T"), LesserEqual{Integer(2)})};
+	List original{Integer(0), Association(All("T"), LesserEqual{Integer(2)})};
 	Hypothesis substitution{Equal{Variable("T"), List{Boolean(true), Integer(2), Integer(3)}}};
 	EXPECT_EQ(original.Substitute(substitution),
 		(List{Integer(0), Boolean(true), Integer(2)}));

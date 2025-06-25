@@ -14,7 +14,6 @@
 #include "Logic/Function.h"
 #include "Logic/Association.h"
 #include "Logic/Variable.h"
-#include "Logic/Tuple.h"
 #include "Logic/Operator.h"
 #include "Logic/CastException.h"
 #include "Logic/Internal/Variant.h"
@@ -28,7 +27,7 @@ using ExpressionVariant = Variant<
     std::monostate,
     Function,      
     Boolean,  Integer, Id, String,
-    Variable, Tuple, Container,
+    Variable, Container,
     Predicate, Association,
     Negative, 
     Conjunction, Disjunction, 

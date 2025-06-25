@@ -212,12 +212,15 @@ Expression Set::MakeHypothesis(const Set& constants, bool reversed) const
             else 
                 return Equal{var, *constants.begin()};
     }
-    else if (const auto* tuple = var.GetIf<Tuple>())
+    else if (const auto* all = var.GetIf<All>())
     {
-        if (reversed)
-            return Equal{constants, var};
-        else 
-            return Equal{var, constants};
+        if (auto allVar = all->GetVariable())
+        {
+            if (reversed)
+                return Equal{constants, *allVar};
+            else 
+                return Equal{*allVar, constants};
+        }
     }
     assert(false); // MakeHypothesis should only be called on a set of variable expressions
     return Boolean(false);

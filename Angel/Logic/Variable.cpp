@@ -35,17 +35,15 @@ Expression Variable::Substitute(const Hypothesis& hypothesis) const
     if (!id)
         return *this;   // variable variable 
 
-    std::string name(*id);
-
     for(const auto& condition : hypothesis)
     {
         if (const auto* equation = condition.GetIf<Equal>())
         {
-            if (equation->front() == *this || equation->front() == Tuple(name))
+            if (equation->front() == *this)
             {   
                 return equation->back().Substitute(hypothesis);
             }
-            if (equation->back() == *this || equation->back() == Tuple(name))
+            if (equation->back() == *this)
             {
                 return equation->front().Substitute(hypothesis);
             }

@@ -48,7 +48,7 @@ TEST(Variable, Substitute)
 		Integer(2));
 
 	EXPECT_EQ(Variable("T").Substitute(Conjunction{
-			Equal{Tuple("T"), List{Integer(-1), Integer(3)}}}),
+			Equal{Variable("T"), List{Integer(-1), Integer(3)}}}),
 			(List{Integer(-1), Integer(3)}));
 	
 	EXPECT_EQ(Variable("A").Substitute(Conjunction{Equal{Variable("B"), Integer(2)}}),
