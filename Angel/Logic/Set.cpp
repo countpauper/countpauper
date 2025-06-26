@@ -37,7 +37,7 @@ unsigned Set::Add(Expression&& other)
             result.first->second = std::move(association->Right());
             return 0;
         }
-        auto result = items.emplace(std::move(item), Boolean(true));
+        auto result = items.emplace(std::move(item), True);
         return result.second?1:0;        
     });
 }
@@ -69,7 +69,7 @@ Expression Set::Get(const Expression& e) const
         if (association.first == e)
             return association.second;
     }
-    return Boolean(false);
+    return False;
 }
 
 Expression Set::Pop(const Expression& e) 
@@ -200,12 +200,12 @@ Expression Set::MakeHypothesis(const Set& constants, bool reversed) const
             return Equal{constants, *this};
         else
             return Equal{*this, constants};
-    assert(items.begin()->second == Boolean(true));
+    assert(items.begin()->second == True);
     const auto& var = items.begin()->first;
     if (const auto* singleVar = var.GetIf<Variable>()) 
     {
         if (constants.size()!=1)
-            return Boolean(false);  // too many
+            return False;  // too many
         else 
             if (reversed)
                 return Equal{*constants.begin(), var};
@@ -223,7 +223,7 @@ Expression Set::MakeHypothesis(const Set& constants, bool reversed) const
         }
     }
     assert(false); // MakeHypothesis should only be called on a set of variable expressions
-    return Boolean(false);
+    return False;
 }
 
 
@@ -232,7 +232,7 @@ Expression Set::Matches(const Expression& e, const Hypothesis& hypothesis) const
     const Set* set = e.GetIf<Set>();
     if (!set)
     {
-        return Boolean(false);  
+        return False;  
     }   
     auto simplified = Substitute(hypothesis).Simplify();
     auto other = set->Substitute(hypothesis).Simplify();
@@ -303,7 +303,7 @@ Set::const_iterator::const_iterator(Inner::const_iterator i) :
 
 Expression Set::const_iterator::operator*() const
 {
-    if (it->second == Boolean(true))
+    if (it->second == True)
         return it->first;
     else
         return Association{Expression(it->first), Expression(it->second)};

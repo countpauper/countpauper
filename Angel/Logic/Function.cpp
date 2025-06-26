@@ -17,7 +17,7 @@ Function::Function(Callback cb, const std::string_view doc) :
 
 Expression Function::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
-    return Boolean(false); 
+    return False; 
 }
 
 Expression Function::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const

@@ -14,14 +14,14 @@ bool Disjunction::operator==(const Disjunction& rhs) const
 Expression Disjunction::Simplify() const
 {
     Disjunction simpler = SimplifyItems();
-    simpler.erase(Boolean(false));
+    simpler.erase(False);
     for(const auto& item: simpler)
     {
-        if (item == Boolean(true))
+        if (item == True)
             return item;
     }
      if (simpler.empty())
-        return Boolean(false);
+        return False;
     else if (simpler.size()==1)
         return simpler.front();
     return simpler;
@@ -31,7 +31,7 @@ Expression Disjunction::Matches(const Expression&, const Hypothesis& hypothesis)
 {
     // TODO: Disjunction match with logical simplication
     // false & X matches true if X is true. 
-    return Boolean(false);
+    return False;
 }
 
 Expression Disjunction::Substitute(const Hypothesis& hypothesis) const
@@ -48,7 +48,7 @@ Expression Disjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, 
         if (isTrue)
             return inferred;
     }
-    return Boolean(false);
+    return False;
 }
 
 std::ostream& operator<<(std::ostream& os, const Disjunction& disjunction)

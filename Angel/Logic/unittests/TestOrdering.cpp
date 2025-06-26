@@ -11,8 +11,8 @@ TEST(Ordering, Construction)
 {
     EXPECT_TRUE(Lesser{}.empty());
     EXPECT_EQ(LesserEqual{Integer(1)}.size(), 1);
-    EXPECT_EQ(Expression(Comparator(L'>'), {Integer(1), Boolean(false)}), 
-        (Greater{Integer(1), Boolean(false)}));   
+    EXPECT_EQ(Expression(Comparator(L'>'), {Integer(1), False}), 
+        (Greater{Integer(1), False}));   
 
 	static_assert(Logic::is_operation<GreaterEqual>);
 	static_assert(Logic::is_ordering<GreaterEqual>);
@@ -21,18 +21,18 @@ TEST(Ordering, Construction)
 TEST(Ordering, Order)
 {
     Knowledge k;
-    EXPECT_EQ(k.Infer(Equal{Integer(1), Integer(2)}), Boolean(false));
-    EXPECT_EQ(k.Infer(Equal{Integer(1), Boolean(true)}), Boolean(true));
+    EXPECT_EQ(k.Infer(Equal{Integer(1), Integer(2)}), False);
+    EXPECT_EQ(k.Infer(Equal{Integer(1), True}), True);
 }
 
 TEST(Ordering, Simplify)
 {
     EXPECT_EQ((Lesser{Integer(0)}).Simplify(), Lesser{Integer(0)});
-    EXPECT_EQ((Lesser{Boolean(true), Integer(2)}).Simplify(), Boolean(true));
-    EXPECT_EQ((GreaterEqual{Integer(1), Integer(2)}).Simplify(), Boolean(false));
+    EXPECT_EQ((Lesser{True, Integer(2)}).Simplify(), True);
+    EXPECT_EQ((GreaterEqual{Integer(1), Integer(2)}).Simplify(), False);
     EXPECT_EQ((Lesser{Integer(1), Integer(2), Variable("x")}).Simplify(), (Lesser{Integer(2), Variable("x")}));
     EXPECT_EQ((GreaterEqual{Variable("X"), Integer(4), Integer(4)}).Simplify(), (GreaterEqual{Variable("X"), Integer(4)}));
-    EXPECT_EQ((Lesser{Variable("X"), Integer(4), Integer(3)}).Simplify(), Boolean(false));
+    EXPECT_EQ((Lesser{Variable("X"), Integer(4), Integer(3)}).Simplify(), False);
     EXPECT_EQ((Greater{Variable("X"), Integer(9), Integer(1), Variable("Y")}).Simplify(), (Greater{Variable("X"), Integer(9), Integer(1),Variable("Y")}));
     EXPECT_EQ((LesserEqual{Integer(0), Integer(1), Variable("X"), Integer(2), Integer(3)}).Simplify(), (LesserEqual{Integer(1), Variable("X"), Integer(2)}));
 
@@ -41,9 +41,9 @@ TEST(Ordering, Simplify)
 
 TEST(Ordering, MatchUnaryOrderingIsTrueIfMatchIsOrdered)
 {
-    EXPECT_EQ((LesserEqual{Integer(3)}).Matches(Integer(3), {}).Simplify(), Boolean(true));
-    EXPECT_EQ((Greater{Integer(4)}).Matches(Integer(3), {}).Simplify(), Boolean(false));
-    EXPECT_EQ((LesserEqual{Integer(1)}).Matches(Integer(2), {}).Simplify(), Boolean(false));
+    EXPECT_EQ((LesserEqual{Integer(3)}).Matches(Integer(3), {}).Simplify(), True);
+    EXPECT_EQ((Greater{Integer(4)}).Matches(Integer(3), {}).Simplify(), False);
+    EXPECT_EQ((LesserEqual{Integer(1)}).Matches(Integer(2), {}).Simplify(), False);
     EXPECT_EQ((Lesser{Integer(-1)}).Matches(Variable("X"), {}).Simplify(), (Lesser{ Variable("X"), Integer(-1) }));
     EXPECT_EQ((Lesser{Integer(2)}).Matches(Variable("X"), {Greater{Variable("X"), Integer(0)}}).Simplify(), 
         (Conjunction{Greater{Variable("X"), Integer(0)}, Lesser{ Variable("X"), Integer(2) }}));
@@ -59,7 +59,7 @@ TEST(Ordering, Substitute)
 TEST(Ordering, Inference)
 {
     Knowledge k { Association(Predicate("cat"), Integer(3)) };
-    EXPECT_EQ(k.Infer(Greater{Predicate("cat"), Boolean(true)}), Boolean(true));
+    EXPECT_EQ(k.Infer(Greater{Predicate("cat"), True}), True);
 }
 
 TEST(Ordering, AssumptionBecomesHypothesisWhenInferred)
@@ -68,7 +68,7 @@ TEST(Ordering, AssumptionBecomesHypothesisWhenInferred)
     Knowledge k;
     Trace trace;
     EXPECT_EQ((Lesser{Variable("X"), Integer(2)}).Infer(k, hypothesis, trace), 
-        Association(Boolean(true), Lesser{Variable("X"), Integer(2)}));
+        Association(True, Lesser{Variable("X"), Integer(2)}));
 }
 
 TEST(Ordering, to_string)

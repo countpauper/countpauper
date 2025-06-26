@@ -162,7 +162,7 @@ Expression Expression::Matches(const Expression& e, const Hypothesis& hypothesis
         [](std::monostate) -> Expression 
         {
             assert(false);  // should never be matching against null-expression
-            return Boolean(false);
+            return False;
         },
         [&e, &hypothesis, this]<IsElement T>(const T& element) -> Expression 
         {
@@ -170,8 +170,8 @@ Expression Expression::Matches(const Expression& e, const Hypothesis& hypothesis
             if (var)
                 return var->Matches(*this, hypothesis, true);
             if (e==element)
-                return Boolean(true);            
-            return Boolean(false); 
+                return True;            
+            return False; 
         },
         [&e, &hypothesis](const auto& obj) 
         {

@@ -32,7 +32,7 @@ TEST(Negative, Negations)
     EXPECT_EQ(k.Infer(Negative(Integer(0))), Integer(0));
     EXPECT_EQ(k.Infer(Negative(Integer(2))), Integer(-2));
     EXPECT_EQ(k.Infer(Negative(Integer(-3))), Integer(3));
-    EXPECT_EQ(k.Infer(Negative(Boolean(true))), Integer(-1));
+    EXPECT_EQ(k.Infer(Negative(True)), Integer(-1));
 }
 
 TEST(Negative, to_string)

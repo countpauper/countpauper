@@ -10,9 +10,9 @@ unsigned AddToContainer(Expression&& item, std::function<unsigned(Expression&&)>
     if (Association* association = item.GetIf<Association>())
     {
         assert(!association->Right().Is<All>()); // not implemented; 
-        if (association->Right().Simplify() == Boolean(false))
+        if (association->Right().Simplify() == False)
             return 0;
-        if (association->Right().Simplify() == Boolean(true))
+        if (association->Right().Simplify() == True)
             return AddToContainer(std::move(association->Left()), addOne);
         if (All* all = association->Left().GetIf<All>())
         {

@@ -16,7 +16,7 @@ TEST(Function, Construction)
     EXPECT_EQ(Function(callback.AsStdFunction(), "test"), Function(callback.AsStdFunction(), "another test"));
     Function::Callback anotherCallback = [](const Knowledge&, const Hypothesis&, Trace&) -> Expression
     {
-        return Boolean(false);
+        return False;
     };
     EXPECT_FALSE(Function(callback.AsStdFunction(), "test") == Function(anotherCallback, "test"));
     EXPECT_THROW(Function(nullptr, "unhappy test"), std::invalid_argument);

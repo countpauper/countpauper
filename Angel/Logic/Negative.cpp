@@ -21,7 +21,7 @@ Expression Negative::Simplify() const
 Expression Negative::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     // TODO: need to compute with remaining variables, then compare 
-    return Boolean(false);
+    return False;
 }
 
 Negative Negative::Substitute(const Hypothesis& hypothesis) const

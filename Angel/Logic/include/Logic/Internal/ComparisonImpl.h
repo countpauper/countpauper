@@ -39,7 +39,7 @@ Expression Simplify(T&& container)
     for(auto it = container.begin(); it!=container.end();)
     {
         if (!IsPotentiallyOrdered<T::ope>(lastConstant, *it))
-            return Boolean(false);
+            return False;
         if (it->IsConstant())
             lastConstant = *it;
         else
@@ -69,7 +69,7 @@ Expression Simplify(T&& container)
             ++it;
     }
     if (allConst) {
-        return Boolean(true);
+        return True;
     } else 
         return std::move(container);
 }
@@ -105,7 +105,7 @@ Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypo
 {
     assert(FlatCollection<T>::size()>1);   // single element equations can't be inferred only matched
     if (!FlatCollection<T>::Assumptions().empty()) {
-        return Association(Boolean(true), T(FlatCollection<T>::items));
+        return Association(True, T(FlatCollection<T>::items));
     }
     Expression first = FlatCollection<T>::front().Infer(k, hypothesis, trace);
     for(const auto& item: *this | std::views::drop(1))
@@ -118,9 +118,9 @@ Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypo
         // but integer and float? 23.0=23   and 23=23.0 ? 
         // at least hypothesis would have to be done here. 
         if (!T::ope(first, cast))
-            return Boolean(false);
+            return False;
     }
-    return Boolean(true);
+    return True;
 }
 
 // TODO: Generalize with operation 

@@ -23,7 +23,7 @@ TEST(Summation, Summations)
     EXPECT_EQ(k.Infer(Summation{Integer(2)}), Integer(2));
     EXPECT_EQ(k.Infer(Summation{Integer(2), Integer(3)}), Integer(5));
     EXPECT_EQ(k.Infer(Summation{Integer(2), Integer(-3)}), Integer(-1));
-    EXPECT_EQ(k.Infer(Summation{Boolean(true), Integer(2)}), Integer(3));
+    EXPECT_EQ(k.Infer(Summation{True, Integer(2)}), Integer(3));
     EXPECT_EQ(k.Infer(Summation{Summation{Integer(2)}}), Integer(2));
 }
 
@@ -44,9 +44,9 @@ TEST(Summation, Substitute)
 TEST(Summation, MatchArgument)
 {
 	EXPECT_EQ(Predicate("sum", {Summation{Integer(1), Integer(2)}}).Matches(
-                Predicate("sum", {Integer(3)}),{}).Simplify(), Boolean(true));
+                Predicate("sum", {Integer(3)}),{}).Simplify(), True);
 	EXPECT_EQ(Predicate("sum", {Integer(-4)}).Matches(
-                Predicate("sum", {Summation{Integer(-5), Boolean(true)}}),{}).Simplify(), Boolean(true));
+                Predicate("sum", {Summation{Integer(-5), True}}),{}).Simplify(), True);
 }
 
 TEST(Summation, Inference)

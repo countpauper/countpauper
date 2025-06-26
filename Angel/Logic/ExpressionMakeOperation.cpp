@@ -10,7 +10,7 @@ ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand)
     if (!ope)
         return std::move(operand);
         
-    Logic::Expression result = Logic::Boolean(false);
+    Logic::Expression result = Logic::False;
     bool found = false;
     
     ((!found && (found = (Ts::ope == ope)) 
@@ -24,7 +24,7 @@ ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand)
 template <typename... Ts>
 ExpressionVariant make_binary_operation(const Operator ope, Collection&& operands) 
 {
-    Logic::Expression result = Logic::Boolean(false);
+    Logic::Expression result = Logic::False;
     bool found = false;
     
     ((!found && (found = (Ts::ope == ope)) 

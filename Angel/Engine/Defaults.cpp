@@ -124,14 +124,14 @@ Logic::Expression Print(const Logic::Knowledge& k, const Logic::Hypothesis& args
 {
     Logic::Expression target = GetArg(args, "omething");
     std::cout << target.Infer(k, args, trace);
-    return Logic::Boolean(true);
+    return Logic::True;
 }
 
 
 Logic::Expression Trace(const Logic::Knowledge& k, const Logic::Hypothesis& args, Logic::Trace& trace)
 {
     trace.SetVerbosity(1);
-    return Logic::Boolean(true);
+    return Logic::True;
 }
 
 

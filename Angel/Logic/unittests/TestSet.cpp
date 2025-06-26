@@ -130,41 +130,41 @@ TEST(Set, Simplify)
 
 TEST(Set, Substitute)
 {
-	EXPECT_EQ((Set{Boolean(true), Variable("I")}).Substitute(Conjunction{Equal{Variable("I"), Integer(3)}}),
-		(Set{Boolean(true), Integer(3)}));
+	EXPECT_EQ((Set{True, Variable("I")}).Substitute(Conjunction{Equal{Variable("I"), Integer(3)}}),
+		(Set{True, Integer(3)}));
 }
 
 TEST(Set, SubstituteAll)
 {
-	EXPECT_EQ((Set{Boolean(true), All("T")}).Substitute(Conjunction{
+	EXPECT_EQ((Set{True, All("T")}).Substitute(Conjunction{
 		Equal{Variable("T"), List{Id("three"), Integer(2)}}}),
-		(Set{Boolean(true), Integer(2), Id("three")}));
+		(Set{True, Integer(2), Id("three")}));
 }
 
 TEST(Set, SubstituteAllFiltered)
 {
 	EXPECT_EQ((Set{Integer(0), Association(All("T"), LesserEqual{Integer(2)}).Substitute(Conjunction{
-		Equal{Variable("T"), List{Boolean(true), Integer(2), Integer(3)}}})}),
-		(Set{Integer(0), Boolean(true), Integer(2)}));
+		Equal{Variable("T"), List{True, Integer(2), Integer(3)}}})}),
+		(Set{Integer(0), True, Integer(2)}));
 }
 
 TEST(Set, Matches)
 {
-	EXPECT_EQ((Set{Integer(3)}).Matches(Set{Integer(3)}, {}).Simplify(), Boolean(true));	
-	EXPECT_EQ((Set{Integer(2)}).Matches(Set{Integer(4)}, {}).Simplify(), Boolean(false));	
-	EXPECT_EQ((Set{Integer(2)}).Matches(Set{Integer(2), Integer(4)}, {}), Boolean(false));
-	EXPECT_EQ((Set{Integer(2),Integer(3)}).Matches(Set{Integer(2)}, {}), Boolean(false));	
-	EXPECT_EQ((Set{Integer(2)}).Matches(Set{Integer(2), Integer(4)}, {}), Boolean(false));
+	EXPECT_EQ((Set{Integer(3)}).Matches(Set{Integer(3)}, {}).Simplify(), True);	
+	EXPECT_EQ((Set{Integer(2)}).Matches(Set{Integer(4)}, {}).Simplify(), False);	
+	EXPECT_EQ((Set{Integer(2)}).Matches(Set{Integer(2), Integer(4)}, {}), False);
+	EXPECT_EQ((Set{Integer(2),Integer(3)}).Matches(Set{Integer(2)}, {}), False);	
+	EXPECT_EQ((Set{Integer(2)}).Matches(Set{Integer(2), Integer(4)}, {}), False);
 }
 
 TEST(Set, MatchesVariable)
 {
 	EXPECT_EQ((Set{Integer(3), Integer(2)}).Matches(Set{Variable("X"), Integer(3)}, {}).Simplify(), 
 		(Equal{Integer(2), Variable("X")}));	
-	EXPECT_EQ((Set{All("L")}).Matches(Set{Boolean(true), Id("ginny")}, {}).Simplify(), 
-		(Equal{Variable("L"), Set{Boolean(true), Id("ginny")} }));	
-	EXPECT_EQ((Set{Integer(0),All("L")}).Matches(Set{Boolean(false), Integer(0)}, {}).Simplify(), 
-		(Equal{Variable("L"), Set{Boolean(false)} }));	
+	EXPECT_EQ((Set{All("L")}).Matches(Set{True, Id("ginny")}, {}).Simplify(), 
+		(Equal{Variable("L"), Set{True, Id("ginny")} }));	
+	EXPECT_EQ((Set{Integer(0),All("L")}).Matches(Set{False, Integer(0)}, {}).Simplify(), 
+		(Equal{Variable("L"), Set{False} }));	
 }
 
 
@@ -176,8 +176,8 @@ TEST(Set, Infer)
 
 TEST(Set, Get)
 {
-	EXPECT_EQ(Set().Get(Id("ginny")), Boolean(false));
-	EXPECT_EQ((Set{Id("ginny"), Id("ginny")}).Get(Id("ginny")), Boolean(true));
+	EXPECT_EQ(Set().Get(Id("ginny")), False);
+	EXPECT_EQ((Set{Id("ginny"), Id("ginny")}).Get(Id("ginny")), True);
 	EXPECT_EQ((Set{
 		Association{Id("ginny"), Integer(1)},
 		Association{Id("gizmo"), Integer(2)},

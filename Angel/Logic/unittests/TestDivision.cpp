@@ -22,7 +22,7 @@ TEST(Division, Divisions)
     EXPECT_EQ(k.Infer(Division{Integer(2)}), Integer(2));
     EXPECT_EQ(k.Infer(Division{Integer(6), Integer(2)}), Integer(3));
     EXPECT_EQ(k.Infer(Division{Integer(9), Integer(-3)}), Integer(-3));
-    EXPECT_EQ(k.Infer(Division{Integer(2), Boolean(true)}), Integer(2));
+    EXPECT_EQ(k.Infer(Division{Integer(2), True}), Integer(2));
     EXPECT_EQ(k.Infer(Division{Division{Integer(2)}}), Integer(2));
 }
 

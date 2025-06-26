@@ -23,7 +23,7 @@ TEST(Multiplication, Multiplications)
     EXPECT_EQ(k.Infer(Multiplication{Integer(2)}), Integer(2));
     EXPECT_EQ(k.Infer(Multiplication{Integer(2), Integer(3)}), Integer(6));
     EXPECT_EQ(k.Infer(Multiplication{Integer(3), Integer(-2)}), Integer(-6));
-    EXPECT_EQ(k.Infer(Multiplication{Boolean(true), Integer(2)}), Integer(2));
+    EXPECT_EQ(k.Infer(Multiplication{True, Integer(2)}), Integer(2));
     EXPECT_EQ(k.Infer(Multiplication{Multiplication{Integer(2)}}), Integer(2));
 }
 

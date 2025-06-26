@@ -67,14 +67,14 @@ TEST(All, MatchingHypothesis)
 TEST(All, MatchingSubstitution)
 {
 	Hypothesis substituted {Equal{Variable("Y"),List{Integer(2), Integer(3)}}};
-	EXPECT_EQ((List{Integer(1), Integer(3)}).Matches(List{All("Y")}, substituted).Simplify(), Boolean(false) );
-	EXPECT_EQ((List{Integer(2), Integer(3)}).Matches(List{All("Y")}, substituted).Simplify(), Boolean(true) );
-	EXPECT_EQ((List{Integer(1), Integer(2), Integer(3)}).Matches(List{Integer(1), All("Y")}, substituted).Simplify(), Boolean(true) );
+	EXPECT_EQ((List{Integer(1), Integer(3)}).Matches(List{All("Y")}, substituted).Simplify(), False );
+	EXPECT_EQ((List{Integer(2), Integer(3)}).Matches(List{All("Y")}, substituted).Simplify(), True );
+	EXPECT_EQ((List{Integer(1), Integer(2), Integer(3)}).Matches(List{Integer(1), All("Y")}, substituted).Simplify(), True );
 }
 
 TEST(All, MatchAnonymous)
 {
-	EXPECT_EQ((List{All("")}).Matches(List{Integer(1)}, {}).Simplify(), Boolean(true));
+	EXPECT_EQ((List{All("")}).Matches(List{Integer(1)}, {}).Simplify(), True);
 }
 
 TEST(All, Hypothesis)
@@ -83,7 +83,7 @@ TEST(All, Hypothesis)
 		Predicate("cat", { Id("ginny")}) 
 	};
 	EXPECT_EQ(k.Infer(Predicate("cat", { All("C")})), (Association{
-		Boolean(true),
+		True,
 		Equal{Variable("C"), List{Id("ginny")}}
 	}));
 }

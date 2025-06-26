@@ -71,10 +71,10 @@ Expression Predicate::Matches(const Expression& inferred, const Hypothesis& hypo
 {
 	const auto* predicate = inferred.GetIf<Predicate>();
 	if (!predicate)
-		return Boolean(false);
+		return False;
 	
 	if (id != predicate->id) // Variable predicate names not (yet) supported
-		return Boolean(false);
+		return False;
 	return arguments.Simplify().Matches(predicate->arguments.Simplify(), hypothesis);
 }
 
@@ -129,7 +129,7 @@ Expression ExtendResult(Expression&& value, Expression&& current, Hypothesis&& h
     // The axiom's variables are in scope of the axiom so they are omitted from the hypothesis
 
     // The current hypothesis is added as a disjunction
-    if (value == Boolean(false))
+    if (value == False)
         if (current)    
             return std::move(current);
         else
@@ -165,7 +165,7 @@ Expression Predicate::Infer(const Knowledge& knowledge, const Hypothesis& origin
 		result.Add(ExtendResult(std::move(value), std::move(current), std::move(conditions)));
 	}
 	if (result.empty())
-		return Boolean(false);
+		return False;
 	if (result.size()==1)
 		return *result.begin();
 	return result;

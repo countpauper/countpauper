@@ -52,7 +52,7 @@ Expression OperationWithBase<T>::Matches(const Expression& expression, const Hyp
     // X+1 matches 3 if X is 2 
     // all unknown variables need to be found and the remaining expression(s) needs to be computed. 
     // if any are ranges, then the result might be a different range 
-    return Boolean(false);
+    return False;
 }
 
 template<class T>

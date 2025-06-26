@@ -7,7 +7,7 @@
        In that case there may be no knowledge to pass 
 - [ ] And isn't substitute just infering a variable with a hypothesis? The only time this should be done early is when matching and then the argument has to be inferred first anyway. Try to remove it altogether. 
 - [*] $Variable is a Value/Ref operator with an Id content (none for anonymous) 
-   - [ ] Tuple wholy replaced by All(Id), BaseClass ValueOperator
+   - [*] Tuple wholy replaced by All(Id), BaseClass ValueOperator
    - [ ] Matching of All with List should be generalized to matching two sub containers with const_container_iterator (All  Set match?)
 - [ ] Find out how big Logic/Angel/Tests are in release really and why, try to optimize for size 
         - [ ] Make a base LogicVariant with all the basic Is<> GetIf<> const and not const, operator== and Hash etc
@@ -15,7 +15,8 @@
         - [*] Maybe containers are one type and unique+ordered the sub variant
         - [ ] Elements even, if for no other reason than to fix pretty printing ?
 - [ ] Rename Collection to reuse Tuple
-- [ ] Boolean(true) and Boolean(false) replaced with constexpr Logic::True and Logic::False
+- [*] True and False replaced with constexpr Logic::True and Logic::False
+
 ## Backlog 
 - [*] Get back up 
 -    [*] remove wstring and platform dependenty conversion 

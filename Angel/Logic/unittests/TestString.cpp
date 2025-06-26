@@ -16,7 +16,7 @@ TEST(String, Construction)
 
 TEST(String, Cast)
 {
-	EXPECT_EQ(String(Boolean(true)), String("true"));
+	EXPECT_EQ(String(True), String("true"));
 	EXPECT_EQ(String(Integer(-3)), String("-3"));
 }
 

@@ -107,7 +107,7 @@ bool AllTrue(const Bag& values)
 {
     for(const auto& item: values)
     {
-        if (item!=Boolean(true))
+        if (item!=True)
             return false;
     }
     return true;
@@ -124,7 +124,7 @@ Expression Collection::Get(const Expression& key) const
         if (assocation)
         {
             auto maybeRight = assocation->Get(key).Simplify();
-            if (maybeRight != Boolean(false))
+            if (maybeRight != False)
             {
                 values.Add(std::move(maybeRight));
             }            
@@ -132,11 +132,11 @@ Expression Collection::Get(const Expression& key) const
         else
         {
             auto match = item.Matches(key, {});
-            if (match==Boolean(true))
+            if (match==True)
             {
-                values.Add(Boolean(true));
+                values.Add(True);
             }
-            else if (match!=Boolean(false))
+            else if (match!=False)
             {
                 // adding the hypothesis now? what does [1, 2].$V do? $V=1|$V=2?
                 values.Add(std::move(match));
@@ -232,19 +232,19 @@ Expression Collection::Matches(Collection_subrange range, const Hypothesis& hypo
             }
             else 
             {
-                return Boolean(false); // length mismatch
+                return False; // length mismatch
             }
         }
         else if (range_it==range.end())
         {
-            return Boolean(false); // length mismatch
+            return False; // length mismatch
         }
         else 
         {
             auto itemMatch = it->Matches(*range_it, vars);
-            if (itemMatch == Boolean(false))
+            if (itemMatch == False)
                 return itemMatch;
-            else if (itemMatch != Boolean(true))
+            else if (itemMatch != True)
                 vars.emplace_back(std::move(itemMatch));
             ++it; ++range_it; 
         }

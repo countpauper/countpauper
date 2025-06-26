@@ -14,14 +14,14 @@ bool Conjunction::operator==(const Conjunction& rhs) const
 Expression Conjunction::Simplify() const
 {
     Conjunction simpler = SimplifyItems();
-    simpler.erase(Boolean(true));
+    simpler.erase(True);
     for(const auto& item: simpler)
     {
-        if (item == Boolean(false))
+        if (item == False)
             return item;
     }
      if (simpler.empty())
-        return Boolean(true);
+        return True;
     else if (simpler.size()==1)
         return simpler.front();
     return simpler;
@@ -31,7 +31,7 @@ Expression Conjunction::Matches(const Expression&, const Hypothesis& hypothesis)
 {
     // TODO: Conjunctions match with logical simplication
     // true & X matches true if X is true. 
-    return Boolean(false);
+    return False;
 }
 
 Conjunction Conjunction::Substitute(const Hypothesis& hypothesis) const
@@ -48,7 +48,7 @@ Expression Conjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, 
         if (!isTrue)
             return isTrue; // or just inferred? true & 0 == 0?
     }
-    return Boolean(true);
+    return True;
 }
 
 std::ostream& operator<<(std::ostream& os, const Conjunction& conjunction)

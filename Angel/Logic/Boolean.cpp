@@ -7,12 +7,7 @@
 
 namespace Angel::Logic
 {
-
-Boolean::Boolean(bool v) :
-	truth(v)
-{
-}
-
+    
 Boolean::Boolean(const std::string_view tag)
 {
 	if (tag == "true")

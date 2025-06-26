@@ -23,7 +23,7 @@ TEST(Subtraction, Subtractions)
     EXPECT_EQ(k.Infer(Subtraction{Integer(2)}), Integer(2));
     EXPECT_EQ(k.Infer(Subtraction{Integer(2), Integer(3)}), Integer(-1));
     EXPECT_EQ(k.Infer(Subtraction{Integer(2), Integer(-3)}), Integer(5));
-    EXPECT_EQ(k.Infer(Subtraction{Boolean(true), Integer(2)}), Integer(-1));
+    EXPECT_EQ(k.Infer(Subtraction{True, Integer(2)}), Integer(-1));
     EXPECT_EQ(k.Infer(Subtraction{Subtraction{Integer(2)}}), Integer(2));
 }
 
@@ -43,9 +43,9 @@ TEST(Subtraction, Substitute)
 TEST(Subtraction, MatchArgument)
 {
 	EXPECT_EQ(Predicate("sub", {Subtraction{Integer(1), Integer(2)}}).Matches(
-                Predicate("sub", {Integer(-1)}),{}).Simplify(), Boolean(true));
+                Predicate("sub", {Integer(-1)}),{}).Simplify(), True);
 	EXPECT_EQ(Predicate("sub", {Integer(-4)}).Matches(
-                Predicate("sub", {Subtraction{Integer(-3), Boolean(true)}}),{}).Simplify(), Boolean(true));
+                Predicate("sub", {Subtraction{Integer(-3), True}}),{}).Simplify(), True);
 }
 
 TEST(Subtraction, Inference)

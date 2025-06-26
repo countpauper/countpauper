@@ -35,8 +35,8 @@ TEST(Variable, MatchingHypothesis)
 TEST(Variable, MatchingSubstitution)
 {
 	Hypothesis substituted {Equal{Variable("Y"),Integer(2)}};
-	EXPECT_EQ(Variable("Y").Matches(Integer(1), substituted), Boolean(false) );
-	EXPECT_EQ(Variable("Y").Matches(Integer(2), substituted), Boolean(true) );
+	EXPECT_EQ(Variable("Y").Matches(Integer(1), substituted), False );
+	EXPECT_EQ(Variable("Y").Matches(Integer(2), substituted), True );
 }
 
 TEST(Variable, Substitute)
@@ -57,7 +57,7 @@ TEST(Variable, Substitute)
 
 TEST(Variable, MatchAnonymous)
 {
-	EXPECT_EQ(Variable("").Matches(Integer(1), {}), Boolean(true));
+	EXPECT_EQ(Variable("").Matches(Integer(1), {}), True);
 }
 
 TEST(Variable, Hypothesis)
@@ -66,7 +66,7 @@ TEST(Variable, Hypothesis)
 		Predicate("cat", { Id("ginny")}) 
 	};
 	EXPECT_EQ(k.Infer(Predicate("cat", { Variable("C")})), (Association{
-		Boolean(true),
+		True,
 		Equal{Variable("C"), Id("ginny")}
 	}));
 }

@@ -28,7 +28,7 @@ size_t Knowledge::Know(Expression&& clause)
 {
     if (auto* predicate = clause.GetIf<Predicate>())
     {
-        return Know(Association{std::move(*predicate), Boolean(true)});
+        return Know(Association{std::move(*predicate), True});
     }
     else if (auto* association = clause.GetIf<Association>())
     {
@@ -54,7 +54,7 @@ size_t Knowledge::Forget(const Predicate& match)
     return std::erase_if(root, [&match](const Expression& item)
     {
         const Association& clause = item.Get<Association>();
-        return clause.Left().Matches(match, {}).Simplify() != Boolean(false);
+        return clause.Left().Matches(match, {}).Simplify() != False;
     });
 }
 
@@ -67,7 +67,7 @@ Expression Knowledge::Infer(const Expression& expression) const
 
 Hypothesis GetAntecedent(Expression&& match)
 {
-    if (match == Boolean(true))
+    if (match == True)
     {
         return Hypothesis();            
     }
@@ -90,7 +90,7 @@ Bag Knowledge::Matches(const Predicate& query) const
         Expression lhs = clause.Left();
         const auto& predicate = lhs.Get<Predicate>();
         auto match = predicate.Matches(query, {});
-        if (match.Simplify() == Boolean(false))
+        if (match.Simplify() == False)
             continue;
         Hypothesis hypothesis = GetAntecedent(std::move(match));
         auto assumptions = hypothesis.Assumptions().size();
@@ -103,7 +103,7 @@ Bag Knowledge::Matches(const Predicate& query) const
         }
 
         auto valueResult =  clause.Right().Simplify();
-        if (valueResult==Boolean(false))
+        if (valueResult==False)
             continue;
         if (hypothesis.empty())
             hypotheses.emplace_back(std::move(valueResult));
@@ -135,7 +135,7 @@ Knowledge& Knowledge::Lock() const
 void Knowledge::AddDefaults()
 {
     Know(Predicate("true"));
-    Know(Association(Predicate("false"), Boolean(false)));
+    Know(Association(Predicate("false"), False));
 }
 
 }

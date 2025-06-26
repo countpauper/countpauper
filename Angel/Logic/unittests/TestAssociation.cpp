@@ -40,13 +40,13 @@ TEST(Association, to_string)
 TEST(Association, Simplify)
 {
 	EXPECT_EQ(Association(Predicate("ginny"), Conjunction{}).Simplify(), Predicate("ginny"));
-	EXPECT_EQ(Association(Integer(1), Boolean(true)).Simplify(), Association(Integer(1), Boolean(true)));
+	EXPECT_EQ(Association(Integer(1), True).Simplify(), Association(Integer(1), True));
 }
 
 TEST(Association, SimplifyComparison)
 {
 	EXPECT_EQ(Association(Variable("X"), Lesser{Integer(0)}).Simplify(), Association(Variable("X"), Lesser{Variable("X"), Integer(0)}));
-	EXPECT_EQ(Association(Integer(3), Equal{Integer(3)}).Simplify(), Association(Integer(3), Boolean(true)));
+	EXPECT_EQ(Association(Integer(3), Equal{Integer(3)}).Simplify(), Association(Integer(3), True));
 }
 
 
@@ -62,9 +62,9 @@ TEST(Association, Matches)
 	EXPECT_EQ(Association(Predicate("legs", {Variable("C")}), Integer(4)).Matches(
 			Predicate("legs", {Id("ginny")}), {Equal{Variable("C"), Id("ginny")}}), 
 			Integer(4));
-	EXPECT_EQ(Association(Id("ginny"), Integer(1)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{Boolean(true), Boolean(true)}));	
-	EXPECT_EQ(Association(Id("gizmo"), Integer(2)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{Boolean(false), Boolean(false)}));	
-	EXPECT_EQ(Association(Id("ginny"), Integer(3)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{Boolean(true), Boolean(false)}));	
+	EXPECT_EQ(Association(Id("ginny"), Integer(1)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{True, True}));	
+	EXPECT_EQ(Association(Id("gizmo"), Integer(2)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{False, False}));	
+	EXPECT_EQ(Association(Id("ginny"), Integer(3)).Matches(Association(Id("ginny"), Integer(1)),{}), (Conjunction{True, False}));	
 }
 
 TEST(Association, Infer)
@@ -78,7 +78,7 @@ TEST(Association, Infer)
 TEST(Association, Get)
 {
     EXPECT_EQ((Association{Id("ginny"), Integer(3)}.Get(Id("ginny"))), Integer(3));
-    EXPECT_EQ((Association{Id("ginny"), Integer(3)}.Get(Id("gizmo"))), Boolean(false));
+    EXPECT_EQ((Association{Id("ginny"), Integer(3)}.Get(Id("gizmo"))), False);
 }
 
 }

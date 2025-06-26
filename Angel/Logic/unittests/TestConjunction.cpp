@@ -11,8 +11,8 @@ TEST(Conjunction, Construction)
 {
     EXPECT_TRUE(Conjunction{}.empty());
     EXPECT_TRUE(Conjunction{Expression()}.empty());
-    EXPECT_EQ(Conjunction{Boolean(false)}.size(), 1);
-    EXPECT_EQ(Expression(BinaryOperator(L'∧'), {Boolean(true), Boolean(false)}), (Conjunction{Boolean(true), Boolean(false)}));   
+    EXPECT_EQ(Conjunction{False}.size(), 1);
+    EXPECT_EQ(Expression(BinaryOperator(L'∧'), {True, False}), (Conjunction{True, False}));   
 
 	static_assert(Logic::is_operation<Conjunction>);
 }
@@ -20,27 +20,27 @@ TEST(Conjunction, Construction)
 TEST(Conjunction, Conjunctions)
 {
     Knowledge k;
-    EXPECT_EQ(k.Infer(Conjunction{}), Boolean(true));
-    EXPECT_EQ(k.Infer(Conjunction{Boolean(true)}), Boolean(true));
-    EXPECT_EQ(k.Infer(Conjunction{Boolean(true), Boolean(false)}), Boolean(false));
-    EXPECT_EQ(k.Infer(Conjunction{Conjunction{Boolean(true)}}), Boolean(true));
+    EXPECT_EQ(k.Infer(Conjunction{}), True);
+    EXPECT_EQ(k.Infer(Conjunction{True}), True);
+    EXPECT_EQ(k.Infer(Conjunction{True, False}), False);
+    EXPECT_EQ(k.Infer(Conjunction{Conjunction{True}}), True);
 }
 
 TEST(Conjunction, Nest)
 {
     Knowledge k;
-    EXPECT_EQ(k.Infer(Conjunction{Conjunction{Boolean(false)}, Conjunction{Boolean(true)}}), Boolean(false));
-    EXPECT_EQ(k.Infer(Conjunction{Predicate("cat")}), Boolean(false));
+    EXPECT_EQ(k.Infer(Conjunction{Conjunction{False}, Conjunction{True}}), False);
+    EXPECT_EQ(k.Infer(Conjunction{Predicate("cat")}), False);
 }
 
 
 TEST(Conjunction, Simplify)
 {
-    EXPECT_EQ((Conjunction{}).Simplify(), Boolean(true));
-    EXPECT_EQ((Conjunction{Predicate("maybe"), Boolean(true)}).Simplify(), Predicate("maybe"));
-    EXPECT_EQ((Conjunction{Predicate("maybe"), Boolean(false)}).Simplify(), Boolean(false));
-    EXPECT_EQ((Conjunction{Boolean(true), Boolean(true)}).Simplify(), Boolean(true));
-    EXPECT_EQ((Conjunction{Boolean(true), Boolean(false)}).Simplify(), Boolean(false));
+    EXPECT_EQ((Conjunction{}).Simplify(), True);
+    EXPECT_EQ((Conjunction{Predicate("maybe"), True}).Simplify(), Predicate("maybe"));
+    EXPECT_EQ((Conjunction{Predicate("maybe"), False}).Simplify(), False);
+    EXPECT_EQ((Conjunction{True, True}).Simplify(), True);
+    EXPECT_EQ((Conjunction{True, False}).Simplify(), False);
 
 }
 
@@ -54,13 +54,13 @@ TEST(Conjunction, Inference)
 {
     Knowledge k;
     k.Know(Predicate("cat"));
-    EXPECT_EQ(k.Infer(Conjunction{Predicate("cat")}), Boolean(true));
+    EXPECT_EQ(k.Infer(Conjunction{Predicate("cat")}), True);
 }
 
 TEST(Conjunction, to_string)
 {
-    EXPECT_EQ(to_string(Conjunction{Boolean(true)}), "true");
-    EXPECT_EQ(to_string(Conjunction{Boolean(true), Boolean(false)}), "true∧false");
+    EXPECT_EQ(to_string(Conjunction{True}), "true");
+    EXPECT_EQ(to_string(Conjunction{True, False}), "true∧false");
 }
 
 }

@@ -27,7 +27,7 @@ Pair::Pair(Expression&& lhs, Expression&& rhs) :
 
 Pair::operator bool() const
 {
-    return bool(lhs) && rhs->Simplify() != Boolean(false);
+    return bool(lhs) && rhs->Simplify() != False;
 }
 
 std::size_t Pair::size() const
@@ -109,7 +109,7 @@ Expression Association::Simplify() const
     }
     if (IsClause())
     {
-        if (rhSimple == Boolean(true))
+        if (rhSimple == True)
             return lhSimple;
     }
 
@@ -152,9 +152,9 @@ Expression Association::Infer(const class Knowledge& k, const Hypothesis& hypoth
 Expression Association::Get(const Expression& key) const
 {
     auto hypothsis = lhs->Matches(key, {}).Simplify();
-    if (hypothsis==Boolean(true))
+    if (hypothsis==True)
         return *rhs;
-    if (hypothsis==Boolean(false))
+    if (hypothsis==False)
         return hypothsis;
     auto right = *rhs;
     return Association(std::move(right),

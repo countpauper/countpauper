@@ -59,7 +59,7 @@ Expression Variable::Matches(const Expression& e, const Hypothesis& hypothesis, 
     if (const auto* stillVar = substitute.GetIf<Variable>())
     {
         if (stillVar->empty())
-            return Boolean(true);   // anonymous
+            return True;   // anonymous
         if (reverse)
             return Equal{*stillVar, e};
         else

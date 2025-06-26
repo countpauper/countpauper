@@ -36,7 +36,7 @@ Expression MatchValliable(const Variable& var, const Expression& expression, con
     if (substitute != var)
         return substitute.Matches(expression, hypothesis);
     if (var.empty())
-        return Boolean(true);   // anonymous
+        return True;   // anonymous
     if (reverse)
         return Equal{var, expression};
     else
@@ -58,12 +58,12 @@ Expression All::Matches(Collection_subrange range, const Hypothesis& hypothesis,
             else 
             {
                 assert(false); // unimplemented, instead of a collection range it should just be a container range
-                return Boolean(false);
+                return False;
             }            
         }
 
         if (var->empty())
-            return Boolean(true);   // anonymous
+            return True;   // anonymous
         if (reverse)
             return Equal{*var, List(range)};
         else
@@ -78,7 +78,7 @@ Expression All::Matches(Collection_subrange range, const Hypothesis& hypothesis,
         else 
         {
             assert(false);  // also here content should anyway be a container. Generic match containers 
-            return Boolean(false);
+            return False;
         }            
 
     }
@@ -97,7 +97,7 @@ Expression All::Matches(const Expression& expression, const Hypothesis& hypothes
         {
             return content->Matches(**other, hypothesis);
         }
-        return Boolean(false);
+        return False;
     }
 }
 

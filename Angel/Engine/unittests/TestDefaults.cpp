@@ -35,7 +35,7 @@ TEST(Defaults, Print)
 {
     Logic::Knowledge k;
     AddDefaults(k);
-    EXPECT_EQ(k.Infer(Logic::Predicate("print", {Logic::String("Hello world!")})), Logic::Boolean(true));
+    EXPECT_EQ(k.Infer(Logic::Predicate("print", {Logic::String("Hello world!")})), Logic::True);
 }
 
 }

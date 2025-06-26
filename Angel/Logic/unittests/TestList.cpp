@@ -45,36 +45,36 @@ TEST(List, Compare)
 TEST(List, Simplify)
 {
     EXPECT_EQ((List{}).Simplify(), List());
-    EXPECT_EQ((List{Conjunction{}}).Simplify(), (List{Boolean(true)}));
+    EXPECT_EQ((List{Conjunction{}}).Simplify(), (List{True}));
 }
 
 TEST(List, Substitute)
 {
-	EXPECT_EQ((List{Boolean(true), Variable("I")}).Substitute(Conjunction{Equal{Variable("I"), Integer(3)}}),
-		(List{Boolean(true), Integer(3)}));
+	EXPECT_EQ((List{True, Variable("I")}).Substitute(Conjunction{Equal{Variable("I"), Integer(3)}}),
+		(List{True, Integer(3)}));
 }
 
 TEST(List, SubstiteAll)
 {
-	EXPECT_EQ((List{Boolean(true), All("T")}).Substitute(Conjunction{
+	EXPECT_EQ((List{True, All("T")}).Substitute(Conjunction{
 		Equal{Variable("T"), List{Integer(2), Id("three")}}}),
-		(List{Boolean(true), Integer(2), Id("three")}));
+		(List{True, Integer(2), Id("three")}));
 }
 
 TEST(List, SubstiteAllFiltered)
 {
 	List original{Integer(0), Association(All("T"), LesserEqual{Integer(2)})};
-	Hypothesis substitution{Equal{Variable("T"), List{Boolean(true), Integer(2), Integer(3)}}};
+	Hypothesis substitution{Equal{Variable("T"), List{True, Integer(2), Integer(3)}}};
 	EXPECT_EQ(original.Substitute(substitution),
-		(List{Integer(0), Boolean(true), Integer(2)}));
+		(List{Integer(0), True, Integer(2)}));
 }
 
 TEST(List, Matches)
 {
-	EXPECT_EQ((List{Integer(3)}).Matches(List{Integer(3)}, {}).Simplify(), Boolean(true));	
-	EXPECT_EQ((List{Integer(2)}).Matches(List{Integer(4)}, {}).Simplify(), Boolean(false));	
-	EXPECT_EQ((List{Integer(2)}).Matches(List{Integer(2), Integer(4)}, {}), Boolean(false));
-	EXPECT_EQ((List{Integer(2),Integer(3)}).Matches(List{Integer(2)}, {}), Boolean(false));	
+	EXPECT_EQ((List{Integer(3)}).Matches(List{Integer(3)}, {}).Simplify(), True);	
+	EXPECT_EQ((List{Integer(2)}).Matches(List{Integer(4)}, {}).Simplify(), False);	
+	EXPECT_EQ((List{Integer(2)}).Matches(List{Integer(2), Integer(4)}, {}), False);
+	EXPECT_EQ((List{Integer(2),Integer(3)}).Matches(List{Integer(2)}, {}), False);	
 }
 
 
@@ -82,10 +82,10 @@ TEST(List, MatchesVariable)
 {
 	EXPECT_EQ((List{Integer(2),Integer(3)}).Matches(List{Variable("X"), Integer(3)}, {}).Simplify(), 
 		(Equal{Variable("X"), Integer(2)}));	
-	EXPECT_EQ((List{All("L")}).Matches(List{Boolean(true), Id("ginny")}, {}).Simplify(), 
-		(Equal{List{Boolean(true), Id("ginny")}, Variable("L")}));	
-	EXPECT_EQ((List{Integer(0),All("L")}).Matches(List{Integer(0), Boolean(false)}, {}).Simplify(), 
-		(Equal{List{Boolean(false)}, Variable("L")}));	
+	EXPECT_EQ((List{All("L")}).Matches(List{True, Id("ginny")}, {}).Simplify(), 
+		(Equal{List{True, Id("ginny")}, Variable("L")}));	
+	EXPECT_EQ((List{Integer(0),All("L")}).Matches(List{Integer(0), False}, {}).Simplify(), 
+		(Equal{List{False}, Variable("L")}));	
 }
 TEST(List, Infer)
 {
@@ -101,7 +101,7 @@ TEST(List, Get)
 		Association{Id("ginny"), Integer(1)},
 		Association{Id("gizmo"), Integer(2)},
 		Association{Id("ginny"), Integer(3)},
-		Id("ginny")}).Get(Id("ginny")), (List{Integer(1), Integer(3), Boolean(true)}));
+		Id("ginny")}).Get(Id("ginny")), (List{Integer(1), Integer(3), True}));
 }
 
 

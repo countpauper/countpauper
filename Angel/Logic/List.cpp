@@ -87,7 +87,7 @@ Expression List::Matches(const Expression& expression, const Hypothesis& hypothe
 {
     const List* list = expression.GetIf<List>();
     if (!list)
-        return Boolean(false);
+        return False;
     auto substituted = list->Substitute(hypothesis);
 
     return Collection::Matches(Collection_subrange(substituted.begin(), substituted.end()), hypothesis);
