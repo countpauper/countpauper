@@ -136,8 +136,8 @@ Expression Association::Matches(const Expression& expression, const Hypothesis& 
     }
     else 
     {
-        Association simple = Substitute(hypothesis);
-        return simple.Get(expression);
+        Association substituted = Substitute(hypothesis);
+        return substituted.Get(expression);
     }
 }
 
@@ -151,9 +151,14 @@ Expression Association::Infer(const class Knowledge& k, const Hypothesis& hypoth
 
 Expression Association::Get(const Expression& key) const
 {
+    auto hypothsis = lhs->Matches(key, {}).Simplify();
+    if (hypothsis==Boolean(true))
+        return *rhs;
+    if (hypothsis==Boolean(false))
+        return hypothsis;
     auto right = *rhs;
     return Association(std::move(right),
-        lhs->Matches(key, {}));
+        std::move(hypothsis));
 }
 
 bool Association::IsClause() const
