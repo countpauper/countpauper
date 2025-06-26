@@ -19,7 +19,7 @@ public:
 	size_t Forget(const Predicate& match);
 	Bag Matches(const Predicate& predicate) const;
 	Expression Infer(const Expression& e) const;
-	bool Knows(const Expression& e) const;
+	Expression Knows(const Expression& e) const;
 	const Bag& Root() const;
 	Knowledge& Lock() const;
 private:

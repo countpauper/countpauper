@@ -27,8 +27,8 @@ TEST(Defaults, Delete)
     };
     AddDefaults(k);
     EXPECT_EQ(k.Infer(Logic::Predicate("delete", {Logic::Id("evil")})), Logic::Integer(1));
-    EXPECT_FALSE(k.Knows(Logic::Predicate("evil")));
-    EXPECT_TRUE(k.Knows(Logic::Predicate("good")));
+    EXPECT_EQ(k.Knows(Logic::Predicate("evil")), Logic::Integer(0));
+    EXPECT_EQ(k.Knows(Logic::Predicate("good")), Logic::Integer(1));
 }
 
 TEST(Defaults, Print)

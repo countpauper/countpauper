@@ -30,26 +30,43 @@ Logic::String HelpList(const Logic::Knowledge& k)
     return Logic::String(ss.str());
 }
 
-Logic::Predicate MakeSignature(const Logic::Id& id, Logic::Hypothesis args)
+Logic::Predicate MakeSignature(const Logic::Id& id, const Logic::Expression& args)
 {
-    Logic::Variable var("args");
-    Logic::List arglist = var.Substitute(args).Get<Logic::List>();
-    return Logic::Predicate(id, std::move(arglist));
+    if (const auto* equals = args.GetIf<Logic::Equal>())
+    {
+        Logic::Variable var("args");
+        Logic::List arglist = var.Substitute(Logic::Conjunction{*equals}).Get<Logic::List>();
+        return Logic::Predicate(id, std::move(arglist));
+    }
+    else 
+    {
+        assert(false); // what is it then? A conjunction somehow?
+        return Logic::Predicate(id);
+    }
 }
 
 Logic::String HelpTopic(const Logic::Knowledge& k, const Logic::Id& id)
 {
-    auto matches = k.Matches(Logic::Predicate(id, {Logic::All("args")}));
-    if (matches.empty())
+    auto matches = k.Knows(Logic::Predicate(id, {Logic::All("args")}));
+    if (matches == Logic::Integer(0))
     {
         throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(id)));
     }
+    Logic::Bag matchBag{};
+    if (const auto* integer = matches.GetIf<Logic::Integer>())
+    {
+        matchBag = Logic::Bag{Logic::String("TODO")};
+    }
+    else 
+    {
+        matchBag = matches.Get<Logic::List>();
+    }
     std::stringstream ss; 
-    for(const auto& match: matches)
+    for(const auto& match: matchBag)
     {
         if (const auto* antecedent_args = match.GetIf<Logic::Association>())
         {
-            auto predicate = MakeSignature(id, antecedent_args->Right().Get<Logic::Conjunction>());
+            auto predicate = MakeSignature(id, antecedent_args->Right());
             ss << predicate << "\t" << antecedent_args->Left().Documentation() << std::endl;
         }
         else 

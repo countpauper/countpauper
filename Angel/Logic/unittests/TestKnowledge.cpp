@@ -9,9 +9,10 @@ TEST(Knowledge, KnowSomething)
 {
     Knowledge k;
     auto defaultSize = k.Root().size();
+    EXPECT_EQ(k.Knows(Predicate("ginny")), Integer(0));
     EXPECT_EQ(k.Know(Predicate("ginny")), 1);
     EXPECT_EQ(k.Root().size(), defaultSize + 1);
-    EXPECT_TRUE(k.Knows(Predicate("ginny")));
+    EXPECT_EQ(k.Knows(Predicate("ginny")), Integer(1));
 }
 
 TEST(Knowledge, AlreadyKnows)
@@ -36,7 +37,7 @@ TEST(Knowledge, Defaults)
 {
     Knowledge k;
     EXPECT_EQ(k.Root().size(), 2); 
-    EXPECT_TRUE(k.Knows(Predicate("true")));
+    EXPECT_EQ(k.Knows(Predicate("true")), Integer(1));
     EXPECT_EQ(k.Infer(Predicate("false")), Boolean(false));
 }
 
@@ -57,6 +58,11 @@ TEST(Knowledge, MatchVariables)
 {
     Knowledge k{
        Association(Predicate("fuzzy",{Variable("X")}), Predicate("cat", {Variable("X")}))};
+    EXPECT_EQ(k.Knows(Predicate("fuzzy", {All("args")})),
+        (Bag{
+            Association(Predicate("cat", {Variable("X")}), 
+                        Equal{Variable("args"), List{Variable("X")}})
+        }));    
     EXPECT_EQ(k.Matches(Predicate("fuzzy",{Id("ginny")})).front(), 
         (Association(Predicate("cat", {Variable("X")}), Conjunction{Equal{Id("ginny"), Variable("X")}})));
 }
@@ -66,9 +72,17 @@ TEST(Knowledge, MultipleMatches)
     Knowledge k{
        Predicate("cat",{Id("gizmo")}), 
        Predicate("cat",{Id("ginny")}) };
+    
+    EXPECT_EQ(k.Knows(Predicate("cat", {All("args")})),
+        (Bag{
+            Association(Boolean(true), Equal{Variable("args"), List{Id("gizmo")}}),
+            Association(Boolean(true), Equal{Variable("args"), List{Id("ginny")}})
+        }));
     EXPECT_EQ(k.Matches(Predicate("cat",{Variable("X")})),
         (Bag{Association(Boolean(true), Conjunction{Equal{Variable("X"), Id("gizmo")}}),
             Association(Boolean(true), Conjunction{Equal{Variable("X"), Id("ginny")}})}));
+
+    
 }
 
 }

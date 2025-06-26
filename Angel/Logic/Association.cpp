@@ -151,10 +151,9 @@ Expression Association::Infer(const class Knowledge& k, const Hypothesis& hypoth
 
 Expression Association::Get(const Expression& key) const
 {
-    if (*lhs == key)
-        return *rhs;
-    else 
-        return Boolean(false);
+    auto right = *rhs;
+    return Association(std::move(right),
+        lhs->Matches(key, {}));
 }
 
 bool Association::IsClause() const

@@ -103,22 +103,30 @@ Collection::const_iterator Collection::Find(const Expression& key) const
     }); 
 }
 
+bool AllTrue(const Bag& values)
+{
+    for(const auto& item: values)
+    {
+        if (item!=Boolean(true))
+            return false;
+    }
+    return true;
+}
+
 Expression Collection::Get(const Expression& key) const
 {
-    // TODO: Lists should return Lists of values, the order is not 
+    // TODO: List keys should return Lists of values, the order is not 
     // terribly useful, since indices are missing, but still it's nicer
     Bag values;
-    bool return_list = false;
     for(const auto &item : *this)
     {
         const auto* assocation = item.GetIf<Association>();
         if (assocation)
         {
-            auto maybeRight = assocation->Get(key);
+            auto maybeRight = assocation->Get(key).Simplify();
             if (maybeRight != Boolean(false))
             {
-                values.emplace_back(assocation->Right());
-                return_list = true;
+                values.Add(std::move(maybeRight));
             }            
         }
         else
@@ -126,20 +134,20 @@ Expression Collection::Get(const Expression& key) const
             auto match = item.Matches(key, {});
             if (match==Boolean(true))
             {
-                values.emplace_back(Boolean(true));
+                values.Add(Boolean(true));
             }
             else if (match!=Boolean(false))
             {
                 // adding the hypothesis now? what does [1, 2].$V do? $V=1|$V=2?
-                values.emplace_back(match);
-                return_list = true; 
+                values.Add(std::move(match));
             }
         }
     }
-    if (return_list)
-        return values;
-    else
+
+    if (AllTrue(values))
         return Integer(values.size());
+    else
+        return values;
 }
 
 

@@ -14,8 +14,8 @@
         - [ ] Maybe operation is one type and the operator the sub variant
         - [*] Maybe containers are one type and unique+ordered the sub variant
         - [ ] Elements even, if for no other reason than to fix pretty printing ?
-- [ ] Rename Collection to Sequence or even reuse Tuple
-
+- [ ] Rename Collection to reuse Tuple
+- [ ] Boolean(true) and Boolean(false) replaced with constexpr Logic::True and Logic::False
 ## Backlog 
 - [*] Get back up 
 -    [*] remove wstring and platform dependenty conversion 

@@ -114,9 +114,9 @@ Bag Knowledge::Matches(const Predicate& query) const
 }
 
 
-bool Knowledge::Knows(const Expression& e) const
+Expression Knowledge::Knows(const Expression& e) const
 {
-    return *root.Get(e).Cast<Boolean>();
+    return root.Get(e);
 }
 
 const Bag& Knowledge::Root() const
