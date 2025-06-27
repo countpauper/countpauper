@@ -1,12 +1,12 @@
 #pragma once 
-#include "Logic/Internal/FlatCollection.h"
+#include "Logic/Internal/FlatTuple.h"
 #include "Logic/Expression.h"
 
 namespace Angel::Logic 
 {
 
 template<class T>
-FlatCollection<T>::FlatCollection(std::initializer_list<Expression> items)
+FlatTuple<T>::FlatTuple(std::initializer_list<Expression> items)
 {
     for(const auto& item: items)
     {
@@ -22,7 +22,7 @@ FlatCollection<T>::FlatCollection(std::initializer_list<Expression> items)
 }
 
 template<class T>
-FlatCollection<T>::FlatCollection(std::vector<Expression>&& items)
+FlatTuple<T>::FlatTuple(std::vector<Expression>&& items)
 {
     for(auto& item: items)
     {
@@ -40,7 +40,7 @@ FlatCollection<T>::FlatCollection(std::vector<Expression>&& items)
 
 template <typename T>
 template<std::ranges::input_range R>
-FlatCollection<T>::FlatCollection(R items)
+FlatTuple<T>::FlatTuple(R items)
 {
     for(auto& item: items)
     {
@@ -57,13 +57,13 @@ FlatCollection<T>::FlatCollection(R items)
 
 
 template<class T>
-void FlatCollection<T>::push_back(const T& same)
+void FlatTuple<T>::push_back(const T& same)
 {
     items.insert(items.end(), same.begin(), same.end());
 }
 
 template<class T>
-void FlatCollection<T>::push_back(const Expression& exp)
+void FlatTuple<T>::push_back(const Expression& exp)
 {
     if (!bool(exp))
         return;
@@ -78,13 +78,13 @@ void FlatCollection<T>::push_back(const Expression& exp)
 }
 
 template<class T>
-void FlatCollection<T>::emplace_back(T&& same)
+void FlatTuple<T>::emplace_back(T&& same)
 {
     items.insert(items.end(), same.begin(), same.end());
 }
 
 template<class T>
-void FlatCollection<T>::emplace_back(Expression&& exp)
+void FlatTuple<T>::emplace_back(Expression&& exp)
 {
     if (!bool(exp))
         return;
@@ -99,7 +99,7 @@ void FlatCollection<T>::emplace_back(Expression&& exp)
 }
 
 template<class T>
-Set FlatCollection<T>::Assumptions() const 
+Set FlatTuple<T>::Assumptions() const 
 { 
     return items.Assumptions(); 
 }

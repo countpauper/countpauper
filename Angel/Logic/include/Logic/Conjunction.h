@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Internal/FlatCollection.h"
+#include "Logic/Internal/FlatTuple.h"
 #include "Logic/Hypothesis.h"
 #include "Logic/Element.h"
 #include "Logic/Binary.h"
@@ -11,10 +11,10 @@ namespace Angel::Logic
 // A Conjunction is a logical operator, which is true, only if all its elements are True
 // It is currently a Collection (ordered, non-unique) because the ordering is used to determine lazy evaulation
 // but technically it could be ordered and unique. 
-class Conjunction : public FlatCollection<Conjunction> 
+class Conjunction : public FlatTuple<Conjunction> 
 {
 public:
-    using FlatCollection<Conjunction>::FlatCollection;
+    using FlatTuple<Conjunction>::FlatTuple;
     Expression Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
     Conjunction Substitute(const Hypothesis& hypothesis) const;

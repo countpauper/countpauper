@@ -8,7 +8,7 @@ namespace Angel::Logic
 
 bool Conjunction::operator==(const Conjunction& rhs) const
 {
-    return FlatCollection<Conjunction>::operator==(rhs);
+    return FlatTuple<Conjunction>::operator==(rhs);
 }
 
 Expression Conjunction::Simplify() const

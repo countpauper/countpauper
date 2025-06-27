@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Internal/FlatCollection.h"
+#include "Logic/Internal/FlatTuple.h"
 #include "Logic/Hypothesis.h"
 #include "Logic/Element.h"
 #include "Logic/Binary.h"
@@ -11,10 +11,10 @@ namespace Angel::Logic
 // A Disjunction is a logical operator, which is true, if any of its elements is True
 // It is currently a Tuple (ordered, non-unique) because the ordering is used to determine lazy evaulation
 // but technically it could be ordered and unique. 
-class Disjunction : public FlatCollection<Disjunction> 
+class Disjunction : public FlatTuple<Disjunction> 
 {
 public:
-    using FlatCollection<Disjunction>::FlatCollection;
+    using FlatTuple<Disjunction>::FlatTuple;
     Expression Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
     Expression Substitute(const Hypothesis& hypothesis) const;

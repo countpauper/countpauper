@@ -10,7 +10,7 @@ namespace Angel::Logic
 template<class T> 
 Expression Operation<T>::Simplify() const
 {
-    T simple = FlatCollection<T>::SimplifyItems();
+    T simple = FlatTuple<T>::SimplifyItems();
     auto it = simple.begin();
     Expression constant(T::initial);
     while(it!=simple.end())
@@ -52,7 +52,7 @@ Expression Operation<T>::Infer(const class Knowledge& k, const Hypothesis& hypot
     // TODO: float and imaginary and upgrade when needed, also when overflowing
     // this can, for instance, be done by accumulating an Expression and making Objects implement operator+(Expression) etc
     
-    Expression value = std::accumulate(FlatCollection<T>::begin(), FlatCollection<T>::end(), Expression(T::initial),
+    Expression value = std::accumulate(FlatTuple<T>::begin(), FlatTuple<T>::end(), Expression(T::initial),
         [&k, &hypothesis, &trace](Expression accumulated, const Expression& item)
         {
             auto inferred = item.Infer(k, hypothesis, trace);

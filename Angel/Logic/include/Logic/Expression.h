@@ -185,6 +185,6 @@ std::string to_string(const Expression& e);
 // Template implementations that depend on Expression and are therefore forward declared
 #include "Logic/Internal/ExpressionImpl.h"
 #include "Logic/Internal/OperationImpl.h"
-#include "Logic/Internal/FlatCollectionImpl.h"
+#include "Logic/Internal/FlatTupleImpl.h"
 #include "Logic/Internal/OperationWithBaseImpl.h"
 #include "Logic/Internal/ComparisonImpl.h"

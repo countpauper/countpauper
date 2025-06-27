@@ -77,16 +77,16 @@ Expression Simplify(T&& container)
 template<class T> 
 Expression Comparison<T>::Simplify() const
 {
-    auto simple = FlatCollection<T>::SimplifyItems();
+    auto simple = FlatTuple<T>::SimplifyItems();
     return Angel::Logic::Simplify<T>(std::move(simple));
 } 
 
 template<class T>
 bool Comparison<T>::HasLeftAssumption() const
 {
-    if (FlatCollection<T>::empty())
+    if (FlatTuple<T>::empty())
         return false;
-    return !FlatCollection<T>::front().Assumptions().empty();
+    return !FlatTuple<T>::front().Assumptions().empty();
 }
 
 template<class T>
@@ -103,11 +103,11 @@ Expression Comparison<T>::Matches(const Expression& expression, const Hypothesis
 template<class T>
 Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    assert(FlatCollection<T>::size()>1);   // single element equations can't be inferred only matched
-    if (!FlatCollection<T>::Assumptions().empty()) {
-        return Association(True, T(FlatCollection<T>::items));
+    assert(FlatTuple<T>::size()>1);   // single element equations can't be inferred only matched
+    if (!FlatTuple<T>::Assumptions().empty()) {
+        return Association(True, T(FlatTuple<T>::items));
     }
-    Expression first = FlatCollection<T>::front().Infer(k, hypothesis, trace);
+    Expression first = FlatTuple<T>::front().Infer(k, hypothesis, trace);
     for(const auto& item: *this | std::views::drop(1))
     {
         auto inferred = item.Infer(k, hypothesis, trace);

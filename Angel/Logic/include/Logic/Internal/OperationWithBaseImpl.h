@@ -10,7 +10,7 @@ namespace Angel::Logic
 template<class T> 
 Expression OperationWithBase<T>::Simplify() const
 {
-    T simple = FlatCollection<T>::SimplifyItems();
+    T simple = FlatTuple<T>::SimplifyItems();
     assert(!simple.empty());    // must have base, TODO: catch at construction
 
     auto it = simple.begin();
@@ -58,10 +58,10 @@ Expression OperationWithBase<T>::Matches(const Expression& expression, const Hyp
 template<class T>
 Expression OperationWithBase<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    assert(!FlatCollection<T>::empty());    // must have base, TODO: catch at construction
+    assert(!FlatTuple<T>::empty());    // must have base, TODO: catch at construction
 
-    Expression value = std::accumulate(FlatCollection<T>::begin()+1, FlatCollection<T>::end(), 
-        FlatCollection<T>::front(),
+    Expression value = std::accumulate(FlatTuple<T>::begin()+1, FlatTuple<T>::end(), 
+        FlatTuple<T>::front(),
         [&k, &hypothesis, &trace](const Expression& accumulated, const Expression& item)
         {
             auto inferred = item.Infer(k, hypothesis, trace);

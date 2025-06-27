@@ -12,18 +12,18 @@ class Set;
 // When one is pushed_back, it will instead append all its elements.
 // This is useful for operations where, for instance, (A+(B+C)) == A+B+C 
 template<class T>
-class FlatCollection
+class FlatTuple
 {
 public: 
     using value_type = Expression;
 
-    FlatCollection() = default;
-	FlatCollection(std::initializer_list<Expression> items);
-	explicit FlatCollection(std::vector<Expression>&& items);
+    FlatTuple() = default;
+	FlatTuple(std::initializer_list<Expression> items);
+	explicit FlatTuple(std::vector<Expression>&& items);
 
     template <std::ranges::input_range R>
-	explicit FlatCollection(R items);
-    ~FlatCollection() = default;
+	explicit FlatTuple(R items);
+    ~FlatTuple() = default;
 
     void push_back(const T& same);
     void push_back(const Expression& exp);
@@ -47,7 +47,7 @@ public:
     const Expression& front() const { return items.front(); }
     Expression& front() { return items.front(); }
     const Expression& back() const { return items.back(); }
-    bool operator==(const FlatCollection<T>& rhs) const { return items.operator==(rhs.items); }
+    bool operator==(const FlatTuple<T>& rhs) const { return items.operator==(rhs.items); }
     std::size_t Hash() const { return items.Hash(); }
 protected:
 

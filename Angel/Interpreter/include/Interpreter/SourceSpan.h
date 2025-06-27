@@ -13,11 +13,6 @@ namespace Interpreter
         size_t length = 0;
         const Source* source = nullptr;
 
-        // Soure source = nullptr;
-        // TODO: a Source itself should be a class that wraps source text (on disk or in memory)
-        // and the SourceSpan should refer to that specific source as well as the span.
-        // extract() should take from that specific source. 
-
         size_t size() const;
         bool empty() const;
         operator std::string() const;

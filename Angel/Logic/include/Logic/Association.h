@@ -9,7 +9,7 @@ namespace Angel::Logic
 class Expression;
 
 class Pair 
-{   // TODO: a Range is another type of Pair
+{   // TODO: a Range is another type of Pair, split to a separate file 
 public:
     Pair(Expression&& lhs, Expression&& rhs);
     explicit operator bool() const;

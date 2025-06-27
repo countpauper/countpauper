@@ -41,7 +41,7 @@ public:
 	Tuple& operator|=(const Tuple rhs);
 protected:
     template<typename U>
-    friend class FlatCollection;
+    friend class FlatTuple;
     const_iterator Find(const Expression& key) const;
     Tuple SimplifyItems() const;
     Tuple SubstituteItems(const Hypothesis& hypothesis) const;

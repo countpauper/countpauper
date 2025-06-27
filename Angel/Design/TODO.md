@@ -6,6 +6,10 @@
        ORRR do the iterative infer described in tautalogy protection below. 
        In that case there may be no knowledge to pass 
 - [ ] And isn't substitute just infering a variable with a hypothesis? The only time this should be done early is when matching and then the argument has to be inferred first anyway. Try to remove it altogether. 
+- [ ] There is too much internal simplifying (especially when adding to containers) and subtituting. 
+        All operations infer, substitute,simplify, should not depend on orde, so:
+                -[ ] Only substitute matched variables with antecdent at the end of infering predicate (dont pass hypothesis?)
+                - [ ] If simplify is infer (without knowledge) then it should never be needed explicitly. ALways recursive or iterative?  
 - [*] $Variable is a Value/Ref operator with an Id content (none for anonymous) 
    - [*] Tuple wholy replaced by All(Id), BaseClass ValueOperator
    - [ ] Matching of All with List should be generalized to matching two sub containers with const_container_iterator (All  Set match?)
@@ -16,8 +20,9 @@
         - [ ] Elements even, if for no other reason than to fix pretty printing ?
 - [ ] Rename Collection to reuse Tuple 
 - [ ] And FlatCollection 
-- [ ] Can't flat collection just derive from tuple, overload Add to add all containers by iterating? Not even be templated?
+- [ ] Can't flat collection just derive from tuple, overload Add to add all containers (also all?) `cat&*[dog,bunny] = cat&dog&bunny?` `cat&*WHAT` ? by iterating? Not even be templated? 
 - [*] True and False replaced with constexpr Logic::True and Logic::False
+- [ ] Clean up a bunch of TODOs or at least put them/checki if they are in this document instead 
 
 ## Backlog 
 - [*] Get back up 
