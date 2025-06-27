@@ -13,7 +13,7 @@ namespace Angel::Logic
 class Variable;
 class Expression;
 class const_container_iterator;
-using Collection_subrange = std::ranges::subrange<std::vector<Expression>::const_iterator, 
+using Tuple_subrange = std::ranges::subrange<std::vector<Expression>::const_iterator, 
                                                     std::vector<Expression>::const_iterator>;
 
 class All : public Individual
@@ -25,7 +25,7 @@ public:
     using Individual::Individual;
 
     All Simplify() const;
-    Expression Matches(Collection_subrange range, const Hypothesis& substituions, bool reverse=false) const;
+    Expression Matches(Tuple_subrange range, const Hypothesis& substituions, bool reverse=false) const;
     Expression Matches(const Expression& expression, const Hypothesis& substutions, bool reverse=false) const;
     All Substitute(const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;

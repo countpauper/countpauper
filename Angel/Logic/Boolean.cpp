@@ -7,7 +7,7 @@
 
 namespace Angel::Logic
 {
-    
+
 Boolean::Boolean(const std::string_view tag)
 {
 	if (tag == "true")
@@ -23,7 +23,7 @@ Boolean::Boolean(const Integer& i) :
 {
 }
 
-Boolean::Boolean(const Collection& c) :
+Boolean::Boolean(const Tuple& c) :
     Boolean(!c.empty())
 {
 }

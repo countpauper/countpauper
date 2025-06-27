@@ -11,10 +11,12 @@
    - [ ] Matching of All with List should be generalized to matching two sub containers with const_container_iterator (All  Set match?)
 - [ ] Find out how big Logic/Angel/Tests are in release really and why, try to optimize for size 
         - [ ] Make a base LogicVariant with all the basic Is<> GetIf<> const and not const, operator== and Hash etc
-        - [ ] Maybe operation is one type and the operator the sub variant
+         - [ ] Maybe operation is one type and the operator the sub variant
         - [*] Maybe containers are one type and unique+ordered the sub variant
         - [ ] Elements even, if for no other reason than to fix pretty printing ?
-- [ ] Rename Collection to reuse Tuple
+- [ ] Rename Collection to reuse Tuple 
+- [ ] And FlatCollection 
+- [ ] Can't flat collection just derive from tuple, overload Add to add all containers by iterating? Not even be templated?
 - [*] True and False replaced with constexpr Logic::True and Logic::False
 
 ## Backlog 

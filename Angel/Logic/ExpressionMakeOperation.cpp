@@ -22,7 +22,7 @@ ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand)
 }
 
 template <typename... Ts>
-ExpressionVariant make_binary_operation(const Operator ope, Collection&& operands) 
+ExpressionVariant make_binary_operation(const Operator ope, Tuple&& operands) 
 {
     Logic::Expression result = Logic::False;
     bool found = false;
@@ -35,7 +35,7 @@ ExpressionVariant make_binary_operation(const Operator ope, Collection&& operand
     return result;
 }
 
-ExpressionVariant make_operation(const Operator ope, Collection&& operands)
+ExpressionVariant make_operation(const Operator ope, Tuple&& operands)
 {
     if (operands.empty())
         throw std::invalid_argument(std::format("Not enough operands for operator {}", std::string(ope)));
@@ -50,7 +50,7 @@ ExpressionVariant make_operation(const Operator ope, Collection&& operands)
 }
 
 
-Expression::Expression(const Operator ope, Collection&& operands) : 
+Expression::Expression(const Operator ope, Tuple&& operands) : 
     ExpressionVariant(make_operation(ope, std::move(operands)))
 {
 }

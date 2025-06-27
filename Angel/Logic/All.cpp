@@ -43,7 +43,7 @@ Expression MatchValliable(const Variable& var, const Expression& expression, con
         return Equal{expression, var};
 }
 
-Expression All::Matches(Collection_subrange range, const Hypothesis& hypothesis, bool reverse) const
+Expression All::Matches(Tuple_subrange range, const Hypothesis& hypothesis, bool reverse) const
 {
     auto var = GetVariable();
     if (var)
@@ -53,7 +53,7 @@ Expression All::Matches(Collection_subrange range, const Hypothesis& hypothesis,
         {
             if (const List* list = substitute.GetIf<List>())
             {
-                return list->Collection::Matches(range, hypothesis);
+                return list->Tuple::Matches(range, hypothesis);
             }
             else 
             {
@@ -73,7 +73,7 @@ Expression All::Matches(Collection_subrange range, const Hypothesis& hypothesis,
     {
         if (const auto* list = content->GetIf<List>())
         {
-            return list->Collection::Matches(range, hypothesis);
+            return list->Tuple::Matches(range, hypothesis);
         }
         else 
         {

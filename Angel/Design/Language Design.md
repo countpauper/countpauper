@@ -192,7 +192,7 @@ Does that make sense?
 To add an association to a collection, a nested pair may need to be used. Eg `[1:cheese:is_food($Nr:$)]`
 
 
-## Collection operators 
+## Container operators 
 ALso the collection operators can be used. The simplest is the `@` any of, or in this case: member of compartor 
 will match with any of the following set. 
 ```
@@ -725,9 +725,9 @@ f(3)?
 * `type($X)` - returns an id with the type name of the argument. `int`, `float` `string`, `bool`, `predicate` etc. 
 More functions may be imported as a math module, see below.
 
-## Collection operators 
+## Container operators 
 
-Collections support operators as well. If either the left or the right hand side is singular and the other is not 
+Containers support operators as well. If either the left or the right hand side is singular and the other is not 
 it is upgraded to a single element set. 
 * `.` - element access, converts to True if the left operarand is part of (if singular) or a subset of (if a collection) of the right operator 
 * `&` - intersection: the collection, with the elements that are both in the left and the right hand side. 

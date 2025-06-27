@@ -53,7 +53,7 @@ public:
     {
     }    
     Expression(const Expression& e);
-    Expression(const Operator ope, Collection&& operands);
+    Expression(const Operator ope, Tuple&& operands);
     Expression& operator=(const Expression& e);
 
     template<class CT>

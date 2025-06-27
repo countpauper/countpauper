@@ -108,7 +108,7 @@ Logic::Expression GenerateObject(Interpreter::SymbolStream& parse, bool allowId)
 Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allowId)
 {
     Interpreter::ParsedSymbol input;
-    Logic::Collection operands;
+    Logic::Tuple operands;
     Logic::Operator ope;
     std::stack<Logic::UnaryOperator> unary_ops;
     while(!parse.eof())

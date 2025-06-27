@@ -15,28 +15,27 @@ List::operator bool() const
 
 bool List::operator==(const List& rhs) const
 {
-    return Collection::operator==(rhs);
+    return Tuple::operator==(rhs);
 }
-
 
 List& List::operator+=(const List& rhs)
 {
-    Collection::operator+=(rhs);
+    Tuple::operator+=(rhs);
     return *this;
 }
 List& List::operator-=(const List& rhs)
 {
-    Collection::operator-=(rhs);
+    Tuple::operator-=(rhs);
     return *this;
 }
 List& List::operator&=(const List& rhs)
 {
-    Collection::operator&=(rhs);
+    Tuple::operator&=(rhs);
     return *this;
 }
 List& List::operator|=(const List& rhs)
 {
-    Collection::operator|=(rhs);
+    Tuple::operator|=(rhs);
     return *this;
 }
 
@@ -90,7 +89,7 @@ Expression List::Matches(const Expression& expression, const Hypothesis& hypothe
         return False;
     auto substituted = list->Substitute(hypothesis);
 
-    return Collection::Matches(Collection_subrange(substituted.begin(), substituted.end()), hypothesis);
+    return Tuple::Matches(Tuple_subrange(substituted.begin(), substituted.end()), hypothesis);
 }
 
 

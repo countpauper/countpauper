@@ -29,7 +29,7 @@ class Container {
 }
 
 Pair --|> Container
-Collection --|> Container 
+Tuple --|> Container 
 
 class List {
     <<ordered>>
@@ -43,11 +43,10 @@ class Set {
     <<unordered>>
     <<unique>>
 }
-Set --|> Collection
+Set --|> Container
 List --|> Sequence
-List --|> Collection
-Sequence --|> Collection
-Bag --|> Collection
+List --|> Tuple
+Bag --|> Tuple
 
 Association --|> Pair
 Range --|> Pair
@@ -60,7 +59,7 @@ Multiplication --|> Operation
 Conjunction --|> Operation 
 Disjunection --|> Operation 
 
-Collection *--> "*" Expresion
+Tuple *--> "*" Expresion
 
 Predicate *--> "1 name" Identifier
 Predicate *--> "1 arguments" List

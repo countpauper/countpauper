@@ -13,7 +13,7 @@ public:
 	explicit Boolean(const std::string_view tag);
     explicit Boolean(const char* tag) : Boolean(std::string_view(tag)) {}
     explicit Boolean(const class Integer& i);
-    explicit Boolean(const class Collection& c);
+    explicit Boolean(const class Tuple& c);
     explicit Boolean(const class Set& s);
 	bool operator==(const Boolean& other) const;
     bool operator*() const;

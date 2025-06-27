@@ -1,5 +1,5 @@
 #pragma once 
-#include "Logic/Internal/Collection.h"
+#include "Logic/Internal/Tuple.h"
 #include <algorithm>
 #include <ranges>
 
@@ -39,11 +39,11 @@ public:
     // }
 
     std::size_t erase(const Expression& e) { return std::erase(items, e); }
-    Collection::const_iterator erase(Collection::const_iterator it) { return items.erase(it); }
+    Tuple::const_iterator erase(Tuple::const_iterator it) { return items.erase(it); }
     std::size_t size() const { return items.size(); }
     bool empty() const { return items.empty(); }
-    Collection::const_iterator begin() const { return items.begin(); }
-    Collection::const_iterator end() const { return items.end(); }
+    Tuple::const_iterator begin() const { return items.begin(); }
+    Tuple::const_iterator end() const { return items.end(); }
     const Expression& front() const { return items.front(); }
     Expression& front() { return items.front(); }
     const Expression& back() const { return items.back(); }
@@ -61,7 +61,7 @@ protected:
         return T(items.SubstituteItems(hypothesis));
     }
 protected:
-    Collection items;
+    Tuple items;
 };
 
     

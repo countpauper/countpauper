@@ -1,6 +1,6 @@
 #pragma once
 #include "Logic/Hypothesis.h"
-#include "Logic/Internal/Collection.h"
+#include "Logic/Internal/Tuple.h"
 #include <iostream>
 
 namespace Angel::Logic
@@ -8,10 +8,10 @@ namespace Angel::Logic
 class Expression;
 
 // A list is an ordered non-unique collection of objects (wrapped in nodes)
-class List : public Collection
+class List : public Tuple
 {
 public:
-    using Collection::Collection;
+    using Tuple::Tuple;
 
     bool operator==(const List& rhs) const;
 	List& operator+=(const List& rhs);

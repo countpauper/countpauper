@@ -8,7 +8,7 @@ namespace Angel::Logic
 {
 
 // A Summation is a mathemetatical operator, which returns all values added together
-// It is currently a Collection (ordered, non-unique), but technically it could be unordered 
+// It is currently a Tuple (ordered, non-unique), but technically it could be unordered 
 class Summation : public Operation<Summation>  
 {
 public:

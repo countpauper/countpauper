@@ -12,8 +12,8 @@ TEST(All, Construction)
     EXPECT_TRUE(bool(All(List{})));
     EXPECT_EQ(All(List{Integer(3)}), (All{Integer(3)}));
     EXPECT_NE(All(List{Integer(3)}), All(List{Integer(-3)}));
-    EXPECT_EQ(Expression(PrefixOperator(L'∀'), Collection{List{Integer(-2)}}), All(List{Integer(-2)})); 
-    EXPECT_EQ(Expression(PrefixOperator(L'∀'), Collection{Id("T")}), All("T"));
+    EXPECT_EQ(Expression(PrefixOperator(L'∀'), Tuple{List{Integer(-2)}}), All(List{Integer(-2)})); 
+    EXPECT_EQ(Expression(PrefixOperator(L'∀'), Tuple{Id("T")}), All("T"));
 }
 
 TEST(All, ConstructValliable)

@@ -1,4 +1,4 @@
-#include "Logic/Internal/Collection.h"
+#include "Logic/Internal/Tuple.h"
 #include "Logic/Expression.h"
 #include "ContainerImpl.h"
 #include <typeinfo>
@@ -9,17 +9,17 @@
 namespace Angel::Logic
 {
 
-Collection::Collection(std::initializer_list<Expression> items) :
+Tuple::Tuple(std::initializer_list<Expression> items) :
     std::vector<Expression>(items)
 {
 }
 
-Collection::Collection(std::vector<Expression>&& items) :
+Tuple::Tuple(std::vector<Expression>&& items) :
     std::vector<Expression>(std::move(items))
 {
 }
 
-Collection::Collection(Collection_subrange items)
+Tuple::Tuple(Tuple_subrange items)
 {
     reserve(std::ranges::size(items));
     for (auto&& e : items) {
@@ -27,24 +27,24 @@ Collection::Collection(Collection_subrange items)
     }    
 }
 
-Collection::~Collection()
+Tuple::~Tuple()
 {
 }
 
-bool Collection::operator==(const Collection& rhs) const
+bool Tuple::operator==(const Tuple& rhs) const
 {
     if (size()!=rhs.size())
         return false;
     return std::equal(begin(), end(), rhs.begin());
 }
 
-Collection& Collection::operator+=(const Collection& rhs)
+Tuple& Tuple::operator+=(const Tuple& rhs)
 {
     insert(end(), rhs.begin(), rhs.end());
     return *this;
 }
 
-Collection& Collection::operator-=(const Collection& rhs)
+Tuple& Tuple::operator-=(const Tuple& rhs)
 {
     for(const auto& rh_item: rhs)
     {
@@ -53,7 +53,7 @@ Collection& Collection::operator-=(const Collection& rhs)
     return *this;
 }
 
-Collection& Collection::operator&=(Collection rhs)
+Tuple& Tuple::operator&=(Tuple rhs)
 {
     for(auto it=begin(); it!=end();)
     {
@@ -69,7 +69,7 @@ Collection& Collection::operator&=(Collection rhs)
     return *this;
 }
 
-Collection& Collection::operator|=(Collection rhs)
+Tuple& Tuple::operator|=(Tuple rhs)
 {
     for(auto it=begin(); it!=end();++it)
     {
@@ -82,7 +82,7 @@ Collection& Collection::operator|=(Collection rhs)
     return operator+=(rhs);
 }
 
-Set Collection::Assumptions() const
+Set Tuple::Assumptions() const
 {
     return std::accumulate(begin(), end(), Set{}, [](const Set& assumptions, const Expression& item)
     {
@@ -90,7 +90,7 @@ Set Collection::Assumptions() const
     });
 }
 
-Collection::const_iterator Collection::Find(const Expression& key) const
+Tuple::const_iterator Tuple::Find(const Expression& key) const
 {
     return std::find_if(begin(), end(), [&key](const value_type& item)
     {
@@ -113,7 +113,7 @@ bool AllTrue(const Bag& values)
     return true;
 }
 
-Expression Collection::Get(const Expression& key) const
+Expression Tuple::Get(const Expression& key) const
 {
     // TODO: List keys should return Lists of values, the order is not 
     // terribly useful, since indices are missing, but still it's nicer
@@ -151,7 +151,7 @@ Expression Collection::Get(const Expression& key) const
 }
 
 
-unsigned Collection::Add(Expression&& key)
+unsigned Tuple::Add(Expression&& key)
 {
     return AddToContainer(std::move(key), [this](Expression&& item)
     {
@@ -160,7 +160,7 @@ unsigned Collection::Add(Expression&& key)
     });
 
 }
-unsigned Collection::Remove(const Expression& key)
+unsigned Tuple::Remove(const Expression& key)
 {
     auto it = Find(key);
     if (it==end())
@@ -169,9 +169,9 @@ unsigned Collection::Remove(const Expression& key)
     return 1;
 }
 
-Collection Collection::SimplifyItems() const 
+Tuple Tuple::SimplifyItems() const 
 {
-    Collection simplified; 
+    Tuple simplified; 
     simplified.reserve(size());
     std::transform(begin(), end(), std::back_inserter(simplified), [](const Expression& e)
     {
@@ -180,9 +180,9 @@ Collection Collection::SimplifyItems() const
     return simplified;   
 }
 
-Collection Collection::SubstituteItems(const Hypothesis& hypothesis) const
+Tuple Tuple::SubstituteItems(const Hypothesis& hypothesis) const
 {
-    Collection substitute; 
+    Tuple substitute; 
     substitute.reserve(size());
     for(const auto& item: *this)
     {
@@ -192,7 +192,7 @@ Collection Collection::SubstituteItems(const Hypothesis& hypothesis) const
     return substitute;   
 }
 
-Expression Collection::Matches(Collection_subrange range, const Hypothesis& hypothesis) const
+Expression Tuple::Matches(Tuple_subrange range, const Hypothesis& hypothesis) const
 {
     auto range_it = range.begin();
     const_iterator it = begin();
@@ -205,7 +205,7 @@ Expression Collection::Matches(Collection_subrange range, const Hypothesis& hypo
             if (const auto* this_all = it->GetIf<All>())
             {
                 assert(it+1 == end());   // for now * can only be at end
-                vars.emplace_back(this_all->Matches(Collection_subrange(range_it, range.end()), vars, false));
+                vars.emplace_back(this_all->Matches(Tuple_subrange(range_it, range.end()), vars, false));
                 range_it=range.end();  
                 ++it;
                 continue;
@@ -217,7 +217,7 @@ Expression Collection::Matches(Collection_subrange range, const Hypothesis& hypo
             if (const auto* list_all = range_it->GetIf<All>())
             {
                 assert(range_it+1 == range.end());   // for now * can only be at end
-                vars.emplace_back(list_all->Matches(Collection_subrange(it, end()), vars, true));
+                vars.emplace_back(list_all->Matches(Tuple_subrange(it, end()), vars, true));
                 it = end(); // TODO could be partial, perhaps tuple match should return integer or (set) exactly which matched
                 ++range_it;
                 continue;
@@ -252,7 +252,7 @@ Expression Collection::Matches(Collection_subrange range, const Hypothesis& hypo
     return vars;
 }
 
-std::size_t Collection::Hash() const
+std::size_t Tuple::Hash() const
 {
     std::size_t result = 0;
     std::hash<Expression> hasher;
