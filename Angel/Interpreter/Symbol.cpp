@@ -55,6 +55,7 @@ hash_t SymbolHash(const std::string_view name)
         return std::format("<{}>", label);
     }
 #else 
+    #warning Still in debug 
     Symbol::Symbol() = default;
 
     Symbol::Symbol(const char* name) : 

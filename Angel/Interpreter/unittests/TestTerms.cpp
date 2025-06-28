@@ -47,8 +47,9 @@ TEST(Terms, Epsilon)
     EXPECT_EQ(Epsilon("cat"), Epsilon("cat"));
     EXPECT_EQ(Epsilon("cat").GetSymbol(), Symbol("cat"));
     EXPECT_EQ(Epsilon(Symbol::epsilon).GetSymbol(), Symbol::epsilon);
-
+#ifndef NDEBUG
     EXPECT_EQ(std::string(Epsilon("cat")), "ε<cat>");
+#endif
     EXPECT_EQ(std::string(Epsilon(Symbol::epsilon)), "ε");
 
     static_assert(is_token<Epsilon>);

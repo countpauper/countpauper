@@ -27,6 +27,7 @@ public:
         VariantT(std::forward<T>(v))
     {
     }
+    Variant(const Variant&) = default;
 
 
     std::size_t Hash() const

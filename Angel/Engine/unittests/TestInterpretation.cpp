@@ -15,8 +15,8 @@ TEST(Interpretation, Axiom)
 
     interpreter.Interpret(source, k);
     EXPECT_FALSE(k.Root().empty());
-    EXPECT_TRUE(k.Knows(Logic::Predicate("cat", {Logic::Id("fish")})));
-    EXPECT_FALSE(k.Knows(Logic::Predicate("fish")));
+    EXPECT_EQ(k.Knows(Logic::Predicate("cat", {Logic::Id("fish")})), Logic::True);
+    EXPECT_EQ(k.Knows(Logic::Predicate("fish")), Logic::False);
 }
 
 TEST(Interpretation, Axioms)
@@ -26,8 +26,8 @@ TEST(Interpretation, Axioms)
     AngelInterpreter interpreter;
 
     interpreter.Interpret(source, k);
-    EXPECT_TRUE(k.Knows(Logic::Predicate("cat")));
-    EXPECT_TRUE(k.Knows(Logic::Predicate("fish")));
+    EXPECT_EQ(k.Knows(Logic::Predicate("cat")), Logic::True);
+    EXPECT_EQ(k.Knows(Logic::Predicate("fish")), Logic::True);
 }
 
 TEST(Interpretation, Query)

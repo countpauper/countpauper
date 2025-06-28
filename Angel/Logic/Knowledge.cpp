@@ -116,7 +116,12 @@ Bag Knowledge::Matches(const Predicate& query) const
 
 Expression Knowledge::Knows(const Expression& e) const
 {
-    return root.Get(e);
+    auto found = root.Get(e);
+    if (const auto* i = found.GetIf<Integer>())
+        return Boolean(*i);
+    else 
+        return found;
+
 }
 
 const Bag& Knowledge::Root() const

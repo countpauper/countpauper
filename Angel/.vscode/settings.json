@@ -1,8 +1,7 @@
 {
     "C_Cpp.autoAddFileAssociations": false,
     "cmake.configureArgs": [
-        "-DBUILD_WITH_TESTS=ON",
-        "-DCMAKE_BUILD_TYPE=Debug"
+        "-DBUILD_WITH_TESTS=ON"
     ],
     "plantuml.diagramsRoot": "Design",
     "testMate.cpp.test.workingDirectory": "${command:cmake.buildDirectory}",

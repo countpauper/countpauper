@@ -17,8 +17,9 @@ class const_container_iterator;
 class Container : public ContainerVariant
 {
 public:
+    Container(const Container&) = default;
     using ContainerVariant::ContainerVariant;
-
+    
     Container& operator=(const Container& e);
 
     std::size_t size() const;

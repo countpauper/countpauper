@@ -12,15 +12,16 @@
                 - [ ] If simplify is infer (without knowledge) then it should never be needed explicitly. ALways recursive or iterative?  
 - [*] $Variable is a Value/Ref operator with an Id content (none for anonymous) 
    - [*] Tuple wholy replaced by All(Id), BaseClass ValueOperator
-   - [ ] Matching of All with List should be generalized to matching two sub containers with const_container_iterator (All  Set match?)
-- [ ] Find out how big Logic/Angel/Tests are in release really and why, try to optimize for size 
-        - [ ] Make a base LogicVariant with all the basic Is<> GetIf<> const and not const, operator== and Hash etc
+   - [ ] Matching of All with List should be generalized to matching two sub containers/ranges with const_container_iterator (All  Set match?)
+- [*] Find out how big Logic/Angel/Tests are in release really and why, try to optimize for siz
+        - MinSizeRel goes 216MB to 7.8MN. Release 8.3. Guess it's mostly debug info. Size is not blocking, only pretty print
+        - [*] Make a base LogicVariant with all the basic Is<> GetIf<> const and not const, operator== and Hash etc
          - [ ] Maybe operation is one type and the operator the sub variant
         - [*] Maybe containers are one type and unique+ordered the sub variant
-        - [ ] Elements even, if for no other reason than to fix pretty printing ?
+        - [ ] Elements even, if for no other reason than to fix pretty printing ? There is alreay a variant
 - [ ] Rename Collection to reuse Tuple 
-- [ ] And FlatCollection 
-- [ ] Can't flat collection just derive from tuple, overload Add to add all containers (also all?) `cat&*[dog,bunny] = cat&dog&bunny?` `cat&*WHAT` ? by iterating? Not even be templated? 
+- [*] And FlatCollection 
+- [*] Can't flat collection just derive from tuple, overload Add to add all containers (also all?) `cat&*[dog,bunny] = cat&dog&bunny?` `cat&*WHAT` ? by iterating? Not even be templated? 
 - [*] True and False replaced with constexpr Logic::True and Logic::False
 - [ ] Clean up a bunch of TODOs or at least put them/checki if they are in this document instead 
 

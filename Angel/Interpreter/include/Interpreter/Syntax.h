@@ -16,6 +16,7 @@ namespace Interpreter
         Syntax(Syntax&& other);
 
         using LookupTable = std::multimap<Symbol, Rule>;
+
         class const_iterator 
         {
         public:
@@ -30,14 +31,18 @@ namespace Interpreter
         protected:
             LookupTable::const_iterator wrapped;
         };
-        class iterator : public const_iterator
+        class iterator
         {
         public:
-            iterator(LookupTable::iterator it) : const_iterator(it) {}
+            using difference_type = std::ptrdiff_t;
+            using value_type = Rule;
+            iterator(LookupTable::iterator it) : wrapped(it) {}
             iterator& operator++() { wrapped++; return *this; }
             iterator operator++(int) { auto tmp = *this; ++wrapped; return tmp;  }
-            value_type& operator*() { return reinterpret_cast<LookupTable::iterator&>(wrapped)->second; }
-            value_type* operator->() { return &reinterpret_cast<LookupTable::iterator&>(wrapped)->second; }
+            value_type& operator*() { return wrapped->second; }
+            value_type* operator->() { return &wrapped->second; }
+        protected:
+            LookupTable::iterator wrapped;
         };
         bool empty() const;
         std::size_t size() const;

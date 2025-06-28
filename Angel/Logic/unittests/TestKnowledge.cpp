@@ -9,10 +9,10 @@ TEST(Knowledge, KnowSomething)
 {
     Knowledge k;
     auto defaultSize = k.Root().size();
-    EXPECT_EQ(k.Knows(Predicate("ginny")), Integer(0));
+    EXPECT_EQ(k.Knows(Predicate("ginny")), False);
     EXPECT_EQ(k.Know(Predicate("ginny")), 1);
     EXPECT_EQ(k.Root().size(), defaultSize + 1);
-    EXPECT_EQ(k.Knows(Predicate("ginny")), Integer(1));
+    EXPECT_EQ(k.Knows(Predicate("ginny")), True);
 }
 
 TEST(Knowledge, AlreadyKnows)
@@ -37,7 +37,7 @@ TEST(Knowledge, Defaults)
 {
     Knowledge k;
     EXPECT_EQ(k.Root().size(), 2); 
-    EXPECT_EQ(k.Knows(Predicate("true")), Integer(1));
+    EXPECT_EQ(k.Knows(Predicate("true")), True);
     EXPECT_EQ(k.Infer(Predicate("false")), False);
 }
 

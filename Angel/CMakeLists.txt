@@ -35,3 +35,4 @@ configure_file("Engine/angel.bnf" "angel.bnf" COPYONLY)
 
 target_link_libraries(${PROJECT_NAME}
         Engine)
+message("Building: ${CMAKE_BUILD_TYPE} with ${CMAKE_CXX_FLAGS}")
