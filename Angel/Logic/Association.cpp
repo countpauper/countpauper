@@ -19,12 +19,6 @@ Pair::Pair(Pair&& o) :
 {
 }
 
-Pair::Pair(Expression&& lhs, Expression&& rhs) : 
-    lhs(std::make_unique<Expression>(std::move(lhs))),
-    rhs(std::make_unique<Expression>(std::move(rhs)))
-{
-}
-
 Pair::operator bool() const
 {
     return bool(lhs) && rhs->Simplify() != False;

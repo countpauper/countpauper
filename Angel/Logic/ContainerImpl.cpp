@@ -5,24 +5,27 @@
 namespace Angel::Logic
 {
 
-unsigned AddToContainer(Expression&& item, std::function<unsigned(Expression&&)> addOne)
+unsigned AddToContainer(const_container_iterator& at, Expression&& item, std::function<unsigned(const_container_iterator& at, Expression&&)> addOne)
 {
+    if (!bool(item))
+        return 0;
+
     if (Association* association = item.GetIf<Association>())
     {
         assert(!association->Right().Is<All>()); // not implemented; 
         if (association->Right().Simplify() == False)
             return 0;
         if (association->Right().Simplify() == True)
-            return AddToContainer(std::move(association->Left()), addOne);
+            return AddToContainer(at, std::move(association->Left()), addOne);
         if (All* all = association->Left().GetIf<All>())
         {
             if (all->GetVariable())
-                return addOne(*all);
-
+                return addOne(at, *all);
             unsigned total = 0;
             for(auto subItem: *all)
             {
-                total += AddToContainer(Association(std::move(subItem), std::move(association->Right())).Simplify(), addOne);
+                total += AddToContainer(at, Association(std::move(subItem), std::move(association->Right())).Simplify(), addOne);
+                ++at;
             }
             return total;            
         }     
@@ -30,16 +33,17 @@ unsigned AddToContainer(Expression&& item, std::function<unsigned(Expression&&)>
     if (const All* all = item.GetIf<All>())
     {
         if (all->GetVariable())
-            return addOne(*all);
+            return addOne(at, *all);
 
         unsigned total = 0;
         for(auto subItem: *all)
         {
-            total += AddToContainer(std::move(subItem), addOne);
+            total += AddToContainer(at, std::move(subItem), addOne);
+            ++at;
         }
         return total;
     }
-    return addOne(std::move(item));
+    return addOne(at, std::move(item));
 }
 
 

@@ -1,10 +1,11 @@
 #pragma once 
 #include <functional>
+#include "Logic/Internal/container_iterator.h"
 
 namespace Angel::Logic 
 {
 class Expression;
 
-unsigned AddToContainer(Expression&& item, std::function<unsigned(Expression&&)> addOne);
+unsigned AddToContainer(const_container_iterator& at, Expression&& item, std::function<unsigned(const_container_iterator&, Expression&&)> addOne);
 
 }

@@ -38,7 +38,7 @@ Expression OperationWithBase<T>::Simplify() const
     if (const_base)
         simple.front() = constant;
     else if (constant) 
-        simple.push_back(constant);
+        simple.Add(std::move(constant));
     if (simple.size()==1)
         return simple.front();
     else

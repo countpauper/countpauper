@@ -25,7 +25,7 @@ Expression Operation<T>::Simplify() const
             ++it;
     }
     if (constant!=T::initial)
-        simple.push_back(constant);
+        simple.Add(std::move(constant));
     if (simple.empty())
         return Integer(T::initial);
     else if (simple.size()==1)

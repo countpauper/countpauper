@@ -32,8 +32,8 @@ TEST(Summation, Simplify)
     EXPECT_EQ((Summation{}).Simplify(), Integer(0));
     EXPECT_EQ((Summation{Integer(2)}).Simplify(), Integer(2));
     EXPECT_EQ((Summation{Integer(3), Integer(3)}).Simplify(), Integer(6));
+    EXPECT_EQ((Summation{Integer(1), All(List{Integer(-2), Integer(3)})}).Simplify(), Integer(2));
 }
-
 
 TEST(Summation, Substitute)
 {

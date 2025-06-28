@@ -41,6 +41,8 @@ TEST(Conjunction, Simplify)
     EXPECT_EQ((Conjunction{Predicate("maybe"), False}).Simplify(), False);
     EXPECT_EQ((Conjunction{True, True}).Simplify(), True);
     EXPECT_EQ((Conjunction{True, False}).Simplify(), False);
+    EXPECT_EQ((Conjunction{Id("cat"), All(List{Id("dog"), Id("bunny")})}), 
+        (Conjunction{Id("cat"), Id("dog"), Id("bunny")}));
 
 }
 

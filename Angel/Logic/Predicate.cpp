@@ -110,11 +110,11 @@ Hypothesis QueryHypothesisOnly(const Hypothesis& hypothesis)
 	// on the other hand keeping output hypothesis and infer context separate might
 	// remove the whole left/right hack
     Hypothesis result;
-    for(const auto& sub : hypothesis)
+    for(auto sub : hypothesis)
     {
 		if (IsQueryHypothesis(sub))
 		{
-			result.push_back(sub);
+			result.Add(std::move(sub));
 		}
     }
     return result;

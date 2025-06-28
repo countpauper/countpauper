@@ -21,6 +21,12 @@ public:
         VariantT(v)
     {
     }
+    template<typename T>
+    requires is_alternative<T, VariantT>
+    Variant(T&& v) :
+        VariantT(std::forward<T>(v))
+    {
+    }
 
 
     std::size_t Hash() const

@@ -95,8 +95,9 @@ Expression Comparison<T>::Matches(const Expression& expression, const Hypothesis
     auto substituted = Substitute(hypothesis);
     assert(substituted.size()==1);  // single element equations can be matched but not inferred. Predicate argument only
     Hypothesis newHypothesis(hypothesis);
-    substituted.items.insert(substituted.begin(), expression.Substitute(hypothesis));
-    newHypothesis.emplace_back(std::move(substituted));
+    Tuple::const_iterator front = substituted.begin();
+    substituted.AddAt(front, expression.Substitute(hypothesis));
+    newHypothesis.Add(substituted);
     return newHypothesis;
 }
 
@@ -105,7 +106,7 @@ Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypo
 {
     assert(FlatTuple<T>::size()>1);   // single element equations can't be inferred only matched
     if (!FlatTuple<T>::Assumptions().empty()) {
-        return Association(True, T(FlatTuple<T>::items));
+        return Association(True, T(static_cast<const Tuple&>(*this)));
     }
     Expression first = FlatTuple<T>::front().Infer(k, hypothesis, trace);
     for(const auto& item: *this | std::views::drop(1))

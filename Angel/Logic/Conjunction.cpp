@@ -14,7 +14,7 @@ bool Conjunction::operator==(const Conjunction& rhs) const
 Expression Conjunction::Simplify() const
 {
     Conjunction simpler = SimplifyItems();
-    simpler.erase(True);
+    simpler.Remove(True);
     for(const auto& item: simpler)
     {
         if (item == False)

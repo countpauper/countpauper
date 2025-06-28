@@ -156,7 +156,7 @@ Expression const_container_iterator::operator*() const
         [](const auto& it)
         {
             return *it;
-        }}, internal);
+        }}, *this);
 }
 
 const_container_iterator& const_container_iterator::operator++()
@@ -169,7 +169,7 @@ const_container_iterator& const_container_iterator::operator++()
         [](auto& it)
         {
             ++it;
-        }}, internal);
+        }}, *this);
     return *this;
 }
 
@@ -182,18 +182,7 @@ const_container_iterator const_container_iterator::operator++(int)
 
 const_container_iterator::operator bool() const
 {
-    return !std::holds_alternative<std::monostate>(internal);
-}
-
-bool const_container_iterator::operator==(const const_container_iterator& other) const 
-{ 
-    if (!*this)
-        return !other;
-    return (internal == other.internal);
-}
-bool const_container_iterator::operator!=(const const_container_iterator& other) const 
-{ 
-    return !(*this == other);     
+    return !std::holds_alternative<std::monostate>(*this);
 }
 
 

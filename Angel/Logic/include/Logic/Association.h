@@ -11,7 +11,12 @@ class Expression;
 class Pair 
 {   // TODO: a Range is another type of Pair, split to a separate file 
 public:
-    Pair(Expression&& lhs, Expression&& rhs);
+    template<class TL, class TR>
+    Pair(TL&& lhs, TR&& rhs) :
+        lhs(std::make_unique<Expression>(std::forward<TL>(lhs))),
+        rhs(std::make_unique<Expression>(std::forward<TR>(rhs)))
+    {  
+    }
     explicit operator bool() const;
     std::size_t size() const;
     Set Assumptions() const;

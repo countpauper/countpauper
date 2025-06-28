@@ -14,7 +14,7 @@ bool Disjunction::operator==(const Disjunction& rhs) const
 Expression Disjunction::Simplify() const
 {
     Disjunction simpler = SimplifyItems();
-    simpler.erase(False);
+    simpler.Remove(False);
     for(const auto& item: simpler)
     {
         if (item == True)

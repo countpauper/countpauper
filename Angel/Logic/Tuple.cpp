@@ -153,11 +153,21 @@ Expression Tuple::Get(const Expression& key) const
 
 unsigned Tuple::Add(Expression&& key)
 {
-    return AddToContainer(std::move(key), [this](Expression&& item)
+    const_iterator back = end();
+    return AddAt(back, std::move(key));
+}
+
+unsigned Tuple::AddAt(const_iterator& at, Expression&& key)
+{
+    const_container_iterator it(at);
+    unsigned added = AddToContainer(it, std::move(key), [this](const_container_iterator& at, Expression&& item)
     {
-        emplace_back(item);
+        auto it = std::get<Tuple::const_iterator>(at);  
+        at = const_container_iterator(Tuple::emplace(it, std::move(item)));
         return 1;        
     });
+    at = std::get<const_iterator>(it);
+    return added;
 
 }
 unsigned Tuple::Remove(const Expression& key)
@@ -205,7 +215,7 @@ Expression Tuple::Matches(Tuple_subrange range, const Hypothesis& hypothesis) co
             if (const auto* this_all = it->GetIf<All>())
             {
                 assert(it+1 == end());   // for now * can only be at end
-                vars.emplace_back(this_all->Matches(Tuple_subrange(range_it, range.end()), vars, false));
+                vars.Add(this_all->Matches(Tuple_subrange(range_it, range.end()), vars, false));
                 range_it=range.end();  
                 ++it;
                 continue;
@@ -217,7 +227,7 @@ Expression Tuple::Matches(Tuple_subrange range, const Hypothesis& hypothesis) co
             if (const auto* list_all = range_it->GetIf<All>())
             {
                 assert(range_it+1 == range.end());   // for now * can only be at end
-                vars.emplace_back(list_all->Matches(Tuple_subrange(it, end()), vars, true));
+                vars.Add(list_all->Matches(Tuple_subrange(it, end()), vars, true));
                 it = end(); // TODO could be partial, perhaps tuple match should return integer or (set) exactly which matched
                 ++range_it;
                 continue;
@@ -245,7 +255,7 @@ Expression Tuple::Matches(Tuple_subrange range, const Hypothesis& hypothesis) co
             if (itemMatch == False)
                 return itemMatch;
             else if (itemMatch != True)
-                vars.emplace_back(std::move(itemMatch));
+                vars.Add(std::move(itemMatch));
             ++it; ++range_it; 
         }
     }

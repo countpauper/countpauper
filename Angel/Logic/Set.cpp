@@ -27,17 +27,20 @@ Set::Set(std::vector<Expression>&& setItems)
 }	
 unsigned Set::Add(Expression&& other)
 {
-    return AddToContainer(std::move(other), [this](Expression&& item)
+    const_container_iterator wherever(begin());
+    return AddToContainer(wherever, std::move(other), [this](const_container_iterator& at, Expression&& item)
     {
         if (auto* association=item.GetIf<Association>())
         {
             auto result = items.emplace(association->Left(), association->Right());
+            at = const_container_iterator(const_iterator(result.first));
             if (result.second)
                 return 1;
             result.first->second = std::move(association->Right());
             return 0;
         }
         auto result = items.emplace(std::move(item), True);
+        at = const_container_iterator(const_iterator(result.first));
         return result.second?1:0;        
     });
 }
@@ -249,8 +252,8 @@ Expression Set::Matches(const Expression& e, const Hypothesis& hypothesis) const
     other -= otherAssumptions;
 
     Hypothesis newHypothesis;
-    newHypothesis.push_back(simplifiedAssumptions.MakeHypothesis(other, false));
-    newHypothesis.push_back(otherAssumptions.MakeHypothesis(simplified, true));
+    newHypothesis.Add(simplifiedAssumptions.MakeHypothesis(other, false));
+    newHypothesis.Add(otherAssumptions.MakeHypothesis(simplified, true));
     return newHypothesis.Simplify();
 }
 
