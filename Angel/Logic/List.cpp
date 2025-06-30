@@ -74,7 +74,12 @@ Expression List::Infer(const Knowledge& knowledge, const Hypothesis& hypothesis,
 
 List List::Simplify() const
 {
-    return List(SimplifyItems());
+    List result;
+    for(const auto& item: *this)
+    {
+        result.Add(item.Simplify());
+    }
+    return result;
 }
 
 List List::Substitute(const Hypothesis& hypothesis) const

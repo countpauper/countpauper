@@ -21,7 +21,7 @@ Pair::Pair(Pair&& o) :
 
 Pair::operator bool() const
 {
-    return bool(lhs) && rhs->Simplify() != False;
+    return bool(lhs) && *rhs != False;
 }
 
 std::size_t Pair::size() const

@@ -48,7 +48,7 @@ Logic::Predicate MakeSignature(const Logic::Id& id, const Logic::Expression& arg
 Logic::String HelpTopic(const Logic::Knowledge& k, const Logic::Id& id)
 {
     auto matches = k.Knows(Logic::Predicate(id, {Logic::All("args")}));
-    if (matches == Logic::Integer(0))
+    if (matches == Logic::False)
     {
         throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(id)));
     }

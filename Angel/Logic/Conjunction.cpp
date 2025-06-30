@@ -44,7 +44,7 @@ Expression Conjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, 
     for(const auto& item: *this)
     {
         auto inferred = item.Infer(k, hypothesis, trace);
-        auto isTrue = inferred.Cast<Boolean>();
+        auto isTrue = inferred.Simplify().Cast<Boolean>();
         if (!isTrue)
             return isTrue; // or just inferred? true & 0 == 0?
     }

@@ -27,7 +27,10 @@ All::All(Expression&& e) :
 
 All All::Simplify() const
 {
-    return All(content->Simplify());
+    if (content)
+        return All(content->Simplify());
+    else
+        return *this;
 }
 
 Expression MatchValliable(const Variable& var, const Expression& expression, const Hypothesis& hypothesis, bool reverse)

@@ -144,7 +144,7 @@ TEST(Set, SubstituteAll)
 TEST(Set, SubstituteAllFiltered)
 {
 	EXPECT_EQ((Set{Integer(0), Association(All("T"), LesserEqual{Integer(2)}).Substitute(Conjunction{
-		Equal{Variable("T"), List{True, Integer(2), Integer(3)}}})}),
+		Equal{Variable("T"), List{True, Integer(2), Integer(3)}}})}).Simplify(),
 		(Set{Integer(0), True, Integer(2)}));
 }
 

@@ -44,7 +44,7 @@ Expression Disjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, 
     for(const auto& item: *this)
     {
         Expression inferred = item.Infer(k, hypothesis, trace);
-        auto isTrue = inferred.Cast<Boolean>();
+        auto isTrue = inferred.Simplify().Cast<Boolean>();
         if (isTrue)
             return inferred;
     }

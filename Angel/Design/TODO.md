@@ -1,15 +1,12 @@
 ## Quick todo / Rafactor
 
 - [ ] Rewrite disjunction & conjunction as an Operation<> (although early out? Multiply also early out on 0? exponent on 1 or 0?)
-- [ ] Implement Simplify(..)  as infer without knowledge (optional). Probably rename as well as it doesn't always infer.
-      Only predicates really rely on the knowledge to match and will return themselves ("Simfplified") otherwise.  
-       ORRR do the iterative infer described in tautalogy protection below. 
-       In that case there may be no knowledge to pass 
-- [ ] And isn't substitute just infering a variable with a hypothesis? The only time this should be done early is when matching and then the argument has to be inferred first anyway. Try to remove it altogether. 
+- [ ] Try to remove substitute it from all non inference functions (get. add, substitute) and merge it with infer. It's mostly juts infer for operations. 
+- [ ] Subsitute is infer for variables, remove that too 
 - [ ] There is too much internal simplifying (especially when adding to containers) and subtituting. 
-        All operations infer, substitute,simplify, should not depend on orde, so:
-                -[ ] Only substitute matched variables with antecdent at the end of infering predicate (dont pass hypothesis?)
-                - [ ] If simplify is infer (without knowledge) then it should never be needed explicitly. ALways recursive or iterative?  
+        All operations infer, substitute,simplify, should not depend on order, so:
+        - [ ] Only substitute matched variables with antecdent at the end of infering predicate (dont pass hypothesis?)
+        - [ ] If simplify is infer (without knowledge) then it should never be needed explicitly. ALways recursive or iterative?  
 - [*] $Variable is a Value/Ref operator with an Id content (none for anonymous) 
    - [*] Tuple wholy replaced by All(Id), BaseClass ValueOperator
    - [ ] Matching of All with List should be generalized to matching two sub containers/ranges with const_container_iterator (All  Set match?)
@@ -24,6 +21,7 @@
 - [*] Can't flat collection just derive from tuple, overload Add to add all containers (also all?) `cat&*[dog,bunny] = cat&dog&bunny?` `cat&*WHAT` ? by iterating? Not even be templated? 
 - [*] True and False replaced with constexpr Logic::True and Logic::False
 - [ ] Clean up a bunch of TODOs or at least put them/checki if they are in this document instead 
+- [ ] Maybe association causation :<- should be split to differentiate how they are simplified, but which operators. Maybe just internally and for the syntax only when parsing clauses. To reduce variant it could be a boolean/enum/sub variant (pair, causation, range)
 
 ## Backlog 
 - [*] Get back up 

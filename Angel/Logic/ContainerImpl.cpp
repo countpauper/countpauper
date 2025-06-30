@@ -13,9 +13,9 @@ unsigned AddToContainer(const_container_iterator& at, Expression&& item, std::fu
     if (Association* association = item.GetIf<Association>())
     {
         assert(!association->Right().Is<All>()); // not implemented; 
-        if (association->Right().Simplify() == False)
+        if (association->Right() == False)
             return 0;
-        if (association->Right().Simplify() == True)
+        if (association->Right() == True)
             return AddToContainer(at, std::move(association->Left()), addOne);
         if (All* all = association->Left().GetIf<All>())
         {
@@ -24,7 +24,7 @@ unsigned AddToContainer(const_container_iterator& at, Expression&& item, std::fu
             unsigned total = 0;
             for(auto subItem: *all)
             {
-                total += AddToContainer(at, Association(std::move(subItem), std::move(association->Right())).Simplify(), addOne);
+                total += AddToContainer(at, Association(std::move(subItem), std::move(association->Right())), addOne);
                 ++at;
             }
             return total;            

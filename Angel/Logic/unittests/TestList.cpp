@@ -65,7 +65,7 @@ TEST(List, SubstiteAllFiltered)
 {
 	List original{Integer(0), Association(All("T"), LesserEqual{Integer(2)})};
 	Hypothesis substitution{Equal{Variable("T"), List{True, Integer(2), Integer(3)}}};
-	EXPECT_EQ(original.Substitute(substitution),
+	EXPECT_EQ(original.Substitute(substitution).Simplify(),
 		(List{Integer(0), True, Integer(2)}));
 }
 

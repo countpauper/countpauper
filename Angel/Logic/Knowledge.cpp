@@ -62,7 +62,7 @@ Expression Knowledge::Infer(const Expression& expression) const
 {
     Hypothesis hypothesis;
     Trace trace;
-    return expression.Infer(*this, hypothesis, trace);
+    return expression.Infer(*this, hypothesis, trace).Simplify();
 }
 
 Hypothesis GetAntecedent(Expression&& match)
