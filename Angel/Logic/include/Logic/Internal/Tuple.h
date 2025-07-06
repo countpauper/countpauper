@@ -8,6 +8,7 @@
 namespace Angel::Logic
 {
 using Tuple_subrange = std::ranges::subrange<std::vector<Expression>::const_iterator, std::vector<Expression>::const_iterator>;
+class Container;
 
 template<typename T> class FlatTuple;
 
@@ -36,10 +37,10 @@ public:
     Expression Matches(Tuple_subrange range, const Hypothesis& hypothesis) const;
     std::size_t Hash() const;
     bool operator==(const Tuple& rhs) const;
-	Tuple& operator+=(const Tuple& rhs);
-	Tuple& operator-=(const Tuple& rhs);
-	Tuple& operator&=(const Tuple rhs);
-	Tuple& operator|=(const Tuple rhs);
+	Tuple& operator+=(const Container& rhs);
+	Tuple& operator-=(const Container& rhs);
+	Tuple& operator&=(const Container rhs);
+	Tuple& operator|=(const Container rhs);
 protected:
     template<typename U>
     friend class FlatTuple;

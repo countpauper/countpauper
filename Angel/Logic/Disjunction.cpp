@@ -41,14 +41,24 @@ Expression Disjunction::Substitute(const Hypothesis& hypothesis) const
 
 Expression Disjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
+    Expression result;
     for(const auto& item: *this)
     {
         Expression inferred = item.Infer(k, hypothesis, trace);
-        auto isTrue = inferred.Simplify().Cast<Boolean>();
-        if (isTrue)
-            return inferred;
+        if (result == False)
+        {
+            auto isTrue = inferred.Simplify().Cast<Boolean>();
+            if (isTrue)
+                return inferred;
+        }
+        if (result)
+            result = ope(result, inferred);
+        else 
+            result = inferred;
     }
-    return False;
+    if (!result)
+        return False;
+    return result;
 }
 
 std::ostream& operator<<(std::ostream& os, const Disjunction& disjunction)

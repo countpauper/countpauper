@@ -59,6 +59,16 @@ TEST(Conjunction, Inference)
     EXPECT_EQ(k.Infer(Conjunction{Predicate("cat")}), True);
 }
 
+TEST(Conjunction, InferContainer)
+{
+    Knowledge k;
+	List a{Id("ginny"), Id("gizmo")};
+	List b{Id("max"), Id("gizmo")};
+	EXPECT_EQ(k.Infer(Conjunction{b, a}), (List{Id("gizmo")}));
+	EXPECT_EQ(k.Infer(Conjunction{a, List{}, b}), (List{}));
+}
+
+
 TEST(Conjunction, to_string)
 {
     EXPECT_EQ(to_string(Conjunction{True}), "true");

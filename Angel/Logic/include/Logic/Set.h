@@ -31,14 +31,15 @@ public:
 	explicit operator bool() const;
 	std::size_t Hash() const;
 	bool operator==(const Set& rhs) const;
-	Set& operator+=(const Set& rhs);
-	Set& operator-=(const Set& rhs);
-	Set& operator&=(const Set& rhs);
-	Set& operator|=(const Set& rhs);
+	Set& operator+=(const Container& rhs);
+	Set& operator-=(const Container& rhs);
+	Set& operator&=(Container rhs);
+	Set& operator|=(const Container& rhs);
 	class const_iterator
 	{
 	public:
 		Expression operator*() const;
+		Expression* operator->() const;
 		const_iterator& operator++();
 		const_iterator operator++(int);
         bool operator==(const const_iterator& rhs) const; 
@@ -51,6 +52,7 @@ public:
 	};
 	const_iterator begin() const;
 	const_iterator end() const;
+	const_iterator erase(const_iterator item);
     static constexpr bool unique=true;
     static constexpr bool ordered=false;
 
@@ -61,10 +63,10 @@ private:
 
 };
 
-Set operator+(Set lhs, const Set& rhs);
-Set operator-(Set lhs, const Set& rhs);
-Set operator&(Set lhs, const Set& rhs);
-Set operator|(Set lhs, const Set& rhs);
+Set operator+(Set lhs, const Container& rhs);
+Set operator-(Set lhs, const Container& rhs);
+Set operator&(Set lhs, const Container& rhs);
+Set operator|(Set lhs, const Container& rhs);
 std::ostream& operator<<(std::ostream& os, const Set& set);
 
 

@@ -41,14 +41,24 @@ Conjunction Conjunction::Substitute(const Hypothesis& hypothesis) const
 
 Expression Conjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
+    Expression result;
     for(const auto& item: *this)
     {
-        auto inferred = item.Infer(k, hypothesis, trace);
-        auto isTrue = inferred.Simplify().Cast<Boolean>();
-        if (!isTrue)
-            return isTrue; // or just inferred? true & 0 == 0?
+        Expression inferred = item.Infer(k, hypothesis, trace);
+        if (result == True)
+        {
+            auto isTrue = inferred.Simplify().Cast<Boolean>();
+            if (!isTrue)
+                return isTrue;
+        }
+        if (result)
+            result = ope(result, inferred);
+        else 
+            result = inferred;
     }
-    return True;
+    if (!result)
+        return True;
+    return result;    
 }
 
 std::ostream& operator<<(std::ostream& os, const Conjunction& conjunction)

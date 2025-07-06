@@ -13,10 +13,25 @@ constexpr Expression operate(const Expression&, const Expression&);
 template<>
 constexpr Expression operate<BinaryOperator{L'+'}>(const Expression& lhs, const Expression& rhs)
 {
-    auto lhInt = lhs.Cast<Integer>();
-    auto rhInt = rhs.Cast<Integer>();
-    lhInt+=rhInt;
-    return lhInt;
+    if (const auto* pLhInt = lhs.GetIf<Integer>())
+    {
+        Integer lhInt = *pLhInt;
+        return lhInt += rhs.Cast<Integer>();
+    }
+    else if (const auto* plhBool = lhs.GetIf<Boolean>())
+    {   // TODO this gets rediculous with more numbers. Make numbers variant 
+        Integer lhInt(*plhBool);
+        return lhInt += rhs.Cast<Integer>();
+    }
+    else if (const auto* lhContainer = lhs.GetIf<Container>())
+    {
+        return *lhContainer + rhs.Cast<Container>();
+    }
+    else 
+    {
+        throw std::invalid_argument(std::format("Can only sum numbers and containers, not {}", lhs.AlternativeTypeId().name()));
+    }
+
 }
 
 template<>
@@ -55,6 +70,30 @@ constexpr Expression operate<BinaryOperator{L'↑'}>(const Expression& lhs, cons
     return lhInt;
 }
 
+template<>
+constexpr Expression operate<BinaryOperator{L'∧'}>(const Expression& lhs, const Expression& rhs)
+{
+    if (const auto* lhCont = lhs.GetIf<Container>())
+    {
+        return *lhCont & rhs.Get<Container>();
+    }
+    auto lhBool = lhs.Get<Boolean>();
+    return lhBool & rhs.Cast<Boolean>();
+
+}
+
+
+template<>
+constexpr Expression operate<BinaryOperator{L'∨'}>(const Expression& lhs, const Expression& rhs)
+{
+    if (const auto* lhCont = lhs.GetIf<Container>())
+    {
+        return *lhCont | rhs.Get<Container>();
+    }
+    auto lhBool = lhs.Get<Boolean>();
+    return lhBool | rhs.Cast<Boolean>();
+}
+
 template<std::size_t N>
 struct OperatorList
 {
@@ -76,12 +115,13 @@ constexpr Expression dispatch_operator(Operator op, const Expression& lhs, const
         else 
             return dispatch_operator<ALL, I + 1>(op, lhs, rhs);
     }
-    return Expression();
+    throw std::runtime_error(std::format("Operator {} not defined for operands of type {} and {}", 
+        std::string(op), lhs.AlternativeTypeId().name(), rhs.AlternativeTypeId().name()));
 }
 
 constexpr Expression BinaryOperator::operator()(const Expression& lhs, const Expression& rhs) const
 {
-    return dispatch_operator<L"+-⋅÷↑">(*this, lhs, rhs);
+    return dispatch_operator<L"+-⋅÷↑∧∨">(*this, lhs, rhs);
 }
 
 }

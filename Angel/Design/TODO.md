@@ -111,6 +111,7 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [ ] Multiple all of/any of in a  comparison is a matrix conjunction/disjunction @[1,2]<@[3,4] = 1<3&1<4&2<3&2<4
 -   [ ] Multi dimensional arrays (as a separate collection type)?
 -   [ ] Apply functions on sequences, sets and arrays with for each 
+    [ ] Like python everything a class, also everything is an expression, including expression types (introspection). TBD what type (besides type). It should be usable to check type of and cast to as a predicate. Perhaps types are just built in predicates and other built ins check `is`. Builtin `type(expression)` gives the id. This id can also be used internally, for instance for cast and other type limited exceptions 
 - [ ] Advanced
 -   [ ] Tautology protection cat: cat (or longer) is an error (use trace, check linked list for equal)
         Maybe it works automatically due to a (new/adjusted) inference engine:
@@ -154,6 +155,8 @@ it mean if it was omitted? In this case the user may have to supply the empty li
 -   [ ] set access with `.` (list done, full feature for unique) 
 -   [ ] Bag as unordered list if it has any advantages for speed and such 
 -   [ ] ^ ⊕ is XOR (only one of the whole set is true) and ** ↑ (like python & knuth ) for power
+-   [ ] No unsigned integer & bit (ie `12&7=4`). Instead perhaps make some sort of bitmask ordered container or operator where 
+[True, False] & [True, True] = [True&True, False&True]. Peraps it's just All: [*Left & *Right]. It would work more like numby matrix operations anyway. 
 -   [ ] Down arrow notation for built in logarithm (invser of up). Non unicode notation tbd perhaps \/ or // 
 -   [ ] ! postfix operator for factorial 
 -   [ ] sqrt prefix operator but what is the non unicode ? Implemented as shortcut for exponent(x, 0.5) 

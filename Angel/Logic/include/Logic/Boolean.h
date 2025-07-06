@@ -17,6 +17,8 @@ public:
     explicit Boolean(const class Set& s);
 	bool operator==(const Boolean& other) const;
     bool operator*() const;
+	Boolean& operator&=(const Boolean& rhs);
+	Boolean& operator|=(const Boolean& rhs);    
     explicit operator bool() const;
     std::size_t Hash() const;
     operator std::string() const;
@@ -27,6 +29,8 @@ private:
 
 static constexpr Boolean True(true); 
 static constexpr Boolean False(false); 
+Boolean operator&(Boolean lhs, const Boolean& rhs);
+Boolean operator|(Boolean lhs, const Boolean& rhs);
 
 std::ostream& operator<<(std::ostream& os, const Boolean& );
 

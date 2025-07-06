@@ -8,7 +8,6 @@ namespace Angel::Logic::Test
 
 TEST(Division, Construction)
 {
-    EXPECT_TRUE(Division{}.empty());
     EXPECT_EQ((Division{Integer(3)}), Division({Integer(3)}));
     EXPECT_NE((Division{Integer(3)}), Division({Integer(3), Integer(2)}));
     EXPECT_EQ(Expression(BinaryOperator(L'÷'), {Integer(-2), Integer(-1)}), (Division{Integer(-2), Integer(-1)}));   

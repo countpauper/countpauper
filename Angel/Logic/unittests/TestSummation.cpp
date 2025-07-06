@@ -8,7 +8,6 @@ namespace Angel::Logic::Test
 
 TEST(Summation, Construction)
 {
-    EXPECT_TRUE(Summation{}.empty());
     EXPECT_EQ((Summation{Integer(3)}), Summation({Integer(3)}));
     EXPECT_NE((Summation{Integer(3)}), Summation({Integer(3), Integer(2)}));
     EXPECT_EQ(Expression(BinaryOperator(L'+'), {Integer(-2), Integer(-1)}), (Summation{Integer(-2), Integer(-1)}));   
@@ -19,7 +18,6 @@ TEST(Summation, Construction)
 TEST(Summation, Summations)
 {
     Knowledge k;
-    EXPECT_EQ(k.Infer(Summation{}), Integer(0));
     EXPECT_EQ(k.Infer(Summation{Integer(2)}), Integer(2));
     EXPECT_EQ(k.Infer(Summation{Integer(2), Integer(3)}), Integer(5));
     EXPECT_EQ(k.Infer(Summation{Integer(2), Integer(-3)}), Integer(-1));
@@ -29,7 +27,6 @@ TEST(Summation, Summations)
 
 TEST(Summation, Simplify)
 {
-    EXPECT_EQ((Summation{}).Simplify(), Integer(0));
     EXPECT_EQ((Summation{Integer(2)}).Simplify(), Integer(2));
     EXPECT_EQ((Summation{Integer(3), Integer(3)}).Simplify(), Integer(6));
     EXPECT_EQ((Summation{Integer(1), All(List{Integer(-2), Integer(3)})}).Simplify(), Integer(2));
@@ -53,6 +50,13 @@ TEST(Summation, Inference)
 {
     Knowledge k { Association(Predicate("cat"), Integer(2)) };
     EXPECT_EQ(k.Infer(Summation{Integer(4), Predicate("cat")}), Integer(6));
+}
+
+TEST(Summation, InferContainer)
+{
+    Knowledge k { Association(Predicate("cat"), List{Id("ginny")}) };
+	List b{Id("ginny"), Id("gizmo")};    
+	EXPECT_EQ(k.Infer(Summation{b, Predicate("cat")}), (List{Id("ginny"), Id("gizmo"), Id("ginny")}));    
 }
 
 TEST(Summation, to_string)

@@ -18,6 +18,19 @@ TEST(Boolean, Construction)
 	EXPECT_THROW(Boolean("False"), std::invalid_argument);	
 }
 
+TEST(Boolean, And)
+{
+	EXPECT_EQ(True & True, True);
+	EXPECT_EQ(True & False, False);
+	EXPECT_EQ(False & True, False);
+}
+
+TEST(Boolean, Or)
+{
+	EXPECT_EQ(True | False, True);
+	EXPECT_EQ(False | True, True);
+	EXPECT_EQ(False | False, False);
+}
 
 TEST(Boolean, Cast)
 {

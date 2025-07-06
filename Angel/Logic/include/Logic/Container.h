@@ -59,13 +59,23 @@ public:
     }
     const_container_iterator begin() const;
     const_container_iterator end() const;
+    const_container_iterator find(const Expression& item) const;
+    const_container_iterator erase(const_container_iterator item);
 
     bool operator<(const Container& o) const;
     inline bool operator<=(const Container& o) const { return *this==o || *this<o; }
     inline bool operator>(const Container& o) const { return !(*this<=o); }
     inline bool operator>=(const Container& o) const { return !(*this<o); }
+    Expression operator+=(const Container& rhs);
+    Expression operator-=(const Container& rhs);    
+    Expression operator&=(const Container& rhs);
+    Expression operator|=(const Container& rhs);    
     std::string Summary() const;
 };
 
+Expression operator+(Container lhs, const Container& rhs);
+Expression operator-(Container lhs, const Container& rhs);
+Expression operator&(Container lhs, const Container& rhs);
+Expression operator|(Container lhs, const Container& rhs);
 std::ostream& operator<<(std::ostream& s, const Container& e);
 }

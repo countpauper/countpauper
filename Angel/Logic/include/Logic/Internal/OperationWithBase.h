@@ -9,8 +9,18 @@ template<class T>
 class OperationWithBase : public FlatTuple<T>
 {
 public:
-    using FlatTuple<T>::FlatTuple;
-    
+    OperationWithBase(std::initializer_list<Expression> items) : 
+        FlatTuple<T>(items)
+    {
+        if (items.size() == 0)
+            throw std::invalid_argument("Operands list can not be empty");
+    }
+    template <std::ranges::input_range R>
+	explicit OperationWithBase(R items) : FlatTuple<T>(items)
+    {
+        if (items.size() == 0)
+            throw std::invalid_argument("Operands list can not be empty");
+    }     
     Expression Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
     T Substitute(const Hypothesis& hypothesis) const

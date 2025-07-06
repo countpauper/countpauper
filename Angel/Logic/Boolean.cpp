@@ -54,6 +54,18 @@ bool Boolean::operator*() const
 	return truth;
 }
 
+Boolean& Boolean::operator&=(const Boolean& rhs)
+{
+    truth = truth && *rhs;
+    return *this;
+}
+
+Boolean& Boolean::operator|=(const Boolean& rhs) 
+{
+    truth = truth || *rhs;
+    return *this;
+}
+
 Boolean::operator std::string() const
 {
     if (truth)
@@ -68,23 +80,15 @@ std::ostream& operator<<(std::ostream& os, const Boolean& element)
     return os;
 }
 
-/*
-Expression boolean(const std::string_view v)
+Boolean operator&(Boolean lhs, const Boolean& rhs)
 {
-    if (v == "true")
-        return boolean(true);
-    else if (v == "false")
-        return boolean(false);
-    else
-        throw std::invalid_argument(std::string("Unrecognized boolean value:") + std::string(v));
+    return lhs &= rhs;
 }
 
-Expression boolean(bool v)
+Boolean operator|(Boolean lhs, const Boolean& rhs)
 {
-	return Create<Boolean>(v);
+    return lhs |= rhs;
 }
-*/
-
 
 
 }

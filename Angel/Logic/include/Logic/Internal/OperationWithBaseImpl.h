@@ -14,31 +14,25 @@ Expression OperationWithBase<T>::Simplify() const
     assert(!simple.empty());    // must have base, TODO: catch at construction
 
     auto it = simple.begin();
-    auto const_base = it->template TryCast<Integer>();
     Expression constant;
-    if (const_base)
-    {
-        constant = *const_base;
-    }
-    ++it;
     while(it!=simple.end())
     {
-        auto integer = it->template TryCast <Integer>();        
-        if (integer)
+        if (it->IsConstant())
         {
             if (constant)
-                constant = T::ope(constant, *integer);
+                constant = T::ope(constant, *it);
             else
-                constant = *integer;
+                constant = *it;
             it = simple.erase(it);
         }
         else 
             ++it;
     }
-    if (const_base)
-        simple.front() = constant;
-    else if (constant) 
-        simple.Add(std::move(constant));
+    if (constant) 
+    {
+        auto front = simple.cbegin();
+        simple.AddAt(front, std::move(constant));
+    }
     if (simple.size()==1)
         return simple.front();
     else
@@ -58,7 +52,7 @@ Expression OperationWithBase<T>::Matches(const Expression& expression, const Hyp
 template<class T>
 Expression OperationWithBase<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    assert(!FlatTuple<T>::empty());    // must have base, TODO: catch at construction
+    assert(!FlatTuple<T>::empty());    // must have base, shoukd have been caught at construction
 
     Expression value = std::accumulate(FlatTuple<T>::begin()+1, FlatTuple<T>::end(), 
         FlatTuple<T>::front(),

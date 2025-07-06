@@ -18,43 +18,43 @@ bool List::operator==(const List& rhs) const
     return Tuple::operator==(rhs);
 }
 
-List& List::operator+=(const List& rhs)
+List& List::operator+=(const Container& rhs)
 {
     Tuple::operator+=(rhs);
     return *this;
 }
-List& List::operator-=(const List& rhs)
+List& List::operator-=(const Container& rhs)
 {
     Tuple::operator-=(rhs);
     return *this;
 }
-List& List::operator&=(const List& rhs)
+List& List::operator&=(const Container& rhs)
 {
     Tuple::operator&=(rhs);
     return *this;
 }
-List& List::operator|=(const List& rhs)
+List& List::operator|=(const Container& rhs)
 {
     Tuple::operator|=(rhs);
     return *this;
 }
 
-List operator+(List lhs, const List& rhs) 
+List operator+(List lhs, const Container& rhs) 
 { 
     return lhs += rhs; 
 }
 
-List operator-(List lhs, const List& rhs)
+List operator-(List lhs, const Container& rhs)
 {
     return lhs -= rhs;
 }
 
-List operator&(List lhs, const List& rhs)
+List operator&(List lhs, const Container& rhs)
 {
     return lhs &= rhs;
 }
 
-List operator|(List lhs, const List& rhs)
+List operator|(List lhs, const Container& rhs)
 {
     return lhs |= rhs;
 }

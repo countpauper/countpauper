@@ -6,6 +6,7 @@
 namespace Angel::Logic
 {
 class Expression;
+class Container;
 
 // A list is an ordered non-unique collection of objects (wrapped in nodes)
 class List : public Tuple
@@ -14,10 +15,10 @@ public:
     using Tuple::Tuple;
 
     bool operator==(const List& rhs) const;
-	List& operator+=(const List& rhs);
-	List& operator-=(const List& rhs);
-	List& operator&=(const List& rhs);
-	List& operator|=(const List& rhs);
+	List& operator+=(const Container& rhs);
+	List& operator-=(const Container& rhs);
+	List& operator&=(const Container& rhs);
+	List& operator|=(const Container& rhs);
     explicit operator bool() const;
     List Simplify() const;
     Expression Matches(const Expression& other, const Hypothesis& hypothesis) const;
@@ -30,10 +31,10 @@ public:
 
 using Bag = List;  // TODO bag is unordered, but for now just use this
 
-List operator+(List lhs, const List& rhs);
-List operator-(List lhs, const List& rhs);
-List operator&(List lhs, const List& rhs);
-List operator|(List lhs, const List& rhs);
+List operator+(List lhs, const Container& rhs);
+List operator-(List lhs, const Container& rhs);
+List operator&(List lhs, const Container& rhs);
+List operator|(List lhs, const Container& rhs);
 
 std::ostream& operator<<(std::ostream& os, const List& list);
 

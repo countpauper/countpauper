@@ -58,6 +58,15 @@ TEST(Disjunction, Inference)
     EXPECT_EQ(k.Infer(Disjunction{Predicate("cat")}), True);
 }
 
+TEST(Disjunction, InferContainer)
+{
+    Knowledge k;
+	Set a{Id("ginny"), Id("gizmo")};
+	List b{Id("max"), Id("gizmo")};
+	EXPECT_EQ(k.Infer(Disjunction{a, b}), (Set{Id("max"), Id("gizmo"), Id("ginny")}));
+	EXPECT_EQ(k.Infer(Disjunction{b, a}), (List{Id("max"), Id("gizmo"), Id("ginny")}));
+}
+
 TEST(Disjunction, to_string)
 {
     EXPECT_EQ(to_string(Disjunction{True}), "true");

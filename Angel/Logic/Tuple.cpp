@@ -38,13 +38,17 @@ bool Tuple::operator==(const Tuple& rhs) const
     return std::equal(begin(), end(), rhs.begin());
 }
 
-Tuple& Tuple::operator+=(const Tuple& rhs)
+Tuple& Tuple::operator+=(const Container& rhs)
 {
-    insert(end(), rhs.begin(), rhs.end());
+    for(auto item: rhs)
+    {
+        auto back = cend();
+        AddAt(back, std::move(item));
+    }
     return *this;
 }
 
-Tuple& Tuple::operator-=(const Tuple& rhs)
+Tuple& Tuple::operator-=(const Container& rhs)
 {
     for(const auto& rh_item: rhs)
     {
@@ -53,11 +57,11 @@ Tuple& Tuple::operator-=(const Tuple& rhs)
     return *this;
 }
 
-Tuple& Tuple::operator&=(Tuple rhs)
+Tuple& Tuple::operator&=(Container rhs)
 {
     for(auto it=begin(); it!=end();)
     {
-        auto rhit = rhs.Find(*it);
+        auto rhit = rhs.find(*it);
         if (rhit!=rhs.end())
         {
             rhs.erase(rhit);
@@ -69,11 +73,11 @@ Tuple& Tuple::operator&=(Tuple rhs)
     return *this;
 }
 
-Tuple& Tuple::operator|=(Tuple rhs)
+Tuple& Tuple::operator|=(Container rhs)
 {
     for(auto it=begin(); it!=end();++it)
     {
-        auto rhit = rhs.Find(*it);
+        auto rhit = rhs.find(*it);
         if (rhit!=rhs.end())
         {
             rhs.erase(rhit);

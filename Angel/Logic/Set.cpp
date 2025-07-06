@@ -116,7 +116,7 @@ bool Set::operator==(const Set& rhs) const
     return true;
 }
 
-Set& Set::operator+=(const Set& rhs)
+Set& Set::operator+=(const Container& rhs)
 {
     for(auto item: rhs)
     {
@@ -125,7 +125,7 @@ Set& Set::operator+=(const Set& rhs)
     return *this;
 }
 
-Set& Set::operator-=(const Set& rhs)
+Set& Set::operator-=(const Container& rhs)
 {
     for(const auto& item: rhs)
     {
@@ -134,42 +134,43 @@ Set& Set::operator-=(const Set& rhs)
     return *this;
 }
 
-Set& Set::operator&=(const Set& rhs)
+Set& Set::operator&=(Container rhs)
 {
-    for(auto it = items.begin(); it!=items.end();)
+    for(auto it = begin(); it!=end();)
     {
-        auto rhsIt = rhs.items.find(it->first);
-        if (rhsIt==rhs.items.end()) 
-            it = items.erase(it);
-        else if (it->second!=rhsIt->second)
-            it = items.erase(it);
-        else 
+        auto rhit = rhs.find(*it);
+        if (rhit!=rhs.end())
+        {
+            rhs.erase(rhit);
             ++it;
+        }
+        else 
+            it = erase(it);
     }
     return *this;
 }
 
-Set& Set::operator|=(const Set& rhs)
+Set& Set::operator|=(const Container& rhs)
 {
     return operator+=(rhs);
 }
 
-Set operator+(Set lhs, const Set& rhs) 
+Set operator+(Set lhs, const Container& rhs) 
 { 
     return lhs += rhs; 
 }
 
-Set operator-(Set lhs, const Set& rhs)
+Set operator-(Set lhs, const Container& rhs)
 {
     return lhs -= rhs;
 }
 
-Set operator&(Set lhs, const Set& rhs)
+Set operator&(Set lhs, const Container& rhs)
 {
     return lhs &= rhs;
 }
 
-Set operator|(Set lhs, const Set& rhs)
+Set operator|(Set lhs, const Container& rhs)
 {
     return lhs |= rhs;
 }
@@ -339,6 +340,10 @@ Set::const_iterator Set::end() const
     return const_iterator(items.end());
 }
 
+Set::const_iterator Set::erase(const_iterator item)
+{
+    return Set::const_iterator(items.erase(item.it));
+}
 
 std::ostream& operator<<(std::ostream& os, const Set& set)
 {
