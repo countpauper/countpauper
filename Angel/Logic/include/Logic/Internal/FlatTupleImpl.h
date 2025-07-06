@@ -33,7 +33,6 @@ unsigned FlatTuple<T>::Add(Expression&& e)
     return AddAt(it, std::move(e));
 }
 
-
 template<class T>
 unsigned FlatTuple<T>::AddAt(const_iterator& at, Expression&& e)
 {

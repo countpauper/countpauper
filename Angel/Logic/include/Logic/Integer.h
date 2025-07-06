@@ -29,6 +29,13 @@ private:
 	long value;
 };
 
+Integer operator+(Integer lhs, const Integer& rhs) { return lhs+=rhs; }
+Integer operator-(Integer lhs, const Integer& rhs) { return lhs-=rhs; }
+Integer operator*(Integer lhs, const Integer& rhs) { return lhs*=rhs; }
+Integer operator/(Integer lhs, const Integer& rhs) { return lhs/=rhs; }
+Integer operator^(Integer lhs, const Integer& rhs) { return lhs^=rhs; }
+
 std::ostream& operator<<(std::ostream& os, const Integer& );
+
 
 }

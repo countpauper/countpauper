@@ -55,7 +55,7 @@ Expression OperationWithBase<T>::Infer(const class Knowledge& k, const Hypothesi
     assert(!FlatTuple<T>::empty());    // must have base, shoukd have been caught at construction
 
     Expression value = std::accumulate(FlatTuple<T>::begin()+1, FlatTuple<T>::end(), 
-        FlatTuple<T>::front(),
+        FlatTuple<T>::front().Infer(k, hypothesis, trace),
         [&k, &hypothesis, &trace](const Expression& accumulated, const Expression& item)
         {
             auto inferred = item.Infer(k, hypothesis, trace);
