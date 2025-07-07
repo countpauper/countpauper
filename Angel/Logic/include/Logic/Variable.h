@@ -1,6 +1,6 @@
 #pragma once
 #include "Logic/Hypothesis.h"
-#include "Logic/Individual.h"
+#include "Logic/Internal/Individual.h"
 #include "Logic/Unary.h"
 #include <string>
 

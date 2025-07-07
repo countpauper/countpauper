@@ -74,23 +74,23 @@ Expression Simplify(T&& container)
         return std::move(container);
 }
 
-template<class T> 
-Expression Comparison<T>::Simplify() const
+template<Comparator CO> 
+Expression Comparison<CO>::Simplify() const
 {
-    auto simple = FlatTuple<T>::SimplifyItems();
-    return Angel::Logic::Simplify<T>(std::move(simple));
+    auto simple = FlatTuple<Comparison<CO>>::SimplifyItems();
+    return Angel::Logic::Simplify<Comparison<CO>>(std::move(simple));
 } 
 
-template<class T>
-bool Comparison<T>::HasLeftAssumption() const
+template<Comparator CO> 
+bool Comparison<CO>::HasLeftAssumption() const
 {
-    if (FlatTuple<T>::empty())
+    if (FlatTuple<Comparison<CO>>::empty())
         return false;
-    return !FlatTuple<T>::front().Assumptions().empty();
+    return !FlatTuple<Comparison<CO>>::front().Assumptions().empty();
 }
 
-template<class T>
-Expression Comparison<T>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
+template<Comparator CO> 
+Expression Comparison<CO>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     auto substituted = Substitute(hypothesis);
     assert(substituted.size()==1);  // single element equations can be matched but not inferred. Predicate argument only
@@ -101,14 +101,14 @@ Expression Comparison<T>::Matches(const Expression& expression, const Hypothesis
     return newHypothesis;
 }
 
-template<class T>
-Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
+template<Comparator CO> 
+Expression Comparison<CO>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    assert(FlatTuple<T>::size()>1);   // single element equations can't be inferred only matched
-    if (!FlatTuple<T>::Assumptions().empty()) {
-        return Association(True, T(static_cast<const Tuple&>(*this)));
+    assert(FlatTuple<Comparison<CO>>::size()>1);   // single element equations can't be inferred only matched
+    if (!FlatTuple<Comparison<CO>>::Assumptions().empty()) {
+        return Association(True, Comparison<CO>(static_cast<const Tuple&>(*this)));
     }
-    Expression first = FlatTuple<T>::front().Infer(k, hypothesis, trace);
+    Expression first = FlatTuple<Comparison<CO>>::front().Infer(k, hypothesis, trace);
     for(const auto& item: *this | std::views::drop(1))
     {
         auto inferred = item.Infer(k, hypothesis, trace);
@@ -118,21 +118,21 @@ Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypo
         // and how does order (not) matter then?  "23" = 23 = 23.0 those should pbly not be automatically equal 
         // but integer and float? 23.0=23   and 23=23.0 ? 
         // at least hypothesis would have to be done here. 
-        if (!T::ope(first, cast))
+        if (!CO(first, cast))
             return False;
     }
     return True;
 }
 
 // TODO: Generalize with operation 
-template<class T>
-std::ostream& operator<<(std::ostream& os, const Comparison<T>& comparison)
+template<Comparator CO>
+std::ostream& operator<<(std::ostream& os, const Comparison<CO> & comparison)
 {
     bool first = comparison.size()>1;
     for(const auto& obj: comparison)
     {
         if (!first)
-            os << T::ope;
+            os << CO;
         os << obj;
         first = false;
     }

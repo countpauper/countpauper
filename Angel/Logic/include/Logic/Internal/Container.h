@@ -3,7 +3,7 @@
 #include "Logic/Set.h"
 #include "Logic/List.h"
 #include "Logic/All.h"
-#include "Internal/Variant.h"
+#include "Logic/Internal/Variant.h"
 #include <variant>
 
 
@@ -77,5 +77,6 @@ Expression operator+(Container lhs, const Container& rhs);
 Expression operator-(Container lhs, const Container& rhs);
 Expression operator&(Container lhs, const Container& rhs);
 Expression operator|(Container lhs, const Container& rhs);
+
 std::ostream& operator<<(std::ostream& s, const Container& e);
 }

@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include "Logic/Knowledge.h"
-#include "Logic/Ordering.h"
 #include "Logic/Expression.h"
 #include "Logic/Trace.h"
 
@@ -15,7 +14,7 @@ TEST(Equal, Construction)
         (Equal{Integer(1), False}));   
 
 	static_assert(Logic::is_operation<Equal>);
-	static_assert(Logic::is_ordering<Equal>);
+	static_assert(Logic::is_comparison<Equal>);
 }
 
 TEST(Equal, Simplify)

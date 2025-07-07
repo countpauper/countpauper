@@ -1,4 +1,4 @@
-#include "Logic/Individual.h"
+#include "Logic/Internal/Individual.h"
 #include "Logic/Expression.h"
 #include <memory>
 

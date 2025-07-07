@@ -1,10 +1,10 @@
 #pragma once
-#include "Logic/Boolean.h"
-#include "Logic/Integer.h"
+#include "Logic/Internal/Number.h"
 #include "Logic/Id.h"
 #include "Logic/String.h"
 #include "Logic/Variable.h"
 #include "Logic/Internal/VariantUtils.h"
+
 #include <variant>
 
 namespace Angel::Logic
@@ -13,7 +13,7 @@ namespace Angel::Logic
 using ElementVariant = std::variant<Boolean, Integer, Id, String>;
 
 template < typename T >
-concept IsElement = is_alternative<T, ElementVariant>;
+concept IsElement = is_alternative<T, ElementVariant> || std::is_same_v<T, Number>;
 
 class Element : public ElementVariant
 {

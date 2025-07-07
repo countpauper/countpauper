@@ -2,6 +2,7 @@
 
 #include <variant>
 #include "Logic/CastException.h"
+#include "Logic/Internal/VariantUtils.h"
 
 namespace Angel::Logic
 {
@@ -141,4 +142,8 @@ public:
     }
 };
 
+template < typename VT>
+concept is_variant = requires(const VT& v) {
+    { v.AlternativeTypeId() } -> std::convertible_to<const std::type_info&>;
+};
 }

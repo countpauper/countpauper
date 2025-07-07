@@ -2,7 +2,7 @@
 
 #include "Logic/Element.h"
 #include "Logic/Hypothesis.h"
-#include "Logic/Hash.h"
+#include "Logic/Internal/Hash.h"
 #include <unordered_map>
 #include <optional>
 #include <vector> 

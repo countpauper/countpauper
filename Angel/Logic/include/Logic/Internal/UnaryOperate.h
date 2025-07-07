@@ -1,6 +1,5 @@
 #pragma once
 #include "Logic/Expression.h"
-#include "Logic/Internal/Oprate.h"
 
 namespace Angel::Logic
 {

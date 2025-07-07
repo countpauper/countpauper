@@ -26,12 +26,24 @@ ExpressionVariant make_binary_operation(const Operator ope, Tuple&& operands)
 {
     Logic::Expression result = Logic::False;
     bool found = false;
-    
+
     ((!found && (found = (Ts::ope == ope)) 
-        ? (result.emplace<Ts>(std::move(operands)), true) 
+        ? result.emplace<Operation>(Ts(std::move(operands))), true 
         : false), ...);
     
     if (!found) throw std::invalid_argument(std::format("Invalid binary operator {}", std::string(ope)));
+    return result;
+}
+
+template <typename... Ts>
+ExpressionVariant make_ordering(const Operator ope, Tuple&& operands) 
+{
+    Logic::Expression result = Logic::False;
+    bool found = false;
+    ((!found && (found = (Ts::ope == ope)) 
+        ? result.emplace<Ordering>(Ts(std::move(operands))), true 
+        : false), ...);    
+    if (!found) throw std::invalid_argument(std::format("Invalid comparator {}", std::string(ope)));
     return result;
 }
 
@@ -44,9 +56,10 @@ ExpressionVariant make_operation(const Operator ope, Tuple&& operands)
             return Container(All(std::move(operands[0])));
         else
             return make_unary_operation<Negative,Variable>(ope, std::move(operands[0]));
-    else 
-        return make_binary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction, 
-            Equal, Unequal, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
+    else if (ope.IsComparator())
+        return make_ordering<Equal, Unequal, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
+    else
+        return make_binary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction>(ope, std::move(operands));
 }
 
 

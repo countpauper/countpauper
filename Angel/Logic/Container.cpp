@@ -1,4 +1,4 @@
-#include "Logic/Container.h"
+#include "Logic/Internal/Container.h"
 #include "Logic/Expression.h"
 #include "Logic/Internal/container_iterator.h"
 #include <sstream>

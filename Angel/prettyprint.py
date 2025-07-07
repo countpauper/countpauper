@@ -30,15 +30,19 @@ class ExpressionPrinter:
     def to_string(self):
         return self.s
 
+def unicode_unescape(s):
+    return s.replace('\\x','\\u') # .encode('latin1').decode('unicode_escape')
+
 class OperatorPrinter:
     def __init__(self, val):
         self.val = val['op']['sw']  
         # print(f"OperatorPrinter {self.val}")
 
     def to_string(self):
-        unicode = str(self.val['unicode']).split(' ')[-1][2:-1]
+        code = str(self.val['unicode']).split(' ')[-1][2:-1]
+        code = unicode_unescape(code)
         operands = str(self.val['operands']).split(' ')[0]
-        return f"{unicode}/{operands}"  
+        return f"{code}/{operands}"  
       
     def display_hint(self):
         return None # "string"
@@ -59,13 +63,13 @@ class SimplePrinter:
 def angel_printer(val):
     try: 
         type_str = str(val.type)
-        # print(f"type {type_str}")
+        #print(f"type {type_str}")
         if type_str.startswith("const "):
             type_str = type_str[6:]
         if type_str.startswith(ns_prefix):
             logic_type = type_str[len(ns_prefix):]
             if logic_type == "Expression": 
-                return ExpressionPrinter(val)
+                return None # ExpressionPrinter(val)
             elif logic_type == "Operator":
                 return OperatorPrinter(val)
             elif logic_type == "Id":
@@ -77,9 +81,9 @@ def angel_printer(val):
             elif logic_type == "Variable":
                 return SimplePrinter(val.type, val["name"])    
             elif logic_type == "String":
-                return SimplePrinter(val.type, val["name"])    
-            elif logic_type == "Tuple":
-                return SimplePrinter(val.type, val["name"])  
+                return SimplePrinter(val.type, val["value"])    
+            #elif logic_type == "Tuple":
+            #S    return SimplePrinter(val.type, val["name"])  
             # TODO but gdb seems to have these with value in storage?
             #elif logic_type == "Expression":
             #    print(f"Expression: type = {val.type}")
@@ -93,7 +97,5 @@ def angel_printer(val):
     except Exception as e:
         stack = traceback.extract_stack()# [:-1]
         print(f"{e} at\n{traceback.format_exc()}") # \n{traceback.format_exc()}")
-
-
 
 gdb.pretty_printers.append(angel_printer)

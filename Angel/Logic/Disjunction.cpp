@@ -34,7 +34,7 @@ Expression Disjunction::Matches(const Expression&, const Hypothesis& hypothesis)
     return False;
 }
 
-Expression Disjunction::Substitute(const Hypothesis& hypothesis) const
+Disjunction Disjunction::Substitute(const Hypothesis& hypothesis) const
 {
     return SubstituteItems(hypothesis);
 }

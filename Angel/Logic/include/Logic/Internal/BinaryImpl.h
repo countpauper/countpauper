@@ -16,7 +16,7 @@ constexpr Expression operate<BinaryOperator{L'+'}>(const Expression& lhs, const 
 {
     if (const auto* lhInt = lhs.GetIf<Integer>())
     {
-        return *lhInt +  rhs.Cast<Integer>();
+        return *lhInt + rhs.Cast<Integer>();
     }
     else if (const auto* lhBool = lhs.GetIf<Boolean>())
     {   // TODO this gets rediculous with more numbers. Make numbers variant, also in operator- 

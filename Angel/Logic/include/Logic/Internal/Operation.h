@@ -1,31 +1,66 @@
 #pragma once
-#include "Logic/Internal/FlatTuple.h"
-#include "Logic/Hypothesis.h"
-#include <iostream>
+
+#include "Logic/Summation.h"
+#include "Logic/Subtraction.h"
+#include "Logic/Multiplication.h"
+#include "Logic/Division.h"
+#include "Logic/Conjunction.h"
+#include "Logic/Disjunction.h"
+#include "Logic/Internal/Variant.h"
+#include <variant>
+
 
 namespace Angel::Logic
 {
 
-template<class T>
-class Operation : public FlatTuple<T>
+using OperationVariant = Variant<
+    Summation, Subtraction, Multiplication, Division, Conjunction, Disjunction>;  
+class const_container_iterator;
+
+class Operation : public OperationVariant
 {
 public:
+    Operation(const Operation&) = default;
+    using OperationVariant::OperationVariant;
     
-    using FlatTuple<T>::FlatTuple;
+    Operation& operator=(const Operation& e);
 
+    std::size_t size() const;
     Expression Simplify() const;
-    Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
-    T Substitute(const Hypothesis& hypothesis) const
+    Set Assumptions() const;
+    Operation Substitute(const Hypothesis& hypothesis) const;
+    Expression Matches(const Expression& e, const Hypothesis& hypothesis) const;
+    Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
+    BinaryOperator GetOperator() const;
+    std::string Summary() const;
+    
+    template<typename T> 
+    requires is_alternative<T, OperationVariant>
+    bool operator==(const T& rhs) const
     {
-        return FlatTuple<T>::SubstituteItems(hypothesis);
+        return std::visit(overloaded_visit{
+            [&rhs](const T& lv)
+            {
+                return lv == rhs;
+            }, 
+            [](const auto&) { return false; }   
+            },*this);
     }
-    Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
-protected:
-    using BaseType = Operation<T>;
+    bool operator==(const Operation& rhs) const;
+ 
+    template<typename T> 
+    bool operator<(const T& rhs) const
+    {
+        return std::visit(
+            [this, &rhs](const auto& obj) 
+            {   
+                std::hash<Expression> hasher;
+                return this->Hash() < hasher(rhs);
+            },*this);
+    }
+
+    bool operator<(const Operation& o) const;
 };
 
-
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const Operation<T>& operation);
-
+std::ostream& operator<<(std::ostream& s, const Operation& e);
 }

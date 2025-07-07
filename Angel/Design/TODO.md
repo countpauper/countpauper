@@ -16,10 +16,6 @@
          - [ ] Maybe operation is one type and the operator the sub variant
         - [*] Maybe containers are one type and unique+ordered the sub variant
         - [ ] Elements even, if for no other reason than to fix pretty printing ? There is alreay a variant
-- [ ] Rename Collection to reuse Tuple 
-- [*] And FlatCollection 
-- [*] Can't flat collection just derive from tuple, overload Add to add all containers (also all?) `cat&*[dog,bunny] = cat&dog&bunny?` `cat&*WHAT` ? by iterating? Not even be templated? 
-- [*] True and False replaced with constexpr Logic::True and Logic::False
 - [ ] Clean up a bunch of TODOs or at least put them/checki if they are in this document instead 
 - [ ] Maybe association causation :<- should be split to differentiate how they are simplified, but which operators. Maybe just internally and for the syntax only when parsing clauses. To reduce variant it could be a boolean/enum/sub variant (pair, causation, range)
 
@@ -76,25 +72,25 @@
 -   [*] Be able to implement factorial like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples
     - [*] With inequality match `factorial(<2): 1`
 -   [*] List operators - + & |
--   [ ] Some way to filter. Using boolean associations seems appropriate as false means out `[*($V @ input: $V<2)]` or even better [*in:<2]
-        [ ]  associations with a single argument comparison will apply to the left side when simplifying. 3:<2 is 3 or 3:false, which is not added to the list
-        [ ] Add associations to list (and sets) checks false of right hand side          
-        [ ] associatons with a tuple will apply the associations to all elements of the tuple 
+-   [*] Some way to filter. Using boolean associations seems appropriate as false means out `[*($V @ input: $V<2)]` or even better [*in:<2]
+        [*]  associations with a single argument comparison will apply to the left side when simplifying. 3:<2 is 3 or 3:false, which is not added to the list
+        [*] Add associations to list (and sets) checks false of right hand side          
+        [*] associatons with a tuple will apply the associations to all elements of the tuple 
         [ ] Test conjunction & disjunction return the last/first truish value as is
         [ ] Tuples in a set are more generator if there are operators with them. Eg *x+2 is also [x0+2, x1+2,...]
-- [ ] /cheese shows an image of cheese 
+                and *L&prdicate (todo in container operator &)
 Sort code: 
 quicksort([]): []
 quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 
--   [ ] set on list and list on set operators `&|+-` (if both side containers?) 
--   [ ] Be able to implement quicksort like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples (x:xs means [x]+xs if xs is a list or as used here to split head:tail
+-   [*] set on list and list on set operators `&|+-` (if both side containers?) 
+-   [*] Be able to implement quicksort like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples (x:xs means [x]+xs if xs is a list or as used here to split head:tail
 -   [*] Membership operator x.{x,y} (done for List)
 
 - Python
 -   [ ] namespaces
 -   [ ] Indexing lists (not sets, only ordered/indexible)  [x,y,z][1]
--   [ ] Add floating points and conversions
+-   [ ] Add floating points (number) and conversions
 -   [ ] ranges [x..y] 
 -   [ ] infinite ranges [..y]
 -   [ ] More advanced ranges, with step ?  (syntax?) x..y*3 is step 3 but to from x*3 to y*3 ? 
@@ -104,7 +100,7 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [ ] Assigning a free clause association is a lambda `l: sqr(n):n*n`.   
 -   [*] Make knowledge and namespace expressions, clauses associations 
 -   [ ] Sub namespaces
--   [ ] Scalar operators on containers [1,2]+2 = [1+1,2+1]
+-   [ ] Scalar operators on containers *[1,2]+2 = [1+1,2+1]
 -   [ ] Scalar operators on ranges are applied to the limits (1..2)*2 = 2..4
 -   [ ] Scalar operator on an all/any is all/any of its operands all([1,2])+2 = all([1+2,2+2]) (precedence correction)
 -   [ ] All of and any of element in a comparison is a conjunection, disjunction respectively. 
@@ -152,12 +148,12 @@ then the stack is reset every time. For performance the importing thing is what 
 it mean if it was omitted? In this case the user may have to supply the empty list case
 -   [ ] Namespace from `axiom:{set,}` preferably without the comma when parsing. Are commas ever needed for collections? for arguments?
 -   [ ] dicts (sets of associations) work as structs
--   [ ] set access with `.` (list done, full feature for unique) 
+-   [*] set access with `.` (list done, full feature for unique) 
 -   [ ] Bag as unordered list if it has any advantages for speed and such 
 -   [ ] ^ ⊕ is XOR (only one of the whole set is true) and ** ↑ (like python & knuth ) for power
 -   [ ] No unsigned integer & bit (ie `12&7=4`). Instead perhaps make some sort of bitmask ordered container or operator where 
 [True, False] & [True, True] = [True&True, False&True]. Peraps it's just All: [*Left & *Right]. It would work more like numby matrix operations anyway. 
--   [ ] Down arrow notation for built in logarithm (invser of up). Non unicode notation tbd perhaps \/ or // 
+-   [ ] Down arrow notation for built in logarithm (inverse of up). Non unicode notation tbd perhaps \/ or // 
 -   [ ] ! postfix operator for factorial 
 -   [ ] sqrt prefix operator but what is the non unicode ? Implemented as shortcut for exponent(x, 0.5) 
 -   [ ] square and cube uncide postfix for exponent(x,2) and exponent(x,3) 

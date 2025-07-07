@@ -2,6 +2,7 @@
 #include "Logic/Expression.h"
 #include "Logic/Internal/UnaryImpl.h"
 #include "Logic/Internal/BinaryImpl.h"
+#include "Logic/Internal/Operation.h"
 #include <numeric>
 
 namespace Angel::Logic

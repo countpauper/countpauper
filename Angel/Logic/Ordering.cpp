@@ -1,4 +1,4 @@
-#include "Logic/Internal/Operation.h"
+#include "Logic/Internal/Ordering.h"
 #include "Logic/Expression.h"
 #include <sstream>
 #include <string>
@@ -6,15 +6,13 @@
 namespace Angel::Logic
 {
 
-const Integer Multiplication::initial(1);
-
-Operation& Operation::operator=(const Operation& e)
+Ordering& Ordering::operator=(const Ordering& e)
 {
-    OperationVariant::operator=(e);
+    OrderingVariant::operator=(e);
     return *this;
 }
 
-std::size_t Operation::size() const
+std::size_t Ordering::size() const
 {
     return std::visit(
         [this](const auto& obj)
@@ -23,7 +21,7 @@ std::size_t Operation::size() const
         }, *this);   
 }
 
-Expression Operation::Simplify() const
+Expression Ordering::Simplify() const
 {
     return std::visit(
         [this](const auto& obj) -> Expression
@@ -32,27 +30,36 @@ Expression Operation::Simplify() const
         }, *this);      
 }
 
-Set Operation::Assumptions() const
+Set Ordering::Assumptions() const
 {
     return std::visit(
         [this](const auto& obj)
         {
             return obj.Assumptions();
         }, *this);
-
 }
 
-Operation Operation::Substitute(const Hypothesis& hypothesis) const
+bool Ordering::HasLeftAssumption() const
+{
+    return std::visit(    
+        [this](const auto& obj)
+        {
+            return obj.HasLeftAssumption();
+        }, *this);   
+}
+
+
+Ordering Ordering::Substitute(const Hypothesis& hypothesis) const
 {
     return std::visit(
-        [&hypothesis](const auto& obj) -> Operation
+        [&hypothesis](const auto& obj) -> Ordering
         {
-            return obj.Substitute(hypothesis);
-        }, *this);      
+            return Ordering(obj.Substitute(hypothesis));
+        },   *this);      
 }
 
 
-Expression Operation::Matches(const Expression& e, const Hypothesis& hypothesis) const 
+Expression Ordering::Matches(const Expression& e, const Hypothesis& hypothesis) const 
 {
     return std::visit(
         [&e, &hypothesis](const auto& obj) 
@@ -61,7 +68,7 @@ Expression Operation::Matches(const Expression& e, const Hypothesis& hypothesis)
         },   *this);    
 }
 
-Expression Operation::Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const
+Expression Ordering::Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const
 {
     return std::visit(
         [&knowledge, &hypothesis, &trace](const auto& obj) -> Expression {
@@ -69,21 +76,26 @@ Expression Operation::Infer(const class Knowledge& knowledge, const Hypothesis& 
         }, *this);
 }
 
-BinaryOperator Operation::GetOperator() const
+Ordering::operator bool() const
+{
+    return size()!=0;
+}
+
+Comparator Ordering::GetComparator() const
 {
     return std::visit(
         [](const auto& obj) 
         {
             return obj.ope;
-        }, *this);    
+        },   *this);    
 }
 
-std::string Operation::Summary() const
+std::string Ordering::Summary() const
 {
-    return std::format("{} with {} operands", GetOperator().Description(), size());
+    return std::format("{} with {} operands", GetComparator().Description(), size());
 }    
 
-bool Operation::operator==(const Operation& rhs) const
+bool Ordering::operator==(const Ordering& rhs) const
 {
     return std::visit(
         [this](const auto& rho)
@@ -93,19 +105,19 @@ bool Operation::operator==(const Operation& rhs) const
 }
 
 
-bool Operation::operator<(const Operation& o) const
+bool Ordering::operator<(const Ordering& o) const
 {
     return Hash() < o.Hash();
 }
 
-std::string to_string(const Operation& c)
+std::string to_string(const Ordering& c)
 {
     std::stringstream ss;
     ss << c;
     return ss.str();
 }
 
-std::ostream& operator<<(std::ostream& s, const Operation& c)
+std::ostream& operator<<(std::ostream& s, const Ordering& c)
 {
     std::visit(
         [&s](const auto& obj)
@@ -114,6 +126,5 @@ std::ostream& operator<<(std::ostream& s, const Operation& c)
         }, c);
     return s;
 }
-
 
 }

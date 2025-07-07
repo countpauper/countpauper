@@ -87,7 +87,7 @@ Predicate Predicate::Substitute(const Hypothesis& hypothesis) const
 bool IsQueryHypothesis(const Expression& e)
 {
 	return std::visit(overloaded_visit{
-        []<Logic::is_ordering C>(const C& comparison)
+        [](const Ordering& comparison)
 		{
 			return comparison.HasLeftAssumption();
 		}, 

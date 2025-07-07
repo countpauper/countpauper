@@ -1,7 +1,6 @@
 #include "Logic/Operator.h"
 #include "Logic/Comparator.h"
 #include "Logic/Integer.h"
-#include "Logic/Internal/OperationImpl.h"
 #include "Logic/Internal/ComparisonImpl.h"
 #include <locale>
 #include <codecvt>
@@ -122,6 +121,7 @@ BinaryOperator::BinaryOperator(const std::string_view tag) :
     Operator(tag, operands)
 {
 }
+
 
 std::ostream& operator<<(std::ostream& os, const Operator& op)
 {

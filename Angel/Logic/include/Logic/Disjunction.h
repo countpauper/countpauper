@@ -17,7 +17,7 @@ public:
     using FlatTuple<Disjunction>::FlatTuple;
     Expression Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
-    Expression Substitute(const Hypothesis& hypothesis) const;
+    Disjunction Substitute(const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     bool operator==(const Disjunction& other) const;
 

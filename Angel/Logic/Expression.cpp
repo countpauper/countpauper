@@ -23,7 +23,15 @@ Expression& Expression::operator=(const Expression& e)
 Operator Expression::GetOperator() const
 {
     return std::visit(overloaded_visit{
-        [this]<is_operation T>(const T& operation) -> Operator
+        [](const Operation& operation) -> Operator 
+        {
+            return operation.GetOperator();
+        },
+        [](const Ordering& ordering) -> Operator 
+        {
+            return ordering.GetComparator();
+        },        
+        [this]<is_operation T>(const T& obj) -> Operator
         {
             return T::ope;
         },
@@ -35,7 +43,7 @@ Operator Expression::GetOperator() const
 
 bool Expression::IsComparison() const 
 {
-    return GetOperator().IsComparator();
+    return Is<Ordering>();
 }
 
 std::size_t Expression::size() const
@@ -45,10 +53,14 @@ std::size_t Expression::size() const
         {
             return container.size();
         },
-        [this]<is_operation OT>(const OT& operation)
+        [this](const Operation& operation)
         {
             return operation.size();
-        },
+        },  
+        [this](const Ordering& ordering)
+        {
+            return ordering.size();
+        },                     
         [this](const auto& obj)
         {
             return 0ULL;
@@ -86,6 +98,19 @@ Expression Expression::Cast(const std::type_info& rtt) const
         throw CastException(AlternativeTypeId(), rtt); 
 }
 
+const std::type_info& Expression::AlternativeTypeId() const 
+{
+    return *std::visit(overloaded_visit{
+        [this]<is_variant T>(const T& obj)
+        {
+            return &obj.AlternativeTypeId();
+        },
+        [this](const auto& obj)
+        {
+            return &ExpressionVariant::AlternativeTypeId();
+        }}, *this);   
+}
+
 Expression Expression::Simplify() const
 {
     return std::visit(overloaded_visit{
@@ -114,10 +139,10 @@ Set Expression::Assumptions() const
         {
             return Set{};
         },
-        [this]<IsElement T>(const T& element)
+        [this]<IsElement T>(const T&)
         {
             return Set{};
-        },
+        },        
         [this](const Function&)
         {
             return Set{};
@@ -141,7 +166,7 @@ Expression Expression::Substitute(const Hypothesis& hypothesis) const
         {
             return Expression();
         },
-        [this]<IsElement T>(const T& element)   -> Expression 
+        [this]<IsElement T>(const T& element) -> Expression 
         {
             return *this;
         },
@@ -186,8 +211,13 @@ Expression Expression::Infer(const class Knowledge& knowledge, const Hypothesis&
         {
             return *this;
         },
-        []<IsElement T>(const T& element) -> Expression {
+        []<IsElement T>(const T& element) -> Expression 
+        {
             return element; 
+        },
+        [](const Number& number) -> Expression 
+        {
+            return number;
         },
         [&knowledge, &hypothesis, &trace](const auto& obj) -> Expression {
             return obj.Infer(knowledge, hypothesis, trace);
@@ -209,14 +239,26 @@ bool Expression::operator<(const Expression& e) const
 std::string Expression::Summary() const
 {
     return std::visit(Logic::overloaded_visit{
-         [this]<Logic::IsElement T>(const T& element) -> std::string 
-         {
+        [this]<Logic::IsElement T>(const T& element) -> std::string 
+        {
             return Logic::to_string(*this);
+        },
+        [this](const Number& number) 
+        {
+            return Logic::to_string(number);
         },
         [](const Logic::Function& fn)
         {
             return std::string(fn.ShortDescription());
         },
+        [](const Operation& operation) -> std::string 
+        {
+            return operation.Summary(); 
+        },
+        [](const Ordering& ordering) -> std::string 
+        {
+            return ordering.Summary();
+        },          
         []<Logic::is_operation Op>(const Op& operation) -> std::string 
         {
             return std::format("{} with {} terms", operation.ope.Description(), operation.size()); 
