@@ -26,6 +26,12 @@ Variable Variable::Simplify() const
     return *this;   
 }
 
+
+Set Variable::Assumptions() const 
+{
+    return Set{*this};
+}
+
 Expression Variable::Substitute(const Hypothesis& hypothesis) const
 {
     if (empty())
@@ -47,7 +53,6 @@ Expression Variable::Substitute(const Hypothesis& hypothesis) const
             {
                 return equation->front().Substitute(hypothesis);
             }
-        
         }
     }
     return *this;

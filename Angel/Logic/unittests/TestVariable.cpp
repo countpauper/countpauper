@@ -16,6 +16,12 @@ TEST(Variable, Construction)
     EXPECT_EQ(Expression(PrefixOperator(L'$'), {Id("Test")}), Variable("Test"));
 }
 
+TEST(Variable, IsAnAssumption)
+{
+	EXPECT_EQ(Variable("T").Assumptions(), (Set{Variable("T")}));
+	EXPECT_FALSE(Expression(Variable("T")).IsConstant());
+}
+
 TEST(Variable, Query)
 {
 	Knowledge k;

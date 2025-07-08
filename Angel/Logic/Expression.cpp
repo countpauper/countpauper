@@ -31,10 +31,6 @@ Operator Expression::GetOperator() const
         {
             return ordering.GetComparator();
         },        
-        [this]<is_operation T>(const T& obj) -> Operator
-        {
-            return T::ope;
-        },
         [this](const auto& obj)
         {
             return Operator();
@@ -147,10 +143,6 @@ Set Expression::Assumptions() const
         {
             return Set{};
         },
-        [this](const Variable& v)
-        {
-            return Set{v};
-        },
         [this](const auto& obj)
         {
             return obj.Assumptions();
@@ -259,10 +251,6 @@ std::string Expression::Summary() const
         {
             return ordering.Summary();
         },          
-        []<Logic::is_operation Op>(const Op& operation) -> std::string 
-        {
-            return std::format("{} with {} terms", operation.ope.Description(), operation.size()); 
-        },
         [](const Container& container) -> std::string 
         {
             return container.Summary();

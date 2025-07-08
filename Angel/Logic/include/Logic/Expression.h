@@ -22,10 +22,9 @@ using ExpressionVariant = Variant<
     std::monostate,
     Function,      
     Number,
-    Id, String, Variable, 
+    Id, String, 
     Container,
     Predicate, Association,
-    Negative,   // TODO: move to operation
     Operation, 
     Ordering>;  
 

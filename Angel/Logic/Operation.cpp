@@ -42,10 +42,10 @@ Set Operation::Assumptions() const
 
 }
 
-Operation Operation::Substitute(const Hypothesis& hypothesis) const
+Expression Operation::Substitute(const Hypothesis& hypothesis) const
 {
     return std::visit(
-        [&hypothesis](const auto& obj) -> Operation
+        [&hypothesis](const auto& obj) -> Expression
         {
             return obj.Substitute(hypothesis);
         }, *this);      
@@ -69,10 +69,10 @@ Expression Operation::Infer(const class Knowledge& knowledge, const Hypothesis& 
         }, *this);
 }
 
-BinaryOperator Operation::GetOperator() const
+Operator Operation::GetOperator() const
 {
     return std::visit(
-        [](const auto& obj) 
+        [](const auto& obj) -> Operator
         {
             return obj.ope;
         }, *this);    
@@ -80,7 +80,11 @@ BinaryOperator Operation::GetOperator() const
 
 std::string Operation::Summary() const
 {
-    return std::format("{} with {} operands", GetOperator().Description(), size());
+    auto terms = size();
+    if (terms==1)
+        return std::format("{} with {} term", GetOperator().Description(), terms);
+    else 
+        return std::format("{} with {} terms", GetOperator().Description(), terms);
 }    
 
 bool Operation::operator==(const Operation& rhs) const

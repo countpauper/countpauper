@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Logic/Summation.h"
+#include "Logic/Negative.h"
 #include "Logic/Subtraction.h"
 #include "Logic/Multiplication.h"
 #include "Logic/Division.h"
 #include "Logic/Conjunction.h"
 #include "Logic/Disjunction.h"
+#include "Logic/Variable.h"
 #include "Logic/Internal/Variant.h"
 #include <variant>
 
@@ -14,6 +16,7 @@ namespace Angel::Logic
 {
 
 using OperationVariant = Variant<
+    Negative, Variable,
     Summation, Subtraction, Multiplication, Division, Conjunction, Disjunction>;  
 class const_container_iterator;
 
@@ -28,12 +31,12 @@ public:
     std::size_t size() const;
     Expression Simplify() const;
     Set Assumptions() const;
-    Operation Substitute(const Hypothesis& hypothesis) const;
+    Expression Substitute(const Hypothesis& hypothesis) const;
     Expression Matches(const Expression& e, const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
-    BinaryOperator GetOperator() const;
+    Operator GetOperator() const;
     std::string Summary() const;
-    
+
     template<typename T> 
     requires is_alternative<T, OperationVariant>
     bool operator==(const T& rhs) const

@@ -83,7 +83,6 @@ Predicate Predicate::Substitute(const Hypothesis& hypothesis) const
     return Predicate(id, arguments.Substitute(hypothesis));
 }
 
-
 bool IsQueryHypothesis(const Expression& e)
 {
 	return std::visit(overloaded_visit{

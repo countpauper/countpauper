@@ -14,7 +14,7 @@ ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand)
     bool found = false;
     
     ((!found && (found = (Ts::ope == ope)) 
-        ? (result.emplace<Ts>(std::move(operand)), true) 
+        ? (result.emplace<Operation>(Ts(std::move(operand))), true) 
         : false), ...);
     
     if (!found) throw std::invalid_argument(std::format("Invalid unary operator {}", std::string(ope)));
