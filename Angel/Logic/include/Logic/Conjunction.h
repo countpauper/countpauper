@@ -1,9 +1,8 @@
 #pragma once
-#include "Logic/Internal/FlatTuple.h"
+#include "Logic/Internal/OperationBase.h"
 #include "Logic/Hypothesis.h"
-#include "Logic/Element.h"
 #include "Logic/Binary.h"
-#include <iostream>
+#include "Logic/Boolean.h"
 
 namespace Angel::Logic
 {
@@ -11,20 +10,18 @@ namespace Angel::Logic
 // A Conjunction is a logical operator, which is true, only if all its elements are True
 // It is currently a Collection (ordered, non-unique) because the ordering is used to determine lazy evaulation
 // but technically it could be ordered and unique. 
-class Conjunction : public FlatTuple<Conjunction> 
+class Conjunction : public OperationBase<Conjunction> 
 {
 public:
-    using FlatTuple<Conjunction>::FlatTuple;
-    Expression Simplify() const;
-    Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
-    Conjunction Substitute(const Hypothesis& hypothesis) const;
+    Conjunction() = default;
+    using OperationBase<Conjunction>::OperationBase;
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
-    bool operator==(const Conjunction& other) const;
+    bool operator==(const Conjunction& rhs) const { return BaseType::operator==(rhs);}
 
     constexpr static BinaryOperator ope {L'∧'};
+    constexpr static Boolean initial=True; 
+    constexpr static Boolean final=False;
 };
-
-std::ostream& operator<<(std::ostream& os, const Conjunction& );
 
 
 }

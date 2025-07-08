@@ -26,16 +26,9 @@ constexpr Expression operate<BinaryOperator{L'+'}>(const Expression& lhs, const 
     {
         return *lhContainer + rhs.Cast<Container>();
     }
-    else if (const auto* lhSum = lhs.GetIf<Summation>())
-    {
-        assert(false); // possibly missing infer or shouldn't get here
-        Summation sum = *lhSum;
-        sum.Add(std::move(Expression(rhs)));
-        return sum;
-    }
     else 
     {
-        assert(false); // possibly missing infer or shouldn't get here
+        assert(false); // possibly missing infer or shouldn't get here. Or perhaps during simplify? 
         return Summation{lhs, rhs};
     }
 }
@@ -54,12 +47,6 @@ constexpr Expression operate<BinaryOperator{L'-'}>(const Expression& lhs, const 
     else if (const auto* lhContainer = lhs.GetIf<Container>())
     {
         return *lhContainer - rhs.Cast<Container>();
-    }
-    else if (const auto* lhSub = lhs.GetIf<Subtraction>())
-    {
-        Subtraction sub = *lhSub;
-        sub.Add(std::move(Expression(rhs)));
-        return sub;
     }
     else 
     {
@@ -101,9 +88,14 @@ constexpr Expression operate<BinaryOperator{L'∧'}>(const Expression& lhs, cons
     {
         return *lhCont & rhs.Get<Container>();
     }
-    auto lhBool = lhs.Get<Boolean>();
-    return lhBool & rhs.Cast<Boolean>();
-
+    else if (const auto* lhBool = lhs.GetIf<Boolean>())
+    {
+        return *lhBool & rhs.Cast<Boolean>();
+    }
+    else 
+    {
+        return Conjunction{lhs, rhs};
+    }
 }
 
 

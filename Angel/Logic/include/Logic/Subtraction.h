@@ -1,18 +1,17 @@
 #pragma once
 #include "Logic/Binary.h"
-#include "Internal/OperationWithBase.h"
+#include "Internal/OperationBase.h"
 #include "Logic/Integer.h"
 #include <iostream>
 
 namespace Angel::Logic
 {
 
-class Subtraction : public OperationWithBase<Subtraction>  
+class Subtraction : public OperationBase<Subtraction>  
 {
 public:
-    using OperationWithBase<Subtraction>::OperationWithBase;
+    using OperationBase<Subtraction>::OperationBase;
     bool operator==(const Subtraction& rhs) const { return BaseType::operator==(rhs);}
-    static const Integer initial;
     constexpr static BinaryOperator ope{L'-'};
 };
 

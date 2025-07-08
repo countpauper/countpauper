@@ -8,6 +8,7 @@ namespace Angel::Logic::Test
 
 TEST(Multiplication, Construction)
 {
+    EXPECT_TRUE((Multiplication{}).empty());
     EXPECT_EQ((Multiplication{Integer(3)}), Multiplication({Integer(3)}));
     EXPECT_NE((Multiplication{Integer(3)}), Multiplication({Integer(3), Integer(2)}));
     EXPECT_EQ(Expression(BinaryOperator(L'⋅'), {Integer(-2), Integer(-1)}), (Multiplication{Integer(-2), Integer(-1)}));   
@@ -27,7 +28,9 @@ TEST(Multiplication, Multiplications)
 
 TEST(Multiplication, Simplify)
 {
+    EXPECT_EQ((Multiplication{}).Simplify(), Integer(1));
     EXPECT_EQ((Multiplication{Integer(2)}).Simplify(), Integer(2));
+    EXPECT_EQ((Multiplication{Integer(0), Integer(2)}).Simplify(), Integer(0));    
     EXPECT_EQ((Multiplication{Integer(3), Integer(3)}).Simplify(), Integer(9));
 }
 

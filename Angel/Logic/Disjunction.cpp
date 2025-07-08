@@ -6,49 +6,16 @@
 namespace Angel::Logic
 {
 
-bool Disjunction::operator==(const Disjunction& rhs) const
-{
-    return FlatTuple<Disjunction>::operator==(rhs);
-}
-
-Expression Disjunction::Simplify() const
-{
-    Disjunction simpler = SimplifyItems();
-    simpler.Remove(False);
-    for(const auto& item: simpler)
-    {
-        if (item == True)
-            return item;
-    }
-     if (simpler.empty())
-        return False;
-    else if (simpler.size()==1)
-        return simpler.front();
-    return simpler;
-}
-
-Expression Disjunction::Matches(const Expression&, const Hypothesis& hypothesis) const
-{
-    // TODO: Disjunction match with logical simplication
-    // false & X matches true if X is true. 
-    return False;
-}
-
-Disjunction Disjunction::Substitute(const Hypothesis& hypothesis) const
-{
-    return SubstituteItems(hypothesis);
-}
-
 Expression Disjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
     Expression result;
     for(const auto& item: *this)
     {
         Expression inferred = item.Infer(k, hypothesis, trace);
-        if (result == False)
+        if (result == initial)
         {
             auto isTrue = inferred.Simplify().Cast<Boolean>();
-            if (isTrue)
+            if (isTrue == final)
                 return inferred;
         }
         if (result)
@@ -57,21 +24,8 @@ Expression Disjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, 
             result = inferred;
     }
     if (!result)
-        return False;
+        return initial;
     return result;
-}
-
-std::ostream& operator<<(std::ostream& os, const Disjunction& disjunction)
-{
-    bool first = true;
-    for(const auto& obj: disjunction)
-    {
-        if (!first)
-            os << disjunction.ope;
-        os << obj;
-        first = false;
-    }
-    return os;
 }
 
 }

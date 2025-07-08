@@ -6,7 +6,6 @@
 namespace Angel::Logic
 {
 
-const Integer Multiplication::initial(1);
 
 Operation& Operation::operator=(const Operation& e)
 {

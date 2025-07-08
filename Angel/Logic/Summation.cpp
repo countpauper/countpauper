@@ -4,8 +4,6 @@
 namespace Angel::Logic
 {
 
-const Integer Summation::initial(0);
-
 std::ostream& operator<<(std::ostream& os, const Summation& operation)
 {
     bool first = true;

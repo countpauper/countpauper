@@ -1,6 +1,5 @@
 ## Quick todo / Rafactor
 
-- [ ] Rewrite disjunction & conjunction as an Operation<> (although early out? Multiply also early out on 0? exponent on 1 or 0?)
 - [ ] Try to remove substitute it from all non inference functions (get. add, substitute) and merge it with infer. It's mostly juts infer for operations. 
 - [ ] Subsitute is infer for variables, remove that too 
 - [ ] There is too much internal simplifying (especially when adding to containers) and subtituting. 
@@ -13,9 +12,9 @@
 - [*] Find out how big Logic/Angel/Tests are in release really and why, try to optimize for siz
         - MinSizeRel goes 216MB to 7.8MN. Release 8.3. Guess it's mostly debug info. Size is not blocking, only pretty print
         - [*] Make a base LogicVariant with all the basic Is<> GetIf<> const and not const, operator== and Hash etc
-         - [ ] Maybe operation is one type and the operator the sub variant
+         - [*] Maybe operation is one type and the operator the sub variant
         - [*] Maybe containers are one type and unique+ordered the sub variant
-        - [ ] Elements even, if for no other reason than to fix pretty printing ? There is alreay a variant
+        - [*] Elements (did numbers) even, if for no other reason than to fix pretty printing ? There is alreay a variant
 - [ ] Clean up a bunch of TODOs or at least put them/checki if they are in this document instead 
 - [ ] Maybe association causation :<- should be split to differentiate how they are simplified, but which operators. Maybe just internally and for the syntax only when parsing clauses. To reduce variant it could be a boolean/enum/sub variant (pair, causation, range)
 

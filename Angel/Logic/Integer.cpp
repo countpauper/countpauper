@@ -9,11 +9,6 @@
 namespace Angel::Logic
 {
 
-Integer::Integer(long value) :
-	value(value)
-{
-}
-
 Integer::Integer(const Boolean& b) :
     value(*b)
 {

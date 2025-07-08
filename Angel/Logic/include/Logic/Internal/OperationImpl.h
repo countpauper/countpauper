@@ -1,42 +1,64 @@
 #pragma once
 #include "Logic/Expression.h"
-#include "Logic/Internal/UnaryImpl.h"
 #include "Logic/Internal/BinaryImpl.h"
-#include "Logic/Internal/Operation.h"
 #include <numeric>
+#include <cassert>
 
 namespace Angel::Logic
 {
 
 template<class T> 
-Expression Operation<T>::Simplify() const
+Expression OperationBase<T>::Simplify() const
 {
     T simple = FlatTuple<T>::SimplifyItems();
+
     auto it = simple.begin();
-    Expression constant(T::initial);
+    Expression constant;
     while(it!=simple.end())
     {
-        auto integer = it->template TryCast <Integer>();        
-        if (integer)
+        if (it->IsConstant())
         {
-            constant = T::ope(constant, *integer);
+            if constexpr (has_final<T>)
+            {
+                if (*it == T::final)
+                    return T::final;
+            }
+            if constexpr (has_initial<T>) 
+            {
+                if (*it == T::initial)
+                {
+                    it = simple.erase(it);
+                    continue;
+                }
+            }
+            if (constant)
+                constant = T::ope(constant, *it);
+            else
+                constant = *it;
             it = simple.erase(it);
         }
         else 
             ++it;
     }
-    if (constant!=T::initial)
-        simple.Add(std::move(constant));
-    if (simple.empty())
-        return Integer(T::initial);
-    else if (simple.size()==1)
+    if (constant) 
+    {
+        auto front = simple.cbegin();
+        simple.AddAt(front, std::move(constant));
+    }
+    if constexpr (has_initial<T>) 
+    {
+        if (simple.empty())
+            return T::initial;
+    }
+
+    if (simple.size()==1)
         return simple.front();
     else
         return std::move(simple);
 }    
 
 template<class T>
-Expression Operation<T>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
+Expression OperationBase<T>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     // TODO: Operation matches with mathematical simplication
     // X+1 matches 3 if X is 2 
@@ -45,16 +67,14 @@ Expression Operation<T>::Matches(const Expression& expression, const Hypothesis&
     return False;
 }
 
-
-
 template<class T>
-Expression Operation<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
+Expression OperationBase<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    // TODO: float and imaginary and upgrade when needed, also when overflowing
-    // this can, for instance, be done by accumulating an Expression and making Objects implement operator+(Expression) etc
-    
-    Expression value = std::accumulate(FlatTuple<T>::begin(), FlatTuple<T>::end(), Expression(T::initial),
-        [&k, &hypothesis, &trace](Expression accumulated, const Expression& item)
+    assert(!FlatTuple<T>::empty());    // must have base, shoukd have been caught at construction
+
+    Expression value = std::accumulate(FlatTuple<T>::begin()+1, FlatTuple<T>::end(), 
+        FlatTuple<T>::front().Infer(k, hypothesis, trace),
+        [&k, &hypothesis, &trace](const Expression& accumulated, const Expression& item)
         {
             auto inferred = item.Infer(k, hypothesis, trace);
             return T::ope(accumulated, inferred);
@@ -63,7 +83,7 @@ Expression Operation<T>::Infer(const class Knowledge& k, const Hypothesis& hypot
 }    
 
 template<class T>
-std::ostream& operator<<(std::ostream& os, const Operation<T>& operation)
+std::ostream& operator<<(std::ostream& os, const OperationBase<T>& operation)
 {
     bool first = true;
     for(const auto& obj: operation)

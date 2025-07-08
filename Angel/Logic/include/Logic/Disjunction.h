@@ -1,30 +1,23 @@
 #pragma once
-#include "Logic/Internal/FlatTuple.h"
+#include "Logic/Internal/OperationBase.h"
 #include "Logic/Hypothesis.h"
-#include "Logic/Element.h"
 #include "Logic/Binary.h"
-#include <iostream>
+#include "Logic/Boolean.h"
 
 namespace Angel::Logic
 {
 
 // A Disjunction is a logical operator, which is true, if any of its elements is True
-// It is currently a Tuple (ordered, non-unique) because the ordering is used to determine lazy evaulation
-// but technically it could be ordered and unique. 
-class Disjunction : public FlatTuple<Disjunction> 
+class Disjunction : public OperationBase<Disjunction> 
 {
 public:
-    using FlatTuple<Disjunction>::FlatTuple;
-    Expression Simplify() const;
-    Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
-    Disjunction Substitute(const Hypothesis& hypothesis) const;
+    Disjunction() = default;
+    using OperationBase<Disjunction>::OperationBase;
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
-    bool operator==(const Disjunction& other) const;
+    bool operator==(const Disjunction& rhs) const { return BaseType::operator==(rhs);}
 
     static constexpr BinaryOperator ope{L'∨'};
+    constexpr static Boolean initial=False; 
+    constexpr static Boolean final=True;
 };
-
-std::ostream& operator<<(std::ostream& os, const Disjunction& );
-
-
 }

@@ -9,7 +9,7 @@ namespace Angel::Logic
 class Integer
 {
 public:
-	explicit Integer(long value);
+	constexpr explicit Integer(long value) : value(value) {}
 	explicit Integer(const class Boolean& b);
 	explicit Integer(const std::string_view s);
     explicit operator bool() const;
