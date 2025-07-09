@@ -571,7 +571,7 @@ Even if it's not a boolean, but trueish, it is returned as is.
 ```
 
 
-### Conjunction axioms 
+### Conjunction consequents 
 
 Since the set of axioms in a namespace is already the conjunction of all true axioms, 
 using a conjunction on the left side in a Horn clause is easily redefined as individual Horn clauses. 
@@ -592,27 +592,32 @@ cat($X): hairy($X)
 fuzball($x): hairy($X)
 ```
 
-### Disjunction axioms
+### Disjunction consequents
+Unlike conjunction and xor consequents, it's not possible to convert this to horn clauses. Only one positive literal 
+can be on the consequent end. 
 
-TODO:  unlike conjunction axioms, it's not clear how to convery this to horn clauses (unlike conjunection clauses).  
-If it was `xor` then each one could be converted to a horn clause by postulating that the other elements of the 
-disjunction must then be false. There is no xor operator defined yet, but for this example assume it is `||` 
+More complex combinations of conjunctions, disjunctions and negations could be implied 
+and a pretty solid truth table/logic solver may already be needed to convert them to horn clauses and a check on that 
+truth table that there is only one positive per row. 
+
+This is why this is lower priority and at first only horn clauses are allowed. When this is allowed it should 
+check on loading that the single positive literal rule is implied or a more complicated inference engine is needed
+where consequents are hypothesized and inferred further. a|b : c infers c and if true a|b is concluded. If that was the 
+query, then it's fine If a or b was being queried, then the alternative remains part of the hypothesis (true|b or if the 
+hypothesis already contained variables $CAT=ginny|b).
+When converting to horn clauses, for debugging, some traceability to the original clause and from
+there to the source location is useful. 
+
+## Xor axioms
+Unlike disjunction axioms, XOR axioms are easier to redefine into horn clauses, by postulating that the other options are false
 ```
-cat($X) || dog($X) : hairy($X)
+cat($X) ⊕ dog($X) : hairy($X)
 ```
 converted to 
 ```
 cat($X): hairy($X) & ~dog($X)
 dog($X): hairy($X) & ~cat($X) 
-```
-
-More complex compinations of conjunections, disjunctions and negations could be implied 
-and a pretty solid truth table/logic solver may already be needed to convert them to horn clauses
-This is why this is lower priority and at first only horn clauses are allowed.
-When converting to horn clauses, for debugging, some traceability to the original clause and from
-there to the source location is useful. 
-
-
+```\
 ## Negations 
 The `~` operator is used. 
 ```

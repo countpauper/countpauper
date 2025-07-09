@@ -8,14 +8,14 @@
 namespace Angel::Logic
 {
 
-template<Comparator OP>
+template<class Order>
 bool IsPotentiallyOrdered(const Expression& left, const Expression& right)
 {
     if ((!bool(left)) || (!bool(right)))
         return true;
 
     if (left.IsConstant() && right.IsConstant())
-        return OP(left, right);
+        return Order::ope(left, right);
     return true;
 }
 
@@ -38,7 +38,7 @@ Expression Simplify(T&& container)
 
     for(auto it = container.begin(); it!=container.end();)
     {
-        if (!IsPotentiallyOrdered<T::ope>(lastConstant, *it))
+        if (!IsPotentiallyOrdered<T>(lastConstant, *it))
             return False;
         if (it->IsConstant())
             lastConstant = *it;
@@ -74,23 +74,23 @@ Expression Simplify(T&& container)
         return std::move(container);
 }
 
-template<Comparator CO> 
-Expression Comparison<CO>::Simplify() const
+template<class T> 
+Expression Comparison<T>::Simplify() const
 {
-    auto simple = FlatTuple<Comparison<CO>>::SimplifyItems();
-    return Angel::Logic::Simplify<Comparison<CO>>(std::move(simple));
+    auto simple = FlatTuple<T>::SimplifyItems();
+    return Angel::Logic::Simplify<T>(std::move(simple));
 } 
 
-template<Comparator CO> 
-bool Comparison<CO>::HasLeftAssumption() const
+template<class T> 
+bool Comparison<T>::HasLeftAssumption() const
 {
-    if (FlatTuple<Comparison<CO>>::empty())
+    if (FlatTuple<T>::empty())
         return false;
-    return !FlatTuple<Comparison<CO>>::front().Assumptions().empty();
+    return !FlatTuple<T>::front().Assumptions().empty();
 }
 
-template<Comparator CO> 
-Expression Comparison<CO>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
+template<class T> 
+Expression Comparison<T>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
     auto substituted = Substitute(hypothesis);
     assert(substituted.size()==1);  // single element equations can be matched but not inferred. Predicate argument only
@@ -101,38 +101,32 @@ Expression Comparison<CO>::Matches(const Expression& expression, const Hypothesi
     return newHypothesis;
 }
 
-template<Comparator CO> 
-Expression Comparison<CO>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
+template<class T> 
+Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    assert(FlatTuple<Comparison<CO>>::size()>1);   // single element equations can't be inferred only matched
-    if (!FlatTuple<Comparison<CO>>::Assumptions().empty()) {
-        return Association(True, Comparison<CO>(static_cast<const Tuple&>(*this)));
+    assert(FlatTuple<T>::size()>1);   // single element equations can't be inferred only matched
+    if (!FlatTuple<T>::Assumptions().empty()) {
+        return Association(True, T(static_cast<const Tuple&>(*this)));
     }
-    Expression first = FlatTuple<Comparison<CO>>::front().Infer(k, hypothesis, trace);
+    Expression first = FlatTuple<T>::front().Infer(k, hypothesis, trace);
     for(const auto& item: *this | std::views::drop(1))
     {
         auto inferred = item.Infer(k, hypothesis, trace);
         auto cast = inferred.Cast(first.AlternativeTypeId());
-        // TODO: is matching the same as being equal? 
-        // or do they have to be the same type or castable to the same type left or right way around
-        // and how does order (not) matter then?  "23" = 23 = 23.0 those should pbly not be automatically equal 
-        // but integer and float? 23.0=23   and 23=23.0 ? 
-        // at least hypothesis would have to be done here. 
-        if (!CO(first, cast))
+        if (!T::ope(first, cast))
             return False;
     }
     return True;
 }
 
-// TODO: Generalize with operation 
-template<Comparator CO>
-std::ostream& operator<<(std::ostream& os, const Comparison<CO> & comparison)
+template<class T> 
+std::ostream& operator<<(std::ostream& os, const Comparison<T> & comparison)
 {
     bool first = comparison.size()>1;
     for(const auto& obj: comparison)
     {
         if (!first)
-            os << CO;
+            os << T::ope;
         os << obj;
         first = false;
     }

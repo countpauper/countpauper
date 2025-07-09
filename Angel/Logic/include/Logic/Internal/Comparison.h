@@ -7,26 +7,27 @@
 namespace Angel::Logic
 {
 
-template<Comparator CO>
-class Comparison : public FlatTuple<Comparison<CO>>
+template < typename T >
+concept is_comparison = std::derived_from<decltype(T::ope), Comparator>;
+
+template<class T>
+class Comparison : public FlatTuple<T>
 {
 public:
-    using FlatTuple<Comparison<CO>>::FlatTuple;
+    using FlatTuple<T>::FlatTuple;
 
     Expression Simplify() const;
     Expression Matches(const Expression& expression, const Hypothesis& hypothesis) const;
-    Comparison<CO> Substitute(const Hypothesis& hypothesis) const
+    T Substitute(const Hypothesis& hypothesis) const
     {
-        return FlatTuple<Comparison<CO>>::SubstituteItems(hypothesis);
+        return T(FlatTuple<T>::SubstituteItems(hypothesis));
     }
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
-    bool operator==(const Comparison<CO>& rhs) const { return FlatTuple<Comparison<CO>>::operator==(rhs); }
+    bool operator==(const Comparison<T>& rhs) const { return FlatTuple<T>::operator==(rhs); }
     bool HasLeftAssumption() const;
-    constexpr static Comparator ope = CO;    
 };
 
 
-template < typename T >
-concept is_comparison = std::derived_from<decltype(T::ope), Comparator>;
+
 
 }

@@ -1,6 +1,5 @@
 ## Quick todo / Rafactor
 
-- [ ] Comparison classses to reduce that variant size and be consistent with operations 
 - [ ] Try to remove substitute it from all non inference functions (get. add, substitute) and merge it with infer. It's mostly juts infer for operations. 
 - [ ] Subsitute is infer for variables, remove that too 
 - [ ] There is too much internal simplifying (especially when adding to containers) and subtituting. 

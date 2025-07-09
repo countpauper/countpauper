@@ -2,17 +2,16 @@
 #include "Logic/Comparator.h"
 #include "Logic/Internal/Comparison.h"
 #include "Logic/Internal/Variant.h"
+#include "Logic/Equal.h"
+#include "Logic/Unequal.h"
+#include "Logic/Lesser.h"
+#include "Logic/LesserEqual.h"
+#include "Logic/Greater.h"
+#include "Logic/GreaterEqual.h"
 #include <iostream>
 
 namespace Angel::Logic
 {
-
-using Equal = Comparison<Comparator{L'='}>;
-using Unequal = Comparison<Comparator{L'≠'}>;
-using Lesser = Comparison<Comparator{L'<'}>;
-using LesserEqual = Comparison<Comparator{L'≤'}>;
-using Greater = Comparison<Comparator{L'>'}>;
-using GreaterEqual = Comparison<Comparator{L'≥'}>;
 
 using OrderingVariant = Variant<
     Equal, Unequal, Lesser, LesserEqual, Greater, GreaterEqual>;  
