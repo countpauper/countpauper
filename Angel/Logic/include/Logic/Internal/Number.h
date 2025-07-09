@@ -56,6 +56,7 @@ public:
     Expression operator-=(const Number& rhs);    
     Expression operator*=(const Number& rhs);
     Expression operator/=(const Number& rhs);    
+    Expression operator^=(const Number& rhs); 
     std::string Summary() const;
 };
 
@@ -63,5 +64,6 @@ Expression operator+(Number lhs, const Number& rhs);
 Expression operator-(Number lhs, const Number& rhs);
 Expression operator*(Number lhs, const Number& rhs);
 Expression operator/(Number lhs, const Number& rhs);
+Expression operator^(Number lhs, const Number& rhs);
 std::ostream& operator<<(std::ostream& s, const Number& e);
 }

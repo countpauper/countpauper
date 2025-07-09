@@ -12,7 +12,7 @@ TEST(Conjunction, Construction)
     EXPECT_TRUE(Conjunction{}.empty());
     EXPECT_TRUE(Conjunction{Expression()}.empty());
     EXPECT_EQ(Conjunction{False}.size(), 1);
-    EXPECT_EQ(Expression(BinaryOperator(L'∧'), {True, False}), (Conjunction{True, False}));   
+    EXPECT_EQ(Expression(MultiOperator(L'∧'), {True, False}), (Conjunction{True, False}));   
 
 	static_assert(Logic::is_operation<Conjunction>);
 }

@@ -10,7 +10,7 @@ TEST(Division, Construction)
 {
     EXPECT_EQ((Division{Integer(3)}), Division({Integer(3)}));
     EXPECT_NE((Division{Integer(3)}), Division({Integer(3), Integer(2)}));
-    EXPECT_EQ(Expression(BinaryOperator(L'÷'), {Integer(-2), Integer(-1)}), (Division{Integer(-2), Integer(-1)}));   
+    EXPECT_EQ(Expression(MultiOperator(L'÷'), {Integer(-2), Integer(-1)}), (Division{Integer(-2), Integer(-1)}));   
 
 	static_assert(Logic::is_operation<Division>);
 }

@@ -12,7 +12,7 @@ TEST(Disjunction, Construction)
     EXPECT_TRUE(Disjunction{}.empty());
     EXPECT_TRUE(Disjunction{Expression()}.empty());
     EXPECT_EQ(Disjunction{False}.size(), 1);    
-    EXPECT_EQ(Expression(BinaryOperator(L'∨'), {True, False}), (Disjunction{True, False}));   
+    EXPECT_EQ(Expression(MultiOperator(L'∨'), {True, False}), (Disjunction{True, False}));   
 
 	static_assert(Logic::is_operation<Disjunction>);
 }

@@ -11,7 +11,7 @@ TEST(Multiplication, Construction)
     EXPECT_TRUE((Multiplication{}).empty());
     EXPECT_EQ((Multiplication{Integer(3)}), Multiplication({Integer(3)}));
     EXPECT_NE((Multiplication{Integer(3)}), Multiplication({Integer(3), Integer(2)}));
-    EXPECT_EQ(Expression(BinaryOperator(L'⋅'), {Integer(-2), Integer(-1)}), (Multiplication{Integer(-2), Integer(-1)}));   
+    EXPECT_EQ(Expression(MultiOperator(L'⋅'), {Integer(-2), Integer(-1)}), (Multiplication{Integer(-2), Integer(-1)}));   
 
 	static_assert(Logic::is_operation<Multiplication>);
 }

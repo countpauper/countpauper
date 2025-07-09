@@ -1,7 +1,7 @@
 #pragma once
 #include "Logic/Internal/OperationBase.h"
 #include "Logic/Hypothesis.h"
-#include "Logic/Binary.h"
+#include "Logic/Multiary.h"
 #include "Logic/Boolean.h"
 
 namespace Angel::Logic
@@ -16,7 +16,7 @@ public:
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     bool operator==(const Disjunction& rhs) const { return BaseType::operator==(rhs);}
 
-    static constexpr BinaryOperator ope{L'∨'};
+    static constexpr MultiOperator ope{L'∨'};
     constexpr static Boolean initial=False; 
     constexpr static Boolean final=True;
 };

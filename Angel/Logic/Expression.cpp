@@ -269,7 +269,7 @@ std::string Expression::Summary() const
         },
         [this](const auto& obj) 
         {
-            return std::string("TODO Description for ")+Logic::to_string(*this);
+            return std::string("Missing Description for ")+Logic::to_string(*this);
         }
     }, *this);
 }

@@ -25,18 +25,18 @@ struct Definition
 
 static constexpr Definition opdef[]{
     {BinaryOperator(L'←'),  0, ":",   "with/if"},
-    {BinaryOperator(L'^'),  0, "",    "power"},
-    {BinaryOperator(L'⋅'),  0, "*",   "multiply"},
-    {BinaryOperator(L'÷'),  0, "/",   "divide"},
+    {MultiOperator(L'^'),  0, "",    "power"},
+    {MultiOperator(L'⋅'),  0, "*",   "multiply"},
+    {MultiOperator(L'÷'),  0, "/",   "divide"},
     {PrefixOperator(L'+'),  0, "",    "positive"},
-    {BinaryOperator(L'+'),  0, "",    "add"},
-    {BinaryOperator(L'-'),  0, "",    "subtract"},
+    {MultiOperator(L'+'),  0, "",    "add"},
+    {MultiOperator(L'-'),  0, "",    "subtract"},
     {PrefixOperator(L'-'),  0, "",    "negative"},
-    {BinaryOperator(L'↑'),  0, "**",  "exponent"},
-    {BinaryOperator(L'↓'),  0, "//",  "logarithm"},
-    {BinaryOperator(L'∧'),  0, "&",   "and"},
-    {BinaryOperator(L'∨'),  0, "|",   "or"},
-    {BinaryOperator(L'⊕'), 0, "^",   "xor"},
+    {MultiOperator(L'↑'),  0, "**",  "exponent"},
+    {MultiOperator(L'↓'),  0, "//",  "logarithm"},
+    {MultiOperator(L'∧'),  0, "&",   "and"},
+    {MultiOperator(L'∨'),  0, "|",   "or"},
+    {MultiOperator(L'⊕'), 0, "^",   "xor"},
     {PrefixOperator(L'¬'),  0, "~",   "not"},
     {Comparator(L'≠'),      0, "!=",  "not equal"},
     {Comparator(L'>'),      0, "",    "greater"},
@@ -116,29 +116,9 @@ UnaryOperator::UnaryOperator(const std::string_view tag) :
 {
 }
 
-
-BinaryOperator::BinaryOperator(const std::string_view tag) :
-    Operator(tag, operands)
-{
-}
-
-
 std::ostream& operator<<(std::ostream& os, const Operator& op)
 {
     os << std::string(op);
     return os;
 }
-
-std::ostream& operator<<(std::ostream& os, const BinaryOperator& op)
-{
-    os << Operator(op);
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const UnaryOperator& op)
-{
-    os << Operator(op);
-    return os;
-}
-
 }

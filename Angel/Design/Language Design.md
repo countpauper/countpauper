@@ -359,11 +359,16 @@ that could be the hypothesis if $X is as of yet unknown. because $X+2 = 4 : $X=4
 
 Seemingly have no purpose, perhaps with predicates. Mostly they seem harmful 
 because technically they would make everything true. 
-TODO: warning? or ignore
 
 ```
 $X 
 $X(ginny): X=cat 
+```
+The parser should not accept it and require an Id, 
+but the logic can support it for consistency, because when querying it could be an edge use case 
+```
+> $X(ginny)?
+$X=cat & $X=fuzzy
 ```
 
 ## Variable instantiation and priority of matching 

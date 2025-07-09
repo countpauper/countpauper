@@ -23,7 +23,6 @@ concept has_size = requires(const T& a) {
     { a.size() } -> std::convertible_to<std::size_t>;
 };
 
-
 template<class T>
 concept is_container = has_size<T> && !is_operation<T>;
 

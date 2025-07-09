@@ -29,7 +29,7 @@ public:
     static constexpr bool ordered=true;
 };
 
-using Bag = List;  // TODO bag is unordered, but for now just use this
+using Bag = List; 
 
 List operator+(List lhs, const Container& rhs);
 List operator-(List lhs, const Container& rhs);

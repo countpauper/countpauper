@@ -94,7 +94,11 @@ Expression Container::operator+=(const Container& rhs)
         {
             return set += rhs;
         },
-        // TODO implement All with adding each element to each element of rhs and also for -= &= |= etc
+        [](All& all) -> Expression
+        {
+            assert(false); // unimplemented
+            return Expression();
+        },
         [this](auto&) -> Expression
         {
             throw std::invalid_argument(std::format("Can not add {} to container", AlternativeTypeId().name()));
@@ -179,7 +183,7 @@ const_container_iterator Container::end() const
 const_container_iterator Container::find(const Expression& key) const
 {
     return std::find_if(begin(), end(), [&key](const Expression& item)
-    {   // TODO match and also in Tuple?
+    { 
         if (item == key)
             return true;
         else if (const auto* association = item.GetIf<Association>())
@@ -241,46 +245,6 @@ std::string to_string(const Container& c)
     std::stringstream ss;
     ss << c;
     return ss.str();
-}
-
-// TODO: move to file and header to internal 
-Expression const_container_iterator::operator*() const
-{
-    return std::visit(overloaded_visit{
-        [](const std::monostate&)
-        {
-            return Expression();
-        },
-        [](const auto& it)
-        {
-            return *it;
-        }}, *this);
-}
-
-const_container_iterator& const_container_iterator::operator++()
-{
-    std::visit(overloaded_visit{
-        [](std::monostate)
-        {
-            throw std::runtime_error("Can't iterate over a a non-iterator");
-        },
-        [](auto& it)
-        {
-            ++it;
-        }}, *this);
-    return *this;
-}
-
-const_container_iterator const_container_iterator::operator++(int) 
-{ 
-    const_container_iterator tmp(*this);
-    ++*this;
-    return tmp; 
-}
-
-const_container_iterator::operator bool() const
-{
-    return !std::holds_alternative<std::monostate>(*this);
 }
 
 Expression operator+(Container lhs, const Container& rhs)

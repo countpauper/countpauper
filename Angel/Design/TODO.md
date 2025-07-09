@@ -1,5 +1,6 @@
 ## Quick todo / Rafactor
 
+- [ ] Comparison classses to reduce that variant size and be consistent with operations 
 - [ ] Try to remove substitute it from all non inference functions (get. add, substitute) and merge it with infer. It's mostly juts infer for operations. 
 - [ ] Subsitute is infer for variables, remove that too 
 - [ ] There is too much internal simplifying (especially when adding to containers) and subtituting. 
@@ -8,15 +9,10 @@
         - [ ] If simplify is infer (without knowledge) then it should never be needed explicitly. ALways recursive or iterative?  
 - [*] $Variable is a Value/Ref operator with an Id content (none for anonymous) 
    - [*] Tuple wholy replaced by All(Id), BaseClass ValueOperator
-   - [ ] Matching of All with List should be generalized to matching two sub containers/ranges with const_container_iterator (All  Set match?)
-- [*] Find out how big Logic/Angel/Tests are in release really and why, try to optimize for siz
-        - MinSizeRel goes 216MB to 7.8MN. Release 8.3. Guess it's mostly debug info. Size is not blocking, only pretty print
-        - [*] Make a base LogicVariant with all the basic Is<> GetIf<> const and not const, operator== and Hash etc
-         - [*] Maybe operation is one type and the operator the sub variant
-        - [*] Maybe containers are one type and unique+ordered the sub variant
-        - [*] Elements (did numbers) even, if for no other reason than to fix pretty printing ? There is alreay a variant
+   - [ ] Matching of All with List should be generalized to matching two sub containers/ranges with const_container_iterator    (All  Set match?)
+      - [ ] Match All/Any in the middle [1, *V, 4] = [1,2,3,4] *V = 2,3. This requires extra recursion over sub ranges. 
 - [ ] Clean up a bunch of TODOs or at least put them/checki if they are in this document instead 
-- [ ] Maybe association causation :<- should be split to differentiate how they are simplified, but which operators. Maybe just internally and for the syntax only when parsing clauses. To reduce variant it could be a boolean/enum/sub variant (pair, causation, range)
+
 
 ## Backlog 
 - [*] Get back up 
@@ -85,10 +81,20 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [*] set on list and list on set operators `&|+-` (if both side containers?) 
 -   [*] Be able to implement quicksort like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples (x:xs means [x]+xs if xs is a list or as used here to split head:tail
 -   [*] Membership operator x.{x,y} (done for List)
-
+- Parser Update 
+-   [ ] Optimize regex match with iterators (see TODO)
+-   [ ] Reduce Term size (see TODO in test) by not precompiling regex or on the heap
+-   [ ] Operator precedence when parsing (see TODO)
+-   [ ] () braces (test)
+-   [ ] All binary operation
+-   [ ] Negative (non integers)
+-   [ ] Unicode operators 
+-   [ ] Namespace 
 - Python
 -   [ ] namespaces
 -   [ ] Indexing lists (not sets, only ordered/indexible)  [x,y,z][1]
+-   [ ] Get with a container of keys for Tuple and Set. Return type is same type as container. So [x,y,z].[x,a] = [true,false]
+-   [ ] Index with container of more than one element [x,y,z][1,2]
 -   [ ] Add floating points (number) and conversions
 -   [ ] ranges [x..y] 
 -   [ ] infinite ranges [..y]
@@ -102,6 +108,10 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [ ] Scalar operators on containers *[1,2]+2 = [1+1,2+1]
 -   [ ] Scalar operators on ranges are applied to the limits (1..2)*2 = 2..4
 -   [ ] Scalar operator on an all/any is all/any of its operands all([1,2])+2 = all([1+2,2+2]) (precedence correction)
+-   [ ] Association operator on all operator: *[cat,fuzzy]:ginny = [cat:ginny,fuzzy:ginny]. See TODO in Association.cpp
+-   [ ] Association on the other end: cat:*[gizmo, ginny] = [cat:gizzmo, cat:ginny]
+-   [ ] Association on any operator `@[cat,dog]:max = cat:max | dog:max` or is itsimpy short hand for `@[cat:max,dog:max]`? Or maybe some notation with ⊆ except there is no rhs or lhs unless it is introduced here.  
+        - [ ] and other away around `cat:@[ginny,gizmo]: ` .. either of the options above. 
 -   [ ] All of and any of element in a comparison is a conjunection, disjunction respectively. 
 -   [ ] Multiple all of/any of in a  comparison is a matrix conjunction/disjunction @[1,2]<@[3,4] = 1<3&1<4&2<3&2<4
 -   [ ] Multi dimensional arrays (as a separate collection type)?
@@ -141,6 +151,7 @@ then the stack is reset every time. For performance the importing thing is what 
 -   [ ] Other MFINAE type matching or even some concept like syntax 
 -   [ ] free pairs `a:b` 
 -   [ ] Derive Clause from Pair or make an isClause() helper?
+-      [ ] Maybe association causation :<- should be split to differentiate how they are simplified, but which operators. Maybe just internally and for the syntax only when parsing clauses. To reduce variant size it could be a boolean/enum/sub variant (pair, causation, range)
 -   [ ] Lambdas are free clauses
 -   [ ] [Fold expressions](https://wiki.haskell.org/Fold): `[list] + ...` means add all elements in the list (right fold) ... + [list] for left. For all binary operators. (NB left or right does not mean iterate backwards. Just order of recursion and applying the operator. Might also need an initial value same as operators with base or for empty lists. 3 ^ [list]...
 -   [ ] Syntax for applying functions(lambdas?) (with two arguments?) `f(*[list], ...)` ? The `*` is for each but what would 
@@ -177,3 +188,9 @@ it mean if it was omitted? In this case the user may have to supply the empty li
 -    [ ] file functions 
 -    [ ] json parsing & dumping 
 
+
+
+Performance 
+- [ ] Measure and clean up unnecessary copies (there may be a lot)
+- [ ] Parallelize, clean up the inference engine first if needed
+- [ ] Fix unlocking the knowledge for built in functions in a thread safe way. 

@@ -1,6 +1,8 @@
 #pragma once
 #include "Logic/Expression.h"
 #include "Logic/Internal/BinaryImpl.h"
+#include "Logic/Internal/MultiaryImpl.h"
+
 #include <numeric>
 #include <cassert>
 

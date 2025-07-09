@@ -26,6 +26,15 @@ TEST(Negative, Substitute)
 		Negative(Integer(3)));
 }
 
+TEST(Negative, Matches)
+{
+    EXPECT_EQ(Negative(Integer(1)).Matches(Integer(-1), {}).Simplify(), True);
+    EXPECT_EQ(Negative(Integer(-2)).Matches(Integer(-2), {}).Simplify(), False);
+    EXPECT_EQ(Negative(Variable("I")).Matches(Integer(-1), {}).Simplify(), (Equal{Variable("I"),Integer(1)}));
+    EXPECT_EQ(Negative(Integer(3)).Matches(Variable("I"), {}).Simplify(), (Equal{Integer(-3), Variable("I")}));
+    EXPECT_EQ(Negative(Integer(3)).Matches(Variable("I"), {Equal{Variable("I"), Integer(-3)}}).Simplify(), True);
+}
+
 TEST(Negative, Negations)
 {
     Knowledge k;

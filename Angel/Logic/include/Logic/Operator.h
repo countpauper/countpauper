@@ -33,7 +33,7 @@ private:
         struct __attribute__ ((packed)) 
         {
             wchar_t unicode; // 1 unicode char in the Basic Multilingual Plane.
-            uint8_t operands:2; // noperator 0, unary, binary. TODO 3 for multiary as opposed to strictly binary . and : ? 
+            uint8_t operands:2; // noperator 0, unary, binary for pairs, 3 for multiary  
             bool postfix:1;
             bool comparison:1;
             uint8_t reserved:4;

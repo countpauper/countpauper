@@ -132,10 +132,6 @@ Expression All::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Tr
     }
     if (empty())
         return *this;
-    const auto* id = content->GetIf<Id>();
-    if (id)
-        return *id; // TODO tupling, get the variable id from the hypthesis 
-        
     return All(content->Infer(k, hypothesis, trace));
 }
 

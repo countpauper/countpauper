@@ -52,15 +52,8 @@ Logic::String HelpTopic(const Logic::Knowledge& k, const Logic::Id& id)
     {
         throw std::runtime_error(std::format("Unknown topic {}", Logic::to_string(id)));
     }
-    Logic::Bag matchBag{};
-    if (const auto* integer = matches.GetIf<Logic::Integer>())
-    {
-        matchBag = Logic::Bag{Logic::String("TODO")};
-    }
-    else 
-    {
-        matchBag = matches.Get<Logic::List>();
-    }
+    Logic::Bag matchBag = matches.Get<Logic::Bag>();
+
     std::stringstream ss; 
     for(const auto& match: matchBag)
     {

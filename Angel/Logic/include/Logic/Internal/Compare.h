@@ -1,7 +1,7 @@
 #pragma once 
 #include "Logic/Expression.h"
 #include "Logic/Comparator.h"
-#include "Logic/Internal/BinaryImpl.h"
+#include "Logic/Internal/MultiaryImpl.h"
 
 namespace Angel::Logic
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "Internal/OperationBase.h"
-#include "Logic/Binary.h"
+#include "Logic/Multiary.h"
 #include "Logic/Integer.h"
 #include <iostream>
 
@@ -15,7 +15,7 @@ public:
     using OperationBase<Summation>::OperationBase;
     bool operator==(const Summation& rhs) const { return BaseType::operator==(rhs);}
     constexpr static Integer initial{ 0 };
-    constexpr static BinaryOperator ope{L'+'};
+    constexpr static MultiOperator ope{L'+'};
 };
 
 std::ostream& operator<<(std::ostream& os, const Summation& operation);

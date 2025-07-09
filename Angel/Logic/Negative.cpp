@@ -20,8 +20,22 @@ Expression Negative::Simplify() const
 
 Expression Negative::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
-    // TODO: need to compute with remaining variables, then compare 
-    return False;
+    auto subst = expression.Substitute(hypothesis);    
+    if (const auto* i = subst.GetIf<Integer>())
+    {
+        auto substContent = content->Substitute(hypothesis);
+        return Equal{std::move(substContent), Integer(-**i)};
+    }
+    else if (const auto* n = subst.GetIf<Negative>())
+    {
+        auto substContent = content->Substitute(hypothesis);
+        return Equal{std::move(substContent), std::move(*n)};
+    }
+    else 
+    {   // this is the default case, the options above just favor less negatives in the condition
+        auto substNeg= this->Substitute(hypothesis);    
+        return Equal{std::move(substNeg), std::move(subst)};
+    }    
 }
 
 Negative Negative::Substitute(const Hypothesis& hypothesis) const

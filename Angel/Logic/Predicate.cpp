@@ -105,9 +105,6 @@ bool IsQueryHypothesis(const Expression& e)
 // In case 2 the hypothesis has the variable on the left $ARG<input. These are kept 
 Hypothesis QueryHypothesisOnly(const Hypothesis& hypothesis)
 {
-	// TODO: input does not need to be const. Would be more performant if erase in place
-	// on the other hand keeping output hypothesis and infer context separate might
-	// remove the whole left/right hack
     Hypothesis result;
     for(auto sub : hypothesis)
     {
@@ -134,8 +131,6 @@ Expression ExtendResult(Expression&& value, Expression&& current, Hypothesis&& h
         else
             return std::move(value);  
     auto left = QueryHypothesisOnly(hypothesis);
-    // TODO: perhaps should compare with current (if disjunction all) conjunctions. 
-    // ockam's razor should discard them or left depending on size
     return Association{std::move(value), Disjunction{std::move(current), std::move(left)}}.Simplify();
 }
 

@@ -131,8 +131,6 @@ const Bag& Knowledge::Root() const
 
 Knowledge& Knowledge::Lock() const
 {
-    // TODO: when using concurrent read access, flush and block read queue before locking
-    // and unlock with a Lock() destructor. Also count locks before releading read queue.
     return const_cast<Knowledge&>(*this);
 }
 

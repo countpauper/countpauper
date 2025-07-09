@@ -21,9 +21,6 @@ Interpreter::Syntax ConstructSyntax(std::filesystem::path fn)
 }
 
 AngelInterpreter::AngelInterpreter() :
-    // TODO: AngelInterpreter tests are ran in Angel/build/Engine/unittest from testmate in vscode
-    // this relative path makes it fail if ran from another cwd
-    // figure out how to inject the location while still keeping this file as the source
     syntax(ConstructSyntax("angel.bnf")),
     parser(syntax)
 {
@@ -125,7 +122,7 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
             //    that operation is the first argument of the new one for that operator
             // if the same: eg a/b * c same as lower  
             //  
-            Logic::BinaryOperator nextOperator{input.location.extract()};
+            Logic::MultiOperator nextOperator{input.location.extract()};
             assert(!ope || nextOperator == ope); // not yet implemented 
             ope = nextOperator;
         }

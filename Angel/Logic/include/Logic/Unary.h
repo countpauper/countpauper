@@ -29,6 +29,4 @@ public:
     PostfixOperator(const std::string_view tag) : UnaryOperator(tag) {}
 };
 
-std::ostream& operator<<(std::ostream& os, const UnaryOperator& op);
-
 }

@@ -119,8 +119,6 @@ bool AllTrue(const Bag& values)
 
 Expression Tuple::Get(const Expression& key) const
 {
-    // TODO: List keys should return Lists of values, the order is not 
-    // terribly useful, since indices are missing, but still it's nicer
     Bag values;
     for(const auto &item : *this)
     {
@@ -232,7 +230,7 @@ Expression Tuple::Matches(Tuple_subrange range, const Hypothesis& hypothesis) co
             {
                 assert(range_it+1 == range.end());   // for now * can only be at end
                 vars.Add(list_all->Matches(Tuple_subrange(it, end()), vars, true));
-                it = end(); // TODO could be partial, perhaps tuple match should return integer or (set) exactly which matched
+                it = end(); 
                 ++range_it;
                 continue;
             }

@@ -22,7 +22,7 @@ ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand)
 }
 
 template <typename... Ts>
-ExpressionVariant make_binary_operation(const Operator ope, Tuple&& operands) 
+ExpressionVariant make_multiary_operation(const Operator ope, Tuple&& operands) 
 {
     Logic::Expression result = Logic::False;
     bool found = false;
@@ -31,7 +31,7 @@ ExpressionVariant make_binary_operation(const Operator ope, Tuple&& operands)
         ? result.emplace<Operation>(Ts(std::move(operands))), true 
         : false), ...);
     
-    if (!found) throw std::invalid_argument(std::format("Invalid binary operator {}", std::string(ope)));
+    if (!found) throw std::invalid_argument(std::format("Invalid multiary operator {}", std::string(ope)));
     return result;
 }
 
@@ -59,7 +59,7 @@ ExpressionVariant make_operation(const Operator ope, Tuple&& operands)
     else if (ope.IsComparator())
         return make_ordering<Equal, Unequal, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
     else
-        return make_binary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction>(ope, std::move(operands));
+        return make_multiary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction>(ope, std::move(operands));
 }
 
 

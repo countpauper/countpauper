@@ -14,12 +14,18 @@ TEST(Operator, Noperator)
 
 TEST(Operator, ConstructBinary)
 {
-    EXPECT_TRUE(BinaryOperator(L'+'));
-    EXPECT_EQ(BinaryOperator(L'∧'), BinaryOperator("&"));
-    EXPECT_NE(BinaryOperator(L'-'), PrefixOperator(L'-'));
-    EXPECT_EQ(BinaryOperator(L'⋅').Operands(), 2);
+    EXPECT_TRUE(BinaryOperator(L'.'));
+    EXPECT_EQ(BinaryOperator(L'←').Operands(), 2);
+}
 
-    static_assert(sizeof(BinaryOperator)==4);
+TEST(Operator, ConstructMulti)
+{
+    EXPECT_TRUE(MultiOperator(L'+'));
+    EXPECT_EQ(MultiOperator(L'∧'), MultiOperator("&"));
+    EXPECT_NE(MultiOperator(L'-'), PrefixOperator(L'-'));
+    EXPECT_EQ(MultiOperator(L'⋅').Operands(), 3);
+
+    static_assert(sizeof(MultiOperator)==4);
 }
 
 TEST(Operator, ConstrucPrefix)
@@ -45,20 +51,20 @@ TEST(Operator, ConstrucComparator)
     EXPECT_TRUE(Comparator(L'>'));
     EXPECT_EQ(Comparator(L'≥'), Comparator(">="));
     EXPECT_NE(Comparator(L'<'), Comparator("<="));
-    EXPECT_EQ(Comparator(L'=').Operands(), 2);
+    EXPECT_EQ(Comparator(L'=').Operands(), 3);
     EXPECT_TRUE(Comparator(L'<').IsComparator());
     static_assert(sizeof(Comparator)==4);
 }
 
 TEST(Operator, String)
 {
-    EXPECT_EQ(std::string(BinaryOperator(L'&')), "&");
-    EXPECT_EQ(std::string(BinaryOperator("!=")), "≠");
+    EXPECT_EQ(std::string(MultiOperator(L'&')), "&");
+    EXPECT_EQ(std::string(MultiOperator("!=")), "≠");
 }
 
 TEST(Operator, Description)
 {
-    EXPECT_EQ(BinaryOperator(L'∨').Description(), "or");
+    EXPECT_EQ(MultiOperator(L'∨').Description(), "or");
     EXPECT_EQ(PrefixOperator("@").Description(), "any of");
 }
 
@@ -69,7 +75,7 @@ TEST(Operator, Precedence)
 
 TEST(Operator, Operate)
 {
-    EXPECT_EQ((BinaryOperator{L'+'})(Integer(1), Integer(2)), Integer(3));
+    EXPECT_EQ((MultiOperator{L'+'})(Integer(1), Integer(2)), Integer(3));
     EXPECT_TRUE(Comparator(L'=')(Integer(1), Integer(1)));
 }
 

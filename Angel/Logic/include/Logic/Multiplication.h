@@ -1,6 +1,6 @@
 #pragma once
 #include "Internal/OperationBase.h"
-#include "Logic/Binary.h"
+#include "Logic/Multiary.h"
 #include "Logic/Integer.h"
 #include <iostream>
 
@@ -14,7 +14,7 @@ public:
     bool operator==(const Multiplication& rhs) const { return BaseType::operator==(rhs);}
     constexpr static Integer initial{1};
     constexpr static Integer final{0};
-    constexpr static BinaryOperator ope{L'⋅'};
+    constexpr static MultiOperator ope{L'⋅'};
 };
 
 }

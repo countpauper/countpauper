@@ -9,7 +9,6 @@ class Association;
 
 // Knowledge is a tree of clauses organized in namespaces
 // A clause is a pair of a predicate and an expression 
-// TODO: it should itself be an expression (Set?)  
 class Knowledge
 {
 public:
