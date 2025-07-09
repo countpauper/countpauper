@@ -20,14 +20,14 @@ Expression OperationBase<T>::Simplify() const
     {
         if (it->IsConstant())
         {
-            if constexpr (has_final<T>)
+            if constexpr (has_absorb<T>)
             {
-                if (*it == T::final)
-                    return T::final;
+                if (*it == T::absorb)
+                    return T::absorb;
             }
-            if constexpr (has_initial<T>) 
+            if constexpr (has_identity<T>) 
             {
-                if (*it == T::initial)
+                if (*it == T::identity)
                 {
                     it = simple.erase(it);
                     continue;
@@ -47,10 +47,10 @@ Expression OperationBase<T>::Simplify() const
         auto front = simple.cbegin();
         simple.AddAt(front, std::move(constant));
     }
-    if constexpr (has_initial<T>) 
+    if constexpr (has_identity<T>) 
     {
         if (simple.empty())
-            return T::initial;
+            return T::identity;
     }
 
     if (simple.size()==1)
@@ -62,11 +62,7 @@ Expression OperationBase<T>::Simplify() const
 template<class T>
 Expression OperationBase<T>::Matches(const Expression& expression, const Hypothesis& hypothesis) const
 {
-    // TODO: Operation matches with mathematical simplication
-    // X+1 matches 3 if X is 2 
-    // all unknown variables need to be found and the remaining expression(s) needs to be computed. 
-    // if any are ranges, then the result might be a different range 
-    return False;
+    return Equal{Substitute(hypothesis), expression.Substitute(hypothesis)};
 }
 
 template<class T>

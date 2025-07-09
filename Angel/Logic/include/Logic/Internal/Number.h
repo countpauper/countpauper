@@ -43,7 +43,7 @@ public:
     {
         return std::visit(
             [this, &rhs](const auto& obj) 
-            {   // TODO: could even generalize and iterate here? 
+            {   
                 std::hash<Expression> hasher;
                 return this->Hash() < hasher(rhs);
             },*this);

@@ -17,7 +17,7 @@ public:
     bool operator==(const Disjunction& rhs) const { return BaseType::operator==(rhs);}
 
     static constexpr MultiOperator ope{L'∨'};
-    constexpr static Boolean initial=False; 
-    constexpr static Boolean final=True;
+    constexpr static Boolean identity=False; 
+    constexpr static Boolean absorb=True;
 };
 }

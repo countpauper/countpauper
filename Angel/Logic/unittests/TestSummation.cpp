@@ -40,6 +40,13 @@ TEST(Summation, Substitute)
 		(Summation{Integer(-2), Integer(3)}));
 }
 
+TEST(Summation, Match)
+{
+	EXPECT_EQ((Summation{Integer(1), Integer(2)}).Matches(Integer(3), {}).Simplify(), True);
+	EXPECT_EQ((Summation{Variable("One"), Integer(2)}).Matches(Integer(3), {Equal{Variable("One"), Integer(1)}}).Simplify(), True);
+//	EXPECT_EQ((Summation{Variable("One"), Integer(2)}).Matches(Integer(3), {}).Simplify(), (Equal{Variable("One"), Integer(1)}));
+}
+
 TEST(Summation, MatchArgument)
 {
 	EXPECT_EQ(Predicate("sum", {Summation{Integer(1), Integer(2)}}).Matches(

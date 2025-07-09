@@ -68,11 +68,6 @@ TEST(Operator, Description)
     EXPECT_EQ(PrefixOperator("@").Description(), "any of");
 }
 
-TEST(Operator, Precedence)
-{
-    // TODO test pemdas and + is equal to min * equal to /
-}
-
 TEST(Operator, Operate)
 {
     EXPECT_EQ((MultiOperator{L'+'})(Integer(1), Integer(2)), Integer(3));

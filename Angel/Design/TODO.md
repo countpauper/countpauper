@@ -146,6 +146,7 @@ then the stack is reset every time. For performance the importing thing is what 
 -   [ ] Total ordering of Expressions with Hash 
 -   [ ] For any operator `@` while infering  
 -   [ ] Unary for any (element of) operator when matching
+-   [ ] Match operations inverse math `$X+1 = 3: $X=3-1`, divide&multiply, power and inverse $X^2 = 4 : $X=4^1/2
 -   [ ] Superset and subset operators  ⊆  ⊇  . Not sure what the ascii version is yet. maybe |= and &= ? 
 -   [ ] For any & each operators also while matching (each sort of done with Tuple I guess)
 -   [ ] Other MFINAE type matching or even some concept like syntax 
@@ -169,8 +170,6 @@ it mean if it was omitted? In this case the user may have to supply the empty li
 -   [ ] square and cube uncide postfix for exponent(x,2) and exponent(x,3) 
 -   [ ] Also on output of exponentiation, shorcuts for 2 operands and the 2nd is 0.5, 2 or 3
 -   [ ] Variable operators `$$X` and `$*X` etc
--   [ ] Optimization: Reduce copies when matching and inferring and add references to known knowledge 
--   [ ] Optimization: Also pass references to ranges, eg when slicing lists, matching with Tuple etc until a copy is necessary. 
 - [ ] Native functions
 -    [ ] Add native cast functions (id, int, float, str, list, set, dict)
 -    [ ] Add native collections functions (size, empty, ordered, unique)
@@ -192,5 +191,7 @@ it mean if it was omitted? In this case the user may have to supply the empty li
 
 Performance 
 - [ ] Measure and clean up unnecessary copies (there may be a lot)
+- [ ] add Reference (expression hidden type) to known knowledge instead/to postpone of a copy 
+- [ ] Also pass references to ranges, eg when slicing lists, matching with Tuple etc until a copy is necessary. Numpy like. 
 - [ ] Parallelize, clean up the inference engine first if needed
 - [ ] Fix unlocking the knowledge for built in functions in a thread safe way. 

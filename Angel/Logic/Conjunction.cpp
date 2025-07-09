@@ -12,10 +12,10 @@ Expression Conjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, 
     for(const auto& item: *this)
     {
         Expression inferred = item.Infer(k, hypothesis, trace);
-        if (result == initial)
+        if (result == identity)
         {
             auto isTrue = inferred.Simplify().Cast<Boolean>();
-            if (isTrue == final)
+            if (isTrue == absorb)
                 return isTrue;
         }
         if (result)
@@ -24,7 +24,7 @@ Expression Conjunction::Infer(const Knowledge& k, const Hypothesis& hypothesis, 
             result = inferred;
     }
     if (!result)
-        return initial;
+        return identity;
     return result;    
 }
 

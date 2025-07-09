@@ -14,7 +14,7 @@ class Summation : public OperationBase<Summation>
 public:
     using OperationBase<Summation>::OperationBase;
     bool operator==(const Summation& rhs) const { return BaseType::operator==(rhs);}
-    constexpr static Integer initial{ 0 };
+    constexpr static Integer identity{ 0 };
     constexpr static MultiOperator ope{L'+'};
 };
 
