@@ -45,21 +45,20 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol,
     auto rules = syntax.Lookup(symbol);
     for(const auto& rule: rules)
     {
-        Logging::Log<Logging::DEBUG>("{:4}{}{}[", it->reference.from, std::string(tab), std::string(rule.second.symbol));
+        Logging::Log<Logging::DEBUG>("{:4}{}{}[", it->reference.offset(), std::string(tab), std::string(rule.second.symbol));
         ++tab;
         std::vector<ParsedSymbol> result = Recurse(rule.first, rule.second.terms, it, to);
         --tab;
         if (!result.empty()) 
         {
-            Logging::Log<Logging::DEBUG>("{:4}{}] pass {} [{}:{}] {} terms", it->reference.from, std::string(tab),
-                 std::string(result.front().symbol), result.front().location.from, result.front().location.length,
-                    result.size()-1);
+            Logging::Log<Logging::DEBUG>("{:4}{}] pass {} {} {} terms", it->reference.offset(), std::string(tab),
+                 std::string(result.front().symbol), std::string(result.front().location), result.size()-1);
             from = it;
             return result;
         }
         else 
         {
-            Logging::Log<Logging::DEBUG>("{:4}{}] fail {}", from->reference.from, std::string(tab),
+            Logging::Log<Logging::DEBUG>("{:4}{}] fail {}", from->reference.offset(), std::string(tab),
                 std::string(symbol));
         }
     }
@@ -72,7 +71,6 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
 {
     std::vector<ParsedSymbol> result;
     RecursiveDescentParser::InputIterator it = from;
-    std::size_t start = from->reference.from;
     for(const Term& term: terms)
     {
         auto match =  std::visit( overloaded_visit
@@ -90,7 +88,7 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
             {
                 if (epsilon.GetSymbol())
                     result.emplace_back(ParsedSymbol{epsilon.GetSymbol(), it->reference.sub(0,0)});
-                Logging::Log<Logging::DEBUG>("{:4}{}{}", it->reference.from, std::string(tab), std::string(epsilon));
+                Logging::Log<Logging::DEBUG>("{:4}{}{}", it->reference.offset(), std::string(tab), std::string(epsilon));
                 return true;
             },
             [&it, &to, this] <is_token _Token>(const _Token& token )
@@ -99,7 +97,7 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
                     return false;
                 if (std::hash<Term>()(token) != it->token) 
                     return false;
-                Logging::Log<Logging::DEBUG>("{:4}{}`{}`", it->reference.from, std::string(tab), it->reference.extract());
+                Logging::Log<Logging::DEBUG>("{:4}{}`{}`", it->reference.offset(), std::string(tab), it->reference.extract());
                 ++it;
                 return true;
             },
@@ -117,7 +115,7 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
             return result;
         }
     }
-    result.insert(result.begin(), ParsedSymbol{symbol, from->reference.source->span().sub(from->reference.from, it->reference.from - from->reference.from)});
+    result.insert(result.begin(), ParsedSymbol{symbol, SourceSpan(from->reference.from, it->reference.from-from->reference.from, from->reference.source)});
     from = it;
     return result;
 }

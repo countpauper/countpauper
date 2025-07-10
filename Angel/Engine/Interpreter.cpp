@@ -212,11 +212,13 @@ std::size_t GenerateKnowledge(const Interpreter::Source& source, Interpreter::Sy
         parse >> input;
         if (input.symbol == Interpreter::Symbol("knowledge"))
         {
-            if (input.location.length < source.size())
+            auto trailing = source.span(input.location.size());
+
+            if (!trailing.empty())
             {
                 throw std::runtime_error(std::format("Trailing input at {}: {}",
-                    input.location.length, 
-                    source.span(input.location.length).extract()));
+                    std::string(trailing), 
+                    trailing.extract()));
             }
         }
         if (input.symbol == Interpreter::Symbol("axiom"))
@@ -238,7 +240,7 @@ std::size_t AngelInterpreter::Interpret(const Interpreter::Source& source, Logic
 Logic::Expression AngelInterpreter::InterpretQuery(const ::Interpreter::Source& source)
 {
     Interpreter::SymbolStream os;
-    parser.Parse(source, os, "query");  // TODO parse expression instead of single predicate
+    parser.Parse(source, os, "query"); 
     return GenerateExpression(os);
 }
 

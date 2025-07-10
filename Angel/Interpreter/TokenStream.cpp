@@ -18,7 +18,7 @@ InputToken::InputToken(hash_t token, SourceSpan ref) :
 
 InputToken::operator std::string() const 
 {
-    return std::format("%x [%d-%d]", token, reference.from, reference.from + reference.length);
+    return std::format("%x {}", token, std::string(reference));
 }
 
 bool InputToken::operator==(const InputToken& other) const 

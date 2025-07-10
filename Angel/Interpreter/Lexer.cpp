@@ -33,7 +33,7 @@ void Lexer::Process(const Source& src, TokenStream& os)
         os << InputToken(best, src.span(location, bestConsumed));
         location += bestConsumed;
     }
-    os << InputToken(0, {location, 0, &src}); // end token
+    os << InputToken(0, SourceSpan{location, src.size()-location, &src}); // end token
 }
     
 std::deque<InputToken> Lexer::Process(const Source& src)

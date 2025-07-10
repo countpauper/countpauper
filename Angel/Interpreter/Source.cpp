@@ -1,4 +1,5 @@
 #include "Interpreter/Source.h"
+#include "Interpreter/SourceSpan.h"
 #include <fstream>
 #include <string>
 #include <cassert>
@@ -33,11 +34,29 @@ SourceSpan Source::span(std::size_t from, std::size_t length) const
     return SourceSpan{from, length, this};
 }
 
+
+Source::const_iterator Source::begin() const
+{
+    return buffer.begin();
+}
+
+Source::const_iterator Source::end() const
+{
+    return buffer.end();
+}
 std::string Source::Read(std::size_t from, std::size_t length) const
 {
-    if (from+length>buffer.size())
+    if (from + length > buffer.size())
         throw std::out_of_range(std::format("Source {} buffer underrun: {} + {} > {}", name, from, length, buffer.size()));
+    
     return buffer.substr(from, length);
+}
+
+char Source::Read(std::size_t from) const
+{
+    if (from > buffer.size())
+        throw std::out_of_range(std::format("Source {} buffer underrun: {} > {}", name, from, buffer.size()));
+    return buffer.at(from);
 }
 
 std::string Source::Name() const 

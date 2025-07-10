@@ -40,7 +40,7 @@ int IOLoop(const std::string_view prompt="")
 		catch(const Interpreter::Error& err)
 		{
 			std::cerr << err.what() << " at `" << err.Location().extract() << 
-				"` [" << err.Location().from <<"]" << std::endl;
+				"` " << std::string(err.Location())  << std::endl;
 		}
 		catch(const std::exception& e)
 		{

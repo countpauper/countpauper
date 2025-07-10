@@ -26,7 +26,6 @@ namespace Interpreter
             const_iterator& operator++() { wrapped++; return *this; }
             const_iterator operator++(int) { auto tmp = *this; ++wrapped; return tmp;  }
             const value_type& operator*() const { return wrapped->second; }
-            const value_type* operator->() const { return &wrapped->second; }
             bool operator==(const const_iterator& o) const { return wrapped == o.wrapped; }
         protected:
             LookupTable::const_iterator wrapped;

@@ -45,6 +45,18 @@ TEST(SourceSpan, Sub)
     EXPECT_EQ(cat.span(0,3), SourceSpan(0, 3, &cat));
 }
 
+TEST(SourceSpan, Range)
+{
+    Source s("Range");
+    SourceSpan span = s.span();
+    EXPECT_EQ(*span.begin(), 'R');
+    EXPECT_NE(span.begin(), span.end());
+    EXPECT_EQ(span.begin() + static_cast<std::ptrdiff_t>(s.size()), span.end());
+    EXPECT_EQ(span.end() - span.begin(), span.size());
+    static_assert(std::forward_iterator<SourceSpan::const_iterator>);
+    static_assert(std::sized_sentinel_for<SourceSpan::const_iterator, SourceSpan::const_iterator>);
+}
+
 TEST(SourceSpan, Extract)
 {
     Source s("Extract");
