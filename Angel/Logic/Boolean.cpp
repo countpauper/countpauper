@@ -80,14 +80,20 @@ std::ostream& operator<<(std::ostream& os, const Boolean& element)
     return os;
 }
 
-Boolean operator&(Boolean lhs, const Boolean& rhs)
+Expression operator&(Boolean lhs, const Expression& rhs)
 {
-    return lhs &= rhs;
+    if (lhs == True)
+        return rhs; 
+    else 
+        return lhs;
 }
 
-Boolean operator|(Boolean lhs, const Boolean& rhs)
+Expression operator|(Boolean lhs, const Expression& rhs)
 {
-    return lhs |= rhs;
+    if (lhs == False)
+        return rhs;
+    else 
+        return lhs;
 }
 
 

@@ -79,7 +79,11 @@ constexpr Expression operate<MultiOperator{L'∧'}>(const Expression& lhs, const
     }
     else if (const auto* lhBool = lhs.GetIf<Boolean>())
     {
-        return *lhBool & rhs.Cast<Boolean>();
+        return *lhBool & rhs;
+    }
+    else if (rhs == True)
+    {
+        return True;
     }
     else 
     {
@@ -95,8 +99,12 @@ constexpr Expression operate<MultiOperator{L'∨'}>(const Expression& lhs, const
     {
         return *lhCont | rhs.Get<Container>();
     }
+    else if (rhs == False)
+    {
+        return lhs;
+    }
     auto lhBool = lhs.Get<Boolean>();
-    return lhBool | rhs.Cast<Boolean>();
+    return lhBool | rhs;
 }
 
 template<std::size_t N>

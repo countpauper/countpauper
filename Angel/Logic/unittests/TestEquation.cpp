@@ -15,6 +15,7 @@ TEST(Equal, Construction)
 
 	static_assert(Logic::is_operation<Equal>);
 	static_assert(Logic::is_comparison<Equal>);
+	static_assert(sizeof(Equal)<=24);
 }
 
 TEST(Equal, Simplify)

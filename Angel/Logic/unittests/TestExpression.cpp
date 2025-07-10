@@ -10,7 +10,7 @@ TEST(Expression, DefaultExpressionIsNull)
     EXPECT_EQ(Expression(), Expression());
     EXPECT_EQ(to_string(Expression()), "null");
     ASSERT_TRUE(Expression().IsConstant());
-    static_assert(sizeof(Expression)<=128);
+    static_assert(sizeof(Expression)<=72);
 }
 
 TEST(Expression, CantCastNull)

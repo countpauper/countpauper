@@ -29,6 +29,7 @@ TEST(Set, Construction)
 	EXPECT_EQ(association_set.size(), 1);
 
 	static_assert(is_container<Set>);
+	static_assert(sizeof(Set)<=56);
 }
 
 TEST(Set, List)

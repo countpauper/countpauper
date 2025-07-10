@@ -24,6 +24,7 @@ TEST(List, Construction)
 	EXPECT_EQ(seq.size(), 1);
 
 	static_assert(Logic::is_container<List>);
+	static_assert(sizeof(List)<=24);
 }
 
 

@@ -10,6 +10,7 @@ TEST(Predicate, Construction)
 {
 	EXPECT_THROW(Predicate(""), std::invalid_argument);
 	EXPECT_NE(Predicate("test"), Predicate("Test"));
+	static_assert(sizeof(Predicate)<=56);
 }
 
 TEST(Predicate, Valence0IsFalseIfNothingKnown)

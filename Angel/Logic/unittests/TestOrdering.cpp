@@ -15,6 +15,7 @@ TEST(Ordering, Construction)
 
 	static_assert(Logic::is_operation<GreaterEqual>);
 	static_assert(Logic::is_comparison<GreaterEqual>);
+	static_assert(sizeof(Ordering(Lesser{}))<=32);
 }
 
 TEST(Ordering, Order)

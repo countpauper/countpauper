@@ -16,6 +16,7 @@ TEST(Boolean, Construction)
 	EXPECT_TRUE(Boolean("true"));
 	EXPECT_FALSE(False);
 	EXPECT_THROW(Boolean("False"), std::invalid_argument);	
+    static_assert(sizeof(Boolean)<=16);
 }
 
 TEST(Boolean, And)

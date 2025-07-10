@@ -12,6 +12,7 @@ TEST(String, Construction)
 	EXPECT_TRUE(String(" "));
 	EXPECT_EQ(String("test"), String("test"));
 	EXPECT_NE(String("test"), String("Test"));
+	static_assert(sizeof(String)<=32);
 }
 
 TEST(String, Cast)

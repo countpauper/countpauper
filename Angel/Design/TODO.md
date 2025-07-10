@@ -1,6 +1,6 @@
 ## Quick todo / Rafactor
 
-- [ ] Try to remove substitute it from all non inference functions (get. add, substitute) and merge it with infer. It's mostly juts infer for operations. 
+- [ ] Try to remove substitute it from all non inference functions (get. add, substitute) and merge it with infer. It's mostly just infer for operations.  
 - [ ] Subsitute is infer for variables, remove that too 
 - [ ] There is too much internal simplifying (especially when adding to containers) and subtituting. 
         All operations infer, substitute,simplify, should not depend on order, so:
@@ -10,7 +10,7 @@
    - [*] Tuple wholy replaced by All(Id), BaseClass ValueOperator
    - [ ] Matching of All with List should be generalized to matching two sub containers/ranges with const_container_iterator    (All  Set match?)
       - [ ] Match All/Any in the middle [1, *V, 4] = [1,2,3,4] *V = 2,3. This requires extra recursion over sub ranges. 
-- [ ] Clean up a bunch of TODOs or at least put them/checki if they are in this document instead 
+- 
 
 
 ## Backlog 
@@ -71,8 +71,7 @@
         [*] Add associations to list (and sets) checks false of right hand side          
         [*] associatons with a tuple will apply the associations to all elements of the tuple 
         [ ] Test conjunction & disjunction return the last/first truish value as is
-        [ ] Tuples in a set are more generator if there are operators with them. Eg *x+2 is also [x0+2, x1+2,...]
-                and *L&prdicate (todo in container operator &)
+
 Sort code: 
 quicksort([]): []
 quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
@@ -88,12 +87,15 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [ ] All binary operation
 -   [ ] Negative (non integers)
 -   [ ] Unicode operators 
+-   [ ] Prefix comparators 
+-   [ ] Make sure both functional examples can be fully parsed 
 -   [ ] Namespace 
 - Python
 -   [ ] namespaces
--   [ ] Indexing lists (not sets, only ordered/indexible)  [x,y,z][1]
+-   [ ] Indexing (a pair) lists (not sets, only ordered/indexible)  [x,y,z][1]
 -   [ ] Get with a container of keys for Tuple and Set. Return type is same type as container. So [x,y,z].[x,a] = [true,false]
 -   [ ] Index with container of more than one element [x,y,z][1,2]
+-   [ ] Test that indexing with a boolean works a ternary operator [a,b][bool]
 -   [ ] Add floating points (number) and conversions
 -   [ ] ranges [x..y] 
 -   [ ] infinite ranges [..y]
@@ -185,12 +187,20 @@ it mean if it was omitted? In this case the user may have to supply the empty li
 -    [ ] string functions 
 -    [ ] file functions 
 -    [ ] json parsing & dumping 
-
-
+Interface
+-    [ ] Command line options
+-    [ ] Multi line input 
+-    [ ] History 
+-    [ ] Debugging 
 
 Performance 
 - [ ] Measure and clean up unnecessary copies (there may be a lot)
 - [ ] add Reference (expression hidden type) to known knowledge instead/to postpone of a copy 
+- [ ] Reduce Expression size to about 32 (2x index, 2x ptr) although a set is already 56 so maybe 64 is already tough
+        - [ ] Find out why Set is so big (or the rest won't matter much). pbly multiset. 
+        - [ ] Use a function ptr only callback for `Function` This might still reduce it from 72 to 64
+        - [ ] Use a small string (0 terminated ptr only) for `String` and `Function` summary
+
 - [ ] Also pass references to ranges, eg when slicing lists, matching with Tuple etc until a copy is necessary. Numpy like. 
 - [ ] Parallelize, clean up the inference engine first if needed
 - [ ] Fix unlocking the knowledge for built in functions in a thread safe way. 

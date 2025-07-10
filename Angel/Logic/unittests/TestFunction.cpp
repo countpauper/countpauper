@@ -21,6 +21,7 @@ TEST(Function, Construction)
     EXPECT_FALSE(Function(callback.AsStdFunction(), "test") == Function(anotherCallback, "test"));
     EXPECT_THROW(Function(nullptr, "unhappy test"), std::invalid_argument);
     EXPECT_THROW(Function(callback.AsStdFunction(), ""), std::invalid_argument);
+	static_assert(sizeof(Function)<=64);
 }
 
 TEST(Function, Callback)

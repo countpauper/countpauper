@@ -17,6 +17,7 @@ TEST(Integer, Construction)
 	EXPECT_EQ(Integer("-4"), Integer(-4));
 	EXPECT_THROW(Integer("3b"), std::invalid_argument);	
 	EXPECT_THROW(Integer("9876543210"), std::out_of_range);	
+	static_assert(sizeof(Integer)<=16);
 }
 
 TEST(Integer, Arithmetic)

@@ -4,6 +4,7 @@
 
 namespace Angel::Logic
 {
+class Expression;
 
 // Boolean is an element that is simply true, or false
 class Boolean 
@@ -29,8 +30,8 @@ private:
 
 static constexpr Boolean True(true); 
 static constexpr Boolean False(false); 
-Boolean operator&(Boolean lhs, const Boolean& rhs);
-Boolean operator|(Boolean lhs, const Boolean& rhs);
+Expression operator&(Boolean lhs, const Expression& rhs);
+Expression operator|(Boolean lhs, const Expression& rhs);
 
 std::ostream& operator<<(std::ostream& os, const Boolean& );
 

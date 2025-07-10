@@ -15,6 +15,7 @@ TEST(Conjunction, Construction)
     EXPECT_EQ(Expression(MultiOperator(L'∧'), {True, False}), (Conjunction{True, False}));   
 
 	static_assert(Logic::is_operation<Conjunction>);
+	static_assert(sizeof(Conjunction)<=24);
 }
 
 TEST(Conjunction, Conjunctions)
@@ -37,8 +38,10 @@ TEST(Conjunction, Nest)
 TEST(Conjunction, Simplify)
 {
     EXPECT_EQ((Conjunction{}).Simplify(), True);
-    EXPECT_EQ((Conjunction{Predicate("maybe"), True}).Simplify(), Predicate("maybe"));
+    EXPECT_EQ((Conjunction{Predicate("maybe"), True}).Simplify(), True);
     EXPECT_EQ((Conjunction{Predicate("maybe"), False}).Simplify(), False);
+    EXPECT_EQ((Conjunction{True, Integer(3)}).Simplify(), Integer(3));
+    EXPECT_EQ((Conjunction{Integer(3), True}).Simplify(), Integer(3));
     EXPECT_EQ((Conjunction{True, True}).Simplify(), True);
     EXPECT_EQ((Conjunction{True, False}).Simplify(), False);
     EXPECT_EQ((Conjunction{Id("cat"), All(List{Id("dog"), Id("bunny")})}), 
@@ -58,6 +61,15 @@ TEST(Conjunction, Inference)
     k.Know(Predicate("cat"));
     EXPECT_EQ(k.Infer(Conjunction{Predicate("cat")}), True);
 }
+
+TEST(Conjunction, InferLastTrueishValue)
+{
+    Knowledge k;
+    EXPECT_EQ(k.Infer(Conjunction{True, Integer(3)}), Integer(3));
+    EXPECT_EQ(k.Infer(Conjunction{Integer(3), True}), True);
+    EXPECT_EQ(k.Infer(Conjunction{False, Integer(3)}), False);
+}
+
 
 TEST(Conjunction, InferContainer)
 {

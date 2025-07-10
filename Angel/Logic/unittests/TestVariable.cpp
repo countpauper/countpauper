@@ -14,6 +14,7 @@ TEST(Variable, Construction)
 	EXPECT_EQ(Variable("Test"), Variable("Test"));
 	EXPECT_NE(Variable("Test"), Variable("Icle"));
     EXPECT_EQ(Expression(PrefixOperator(L'$'), {Id("Test")}), Variable("Test"));
+	static_assert(sizeof(Variable)<=24);
 }
 
 TEST(Variable, IsAnAssumption)

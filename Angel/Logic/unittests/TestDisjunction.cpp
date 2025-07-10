@@ -15,6 +15,7 @@ TEST(Disjunction, Construction)
     EXPECT_EQ(Expression(MultiOperator(L'∨'), {True, False}), (Disjunction{True, False}));   
 
 	static_assert(Logic::is_operation<Disjunction>);
+	static_assert(sizeof(Disjunction)<=24);
 }
 
 TEST(Disjunction, Conjunctions)

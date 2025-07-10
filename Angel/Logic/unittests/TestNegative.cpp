@@ -12,6 +12,7 @@ TEST(Negative, Construction)
     EXPECT_EQ(Negative(Integer(3)), Negative(Integer(3)));
     EXPECT_NE(Negative(Integer(3)), Negative(Integer(-3)));
     EXPECT_EQ(Expression(PrefixOperator(L'-'), {Integer(-2)}), Negative(Integer(-2)));
+	static_assert(sizeof(Negative)<=24);
 }
 
 TEST(Negative, Simplify)

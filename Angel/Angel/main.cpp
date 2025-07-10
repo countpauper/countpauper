@@ -61,7 +61,6 @@ int InteractiveConsole()
 
 int main(int argc, char* argv[])
 {
-	// TODO interpret arguments and apply options
 	if (isatty(fileno(stdin)))
 		return Angel::InteractiveConsole();
 	else 

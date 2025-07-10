@@ -13,6 +13,7 @@ TEST(Association, Construction)
 	EXPECT_EQ(association.size(), 2);
     EXPECT_EQ(association.Left(), Id("ginny"));
     EXPECT_EQ(association.Right(), Integer(3));
+    static_assert(sizeof(Association)<=16);
 }
 
 

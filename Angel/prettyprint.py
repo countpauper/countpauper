@@ -77,22 +77,10 @@ def angel_printer(val):
             elif logic_type == "Integer":
                 return SimplePrinter(val.type, val["value"])
             elif logic_type == "Boolean":
-                return SimplePrinter(val.type, val["truth"])
-            elif logic_type == "Variable":
-                return SimplePrinter(val.type, val["name"])    
+                return SimplePrinter(val.type, val["truth"]) 
             elif logic_type == "String":
                 return SimplePrinter(val.type, val["value"])    
-            #elif logic_type == "Tuple":
-            #S    return SimplePrinter(val.type, val["name"])  
-            # TODO but gdb seems to have these with value in storage?
-            #elif logic_type == "Expression":
-            #    print(f"Expression: type = {val.type}")
-            # elif logic_type == "Association":
-            #     print(f"Association {val}")
-            # elif logic_type == "Conjunction":
-            #     print(f"Conjunction {val}")
-
-    #        return ExpressionValuePrinter(type_str[len(ns_prefix):], val)
+   #        return ExpressionValuePrinter(type_str[len(ns_prefix):], val)
         return None
     except Exception as e:
         stack = traceback.extract_stack()# [:-1]

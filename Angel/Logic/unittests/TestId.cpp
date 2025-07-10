@@ -12,6 +12,7 @@ TEST(Id, Construction)
 	EXPECT_TRUE(Id("test"));
 	EXPECT_EQ(Logic::Id("test"), Logic::Id("test"));
 	EXPECT_NE(Logic::Id("test"), Logic::Id("icle"));
+	static_assert(sizeof(Id)<=32);
 }
 
 TEST(Id, Infer)
