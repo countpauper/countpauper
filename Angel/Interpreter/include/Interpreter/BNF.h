@@ -21,12 +21,12 @@ namespace Interpreter
 static const Syntax BNF
 {
     //   <syntax> ::= <rule> | <rule> <syntax>
-    Rule("syntax", {Symbol("line"), Symbol("syntax-tail")}),
-    Rule("syntax-tail", {Regex("(\\s*\\n)+"), Symbol("line"), Symbol("syntax-tail")}),  
+    Rule("syntax", {Symbol("opt-whitespace"), Symbol("line"), Symbol("opt-whitespace"), Symbol("syntax-tail")}),
+    Rule("syntax-tail", {Regex("(\\s*\\n)+"), Symbol("opt-whitespace"), Symbol("line"),  Symbol("opt-whitespace"),Symbol("syntax-tail")}),  
     Rule("syntax-tail", {Epsilon("syntax-end")}),
     //   <rule> ::= <opt-whitespace> "<" <rule-name> ">" <opt-whitespace> "::=" <opt-whitespace> <expression> <line-end>
-    Rule("line", {Symbol("opt-whitespace"), Symbol("rule")}),
-    Rule("line", {Symbol("opt-whitespace"), Symbol("remark")}),
+    Rule("line", {Symbol("rule")}),
+    Rule("line", {Symbol("remark")}),
     Rule("rule", {Symbol("rule-name"), Symbol("opt-whitespace"), Literal("::="), Symbol("opt-whitespace"), Symbol("expression"), Symbol("remark")}),
     //   <opt-whitespace> ::= " " <opt-whitespace> | ""
     Rule("opt-whitespace", {Regex("[ \\t]+")}),
@@ -35,8 +35,8 @@ static const Syntax BNF
     Rule("remark", {Regex("#[^\n]+")}),
     Rule("remark", {Epsilon()}),
     // <expression> ::= <list> | <list> <opt-whitespace> "|" <opt-whitespace> <expression>
-    Rule("expression", {Symbol("list"), Symbol("expression-tail")}),
-    Rule("expression-tail", {Symbol("opt-whitespace"), Literal("|"), Symbol("opt-whitespace"), Symbol("list"), Symbol("expression-tail")}),
+    Rule("expression", {Symbol("list"), Symbol("opt-whitespace"), Symbol("expression-tail")}),
+    Rule("expression-tail", { Literal("|"), Symbol("opt-whitespace"), Symbol("list"), Symbol("opt-whitespace"), Symbol("expression-tail")}),
     Rule("expression-tail", {Epsilon("expression-end")}),
     // <line-end> ::= <opt-whitespace> <EOL> | <line-end> <line-end>
     // Not a symbol to avoid symbol spam

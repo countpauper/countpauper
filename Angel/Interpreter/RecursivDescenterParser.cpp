@@ -109,9 +109,7 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
 
         if (!match) {
             if (!result.empty())
-            //TODO: figure out how opt-whitespace triggers this. because without it the Dump() of the stream is no longer neccessary
-            //    throw Error(std::format("Grammar is not deterministic in {}", std::string(symbol)), from->reference);
-                return std::vector<ParsedSymbol>();
+                throw Error(std::format("Grammar is not deterministic in {}", std::string(symbol)), from->reference);
             return result;
         }
     }

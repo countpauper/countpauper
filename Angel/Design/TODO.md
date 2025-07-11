@@ -200,7 +200,6 @@ Performance
         - [ ] Find out why Set is so big (or the rest won't matter much). pbly multiset. 
         - [ ] Use a function ptr only callback for `Function` This might still reduce it from 72 to 64
         - [ ] Use a small string (0 terminated ptr only) for `String` and `Function` summary
-
 - [ ] Also pass references to ranges, eg when slicing lists, matching with Tuple etc until a copy is necessary. Numpy like. 
 - [ ] Parallelize, clean up the inference engine first if needed
 - [ ] Fix unlocking the knowledge for built in functions in a thread safe way. 
