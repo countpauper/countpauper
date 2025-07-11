@@ -15,9 +15,8 @@ Literal::Literal(const std::string_view match):
 
 std::size_t Literal::Match(SourceSpan src) const
 {
-    std::string srcStrart = src.sub(0, match.size()).extract();
-
-    if (match == srcStrart)
+    if (src.size()>=match.size() && 
+        std::equal(match.begin(), match.end(), src.begin()))
         return match.size();
     else
         return 0;
@@ -46,10 +45,8 @@ Regex::Regex(const std::string_view match):
 
 std::size_t Regex::Match(SourceSpan src) const
 {
-    std::cmatch result;
-    std::string srcString = src.extract(); // TODO optimize with iterator, this copies a lot of source
-
-    if (std::regex_search(srcString.c_str(), result, expression, 
+    std::match_results<SourceSpan::const_iterator> result;
+    if (std::regex_search(src.begin(), src.end(), result, expression, 
             std::regex_constants::match_continuous | std::regex_constants::match_not_null))
         return result.length();
     else 

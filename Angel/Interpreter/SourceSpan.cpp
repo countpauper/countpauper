@@ -59,12 +59,9 @@ SourceSpan SourceSpan::sub(std::ptrdiff_t offset, std::ptrdiff_t newLength) cons
 
 std::string SourceSpan::extract() const
 {
-    if (length==0)
-        return std::string();
     if (!source)
         throw std::runtime_error(std::format("Can't extract {} bytes from null source", length));
-
-    return source->Read(from, length);
+    return std::string(begin(), end());
 }
 
 std::ostream& operator<<(std::ostream& os, const SourceSpan& span)
@@ -94,6 +91,24 @@ SourceSpan::const_iterator SourceSpan::const_iterator::operator++(int)
 { 
     auto tmp = *this; 
     ++pos; 
+    return tmp;  
+}
+
+SourceSpan::const_iterator& SourceSpan::const_iterator::operator--() 
+{ 
+    pos--; 
+    return *this; 
+}
+SourceSpan::const_iterator& SourceSpan::const_iterator::operator-=(std::ptrdiff_t offset)
+{
+    pos-=offset;
+    return *this;
+}
+
+SourceSpan::const_iterator SourceSpan::const_iterator::operator--(int) 
+{ 
+    auto tmp = *this; 
+    --pos; 
     return tmp;  
 }
 

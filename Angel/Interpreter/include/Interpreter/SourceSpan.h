@@ -25,6 +25,9 @@ namespace Interpreter
             const_iterator& operator++();
             const_iterator& operator+=(std::ptrdiff_t offset);
             const_iterator operator++(int);
+            const_iterator& operator--();
+            const_iterator& operator-=(std::ptrdiff_t offset);
+            const_iterator operator--(int);
             value_type operator*() const;
             bool operator==(const const_iterator& o) const;
         protected:

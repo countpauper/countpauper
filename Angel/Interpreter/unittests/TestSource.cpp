@@ -53,14 +53,14 @@ TEST(SourceSpan, Range)
     EXPECT_NE(span.begin(), span.end());
     EXPECT_EQ(span.begin() + static_cast<std::ptrdiff_t>(s.size()), span.end());
     EXPECT_EQ(span.end() - span.begin(), span.size());
-    static_assert(std::forward_iterator<SourceSpan::const_iterator>);
+    static_assert(std::bidirectional_iterator<SourceSpan::const_iterator>);
     static_assert(std::sized_sentinel_for<SourceSpan::const_iterator, SourceSpan::const_iterator>);
 }
 
 TEST(SourceSpan, Extract)
 {
     Source s("Extract");
-    EXPECT_EQ(SourceSpan(1,0).extract(), "");
+    EXPECT_THROW(SourceSpan(1,0).extract(), std::runtime_error);
     EXPECT_EQ(SourceSpan(0,5, &s).extract(), "Extra");
     // These aren't clipped. If clipping is needed, call SourceSpan.sub() first
     EXPECT_THROW(SourceSpan(4,4, &s).extract(), std::out_of_range);
