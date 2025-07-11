@@ -23,42 +23,42 @@ RecursiveDescentParser::RecursiveDescentParser(const Syntax& syntax) :
 static Logging::Tabber tab;
 
 
-void RecursiveDescentParser::ParseTokens(TokenStream& is, SymbolStream& os, Symbol start)
+void RecursiveDescentParser::ParseTokens(TokenStream& is, SymbolStream& os, const Symbol& start)
 {
-    auto input = is.Dump();
-    auto it = input.begin();
-    assert(input.back().token == 0); // skip end
     tab = 0;
-    auto output = Recurse(start, it, input.end()-1);
+    auto output = Recurse(start, is);
     if (output.empty())
-        throw Error("Unexpected token", it->reference);
+    {
+        const auto& pos = is.peek();
+
+        throw Error(std::format("Unexpected token {}", pos.token?
+            to_string(*lexicon.at(pos.token)):"<eof>"), pos.reference);
+    }
     for(const auto& symbol : output)
     {
         os << symbol;
     }
 }
 
-std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol,
-    RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
+std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(const Symbol& symbol, TokenStream& is)
 {
-    RecursiveDescentParser::InputIterator it = from;
     auto rules = syntax.Lookup(symbol);
     for(const auto& rule: rules)
     {
-        Logging::Log<Logging::DEBUG>("{:4}{}{}[", it->reference.offset(), std::string(tab), std::string(rule.second.symbol));
+        const auto pos = is.peek();
+        Logging::Log<Logging::DEBUG>("{:4}{}{}[", pos.reference.offset(), std::string(tab), std::string(rule.second.symbol));
         ++tab;
-        std::vector<ParsedSymbol> result = Recurse(rule.first, rule.second.terms, it, to);
+        std::vector<ParsedSymbol> result = Recurse(rule.first, rule.second.terms, is);
         --tab;
         if (!result.empty()) 
         {
-            Logging::Log<Logging::DEBUG>("{:4}{}] pass {} {} {} terms", it->reference.offset(), std::string(tab),
+            Logging::Log<Logging::DEBUG>("{:4}{}] pass {} {} {} terms", pos.reference.offset(), std::string(tab),
                  std::string(result.front().symbol), std::string(result.front().location), result.size()-1);
-            from = it;
             return result;
         }
         else 
         {
-            Logging::Log<Logging::DEBUG>("{:4}{}] fail {}", from->reference.offset(), std::string(tab),
+            Logging::Log<Logging::DEBUG>("{:4}{}] fail {}", pos.reference.offset(), std::string(tab),
                 std::string(symbol));
         }
     }
@@ -66,39 +66,44 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol,
 }
 
 
-std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const Terms& terms, 
-    RecursiveDescentParser::InputIterator& from, RecursiveDescentParser::InputIterator to)
+std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(const Symbol& symbol, const Terms& terms, TokenStream& is)
 {
     std::vector<ParsedSymbol> result;
-    RecursiveDescentParser::InputIterator it = from;
+    InputToken start = is.peek();   // TODO: maybe optimize without symbol copies
     for(const Term& term: terms)
     {
         auto match =  std::visit( overloaded_visit
         {
-            [&it, &to, this, &result]( const Symbol& subSymbol )
+            [&is, this, &result]( const Symbol& subSymbol )
             { 
-                auto subResult = Recurse(subSymbol, it, to); 
+                auto subResult = Recurse(subSymbol, is); 
                 if (subResult.empty())
                     return false;
                 for(const auto& i : subResult)
                     result.emplace_back(i);
                 return true;
             },
-            [&result, &it] (const Epsilon& epsilon)
+            [&result, &is] (const Epsilon& epsilon)
             {
                 if (epsilon.GetSymbol())
-                    result.emplace_back(ParsedSymbol{epsilon.GetSymbol(), it->reference.sub(0,0)});
-                Logging::Log<Logging::DEBUG>("{:4}{}{}", it->reference.offset(), std::string(tab), std::string(epsilon));
+                {
+                    const auto& pos = is.peek();
+                    result.emplace_back(ParsedSymbol{epsilon.GetSymbol(), pos.reference.sub(0,0)});
+                }
+                auto pos = is.peek();
+                Logging::Log<Logging::DEBUG>("{:4}{}{}", pos.reference.offset(), std::string(tab), std::string(epsilon));
                 return true;
             },
-            [&it, &to, this] <is_token _Token>(const _Token& token )
+            [&is, this] <is_token _Token>(const _Token& token )
             { 
-                if (it==to)
+                if (is.eof())
                     return false;
-                if (std::hash<Term>()(token) != it->token) 
+                auto peek = is.peek();
+                if (std::hash<Term>()(token) != peek.token) 
                     return false;
-                Logging::Log<Logging::DEBUG>("{:4}{}`{}`", it->reference.offset(), std::string(tab), it->reference.extract());
-                ++it;
+                InputToken eat;
+                is >> eat;
+                Logging::Log<Logging::DEBUG>("{:4}{}`{}`", eat.reference.offset(), std::string(tab), eat.reference.extract());
                 return true;
             },
             []( auto&  ) 
@@ -109,12 +114,14 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(Symbol symbol, const T
 
         if (!match) {
             if (!result.empty())
-                throw Error(std::format("Grammar is not deterministic in {}", std::string(symbol)), from->reference);
+            {
+                throw Error(std::format("Grammar is not deterministic in {}", std::string(symbol)), start.reference);
+            }
             return result;
         }
     }
-    result.insert(result.begin(), ParsedSymbol{symbol, SourceSpan(from->reference.from, it->reference.from-from->reference.from, from->reference.source)});
-    from = it;
+    InputToken end = is.peek();   // TODO: maybe optimize without symbol copies
+    result.insert(result.begin(), ParsedSymbol{symbol, SourceSpan(start.reference.from, end.reference.from-start.reference.from, start.reference.source)});
     return result;
 }
 

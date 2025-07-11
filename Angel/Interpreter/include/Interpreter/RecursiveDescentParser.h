@@ -11,13 +11,12 @@ class RecursiveDescentParser : public Parser
 {
 public:
     explicit RecursiveDescentParser(const Syntax& syntax);
-    void ParseTokens(TokenStream& is, SymbolStream& os, Symbol start) override;
+    void ParseTokens(TokenStream& is, SymbolStream& os, const Symbol& start) override;
 private:
-    using InputIterator = std::deque<InputToken>::iterator;
-    std::vector<ParsedSymbol> Recurse(Symbol rule, 
-        InputIterator& from,InputIterator to);
-    std::vector<ParsedSymbol> Recurse(Symbol symbol, const Terms& terms, 
-        InputIterator& from, InputIterator to);
+    std::vector<ParsedSymbol> Recurse(const Symbol& rule, 
+        TokenStream& is);
+    std::vector<ParsedSymbol> Recurse(const Symbol& symbol, const Terms& terms, 
+        TokenStream& is);
     };
 
 }

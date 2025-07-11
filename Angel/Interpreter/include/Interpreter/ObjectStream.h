@@ -151,6 +151,12 @@ public:
         return *this;
     }
 
+    const T& peek()
+    {
+        return objects.front();
+    }
+
+
     using Range = FifoRange<T, Fifo<T>>; 
     Range View() 
     {
@@ -166,6 +172,16 @@ public:
         return state & eofbit; 
     }
 
+    std::size_t size() const
+    {
+        return objects.size();
+    }
+
+    bool empty() const 
+    {
+        return objects.empty();
+    }
+    
     void setstate(iostate flags)
     {
         state |= flags;

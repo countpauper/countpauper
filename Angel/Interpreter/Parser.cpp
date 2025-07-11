@@ -46,7 +46,7 @@ void CheckTrailing(const Source& src, TokenStream& tokens)
 {
     InputToken trailing;
     tokens >> trailing;
-    if (!tokens.eof())
+    if (trailing.token != 0)
     {
         throw Error("Trailing tokens", trailing.reference);
     }
