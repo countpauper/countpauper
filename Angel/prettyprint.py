@@ -48,9 +48,9 @@ class OperatorPrinter:
         return None # "string"
 
 
-class SimplePrinter:
+class ElementPrinter:
     def __init__(self, typ, value):
-        # print(f"SimplePrinter {typ} for {value}")
+        # print(f"ElementPrinter {typ} for {value}")
         self.val = value
         self.type = str(typ)[len(ns_prefix):]  
 
@@ -73,13 +73,13 @@ def angel_printer(val):
             elif logic_type == "Operator":
                 return OperatorPrinter(val)
             elif logic_type == "Id":
-                return SimplePrinter(val.type, val["name"])
+                return ElementPrinter(val.type, val["name"])
             elif logic_type == "Integer":
-                return SimplePrinter(val.type, val["value"])
+                return ElementPrinter(val.type, val["value"])
             elif logic_type == "Boolean":
-                return SimplePrinter(val.type, val["truth"]) 
+                return ElementPrinter(val.type, val["truth"]) 
             elif logic_type == "String":
-                return SimplePrinter(val.type, val["value"])    
+                return ElementPrinter(val.type, val["value"])    
    #        return ExpressionValuePrinter(type_str[len(ns_prefix):], val)
         return None
     except Exception as e:

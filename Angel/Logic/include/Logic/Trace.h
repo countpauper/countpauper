@@ -5,10 +5,11 @@ class Trace
 {
 public:
     Trace() = default;
-    Trace(const Trace& parent, const class Predicate& predicate);
+    Trace(Trace& parent, const class Predicate& predicate);
     void SetVerbosity(unsigned level);
 private:
-    const Trace* parent = nullptr;
+    unsigned Depth() const;
+    Trace* parent = nullptr;
     unsigned verbosity = 0;
 
 };

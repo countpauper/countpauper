@@ -93,6 +93,11 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 - Python
 -   [ ] namespaces
 -   [ ] Indexing (a pair) lists (not sets, only ordered/indexible)  [x,y,z][1]
+-   [ ] String is a container with operator +(concatenate) -(remove all) if rhs is string 
+-   [ ] String oprator &: any overlap, operator |: TBD 
+-   [ ] String operator: if rhs is another container, try to cast alle elements to string and then handle individually
+-   [ ] String that can be indexed for substring 
+-   [ ] String Get is is like find substring, perhaps return count of matches 
 -   [ ] Get with a container of keys for Tuple and Set. Return type is same type as container. So [x,y,z].[x,a] = [true,false]
 -   [ ] Index with container of more than one element [x,y,z][1,2]
 -   [ ] Test that indexing with a boolean works a ternary operator [a,b][bool]
@@ -166,6 +171,7 @@ it mean if it was omitted? In this case the user may have to supply the empty li
 -   [ ] No unsigned integer & bit (ie `12&7=4`). Instead perhaps make some sort of bitmask ordered container or operator where 
 [True, False] & [True, True] = [True&True, False&True]. Peraps it's just All: [*Left & *Right]. It would work more like numby matrix operations anyway. 
 -   [ ] Down arrow notation for built in logarithm (inverse of up). Non unicode notation tbd perhaps \/ or // 
+-   [ ] Substring matching "bla"+$S+"bla"="bladibla"? true:$S="di"
 -   [ ] ! postfix operator for factorial 
 -   [ ] sqrt prefix operator but what is the non unicode ? Implemented as shortcut for exponent(x, 0.5) 
 -   [ ] square and cube uncide postfix for exponent(x,2) and exponent(x,3) 

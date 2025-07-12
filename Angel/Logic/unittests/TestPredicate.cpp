@@ -65,7 +65,7 @@ TEST(Predicate, ArgumentInequality)
 
 TEST(Predicate, to_string)
 {
-	EXPECT_EQ(to_string(Predicate("gizmo", List{})), "gizmo");
+	EXPECT_EQ(to_string(Predicate("gizmo", List{})), "gizmo()");
 	EXPECT_EQ(to_string(Predicate("cat", List{Id("ginny")})), "cat(ginny)");
 }
 

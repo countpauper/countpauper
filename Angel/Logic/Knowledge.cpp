@@ -8,7 +8,7 @@
 
 namespace Angel::Logic
 {
-\
+
 Knowledge::Knowledge() :
 	root()
 {
@@ -139,6 +139,14 @@ void Knowledge::AddDefaults()
 {
     Know(Predicate("true"));
     Know(Association(Predicate("false"), False));
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Knowledge& knowledge)
+{
+    for(const auto& clause: knowledge.Root())
+        os << clause << std::endl;
+    return os;
 }
 
 }

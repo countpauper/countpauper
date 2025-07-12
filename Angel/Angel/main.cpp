@@ -4,6 +4,7 @@
 #include "Interpreter/Source.h"
 #include "Interpreter/Error.h"
 #include "Interpreter/Utils.h"
+#include "Interpreter/Logging.h"
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -28,6 +29,7 @@ int IOLoop(const std::string_view prompt="")
 			if (Interpreter::rtrim(line).back()=='?')
 			{
 				Logic::Expression query = interpreter.InterpretQuery(src);
+				Logging::Log<Logging::INFO>("? {}", Logic::to_string(query));
 				auto response = knowledge.Infer(query);
 				std::cout << response << std::endl;
 			} 

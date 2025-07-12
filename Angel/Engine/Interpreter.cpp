@@ -4,6 +4,7 @@
 #include "Interpreter/SymbolStream.h"
 #include "Interpreter/Source.h"
 #include "Logic/Expression.h"
+#include "Interpreter/Logging.h"
 #include <format>
 #include <unistd.h>
 #include <cassert>
@@ -123,6 +124,7 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
             // if the same: eg a/b * c same as lower  
             //  
             Logic::MultiOperator nextOperator{input.location.extract()};
+            //TODO: this could also be a binary operator. No way to know ahead of time and an exception
             assert(!ope || nextOperator == ope); // not yet implemented 
             ope = nextOperator;
         }
@@ -191,13 +193,18 @@ void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge
                  input.symbol == Interpreter::Symbol("-axioms"))
         {
             if (predicate)
+            {
+                Logging::Log<Logging::INFO>("> {}", Logic::to_string(predicate));
                 knowledge.Know(std::move(predicate));
+            }
             return;
         }
         else if (input.symbol == Interpreter::Symbol("expression"))
         {
-            Logic::Expression terms = GenerateExpression(parse);
-            knowledge.Know(Logic::Association{std::move(predicate), std::move(terms)});
+            Logic::Expression terms = GenerateExpression(parse, true);
+            Logic::Association clause{std::move(predicate), std::move(terms)};
+            Logging::Log<Logging::INFO>("> {}", Logic::to_string(clause));
+            knowledge.Know(std::move(clause));
             return;
         }
     }

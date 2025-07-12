@@ -79,9 +79,9 @@ Expression Variable::Matches(const Expression& e, const Hypothesis& hypothesis, 
 
 Expression Variable::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    for(const auto& condition : hypothesis)
+    for(const auto& substitution : hypothesis)
     {
-        if (const auto* equation = condition.GetIf<Equal>())
+        if (const auto* equation = substitution.GetIf<Equal>())
         {
             // not determined what to do with long equations or unequations 
             // if any item in the equation is the variable another can be inferred.

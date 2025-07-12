@@ -167,24 +167,17 @@ Expression Predicate::Infer(const Knowledge& knowledge, const Hypothesis& origin
 
 std::ostream& operator<<(std::ostream& os, const Predicate& predicate)
 {
-	if (predicate.arguments)
+	os << predicate.id << "(";
+	bool first = true;
+	for(const auto& arg: predicate.arguments)
 	{
-		os << predicate.id << "(";
-		bool first = true;
-		for(const auto& arg: predicate.arguments)
-		{
-			if (!first)
-				os << ",";
-			os << arg;
-			first = false;
-		}
-		os << ")";
+		if (!first)
+			os << ",";
+		os << arg;
+		first = false;
 	}
-	else
-	{
-		os << predicate.id;
-	}
-    return os;
+	os << ")";
+	return os;
 }
 
 }

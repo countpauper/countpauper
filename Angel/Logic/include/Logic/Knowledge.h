@@ -26,5 +26,6 @@ private:
 	Bag root;
 };
 
+std::ostream& operator<<(std::ostream& os, const Knowledge& list);
 
 }

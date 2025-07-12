@@ -9,16 +9,28 @@ namespace Angel::Logic
 void Trace::SetVerbosity(unsigned level)
 {
     verbosity = level;
+    if (parent)
+        parent->verbosity = verbosity;  // for siblings, else this does very little
 }
 
-Trace::Trace(const Trace& parent, const Predicate& predicate) : 
+Trace::Trace(Trace& parent, const Predicate& predicate) : 
     parent(&parent),
     verbosity(parent.verbosity)
 {
     if (verbosity)
     {
-        std::cout << "..." << predicate << std::endl;
+        for(auto d=0; d < Depth();++d)
+            std::cout << "…";
+        std::cout << predicate << std::endl;
     }
+}
+
+unsigned Trace::Depth() const
+{
+    unsigned depth = 0;
+    for(auto p = parent; p; p=p->parent)
+        depth++;
+    return depth;
 }
 
 

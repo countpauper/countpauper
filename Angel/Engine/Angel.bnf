@@ -4,22 +4,23 @@
 # TODO <namsepace>  
 <axioms> ::= "," <space> <axiom> <axioms> | ε-axioms
 <axiom> ::= <predicate> <space> <terms> 
-<terms> ::= ":" <expression> | ε-terms
+<terms> ::= <implication> <expression> | ε-terms
 <predicate> ::= <id> <space> <arguments>
 <arguments> ::= "(" <space> <sequence> <space> ")" ε-predicate | ε-predicate
 <sequence> ::= <expression> <space> <sequence-next> | ε-sequence
 <sequence-next> ::= "," <space> <expression> <sequence-next> | ε-sequence
 <expression> ::= <value> <space> <operand>
 <operand> ::= <binary-operator> <space> <value> <space> <operand> | ε-expression
-<numerical-prefix-operator> ::= '[+-]'
+<numerical-prefix-operator> ::= '[+-]' | <comparator>
 <star-operator> ::= "*"
 <numerical-binary-operator> ::= '[\/^]' | <numerical-prefix-operator> | <star-operator>
 <logical-prefix-operator> ::= '[~¬]'
 <logical-binary-operator> ::= '[&\|]'
 <comparator> ::= '(!=|>=|<=|[<>=≠≥≤])'
 <set-either-operator> ::= "@"
+<implication> ::= ':|←'
 <value-prefix-operator> ::= '[∃∀\$]' | <set-either-operator> | <star-operator>
-<set-binary-operator> ::= '[.∈]' | <set-either-operator>
+<set-binary-operator> ::= '\.{1,2}|∈' | <set-either-operator> | <implication>
 <binary-operator> ::= <numerical-binary-operator> | <logical-binary-operator> | <comparator> | <set-binary-operator> 
 <prefix-operator> ::= <numerical-prefix-operator> | <logical-prefix-operator> | <value-prefix-operator>
 <value> ::= <prefix-operator> <value> | <object> | "(" <space> <expression> <space> ")" 
