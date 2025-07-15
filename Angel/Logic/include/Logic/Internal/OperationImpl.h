@@ -95,4 +95,15 @@ std::ostream& operator<<(std::ostream& os, const OperationBase<T>& operation)
     return os;
 }
 
+
+template<typename... T> 
+Operator Operator::Find(std::string_view tag)
+{
+    Operator found;
+    if (tag.empty())
+        return found;
+    (found = (!found? Operator(FindId(tag, T::operands)) : found), ...);
+    return found;
+}
+
 }

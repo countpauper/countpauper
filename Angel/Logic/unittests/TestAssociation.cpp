@@ -35,7 +35,7 @@ TEST(Association, to_string)
 {
 	EXPECT_EQ(to_string(Association{Id("ginny"), Integer(4)}), "ginny:4");
 	EXPECT_EQ(to_string(Association{Id("ginny"), Id("gizmo")}), "ginny:gizmo");
-	EXPECT_EQ(to_string(Association{Predicate("cat"), Id("gizmo")}), "cat←gizmo");
+	EXPECT_EQ(to_string(Association{Predicate("cat"), Id("gizmo")}), "cat()←gizmo");
 }
 
 TEST(Association, Simplify)

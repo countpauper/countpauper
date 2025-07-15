@@ -35,6 +35,7 @@ public:
     Set Assumptions() const;
     const_container_iterator begin() const;
     const_container_iterator end() const;
+    Expression Get(const Expression& key) const;    
     constexpr static PrefixOperator ope{L'∀'};
 };
 

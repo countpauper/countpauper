@@ -24,7 +24,7 @@ using ExpressionVariant = Variant<
     Number,
     Id, String, 
     Container,
-    Predicate, Association,
+    Predicate,
     Operation, 
     Ordering>;  
 

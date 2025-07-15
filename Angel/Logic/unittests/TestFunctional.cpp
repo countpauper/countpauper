@@ -24,9 +24,9 @@ TEST(Functional, Sort)
         Association(Predicate("sort", {}), List{}),
         Association(Predicate("sort", {Variable("H"), All("T")}), 
             Summation{
-                Predicate("sort", {All{Association(All("T"), Lesser{Variable("H")})}}),
+                Predicate("sort", {Association(All("T"), Lesser{Variable("H")})}),
                 List{Variable("H")},
-                Predicate("sort", {All{Association(All("T"), GreaterEqual{Variable("H")})}})
+                Predicate("sort", {Association(All("T"), GreaterEqual{Variable("H")})})
             })
     };
     EXPECT_EQ(sort.Infer(Predicate("sort", {Integer(2), Integer(1)})), (List{Integer(1), Integer(2)}));

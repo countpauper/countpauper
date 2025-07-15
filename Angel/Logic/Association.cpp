@@ -65,6 +65,17 @@ Expression Association::Infer(const class Knowledge& k, const Hypothesis& hypoth
     };
 }
 
+const_container_iterator Association::begin() const
+{
+    assert(false); // really iterate over two values?
+    return const_container_iterator();
+}
+
+const_container_iterator Association::end() const
+{
+    return const_container_iterator();
+}
+
 Expression Association::Get(const Expression& key) const
 {
     auto hypothsis = lhs->Matches(key, {}).Simplify();

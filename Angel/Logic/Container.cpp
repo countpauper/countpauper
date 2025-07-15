@@ -22,12 +22,12 @@ std::size_t Container::size() const
         }, *this);   
 }
 
-Container Container::Simplify() const
+Expression Container::Simplify() const
 {
     return std::visit(
-        [this](const auto& obj) -> Container
+        [this](const auto& obj) -> Expression
         {
-            return Container(obj.Simplify());
+            return obj.Simplify();
         }, *this);      
 }
 
@@ -65,6 +65,14 @@ Expression Container::Infer(const class Knowledge& knowledge, const Hypothesis& 
     return std::visit(
         [&knowledge, &hypothesis, &trace](const auto& obj) -> Expression {
             return obj.Infer(knowledge, hypothesis, trace);
+        }, *this);
+}
+
+Expression Container::GetItem(const Expression& key) const
+{
+    return std::visit(
+        [&key](const auto& obj) {
+            return obj.Get(key);
         }, *this);
 }
 

@@ -190,6 +190,14 @@ const_container_iterator All::end() const
 
 }
 
+Expression All::Get(const Expression& key) const
+{
+    assert(false);  // what should it do ? 
+    // *[A,B].x is more [A.x, B.x] than it is [A,B].x but that's like all other operators 
+    return Expression();
+}
+
+
 std::ostream& operator<<(std::ostream& os, const All& all)
 {
     os << all.ope;

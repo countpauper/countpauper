@@ -3,6 +3,7 @@
 #include "Logic/Set.h"
 #include "Logic/List.h"
 #include "Logic/All.h"
+#include "Logic/Association.h"
 #include "Logic/Internal/Variant.h"
 #include <variant>
 
@@ -11,7 +12,7 @@ namespace Angel::Logic
 {
 
 using ContainerVariant = Variant<
-    List, Set, All>;  
+    List, Set, All, Association>;  
 class const_container_iterator;
 
 class Container : public ContainerVariant
@@ -24,13 +25,13 @@ public:
 
     std::size_t size() const;
 
-    Container Simplify() const;
+    Expression Simplify() const;
     Set Assumptions() const;
     inline bool IsConstant() const { return Assumptions().empty(); }
     Container Substitute(const Hypothesis& hypothesis) const;
     Expression Matches(const Expression& e, const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
-
+    Expression GetItem(const Expression& key) const;
     explicit operator bool() const;
 
     template<typename T> 

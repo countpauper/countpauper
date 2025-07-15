@@ -16,6 +16,7 @@ TEST(Operator, ConstructBinary)
 {
     EXPECT_TRUE(BinaryOperator(L'.'));
     EXPECT_EQ(BinaryOperator(L'←').Operands(), 2);
+    EXPECT_EQ(Operator::Find<BinaryOperator>("."), BinaryOperator("."));
 }
 
 TEST(Operator, ConstructMulti)
@@ -24,7 +25,7 @@ TEST(Operator, ConstructMulti)
     EXPECT_EQ(MultiOperator(L'∧'), MultiOperator("&"));
     EXPECT_NE(MultiOperator(L'-'), PrefixOperator(L'-'));
     EXPECT_EQ(MultiOperator(L'⋅').Operands(), 3);
-
+    EXPECT_EQ((Operator::Find<BinaryOperator, MultiOperator>("*")), MultiOperator(L'⋅'));
     static_assert(sizeof(MultiOperator)==4);
 }
 

@@ -7,9 +7,6 @@ namespace Angel::Logic
 template <typename... Ts>
 ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand) 
 {
-    if (!ope)
-        return std::move(operand);
-        
     Logic::Expression result = Logic::False;
     bool found = false;
     
@@ -51,7 +48,12 @@ ExpressionVariant make_operation(const Operator ope, Tuple&& operands)
 {
     if (operands.empty())
         throw std::invalid_argument(std::format("Not enough operands for operator {}", std::string(ope)));
-    if (operands.size()==1) 
+    if (!ope)
+    {
+        assert(operands.size() == 1);
+        return std::move(operands[0]);
+    }
+    if (ope.Operands()==1)
         if (ope==All::ope)
             return Container(All(std::move(operands[0])));
         else

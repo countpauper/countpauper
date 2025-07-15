@@ -24,35 +24,36 @@ struct Definition
 };
 
 static constexpr Definition opdef[]{
-    {BinaryOperator(L'←'),  0, ":",   "with/if"},
+    {BinaryOperator(L'←'),  0, ":",  "with/if"},
     {MultiOperator(L'^'),  0, "",    "power"},
     {MultiOperator(L'⋅'),  0, "*",   "multiply"},
     {MultiOperator(L'÷'),  0, "/",   "divide"},
-    {PrefixOperator(L'+'),  0, "",    "positive"},
+    {PrefixOperator(L'+'),  0, "",   "positive"},
     {MultiOperator(L'+'),  0, "",    "add"},
     {MultiOperator(L'-'),  0, "",    "subtract"},
-    {PrefixOperator(L'-'),  0, "",    "negative"},
+    {PrefixOperator(L'-'),  0, "",   "negative"},
     {MultiOperator(L'↑'),  0, "**",  "exponent"},
     {MultiOperator(L'↓'),  0, "//",  "logarithm"},
     {MultiOperator(L'∧'),  0, "&",   "and"},
     {MultiOperator(L'∨'),  0, "|",   "or"},
     {MultiOperator(L'⊕'), 0, "^",   "xor"},
-    {PrefixOperator(L'¬'),  0, "~",   "not"},
-    {Comparator(L'≠'),      0, "!=",  "not equal"},
-    {Comparator(L'>'),      0, "",    "greater"},
-    {Comparator(L'<'),      0, "",    "lesser"},
-    {Comparator(L'≥'),      0, ">=",  "greater or equal"},
-    {Comparator(L'≤'),      0, "<=",  "lesser or equal"},
-    {Comparator(L'∈'),      0, "@",   "element of"},
-    {PrefixOperator(L'$'),  0, "",    "value of"},
-    {PrefixOperator(L'∀'),  0, "*",   "all of"},
-    {PrefixOperator(L'∃'),  0, "@",   "any of"},
-    {BinaryOperator(L'.'),  0, "",    "item"},
-    {PrefixOperator(L'√'),  0, "",    "square root"},
-    {PostfixOperator(L'²'), 0, "",    "squared"},
-    {PostfixOperator(L'³'), 0, "",    "cubed"},
-    {PostfixOperator(L'!'), 0, "",    "factorial"},
-    {Operator(),            0, "",    "none"} // 0 terminated
+    {PrefixOperator(L'¬'),  0, "~",  "not"},
+    {Comparator(L'='),      0, "",   "equal"},
+    {Comparator(L'≠'),      0, "!=", "not equal"},
+    {Comparator(L'>'),      0, "",   "greater"},
+    {Comparator(L'<'),      0, "",   "lesser"},
+    {Comparator(L'≥'),      0, ">=", "greater or equal"},
+    {Comparator(L'≤'),      0, "<=", "lesser or equal"},
+    {Comparator(L'∈'),      0, "@",  "element of"},
+    {PrefixOperator(L'$'),  0, "",   "value of"},
+    {PrefixOperator(L'∀'),  0, "*",  "all of"},
+    {PrefixOperator(L'∃'),  0, "@",  "any of"},
+    {BinaryOperator(L'.'),  0, "",   "item"},
+    {PrefixOperator(L'√'),  0, "",   "square root"},
+    {PostfixOperator(L'²'), 0, "",   "squared"},
+    {PostfixOperator(L'³'), 0, "",   "cubed"},
+    {PostfixOperator(L'!'), 0, "",   "factorial"},
+    {Operator(),            0, "",   "none"} // 0 terminated
 };
 
 static const Definition& FindDefinition(uint32_t id)
@@ -67,7 +68,7 @@ static const Definition& FindDefinition(uint32_t id)
 }
 static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> wchar_conv;
 
-static const uint32_t FindId(const std::string_view tag, unsigned operands)
+uint32_t Operator::FindId(const std::string_view tag, unsigned operands)
 {
     if (tag.empty())
         return 0;
@@ -81,13 +82,15 @@ static const uint32_t FindId(const std::string_view tag, unsigned operands)
         if (opdef[i].altTag == tag) 
             return opdef[i].op.Id();
     }
-    throw std::invalid_argument(std::format("Undefined operator {}", tag));
+    return 0;
 }
 
 Operator::Operator(const std::string_view tag, uint8_t operands) :
-    op{.id{FindId(tag, operands)}}
+    Operator(FindId(tag, operands))
 {
     static_assert(sizeof(op) == 4);
+    if (!tag.empty() && op.id==0)
+        throw std::invalid_argument(std::format("Undefined operator {}", tag));    
 }
 
 Operator::operator bool() const

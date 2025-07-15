@@ -8,6 +8,7 @@
 #include "Logic/Conjunction.h"
 #include "Logic/Disjunction.h"
 #include "Logic/Variable.h"
+#include "Logic/Item.h"
 #include "Logic/Internal/Variant.h"
 #include <variant>
 
@@ -16,7 +17,7 @@ namespace Angel::Logic
 {
 
 using OperationVariant = Variant<
-    Negative, Variable,
+    Negative, Variable, Item,
     Summation, Subtraction, Multiplication, Division, Conjunction, Disjunction>;  
 class const_container_iterator;
 

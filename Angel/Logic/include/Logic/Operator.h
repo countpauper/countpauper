@@ -20,12 +20,16 @@ public:
     unsigned Operands() const { return op.sw.operands; }
     bool IsPostfix() const { return op.sw.postfix; }
     bool IsComparator() const { return op.sw.comparison; }
+    template<typename... T> 
+    static Operator Find(std::string_view tag);
 protected:
-    constexpr explicit Operator(const wchar_t tag, uint8_t operands, bool postfix=false, bool comparator=false) :
+    constexpr Operator(const wchar_t tag, uint8_t operands, bool postfix=false, bool comparator=false) :
         op{.sw{tag, operands, postfix, comparator, 0, 0}}
     {
     }
     Operator(const std::string_view tags, uint8_t operands);
+    constexpr explicit Operator(uint32_t code) : op{.id{code}} {}
+    static uint32_t FindId(const std::string_view tag, unsigned operands);
 private:
     union Code
     {

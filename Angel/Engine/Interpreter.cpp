@@ -123,8 +123,11 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
             //    that operation is the first argument of the new one for that operator
             // if the same: eg a/b * c same as lower  
             //  
-            Logic::MultiOperator nextOperator{input.location.extract()};
-            //TODO: this could also be a binary operator. No way to know ahead of time and an exception
+            auto operatorTag = input.location.extract();
+            Logic::Operator nextOperator = Logic::Operator::Find<Logic::BinaryOperator, Logic::MultiOperator>(
+                                                                operatorTag);
+            if (!nextOperator)
+                throw std::runtime_error(std::format("Unknown operator {}", operatorTag));
             assert(!ope || nextOperator == ope); // not yet implemented 
             ope = nextOperator;
         }

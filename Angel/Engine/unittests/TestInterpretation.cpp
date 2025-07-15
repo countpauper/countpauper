@@ -65,5 +65,64 @@ TEST(Interpretation, Set)
     EXPECT_EQ(k.Infer(Logic::Predicate("s")), (Logic::Set{Logic::Id("ginny"), Logic::Id("gizmo")}));
 }
 
+TEST(Interpretation, Operation)
+{
+    Logic::Knowledge k; 
+    AngelInterpreter interpreter;
+    Interpreter::Source source("q:a&b");
+    interpreter.Interpret(source, k);
+    EXPECT_EQ(k.Infer(Logic::Predicate("q")), (Logic::Conjunction{Logic::Id("a"), Logic::Id("b")}));
+}
+
+TEST(Interpretation, BinaryOperation)
+{
+    Logic::Knowledge k; 
+    AngelInterpreter interpreter;
+    Interpreter::Source source("hascat(*C):$C.cat");
+    interpreter.Interpret(source, k);
+    EXPECT_EQ(k.Infer(Logic::Predicate("hascat", {Logic::Id("dog"), Logic::Id("cat")})), Logic::Integer(1));
+}
+
+
+TEST(Interpretation, Prefix)
+{
+    Logic::Knowledge k; 
+    AngelInterpreter interpreter;
+    Interpreter::Source source("neg($a):-$a");
+    interpreter.Interpret(source, k);
+    EXPECT_EQ(k.Infer(Logic::Predicate("neg",{Logic::Integer(3)})), Logic::Integer(-3));
+}
+
+TEST(Interpretation, PrefixComparator)
+{
+    Logic::Knowledge k; 
+    AngelInterpreter interpreter;
+    Interpreter::Source source("small(<=9)");
+    interpreter.Interpret(source, k);
+    EXPECT_EQ(k.Infer(Logic::Predicate("small",{Logic::Integer(9)})), Logic::True);
+    EXPECT_EQ(k.Infer(Logic::Predicate("small",{Logic::Integer(10)})), Logic::False);
+}
+
+TEST(Interpretation, Factorial)
+{
+    Logic::Knowledge k; 
+    AngelInterpreter interpreter;
+    Interpreter::Source source("factorial(≤1)←1\nfactorial($n)←$n⋅factorial($n-1)\n");
+    interpreter.Interpret(source, k);
+    EXPECT_EQ(k.Infer(Logic::Predicate("factorial",{Logic::Integer(0)})), Logic::Integer(1));
+    EXPECT_EQ(k.Infer(Logic::Predicate("factorial",{Logic::Integer(5)})), Logic::Integer(120));
+}
+
+TEST(Interpretation, Sort)
+{
+    Logic::Knowledge k; 
+    AngelInterpreter interpreter;
+    Interpreter::Source source("sort←[]\nsort($H,∀T)←sort(∀T:<$H)+[$H]+sort(∀T:≥$H)");
+    interpreter.Interpret(source, k);
+    EXPECT_EQ(k.Infer(Logic::Predicate("sort",{
+            Logic::Integer(5), Logic::Integer(2), Logic::Integer(1), Logic::Integer(4), Logic::Integer(3) })),
+        (Logic::List{
+            Logic::Integer(1), Logic::Integer(2), Logic::Integer(3), Logic::Integer(4), Logic::Integer(5) }));
+}
 
 }
