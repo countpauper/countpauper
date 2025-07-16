@@ -66,7 +66,7 @@ TEST(Operator, String)
 TEST(Operator, Description)
 {
     EXPECT_EQ(MultiOperator(L'∨').Description(), "or");
-    EXPECT_EQ(PrefixOperator("@").Description(), "any of");
+    EXPECT_EQ(Filter("@").Description(), "any of");
 }
 
 TEST(Operator, Operate)

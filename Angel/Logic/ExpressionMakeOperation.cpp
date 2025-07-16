@@ -19,6 +19,23 @@ ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand)
 }
 
 template <typename... Ts>
+ExpressionVariant make_binary_operation(const Operator ope, Tuple&& operands) 
+{
+    if (operands.size()!=2)
+        throw std::invalid_argument(std::format("Binary operation {} needs two operands, not {}", std::string(ope), operands.size()));
+
+    Logic::Expression result = Logic::False;
+    bool found = false;
+
+    ((!found && (found = (Ts::ope == ope)) 
+        ? result.emplace<Operation>(Ts(std::move(operands[0]), std::move(operands[1]))), true 
+        : false), ...);
+    
+    if (!found) throw std::invalid_argument(std::format("Invalid multiary operator {}", std::string(ope)));
+    return result;
+}
+
+template <typename... Ts>
 ExpressionVariant make_multiary_operation(const Operator ope, Tuple&& operands) 
 {
     Logic::Expression result = Logic::False;
@@ -33,8 +50,10 @@ ExpressionVariant make_multiary_operation(const Operator ope, Tuple&& operands)
 }
 
 template <typename... Ts>
-ExpressionVariant make_ordering(const Operator ope, Tuple&& operands) 
+ExpressionVariant make_ordering(Operator ope, Tuple&& operands) 
 {
+    if (ope.Operands()==1)
+        ope=Comparator(ope.op.sw.unicode);  // Find operator defined with comparators, also for filters
     Logic::Expression result = Logic::False;
     bool found = false;
     ((!found && (found = (Ts::ope == ope)) 
@@ -53,13 +72,15 @@ ExpressionVariant make_operation(const Operator ope, Tuple&& operands)
         assert(operands.size() == 1);
         return std::move(operands[0]);
     }
-    if (ope.Operands()==1)
+    if (ope.IsComparator())
+        return make_ordering<Equal, Unequal, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
+    else if (ope.Operands()==1)
         if (ope==All::ope)
             return Container(All(std::move(operands[0])));
         else
             return make_unary_operation<Negative,Variable>(ope, std::move(operands[0]));
-    else if (ope.IsComparator())
-        return make_ordering<Equal, Unequal, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
+    else if (ope.Operands()==2)
+        return make_binary_operation<Item>(ope, std::move(operands));
     else
         return make_multiary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction>(ope, std::move(operands));
 }

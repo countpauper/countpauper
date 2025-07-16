@@ -12,7 +12,7 @@ TEST(Ordering, Construction)
     EXPECT_EQ(LesserEqual{Integer(1)}.size(), 1);
     EXPECT_EQ(Expression(Comparator(L'>'), {Integer(1), False}), 
         (Greater{Integer(1), False}));   
-    EXPECT_EQ(Expression(Comparator(L'≠'), {Integer(0)}), 
+    EXPECT_EQ(Expression(Filter(L'≠'), {Integer(0)}), 
         (Unequal{Integer(0)}));   
 
 	static_assert(Logic::is_operation<GreaterEqual>);
