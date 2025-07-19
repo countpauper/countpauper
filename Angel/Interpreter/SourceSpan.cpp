@@ -60,7 +60,7 @@ SourceSpan SourceSpan::sub(std::ptrdiff_t offset, std::ptrdiff_t newLength) cons
 std::string SourceSpan::extract() const
 {
     if (!source)
-        throw std::runtime_error(std::format("Can't extract {} bytes from null source", length));
+        throw std::runtime_error(std::format("Can't extract {} characters from null source", length));
     return std::string(begin(), end());
 }
 

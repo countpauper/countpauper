@@ -46,6 +46,12 @@ std::vector<ParsedSymbol> RecursiveDescentParser::Recurse(const Symbol& symbol, 
     for(const auto& rule: rules)
     {
         const auto pos = is.peek();
+        const auto term = lexicon[pos.token];
+        if (term)
+            Logging::Log<Logging::DEBUG>("{:4}{}@`{}`=>{}", pos.reference.offset(), std::string(tab), pos.reference.extract(), std::to_string(*term));
+        else
+            Logging::Log<Logging::DEBUG>("{:4}{}@{} chars => <eof>", pos.reference.offset(), std::string(tab), pos.reference.size());
+
         Logging::Log<Logging::DEBUG>("{:4}{}{}[", pos.reference.offset(), std::string(tab), std::string(rule.second.symbol));
         ++tab;
         std::vector<ParsedSymbol> result = Recurse(rule.first, rule.second.terms, is);

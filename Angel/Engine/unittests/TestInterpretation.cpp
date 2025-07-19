@@ -22,7 +22,7 @@ TEST(Interpretation, Axiom)
 TEST(Interpretation, Axioms)
 {
     Logic::Knowledge k; 
-    Interpreter::Source source("cat , fish");
+    Interpreter::Source source("cat\nfish");
     AngelInterpreter interpreter;
 
     interpreter.Interpret(source, k);
@@ -107,7 +107,8 @@ TEST(Interpretation, Factorial)
 {
     Logic::Knowledge k; 
     AngelInterpreter interpreter;
-    Interpreter::Source source("factorial(≤1)←1\nfactorial($n)←$n⋅factorial($n-1)\n");
+    //Interpreter::Source source("factorial(≤1)←1\nfactorial($n) ← $n⋅factorial($n-1)");
+    Interpreter::Source source("factorial(<=1):1\nfactorial($n):$n*factorial($n-1)");
     interpreter.Interpret(source, k);
     EXPECT_EQ(k.Infer(Logic::Predicate("factorial",{Logic::Integer(0)})), Logic::Integer(1));
     EXPECT_EQ(k.Infer(Logic::Predicate("factorial",{Logic::Integer(5)})), Logic::Integer(120));
@@ -117,7 +118,8 @@ TEST(Interpretation, Sort)
 {
     Logic::Knowledge k; 
     AngelInterpreter interpreter;
-    Interpreter::Source source("sort←[]\nsort($H,∀T)←sort(∀T:<$H)+[$H]+sort(∀T:≥$H)");
+    //Interpreter::Source source("sort←[]\nsort($H,∀T)←sort(∀T:<$H) + [$H] + sort(∀T:≥$H)");
+    Interpreter::Source source("sort:[]\nsort($H,*T):sort(*T:<$H) + [$H] + sort(*T:>=$H)");
     interpreter.Interpret(source, k);
     EXPECT_EQ(k.Infer(Logic::Predicate("sort",{
             Logic::Integer(5), Logic::Integer(2), Logic::Integer(1), Logic::Integer(4), Logic::Integer(3) })),

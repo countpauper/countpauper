@@ -2,9 +2,10 @@
 <knowledge> ::= ""
 <query>::=<expression> <space> "?"
 # TODO <namsepace>  
-<axioms> ::= "," <space> <axiom> <axioms> | ε-axioms
-<axiom> ::= <predicate> <space> <terms> 
-<terms> ::= <implication> <expression> | ε-terms
+<axioms> ::= <axiom> <space> <axioms> | ε-axioms
+
+<axiom> ::= <predicate> <space> <terms>  
+<terms> ::= <implication> <space> <expression> <space> | ε-terms
 <predicate> ::= <id> <space> <arguments>
 <arguments> ::= "(" <space> <sequence> <space> ")" ε-predicate | ε-predicate
 <sequence> ::= <expression> <space> <sequence-next> | ε-sequence
@@ -13,7 +14,7 @@
 <operand> ::= <binary-operator> <space> <value> <space> <operand> | ε-expression
 <numerical-prefix-operator> ::= '[+-]' | <comparator>
 <star-operator> ::= "*"
-<numerical-binary-operator> ::= '[\/^]' | <numerical-prefix-operator> | <star-operator>
+<numerical-binary-operator> ::= '[\/\^⋅÷]' | <numerical-prefix-operator> | <star-operator>
 <logical-prefix-operator> ::= '[~¬]'
 <logical-binary-operator> ::= '[&\|]'
 <comparator> ::= '(!=|>=|<=|[<>=≠≥≤])'
@@ -35,11 +36,13 @@
 <positive-integer> ::= '[0-9]+' 
 <positive-float> ::= '(([0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)|(inf)|(nan))'
 <string> ::= '\"([^"\\]|\\\"|\\\\)*\"'
-<id> ::= '([^\x00-\x7F]|[A-Za-z_])([^\x00-\x7F]|\w|\_)*'
+<id> ::= '([^\x00-\x7F\x80-0xBF÷∀-⋿]|[A-Za-z_])([^\x00-\x7F\x80-0xBF÷∀-⋿]|\w|\_)*'
 <variable_id> ::= <id> | <variable> | εanonymous
 <variable> ::= <value-prefix-operator> <variable_id>
 <container> ::= <list> | <set> 
 <list> ::= "[" <space> <sequence> "]"
 <set> ::= "{" <space> <sequence> "}"
 <space> ::= <req-space> | "" 
-<req-space> ::= '\s+'
+<req-space> ::= <linear-space> | <endl>
+<linear-space> ::= '[ \t\r]+'
+<endl> ::= '(\s*\n)+'

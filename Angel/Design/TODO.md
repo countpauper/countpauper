@@ -80,7 +80,8 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [*] Be able to implement quicksort like Haskell https://en.wikipedia.org/wiki/Haskell#Code_examples (x:xs means [x]+xs if xs is a list or as used here to split head:tail
 -   [*] Membership operator x.{x,y} (done for List)
 - Parser Update 
--   [ ] Optimize regex match with iterators (see TODO)
+-   [*] Optimize regex match with iterators (see TODO)
+-   [ ] Fix utf8 parsing, need utf8 string with working substring and iterators that are character, not index based 
 -   [ ] Reduce Term size (see TODO in test) by not precompiling regex or on the heap
 -   [ ] Operator precedence when parsing (see TODO)
 -   [ ] () braces (test)
