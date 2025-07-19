@@ -24,6 +24,7 @@ public:
     Expression Substitute(const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     constexpr static PrefixOperator ope{L'$'};
+    using Pariant = class Operation;
 };
 
 

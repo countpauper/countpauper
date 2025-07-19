@@ -11,7 +11,7 @@ ExpressionVariant make_unary_operation(const Operator ope, Expression&& operand)
     bool found = false;
     
     ((!found && (found = (Ts::ope == ope)) 
-        ? (result.emplace<Operation>(Ts(std::move(operand))), true) 
+        ? (result.emplace<typename Ts::Pariant>(Ts(std::move(operand))), true) 
         : false), ...);
     
     if (!found) throw std::invalid_argument(std::format("Invalid unary operator {}", std::string(ope)));
@@ -28,7 +28,7 @@ ExpressionVariant make_binary_operation(const Operator ope, Tuple&& operands)
     bool found = false;
 
     ((!found && (found = (Ts::ope == ope)) 
-        ? result.emplace<Operation>(Ts(std::move(operands[0]), std::move(operands[1]))), true 
+        ? result.emplace<typename Ts::Pariant>(Ts(std::move(operands[0]), std::move(operands[1]))), true 
         : false), ...);
     
     if (!found) throw std::invalid_argument(std::format("Invalid multiary operator {}", std::string(ope)));
@@ -75,13 +75,10 @@ ExpressionVariant make_operation(const Operator ope, Tuple&& operands)
     if (ope.IsComparator())
         return make_ordering<Equal, Unequal, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
     else if (ope.Operands()==1)
-        if (ope==All::ope)
-            return Container(All(std::move(operands[0])));
-        else
-            return make_unary_operation<Negative,Variable>(ope, std::move(operands[0]));
+            return make_unary_operation<All, Negative,Variable>(ope, std::move(operands[0]));
     else if (ope.Operands()==2)
-        return make_binary_operation<Item>(ope, std::move(operands));
-    else
+        return make_binary_operation<Item, Association>(ope, std::move(operands));
+    else    
         return make_multiary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction>(ope, std::move(operands));
 }
 

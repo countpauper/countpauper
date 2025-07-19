@@ -28,7 +28,8 @@ public:
     bool operator==(const Association& other) const { return Pair::operator==(other); }
     bool IsClause() const;
     constexpr static BinaryOperator ope{L'←'};
-
+    using Pariant = Container;
+    
     static constexpr bool unique=false;
     static constexpr bool ordered=true;    
 };

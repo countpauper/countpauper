@@ -37,6 +37,7 @@ public:
         return FlatTuple<T>::SubstituteItems(hypothesis);
     }
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
+    using Pariant = class Operation;
 protected:
     // default constructor protected so derived classes can make it public to allow empty terms
     // The derived classes should implement the case by overloading Infer

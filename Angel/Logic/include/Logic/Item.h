@@ -7,6 +7,7 @@ namespace Angel::Logic
 {
 
 class Expression;
+class Operation;
 
 class Item : public Pair
 {
@@ -24,6 +25,7 @@ public:
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     bool operator==(const Item& other) const { return Pair::operator==(other); }
     constexpr static BinaryOperator ope{L'.'};
+    using Pariant = Operation;
 };
 
 

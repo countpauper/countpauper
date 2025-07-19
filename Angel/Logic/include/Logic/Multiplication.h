@@ -15,6 +15,7 @@ public:
     constexpr static Integer identity{1};
     constexpr static Integer absorb{0};
     constexpr static MultiOperator ope{L'⋅'};
+    using Parient = class Operation;
 };
 
 }

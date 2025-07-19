@@ -21,6 +21,7 @@ public:
     bool operator==(const Negative& other) const;
     std::size_t Hash() const;
     constexpr static PrefixOperator ope{L'-'};
+    using Pariant = class Operation;
 };
 
 std::ostream& operator<<(std::ostream& os, const Negative& );

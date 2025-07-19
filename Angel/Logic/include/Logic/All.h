@@ -37,6 +37,7 @@ public:
     const_container_iterator end() const;
     Expression Get(const Expression& key) const;    
     constexpr static PrefixOperator ope{L'∀'};
+    using Pariant = class Container;
 };
 
 std::ostream& operator<<(std::ostream& os, const All& );
