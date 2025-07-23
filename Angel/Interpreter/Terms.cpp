@@ -81,13 +81,47 @@ bool Literal::operator==(const Literal& other) const
 
 Regex::Regex(const std::string_view match):
     wmatch(utf8_to_wstring(match)),
-    expression(wmatch.data(), wmatch.size(), 
-        std::regex_constants::ECMAScript | 
-        std::regex_constants::optimize | 
-        std::regex_constants::nosubs)
+    expression(ConstructExpression())
 {
     if (wmatch.empty())
         throw std::invalid_argument("Regex token can not be empty. Use Epsilon.");
+}
+
+std::unique_ptr<std::wregex> Regex::ConstructExpression() const
+{
+    return std::make_unique<std::wregex>(wmatch.data(), wmatch.size(), 
+        std::regex_constants::ECMAScript | 
+        std::regex_constants::optimize | 
+        std::regex_constants::nosubs);
+}
+
+Regex::Regex(const Regex& other) :
+    wmatch(other.wmatch),
+    expression(ConstructExpression())    
+{
+}
+
+Regex::Regex(Regex&& other) :
+    wmatch(std::move(other.wmatch)),
+    expression(std::move(other.expression))
+{
+}
+
+Regex& Regex::operator=(const Regex& other)
+{
+    wmatch = other.wmatch;
+    expression.reset();
+    expression = ConstructExpression();
+    return *this;
+}
+
+Regex& Regex::operator=(Regex&& other)
+{
+    expression.reset();
+    wmatch.clear();
+    std::swap(wmatch, other.wmatch);
+    std::swap(expression, other.expression);
+    return *this;
 }
 
 std::size_t length_of_next_utf8_codepoint(std::string_view utf8_string)
@@ -127,7 +161,7 @@ std::size_t Regex::Match(SourceSpan src) const
     std::wsmatch result;
     std::string utf8Source = src.extract(); 
     std::wstring theSource = utf8_to_wstring(utf8Source);
-    if (std::regex_search(theSource, result, expression, 
+    if (std::regex_search(theSource, result, *expression, 
             std::regex_constants::match_continuous | std::regex_constants::match_not_null))
         return wchars_to_bytes(utf8Source, result.length());
     else 

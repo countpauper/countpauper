@@ -112,7 +112,6 @@ namespace std
 
 size_t hash<Interpreter::Symbol>::operator()(const Interpreter::Symbol& s) noexcept 
 {
-
     return s.Hash();
 }
 

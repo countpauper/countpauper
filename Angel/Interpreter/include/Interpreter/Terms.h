@@ -33,6 +33,10 @@ class Regex
 {
 public:
     Regex(const std::string_view match);
+    Regex(const Regex& other);
+    Regex(Regex&& other);
+    Regex& operator=(const Regex& other);
+    Regex& operator=(Regex&& other);
     std::size_t Match(SourceSpan src) const;
     operator std::string() const;
     bool operator==(const Regex& other) const;
@@ -40,7 +44,9 @@ public:
 private:
     friend struct std::hash<Interpreter::Regex>;
     std::wstring wmatch;
-    std::wregex expression;
+    std::unique_ptr<std::wregex> ConstructExpression() const;
+    // expression is a unique pointer to reduce size of the Terms variant from 128 to 48
+    std::unique_ptr<std::wregex> expression;
 };
 
 class Epsilon

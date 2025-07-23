@@ -7,7 +7,7 @@ namespace Interpreter::Test
 
 TEST(Terms, Term)
 {
-    static_assert(sizeof(Term)<=128);   // TODO could be smaller without regex precompiling
+    static_assert(sizeof(Term)<=64); 
 
     Term term = Literal("cat");
     EXPECT_EQ(std::to_string(term), "\"cat\"");

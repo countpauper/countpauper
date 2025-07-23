@@ -83,7 +83,8 @@ const Term* FindLeftSymbolOrNotEpsilon(const Rule& rule)
         return std::visit(overloaded_visit{
             [](const Symbol&) { return true; },
             [](const Epsilon&) { return false; },
-            []<is_token _Token>(const _Token& token ) { return true; }
+            [](const Literal&) { return true; },
+            [](const Regex&) { return true; }
         }, term);
     });
 }
@@ -110,7 +111,7 @@ bool Syntax::CheckLeftRecursive(SyntaxPath& path) const
                 path.pop_back();
                 return result; 
             },
-            [](const Token&) 
+            [](const auto&) 
             { 
                 return false; 
             }

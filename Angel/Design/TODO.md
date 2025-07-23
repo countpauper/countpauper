@@ -81,15 +81,15 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [*] Membership operator x.{x,y} (done for List)
 - Parser Update 
 -   [*] Optimize regex match with iterators (see TODO)
--   [ ] Fix utf8 parsing, need utf8 string with working substring and iterators that are character, not index based 
--   [ ] Reduce Term size (see TODO in test) by not precompiling regex or on the heap
+-   [*] Fix utf8 parsing, ~~need utf8 string~~ use utf16 with working substring and iterators that are character, not index based 
+-   [*] Reduce Term size (see TODO in test) by not precompiling regex or on the heap
 -   [ ] Operator precedence when parsing (see TODO)
 -   [ ] () braces (test)
 -   [ ] All binary operation
 -   [ ] Negative (non integers)
--   [ ] Unicode operators 
--   [ ] Prefix comparators 
--   [ ] Make sure both functional examples can be fully parsed 
+-   [*] Unicode operators 
+-   [*] Prefix comparators 
+-   [*] Make sure both functional examples can be fully parsed 
 -   [ ] Namespace 
 - Python
 -   [ ] namespaces
