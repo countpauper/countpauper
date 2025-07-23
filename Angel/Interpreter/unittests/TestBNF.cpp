@@ -127,7 +127,7 @@ TEST(BNF, List)
 TEST(BNF, Unicode)
 {
     RecursiveDescentParser parser(BNF);
-    EXPECT_THAT(parser.ParseIt("<日本語>::= \"(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧\" '😄|😁' # ข้อคิดเห็น\n"),  
+    EXPECT_THAT(parser.ParseIt("<日本語>::= \"(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧\" '≜|ည' # ข้อคิดเห็น\n"),  
         RangeEq({Symbol("syntax"),
                     Symbol("line"), Symbol("rule"), Symbol("rule-name"),
                     Symbol("expression"),

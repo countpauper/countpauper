@@ -7,6 +7,8 @@
 <axiom> ::= <predicate> <space> <terms>  
 <terms> ::= <implication> <space> <expression> <space> | ε-terms
 <predicate> ::= <id> <space> <arguments>
+<arguments> ::= <namspace> 
+<namespace> ::= "{" <space> <axioms> "}"
 <arguments> ::= "(" <space> <sequence> <space> ")" ε-predicate | ε-predicate
 <sequence> ::= <expression> <space> <sequence-next> | ε-sequence
 <sequence-next> ::= "," <space> <expression> <sequence-next> | ε-sequence
@@ -36,7 +38,7 @@
 <positive-integer> ::= '[0-9]+' 
 <positive-float> ::= '(([0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)|(inf)|(nan))'
 <string> ::= '\"([^"\\]|\\\"|\\\\)*\"'
-<id> ::= '([^\x00-\x7F\x80-0xBF÷∀-⋿]|[A-Za-z_])([^\x00-\x7F\x80-0xBF÷∀-⋿]|\w|\_)*'
+<id> ::= '([^\x00-\xBF÷∀-⋿←-↕]|[A-Za-z_])([^\x00-\xBF÷∀-⋿←-↕]|\w|\_)*'
 <variable_id> ::= <id> | <variable> | εanonymous
 <variable> ::= <value-prefix-operator> <variable_id>
 <container> ::= <list> | <set> 

@@ -108,7 +108,7 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
     Interpreter::ParsedSymbol input;
     Logic::Tuple operands;
     Logic::Operator ope;
-    std::stack<Logic::UnaryOperator> unary_ops;
+    std::stack<Logic::Operator> unary_ops;
     while(!parse.eof())
     {   
         parse >> input;
@@ -133,7 +133,8 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
         }
         if (input.symbol == Interpreter::Symbol("prefix-operator"))
         {
-            unary_ops.push(Logic::PrefixOperator(input.location.extract()));
+            unary_ops.push(Logic::Operator::Find<Logic::PrefixOperator, Logic::Filter>(
+                                                                input.location.extract()));
         }
         else if (input.symbol == Interpreter::Symbol("object"))
         {   // TODO: prefixed values and braces

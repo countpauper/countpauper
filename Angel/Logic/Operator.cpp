@@ -83,7 +83,7 @@ uint32_t Operator::FindId(const std::string_view tag, unsigned operands)
     {
         if (operands!=opdef[i].op.Operands())
             continue;
-        if (tag.size()==1 && std::string(opdef[i].op)==tag)
+        if (std::string(opdef[i].op)==tag)
             return opdef[i].op.Id();
         if (opdef[i].altTag == tag) 
             return opdef[i].op.Id();

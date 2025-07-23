@@ -20,6 +20,8 @@ void Lexer::Process(const Source& src, TokenStream& os)
         std::size_t bestConsumed = 0;
         for(auto tokenPair : lexicon)
         {
+            if (!tokenPair.second)
+                continue;
             auto consumed = Match(*tokenPair.second, src.span(location));
             if (consumed>bestConsumed) {
                 best = tokenPair.first;

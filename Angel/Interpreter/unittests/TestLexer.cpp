@@ -18,7 +18,8 @@ inline auto RangeEq(std::initializer_list<T> ilist) {
 
 static Source empty("");
 static Source cat("cat");
-Source whitespace("\t ");
+static Source whitespace("\t ");
+static Source unicode("ç≤π");
 
 TEST(Lexer, Empty)
 {
@@ -37,6 +38,21 @@ TEST(Lexer, Literal)
     EXPECT_THAT(lexer.Process(cat), RangeEq({InputToken(term, {0, 3, &cat}), InputToken(0, {3, 0, &cat}) }));
     EXPECT_THROW(lexer.Process(whitespace), Error);
 }
+
+TEST(Lexer, Unicode)
+{
+    Term byte = Literal("ç");
+    Term regexUnicode = Regex("[∀-⋿]");
+    Term two_byte = Literal("π");
+    Lexer lexer(Lexicon{&byte, &regexUnicode, &two_byte});
+    auto tokens = lexer.Process(unicode);
+    EXPECT_THAT(tokens, RangeEq({
+        InputToken(byte, unicode.span(0,2)),
+        InputToken(regexUnicode, unicode.span(2,3)),
+        InputToken(two_byte, unicode.span(5,2)),
+        InputToken(0, unicode.span(7,0))
+    }));
+} 
 
 TEST(Lexer, Regex)
 {

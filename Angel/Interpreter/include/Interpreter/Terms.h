@@ -39,8 +39,8 @@ public:
     bool operator!=(const Regex& other) const { return !this->operator==(other); }
 private:
     friend struct std::hash<Interpreter::Regex>;
-    std::string match;
-    std::regex expression;
+    std::wstring wmatch;
+    std::wregex expression;
 };
 
 class Epsilon
