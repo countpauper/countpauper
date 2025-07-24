@@ -84,6 +84,10 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [*] Fix utf8 parsing, ~~need utf8 string~~ use utf16 with working substring and iterators that are character, not index based 
 -   [*] Reduce Term size (see TODO in test) by not precompiling regex or on the heap
 -   [ ] Operator precedence when parsing (see TODO)
+-   [ ] Operations output braces for operands with lower precedence
+-   [ ] Power operation and it outputs square roots and square, cube (also test braces for those) 
+-   [ ] Log operation and all other related 
+-   [ ] Parse (and construct) all operands
 -   [ ] () braces (test)
 -   [ ] All binary operation
 -   [ ] Negative (non integers)

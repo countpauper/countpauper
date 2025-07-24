@@ -2,6 +2,7 @@
 #include <string_view>
 #include <cstdint> 
 #include <array>
+#include <vector>
 
 namespace Angel::Logic
 {
@@ -19,9 +20,11 @@ public:
     uint32_t Id() const { return op.id; }
     unsigned Operands() const { return op.sw.operands; }
     bool IsPostfix() const { return op.sw.postfix; }
+    bool IsPrefix() const { return !IsPostfix(); }
     bool IsComparator() const { return op.sw.comparison; }
     template<typename... T> 
     static Operator Find(std::string_view tag);
+    static std::vector<Operator> All();
 protected:
     constexpr Operator(const wchar_t tag, uint8_t operands, bool postfix=false, bool comparator=false) :
         op{.sw{tag, operands, postfix, comparator, 0, 0}}
@@ -47,6 +50,7 @@ private:
 public: 
     Code op;
 };
+
 
 template < typename T >
 concept is_operation = std::derived_from<decltype(T::ope), Operator>;

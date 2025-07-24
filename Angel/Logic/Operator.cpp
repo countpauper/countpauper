@@ -25,42 +25,53 @@ struct Definition
 
 static constexpr Definition opdef[]{
     {BinaryOperator(L'←'),  0, ":",  "with/if"},
-    {MultiOperator(L'^'),  0, "",    "power"},
-    {MultiOperator(L'⋅'),  0, "*",   "multiply"},
-    {MultiOperator(L'÷'),  0, "/",   "divide"},
-    {PrefixOperator(L'+'),  0, "",   "positive"},
-    {MultiOperator(L'+'),  0, "",    "add"},
-    {MultiOperator(L'-'),  0, "",    "subtract"},
-    {PrefixOperator(L'-'),  0, "",   "negative"},
-    {MultiOperator(L'↑'),  0, "**",  "exponent"},
-    {MultiOperator(L'↓'),  0, "//",  "logarithm"},
-    {MultiOperator(L'∧'),  0, "&",   "and"},
-    {MultiOperator(L'∨'),  0, "|",   "or"},
-    {MultiOperator(L'⊕'), 0, "^",   "xor"},
-    {PrefixOperator(L'¬'),  0, "~",  "not"},
-    {Comparator(L'='),      0, "",   "equal"},
-    {Comparator(L'≠'),      0, "!=", "not equal"},
-    {Comparator(L'>'),      0, "",   "greater"},
-    {Comparator(L'<'),      0, "",   "lesser"},
-    {Comparator(L'≥'),      0, ">=", "greater or equal"},
-    {Comparator(L'≤'),      0, "<=", "lesser or equal"},
-    {Comparator(L'∈'),      0, "@",  "element of"},
-    {Filter(L'='),          0, "",   "equal"},
-    {Filter(L'≠'),          0, "!=", "not equal"},
-    {Filter(L'>'),          0, "",   "greater"},
-    {Filter(L'<'),          0, "",   "lesser"},
-    {Filter(L'≥'),          0, ">=", "greater or equal"},
-    {Filter(L'≤'),          0, "<=", "lesser or equal"},
-    {PrefixOperator(L'$'),  0, "",   "value of"},
-    {PrefixOperator(L'∀'),  0, "*",  "all of"},
-    {PrefixOperator(L'∃'),  0, "@",  "any of"},
-    {BinaryOperator(L'.'),  0, "",   "item"},
-    {PrefixOperator(L'√'),  0, "",   "square root"},
-    {PostfixOperator(L'²'), 0, "",   "squared"},
-    {PostfixOperator(L'³'), 0, "",   "cubed"},
-    {PostfixOperator(L'!'), 0, "",   "factorial"},
-    {Operator(),            0, "",   "none"} // 0 terminated
+    {Filter(L'='),          5, "",   "equal"},
+    {Filter(L'≠'),          5, "!=", "not equal"},
+    {Filter(L'>'),          5, "",   "greater"},
+    {Filter(L'<'),          5, "",   "lesser"},
+    {Filter(L'≥'),          5, ">=", "greater or equal"},
+    {Filter(L'≤'),          5, "<=", "lesser or equal"},
+    {Comparator(L'='),      10, "",   "equal"},
+    {Comparator(L'≠'),      10, "!=", "not equal"},
+    {Comparator(L'>'),      10, "",   "greater"},
+    {Comparator(L'<'),      10, "",   "lesser"},
+    {Comparator(L'≥'),      10, ">=", "greater or equal"},
+    {Comparator(L'≤'),      10, "<=", "lesser or equal"},
+    {MultiOperator(L'⊕'),  20, "^",   "xor"},
+    {MultiOperator(L'∨'),   20, "|",   "or"},
+    {MultiOperator(L'∧'),   30, "&",   "and"},
+    {PrefixOperator(L'¬'),  35, "~",  "not"},
+    {Comparator(L'∈'),      40, "@",  "element of"},
+    {MultiOperator(L'+'),   50, "",    "add"},
+    {MultiOperator(L'-'),   50, "",    "subtract"},
+    {MultiOperator(L'⋅'),   60, "*",   "multiply"},
+    {MultiOperator(L'÷'),   60, "/",   "divide"},
+    {MultiOperator(L'↑'),   70, "**",  "exponent"},
+    {MultiOperator(L'↓'),   70, "//",  "logarithm"},
+    {PrefixOperator(L'+'),  80, "",   "positive"},
+    {PrefixOperator(L'-'),  80, "",   "negative"},
+    {PrefixOperator(L'√'),  85, "",   "square root"},
+    {PostfixOperator(L'²'), 85, "",   "squared"},
+    {PostfixOperator(L'³'), 85, "",   "cubed"},
+    {PostfixOperator(L'!'), 90, "",   "factorial"},
+    {PrefixOperator(L'$'),  95, "",   "value of"},
+    {PrefixOperator(L'∀'),  95, "*",  "all of"},
+    {PrefixOperator(L'∃'),  95, "@",  "any of"},
+    {BinaryOperator(L'.'), 100, "",   "item"},
+    {Operator(),             0, "",   "none"} // 0 terminated
 };
+
+std::vector<Operator> Operator::All()
+{
+    std::vector<Operator> result;
+    for(const auto& defop : opdef)
+    {
+        if (defop.op.Id())
+            result.push_back(defop.op);
+    }
+    return result;
+}
+
 
 static const Definition& FindDefinition(uint32_t id)
 {

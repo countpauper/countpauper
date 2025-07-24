@@ -76,5 +76,68 @@ TEST(Operator, Operate)
     EXPECT_TRUE(Comparator(L'=')(Integer(1), Integer(1)));
 }
 
+TEST(Operator, Precedence)
+{
+    EXPECT_EQ(MultiOperator{L'+'}.Precedence(), MultiOperator{L'-'}.Precedence()); 
+    EXPECT_EQ(MultiOperator{L'÷'}.Precedence(), MultiOperator{L'⋅'}.Precedence()); 
+    // value of highest precedence. Take the value to operate on 
+    EXPECT_GT(MultiOperator{L'$'}.Precedence(), MultiOperator{L'²'}.Precedence()); 
+    // PE before MD
+    EXPECT_LT(MultiOperator{L'⋅'}.Precedence(), MultiOperator{L'²'}.Precedence()); 
+    // MD before AS
+    EXPECT_LT(MultiOperator{L'+'}.Precedence(), MultiOperator{L'⋅'}.Precedence()); 
+    // Mathtmetical operators before logical operators
+    EXPECT_GT(MultiOperator{L'+'}.Precedence(), MultiOperator{L'⊕'}.Precedence()); 
+    // Everything before clause, the operation is the antecedent
+    EXPECT_GT(MultiOperator{L'∨'}.Precedence(), MultiOperator{L'←'}.Precedence()); 
+}
+
+
+std::string op2str(Operator op, std::string lhs, std::string rhs, bool braces)
+{
+    std::string unbraced;
+    if (op.Operands()==1)
+    {
+        if (lhs.size() == 1)
+            std::swap(lhs, rhs);
+
+        if (op.IsPrefix())
+            unbraced = std::string(op) + lhs;
+        else
+            unbraced = lhs + std::string(op);
+    }
+    else 
+    {
+        unbraced = lhs +  std::string(op) + rhs;
+    }
+    if (braces)
+        return std::format("({})", unbraced);
+    else 
+        return unbraced;
+}
+
+TEST(Operator, DISABLED_PrintPrecedence)
+{
+    auto operators = Operator::All();
+    for(const auto& first_op : operators) 
+    {
+        for(const auto& second_op : operators) 
+        {
+            if (first_op.Precedence() == second_op.Precedence())
+            {
+                std::cout << "= " << op2str(second_op,op2str(first_op, "X", "Y",false), "Z", false) << std::endl;
+
+            }
+            else if (first_op.Precedence() > second_op.Precedence())
+            {
+                std::cout <<  "> " << op2str(second_op,op2str(first_op, "X", "Y", true), "Z", false)<< std::endl;
+            }
+            else 
+            {
+                std::cout << "< " << op2str(first_op, "X", op2str(second_op, "Y", "Z", true), false)<< std::endl;
+            }
+        }
+    }
+}
 
 }
