@@ -35,6 +35,7 @@ public:
 	Set& operator-=(const Container& rhs);
 	Set& operator&=(Container rhs);
 	Set& operator|=(const Container& rhs);
+	Set& operator^=(const Container& rhs);
 	class const_iterator
 	{
 	public:
@@ -67,6 +68,7 @@ Set operator+(Set lhs, const Container& rhs);
 Set operator-(Set lhs, const Container& rhs);
 Set operator&(Set lhs, const Container& rhs);
 Set operator|(Set lhs, const Container& rhs);
+Set operator^(Set lhs, const Container& rhs);
 std::ostream& operator<<(std::ostream& os, const Set& set);
 
 

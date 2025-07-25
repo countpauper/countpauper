@@ -41,6 +41,7 @@ public:
 	Tuple& operator-=(const Container& rhs);
 	Tuple& operator&=(const Container rhs);
 	Tuple& operator|=(const Container rhs);
+   	Tuple& operator^=(const Container& rhs);
 protected:
     template<typename U>
     friend class FlatTuple;

@@ -40,24 +40,24 @@ static constexpr Definition opdef[]{
     {MultiOperator(L'⊕'),  20, "^",   "xor"},
     {MultiOperator(L'∨'),   20, "|",   "or"},
     {MultiOperator(L'∧'),   30, "&",   "and"},
-    {PrefixOperator(L'¬'),  35, "~",  "not"},
-    {Comparator(L'∈'),      40, "@",  "element of"},
+    {PrefixOperator(L'¬'),  35, "~",  "not"},  
+    {Comparator(L'∈'),      40, "@",  "element of"},    // TODO Element
     {MultiOperator(L'+'),   50, "",    "add"},
     {MultiOperator(L'-'),   50, "",    "subtract"},
     {MultiOperator(L'⋅'),   60, "*",   "multiply"},
     {MultiOperator(L'÷'),   60, "/",   "divide"},
-    {MultiOperator(L'↑'),   70, "**",  "exponent"},
-    {MultiOperator(L'↓'),   70, "//",  "logarithm"},
-    {PrefixOperator(L'+'),  80, "",   "positive"},
-    {PrefixOperator(L'-'),  80, "",   "negative"},
-    {PrefixOperator(L'√'),  85, "",   "square root"},
-    {PostfixOperator(L'²'), 85, "",   "squared"},
-    {PostfixOperator(L'³'), 85, "",   "cubed"},
-    {PostfixOperator(L'!'), 90, "",   "factorial"},
-    {PrefixOperator(L'$'),  95, "",   "value of"},
-    {PrefixOperator(L'∀'),  95, "*",  "all of"},
-    {PrefixOperator(L'∃'),  95, "@",  "any of"},
-    {BinaryOperator(L'.'), 100, "",   "item"},
+    {MultiOperator(L'↑'),   70, "**",  "exponent"}, // TODO Power
+    {MultiOperator(L'↓'),   70, "//",  "logarithm"},    // TODO Logarithm
+    {PrefixOperator(L'+'),  75, "",   "positive"},
+    {PrefixOperator(L'-'),  75, "",   "negative"},
+    {PrefixOperator(L'√'),  75, "",   "square root"},
+    {PostfixOperator(L'²'), 80, "",   "squared"},
+    {PostfixOperator(L'³'), 80, "",   "cubed"},
+    {PostfixOperator(L'!'), 85, "",   "factorial"},
+    {PrefixOperator(L'∀'),  90, "*",  "all of"},
+    {PrefixOperator(L'∃'),  90, "@",  "any of"},    // TODO Any
+    {BinaryOperator(L'.'),  95, "",   "item"},
+    {PrefixOperator(L'$'), 100, "",   "value of"},
     {Operator(),             0, "",   "none"} // 0 terminated
 };
 

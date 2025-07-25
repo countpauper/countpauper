@@ -103,8 +103,39 @@ constexpr Expression operate<MultiOperator{L'∨'}>(const Expression& lhs, const
     {
         return lhs;
     }
+    else if (lhs == False) 
+    {
+        return rhs;
+    }
     auto lhBool = lhs.Get<Boolean>();
     return lhBool | rhs;
+}
+
+
+template<>
+constexpr Expression operate<MultiOperator{L'⊕'}>(const Expression& lhs, const Expression& rhs)
+{
+    if (const auto* lhCont = lhs.GetIf<Container>())
+    {
+        return *lhCont ^ rhs.Get<Container>();
+    }
+    auto lhBool = lhs.TryCast<Boolean>();
+    if (lhBool)
+    {
+        if (*lhBool)
+            return Negation(rhs).Simplify();        
+        else 
+            return rhs;
+    }
+    auto rhBool = rhs.TryCast<Boolean>();
+    if (rhBool)
+    {
+        if (*rhBool)
+            return Negation(lhs).Simplify();
+        else
+            return lhs;
+    }
+    return Exclusion{lhs, rhs};        
 }
 
 template<std::size_t N>
@@ -134,7 +165,7 @@ constexpr Expression dispatch_operator(Operator op, const Expression& lhs, const
 
 constexpr Expression MultiOperator::operator()(const Expression& lhs, const Expression& rhs) const
 {
-    return dispatch_operator<L"+-⋅÷↑∧∨">(*this, lhs, rhs);
+    return dispatch_operator<L"+-⋅÷↑∧∨⊕">(*this, lhs, rhs);
 }
 
 }

@@ -75,11 +75,11 @@ ExpressionVariant make_operation(const Operator ope, Tuple&& operands)
     if (ope.IsComparator())
         return make_ordering<Equal, Unequal, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
     else if (ope.Operands()==1)
-            return make_unary_operation<All, Negative,Variable>(ope, std::move(operands[0]));
+            return make_unary_operation<All, Negative, Negation, Variable>(ope, std::move(operands[0]));
     else if (ope.Operands()==2)
         return make_binary_operation<Item, Association>(ope, std::move(operands));
     else    
-        return make_multiary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction>(ope, std::move(operands));
+        return make_multiary_operation<Summation, Subtraction, Multiplication, Division, Disjunction, Conjunction, Exclusion>(ope, std::move(operands));
 }
 
 

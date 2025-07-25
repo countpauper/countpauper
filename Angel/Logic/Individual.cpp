@@ -5,6 +5,12 @@
 namespace Angel::Logic
 {
 
+Individual::Individual(const Expression& e) :
+    content(bool(e)?std::make_unique<Expression>(e):nullptr)
+{
+}
+
+
 Individual::Individual(Expression&& e) :
     content(bool(e)?std::make_unique<Expression>(std::move(e)):nullptr)
 {

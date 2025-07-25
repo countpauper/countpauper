@@ -155,6 +155,15 @@ Set& Set::operator|=(const Container& rhs)
     return operator+=(rhs);
 }
 
+Set& Set::operator^=(const Container& rhs)
+{
+    // TODO: might have to do this at container level for all type combos
+    Container excludeLhs = rhs - Container(*this);
+    operator-=(rhs);
+    return operator|=(excludeLhs);
+}
+
+
 Set operator+(Set lhs, const Container& rhs) 
 { 
     return lhs += rhs; 
@@ -173,6 +182,11 @@ Set operator&(Set lhs, const Container& rhs)
 Set operator|(Set lhs, const Container& rhs)
 {
     return lhs |= rhs;
+}
+
+Set operator^(Set lhs, const Container& rhs)
+{
+    return lhs ^= rhs;
 }
 
 

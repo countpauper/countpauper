@@ -38,6 +38,12 @@ List& List::operator|=(const Container& rhs)
     Tuple::operator|=(rhs);
     return *this;
 }
+List& List::operator^=(const Container& rhs)
+{
+    Container excludeLhs = rhs - Container(*this);
+    operator-=(rhs);    // this is excludeRhs;
+    return operator|=(excludeLhs);
+}
 
 List operator+(List lhs, const Container& rhs) 
 { 
@@ -59,6 +65,10 @@ List operator|(List lhs, const Container& rhs)
     return lhs |= rhs;
 }
 
+List operator^(List lhs, const Container& rhs)
+{
+    return lhs ^= rhs;
+}
 
 Expression List::Infer(const Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const
 {

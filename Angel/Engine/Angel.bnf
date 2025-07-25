@@ -26,7 +26,8 @@
 <set-binary-operator> ::= '\.{1,2}|∈' | <set-either-operator> | <implication>
 <binary-operator> ::= <numerical-binary-operator> | <logical-binary-operator> | <comparator> | <set-binary-operator> 
 <prefix-operator> ::= <numerical-prefix-operator> | <logical-prefix-operator> | <value-prefix-operator>
-<value> ::= <prefix-operator> <value> | <object> | "(" <space> <expression> <space> ")" 
+<value> ::= <prefix-operator> <value> | <object> 
+<value> ::= "(" <space> <expression> <space> ")" 
 # TODO indexation [ ], lists, sets and ranges value:value 
 <object> ::= <positive-integer>
 <object> ::= <predicate>  # NB: true and false are predefined ids with a value 

@@ -81,15 +81,15 @@ TEST(Operator, Precedence)
     EXPECT_EQ(MultiOperator{L'+'}.Precedence(), MultiOperator{L'-'}.Precedence()); 
     EXPECT_EQ(MultiOperator{L'÷'}.Precedence(), MultiOperator{L'⋅'}.Precedence()); 
     // value of highest precedence. Take the value to operate on 
-    EXPECT_GT(MultiOperator{L'$'}.Precedence(), MultiOperator{L'²'}.Precedence()); 
+    EXPECT_GT(PrefixOperator{L'$'}.Precedence(), PostfixOperator{L'²'}.Precedence()); 
     // PE before MD
-    EXPECT_LT(MultiOperator{L'⋅'}.Precedence(), MultiOperator{L'²'}.Precedence()); 
+    EXPECT_LT(MultiOperator{L'⋅'}.Precedence(), PostfixOperator{L'²'}.Precedence()); 
     // MD before AS
     EXPECT_LT(MultiOperator{L'+'}.Precedence(), MultiOperator{L'⋅'}.Precedence()); 
     // Mathtmetical operators before logical operators
     EXPECT_GT(MultiOperator{L'+'}.Precedence(), MultiOperator{L'⊕'}.Precedence()); 
     // Everything before clause, the operation is the antecedent
-    EXPECT_GT(MultiOperator{L'∨'}.Precedence(), MultiOperator{L'←'}.Precedence()); 
+    EXPECT_GT(MultiOperator{L'∨'}.Precedence(), BinaryOperator{L'←'}.Precedence()); 
 }
 
 

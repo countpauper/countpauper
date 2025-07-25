@@ -24,7 +24,7 @@ Expression Negative::Matches(const Expression& expression, const Hypothesis& hyp
     if (const auto* i = subst.GetIf<Integer>())
     {
         auto substContent = content->Substitute(hypothesis);
-        return Equal{std::move(substContent), Integer(-**i)};
+        return Equal{std::move(substContent), ope(*i)};
     }
     else if (const auto* n = subst.GetIf<Negative>())
     {

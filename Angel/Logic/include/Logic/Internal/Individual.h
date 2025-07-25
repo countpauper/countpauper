@@ -9,6 +9,7 @@ class Set;
 class Individual
 {
 public: 
+    explicit Individual(const Expression& e);
     explicit Individual(Expression&& e);
     Individual(const Individual& o);
     Individual(Individual&& o);

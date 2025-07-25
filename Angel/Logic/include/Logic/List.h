@@ -19,6 +19,7 @@ public:
 	List& operator-=(const Container& rhs);
 	List& operator&=(const Container& rhs);
 	List& operator|=(const Container& rhs);
+	List& operator^=(const Container& rhs);    
     explicit operator bool() const;
     List Simplify() const;
     Expression Matches(const Expression& other, const Hypothesis& hypothesis) const;
@@ -35,6 +36,7 @@ List operator+(List lhs, const Container& rhs);
 List operator-(List lhs, const Container& rhs);
 List operator&(List lhs, const Container& rhs);
 List operator|(List lhs, const Container& rhs);
+List operator^(List lhs, const Container& rhs);
 
 std::ostream& operator<<(std::ostream& os, const List& list);
 

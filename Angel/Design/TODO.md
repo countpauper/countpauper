@@ -86,8 +86,9 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [ ] Operator precedence when parsing (see TODO)
 -   [ ] Operations output braces for operands with lower precedence
 -   [ ] Power operation and it outputs square roots and square, cube (also test braces for those) 
--   [ ] Log operation and all other related 
--   [ ] Parse (and construct) all operands
+-   [ ] Log operation and all other related
+-   [ ] Parse postfix operators 
+-   [ ] Parse (and construct) all operators
 -   [ ] () braces (test)
 -   [ ] All binary operation
 -   [ ] Negative (non integers)

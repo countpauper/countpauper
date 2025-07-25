@@ -91,23 +91,23 @@ bool Container::operator==(const Container& rhs) const
 }
 
 
-Expression Container::operator+=(const Container& rhs)
+Container Container::operator+=(const Container& rhs)
 {
     return std::visit(overloaded_visit{
-        [&rhs](List& list) -> Expression
+        [&rhs](List& list) -> Container
         {
             return list += rhs;
         },
-        [&rhs](Set& set) -> Expression
+        [&rhs](Set& set) -> Container
         {
             return set += rhs;
         },
-        [](All& all) -> Expression
+        [](All& all) -> Container
         {
             assert(false); // unimplemented
-            return Expression();
+            return Container(List{});
         },
-        [this](auto&) -> Expression
+        [this](auto&) -> Container
         {
             throw std::invalid_argument(std::format("Can not add {} to container", AlternativeTypeId().name()));
         }
@@ -115,56 +115,74 @@ Expression Container::operator+=(const Container& rhs)
 }
 
 
-Expression Container::operator-=(const Container& rhs)
+Container Container::operator-=(const Container& rhs)
 {
     return std::visit(overloaded_visit{
-        [&rhs](List& list) -> Expression
+        [&rhs](List& list) -> Container
         {
             return list -= rhs;
         },
-        [&rhs](Set& set) -> Expression
+        [&rhs](Set& set) -> Container
         {
             return set -= rhs;
         },
-        [this](auto&) -> Expression
+        [this](auto&) -> Container
         {
             throw std::invalid_argument(std::format("Can not subtract {} to container", AlternativeTypeId().name()));
         }
     }, *this);
 }
 
-Expression Container::operator&=(const Container& rhs)
+Container Container::operator&=(const Container& rhs)
 {
     return std::visit(overloaded_visit{
-        [&rhs](List& list) -> Expression
+        [&rhs](List& list) -> Container
         {
             return list &= rhs;
         },
-        [&rhs](Set& set) -> Expression
+        [&rhs](Set& set) -> Container
         {
             return set &= rhs;
         },
-        [this](auto&) -> Expression
+        [this](auto&) -> Container
         {
             throw std::invalid_argument(std::format("Can not intersect {} with container", AlternativeTypeId().name()));
         }
     }, *this);
 }
 
-Expression Container::operator|=(const Container& rhs)
+Container Container::operator|=(const Container& rhs)
 {
     return std::visit(overloaded_visit{
-        [&rhs](List& list) -> Expression
+        [&rhs](List& list) -> Container
         {
             return list |= rhs;
         },
-        [&rhs](Set& set) -> Expression
+        [&rhs](Set& set) -> Container
         {
             return set |= rhs;
         },
-        [this](auto&) -> Expression
+        [this](auto&) -> Container
         {
             throw std::invalid_argument(std::format("Can not disjunct {} with container", AlternativeTypeId().name()));
+        }
+    }, *this);
+}
+
+Container Container::operator^=(const Container& rhs)
+{
+    return std::visit(overloaded_visit{
+        [&rhs](List& list) -> Container
+        {
+            return list ^= rhs;
+        },
+        [&rhs](Set& set) -> Container
+        {
+            return set ^= rhs;
+        },
+        [this](auto&) -> Container
+        {
+            throw std::invalid_argument(std::format("Can not exclude {} with container", AlternativeTypeId().name()));
         }
     }, *this);
 }
@@ -255,24 +273,29 @@ std::string to_string(const Container& c)
     return ss.str();
 }
 
-Expression operator+(Container lhs, const Container& rhs)
+Container operator+(Container lhs, const Container& rhs)
 {
     return lhs += rhs;
 }
 
-Expression operator-(Container lhs, const Container& rhs)
+Container operator-(Container lhs, const Container& rhs)
 {
     return lhs -= rhs;
 }
 
-Expression operator&(Container lhs, const Container& rhs)
+Container operator&(Container lhs, const Container& rhs)
 {
     return lhs &= rhs;
 }
 
-Expression operator|(Container lhs, const Container& rhs)
+Container operator|(Container lhs, const Container& rhs)
 {
     return lhs |= rhs;
+}
+
+Container operator^(Container lhs, const Container& rhs)
+{
+    return lhs ^= rhs;
 }
 
 std::ostream& operator<<(std::ostream& s, const Container& c)
