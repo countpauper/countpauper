@@ -19,7 +19,13 @@ Boolean::Boolean(const std::string_view tag)
 }
 
 Boolean::Boolean(const Integer& i) :
-    Boolean(*i != 0)
+    Boolean(long(i) != 0)
+{
+}
+
+
+Boolean::Boolean(const Real& r) :
+    Boolean(double(r)!=0)
 {
 }
 
@@ -49,20 +55,15 @@ bool Boolean::operator==(const Boolean& other) const
     return truth == other.truth;
 }
 
-bool Boolean::operator*() const
-{
-	return truth;
-}
-
 Boolean& Boolean::operator&=(const Boolean& rhs)
 {
-    truth = truth && *rhs;
+    truth = truth && bool(rhs);
     return *this;
 }
 
 Boolean& Boolean::operator|=(const Boolean& rhs) 
 {
-    truth = truth || *rhs;
+    truth = truth || bool(rhs);
     return *this;
 }
 

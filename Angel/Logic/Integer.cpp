@@ -1,5 +1,5 @@
 #include "Logic/Integer.h"
-#include "Logic/Boolean.h"
+#include "Logic/Internal/Number.h"
 #include <string>
 #include <stdexcept> 
 #include <iostream>
@@ -10,7 +10,13 @@ namespace Angel::Logic
 {
 
 Integer::Integer(const Boolean& b) :
-    value(*b)
+    value(bool(b))
+{
+}
+
+
+Integer::Integer(const Real& r) :
+    value(double(r))
 {
 }
 
@@ -19,7 +25,7 @@ Integer::Integer(const std::string_view s) :
 {
     auto result = std::from_chars(s.begin(),s.end(),value,10);
     if (result.ptr != s.end())
-       throw std::invalid_argument(std::format("Trailing character when converintg {} to integer", s));
+       throw std::invalid_argument(std::format("Trailing character when converting {} to integer", s));
     if (result.ec == std::errc())
         return;
     else if (result.ec == std::errc::result_out_of_range)
@@ -33,66 +39,14 @@ Integer::operator bool() const
     return value!=0;
 }
 
+Integer::operator long() const
+{
+	return value;
+}
+
 bool Integer::operator==(const Integer& integer) const
 {
 	return value== integer.value;
-}
-
-Integer Integer::operator+=(const Integer& o)
-{
-    value += o.value;
-    return *this;    
-}
-
-Integer Integer::operator-=(const Integer& o)
-{
-    value -= o.value;
-    return *this;    
-}
-
-Integer Integer::operator*=(const Integer& o)
-{
-    value *= o.value;
-    return *this;    
-}
-
-Integer Integer::operator/=(const Integer& o)
-{
-    value /= o.value;
-    return *this;    
-}
-
-long IntegerPower(long base, unsigned exponent)
-{
-    long result = 1;
-    while (exponent > 0)
-    {
-        if (exponent % 2)
-            result = result * base;
-        base = base * base;
-        exponent /= 2;
-    }
-    return result;
-}
-
-Integer Integer::operator^=(const Integer& o)
-{
-    assert(o.value>=0); // automatic conversion to double when dividing not yet implemented
-
-    // TODO if overflow on integer exponent, switch to real or really large 
-    [[maybe_unused]] unsigned bits_needed = std::log2(std::abs(value)) * o.value;
-    assert(bits_needed <= (sizeof(o.value)*8)-1);
-    return Integer(IntegerPower(value, o.value)); 
-}
-
-Integer Integer::log(const Integer& o) const
-{
-    assert(value>0);  // TODO: negative values require complex
-    assert(o.value>0);  // TODO: negative values require complex
-    assert(o.value!=1); // goes to infinity, which requires Real
-    double result = std::log(double(value))/std::log(o.value);
-    assert(result<std::numeric_limits<long>::max());    // automatic conversion on overflow not yet implemented
-    return Integer(result);
 }
 
 
@@ -100,6 +54,12 @@ bool Integer::operator<(const Integer& rhs) const
 {
     return value < rhs.value;
 }
+
+Integer Integer::operator-() const
+{
+    return Integer(-value);
+}
+
 std::size_t Integer::Hash() const
 {
     return value;
@@ -111,9 +71,66 @@ std::ostream& operator<<(std::ostream& os, const Integer& integer)
     return os;
 }
 
-long Integer::operator*() const
+
+Number operator+(const Integer& lhs, const Integer& rhs) 
+{ 
+    return Integer(long(lhs) + long(rhs));
+}
+Number operator-(const Integer& lhs, const Integer& rhs) 
+{ 
+    return Integer(long(lhs) - long(rhs));
+}
+
+Number operator*(const Integer& lhs, const Integer& rhs) 
+{ 
+    return Integer(long(lhs) * long(rhs));
+}
+Number operator/(const Integer& lhs, const Integer& rhs) 
+{ 
+    return Integer(long(lhs) / long(rhs));
+}
+
+long IntegerPower(long base, long exponent)
 {
-	return value;
+    long result = 1;
+
+    while (exponent > 0)
+    {
+        if (exponent % 2)
+            result = result * base;
+        base = base * base;
+        exponent /= 2;
+    }
+    return result;
+}
+
+Number operator^(const Integer& lhs, const Integer& rhs) 
+{ 
+    long base = long(lhs);
+    long exponent = long(rhs);
+
+    if (exponent >= 0)
+    {
+        unsigned bits_needed = std::log2(std::abs(base)) * exponent;
+        if (bits_needed <= sizeof(long)*8 -1)
+        {
+            return Integer(IntegerPower(base, exponent));
+        }
+    }
+    return Number(std::pow(base, exponent));
+}
+
+Number log(const Integer& lhs, const Integer& rhs)
+{
+    long base = long(lhs);
+    long value = long(rhs);
+
+    assert(base>0);  // TODO: negative values require complex
+    assert(value>0);  // TODO: negative values require complex
+    assert(value!=1); // goes to infinity, which requires Integer
+    double result = std::log10(base) / std::log10(value);
+    assert(result<std::numeric_limits<long>::max());    // automatic conversion on overflow not yet implemented
+    return Number(result);
 }
 
 }

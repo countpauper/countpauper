@@ -11,6 +11,7 @@ class Exponentiation : public OperationBase<Exponentiation>
 {
 public:
     using OperationBase<Exponentiation>::OperationBase;
+    Expression Simplify() const;
     bool operator==(const Exponentiation& rhs) const { return BaseType::operator==(rhs);}
     constexpr static MultiOperator ope{L'↑'};
 };

@@ -22,12 +22,12 @@ TEST(Integer, Construction)
 
 TEST(Integer, Arithmetic)
 {
-	Integer i(3);
-	EXPECT_EQ(i+=Integer(2), Integer(5));
-	EXPECT_EQ(i-=Integer(3), Integer(2));
-	EXPECT_EQ(i*=Integer(3), Integer(6));
-	EXPECT_EQ(i/=Integer(2), Integer(3));
-	EXPECT_EQ(i^=Integer(2), Integer(9));
+	EXPECT_EQ(Integer(3) + Integer(2), Number(Integer(5)));
+	EXPECT_EQ(Integer(5) - Integer(3), Number(Integer(2)));
+	EXPECT_EQ(Integer(2) * Integer(3), Number(Integer(6)));
+	EXPECT_EQ(Integer(6) / Integer(2), Number(Integer(3)));
+	EXPECT_EQ(Integer(-3) ^ Integer(2), Number(Integer(9)));
+	EXPECT_EQ(log(Integer(9), Integer(3)), Number(Integer(2)));
 }
 
 TEST(Integer, Cast)

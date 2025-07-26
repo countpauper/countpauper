@@ -75,7 +75,7 @@ constexpr Expression operate<MultiOperator{L'↓'}>(const Expression& lhs, const
 {
     auto lhNumber = lhs.Cast<Number>();
     auto rhNumber = rhs.Cast<Number>();
-    return lhNumber.log(rhNumber);
+    return lhNumber.logis(rhNumber);
 }
 
 template<>

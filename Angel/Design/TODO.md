@@ -107,7 +107,7 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [ ] Get with a container of keys for Tuple and Set. Return type is same type as container. So [x,y,z].[x,a] = [true,false]
 -   [ ] Index with container of more than one element [x,y,z][1,2]
 -   [ ] Test that indexing with a boolean works a ternary operator [a,b][bool]
--   [ ] Add real (number) and conversions
+-   [ ] Add real (number) and conversions, fix operations (especially exp & log)
 -   [ ] ranges [x..y] 
 -   [ ] infinite ranges [..y]
 -   [ ] More advanced ranges, with step ?  (syntax?) x..y*3 is step 3 but to from x*3 to y*3 ? 

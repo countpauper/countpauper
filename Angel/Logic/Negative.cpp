@@ -11,9 +11,9 @@ Expression Negative::Simplify() const
     {
         return (*neg)->Simplify();
     }
-    else if (const Integer* integer = simple.GetIf<Integer>())
+    else if (const Number* nr= simple.GetIf<Number>())
     {
-        return ope(*integer);
+        return ope(*nr);
     }
     return Negative{std::move(simple)};
 }

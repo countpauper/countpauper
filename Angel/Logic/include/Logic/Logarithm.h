@@ -11,6 +11,7 @@ class Logarithm : public OperationBase<Logarithm>
 {
 public:
     using OperationBase<Logarithm>::OperationBase;
+    Expression Simplify() const;
     bool operator==(const Logarithm& rhs) const { return BaseType::operator==(rhs);}
     constexpr static MultiOperator ope{L'↓'};
 };

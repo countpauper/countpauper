@@ -12,6 +12,8 @@ class Variant : public std::variant<Alternatives...>
 {
 public:
     using VariantT = std::variant<Alternatives...>;
+    using VariantT::operator=;
+    
     Variant() :
         VariantT(std::variant_alternative_t<0, VariantT>())
     {

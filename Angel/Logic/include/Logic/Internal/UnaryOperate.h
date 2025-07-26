@@ -10,13 +10,13 @@ constexpr Expression operate(const Expression&);
 template<> 
 constexpr Expression operate<PrefixOperator{L'-'}>(const Expression& operand)
 {
-    return Integer(- *operand.Cast<Integer>());
+    return -operand.Get<Number>();
 }
 
 template<> 
 constexpr Expression operate<PrefixOperator{L'¬'}>(const Expression& operand)
 {
-    return Boolean(! *operand.Cast<Boolean>());
+    return Boolean(!bool(operand.Cast<Boolean>()));
 }
 
 template<PostfixOperator OP> 

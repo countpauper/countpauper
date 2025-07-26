@@ -10,7 +10,7 @@
 namespace Angel::Logic
 {
 
-using ElementVariant = std::variant<Boolean, Integer, Id, String>;
+using ElementVariant = std::variant<Boolean, Integer, Real, Id, String>;
 
 template < typename T >
 concept IsElement = is_alternative<T, ElementVariant> || std::is_same_v<T, Number>;

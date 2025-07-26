@@ -19,6 +19,7 @@ TEST(Negative, Simplify)
 {
     EXPECT_EQ(Negative(Expression(Negative(Summation{Integer(2)}))).Simplify(), Integer(2));
     EXPECT_EQ(Negative(Summation{Integer(3)}).Simplify(), Integer(-3));
+    EXPECT_EQ(Negative(Real(-3.1)).Simplify(), Real(3.1));
 }
 
 TEST(Negative, Substitute)

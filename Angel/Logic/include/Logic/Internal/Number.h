@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Logic/Integer.h"
-//#include "Logic/Float.h"
+#include "Logic/Real.h"
 //#include "Logic/Complex.h"
 #include "Logic/Boolean.h"
 #include "Logic/Internal/Variant.h"
@@ -12,7 +12,7 @@ namespace Angel::Logic
 
 using NumberVariant = Variant<
     Integer, 
-//    Float, 
+    Real, 
 //    Complex,
     Boolean>;
 class const_container_iterator;
@@ -20,9 +20,12 @@ class const_container_iterator;
 class Number : public NumberVariant
 {
 public:
+    explicit Number(double real, double imaginary=0.0);
+
     Number(const Number&) = default;
     using NumberVariant::NumberVariant;
     Number& operator=(const Number& e);
+    Number& operator=(Number&& e);
 
     template<typename T> 
     requires is_alternative<T, NumberVariant>
@@ -52,12 +55,13 @@ public:
     inline bool operator<=(const Number& o) const { return *this==o || *this<o; }
     inline bool operator>(const Number& o) const { return !(*this<=o); }
     inline bool operator>=(const Number& o) const { return !(*this<o); }
-    Number operator+=(const Number& rhs);
-    Number operator-=(const Number& rhs);    
-    Number operator*=(const Number& rhs);
-    Number operator/=(const Number& rhs);    
-    Number operator^=(const Number& rhs); 
-    Number log(const Number& rhs) const;
+    Number& operator+=(const Number& rhs);
+    Number& operator-=(const Number& rhs);    
+    Number& operator*=(const Number& rhs);
+    Number& operator/=(const Number& rhs);    
+    Number& operator^=(const Number& rhs); 
+    Number& logis(const Number& rhs);
+    Number operator-() const;
     std::string Summary() const;
 };
 

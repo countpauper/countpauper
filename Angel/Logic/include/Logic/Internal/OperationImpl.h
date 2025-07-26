@@ -68,16 +68,20 @@ Expression OperationBase<T>::Matches(const Expression& expression, const Hypothe
 template<class T>
 Expression OperationBase<T>::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
 {
-    assert(!FlatTuple<T>::empty());    // must have base, shoukd have been caught at construction
+    if constexpr (has_identity<T>)
+    {
+        if (FlatTuple<T>::empty())
+            return T();        
+    }
+    
+    T result{FlatTuple<T>::front().Infer(k, hypothesis, trace)};
+    result.reserve(FlatTuple<T>::size()); 
 
-    Expression value = std::accumulate(FlatTuple<T>::begin()+1, FlatTuple<T>::end(), 
-        FlatTuple<T>::front().Infer(k, hypothesis, trace),
-        [&k, &hypothesis, &trace](const Expression& accumulated, const Expression& item)
-        {
-            auto inferred = item.Infer(k, hypothesis, trace);
-            return T::ope(accumulated, inferred);
-        });
-    return value;
+    std::transform(FlatTuple<T>::begin()+1, FlatTuple<T>::end(), std::back_inserter(result), [&k, &hypothesis, &trace](const Expression& operand)
+    {
+            return operand.Infer(k, hypothesis, trace);
+    });
+    return result;
 }    
 
 template<class T>

@@ -2,6 +2,7 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Logarithm.h"
 #include "Logic/Expression.h"
+#include <cmath>
 
 namespace Angel::Logic::Test
 {
@@ -18,7 +19,7 @@ TEST(Logarithm, Construction)
 TEST(Logarithm, Logarithms)
 {
     Knowledge k;
-    //EXPECT_EQ(k.Infer(Logarithm{Integer(2)}), Real(std::log(2)));
+    EXPECT_EQ(k.Infer(Logarithm{Integer(2)}), Real(std::log(2)));
     EXPECT_EQ(k.Infer(Logarithm{Integer(8), Integer(2)}), Integer(3));
     // TODO complex EXPECT_EQ(k.Infer(Logarithm{Integer(2), Integer(-3)}), Integer(-1));
     EXPECT_EQ(k.Infer(Logarithm{True, Integer(2)}), Integer(0));
@@ -26,9 +27,8 @@ TEST(Logarithm, Logarithms)
 
 TEST(Logarithm, Simplify)
 {
-    EXPECT_EQ((Logarithm{Integer(2)}).Simplify(), Integer(2));
-    EXPECT_EQ((Logarithm{Integer(3), Integer(3)}).Simplify(), Integer(1));
-    //EXPECT_EQ((Logarithm{Integer(1), All(List{Integer(-2), Integer(3)})}).Simplify(), Integer(2));
+    EXPECT_EQ((Logarithm{Real(2.1)}).Simplify(), Real(std::log(2.1)));
+    EXPECT_EQ((Logarithm{Integer(1000), Integer(10)}).Simplify(), Integer(3));
 }
 
 TEST(Logarithm, Substitute)
@@ -41,15 +41,15 @@ TEST(Logarithm, Match)
 {
 	EXPECT_EQ((Logarithm{Integer(2), Integer(2)}).Matches(Integer(1), {}).Simplify(), True);
 	EXPECT_EQ((Logarithm{Variable("Eight"), Integer(2)}).Matches(Integer(3), {Equal{Variable("Eight"), Integer(8)}}).Simplify(), True);
-//	EXPECT_EQ((Logarithm{Variable("One"), Integer(2)}).Matches(Integer(3), {}).Simplify(), (Equal{Variable("One"), Integer(1)}));
+	// TODO inverse EXPECT_EQ((Logarithm{Integer(8), Variable("Two")}).Matches(Integer(3), {}).Simplify(), (Equal{Variable("Two"), Integer(2)}));
 }
 
 TEST(Logarithm, MatchArgument)
 {
-	EXPECT_EQ(Predicate("sum", {Logarithm{Integer(1), Integer(2)}}).Matches(
-                Predicate("sum", {Integer(0)}),{}).Simplify(), True);
-	EXPECT_EQ(Predicate("sum", {Integer(4)}).Matches(
-                Predicate("sum", {Logarithm{Integer(16), Integer(2)}}),{}).Simplify(), True);
+	EXPECT_EQ(Predicate("log", {Logarithm{Integer(1), Integer(2)}}).Matches(
+                Predicate("log", {Integer(0)}),{}).Simplify(), True);
+	EXPECT_EQ(Predicate("log", {Integer(4)}).Matches(
+                Predicate("log", {Logarithm{Integer(16), Integer(2)}}),{}).Simplify(), True);
 }
 
 TEST(Logarithm, Inference)
