@@ -7,17 +7,18 @@ namespace Angel::Logic
 
 // If the derived type T has an T::identity, that will be the value of the simplication/iference if the operation has 0 terms 
 template<typename T>
-concept has_identity = std::convertible_to<decltype(T::identity), Expression>;
+concept has_identity = requires { typename std::remove_reference_t<decltype(T::identity)>; };
+
 // If the derived type T has a T::absorb, that will be the value if the simplification/inference has at least one absorb term
 // for instance Multiplication{x,0,y} = 0, so T::final = Integer(0). Also for conjunction/disjunction
 template<typename T>
-concept has_absorb = std::convertible_to<decltype(T::absorb), Expression>;
-
+concept has_absorb = requires { typename std::remove_reference_t<decltype(T::absorb)>; };
 
 template<class T>
 class OperationBase : public FlatTuple<T>
 {
 public:
+    OperationBase() requires has_identity<T> = default;
     OperationBase(std::initializer_list<Expression> items) : 
         FlatTuple<T>(items)
     {
@@ -38,10 +39,8 @@ public:
     }
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     using Pariant = class Operation;
-protected:
-    // default constructor protected so derived classes can make it public to allow empty terms
-    // The derived classes should implement the case by overloading Infer
-    OperationBase() = default; 
+
+    static std::string OperandToString(const Expression& e);
 protected:
     using BaseType = OperationBase<T>;
 };

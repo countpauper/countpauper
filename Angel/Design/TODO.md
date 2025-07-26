@@ -85,8 +85,8 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [*] Reduce Term size (see TODO in test) by not precompiling regex or on the heap
 -   [ ] Operator precedence when parsing (see TODO)
 -   [ ] Operations output braces for operands with lower precedence
--   [ ] Power operation and it outputs square roots and square, cube (also test braces for those) 
--   [ ] Log operation and all other related
+-   [*] Power operation and it outputs square roots and square, cube (also test braces for those) 
+-   [*] Log operation and all other related
 -   [ ] Parse postfix operators 
 -   [ ] Parse (and construct) all operators
 -   [ ] () braces (test)
@@ -107,7 +107,7 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [ ] Get with a container of keys for Tuple and Set. Return type is same type as container. So [x,y,z].[x,a] = [true,false]
 -   [ ] Index with container of more than one element [x,y,z][1,2]
 -   [ ] Test that indexing with a boolean works a ternary operator [a,b][bool]
--   [ ] Add floating points (number) and conversions
+-   [ ] Add real (number) and conversions
 -   [ ] ranges [x..y] 
 -   [ ] infinite ranges [..y]
 -   [ ] More advanced ranges, with step ?  (syntax?) x..y*3 is step 3 but to from x*3 to y*3 ? 
@@ -184,7 +184,7 @@ it mean if it was omitted? In this case the user may have to supply the empty li
 -   [ ] Also on output of exponentiation, shorcuts for 2 operands and the 2nd is 0.5, 2 or 3
 -   [ ] Variable operators `$$X` and `$*X` etc
 - [ ] Native functions
--    [ ] Add native cast functions (id, int, float, str, list, set, dict)
+-    [ ] Add native cast functions (id, int, real, string, list, set, dict)
 -    [ ] Add native collections functions (size, empty, ordered, unique)
 -    [ ] Add native collection casts
 -    [ ] file IO

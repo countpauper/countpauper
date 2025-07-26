@@ -62,14 +62,39 @@ Integer Integer::operator/=(const Integer& o)
     return *this;    
 }
 
+long IntegerPower(long base, unsigned exponent)
+{
+    long result = 1;
+    while (exponent > 0)
+    {
+        if (exponent % 2)
+            result = result * base;
+        base = base * base;
+        exponent /= 2;
+    }
+    return result;
+}
+
 Integer Integer::operator^=(const Integer& o)
 {
     assert(o.value>=0); // automatic conversion to double when dividing not yet implemented
-    double result = std::pow(double(value), o.value);
-    assert(result<std::numeric_limits<long>::max());    // automatic conversion on overflow not yet implemented
-    value = result;
-    return *this;    
+
+    // TODO if overflow on integer exponent, switch to real or really large 
+    [[maybe_unused]] unsigned bits_needed = std::log2(std::abs(value)) * o.value;
+    assert(bits_needed <= (sizeof(o.value)*8)-1);
+    return Integer(IntegerPower(value, o.value)); 
 }
+
+Integer Integer::log(const Integer& o) const
+{
+    assert(value>0);  // TODO: negative values require complex
+    assert(o.value>0);  // TODO: negative values require complex
+    assert(o.value!=1); // goes to infinity, which requires Real
+    double result = std::log(double(value))/std::log(o.value);
+    assert(result<std::numeric_limits<long>::max());    // automatic conversion on overflow not yet implemented
+    return Integer(result);
+}
+
 
 bool Integer::operator<(const Integer& rhs) const
 {

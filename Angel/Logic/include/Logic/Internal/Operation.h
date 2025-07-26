@@ -1,10 +1,13 @@
 #pragma once
 
-#include "Logic/Summation.h"
 #include "Logic/Negative.h"
+#include "Logic/Summation.h"
 #include "Logic/Subtraction.h"
 #include "Logic/Multiplication.h"
 #include "Logic/Division.h"
+#include "Logic/Exponentiation.h"
+#include "Logic/Logarithm.h"
+
 #include "Logic/Negation.h"
 #include "Logic/Conjunction.h"
 #include "Logic/Disjunction.h"
@@ -20,7 +23,7 @@ namespace Angel::Logic
 
 using OperationVariant = Variant<
     Negative, Variable, Item,
-    Summation, Subtraction, Multiplication, Division, 
+    Summation, Subtraction, Multiplication, Division, Exponentiation, Logarithm,
     Negation, Conjunction, Disjunction, Exclusion>;  
 class const_container_iterator;
 

@@ -20,75 +20,90 @@ bool Number::operator==(const Number& rhs) const
         }, rhs);
 }
 
-Expression Number::operator+=(const Number& rhs) 
+Number Number::operator+=(const Number& rhs) 
 { 
      return std::visit(overloaded_visit{
-        [&rhs](Boolean& obj) -> Expression
+        [&rhs](Boolean& obj) -> Number
         {
             return Integer(obj) += rhs.Cast<Integer>();
         },
-        [&rhs](auto& obj) -> Expression
+        [&rhs](auto& obj) -> Number
         {
             return obj += rhs.Cast<Integer>();
         }
     }, *this);
 }
 
-Expression Number::operator-=(const Number& rhs) 
+Number Number::operator-=(const Number& rhs) 
 { 
      return std::visit(overloaded_visit{
-        [&rhs](Boolean& obj) -> Expression
+        [&rhs](Boolean& obj) -> Number
         {
             return Integer(obj) -= rhs.Cast<Integer>();
         },
-        [&rhs](auto& obj) -> Expression
+        [&rhs](auto& obj) -> Number
         {
             return obj -= rhs.Cast<Integer>();
         }
     }, *this);
 }
 
-Expression Number::operator*=(const Number& rhs) 
+Number Number::operator*=(const Number& rhs) 
 { 
      return std::visit(overloaded_visit{
-        [&rhs](Boolean& obj) -> Expression
+        [&rhs](Boolean& obj) -> Number
         {
             return Integer(obj) *= rhs.Cast<Integer>();
         },
-        [&rhs](auto& obj) -> Expression
+        [&rhs](auto& obj) -> Number
         {
             return obj *= rhs.Cast<Integer>();
         }
     }, *this);
 }
 
-Expression Number::operator/=(const Number& rhs) 
+Number Number::operator/=(const Number& rhs) 
 { 
      return std::visit(overloaded_visit{
-        [&rhs](Boolean& obj) -> Expression
+        [&rhs](Boolean& obj) -> Number
         {
             return Integer(obj) /= rhs.Cast<Integer>();
         },
-        [&rhs](auto& obj) -> Expression
+        [&rhs](auto& obj) -> Number
         {
             return obj /= rhs.Cast<Integer>();
         }
     }, *this);
 }
 
-Expression Number::operator^=(const Number& rhs) 
+Number Number::operator^=(const Number& rhs) // TODO this is weird since it doesn't change this
 { 
      return std::visit(overloaded_visit{
-        [&rhs](Boolean& obj) -> Expression
+        [&rhs](Boolean& obj) -> Number
         {
             return Integer(obj) ^= rhs.Cast<Integer>();
         },
-        [&rhs](auto& obj) -> Expression
+        [&rhs](auto& obj) -> Number
         {
             return obj ^= rhs.Cast<Integer>();
         }
     }, *this);
 }
+
+Number Number::log(const Number& rhs) const
+{
+     return std::visit(overloaded_visit{
+        [&rhs](const Boolean& obj) -> Number
+        {
+            return Integer(obj).log(rhs.Cast<Integer>());
+        },
+        [&rhs](const auto& obj) -> Number
+        {
+            return obj.log(rhs.Cast<Integer>());
+        }
+    }, *this);
+}
+
 bool Number::operator<(const Number& o) const
 {
     return Hash() < o.Hash();
@@ -102,11 +117,11 @@ std::string to_string(const Number& c)
 }
 
 
-Expression operator+(Number lhs, const Number& rhs) { return lhs+= rhs; }
-Expression operator-(Number lhs, const Number& rhs) { return lhs-= rhs; }
-Expression operator*(Number lhs, const Number& rhs) { return lhs*= rhs; }
-Expression operator/(Number lhs, const Number& rhs) { return lhs/= rhs; }
-Expression operator^(Number lhs, const Number& rhs) { return lhs^= rhs; }
+Number operator+(Number lhs, const Number& rhs) { return lhs+= rhs; }
+Number operator-(Number lhs, const Number& rhs) { return lhs-= rhs; }
+Number operator*(Number lhs, const Number& rhs) { return lhs*= rhs; }
+Number operator/(Number lhs, const Number& rhs) { return lhs/= rhs; }
+Number operator^(Number lhs, const Number& rhs) { return lhs^= rhs; }
 
 std::ostream& operator<<(std::ostream& s, const Number& c)
 {

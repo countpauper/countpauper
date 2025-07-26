@@ -19,6 +19,7 @@ public:
 	Integer operator*=(const Integer& o);
 	Integer operator/=(const Integer& o);
 	Integer operator^=(const Integer& o);
+	Integer log(const Integer& o) const;
 	bool operator<(const Integer& rhs) const;
 
     std::size_t Hash() const;

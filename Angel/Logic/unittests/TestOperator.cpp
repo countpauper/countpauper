@@ -43,7 +43,7 @@ TEST(Operator, ConstrucPrefix)
 TEST(Operator, ConstrucPostfix)
 {
     EXPECT_TRUE(PostfixOperator(L'+'));
-    EXPECT_NE(PostfixOperator(L'²'), PostfixOperator("!"));
+    EXPECT_NE(PostfixOperator(L'²'), PostfixOperator("³"));
     EXPECT_EQ(PostfixOperator(L'-').Operands(), 1);
     static_assert(sizeof(PostfixOperator)==4);
 }

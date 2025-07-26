@@ -3,6 +3,7 @@
 #include "Logic/Binary.h"
 #include "Logic/Internal/Pair.h"
 #include "Logic/Internal/container_iterator.h"
+
 namespace Angel::Logic
 {
 

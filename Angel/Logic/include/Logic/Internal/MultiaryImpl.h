@@ -71,6 +71,14 @@ constexpr Expression operate<MultiOperator{L'↑'}>(const Expression& lhs, const
 }
 
 template<>
+constexpr Expression operate<MultiOperator{L'↓'}>(const Expression& lhs, const Expression& rhs)
+{
+    auto lhNumber = lhs.Cast<Number>();
+    auto rhNumber = rhs.Cast<Number>();
+    return lhNumber.log(rhNumber);
+}
+
+template<>
 constexpr Expression operate<MultiOperator{L'∧'}>(const Expression& lhs, const Expression& rhs)
 {
     if (const auto* lhCont = lhs.GetIf<Container>())
@@ -165,7 +173,7 @@ constexpr Expression dispatch_operator(Operator op, const Expression& lhs, const
 
 constexpr Expression MultiOperator::operator()(const Expression& lhs, const Expression& rhs) const
 {
-    return dispatch_operator<L"+-⋅÷↑∧∨⊕">(*this, lhs, rhs);
+    return dispatch_operator<L"+-⋅÷↑↓∧∨⊕">(*this, lhs, rhs);
 }
 
 }

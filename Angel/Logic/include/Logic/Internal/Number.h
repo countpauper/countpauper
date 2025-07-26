@@ -52,18 +52,19 @@ public:
     inline bool operator<=(const Number& o) const { return *this==o || *this<o; }
     inline bool operator>(const Number& o) const { return !(*this<=o); }
     inline bool operator>=(const Number& o) const { return !(*this<o); }
-    Expression operator+=(const Number& rhs);
-    Expression operator-=(const Number& rhs);    
-    Expression operator*=(const Number& rhs);
-    Expression operator/=(const Number& rhs);    
-    Expression operator^=(const Number& rhs); 
+    Number operator+=(const Number& rhs);
+    Number operator-=(const Number& rhs);    
+    Number operator*=(const Number& rhs);
+    Number operator/=(const Number& rhs);    
+    Number operator^=(const Number& rhs); 
+    Number log(const Number& rhs) const;
     std::string Summary() const;
 };
 
-Expression operator+(Number lhs, const Number& rhs);
-Expression operator-(Number lhs, const Number& rhs);
-Expression operator*(Number lhs, const Number& rhs);
-Expression operator/(Number lhs, const Number& rhs);
-Expression operator^(Number lhs, const Number& rhs);
+Number operator+(Number lhs, const Number& rhs);
+Number operator-(Number lhs, const Number& rhs);
+Number operator*(Number lhs, const Number& rhs);
+Number operator/(Number lhs, const Number& rhs);
+Number operator^(Number lhs, const Number& rhs);
 std::ostream& operator<<(std::ostream& s, const Number& e);
 }
