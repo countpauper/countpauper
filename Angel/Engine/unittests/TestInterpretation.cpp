@@ -40,9 +40,30 @@ TEST(Interpretation, Query)
 TEST(Interpretation, Expression)
 {
     AngelInterpreter interpreter;
-    Interpreter::Source source("-1+2?");
+    Interpreter::Source source("-1+2.0e-1?");
     EXPECT_EQ(interpreter.InterpretQuery(source), (
-        Logic::Summation{Logic::Negative(Logic::Integer(1)), Logic::Integer(2)}));
+        Logic::Summation{Logic::Negative(Logic::Integer(1)), Logic::Real(0.2)}));
+}
+
+TEST(Interpretation, Precedence)
+{
+    AngelInterpreter interpreter;
+    Interpreter::Source source("-1+2**3*4?");
+    EXPECT_EQ(interpreter.InterpretQuery(source), (
+        Logic::Summation{Logic::Negative(Logic::Integer(1)), 
+            Logic::Multiplication{
+                Logic::Exponentiation{Logic::Integer(2), Logic::Integer(3)}, 
+                Logic::Integer(4)
+            }
+        }));
+}
+
+TEST(Interpretation, Braces)
+{
+    AngelInterpreter interpreter;
+    Interpreter::Source source("(true-2)⋅3?");
+    EXPECT_EQ(interpreter.InterpretQuery(source), (
+        Logic::Multiplication{Logic::Subtraction{Logic::True,  Logic::Integer(2)}, Logic::Integer(3)}));
 }
 
 TEST(Interpretation, List)
@@ -99,7 +120,7 @@ TEST(Interpretation, PrefixComparator)
     AngelInterpreter interpreter;
     Interpreter::Source source("small(<=9)");
     interpreter.Interpret(source, k);
-    EXPECT_EQ(k.Infer(Logic::Predicate("small",{Logic::Integer(9)})), Logic::True);
+    EXPECT_EQ(k.Infer(Logic::Predicate("small",{Logic::Integer(8)})), Logic::True);
     EXPECT_EQ(k.Infer(Logic::Predicate("small",{Logic::Integer(10)})), Logic::False);
 }
 

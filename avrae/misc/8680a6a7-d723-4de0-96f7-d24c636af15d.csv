@@ -1,0 +1,13 @@
+Quaff,1,Healing,Greater Healing, Superior Healing, Supreme Healing, Full Healing(70hp)
+Quaff,2,Cure, Antitoxin,Lycanthropy / Mummy Rot antidote (1d2),Elixir of health, vitality, longevity
+Quaff,3,Swiftness,10ft 1hr,Kinetic Jaunt,Ashardalon’s Stride, Speed, Oil of Slipperiness
+Quaff,4,Resilience,+1 AC,Barkskin, Resistance, Stoneskin, Invulnerability
+Quaff,5,Boldness, Growth, Heroism,Elemental Weapon oil,Frost Giant Strength,Oil of Sharpness
+Quaff,6,Brain stuff,Comprehension ,Psionic Fortitude ,Mind Reading,Clairvoyance,Intellect Fortress
+Quaff,7,Transform,Alter self 10 min,Polychromy,Flying,Aqueous Form, Oil of Etherealness
+Throw, 1, Elements, Alchemist's Fire, Chromatic Orb, Snilloc’s Snowball, Fireball, ?
+Throw, 2, Venom, Poison, Drow Poison, Stinking cloud, Serpent Venom, Cloudkill 
+Throw, 3, Flash bang, Color spray, Sleep(lvl2), Pyrotechnics: Smoke, Hypnotic pattern, ? 
+Throw, 4, Holy hand grenade, Sacred flame, Guiding bolt, Moonbeam, Daylight, Magic circle
+Throw, 5, Love, Animal friendship, Philter of Love, Truth Serum, Calm Emotions, Fast friends
+Throw, 6, Seeking, Hunter's mark, Faerie fire, Dispel invisibility, ?, ?

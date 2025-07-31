@@ -52,13 +52,23 @@ gallon:
 L:
   gallon: 0.26417217685798894 
   pint: 1.759754
+  cup: 3.519508
+  fl oz: 33.81402
+quart:
+  liter: 0.9463525
+  gallon: 0.25
 pint:
   gal: 0.125
   quart: 0.5
   L: 0.5682612
-quart:
-  liter: 0.9463525
-  gallon: 0.25
+  cup: 2
+  fl oz: 20
+cup:
+  L: 3.519508
+  fl oz: 10
+fl oz:
+  L: 0.02841306
+  cup: 0.1
 litre:
   L: 1
 # time
