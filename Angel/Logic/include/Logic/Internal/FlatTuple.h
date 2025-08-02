@@ -25,6 +25,8 @@ public:
     ~FlatTuple() = default;
     unsigned Add(Expression&& exp);
     unsigned AddAt(const_iterator& at, Expression&& exp);
+    unsigned AddLeft(Expression&& exp);
+    Expression RemoveLeft();
 protected:
     T SimplifyItems() const
     {

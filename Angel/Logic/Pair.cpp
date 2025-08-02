@@ -28,6 +28,23 @@ std::size_t Pair::size() const
         static_cast<std::size_t>(bool(rhs));
 }
 
+
+Expression Pair::RemoveLeft()
+{
+    if (!lhs)
+        return Expression();
+    Expression result = std::move(*lhs);
+    lhs.reset();
+    return std::move(result);
+}
+
+void Pair::AddLeft(Expression&& operand)   
+{
+    if (lhs)
+        throw std::runtime_error("Pair buffer overflow");
+    lhs = std::make_unique<Expression>(std::move(operand));
+}
+
 Set Pair::Assumptions() const
 {
     return Left().Assumptions() + Right().Assumptions();

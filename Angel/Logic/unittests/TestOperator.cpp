@@ -76,6 +76,14 @@ TEST(Operator, Operate)
     EXPECT_TRUE(Comparator(L'=')(Integer(1), Integer(1)));
 }
 
+TEST(Operator, RemarkIsNotAnOperator)
+{
+    EXPECT_THROW(PrefixOperator("#"), std::invalid_argument);
+    EXPECT_THROW(BinaryOperator("#"), std::invalid_argument);
+    EXPECT_THROW(MultiOperator("#"), std::invalid_argument);
+    EXPECT_THROW(Comparator("#"), std::invalid_argument);
+}
+
 TEST(Operator, Precedence)
 {
     EXPECT_EQ(MultiOperator{L'+'}.Precedence(), MultiOperator{L'-'}.Precedence()); 

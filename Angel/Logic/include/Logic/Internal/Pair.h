@@ -18,6 +18,8 @@ public:
     }
     explicit operator bool() const;
     std::size_t size() const;
+    Expression RemoveLeft();
+    void AddLeft(Expression&& operand);    
     Set Assumptions() const;
     const Expression& Left() const;
     Expression& Left();

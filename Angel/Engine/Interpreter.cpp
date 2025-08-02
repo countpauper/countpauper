@@ -12,6 +12,9 @@
 namespace Angel::Engine
 {
 
+
+static Logging::Tabber tab;
+
 Interpreter::Syntax ConstructSyntax(std::filesystem::path fn)
 {
     Interpreter::Grammar bnf(Interpreter::BNF); 
@@ -27,8 +30,28 @@ AngelInterpreter::AngelInterpreter() :
 {
 }
 
-Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allowId=false);
+struct ParseState 
+{
+    bool braces : 1 = false;
+};
+
+std::pair<Logic::Expression, ParseState> GenerateExpression(const Interpreter::ParsedSymbol& expressionSymbol, Interpreter::SymbolStream& parse, bool allowId=false);
 std::vector<Logic::Expression> GenerateSequence(Interpreter::SymbolStream& parse);
+
+
+Interpreter::ParsedSymbol SkipTo( Interpreter::SymbolStream& parse, std::string_view symbol)
+{
+    Interpreter::ParsedSymbol input; 
+    while(!parse.eof())
+    {    
+        parse >> input;
+        if (input.symbol == Interpreter::Symbol(symbol))
+        {
+            return input;
+        }
+    }
+    throw std::runtime_error(std::format("End of file when looking for {}", symbol));
+}
 
 Logic::Expression GeneratePredicateOrId( Interpreter::SymbolStream& parse, bool allowId)
 {
@@ -77,6 +100,10 @@ Logic::Expression GenerateObject(Interpreter::SymbolStream& parse, bool allowId)
     {
         return Logic::Integer(input.location.extract());
     }
+    else if (input.symbol == Interpreter::Symbol("positive-float"))
+    {
+        return Logic::Real(input.location.extract());
+    }
     else if (input.symbol == Interpreter::Symbol("variable"))
     {
         return Logic::Variable(input.location.sub(1).extract());
@@ -91,7 +118,10 @@ Logic::Expression GenerateObject(Interpreter::SymbolStream& parse, bool allowId)
     }
     else if (input.symbol == Interpreter::Symbol("list"))
     {
-        return Logic::List(GenerateSequence(parse));
+        Logging::Log<Logging::DEBUG>("{}[", std::string(tab));
+        auto seq = GenerateSequence(parse);
+        Logging::Log<Logging::DEBUG>("{}]", std::string(tab));
+        return Logic::List(std::move(seq));
     }
     else if (input.symbol == Interpreter::Symbol("set"))
     {
@@ -103,12 +133,113 @@ Logic::Expression GenerateObject(Interpreter::SymbolStream& parse, bool allowId)
     }
 }
 
-Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allowId)
+using UnaryOperators= std::stack<Logic::Operator>;
+
+Logic::Expression GenerateUnaryOperation(UnaryOperators& operators, unsigned minimalPrecedence, Logic::Expression&& operand)
+{
+    while (!operators.empty())
+    {
+        auto op = operators.top();
+        if (op.Precedence() < minimalPrecedence)
+            break;
+        operators.pop();
+        const auto* id = operand.GetIf<Logic::Id>();
+        if (op==Logic::PrefixOperator(L'∀') && id)
+            operand = Logic::All(std::string(*id));
+        else 
+            operand = Logic::Expression(op, { std::move(operand) });
+    }
+    return operand;
+}
+
+std::pair<Logic::Expression, ParseState> GenerateValue(Interpreter::SymbolStream& parse, bool allowId)
 {
     Interpreter::ParsedSymbol input;
-    Logic::Tuple operands;
-    Logic::Operator ope;
-    std::stack<Logic::Operator> unary_ops;
+    UnaryOperators unary_ops;
+    while(!parse.eof())
+    {      
+        parse >> input;
+        if (input.symbol == Interpreter::Symbol("prefix-operator"))
+        {
+            unary_ops.push(Logic::Operator::Find<Logic::PrefixOperator, Logic::Filter>(
+                                                                input.location.extract()));
+        }        
+        if (input.symbol == Interpreter::Symbol("braced-expression"))
+        {
+            Logic::Expression expression = GenerateExpression(SkipTo(parse, "expression"), parse, allowId).first;
+            expression = GenerateUnaryOperation(unary_ops, 0, std::move(expression));
+            return std::make_pair(expression, ParseState{.braces=true});
+        }
+        else if (input.symbol == Interpreter::Symbol("object"))
+        {   
+            Logic::Expression expression = GenerateObject(parse, allowId);
+            expression = GenerateUnaryOperation(unary_ops, 0, std::move(expression));
+            return std::make_pair(expression,ParseState{});
+        }
+    }
+    throw std::runtime_error("Unexpected end of file when looking for value");
+}
+
+Logic::Expression GenerateOperation(const Interpreter::ParsedSymbol& currentExpression, Logic::Operator op, Logic::Expression&& firstOperand, Interpreter::SymbolStream& parse, bool allowId)
+{
+    auto [remaining, state] = GenerateExpression(currentExpression, parse, allowId);
+    if (auto* operation = remaining.GetIf<Logic::Operation>())
+    {
+        if (operation->GetOperator() == op)
+        {
+            Logging::Log<Logging::DEBUG>("{}Continue {}  {}  {}", 
+                std::string(tab),
+                Logic::to_string(firstOperand),
+                std::string(op), 
+                Logic::to_string(*operation));
+            operation->AddLeft(std::move(firstOperand));
+            return *operation;;
+        }
+        else if (state.braces)
+        {
+            Logging::Log<Logging::DEBUG>("{}RHS braced: {}  {}  ({}) ", 
+                std::string(tab),
+                Logic::to_string(firstOperand), std::string(op), Logic::to_string(remaining));
+        }
+        else if (operation->GetOperator().Precedence()<=op.Precedence())
+        {
+            auto secondOperand = operation->RemoveLeft();
+            auto highPrecedenceOperation = Logic::Expression(op, {std::move(firstOperand), std::move(secondOperand)});
+            Logging::Log<Logging::DEBUG>("{}Op {} < {}. Substitute {} before {}", 
+                std::string(tab),
+                std::string(operation->GetOperator()), 
+                std::string(op), 
+                Logic::to_string(highPrecedenceOperation),
+                Logic::to_string(*operation));
+            operation->AddLeft(std::move(highPrecedenceOperation));
+            return remaining;
+        }
+        else 
+        {
+            Logging::Log<Logging::DEBUG>("{}Op {} >= {}. Chain {} before {}", 
+                std::string(tab),
+                std::string(operation->GetOperator()), 
+                std::string(op), 
+                Logic::to_string(firstOperand),
+                Logic::to_string(*operation));
+        }
+    }
+    else 
+    {
+        Logging::Log<Logging::DEBUG>("{}RHS is a value: new {}  {}  {} ", 
+            std::string(tab),            
+            Logic::to_string(firstOperand), std::string(op), Logic::to_string(remaining));
+    }
+    return Logic::Expression(op, {std::move(firstOperand), std::move(remaining)});
+}
+
+
+std::pair<Logic::Expression, ParseState> GenerateExpression(const Interpreter::ParsedSymbol& expressionSymbol, Interpreter::SymbolStream& parse, bool allowId)
+{
+    Interpreter::ParsedSymbol input;
+    Logic::Expression expression;
+    ParseState state;
+    ++tab;
     while(!parse.eof())
     {   
         parse >> input;
@@ -124,40 +255,37 @@ Logic::Expression GenerateExpression(Interpreter::SymbolStream& parse, bool allo
             // if the same: eg a/b * c same as lower  
             //  
             auto operatorTag = input.location.extract();
-            Logic::Operator nextOperator = Logic::Operator::Find<Logic::BinaryOperator, Logic::MultiOperator>(
+            Logic::Operator op = Logic::Operator::Find<Logic::BinaryOperator, Logic::MultiOperator>(
                                                                 operatorTag);
-            if (!nextOperator)
+            if (!op)
                 throw std::runtime_error(std::format("Unknown operator {}", operatorTag));
-            assert(!ope || nextOperator == ope); // not yet implemented 
-            ope = nextOperator;
+            if (!expression)
+                throw std::runtime_error(std::format("Unexpected operator {} must follow operand", operatorTag));
+
+            expression = GenerateOperation(expressionSymbol, op, std::move(expression), parse, allowId);
         }
         if (input.symbol == Interpreter::Symbol("prefix-operator"))
         {
-            unary_ops.push(Logic::Operator::Find<Logic::PrefixOperator, Logic::Filter>(
-                                                                input.location.extract()));
+            assert(false);  // these should be in GenerateValue now 
         }
-        else if (input.symbol == Interpreter::Symbol("object"))
-        {   // TODO: prefixed values and braces
-            Logic::Expression newOparand = GenerateObject(parse, allowId);
-            while (!unary_ops.empty())
-            {
-                auto op = unary_ops.top();
-                unary_ops.pop();
-                const auto* id = newOparand.GetIf<Logic::Id>();
-                if (op==Logic::PrefixOperator(L'∀') && id)
-                    newOparand = Logic::All(std::string(*id));
-                else 
-                    newOparand = Logic::Expression(op, { newOparand });
-            }
-            operands.emplace_back(std::move(newOparand));
+        if (input.symbol == Interpreter::Symbol("value"))
+        {
+            auto [vexpression, vstate] = GenerateValue(parse, allowId);
+            expression = std::move(vexpression);
+            state = std::move(vstate);
         }
         else if (input.symbol == Interpreter::Symbol("-expression"))
         {
-            return Logic::Expression(ope, std::move(operands));
+            assert(expression);
+            Logging::Log<Logging::DEBUG>("{}`{}` = {}", std::string(tab), expressionSymbol.location.extract(), Logic::to_string(expression));
+            break;
         }
-
+        assert(input.symbol != Interpreter::Symbol("sequence"));
+        assert(input.symbol != Interpreter::Symbol("-sequence"));
     }
-    return Logic::Expression(ope, std::move(operands));
+    
+    --tab;
+    return std::make_pair(std::move(expression), state);
 }
 
 std::vector<Logic::Expression> GenerateSequence(Interpreter::SymbolStream& parse)
@@ -169,7 +297,7 @@ std::vector<Logic::Expression> GenerateSequence(Interpreter::SymbolStream& parse
         parse >> input;
         if (input.symbol == Interpreter::Symbol("expression"))
         {
-            result.push_back(GenerateExpression(parse, true));
+            result.emplace_back(GenerateExpression(input, parse, true).first);
         }
         else if (input.symbol == Interpreter::Symbol("-sequence"))
         {
@@ -198,6 +326,7 @@ void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge
         {
             if (predicate)
             {
+                assert(!tab);
                 Logging::Log<Logging::INFO>("> {}", Logic::to_string(predicate));
                 knowledge.Know(std::move(predicate));
             }
@@ -205,9 +334,10 @@ void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge
         }
         else if (input.symbol == Interpreter::Symbol("expression"))
         {
-            Logic::Expression terms = GenerateExpression(parse, true);
+            Logic::Expression terms = GenerateExpression(input, parse, true).first;
             Logic::Association clause{std::move(predicate), std::move(terms)};
-            Logging::Log<Logging::INFO>("> {}", Logic::to_string(clause));
+            assert(!tab);
+            Logging::Log<Logging::INFO>("# {}", Logic::to_string(clause));
             knowledge.Know(std::move(clause));
             return;
         }
@@ -241,10 +371,45 @@ std::size_t GenerateKnowledge(const Interpreter::Source& source, Interpreter::Sy
     return count;
 }
 
+template<std::ostream* log>
+void LogParse(Interpreter::SymbolStream copy)
+{
+    Logging::Tabber parsetab;
+    Interpreter::ParsedSymbol input; 
+    std::stack<Interpreter::SourceSpan> spans;
+    while(!copy.eof())
+    {
+        copy >> input;
+        if (spans.empty())
+        {
+            parsetab = 0;
+        }
+        while(!spans.empty() && !input.location.in(spans.top())) 
+        {
+            spans.pop();
+            --parsetab;
+        }
+        spans.push(input.location);
+        ++parsetab;
+        if (input.location.empty())
+        {
+            Logging::Log<log>("{}{}",std::string(parsetab), std::string(input.symbol));
+        }
+        else 
+        {
+            Logging::Log<log>("{}{} {} [{}..{}]", 
+                std::string(parsetab), std::string(input.symbol), 
+                input.location.extract(), input.location.from, input.location.from + input.location.length-1);
+        }
+    }   
+}
+
 std::size_t AngelInterpreter::Interpret(const Interpreter::Source& source, Logic::Knowledge& knowledge )
 {
     Interpreter::SymbolStream os;
     parser.Parse(source, os);
+    tab = 0;
+    LogParse<Logging::DEBUG>(os);
     return GenerateKnowledge(source, os, knowledge);
 }    
 
@@ -252,7 +417,8 @@ Logic::Expression AngelInterpreter::InterpretQuery(const ::Interpreter::Source& 
 {
     Interpreter::SymbolStream os;
     parser.Parse(source, os, "query"); 
-    return GenerateExpression(os);
+    tab = 0;
+    return GenerateExpression(SkipTo(os, "expression"), os).first;
 }
 
 }

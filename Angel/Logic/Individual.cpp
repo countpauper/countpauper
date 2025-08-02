@@ -59,6 +59,24 @@ bool Individual::empty() const
     return !bool(content);
 }
 
+Expression Individual::RemoveLeft()
+{
+    if (empty())
+        return Expression();
+
+    Expression operand = std::move(*content);
+    content.reset();
+    return operand; 
+}
+
+void Individual::AddLeft(Expression&& operand)
+{
+    if (!empty())
+        throw std::runtime_error("Individual buffer overflow");
+    content = std::make_unique<Expression>(std::move(operand));
+}
+
+
 Set Individual::Assumptions() const
 {
     return content->Assumptions();

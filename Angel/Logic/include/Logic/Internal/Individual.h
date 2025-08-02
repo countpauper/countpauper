@@ -19,6 +19,8 @@ public:
     explicit operator bool() const;
     std::size_t size() const;
     bool empty() const;
+    Expression RemoveLeft();
+    void AddLeft(Expression&& operand);
     Set Assumptions() const;
     const Expression& operator*() const;
     const Expression* operator->() const;

@@ -77,6 +77,26 @@ Operator Operation::GetOperator() const
         }, *this);    
 }
 
+
+Expression Operation::RemoveLeft()
+{
+    return std::visit(
+        [](auto& obj) -> Expression
+        {
+            return obj.RemoveLeft();
+        }, *this);
+}
+
+void Operation::AddLeft(Expression&& operand)
+{
+    std::visit(
+        [&operand](auto& obj)
+        {
+            obj.AddLeft(std::move(operand));
+        }, *this);
+}
+
+
 std::string Operation::Summary() const
 {
     auto terms = size();

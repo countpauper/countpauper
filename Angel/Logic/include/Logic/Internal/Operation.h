@@ -42,6 +42,8 @@ public:
     Expression Matches(const Expression& e, const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
     Operator GetOperator() const;
+    Expression RemoveLeft();
+    void AddLeft(Expression&& operand);
     std::string Summary() const;
 
     template<typename T> 

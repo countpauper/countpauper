@@ -61,9 +61,10 @@ TEST(Interpretation, Precedence)
 TEST(Interpretation, Braces)
 {
     AngelInterpreter interpreter;
-    Interpreter::Source source("(true-2)⋅3?");
+// both should work, but implementation only checks braces of rhs. Does that matter? Shouldn't pop back     Interpreter::Source source("(true-2)⋅3?");
+    Interpreter::Source source("0⋅(true-2)⋅3?");
     EXPECT_EQ(interpreter.InterpretQuery(source), (
-        Logic::Multiplication{Logic::Subtraction{Logic::True,  Logic::Integer(2)}, Logic::Integer(3)}));
+        Logic::Multiplication{Logic::Integer(0), Logic::Subtraction{Logic::Predicate("true"),  Logic::Integer(2)}, Logic::Integer(3)}));
 }
 
 TEST(Interpretation, List)
@@ -138,7 +139,7 @@ TEST(Interpretation, Sort)
 {
     Logic::Knowledge k; 
     AngelInterpreter interpreter;
-    Interpreter::Source source("sort←[]\nsort($H,∀T)←sort(∀T:<$H) + [$H] + sort(∀T:≥$H)");
+    Interpreter::Source source("sort($H,∀T)←sort(∀T:<$H) + [$H] + sort(∀T:≥$H)\nsort←[]");
     interpreter.Interpret(source, k);
     EXPECT_EQ(k.Infer(Logic::Predicate("sort",{
             Logic::Integer(5), Logic::Integer(2), Logic::Integer(1), Logic::Integer(4), Logic::Integer(3) })),

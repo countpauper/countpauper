@@ -95,8 +95,7 @@ Expression Comparison<T>::Matches(const Expression& expression, const Hypothesis
     auto substituted = Substitute(hypothesis);
     assert(substituted.size()==1);  // single element equations can be matched but not inferred. Predicate argument only
     Hypothesis newHypothesis(hypothesis);
-    Tuple::const_iterator front = substituted.begin();
-    substituted.AddAt(front, expression.Substitute(hypothesis));
+    substituted.AddLeft(expression.Substitute(hypothesis));
     newHypothesis.Add(substituted);
     return newHypothesis;
 }

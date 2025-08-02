@@ -44,8 +44,7 @@ Expression OperationBase<T>::Simplify() const
     }
     if (constant) 
     {
-        auto front = simple.cbegin();
-        simple.AddAt(front, std::move(constant));
+        simple.AddLeft(std::move(constant));
     }
     if constexpr (has_identity<T>) 
     {

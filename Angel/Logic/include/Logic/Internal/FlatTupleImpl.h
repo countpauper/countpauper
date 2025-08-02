@@ -36,7 +36,6 @@ unsigned FlatTuple<T>::Add(Expression&& e)
 template<class T>
 unsigned FlatTuple<T>::AddAt(const_iterator& at, Expression&& e)
 {
-  
     if (const auto* same = e.GetIf<T>())
     {
         unsigned total = 0;
@@ -50,4 +49,22 @@ unsigned FlatTuple<T>::AddAt(const_iterator& at, Expression&& e)
     }
     return Tuple::AddAt(at, std::move(e));
 }
+
+template<class T>
+unsigned FlatTuple<T>::AddLeft(Expression&& exp)
+{
+    const_iterator it = begin();
+    return AddAt(it, std::move(exp));
+}
+
+template<class T>
+Expression FlatTuple<T>::RemoveLeft()
+{
+    if (empty())
+        return Expression();
+    Expression result = front();
+    erase(begin());
+    return result;
+}
+
 }

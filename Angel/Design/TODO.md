@@ -91,7 +91,7 @@ quicksort([$H,*T]): quicksort([*T:<$H]) + [$H] + quicksort([*T:>=$H])
 -   [ ] Parse (and construct) all operators
 -   [ ] () braces (test)
 -   [ ] All binary operation
--   [ ] Negative (non integers)
+-   [*] Negative (non integers)
 -   [*] Unicode operators 
 -   [*] Prefix comparators 
 -   [*] Make sure both functional examples can be fully parsed 
