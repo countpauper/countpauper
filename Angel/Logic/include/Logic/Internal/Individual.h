@@ -21,6 +21,8 @@ public:
     bool empty() const;
     Expression RemoveLeft();
     void AddLeft(Expression&& operand);
+    Expression RemoveRight();
+    void AddRight(Expression&& operand);
     Set Assumptions() const;
     const Expression& operator*() const;
     const Expression* operator->() const;

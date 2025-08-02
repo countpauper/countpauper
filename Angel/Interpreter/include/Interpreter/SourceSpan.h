@@ -44,6 +44,7 @@ namespace Interpreter
         bool operator==(const SourceSpan& o) const;
         bool operator!=(const SourceSpan& o) const { return !(*this == o); }
         SourceSpan sub(std::ptrdiff_t offset, std::ptrdiff_t newLength=std::numeric_limits<std::ptrdiff_t>::max()) const;
+        bool in(const SourceSpan& other) const;
         std::string extract() const;
         
     };    

@@ -132,6 +132,11 @@ public:
         for(const auto& object: objects)
             (*this) << object;
     }
+    Fifo(const Fifo& o)
+        : objects(o.objects)
+        , state(o.state)
+    {
+    }
 
     Fifo<T>& operator<<(const T& object)
     {

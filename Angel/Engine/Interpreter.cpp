@@ -180,57 +180,63 @@ std::pair<Logic::Expression, ParseState> GenerateValue(Interpreter::SymbolStream
     throw std::runtime_error("Unexpected end of file when looking for value");
 }
 
-Logic::Expression GenerateOperation(const Interpreter::ParsedSymbol& currentExpression, Logic::Operator op, Logic::Expression&& firstOperand, Interpreter::SymbolStream& parse, bool allowId)
+Logic::Expression GenerateOperation(Logic::Operator op, Logic::Expression&& lhs, ParseState lhstate, Interpreter::SymbolStream& parse, bool allowId)
 {
-    auto [remaining, state] = GenerateExpression(currentExpression, parse, allowId);
-    if (auto* operation = remaining.GetIf<Logic::Operation>())
+    auto [rhs, rhstate] = GenerateValue(parse, allowId);
+    if (auto* operation = lhs.GetIf<Logic::Operation>())
     {
         if (operation->GetOperator() == op)
         {
             Logging::Log<Logging::DEBUG>("{}Continue {}  {}  {}", 
                 std::string(tab),
-                Logic::to_string(firstOperand),
+                Logic::to_string(*operation),
                 std::string(op), 
-                Logic::to_string(*operation));
-            operation->AddLeft(std::move(firstOperand));
+                Logic::to_string(rhs));
+            operation->AddRight(std::move(rhs));
             return *operation;;
         }
-        else if (state.braces)
+        else if (lhstate.braces)
         {
-            Logging::Log<Logging::DEBUG>("{}RHS braced: {}  {}  ({}) ", 
+            Logging::Log<Logging::DEBUG>("{} LHS braced: ({})  {}  {} ", 
                 std::string(tab),
-                Logic::to_string(firstOperand), std::string(op), Logic::to_string(remaining));
+                Logic::to_string(lhs), std::string(op), Logic::to_string(rhs));
         }
-        else if (operation->GetOperator().Precedence()<=op.Precedence())
+        else if (rhstate.braces)
         {
-            auto secondOperand = operation->RemoveLeft();
-            auto highPrecedenceOperation = Logic::Expression(op, {std::move(firstOperand), std::move(secondOperand)});
-            Logging::Log<Logging::DEBUG>("{}Op {} < {}. Substitute {} before {}", 
+            Logging::Log<Logging::DEBUG>("{} RHS braced: {}  {}  ({}) ", 
+                std::string(tab),
+                Logic::to_string(lhs), std::string(op), Logic::to_string(rhs));
+        }
+        else if (operation->GetOperator().Precedence() < op.Precedence())
+        {
+            auto adoptedOperand = operation->RemoveRight();
+            auto highPrecedenceOperation = Logic::Expression(op, {std::move(adoptedOperand), std::move(rhs)});
+            Logging::Log<Logging::DEBUG>("{} LHS Op {} < {}. Substitute {} before {}", 
                 std::string(tab),
                 std::string(operation->GetOperator()), 
                 std::string(op), 
                 Logic::to_string(highPrecedenceOperation),
                 Logic::to_string(*operation));
-            operation->AddLeft(std::move(highPrecedenceOperation));
-            return remaining;
+            operation->AddRight(std::move(highPrecedenceOperation));
+            return std::move(lhs);
         }
         else 
         {
-            Logging::Log<Logging::DEBUG>("{}Op {} >= {}. Chain {} before {}", 
+            Logging::Log<Logging::DEBUG>("{} LHS Op {} >= {}. Chain {} before {}", 
                 std::string(tab),
                 std::string(operation->GetOperator()), 
                 std::string(op), 
-                Logic::to_string(firstOperand),
-                Logic::to_string(*operation));
+                Logic::to_string(*operation),
+                Logic::to_string(rhs));
         }
     }
     else 
     {
         Logging::Log<Logging::DEBUG>("{}RHS is a value: new {}  {}  {} ", 
             std::string(tab),            
-            Logic::to_string(firstOperand), std::string(op), Logic::to_string(remaining));
+            Logic::to_string(lhs), std::string(op), Logic::to_string(rhs));
     }
-    return Logic::Expression(op, {std::move(firstOperand), std::move(remaining)});
+    return Logic::Expression(op, {std::move(lhs), std::move(rhs)});
 }
 
 
@@ -245,15 +251,6 @@ std::pair<Logic::Expression, ParseState> GenerateExpression(const Interpreter::P
         parse >> input;
         if (input.symbol == Interpreter::Symbol("binary-operator"))
         {
-            // TODO if new operator is different, determine precedence. 
-            // if higher: eg a+ b * ... 
-            //    the last object is the start of a new operations 
-            //    this operation is appended to the existing operation as its new last element 
-            // if lower:   a*b + ...
-            //    the last object is appended to the existing operation
-            //    that operation is the first argument of the new one for that operator
-            // if the same: eg a/b * c same as lower  
-            //  
             auto operatorTag = input.location.extract();
             Logic::Operator op = Logic::Operator::Find<Logic::BinaryOperator, Logic::MultiOperator>(
                                                                 operatorTag);
@@ -262,7 +259,8 @@ std::pair<Logic::Expression, ParseState> GenerateExpression(const Interpreter::P
             if (!expression)
                 throw std::runtime_error(std::format("Unexpected operator {} must follow operand", operatorTag));
 
-            expression = GenerateOperation(expressionSymbol, op, std::move(expression), parse, allowId);
+            expression = GenerateOperation(op, std::move(expression), state, parse, allowId);
+            state.braces = false;
         }
         if (input.symbol == Interpreter::Symbol("prefix-operator"))
         {
@@ -409,7 +407,7 @@ std::size_t AngelInterpreter::Interpret(const Interpreter::Source& source, Logic
     Interpreter::SymbolStream os;
     parser.Parse(source, os);
     tab = 0;
-    LogParse<Logging::DEBUG>(os);
+    LogParse<Logging::OFF>(os);
     return GenerateKnowledge(source, os, knowledge);
 }    
 

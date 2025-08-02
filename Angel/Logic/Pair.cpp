@@ -45,6 +45,23 @@ void Pair::AddLeft(Expression&& operand)
     lhs = std::make_unique<Expression>(std::move(operand));
 }
 
+Expression Pair::RemoveRight()
+{
+    if (!rhs)
+        return Expression();
+    Expression result = std::move(*rhs);
+    rhs.reset();
+    return std::move(result);
+}
+
+void Pair::AddRight(Expression&& operand)   
+{
+    if (rhs)
+        throw std::runtime_error("Pair buffer overflow");
+    rhs = std::make_unique<Expression>(std::move(operand));
+}
+
+
 Set Pair::Assumptions() const
 {
     return Left().Assumptions() + Right().Assumptions();

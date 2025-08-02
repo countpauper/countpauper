@@ -67,4 +67,19 @@ Expression FlatTuple<T>::RemoveLeft()
     return result;
 }
 
+template<class T>
+unsigned FlatTuple<T>::AddRight(Expression&& exp)
+{
+    return Add(std::move(exp));
+}
+
+template<class T>
+Expression FlatTuple<T>::RemoveRight()
+{
+    if (empty())
+        return Expression();
+    Expression result = back();
+    pop_back();
+    return result;
+}
 }

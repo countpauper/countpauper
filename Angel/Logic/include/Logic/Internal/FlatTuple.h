@@ -27,6 +27,8 @@ public:
     unsigned AddAt(const_iterator& at, Expression&& exp);
     unsigned AddLeft(Expression&& exp);
     Expression RemoveLeft();
+    unsigned AddRight(Expression&& exp);
+    Expression RemoveRight();
 protected:
     T SimplifyItems() const
     {

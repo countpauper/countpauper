@@ -44,6 +44,8 @@ public:
     Operator GetOperator() const;
     Expression RemoveLeft();
     void AddLeft(Expression&& operand);
+    Expression RemoveRight();
+    void AddRight(Expression&& operand);
     std::string Summary() const;
 
     template<typename T> 

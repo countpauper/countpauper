@@ -3,7 +3,6 @@
 # !alchemy rest <item> [<...>] use sum of charges to get those items
 # !alchemy <table> to show the table 
 # !alchemy <table> <level> ... Use spell slots of at least level to randomly roll on that table. Tables: q[uaff] t[hrow] 
-# !cc create Alchemy -min 0 -max {(ArtificerLevel +3)/4} -type bubble -reset long
 using(baglib="4119d62e-6a98-4153-bea9-0a99bb36da2c")
 
 # Load data
@@ -12,7 +11,7 @@ tabledata = [[i.strip() for i in line.split(',')] for line in tabledata.split('\
 tablenames = {l[0].lower() for l in tabledata}
 tables = {table: [l[1:] for l in tabledata if l[0].lower() ==table] for table in tablenames }
 ch = character()
-charges_cc = 'alchemy'
+charges_cc = 'Alchemy'
 nl='\n'
 
 # Helper functions
@@ -34,6 +33,8 @@ def format_bill_item(item):
 def format_bill(items, sep=', '):
     if not items:
         return "nothing"
+    if nl in sep:
+        return sep.join(format_bill_item(i) for i in items)
     if len(items)==1:
         return format_bill_item(items[0])
     if len(items)==2:
@@ -43,10 +44,10 @@ def format_bill(items, sep=', '):
 def format_expired(expired, sep=nl):
     if not expired:
         return ""
-    return f"Old potions have expired:\n" + sep.join(f'{count}x {item}' for item, count in expired.items()) + nl
+    return f"Old potions have expired:\n" + sep.join(f'{count}x {item}' for item, count in expired.items())
  
 def format_resources(sep='\t'):
-    return f'`{charges_cc}` {ch.cc_str(charges_cc)}{sep}'+sep.join(ch.spellbook.slots_str(n) for n in range(1,6) )
+    return f'Resources: `{charges_cc}` {ch.cc_str(charges_cc)}{sep}'+sep.join(ch.spellbook.slots_str(n) for n in range(1,6) )
 
 # Parse arguments
 syntax = f'!{ctx.alias} [<item>] [<rest>] [<item>] ... [<table> [<level>]] ...  '
@@ -78,6 +79,7 @@ for arg in args:
                 charges.append((level, full_name)) 
             else:
                 slots.append((level, full_name))
+
 # sort both costly to cheap to reduce unfafourable rounding
 if slots:
     slots.sort()
@@ -93,7 +95,7 @@ if not charges and not slots:
         die = len(selected_rows)
         header = [f'1d{die}']+[f'{charge} Charge' for charge in range(1,6)]
         output = format_row(header) + '\n' + nl.join(format_row([idx]+row) for idx, row in enumerate(selected_rows))
-        return f'echo {selected_table}\n```{output}\n``` {format_resources()}'
+        return f'echo **{selected_table} table:**\n```{output}\n``` {format_resources()}'
     else:
         return f'echo `{syntax}`\n{format_resources()}'
 
@@ -102,7 +104,6 @@ if not charges and not slots:
 total_bill=[]
 
 if charges: 
-
     available_charges = ch.get_cc(charges_cc)
     total_charges = sum(c for c, _ in charges) 
     if total_charges > available_charges:
@@ -111,11 +112,15 @@ if charges:
 else:
     total_charges=None
 
+max_level = ch.get_cc_max(charges_cc)
+
 if slots:
     cost_slots = []
     sb = ch.spellbook
     available_slots = [sb.get_slots(lvl) for lvl in range(1,6)]
     for required_lvl, input in slots:
+        if required_lvl > max_level:
+            return f'echo Level {required_lvl} for {input} is higher than the maximum spell slot level ({max_level}) at your alchemist level ({ArtificerLevel}).'
         for lvl, availlable in enumerate(available_slots):
             if not availlable:
                 continue
@@ -149,6 +154,8 @@ potion_bag = baglib.get_bag(bags, potion_bag_name, True, True)
 if rest: 
     expired = dict(potion_bag[1])
     potion_bag[1]={}
+else:
+    expired=dict()
 for _, item in total_bill:
     potion_bag[1][item] = potion_bag[1].get(item, 0) + 1
 baglib.save_bags(bags, False, ch)
@@ -158,5 +165,4 @@ New potions added to {potion_bag_name}:
 {format_bill(total_bill, nl)}
 {format_resources()}
 """
-
 </drac2>

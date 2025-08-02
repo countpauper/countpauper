@@ -96,6 +96,23 @@ void Operation::AddLeft(Expression&& operand)
         }, *this);
 }
 
+Expression Operation::RemoveRight()
+{
+    return std::visit(
+        [](auto& obj) -> Expression
+        {
+            return obj.RemoveRight();
+        }, *this);
+}
+
+void Operation::AddRight(Expression&& operand)
+{
+    std::visit(
+        [&operand](auto& obj)
+        {
+            obj.AddRight(std::move(operand));
+        }, *this);
+}
 
 std::string Operation::Summary() const
 {

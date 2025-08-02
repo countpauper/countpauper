@@ -122,6 +122,13 @@ bool SourceSpan::const_iterator::operator==(const SourceSpan::const_iterator& o)
     return pos == o.pos && source == o.source;
 }
 
+bool SourceSpan::in(const SourceSpan& other) const
+{
+    if (from==other.from + other.length)
+        return false;
+    return (from >= other.from && from + length <= other.from + other.length);
+}
+
 SourceSpan::const_iterator operator+(const SourceSpan::const_iterator& it, std::ptrdiff_t offset)
 {
     SourceSpan::const_iterator result = it;

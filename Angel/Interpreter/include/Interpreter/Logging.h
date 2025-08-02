@@ -7,15 +7,16 @@
 
 namespace Logging 
 {
+    constexpr std::ostream* OFF = nullptr;
     constexpr std::ostream* ERROR = &std::clog;
     constexpr std::ostream* WARN = &std::clog;
 #ifdef RELEASE
-    constexpr std::ostream* INFO = nullptr;
-    constexpr std::ostream* DEBUG = nullptr;
+    constexpr std::ostream* INFO = OFF;
+    constexpr std::ostream* DEBUG = OFF;
 #else 
     constexpr std::ostream* INFO = &std::cout;
 //    constexpr std::ostream* DEBUG = &std::cout;
-    constexpr std::ostream* DEBUG = nullptr;
+    constexpr std::ostream* DEBUG = OFF;
 #endif
     template<std::ostream* s, class... Args>
     inline typename std::enable_if_t<s!=nullptr>
@@ -49,6 +50,10 @@ namespace Logging
         {
             tabs = tab;
             return *this;
+        }
+        operator bool() const 
+        {
+            return tabs!=0;
         }
         operator::std::string() 
         {

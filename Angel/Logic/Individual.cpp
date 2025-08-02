@@ -76,6 +76,15 @@ void Individual::AddLeft(Expression&& operand)
     content = std::make_unique<Expression>(std::move(operand));
 }
 
+Expression Individual::RemoveRight()
+{
+    return RemoveLeft();
+}
+
+void Individual::AddRight(Expression&& operand)
+{
+    AddLeft(std::move(operand));
+}
 
 Set Individual::Assumptions() const
 {

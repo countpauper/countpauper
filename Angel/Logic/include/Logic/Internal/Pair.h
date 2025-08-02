@@ -20,6 +20,8 @@ public:
     std::size_t size() const;
     Expression RemoveLeft();
     void AddLeft(Expression&& operand);    
+    Expression RemoveRight();
+    void AddRight(Expression&& operand);    
     Set Assumptions() const;
     const Expression& Left() const;
     Expression& Left();
