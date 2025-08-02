@@ -24,22 +24,22 @@ std::ostream& operator<<(std::ostream& os, const Exponentiation& operation)
 {
     if (operation.size()==1)
     {
-        return os << "e" <<  operation.ope << Exponentiation::OperandToString(operation.front());
+        return os << "e" <<  operation.ope << Exponentiation::OperandToString(operation.front(), false);
     }
 
     if (operation.size()==2)
     {
         if (operation.back() == Integer(2))
         {
-            return os << Exponentiation::OperandToString(operation.front()) << "²";
+            return os << Exponentiation::OperandToString(operation.front(), true) << "²";
         }
         else if (operation.back() == Integer(3))
         {
-            return os << Exponentiation::OperandToString(operation.front()) << "³";
+            return os << Exponentiation::OperandToString(operation.front(), true) << "³";
         }
         else if (operation.back() == Real(0.5))
         {
-            return os << "√" << Exponentiation::OperandToString(operation.front());
+            return os << "√" << Exponentiation::OperandToString(operation.front(), true);
         }
     }
     bool first = true;
@@ -47,7 +47,7 @@ std::ostream& operator<<(std::ostream& os, const Exponentiation& operation)
     {
         if (!first)
             os << operation.ope;
-        os << Exponentiation::OperandToString(obj);
+        os << Exponentiation::OperandToString(obj, first);
         first = false;
     }
     return os;

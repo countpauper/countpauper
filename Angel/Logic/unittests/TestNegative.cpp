@@ -50,6 +50,7 @@ TEST(Negative, to_string)
 {
     EXPECT_EQ(to_string(Negative(Integer(3))), "-3");
     EXPECT_EQ(to_string(Negative(Integer(-2))), "--2");
+    EXPECT_EQ(to_string(Negative(Subtraction{Integer(1), Integer(3)})), "-(1-3)");
 }
 
 }

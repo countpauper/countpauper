@@ -23,7 +23,7 @@ std::ostream& operator<<(std::ostream& os, const Logarithm& operation)
 {
     if (operation.size()==1)
     {
-        return os << "e" <<  operation.ope << Exponentiation::OperandToString(operation.front());
+        return os << "e" <<  operation.ope << Exponentiation::OperandToString(operation.front(), false);
     }
 
     bool first = true;
@@ -31,7 +31,7 @@ std::ostream& operator<<(std::ostream& os, const Logarithm& operation)
     {
         if (!first)
             os << operation.ope;
-        os << Logarithm::OperandToString(obj);
+        os << Logarithm::OperandToString(obj, first);
         first = false;
     }
     return os;

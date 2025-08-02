@@ -119,9 +119,11 @@ std::string to_string(const Ordering& c)
 
 std::ostream& operator<<(std::ostream& s, const Ordering& c)
 {
+
     std::visit(
         [&s](const auto& obj)
         {
+            // TODO: operand to string with GetOperator()
             s << obj;
         }, c);
     return s;

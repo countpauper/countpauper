@@ -48,12 +48,14 @@ TEST(Interpretation, Expression)
 TEST(Interpretation, Precedence)
 {
     AngelInterpreter interpreter;
-    Interpreter::Source source("-1+2**3*4?");
+    Interpreter::Source source("-1+2**3*4/5.0?");
     EXPECT_EQ(interpreter.InterpretQuery(source), (
         Logic::Summation{Logic::Negative(Logic::Integer(1)), 
-            Logic::Multiplication{
-                Logic::Exponentiation{Logic::Integer(2), Logic::Integer(3)}, 
-                Logic::Integer(4)
+            Logic::Division{
+                Logic::Multiplication{
+                    Logic::Exponentiation{Logic::Integer(2), Logic::Integer(3)}, 
+                    Logic::Integer(4)
+                }, Logic::Real(5.0)
             }
         }));
 }

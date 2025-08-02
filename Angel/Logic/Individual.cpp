@@ -118,4 +118,11 @@ bool Individual::operator==(const Individual& other) const
     return *content == *other.content;
 }
 
+std::string Individual::OperandToString(const UnaryOperator& ope, const Expression& e)
+{
+    if (ope.NeedsBracesAround(e, false))
+        return std::format("({})", to_string(e));
+    else 
+        return to_string(e);
+}
 }

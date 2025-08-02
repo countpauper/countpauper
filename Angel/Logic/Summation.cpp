@@ -9,7 +9,7 @@ std::ostream& operator<<(std::ostream& os, const Summation& operation)
     bool first = true;
     for(const auto& obj: operation)
     {
-        auto s = to_string(obj);
+        auto s = Summation::OperandToString(obj, first);
         if ((!first) && (!s.empty()) && (s.front()!='-'))
             os << operation.ope;
         os << s;

@@ -118,6 +118,15 @@ Expression Comparison<T>::Infer(const class Knowledge& k, const Hypothesis& hypo
     return True;
 }
 
+template<class T>
+std::string Comparison<T>::OperandToString(const Expression& e, bool first)
+{
+    if (T::ope.NeedsBracesAround(e, first))
+        return std::format("({})", to_string(e));
+    else 
+        return to_string(e);
+}
+
 template<class T> 
 std::ostream& operator<<(std::ostream& os, const Comparison<T> & comparison)
 {
@@ -126,7 +135,7 @@ std::ostream& operator<<(std::ostream& os, const Comparison<T> & comparison)
     {
         if (!first)
             os << T::ope;
-        os << obj;
+        os << Comparison<T>::OperandToString(obj, first);
         first = false;
     }
     return os;

@@ -84,10 +84,12 @@ Expression OperationBase<T>::Infer(const class Knowledge& k, const Hypothesis& h
 }    
 
 template<class T>
-std::string OperationBase<T>::OperandToString(const Expression& e)
+std::string OperationBase<T>::OperandToString(const Expression& e, bool first)
 {
-    // TODO: add braces if e is an operation and precedence < T::precedence
-    return to_string(e);
+    if (T::ope.NeedsBracesAround(e, first))
+        return std::format("({})", to_string(e));
+    else 
+        return to_string(e);
 }
 
 template<class T>
@@ -96,7 +98,7 @@ std::ostream& operator<<(std::ostream& os, const OperationBase<T>& operation)
     bool first = true;
     for(const auto& obj: operation)
     {
-        auto s = to_string(obj);
+        auto s = OperationBase<T>::OperandToString(obj, false);
         if (!first)
             os << T::ope;
         os << s;

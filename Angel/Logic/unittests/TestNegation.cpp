@@ -47,6 +47,7 @@ TEST(Negation, to_string)
 {
     EXPECT_EQ(to_string(Negation(True)), "¬true");
     EXPECT_EQ(to_string(Negation(Integer(-2))), "¬-2");
+    EXPECT_EQ(to_string(Negation(Conjunction{True, False})), "¬(true∧false)");
 }
 
 }

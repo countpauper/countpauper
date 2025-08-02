@@ -104,7 +104,7 @@ std::ostream& operator<<(std::ostream& os, const Variable& var)
 {
     os << var.ope;
     if (var)
-        os << to_string(*var);
+        os << Variable::OperandToString(Variable::ope, *var);
     return os;
 }
 

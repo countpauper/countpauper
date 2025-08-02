@@ -1,7 +1,7 @@
 #include "Logic/Operator.h"
 #include "Logic/Comparator.h"
-#include "Logic/Integer.h"
 #include "Logic/Internal/ComparisonImpl.h"
+#include "Logic/Expression.h"
 #include <locale>
 #include <codecvt>
 #include <format>
@@ -131,6 +131,20 @@ unsigned Operator::Precedence() const
 {
     return FindDefinition(op.id).precedence;
 }
+
+bool Operator::NeedsBracesAround(const Expression& expression, bool first) const
+{
+    const auto* operation = expression.GetIf<Operation>();
+    if (!operation)
+        return false;
+    auto expressionOperator = operation->GetOperator();
+    if (expressionOperator.Precedence() < Precedence())
+        return true;
+    if (!first & expressionOperator.Precedence() == Precedence())
+        return true; 
+    return false;
+}
+
 
 UnaryOperator::UnaryOperator(const std::string_view tag) :
     Operator(tag, operands)

@@ -43,6 +43,8 @@ TEST(Division, to_string)
     EXPECT_EQ(to_string(Division{Integer(-3)}), "-3");
     EXPECT_EQ(to_string(Division{Integer(-2), Integer(3)}), "-2÷3");
     EXPECT_EQ(to_string(Division{Integer(2), Integer(-3)}), "2÷-3");
+    EXPECT_EQ(to_string(Division{Real(1.2), Multiplication{Integer(-3), Real(0.4)}}), "1.2÷(-3⋅0.4)");
+
 }
 
 }

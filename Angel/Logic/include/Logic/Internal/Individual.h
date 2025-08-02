@@ -27,6 +27,7 @@ public:
     const Expression& operator*() const;
     const Expression* operator->() const;
     std::size_t Hash() const;
+    static std::string OperandToString(const class UnaryOperator& ope, const Expression& e); 
 protected:
     bool operator==(const Individual& other) const;
     std::unique_ptr<Expression> content;

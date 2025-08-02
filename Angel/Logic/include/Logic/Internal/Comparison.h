@@ -25,6 +25,7 @@ public:
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     bool operator==(const Comparison<T>& rhs) const { return FlatTuple<T>::operator==(rhs); }
     bool HasLeftAssumption() const;
+    static std::string OperandToString(const Expression& e, bool first);    
     using Pariant = class Ordering;
 };
 

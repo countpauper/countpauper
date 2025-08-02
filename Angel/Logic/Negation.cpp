@@ -61,7 +61,7 @@ std::size_t Negation::Hash() const
 
 std::ostream& operator<<(std::ostream& os, const Negation& neg)
 {
-    os << neg.ope << *neg;
+    os << neg.ope << Negation::OperandToString(Negation::ope, *neg);
     return os;
 }
 }

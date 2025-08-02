@@ -85,6 +85,7 @@ TEST(Conjunction, to_string)
 {
     EXPECT_EQ(to_string(Conjunction{True}), "true");
     EXPECT_EQ(to_string(Conjunction{True, False}), "true∧false");
+    EXPECT_EQ(to_string(Conjunction{Disjunction{True, False}, False}), "(true∨false)∧false");
 }
 
 }

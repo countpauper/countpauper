@@ -40,7 +40,7 @@ public:
     Expression Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const;
     using Pariant = class Operation;
     
-    static std::string OperandToString(const Expression& e);
+    static std::string OperandToString(const Expression& e, bool first);
 protected:
     using BaseType = OperationBase<T>;
 };

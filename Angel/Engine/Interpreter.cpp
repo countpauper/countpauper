@@ -185,9 +185,9 @@ Logic::Expression GenerateOperation(Logic::Operator op, Logic::Expression&& lhs,
     auto [rhs, rhstate] = GenerateValue(parse, allowId);
     if (auto* operation = lhs.GetIf<Logic::Operation>())
     {
-        if (operation->GetOperator() == op)
+        if (operation->GetOperator() == op && op.Operands() > 2)
         {
-            Logging::Log<Logging::DEBUG>("{}Continue {}  {}  {}", 
+            Logging::Log<Logging::DEBUG>("{} Append {}  {}  {}", 
                 std::string(tab),
                 Logic::to_string(*operation),
                 std::string(op), 
@@ -222,7 +222,7 @@ Logic::Expression GenerateOperation(Logic::Operator op, Logic::Expression&& lhs,
         }
         else 
         {
-            Logging::Log<Logging::DEBUG>("{} LHS Op {} >= {}. Chain {} before {}", 
+            Logging::Log<Logging::DEBUG>("{} LHS Op {} >= {}. Nest {} in {}", 
                 std::string(tab),
                 std::string(operation->GetOperator()), 
                 std::string(op), 
@@ -232,7 +232,7 @@ Logic::Expression GenerateOperation(Logic::Operator op, Logic::Expression&& lhs,
     }
     else 
     {
-        Logging::Log<Logging::DEBUG>("{}RHS is a value: new {}  {}  {} ", 
+        Logging::Log<Logging::DEBUG>("{} RHS is a value: new {}  {}  {} ", 
             std::string(tab),            
             Logic::to_string(lhs), std::string(op), Logic::to_string(rhs));
     }

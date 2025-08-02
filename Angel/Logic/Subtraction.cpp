@@ -10,7 +10,7 @@ std::ostream& operator<<(std::ostream& os, const Subtraction& subtraction)
     bool first = true;
     for(const auto& obj: subtraction)
     {
-        auto s = to_string(obj);
+        auto s = Subtraction::OperandToString(obj, first);
         if (first)
             os << s;
         else if ((!s.empty()) && (s.front()=='-'))

@@ -17,6 +17,7 @@ public:
     operator std::string() const;
     const std::string_view Description() const;
     unsigned Precedence() const;
+    bool NeedsBracesAround(const Expression& expresison, bool first) const;
     uint32_t Id() const { return op.id; }
     unsigned Operands() const { return op.sw.operands; }
     bool IsPostfix() const { return op.sw.postfix; }

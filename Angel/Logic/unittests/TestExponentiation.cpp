@@ -66,6 +66,7 @@ TEST(Exponentiation, to_string)
     EXPECT_EQ(to_string(Exponentiation{Integer(-2), Integer(3)}), "-2³");
     EXPECT_EQ(to_string(Exponentiation{Integer(2), Real(0.5)}), "√2");
     EXPECT_EQ(to_string(Exponentiation{Integer(2), Integer(-3)}), "2↑-3");
+    EXPECT_EQ(to_string(Exponentiation{Summation{Real(2.1), Integer(-3)}, Real(0.2)}), "(2.1-3)↑0.2");
 }
 
 }
