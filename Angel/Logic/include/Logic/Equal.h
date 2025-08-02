@@ -9,7 +9,7 @@ class Equal : public Comparison<Equal>
 {
 public:
     using Comparison<Equal>::Comparison;
-    constexpr static Comparator ope{L'='};
+    constexpr static Order ope{L'='};
 };
 
 }

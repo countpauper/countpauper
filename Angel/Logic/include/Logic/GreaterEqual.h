@@ -9,7 +9,7 @@ class GreaterEqual : public Comparison<GreaterEqual>
 {
 public:
     using Comparison<GreaterEqual>::Comparison;
-    constexpr static Comparator ope{L'≥'};
+    constexpr static Order ope{L'≥'};
 };
 
 }

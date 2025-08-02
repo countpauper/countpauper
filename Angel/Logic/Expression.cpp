@@ -29,7 +29,7 @@ Operator Expression::GetOperator() const
         },
         [](const Ordering& ordering) -> Operator 
         {
-            return ordering.GetComparator();
+            return ordering.GetOrder();
         },        
         [this](const auto& obj)
         {

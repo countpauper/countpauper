@@ -81,7 +81,7 @@ Ordering::operator bool() const
     return size()!=0;
 }
 
-Comparator Ordering::GetComparator() const
+Order Ordering::GetOrder() const
 {
     return std::visit(
         [](const auto& obj) 
@@ -92,7 +92,7 @@ Comparator Ordering::GetComparator() const
 
 std::string Ordering::Summary() const
 {
-    return std::format("{} with {} operands", GetComparator().Description(), size());
+    return std::format("{} with {} operands", GetOrder().Description(), size());
 }    
 
 bool Ordering::operator==(const Ordering& rhs) const

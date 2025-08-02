@@ -31,14 +31,14 @@ static constexpr Definition opdef[]{
     {Filter(L'<'),          5, "",   "lesser"},
     {Filter(L'≥'),          5, ">=", "greater or equal"},
     {Filter(L'≤'),          5, "<=", "lesser or equal"},
-    {Comparator(L'='),      10, "",   "equal"},
-    {Comparator(L'≠'),      10, "!=", "not equal"},
-    {Comparator(L'>'),      10, "",   "greater"},
-    {Comparator(L'<'),      10, "",   "lesser"},
-    {Comparator(L'≥'),      10, ">=", "greater or equal"},
-    {Comparator(L'≤'),      10, "<=", "lesser or equal"},
-//    {BinaryOperator(L'∈'),  10, "@",  "element of"},    // TODO Element although it is a lot like item
-//    {BinaryOperator(L'⊆'),  10, "@@", "subset"},        // TODO basically alias for and(*A ∈ B)
+    {Order(L'='),      10, "",   "equal"},
+    {Order(L'≠'),      10, "!=", "not equal"},
+    {Order(L'>'),      10, "",   "greater"},
+    {Order(L'<'),      10, "",   "lesser"},
+    {Order(L'≥'),      10, ">=", "greater or equal"},
+    {Order(L'≤'),      10, "<=", "lesser or equal"},
+    {Comparator(L'∈'),  10, "@",  "element of"},    // TODO Element although it is a lot like item
+    {Comparator(L'⊆'),  10, "@@", "subset"},        // TODO basically alias for and(*A ∈ B)
     {MultiOperator(L'⊕'),  20, "^",   "xor"},
     {MultiOperator(L'∨'),   20, "|",   "or"},
     {MultiOperator(L'∧'),   30, "&",   "and"},

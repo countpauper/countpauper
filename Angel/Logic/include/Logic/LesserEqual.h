@@ -9,7 +9,7 @@ class LesserEqual : public Comparison<LesserEqual>
 {
 public:
     using Comparison<LesserEqual>::Comparison;
-    constexpr static Comparator ope{L'≤'};
+    constexpr static Order ope{L'≤'};
 };
 
 }

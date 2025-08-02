@@ -1,10 +1,10 @@
 #include "Engine/Interpreter.h"
 #include "Engine/Defaults.h"
 #include "Logic/Expression.h"
-#include "Interpreter/Source.h"
-#include "Interpreter/Error.h"
-#include "Interpreter/Utils.h"
-#include "Interpreter/Logging.h"
+#include "Parser/Source.h"
+#include "Parser/Error.h"
+#include "Parser/Utils.h"
+#include "Parser/Logging.h"
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -25,8 +25,8 @@ int IOLoop(const std::string_view prompt="")
 			break;
 		try 
 		{
-			Interpreter::Source src(line);
-			if (Interpreter::rtrim(line).back()=='?')
+			Parser::Source src(line);
+			if (Parser::rtrim(line).back()=='?')
 			{
 				Logic::Expression query = interpreter.InterpretQuery(src);
 				Logging::Log<Logging::INFO>("? {}", Logic::to_string(query));
@@ -35,11 +35,11 @@ int IOLoop(const std::string_view prompt="")
 			} 
 			else 
 			{
-				Interpreter::Source src(line);
+				Parser::Source src(line);
 				interpreter.Interpret(src, knowledge);
 			}
 		}
-		catch(const Interpreter::Error& err)
+		catch(const Parser::Error& err)
 		{
 			std::cerr << err.what() << " at `" << err.Location().extract() << 
 				"` " << std::string(err.Location())  << std::endl;

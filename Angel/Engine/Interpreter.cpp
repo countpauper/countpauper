@@ -1,10 +1,10 @@
 #include "Engine/Interpreter.h"
-#include "Interpreter/Grammar.h"
-#include "Interpreter/BNF.h"
-#include "Interpreter/SymbolStream.h"
-#include "Interpreter/Source.h"
+#include "Parser/Grammar.h"
+#include "Parser/BNF.h"
+#include "Parser/SymbolStream.h"
+#include "Parser/Source.h"
 #include "Logic/Expression.h"
-#include "Interpreter/Logging.h"
+#include "Parser/Logging.h"
 #include <format>
 #include <unistd.h>
 #include <cassert>
@@ -15,12 +15,12 @@ namespace Angel::Engine
 
 static Logging::Tabber tab;
 
-Interpreter::Syntax ConstructSyntax(std::filesystem::path fn)
+Parser::Syntax ConstructSyntax(std::filesystem::path fn)
 {
-    Interpreter::Grammar bnf(Interpreter::BNF); 
+    Parser::Grammar bnf(Parser::BNF); 
     //char buf[1024];
     // printf("cwd: %s\n", getcwd(buf, sizeof(buf))); //std::filesystem::current_path().c_str());
-    Interpreter::FileSource angelBNF(fn);
+    Parser::FileSource angelBNF(fn);
     return bnf.Parse(angelBNF);
 }
 
@@ -35,17 +35,17 @@ struct ParseState
     bool braces : 1 = false;
 };
 
-std::pair<Logic::Expression, ParseState> GenerateExpression(const Interpreter::ParsedSymbol& expressionSymbol, Interpreter::SymbolStream& parse, bool allowId=false);
-std::vector<Logic::Expression> GenerateSequence(Interpreter::SymbolStream& parse);
+std::pair<Logic::Expression, ParseState> GenerateExpression(const Parser::ParsedSymbol& expressionSymbol, Parser::SymbolStream& parse, bool allowId=false);
+std::vector<Logic::Expression> GenerateSequence(Parser::SymbolStream& parse);
 
 
-Interpreter::ParsedSymbol SkipTo( Interpreter::SymbolStream& parse, std::string_view symbol)
+Parser::ParsedSymbol SkipTo( Parser::SymbolStream& parse, std::string_view symbol)
 {
-    Interpreter::ParsedSymbol input; 
+    Parser::ParsedSymbol input; 
     while(!parse.eof())
     {    
         parse >> input;
-        if (input.symbol == Interpreter::Symbol(symbol))
+        if (input.symbol == Parser::Symbol(symbol))
         {
             return input;
         }
@@ -53,26 +53,26 @@ Interpreter::ParsedSymbol SkipTo( Interpreter::SymbolStream& parse, std::string_
     throw std::runtime_error(std::format("End of file when looking for {}", symbol));
 }
 
-Logic::Expression GeneratePredicateOrId( Interpreter::SymbolStream& parse, bool allowId)
+Logic::Expression GeneratePredicateOrId( Parser::SymbolStream& parse, bool allowId)
 {
-    Interpreter::ParsedSymbol input; 
+    Parser::ParsedSymbol input; 
     Logic::Id id;
     Logic::List args;
     bool hasArguments = false;
     while(!parse.eof())
     {    
         parse >> input;
-        if (input.symbol == Interpreter::Symbol("id"))
+        if (input.symbol == Parser::Symbol("id"))
         {
             id = Logic::Id(input.location.extract());
         }
-        else if (input.symbol == Interpreter::Symbol("sequence"))
+        else if (input.symbol == Parser::Symbol("sequence"))
         {
             assert(!hasArguments);  // double arguments is weird 
             hasArguments = true;
             args = Logic::List(std::move(GenerateSequence(parse)));
         }
-        else if (input.symbol == Interpreter::Symbol("-predicate"))
+        else if (input.symbol == Parser::Symbol("-predicate"))
         {
             break;
         }
@@ -84,46 +84,46 @@ Logic::Expression GeneratePredicateOrId( Interpreter::SymbolStream& parse, bool 
         return id;
 }
 
-Logic::Expression GenerateObject(Interpreter::SymbolStream& parse, bool allowId)
+Logic::Expression GenerateObject(Parser::SymbolStream& parse, bool allowId)
 {
-    Interpreter::ParsedSymbol input; 
+    Parser::ParsedSymbol input; 
     parse >> input; 
-    if (input.symbol == Interpreter::Symbol("predicate"))
+    if (input.symbol == Parser::Symbol("predicate"))
     {
         return GeneratePredicateOrId(parse, allowId);
     }
-    else if (input.symbol == Interpreter::Symbol("boolean"))
+    else if (input.symbol == Parser::Symbol("boolean"))
     {
         return Logic::Boolean(input.location.extract());
     }
-    else if (input.symbol == Interpreter::Symbol("positive-integer"))
+    else if (input.symbol == Parser::Symbol("positive-integer"))
     {
         return Logic::Integer(input.location.extract());
     }
-    else if (input.symbol == Interpreter::Symbol("positive-float"))
+    else if (input.symbol == Parser::Symbol("positive-float"))
     {
         return Logic::Real(input.location.extract());
     }
-    else if (input.symbol == Interpreter::Symbol("variable"))
+    else if (input.symbol == Parser::Symbol("variable"))
     {
         return Logic::Variable(input.location.sub(1).extract());
     }
-    else if (input.symbol == Interpreter::Symbol("string"))
+    else if (input.symbol == Parser::Symbol("string"))
     {
         return Logic::String(input.location.sub(1,-1).extract());
     }
-    else if (input.symbol == Interpreter::Symbol("container"))
+    else if (input.symbol == Parser::Symbol("container"))
     {    
         return GenerateObject(parse, allowId);
     }
-    else if (input.symbol == Interpreter::Symbol("list"))
+    else if (input.symbol == Parser::Symbol("list"))
     {
         Logging::Log<Logging::DEBUG>("{}[", std::string(tab));
         auto seq = GenerateSequence(parse);
         Logging::Log<Logging::DEBUG>("{}]", std::string(tab));
         return Logic::List(std::move(seq));
     }
-    else if (input.symbol == Interpreter::Symbol("set"))
+    else if (input.symbol == Parser::Symbol("set"))
     {
         return Logic::Set(GenerateSequence(parse));
     }
@@ -152,25 +152,25 @@ Logic::Expression GenerateUnaryOperation(UnaryOperators& operators, unsigned min
     return operand;
 }
 
-std::pair<Logic::Expression, ParseState> GenerateValue(Interpreter::SymbolStream& parse, bool allowId)
+std::pair<Logic::Expression, ParseState> GenerateValue(Parser::SymbolStream& parse, bool allowId)
 {
-    Interpreter::ParsedSymbol input;
+    Parser::ParsedSymbol input;
     UnaryOperators unary_ops;
     while(!parse.eof())
     {      
         parse >> input;
-        if (input.symbol == Interpreter::Symbol("prefix-operator"))
+        if (input.symbol == Parser::Symbol("prefix-operator"))
         {
             unary_ops.push(Logic::Operator::Find<Logic::PrefixOperator, Logic::Filter>(
                                                                 input.location.extract()));
         }        
-        if (input.symbol == Interpreter::Symbol("braced-expression"))
+        if (input.symbol == Parser::Symbol("braced-expression"))
         {
             Logic::Expression expression = GenerateExpression(SkipTo(parse, "expression"), parse, allowId).first;
             expression = GenerateUnaryOperation(unary_ops, 0, std::move(expression));
             return std::make_pair(expression, ParseState{.braces=true});
         }
-        else if (input.symbol == Interpreter::Symbol("object"))
+        else if (input.symbol == Parser::Symbol("object"))
         {   
             Logic::Expression expression = GenerateObject(parse, allowId);
             expression = GenerateUnaryOperation(unary_ops, 0, std::move(expression));
@@ -180,7 +180,7 @@ std::pair<Logic::Expression, ParseState> GenerateValue(Interpreter::SymbolStream
     throw std::runtime_error("Unexpected end of file when looking for value");
 }
 
-Logic::Expression GenerateOperation(Logic::Operator op, Logic::Expression&& lhs, ParseState lhstate, Interpreter::SymbolStream& parse, bool allowId)
+Logic::Expression GenerateOperation(Logic::Operator op, Logic::Expression&& lhs, ParseState lhstate, Parser::SymbolStream& parse, bool allowId)
 {
     auto [rhs, rhstate] = GenerateValue(parse, allowId);
     if (auto* operation = lhs.GetIf<Logic::Operation>())
@@ -240,16 +240,16 @@ Logic::Expression GenerateOperation(Logic::Operator op, Logic::Expression&& lhs,
 }
 
 
-std::pair<Logic::Expression, ParseState> GenerateExpression(const Interpreter::ParsedSymbol& expressionSymbol, Interpreter::SymbolStream& parse, bool allowId)
+std::pair<Logic::Expression, ParseState> GenerateExpression(const Parser::ParsedSymbol& expressionSymbol, Parser::SymbolStream& parse, bool allowId)
 {
-    Interpreter::ParsedSymbol input;
+    Parser::ParsedSymbol input;
     Logic::Expression expression;
     ParseState state;
     ++tab;
     while(!parse.eof())
     {   
         parse >> input;
-        if (input.symbol == Interpreter::Symbol("binary-operator"))
+        if (input.symbol == Parser::Symbol("binary-operator"))
         {
             auto operatorTag = input.location.extract();
             Logic::Operator op = Logic::Operator::Find<Logic::BinaryOperator, Logic::MultiOperator>(
@@ -262,42 +262,42 @@ std::pair<Logic::Expression, ParseState> GenerateExpression(const Interpreter::P
             expression = GenerateOperation(op, std::move(expression), state, parse, allowId);
             state.braces = false;
         }
-        if (input.symbol == Interpreter::Symbol("prefix-operator"))
+        if (input.symbol == Parser::Symbol("prefix-operator"))
         {
             assert(false);  // these should be in GenerateValue now 
         }
-        if (input.symbol == Interpreter::Symbol("value"))
+        if (input.symbol == Parser::Symbol("value"))
         {
             auto [vexpression, vstate] = GenerateValue(parse, allowId);
             expression = std::move(vexpression);
             state = std::move(vstate);
         }
-        else if (input.symbol == Interpreter::Symbol("-expression"))
+        else if (input.symbol == Parser::Symbol("-expression"))
         {
             assert(expression);
             Logging::Log<Logging::DEBUG>("{}`{}` = {}", std::string(tab), expressionSymbol.location.extract(), Logic::to_string(expression));
             break;
         }
-        assert(input.symbol != Interpreter::Symbol("sequence"));
-        assert(input.symbol != Interpreter::Symbol("-sequence"));
+        assert(input.symbol != Parser::Symbol("sequence"));
+        assert(input.symbol != Parser::Symbol("-sequence"));
     }
     
     --tab;
     return std::make_pair(std::move(expression), state);
 }
 
-std::vector<Logic::Expression> GenerateSequence(Interpreter::SymbolStream& parse)
+std::vector<Logic::Expression> GenerateSequence(Parser::SymbolStream& parse)
 {
     std::vector<Logic::Expression> result;
-    Interpreter::ParsedSymbol input;
+    Parser::ParsedSymbol input;
     while(!parse.eof())
     {      
         parse >> input;
-        if (input.symbol == Interpreter::Symbol("expression"))
+        if (input.symbol == Parser::Symbol("expression"))
         {
             result.emplace_back(GenerateExpression(input, parse, true).first);
         }
-        else if (input.symbol == Interpreter::Symbol("-sequence"))
+        else if (input.symbol == Parser::Symbol("-sequence"))
         {
             break;
         }
@@ -306,21 +306,21 @@ std::vector<Logic::Expression> GenerateSequence(Interpreter::SymbolStream& parse
 }
 
 
-void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge)
+void GenerateAxiom(Parser::SymbolStream& parse, Logic::Knowledge& knowledge)
 {
-    Interpreter::ParsedSymbol input; 
+    Parser::ParsedSymbol input; 
     Logic::Predicate predicate;
     while(!parse.eof())
     {
         parse >> input;
-        if (input.symbol == Interpreter::Symbol("predicate"))
+        if (input.symbol == Parser::Symbol("predicate"))
         {
             assert(!predicate && "Generate predicated was not moved to knowledge");
             auto expression = GeneratePredicateOrId(parse, false);
             predicate = expression.Get<Logic::Predicate>();
         }    
-        else if (input.symbol == Interpreter::Symbol("axioms") || 
-                 input.symbol == Interpreter::Symbol("-axioms"))
+        else if (input.symbol == Parser::Symbol("axioms") || 
+                 input.symbol == Parser::Symbol("-axioms"))
         {
             if (predicate)
             {
@@ -330,7 +330,7 @@ void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge
             }
             return;
         }
-        else if (input.symbol == Interpreter::Symbol("expression"))
+        else if (input.symbol == Parser::Symbol("expression"))
         {
             Logic::Expression terms = GenerateExpression(input, parse, true).first;
             Logic::Association clause{std::move(predicate), std::move(terms)};
@@ -342,14 +342,14 @@ void GenerateAxiom(Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge
     }
 }
 
-std::size_t GenerateKnowledge(const Interpreter::Source& source, Interpreter::SymbolStream& parse, Logic::Knowledge& knowledge)
+std::size_t GenerateKnowledge(const Parser::Source& source, Parser::SymbolStream& parse, Logic::Knowledge& knowledge)
 {
-    Interpreter::ParsedSymbol input; 
+    Parser::ParsedSymbol input; 
     std::size_t count = 0;
     while(!parse.eof())
     {
         parse >> input;
-        if (input.symbol == Interpreter::Symbol("knowledge"))
+        if (input.symbol == Parser::Symbol("knowledge"))
         {
             auto trailing = source.span(input.location.size());
 
@@ -360,7 +360,7 @@ std::size_t GenerateKnowledge(const Interpreter::Source& source, Interpreter::Sy
                     trailing.extract()));
             }
         }
-        if (input.symbol == Interpreter::Symbol("axiom"))
+        if (input.symbol == Parser::Symbol("axiom"))
         {
             GenerateAxiom(parse, knowledge);
             ++count;
@@ -370,11 +370,11 @@ std::size_t GenerateKnowledge(const Interpreter::Source& source, Interpreter::Sy
 }
 
 template<std::ostream* log>
-void LogParse(Interpreter::SymbolStream copy)
+void LogParse(Parser::SymbolStream copy)
 {
     Logging::Tabber parsetab;
-    Interpreter::ParsedSymbol input; 
-    std::stack<Interpreter::SourceSpan> spans;
+    Parser::ParsedSymbol input; 
+    std::stack<Parser::SourceSpan> spans;
     while(!copy.eof())
     {
         copy >> input;
@@ -402,18 +402,18 @@ void LogParse(Interpreter::SymbolStream copy)
     }   
 }
 
-std::size_t AngelInterpreter::Interpret(const Interpreter::Source& source, Logic::Knowledge& knowledge )
+std::size_t AngelInterpreter::Interpret(const Parser::Source& source, Logic::Knowledge& knowledge )
 {
-    Interpreter::SymbolStream os;
+    Parser::SymbolStream os;
     parser.Parse(source, os);
     tab = 0;
     LogParse<Logging::OFF>(os);
     return GenerateKnowledge(source, os, knowledge);
 }    
 
-Logic::Expression AngelInterpreter::InterpretQuery(const ::Interpreter::Source& source)
+Logic::Expression AngelInterpreter::InterpretQuery(const ::Parser::Source& source)
 {
-    Interpreter::SymbolStream os;
+    Parser::SymbolStream os;
     parser.Parse(source, os, "query"); 
     tab = 0;
     return GenerateExpression(SkipTo(os, "expression"), os).first;

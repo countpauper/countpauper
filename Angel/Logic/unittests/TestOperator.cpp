@@ -48,14 +48,14 @@ TEST(Operator, ConstrucPostfix)
     static_assert(sizeof(PostfixOperator)==4);
 }
 
-TEST(Operator, ConstrucComparator)
+TEST(Operator, ConstructOrder)
 {
-    EXPECT_TRUE(Comparator(L'>'));
-    EXPECT_EQ(Comparator(L'≥'), Comparator(">="));
-    EXPECT_NE(Comparator(L'<'), Comparator("<="));
-    EXPECT_EQ(Comparator(L'=').Operands(), 3);
-    EXPECT_TRUE(Comparator(L'<').IsComparator());
-    static_assert(sizeof(Comparator)==4);
+    EXPECT_TRUE(Order(L'>'));
+    EXPECT_EQ(Order(L'≥'), Order(">="));
+    EXPECT_NE(Order(L'<'), Order("<="));
+    EXPECT_EQ(Order(L'=').Operands(), 3);
+    EXPECT_TRUE(Order(L'<').IsComparator());
+    static_assert(sizeof(Order)==4);
 }
 
 TEST(Operator, String)
@@ -73,7 +73,7 @@ TEST(Operator, Description)
 TEST(Operator, Operate)
 {
     EXPECT_EQ((MultiOperator{L'+'})(Integer(1), Integer(2)), Integer(3));
-    EXPECT_TRUE(Comparator(L'=')(Integer(1), Integer(1)));
+    EXPECT_TRUE(Order(L'=')(Integer(1), Integer(1)));
 }
 
 TEST(Operator, RemarkIsNotAnOperator)

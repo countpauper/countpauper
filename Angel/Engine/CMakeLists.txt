@@ -8,5 +8,5 @@ target_include_directories(${MODULE} PUBLIC ${MODULE_INCLUDE_DIR})
 add_subdirectory(unittests)
 
 target_link_libraries(${MODULE} PUBLIC
-     Interpreter
+     Parser
      Logic)

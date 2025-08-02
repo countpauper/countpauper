@@ -9,7 +9,7 @@ class Greater : public Comparison<Greater>
 {
 public:
     using Comparison<Greater>::Comparison;
-    constexpr static Comparator ope{L'>'};
+    constexpr static Order ope{L'>'};
 };
 
 }

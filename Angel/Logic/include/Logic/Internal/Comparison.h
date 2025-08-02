@@ -8,7 +8,9 @@ namespace Angel::Logic
 {
 
 template < typename T >
-concept is_comparison = std::derived_from<decltype(T::ope), Comparator>;
+concept is_comparison = std::derived_from<decltype(T::ope), Comparator> ||          
+                        std::derived_from<decltype(T::ope), Order>;
+
 
 template<class T>
 class Comparison : public FlatTuple<T>

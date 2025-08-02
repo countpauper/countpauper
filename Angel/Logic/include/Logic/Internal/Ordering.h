@@ -31,7 +31,7 @@ public:
     Ordering Substitute(const Hypothesis& hypothesis) const;
     Expression Matches(const Expression& e, const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
-    Comparator GetComparator() const;
+    Order GetOrder() const;
     std::string Summary() const;
 
     template<typename T> 

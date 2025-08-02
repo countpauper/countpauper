@@ -24,7 +24,7 @@ if (NOT TARGET gtest)
         add_subdirectory("${DEPENDENCIES_DIR}/googletest/" ${CMAKE_BINARY_DIR}/googletest)
 endif()
 
-add_subdirectory(Interpreter)
+add_subdirectory(Parser)
 add_subdirectory(Logic)
 add_subdirectory(Engine)
 
