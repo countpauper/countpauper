@@ -23,6 +23,12 @@ public:
     bool IsPostfix() const { return op.sw.postfix; }
     bool IsPrefix() const { return !IsPostfix(); }
     bool IsComparator() const { return op.sw.comparison; }
+    Expression Identity() const;
+    Expression Absorb() const;
+
+    constexpr Expression operator()(const Expression& lhs, const Expression& rhs) const;
+    constexpr Expression operator()(const Expression& operand) const;
+
     template<typename... T> 
     static Operator Find(std::string_view tag);
     static std::vector<Operator> All();

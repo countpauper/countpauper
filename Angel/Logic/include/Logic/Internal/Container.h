@@ -51,12 +51,8 @@ public:
     template<typename T> 
     bool operator<(const T& rhs) const
     {
-        return std::visit(
-            [this, &rhs](const auto& obj) 
-            {
-                std::hash<Expression> hasher;
-                return this->Hash() < hasher(rhs);
-            },*this);
+        std::hash<Expression> hasher;
+        return this->Hash() < hasher(rhs);
     }
     const_container_iterator begin() const;
     const_container_iterator end() const;

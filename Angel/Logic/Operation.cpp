@@ -6,7 +6,6 @@
 namespace Angel::Logic
 {
 
-
 Operation& Operation::operator=(const Operation& e)
 {
     OperationVariant::operator=(e);

@@ -7,6 +7,7 @@
 #include "Logic/Internal/Number.h"
 #include "Logic/Internal/Ordering.h"
 #include "Logic/Internal/Operation.h"
+#include "Logic/Internal/GenericOperation.h"
 #include "Logic/Function.h"
 #include "Logic/Association.h"
 #include "Logic/Variable.h"
@@ -26,6 +27,7 @@ using ExpressionVariant = Variant<
     Container,
     Predicate,
     Operation, 
+    GenericOperation,
     Ordering>;  
 
 template <typename T, typename O>

@@ -12,6 +12,38 @@
       - [ ] Match All/Any in the middle [1, *V, 4] = [1,2,3,4] *V = 2,3. This requires extra recursion over sub ranges. 
 - 
 
+Operation is not a variant. All a tuple with an operator specifying the maximum number of elements (checked for certain constructors)
+- Computation (Multiary)  
+    Addition, Subtraction, Multiplication, Division, Exponent, Logarithm 
+    Conjunction, Disjunction, Exclusion, 
+- Add free functions to create Summation(..) etc parser still just uses Expression(operator, {operands}). 
+- Ordering(Order), 
+    < <= > >= = \= 
+- Comparison(Comparator)
+    (not) element, subset ... (equal here? ) 
+- Access (binary)
+    Item, Index (Implication?) 
+- Variable(Unary)
+    All, Value, Any (Refer)
+- Inversion(Unary)
+    Negative, Negation (complementary set) 
+
+All of these are not variants but have a member variable operator of that type as the variant type.
+They can all use GenericOperator.operator. This is combined with a base class for their valence: 
+Tuple, Individual, Pair   
+
+Most computation, inference, simplication should already be generalized. Might need to find where to put 
+identity and absort. Possibly in the operator, but not in the header. 
+Converting to string depends on exact operator sometimes (especially exponent, but also summation)
+
+Plan: 
+ - Flatten Ordering , introducing GenericOperation  
+ - Split off Variable 
+ - Flatten Computation to figure out special string output 
+ - Access
+ - Inversion 
+ - Rename GenericOperation to Operation and delete OperationBase and Impl 
+ - Add Comparison (what started this all)
 
 ## Backlog 
 - [*] Get back up 

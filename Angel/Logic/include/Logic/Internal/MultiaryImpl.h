@@ -171,7 +171,7 @@ constexpr Expression dispatch_operator(Operator op, const Expression& lhs, const
         std::string(op), lhs.AlternativeTypeId().name(), rhs.AlternativeTypeId().name()));
 }
 
-constexpr Expression MultiOperator::operator()(const Expression& lhs, const Expression& rhs) const
+constexpr Expression Operator::operator()(const Expression& lhs, const Expression& rhs) const
 {
     return dispatch_operator<L"+-⋅÷↑↓∧∨⊕">(*this, lhs, rhs);
 }

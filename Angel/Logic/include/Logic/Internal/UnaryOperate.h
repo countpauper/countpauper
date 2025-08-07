@@ -37,7 +37,7 @@ constexpr Expression dispatch_operator(Operator op, const Expression& operand)
     return Expression();
 }
 
-constexpr Expression PrefixOperator::operator()(const Expression& operand) const
+constexpr Expression Operator::operator()(const Expression& operand) const
 {
     return dispatch_operator<L"-¬">(*this, operand);
 }

@@ -132,16 +132,34 @@ unsigned Operator::Precedence() const
     return FindDefinition(op.id).precedence;
 }
 
+Expression Operator::Identity() const
+{
+    return Expression();
+}
+
+Expression Operator::Absorb() const
+{
+    return Expression();
+}
+
 bool Operator::NeedsBracesAround(const Expression& expression, bool first) const
 {
-    const auto* operation = expression.GetIf<Operation>();
-    if (!operation)
-        return false;
-    auto expressionOperator = operation->GetOperator();
-    if (expressionOperator.Precedence() < Precedence())
-        return true;
-    if (!first & expressionOperator.Precedence() == Precedence())
-        return true; 
+    if (const auto* operation = expression.GetIf<Operation>())
+    {
+        auto expressionOperator = operation->GetOperator();
+        if (expressionOperator.Precedence() < Precedence())
+            return true;
+        if (!first & expressionOperator.Precedence() == Precedence())
+            return true; 
+    }
+    if (const auto* newOperation = expression.GetIf<GenericOperation>())
+    {
+        const auto& expressionOperator = newOperation->GetOperator();
+        if (expressionOperator.Precedence() < Precedence())
+            return true;
+        if (!first & expressionOperator.Precedence() == Precedence())
+            return true; 
+    }
     return false;
 }
 
