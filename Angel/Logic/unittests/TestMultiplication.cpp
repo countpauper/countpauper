@@ -2,6 +2,7 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Multiplication.h"
 #include "Logic/Expression.h"
+#include "Logic/Summation.h"
 
 namespace Angel::Logic::Test
 {
@@ -46,7 +47,7 @@ TEST(Multiplication, to_string)
     EXPECT_EQ(to_string(Multiplication{Integer(-3)}), "-3");
     EXPECT_EQ(to_string(Multiplication{Integer(-2), Integer(3)}), "-2⋅3");
     EXPECT_EQ(to_string(Multiplication{Integer(2), Integer(-3)}), "2⋅-3");
-    EXPECT_EQ(to_string(Multiplication{Integer(2), Summation{Integer(3), Integer(1)}}), "2⋅(3+1)");
+    EXPECT_EQ(to_string(Multiplication{Integer(2), Summation({Integer(3), Integer(1)})}), "2⋅(3+1)");
 }
 
 }

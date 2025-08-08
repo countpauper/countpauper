@@ -2,6 +2,7 @@
 #include "Logic/Set.h"
 #include "Logic/Knowledge.h"
 #include "Logic/Expression.h"
+#include "Logic/Summation.h"
 
 namespace Angel::Logic::Test
 {
@@ -172,7 +173,7 @@ TEST(Set, MatchesVariable)
 TEST(Set, Infer)
 {
 	Knowledge k;
- 	EXPECT_EQ(k.Infer(Set{Summation{Integer(2), Integer(3)}, Integer(5)}), (Set{Integer(5)}));
+ 	EXPECT_EQ(k.Infer(Set{Summation({Integer(2), Integer(3)}), Integer(5)}), (Set{Integer(5)}));
 }
 
 TEST(Set, Get)

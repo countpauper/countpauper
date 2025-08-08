@@ -15,6 +15,7 @@ class Expression;
 class NewOperator
 {
 public:
+    virtual ~NewOperator() = default;
     operator std::string() const;
     bool operator==(const NewOperator& o) const;
     std::string_view Description() const;
@@ -29,7 +30,7 @@ protected:
     constexpr NewOperator(const wchar_t tag, uint8_t operands, bool postfix=false, bool comparator=false) :
         op{.sw{tag, operands, postfix, comparator, 0, 0}}
     {
-        all[op] = this;
+        all.insert(std::make_pair(op, this));
     }
 protected:
     union Code
@@ -52,7 +53,18 @@ protected:
     static std::map<Code, NewOperator*> all;
 };
 
-std::ostream& operator<<(std::ostream& os, const Operator& op);
+class NewBinaryOperator : public NewOperator 
+{
+public:
+    NewBinaryOperator(wchar_t code);
+    ~NewBinaryOperator();
+    virtual Expression operator()(const Expression& lhs, const Expression& rhs) const = 0;
+    Tuple operator()(const Tuple& operands) const override;
+    unsigned MinimumOperands() const override;
+protected:
+    const Expression* identity;
+    const Expression* absorb;
+};
 
 class GenericOperation : public FlatTuple<GenericOperation>
 {
@@ -105,7 +117,7 @@ private:
     const NewOperator& ope; 
 };
 
-GenericOperation NewSummation(std::initializer_list<Expression> operands);
-
 std::ostream& operator<<(std::ostream& s, const GenericOperation& e);
+
+
 }

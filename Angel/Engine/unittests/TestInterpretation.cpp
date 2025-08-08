@@ -2,6 +2,7 @@
 #include "Engine/Interpreter.h"
 #include "Logic/Knowledge.h"
 #include "Logic/Expression.h"
+#include "Logic/Summation.h"
 #include <gtest/gtest.h>
 
 namespace Angel::Engine::Test
@@ -42,7 +43,7 @@ TEST(Interpretation, Expression)
     AngelInterpreter interpreter;
     Parser::Source source("-1+2.0e-1?");
     EXPECT_EQ(interpreter.InterpretQuery(source), (
-        Logic::Summation{Logic::Negative(Logic::Integer(1)), Logic::Real(0.2)}));
+        Logic::Summation({Logic::Negative(Logic::Integer(1)), Logic::Real(0.2)})));
 }
 
 TEST(Interpretation, Precedence)
@@ -50,14 +51,14 @@ TEST(Interpretation, Precedence)
     AngelInterpreter interpreter;
     Parser::Source source("-1+2**3*4/5.0?");
     EXPECT_EQ(interpreter.InterpretQuery(source), (
-        Logic::Summation{Logic::Negative(Logic::Integer(1)), 
+        Logic::Summation({Logic::Negative(Logic::Integer(1)), 
             Logic::Division{
                 Logic::Multiplication{
                     Logic::Exponentiation{Logic::Integer(2), Logic::Integer(3)}, 
                     Logic::Integer(4)
                 }, Logic::Real(5.0)
             }
-        }));
+        })));
 }
 
 TEST(Interpretation, Braces)

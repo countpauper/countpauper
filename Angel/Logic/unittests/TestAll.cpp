@@ -3,6 +3,7 @@
 #include "Logic/All.h"
 #include "Logic/Expression.h"
 #include "Logic/Trace.h"
+#include "Logic/Summation.h"
 
 namespace Angel::Logic::Test
 {
@@ -26,7 +27,7 @@ TEST(All, ConstructValliable)
 
 TEST(All, Simplify)
 {
-    EXPECT_EQ(All(List{Summation{Integer(2)}}).Simplify(), 
+    EXPECT_EQ(All(List({Summation({Integer(2)})})).Simplify(), 
         All(List{Integer(2)}));
 }
 

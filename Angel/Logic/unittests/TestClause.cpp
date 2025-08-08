@@ -3,6 +3,7 @@
 #include "Logic/Predicate.h"
 #include "Logic/Association.h"
 #include "Logic/Expression.h"
+#include "Logic/Summation.h"
 
 namespace Angel::Logic::Test
 {
@@ -69,7 +70,7 @@ namespace Angel::Logic::Test
 
 	TEST(Clause, Arithmetic)
 	{
-		Knowledge k{Association(Predicate("plustwo", {Variable("X")}), Summation{Variable("X"), Integer(2)})};
+		Knowledge k{Association(Predicate("plustwo", {Variable("X")}), Summation({Variable("X"), Integer(2)}))};
 		EXPECT_EQ(k.Infer(Predicate("plustwo", {Integer(-3)})), Integer(-1));
 	}	
 }

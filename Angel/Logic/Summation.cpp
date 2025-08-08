@@ -4,18 +4,48 @@
 namespace Angel::Logic
 {
 
-std::ostream& operator<<(std::ostream& os, const Summation& operation)
+
+class Sum : public NewBinaryOperator
 {
-    bool first = true;
-    for(const auto& obj: operation)
+
+public:
+    Sum() : NewBinaryOperator(L'+')
     {
-        auto s = Summation::OperandToString(obj, first);
-        if ((!first) && (!s.empty()) && (s.front()!='-'))
-            os << operation.ope;
-        os << s;
-        first = false;
+        static const Expression _identity{Integer(0)};
+        identity = &_identity;
+        precedence = 50; 
+        description = "add";
     }
-    return os;
+    Expression operator()(const Expression& lhs, const Expression& rhs) const override 
+    {
+        if (const auto* lhNumber = lhs.GetIf<Number>())
+        {
+            return *lhNumber + rhs.Cast<Number>();
+        }
+        else if (const auto* lhContainer = lhs.GetIf<Container>())
+        {
+            return *lhContainer + rhs.Cast<Container>();
+        }
+        else 
+        {
+            assert(false); // possibly missing infer or shouldn't get here. Or perhaps during simplify? 
+            return Summation({lhs, rhs});
+        }
+    }
+    std::string OperandToString(const Expression& operand, bool first) const
+    {
+        std::string result = NewOperator::OperandToString(operand, first);
+        if (result.size()>2 && result[1]=='-')
+            result = result.substr(1);
+        return result;
+    }
+};
+
+
+GenericOperation Summation(std::initializer_list<Expression> operands)
+{
+    static const Sum sum;
+    return GenericOperation(sum, operands);
 }
 
 }

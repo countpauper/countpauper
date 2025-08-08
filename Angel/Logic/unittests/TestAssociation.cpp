@@ -2,6 +2,7 @@
 #include "Logic/Association.h"
 #include "Logic/Knowledge.h"
 #include "Logic/Expression.h"
+#include "Logic/Summation.h"
 
 namespace Angel::Logic::Test
 {
@@ -71,7 +72,7 @@ TEST(Association, Matches)
 TEST(Association, Infer)
 {
 	Knowledge k;
-	EXPECT_EQ(k.Infer(Association{Id("five"), Summation{Integer(2), Integer(3)}}), 
+	EXPECT_EQ(k.Infer(Association{Id("five"), Summation({Integer(2), Integer(3)})}), 
         (Association{Id("five"), Integer(5)}));
 }
 

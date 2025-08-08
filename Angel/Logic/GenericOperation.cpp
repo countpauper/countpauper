@@ -136,64 +136,60 @@ public:
     virtual Expression operator()(const Expression& operand) const = 0;
 };
 
-class NewBinaryOperator : public NewOperator 
+NewBinaryOperator::NewBinaryOperator(wchar_t code) 
+    : NewOperator(code, 2) 
 {
-public:
-    NewBinaryOperator(wchar_t code) 
-        : NewOperator(code, 2) 
-    {
-    }
-    virtual Expression operator()(const Expression& lhs, const Expression& rhs) const = 0;
+}
 
-    Tuple operator()(const Tuple& operands) const override
+NewBinaryOperator::~NewBinaryOperator() = default;
+
+Tuple NewBinaryOperator::operator()(const Tuple& operands) const
+{
+    Expression constant;
+    Tuple result(operands);
+    auto it = result.begin();
+    while(it!=result.end())
     {
-        Expression constant;
-        Tuple result(operands);
-        auto it = result.begin();
-        while(it!=result.end())
+        if (it->IsConstant())
         {
-            if (it->IsConstant())
+            if (absorb)
             {
-                if (absorb)
-                {
-                    if (*it == absorb)
-                        return Tuple{absorb};
-                }
-                if (identity) 
-                {
-                    if (*it == identity)
-                    {
-                        it = result.erase(it);
-                        continue;
-                    }
-                }
-                if (constant)
-                    constant = (*this)(constant, *it);
-                else
-                    constant = *it;
-                it = result.erase(it);
+                if (*it == *absorb)
+                    return Tuple{*absorb};
             }
-            else 
-                ++it;
+            if (identity) 
+            {
+                if (*it == *identity)
+                {
+                    it = result.erase(it);
+                    continue;
+                }
+            }
+            if (constant)
+                constant = (*this)(constant, *it);
+            else
+                constant = *it;
+            it = result.erase(it);
         }
-        if (constant) 
-        {
-            auto begin = result.cbegin();
-            result.AddAt(begin, std::move(constant));
-        }
-        if (identity && result.empty())
-        {
-            return Tuple{identity};
-        }
-        return result;
+        else 
+            ++it;
     }
-    unsigned MinimumOperands() const { return identity?0:1; }
-protected:
-    bool comparator = false;
-    Expression identity;
-    Expression absorb;
-};
+    if (constant) 
+    {
+        auto begin = result.cbegin();
+        result.AddAt(begin, std::move(constant));
+    }
+    if (identity && result.empty())
+    {
+        return Tuple{*identity};
+    }
+    return result;
+}
 
+unsigned NewBinaryOperator::MinimumOperands() const 
+{ 
+    return identity?0:1;
+}
 
 GenericOperation::GenericOperation(const NewOperator& ope, std::initializer_list<Expression> operands) :
     FlatTuple<GenericOperation>(operands),
@@ -302,7 +298,6 @@ std::string to_string(const GenericOperation& c)
 std::string GenericOperation::OperandToString(const Expression& e, bool first) const
 {
     return ope.OperandToString(e, first);
-
 }
 
 std::ostream& operator<<(std::ostream& os, const GenericOperation& operation)
@@ -314,48 +309,6 @@ std::ostream& operator<<(std::ostream& os, const GenericOperation& operation)
         first = false;
     }
     return os;
-}
-
-
-
-class Sum : public NewBinaryOperator
-{
-public:
-    Sum() : NewBinaryOperator(L'+')
-    {
-        identity = Integer(0);
-        precedence = 50; 
-        description = "add";
-    }
-    Expression operator()(const Expression& lhs, const Expression& rhs) const override 
-    {
-        if (const auto* lhNumber = lhs.GetIf<Number>())
-        {
-            return *lhNumber + rhs.Cast<Number>();
-        }
-        else if (const auto* lhContainer = lhs.GetIf<Container>())
-        {
-            return *lhContainer + rhs.Cast<Container>();
-        }
-        else 
-        {
-            assert(false); // possibly missing infer or shouldn't get here. Or perhaps during simplify? 
-            return NewSummation({lhs, rhs});
-        }
-    }
-    std::string OperandToString(const Expression& operand, bool first) const
-    {
-        std::string result = NewOperator::OperandToString(operand, first);
-        if (result.size()>2 && result[1]=='-')
-            result = result.substr(1);
-        return result;
-    }
-};
-static const Sum sum;
-
-GenericOperation NewSummation(std::initializer_list<Expression> operands)
-{
-    return GenericOperation(sum, operands);
 }
 
 }

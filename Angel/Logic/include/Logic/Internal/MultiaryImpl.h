@@ -10,25 +10,6 @@ namespace Angel::Logic
 
 template<MultiOperator OP> 
 constexpr Expression operate(const Expression&, const Expression&);
- 
-template<>
-constexpr Expression operate<MultiOperator{L'+'}>(const Expression& lhs, const Expression& rhs)
-{
-    if (const auto* lhNumber = lhs.GetIf<Number>())
-    {
-        return *lhNumber + rhs.Cast<Number>();
-    }
-    else if (const auto* lhContainer = lhs.GetIf<Container>())
-    {
-        return *lhContainer + rhs.Cast<Container>();
-    }
-    else 
-    {
-        assert(false); // possibly missing infer or shouldn't get here. Or perhaps during simplify? 
-        return Summation{lhs, rhs};
-    }
-}
-
 template<>
 constexpr Expression operate<MultiOperator{L'-'}>(const Expression& lhs, const Expression& rhs)
 {
@@ -98,7 +79,6 @@ constexpr Expression operate<MultiOperator{L'∧'}>(const Expression& lhs, const
         return Conjunction{lhs, rhs};
     }
 }
-
 
 template<>
 constexpr Expression operate<MultiOperator{L'∨'}>(const Expression& lhs, const Expression& rhs)
@@ -173,7 +153,7 @@ constexpr Expression dispatch_operator(Operator op, const Expression& lhs, const
 
 constexpr Expression Operator::operator()(const Expression& lhs, const Expression& rhs) const
 {
-    return dispatch_operator<L"+-⋅÷↑↓∧∨⊕">(*this, lhs, rhs);
+    return dispatch_operator<L"-⋅÷↑↓∧∨⊕">(*this, lhs, rhs);
 }
 
 }

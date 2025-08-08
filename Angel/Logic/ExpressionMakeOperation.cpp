@@ -53,7 +53,7 @@ template <typename... Ts>
 ExpressionVariant make_ordering(Operator ope, Tuple&& operands) 
 {
     if (ope.Operands()==1)
-        ope=Comparator(ope.op.sw.unicode);  // Find operator defined with comparators, also for filters
+        ope=Order(ope.op.sw.unicode);  // Find operator defined with Order, also for Filters
     Logic::Expression result = Logic::False;
     bool found = false;
     ((!found && (found = (Ts::ope == ope)) 
@@ -79,7 +79,7 @@ ExpressionVariant make_operation(const Operator ope, Tuple&& operands)
     else if (ope.Operands()==2)
         return make_binary_operation<Item, Association>(ope, std::move(operands));
     else    
-        return make_multiary_operation<Summation, Subtraction, Multiplication, Division, Exponentiation, Logarithm,
+        return make_multiary_operation<Subtraction, Multiplication, Division, Exponentiation, Logarithm,
                     Conjunction, Disjunction, Exclusion>(ope, std::move(operands));
 }
 

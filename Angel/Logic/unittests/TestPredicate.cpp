@@ -2,6 +2,7 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Predicate.h"
 #include "Logic/Expression.h"
+#include "Logic/Summation.h"
 
 namespace Angel::Logic::Test
 {
@@ -79,8 +80,8 @@ TEST(Predicate, Infer)
 {
 	Knowledge k;
 	k.Know(Predicate("legs", List{Integer(4)}));
-	EXPECT_EQ(k.Infer(Predicate("legs", List{Summation{Integer(2), False}})), False);
-	EXPECT_EQ(k.Infer(Predicate("legs", List{Summation{Integer(2), Integer(2)}})), True);
+	EXPECT_EQ(k.Infer(Predicate("legs", List{Summation({Integer(2), False})})), False);
+	EXPECT_EQ(k.Infer(Predicate("legs", List{Summation({Integer(2), Integer(2)})})), True);
 }
 
 }
