@@ -4,8 +4,8 @@
 #include "Parser/Syntax.h"
 #include "Parser/Error.h"
 #include "Parser/Utils.h"
-#include "Parser/Logging.h"
 #include "Parser/Source.h"
+#include "Parser/Logging.h"
 #include <sstream>
 #include <ranges>
 #include <assert.h>

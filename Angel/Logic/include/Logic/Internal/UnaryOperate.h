@@ -13,11 +13,6 @@ constexpr Expression operate<PrefixOperator{L'-'}>(const Expression& operand)
     return -operand.Get<Number>();
 }
 
-template<> 
-constexpr Expression operate<PrefixOperator{L'¬'}>(const Expression& operand)
-{
-    return Boolean(!bool(operand.Cast<Boolean>()));
-}
 
 template<PostfixOperator OP> 
 constexpr Expression operate(const Expression&) { return Expression(); }
@@ -39,7 +34,7 @@ constexpr Expression dispatch_operator(Operator op, const Expression& operand)
 
 constexpr Expression Operator::operator()(const Expression& operand) const
 {
-    return dispatch_operator<L"-¬">(*this, operand);
+    return dispatch_operator<L"-">(*this, operand);
 }
 
 }

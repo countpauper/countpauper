@@ -8,16 +8,14 @@ namespace Angel::Logic::Test
 
 TEST(Negation, Construction)
 {
-    EXPECT_TRUE(bool(Negation(False)));
     EXPECT_EQ(Negation(True), Negation(True));
     EXPECT_NE(Negation(True), Negation(False));
-    EXPECT_EQ(Expression(PrefixOperator(L'¬'), {False}), Negation(False));
-	static_assert(sizeof(Negation)<=24);
+    EXPECT_EQ(GenericOperation(L'¬', False), Negation(False));
 }
 
 TEST(Negation, Simplify)
 {
-    EXPECT_EQ(Negation(Expression(Negation(Conjunction{False}))).Simplify(), False);
+    EXPECT_EQ(Negation(Negation(Conjunction{False})).Simplify(), False);
     EXPECT_EQ(Negation(Disjunction{False}).Simplify(), True);
 }
 
@@ -33,6 +31,11 @@ TEST(Negation, Matches)
     EXPECT_EQ(Negation(False).Matches(False, {}).Simplify(), False);
     EXPECT_EQ(Negation(Variable("B")).Matches(False, {}).Simplify(), (Equal{Variable("B"), True}));
     EXPECT_EQ(Negation(True).Matches(Variable("B"), {}).Simplify(), (Equal{False, Variable("B")}));
+}
+
+TEST(Negation, Inversion)
+{
+    EXPECT_EQ(Negation(Variable("X")), Negation(Variable("X")));
 }
 
 TEST(Negation, Negations)

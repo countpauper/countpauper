@@ -1,4 +1,3 @@
-#include "Logic/Summation.h"
 #include "Logic/Expression.h"
 
 namespace Angel::Logic

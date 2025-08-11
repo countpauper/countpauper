@@ -4,12 +4,11 @@
 namespace Angel::Logic
 {
 
-
 class Sum : public NewBinaryOperator
 {
 
 public:
-    Sum() : NewBinaryOperator(L'+')
+    Sum() : NewBinaryOperator(L'+', true)
     {
         static const Expression _identity{Integer(0)};
         identity = &_identity;
@@ -34,7 +33,7 @@ public:
     }
     std::string OperandToString(const Expression& operand, bool first) const
     {
-        std::string result = NewOperator::OperandToString(operand, first);
+        std::string result = NewBinaryOperator::OperandToString(operand, first);
         if (result.size()>2 && result[1]=='-')
             result = result.substr(1);
         return result;

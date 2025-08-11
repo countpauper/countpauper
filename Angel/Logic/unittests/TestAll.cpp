@@ -3,7 +3,6 @@
 #include "Logic/All.h"
 #include "Logic/Expression.h"
 #include "Logic/Trace.h"
-#include "Logic/Summation.h"
 
 namespace Angel::Logic::Test
 {

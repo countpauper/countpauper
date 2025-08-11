@@ -3,65 +3,41 @@
 
 namespace Angel::Logic
 {
-
-Expression Negation::Simplify() const
+    
+class Negate : public NewUnaryOperator
 {
-    auto simple = content->Simplify();
-    if (const Negation* neg = simple.GetIf<Negation>()) 
+
+public:
+    Negate() : NewUnaryOperator(L'¬')
     {
-        return (*neg)->Simplify();
+        precedence = 40; 
+        description = "negate";
+        inversion = this;
     }
-    else if (const Boolean* boolean = simple.GetIf<Boolean>())
+    Expression operator()(const Expression& operand) const override 
     {
-        return ope(*boolean);
+        if (auto maybeBool = operand.TryCast<Boolean>()) 
+        {
+            return Boolean(!bool(*maybeBool));
+        }
+        else 
+        {
+            return Negation(operand);
+        }
     }
-    return Negation{std::move(simple)};
+};
+
+
+GenericOperation Negation(Expression &&operand)
+{
+    static const Negate neg;
+    return GenericOperation(neg, std::move(operand));
 }
 
-Expression Negation::Matches(const Expression& expression, const Hypothesis& hypothesis) const
+GenericOperation Negation(const Expression &operand)
 {
-    auto subst = expression.Substitute(hypothesis);    
-    if (const auto* i = subst.GetIf<Boolean>())
-    {
-        auto substContent = content->Substitute(hypothesis);
-        return Equal{std::move(substContent), ope(*i)};
-    }
-    else if (const auto* n = subst.GetIf<Negation>())
-    {
-        auto substContent = content->Substitute(hypothesis);
-        return Equal{std::move(substContent), std::move(*n)};
-    }
-    else 
-    {   // this is the default case, the options above just favor less negations in the condition
-        auto substNeg= this->Substitute(hypothesis);    
-        return Equal{std::move(substNeg), std::move(subst)};
-    }    
+    static const Negate neg;
+    return GenericOperation(neg, {operand});
 }
 
-Negation Negation::Substitute(const Hypothesis& hypothesis) const
-{
-    return Negation(content->Substitute(hypothesis));
-}
-
-Expression Negation::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
-{
-    auto value = content->Infer(k, hypothesis, trace);
-    return ope(value);
-}
-
-bool Negation::operator==(const Negation& other) const
-{
-    return Individual::operator==(other);
-}
-
-std::size_t Negation::Hash() const
-{
-    return Individual::Hash() ^ typeid(*this).hash_code();
-}
-
-std::ostream& operator<<(std::ostream& os, const Negation& neg)
-{
-    os << neg.ope << Negation::OperandToString(Negation::ope, *neg);
-    return os;
-}
 }

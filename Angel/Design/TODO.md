@@ -37,13 +37,24 @@ identity and absort. Possibly in the operator, but not in the header.
 Converting to string depends on exact operator sometimes (especially exponent, but also summation)
 
 Plan: 
- - Flatten Ordering , introducing GenericOperation  
- - Split off Variable 
- - Flatten Computation to figure out special string output 
- - Access
- - Inversion 
- - Rename GenericOperation to Operation and delete OperationBase and Impl 
- - Add Comparison (what started this all)
+ - [*] Flatten Ordering , introducing GenericOperation  
+ - [ ] Split off Variable 
+ - [*] Flatten Computation to figure out special string output 
+ - [ ] Simplify assumptions when matching operations 
+    - [ ] Call simplify 
+    - [ ] BEFORE simplifying the elements, try to move all (the) assumption to one side. 
+        - [ ] If one side is an Ordering (generic for now) AND has an assumption: apply the opposite operation around the other operands of the equation A+2<3 <-> A < 3-2 (then simplify A<1)
+        - [ ] Each (Generic) Operator gets an inverse (unit test the inverse of negation = itself) 
+        - Binary comparators ... do not seem to make sense all the way
+        - Logical operations? A&B <-> C: B <-> C|A  ... this does not count for <- or @(element) or @@(subset) (~{cat})@@animals   does not mean {cat}@@~animals.
+        - [ ] Make equal a GenericOperation 
+        - [ ] Make a generic operation of subtraction and negative and unit test that inversing as well and test nested: neg(sum(2,a))=-3 =>  = sum(2,a) = neg(-3) => a = sub(neg(-3),2) (simplify) a = 3-2 = 1       
+        - [ ] Handle generic operations that are not invertible, such as value of
+ - [ ] Access
+ - [ ] Inversion 
+ - [ ] Rename GenericOperation to Operation and delete OperationBase and Impl 
+ - [ ] Clean up FlatTuple 
+ - [ ] Add Comparison (what started this all) for subset and element
 
 ## Backlog 
 - [*] Get back up 
@@ -206,9 +217,10 @@ it mean if it was omitted? In this case the user may have to supply the empty li
 -   [*] set access with `.` (list done, full feature for unique) 
 -   [ ] Bag as unordered list if it has any advantages for speed and such 
 -   [ ] ^ ⊕ is XOR (only one of the whole set is true) and ** ↑ (like python & knuth ) for power
+  - [ ] Logical negation of a collection is the complement. This is also for simplifying logical equations ~(a@set) <-> a@~set 
 -   [ ] No unsigned integer & bit (ie `12&7=4`). Instead perhaps make some sort of bitmask ordered container or operator where 
 [True, False] & [True, True] = [True&True, False&True]. Peraps it's just All: [*Left & *Right]. It would work more like numby matrix operations anyway. 
--   [ ] Down arrow notation for built in logarithm (inverse of up). Non unicode notation tbd perhaps \/ or // 
+-   [*] Down arrow notation for built in logarithm (inverse of up). Non unicode notation tbd perhaps \/ or //  
 -   [ ] Substring matching "bla"+$S+"bla"="bladibla"? true:$S="di"
 -   [ ] ! postfix operator for factorial 
 -   [ ] sqrt prefix operator but what is the non unicode ? Implemented as shortcut for exponent(x, 0.5) 

@@ -2,7 +2,6 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Exponentiation.h"
 #include "Logic/Expression.h"
-#include "Logic/Summation.h"
 #include <cmath>
 
 namespace Angel::Logic::Test

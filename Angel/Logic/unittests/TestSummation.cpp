@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include "Logic/Knowledge.h"
-#include "Logic/Summation.h"
 #include "Logic/Expression.h"
 
 namespace Angel::Logic::Test
@@ -11,6 +10,7 @@ TEST(Summation, Construction)
     EXPECT_TRUE(Summation({}).empty());
     EXPECT_EQ(Summation({Integer(3)}), Summation({Integer(3)}));
     EXPECT_NE(Summation({Integer(3)}), Summation({Integer(3), Integer(2)}));
+    EXPECT_EQ(Summation({Integer(1), Summation({Integer(2), Integer(3)})}).size(), 3);   // flatten same operator 
     EXPECT_EQ(GenericOperation(L'+', {Integer(-2), Integer(-1)}), Summation({Integer(-2), Integer(-1)}));   
 }
 

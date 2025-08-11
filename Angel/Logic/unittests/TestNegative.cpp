@@ -2,7 +2,6 @@
 #include "Logic/Knowledge.h"
 #include "Logic/Negative.h"
 #include "Logic/Expression.h"
-#include "Logic/Summation.h"
 
 namespace Angel::Logic::Test
 {

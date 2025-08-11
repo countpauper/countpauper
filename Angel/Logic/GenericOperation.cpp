@@ -1,8 +1,9 @@
 #include "Logic/Internal/GenericOperation.h"
 #include "Logic/Internal/Tuple.h"
 #include "Logic/Expression.h"
-#include <sstream>
+#include <iostream>
 #include <string>
+#include <sstream>
 #include <codecvt>
 
 namespace Angel::Logic
@@ -16,6 +17,31 @@ std::string UnicodeToUtf8(wchar_t tag)
     return wchar_conv.to_bytes(wstr);
 }
 
+class NoneOperator : public NewOperator
+{
+public:
+    unsigned MinimumOperands() const override
+    {
+        return 0;
+    }
+    Tuple operator()(const Tuple& operands) const override
+    {
+        return Tuple();
+    }
+    std::string OperandToString(const Expression& operand, bool first) const 
+    {
+        return "null";
+    }
+};
+
+static NoneOperator noneOperator;
+
+NewOperator::NewOperator()
+    : op{.id=0}
+    , inversion(&noneOperator)
+{
+}
+
 NewOperator::operator std::string() const
 {
     return UnicodeToUtf8(op.sw.unicode);
@@ -26,22 +52,32 @@ bool NewOperator::operator==(const NewOperator& o) const
     return op.id == o.op.id;
 }
 
+NewOperator::operator bool() const
+{
+    return op.id!=0;
+}
+
 std::size_t NewOperator::Hash() const
 {
     return op.id;
 }
 
-std::string NewOperator::OperandToString(const Expression& operand, bool first) const
+unsigned NewOperator::Operands() const 
+{ 
+    return op.sw.operands; 
+}
+
+bool NewOperator::IsPostfix() const 
+{ 
+    return op.sw.postfix; 
+}
+
+const NewOperator& NewOperator::Inversion() const
 {
-    std::string result;
-    if (!first)
-        result += UnicodeToUtf8(op.sw.unicode);
-    
-    if (NeedsBracesAround(operand, first))
-        result += std::format("({})", to_string(operand));
-    else 
-        result += to_string(operand);
-    return result;
+    if (inversion)
+        return *inversion;
+    else
+        return noneOperator;
 }
 
 std::string_view NewOperator::Description() const
@@ -62,6 +98,8 @@ bool NewOperator::NeedsBracesAround(const Expression& expression, bool first) co
     if (const auto* operation = expression.GetIf<Operation>())
     {
         auto expressionOperator = operation->GetOperator();
+        if (expressionOperator.Operands()>1 && operation->size()<2)
+            return false;
         if (expressionOperator.Precedence() < Precedence())
             return true;
         if (!first & expressionOperator.Precedence() == Precedence())
@@ -70,6 +108,8 @@ bool NewOperator::NeedsBracesAround(const Expression& expression, bool first) co
     if (const auto* newOperation = expression.GetIf<GenericOperation>())
     {
         const auto& expressionOperator = newOperation->GetOperator();
+        if (expressionOperator.Operands()>1 && newOperation->size()<2)
+            return false;
         if (expressionOperator.Precedence() < Precedence())
             return true;
         if (!first & expressionOperator.Precedence() == Precedence())
@@ -117,27 +157,47 @@ std::ostream& operator<<(std::ostream& os, const NewOperator& op)
 
 std::map<NewOperator::Code, NewOperator*> NewOperator::all;
 
-class NewUnaryOperator : public NewOperator
+NewUnaryOperator::NewUnaryOperator(wchar_t c) 
+    : NewOperator(c, 1) 
 {
-public:
-    NewUnaryOperator(wchar_t c) 
-        : NewOperator(c, 1) 
-    {
-    }
-    Tuple operator()(const Tuple& operands) const override
-    {
-        if (operands.empty())
-            throw std::invalid_argument(std::format("Missing operand for unary operator {}", std::string(*this)));
-        if (operands.size()>1)
-            throw std::invalid_argument(std::format("Too many operands ({}) for unary operator {}", operands.size(), std::string(*this)));
-        return Tuple{operands.front()};
-    }
-    unsigned MinimumOperands() const override { return 1; }
-    virtual Expression operator()(const Expression& operand) const = 0;
-};
+}
+Tuple NewUnaryOperator::operator()(const Tuple& operands) const
+{
+    if (operands.empty())
+        throw std::invalid_argument(std::format("Missing operand for unary operator {}", std::string(*this)));
+    if (operands.size()>1)
+        throw std::invalid_argument(std::format("Too many operands ({}) for unary operator {}", operands.size(), std::string(*this)));
+    return Tuple{(*this)(operands.front())};
+}
 
-NewBinaryOperator::NewBinaryOperator(wchar_t code) 
-    : NewOperator(code, 2) 
+unsigned NewUnaryOperator::MinimumOperands() const 
+{ 
+    return 1; 
+}
+
+
+std::string NewUnaryOperator::OperandToString(const Expression& operand, bool) const
+{
+    std::string result;
+    if (NeedsBracesAround(operand, op.sw.postfix))
+        result = std::format("({})", to_string(operand));
+    else 
+        result = to_string(operand);
+    if (op.sw.postfix)
+    {
+        return result + UnicodeToUtf8(op.sw.unicode);
+    }
+    else 
+    {
+        return UnicodeToUtf8(op.sw.unicode) + result;
+    }    
+    return result;
+}
+
+
+
+NewBinaryOperator::NewBinaryOperator(wchar_t code, bool multiary) 
+    : NewOperator(code, multiary?3:2) 
 {
 }
 
@@ -191,16 +251,52 @@ unsigned NewBinaryOperator::MinimumOperands() const
     return identity?0:1;
 }
 
-GenericOperation::GenericOperation(const NewOperator& ope, std::initializer_list<Expression> operands) :
-    FlatTuple<GenericOperation>(operands),
-    ope(ope)
+
+std::string NewBinaryOperator::OperandToString(const Expression& operand, bool first) const
+{
+    std::string result;
+    if (!first)
+        result += UnicodeToUtf8(op.sw.unicode);
+    
+    if (NeedsBracesAround(operand, first))
+        result += std::format("({})", to_string(operand));
+    else 
+        result += to_string(operand);
+    return result;
+}
+
+GenericOperation::GenericOperation() :
+    Tuple(),
+    ope(noneOperator)
 {
 }
 
-GenericOperation::GenericOperation(const NewOperator& ope, Tuple&& operands) :
-    FlatTuple<GenericOperation>(std::move(operands)),
+
+GenericOperation::GenericOperation(const NewOperator& ope, std::initializer_list<Expression> operands) :
+    Tuple(),
     ope(ope)
 {
+    for(auto operand: operands)
+    {
+        Add(std::move(operand));
+    }
+}
+
+GenericOperation::GenericOperation(const NewOperator& ope, Tuple&& operands) :
+    Tuple(),
+    ope(ope)
+{
+    for(auto&& operand: operands)
+    {
+        Add(std::move(operand));
+    }  
+}
+
+GenericOperation::GenericOperation(const NewUnaryOperator& ope, Expression&& operand) :
+    Tuple(),
+    ope(ope)
+{
+    Add(std::move(operand));
 }
 
 GenericOperation::GenericOperation(wchar_t tag, Tuple&& operands) :
@@ -213,6 +309,30 @@ GenericOperation::GenericOperation(wchar_t tag, Expression&& operand) :
 {
 }
 
+unsigned GenericOperation::Add(Expression&& operand)
+{
+    if (const auto* op = operand.GetIf<GenericOperation>())
+    {
+        if (ope.Operands() == 3 && op->ope == ope) 
+        {
+            unsigned total = 0;
+            for(auto& item: *op)
+            {
+                total += Add(std::move(item));
+            }
+            return total;
+        }
+    }
+    return Tuple::Add(std::move(operand));    
+}
+
+unsigned GenericOperation::Add(const Expression& operand)
+{
+    // TODO: this can probably be optimized
+    Expression copy(operand);
+    return Add(std::move(copy));
+}
+
 GenericOperation& GenericOperation::operator=(const GenericOperation& o)
 {
     if (o.ope != ope)
@@ -220,22 +340,26 @@ GenericOperation& GenericOperation::operator=(const GenericOperation& o)
         throw std::invalid_argument(std::format("Can't assign {} operation to {}", 
             o.ope.Description(), ope.Description()));
     }
-    Tuple::operator=(o);
+    Base::operator=(o);
     return *this;
 }
 
 Expression GenericOperation::Simplify() const
 {
     // TODO: Optimize moving contents into new 
-    Tuple simple = Tuple::SimplifyItems();
+    Tuple simple = Base::SimplifyItems();
     Tuple result(ope(simple));
-
-    if (result.size()==1)
+    if (result.size()==1) 
+    {
+        std::cout << *this << "=" << result.front() << std::endl;
         return result.front();
+    }
     else
+    {
+        std::cout <<  *this << "=" << std::string(ope) << " with " << result.size() << " operands " << std::endl;
         return GenericOperation(ope, std::move(result));
+    }
 }
-
 Expression GenericOperation::Substitute(const Hypothesis& hypothesis) const
 {
     return GenericOperation(ope, Tuple::SubstituteItems(hypothesis));
@@ -281,6 +405,11 @@ bool GenericOperation::operator==(const GenericOperation& rhs) const
     return ope == rhs.ope && Tuple::operator==(rhs);
 }
 
+GenericOperation::operator bool() const
+{
+    return bool(ope);
+}
+
 std::size_t GenericOperation::Hash() const
 {
     return Tuple::Hash() ^ ope.Hash();
@@ -294,6 +423,41 @@ std::string to_string(const GenericOperation& c)
     ss << c;
     return ss.str();
 }
+
+GenericOperation GenericOperation::Solve(const Expression& target, const Expression& substitute) const
+{
+    if (!ope.Inversion())
+        return GenericOperation();
+    GenericOperation inversion(ope.Inversion(), {});
+    for(const auto& operand: *this)
+    {
+        if (operand == target)
+        {
+            inversion.Add(substitute);
+        }
+        else if (const auto subOperation = operand.GetIf<GenericOperation>())
+        {
+            if (subOperation->Assumptions().Get(target)!=False)
+            {
+                auto subInversion = subOperation->Solve(target, substitute);
+                if (subInversion)
+                    inversion.Add(std::move(subInversion));
+                else
+                    inversion.Add(operand);
+            }
+            else 
+            {
+                inversion.Add(operand);
+            }
+        }
+        else 
+        {
+            inversion.Add(operand);
+        }
+    }
+    return inversion;
+}
+
 
 std::string GenericOperation::OperandToString(const Expression& e, bool first) const
 {

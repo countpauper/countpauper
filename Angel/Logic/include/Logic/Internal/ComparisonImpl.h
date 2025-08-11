@@ -74,10 +74,45 @@ Expression Simplify(T&& container)
         return std::move(container);
 }
 
+// Transpose attempts to move operations on variables to inverse operations on constants
+// TODO It only supports GenericOperation (who need it more), but the comparisons should also be GenericOperation 
+template<class T>
+T Transpose(const Comparison<T>& comparison)
+{
+    T result(static_cast<const T&>(comparison));
+    for(auto&& operand: result)
+    {
+        if (auto operation = operand.template GetIf<GenericOperation>())
+        {
+            auto assumptions = operand.Assumptions();
+            if (assumptions.size()==0)
+                continue;
+            assert(assumptions.size()==1);  // not sure what to do with multiple operands yet
+            Variable subst("___");  // TODO: truely unique (illegal char/anonymous)?
+            if ( auto inversion = operation->Solve(*assumptions.begin(), subst))
+            {
+                for (auto&& subsituteOperand: result)
+                {
+                    if (&subsituteOperand == &operand) 
+                    {
+                        subsituteOperand = *assumptions.begin();
+                    }
+                    else 
+                    {
+                        subsituteOperand = inversion.Substitute(Hypothesis{Equal{subst, subsituteOperand}});
+                    }
+                }
+            }
+        }
+    }
+    return result;
+}
+
 template<class T> 
 Expression Comparison<T>::Simplify() const
 {
-    auto simple = FlatTuple<T>::SimplifyItems();
+    auto transposed = Transpose(*this);
+    auto simple = transposed.SimplifyItems();
     return Angel::Logic::Simplify<T>(std::move(simple));
 } 
 

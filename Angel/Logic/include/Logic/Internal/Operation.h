@@ -23,7 +23,7 @@ namespace Angel::Logic
 using OperationVariant = Variant<
     Negative, Variable, Item,
     Subtraction, Multiplication, Division, Exponentiation, Logarithm,
-    Negation, Conjunction, Disjunction, Exclusion>;  
+    Conjunction, Disjunction, Exclusion>;  
 class const_container_iterator;
 
 class Operation : public OperationVariant
