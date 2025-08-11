@@ -1,5 +1,5 @@
 #pragma once
-#include "Logic/Internal/GenericOperation.h"
+#include "Logic/GenericOperation.h"
 #include <iostream>
 
 namespace Angel::Logic
