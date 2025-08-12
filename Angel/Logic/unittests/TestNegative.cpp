@@ -11,8 +11,7 @@ TEST(Negative, Construction)
     EXPECT_TRUE(bool(Negative(Integer(0))));
     EXPECT_EQ(Negative(Integer(3)), Negative(Integer(3)));
     EXPECT_NE(Negative(Integer(3)), Negative(Integer(-3)));
-    EXPECT_EQ(Expression(PrefixOperator(L'-'), {Integer(-2)}), Negative(Integer(-2)));
-	static_assert(sizeof(Negative)<=24);
+    EXPECT_EQ(GenericOperation(L'-', Integer(3)), Negative(Integer(3)));
 }
 
 TEST(Negative, Simplify)
@@ -44,6 +43,11 @@ TEST(Negative, Negations)
     EXPECT_EQ(k.Infer(Negative(Integer(2))), Integer(-2));
     EXPECT_EQ(k.Infer(Negative(Integer(-3))), Integer(3));
     EXPECT_EQ(k.Infer(Negative(True)), Integer(-1));
+}
+
+TEST(Negation, Solve)
+{
+    EXPECT_EQ(Negative(Variable("X")).Solve(Variable("X"), Variable("Y")), Negative(Variable("Y")));
 }
 
 TEST(Negative, to_string)

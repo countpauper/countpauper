@@ -75,7 +75,7 @@ ExpressionVariant make_operation(const Operator ope, Tuple&& operands)
     if (ope.IsComparator())
         return make_ordering<Equal, Unequal, Lesser, LesserEqual,Greater, GreaterEqual>(ope, std::move(operands));
     else if (ope.Operands()==1)
-            return make_unary_operation<All, Negative, Variable>(ope, std::move(operands[0]));
+        return make_unary_operation<All, Variable>(ope, std::move(operands[0]));
     else if (ope.Operands()==2)
         return make_binary_operation<Item, Association>(ope, std::move(operands));
     else    

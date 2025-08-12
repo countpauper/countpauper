@@ -286,4 +286,3 @@ std::string to_string(const Expression& e);
 #include "Logic/Internal/FlatTupleImpl.h"
 #include "Logic/Internal/OperationImpl.h"
 #include "Logic/Internal/ComparisonImpl.h"
-#include "Logic/Internal/UnaryOperate.h"

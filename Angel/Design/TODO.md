@@ -50,7 +50,9 @@ Plan:
         - [ ] Conjunction disjunection A&True=False => A=False|True(Bla about A but the whole thing is a tautology always True) A|True=False => A=True&False (Contradiction on A so the whole equation is False)
             - Ordering simplify (How Generic?) to see if an equation is a tautology or a contradiction. Making the hypothesis just True or False. This can also happen to numeric (eg A>A+1). A tautology is when one assumption can be any in its range. A contradiction when one assumption can be none in its range. How to compute except for boolean? Needs more advanced solvers  
         - [ ] Make equal a GenericOperation 
+        - [ ] GenericOperation(for, with) should be Equal("Y", GenericOperation).Solve where the assumption in the operation is solved and replaced by "Y" if there is one and something bad happens when it can't be solved (two unknowns)
         - [ ] Make a generic operation of subtraction and negative and unit test that inversing as well and test nested: neg(sum(2,a))=-3 =>  = sum(2,a) = neg(-3) => a = sub(neg(-3),2) (simplify) a = 3-2 = 1       
+        - GenericOperation for all and value, get rid of `make_unary_operation`
         - [ ] Handle generic operations that are not invertible, such as value of
  - [ ] Access
  - [ ] Inversion 

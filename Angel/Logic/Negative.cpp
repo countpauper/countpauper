@@ -3,66 +3,40 @@
 
 namespace Angel::Logic
 {
-
-Expression Negative::Simplify() const
+    
+class NegativeOp : public NewUnaryOperator
 {
-    auto simple = content->Simplify();
-    if (const Negative* neg = simple.GetIf<Negative>()) 
+
+public:
+    NegativeOp() : NewUnaryOperator(L'-')
     {
-        return (*neg)->Simplify();
+        precedence = 75; 
+        description = "negative";
+        inversion = this;
     }
-    else if (const Number* nr= simple.GetIf<Number>())
+    Expression operator()(const Expression& operand) const override 
     {
-        return ope(*nr);
+        if (auto maybeNumber = operand.GetIf<Number>()) 
+        {
+            return -(*maybeNumber);
+        }
+        else 
+        {
+            return Negative(operand);
+        }
     }
-    return Negative{std::move(simple)};
-}
+};
 
-Expression Negative::Matches(const Expression& expression, const Hypothesis& hypothesis) const
+GenericOperation Negative(Expression &&operand)
 {
-    auto subst = expression.Substitute(hypothesis);    
-    if (const auto* i = subst.GetIf<Integer>())
-    {
-        auto substContent = content->Substitute(hypothesis);
-        return Equal{std::move(substContent), ope(*i)};
-    }
-    else if (const auto* n = subst.GetIf<Negative>())
-    {
-        auto substContent = content->Substitute(hypothesis);
-        return Equal{std::move(substContent), std::move(*n)};
-    }
-    else 
-    {   // this is the default case, the options above just favor less negatives in the condition
-        auto substNeg= this->Substitute(hypothesis);    
-        return Equal{std::move(substNeg), std::move(subst)};
-    }    
+    static const NegativeOp neg;
+    return GenericOperation(neg, std::move(operand));
 }
 
-Negative Negative::Substitute(const Hypothesis& hypothesis) const
+GenericOperation Negative(const Expression &operand)
 {
-    return Negative(content->Substitute(hypothesis));
+    static const NegativeOp neg;
+    return GenericOperation(neg, {operand});
 }
 
-Expression Negative::Infer(const class Knowledge& k, const Hypothesis& hypothesis, Trace& trace) const
-{
-    auto value = content->Infer(k, hypothesis, trace);
-    return ope(value);
-}
-
-bool Negative::operator==(const Negative& other) const
-{
-    return Individual::operator==(other);
-}
-
-
-std::size_t Negative::Hash() const
-{
-    return Individual::Hash() ^ typeid(*this).hash_code();
-}
-
-std::ostream& operator<<(std::ostream& os, const Negative& neg)
-{
-    os << neg.ope << Negative::OperandToString(Negative::ope, *neg);
-    return os;
-}
 }
