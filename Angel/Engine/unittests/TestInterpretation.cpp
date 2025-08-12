@@ -66,7 +66,7 @@ TEST(Interpretation, Braces)
 // both should work, but implementation only checks braces of rhs. Does that matter? Shouldn't pop back     Parser::Source source("(true-2)⋅3?");
     Parser::Source source("0⋅(true-2)⋅3?");
     EXPECT_EQ(interpreter.InterpretQuery(source), (
-        Logic::Multiplication{Logic::Integer(0), Logic::Subtraction{Logic::Predicate("true"),  Logic::Integer(2)}, Logic::Integer(3)}));
+        Logic::Multiplication{Logic::Integer(0), Logic::Subtraction({Logic::Predicate("true"),  Logic::Integer(2)}), Logic::Integer(3)}));
 }
 
 TEST(Interpretation, List)

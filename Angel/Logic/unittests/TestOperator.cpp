@@ -72,7 +72,7 @@ TEST(Operator, Description)
 
 TEST(Operator, Operate)
 {
-    EXPECT_EQ((MultiOperator{L'-'})(Integer(1), Integer(2)), Integer(-1));
+    EXPECT_EQ((MultiOperator{L'÷'})(Real(1), Integer(2)), Real(0.5));
     EXPECT_TRUE(Order(L'=')(Integer(1), Integer(1)));
 }
 
