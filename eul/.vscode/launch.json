@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "testmate Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${exec}",      
+            "MIMode": "gdb",
+            "miDebuggerArgs": "", 
+            "setupCommands": [
+                { 
+                    "text": "-enable-pretty-printing", 
+                    "description": "enable pretty printing in watch window" 
+                }
+            ]        
+        }
+    ]
+}
