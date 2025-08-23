@@ -9,77 +9,77 @@ namespace eul::Test
 
 TEST(Signal, ConnectDisconnect)
 {
-    Slot<> slot;
-    EXPECT_FALSE(slot.IsConnected());
-    Signal<> signal;
-    slot = signal.Connect([](){});
-    EXPECT_TRUE(slot.IsConnected());
-    EXPECT_EQ(signal.connections(), 1);
-    slot.Disconnect();
-    EXPECT_FALSE(slot.IsConnected());
-    EXPECT_EQ(signal.connections(), 0);
-    slot.Disconnect();
+    slot<> s;
+    EXPECT_FALSE(s.connected());
+    signal<> sig;
+    s = sig.connect([](){});
+    EXPECT_TRUE(s.connected());
+    EXPECT_EQ(sig.connections(), 1);
+    s.disconnect();
+    EXPECT_FALSE(s.connected());
+    EXPECT_EQ(sig.connections(), 0);
+    s.disconnect();
 }
 
 TEST(Signal, One) 
 {
-    Signal<> signal;
+    signal<> sig;
     MockFunction<void(void)> cb;
     EXPECT_CALL(cb, Call).Times(1);     
     {
-        auto slot = signal.Connect(cb.AsStdFunction());
+        auto s = sig.connect(cb.AsStdFunction());
 
-        signal();
+        sig();
     }
-    signal();
+    sig();
 }
 
 TEST(Signal, Multiple) 
 {
-    Signal<> signal;
+    signal<> sig;
     MockFunction<void(void)> a;
     MockFunction<void(void)> b;
     EXPECT_CALL(a, Call).Times(1);     
     EXPECT_CALL(b, Call).Times(1);     
-    Slot<> slotA(signal, a.AsStdFunction());
-    auto slotB = signal.Connect(b.AsStdFunction());
-    EXPECT_EQ(signal.connections(), 2);
-    signal();
+    slot<> A(sig, a.AsStdFunction());
+    auto B = sig.connect(b.AsStdFunction());
+    EXPECT_EQ(sig.connections(), 2);
+    sig();
 
-    signal.DisconnectAll();
-    EXPECT_EQ(signal.connections(), 0);
+    sig.disconnect();
+    EXPECT_EQ(sig.connections(), 0);
 }
 
 TEST(Signal, SignalWithArgs) 
 {
-    Signal<bool, int> signal;
+    signal<bool, int> sig;
     MockFunction<void(bool, int)> a;
     EXPECT_CALL(a, Call(true, 3)).Times(1);     
-    auto slot = signal.Connect(a.AsStdFunction());
+    auto s = sig.connect(a.AsStdFunction());
     const int v = 3;
-    signal(true, v);
+    sig(true, v);
 }
 
 TEST(Signal, DisconnectDuringSignal) 
 {
-    Signal<> signal;
+    signal<> sig;
 
     MockFunction<void()> stillCalled;    
     EXPECT_CALL(stillCalled, Call()).Times(2);
-    Slot<> backSlot(signal, stillCalled.AsStdFunction());
+    slot<> backslot(sig, stillCalled.AsStdFunction());
 
     MockFunction<void()> disconnecter;
-    Slot<> slot;
-    EXPECT_CALL(disconnecter, Call()).Times(1).WillOnce(Invoke([&slot]()
+    slot<> s;
+    EXPECT_CALL(disconnecter, Call()).Times(1).WillOnce(Invoke([&s]()
     {
-        slot.Disconnect();
+        s.disconnect();
     }));
-    slot = signal.Connect(disconnecter.AsStdFunction());
-    Slot<> frontSlot(signal, stillCalled.AsStdFunction());
+    s = sig.connect(disconnecter.AsStdFunction());
+    slot<> frontslot(sig, stillCalled.AsStdFunction());
 
-    signal();
-    EXPECT_FALSE(slot.IsConnected());
-    EXPECT_TRUE(backSlot.IsConnected());
+    sig();
+    EXPECT_FALSE(s.connected());
+    EXPECT_TRUE(backslot.connected());
 }
 
 

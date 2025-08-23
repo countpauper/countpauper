@@ -7,95 +7,95 @@ namespace eul
 {
 
 template<typename ...Args> 
-class Signal;
+class signal;
 
 template<typename ...Args>
-class Slot : protected LinkedList::Node
+class slot : protected intrusive_list::node
 {
 public:
-    using Callback = std::function<void(Args...)>;
-    using SignalType = Signal<Args...>;
+    using callback = std::function<void(Args...)>;
+    using signalType = signal<Args...>;
 
-    Slot() = default;
-    Slot(SignalType& signal, const Callback& cb) :
-        Slot(signal.Connect(cb))
+    slot() = default;
+    slot(signalType& signal, const callback& cb) :
+        slot(signal.connect(cb))
     {
     }
-    inline void Disconnect() 
+    inline void disconnect() 
     {
         if (queued)
             disconnected = true;
         else
         {
             disconnected = false;
-            Unlink();
+            unlink();
         }
         queued = false;
     }
-    inline bool IsConnected() const 
+    inline bool connected() const 
     {
-        return !disconnected && IsLinked();
+        return !disconnected && linked();
     }
 private:
-    Slot(LinkedList& list, Callback cb) :
-        Node(list),
-        callback(cb)
+    slot(intrusive_list& list, callback cb) :
+        node(list),
+        cb(cb)
     {
     }
-    void Queue()
+    void queue()
     {
         queued = true;
     }
-    void Dequeue()
+    void dequeue()
     {
         queued = false;
         if (disconnected)
         {
-            Disconnect();
+            disconnect();
         }
     }
-    friend class Signal<Args...>;
-    Callback callback;
+    friend class signal<Args...>;
+    callback cb;
     bool queued:1 = false; 
     bool disconnected:1 = false;
 };
 
 template<typename ...Args>
-class Signal
+class signal
 {
 public:
-    Signal() = default;
-    using SlotType = Slot<Args...>;
-    using Callback = SlotType::Callback;
-    SlotType Connect(Callback cb)
+    signal() = default;
+    using slotType = slot<Args...>;
+    using callback = slotType::callback;
+    slotType connect(callback cb)
     {
-        return SlotType(slots, cb);
+        return slotType(_slots, cb);
     }
-    void DisconnectAll() 
+    void disconnect() 
     {
-        slots.clear();
+        _slots.clear();
     }
     
     template<typename... Pargs>
     void operator()(Pargs&&... args) const
     {
-        for(LinkedList::Node& node: slots) 
+        for(intrusive_list::node& _node: _slots) 
         {
-            static_cast<SlotType&>(node).Queue();
+            static_cast<slotType&>(_node).queue();
         }
-        for(const LinkedList::Node& node: slots) 
+        for(const intrusive_list::node& _node: _slots) 
         {
-            const SlotType& slot = static_cast<const SlotType&>(node);
+            const slotType& slot = static_cast<const slotType&>(_node);
             if (slot.queued)
-                static_cast<const SlotType&>(slot).callback(std::forward<Pargs>(args)...);
+                static_cast<const slotType&>(slot).cb(std::forward<Pargs>(args)...);
         }
-        for(LinkedList::Node& node: slots) 
+        for(intrusive_list::node& _node: _slots) 
         {
-            static_cast<SlotType&>(node).Dequeue();
+            static_cast<slotType&>(_node).dequeue();
         }
     }
-    std::size_t connections() const { return slots.size(); }
+    std::size_t connections() const { return _slots.size(); }
 private:
-    LinkedList slots;
+    intrusive_list _slots;
 };
 }

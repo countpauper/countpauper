@@ -6,33 +6,33 @@
 namespace eul
 {
 
-class LinkedList 
+class intrusive_list 
 {
 public:
 
 
-    class Node 
+    class node 
     {
     public:
-        Node();
-        Node(class LinkedList& root);
-        Node(const Node& other);
-        Node(Node&& other);
-        Node& operator=(const Node& other);
-        Node& operator=(Node&& other);
-        bool IsLinked() const;
-        void Unlink();
-        ~Node();
+        node();
+        node(class intrusive_list& root);
+        node(const node& other);
+        node(node&& other);
+        node& operator=(const node& other);
+        node& operator=(node&& other);
+        bool linked() const;
+        void unlink();
+        ~node();
     private:
-        friend class LinkedList;
-        LinkedList* root;
-        mutable class Node* next;
+        friend class intrusive_list;
+        intrusive_list* _root;
+        mutable class node* _next;
     };
 
     class iterator 
     {
     public:
-        using value_type = Node;
+        using value_type = node;
         using difference_type = std::ptrdiff_t;
         bool operator==(const iterator& o) const;
         iterator& operator++();
@@ -41,30 +41,30 @@ public:
         value_type& operator*() const;
         value_type* operator->() const;
     private:
-        friend class LinkedList;
+        friend class intrusive_list;
         iterator();
-        iterator(value_type* node);
-        value_type* node;
+        iterator(value_type* _node);
+        value_type* _node;
     };
 
 
-    LinkedList();
+    intrusive_list();
     const iterator begin() const;
     const iterator end() const;
     iterator begin();
     iterator end(); 
-    Node& front();
+    node& front();
 
-    iterator push_front(Node& node);
-    iterator push_back(Node& node);
-    iterator erase(Node& node);
+    iterator push_front(node& _node);
+    iterator push_back(node& _node);
+    iterator erase(node& _node);
     void clear();
-    iterator insert(const iterator& pos, Node& node);
-    iterator insert(const Node& after, Node& node);
+    iterator insert(const iterator& pos, node& _node);
+    iterator insert(const node& after, node& _node);
     std::size_t size() const;
     bool empty() const;
 protected:
-    friend Node;
-    Node* first=nullptr;
+    friend node;
+    node* _first=nullptr;
 };
 }

@@ -12,48 +12,48 @@ namespace eul::Test
 {
 using namespace testing;
 
-class RTStateMock : public State  
+class RTStateMock : public state  
 {
 public:
-    using State::State;
+    using state::state;
     std::string_view name; 
 
-    MOCK_METHOD(void, Entry, (), (override));
-    MOCK_METHOD(void, Exit, (), (override));
-    MOCK_METHOD(void, OnEvent, (const Event&), (override));
+    MOCK_METHOD(void, entry, (), (override));
+    MOCK_METHOD(void, exit, (), (override));
+    MOCK_METHOD(void, on, (const event&), (override));
 };
 
-TEST(RTStateMachine, Initial)
+TEST(rt_state_machine, initial)
 {    
     RTStateMock on;
     RTStateMock off;
-    EXPECT_CALL(off, Entry());
-    EXPECT_CALL(on, Entry()).Times(0);
-    Machine sm { off, on};
-    EXPECT_TRUE(sm.InState(off));
-    EXPECT_TRUE(sm.InState(sm));
+    EXPECT_CALL(off, entry());
+    EXPECT_CALL(on, entry()).Times(0);
+    machine sm { off, on};
+    EXPECT_TRUE(sm.in(off));
+    EXPECT_TRUE(sm.in(sm));
 }
 
-TEST(RTStateMachine, Transition)
+TEST(rt_state_machine, transition)
 {
     RTStateMock solid;
-    State blinking;
+    state blinking;
     RTStateMock on { solid, blinking };
     RTStateMock off;
-    Machine sm { off, on};
-    Event button; 
-    Transition off_button(off, button, on);
+    machine sm { off, on};
+    event button; 
+    transition off_button(off, button, on);
     InSequence seq;
-    EXPECT_CALL(off, Exit());
-    EXPECT_CALL(on, Entry());
-    EXPECT_CALL(solid, Entry());
+    EXPECT_CALL(off, exit());
+    EXPECT_CALL(on, entry());
+    EXPECT_CALL(solid, entry());
 
-    EXPECT_TRUE(sm.Signal(button));
-    EXPECT_TRUE(sm.InState(on));
-    EXPECT_TRUE(sm.InState(solid));
+    EXPECT_TRUE(sm.signal(button));
+    EXPECT_TRUE(sm.in(on));
+    EXPECT_TRUE(sm.in(solid));
 }
 
-TEST(RTStateMachine, ToSubstate)
+TEST(rt_state_machine, to_sub_state)
 {
     RTStateMock solid { };
     solid.name="solid";
@@ -61,35 +61,35 @@ TEST(RTStateMachine, ToSubstate)
     blinking.name="blinking";
     RTStateMock on { solid, blinking };
     on.name="on";
-    State off;
-    Machine sm { off, on};
-    Event button;
-    Event warning;
-    Transition button_on(off, button, on);
-    Transition warn_blink(sm, warning, blinking);
-    sm.Signal(button);
-    ASSERT_TRUE(sm.InState(on));
+    state off;
+    machine sm { off, on};
+    event button;
+    event warning;
+    transition button_on(off, button, on);
+    transition warn_blink(sm, warning, blinking);
+    sm.signal(button);
+    ASSERT_TRUE(sm.in(on));
 
     InSequence seq;
-    EXPECT_CALL(solid, Exit());
-    EXPECT_CALL(blinking, Entry());
-    EXPECT_CALL(on, Entry()).Times(0);
+    EXPECT_CALL(solid, exit());
+    EXPECT_CALL(blinking, entry());
+    EXPECT_CALL(on, entry()).Times(0);
 
-    EXPECT_TRUE(sm.Signal(warning));
-    EXPECT_TRUE(sm.InState(on));
-    EXPECT_TRUE(sm.InState(blinking));
+    EXPECT_TRUE(sm.signal(warning));
+    EXPECT_TRUE(sm.in(on));
+    EXPECT_TRUE(sm.in(blinking));
 }
 
-TEST(RTStateMachine, NonTransitionEventsAreSentToActiveState)
+TEST(rt_state_machine, non_transitioning_events_are_sent_to_active_state)
 {
     RTStateMock on;
     RTStateMock off;
-    Machine sm { off, on};
-    Event test;
-    EXPECT_CALL(off, OnEvent(test)).Times(1);
-    EXPECT_CALL(on, OnEvent(_)).Times(0);
-    ASSERT_TRUE(sm.InState(off));
-    sm.Signal(test);
+    machine sm { off, on};
+    event test;
+    EXPECT_CALL(off, on(test)).Times(1);
+    EXPECT_CALL(on, on(_)).Times(0);
+    ASSERT_TRUE(sm.in(off));
+    sm.signal(test);
 }
 
 }

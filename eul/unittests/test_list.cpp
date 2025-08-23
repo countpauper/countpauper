@@ -4,67 +4,67 @@
 namespace eul::Test
 {
 
-TEST(List, FreeNode)
+TEST(intrusive_list, lonely_node)
 {
-    LinkedList::Node node;
-    EXPECT_FALSE(node.IsLinked());
+    intrusive_list::node node;
+    EXPECT_FALSE(node.linked());
 }
 
-TEST(List, ConstructedNode)
+TEST(intrusive_list, construct_node)
 {
-    LinkedList list;
-    LinkedList::Node node(list);
-    EXPECT_TRUE(node.IsLinked());
+    intrusive_list list;
+    intrusive_list::node node(list);
+    EXPECT_TRUE(node.linked());
     EXPECT_EQ(list.size(), 1);
 }
 
-TEST(List, DestructedNodeIsErased)
+TEST(intrusive_list, destructed_node_is_erased)
 {
-    LinkedList list;
+    intrusive_list list;
     {
-        LinkedList::Node node(list);
+        intrusive_list::node node(list);
         EXPECT_FALSE(list.empty());
     }
     EXPECT_TRUE(list.empty());
 }
 
-TEST(List, CopiedNodesAreAdded)
+TEST(intrusive_list, copied_nodes_are_linked)
 {
-    LinkedList list;
-    LinkedList::Node node(list);
-    LinkedList::Node copy(node);
+    intrusive_list list;
+    intrusive_list::node node(list);
+    intrusive_list::node copy(node);
     EXPECT_EQ(list.size(), 2);
-    LinkedList::Node assigned;
+    intrusive_list::node assigned;
     assigned = node;
     EXPECT_EQ(list.size(), 3);
     assigned = copy;
     EXPECT_EQ(list.size(), 3);
 }
 
-TEST(List, MovedNodesAreAddedOldAreRemoved)
+TEST(intrusive_list, moved_nodes_are_linked_old_are_erased)
 {
-    LinkedList list;
-    LinkedList::Node node(list);
-    LinkedList::Node move(std::move(node));
+    intrusive_list list;
+    intrusive_list::node node(list);
+    intrusive_list::node move(std::move(node));
     EXPECT_EQ(list.size(), 1);
-    EXPECT_FALSE(node.IsLinked());
-    EXPECT_TRUE(move.IsLinked());
+    EXPECT_FALSE(node.linked());
+    EXPECT_TRUE(move.linked());
 
     node = std::move(move);
-    EXPECT_FALSE(move.IsLinked());
-    EXPECT_TRUE(node.IsLinked());
+    EXPECT_FALSE(move.linked());
+    EXPECT_TRUE(node.linked());
     EXPECT_EQ(list.size(), 1);
 }
 
-struct Mixed : LinkedList::Node 
+struct Mixed : intrusive_list::node 
 {
     int value;
     Mixed(int v) : value(v) {}
 };
 
-TEST(List, ListCanBeIterated)
+TEST(intrusive_list, list_can_be_iterated)
 {
-    LinkedList list;
+    intrusive_list list;
     Mixed one(1), two(2), three(3);
     list.push_front(one);
     list.push_front(two);
@@ -77,10 +77,10 @@ TEST(List, ListCanBeIterated)
     EXPECT_EQ(sum, 6);
 }
 
-TEST(List, EraseInLoop)
+TEST(intrusive_list, erase_inside_loop)
 {
     Mixed one(1), two(2), three(3);
-    LinkedList list;
+    intrusive_list list;
     list.push_front(one);
     list.insert(list.push_back(two), three);
     for(auto& n: list)
@@ -88,18 +88,18 @@ TEST(List, EraseInLoop)
         if (static_cast<Mixed&>(n).value==2)
             list.erase(n);
     }     
-    EXPECT_FALSE(two.IsLinked());
+    EXPECT_FALSE(two.linked());
 }
 
-TEST(List, Clear)
+TEST(intrusive_list, clear)
 {
-    LinkedList list;
-    LinkedList::Node first(list);
-    LinkedList::Node second(list);
+    intrusive_list list;
+    intrusive_list::node first(list);
+    intrusive_list::node second(list);
     list.clear();
     EXPECT_TRUE(list.empty());
-    EXPECT_FALSE(first.IsLinked());
-    EXPECT_FALSE(second.IsLinked());
+    EXPECT_FALSE(first.linked());
+    EXPECT_FALSE(second.linked());
     list.clear();
 }
 

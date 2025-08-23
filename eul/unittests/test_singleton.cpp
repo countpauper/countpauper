@@ -11,20 +11,20 @@ struct State
     bool state = false;
 };
 
-TEST(Singleton, OneInstance)
+TEST(singleton, one_instance)
 {
-    Singleton<State> single;
+    singleton<State> single;
     single->state = true;
-    EXPECT_EQ(Singleton<State>::Get().state, true);
-    Singleton<State> second; 
+    EXPECT_EQ(singleton<State>::Get().state, true);
+    singleton<State> second; 
     EXPECT_EQ(second->state, true);
 }
 
-TEST(Singleton, WithParameters)
+TEST(singleton, with_parameters)
 {
-    Singleton<State> single(true);
-    EXPECT_EQ(Singleton<State>::Get().state, true);
-    Singleton<State> second; 
+    singleton<State> single(true);
+    EXPECT_EQ(singleton<State>::Get().state, true);
+    singleton<State> second; 
     EXPECT_EQ(second->state, true);
 }
 

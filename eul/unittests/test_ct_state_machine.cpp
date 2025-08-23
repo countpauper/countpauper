@@ -10,33 +10,33 @@ using namespace testing;
 class StateMock 
 {
 public:
-    MOCK_METHOD(void, OnEvent, (StateIF& state, const Event&));    
+    MOCK_METHOD(void, on, (stateIF& state, const event&));    
 };
 
-class Solid : public State<> {  };
-class Blinking : public State<> { }; 
-class On : public State<Solid, Blinking> { };
-class Off : public State<> 
+class Solid : public state<> {  };
+class Blinking : public state<> { }; 
+class On : public state<Solid, Blinking> { };
+class Off : public state<> 
 { 
 public:
     StateMock* mock = nullptr;  // TODO: mock reference should not be copyable, just movable. Maybe just unique ptr?
-    void OnEvent(const Event& event) override
+    void on(const event& ev) override
     {
         if (mock)
-            mock->OnEvent(*this, event);
+            mock->on(*this, ev);
     }
 };
 
-Event button;
-Event warning; 
+event button;
+event warning; 
 
-TEST(CTStateMachine, Initial)
+TEST(ct_state_machine, initial)
 {
-    Machine<Off, On> sm {};
-    EXPECT_TRUE(sm.InState<Off>());
+    machine<Off, On> sm {};
+    EXPECT_TRUE(sm.in<Off>());
 }
 
-TEST(CTStateMachine, Concepts)
+TEST(ct_state_machine, concepts)
 {
     static_assert(is_branch_state<On>);
     static_assert(!is_leaf_state<On>);
@@ -44,16 +44,16 @@ TEST(CTStateMachine, Concepts)
     static_assert(is_leaf_state<Off>);
 }
 
-TEST(CTStateMachine, Transition)
+TEST(ct_state_machine, transition)
 {
-    Machine<Off, On> sm;
-    sm.Transition<Off,On>(button);
-    EXPECT_TRUE(sm.Signal(button));
-    EXPECT_TRUE(sm.InState<On>());
-    EXPECT_TRUE(sm.InState<Solid>());
+    machine<Off, On> sm;
+    sm.transition<Off,On>(button);
+    EXPECT_TRUE(sm.signal(button));
+    EXPECT_TRUE(sm.in<On>());
+    EXPECT_TRUE(sm.in<Solid>());
 }
 
-TEST(CTStateMachine, DISABLED_ToSubstate)
+TEST(ct_state_machine, DISABLED_to_sub_state)
 {
     // TODO: to implement this 
     // 1) Transitions should encode a chain of alternative indices to switch to 
@@ -66,21 +66,21 @@ TEST(CTStateMachine, DISABLED_ToSubstate)
     // 8) As an optimization the sequence could be encoded in a uint32_t which uses number%std::variant_size() and the next is *variant_size()
     // 9) There is a maximum depth/amount of substates however (static_assert).
     // 10) Optionally transitions could also (be templated and) use a 64 bit substate sequence. If the constructors are constexpr then its size doesn't matter there 
-    Machine<Off, On> sm;
-    sm.Transition<void,Blinking>(warning);
-    EXPECT_TRUE(sm.Signal(warning));
-    EXPECT_TRUE(sm.InState<On>());
-    EXPECT_TRUE(sm.InState<Blinking>());
+    machine<Off, On> sm;
+    sm.transition<void,Blinking>(warning);
+    EXPECT_TRUE(sm.signal(warning));
+    EXPECT_TRUE(sm.in<On>());
+    EXPECT_TRUE(sm.in<Blinking>());
 }
 
-TEST(CTStateMachine, NonTransitionEventsAreSentToActiveState)
+TEST(ct_state_machine, non_transition_events_are_sent_to_active_state)
 {
-    Event test;
-    Machine<Off, On> sm;
+    event test;
+    machine<Off, On> sm;
     StateMock mock;
-    dynamic_cast<Off&>(sm.GetState()).mock = &mock;
-    EXPECT_CALL(mock, OnEvent(_, test)).Times(1);
-    sm.Signal(test);
+    dynamic_cast<Off&>(sm.get()).mock = &mock;
+    EXPECT_CALL(mock, on(_, test)).Times(1);
+    sm.signal(test);
 }
 
 }

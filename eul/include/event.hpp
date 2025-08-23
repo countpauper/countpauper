@@ -1,16 +1,16 @@
 namespace eul
 {
 
-class Event 
+class event 
 {
 public:
-    Event() ;
-    Event(const Event& o);
-    Event& operator=(const Event& o);
-    bool operator==(const Event& o) const;
+    event() ;
+    event(const event& o);
+    event& operator=(const event& o);
+    bool operator==(const event& o) const;
 private:
-    unsigned id;
-    static unsigned lastId;
+    unsigned _id;
+    static unsigned _last_Id;
 };
 
 }

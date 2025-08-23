@@ -5,47 +5,47 @@
 namespace eul
 {
 template<class T>
-class Singleton final
+class singleton final
 {
 public:
     template<typename ...Args>
-    constexpr Singleton(Args&&... args)
+    constexpr singleton(Args&&... args)
     { 
         if (!has_value()) {
             if constexpr (std::is_constructible_v<T, Args...>) {
-                instance = T(std::forward<Args>(args)...);
+                _instance = T(std::forward<Args>(args)...);
             }
         }
     }
 
     static constexpr T& Get()
     {
-        return *instance;
+        return *_instance;
     }
 
     bool has_value() const 
     {
-        return instance.has_value();
+        return _instance.has_value();
     }
     
     T* operator->() const
     {
         if (has_value())
-            return &Singleton<T>::Get();
+            return &singleton<T>::Get();
         else 
             return nullptr;
     }
 
     T& operator*() const
     {
-        return Singleton<T>::Get();
+        return singleton<T>::Get();
     }
 private:
-    static std::optional<T> instance; 
+    static std::optional<T> _instance; 
 };
 
 template<class T>
-std::optional<T> Singleton<T>::instance; 
+std::optional<T> singleton<T>::_instance; 
 }
 
 

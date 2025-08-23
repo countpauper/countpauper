@@ -13,57 +13,57 @@
 namespace eul
 {
 
-class StateIF
+class stateIF
 {
 public:
-    virtual ~StateIF() = default;
-    virtual void Entry();
-    virtual void Exit();
-    virtual void OnEvent(const Event& event);
+    virtual ~stateIF() = default;
+    virtual void entry();
+    virtual void exit();
+    virtual void on(const event&);
 };
 
-class State;
+class state;
 
-class Transition : public LinkedList::Node
+class transition : public intrusive_list::node
 {
 public:
-    Transition(const Event& event, State& to);
-    Transition(State& from, const Event& event, State& to);
+    transition(const event& _event, state& to);
+    transition(state& from, const event& _event, state& to);
 private:
-    friend State;
-    Event event;
-    State& to;
+    friend state;
+    event _event;
+    state& _to;
 };
 
-class State : public StateIF, public LinkedList::Node
+class state : public stateIF, public intrusive_list::node
 {
 public:
-    State();
-    State(std::initializer_list<std::reference_wrapper<State>> children);
-    bool InState(const State& child) const;
+    state();
+    state(std::initializer_list<std::reference_wrapper<state>> children);
+    bool in(const state& child) const;
 protected:
-    friend class Machine;
-    State* FindTransition(const Event& event) const;
-    std::expected<State*, errno_t> ChangeState(State& state);
-    void Enter();
-    void ConfirmeSubStateChange();
-    void Leave();
-    State* DefaultState();
-    void SignalEvent(const Event& event);
+    friend class machine;
+    state* find_transition(const event& _event) const;
+    std::expected<state*, errno_t> change(state& state);
+    void enter();
+    void confirm_substate_change();
+    void leave();
+    state* default_state();
+    void signal(const event& _event);
 private:
-    LinkedList children;
-    State* state = nullptr;
+    intrusive_list children;
+    state* _state = nullptr;
 
-    friend Transition;
-    void Transit(Transition& transition);
-    LinkedList transitions;
+    friend transition;
+    void transit(transition& transition);
+    intrusive_list transitions;
 };
 
-class Machine : public State
+class machine : public state
 {
 public:
-    explicit Machine(std::initializer_list<std::reference_wrapper<State>> children);
-    bool Signal(const Event& event);
+    explicit machine(std::initializer_list<std::reference_wrapper<state>> children);
+    bool signal(const event& _event);
 };
 
 

@@ -4,118 +4,118 @@
 
 namespace eul 
 {
-LinkedList::Node::Node() :
-    root(nullptr),
-    next(nullptr)
+intrusive_list::node::node() :
+    _root(nullptr),
+    _next(nullptr)
 {
 }
 
-LinkedList::Node::Node(class LinkedList& root) :
-    Node()
+intrusive_list::node::node(class intrusive_list& _root) :
+    node()
 {
-    root.push_front(*this);
+    _root.push_front(*this);
 }
 
-LinkedList::Node::Node(const LinkedList::Node& other) :
-    Node()
+intrusive_list::node::node(const intrusive_list::node& other) :
+    node()
 {
-    if (other.root) 
+    if (other._root) 
     {
-        other.root->insert(other, *this);
+        other._root->insert(other, *this);
     }
 }
 
-LinkedList::Node::Node(LinkedList::Node&& other) :
-    Node()
+intrusive_list::node::node(intrusive_list::node&& other) :
+    node()
 {
-    if (other.root) 
+    if (other._root) 
     {
-        other.root->insert(other, *this);
-        other.root->erase(other);
+        other._root->insert(other, *this);
+        other._root->erase(other);
     }
 }
 
-LinkedList::Node& LinkedList::Node::operator=(const LinkedList::Node& other) 
+intrusive_list::node& intrusive_list::node::operator=(const intrusive_list::node& other) 
 {
-    if (root!=other.root) 
+    if (_root!=other._root) 
     {
-        if (other.root)
-            other.root->insert(other, *this);
-        else if (root)
-            root->erase(*this); 
+        if (other._root)
+            other._root->insert(other, *this);
+        else if (_root)
+            _root->erase(*this); 
     }
     return *this;
 }
 
-LinkedList::Node& LinkedList::Node::operator=(LinkedList::Node&& other)
+intrusive_list::node& intrusive_list::node::operator=(intrusive_list::node&& other)
 {
-    if (root!=other.root) 
+    if (_root!=other._root) 
     {
-        if (other.root)
-            other.root->insert(other, *this);
-        else if (root)
-            root->erase(*this);
+        if (other._root)
+            other._root->insert(other, *this);
+        else if (_root)
+            _root->erase(*this);
 
     }
-    if (other.root)
-        other.root->erase(other);
+    if (other._root)
+        other._root->erase(other);
     return *this;
 }
 
-bool LinkedList::Node::IsLinked() const 
+bool intrusive_list::node::linked() const 
 {
-    return root!=nullptr;
+    return _root!=nullptr;
 }
 
 
-void LinkedList::Node::Unlink()
+void intrusive_list::node::unlink()
 {
-    if (root)
-        root->erase(*this);
+    if (_root)
+        _root->erase(*this);
 }
 
-LinkedList::Node::~Node() 
+intrusive_list::node::~node() 
 {
-    Unlink();
+    unlink();
 }
 
 
-LinkedList::iterator::iterator() :
-    node(nullptr)
-{
-}
-
-LinkedList::iterator::iterator(value_type* node) : 
-    node(node)
+intrusive_list::iterator::iterator() :
+    _node(nullptr)
 {
 }
 
-bool LinkedList::iterator::operator==(const LinkedList::iterator& o) const
+intrusive_list::iterator::iterator(value_type* n) : 
+    _node(n)
 {
-    return node == o.node;
 }
 
-LinkedList::iterator& LinkedList::iterator::operator++()
+bool intrusive_list::iterator::operator==(const intrusive_list::iterator& o) const
 {
-    if (node)
-        node = node->next;
+    return _node == o._node;
+}
+
+intrusive_list::iterator& intrusive_list::iterator::operator++()
+{
+    if (_node)
+        _node = _node->_next;
     return *this;
 }
 
-LinkedList::iterator LinkedList::iterator::operator++(int)
+intrusive_list::iterator intrusive_list::iterator::operator++(int)
 {
-    iterator prev(node);
+    iterator prev(_node);
     ++(*this);
     return prev;
 }
 
-LinkedList::iterator::difference_type LinkedList::iterator::operator-(const LinkedList::iterator& o) const
+intrusive_list::iterator::difference_type intrusive_list::iterator::operator-(const intrusive_list::iterator& o) const
 {
     difference_type distance = 0; 
     for (auto it=o; it!=iterator(); ++it, ++distance)
         if (it==*this)
             return distance;    
-    if (!node)  // this is the end() 
+    if (!_node)  // this is the end() 
         return distance;
     distance = 0; 
     for(auto it=*this; it!=iterator(); ++it, --distance) 
@@ -126,129 +126,129 @@ LinkedList::iterator::difference_type LinkedList::iterator::operator-(const Link
     return std::numeric_limits<difference_type>::min();
 }
 
-LinkedList::iterator::value_type& LinkedList::iterator::operator*() const
+intrusive_list::iterator::value_type& intrusive_list::iterator::operator*() const
 {
-    return *node;
+    return *_node;
 }
 
-LinkedList::iterator::value_type* LinkedList::iterator::operator->() const
+intrusive_list::iterator::value_type* intrusive_list::iterator::operator->() const
 {
-    return node;
+    return _node;
 }
 
-LinkedList::LinkedList() :
-    first(nullptr)
+intrusive_list::intrusive_list() :
+    _first(nullptr)
 {
 }
 
-LinkedList::iterator LinkedList::push_front(Node& node)
+intrusive_list::iterator intrusive_list::push_front(node& n)
 {
-    if (node.root)
-        node.root->erase(node);
-    node.root = this;
-    node.next = first; 
-    first = &node;
-    return iterator(first);
+    if (n._root)
+        n._root->erase(n);
+    n._root = this;
+    n._next = _first; 
+    _first = &n;
+    return iterator(_first);
 }
 
-LinkedList::iterator LinkedList::push_back(LinkedList::Node& node)
+intrusive_list::iterator intrusive_list::push_back(intrusive_list::node& node)
 {
     for(auto& n: *this) 
     {
-        if (!n.next)
+        if (!n._next)
             return insert(n, node);
     }
     return push_front(node);
 }
 
-const LinkedList::iterator LinkedList::begin() const
+const intrusive_list::iterator intrusive_list::begin() const
 {
-    return iterator(first); 
+    return iterator(_first); 
 }
 
-const LinkedList::iterator LinkedList::end() const 
+const intrusive_list::iterator intrusive_list::end() const 
 {
     return iterator();
 }
 
 
-LinkedList::iterator LinkedList::begin() 
+intrusive_list::iterator intrusive_list::begin() 
 {
-    return iterator(first);
+    return iterator(_first);
 }
 
-LinkedList::Node& LinkedList::front()
+intrusive_list::node& intrusive_list::front()
 {
-    return *first;
+    return *_first;
 }
 
 
-LinkedList::iterator LinkedList::end() 
+intrusive_list::iterator intrusive_list::end() 
 {
     return iterator(); 
 }
 
-LinkedList::iterator LinkedList::erase(LinkedList::Node& node)
+intrusive_list::iterator intrusive_list::erase(intrusive_list::node& erased)
 {
-    if (first == &node) 
+    if (_first == &erased) 
     {
-        first = node.next;
-        node.root = nullptr;
-        node.next = nullptr;
+        _first = erased._next;
+        erased._root = nullptr;
+        erased._next = nullptr;
         return begin();
     }
-    for(Node& n: *this)
+    for(node& n: *this)
     {
-        if (n.next == &node) 
+        if (n._next == &erased) 
         {
-            n.next = node.next;
-            node.next = nullptr;
-            node.root = nullptr;
-            return iterator(n.next);
+            n._next = erased._next;
+            erased._next = nullptr;
+            erased._root = nullptr;
+            return iterator(n._next);
         }
     }
     return end();
 }
 
-void LinkedList::clear()
+void intrusive_list::clear()
 {
-    Node* prev = nullptr;
-    for(Node& n: *this)
+    node* prev = nullptr;
+    for(node& n: *this)
     {
         if (prev)
-            prev->next = nullptr;
+            prev->_next = nullptr;
         prev = &n;
-        n.root = nullptr;
+        n._root = nullptr;
     }
-    first = nullptr;
+    _first = nullptr;
 }
 
 
-LinkedList::iterator LinkedList::insert(const Node& after, Node& node)
+intrusive_list::iterator intrusive_list::insert(const node& after, node& n)
 {
-    if (node.root)
-        node.root->erase(node);
-    node.next = after.next; 
-    node.root = this;
-    const_cast<Node&>(after).next = &node;
-    return iterator(&node);    
+    if (n._root)
+        n._root->erase(n);
+    n._next = after._next; 
+    n._root = this;
+    const_cast<node&>(after)._next = &n;
+    return iterator(&n);    
 }
 
-LinkedList::iterator LinkedList::insert(const iterator& pos, Node& node)
+intrusive_list::iterator intrusive_list::insert(const iterator& pos, node& node)
 {
     if (pos==end())
         return push_back(node);
     return insert(*pos, node);
 }
 
-std::size_t LinkedList::size() const 
+std::size_t intrusive_list::size() const 
 {
     return end()-begin();
 }
 
-bool LinkedList::empty() const 
+bool intrusive_list::empty() const 
 {
-    return first==nullptr;
+    return _first==nullptr;
 }
 
 }

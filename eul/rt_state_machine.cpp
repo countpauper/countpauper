@@ -4,23 +4,23 @@
 namespace eul 
 {
     
-void StateIF::Entry()
+void stateIF::entry()
 {
 }
 
-void StateIF::Exit()
+void stateIF::exit()
 {
 }
 
-void StateIF::OnEvent(const Event& event)
+void stateIF::on(const event& _event)
 {
 }
 
-State::State()
+state::state()
 {
 }
 
-State::State(std::initializer_list<std::reference_wrapper<State>> children_)
+state::state(std::initializer_list<std::reference_wrapper<state>> children_)
 {
     for(auto it = std::rbegin(children_); it!=std::rend(children_); ++it)
     {
@@ -28,62 +28,62 @@ State::State(std::initializer_list<std::reference_wrapper<State>> children_)
     }
 }
 
-void State::Leave()
+void state::leave()
 {
-    if (state)
-        state->Leave();
-    state = nullptr;
-    Exit();
+    if (_state)
+        _state->leave();
+    _state = nullptr;
+    exit();
 }
 
-void State::ConfirmeSubStateChange() 
+void state::confirm_substate_change() 
 {
-    if (!state)
-        state = DefaultState();
-    if (state)
-        state->Enter();
+    if (!_state)
+        _state = default_state();
+    if (_state)
+        _state->enter();
 }
 
-void State::Enter()
+void state::enter()
 {
-    Entry();
-    ConfirmeSubStateChange();
+    entry();
+    confirm_substate_change();
 }
 
-State* State::DefaultState()
+state* state::default_state()
 {
     if (!children.empty())
     {
-        return &static_cast<State&>(children.front());
+        return &static_cast<state&>(children.front());
     }
     return nullptr;
 }
 
-bool State::InState(const State& query) const
+bool state::in(const state& query) const
 {
     return this == &query || 
-        (state && state->InState(query));
+        (_state && _state->in(query));
 }
 
-void State::Transit(Transition& transition)
+void state::transit(transition& transition)
 {
     transitions.push_front(transition);
 }
 
-State* State::FindTransition(const Event& event) const
+state* state::find_transition(const event& _event) const
 {
     for(const auto& node : transitions)
     {
-        const auto& transition = static_cast<const Transition&>(node); 
-        if (transition.event == event)
-            return &transition.to;
+        const auto& trans = static_cast<const transition&>(node); 
+        if (trans._event == _event)
+            return &trans._to;
     }
-    if (state)
-        return state->FindTransition(event);
+    if (_state)
+        return _state->find_transition(_event);
     return nullptr;
 }
 
-std::expected<State*, errno_t> State::ChangeState(State& to)
+std::expected<state*, errno_t> state::change(state& to)
 {
     if (this == &to)
     {
@@ -91,19 +91,19 @@ std::expected<State*, errno_t> State::ChangeState(State& to)
     }
     for(auto& node: children)
     {
-        State& child = static_cast<State&>(node);
-        if (auto result = child.ChangeState(to))
+        state& child = static_cast<state&>(node);
+        if (auto result = child.change(to))
         {
-            if (state==*result)
+            if (_state==*result)
             {
-                state->ConfirmeSubStateChange();
+                _state->confirm_substate_change();
                 return nullptr;
             }
             else if (*result)
             {
-                if (state)
-                    state->Exit();
-                state = *result;
+                if (_state)
+                    _state->exit();
+                _state = *result;
                 return this;
             }
         } 
@@ -111,47 +111,47 @@ std::expected<State*, errno_t> State::ChangeState(State& to)
     return std::unexpected(ENOENT);
 }
 
-void State::SignalEvent(const Event& event)
+void state::signal(const event& _event)
 {
-    OnEvent(event);
-    if (state)
-        state->SignalEvent(event);
+    on(_event);
+    if (_state)
+        _state->signal(_event);
 }
 
 
-Machine::Machine(std::initializer_list<std::reference_wrapper<State>> children)
-    : State(children)
+machine::machine(std::initializer_list<std::reference_wrapper<state>> children)
+    : state(children)
 {
     if (children.size()>0) 
-        (*ChangeState(*DefaultState()))->Enter();
+        (*change(*default_state()))->enter();
 }
 
-bool Machine::Signal(const Event& event)
+bool machine::signal(const event& _event)
 {    
-    if (State* target = FindTransition(event))
+    if (state* target = find_transition(_event))
     {
-        auto result = ChangeState(*target);
+        auto result = change(*target);
         if (result)
         {
             if (*result)
-                (*result)->Enter();
+                (*result)->enter();
             return true;
         }
     }
-    SignalEvent(event);
+    signal(_event);
     return false;
 }
 
-Transition::Transition(const Event& event, State& to) :
-    event(event),
-    to(to)
+transition::transition(const event& _event, state& to) :
+    _event(_event),
+    _to(to)
 {
 }
 
-Transition::Transition(State& from, const Event& event, State& to) :
-    Transition(event, to)
+transition::transition(state& from, const event& _event, state& to) :
+    transition(_event, to)
 {
-    from.Transit(*this);
+    from.transit(*this);
 }
 
 }

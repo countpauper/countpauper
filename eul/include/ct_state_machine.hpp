@@ -35,16 +35,16 @@ constexpr std::size_t variant_index_of() {
 }
 
 
-template<typename... C> class State; 
-template<> class State<>; 
+template<typename... C> class state; 
+template<> class state<>; 
 
 template<typename T>
-concept is_leaf_state = std::is_base_of_v<State<>, T>;
+concept is_leaf_state = std::is_base_of_v<state<>, T>;
 
 // Branch (parent) state.
 template<typename T>
 concept is_branch_state = requires(T t) {
-    { t.template InState<State<>>() } -> std::convertible_to<bool>; 
+    { t.template in<state<>>() } -> std::convertible_to<bool>; 
 };
 
 
@@ -73,31 +73,31 @@ template<typename T>
 concept is_branch_state = derives_from_branch_state<T>::value;
 */
 
-class StateIF
+class stateIF
 {
 public:
-    virtual void OnEvent(const Event& event);
+    virtual void on(const event& _event);
 };
 
-class Transitioning : public StateIF 
+class transitioning : public stateIF 
 {
 public:
-    StateIF& GetState();
+    stateIF& get();
 };
 
 
-// TODO : require each C concept state 
+// TODO : require each C to be a concept state 
 template<typename... C>
-class State : public StateIF
+class state : public stateIF
 {
 public:
-    State() = default;
+    state() = default;
    
     template<typename... FC>
-    friend class State;
+    friend class state;
 
     template<typename QC>
-    bool InState() const 
+    bool in() const 
     {
         return std::visit([](auto const& obj) -> bool 
         {
@@ -105,32 +105,32 @@ public:
             if constexpr (std::is_same_v<QC, T>) {
                 return true;
             } else if constexpr (is_branch_state<T>) {
-                return obj.template InState<QC>();
+                return obj.template in<QC>();
             } else {
                 return false;
             }
         }, child);
     }
-    StateIF& GetState()
+    stateIF& get()
     {
-        return std::visit([](auto& obj) -> StateIF&  
+        return std::visit([](auto& obj) -> stateIF&  
         {
-            return obj.GetState();
+            return obj.get();
         }, child);
     }    
     static const std::size_t npos = -1;
 protected:
-    void OnEvent(const Event& event)
+    void on(const event& _event)
     {
-        StateIF::OnEvent(event);
-        std::visit([&event](auto& obj) 
+        stateIF::on(_event);
+        std::visit([&_event](auto& obj) 
         {
-           obj.OnEvent(event); 
+           obj.on(_event); 
         }, child);
     }
 
     template<typename CT>
-    static std::pair<uint8_t, bool> FindChild()
+    static std::pair<uint8_t, bool> find()
     {
         std::size_t idx = variant_index_of<CT, VariantType>();
         if (idx == npos)
@@ -144,20 +144,19 @@ protected:
         }
     }
 
-
-    using VariantType = std::variant<C..., Transitioning>;
+    using VariantType = std::variant<C..., transitioning>;
     VariantType child;
 };
 
 // Child Leaf state 
 template<>
-class State<> : public StateIF
+class state<> : public stateIF
 {
     template<typename... FC>
-    friend class State;
+    friend class state;
 public:
-    State() = default;
-    StateIF& GetState()
+    state() = default;
+    stateIF& get()
     {
         return *this;  
     }    
@@ -183,53 +182,53 @@ Variant default_construct_by_index(std::size_t idx)
 
 
 template<typename... C>
-class Machine : public State<C...> 
+class machine : public state<C...> 
 {
 public:
-    using StateType = State<C...>;
+    using StateType = state<C...>;
 
-    Machine()
+    machine()
     {
     }
     struct TransStruct
     {
-        Event event;
-        std::pair<std::uint8_t, bool> from;
-        std::pair<std::uint8_t, bool> to;
+        event _event;
+        std::pair<std::uint8_t, bool> _from;
+        std::pair<std::uint8_t, bool> _to;
     };
 
     template<typename From, typename To>
-    void Transition(const Event& event)
+    void transition(const event& _event)
     {  
         transitions.push_back(
             TransStruct{
-                .event = event, 
-                .from = StateType::template FindChild<From>(),
-                .to = StateType::template FindChild<To>()
+                ._event = _event, 
+                ._from = StateType::template find<From>(),
+                ._to = StateType::template find<To>()
             });
     }
     
-    void OnEvent(const Event& event) 
+    void on(const event& _event) 
     {
-        State<C...>::OnEvent(event);
+        state<C...>::on(_event);
     }
 
 
-    bool Signal(const Event& event)
+    bool signal(const event& _event)
     {
         for(const auto& t: transitions)
         {
-            assert(!t.from.second); // TODO handle in sub child
-            if (t.event == event &&
-                StateType::child.index() == t.from.first)
+            assert(!t._from.second); // TODO handle in sub child
+            if (t._event == _event &&
+                StateType::child.index() == t._from.first)
             {
-                StateType::child = typename StateType::VariantType(Transitioning());
-                assert(!t.to.second); // TODO if sub, then pass that sub as initial state AND SO ON (where is that info)
-                StateType::child = default_construct_by_index<typename StateType::VariantType>(t.to.first);
+                StateType::child = typename StateType::VariantType(transitioning());
+                assert(!t._to.second); // TODO if sub, then pass that sub as initial state AND SO ON (where is that info)
+                StateType::child = default_construct_by_index<typename StateType::VariantType>(t._to.first);
                 return true;
             }
         }
-        OnEvent(event);
+        on(_event);
         return false;
     } 
 

@@ -6,17 +6,17 @@ namespace eul::Test
 {
 
 
-TEST(StackSpan, Create)
+TEST(stack_span, create)
 {
-    auto s = StackSpan<int>(4);
+    auto s = stack_span<int>(4);
     s[3] = 1;
     EXPECT_EQ(s[3], 1);
 }
 
 
-TEST(StackSpan, Empty)
+TEST(stack_span, empty)
 {
-    auto s = StackSpan<int>(0);
+    auto s = stack_span<int>(0);
     EXPECT_EQ(s.size(), 0);
 }
 

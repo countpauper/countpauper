@@ -4,27 +4,27 @@ namespace eul
 {
     
 
-Event::Event() 
+event::event() 
 {
-    lastId++;
-    id = lastId;
+    _last_Id++;
+    _id = _last_Id;
 }
 
-Event::Event(const Event& o) :
-    id(o.id)
+event::event(const event& o) :
+    _id(o._id)
 {
 }
-Event& Event::operator=(const Event& o)
+event& event::operator=(const event& o)
 {
-    id = o.id;
+    _id = o._id;
     return *this;
 }
 
-bool Event::operator==(const Event& o) const
+bool event::operator==(const event& o) const
 {
-    return id == o.id;
+    return _id == o._id;
 }
 
-unsigned Event::lastId = 0;
+unsigned event::_last_Id = 0;
 
 }

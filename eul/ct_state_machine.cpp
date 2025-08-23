@@ -3,7 +3,7 @@
 namespace eul 
 {
 
-StateIF& Transitioning::GetState()
+stateIF& transitioning::get()
 {
     return *this;
 }    
