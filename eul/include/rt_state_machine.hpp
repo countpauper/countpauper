@@ -2,9 +2,9 @@
 
 #include "event.hpp"
 #include "intrusive_list.hpp"
+#include "expectation.hpp"
 #include <initializer_list>
 #include <functional>
-#include <expected>
 
 // Run time state machine: 
 // 1) states constructed at initialization (can be static) 
@@ -17,9 +17,9 @@ class stateIF
 {
 public:
     virtual ~stateIF() = default;
-    virtual void entry();
-    virtual void exit();
-    virtual void on(const event&);
+    virtual expectation entry();
+    virtual expectation exit();
+    virtual expectation on(const event&);
 };
 
 class state;
@@ -45,11 +45,11 @@ protected:
     friend class machine;
     state* find_transition(const event& _event) const;
     std::expected<state*, errno_t> change(state& state);
-    void enter();
-    void confirm_substate_change();
-    void leave();
+    expectation enter();
+    expectation confirm_substate_change();
+    expectation leave();
     state* default_state();
-    void signal(const event& _event);
+    expectation signal(const event& _event);
 private:
     intrusive_list children;
     state* _state = nullptr;
@@ -63,7 +63,7 @@ class machine : public state
 {
 public:
     explicit machine(std::initializer_list<std::reference_wrapper<state>> children);
-    bool signal(const event& _event);
+    expectation signal(const event& _event);
 };
 
 

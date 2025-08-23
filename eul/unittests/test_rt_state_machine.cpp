@@ -3,8 +3,7 @@
 #include <gmock/gmock.h>
 
 
-// TODO: Must support hierarchical states 
-// Must support generic event system that could be linked to Bus 
+// TODO: 
 // Must be able to implement entry and exit with error handling 
 // Must not use heap 
 
@@ -18,9 +17,9 @@ public:
     using state::state;
     std::string_view name; 
 
-    MOCK_METHOD(void, entry, (), (override));
-    MOCK_METHOD(void, exit, (), (override));
-    MOCK_METHOD(void, on, (const event&), (override));
+    MOCK_METHOD(expectation, entry, (), (override));
+    MOCK_METHOD(expectation, exit, (), (override));
+    MOCK_METHOD(expectation, on, (const event&), (override));
 };
 
 TEST(rt_state_machine, initial)
@@ -89,7 +88,45 @@ TEST(rt_state_machine, non_transitioning_events_are_sent_to_active_state)
     EXPECT_CALL(off, on(test)).Times(1);
     EXPECT_CALL(on, on(_)).Times(0);
     ASSERT_TRUE(sm.in(off));
-    sm.signal(test);
+    EXPECT_TRUE(sm.signal(test));
+}
+
+TEST(rt_state_machine, signal_errors_are_propagated)
+{
+    RTStateMock solid { };    
+    RTStateMock on { solid };
+    machine sm { on};
+    event test;
+    EXPECT_CALL(on, on(test)).Times(1).WillOnce(Return(std::unexpected(EBADF)));
+    EXPECT_CALL(solid, on(test)).Times(0);
+    EXPECT_EQ(sm.signal(test).error(), EBADF);
+}
+
+TEST(rt_state_machine, exit_errors_prevent_transition)
+{
+    RTStateMock on;
+    RTStateMock off;
+    machine sm { off, on};
+    event button;
+    transition button_on(off, button, on);
+    EXPECT_CALL(off, exit()).Times(1).WillOnce(Return(std::unexpected(EBADF)));
+    EXPECT_CALL(on, entry()).Times(0);
+    EXPECT_EQ(sm.signal(button).error(), EBADF);
+    EXPECT_FALSE(sm.in(on));
+    EXPECT_FALSE(sm.in(off));
+}
+
+TEST(rt_state_machine, entry_errors_prevent_transition)
+{
+    RTStateMock on;
+    RTStateMock off;
+    machine sm { off, on};
+    event button;
+    transition button_on(off, button, on);
+    EXPECT_CALL(on, entry()).Times(1).WillOnce(Return(std::unexpected(EBADMSG)));
+    EXPECT_EQ(sm.signal(button).error(), EBADMSG);
+    EXPECT_FALSE(sm.in(on));
+    EXPECT_FALSE(sm.in(off));
 }
 
 }

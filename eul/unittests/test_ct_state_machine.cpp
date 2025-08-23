@@ -10,7 +10,7 @@ using namespace testing;
 class StateMock 
 {
 public:
-    MOCK_METHOD(void, on, (stateIF& state, const event&));    
+    MOCK_METHOD(expectation, on, (stateIF& state, const event&));    
 };
 
 class Solid : public state<> {  };
@@ -20,10 +20,12 @@ class Off : public state<>
 { 
 public:
     StateMock* mock = nullptr;  // TODO: mock reference should not be copyable, just movable. Maybe just unique ptr?
-    void on(const event& ev) override
+    expectation on(const event& ev) override
     {
         if (mock)
-            mock->on(*this, ev);
+            return mock->on(*this, ev);
+        else 
+            return std::unexpected(ENODEV);
     }
 };
 

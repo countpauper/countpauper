@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "event.hpp"
+#include "expectation.hpp"
 #include <variant> 
 #include <initializer_list>
 #include <vector> // TODO linked list or something 
@@ -76,7 +77,7 @@ concept is_branch_state = derives_from_branch_state<T>::value;
 class stateIF
 {
 public:
-    virtual void on(const event& _event);
+    virtual expectation on(const event& _event);
 };
 
 class transitioning : public stateIF 
@@ -120,12 +121,12 @@ public:
     }    
     static const std::size_t npos = -1;
 protected:
-    void on(const event& _event)
+    expectation on(const event& _event)
     {
         stateIF::on(_event);
-        std::visit([&_event](auto& obj) 
+        return std::visit([&_event](auto& obj) 
         {
-           obj.on(_event); 
+           return obj.on(_event); 
         }, child);
     }
 
@@ -208,13 +209,13 @@ public:
             });
     }
     
-    void on(const event& _event) 
+    expectation on(const event& _event) 
     {
-        state<C...>::on(_event);
+        return state<C...>::on(_event);
     }
 
 
-    bool signal(const event& _event)
+    expectation signal(const event& _event)
     {
         for(const auto& t: transitions)
         {
@@ -225,11 +226,10 @@ public:
                 StateType::child = typename StateType::VariantType(transitioning());
                 assert(!t._to.second); // TODO if sub, then pass that sub as initial state AND SO ON (where is that info)
                 StateType::child = default_construct_by_index<typename StateType::VariantType>(t._to.first);
-                return true;
+                return as_expected;
             }
         }
-        on(_event);
-        return false;
+        return on(_event);
     } 
 
 private:

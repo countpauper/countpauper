@@ -4,16 +4,19 @@
 namespace eul 
 {
     
-void stateIF::entry()
+expectation stateIF::entry()
 {
+    return as_expected;
 }
 
-void stateIF::exit()
+expectation stateIF::exit()
 {
+    return as_expected;
 }
 
-void stateIF::on(const event& _event)
+expectation stateIF::on(const event& _event)
 {
+    return as_expected;
 }
 
 state::state()
@@ -28,26 +31,46 @@ state::state(std::initializer_list<std::reference_wrapper<state>> children_)
     }
 }
 
-void state::leave()
+expectation state::leave()
 {
     if (_state)
-        _state->leave();
+    {
+        auto result = _state->leave();
+        if (!result)
+        {
+            _state = nullptr;
+            return result;
+        }
+    }
     _state = nullptr;
-    exit();
+    return exit();
 }
 
-void state::confirm_substate_change() 
+expectation state::confirm_substate_change() 
 {
     if (!_state)
         _state = default_state();
-    if (_state)
-        _state->enter();
+    if (_state) 
+    {
+        auto enter_result = _state->enter();
+        if (!enter_result)
+        {
+            _state = nullptr;
+            return enter_result;
+        }
+        else
+            return enter_result;
+    }
+    else
+        return as_expected;
 }
 
-void state::enter()
+expectation state::enter()
 {
-    entry();
-    confirm_substate_change();
+    auto result = entry();
+    if (!result)
+        return result;
+    return confirm_substate_change();
 }
 
 state* state::default_state()
@@ -92,54 +115,67 @@ std::expected<state*, errno_t> state::change(state& to)
     for(auto& node: children)
     {
         state& child = static_cast<state&>(node);
-        if (auto result = child.change(to))
+        auto change_result = child.change(to);
+        if (change_result)
         {
-            if (_state==*result)
+            if (_state==*change_result)
             {
-                _state->confirm_substate_change();
+                auto entry_result = _state->confirm_substate_change();
+                if (!entry_result)
+                    return std::unexpected(entry_result.error());
                 return nullptr;
             }
-            else if (*result)
+            else if (*change_result)
             {
                 if (_state)
-                    _state->exit();
-                _state = *result;
+                {
+                    auto exit_result = _state->exit();
+                    if (!exit_result) 
+                    {
+                        _state = nullptr;
+                        return std::unexpected(exit_result.error());
+                    }
+                }
+                _state = *change_result;
                 return this;
             }
-        } 
+        } else if (change_result.error()!=ENOENT)
+            return std::unexpected(change_result.error());
     }
     return std::unexpected(ENOENT);
 }
 
-void state::signal(const event& _event)
+expectation state::signal(const event& _event)
 {
-    on(_event);
+    auto result = on(_event);
+    if (!result)
+        return result;
     if (_state)
-        _state->signal(_event);
+        return _state->signal(_event);
+    return result;
 }
 
 
 machine::machine(std::initializer_list<std::reference_wrapper<state>> children)
     : state(children)
 {
-    if (children.size()>0) 
-        (*change(*default_state()))->enter();
+    confirm_substate_change();
 }
 
-bool machine::signal(const event& _event)
+expectation machine::signal(const event& _event)
 {    
     if (state* target = find_transition(_event))
     {
-        auto result = change(*target);
-        if (result)
+        auto destination = change(*target);
+        if (destination)
         {
-            if (*result)
-                (*result)->enter();
-            return true;
-        }
+            if (*destination)
+                return (*destination)->enter();
+            return as_expected;
+        } if (destination.error()!=ENOENT) 
+            return std::unexpected(destination.error());
     }
-    signal(_event);
-    return false;
+    return state::signal(_event);
 }
 
 transition::transition(const event& _event, state& to) :
