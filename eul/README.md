@@ -67,6 +67,16 @@ and provide functions to convert to string or provide some level of severity may
 can of course also be converted to a single 32bit code.
 Components can also be registered and might be linked to logging categories. 
 
+## Identifier 
+State machine events, error categories and components and perhaps more need to have unique identifiers to recognize 
+an instance/type. For global types the pointer to the single instance can identify it. For instances that may be created 
+on the stack, an Identifier helper could hand out unique IDs. 
+The underlying size of the ID could be templated. This can also help reduce the memory footprint, for instance for 
+error caterogies to one byte.  
+The `event` type currently has the id built in. This could be generalized. Of course it should also be tested 
+that IDs don't run out. 
+IDs themselves should not be copyable. If you want to copy an object with an ID then it should create a new ID for itself  
+
 ## Logging 
 The logging from Angel could be reused. Perhaps as C++ wrappers around C logging.
 It could add source categories which are automatically added to the log, alongside the level and time 

@@ -2,7 +2,7 @@
 
 #include "event.hpp"
 #include "expectation.hpp"
-#include <variant> 
+#include "variant.hpp"
 #include <initializer_list>
 #include <vector> // TODO linked list or something 
 #include <cstdint> 
@@ -20,22 +20,6 @@ namespace eul
 {
 
 
-template<class... Ts> struct overloaded_visit : Ts... { using Ts::operator()...; };
-
-template <typename T, typename Variant, std::size_t... Is>
-constexpr std::size_t variant_index_of_impl(std::index_sequence<Is...>) 
-{
-    std::size_t result = static_cast<std::size_t>(-1);
-    ((std::is_same_v<T, std::variant_alternative_t<Is, Variant>> ? (result = Is, false) : false) || ...);
-    return result;
-}
-
-template <typename T, typename Variant>
-constexpr std::size_t variant_index_of() {
-    return variant_index_of_impl<T, Variant>(std::make_index_sequence<std::variant_size_v<Variant>>{});
-}
-
-
 template<typename... C> class state; 
 template<> class state<>; 
 
@@ -46,8 +30,8 @@ concept is_leaf_state = std::is_base_of_v<state<>, T>;
 template<typename T>
 concept is_branch_state = requires(T t) {
     { t.template in<state<>>() } -> std::convertible_to<bool>; 
+//    { T::template find<state<>>() } -> std::convertible_to<std::size_t>; 
 };
-
 
 /* this works if T is the State<T...> itself, not classes derived from it, which is not even good enough for the visit
 // Primary template: false for any type
@@ -86,6 +70,47 @@ public:
     stateIF& get();
 };
 
+template<typename FindT, typename Variant> 
+constexpr std::size_t find_child_transition();
+
+static constexpr std::size_t nostate(-1);
+
+template<typename FindT, typename Variant, std::size_t Idx=0>
+constexpr std::size_t find_child_transition_impl() 
+{
+    if constexpr (Idx>=std::variant_size_v<Variant>)
+        return nostate;
+    using ChildState = std::variant_alternative_t<Idx, Variant>;
+    if constexpr (is_branch_state<ChildState>)
+    {
+        constexpr std::size_t result = ChildState::template find<FindT>();
+        if constexpr (result==nostate)   // TODO can this be constexpr? 
+        {
+            return find_child_transition_impl<FindT, Variant, Idx+1>();
+
+        }
+        else 
+            return Idx + result * std::variant_size_v<Variant>;
+    }
+    else 
+        return nostate;
+}
+
+template<typename FindT, typename Variant> 
+constexpr std::size_t find_child_transition() 
+{
+    // TODO: can include variant_index_of in find_child_transition_impl instead 
+    std::size_t idx = variant_index_of<FindT, Variant>();
+    if (idx == static_cast<std::size_t>(-1))
+    {   
+        return find_child_transition_impl<FindT, Variant>();
+    }
+    else 
+    {
+        return idx;
+    }
+
+}
 
 // TODO : require each C to be a concept state 
 template<typename... C>
@@ -119,7 +144,6 @@ public:
             return obj.get();
         }, child);
     }    
-    static const std::size_t npos = -1;
 protected:
     expectation on(const event& _event)
     {
@@ -130,22 +154,18 @@ protected:
         }, child);
     }
 
+    using VariantType = std::variant<C..., transitioning>;
+
+    template<typename FT, typename VT, std::size_t Idx>
+    friend constexpr std::size_t find_child_transition_impl();
+
     template<typename CT>
-    static std::pair<uint8_t, bool> find()
+    static constexpr std::size_t find()
     {
-        std::size_t idx = variant_index_of<CT, VariantType>();
-        if (idx == npos)
-        {   // TODO iterate over all alterantives until found
-            return std::make_pair(0, true);
-        }
-        else 
-        {
-            assert(idx<256); // too many TODO error
-            return std::make_pair(idx, false);
-        }
+        return find_child_transition<CT, VariantType>();
     }
 
-    using VariantType = std::variant<C..., transitioning>;
+
     VariantType child;
 };
 
@@ -161,26 +181,7 @@ public:
     {
         return *this;  
     }    
-private:
 };
-
-template <typename Variant, std::size_t... Is>
-constexpr auto state_creators(std::index_sequence<Is...>) 
-{
-    return std::array<Variant(*)(), sizeof...(Is)>{
-        ([]() -> Variant { return Variant{std::in_place_index<Is>}; })...
-    };
-}
-
-template <typename Variant>
-Variant default_construct_by_index(std::size_t idx) 
-{
-    constexpr std::size_t N = std::variant_size_v<Variant>;
-    assert (idx < N -1 );   // trying to create non existing variant or Transitioning state 
-    static constexpr auto creators = state_creators<Variant>(std::make_index_sequence<N>{});
-    return creators[idx]();
-}
-
 
 template<typename... C>
 class machine : public state<C...> 
@@ -194,8 +195,8 @@ public:
     struct TransStruct
     {
         event _event;
-        std::pair<std::uint8_t, bool> _from;
-        std::pair<std::uint8_t, bool> _to;
+        std::size_t _from;
+        std::size_t _to;
     };
 
     template<typename From, typename To>
@@ -219,13 +220,12 @@ public:
     {
         for(const auto& t: transitions)
         {
-            assert(!t._from.second); // TODO handle in sub child
             if (t._event == _event &&
-                StateType::child.index() == t._from.first)
+                StateType::child.index() == t._from)
             {
                 StateType::child = typename StateType::VariantType(transitioning());
-                assert(!t._to.second); // TODO if sub, then pass that sub as initial state AND SO ON (where is that info)
-                StateType::child = default_construct_by_index<typename StateType::VariantType>(t._to.first);
+                auto result = construct_variant_by_index<typename StateType::VariantType>(t._to);
+                StateType::child = result.value();
                 return as_expected;
             }
         }

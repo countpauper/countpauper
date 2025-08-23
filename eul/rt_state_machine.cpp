@@ -36,13 +36,10 @@ expectation state::leave()
     if (_state)
     {
         auto result = _state->leave();
+        _state = nullptr;
         if (!result)
-        {
-            _state = nullptr;
             return result;
-        }
     }
-    _state = nullptr;
     return exit();
 }
 
@@ -50,19 +47,12 @@ expectation state::confirm_substate_change()
 {
     if (!_state)
         _state = default_state();
-    if (_state) 
-    {
-        auto enter_result = _state->enter();
-        if (!enter_result)
-        {
-            _state = nullptr;
-            return enter_result;
-        }
-        else
-            return enter_result;
-    }
-    else
+    if (!_state) 
         return as_expected;
+    auto enter_result = _state->enter();
+    if (!enter_result)
+        _state = nullptr;
+    return enter_result;
 }
 
 expectation state::enter()
@@ -75,11 +65,9 @@ expectation state::enter()
 
 state* state::default_state()
 {
-    if (!children.empty())
-    {
-        return &static_cast<state&>(children.front());
-    }
-    return nullptr;
+    if (children.empty())
+        return nullptr;
+    return &static_cast<state&>(children.front());
 }
 
 bool state::in(const state& query) const
@@ -109,14 +97,11 @@ state* state::find_transition(const event& _event) const
 std::expected<state*, errno_t> state::change(state& to)
 {
     if (this == &to)
-    {
         return this;
-    }
     for(auto& node: children)
     {
         state& child = static_cast<state&>(node);
-        auto change_result = child.change(to);
-        if (change_result)
+        if (auto change_result = child.change(to))
         {
             if (_state==*change_result)
             {
