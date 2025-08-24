@@ -44,6 +44,10 @@ All containers should be iterable and the iterators should meet at least one [it
 - Preferably have an initialize_list constructor 
 - Preferably be movable 
 
+# Documentation 
+
+TODO: link to a README for each utility 
+
 # Ideas
 
 ## mini functors 

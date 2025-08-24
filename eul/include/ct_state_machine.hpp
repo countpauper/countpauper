@@ -13,15 +13,23 @@
 // Compile time state machine: 
 // 1) RAII states constructed when activated. 
 // 2) Compile time generation of state transition table
-// Status: hierarchical transitions still needs to be generated properly (variable depth represented how)?
-// And after that state transitions to non-default child states of parent states 
 
 namespace eul
 {
 
+using state_hash = std::size_t; 
+class stateIF
+{
+public:
+    virtual expectation on(const event& _event);
+};
 
-template<typename... C> class state; 
+template<typename T> 
+concept is_state  = std::is_base_of_v<stateIF, T>;
+
+template<is_state... C> class state; 
 template<> class state<>; 
+
 
 template<typename T>
 concept is_leaf_state = std::is_base_of_v<state<>, T>;
@@ -30,80 +38,45 @@ concept is_leaf_state = std::is_base_of_v<state<>, T>;
 template<typename T>
 concept is_branch_state = requires(T t) {
     { t.template in<state<>>() } -> std::convertible_to<bool>; 
-//    { T::template find<state<>>() } -> std::convertible_to<std::size_t>; 
+    { t.template get() } -> std::convertible_to<stateIF>; 
+//    { constexpr T::template find<state<>>() } -> std::convertible_to<state_hash>; 
 };
 
-/* this works if T is the State<T...> itself, not classes derived from it, which is not even good enough for the visit
-// Primary template: false for any type
-template<typename T>
-struct is_branch_state_instantiation : std::false_type {};
-
-// Specialization for Wrapper with any args
-template<typename First, typename... Args>
-struct is_branch_state_instantiation<State<First, Args...>> : std::true_type {};
-
-template<typename T>
-inline constexpr bool is_branch_state = is_branch_state_instantiation<std::remove_cv_t<T>>::value;
-*/
-
-/* // This only works if the user adds  using is_branch_tag = void;  to all states
-template<typename T, typename = void>
-struct derives_from_branch_state : std::false_type {};
-
-template<typename T>
-struct derives_from_branch_state<T, std::void_t<typename T::is_branch_tag>> : std::true_type {};
-
-// Concept form
-template<typename T>
-concept is_branch_state = derives_from_branch_state<T>::value;
-*/
-
-class stateIF
-{
-public:
-    virtual expectation on(const event& _event);
-};
 
 class transitioning : public stateIF 
 {
-public:
-    stateIF& get();
 };
 
 template<typename FindT, typename Variant> 
-constexpr std::size_t find_child_transition();
+constexpr state_hash find_child_transition();
 
-static constexpr std::size_t nostate(-1);
+static constexpr state_hash nostate(-1);
+static constexpr state_hash anystate(-2);
 
 template<typename FindT, typename Variant, std::size_t Idx=0>
-constexpr std::size_t find_child_transition_impl() 
+constexpr state_hash find_child_transition_impl() 
 {
-    if constexpr (Idx>=std::variant_size_v<Variant>)
-        return nostate;
     using ChildState = std::variant_alternative_t<Idx, Variant>;
     if constexpr (is_branch_state<ChildState>)
     {
-        constexpr std::size_t result = ChildState::template find<FindT>();
-        if constexpr (result==nostate)   // TODO can this be constexpr? 
+        constexpr state_hash result = ChildState::template find<FindT>();
+        if constexpr (result!=nostate)   // TODO can this be constexpr? 
         {
-            return find_child_transition_impl<FindT, Variant, Idx+1>();
-        }
-        else 
-        {
-            static_assert(result < std::numeric_limits<std::size_t>::max() / std::variant_size_v<Variant>); // prevent overflow    
+            static_assert(result < anystate / std::variant_size_v<Variant>); // prevent overflow    
             return Idx + result * std::variant_size_v<Variant>;
         }
     }
+    if constexpr (Idx<std::variant_size_v<Variant>-1)
+        return find_child_transition_impl<FindT, Variant, Idx+1>();
     else 
         return nostate;
 }
 
 template<typename FindT, typename Variant> 
-constexpr std::size_t find_child_transition() 
+constexpr state_hash find_child_transition() 
 {
-    // TODO: can include variant_index_of in find_child_transition_impl instead 
-    std::size_t idx = variant_index_of<FindT, Variant>();
-    if (idx == static_cast<std::size_t>(-1))
+    state_hash idx = variant_index_of<FindT, Variant>();
+    if (idx == nostate)
     {   
         return find_child_transition_impl<FindT, Variant>();
     }
@@ -113,13 +86,12 @@ constexpr std::size_t find_child_transition()
     }
 }
 
-// TODO : require each C to be a concept state 
-template<typename... C>
+template<is_state... C>
 class state : public stateIF
 {
 public:
     state() = default;
-    explicit state(std::size_t to) 
+    explicit state(state_hash to) 
     {
         auto index = to % std::variant_size<VariantType>();
         auto sub = to / std::variant_size<VariantType>();      
@@ -130,7 +102,7 @@ public:
         if (result)
             child = result.value();
     }
-    template<typename... FC>
+    template<is_state... FC>
     friend class state;
 
 
@@ -151,9 +123,16 @@ public:
     }
     stateIF& get()
     {
-        return std::visit([](auto& obj) -> stateIF&  
-        {
-            return obj.get();
+        return std::visit(overloaded_visit{
+            [](auto& obj) -> stateIF&
+            requires is_branch_state<decltype(obj)>  
+            {
+                return obj.get();
+            },
+            [](stateIF& leaf) -> stateIF&
+            {
+                return leaf;
+            }
         }, child);
     }    
     expectation change(std::size_t to)
@@ -199,10 +178,10 @@ protected:
     using VariantType = std::variant<C..., transitioning>;
 
     template<typename FT, typename VT, std::size_t Idx>
-    friend constexpr std::size_t find_child_transition_impl();
+    friend constexpr state_hash find_child_transition_impl();
 
     template<typename CT>
-    static constexpr std::size_t find()
+    static constexpr state_hash find()
     {
         return find_child_transition<CT, VariantType>();
     }
@@ -211,18 +190,14 @@ protected:
     VariantType child;
 };
 
-// Child Leaf state 
+// Child/Leaf state 
 template<>
 class state<> : public stateIF
 {
-    template<typename... FC>
+    template<is_state... FC>
     friend class state;
 public:
     state() = default;
-    stateIF& get()
-    {
-        return *this;  
-    }    
 };
 
 template<typename... C>
@@ -231,14 +206,12 @@ class machine : public state<C...>
 public:
     using StateType = state<C...>;
 
-    machine()
-    {
-    }
+    machine() = default;
     struct TransStruct
     {
         event _event;
-        std::size_t _from;
-        std::size_t _to;
+        state_hash _from;
+        state_hash _to;
     };
 
     template<typename From, typename To>
@@ -252,18 +225,27 @@ public:
             });
     }
     
+    template<typename To>
+    void transition(const event& _event)
+    {  
+        transitions.push_back(
+            TransStruct{
+                ._event = _event, 
+                ._from = anystate,
+                ._to = StateType::template find<To>()
+            });
+    }    
     expectation on(const event& _event) 
     {
         return state<C...>::on(_event);
     }
-
 
     expectation signal(const event& _event)
     {
         for(const auto& t: transitions)
         {
             if (t._event == _event &&
-                (t.from == nostate || StateType::child.index() == t._from)
+                (t._from == anystate || StateType::child.index() == t._from))
             {
                 return StateType::change(t._to);
             }
@@ -276,6 +258,9 @@ private:
     // OR require it to be the initializer list and keep that. Its elements are created with a templated function to make it 
     // but that function would require the variant/sm already which is being constructed so circular dependency 
 };
+
+
+
 
 
 }

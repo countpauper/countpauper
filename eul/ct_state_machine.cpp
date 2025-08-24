@@ -1,11 +1,6 @@
 #include "ct_state_machine.hpp"
 
-namespace eul 
+namespace eul
 {
-
-stateIF& transitioning::get()
-{
-    return *this;
-}    
 
 }
