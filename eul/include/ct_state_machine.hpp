@@ -8,7 +8,7 @@
 #include <cstdint> 
 #include <type_traits>
 #include <assert.h>
-
+#include <limits>
 
 // Compile time state machine: 
 // 1) RAII states constructed when activated. 
@@ -87,10 +87,12 @@ constexpr std::size_t find_child_transition_impl()
         if constexpr (result==nostate)   // TODO can this be constexpr? 
         {
             return find_child_transition_impl<FindT, Variant, Idx+1>();
-
         }
         else 
+        {
+            static_assert(result < std::numeric_limits<std::size_t>::max() / std::variant_size_v<Variant>); // prevent overflow    
             return Idx + result * std::variant_size_v<Variant>;
+        }
     }
     else 
         return nostate;
@@ -109,7 +111,6 @@ constexpr std::size_t find_child_transition()
     {
         return idx;
     }
-
 }
 
 // TODO : require each C to be a concept state 
@@ -144,6 +145,13 @@ public:
             return obj.get();
         }, child);
     }    
+    expectation change(std::size_t to)
+    {
+        child = VariantType(transitioning());
+        auto result = construct_variant_by_index<VariantType>(to);
+        child = result.value();
+        return as_expected;
+    }
 protected:
     expectation on(const event& _event)
     {
@@ -223,10 +231,7 @@ public:
             if (t._event == _event &&
                 StateType::child.index() == t._from)
             {
-                StateType::child = typename StateType::VariantType(transitioning());
-                auto result = construct_variant_by_index<typename StateType::VariantType>(t._to);
-                StateType::child = result.value();
-                return as_expected;
+                return StateType::change(t._to);
             }
         }
         return on(_event);

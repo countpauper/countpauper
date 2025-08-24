@@ -7,21 +7,27 @@
 namespace eul 
 {
 
-template <typename Variant, std::size_t... Idx>
-constexpr auto _alternative_creators(std::index_sequence<Idx...>) 
+template <typename Variant, typename... Args, std::size_t... Is>
+constexpr auto _alternative_creators(std::index_sequence<Is...>) 
 {
-    return std::array<Variant(*)(), sizeof...(Idx)>{
-        ([]() -> Variant { return Variant{std::in_place_index<Idx>}; })...
+    using Creator = Variant(*)(Args&&...);
+    return std::array<Creator, sizeof...(Is)>{
+        {
+            [](Args&&... args) -> Variant 
+            {
+                return Variant{std::in_place_index<Is>, std::forward<Args>(args)...};
+            }...
+        }
     };
 }
 
 template <typename Variant, typename... Args>
-std::expected<Variant, errno_t> construct_variant_by_index(std::size_t idx, Args&&... args) 
+constexpr std::expected<Variant, errno_t> construct_variant_by_index(std::size_t idx, Args&&... args) 
 {
     constexpr std::size_t N = std::variant_size_v<Variant>;
     if (idx >= N)
         return std::unexpected(EINVAL);
-    static constexpr auto creators = _alternative_creators<Variant>(std::make_index_sequence<N>{});
+    static constexpr auto creators = _alternative_creators<Variant, Args...>(std::make_index_sequence<N>{});
     return creators[idx](std::forward<Args>(args)...);
 }
 

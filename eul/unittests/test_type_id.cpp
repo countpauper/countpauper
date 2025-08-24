@@ -5,23 +5,23 @@ namespace eul::Test
 {
 
 
-TEST(TypeId, Unique)
+TEST(type_id, unique)
 {
     EXPECT_EQ(type_id<int>(), type_id<int>());
     EXPECT_NE(type_id<int>(), type_id<unsigned>());
 }
 
-TEST(TypeId, ConstIsSameType)
+TEST(type_id, const_is_same_type)
 {
     EXPECT_EQ(type_id<int>(), type_id<const int>());
 }
 
-TEST(TypeId, ReferenceIsSametype)
+TEST(type_id, reference_is_same_type)
 {
     EXPECT_EQ(type_id<int&>(), type_id<int>());
 }
 
-TEST(TypeId, Struct)
+TEST(type_id, struct)
 {
     struct Test 
     {
@@ -31,13 +31,13 @@ TEST(TypeId, Struct)
     EXPECT_NE(type_id<Test>(), 0);
 }
 
-TEST(TypeId, OfValue)
+TEST(type_id, of_value)
 {
     const int a=0;
     EXPECT_EQ(type_id(a), type_id<int>());
 };
 
-TEST(TypeId, VolatileIsSame)
+TEST(type_id, volatile_is_same_type_id)
 {
     volatile int a=0;
     EXPECT_EQ(type_id(a), type_id<int>());

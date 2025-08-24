@@ -7,7 +7,7 @@ using namespace ::testing;
 namespace eul::Test
 {
 
-TEST(Signal, ConnectDisconnect)
+TEST(signal, connect_disconnect)
 {
     slot<> s;
     EXPECT_FALSE(s.connected());
@@ -21,7 +21,7 @@ TEST(Signal, ConnectDisconnect)
     s.disconnect();
 }
 
-TEST(Signal, One) 
+TEST(signal, one) 
 {
     signal<> sig;
     MockFunction<void(void)> cb;
@@ -34,7 +34,7 @@ TEST(Signal, One)
     sig();
 }
 
-TEST(Signal, Multiple) 
+TEST(signal, multiple) 
 {
     signal<> sig;
     MockFunction<void(void)> a;
@@ -50,7 +50,7 @@ TEST(Signal, Multiple)
     EXPECT_EQ(sig.connections(), 0);
 }
 
-TEST(Signal, SignalWithArgs) 
+TEST(signal, signal_with_args) 
 {
     signal<bool, int> sig;
     MockFunction<void(bool, int)> a;
@@ -60,7 +60,7 @@ TEST(Signal, SignalWithArgs)
     sig(true, v);
 }
 
-TEST(Signal, DisconnectDuringSignal) 
+TEST(signal, disconnect_during_signal) 
 {
     signal<> sig;
 

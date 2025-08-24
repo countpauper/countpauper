@@ -68,10 +68,15 @@ can of course also be converted to a single 32bit code.
 Components can also be registered and might be linked to logging categories. 
 
 ## Identifier 
+
+Status: Identifier was split off from event. Needs 
+1. Unit tests
+1. Determine if copying should generate new IDs (and moving not). Sounds logical, but if done, state machine unit tests break.
+
 State machine events, error categories and components and perhaps more need to have unique identifiers to recognize 
 an instance/type. For global types the pointer to the single instance can identify it. For instances that may be created 
 on the stack, an Identifier helper could hand out unique IDs. 
-The underlying size of the ID could be templated. This can also help reduce the memory footprint, for instance for 
+The underlying size of the ID could be templated  This can also help reduce the memory footprint, for instance for 
 error caterogies to one byte.  
 The `event` type currently has the id built in. This could be generalized. Of course it should also be tested 
 that IDs don't run out. 
