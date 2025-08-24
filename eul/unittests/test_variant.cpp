@@ -52,12 +52,10 @@ TEST(variant, construct_by_index)
     static_assert(!construct_variant_by_index<Variant0AB>(3));
 }
 
-// construct_variant_by_index with arguments only works if all variants have the same constructor signature 
-// this precludes std::monostate
-using VariantAB = std::variant<AlternativeA, AlternativeB>;
 TEST(variant, construct_by_index_with_args)
 {
-    EXPECT_EQ(std::get<AlternativeA>(construct_variant_by_index<VariantAB>(0, 'a').value()), AlternativeA('a'));
+    EXPECT_EQ(std::get<AlternativeA>(construct_variant_by_index<Variant0AB>(1, 'a').value()), AlternativeA('a'));
+    EXPECT_FALSE(construct_variant_by_index<Variant0AB>(0, '?'));
 }
 
 

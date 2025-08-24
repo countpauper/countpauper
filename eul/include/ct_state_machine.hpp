@@ -119,9 +119,20 @@ class state : public stateIF
 {
 public:
     state() = default;
-   
+    explicit state(std::size_t to) 
+    {
+        auto index = to % std::variant_size<VariantType>();
+        auto sub = to / std::variant_size<VariantType>();      
+        auto result = construct_variant_by_index<VariantType>(index, sub);
+        if (!result && sub==0)
+            result = construct_variant_by_index<VariantType>(index);
+        assert(result);
+        if (result)
+            child = result.value();
+    }
     template<typename... FC>
     friend class state;
+
 
     template<typename QC>
     bool in() const 
@@ -148,9 +159,32 @@ public:
     expectation change(std::size_t to)
     {
         child = VariantType(transitioning());
-        auto result = construct_variant_by_index<VariantType>(to);
-        child = result.value();
-        return as_expected;
+        auto index = to % std::variant_size<VariantType>();
+        auto sub = to / std::variant_size<VariantType>();
+        if (index  == child.index())
+        { 
+            return std::visit(overloaded_visit
+            {
+                [sub](const auto& _branch)
+                requires is_branch_state<decltype(_branch)>
+                { 
+                    return _branch.change(sub);
+                },
+                [sub](auto&)
+                {
+                    assert(sub==0);
+                    return std::unexpected(ECHILD);
+                }
+            }, child);
+        }
+        else 
+        {
+            auto result = construct_variant_by_index<VariantType>(index, sub);
+            if (!result)
+                return std::unexpected(result.error());
+            child = result.value();
+            return as_expected;
+        }
     }
 protected:
     expectation on(const event& _event)
@@ -229,7 +263,7 @@ public:
         for(const auto& t: transitions)
         {
             if (t._event == _event &&
-                StateType::child.index() == t._from)
+                (t.from == nostate || StateType::child.index() == t._from)
             {
                 return StateType::change(t._to);
             }

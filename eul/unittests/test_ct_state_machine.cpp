@@ -16,6 +16,7 @@ public:
 class MockChild : public state<> 
 { 
 public:
+    using state::state;
     StateMock* mock = nullptr;  // TODO: mock reference should not be copyable, just movable. Maybe just unique ptr?
     expectation on(const event& ev) override
     {
@@ -27,9 +28,9 @@ public:
 };
 
 
-class Solid : public MockChild {  };
+class Solid : public MockChild { };
 class Blinking : public MockChild { }; 
-class On : public state<Solid, Blinking> { };
+class On : public state<Solid, Blinking> { using state::state; };
 class Off : public MockChild { } ;
 
 
@@ -60,7 +61,7 @@ TEST(ct_state_machine, transition)
     EXPECT_TRUE(sm.in<Solid>());
 }
 
-TEST(ct_state_machine, DISABLED_to_sub_state)
+TEST(ct_state_machine, to_sub_state)
 {
     // TODO: to implement this 
     // 1) [done] Transitions should encode a chain of alternative indices to switch to 
