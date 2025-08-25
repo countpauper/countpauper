@@ -3,12 +3,11 @@
 #include "event.hpp"
 #include "expectation.hpp"
 #include "variant.hpp"
+#include "intrusive_list.hpp"
 #include <initializer_list>
-#include <vector> // TODO linked list or something 
 #include <cstdint> 
 #include <type_traits>
 #include <assert.h>
-#include <limits>
 
 // Compile time state machine: 
 // 1) RAII states constructed when activated. 
@@ -124,6 +123,13 @@ public:
             }
         }, child);
     }    
+
+    template<typename CT> 
+    expectation change()
+    {
+        return change(find_child_transition<CT, VariantType>());
+    }
+protected:
     expectation change(std::size_t to)
     {
         child = VariantType(transitioning());
@@ -153,7 +159,7 @@ public:
             }
         }, child);
     }
-protected:
+
     expectation on(const event& _event)
     {
         stateIF::on(_event);
@@ -188,40 +194,49 @@ public:
     state() = default;
 };
 
+
 template<typename... C>
 class machine : public state<C...> 
 {
 public:
     using StateType = state<C...>;
 
-    machine() = default;
-    struct TransStruct
+    struct Transition : public intrusive_list::node 
     {
+        Transition(intrusive_list& list, const event& ev, state_hash f, state_hash t) : 
+            intrusive_list::node(list),
+            _event(ev),
+            _from(f),
+            _to(t)
+        {
+        }
         event _event;
         state_hash _from;
         state_hash _to;
     };
 
+    machine() = default;
+
     template<typename From, typename To>
-    void transition(const event& _event)
+    Transition transition(const event& _event)
     {  
-        transitions.push_back(
-            TransStruct{
-                ._event = _event, 
-                ._from = StateType::template find<From>(),
-                ._to = StateType::template find<To>()
-            });
+        return Transition {
+                _transitions,
+                _event, 
+                StateType::template find<From>(),
+                StateType::template find<To>()
+            };
     }
     
     template<typename To>
-    void transition(const event& _event)
+    Transition transition(const event& _event)
     {  
-        transitions.push_back(
-            TransStruct{
-                ._event = _event, 
-                ._from = anystate,
-                ._to = StateType::template find<To>()
-            });
+        return Transition{
+                _transitions,
+                _event, 
+                anystate,
+                StateType::template find<To>()
+            };
     }    
     expectation on(const event& _event) 
     {
@@ -230,8 +245,9 @@ public:
 
     expectation signal(const event& _event)
     {
-        for(const auto& t: transitions)
+        for(const auto& n: _transitions)
         {
+            const Transition& t  = static_cast<const Transition&>(n); 
             if (t._event == _event &&
                 (t._from == anystate || StateType::child.index() == t._from))
             {
@@ -242,9 +258,7 @@ public:
     } 
 
 private:
-    std::vector<TransStruct> transitions;    // TODO: avoid heap. Linked list, but return from Transition?
-    // OR require it to be the initializer list and keep that. Its elements are created with a templated function to make it 
-    // but that function would require the variant/sm already which is being constructed so circular dependency 
+    intrusive_list _transitions;   
 };
 
 
