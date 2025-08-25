@@ -91,20 +91,9 @@ class state : public stateIF
 {
 public:
     state() = default;
-    explicit state(state_hash to) 
-    {
-        auto index = to % std::variant_size<VariantType>();
-        auto sub = to / std::variant_size<VariantType>();      
-        auto result = construct_variant_by_index<VariantType>(index, sub);
-        if (!result && sub==0)
-            result = construct_variant_by_index<VariantType>(index);
-        assert(result);
-        if (result)
-            child = result.value();
-    }
+
     template<is_state... FC>
     friend class state;
-
 
     template<typename QC>
     bool in() const 
@@ -140,30 +129,29 @@ public:
         child = VariantType(transitioning());
         auto index = to % std::variant_size<VariantType>();
         auto sub = to / std::variant_size<VariantType>();
-        if (index  == child.index())
+        if (index  != child.index())
         { 
-            return std::visit(overloaded_visit
-            {
-                [sub](const auto& _branch)
-                requires is_branch_state<decltype(_branch)>
-                { 
-                    return _branch.change(sub);
-                },
-                [sub](auto&)
-                {
-                    assert(sub==0);
-                    return std::unexpected(ECHILD);
-                }
-            }, child);
-        }
-        else 
-        {
-            auto result = construct_variant_by_index<VariantType>(index, sub);
+            auto result = construct_variant_by_index<VariantType>(index);
             if (!result)
                 return std::unexpected(result.error());
+            
             child = result.value();
-            return as_expected;
         }
+        return std::visit(overloaded_visit
+        {
+            [sub](auto& _branch) -> expectation
+            requires is_branch_state<decltype(_branch)>
+            { 
+                return _branch.change(sub);
+            },
+            [sub](auto&) -> expectation
+            {
+                if (sub==0)
+                    return as_expected;
+                else 
+                    return std::unexpected(ENOENT);
+            }
+        }, child);
     }
 protected:
     expectation on(const event& _event)

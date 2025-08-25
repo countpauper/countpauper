@@ -27,14 +27,9 @@ public:
     }
 };
 
-
 class Solid : public MockChild { };
 class Blinking : public MockChild { }; 
-// TODO needing to inherit state constructors to construct substate by state hash is fragile. 
-// Also if the sub state does want entry behavior they have to manually implement that too  
-// Idea: default state constructors, but start in Transitioning state for parents (index 0 anyway)
-// then the state creators will call change immediately after 
-class On : public state<Solid, Blinking> { using state::state; }; 
+class On : public state<Solid, Blinking> { }; 
 class Off : public MockChild { } ;
 
 
