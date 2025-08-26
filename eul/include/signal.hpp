@@ -65,11 +65,14 @@ class signal
 {
 public:
     signal() = default;
-    using slotType = slot<Args...>;
-    using callback = slotType::callback;
-    slotType connect(callback cb)
+    using SlotType = slot<Args...>;
+    using callback = SlotType::callback;
+    SlotType connect(callback cb)
     {
-        return slotType(_slots, cb);
+        if (cb)
+            return SlotType(_slots, cb);
+        else
+            return SlotType();
     }
     void disconnect() 
     {
@@ -81,21 +84,22 @@ public:
     {
         for(intrusive_list::node& _node: _slots) 
         {
-            static_cast<slotType&>(_node).queue();
+            static_cast<SlotType&>(_node).queue();
         }
         for(const intrusive_list::node& _node: _slots) 
         {
-            const slotType& slot = static_cast<const slotType&>(_node);
+            const SlotType& slot = static_cast<const SlotType&>(_node);
             if (slot.queued)
-                static_cast<const slotType&>(slot).cb(std::forward<Pargs>(args)...);
+                static_cast<const SlotType&>(slot).cb(std::forward<Pargs>(args)...);
         }
         for(intrusive_list::node& _node: _slots) 
         {
-            static_cast<slotType&>(_node).dequeue();
+            static_cast<SlotType&>(_node).dequeue();
         }
     }
     std::size_t connections() const { return _slots.size(); }
 private:
     intrusive_list _slots;
 };
+
 }

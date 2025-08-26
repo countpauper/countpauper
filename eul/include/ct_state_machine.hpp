@@ -59,7 +59,7 @@ constexpr state_hash find_child_transition_impl()
     if constexpr (is_branch_state<ChildState>)
     {
         constexpr state_hash result = ChildState::template find<FindT>();
-        if constexpr (result!=nostate)   // TODO can this be constexpr? 
+        if constexpr (result!=nostate)    
         {
             static_assert(result < anystate / std::variant_size_v<Variant>); // prevent overflow    
             return Idx + result * std::variant_size_v<Variant>;

@@ -48,6 +48,7 @@ TEST(signal, multiple)
 
     sig.disconnect();
     EXPECT_EQ(sig.connections(), 0);
+    sig();
 }
 
 TEST(signal, signal_with_args) 
@@ -80,6 +81,16 @@ TEST(signal, disconnect_during_signal)
     sig();
     EXPECT_FALSE(s.connected());
     EXPECT_TRUE(backslot.connected());
+}
+
+
+TEST(signal, null_callback_cant_be_connected) 
+{
+    signal<> s;
+    auto nullslot = s.connect(nullptr);
+    EXPECT_FALSE(nullslot.connected());
+    EXPECT_EQ(s.connections(), 0);
+    s();
 }
 
 
