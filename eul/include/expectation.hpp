@@ -47,7 +47,7 @@ constexpr auto operator&&(expectation lhs, Fn&& rhs)
     using R = std::remove_cvref_t<std::invoke_result_t<Fn>>;
     if (!lhs)
         return R(std::unexpected(lhs.error()));
-    return std::__invoke(std::forward<Fn>(rhs));
+    return std::invoke(std::forward<Fn>(rhs));
 }
 
 
@@ -56,7 +56,7 @@ requires std::same_as<typename std::remove_cvref_t<std::invoke_result_t<Fn>>, ex
 constexpr expectation operator||(expectation lhs, Fn&& rhs)
 {
     if (!lhs)
-        return std::__invoke(std::forward<Fn>(rhs));
+        return std::invoke(std::forward<Fn>(rhs));
     else 
         return lhs;
 }

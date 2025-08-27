@@ -9,7 +9,7 @@ namespace eul::Test
 
 TEST(signal, connect_disconnect)
 {
-    slot<> s;
+    slot_fn<> s;
     EXPECT_FALSE(s.connected());
     signal<> sig;
     s = sig.connect([](){});
@@ -41,7 +41,7 @@ TEST(signal, multiple)
     MockFunction<void(void)> b;
     EXPECT_CALL(a, Call).Times(1);     
     EXPECT_CALL(b, Call).Times(1);     
-    slot<> A(sig, a.AsStdFunction());
+    slot_fn<> A(sig, a.AsStdFunction());
     auto B = sig.connect(b.AsStdFunction());
     EXPECT_EQ(sig.connections(), 2);
     sig();
@@ -67,16 +67,16 @@ TEST(signal, disconnect_during_signal)
 
     MockFunction<void()> stillCalled;    
     EXPECT_CALL(stillCalled, Call()).Times(2);
-    slot<> backslot(sig, stillCalled.AsStdFunction());
+    slot_fn<> backslot(sig, stillCalled.AsStdFunction());
 
     MockFunction<void()> disconnecter;
-    slot<> s;
+    slot_fn<> s;
     EXPECT_CALL(disconnecter, Call()).Times(1).WillOnce(Invoke([&s]()
     {
         s.disconnect();
     }));
     s = sig.connect(disconnecter.AsStdFunction());
-    slot<> frontslot(sig, stillCalled.AsStdFunction());
+    slot_fn<> frontslot(sig, stillCalled.AsStdFunction());
 
     sig();
     EXPECT_FALSE(s.connected());
@@ -93,5 +93,15 @@ TEST(signal, null_callback_cant_be_connected)
     s();
 }
 
+void free_function(int& a) { a+=1; } 
+
+TEST(signal, free_function_callback) 
+{
+    signal<int&> s;
+    auto free_slot = s.connect2(free_function);
+    int v = 0;
+    s(v);
+    EXPECT_EQ(v, 1);
+}
 
 }

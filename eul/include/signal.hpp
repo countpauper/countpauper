@@ -9,19 +9,15 @@ namespace eul
 template<typename ...Args> 
 class signal;
 
-template<typename ...Args>
-class slot : protected intrusive_list::node
-{
+template<class... Args >
+class __slot :  protected intrusive_list::node
+{  
 public:
-    using callback = std::function<void(Args...)>;
-    using signalType = signal<Args...>;
+    __slot() = default;
+    virtual ~__slot() = default;
+    virtual void operator()(Args...) = 0;
 
-    slot() = default;
-    slot(signalType& signal, const callback& cb) :
-        slot(signal.connect(cb))
-    {
-    }
-    inline void disconnect() 
+    void disconnect()
     {
         if (queued)
             disconnected = true;
@@ -35,13 +31,17 @@ public:
     inline bool connected() const 
     {
         return !disconnected && linked();
-    }
-private:
-    slot(intrusive_list& list, callback cb) :
-        node(list),
-        cb(cb)
+    }    
+protected:
+    template<typename... FriendArgs>
+    friend class signal;
+    
+    __slot(intrusive_list& list) : 
+        intrusive_list::node(list)
     {
     }
+
+
     void queue()
     {
         queued = true;
@@ -53,11 +53,54 @@ private:
         {
             disconnect();
         }
-    }
-    friend class signal<Args...>;
-    callback cb;
+    }    
+
     bool queued:1 = false; 
     bool disconnected:1 = false;
+};
+
+template<class F, class... Args>
+requires std::invocable<F, Args...>
+class slot 
+    : public __slot<Args...>
+{
+public:
+    using BaseType = __slot<Args...>;
+
+    slot() = default;
+
+
+    slot(signal<Args...>& signal, F&& cb) :
+        slot(signal.connect(std::move(cb)))
+    {
+    }
+
+    void operator()(Args... args) override
+    {
+        if (!BaseType::queued)
+            return;
+        std::invoke(fn, std::forward<Args>(args)...);
+    }
+protected:
+    template<typename... FriendArgs>
+    friend class signal;
+    
+    slot(intrusive_list& list, F&& fn) :
+        BaseType(list),
+        fn(std::move(fn))
+    {
+    }
+
+    F fn;
+
+};
+
+template<typename...Args>
+class slot_fn: public slot<std::function<void(Args...)>, Args...>
+{
+public:
+    using SlotType = slot<std::function<void(Args...)>, Args...>;
+    using SlotType::slot;
 };
 
 template<typename ...Args>
@@ -65,15 +108,22 @@ class signal
 {
 public:
     signal() = default;
-    using SlotType = slot<Args...>;
-    using callback = SlotType::callback;
-    SlotType connect(callback cb)
+
+    auto connect(std::function<void(Args...)>&& cb)
     {
         if (cb)
-            return SlotType(_slots, cb);
+            return slot_fn<Args...>(_slots, std::move(cb));
         else
-            return SlotType();
+            return slot_fn<Args...>();
     }
+
+    template<typename Fn>
+    requires std::invocable<Fn, Args...>
+    auto connect2(Fn&& fn)
+    {
+        return slot<Fn, Args...>(_slots, std::move(fn));
+    }
+
     void disconnect() 
     {
         _slots.clear();
@@ -82,20 +132,22 @@ public:
     template<typename... Pargs>
     void operator()(Pargs&&... args) const
     {
+        using SlotType = __slot<Args...>;
         for(intrusive_list::node& _node: _slots) 
         {
-            static_cast<SlotType&>(_node).queue();
-        }
-        for(const intrusive_list::node& _node: _slots) 
-        {
-            const SlotType& slot = static_cast<const SlotType&>(_node);
-            if (slot.queued)
-                static_cast<const SlotType&>(slot).cb(std::forward<Pargs>(args)...);
+            auto& s = static_cast<SlotType&>(_node);
+            s.queue();
         }
         for(intrusive_list::node& _node: _slots) 
         {
-            static_cast<SlotType&>(_node).dequeue();
+            auto& s = static_cast<SlotType&>(_node);
+            s(std::forward<Pargs>(args)...);
         }
+        for(intrusive_list::node& _node: _slots) 
+        {
+            auto& s = static_cast<SlotType&>(_node);
+            s.dequeue();
+        }        
     }
     std::size_t connections() const { return _slots.size(); }
 private:
