@@ -1,4 +1,5 @@
 #include "signal.hpp"
+#include "captor.hpp"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -103,5 +104,23 @@ TEST(signal, free_function_callback)
     s(v);
     EXPECT_EQ(v, 1);
 }
+
+TEST(signal, two_captors_called) 
+{
+    MockFunction<void(unsigned, int)> call1;   
+    captor<decltype(call1.AsStdFunction()), unsigned> cap1(call1.AsStdFunction(), 0);
+    EXPECT_CALL(call1, Call(0, -3));
+
+    MockFunction<void(unsigned, int, int)> call2;   
+    captor<decltype(call2.AsStdFunction()), unsigned, int> cap2(call2.AsStdFunction(), 1, 2);
+    EXPECT_CALL(call2, Call(1, 2, -3));
+
+    signal<int> sig;
+    auto slot1 = sig.connect(cap1);
+    auto slot2 = sig.connect(cap2);
+
+    sig(-3);
+}
+
 
 }

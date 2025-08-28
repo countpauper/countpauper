@@ -1,4 +1,7 @@
 {
+    "files.exclude": {
+        "build/": true
+    },
     "files.associations": {
         "memory_resource": "cpp",
         "array": "cpp",
