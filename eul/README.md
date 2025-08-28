@@ -50,19 +50,6 @@ TODO: link to a README for each utility
 
 # Ideas
 
-## mini functors 
-
-`std::function<...>` is kind of big and may use heap allocatiom. Mots of the the times only one 
-captured value is needed. Most of those times that value is the this pointer. Sometimes none are needed. 
-In some cases the client knows that. In other cases the functor type could be templated for instance
-`std::signal<FUNCTOR>`, then of course the variadic arguments should be derivable from the functor. Not sure of std::function has that any more (argument_type is deprecated and was only one).
-
-Here are some units: 
-- `eul::tuple_function<T...>`: A functor with a variable sized tuple captures. The tuple is passes as additional arguments
-- `eul::callback`: a functor with nothing captured. smallest. It's basicallly a `tuple_function<void>`
-- `eul::member_function<Class>`: A functor with the this pointer captures, which is basically 
-   `eul::tuple_function<Class*>`, except that it will use the captured `Class*` to call the members on. Optionally more can be captured but the first tuple argument is the class 
-
 ## Errors 
 `expectation` is great and all but the posix error codes are a bit limiting. Instead a more structured type can be used, which also uses the other bits that are likely available in the expected anyway due to alignment.
 Each error is a struct { ErrorCategory category; Component source; uint16_t code; } 
