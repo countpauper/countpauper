@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "singleton.hpp"
+#include "copy_counter.hpp"
 
 namespace eul::Test
 {
@@ -28,5 +29,17 @@ TEST(singleton, with_parameters)
     EXPECT_EQ(second->state, true);
 }
 
+TEST(singleton, constructed_in_place)
+{
+    copy_count count;
+    {
+        singleton<copy_counter> single(count);
+        EXPECT_EQ((*single)->current(), 1);
+        EXPECT_EQ(count.assigned, 0);
+        EXPECT_EQ(count.moved, 0);
+    }
+    EXPECT_EQ(count.destructed, 0);
+    EXPECT_EQ(count.current(), 1);
+}   
 
 }

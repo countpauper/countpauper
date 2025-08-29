@@ -13,7 +13,7 @@ public:
     { 
         if (!has_value()) {
             if constexpr (std::is_constructible_v<T, Args...>) {
-                _instance = T(std::forward<Args>(args)...);
+                _instance.emplace(std::forward<Args>(args)...);
             }
         }
     }
