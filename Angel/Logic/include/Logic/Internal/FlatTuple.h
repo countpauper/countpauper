@@ -24,6 +24,7 @@ public:
 	explicit FlatTuple(R items);
     ~FlatTuple() = default;
     unsigned Add(Expression&& exp);
+    inline unsigned AddAt(const const_iterator& at, Expression&& exp) { const_iterator it=at; return AddAt(it, std::move(exp)); } 
     unsigned AddAt(const_iterator& at, Expression&& exp);
     unsigned AddLeft(Expression&& exp);
     Expression RemoveLeft();

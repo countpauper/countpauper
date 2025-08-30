@@ -32,6 +32,7 @@ public:
     Set Assumptions() const;
     Expression Get(const Expression& key) const;
     unsigned Add(Expression&& key);
+    inline unsigned AddAt(const const_iterator& at, Expression&& key) { const_iterator it=at; return AddAt(it, std::move(key)); }
     unsigned AddAt(const_iterator& at, Expression&& key);
     unsigned Remove(const Expression& key);
     Expression Matches(Tuple_subrange range, const Hypothesis& hypothesis) const;

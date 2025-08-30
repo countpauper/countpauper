@@ -42,8 +42,7 @@ Tuple& Tuple::operator+=(const Container& rhs)
 {
     for(auto item: rhs)
     {
-        auto back = cend();
-        AddAt(back, std::move(item));
+        AddAt(cend(), std::move(item));
     }
     return *this;
 }
@@ -155,8 +154,7 @@ Expression Tuple::Get(const Expression& key) const
 
 unsigned Tuple::Add(Expression&& key)
 {
-    const_iterator back = end();
-    return AddAt(back, std::move(key));
+    return AddAt(end(), std::move(key));
 }
 
 unsigned Tuple::AddAt(const_iterator& at, Expression&& key)

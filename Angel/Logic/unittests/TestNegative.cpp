@@ -45,7 +45,7 @@ TEST(Negative, Negations)
     EXPECT_EQ(k.Infer(Negative(True)), Integer(-1));
 }
 
-TEST(Negation, Solve)
+TEST(Negative, Solve)
 {
     EXPECT_EQ(Negative(Variable("X")).Solve(Variable("X"), Variable("Y")), Negative(Variable("Y")));
 }

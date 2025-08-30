@@ -33,9 +33,9 @@ TEST(Negation, Matches)
     EXPECT_EQ(Negation(True).Matches(Variable("B"), {}).Simplify(), (Equal{False, Variable("B")}));
 }
 
-TEST(Negation, Inversion)
+TEST(Negation, Solve)
 {
-    EXPECT_EQ(Negation(Variable("X")), Negation(Variable("X")));
+    EXPECT_EQ(Negation(Variable("X")).Solve(Variable("X"), Variable("Y")), Negation(Variable("Y")));
 }
 
 TEST(Negation, Negations)

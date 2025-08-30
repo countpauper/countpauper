@@ -308,6 +308,10 @@ std::ostream& operator<<(std::ostream& s, const Container& c)
     return s;
 }
 
+void PrintTo(const Container& container, ::std::ostream* os)
+{
+    *os << container;
+}
 
 
 static_assert(std::input_iterator<const_container_iterator>);

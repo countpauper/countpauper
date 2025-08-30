@@ -12,7 +12,7 @@ public:
     {
         precedence = 40; 
         description = "negate";
-        inversion = this;
+        SelfInvertible();
     }
     Expression operator()(const Expression& operand) const override 
     {

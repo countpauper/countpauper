@@ -6,7 +6,6 @@ namespace Angel::Logic
 
 class Sum : public NewBinaryOperator
 {
-
 public:
     Sum() : NewBinaryOperator(L'+', true)
     {
@@ -14,6 +13,8 @@ public:
         identity = &_identity;
         precedence = 50; 
         description = "add";
+        commutative = true;
+        SetInvertible(L'-');
     }
     Expression operator()(const Expression& lhs, const Expression& rhs) const override 
     {

@@ -53,7 +53,7 @@ public:
     Expression Matches(const Expression& e, const Hypothesis& hypothesis) const;
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
     const NewOperator& GetOperator() const;
-    GenericOperation Solve(const Expression& target, const Expression& substitute) const;
+    GenericOperation Solve(const Expression& target, Expression&& substitute) const;
     std::string OperandToString(const Expression& e, bool first) const;
     std::string Summary() const;
 
@@ -67,15 +67,20 @@ public:
         return Hash() < hasher(rhs);
     }
     std::size_t Hash() const;
+
+
 protected:
     using Base=Tuple;
+    GenericOperation SolveCommutative(const Expression& target, Expression&& substitute) const;
+    GenericOperation SolveNonCommutative(const Expression& target, Expression&& substitute) const;
 private:
 
     const NewOperator& ope; 
 };
 
 std::ostream& operator<<(std::ostream& s, const GenericOperation& e);
-
+// This helper is needed because google test printer prioritizes begin() end() 
+void PrintTo(const GenericOperation&, ::std::ostream* os);
 
 }
 

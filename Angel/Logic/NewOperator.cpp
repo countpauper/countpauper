@@ -36,7 +36,7 @@ const NewOperator& NewOperator::none = noneOperator;
 
 NewOperator::NewOperator()
     : op{.id=0}
-    , inversion(&none)
+    , inverse(&none)
 {
 }
 
@@ -60,9 +60,15 @@ std::size_t NewOperator::Hash() const
     return op.id;
 }
 
-unsigned NewOperator::Operands() const 
-{ 
-    return op.sw.operands; 
+
+bool NewOperator::IsUnary() const
+{
+    return op.sw.operands == 1;
+}
+
+bool NewOperator::IsMultiary() const
+{
+    return op.sw.operands == 3;
 }
 
 bool NewOperator::IsPostfix() const 
@@ -70,10 +76,20 @@ bool NewOperator::IsPostfix() const
     return op.sw.postfix; 
 }
 
+bool NewOperator::IsComparator() const
+{
+    return op.sw.comparison;
+}
+
+bool NewOperator::IsCommutative() const 
+{
+    return commutative;
+}
+
 const NewOperator& NewOperator::Inversion() const
 {
-    if (inversion)
-        return *inversion;
+    if (inverse)
+        return *inverse;
     else
         return noneOperator;
 }
@@ -106,7 +122,7 @@ bool NewOperator::NeedsBracesAround(const Expression& expression, bool first) co
     if (const auto* newOperation = expression.GetIf<GenericOperation>())
     {
         const auto& expressionOperator = newOperation->GetOperator();
-        if (expressionOperator.Operands()>1 && newOperation->size()<2)
+        if (!expressionOperator.IsUnary() && newOperation->size()<2)
             return false;
         if (expressionOperator.Precedence() < Precedence())
             return true;
@@ -146,6 +162,26 @@ const NewOperator& NewOperator::Find(wchar_t tag, bool unary)
     }
 }
 
+void NewOperator::SelfInvertible()
+{
+    inverse = this;
+}
+
+bool NewOperator::SetInvertible(wchar_t inversion)
+{
+    auto inv_op=all.find(Code{.sw{inversion, op.sw.operands, IsPostfix(), IsComparator(), 0, 0}});    
+    if (inv_op==all.end())
+        inv_op=all.find(Code{.sw{inversion, op.sw.operands, !IsPostfix(), IsComparator(), 0, 0}});    
+
+    // it's not an error if not found. One of the inversions is constructed first. 
+    // if not found postpone and the inversion will make the circular reference
+    if (inv_op==all.end())
+        return false;
+    
+    inverse = inv_op->second;
+    inv_op->second->inverse = this;
+    return true;
+}
 
 std::ostream& operator<<(std::ostream& os, const NewOperator& op)
 {
@@ -158,7 +194,9 @@ std::map<NewOperator::Code, NewOperator*> NewOperator::all;
 NewUnaryOperator::NewUnaryOperator(wchar_t c) 
     : NewOperator(c, 1) 
 {
+    commutative = true;
 }
+
 Tuple NewUnaryOperator::operator()(const Tuple& operands) const
 {
     if (operands.empty())
@@ -234,8 +272,7 @@ Tuple NewBinaryOperator::operator()(const Tuple& operands) const
     }
     if (constant) 
     {
-        auto begin = result.cbegin();
-        result.AddAt(begin, std::move(constant));
+        result.AddAt(result.cbegin(), std::move(constant));
     }
     if (identity && result.empty())
     {

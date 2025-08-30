@@ -78,4 +78,6 @@ Container operator|(Container lhs, const Container& rhs);
 Container operator^(Container lhs, const Container& rhs);
 
 std::ostream& operator<<(std::ostream& s, const Container& e);
+void PrintTo(const Container& container, ::std::ostream* os);
+
 }

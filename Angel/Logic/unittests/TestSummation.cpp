@@ -59,11 +59,25 @@ TEST(Summation, Inference)
     EXPECT_EQ(k.Infer(Summation({Integer(4), Predicate("cat")})), Integer(6));
 }
 
+
 TEST(Summation, InferContainer)
 {
     Knowledge k { Association(Predicate("cat"), List{Id("ginny")}) };
 	List b{Id("ginny"), Id("gizmo")};    
 	EXPECT_EQ(k.Infer(Summation({b, Predicate("cat")})), (List{Id("ginny"), Id("gizmo"), Id("ginny")}));    
+}
+
+TEST(Summation, Solve)
+{
+    // Y = X + 2 + 3 => X = Y - 2 -3  
+    EXPECT_EQ(Summation({Variable("X"), Integer(2), Integer(3)}).Solve(Variable("X"), Variable("Y")), 
+        Subtraction({Variable("Y"), Integer(2), Integer(3)}));
+    // Y = 2 + X + 3 => X = Y - 2 -3 
+    EXPECT_EQ(Summation({Integer(2), Variable("X"), Integer(3)}).Solve(Variable("X"), Variable("Y")), 
+        Subtraction({Variable("Y"), Integer(2), Integer(3)}));
+    // Y = [a] + X => X = Y - [a]
+    EXPECT_EQ(Summation({List{Id("a")}, Variable("X")}).Solve(Variable("X"), Variable("Y")), 
+        Subtraction({Variable("Y"), List{Id("a")}}));
 }
 
 TEST(Summation, to_string)

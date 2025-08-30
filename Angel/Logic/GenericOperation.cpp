@@ -53,7 +53,7 @@ unsigned GenericOperation::Add(Expression&& operand)
 {
     if (const auto* op = operand.GetIf<GenericOperation>())
     {
-        if (ope.Operands() == 3 && op->ope == ope) 
+        if (ope.IsMultiary() && op->ope == ope) 
         {
             unsigned total = 0;
             for(auto& item: *op)
@@ -164,38 +164,75 @@ std::string to_string(const GenericOperation& c)
     return ss.str();
 }
 
-GenericOperation GenericOperation::Solve(const Expression& target, const Expression& substitute) const
+
+
+
+GenericOperation GenericOperation::Solve(const Expression& target, Expression&& substitute) const
 {
+    if (!ope.IsCommutative())
+    {
+        return SolveNonCommutative(target, std::move(substitute));
+
+    }
     if (!ope.Inversion())
-        return GenericOperation();
-    GenericOperation inversion(ope.Inversion(), {});
+        return GenericOperation();  // toSolveCommutativeo non commutatitve can be solved with same op sometimes x=1-Y = y=1-x
+    return SolveCommutative(target, std::move(substitute));
+}
+
+GenericOperation GenericOperation::SolveNonCommutative(const Expression& target, Expression&& substitute) const
+{
+    if (front()!=target)
+    {
+        GenericOperation solution = *this;
+        for(auto& operand: solution)
+        {
+            if (operand==target && substitute)
+                operand = std::move(substitute);
+            else if (const auto subOperation = operand.GetIf<GenericOperation>())
+            {
+                auto subInversion = subOperation->Solve(target, std::move(substitute));
+                if (subInversion)
+                    operand = subInversion;
+            }
+        }
+        if (substitute)
+            return solution;
+        else 
+            return GenericOperation();        
+    }
+    else
+    {
+        return SolveCommutative(target, std::move(substitute));
+    }
+
+}
+
+GenericOperation GenericOperation::SolveCommutative(const Expression& target, Expression&& substitute) const
+{
+    GenericOperation solution(ope.Inversion(), {});
     for(const auto& operand: *this)
     {
-        if (operand == target)
+        if ((operand == target) && (substitute))
         {
-            inversion.Add(substitute);
+            solution.AddAt(solution.begin(), std::move(substitute));
         }
         else if (const auto subOperation = operand.GetIf<GenericOperation>())
         {
-            if (subOperation->Assumptions().Get(target)!=False)
-            {
-                auto subInversion = subOperation->Solve(target, substitute);
-                if (subInversion)
-                    inversion.Add(std::move(subInversion));
-                else
-                    inversion.Add(operand);
-            }
-            else 
-            {
-                inversion.Add(operand);
-            }
+            auto subInversion = subOperation->Solve(target, std::move(substitute));
+            if (subInversion)
+                solution.Add(std::move(subInversion));
+            else
+                solution.Add(operand);
         }
         else 
         {
-            inversion.Add(operand);
+            solution.Add(operand);
         }
     }
-    return inversion;
+    if (substitute) // substituted
+        return solution;
+    else
+        return GenericOperation();
 }
 
 
@@ -213,6 +250,11 @@ std::ostream& operator<<(std::ostream& os, const GenericOperation& operation)
         first = false;
     }
     return os;
+}
+
+void PrintTo(const GenericOperation& op, ::std::ostream* os)
+{
+    *os << op;
 }
 
 }

@@ -24,8 +24,12 @@ public:
     bool NeedsBracesAround(const Expression& expresison, bool first) const;
     unsigned Precedence() const;    
     virtual unsigned MinimumOperands() const = 0;
-    unsigned Operands() const;
+    bool IsUnary() const;
+    bool IsMultiary() const;
     bool IsPostfix() const;
+    bool IsComparator() const;
+    bool IsCommutative() const;
+
     const NewOperator& Inversion() const;
     virtual Tuple operator()(const Tuple& operands) const = 0;
     std::size_t Hash() const;
@@ -36,8 +40,10 @@ protected:
     constexpr NewOperator(const wchar_t tag, uint8_t operands, bool postfix=false, bool comparator=false) :
         op{.sw{tag, operands, postfix, comparator, 0, 0}}
     {
-        all.insert(std::make_pair(op, this));
+       all.insert(std::make_pair(op, this));
     }
+    void SelfInvertible();
+    bool SetInvertible(const wchar_t inversion);
 protected:
     union Code
     {
@@ -56,7 +62,8 @@ protected:
     Code op;
     std::string_view description;
     unsigned precedence;
-    const NewOperator* inversion=nullptr;
+    bool commutative = false; 
+    const NewOperator* inverse=nullptr;
     static std::map<Code, NewOperator*> all;
 };
 

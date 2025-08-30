@@ -29,8 +29,7 @@ FlatTuple<T>::FlatTuple(R items)
 template<class T>
 unsigned FlatTuple<T>::Add(Expression&& e)
 {
-    const_iterator it = end();
-    return AddAt(it, std::move(e));
+    return AddAt(end(), std::move(e));
 }
 
 template<class T>
@@ -53,8 +52,7 @@ unsigned FlatTuple<T>::AddAt(const_iterator& at, Expression&& e)
 template<class T>
 unsigned FlatTuple<T>::AddLeft(Expression&& exp)
 {
-    const_iterator it = begin();
-    return AddAt(it, std::move(exp));
+    return AddAt(begin(), std::move(exp));
 }
 
 template<class T>
