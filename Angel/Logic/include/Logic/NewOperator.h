@@ -24,12 +24,13 @@ public:
     bool NeedsBracesAround(const Expression& expresison, bool first) const;
     unsigned Precedence() const;    
     virtual unsigned MinimumOperands() const = 0;
+    virtual const class NewUnaryOperator* Unary() const = 0;
     bool IsUnary() const;
     bool IsMultiary() const;
     bool IsPostfix() const;
     bool IsComparator() const;
     bool IsCommutative() const;
-
+    
     const NewOperator& Inversion() const;
     virtual Tuple operator()(const Tuple& operands) const = 0;
     std::size_t Hash() const;
@@ -70,11 +71,13 @@ protected:
 class NewUnaryOperator : public NewOperator
 {
 public:
-    NewUnaryOperator(wchar_t c);
+    explicit NewUnaryOperator(wchar_t c);
     Tuple operator()(const Tuple& operands) const override;
     unsigned MinimumOperands() const override;
     virtual Expression operator()(const Expression& operand) const = 0;
     std::string OperandToString(const Expression& operand, bool first) const override;
+    const NewUnaryOperator* Unary() const override;
+    static inline const NewUnaryOperator& Find(wchar_t tag) { return static_cast<const NewUnaryOperator&>(NewOperator::Find(tag, true)); }
 };
 
 class NewBinaryOperator : public NewOperator 
@@ -86,7 +89,10 @@ public:
     Tuple operator()(const Tuple& operands) const override;
     unsigned MinimumOperands() const override;
     std::string OperandToString(const Expression& operand, bool first) const override;
+    static inline const NewBinaryOperator& Find(wchar_t tag) { return static_cast<const NewBinaryOperator&>(NewOperator::Find(tag, false)); }
+    const NewUnaryOperator* Unary() const override;
 protected:
+    const NewUnaryOperator* unary;
     const Expression* identity;
     const Expression* absorb;
 };

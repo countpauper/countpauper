@@ -30,13 +30,13 @@ public:
 GenericOperation Negative(Expression &&operand)
 {
     static const NegativeOp neg;
-    return GenericOperation(neg, std::move(operand));
+    return GenericOperation(neg, operand);
 }
 
 GenericOperation Negative(const Expression &operand)
 {
     static const NegativeOp neg;
-    return GenericOperation(neg, {operand});
+    return GenericOperation(neg, operand);
 }
 
 }

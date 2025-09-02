@@ -1,39 +1,96 @@
+#include "Logic/Logarithm.h"
 #include "Logic/Expression.h"
 #include <cmath>
+#include <bit>
 
 namespace Angel::Logic
 {
 
-
-Expression Logarithm::Simplify() const
+class NaturalLog : public NewUnaryOperator
 {
-    if (size()==1)
+public:
+    NaturalLog() : NewUnaryOperator(L'↓')
     {
-        auto simple = front().Simplify();
-        if (auto value = simple.TryCast<Real>())
+        precedence = 71; 
+        description = "natural logarithm";
+        SetInvertible(L'↑');
+    }
+
+    Expression operator()(const Expression& operand) const override 
+    {
+        if (auto maybeNumber = operand.GetIf<Number>()) 
         {
-            return Real(std::log(double(*value)));
+            if (auto maybeReal = maybeNumber->GetIf<Real>())
+            {
+                return Real(std::log(double(*maybeReal)));
+            }
+            else if (auto maybeInt = maybeNumber->GetIf<Integer>())
+            {   // power of 2 ?
+                long v = long(*maybeInt);
+                if (v>0)
+                    return Integer(std::bit_width((unsigned long)(v)) - 1);
+                assert(false);  // negative power 2 not supported (yet);
+            }
+            else if (auto maybeBool = maybeNumber->GetIf<Boolean>())
+            {
+                if (bool(*maybeBool))
+                    return Real(0.0);
+                else 
+                    return Real(-std::numeric_limits<double>::infinity());
+            }
+            else 
+            {
+                assert(false);  // complex (or whatever) not yet implemented
+            }
+        }
+        else 
+        {
+            return Logarithm({operand});
+        }
+    } 
+
+    std::string OperandToString(const Expression& operand, bool first) const
+    {
+        std::string result;
+        if (NeedsBracesAround(operand, first))
+            result = std::format("({})", to_string(operand));
+        else 
+            result = to_string(operand);
+        return std::format("e{}{}", std::string(*this), result);
+    }    
+};
+
+class Log : public NewBinaryOperator
+{
+public:
+    Log() : NewBinaryOperator(L'↓', true)
+    {
+        static NaturalLog _ln;
+        unary = &_ln;
+        precedence = 70; 
+        description = "logarithm";
+        commutative = false;
+        SetInvertible(L'↑');
+    }
+    Expression operator()(const Expression& lhs, const Expression& rhs) const override 
+    {
+        if (const auto* lhNumber = lhs.GetIf<Number>())
+        {
+            return log(*lhNumber, rhs.Cast<Number>());
+        }
+        else 
+        {
+            assert(false); // possibly missing infer or shouldn't get here. Or perhaps during simplify? 
+            return Logarithm({lhs, rhs});
         }
     }
-    return OperationBase<Logarithm>::Simplify();
-}
+};
 
-std::ostream& operator<<(std::ostream& os, const Logarithm& operation)
+
+GenericOperation Logarithm(std::initializer_list<Expression> operands)
 {
-    if (operation.size()==1)
-    {
-        return os << "e" <<  operation.ope << Exponentiation::OperandToString(operation.front(), false);
-    }
-
-    bool first = true;
-    for(const auto& obj: operation)
-    {
-        if (!first)
-            os << operation.ope;
-        os << Logarithm::OperandToString(obj, first);
-        first = false;
-    }
-    return os;
+    static const Log log;
+    return GenericOperation(log, operands);
 }
 
 }

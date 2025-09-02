@@ -70,5 +70,6 @@ Number operator-(Number lhs, const Number& rhs);
 Number operator*(Number lhs, const Number& rhs);
 Number operator/(Number lhs, const Number& rhs);
 Number operator^(Number lhs, const Number& rhs);
+Number log(Number lhs, const Number& rhs);
 std::ostream& operator<<(std::ostream& s, const Number& e);
 }

@@ -29,6 +29,11 @@ public:
     {
         return "null";
     }
+
+    const NewUnaryOperator* Unary() const override
+    {
+        return nullptr;
+    }
 };
 
 static NoneOperator noneOperator;
@@ -85,6 +90,7 @@ bool NewOperator::IsCommutative() const
 {
     return commutative;
 }
+
 
 const NewOperator& NewOperator::Inversion() const
 {
@@ -177,7 +183,7 @@ bool NewOperator::SetInvertible(wchar_t inversion)
     // if not found postpone and the inversion will make the circular reference
     if (inv_op==all.end())
         return false;
-    
+    assert(inverse==nullptr && inv_op->second->inverse==nullptr);   // can only set one inverse. Mixed up 
     inverse = inv_op->second;
     inv_op->second->inverse = this;
     return true;
@@ -230,7 +236,10 @@ std::string NewUnaryOperator::OperandToString(const Expression& operand, bool) c
     return result;
 }
 
-
+const NewUnaryOperator* NewUnaryOperator::Unary() const
+{
+    return nullptr;
+}
 
 NewBinaryOperator::NewBinaryOperator(wchar_t code, bool multiary) 
     : NewOperator(code, multiary?3:2) 
@@ -241,6 +250,10 @@ NewBinaryOperator::~NewBinaryOperator() = default;
 
 Tuple NewBinaryOperator::operator()(const Tuple& operands) const
 {
+    if ((operands.size()==1) && (unary))
+    {
+        return (*unary)(operands);
+    }
     Expression constant;
     Tuple result(operands);
     auto it = result.begin();
@@ -283,9 +296,13 @@ Tuple NewBinaryOperator::operator()(const Tuple& operands) const
 
 unsigned NewBinaryOperator::MinimumOperands() const 
 { 
-    return identity?0:1;
+    if (identity)
+        return 0;
+    else if (unary)
+        return 1;
+    else 
+        return 2;
 }
-
 
 std::string NewBinaryOperator::OperandToString(const Expression& operand, bool first) const
 {
@@ -298,6 +315,11 @@ std::string NewBinaryOperator::OperandToString(const Expression& operand, bool f
     else 
         result += to_string(operand);
     return result;
+}
+
+const NewUnaryOperator* NewBinaryOperator::Unary() const
+{
+    return unary;
 }
 
 }

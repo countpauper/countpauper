@@ -16,31 +16,28 @@ class GenericOperation : public Tuple
 public:
     GenericOperation();
     GenericOperation(const GenericOperation&) = default;
-    GenericOperation(const NewOperator& ope, std::initializer_list<Expression> operands);
-    GenericOperation(const NewOperator& ope, Tuple&& operands);
+    GenericOperation(const NewUnaryOperator& ope, const Expression& operand);
     GenericOperation(const NewUnaryOperator& ope, Expression&& operand);
-    GenericOperation(wchar_t tag, Tuple&& operands);
     GenericOperation(wchar_t tag, Expression&& operand);
 
     template <std::ranges::input_range R>
-	explicit GenericOperation(Operator ope, R operands) 
+	GenericOperation(const NewOperator& ope, R operands) 
         : ope(ope)
     {
 
-        if (ope.Operands() < 3) 
-        {
-            if (operands.size() != ope.Operands())
-                throw std::invalid_argument(std::format("Operation {} needs {} operands, not {}", ope, ope.Operands(), operands.size()));
-        }
-        else 
-        {
-            if (!bool(ope.Identity()) && operands.empty())
-                throw std::invalid_argument(std::format("Operands list of {} can not be empty", ope));
-        } 
+        if (operands.size() < ope.MinimumOperands())
+            throw std::invalid_argument(std::format("{} needs at least {} operands, not {}", ope.Description(), ope.MinimumOperands(), operands.size()));
+ 
         for(auto& operand: operands) 
         {
             Add(std::move(operand));
         }        
+    }
+
+    template <std::ranges::input_range R>
+	GenericOperation(wchar_t tag, R operands) 
+        : GenericOperation(NewBinaryOperator::Find(tag), std::move(operands))
+    {
     }
 
     unsigned Add(Expression&& operand);
@@ -73,6 +70,9 @@ protected:
     using Base=Tuple;
     GenericOperation SolveCommutative(const Expression& target, Expression&& substitute) const;
     GenericOperation SolveNonCommutative(const Expression& target, Expression&& substitute) const;
+    GenericOperation SolveInversionCommutative(const Expression& target, Expression&& substitute);
+    GenericOperation SolveInversionNonCommutative(const Expression& target, Expression&& substitute);
+
 private:
 
     const NewOperator& ope; 

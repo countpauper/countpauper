@@ -166,6 +166,7 @@ Number operator-(Number lhs, const Number& rhs) { return lhs-= rhs; }
 Number operator*(Number lhs, const Number& rhs) { return lhs*= rhs; }
 Number operator/(Number lhs, const Number& rhs) { return lhs/= rhs; }
 Number operator^(Number lhs, const Number& rhs) { return lhs^= rhs; }
+Number log(Number lhs, const Number& rhs) { return lhs.logis(rhs); }
 
 std::ostream& operator<<(std::ostream& s, const Number& c)
 {

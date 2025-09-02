@@ -31,13 +31,13 @@ public:
 GenericOperation Negation(Expression &&operand)
 {
     static const Negate neg;
-    return GenericOperation(neg, std::move(operand));
+    return GenericOperation(neg, operand);
 }
 
 GenericOperation Negation(const Expression &operand)
 {
     static const Negate neg;
-    return GenericOperation(neg, {operand});
+    return GenericOperation(neg, operand);
 }
 
 }

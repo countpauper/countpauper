@@ -1,55 +1,95 @@
+#include "Logic/Exponentiation.h"
 #include "Logic/Expression.h"
 #include <cmath>
 
 namespace Angel::Logic
 {
 
-
-Expression Exponentiation::Simplify() const
+class Exp : public NewUnaryOperator
 {
-    if (size()==1)
+public:
+    Exp() : NewUnaryOperator(L'↑')
     {
-        auto simple = front().Simplify();
-        if (auto value = simple.TryCast<Real>())
-        {
-            return Real(std::exp(double(*value)));
-        }
+        precedence = 71; 
+        description = "exponent";
+        SetInvertible(L'↓');
     }
-    return OperationBase<Exponentiation>::Simplify();
-}
 
+    Expression operator()(const Expression& operand) const override 
+    {
+        if (auto maybeNumber = operand.GetIf<Number>()) 
+        {
+            if (auto maybeReal = maybeNumber->GetIf<Real>())
+            {
+                return Real(std::exp(double(*maybeReal)));
+            }
+            else if (auto maybeInt = maybeNumber->GetIf<Integer>())
+            {   // power of 2 ?
+                return Integer(1 << long(*maybeInt));
+            }
+            else if (auto maybeBool = maybeNumber->GetIf<Boolean>())
+            {
+                if (bool(*maybeBool))
+                    return Real(1.0);
+                else 
+                    return Real(std::exp(1.0));
+            }
+            else 
+            {
+                assert(false);  // complex (or whatever) not yet implemented
+            }
+        }
+        else 
+        {
+            return Exponentiation({operand});
+        }
+    } 
 
-std::ostream& operator<<(std::ostream& os, const Exponentiation& operation)
+    std::string OperandToString(const Expression& operand, bool first) const
+    {
+        std::string result;
+        if (NeedsBracesAround(operand, first))
+            result = std::format("({})", to_string(operand));
+        else 
+            result = to_string(operand);
+        return std::format("e{}{}", std::string(*this), result);
+    }
+};
+
+class Power : public NewBinaryOperator
 {
-    if (operation.size()==1)
+public:
+    Power() : NewBinaryOperator(L'↑', true)
     {
-        return os << "e" <<  operation.ope << Exponentiation::OperandToString(operation.front(), false);
+        static const Expression _identity{Integer(1)};
+        identity = &_identity;
+        static const Exp _exp;
+        unary = &_exp;
+        precedence = 70; 
+        description = "power";
+        
+        commutative = false;
+        SetInvertible(L'↓');
     }
+    Expression operator()(const Expression& lhs, const Expression& rhs) const override 
+    {
+        if (const auto* lhNumber = lhs.GetIf<Number>())
+        {
+            return *lhNumber ^ rhs.Cast<Number>();
+        }
+        else 
+        {
+            assert(false); // possibly missing infer or shouldn't get here. Or perhaps during simplify? 
+            return Exponentiation({lhs, rhs});
+        }
+    }
+};
 
-    if (operation.size()==2)
-    {
-        if (operation.back() == Integer(2))
-        {
-            return os << Exponentiation::OperandToString(operation.front(), true) << "²";
-        }
-        else if (operation.back() == Integer(3))
-        {
-            return os << Exponentiation::OperandToString(operation.front(), true) << "³";
-        }
-        else if (operation.back() == Real(0.5))
-        {
-            return os << "√" << Exponentiation::OperandToString(operation.front(), true);
-        }
-    }
-    bool first = true;
-    for(const auto& obj: operation)
-    {
-        if (!first)
-            os << operation.ope;
-        os << Exponentiation::OperandToString(obj, first);
-        first = false;
-    }
-    return os;
+
+GenericOperation Exponentiation(std::initializer_list<Expression> operands)
+{
+    static const Power pow;
+    return GenericOperation(pow, operands);
 }
 
 }

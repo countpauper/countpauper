@@ -15,7 +15,7 @@
 Operation is not a variant. All a tuple with an operator specifying the maximum number of elements (checked for certain constructors)
 - Computation (Multiary)  
     Addition, Subtraction, Multiplication, Division, Exponent, Logarithm 
-    Conjunction, Disjunction, Exclusion, 
+    Conjunction (NB false is an absorbant, true identity), Disjunction (true is absorbent, false identity), Exclusion, 
 - Add free functions to create Summation(..) etc parser still just uses Expression(operator, {operands}). 
 - Ordering(Order), 
     < <= > >= = \= 
@@ -27,6 +27,16 @@ Operation is not a variant. All a tuple with an operator specifying the maximum 
     All, Value, Any (Refer)
 - Inversion(Unary)
     Negative, Negation (complementary set) 
+Operation	    Identity Absorbing Element	Notes
+Addition (+)	0	     None	            a+0=aa+0=a
+Subtraction (-)	None	 None	            No identity or absorbing element (not associative/commutative)
+Multiplication (×)	1	    0	            a×1=a,a×0=0a×1=a,a×0=0
+Division (÷)	1 (right identity)	0 (left absorbing)	a÷1=aa÷1=a, division by 0 undefined
+Power (exponentiation)	1 (exponent 1)	None	b1=bb1=b, no absorbing element
+Logarithm	    None    None
+Boolean OR (∨)	False (⊥)	True (⊤)	a∨⊥=aa∨⊥=a, a∨⊤=⊤a∨⊤=⊤
+Boolean AND (∧)	True (⊤)	False (⊥)	a∧⊤=aa∧⊤=a, a∧⊥=⊥a∧⊥=⊥
+Boolean XOR (⊕)	False (⊥)	None	Identity exists, no absorbing element
 
 All of these are not variants but have a member variable operator of that type as the variant type.
 They can all use GenericOperator.operator. This is combined with a base class for their valence: 

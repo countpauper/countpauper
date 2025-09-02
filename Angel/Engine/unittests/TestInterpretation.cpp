@@ -51,12 +51,12 @@ TEST(Interpretation, Precedence)
     Parser::Source source("-1+2**3*4/5.0?");
     EXPECT_EQ(interpreter.InterpretQuery(source), (
         Logic::Summation({Logic::Negative(Logic::Integer(1)), 
-            Logic::Division{
-                Logic::Multiplication{
-                    Logic::Exponentiation{Logic::Integer(2), Logic::Integer(3)}, 
+            Logic::Division({
+                Logic::Multiplication({
+                    Logic::Exponentiation({Logic::Integer(2), Logic::Integer(3)}), 
                     Logic::Integer(4)
-                }, Logic::Real(5.0)
-            }
+                }), Logic::Real(5.0)
+            })
         })));
 }
 
@@ -65,8 +65,8 @@ TEST(Interpretation, Braces)
     AngelInterpreter interpreter;
 // both should work, but implementation only checks braces of rhs. Does that matter? Shouldn't pop back     Parser::Source source("(true-2)⋅3?");
     Parser::Source source("0⋅(true-2)⋅3?");
-    EXPECT_EQ(interpreter.InterpretQuery(source), (
-        Logic::Multiplication{Logic::Integer(0), Logic::Subtraction({Logic::Predicate("true"),  Logic::Integer(2)}), Logic::Integer(3)}));
+    EXPECT_EQ(interpreter.InterpretQuery(source), 
+        Logic::Multiplication({Logic::Integer(0), Logic::Subtraction({Logic::Predicate("true"),  Logic::Integer(2)}), Logic::Integer(3)}));
 }
 
 TEST(Interpretation, List)

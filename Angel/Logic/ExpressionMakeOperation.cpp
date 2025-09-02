@@ -79,8 +79,7 @@ ExpressionVariant make_operation(const Operator ope, Tuple&& operands)
     else if (ope.Operands()==2)
         return make_binary_operation<Item, Association>(ope, std::move(operands));
     else    
-        return make_multiary_operation<Multiplication, Division, Exponentiation, Logarithm,
-                    Conjunction, Disjunction, Exclusion>(ope, std::move(operands));
+        return make_multiary_operation<Conjunction, Disjunction, Exclusion>(ope, std::move(operands));
 }
 
 

@@ -5,47 +5,27 @@
 namespace Angel::Logic
 {
 
-GenericOperation::GenericOperation() :
-    Tuple(),
-    ope(NewOperator::none)
+GenericOperation::GenericOperation()
+    : Tuple()
+    , ope(NewOperator::none)
 {
 }
 
-
-GenericOperation::GenericOperation(const NewOperator& ope, std::initializer_list<Expression> operands) :
-    Tuple(),
-    ope(ope)
+GenericOperation::GenericOperation(const NewUnaryOperator& ope, const Expression& operand) 
+    : Tuple({operand})
+    , ope(ope)
 {
-    for(auto operand: operands)
-    {
-        Add(std::move(operand));
-    }
 }
 
-GenericOperation::GenericOperation(const NewOperator& ope, Tuple&& operands) :
-    Tuple(),
-    ope(ope)
-{
-    for(auto&& operand: operands)
-    {
-        Add(std::move(operand));
-    }  
-}
-
-GenericOperation::GenericOperation(const NewUnaryOperator& ope, Expression&& operand) :
-    Tuple(),
-    ope(ope)
+GenericOperation::GenericOperation(const NewUnaryOperator& ope, Expression&& operand) 
+    : Tuple()
+    , ope(ope)
 {
     Add(std::move(operand));
 }
 
-GenericOperation::GenericOperation(wchar_t tag, Tuple&& operands) :
-    GenericOperation(NewOperator::Find(tag, false), std::move(operands))
-{
-}
-    
-GenericOperation::GenericOperation(wchar_t tag, Expression&& operand) :
-    GenericOperation(NewOperator::Find(tag, true), Tuple{std::move(operand)})
+GenericOperation::GenericOperation(wchar_t tag, Expression&& operand)
+    : GenericOperation(NewUnaryOperator::Find(tag), std::move(operand))
 {
 }
 
@@ -113,7 +93,7 @@ Expression GenericOperation::Matches(const Expression& e, const Hypothesis& hypo
 Expression GenericOperation::Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const
 {
     if (ope.MinimumOperands()==0 && Base::empty())
-        return GenericOperation(ope, {});
+        return GenericOperation(ope, Tuple());
 
     GenericOperation result(ope, Tuple{Base::front().Infer(knowledge, hypothesis, trace)});
     result.reserve(Base::size()); 
@@ -172,10 +152,9 @@ GenericOperation GenericOperation::Solve(const Expression& target, Expression&& 
     if (!ope.IsCommutative())
     {
         return SolveNonCommutative(target, std::move(substitute));
-
     }
     if (!ope.Inversion())
-        return GenericOperation();  // toSolveCommutativeo non commutatitve can be solved with same op sometimes x=1-Y = y=1-x
+        return GenericOperation();  
     return SolveCommutative(target, std::move(substitute));
 }
 
@@ -209,35 +188,64 @@ GenericOperation GenericOperation::SolveNonCommutative(const Expression& target,
 
 GenericOperation GenericOperation::SolveCommutative(const Expression& target, Expression&& substitute) const
 {
-    GenericOperation solution(ope.Inversion(), {});
-    for(const auto& operand: *this)
+   GenericOperation solution(ope.Inversion(), *this);
+    if (solution.ope.IsCommutative())
+        return solution.SolveInversionCommutative(target ,std::move(substitute));
+    else 
+        return solution.SolveInversionNonCommutative(target, std::move(substitute));
+
+}
+
+GenericOperation GenericOperation::SolveInversionCommutative(const Expression& target, Expression&& substitute)
+{
+    for(auto& operand: *this)
     {
         if ((operand == target) && (substitute))
         {
-            solution.AddAt(solution.begin(), std::move(substitute));
+            operand = std::move(substitute);
         }
         else if (const auto subOperation = operand.GetIf<GenericOperation>())
         {
             auto subInversion = subOperation->Solve(target, std::move(substitute));
             if (subInversion)
-                solution.Add(std::move(subInversion));
-            else
-                solution.Add(operand);
-        }
-        else 
-        {
-            solution.Add(operand);
+                operand = std::move(subInversion);
         }
     }
     if (substitute) // substituted
-        return solution;
+        return *this;
     else
         return GenericOperation();
 }
 
+GenericOperation GenericOperation::SolveInversionNonCommutative(const Expression& target, Expression&& substitute)
+{
+    iterator targetIt=end();
+    for(auto it=begin(); it!=end(); ++it)
+    {
+        if ((targetIt==end()) && (*it == target))
+        {
+            targetIt = it;
+        }
+        else if (const auto subOperation = it->GetIf<GenericOperation>())
+        {
+            auto subInversion = subOperation->Solve(target, std::move(substitute));
+            if (subInversion)
+                *it = std::move(subInversion);
+        }
+    }
+    if (targetIt == end())
+        return GenericOperation();
+    erase(targetIt);
+    AddAt(begin(), std::move(substitute));
+    return *this;
+}
+
+
 
 std::string GenericOperation::OperandToString(const Expression& e, bool first) const
 {
+    if (size() == 1 && ope.Unary())
+        return ope.Unary()->OperandToString(e, true);
     return ope.OperandToString(e, first);
 }
 

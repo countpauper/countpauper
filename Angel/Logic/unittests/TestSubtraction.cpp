@@ -10,7 +10,7 @@ TEST(Subtraction, Construction)
 {
     EXPECT_EQ((Subtraction({Integer(3)})), Subtraction({Integer(3)}));    
     EXPECT_NE((Subtraction({Integer(3)})), Subtraction({Integer(3), Integer(2)}));
-    EXPECT_EQ(GenericOperation(L'-', {Integer(-2), Integer(-1)}), Subtraction({Integer(-2), Integer(-1)}));   
+    EXPECT_EQ(GenericOperation(L'-', Tuple{Integer(-2), Integer(-1)}), Subtraction({Integer(-2), Integer(-1)}));   
 }
 
 TEST(Subtraction, Subtractions)

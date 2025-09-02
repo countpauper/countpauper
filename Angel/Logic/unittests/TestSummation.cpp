@@ -11,7 +11,7 @@ TEST(Summation, Construction)
     EXPECT_EQ(Summation({Integer(3)}), Summation({Integer(3)}));
     EXPECT_NE(Summation({Integer(3)}), Summation({Integer(3), Integer(2)}));
     EXPECT_EQ(Summation({Integer(1), Summation({Integer(2), Integer(3)})}).size(), 3);   // flatten same operator 
-    EXPECT_EQ(GenericOperation(L'+', {Integer(-2), Integer(-1)}), Summation({Integer(-2), Integer(-1)}));   
+    EXPECT_EQ(GenericOperation(L'+', Tuple{Integer(-2), Integer(-1)}), Summation({Integer(-2), Integer(-1)}));   
 }
 
 TEST(Summation, Summations)
@@ -85,7 +85,7 @@ TEST(Summation, to_string)
     EXPECT_EQ(to_string(Summation({Integer(-3)})), "-3");
     EXPECT_EQ(to_string(Summation({Integer(-2), Integer(3)})), "-2+3");
     EXPECT_EQ(to_string(Summation({Integer(2), Integer(-3)})), "2-3");
-    EXPECT_EQ(to_string(Summation({Integer(1), Multiplication{Integer(2), Integer(3)}})), "1+2⋅3");    
+    EXPECT_EQ(to_string(Summation({Integer(1), Multiplication({Integer(2), Integer(3)})})), "1+2⋅3");    
 }
 
 }
