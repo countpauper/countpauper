@@ -32,12 +32,13 @@ public:
             return Summation({lhs, rhs});
         }
     }
-    std::string OperandToString(const Expression& operand, bool first) const
+    
+    void AddOperand(std::string& str, const Expression& operand) const
     {
-        std::string result = NewBinaryOperator::OperandToString(operand, first);
-        if (result.size()>2 && result[1]=='-')
-            result = result.substr(1);
-        return result;
+        auto pos = str.size();
+        NewBinaryOperator::AddOperand(str, operand);
+        if (str.size() > pos + 2 && str[pos+1]=='-')
+            str.erase(str.begin() + pos);
     }
 };
 

@@ -34,7 +34,7 @@ public:
     const NewOperator& Inversion() const;
     virtual Tuple operator()(const Tuple& operands) const = 0;
     std::size_t Hash() const;
-    virtual std::string OperandToString(const Expression& operand, bool first) const = 0;
+    virtual void AddOperand(std::string& str, const Expression& operand) const= 0;
     static const NewOperator& Find(wchar_t tag, bool unary);
     static const NewOperator& none;
 protected:
@@ -75,7 +75,7 @@ public:
     Tuple operator()(const Tuple& operands) const override;
     unsigned MinimumOperands() const override;
     virtual Expression operator()(const Expression& operand) const = 0;
-    std::string OperandToString(const Expression& operand, bool first) const override;
+    void AddOperand(std::string& str, const Expression& operand) const override;
     const NewUnaryOperator* Unary() const override;
     static inline const NewUnaryOperator& Find(wchar_t tag) { return static_cast<const NewUnaryOperator&>(NewOperator::Find(tag, true)); }
 };
@@ -88,7 +88,7 @@ public:
     virtual Expression operator()(const Expression& lhs, const Expression& rhs) const = 0;
     Tuple operator()(const Tuple& operands) const override;
     unsigned MinimumOperands() const override;
-    std::string OperandToString(const Expression& operand, bool first) const override;
+    void AddOperand(std::string& str, const Expression& operand) const override;
     static inline const NewBinaryOperator& Find(wchar_t tag) { return static_cast<const NewBinaryOperator&>(NewOperator::Find(tag, false)); }
     const NewUnaryOperator* Unary() const override;
 protected:

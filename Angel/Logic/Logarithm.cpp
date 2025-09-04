@@ -49,14 +49,13 @@ public:
         }
     } 
 
-    std::string OperandToString(const Expression& operand, bool first) const
+    void AddOperand(std::string& str, const Expression& operand) const
     {
-        std::string result;
-        if (NeedsBracesAround(operand, first))
-            result = std::format("({})", to_string(operand));
+        str += "e" + std::string(*this);
+        if (NeedsBracesAround(operand, str.empty()))
+            str += std::format("({})", to_string(operand));
         else 
-            result = to_string(operand);
-        return std::format("e{}{}", std::string(*this), result);
+            str += to_string(operand);
     }    
 };
 

@@ -45,14 +45,13 @@ public:
         }
     } 
 
-    std::string OperandToString(const Expression& operand, bool first) const
+    void AddOperand(std::string& str, const Expression& operand) const
     {
-        std::string result;
-        if (NeedsBracesAround(operand, first))
-            result = std::format("({})", to_string(operand));
+        str += "e" + std::string(*this);
+        if (NeedsBracesAround(operand, str.empty()))
+            str += std::format("({})", to_string(operand));
         else 
-            result = to_string(operand);
-        return std::format("e{}{}", std::string(*this), result);
+            str += to_string(operand);
     }
 };
 
@@ -83,6 +82,25 @@ public:
             return Exponentiation({lhs, rhs});
         }
     }
+    void AddOperand(std::string& str, const Expression& operand) const
+    {
+        if (!str.empty() && (operand==Real(2.0) || operand==Integer(2)))
+        {
+            str += "²";
+        }
+        else if (!str.empty() && (operand==Real(3.0) || operand==Integer(3)))
+        {
+            str += "³";
+        }
+        else if (!str.empty() && operand==Real(0.5))
+        {
+            str = "√" + str;
+        }
+        else 
+        {
+            NewBinaryOperator::AddOperand(str, operand);
+        }
+    }    
 };
 
 

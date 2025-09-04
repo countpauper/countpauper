@@ -25,9 +25,8 @@ public:
     {
         return Tuple();
     }
-    std::string OperandToString(const Expression& operand, bool first) const 
+    void AddOperand(std::string& str, const Expression& operand) const
     {
-        return "null";
     }
 
     const NewUnaryOperator* Unary() const override
@@ -218,7 +217,7 @@ unsigned NewUnaryOperator::MinimumOperands() const
 }
 
 
-std::string NewUnaryOperator::OperandToString(const Expression& operand, bool) const
+void NewUnaryOperator::AddOperand(std::string& str, const Expression& operand) const
 {
     std::string result;
     if (NeedsBracesAround(operand, op.sw.postfix))
@@ -227,13 +226,12 @@ std::string NewUnaryOperator::OperandToString(const Expression& operand, bool) c
         result = to_string(operand);
     if (op.sw.postfix)
     {
-        return result + UnicodeToUtf8(op.sw.unicode);
+        str += result+ UnicodeToUtf8(op.sw.unicode);
     }
     else 
     {
-        return UnicodeToUtf8(op.sw.unicode) + result;
+        str += UnicodeToUtf8(op.sw.unicode) + result;
     }    
-    return result;
 }
 
 const NewUnaryOperator* NewUnaryOperator::Unary() const
@@ -304,17 +302,16 @@ unsigned NewBinaryOperator::MinimumOperands() const
         return 2;
 }
 
-std::string NewBinaryOperator::OperandToString(const Expression& operand, bool first) const
+void NewBinaryOperator::AddOperand(std::string& str, const Expression& operand) const
 {
-    std::string result;
+    bool first = str.empty();
     if (!first)
-        result += UnicodeToUtf8(op.sw.unicode);
+        str += UnicodeToUtf8(op.sw.unicode);
     
     if (NeedsBracesAround(operand, first))
-        result += std::format("({})", to_string(operand));
+        str += std::format("({})", to_string(operand));
     else 
-        result += to_string(operand);
-    return result;
+        str += to_string(operand);
 }
 
 const NewUnaryOperator* NewBinaryOperator::Unary() const

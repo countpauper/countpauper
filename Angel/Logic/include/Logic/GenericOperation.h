@@ -51,7 +51,6 @@ public:
     Expression Infer(const class Knowledge& knowledge, const Hypothesis& hypothesis, Trace& trace) const;
     const NewOperator& GetOperator() const;
     GenericOperation Solve(const Expression& target, Expression&& substitute) const;
-    std::string OperandToString(const Expression& e, bool first) const;
     std::string Summary() const;
 
     bool operator==(const GenericOperation& rhs) const;
@@ -64,10 +63,10 @@ public:
         return Hash() < hasher(rhs);
     }
     std::size_t Hash() const;
-
-
+    operator std::string() const;
 protected:
     using Base=Tuple;
+    void AddOperand(std::string& str, const Expression& e) const;
     GenericOperation SolveCommutative(const Expression& target, Expression&& substitute) const;
     GenericOperation SolveNonCommutative(const Expression& target, Expression&& substitute) const;
     GenericOperation SolveInversionCommutative(const Expression& target, Expression&& substitute);

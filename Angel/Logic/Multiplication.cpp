@@ -30,13 +30,6 @@ public:
             return Multiplication({lhs, rhs});
         }
     }
-    std::string OperandToString(const Expression& operand, bool first) const
-    {
-        std::string result = NewBinaryOperator::OperandToString(operand, first);
-        if (result.size()>2 && result[1]=='-')
-            result = result.substr(1);
-        return result;
-    }
 };
 
 

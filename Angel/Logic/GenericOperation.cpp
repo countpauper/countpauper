@@ -242,21 +242,27 @@ GenericOperation GenericOperation::SolveInversionNonCommutative(const Expression
 
 
 
-std::string GenericOperation::OperandToString(const Expression& e, bool first) const
+void GenericOperation::AddOperand(std::string& str, const Expression& e) const
 {
     if (size() == 1 && ope.Unary())
-        return ope.Unary()->OperandToString(e, true);
-    return ope.OperandToString(e, first);
+        return ope.Unary()->AddOperand(str, e);
+    ope.AddOperand(str, e);
+}
+
+
+GenericOperation::operator std::string() const
+{
+    std::string result;
+    for(const auto& obj: *this)
+    {
+        AddOperand(result, obj);
+    }
+    return result;
 }
 
 std::ostream& operator<<(std::ostream& os, const GenericOperation& operation)
 {
-    bool first = true;
-    for(const auto& obj: operation)
-    {
-        os << operation.OperandToString(obj, first);
-        first = false;
-    }
+    os << std::string(operation);
     return os;
 }
 
