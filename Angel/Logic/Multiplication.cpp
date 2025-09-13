@@ -15,8 +15,7 @@ public:
         absorb = &_absorb;
         precedence = 60; 
         description = "multiply";
-        commutative = true;
-        SetInvertible(L'÷');
+        SetCommutativeInvertible(L'÷');
     }
     Expression operator()(const Expression& lhs, const Expression& rhs) const override 
     {

@@ -67,8 +67,8 @@ public:
         precedence = 70; 
         description = "power";
         
-        commutative = false;
-        SetInvertible(L'↓');
+        SetInvertible(L'↓', L'↑');
+        right_associative = true;
     }
     Expression operator()(const Expression& lhs, const Expression& rhs) const override 
     {

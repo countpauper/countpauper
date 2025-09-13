@@ -127,8 +127,8 @@ Number log(const Integer& lhs, const Integer& rhs)
 
     assert(base>0);  // TODO: negative values require complex
     assert(value>0);  // TODO: negative values require complex
-    assert(value!=1); // goes to infinity, which requires Integer
-    double result = std::log10(base) / std::log10(value);
+    assert(base!=1); // goes to infinity, which requires Integer
+    double result = std::log10(value) / std::log10(base);
     assert(result<std::numeric_limits<long>::max());    // automatic conversion on overflow not yet implemented
     return Number(result);
 }

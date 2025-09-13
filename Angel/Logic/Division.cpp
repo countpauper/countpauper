@@ -14,8 +14,7 @@ public:
         // TODO 0 is left absorbing 
         precedence = 60; 
         description = "divide";
-        commutative = false;
-        SetInvertible(L'⋅');
+        SetInvertible(L'⋅', L'÷');
     }
     Expression operator()(const Expression& lhs, const Expression& rhs) const override 
     {

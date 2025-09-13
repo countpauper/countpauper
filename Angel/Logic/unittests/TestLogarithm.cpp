@@ -19,9 +19,11 @@ TEST(Logarithm, Logarithms)
     Knowledge k;
     EXPECT_EQ(k.Infer(Logarithm({Real(2)})), Real(std::log(2)));
     EXPECT_EQ(k.Infer(Logarithm({Integer(16)})), Integer(4));
-    EXPECT_EQ(k.Infer(Logarithm({Integer(8), Integer(2)})), Integer(3));
+    EXPECT_EQ(k.Infer(Logarithm({Integer(2), Integer(8)})), Integer(3));
     // TODO complex EXPECT_EQ(k.Infer(Logarithm({Integer(2), Integer(-3)})), Integer(-1));
-    EXPECT_EQ(k.Infer(Logarithm({True, Integer(2)})), Integer(0));
+    EXPECT_EQ(k.Infer(Logarithm({Integer(2), True})), Integer(0));
+    // NB logarithm operands are right associative so 2↓(3↓81) = 2↓4 = 2  
+    EXPECT_EQ(k.Infer(Logarithm({Integer(2), Integer(3), Integer(81)})), Integer(2));
 }
 
 TEST(Logarithm, Simplify)

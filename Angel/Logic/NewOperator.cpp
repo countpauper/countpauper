@@ -33,6 +33,15 @@ public:
     {
         return nullptr;
     }
+
+    GenericOperation InvertLeft(Expression&&, Expression&&) const 
+    {
+        return GenericOperation();
+    }
+    GenericOperation InvertRight(Expression&&, Expression&&) const 
+    {
+        return GenericOperation();
+    }
 };
 
 static NoneOperator noneOperator;
@@ -40,7 +49,6 @@ const NewOperator& NewOperator::none = noneOperator;
 
 NewOperator::NewOperator()
     : op{.id=0}
-    , inverse(&none)
 {
 }
 
@@ -83,20 +91,6 @@ bool NewOperator::IsPostfix() const
 bool NewOperator::IsComparator() const
 {
     return op.sw.comparison;
-}
-
-bool NewOperator::IsCommutative() const 
-{
-    return commutative;
-}
-
-
-const NewOperator& NewOperator::Inversion() const
-{
-    if (inverse)
-        return *inverse;
-    else
-        return noneOperator;
 }
 
 std::string_view NewOperator::Description() const
@@ -167,156 +161,10 @@ const NewOperator& NewOperator::Find(wchar_t tag, bool unary)
     }
 }
 
-void NewOperator::SelfInvertible()
-{
-    inverse = this;
-}
-
-bool NewOperator::SetInvertible(wchar_t inversion)
-{
-    auto inv_op=all.find(Code{.sw{inversion, op.sw.operands, IsPostfix(), IsComparator(), 0, 0}});    
-    if (inv_op==all.end())
-        inv_op=all.find(Code{.sw{inversion, op.sw.operands, !IsPostfix(), IsComparator(), 0, 0}});    
-
-    // it's not an error if not found. One of the inversions is constructed first. 
-    // if not found postpone and the inversion will make the circular reference
-    if (inv_op==all.end())
-        return false;
-    assert(inverse==nullptr && inv_op->second->inverse==nullptr);   // can only set one inverse. Mixed up 
-    inverse = inv_op->second;
-    inv_op->second->inverse = this;
-    return true;
-}
-
 std::ostream& operator<<(std::ostream& os, const NewOperator& op)
 {
     os << std::string(op);
     return os;
-}
-
-std::map<NewOperator::Code, NewOperator*> NewOperator::all;
-
-NewUnaryOperator::NewUnaryOperator(wchar_t c) 
-    : NewOperator(c, 1) 
-{
-    commutative = true;
-}
-
-Tuple NewUnaryOperator::operator()(const Tuple& operands) const
-{
-    if (operands.empty())
-        throw std::invalid_argument(std::format("Missing operand for unary operator {}", std::string(*this)));
-    if (operands.size()>1)
-        throw std::invalid_argument(std::format("Too many operands ({}) for unary operator {}", operands.size(), std::string(*this)));
-    return Tuple{(*this)(operands.front())};
-}
-
-unsigned NewUnaryOperator::MinimumOperands() const 
-{ 
-    return 1; 
-}
-
-
-void NewUnaryOperator::AddOperand(std::string& str, const Expression& operand) const
-{
-    std::string result;
-    if (NeedsBracesAround(operand, op.sw.postfix))
-        result = std::format("({})", to_string(operand));
-    else 
-        result = to_string(operand);
-    if (op.sw.postfix)
-    {
-        str += result+ UnicodeToUtf8(op.sw.unicode);
-    }
-    else 
-    {
-        str += UnicodeToUtf8(op.sw.unicode) + result;
-    }    
-}
-
-const NewUnaryOperator* NewUnaryOperator::Unary() const
-{
-    return nullptr;
-}
-
-NewBinaryOperator::NewBinaryOperator(wchar_t code, bool multiary) 
-    : NewOperator(code, multiary?3:2) 
-{
-}
-
-NewBinaryOperator::~NewBinaryOperator() = default;
-
-Tuple NewBinaryOperator::operator()(const Tuple& operands) const
-{
-    if ((operands.size()==1) && (unary))
-    {
-        return (*unary)(operands);
-    }
-    Expression constant;
-    Tuple result(operands);
-    auto it = result.begin();
-    while(it!=result.end())
-    {
-        if (it->IsConstant())
-        {
-            if (absorb)
-            {
-                if (*it == *absorb)
-                    return Tuple{*absorb};
-            }
-            if (identity) 
-            {
-                if (*it == *identity)
-                {
-                    it = result.erase(it);
-                    continue;
-                }
-            }
-            if (constant)
-                constant = (*this)(constant, *it);
-            else
-                constant = *it;
-            it = result.erase(it);
-        }
-        else 
-            ++it;
-    }
-    if (constant) 
-    {
-        result.AddAt(result.cbegin(), std::move(constant));
-    }
-    if (identity && result.empty())
-    {
-        return Tuple{*identity};
-    }
-    return result;
-}
-
-unsigned NewBinaryOperator::MinimumOperands() const 
-{ 
-    if (identity)
-        return 0;
-    else if (unary)
-        return 1;
-    else 
-        return 2;
-}
-
-void NewBinaryOperator::AddOperand(std::string& str, const Expression& operand) const
-{
-    bool first = str.empty();
-    if (!first)
-        str += UnicodeToUtf8(op.sw.unicode);
-    
-    if (NeedsBracesAround(operand, first))
-        str += std::format("({})", to_string(operand));
-    else 
-        str += to_string(operand);
-}
-
-const NewUnaryOperator* NewBinaryOperator::Unary() const
-{
-    return unary;
 }
 
 }

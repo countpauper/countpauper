@@ -14,8 +14,7 @@ public:
         identity = &_identity;
         precedence = 50; 
         description = "subtract";
-        commutative = false;
-        SetInvertible(L'+');
+        SetInvertible(L'+', L'-');
     }
     Expression operator()(const Expression& lhs, const Expression& rhs) const override 
     {

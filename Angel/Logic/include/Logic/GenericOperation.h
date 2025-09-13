@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Logic/Internal/Tuple.h"
-#include "Logic/NewOperator.h"
+#include "NewOperator.h"
+#include "NewUnaryOperator.h"
+#include "NewBinaryOperator.h"
 #include <initializer_list>
 #include <ranges>
 #include <map>
@@ -67,11 +69,6 @@ public:
 protected:
     using Base=Tuple;
     void AddOperand(std::string& str, const Expression& e) const;
-    GenericOperation SolveCommutative(const Expression& target, Expression&& substitute) const;
-    GenericOperation SolveNonCommutative(const Expression& target, Expression&& substitute) const;
-    GenericOperation SolveInversionCommutative(const Expression& target, Expression&& substitute);
-    GenericOperation SolveInversionNonCommutative(const Expression& target, Expression&& substitute);
-
 private:
 
     const NewOperator& ope; 

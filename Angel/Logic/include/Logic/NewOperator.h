@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Logic/Internal/Tuple.h"
-#include "Logic/Operator.h"
 #include <initializer_list>
 #include <ranges>
 #include <map>
@@ -10,7 +9,7 @@
 namespace Angel::Logic
 {
 class Expression;
-
+class GenericOperation;
 
 class NewOperator
 {
@@ -29,22 +28,24 @@ public:
     bool IsMultiary() const;
     bool IsPostfix() const;
     bool IsComparator() const;
-    bool IsCommutative() const;
-    
-    const NewOperator& Inversion() const;
+
     virtual Tuple operator()(const Tuple& operands) const = 0;
     std::size_t Hash() const;
     virtual void AddOperand(std::string& str, const Expression& operand) const= 0;
     static const NewOperator& Find(wchar_t tag, bool unary);
     static const NewOperator& none;
+
+    virtual GenericOperation InvertLeft(Expression&& lhs, Expression&& rhs) const = 0; 
+    virtual GenericOperation InvertRight(Expression&& lhs, Expression&& rhs) const = 0; 
 protected:
     constexpr NewOperator(const wchar_t tag, uint8_t operands, bool postfix=false, bool comparator=false) :
         op{.sw{tag, operands, postfix, comparator, 0, 0}}
     {
        all.insert(std::make_pair(op, this));
     }
-    void SelfInvertible();
-    bool SetInvertible(const wchar_t inversion);
+    void SetRightInvertible(NewOperator& inverse);
+    void SetLeftInveritible(NewOperator& inverse);
+    
 protected:
     union Code
     {
@@ -63,39 +64,11 @@ protected:
     Code op;
     std::string_view description;
     unsigned precedence;
-    bool commutative = false; 
-    const NewOperator* inverse=nullptr;
     static std::map<Code, NewOperator*> all;
 };
 
-class NewUnaryOperator : public NewOperator
-{
-public:
-    explicit NewUnaryOperator(wchar_t c);
-    Tuple operator()(const Tuple& operands) const override;
-    unsigned MinimumOperands() const override;
-    virtual Expression operator()(const Expression& operand) const = 0;
-    void AddOperand(std::string& str, const Expression& operand) const override;
-    const NewUnaryOperator* Unary() const override;
-    static inline const NewUnaryOperator& Find(wchar_t tag) { return static_cast<const NewUnaryOperator&>(NewOperator::Find(tag, true)); }
-};
 
-class NewBinaryOperator : public NewOperator 
-{
-public:
-    NewBinaryOperator(wchar_t code, bool multiary=false);
-    ~NewBinaryOperator();
-    virtual Expression operator()(const Expression& lhs, const Expression& rhs) const = 0;
-    Tuple operator()(const Tuple& operands) const override;
-    unsigned MinimumOperands() const override;
-    void AddOperand(std::string& str, const Expression& operand) const override;
-    static inline const NewBinaryOperator& Find(wchar_t tag) { return static_cast<const NewBinaryOperator&>(NewOperator::Find(tag, false)); }
-    const NewUnaryOperator* Unary() const override;
-protected:
-    const NewUnaryOperator* unary;
-    const Expression* identity;
-    const Expression* absorb;
-};
+std::string UnicodeToUtf8(wchar_t tag);
 
 }
 

@@ -68,8 +68,8 @@ public:
         unary = &_ln;
         precedence = 70; 
         description = "logarithm";
-        commutative = false;
-        SetInvertible(L'↑');
+        SetInvertible(L'↑', L'↓');
+        right_associative = true;
     }
     Expression operator()(const Expression& lhs, const Expression& rhs) const override 
     {
@@ -84,7 +84,6 @@ public:
         }
     }
 };
-
 
 GenericOperation Logarithm(std::initializer_list<Expression> operands)
 {

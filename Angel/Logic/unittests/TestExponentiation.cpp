@@ -23,7 +23,8 @@ TEST(Exponentiation, Exponentiations)
     EXPECT_EQ(k.Infer(Exponentiation({Integer(2), Integer(-3)})), Real(1.0/8.0));
     EXPECT_DOUBLE_EQ(double(k.Infer(Exponentiation({Integer(-256), Integer(11)})).Get<Real>()), -3.09485009821345e26);
     EXPECT_EQ(k.Infer(Exponentiation({True, Integer(2)})), Integer(1));
-    EXPECT_EQ(k.Infer(Exponentiation({Integer(2), Integer(3), Integer(2), Integer(1)})), Integer(64));
+    // exponentiations is right associative
+    EXPECT_EQ(k.Infer(Exponentiation({Integer(2), Integer(3), Integer(2), Integer(1)})), Integer(512));
     EXPECT_EQ(k.Infer(Exponentiation({Integer(2), Exponentiation({Integer(2), Integer(2)})})), Integer(16));
 }
 
@@ -62,9 +63,6 @@ TEST(Exponentiation, Inference)
 TEST(Exponentiation, Solve)
 {
     // Y = 2 ↑ X => X = 2 ↓ Y 
-
-    // TODO: 1) Exponentiation and logarithm seem to be inversed in decideing how to solve non commutative.
-    ///  also in general, solving may have to be done more iteratively.
     EXPECT_EQ(Exponentiation({Integer(2), Variable("X")}).Solve(Variable("X"), Variable("Y")), 
         Logarithm({Integer(2),  Variable("Y")}));
 

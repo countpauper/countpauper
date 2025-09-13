@@ -144,103 +144,36 @@ std::string to_string(const GenericOperation& c)
     return ss.str();
 }
 
-
-
+Expression RemainingOperands(const NewOperator& ope, std::ranges::input_range auto operands)
+{
+    if (std::ranges::empty(operands)) 
+        return Expression();
+    if (std::ranges::size(operands) == 1)
+        return *operands.begin();
+    else 
+        return GenericOperation(ope, operands);
+}
 
 GenericOperation GenericOperation::Solve(const Expression& target, Expression&& substitute) const
 {
-    if (!ope.IsCommutative())
+    auto it = Find(target);
+    if (it == end())
+        return GenericOperation();  // can't be solved, return NULL operation indicates failure 
+    if (it == begin())
     {
-        return SolveNonCommutative(target, std::move(substitute));
+        return ope.InvertLeft(std::move(substitute), RemainingOperands(ope, std::ranges::subrange(it+1, end())));
     }
-    if (!ope.Inversion())
-        return GenericOperation();  
-    return SolveCommutative(target, std::move(substitute));
-}
-
-GenericOperation GenericOperation::SolveNonCommutative(const Expression& target, Expression&& substitute) const
-{
-    if (front()!=target)
+    else if (it == end()-1)
     {
-        GenericOperation solution = *this;
-        for(auto& operand: solution)
-        {
-            if (operand==target && substitute)
-                operand = std::move(substitute);
-            else if (const auto subOperation = operand.GetIf<GenericOperation>())
-            {
-                auto subInversion = subOperation->Solve(target, std::move(substitute));
-                if (subInversion)
-                    operand = subInversion;
-            }
-        }
-        if (substitute)
-            return solution;
-        else 
-            return GenericOperation();        
+        return ope.InvertRight(RemainingOperands(ope, std::ranges::subrange(begin(), it)), std::move(substitute));
     }
     else
     {
-        return SolveCommutative(target, std::move(substitute));
+        return ope.InvertRight(RemainingOperands(ope, std::ranges::subrange(begin(), it)), 
+            ope.InvertLeft(std::move(substitute), 
+                RemainingOperands(ope, std::ranges::subrange(it+1, end()))));
     }
-
 }
-
-GenericOperation GenericOperation::SolveCommutative(const Expression& target, Expression&& substitute) const
-{
-   GenericOperation solution(ope.Inversion(), *this);
-    if (solution.ope.IsCommutative())
-        return solution.SolveInversionCommutative(target ,std::move(substitute));
-    else 
-        return solution.SolveInversionNonCommutative(target, std::move(substitute));
-
-}
-
-GenericOperation GenericOperation::SolveInversionCommutative(const Expression& target, Expression&& substitute)
-{
-    for(auto& operand: *this)
-    {
-        if ((operand == target) && (substitute))
-        {
-            operand = std::move(substitute);
-        }
-        else if (const auto subOperation = operand.GetIf<GenericOperation>())
-        {
-            auto subInversion = subOperation->Solve(target, std::move(substitute));
-            if (subInversion)
-                operand = std::move(subInversion);
-        }
-    }
-    if (substitute) // substituted
-        return *this;
-    else
-        return GenericOperation();
-}
-
-GenericOperation GenericOperation::SolveInversionNonCommutative(const Expression& target, Expression&& substitute)
-{
-    iterator targetIt=end();
-    for(auto it=begin(); it!=end(); ++it)
-    {
-        if ((targetIt==end()) && (*it == target))
-        {
-            targetIt = it;
-        }
-        else if (const auto subOperation = it->GetIf<GenericOperation>())
-        {
-            auto subInversion = subOperation->Solve(target, std::move(substitute));
-            if (subInversion)
-                *it = std::move(subInversion);
-        }
-    }
-    if (targetIt == end())
-        return GenericOperation();
-    erase(targetIt);
-    AddAt(begin(), std::move(substitute));
-    return *this;
-}
-
-
 
 void GenericOperation::AddOperand(std::string& str, const Expression& e) const
 {

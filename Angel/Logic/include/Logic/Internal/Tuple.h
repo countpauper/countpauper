@@ -28,6 +28,14 @@ public:
             emplace_back(item);
         }
     }
+    template<std::ranges::input_range R> 
+    explicit Tuple(const R& items)
+    {
+        for(auto item: items)
+        {
+            emplace_back(item);
+        }
+    }  
     ~Tuple();
     Set Assumptions() const;
     Expression Get(const Expression& key) const;

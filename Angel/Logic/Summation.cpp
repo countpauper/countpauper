@@ -13,8 +13,7 @@ public:
         identity = &_identity;
         precedence = 50; 
         description = "add";
-        commutative = true;
-        SetInvertible(L'-');
+        SetCommutativeInvertible(L'-');
     }
     Expression operator()(const Expression& lhs, const Expression& rhs) const override 
     {
