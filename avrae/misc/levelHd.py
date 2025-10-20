@@ -18,7 +18,7 @@ for hd, dice in maxHD_per_die.items():
 		if difference>0:
 			newCC.set(cc.value + difference)
 	elif dice>0:
-		new_CCs.append(ch.create_cc(cc_prefix+hd+")", minVal=0, maxVal=dice, reset='long'))
+		new_CCs.append(ch.create_cc(cc_prefix+hd+")", minVal=0, maxVal=dice, reset='long', reset_by='{dice/2}'))
 
 class_desc = "\n".join(f"**{cls}**: {lvl}d{HDs[cls.lower()]}" for cls, lvl in ch.levels)
 separator="⎯"* 18
