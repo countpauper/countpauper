@@ -2,11 +2,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-
-// TODO: 
-// Must be able to implement entry and exit with error handling 
-// Must not use heap 
-
 namespace eul::Test
 {
 using namespace testing;
@@ -35,12 +30,9 @@ TEST(rt_state_machine, initial)
 TEST(rt_state_machine, transition)
 {
     RTStateMock solid;
-    solid.name="solid";
     state blinking;
     RTStateMock on { solid, blinking };
-    on.name = "on";
     RTStateMock off;
-    off.name="off";
     machine sm { off, on};
     event button; 
     transition off_button(off, button, on);
@@ -106,9 +98,26 @@ TEST(rt_state_machine, behaviour_errors_are_propagated_to_signaller)
     event test;
     transition onTest(on, test, testBehaviour.AsStdFunction());
     EXPECT_CALL(testBehaviour, Call(_,test)).WillOnce(Return(std::unexpected(EBADF)));
-    EXPECT_EQ(sm.signal(test).error(), EBADF);
+    EXPECT_ERROR(sm.signal(test), EBADF);
 }
 
+TEST(rt_state_machine, guard_returning_EACCESS_blocks_transition)
+{
+    RTStateMock solid;
+    state blinking;
+    RTStateMock on { solid, blinking };
+    RTStateMock off;
+    machine sm { off, on};
+    event button; 
+    MockFunction<transition::BEHAVIOUR> guard;
+    transition off_button(off, button, on, guard.AsStdFunction());
+    EXPECT_CALL(guard, Call(_,_)).WillOnce(Return(EACCES));
+    InSequence seq;
+    EXPECT_CALL(off, exit()).Times(0);
+    EXPECT_CALL(on, entry()).Times(0);
+    EXPECT_ERROR(sm.signal(button), ECHILD);
+    EXPECT_TRUE(sm.in(off));
+}
 TEST(rt_state_machine, exit_errors_prevent_transition)
 {
     RTStateMock on;

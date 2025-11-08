@@ -148,8 +148,8 @@ expectation machine::signal(const event& _event)
     if (!target) {
         return std::unexpected(target.error());
     }
-    auto& state_target = **target;
-    auto destination = change(state_target);
+    auto state_target = *target;
+    auto destination = change(*state_target);
     if (destination)
     {
         if (*destination)
