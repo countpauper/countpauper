@@ -66,8 +66,8 @@ expectation operator&&(expectation lhs, expectation rhs) = delete;
 expectation operator||(expectation lhs, expectation rhs) = delete;
 
 // google mock helpers
-#define EXPECTED(exp) EXPECT_TRUE(exp)
-#define EXPECT_ERROR(query, err) EXPECT_EQ(expectation(query).error(), err)
-#define EXPECT_UNEXPECTED(query) EXPECT_FALSE(expectation(query))
+#define EXPECTED(query) EXPECT_TRUE((query).has_value())
+#define EXPECT_ERROR(query, err) EXPECT_EQ((query).error(), err)
+#define EXPECT_UNEXPECTED(query) EXPECT_FALSE((query).has_value())
 
 static constexpr expectation as_expected;

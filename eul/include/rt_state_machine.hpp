@@ -19,7 +19,6 @@ public:
     virtual ~stateIF() = default;
     virtual expectation entry();
     virtual expectation exit();
-    virtual expectation on(const event&);
 };
 
 class state;
@@ -27,12 +26,17 @@ class state;
 class transition : public intrusive_list::node
 {
 public:
-    transition(const event& _event, state& to);
-    transition(state& from, const event& _event, state& to);
+    using BEHAVIOUR = std::function<expectation(const class state&, const event& evt)>;
+    transition(state& from, const event& _event, state& to, const BEHAVIOUR& bhv = BEHAVIOUR());
+    transition(state& internal, const event& _event, const BEHAVIOUR& bhv);
+protected:
+    expectation behave(const state& _in, const event& _event) const;
 private:
+    transition(const event& _event, state& to, const BEHAVIOUR& bhv);
     friend state;
     event _event;
     state& _to;
+    BEHAVIOUR _behaviour;
 };
 
 class state : public stateIF, public intrusive_list::node
@@ -43,13 +47,12 @@ public:
     bool in(const state& child) const;
 protected:
     friend class machine;
-    state* find_transition(const event& _event) const;
+    std::expected<state*, errno_t> find_transition(const event& _event) const;
     std::expected<state*, errno_t> change(state& state);
     expectation enter();
     expectation confirm_substate_change();
     expectation leave();
     state* default_state();
-    expectation signal(const event& _event);
 private:
     intrusive_list children;
     state* _state = nullptr;

@@ -14,11 +14,6 @@ expectation stateIF::exit()
     return as_expected;
 }
 
-expectation stateIF::on(const event& _event)
-{
-    return as_expected;
-}
-
 state::state()
 {
 }
@@ -81,17 +76,23 @@ void state::transit(transition& transition)
     transitions.push_front(transition);
 }
 
-state* state::find_transition(const event& _event) const
+std::expected<state*,errno_t> state::find_transition(const event& _event) const
 {
     for(const auto& node : transitions)
     {
         const auto& trans = static_cast<const transition&>(node); 
-        if (trans._event == _event)
-            return &trans._to;
+        if (trans._event == _event) {
+            auto result = trans.behave(*this, _event);
+            if (result) {
+                return &trans._to;
+            } else if (result.error() != EACCES) {
+                return std::unexpected(result.error());
+            }
+        }
     }
     if (_state)
         return _state->find_transition(_event);
-    return nullptr;
+    return std::unexpected(ECHILD);
 }
 
 std::expected<state*, errno_t> state::change(state& to)
@@ -123,21 +124,15 @@ std::expected<state*, errno_t> state::change(state& to)
                 }
                 _state = *change_result;
                 return this;
+            } 
+            else 
+            {
+                return nullptr;
             }
-        } else if (change_result.error()!=ENOENT)
+        } else if (change_result.error()!=ECHILD)
             return std::unexpected(change_result.error());
     }
-    return std::unexpected(ENOENT);
-}
-
-expectation state::signal(const event& _event)
-{
-    auto result = on(_event);
-    if (!result)
-        return result;
-    if (_state)
-        return _state->signal(_event);
-    return result;
+    return std::unexpected(ECHILD);
 }
 
 
@@ -149,30 +144,48 @@ machine::machine(std::initializer_list<std::reference_wrapper<state>> children)
 
 expectation machine::signal(const event& _event)
 {    
-    if (state* target = find_transition(_event))
-    {
-        auto destination = change(*target);
-        if (destination)
-        {
-            if (*destination)
-                return (*destination)->enter();
-            return as_expected;
-        } if (destination.error()!=ENOENT) 
-            return std::unexpected(destination.error());
+    auto target = find_transition(_event);
+    if (!target) {
+        return std::unexpected(target.error());
     }
-    return state::signal(_event);
+    auto& state_target = **target;
+    auto destination = change(state_target);
+    if (destination)
+    {
+        if (*destination)
+            return (*destination)->enter();
+        return as_expected;
+    }
+    return std::unexpected(destination.error());
 }
 
-transition::transition(const event& _event, state& to) :
+transition::transition(const event& _event, state& to, const transition::BEHAVIOUR& bhv) :
     _event(_event),
-    _to(to)
+    _to(to),
+    _behaviour(bhv)
 {
 }
 
-transition::transition(state& from, const event& _event, state& to) :
-    transition(_event, to)
+transition::transition(state& from, const event& _event, state& to, const transition::BEHAVIOUR& bhv) :
+    transition(_event, to, bhv)
 {
     from.transit(*this);
+}
+
+
+transition::transition(state& internal, const event& _event, const transition::BEHAVIOUR& bhv) :
+    transition(_event, internal, bhv)
+{
+    internal.transit(*this);
+}
+
+
+expectation transition::behave(const state& _state, const event& _event) const
+{
+    if (!_behaviour) {
+        return as_expected;
+    }
+    return _behaviour(_state, _event);
 }
 
 }

@@ -70,6 +70,11 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "expected": "cpp"
+        "expected": "cpp",
+        "executor": "cpp",
+        "io_context": "cpp",
+        "netfwd": "cpp",
+        "timer": "cpp",
+        "future": "cpp"
     }
 }

@@ -20,7 +20,7 @@ using state_hash = std::size_t;
 class stateIF
 {
 public:
-    virtual expectation on(const event& _event);
+    virtual expectation on(const event&) { return as_expected; }
 };
 
 template<typename T> 
@@ -155,7 +155,7 @@ protected:
                 if (sub==0)
                     return as_expected;
                 else 
-                    return std::unexpected(ENOENT);
+                    return std::unexpected(ECHILD);
             }
         }, child);
     }

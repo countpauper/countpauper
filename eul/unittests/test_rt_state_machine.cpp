@@ -19,7 +19,6 @@ public:
 
     MOCK_METHOD(expectation, entry, (), (override));
     MOCK_METHOD(expectation, exit, (), (override));
-    MOCK_METHOD(expectation, on, (const event&), (override));
 };
 
 TEST(rt_state_machine, initial)
@@ -36,9 +35,12 @@ TEST(rt_state_machine, initial)
 TEST(rt_state_machine, transition)
 {
     RTStateMock solid;
+    solid.name="solid";
     state blinking;
     RTStateMock on { solid, blinking };
+    on.name = "on";
     RTStateMock off;
+    off.name="off";
     machine sm { off, on};
     event button; 
     transition off_button(off, button, on);
@@ -79,26 +81,31 @@ TEST(rt_state_machine, to_sub_state)
     EXPECT_TRUE(sm.in(blinking));
 }
 
-TEST(rt_state_machine, non_transitioning_events_are_sent_to_active_state)
+TEST(rt_state_machine, internal_transitions_only_execute_behavior)
 {
     RTStateMock on;
     RTStateMock off;
     machine sm { off, on};
+    MockFunction<transition::BEHAVIOUR> testBehaviour;
     event test;
-    EXPECT_CALL(off, on(test)).Times(1);
-    EXPECT_CALL(on, on(_)).Times(0);
+    transition offTest(off, test, testBehaviour.AsStdFunction());
+    EXPECT_CALL(testBehaviour, Call(_,test)).Times(1);
+    EXPECT_CALL(off, exit()).Times(0);
+    EXPECT_CALL(off, entry()).Times(0);
+
     ASSERT_TRUE(sm.in(off));
     EXPECT_TRUE(sm.signal(test));
 }
 
-TEST(rt_state_machine, signal_errors_are_propagated)
+TEST(rt_state_machine, behaviour_errors_are_propagated_to_signaller)
 {
     RTStateMock solid { };    
     RTStateMock on { solid };
     machine sm { on};
+    MockFunction<transition::BEHAVIOUR> testBehaviour;
     event test;
-    EXPECT_CALL(on, on(test)).Times(1).WillOnce(Return(std::unexpected(EBADF)));
-    EXPECT_CALL(solid, on(test)).Times(0);
+    transition onTest(on, test, testBehaviour.AsStdFunction());
+    EXPECT_CALL(testBehaviour, Call(_,test)).WillOnce(Return(std::unexpected(EBADF)));
     EXPECT_EQ(sm.signal(test).error(), EBADF);
 }
 
