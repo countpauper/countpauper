@@ -13,60 +13,64 @@
 namespace eul
 {
 
-class stateIF
-{
-public:
-    virtual ~stateIF() = default;
-    virtual expectation entry();
-    virtual expectation exit();
-};
-
 class state;
 
-class transition : public intrusive_list::node
+class state : public intrusive_list::node
 {
 public:
-    using BEHAVIOUR = std::function<expectation(const class state&, const event& evt)>;
-    transition(state& from, const event& _event, state& to, const BEHAVIOUR& bhv = BEHAVIOUR());
-    transition(state& internal, const event& _event, const BEHAVIOUR& bhv);
-protected:
-    expectation behave(const state& _in, const event& _event) const;
-private:
-    transition(const event& _event, state& to, const BEHAVIOUR& bhv);
-    friend state;
-    event _event;
-    state& _to;
-    BEHAVIOUR _behaviour;
-};
-
-class state : public stateIF, public intrusive_list::node
-{
-public:
+    
     state();
     state(std::initializer_list<std::reference_wrapper<state>> children);
     bool in(const state& child) const;
+
+    using behaviour = std::function<expectation(const class state&, const event& evt)>;
+    state& entry(const behaviour& _entry);
+    state& exit(const behaviour& _exit);
 protected:
     friend class machine;
     std::expected<state*, errno_t> find_transition(const event& _event) const;
-    std::expected<state*, errno_t> change(state& state);
-    expectation enter();
-    expectation confirm_substate_change();
-    expectation leave();
+    std::expected<state*, errno_t> change(state& state, const event& _event);
+    expectation enter(const event& _event);
+    expectation confirm_substate_change(const event& _event);
+    expectation leave(const event& _event);
     state* default_state();
+
+    expectation on_entry(const event& _event) const;
+    expectation on_exit(const event& _event) const;
+public:
+    class transition : public intrusive_list::node
+    {
+    public:
+        transition(state& from, const event& _event, state& to, const state::behaviour& bhv = state::behaviour());
+        transition(state& internal, const event& _event, const state::behaviour& bhv);
+    protected:
+        expectation behave(const state& _in, const event& _event) const;
+    private:
+        transition(const event& _event, state& to, const state::behaviour& bhv);
+        friend state;
+        event _event;
+        state& _to;
+        state::behaviour _behaviour;
+    };
 private:
     intrusive_list children;
     state* _state = nullptr;
+    behaviour _entry; 
+    behaviour _exit;
 
-    friend transition;
     void transit(transition& transition);
     intrusive_list transitions;
 };
+
+
 
 class machine : public state
 {
 public:
     explicit machine(std::initializer_list<std::reference_wrapper<state>> children);
     expectation signal(const event& _event);
+
+    static event construction;
 };
 
 

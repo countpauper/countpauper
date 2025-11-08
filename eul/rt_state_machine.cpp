@@ -4,16 +4,6 @@
 namespace eul 
 {
     
-expectation stateIF::entry()
-{
-    return as_expected;
-}
-
-expectation stateIF::exit()
-{
-    return as_expected;
-}
-
 state::state()
 {
 }
@@ -26,36 +16,64 @@ state::state(std::initializer_list<std::reference_wrapper<state>> children_)
     }
 }
 
-expectation state::leave()
+
+
+state& state::entry(const behaviour& _entry)
+{
+    this->_entry = _entry;
+    return *this;
+}
+state& state::exit(const behaviour& _exit)
+{
+    this->_exit = _exit;
+    return *this;
+}
+
+expectation state::on_entry(const event& _event) const
+{
+    if (_entry)
+        return _entry(*this, _event);
+    return as_expected;
+}
+
+expectation state::on_exit(const event& _event) const
+{
+    if (_exit)
+        return _exit(*this, _event);
+    return as_expected;
+}
+
+expectation state::leave(const event& _event)
 {
     if (_state)
     {
-        auto result = _state->leave();
+        auto result = _state->leave(_event);
         _state = nullptr;
         if (!result)
             return result;
     }
-    return exit();
+    return on_exit(_event);
 }
 
-expectation state::confirm_substate_change() 
+expectation state::confirm_substate_change(const event& _event) 
 {
     if (!_state)
         _state = default_state();
     if (!_state) 
         return as_expected;
-    auto enter_result = _state->enter();
+    auto enter_result = _state->enter(_event);
     if (!enter_result)
         _state = nullptr;
     return enter_result;
 }
 
-expectation state::enter()
+expectation state::enter(const event& _event)
 {
-    auto result = entry();
+    auto result = on_entry(_event);
     if (!result)
         return result;
-    return confirm_substate_change();
+
+    return confirm_substate_change(_event);
 }
 
 state* state::default_state()
@@ -95,18 +113,18 @@ std::expected<state*,errno_t> state::find_transition(const event& _event) const
     return std::unexpected(ECHILD);
 }
 
-std::expected<state*, errno_t> state::change(state& to)
+std::expected<state*, errno_t> state::change(state& to, const event& _event)
 {
     if (this == &to)
         return this;
     for(auto& node: children)
     {
         state& child = static_cast<state&>(node);
-        if (auto change_result = child.change(to))
+        if (auto change_result = child.change(to, _event))
         {
             if (_state==*change_result)
             {
-                auto entry_result = _state->confirm_substate_change();
+                auto entry_result = _state->confirm_substate_change(_event);
                 if (!entry_result)
                     return std::unexpected(entry_result.error());
                 return nullptr;
@@ -115,7 +133,7 @@ std::expected<state*, errno_t> state::change(state& to)
             {
                 if (_state)
                 {
-                    auto exit_result = _state->exit();
+                    auto exit_result = _state->on_exit(_event);
                     if (!exit_result) 
                     {
                         _state = nullptr;
@@ -139,7 +157,7 @@ std::expected<state*, errno_t> state::change(state& to)
 machine::machine(std::initializer_list<std::reference_wrapper<state>> children)
     : state(children)
 {
-    confirm_substate_change();
+    confirm_substate_change(construction);
 }
 
 expectation machine::signal(const event& _event)
@@ -149,43 +167,47 @@ expectation machine::signal(const event& _event)
         return std::unexpected(target.error());
     }
     auto state_target = *target;
-    auto destination = change(*state_target);
+    auto destination = change(*state_target, _event);
     if (destination)
     {
         if (*destination)
-            return (*destination)->enter();
+            return (*destination)->enter(_event);
         return as_expected;
     }
     return std::unexpected(destination.error());
 }
 
-transition::transition(const event& _event, state& to, const transition::BEHAVIOUR& bhv) :
+state::transition::transition(const event& _event, state& to, const state::behaviour& bhv) :
     _event(_event),
     _to(to),
     _behaviour(bhv)
 {
 }
 
-transition::transition(state& from, const event& _event, state& to, const transition::BEHAVIOUR& bhv) :
+state::transition::transition(state& from, const event& _event, state& to, const state::behaviour& bhv) :
     transition(_event, to, bhv)
 {
     from.transit(*this);
 }
 
 
-transition::transition(state& internal, const event& _event, const transition::BEHAVIOUR& bhv) :
+state::transition::transition(state& internal, const event& _event, const state::behaviour& bhv) :
     transition(_event, internal, bhv)
 {
     internal.transit(*this);
 }
 
 
-expectation transition::behave(const state& _state, const event& _event) const
+expectation state::transition::behave(const state& _state, const event& _event) const
 {
     if (!_behaviour) {
         return as_expected;
     }
     return _behaviour(_state, _event);
 }
+
+
+event machine::construction;
+
 
 }
