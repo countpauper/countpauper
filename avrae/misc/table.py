@@ -1,3 +1,4 @@
+<drac2>
 # Help 
 
 # `!table [<svar/cvar/uvar>] [<dice>] [<comma,separated>] [...]`
@@ -27,7 +28,7 @@
 
 # `!table heads,tails` : will roll random heads or tails.
 
-<drac2>
+
 hexchars = '0123456789abcdef'
 
 def is_gvar(s):

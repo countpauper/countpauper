@@ -1,4 +1,4 @@
-!servalias hd_hp <drac2>
+!servalias hd <drac2>
 ch=character()
 HDs=dict(wizard=6,sorcerer=6,
 		 artificer=8, bard=8, cleric=8, druid=8, monk=8, rogue=8, warlock=8,
@@ -18,10 +18,10 @@ for hd, dice in maxHD_per_die.items():
 		if difference>0:
 			newCC.set(cc.value + difference)
 	elif dice>0:
-		new_CCs.append(ch.create_cc(cc_prefix+hd+")", minVal=0, maxVal=dice, reset='long', reset_by='{dice/2}'))
+		new_CCs.append(ch.create_cc(cc_prefix+hd+")", minVal=0, maxVal=dice, reset='long', reset_by=dice//2))
 
 class_desc = "\n".join(f"**{cls}**: {lvl}d{HDs[cls.lower()]}" for cls, lvl in ch.levels)
 separator="⎯"* 18
 cc_desc = "\n".join(f"**{cc.name}** : {str(cc)}" for cc in new_CCs)
-return f'''embed -title "{name} updates {get('their','their')} hit dice." -desc "{class_desc}\n{separator}\n{cc_desc}\n{reset_info}"'''
+return f'''embed -title "{name} updates {get('their','their')} hit dice." -desc "{class_desc}\n{separator}\n{cc_desc}"'''
 </drac2>

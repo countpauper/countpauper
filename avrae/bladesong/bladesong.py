@@ -12,13 +12,19 @@ if not ignore:
 		if  subclass not in ["bladesinger","bladesinging"]:
 			return f'echo The Bladesinger subclass is not set. Use `!level Wizard {WizardLevel} Bladesinging`'
 
+def find_cc(ch, name):
+	try:
+		return ch.cc(name)
+	except "ConsumableException":
+		return ([cc for cc in ch.consumables if name.lower() in cc.name.lower()] + [None])[0]
+
 ch=character()
 bladesongs = 0
-cc = 'Bladesong'
 if not ignore:
-	if not ch.cc_exists(cc):
-		return f'echo {title} counter is not created. Use `!level Wizard {WizardLevel} Bladesinger` or `!cc create Bladesong -min 0 -max {proficiencyBonus} -reset long -type bubble` to create it.'
-	bladesongs = ch.get_cc(cc)
+	cc = find_cc(ch, 'Bladesong')
+	if not cc:
+		return f'echo {title} counter is not created. Use `!level Wizard {WizardLevel} Bladesinger` or `!cc create Bladesong -min 0 -max proficiencyBonus -reset long -type bubble` to create it.'
+	bladesongs = cc.value 
 
 #  don't use var anymore
 var_name='Bladesong'
@@ -98,11 +104,11 @@ if not active:
 	if turns > 0:
 		if not ignore:
 			if bladesongs>0:
-				ch.mod_cc(cc, -1, True)
+				cc.mod(-1, True)
 			else:
 				title = 'Bladesong not available.'
 				turns=None
-			fields+= f' -f "Remaining Uses|{ch.cc_str(cc)}|inline"'
+			fields+= f' -f "Remaining Uses|{cc}|inline"'
 elif turns > 0:
 	title = 'Bladesong already active'
 

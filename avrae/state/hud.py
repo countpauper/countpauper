@@ -11,6 +11,26 @@
 args=[a for a in &ARGS&]
 ap=argparse(args)
 
+
+# Helper to match string in collection. It will first exact match (case insensitivey) 
+# and on failure fuzzy match
+# returns none if nothing matches
+def match(s, l):
+	s = s.lower()
+	# exact
+	for item in l:
+		if item.lower() == s:
+			return item
+	# starts with
+	for item in l:
+		if item.lower().startswith(s):
+			return item
+	# contains
+	for item in l:
+		if s in item.lower():
+			return item
+	return None		
+
 # Get statblocks, ch is character for CCs and other things not available from combatants
 # stat is a list of combatants for hp, ac other simple stuff
 ch=character()
@@ -101,7 +121,7 @@ if auto in field_list and ch:
 					consumable_names.remove(field_cc)
 					field_list.insert(index,label)
 					index+=1
-				if (field_item:=field.get('item')) and (match_item:=([i for i in item_names if field_item in i]+[None])[0]):
+				if (field_item:=field.get('item')) and (match_item:=match(field_item, item_names)):
 					item_names.remove(match_item)
 					field_list.insert(index,label)
 					index+=1
@@ -121,15 +141,12 @@ for idx in range(len(field_list)):
 				continue
 			# fuzzy matching with known CCs
 			if ch and custom=='cc':
-				for cc in ch.consumables:
-					if cc.name.lower().startswith(sub_name.lower()):
-						sub_name=cc.name
-						break
+				sub_name=match(sub_name, [cc.name for cc in ch.consumables]) or sub_name
 				display = display or custom
 				field_list[idx] = dict(display=display, cc=sub_name, icon=icon)
 			elif ch and custom=='item':
 				# TODO: last argument unused
-				item_name=([i for i in bag_items.keys() if sub_name.lower() in i]+[sub_name])[0]
+				item_name = match(sub_name, bag_items.keys()) or sub_name
 				field_list[idx] = dict(display=custom, item=item_name, icon=icon)
 			break
 
@@ -146,7 +163,7 @@ for a in args:
 
 # store or dump output
 if ap.last('set') and ch:
-	ch.set_cvar(cvar_name,dump_json(field_list))
+	ch.set_cvar(cvar_name, dump_json(field_list))
 
 if ap.last('var'):
 	if ch:
