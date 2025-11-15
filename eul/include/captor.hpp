@@ -15,6 +15,8 @@ template<typename Fn, typename... Captures>
 class captor 
 {
 public:
+    captor() = default;
+    
     template<typename... PCaptures>
     captor(Fn&& fn, PCaptures&&... captives) :
         _fn(std::move(fn)),

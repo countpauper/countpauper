@@ -100,7 +100,7 @@ std::expected<state*,errno_t> state::find_transition(const event& _event) const
     {
         const auto& trans = static_cast<const transition&>(node); 
         if (trans._event == _event) {
-            auto result = trans.behave(*this, _event);
+            auto result = trans.guard(*this, _event);
             if (result) {
                 return &trans._to;
             } else if (result.error() != EACCES) {
@@ -177,39 +177,28 @@ expectation machine::signal(const event& _event)
     return std::unexpected(destination.error());
 }
 
-state::transition::transition(const event& _event, state& to, const BEHAVIOUR& bhv) :
+state::transition::transition(const event& _event, state& to) :
     _event(_event),
-    _to(to),
-    _behaviour(bhv)
+    _to(to)
 {
 }
 
 state::transition::transition(state& from, const event& _event, state& to) :
-    transition(_event, to, BEHAVIOUR())
+    transition(_event, to)
 {
     from.transit(*this);
 }
 
-state::transition::transition(state& from, const event& _event, state& to, const BEHAVIOUR& bhv) :
-    transition(_event, to, bhv)
-{
-    from.transit(*this);
-}
-
-
-state::transition::transition(state& internal, const event& _event, const BEHAVIOUR& bhv) :
-    transition(_event, internal, bhv)
+state::transition::transition(state& internal, const event& _event) :
+    transition(_event, internal)
 {
     internal.transit(*this);
 }
 
 
-expectation state::transition::behave(const state& _state, const event& _event) const
+expectation state::transition::guard(const state& _state, const event& _event) const
 {
-    if (!_behaviour) {
-        return as_expected;
-    }
-    return _behaviour(_state, _event);
+    return as_expected;
 }
 
 
