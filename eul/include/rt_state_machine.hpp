@@ -38,19 +38,26 @@ protected:
     expectation on_entry(const event& _event) const;
     expectation on_exit(const event& _event) const;
 public:
+
+    // TODO can be any callable that matches the signature (expecation(const state&, const event&))
+    // or void, use a concept for it
+    // Then also use templated callback/signals for entry/exit      
+    //template<typename BEHAVIOUR>    
     class transition : public intrusive_list::node
     {
     public:
-        transition(state& from, const event& _event, state& to, const state::behaviour& bhv = state::behaviour());
-        transition(state& internal, const event& _event, const state::behaviour& bhv);
+        using BEHAVIOUR = state::behaviour;
+        transition(state& from, const event& _event, state& to);
+        transition(state& from, const event& _event, state& to, const BEHAVIOUR& bhv);
+        transition(state& internal, const event& _event, const BEHAVIOUR& bhv);
     protected:
         expectation behave(const state& _in, const event& _event) const;
     private:
-        transition(const event& _event, state& to, const state::behaviour& bhv);
+        transition(const event& _event, state& to, const BEHAVIOUR& bhv);
         friend state;
         event _event;
         state& _to;
-        state::behaviour _behaviour;
+        BEHAVIOUR _behaviour;
     };
 private:
     intrusive_list children;

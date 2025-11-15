@@ -77,17 +77,33 @@ TEST(intrusive_list, list_can_be_iterated)
     EXPECT_EQ(sum, 6);
 }
 
+TEST(intrusive_list, find)
+{
+    intrusive_list list;
+    intrusive_list::node one(list); 
+    intrusive_list::node two(list); 
+    intrusive_list::node out;
+    
+    EXPECT_EQ(list.find(two), list.begin());
+    EXPECT_EQ(*list.find(one), one);
+    EXPECT_EQ(list.find(out), list.end());
+}
+
 TEST(intrusive_list, erase_inside_loop)
 {
     Mixed one(1), two(2), three(3);
     intrusive_list list;
     list.push_front(one);
     list.insert(list.push_back(two), three);
+    unsigned remaining = 0;
     for(auto& n: list)
     {
         if (static_cast<Mixed&>(n).value==2)
             list.erase(n);
+        else 
+            ++remaining;
     }     
+    EXPECT_EQ(list.size(), remaining);
     EXPECT_FALSE(two.linked());
 }
 

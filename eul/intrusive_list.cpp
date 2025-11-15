@@ -79,14 +79,20 @@ intrusive_list::node::~node()
     unlink();
 }
 
+bool intrusive_list::node::operator==(const intrusive_list::node& other) const
+{
+    return this == &other;
+}
 
-intrusive_list::iterator::iterator() :
-    _node(nullptr)
+intrusive_list::iterator::iterator()
+    : _node(nullptr)
+    , _ref(&_node)
 {
 }
 
-intrusive_list::iterator::iterator(value_type* n) : 
-    _node(n)
+intrusive_list::iterator::iterator(const pointer& n) 
+    : _node(n)
+    , _ref(&n)
 {
 }
 
@@ -97,8 +103,16 @@ bool intrusive_list::iterator::operator==(const intrusive_list::iterator& o) con
 
 intrusive_list::iterator& intrusive_list::iterator::operator++()
 {
-    if (_node)
-        _node = _node->_next;
+    if (_node) {
+        if (*_ref == _node ) {
+            _ref = &(_node->_next);
+            _node = _node->_next;
+        } else {
+            // The previous->next got overwritten, indicating that the current was erased (or moved)
+            //  iterate to the node that repaced it 
+            _node = *_ref;
+        }
+    }
     return *this;
 }
 
@@ -182,6 +196,15 @@ intrusive_list::node& intrusive_list::front()
     return *_first;
 }
 
+intrusive_list::iterator intrusive_list::find(const node& node) const
+{
+    iterator it = begin();
+    for(;it!=end();++it) {
+        if (*it == node) 
+            break;
+    }
+    return it;
+}
 
 intrusive_list::iterator intrusive_list::end() 
 {
@@ -215,10 +238,7 @@ void intrusive_list::clear()
     node* prev = nullptr;
     for(node& n: *this)
     {
-        if (prev)
-            prev->_next = nullptr;
-        prev = &n;
-        n._root = nullptr;
+        n.unlink();
     }
     _first = nullptr;
 }

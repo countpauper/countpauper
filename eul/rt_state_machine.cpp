@@ -177,21 +177,27 @@ expectation machine::signal(const event& _event)
     return std::unexpected(destination.error());
 }
 
-state::transition::transition(const event& _event, state& to, const state::behaviour& bhv) :
+state::transition::transition(const event& _event, state& to, const BEHAVIOUR& bhv) :
     _event(_event),
     _to(to),
     _behaviour(bhv)
 {
 }
 
-state::transition::transition(state& from, const event& _event, state& to, const state::behaviour& bhv) :
+state::transition::transition(state& from, const event& _event, state& to) :
+    transition(_event, to, BEHAVIOUR())
+{
+    from.transit(*this);
+}
+
+state::transition::transition(state& from, const event& _event, state& to, const BEHAVIOUR& bhv) :
     transition(_event, to, bhv)
 {
     from.transit(*this);
 }
 
 
-state::transition::transition(state& internal, const event& _event, const state::behaviour& bhv) :
+state::transition::transition(state& internal, const event& _event, const BEHAVIOUR& bhv) :
     transition(_event, internal, bhv)
 {
     internal.transit(*this);
