@@ -7,10 +7,8 @@
 namespace Engine
 {
 
-OffscreenSurface::OffscreenSurface() :
-    m_glRC(0)
+Display::Display()
 {
-
     TCHAR szWindowClass[] = "Offscreen";
     HINSTANCE moduleHandle = GetModuleHandle(NULL);
     WNDCLASSEX wcex;
@@ -35,33 +33,53 @@ OffscreenSurface::OffscreenSurface() :
     }
 
 
-    HWND hWnd = CreateWindow(szWindowClass, "Offscreen Surface", WS_DISABLED,
+    m_display = CreateWindow(szWindowClass, "Offscreen Surface", WS_DISABLED,
         0, 1, 0, 1, NULL, NULL, moduleHandle, NULL);
-    if (!hWnd)
+    if (!m_display)
     {
         throw std::runtime_error("Failed to create offscreen window");
     }
-    ShowWindow(hWnd, SW_HIDE);
-    // for windows refactor, the hidden window would be the "Display"
-    // THe chosen pixelformat descriptor the "Config" (need a DC for each surface?)
-    //
-    HDC hDC = GetDC(hWnd);
+    ShowWindow(m_display, SW_HIDE);
+}
+
+Display::~Display()
+{
+    DestroyWindow(m_display);
+}
+
+PixelFormat Display::GetConfig(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, uint8_t depth) const
+{
     PIXELFORMATDESCRIPTOR pfd;
+
     memset(&pfd, 0, sizeof(pfd));
     pfd.nSize = sizeof(pfd);
     pfd.nVersion = 1;
     pfd.dwFlags = PFD_SUPPORT_OPENGL;
     pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 32;
+    pfd.cColorBits = red+green+blue+alpha;
     pfd.cStencilBits = 8;
-    pfd.cDepthBits = 24;
+    pfd.cDepthBits = depth;
 
+    return pfd;
+}
+
+DisplayHandle Display::GetHandle() const
+{
+    return m_display;
+}
+
+OffscreenSurface::OffscreenSurface(const Display& display, unsigned width, unsigned height, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, uint8_t depth) :
+    m_display(display),
+    m_context(nullptr),
+    m_surface(nullptr)
+{
+    PIXELFORMATDESCRIPTOR pfd = display.GetConfig(red, green, blue, alpha, depth);
+    HWND hWnd = display.GetHandle();
+    HDC hDC = GetDC(hWnd);
     int pf = ChoosePixelFormat(hDC, &pfd);
     if (pf == 0)
     {
-
         ReleaseDC(hWnd, hDC);
-        DestroyWindow(hWnd);
         throw std::runtime_error("Failed to choose offscreen surface format");
     }
 
@@ -70,33 +88,29 @@ OffscreenSurface::OffscreenSurface() :
         throw std::runtime_error("Failed to set offscreen surface format");
     }
 
-    // TODO move and delete on close
     HGLRC glRC = wglCreateContext(hDC);
     if (!glRC)
     {
         ReleaseDC(hWnd, hDC);
-        DestroyWindow(hWnd);
         throw std::runtime_error("Failed to create offscreen OpenGL context");
     }
-    m_display = hWnd;
-    m_surface = glRC;
-
-    wglMakeCurrent(hDC, (HGLRC)m_surface);
-
-    ReleaseDC(hWnd, hDC);
-    DestroyWindow(hWnd);
+    wglMakeCurrent(hDC, (HGLRC)glRC);
 
     GLenum glewError = glewInit();
     if (GLEW_OK != glewError)
     {
         throw std::runtime_error("Failed to initialize GLEW");
     }
+    m_context = hDC;
+    m_surface = glRC;
 }
 
 
 OffscreenSurface::~OffscreenSurface()
 {
+    wglDeleteContext(m_surface);
     wglMakeCurrent(NULL, NULL);
+    ReleaseDC(m_display.GetHandle(), m_context);
 }
 
 

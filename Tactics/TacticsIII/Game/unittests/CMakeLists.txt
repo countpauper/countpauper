@@ -18,6 +18,14 @@ target_link_libraries(${EXE_NAME} PUBLIC
     gmock_main
 )
 
+# Copy binary needed to run unittests
+set(UNITTEST_BINARY_DIR "${CMAKE_BINARY_DIR}/Game/unittests")
+message("Copy ${CMAKE_PREFIX_PATH}/bin/glew32.dll to ${UNITTEST_BINARY_DIR}")
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_PREFIX_PATH}/bin/glew32.dll"
+    "${UNITTEST_BINARY_DIR}"
+)
+
 add_test(
         NAME ${PROJECT_NAME}
         COMMAND ${EXE_NAME}

@@ -27,7 +27,7 @@ namespace Engine::Test
 
     TEST(Image, ReadImage)
     {
-        Image newImage("../../../data/test.png");
+        Image newImage("test.png");
         EXPECT_TRUE(newImage);
         EXPECT_EQ(newImage.Width(), 32);
         EXPECT_EQ(newImage.Channels(), 3);

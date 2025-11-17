@@ -10,6 +10,9 @@
         "cmake.configureSettings":{
                 "BUILD_TESTS": true
         },
+        "files.associations": {
+                "string_view": "cpp"
+        },
 
 
 }

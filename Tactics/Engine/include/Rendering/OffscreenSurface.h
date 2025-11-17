@@ -4,7 +4,11 @@
 
 #ifdef WIN32
     // TODO: The windows offscreen surface now also has to be refactored into a headless display
-
+    #include <EGL/egl.h>
+    using PixelFormat = PIXELFORMATDESCRIPTOR;
+    using ContextHandle = HDC;
+    using DisplayHandle = HWND;
+    using SurfaceHandle = HGLRC;
 #else
     #include <EGL/egl.h>
     using PixelFormat = EGLConfig;

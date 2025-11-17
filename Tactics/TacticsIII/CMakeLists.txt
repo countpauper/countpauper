@@ -28,3 +28,9 @@ add_subdirectory(Game)
 target_link_libraries(${PROJECT_NAME}
      Game
      Engine)
+
+message("Copy bins to ${CMAKE_BINARY_DIR}")
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_PREFIX_PATH}/bin/libfreeglut.dll"
+    "${CMAKE_BINARY_DIR}"
+)
