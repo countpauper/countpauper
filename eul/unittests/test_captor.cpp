@@ -35,6 +35,13 @@ TEST(captor, is_smoll)
     int some_int = 3;
     std::function<int()> lambda = [some_int]() { return some_int+1; };
     static_assert(sizeof(cap) < sizeof(lambda));
+    EXPECT_EQ(cap(), 4);
+}
+
+TEST(captor, no_cap)
+{
+    captor<int(*)(int)> cap(free_function);
+    EXPECT_EQ(cap(2), 3);
 }
 
 TEST(captor, argument)

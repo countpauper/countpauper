@@ -24,7 +24,7 @@ public:
     bool in(const state& child) const;
 
     using behaviour = std::function<expectation(const class state&, const event& evt)>;
-    state& entry(const behaviour& _entry);
+    state& entry(const behaviour& _entry);  // TODO templated entry/exit behaviours 
     state& exit(const behaviour& _exit);
 protected:
     friend class machine;
@@ -38,17 +38,13 @@ protected:
     expectation on_entry(const event& _event) const;
     expectation on_exit(const event& _event) const;
 public:
-
-    // TODO can be any callable that matches the signature (expecation(const state&, const event&))
-    // or void, use a concept for it
-    // Then also use templated callback/signals for entry/exit      
     class transition : public intrusive_list::node
     {
     public:
         transition(state& from, const event& _event, state& to);
         transition(state& internal, const event& _event);
     protected:
-        virtual expectation guard(const state& _in, const event& _event) const;
+        virtual expectation call_guard(const state& _in, const event& _event) const;
     private:
         transition(const event& _event, state& to);
 
@@ -57,8 +53,7 @@ public:
         state& _to;
     };
 
-//    template<std::invocable<const state&, const event&> GUARD>     // TODO GUARD must be invocable as a guard
-    template<typename GUARD> 
+    template<std::invocable<const state&, const event&> GUARD = state::behaviour>
     class guard_transition : public transition 
     {
     public:
@@ -73,16 +68,13 @@ public:
             _guard = grd;
         }
     protected:
-        expectation guard(const state& _in, const event& _event) const override 
+        expectation call_guard(const state& _in, const event& _event) const override 
         {
             return _guard(_in, _event);
         }
     private:
         GUARD _guard;
     };
-
-    using guard_transition_fn = guard_transition<state::behaviour>;
-
 private:
     intrusive_list children;
     state* _state = nullptr;

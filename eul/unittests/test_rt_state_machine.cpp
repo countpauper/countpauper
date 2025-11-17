@@ -1,4 +1,5 @@
 #include "rt_state_machine.hpp"
+#include "captor.hpp"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -114,7 +115,7 @@ TEST(rt_state_machine, internal_transitions_only_execute_behavior)
     machine sm { off, on};
     MockFunction<state::behaviour> testBehaviour;
     event test;
-    state::transition offTest(off, test, testBehaviour.AsStdFunction());
+    state::guard_transition offTest(off, test, testBehaviour.AsStdFunction());
     EXPECT_CALL(testBehaviour, Call(_,test)).Times(1);
     EXPECT_CALL(off, exit(_)).Times(0);
     EXPECT_CALL(off, entry(_)).Times(0);
@@ -123,14 +124,14 @@ TEST(rt_state_machine, internal_transitions_only_execute_behavior)
     EXPECT_TRUE(sm.signal(test));
 }
 
-TEST(rt_state_machine, behaviour_errors_are_propagated_to_signaller)
+TEST(rt_state_machine, guard_errors_are_propagated_to_signaller)
 {
     RTStateMock solid { };    
     RTStateMock on { solid };
     machine sm { on};
     MockFunction<state::behaviour> testBehaviour;
     event test;
-    state::transition onTest(on, test, testBehaviour.AsStdFunction());
+    state::guard_transition onTest(on, test, testBehaviour.AsStdFunction());
     EXPECT_CALL(testBehaviour, Call(_,test)).WillOnce(Return(std::unexpected(EBADF)));
     EXPECT_ERROR(sm.signal(test), EBADF);
 }
@@ -144,7 +145,7 @@ TEST(rt_state_machine, guard_returning_EACCESS_blocks_transition)
     machine sm { off, on};
     event button; 
     MockFunction<state::behaviour> guard;
-    state::transition off_button(off, button, on, guard.AsStdFunction());
+    state::guard_transition off_button(off, button, on, guard.AsStdFunction());
     EXPECT_CALL(guard, Call(_,_)).WillOnce(Return(EACCES));
     InSequence seq;
     EXPECT_CALL(off, exit(_)).Times(0);
@@ -152,6 +153,31 @@ TEST(rt_state_machine, guard_returning_EACCESS_blocks_transition)
     EXPECT_ERROR(sm.signal(button), ECHILD);
     EXPECT_TRUE(sm.in(off));
 }
+
+expectation free_guard(bool* called, const state&, const event&)
+{
+    if (*called) 
+        return std::unexpected(EALREADY);
+    *called = true;
+    return as_expected;
+}
+
+
+TEST(rt_state_machine, guard_can_be_any_invocable)
+{
+    state from;    
+    state to;
+    machine sm { from, to };
+    bool called = false;
+    captor<expectation(*)(bool*, const state&, const event&), bool*> guard(free_guard, &called);
+    event test;
+    state::guard_transition<decltype(guard)> guardTest(from, test, to, guard);
+    EXPECTED(sm.signal(test));
+    EXPECT_TRUE(sm.in(to));
+    EXPECT_TRUE(called);
+
+}
+
 TEST(rt_state_machine, exit_errors_prevent_transition)
 {
     RTStateMock on;
@@ -178,5 +204,6 @@ TEST(rt_state_machine, entry_errors_prevent_transition)
     EXPECT_FALSE(sm.in(on));
     EXPECT_FALSE(sm.in(off));
 }
+
 
 }

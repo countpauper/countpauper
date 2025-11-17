@@ -100,11 +100,11 @@ std::expected<state*,errno_t> state::find_transition(const event& _event) const
     {
         const auto& trans = static_cast<const transition&>(node); 
         if (trans._event == _event) {
-            auto result = trans.guard(*this, _event);
-            if (result) {
+            auto guard_result = trans.call_guard(*this, _event);
+            if (guard_result) {
                 return &trans._to;
-            } else if (result.error() != EACCES) {
-                return std::unexpected(result.error());
+            } else if (guard_result.error() != EACCES) {
+                return std::unexpected(guard_result.error());
             }
         }
     }
@@ -196,7 +196,7 @@ state::transition::transition(state& internal, const event& _event) :
 }
 
 
-expectation state::transition::guard(const state& _state, const event& _event) const
+expectation state::transition::call_guard(const state& _state, const event& _event) const
 {
     return as_expected;
 }
