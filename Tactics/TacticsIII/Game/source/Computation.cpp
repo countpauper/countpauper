@@ -60,7 +60,6 @@ bool Operation::Redundant() const
             return value == std::numeric_limits<int>::max();
         default:
             throw std::runtime_error("Unimplemented redundancy "+std::to_string(unsigned(op)));
-
     }
 }
 
@@ -200,7 +199,7 @@ Computation& Computation::append(Operator op, const Computation& o)
 Computation operator+(const Computation& a, const Computation& b)
 {
     Computation result(a);
-    return result+=b;
+    return result += b;
 }
 
 Computation operator-(const Computation& a, const Computation& b)
@@ -217,7 +216,7 @@ Computation operator*(const Computation& a, const Computation& b)
 
 Computation operator>=(const Computation& a, const Computation& b)
 {
-    if (a.Total()>= b.Total())
+    if (a.Total() >= b.Total())
     {
         return a;
     }

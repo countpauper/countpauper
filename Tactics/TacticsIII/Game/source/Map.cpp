@@ -3,9 +3,9 @@
 #include "File/Image.h"
 #include "Geometry/Angles.h"
 #include "File/Image.h"
-#include "UI/Debug.h"
 #include "Utility/Maths.h"
 #include "Game/Material.h"
+#include "UI/Logging.h"
 #include <cassert>
 #include <span>
 
@@ -70,11 +70,9 @@ Map::Map(std::string_view filename, const Engine::Image& data) :
             grid.liquid = FindMaterial(Engine::HSVA(liquidPixel));
             grid.gas = FindMaterial(Engine::HSVA(gasPixel));
 
-            /*
-            Engine::Debug::Log("Pixel [%d, %d] %f %f %f is %s. %d solid + %d liquid", x,y,
+            Engine::Logging::Log<true>("Pixel [%d, %d] %f %f %f is %s. %d solid + %d liquid", x,y,
                 materialPixel.Hue(), 100.0 * materialPixel.Saturation(), 100.0 * materialPixel.Value(), grid.ground->name.c_str(),
                 grid.level, grid.liquidity);
-            */
         }
     }
     GenerateMesh();
@@ -145,7 +143,7 @@ void Map::GenerateMesh()
     {
         int x = idx % size.x;
         int y = idx / size.x;
-        double height = double(grid.level)/ subheight;
+        double height = double(grid.level) / subheight;
         unsigned vertidx = mesh.vertices.size();
         Engine::Quad quad(
             Engine::Coordinate(x, y, height),
