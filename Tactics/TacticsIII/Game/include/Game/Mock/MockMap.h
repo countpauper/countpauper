@@ -10,15 +10,8 @@ using namespace ::testing;
 class MockMap : public HeightMap
 {
 public:
-    MockMap(int level=0)
+    MockMap(float level=0)
     {
-        EXPECT_CALL(*this, GetMaterial(_)).WillRepeatedly(Invoke([level](Engine::Position pos) -> const Material&
-        {
-            if (pos>=level)
-                return Material::air;
-            else
-                return Material::earth;
-        }));
         EXPECT_CALL(*this, GroundHeight(_)).WillRepeatedly(Return(level));
     }
     MockMap(Engine::Size size) : MockMap(0)
@@ -27,8 +20,7 @@ public:
     }
     MOCK_METHOD(Engine::IntBox, GetBounds, (), (const override));
     MOCK_METHOD(Engine::Coordinate, GroundCoord, (Engine::Position pos), (const override));
-    MOCK_METHOD(int, GroundHeight, (Engine::Position pos), (const override));
-    MOCK_METHOD(const Material&, GetMaterial, (Engine::Position pos), (const override));
+    MOCK_METHOD(float, GroundHeight, (Engine::Position pos), (const override));
 };
 
 }

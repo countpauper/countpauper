@@ -16,7 +16,7 @@ namespace Engine
         float Size() const;
         Position& operator+=(Position delta);
         Position& operator-=(Position delta);
-        operator bool() const;
+        explicit operator bool() const;
     };
 
 	bool operator==(Position a, Position b);

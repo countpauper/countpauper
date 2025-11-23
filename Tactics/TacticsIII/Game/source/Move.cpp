@@ -49,7 +49,7 @@ Move::Move(World& world, Actor& actor, Engine::Position destination, unsigned di
             if (!map.GetBounds().Contains(to))
                 continue;
 
-            int deltaHeight = map.GroundHeight(to) - map.GroundHeight(at);
+            int deltaHeight = std::floor(map.GroundHeight(to) - map.GroundHeight(at));
             if (deltaHeight > jumpHeight)
                 continue;
             if (world.Obstacle(to, &actor))

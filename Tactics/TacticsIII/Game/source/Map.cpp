@@ -12,11 +12,25 @@
 namespace Game
 {
 
-Map::Map(Engine::Size size) :
+Map::Map(Engine::Size size, std::initializer_list<std::pair<const Material&, int>> map) :
     Scenery(mesh),
     size(size),
     grids(size.x * size.y)
 {
+    auto it = map.begin();
+    for(auto& grid: grids)
+    {
+        if (it==map.end())
+            break;
+        if (it->first == Material::water) {
+            grid.liquid = &it->first;
+            grid.ground = &Material::stone;
+        } else {
+            grid.ground = &it->first;
+        }
+        grid.level = it->second;
+        ++it;
+    }
     GenerateMesh();
 }
 
@@ -104,28 +118,18 @@ const Map::Grid& Map::operator[](Engine::Position pos) const
 }
 
 
-int Map::GroundHeight(Engine::Position pos) const
+float Map::GroundHeight(Engine::Position pos) const
 {
     const auto& grid = (*this)[pos];
-    return Engine::Position(pos.x, pos.y, grid.level / subheight);
-}
-
-const Material& Map::GetMaterial(Engine::Position pos) const
-{
-    const auto& grid = (*this)[pos];
-    if (grid.liquidity)
-        return *grid.liquid;
-    else
-        return *grid.ground;
+    return (float)grid.level / subheight;
 }
 
 Engine::Coordinate Map::GroundCoord(Engine::Position pos) const
 {
-    auto& grid = (*this)[pos];
     return Engine::Coordinate(
         pos.x + 0.5,
         pos.y + 0.5,
-        float(grid.level) / subheight + pos.z
+        GroundHeight(pos) + pos.z
     );
 }
 

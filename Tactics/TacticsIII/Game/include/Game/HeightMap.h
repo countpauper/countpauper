@@ -11,8 +11,7 @@ class HeightMap
 public:
     virtual Engine::IntBox GetBounds() const = 0;
     virtual Engine::Coordinate GroundCoord(Engine::Position pos) const = 0;
-    virtual int GroundHeight(Engine::Position pos) const = 0;
-    virtual const Material& GetMaterial(Engine::Position pos) const = 0;
+    virtual float GroundHeight(Engine::Position pos) const = 0;
 };
 
 }

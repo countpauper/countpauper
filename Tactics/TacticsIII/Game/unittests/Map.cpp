@@ -8,13 +8,12 @@ using namespace ::testing;
 
 TEST(Map, Anonymous)
 {
-
     Map nemo(Engine::Size{});
     EXPECT_EQ(nemo.Name(), "map");
     EXPECT_EQ(nemo.FileName(), "");
 }
 
-TEST(Map, Size)
+TEST(Map, Bounds)
 {
     Map zero(Engine::Size{});
     EXPECT_TRUE(zero.GetBounds().Empty());
@@ -24,6 +23,18 @@ TEST(Map, Size)
 
     Map big(Engine::Size{256,256,64});
     EXPECT_EQ(small.GetBounds(), (Engine::IntBox{{0,255},{0,255},{0,63}}));
+}
+
+TEST(Map, GroundHeight)
+{
+    Map low(Engine::Size{1,1,1}, {{Material::stone, 24}});
+    EXPECT_EQ(low.GroundHeight({0,0,0}), 1.5);
+
+    Map high(Engine::Size{2,2,2}, {
+        {Material::stone, 200}, {Material::stone, 210},
+        {Material::stone, 220}, {Material::stone, 240}});
+    EXPECT_FLOAT_EQ(high.GroundHeight({0,1,9}), 13.75);
+
 }
 
 }
