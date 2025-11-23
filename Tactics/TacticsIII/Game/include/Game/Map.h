@@ -5,6 +5,7 @@
 #include "UI/Scenery.h"
 #include "Game/HeightMap.h"
 #include "Game/Material.h"
+#include "Game/Block.h"
 #include <vector>
 
 namespace Engine
@@ -30,24 +31,19 @@ public:
     Engine::Coordinate GroundCoord(Engine::Position pos) const override;
     float GroundHeight(Engine::Position pos) const override;
 private:
-    struct Grid
-    {
-        int level = 0;
-        const Material* ground = &Material::earth;
-        int liquidity = 0;
-        const Material* liquid = nullptr;
-        const Material* gas = nullptr;
-    };
     Map(std::string_view fileName, const class Engine::Image& data);
+    unsigned Index(Engine::Position pos) const;
+    void Column(unsigned x, unsigned y, const Material& solid, unsigned solidLvl, const Material& liquid, unsigned liquidLvl);
+    void AddQuadToMesh(Engine::Coordinate topleft, const Material& mat);
 
     void GenerateMesh();
-    Grid& operator[](Engine::Position pos);
-    const Grid& operator[](Engine::Position pos) const;
+    Block& operator[](Engine::Position pos);
+    const Block& operator[](Engine::Position pos) const;
 
     static constexpr int subheight = 16;
     std::string filename;
     Engine::Size size;
-    std::vector<Grid> grids;
+    std::vector<Block> blocks;
     Engine::Mesh mesh;
 };
 

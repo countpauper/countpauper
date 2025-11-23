@@ -8,6 +8,8 @@
 #include "UI/Logging.h"
 #include <cassert>
 #include <span>
+#include <cmath>
+
 
 namespace Game
 {
@@ -15,21 +17,21 @@ namespace Game
 Map::Map(Engine::Size size, std::initializer_list<std::pair<const Material&, int>> map) :
     Scenery(mesh),
     size(size),
-    grids(size.x * size.y)
+    blocks(size.x * size.y * size.z)
 {
     auto it = map.begin();
-    for(auto& grid: grids)
+    for(unsigned y=0; y<size.y; ++y)
     {
-        if (it==map.end())
-            break;
-        if (it->first == Material::water) {
-            grid.liquid = &it->first;
-            grid.ground = &Material::stone;
-        } else {
-            grid.ground = &it->first;
+        for(unsigned x=0;x<size.x; ++x)
+        {
+            if (it==map.end())
+                break;
+            if (it->first == Material::water)
+                Column(x, y, Material::stone, it->second, it->first, 0);
+            else
+                Column(x,y, it->first, it->second, Material::air, 0);
+            ++it;
         }
-        grid.level = it->second;
-        ++it;
     }
     GenerateMesh();
 }
@@ -66,27 +68,19 @@ Map::Map(std::string_view filename, const Engine::Image& data) :
     Scenery(mesh),
     filename(filename),
     size{int(data.Width()), int(data.Height()/4), 16},
-    grids(size.x * size.y)
+    blocks(size.x * size.y * 16)
 {
     for(unsigned y=0; y<size.y; ++y)
     {
         for(unsigned x=0; x< size.x; ++x)
         {
-            Grid& grid = grids[y*size.x + x];
             Engine::RGBA levelPixel = data[Engine::Position(x, y)];
             Engine::HSVA materialPixel(data[Engine::Position(x, y + size.y)]);
             Engine::HSVA liquidPixel(data[Engine::Position(x, y + 2 * size.y)]);
             Engine::HSVA gasPixel(data[Engine::Position(x, y+ 3*size.y)]);
-            grid.level =  levelPixel.r;
-            grid.liquidity = levelPixel.b - grid.level;
-            // TODO: green is gas level
-            grid.ground = FindMaterial(materialPixel);
-            grid.liquid = FindMaterial(Engine::HSVA(liquidPixel));
-            grid.gas = FindMaterial(Engine::HSVA(gasPixel));
 
-            Engine::Logging::Log<true>("Pixel [%d, %d] %f %f %f is %s. %d solid + %d liquid", x,y,
-                materialPixel.Hue(), 100.0 * materialPixel.Saturation(), 100.0 * materialPixel.Value(), grid.ground->name.c_str(),
-                grid.level, grid.liquidity);
+            const auto& liquidMaterial = levelPixel.b > levelPixel.r ? Material::water : Material::air; //FindMaterial(Engine::HSVA(liquidPixel));
+            Column(x,y, *FindMaterial(materialPixel), levelPixel.r, liquidMaterial, levelPixel.b);
         }
     }
     GenerateMesh();
@@ -107,21 +101,37 @@ Engine::Mesh& Map::GetMesh()
     return mesh;
 }
 
-Map::Grid& Map::operator[](Engine::Position pos)
+unsigned Map::Index(Engine::Position pos) const
 {
-    return grids[pos.x + pos.y * size.x];
+    return pos.x +
+        pos.y * size.x +
+        pos.z * size.x * size.y;
 }
 
-const Map::Grid& Map::operator[](Engine::Position pos) const
+Block& Map::operator[](Engine::Position pos)
 {
-    return grids[pos.x + pos.y * size.x];
+    return blocks[Index(pos)];
+}
+
+const Block& Map::operator[](Engine::Position pos) const
+{
+    return blocks[Index(pos)];
 }
 
 
 float Map::GroundHeight(Engine::Position pos) const
 {
     const auto& grid = (*this)[pos];
-    return (float)grid.level / subheight;
+    for(int z=size.z-1; z>=pos.z; --z)
+    {
+        const auto& block = (*this)[Engine::Position(pos.x, pos.y, z)];
+        auto height = block.SolidLevel();
+        if (!std::isnan(height))
+        {
+            return height + z;
+        }
+    }
+    return pos.z;
 }
 
 Engine::Coordinate Map::GroundCoord(Engine::Position pos) const
@@ -138,61 +148,117 @@ Engine::IntBox Map::GetBounds() const
     return Engine::IntBox(size);
 }
 
+
+void Map::Column(unsigned x, unsigned y, const Material& solid, unsigned solidLvl, const Material& liquid, unsigned liquidLvl)
+{
+    float solidHeight = (float)solidLvl/subheight;
+    float liquidHeight = (float)liquidLvl/subheight;
+
+    for(unsigned z=0; z<size.z; ++z)
+    {
+        auto& block = (*this)[Engine::Position(x,y,z)];
+
+        Engine::Range<float> zRng{float(z), float(z+1)};
+        if (zRng[solidHeight])
+        {
+            if (solid==Material::vegetation)
+                block = Block::Vegetation(solidHeight-z - 0.1, 0.1);
+            else
+                block = Block::Vegetation(0.0f, solidHeight - z);
+
+            if (zRng[liquidHeight] && liquid!=Material::air)
+            {
+                block.AddWater(liquidHeight - solidHeight);
+            }
+        }
+
+        else if (zRng < solidHeight)
+        {
+            block = Block::Stone;
+        }
+        else if (zRng < liquidHeight)
+        {
+            assert(liquid == Material::water);  // what does this mean? bad map?
+            block = Block::Water;
+        }
+        else
+        {
+            block = Block::Air;
+        }
+    }
+}
+
 void Map::GenerateMesh()
 {
     int idx = 0;
     Engine::Vector up(0, 0, 1);
 
-    for(const auto& grid: grids)
+    for(unsigned y=0; y<size.y; ++y)
     {
-        int x = idx % size.x;
-        int y = idx / size.x;
-        double height = double(grid.level) / subheight;
-        unsigned vertidx = mesh.vertices.size();
-        Engine::Quad quad(
-            Engine::Coordinate(x, y, height),
-            Engine::Coordinate(x+1, y, height),
-            Engine::Coordinate(x+1, y+1, height),
-            Engine::Coordinate(x, y+1, height)
-        );
-        float brightness = height / float(size.z);
-        brightness = 0.2 + brightness*0.8;
-        auto groundColor = grid.ground->color;
-        auto vertexColor = Engine::Lerp(Engine::RGBA::black, groundColor, brightness);
-        quad.SetColor(vertexColor);
-        quad.SetName(idx);
-        mesh += quad;
-
-        if (x > 0 )
+        for(unsigned x=0; x<size.x; ++x)
         {
-            Grid& neighbourGrid = grids[idx-1];
-            if (neighbourGrid.level != grid.level)
+            for(int z=size.z-1; z>=0; --z)
             {
-                // TODO add as a quad here too with its own normal and texture coordinates when adding light,
-                //  then fake lighting can be removed as that's the complication now to recompute
-                unsigned neighbourVertexIdx = vertidx - 4;
-                mesh.triangles.push_back({vertidx, vertidx+3, neighbourVertexIdx +1});
-                mesh.names.push_back(idx);
-                mesh.triangles.push_back({vertidx+3, neighbourVertexIdx +2, neighbourVertexIdx +1});
-                mesh.names.push_back(idx);
+                const auto& block = (*this)[Engine::Position(x,y,z)];
+                const auto& material= block.GetMaterial(Orientation::up);
+                if (material==Material::air)
+                    continue;
+                auto height = block.SolidLevel();
+                AddQuadToMesh(Engine::Coordinate(x, y, z + height), material);
+                // TODO: continue until solid
+                break;
             }
         }
-        if (y >0 )
-        {
-            Grid& neighbourGrid = grids[idx - size.x];
-            if (neighbourGrid.level != grid.level)
-            {
-                unsigned neighbourVertexIdx = vertidx - (4 * size.x);
-                mesh.triangles.push_back({vertidx+1, vertidx+0, neighbourVertexIdx +3});
-                mesh.names.push_back(idx);
-                mesh.triangles.push_back({vertidx+1, neighbourVertexIdx+3, neighbourVertexIdx +2});
-                mesh.names.push_back(idx);
-            }
-        }
-
-        ++idx;
     }
     assert(mesh.names.size() == mesh.triangles.size());
+}
+
+
+void Map::AddQuadToMesh(Engine::Coordinate topleft, const Material& mat)
+{
+    unsigned vertidx = mesh.vertices.size();
+    Engine::Quad quad(
+        topleft,
+        topleft + Engine::Vector(1,0,0),
+        topleft + Engine::Vector(1,1,0),
+        topleft + Engine::Vector(0,1,0)
+    );
+    float brightness = topleft.z / float(size.z);
+    brightness = 0.2 + brightness*0.8;
+    auto groundColor = mat.color;
+    auto vertexColor = Engine::Lerp(Engine::RGBA::black, groundColor, brightness);
+    quad.SetColor(vertexColor);
+    quad.SetName(Index(Engine::Position(topleft.x, topleft.y, topleft.z)));
+    mesh += quad;
+
+    /* TODO sides
+    if (topleft.x > 0 )
+    {
+        Grid& neighbourGrid = grids[idx-1];
+        if (neighbourGrid.level != grid.level)
+        {
+            // TODO add as a quad here too with its own normal and texture coordinates when adding light,
+            //  then fake lighting can be removed as that's the complication now to recompute
+            unsigned neighbourVertexIdx = vertidx - 4;
+            mesh.triangles.push_back({vertidx, vertidx+3, neighbourVertexIdx +1});
+            mesh.names.push_back(idx);
+            mesh.triangles.push_back({vertidx+3, neighbourVertexIdx +2, neighbourVertexIdx +1});
+            mesh.names.push_back(idx);
+        }
+    }
+    if ( topleft.y >0 )
+    {
+        Grid& neighbourGrid = grids[idx - size.x];
+        if (neighbourGrid.level != grid.level)
+        {
+            unsigned neighbourVertexIdx = vertidx - (4 * size.x);
+            mesh.triangles.push_back({vertidx+1, vertidx+0, neighbourVertexIdx +3});
+            mesh.names.push_back(idx);
+            mesh.triangles.push_back({vertidx+1, neighbourVertexIdx+3, neighbourVertexIdx +2});
+            mesh.names.push_back(idx);
+        }
+    }
+        */
 }
 
 }

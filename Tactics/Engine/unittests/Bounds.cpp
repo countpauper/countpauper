@@ -79,6 +79,18 @@ TEST(Range, Inclusion)
     EXPECT_FALSE((Range<int>() | -1)[2]);
 }
 
+TEST(Range, Compare)
+{
+    EXPECT_TRUE(Range<int>(2,3) > 1 );
+    EXPECT_FALSE(Range<int>(2,3) > 2 );
+    EXPECT_TRUE(Range<int>(2,4) >= 3 );
+
+    EXPECT_TRUE(Range<int>(2,3) < 4 );
+    EXPECT_TRUE(Range<int>(2,3) < 3 );
+    EXPECT_FALSE(Range<int>(2,3) < 2 );
+    EXPECT_TRUE(Range<int>(2,4) <= 3 );
+}
+
 TEST(AABB, Size)
 {
     EXPECT_EQ(1, AABB(Coordinate::origin, Coordinate(1, 1, 1)).Volume());

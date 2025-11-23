@@ -5,6 +5,15 @@
 namespace Game
 {
 
+
+Block::Block()
+    : air(0.0f)
+    , water(0.0f)
+    , vegetation(0.0f)
+    , stone(0.0f)
+{
+}
+
 Block::Block(float air, float water, float veg, float stone)
     : air(air)
     , water(water)
@@ -70,5 +79,15 @@ Block Block::Vegetation(float vegetation, float rock)
     return Block(1.0f - (vegetation+rock), 0.0f, vegetation, rock);
 }
 
+void Block::AddWater(float moreWater)
+{
+    if (moreWater>air)
+    {
+        air = 0.0f;
+    } else {
+        air -= moreWater;
+    }
+    water += moreWater;
+}
 
 }

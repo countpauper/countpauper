@@ -86,6 +86,22 @@ struct Range
         return *this;
     }
 
+    bool operator<(T v) const
+    {
+        return end <= v;
+    }
+    bool operator<=(T v) const
+    {
+        return begin >= v;
+    }
+    bool operator>(T v) const
+    {
+        return begin > v;
+    }
+    bool operator>=(T v) const
+    {
+        return end > v;
+    }
     Range& Expand(T v)
     {
         if (v > 0)
