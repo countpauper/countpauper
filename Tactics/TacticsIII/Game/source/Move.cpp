@@ -3,10 +3,12 @@
 #include "Game/Stat.h"
 #include "Game/Actor.h"
 #include "Game/HeightMap.h"
+#include "Game/Orientation.h"
 #include "AI/Astar.h"
 #include "Geometry/Line.h"
 #include <GL/gl.h>
 #include "Geometry/IntBox.h"
+#include "UI/Logging.h"
 
 namespace Game
 {
@@ -38,20 +40,19 @@ Move::Move(World& world, Actor& actor, Engine::Position destination, unsigned di
     const auto& map = world.GetMap();
     auto neighbours = [&world, &actor](Engine::Position at)
     {
-        // TODO Return of Direction?
-        Engine::Position neighbourVectors[] {{1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}};
         const auto& map = world.GetMap();
         std::vector<Engine::Position> result;
-        int jumpHeight = 1+ actor.GetStats().Get(Stat::jump).Total() / 2;
-        for(auto nVec : std::span(neighbourVectors))
+        float jump = 1.0f + actor.GetStats().Get(Stat::jump).Total() / 2.0f;
+        for(auto ori : Orientation::all)
         {
-            auto to = at + nVec;
+            auto to = at + ori.Vector();
             if (!map.GetBounds().Contains(to))
                 continue;
-
-            int deltaHeight = std::floor(map.GroundHeight(to) - map.GroundHeight(at));
-            if (deltaHeight > jumpHeight)
+            Engine::Position headroom = to + Engine::Position(0, 0, std::ceil(jump));
+            float deltaHeight = map.GroundHeight(headroom) - map.GroundHeight(at);
+            if (std::abs(deltaHeight) > jump)
                 continue;
+            // TODO check size its under ceiling
             if (world.Obstacle(to, &actor))
                 continue;
             result.push_back(to);

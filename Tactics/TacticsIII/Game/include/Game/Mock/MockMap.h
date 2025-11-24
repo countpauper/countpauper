@@ -10,9 +10,9 @@ using namespace ::testing;
 class MockMap : public HeightMap
 {
 public:
-    MockMap(float level=0)
+    MockMap(float height=0)
     {
-        EXPECT_CALL(*this, GroundHeight(_)).WillRepeatedly(Return(level));
+        EXPECT_CALL(*this, GroundHeight(_)).WillRepeatedly(Return(height));
     }
     MockMap(Engine::Size size) : MockMap(0)
     {

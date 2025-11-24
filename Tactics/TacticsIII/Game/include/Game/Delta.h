@@ -27,8 +27,6 @@ public:
     void Move(const class World& world, Engine::Position destination) override;
     Engine::Position Position() const override;
     Engine::Size Size() const override;
-
-
     const Engine::Object& GetAppearance() const override;
     std::string_view Name() const override;
     void Render() const override;

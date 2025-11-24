@@ -55,7 +55,6 @@ Engine::Size Race::GetSize() const
     return size;
 }
 
-
 Races::Races(const json& data)
 {
     for(auto el: data.items())

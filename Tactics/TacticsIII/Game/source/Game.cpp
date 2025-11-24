@@ -89,6 +89,15 @@ void Game::Focus(Engine::Coordinate coord)
     }
 }
 
+Engine::Position IdToPosition(uint32_t id, const Engine::IntBox& bounds)
+{
+    return Engine::Position{
+        static_cast<int>((id                                      ) % bounds.x.Size()),
+        static_cast<int>((id /  bounds.x.Size()                   ) % bounds.y.Size()),
+        static_cast<int>((id / (bounds.x.Size() * bounds.y.Size())) % bounds.z.Size())
+    } + bounds.Start();
+}
+
 void Game::OnMessage(const Engine::Message& message)
 {
     if (auto clickOn = message.Cast<Engine::ClickOn>())
@@ -97,10 +106,7 @@ void Game::OnMessage(const Engine::Message& message)
         if (clickOn->object == &map)
         {
             auto bounds = map.GetBounds();
-            Engine::Position destination(
-                    clickOn->sub % bounds.x.Size() + bounds.x.begin,
-                    clickOn->sub / bounds.x.Size() + bounds.y.begin,
-                    0);
+            Engine::Position destination = IdToPosition(clickOn->sub, bounds);
             plan = Plan::Move(*this, Current(), destination);
         }
         else if (target && target!=& Current())

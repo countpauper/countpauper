@@ -67,8 +67,8 @@ Map::Map(std::string_view filename) :
 Map::Map(std::string_view filename, const Engine::Image& data) :
     Scenery(mesh),
     filename(filename),
-    size{int(data.Width()), int(data.Height()/4), 16},
-    blocks(size.x * size.y * 16)
+    size{int(data.Width()), int(data.Height()/4), (int)LevelToHeight(256)},
+    blocks(size.x * size.y * size.z)
 {
     for(unsigned y=0; y<size.y; ++y)
     {
@@ -101,7 +101,7 @@ Engine::Mesh& Map::GetMesh()
     return mesh;
 }
 
-unsigned Map::Index(Engine::Position pos) const
+uint32_t Map::Index(Engine::Position pos) const
 {
     return pos.x +
         pos.y * size.x +
@@ -119,10 +119,19 @@ const Block& Map::operator[](Engine::Position pos) const
 }
 
 
+float Map::LevelToHeight(int level) const
+{
+    return static_cast<float>(level) / subheight;
+}
+int Map::HeightToLevel(float height) const
+{
+    return static_cast<int>(height * subheight);
+}
+
 float Map::GroundHeight(Engine::Position pos) const
 {
     const auto& grid = (*this)[pos];
-    for(int z=size.z-1; z>=pos.z; --z)
+    for(int z=pos.z; z>=0; --z)
     {
         const auto& block = (*this)[Engine::Position(pos.x, pos.y, z)];
         auto height = block.SolidLevel();
@@ -131,7 +140,7 @@ float Map::GroundHeight(Engine::Position pos) const
             return height + z;
         }
     }
-    return pos.z;
+    return 0.0f;
 }
 
 Engine::Coordinate Map::GroundCoord(Engine::Position pos) const
@@ -139,7 +148,7 @@ Engine::Coordinate Map::GroundCoord(Engine::Position pos) const
     return Engine::Coordinate(
         pos.x + 0.5,
         pos.y + 0.5,
-        GroundHeight(pos) + pos.z
+        GroundHeight(pos)
     );
 }
 
@@ -148,11 +157,10 @@ Engine::IntBox Map::GetBounds() const
     return Engine::IntBox(size);
 }
 
-
 void Map::Column(unsigned x, unsigned y, const Material& solid, unsigned solidLvl, const Material& liquid, unsigned liquidLvl)
 {
-    float solidHeight = (float)solidLvl/subheight;
-    float liquidHeight = (float)liquidLvl/subheight;
+    float solidHeight = LevelToHeight(solidLvl);
+    float liquidHeight = LevelToHeight(liquidLvl);
 
     for(unsigned z=0; z<size.z; ++z)
     {
@@ -203,10 +211,20 @@ void Map::GenerateMesh()
                 const auto& material= block.GetMaterial(Orientation::up);
                 if (material==Material::air)
                     continue;
-                auto height = block.SolidLevel();
-                AddQuadToMesh(Engine::Coordinate(x, y, z + height), material);
-                // TODO: continue until solid
-                break;
+                auto height = block.LiquidLevel();
+                if (!std::isnan(height)) {
+                    AddQuadToMesh(Engine::Coordinate(x, y, z + height), material);
+                }
+
+                height = block.SolidLevel();
+                if (!std::isnan(height))
+                {
+                    if (material == Material::water)    // TODO don't guess, get material profile and pick first solid
+                        AddQuadToMesh(Engine::Coordinate(x, y, z + height), Material::stone);
+                    else
+                        AddQuadToMesh(Engine::Coordinate(x, y, z + height), material);
+                    break;
+                }
             }
         }
     }

@@ -28,12 +28,12 @@ TEST(Map, Bounds)
 TEST(Map, GroundHeight)
 {
     Map low(Engine::Size{1,1,1}, {{Material::stone, 8}});
-    EXPECT_EQ(low.GroundHeight({0,0,0}), 0.5);
+    EXPECT_EQ(low.GroundHeight({0,0,0}), 0.5f);
 
     Map high(Engine::Size{2,2,16}, {
         {Material::stone, 200}, {Material::stone, 210},
         {Material::stone, 220}, {Material::stone, 240}});
-    EXPECT_FLOAT_EQ(high.GroundHeight({0,1,0}), 13.75);
+    EXPECT_FLOAT_EQ(high.GroundHeight({0, 1, 16}), 13.75f);
 
 }
 

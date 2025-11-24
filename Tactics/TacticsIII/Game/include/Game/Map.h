@@ -30,6 +30,7 @@ public:
     Engine::IntBox GetBounds() const override;
     Engine::Coordinate GroundCoord(Engine::Position pos) const override;
     float GroundHeight(Engine::Position pos) const override;
+
 private:
     Map(std::string_view fileName, const class Engine::Image& data);
     unsigned Index(Engine::Position pos) const;
@@ -39,6 +40,9 @@ private:
     void GenerateMesh();
     Block& operator[](Engine::Position pos);
     const Block& operator[](Engine::Position pos) const;
+
+    float LevelToHeight(int level) const;
+    int HeightToLevel(float height) const;
 
     static constexpr int subheight = 16;
     std::string filename;
