@@ -2,7 +2,6 @@
 
 namespace Game
 {
-
     enum class Operator
     {
             nop = 0,

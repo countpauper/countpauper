@@ -16,7 +16,7 @@ public:
         return map;
     }
     MOCK_METHOD(bool, Obstacle, (Engine::Position at, const Actor* except), (const override));
-    MockMap map;
+    NiceMock<MockMap> map;
 };
 
 }

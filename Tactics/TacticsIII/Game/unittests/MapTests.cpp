@@ -33,7 +33,7 @@ TEST(Map, GroundHeight)
     Map high(Engine::Size{2,2,16}, {
         {Material::stone, 200}, {Material::stone, 210},
         {Material::stone, 220}, {Material::stone, 240}});
-    EXPECT_FLOAT_EQ(high.GroundHeight({0, 1, 16}), 13.75f);
+    EXPECT_FLOAT_EQ(high.GroundHeight({0, 1, 15}), 13.75f);
 
 }
 

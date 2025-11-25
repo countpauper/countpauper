@@ -150,7 +150,7 @@ Requirements Equipment::CanEquip(const Statted& stats) const
         required -= stats.Get(limit.itemCost, boni, unequip);
         required += Get(limit.itemCost, boni, limit.itemFilter);  // TODO can this preexisting bonus be found/multiplied by 0 instead?
         auto available = stats.Get(limit.creatureCapacity);
-        result.emplace_back(limit.itemCost, available, Requirement::greater_equal, required);
+        result.emplace_back(StatRequirement{ limit.itemCost, available, Comparator::greater_equal, required});
     }
     return result;
 }

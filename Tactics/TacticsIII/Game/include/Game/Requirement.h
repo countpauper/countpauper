@@ -2,37 +2,53 @@
 
 #include "Game/Stat.h"
 #include "Game/Computation.h"
+#include "Game/Comparator.h"
 #include <vector>
 #include <string>
+#include <vector>
 
 namespace Game
 {
 
-class Requirement
+class StatRequirement
 {
 public:
-    enum Operator
-    {
-        not_equal = 0,
-        equal = 1,
-        less = 2,
-        less_equal = 3,
-        greater = 4,
-        greater_equal = 5,
-    };
-    Requirement(Stat::Id stat, const Computation& actual, Operator op, const Computation& required);
-    operator bool() const;
-    bool operator==(const Requirement& req) const;
-    Requirement operator!() const;
+    StatRequirement(Stat::Id stat, const Computation& actual, Comparator op, const Computation& required);
+    explicit operator bool() const;
+    bool operator==(const StatRequirement& req) const;
+    StatRequirement operator!() const;
     std::string Description() const;
 private:
-    static std::string_view Describe(Operator op);
     Stat::Id stat;
-    Operator op;
+    Comparator op;
     Computation actual;
     Computation required;
 };
 
+class PathRequirement
+{
+public:
+    explicit PathRequirement(bool reachable);
+    explicit operator bool() const;
+    std::string Description() const;
+    bool operator==(const PathRequirement& req) const;
+private:
+    bool reachable;
+};
+
+// TODO: Item requirement, statE requirement
+
+using RequirementVariant = std::variant<StatRequirement, PathRequirement>;
+
+class Requirement
+    : public RequirementVariant
+{
+public:
+    using RequirementVariant::RequirementVariant;
+
+    explicit operator bool() const;
+    std::string Description() const;
+};
 
 class Requirements : public std::vector<Requirement>
 {

@@ -92,7 +92,7 @@ struct Range
     }
     bool operator<=(T v) const
     {
-        return begin >= v;
+        return begin <= v;
     }
     bool operator>(T v) const
     {

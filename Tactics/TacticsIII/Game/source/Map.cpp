@@ -14,7 +14,7 @@
 namespace Game
 {
 
-Map::Map(Engine::Size size, std::initializer_list<std::pair<const Material&, int>> map) :
+Map::Map(Engine::Size size, std::initializer_list<std::pair<const Material&, unsigned>> map) :
     Scenery(mesh),
     size(size),
     blocks(size.x * size.y * size.z)
@@ -29,7 +29,7 @@ Map::Map(Engine::Size size, std::initializer_list<std::pair<const Material&, int
             if (it->first == Material::water)
                 Column(x, y, Material::stone, it->second, it->first, 0);
             else
-                Column(x,y, it->first, it->second, Material::air, 0);
+                Column(x, y, it->first, it->second, Material::air, 0);
             ++it;
         }
     }
@@ -141,15 +141,6 @@ float Map::GroundHeight(Engine::Position pos) const
         }
     }
     return 0.0f;
-}
-
-Engine::Coordinate Map::GroundCoord(Engine::Position pos) const
-{
-    return Engine::Coordinate(
-        pos.x + 0.5,
-        pos.y + 0.5,
-        GroundHeight(pos)
-    );
 }
 
 Engine::IntBox Map::GetBounds() const

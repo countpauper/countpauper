@@ -67,7 +67,11 @@ std::vector<Engine::Position>::const_iterator Move::Reachable() const
 {
     unsigned grids = actor.GetStats().Get(Stat::speed).Total() *
         actor.GetCounts().Available(Stat::ap);
-    if (grids>=path.size())
+    if (path.empty())
+    {
+        return path.begin();
+    }
+    else if (grids>=path.size())
     {
         return path.end() - 1;
     }
@@ -97,10 +101,16 @@ void Move::Render() const
 
 Requirements Move::CanDo() const
 {
-    return {
-        Requirement(Stat::ap, actor.GetCounts().Available(Stat::ap), Requirement::greater_equal, AP()),
-        Requirement(Stat::speed, actor.GetStats().Get(Stat::speed), Requirement::not_equal, 0)
+    Requirements req{
+        StatRequirement(Stat::ap, actor.GetCounts().Available(Stat::ap), Comparator::greater_equal, AP()),
+        StatRequirement(Stat::speed, actor.GetStats().Get(Stat::speed), Comparator::not_equal, 0)
     };
+
+    if (!req) {
+        return req;
+    }
+    req.push_back(PathRequirement(!path.empty()));
+    return req;
 }
 
 std::vector<Delta> Move::Execute(std::ostream& log) const

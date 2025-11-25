@@ -49,9 +49,9 @@ Computation ComputeDamage(const Computations& offense, const Computations& defen
 
 Requirements Attack::CanDo() const
 {
-    return {
-        Requirement(Stat::ap, actor.GetCounts().Available(Stat::ap), Requirement::less_equal, AP()),
-        Requirement(Stat::reach, actor.GetStats().Get(Stat::reach), Requirement::greater_equal, Computation(actor.Position().ManDistance(target.Position())))
+    return Requirements{
+        StatRequirement(Stat::ap, actor.GetCounts().Available(Stat::ap), Comparator::less_equal, AP()),
+        StatRequirement(Stat::reach, actor.GetStats().Get(Stat::reach), Comparator::greater_equal, Computation(actor.Position().ManDistance(target.Position())))
     };
 }
 

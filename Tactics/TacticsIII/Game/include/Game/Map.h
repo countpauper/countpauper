@@ -21,14 +21,13 @@ class Map :
     public HeightMap
 {
 public:
-    explicit Map(Engine::Size size, std::initializer_list<std::pair<const Material&, int>> map={});
+    explicit Map(Engine::Size size, std::initializer_list<std::pair<const Material&, unsigned>> map={});
     explicit Map(std::string_view fileName);
     std::string_view Name() const override;
     std::string_view FileName() const;
     Engine::Mesh& GetMesh();
     // Height Map
     Engine::IntBox GetBounds() const override;
-    Engine::Coordinate GroundCoord(Engine::Position pos) const override;
     float GroundHeight(Engine::Position pos) const override;
 
 private:

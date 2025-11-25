@@ -5,7 +5,7 @@
 namespace Game
 {
 
-Requirement::Requirement(Stat::Id stat, const Computation& actual, Operator op, const Computation& required) :
+StatRequirement::StatRequirement(Stat::Id stat, const Computation& actual, Comparator op, const Computation& required) :
     stat(stat),
     actual(actual),
     op(op),
@@ -13,29 +13,13 @@ Requirement::Requirement(Stat::Id stat, const Computation& actual, Operator op, 
 {
 }
 
-Requirement::operator bool() const
+StatRequirement::operator bool() const
 {
-    switch(op)
-    {
-        case not_equal:
-            return actual.Total() != required.Total();
-        case equal:
-            return actual.Total() == required.Total();
-        case less:
-            return actual.Total() < required.Total();
-        case less_equal:
-            return actual.Total() <= required.Total();
-        case greater:
-            return actual.Total() > required.Total();
-        case greater_equal:
-            return actual.Total() >= required.Total();
-        default:
-            assert(false); // unimplemented
-            return false;
-    }
+    return op(actual.Total(), required.Total());
 }
 
-bool Requirement::operator==(const Requirement& o) const
+
+bool StatRequirement::operator==(const StatRequirement& o) const
 {
     return stat == o.stat &&
         actual == o.actual &&
@@ -43,55 +27,18 @@ bool Requirement::operator==(const Requirement& o) const
         required == o.required;
 }
 
-Requirement Requirement::operator!() const
+
+
+StatRequirement StatRequirement::operator!() const
 {
-    switch(op)
-    {
-        case not_equal:
-            return Requirement(stat, actual, equal, required);
-        case equal:
-            return Requirement(stat, actual, not_equal, required);
-        case less:
-            return Requirement(stat, actual, greater_equal, required);
-        case less_equal:
-            return Requirement(stat, actual, greater, required);
-        case greater:
-            return Requirement(stat, actual, less_equal, required);
-        case greater_equal:
-            return Requirement(stat, actual, less, required);
-        default:
-            assert(false); // unimplemented
-            return *this;
-    }
+    return StatRequirement(stat, actual, op.Opposite(), required);
 }
 
-std::string_view Requirement::Describe(Operator op)
-{
-    switch(op)
-    {
-        case not_equal:
-            return "is not";
-        case equal:
-            return "is";
-        case less:
-            return "is less than";
-        case less_equal:
-            return "is not more than";
-        case greater:
-            return "is more than";
-        case greater_equal:
-            return "is not less than";
-        default:
-            assert(false); // unimplemented
-            return "";
-    }
-}
-
-std::string Requirement::Description() const
+std::string StatRequirement::Description() const
 {
     if (bool(*this))
     {
-        return std::string(Stat::Name(stat)) + " (" + actual.Description() +") " + std::string(Describe(op)) + " " + required.Description();
+        return std::string(Stat::Name(stat)) + " (" + actual.Description() +") " + std::string(op) + " " + required.Description();
     }
     else
     {
@@ -99,10 +46,50 @@ std::string Requirement::Description() const
     }
 }
 
+PathRequirement::PathRequirement(bool reachable)
+    : reachable(reachable)
+{
+}
+
+PathRequirement::operator bool() const
+{
+    return reachable;
+}
+
+std::string PathRequirement::Description() const
+{
+    if (reachable)
+        return "the destination is reachable";
+    else
+        return "the destination is not reachable";
+}
+
+bool PathRequirement::operator==(const PathRequirement& req) const
+{
+    return reachable == req.reachable;
+}
 
 Requirements::Requirements(std::initializer_list<Requirement> init) :
     std::vector<Requirement>(init)
 {
+}
+
+
+
+Requirement::operator bool() const
+{
+    return std::visit([](const auto& var)
+    {
+        return bool(var);
+    }, *this);
+}
+
+std::string Requirement::Description() const
+{
+    return std::visit([](const auto& var)
+    {
+        return var.Description();
+    }, *this);
 }
 
 Requirements::operator bool() const

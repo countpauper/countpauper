@@ -6,6 +6,7 @@
 #include "MockCounted.h"
 #include "MockEquipped.h"
 #include "UI/Mock/MockScenery.h"
+#include <unordered_map>
 
 namespace Game::Test
 {
@@ -20,6 +21,7 @@ public:
         {
             ON_CALL(*this, Position()).WillByDefault(Return(destination));
         }));
+        ON_CALL(stats, Get(_, _, _)).WillByDefault(Return(Computation(0)));
     }
 
     MockActor(std::string_view name) :
@@ -30,13 +32,23 @@ public:
 
     void SetName(std::string_view name)
     {
-        EXPECT_CALL(appearance, Name()).WillRepeatedly(Return(name));
-        EXPECT_CALL(stats, Name()).WillRepeatedly(Return(name));
+        ON_CALL(appearance, Name()).WillByDefault(Return(name));
+        ON_CALL(stats, Name()).WillByDefault(Return(name));
+    }
+
+    void SetStats(std::unordered_map<Stat::Id, int> _stats)
+    {
+        for(const auto& [stat, value]: _stats)
+        {
+            ON_CALL(stats, Get(stat, _, _)).WillByDefault(Return(Computation(value)));
+            ON_CALL(counts, Available(stat)).WillByDefault(Return(value));
+        }
     }
 
     MOCK_METHOD(void, Move, (const class World& world, Engine::Position destination), (override));
     MOCK_METHOD(Engine::Position, Position, (), (const override));
     MOCK_METHOD(Engine::Size, Size, (), (const override));
+
     const Engine::Scenery& GetAppearance() const override { return appearance; }
     Statted& GetStats() { return stats; }
     const Statted& GetStats() const { return stats; }
@@ -47,8 +59,8 @@ public:
 
     Engine::Test::MockScenery appearance;
     NiceMock<MockStatted> stats;
-    MockCounted counts;
-    MockEquipped equipment;
+    NiceMock<MockCounted> counts;
+    NiceMock<MockEquipped> equipment;
 };
 
 }
