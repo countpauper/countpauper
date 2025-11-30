@@ -36,6 +36,12 @@ Line Line::Section(const Engine::Range<double>& range) const
     return Line(a + v * slice.begin, a + v * slice.end);
 }
 
+
+Line Line::Invert() const
+{
+    return Line{b, a};
+}
+
 Coordinate Line::Project(const Coordinate& p) const
 {
     double interpolation_factor = ProjectionCoefficient(p);
@@ -72,6 +78,59 @@ AABB Line::Bounds() const
     return AABB(a, b);
 }
 
+std::vector<std::pair<Position, double>> Line::Voxelize() const
+{
+    std::vector<std::pair<Position, double>> result;
+    Coordinate pos = a;
+    double remaining = Length();
+    Position current(pos.x, pos.y, pos.z);
+    while(true)
+    {
+        AABB bounds(Coordinate{
+                    static_cast<double>(current.x),
+                    static_cast<double>(current.y),
+                    static_cast<double>(current.z)},
+                Coordinate{
+                    static_cast<double>(current.x+1),
+                    static_cast<double>(current.y+1),
+                    static_cast<double>(current.z+1)});
+        if (bounds.Contains(b))
+        {   // b in current voxel, add last voxel
+            result.emplace_back(current, remaining);
+            return result;
+        }
+        else
+        {
+            auto intersection = bounds.NamedIntersection(Invert());
+            auto doubleCheckRange = bounds.Intersection(Invert());
+
+            result.emplace_back(current, remaining - intersection.second);
+            remaining = intersection.second;
+            switch(intersection.first)
+            {
+                case Axis::NegZ:
+                    current.z -=1;  // TODO Axis to position
+                    break;
+                case Axis::NegY:
+                    current.y -=1;  // TODO Axis to position
+                    break;
+                case Axis::NegX:
+                    current.x -=1;  // TODO Axis to position
+                    break;
+                case Axis::PosX:
+                    current.x +=1;  // TODO Axis to position
+                    break;
+                case Axis::PosY:
+                    current.y +=1;
+                    break;
+                case Axis::PosZ:
+                    current.z +=1;
+                    break;
+            }
+        }
+    }
+    return result;
+}
 bool Line::operator==(const Line& rhs) const
 {
     return a == rhs.a && b == rhs.b;

@@ -69,12 +69,109 @@ Coordinate AABB::Clip(const Coordinate& p) const
     return Coordinate(x.Clip(p.x), y.Clip(p.y), z.Clip(p.z));
 }
 
-double AABB::Intersection(const Line& line) const
+double ComputeCoefficient(double from, double to, double delta, bool neg)
 {
-    assert(false); // TODO
-    // Possibly just check if line a is inside or both
-    // and if a or b is outside intersect with the six planes
-    return std::numeric_limits<double>::signaling_NaN();
+    double v = to-from;
+    // if (v*normal>0)
+    //     return std::numeric_limits<double>::infinity();
+    double coef = v / delta;
+    if (coef<0.0)
+        return std::numeric_limits<double>::infinity();
+    else if (coef>1.0)
+        return std::numeric_limits<double>::infinity();
+    if (neg != std::signbit(v))
+        return coef;
+    else
+        return -coef;
+}
+
+std::pair<Axis, double> AABB::NamedIntersection(const Line& line) const
+{
+    Vector V(line);
+
+    if (std::abs(V.x) <= std::numeric_limits<double>::epsilon() && !x[line.a.x]) {
+        return std::make_pair(Axis::None, std::numeric_limits<double>::infinity());
+    }
+    if (std::abs(V.y) <= std::numeric_limits<double>::epsilon() && !y[line.a.y]) {
+        return std::make_pair(Axis::None, std::numeric_limits<double>::infinity());
+    }
+    if (std::abs(V.z) <= std::numeric_limits<double>::epsilon() && !z[line.a.z]) {
+        return std::make_pair(Axis::None, std::numeric_limits<double>::infinity());
+    }
+
+    double coefficients[]{
+        ComputeCoefficient(line.a.z, z.begin, V.z, true),
+        ComputeCoefficient(line.a.y, y.begin, V.y, true),
+        ComputeCoefficient(line.a.x, x.begin, V.x, true),
+        std::numeric_limits<double>::quiet_NaN(),
+        ComputeCoefficient(line.a.x, x.end, V.x, false),
+        ComputeCoefficient(line.a.y, y.end, V.y, false),
+        ComputeCoefficient(line.a.z, z.end, V.z, false),
+    };
+    double enter = -std::numeric_limits<double>::infinity();
+    Axis enterAxis = Axis::None;
+    double leave = - std::numeric_limits<double>::infinity();
+    Axis leaveAxis = Axis::None;
+    Axis axis = Axis::NegZ;
+
+    for(double coef: std::span(coefficients))
+    {
+        if (coef>=0 && coef<=1.0 && coef > enter) {
+            enterAxis = axis;
+            enter = coef;
+        }
+        if (coef>=-1.0 && coef<=0 && coef > leave ) {
+            leaveAxis = axis;
+            leave = coef;
+        }
+        axis=(Axis)(int(axis)+1);
+    }
+    if (enterAxis==Axis::None)
+    {
+        return std::make_pair(leaveAxis, leave * V.Length());
+
+    }
+    return std::make_pair(enterAxis, enter * V.Length());
+}
+
+Range<double> AABB::Intersection(const Line& line) const
+{
+    Vector V(line);
+    if (std::abs(V.x) <= std::numeric_limits<double>::epsilon() && !x[line.a.x]) {
+        return Range<double>::empty();
+    }
+    if (std::abs(V.y) <= std::numeric_limits<double>::epsilon() && !y[line.a.y]) {
+        return Range<double>::empty();
+    }
+    if (std::abs(V.z) <= std::numeric_limits<double>::epsilon() && !z[line.a.z]) {
+        return Range<double>::empty();
+    }
+
+    double intersections[]{
+        ComputeCoefficient(line.a.x, x.end, V.x, false),
+        ComputeCoefficient(line.a.x, x.begin, V.x, true),
+
+        ComputeCoefficient(line.a.y, y.begin, V.y, true),
+        ComputeCoefficient(line.a.y, y.end, V.y, false),
+
+        ComputeCoefficient(line.a.z, z.begin, V.z, true),
+        ComputeCoefficient(line.a.z, z.end, V.z, false),
+    };
+    double enter = 0.0; // at least at coefficient of A
+    double leave = 1.0; // maximum at coeffiecient of B
+
+    for(auto intersect : std::span(intersections))
+    {
+        if (std::isinf(intersect) || std::isnan(intersect)) {
+            continue;
+        }
+        if ((intersect<=0) && (-intersect<leave)) {
+            leave = -intersect; // leave at the smallest negative (intersect from back of plane)
+        }
+        if ((intersect>=0) && (intersect>enter))
+            enter = intersect;  // enter at the smallest positive (intersect from front of plane)
+    }
+    return Range<double>(enter * line.Length(), leave * line.Length());
 }
 
 
@@ -118,8 +215,6 @@ void AABB::Render()
     glEnd();
     glPopMatrix();
 }
-
-
 
 AABB& AABB::operator*=(const Matrix& transformation)
 {
@@ -209,6 +304,40 @@ Range<double> AABB::Z() const
 {
     return z;
 }
+
+
+Plane AABB::Right() const
+{   // +X
+    return Plane{Vector::X, -x.end};
+}
+
+
+Plane AABB::Left() const
+{   // -X
+    return Plane{-Vector::X, x.begin};
+}
+
+Plane AABB::Front() const
+{   // +Y
+    return Plane{Vector::Y, -y.end};
+}
+
+Plane AABB::Back() const
+{   // -Y
+    return Plane{-Vector::Y, y.begin};
+}
+
+Plane AABB::Top() const
+{   // +Z
+    return Plane{Vector::Z, -z.end};
+}
+
+Plane AABB::Bottom() const
+{   // -Z
+    return Plane{-Vector::Z, z.begin};
+}
+
+
 
 AABB& AABB::operator|=(const Coordinate& p)
 {

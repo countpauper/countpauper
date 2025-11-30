@@ -130,6 +130,32 @@ TEST(AABB, Clip)
     EXPECT_TRUE(box.Contains(box.Clip(Coordinate(-std::numeric_limits<double>::infinity(), 0.5, 10.0))));
 }
 
+TEST(AABB, Intersection)
+{
+    AABB box(Coordinate{0.5, 0.5, 0.5}, Coordinate{1.0, 1.0, 1.0});
+    EXPECT_EQ( box.Intersection(Line(Coordinate{0.0, 0.75, 0.75}, Coordinate{1.25, 0.75, 0.75})),
+        Range(0.5, 1.0));
+    EXPECT_EQ(box.Intersection(Line(Coordinate{0.75, 0.75, 0.75}, Coordinate{1.25, 0.75, 0.75})),
+        Range(0.0, 0.25));
+    EXPECT_EQ(box.Intersection(Line(Coordinate{1.25, 0.75, 0.75}, Coordinate{0.75, 0.75, 0.75})),
+        Range(0.25, 0.5));
+    EXPECT_FALSE(box.Intersection(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.0, 0.0, 0.75})));
+}
+
+
+TEST(AABB, NamedIntersection)
+{
+    AABB box(Coordinate{0.5, 0.5, 0.5}, Coordinate{1.0, 1.0, 1.0});
+    EXPECT_EQ( box.NamedIntersection(Line(Coordinate{0.0, 0.75, 0.75}, Coordinate{1.25, 0.75, 0.75})),
+        std::make_pair(Axis::NegX, 0.5));
+    EXPECT_EQ( box.NamedIntersection(Line(Coordinate{1.25, 0.75, 0.75}, Coordinate{0.75, 0.75, 0.75})),
+        std::make_pair(Axis::PosX, 0.25));
+    EXPECT_EQ( box.NamedIntersection(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.25, 0.0, 0.75})),
+        std::make_pair(Axis::None, std::numeric_limits<double>::infinity()));
+    EXPECT_EQ( box.NamedIntersection(Line(Coordinate{0.75, 0.75, 0.75}, Coordinate{0.75, 0.00, 0.75})),
+        std::make_pair(Axis::NegY, -0.25));
+}
+
 TEST(AABB, Transform)
 {
     AABB box(Coordinate::origin, Coordinate(1, 1, 1));

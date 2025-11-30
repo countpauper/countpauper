@@ -28,7 +28,7 @@ public:
     {}
     AABB GetBoundingBox() const override;
     double Distance(const Coordinate& p) const override;
-    double Intersection(const Line& line) const override;
+    Range<double> Intersection(const Line& line) const override;
 private:
     Coordinate c;
 };
@@ -44,7 +44,7 @@ public:
     AABB  GetBoundingBox() const override;
     double Distance(const Coordinate& p) const override;
     double Volume() const override;
-    double Intersection(const Line& line) const override;
+    Range<double> Intersection(const Line& line) const override;
 private:
     Coordinate center;
     double radius;
@@ -60,7 +60,7 @@ public:
     Line Axis() const;
     Cylinder Slice(const Engine::Range<double>& range) const;
     double Volume() const override;
-    double Intersection(const Line& line) const override;
+    Range<double> Intersection(const Line& line) const override;
 private:
     Vector scale;
     Vector origin;
@@ -74,7 +74,7 @@ public:
     CompoundVolume() = default;
     CompoundVolume(const std::vector<std::reference_wrapper<const IVolume>>& vols);
     CompoundVolume(const CompoundVolume& o);
-    double Intersection(const Line& line) const override;
+    Range<double> Intersection(const Line& line) const override;
 protected:
     std::vector<Engine::clone_ptr<IVolume>> volumes;
 };

@@ -234,6 +234,7 @@ std::pair<double, uint32_t> Mesh::NamedIntersection(const Line& line) const
     // and make vertices private, provide operator[] etc
     unsigned idx = 0;
     double nearest = std::numeric_limits<double>::max();
+    double furthest = std::numeric_limits<double>::min();
     unsigned best = names.size();
     for(auto triangle : triangles)
     {
@@ -252,9 +253,14 @@ std::pair<double, uint32_t> Mesh::NamedIntersection(const Line& line) const
     return std::make_pair(nearest, name);
 }
 
-double Mesh::Intersection(const Line& line) const
+Range<double> Mesh::Intersection(const Line& line) const
 {
-    return NamedIntersection(line).first;
+    auto enterTriangle = NamedIntersection(line);
+    if (std::isinf(enterTriangle.first)) {
+        return Range<double>::empty();
+    }
+    auto exitTriangle = NamedIntersection(line.Invert());
+    return Range<double>(enterTriangle.first, exitTriangle.first);
 }
 
 double Mesh::Distance(const Coordinate& p) const

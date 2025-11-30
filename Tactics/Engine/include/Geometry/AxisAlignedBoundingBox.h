@@ -3,6 +3,7 @@
 #include "Geometry/Coordinate.h"
 #include "Utility/Range.h"
 #include "Geometry/Volume.h"
+#include "Geometry/Plane.h"
 
 namespace Engine
 {
@@ -10,6 +11,17 @@ namespace Engine
     struct Vector;
     struct Line;
     struct Matrix;
+
+    enum class Axis : int
+    {
+        NegZ=-3,
+        NegY=-2,
+        NegX=-1,
+        None=0,
+        PosX=1,
+        PosY=2,
+        PosZ=3
+    };
 
     struct AABB : public IVolume, public Clone<AABB>
     {
@@ -35,9 +47,18 @@ namespace Engine
 
         bool Contains(const Coordinate& p) const;
         Coordinate Clip(const Coordinate& p) const;
-        double Intersection(const Line& line) const override;
+        // 0 None, 1..6 = Right(), Bottom(), Front, Back(), Left(), Top(),
+        std::pair<Axis, double> NamedIntersection(const Line& line) const;
+        Range<double> Intersection(const Line& line) const override;
 
         void Render();
+
+        Plane Right() const;    // +X
+        Plane Left() const;     // -X
+        Plane Front() const;    // +Y
+        Plane Back() const;     // -Y
+        Plane Top() const;      // +Z
+        Plane Bottom() const;   // -Z
 
         bool operator[](const Coordinate& p) const { return Contains(p); }
         AABB& operator|=(const Coordinate& p);

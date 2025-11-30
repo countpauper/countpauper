@@ -18,13 +18,13 @@ double Point::Distance(const Coordinate& p) const
     return (c - p).Length();
 }
 
-double Point::Intersection(const Line& line) const
+Range<double> Point::Intersection(const Line& line) const
 {
     assert(false); // TODO
     // Probably just check if the point is colinear with the line
     // between a and b and then the distance from a
     // but it needs a unit test
-    return std::numeric_limits<double>::signaling_NaN();
+    return Range<double>::empty();
 }
 
 AABB Sphere::GetBoundingBox() const
@@ -44,10 +44,10 @@ double Sphere::Volume() const
     return radius * radius * radius * PI * 4.0 / 3.0;
 }
 
-double Sphere::Intersection(const Line& line) const
+Range<double> Sphere::Intersection(const Line& line) const
 {
     assert(false); // TODO
-    return std::numeric_limits<double>::signaling_NaN();
+    return Range<double>::empty();
 }
 
 Cylinder::Cylinder() :
@@ -155,10 +155,10 @@ double Cylinder::Volume() const
     return Engine::PI * scale.y * scale.z * scale.z;
 }
 
-double Cylinder::Intersection(const Line& line) const
+Range<double> Cylinder::Intersection(const Line& line) const
 {
     assert(false); // TODO
-    return std::numeric_limits<double>::signaling_NaN();
+    return Range<double>::empty();
 }
 
 CompoundVolume::CompoundVolume(const std::vector<std::reference_wrapper<const IVolume>>& vols)
@@ -177,11 +177,13 @@ CompoundVolume::CompoundVolume(const CompoundVolume& other)
     }
 }
 
-double CompoundVolume::Intersection(const Line& line) const
+Range<double> CompoundVolume::Intersection(const Line& line) const
 {
-    assert(false); // TODO
-    // Probably just take the minimum of all intersections
-    return std::numeric_limits<double>::signaling_NaN();
+    Range<double> result = Range<double>::empty();
+    for(const auto& vol: volumes) {
+        result |= vol->Intersection(line);
+    }
+    return result;;
 }
 
 

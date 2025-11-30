@@ -8,6 +8,7 @@
 #include "Geometry/Triangle.h"
 #include "Geometry/AxisAlignedBoundingBox.h"
 #include "GTestGeometry.h"
+#include <numeric>
 
 namespace Engine::Test
 {
@@ -126,6 +127,33 @@ TEST(Line, Section)
 
 }
 
+TEST(Line, Vozelize)
+{
+    Coordinate a(0.5, 2.2, 3.6);
+    Coordinate b(3.1, -0.5, -2.0);
+
+    //     Y                 Za
+    //     3                 3*
+    //     2a*               2 *
+    //     1  **             1  *
+    //X -1 0 1 2*3        X 0 1 2*3
+    //    -1     *b         -1    *
+    //                      -2     b
+
+    Line line(a,b);
+    auto voxels = line.Voxelize();
+    EXPECT_EQ(voxels[0].first, Position(0, 2, 3));
+    EXPECT_EQ(voxels[1].first, Position(1, 2, 3));
+    auto total_fragments = std::accumulate(voxels.begin(), voxels.end(), 0.0,
+        [](double sum, std::pair<Position, double> voxel)
+    {
+        return sum + voxel.second;
+    });
+    EXPECT_DOUBLE_EQ(total_fragments, line.Length());
+
+}
+
+
 TEST(Plane, Null)
 {
     EXPECT_FALSE(Plane(Vector::zero, 1));
@@ -152,11 +180,11 @@ TEST(Plane, XY)
 
 TEST(Plane, XYIntersection)
 {
-    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, -6))), 2);
-    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,-6), Coordinate(0, 0, 2))), -6);
-    EXPECT_TRUE(std::isnan(Plane::xy.Intersection(Line(Coordinate(0,1,2), Coordinate(1, 0, 2)))));
-    EXPECT_TRUE(std::isnan(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 1)))));
-    EXPECT_TRUE(std::isnan(Plane::xy.Intersection(Line(Coordinate(0,0,-2), Coordinate(0, 0, -4)))));
+    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, -6))).begin, 2);
+    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,-6), Coordinate(0, 0, 2))).begin, -6);
+    EXPECT_FALSE(Plane::xy.Intersection(Line(Coordinate(0,1,2), Coordinate(1, 0, 2))));
+    EXPECT_FALSE(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 1))));
+    EXPECT_FALSE(Plane::xy.Intersection(Line(Coordinate(0,0,-2), Coordinate(0, 0, -4))));
 }
 
 
@@ -194,7 +222,7 @@ TEST(Plane, NotNormalXYAt1)
     EXPECT_FALSE(xy2.GetBoundingBox().Contains(Coordinate(1, 1, 1.1)));
     EXPECT_TRUE(xy2.GetBoundingBox().Contains(Coordinate(0, 0, 0.9)));
 
-    EXPECT_EQ(xy2.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 0))), 1);
+    EXPECT_EQ(xy2.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 0))).begin, 1);
 
 }
 
