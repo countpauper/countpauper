@@ -25,7 +25,7 @@ public:
     void Apply();
 
     void Move(const class World& world, Engine::Position destination) override;
-    Engine::Position Position() const override;
+    Game::Position GetPosition() const override;
     Engine::Size Size() const override;
     const Engine::Object& GetAppearance() const override;
     std::string_view Name() const override;
@@ -55,7 +55,7 @@ public:
 public:
     Actor* parent;
     const class World* world;
-    Engine::Position position;
+    Position position;
     std::map<Stat::Id, int> counterDelta;
 };
 

@@ -12,9 +12,9 @@ using namespace ::testing;
 
 TEST(Move, step)
 {
-    MockActor actor("a");
+    NiceMock<MockActor> actor("a");
     actor.SetStats({
-        {Stat::speed, 2},
+        {Stat::speed, 3},
         {Stat::jump, 1},
         {Stat::ap, 1}
     });
@@ -22,21 +22,21 @@ TEST(Move, step)
     NiceMock<MockWorld> world;
     world.map.SetHeightMap({2,2,2}, {0, 2.0, 0.0, 1.0});
 
-    Move action(world, actor, Engine::Position(1,1,0));
-    EXPECT_EQ(action.Description(), "Move (1, 1, 0)");
+    Move action(world, actor, Engine::Position(1,1,1));
+    EXPECT_EQ(action.Description(), "Move (1, 1, 1)");
     EXPECT_EQ(action.AP(), 1);
     EXPECT_TRUE(action.CanDo());
 
     std::stringstream log;
     auto delta = action.Execute(log).front();
-    EXPECT_EQ(log.str(), "a moves to (1, 1, 0)\n");
-    EXPECT_EQ(delta.Position(), Engine::Position(1,1,0));
+    EXPECT_EQ(log.str(), "a moves to (1, 1, 1)\n");
+    EXPECT_EQ(delta.GetPosition(), Position(1,1,1));
     EXPECT_EQ(delta.Available(Stat::ap), 0);
 }
 
 TEST(Move, cant_move_with_speed_0)
 {
-    MockActor actor("b");
+    NiceMock<MockActor> actor("b");
     actor.SetStats({
         {Stat::speed, 0},
         {Stat::jump, 1},
@@ -54,7 +54,7 @@ TEST(Move, cant_move_with_speed_0)
 
 TEST(Move, cant_jump_too_high)
 {
-    MockActor actor("b");
+    NiceMock<MockActor> actor("b");
     actor.SetStats({
         {Stat::speed, 1},
         {Stat::jump, 1},

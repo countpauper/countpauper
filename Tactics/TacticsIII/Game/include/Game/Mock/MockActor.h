@@ -2,6 +2,8 @@
 #include <gmock/gmock.h>
 
 #include "Game/Actor.h"
+#include "Game/World.h"
+#include "Game/HeightMap.h"
 #include "MockStatted.h"
 #include "MockCounted.h"
 #include "MockEquipped.h"
@@ -17,9 +19,12 @@ class MockActor : public Actor
 public:
     MockActor()
     {
-        ON_CALL(*this, Move(_, _)).WillByDefault(Invoke([this](const class World&, Engine::Position destination)
+        ON_CALL(*this, Move(_, _)).WillByDefault(Invoke([this](const class World& world, Engine::Position destination)
         {
-            ON_CALL(*this, Position()).WillByDefault(Return(destination));
+            ON_CALL(*this, GetPosition()).WillByDefault(Return(Position(
+                destination.x,
+                destination.y,
+                world.GetMap().GroundHeight(destination))));
         }));
         ON_CALL(stats, Get(_, _, _)).WillByDefault(Return(Computation(0)));
     }
@@ -46,7 +51,7 @@ public:
     }
 
     MOCK_METHOD(void, Move, (const class World& world, Engine::Position destination), (override));
-    MOCK_METHOD(Engine::Position, Position, (), (const override));
+    MOCK_METHOD(Position, GetPosition, (), (const override));
     MOCK_METHOD(Engine::Size, Size, (), (const override));
 
     const Engine::Scenery& GetAppearance() const override { return appearance; }

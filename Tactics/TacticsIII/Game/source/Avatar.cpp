@@ -79,16 +79,16 @@ void Avatar::Select(bool on)
 
 void Avatar::Move(const World& world, Engine::Position destination)
 {
-    coordinate = world.GetMap().GroundCoord(creature.SetPosition(destination));
+    coordinate = world.GetMap().GroundCoord(destination);
+    creature.SetPosition({destination.x, destination.y, coordinate.z});
 }
-
 
 const Engine::Object& Avatar::GetAppearance() const
 {
     return *this;
 }
 
-Engine::Position Avatar::Position() const
+Game::Position Avatar::GetPosition() const
 {
     return creature.GetPosition();
 }

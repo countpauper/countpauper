@@ -28,7 +28,7 @@ public:
     void Move(const World& world, Engine::Position destination) override;
 
     const Engine::Object& GetAppearance() const override;
-    Engine::Position Position() const override;
+    Game::Position GetPosition() const override;
     Engine::Size Size() const override;
     Statted& GetStats() override;
     const Statted& GetStats() const override;

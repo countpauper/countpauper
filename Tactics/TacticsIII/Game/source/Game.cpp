@@ -65,7 +65,7 @@ bool Game::Obstacle(Engine::Position at, const Actor* except) const
     {
         if (avatar.get() == except)
             continue;
-        if (avatar->Position() == at)
+        if (avatar->GetPosition().p == at)
             return true;
     }
     // TODO: objects, size &  height (use Bounds)

@@ -8,7 +8,8 @@
 #include "Game/Conditions.h"
 #include "Game/Equipments.h"
 #include "Game/Boni.h"
-#include "Geometry/Position.h"
+#include "Game/Position.h"
+#include "Geometry/Size.h"
 #include "UI/Object.h"
 
 namespace Game
@@ -40,16 +41,16 @@ public:
     std::string_view Name() const override;
     const Equipment& Equip(const Equipment& equipment) override;
     Computation Bonus(Stat::Id id) const override;
-    Engine::Position GetPosition() const;
+    Position GetPosition() const;
     Engine::Size GetSize() const;
-    const Engine::Position& SetPosition(Engine::Position pos);
+    const Position& SetPosition(Position pos);
     const Race& GetRace() const;
     json Serialize() const;
     static StatDefinition definition;
 private:
     void OnCount(Stat::Id stat, unsigned remaining) override;
     std::string name;
-    Engine::Position position;
+    Position position;
     const Race& race;
     Restrictions tags;
     // TODO: effects(bonuses) knowledge (with bonuses), actions, skills(extra actions)

@@ -1,7 +1,7 @@
 #pragma once
 #include "Game/Statted.h"
 #include "Game/Counted.h"
-#include "Geometry/Position.h"
+#include "Game/Position.h"
 #include "Geometry/Size.h"
 #include "UI/Object.h"
 
@@ -12,7 +12,7 @@ class Actor
 {
 public:
     virtual void Move(const class World& world, Engine::Position destination) = 0;
-    virtual Engine::Position Position() const = 0;
+    virtual Position GetPosition() const = 0;
     virtual Engine::Size Size() const = 0;
 
     virtual const Engine::Object& GetAppearance() const = 0;

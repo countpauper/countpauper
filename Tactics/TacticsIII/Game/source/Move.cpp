@@ -60,7 +60,7 @@ Move::Move(World& world, Actor& actor, Engine::Position destination, unsigned di
         return result;
     };
     std::vector destinations = Approach(world, actor, destination, distance);
-    path = Engine::Astar::Plan<Engine::Position, float>(actor.Position(), destinations, cost, neighbours);
+    path = Engine::Astar::Plan<Engine::Position, float>(actor.GetPosition().p, destinations, cost, neighbours);
 }
 
 std::vector<Engine::Position>::const_iterator Move::Reachable() const

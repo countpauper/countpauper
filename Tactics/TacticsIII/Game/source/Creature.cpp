@@ -39,7 +39,7 @@ std::string_view Creature::Name() const
     return name;
 }
 
-Engine::Position Creature::GetPosition() const
+Position Creature::GetPosition() const
 {
     return position;
 }
@@ -49,11 +49,10 @@ Engine::Size Creature::GetSize() const
     return race.GetSize();
 }
 
-const Engine::Position& Creature::SetPosition(Engine::Position pos)
+const Position& Creature::SetPosition(Position pos)
 {
     return position = pos;
 }
-
 
 const Race& Creature::GetRace() const
 {
@@ -64,7 +63,7 @@ json Creature::Serialize() const
 {
     json result =  json::object({
         {"name", Name()},
-        {"position", json::array({position.x, position.y, position.z})},
+        {"position", json::array({position.p.x, position.p.y, position.z_offset + position.p.z})},
         {"race", race.Name()},
         {"stats", Statistics::Serialize()},
         {"counters", Counters::Serialize()},

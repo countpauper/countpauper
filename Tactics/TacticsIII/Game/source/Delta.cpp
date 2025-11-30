@@ -1,4 +1,6 @@
 #include "Game/Delta.h"
+#include "Game/World.h"
+#include "Game/HeightMap.h"
 
 namespace Game
 {
@@ -33,7 +35,7 @@ const Engine::Object& Delta::GetAppearance() const
 void Delta::Apply()
 {
     if (world)
-        parent->Move(*world, position);
+        parent->Move(*world, position.p);
     for(const auto& dCounter : counterDelta)
         parent->GetCounts().Cost(dCounter.first, -dCounter.second, true);
 
@@ -62,10 +64,11 @@ Engine::Quaternion Delta::GetOrientation() const
 void Delta::Move(const class World& world, Engine::Position destination)
 {
     this->world = &world;
-    position = destination; // TODO: could be a Vector instead
+    auto z = this->world->GetMap().GroundHeight(destination);
+    position = Position(destination.x, destination.y, z);
 }
 
-Engine::Position Delta::Position() const
+Position Delta::GetPosition() const
 {
     return position;
 }
