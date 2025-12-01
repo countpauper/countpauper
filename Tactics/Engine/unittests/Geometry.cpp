@@ -142,8 +142,10 @@ TEST(Line, Vozelize)
 
     Line line(a,b);
     auto voxels = line.Voxelize();
+    EXPECT_LE(voxels.size(), 3+3+6);
     EXPECT_EQ(voxels[0].first, Position(0, 2, 3));
-    EXPECT_EQ(voxels[1].first, Position(1, 2, 3));
+    EXPECT_EQ(voxels[1].first, Position(0, 1, 3));
+    EXPECT_EQ(voxels.back().first, Position(3,-1,-2));
     auto total_fragments = std::accumulate(voxels.begin(), voxels.end(), 0.0,
         [](double sum, std::pair<Position, double> voxel)
     {

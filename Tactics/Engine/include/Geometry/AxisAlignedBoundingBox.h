@@ -4,6 +4,7 @@
 #include "Utility/Range.h"
 #include "Geometry/Volume.h"
 #include "Geometry/Plane.h"
+#include "Geometry/Axis.h"
 
 namespace Engine
 {
@@ -11,17 +12,6 @@ namespace Engine
     struct Vector;
     struct Line;
     struct Matrix;
-
-    enum class Axis : int
-    {
-        NegZ=-3,
-        NegY=-2,
-        NegX=-1,
-        None=0,
-        PosX=1,
-        PosY=2,
-        PosZ=3
-    };
 
     struct AABB : public IVolume, public Clone<AABB>
     {

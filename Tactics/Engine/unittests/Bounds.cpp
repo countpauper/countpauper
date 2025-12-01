@@ -154,6 +154,14 @@ TEST(AABB, NamedIntersection)
         std::make_pair(Axis::None, std::numeric_limits<double>::infinity()));
     EXPECT_EQ( box.NamedIntersection(Line(Coordinate{0.75, 0.75, 0.75}, Coordinate{0.75, 0.00, 0.75})),
         std::make_pair(Axis::NegY, -0.25));
+
+    auto diagonal = Line(Coordinate{0.0, 0.25, 0.25}, Coordinate{1.25, 1.0, 0.75});
+    auto diagonalHit = box.NamedIntersection(diagonal);
+    EXPECT_EQ(diagonalHit.first, Axis::NegZ);
+    auto diagonalHitLocation = diagonal.Section(Range<double>(diagonalHit.second, 10.0)).a;
+    EXPECT_DOUBLE_EQ(diagonalHitLocation.z, box.z.begin);
+    EXPECT_TRUE(box.X()[diagonalHitLocation.x]);
+    EXPECT_TRUE(box.Y()[diagonalHitLocation.y]);
 }
 
 TEST(AABB, Transform)

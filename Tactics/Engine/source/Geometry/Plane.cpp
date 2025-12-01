@@ -100,30 +100,25 @@ namespace Engine
         return dot == 0;
     }
 
-    double Plane::IntersectionCoefficient(const Line& line) const
+    Range<double> Plane::Intersection(const Line& line) const
     {
         // TODO: this can probably be optimized with a
         // method similar to Triangle, just don't check the limtis on u and v
 
         double normaldot = Vector(line).Dot(normal);
         if (std::abs(normaldot) < std::numeric_limits<double>::epsilon())
-            return std::numeric_limits<double>::infinity();
+            return Range<double>::empty();
         // P is projection vector from line.a to a point on the plane
         Vector P =  normal * -NormalDistance(line.a) / normal.LengthSquared();
         double projectiondot = P.Dot(normal);
-        return  projectiondot / normaldot;
-    }
+        double fraction = projectiondot / normaldot;
 
-    Range<double> Plane::Intersection(const Line& line) const
-    {
-        double fraction = IntersectionCoefficient(line);
-        if (std::isinf(fraction)) {
+        if (std::isinf(fraction))
             return Range<double>::empty();
-        }
         if ((fraction<0) || (fraction>1))
            return Range<double>::empty();
         double d;
-        if (fraction < 0 )
+        if (normaldot < 0 )
             d = fraction * line.Length();    // a is above the plane
         else
             d = -fraction * line.Length();   // a is behind the plane

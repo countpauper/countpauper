@@ -13,6 +13,32 @@ namespace Engine
     {
     }
 
+    Position::Position(Axis axis) :
+        Position()
+    {
+        switch(axis)
+        {
+            case Axis::NegZ:
+                z = -1;
+                break;
+            case Axis::NegY:
+                y = -1;
+                break;
+            case Axis::NegX:
+                x = -1;
+                break;
+            case Axis::PosX:
+                x = 1;
+                break;
+            case Axis::PosY:
+                y = 1;
+                break;
+            case Axis::PosZ:
+                z = 1;
+                break;
+        }
+    }
+
     unsigned Position::ManDistance(Position other) const
     {
         return std::abs(other.x - x) +

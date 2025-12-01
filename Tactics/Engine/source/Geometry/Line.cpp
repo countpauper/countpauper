@@ -106,27 +106,7 @@ std::vector<std::pair<Position, double>> Line::Voxelize() const
 
             result.emplace_back(current, remaining - intersection.second);
             remaining = intersection.second;
-            switch(intersection.first)
-            {
-                case Axis::NegZ:
-                    current.z -=1;  // TODO Axis to position
-                    break;
-                case Axis::NegY:
-                    current.y -=1;  // TODO Axis to position
-                    break;
-                case Axis::NegX:
-                    current.x -=1;  // TODO Axis to position
-                    break;
-                case Axis::PosX:
-                    current.x +=1;  // TODO Axis to position
-                    break;
-                case Axis::PosY:
-                    current.y +=1;
-                    break;
-                case Axis::PosZ:
-                    current.z +=1;
-                    break;
-            }
+            current += Position(intersection.first);
         }
     }
     return result;

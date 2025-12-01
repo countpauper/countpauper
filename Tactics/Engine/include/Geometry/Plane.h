@@ -34,9 +34,6 @@ struct Plane : public IGeometry, public Clone<Plane>
     AABB GetBoundingBox() const override;
     double Distance(const Coordinate& c) const override;
     bool IsParallel(const Line& line) const;
-    // Return the number coefficient between the Plane's normal and the Line vector where the infinite line would intersect
-    // this can be <0 if a and b are below the plane or >1 if a and b are both above the plane
-    double IntersectionCoefficient(const Line& line) const;
     Range<double> Intersection(const Line& line) const override;
     Engine::Vector normal;  // does not need to be normalized
     double d;
