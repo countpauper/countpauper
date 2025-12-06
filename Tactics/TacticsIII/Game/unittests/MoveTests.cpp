@@ -49,7 +49,7 @@ TEST(Move, cant_move_with_speed_0)
     std::stringstream log;
     auto deltas = action.Execute(log);
     EXPECT_TRUE(deltas.empty());
-    EXPECT_EQ(log.str(), "b can't move, because speed (0) is 0\n");
+    EXPECT_EQ(log.str(), "b can't move, because speed (0[speed]) is 0\n");
 }
 
 TEST(Move, cant_jump_too_high)

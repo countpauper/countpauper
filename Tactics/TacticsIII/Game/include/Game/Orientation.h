@@ -127,27 +127,27 @@ protected:
 std::ostream& operator<<(std::ostream& os, const Orientation& dir);
 std::wostream& operator<<(std::wostream& os, const Orientation& dir);
 
-class Directions
+class Orientations
 {
 public:
-    Directions();
-    explicit Directions(Orientation dir);
-    explicit Directions(const std::initializer_list<Orientation>& dirs);
-    explicit Directions(uint16_t flags);
+    Orientations();
+    explicit Orientations(Orientation dir);
+    explicit Orientations(const std::initializer_list<Orientation>& dirs);
+    explicit Orientations(uint16_t flags);
 
-    Directions& operator|=(const Orientation& dir);
-    Directions& operator&=(const Directions& dirs);
-    Directions& operator|=(const Directions& dirs);
-    bool operator==(const Directions& other) const;
-    bool operator!=(const Directions& other) const { return !(*this == other); }
+    Orientations& operator|=(const Orientation& dir);
+    Orientations& operator&=(const Orientations& dirs);
+    Orientations& operator|=(const Orientations& dirs);
+    bool operator==(const Orientations& other) const;
+    bool operator!=(const Orientations& other) const { return !(*this == other); }
     bool operator[](const Orientation& dir) const;
     bool empty() const;
     size_t size() const;
 
     operator bool() const;
-    static Directions none;
-    static Directions all;
-    static Directions axes;
+    static Orientations none;
+    static Orientations all;
+    static Orientations axes;
 
     class iterator
     {
@@ -163,8 +163,8 @@ public:
         // iterator traits
         using difference_type = int;
         using iterator_category = std::forward_iterator_tag;
-        using pointer = const Orientation*;   // BS, but needed to use directions in std::algorithms
-        using reference = const Orientation&; // BS, but needed to use directions in std::algorithms
+        using pointer = const Orientation*;   // BS, but needed to use Orientations in std::algorithms
+        using reference = const Orientation&; // BS, but needed to use Orientations in std::algorithms
 
         int bit;
         const uint16_t& flags;
@@ -176,8 +176,8 @@ private:
     uint16_t flags;
 };
 
-Directions operator|(const Orientation& a, const Orientation& b);
-Directions operator|(Directions dirs, const Orientation& b);
+Orientations operator|(const Orientation& a, const Orientation& b);
+Orientations operator|(Orientations dirs, const Orientation& b);
 
 
 }    // ::Game

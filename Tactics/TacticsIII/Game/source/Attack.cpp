@@ -1,6 +1,6 @@
 #include "Game/Attack.h"
-#include "Geometry/Line.h"
 #include "Utility/Random.h"
+#include "Game/Utilities.h"
 #include "UI/Avatar.h"
 #include <GL/gl.h>
 
@@ -21,37 +21,13 @@ void Attack::Render() const
     line.Render();
 }
 
-// TODO: should still include map and be collected with more free functions or utility functions of actor
-double HitChance(const Actor& actor, const Actor& target)
-{
-    auto hitScore = target.GetStats().Get(Stat::dodge) + target.GetStats().Get(Stat::block);    // TODO: front
-    return 1.0;
-}
-
-int ComputeDamage(const Computation& offense, const Computation& defense)
-{
-    return (offense - defense).Total();
-}
-
-Computation ComputeDamage(const Computations& offense, const Computations& defense)
-{
-    Computation result(Engine::Range<int>(0,std::numeric_limits<int>::max()));
-    result += Computation(ComputeDamage(offense.at(Stat::sharp_damage), defense.at(Stat::sharp_resist)), "sharp");
-    result += Computation(ComputeDamage(offense.at(Stat::blunt_damage), defense.at(Stat::blunt_resist)), "blunt");
-    result += Computation(ComputeDamage(offense.at(Stat::heat_damage), defense.at(Stat::heat_resist)), "heat");
-    result += Computation(ComputeDamage(offense.at(Stat::cold_damage), defense.at(Stat::cold_resist)), "cold");
-    result += Computation(ComputeDamage(offense.at(Stat::lightning_damage), defense.at(Stat::lightning_resist)), "lightning");
-    result += Computation(ComputeDamage(offense.at(Stat::poison_damage), defense.at(Stat::poison_resist)), "poison");
-    result.Simplify();
-    return result;
-}
-
 
 Requirements Attack::CanDo() const
 {
     return Requirements{
         StatRequirement(Stat::ap, actor.GetCounts().Available(Stat::ap), Comparator::less_equal, AP()),
-        StatRequirement(Stat::reach, actor.GetStats().Get(Stat::reach), Comparator::greater_equal, Computation(actor.GetPosition().ManDistance(target.GetPosition())))
+        StatRequirement(Stat::reach, actor.GetStats().Get(Stat::reach), Comparator::greater_equal, Computation(actor.GetPosition().ManDistance(target.GetPosition()))),
+        TargetRequirement(ComputeCover(world, actor, target))
     };
 }
 

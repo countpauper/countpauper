@@ -444,9 +444,9 @@ std::wostream& operator<<(std::wostream& os, const Orientation& dir)
     return os;
 }
 
-Directions Directions::none(0);
+Orientations Orientations::none(0);
 
-Directions Directions::all =
+Orientations Orientations::all =
     Orientation::north |
     Orientation::south |
     Orientation::east |
@@ -454,57 +454,57 @@ Directions Directions::all =
     Orientation::up |
     Orientation::down;
 
-Directions Directions::axes =
+Orientations Orientations::axes =
     Orientation::x |
     Orientation::y |
     Orientation::z;
 
-Directions::Directions() :
-    Directions(0)
+Orientations::Orientations() :
+    Orientations(0)
 {
 }
 
-Directions::Directions(Orientation dir) :
-    Directions()
+Orientations::Orientations(Orientation dir) :
+    Orientations()
 {
     (*this) |= dir;
 }
 
-Directions::Directions(uint16_t flags) :
+Orientations::Orientations(uint16_t flags) :
     flags(flags)
 {
 }
 
-Directions::Directions(const std::initializer_list<Orientation>& dirs) :
-    Directions()
+Orientations::Orientations(const std::initializer_list<Orientation>& dirs) :
+    Orientations()
 {
     for (const auto& dir : dirs)
         (*this) |= dir;
 }
 
 
-Directions& Directions::operator|=(const Orientation& dir)
+Orientations& Orientations::operator|=(const Orientation& dir)
 {
     flags |= 1 << dir.Id();
     return *this;
 }
 
-bool Directions::operator==(const Directions& other) const
+bool Orientations::operator==(const Orientations& other) const
 {
     return flags == other.flags;
 }
 
-bool Directions::operator[](const Orientation& dir) const
+bool Orientations::operator[](const Orientation& dir) const
 {
     return (flags & (1 << dir.Id())) != 0;
 }
 
-bool Directions::empty() const
+bool Orientations::empty() const
 {
     return flags == 0;
 }
 
-size_t Directions::size() const
+size_t Orientations::size() const
 {
     size_t count = 0;
     for (int bit = 0; bit < sizeof(flags) * 8; ++bit)
@@ -515,19 +515,19 @@ size_t Directions::size() const
     return count;
 }
 
-Directions::operator bool() const
+Orientations::operator bool() const
 {
     return !empty();
 }
 
-Directions::iterator::iterator(const uint16_t& flags, int start) :
+Orientations::iterator::iterator(const uint16_t& flags, int start) :
     bit(start -1),
     flags(flags)
 {
     operator++();
 }
 
-Directions::iterator& Directions::iterator::operator++()
+Orientations::iterator& Orientations::iterator::operator++()
 {
     while (++bit < sizeof(flags) * 8)
     {
@@ -537,59 +537,59 @@ Directions::iterator& Directions::iterator::operator++()
     return *this;
 }
 
-bool Directions::iterator::operator==(const Directions::iterator& other) const
+bool Orientations::iterator::operator==(const Orientations::iterator& other) const
 {
     return bit == other.bit && flags == other.flags;
 }
 
-bool Directions::iterator::operator!=(const Directions::iterator& other) const
+bool Orientations::iterator::operator!=(const Orientations::iterator& other) const
 {
     return !((*this) == other);
 }
 
-Directions::iterator::value_type Directions::iterator::operator*() const
+Orientations::iterator::value_type Orientations::iterator::operator*() const
 {
     return Orientation(uint8_t(bit));
 }
 
-Directions::iterator Directions::begin() const
+Orientations::iterator Orientations::begin() const
 {
     return iterator(flags, 0);
 }
 
-Directions::iterator Directions::end() const
+Orientations::iterator Orientations::end() const
 {
     return iterator(flags, sizeof(flags) * 8);
 }
 
-Directions& Directions::operator&=(const Directions& dirs)
+Orientations& Orientations::operator&=(const Orientations& dirs)
 {
     flags &= dirs.flags;
     return *this;
 }
 
-Directions& Directions::operator|=(const Directions& dirs)
+Orientations& Orientations::operator|=(const Orientations& dirs)
 {
     flags |= dirs.flags;
     return *this;
 }
 
-Directions& operator|(const Directions& a, const Directions& b)
+Orientations& operator|(const Orientations& a, const Orientations& b)
 {
-    return Directions(a) |= b;
+    return Orientations(a) |= b;
 }
-Directions& operator&(const Directions& a, const Directions& b)
+Orientations& operator&(const Orientations& a, const Orientations& b)
 {
-    return Directions(a) &= b;
-}
-
-
-Directions operator|(const Orientation& a, const Orientation& b)
-{
-    return Directions(a) |= b;
+    return Orientations(a) &= b;
 }
 
-Directions operator|(Directions dirs, const Orientation& b)
+
+Orientations operator|(const Orientation& a, const Orientation& b)
+{
+    return Orientations(a) |= b;
+}
+
+Orientations operator|(Orientations dirs, const Orientation& b)
 {
     return dirs |= b;
 }

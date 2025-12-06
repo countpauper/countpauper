@@ -54,7 +54,7 @@ TEST(Attack, out_of_reach)
     std::stringstream log;
     auto deltas = action.Execute(log);
     EXPECT_TRUE(deltas.empty());
-    EXPECT_EQ(log.str(), "a can't attack t, because reach (1) is less than 2\n");
+    EXPECT_EQ(log.str(), "a can't attack t, because reach (1[reach]) is less than 2\n");
 }
 
 TEST(Attack, out_of_reach_due_to_height)
@@ -79,7 +79,7 @@ TEST(Attack, out_of_reach_due_to_height)
     std::stringstream log;
     auto deltas = highAttack.Execute(log);
     EXPECT_TRUE(deltas.empty());
-    EXPECT_EQ(log.str(), "a can't attack high, because reach (1) is less than 2\n");
+    EXPECT_EQ(log.str(), "a can't attack high, because reach (1[reach]) is less than 2\n");
 
     Attack lowAttack(world, attacker, lowTarget);
     EXPECT_TRUE(lowAttack.CanDo());
@@ -90,7 +90,22 @@ TEST(Attack, out_of_reach_due_to_height)
 TEST(Attack, cover_at_reach)
 {
     // A[]T
+    NiceMock<MockWorld> world;
+    NiceMock<MockActor> attacker("a");
+    NiceMock<MockActor> target("t");
+    world.map.SetHeightMap({3,1,4}, {0.1, 2.5, 0.2});
+    attacker.Move(world, {0,0,0});
+    attacker.SetStats({
+        {Stat::reach, 2},
+        {Stat::ap, 1}});
+    target.Move(world, {2,0,0});
 
+    Attack action(world, attacker, target);
+    EXPECT_FALSE(action.CanDo());
+    std::stringstream log;
+    auto deltas = action.Execute(log);
+    EXPECT_TRUE(deltas.empty());
+    EXPECT_EQ(log.str(), "a can't attack t, because the target is covered\n");
 }
 
 TEST(Attack, cover_due_to_diagonal_height)

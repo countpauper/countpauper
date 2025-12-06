@@ -1,5 +1,6 @@
 #pragma once
 #include "Geometry/Position.h"
+#include "Geometry/Coordinate.h"
 
 namespace Game
 {
@@ -12,9 +13,12 @@ namespace Game
         Engine::Position p;
         Fraction z_offset;
 
+        double Z() const;
         double ManDistance(Position other) const;
         double Distance(Position other) const;
         double Size() const;
+        Engine::Coordinate Coord() const;
+
         Position& operator+=(Position delta);
         Position& operator-=(Position delta);
         explicit operator bool() const;

@@ -1,6 +1,7 @@
 #pragma once
 #include "Geometry/Position.h"
 #include "Game/Material.h"
+#include "Game/Position.h"
 #include "Geometry/IntBox.h"
 
 namespace Game
@@ -13,11 +14,7 @@ public:
     virtual float GroundHeight(Engine::Position pos) const = 0;
     Engine::Coordinate GroundCoord(Engine::Position pos) const
     {
-        return Engine::Coordinate(
-            pos.x + 0.5,
-            pos.y + 0.5,
-            GroundHeight(pos)
-        );
+        return Game::Position(pos.x, pos.y, GroundHeight(pos)).Coord();
     }
 };
 

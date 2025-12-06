@@ -45,7 +45,7 @@ public:
     {
         for(const auto& [stat, value]: _stats)
         {
-            ON_CALL(stats, Get(stat, _, _)).WillByDefault(Return(Computation(value)));
+            ON_CALL(stats, Get(stat, _, _)).WillByDefault(Return(Computation(value, Stat::Name(stat))));
             ON_CALL(counts, Available(stat)).WillByDefault(Return(value));
         }
     }

@@ -69,6 +69,29 @@ bool PathRequirement::operator==(const PathRequirement& req) const
     return reachable == req.reachable;
 }
 
+TargetRequirement::TargetRequirement(double cover)
+    : cover(cover)
+{
+}
+
+TargetRequirement::operator bool() const
+{
+    return cover<=0.8;
+}
+
+std::string TargetRequirement::Description() const
+{
+    if (cover>0.8)
+        return "the target is covered";
+    else
+        return "the target is open";
+}
+
+bool TargetRequirement::operator==(const TargetRequirement& req) const
+{
+    return cover == req.cover;
+}
+
 Requirements::Requirements(std::initializer_list<Requirement> init) :
     std::vector<Requirement>(init)
 {

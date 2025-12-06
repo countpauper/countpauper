@@ -38,7 +38,19 @@ private:
 
 // TODO: Item requirement, statE requirement
 
-using RequirementVariant = std::variant<StatRequirement, PathRequirement>;
+class TargetRequirement
+{
+public:
+    explicit TargetRequirement(double cover);
+    explicit operator bool() const;
+    std::string Description() const;
+    bool operator==(const TargetRequirement& req) const;
+private:
+    double cover;
+
+};
+
+using RequirementVariant = std::variant<StatRequirement, PathRequirement, TargetRequirement>;
 
 class Requirement
     : public RequirementVariant

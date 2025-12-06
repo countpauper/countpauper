@@ -4,6 +4,7 @@
 namespace Game
 {
 
+    //  TODO: Merge with operator and Computation 
 class Comparator
 {
 public:

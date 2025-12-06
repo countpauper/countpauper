@@ -50,6 +50,8 @@ bool Operation::Redundant() const
 {
     switch(op)
     {
+        case Operator::nop:
+            return true;
         case Operator::add:
             return value == 0;
         case Operator::multiply:

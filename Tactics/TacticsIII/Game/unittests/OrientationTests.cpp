@@ -153,7 +153,7 @@ TEST(Orientation, CounterClockwise)
 TEST(Orientation, EvenDivision)
 {
     // even division of each direction in a 5x5 map
-    // 4 directions x 6 places + 1 x none = 25 positions
+    // 4 orientations x 6 places + 1 x none = 25 positions
     std::map<Orientation, unsigned> count =
     {
         { Orientation(Orientation::none), 0 },
@@ -212,9 +212,9 @@ TEST(Orientation, Turn)
 }
 
 
-TEST(Directions, Empty)
-{   // Default initialized directions are empty
-    Directions dirs;
+TEST(Orientations, Empty)
+{   // Default initialized orientations are empty
+    Orientations dirs;
     EXPECT_FALSE(dirs);
     EXPECT_TRUE(dirs.empty());
     EXPECT_TRUE(dirs.begin() == dirs.end());
@@ -222,9 +222,9 @@ TEST(Directions, Empty)
     EXPECT_FALSE(dirs[Orientation::north]);
 }
 
-TEST(Directions, Single)
-{   // Initializing with one directions means it's contained
-    Directions dirs(Orientation::north);
+TEST(Orientations, Single)
+{   // Initializing with one orientations means it's contained
+    Orientations dirs(Orientation::north);
     EXPECT_TRUE(dirs);
     EXPECT_FALSE(dirs.empty());
     EXPECT_EQ(Orientation::north, *dirs.begin());
@@ -233,9 +233,9 @@ TEST(Directions, Single)
     EXPECT_TRUE(dirs[Orientation::north]);
 }
 
-TEST(Directions, None)
+TEST(Orientations, None)
 {   // None is a direction and can be represented
-    Directions dirs(Orientation::none);
+    Orientations dirs(Orientation::none);
     EXPECT_TRUE(dirs);
     EXPECT_FALSE(dirs.empty());
     EXPECT_EQ(Orientation::none, *dirs.begin());
@@ -244,19 +244,19 @@ TEST(Directions, None)
     EXPECT_FALSE(dirs[Orientation::north]);
 }
 
-TEST(Directions, All)
-{   // The Directions::all contains all directions except none
-    EXPECT_TRUE(Directions::all);
-    EXPECT_FALSE(Directions::all.empty());
+TEST(Orientations, All)
+{   // The Orientations::all contains all orientations except none
+    EXPECT_TRUE(Orientations::all);
+    EXPECT_FALSE(Orientations::all.empty());
 
-    EXPECT_FALSE(Directions::all[Orientation::none]);
-    EXPECT_TRUE(Directions::all[Orientation::north]);
-    EXPECT_TRUE(Directions::all[Orientation::down]);
+    EXPECT_FALSE(Orientations::all[Orientation::none]);
+    EXPECT_TRUE(Orientations::all[Orientation::north]);
+    EXPECT_TRUE(Orientations::all[Orientation::down]);
 }
 
-TEST(Directions, Operation)
-{   // The Directions::all contains all directions except none
-    EXPECT_TRUE((Directions() | Orientation::north)[Orientation::north]);
+TEST(Orientations, Operation)
+{   // The Orientations::all contains all orientations except none
+    EXPECT_TRUE((Orientations() | Orientation::north)[Orientation::north]);
     EXPECT_TRUE((Orientation::north | Orientation::south)[Orientation::south] );
 
 }
