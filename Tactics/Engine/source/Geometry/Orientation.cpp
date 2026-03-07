@@ -1,10 +1,10 @@
-#include "Game/Orientation.h"
+#include "Geometry/Orientation.h"
 #include "Geometry/Geometry.h"
 #include "Geometry/Vector.h"
 #include "Geometry/Angles.h"
 #include <assert.h>
 
-namespace Game
+namespace Engine
 {
 
 HalfPiAngle::HalfPiAngle() = default;
@@ -79,58 +79,39 @@ uint8_t Orientation::Id() const
     return static_cast<uint8_t>(value);
 }
 
-const Orientation Orientation::none;
-const Orientation Orientation::east(Orientation::East);
-const Orientation Orientation::north(Orientation::North);
-const Orientation Orientation::west(Orientation::West);
-const Orientation Orientation::south(Orientation::South);
-const Orientation Orientation::up(Orientation::Up);
-const Orientation Orientation::down(Orientation::Down);
-const Orientation Orientation::forward = east;
-const Orientation Orientation::left = north;
-const Orientation Orientation::backward = west;
-const Orientation Orientation::right = south;
-const Orientation Orientation::x = east;
-const Orientation Orientation::y = north;
-const Orientation Orientation::z = up;
-
-const std::map<const std::wstring_view, Orientation> Orientation::map(
+const std::map<const std::string_view, Orientation> Orientation::map(
 {
-	{ L"east", Orientation::east },
-	{ L"north", Orientation::north },
-	{ L"west", Orientation::west },
-	{ L"south", Orientation::south },
-	{ L"forward", Orientation::forward },
-	{ L"backward", Orientation::backward },
-	{ L"right", Orientation::right },
-	{ L"left", Orientation::left },
-	{ L"up",Orientation::up },
-	{ L"down", Orientation::down },
+	{ "front", Orientation::front },
+	{ "back", Orientation::back },
+	{ "right", Orientation::right },
+	{ "left", Orientation::left },
+	{ "up",Orientation::up },
+	{ "down", Orientation::down },
 });
 
 
-std::array<Orientation, 4> Orientation::cardinal
+std::array<Orientation, 4> Orientation::horizontal
 {
-    Orientation::east,
-    Orientation::north,
-    Orientation::west,
-    Orientation::south
+    Orientation::front,
+    Orientation::back,
+    Orientation::left,
+    Orientation::right
 };
 
 std::array<Orientation, 6> Orientation::all
 {
-    Orientation::east,
-    Orientation::north,
-    Orientation::west,
-    Orientation::south,
+    Orientation::front,
+    Orientation::back,
+    Orientation::left,
+    Orientation::right,
     Orientation::up,
     Orientation::down
 };
 
 std::array<Orientation, 3> Orientation::positive
 {
-    Orientation::east,
-    Orientation::north,
+    Orientation::front,
+    Orientation::right,
     Orientation::up,
 };
 
@@ -150,13 +131,13 @@ Orientation::Value Orientation::From(const Engine::Position& vector)
 	else
 	{
 		if (x > y && x <= -y)
-			return Orientation::South;
+			return Orientation::Right;
 		if (x >= y && x > -y)
-			return Orientation::East;
+			return Orientation::Left;
 		if (x < y && x >= -y)
-			return Orientation::North;
+			return Orientation::Front;
 		if (x <= y && x < -y)
-			return Orientation::West;
+			return Orientation::Back;
 		assert(x == 0 && y == 0);
 		return Orientation::None;
 	}
@@ -183,17 +164,16 @@ Orientation::Orientation(int x, int y, int z) :
 {
 }
 
-Engine::Position Orientation::Vector() const
+Engine::Position Orientation::GetVector() const
 {
 	return Engine::Position(vector[value].x, vector[value].y, vector[value].z);
 }
 
 
-double Orientation::Surface(const Engine::Vector& grid) const
+double Orientation::Surface(const Vector& grid) const
 {
     if (IsZ())
     {
-        assert(grid.x == grid.y);
         return grid.x * grid.y;
     }
     else if (IsY())
@@ -381,7 +361,11 @@ Orientation Orientation::Turn(Orientation turn) const
 
 std::string Orientation::AbsoluteDescription() const
 {
-    return std::string(description.at(value));
+    auto it = description.find(value);
+    if (it==description.end())
+        return "<unknown orientation>";
+    else
+        return std::string(it->second);
 }
 
 bool Orientation::IsNone() const
@@ -398,14 +382,22 @@ bool Orientation::operator<(Orientation other) const
     return value < other.value;
 }
 
+const Orientation Orientation::none{};
+const Orientation Orientation::front{Orientation::Front};
+const Orientation Orientation::back{Orientation::Back};
+const Orientation Orientation::left{Orientation::Left};
+const Orientation Orientation::right{Orientation::Right};
+const Orientation Orientation::up{Orientation::Up};
+const Orientation Orientation::down{Orientation::Down};
+
 std::array<Engine::Position, 10> Orientation::vector =
 {
     Engine::Position(0, 0, 0), // None
     Engine::Position(),
-    Engine::Position(1, 0, 0), // East
-    Engine::Position(-1, 0, 0), // West
-    Engine::Position(0, 1, 0), // North
-    Engine::Position(0, -1, 0), // South
+    Engine::Position(0, 1, 0), // Front
+    Engine::Position(0, -1, 0), // Back
+    Engine::Position(1, 0, 0), // Right
+    Engine::Position(-1, 0, 0), // Left
     Engine::Position(),
     Engine::Position(),
     Engine::Position(0, 0, 1), // Up
@@ -414,22 +406,24 @@ std::array<Engine::Position, 10> Orientation::vector =
 
 std::map<Orientation::Value, HalfPiAngle> Orientation::half_pi_angle=
 {
-	{ Orientation::Value::North, HalfPiAngle(1) },
-	{ Orientation::Value::East, HalfPiAngle(0) },
-	{ Orientation::Value::South, HalfPiAngle(-1) },
-	{ Orientation::Value::West, HalfPiAngle(2) }
+	{ Orientation::Value::Front, HalfPiAngle(1) },
+	{ Orientation::Value::Right, HalfPiAngle(0) },
+	{ Orientation::Value::Back, HalfPiAngle(-1) },
+	{ Orientation::Value::Left, HalfPiAngle(2) }
 };
 
 std::map<Orientation::Value, std::string_view> Orientation::description =
 {
     { Orientation::Value::None, "" },
     { Orientation::Value::Negative, "-" },
-    { Orientation::Value::North, "North" },
-    { Orientation::Value::East, "East" },
-	{ Orientation::Value::South, "South" } ,
-	{ Orientation::Value::West, "West" },
+    { Orientation::Value::Front, "Front" },
+    { Orientation::Value::Right, "Right" },
+    { Orientation::Value::Horizontal, "Horizontal" },
+	{ Orientation::Value::Back, "Back" } ,
+	{ Orientation::Value::Left, "Left" },
 	{ Orientation::Value::Up, "Up" } ,
 	{ Orientation::Value::Down, "Down" },
+    { Orientation::Value::Vertical, "Vertical" }
 };
 
 
@@ -442,17 +436,12 @@ std::ostream& operator<<(std::ostream& os, Orientation dir)
 Orientations Orientations::none(0);
 
 Orientations Orientations::all =
-    Orientation::north |
-    Orientation::south |
-    Orientation::east |
-    Orientation::west |
+    Orientation::front |
+    Orientation::back |
+    Orientation::left |
+    Orientation::right |
     Orientation::up |
     Orientation::down;
-
-Orientations Orientations::axes =
-    Orientation::x |
-    Orientation::y |
-    Orientation::z;
 
 Orientations::Orientations() :
     Orientations(0)
@@ -477,13 +466,14 @@ Orientations::Orientations(const std::initializer_list<Orientation>& dirs) :
         (*this) |= dir;
 }
 
-Orientations::Orientations(const Engine::Position& v)
+Orientations::Orientations(const Engine::Position& v) :
+    Orientations()
 {
     for (const auto& ori: all)
     {
-        int x = ori.Vector().x * v.x;
-        int y = ori.Vector().y * v.y;
-        int z = ori.Vector().z * v.z;
+        int x = ori.GetVector().x * v.x;
+        int y = ori.GetVector().y * v.y;
+        int z = ori.GetVector().z * v.z;
         if (x>0 || y>0 || z>0)
             (*this) |= ori;
     }

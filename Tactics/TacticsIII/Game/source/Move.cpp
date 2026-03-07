@@ -43,9 +43,9 @@ Move::Move(World& world, Actor& actor, Engine::Position destination, unsigned di
         const auto& map = world.GetMap();
         std::vector<Engine::Position> result;
         float jump = 1.0f + actor.GetStats().Get(Stat::jump).Total() / 2.0f;
-        for(auto ori : Orientation::all)
+        for(auto ori : Orientations::all)
         {
-            auto to = at + ori.Vector();
+            auto to = at + ori.GetVector();
             if (!map.GetBounds().Contains(to))
                 continue;
             Engine::Position headroom = to + Engine::Position(0, 0, std::ceil(jump));

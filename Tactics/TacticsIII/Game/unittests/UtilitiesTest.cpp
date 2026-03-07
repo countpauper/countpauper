@@ -6,24 +6,24 @@
 namespace Game::Test
 {
 
+
 TEST(Utilities, Facing)
 {
     Position to(2,2,2);
-    EXPECT_EQ(Facing(Position{1,2,2}, to, Size(1,1,1)), Orientations{Orientation::east});
-    EXPECT_EQ(Facing(Position{3,2,2}, to, Size(1,1,1)), Orientations{Orientation::west});
-    EXPECT_EQ(Facing(Position{2,1,2}, to, Size(1,1,1)), Orientations{Orientation::north});
-    EXPECT_EQ(Facing(Position{2,3,2}, to, Size(1,1,1)), Orientations{Orientation::south});
-    EXPECT_EQ(Facing(Position{2,2,1}, to, Size(1,1,1)), Orientations{Orientation::up});
-    EXPECT_EQ(Facing(Position{2,2,3}, to, Size(1,1,1)), Orientations{Orientation::down});
-    EXPECT_EQ(Facing(Position{2,2,2}, to, Size(1,1,1)), Orientations{});
+    EXPECT_EQ(Facing(Position{1,2,2}, to), Orientations{east});
+    EXPECT_EQ(Facing(Position{3,2,2}, to), Orientations{west});
+    EXPECT_EQ(Facing(Position{2,1,2}, to), Orientations{north});
+    EXPECT_EQ(Facing(Position{2,3,2}, to), Orientations{south});
+    EXPECT_EQ(Facing(Position{2,2,1}, to), Orientations{up});
+    EXPECT_EQ(Facing(Position{2,2,3}, to), Orientations{down});
+    EXPECT_EQ(Facing(Position{2,2,2}, to), Orientations{});
 
-    EXPECT_EQ(Facing(Position{1,3,2}, to, Size(1,1,1)), (Orientations{Orientation::east, Orientation::south}));
-    EXPECT_EQ(Facing(Position{2,3,1}, to, Size(1,1,1)), (Orientations{Orientation::north, Orientation::up}));
+    EXPECT_EQ(Facing(Position{1,3,2}, to), (Orientations{east, south}));
+    EXPECT_EQ(Facing(Position{2,3,1}, to), (Orientations{south, up}));
 
-    EXPECT_EQ(Facing(Position{1,2,2.4}, to, Size(1,1,1)), (Orientations{Orientation::east}));
-    EXPECT_EQ(Facing(Position{1,2,2.4}, to, Size(1,1,0.5)), (Orientations{Orientation::east, Orientation::down}));
-    EXPECT_EQ(Facing(Position{1,2,2.6}, to, Size(1,1,1)), (Orientations{Orientation::east, Orientation::down}));
-    EXPECT_EQ(Facing(Position{1,2,2.6}, to, Size(1,1,5)), (Orientations{Orientation::east}));
+    EXPECT_EQ(Facing(Position{1,2,2.4}, to), (Orientations{east}));
+    EXPECT_EQ(Facing(Position{1,2,2.6}, to), (Orientations{east, down}));
+
 
 }
 

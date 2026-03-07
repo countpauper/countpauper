@@ -35,7 +35,7 @@ struct Plane : public IGeometry, public Clone<Plane>
     double Distance(const Coordinate& c) const override;
     bool IsParallel(const Line& line) const;
     Range<double> Intersection(const Line& line) const override;
-    Engine::Vector normal;  // does not need to be normalized
+    Engine::Vector normal;  // not necessarily be normalized
     double d;
 
     static Plane null;
