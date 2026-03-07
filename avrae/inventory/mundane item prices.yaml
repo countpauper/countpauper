@@ -132,6 +132,8 @@ common clothes: 0.5
 clothes, costume: 5
 fine clothes: 15
 traveler's clothes: 2
+cold weather clothing: 10
+clothes, cold weather: 10
 component pouch: 25
 crowbar: 2
 druidic focus (sprig of mistletoe): 1
