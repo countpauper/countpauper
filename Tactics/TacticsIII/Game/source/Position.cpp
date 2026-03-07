@@ -18,28 +18,24 @@ Position::Position(int x, int y, double z) :
 {
 }
 
-double Position::Z() const
-{
-    return static_cast<double>(p.z) + z_offset;
-}
 
 
 double Position::ManDistance(Position other) const
 {
-    return std::abs(other.p.x - p.x) +
-        std::abs(other.p.y - p.y) +
+    return std::abs(other.X() - X()) +
+        std::abs(other.Y() - Y()) +
         std::abs(other.Z() - Z());
 }
 
-double Position::Size() const
+double Position::Length() const
 {
     return std::sqrt(Engine::Sqr(double(p.x)) + Engine::Sqr(double(p.y)) + Engine::Sqr(Z()));
 }
 
 double Position::Distance(Position other) const
 {
-    return std::sqrt(Engine::Sqr(double(other.p.x - p.x)) +
-            Engine::Sqr(double(other.p.y - p.y)) +
+    return std::sqrt(Engine::Sqr(double(other.X() - X())) +
+            Engine::Sqr(double(other.Z() - Y())) +
             Engine::Sqr(double(other.p.z -p.z) + (other.z_offset - z_offset)));
 }
 
@@ -90,12 +86,12 @@ Position operator-(Position a, Position b)
 
 std::ostream& operator<<(std::ostream& stream, Position position)
 {
-    stream << "(" << position.p.x << ", " << position.p.y << ", " << position.Z() << ")";
+    stream << "(" << position.X() << ", " << position.Y() << ", " << position.Z() << ")";
     return stream;
 }
 std::wostream& operator<<(std::wostream& stream, Position position)
 {
-    stream << L"(" << position.p.x << L", " << position.p.y << L", " << position.Z() << L")";
+    stream << L"(" << position.X() << L", " << position.Y() << L", " << position.Z() << L")";
     return stream;
 }
 bool operator==(Position a, Position b)

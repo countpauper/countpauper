@@ -10,11 +10,11 @@ TEST(Position, Bool)
     EXPECT_TRUE((Position{0, 0, 0.1f}));
 }
 
-TEST(Position, Size)
+TEST(Position, Length)
 {
-    EXPECT_EQ(0, Position().Size());
-    EXPECT_EQ(1.0, Position(1, 0, 0).Size());
-    EXPECT_EQ(1.0, Position(0, 0, -1.0f).Size());
+    EXPECT_EQ(0, Position().Length());
+    EXPECT_EQ(1.0, Position(1, 0, 0).Length());
+    EXPECT_EQ(1.0, Position(0, 0, -1.0f).Length());
 }
 
 TEST(Position, ManhattanDistance)

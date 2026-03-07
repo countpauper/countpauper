@@ -93,7 +93,7 @@ Game::Position Avatar::GetPosition() const
     return creature.GetPosition();
 }
 
-Engine::Size Avatar::Size() const
+Position Avatar::GetSize() const
 {
     return creature.GetSize();
 }

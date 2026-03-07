@@ -25,8 +25,8 @@ public:
     void Apply();
 
     void Move(const class World& world, Engine::Position destination) override;
-    Game::Position GetPosition() const override;
-    Engine::Size Size() const override;
+    Position GetPosition() const override;
+    Size GetSize() const override;
     const Engine::Object& GetAppearance() const override;
     std::string_view Name() const override;
     void Render() const override;

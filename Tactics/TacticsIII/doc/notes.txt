@@ -1,0 +1,50 @@
+Line intersection for attacks.
+
+Straight line first.
+Parabola is a straight line (perpendiclar to gravity) a vector to span th eplane it is in (0,0,1) and a 3 coefficients along the line vector (every vector is a one)
+The origin of the line is at the apex of the parabola .
+
+Anyway line:
+Line is an origin and vector.
+For a line segment the vector spans the length of the line and the segment is [0...1]
+For a half line the vector is unit (or speed or whatever) and the segment is [0...inf]
+for a line the range is [-inf to inf ]
+
+Each grid is an axis aligned box. The line starts at the character's shoot height in its grid on one of the 1-3 planes facing the target. (depends on the vector to the target. Any non 0 is a direction
+The length of the line is the total fall off range (basically range + damage).
+
+A list is computed with grid coordinates and the range of the line that goes through it.
+This is done with a configurable epsilon so diagonal lines don't clip every tiny corner. They are a bit rounded for hitting terrain.
+For every transition then the height is computed.
+Then for each grid the height range in and out is computed and matched to the materials at those levels.
+Along the line the remaining damage of the attack is computed depending on the density and whether fire or poison is picked up.
+Also obstacles/creatures are checked and the damage applied.
+
+To compute the grids and the range that the line goes through, the scan starts at the origin of the line and the exiting face.
+The neighbour at that face is selected.
+The intersection with the line and all (other) faces of that line is computed.
+Each face is an axis aligned plane
+This is a new type of geometry that consists of:
+- one float offset
+- one axis aligned direction vector (X,Y,Z, or negative), stored as a Direction
+Computing intersection with a line and this plane is relatively easy and fast math. It's just the delta along the axis between origin and offset divided by the vector's coefficient along that axis (if 0 then inf/-inf)
+The nearest plane is found that is at least the epsilon away
+The neighbour grid at that plane is taken next.
+If the distance between the previous and the next plane is smaller than that epsilon, a corner is clipped and that
+grid is skipped. Instead the epsilon is added to the next grid (or divided between previous and next?)
+
+So: TODO:
+Make an axis aligned plane
+with functions to convert to a basic plane
+derived from IGeometry
+Add unit tests
+Implement the function to compute the line intersection.
+
+Add getters to the axis aligned bounding box to get Plane(Direction)
+Use these to implement the line intersection of the axis aligned box by: iterating over all of those planes.
+Check if the intersection coordinate is also within both perpendicular plane ranges.
+
+
+
+
+

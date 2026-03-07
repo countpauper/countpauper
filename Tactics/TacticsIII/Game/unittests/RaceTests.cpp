@@ -29,7 +29,7 @@ TEST(Race, load_name_and_stats_from_json)
     const Race& human = races.front();
     EXPECT_EQ(human.Name(), "human");
     EXPECT_EQ(human.Bonus(Stat::str), Computation(1, "human"));
-    EXPECT_EQ(human.GetSize(), Engine::Size(1,1,2));
+    EXPECT_EQ(human.GetSize(), Size(1,1,2));
 
     EXPECT_EQ(races.Find("human")->Name(), "human");
     EXPECT_EQ(races.Find("marathon"), nullptr);

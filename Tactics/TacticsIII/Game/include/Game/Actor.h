@@ -13,7 +13,7 @@ class Actor
 public:
     virtual void Move(const class World& world, Engine::Position destination) = 0;
     virtual Position GetPosition() const = 0;
-    virtual Engine::Size Size() const = 0;
+    virtual Size GetSize() const = 0;
 
     virtual const Engine::Object& GetAppearance() const = 0;
     virtual Statted& GetStats() = 0;

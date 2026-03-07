@@ -39,12 +39,12 @@ public:
 	Orientation Opposite() const;
     bool IsPosititve() const;
     bool IsNegative() const;
-    bool IsOpposite(const Orientation& other) const;
-    bool IsClockwise(const Orientation& other) const;
-    bool IsCounterClockwise(const Orientation& other) const;
-    bool IsPerpendicular(const Orientation& other) const;
-    Orientation Perpendicular(const Orientation& other) const;
-    bool IsParallel(const Orientation& other) const;
+    bool IsOpposite(Orientation other) const;
+    bool IsClockwise(Orientation other) const;
+    bool IsCounterClockwise(Orientation other) const;
+    bool IsPerpendicular(Orientation other) const;
+    Orientation Perpendicular(Orientation other) const;
+    bool IsParallel(Orientation other) const;
     bool IsProne() const;
 	bool IsHorizontal() const;
 	bool IsVertical() const;
@@ -60,30 +60,30 @@ public:
     int Z() const;
 
 	static Orientation Gravity();
-	Orientation Turn(const Orientation& turn) const;
+	Orientation Turn(Orientation turn) const;
     std::string AbsoluteDescription() const;
 
     uint8_t Id() const;
 
     bool IsNone() const;    // operator bool leads to implicit conversion confusion with operator==
-    bool operator==(const Orientation& other) const;
-    bool operator!=(const Orientation& other) const { return !((*this) == other); }
-    bool operator<(const Orientation& other) const;
+    bool operator==(Orientation other) const;
+    bool operator!=(Orientation other) const { return !((*this) == other); }
+    bool operator<(Orientation other) const;
 
 	static const Orientation none;
 	static const Orientation east;
-    static const Orientation& forward;
+    static const Orientation forward;
     static const Orientation west;
-	static const Orientation& backward;
-    static const Orientation& x;
+	static const Orientation backward;
+    static const Orientation x;
     static const Orientation north;
-	static const Orientation& left;
+	static const Orientation left;
 	static const Orientation south;
-	static const Orientation& right;
-    static const Orientation& y;
+	static const Orientation right;
+    static const Orientation y;
 	static const Orientation up;
 	static const Orientation down;
-    static const Orientation& z;
+    static const Orientation z;
 	static const std::map<const std::wstring_view, Orientation> map;
     static std::array<Orientation, 4> cardinal;
     static std::array<Orientation, 6> all;
@@ -115,7 +115,7 @@ protected:
 	};
 	Orientation(Value value);
 	Value value;
-	HalfPiAngle HalfPiDelta(const Orientation& other) const;
+	HalfPiAngle HalfPiDelta(Orientation other) const;
 	static Value From(const Engine::Position& vector);
 	static Value From(HalfPiAngle angle);
 
@@ -124,8 +124,7 @@ protected:
 	static std::map<Value, HalfPiAngle> half_pi_angle;
 };
 
-std::ostream& operator<<(std::ostream& os, const Orientation& dir);
-std::wostream& operator<<(std::wostream& os, const Orientation& dir);
+std::ostream& operator<<(std::ostream& os, Orientation dir);
 
 class Orientations
 {
@@ -134,17 +133,17 @@ public:
     explicit Orientations(Orientation dir);
     explicit Orientations(const std::initializer_list<Orientation>& dirs);
     explicit Orientations(uint16_t flags);
-
-    Orientations& operator|=(const Orientation& dir);
-    Orientations& operator&=(const Orientations& dirs);
-    Orientations& operator|=(const Orientations& dirs);
-    bool operator==(const Orientations& other) const;
-    bool operator!=(const Orientations& other) const { return !(*this == other); }
-    bool operator[](const Orientation& dir) const;
+    explicit Orientations(const Engine::Position& v);
+    Orientations& operator|=(Orientation dir);
+    Orientations& operator&=(Orientations dirs);
+    Orientations& operator|=(Orientations dirs);
+    bool operator==(Orientations other) const;
+    bool operator!=(Orientations other) const { return !(*this == other); }
+    bool operator[](Orientation dir) const;
     bool empty() const;
     size_t size() const;
 
-    operator bool() const;
+    explicit operator bool() const;
     static Orientations none;
     static Orientations all;
     static Orientations axes;
@@ -164,7 +163,7 @@ public:
         using difference_type = int;
         using iterator_category = std::forward_iterator_tag;
         using pointer = const Orientation*;   // BS, but needed to use Orientations in std::algorithms
-        using reference = const Orientation&; // BS, but needed to use Orientations in std::algorithms
+        using reference = Orientation; // BS, but needed to use Orientations in std::algorithms
 
         int bit;
         const uint16_t& flags;
@@ -176,8 +175,9 @@ private:
     uint16_t flags;
 };
 
-Orientations operator|(const Orientation& a, const Orientation& b);
-Orientations operator|(Orientations dirs, const Orientation& b);
+Orientations operator|(Orientation a, Orientation b);
+Orientations operator|(Orientations dirs, Orientation b);
+std::ostream& operator<<(std::ostream& os, Orientations dirs);
 
 
 }    // ::Game

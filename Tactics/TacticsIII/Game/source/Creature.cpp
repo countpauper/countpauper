@@ -44,7 +44,7 @@ Position Creature::GetPosition() const
     return position;
 }
 
-Engine::Size Creature::GetSize() const
+Size Creature::GetSize() const
 {
     return race.GetSize();
 }
@@ -63,7 +63,7 @@ json Creature::Serialize() const
 {
     json result =  json::object({
         {"name", Name()},
-        {"position", json::array({position.p.x, position.p.y, position.z_offset + position.p.z})},
+        {"position", json::array({position.X(), position.Y(), position.Z()})},
         {"race", race.Name()},
         {"stats", Statistics::Serialize()},
         {"counters", Counters::Serialize()},

@@ -73,10 +73,10 @@ Position Delta::GetPosition() const
     return position;
 }
 
-Engine::Size Delta::Size() const
+Position Delta::GetSize() const
 {
     assert(false); // TODO: local storage that overrides when shape changing
-    return parent->Size();
+    return parent->GetSize();
 }
 
 Statted& Delta::GetStats()

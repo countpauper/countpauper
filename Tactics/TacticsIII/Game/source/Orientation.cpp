@@ -86,13 +86,13 @@ const Orientation Orientation::west(Orientation::West);
 const Orientation Orientation::south(Orientation::South);
 const Orientation Orientation::up(Orientation::Up);
 const Orientation Orientation::down(Orientation::Down);
-const Orientation& Orientation::forward = east;
-const Orientation& Orientation::left = north;
-const Orientation& Orientation::backward = west;
-const Orientation& Orientation::right = south;
-const Orientation& Orientation::x = east;
-const Orientation& Orientation::y = north;
-const Orientation& Orientation::z = up;
+const Orientation Orientation::forward = east;
+const Orientation Orientation::left = north;
+const Orientation Orientation::backward = west;
+const Orientation Orientation::right = south;
+const Orientation Orientation::x = east;
+const Orientation Orientation::y = north;
+const Orientation Orientation::z = up;
 
 const std::map<const std::wstring_view, Orientation> Orientation::map(
 {
@@ -231,34 +231,34 @@ bool Orientation::IsNegative() const
     return (value & Negative) != 0 && value != 0;
 }
 
-bool Orientation::IsOpposite(const Orientation& other) const
+bool Orientation::IsOpposite(Orientation other) const
 {
 	if ((other.value & Plane) != (value & Plane))
 		return false;
 	return (other.value & Negative) != (value & Negative);
 }
 
-bool Orientation::IsClockwise(const Orientation& other) const
+bool Orientation::IsClockwise(Orientation other) const
 {
 	if ((!IsHorizontal()) || (!other.IsHorizontal()))
 		return false;
 	return HalfPiDelta(other).Normalize() == HalfPiAngle(-1);
 }
 
-bool Orientation::IsCounterClockwise(const Orientation& other) const
+bool Orientation::IsCounterClockwise(Orientation other) const
 {
 	if ((!IsHorizontal()) || (!other.IsHorizontal()))
 		return false;
 	return HalfPiDelta(other).Normalize() == HalfPiAngle(1);
 }
 
-bool Orientation::IsPerpendicular(const Orientation& other) const
+bool Orientation::IsPerpendicular(Orientation other) const
 {
     return ((!IsNone()) && (!other.IsNone()) &&
         (value&Value::Axes) != (other.value&Value::Axes));
 }
 
-Orientation Orientation::Perpendicular(const Orientation& other) const
+Orientation Orientation::Perpendicular(Orientation other) const
 {
     if (IsParallel(other))
         throw std::runtime_error("Can't determine one perpendicular axis to a parallel axis");
@@ -268,13 +268,13 @@ Orientation Orientation::Perpendicular(const Orientation& other) const
     return Orientation(perpendicularAxis);
 }
 
-bool Orientation::IsParallel(const Orientation& other) const
+bool Orientation::IsParallel(Orientation other) const
 {
     return ((!IsNone()) && (!other.IsNone()) &&
         (value&Value::Axes) == (other.value&Value::Axes));
 }
 
-HalfPiAngle Orientation::HalfPiDelta(const Orientation& other) const
+HalfPiAngle Orientation::HalfPiDelta(Orientation other) const
 {
 	auto it = half_pi_angle.find(value);
 	if (it == half_pi_angle.end())
@@ -354,7 +354,7 @@ Orientation Orientation::Gravity()
 }
 
 
-Orientation Orientation::Turn(const Orientation& turn) const
+Orientation Orientation::Turn(Orientation turn) const
 {
 	if (turn.IsVertical())
 	{
@@ -389,11 +389,11 @@ bool Orientation::IsNone() const
     return value == Orientation::None;
 }
 
-bool Orientation::operator==(const Orientation& other) const
+bool Orientation::operator==(Orientation other) const
 {
     return value == other.value;
 }
-bool Orientation::operator<(const Orientation& other) const
+bool Orientation::operator<(Orientation other) const
 {
     return value < other.value;
 }
@@ -423,6 +423,7 @@ std::map<Orientation::Value, HalfPiAngle> Orientation::half_pi_angle=
 std::map<Orientation::Value, std::string_view> Orientation::description =
 {
     { Orientation::Value::None, "" },
+    { Orientation::Value::Negative, "-" },
     { Orientation::Value::North, "North" },
     { Orientation::Value::East, "East" },
 	{ Orientation::Value::South, "South" } ,
@@ -432,13 +433,7 @@ std::map<Orientation::Value, std::string_view> Orientation::description =
 };
 
 
-std::ostream& operator<<(std::ostream& os, const Orientation& dir)
-{
-    os << dir.AbsoluteDescription().c_str();
-    return os;
-}
-
-std::wostream& operator<<(std::wostream& os, const Orientation& dir)
+std::ostream& operator<<(std::ostream& os, Orientation dir)
 {
     os << dir.AbsoluteDescription().c_str();
     return os;
@@ -482,19 +477,31 @@ Orientations::Orientations(const std::initializer_list<Orientation>& dirs) :
         (*this) |= dir;
 }
 
+Orientations::Orientations(const Engine::Position& v)
+{
+    for (const auto& ori: all)
+    {
+        int x = ori.Vector().x * v.x;
+        int y = ori.Vector().y * v.y;
+        int z = ori.Vector().z * v.z;
+        if (x>0 || y>0 || z>0)
+            (*this) |= ori;
+    }
+}
 
-Orientations& Orientations::operator|=(const Orientation& dir)
+
+Orientations& Orientations::operator|=(Orientation dir)
 {
     flags |= 1 << dir.Id();
     return *this;
 }
 
-bool Orientations::operator==(const Orientations& other) const
+bool Orientations::operator==(Orientations other) const
 {
     return flags == other.flags;
 }
 
-bool Orientations::operator[](const Orientation& dir) const
+bool Orientations::operator[](Orientation dir) const
 {
     return (flags & (1 << dir.Id())) != 0;
 }
@@ -562,36 +569,46 @@ Orientations::iterator Orientations::end() const
     return iterator(flags, sizeof(flags) * 8);
 }
 
-Orientations& Orientations::operator&=(const Orientations& dirs)
+Orientations& Orientations::operator&=(Orientations dirs)
 {
     flags &= dirs.flags;
     return *this;
 }
 
-Orientations& Orientations::operator|=(const Orientations& dirs)
+Orientations& Orientations::operator|=(Orientations dirs)
 {
     flags |= dirs.flags;
     return *this;
 }
 
-Orientations& operator|(const Orientations& a, const Orientations& b)
+Orientations& operator|(Orientations a, Orientations b)
 {
     return Orientations(a) |= b;
 }
-Orientations& operator&(const Orientations& a, const Orientations& b)
+Orientations& operator&(Orientations a, Orientations b)
 {
     return Orientations(a) &= b;
 }
 
 
-Orientations operator|(const Orientation& a, const Orientation& b)
+Orientations operator|(Orientation a, Orientation b)
 {
     return Orientations(a) |= b;
 }
 
-Orientations operator|(Orientations dirs, const Orientation& b)
+Orientations operator|(Orientations dirs, Orientation b)
 {
     return dirs |= b;
 }
 
+std::ostream& operator<<(std::ostream& os, Orientations oris)
+{
+    if (oris) {
+        for(auto ori: oris)
+            os << ori;
+    } else {
+        os << "none";
+    }
+    return os;
+}
 }    // ::Game

@@ -28,8 +28,8 @@ public:
     void Move(const World& world, Engine::Position destination) override;
 
     const Engine::Object& GetAppearance() const override;
-    Game::Position GetPosition() const override;
-    Engine::Size Size() const override;
+    Position GetPosition() const override;
+    Size GetSize() const override;
     Statted& GetStats() override;
     const Statted& GetStats() const override;
     Counted& GetCounts() override;

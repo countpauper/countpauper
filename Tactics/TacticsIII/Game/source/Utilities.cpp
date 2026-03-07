@@ -7,9 +7,11 @@
 namespace Game
 {
 
-Orientations Facing(Position from, Position& to)
+Orientations Facing(Position from, Position to, Size size)
 {
-    return Orientations();
+    Orientations result;
+    Position V = to - from;
+    return Orientations(Engine::Position{V.X(), V.Y(), static_cast<int>(std::round(V.Z()))});
 }
 
 double ComputeCover(const World& world, const Actor& from, const Actor& to)
@@ -22,10 +24,10 @@ double ComputeCover(const World& world, const Actor& from, const Actor& to)
     //      Liquid & gas: range adjusted with parallel flow, miss adjusted with perpendicular flows (also up)
     //      Clouds: obscurement (cant see or miss)
     //      Fire: ignite particle, water extinguish particle (also obstacles)
-    auto origin = from.GetPosition()+Position(0,0, from.Size().z / 2.0);
-    auto aim = to.GetPosition() + Position(0,0, to.Size().z / 2.0);
+    auto origin = from.GetPosition()+Position(0,0, from.GetSize().Z() / 2.0);
+    auto aim = to.GetPosition() + Position(0,0, to.GetSize().Z() / 2.0);
 
-    auto targetSurfaces = Facing(origin, aim);
+    auto targetSurfaces = Facing(origin, aim, to.GetSize());
 
     // compute normals and dot product with the Vector(aim-origin).Normalized()
     //  keep negative ones (Facing should already have discarded them?). Their sum is 0...-1,

@@ -13,16 +13,20 @@ namespace Game
         Engine::Position p;
         Fraction z_offset;
 
-        double Z() const;
+        inline int X() const { return p.x; }
+        inline int Y() const { return p.y; }
+        inline double Z() const { return  static_cast<double>(p.z) + z_offset; }
         double ManDistance(Position other) const;
         double Distance(Position other) const;
-        double Size() const;
+        double Length() const;
         Engine::Coordinate Coord() const;
 
         Position& operator+=(Position delta);
         Position& operator-=(Position delta);
         explicit operator bool() const;
     };
+
+    using Size = Position;
 
 	bool operator==(Position a, Position b);
     bool operator!=(Position a, Position b);
