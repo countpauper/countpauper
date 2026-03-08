@@ -11,6 +11,7 @@ namespace  Engine::Test
 TEST(Orientation, None)
 {
     EXPECT_TRUE(Orientation().IsNone());
+    EXPECT_FALSE(Orientation());
 	EXPECT_TRUE(Orientation::none.IsNone());
     EXPECT_FALSE(Orientation::none.IsPosititve());
     EXPECT_FALSE(Orientation::none.IsNegative());
@@ -31,10 +32,10 @@ TEST(Orientation, CardinalPositions)
 
 TEST(Orientation, DiagonalPositions)
 {
-	EXPECT_EQ(Orientation(Engine::Position(-1, -1, 0)), Orientation::left);
-	EXPECT_EQ(Orientation(Engine::Position(1, -1, 0)), Orientation::back);
-	EXPECT_EQ(Orientation(Engine::Position(1, 1, 0)), Orientation::right);
-	EXPECT_EQ(Orientation(Engine::Position(-1, 1, 0)), Orientation::front);
+	EXPECT_EQ(Orientation(Engine::Position(-2, -1, 0)), Orientation::left);
+	EXPECT_EQ(Orientation(Engine::Position(1, -1, 0)), Orientation::right);
+	EXPECT_EQ(Orientation(Engine::Position(2, 1, 0)), Orientation::right);
+	EXPECT_EQ(Orientation(Engine::Position(-1, 1, 0)), Orientation::left);
 }
 
 TEST(Orientation, VerticalPositions)
@@ -42,7 +43,7 @@ TEST(Orientation, VerticalPositions)
 	EXPECT_EQ(Orientation(0, 0, 1), Orientation::up);
 	EXPECT_EQ(Orientation(0, 0,-1), Orientation::down);
 	EXPECT_EQ(Orientation(1, 1,-2), Orientation::down);
-	EXPECT_EQ(Orientation(1, 0, 1), Orientation::right);
+	EXPECT_EQ(Orientation(2, 0, 1), Orientation::right);
 }
 
 TEST(Orientation, Axis)
@@ -60,6 +61,7 @@ TEST(Orientation, Axis)
 
 TEST(Orientation, Opposite)
 {
+    EXPECT_FALSE(Orientation::none.IsOpposite(Orientation::none));
     EXPECT_TRUE(Orientation::right.IsOpposite(Orientation::left));
     EXPECT_TRUE(Orientation::back.IsOpposite(Orientation::front));
     EXPECT_TRUE(Orientation::up.IsOpposite(Orientation::down));
@@ -103,25 +105,25 @@ TEST(Orientation, Perpendiclar)
 TEST(Orientation, Angles)
 {
 	EXPECT_TRUE(std::isnan(Orientation::none.Angle()));
-	EXPECT_EQ(Orientation::right.Angle(), 0);
-	EXPECT_NEAR(Orientation::front.Angle(), 0.5*Engine::PI, 0.001);
-	EXPECT_NEAR(Orientation::back.Angle(), -0.5*Engine::PI, 0.001);
-	EXPECT_NEAR(Orientation::left.Angle(), Engine::PI, 0.001);
+	EXPECT_EQ(Orientation::front.Angle(), 0);
+	EXPECT_NEAR(Orientation::right.Angle(), -0.5*Engine::PI, 0.001);
+	EXPECT_NEAR(Orientation::left.Angle(), 0.5*Engine::PI, 0.001);
+	EXPECT_NEAR(Orientation::back.Angle(), Engine::PI, 0.001);
 	EXPECT_TRUE(std::isnan(Orientation::up.Angle()));
 	EXPECT_TRUE(std::isnan(Orientation::down.Angle()));
 }
 
 TEST(Orientation, Clockwise)
 {
-	EXPECT_TRUE(Orientation::right.IsClockwise(Orientation::front));
-	EXPECT_TRUE(Orientation::back.IsClockwise(Orientation::right));
-	EXPECT_TRUE(Orientation::left.IsClockwise(Orientation::back));
-	EXPECT_TRUE(Orientation::front.IsClockwise(Orientation::left));
+	EXPECT_TRUE(Orientation::left.IsClockwise(Orientation::front));
+	EXPECT_TRUE(Orientation::front.IsClockwise(Orientation::right));
+	EXPECT_TRUE(Orientation::right.IsClockwise(Orientation::back));
+	EXPECT_TRUE(Orientation::back.IsClockwise(Orientation::left));
 
-	EXPECT_FALSE(Orientation::left.IsClockwise(Orientation::front));
-	EXPECT_FALSE(Orientation::front.IsClockwise(Orientation::right));
-	EXPECT_FALSE(Orientation::right.IsClockwise(Orientation::back));
-	EXPECT_FALSE(Orientation::back.IsClockwise(Orientation::left));
+	EXPECT_FALSE(Orientation::right.IsClockwise(Orientation::front));
+	EXPECT_FALSE(Orientation::back.IsClockwise(Orientation::right));
+	EXPECT_FALSE(Orientation::left.IsClockwise(Orientation::back));
+	EXPECT_FALSE(Orientation::front.IsClockwise(Orientation::left));
 
 	EXPECT_FALSE(Orientation::right.IsClockwise(Orientation::left));
 	EXPECT_FALSE(Orientation::back.IsClockwise(Orientation::front));
@@ -130,18 +132,17 @@ TEST(Orientation, Clockwise)
 	EXPECT_FALSE(Orientation::down.IsClockwise(Orientation::front));
 }
 
-
 TEST(Orientation, CounterClockwise)
 {
-	EXPECT_TRUE(Orientation::left.IsCounterClockwise(Orientation::front));
-	EXPECT_TRUE(Orientation::front.IsCounterClockwise(Orientation::right));
-	EXPECT_TRUE(Orientation::right.IsCounterClockwise(Orientation::back));
-	EXPECT_TRUE(Orientation::back.IsCounterClockwise(Orientation::left));
+	EXPECT_TRUE(Orientation::right.IsCounterClockwise(Orientation::front));
+	EXPECT_TRUE(Orientation::back.IsCounterClockwise(Orientation::right));
+	EXPECT_TRUE(Orientation::left.IsCounterClockwise(Orientation::back));
+	EXPECT_TRUE(Orientation::front.IsCounterClockwise(Orientation::left));
 
-	EXPECT_FALSE(Orientation::right.IsCounterClockwise(Orientation::front));
-	EXPECT_FALSE(Orientation::back.IsCounterClockwise(Orientation::right));
-	EXPECT_FALSE(Orientation::left.IsCounterClockwise(Orientation::back));
-	EXPECT_FALSE(Orientation::front.IsCounterClockwise(Orientation::left));
+	EXPECT_FALSE(Orientation::left.IsCounterClockwise(Orientation::front));
+	EXPECT_FALSE(Orientation::front.IsCounterClockwise(Orientation::right));
+	EXPECT_FALSE(Orientation::right.IsCounterClockwise(Orientation::back));
+	EXPECT_FALSE(Orientation::back.IsCounterClockwise(Orientation::left));
 
 	EXPECT_FALSE(Orientation::right.IsCounterClockwise(Orientation::left));
 	EXPECT_FALSE(Orientation::back.IsCounterClockwise(Orientation::front));
@@ -171,11 +172,11 @@ TEST(Orientation, EvenDivision)
             count[dir] += 1;
         }
     }
-    EXPECT_TRUE(count[Orientation::none] == 1);
-    EXPECT_TRUE(count[Orientation::front] == 6);
-    EXPECT_TRUE(count[Orientation::right] == 6);
-    EXPECT_TRUE(count[Orientation::back] == 6);
-    EXPECT_TRUE(count[Orientation::left] == 6);
+    EXPECT_EQ(count[Orientation::none], 1);
+    EXPECT_EQ(count[Orientation::front], 6);
+    EXPECT_EQ(count[Orientation::right], 6);
+    EXPECT_EQ(count[Orientation::back], 6);
+    EXPECT_EQ(count[Orientation::left], 6);
 }
 
 TEST(Orientation, Vector)
@@ -188,14 +189,6 @@ TEST(Orientation, Vector)
 
 }
 
-TEST(Orientation, Prone)
-{
-	EXPECT_TRUE(Orientation::up.IsProne());
-	EXPECT_TRUE(Orientation::down.IsProne());
-	EXPECT_FALSE(Orientation::right.IsProne());
-	EXPECT_FALSE(Orientation::front.IsProne());
-	EXPECT_FALSE(Orientation::none.IsProne());
-}
 
 TEST(Orientation, Turn)
 {

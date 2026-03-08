@@ -16,6 +16,13 @@ Vector::Vector(Coordinate c) :
 {
 }
 
+Vector::Vector(const Position& p) :
+    x(p.x),
+    y(p.y),
+    z(p.z)
+{
+}
+
 Vector::Vector(const Line& l) :
     Vector(l.b - l.a)
 {

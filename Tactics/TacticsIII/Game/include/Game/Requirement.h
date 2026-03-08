@@ -68,7 +68,7 @@ public:
     Requirements() = default;
     Requirements(std::initializer_list<Requirement> init);
 
-    operator bool() const;
+    explicit operator bool() const;
     Requirements Failed() const;
     Requirements Succeeded() const;
 

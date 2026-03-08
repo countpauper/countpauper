@@ -11,6 +11,7 @@ struct Matrix;
 struct Line;
 struct Plane;
 struct Quaternion;
+struct Position;
 
 struct Vector
 {
@@ -22,9 +23,9 @@ struct Vector
     {
     }
     explicit Vector(Coordinate c);
+    explicit Vector(const Position& p);
     explicit Vector(const Line& l);
     explicit Vector(const Plane& p);
-
     explicit operator bool() const;
     double Length() const;
     double LengthSquared() const;

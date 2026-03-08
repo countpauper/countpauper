@@ -40,16 +40,16 @@ public:
     bool IsPosititve() const;
     bool IsNegative() const;
     bool IsOpposite(Orientation other) const;
-    bool IsClockwise(Orientation other) const;
+    bool IsClockwise(Orientation to) const;
     bool IsCounterClockwise(Orientation other) const;
     bool IsPerpendicular(Orientation other) const;
     Orientation Perpendicular(Orientation other) const;
     bool IsParallel(Orientation other) const;
-    bool IsProne() const;
 	bool IsHorizontal() const;
 	bool IsVertical() const;
 
     Orientation Axis() const;
+    operator bool() const;
     bool IsX() const;
     bool IsY() const;
     bool IsZ() const;
@@ -91,6 +91,7 @@ protected:
 		Vertical = ZAxis,
 		Plane = Vertical | Horizontal,
         Axes = XAxis | YAxis | ZAxis,
+        Invalid
 	};
 public:
     static const Orientation front;
@@ -106,7 +107,7 @@ protected:
     static std::array<Orientation, 3> positive;
 	Orientation(Value value);
 	Value value;
-	HalfPiAngle HalfPiDelta(Orientation other) const;
+	HalfPiAngle HalfPiDeltaTo(Orientation other) const;
 	static Value From(const Engine::Position& vector);
 	static Value From(HalfPiAngle angle);
 

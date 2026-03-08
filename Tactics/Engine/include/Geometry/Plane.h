@@ -8,6 +8,7 @@ namespace Engine
 struct Coordinate;
 struct Line;
 struct Triangle;
+class AxisAlignedPlane;
 
 struct Plane : public IGeometry, public Clone<Plane>
 {
@@ -21,10 +22,11 @@ struct Plane : public IGeometry, public Clone<Plane>
     Plane(const Coordinate& origin, const Vector& span1, const Vector& span2);
     Plane(const Coordinate& a, const Coordinate& b, const Coordinate& c);
     Plane(const Triangle& t);
+    Plane(const AxisAlignedPlane& p);
 
     Plane& Normalize();
     Plane Normalized() const;
-    operator bool() const;
+    explicit operator bool() const;
     bool operator==(const Plane& other) const;
     Plane operator-() const;
 
@@ -38,10 +40,10 @@ struct Plane : public IGeometry, public Clone<Plane>
     Engine::Vector normal;  // not necessarily be normalized
     double d;
 
-    static Plane null;
-    static Plane xy;
-    static Plane xz;
-    static Plane yz;
+    static const Plane null;
+    static const Plane xy;
+    static const Plane xz;
+    static const Plane yz;
 private:
     double NormalDistance(const Coordinate& c) const;
 };

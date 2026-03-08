@@ -4,6 +4,7 @@
 #include "Utility/Maths.h"
 #include "Geometry/Triangle.h"
 #include "Geometry/AxisAlignedBoundingBox.h"
+#include "Geometry/AxisAlignedPlane.h"
 
 namespace Engine
 {
@@ -28,8 +29,17 @@ namespace Engine
     {
     }
 
+    Plane::Plane(const AxisAlignedPlane& p) :
+        Plane(Vector(p.axis.GetVector()), p.d)
+    {
+
+    }
+
+
     Coordinate Plane::Project(const Coordinate& c) const
     {
+        if (!bool(normal))
+            throw std::runtime_error("Can't project a coordinate on a null plane.");
         return c - normal * NormalDistance(c) / normal.LengthSquared();
     }
 

@@ -31,7 +31,7 @@ public:
     const uint8_t& operator[](unsigned offset) const;
     uint8_t& operator[](unsigned offset);
     RGBA operator[](const Position& position) const;
-    operator bool() const;
+    explicit operator bool() const;
 private:
     void Read(std::string_view fn);
 

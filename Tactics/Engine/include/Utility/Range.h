@@ -34,10 +34,16 @@ struct Range
             return static_cast<T>(1);
     }
 
-    operator bool() const
+    explicit operator bool() const
     {
-        return end > begin;
+        return !IsEmpty();
     }
+
+    bool IsEmpty() const
+    {
+        return end <= begin;
+    }
+
     T Size() const
     {
         return end - begin;
@@ -102,6 +108,12 @@ struct Range
     {
         return end > v;
     }
+
+    bool operator==(const Range<T>& o) const
+    {
+        return begin == o.begin && end == o.end;
+    }
+    
     Range& Expand(T v)
     {
         if (v > 0)

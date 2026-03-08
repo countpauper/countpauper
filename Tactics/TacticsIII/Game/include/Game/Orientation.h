@@ -11,4 +11,9 @@ namespace Game
 	static const Orientation south = Orientation::back;
     static const Orientation up = Orientation::up;
     static const Orientation down = Orientation::down;
+
+    constexpr bool IsProne(const Orientation ori)
+    {
+        return ori.IsVertical();
+    }
 }

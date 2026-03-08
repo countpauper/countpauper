@@ -261,11 +261,15 @@ AABB& AABB::operator+=(const Vector& offset)
     return *this;
 }
 
-AABB::operator bool() const
+bool AABB::operator==(const AABB& other) const
 {
-    return Volume()!=0;
+    return x == other.x && y == other.y && z == other.z;
 }
 
+bool AABB::IsEmpty() const
+{
+    return x.IsEmpty() && y.IsEmpty() && z.IsEmpty();
+}
 double AABB::Volume() const
 {
     Vector extent = Extent();

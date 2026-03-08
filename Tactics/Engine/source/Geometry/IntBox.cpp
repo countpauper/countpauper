@@ -180,6 +180,11 @@ IntBox& IntBox::operator|=(IntBox b)
     return *this;
 }
 
+bool IntBox::operator==(const IntBox& other) const
+{
+    return x == other.x && y==other.y && z==other.z;
+}
+
 IntBox operator|(IntBox a, IntBox b)
 {
     return IntBox(a) |= b;

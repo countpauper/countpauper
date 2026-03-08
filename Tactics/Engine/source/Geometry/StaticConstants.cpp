@@ -4,6 +4,8 @@
 #include "Geometry/Plane.h"
 #include "Geometry/Vector.h"
 #include "Geometry/Quaternion.h"
+#include "Geometry/AxisAlignedPlane.h"
+#include "Geometry/Orientation.h"
 
 namespace Engine
 {
@@ -23,10 +25,36 @@ const Vector Vector::Z(0, 0, 1);
 
 const Quaternion Quaternion::Identity(0, 0, 0, 1);
 
+const Orientation Orientation::none{};
+const Orientation Orientation::front{Orientation::Front};
+const Orientation Orientation::back{Orientation::Back};
+const Orientation Orientation::left{Orientation::Left};
+const Orientation Orientation::right{Orientation::Right};
+const Orientation Orientation::up{Orientation::Up};
+const Orientation Orientation::down{Orientation::Down};
 
-Plane Plane::null(Vector::zero, 0);
-Plane Plane::xy(Vector::Z, 0);
-Plane Plane::xz(Vector::Y, 0);
-Plane Plane::yz(Vector::X, 0);
+std::array<Engine::Position, 10> Orientation::vector =
+{
+    Engine::Position(0, 0, 0), // None
+    Engine::Position(0, 0, 0), // None with extra steps
+    Engine::Position(0, 1, 0), // Front
+    Engine::Position(0, -1, 0), // Back
+    Engine::Position(1, 0, 0), // Right
+    Engine::Position(-1, 0, 0), // Left
+    Engine::Position(),
+    Engine::Position(),
+    Engine::Position(0, 0, 1), // Up
+    Engine::Position(0, 0,-1) // Down
+};
+
+const AxisAlignedPlane AxisAlignedPlane::null{Orientation::none, 0 };
+const AxisAlignedPlane AxisAlignedPlane::xy{Orientation::up, 0 };
+const AxisAlignedPlane AxisAlignedPlane::xz{Orientation::front, 0 };
+const AxisAlignedPlane AxisAlignedPlane::yz{Orientation::right, 0 };
+
+const Plane Plane::null{AxisAlignedPlane::null };
+const Plane Plane::xy{AxisAlignedPlane::xy };
+const Plane Plane::xz{AxisAlignedPlane::xz };
+const Plane Plane::yz{AxisAlignedPlane::yz };
 
 }

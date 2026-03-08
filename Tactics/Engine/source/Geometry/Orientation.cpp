@@ -120,27 +120,73 @@ Orientation::Value Orientation::From(const Engine::Position& vector)
 	auto x = vector.x;
     auto y = vector.y;
     auto z = vector.z;
-    if ((z > std::abs(x)) && (z > std::abs(y)))
-	{
-		return Up;
-	}
-	else if ((z < -std::abs(x)) && (z < -std::abs(y)))
-	{
-		return Down;
-	}
-	else
-	{
-		if (x > y && x <= -y)
-			return Orientation::Right;
-		if (x >= y && x > -y)
-			return Orientation::Left;
-		if (x < y && x >= -y)
-			return Orientation::Front;
-		if (x <= y && x < -y)
-			return Orientation::Back;
-		assert(x == 0 && y == 0);
-		return Orientation::None;
-	}
+
+    // This is a fairly complex algorithm, when requiring each orientation gets an exactly even slice of grids
+    // To do it, 6 sectors are defined as bits N(+Y) S(-Y) E(+X) W(-X) U(+Z) D(-Z) (order of the enum but not same value)
+    // These sectors overlap on the diagonals. There are 18 diagonals:
+    //  8 diagonals where abs(x) == abs(y) == abs(z) (well 4 but both side of the origin)
+    //  4 horizontal where z == 0 and abs(x) == abs(y)
+    //  4 vertical x == 0 an 4 where y == 0
+    //  If a grid is assigned to all sectors it must be 0,0,0, direction none
+    //  If a grid is assigned to one of 6 sectors, this is the result.
+    //  If the grid is assigned to 2 or 3 sectors it's on a diagonal. These are divided evenly over the horizontal directions
+    //  This is done clockwise based on the sign of X and Y +X+Y=North +X-Y=East -X-Y=South, -X+Y=West
+    //  Up and down do not get diagonals, those sectors are smaller
+    //  This is done with a lookup table
+
+    enum Sector {
+        None = 0,
+        PosX = 1<<0,
+        NegX = 1<<1,
+        PosY = 1<<2,
+        NegY = 1<<3,
+        PosZ = 1<<4,
+        NegZ = 1<<5
+    };
+    unsigned sectorSet=None;
+
+    if (x >= abs(y) + abs(z))
+        sectorSet |= PosX;
+    if (-x >= abs(y) + abs(z))
+        sectorSet |= NegX;
+    if (y >= abs(x) + abs(z))
+        sectorSet |= PosY;
+    if (-y >= abs(x) + abs(z))
+        sectorSet |= NegY;
+    if (z >= abs(x) + abs(y))
+        sectorSet |= PosZ;
+    if (-z >= abs(x) + abs(y))
+        sectorSet |= NegZ;
+    static constexpr Orientation::Value assignedSector[64] =
+    {
+        // Up = 0
+        // 0                     PosX                     NegX                     PosX NegX
+        Orientation::Invalid,    Orientation::Right,      Orientation::Left,       Orientation::Invalid,        // 0
+        Orientation::Front,      Orientation::Front,      Orientation::Left,       Orientation::Invalid,         // PosY
+        Orientation::Back,       Orientation::Right,      Orientation::Back,       Orientation::Invalid,       // NegY
+        Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,        // Pos NegX
+        //// +Z
+        Orientation::Up,         Orientation::Right,      Orientation::Left,       Orientation::Invalid,        // 0
+        Orientation::Front,      Orientation::Front,      Orientation::Left,       Orientation::Invalid,         // PosY
+        Orientation::Back,       Orientation::Right,      Orientation::Back,       Orientation::Invalid,       // NegY
+        Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,        // Pos NegX
+        ///  -Z
+        Orientation::Down,       Orientation::Right,      Orientation::Left,       Orientation::Invalid,        // 0
+        Orientation::Front,      Orientation::Front,      Orientation::Back,       Orientation::Invalid,        // PosY
+        Orientation::Back,       Orientation::Right,      Orientation::Left,       Orientation::Invalid,        // NegY
+        Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,        // Pos NegX
+        /// +Z-Z
+        Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,        // 0
+        Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,        // PosY
+        Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,        // NegY
+        Orientation::Invalid,    Orientation::Invalid,    Orientation::Invalid,    Orientation::None            // PosY, NegY
+    };
+
+    unsigned sectors = 0;
+
+    auto result = assignedSector[sectorSet];
+    assert(result != Orientation::Invalid);
+    return result;
 }
 
 Orientation::Value Orientation::From(HalfPiAngle angle)
@@ -200,7 +246,6 @@ Orientation Orientation::Opposite() const
 	return Orientation(Value(value^Negative));
 }
 
-
 bool Orientation::IsPosititve() const
 {
     return (value & Negative) == 0 && value != 0;
@@ -218,18 +263,18 @@ bool Orientation::IsOpposite(Orientation other) const
 	return (other.value & Negative) != (value & Negative);
 }
 
-bool Orientation::IsClockwise(Orientation other) const
+bool Orientation::IsClockwise(Orientation to) const
 {
-	if ((!IsHorizontal()) || (!other.IsHorizontal()))
+	if ((!IsHorizontal()) || (!to.IsHorizontal()))
 		return false;
-	return HalfPiDelta(other).Normalize() == HalfPiAngle(-1);
+	return HalfPiDeltaTo(to).Normalize() == HalfPiAngle(-1);
 }
 
-bool Orientation::IsCounterClockwise(Orientation other) const
+bool Orientation::IsCounterClockwise(Orientation to) const
 {
-	if ((!IsHorizontal()) || (!other.IsHorizontal()))
+	if ((!IsHorizontal()) || (!to.IsHorizontal()))
 		return false;
-	return HalfPiDelta(other).Normalize() == HalfPiAngle(1);
+	return HalfPiDeltaTo(to).Normalize() == HalfPiAngle(1);
 }
 
 bool Orientation::IsPerpendicular(Orientation other) const
@@ -254,20 +299,15 @@ bool Orientation::IsParallel(Orientation other) const
         (value&Value::Axes) == (other.value&Value::Axes));
 }
 
-HalfPiAngle Orientation::HalfPiDelta(Orientation other) const
+HalfPiAngle Orientation::HalfPiDeltaTo(Orientation to) const
 {
 	auto it = half_pi_angle.find(value);
 	if (it == half_pi_angle.end())
 		throw std::invalid_argument("Can't turn from vertical or unspecified direction");
-	auto oit = half_pi_angle.find(other.value);
-	if (oit == half_pi_angle.end())
+	auto toit = half_pi_angle.find(to.value);
+	if (toit == half_pi_angle.end())
 		throw std::invalid_argument("Can't turn to vertical or unspeficied direction");
-	return (it->second - oit->second);
-}
-
-bool Orientation::IsProne() const
-{
-	return IsVertical();
+	return (toit->second - it->second);
 }
 
 bool Orientation::IsVertical() const
@@ -283,6 +323,11 @@ bool Orientation::IsHorizontal() const
 Orientation Orientation::Axis() const
 {
     return Orientation(value&Value::Axes);
+}
+
+Orientation::operator bool() const
+{
+    return !IsNone();
 }
 
 bool Orientation::IsX() const
@@ -370,46 +415,29 @@ std::string Orientation::AbsoluteDescription() const
 
 bool Orientation::IsNone() const
 {
-    return value == Orientation::None;
+    return value <= Orientation::Negative;
 }
 
 bool Orientation::operator==(Orientation other) const
 {
-    return value == other.value;
+    if (IsNone())
+        return other.IsNone();
+    else
+        return value == other.value;
 }
+
 bool Orientation::operator<(Orientation other) const
 {
     return value < other.value;
 }
 
-const Orientation Orientation::none{};
-const Orientation Orientation::front{Orientation::Front};
-const Orientation Orientation::back{Orientation::Back};
-const Orientation Orientation::left{Orientation::Left};
-const Orientation Orientation::right{Orientation::Right};
-const Orientation Orientation::up{Orientation::Up};
-const Orientation Orientation::down{Orientation::Down};
-
-std::array<Engine::Position, 10> Orientation::vector =
-{
-    Engine::Position(0, 0, 0), // None
-    Engine::Position(),
-    Engine::Position(0, 1, 0), // Front
-    Engine::Position(0, -1, 0), // Back
-    Engine::Position(1, 0, 0), // Right
-    Engine::Position(-1, 0, 0), // Left
-    Engine::Position(),
-    Engine::Position(),
-    Engine::Position(0, 0, 1), // Up
-    Engine::Position(0, 0,-1) // Down
-};
 
 std::map<Orientation::Value, HalfPiAngle> Orientation::half_pi_angle=
 {
-	{ Orientation::Value::Front, HalfPiAngle(1) },
-	{ Orientation::Value::Right, HalfPiAngle(0) },
-	{ Orientation::Value::Back, HalfPiAngle(-1) },
-	{ Orientation::Value::Left, HalfPiAngle(2) }
+	{ Orientation::Value::Front, HalfPiAngle(0) },
+	{ Orientation::Value::Back, HalfPiAngle(2) },
+	{ Orientation::Value::Right, HalfPiAngle(-1) },
+	{ Orientation::Value::Left, HalfPiAngle(1) }
 };
 
 std::map<Orientation::Value, std::string_view> Orientation::description =

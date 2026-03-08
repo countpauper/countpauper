@@ -26,7 +26,9 @@ namespace Engine
         Coordinate Center() const;
 
         Vector Extent() const;
-        operator bool() const;
+        bool IsEmpty() const;
+        explicit inline operator bool() const { return !IsEmpty(); }
+
         Range<double> X() const;
         Range<double> Y() const;
         Range<double> Z() const;
@@ -59,7 +61,7 @@ namespace Engine
         AABB& Grow(double v);
         AABB& operator*=(const Matrix& transformation);
         AABB& operator+=(const Vector& offset);
-
+        bool operator==(const AABB& other) const;
 
         Range<double> x;
         Range<double> y;

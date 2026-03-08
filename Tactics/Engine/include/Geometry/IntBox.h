@@ -48,7 +48,7 @@ public:
     Iterator begin() const;
     Iterator end() const;
 
-    operator bool() const { return !Empty(); }
+    explicit operator bool() const { return !Empty(); }
     bool Empty() const;
     bool Contains(Position position) const;
     bool operator[](Position position) { return Contains(position); }
@@ -59,6 +59,7 @@ public:
     Position Clip(Position position) const;
     IntBox& operator|=(Position p);
     IntBox& operator|=(IntBox b);
+    bool operator==(const IntBox& other) const;
 
     Range<int> x;
     Range<int> y;
