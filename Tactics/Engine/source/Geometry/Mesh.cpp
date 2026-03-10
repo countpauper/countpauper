@@ -241,7 +241,7 @@ std::pair<double, uint32_t> Mesh::NamedIntersection(const Line& line) const
         Engine::Triangle t(vertices[triangle.vertex[0]].c,
             vertices[triangle.vertex[1]].c,
             vertices[triangle.vertex[2]].c);
-        double distance = t.Intersection(line);
+        double distance = t.Intersection(line).begin;
         if (distance>=0.0 && distance < nearest) // nb could be nan
         {
             nearest = distance;

@@ -1,11 +1,13 @@
 #include "Geometry/Coordinate.h"
+#include "Geometry/Geometry.h"
+
 #pragma once
 
 namespace Engine
 {
     class Line;
 
-    struct  Triangle
+    struct  Triangle : public IGeometry
     {
     public:
         Coordinate a;
@@ -21,10 +23,13 @@ namespace Engine
         double Surface() const;
         Vector Normal() const;
         Triangle Flipped() const;
-        double Distance(const Coordinate& c) const;
-        // TODO implement Geometry::Intersection(...) range according to that behavior spec
-        double Intersection(const Line& line) const;
         Vector BaryCentric(const Coordinate& c) const;
+
+        // IGeometry
+        AABB GetBoundingBox() const override;
+        double Distance(const Coordinate& p) const;
+        Range<double> Intersection(const Line& line) const override;
+
     };
 
     std::ostream& operator<<(std::ostream& s, const Triangle& triangle);

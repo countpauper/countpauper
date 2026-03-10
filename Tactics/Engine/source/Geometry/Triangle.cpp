@@ -2,6 +2,7 @@
 #include "Geometry/Plane.h"
 #include "Geometry/Line.h"
 #include "Geometry/Vector.h"
+#include "Geometry/AxisAlignedBoundingBox.h"
 #include <cassert>
 
 
@@ -52,6 +53,15 @@ Vector Triangle::BaryCentric(const Coordinate& p) const
     barycentric.z = (d00*dp1 - d01 * dp0) / denom;
     barycentric.x = 1.0 - barycentric.y - barycentric.z;
     return barycentric;
+}
+
+
+AABB Triangle::GetBoundingBox() const
+{
+    AABB result(a, a);
+    result |= b;
+    result |=c;
+    return result;
 }
 
 double Triangle::Distance(const Coordinate& p) const
@@ -106,7 +116,7 @@ double Triangle::Distance(const Coordinate& p) const
 }
 
 
-double Triangle::Intersection(const Line& line) const
+Range<double> Triangle::Intersection(const Line& line) const
 {
     // See https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
     constexpr double epsilon = std::numeric_limits<double>::epsilon();
@@ -117,33 +127,30 @@ double Triangle::Intersection(const Line& line) const
     Vector ray_cross_e2 = ray_vector.Cross(edge2);
     double det = edge1.Dot(ray_cross_e2);
 
-    if (det > -epsilon && det < epsilon)
-        return nan;    // This ray is parallel to this triangle.
+    if (std::abs(det) < epsilon )
+        return Range<double>::empty();    // This ray is parallel to this triangle.
 
     double inv_det = 1.0 / det;
     Vector s = line.o - a;
     double u = inv_det * s.Dot(ray_cross_e2);
 
     if (u < 0 || u > 1)
-        return nan;     // the ray passes through the triangle's plane outside of the bounds
+        return Range<double>::empty();     // the ray passes through the triangle's plane outside of the bounds
 
     Vector s_cross_e1 = s.Cross(edge1);
     double v = inv_det * ray_vector.Dot(s_cross_e1);
 
     if (v < 0 || u + v > 1)
-        return nan;  // the ray passes through the triangle's plane outside of the boudnds
+        return Range<double>::empty();  // the ray passes through the triangle's plane outside of the boudnds
 
 
     // At this stage we can compute t to find out where the intersection point is on the line.
     double t = inv_det * edge2.Dot(s_cross_e1);
 
-    if (t >= 0) // ray intersection
-        if (det > 0)
-            return t;
-        else
-            return -t;
-    else // This means that there is a line intersection but not a ray intersection.
-        return nan;
+    if (det > 0)
+        return Range<double>(t, nan);
+    else
+        return Range<double>(nan, t);
 }
 
 

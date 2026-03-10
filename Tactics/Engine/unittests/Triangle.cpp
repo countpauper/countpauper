@@ -2,6 +2,8 @@
 #include "Geometry/Triangle.h"
 #include "Geometry/Vector.h"
 #include "Geometry/Line.h"
+#include "Geometry/AxisAlignedBoundingBox.h"
+#include "GTestGeometry.h"
 
 namespace Engine::Test
 {
@@ -57,16 +59,25 @@ TEST(Triangle, Distance)
     EXPECT_EQ(-2, xzTriangle.Distance(Coordinate(0, -2, 2))); // near first edege
 }
 
+TEST(Triangle, BoundingBox)
+{
+    Triangle triangle(Coordinate(-0.5, 2.1, 0), Coordinate(3.9, 0, -0.2), Coordinate(1, 3, 4));
+    EXPECT_TRUE(triangle.GetBoundingBox().Contains(triangle.a));
+    EXPECT_TRUE(triangle.GetBoundingBox().Contains(triangle.b));
+    EXPECT_TRUE(triangle.GetBoundingBox().Contains(triangle.c));
+    EXPECT_EQ(triangle.GetBoundingBox(), AABB(Coordinate(-0.5, 0.0,-0.2), Coordinate(3.9,3.0,4.0)));
+}
+
 TEST(Triangle, Intersection)
 {
     Triangle xyTriangle(Coordinate(0, 2, 0), Coordinate(3, 0, 0), Coordinate(1, 4, 0));
-    EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(2,1,2), Coordinate(2,1,-1))), 0.66666, 0.01);
-    EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(2,1,-1), Coordinate(2,1,2))), -0.3333, 0.01);
-    EXPECT_EQ(xyTriangle.Intersection(Line(Coordinate(1,2,1.5), Coordinate(1,2,0))), 1.0);
-    EXPECT_EQ(xyTriangle.Intersection(Line(Coordinate(1,2,0), Coordinate(1,2,-2))), 0.0);
-    EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(1,2,1), Coordinate(0,2,0))), 1.0, 0.00001);
-    EXPECT_TRUE(std::isnan(xyTriangle.Intersection(Line(Coordinate(1,2,1), Coordinate(0,2,1))))) << "parallel line intersected the triangle";
-    EXPECT_TRUE(std::isnan(xyTriangle.Intersection(Line(Coordinate(1,1,1), Coordinate(1,1,-1))))) << "line didn't miss the triangle";
+    EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(2,1,2), Coordinate(2,1,-1))).begin, 0.66666, 0.01);
+    EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(2,1,-1), Coordinate(2,1,2))).end, 0.3333, 0.01);
+    EXPECT_EQ(xyTriangle.Intersection(Line(Coordinate(1,2,1.5), Coordinate(1,2,0))).begin, 1.0);
+    EXPECT_EQ(xyTriangle.Intersection(Line(Coordinate(1,2,0), Coordinate(1,2,-2))).begin, 0.0);
+    EXPECT_NEAR(xyTriangle.Intersection(Line(Coordinate(1,2,1), Coordinate(0,2,0))).begin, 1.0, 0.00001);
+    EXPECT_FALSE(xyTriangle.Intersection(Line(Coordinate(1,2,1), Coordinate(0,2,1)))) << "parallel line intersected the triangle";
+    EXPECT_FALSE(xyTriangle.Intersection(Line(Coordinate(1,1,1), Coordinate(1,1,-1)))) << "line didn't miss the triangle";
 }
 
 }
