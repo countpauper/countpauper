@@ -111,7 +111,7 @@ double Triangle::Intersection(const Line& line) const
     // See https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
     constexpr double epsilon = std::numeric_limits<double>::epsilon();
     constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-    Vector ray_vector = Vector(line).Normal();
+    Vector ray_vector = line.v;
     Vector edge1 = b - a;
     Vector edge2 = c - a;
     Vector ray_cross_e2 = ray_vector.Cross(edge2);
@@ -121,7 +121,7 @@ double Triangle::Intersection(const Line& line) const
         return nan;    // This ray is parallel to this triangle.
 
     double inv_det = 1.0 / det;
-    Vector s = line.a - a;
+    Vector s = line.o - a;
     double u = inv_det * s.Dot(ray_cross_e2);
 
     if (u < 0 || u > 1)

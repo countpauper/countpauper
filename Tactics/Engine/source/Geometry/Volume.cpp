@@ -59,7 +59,7 @@ Cylinder::Cylinder() :
 
 Cylinder::Cylinder(const Line& axis, double dy, double dz) :
     scale(axis.Length(), dy, dz),  // unit cylinder unit length and unit radius in both directions
-    origin(axis.a),
+    origin(axis.o),
     orientation(scale.x>0 ? Quaternion::Shortest(Vector::X, Vector(axis).Normal()) : Quaternion::Identity)
 {
 }
@@ -142,7 +142,7 @@ double Cylinder::Distance(const Coordinate& p) const
 Line Cylinder::Axis() const
 {
     Vector v = orientation * Vector(scale.x, 0,0);
-    return Line(Coordinate::origin + origin, Coordinate::origin + origin + v);
+    return Line(Coordinate::origin + origin, v);
 }
 
 Cylinder Cylinder::Slice(const Engine::Range<double>& range) const

@@ -24,7 +24,7 @@ Vector::Vector(const Position& p) :
 }
 
 Vector::Vector(const Line& l) :
-    Vector(l.b - l.a)
+    Vector(l.v)
 {
 }
 

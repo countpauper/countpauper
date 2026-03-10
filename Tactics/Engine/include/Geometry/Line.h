@@ -11,14 +11,23 @@ struct AABB;
 struct Line
 {
 public:
-    Coordinate a;
-    Coordinate b;
+    Coordinate o;
+    Vector v;
+
     Line() = default;
-    Line(const Coordinate& a, const Coordinate& b) :
-        a(a),
-        b(b)
+    Line(const Coordinate& o, const Vector& v) :
+        o(o),
+        v(v)
     {
     }
+    Line(const Coordinate& a, const Coordinate& b) :
+        Line(a, b-a)
+    {
+    }
+
+    inline Coordinate A() const { return o; }
+    inline Coordinate B() const { return o+v; }
+
     double LengthSquared() const;
     double Length() const;
     double Distance(const Coordinate& p) const;

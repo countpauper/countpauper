@@ -34,7 +34,19 @@ AABB AxisAlignedPlane::GetBoundingBox() const
 
 double AxisAlignedPlane::Distance(const Coordinate& c) const
 {
-    return Vector(axis.GetVector()).Dot(Vector(c)) - d;
+    double delta;
+    if (axis.IsX())
+        delta = c.x - d;
+    else if (axis.IsY())
+        delta = c.y - d;
+    else if (axis.IsZ())
+        delta = c.z - d;
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+    if (axis.IsNegative())
+        return -delta;
+    else
+        return delta;
 }
 
 Coordinate AxisAlignedPlane::Project(const Coordinate& c) const
@@ -56,13 +68,32 @@ bool AxisAlignedPlane::Above(const Coordinate& c) const
 
 Range<double> AxisAlignedPlane::Intersection(const Line& line) const
 {
-    if (axis.IsNone())
+    double delta, dv;
+    if (axis.IsX())
+    {
+        delta = (d - line.o.x);
+        dv = line.v.x;
+    }
+    else if (axis.IsY())
+    {
+        delta = (d - line.o.y);
+        dv = line.v.y;
+    }
+    else if (axis.IsZ())
+    {
+        delta = (d - line.o.z);
+        dv = line.v.z;
+    }
+    else
         return Range<double>::empty();
-    auto v = Vector(axis.GetVector());
-    Line translated = Matrix::Translation(v * -d) * line;
 
-    auto dot = v.Dot(Vector(translated));
-    return Range<double>(dot - d, dot - d);
+    if (dv==0)
+        return Range<double>::empty();
+
+    if (axis.IsNegative() != std::signbit(delta))
+        return Range<double>(delta/dv, std::numeric_limits<double>::quiet_NaN());
+    else
+        return Range<double>(std::numeric_limits<double>::quiet_NaN(), delta/dv);
 }
 
 

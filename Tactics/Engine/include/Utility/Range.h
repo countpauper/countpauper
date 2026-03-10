@@ -113,7 +113,7 @@ struct Range
     {
         return begin == o.begin && end == o.end;
     }
-    
+
     Range& Expand(T v)
     {
         if (v > 0)
@@ -165,6 +165,17 @@ struct Range
     bool finite() const
     {
         return !infinite();
+    }
+
+    bool IsNumbers() const
+    {
+        return !std::isnan(begin) &&
+            !std::isnan(end);
+    }
+
+    T GetNumber() const
+    {
+        return std::isnan(begin) ? end : begin;
     }
 
     static constexpr Range infinity()

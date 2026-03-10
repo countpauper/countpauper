@@ -20,7 +20,7 @@ double Line::Length() const
 
 double Line::ProjectionCoefficient(const Coordinate& p) const
 {
-    Engine::Vector v = p - a;
+    Engine::Vector v = p - o;
     double length_squared = LengthSquared();
     if (length_squared == 0)
         return 0;   // project on point a==b
@@ -33,13 +33,13 @@ Line Line::Section(const Engine::Range<double>& range) const
     Range<double> slice = range / Length();
     slice &= Range(0.0, 1.0);
     auto v = Vector(*this);
-    return Line(a + v * slice.begin, a + v * slice.end);
+    return Line(o + v * slice.begin, o + v * slice.end);
 }
 
 
 Line Line::Invert() const
 {
-    return Line{b, a};
+    return Line{B(), A()};
 }
 
 Coordinate Line::Project(const Coordinate& p) const
@@ -47,23 +47,23 @@ Coordinate Line::Project(const Coordinate& p) const
     double interpolation_factor = ProjectionCoefficient(p);
     if (interpolation_factor <= 0)
     {
-        return a;
+        return A();
     }
     else if (interpolation_factor >= 1)
     {
-        return b;
+        return B();
     }
     else
     {
-        return Coordinate::origin+Lerp(Vector(a), Vector(b), interpolation_factor);
+        return Coordinate::origin+Lerp(Vector(A()), Vector(B()), interpolation_factor);
     }
 }
 
 void Line::Render() const
 {
     glBegin(GL_LINES);
-        glVertex3d(a.x, a.y, a.z);
-        glVertex3d(b.x, b.y, b.z);
+        glVertex3d(A().x, A().y, A().z);
+        glVertex3d(B().x, B().y, B().z);
     glEnd();
 }
 double Line::Distance(const Coordinate& p) const
@@ -75,13 +75,13 @@ double Line::Distance(const Coordinate& p) const
 
 AABB Line::Bounds() const
 {
-    return AABB(a, b);
+    return AABB(A(), B());
 }
 
 std::vector<std::pair<Position, double>> Line::Voxelize() const
 {
     std::vector<std::pair<Position, double>> result;
-    Coordinate pos = a;
+    Coordinate pos = o;
     double remaining = Length();
     Position current(pos.x, pos.y, pos.z);
     while(true)
@@ -94,7 +94,7 @@ std::vector<std::pair<Position, double>> Line::Voxelize() const
                     static_cast<double>(current.x+1),
                     static_cast<double>(current.y+1),
                     static_cast<double>(current.z+1)});
-        if (bounds.Contains(b))
+        if (bounds.Contains(B()))
         {   // b in current voxel, add last voxel
             result.emplace_back(current, remaining);
             return result;
@@ -113,36 +113,30 @@ std::vector<std::pair<Position, double>> Line::Voxelize() const
 }
 bool Line::operator==(const Line& rhs) const
 {
-    return a == rhs.a && b == rhs.b;
+    return o == rhs.o && v == rhs.v;
 }
 
 Line& Line::operator*=(const Matrix& transformation)
 {
-    a *= transformation;
-    b *= transformation;
-    return *this;
+    return *this = Line(transformation * A(), transformation * B());
 }
 
 
 Line& Line::operator*=(Quaternion q)
 {
-    auto va = q * Vector(a);
-    a = Coordinate(va.x, va.y, va.z);
-    auto vb = q * Vector(b);
-    b = Coordinate(vb.x, vb.y, vb.z);
-    return *this;
+    auto va = q * Vector(A());
+    auto vb = q * Vector(B());
+    return *this = Line(Coordinate(va.x, va.y, va.z), Coordinate(vb.x, vb.y, vb.z));
 }
 
 Line& Line::operator+=(Vector v)
 {
-    a += v;
-    b += v;
+    o += v;
     return *this;
 }
 Line& Line::operator-=(Vector v)
 {
-    a -= v;
-    b -= v;
+    o -= v;
     return *this;
 }
 
@@ -170,7 +164,7 @@ Line operator-(Line line, Vector v)
 
 std::ostream& operator<<(std::ostream& s, const Line& line)
 {
-    s << line.a << "-" << line.b;
+    s << line.A() << "-" << line.B();
     return s;
 }
 

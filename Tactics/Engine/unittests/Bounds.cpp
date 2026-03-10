@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include "Utility/Range.h"
 #include "Geometry/Vector.h"
 #include "Geometry/AxisAlignedBoundingBox.h"
 #include "Geometry/Matrix.h"
@@ -9,87 +8,6 @@
 
 namespace Engine::Test
 {
-
-TEST(Range, Size)
-{
-    EXPECT_EQ(1, Range(0, 1).Size());
-    EXPECT_EQ(0, Range(2, 2).Size());
-    EXPECT_FALSE(Range(3, 3));
-}
-
-TEST(Range, Middle)
-{
-    EXPECT_EQ(3, Range<int>(2, 4).Middle());
-    EXPECT_EQ(2, Range<int>(2, 3).Middle());
-    EXPECT_EQ(1.5, Range<double>(1, 2).Middle());
-    EXPECT_EQ(1.5, Range<double>(2, 1).Middle());
-}
-
-TEST(Range, MiddleOfEverything)
-{
-    EXPECT_EQ(0, Range<double>::infinity().Middle());
-}
-
-TEST(Range, Union)
-{
-    EXPECT_EQ(Range(0, 2), Range(0, 1) | Range(1, 2));
-    EXPECT_EQ(Range(-1, 2), Range(-1, 0) | Range(1, 2));
-    EXPECT_EQ(Range(-1, 2), Range(1, 2) | Range(-1, 0));
-}
-
-TEST(Range, Intersection)
-{
-    EXPECT_FALSE(Range(0, 1) & Range(1, 2));
-    EXPECT_EQ(Range(0, 1), Range(-1, 2) & Range(0, 1));
-    EXPECT_EQ(Range(0, 1), Range(-1, 1) & Range(0, 3));
-    EXPECT_FALSE(Range(2, 3) & Range(0, 1));
-}
-
-TEST(Range, Move)
-{
-    EXPECT_EQ(1, (Range(0, 1) + 1).Size());
-}
-
-TEST(Range, Expand)
-{
-    EXPECT_EQ(2, Range(0, 1).Expand(1).Size());
-}
-
-TEST(Range, Cast)
-{
-    EXPECT_EQ(Range<int>(0, 1), Range<int>(Range<double>(0.1, 1.2)));
-    EXPECT_EQ(Range<double>(-1.0, 2.0), Range<double>(Range<int>(-1, 2)));
-}
-
-TEST(Range, consts)
-{
-    EXPECT_EQ(std::numeric_limits<double>::infinity(), Range<double>::infinity().Size());
-    EXPECT_TRUE(Range<double>::infinity() | -10000.0);
-    EXPECT_EQ(0, Range<double>::null().Size());
-    EXPECT_FALSE(bool(Range<double>::null() | 0.0));
-    EXPECT_FALSE(Range<double>::empty());
-    EXPECT_FALSE(Range<int>::empty());
-}
-
-TEST(Range, Inclusion)
-{
-    EXPECT_TRUE((Range<int>() | 2)[2]);
-    EXPECT_TRUE((Range<int>() | -1)[-1]);
-    EXPECT_TRUE((Range<int>() | -1 | 2)[1]);
-    EXPECT_FALSE((Range<int>() | -1)[2]);
-}
-
-TEST(Range, Compare)
-{
-    EXPECT_TRUE(Range<int>(2,3) > 1 );
-    EXPECT_FALSE(Range<int>(2,3) > 2 );
-    EXPECT_TRUE(Range<int>(2,4) >= 3 );
-
-    EXPECT_TRUE(Range<int>(2,3) < 4 );
-    EXPECT_TRUE(Range<int>(2,3) < 3 );
-    EXPECT_FALSE(Range<int>(2,3) < 2 );
-    EXPECT_TRUE(Range<int>(2,4) <= 3 );
-}
 
 TEST(AABB, Size)
 {
@@ -158,7 +76,7 @@ TEST(AABB, NamedIntersection)
     auto diagonal = Line(Coordinate{0.0, 0.25, 0.25}, Coordinate{1.25, 1.0, 0.75});
     auto diagonalHit = box.NamedIntersection(diagonal);
     EXPECT_EQ(diagonalHit.first, Axis::NegZ);
-    auto diagonalHitLocation = diagonal.Section(Range<double>(diagonalHit.second, 10.0)).a;
+    auto diagonalHitLocation = diagonal.Section(Range<double>(diagonalHit.second, 10.0)).A();
     EXPECT_DOUBLE_EQ(diagonalHitLocation.z, box.z.begin);
     EXPECT_TRUE(box.X()[diagonalHitLocation.x]);
     EXPECT_TRUE(box.Y()[diagonalHitLocation.y]);

@@ -32,13 +32,34 @@ TEST(Plane, XY)
     EXPECT_FALSE(Plane::xy.Above(Coordinate(0, 0, -1)));
 }
 
-TEST(Plane, XYIntersection)
+
+TEST(Plane, XYIntersectsLineSegmentFromFront)
 {
-    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, -6))).begin, 2);
-    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,-6), Coordinate(0, 0, 2))).begin, -6);
+    // -7 -6 -5 -4 -3 -2 -1  0  1  2  3
+    //     B                 P->   A    Intersects from the front after a partial (2/8) line segments
+    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, -6))).begin, 0.25);
+    EXPECT_FALSE(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, -6))).IsNumbers());
+}
+
+TEST(Plane, XYIntersectsHalfLineFromBack)
+{
+    // -7 -6 -5 -4 -3 -2 -1  0  1  2  3
+    //     A->B              P->        Intersects from the back after multiple (6) half line vectors
+    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,0,-6), Vector(0, 0, 1))).end, 6);
+    EXPECT_FALSE(Plane::xy.Intersection(Line(Coordinate(0,0,-6), Vector(0, 0, 1))).IsNumbers());
+}
+
+TEST(Plane, XYDoesntIntersectParallelLine)
+{
+    // Line parallel to the XY plane (same Z)
     EXPECT_FALSE(Plane::xy.Intersection(Line(Coordinate(0,1,2), Coordinate(1, 0, 2))));
-    EXPECT_FALSE(Plane::xy.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 1))));
-    EXPECT_FALSE(Plane::xy.Intersection(Line(Coordinate(0,0,-2), Coordinate(0, 0, -4))));
+}
+
+TEST(Plane, XYIntersectsLineBehindOrigin)
+{
+    // -4 -3 -2 -1  0  1  2
+    //     B<-A      P->       Intersects behind A (negative) from behind the plane
+    EXPECT_EQ(Plane::xy.Intersection(Line(Coordinate(0,1,-2), Vector(1, 0, -1))).end, -2);
 }
 
 
@@ -76,7 +97,7 @@ TEST(Plane, NotNormalXYAt1)
     EXPECT_FALSE(xy2.GetBoundingBox().Contains(Coordinate(1, 1, 1.1)));
     EXPECT_TRUE(xy2.GetBoundingBox().Contains(Coordinate(0, 0, 0.9)));
 
-    EXPECT_EQ(xy2.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 0))).begin, 1);
+    EXPECT_EQ(xy2.Intersection(Line(Coordinate(0,0,2), Coordinate(0, 0, 0))).begin, 0.5);
 
 }
 

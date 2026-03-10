@@ -24,7 +24,7 @@ AABB::AABB(const Coordinate& begin, const Coordinate& end) :
 }
 
 AABB::AABB(const Line& line) :
-    AABB(line.a, line.b)
+    AABB(line.A(), line.B())
 {
 }
 
@@ -89,24 +89,24 @@ std::pair<Axis, double> AABB::NamedIntersection(const Line& line) const
 {
     Vector V(line);
 
-    if (std::abs(V.x) <= std::numeric_limits<double>::epsilon() && !x[line.a.x]) {
+    if (std::abs(V.x) <= std::numeric_limits<double>::epsilon() && !x[line.o.x]) {
         return std::make_pair(Axis::None, std::numeric_limits<double>::infinity());
     }
-    if (std::abs(V.y) <= std::numeric_limits<double>::epsilon() && !y[line.a.y]) {
+    if (std::abs(V.y) <= std::numeric_limits<double>::epsilon() && !y[line.o.y]) {
         return std::make_pair(Axis::None, std::numeric_limits<double>::infinity());
     }
-    if (std::abs(V.z) <= std::numeric_limits<double>::epsilon() && !z[line.a.z]) {
+    if (std::abs(V.z) <= std::numeric_limits<double>::epsilon() && !z[line.o.z]) {
         return std::make_pair(Axis::None, std::numeric_limits<double>::infinity());
     }
 
     double coefficients[]{
-        ComputeCoefficient(line.a.z, z.begin, V.z, true),
-        ComputeCoefficient(line.a.y, y.begin, V.y, true),
-        ComputeCoefficient(line.a.x, x.begin, V.x, true),
+        ComputeCoefficient(line.o.z, z.begin, V.z, true),
+        ComputeCoefficient(line.o.y, y.begin, V.y, true),
+        ComputeCoefficient(line.o.x, x.begin, V.x, true),
         std::numeric_limits<double>::quiet_NaN(),
-        ComputeCoefficient(line.a.x, x.end, V.x, false),
-        ComputeCoefficient(line.a.y, y.end, V.y, false),
-        ComputeCoefficient(line.a.z, z.end, V.z, false),
+        ComputeCoefficient(line.o.x, x.end, V.x, false),
+        ComputeCoefficient(line.o.y, y.end, V.y, false),
+        ComputeCoefficient(line.o.z, z.end, V.z, false),
     };
     double enter = -std::numeric_limits<double>::infinity();
     Axis enterAxis = Axis::None;
@@ -137,25 +137,25 @@ std::pair<Axis, double> AABB::NamedIntersection(const Line& line) const
 Range<double> AABB::Intersection(const Line& line) const
 {
     Vector V(line);
-    if (std::abs(V.x) <= std::numeric_limits<double>::epsilon() && !x[line.a.x]) {
+    if (std::abs(V.x) <= std::numeric_limits<double>::epsilon() && !x[line.o.x]) {
         return Range<double>::empty();
     }
-    if (std::abs(V.y) <= std::numeric_limits<double>::epsilon() && !y[line.a.y]) {
+    if (std::abs(V.y) <= std::numeric_limits<double>::epsilon() && !y[line.o.y]) {
         return Range<double>::empty();
     }
-    if (std::abs(V.z) <= std::numeric_limits<double>::epsilon() && !z[line.a.z]) {
+    if (std::abs(V.z) <= std::numeric_limits<double>::epsilon() && !z[line.o.z]) {
         return Range<double>::empty();
     }
 
     double intersections[]{
-        ComputeCoefficient(line.a.x, x.end, V.x, false),
-        ComputeCoefficient(line.a.x, x.begin, V.x, true),
+        ComputeCoefficient(line.o.x, x.end, V.x, false),
+        ComputeCoefficient(line.o.x, x.begin, V.x, true),
 
-        ComputeCoefficient(line.a.y, y.begin, V.y, true),
-        ComputeCoefficient(line.a.y, y.end, V.y, false),
+        ComputeCoefficient(line.o.y, y.begin, V.y, true),
+        ComputeCoefficient(line.o.y, y.end, V.y, false),
 
-        ComputeCoefficient(line.a.z, z.begin, V.z, true),
-        ComputeCoefficient(line.a.z, z.end, V.z, false),
+        ComputeCoefficient(line.o.z, z.begin, V.z, true),
+        ComputeCoefficient(line.o.z, z.end, V.z, false),
     };
     double enter = 0.0; // at least at coefficient of A
     double leave = 1.0; // maximum at coeffiecient of B

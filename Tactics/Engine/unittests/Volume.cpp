@@ -74,8 +74,8 @@ TEST(Cylinder, Nul)
 
     EXPECT_FALSE(c.Slice(Range(0.0, 1.0)).Volume());
 
-    EXPECT_EQ(c.Axis().a, Coordinate::origin);
-    EXPECT_EQ(c.Axis().b, Coordinate::origin);
+    EXPECT_EQ(c.Axis().A(), Coordinate::origin);
+    EXPECT_EQ(c.Axis().B(), Coordinate::origin);
 }
 
 TEST(Cylinder, AxisAligned)
@@ -94,8 +94,8 @@ TEST(Cylinder, AxisAligned)
     EXPECT_DOUBLE_EQ(sqrt(2) - 1.0, c.Distance(Coordinate(0, 1, 1)));
     EXPECT_DOUBLE_EQ(sqrt(2) - 1.0, c.Distance(Coordinate(1, 1, 1)));
 
-    EXPECT_EQ(c.Axis().a, Coordinate::origin);
-    EXPECT_3D_EQ(c.Axis().b, b);
+    EXPECT_EQ(c.Axis().A(), Coordinate::origin);
+    EXPECT_3D_EQ(c.Axis().B(), b);
 }
 
 TEST(Cylinder, Turned)
@@ -104,11 +104,9 @@ TEST(Cylinder, Turned)
     Cylinder c(axis, 1, 1);
     EXPECT_EQ(Vector(2,2,2), c.GetBoundingBox().Extent());
 
-    EXPECT_EQ(c.Axis().a, axis.a);
-    EXPECT_3D_NEAR(c.Axis().b, axis.b, 1e-12);
-
+    EXPECT_EQ(c.Axis().o, axis.o);
+    EXPECT_3D_EQ(c.Axis().v, axis.v);
 }
-
 
 TEST(Cylinder, Titlted)
 {
@@ -119,8 +117,8 @@ TEST(Cylinder, Titlted)
     EXPECT_LT(c.Distance(Coordinate(0.7, 0, 0.7)), 0.0);
     EXPECT_GT(c.Distance(Coordinate(1.0, 0, 0.0)), 0.0);
 
-    EXPECT_EQ(c.Axis().a, axis.a);
-    EXPECT_3D_EQ(c.Axis().b, axis.b);
+    EXPECT_EQ(c.Axis().o, axis.o);
+    EXPECT_3D_EQ(c.Axis().v, axis.v);
 
 }
 
@@ -130,8 +128,8 @@ TEST(Cylinder, Diagonal)
     Cylinder c(axis, 1, 1);
     EXPECT_3D_NEAR(c.GetBoundingBox().Extent(), Vector(2 + sqrt(2), 2 + sqrt(2), 2), 1e-12);
 
-    EXPECT_EQ(c.Axis().a, axis.a);
-    EXPECT_3D_NEAR(c.Axis().b, axis.b, 1e-12);
+    EXPECT_EQ(c.Axis().o, axis.o);
+    EXPECT_3D_EQ(c.Axis().v, axis.v);
 }
 
 TEST(Cylinder, Ellipse)

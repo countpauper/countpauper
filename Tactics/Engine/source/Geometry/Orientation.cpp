@@ -248,12 +248,12 @@ Orientation Orientation::Opposite() const
 
 bool Orientation::IsPosititve() const
 {
-    return (value & Negative) == 0 && value != 0;
+    return (value & Negative) == 0 && value != None;
 }
 
 bool Orientation::IsNegative() const
 {
-    return (value & Negative) != 0 && value != 0;
+    return (value & Negative) != 0 && value != None;
 }
 
 bool Orientation::IsOpposite(Orientation other) const
@@ -345,16 +345,17 @@ bool Orientation::IsZ() const
     return (value & Value::ZAxis);
 }
 
+
 bool Orientation::IsValid() const
 {
-    auto axis = value & Value::Axes;
-    if (axis == 0)
-    {   // if no axis, then can't be negative
-        return (value & Value::Negative) == 0;
+    int axes = int(IsX()) + int(IsY()) + int(IsZ());
+    if (axes==0)
+    {
+        return !IsNegative();
     }
     else
-    {   // only one axis
-        return (axis == Value::XAxis || axis == Value::YAxis || axis == Value::ZAxis);
+    {
+        return axes = 1;
     }
 }
 

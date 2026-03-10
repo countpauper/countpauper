@@ -45,7 +45,7 @@ namespace Engine
 
     Line Plane::Project(const Line& l) const
     {
-        return Line(Project(l.a), Project(l.b));
+        return Line(Project(l.A()), Project(l.B()));
     }
 
     double Plane::NormalDistance(const Coordinate& c) const
@@ -119,20 +119,14 @@ namespace Engine
         if (std::abs(normaldot) < std::numeric_limits<double>::epsilon())
             return Range<double>::empty();
         // P is projection vector from line.a to a point on the plane
-        Vector P =  normal * -NormalDistance(line.a) / normal.LengthSquared();
+        Vector P =  normal * -NormalDistance(line.o) / normal.LengthSquared();
         double projectiondot = P.Dot(normal);
         double fraction = projectiondot / normaldot;
 
-        if (std::isinf(fraction))
-            return Range<double>::empty();
-        if ((fraction<0) || (fraction>1))
-           return Range<double>::empty();
-        double d;
-        if (normaldot < 0 )
-            d = fraction * line.Length();    // a is above the plane
+        if (std::signbit(projectiondot))
+            return Range<double>(fraction, std::numeric_limits<double>::quiet_NaN());
         else
-            d = -fraction * line.Length();   // a is behind the plane
-        return Range<double>(d, d);
+            return Range<double>(std::numeric_limits<double>::quiet_NaN(), fraction);
     }
 
     Plane& Plane::Normalize()

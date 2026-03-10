@@ -22,9 +22,7 @@ namespace Engine
         Vector Normal() const;
         Triangle Flipped() const;
         double Distance(const Coordinate& c) const;
-        // NaN if line does not intersect the triangle
-        // positive distance from line.a to the interseciont if line.a is above the plane of the counter-clockwise triangle
-        // negative distance from line.a to the intersection if line.a is below the plane of the counter-clockwise triangle
+        // TODO implement Geometry::Intersection(...) range according to that behavior spec
         double Intersection(const Line& line) const;
         Vector BaryCentric(const Coordinate& c) const;
     };
