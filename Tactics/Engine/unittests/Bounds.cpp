@@ -65,17 +65,17 @@ TEST(AABB, NamedIntersection)
 {
     AABB box(Coordinate{0.5, 0.5, 0.5}, Coordinate{1.0, 1.0, 1.0});
     EXPECT_EQ( box.NamedIntersection(Line(Coordinate{0.0, 0.75, 0.75}, Coordinate{1.25, 0.75, 0.75})),
-        std::make_pair(Axis::NegX, 0.5));
+        std::make_pair(Orientation::left, 0.5));
     EXPECT_EQ( box.NamedIntersection(Line(Coordinate{1.25, 0.75, 0.75}, Coordinate{0.75, 0.75, 0.75})),
-        std::make_pair(Axis::PosX, 0.25));
+        std::make_pair(Orientation::right, 0.25));
     EXPECT_EQ( box.NamedIntersection(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.25, 0.0, 0.75})),
-        std::make_pair(Axis::None, std::numeric_limits<double>::infinity()));
+        std::make_pair(Orientation::none, std::numeric_limits<double>::infinity()));
     EXPECT_EQ( box.NamedIntersection(Line(Coordinate{0.75, 0.75, 0.75}, Coordinate{0.75, 0.00, 0.75})),
-        std::make_pair(Axis::NegY, -0.25));
+        std::make_pair(Orientation::back, -0.25));
 
     auto diagonal = Line(Coordinate{0.0, 0.25, 0.25}, Coordinate{1.25, 1.0, 0.75});
     auto diagonalHit = box.NamedIntersection(diagonal);
-    EXPECT_EQ(diagonalHit.first, Axis::NegZ);
+    EXPECT_EQ(diagonalHit.first, Orientation::down);
     auto diagonalHitLocation = diagonal.Section(Range<double>(diagonalHit.second, 10.0)).A();
     EXPECT_DOUBLE_EQ(diagonalHitLocation.z, box.z.begin);
     EXPECT_TRUE(box.X()[diagonalHitLocation.x]);

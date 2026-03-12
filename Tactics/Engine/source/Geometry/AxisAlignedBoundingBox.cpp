@@ -85,18 +85,18 @@ double ComputeCoefficient(double from, double to, double delta, bool neg)
         return -coef;
 }
 
-std::pair<Axis, double> AABB::NamedIntersection(const Line& line) const
+std::pair<Orientation, double> AABB::NamedIntersection(const Line& line) const
 {
     Vector V(line);
 
     if (std::abs(V.x) <= std::numeric_limits<double>::epsilon() && !x[line.o.x]) {
-        return std::make_pair(Axis::None, std::numeric_limits<double>::infinity());
+        return std::make_pair(Orientation::none, std::numeric_limits<double>::infinity());
     }
     if (std::abs(V.y) <= std::numeric_limits<double>::epsilon() && !y[line.o.y]) {
-        return std::make_pair(Axis::None, std::numeric_limits<double>::infinity());
+        return std::make_pair(Orientation::none, std::numeric_limits<double>::infinity());
     }
     if (std::abs(V.z) <= std::numeric_limits<double>::epsilon() && !z[line.o.z]) {
-        return std::make_pair(Axis::None, std::numeric_limits<double>::infinity());
+        return std::make_pair(Orientation::none, std::numeric_limits<double>::infinity());
     }
 
     double coefficients[]{
@@ -108,25 +108,34 @@ std::pair<Axis, double> AABB::NamedIntersection(const Line& line) const
         ComputeCoefficient(line.o.y, y.end, V.y, false),
         ComputeCoefficient(line.o.z, z.end, V.z, false),
     };
+    static const Orientation axes[]={
+        Orientation::down,
+        Orientation::back,
+        Orientation::left,
+        Orientation::none,
+        Orientation::right,
+        Orientation::front,
+        Orientation::up
+    };
     double enter = -std::numeric_limits<double>::infinity();
-    Axis enterAxis = Axis::None;
+    Orientation enterAxis;
     double leave = - std::numeric_limits<double>::infinity();
-    Axis leaveAxis = Axis::None;
-    Axis axis = Axis::NegZ;
+    Orientation leaveAxis ;
 
+    unsigned axisIndex  =0;
     for(double coef: std::span(coefficients))
     {
         if (coef>=0 && coef<=1.0 && coef > enter) {
-            enterAxis = axis;
+            enterAxis = axes[axisIndex];
             enter = coef;
         }
         if (coef>=-1.0 && coef<=0 && coef > leave ) {
-            leaveAxis = axis;
+            leaveAxis = axes[axisIndex];
             leave = coef;
         }
-        axis=(Axis)(int(axis)+1);
+        ++axisIndex;
     }
-    if (enterAxis==Axis::None)
+    if (!enterAxis)
     {
         return std::make_pair(leaveAxis, leave * V.Length());
 
@@ -309,39 +318,20 @@ Range<double> AABB::Z() const
     return z;
 }
 
+AxisAlignedPlane AABB::Side(Orientation side) const
+{
+    if (!side)
+        return AxisAlignedPlane(side);
 
-Plane AABB::Right() const
-{   // +X
-    return Plane{Vector::X, -x.end};
+    const Range<double>& axisRange =
+        side.IsX() ? this->x :
+        side.IsY() ? this->y :
+        this->z;
+    if (side.IsNegative())
+        return AxisAlignedPlane(side, axisRange.begin);
+    else
+        return AxisAlignedPlane(side, axisRange.end);
 }
-
-
-Plane AABB::Left() const
-{   // -X
-    return Plane{-Vector::X, x.begin};
-}
-
-Plane AABB::Front() const
-{   // +Y
-    return Plane{Vector::Y, -y.end};
-}
-
-Plane AABB::Back() const
-{   // -Y
-    return Plane{-Vector::Y, y.begin};
-}
-
-Plane AABB::Top() const
-{   // +Z
-    return Plane{Vector::Z, -z.end};
-}
-
-Plane AABB::Bottom() const
-{   // -Z
-    return Plane{-Vector::Z, z.begin};
-}
-
-
 
 AABB& AABB::operator|=(const Coordinate& p)
 {

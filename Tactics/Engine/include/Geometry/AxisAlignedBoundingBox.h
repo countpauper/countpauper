@@ -3,8 +3,8 @@
 #include "Geometry/Coordinate.h"
 #include "Utility/Range.h"
 #include "Geometry/Volume.h"
-#include "Geometry/Plane.h"
-#include "Geometry/Axis.h"
+#include "Geometry/AxisAlignedPlane.h"
+#include "Geometry/Orientation.h"
 
 namespace Engine
 {
@@ -40,17 +40,18 @@ namespace Engine
         bool Contains(const Coordinate& p) const;
         Coordinate Clip(const Coordinate& p) const;
         // 0 None, 1..6 = Right(), Bottom(), Front, Back(), Left(), Top(),
-        std::pair<Axis, double> NamedIntersection(const Line& line) const;
+        std::pair<Orientation, double> NamedIntersection(const Line& line) const;
         Range<double> Intersection(const Line& line) const override;
 
         void Render();
 
-        Plane Right() const;    // +X
-        Plane Left() const;     // -X
-        Plane Front() const;    // +Y
-        Plane Back() const;     // -Y
-        Plane Top() const;      // +Z
-        Plane Bottom() const;   // -Z
+        AxisAlignedPlane Side(Orientation side) const;
+        AxisAlignedPlane Right() const;    // +X
+        AxisAlignedPlane Left() const;     // -X
+        AxisAlignedPlane Front() const;    // +Y
+        AxisAlignedPlane Back() const;     // -Y
+        AxisAlignedPlane Top() const;      // +Z
+        AxisAlignedPlane Bottom() const;   // -Z
 
         bool operator[](const Coordinate& p) const { return Contains(p); }
         AABB& operator|=(const Coordinate& p);

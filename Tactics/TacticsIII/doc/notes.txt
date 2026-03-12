@@ -36,12 +36,12 @@ If the distance between the previous and the next plane is smaller than that eps
 grid is skipped. Instead the epsilon is added to the next grid (or divided between previous and next?)
 
 So: TODO:
-Make an axis aligned plane
-with functions to convert to a basic plane
-derived from IGeometry
-Add unit tests
-Implement the function to compute the line intersection.
-Range<double> Intersect(Line) const; which can return empty ranges and or infinite start end
+[done] Make an axis aligned plane
+[done] with functions to convert to a basic plane
+[done] derived from IGeometry
+[done] Add unit tests
+[done] Implement the function to compute the line intersection.
+[done] Range<double> Intersect(Line) const; which can return empty ranges and or infinite start end
 
 Add getters to the axis aligned bounding box to get Plane(Direction)
 Use these to implement the line intersection of the axis aligned box by: iterating over all of those planes.

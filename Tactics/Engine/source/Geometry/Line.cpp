@@ -106,7 +106,7 @@ std::vector<std::pair<Position, double>> Line::Voxelize() const
 
             result.emplace_back(current, remaining - intersection.second);
             remaining = intersection.second;
-            current += Position(intersection.first);
+            current += intersection.first.GetVector();
         }
     }
     return result;

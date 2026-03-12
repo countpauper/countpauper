@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include "Geometry/Axis.h"
 
 namespace Engine
 {
@@ -8,7 +7,6 @@ namespace Engine
     {
         Position();
         Position(int x, int y, int z=0);
-        Position(Axis axis);
         int x;
         int y;
         int z;
