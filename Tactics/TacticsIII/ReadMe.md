@@ -7,9 +7,12 @@ git submodule update --init --recursive
 
 ## To build in windows
 * Install [MSys2](https://www.msys2.org/) for pacman
-* Install [MinGW](https://www.mingw-w64.org/)
-* Install FreeGLUT from MinGW with `pacman -S mingw-w64-ucrt-x86_64-freeglut`
-* Install GLEW with `pacman -S mingw-w64-ucrt-x86_64-glew`
+* Install [MinGW](https://www.mingw-w64.org/) 
+* OR (better?) with `pacman -S mingw-w64-x86_64-gcc` 
+* and GDB: `pacman -S mingw-w64-x86_64-gdb`
+* Install FreeGLUT from MinGW with `pacman -S mingw-w64-x86_64-freeglut`
+* Install GLEW with `pacman -S mingw-w64-x86_64-glew`
+* Install GLE `pacman -S mingw-w64-x86_64-mesa mingw-w64-x86_64-egl-headers`
 * vscode with the recommended extensions
 
 ```

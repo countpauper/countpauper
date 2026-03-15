@@ -8,7 +8,13 @@
 		}
 	],
 	"settings": {
-		"C_Cpp.autoAddFileAssociations": false
+		"C_Cpp.autoAddFileAssociations": false,
+		"testMate.cpp.test.executables": "{build,Build,BUILD,out,Out,OUT}/**/*{test,Test,TEST}*",
+		"testMate.cpp.discovery.strictPattern": true,
+		"testMate.cpp.log.logpanel": true,
+		"cmake.configureSettings":{
+				"BUILD_TESTS": true
+		},
 	},
 	"extensions": {
 		"recommendations": [

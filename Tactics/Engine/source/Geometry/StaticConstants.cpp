@@ -33,20 +33,6 @@ const Orientation Orientation::right{Orientation::Right};
 const Orientation Orientation::up{Orientation::Up};
 const Orientation Orientation::down{Orientation::Down};
 
-std::array<Engine::Position, 10> Orientation::vector =
-{
-    Engine::Position(0, 0, 0), // None
-    Engine::Position(0, 0, 0), // None with extra steps
-    Engine::Position(0, 1, 0), // Front
-    Engine::Position(0, -1, 0), // Back
-    Engine::Position(1, 0, 0), // Right
-    Engine::Position(-1, 0, 0), // Left
-    Engine::Position(),
-    Engine::Position(),
-    Engine::Position(0, 0, 1), // Up
-    Engine::Position(0, 0,-1) // Down
-};
-
 const AxisAlignedPlane AxisAlignedPlane::null{Orientation::none, 0 };
 const AxisAlignedPlane AxisAlignedPlane::xy{Orientation::up, 0 };
 const AxisAlignedPlane AxisAlignedPlane::xz{Orientation::front, 0 };

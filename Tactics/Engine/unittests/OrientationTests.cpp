@@ -15,7 +15,6 @@ TEST(Orientation, None)
 	EXPECT_TRUE(Orientation::none.IsNone());
     EXPECT_FALSE(Orientation::none.IsPosititve());
     EXPECT_FALSE(Orientation::none.IsNegative());
-    EXPECT_TRUE(Orientation::none.IsValid());
     EXPECT_FALSE(Orientation::none.IsX());
     EXPECT_FALSE(Orientation::none.GetVector());
 }
@@ -97,9 +96,9 @@ TEST(Orientation, Perpendiclar)
     EXPECT_TRUE(Orientation::front.Perpendicular(Orientation::right).IsPerpendicular(Orientation::left));
     EXPECT_TRUE(Orientation::up.Perpendicular(Orientation::right).IsPerpendicular(Orientation::down));
     EXPECT_TRUE(Orientation::up.Perpendicular(Orientation::right).IsPerpendicular(Orientation::down));
-    EXPECT_THROW(Orientation::up.Perpendicular(Orientation::down), std::exception);
-    EXPECT_THROW(Orientation::none.Perpendicular(Orientation::left), std::exception);
-    EXPECT_THROW(Orientation::front.Perpendicular(Orientation::none), std::exception);
+    EXPECT_FALSE(Orientation::up.Perpendicular(Orientation::down));
+    EXPECT_FALSE(Orientation::none.Perpendicular(Orientation::left));
+    EXPECT_FALSE(Orientation::front.Perpendicular(Orientation::none));
 }
 
 TEST(Orientation, Angles)
@@ -181,14 +180,25 @@ TEST(Orientation, EvenDivision)
 
 TEST(Orientation, Vector)
 {
-
-	for (auto dir : Orientations::all)
+	for (auto ori : Orientations::all)
 	{
-		EXPECT_EQ(Orientation(dir.GetVector()), dir);
+        auto v = ori.GetVector();
+        auto newori = Orientation(v);
+        EXPECT_EQ(ori, newori);
 	}
 
 }
 
+TEST(Orientation, Index)
+{
+    EXPECT_EQ(Orientation().Index(), -1);
+    int expectedIndex = 0;
+	for (auto ori : Orientations::all)
+	{
+        EXPECT_EQ(ori.Index(), expectedIndex) << ori;
+        ++expectedIndex;
+    }
+}
 
 TEST(Orientation, Turn)
 {

@@ -20,7 +20,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC "include" PRIVATE
 # For some reason  find_package(OpenGL REQUIRED COMPONENTS ... EGL) doesn't find EGL
 # so add it manually
 set(EGL_INCLUDE_DIR "${CMAKE_PREFIX_PATH}/include")
-#set(EGL_LIBRARY "${CMAKE_PREFIX_PATH}/lib/libEGL.a")
 include_directories(${EGL_INCLUDE_DIR})
 cmake_path(CONVERT "${CMAKE_PREFIX_PATH}/lib/libEGL.a" TO_CMAKE_PATH_LIST EGL_LIBRARY)
 
@@ -29,8 +28,6 @@ target_link_libraries(${PROJECT_NAME}
         Stb
         GLUT::GLUT
         nlohmann_json::nlohmann_json
-#        OpenGL::EGL
-        "${EGL_LIBRARY}"
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES})
 

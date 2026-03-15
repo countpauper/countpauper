@@ -14,13 +14,14 @@ add_executable(${EXE_NAME} ${SOURCES} ${HEADERS})
 
 
 # Copy binary needed to run unittests
-set(UNITTEST_BINARY_DIR "${CMAKE_BINARY_DIR}/unittests")
+set(UNITTEST_BINARY_DIR "${CMAKE_BINARY_DIR}/Engine/unittests")
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${CMAKE_PREFIX_PATH}/bin/glew32.dll"
     "${UNITTEST_BINARY_DIR}"
 )
+
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${CMAKE_SOURCE_DIR}/data/test.png"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../data/test.png"
     "${UNITTEST_BINARY_DIR}"
 )
 

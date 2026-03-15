@@ -8,6 +8,14 @@ project(tactics)
 file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
+# Infer the MinGW/MSYS2 path from the compiler
+get_filename_component(MINGW_BIN_DIR ${CMAKE_C_COMPILER} DIRECTORY)
+get_filename_component(MINGW_PATH ${MINGW_BIN_DIR} DIRECTORY)  # Path to /mingw64
+
+# Set CMAKE_PREFIX_PATH to the inferred path
+set(CMAKE_PREFIX_PATH ${MINGW_PATH})
+message(STATUS "Using MinGW path: ${MINGW_PATH}")
+
 #
 # Add subdirectories
 #

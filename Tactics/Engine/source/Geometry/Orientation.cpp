@@ -67,17 +67,20 @@ Orientation::Orientation() :
 Orientation::Orientation(Orientation::Value value) :
 	value(value)
 {
+    if (value <= Value::MinValid && value >= Value::Invalid )
+        throw std::invalid_argument("Orientation value is invalid");
 }
 
-Orientation::Orientation(uint8_t id) :
-    Orientation(static_cast<Value>(id))
+Orientation::Orientation(int index) :
+    Orientation(Value(index > 2 ? (2 - index) : index + 1))
 {
 }
 
-uint8_t Orientation::Id() const
+int Orientation::Index() const
 {
-    return static_cast<uint8_t>(value);
+    return value < 0 ? 2 - static_cast<int>(value) : static_cast<int>(value - 1);
 }
+
 
 const std::map<const std::string_view, Orientation> Orientation::map(
 {
@@ -100,19 +103,20 @@ std::array<Orientation, 4> Orientation::horizontal
 
 std::array<Orientation, 6> Orientation::all
 {
+    Orientation::up,
+    Orientation::down,
     Orientation::front,
     Orientation::back,
     Orientation::left,
-    Orientation::right,
-    Orientation::up,
-    Orientation::down
+    Orientation::right
 };
+
 
 std::array<Orientation, 3> Orientation::positive
 {
+    Orientation::up,
     Orientation::front,
     Orientation::right,
-    Orientation::up,
 };
 
 Orientation::Value Orientation::From(const Engine::Position& vector)
@@ -185,7 +189,6 @@ Orientation::Value Orientation::From(const Engine::Position& vector)
     unsigned sectors = 0;
 
     auto result = assignedSector[sectorSet];
-    assert(result != Orientation::Invalid);
     return result;
 }
 
@@ -212,7 +215,19 @@ Orientation::Orientation(int x, int y, int z) :
 
 Engine::Position Orientation::GetVector() const
 {
-	return Engine::Position(vector[value].x, vector[value].y, vector[value].z);
+    static constexpr std::array<Position, 8> oriVector =
+    {
+        Position(0, 0, 0),  // None
+        Position(0, 0, 1),  // Up
+        Position(0, 1, 0),  // Front
+        Position(1, 0, 0),  // Right
+        Position(0, 0,-1),  // Down
+        Position(0, -1, 0), // Back
+        Position(-1, 0, 0), // Left
+        Position()          // Invalid
+    };
+    auto idx = Index()+1;
+    return oriVector[idx];
 }
 
 
@@ -243,24 +258,22 @@ double Orientation::Angle() const
 
 Orientation Orientation::Opposite() const
 {
-	return Orientation(Value(value^Negative));
+	return Orientation(Value(-value));
 }
 
 bool Orientation::IsPosititve() const
 {
-    return (value & Negative) == 0 && value != None;
+    return value > Value::None;
 }
 
 bool Orientation::IsNegative() const
 {
-    return (value & Negative) != 0 && value != None;
+    return value < Value::None;
 }
 
 bool Orientation::IsOpposite(Orientation other) const
 {
-	if ((other.value & Plane) != (value & Plane))
-		return false;
-	return (other.value & Negative) != (value & Negative);
+	return bool(*this) && *this == -other;
 }
 
 bool Orientation::IsClockwise(Orientation to) const
@@ -279,24 +292,38 @@ bool Orientation::IsCounterClockwise(Orientation to) const
 
 bool Orientation::IsPerpendicular(Orientation other) const
 {
-    return ((!IsNone()) && (!other.IsNone()) &&
-        (value&Value::Axes) != (other.value&Value::Axes));
+    auto axis = Axis();
+    auto otherAxis = other.Axis();
+    if (!axis || !otherAxis)
+        return false;
+    return axis != otherAxis;
 }
 
 Orientation Orientation::Perpendicular(Orientation other) const
 {
-    if (IsParallel(other))
-        throw std::runtime_error("Can't determine one perpendicular axis to a parallel axis");
-    if ((this->IsNone()) || (other.IsNone()))
-        throw std::runtime_error("Can't determine an axis perpendicular to None");
-    auto perpendicularAxis = Value::Axes & ~ (value | other.value);
-    return Orientation(perpendicularAxis);
+    auto axis = Axis();
+    auto otherAxis = other.Axis();
+    if (!axis)
+        return axis;
+    if (!otherAxis)
+        return otherAxis;
+    static constexpr Orientation::Value perpendicular[4][4]=
+    {
+        // Z                  Y                   X
+        { Orientation::None,  Orientation::XAxis, Orientation::YAxis }, // Z
+        { Orientation::XAxis, Orientation::None,  Orientation::ZAxis }, // Y
+        { Orientation::YAxis, Orientation::ZAxis, Orientation::None  }  // X
+    };
+    return Orientation(perpendicular[axis.Index()][otherAxis.Index()]);
 }
 
 bool Orientation::IsParallel(Orientation other) const
 {
-    return ((!IsNone()) && (!other.IsNone()) &&
-        (value&Value::Axes) == (other.value&Value::Axes));
+    auto axis = Axis();
+    auto otherAxis = other.Axis();
+    if (!axis || !otherAxis)
+        return false;
+    return axis == otherAxis;
 }
 
 HalfPiAngle Orientation::HalfPiDeltaTo(Orientation to) const
@@ -312,17 +339,18 @@ HalfPiAngle Orientation::HalfPiDeltaTo(Orientation to) const
 
 bool Orientation::IsVertical() const
 {
-	return 	(value&Vertical);
+    return Axis().IsZ();
 }
 
 bool Orientation::IsHorizontal() const
 {
-	return (value&Horizontal);
+	auto axis = Axis();
+    return axis.IsX() || axis.IsY();
 }
 
 Orientation Orientation::Axis() const
 {
-    return Orientation(value&Value::Axes);
+    return Orientation(Value(std::abs(value)));
 }
 
 Orientation::operator bool() const
@@ -332,53 +360,38 @@ Orientation::operator bool() const
 
 bool Orientation::IsX() const
 {
-    return (value & Value::XAxis);
+    return std::abs(value) == Value::XAxis;
 }
 
 bool Orientation::IsY() const
 {
-    return (value & Value::YAxis);
+    return std::abs(value) == Value::YAxis;
 }
 
 bool Orientation::IsZ() const
 {
-    return (value & Value::ZAxis);
-}
-
-
-bool Orientation::IsValid() const
-{
-    int axes = int(IsX()) + int(IsY()) + int(IsZ());
-    if (axes==0)
-    {
-        return !IsNegative();
-    }
-    else
-    {
-        return axes = 1;
-    }
+    return std::abs(value) == Value::ZAxis;
 }
 
 int Orientation::X() const
 {
-    return vector[value].x;
+    return GetVector().x;
 }
 
 int Orientation::Y() const
 {
-    return vector[value].y;
+    return GetVector().y;
 }
 
 int Orientation::Z() const
 {
-    return vector[value].z;
+    return GetVector().z;
 }
 
 Orientation Orientation::Gravity()
 {
     return Orientation(Down);
 }
-
 
 Orientation Orientation::Turn(Orientation turn) const
 {
@@ -405,26 +418,32 @@ Orientation Orientation::Turn(Orientation turn) const
 	}
 }
 
-std::string Orientation::AbsoluteDescription() const
+std::string_view Orientation::Description() const
 {
-    auto it = description.find(value);
-    if (it==description.end())
-        return "<unknown orientation>";
-    else
-        return std::string(it->second);
+	static const std::array<std::string_view, 8> description =
+    {
+        "",
+        "Up",
+        "Front",
+        "Right",
+        "Down",
+        "Back",
+        "Left",
+        "Invalid"
+    };
+
+
+    return description[Index() + 1];
 }
 
 bool Orientation::IsNone() const
 {
-    return value <= Orientation::Negative;
+    return value == Value::None;
 }
 
 bool Orientation::operator==(Orientation other) const
 {
-    if (IsNone())
-        return other.IsNone();
-    else
-        return value == other.value;
+    return value == other.value;
 }
 
 bool Orientation::operator<(Orientation other) const
@@ -441,36 +460,21 @@ std::map<Orientation::Value, HalfPiAngle> Orientation::half_pi_angle=
 	{ Orientation::Value::Left, HalfPiAngle(1) }
 };
 
-std::map<Orientation::Value, std::string_view> Orientation::description =
-{
-    { Orientation::Value::None, "" },
-    { Orientation::Value::Negative, "-" },
-    { Orientation::Value::Front, "Front" },
-    { Orientation::Value::Right, "Right" },
-    { Orientation::Value::Horizontal, "Horizontal" },
-	{ Orientation::Value::Back, "Back" } ,
-	{ Orientation::Value::Left, "Left" },
-	{ Orientation::Value::Up, "Up" } ,
-	{ Orientation::Value::Down, "Down" },
-    { Orientation::Value::Vertical, "Vertical" }
-};
-
-
 std::ostream& operator<<(std::ostream& os, Orientation dir)
 {
-    os << dir.AbsoluteDescription().c_str();
+    os << dir.Description();
     return os;
 }
 
 Orientations Orientations::none(0);
 
 Orientations Orientations::all =
-    Orientation::front |
-    Orientation::back |
-    Orientation::left |
-    Orientation::right |
     Orientation::up |
-    Orientation::down;
+    Orientation::front |
+    Orientation::right |
+    Orientation::down |
+    Orientation::back |
+    Orientation::left;
 
 Orientations::Orientations() :
     Orientations(0)
@@ -511,7 +515,7 @@ Orientations::Orientations(const Engine::Position& v) :
 
 Orientations& Orientations::operator|=(Orientation dir)
 {
-    flags |= 1 << dir.Id();
+    flags |= 1 << (dir.Index()+1);
     return *this;
 }
 
@@ -522,7 +526,7 @@ bool Orientations::operator==(Orientations other) const
 
 bool Orientations::operator[](Orientation dir) const
 {
-    return (flags & (1 << dir.Id())) != 0;
+    return (flags & (1 << (dir.Index()+1))) != 0;
 }
 
 bool Orientations::empty() const
@@ -575,7 +579,7 @@ bool Orientations::iterator::operator!=(const Orientations::iterator& other) con
 
 Orientations::iterator::value_type Orientations::iterator::operator*() const
 {
-    return Orientation(uint8_t(bit));
+    return Orientation(bit-1);
 }
 
 Orientations::iterator Orientations::begin() const

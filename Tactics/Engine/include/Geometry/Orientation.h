@@ -31,12 +31,13 @@ class Orientation
 public:
 	Orientation();
     Orientation(int x, int y, int z);
-    explicit Orientation(uint8_t id);
+
     explicit Orientation(const Position& vector);
     Position GetVector() const;
     double Surface(const Vector& grid) const;  // in m^2
     double Angle() const;
 	Orientation Opposite() const;
+    Orientation operator-() const { return Opposite(); }
     bool IsPosititve() const;
     bool IsNegative() const;
     bool IsOpposite(Orientation other) const;
@@ -53,7 +54,6 @@ public:
     bool IsX() const;
     bool IsY() const;
     bool IsZ() const;
-    bool IsValid() const;
 
     int X() const;
     int Y() const;
@@ -61,38 +61,39 @@ public:
 
 	static Orientation Gravity();
 	Orientation Turn(Orientation turn) const;
-    std::string AbsoluteDescription() const;
+    std::string_view Description() const;
 
-    uint8_t Id() const;
+    int Index() const;     // Index into Orientations::all, None = -1
 
     bool IsNone() const;    // operator bool leads to implicit conversion confusion with operator==
     bool operator==(Orientation other) const;
     bool operator!=(Orientation other) const { return !((*this) == other); }
     bool operator<(Orientation other) const;
 
+
 	static const Orientation none;
 protected:
-	enum Value
+	enum Value : int
 	{
 		None = 0,
-		Negative = 1,
+
+        ZAxis = 1,
         YAxis = 2,
-        Front = YAxis,   // defined before xaxis for debugger
-		Back = Front | Negative,
+        XAxis = 3,
 
-        XAxis = 4,
-        Right = XAxis,
-		Left = Right | Negative,
-		Horizontal = (XAxis | YAxis),
-
-        ZAxis = 8,
         Up = ZAxis,
-		Down = ZAxis | Negative,
-		Vertical = ZAxis,
-		Plane = Vertical | Horizontal,
-        Axes = XAxis | YAxis | ZAxis,
-        Invalid
+        Down = -ZAxis,
+
+        Front = YAxis,
+		Back = -YAxis,
+
+        Right = XAxis,
+		Left = -XAxis,
+
+        Invalid = XAxis+1,
+        MinValid = -Invalid
 	};
+
 public:
     static const Orientation front;
     static const Orientation back;
@@ -105,15 +106,17 @@ protected:
     static std::array<Orientation, 4> horizontal;
     static std::array<Orientation, 6> all;
     static std::array<Orientation, 3> positive;
-	Orientation(Value value);
+
+    friend class Orientations;
+	explicit Orientation(Value value);
+    explicit Orientation(int index);
+
 	Value value;
 	HalfPiAngle HalfPiDeltaTo(Orientation other) const;
 	static Value From(const Engine::Position& vector);
 	static Value From(HalfPiAngle angle);
 
-	static std::map<Value, std::string_view> description;
-    static std::array<Engine::Position,10> vector;
-	static std::map<Value, HalfPiAngle> half_pi_angle;
+    static std::map<Value, HalfPiAngle> half_pi_angle;
 };
 
 std::ostream& operator<<(std::ostream& os, Orientation dir);

@@ -99,6 +99,7 @@ std::pair<Orientation, double> AABB::NamedIntersection(const Line& line) const
         return std::make_pair(Orientation::none, std::numeric_limits<double>::infinity());
     }
 
+    // TODO rewrite this horror show with for(Directions::all ) { Plane[dir].intersect and bla };
     double coefficients[]{
         ComputeCoefficient(line.o.z, z.begin, V.z, true),
         ComputeCoefficient(line.o.y, y.begin, V.y, true),
@@ -145,7 +146,17 @@ std::pair<Orientation, double> AABB::NamedIntersection(const Line& line) const
 
 Range<double> AABB::Intersection(const Line& line) const
 {
+
     Vector V(line);
+    // Compute the factors f of line vector v before it hits all of the planes of the AABB
+    Range<double> f[Orientations::all.size()];
+    for(auto ori:Orientations::all) {
+        f[ori.Index()] = Side(ori).Intersection(line);
+    }
+
+
+    return f[0];
+/*
     if (std::abs(V.x) <= std::numeric_limits<double>::epsilon() && !x[line.o.x]) {
         return Range<double>::empty();
     }
@@ -155,6 +166,8 @@ Range<double> AABB::Intersection(const Line& line) const
     if (std::abs(V.z) <= std::numeric_limits<double>::epsilon() && !z[line.o.z]) {
         return Range<double>::empty();
     }
+
+    // TODO rewrite this too with axis aligned planes along all orientations
 
     double intersections[]{
         ComputeCoefficient(line.o.x, x.end, V.x, false),
@@ -181,6 +194,7 @@ Range<double> AABB::Intersection(const Line& line) const
             enter = intersect;  // enter at the smallest positive (intersect from front of plane)
     }
     return Range<double>(enter * line.Length(), leave * line.Length());
+*/
 }
 
 

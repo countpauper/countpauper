@@ -38,7 +38,7 @@
                         "request": "launch",
                         "program": "${cmake.testProgram}",
                         "args": [ "${cmake.testArgs}" ],
-                },
+                },      
                 {
                         "name": "Python Debugger: Current File",
                         "type": "debugpy",

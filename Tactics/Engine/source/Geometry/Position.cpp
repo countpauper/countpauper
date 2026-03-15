@@ -5,13 +5,7 @@
 namespace Engine
 {
 
-    Position::Position() : x(0), y(0), z(0)
-    {
-    }
 
-    Position::Position(int x, int y, int z) : x(x), y(y), z(z)
-    {
-    }
 
     unsigned Position::ManDistance(Position other) const
     {
@@ -43,10 +37,6 @@ namespace Engine
         y -= delta.y;
         z -= delta.z;
         return *this;
-    }
-    Position::operator bool() const
-    {
-        return x != 0 || y != 0 || z != 0;
     }
 
     Position operator+(Position a, Position b)

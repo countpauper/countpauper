@@ -5,17 +5,19 @@ namespace Engine
 {
     struct Position
     {
-        Position();
-        Position(int x, int y, int z=0);
+        constexpr Position() : x(0), y(0), z(0) { }
+        constexpr Position(int x, int y, int z=0) : x(x), y(y), z(z) { }
+
         int x;
         int y;
         int z;
+
         unsigned ManDistance(Position other) const;
         float Distance(Position other) const;
         float Size() const;
         Position& operator+=(Position delta);
         Position& operator-=(Position delta);
-        explicit operator bool() const;
+        explicit constexpr operator bool() const { return  x != 0 || y != 0 || z != 0; }
     };
 
 	bool operator==(Position a, Position b);
