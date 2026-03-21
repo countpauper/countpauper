@@ -39,7 +39,7 @@ TEST(Triangle, Distance)
 
     // right hand ccw (like default opengl): triangle is facing -z axis
     Triangle xyTriangle(Coordinate(1, 4, 0), Coordinate(3, 0, 0), Coordinate(1, 0, 0));
-    EXPECT_LT(xyTriangle.Normal().z, 0);
+    EXPECT_LT(xyTriangle.Normal().Z(), 0);
     EXPECT_EQ(1, xyTriangle.Distance(Coordinate::origin)); // near first vertex
     EXPECT_EQ(3, xyTriangle.Distance(Coordinate(3, 0, -3))); // near second vertex, but in front
     EXPECT_EQ(2, xyTriangle.Distance(Coordinate(1, 6, 0))); // near third vertex
@@ -52,7 +52,7 @@ TEST(Triangle, Distance)
 
     // triangle is facing +y axis
     Triangle xzTriangle(Coordinate::origin, Coordinate(0, 0, 3), Coordinate(2, 0, 1));
-    EXPECT_GT(xzTriangle.Normal().y, 0);
+    EXPECT_GT(xzTriangle.Normal().Y(), 0);
     EXPECT_EQ(-1, xzTriangle.Distance(Coordinate(0, -1, 0))); // behind first vertex
     EXPECT_EQ(1, xzTriangle.Distance(Coordinate(3, 0, 1))); // in front of third vertex
     EXPECT_EQ(0, xzTriangle.Distance(Coordinate(0, 0, 2.5))); // on first edge

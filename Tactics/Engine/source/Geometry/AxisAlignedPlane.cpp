@@ -36,11 +36,11 @@ double AxisAlignedPlane::Distance(const Coordinate& c) const
 {
     double delta;
     if (axis.IsX())
-        delta = c.x - d;
+        delta = c.X() - d;
     else if (axis.IsY())
-        delta = c.y - d;
+        delta = c.Y() - d;
     else if (axis.IsZ())
-        delta = c.z - d;
+        delta = c.Z() - d;
     else
         return std::numeric_limits<double>::quiet_NaN();
     if (axis.IsNegative())
@@ -55,9 +55,9 @@ Coordinate AxisAlignedPlane::Project(const Coordinate& c) const
         throw std::runtime_error("Can't project a coordinate on a null plane.");
     auto v = axis.GetVector();
     return Coordinate(
-        v.x ? d : c.x,
-        v.y ? d : c.y,
-        v.z ? d : c.z
+        v.x ? d : c.X(),
+        v.y ? d : c.Y(),
+        v.z ? d : c.Z()
     );
 }
 
@@ -68,32 +68,32 @@ bool AxisAlignedPlane::Above(const Coordinate& c) const
 
 Range<double> AxisAlignedPlane::Intersection(const Line& line) const
 {
+    static constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
     double delta, dv;
     if (axis.IsX())
     {
-        delta = (d - line.o.x);
-        dv = line.v.x;
+        delta = (d - line.o.X());
+        dv = line.v.X();
     }
     else if (axis.IsY())
     {
-        delta = (d - line.o.y);
-        dv = line.v.y;
+        delta = (d - line.o.Y());
+        dv = line.v.Y();
     }
     else if (axis.IsZ())
     {
-        delta = (d - line.o.z);
-        dv = line.v.z;
+        delta = (d - line.o.Z());
+        dv = line.v.Z();
     }
     else
-        return Range<double>::empty();
+        return Range<double>(NaN,NaN);
+    if (dv == 0)
+        return Range<double>(std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity());
 
-    if (dv==0)
-        return Range<double>::empty();
-
-    if (axis.IsNegative() != std::signbit(delta))
-        return Range<double>(delta/dv, std::numeric_limits<double>::quiet_NaN());
+    if (axis.IsNegative() != std::signbit(dv))
+        return Range<double>(delta/dv, NaN);
     else
-        return Range<double>(std::numeric_limits<double>::quiet_NaN(), delta/dv);
+        return Range<double>(NaN, delta/dv);
 }
 
 

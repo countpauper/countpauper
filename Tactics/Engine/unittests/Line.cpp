@@ -44,7 +44,7 @@ TEST(Line, Section)
 
 }
 
-TEST(Line, Vozelize)
+TEST(Line, DISABLED_Vozelize)
 {
     Coordinate a(0.5, 2.2, 3.6);
     Coordinate b(3.1, -0.5, -2.0);

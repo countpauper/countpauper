@@ -1,6 +1,7 @@
 #include "Geometry/Coordinate.h"
 #include "Geometry/Vector.h"
 #include "Geometry/Matrix.h"
+#include "Geometry/Orientation.h"
 #include "Utility/from_string.h"
 #include "Utility/String.h"
 #include <GL/gl.h>
@@ -12,6 +13,17 @@ namespace Engine
 
 
 
+double Coordinate::Axis(const Orientation& axis) const
+{
+    if (axis.IsX())
+        return X();
+    if (axis.IsY())
+        return Y();
+    if (axis.IsZ())
+        return Z();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
 
 double Coordinate::Distance(Coordinate other) const
 {
@@ -20,17 +32,17 @@ double Coordinate::Distance(Coordinate other) const
 
 Coordinate& Coordinate::operator+=(Vector v)
 {
-    x += v.x;
-    y += v.y;
-    z += v.z;
+    x += v.X();
+    y += v.Y();
+    z += v.Z();
     return *this;
 }
 
 Coordinate& Coordinate::operator-=(Vector v)
 {
-    x -= v.x;
-    y -= v.y;
-    z -= v.z;
+    x -= v.X();
+    y -= v.Y();
+    z -= v.Z();
     return *this;
 }
 
@@ -77,17 +89,19 @@ void Coordinate::Render() const
 
 Coordinate operator*(const Matrix& m, Coordinate v)
 {
-    double w = v.x * m[0][3] + v.y * m[1][3] + v.z * m[2][3] + m[3][3];
+    auto [vx, vy, vz] = v.Coefficients();
+
+    double w = vx * m[0][3] + vy * m[1][3] + vz * m[2][3] + m[3][3];
     return Coordinate(
-        (v.x * m[0][0] + v.y * m[1][0] + v.z * m[2][0] + m[3][0]) / w,
-        (v.x * m[0][1] + v.y * m[1][1] + v.z * m[2][1] + m[3][1]) / w,
-        (v.x * m[0][2] + v.y * m[1][2] + v.z * m[2][2] + m[3][2]) / w
+        (vx * m[0][0] + vy * m[1][0] + vz * m[2][0] + m[3][0]) / w,
+        (vx * m[0][1] + vy * m[1][1] + vz * m[2][1] + m[3][1]) / w,
+        (vx * m[0][2] + vy * m[1][2] + vz * m[2][2] + m[3][2]) / w
     );
 }
 
 std::ostream& operator<<(std::ostream& s, Coordinate coordinate)
 {
-    s << "(" << coordinate.x << "," << coordinate.y << "," << coordinate.z << ")";
+    s << "(" << coordinate.X() << "," << coordinate.Y() << "," << coordinate.Z() << ")";
     return s;
 }
 
@@ -101,18 +115,20 @@ std::istream& operator>>(std::istream& s, Coordinate& coordinate)
     auto value_strings= Split(str, ',');
     if (value_strings.size()>3)
         throw std::runtime_error("Invalid vector format, too many dimensions");
+    double x,y,z;
     if (value_strings.size() >= 1)
-        coordinate.x = from_string<double>(value_strings[0]);
+        x = from_string<double>(value_strings[0]);
     else
-        coordinate.x = 0;
+        x = 0;
     if (value_strings.size() >= 2)
-        coordinate.y = from_string<double>(value_strings[1]);
+        y = from_string<double>(value_strings[1]);
     else
-        coordinate.y = 0;
+        y = 0;
     if (value_strings.size() >= 3)
-        coordinate.z = from_string<double>(value_strings[2]);
+        z = from_string<double>(value_strings[2]);
     else
-        coordinate.z = 0;
+        z = 0;
+    coordinate = Coordinate(x,y,z);
     return s;
 }
 

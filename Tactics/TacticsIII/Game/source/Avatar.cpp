@@ -80,7 +80,7 @@ void Avatar::Select(bool on)
 void Avatar::Move(const World& world, Engine::Position destination)
 {
     coordinate = world.GetMap().GroundCoord(destination);
-    creature.SetPosition({destination.x, destination.y, coordinate.z});
+    creature.SetPosition({destination.x, destination.y, coordinate.Z()});
 }
 
 const Engine::Object& Avatar::GetAppearance() const
@@ -138,7 +138,7 @@ Engine::Coordinate Avatar::GetCoordinate() const
 Engine::Quaternion Avatar::GetOrientation() const
 {
     if (creature.Is<Downed>())
-        return Engine::Quaternion(Engine::Vector::Y, Engine::PI/2);
+        return Engine::Quaternion(Engine::Vector::YAxis, Engine::PI/2);
     else    // TODO: add a facing here
         return Engine::Quaternion::Identity;
 }

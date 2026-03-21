@@ -4,15 +4,16 @@
 #include "Geometry/Plane.h"
 #include "Geometry/Matrix.h"
 #include "Geometry/Quaternion.h"
+#include "Geometry/Orientation.h"
 
 namespace Engine
 {
 
 
 Vector::Vector(Coordinate c) :
-    x(c.x),
-    y(c.y),
-    z(c.z)
+    x(c.X()),
+    y(c.Y()),
+    z(c.Z())
 {
 }
 
@@ -40,6 +41,18 @@ Vector::operator bool() const
 double Vector::Length() const
 {
     return sqrt(LengthSquared());
+}
+
+double Vector::Axis(const Orientation& axis) const
+{
+    if (axis.IsX())
+        return X();
+    if (axis.IsY())
+        return Y();
+    if (axis.IsZ())
+        return Z();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
 }
 
 double Vector::LengthSquared() const
@@ -93,17 +106,17 @@ Vector& Vector::operator/=(double divisor)
 
 Vector& Vector::operator+=(Vector v)
 {
-    x += v.x;
-    y += v.y;
-    z += v.z;
+    x += v.X();
+    y += v.Y();
+    z += v.Z();
     return *this;
 }
 
 Vector& Vector::operator-=(Vector v)
 {
-    x -= v.x;
-    y -= v.y;
-    z -= v.z;
+    x -= v.X();
+    y -= v.Y();
+    z -= v.Z();
     return *this;
 }
 
@@ -126,12 +139,12 @@ Vector Vector::operator-() const
 
 double Vector::Dot(Vector v) const
 {
-    return x * v.x + y * v.y + z * v.z;
+    return x * v.X() + y * v.Y() + z * v.Z();
 }
 
 std::ostream& operator<<(std::ostream& s, Vector v)
 {
-    Coordinate c(v.x, v.y, v.z);
+    Coordinate c(v.X(), v.Y(), v.Z());
     return s << c;
 }
 
@@ -139,7 +152,7 @@ std::istream& operator>>(std::istream& s, Vector& v)
 {
     Coordinate c;
     s >> c;
-    v = Vector(c.x, c.y, c.z);
+    v = Vector(c.X(), c.Y(), c.Z());
     return s;
 }
 
@@ -166,16 +179,17 @@ Vector operator-(Vector a, Vector b)
 
 Vector operator-(Coordinate a, Coordinate b)
 {
-    return Vector(a.x - b.x, a.y - b.y, a.z - b.z);
+    return Vector(a.X() - b.X(), a.Y() - b.Y(), a.Z() - b.Z());
 }
 
 Vector operator*(const Matrix& m, Vector v)
 {
-    double w = v.x * m[0][3] + v.y * m[1][3] + v.z * m[2][3] + m[3][3];
+    auto [vx, vy, vz ] = v.Coefficients();
+    double w = vx * m[0][3] + vy * m[1][3] + vz * m[2][3] + m[3][3];
     return Vector(
-        v.x * m[0][0] + v.y * m[1][0] + v.z * m[2][0] + m[3][0],
-        v.x * m[0][1] + v.y * m[1][1] + v.z * m[2][1] + m[3][1],
-        v.x * m[0][2] + v.y * m[1][2] + v.z * m[2][2] + m[3][2]
+        vx * m[0][0] + vy * m[1][0] + vz * m[2][0] + m[3][0],
+        vx * m[0][1] + vy * m[1][1] + vz * m[2][1] + m[3][1],
+        vx * m[0][2] + vy * m[1][2] + vz * m[2][2] + m[3][2]
     ) / w;
 }
 

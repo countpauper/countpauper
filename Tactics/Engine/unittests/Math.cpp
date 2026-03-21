@@ -165,7 +165,7 @@ TEST(Math, RungeKuttaVector)
 {
     auto df = [](double, const Vector& y)
     {
-        return Vector(y.x / y.z, y.y / y.z, 0.1);
+        return Vector(y.X() / y.Z(), y.Y() / y.Z(), 0.1);
     };
     EXPECT_3D_NEAR(RungeKutta<Vector>(0, Vector(1, 2, 3), 0.5, df), Vector(1.179736, 2.359472, 3.05), 1e-3);
 }

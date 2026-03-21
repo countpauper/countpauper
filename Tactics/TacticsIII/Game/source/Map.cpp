@@ -232,12 +232,12 @@ void Map::AddQuadToMesh(Engine::Coordinate topleft, const Material& mat)
         topleft + Engine::Vector(1,1,0),
         topleft + Engine::Vector(0,1,0)
     );
-    float brightness = topleft.z / float(size.z);
+    float brightness = topleft.Z() / float(size.z);
     brightness = 0.2 + brightness*0.8;
     auto groundColor = mat.color;
     auto vertexColor = Engine::Lerp(Engine::RGBA::black, groundColor, brightness);
     quad.SetColor(vertexColor);
-    quad.SetName(Index(Engine::Position(topleft.x, topleft.y, topleft.z)));
+    quad.SetName(Index(Engine::Position(topleft.X(), topleft.Y(), topleft.Z())));
     mesh += quad;
 
     /* TODO sides

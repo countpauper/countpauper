@@ -50,7 +50,7 @@ namespace Engine
 
     double Plane::NormalDistance(const Coordinate& c) const
     {
-        return normal.x * c.x + normal.y * c.y + normal.z * c.z + d;
+        return normal.X() * c.X() + normal.Y() * c.Y() + normal.Z() * c.Z() + d;
     }
 
     bool Plane::Above(const Coordinate& c) const
@@ -62,37 +62,37 @@ namespace Engine
     {
         // if the normal is perpendicular to an axis, then it is limited
         auto result = AABB::infinity;
-        if (normal.y == 0 && normal.z == 0)
+        if (normal.Y() == 0 && normal.Z() == 0)
         {   // perendicular to x
-            if (normal.x < 0)
+            if (normal.X() < 0)
             {
-                result.x.begin = -d / normal.x;
+                result.x.begin = -d / normal.X();
             }
             else
             {
-                result.x.end = -d / normal.x;
+                result.x.end = -d / normal.X();
             }
         }
-        else if (normal.x == 0 && normal.z == 0)
+        else if (normal.X() == 0 && normal.Z() == 0)
         {   // perpendicular to y
-            if (normal.y < 0)
+            if (normal.Y() < 0)
             {
-                result.y.begin = -d / normal.y;
+                result.y.begin = -d / normal.Y();
             }
             else
             {
-                result.y.end = -d / normal.y;
+                result.y.end = -d / normal.Y();
             }
         }
-        else if (normal.x == 0 && normal.y == 0)
+        else if (normal.X() == 0 && normal.Y() == 0)
         {   // perpendicular to z
-            if (normal.z < 0)
+            if (normal.Z() < 0)
             {
-                result.z.begin = -d / normal.z;
+                result.z.begin = -d / normal.Z();
             }
             else
             {
-                result.z.end = -d / normal.z;
+                result.z.end = -d / normal.Z();
             }
         }
         return result;

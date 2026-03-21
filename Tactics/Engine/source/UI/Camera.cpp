@@ -46,19 +46,18 @@ namespace Engine
         auto vector = target - position;
         if (vector)
         {
-            auto [yaw, pitch] = FaceYawPitch(vector.Normal(), vertical.z == 1);
-            rotation.x = pitch;
-            if (vertical.z)
+            auto [yaw, pitch] = FaceYawPitch(vector.Normal(), vertical.Z() == 1);
+            if (vertical.Z())
             {
-                rotation.z = yaw;
+                rotation = Coordinate(pitch, 0, yaw);
             }
             else
             {
-                assert(!vertical.x);
-                rotation.y = yaw;
+                assert(!vertical.X());
+                rotation = Coordinate(pitch, yaw, yaw);
             }
             Logging::Log<UiLogging, Logging::Debug>("Face (%.3f, %.3f, %.3f) yaw=%.1f, pitch=%.1f, distance %.3f",
-                vector.x, vector.y, vector.z,
+                vector.X(), vector.Y(), vector.Z(),
                 Rad2Deg(yaw), Rad2Deg(pitch), vector.Length());
         }
         PostRedraw();
@@ -90,9 +89,9 @@ namespace Engine
         // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/building-basic-perspective-projection-matrix
 
         Matrix m = Matrix::Perspective(n, f) * Matrix::Scale(Vector(scale, scale, 1));
-        m *= Quaternion(Vector::X, rotation.x);
-        m *= Quaternion(Vector::Y, rotation.y);
-        m *= Quaternion(Vector::Z, rotation.z);
+        m *= Quaternion(Vector::XAxis, rotation.X());
+        m *= Quaternion(Vector::YAxis, rotation.Y());
+        m *= Quaternion(Vector::ZAxis, rotation.Z());
         m *= Matrix::Translation(-Vector(position));
         return m;
     }
@@ -119,7 +118,7 @@ namespace Engine
     {
         Matrix m = Matrix::Scale({zoom, zoom, zoom});
         m*= Matrix::Translation(-Vector(position));
-        m *= Quaternion(Vector::X, M_PI/-2);
+        m *= Quaternion(Vector::XAxis, M_PI/-2);
         return m; // untested rewrite
     }
 
@@ -171,22 +170,22 @@ namespace Engine
             {
                 if (key->code == GLUT_KEY_UP)
                 {
-                    Vector dir = Vector(sin(rotation.z), cos(rotation.z), 0);
+                    Vector dir = Vector(sin(rotation.Z()), cos(rotation.Z()), 0);
                     Move(dir);
                 }
                 else if (key->code == GLUT_KEY_DOWN)
                 {
-                    Vector dir = -Vector(sin(-rotation.z), cos(-rotation.z), 0);
+                    Vector dir = -Vector(sin(-rotation.Z()), cos(-rotation.Z()), 0);
                     Move(dir);
                 }
                 else if (key->code == GLUT_KEY_RIGHT)
                 {
-                    Vector dir = Vector(cos(-rotation.z), sin(-rotation.z), 0);
+                    Vector dir = Vector(cos(-rotation.Z()), sin(-rotation.Z()), 0);
                     Move(dir);
                 }
                 else if (key->code == GLUT_KEY_LEFT)
                 {
-                    Vector dir = -Vector(cos(-rotation.z), sin(-rotation.z), 0);
+                    Vector dir = -Vector(cos(-rotation.Z()), sin(-rotation.Z()), 0);
                     Move(dir);
                 }
                 else if (key->code == GLUT_KEY_PAGE_UP)
@@ -244,25 +243,25 @@ namespace Engine
 
             if (key->code == GLUT_KEY_UP)
             {
-                Vector dir = Vector(sin(rotation.z), cos(rotation.z), 0);
+                Vector dir = Vector(sin(rotation.Z()), cos(rotation.Z()), 0);
                 Move(dir);
                 Face(target);
             }
             else if (key->code == GLUT_KEY_DOWN)
             {
-                Vector dir = -Vector(sin(-rotation.z), cos(-rotation.z), 0);
+                Vector dir = -Vector(sin(-rotation.Z()), cos(-rotation.Z()), 0);
                 Move(dir);
                 Face(target);
             }
             else if (key->code == GLUT_KEY_RIGHT)
             {
-                Vector dir = Vector(cos(-rotation.z), sin(-rotation.z), 0);
+                Vector dir = Vector(cos(-rotation.Z()), sin(-rotation.Z()), 0);
                 Move(dir);
                 Face(target);
             }
             else if (key->code == GLUT_KEY_LEFT)
             {
-                Vector dir = -Vector(cos(-rotation.z), sin(-rotation.z), 0);
+                Vector dir = -Vector(cos(-rotation.Z()), sin(-rotation.Z()), 0);
                 Move(dir);
                 Face(target);
             }

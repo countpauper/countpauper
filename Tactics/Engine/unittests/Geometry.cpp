@@ -25,8 +25,8 @@ TEST(Geometry, Vector)
     EXPECT_EQ(Vector(2, -4, 0), Vector(1, -2, 0) * 2.0);
     EXPECT_EQ(Vector(1, -2, 0), Vector(2, -4, 0) / 2.0);
 
-    EXPECT_EQ(Vector::Z, Vector::X.Cross(Vector::Y));
-    EXPECT_GT(0.0, Vector(1, 1, 0).Cross(Vector(1, -1, 0)).z);
+    EXPECT_EQ(Vector::ZAxis, Vector::XAxis.Cross(Vector::YAxis));
+    EXPECT_GT(0.0, Vector(1, 1, 0).Cross(Vector(1, -1, 0)).Z());
     EXPECT_EQ(Vector(0, 0, -0.5), Vector(0.5, 0, 0).Cross(Vector(0, -1, 0)));
 }
 

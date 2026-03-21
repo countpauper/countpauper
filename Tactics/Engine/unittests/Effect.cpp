@@ -12,7 +12,7 @@ namespace Engine::Test
         ParticleEffect<Cloud> cloud(1);
         cloud.Tick(0);
         EXPECT_EQ(cloud.Count(), 1);
-        EXPECT_LE(cloud.Bounds().Extent().z, 2);
+        EXPECT_LE(cloud.Bounds().Extent().Z(), 2);
         cloud.Tick(0.5);
         EXPECT_GT(cloud.Bounds().z.Size(),0);
         cloud.Tick(0.6);

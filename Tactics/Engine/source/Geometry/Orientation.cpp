@@ -235,15 +235,15 @@ double Orientation::Surface(const Vector& grid) const
 {
     if (IsZ())
     {
-        return grid.x * grid.y;
+        return grid.X() * grid.Y();
     }
     else if (IsY())
     {
-        return grid.x * grid.z;
+        return grid.X() * grid.Z();
     }
     else
     {
-        return grid.y * grid.z;
+        return grid.Y() * grid.Z();
     }
 }
 
@@ -475,6 +475,11 @@ Orientations Orientations::all =
     Orientation::down |
     Orientation::back |
     Orientation::left;
+
+Orientations Orientations::axes =
+    Orientation::up |
+    Orientation::front |
+    Orientation::right;
 
 Orientations::Orientations() :
     Orientations(0)

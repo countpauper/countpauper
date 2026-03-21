@@ -45,9 +45,9 @@ namespace Engine
     template<class T>
     T TrilinearInterpolation(const T d[8], const Engine::Vector& v)
     {   // d is column major, ie (d[0,0,0], d[0,0,1], d[0,1,0] ... d[1,1,1])
-        auto x0 = BilinearInterpolation(d, v.y, v.z);
-        auto x1 = BilinearInterpolation(d + 4, v.y, v.z);
-        return Lerp(x0, x1, v.x);
+        auto x0 = BilinearInterpolation(d, v.Y(), v.Z());
+        auto x1 = BilinearInterpolation(d + 4, v.Y(), v.Z());
+        return Lerp(x0, x1, v.X());
     }
 
     // Logistic sigmoid 0...1 with f(0)=0.5

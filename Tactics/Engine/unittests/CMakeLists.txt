@@ -31,7 +31,6 @@ target_link_libraries(${EXE_NAME} PUBLIC
     gmock_main
 )
 
-
 add_test(
         NAME ${PROJECT_NAME}
         COMMAND ${EXE_NAME}

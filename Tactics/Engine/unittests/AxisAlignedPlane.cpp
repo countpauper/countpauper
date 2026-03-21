@@ -18,7 +18,7 @@ TEST(AxisAlignedPlane, Null)
 TEST(AxisAlignedPlane, XY)
 {
     EXPECT_TRUE(AxisAlignedPlane::xy);
-    EXPECT_EQ(Plane(AxisAlignedPlane::xy), Plane(Coordinate::origin, Vector::X, Vector::Y));
+    EXPECT_EQ(Plane(AxisAlignedPlane::xy), Plane(Coordinate::origin, Vector::XAxis, Vector::YAxis));
     EXPECT_EQ(0, AxisAlignedPlane::xy.Distance(Coordinate::origin));
     EXPECT_DOUBLE_EQ(1, AxisAlignedPlane::xy.Distance(Coordinate(0, 0, 1)));
     EXPECT_DOUBLE_EQ(0, AxisAlignedPlane::xy.Distance(Coordinate(1, 1, 0)));
@@ -51,14 +51,15 @@ TEST(AxisAlignedPlane, XYIntersectsHalfLineFromBack)
 TEST(AxisAlignedPlane, XYDoesntIntersectParallelLine)
 {
     // Line parallel to the XY plane (same Z)
-    EXPECT_FALSE(AxisAlignedPlane::xy.Intersection(Line(Coordinate(0,1,2), Coordinate(1, 0, 2))));
+    auto i = AxisAlignedPlane::xy.Intersection(Line(Coordinate(0,1,2), Coordinate(1, 0, 2)));
+    EXPECT_FALSE(i) << i;
 }
 
 TEST(AxisAlignedPlane, XYIntersectsLineBehindOrigin)
 {
     // -4 -3 -2 -1  0  1  2
     //     B<-A      P->       Intersects behind A (negative) from behind the plane
-    EXPECT_EQ(AxisAlignedPlane::xy.Intersection(Line(Coordinate(0,1,-2), Vector(1, 0, -1))).end, -2);
+    EXPECT_EQ(AxisAlignedPlane::xy.Intersection(Line(Coordinate(0,1,-2), Vector(1, 0, -1))).begin, -2);
 }
 
 }

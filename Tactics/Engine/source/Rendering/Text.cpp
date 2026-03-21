@@ -52,7 +52,7 @@ namespace Engine
         auto pixel = Window::CurrentWindow()->PixelScale();
         pixel *= inverseScale;
 
-        float lineHeight = 24.0 * pixel.y;
+        float lineHeight = 24.0 * pixel.Y();
         //glDisable(GL_TEXTURE_2D);
         double y = 0;
         if (vertical_align == Align::bottom)

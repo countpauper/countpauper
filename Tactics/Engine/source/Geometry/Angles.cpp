@@ -38,15 +38,15 @@ namespace Engine
         if (yawAxisZ)
         {
             return std::make_pair(
-                atan2(direction.x, direction.y),
-                asin(direction.z)
+                atan2(direction.X(), direction.Y()),
+                asin(direction.Z())
             );
         }
         else
         {
             return std::make_pair(
-                atan2(direction.x, direction.z),
-                asin(-direction.y)
+                atan2(direction.X(), direction.Z()),
+                asin(-direction.Y())
             );
         }
     }

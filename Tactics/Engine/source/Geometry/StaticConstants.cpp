@@ -19,19 +19,19 @@ const IntBox IntBox::all(Range<int>(std::numeric_limits<int>::min(), std::numeri
 
 
 const Vector Vector::zero(0, 0, 0);
-const Vector Vector::X(1, 0, 0);
-const Vector Vector::Y(0, 1, 0);
-const Vector Vector::Z(0, 0, 1);
+const Vector Vector::XAxis(1, 0, 0);
+const Vector Vector::YAxis(0, 1, 0);
+const Vector Vector::ZAxis(0, 0, 1);
 
 const Quaternion Quaternion::Identity(0, 0, 0, 1);
 
 const Orientation Orientation::none{};
-const Orientation Orientation::front{Orientation::Front};
-const Orientation Orientation::back{Orientation::Back};
-const Orientation Orientation::left{Orientation::Left};
-const Orientation Orientation::right{Orientation::Right};
 const Orientation Orientation::up{Orientation::Up};
 const Orientation Orientation::down{Orientation::Down};
+const Orientation Orientation::front{Orientation::Front};
+const Orientation Orientation::back{Orientation::Back};
+const Orientation Orientation::right{Orientation::Right};
+const Orientation Orientation::left{Orientation::Left};
 
 const AxisAlignedPlane AxisAlignedPlane::null{Orientation::none, 0 };
 const AxisAlignedPlane AxisAlignedPlane::xy{Orientation::up, 0 };

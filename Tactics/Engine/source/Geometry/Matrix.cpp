@@ -24,10 +24,10 @@ Matrix::Matrix(std::initializer_list<double> v)
 }
 
 Matrix::Matrix(const Vector& x, const Vector& y, const Vector& z, const Vector& t) :
-    Matrix({ x.x, x.y, x.z, 0,
-        y.x, y.y, y.z, 0,
-        z.x, z.y, z.z, 0,
-        t.x, t.y, t.z, 1 })
+    Matrix({ x.X(), x.Y(), x.Z(), 0,
+        y.X(), y.Y(), y.Z(), 0,
+        z.X(), z.Y(), z.Z(), 0,
+        t.X(), t.Y(), t.Z(), 1 })
 {
 }
 
@@ -326,9 +326,9 @@ Vector Matrix::Translation() const
 
 Matrix& Matrix::SetTranslation(const Vector& translation)
 {
-    m[3][0] = translation.x;
-    m[3][1] = translation.y;
-    m[3][2] = translation.z;
+    m[3][0] = translation.X();
+    m[3][1] = translation.Y();
+    m[3][2] = translation.Z();
     return *this;
 }
 
@@ -358,9 +358,9 @@ Matrix Matrix::Scale(const Vector& scale)
 {
     Matrix matrix;
     memset(&matrix[0][0], 0, sizeof(matrix[0][0]) * 4 * 4);
-    matrix[0][0] = scale.x;
-    matrix[1][1] = scale.y;
-    matrix[2][2] = scale.z;
+    matrix[0][0] = scale.X();
+    matrix[1][1] = scale.Y();
+    matrix[2][2] = scale.Z();
     matrix[3][3] = 1;
     return matrix;
 }
@@ -401,9 +401,9 @@ Matrix Matrix::ZRot(double angle)
 Matrix Matrix::Translation(const Vector& vector)
 {
     Matrix matrix = Identity();
-    matrix[3][0] = vector.x;
-    matrix[3][1] = vector.y;
-    matrix[3][2] = vector.z;
+    matrix[3][0] = vector.X();
+    matrix[3][1] = vector.Y();
+    matrix[3][2] = vector.Z();
     return matrix;
 }
 

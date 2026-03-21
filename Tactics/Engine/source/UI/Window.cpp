@@ -165,9 +165,9 @@ Coordinate Window::Screen2View(int x, int y) const
     glutSetWindow(handle);
     Vector pixel = PixelScale();
     return Coordinate(
-        -1.0 + 2.0 * x * pixel.x,
-        1.0 + -2.0 * y * pixel.y,
-        0 * pixel.z
+        -1.0 + 2.0 * x * pixel.X(),
+        1.0 + -2.0 * y * pixel.Y(),
+        0 * pixel.Z()
     );
 }
 
@@ -191,7 +191,7 @@ void Window::OnMouse(int button, int state, int x, int y)
         }
         else
         {
-            Logging::Log<UiLogging, Logging::Info>("Selected nothing at %f, %f", viewPosition.x, viewPosition.y);
+            Logging::Log<UiLogging, Logging::Info>("Selected nothing at %f, %f", viewPosition.X(), viewPosition.Y());
         }
         app->bus.Post(ClickOn(prop, sub));
     }

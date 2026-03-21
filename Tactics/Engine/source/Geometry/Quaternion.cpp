@@ -23,9 +23,9 @@ Quaternion::Quaternion(const Vector& axis, double angle) :
     w(cos(angle/2))
 {
     double sinHalfAngle = sin(angle / 2);
-    x = axis.x * sinHalfAngle;
-    y = axis.y * sinHalfAngle;
-    z = axis.z * sinHalfAngle;
+    x = axis.X() * sinHalfAngle;
+    y = axis.Y() * sinHalfAngle;
+    z = axis.Z() * sinHalfAngle;
 }
 
 double Quaternion::SquareMagnitude() const
@@ -101,7 +101,7 @@ Quaternion Quaternion::Shortest(const Vector& a, const Vector& b)
         return Quaternion::Identity;
 
     auto cross = a.Cross(b);
-    return Quaternion{ cross.x, cross.y, cross.z, 1+dot }.Normalized();
+    return Quaternion{ cross.X(), cross.Y(), cross.Z(), 1+dot }.Normalized();
 }
 
 void Quaternion::Render() const
@@ -117,11 +117,12 @@ Vector operator*(const Quaternion& q, const Vector& v)
     double s = q.w;
     return u * 2.0 * u.Dot(v) + v * (s*s - u.Dot(u)) + u.Cross(v) * s * 2.0;
 */
+    auto [vx, vy, vz] = v.Coefficients();
 
     return Vector(
-        q.w * q.w*v.x   + 2 * q.y*q.w*v.z  - 2 * q.z*q.w*v.y + q.x * q.x*v.x     + 2 * q.y*q.x*v.y + 2 * q.z*q.x*v.z - q.z * q.z*v.x - q.y * q.y*v.x,
-        2 * q.x*q.y*v.x + q.y * q.y*v.y    + 2 * q.z*q.y*v.z + 2 * q.w*q.z*v.x   - q.z * q.z*v.y   + q.w * q.w*v.y   - 2 * q.x*q.w*v.z - q.x * q.x*v.y,
-        2 * q.x*q.z*v.x + 2 * q.y*q.z*v.y  + q.z * q.z*v.z   - 2 * q.w*q.y*v.x   - q.y * q.y*v.z   + 2 * q.w*q.x*v.y - q.x * q.x*v.z + q.w * q.w*v.z);
+        q.w * q.w*vx   + 2 * q.y*q.w*vz  - 2 * q.z*q.w*vy + q.x * q.x*vx     + 2 * q.y*q.x*vy + 2 * q.z*q.x*vz - q.z * q.z*vx - q.y * q.y*vx,
+        2 * q.x*q.y*vx + q.y * q.y*vy    + 2 * q.z*q.y*vz + 2 * q.w*q.z*vx   - q.z * q.z*vy   + q.w * q.w*vy   - 2 * q.x*q.w*vz - q.x * q.x*vy,
+        2 * q.x*q.z*vx + 2 * q.y*q.z*vy  + q.z * q.z*vz   - 2 * q.w*q.y*vx   - q.y * q.y*vz   + 2 * q.w*q.x*vy - q.x * q.x*vz + q.w * q.w*vz);
 }
 
 Quaternion operator*(const Quaternion& q1, const Quaternion& q2)

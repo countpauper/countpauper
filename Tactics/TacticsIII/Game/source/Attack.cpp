@@ -17,7 +17,7 @@ void Attack::Render() const
 {
     glColor3d(1.0, 1.0, 0.0);
     Engine::Line line(actor.GetAppearance().GetCoordinate(), target.GetAppearance().GetCoordinate());
-    line += Engine::Vector::Z;
+    line += Engine::Vector::ZAxis;
     line.Render();
 }
 

@@ -39,7 +39,6 @@ TEST(AABB, Include)
     EXPECT_TRUE((box | Coordinate(2, 2, 2))[Coordinate(1.5, 1.5, 1.5)]);
 }
 
-
 TEST(AABB, Clip)
 {
     AABB box(Coordinate::origin, Coordinate(1, 1, 1));
@@ -48,38 +47,97 @@ TEST(AABB, Clip)
     EXPECT_TRUE(box.Contains(box.Clip(Coordinate(-std::numeric_limits<double>::infinity(), 0.5, 10.0))));
 }
 
-TEST(AABB, Intersection)
+TEST(AABB, AlignedIntersection)
 {
     AABB box(Coordinate{0.5, 0.5, 0.5}, Coordinate{1.0, 1.0, 1.0});
     EXPECT_EQ( box.Intersection(Line(Coordinate{0.0, 0.75, 0.75}, Coordinate{1.25, 0.75, 0.75})),
-        Range(0.5, 1.0));
+        Range(0.4, 0.8));
     EXPECT_EQ(box.Intersection(Line(Coordinate{0.75, 0.75, 0.75}, Coordinate{1.25, 0.75, 0.75})),
-        Range(0.0, 0.25));
+        Range(-0.5, 0.5));
     EXPECT_EQ(box.Intersection(Line(Coordinate{1.25, 0.75, 0.75}, Coordinate{0.75, 0.75, 0.75})),
-        Range(0.25, 0.5));
+        Range(0.5, 1.5));
+}
+
+TEST(AABB, AlignedMissingIntersection)
+{
+    AABB box(Coordinate{0.5, 0.5, 0.5}, Coordinate{1.0, 1.0, 1.0});
     EXPECT_FALSE(box.Intersection(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.0, 0.0, 0.75})));
+    EXPECT_FALSE(box.Intersection(Line(Coordinate{0.75, 0.0, 1.2}, Coordinate{0.75, 1.0, 1.2})));
+    EXPECT_FALSE(box.Intersection(Line(Coordinate{0.0, 0.75, 0.0}, Coordinate{0.0, 0.75, 1.25})));
+}
+
+TEST(AABB, UnalignedIntersection)
+{
+/*
+       =|====
+       =|===/    Exit  = (4,6)  after 1 2/3th
+       =|==B=    B     = (2.5,3)
+       =|=/==    Entry = (1,1) after 1/3th of the line
+        |/
+       -|----------X-axis ----->
+        |A       A     = (0.25, 0)
+    -1  0
+*/
+    AABB box(Coordinate{-1.0, 1.0, 0.5}, Coordinate{4.0, 6.0, 1.0});
+    EXPECT_EQ( box.Intersection(Line(Coordinate{0.25, 0.0, 0.75}, Coordinate{2.5, 3.0, 0.75})),
+        Range(1.0/3, 5.0/3));
+
+}
+
+TEST(AABB, UnalignedMiss)
+{
+
+/*      |   /          Pass at 200% (3,4)
+        |  /
+        | /B           B = (2,1.5)
+     1  |/  ==
+       -|---==-------X-axis ----->
+        |A  ==        A = (0.0, 0)
+    -1  0
+*/
+
+    AABB box(Coordinate{ 1.0,-1.0, 0.5}, Coordinate{3.0, 1.0, 1.0});
+    auto miss = box.Intersection(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.5, 2.0, 0.75}));
+    EXPECT_FALSE( miss ) << miss;
+}
+
+TEST(AABB, NamedAlignedEntry)
+{
+    AABB box(Coordinate{0.5, 0.5, 0.5}, Coordinate{1.0, 1.0, 1.0});
+    EXPECT_EQ( box.Entry(Line(Coordinate{0.0, 0.75, 0.75}, Coordinate{1.25, 0.75, 0.75})),
+        std::make_pair(Orientation::left, 0.4));
+    EXPECT_EQ( box.Entry(Line(Coordinate{1.25, 0.75, 0.75}, Coordinate{0.75, 0.75, 0.75})),
+        std::make_pair(Orientation::right, 0.5));
+    EXPECT_EQ( box.Entry(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.25, 0.0, 0.75})),
+        std::make_pair(Orientation::none, std::numeric_limits<double>::infinity()));
+    EXPECT_EQ( box.Entry(Line(Coordinate{0.75, 0.75, 0.75}, Coordinate{0.75, 0.25, 0.75})),
+        std::make_pair(Orientation::front, -0.5));  // line start in box, this is where it entered if it's infinite.
 }
 
 
-TEST(AABB, NamedIntersection)
+TEST(AABB, NamedAlignedExit)
 {
     AABB box(Coordinate{0.5, 0.5, 0.5}, Coordinate{1.0, 1.0, 1.0});
-    EXPECT_EQ( box.NamedIntersection(Line(Coordinate{0.0, 0.75, 0.75}, Coordinate{1.25, 0.75, 0.75})),
-        std::make_pair(Orientation::left, 0.5));
-    EXPECT_EQ( box.NamedIntersection(Line(Coordinate{1.25, 0.75, 0.75}, Coordinate{0.75, 0.75, 0.75})),
-        std::make_pair(Orientation::right, 0.25));
-    EXPECT_EQ( box.NamedIntersection(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.25, 0.0, 0.75})),
+    EXPECT_EQ( box.Exit(Line(Coordinate{0.0, 0.75, 0.75}, Coordinate{1.25, 0.75, 0.75})),
+        std::make_pair(Orientation::right, 0.8));
+    EXPECT_EQ( box.Exit(Line(Coordinate{1.25, 0.75, 0.75}, Coordinate{0.75, 0.75, 0.75})),
+        std::make_pair(Orientation::left, 1.5));
+    EXPECT_EQ( box.Exit(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.25, 0.0, 0.75})),
         std::make_pair(Orientation::none, std::numeric_limits<double>::infinity()));
-    EXPECT_EQ( box.NamedIntersection(Line(Coordinate{0.75, 0.75, 0.75}, Coordinate{0.75, 0.00, 0.75})),
-        std::make_pair(Orientation::back, -0.25));
+    EXPECT_EQ( box.Exit(Line(Coordinate{0.75, 1.25, 0.75}, Coordinate{0.75, 1.75, 0.75})),
+        std::make_pair(Orientation::front, -0.5));  // line start on box, this is where it would exit if it's infinite.
+}
 
+TEST(AABB, NamedUnalignedEntry)
+{
+    AABB box(Coordinate{0.5, 0.5, 0.5}, Coordinate{1.0, 1.0, 1.0});
     auto diagonal = Line(Coordinate{0.0, 0.25, 0.25}, Coordinate{1.25, 1.0, 0.75});
-    auto diagonalHit = box.NamedIntersection(diagonal);
+    auto diagonalHit = box.Entry(diagonal);
     EXPECT_EQ(diagonalHit.first, Orientation::down);
     auto diagonalHitLocation = diagonal.Section(Range<double>(diagonalHit.second, 10.0)).A();
-    EXPECT_DOUBLE_EQ(diagonalHitLocation.z, box.z.begin);
-    EXPECT_TRUE(box.X()[diagonalHitLocation.x]);
-    EXPECT_TRUE(box.Y()[diagonalHitLocation.y]);
+    EXPECT_DOUBLE_EQ(diagonalHitLocation.Z(), box.z.begin);
+    EXPECT_TRUE(box.X()[diagonalHitLocation.X()]);
+    EXPECT_TRUE(box.Y()[diagonalHitLocation.Y()]);
 }
 
 TEST(AABB, Transform)

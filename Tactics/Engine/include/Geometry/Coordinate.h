@@ -5,16 +5,25 @@ namespace Engine
 
 struct Vector;
 struct Matrix;
-struct Coordinate final
+class Orientation;
+
+class Coordinate final
 {
+public:
     Coordinate() = default;
-    Coordinate(double x, double y, double z) :
+    constexpr Coordinate(double x, double y, double z) :
         x(x),
         y(y),
         z(z)
     {
     }
     double Distance(Coordinate other) const;
+
+    constexpr double X() const { return x; }
+    constexpr double Y() const { return y; }
+    constexpr double Z() const { return z; }
+    double Axis(const Orientation& axis) const;
+    constexpr std::tuple<double, double, double> Coefficients() const { return std::make_tuple(x, y, z); }
 
     Coordinate& operator+=(Vector v);
     Coordinate& operator-=(Vector v);
@@ -23,10 +32,11 @@ struct Coordinate final
     bool operator==(const Coordinate& other) const;
     void Render() const;
 
+    static const Coordinate origin;
+private:
     double x;
     double y;
     double z;
-    static const Coordinate origin;
 };
 
 Coordinate operator*(Coordinate c, double factor);

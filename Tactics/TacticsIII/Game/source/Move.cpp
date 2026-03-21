@@ -92,7 +92,7 @@ void Move::Render() const
             glColor3d(0.9, 0.2, 0.2);
         auto next = world.GetMap().GroundCoord(p);
         Engine::Line line(prev, next);
-        line += Engine::Vector::Z;
+        line += Engine::Vector::ZAxis;
         line.Render();
         prev = next;
     }

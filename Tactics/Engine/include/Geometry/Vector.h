@@ -3,6 +3,8 @@
 #include <ostream>
 #include <istream>
 #include <limits>
+#include <tuple>
+
 namespace Engine
 {
 
@@ -12,11 +14,13 @@ struct Line;
 struct Plane;
 struct Quaternion;
 struct Position;
+class Orientation;
 
-struct Vector
+class Vector
 {
+public:
     Vector() = default;
-    Vector(double x, double y, double z) :
+    constexpr Vector(double x, double y, double z) :
         x(x),
         y(y),
         z(z)
@@ -29,6 +33,12 @@ struct Vector
     explicit operator bool() const;
     double Length() const;
     double LengthSquared() const;
+    double Axis(const Orientation& axis) const;
+    constexpr double X() const { return x; }
+    constexpr double Y() const { return y; }
+    constexpr double Z() const { return z; }
+    constexpr std::tuple<double, double, double> Coefficients() const { return std::make_tuple(x, y, z); }
+
     Vector Normal() const;
     bool IsNormalized() const;
     Vector Cross(Vector o) const;
@@ -44,13 +54,14 @@ struct Vector
 
     double Dot(Vector v) const;
 
+    static const Vector zero;
+    static const Vector XAxis;
+    static const Vector YAxis;
+    static const Vector ZAxis;
+private:
     double x;
     double y;
     double z;
-    static const Vector zero;
-    static const Vector X;
-    static const Vector Y;
-    static const Vector Z;
 
 };
 Vector operator*(Vector v, double factor);

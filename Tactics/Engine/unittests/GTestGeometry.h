@@ -4,18 +4,18 @@
 { \
     const auto& _real=(v1); \
     const auto& _expected = (v2); \
-    EXPECT_DOUBLE_EQ(_real.x, _expected.x) << "X"; \
-    EXPECT_DOUBLE_EQ(_real.y, _expected.y) << "Y"; \
-    EXPECT_DOUBLE_EQ(_real.z, _expected.z) << "Z"; \
+    EXPECT_DOUBLE_EQ(_real.X(), _expected.X()) << "X"; \
+    EXPECT_DOUBLE_EQ(_real.Y(), _expected.Y()) << "Y"; \
+    EXPECT_DOUBLE_EQ(_real.Z(), _expected.Z()) << "Z"; \
  }
 
 #define EXPECT_3D_NEAR(v1, v2, abs_error) \
 { \
     const auto& _real=(v1); \
     const auto& _expected = (v2); \
-    EXPECT_NEAR(_real.x, _expected.x, abs_error) << "X"; \
-    EXPECT_NEAR(_real.y, _expected.y, abs_error) << "Y"; \
-    EXPECT_NEAR(_real.z, _expected.z, abs_error) << "Z"; \
+    EXPECT_NEAR(_real.X(), _expected.X(), abs_error) << "X"; \
+    EXPECT_NEAR(_real.Y(), _expected.Y(), abs_error) << "Y"; \
+    EXPECT_NEAR(_real.Z(), _expected.Z(), abs_error) << "Z"; \
  }
 
 #define EXPECT_MATRIX_NEAR(m1, m2, abs_error) \
@@ -29,16 +29,16 @@
 { \
     const auto& _real=(v1); \
     const auto& _compare = (v2); \
-    EXPECT_DOUBLE_GE(_real.x, _compare.x); \
-    EXPECT_DOUBLE_GE(_real.y, _compare.y); \
-    EXPECT_DOUBLE_GE(_real.z, _compare.z); \
+    EXPECT_DOUBLE_GE(_real.X(), _compare.X()); \
+    EXPECT_DOUBLE_GE(_real.Y(), _compare.Y(); \
+    EXPECT_DOUBLE_GE(_real.Z(), _compare.Z(); \
  }
 
 #define EXPECT_3D_LE(ref, target) \
 { \
     const auto& _real=(v1); \
     const auto& _compare = (v2); \
-    EXPECT_DOUBLE_LE(_real.x, _compare.x); \
-    EXPECT_DOUBLE_LE(_real.y, _compare.y); \
-    EXPECT_DOUBLE_LE(_real.z, _compare.z); \
+    EXPECT_DOUBLE_LE(_real.X(), _compare.Z()); \
+    EXPECT_DOUBLE_LE(_real.Y(), _compare.Y()); \
+    EXPECT_DOUBLE_LE(_real.Z(), _compare.Z()); \
  }

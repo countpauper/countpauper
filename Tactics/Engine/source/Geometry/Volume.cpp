@@ -60,7 +60,7 @@ Cylinder::Cylinder() :
 Cylinder::Cylinder(const Line& axis, double dy, double dz) :
     scale(axis.Length(), dy, dz),  // unit cylinder unit length and unit radius in both directions
     origin(axis.o),
-    orientation(scale.x>0 ? Quaternion::Shortest(Vector::X, Vector(axis).Normal()) : Quaternion::Identity)
+    orientation(scale.X()>0 ? Quaternion::Shortest(Vector::XAxis, Vector(axis).Normal()) : Quaternion::Identity)
 {
 }
 
@@ -80,20 +80,20 @@ double Cylinder::Distance(const Coordinate& p) const
     Coordinate tp = p - origin;
     tp *= orientation.Conjugate().AsMatrix();
     // scale is not inversed, because it can't handle 0 sizes and the result will need to be transformed back in a weird way. Instead the unit cylinder is scaled
-    double dy = scale.y, dz = scale.z;
-    auto coefficient = tp.x / scale.x;
-    auto projection = Vector(tp.x,0,0);  // p
-    Vector projectionVector(0,-tp.y, -tp.z);  // pv
+    double dy = scale.Y(), dz = scale.Z();
+    auto coefficient = tp.X() / scale.X();
+    auto projection = Vector(tp.X(),0,0);  // p
+    Vector projectionVector(0,-tp.Y(), -tp.Z());  // pv
     // NB: this is not exactly correct, the nearest point on an elipse is not on the line between point and the center
     //  but there is no analytical solution so this is faster
     double cylinderRadius;
-    if ((tp.y == 0) && (tp.z == 0))
+    if ((tp.Y() == 0) && (tp.Z() == 0))
     {
-        cylinderRadius = std::min(scale.y, scale.z);
+        cylinderRadius = std::min(scale.Y(), scale.Z());
     }
     else
     {
-        double a = atan2(tp.z, tp.y);
+        double a = atan2(tp.Z(), tp.Y());
         cylinderRadius = Lerp(dz, dy, std::abs(cos(a)));
     }
     auto axisDistance = projectionVector.Length(); // |pv|
@@ -107,7 +107,7 @@ double Cylinder::Distance(const Coordinate& p) const
 
     if (coefficient <= 0)
     {
-        auto planeDistance = -tp.x;
+        auto planeDistance = -tp.X();
         if (axisDistance < cylinderRadius)
         {   // A: in tube, distance to front start plane
             return planeDistance;
@@ -120,7 +120,7 @@ double Cylinder::Distance(const Coordinate& p) const
     }
     else if (coefficient >= 1)
     {
-        auto planeDistance = tp.x - scale.x;
+        auto planeDistance = tp.X() - scale.X();
         if (axisDistance < cylinderRadius)
         {   // C: in tube, distance to front start plane
             return planeDistance;
@@ -133,7 +133,7 @@ double Cylinder::Distance(const Coordinate& p) const
     }
     else
     {   // projection inside the cylinder. point either outside (E) or inside the cylinder (E')
-        auto planeDistance = std::min(tp.x, scale.x - tp.x);
+        auto planeDistance = std::min(tp.X(), scale.X() - tp.X());
         return std::min(axisDistance - cylinderRadius, planeDistance);
     }
     return 0;
@@ -141,18 +141,18 @@ double Cylinder::Distance(const Coordinate& p) const
 
 Line Cylinder::Axis() const
 {
-    Vector v = orientation * Vector(scale.x, 0,0);
+    Vector v = orientation * Vector(scale.X(), 0,0);
     return Line(Coordinate::origin + origin, v);
 }
 
 Cylinder Cylinder::Slice(const Engine::Range<double>& range) const
 {
-    return Cylinder(Axis().Section(range), scale.y, scale.z);
+    return Cylinder(Axis().Section(range), scale.Y(), scale.Z());
 }
 
 double Cylinder::Volume() const
 {
-    return Engine::PI * scale.y * scale.z * scale.z;
+    return Engine::PI * scale.Y() * scale.Z() * scale.Z();
 }
 
 Range<double> Cylinder::Intersection(const Line& line) const

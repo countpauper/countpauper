@@ -21,7 +21,7 @@ TEST(Plane, Null)
 TEST(Plane, XY)
 {
     EXPECT_TRUE(Plane::xy);
-    EXPECT_EQ(Plane::xy, Plane(Coordinate::origin, Vector::X, Vector::Y));
+    EXPECT_EQ(Plane::xy, Plane(Coordinate::origin, Vector::XAxis, Vector::YAxis));
     EXPECT_EQ(0, Plane::xy.Distance(Coordinate::origin));
     EXPECT_DOUBLE_EQ(1, Plane::xy.Distance(Coordinate(0, 0, 1)));
     EXPECT_DOUBLE_EQ(0, Plane::xy.Distance(Coordinate(1, 1, 0)));

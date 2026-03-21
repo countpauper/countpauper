@@ -99,8 +99,7 @@ namespace Engine
         for (size_t i = particles.Count(); i < count; ++i)
         {
             auto& p = particles.Spawn();
-            p.c.x = Effect::random.Chance();
-            p.c.z = Effect::random.Chance();
+            p.c  = Coordinate( Effect::random.Chance(), p.c.Y(),  Effect::random.Chance());
             p.color = RGBA::white;
             p.size = 0.25;
         }
@@ -112,9 +111,10 @@ namespace Engine
         if (particle.age > lifetime)
             particle.Despawn();
         double zig = seconds * zag;   // Move 'ZIG'
-        particle.movement.x += random.Uniform(Range(-zig, zig));
-        particle.movement.y += random.Uniform(Range(-zig, zig));
-        particle.movement.z += random.Uniform(Range(-zig, zig));
+        Vector zigzag { random.Uniform(Range(-zig, zig)),
+            random.Uniform(Range(-zig, zig)),
+            random.Uniform(Range(-zig, zig))};
+        particle.movement += zigzag;
 
         particle.color = RGBA::white.Translucent(1.0-(particle.age / lifetime));
     }

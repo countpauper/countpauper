@@ -169,7 +169,7 @@ void Mesh::RenderSelection() const
         for (int i = 0; i < 3; ++i)
         {
             const auto& v = vertices.at(t.vertex[i]);
-            glVertex3d(v.c.x, v.c.y, v.c.z);
+            glVertex3d(v.c.X(), v.c.Y(), v.c.Z());
         }
         glEnd();
     }

@@ -14,9 +14,7 @@ TEST(Matrix, Identity)
     Matrix identity = Matrix::Identity();
     Vector v(1, 2, 3);
     EXPECT_TRUE(identity.IsIdentity());
-    EXPECT_EQ(v.x, (identity * v).x);
-    EXPECT_EQ(v.y, (identity * v).y);
-    EXPECT_EQ(v.z, (identity * v).z);
+    EXPECT_3D_EQ(v, (identity * v));
 }
 
 TEST(Matrix, Scale)
@@ -65,7 +63,7 @@ TEST(Matrix, Multiplication)
 
 TEST(Matrix, InverseAffine)
 {
-    Quaternion xrot(Vector::X, float(PI / 2));
+    Quaternion xrot(Vector::XAxis, float(PI / 2));
     auto matrix = xrot.AsMatrix()*Matrix::Translation(Vector(2, -3, 4));
 
     Vector v = Vector(1, -2, 0.5);

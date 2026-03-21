@@ -12,15 +12,16 @@ namespace Engine
 template<typename T>
 struct Range
 {
-    Range() = default;
-    Range(T begin, T end) :
+    constexpr Range() = default;
+
+    constexpr Range(T begin, T end) :
         begin(begin),
         end(end)
     {
     }
 
     template<typename OT>
-    explicit Range(Range<OT> o) :
+    constexpr explicit Range(Range<OT> o) :
         begin(static_cast<T>(o.begin)),
         end(static_cast<T>(o.end))
     {
@@ -34,27 +35,27 @@ struct Range
             return static_cast<T>(1);
     }
 
-    explicit operator bool() const
+    explicit constexpr operator bool() const
     {
         return !IsEmpty();
     }
 
-    bool IsEmpty() const
+    constexpr bool IsEmpty() const
     {
         return end <= begin;
     }
 
-    T Size() const
+    constexpr T Size() const
     {
         return end - begin;
     }
 
-    bool operator[](T v) const
+    constexpr bool operator[](T v) const
     {   // in
         return (begin <= v) && (v+ElementSize() <= end);
     }
 
-    Range& operator|=(T v)
+    constexpr Range& operator|=(T v)
     {
         begin = std::min(begin, v);
         end = std::max(end, v+ElementSize());
@@ -62,59 +63,60 @@ struct Range
     }
 
 
-    Range& operator+=(T v)
+    constexpr Range& operator+=(T v)
     {
         begin += v;
         end += v;
         return *this;
     }
-    Range& operator-=(T v) { return operator+=(-v); }
-    Range& operator*=(T v)
+    constexpr Range& operator-=(T v) { return operator+=(-v); }
+    constexpr Range& operator*=(T v)
     {
         begin *= v;
         end *= v;
         return *this;
     }
-    Range& operator/=(T v)
+
+    constexpr Range& operator/=(T v)
     {
         return operator*=(1 / v);
     }
 
-    Range& operator|=(const Range<T>& o)
+    constexpr Range& operator|=(const Range<T>& o)
     {
         *this = *this | o;
         return *this;
     }
 
-    Range& operator&=(const Range<T>& o)
+    constexpr Range& operator&=(const Range<T>& o)
     {
         *this = *this & o;
         return *this;
     }
 
-    bool operator<(T v) const
+    constexpr bool operator<(T v) const
     {
         return end <= v;
     }
-    bool operator<=(T v) const
+    constexpr bool operator<=(T v) const
     {
         return begin <= v;
     }
-    bool operator>(T v) const
+    constexpr bool operator>(T v) const
     {
         return begin > v;
     }
-    bool operator>=(T v) const
+    constexpr bool operator>=(T v) const
     {
         return end > v;
     }
 
-    bool operator==(const Range<T>& o) const
+    constexpr bool operator==(const Range<T>& o) const
     {
         return begin == o.begin && end == o.end;
     }
 
-    Range& Expand(T v)
+    constexpr Range& Expand(T v)
     {
         if (v > 0)
             end += v;
@@ -123,23 +125,23 @@ struct Range
         return *this;
     }
 
-    Range& Grow(T v)
+    constexpr Range& Grow(T v)
     {
         end += v;
         begin -= v;
         return *this;
     }
-    T Clip(T v) const
+    constexpr T Clip(T v) const
     {
         return Engine::Clip(v, begin, end - ElementSize());
     }
 
-    T Middle() const
+    constexpr T Middle() const
     {
         return Middle(std::is_floating_point<T>());
     }
 
-    T Middle(std::true_type) const
+    constexpr T Middle(std::true_type) const
     {
         if ((std::isinf(end)) && (std::isinf(begin)) && (std::signbit(begin)!=std::signbit(end)))
             return 0;
@@ -147,7 +149,7 @@ struct Range
             return (begin + end) / 2;
     }
 
-    T Middle(std::false_type) const
+    constexpr T Middle(std::false_type) const
     {
         return (begin + end) / 2;
     }
@@ -157,23 +159,23 @@ struct Range
     T end;
 
 
-    bool infinite() const
+    constexpr bool infinite() const
     {
         return std::isinf(begin) || std::isinf(end);
     }
 
-    bool finite() const
+    constexpr bool finite() const
     {
         return !infinite();
     }
 
-    bool IsNumbers() const
+    constexpr bool IsNumbers() const
     {
         return !std::isnan(begin) &&
             !std::isnan(end);
     }
 
-    T GetNumber() const
+    constexpr T GetNumber() const
     {
         return std::isnan(begin) ? end : begin;
     }

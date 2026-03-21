@@ -48,11 +48,9 @@ Vector Triangle::BaryCentric(const Coordinate& p) const
 
     auto dp0 = vp.Dot(v0);
     auto dp1 = vp.Dot(v1);
-    Vector barycentric;
-    barycentric.y = (d11*dp0 - d01 * dp1) / denom;
-    barycentric.z = (d00*dp1 - d01 * dp0) / denom;
-    barycentric.x = 1.0 - barycentric.y - barycentric.z;
-    return barycentric;
+    double by = (d11*dp0 - d01 * dp1) / denom;
+    double bz = (d00*dp1 - d01 * dp0) / denom;
+    return Vector{ 1.0 - by -bz, by, bz};
 }
 
 
@@ -75,13 +73,13 @@ double Triangle::Distance(const Coordinate& p) const
     Vector barycentric = BaryCentric(pp);
     double sign = std::signbit(plane.normal.Dot(p - pp)) ? -1 : 1;
 
-    if (barycentric.x < 0)
+    if (barycentric.X() < 0)
     {
-        if (barycentric.y < 0)
+        if (barycentric.Z() < 0)
         {
             return (c - p).Length();
         }
-        else if (barycentric.z < 0)
+        else if (barycentric.Z() < 0)
         {
             return (b - p).Length();
         }
@@ -90,9 +88,9 @@ double Triangle::Distance(const Coordinate& p) const
             return Line(b, c).Distance(p);
         }
     }
-    else if (barycentric.y < 0)
+    else if (barycentric.Y() < 0)
     {
-        if (barycentric.z < 0)
+        if (barycentric.Z() < 0)
         {
             return (a - p).Length();
         }
@@ -101,13 +99,13 @@ double Triangle::Distance(const Coordinate& p) const
             return Line(a, c).Distance(p);
         }
     }
-    else if (barycentric.z < 0)
+    else if (barycentric.Z() < 0)
     {
         return Line(a, b).Distance(p);
     }
     else
     {   // All>0, all should be <=1.0 too
-        assert(barycentric.x <= 1.0 && barycentric.y <= 1.0 && barycentric.z <= 1.0);
+        assert(barycentric.X() <= 1.0 && barycentric.Y() <= 1.0 && barycentric.Z() <= 1.0);
         // If it projects into the triangle a negative value is returned if the point is behind the triangle
         // this allows at least convex meshes to determine if the point is inside the mesh when all distance<=0
         return sign * (pp - p).Length();

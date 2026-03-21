@@ -12,6 +12,7 @@ namespace Engine
     struct Vector;
     struct Line;
     struct Matrix;
+    class Orientation;
 
     struct AABB : public IVolume, public Clone<AABB>
     {
@@ -25,6 +26,7 @@ namespace Engine
         Coordinate End() const;
         Coordinate Center() const;
 
+
         Vector Extent() const;
         bool IsEmpty() const;
         explicit inline operator bool() const { return !IsEmpty(); }
@@ -32,6 +34,7 @@ namespace Engine
         Range<double> X() const;
         Range<double> Y() const;
         Range<double> Z() const;
+        Range<double> Extent(const Orientation& axis) const;
 
         AABB GetBoundingBox() const override { return *this; }
         virtual double Distance(const Coordinate& p) const override;
@@ -39,8 +42,8 @@ namespace Engine
 
         bool Contains(const Coordinate& p) const;
         Coordinate Clip(const Coordinate& p) const;
-        // 0 None, 1..6 = Right(), Bottom(), Front, Back(), Left(), Top(),
-        std::pair<Orientation, double> NamedIntersection(const Line& line) const;
+        std::pair<Orientation, double> Entry(const Line& line) const;
+        std::pair<Orientation, double> Exit(const Line& line) const;
         Range<double> Intersection(const Line& line) const override;
 
         void Render();

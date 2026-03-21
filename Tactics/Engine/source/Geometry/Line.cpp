@@ -3,6 +3,7 @@
 #include "Utility/Maths.h"
 #include "Geometry/Vector.h"
 #include "Geometry/AxisAlignedBoundingBox.h"
+#include "Rendering/Drawing.h"
 #include <sstream>
 
 namespace Engine
@@ -62,8 +63,8 @@ Coordinate Line::Project(const Coordinate& p) const
 void Line::Render() const
 {
     glBegin(GL_LINES);
-        glVertex3d(A().x, A().y, A().z);
-        glVertex3d(B().x, B().y, B().z);
+        glVertex(A());
+        glVertex(B());
     glEnd();
 }
 double Line::Distance(const Coordinate& p) const
@@ -83,7 +84,7 @@ std::vector<std::pair<Position, double>> Line::Voxelize() const
     std::vector<std::pair<Position, double>> result;
     Coordinate pos = o;
     double remaining = Length();
-    Position current(pos.x, pos.y, pos.z);
+    Position current(pos.X(), pos.Y(), pos.Z());
     while(true)
     {
         AABB bounds(Coordinate{
@@ -101,8 +102,8 @@ std::vector<std::pair<Position, double>> Line::Voxelize() const
         }
         else
         {
-            auto intersection = bounds.NamedIntersection(Invert());
-            auto doubleCheckRange = bounds.Intersection(Invert());
+            auto intersection = bounds.Exit(Invert());
+            //auto doubleCheckRange = bounds.Intersection(Invert());
 
             result.emplace_back(current, remaining - intersection.second);
             remaining = intersection.second;
@@ -126,7 +127,7 @@ Line& Line::operator*=(Quaternion q)
 {
     auto va = q * Vector(A());
     auto vb = q * Vector(B());
-    return *this = Line(Coordinate(va.x, va.y, va.z), Coordinate(vb.x, vb.y, vb.z));
+    return *this = Line(Coordinate(va.X(), va.Y(), va.Z()), Coordinate(vb.X(), vb.Y(), vb.Z()));
 }
 
 Line& Line::operator+=(Vector v)

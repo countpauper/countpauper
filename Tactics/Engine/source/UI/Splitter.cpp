@@ -50,27 +50,27 @@ Control* Splitter::Click(Coordinate pos) const
 {
     if (horizontal)
     {
-        if (pos.x<split)
+        if (pos.X() < split)
         {
-            pos.x *= split;
+            pos = Coordinate(pos.X() * split, pos.Y(), pos.Z());
             return children.front()->Click(pos);
         }
         else
         {
-            pos.x *= 1-split;
+            pos = Coordinate(pos.X() * (1- split), pos.Y(), pos.Z());
             return children.back()->Click(pos);
         }
     }
     else
     {
-        if (pos.y < split)
+        if (pos.Y() < split)
         {
-            pos.y *= split;
+            pos = Coordinate(pos.X(), pos.Y()*split, pos.Z());
             return children.front()->Click(pos);
         }
         else
         {
-            pos.y *= 1-split;
+            pos = Coordinate(pos.X(), pos.Y()*(1-split), pos.Z());
             return children.back()->Click(pos);
         }
     }
