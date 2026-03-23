@@ -108,8 +108,7 @@ TEST(AABB, NamedAlignedEntry)
         std::make_pair(Orientation::left, 0.4));
     EXPECT_EQ( box.Entry(Line(Coordinate{1.25, 0.75, 0.75}, Coordinate{0.75, 0.75, 0.75})),
         std::make_pair(Orientation::right, 0.5));
-    EXPECT_EQ( box.Entry(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.25, 0.0, 0.75})),
-        std::make_pair(Orientation::none, std::numeric_limits<double>::infinity()));
+    EXPECT_FALSE( box.Entry(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.25, 0.0, 0.75})).first);
     EXPECT_EQ( box.Entry(Line(Coordinate{0.75, 0.75, 0.75}, Coordinate{0.75, 0.25, 0.75})),
         std::make_pair(Orientation::front, -0.5));  // line start in box, this is where it entered if it's infinite.
 }

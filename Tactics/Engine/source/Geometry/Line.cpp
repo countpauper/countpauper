@@ -31,7 +31,7 @@ double Line::ProjectionCoefficient(const Coordinate& p) const
 
 Line Line::Section(const Engine::Range<double>& range) const
 {
-    Range<double> slice = range / Length();
+    Range<double> slice = range;
     slice &= Range(0.0, 1.0);
     auto v = Vector(*this);
     return Line(o + v * slice.begin, o + v * slice.end);

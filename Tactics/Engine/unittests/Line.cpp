@@ -33,10 +33,10 @@ TEST(Line, Section)
     Coordinate a(1, 2, 3);
     Coordinate b(3, 0, 4);
     Line line(a, b);
-    auto firstSection = line.Section(Range(0.0, line.Length() / 2.0));
+    auto firstSection = line.Section(Range(0.0, 0.5));
     EXPECT_EQ(line.A(), firstSection.A());
     EXPECT_EQ(firstSection.B(), Coordinate(2, 1, 3.5));
-    auto secondSection = line.Section(Range(line.Length() / 2.0, line.Length()));
+    auto secondSection = line.Section(Range(0.5, 1.0));
     EXPECT_EQ(line.B(), secondSection.B());
     EXPECT_EQ(secondSection.A(), firstSection.B());
     auto clippedSection = line.Section(Range(0.0, std::numeric_limits<double>::infinity()));

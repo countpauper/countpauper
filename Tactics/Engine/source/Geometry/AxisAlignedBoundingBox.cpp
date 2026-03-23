@@ -82,195 +82,152 @@ std::pair<bool, double> ComputeCoefficient(double from, double to, double delta,
     return std::make_pair( std::signbit(v) != std::signbit(normal), coef);
 }
 
-bool is_smaller(double a, double b)
+bool is_closer(double a, double b)
 {
     return std::abs(a) < std::abs(b);
 }
 
-double smallest_number(double a, double b)
+double closest_number(double a, double b)
 {
     if (std::isnan(a))
         return b;
     if (std::isnan(b))
         return a;
-    if (is_smaller(a,b))
+    if (is_closer(a,b))
         return a;
     return b;
 }
 
+double furthest_number(double a, double b)
+{
+    if (std::isnan(a))
+        return b;
+    if (std::isnan(b))
+        return a;
+    if (is_closer(a,b))
+        return b;
+    return a;
+}
+
+
 std::pair<Orientation, double> AABB::Entry(const Line& line) const
 {
     Vector V(line);
-    for(auto axis: Orientations::axes)
+    Orientation entrySide;
+    Range<double> rng(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
+    for(auto axis : Orientations::axes)
     {
-        if (std::abs(V.Axis(axis)) <= std::numeric_limits<double>::epsilon() &&
-            !Extent(axis)[line.o.Axis(axis)])
-            return std::make_pair(Orientation::none, std::numeric_limits<double>::infinity());
-    }
-
-
-    double entry = std::numeric_limits<double>::infinity();
-    Orientation entryAxis;
-
-    for(auto side: Orientations::all)
-    {
-        auto coef = Side(side).Intersection(line);
-        if (is_smaller(coef.begin, entry)) {
-            entryAxis = side;
-            entry = coef.begin;
+        auto intersection = Side(axis).Intersection(line);
+        if (!intersection)
+        {
+            if (!Extent(axis)[line.o.Axis(axis)])
+                return std::make_pair(Orientation::none, std::numeric_limits<double>::quiet_NaN());
+        }
+        else
+        {
+            auto opposite = Side(-axis).Intersection(line);
+            Range<double> t; // begin = t-close, end = t-far
+            Orientation enterSide;
+            if (intersection.GetNumber() <= opposite.GetNumber())
+            {
+                t.begin = intersection.GetNumber();
+                t.end = opposite.GetNumber();
+                enterSide = axis;
+            }
+            else
+            {
+                t.begin = opposite.GetNumber();
+                t.end = intersection.GetNumber();
+                enterSide = -axis;
+            }
+            if (!(t.begin < rng.begin)) // rng.begin can be NaN so double negative
+            {
+                rng.begin = t.begin;
+                entrySide = enterSide;
+            }
+            rng.end = std::min(t.end, rng.end);
         }
     }
-    if (!entryAxis)
+    if (rng.empty())
     {
-        return std::make_pair(entryAxis, std::numeric_limits<double>::quiet_NaN());
+        return std::make_pair(Orientation::none, std::numeric_limits<double>::quiet_NaN());
     }
-    return std::make_pair(entryAxis, entry);
+    return std::make_pair(entrySide, rng.begin);
 }
 
 
 std::pair<Orientation, double> AABB::Exit(const Line& line) const
 {
     Vector V(line);
-    for(auto axis: Orientations::axes)
+    Orientation exitSide;
+    Range<double> rng(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
+    for(auto axis : Orientations::axes)
     {
-        if (std::abs(V.Axis(axis)) <= std::numeric_limits<double>::epsilon() &&
-            !Extent(axis)[line.o.Axis(axis)])
-            return std::make_pair(Orientation::none, std::numeric_limits<double>::infinity());
-    }
-
-    double exit = std::numeric_limits<double>::infinity();
-    Orientation exitAxis;
-
-    for(auto side: Orientations::all)
-    {
-        auto coef = Side(side).Intersection(line);
-        if (is_smaller(coef.end, exit)) {
-            exitAxis = side;
-            exit = coef.end;
-        }
-    }
-    if (!exitAxis)
-    {
-        return std::make_pair(exitAxis, std::numeric_limits<double>::quiet_NaN());
-    }
-    return std::make_pair(exitAxis, exit);
-}
-
-/*
-bool boundscheck(double p, double v, const Range<double>& intersect)
-{
-    if (intersect.empty())
-    {
-        return true;    // TODO check if p within range
-    }
-    else
-    {
-        return intersect[v];
-    }
-}
-
-Range<double> AABB::Intersection(const Line& line) const
-{
-    Vector V(line);
-    // Compute the factors f of line vector v before it hits all of the planes of the AABB
-    Range<double> f[Orientations::all.size()];
-    for(auto ori:Orientations::all)
-    {
-        f[ori.Index()] = Side(ori).Intersection(line);
-    }
-    // Define the perpendicular axes to the normal of each side, spanning the ranges of the intersection
-    static constexpr Range<int> hbounds[]=
-    {
-        {4,1},  // +Z within -Y,Y
-        {5,2},  // +Y within -X,X
-        {3,0},  // +X within -Z,Z
-        {4,1},  // -Z within -Y,Y
-        {5,2},  // -Y within -X,X
-        {3,0}   // -X within -Z,Z
-    };
-    static constexpr Range<int> vbounds[]=
-    {
-        {5,2},  // +Z within -X,X
-        {3,0},  // +Y within -Z,Z
-        {4,1},  // +X within -Y,Y
-        {5,2},  // -Z within -X,X
-        {3,0},  // -Y within -Z,Z
-        {4,1},  // -X within -Y,Y
-    };
-    int idx = 0;
-    auto clipRange = Range<double>(std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity());
-    Orientation inPlane;
-    Orientation outPlane;
-    for(auto ori:Orientations::all)
-    {
-        auto f_axis = f[ori.Index()];
-        if (f_axis.empty())
-            continue;
-        Range<double> hrange( f[hbounds[idx].begin].GetNumber(), f[hbounds[idx].end].GetNumber());
-        Range<double> vrange( f[vbounds[idx].begin].GetNumber(), f[vbounds[idx].end].GetNumber());
-        auto enter = f_axis.begin;
-        if (!std::isnan(enter))
+        auto intersection = Side(axis).Intersection(line);
+        if (!intersection)
         {
-            if (boundscheck(0, enter, hrange) &&
-                boundscheck(0, enter, vrange))  // TODO add parallel axes range and line origin coordinate
-            {
-                if (enter<clipRange.begin)
-                {
-                    inPlane = ori;
-                    clipRange.begin = enter;
-                }
-            }
+            if (!Extent(axis)[line.o.Axis(axis)])
+                return std::make_pair(Orientation::none, std::numeric_limits<double>::quiet_NaN());
         }
-        // TODO: refactor, do the same as begin but use f_axis.end and clipRange.end?
-        auto leave = f_axis.end;
-        if (!std::isnan(leave))
+        else
         {
-            if (boundscheck(0, leave, hrange) &&
-                boundscheck(0, leave, vrange))
+            auto opposite = Side(-axis).Intersection(line);
+            Range<double> t; // begin = t-close, end = t-far
+            Orientation exSide;
+            if (intersection.GetNumber() >= opposite.GetNumber())
             {
-                if (leave<clipRange.end)
-                {
-                    outPlane = ori;
-                    clipRange.end = leave;
-                }
+                t.end = intersection.GetNumber();
+                t.begin = opposite.GetNumber();
+                exSide = axis;
             }
-
+            else
+            {
+                t.end = opposite.GetNumber();
+                t.begin = intersection.GetNumber();
+                exSide = -axis;
+            }
+            if (!(t.end > rng.end)) // rng.end can be NaN so double negative
+            {
+                rng.end = t.end;
+                exitSide = exSide;
+            }
+            rng.begin = std::max(t.begin, rng.begin);
         }
-
     }
-    return clipRange;
+    if (rng.empty())
+    {
+        return std::make_pair(Orientation::none, std::numeric_limits<double>::quiet_NaN());
+    }
+    return std::make_pair(exitSide, rng.end);
 }
-*/
+
 
 
 Range<double> AABB::Intersection(const Line& line) const
 {
-    // TODO: here (and named intersection) use relative intersections to see if miss, not rough parallel check
+    // https://en.wikipedia.org/wiki/Slab_method
+
     Vector V(line);
-    for(auto axis: Orientations::axes)
+    Range<double> result(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
+    for(auto axis : Orientations::axes)
     {
-        if (std::abs(V.Axis(axis)) <= std::numeric_limits<double>::epsilon() &&
-            !Extent(axis)[line.o.Axis(axis)]) {
-            return Range<double>::empty();
+        auto intersection = Side(axis).Intersection(line);
+        if (!intersection)
+        {
+            if (!Extent(axis)[line.o.Axis(axis)])
+                return Range<double>::empty();
+        }
+        else
+        {
+            auto opposite = Side(-axis).Intersection(line);
+            Range<double> t; // begin = t-close, end = t-far
+            t.begin = std::min(intersection.GetNumber(), opposite.GetNumber());
+            t.end  = std::max(intersection.GetNumber(), opposite.GetNumber());
+            result.begin = std::max(t.begin, result.begin);
+            result.end = std::min(t.end, result.end);
         }
     }
-    Range<double> intersections[6];
-    for(auto side : Orientations::all)
-        intersections[side.Index()] = Side(side).Intersection(line);
-
-    double enter = std::numeric_limits<double>::quiet_NaN(); // at least at coefficient of A
-    double leave = std::numeric_limits<double>::quiet_NaN(); // maximum at coeffiecient of B
-
-    for(auto side : Orientations::all)
-    {
-        const auto& intersect = intersections[side.Index()];
-        // if (std::isinf(intersect) || std::isinf(-intersect))
-        //     continue;
-
-        enter = smallest_number(intersect.begin, enter);
-        leave = smallest_number(intersect.end, leave);
-    }
-    return Range<double>(enter, leave );
+    return result;
 }
 
 
