@@ -44,7 +44,7 @@ TEST(Line, Section)
 
 }
 
-TEST(Line, DISABLED_Vozelize)
+TEST(Line, Vozelize)
 {
     Coordinate a(0.5, 2.2, 3.6);
     Coordinate b(3.1, -0.5, -2.0);
@@ -68,7 +68,7 @@ TEST(Line, DISABLED_Vozelize)
     {
         return sum + voxel.second;
     });
-    EXPECT_DOUBLE_EQ(total_fragments, line.Length());
+    EXPECT_DOUBLE_EQ(total_fragments, 1.0);
 
 }
 

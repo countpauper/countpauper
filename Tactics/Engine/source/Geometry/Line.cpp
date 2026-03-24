@@ -5,6 +5,7 @@
 #include "Geometry/AxisAlignedBoundingBox.h"
 #include "Rendering/Drawing.h"
 #include <sstream>
+#include <cassert>
 
 namespace Engine
 {
@@ -82,33 +83,20 @@ AABB Line::Bounds() const
 std::vector<std::pair<Position, double>> Line::Voxelize() const
 {
     std::vector<std::pair<Position, double>> result;
-    Coordinate pos = o;
-    double remaining = Length();
-    Position current(pos.X(), pos.Y(), pos.Z());
-    while(true)
+    Position current(o.X(), o.Y(), o.Z());
+    double previous = 0.0;
+    while(previous<1.0)
     {
         AABB bounds(Coordinate{
                     static_cast<double>(current.x),
                     static_cast<double>(current.y),
                     static_cast<double>(current.z)},
-                Coordinate{
-                    static_cast<double>(current.x+1),
-                    static_cast<double>(current.y+1),
-                    static_cast<double>(current.z+1)});
-        if (bounds.Contains(B()))
-        {   // b in current voxel, add last voxel
-            result.emplace_back(current, remaining);
-            return result;
-        }
-        else
-        {
-            auto intersection = bounds.Exit(Invert());
-            //auto doubleCheckRange = bounds.Intersection(Invert());
-
-            result.emplace_back(current, remaining - intersection.second);
-            remaining = intersection.second;
-            current += intersection.first.GetVector();
-        }
+                    Vector(1,1,1));
+        auto intersection = bounds.Exit(*this);
+        assert(intersection.first); // somehow left the line. could probably continue; to skip edge cases, but which way?
+        result.emplace_back(current, std::min(1.0, intersection.second) - previous);
+        current += intersection.first.GetVector();
+        previous = intersection.second;
     }
     return result;
 }

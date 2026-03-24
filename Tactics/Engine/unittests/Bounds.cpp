@@ -121,8 +121,7 @@ TEST(AABB, NamedAlignedExit)
         std::make_pair(Orientation::right, 0.8));
     EXPECT_EQ( box.Exit(Line(Coordinate{1.25, 0.75, 0.75}, Coordinate{0.75, 0.75, 0.75})),
         std::make_pair(Orientation::left, 1.5));
-    EXPECT_EQ( box.Exit(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.25, 0.0, 0.75})),
-        std::make_pair(Orientation::none, std::numeric_limits<double>::infinity()));
+    EXPECT_FALSE( box.Exit(Line(Coordinate{0.0, 0.0, 0.75}, Coordinate{1.25, 0.0, 0.75})).first);
     EXPECT_EQ( box.Exit(Line(Coordinate{0.75, 1.25, 0.75}, Coordinate{0.75, 1.75, 0.75})),
         std::make_pair(Orientation::front, -0.5));  // line start on box, this is where it would exit if it's infinite.
 }
