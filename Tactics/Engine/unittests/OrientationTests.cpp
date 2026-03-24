@@ -103,13 +103,13 @@ TEST(Orientation, Perpendiclar)
 
 TEST(Orientation, Angles)
 {
-	EXPECT_TRUE(std::isnan(Orientation::none.Angle()));
-	EXPECT_EQ(Orientation::front.Angle(), 0);
-	EXPECT_NEAR(Orientation::right.Angle(), -0.5*Engine::PI, 0.001);
-	EXPECT_NEAR(Orientation::left.Angle(), 0.5*Engine::PI, 0.001);
-	EXPECT_NEAR(Orientation::back.Angle(), Engine::PI, 0.001);
-	EXPECT_TRUE(std::isnan(Orientation::up.Angle()));
-	EXPECT_TRUE(std::isnan(Orientation::down.Angle()));
+	EXPECT_EQ(Orientation::none.Angle(), 0.0);
+	EXPECT_EQ(Orientation::front.Angle(), RightAngle::straight);
+	EXPECT_EQ(Orientation::right.Angle(), RightAngle(-1));
+	EXPECT_EQ(Orientation::left.Angle(), RightAngle(1));
+	EXPECT_EQ(Orientation::back.Angle(), RightAngle::around);
+	EXPECT_EQ(Orientation::up.Angle(), 0.0);
+	EXPECT_EQ(Orientation::down.Angle(Orientation::front), RightAngle::around);
 }
 
 TEST(Orientation, Clockwise)
@@ -202,16 +202,16 @@ TEST(Orientation, Index)
 
 TEST(Orientation, Turn)
 {
-	EXPECT_EQ(Orientation::right.Turn(Orientation::left), Orientation::front);
-	EXPECT_EQ(Orientation::front.Turn(Orientation::back), Orientation::back);
-	EXPECT_EQ(Orientation::back.Turn(Orientation::right), Orientation::left);
-	EXPECT_EQ(Orientation::left.Turn(Orientation::front), Orientation::left);
+	EXPECT_EQ(Orientation::right.Turn(RightAngle::counter_clockwise), Orientation::front);
+	EXPECT_EQ(Orientation::front.Turn(RightAngle::around), Orientation::back);
+	EXPECT_EQ(Orientation::back.Turn(RightAngle::clockwise), Orientation::left);
+	EXPECT_EQ(Orientation::left.Turn(RightAngle::straight), Orientation::left);
 
-	EXPECT_EQ(Orientation::right.Turn(Orientation::up), Orientation::up);
-	EXPECT_EQ(Orientation::front.Turn(Orientation::down), Orientation::down);
+	EXPECT_EQ(Orientation::right.Turn(RightAngle::counter_clockwise, Orientation::front), Orientation::down);
+	EXPECT_EQ(Orientation::front.Turn(RightAngle::counter_clockwise, Orientation::right), Orientation::up);
 
-	EXPECT_EQ(Orientation::down.Turn(Orientation::right), Orientation::down);
-	EXPECT_EQ(Orientation::down.Turn(Orientation::up), Orientation::up);
+	EXPECT_EQ(Orientation::down.Turn(RightAngle::straight, Orientation::back), Orientation::down);
+	EXPECT_EQ(Orientation::down.Turn(RightAngle::around, Orientation::back), Orientation::up);
 }
 
 

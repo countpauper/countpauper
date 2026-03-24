@@ -42,17 +42,13 @@ So: TODO:
 [done] Add unit tests
 [done] Implement the function to compute the line intersection.
 [done] Range<double> Intersect(Line) const; which can return empty ranges and or infinite start end
-
-Add getters to the axis aligned bounding box to get Plane(Direction)
-Use these to implement the line intersection of the axis aligned box by: iterating over all of those planes.
-Check if the intersection coordinate is also within both perpendicular plane ranges.
-
-Create a function that creates a subsection line with that range, to get the height range over the Z
-Line::Subsection(Range): Line
-unit test it of course
-
+[done] Add getters to the axis aligned bounding box to get Plane(Direction)
+[done] Use these to implement the line intersection of the axis aligned box by: iterating over all of those planes.
+[done] Check if the intersection coordinate is also within both perpendicular plane ranges.
+[was alreadt done: Section] Create a function that creates a subsection line with that range, to get the height range over the Z
+[done] unit test it of course
 Create a function to get a slice of materials from a grid, something
-struct MaterialSection { mat*, Obstacle*, density, temperature};
+struct MaterialSection { mat*, Obstacle*, density, temperature}; or all mats (with a height start) and then slice that to a range 
 Grid::Slice(Range height) : vector<pair<MaterialSection, double>
 
 Apply the material section to the projectile and the projectile to the obstacles for that grid

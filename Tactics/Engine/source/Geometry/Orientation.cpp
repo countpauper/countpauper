@@ -1,63 +1,11 @@
 #include "Geometry/Orientation.h"
 #include "Geometry/Geometry.h"
 #include "Geometry/Vector.h"
-#include "Geometry/Angles.h"
+
 #include <assert.h>
 
 namespace Engine
 {
-
-HalfPiAngle::HalfPiAngle() = default;
-
-HalfPiAngle::HalfPiAngle(int value) : value(value)
-{
-}
-
-bool HalfPiAngle::operator==(const HalfPiAngle& other) const
-{
-	return value == other.value;
-}
-
-HalfPiAngle& HalfPiAngle::operator+=(const HalfPiAngle& other)
-{
-	value += other.value;
-	return *this;
-}
-
-HalfPiAngle operator+(const HalfPiAngle& a, const HalfPiAngle& b)
-{
-	HalfPiAngle o(a);
-	o += b;
-	return o;
-}
-
-HalfPiAngle& HalfPiAngle::operator-=(const HalfPiAngle& other)
-{
-	value -= other.value;
-	return *this;
-}
-HalfPiAngle operator-(const HalfPiAngle& a, const HalfPiAngle& b)
-{
-	HalfPiAngle o(a);
-	o -= b;
-	return o;
-}
-
-
-double HalfPiAngle::Angle() const
-{
-	return static_cast<double>(value) * 0.5 * Engine::PI;
-}
-
-HalfPiAngle& HalfPiAngle::Normalize()
-{
-	value %= 4;
-	if (value > 2)
-		value -= 4;
-	if (value < -1)
-		value += 4;
-	return *this;
-}
 
 Orientation::Orientation() :
 	value(None)
@@ -192,14 +140,38 @@ Orientation::Value Orientation::From(const Engine::Position& vector)
     return result;
 }
 
-Orientation::Value Orientation::From(HalfPiAngle angle)
+Orientation::Value Orientation::From(RightAngle angle, Orientation axis)
 {
 	angle.Normalize();
-	auto it = std::find_if(half_pi_angle.begin(), half_pi_angle.end(), [angle](const decltype(half_pi_angle)::value_type& kv)
-	{
-		return kv.second == angle;
-	});
-	return it->first;
+    AngleMap::iterator it;
+
+    if (axis.IsX())
+    {
+        it = std::find_if(x_angle.begin(), x_angle.end(), [angle](const AngleMap::value_type& kv)
+        {
+            return kv.second == angle;
+        });
+    }
+    else if (axis.IsY())
+    {
+        it = std::find_if(y_angle.begin(), y_angle.end(), [angle](const AngleMap::value_type& kv)
+        {
+            return kv.second == angle;
+        });
+    }
+    else if (axis.IsZ())
+    {
+        it = std::find_if(z_angle.begin(), z_angle.end(), [angle](const AngleMap::value_type& kv)
+        {
+            return kv.second == angle;
+        });
+    }
+
+
+    if (axis.IsNegative())
+        return Orientation::Value(-(it->first));
+    else
+        return it->first;
 }
 
 
@@ -247,13 +219,22 @@ double Orientation::Surface(const Vector& grid) const
     }
 }
 
-double Orientation::Angle() const
+RightAngle Orientation::Angle(Orientation axis) const
 {
-	auto it = half_pi_angle.find(value);
-	if (it == half_pi_angle.end())
-		return std::numeric_limits<float>::quiet_NaN();
-	else
-		return it->second.Angle();
+    RightAngle result{0};
+    if (IsNone() || axis.IsNone() || axis.Axis() == Axis())
+        return result;
+
+    if (axis.IsX())
+        result = x_angle.at(value);
+    if (axis.IsY())
+        result = y_angle.at(value);
+    if (axis.IsZ())
+        result = z_angle.at(value);
+    if (axis.IsNegative())
+        return -result;
+    else
+        return result;
 }
 
 Orientation Orientation::Opposite() const
@@ -280,14 +261,14 @@ bool Orientation::IsClockwise(Orientation to) const
 {
 	if ((!IsHorizontal()) || (!to.IsHorizontal()))
 		return false;
-	return HalfPiDeltaTo(to).Normalize() == HalfPiAngle(-1);
+	return HalfPiDeltaTo(to).first.Normalize() == RightAngle(-1);
 }
 
 bool Orientation::IsCounterClockwise(Orientation to) const
 {
 	if ((!IsHorizontal()) || (!to.IsHorizontal()))
 		return false;
-	return HalfPiDeltaTo(to).Normalize() == HalfPiAngle(1);
+	return HalfPiDeltaTo(to).first.Normalize() == RightAngle(1);
 }
 
 bool Orientation::IsPerpendicular(Orientation other) const
@@ -326,15 +307,16 @@ bool Orientation::IsParallel(Orientation other) const
     return axis == otherAxis;
 }
 
-HalfPiAngle Orientation::HalfPiDeltaTo(Orientation to) const
+std::pair<RightAngle, Orientation> Orientation::HalfPiDeltaTo(Orientation to) const
 {
-	auto it = half_pi_angle.find(value);
-	if (it == half_pi_angle.end())
-		throw std::invalid_argument("Can't turn from vertical or unspecified direction");
-	auto toit = half_pi_angle.find(to.value);
-	if (toit == half_pi_angle.end())
-		throw std::invalid_argument("Can't turn to vertical or unspeficied direction");
-	return (toit->second - it->second);
+    auto axis = Perpendicular(to);
+    if (!axis)
+        return std::make_pair(RightAngle::straight, *this);
+
+    auto angle = Angle(axis);
+    auto toangle = to.Angle(axis);
+
+    return std::make_pair(toangle - angle, axis);
 }
 
 bool Orientation::IsVertical() const
@@ -393,29 +375,18 @@ Orientation Orientation::Gravity()
     return Orientation(Down);
 }
 
-Orientation Orientation::Turn(Orientation turn) const
+Orientation Orientation::Turn(RightAngle turn, Orientation axis) const
 {
-	if (turn.IsVertical())
-	{
-		return turn;
-	}
-	else if (IsVertical())
+    if (IsNone() || axis.IsNone())
 	{
 		return *this;
 	}
-	else if (IsNone())
-	{
-		return turn;
-	}
-	else if (turn.IsNone())
-	{
-		return *this;
-	}
-	else
-	{	// both this and turn are horizontal
-		auto angle = (half_pi_angle.at(value) + half_pi_angle.at(turn.value)).Normalize();
-		return Orientation(From(angle));
-	}
+
+    if (Axis() == axis.Axis())
+        return *this;   // TODO if axis is negative than negate this ?
+
+    auto angle = (Angle(axis) + turn).Normalize();
+    return Orientation(From(angle, axis.Axis()));
 }
 
 std::string_view Orientation::Description() const
@@ -451,14 +422,30 @@ bool Orientation::operator<(Orientation other) const
     return value < other.value;
 }
 
-
-std::map<Orientation::Value, HalfPiAngle> Orientation::half_pi_angle=
+Orientation::AngleMap Orientation::x_angle=
 {
-	{ Orientation::Value::Front, HalfPiAngle(0) },
-	{ Orientation::Value::Back, HalfPiAngle(2) },
-	{ Orientation::Value::Right, HalfPiAngle(-1) },
-	{ Orientation::Value::Left, HalfPiAngle(1) }
+	{ Orientation::Value::Front, RightAngle(0) },
+	{ Orientation::Value::Up, RightAngle(1) },
+	{ Orientation::Value::Back, RightAngle(2) },
+	{ Orientation::Value::Down, RightAngle(-1) }
 };
+
+Orientation::AngleMap Orientation::y_angle=
+{
+	{ Orientation::Value::Up, RightAngle(0) },
+	{ Orientation::Value::Right, RightAngle(1) },
+	{ Orientation::Value::Down, RightAngle(2) },
+	{ Orientation::Value::Left, RightAngle(-1) }
+};
+
+Orientation::AngleMap Orientation::z_angle=
+{
+	{ Orientation::Value::Front, RightAngle(0) },
+	{ Orientation::Value::Right, RightAngle(-1) },
+	{ Orientation::Value::Back, RightAngle(2) },
+	{ Orientation::Value::Left, RightAngle(1) }
+};
+
 
 std::ostream& operator<<(std::ostream& os, Orientation dir)
 {

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "Geometry/Angles.h"
 #include "Geometry/Quaternion.h"
+#include "Geometry/RightAngle.h"
 
 namespace Engine::Test
 {
@@ -47,5 +48,30 @@ TEST(Angles, FaceYawPitch)
 */
 }
 
+
+TEST(RightAngle, Negate)
+{
+    EXPECT_EQ(-RightAngle::straight, RightAngle::straight);
+    EXPECT_EQ(-RightAngle::clockwise, RightAngle::counter_clockwise);
+}
+
+TEST(RightAngle, Add)
+{
+    EXPECT_EQ(RightAngle::clockwise + RightAngle::counter_clockwise, RightAngle::straight);
+    EXPECT_EQ(RightAngle::clockwise + RightAngle::clockwise, -RightAngle::around);
+}
+
+TEST(RightAngle, Subtract)
+{
+    EXPECT_EQ(RightAngle::straight - RightAngle::clockwise, RightAngle::counter_clockwise);
+    EXPECT_EQ(RightAngle::clockwise - RightAngle::counter_clockwise, -RightAngle::around);
+    EXPECT_EQ(RightAngle::clockwise - RightAngle::clockwise, RightAngle::straight);
+}
+
+TEST(RightAngle, Angle)
+{
+    EXPECT_EQ(RightAngle::straight, 0.0);
+    EXPECT_EQ(RightAngle::around, PI);
+}
 
 }

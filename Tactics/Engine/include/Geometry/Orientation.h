@@ -4,26 +4,11 @@
 #include <array>
 #include "Utility/from_string.h"
 #include "Geometry/Position.h"
+#include "Geometry/RightAngle.h"
 
 namespace Engine
 {
 class Vector;
-
-class HalfPiAngle
-{
-public:
-	HalfPiAngle();
-	explicit HalfPiAngle(int value);
-	bool operator==(const HalfPiAngle& other) const;
-	HalfPiAngle& operator+=(const HalfPiAngle& other);
-	HalfPiAngle& operator-=(const HalfPiAngle& other);
-	double Angle() const;
-	HalfPiAngle& Normalize();
-private:
-	int value;
-};
-HalfPiAngle operator+(const HalfPiAngle& a, const HalfPiAngle& b);
-HalfPiAngle operator-(const HalfPiAngle& a, const HalfPiAngle& b);
 
 // Orientation represents an integer unit vector, so it's either a cardinal wind direction, up or down
 class Orientation
@@ -35,7 +20,7 @@ public:
     explicit Orientation(const Position& vector);
     Position GetVector() const;
     double Surface(const Vector& grid) const;  // in m^2
-    double Angle() const;
+    RightAngle Angle(Orientation axis = up) const;
 	Orientation Opposite() const;
     Orientation operator-() const { return Opposite(); }
     bool IsPosititve() const;
@@ -60,7 +45,7 @@ public:
     int Z() const;
 
 	static Orientation Gravity();
-	Orientation Turn(Orientation turn) const;
+	Orientation Turn(RightAngle turn, Orientation axis=up) const;
     std::string_view Description() const;
 
     int Index() const;     // Index into Orientations::all, None = -1
@@ -112,11 +97,14 @@ protected:
     explicit Orientation(int index);
 
 	Value value;
-	HalfPiAngle HalfPiDeltaTo(Orientation other) const;
+	std::pair<RightAngle, Orientation> HalfPiDeltaTo(Orientation other) const;
 	static Value From(const Engine::Position& vector);
-	static Value From(HalfPiAngle angle);
+	static Value From(RightAngle angle, Orientation axis);
 
-    static std::map<Value, HalfPiAngle> half_pi_angle;
+    using AngleMap = std::map<Value, RightAngle> ;
+    static AngleMap x_angle;
+    static AngleMap y_angle;
+    static AngleMap z_angle;
 };
 
 std::ostream& operator<<(std::ostream& os, Orientation dir);

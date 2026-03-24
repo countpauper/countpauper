@@ -25,6 +25,11 @@ const Vector Vector::ZAxis(0, 0, 1);
 
 const Quaternion Quaternion::Identity(0, 0, 0, 1);
 
+const RightAngle RightAngle::straight{0};
+const RightAngle RightAngle::clockwise{-1};
+const RightAngle RightAngle::counter_clockwise{1};
+const RightAngle RightAngle::around{2};
+
 const Orientation Orientation::none{};
 const Orientation Orientation::up{Orientation::Up};
 const Orientation Orientation::down{Orientation::Down};
