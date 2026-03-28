@@ -42,12 +42,12 @@ public:
     
     Slice& operator+=(const Slice&);
     Slice& operator&=(Engine::Range<double> heigh);
-    Slice& operator*=(float mul);
+    Slice& operator*=(double scale);
 private:
     std::vector<Layer> layers;
 };
 
 Slice operator+(const Slice& lhs, const Slice& rhs);
 Slice operator&(const Slice& lhs, Engine::Range<double> rng);
-
+Slice operator*(const Slice& lhs, double scale);
 }

@@ -69,4 +69,12 @@ TEST(Slice, HeteroGeneousCut)
     EXPECT_EQ(cut[1], (Slice::Layer{Material::air, 0.4, 300.0f}));
 }
 
+TEST(Slice, Scale)
+{
+    auto halfSlice = Slice(Block(0.4f)) * 0.5;
+    ASSERT_EQ(halfSlice.size(), 2);
+    EXPECT_EQ(halfSlice[0], (Slice::Layer{Material::stone, 0.2, 300.0f}));
+    EXPECT_EQ(halfSlice[1], (Slice::Layer{Material::air, 0.3, 300.0f}));
+
+}
 }

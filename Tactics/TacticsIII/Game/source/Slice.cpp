@@ -133,10 +133,19 @@ Slice operator&(const Slice& lhs, Engine::Range<double> rng)
 }
 
 
-Slice& Slice::operator*=(float mul)
+Slice& Slice::operator*=(double scale)
 {
+    for(auto& layer: layers)
+    {
+        layer.amount *= scale;
+    }
     return *this;
 }
 
+Slice operator*(const Slice& lhs, double scale)
+{
+    Slice result(lhs);
+    return result *= scale;
+}
 
 }
