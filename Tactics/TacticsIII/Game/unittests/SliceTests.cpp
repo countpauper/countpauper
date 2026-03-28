@@ -49,5 +49,24 @@ TEST(Slice, StackSameSlice)
     EXPECT_EQ(slice[0].amount, 2.0);
 }
 
+TEST(Slice, HomogeneousCut)
+{
+    Engine::Range<double> range(0.2, 0.5);
+    auto cut = Slice(Block::Stone) & range;
+    ASSERT_EQ(cut.size(), 1);
+    EXPECT_NEAR(cut[0].amount, range.Size(), 1e-6f);
+}
+
+TEST(Slice, HeteroGeneousCut)
+{
+    Engine::Range<double> range(0.2, 0.8);
+    // Original:  |rock | air    |      0.4 rock 0.6 air
+    // Cut           |        |         0.2 rock 0.4 air 
+    //            0 .2 .4 .6 .8 1.0
+    auto cut = Slice(Block(0.4f)) & range;
+    ASSERT_EQ(cut.size(), 2);
+    EXPECT_EQ(cut[0], (Slice::Layer{Material::stone, 0.2, 300.0f}));
+    EXPECT_EQ(cut[1], (Slice::Layer{Material::air, 0.4, 300.0f}));
+}
 
 }

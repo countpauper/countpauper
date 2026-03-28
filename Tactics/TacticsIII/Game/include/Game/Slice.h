@@ -28,6 +28,7 @@ public:
         Amount amount; 
         Temperature temperature; 
         
+        bool operator==(const Layer& rhs) const;
         float Volume() const;
         float Density() const;  
         bool TryMerge(const Layer& rhs);
@@ -47,5 +48,6 @@ private:
 };
 
 Slice operator+(const Slice& lhs, const Slice& rhs);
+Slice operator&(const Slice& lhs, Engine::Range<double> rng);
 
 }

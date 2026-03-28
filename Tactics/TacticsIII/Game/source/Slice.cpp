@@ -30,6 +30,17 @@ Slice::Slice(const Slice& other)
 }
 
 
+bool Slice::Layer::operator==(const Slice::Layer& rhs) const
+{
+    if (material.get() != rhs.material.get())
+        return false;
+    if (amount != rhs.amount)
+        return false;
+    if (temperature != rhs.temperature)
+        return false;
+    return true;
+}
+
 float Slice::Layer::Volume() const
 {
     return amount * 100.0f;
@@ -82,8 +93,45 @@ Slice operator+(const Slice& lhs, const Slice& rhs)
 
 Slice& Slice::operator&=(Engine::Range<double> height)
 {
+    auto cutIt = layers.begin();
+    decltype(layers)::iterator cutStart, cutEnd;
+    double progress = 0.0;
+    while(cutIt!=layers.end())
+    {
+        if (progress + cutIt->amount >= height.begin) 
+        {
+            cutStart = cutIt;
+            double cutProgress = height.begin - progress;
+            progress += cutProgress;
+            cutStart->amount -= cutProgress;
+            break;
+        }
+        progress += cutIt->amount;
+        ++cutIt;
+    }
+    while(cutIt!=layers.end()) 
+    {
+        if (progress + cutIt->amount >= height.end)
+        {
+            double cutProgress = height.end - progress;
+            cutIt->amount = cutProgress;
+            cutEnd = ++cutIt;
+            break;
+        }
+        progress += cutIt->amount;
+        ++cutIt;
+    }
+    layers.erase(layers.begin(), cutStart);
+    layers.erase(cutEnd, layers.end());
     return *this;
 }
+
+Slice operator&(const Slice& lhs, Engine::Range<double> rng)
+{
+    Slice result(lhs);
+    return result &= rng;
+}
+
 
 Slice& Slice::operator*=(float mul)
 {
