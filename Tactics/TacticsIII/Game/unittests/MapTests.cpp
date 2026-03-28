@@ -22,7 +22,7 @@ TEST(Map, Bounds)
     EXPECT_EQ(small.GetBounds(), (Engine::IntBox{{0,1},{0,1},{0,1}}));
 
     Map big(Engine::Size{256,256,64});
-    EXPECT_EQ(small.GetBounds(), (Engine::IntBox{{0,255},{0,255},{0,63}}));
+    EXPECT_EQ(big.GetBounds(), (Engine::IntBox{{0,256},{0,256},{0,64}}));
 }
 
 TEST(Map, GroundHeight)

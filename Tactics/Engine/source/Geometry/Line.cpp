@@ -93,6 +93,11 @@ std::vector<std::pair<Position, double>> Line::Voxelize() const
                     static_cast<double>(current.z)},
                     Vector(1,1,1));
         auto intersection = bounds.Exit(*this);
+        if (!intersection.first) {
+            assert(previous==0.0);  // does not leave the start ? at least it starts on an edge and stays outside
+            result.emplace_back(current, 1.0 - previous);
+            break;
+        }
         assert(intersection.first); // somehow left the line. could probably continue; to skip edge cases, but which way?
         result.emplace_back(current, std::min(1.0, intersection.second) - previous);
         current += intersection.first.GetVector();

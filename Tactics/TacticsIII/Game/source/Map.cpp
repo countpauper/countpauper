@@ -161,9 +161,9 @@ void Map::Column(unsigned x, unsigned y, const Material& solid, unsigned solidLv
         if (zRng[solidHeight])
         {
             if (solid==Material::vegetation)
-                block = Block::Vegetation(solidHeight-z - 0.1, 0.1);
+                block = Block(0.1, 0.0, solidHeight-z - 0.1);
             else
-                block = Block::Vegetation(0.0f, solidHeight - z);
+                block = Block(solidHeight - z);
 
             if (zRng[liquidHeight] && liquid!=Material::air)
             {

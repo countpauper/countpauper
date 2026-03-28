@@ -7,15 +7,17 @@ namespace Game
 
 
 Block::Block()
-    : air(0.0f)
+    : temperature(0.0f)
+    , air(0.0f)
     , water(0.0f)
     , vegetation(0.0f)
     , stone(0.0f)
 {
 }
 
-Block::Block(float air, float water, float veg, float stone)
-    : air(air)
+Block::Block(float stone, float water, float veg, float temp)
+    : temperature(temp)
+    , air(1.0-(stone+water+veg))
     , water(water)
     , vegetation(veg)
     , stone(stone)
@@ -69,15 +71,10 @@ float Block::LiquidLevel() const
     return stone + water + waterVeg;
 }
 
-//                          air     water   veg.    rock
-const Block Block::Air      (1.0f,  0.0f,   0.0f,   0.0f);
-const Block Block::Water    (0.0f,  1.0f,   0.0f,   0.0f);
-const Block Block::Stone    (0.0f,  0.0f,   0.0f,   1.0f);
-
-Block Block::Vegetation(float vegetation, float rock)
-{
-    return Block(1.0f - (vegetation+rock), 0.0f, vegetation, rock);
-}
+//                          rock    water   veg     air is remaining
+const Block Block::Air      (0.0,   0.0f,   0.0f);
+const Block Block::Water    (0.0f,  1.0f,   0.0f);
+const Block Block::Stone    (1.0f,  0.0f,   0.0f);
 
 void Block::AddWater(float moreWater)
 {

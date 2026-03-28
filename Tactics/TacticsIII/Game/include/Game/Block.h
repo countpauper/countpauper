@@ -6,6 +6,8 @@
 namespace Game
 {
 
+
+
 class Block
 {
 public:
@@ -14,23 +16,23 @@ public:
     using Amount = float;
     using Temperature = float;
     Block();
-    Block(float air, float water, float veg, float rock);
+    Block(float rock, float water=0.0f, float veg=0.0f, float temp=300.0f);
 
     static const Block Water;
     static const Block Stone;
     static const Block Air;
-    static Block Vegetation(float vegetation, float rock);
+    
     void AddWater(float moreWater);
     const Material& GetMaterial(Orientation side) const;
     float LiquidLevel() const; // NaN is no liquid. 1.0 is full
     float SolidLevel() const;  // NaN is no ground. 1.0 is full solid
 private:
-    float air;  // if > 1.0-(rest) then it's pressurized. if < then underpressure (vacuum). In Bar
+    friend class Slice;
+    Temperature temperature;
+    float air;          // if > 1.0-(rest) then it's pressurized. if < then underpressure (vacuum). In Bar
     Amount water;       // liquid level = rock + min(nature,water) + water
     Amount vegetation;  // if > water sticks out into air.
     Amount stone;       // level of stone (for now)
 };
-
-
 
 }

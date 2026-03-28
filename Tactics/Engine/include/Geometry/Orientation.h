@@ -16,7 +16,6 @@ class Orientation
 public:
 	Orientation();
     Orientation(int x, int y, int z);
-
     explicit Orientation(const Position& vector);
     Position GetVector() const;
     double Surface(const Vector& grid) const;  // in m^2
