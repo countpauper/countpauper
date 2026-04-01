@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "Rendering/Effect.h"
-#include "GTestGeometry.h"
+#include "Geometry/Gtest.h"
 #include <array>
 #include <numeric>
 #include <iostream>

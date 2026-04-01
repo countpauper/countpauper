@@ -41,12 +41,12 @@ private:
 class TargetRequirement
 {
 public:
-    explicit TargetRequirement(double cover);
+    explicit TargetRequirement(double surface);
     explicit operator bool() const;
     std::string Description() const;
     bool operator==(const TargetRequirement& req) const;
 private:
-    double cover;
+    double surface;
 
 };
 

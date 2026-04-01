@@ -11,7 +11,7 @@ namespace Game
 class Actor
 {
 public:
-    virtual void Move(const class World& world, Engine::Position destination) = 0;
+    virtual void Move(const class World& world, Position destination) = 0;
     virtual Position GetPosition() const = 0;
     virtual Size GetSize() const = 0;
 

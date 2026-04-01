@@ -47,26 +47,22 @@ So: TODO:
 [done] Check if the intersection coordinate is also within both perpendicular plane ranges.
 [was alreadt done: Section] Create a function that creates a subsection line with that range, to get the height range over the Z
 [done] unit test it of course
-Create a function to get a slice of materials from a grid, something
-struct MaterialSection { mat*, Obstacle*, density, temperature}; or all mats (with a height start) and then slice that to a range 
-Grid::Slice(Range height) : vector<pair<MaterialSection, double>
-
-Apply the material section to the projectile and the projectile to the obstacles for that grid
+[done] Create a function to get a slice of materials from a grid, something
+[done Apply the material section to the projectile
+Apply the projectile to the obstacles for that grid
+Slow down by liquids 
+PEnetrate solids 
 Projectile::Resistance(Materia)
-
-
-Then the final function to trace the path over multiple grids.
-
+[done] Then the final function to trace the path over multiple grids.
 For melee weapons the same is done except the path is shorter and it may start at a different corner
 
 TODO:
 Where does it aim, how does (especially) vertical cover make it harder to aim.
-Instead of tracing a straight line and assuming perfect aim, a target height should be traced from the target to the origin
-This range is higher or smaller depending on the size of the character and what is aimed for (eg hamstring, headshot)
-or just center mass.
-Tracing through grids a slice can still be returned, but the height range is reduced by solid material (perhaps to 0)
-
-Then the algorithm will be: Trace two lines (bottom and top range) from aim target to source and keep the range of "clear" material
+[done] Instead of tracing a straight line and assuming perfect aim, a target height should be traced from the target to the origin
+[done]This range is higher or smaller depending on the size of the character 
+and what is aimed for (eg hamstring, headshot)
+[done] Tracing through grids a slice can still be returned, but the height range is reduced by solid material (perhaps to 0)
+[done] Then the algorithm will be: Trace two lines (bottom and top range) from aim target to source and keep the range of "clear" material
 The hit chance is computed from the height of this range. THis could still be 0 so penetrating shots can be attempted
 This also takes obstacles and their height into account
 Then trace once from the source to the middle of this range (fairest) and see what it really will hit.

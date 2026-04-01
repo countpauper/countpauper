@@ -4,7 +4,7 @@
 #include "Rendering/OffscreenSurface.h"
 #include "Rendering/Color.h"
 #include "Geometry/Matrix.h"
-#include "GTestGeometry.h"
+#include "Geometry/Gtest.h"
 
 namespace Engine::Test
 {

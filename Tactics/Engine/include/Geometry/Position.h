@@ -15,6 +15,10 @@ namespace Engine
         unsigned ManDistance(Position other) const;
         float Distance(Position other) const;
         float Size() const;
+        consteval int X() const { return x; }
+        consteval int Y() const { return y; }
+        consteval int Z() const { return z; }
+    
         Position& operator+=(Position delta);
         Position& operator-=(Position delta);
         explicit constexpr operator bool() const { return  x != 0 || y != 0 || z != 0; }
@@ -25,6 +29,9 @@ namespace Engine
     bool operator<(Position a, Position b); // for map keys
     Position operator+(Position a, Position b);
     Position operator-(Position a, Position b);
+
+
+
     std::ostream& operator<<(std::ostream& stream, Position position);
     std::wostream& operator<<(std::wostream& stream, Position position);
 }   // ::Engine

@@ -28,7 +28,7 @@ public:
     Engine::Mesh& GetMesh();
     // Height Map
     Engine::IntBox GetBounds() const override;
-    float GroundHeight(Engine::Position pos) const override;
+    float GroundHeight(Position pos) const override;
 
 private:
     Map(std::string_view fileName, const class Engine::Image& data);
@@ -37,8 +37,9 @@ private:
     void AddQuadToMesh(Engine::Coordinate topleft, const Material& mat);
 
     void GenerateMesh();
+
     Block& operator[](Engine::Position pos);
-    const Block& operator[](Engine::Position pos) const;
+    const Block& GetBlock(Engine::Position pos) const override;
 
     float LevelToHeight(int level) const;
     int HeightToLevel(float height) const;

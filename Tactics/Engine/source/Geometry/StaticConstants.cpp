@@ -38,6 +38,7 @@ const Orientation Orientation::back{Orientation::Back};
 const Orientation Orientation::right{Orientation::Right};
 const Orientation Orientation::left{Orientation::Left};
 
+
 const AxisAlignedPlane AxisAlignedPlane::null{Orientation::none, 0 };
 const AxisAlignedPlane AxisAlignedPlane::xy{Orientation::up, 0 };
 const AxisAlignedPlane AxisAlignedPlane::xz{Orientation::front, 0 };

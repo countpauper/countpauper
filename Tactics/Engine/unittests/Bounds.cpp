@@ -3,7 +3,7 @@
 #include "Geometry/AxisAlignedBoundingBox.h"
 #include "Geometry/Matrix.h"
 #include "Geometry/Angles.h"
-#include "GTestGeometry.h"
+#include "Geometry/Gtest.h"
 
 
 namespace Engine::Test

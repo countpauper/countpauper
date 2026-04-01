@@ -27,7 +27,7 @@ Requirements Attack::CanDo() const
     return Requirements{
         StatRequirement(Stat::ap, actor.GetCounts().Available(Stat::ap), Comparator::less_equal, AP()),
         StatRequirement(Stat::reach, actor.GetStats().Get(Stat::reach), Comparator::greater_equal, Computation(actor.GetPosition().ManDistance(target.GetPosition()))),
-        TargetRequirement(ComputeCover(world, actor, target))
+        TargetRequirement(ComputeAttackSurface(world, actor, target))
     };
 }
 

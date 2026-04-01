@@ -4,18 +4,20 @@
 
 namespace Game
 {
-    using Fraction=double;   // TODO fixed point
+    using Fraction=float;   // TODO fixed point
 
     struct Position
     {
         Position();
-        Position(int x, int y, double z=0.0);
+        Position(int x, int y, float z=0.0);
+        explicit Position(const Engine::Position& p, float zo=0.0);
+
         Engine::Position p;
         Fraction z_offset;
 
         inline int X() const { return p.x; }
         inline int Y() const { return p.y; }
-        inline double Z() const { return  static_cast<double>(p.z) + z_offset; }
+        inline float Z() const { return  static_cast<float>(p.z) + z_offset; }
         double ManDistance(Position other) const;
         double Distance(Position other) const;
         double Length() const;

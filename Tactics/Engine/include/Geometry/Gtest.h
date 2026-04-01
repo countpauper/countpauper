@@ -42,3 +42,19 @@
     EXPECT_DOUBLE_LE(_real.Y(), _compare.Y()); \
     EXPECT_DOUBLE_LE(_real.Z(), _compare.Z()); \
  }
+
+#define EXPECT_RANGE_EQ(r1, r2) \
+{ \
+    const auto& _real=(r1); \
+    const auto& _expected = (r2); \
+    EXPECT_DOUBLE_EQ(_real.begin, _expected.begin) << "begin"; \
+    EXPECT_DOUBLE_EQ(_real.end, _expected.end) << "end"; \
+}
+
+#define EXPECT_RANGE_NEAR(r1, r2, abs_error) \
+{ \
+    const auto& _real=(r1); \
+    const auto& _expected = (r2); \
+    EXPECT_NEAR(_real.begin, _expected.begin, abs_error) << "begin"; \
+    EXPECT_NEAR(_real.end, _expected.end, abs_error) << "end"; \
+}

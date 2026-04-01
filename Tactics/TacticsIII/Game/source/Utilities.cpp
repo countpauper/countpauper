@@ -2,6 +2,7 @@
 #include "Game/Actor.h"
 #include "Game/World.h"
 #include "Game/HeightMap.h"
+#include "Game/Slice.h"
 #include "Geometry/Line.h"
 
 namespace Game
@@ -14,9 +15,33 @@ Engine::Orientations Facing(Position from, Position to)
     return Engine::Orientations(Engine::Position{V.X(), V.Y(), static_cast<int>(std::round(V.Z()))});
 }
 
-double ComputeCover(const World& world, const Actor& from, const Actor& to)
+void DownPositions(std::vector<std::pair<Engine::Position, double>>& path)
 {
-    // TODO add attack height and target height based on state and size etc
+    for(auto it = path.begin(); it!=path.end();)
+    {
+        auto totalLength = it->second;
+        auto nit = it;
+        auto minZ = it->first.z;
+        for(++nit; nit!=path.end();++nit)
+        {
+            if (it->first.x != nit->first.x || 
+                it->first.y != nit->first.y)
+                break;
+            totalLength += nit->second;
+            minZ = std::min(minZ, nit->first.z);
+        }
+        it->second = totalLength;
+        it->first.z = minZ;
+        it = path.erase(it+1, nit);
+    }
+}
+
+
+
+double ComputeAttackSurface(const World& world, const Actor& from, const Actor& to)
+{
+    Engine::Range<double> aimHeight{0,1};
+    // TODO add attack height and target height based on state and size etc, weapon reach 
     // TODO check obstacles not from and to
     // TODO trace through block, height slice from z where enters and z where leaves:
     //      SOlid: cover (100% for that aim)
@@ -24,10 +49,12 @@ double ComputeCover(const World& world, const Actor& from, const Actor& to)
     //      Liquid & gas: range adjusted with parallel flow, miss adjusted with perpendicular flows (also up)
     //      Clouds: obscurement (cant see or miss)
     //      Fire: ignite particle, water extinguish particle (also obstacles)
-    auto origin = from.GetPosition()+Position(0,0, from.GetSize().Z() / 2.0);
-    auto aim = to.GetPosition() + Position(0,0, to.GetSize().Z() / 2.0);
+    static const double weaponHeight = 0.75;
+    aimHeight *= to.GetSize().Z();
+    auto origin = from.GetPosition()+Position(0,0, from.GetSize().Z() * weaponHeight);  // TODO configure/check/parameterize weapon height from creature & action
+    auto aimLow = to.GetPosition() + Position(0,0, aimHeight.begin);
 
-    auto targetSurfaces = Facing(origin, aim);  // TODO size ? of which?
+    auto targetSurfaces = Facing(origin, aimLow);  // TODO size ? of which?
 
     // compute normals and dot product with the Vector(aim-origin).Normalized()
     //  keep negative ones (Facing should already have discarded them?). Their sum is 0...-1,
@@ -36,17 +63,34 @@ double ComputeCover(const World& world, const Actor& from, const Actor& to)
     // along the orientation vectors add half the size (or whatever to the bounding box) and iterate, aim at those points
     // then instead of aiming from center mass
     // for taller (upright) targets aim high medium low instead of specific target (headshot/hamstring)
-    Engine::Line line(origin.Coord(), aim.Coord());
+    Engine::Line line(origin.Coord(), aimLow.Coord());
     auto path = line.Voxelize();
+    DownPositions(path);
+
     double progress = 0;
     double cover = 0.0;
-    for(const auto& p : path)
+    auto z = origin.Z();
+    auto surfaceHeight = aimHeight;
+    for(auto it = path.begin(); it!=path.end();++it)
     {
-        auto z = lerp(origin.Z(), aim.Z(), progress);
-        cover = std::max((world.GetMap().GroundHeight(p.first) - z), cover);
-        progress += p.second / line.Length();
+        Slice slice;
+        for(auto pos = it->first; (pos.z - it->first.z) <= aimHeight.Size(); pos.z+=1)
+        {
+            slice += Slice(world.GetMap()[pos]);
+        } 
+        slice &= surfaceHeight;
+        // TODO range = slice.FindGasOpening() (biggest) and if empty slice.FindLiquidOpening()
+        auto opening = slice.FindGasOpening();
+        if (opening.empty())
+            opening = slice.FindNonSolidOpening();
+        surfaceHeight &= opening;
+        if (surfaceHeight.empty())
+            break;
+        progress += it->second;
+        auto nextz = lerp(origin.Z(), aimLow.Z(), progress); 
+        z = nextz;
     }
-    return cover;
+    return surfaceHeight.Size();
 }
 
 // TODO: should still include map for cover/obscure

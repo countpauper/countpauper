@@ -5,15 +5,12 @@ namespace Game
     using Orientation = Engine::Orientation;
     using Orientations = Engine::Orientations;
 
-	static const Orientation east = Orientation::right;
-    static const Orientation west = Orientation::left;
-    static const Orientation north = Orientation::front;
-	static const Orientation south = Orientation::back;
-    static const Orientation up = Orientation::up;
-    static const Orientation down = Orientation::down;
+	extern const Orientation east;
+    extern const Orientation west;
+    extern const Orientation north;
+	extern const Orientation south;
+    extern const Orientation up;
+    extern const Orientation down;
 
-    constexpr bool IsProne(const Orientation ori)
-    {
-        return ori.IsVertical();
-    }
+    inline bool IsProne(const Orientation ori);
 }

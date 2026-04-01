@@ -31,6 +31,10 @@ public:
         bool operator==(const Layer& rhs) const;
         float Volume() const;
         float Density() const;  
+        bool IsGas() const;
+        bool IsSolid() const;
+        Engine::Range<double> FindGasOpening() const;
+        Engine::Range<double> FindNonSolidOpening() const;
         bool TryMerge(const Layer& rhs);
     };
 
@@ -43,6 +47,11 @@ public:
     Slice& operator+=(const Slice&);
     Slice& operator&=(Engine::Range<double> heigh);
     Slice& operator*=(double scale);
+
+    Engine::Range<double> FindGasOpening() const;
+    Engine::Range<double> FindNonSolidOpening() const;
+    Engine::Range<double> FindRange(std::function<bool(const Layer&)> predicate) const;
+
 private:
     std::vector<Layer> layers;
 };

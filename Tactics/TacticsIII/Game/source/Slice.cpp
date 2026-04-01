@@ -48,7 +48,18 @@ float Slice::Layer::Volume() const
 
 float Slice::Layer::Density() const
 {
-    return 1.0f;
+    return material.get().Density(temperature);
+}
+
+ 
+bool Slice::Layer::IsGas() const
+{
+    return material.get().IsGas(temperature);
+}
+
+bool Slice::Layer::IsSolid() const
+{
+    return material.get().IsSolid(temperature);
 }
 
 bool Slice::Layer::TryMerge(const Slice::Layer& rhs) 
@@ -80,7 +91,7 @@ Slice& Slice::operator+=(const Slice& rhs)
     {
         ++start;
     }   
-    layers.insert(end(), start, rhs.layers.end());
+    layers.insert(layers.end(), start, rhs.layers.end());
     return *this;
 }
 
@@ -93,22 +104,30 @@ Slice operator+(const Slice& lhs, const Slice& rhs)
 
 Slice& Slice::operator&=(Engine::Range<double> height)
 {
+    if (height.begin > height.end) {
+        layers.clear();
+        return *this;
+    }
     auto cutIt = layers.begin();
-    decltype(layers)::iterator cutStart, cutEnd;
     double progress = 0.0;
+    auto cutBegin = cutIt;
     while(cutIt!=layers.end())
     {
         if (progress + cutIt->amount >= height.begin) 
         {
-            cutStart = cutIt;
+            cutBegin = cutIt;
             double cutProgress = height.begin - progress;
             progress += cutProgress;
-            cutStart->amount -= cutProgress;
+            cutBegin->amount -= cutProgress;
             break;
         }
         progress += cutIt->amount;
         ++cutIt;
     }
+    cutIt = layers.erase(layers.begin(), cutBegin);
+
+
+    auto cutEnd = cutIt;
     while(cutIt!=layers.end()) 
     {
         if (progress + cutIt->amount >= height.end)
@@ -121,8 +140,7 @@ Slice& Slice::operator&=(Engine::Range<double> height)
         progress += cutIt->amount;
         ++cutIt;
     }
-    layers.erase(layers.begin(), cutStart);
-    layers.erase(cutEnd, layers.end());
+    cutIt = layers.erase(cutEnd, layers.end());
     return *this;
 }
 
@@ -147,5 +165,52 @@ Slice operator*(const Slice& lhs, double scale)
     Slice result(lhs);
     return result *= scale;
 }
+
+
+Engine::Range<double> Slice::FindGasOpening() const
+{
+    return FindRange([](const Layer& l)
+    {
+        return l.IsGas();
+    });
+}
+
+Engine::Range<double> Slice::FindNonSolidOpening() const
+{
+    return FindRange([](const Layer& l)
+    {
+        return !l.IsSolid();
+    });
+}
+
+Engine::Range<double> Slice::FindRange(std::function<bool(const Slice::Layer&)> predicate) const
+{
+    auto result = Engine::Range<double>::empty();
+    Engine::Range<double> current = Engine::Range<double>::empty();
+    double progress = 0;
+    for(const auto& layer : layers)
+    {
+        if (predicate(layer))
+        {
+            current.begin = std::min(progress, current.begin);
+        }
+        else if (!predicate(layer))
+        {
+            current.end = progress; 
+            if (current.Size() > result.Size())
+                result = current;
+            current = Engine::Range<double>::empty();
+        }
+        progress += layer.amount;
+    }
+    current.end = progress; 
+
+    if (current.Size() > result.Size())
+        result = current;
+
+    return result;
+
+}
+
 
 }

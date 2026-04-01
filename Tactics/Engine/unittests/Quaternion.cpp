@@ -3,7 +3,7 @@
 #include "Geometry/Vector.h"
 #include "Geometry/Angles.h"
 #include "Geometry/Matrix.h"
-#include "GTestGeometry.h"
+#include "Geometry/Gtest.h"
 #include <GL/gl.h>
 
 namespace Engine::Test

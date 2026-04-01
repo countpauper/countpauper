@@ -8,6 +8,12 @@ struct Material
 {
     std::string name;
     Engine::RGBA color;
+    float freezingPoint; 
+    float boilingPoint;
+    
+    float Density(float temperature) const;
+    bool IsSolid(float temperature) const;
+    bool IsGas(float temperature) const;
 
     bool operator==(const Material& other) const;
 

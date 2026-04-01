@@ -1,6 +1,9 @@
 #include "Game/Slice.h"
 #include "Game/Block.h"
+#include "Geometry/Gtest.h"
 #include <gtest/gtest.h>
+
+
 
 namespace Game::Test
 {
@@ -60,13 +63,28 @@ TEST(Slice, HomogeneousCut)
 TEST(Slice, HeteroGeneousCut)
 {
     Engine::Range<double> range(0.2, 0.8);
-    // Original:  |rock | air    |      0.4 rock 0.6 air
-    // Cut           |        |         0.2 rock 0.4 air 
+    // Original:  |stone| air    |      0.4 stone 0.6 air
+    // Cut           |        |         0.2 stone 0.4 air 
     //            0 .2 .4 .6 .8 1.0
     auto cut = Slice(Block(0.4f)) & range;
     ASSERT_EQ(cut.size(), 2);
     EXPECT_EQ(cut[0], (Slice::Layer{Material::stone, 0.2, 300.0f}));
     EXPECT_EQ(cut[1], (Slice::Layer{Material::air, 0.4, 300.0f}));
+}
+
+TEST(Slice, ZeroCut)
+{
+    Engine::Range<double> range(0.2, 0.2);
+    auto cut = Slice(Block::Water) & range;
+    ASSERT_EQ(cut.size(), 1);
+    EXPECT_EQ(cut[0], (Slice::Layer{Material::water, 0.0, 300.0f}));
+}
+
+TEST(Slice, EmptyCut)
+{
+    auto range = Engine::Range<double>::empty();
+    auto cut = Slice(Block::Water) & range;
+    ASSERT_EQ(cut.size(), 0);
 }
 
 TEST(Slice, Scale)
@@ -75,6 +93,14 @@ TEST(Slice, Scale)
     ASSERT_EQ(halfSlice.size(), 2);
     EXPECT_EQ(halfSlice[0], (Slice::Layer{Material::stone, 0.2, 300.0f}));
     EXPECT_EQ(halfSlice[1], (Slice::Layer{Material::air, 0.3, 300.0f}));
-
 }
+
+TEST(Slice, Find)
+{
+    EXPECT_FALSE(Slice(Block::Stone).FindNonSolidOpening());
+    EXPECT_EQ(Slice(Block::Air).FindGasOpening().Size(), 1.0);
+    EXPECT_RANGE_NEAR(((Slice(Block(0.6)) + Slice(Block(0.4, 0.3)) + Slice(Block::Stone)) * 0.5).FindNonSolidOpening(), 
+        Engine::Range<double>(0.7, 1.0), 1e-6);
+}
+
 }

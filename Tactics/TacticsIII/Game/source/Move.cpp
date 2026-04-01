@@ -48,8 +48,8 @@ Move::Move(World& world, Actor& actor, Engine::Position destination, unsigned di
             auto to = at + ori.GetVector();
             if (!map.GetBounds().Contains(to))
                 continue;
-            Engine::Position headroom = to + Engine::Position(0, 0, std::ceil(jump));
-            float deltaHeight = map.GroundHeight(headroom) - map.GroundHeight(at);
+            Position headroom = Position(to, jump);
+            float deltaHeight = map.GroundHeight(headroom) - map.GroundHeight(Position(at));
             if (std::abs(deltaHeight) > jump)
                 continue;
             // TODO check size its under ceiling
@@ -125,7 +125,7 @@ std::vector<Delta> Move::Execute(std::ostream& log) const
     Delta dActor(actor);
     if (ap)
     {
-        dActor.Move(world, *Reachable());
+        dActor.Move(world, Position(*Reachable()));
         dActor.GetCounts().Cost(Stat::ap, ap, true);
         log << actor.GetAppearance().Name() << " moves to " << *Reachable() << std::endl;
     }

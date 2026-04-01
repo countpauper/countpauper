@@ -19,11 +19,11 @@ class MockActor : public Actor
 public:
     MockActor()
     {
-        ON_CALL(*this, Move(_, _)).WillByDefault(Invoke([this](const class World& world, Engine::Position destination)
+        ON_CALL(*this, Move(_, _)).WillByDefault(Invoke([this](const class World& world, Position destination)
         {
             ON_CALL(*this, GetPosition()).WillByDefault(Return(Position(
-                destination.x,
-                destination.y,
+                destination.X(),
+                destination.Y(),
                 world.GetMap().GroundHeight(destination))));
         }));
         ON_CALL(stats, Get(_, _, _)).WillByDefault(Return(Computation(0)));
@@ -50,7 +50,7 @@ public:
         }
     }
 
-    MOCK_METHOD(void, Move, (const class World& world, Engine::Position destination), (override));
+    MOCK_METHOD(void, Move, (const class World& world, Position destination), (override));
     MOCK_METHOD(Position, GetPosition, (), (const override));
     MOCK_METHOD(Size, GetSize, (), (const override));
 

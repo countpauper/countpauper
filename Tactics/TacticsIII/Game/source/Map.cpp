@@ -110,12 +110,12 @@ uint32_t Map::Index(Engine::Position pos) const
 
 Block& Map::operator[](Engine::Position pos)
 {
-    return blocks[Index(pos)];
+    return blocks.at(Index(pos));
 }
 
-const Block& Map::operator[](Engine::Position pos) const
+const Block& Map::GetBlock(Engine::Position pos) const
 {
-    return blocks[Index(pos)];
+    return blocks.at(Index(pos));
 }
 
 
@@ -128,12 +128,11 @@ int Map::HeightToLevel(float height) const
     return static_cast<int>(height * subheight);
 }
 
-float Map::GroundHeight(Engine::Position pos) const
+float Map::GroundHeight(Position pos) const
 {
-    const auto& grid = (*this)[pos];
-    for(int z=pos.z; z>=0; --z)
+    for(int z=ceil(pos.Z()); z>=0; --z)
     {
-        const auto& block = (*this)[Engine::Position(pos.x, pos.y, z)];
+        const auto& block = GetBlock(Engine::Position(pos.X(), pos.Y(), z));
         auto height = block.SolidLevel();
         if (!std::isnan(height))
         {

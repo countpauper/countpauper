@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "Utility/Maths.h"
-#include "GTestGeometry.h"
+#include "Geometry/Gtest.h"
 
 namespace Engine::Test
 {

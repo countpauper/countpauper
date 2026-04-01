@@ -12,12 +12,18 @@ Position::Position() :
 {
 }
 
-Position::Position(int x, int y, double z) :
+Position::Position(int x, int y, float z) :
     p(x, y, (int)z),
     z_offset(z - p.z)
 {
 }
 
+Position::Position(const Engine::Position& p, float zo) :
+    p(p),
+    z_offset(zo)
+{
+
+}
 
 
 double Position::ManDistance(Position other) const

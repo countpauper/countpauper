@@ -18,7 +18,7 @@ Avatar::Avatar(const World& world, const Races& races, const ItemDatabase& items
 {
     if (auto posData = Engine::try_get<json>(data, "position"))
     {
-        Move(world, Engine::Position((*posData)[0], (*posData)[1], (*posData)[2]));
+        Move(world, Position((*posData)[0], (*posData)[1], (*posData)[2]));
     }
     GenerateMesh();
     SubscribeBus();
@@ -77,10 +77,11 @@ void Avatar::Select(bool on)
 }
 
 
-void Avatar::Move(const World& world, Engine::Position destination)
+void Avatar::Move(const World& world, Position destination)
 {
-    coordinate = world.GetMap().GroundCoord(destination);
-    creature.SetPosition({destination.x, destination.y, coordinate.Z()});
+    auto z = world.GetMap().GroundHeight(destination);
+    coordinate = Engine::Coordinate(destination.X(), destination.Y(), z);
+    creature.SetPosition({destination.X(), destination.Y(), z});
 }
 
 const Engine::Object& Avatar::GetAppearance() const

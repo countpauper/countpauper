@@ -71,10 +71,17 @@ float Block::LiquidLevel() const
     return stone + water + waterVeg;
 }
 
-//                          rock    water   veg     air is remaining
+float Block::AirPressure() const 
+{
+    float airVolume = 1.0 - (water+stone+vegetation);
+    return air/airVolume;
+}
+
+//                          stone    water   veg     air is remaining
 const Block Block::Air      (0.0,   0.0f,   0.0f);
 const Block Block::Water    (0.0f,  1.0f,   0.0f);
 const Block Block::Stone    (1.0f,  0.0f,   0.0f);
+const Block Block::Space;
 
 void Block::AddWater(float moreWater)
 {

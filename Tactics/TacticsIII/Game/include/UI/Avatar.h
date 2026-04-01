@@ -25,7 +25,7 @@ public:
     Engine::Coordinate GetCoordinate() const override;
     Engine::Quaternion GetOrientation() const override;
     void Select(bool on);
-    void Move(const World& world, Engine::Position destination) override;
+    void Move(const World& world, Position destination) override;
 
     const Engine::Object& GetAppearance() const override;
     Position GetPosition() const override;

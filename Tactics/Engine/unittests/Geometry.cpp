@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "Geometry/Coordinate.h"
 #include "Geometry/Vector.h"
-#include "GTestGeometry.h"
+#include "Geometry/Gtest.h"
 #include <numeric>
 
 namespace Engine::Test

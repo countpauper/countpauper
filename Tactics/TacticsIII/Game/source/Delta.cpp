@@ -35,7 +35,7 @@ const Engine::Object& Delta::GetAppearance() const
 void Delta::Apply()
 {
     if (world)
-        parent->Move(*world, position.p);
+        parent->Move(*world, position);
     for(const auto& dCounter : counterDelta)
         parent->GetCounts().Cost(dCounter.first, -dCounter.second, true);
 
@@ -61,11 +61,11 @@ Engine::Quaternion Delta::GetOrientation() const
 }
 
 
-void Delta::Move(const class World& world, Engine::Position destination)
+void Delta::Move(const class World& world, Position destination)
 {
     this->world = &world;
     auto z = this->world->GetMap().GroundHeight(destination);
-    position = Position(destination.x, destination.y, z);
+    position = Position(destination.X(), destination.Y(), z);
 }
 
 Position Delta::GetPosition() const

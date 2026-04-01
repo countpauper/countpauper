@@ -3,7 +3,7 @@
 #include "Geometry/Quaternion.h"
 #include "Geometry/Vector.h"
 #include "Geometry/Angles.h"
-#include "GTestGeometry.h"
+#include "Geometry/Gtest.h"
 
 namespace Engine::Test
 {

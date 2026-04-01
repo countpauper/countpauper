@@ -2,6 +2,7 @@
 #include <gmock/gmock.h>
 
 #include "Game/HeightMap.h"
+#include "Game/Block.h"
 
 namespace Game::Test
 {
@@ -10,15 +11,18 @@ using namespace ::testing;
 
 MATCHER_P(IsPositionAbove, p, "")
 {
-    *result_listener << "where the vector is (" << arg.x - p.x << ", " << arg.y - p.y << ")";
-    return (arg.x == p.x && arg.y == p.y && arg.z > p.z);
+    *result_listener << "where the vector is (" << (arg.p.x - p.x) << ", " << (arg.p.y - p.y) << ")";
+    return (arg.p.x == p.x && arg.p.y == p.y && arg.Z() > p.z);
 }
 
 
 class MockMap : public HeightMap
 {
 public:
-    MockMap() = default;
+    MockMap()
+    {
+        ON_CALL(*this,  GetBlock(_)).WillByDefault(ReturnRef(Block::Space));
+    }
 
     void SetHeightMap(Engine::Size size, std::initializer_list<float> heights={})
     {
@@ -31,9 +35,19 @@ public:
             ON_CALL(*this, GroundHeight(IsPositionAbove(Engine::Position(x,y,-1)))).WillByDefault(Return(height));
             ++idx;
         }
+        ON_CALL(*this, GetBlock(_)).WillByDefault(WithArg<0>([this](Engine::Position p) -> const Block&
+        {
+            auto h = GroundHeight(Position(p));
+            if (h <= p.z)    // todo fraction of h
+                return Block::Air;   
+            else    
+                return Block::Stone;
+        }));
     }
     MOCK_METHOD(Engine::IntBox, GetBounds, (), (const override));
-    MOCK_METHOD(float, GroundHeight, (Engine::Position pos), (const override));
+    MOCK_METHOD(float, GroundHeight, (Position pos), (const override));
+    MOCK_METHOD(const Block&, GetBlock, (Engine::Position pos), (const override));
+
 };
 
 }

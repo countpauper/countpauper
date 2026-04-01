@@ -27,12 +27,15 @@ TEST(Utilities, Facing)
 
 }
 
-TEST(Utilities, Cover)
+TEST(Utilities, AttackSurface)
 {
     MockWorld world;
     MockActor attacker;
     MockActor defender;
-    EXPECT_LE(ComputeCover(world, attacker, defender), 1.0);
+    defender.Move(world, Position(1,0,0));
+    world.map.SetHeightMap(Engine::Size(2,1,1), {0.0f, 0.0f});
+    EXPECT_CALL(defender, GetSize()).WillOnce(Return(Size(1,1,2)));
+    EXPECT_EQ(ComputeAttackSurface(world, attacker, defender), 2.0);
 }
 
 TEST(Utilities, HitChance)

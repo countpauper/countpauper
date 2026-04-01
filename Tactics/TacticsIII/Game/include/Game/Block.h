@@ -16,21 +16,23 @@ public:
     using Amount = float;
     using Temperature = float;
     Block();
-    Block(float rock, float water=0.0f, float veg=0.0f, float temp=300.0f);
+    Block(float stone, float water=0.0f, float veg=0.0f, float temp=300.0f);
 
     static const Block Water;
     static const Block Stone;
     static const Block Air;
+    static const Block Space;
     
     void AddWater(float moreWater);
     const Material& GetMaterial(Orientation side) const;
     float LiquidLevel() const; // NaN is no liquid. 1.0 is full
     float SolidLevel() const;  // NaN is no ground. 1.0 is full solid
+    float AirPressure() const;  // Air pressure in Bar
 private:
     friend class Slice;
     Temperature temperature;
     float air;          // if > 1.0-(rest) then it's pressurized. if < then underpressure (vacuum). In Bar
-    Amount water;       // liquid level = rock + min(nature,water) + water
+    Amount water;       // liquid level = stone + min(nature,water) + water
     Amount vegetation;  // if > water sticks out into air.
     Amount stone;       // level of stone (for now)
 };
