@@ -38,7 +38,7 @@ void DownPositions(std::vector<std::pair<Engine::Position, double>>& path)
 
 
 
-double ComputeAttackSurface(const World& world, const Actor& from, const Actor& to)
+double ComputeAttackSurface(const World& world, const Actor& from, const Actor& to, float reach)
 {
     Engine::Range<float> aimHeight{0,1};
     // TODO add attack height and target height based on state and size etc, weapon reach 
@@ -50,14 +50,26 @@ double ComputeAttackSurface(const World& world, const Actor& from, const Actor& 
     //      Clouds: obscurement (cant see or miss)
     //      Fire: ignite particle, water extinguish particle (also obstacles)
     static const float weaponHeight = 0.75;
-    aimHeight *= to.GetSize().Z();
+    auto origin = from.GetPosition()+Position(0,0, from.GetSize().Z() * weaponHeight);  
 
-    auto origin = from.GetPosition()+Position(0,0, from.GetSize().Z() * weaponHeight);  // TODO configure/check/parameterize weapon height from creature & action
+    aimHeight *= to.GetSize().Z(); // TODO configure/check/parameterize weapon height from creature & action
     auto aimLow = to.GetPosition() + Position(0,0, aimHeight.begin);
-
     auto aimMiddle = to.GetPosition() + Position(0, 0, aimHeight.Middle());
     auto targetSurfaces = Facing(origin, aimMiddle);  // TODO size ? of which?
     aimHeight += Engine::Fraction(to.GetPosition().Z());
+
+    // Compute reach height, todo, obviously refactor. Should probably not even be part of this computation? Or it might be efficient to check before iterating over the map for no reason 
+
+    auto delta = (to.GetPosition() - from.GetPosition());  
+    delta.p.z = 0;
+    delta.z_offset = 0.0f;
+    float horizontalDistance = delta.Length() - 1.0;
+    float verticalReach = (reach*reach) - (horizontalDistance*horizontalDistance);
+    if (verticalReach<0)
+        return 0.0;
+    verticalReach = sqrt(verticalReach);
+    Engine::Range<float> reachRange(origin.Z() - verticalReach, origin.Z() + verticalReach);
+    aimHeight &= reachRange;
 
     // compute normals and dot product with the Vector(aim-origin).Normalized()
     //  keep negative ones (Facing should already have discarded them?). Their sum is 0...-1,
@@ -71,26 +83,29 @@ double ComputeAttackSurface(const World& world, const Actor& from, const Actor& 
     DownPositions(path);
 
     float progress = 0;
-    float cover = 0.0;
     Engine::Range<float> triangle(origin.Z(), origin.Z());
-    auto surfaceHeight = aimHeight;
-    for(auto it = path.begin(); it!=path.end();++it)
+    auto it = path.begin();
+    for(auto it =path.begin(); it!=path.end();++it)
     {
+        // check when leaving it grid, progress first; 
+        progress += it->second; 
+        if (progress<1e-3)
+            continue;   // don't introduce numeric impression when barely leaving the origin 
+
+        triangle.begin = lerp(origin.Z(), aimHeight.begin, progress);
+        triangle.end = lerp(origin.Z(), aimHeight.end, progress);
         Slice slice = world.GetMap().GetSlice(Position(it->first.X(), it->first.Y(), triangle.begin), triangle.Size());
-        // TODO range = slice.FindGasOpening() (biggest) and if empty slice.FindLiquidOpening()
         auto opening = slice.FindGasOpening();
         if (opening.IsEmpty())
             opening = slice.FindNonSolidOpening();
-        surfaceHeight &= opening;
-        if (surfaceHeight.IsEmpty()) {
+        opening /= progress;    // extrapolate to end 
+
+        aimHeight &= opening;
+        if (aimHeight.IsEmpty()) {
             break;
         }
-        progress += it->second;
-        auto nextz = lerp(origin.Z(), aimLow.Z(), progress); 
-        triangle.begin = lerp(origin.Z(), aimHeight.begin, progress);
-        triangle.end = lerp(origin.Z(), aimHeight.end, progress);
     }
-    return surfaceHeight.Size();
+    return aimHeight.Size();
 }
 
 // TODO: should still include map for cover/obscure

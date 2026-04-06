@@ -13,7 +13,7 @@ Engine::Coordinate BlockMap::GroundCoord(Engine::Position pos) const
 Slice BlockMap::GetSlice(Position pos, float height) const
 {
     Slice slice; 
-    for(int z = 0; z<std::ceil(height); ++z)
+    for(int z = 0; z<std::ceil(height + pos.z_offset); ++z) // TODO test this z_offset, 
     {
         slice += Slice(GetBlock({pos.X(), pos.Y(), pos.p.z + z}));
     }

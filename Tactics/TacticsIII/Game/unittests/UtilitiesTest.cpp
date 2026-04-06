@@ -34,8 +34,9 @@ TEST(Utilities, AttackSurface)
     MockActor defender;
     defender.Move(world, Position(1,0,0));
     world.map.SetHeightMap(Engine::Size(2,1,1), {0.0f, 0.0f});
+    EXPECT_CALL(attacker, GetSize()).WillOnce(Return(Size(1,1,1)));
     EXPECT_CALL(defender, GetSize()).WillOnce(Return(Size(1,1,2)));
-    EXPECT_EQ(ComputeAttackSurface(world, attacker, defender), 2.0);
+    EXPECT_EQ(ComputeAttackSurface(world, attacker, defender, 2.0), 2.0);
 }
 
 TEST(Utilities, HitChance)
