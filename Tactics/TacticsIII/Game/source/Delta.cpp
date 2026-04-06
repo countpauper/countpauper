@@ -1,6 +1,6 @@
 #include "Game/Delta.h"
 #include "Game/World.h"
-#include "Game/HeightMap.h"
+#include "Game/BlockMap.h"
 
 namespace Game
 {

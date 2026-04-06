@@ -1,7 +1,7 @@
 #pragma once
 #include <gmock/gmock.h>
 
-#include "Game/HeightMap.h"
+#include "Game/BlockMap.h"
 #include "Game/Block.h"
 
 namespace Game::Test

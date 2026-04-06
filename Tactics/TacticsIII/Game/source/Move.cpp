@@ -2,7 +2,7 @@
 #include "Game/World.h"
 #include "Game/Stat.h"
 #include "Game/Actor.h"
-#include "Game/HeightMap.h"
+#include "Game/BlockMap.h"
 #include "Game/Orientation.h"
 #include "AI/Astar.h"
 #include "Geometry/Line.h"

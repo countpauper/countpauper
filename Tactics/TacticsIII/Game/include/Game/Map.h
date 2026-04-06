@@ -3,7 +3,7 @@
 #include "Geometry/Mesh.h"
 #include "Geometry/Position.h"
 #include "UI/Scenery.h"
-#include "Game/HeightMap.h"
+#include "Game/BlockMap.h"
 #include "Game/Material.h"
 #include "Game/Block.h"
 #include <vector>

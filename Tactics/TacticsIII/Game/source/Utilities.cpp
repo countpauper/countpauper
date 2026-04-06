@@ -1,7 +1,7 @@
 #include "Game/Utilities.h"
 #include "Game/Actor.h"
 #include "Game/World.h"
-#include "Game/HeightMap.h"
+#include "Game/BlockMap.h"
 #include "Game/Slice.h"
 #include "Geometry/Line.h"
 
