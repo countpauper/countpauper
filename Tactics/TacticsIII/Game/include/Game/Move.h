@@ -4,7 +4,6 @@
 #include <vector>
 namespace Game
 {
-class HeightMap;
 class World;
 
 class Move : public Action

@@ -3,23 +3,23 @@
 #include "Game/Material.h"
 #include "Game/Position.h"
 #include "Geometry/IntBox.h"
+#include "Game/Slice.h"
 
 namespace Game
 {
 
 class Block;
 
-class HeightMap
+class BlockMap
 {
 public:
     virtual Engine::IntBox GetBounds() const = 0;
-    virtual float GroundHeight(Position pos) const = 0;
-    Engine::Coordinate GroundCoord(Engine::Position pos) const
-    {
-        return Game::Position(pos.x, pos.y, GroundHeight(Position(pos))).Coord();
-    }
-    virtual const Block& GetBlock(Engine::Position pos) const = 0;
-    const Block& operator[](Engine::Position pos) const  { return GetBlock(pos); }
+    virtual Block GetBlock(Engine::Position pos) const = 0;
+
+    float GroundHeight(Position pos) const;
+    Engine::Coordinate GroundCoord(Engine::Position pos) const;
+    Slice GetSlice(Position pos, float height) const;
+    Block operator[](Engine::Position pos) const  { return GetBlock(pos); }
 };
 
 }

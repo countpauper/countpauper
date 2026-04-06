@@ -94,4 +94,17 @@ void Block::AddWater(float moreWater)
     water += moreWater;
 }
 
+bool Block::CanWalk() const
+{
+    auto solidLvl = SolidLevel();
+    if (solidLvl>=1.0)
+        return false; 
+    if (solidLvl<=0.0)
+        return false;
+    if (LiquidLevel()>=1.0)
+        return false;
+    return true;
+}
+
+
 }

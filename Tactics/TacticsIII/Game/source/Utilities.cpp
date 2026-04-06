@@ -40,21 +40,24 @@ void DownPositions(std::vector<std::pair<Engine::Position, double>>& path)
 
 double ComputeAttackSurface(const World& world, const Actor& from, const Actor& to)
 {
-    Engine::Range<double> aimHeight{0,1};
+    Engine::Range<float> aimHeight{0,1};
     // TODO add attack height and target height based on state and size etc, weapon reach 
     // TODO check obstacles not from and to
     // TODO trace through block, height slice from z where enters and z where leaves:
-    //      SOlid: cover (100% for that aim)
+    //      Solid: cover (100% for that aim)
     //      Liquid: Density = reduce power
     //      Liquid & gas: range adjusted with parallel flow, miss adjusted with perpendicular flows (also up)
     //      Clouds: obscurement (cant see or miss)
     //      Fire: ignite particle, water extinguish particle (also obstacles)
-    static const double weaponHeight = 0.75;
+    static const float weaponHeight = 0.75;
     aimHeight *= to.GetSize().Z();
+
     auto origin = from.GetPosition()+Position(0,0, from.GetSize().Z() * weaponHeight);  // TODO configure/check/parameterize weapon height from creature & action
     auto aimLow = to.GetPosition() + Position(0,0, aimHeight.begin);
 
-    auto targetSurfaces = Facing(origin, aimLow);  // TODO size ? of which?
+    auto aimMiddle = to.GetPosition() + Position(0, 0, aimHeight.Middle());
+    auto targetSurfaces = Facing(origin, aimMiddle);  // TODO size ? of which?
+    aimHeight += Engine::Fraction(to.GetPosition().Z());
 
     // compute normals and dot product with the Vector(aim-origin).Normalized()
     //  keep negative ones (Facing should already have discarded them?). Their sum is 0...-1,
@@ -67,28 +70,25 @@ double ComputeAttackSurface(const World& world, const Actor& from, const Actor& 
     auto path = line.Voxelize();
     DownPositions(path);
 
-    double progress = 0;
-    double cover = 0.0;
-    auto z = origin.Z();
+    float progress = 0;
+    float cover = 0.0;
+    Engine::Range<float> triangle(origin.Z(), origin.Z());
     auto surfaceHeight = aimHeight;
     for(auto it = path.begin(); it!=path.end();++it)
     {
-        Slice slice;
-        for(auto pos = it->first; (pos.z - it->first.z) <= aimHeight.Size(); pos.z+=1)
-        {
-            slice += Slice(world.GetMap()[pos]);
-        } 
-        slice &= surfaceHeight;
+        Slice slice = world.GetMap().GetSlice(Position(it->first.X(), it->first.Y(), triangle.begin), triangle.Size());
         // TODO range = slice.FindGasOpening() (biggest) and if empty slice.FindLiquidOpening()
         auto opening = slice.FindGasOpening();
-        if (opening.empty())
+        if (opening.IsEmpty())
             opening = slice.FindNonSolidOpening();
         surfaceHeight &= opening;
-        if (surfaceHeight.empty())
+        if (surfaceHeight.IsEmpty()) {
             break;
+        }
         progress += it->second;
         auto nextz = lerp(origin.Z(), aimLow.Z(), progress); 
-        z = nextz;
+        triangle.begin = lerp(origin.Z(), aimHeight.begin, progress);
+        triangle.end = lerp(origin.Z(), aimHeight.end, progress);
     }
     return surfaceHeight.Size();
 }

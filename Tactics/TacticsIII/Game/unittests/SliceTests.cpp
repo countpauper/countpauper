@@ -31,6 +31,11 @@ TEST(Slice, AirSlice)
     EXPECT_EQ(Slice(Block::Air)[0].material, Material::air);
 }
 
+TEST(Slice, VacuumSlice)
+{
+    EXPECT_EQ(Slice(Block())[0].material, Material::vacuum);
+}
+
 TEST(Slice, MixedSlice)
 {
     Block block(0.5, 0.1, 0.0);
@@ -54,7 +59,7 @@ TEST(Slice, StackSameSlice)
 
 TEST(Slice, HomogeneousCut)
 {
-    Engine::Range<double> range(0.2, 0.5);
+    Engine::Range<float> range(0.2f, 0.5f);
     auto cut = Slice(Block::Stone) & range;
     ASSERT_EQ(cut.size(), 1);
     EXPECT_NEAR(cut[0].amount, range.Size(), 1e-6f);
@@ -62,7 +67,7 @@ TEST(Slice, HomogeneousCut)
 
 TEST(Slice, HeteroGeneousCut)
 {
-    Engine::Range<double> range(0.2, 0.8);
+    Engine::Range<float> range(0.2f, 0.8f);
     // Original:  |stone| air    |      0.4 stone 0.6 air
     // Cut           |        |         0.2 stone 0.4 air 
     //            0 .2 .4 .6 .8 1.0
@@ -74,7 +79,7 @@ TEST(Slice, HeteroGeneousCut)
 
 TEST(Slice, ZeroCut)
 {
-    Engine::Range<double> range(0.2, 0.2);
+    Engine::Range<float> range(0.2f, 0.2f);
     auto cut = Slice(Block::Water) & range;
     ASSERT_EQ(cut.size(), 1);
     EXPECT_EQ(cut[0], (Slice::Layer{Material::water, 0.0, 300.0f}));
@@ -82,14 +87,14 @@ TEST(Slice, ZeroCut)
 
 TEST(Slice, EmptyCut)
 {
-    auto range = Engine::Range<double>::empty();
+    auto range = Engine::Range<float>::empty();
     auto cut = Slice(Block::Water) & range;
     ASSERT_EQ(cut.size(), 0);
 }
 
 TEST(Slice, Scale)
 {
-    auto halfSlice = Slice(Block(0.4f)) * 0.5;
+    auto halfSlice = Slice(Block(0.4f)) * 0.5f;
     ASSERT_EQ(halfSlice.size(), 2);
     EXPECT_EQ(halfSlice[0], (Slice::Layer{Material::stone, 0.2, 300.0f}));
     EXPECT_EQ(halfSlice[1], (Slice::Layer{Material::air, 0.3, 300.0f}));

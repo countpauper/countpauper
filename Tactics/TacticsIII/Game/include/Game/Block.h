@@ -28,6 +28,8 @@ public:
     float LiquidLevel() const; // NaN is no liquid. 1.0 is full
     float SolidLevel() const;  // NaN is no ground. 1.0 is full solid
     float AirPressure() const;  // Air pressure in Bar
+
+    bool CanWalk() const;
 private:
     friend class Slice;
     Temperature temperature;

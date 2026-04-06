@@ -48,6 +48,13 @@ Move::Move(World& world, Actor& actor, Engine::Position destination, unsigned di
             auto to = at + ori.GetVector();
             if (!map.GetBounds().Contains(to))
                 continue;
+            auto block = map.GetBlock(to);
+            // TODO: besides this not accounting for flying/swimming movement this is not sufficient 
+            // A block can be fully  air and still walkable because of its neighbour
+            // A slice could be better, but getting slices as part of path planning would not be efficient unless
+            // all slices are precomputed or instead of blocks in fact maps were just slices. (But how would physics work in layers)
+            if (!block.CanWalk())
+                continue;
             Position headroom = Position(to, jump);
             float deltaHeight = map.GroundHeight(headroom) - map.GroundHeight(Position(at));
             if (std::abs(deltaHeight) > jump)

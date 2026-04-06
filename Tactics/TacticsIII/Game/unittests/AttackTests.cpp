@@ -13,6 +13,7 @@ TEST(Attack, hit)
     NiceMock<MockWorld> world;
     NiceMock<MockActor> attacker("a");
     NiceMock<MockActor> target("t");
+    EXPECT_CALL(target, GetSize()).WillRepeatedly(Return(Size{0,0,1}));
     Attack action(world, attacker, target);
     EXPECT_EQ(action.Description(), "Attack t");
     EXPECT_EQ(action.AP(), 1);
@@ -40,6 +41,7 @@ TEST(Attack, out_of_reach)
     NiceMock<MockWorld> world;
     NiceMock<MockActor> attacker("a");
     NiceMock<MockActor> target("t");
+    EXPECT_CALL(target, GetSize()).WillRepeatedly(Return(Size{0,0,1}));
 
     attacker.Move(world, {0,0,0});
     attacker.SetStats({
@@ -62,16 +64,24 @@ TEST(Attack, out_of_reach_due_to_height)
     NiceMock<MockWorld> world;
     NiceMock<MockActor> attacker("a");
     NiceMock<MockActor> lowTarget("low");
+    EXPECT_CALL(lowTarget, GetSize()).WillRepeatedly(Return(Size{0,0,1}));    
     NiceMock<MockActor> highTarget("high");
-    world.map.SetHeightMap({2,2,4}, {0.5, 1.1, 1.6, 2.0});
+    EXPECT_CALL(highTarget, GetSize()).WillRepeatedly(Return(Size{0,0,1}));    
+    world.map.SetHeightMap({3,1,4}, {0.5, 1.1, 1.6});
 
     attacker.SetStats({
         {Stat::reach, 1},
         {Stat::ap, 1}});
-    attacker.Move(world, {0,0,0});
-    lowTarget.Move(world, {1,0,1});
-    highTarget.Move(world, {0,1,1});
-
+    attacker.Move(world, {1,0,1.1});
+    lowTarget.Move(world, {0,0,0.5});
+    highTarget.Move(world, {2,0,1.6});
+    ///              _   
+    ///             / high      TODO will have to be higher to not reach from shoulder height 0.75+/-sqrt(2)
+    ///        __atk\_high 
+    ///     low /atk  ==== 1.6 
+    ///     low/========== 1.1
+    ///     ============== 0.5
+    /// ================== 0.0
     EXPECT_CALL(attacker.counts, Cost(_, _, _)).Times(0);
 
     Attack highAttack(world, attacker, highTarget);
@@ -93,6 +103,7 @@ TEST(Attack, cover_at_reach)
     NiceMock<MockWorld> world;
     NiceMock<MockActor> attacker("a");
     NiceMock<MockActor> target("t");
+    EXPECT_CALL(target, GetSize()).WillRepeatedly(Return(Size{0,0,1}));
     world.map.SetHeightMap({3,1,4}, {0.1, 2.5, 0.2});
     attacker.Move(world, {0,0,0});
     attacker.SetStats({

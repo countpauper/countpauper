@@ -4,12 +4,12 @@
 namespace Game
 {
 class Actor;
-class HeightMap;
+class BlockMap;
 
 class World
 {
 public:
-    virtual const HeightMap& GetMap() const = 0;
+    virtual const BlockMap& GetMap() const = 0;
     virtual bool Obstacle(Engine::Position at, const Actor* except=nullptr) const =0;
 };
 

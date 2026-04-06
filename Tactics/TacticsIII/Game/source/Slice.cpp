@@ -9,23 +9,26 @@ namespace Game
 Slice::Slice(const Block& block)
 {
     if (block.stone)
-    {
         layers.emplace_back(Layer{Material::stone, block.stone, block.temperature});
-    }
     if (block.water)
-    {
         layers.emplace_back(Layer(Material::water, block.water, block.temperature));
-    }
     assert(!block.vegetation);  // TODO should add to water volume if any or subtract from air. Not sure what to do with this as an obstacle/cover 
-    /// maybe it's layer needs a 'vegetation density' amount 
+    /// maybe each layer needs a 'vegetation density' amount 
     if (block.air)
-    {
         layers.emplace_back(Layer(Material::air, block.air, block.temperature));
-    }
+    if (layers.empty())
+        layers.emplace_back(Layer(Material::vacuum, 1.0f, block.temperature));
+
 }
 
 Slice::Slice(const Slice& other) 
     : layers(other.layers)
+{
+}
+
+
+Slice::Slice(std::initializer_list<Layer> layers) : 
+    layers(layers)
 {
 }
 
@@ -102,21 +105,21 @@ Slice operator+(const Slice& lhs, const Slice& rhs)
     return result += rhs;
 }
 
-Slice& Slice::operator&=(Engine::Range<double> height)
+Slice& Slice::operator&=(Engine::Range<float> height)
 {
     if (height.begin > height.end) {
         layers.clear();
         return *this;
     }
     auto cutIt = layers.begin();
-    double progress = 0.0;
+    float progress = 0.0;
     auto cutBegin = cutIt;
     while(cutIt!=layers.end())
     {
         if (progress + cutIt->amount >= height.begin) 
         {
             cutBegin = cutIt;
-            double cutProgress = height.begin - progress;
+            float cutProgress = height.begin - progress;
             progress += cutProgress;
             cutBegin->amount -= cutProgress;
             break;
@@ -132,7 +135,7 @@ Slice& Slice::operator&=(Engine::Range<double> height)
     {
         if (progress + cutIt->amount >= height.end)
         {
-            double cutProgress = height.end - progress;
+            float cutProgress = height.end - progress;
             cutIt->amount = cutProgress;
             cutEnd = ++cutIt;
             break;
@@ -144,14 +147,14 @@ Slice& Slice::operator&=(Engine::Range<double> height)
     return *this;
 }
 
-Slice operator&(const Slice& lhs, Engine::Range<double> rng)
+Slice operator&(const Slice& lhs, Engine::Range<float> rng)
 {
     Slice result(lhs);
     return result &= rng;
 }
 
 
-Slice& Slice::operator*=(double scale)
+Slice& Slice::operator*=(float scale)
 {
     for(auto& layer: layers)
     {
@@ -160,14 +163,14 @@ Slice& Slice::operator*=(double scale)
     return *this;
 }
 
-Slice operator*(const Slice& lhs, double scale)
+Slice operator*(const Slice& lhs, float scale)
 {
     Slice result(lhs);
     return result *= scale;
 }
 
 
-Engine::Range<double> Slice::FindGasOpening() const
+Engine::Range<float> Slice::FindGasOpening() const
 {
     return FindRange([](const Layer& l)
     {
@@ -175,7 +178,7 @@ Engine::Range<double> Slice::FindGasOpening() const
     });
 }
 
-Engine::Range<double> Slice::FindNonSolidOpening() const
+Engine::Range<float> Slice::FindNonSolidOpening() const
 {
     return FindRange([](const Layer& l)
     {
@@ -183,11 +186,11 @@ Engine::Range<double> Slice::FindNonSolidOpening() const
     });
 }
 
-Engine::Range<double> Slice::FindRange(std::function<bool(const Slice::Layer&)> predicate) const
+Engine::Range<float> Slice::FindRange(std::function<bool(const Slice::Layer&)> predicate) const
 {
-    auto result = Engine::Range<double>::empty();
-    Engine::Range<double> current = Engine::Range<double>::empty();
-    double progress = 0;
+    auto result = Engine::Range<float>::empty();
+    Engine::Range<float> current = Engine::Range<float>::empty();
+    float progress = 0;
     for(const auto& layer : layers)
     {
         if (predicate(layer))
@@ -199,7 +202,7 @@ Engine::Range<double> Slice::FindRange(std::function<bool(const Slice::Layer&)> 
             current.end = progress; 
             if (current.Size() > result.Size())
                 result = current;
-            current = Engine::Range<double>::empty();
+            current = Engine::Range<float>::empty();
         }
         progress += layer.amount;
     }
@@ -212,5 +215,10 @@ Engine::Range<double> Slice::FindRange(std::function<bool(const Slice::Layer&)> 
 
 }
 
+std::ostream& operator<<(std::ostream& os, const Slice::Layer& layer)
+{
+    os << layer.material.get().name << " " << int(layer.amount*1000) << "L@" << layer.temperature << "K";
+    return os;
+}
 
 }

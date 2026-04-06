@@ -47,6 +47,7 @@ public:
     bool operator==(const TargetRequirement& req) const;
 private:
     double surface;
+    static constexpr double threshold = 0.5; 
 
 };
 

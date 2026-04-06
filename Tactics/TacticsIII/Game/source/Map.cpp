@@ -113,7 +113,7 @@ Block& Map::operator[](Engine::Position pos)
     return blocks.at(Index(pos));
 }
 
-const Block& Map::GetBlock(Engine::Position pos) const
+Block Map::GetBlock(Engine::Position pos) const
 {
     return blocks.at(Index(pos));
 }
@@ -128,19 +128,6 @@ int Map::HeightToLevel(float height) const
     return static_cast<int>(height * subheight);
 }
 
-float Map::GroundHeight(Position pos) const
-{
-    for(int z=ceil(pos.Z()); z>=0; --z)
-    {
-        const auto& block = GetBlock(Engine::Position(pos.X(), pos.Y(), z));
-        auto height = block.SolidLevel();
-        if (!std::isnan(height))
-        {
-            return height + z;
-        }
-    }
-    return 0.0f;
-}
 
 Engine::IntBox Map::GetBounds() const
 {

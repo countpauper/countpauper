@@ -11,7 +11,7 @@ class MockWorld : public World
 {
 public:
     MockWorld() = default;
-    const HeightMap& GetMap() const
+    const BlockMap& GetMap() const
     {
         return map;
     }

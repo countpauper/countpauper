@@ -4,6 +4,7 @@
 #include "Utility/Range.h"
 #include <vector>
 #include <span>
+#include <initializer_list>
 
 namespace Game
 {
@@ -33,30 +34,37 @@ public:
         float Density() const;  
         bool IsGas() const;
         bool IsSolid() const;
-        Engine::Range<double> FindGasOpening() const;
-        Engine::Range<double> FindNonSolidOpening() const;
+        Engine::Range<float> FindGasOpening() const;
+        Engine::Range<float> FindNonSolidOpening() const;
         bool TryMerge(const Layer& rhs);
     };
+    Slice(std::initializer_list<Layer> layers);
 
     using const_iterator = std::vector<Layer>::const_iterator; 
     inline std::size_t size() const { return layers.size(); }
     inline const_iterator begin() const { return layers.begin(); }
     inline const_iterator end() const { return layers.begin(); }
     inline const Layer& operator[](unsigned idx) { return layers.at(idx); }
+    using value_type = Layer; 
     
     Slice& operator+=(const Slice&);
-    Slice& operator&=(Engine::Range<double> heigh);
-    Slice& operator*=(double scale);
+    Slice& operator&=(Engine::Range<float> heigh);
+    Slice& operator*=(float scale);
 
-    Engine::Range<double> FindGasOpening() const;
-    Engine::Range<double> FindNonSolidOpening() const;
-    Engine::Range<double> FindRange(std::function<bool(const Layer&)> predicate) const;
+    Engine::Range<float> FindGasOpening() const;
+    Engine::Range<float> FindNonSolidOpening() const;
+    Engine::Range<float> FindRange(std::function<bool(const Layer&)> predicate) const;
 
 private:
     std::vector<Layer> layers;
 };
 
 Slice operator+(const Slice& lhs, const Slice& rhs);
-Slice operator&(const Slice& lhs, Engine::Range<double> rng);
-Slice operator*(const Slice& lhs, double scale);
+Slice operator&(const Slice& lhs, Engine::Range<float> rng);
+Slice operator*(const Slice& lhs, float scale);
+
+
+
+std::ostream& operator<<(std::ostream& os, const Slice::Layer& layer);
+
 }

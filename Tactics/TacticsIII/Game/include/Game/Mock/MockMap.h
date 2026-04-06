@@ -16,37 +16,42 @@ MATCHER_P(IsPositionAbove, p, "")
 }
 
 
-class MockMap : public HeightMap
+class MockMap : public BlockMap
 {
 public:
     MockMap()
     {
-        ON_CALL(*this,  GetBlock(_)).WillByDefault(ReturnRef(Block::Space));
+        ON_CALL(*this,  GetBlock(_)).WillByDefault(Return(Block::Space));
+    }
+
+    void SetSize(Engine::Size size)
+    {
+        ON_CALL(*this, GetBounds()).WillByDefault(Return(Engine::IntBox(size)));
     }
 
     void SetHeightMap(Engine::Size size, std::initializer_list<float> heights={})
     {
-        ON_CALL(*this, GetBounds()).WillByDefault(Return(Engine::IntBox(size)));
-        unsigned idx=0;
-        for(auto height: heights)
+        SetSize(size);
+        std::vector<float> heightCopy(heights);
+        ON_CALL(*this, GetBlock(_)).WillByDefault(WithArg<0>([this, size, heightCopy](Engine::Position p) -> Block
         {
-            unsigned x = idx % size.x;
-            unsigned y = idx / size.x;
-            ON_CALL(*this, GroundHeight(IsPositionAbove(Engine::Position(x,y,-1)))).WillByDefault(Return(height));
-            ++idx;
-        }
-        ON_CALL(*this, GetBlock(_)).WillByDefault(WithArg<0>([this](Engine::Position p) -> const Block&
-        {
-            auto h = GroundHeight(Position(p));
-            if (h <= p.z)    // todo fraction of h
-                return Block::Air;   
-            else    
+            auto index = p.X() + p.Y() * size.X();
+            float intHeight;
+            float fracHeight = modf(heightCopy.at(index), &intHeight);
+
+            if (p.z < intHeight)    // todo fraction of h
                 return Block::Stone;
+            else if (p.z > intHeight)   
+                return Block::Air;
+            else 
+                return Block(fracHeight);
+
         }));
     }
     MOCK_METHOD(Engine::IntBox, GetBounds, (), (const override));
-    MOCK_METHOD(float, GroundHeight, (Position pos), (const override));
-    MOCK_METHOD(const Block&, GetBlock, (Engine::Position pos), (const override));
+    MOCK_METHOD(Block, GetBlock, (Engine::Position pos), (const override));
+
+private:
 
 };
 

@@ -18,7 +18,7 @@ namespace Game
 
 class Map :
     public Engine::Scenery,
-    public HeightMap
+    public BlockMap
 {
 public:
     explicit Map(Engine::Size size, std::initializer_list<std::pair<const Material&, unsigned>> map={});
@@ -28,8 +28,6 @@ public:
     Engine::Mesh& GetMesh();
     // Height Map
     Engine::IntBox GetBounds() const override;
-    float GroundHeight(Position pos) const override;
-
 private:
     Map(std::string_view fileName, const class Engine::Image& data);
     unsigned Index(Engine::Position pos) const;
@@ -39,7 +37,7 @@ private:
     void GenerateMesh();
 
     Block& operator[](Engine::Position pos);
-    const Block& GetBlock(Engine::Position pos) const override;
+    Block GetBlock(Engine::Position pos) const override;
 
     float LevelToHeight(int level) const;
     int HeightToLevel(float height) const;

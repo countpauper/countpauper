@@ -76,12 +76,12 @@ TargetRequirement::TargetRequirement(double surface)
 
 TargetRequirement::operator bool() const
 {
-    return surface>=0.5;
+    return surface>=threshold;
 }
 
 std::string TargetRequirement::Description() const
 {
-    if (surface<0.5)
+    if (!bool(*this))
         return "the target is covered";
     else if (surface>1.0)
         return "the target is wide open";

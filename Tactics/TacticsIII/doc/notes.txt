@@ -55,6 +55,7 @@ PEnetrate solids
 Projectile::Resistance(Materia)
 [done] Then the final function to trace the path over multiple grids.
 For melee weapons the same is done except the path is shorter and it may start at a different corner
+Reach: reach^2 = horizontal^2 + vertical^2 so vertical reach is sqrt ( reach^2 - horizontal^2) + - from attack height. The horizontal is computed using the normal manhattan distance like 
 
 TODO:
 Where does it aim, how does (especially) vertical cover make it harder to aim.

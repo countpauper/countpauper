@@ -10,6 +10,9 @@ struct Material
     Engine::RGBA color;
     float freezingPoint; 
     float boilingPoint;
+    float solidDensity;
+    float liquidDensity;
+    float gasDensity;
     
     float Density(float temperature) const;
     bool IsSolid(float temperature) const;
@@ -22,6 +25,7 @@ struct Material
     static const Material earth;
     static const Material stone;
     static const Material vegetation;
+    static const Material vacuum;
     static const Material* all[5];
 };
 
