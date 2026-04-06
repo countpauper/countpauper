@@ -22,7 +22,7 @@ AxisAlignedPlane AxisAlignedPlane::operator-() const
 AABB AxisAlignedPlane::GetBoundingBox() const
 {
     if (axis.IsNone())
-        return AABB();
+        return AABB::empty;
 
     auto v = axis.GetVector();
     return AABB(

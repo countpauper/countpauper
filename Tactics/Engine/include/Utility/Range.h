@@ -8,7 +8,7 @@
 namespace Engine
 {
 
-// range [begin, end>
+// range [begin, end]
 template<typename T>
 struct Range
 {
@@ -42,17 +42,17 @@ struct Range
 
     constexpr bool IsEmpty() const
     {
-        return end <= begin;
+        return end < begin;
     }
 
     constexpr T Size() const
     {
-        return end - begin;
+        return (end - begin) + ElementSize();
     }
 
     constexpr bool operator[](T v) const
     {   // in
-        return (begin <= v) && (v+ElementSize() <= end);
+        return (begin <= v) && (end >= v);
     }
 
     constexpr Range& operator|=(T v)
@@ -191,14 +191,9 @@ struct Range
         return Range(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
     }
 
-    static constexpr Range null()
-    {
-        return Range(0, 0);
-    }
-
     static constexpr Range empty()
     {
-        return Range(std::numeric_limits<T>::max(), std::numeric_limits<T>::min());
+        return Range(std::numeric_limits<T>::max(), std::numeric_limits<T>::lowest());
     }
 };
 
@@ -239,7 +234,7 @@ template<typename T>
 Range<T> operator&(const Range<T>& a, const Range<T>& b)
 {
     auto begin = std::max(a.begin, b.begin);
-    return Range(begin, std::max(begin, std::min(a.end, b.end)));
+    return Range(begin, std::min(a.end, b.end));
 }
 
 template<typename T>

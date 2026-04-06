@@ -10,8 +10,8 @@ namespace Engine::Test
 TEST(IntBox, Size)
 {
     EXPECT_EQ(IntBox(Position(1, 1, 1)).Volume(), 1);
-    EXPECT_EQ(IntBox(Position(0, 0, 0), Position(1, 1, 1)).Volume(), 1);
-    EXPECT_EQ(IntBox(Position(0, 0, 0), Position(1, 1, 1)).Extent(), Size(1, 1, 1));
+    EXPECT_EQ(IntBox(Position(0, 0, 0), Position(0, 0, 0)).Volume(), 1);
+    EXPECT_EQ(IntBox(Position(0, 0, 0), Position(1, 1, 1)).Extent(), Size(2, 2, 2));
     EXPECT_EQ(IntBox(Position(-1, 1, 3), Position(0, 2, 4)).x, Range(-1, 0));
     EXPECT_EQ(IntBox(Position(-1, 1, 3), Position(0, 2, 4)).y, Range(1, 2));
     EXPECT_EQ(IntBox(Position(-1, 1, 3), Position(0, 2, 4)).z, Range(3, 4));
@@ -46,7 +46,7 @@ TEST(IntBox, Include)
 
 TEST(IntBox, Iterator)
 {
-    IntBox box(Position(-1, 0, -1), Position(2,1,1));
+    IntBox box(Position(-1, 0, -1), Position(1,0,0));
     std::vector<Position> positions;
     std::copy(box.begin(), box.end(), std::back_inserter(positions));
     EXPECT_EQ(positions, std::vector<Position>({

@@ -15,10 +15,11 @@ namespace Engine
         unsigned ManDistance(Position other) const;
         float Distance(Position other) const;
         float Size() const;
-        consteval int X() const { return x; }
-        consteval int Y() const { return y; }
-        consteval int Z() const { return z; }
-    
+
+        constexpr int X() const { return x; }
+        constexpr int Y() const { return y; }
+        constexpr int Z() const { return z; }
+
         Position& operator+=(Position delta);
         Position& operator-=(Position delta);
         explicit constexpr operator bool() const { return  x != 0 || y != 0 || z != 0; }

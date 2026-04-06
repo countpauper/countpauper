@@ -6,6 +6,13 @@ namespace Engine::Test
 {
 
 
+TEST(Math, Fraction)
+{
+    EXPECT_EQ(Fraction(0.0f), 0.0f);
+    EXPECT_DOUBLE_EQ(Fraction(1.2), 0.2);
+    EXPECT_NEAR(Fraction(-8.3f), -0.3f, 1e-6f);
+}
+
 TEST(Math, Gaussian)
 {
     EXPECT_EQ(1, Gaussian(0, 1));

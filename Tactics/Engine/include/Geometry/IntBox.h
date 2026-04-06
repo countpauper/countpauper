@@ -12,8 +12,8 @@ public:
     IntBox() : IntBox(Size()) {}
     IntBox(Range<int> x, Range<int> y, Range<int> z);
     IntBox(Position from, Position to);
-    IntBox(Position from) : IntBox(from, from + Position(1,1,1)) {}
-    IntBox(Position from, Size extent) : IntBox(from, from + extent) {}
+    IntBox(Position from) : IntBox(from, Size(1,1,1)) {}
+    IntBox(Position from, Size extent) : IntBox(from, from + extent + Size(-1)) {}
     explicit IntBox(Size extent) : IntBox(Position(0, 0, 0), extent) {}
     Position Start() const;
     Position End() const;

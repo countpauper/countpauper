@@ -14,7 +14,7 @@ namespace Engine
 
 
 const AABB AABB::infinity(Range<double>::infinity(), Range<double>::infinity(), Range<double>::infinity());
-const AABB AABB::empty(Range<double>::null(), Range<double>::null(), Range<double>::null());
+const AABB AABB::empty(Range<double>::empty(), Range<double>::empty(), Range<double>::empty());
 
 AABB::AABB(const Coordinate& begin, const Coordinate& end) :
     x(begin.X(), end.X()),

@@ -5,12 +5,47 @@
 namespace Engine::Test
 {
 
-TEST(Range, Size)
+TEST(Range, SizeInt)
 {
-    EXPECT_EQ(1, Range(0, 1).Size());
-    EXPECT_EQ(0, Range(2, 2).Size());
-    EXPECT_FALSE(Range(3, 3));
+    EXPECT_EQ(Range(0, 1).Size(), 2);
+    EXPECT_EQ(Range(2, 2).Size(), 1);
 }
+
+TEST(Range, EmptyInt)
+{
+    EXPECT_TRUE(Range(3, 3));
+    EXPECT_FALSE(Range(2, 1));
+}
+
+TEST(Range, ContainsInt)
+{
+    EXPECT_TRUE(Range(1,2)[2]);
+    EXPECT_TRUE(Range(-1,-1)[-1]);
+    EXPECT_FALSE(Range(0,2)[3]);
+    EXPECT_FALSE(Range(1,2)[0]);
+}
+
+TEST(Range, SizeFloat)
+{
+    EXPECT_EQ(Range(0.0, 1.0).Size(), 1.0);
+    EXPECT_EQ(Range(2.0, 2.0).Size(), 0.0);
+}
+
+TEST(Range, EmptyFloat)
+{
+    EXPECT_TRUE(Range(2.0, 3.0));
+    EXPECT_TRUE(Range(1.0, 1.0));
+    EXPECT_FALSE(Range(1.0, -1.0));
+}
+
+TEST(Range, ContainsFloat)
+{
+    EXPECT_TRUE(Range(1.0,2.0)[2.0]);
+    EXPECT_TRUE(Range(-1.0,-1.0)[-1.0]);
+    EXPECT_FALSE(Range(0.0, 2.0)[2.001]);
+    EXPECT_FALSE(Range(1.0, 2.0)[0.0]);
+}
+
 
 TEST(Range, Middle)
 {
@@ -34,7 +69,7 @@ TEST(Range, Union)
 
 TEST(Range, Intersection)
 {
-    EXPECT_FALSE(Range(0, 1) & Range(1, 2));
+    EXPECT_TRUE(Range(0, 1) & Range(1, 2));
     EXPECT_EQ(Range(0, 1), Range(-1, 2) & Range(0, 1));
     EXPECT_EQ(Range(0, 1), Range(-1, 1) & Range(0, 3));
     EXPECT_FALSE(Range(2, 3) & Range(0, 1));
@@ -42,12 +77,12 @@ TEST(Range, Intersection)
 
 TEST(Range, Move)
 {
-    EXPECT_EQ(1, (Range(0, 1) + 1).Size());
+    EXPECT_EQ((Range(0, 1) + 1).Size(), 2);
 }
 
 TEST(Range, Expand)
 {
-    EXPECT_EQ(2, Range(0, 1).Expand(1).Size());
+    EXPECT_EQ(Range(0, 1).Expand(1).Size(), 3);
 }
 
 TEST(Range, Cast)
@@ -60,8 +95,6 @@ TEST(Range, consts)
 {
     EXPECT_EQ(std::numeric_limits<double>::infinity(), Range<double>::infinity().Size());
     EXPECT_TRUE(Range<double>::infinity() | -10000.0);
-    EXPECT_EQ(0, Range<double>::null().Size());
-    EXPECT_FALSE(bool(Range<double>::null() | 0.0));
     EXPECT_FALSE(Range<double>::empty());
     EXPECT_FALSE(Range<int>::empty());
 }

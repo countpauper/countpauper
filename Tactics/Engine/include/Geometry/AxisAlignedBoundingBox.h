@@ -72,7 +72,7 @@ namespace Engine
         Range<double> z;
 
         static const AABB infinity; //= AABB(Range<double>::infinity(), Range<double>::infinity(), Range<double>::infinity());
-        static const AABB empty; //= AABB((Range<double>::null(), Range<double>::null(), Range<double>::null());
+        static const AABB empty; //= AABB((Range<double>::empty(), Range<double>::empty(), Range<double>::empty());
     };
 
 

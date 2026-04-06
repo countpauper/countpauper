@@ -9,6 +9,13 @@
 // NB Named maths.h because otherwise the release build gets confused with stdlib math.h
 namespace Engine
 {
+    template<typename T>
+    T Fraction(T value)
+    {
+        T integer;
+        return modf(value, &integer);
+    }
+
     double Gaussian(double x, double stddev);
     double InvGaussian(double y, double stddev);    // always positive
 
