@@ -55,10 +55,10 @@ PEnetrate solids
 Projectile::Resistance(Materia)
 [done] Then the final function to trace the path over multiple grids.
 For melee weapons the same is done except the path is shorter and it may start at a different corner
-Reach: reach^2 = horizontal^2 + vertical^2 so vertical reach is sqrt ( reach^2 - horizontal^2) + - from attack height. The horizontal is computed using the normal manhattan distance like 
+[done] Reach: reach^2 = horizontal^2 + vertical^2 so vertical reach is sqrt ( reach^2 - horizontal^2) + - from attack height. The horizontal is computed using the normal manhattan distance like 
 
 TODO:
-Where does it aim, how does (especially) vertical cover make it harder to aim.
+[done] Where does it aim, how does (especially) vertical cover make it harder to aim.
 [done] Instead of tracing a straight line and assuming perfect aim, a target height should be traced from the target to the origin
 [done]This range is higher or smaller depending on the size of the character 
 and what is aimed for (eg hamstring, headshot)
@@ -67,6 +67,31 @@ and what is aimed for (eg hamstring, headshot)
 The hit chance is computed from the height of this range. THis could still be 0 so penetrating shots can be attempted
 This also takes obstacles and their height into account
 Then trace once from the source to the middle of this range (fairest) and see what it really will hit.
+
+
+
+Having to take slces for (1) hit checks, is slow. Looks like slices are also needed for: 
+2) Pathplanning 
+3) Perception checks 
+Using blocks is good for cellular automata, but ... the cell state is too big (>256bits) for precomputes cellular automata anyway 
+Instead switch to a 2d grid of slices with layers. Layers are stores as a vector with thickness. 
+Can perhaps still do cellular automata if each cell becomes about 1/256th meter (of course stored compressed with basically run length encoding)
+Each cell is: 
+material enum: about 4-5 bits 
+temperature (state enum solid, liquid, gas): 3 bits
+movement vector compressed into how many liters would flow up/or down, left or right, forward or backward per time unit. so that's 3still 3x5 bits or so and what does it mean if the unit of volume is 1 volumes
+
+
+TODO: 
+[done] Fix last attack tests
+Change Game::Position with const fixed point bits, (does it have tests) and make length/distance etc still work. fraction float can go, it's just intepretation. 
+Maybe scale x and y *256/1024 as well, but only allow zeros for those if that is easier. 
+
+Update path planning to use slices 
+Change the map to not store blocks but slices 
+Remove block getter in map.
+Make layer amount a fixed point/word
+
 
 
 

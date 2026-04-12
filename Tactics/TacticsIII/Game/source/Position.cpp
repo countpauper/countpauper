@@ -25,6 +25,10 @@ Position::Position(const Engine::Position& p, float zo) :
 
 }
 
+Position Position::ProjectHorizontal() const 
+{ 
+    return Position(X(), Y(), 0);
+}
 
 double Position::ManDistance(Position other) const
 {
@@ -100,6 +104,14 @@ std::wostream& operator<<(std::wostream& stream, Position position)
     stream << L"(" << position.X() << L", " << position.Y() << L", " << position.Z() << L")";
     return stream;
 }
+
+Position round(Position p)
+{
+    p.p.z += std::round(p.z_offset);
+    p.z_offset = 0;
+    return p;
+}
+
 bool operator==(Position a, Position b)
 {
     return a.p == b.p && a.z_offset == b.z_offset;

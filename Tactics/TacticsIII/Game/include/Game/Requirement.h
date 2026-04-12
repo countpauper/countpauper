@@ -41,13 +41,13 @@ private:
 class TargetRequirement
 {
 public:
-    explicit TargetRequirement(double surface);
+    explicit TargetRequirement(float surface);
     explicit operator bool() const;
     std::string Description() const;
     bool operator==(const TargetRequirement& req) const;
 private:
-    double surface;
-    static constexpr double threshold = 0.5; 
+    float surface;
+    static constexpr float threshold = 0.1f; 
 
 };
 

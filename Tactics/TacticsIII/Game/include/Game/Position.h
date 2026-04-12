@@ -18,6 +18,8 @@ namespace Game
         inline int X() const { return p.x; }
         inline int Y() const { return p.y; }
         inline float Z() const { return  static_cast<float>(p.z) + z_offset; }
+
+        Position ProjectHorizontal() const;
         double ManDistance(Position other) const;
         double Distance(Position other) const;
         double Length() const;
@@ -29,6 +31,8 @@ namespace Game
     };
 
     using Size = Position;
+
+    Position round(Position p);
 
 	bool operator==(Position a, Position b);
     bool operator!=(Position a, Position b);

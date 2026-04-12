@@ -15,7 +15,9 @@ Engine::Orientations Facing(Position from, Position to)
     return Engine::Orientations(Engine::Position{V.X(), V.Y(), static_cast<int>(std::round(V.Z()))});
 }
 
-void DownPositions(std::vector<std::pair<Engine::Position, double>>& path)
+using ProjectilePath = std::vector<std::pair<Engine::Position, double>>;
+
+void DownPositions(ProjectilePath& path)
 {
     for(auto it = path.begin(); it!=path.end();)
     {
@@ -37,54 +39,36 @@ void DownPositions(std::vector<std::pair<Engine::Position, double>>& path)
 }
 
 
+Position AttackOrigin(const Actor& from)
+{
+    // TODO configure/check/parameterize weapon height from creature & action
+    static const float weaponHeight = 0.75;
+    auto origin = from.GetPosition() + Position(0, 0, from.GetSize().Z() * weaponHeight);  
+    return origin;
+}
 
-double ComputeAttackSurface(const World& world, const Actor& from, const Actor& to, float reach)
+Engine::Range<float> AimHeight(const Actor& target)
 {
     Engine::Range<float> aimHeight{0,1};
-    // TODO add attack height and target height based on state and size etc, weapon reach 
-    // TODO check obstacles not from and to
-    // TODO trace through block, height slice from z where enters and z where leaves:
-    //      Solid: cover (100% for that aim)
-    //      Liquid: Density = reduce power
-    //      Liquid & gas: range adjusted with parallel flow, miss adjusted with perpendicular flows (also up)
-    //      Clouds: obscurement (cant see or miss)
-    //      Fire: ignite particle, water extinguish particle (also obstacles)
-    static const float weaponHeight = 0.75;
-    auto origin = from.GetPosition()+Position(0,0, from.GetSize().Z() * weaponHeight);  
+    aimHeight *= target.GetSize().Z(); 
+    aimHeight += target.GetPosition().Z();
+    return aimHeight;
+}
 
-    aimHeight *= to.GetSize().Z(); // TODO configure/check/parameterize weapon height from creature & action
-    auto aimLow = to.GetPosition() + Position(0,0, aimHeight.begin);
-    auto aimMiddle = to.GetPosition() + Position(0, 0, aimHeight.Middle());
-    auto targetSurfaces = Facing(origin, aimMiddle);  // TODO size ? of which?
-    aimHeight += Engine::Fraction(to.GetPosition().Z());
+float HorizontalAttackDistance(Position from, Position to)
+{
+    auto distance = from.ProjectHorizontal().ManDistance(to.ProjectHorizontal());
+    return distance - 1.0f;    // TODO, should not need -1.0 if using origin surface and target surface instead of middle
+}
 
-    // Compute reach height, todo, obviously refactor. Should probably not even be part of this computation? Or it might be efficient to check before iterating over the map for no reason 
 
-    auto delta = (to.GetPosition() - from.GetPosition());  
-    delta.p.z = 0;
-    delta.z_offset = 0.0f;
-    float horizontalDistance = delta.Length() - 1.0;
-    float verticalReach = (reach*reach) - (horizontalDistance*horizontalDistance);
-    if (verticalReach<0)
-        return 0.0;
-    verticalReach = sqrt(verticalReach);
-    Engine::Range<float> reachRange(origin.Z() - verticalReach, origin.Z() + verticalReach);
-    aimHeight &= reachRange;
 
-    // compute normals and dot product with the Vector(aim-origin).Normalized()
-    //  keep negative ones (Facing should already have discarded them?). Their sum is 0...-1,
-    //  which is proportional to the orthogonal projection of the target on the "vision" of the attacker.
-    //  So it's fair to make a weighted sum and just disard any loss as a "bad angle"
-    // along the orientation vectors add half the size (or whatever to the bounding box) and iterate, aim at those points
-    // then instead of aiming from center mass
-    // for taller (upright) targets aim high medium low instead of specific target (headshot/hamstring)
-    Engine::Line line(origin.Coord(), aimLow.Coord());
-    auto path = line.Voxelize();
-    DownPositions(path);
 
-    float progress = 0;
+
+Engine::Range<float> ScanAimWindow(const World& world, const ProjectilePath& path, const Position& origin, Engine::Range<float> aimHeight)
+{
     Engine::Range<float> triangle(origin.Z(), origin.Z());
-    auto it = path.begin();
+    float progress = 0;
     for(auto it =path.begin(); it!=path.end();++it)
     {
         // check when leaving it grid, progress first; 
@@ -99,13 +83,39 @@ double ComputeAttackSurface(const World& world, const Actor& from, const Actor& 
         if (opening.IsEmpty())
             opening = slice.FindNonSolidOpening();
         opening /= progress;    // extrapolate to end 
+        opening += aimHeight.begin;
 
         aimHeight &= opening;
         if (aimHeight.IsEmpty()) {
             break;
         }
     }
-    return aimHeight.Size();
+    return aimHeight;
+}
+
+Engine::Range<float> AttackHeight(const World& world, const Actor& from, const Actor& to)
+{
+    // TODO check obstacles not from and to, this should fix test cover_due_to_obstacle
+    //      Use auto targetSurfaces = Facing(origin, aimHeight.Middle()) and sum surfaces instead of just sort of middle plane
+    //          compute normals and dot product with the Vector(aim-origin).Normalized()
+    //          keep negative ones (Facing should already have discarded them?). Their sum is 0...-1,
+    //          which is proportional to the orthogonal projection of the target on the "vision" of the attacker.
+    //          So it's fair to make a weighted sum and just disard any loss as a "bad angle"
+    //          This should fix partial_cover_due_to_diagonal_height
+    //      Subtract shield of targetSurfaces with shield if any
+    //      Liquid: Density = reduce power (not for melee?)
+    //      Liquid & gas: range adjusted with parallel flow, miss adjusted with perpendicular flows (also up)
+    //      Clouds: obscurement (cant see or miss)
+    //      Fire: ignite particle, water extinguish particle (also obstacles)
+    auto origin = AttackOrigin(from);
+    auto aimHeight = AimHeight(to);
+   
+    auto aimLow = to.GetPosition().ProjectHorizontal() + Position(0,0, aimHeight.begin);
+    Engine::Line bottomLine(origin.Coord(), aimLow.Coord());
+    auto path = bottomLine.Voxelize();
+    DownPositions(path);
+
+    return ScanAimWindow(world, path, origin, aimHeight);
 }
 
 // TODO: should still include map for cover/obscure
@@ -142,6 +152,39 @@ Computation ComputeDamage(const Computations& offense, const Computations& defen
     result += ComputeMitigation(ValueOr(offense, Stat::poison_damage),  ValueOr(defense, Stat::poison_resist), "poison");
     result.Simplify();
     return result;
+}
+
+unsigned AttackDistance(Position delta)
+{
+    delta = round(delta);
+    auto reach = unsigned(std::ceil(delta.Length()*2));
+    if (reach>=2)
+        return reach-1;
+    else
+        return reach; 
+}
+
+unsigned AttackDistance(const Actor& from, const Actor& to)
+{
+    auto delta = to.GetPosition() - from.GetPosition();
+    return AttackDistance(delta);
+}
+
+float VerticalReach(Position delta, unsigned reach)
+{
+    delta = round(delta);
+    return (1.0f + reach - delta.Length())/2.0;
+}
+
+Engine::Range<float> VerticalReach(const Actor& from, Position to)
+{
+    float reach = from.GetStats().Get(Stat::reach).Total();
+    auto delta = to - from.GetPosition();
+    float verticalReach = VerticalReach(delta, reach);
+    Engine::Range<float> reachRange(-verticalReach, +verticalReach);
+    auto origin = AttackOrigin(from);
+    reachRange += origin.Z();    
+    return reachRange;
 }
 
 

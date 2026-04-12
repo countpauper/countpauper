@@ -69,7 +69,7 @@ bool PathRequirement::operator==(const PathRequirement& req) const
     return reachable == req.reachable;
 }
 
-TargetRequirement::TargetRequirement(double surface)
+TargetRequirement::TargetRequirement(float surface)
     : surface(surface)
 {
 }
@@ -82,8 +82,8 @@ TargetRequirement::operator bool() const
 std::string TargetRequirement::Description() const
 {
     if (!bool(*this))
-        return "the target is covered";
-    else if (surface>1.0)
+        return "the target is behind cover";
+    else if (surface>1.0f)
         return "the target is wide open";
     else 
         return "the target is open";
