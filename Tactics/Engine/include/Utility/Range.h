@@ -50,6 +50,7 @@ struct Range
         return (end - begin) + ElementSize();
     }
 
+
     constexpr bool operator[](T v) const
     {   // in
         return (begin <= v) && (end >= v);
@@ -133,7 +134,7 @@ struct Range
     }
     constexpr T Clip(T v) const
     {
-        return Engine::Clip(v, begin, end - ElementSize());
+        return Engine::Clip(v, begin, end);
     }
 
     constexpr T Middle() const

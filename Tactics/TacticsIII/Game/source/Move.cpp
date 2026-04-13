@@ -13,51 +13,53 @@
 namespace Game
 {
 
-std::vector<Engine::Position> Approach(const World& world,  Actor& actor, Engine::Position center, unsigned distance)
+std::set<Position> Approach(const World& world,  Actor& actor, Position center, unsigned distance)
 {
     // Not the most efficient algorithm but with a small map it should be fine
-    Engine::IntBox box(center);
+    Engine::IntBox box(round(center));
     box.Grow(distance);
-    std::vector<Engine::Position> result;
+    std::set<Position> result;
     for(auto p : box)
     {
-        if ((std::round(p.Distance(center) - distance) == 0) &&
-            (!world.Obstacle(p, &actor)))
+        Position gp(p);
+        if ((std::round(gp.Distance(center) - distance) == 0) &&
+            (!world.Obstacle(gp, &actor)))
         {
-            result.push_back(p);
+            result.insert(Position(gp.x, gp.y, world.GetMap().GroundHeight(gp)));
         }
     }
     return result;
 }
 
-Move::Move(World& world, Actor& actor, Engine::Position destination, unsigned distance) :
+Move::Move(World& world, Actor& actor, Position destination, unsigned distance) :
     Action(world, actor)
 {
-    auto cost = [](Engine::Position from, Engine::Position to) -> float
+    auto cost = [](Position from, Position to) -> float
     {
         return from.Distance(to);
     };
     const auto& map = world.GetMap();
-    auto neighbours = [&world, &actor](Engine::Position at)
+    auto neighbours = [&world, &actor](Position at)
     {
         const auto& map = world.GetMap();
-        std::vector<Engine::Position> result;
-        float jump = 1.0f + actor.GetStats().Get(Stat::jump).Total() / 2.0f;
-        for(auto ori : Orientations::all)
+        std::vector<Position> result;
+        Position jump(0, 0, 1.0f + actor.GetStats().Get(Stat::jump).Total() / 2.0f);
+        for(auto ori : Orientations::horizontal)    // NB: Horizontal only because this is specific for walking 
         {
-            auto to = at + ori.GetVector();
-            if (!map.GetBounds().Contains(to))
+            auto to = at + Position(ori.GetVector());
+            if (!map.GetBounds().Contains(round(to)))
                 continue;
-            auto block = map.GetBlock(to);
+            auto block = map.GetBlock(round(to));
             // TODO: besides this not accounting for flying/swimming movement this is not sufficient 
             // A block can be fully  air and still walkable because of its neighbour
             // A slice could be better, but getting slices as part of path planning would not be efficient unless
             // all slices are precomputed or instead of blocks in fact maps were just slices. (But how would physics work in layers)
             if (!block.CanWalk())
                 continue;
-            Position headroom = Position(to, jump);
-            float deltaHeight = map.GroundHeight(headroom) - map.GroundHeight(Position(at));
-            if (std::abs(deltaHeight) > jump)
+            Position headroom = Position(to) + jump;
+            to.z = map.GroundHeight(headroom);
+            float deltaHeight = to.z - map.GroundHeight(Position(at));
+            if (std::abs(deltaHeight) > jump.Z())
                 continue;
             // TODO check size its under ceiling
             if (world.Obstacle(to, &actor))
@@ -66,11 +68,11 @@ Move::Move(World& world, Actor& actor, Engine::Position destination, unsigned di
         }
         return result;
     };
-    std::vector destinations = Approach(world, actor, destination, distance);
-    path = Engine::Astar::Plan<Engine::Position, float>(actor.GetPosition().p, destinations, cost, neighbours);
+    std::set<Position> destinations = Approach(world, actor, destination, distance);
+    path = Engine::Astar::Plan<Position, float>(actor.GetPosition(), destinations, cost, neighbours, map.GetBounds().Volume());
 }
 
-std::vector<Engine::Position>::const_iterator Move::Reachable() const
+std::vector<Position>::const_iterator Move::Reachable() const
 {
     unsigned grids = actor.GetStats().Get(Stat::speed).Total() *
         actor.GetCounts().Available(Stat::ap);
@@ -97,7 +99,7 @@ void Move::Render() const
     {
         if (it++ > Reachable())
             glColor3d(0.9, 0.2, 0.2);
-        auto next = world.GetMap().GroundCoord(p);
+        auto next = p.Coord();
         Engine::Line line(prev, next);
         line += Engine::Vector::ZAxis;
         line.Render();

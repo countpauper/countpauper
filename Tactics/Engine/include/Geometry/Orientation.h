@@ -128,6 +128,8 @@ public:
     explicit operator bool() const;
     static Orientations none;
     static Orientations all;
+    static Orientations horizontal;
+    static Orientations vertical;
     static Orientations axes;
 
     class iterator

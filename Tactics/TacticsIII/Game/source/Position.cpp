@@ -7,20 +7,23 @@ namespace Game
 {
 
 Position::Position() :
-    p(),
-    z_offset(0.0)
+    x(0), 
+    y(0),
+    z(0)
 {
 }
 
 Position::Position(int x, int y, float z) :
-    p(x, y, (int)z),
-    z_offset(z - p.z)
+    x(x),
+    y(y),
+    z(z)
 {
 }
 
 Position::Position(const Engine::Position& p, float zo) :
-    p(p),
-    z_offset(zo)
+    x(p.x),
+    y(p.y),
+    z(p.z + zo)
 {
 
 }
@@ -30,55 +33,51 @@ Position Position::ProjectHorizontal() const
     return Position(X(), Y(), 0);
 }
 
-double Position::ManDistance(Position other) const
+float Position::ManDistance(Position other) const
 {
     return std::abs(other.X() - X()) +
         std::abs(other.Y() - Y()) +
         std::abs(other.Z() - Z());
 }
 
-double Position::Length() const
+float Position::Length() const
 {
-    return std::sqrt(Engine::Sqr(double(p.x)) + Engine::Sqr(double(p.y)) + Engine::Sqr(Z()));
+    return std::sqrt(Engine::Sqr(float(X())) + Engine::Sqr(float(Y())) + Engine::Sqr(Z()));
 }
 
-double Position::Distance(Position other) const
+float Position::Distance(Position other) const
 {
-    return std::sqrt(Engine::Sqr(double(other.X() - X())) +
-            Engine::Sqr(double(other.Z() - Y())) +
-            Engine::Sqr(double(other.p.z -p.z) + (other.z_offset - z_offset)));
+    return std::sqrt(Engine::Sqr(float(other.X() - X())) +
+            Engine::Sqr(float(other.Y() - Y())) +
+            Engine::Sqr(float(other.Z() - Z())));
 }
 
 Position& Position::operator+=(Position delta)
 {
-    p += delta.p;
-    z_offset += delta.z_offset;
-    int z_overflow = std::floor(z_offset);
-    p.z += z_overflow;
-    z_offset -= z_overflow;
+    x+= delta.x;
+    y+= delta.y;
+    z+= delta.z;
     return *this;
 }
 Position& Position::operator-=(Position delta)
 {
-    p -= delta.p;
-    z_offset -= delta.z_offset;
-    int z_underflow = std::floor(z_offset);
-    p.z += z_underflow;
-    z_offset -= z_underflow;
+    x -= delta.x;
+    y -= delta.y;
+    z -= delta.z;
     return *this;
 }
 
 Engine::Coordinate Position::Coord() const
 {
     return Engine::Coordinate{
-        static_cast<double>(p.x)+0.5,
-        static_cast<double>(p.y)+0.5,
+        static_cast<double>(x)+0.5,
+        static_cast<double>(y)+0.5,
         Z()
     };
 }
 Position::operator bool() const
 {
-    return bool(p) || z_offset!=0.0f;
+    return X() != 0 || Y() != 0 || Z() != 0.0f;
 }
 
 Position operator+(Position a, Position b)
@@ -105,16 +104,16 @@ std::wostream& operator<<(std::wostream& stream, Position position)
     return stream;
 }
 
-Position round(Position p)
+Engine::Position round(Position p)
 {
-    p.p.z += std::round(p.z_offset);
-    p.z_offset = 0;
-    return p;
+     return Engine::Position(p.x, p.y, std::round(p.z)); 
 }
 
 bool operator==(Position a, Position b)
 {
-    return a.p == b.p && a.z_offset == b.z_offset;
+    return a.X() == b.X() && 
+        a.Y() == b.Y() && 
+        a.Z() == b.Z();
 }
 bool operator!=(Position a, Position b)
 {
@@ -123,18 +122,19 @@ bool operator!=(Position a, Position b)
 
 bool operator<(Position a, Position b)
 {
-    if (a.Z() > b.Z())
-        return false;
+    if (a.Z() < b.Z())
+        return true;
     else if (a.Z() == b.Z())
     {
-        if (a.p.y > b.p.y)
-            return false;
-        else if (a.p.y == b.p.y)
+        if (a.Y() < b.Y())
+            return true;
+        else if (a.Y() == b.Y())
         {
-            return a.p.x < b.p.x;
+            return a.X() < b.X();
         }
     }
     return false;
 }
 
 }
+

@@ -30,6 +30,8 @@ public:
     const Engine::Object& GetAppearance() const override;
     Position GetPosition() const override;
     Size GetSize() const override;
+    bool At(Position) const;
+    
     Statted& GetStats() override;
     const Statted& GetStats() const override;
     Counted& GetCounts() override;

@@ -57,6 +57,7 @@ namespace Engine
         stream << "(" << position.x << ", " << position.y << ", " << position.z << ")";
         return stream;
     }
+
     std::wostream& operator<<(std::wostream& stream, Position position)
     {
         stream << L"(" << position.x << L", " << position.y << L", " << position.z << L")";

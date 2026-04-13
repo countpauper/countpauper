@@ -463,6 +463,17 @@ Orientations Orientations::all =
     Orientation::back |
     Orientation::left;
 
+
+Orientations Orientations::horizontal =
+    Orientation::front |
+    Orientation::right |
+    Orientation::back |
+    Orientation::left;
+
+Orientations Orientations::vertical =
+    Orientation::up |
+    Orientation::down;
+
 Orientations Orientations::axes =
     Orientation::up |
     Orientation::front |

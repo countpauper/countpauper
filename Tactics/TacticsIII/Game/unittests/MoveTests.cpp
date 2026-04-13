@@ -22,7 +22,7 @@ TEST(Move, step)
     NiceMock<MockWorld> world;
     world.map.SetHeightMap({2,2,2}, {0, 2.0, 0.0, 1.0});
 
-    Move action(world, actor, Engine::Position(1,1,1));
+    Move action(world, actor, Position(1,1,1));
     EXPECT_EQ(action.Description(), "Move (1, 1, 1)");
     EXPECT_EQ(action.AP(), 1);
     EXPECT_TRUE(action.CanDo());
@@ -44,7 +44,7 @@ TEST(Move, cant_move_with_speed_0)
     });
     NiceMock<MockWorld> world;
 
-    Move action(world, actor, Engine::Position(1,1,0));
+    Move action(world, actor, Position(1,1,0));
     EXPECT_FALSE(action.CanDo());
     std::stringstream log;
     auto deltas = action.Execute(log);
@@ -62,7 +62,7 @@ TEST(Move, cant_jump_too_high)
     });
     NiceMock<MockWorld> world;
     world.map.SetHeightMap({2,1,4}, {0, 2.0});
-    Move action(world, actor, Engine::Position(1,0,2));
+    Move action(world, actor, Position(1,0,2));
     EXPECT_FALSE(action.CanDo());
     std::stringstream log;
     auto deltas = action.Execute(log);

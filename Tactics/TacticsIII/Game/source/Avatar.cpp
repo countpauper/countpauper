@@ -80,7 +80,7 @@ void Avatar::Select(bool on)
 void Avatar::Move(const World& world, Position destination)
 {
     auto z = world.GetMap().GroundHeight(destination);
-    coordinate = Engine::Coordinate(destination.X(), destination.Y(), z);
+    coordinate = Engine::Coordinate(destination.X()+0.5, destination.Y()+0.5, z);
     creature.SetPosition({destination.X(), destination.Y(), z});
 }
 
@@ -147,6 +147,23 @@ Engine::Quaternion Avatar::GetOrientation() const
 std::string_view Avatar::Name() const
 {
     return creature.Name();
+}
+
+bool Avatar::At(Position query) const
+{
+    auto pos = GetPosition();
+    auto siz = GetSize();
+    // TODO a game bounds or with fixed point Z just an int bo 
+    Engine::Range<int> xr(pos.x, pos.x+siz.x-1);
+    if (!xr[query.Z()])
+        return false;
+    Engine::Range<int> yr(pos.y, pos.y+siz.y-1);
+    if (!yr[query.Y()])
+        return false;
+    Engine::Range<float> zr(pos.x, pos.y+siz.z);
+    if (!zr[query.Z()])
+        return false;
+    return true;
 }
 
 

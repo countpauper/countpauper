@@ -1,6 +1,7 @@
 #pragma once
 #include "Geometry/Position.h"
 #include "Geometry/Coordinate.h"
+#include <cmath>
 
 namespace Game
 {
@@ -12,17 +13,17 @@ namespace Game
         Position(int x, int y, float z=0.0);
         explicit Position(const Engine::Position& p, float zo=0.0);
 
-        Engine::Position p;
-        Fraction z_offset;
+        int x,y;
+        float z;
 
-        inline int X() const { return p.x; }
-        inline int Y() const { return p.y; }
-        inline float Z() const { return  static_cast<float>(p.z) + z_offset; }
+        inline int X() const { return x; }
+        inline int Y() const { return y; }
+        inline float Z() const { return z; }
 
         Position ProjectHorizontal() const;
-        double ManDistance(Position other) const;
-        double Distance(Position other) const;
-        double Length() const;
+        float ManDistance(Position other) const;
+        float Distance(Position other) const;
+        float Length() const;
         Engine::Coordinate Coord() const;
 
         Position& operator+=(Position delta);
@@ -32,7 +33,7 @@ namespace Game
 
     using Size = Position;
 
-    Position round(Position p);
+    Engine::Position round(Position p);
 
 	bool operator==(Position a, Position b);
     bool operator!=(Position a, Position b);
@@ -40,4 +41,16 @@ namespace Game
     Position operator+(Position a, Position b);
     Position operator-(Position a, Position b);
 
+    std::ostream& operator<<(std::ostream& stream, Position position);
+
 }   // ::Game
+
+
+template<>
+struct std::hash<Game::Position>
+{
+    size_t operator()(const Game::Position &p) const
+    {
+        return p.X() + p.Y()*256 + static_cast<size_t>(std::round(p.Z()*1024)*65536);
+    }
+};

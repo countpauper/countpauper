@@ -156,8 +156,8 @@ Computation ComputeDamage(const Computations& offense, const Computations& defen
 
 unsigned AttackDistance(Position delta)
 {
-    delta = round(delta);
-    auto reach = unsigned(std::ceil(delta.Length()*2));
+    auto roundDelta = round(delta);
+    auto reach = unsigned(std::ceil(roundDelta.Size()*2));
     if (reach>=2)
         return reach-1;
     else
@@ -172,8 +172,8 @@ unsigned AttackDistance(const Actor& from, const Actor& to)
 
 float VerticalReach(Position delta, unsigned reach)
 {
-    delta = round(delta);
-    return (1.0f + reach - delta.Length())/2.0;
+    auto roundDelta = round(delta);
+    return (1.0f + reach - roundDelta.Size())/2.0;
 }
 
 Engine::Range<float> VerticalReach(const Actor& from, Position to)

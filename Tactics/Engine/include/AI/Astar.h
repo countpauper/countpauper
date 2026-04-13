@@ -3,7 +3,7 @@
 #include <map>
 #include <unordered_set>
 #include <functional>
-#include <span>
+#include <ranges>
 
 namespace Engine::Astar
 {
@@ -43,8 +43,9 @@ bool UpdateOpen(std::multimap<Score, std::pair<T,Score>>& open, T found, Score s
     return true;
 }
 
-template<typename T, typename Score=double>
-std::vector<T> Plan(T from, std::span<T> destinations, std::function<Score(T,T)> score, std::function<std::vector<T>(T)> neighbours)
+template<typename T, typename Score=double,std::ranges::input_range DR>
+    requires std::same_as<std::ranges::range_value_t<DR>, T>
+std::vector<T> Plan(T from, DR&& destinations, std::function<Score(T,T)> score, std::function<std::vector<T>(T)> neighbours, std::size_t limit=1000)
 {
     // a sorted map where the key is  cumulative Score to get to T + cost(T, to)
     // and the value is T and the score to get from T
@@ -68,6 +69,8 @@ std::vector<T> Plan(T from, std::span<T> destinations, std::function<Score(T,T)>
         }
         open.erase(open.begin());
         closed.insert(current);
+        if (closed.size() > limit)
+            break;  // fail due to limit
         for(auto neighbour : neighbours(current))
         {
             if (closed.count(neighbour))

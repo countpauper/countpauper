@@ -59,16 +59,15 @@ const BlockMap& Game::GetMap() const
     return map;
 }
 
-bool Game::Obstacle(Engine::Position at, const Actor* except) const
+bool Game::Obstacle(Position at, const Actor* except) const
 {
     for(const auto& avatar : avatars)
     {
         if (avatar.get() == except)
             continue;
-        if (avatar->GetPosition().p == at)
+        if (avatar->At(at))
             return true;
     }
-    // TODO: objects, size &  height (use Bounds)
     return false;
 }
 
@@ -107,7 +106,7 @@ void Game::OnMessage(const Engine::Message& message)
         {
             auto bounds = map.GetBounds();
             Engine::Position destination = IdToPosition(clickOn->sub, bounds);
-            plan = Plan::Move(*this, Current(), destination);
+            plan = Plan::Move(*this, Current(), Position(destination));
         }
         else if (target && target!=& Current())
         {

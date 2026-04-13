@@ -78,7 +78,7 @@ TEST(Computation, nested_multiply)
 TEST(Computation, limit)
 {   // TODO: this limit is a remnamnt  from stat specific descriptors, which were computations
     // preferably upper and lower bound operators are used if there's a mechanism to keep these add the end as operands are appended
-    Computation limited(Engine::Range<int>(0,5));
+    Computation limited(Engine::Range<int>(0,4));
     limited += Computation(7, "a");
     EXPECT_EQ(limited.Total(), 4);  // NB range is exclusive on the maximum
     limited -= Computation(10, "b");

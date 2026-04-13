@@ -1,6 +1,6 @@
 #include "Game/BlockMap.h"
 #include "Game/Block.h"
-
+#include <cmath>
 
 namespace Game
 {
@@ -13,17 +13,22 @@ Engine::Coordinate BlockMap::GroundCoord(Engine::Position pos) const
 Slice BlockMap::GetSlice(Position pos, float height) const
 {
     Slice slice; 
-    for(int z = 0; z<std::ceil(height + pos.z_offset); ++z) // TODO test this z_offset, 
+    float posz = 0;
+    auto z_fraction = std::modf(pos.Z(), &posz);
+    for(int z = 0; z<std::ceil(height + z_fraction); ++z) // TODO test this z_fraction, 
     {
-        slice += Slice(GetBlock({pos.X(), pos.Y(), pos.p.z + z}));
+        slice += Slice(GetBlock({pos.X(), pos.Y(), int(posz) + z}));
     }
-    slice &= Engine::Range<float>(pos.z_offset, pos.z_offset + height);
+    slice &= Engine::Range<float>(z_fraction, z_fraction + height);
     return slice;
 }
 
 float BlockMap::GroundHeight(Position pos) const
 {
-    for(int z=ceil(pos.Z()); z>=0; --z)
+    auto top = ceil(pos.Z());
+    top = GetBounds().z.Clip(top);
+
+    for(int z=top; z>=0; --z)
     {
         auto block = GetBlock(Engine::Position(pos.X(), pos.Y(), z));
         auto height = block.SolidLevel();

@@ -7,6 +7,7 @@ namespace Game
 {
 class Actor;
 class World;
+
 class Action
 {
 public:
