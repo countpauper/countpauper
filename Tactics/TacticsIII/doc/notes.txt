@@ -84,10 +84,11 @@ movement vector compressed into how many liters would flow up/or down, left or r
 
 TODO: 
 [done] Fix last attack tests
+[done] Implement fixed point 
 Change Game::Position with const fixed point bits, (does it have tests) and make length/distance etc still work. fraction float can go, it's just intepretation. 
 Maybe scale x and y *256/1024 as well, but only allow zeros for those if that is easier. 
 
-Update path planning to use slices 
+Update path planning to not use any blocks anymore, but use slices and vertical holes 
 Change the map to not store blocks but slices 
 Remove block getter in map.
 Make layer amount a fixed point/word
