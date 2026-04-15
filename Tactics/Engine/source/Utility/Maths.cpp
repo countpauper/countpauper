@@ -25,11 +25,6 @@ namespace Engine
         return (a + b)*0.5;
     }
 
-    double Sqr(double v)
-    {
-        return v * v;
-    }
-
     double Sigmoid(double x)
     {
         return 1.0 / (exp(-x)+ 1.0);

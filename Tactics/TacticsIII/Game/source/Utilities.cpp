@@ -12,7 +12,7 @@ Engine::Orientations Facing(Position from, Position to)
 {
     Engine::Orientations result;
     Position V = to - from;
-    return Engine::Orientations(Engine::Position{V.X(), V.Y(), static_cast<int>(std::round(V.Z()))});
+    return Engine::Orientations(Engine::Position{V.X(), V.Y(), round(V.Z())});
 }
 
 using ProjectilePath = std::vector<std::pair<Engine::Position, double>>;
@@ -50,8 +50,8 @@ Position AttackOrigin(const Actor& from)
 Engine::Range<float> AimHeight(const Actor& target)
 {
     Engine::Range<float> aimHeight{0,1};
-    aimHeight *= target.GetSize().Z(); 
-    aimHeight += target.GetPosition().Z();
+    aimHeight *= static_cast<float>(target.GetSize().Z()); 
+    aimHeight += static_cast<float>(target.GetPosition().Z());
     return aimHeight;
 }
 
@@ -67,7 +67,7 @@ float HorizontalAttackDistance(Position from, Position to)
 
 Engine::Range<float> ScanAimWindow(const World& world, const ProjectilePath& path, const Position& origin, Engine::Range<float> aimHeight)
 {
-    Engine::Range<float> triangle(origin.Z(), origin.Z());
+    Engine::Range<Position::ZType> triangle(origin.Z(), origin.Z());
     float progress = 0;
     for(auto it =path.begin(); it!=path.end();++it)
     {
@@ -76,8 +76,8 @@ Engine::Range<float> ScanAimWindow(const World& world, const ProjectilePath& pat
         if (progress<1e-3)
             continue;   // don't introduce numeric impression when barely leaving the origin 
 
-        triangle.begin = lerp(origin.Z(), aimHeight.begin, progress);
-        triangle.end = lerp(origin.Z(), aimHeight.end, progress);
+        triangle.begin = lerp(origin.Z(), Position::ZType(aimHeight.begin), progress);
+        triangle.end = lerp(origin.Z(), Position::ZType(aimHeight.end), progress);
         Slice slice = world.GetMap().GetSlice(Position(it->first.X(), it->first.Y(), triangle.begin), triangle.Size());
         auto opening = slice.FindGasOpening();
         if (opening.IsEmpty())
@@ -183,7 +183,7 @@ Engine::Range<float> VerticalReach(const Actor& from, Position to)
     float verticalReach = VerticalReach(delta, reach);
     Engine::Range<float> reachRange(-verticalReach, +verticalReach);
     auto origin = AttackOrigin(from);
-    reachRange += origin.Z();    
+    reachRange += static_cast<float>(origin.Z());   // TODO: in FixedPoint as well?    
     return reachRange;
 }
 

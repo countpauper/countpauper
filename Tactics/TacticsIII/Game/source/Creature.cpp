@@ -63,7 +63,7 @@ json Creature::Serialize() const
 {
     json result =  json::object({
         {"name", Name()},
-        {"position", json::array({position.X(), position.Y(), position.Z()})},
+        {"position", json::array({position.X(), position.Y(), static_cast<float>(position.Z())})},
         {"race", race.Name()},
         {"stats", Statistics::Serialize()},
         {"counters", Counters::Serialize()},

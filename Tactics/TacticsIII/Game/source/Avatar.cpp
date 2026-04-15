@@ -18,7 +18,7 @@ Avatar::Avatar(const World& world, const Races& races, const ItemDatabase& items
 {
     if (auto posData = Engine::try_get<json>(data, "position"))
     {
-        Move(world, Position((*posData)[0], (*posData)[1], (*posData)[2]));
+        Move(world, Position((*posData)[0], (*posData)[1], float((*posData)[2])));
     }
     GenerateMesh();
     SubscribeBus();
@@ -80,7 +80,7 @@ void Avatar::Select(bool on)
 void Avatar::Move(const World& world, Position destination)
 {
     auto z = world.GetMap().GroundHeight(destination);
-    coordinate = Engine::Coordinate(destination.X()+0.5, destination.Y()+0.5, z);
+    coordinate = Engine::Coordinate(destination.X()+0.5, destination.Y()+0.5, static_cast<double>(z));
     creature.SetPosition({destination.X(), destination.Y(), z});
 }
 
@@ -155,12 +155,12 @@ bool Avatar::At(Position query) const
     auto siz = GetSize();
     // TODO a game bounds or with fixed point Z just an int bo 
     Engine::Range<int> xr(pos.x, pos.x+siz.x-1);
-    if (!xr[query.Z()])
+    if (!xr[query.X()])
         return false;
     Engine::Range<int> yr(pos.y, pos.y+siz.y-1);
     if (!yr[query.Y()])
         return false;
-    Engine::Range<float> zr(pos.x, pos.y+siz.z);
+    Engine::Range<Position::ZType> zr(pos.z, pos.z + siz.z);
     if (!zr[query.Z()])
         return false;
     return true;

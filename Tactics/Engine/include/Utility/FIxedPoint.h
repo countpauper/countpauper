@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <cassert>
 
 namespace Engine
 {
@@ -9,6 +10,7 @@ class FixedPoint
 {
 public:
     using FPT = FixedPoint<bits, T>;
+    using IntegerType = T;
 
     FixedPoint() = default;
     constexpr FixedPoint(float input) :
@@ -61,12 +63,12 @@ public:
 
     explicit operator float() const
     {
-        return Integral() + float(FracionBits()) / FractionDivisor();
+        return Integral() + float(FractionBits()) / FractionDivisor();
     }
 
     explicit operator double() const
     {
-        return Integral() + double(FracionBits()) / FractionDivisor();
+        return Integral() + double(FractionBits()) / FractionDivisor();
     }
 
     explicit operator T() const
@@ -74,7 +76,15 @@ public:
         return Integral();
     }
 
+    constexpr T RawValue() const
+    {
+        return v;
+    }
 
+    FPT operator-() const
+    {
+        return FromRaw(-v);
+    }
 
     FPT& operator+=(FPT rhs)
     {
@@ -98,6 +108,12 @@ public:
         return *this;
     }
 
+    template<std::floating_point RHT>
+    FPT& operator*=(RHT rhs)
+    {
+        return *this = FPT(static_cast<RHT>(*this) * rhs);
+    }
+
     FPT& operator/=(FPT rhs)
     {
         assert(sizeof(T) <= sizeof(uint64_t)/2);  // requires a type with double the size of the original  for intermediate result. For now 64 bits is used.
@@ -106,6 +122,12 @@ public:
         else
             v = static_cast<T>((static_cast<uint64_t>(v) << bits) / rhs.v);
         return *this;
+    }
+
+    template<std::floating_point RHT>
+    FPT& operator/=(RHT rhs)
+    {
+        return *this = FPT(static_cast<RHT>(*this) / rhs);
     }
 
     bool operator==(FPT rhs) const
@@ -140,11 +162,18 @@ public:
 
 
 private:
+    template<unsigned OB, std::integral OT> friend FixedPoint<OB,OT> abs(FixedPoint<OB,OT> fp);
+    template<unsigned OB, std::integral OT> friend FixedPoint<OB,OT> modfp(FixedPoint<OB,OT>, OT&);
+    template<unsigned OB, std::integral OT> friend bool signbit(FixedPoint<OB, OT> fp);
+    template<unsigned OB, std::integral OT> friend OT round(FixedPoint<OB, OT> fp);
+    template<unsigned OB, std::integral OT> friend OT ceil(FixedPoint<OB, OT> fp);
+    template<unsigned OB, std::integral OT> friend OT floor(FixedPoint<OB, OT> fp);
+
     constexpr T Integral() const
     {
         return v>>bits;
     }
-    constexpr T FracionBits() const
+    constexpr T FractionBits() const
     {
         return v & FractionMask();
     }
@@ -157,35 +186,42 @@ private:
         return FractionDivisor()-1;
     }
 
+    static FPT FromRaw(T v)
+    {
+        FPT result;
+        result.v = v;
+        return result;
+    }
+
     template<unsigned OB, std::integral OT>
     friend class FixedPoint;
 
     T v;
 };
 
-template<unsigned bits, typename T>
-FixedPoint<bits, T> operator+(FixedPoint<bits,T> lhs, FixedPoint<bits, T> rhs)
+template<unsigned bits, typename T, typename RHT>
+FixedPoint<bits, T> operator+(FixedPoint<bits,T> lhs, RHT rhs)
 {
     FixedPoint<bits, T> result(lhs);
     return lhs += rhs;
 }
 
-template<unsigned bits, typename T>
-FixedPoint<bits, T> operator-(FixedPoint<bits,T> lhs, FixedPoint<bits, T> rhs)
+template<unsigned bits, typename T, typename RHT>
+FixedPoint<bits, T> operator-(FixedPoint<bits,T> lhs, RHT rhs)
 {
     FixedPoint<bits, T> result(lhs);
     return lhs -= rhs;
 }
 
-template<unsigned bits, typename T>
-FixedPoint<bits, T> operator*(FixedPoint<bits,T> lhs, FixedPoint<bits, T> rhs)
+template<unsigned bits, typename T, typename RHT>
+FixedPoint<bits, T> operator*(FixedPoint<bits,T> lhs, RHT rhs)
 {
     FixedPoint<bits, T> result(lhs);
     return lhs *= rhs;
 }
 
-template<unsigned bits, typename T>
-FixedPoint<bits, T> operator/(FixedPoint<bits,T> lhs, FixedPoint<bits, T> rhs)
+template<unsigned bits, typename T, typename RHT>
+FixedPoint<bits, T> operator/(FixedPoint<bits,T> lhs, RHT rhs)
 {
     FixedPoint<bits, T> result(lhs);
     return lhs /= rhs;
@@ -197,6 +233,70 @@ std::ostream& operator<<(std::ostream& stream, FixedPoint<bits, T> value)
     stream << static_cast<double>(value);
     return stream;
 }
+
+template<unsigned B, std::integral T>
+FixedPoint<B,T> abs(FixedPoint<B,T> fp)
+{
+    return FixedPoint<B,T>::FromRaw(std::abs(fp.RawValue()));
+}
+
+template<unsigned B, std::integral T>
+FixedPoint<B,T> modfp(FixedPoint<B,T> fp, T& integer)
+{
+    if (signbit(fp))
+    {
+        fp = -fp;
+        integer = -(fp.Integral());
+        return -FixedPoint<B,T>::FromRaw(fp.FractionBits());
+    }
+    else
+    {
+        integer = fp.Integral();
+        return FixedPoint<B,T>::FromRaw(fp.FractionBits());
+    }
+}
+
+template<unsigned B, std::integral T>
+bool signbit(FixedPoint<B,T> fp)
+{
+    return std::signbit(fp.RawValue());
+}
+
+template<unsigned B, std::integral T>
+T round(FixedPoint<B,T> fp)
+{
+    if constexpr (B==0)
+        return fp.Integral();
+    else
+    {
+        fp -= FixedPoint<B,T>::FromRaw(signbit(fp));
+        T Int = fp.Integral();
+        T fraction = fp.FractionBits();
+        T roundInt = fraction >> (B-1);
+        return Int + roundInt;
+    }
+}
+
+template<unsigned B, std::integral T>
+T floor(FixedPoint<B,T> fp)
+{
+    return fp.Integral();
+}
+
+template<unsigned B, std::integral T>
+T ceil(FixedPoint<B,T> fp)
+{
+    return fp.Integral() + (fp.FractionBits()!=0);
+}
+
+
+template<unsigned B, std::integral T>
+constexpr FixedPoint<B,T> lerp(FixedPoint<B,T> __a, FixedPoint<B,T> __b, float __t) noexcept
+{
+    return FixedPoint<B,T>(std::__lerp(static_cast<float>(__a), static_cast<float>(__b), __t));
+}
+
+// TODO a numeric_limits definition of fixed point
 
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Geometry/Position.h"
 #include "Geometry/Coordinate.h"
+#include "Utility/FixedPoint.h"
 #include <cmath>
 
 namespace Game
@@ -10,15 +11,16 @@ namespace Game
     struct Position
     {
         Position();
-        Position(int x, int y, float z=0.0);
+        using ZType = Engine::FixedPoint<8>;
+        Position(int x, int y, ZType z=ZType(0));
         explicit Position(const Engine::Position& p, float zo=0.0);
 
         int x,y;
-        float z;
+        ZType z;
 
         inline int X() const { return x; }
         inline int Y() const { return y; }
-        inline float Z() const { return z; }
+        inline ZType Z() const { return z; }
 
         Position ProjectHorizontal() const;
         float ManDistance(Position other) const;
@@ -51,6 +53,6 @@ struct std::hash<Game::Position>
 {
     size_t operator()(const Game::Position &p) const
     {
-        return p.X() + p.Y()*256 + static_cast<size_t>(std::round(p.Z()*1024)*65536);
+        return p.X() + p.Y()*256 + static_cast<size_t>(p.Z().RawValue())*65536; // TODO: std::hash for FixedPoint and use that instead of RawValue, make it private 
     }
 };

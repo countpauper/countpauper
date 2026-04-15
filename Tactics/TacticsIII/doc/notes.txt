@@ -85,6 +85,7 @@ movement vector compressed into how many liters would flow up/or down, left or r
 TODO: 
 [done] Fix last attack tests
 [done] Implement fixed point 
+Slice with fixed point and aim + Move with fixed point height  
 Change Game::Position with const fixed point bits, (does it have tests) and make length/distance etc still work. fraction float can go, it's just intepretation. 
 Maybe scale x and y *256/1024 as well, but only allow zeros for those if that is easier. 
 

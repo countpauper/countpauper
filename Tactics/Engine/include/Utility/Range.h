@@ -63,7 +63,6 @@ struct Range
         return *this;
     }
 
-
     constexpr Range& operator+=(T v)
     {
         begin += v;

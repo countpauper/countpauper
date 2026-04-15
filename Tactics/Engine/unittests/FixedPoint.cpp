@@ -33,6 +33,8 @@ TEST(FixedPoint, OutOfRange)
     EXPECT_THROW((FixedPoint<8,int16_t>(1e3)), std::range_error);
     EXPECT_THROW((FixedPoint<30,int32_t>(-5.0f)), std::range_error);
     EXPECT_THROW(FixedPoint(65536), std::range_error);
+    EXPECT_THROW(FixedPoint(std::numeric_limits<float>::infinity()), std::range_error);
+    EXPECT_THROW(FixedPoint(std::numeric_limits<float>::infinity()), std::range_error);
 }
 
 TEST(FixedPoint, FractionOnly)
@@ -55,6 +57,8 @@ TEST(FixedPoint, 64bit)
 
 TEST(FixedPoint, Arithmatic)
 {
+    EXPECT_EQ(-FixedPoint(8), FixedPoint(-8));
+    EXPECT_EQ(-FixedPoint(-0.01), FixedPoint(0.01));
     EXPECT_EQ(FixedPoint(10) + FixedPoint(0.5), FixedPoint(10.5));
     EXPECT_EQ(FixedPoint(8) - FixedPoint(0.25), FixedPoint(7.75));
     EXPECT_EQ(FixedPoint(10) * FixedPoint(0.5), FixedPoint(5));
@@ -71,4 +75,68 @@ TEST(FixedPoint, Compare)
     EXPECT_LE(FixedPoint(0.5), FixedPoint(0.5));
 }
 
+TEST(FixedPoint, Absolute)
+{
+    EXPECT_EQ(abs(FixedPoint(-3.0)), FixedPoint(3.0));
+    EXPECT_EQ(abs(FixedPoint(0.1)), FixedPoint(0.1));
+}
+
+TEST(FixedPoint, Modulo)
+{
+    int i = 0;
+    EXPECT_EQ(modfp(FixedPoint(1.2), i), FixedPoint(0.2));
+    EXPECT_EQ(i, 1);
+
+    EXPECT_EQ(modfp(FixedPoint(2.0), i), FixedPoint(0));
+    EXPECT_EQ(i, 2);
+
+
+    EXPECT_EQ(modfp(FixedPoint(-4.8), i), FixedPoint(-0.8));
+    EXPECT_EQ(i, -4);
+
+    EXPECT_EQ(modfp(FixedPoint(-8), i), FixedPoint(0));
+    EXPECT_EQ(i, -8);
+}
+
+TEST(FixedPoint, Round)
+{
+    EXPECT_EQ(round(FixedPoint(2.0)), 2);
+    EXPECT_EQ(round(FixedPoint(1.5)), 2);
+    EXPECT_EQ(round(FixedPoint(1.4)), 1);
+    EXPECT_EQ(round(FixedPoint<0>(3.7)), 4);  // .7 is already rounded on construction
+}
+
+TEST(FixedPoint, RoundNegative)
+{
+    EXPECT_EQ(round(FixedPoint(-2.0)), -2);
+    EXPECT_EQ(round(FixedPoint(-2.4)), -2);
+    EXPECT_EQ(round(FixedPoint(-2.5)), -3);
+    EXPECT_EQ(round(FixedPoint(-2.6)), -3);
+}
+
+TEST(FixedPoint, Floor)
+{
+    EXPECT_EQ(floor(FixedPoint(1.9)), 1);
+    EXPECT_EQ(floor(FixedPoint(2.0)), 2);
+    EXPECT_EQ(floor(FixedPoint(-2.4)), -3);
+}
+
+TEST(FixedPoint, Ceil)
+{
+    EXPECT_EQ(ceil(FixedPoint(1.9)), 2);
+    EXPECT_EQ(ceil(FixedPoint(2.0)), 2);
+    EXPECT_EQ(ceil(FixedPoint(-1.0)), -1);
+    EXPECT_EQ(ceil(FixedPoint(-2.4)), -2);
+
+}
+
+TEST(FixedPoint, lerp)
+{
+    EXPECT_EQ(lerp(FixedPoint(1), FixedPoint(3), 0.0f), FixedPoint(1));
+    EXPECT_EQ(lerp(FixedPoint(1), FixedPoint(3), 1.0f), FixedPoint(3));
+    EXPECT_EQ(lerp(FixedPoint(1), FixedPoint(3), 0.5f), FixedPoint(2));
+    EXPECT_EQ(lerp(FixedPoint(1), FixedPoint(3), 1.5f), FixedPoint(4));
+    EXPECT_EQ(lerp(FixedPoint(1), FixedPoint(3), -1.0f), FixedPoint(-1));
+
+}
 }

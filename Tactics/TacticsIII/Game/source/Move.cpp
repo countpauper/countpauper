@@ -58,8 +58,8 @@ Move::Move(World& world, Actor& actor, Position destination, unsigned distance) 
                 continue;
             Position headroom = Position(to) + jump;
             to.z = map.GroundHeight(headroom);
-            float deltaHeight = to.z - map.GroundHeight(Position(at));
-            if (std::abs(deltaHeight) > jump.Z())
+            auto deltaHeight = to.z - map.GroundHeight(Position(at));  // TODO in fixed point 
+            if (abs(deltaHeight) > jump.Z())
                 continue;
             // TODO check size its under ceiling
             if (world.Obstacle(to, &actor))

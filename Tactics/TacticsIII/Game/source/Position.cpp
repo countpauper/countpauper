@@ -13,7 +13,7 @@ Position::Position() :
 {
 }
 
-Position::Position(int x, int y, float z) :
+Position::Position(int x, int y, Position::ZType z) :
     x(x),
     y(y),
     z(z)
@@ -37,12 +37,12 @@ float Position::ManDistance(Position other) const
 {
     return std::abs(other.X() - X()) +
         std::abs(other.Y() - Y()) +
-        std::abs(other.Z() - Z());
+        static_cast<float>(abs(other.Z() - Z()));
 }
 
 float Position::Length() const
 {
-    return std::sqrt(Engine::Sqr(float(X())) + Engine::Sqr(float(Y())) + Engine::Sqr(Z()));
+    return std::sqrt(Engine::Sqr(float(X())) + Engine::Sqr(float(Y())) + Engine::Sqr(static_cast<float>(Z())));
 }
 
 float Position::Distance(Position other) const
@@ -72,7 +72,7 @@ Engine::Coordinate Position::Coord() const
     return Engine::Coordinate{
         static_cast<double>(x)+0.5,
         static_cast<double>(y)+0.5,
-        Z()
+        static_cast<double>(Z())
     };
 }
 Position::operator bool() const
@@ -98,15 +98,10 @@ std::ostream& operator<<(std::ostream& stream, Position position)
     stream << "(" << position.X() << ", " << position.Y() << ", " << position.Z() << ")";
     return stream;
 }
-std::wostream& operator<<(std::wostream& stream, Position position)
-{
-    stream << L"(" << position.X() << L", " << position.Y() << L", " << position.Z() << L")";
-    return stream;
-}
 
 Engine::Position round(Position p)
 {
-     return Engine::Position(p.x, p.y, std::round(p.z)); 
+     return Engine::Position(p.x, p.y, round(p.z)); 
 }
 
 bool operator==(Position a, Position b)

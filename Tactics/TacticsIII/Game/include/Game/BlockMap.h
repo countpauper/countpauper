@@ -16,9 +16,9 @@ public:
     virtual Engine::IntBox GetBounds() const = 0;
     virtual Block GetBlock(Engine::Position pos) const = 0;
 
-    float GroundHeight(Position pos) const;
+    Position::ZType GroundHeight(Position pos) const;
     Engine::Coordinate GroundCoord(Engine::Position pos) const;
-    Slice GetSlice(Position pos, float height) const;
+    Slice GetSlice(Position pos, Position::ZType height) const;
     Block operator[](Engine::Position pos) const  { return GetBlock(pos); }
 };
 
