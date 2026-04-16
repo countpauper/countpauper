@@ -2,7 +2,7 @@
 
 #include "Game/Block.h"
 #include "Utility/Range.h"
-#include "Utility/FIxedPoint.h"
+#include "Utility/FixedPoint.h"
 #include "Game/Position.h"
 #include <vector>
 #include <span>

@@ -59,6 +59,7 @@ Position& Position::operator+=(Position delta)
     z+= delta.z;
     return *this;
 }
+
 Position& Position::operator-=(Position delta)
 {
     x -= delta.x;
@@ -83,14 +84,12 @@ Position::operator bool() const
 Position operator+(Position a, Position b)
 {
     Position o(a);
-    o += b;
-    return o;
+    return o += b;
 }
 Position operator-(Position a, Position b)
 {
     Position o(a);
-    o -= b;
-    return o;
+    return o -= b;
 }
 
 std::ostream& operator<<(std::ostream& stream, Position position)
@@ -101,7 +100,7 @@ std::ostream& operator<<(std::ostream& stream, Position position)
 
 Engine::Position round(Position p)
 {
-     return Engine::Position(p.x, p.y, round(p.z)); 
+     return Engine::Position(p.X(), p.Y(), round(p.Z())); 
 }
 
 bool operator==(Position a, Position b)

@@ -15,8 +15,7 @@ namespace Game
         Position(int x, int y, ZType z=ZType(0));
         explicit Position(const Engine::Position& p, float zo=0.0);
 
-        int x,y;
-        ZType z;
+
 
         inline int X() const { return x; }
         inline int Y() const { return y; }
@@ -31,6 +30,9 @@ namespace Game
         Position& operator+=(Position delta);
         Position& operator-=(Position delta);
         explicit operator bool() const;
+
+        int x,y;
+        ZType z;
     };
 
     using Size = Position;

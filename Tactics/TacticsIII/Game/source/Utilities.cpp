@@ -169,20 +169,20 @@ unsigned AttackDistance(const Actor& from, const Actor& to)
     return AttackDistance(delta);
 }
 
-float VerticalReach(Position delta, unsigned reach)
+ZType VerticalReach(Position delta, unsigned reach)
 {
     auto roundDelta = round(delta);
-    return (1.0f + reach - roundDelta.Size())/2.0;
+    return ZType((1.0f + reach - roundDelta.Size())/2.0);
 }
 
 Engine::Range<ZType> VerticalReach(const Actor& from, Position to)
 {
-    float reach = from.GetStats().Get(Stat::reach).Total();
+    auto reach = from.GetStats().Get(Stat::reach).Total();
     auto delta = to - from.GetPosition();
     ZType verticalReach { VerticalReach(delta, reach) };
     Engine::Range<ZType> reachRange(-verticalReach, verticalReach);
     auto origin = AttackOrigin(from);
-    reachRange += static_cast<float>(origin.Z());   // TODO: in FixedPoint as well?    
+    reachRange += origin.Z();
     return reachRange;
 }
 

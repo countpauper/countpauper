@@ -154,13 +154,13 @@ bool Avatar::At(Position query) const
     auto pos = GetPosition();
     auto siz = GetSize();
     // TODO a game bounds or with fixed point Z just an int bo 
-    Engine::Range<int> xr(pos.x, pos.x+siz.x-1);
+    Engine::Range<int> xr(pos.X(), pos.X() + siz.X() - 1);
     if (!xr[query.X()])
         return false;
-    Engine::Range<int> yr(pos.y, pos.y+siz.y-1);
+    Engine::Range<int> yr(pos.Y(), pos.Y() + siz.Y() -1 );
     if (!yr[query.Y()])
         return false;
-    Engine::Range<ZType> zr(pos.z, pos.z + siz.z);
+    Engine::Range<ZType> zr(pos.Z(), pos.Z() + siz.Z());
     if (!zr[query.Z()])
         return false;
     return true;

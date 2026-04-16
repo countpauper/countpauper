@@ -112,7 +112,7 @@ public:
     template<std::floating_point RHT>
     FPT& operator*=(RHT rhs)
     {
-        return *this = FPT(static_cast<RHT>(*this) * rhs);
+        return *this =  FPT::FromRaw( v * rhs);
     }
 
     FPT& operator/=(FPT rhs)
@@ -128,7 +128,7 @@ public:
     template<std::floating_point RHT>
     FPT& operator/=(RHT rhs)
     {
-        return *this = FPT(static_cast<RHT>(*this) / rhs);
+        return *this = FPT::FromRaw( v / rhs);
     }
 
     bool operator==(FPT rhs) const

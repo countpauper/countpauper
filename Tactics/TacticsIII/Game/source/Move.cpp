@@ -25,7 +25,7 @@ std::set<Position> Approach(const World& world,  Actor& actor, Position center, 
         if ((std::round(gp.Distance(center) - distance) == 0) &&
             (!world.Obstacle(gp, &actor)))
         {
-            result.insert(Position(gp.x, gp.y, world.GetMap().GroundHeight(gp)));
+            result.insert(Position(gp.X(), gp.Y(), world.GetMap().GroundHeight(gp)));
         }
     }
     return result;
@@ -43,7 +43,8 @@ Move::Move(World& world, Actor& actor, Position destination, unsigned distance) 
     {
         const auto& map = world.GetMap();
         std::vector<Position> result;
-        Position jump(0, 0, 1.0f + actor.GetStats().Get(Stat::jump).Total() / 2.0f);
+        ZType jumpHeight = ZType(1) + ZType(actor.GetStats().Get(Stat::jump).Total()) / 2;
+        Position jump(0, 0, jumpHeight);
         for(auto ori : Orientations::horizontal)    // NB: Horizontal only because this is specific for walking 
         {
             auto to = at + Position(ori.GetVector());
@@ -58,8 +59,8 @@ Move::Move(World& world, Actor& actor, Position destination, unsigned distance) 
                 continue;
             Position headroom = Position(to) + jump;
             to.z = map.GroundHeight(headroom);
-            auto deltaHeight = to.z - map.GroundHeight(Position(at));  // TODO in fixed point 
-            if (abs(deltaHeight) > jump.Z())
+            auto deltaHeight = to.z - map.GroundHeight(Position(at));
+            if (abs(deltaHeight) > jumpHeight)
                 continue;
             // TODO check size its under ceiling
             if (world.Obstacle(to, &actor))
