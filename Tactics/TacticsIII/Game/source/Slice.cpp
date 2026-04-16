@@ -46,7 +46,7 @@ bool Slice::Layer::operator==(const Slice::Layer& rhs) const
 
 float Slice::Layer::Volume() const
 {
-    return amount * 100.0f;
+    return static_cast<float>(amount) * 100.0f;
 }
 
 float Slice::Layer::Density() const
@@ -105,21 +105,21 @@ Slice operator+(const Slice& lhs, const Slice& rhs)
     return result += rhs;
 }
 
-Slice& Slice::operator&=(Engine::Range<float> height)
+Slice& Slice::operator&=(Engine::Range<ZType> height)
 {
     if (height.begin > height.end) {
         layers.clear();
         return *this;
     }
     auto cutIt = layers.begin();
-    float progress = 0.0;
+    ZType progress { 0 };
     auto cutBegin = cutIt;
     while(cutIt!=layers.end())
     {
         if (progress + cutIt->amount >= height.begin) 
         {
             cutBegin = cutIt;
-            float cutProgress = height.begin - progress;
+            auto cutProgress = height.begin - progress;
             progress += cutProgress;
             cutBegin->amount -= cutProgress;
             break;
@@ -135,7 +135,7 @@ Slice& Slice::operator&=(Engine::Range<float> height)
     {
         if (progress + cutIt->amount >= height.end)
         {
-            float cutProgress = height.end - progress;
+            auto cutProgress = height.end - progress;
             cutIt->amount = cutProgress;
             cutEnd = ++cutIt;
             break;
@@ -147,7 +147,7 @@ Slice& Slice::operator&=(Engine::Range<float> height)
     return *this;
 }
 
-Slice operator&(const Slice& lhs, Engine::Range<float> rng)
+Slice operator&(const Slice& lhs, Engine::Range<ZType> rng)
 {
     Slice result(lhs);
     return result &= rng;
@@ -170,7 +170,7 @@ Slice operator*(const Slice& lhs, float scale)
 }
 
 
-Engine::Range<float> Slice::FindGasOpening() const
+Engine::Range<ZType> Slice::FindGasOpening() const
 {
     return FindRange([](const Layer& l)
     {
@@ -178,7 +178,7 @@ Engine::Range<float> Slice::FindGasOpening() const
     });
 }
 
-Engine::Range<float> Slice::FindNonSolidOpening() const
+Engine::Range<ZType> Slice::FindNonSolidOpening() const
 {
     return FindRange([](const Layer& l)
     {
@@ -186,11 +186,11 @@ Engine::Range<float> Slice::FindNonSolidOpening() const
     });
 }
 
-Engine::Range<float> Slice::FindRange(std::function<bool(const Slice::Layer&)> predicate) const
+Engine::Range<ZType> Slice::FindRange(std::function<bool(const Slice::Layer&)> predicate) const
 {
-    auto result = Engine::Range<float>::empty();
-    Engine::Range<float> current = Engine::Range<float>::empty();
-    float progress = 0;
+    auto result = Engine::Range<ZType>::empty();
+    Engine::Range<ZType> current = Engine::Range<ZType>::empty();
+    ZType progress = 0;
     for(const auto& layer : layers)
     {
         if (predicate(layer))
@@ -202,7 +202,7 @@ Engine::Range<float> Slice::FindRange(std::function<bool(const Slice::Layer&)> p
             current.end = progress; 
             if (current.Size() > result.Size())
                 result = current;
-            current = Engine::Range<float>::empty();
+            current = Engine::Range<ZType>::empty();
         }
         progress += layer.amount;
     }

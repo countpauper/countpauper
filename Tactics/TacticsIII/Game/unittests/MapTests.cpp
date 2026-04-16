@@ -32,12 +32,12 @@ TEST(Map, Bounds)
 TEST(Map, GroundHeight)
 {
     Map low(Engine::Size{1,1,1}, {{Material::stone, 8}});
-    EXPECT_EQ(low.GroundHeight({0,0,0}), Position::ZType(0.5f));
+    EXPECT_EQ(low.GroundHeight({0,0,0}), ZType(0.5f));
 
     Map high(Engine::Size{2,2,16}, {
         {Material::stone, 200}, {Material::stone, 210},
         {Material::stone, 220}, {Material::stone, 240}});
-    EXPECT_EQ(high.GroundHeight({0, 1, 14.1}), Position::ZType(13.75f));
+    EXPECT_EQ(high.GroundHeight({0, 1, 14.1}), ZType(13.75f));
 
 }
 
@@ -47,10 +47,10 @@ TEST(Map, HeightMap)
     map.SetHeightMap(Engine::Size(2,2,3), 
         { 0.5, 1.8,
           2.1, 0.9 });
-    EXPECT_EQ(map.GroundHeight({0, 0, 0}), Position::ZType(0.5));
-    EXPECT_EQ(map.GroundHeight({1, 0, 2}), Position::ZType(1.8));
-    EXPECT_EQ(map.GroundHeight({0, 1, 3}), Position::ZType(2.1));
-    EXPECT_EQ(map.GroundHeight({1, 1, 1}), Position::ZType(0.9));
+    EXPECT_EQ(map.GroundHeight({0, 0, 0}), ZType(0.5));
+    EXPECT_EQ(map.GroundHeight({1, 0, 2}), ZType(1.8));
+    EXPECT_EQ(map.GroundHeight({0, 1, 3}), ZType(2.1));
+    EXPECT_EQ(map.GroundHeight({1, 1, 1}), ZType(0.9));
 }
 
 
@@ -67,9 +67,11 @@ MATCHER_P(LayerEq, epsilon, "")
                          << actual.material.get().name << " vs expected: " << expected.material.get().name << ")";
         return false;
     }
-    // Use gMock's built-in FloatNear logic for the float members
-    return ExplainMatchResult(FloatNear(expected.amount, epsilon), actual.amount, result_listener) && 
-            ExplainMatchResult(FloatNear(expected.temperature, epsilon), actual.temperature, result_listener);
+    if (expected.amount != actual.amount)
+        return false; // TODO explain or remove the whole thing 
+            
+    // // Use gMock's built-in FloatNear logic for the float members
+    return ExplainMatchResult(FloatNear(expected.temperature, epsilon), actual.temperature, result_listener);
 }
 
 

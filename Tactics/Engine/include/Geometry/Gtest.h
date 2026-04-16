@@ -55,6 +55,6 @@
 { \
     const auto& _real=(r1); \
     const auto& _expected = (r2); \
-    EXPECT_NEAR(_real.begin, _expected.begin, abs_error) << "begin"; \
-    EXPECT_NEAR(_real.end, _expected.end, abs_error) << "end"; \
+    EXPECT_NEAR(static_cast<double>(_real.begin), static_cast<double>(_expected.begin), static_cast<double>(abs_error)) << "begin"; \
+    EXPECT_NEAR(static_cast<double>(_real.end), static_cast<double>(_expected.end), static_cast<double>(abs_error)) << "end"; \
 }

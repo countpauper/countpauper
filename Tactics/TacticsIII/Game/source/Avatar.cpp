@@ -160,7 +160,7 @@ bool Avatar::At(Position query) const
     Engine::Range<int> yr(pos.y, pos.y+siz.y-1);
     if (!yr[query.Y()])
         return false;
-    Engine::Range<Position::ZType> zr(pos.z, pos.z + siz.z);
+    Engine::Range<ZType> zr(pos.z, pos.z + siz.z);
     if (!zr[query.Z()])
         return false;
     return true;

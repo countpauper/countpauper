@@ -10,7 +10,7 @@ Engine::Coordinate BlockMap::GroundCoord(Engine::Position pos) const
     return Game::Position(pos.x, pos.y, GroundHeight(Position(pos))).Coord();
 }
 
-Slice BlockMap::GetSlice(Position pos, Position::ZType height) const
+Slice BlockMap::GetSlice(Position pos, ZType height) const
 {
     Slice slice; 
     int posz = 0;
@@ -19,12 +19,11 @@ Slice BlockMap::GetSlice(Position pos, Position::ZType height) const
     {
         slice += Slice(GetBlock({pos.X(), pos.Y(), posz + z}));
     }
-    // TODO Slice with fixed point 
-    slice &= Engine::Range<float>(static_cast<float>(z_fraction), static_cast<float>(z_fraction + height));
+    slice &= Engine::Range<ZType>(z_fraction, z_fraction + height);
     return slice;
 }
 
-Position::ZType BlockMap::GroundHeight(Position pos) const
+ZType BlockMap::GroundHeight(Position pos) const
 {
     auto top = ceil(pos.Z());
     top = GetBounds().z.Clip(top);
@@ -35,7 +34,7 @@ Position::ZType BlockMap::GroundHeight(Position pos) const
         auto height = block.SolidLevel();
         if (!std::isnan(height))
         {
-            return Position::ZType(height + z); // TODO SolidLevel in std::optional<FIxedPoint>
+            return ZType(height + z); // TODO SolidLevel in std::optional<FIxedPoint>
         }
     }
     return 0.0f;

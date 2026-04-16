@@ -47,11 +47,10 @@ Position AttackOrigin(const Actor& from)
     return origin;
 }
 
-Engine::Range<float> AimHeight(const Actor& target)
+Engine::Range<ZType> AimHeight(const Actor& target)
 {
-    Engine::Range<float> aimHeight{0,1};
-    aimHeight *= static_cast<float>(target.GetSize().Z()); 
-    aimHeight += static_cast<float>(target.GetPosition().Z());
+    Engine::Range<ZType> aimHeight{0,target.GetSize().Z()};
+    aimHeight += target.GetPosition().Z();
     return aimHeight;
 }
 
@@ -65,9 +64,9 @@ float HorizontalAttackDistance(Position from, Position to)
 
 
 
-Engine::Range<float> ScanAimWindow(const World& world, const ProjectilePath& path, const Position& origin, Engine::Range<float> aimHeight)
+Engine::Range<ZType> ScanAimWindow(const World& world, const ProjectilePath& path, const Position& origin, Engine::Range<ZType> aimHeight)
 {
-    Engine::Range<Position::ZType> triangle(origin.Z(), origin.Z());
+    Engine::Range<ZType> triangle(origin.Z(), origin.Z());
     float progress = 0;
     for(auto it =path.begin(); it!=path.end();++it)
     {
@@ -76,13 +75,13 @@ Engine::Range<float> ScanAimWindow(const World& world, const ProjectilePath& pat
         if (progress<1e-3)
             continue;   // don't introduce numeric impression when barely leaving the origin 
 
-        triangle.begin = lerp(origin.Z(), Position::ZType(aimHeight.begin), progress);
-        triangle.end = lerp(origin.Z(), Position::ZType(aimHeight.end), progress);
+        triangle.begin = lerp(origin.Z(), aimHeight.begin, progress);
+        triangle.end = lerp(origin.Z(), aimHeight.end, progress);
         Slice slice = world.GetMap().GetSlice(Position(it->first.X(), it->first.Y(), triangle.begin), triangle.Size());
         auto opening = slice.FindGasOpening();
         if (opening.IsEmpty())
             opening = slice.FindNonSolidOpening();
-        opening /= progress;    // extrapolate to end 
+        opening *= 1.0f / progress;    // extrapolate to end 
         opening += aimHeight.begin;
 
         aimHeight &= opening;
@@ -93,7 +92,7 @@ Engine::Range<float> ScanAimWindow(const World& world, const ProjectilePath& pat
     return aimHeight;
 }
 
-Engine::Range<float> AttackHeight(const World& world, const Actor& from, const Actor& to)
+Engine::Range<ZType> AttackHeight(const World& world, const Actor& from, const Actor& to)
 {
     // TODO check obstacles not from and to, this should fix test cover_due_to_obstacle
     //      Use auto targetSurfaces = Facing(origin, aimHeight.Middle()) and sum surfaces instead of just sort of middle plane
@@ -176,12 +175,12 @@ float VerticalReach(Position delta, unsigned reach)
     return (1.0f + reach - roundDelta.Size())/2.0;
 }
 
-Engine::Range<float> VerticalReach(const Actor& from, Position to)
+Engine::Range<ZType> VerticalReach(const Actor& from, Position to)
 {
     float reach = from.GetStats().Get(Stat::reach).Total();
     auto delta = to - from.GetPosition();
-    float verticalReach = VerticalReach(delta, reach);
-    Engine::Range<float> reachRange(-verticalReach, +verticalReach);
+    ZType verticalReach { VerticalReach(delta, reach) };
+    Engine::Range<ZType> reachRange(-verticalReach, verticalReach);
     auto origin = AttackOrigin(from);
     reachRange += static_cast<float>(origin.Z());   // TODO: in FixedPoint as well?    
     return reachRange;

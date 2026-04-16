@@ -59,27 +59,27 @@ TEST(Slice, StackSameSlice)
 
 TEST(Slice, HomogeneousCut)
 {
-    Engine::Range<float> range(0.2f, 0.5f);
+    Engine::Range<ZType> range(0.2f, 0.5f);
     auto cut = Slice(Block::Stone) & range;
     ASSERT_EQ(cut.size(), 1);
-    EXPECT_NEAR(cut[0].amount, range.Size(), 1e-6f);
+    EXPECT_EQ(cut[0].amount, range.Size());
 }
 
 TEST(Slice, HeteroGeneousCut)
 {
-    Engine::Range<float> range(0.2f, 0.8f);
+    Engine::Range<ZType> range(0.2f, 0.9f);
     // Original:  |stone| air    |      0.4 stone 0.6 air
-    // Cut           |        |         0.2 stone 0.4 air 
+    // Cut           |          |       0.2 stone 0.5 air 
     //            0 .2 .4 .6 .8 1.0
     auto cut = Slice(Block(0.4f)) & range;
     ASSERT_EQ(cut.size(), 2);
     EXPECT_EQ(cut[0], (Slice::Layer{Material::stone, 0.2, 300.0f}));
-    EXPECT_EQ(cut[1], (Slice::Layer{Material::air, 0.4, 300.0f}));
+    EXPECT_EQ(cut[1], (Slice::Layer{Material::air, 0.5, 300.0f}));
 }
 
 TEST(Slice, ZeroCut)
 {
-    Engine::Range<float> range(0.2f, 0.2f);
+    Engine::Range<ZType> range(0.2f, 0.2f);
     auto cut = Slice(Block::Water) & range;
     ASSERT_EQ(cut.size(), 1);
     EXPECT_EQ(cut[0], (Slice::Layer{Material::water, 0.0, 300.0f}));
@@ -87,7 +87,7 @@ TEST(Slice, ZeroCut)
 
 TEST(Slice, EmptyCut)
 {
-    auto range = Engine::Range<float>::empty();
+    auto range = Engine::Range<ZType>::empty();
     auto cut = Slice(Block::Water) & range;
     ASSERT_EQ(cut.size(), 0);
 }
@@ -105,7 +105,7 @@ TEST(Slice, Find)
     EXPECT_FALSE(Slice(Block::Stone).FindNonSolidOpening());
     EXPECT_EQ(Slice(Block::Air).FindGasOpening().Size(), 1.0);
     EXPECT_RANGE_NEAR(((Slice(Block(0.6)) + Slice(Block(0.4, 0.3)) + Slice(Block::Stone)) * 0.5).FindNonSolidOpening(), 
-        Engine::Range<double>(0.7, 1.0), 1e-6);
+        Engine::Range<ZType>(0.7, 1.0), std::numeric_limits<ZType>::epsilon());
 }
 
 }

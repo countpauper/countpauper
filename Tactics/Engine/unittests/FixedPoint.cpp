@@ -137,6 +137,37 @@ TEST(FixedPoint, lerp)
     EXPECT_EQ(lerp(FixedPoint(1), FixedPoint(3), 0.5f), FixedPoint(2));
     EXPECT_EQ(lerp(FixedPoint(1), FixedPoint(3), 1.5f), FixedPoint(4));
     EXPECT_EQ(lerp(FixedPoint(1), FixedPoint(3), -1.0f), FixedPoint(-1));
-
 }
+
+
+TEST(FixedPoint, numeric_limits_signed)
+{
+    EXPECT_TRUE((std::numeric_limits<FixedPoint<>>::is_signed));
+    EXPECT_FALSE((std::numeric_limits<FixedPoint<8, uint16_t>>::is_signed));
+}
+
+TEST(FixedPoint, numeric_limits_digits)
+{
+    EXPECT_EQ((std::numeric_limits<FixedPoint<16, int32_t>>::digits), (std::numeric_limits<int16_t>::digits));
+    EXPECT_EQ((std::numeric_limits<FixedPoint<16, int32_t>>::digits10), (std::numeric_limits<int16_t>::digits10));
+    EXPECT_EQ((std::numeric_limits<FixedPoint<0, uint16_t>>::digits), (std::numeric_limits<uint16_t>::digits));
+    EXPECT_EQ((std::numeric_limits<FixedPoint<16, uint16_t>>::digits), 0);
+}
+
+
+TEST(FixedPoint, numeric_limits_limits)
+{
+    EXPECT_EQ((std::numeric_limits<FixedPoint<16, unsigned>>::lowest()),(FixedPoint<16, unsigned>(0U)));
+    EXPECT_GT((std::numeric_limits<FixedPoint<>>::max()), (std::numeric_limits<FixedPoint<>>::lowest()));
+    ASSERT_TRUE((std::numeric_limits<FixedPoint<16, unsigned>>::is_modulo));
+    EXPECT_EQ((std::numeric_limits<FixedPoint<16, unsigned>>::max() + std::numeric_limits<FixedPoint<16, unsigned>>::epsilon()),
+                (std::numeric_limits<FixedPoint<16, unsigned>>::lowest()));
+}
+
+TEST(FixedPoint, numeric_limits_epsilon)
+{
+    EXPECT_GT((std::numeric_limits<FixedPoint<>>::epsilon()), FixedPoint(0));
+    EXPECT_EQ((std::numeric_limits<FixedPoint<>>::epsilon()).RawValue(), 1);
+}
+
 }

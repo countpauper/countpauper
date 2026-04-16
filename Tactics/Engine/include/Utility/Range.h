@@ -29,10 +29,10 @@ struct Range
 
     constexpr T ElementSize() const
     {   // floating point ranges are inclusive for clipping
-        if (std::is_floating_point<T>::value)
-            return static_cast<T>(0.0);
-        else
+        if (std::numeric_limits<T>::is_integer)
             return static_cast<T>(1);
+        else
+            return static_cast<T>(0);
     }
 
     explicit constexpr operator bool() const

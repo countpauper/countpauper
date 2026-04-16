@@ -21,10 +21,10 @@ TEST(Position, ManhattanDistance)
 {
     EXPECT_EQ(0.0f, Position(1, 1, 0).ManDistance(Position(1, 1, 0)));
     EXPECT_FLOAT_EQ(1.0f, Position(0, 1, 0.5f).ManDistance(Position(1, 1, 0.5f)));
-    EXPECT_FLOAT_EQ(2.1f, Position(0, 1, 0.1f).ManDistance(Position(1, 0, 0.2f)));
+    EXPECT_FLOAT_EQ(2.25f, Position(0, 1, 0.1f).ManDistance(Position(1, 0, 0.35f)));
     EXPECT_FLOAT_EQ(3.0f, Position(0, 1, 0).ManDistance(Position(1, -1, 0)));
-    EXPECT_FLOAT_EQ(1.6f, Position(0, 1, 0.1f).ManDistance(Position(0, 0, 0.7f)));
-    EXPECT_FLOAT_EQ(2.9f, Position(0, 1, 0).ManDistance(Position(0, -1, -0.9f)));
+    EXPECT_FLOAT_EQ(1.5f, Position(0, 1, 0.1f).ManDistance(Position(0, 0, 0.6f)));
+    EXPECT_FLOAT_EQ(2.75f, Position(0, 1, 0).ManDistance(Position(0, -1, -0.75f)));
 }
 
 }

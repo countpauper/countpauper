@@ -2,6 +2,8 @@
 
 #include "Game/Block.h"
 #include "Utility/Range.h"
+#include "Utility/FIxedPoint.h"
+#include "Game/Position.h"
 #include <vector>
 #include <span>
 #include <initializer_list>
@@ -22,7 +24,7 @@ public:
     
     struct Layer 
     {
-        using Amount = Block::Amount;
+        using Amount = Engine::FixedPoint<8>;   // TODO could probably be uint16_t to save space as it's always positive 
         using Temperature = Block::Temperature;
 
         std::reference_wrapper<const Material> material;
@@ -34,8 +36,8 @@ public:
         float Density() const;  
         bool IsGas() const;
         bool IsSolid() const;
-        Engine::Range<float> FindGasOpening() const;
-        Engine::Range<float> FindNonSolidOpening() const;
+        Engine::Range<ZType> FindGasOpening() const;
+        Engine::Range<ZType> FindNonSolidOpening() const;
         bool TryMerge(const Layer& rhs);
     };
     Slice(std::initializer_list<Layer> layers);
@@ -48,19 +50,19 @@ public:
     using value_type = Layer; 
     
     Slice& operator+=(const Slice&);
-    Slice& operator&=(Engine::Range<float> heigh);
+    Slice& operator&=(Engine::Range<ZType> heigh);
     Slice& operator*=(float scale);
 
-    Engine::Range<float> FindGasOpening() const;
-    Engine::Range<float> FindNonSolidOpening() const;
-    Engine::Range<float> FindRange(std::function<bool(const Layer&)> predicate) const;
+    Engine::Range<ZType> FindGasOpening() const;
+    Engine::Range<ZType> FindNonSolidOpening() const;
+    Engine::Range<ZType> FindRange(std::function<bool(const Layer&)> predicate) const;
 
 private:
     std::vector<Layer> layers;
 };
 
 Slice operator+(const Slice& lhs, const Slice& rhs);
-Slice operator&(const Slice& lhs, Engine::Range<float> rng);
+Slice operator&(const Slice& lhs, Engine::Range<ZType> rng);
 Slice operator*(const Slice& lhs, float scale);
 
 

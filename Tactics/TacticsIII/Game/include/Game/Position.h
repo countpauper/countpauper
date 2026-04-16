@@ -6,12 +6,12 @@
 
 namespace Game
 {
-    using Fraction=float;   // TODO fixed point
+    using ZType = Engine::FixedPoint<8>;   
 
     struct Position
     {
         Position();
-        using ZType = Engine::FixedPoint<8>;
+        using ZType = Game::ZType;
         Position(int x, int y, ZType z=ZType(0));
         explicit Position(const Engine::Position& p, float zo=0.0);
 

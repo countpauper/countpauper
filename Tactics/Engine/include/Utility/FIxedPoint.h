@@ -1,4 +1,5 @@
 #pragma once
+#include <limits>
 #include <cmath>
 #include <cassert>
 
@@ -168,6 +169,7 @@ private:
     template<unsigned OB, std::integral OT> friend OT round(FixedPoint<OB, OT> fp);
     template<unsigned OB, std::integral OT> friend OT ceil(FixedPoint<OB, OT> fp);
     template<unsigned OB, std::integral OT> friend OT floor(FixedPoint<OB, OT> fp);
+    template<typename _T> friend struct std::numeric_limits;
 
     constexpr T Integral() const
     {
@@ -296,7 +298,88 @@ constexpr FixedPoint<B,T> lerp(FixedPoint<B,T> __a, FixedPoint<B,T> __b, float _
     return FixedPoint<B,T>(std::__lerp(static_cast<float>(__a), static_cast<float>(__b), __t));
 }
 
-// TODO a numeric_limits definition of fixed point
-
 }
 
+namespace std
+{ // Risky to add custom things to std namespace, but then numeric_limits is already in it and it is used otherwise generically.
+
+template<unsigned B, integral T>
+struct numeric_limits<Engine::FixedPoint<B,T>>
+{
+public:
+    using FPT = Engine::FixedPoint<B,T>;
+
+    static constexpr bool is_specialized = true;
+    static constexpr bool is_signed = numeric_limits<T>::is_signed;
+    static constexpr bool is_integer = B==0;
+    static constexpr bool is_exact = false;
+    static constexpr bool has_quiet_NaN = numeric_limits<T>::has_quiet_NaN;
+    static constexpr bool has_signaling_NaN = numeric_limits<T>::has_signaling_NaN;
+    static constexpr float_denorm_style has_denorm = denorm_absent;
+    static constexpr bool has_denorm_loss = false;
+    static constexpr float_round_style round_style = round_to_nearest;
+    static constexpr bool is_iec559 = false;
+    static constexpr bool is_bounded = numeric_limits<T>::is_bounded;
+    static constexpr bool is_modulo = numeric_limits<T>::is_modulo;
+    static constexpr int digits = numeric_limits<T>::digits - B;
+    static constexpr int digits10 = numeric_limits<FPT>::digits * log10(2);
+    static constexpr int radix = numeric_limits<T>::radix;
+    static constexpr int min_exponent = 0;
+    static constexpr int min_exponent10 = 0;
+    static constexpr int max_exponent = 0;
+    static constexpr int max_exponent10 = 0;
+    static constexpr bool traps = numeric_limits<T>::traps;
+    static constexpr bool tinyness_before = false;
+
+    static constexpr FPT max()
+    {
+        return FPT::FromRaw(numeric_limits<T>::max());
+    }
+
+    static constexpr FPT min()
+    {
+        return FPT::FromRaw(numeric_limits<T>::min());
+    }
+
+    static constexpr FPT denorm_min()
+    {
+        return FPT::FromRaw(numeric_limits<T>::min());
+    }
+
+    static constexpr FPT lowest()
+    {
+        return FPT::FromRaw(numeric_limits<T>::lowest());
+    }
+
+    static constexpr FPT epsilon()
+    {
+        return FPT::FromRaw(1);
+    }
+
+    static constexpr FPT round_error()
+    {
+        if (B==0)
+            return FPT::FromRaw(1);
+        else
+            return FPT::FromRaw(1 << (B-1));
+    }
+
+    static constexpr FPT infinity()
+    {
+        return FPT::FromRaw(0);
+    }
+
+    static constexpr FPT quiet_NaN()
+    {
+        return FPT::FromRaw(0);
+    }
+
+    static constexpr FPT  signaling_NaN()
+    {
+        return FPT::FromRaw(0);
+    }
+
+
+};
+
+}
