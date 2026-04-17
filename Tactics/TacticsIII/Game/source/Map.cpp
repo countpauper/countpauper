@@ -182,26 +182,13 @@ void Map::GenerateMesh()
     {
         for(unsigned x=0; x<size.x; ++x)
         {
-            for(int z=size.z-1; z>=0; --z)
+            auto slice = GetSlice(Position(x,y,0), ZType(size.z));  // TOOD when no more blocks, just grab it fast 
+            ZType height = 0.0;
+            for(auto layer : slice) 
             {
-                const auto& block = (*this)[Engine::Position(x,y,z)];
-                const auto& material= block.GetMaterial(Orientation::up);
-                if (material==Material::air)
-                    continue;
-                auto height = block.LiquidLevel();
-                if (!std::isnan(height)) {
-                    AddQuadToMesh(Engine::Coordinate(x, y, z + height), material);
-                }
-
-                height = block.SolidLevel();
-                if (!std::isnan(height))
-                {
-                    if (material == Material::water)    // TODO don't guess, get material profile and pick first solid
-                        AddQuadToMesh(Engine::Coordinate(x, y, z + height), Material::stone);
-                    else
-                        AddQuadToMesh(Engine::Coordinate(x, y, z + height), material);
-                    break;
-                }
+                height += layer.amount;
+                const auto& material= layer.material;
+                AddQuadToMesh(Engine::Coordinate(x, y, static_cast<double>(height)), material);                
             }
         }
     }

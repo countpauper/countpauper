@@ -12,8 +12,9 @@ Slice::Slice(const Block& block)
         layers.emplace_back(Layer{Material::stone, block.stone, block.temperature});
     if (block.water)
         layers.emplace_back(Layer(Material::water, block.water, block.temperature));
-    assert(!block.vegetation);  // TODO should add to water volume if any or subtract from air. Not sure what to do with this as an obstacle/cover 
-    /// maybe each layer needs a 'vegetation density' amount 
+    // TODO really vegation should be mixed in to water and air, but block will go anyway
+    if (block.vegetation)
+        layers.emplace_back(Layer(Material::vegetation, block.vegetation, block.temperature));
     if (block.air)
         layers.emplace_back(Layer(Material::air, block.air, block.temperature));
     if (layers.empty())

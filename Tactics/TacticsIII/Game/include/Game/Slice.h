@@ -45,7 +45,7 @@ public:
     using const_iterator = std::vector<Layer>::const_iterator; 
     inline std::size_t size() const { return layers.size(); }
     inline const_iterator begin() const { return layers.begin(); }
-    inline const_iterator end() const { return layers.begin(); }
+    inline const_iterator end() const { return layers.end(); }
     inline const Layer& operator[](unsigned idx) { return layers.at(idx); }
     using value_type = Layer; 
     
