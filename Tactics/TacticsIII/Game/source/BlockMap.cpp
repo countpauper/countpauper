@@ -14,6 +14,7 @@ Slice BlockMap::GetSlice(Position pos, ZType height) const
 {
     Slice slice; 
     int posz = 0;
+    pos.z = std::max(pos.Z(), ZType(0));
     auto z_fraction = modfp(pos.Z(), posz);
     for(int z = 0; z< ceil(height + z_fraction); ++z) // TODO test this z_fraction, 
     {

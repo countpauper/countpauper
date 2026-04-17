@@ -44,24 +44,19 @@ Move::Move(World& world, Actor& actor, Position destination, unsigned distance) 
         const auto& map = world.GetMap();
         std::vector<Position> result;
         ZType jumpHeight = ZType(1) + ZType(actor.GetStats().Get(Stat::jump).Total()) / 2;
+        ZType actorHeight = actor.GetSize().Z();
         Position jump(0, 0, jumpHeight);
+
         for(auto ori : Orientations::horizontal)    // NB: Horizontal only because this is specific for walking 
         {
             auto to = at + Position(ori.GetVector());
             if (!map.GetBounds().Contains(round(to)))
                 continue;
-            auto block = map.GetBlock(round(to));
-            // TODO: besides this not accounting for flying/swimming movement this is not sufficient 
-            // A block can be fully  air and still walkable because of its neighbour
-            // A slice could be better, but getting slices as part of path planning would not be efficient unless
-            // all slices are precomputed or instead of blocks in fact maps were just slices. (But how would physics work in layers)
-            if (!block.CanWalk())
-                continue;
-            Position headroom = Position(to) + jump;
-            to.z = map.GroundHeight(headroom);
-            auto deltaHeight = to.z - map.GroundHeight(Position(at));
-            if (abs(deltaHeight) > jumpHeight)
-                continue;
+            auto slice = map.GetSlice(to - jump, jumpHeight*2);
+            auto ground = slice.FindNonSolidOpening();
+            if (ground.Size() < actorHeight || ground.begin == ZType(0))
+                continue;   // no ground to stand on
+            to.z = ground.begin; 
             // TODO check size its under ceiling
             if (world.Obstacle(to, &actor))
                 continue;

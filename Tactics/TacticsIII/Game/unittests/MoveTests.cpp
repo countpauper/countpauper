@@ -20,8 +20,8 @@ TEST(Move, step)
     });
 
     NiceMock<MockWorld> world;
-    world.map.SetHeightMap({2,2,2}, {0, 2.0, 0.0, 1.0});
-
+    world.map.SetHeightMap({2,2,2}, {0.01, 2.0, 0.01, 1.0});
+    ON_CALL(actor, GetPosition()).WillByDefault(Return(Position(0,0,0.01)));
     Move action(world, actor, Position(1,1,1));
     EXPECT_EQ(action.Description(), "Move (1, 1, 1)");
     EXPECT_EQ(action.AP(), 1);
@@ -61,7 +61,7 @@ TEST(Move, cant_jump_too_high)
         {Stat::ap, 1}
     });
     NiceMock<MockWorld> world;
-    world.map.SetHeightMap({2,1,4}, {0, 2.0});
+    world.map.SetHeightMap({2,1,4}, {0.01, 2.0});
     Move action(world, actor, Position(1,0,2));
     EXPECT_FALSE(action.CanDo());
     std::stringstream log;
