@@ -138,25 +138,23 @@ const Slice& Map::SliceAt(int x, int y) const
     return slices.at(SliceIdx(x, y));
 }
 
-void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl)
+void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl, float temperature)
 {
-    static const float defaultTemperature = 300.0f;
-    ZType mapHeight { GetBounds().z.Size()};
 
-
+    auto mapHeight  = Z();
     auto& slice = slices.at(SliceIdx(x,y));
     if (solidLvl)
     {
-        slice.emplace_back(solid, solidLvl, defaultTemperature); 
+        slice.emplace_back(solid, solidLvl - mapHeight.begin, temperature); 
     }
     if (liquidLvl > solidLvl)
     {
-        slice.emplace_back(liquid, liquidLvl - solidLvl, defaultTemperature);
-        slice.emplace_back(Material::air, mapHeight - liquidLvl, defaultTemperature);
+        slice.emplace_back(liquid, liquidLvl - solidLvl, temperature);
+        slice.emplace_back(Material::air, mapHeight.end - liquidLvl, temperature);
     }
     else 
     {
-        slice.emplace_back(Material::air, mapHeight - solidLvl, defaultTemperature);
+        slice.emplace_back(Material::air, mapHeight.end - solidLvl, temperature);
     }
 }
 

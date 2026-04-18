@@ -81,8 +81,6 @@ material enum: about 4-5 bits
 temperature (state enum solid, liquid, gas): 3 bits
 movement vector compressed into how many liters would flow up/or down, left or right, forward or backward per time unit. so that's 3still 3x5 bits or so and what does it mean if the unit of volume is 1 volumes
 
-
-TODO: 
 [done] Fix last attack tests
 [done] Implement fixed point 
 [done] Change Game::Position with const fixed point bits, (does it have tests) and make length/distance etc still work. fraction float can go, it's just intepretation. 
@@ -90,7 +88,7 @@ TODO:
 [done] Update path planning to not use any blocks anymore, but use slices and vertical holes 
 [done] Change the map to not store blocks but slices 
 [done] Remove block altogether and rename BlockMap file, NB some slice tests still use blocks
-Make layer amount and temperature a fixed point/word
+[done] Make layer amount and temperature a fixed point/word
 
 
 

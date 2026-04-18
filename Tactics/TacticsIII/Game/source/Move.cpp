@@ -32,6 +32,16 @@ std::set<Position> Approach(const World& world,  Actor& actor, Position center, 
     return result;
 }
 
+Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, ZType jumpHeight)
+{
+    Engine::Range zRange(at.z - jumpHeight, at.z + jumpHeight);
+    zRange &= map.Z();
+    at.z = zRange.begin;
+    auto slice = map.GetSlice(at, zRange.Size());
+    auto ground = slice.FindBiggestNonSolidOpening();
+    return ground;
+}
+
 Move::Move(World& world, Actor& actor, Position destination, unsigned distance) :
     Action(world, actor)
 {
@@ -53,8 +63,7 @@ Move::Move(World& world, Actor& actor, Position destination, unsigned distance) 
             auto to = at + Position(ori.GetVector());
             if (!map.GetBounds().Contains(round(to)))
                 continue;
-            auto slice = map.GetSlice(to - jump, jumpHeight*2);
-            auto ground = slice.FindBiggestNonSolidOpening();
+            auto ground = FindMoveOpening(map, to, jumpHeight);
             if (ground.Size() < actorHeight || ground.begin == ZType(0))
                 continue;   // no ground to stand on
             to.z = ground.begin; 

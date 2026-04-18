@@ -33,7 +33,7 @@ public:
 private:
     Map(std::string_view fileName, const class Engine::Image& data);
     unsigned Index(Engine::Position pos) const;
-    void Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl);
+    void Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl, float temperature=300.0f);
     void AddQuadToMesh(Engine::Coordinate topleft, const Material& mat);
 
     unsigned SliceIdx(int x, int y) const;

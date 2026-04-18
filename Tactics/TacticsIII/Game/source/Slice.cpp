@@ -22,6 +22,11 @@ Slice::Slice(std::initializer_list<Layer> layers) :
 
 void Slice::emplace_back(const Material& material, Layer::Amount amt, Layer::Temperature temp)
 {
+    if (!layers.empty())
+    {
+        if (layers.back().TryMerge(Layer{material, amt, temp}))
+            return;
+    }
     layers.emplace_back(material, amt, temp);
 }
 
@@ -60,28 +65,27 @@ Slice& Slice::operator&=(Engine::Range<ZType> height)
         layers.clear();
         return *this;
     }
-    if (height.begin < ZType(0)) 
-    {
-        height.begin = 0;   // TODO could add void here
-    }
     auto cutIt = layers.begin();
-    ZType progress { 0 };
+    if (height.begin < ZType(0))
+    {
+        cutIt = layers.insert(cutIt, {Material::vacuum, -height.begin, 0.0});
+        ++cutIt;
+        height.begin = ZType(0);
+    }
+    Layer::Amount progress { static_cast<Layer::Amount::IntegerType>(0) };
     auto cutBegin = cutIt;
     while(cutIt!=layers.end())
     {
         if (progress + cutIt->amount >= height.begin) 
         {
-            cutBegin = cutIt;
             auto cutProgress = height.begin - progress;
             progress += cutProgress;
-            cutBegin->amount -= cutProgress;
+            cutIt->amount -= cutProgress;
             break;
         }
         progress += cutIt->amount;
-        ++cutIt;
+        cutIt = layers.erase(cutIt);
     }
-    cutIt = layers.erase(layers.begin(), cutBegin);
-
 
     auto cutEnd = cutIt;
     while(cutIt!=layers.end()) 
@@ -90,6 +94,7 @@ Slice& Slice::operator&=(Engine::Range<ZType> height)
         {
             auto cutProgress = height.end - progress;
             cutIt->amount = cutProgress;
+            progress += cutProgress;
             cutEnd = ++cutIt;
             cutIt = layers.erase(cutEnd, layers.end());
             break;
@@ -97,7 +102,10 @@ Slice& Slice::operator&=(Engine::Range<ZType> height)
         progress += cutIt->amount;
         ++cutIt;
     }
-    // TODO: Could add void/air at the top if progress is still < height.end
+    if (progress < height.end)
+    {
+        (*this)+=Slice({Material::vacuum, height.end - progress, 0.0});
+    }
     return *this;
 }
 
@@ -143,8 +151,8 @@ Engine::Range<ZType> Slice::FindBiggestNonSolidOpening() const
 Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Layer&)> predicate) const
 {
     auto result = Engine::Range<ZType>::empty();
-    Engine::Range<ZType> current = Engine::Range<ZType>::empty();
     ZType progress = 0;
+    Engine::Range<ZType> current = result;
     for(const auto& layer : layers)
     {
         if (predicate(layer))

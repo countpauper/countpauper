@@ -15,6 +15,7 @@ public:
     Slice GetSlice(Position pos, ZType height) const;
 
     ZType GroundHeight(Position pos) const;
+    Engine::Range<ZType> Z() const;
     Engine::Coordinate GroundCoord(Engine::Position pos) const;
 };
 

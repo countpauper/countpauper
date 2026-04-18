@@ -23,7 +23,8 @@ public:
     Slice(std::initializer_list<Layer> layers);
 
     void emplace_back(const Material& material, Layer::Amount amt, Layer::Temperature temp);
-
+    Layer pop_front();
+    
     using const_iterator = std::vector<Layer>::const_iterator; 
     inline std::size_t size() const { return layers.size(); }
     inline const_iterator begin() const { return layers.begin(); }

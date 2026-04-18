@@ -9,18 +9,19 @@
 namespace Engine
 {
 
-template<unsigned bits=16, std::integral T=int>
+template<unsigned B=16, std::integral T=int>
 class FixedPoint
 {
 public:
-    using FPT = FixedPoint<bits, T>;
+    using FPT = FixedPoint<B, T>;
     using IntegerType = T;
+    static constexpr unsigned Bits = B;
 
     FixedPoint() = default;
     constexpr FixedPoint(float input) :
         v(std::round(input * FractionDivisor()))
     {
-        static_assert(bits < std::log2(std::numeric_limits<T>::max()));
+        static_assert(Bits < std::log2(std::numeric_limits<T>::max()));
 
         if (input * FractionDivisor() > std::numeric_limits<T>::max())
             throw std::range_error("Floating point is too large for fixed point");
@@ -39,19 +40,19 @@ public:
     constexpr FixedPoint(T input) :
         v(input * FractionDivisor())
     {
-        if (input>std::numeric_limits<T>::max() >> bits)
+        if (input>std::numeric_limits<T>::max() >> Bits)
             throw std::range_error("Integer is too large for fixed point");
-        if (input < std::numeric_limits<T>::lowest() >> bits)
+        if (input < std::numeric_limits<T>::lowest() >> Bits)
             throw std::range_error("Integer is too small for fixed point");
     }
 
     template<unsigned OB, typename OT>
     constexpr FixedPoint(FixedPoint<OB, OT> o)
     {
-        if (OB > bits)
-            v = static_cast<T>(o.v >> (OB - bits));
+        if (OB > Bits)
+            v = static_cast<T>(o.v >> (OB - Bits));
         else
-            v = static_cast<T>(o.v << (bits - OB));
+            v = static_cast<T>(o.v << (Bits - OB));
     }
 
     FixedPoint(const FPT& o) :
@@ -111,9 +112,9 @@ public:
     {
         assert(sizeof(T) <= sizeof(uint64_t)/2);  // requires a type with double the size of the original for intermediate result. For now 64 bits is used
         if (std::is_signed<T>())
-            v = static_cast<T>((static_cast<int64_t>(v)*rhs.v) >> bits);
+            v = static_cast<T>((static_cast<int64_t>(v)*rhs.v) >> Bits);
         else
-            v = static_cast<T>((static_cast<uint64_t>(v)*rhs.v) >> bits);
+            v = static_cast<T>((static_cast<uint64_t>(v)*rhs.v) >> Bits);
         return *this;
     }
 
@@ -127,9 +128,9 @@ public:
     {
         assert(sizeof(T) <= sizeof(uint64_t)/2);  // requires a type with double the size of the original  for intermediate result. For now 64 bits is used.
         if (std::is_signed<T>())
-            v = static_cast<T>((static_cast<int64_t>(v) << bits) / rhs.v);
+            v = static_cast<T>((static_cast<int64_t>(v) << Bits) / rhs.v);
         else
-            v = static_cast<T>((static_cast<uint64_t>(v) << bits) / rhs.v);
+            v = static_cast<T>((static_cast<uint64_t>(v) << Bits) / rhs.v);
         return *this;
     }
 
@@ -181,7 +182,7 @@ private:
 
     constexpr T Integral() const
     {
-        return v>>bits;
+        return v>>Bits;
     }
     constexpr T FractionBits() const
     {
@@ -189,7 +190,7 @@ private:
     }
     static constexpr uint64_t FractionDivisor()
     {
-        return 1ULL<<bits;
+        return 1ULL<<Bits;
     }
     static constexpr uint64_t FractionMask()
     {

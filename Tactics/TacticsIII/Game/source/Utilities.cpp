@@ -78,6 +78,9 @@ Engine::Range<ZType> ScanAimWindow(const World& world, const ProjectilePath& pat
         auto opening = slice.FindBiggestGasOpening();
         if (opening.IsEmpty())
             opening = slice.FindBiggestNonSolidOpening();
+        if (opening.IsEmpty())
+            return Engine::Range<ZType>::empty();
+
         opening *= 1.0f / progress;    // extrapolate to end 
         opening += aimHeight.begin;
 

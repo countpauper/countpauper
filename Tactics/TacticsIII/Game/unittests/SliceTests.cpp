@@ -83,10 +83,12 @@ TEST(Slice, EmptyCut)
 
 TEST(Slice, OverSizedCut)
 {
-    Engine::Range<ZType> range(-0.5, 1.5);
+    Engine::Range<ZType> range(-0.5, 1.75);
     auto cut = Slice({{Material::air, 1.0, 0.0f}}) & range;
-    ASSERT_EQ(cut.size(), 1);
-    EXPECT_EQ(cut[0], (Layer{Material::air, 1.0, 0.0f}));
+    ASSERT_EQ(cut.size(), 3);
+    EXPECT_EQ(cut[0], (Layer{Material::vacuum, 0.5, 0.0f}));
+    EXPECT_EQ(cut[1], (Layer{Material::air, 1.0, 0.0f}));
+    EXPECT_EQ(cut[2], (Layer{Material::vacuum, 0.75, 0.0f}));
 }
 
 TEST(Slice, Scale)
