@@ -5,7 +5,6 @@
 #include "UI/Scenery.h"
 #include "Game/BlockMap.h"
 #include "Game/Material.h"
-#include "Game/Block.h"
 #include <vector>
 
 namespace Engine
@@ -18,34 +17,34 @@ namespace Game
 
 class Map :
     public Engine::Scenery,
-    public BlockMap
+    public MapItf
 {
 public:
-    explicit Map(Engine::Size size, std::initializer_list<std::pair<const Material&, unsigned>> map={});
+    explicit Map(Engine::Size size, std::initializer_list<std::pair<const Material&, ZType>> map={});
     explicit Map(std::string_view fileName);
     std::string_view Name() const override;
     std::string_view FileName() const;
     Engine::Mesh& GetMesh();
-    // Height Map
+    // Map Itf
     Engine::IntBox GetBounds() const override;
+    const Slice& SliceAt(int x, int y) const override; 
 private:
     Map(std::string_view fileName, const class Engine::Image& data);
     unsigned Index(Engine::Position pos) const;
-    void Column(unsigned x, unsigned y, const Material& solid, unsigned solidLvl, const Material& liquid, unsigned liquidLvl);
+    void Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl);
     void AddQuadToMesh(Engine::Coordinate topleft, const Material& mat);
+
+    unsigned SliceIdx(int x, int y) const;
 
     void GenerateMesh();
 
-    Block& operator[](Engine::Position pos);
-    Block GetBlock(Engine::Position pos) const override;
-
-    float LevelToHeight(int level) const;
-    int HeightToLevel(float height) const;
+    ZType LevelToHeight(int level) const;
+    int HeightToLevel(ZType height) const;
 
     static constexpr int subheight = 16;
     std::string filename;
     Engine::Size size;
-    std::vector<Block> blocks;
+    std::vector<Slice> slices;
     Engine::Mesh mesh;
 };
 

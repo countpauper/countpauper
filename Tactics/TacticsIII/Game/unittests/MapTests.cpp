@@ -31,12 +31,12 @@ TEST(Map, Bounds)
 
 TEST(Map, GroundHeight)
 {
-    Map low(Engine::Size{1,1,1}, {{Material::stone, 8}});
+    Map low(Engine::Size{1,1,1}, {{Material::stone, 0.5}});
     EXPECT_EQ(low.GroundHeight({0,0,0}), ZType(0.5f));
 
     Map high(Engine::Size{2,2,16}, {
-        {Material::stone, 200}, {Material::stone, 210},
-        {Material::stone, 220}, {Material::stone, 240}});
+        {Material::stone, 12.5}, {Material::stone, 13.125},
+        {Material::stone, 13.75}, {Material::stone, 15}});
     EXPECT_EQ(high.GroundHeight({0, 1, 14.1}), ZType(13.75f));
 
 }
@@ -80,9 +80,11 @@ TEST(Map, GetSlice)
 {
     NiceMock<MockMap> map;
     map.SetSize(Engine::Size(1,1,3));
-    ON_CALL(map, GetBlock(Engine::Position(0,0,0))).WillByDefault(Return(Block(0.8)));
-    ON_CALL(map, GetBlock(Engine::Position(0,0,1))).WillByDefault(Return(Block::Air));
-    ON_CALL(map, GetBlock(Engine::Position(0,0,2))).WillByDefault(Return(Block::Stone));
+    Slice slice({{Material::stone, 0.8, 300.0f},
+                {Material::air, 1.2, 300.0f},
+                {Material::stone, 1.0, 300.0f}});
+    
+    ON_CALL(map, SliceAt(0,0)).WillByDefault(ReturnRef(slice));
 
     EXPECT_THAT(map.GetSlice({0,0,0}, 2.0), Pointwise(LayerEq(0.001f), 
         Slice( {{Material::stone, 0.8, 300.0f }, 

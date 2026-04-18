@@ -8,18 +8,15 @@
 namespace Game
 {
 
-class Block;
-
-class BlockMap
+class MapItf
 {
 public:
     virtual Engine::IntBox GetBounds() const = 0;
-    virtual Block GetBlock(Engine::Position pos) const = 0;
+    virtual const Slice& SliceAt(int x, int y) const = 0;
+    Slice GetSlice(Position pos, ZType height) const;
 
     ZType GroundHeight(Position pos) const;
     Engine::Coordinate GroundCoord(Engine::Position pos) const;
-    Slice GetSlice(Position pos, ZType height) const;
-    Block operator[](Engine::Position pos) const  { return GetBlock(pos); }
 };
 
 }

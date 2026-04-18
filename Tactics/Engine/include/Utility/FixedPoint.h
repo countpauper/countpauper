@@ -72,6 +72,11 @@ public:
         return Integral() + double(FractionBits()) / FractionDivisor();
     }
 
+    explicit operator bool() const
+    {
+        return v!=0;
+    }
+
     explicit operator T() const
     {
         return Integral();

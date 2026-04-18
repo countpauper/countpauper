@@ -8,7 +8,7 @@ class Game {
 
 }
 
-interface BlockMap {
+interface MapItf {
    Height(Position): int
 }
 
@@ -23,10 +23,10 @@ interface Actor {
 
 Actor *--> "appearance" Engine.UI.Scenery
 
-World o--> BlockMap
+World o--> MapItf
 Game ...|> World
 Game *---> Map
-Map ..|> BlockMap
+Map ..|> MapItf
 class Avatar
 Avatar ...|> Actor
 Game *--> "*" Avatar

@@ -61,8 +61,8 @@ TEST(Utilities, AttackSurface)
     MockActor attacker;
     MockActor defender;
     attacker.SetStats({{Stat::reach, 2}});
+    world.map.SetHeightMap(Engine::Size(2,1,2), {0.0f, 0.0f});
     defender.Move(world, Position(1,0,0));
-    world.map.SetHeightMap(Engine::Size(2,1,1), {0.0f, 0.0f});
     EXPECT_CALL(attacker, GetSize()).WillOnce(Return(Size(1,1,1)));
     EXPECT_CALL(defender, GetSize()).WillOnce(Return(Size(1,1,2)));
     EXPECT_EQ(AttackHeight(world, attacker, defender), Engine::Range<ZType>(0, 2.0));

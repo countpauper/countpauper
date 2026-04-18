@@ -2,8 +2,6 @@
 #include <gmock/gmock.h>
 
 #include "Game/BlockMap.h"
-#include "Game/Block.h"
-
 namespace Game::Test
 {
 using namespace ::testing;
@@ -16,12 +14,16 @@ MATCHER_P(IsPositionAbove, p, "")
 }
 
 
-class MockMap : public BlockMap
+class MockMap : public MapItf
 {
 public:
     MockMap()
     {
-        ON_CALL(*this,  GetBlock(_)).WillByDefault(Return(Block::Space));
+        Slice slice;
+        ON_CALL(*this, SliceAt(_,_)).WillByDefault([slice](int, int) -> const Slice&
+        {
+            return slice;
+        });
     }
 
     void SetSize(Engine::Size size)
@@ -29,28 +31,32 @@ public:
         ON_CALL(*this, GetBounds()).WillByDefault(Return(Engine::IntBox(size)));
     }
 
-    void SetHeightMap(Engine::Size size, std::initializer_list<float> heights={})
+    void SetHeightMap(Engine::Size size, std::initializer_list<ZType> heights={})
     {
         SetSize(size);
-        std::vector<float> heightCopy(heights);
-        ON_CALL(*this, GetBlock(_)).WillByDefault(WithArg<0>([this, size, heightCopy](Engine::Position p) -> Block
+
+        std::vector<Slice> slices;
+        slices.clear();
+        unsigned heightIndex=0;
+        ZType mapHeight {size.z};
+
+        for(int y=0;y<size.y; ++y)
         {
-            auto index = p.X() + p.Y() * size.X();
-            float intHeight;
-            float fracHeight = modf(heightCopy.at(index), &intHeight);
-
-            if (p.z < intHeight)    // todo fraction of h
-                return Block::Stone;
-            else if (p.z > intHeight)   
-                return Block::Air;
-            else 
-                return Block(fracHeight);
-
-        }));
+            for (int x=0;x<size.x; ++x)
+            {
+                auto heightIt = heights.begin()+(heightIndex % heights.size());
+                slices.push_back(Slice({{Material::stone, *heightIt, 300.0f}, 
+                            {Material::air, mapHeight - *heightIt, 300.0f}}));
+                ++heightIndex;
+            }
+        }
+        ON_CALL(*this, SliceAt(_,_)).WillByDefault([slices, size](int x, int y) -> const Slice&
+        {
+            return slices.at(x + y * size.y);
+        });
     }
     MOCK_METHOD(Engine::IntBox, GetBounds, (), (const override));
-    MOCK_METHOD(Block, GetBlock, (Engine::Position pos), (const override));
-
+    MOCK_METHOD(const Slice&, SliceAt, (int,int), (const override));
 private:
 
 };

@@ -4,12 +4,12 @@
 namespace Game
 {
 class Actor;
-class BlockMap;
+class MapItf;
 
 class World
 {
 public:
-    virtual const BlockMap& GetMap() const = 0;
+    virtual const MapItf& GetMap() const = 0;
     virtual bool Obstacle(Position at, const Actor* except=nullptr) const =0;
 };
 

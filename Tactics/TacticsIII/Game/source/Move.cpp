@@ -53,7 +53,7 @@ Move::Move(World& world, Actor& actor, Position destination, unsigned distance) 
             if (!map.GetBounds().Contains(round(to)))
                 continue;
             auto slice = map.GetSlice(to - jump, jumpHeight*2);
-            auto ground = slice.FindNonSolidOpening();
+            auto ground = slice.FindBiggestNonSolidOpening();
             if (ground.Size() < actorHeight || ground.begin == ZType(0))
                 continue;   // no ground to stand on
             to.z = ground.begin; 

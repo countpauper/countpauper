@@ -54,7 +54,7 @@ Game::Game(Engine::Scene& scene, const json& data) :
     // avatars.at(0)->GetEquipment().Equip(Equipment(offhand));
 }
 
-const BlockMap& Game::GetMap() const
+const MapItf& Game::GetMap() const
 {
     return map;
 }

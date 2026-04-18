@@ -42,6 +42,8 @@ public:
     };
     Slice(std::initializer_list<Layer> layers);
 
+    void emplace_back(const Material& material, Layer::Amount amt, Layer::Temperature temp);
+    
     using const_iterator = std::vector<Layer>::const_iterator; 
     inline std::size_t size() const { return layers.size(); }
     inline const_iterator begin() const { return layers.begin(); }
@@ -53,9 +55,9 @@ public:
     Slice& operator&=(Engine::Range<ZType> heigh);
     Slice& operator*=(float scale);
 
-    Engine::Range<ZType> FindGasOpening() const;
-    Engine::Range<ZType> FindNonSolidOpening() const;
-    Engine::Range<ZType> FindRange(std::function<bool(const Layer&)> predicate) const;
+    Engine::Range<ZType> FindBiggestGasOpening() const;
+    Engine::Range<ZType> FindBiggestNonSolidOpening() const;
+    Engine::Range<ZType> FindBiggestRange(std::function<bool(const Layer&)> predicate) const;
 
 private:
     std::vector<Layer> layers;

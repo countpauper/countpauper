@@ -76,6 +76,11 @@ bool Slice::Layer::TryMerge(const Slice::Layer& rhs)
     return true;
 }
 
+void Slice::emplace_back(const Material& material, Slice::Layer::Amount amt, Slice::Layer::Temperature temp)
+{
+    layers.emplace_back(material, amt, temp);
+}
+
 Slice& Slice::operator=(const Slice& rhs)
 {
     layers = rhs.layers;
@@ -99,7 +104,6 @@ Slice& Slice::operator+=(const Slice& rhs)
     return *this;
 }
 
-
 Slice operator+(const Slice& lhs, const Slice& rhs)
 {
     Slice result(lhs);
@@ -111,6 +115,10 @@ Slice& Slice::operator&=(Engine::Range<ZType> height)
     if (height.begin > height.end) {
         layers.clear();
         return *this;
+    }
+    if (height.begin < ZType(0)) 
+    {
+        height.begin = 0;   // TODO could add void here
     }
     auto cutIt = layers.begin();
     ZType progress { 0 };
@@ -139,12 +147,13 @@ Slice& Slice::operator&=(Engine::Range<ZType> height)
             auto cutProgress = height.end - progress;
             cutIt->amount = cutProgress;
             cutEnd = ++cutIt;
+            cutIt = layers.erase(cutEnd, layers.end());
             break;
         }
         progress += cutIt->amount;
         ++cutIt;
     }
-    cutIt = layers.erase(cutEnd, layers.end());
+    // TODO: Could add void/air at the top if progress is still < height.end
     return *this;
 }
 
@@ -171,23 +180,23 @@ Slice operator*(const Slice& lhs, float scale)
 }
 
 
-Engine::Range<ZType> Slice::FindGasOpening() const
+Engine::Range<ZType> Slice::FindBiggestGasOpening() const
 {
-    return FindRange([](const Layer& l)
+    return FindBiggestRange([](const Layer& l)
     {
         return l.IsGas();
     });
 }
 
-Engine::Range<ZType> Slice::FindNonSolidOpening() const
+Engine::Range<ZType> Slice::FindBiggestNonSolidOpening() const
 {
-    return FindRange([](const Layer& l)
+    return FindBiggestRange([](const Layer& l)
     {
         return !l.IsSolid();
     });
 }
 
-Engine::Range<ZType> Slice::FindRange(std::function<bool(const Slice::Layer&)> predicate) const
+Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Slice::Layer&)> predicate) const
 {
     auto result = Engine::Range<ZType>::empty();
     Engine::Range<ZType> current = Engine::Range<ZType>::empty();

@@ -92,6 +92,15 @@ TEST(Slice, EmptyCut)
     ASSERT_EQ(cut.size(), 0);
 }
 
+
+TEST(Slice, OverSizedCut)
+{
+    Engine::Range<ZType> range(-0.5, 1.5);
+    auto cut = Slice({{Material::air, 1.0, 0.0f}}) & range;
+    ASSERT_EQ(cut.size(), 1);
+    EXPECT_EQ(cut[0], (Slice::Layer{Material::air, 1.0, 0.0f}));
+}
+
 TEST(Slice, Scale)
 {
     auto halfSlice = Slice(Block(0.4f)) * 0.5f;
@@ -102,9 +111,9 @@ TEST(Slice, Scale)
 
 TEST(Slice, Find)
 {
-    EXPECT_FALSE(Slice(Block::Stone).FindNonSolidOpening());
-    EXPECT_EQ(Slice(Block::Air).FindGasOpening().Size(), 1.0);
-    EXPECT_RANGE_NEAR(((Slice(Block(0.6)) + Slice(Block(0.4, 0.3)) + Slice(Block::Stone)) * 0.5).FindNonSolidOpening(), 
+    EXPECT_FALSE(Slice(Block::Stone).FindBiggestNonSolidOpening());
+    EXPECT_EQ(Slice(Block::Air).FindBiggestGasOpening().Size(), 1.0);
+    EXPECT_RANGE_NEAR(((Slice(Block(0.6)) + Slice(Block(0.4, 0.3)) + Slice(Block::Stone)) * 0.5).FindBiggestNonSolidOpening(), 
         Engine::Range<ZType>(0.7, 1.0), std::numeric_limits<ZType>::epsilon());
 }
 

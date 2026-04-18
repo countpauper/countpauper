@@ -14,10 +14,10 @@
 namespace Game
 {
 
-Map::Map(Engine::Size size, std::initializer_list<std::pair<const Material&, unsigned>> map) :
+Map::Map(Engine::Size size, std::initializer_list<std::pair<const Material&, ZType>> map) :
     Scenery(mesh),
     size(size),
-    blocks(size.x * size.y * size.z)
+    slices(size.x * size.y)
 {
     auto it = map.begin();
     for(unsigned y=0; y<size.y; ++y)
@@ -68,7 +68,7 @@ Map::Map(std::string_view filename, const Engine::Image& data) :
     Scenery(mesh),
     filename(filename),
     size{int(data.Width()), int(data.Height()/4), (int)LevelToHeight(256)},
-    blocks(size.x * size.y * size.z)
+    slices(size.x * size.y)
 {
     for(unsigned y=0; y<size.y; ++y)
     {
@@ -80,7 +80,9 @@ Map::Map(std::string_view filename, const Engine::Image& data) :
             Engine::HSVA gasPixel(data[Engine::Position(x, y+ 3*size.y)]);
 
             const auto& liquidMaterial = levelPixel.b > levelPixel.r ? Material::water : Material::air; //FindMaterial(Engine::HSVA(liquidPixel));
-            Column(x,y, *FindMaterial(materialPixel), levelPixel.r, liquidMaterial, levelPixel.b);
+            ZType solidHeight = LevelToHeight(levelPixel.r);
+            ZType liquidHeight = LevelToHeight(levelPixel.b);
+            Column(x,y, *FindMaterial(materialPixel), solidHeight, liquidMaterial, liquidHeight);
         }
     }
     GenerateMesh();
@@ -108,22 +110,13 @@ uint32_t Map::Index(Engine::Position pos) const
         pos.z * size.x * size.y;
 }
 
-Block& Map::operator[](Engine::Position pos)
+
+ZType Map::LevelToHeight(int level) const
 {
-    return blocks.at(Index(pos));
+    return ZType(level) / subheight;
 }
 
-Block Map::GetBlock(Engine::Position pos) const
-{
-    return blocks.at(Index(pos));
-}
-
-
-float Map::LevelToHeight(int level) const
-{
-    return static_cast<float>(level) / subheight;
-}
-int Map::HeightToLevel(float height) const
+int Map::HeightToLevel(ZType height) const
 {
     return static_cast<int>(height * subheight);
 }
@@ -134,42 +127,35 @@ Engine::IntBox Map::GetBounds() const
     return Engine::IntBox(size);
 }
 
-void Map::Column(unsigned x, unsigned y, const Material& solid, unsigned solidLvl, const Material& liquid, unsigned liquidLvl)
+unsigned Map::SliceIdx(int x, int y) const
 {
-    float solidHeight = LevelToHeight(solidLvl);
-    float liquidHeight = LevelToHeight(liquidLvl);
+    return y*size.x + x;
+}
 
-    for(unsigned z=0; z<size.z; ++z)
+const Slice& Map::SliceAt(int x, int y) const
+{
+    return slices.at(SliceIdx(x, y));
+}
+
+void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl)
+{
+    static const float defaultTemperature = 300.0f;
+    ZType mapHeight { GetBounds().z.Size()};
+
+
+    auto& slice = slices.at(SliceIdx(x,y));
+    if (solidLvl)
     {
-        auto& block = (*this)[Engine::Position(x,y,z)];
-
-        Engine::Range<float> zRng{float(z), float(z+1)};
-        if (zRng[solidHeight])
-        {
-            if (solid==Material::vegetation)
-                block = Block(0.1, 0.0, solidHeight-z - 0.1);
-            else
-                block = Block(solidHeight - z);
-
-            if (zRng[liquidHeight] && liquid!=Material::air)
-            {
-                block.AddWater(liquidHeight - solidHeight);
-            }
-        }
-
-        else if (zRng < solidHeight)
-        {
-            block = Block::Stone;
-        }
-        else if (zRng < liquidHeight)
-        {
-            assert(liquid == Material::water);  // what does this mean? bad map?
-            block = Block::Water;
-        }
-        else
-        {
-            block = Block::Air;
-        }
+        slice.emplace_back(solid, solidLvl, defaultTemperature); 
+    }
+    if (liquidLvl > solidLvl)
+    {
+        slice.emplace_back(liquid, liquidLvl - solidLvl, defaultTemperature);
+        slice.emplace_back(Material::air, mapHeight - liquidLvl, defaultTemperature);
+    }
+    else 
+    {
+        slice.emplace_back(Material::air, mapHeight - solidLvl, defaultTemperature);
     }
 }
 
@@ -182,7 +168,7 @@ void Map::GenerateMesh()
     {
         for(unsigned x=0; x<size.x; ++x)
         {
-            auto slice = GetSlice(Position(x,y,0), ZType(size.z));  // TOOD when no more blocks, just grab it fast 
+            const auto& slice = SliceAt(x, y);
             ZType height = 0.0;
             for(auto layer : slice) 
             {

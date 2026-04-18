@@ -23,7 +23,7 @@ class Game :
 {
 public:
     explicit Game(Engine::Scene& scene, const json& data=json());
-    const BlockMap& GetMap() const override;
+    const MapItf& GetMap() const override;
     bool Obstacle(Position at, const Actor* except=nullptr) const override;
     json Serialize() const;
 private:

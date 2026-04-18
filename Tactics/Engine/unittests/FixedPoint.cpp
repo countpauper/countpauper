@@ -22,6 +22,12 @@ TEST(FixedPoint, Integral)
     EXPECT_DOUBLE_EQ(static_cast<int>(FixedPoint(-1)), -1);
 }
 
+TEST(FixedPoint, Boolean)
+{
+    EXPECT_TRUE(FixedPoint(1));
+    EXPECT_FALSE(FixedPoint(0));
+}
+
 TEST(FixedPoint, Unsigned)
 {
     EXPECT_EQ(static_cast<float>(FixedPoint<16,unsigned>(0.5f)), 0.5f);

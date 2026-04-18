@@ -15,8 +15,6 @@ namespace Game
         Position(int x, int y, ZType z=ZType(0));
         explicit Position(const Engine::Position& p, float zo=0.0);
 
-
-
         inline int X() const { return x; }
         inline int Y() const { return y; }
         inline ZType Z() const { return z; }
