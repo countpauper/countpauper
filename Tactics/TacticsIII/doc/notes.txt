@@ -88,9 +88,9 @@ TODO:
 [done] Change Game::Position with const fixed point bits, (does it have tests) and make length/distance etc still work. fraction float can go, it's just intepretation. 
 [done] Slice with fixed point and Fixed point aim height and Move with fixed point height  
 [done] Update path planning to not use any blocks anymore, but use slices and vertical holes 
-Change the map to not store blocks but slices 
-Remove block altogether and rename BlockMap file, NB some slice tests still use blocks
-Make layer amount a fixed point/word
+[done] Change the map to not store blocks but slices 
+[done] Remove block altogether and rename BlockMap file, NB some slice tests still use blocks
+Make layer amount and temperature a fixed point/word
 
 
 

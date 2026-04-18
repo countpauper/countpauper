@@ -1,12 +1,11 @@
 #pragma once
-#include "Geometry/Position.h"
-#include "Game/Material.h"
 #include "Game/Position.h"
 #include "Geometry/IntBox.h"
-#include "Game/Slice.h"
 
 namespace Game
 {
+
+class Slice;
 
 class MapItf
 {

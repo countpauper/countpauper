@@ -1,32 +1,18 @@
 #include "Game/Slice.h"
-#include "Game/Block.h"
 #include <cassert>
 
 namespace Game
 {
-
-
-Slice::Slice(const Block& block)
-{
-    if (block.stone)
-        layers.emplace_back(Layer{Material::stone, block.stone, block.temperature});
-    if (block.water)
-        layers.emplace_back(Layer(Material::water, block.water, block.temperature));
-    // TODO really vegation should be mixed in to water and air, but block will go anyway
-    if (block.vegetation)
-        layers.emplace_back(Layer(Material::vegetation, block.vegetation, block.temperature));
-    if (block.air)
-        layers.emplace_back(Layer(Material::air, block.air, block.temperature));
-    if (layers.empty())
-        layers.emplace_back(Layer(Material::vacuum, 1.0f, block.temperature));
-
-}
 
 Slice::Slice(const Slice& other) 
     : layers(other.layers)
 {
 }
 
+Slice::Slice(const Material& mat, Layer::Amount amt, Layer::Temperature temp) :
+    Slice{{{mat, amt, temp}}}
+{
+}
 
 Slice::Slice(std::initializer_list<Layer> layers) : 
     layers(layers)

@@ -1,7 +1,9 @@
 #pragma once
 #include <gmock/gmock.h>
 
-#include "Game/BlockMap.h"
+#include "Game/MapItf.h"
+#include "Game/Slice.h"
+
 namespace Game::Test
 {
 using namespace ::testing;

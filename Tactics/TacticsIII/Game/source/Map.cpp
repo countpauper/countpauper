@@ -1,10 +1,11 @@
 #include "Game/Game.h"
 #include "Game/Map.h"
+
+#include "Game/Material.h"
 #include "File/Image.h"
 #include "Geometry/Angles.h"
 #include "File/Image.h"
 #include "Utility/Maths.h"
-#include "Game/Material.h"
 #include "UI/Logging.h"
 #include <cassert>
 #include <span>

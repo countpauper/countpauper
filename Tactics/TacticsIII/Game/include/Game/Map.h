@@ -1,10 +1,12 @@
 #pragma once
+#include "Game/MapItf.h"
+#include "Game/Slice.h"
+#include "Game/Material.h"
+
 #include "Geometry/Size.h"
 #include "Geometry/Mesh.h"
 #include "Geometry/Position.h"
 #include "UI/Scenery.h"
-#include "Game/BlockMap.h"
-#include "Game/Material.h"
 #include <vector>
 
 namespace Engine

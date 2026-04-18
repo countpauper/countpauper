@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Game/Block.h"
 #include "Utility/Range.h"
 #include "Utility/FixedPoint.h"
 #include "Game/Position.h"
+#include "Game/Material.h"
 #include <vector>
 #include <span>
 #include <initializer_list>
@@ -12,20 +12,17 @@ namespace Game
 {
 
 class Material;
-class Block;
 
 class Slice 
 {
 public:
     Slice() = default;
-    explicit Slice(const Block& block);
     Slice(const Slice& other);
     Slice& operator=(const Slice& other);
-    
     struct Layer 
     {
         using Amount = Engine::FixedPoint<8>;   // TODO could probably be uint16_t to save space as it's always positive 
-        using Temperature = Block::Temperature;
+        using Temperature = float;              // TODO use 16 bit integer/fixedpoint to save space
 
         std::reference_wrapper<const Material> material;
         Amount amount; 
@@ -40,10 +37,11 @@ public:
         Engine::Range<ZType> FindNonSolidOpening() const;
         bool TryMerge(const Layer& rhs);
     };
+    Slice(const Material& material, Layer::Amount amt=1, Layer::Temperature temp=300);
     Slice(std::initializer_list<Layer> layers);
 
     void emplace_back(const Material& material, Layer::Amount amt, Layer::Temperature temp);
-    
+
     using const_iterator = std::vector<Layer>::const_iterator; 
     inline std::size_t size() const { return layers.size(); }
     inline const_iterator begin() const { return layers.begin(); }
