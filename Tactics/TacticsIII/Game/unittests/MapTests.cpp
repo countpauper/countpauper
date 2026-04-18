@@ -69,9 +69,9 @@ MATCHER_P(LayerEq, epsilon, "")
     }
     if (expected.amount != actual.amount)
         return false; // TODO explain or remove the whole thing 
-            
-    // // Use gMock's built-in FloatNear logic for the float members
-    return ExplainMatchResult(FloatNear(expected.temperature, epsilon), actual.temperature, result_listener);
+    if (expected.temperature != actual.temperature)
+        return false;   // TODO explain or just get rid of the LayerEq
+    return true;
 }
 
 

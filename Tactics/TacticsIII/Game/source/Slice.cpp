@@ -20,49 +20,7 @@ Slice::Slice(std::initializer_list<Layer> layers) :
 }
 
 
-bool Slice::Layer::operator==(const Slice::Layer& rhs) const
-{
-    if (material.get() != rhs.material.get())
-        return false;
-    if (amount != rhs.amount)
-        return false;
-    if (temperature != rhs.temperature)
-        return false;
-    return true;
-}
-
-float Slice::Layer::Volume() const
-{
-    return static_cast<float>(amount) * 100.0f;
-}
-
-float Slice::Layer::Density() const
-{
-    return material.get().Density(temperature);
-}
-
- 
-bool Slice::Layer::IsGas() const
-{
-    return material.get().IsGas(temperature);
-}
-
-bool Slice::Layer::IsSolid() const
-{
-    return material.get().IsSolid(temperature);
-}
-
-bool Slice::Layer::TryMerge(const Slice::Layer& rhs) 
-{
-    if (material.get() != rhs.material.get())
-        return false;
-    if (this->temperature != rhs.temperature) 
-        return false;   // Maybe is close enough (like less than 1 celsius) still mix 
-    amount += rhs.amount;
-    return true;
-}
-
-void Slice::emplace_back(const Material& material, Slice::Layer::Amount amt, Slice::Layer::Temperature temp)
+void Slice::emplace_back(const Material& material, Layer::Amount amt, Layer::Temperature temp)
 {
     layers.emplace_back(material, amt, temp);
 }
@@ -182,7 +140,7 @@ Engine::Range<ZType> Slice::FindBiggestNonSolidOpening() const
     });
 }
 
-Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Slice::Layer&)> predicate) const
+Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Layer&)> predicate) const
 {
     auto result = Engine::Range<ZType>::empty();
     Engine::Range<ZType> current = Engine::Range<ZType>::empty();
@@ -211,10 +169,5 @@ Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Slice::Lay
 
 }
 
-std::ostream& operator<<(std::ostream& os, const Slice::Layer& layer)
-{
-    os << layer.material.get().name << " " << int(layer.amount*1000) << "L@" << layer.temperature << "K";
-    return os;
-}
 
 }

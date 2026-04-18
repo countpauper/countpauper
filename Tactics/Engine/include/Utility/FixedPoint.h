@@ -2,6 +2,9 @@
 #include <limits>
 #include <cmath>
 #include <cassert>
+#include <cstdint>
+#include <stdexcept>
+#include <iostream>
 
 namespace Engine
 {

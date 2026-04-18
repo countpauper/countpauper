@@ -96,4 +96,3 @@ Make layer amount and temperature a fixed point/word
 
 
 
-

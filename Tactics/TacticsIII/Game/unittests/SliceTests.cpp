@@ -59,10 +59,10 @@ TEST(Slice, HeteroGeneousCut)
     // Original:  |stone| air    |      0.4 stone 0.6 air
     // Cut           |          |       0.2 stone 0.5 air 
     //            0 .2 .4 .6 .8 1.0
-    auto cut = Slice{{Material::stone, 0.4, 300}, {Material::air, 0.6, 300}} & range;
+    auto cut = Slice{{Material::stone, 0.4, 300.0}, {Material::air, 0.6, 300.0}} & range;
     ASSERT_EQ(cut.size(), 2);
-    EXPECT_EQ(cut[0], (Slice::Layer{Material::stone, 0.2, 300.0f}));
-    EXPECT_EQ(cut[1], (Slice::Layer{Material::air, 0.5, 300.0f}));
+    EXPECT_EQ(cut[0], (Layer{Material::stone, 0.2, 300.0f}));
+    EXPECT_EQ(cut[1], (Layer{Material::air, 0.5, 300.0f}));
 }
 
 TEST(Slice, ZeroCut)
@@ -70,7 +70,7 @@ TEST(Slice, ZeroCut)
     Engine::Range<ZType> range(0.2f, 0.2f);
     auto cut = Slice(Material::water) & range;
     ASSERT_EQ(cut.size(), 1);
-    EXPECT_EQ(cut[0], (Slice::Layer{Material::water, 0.0, 300.0f}));
+    EXPECT_EQ(cut[0], (Layer{Material::water, 0.0, 300.0f}));
 }
 
 TEST(Slice, EmptyCut)
@@ -86,23 +86,25 @@ TEST(Slice, OverSizedCut)
     Engine::Range<ZType> range(-0.5, 1.5);
     auto cut = Slice({{Material::air, 1.0, 0.0f}}) & range;
     ASSERT_EQ(cut.size(), 1);
-    EXPECT_EQ(cut[0], (Slice::Layer{Material::air, 1.0, 0.0f}));
+    EXPECT_EQ(cut[0], (Layer{Material::air, 1.0, 0.0f}));
 }
 
 TEST(Slice, Scale)
 {
-    auto halfSlice = Slice{{Material::stone, 0.4, 300}, {Material::air, 0.6, 300}} * 0.5f;
+    auto halfSlice = Slice{{Material::stone, 0.4, 300.0}, {Material::air, 0.6, 300.0}} * 0.5f;
     ASSERT_EQ(halfSlice.size(), 2);
-    EXPECT_EQ(halfSlice[0], (Slice::Layer{Material::stone, 0.2, 300.0f}));
-    EXPECT_EQ(halfSlice[1], (Slice::Layer{Material::air, 0.3, 300.0f}));
+    EXPECT_EQ(halfSlice[0], (Layer{Material::stone, 0.2, 300.0f}));
+    EXPECT_EQ(halfSlice[1], (Layer{Material::air, 0.3, 300.0f}));
 }
 
 TEST(Slice, Find)
 {
     EXPECT_FALSE(Slice(Material::stone).FindBiggestNonSolidOpening());
     EXPECT_EQ(Slice(Material::air).FindBiggestGasOpening().Size(), 1.0);
-    EXPECT_RANGE_NEAR(Slice({{Material::stone, 0.7, 300}, 
-        {Material::air, 0.3, 300}, {Material::stone, 0.5, 300}}).FindBiggestNonSolidOpening(), 
+    EXPECT_RANGE_NEAR(Slice(
+        {{Material::stone, 0.7, 300.0}, 
+         {Material::air, 0.3, 300.0}, 
+         {Material::stone, 0.5, 300.0}}).FindBiggestNonSolidOpening(), 
         Engine::Range<ZType>(0.7, 1.0), std::numeric_limits<ZType>::epsilon());
 }
 

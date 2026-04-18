@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Utility/Range.h"
-#include "Utility/FixedPoint.h"
 #include "Game/Position.h"
-#include "Game/Material.h"
+#include "Game/Layer.h"
+
 #include <vector>
 #include <span>
 #include <initializer_list>
@@ -19,25 +19,7 @@ public:
     Slice() = default;
     Slice(const Slice& other);
     Slice& operator=(const Slice& other);
-    struct Layer 
-    {
-        using Amount = Engine::FixedPoint<8>;   // TODO could probably be uint16_t to save space as it's always positive 
-        using Temperature = float;              // TODO use 16 bit integer/fixedpoint to save space
-
-        std::reference_wrapper<const Material> material;
-        Amount amount; 
-        Temperature temperature; 
-        
-        bool operator==(const Layer& rhs) const;
-        float Volume() const;
-        float Density() const;  
-        bool IsGas() const;
-        bool IsSolid() const;
-        Engine::Range<ZType> FindGasOpening() const;
-        Engine::Range<ZType> FindNonSolidOpening() const;
-        bool TryMerge(const Layer& rhs);
-    };
-    Slice(const Material& material, Layer::Amount amt=1, Layer::Temperature temp=300);
+    Slice(const Material& material, Layer::Amount amt=1.0, Layer::Temperature temp=300.0);
     Slice(std::initializer_list<Layer> layers);
 
     void emplace_back(const Material& material, Layer::Amount amt, Layer::Temperature temp);
@@ -67,6 +49,5 @@ Slice operator*(const Slice& lhs, float scale);
 
 
 
-std::ostream& operator<<(std::ostream& os, const Slice::Layer& layer);
 
 }
