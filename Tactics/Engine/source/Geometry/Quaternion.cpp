@@ -1,9 +1,9 @@
 #include "Geometry/Quaternion.h"
 #include "Geometry/Vector.h"
 #include "Geometry/Matrix.h"
+#include "Utility/Assert.h"
 #include <cmath>
 #include <limits>
-#include <cassert>
 
 namespace Engine
 {

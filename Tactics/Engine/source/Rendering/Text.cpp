@@ -1,7 +1,7 @@
 #include "Rendering/Text.h"
+#include "Utility/Assert.h"
 #include <GL/gl.h>
 #include <GL/glut.h>
-#include <cassert>
 #include <algorithm>
 #include "UI/Window.h"
 

@@ -116,7 +116,7 @@ OffscreenSurface::~OffscreenSurface()
 
 }
 #else
-#include <cassert>
+#include "Utility/Assert.h"
 #include <limits>
 #include <EGL/egl.h>
 #include <stdexcept>

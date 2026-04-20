@@ -7,11 +7,12 @@
 #include "UI/Application.h"
 #include "Rendering/Text.h"
 #include "Geometry/Coordinate.h"
+#include "Utility/Assert.h"
 
 #include <GL/glew.h>
 #include <GL/glut.h>
 #undef GetObject
-#include <assert.h>
+
 
 namespace Engine
 {

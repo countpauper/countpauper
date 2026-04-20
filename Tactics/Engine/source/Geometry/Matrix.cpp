@@ -2,9 +2,9 @@
 #include "Geometry/Coordinate.h"
 #include "Geometry/Vector.h"
 #include "Geometry/Quaternion.h"
+#include "Utility/Assert.h"
 #include <GL/gl.h>
 #include <initializer_list>
-#include <cassert>
 #include <cstring>
 #include <cmath>
 

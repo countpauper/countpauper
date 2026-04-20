@@ -1,7 +1,7 @@
 #include "UI/Label.h"
 #include "Rendering/Text.h"
+#include "Utility/Assert.h"
 #include <GL/gl.h>
-#include <cassert>
 
 namespace Engine
 {

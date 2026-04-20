@@ -2,7 +2,7 @@
 #include "Geometry/Geometry.h"
 #include "Geometry/Vector.h"
 
-#include <assert.h>
+#include "Utility/Assert.h"
 
 namespace Engine
 {

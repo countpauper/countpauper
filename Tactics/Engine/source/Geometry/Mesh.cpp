@@ -11,9 +11,9 @@
 #include "Geometry/Triangle.h"
 #include "UI/Debug.h"
 #include "Utility/Error.h"
-
+#include "Utility/Assert.h"
 #include <array>
-#include <cassert>
+
 
 namespace Engine
 {

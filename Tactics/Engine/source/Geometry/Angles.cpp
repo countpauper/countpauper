@@ -1,6 +1,6 @@
 #include "Geometry/Angles.h"
+#include "Utility/Assert.h"
 #include <cmath>
-#include <cassert>
 
 namespace Engine
 {

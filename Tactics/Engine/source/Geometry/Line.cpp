@@ -4,8 +4,8 @@
 #include "Geometry/Vector.h"
 #include "Geometry/AxisAlignedBoundingBox.h"
 #include "Rendering/Drawing.h"
+#include "Utility/Assert.h"
 #include <sstream>
-#include <cassert>
 
 namespace Engine
 {

@@ -11,9 +11,9 @@
 #include "UI/WindowMessages.h"
 #include "UI/Application.h"
 #include "Logging.h"
+#include "Utility/Assert.h"
 #include <iostream>
 #include <cmath>
-#include <cassert>
 
 namespace Engine
 {

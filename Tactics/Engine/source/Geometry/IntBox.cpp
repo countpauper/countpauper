@@ -1,5 +1,5 @@
 #include "Geometry/IntBox.h"
-#include <cassert>
+#include "Utility/Assert.h"
 
 namespace Engine
 {

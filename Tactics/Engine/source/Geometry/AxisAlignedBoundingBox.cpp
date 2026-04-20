@@ -5,9 +5,9 @@
 #include "Geometry/Matrix.h"
 #include "Rendering/Drawing.h"
 #include "Utility/GLUtil.h"
+#include "Utility/Assert.h"
 #include <array>
 #include <GL/gl.h>
-#include <cassert>
 
 namespace Engine
 {

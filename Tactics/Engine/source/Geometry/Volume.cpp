@@ -4,7 +4,8 @@
 #include "Geometry/Angles.h"
 #include "Geometry/AxisAlignedBoundingBox.h"
 #include <numeric>
-#include <cassert>
+#include "Utility/Assert.h"
+
 
 namespace Engine
 {

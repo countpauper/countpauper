@@ -3,7 +3,7 @@
 #include "Geometry/Line.h"
 #include "Geometry/Vector.h"
 #include "Geometry/AxisAlignedBoundingBox.h"
-#include <cassert>
+#include "Utility/Assert.h"
 
 
 namespace Engine

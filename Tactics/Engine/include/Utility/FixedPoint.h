@@ -1,7 +1,8 @@
 #pragma once
+#include "Utility/Assert.h"
+
 #include <limits>
 #include <cmath>
-#include <cassert>
 #include <cstdint>
 #include <stdexcept>
 #include <iostream>
