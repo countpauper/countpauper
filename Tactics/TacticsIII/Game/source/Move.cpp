@@ -10,6 +10,7 @@
 #include <GL/gl.h>
 #include "Geometry/IntBox.h"
 #include "UI/Logging.h"
+#include "Utility/Assert.h"
 
 namespace Game
 {
@@ -32,14 +33,34 @@ std::set<Position> Approach(const World& world,  Actor& actor, Position center, 
     return result;
 }
 
-Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, ZType jumpHeight)
+Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, Engine::Range<ZType> heightDifference, ZType space)
 {
-    Engine::Range zRange(at.z - jumpHeight, at.z + jumpHeight);
-    zRange &= map.Z();
-    at.z = zRange.begin;
-    auto slice = map.GetSlice(at, zRange.Size());
-    auto ground = slice.FindBiggestNonSolidOpening();
-    return ground;
+    const auto& slice = map.SliceAt(at.X(), at.Y());
+    auto [it, offset] = slice.Find(at.Z());
+    if (it->IsSolid())
+    {
+        auto delta = it->amount - offset;  
+        if (delta > heightDifference.end)
+            return Engine::Range<ZType>::empty();
+        auto next = it+1;
+        if (next == slice.end())
+            return Engine::Range<ZType>::empty();
+        assert(!next->IsSolid());   // not handled yet, iterate to layers it can pass 
+        if (next->amount < space)   
+            return Engine::Range<ZType>::empty();   // TODO should add subsequent that can pass for full height 
+        return { at.Z() + delta, at.Z() + delta + next->amount };
+    }
+    else 
+    {   
+        if (it == slice.begin())
+            return Engine::Range<ZType>::empty();
+        assert((it-1)->IsSolid());  // subsequent downwards layers that cant support weight not yet handles
+        if (offset > -heightDifference.begin)
+            return Engine::Range<ZType>::empty();
+        if (it->amount < space)
+            return Engine::Range<ZType>::empty();
+        return { at.Z() - offset, at.Z() - offset + it->amount };    
+    }
 }
 
 Move::Move(World& world, Actor& actor, Position destination, unsigned distance) :
@@ -63,7 +84,7 @@ Move::Move(World& world, Actor& actor, Position destination, unsigned distance) 
             auto to = at + Position(ori.GetVector());
             if (!map.GetBounds().Contains(round(to)))
                 continue;
-            auto ground = FindMoveOpening(map, to, jumpHeight);
+            auto ground = FindMoveOpening(map, to, {-jumpHeight,jumpHeight}, actorHeight);
             if (ground.Size() < actorHeight || ground.begin == ZType(0))
                 continue;   // no ground to stand on
             to.z = ground.begin; 

@@ -1,6 +1,6 @@
 #include "Game/Equipments.h"
 #include "Game/ItemDatabase.h"
-#include <cassert>
+#include "Utility/Assert.h"
 
 namespace Game
 {

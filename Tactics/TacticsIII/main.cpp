@@ -9,16 +9,18 @@
 #include "UI/Label.h"
 #include "UI/Splitter.h"
 #include "Utility/Singleton.h"
+#include "Utility/Assert.h"
 
 static constexpr Engine::Logging::Level MainLogging = Engine::Logging::Warning;
+
 
 int main(int argc, char**argv)
 {
     try
     {
+
         Engine::Singleton<Engine::Application> app(argc, argv);
         Engine::Window window;
-
         window.SetTitle("Tactics III");
         Engine::Label lbl("left_lbl", "Select an avatar");
         Engine::Label lbl2("right_lbl", "Make a plan");

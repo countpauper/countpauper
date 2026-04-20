@@ -1,7 +1,7 @@
 #include "Game/Computation.h"
+#include "Utility/Assert.h"
 #include <numeric>
 #include <sstream>
-#include <cassert>
 
 namespace Game
 {

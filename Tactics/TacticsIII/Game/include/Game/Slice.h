@@ -29,6 +29,7 @@ public:
     inline std::size_t size() const { return layers.size(); }
     inline const_iterator begin() const { return layers.begin(); }
     inline const_iterator end() const { return layers.end(); }
+    std::pair<const_iterator,Layer::Amount> Find(ZType at) const;
     inline const Layer& operator[](unsigned idx) { return layers.at(idx); }
     using value_type = Layer; 
     

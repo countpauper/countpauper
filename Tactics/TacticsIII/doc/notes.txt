@@ -50,8 +50,13 @@ So: TODO:
 [done] Create a function to get a slice of materials from a grid, something
 [done Apply the material section to the projectile
 Apply the projectile to the obstacles for that grid
+Orientation and origin surface adjustment (remove -1 on range)
 Slow down by liquids 
-PEnetrate solids 
+Penetrate solids (use density + distance limits. Always limit by density that is impenetrable)
+Penetrate objects 
+Transfer target size to miss chance
+Compute obscurement from vegation and add it to miss chance 
+Add clouds to layers and compute cloud obscurement (might need redesign, how size of cloud is limited to layer? Split ? )
 Projectile::Resistance(Materia)
 [done] Then the final function to trace the path over multiple grids.
 For melee weapons the same is done except the path is shorter and it may start at a different corner
@@ -89,8 +94,15 @@ movement vector compressed into how many liters would flow up/or down, left or r
 [done] Change the map to not store blocks but slices 
 [done] Remove block altogether and rename BlockMap file, NB some slice tests still use blocks
 [done] Make layer amount and temperature a fixed point/word
-
-
+Slices for generating vertical mesh quads:
+    - SLice::find(height): iterator to loop what's next to the surface. 
+    - During Map::GenerateMesh() scan +X and +Y (-X and -Y are done by those opposites) for what is besides. 
+    - If surface is stone and next is stone or veg and veg, or water+water make a side quad of the same to the height of that layer (add a function to compute the height up to it) 
+    - If the surface is stone and next is veg then make a side of stone or the other way around 
+    - if water and next is air, go one down to not air (stone, veg, water all will do) and make water side 
+    - if water and next is stone/veg, then use stone veg 
+    - if stone/veg and next is translucent (air or water) then go down to the first opaque (stone/veg), skip water and air, use that material for the side 
+    - for the ones that go down (next to is air or water ) 
 
 
 

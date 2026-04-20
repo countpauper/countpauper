@@ -1,6 +1,6 @@
 #include "Game/StatDefinition.h"
+#include "Utility/Assert.h"
 #include <nlohmann/json.hpp>
-#include <cassert>
 
 namespace Game
 {

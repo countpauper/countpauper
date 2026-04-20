@@ -1,5 +1,5 @@
 #include "Game/Comparator.h"
-#include <cassert>
+#include "Utility/Assert.h"
 
 namespace Game
 {

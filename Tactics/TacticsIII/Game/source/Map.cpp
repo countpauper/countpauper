@@ -7,7 +7,7 @@
 #include "File/Image.h"
 #include "Utility/Maths.h"
 #include "UI/Logging.h"
-#include <cassert>
+#include "Utility/Assert.h"
 #include <span>
 #include <cmath>
 

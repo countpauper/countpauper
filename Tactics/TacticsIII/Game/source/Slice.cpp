@@ -1,5 +1,5 @@
 #include "Game/Slice.h"
-#include <cassert>
+#include "Utility/Assert.h"
 
 namespace Game
 {
@@ -28,6 +28,19 @@ void Slice::emplace_back(const Material& material, Layer::Amount amt, Layer::Tem
             return;
     }
     layers.emplace_back(material, amt, temp);
+}
+
+
+std::pair<Slice::const_iterator, Layer::Amount> Slice::Find(ZType at) const
+{
+    Layer::Amount progress{0.0};
+    for(auto it = begin(); it!=end(); ++it)
+    {
+        if (progress + it->amount > at)
+            return std::make_pair(it, at - progress);
+        progress += it->amount;
+    }
+    return std::make_pair(end(), Layer::Amount());
 }
 
 Slice& Slice::operator=(const Slice& rhs)
