@@ -105,4 +105,35 @@ Slices for generating vertical mesh quads:
     - for the ones that go down (next to is air or water ) 
 
 
+==========================================
+Physics and Magics 
+
+= Create water (later can ignite=start fire)
+- Spell action: Create water 
+- Action bar in the bottom (used to have it in tactics I, where did it go)
+- Select spell with F-keys 
+- Use slected action on target location 
+- Select spell with click
+- Use on target creature places it just above (to extinguish or whatever)
+- Creates a m3 of water 
+- Water starts spreading and flowing 
+- Amount of water depends on ability. Perphaps taller layer or perhaps pressurize it
+- Flowing down hill 
+- Flow ends with small layers
+- SMall layers turn to surface objects ? 
+
+= Ignite = start fire 
+- Spell action: ignite 
+- Create a fire object 
+- Add fuel (vegetation surfaces) 
+- Burn the vegegation surface away
+- If no fuel, extinguish 
+- Air is heated 
+- Heated air spreads 
+- Hot air can ignite nearby
+- Hot air damages creatures and objects 
+- Burning fuel is turned into sooth 
+- Burning fuel is turned into smoke 
+- Smoke moves and spreads with hot moving air 
+
 
