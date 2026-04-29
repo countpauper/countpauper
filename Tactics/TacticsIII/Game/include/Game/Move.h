@@ -15,7 +15,11 @@ public:
     std::vector<Delta> Execute(std::ostream& log) const override;
     unsigned AP() const override;
     std::string Description() const override;
+    Position GetDestination() const override;
+    unsigned GetDistance() const override;    
 private:
+    Position destination;
+    unsigned distance;
     std::vector<Position> path;
     decltype(path)::const_iterator Reachable() const;
 };

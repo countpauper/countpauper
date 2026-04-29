@@ -108,19 +108,22 @@ Slices for generating vertical mesh quads:
 ==========================================
 Physics and Magics 
 
-= Create water (later can ignite=start fire)
-- Spell action: Create water 
-- Action bar in the bottom (used to have it in tactics I, where did it go)
+= Extra actions 
+- Create action
+- Action bar in the bottom (see old one in Tactics/Tactics/Skillbar.h)
 - Select spell with F-keys 
 - Use slected action on target location 
-- Select spell with click
+- Select action/spell with click
+
+= Create water (later can ignite=start fire)
+- Spell action: Create water 
 - Use on target creature places it just above (to extinguish or whatever)
-- Creates a m3 of water 
+- Creates 1 m3 of water 
 - Water starts spreading and flowing 
-- Amount of water depends on ability. Perphaps taller layer or perhaps pressurize it
 - Flowing down hill 
+- Amount of water depends on ability. Perphaps taller layer or perhaps pressurize it
 - Flow ends with small layers
-- SMall layers turn to surface objects ? 
+- Small layers turn to surface objects ? 
 
 = Ignite = start fire 
 - Spell action: ignite 

@@ -78,4 +78,15 @@ std::string Attack::Description() const
     return std::string("Attack ") + std::string(target.GetAppearance().Name());
 }
 
+Position Attack::GetDestination() const
+{
+    return target.GetPosition();
+}
+
+unsigned Attack::GetDistance() const
+{
+    return actor.GetStats().Get(Stat::reach).Total();
+}
+
+
 }

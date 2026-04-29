@@ -24,6 +24,7 @@ struct Material
     static const Material water;
     static const Material earth;
     static const Material stone;
+    static const Material vegetation;
     static const Material vacuum;
     static const Material* all[5];
 };

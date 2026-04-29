@@ -23,7 +23,7 @@ TEST(Move, step)
     world.map.SetHeightMap({2,2,2}, {0.01, 2.0, 0.01, 1.0});
     ON_CALL(actor, GetPosition()).WillByDefault(Return(Position(0,0,0.01)));
     Move action(world, actor, Position(1,1,1));
-    EXPECT_EQ(action.Description(), "Move (1, 1, 1)");
+    EXPECT_EQ(action.Description(), "Move to (1, 1, 1)");
     EXPECT_EQ(action.AP(), 1);
     EXPECT_TRUE(action.CanDo());
 

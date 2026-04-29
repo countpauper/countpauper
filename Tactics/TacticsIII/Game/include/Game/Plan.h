@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include "Game/Action.h"
+#include "Game/Move.h"
 #include "Geometry/Position.h"
 #include "Geometry/Mesh.h"
 #include "UI/Scenery.h"
@@ -29,8 +30,18 @@ public:
     std::string Execute();
 
     // TODO: helpers to create an attack plan, flee (move) plan, spell/technique plan, dodge, ready and so on plan for UI and AI level
-    static Plan Move(World& world, Avatar& actor, Position destination);
-    static Plan Attack(World& world, Avatar& actor, Avatar& target);
+    static Plan Move(World& world, Avatar& actor, Position destination, unsigned distance=0);
+    static Plan Attack(World& world, Avatar& actor, Avatar& target); 
+
+    template<typename A, typename... Params> 
+    requires std::is_base_of_v<Action, A>
+    static Plan Act(World& world, Avatar& actor, Params&&... params)
+    {
+        auto action = std::make_unique<A>(world, actor, std::forward<Params>(params)...);
+        auto plan = Move(world, actor, action->GetDestination(), action->GetDistance());
+        plan.actions.emplace_back(std::move(action));
+        return plan;
+    }
 private:
     Engine::Mesh mesh;
     // TODO: plans may be a chance tree instead. if the first action is a provoked reaction that might ko the actor, then that's also a possible execution.

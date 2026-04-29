@@ -64,7 +64,9 @@ Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, Engine::Ran
 }
 
 Move::Move(World& world, Actor& actor, Position destination, unsigned distance) :
-    Action(world, actor)
+    Action(world, actor),
+    destination(destination),
+    distance(distance)
 {
     auto cost = [](Position from, Position to) -> float
     {
@@ -183,12 +185,22 @@ unsigned Move::AP() const
 
 std::string Move::Description() const
 {
-    if (path.empty()) {
-        return "Don't move";
-    }
     std::stringstream ss;
-    ss << "Move " << path.back();
+    if (distance==0)
+        ss << "Move to " << destination;
+    else 
+        ss << "Move within " << distance << " of " << destination;
     return ss.str();
+}
+
+Position Move::GetDestination() const
+{
+    return destination;
+}
+
+unsigned Move::GetDistance() const
+{
+    return distance;
 }
 
 }
