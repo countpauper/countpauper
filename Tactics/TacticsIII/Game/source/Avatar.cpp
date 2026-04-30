@@ -131,6 +131,16 @@ class Equipped& Avatar::GetEquipment()
     return creature;
 }
 
+const class Conditions& Avatar::GetConditions() const
+{
+    return creature;
+}
+
+class Conditions& Avatar::GetConditions()
+{
+    return creature;
+}
+
 Engine::Coordinate Avatar::GetCoordinate() const
 {
     return coordinate;
@@ -173,7 +183,7 @@ std::string Avatar::Sheet() const
     ss << Name() << std::endl;
     ss << Engine::TitleCase(creature.GetRace().Name()).c_str() << " " << creature.Get(Stat::level).Total() << std::endl;
     ss << "HP:" << creature.Available(Stat::hp) << " AP:" << creature.Available(Stat::ap) << std::endl;
-    ss << creature.Conditions::Description();
+    ss << creature.ConditionLevels::Description();
     return ss.str();
 }
 

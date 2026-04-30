@@ -11,10 +11,28 @@ Delta::Delta(Actor& parent) :
 }
 
 Delta::Delta(const Delta& other) :
+    Conditions(other),
+    Statted(other),
+    Counted(other),
+    Equipped(other),
     parent(other.parent),
     world(other.world),
     position(other.position),
-    counterDelta(other.counterDelta)
+    counterDelta(other.counterDelta),
+    conditionOverride(other.conditionOverride)
+{
+}
+
+Delta::Delta(Delta&& other) :
+    Conditions(std::move(other)),
+    Statted(std::move(other)),
+    Counted(std::move(other)),
+    Equipped(std::move(other)),
+    parent(other.parent),
+    world(other.world),
+    position(other.position),
+    counterDelta(std::move(other.counterDelta)),
+    conditionOverride(std::move(other.conditionOverride))
 {
 }
 
@@ -172,5 +190,37 @@ std::vector<const Equipment*> Delta::GetEquipped(const Restrictions& filter) con
     assert(false); // TODO
     return {};
 }
+
+Conditions& Delta::GetConditions() 
+{
+    return *this;
+}
+
+const Conditions& Delta::GetConditions() const
+{
+    return *this;
+}
+
+unsigned Delta::GetCondition(std::function<bool(const Condition& condition)> pred) const
+{
+    auto over = conditionOverride.FindCondition(pred);
+    if (over.first)
+        return over.second;
+    else 
+        return parent->GetConditions().GetCondition(pred);
+}
+
+void Delta::SetCondition(const Condition& condition, unsigned level)
+{
+    return conditionOverride.SetCondition(condition, level);
+}
+
+Computation Delta::ConditionalBonus(Stat::Id id) const
+{
+    assert(false); // TODO: compute from overriddn conditions
+    // but then (the hard part) from the non-overridden conditions in the parent
+    return 0;
+}
+
 
 }

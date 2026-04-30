@@ -4,7 +4,18 @@
 namespace Game
 {
 
-Conditions::Conditions(const json& data)
+
+bool Conditions::Has(std::function<bool(const Condition& condition)> pred) const
+{
+    return GetCondition(pred) > 0;
+}
+
+Computation Conditions::Bonus(Stat::Id id) const
+{
+    return ConditionalBonus(id);
+}
+
+ConditionLevels::ConditionLevels(const json& data)
 {
     for(const auto& el: data.items())
     {
@@ -12,12 +23,23 @@ Conditions::Conditions(const json& data)
     }
 }
 
+ConditionLevels::ConditionLevels(const ConditionLevels& other) :
+    conditions(other.conditions)
+{
+}
 
-Computation Conditions::Bonus(Stat::Id id) const
+ConditionLevels::ConditionLevels(ConditionLevels&& other) :
+    conditions(std::move(other.conditions))
+{
+}
+
+Computation ConditionLevels::ConditionalBonus(Stat::Id id) const
 {
     Computation result;
     for(const auto& c : conditions)
     {
+        if (!c.second)
+            continue;
         // NB: Powers is not factored in here. Some conditions (spell effects)
         // will downgrade when their power is diminished (by time/healing)
         result += c.first->Bonus(id);
@@ -25,7 +47,34 @@ Computation Conditions::Bonus(Stat::Id id) const
     return result;
 }
 
-std::string Conditions::Description() const
+
+std::pair<const Condition*, unsigned> ConditionLevels::FindCondition(const std::function<bool(const Condition& condition)>& pred) const
+{
+    auto it = std::find_if(conditions.begin(), conditions.end(), [&pred](const decltype(conditions)::value_type& c) {
+        return pred(*c.first);
+    });
+    if (it!=conditions.end())
+    {
+        return *it;
+    }
+    return {nullptr, 0};
+}
+
+unsigned ConditionLevels::GetCondition(std::function<bool(const Condition& condition)> pred) const
+{
+    return FindCondition(pred).second;
+}
+
+void ConditionLevels::SetCondition(const Condition& condition, unsigned level)
+{
+    auto [it, inserted] = conditions.insert(std::make_pair(&condition,level));
+    if (!inserted)
+    {
+        it->second = std::max(level, it->second);
+    }
+}
+
+std::string ConditionLevels::Description() const
 {
     std::vector<std::string_view> condition_names;
     std::transform(conditions.begin(), conditions.end(), std::back_insert_iterator(condition_names),
@@ -37,7 +86,7 @@ std::string Conditions::Description() const
 }
 
 
-json Conditions::Serialize() const
+json ConditionLevels::Serialize() const
 {
     auto result = json::object();
 

@@ -1,5 +1,6 @@
 #include "Game/Requirement.h"
 #include "Game/Computation.h"
+#include "Game/Condition.h"
 #include "Utility/String.h"
 
 namespace Game
@@ -19,12 +20,12 @@ StatRequirement::operator bool() const
 }
 
 
-bool StatRequirement::operator==(const StatRequirement& o) const
+bool StatRequirement::operator==(const StatRequirement& rhs) const
 {
-    return stat == o.stat &&
-        actual == o.actual &&
-        op == o.op &&
-        required == o.required;
+    return stat == rhs.stat &&
+        actual == rhs.actual &&
+        op == rhs.op &&
+        required == rhs.required;
 }
 
 
@@ -43,6 +44,50 @@ std::string StatRequirement::Description() const
     else
     {
         return (!*this).Description();
+    }
+}
+
+
+ConditionRequirement::ConditionRequirement(bool has, const Condition& condition, bool expected) :
+    has(has),
+    condition(condition),
+    expected(expected)
+{
+}
+
+ConditionRequirement::operator bool() const
+{
+    return has == expected;
+}
+
+
+bool ConditionRequirement::operator==(const ConditionRequirement& rhs) const
+{
+    return has == rhs.has && expected == rhs.expected;
+}
+
+
+
+ConditionRequirement ConditionRequirement::operator!() const
+{
+    return ConditionRequirement(has, condition, !expected);
+}
+
+std::string ConditionRequirement::Description() const
+{
+    if (bool(*this))
+    {
+        if (expected)
+            return "is " + std::string(condition.Name());
+        else
+            return "isn't " + std::string(condition.Name());
+    }
+    else
+    {
+        if (expected)
+            return "isn't " + std::string(condition.Name()) + " but should be";
+        else
+            return "is " + std::string(condition.Name()) + " but shouldn't be";
     }
 }
 

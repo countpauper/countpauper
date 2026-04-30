@@ -20,6 +20,7 @@ class Delta :
 public:
     Delta(Actor& parent);
     Delta(const Delta& other);
+    Delta(Delta&& other);
     Delta& operator=(const Delta& other);
 
     void Apply();
@@ -52,11 +53,18 @@ public:
     unsigned Unequip(const Restrictions filter) override;
     std::vector<const Equipment*> GetEquipped(const Restrictions& filter={}) const override;
 
+    class Conditions& GetConditions() override;
+    const class Conditions& GetConditions() const override;
+    unsigned GetCondition(std::function<bool(const Condition& condition)> pred) const override;
+    void SetCondition(const Condition& condition, unsigned level) override;
+    Computation ConditionalBonus(Stat::Id id) const override;
+ 
 public:
     Actor* parent;
     const class World* world;
     Position position;
     std::map<Stat::Id, int> counterDelta;
+    ConditionLevels conditionOverride;
 };
 
 }

@@ -7,6 +7,7 @@
 #include "MockStatted.h"
 #include "MockCounted.h"
 #include "MockEquipped.h"
+#include "MockConditions.h"
 #include "UI/Mock/MockScenery.h"
 #include <unordered_map>
 
@@ -61,11 +62,14 @@ public:
     const Counted& GetCounts() const { return counts; }
     const Equipped& GetEquipment() const { return equipment; }
     Equipped& GetEquipment() { return equipment; }
+    const Conditions& GetConditions() const { return conditions; }
+    Conditions& GetConditions() { return conditions; }
 
     Engine::Test::MockScenery appearance;
     NiceMock<MockStatted> stats;
     NiceMock<MockCounted> counts;
     NiceMock<MockEquipped> equipment;
+    NiceMock<MockConditions> conditions;
 };
 
 }

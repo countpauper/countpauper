@@ -19,7 +19,7 @@ class Creature :
     public virtual Boni,
     public Statistics,
     public Counters,
-    public Conditions,
+    public ConditionLevels,
     public Equipments
 {
 public:

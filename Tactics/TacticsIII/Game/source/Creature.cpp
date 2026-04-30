@@ -27,7 +27,7 @@ Creature::Creature(std::string_view name, const Race& race) :
 Creature::Creature(const Race& race, const class ItemDatabase& items, const json& data) :
     Statistics(definition, Engine::must_get<json>(data, "stats")),
     Counters(definition, static_cast<Statted&>(*this), data),
-    Conditions(Engine::get_value_or<json>(data, "conditions")),
+    ConditionLevels(Engine::get_value_or<json>(data, "conditions")),
     Equipments(items, Engine::get_value_or<json>(data, "equipment")),
     name(Engine::must_get<std::string_view>(data, "name")),
     race(race)
@@ -67,7 +67,7 @@ json Creature::Serialize() const
         {"race", race.Name()},
         {"stats", Statistics::Serialize()},
         {"counters", Counters::Serialize()},
-        {"conditions", Conditions::Serialize()},
+        {"conditions", ConditionLevels::Serialize()},
         {"equipment", Equipments::Serialize()}
 
     });
@@ -119,8 +119,8 @@ void Creature::OnCount(Stat::Id stat, unsigned remaining)
 {
     if (stat == Stat::hp && remaining == 0)
     {
-        Apply<Downed>();
-        Apply<KO>();
+        Conditions::Apply<Downed>();
+        Conditions::Apply<KO>();
     }
 }
 

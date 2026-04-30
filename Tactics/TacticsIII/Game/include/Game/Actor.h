@@ -22,7 +22,8 @@ public:
     virtual const Counted& GetCounts() const = 0;
     virtual const class Equipped& GetEquipment() const = 0;
     virtual class Equipped& GetEquipment() = 0;
-
+    virtual class Conditions& GetConditions() = 0;
+    virtual const class Conditions& GetConditions() const = 0;
 };
 
 }

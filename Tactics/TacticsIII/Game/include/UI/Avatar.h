@@ -38,7 +38,8 @@ public:
     const Counted& GetCounts() const override;
     const class Equipped& GetEquipment() const override;
     class Equipped& GetEquipment() override;
-
+    class Conditions& GetConditions() override;
+    const class Conditions& GetConditions() const override;
     json Serialize() const;
 private:
     void GenerateMesh();

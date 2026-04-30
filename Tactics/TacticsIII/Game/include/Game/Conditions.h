@@ -8,37 +8,47 @@
 namespace Game
 {
 
+
 class Conditions : public virtual Boni
 {
 public:
-    Conditions() = default;
-    explicit Conditions(const json& data);
-    virtual ~Conditions() = default;
+    virtual unsigned GetCondition(std::function<bool(const Condition& condition)> pred) const = 0;
+    bool Has(std::function<bool(const Condition& condition)> pred) const;
+    virtual void SetCondition(const Condition& condition, unsigned level =1) = 0;
 
     template<class CT>
     bool Is() const
     {
-        return std::find_if(conditions.begin(), conditions.end(), [](const decltype(conditions)::value_type& c)
+        return Has([](const Condition& condition)
         {
-            return dynamic_cast<const CT*>(c.first) != nullptr;
-        }) != conditions.end();
+            return dynamic_cast<const CT*>(&condition) != nullptr;
+        });
     }
-
-    void Apply(const Condition& condition, unsigned level = 1)
-    {
-        auto [it, inserted] = conditions.insert(std::make_pair(&condition,level));
-        if (!inserted)
-        {
-            it->second = std::max(level, it->second);
-        }
-    }
+    
     template<class CT>
     void Apply(unsigned level = 1)
     {
-        Apply(*Engine::Singleton<CT>(), level);
+        SetCondition(*Engine::Singleton<CT>(), level);
     }
-
+    virtual Computation ConditionalBonus(Stat::Id id) const  = 0;
     Computation Bonus(Stat::Id id) const override;
+
+};
+
+class ConditionLevels : public Conditions
+{
+public:
+    ConditionLevels() = default;
+    explicit ConditionLevels(const json& data);
+    ConditionLevels(const ConditionLevels& other);
+    ConditionLevels(ConditionLevels&& other);
+    virtual ~ConditionLevels() = default;
+
+    std::pair<const Condition*, unsigned> FindCondition(const std::function<bool(const Condition& condition)>& pred) const;
+    unsigned GetCondition(std::function<bool(const Condition& condition)> pred) const;
+    void SetCondition(const Condition& condition, unsigned level = 1);
+
+    Computation ConditionalBonus(Stat::Id id) const override;
     std::string Description() const;
     json Serialize() const;
 private:

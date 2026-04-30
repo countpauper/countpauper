@@ -47,7 +47,7 @@ std::vector<Delta> Attack::Execute(std::ostream& log) const
     if (chance < Engine::Random().Chance())
     {
         log << actor.GetAppearance().Name() << "misses " << target.GetAppearance().Name() << std::endl;  // TODO: this hit chance should be specified in miss, block, parry obstacle
-        return {dAttacker};
+        return {std::move(dAttacker)};
     }
 
     auto offense = actor.GetStats().Get({Stat::sharp_damage, Stat::blunt_damage, Stat::heat_damage, Stat::cold_damage, Stat::lightning_damage, Stat::poison_damage},
@@ -59,13 +59,13 @@ std::vector<Delta> Attack::Execute(std::ostream& log) const
         Delta dTarget(target);
         dTarget.GetCounts().Cost(Stat::hp, damage.Total(), true);
         log << dAttacker.GetAppearance().Name() << " deals " << damage.Description() << " damage to " << dTarget.GetAppearance().Name() << std::endl;
-        return { dAttacker, dTarget };
+        return { std::move(dAttacker), std::move(dTarget) };
     }
     else
     {
         log << actor.GetAppearance().Name() << " deals " << target.GetAppearance().Name() << " a glancing blow" << std::endl;
     }
-    return { dAttacker };
+    return { std::move(dAttacker) };
 }
 
 unsigned Attack::AP() const

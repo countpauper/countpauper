@@ -25,6 +25,20 @@ private:
     Computation required;
 };
 
+class ConditionRequirement
+{
+public:
+    ConditionRequirement(bool has, const class Condition& condition, bool expected);
+    explicit operator bool() const;
+    bool operator==(const ConditionRequirement& rhs) const;
+    ConditionRequirement operator!() const;
+    std::string Description() const;
+private:
+    bool has; 
+    const Condition& condition;
+    bool expected;
+};
+
 class PathRequirement
 {
 public:
@@ -51,7 +65,7 @@ private:
 
 };
 
-using RequirementVariant = std::variant<StatRequirement, PathRequirement, TargetRequirement>;
+using RequirementVariant = std::variant<StatRequirement, PathRequirement, TargetRequirement, ConditionRequirement>;
 
 class Requirement
     : public RequirementVariant
