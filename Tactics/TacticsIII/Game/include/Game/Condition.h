@@ -14,6 +14,7 @@ public:
     Condition(std::string_view name, const json& data);
     virtual ~Condition() = default;
     std::string_view Name() const;
+    virtual std::string OppositeName() const;
     Computation Bonus(Stat::Id stat) const;
     std::pair<std::string_view, json> Serialize() const;
     static std::unique_ptr<Condition> Deserialize(std::string_view name, const json& data);
@@ -30,12 +31,14 @@ class KO : public Condition
 {
 public:
     KO();
+    std::string OppositeName() const override;
 };
 
 class Downed : public Condition
 {
 public:
     Downed();
+    std::string OppositeName() const override;
 };
 
 }

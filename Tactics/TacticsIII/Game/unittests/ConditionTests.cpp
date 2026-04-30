@@ -43,7 +43,6 @@ TEST(Condition, ko_zeros_action_points)
 
 TEST(Condition, serialize)
 {
-
     ConditionLevels conditions;
     conditions.Apply<Downed>();
     auto json = conditions.Serialize();

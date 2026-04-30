@@ -1,4 +1,4 @@
-#include "Game/Down.h"
+#include "Game/UpDown.h"
 #include "Game/Mock/MockActor.h"
 #include "Game/Mock/MockWorld.h"
 #include "Definition.h"
@@ -44,7 +44,7 @@ TEST(Down, cannot_go_down_without_ap)
     std::stringstream log;
     auto deltas = action.Execute(log);
     EXPECT_TRUE(deltas.empty());
-    EXPECT_EQ(log.str(), "a stays up ");
+    EXPECT_EQ(log.str(), "a stays up");
 }
 
 }

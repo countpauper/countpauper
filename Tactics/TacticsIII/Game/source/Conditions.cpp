@@ -5,6 +5,12 @@ namespace Game
 {
 
 
+
+unsigned Conditions::GetCondition(const Condition& condition) const
+{
+    return GetCondition([&condition](const Condition& c) { return &c == &condition; });
+}
+
 bool Conditions::Has(std::function<bool(const Condition& condition)> pred) const
 {
     return GetCondition(pred) > 0;

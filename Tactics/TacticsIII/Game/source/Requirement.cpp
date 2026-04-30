@@ -48,48 +48,78 @@ std::string StatRequirement::Description() const
 }
 
 
-ConditionRequirement::ConditionRequirement(bool has, const Condition& condition, bool expected) :
-    has(has),
+ConditionRequirement::ConditionRequirement(const Condition& condition, unsigned actual, Comparator op, unsigned required) :
     condition(condition),
-    expected(expected)
+    actual(actual),
+    required(required),
+    op(op)
+{
+}
+
+
+ConditionRequirement::ConditionRequirement(const Condition& condition, unsigned has, bool expected) :
+    ConditionRequirement(condition, has, expected ? Comparator::not_equal : Comparator::equal, 0)
 {
 }
 
 ConditionRequirement::operator bool() const
 {
-    return has == expected;
+    return op(actual, required);
 }
-
 
 bool ConditionRequirement::operator==(const ConditionRequirement& rhs) const
 {
-    return has == rhs.has && expected == rhs.expected;
+    return actual == rhs.actual && 
+        required == rhs.required && 
+        &condition == &rhs.condition && 
+        op == rhs.op;
 }
 
 
 
 ConditionRequirement ConditionRequirement::operator!() const
 {
-    return ConditionRequirement(has, condition, !expected);
+    return ConditionRequirement(condition, actual, op.Opposite(), required);
 }
 
 std::string ConditionRequirement::Description() const
 {
-    if (bool(*this))
+    if (IsBooleanRequirement())
     {
-        if (expected)
-            return "is " + std::string(condition.Name());
-        else
-            return "isn't " + std::string(condition.Name());
+          if (bool(*this))
+          {
+                if (actual)
+                    return "is " + std::string(condition.Name());
+                else
+                    return "is " + condition.OppositeName();
+            }
+            else
+            {
+                if (actual)
+                    return "isn't " + condition.OppositeName();
+                else
+                    return "isn't " + std::string(condition.Name());
+            }
     }
-    else
+    else 
     {
-        if (expected)
-            return "isn't " + std::string(condition.Name()) + " but should be";
+          if (bool(*this))
+          {
+            return std::format("{}({}) {} {}", std::string(condition.Name()), actual, std::string(op), required);
+        }
         else
-            return "is " + std::string(condition.Name()) + " but shouldn't be";
+        {
+            return (!*this).Description();
+        }
     }
 }
+
+bool ConditionRequirement::IsBooleanRequirement() const
+{
+    return required==0 && 
+            (op==Comparator::equal || op==Comparator::not_equal);
+}
+
 
 PathRequirement::PathRequirement(bool reachable)
     : reachable(reachable)

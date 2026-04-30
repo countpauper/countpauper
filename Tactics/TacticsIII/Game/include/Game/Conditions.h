@@ -13,6 +13,7 @@ class Conditions : public virtual Boni
 {
 public:
     virtual unsigned GetCondition(std::function<bool(const Condition& condition)> pred) const = 0;
+    unsigned GetCondition(const Condition& condition) const;
     bool Has(std::function<bool(const Condition& condition)> pred) const;
     virtual void SetCondition(const Condition& condition, unsigned level =1) = 0;
 

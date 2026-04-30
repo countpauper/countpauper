@@ -5,18 +5,18 @@ namespace Game
 {
 class World;
 
-class Down : public Action
+class ApplySelf : public Action
 {
 public:
-    Down(World& world, Actor& actor);
-    void Render() const override;
+    ApplySelf(World& world, Actor& actor, const Condition& condition, unsigned level = 1);
     Requirements CanDo() const override;
     std::vector<Delta> Execute(std::ostream& log) const override;
-    unsigned AP() const override;
     std::string Description() const override;
     Position GetDestination() const override;
-    unsigned GetDistance() const override;    
+    unsigned GetDistance() const override;
+private:
+    const Condition& condition;
+    unsigned level;
 };
-
 
 }

@@ -28,15 +28,17 @@ private:
 class ConditionRequirement
 {
 public:
-    ConditionRequirement(bool has, const class Condition& condition, bool expected);
+    ConditionRequirement(const class Condition& condition, unsigned actual, Comparator op, unsigned required);
+    ConditionRequirement(const class Condition& condition, unsigned has, bool expected);
     explicit operator bool() const;
     bool operator==(const ConditionRequirement& rhs) const;
     ConditionRequirement operator!() const;
     std::string Description() const;
 private:
-    bool has; 
+    bool IsBooleanRequirement() const;
     const Condition& condition;
-    bool expected;
+    unsigned actual, required; 
+    Comparator op;
 };
 
 class PathRequirement

@@ -20,6 +20,11 @@ std::string_view Condition::Name() const
     return name;
 }
 
+std::string Condition::OppositeName() const
+{
+    return std::string("not ") + std::string(name);
+}
+
 Computation Condition::Bonus(Stat::Id stat) const
 {
     auto it = bonus.find(stat);
@@ -40,7 +45,7 @@ std::unique_ptr<Condition> Condition::Deserialize(std::string_view name, const j
     {
         return std::make_unique<KO>();
     }
-    else if (name=="Downed")
+    else if (name=="down")
     {
         return std::make_unique<Downed>();
     }
@@ -61,13 +66,22 @@ KO::KO() :
     bonus[Stat::ap] = std::numeric_limits<int>::min();
 }
 
+std::string KO::OppositeName() const
+{
+    return "OK";
+}
+
 Downed::Downed() :
-    Condition("Downed")
+    Condition("down")
 {
     bonus[Stat::speed] = -2;
     bonus[Stat::dodge] = -5;
 }
 
+std::string Downed::OppositeName() const
+{
+    return "up";
+}
 
 Engine::Singleton<KO> ko;
 Engine::Singleton<Downed> downed;

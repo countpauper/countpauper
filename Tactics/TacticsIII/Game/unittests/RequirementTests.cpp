@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "Game/Requirement.h"
+#include "Game/Condition.h"
 
 namespace Game::Test
 {
@@ -72,5 +73,29 @@ TEST(Requirement, requirements_are_a_conjunection)
     EXPECT_EQ(reqs.Description(), "action (1) is more than 0, but the destination is not reachable and hitpoints (4) is not less than 3");
     EXPECT_EQ(reqs.Failed(), Requirements({reqs[1], reqs[2]}));
 }
+
+
+TEST(Requirement, condition_boolean)
+{
+    KO ko;
+    EXPECT_TRUE(ConditionRequirement(ko, true, true));
+    EXPECT_TRUE(ConditionRequirement(ko, false, false));
+    EXPECT_FALSE(ConditionRequirement(ko, true, false));
+    EXPECT_EQ(ConditionRequirement(ko, true, true).Description(), "is KO");
+    EXPECT_EQ(ConditionRequirement(ko, false, true).Description(), "isn't KO");
+    EXPECT_EQ(ConditionRequirement(ko, true, false).Description(), "isn't OK");
+}
+
+TEST(Requirement, condition_numerical)
+{
+    Condition poisoned("poisoned", json({{"hp",-2}}));
+
+    EXPECT_TRUE(ConditionRequirement(poisoned, 3, Comparator::greater, 1));
+    EXPECT_TRUE(ConditionRequirement(poisoned, 1, Comparator::less, 3));
+    EXPECT_FALSE(ConditionRequirement(poisoned, 2, Comparator::greater, 2));
+    EXPECT_EQ(ConditionRequirement(poisoned, 3, Comparator::greater, 1).Description(), "poisoned(3) is more than 1");
+    EXPECT_EQ(ConditionRequirement(poisoned, 1, Comparator::less, 1).Description(), "poisoned(1) is not less than 1");
+}
+
 }
 
