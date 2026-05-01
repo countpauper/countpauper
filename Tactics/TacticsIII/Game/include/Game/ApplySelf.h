@@ -15,6 +15,7 @@ public:
     Position GetDestination() const override;
     unsigned GetDistance() const override;
 private:
+    std::string TargetConditionName() const;
     const Condition& condition;
     unsigned level;
 };

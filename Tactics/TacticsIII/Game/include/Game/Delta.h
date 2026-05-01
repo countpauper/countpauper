@@ -57,6 +57,7 @@ public:
     const class Conditions& GetConditions() const override;
     unsigned GetCondition(std::function<bool(const Condition& condition)> pred) const override;
     void SetCondition(const Condition& condition, unsigned level) override;
+    void ApplyConditions(Range conditions) override;
     Computation ConditionalBonus(Stat::Id id) const override;
  
 public:

@@ -56,6 +56,7 @@ void Delta::Apply()
         parent->Move(*world, position);
     for(const auto& dCounter : counterDelta)
         parent->GetCounts().Cost(dCounter.first, -dCounter.second, true);
+    parent->GetConditions().ApplyConditions(conditionOverride.GetConditions());
 
 }
 
@@ -213,6 +214,14 @@ unsigned Delta::GetCondition(std::function<bool(const Condition& condition)> pre
 void Delta::SetCondition(const Condition& condition, unsigned level)
 {
     return conditionOverride.SetCondition(condition, level);
+}
+
+void Delta::ApplyConditions(Range conditions)
+{
+    for(const auto& condition: conditions)
+    {
+        SetCondition(*condition.first, condition.second);
+    }
 }
 
 Computation Delta::ConditionalBonus(Stat::Id id) const

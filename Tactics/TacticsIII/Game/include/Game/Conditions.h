@@ -4,6 +4,7 @@
 #include "Game/Boni.h"
 #include "File/Json.h"
 #include "Utility/Singleton.h"
+#include <ranges>
 
 namespace Game
 {
@@ -33,7 +34,8 @@ public:
     }
     virtual Computation ConditionalBonus(Stat::Id id) const  = 0;
     Computation Bonus(Stat::Id id) const override;
-
+    using Range= std::ranges::subrange<std::map<const Condition*, unsigned>::const_iterator>;
+    virtual void ApplyConditions(Range conditions) = 0;
 };
 
 class ConditionLevels : public Conditions
@@ -48,6 +50,9 @@ public:
     std::pair<const Condition*, unsigned> FindCondition(const std::function<bool(const Condition& condition)>& pred) const;
     unsigned GetCondition(std::function<bool(const Condition& condition)> pred) const;
     void SetCondition(const Condition& condition, unsigned level = 1);
+
+    Range GetConditions() const;
+    void ApplyConditions(Range conditions) override;
 
     Computation ConditionalBonus(Stat::Id id) const override;
     std::string Description() const;

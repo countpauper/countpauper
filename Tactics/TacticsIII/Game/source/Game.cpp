@@ -1,6 +1,7 @@
 #include "Game/Map.h"
 #include "UI/Avatar.h"
 #include "Game/Game.h"
+#include "Game/UpDown.h"
 #include "Game/Equipment.h"
 #include "UI/Scene.h"
 #include "UI/Application.h"
@@ -108,9 +109,19 @@ void Game::OnMessage(const Engine::Message& message)
             Engine::Position destination = IdToPosition(clickOn->sub, bounds);
             plan = Plan::Move(*this, Current(), Position(destination));
         }
-        else if (target && target!=& Current())
+        else if (target)
         {
-            plan = Plan::Attack(*this, Current(), const_cast<Avatar&>(*target));
+            if (target == &Current())
+            {
+                if (target->GetConditions().Is<Downed>())
+                    plan = Plan::Act<Up>(*this, Current());
+                else 
+                    plan = Plan::Act<Down>(*this, Current());
+            }
+            else
+            {
+                plan = Plan::Attack(*this, Current(), const_cast<Avatar&>(*target));
+            }
         }
         auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
         lbl->SetText(plan.Description());

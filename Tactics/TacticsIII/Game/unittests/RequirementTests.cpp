@@ -62,7 +62,7 @@ TEST(Requirement, stat_greater_equal)
     EXPECT_TRUE((!StatRequirement(Stat::none, 2, Comparator::greater_equal, 3)) == StatRequirement(Stat::none, 2, Comparator::less, 3));
 }
 
-TEST(Requirement, requirements_are_a_conjunection)
+TEST(Requirement, requirements_are_a_conjunction)
 {
     Requirements reqs{
         StatRequirement(Stat::ap, 1, Comparator::greater, 0),
@@ -70,10 +70,9 @@ TEST(Requirement, requirements_are_a_conjunection)
         StatRequirement(Stat::hp, 4, Comparator::less, 3)
     };
     EXPECT_FALSE(reqs);
-    EXPECT_EQ(reqs.Description(), "action (1) is more than 0, but the destination is not reachable and hitpoints (4) is not less than 3");
+    EXPECT_EQ(reqs.Description(), "the destination is not reachable and hitpoints (4) is not less than 3");
     EXPECT_EQ(reqs.Failed(), Requirements({reqs[1], reqs[2]}));
 }
-
 
 TEST(Requirement, condition_boolean)
 {

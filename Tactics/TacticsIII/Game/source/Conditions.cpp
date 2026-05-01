@@ -80,6 +80,27 @@ void ConditionLevels::SetCondition(const Condition& condition, unsigned level)
     }
 }
 
+
+Conditions::Range ConditionLevels::GetConditions() const
+{
+    return conditions;
+}
+
+void ConditionLevels::ApplyConditions(Conditions::Range conditions)
+{
+    for(const auto& condition: conditions)
+    {
+        if (condition.second)
+        {
+            SetCondition(*condition.first, condition.second);
+        }
+        else 
+        {
+            this->conditions.erase(condition.first);
+        }
+    }
+}
+
 std::string ConditionLevels::Description() const
 {
     std::vector<std::string_view> condition_names;

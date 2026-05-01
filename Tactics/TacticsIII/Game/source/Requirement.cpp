@@ -247,7 +247,7 @@ std::string Requirements::Description() const
     }
     else
     {
-        return Engine::Join(successStrings, "and ")+", but "+Engine::Join(failStrings, " and ");
+        return Engine::Join(failStrings, " and ");
     }
 }
 
