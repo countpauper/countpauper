@@ -35,7 +35,7 @@ public:
     virtual Computation ConditionalBonus(Stat::Id id) const  = 0;
     Computation Bonus(Stat::Id id) const override;
     using Range= std::ranges::subrange<std::map<const Condition*, unsigned>::const_iterator>;
-    virtual void ApplyConditions(Range conditions) = 0;
+    virtual void ApplyConditions(Range conditions);
 };
 
 class ConditionLevels : public Conditions
@@ -49,11 +49,10 @@ public:
 
     std::pair<const Condition*, unsigned> FindCondition(const std::function<bool(const Condition& condition)>& pred) const;
     unsigned GetCondition(std::function<bool(const Condition& condition)> pred) const;
-    void SetCondition(const Condition& condition, unsigned level = 1);
-
+    void SetCondition(const Condition& condition, unsigned level = 1) override;
+    void RemoveCondition(const Condition& condition); 
+    void InsertCondition(const Condition& condition, unsigned level);
     Range GetConditions() const;
-    void ApplyConditions(Range conditions) override;
-
     Computation ConditionalBonus(Stat::Id id) const override;
     std::string Description() const;
     json Serialize() const;

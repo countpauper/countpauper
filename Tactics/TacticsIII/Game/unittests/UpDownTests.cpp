@@ -55,7 +55,7 @@ TEST(Down, can_get_back_up)
     EXPECT_CALL(actor.conditions, GetCondition(_)).Times(2).WillRepeatedly(Return(1));
     Up action(world, actor);
     EXPECT_EQ(action.Description(), "Go up");
-    EXPECT_EQ(action.AP(), 1);    actor.SetStats({{Stat::ap, 1}});
+    EXPECT_EQ(action.AP(), 1);
     EXPECT_TRUE(action.CanDo());
 
     std::stringstream log;

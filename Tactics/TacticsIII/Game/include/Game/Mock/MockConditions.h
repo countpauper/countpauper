@@ -13,7 +13,6 @@ public:
     MOCK_METHOD(unsigned, GetCondition, (std::function<bool(const Condition& condition)> pred), (const override));
     MOCK_METHOD(void, SetCondition, (const Condition& condition, unsigned level), (override));
     MOCK_METHOD(Computation, ConditionalBonus, (Stat::Id id), (const override));
-    MOCK_METHOD(void, ApplyConditions, (Range conditions), (override));
 };
 
 }

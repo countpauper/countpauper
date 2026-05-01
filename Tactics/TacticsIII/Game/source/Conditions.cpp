@@ -71,13 +71,31 @@ unsigned ConditionLevels::GetCondition(std::function<bool(const Condition& condi
     return FindCondition(pred).second;
 }
 
-void ConditionLevels::SetCondition(const Condition& condition, unsigned level)
+void ConditionLevels::RemoveCondition(const Condition& condition)
+{
+    conditions.erase(&condition);
+}
+
+void ConditionLevels::InsertCondition(const Condition& condition, unsigned level)
 {
     auto [it, inserted] = conditions.insert(std::make_pair(&condition,level));
     if (!inserted)
     {
-        it->second = std::max(level, it->second);
+        it->second = level;
     }
+}
+
+void ConditionLevels::SetCondition(const Condition& condition, unsigned level)
+{
+    if (level==0)
+    {
+        RemoveCondition(condition);
+    }
+    else 
+    {
+        InsertCondition(condition, level); 
+    }
+
 }
 
 
@@ -86,18 +104,11 @@ Conditions::Range ConditionLevels::GetConditions() const
     return conditions;
 }
 
-void ConditionLevels::ApplyConditions(Conditions::Range conditions)
+void Conditions::ApplyConditions(Conditions::Range conditions)
 {
     for(const auto& condition: conditions)
     {
-        if (condition.second)
-        {
-            SetCondition(*condition.first, condition.second);
-        }
-        else 
-        {
-            this->conditions.erase(condition.first);
-        }
+        SetCondition(*condition.first, condition.second);
     }
 }
 

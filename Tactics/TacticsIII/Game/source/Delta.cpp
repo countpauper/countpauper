@@ -213,14 +213,14 @@ unsigned Delta::GetCondition(std::function<bool(const Condition& condition)> pre
 
 void Delta::SetCondition(const Condition& condition, unsigned level)
 {
-    return conditionOverride.SetCondition(condition, level);
+    return conditionOverride.InsertCondition(condition, level);
 }
 
 void Delta::ApplyConditions(Range conditions)
 {
     for(const auto& condition: conditions)
     {
-        SetCondition(*condition.first, condition.second);
+        conditionOverride.InsertCondition(*condition.first, condition.second);
     }
 }
 
