@@ -7,13 +7,15 @@ namespace Engine
 class Font
 {
 public:
-    Font(std::string_view name, unsigned height);
+    // NB for stroke fonts, height and width are in model space, for bitmap fonts they are in pixels
+    Font(std::string_view name, float height);
     void Render(int character) const;
-    unsigned Width(std::string_view text) const;
-    unsigned Height(std::string_view text="") const;
+    float Width(std::string_view text) const;
+    float Height(std::string_view text="") const;
+    bool IsStroke() const;
 private:
     struct FontDescriptor* font;    // platform/implementation dependent font descriptor
-    unsigned height;
+    float scale;
 };
 
 }

@@ -30,6 +30,8 @@ FontDescriptor glutFonts[]={
     {"helvetica", 18, GLUT_BITMAP_HELVETICA_18}
 };
 
+static constexpr float strokeFontHeight = 152.38f;  // https://www.opengl.org/resources/libraries/glut/spec3/node78.html
+
 FontDescriptor* FindFont(std::string_view name, unsigned height)
 {
     for(auto& font : glutFonts)
@@ -41,42 +43,47 @@ FontDescriptor* FindFont(std::string_view name, unsigned height)
     return nullptr;
 }
 
-Font::Font(std::string_view name, unsigned height) :
+Font::Font(std::string_view name, float height) :
     font(FindFont(name, height)),
-    height(height)
+    scale(font ? (font->height ? 1.0 : height ) : 0.0f)
 {
     if (!font)
         throw std::invalid_argument(std::format("Unknown font: {} {}", name, height));
-    assert(font->height);   // Stroke fonts not supported yet
 }
 
-unsigned Font::Height(std::string_view text) const
+bool Font::IsStroke() const
+{
+    return font && font->height == 0;
+}
+
+float Font::Height(std::string_view text) const
 {
     if (!font)
         return 0;
     unsigned lines = std::count(text.begin(), text.end(), '\n') + 1;
-    if (font->height)
-        return font->height * lines;
+    if (IsStroke())
+        return scale * lines;
     else
-        return height * lines;
+        return font->height * lines;
 }
 
-unsigned Font::Width(std::string_view text) const
+float Font::Width(std::string_view text) const
 {
-    unsigned sum = 0;
+    float sum = 0;
     if (!font)
         return sum;
-    else if (font->height == 0)
+    else if (IsStroke())
     {
-        return std::accumulate(text.begin(), text.end(), 0, [&](unsigned sum, char c)
+        return std::accumulate(text.begin(), text.end(), 0.0f, [this](float sum, char c)
         {
             assert(c!='\n');    // TODO: split lines and compute maximum
-            return sum + glutStrokeWidth(font->ptr, c);
-        });
+            float charWidth = glutStrokeWidth(font->ptr, c);
+            return sum + charWidth;
+        }) * scale / strokeFontHeight;
     }
     else
     {
-        return std::accumulate(text.begin(), text.end(), 0, [&](unsigned sum, char c)
+        return std::accumulate(text.begin(), text.end(), 0, [this](unsigned sum, char c)
         {
             assert(c!='\n');    // TODO: split lines and compute maximum
             return sum + glutBitmapWidth(font->ptr, c);
@@ -89,12 +96,12 @@ void Font::Render(int character) const
     if (!font)
         return;
 
-    if (font->height == 0)
+    if (IsStroke())
     {
-        glPushMatrix();
-        glScaled(height, height, 1);
+        float s = scale / strokeFontHeight;
+        glScaled(s, s, 1.0);   // make character height 1.0
         glutStrokeCharacter(font->ptr, character);
-        glPopMatrix();
+        glScaled(1.0 / s, 1.0 / s, 1.0);
     }
     else
     {

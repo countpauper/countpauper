@@ -30,10 +30,10 @@ struct Layout
     Engine::Splitter hud_bottom_splitter;
 
     Layout()
-        : info_lbl("left_lbl", "Select an avatar")
-        , plan_lbl("right_lbl", "Make a plan")
+        : info_lbl("left_lbl", "Select an avatar", 20)
+        , plan_lbl("right_lbl", "Make a plan", 20)
         , info_plan_v_splitter(info_lbl, plan_lbl)
-        , log_lbl("log_lbl", "")
+        , log_lbl("log_lbl", "", 20)
         , buttons({
             Engine::Label("button0", "1"), 
             Engine::Label("button1", "2"), 
@@ -50,6 +50,11 @@ struct Layout
         , hud_bottom_splitter(info_plan_v_splitter, log_button_splitter, false, 0.75)
     {
         log_lbl.vertical_align = Engine::Align::bottom;
+        for(auto& button : buttons)
+        {
+            button.vertical_align = Engine::Align::center;
+            button.outline = Engine::RGBA(128, 128, 128);
+        }
     }
     
     Engine::Control& root() 

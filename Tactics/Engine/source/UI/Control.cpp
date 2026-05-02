@@ -20,6 +20,7 @@ void Controls::Render() const
 {
     if (!shown)
         return;
+
     for(auto child: children)
     {
         child->Render();

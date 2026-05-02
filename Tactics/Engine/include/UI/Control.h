@@ -30,6 +30,7 @@ protected:
     std::string name;
     bool shown = true;
     bool enabled = true;
+
 };
 
 class Controls :
@@ -37,7 +38,7 @@ class Controls :
 {
 public:
     using Control::Control;
-    Controls() : Control("") {} 
+    Controls() : Control("") {}
     void Add(Control& control);
     void Render() const;
     Control* Click(Coordinate pos) const;
