@@ -10,7 +10,7 @@ class MockControl : public Control
 public:
     using Control::Control;
     MOCK_METHOD(void, Render, (), (const override));
-    MOCK_METHOD(Control*, Click, (Coordinate), (const override));
+    MOCK_METHOD(Control*, Click, (Coordinate), (override));
 };
 
 }

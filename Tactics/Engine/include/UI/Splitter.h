@@ -11,7 +11,7 @@ public:
     Splitter(Control& one, Control& two, bool horizontal=true, double split = 0.5);
     void Move(double split);
     void Render() const override;
-    Control* Click(Coordinate pos) const override;
+    Control* Click(Coordinate pos) override;
 private:
     bool horizontal;
     double split;

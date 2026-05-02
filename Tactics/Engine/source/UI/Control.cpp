@@ -69,15 +69,14 @@ void Controls::Add(Control& control)
     control.parent = this;
 }
 
-Control* Controls::Click(Coordinate pos) const
+Control* Controls::Click(Coordinate pos)
 {
-    if (!enabled || !shown)
-        return nullptr;
-
+    if (!shown)
+        return this;
     for(auto child: children)
     {
-        auto hit = child->Click(pos);
-        return hit;
+        if (auto hit = child->Click(pos))
+            return hit;
     }
     return nullptr;
 }

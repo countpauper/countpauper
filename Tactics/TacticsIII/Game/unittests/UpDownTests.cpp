@@ -21,7 +21,7 @@ TEST(Down, can_go_down)
 
     std::stringstream log;
     auto deltas = action.Execute(log);
-    EXPECT_EQ(log.str(), "a goes down");
+    EXPECT_EQ(log.str(), "a goes down\n");
     ASSERT_EQ(deltas.size(), 1);
 
     const auto& delta = deltas[0];
@@ -44,7 +44,7 @@ TEST(Down, cannot_go_down_without_ap)
     std::stringstream log;
     auto deltas = action.Execute(log);
     EXPECT_TRUE(deltas.empty());
-    EXPECT_EQ(log.str(), "a can't go down, because action (0) is less than 1");
+    EXPECT_EQ(log.str(), "a can't go down, because action (0) is less than 1\n");
 }
 
 TEST(Down, can_get_back_up)
@@ -60,7 +60,7 @@ TEST(Down, can_get_back_up)
 
     std::stringstream log;
     auto deltas = action.Execute(log);
-    EXPECT_EQ(log.str(), "a goes up");
+    EXPECT_EQ(log.str(), "a goes up\n");
     ASSERT_EQ(deltas.size(), 1);
 
     const auto& delta = deltas[0];

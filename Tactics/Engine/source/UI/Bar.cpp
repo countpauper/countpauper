@@ -40,19 +40,19 @@ void Bar::Render() const
     glPopMatrix();
 }
 
-Control* Bar::Click(Coordinate pos) const
+Control* Bar::Click(Coordinate pos)
 {
     if (horizontal)
     {
         double index;
-        double offset = std::modf(pos.X() / children.size(), &index);
+        double offset = std::modf(pos.X() * children.size(), &index);
         return children.at(unsigned(index))->Click(Coordinate(offset, pos.Y(), pos.Z()));
     }
     else
     {
         double index;
-        double offset = std::modf(pos.Y() / children.size(), &index);
-        return children.at(index)->Click(Coordinate(pos.X(), offset, pos.Z()));
+        double offset = std::modf(pos.Y() * children.size(), &index);
+        return children.at(unsigned(index))->Click(Coordinate(pos.X(), offset, pos.Z()));
     }
 }
 

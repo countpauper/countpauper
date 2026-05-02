@@ -47,7 +47,7 @@ void Splitter::Render() const
     }
 }
 
-Control* Splitter::Click(Coordinate pos) const
+Control* Splitter::Click(Coordinate pos)
 {
     if (horizontal)
     {
@@ -66,12 +66,12 @@ Control* Splitter::Click(Coordinate pos) const
     {
         if (pos.Y() < split)
         {
-            pos = Coordinate(pos.X(), pos.Y()*split, pos.Z());
+            pos = Coordinate(pos.X(), pos.Y()/split, pos.Z());
             return children.front()->Click(pos);
         }
         else
         {
-            pos = Coordinate(pos.X(), pos.Y()*(1-split), pos.Z());
+            pos = Coordinate(pos.X(), (pos.Y() - split) / (1-split), pos.Z());
             return children.back()->Click(pos);
         }
     }

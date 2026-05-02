@@ -10,7 +10,7 @@ class Control
 public:
     explicit Control(std::string_view name);
     virtual void Render() const = 0;
-    virtual Control* Click(Coordinate pos) const = 0;
+    virtual Control* Click(Coordinate pos) = 0;
     template<class Type>
     Type* Find(std::string_view path)
     {
@@ -30,7 +30,6 @@ protected:
     std::string name;
     bool shown = true;
     bool enabled = true;
-
 };
 
 class Controls :
@@ -41,7 +40,7 @@ public:
     Controls() : Control("") {}
     void Add(Control& control);
     void Render() const;
-    Control* Click(Coordinate pos) const;
+    Control* Click(Coordinate pos) override;
     virtual Control* FindControl(std::string_view path);
 protected:
     std::vector<Control*> children;

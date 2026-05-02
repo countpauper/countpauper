@@ -9,7 +9,8 @@ namespace Engine
 Label::Label(std::string_view name, std::string_view text, float lines) :
     Control(name),
     text(text),
-    font("stroke roman", 1.0f / lines)
+//    font("stroke roman", 1.0f / lines)
+    font("helvetica", 12)
 {
 }
 
@@ -26,7 +27,7 @@ void Label::AddText(std::string_view newText)
 void Label::RenderBackground() const
 {
     if (background)
-    {
+    {   // NB: sorting wrong, will block off the text
         background.Render();
         glBegin(GL_QUADS);
             glVertex2f(0.0f, 0.0f);

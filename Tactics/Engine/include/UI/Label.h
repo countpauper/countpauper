@@ -17,7 +17,7 @@ public:
     void AddText(std::string_view newText);
 
     void Render() const override;
-    Control* Click(Coordinate pos) const override { return nullptr; }
+    Control* Click(Coordinate pos) override { return nullptr; }
 
     RGBA enabledColor = RGBA::white;
     RGBA disabledColor = RGBA::white.Translucent(0.5);

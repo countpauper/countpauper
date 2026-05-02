@@ -10,7 +10,7 @@ class HUD : public Controls
 public:
     HUD();
     void Render() const override;
-    Control* Click(Coordinate pos) const override;
+    Control* Click(Coordinate pos) override;
 private:
     Matrix projection;
 };

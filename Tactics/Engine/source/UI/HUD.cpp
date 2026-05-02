@@ -19,7 +19,7 @@ void HUD::Render() const
 {
     // TODO: this doesn't clip at all, which will be weird eventually
     // In that case an AABB should be used for the window, multiplied with a matrix for each control
-    // and applied as a glviewport before actually rendering. This requires some sort of helper and state to
+    // and applied as a ~~glviewport~~ glScissor before actually rendering. This requires some sort of helper and state to
     // generalize this and separate it from actual rendering
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -31,7 +31,7 @@ void HUD::Render() const
     Controls::Render();
 }
 
-Control* HUD::Click(Coordinate pos) const
+Control* HUD::Click(Coordinate pos)
 {
     return Controls::Click(projection.Inverse() * pos);
 }

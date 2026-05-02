@@ -82,7 +82,7 @@ void glRasterText(std::string_view text, const Font& font, Align horizontal_alig
     else if (vertical_align == Align::center)
     {
         yorigin = 0.5;
-        lineshift = std::count(text.begin(), text.end(), '\n') / 2.0f;
+        lineshift = (std::count(text.begin(), text.end(), '\n')+1) / -2.0f;
     }
     auto [winX, winY] = projectWindow({0.0, yorigin, 0.0});
     winY += static_cast<int>(lineshift * font.Height());
