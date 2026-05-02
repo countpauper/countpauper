@@ -1,21 +1,20 @@
 #pragma once
-#include <string>
 #include "UI/Control.h"
-#include "Rendering/Color.h"
 
 namespace Engine
 {
 
+/// @brief A control with two children that splits its area in two and renders each child in on each side
 class Splitter : public Controls
 {
 public:
-    Splitter(Control& one, Control& two, double split = 0.5, bool horizontal=true);
+    Splitter(Control& one, Control& two, bool horizontal=true, double split = 0.5);
     void Move(double split);
     void Render() const override;
     Control* Click(Coordinate pos) const override;
 private:
-    double split;
     bool horizontal;
+    double split;
 };
 
 }

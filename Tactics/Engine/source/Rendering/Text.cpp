@@ -1,8 +1,12 @@
 #include "Rendering/Text.h"
 #include "Utility/Assert.h"
+#include "Geometry/Matrix.h"
+#include "Geometry/Vector.h"
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <algorithm>
+#include <utility>
 #include "UI/Window.h"
 
 namespace Engine
@@ -45,36 +49,57 @@ namespace Engine
     void glText(std::string_view text, Align horizontal_align, Align vertical_align)
     {
         assert(horizontal_align == Align::left);  // only supported
-        assert(vertical_align != Align::center);   // only supported;
 
-        auto inverseScale = Engine::Matrix::ModelView().SetTranslation(Vector::zero).Inverse();
+        // Compute the start point in window coordinates directly, so raster position
+        // is not rejected by the current projection/modelview when text is partially off-screen.
+        GLint viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+
+        auto modelView = Matrix::ModelView();
+        auto projection = Matrix::Projection();
+        auto transform = projection * modelView;
+
+        auto projectWindow = [&](const Vector& o) -> std::pair<int, int>
+        {
+            auto ndc = transform * o;
+            int winX = viewport[0] + static_cast<int>(0.5 * (ndc.X() + 1.0) * viewport[2]);
+            int winY = viewport[1] + static_cast<int>(0.5 * (ndc.Y() + 1.0) * viewport[3]);
+            return {winX, winY};
+        };
 
         auto pixel = Window::CurrentWindow()->PixelScale();
-        pixel *= inverseScale;
+        float lineHeightPixel = 24.0f; // TODO: get from current font
 
-        float lineHeight = 24.0 * pixel.Y();
-        //glDisable(GL_TEXTURE_2D);
-        double y = 0;
+        float yorigin = 0;
+        float lineshift = -1;
         if (vertical_align == Align::bottom)
         {
-            auto lines = std::count(text.begin(), text.end(), '\n');
-            y = 1.0 - (lines - 1) * lineHeight;
+            yorigin = 1.0;
+            lineshift = std::count(text.begin(), text.end(), '\n') - 1;
         }
-        else if (vertical_align == Align::top)
+        else if (vertical_align == Align::center)
         {
-            y = lineHeight * 1;
+            yorigin = 0,5;
+            lineshift = std::count(text.begin(), text.end(), '\n') / 2.0;
         }
+        auto [winX, winY] = projectWindow({0.0, yorigin, 0.0});
+        winY += lineshift * lineHeightPixel;
 
-        glBindTexture(GL_TEXTURE_2D,0);
-        glRasterPos3f(0, y, 0); // set start position
-        for(auto c : text)
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glWindowPos2i(winX, winY);
+
+        for (auto c : text)
         {
-            if (c=='\n') {
-                y += lineHeight;
-                glRasterPos3f(0, y, 0);
+            if (c == '\n')
+            {
+                winY -= lineHeightPixel;
+                glWindowPos2i(winX, winY);
             }
-            else if ((y>=0.0) && (y<=1.0))  // crude clipping
-                glutBitmapCharacter( GLUT_BITMAP_TIMES_ROMAN_24, c);
+            else
+            {
+                glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
+            }
         }
     }
 

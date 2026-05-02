@@ -4,13 +4,14 @@
 namespace Engine
 {
 
-Splitter::Splitter(Control& first, Control& second, double split, bool horizontal) :
-    split(split),
-    horizontal(horizontal)
+Splitter::Splitter(Control& first, Control& second, bool horizontal, double split) :
+    horizontal(horizontal),
+    split(split)
 {
     Add(first);
     Add(second);
 }
+
 void Splitter::Move(double split)
 {
     split = split;
