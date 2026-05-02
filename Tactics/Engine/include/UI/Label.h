@@ -2,6 +2,7 @@
 #include <string>
 #include "UI/Control.h"
 #include "Rendering/Color.h"
+#include "Rendering/Font.h"
 #include "Rendering/Text.h"
 namespace Engine
 {
@@ -23,6 +24,7 @@ public:
     Align vertical_align = Align::top;
     Align horizontal_align = Align::left;
 private:
+    Font font;
     std::string text;
 };
 

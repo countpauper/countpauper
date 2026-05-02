@@ -8,7 +8,8 @@ namespace Engine
 
 Label::Label(std::string_view name, std::string_view text) :
     Control(name),
-    text(text)
+    text(text),
+    font("helvetica", 12)
 {
 }
 
@@ -30,7 +31,7 @@ void Label::Render() const
         enabledColor.Render();
     else
         disabledColor.Render();
-    glText(text.c_str(), horizontal_align, vertical_align);
+    glText(text.c_str(), font, horizontal_align, vertical_align);
 }
 
 }
