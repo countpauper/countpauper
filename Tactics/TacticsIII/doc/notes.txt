@@ -109,10 +109,10 @@ Slices for generating vertical mesh quads:
 Physics and Magics 
 
 = Extra actions 
-- Create action
+[done, Up&Down] Create action
 - Action bar in the bottom (see old one in Tactics/Tactics/Skillbar.h)
-- Select spell with F-keys 
-- Use slected action on target location 
+- Select action with F-keys  (immediate)
+- Use slected (other) action on target location (like attack, maybe add shoot) 
 - Select action/spell with click
 
 = Create water (later can ignite=start fire)

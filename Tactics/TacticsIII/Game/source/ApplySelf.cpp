@@ -27,13 +27,13 @@ std::vector<Delta> ApplySelf::Execute(std::ostream& log) const
     auto can = CanDo();
     if (!can)
     {
-        log << actor.GetAppearance().Name() << " can't go " << TargetConditionName() << ", because " << can.Description();
+        log << actor.GetAppearance().Name() << " can't go " << TargetConditionName() << ", because " << can.Description() << std::endl;
         return {};
     }
     Delta dActor(actor);
     dActor.GetConditions().SetCondition(condition, level);
     dActor.GetCounts().Cost(Stat::ap, AP(), true);
-    log << actor.GetAppearance().Name() << " goes " << TargetConditionName();
+    log << actor.GetAppearance().Name() << " goes " << TargetConditionName() << std::endl;
     return { std::move(dActor) };
 }
 

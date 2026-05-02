@@ -7,7 +7,6 @@
 namespace Game::Test
 {
 
-
 TEST(Delta, Move)
 {
     MockActor actor;
