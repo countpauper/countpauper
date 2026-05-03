@@ -7,30 +7,47 @@ namespace Engine
 {
 
 Button::Button(std::string_view name, std::string_view text) :
-    Label(name, text, 1)
+    Label(name, text, 1),
+    hotkey{0,0}
 {
     enabled = true;
-
-    Engine::Application::Get().bus.Subscribe(*this,
-    {
-        Engine::MessageType<Engine::KeyPressed>()
-    });
-
 }
 
 Control* Button::Click(Coordinate pos)
 {
     if (!IsEnabled())
-        return nullptr;
-
-    Application::Get().bus.Post(Clicked(*this));
+        Application::Get().bus.Post(Clicked(*this));
     return this;
+}
+
+void Button::SetHotkey(char ascii)
+{
+    hotkey = std::make_pair(0, ascii);
+    Engine::Application::Get().bus.Subscribe(*this, { Engine::MessageType<Engine::KeyPressed>() });
+}
+
+void Button::SetHotkey(std::uint8_t code)
+{
+    hotkey = std::make_pair(code, 0);
+    Engine::Application::Get().bus.Subscribe(*this, {  Engine::MessageType<Engine::KeyPressed>() });
+}
+
+void Button::ResetHotkey()
+{
+    Engine::Application::Get().bus.Unsubscribe(*this, {  Engine::MessageType<Engine::KeyPressed>() });
 }
 
 
 void Button::OnMessage(const Message& message)
 {
-    // TODO Hotkey
+    if (auto key = message.Cast<Engine::KeyPressed>())
+    {
+        if (hotkey == std::make_pair(key->code, key->ascii) &&
+            IsEnabled());
+        {
+            Application::Get().bus.Post(Clicked(*this));
+        }
+    }
 }
 
 

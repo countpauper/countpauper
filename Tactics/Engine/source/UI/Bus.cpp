@@ -1,18 +1,53 @@
 #include "UI/Bus.h"
+#include "Utility/Assert.h"
+#include <algorithm>
 
 namespace Engine
 {
 
-void Bus::Subscribe(Passenger& passenger, std::set<Message::Type> messages)
+Bus::~Bus()
 {
-    if (messages.empty())
+    for(auto& sub : subscriptions)
     {
-        subscriptions.erase(&passenger);
+        sub.first->bus = nullptr;
     }
-    else
+}
+
+unsigned Bus::Subscribe(Passenger& passenger, const std::set<Message::Type>& messages)
+{
+    auto [it, inserted] = subscriptions.insert(std::make_pair(&passenger, messages));
+    if (inserted)
     {
-        subscriptions[&passenger] = messages;
+        assert(!passenger.bus); // resubscription or multiple subscription not supported yet
+        passenger.bus = this;
+        return messages.size();
     }
+    it->second.insert(messages.begin(), messages.end());
+    return messages.size(); // TODO only should be new ones, in fact return the set to unsub scoped
+}
+
+unsigned Bus::Unsubscribe(Passenger& passenger, const std::set<Message::Type>& messages)
+{
+    auto it = subscriptions.find(&passenger);
+    if (it == subscriptions.end())
+        return 0;
+    std::set<Message::Type> difference;
+    std::set_difference(it->second.begin(), it->second.end(),
+        messages.begin(), messages.end(),
+        std::inserter(difference, difference.begin()));
+    it->second = difference;
+    return messages.size(); // TODO should only be ones that were in there, in fact return set
+}
+
+unsigned Bus::Unsubscribe(Passenger& passenger)
+{
+    auto it = subscriptions.find(&passenger);
+    if (it == subscriptions.end())
+        return 0;
+    unsigned current = it->second.size();
+    subscriptions.erase(it);
+    passenger.bus = nullptr;
+    return current;
 }
 
 void Bus::Post(const Message& message) const
@@ -26,5 +61,9 @@ void Bus::Post(const Message& message) const
     }
 }
 
-
+Passenger::~Passenger()
+{
+    if (bus)
+        bus->Unsubscribe(*this);
+}
 }

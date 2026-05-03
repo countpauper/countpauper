@@ -25,15 +25,26 @@ MATCHER_P(MessageOfType, messageType, std::string("Is not of the type ") + messa
 
 TEST(Bus, MessageIsDeliveredOnlyToSubscriber)
 {
+    Bus bus;
     MockPassenger passenger;
     MockPassenger other;
-    Bus bus;
     bus.Subscribe(passenger, {MessageType<Click>()});
     bus.Subscribe(other, {MessageType<KeyPressed>()});
     EXPECT_CALL(passenger, OnMessage(MessageOfType(&typeid(Click))));
     EXPECT_CALL(other, OnMessage(_)).Times(0);
     std::stringstream ss;
     bus.Post(Click{1,2,3});
+}
+
+TEST(Bus, Unsubscribe)
+{
+    Bus bus;
+    MockPassenger passenger;
+    EXPECT_EQ(bus.Subscribe(passenger,  { MessageType<Click>()      }), 1);
+    EXPECT_EQ(bus.Subscribe(passenger,  { MessageType<KeyPressed>() }), 1);
+    EXPECT_EQ(bus.Unsubscribe(passenger,{ MessageType<Click>()      }), 1);
+    EXPECT_EQ(bus.Unsubscribe(passenger), 1);
+    EXPECT_EQ(bus.Unsubscribe(passenger), 0);
 }
 
 

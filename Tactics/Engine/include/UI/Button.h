@@ -21,8 +21,13 @@ public:
         Clicked(Button& button);
         Button& button;
     };
+
+    void SetHotkey(char ascii);
+    void SetHotkey(std::uint8_t code);
+    void ResetHotkey();
 private:
     void OnMessage(const Message& message) override;
+    std::pair<int, char> hotkey;   // TODO add modifiers but make a better key struct and include it, constructors etc
 };
 
 }

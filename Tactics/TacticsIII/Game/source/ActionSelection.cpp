@@ -5,19 +5,38 @@
 #include "UI/Avatar.h"
 #include "UI/Window.h"
 #include "UI/Logging.h"
+#include "UI/WindowMessages.h"
 #include <ranges> 
 
 namespace Game::UI
 {
 
+
+std::vector<std::reference_wrapper<Engine::Button>> FindActionButtons()
+{
+    std::vector<std::reference_wrapper<Engine::Button>> buttons;
+    for(int i=0; i<10; ++i)
+    {
+        // TODO: Could be faster to find action bar(s) and add all their button children
+        auto* button = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Button>(std::format("action{}",i));
+        assert(button);
+        button->SetHotkey(static_cast<char>('0' + (i+1)%10));        
+        buttons.emplace_back(*button);
+    }
+    return buttons;
+}
+
+
 ActionSelection::ActionSelection()
     : selectedButton(nullptr)
+    , actionButtons(FindActionButtons())
 {   
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<UI::Selected>(),
         Engine::MessageType<Engine::Button::Clicked>()
     });
+
     HideActions();
 }
 
@@ -42,34 +61,28 @@ void ActionSelection::OnMessage(const Engine::Message& message)
             Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Deselected (%s)", button.Name().c_str());
             selectedButton = nullptr;
         }
-        else 
+        else
         {
-            selectedButton = &button;   
+            selectedButton = &button;
             Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Selected (%s)", button.Name().c_str());
             selectedButton->outline = Engine::RGBA::white;
-        }
-    }
-}
 
-std::vector<std::reference_wrapper<Engine::Button>> GetActionButtons()
-{
-    std::vector<std::reference_wrapper<Engine::Button>> buttons;
-    for(int i=0; i<10; ++i)
-    {
-        // TODO: Could be faster to find action bar(s) and add all their button children
-        auto* button = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Button>(std::format("action{}",i));
-        assert(button);
-        buttons.emplace_back(*button);
+            if (auto it = actionFactories.find(&button); it != actionFactories.end())
+            {
+                auto plan = it->second();
+            }
+        }
+        Engine::Application::Get().bus.Post(Engine::Redraw());
     }
-    return buttons;
 }
 
 void ActionSelection::HideActions()
 {
-    for(auto button : GetActionButtons())
+    for(auto button : actionButtons)
     {
         button.get().Hide();
     }
+    actionFactories.clear();
 }
 
 void ActionSelection::ShowActions(const class Avatar& avatar)
@@ -86,10 +99,30 @@ void ActionSelection::ShowActions(const class Avatar& avatar)
         "",
         "end"
     };
-    for(auto [button, name] : std::views::zip(GetActionButtons(), actionName))
+    int hotkey = 1;
+    for(auto [button, name] : std::views::zip(actionButtons, actionName))
     {
         button.get().Show();
         button.get().SetText(name);
+
+        if (!name.empty())
+        {
+            auto& btn = button.get();
+            if (name == "up")
+            {
+                actionFactories[&btn] = [&avatar]() { return Plan(); };
+            }
+            else if (name == "down")
+            {
+                actionFactories[&btn] = [&avatar]() { return Plan(); };
+            }
+            else if (name == "end")
+            {
+                actionFactories[&btn] = [&avatar]() { return Plan(); };
+            }
+        }
+
+        hotkey++;
     }
 }
 

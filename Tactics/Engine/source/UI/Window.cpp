@@ -67,7 +67,7 @@ Window::Window()
     allWindows[handle] = this;
 
     Init();
-    // Hook functions, TODO: this should be done once for all windows
+    // Hook functions, TODO: this should be done only once for all windows
     glutDisplayFunc(Display);
     glutMouseFunc(Mouse);
     glutKeyboardFunc(Key);
@@ -117,17 +117,21 @@ void Window::OnMessage(const Engine::Message& message)
 {
     if (auto redraw = message.Cast<Redraw>())
     {
-        glutPostRedisplay();
-        glutPostOverlayRedisplay();
+        Invalidate();
     }
+}
+
+void Window::Invalidate() const
+{
+    glutPostRedisplay();
+    glutPostOverlayRedisplay();
 }
 
 void Window::SpecialKey(int key,  int x, int y)
 {
     Logging::Log<UiLogging, Logging::Info>("Special Key(%d @ %d, %d)", key, x, y);
-    assert(key<256); // upper byte used for ascii
     Window& window = *CurrentWindow();
-    window.OnKey(key, 0, x, y);
+    window.OnKey(key & 0xFF, key>>8, x, y);
 }
 
 void Window::Key(unsigned char key,  int x, int y)

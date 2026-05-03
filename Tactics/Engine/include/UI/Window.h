@@ -23,6 +23,7 @@ private:
     void Init();
     void OnMouse(int button, int state, int x, int y);
     void OnKey(std::uint8_t code, unsigned char ascii,  int x, int y);
+    void Invalidate() const;
     void Render();
     void OnMessage(const Message& message);
     Coordinate Screen2View(int x, int y) const;

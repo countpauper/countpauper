@@ -14,9 +14,9 @@ struct Click : Message
 
 struct KeyPressed : Message
 {
-    KeyPressed(std::uint8_t code, unsigned char ascii, std::uint16_t mods) : code(code), ascii(ascii), modifiers(mods) {}
+    KeyPressed(std::uint8_t code, char ascii, std::uint16_t mods) : code(code), ascii(ascii), modifiers(mods) {}
     std::uint8_t code;
-    unsigned char ascii;
+    char ascii;
     std::uint16_t modifiers;
 };
 
