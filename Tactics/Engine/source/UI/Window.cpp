@@ -175,15 +175,32 @@ Coordinate Window::Screen2View(int x, int y) const
 void Window::OnMouse(int button, int state, int x, int y)
 {
     app->bus.Post(Click(button, x, y));
+    if (button==3 && state == GLUT_UP)
+    {
+        app->bus.Post(ScrollWheel(true));
 
-    auto viewPosition = Screen2View(x, y);
-    auto control = hud.Click(viewPosition);
-
-    if (control)
-        return; // TODO bus it ? for now at least don't check the scene below it
+    }
+    else if (button==4 && state == GLUT_UP)
+    {
+        app->bus.Post(ScrollWheel(false));
+    }
 
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
     {
+        // TODO: Make cancelable:
+        // 1: Also check on GLUT_DOWN which one it is (don't Click(..), just find)
+        // 2: Highlight it slightly (to give feedback)(could be same as tab selected)
+        // 3: On glut up, only if it's the same, remove the highlight and forward the click
+        // 4: [optional] keep as tab selected
+        // Perhaps a button/control can partially separate this concern
+        // But this would have to dehighlight all previously highlighted on button up
+
+        auto viewPosition = Screen2View(x, y);
+        auto control = hud.Click(viewPosition);
+
+        if (control)
+            return; // caught, don't click on the scene below
+
         auto [prop, sub ] = scene.Select(viewPosition);
         if (prop)
         {
@@ -197,15 +214,7 @@ void Window::OnMouse(int button, int state, int x, int y)
         app->bus.Post(ClickOn(prop, sub));
     }
     // TODO bus
-    if (button==3 && state == GLUT_UP)
-    {
-        app->bus.Post(ScrollWheel(true));
 
-    }
-    else if (button==4 && state == GLUT_UP)
-    {
-        app->bus.Post(ScrollWheel(false));
-    }
 }
 
 

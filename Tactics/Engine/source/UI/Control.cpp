@@ -8,6 +8,11 @@ Control::Control(std::string_view name) :
 {
 }
 
+std::string Control::Name() const
+{
+    return name;
+}
+
 Control* Control::FindControl(std::string_view path)
 {
     if (path==name)

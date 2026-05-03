@@ -17,6 +17,7 @@ public:
         return dynamic_cast<Type*>(FindControl(path));
     }
     virtual Control* FindControl(std::string_view path);
+    std::string Name() const;
 
     bool IsShown() const;
     bool IsEnabled() const;
@@ -24,6 +25,7 @@ public:
     void Hide();
     void Enable();
     void Disable();
+
 protected:
     friend class Controls;
     const Control* parent=nullptr;
