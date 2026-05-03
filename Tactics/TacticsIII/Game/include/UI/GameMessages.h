@@ -2,7 +2,7 @@
 #include "UI/Message.h"
 #include <cstdint>
 
-namespace Game
+namespace Game::UI
 {
 
 struct Selected : Engine::Message

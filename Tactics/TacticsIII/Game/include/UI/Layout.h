@@ -8,6 +8,9 @@
 #include <vector>
 #include <functional>
 
+namespace Game::UI
+{
+
 template<typename CT>
 std::vector<std::reference_wrapper<Engine::Control>> make_control_refs(std::span<CT> controls) 
 {
@@ -36,16 +39,16 @@ struct Layout
         , info_plan_v_splitter(info_lbl, plan_lbl)
         , log_lbl("log_lbl", "", 20)
         , buttons({
-            Engine::Button("button0", "1"), 
-            Engine::Button("button1", "2"), 
-            Engine::Button("button2", "3"), 
-            Engine::Button("button3", "4"), 
-            Engine::Button("button4", "5"), 
-            Engine::Button("button5", "6"), 
-            Engine::Button("button6", "7"), 
-            Engine::Button("button7", "8"), 
-            Engine::Button("button8", "9"), 
-            Engine::Button("button9", "10")})
+            Engine::Button("action0", "1"), 
+            Engine::Button("action1", "2"), 
+            Engine::Button("action2", "3"), 
+            Engine::Button("action3", "4"), 
+            Engine::Button("action4", "5"), 
+            Engine::Button("action5", "6"), 
+            Engine::Button("action6", "7"), 
+            Engine::Button("action7", "8"), 
+            Engine::Button("action8", "9"), 
+            Engine::Button("action9", "10")})
         , button_bar(make_control_refs<Engine::Button>(buttons))
         , log_button_splitter(log_lbl, button_bar, false, 0.75)
         , hud_bottom_splitter(info_plan_v_splitter, log_button_splitter, false, 0.75)
@@ -63,3 +66,5 @@ struct Layout
         return hud_bottom_splitter;
     }
 };
+
+}

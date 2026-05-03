@@ -17,6 +17,8 @@ public:
     virtual Requirements CanDo() const = 0;
     virtual std::vector<Delta> Execute(std::ostream& log) const = 0;
     virtual std::string Description() const = 0;
+    virtual bool TargetDestination() const { return false; }
+    virtual bool TargetAvatar() const { return false; }
     virtual Position GetDestination() const = 0;
     virtual unsigned GetDistance() const = 0;
 protected:

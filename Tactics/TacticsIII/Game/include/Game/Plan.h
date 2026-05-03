@@ -10,7 +10,10 @@
 
 namespace Game
 {
-class Avatar;
+namespace UI
+{
+    class Avatar;
+}
 class World;
 
 class Plan : public Engine::Scenery
@@ -30,15 +33,19 @@ public:
     std::string Execute();
 
     // TODO: helpers to create an attack plan, flee (move) plan, spell/technique plan, dodge, ready and so on plan for UI and AI level
-    static Plan Move(World& world, Avatar& actor, Position destination, unsigned distance=0);
-    static Plan Attack(World& world, Avatar& actor, Avatar& target); 
+    static Plan Move(World& world, UI::Avatar& actor, Position destination, unsigned distance=0);
+    static Plan Attack(World& world, UI::Avatar& actor, UI::Avatar& target); 
 
     template<typename A, typename... Params> 
     requires std::is_base_of_v<Action, A>
-    static Plan Act(World& world, Avatar& actor, Params&&... params)
+    static Plan Act(World& world, UI::Avatar& actor, Params&&... params)
     {
         auto action = std::make_unique<A>(world, actor, std::forward<Params>(params)...);
-        auto plan = Move(world, actor, action->GetDestination(), action->GetDistance());
+        Plan plan;
+        if (action->TargetDestination() || action->TargetAvatar())
+        {
+            plan = Move(world, actor, action->GetDestination(), action->GetDistance());
+        }
         plan.actions.emplace_back(std::move(action));
         return plan;
     }

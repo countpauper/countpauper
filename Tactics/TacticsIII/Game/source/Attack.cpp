@@ -78,6 +78,11 @@ std::string Attack::Description() const
     return std::string("Attack ") + std::string(target.GetAppearance().Name());
 }
 
+bool Attack::TargetAvatar() const 
+{
+    return true;
+}
+
 Position Attack::GetDestination() const
 {
     return target.GetPosition();

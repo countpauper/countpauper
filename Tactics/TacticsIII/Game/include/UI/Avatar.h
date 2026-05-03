@@ -7,7 +7,7 @@
 #include "UI/Scenery.h"
 #include "UI/Bus.h"
 
-namespace Game
+namespace Game::UI
 {
 class Counter;
 

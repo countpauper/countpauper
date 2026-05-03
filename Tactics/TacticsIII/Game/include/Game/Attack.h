@@ -13,6 +13,7 @@ public:
     std::vector<Delta> Execute(std::ostream& log) const override;
     unsigned AP() const override;
     std::string Description() const override;
+    bool TargetAvatar() const override;
     Position GetDestination() const override;
     unsigned GetDistance() const override;    
 private:

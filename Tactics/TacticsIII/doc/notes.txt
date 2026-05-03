@@ -112,8 +112,12 @@ Physics and Magics
 [done, Up&Down] Create action
 - Action bar in the bottom (see old one in Tactics/Tactics/Skillbar.h)
 - Select action with F-keys  (immediate)
-- Use slected (other) action on target location (like attack, maybe add shoot) 
+- Use selected (other) action on target location (like attack, maybe add shoot) 
 - Select action/spell with click
+
+
+= Tech debt 
+- Replace all Logging::Log with std::format & syntax 
 
 = Create water (later can ignite=start fire)
 - Spell action: Create water 

@@ -14,12 +14,12 @@
 namespace Game
 {
 
-Avatars DeserializeAvatars(const World& world, const Races& races, const ItemDatabase& items, const json& data)
+UI::Avatars DeserializeAvatars(const World& world, const Races& races, const ItemDatabase& items, const json& data)
 {
-    Avatars result;
+    UI::Avatars result;
     for(auto avatarData : data)
     {
-        result.emplace_back(std::move(std::make_unique<Avatar>(world, races, items, avatarData)));
+        result.emplace_back(std::move(std::make_unique<UI::Avatar>(world, races, items, avatarData)));
     }
     return std::move(result);
 }
@@ -37,7 +37,7 @@ Game::Game(Engine::Scene& scene, const json& data) :
 
     Engine::Application::Get().bus.Subscribe(*this,
     {
-        Engine::MessageType<Selected>(),
+        Engine::MessageType<UI::Selected>(),
         Engine::MessageType<Engine::ClickOn>(),
         Engine::MessageType<Engine::KeyPressed>()
     });
@@ -102,7 +102,7 @@ void Game::OnMessage(const Engine::Message& message)
 {
     if (auto clickOn = message.Cast<Engine::ClickOn>())
     {
-        auto target = dynamic_cast<const Avatar*>(clickOn->object);
+        auto target = dynamic_cast<const UI::Avatar*>(clickOn->object);
         if (clickOn->object == &map)
         {
             auto bounds = map.GetBounds();
@@ -120,20 +120,20 @@ void Game::OnMessage(const Engine::Message& message)
             }
             else
             {
-                plan = Plan::Attack(*this, Current(), const_cast<Avatar&>(*target));
+                plan = Plan::Attack(*this, Current(), const_cast<UI::Avatar&>(*target));
             }
         }
         auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
         lbl->SetText(plan.Description());
         Changed();
     }
-    else if (auto selected = message.Cast<Selected>())
+    else if (auto selected = message.Cast<UI::Selected>())
     {
         if (selected->avatar)
         {
             Focus(selected->avatar->GetCoordinate());
             auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("left_lbl");
-            lbl->SetText(selected->avatar->Sheet());
+            lbl->SetText(selected->avatar-> Sheet());
         }
         else
         {
@@ -163,7 +163,7 @@ void Game::OnMessage(const Engine::Message& message)
     }
 }
 
-Avatar& Game::Current() const
+UI::Avatar& Game::Current() const
 {
     return *avatars[turn];
 }

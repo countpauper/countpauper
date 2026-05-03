@@ -76,14 +76,14 @@ std::string Plan::Execute()
     return s.str();
 }
 
-Plan Plan::Move(World& world, Avatar& actor, Position destination, unsigned distance)
+Plan Plan::Move(World& world, UI::Avatar& actor, Position destination, unsigned distance)
 {
     Plan result;
     result.actions.emplace_back(std::move(std::make_unique<::Game::Move>(world, actor, destination, distance)));
     return result;
 }
 
-Plan Plan::Attack(World& world, Avatar& actor, Avatar& target)
+Plan Plan::Attack(World& world, UI::Avatar& actor, UI::Avatar& target)
 {
     return Act<Game::Attack>(world, actor, target);
 }

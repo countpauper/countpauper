@@ -9,7 +9,7 @@
 #include "Game/Map.h"
 #include "Game/World.h"
 
-namespace Game
+namespace Game::UI
 {
 
 Avatar::Avatar(const World& world, const Races& races, const ItemDatabase& items, const json& data) :
@@ -48,7 +48,7 @@ void Avatar::GenerateMesh()
 void Avatar::SubscribeBus()
 {
     Engine::Application::Get().bus.Subscribe(*this, {
-            Engine::MessageType<Game::Selected>()
+            Engine::MessageType<Selected>()
         });
 }
 

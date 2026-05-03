@@ -19,7 +19,7 @@ int main(int argc, char**argv)
         Engine::Singleton<Engine::Application> app(argc, argv);
         Engine::Window window;
         window.SetTitle("Tactics III");
-        Layout layout;
+        Game::UI::Layout layout;
         window.GetHUD().Add(layout.root());
         Game::Game game(window.GetScene(), Engine::LoadJson("level.json"));
         app->Run();

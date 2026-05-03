@@ -2,6 +2,7 @@
 #include "Game/Map.h"
 #include "UI/Avatar.h"
 #include "UI/Bus.h"
+#include "UI/ActionSelection.h"
 #include "Game/Plan.h"
 #include "Game/World.h"
 #include "Game/Race.h"
@@ -27,7 +28,7 @@ public:
     bool Obstacle(Position at, const Actor* except=nullptr) const override;
     json Serialize() const;
 private:
-    Avatar& Current() const;
+    UI::Avatar& Current() const;
     void Focus(Engine::Position pos);
     void Focus(Engine::Coordinate coord);
     void OnMessage(const Engine::Message& message);
@@ -38,7 +39,8 @@ private:
     ItemDatabase items;
     Map map;
     Plan plan;
-    Avatars avatars;
+    UI::Avatars avatars;
+    UI::ActionSelection selectedAction;
     unsigned round=0;
     unsigned turn=0;
 };
