@@ -14,12 +14,18 @@ public:
     ActionSelection();
 private:
     void OnMessage(const Engine::Message& message) override;
-    void HideActions();
-    void ShowActions(const class Avatar& avatar);
+
+    using ActionFactory = std::function<Plan()>;
+    using SelectableActions = std::map<Engine::Button*, std::function<Plan()>>;
+    SelectableActions FindButtons();
+
+    void DepopulateButtons();
+    void PopulateButtons(const class Avatar& avatar);
+    void StyleButtons();
 private:
+    
     Engine::Button* selectedButton;
-    std::map<Engine::Button*, std::function<Plan()>> actionFactories;
-    std::vector<std::reference_wrapper<Engine::Button>> actionButtons;
+    SelectableActions actionButtons;
 };
 
 }

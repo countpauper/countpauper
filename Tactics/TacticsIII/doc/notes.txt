@@ -118,6 +118,7 @@ Physics and Magics
 
 = Tech debt 
 - Replace all Logging::Log with std::format & syntax 
+- Make label style properties together a Style and switch (enabled, disabled, selected, highlighted)
 
 = Create water (later can ignite=start fire)
 - Spell action: Create water 

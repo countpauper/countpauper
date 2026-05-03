@@ -12,16 +12,16 @@ namespace Game::UI
 {
 
 
-std::vector<std::reference_wrapper<Engine::Button>> FindActionButtons()
+ActionSelection::SelectableActions ActionSelection::FindButtons()
 {
-    std::vector<std::reference_wrapper<Engine::Button>> buttons;
+    SelectableActions buttons;
     for(int i=0; i<10; ++i)
     {
         // TODO: Could be faster to find action bar(s) and add all their button children
         auto* button = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Button>(std::format("action{}",i));
         assert(button);
         button->SetHotkey(static_cast<char>('0' + (i+1)%10));        
-        buttons.emplace_back(*button);
+        buttons.emplace(button, ActionFactory());
     }
     return buttons;
 }
@@ -29,7 +29,7 @@ std::vector<std::reference_wrapper<Engine::Button>> FindActionButtons()
 
 ActionSelection::ActionSelection()
     : selectedButton(nullptr)
-    , actionButtons(FindActionButtons())
+    , actionButtons(FindButtons())
 {   
     Engine::Application::Get().bus.Subscribe(*this,
     {
@@ -37,7 +37,7 @@ ActionSelection::ActionSelection()
         Engine::MessageType<Engine::Button::Clicked>()
     });
 
-    HideActions();
+    StyleButtons();
 }
 
 void ActionSelection::OnMessage(const Engine::Message& message)
@@ -45,12 +45,17 @@ void ActionSelection::OnMessage(const Engine::Message& message)
     if (auto selected = message.Cast<UI::Selected>())
     {
         if (selected->avatar)
-            ShowActions(*selected->avatar);
+            PopulateButtons(*selected->avatar);
         else
-            HideActions();
+            DepopulateButtons();
+        StyleButtons();
     }
     else if (auto clicked = message.Cast<Engine::Button::Clicked>())
     {
+        auto it = actionButtons.find(&clicked->button);
+        if (it == actionButtons.end())
+            return;
+        
         if (selectedButton)
         {
             selectedButton->outline = Engine::RGBA(128, 128, 128);
@@ -66,26 +71,21 @@ void ActionSelection::OnMessage(const Engine::Message& message)
             selectedButton = &button;
             Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Selected (%s)", button.Name().c_str());
             selectedButton->outline = Engine::RGBA::white;
-
-            if (auto it = actionFactories.find(&button); it != actionFactories.end())
-            {
-                auto plan = it->second();
-            }
         }
         Engine::Application::Get().bus.Post(Engine::Redraw());
     }
 }
 
-void ActionSelection::HideActions()
+void ActionSelection::DepopulateButtons()
 {
-    for(auto button : actionButtons)
+    for(auto& button : actionButtons)
     {
-        button.get().Hide();
+        button.first->Hide();
+        button.second = ActionFactory();
     }
-    actionFactories.clear();
 }
 
-void ActionSelection::ShowActions(const class Avatar& avatar)
+void ActionSelection::PopulateButtons(const class Avatar& avatar)
 {
     std::array<std::string_view, 10> actionName = {
         "up",
@@ -99,30 +99,41 @@ void ActionSelection::ShowActions(const class Avatar& avatar)
         "",
         "end"
     };
-    int hotkey = 1;
-    for(auto [button, name] : std::views::zip(actionButtons, actionName))
+    for(auto [buttonItem, name] : std::views::zip(actionButtons, actionName))
     {
-        button.get().Show();
-        button.get().SetText(name);
-
+        auto& button = *buttonItem.first;
+        button.SetText(name);
         if (!name.empty())
         {
-            auto& btn = button.get();
             if (name == "up")
             {
-                actionFactories[&btn] = [&avatar]() { return Plan(); };
+                buttonItem.second = [&avatar]() { return Plan(); };
             }
             else if (name == "down")
             {
-                actionFactories[&btn] = [&avatar]() { return Plan(); };
+                buttonItem.second = [&avatar]() { return Plan(); };
             }
             else if (name == "end")
             {
-                actionFactories[&btn] = [&avatar]() { return Plan(); };
+                buttonItem.second = [&avatar]() { return Plan(); };
+            }
+            else 
+            {
+                buttonItem.second = ActionFactory();
             }
         }
+    }
+}
 
-        hotkey++;
+
+void ActionSelection::StyleButtons()
+{
+    for(auto& button : actionButtons)
+    {
+        if (button.second)
+            button.first->Enable();
+        else 
+            button.first->Disable();
     }
 }
 
