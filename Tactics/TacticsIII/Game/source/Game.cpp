@@ -144,7 +144,7 @@ void Game::OnMessage(const Engine::Message& message)
     else if (auto key = message.Cast<Engine::KeyPressed>())
     {
         if (key->ascii == 13)
-        {
+        {   // TODO make this a button with a hotkey on the actions bar
             auto desc = plan.Execute();
             auto log = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("log_lbl");
             log->AddText(desc);
@@ -157,7 +157,7 @@ void Game::OnMessage(const Engine::Message& message)
             Changed();
         }
         else if (key->code == 2)
-        {
+        {   // TODO make this a button with a hotkey, remove game key subscription 
             Engine::SaveJson(Serialize(), "savegame.json");
         }
     }

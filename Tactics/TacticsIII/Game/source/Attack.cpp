@@ -7,9 +7,9 @@
 namespace Game
 {
 
-Attack::Attack(World& world, Actor& actor, Actor& target) :
+Attack::Attack(World& world, Actor& actor, std::reference_wrapper<Actor> target) :
     Action(world, actor),
-    target(target)
+    target(target.get())
 {
 }
 
@@ -76,11 +76,6 @@ unsigned Attack::AP() const
 std::string Attack::Description() const
 {
     return std::string("Attack ") + std::string(target.GetAppearance().Name());
-}
-
-bool Attack::TargetAvatar() const 
-{
-    return true;
 }
 
 Position Attack::GetDestination() const

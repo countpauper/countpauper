@@ -193,10 +193,6 @@ std::string Move::Description() const
     return ss.str();
 }
 
-bool Move::TargetDestination() const 
-{
-    return true;
-}
 
 Position Move::GetDestination() const
 {
