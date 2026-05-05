@@ -1,3 +1,4 @@
+#include "Game/UpDown.h"
 #include "UI/ActionSelection.h"
 #include "UI/GameMessages.h"
 #include "UI/Button.h"
@@ -21,20 +22,23 @@ ActionSelection::SelectableActions ActionSelection::FindButtons()
         auto* button = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Button>(std::format("action{}",i));
         assert(button);
         button->SetHotkey(static_cast<char>('0' + (i+1)%10));        
-        buttons.emplace(button, ActionFactory());
+        buttons.emplace(button, ButtonAction());
     }
     return buttons;
 }
 
 
-ActionSelection::ActionSelection()
-    : selectedButton(nullptr)
+ActionSelection::ActionSelection(World& world)
+    : world(world)
+    , selectedButton(nullptr)
+    , selectedActor(nullptr)
     , actionButtons(FindButtons())
 {   
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<UI::Selected>(),
-        Engine::MessageType<Engine::Button::Clicked>()
+        Engine::MessageType<Engine::Button::Clicked>(),
+        Engine::MessageType<ActionFactoryIF::Complete>()
     });
 
     StyleButtons();
@@ -44,11 +48,11 @@ void ActionSelection::OnMessage(const Engine::Message& message)
 {
     if (auto selected = message.Cast<UI::Selected>())
     {
+        DepopulateButtons();
         if (selected->avatar)
             PopulateButtons(*selected->avatar);
-        else
-            DepopulateButtons();
         StyleButtons();
+        selectedActor = selected->avatar;
     }
     else if (auto clicked = message.Cast<Engine::Button::Clicked>())
     {
@@ -71,22 +75,39 @@ void ActionSelection::OnMessage(const Engine::Message& message)
             selectedButton = &button;
             Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Selected (%s)", button.Name().c_str());
             selectedButton->outline = Engine::RGBA::white;
+            it->second->Activate();
         }
         Engine::Application::Get().bus.Post(Engine::Redraw());
     }
+    else if (auto complete = message.Cast<ActionFactoryIF::Complete>())
+    {
+        if (selectedButton && 
+            actionButtons.find(selectedButton)->second.get() == &complete->factory)
+        {
+            selectedButton->outline = Engine::RGBA(128, 128, 128);
+            selectedButton = nullptr;
+        }
+    }
 }
+
 
 void ActionSelection::DepopulateButtons()
 {
+    if (selectedButton)
+    {
+        selectedButton = nullptr;
+    }
     for(auto& button : actionButtons)
     {
         button.first->Hide();
-        button.second = ActionFactory();
+        button.second.reset();
     }
 }
 
 void ActionSelection::PopulateButtons(const class Avatar& avatar)
 {
+
+
     std::array<std::string_view, 10> actionName = {
         "up",
         "down",
@@ -103,23 +124,24 @@ void ActionSelection::PopulateButtons(const class Avatar& avatar)
     {
         auto& button = *buttonItem.first;
         button.SetText(name);
+        button.Show();
         if (!name.empty())
         {
             if (name == "up")
             {
-                buttonItem.second = [&avatar]() { return Plan(); };
+                buttonItem.second = std::move(std::make_unique<ActionFactory<Up>>());
             }
             else if (name == "down")
             {
-                buttonItem.second = [&avatar]() { return Plan(); };
+                buttonItem.second = std::move(std::make_unique<ActionFactory<Down>>());
             }
             else if (name == "end")
             {
-                buttonItem.second = [&avatar]() { return Plan(); };
+                // TODO some other lambda with world and actor? 
             }
             else 
             {
-                buttonItem.second = ActionFactory();
+                buttonItem.second.reset();
             }
         }
     }

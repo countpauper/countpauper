@@ -50,7 +50,6 @@ TEST(TargetQueue, TargetAndPosition)
     EXPECT_EQ(queue.as_tuple(), std::make_tuple(static_cast<Actor*>(&actor), Position(-1, 0, -3)));
 }
 
-
 TEST(TargetQueue, VariadicTarget)
 {
     using TargetOptions = std::variant<Actor*, Position>;

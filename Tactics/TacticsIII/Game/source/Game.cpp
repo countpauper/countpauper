@@ -30,7 +30,8 @@ Game::Game(Engine::Scene& scene, const json& data) :
     items(Engine::LoadJson(Engine::get_value_or<std::string_view>(data, "items", "data/items.json"))),
     map(Engine::get_value_or<std::string_view>(data, "map", "data/map20.png")),
     round(Engine::get_value_or<unsigned>(data, "round", 0)),
-    turn(Engine::get_value_or<unsigned>(data, "turn", 0))
+    turn(Engine::get_value_or<unsigned>(data, "turn", 0)),
+    selectedAction(*this)
 {
     Creature::definition.Parse(Engine::LoadJson("data/creature.json"));
     avatars = DeserializeAvatars(*this, races, items, Engine::get_value_or(data, "avatars", json::array()));

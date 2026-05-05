@@ -110,11 +110,10 @@ Physics and Magics
 
 = Extra actions 
 [done, Up&Down] Create action
-- Action bar in the bottom (see old one in Tactics/Tactics/Skillbar.h)
-- Select action with F-keys  (immediate)
+* Action bar in the bottom (see old one in Tactics/Tactics/Skillbar.h)
+* Select action with hotkeys  (immediate)
 - Use selected (other) action on target location (like attack, maybe add shoot) 
 - Select action/spell with click
-
 
 = Tech debt 
 - Replace all Logging::Log with std::format & syntax 
