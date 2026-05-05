@@ -49,6 +49,19 @@ public:
         elements[count++] = std::forward<ET>(value);
     }
 
+    template<typename ET>
+    bool ExpectNext() const 
+    {
+        if constexpr(sizeof...(T)==0)
+            return std::is_void_v<ET>;
+        else 
+        {
+            if (IsComplete())
+                return std::is_void_v<ET>;
+            return isConvertibleToActiveType<ET>(elements[count]);
+        }
+    }
+
     variant_type operator[](size_t idx)
     {
         if (idx >= count) 

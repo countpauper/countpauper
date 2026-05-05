@@ -12,7 +12,8 @@ TEST(TargetQueue, Void)
     EXPECT_TRUE(TargetQueue<>().IsComplete());
     EXPECT_TRUE(TargetQueue<>().IsEmpty());
     EXPECT_EQ(TargetQueue<>().as_tuple(), std::tuple<>());
-
+    EXPECT_FALSE(TargetQueue<>().ExpectNext<bool>());
+    EXPECT_TRUE(TargetQueue<>().ExpectNext<void>());
 }
 
 TEST(TargetQueue, Position)
@@ -21,6 +22,7 @@ TEST(TargetQueue, Position)
     EXPECT_FALSE(queue.IsComplete());
     EXPECT_TRUE(queue.IsEmpty());
     EXPECT_THROW(queue.pop(), std::runtime_error);
+    EXPECT_TRUE(queue.ExpectNext<Position>());
     queue.push_back(Position{1,2,3});
     EXPECT_FALSE(queue.IsEmpty());
     EXPECT_TRUE(queue.IsComplete());
@@ -35,6 +37,7 @@ TEST(TargetQueue, TargetAndPosition)
 {
     TargetQueue<Actor*, Position> queue;
     EXPECT_THROW(queue.push_back(Position(-1,0,-3)), std::bad_variant_access);
+    EXPECT_FALSE(queue.ExpectNext<Position>());
     EXPECT_TRUE(queue.IsEmpty());
     MockActor actor;
     queue.push_back(&actor);
@@ -52,6 +55,8 @@ TEST(TargetQueue, VariadicTarget)
 {
     using TargetOptions = std::variant<Actor*, Position>;
     TargetQueue<TargetOptions> queue;
+    EXPECT_TRUE(queue.ExpectNext<Position>());
+    EXPECT_TRUE(queue.ExpectNext<Actor*>());
     queue.push_back(Position(-4,2,1));
     EXPECT_TRUE(queue.IsComplete());
     EXPECT_EQ(std::get<Position>(std::get<TargetOptions>(queue.pop())), Position(-4,2,1));
