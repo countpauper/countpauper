@@ -15,7 +15,7 @@ Button::Button(std::string_view name, std::string_view text) :
 
 Control* Button::Click(Coordinate pos)
 {
-    if (!IsEnabled())
+    if (IsEnabled())
         Application::Get().bus.Post(Clicked(*this));
     return this;
 }
@@ -43,7 +43,7 @@ void Button::OnMessage(const Message& message)
     if (auto key = message.Cast<Engine::KeyPressed>())
     {
         if (hotkey == std::make_pair(key->code, key->ascii) &&
-            IsEnabled());
+            IsEnabled())
         {
             Application::Get().bus.Post(Clicked(*this));
         }
