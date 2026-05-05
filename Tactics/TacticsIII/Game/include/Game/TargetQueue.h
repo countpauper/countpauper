@@ -8,10 +8,6 @@
 namespace Game
 {
 
-
-template<typename T, typename... Ts>
-concept IsOneOf = (std::same_as<T, Ts> || ...);
-
 template<typename... T> 
 class TargetQueue
 {
@@ -44,17 +40,15 @@ public:
     }
 
     template<typename ET>
-    //requires IsOneOf<ET, T...>
     void push_back( ET&& value) 
     {
         if (IsComplete())
             throw std::out_of_range("Target queue is already complete.");        
-        if (!std::holds_alternative<ET>(elements[count])) 
+        if (!isConvertibleToActiveType<ET>(elements[count])) 
             throw std::bad_variant_access();
         elements[count++] = std::forward<ET>(value);
     }
 
-    // Get the value at index idx (as a variant)
     variant_type operator[](size_t idx)
     {
         if (idx >= count) 
@@ -86,6 +80,22 @@ public:
         }
     }
 private:
+    // Helper to check if ET is convertible to the active variant type of var
+    template<typename ET>
+    bool isConvertibleToActiveType(const variant_type& var) const 
+    {
+        return std::visit([](const auto& arg) 
+        {
+            using ActiveType = std::decay_t<decltype(arg)>;
+            return std::is_convertible_v<ET, ActiveType>;
+        }, var);
+    }
+
+    // TODO: it could be possible to store the tuple directly, but setting a tuple element then requires a complicated fold expression
+    // that unpacks all elements of the current version and only replaces the one at count with the new version to reconstruct the new tuple
+    // This might be worht it if there are vastly different size elements in the tuple and the size of the array becomes unnecessarily big.
+    // also isConvertibleToActiveType would have to be rewritten with a fold expression that only checks std::is_convertible at the matching
+    // runtime==compile time element (and the rest true, then conjunction of the results).  
     std::array<variant_type, sizeof...(T)> elements;
     std::size_t count = 0;
 };
