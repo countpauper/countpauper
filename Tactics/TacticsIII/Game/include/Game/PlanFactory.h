@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/Action.h"
+#include "Game/Plan.h"
 #include "Game/TargetQueue.h"
 #include "Game/Map.h"
 #include "UI/WindowMessages.h"
@@ -38,6 +38,20 @@ public:
 private:
 };
 
+class DefaultPlanFactory : 
+    public PlanFactoryIF,
+    public Engine::Passenger
+{
+public:
+    void Activate() override;
+    void Deactivate() override;
+    Plan operator()(World& world, Actor& actor) const override;
+protected:
+    void OnMessage(const Engine::Message& message) override;
+private: 
+    std::variant<std::monostate, Position, Actor*> target;
+};
+
 template<class AT>
 class PlanFactoryAction : 
     public PlanFactoryIF,
@@ -71,7 +85,14 @@ protected:
     {
         if (auto clickOn = message.Cast<Engine::ClickOn>())
         {
-            auto target = dynamic_cast<const UI::Avatar*>(clickOn->object);
+            if (auto target = dynamic_cast<const Actor*>(clickOn->object))
+            {
+                if (targets.template ExpectNext<Actor*>())
+                {
+                    targets.push_back(target);
+                }
+                // else warning? Or if position, position of target?  
+            }
             if (const auto* map = dynamic_cast<const Map*>(clickOn->object))
             {
                 if (targets.template ExpectNext<Position>())
@@ -79,6 +100,7 @@ protected:
                     Position destination = map->IdToPosition(clickOn->sub);
                     targets.push_back(destination);
                 }
+                // else warning? Or if target, target that is standing exactly at that position ?                 
             }
             if (targets.IsComplete())
                 Engine::Application::Get().bus.Post(Complete(*this));            

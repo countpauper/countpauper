@@ -30,7 +30,7 @@ private:
     void SelectDefault();
     
     World& world;
-    PlanFactoryAction<Move> moveFactory; 
+    DefaultPlanFactory defaultFactory; 
     // TODO attackFactory, activate by default;
     Engine::Button* selectedButton;
     class Actor* selectedActor;

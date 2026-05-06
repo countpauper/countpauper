@@ -52,7 +52,7 @@ void ActionSelection::Select(Engine::Button& button)
     selectedButton->outline = Engine::RGBA::white;
     auto it = actionButtons.find(selectedButton);
     it->second->Activate();
-    moveFactory.Deactivate();
+    defaultFactory.Deactivate();
 }
 
 void ActionSelection::Deselect()
@@ -70,7 +70,7 @@ void ActionSelection::Deselect()
 void ActionSelection::SelectDefault()
 {
     Deselect();
-    moveFactory.Activate();
+    defaultFactory.Activate();
 }
 
 void ActionSelection::OnMessage(const Engine::Message& message)

@@ -32,9 +32,8 @@ public:
     unsigned AP() const;
     std::string Execute();
 
-    // TODO: helpers to create an attack plan, flee (move) plan, spell/technique plan, dodge, ready and so on plan for UI and AI level
     static Plan Move(World& world, Actor& actor, Position destination, unsigned distance=0);
-    static Plan Attack(World& world, Actor& actor, UI::Avatar& target); 
+    static Plan Attack(World& world, Actor& actor, Actor& target); 
 
     template<typename A, typename... Params> 
     requires std::is_base_of_v<Action, A>

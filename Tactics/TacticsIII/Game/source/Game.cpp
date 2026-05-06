@@ -40,7 +40,6 @@ Game::Game(Engine::Scene& scene, const json& data) :
     Engine::Application::Get().bus.Subscribe(*this,
     {
         Engine::MessageType<UI::Selected>(),
-        Engine::MessageType<Engine::ClickOn>(),
         Engine::MessageType<Engine::KeyPressed>(),
         Engine::MessageType<PlanFactoryIF::Complete>()
 
@@ -95,28 +94,7 @@ void Game::Focus(Engine::Coordinate coord)
 
 void Game::OnMessage(const Engine::Message& message)
 {
-    if (auto clickOn = message.Cast<Engine::ClickOn>())
-    {
-        auto target = dynamic_cast<const UI::Avatar*>(clickOn->object);
-        if (target)
-        {
-            if (target == &Current())
-            {
-                if (target->GetConditions().Is<Downed>())
-                    plan = Plan::Act<Up>(*this, Current());
-                else 
-                    plan = Plan::Act<Down>(*this, Current());
-            }
-            else
-            {
-                plan = Plan::Attack(*this, Current(), const_cast<UI::Avatar&>(*target));
-            }
-        }
-        auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
-        lbl->SetText(plan.Description());
-        Changed();
-    }
-    else if (auto complete = message.Cast<PlanFactoryIF::Complete>())
+    if (auto complete = message.Cast<PlanFactoryIF::Complete>())
     {
         plan = complete->factory(*this, Current());
         auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");

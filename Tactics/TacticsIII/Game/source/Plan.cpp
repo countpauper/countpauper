@@ -83,7 +83,7 @@ Plan Plan::Move(World& world, Actor& actor, Position destination, unsigned dista
     return result;
 }
 
-Plan Plan::Attack(World& world, Actor& actor, UI::Avatar& target)
+Plan Plan::Attack(World& world, Actor& actor, Actor& target)
 {
     return Act<Game::Attack>(world, actor, target);
 }
