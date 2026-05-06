@@ -3,7 +3,8 @@
 #include "UI/Bus.h"
 #include "UI/Button.h"
 #include "Game/Plan.h"
-#include "Game/ActionFactory.h"
+#include "Game/PlanFactory.h"
+#include "Game/Move.h"
 #include <map>
 #include <functional>
 
@@ -16,7 +17,7 @@ public:
 private:
     void OnMessage(const Engine::Message& message) override;
 
-    using ButtonAction = std::unique_ptr<ActionFactoryIF>;
+    using ButtonAction = std::unique_ptr<PlanFactoryIF>;
     using SelectableActions = std::map<Engine::Button*, ButtonAction>;
     SelectableActions FindButtons();
 
@@ -24,8 +25,13 @@ private:
     void PopulateButtons(const class Avatar& avatar);
     void StyleButtons();
 private:
-    void Activate(ActionFactoryIF& factory);
+    void Select(Engine::Button& button);
+    void Deselect();
+    void SelectDefault();
+    
     World& world;
+    PlanFactoryAction<Move> moveFactory; 
+    // TODO attackFactory, activate by default;
     Engine::Button* selectedButton;
     class Actor* selectedActor;
     SelectableActions actionButtons;

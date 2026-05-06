@@ -138,6 +138,17 @@ const Slice& Map::SliceAt(int x, int y) const
     return slices.at(SliceIdx(x, y));
 }
 
+Position Map::IdToPosition(uint32_t id) const
+{
+    auto bounds = GetBounds();
+    return Position{
+        static_cast<int>((id                                      ) % bounds.x.Size()),
+        static_cast<int>((id /  bounds.x.Size()                   ) % bounds.y.Size()),
+        static_cast<int>((id / (bounds.x.Size() * bounds.y.Size())) % bounds.z.Size())
+    } + Position(bounds.Start());
+}
+
+
 void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl, float temperature)
 {
 

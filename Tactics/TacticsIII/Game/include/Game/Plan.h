@@ -33,12 +33,12 @@ public:
     std::string Execute();
 
     // TODO: helpers to create an attack plan, flee (move) plan, spell/technique plan, dodge, ready and so on plan for UI and AI level
-    static Plan Move(World& world, UI::Avatar& actor, Position destination, unsigned distance=0);
-    static Plan Attack(World& world, UI::Avatar& actor, UI::Avatar& target); 
+    static Plan Move(World& world, Actor& actor, Position destination, unsigned distance=0);
+    static Plan Attack(World& world, Actor& actor, UI::Avatar& target); 
 
     template<typename A, typename... Params> 
     requires std::is_base_of_v<Action, A>
-    static Plan Act(World& world, UI::Avatar& actor, Params&&... params)
+    static Plan Act(World& world, Actor& actor, Params&&... params)
     {
         auto action = std::make_unique<A>(world, actor, std::forward<Params>(params)...);
         Plan plan;

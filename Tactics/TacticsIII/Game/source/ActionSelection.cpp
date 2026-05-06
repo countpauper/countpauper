@@ -38,10 +38,39 @@ ActionSelection::ActionSelection(World& world)
     {
         Engine::MessageType<UI::Selected>(),
         Engine::MessageType<Engine::Button::Clicked>(),
-        Engine::MessageType<ActionFactoryIF::Complete>()
+        Engine::MessageType<PlanFactoryIF::Complete>()
     });
 
     StyleButtons();
+    SelectDefault();
+}
+
+void ActionSelection::Select(Engine::Button& button)
+{
+    selectedButton = &button;
+    Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Selected (%s)", button.Name().c_str());
+    selectedButton->outline = Engine::RGBA::white;
+    auto it = actionButtons.find(selectedButton);
+    it->second->Activate();
+    moveFactory.Deactivate();
+}
+
+void ActionSelection::Deselect()
+{
+    if (selectedButton)
+    {
+        Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Deselected (%s)", selectedButton->Name().c_str());
+        auto it = actionButtons.find(selectedButton);
+        it->second->Deactivate();
+        selectedButton->outline = Engine::RGBA(128, 128, 128);
+        selectedButton = nullptr;
+    }
+}
+
+void ActionSelection::SelectDefault()
+{
+    Deselect();
+    moveFactory.Activate();
 }
 
 void ActionSelection::OnMessage(const Engine::Message& message)
@@ -60,32 +89,24 @@ void ActionSelection::OnMessage(const Engine::Message& message)
         if (it == actionButtons.end())
             return;
         
-        if (selectedButton)
-        {
-            selectedButton->outline = Engine::RGBA(128, 128, 128);
-        }
         auto& button = clicked->button;
         if (selectedButton == &button)
         {
-            Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Deselected (%s)", button.Name().c_str());
-            selectedButton = nullptr;
+            SelectDefault();
         }
         else
         {
-            selectedButton = &button;
-            Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Selected (%s)", button.Name().c_str());
-            selectedButton->outline = Engine::RGBA::white;
-            it->second->Activate();
+            Deselect();
+            Select(button);
         }
         Engine::Application::Get().bus.Post(Engine::Redraw());
     }
-    else if (auto complete = message.Cast<ActionFactoryIF::Complete>())
+    else if (auto complete = message.Cast<PlanFactoryIF::Complete>())
     {
         if (selectedButton && 
             actionButtons.find(selectedButton)->second.get() == &complete->factory)
         {
-            selectedButton->outline = Engine::RGBA(128, 128, 128);
-            selectedButton = nullptr;
+            SelectDefault();
         }
     }
 }
@@ -93,10 +114,7 @@ void ActionSelection::OnMessage(const Engine::Message& message)
 
 void ActionSelection::DepopulateButtons()
 {
-    if (selectedButton)
-    {
-        selectedButton = nullptr;
-    }
+    Deselect();
     for(auto& button : actionButtons)
     {
         button.first->Hide();
@@ -106,8 +124,7 @@ void ActionSelection::DepopulateButtons()
 
 void ActionSelection::PopulateButtons(const class Avatar& avatar)
 {
-
-
+    // TODO get the name from the action factory, ie from the action statically? Or the other way around (not from the model but from the view )
     std::array<std::string_view, 10> actionName = {
         "up",
         "down",
@@ -129,11 +146,11 @@ void ActionSelection::PopulateButtons(const class Avatar& avatar)
         {
             if (name == "up")
             {
-                buttonItem.second = std::move(std::make_unique<ActionFactory<Up>>());
+                buttonItem.second = std::move(std::make_unique<PlanFactoryAction<Up>>());
             }
             else if (name == "down")
             {
-                buttonItem.second = std::move(std::make_unique<ActionFactory<Down>>());
+                buttonItem.second = std::move(std::make_unique<PlanFactoryAction<Down>>());
             }
             else if (name == "end")
             {

@@ -76,6 +76,11 @@ public:
         return elements[--count];
     }
 
+    void clear()
+    {
+        count = 0;
+    }
+
     // Convert back to a std::tuple<Ts...>
     tuple_type as_tuple() const 
     {
@@ -95,7 +100,7 @@ public:
 private:
     // Helper to check if ET is convertible to the active variant type of var
     template<typename ET>
-    bool isConvertibleToActiveType(const variant_type& var) const 
+    constexpr bool isConvertibleToActiveType(const variant_type& var) const 
     {
         return std::visit([](const auto& arg) 
         {
@@ -111,6 +116,61 @@ private:
     // runtime==compile time element (and the rest true, then conjunction of the results).  
     std::array<variant_type, sizeof...(T)> elements;
     std::size_t count = 0;
+};
+
+
+template<> 
+class TargetQueue<>
+{
+public: 
+    using variant_type = std::variant<std::monostate>;
+    using tuple_type = std::tuple<>;
+
+    TargetQueue()
+    {   
+    }
+
+    bool IsComplete() const 
+    { 
+        return true;
+    }
+
+    bool IsEmpty() const 
+    {
+        return true;
+    }
+
+    template<typename ET>
+    void push_back( ET&& value) 
+    {
+        throw std::out_of_range("Target queue is always complete.");        
+    }
+
+    template<typename ET>
+    bool ExpectNext() const 
+    {
+        return false;
+    }
+
+    variant_type operator[](size_t)
+    {
+        throw std::out_of_range("Index out of range.");
+    }
+
+    variant_type pop()
+    {
+        throw std::runtime_error("Target queue is always empty.");
+    }
+
+    void clear()
+    {
+    }
+
+    // Convert back to a std::tuple<Ts...>
+    tuple_type as_tuple() const 
+    {
+        return tuple_type();
+    }
 };
 
 

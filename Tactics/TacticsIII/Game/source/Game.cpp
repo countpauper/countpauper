@@ -3,6 +3,7 @@
 #include "Game/Game.h"
 #include "Game/UpDown.h"
 #include "Game/Equipment.h"
+#include "Game/PlanFactory.h"
 #include "UI/Scene.h"
 #include "UI/Application.h"
 #include "UI/GameMessages.h"
@@ -40,7 +41,9 @@ Game::Game(Engine::Scene& scene, const json& data) :
     {
         Engine::MessageType<UI::Selected>(),
         Engine::MessageType<Engine::ClickOn>(),
-        Engine::MessageType<Engine::KeyPressed>()
+        Engine::MessageType<Engine::KeyPressed>(),
+        Engine::MessageType<PlanFactoryIF::Complete>()
+
     });
     scene.Add(map);
     scene.Add(plan);
@@ -90,27 +93,12 @@ void Game::Focus(Engine::Coordinate coord)
     }
 }
 
-Engine::Position IdToPosition(uint32_t id, const Engine::IntBox& bounds)
-{
-    return Engine::Position{
-        static_cast<int>((id                                      ) % bounds.x.Size()),
-        static_cast<int>((id /  bounds.x.Size()                   ) % bounds.y.Size()),
-        static_cast<int>((id / (bounds.x.Size() * bounds.y.Size())) % bounds.z.Size())
-    } + bounds.Start();
-}
-
 void Game::OnMessage(const Engine::Message& message)
 {
     if (auto clickOn = message.Cast<Engine::ClickOn>())
     {
         auto target = dynamic_cast<const UI::Avatar*>(clickOn->object);
-        if (clickOn->object == &map)
-        {
-            auto bounds = map.GetBounds();
-            Engine::Position destination = IdToPosition(clickOn->sub, bounds);
-            plan = Plan::Move(*this, Current(), Position(destination));
-        }
-        else if (target)
+        if (target)
         {
             if (target == &Current())
             {
@@ -127,6 +115,13 @@ void Game::OnMessage(const Engine::Message& message)
         auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
         lbl->SetText(plan.Description());
         Changed();
+    }
+    else if (auto complete = message.Cast<PlanFactoryIF::Complete>())
+    {
+        plan = complete->factory(*this, Current());
+        auto lbl = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("right_lbl");
+        lbl->SetText(plan.Description());
+        Changed();        
     }
     else if (auto selected = message.Cast<UI::Selected>())
     {

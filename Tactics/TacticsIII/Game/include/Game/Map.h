@@ -27,6 +27,7 @@ public:
     std::string_view Name() const override;
     std::string_view FileName() const;
     Engine::Mesh& GetMesh();
+    Position IdToPosition(uint32_t id) const;
     // Map Itf
     Engine::IntBox GetBounds() const override;
     const Slice& SliceAt(int x, int y) const override; 
