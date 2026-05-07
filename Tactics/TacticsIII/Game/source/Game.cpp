@@ -4,6 +4,7 @@
 #include "Game/UpDown.h"
 #include "Game/Equipment.h"
 #include "Game/PlanFactory.h"
+// Game is model, UI is view, there should be more of a presenter layer in between
 #include "UI/Scene.h"
 #include "UI/Application.h"
 #include "UI/GameMessages.h"
@@ -11,6 +12,7 @@
 #include "UI/Window.h"
 #include "UI/Label.h"
 #include "UI/HUD.h"
+#include "UI/Button.h"
 
 namespace Game
 {
@@ -41,8 +43,8 @@ Game::Game(Engine::Scene& scene, const json& data) :
     {
         Engine::MessageType<UI::Selected>(),
         Engine::MessageType<Engine::KeyPressed>(),
-        Engine::MessageType<PlanFactoryIF::Complete>()
-
+        Engine::MessageType<PlanFactoryIF::Complete>(),
+        Engine::MessageType<Engine::Button::Clicked>()
     });
     scene.Add(map);
     scene.Add(plan);
@@ -115,10 +117,10 @@ void Game::OnMessage(const Engine::Message& message)
         }
         Changed();
     }
-    else if (auto key = message.Cast<Engine::KeyPressed>())
+    else if (auto clicked = message.Cast<Engine::Button::Clicked>())
     {
-        if (key->ascii == 13)
-        {   // TODO make this a button with a hotkey on the actions bar
+        if (clicked->button.Name() == "btn_end")
+        {
             auto desc = plan.Execute();
             auto log = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Label>("log_lbl");
             log->AddText(desc);
@@ -130,7 +132,10 @@ void Game::OnMessage(const Engine::Message& message)
                 Current().GetCounts().Reset(Counter::Reset::action);
             Changed();
         }
-        else if (key->code == 2)
+    }
+    else if (auto key = message.Cast<Engine::KeyPressed>())
+    {
+        if (key->code == 2)
         {   // TODO make this a button with a hotkey, remove game key subscription 
             Engine::SaveJson(Serialize(), "savegame.json");
         }

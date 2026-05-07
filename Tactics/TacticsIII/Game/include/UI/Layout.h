@@ -28,7 +28,7 @@ struct Layout
     Engine::Label plan_lbl;
     Engine::Splitter info_plan_v_splitter;
     Engine::Label log_lbl;
-    std::array<Engine::Button, 10> buttons;
+    std::array<Engine::Button, 11> buttons;
     Engine::Bar button_bar;
     Engine::Splitter log_button_splitter;
     Engine::Splitter hud_bottom_splitter;
@@ -48,8 +48,9 @@ struct Layout
             Engine::Button("action6", "7"), 
             Engine::Button("action7", "8"), 
             Engine::Button("action8", "9"), 
-            Engine::Button("action9", "10")})
-        , button_bar(make_control_refs<Engine::Button>(buttons))
+            Engine::Button("action9", "10"),
+            Engine::Button("btn_end","end")})
+        , button_bar("action_bar", make_control_refs<Engine::Button>(buttons))
         , log_button_splitter(log_lbl, button_bar, false, 0.75)
         , hud_bottom_splitter(info_plan_v_splitter, log_button_splitter, false, 0.75)
     {
@@ -59,6 +60,7 @@ struct Layout
             button.vertical_align = Engine::Align::center;
             button.outline = Engine::RGBA(128, 128, 128);
         }
+        buttons.back().SetHotkey('\r');
     }
     
     Engine::Control& root() 

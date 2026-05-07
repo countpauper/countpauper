@@ -41,7 +41,7 @@ public:
     {
         auto action = std::make_unique<A>(world, actor, std::forward<Params>(params)...);
         Plan plan;
-        if constexpr(std::tuple_size<typename A::Targets>()==0)
+        if constexpr(std::tuple_size<typename A::Targets>()>0)
         {
             plan = Move(world, actor, action->GetDestination(), action->GetDistance());
         }

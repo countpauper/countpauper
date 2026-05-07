@@ -112,12 +112,17 @@ Physics and Magics
 [done, Up&Down] Create action
 * Action bar in the bottom (see old one in Tactics/Tactics/Skillbar.h)
 * Select action with hotkeys  (immediate)
-- Use selected (other) action on target location (like attack, maybe add shoot) 
-- Select action/spell with click
+* Use selected (other) action on target location (like attack, maybe add shoot) 
+* Select action/spell with click
+* Make end a hot key button #11 or so by registering a lambda, not a factory. Two types of buttons in the bar. Maybe game just registers it. 
 
 = Tech debt 
+* Fix that reach thing 
+- Split the tuple array to a base utility in Engine, keep the queue with push 
 - Replace all Logging::Log with std::format & syntax 
+- Fix that path planning assert 
 - Make label style properties together a Style and switch (enabled, disabled, selected, highlighted)
+
 
 = Create water (later can ignite=start fire)
 - Spell action: Create water 

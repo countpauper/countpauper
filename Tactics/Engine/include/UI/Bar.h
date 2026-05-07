@@ -9,7 +9,7 @@ namespace Engine
 class Bar : public Controls
 {
 public:
-    Bar(std::vector<std::reference_wrapper<Control>> controls, bool horizontal=true, double ratio=1.0f);
+    Bar(std::string_view name, std::vector<std::reference_wrapper<Control>> controls, bool horizontal=true, double ratio=1.0f);
     void Render() const override;
     Control* Click(Coordinate pos) override;
 private:

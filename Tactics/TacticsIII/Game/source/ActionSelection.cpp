@@ -2,6 +2,7 @@
 #include "UI/ActionSelection.h"
 #include "UI/GameMessages.h"
 #include "UI/Button.h"
+#include "UI/Bar.h"
 #include "UI/Application.h"
 #include "UI/Avatar.h"
 #include "UI/Window.h"
@@ -16,12 +17,13 @@ namespace Game::UI
 ActionSelection::SelectableActions ActionSelection::FindButtons()
 {
     SelectableActions buttons;
-    for(int i=0; i<10; ++i)
+    auto* bar = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Bar>("action_bar");
+    unsigned i = 0;
+    static const std::string_view hotkeys="1234567890\n";
+    for(auto child : bar->GetChildren().subspan(0,10))
     {
-        // TODO: Could be faster to find action bar(s) and add all their button children
-        auto* button = Engine::Window::CurrentWindow()->GetHUD().Find<Engine::Button>(std::format("action{}",i));
-        assert(button);
-        button->SetHotkey(static_cast<char>('0' + (i+1)%10));        
+        auto button = static_cast<Engine::Button*>(child);
+        button->SetHotkey(hotkeys[i++]);
         buttons.emplace(button, ButtonAction());
     }
     return buttons;
@@ -135,7 +137,7 @@ void ActionSelection::PopulateButtons(const class Avatar& avatar)
         "",
         "",
         "",
-        "end"
+        ""
     };
     for(auto [buttonItem, name] : std::views::zip(actionButtons, actionName))
     {
@@ -146,15 +148,11 @@ void ActionSelection::PopulateButtons(const class Avatar& avatar)
         {
             if (name == "up")
             {
-                buttonItem.second = std::move(std::make_unique<PlanFactoryAction<Up>>());
+                buttonItem.second = std::move(std::make_unique<Up::Factory>());
             }
             else if (name == "down")
             {
-                buttonItem.second = std::move(std::make_unique<PlanFactoryAction<Down>>());
-            }
-            else if (name == "end")
-            {
-                // TODO some other lambda with world and actor? 
+                buttonItem.second = std::move(std::make_unique<Down::Factory>());
             }
             else 
             {

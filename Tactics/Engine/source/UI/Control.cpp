@@ -88,6 +88,9 @@ Control* Controls::Click(Coordinate pos)
 
 Control* Controls::FindControl(std::string_view path)
 {
+    if (path == name)
+        return this;
+        
     auto remainingPath = path;
     if (!name.empty()) {
         if (path.substr(0, name.size()) == name &&
@@ -108,5 +111,9 @@ Control* Controls::FindControl(std::string_view path)
     return nullptr;
 }
 
+std::span<Control*> Controls::GetChildren()
+{
+    return std::span(children.data(), children.size());
+}
 
 }

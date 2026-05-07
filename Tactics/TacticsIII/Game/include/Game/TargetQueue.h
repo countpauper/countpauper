@@ -149,7 +149,7 @@ public:
     template<typename ET>
     bool ExpectNext() const 
     {
-        return false;
+        return std::is_void_v<ET>;;
     }
 
     variant_type operator[](size_t)

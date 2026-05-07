@@ -44,6 +44,7 @@ public:
     void Render() const;
     Control* Click(Coordinate pos) override;
     virtual Control* FindControl(std::string_view path);
+    std::span<Control*> GetChildren();
 protected:
     std::vector<Control*> children;
 private:

@@ -5,10 +5,12 @@
 namespace Engine
 {
 
-Bar::Bar(std::vector<std::reference_wrapper<Control>> controls, bool horizontal, double ratio) :
+Bar::Bar(std::string_view name, std::vector<std::reference_wrapper<Control>> controls, bool horizontal, double ratio) :
     horizontal(horizontal),
     ratio(ratio)
 {
+    this->name = name;
+
     for(auto& control : controls)
     {
         Add(control.get());
