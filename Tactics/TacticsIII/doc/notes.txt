@@ -118,7 +118,7 @@ Physics and Magics
 
 = Tech debt 
 * Fix that reach thing 
-- Split the tuple array to a base utility in Engine, keep the queue with push 
+* Split the tuple array to a base utility in Engine, keep the queue with push 
 - Replace all Logging::Log with std::format & syntax 
 - Fix that path planning assert 
 - Make label style properties together a Style and switch (enabled, disabled, selected, highlighted)
