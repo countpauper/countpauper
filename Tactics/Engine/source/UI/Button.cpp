@@ -8,9 +8,12 @@ namespace Engine
 
 Button::Button(std::string_view name, std::string_view text) :
     Label(name, text, 1),
-    hotkey{0,0}
+    hotkey{0,0},
+    selected(false)
 {
     enabled = true;
+    enabledStyle.outline = Engine::RGBA(128, 128, 128);
+    disabledStyle.outline = Engine::RGBA(64, 64, 64);
 }
 
 Control* Button::Click(Coordinate pos)
@@ -35,6 +38,16 @@ void Button::SetHotkey(std::uint8_t code)
 void Button::ResetHotkey()
 {
     Engine::Application::Get().bus.Unsubscribe(*this, {  Engine::MessageType<Engine::KeyPressed>() });
+}
+
+
+
+const Style& Button::ActiveStyle() const
+{
+    if (selected)
+        return selectedStyle;
+    else
+        return Label::ActiveStyle();
 }
 
 

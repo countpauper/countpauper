@@ -58,7 +58,6 @@ struct Layout
         for(auto& button : buttons)
         {
             button.vertical_align = Engine::Align::center;
-            button.outline = Engine::RGBA(128, 128, 128);
         }
         buttons.back().SetHotkey('\r');
     }

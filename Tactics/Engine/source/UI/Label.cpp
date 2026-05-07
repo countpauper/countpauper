@@ -8,9 +8,7 @@ namespace Engine
 
 Label::Label(std::string_view name, std::string_view text, float lines) :
     Control(name),
-    text(text),
-//    font("stroke roman", 1.0f / lines)
-    font("helvetica", 12)
+    text(text)
 {
 }
 
@@ -24,11 +22,11 @@ void Label::AddText(std::string_view newText)
     text += newText;
 }
 
-void Label::RenderBackground() const
+void Label::RenderBackground(const Style& style) const
 {
-    if (background)
+    if (style.background)
     {   // NB: sorting wrong, will block off the text
-        background.Render();
+        style.background.Render();
         glBegin(GL_QUADS);
             glVertex2f(0.0f, 0.0f);
             glVertex2f(0.0f, 1.0f);
@@ -38,12 +36,12 @@ void Label::RenderBackground() const
     }
 }
 
-void Label::RenderOutline() const
+void Label::RenderOutline(const Style& style) const
 {
-    if (outline)
+    if (style.outline && style.lineWidth>0.0f)
     {
-        outline.Render();
-        glLineWidth(1.0f);
+        style.outline.Render();
+        glLineWidth(style.lineWidth);
         glBegin(GL_LINE_LOOP);
             glVertex2f(0.0f, 0.0f);
             glVertex2f(1.0f, 0.0f);
@@ -53,18 +51,29 @@ void Label::RenderOutline() const
     }
 }
 
+void Label::RenderText(const Style& style) const
+{
+    glText(text.c_str(), style.font, horizontal_align, vertical_align);
+}
+
 void Label::Render() const
 {
     if (!shown)
         return;
-    RenderBackground();
-    RenderOutline();
 
-    if (IsEnabled())
-        enabledColor.Render();
-    else
-        disabledColor.Render();
-    glText(text.c_str(), font, horizontal_align, vertical_align);
+    RenderBackground(ActiveStyle());
+    RenderOutline(ActiveStyle());
+    RenderText(ActiveStyle());
+
 }
+
+const Style& Label::ActiveStyle() const
+{
+    if (IsEnabled())
+        return enabledStyle;
+    else
+        return disabledStyle;
+}
+
 
 }

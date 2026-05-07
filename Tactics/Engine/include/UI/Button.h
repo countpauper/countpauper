@@ -6,8 +6,6 @@
 namespace Engine
 {
 
-
-
 class Button :
     public Label,
     public Passenger
@@ -25,7 +23,13 @@ public:
     void SetHotkey(char ascii);
     void SetHotkey(std::uint8_t code);
     void ResetHotkey();
+
+    Style selectedStyle = {.outline=RGBA::white, .font=enabledStyle.font};
+    bool selected;
 private:
+
+    const Style& ActiveStyle() const;
+
     void OnMessage(const Message& message) override;
     std::pair<int, char> hotkey;   // TODO add modifiers but make a better key struct and include it, constructors etc
 };

@@ -47,11 +47,12 @@ ActionSelection::ActionSelection(World& world)
     SelectDefault();
 }
 
+
 void ActionSelection::Select(Engine::Button& button)
 {
     selectedButton = &button;
     Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Selected ({})", button.Name());
-    selectedButton->outline = Engine::RGBA::white;
+    selectedButton->selected = true;
     auto it = actionButtons.find(selectedButton);
     it->second->Activate();
     defaultFactory.Deactivate();
@@ -64,7 +65,7 @@ void ActionSelection::Deselect()
         Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Deselected ({})", selectedButton->Name());
         auto it = actionButtons.find(selectedButton);
         it->second->Deactivate();
-        selectedButton->outline = Engine::RGBA(128, 128, 128);
+        selectedButton->selected = false;
         selectedButton = nullptr;
     }
 }

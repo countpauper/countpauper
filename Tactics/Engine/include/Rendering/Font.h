@@ -8,7 +8,7 @@ class Font
 {
 public:
     // NB for stroke fonts, height and width are in model space, for bitmap fonts they are in pixels
-    Font(std::string_view name, float height);
+    Font(std::string_view name="stroke roman", float height=1.0f);
     void Render(int character) const;
     float Width(std::string_view text) const;
     float Height(std::string_view text="") const;
