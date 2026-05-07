@@ -56,7 +56,7 @@ namespace Engine
                 assert(!vertical.X());
                 rotation = Coordinate(pitch, yaw, yaw);
             }
-            Logging::Log<UiLogging, Logging::Debug>("Face (%.3f, %.3f, %.3f) yaw=%.1f, pitch=%.1f, distance %.3f",
+            Logging::Log<UiLogging, Logging::Debug>("Face ({:3f}, {:3f}, {:3f}) yaw={}, pitch={}, distance {}",
                 vector.X(), vector.Y(), vector.Z(),
                 Rad2Deg(yaw), Rad2Deg(pitch), vector.Length());
         }

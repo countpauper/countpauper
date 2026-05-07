@@ -27,7 +27,7 @@ int main(int argc, char**argv)
     }
     catch(const std::exception& ex)
     {
-        Engine::Logging::Log<MainLogging, Engine::Logging::Fatal>("Exception: %s", ex.what());
+        Engine::Logging::Log<MainLogging, Engine::Logging::Fatal>("Exception: {}", ex.what());
         return 1;
     }
     return 0;

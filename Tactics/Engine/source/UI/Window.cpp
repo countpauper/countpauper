@@ -129,14 +129,14 @@ void Window::Invalidate() const
 
 void Window::SpecialKey(int key,  int x, int y)
 {
-    Logging::Log<UiLogging, Logging::Info>("Special Key(%d @ %d, %d)", key, x, y);
+    Logging::Log<UiLogging, Logging::Info>("Special Key({} @ {}, {})", key, x, y);
     Window& window = *CurrentWindow();
     window.OnKey(key & 0xFF, key>>8, x, y);
 }
 
 void Window::Key(unsigned char key,  int x, int y)
 {
-    Logging::Log<UiLogging, Logging::Info>("Key(%c(%d) @ %d, %d)", key, key, x, y);
+    Logging::Log<UiLogging, Logging::Info>("Key({} ({}) @ ({}, {})", key, key, x, y);
     Window& window = *CurrentWindow();
     window.OnKey(0, key, x, y);
 }
@@ -149,7 +149,7 @@ void Window::OnKey(std::uint8_t code, unsigned char ascii, int x, int y)
 
 void Window::Mouse(int button, int state, int x, int y)
 {
-    Logging::Log<UiLogging, Logging::Info>("Mouse(%d, %s, %d @ %d, %d, )", button, state== GLUT_UP?"up":"down", glutGetModifiers(), x,y);
+    Logging::Log<UiLogging, Logging::Info>("Mouse({}, {}, {} @ {}, {}, )", button, state== GLUT_UP?"up":"down", glutGetModifiers(), x,y);
     Window& window = *CurrentWindow();
     window.OnMouse(button, state, x, y);
 }
@@ -209,11 +209,11 @@ void Window::OnMouse(int button, int state, int x, int y)
         if (prop)
         {
             auto name = prop->Name();
-            Logging::Log<UiLogging, Logging::Info>("Selected %.*s.%d", name.size(), name.data(), sub);
+            Logging::Log<UiLogging, Logging::Info>("Selected{}.{}", name, sub);
         }
         else
         {
-            Logging::Log<UiLogging, Logging::Info>("Selected nothing at %f, %f", viewPosition.X(), viewPosition.Y());
+            Logging::Log<UiLogging, Logging::Info>("Selected nothing at {}, {}", viewPosition.X(), viewPosition.Y());
         }
         app->bus.Post(ClickOn(prop, sub));
     }

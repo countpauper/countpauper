@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
 #include <sstream>
+#include <utility>
+#include <format>
 
 namespace Engine::Logging
 {
@@ -22,7 +23,7 @@ namespace Engine::Logging
         template<bool ET, typename... Params>
         struct Logit
         {
-            Logit(const char*, Params...)
+            Logit(std::format_string<Params...>, Params&&...)
             {
             }
         };
@@ -30,17 +31,23 @@ namespace Engine::Logging
         template<>
         struct Logit<true>
         {
-            Logit(const char* s);
+            Logit(std::string_view s);
+            Logit(std::format_string<> fmt):
+                Logit(std::string_view(std::format(fmt)))
+            {
+            }
         };
 
-    template<typename... Params>
+        template<typename... Params>
         struct Logit<true, Params...>
         {
-            Logit(const char* s, Params... parameters)
+            Logit(std::string_view s)
             {
-                static char lineBuffer[1024];
-                snprintf(lineBuffer,sizeof(lineBuffer), s, std::forward<Params>(parameters)...);
-                Logit<true> log(lineBuffer);
+                Logit<true> log(s);
+            }
+            Logit(std::format_string<Params...> fmt, Params&&... parameters) :
+                Logit(std::format(fmt, std::forward<Params>(parameters)...))
+            {
             }
         };
 
@@ -52,17 +59,19 @@ namespace Engine::Logging
     }
 
     template<bool On, typename... Params>
-    void Log(const char* s, Params... params)
+    void Log(std::format_string<Params...> fmt, Params&&... params)
     {
-        Internal::Logit<On, Params...> log(s, std::forward<Params>(params)...);
-    }
-    template<Level CatLvl, Level LogLvl, typename... Params>
-    void Log(const char* s, Params... params)
-    {
-        Internal::Logit<Internal::LogLevelOn<CatLvl, LogLvl>(), Params...> log(s, std::forward<Params>(params)...);
+        Internal::Logit<On, Params...> log(fmt, std::forward<Params>(params)...);
     }
 
-    // TODO add log levels or just remove it 
+
+    template<Level CatLvl, Level LogLvl, typename... Params>
+    void Log(std::format_string<Params...> fmt, Params&&... params)
+    {
+        Internal::Logit<Internal::LogLevelOn<CatLvl, LogLvl>(), Params...> log(fmt, std::forward<Params>(params)...);
+    }
+
+    // TODO add log levels or just remove it
     class LogStream
     {
     public:

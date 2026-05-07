@@ -9,9 +9,9 @@ namespace Engine::Logging
     namespace Internal
     {
         static Engine::Timer startup;
-        Logit<true>::Logit(const char* s)
+        Logit<true>::Logit(std::string_view s)
         {
-            printf("[%.3f] %s\n", startup.Seconds(), s);
+            printf("[%.3f] %.*s\n", startup.Seconds(), static_cast<int>(s.size()), s.data());
         }
 
     }
@@ -28,7 +28,7 @@ LogStream::LogStream(LogStream&& o)
 
 LogStream::~LogStream()
 {
-    Log<true>(s.str().c_str());
+    Internal::Logit<true>(std::string_view(s.str()));
 }
 
 }

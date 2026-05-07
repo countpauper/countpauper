@@ -50,7 +50,7 @@ ActionSelection::ActionSelection(World& world)
 void ActionSelection::Select(Engine::Button& button)
 {
     selectedButton = &button;
-    Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Selected (%s)", button.Name().c_str());
+    Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Selected ({})", button.Name());
     selectedButton->outline = Engine::RGBA::white;
     auto it = actionButtons.find(selectedButton);
     it->second->Activate();
@@ -61,7 +61,7 @@ void ActionSelection::Deselect()
 {
     if (selectedButton)
     {
-        Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Deselected (%s)", selectedButton->Name().c_str());
+        Engine::Logging::Log<Engine::Logging::Info, Engine::Logging::Info>("Deselected ({})", selectedButton->Name());
         auto it = actionButtons.find(selectedButton);
         it->second->Deactivate();
         selectedButton->outline = Engine::RGBA(128, 128, 128);
