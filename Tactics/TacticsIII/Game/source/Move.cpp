@@ -40,26 +40,46 @@ Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, Engine::Ran
     if (it->IsSolid())
     {
         auto delta = it->amount - offset;  
+        auto next = it+1;
+        for(; next != slice.end(); ++next)
+        {
+            if(!next->IsSolid())
+                break;
+            delta += next->amount;
+        }
         if (delta > heightDifference.end)
             return Engine::Range<ZType>::empty();
-        auto next = it+1;
-        if (next == slice.end())
+
+        //TODO: refactor this to finding a range of space helper, in slice ? 
+        Game::Layer::Amount totalSpace = 0.0; 
+        for(;next!=slice.end(); ++next)
+        {
+            if (next->IsSolid())
+                break;
+            totalSpace += next->amount;
+        }
+        if (totalSpace < space)   
             return Engine::Range<ZType>::empty();
-        assert(!next->IsSolid());   // not handled yet, iterate to layers it can pass 
-        if (next->amount < space)   
-            return Engine::Range<ZType>::empty();   // TODO should add subsequent that can pass for full height 
-        return { at.Z() + delta, at.Z() + delta + next->amount };
+        return { at.Z() + delta, at.Z() + delta + totalSpace };
     }
     else 
     {   
         if (it == slice.begin())
             return Engine::Range<ZType>::empty();
-        assert((it-1)->IsSolid());  // subsequent downwards layers that cant support weight not yet handles
-        if (offset > -heightDifference.begin)
+        auto delta = offset;
+        auto totalSpace = it->amount;   // TODO there could be more space above as well
+        for(auto next = it-1; next!=slice.begin(); --next)
+        {
+            if (next->IsSolid())
+                break;
+            delta += next->amount;
+            totalSpace += next->amount;
+        }
+        if (delta > -heightDifference.begin)
             return Engine::Range<ZType>::empty();
-        if (it->amount < space)
+        if (totalSpace < space)
             return Engine::Range<ZType>::empty();
-        return { at.Z() - offset, at.Z() - offset + it->amount };    
+        return { at.Z() - offset, at.Z() - delta + it->amount };    
     }
 }
 
