@@ -28,8 +28,6 @@ bool StatRequirement::operator==(const StatRequirement& rhs) const
         required == rhs.required;
 }
 
-
-
 StatRequirement StatRequirement::operator!() const
 {
     return StatRequirement(stat, actual, op.Opposite(), required);

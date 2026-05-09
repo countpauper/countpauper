@@ -26,7 +26,7 @@ Requirements Attack::CanDo() const
 {
     return Requirements{
         StatRequirement(Stat::ap, actor.GetCounts().Available(Stat::ap), Comparator::less_equal, AP()),
-        StatRequirement(Stat::reach, actor.GetStats().Get(Stat::reach), Comparator::greater_equal, Computation(AttackDistance(actor, target))),
+        StatRequirement(Stat::reach, ComputeReach(), Comparator::greater_equal, Computation(AttackDistance(actor, target))),
         TargetRequirement(static_cast<float>(AttackHeight(world, actor, target).Size()))
     };
 }
@@ -83,9 +83,16 @@ Position Attack::GetDestination() const
     return target.GetPosition();
 }
 
+
+Computation Attack::ComputeReach() const
+{
+    return actor.GetStats().Get(Stat::reach, nullptr, {Restriction::melee});
+}
+
+
 unsigned Attack::GetDistance() const
 {
-    return actor.GetStats().Get(Stat::reach).Total();
+    return ComputeReach().Total();
 }
 
 

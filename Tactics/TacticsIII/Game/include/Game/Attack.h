@@ -19,6 +19,7 @@ public:
     Position GetDestination() const override;
     unsigned GetDistance() const override;    
 private:
+    Computation ComputeReach() const;
     Actor& target;
 };
 

@@ -117,12 +117,11 @@ Physics and Magics
 * Make end a hot key button #11 or so by registering a lambda, not a factory. Two types of buttons in the bar. Maybe game just registers it. 
 
 = Tech debt 
-* Fix that reach thing 
 * Split the tuple array to a base utility in Engine, keep the queue with push 
 * Replace all Logging::Log with std::format & syntax 
-- Fix that path planning assert 
+* Fix that path planning assert 
 * Make label style properties together a Style and switch (enabled, disabled, selected, highlighted)
-
+* Fix that reach thing again [how did it ever work?]
 
 = Create water (later can ignite=start fire)
 - Spell action: Create water 
