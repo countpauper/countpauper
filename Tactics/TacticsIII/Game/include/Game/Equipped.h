@@ -16,4 +16,10 @@ public:
     virtual std::vector<const Equipment*> GetEquipped(const Restrictions& filter={}) const = 0;
 };
 
+class NoEquipment :
+    public Equipped 
+{
+};
+
+
 }

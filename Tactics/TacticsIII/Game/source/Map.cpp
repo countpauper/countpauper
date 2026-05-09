@@ -83,7 +83,9 @@ Map::Map(std::string_view filename, const Engine::Image& data) :
             const auto& liquidMaterial = levelPixel.b > levelPixel.r ? Material::water : Material::air; //FindMaterial(Engine::HSVA(liquidPixel));
             ZType solidHeight = LevelToHeight(levelPixel.r);
             ZType liquidHeight = LevelToHeight(levelPixel.b);
-            Column(x,y, *FindMaterial(materialPixel), solidHeight, liquidMaterial, liquidHeight);
+            const Material* mat = FindMaterial(materialPixel); 
+            assert(mat);
+            Column(x,y, *mat , solidHeight, liquidMaterial, liquidHeight);
         }
     }
     GenerateMesh();
@@ -151,12 +153,37 @@ Position Map::IdToPosition(uint32_t id) const
 
 void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl, float temperature)
 {
-
     auto mapHeight  = Z();
     auto& slice = slices.at(SliceIdx(x,y));
-    if (solidLvl)
+    static const ZType maxVeg(0.1);
+    static const ZType maxEarth(2.0);
+    ZType stoneLevel=0.0;
+    ZType earthLevel=0.0;
+    ZType vegLevel=0.0;
+    if (solidLvl >= mapHeight.begin)
     {
-        slice.emplace_back(solid, solidLvl - mapHeight.begin, temperature); 
+        solidLvl -= mapHeight.begin;
+        if (solid == Material::vegetation)
+        {
+            stoneLevel = solidLvl > maxVeg + maxEarth ? solidLvl - maxVeg - maxEarth : 0.0;
+            earthLevel = (solidLvl > maxVeg ? std::max(solidLvl - maxVeg, maxEarth)  : 0.0f) - stoneLevel;
+            vegLevel = std::min( solidLvl, maxVeg ); 
+        } 
+        else if (solid == Material::earth)
+        {
+            stoneLevel = solidLvl > maxEarth ? solidLvl - maxEarth : 0.0;
+            earthLevel = std::min(solidLvl, maxEarth);
+        }
+        else if (solid == Material::stone)
+        {
+            stoneLevel = solidLvl;
+        } 
+        if (stoneLevel)
+            slice.emplace_back(Material::stone, stoneLevel, temperature);
+        if (earthLevel)
+            slice.emplace_back(Material::earth, earthLevel, temperature);
+        if (vegLevel)
+            slice.emplace_back(solid, vegLevel, temperature);
     }
     if (liquidLvl > solidLvl)
     {

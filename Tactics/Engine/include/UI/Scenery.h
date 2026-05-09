@@ -16,7 +16,7 @@ public:
     Coordinate GetCoordinate() const override;
     Quaternion GetOrientation() const override;
 
-    std::pair<double, std::uint32_t> Intersection(const Line& line) const;
+    virtual std::pair<double, std::uint32_t> Intersection(const Line& line) const;
 private:
     Mesh& mesh;
 };

@@ -25,8 +25,11 @@ class Game :
 public:
     explicit Game(Engine::Scene& scene, const json& data=json());
     const MapItf& GetMap() const override;
-    bool Obstacle(Position at, const Actor* except=nullptr) const override;
+    const Actor* ObstacleAt(const Engine::IntBox& bounds, const Actor* except=nullptr) const override;
     json Serialize() const;
+
+    using Obstacles = std::vector<std::unique_ptr<Obstacle>>;
+
 private:
     UI::Avatar& Current() const;
     void Focus(Engine::Position pos);
@@ -38,8 +41,9 @@ private:
     Races races;
     ItemDatabase items;
     Map map;
+    Obstacles obstacles;
+    std::vector<UI::Avatar*> avatars;
     Plan plan;
-    UI::Avatars avatars;
     UI::ActionSelection selectedAction;
     unsigned round=0;
     unsigned turn=0;

@@ -39,5 +39,17 @@ TEST(Position, Distance)
     EXPECT_FLOAT_EQ(Position(0, 1, 0.5f).Distance(Position(1, 1, 0.5f)), 1.0f);
     EXPECT_FLOAT_EQ(Position(-1, 0, 0.1f).Distance(Position(0, 0, 1.1f)), std::sqrt(2));
 }
+
+
+TEST(Position, Bounds)
+{
+    EXPECT_TRUE(GameBounds(Position(1,2,3), Size(1,1,1)));
+    EXPECT_FALSE(GameBounds(Position(1,-2,-3), Size(1,1,0)));
+    EXPECT_TRUE(GameBounds(Position(-1,0,2), Size(1,1,1)).Contains(Position(-1,0,2).Raw()));
+    EXPECT_FALSE(GameBounds(Position(-1,0,2), Size(1,1,1)).Contains(Position(0,0,2).Raw()));
+}
+
+
+
 }
 

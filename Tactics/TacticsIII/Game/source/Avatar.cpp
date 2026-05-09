@@ -13,7 +13,7 @@ namespace Game::UI
 {
 
 Avatar::Avatar(const World& world, const Races& races, const ItemDatabase& items, const json& data) :
-    Scenery(mesh),
+    Obstacle(),
     creature(races.Get(Engine::must_get<std::string_view>(data, "race")), items, data)
 {
     if (auto posData = Engine::try_get<json>(data, "position"))
@@ -25,7 +25,7 @@ Avatar::Avatar(const World& world, const Races& races, const ItemDatabase& items
 }
 
 Avatar::Avatar(std::string_view name, const Race& race) :
-    Scenery(mesh),
+    Obstacle(),
     creature(name, race)
 {
     GenerateMesh();
@@ -99,6 +99,7 @@ Position Avatar::GetSize() const
     return creature.GetSize();
 }
 
+
 Statted& Avatar::GetStats()
 {
     return creature;
@@ -141,10 +142,7 @@ class Conditions& Avatar::GetConditions()
     return creature;
 }
 
-Engine::Coordinate Avatar::GetCoordinate() const
-{
-    return coordinate;
-}
+
 
 Engine::Quaternion Avatar::GetOrientation() const
 {
@@ -158,24 +156,6 @@ std::string_view Avatar::Name() const
 {
     return creature.Name();
 }
-
-bool Avatar::At(Position query) const
-{
-    auto pos = GetPosition();
-    auto siz = GetSize();
-    // TODO a game bounds or with fixed point Z just an int bo 
-    Engine::Range<int> xr(pos.X(), pos.X() + siz.X() - 1);
-    if (!xr[query.X()])
-        return false;
-    Engine::Range<int> yr(pos.Y(), pos.Y() + siz.Y() -1 );
-    if (!yr[query.Y()])
-        return false;
-    Engine::Range<ZType> zr(pos.Z(), pos.Z() + siz.Z());
-    if (!zr[query.Z()])
-        return false;
-    return true;
-}
-
 
 std::string Avatar::Sheet() const
 {

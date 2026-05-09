@@ -1,19 +1,17 @@
 #pragma once
-#include "Game/Actor.h"
+
 #include "Game/Creature.h"
 #include "Game/Race.h"
-#include "Geometry/Position.h"
-#include "Geometry/Mesh.h"
-#include "UI/Scenery.h"
+#include "Game/Obstacle.h"
 #include "UI/Bus.h"
+
 
 namespace Game::UI
 {
 class Counter;
 
 class Avatar :
-    public Engine::Scenery,
-    public Actor,
+    public Obstacle,
     public Engine::Passenger
 {
 public:
@@ -22,7 +20,6 @@ public:
     std::string_view Name() const override;
     std::string Sheet() const;
     void OnMessage(const Engine::Message& message);
-    Engine::Coordinate GetCoordinate() const override;
     Engine::Quaternion GetOrientation() const override;
     void Select(bool on);
     void Move(const World& world, Position destination) override;
@@ -30,7 +27,6 @@ public:
     const Engine::Object& GetAppearance() const override;
     Position GetPosition() const override;
     Size GetSize() const override;
-    bool At(Position) const;
     
     Statted& GetStats() override;
     const Statted& GetStats() const override;
@@ -44,13 +40,8 @@ public:
 private:
     void GenerateMesh();
     void SubscribeBus();
-
-    Engine::Mesh mesh;
-    Engine::Coordinate coordinate;
     Creature creature;
     bool selected = false;
 };
-
-using Avatars = std::vector<std::unique_ptr<Avatar>>;
 
 }

@@ -103,6 +103,12 @@ Engine::Position round(Position p)
      return Engine::Position(p.X(), p.Y(), round(p.Z())); 
 }
 
+
+Engine::IntBox GameBounds(const Position& pos, const Size& size)
+{
+    return Engine::IntBox(pos.Raw(), pos.Raw() + size.Raw() + Engine::Position(-1,-1,-1));
+}
+
 bool operator==(Position a, Position b)
 {
     return a.X() == b.X() && 

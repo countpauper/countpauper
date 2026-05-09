@@ -10,7 +10,8 @@ class World
 {
 public:
     virtual const MapItf& GetMap() const = 0;
-    virtual bool Obstacle(Position at, const Actor* except=nullptr) const =0;
+    virtual const Actor* ObstacleAt(const Engine::IntBox& bounds, const Actor* except=nullptr) const =0;
 };
+
 
 }

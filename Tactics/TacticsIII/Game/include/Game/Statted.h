@@ -23,4 +23,28 @@ public:
     virtual void Level(Stat::Id stat, int amount) = 0;
 };
 
+
+class NoStats : 
+    public Statted
+{
+    explicit NoStats(std::string_view name="") : name(name) {}
+
+    std::string_view Name() const { return name; }
+    
+    Computation Get(Stat::Id, [[maybe_unused]] const class Boni* extraBoni = nullptr, [[maybe_unused]] const Restrictions& restricted={}) const override 
+    { 
+        return Computation(); 
+    }
+    Computations Get(std::initializer_list<Stat::Id>, [[maybe_unused]] const class Boni* boni = nullptr, [[maybe_unused]] const Restrictions& restricted={}) const override
+    {
+        return Computations();
+    } 
+
+    const class StatDefinition& Definition() const override { return undefined; }
+    void Level(Stat::Id, int) override {}
+private:
+    std::string name;
+    static const StatDefinition undefined;
+};
+
 }

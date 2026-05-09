@@ -1,7 +1,9 @@
 #pragma once
 #include "Geometry/Position.h"
 #include "Geometry/Coordinate.h"
+#include "Geometry/IntBox.h"
 #include "Utility/FixedPoint.h"
+
 #include <cmath>
 
 namespace Game
@@ -29,6 +31,8 @@ namespace Game
         Position& operator-=(Position delta);
         explicit operator bool() const;
 
+        Engine::Position Raw() const { return Engine::Position(x,y,z.RawValue()); }
+
         int x,y;
         ZType z;
     };
@@ -36,6 +40,8 @@ namespace Game
     using Size = Position;
 
     Engine::Position round(Position p);
+    Engine::IntBox GameBounds(const Position&, const Size& size);
+
 
 	bool operator==(Position a, Position b);
     bool operator!=(Position a, Position b);

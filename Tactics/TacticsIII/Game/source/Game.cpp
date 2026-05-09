@@ -17,9 +17,9 @@
 namespace Game
 {
 
-UI::Avatars DeserializeAvatars(const World& world, const Races& races, const ItemDatabase& items, const json& data)
+Game::Obstacles DeserializeObstacles(const World& world, const Races& races, const ItemDatabase& items, const json& data)
 {
-    UI::Avatars result;
+    Game::Obstacles result;
     for(auto avatarData : data)
     {
         result.emplace_back(std::move(std::make_unique<UI::Avatar>(world, races, items, avatarData)));
@@ -37,7 +37,7 @@ Game::Game(Engine::Scene& scene, const json& data) :
     selectedAction(*this)
 {
     Creature::definition.Parse(Engine::LoadJson("data/creature.json"));
-    avatars = DeserializeAvatars(*this, races, items, Engine::get_value_or(data, "avatars", json::array()));
+    obstacles = DeserializeObstacles(*this, races, items, Engine::get_value_or(data, "avatars", json::array()));
 
     Engine::Application::Get().bus.Subscribe(*this,
     {
@@ -51,9 +51,13 @@ Game::Game(Engine::Scene& scene, const json& data) :
     scene.GetCamera().Move(Engine::Coordinate(map.GetBounds().x.Middle(), -1, map.GetBounds().z.end));
 
     Focus(Engine::Position(map.GetBounds().x.Middle(), map.GetBounds().y.Middle(), 0));
-    for(const auto& avatar: avatars)
+    for(const auto& obstacle: obstacles)
     {
-        scene.Add(*avatar);
+        scene.Add(*obstacle);
+        if (auto* avatar = dynamic_cast<UI::Avatar*>(obstacle.get()))
+        {
+            avatars.push_back(avatar);
+        }
     }
     avatars[turn]->Select(true);
     // const Item& offhand = items.Get("dagger");
@@ -65,16 +69,16 @@ const MapItf& Game::GetMap() const
     return map;
 }
 
-bool Game::Obstacle(Position at, const Actor* except) const
+const Actor* Game::ObstacleAt(const Engine::IntBox& bounds, const Actor* except) const
 {
-    for(const auto& avatar : avatars)
+    for(const auto& obstacle : obstacles)
     {
-        if (avatar.get() == except)
+        if (obstacle.get() == except)
             continue;
-        if (avatar->At(at))
-            return true;
+        if (obstacle->In(bounds))
+            return obstacle.get();
     }
-    return false;
+    return nullptr;
 }
 
 void Game::Focus(Engine::Position pos)

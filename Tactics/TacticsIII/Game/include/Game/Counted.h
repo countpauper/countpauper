@@ -17,4 +17,14 @@ protected:
     virtual void OnCount(Stat::Id, unsigned ) {}
 private:
 };
+
+class NoCounts : 
+    public Counted 
+{
+public:
+    unsigned Available(Stat::Id) const { return 0; }
+    unsigned Cost(Stat::Id, unsigned, [[maybe_unused]] bool truncate=false) { return 0;}
+    void Reset(Counter::Reset) {};
+};
+
 };

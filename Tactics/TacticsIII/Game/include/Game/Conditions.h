@@ -60,4 +60,16 @@ private:
     std::map<const Condition*, unsigned> conditions;
 };
 
+
+
+class NoConditions : 
+    public Conditions 
+{
+public:
+    unsigned GetCondition(std::function<bool(const Condition& condition)>) const override { return 0;}
+    void SetCondition(const Condition&, [[maybe_unused]] unsigned level =1) override {}
+    Computation ConditionalBonus(Stat::Id) const { return Computation(); }
+};
+
+
 }

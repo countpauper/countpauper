@@ -8,7 +8,6 @@
 #include "AI/Astar.h"
 #include "Geometry/Line.h"
 #include <GL/gl.h>
-#include "Geometry/IntBox.h"
 #include "UI/Logging.h"
 #include "Utility/Assert.h"
 
@@ -25,7 +24,7 @@ std::set<Position> Approach(const World& world,  Actor& actor, Position center, 
     {
         Position gp(p);
         if ((std::round(gp.Distance(center) - distance) == 0) &&
-            (!world.Obstacle(gp, &actor)))
+            (!world.ObstacleAt(GameBounds(gp, actor.GetSize()), &actor)))
         {
             result.insert(Position(gp.X(), gp.Y(), world.GetMap().GroundHeight(gp)));
         }
@@ -111,7 +110,7 @@ Move::Move(World& world, Actor& actor, Position destination, unsigned distance) 
                 continue;   // no ground to stand on
             to.z = ground.begin; 
             // TODO check size its under ceiling
-            if (world.Obstacle(to, &actor))
+            if (world.ObstacleAt(GameBounds(to, actor.GetSize()), &actor))
                 continue;
             result.push_back(to);
         }
