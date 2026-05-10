@@ -123,10 +123,16 @@ Physics and Magics
 * Make label style properties together a Style and switch (enabled, disabled, selected, highlighted)
 * Fix that reach thing again [how did it ever work?]
 
+= Map 
+- Render water 
+- Render sides 
+- Partially invalidate and update map mesh 
+
 = Create water (later can ignite=start fire)
 - Spell action: Create water 
 - Use on target creature places it just above (to extinguish or whatever)
 - Creates 1 m3 of water 
+- Add as active ability or whatever
 - Water starts spreading and flowing 
 - Flowing down hill 
 - Amount of water depends on ability. Perphaps taller layer or perhaps pressurize it
@@ -136,7 +142,7 @@ Physics and Magics
 = Ignite = start fire 
 - Spell action: ignite 
 - Create a fire object 
-- Add fuel (vegetation surfaces) 
+- Add fuel (vegetation surfaces, instead of layers)
 - Burn the vegegation surface away
 - If no fuel, extinguish 
 - Air is heated 

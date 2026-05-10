@@ -5,6 +5,7 @@
 #include "Rendering/Color.h"
 #include "Geometry/Matrix.h"
 #include "Geometry/Gtest.h"
+#include <ranges>
 
 namespace Engine::Test
 {
@@ -72,7 +73,7 @@ TEST_F(Mesh, Color)
 {
     Box cube;
     cube.SetColor(RGBA::red);
-    EXPECT_TRUE(all_of(cube.vertices.begin(), cube.vertices.end(), [](const Engine::Mesh::Vertex& v)
+    EXPECT_TRUE(std::ranges::all_of(cube.Vertices(), [](const Engine::Mesh::Vertex& v)
     {
         return v.color == RGBA::red;
     }));
@@ -91,13 +92,13 @@ TEST_F(Mesh, ColorNamed)
     mesh += otherCube;
 
     mesh.SetColor(2, RGBA::green);
-    ASSERT_FALSE(all_of(mesh.vertices.begin(), mesh.vertices.end(), [](const Engine::Mesh::Vertex& v)
+    ASSERT_FALSE(std::ranges::all_of(mesh.Vertices(), [](const Engine::Mesh::Vertex& v)
     {
         return v.color == RGBA::green;
     }));
 
     mesh.SetColor(RGBA::green);
-    EXPECT_TRUE(all_of(mesh.vertices.begin(), mesh.vertices.end(), [](const Engine::Mesh::Vertex& v)
+    EXPECT_TRUE(std::ranges::all_of(mesh.Vertices(), [](const Engine::Mesh::Vertex& v)
     {
         return v.color == RGBA::green;
     }));

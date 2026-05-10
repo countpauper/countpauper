@@ -42,10 +42,7 @@ public:
 
     Mesh& operator*=(const Matrix& transformation);
 
-    std::vector<Vertex> vertices;
-    std::vector<Triangle> triangles;
 
-    std::vector<uint32_t> names;    // same size as triangles. not together due to glDrawElements
 
     bool IsNamed() const;
 
@@ -61,10 +58,18 @@ public:
     void Invalidate();
     void InvalidateVertices();
     void InvalidateTriangles();
-private:
+
+    std::span<const Vertex> Vertices() const;
+    std::span<const Triangle> Triangles() const;
+    std::span<const uint32_t> Names() const;
+protected:
     void Validate() const;
     void GenerateVertexBuffer() const;
     void GenerateIndexBuffer() const;
+
+    std::vector<Vertex> vertices;
+    std::vector<Triangle> triangles;
+    std::vector<uint32_t> names;    // same size as triangles. not together due to glDrawElements
 
     mutable uint32_t vertexBuffer, opaqueTriangleBuffer, translucentTriangleBuffer;
     mutable uint32_t opaqueTrianglesBuffered, translucentTrianglesBuffered;
@@ -73,6 +78,8 @@ private:
     void RenderSelection() const;
     void RenderOpaque() const;
     void RenderTranslucent() const;
+
+
 };
 
 

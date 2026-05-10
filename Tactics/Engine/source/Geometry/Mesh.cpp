@@ -341,6 +341,21 @@ void Mesh::InvalidateTriangles()
 }
 
 
+std::span<const Mesh::Vertex> Mesh::Vertices() const
+{
+    return vertices;
+}
+
+std::span<const Mesh::Triangle> Mesh::Triangles() const
+{
+    return triangles;
+}
+
+std::span<const uint32_t> Mesh::Names() const
+{
+    return names;
+}
+
 void Mesh::Validate() const
 {
     GenerateVertexBuffer();

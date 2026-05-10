@@ -196,6 +196,15 @@ void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, 
     }
 }
 
+uint8_t ComputeOpacityAtDepth(uint8_t alpha, ZType depth)
+{
+    static constexpr float maxAlpha = 255.0f;
+    float o1 = alpha / maxAlpha;    // Alpha channel of material is defined as opacity at 1 meter
+    float m = float(depth);
+    float o = o1 * std::pow(m, 1.0f - o1);
+    return static_cast<Engine::RGBA::Component>(o * maxAlpha);
+}
+
 void Map::GenerateMesh()
 {
     int idx = 0;
@@ -211,27 +220,27 @@ void Map::GenerateMesh()
             {
                 height += layer.amount;
                 const auto& material= layer.material;
-                AddQuadToMesh(Engine::Coordinate(x, y, static_cast<double>(height)), material);                
+                auto color = material.get().color;
+                // todo: should compute each vertex as average of cornered squares for smooth interpolation 
+                color.a = ComputeOpacityAtDepth(color.a, layer.amount); 
+                AddQuadToMesh(Engine::Coordinate(x, y, static_cast<double>(height)), color);                
             }
         }
     }
-    assert(mesh.names.size() == mesh.triangles.size());
+    assert(mesh.Names().size() == mesh.Triangles().size());
 }
 
 
-void Map::AddQuadToMesh(Engine::Coordinate topleft, const Material& mat)
+void Map::AddQuadToMesh(Engine::Coordinate topleft, Engine::RGBA vertexColor)
 {
-    unsigned vertidx = mesh.vertices.size();
     Engine::Quad quad(
         topleft,
         topleft + Engine::Vector(1,0,0),
         topleft + Engine::Vector(1,1,0),
         topleft + Engine::Vector(0,1,0)
     );
-    float brightness = topleft.Z() / float(size.z);
-    brightness = 0.2 + brightness*0.8;
-    auto groundColor = mat.color;
-    auto vertexColor = Engine::Lerp(Engine::RGBA::black, groundColor, brightness);
+    if (!vertexColor)
+        return;
     quad.SetColor(vertexColor);
     quad.SetName(Index(Engine::Position(topleft.X(), topleft.Y(), topleft.Z())));
     mesh += quad;

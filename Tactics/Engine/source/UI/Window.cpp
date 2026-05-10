@@ -109,6 +109,9 @@ void Window::Render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     CurrentWindow()->GetScene().Render();
+    glEnable(GL_BLEND);
+    CurrentWindow()->GetScene().Render();
+    glDisable(GL_BLEND);
     CurrentWindow()->GetHUD().Render();
     glFlush();
 }
