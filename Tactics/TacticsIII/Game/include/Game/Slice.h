@@ -26,9 +26,14 @@ public:
     Layer pop_front();
     
     using const_iterator = std::vector<Layer>::const_iterator; 
+    using const_reverse_iterator = std::vector<Layer>::const_reverse_iterator;
+
     inline std::size_t size() const { return layers.size(); }
     inline const_iterator begin() const { return layers.begin(); }
     inline const_iterator end() const { return layers.end(); }
+    inline const_reverse_iterator rbegin() const { return layers.rbegin(); }
+    inline const_reverse_iterator rend() const { return layers.rend(); } 
+    // Return the iterator of the layer that 'at' is in and the amount that at is above the bottom of that layer
     std::pair<const_iterator,Layer::Amount> Find(ZType at) const;
     inline const Layer& operator[](unsigned idx) { return layers.at(idx); }
     using value_type = Layer; 
@@ -39,7 +44,7 @@ public:
 
     Engine::Range<ZType> FindBiggestGasOpening() const;
     Engine::Range<ZType> FindBiggestNonSolidOpening() const;
-    Engine::Range<ZType> FindBiggestRange(std::function<bool(const Layer&)> predicate) const;
+    Engine::Range<ZType> FindBiggestRange(Layer::Predicate predicate) const;
 
 private:
     std::vector<Layer> layers;

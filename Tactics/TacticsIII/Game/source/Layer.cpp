@@ -34,6 +34,17 @@ bool Layer::IsSolid() const
     return material.get().IsSolid(static_cast<float>(temperature));
 }
 
+bool Layer::IsOpaque() const
+{
+    return material.get().color.IsOpaque();
+}
+
+bool Layer::IsTranslucent() const
+{
+    return !material.get().color.IsOpaque();
+}
+
+
 bool Layer::TryMerge(const Layer& rhs) 
 {
     if (material.get() != rhs.material.get())

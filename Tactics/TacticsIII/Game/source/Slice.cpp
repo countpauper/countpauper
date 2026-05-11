@@ -155,10 +155,7 @@ Engine::Range<ZType> Slice::FindBiggestGasOpening() const
 
 Engine::Range<ZType> Slice::FindBiggestNonSolidOpening() const
 {
-    return FindBiggestRange([](const Layer& l)
-    {
-        return !l.IsSolid();
-    });
+    return FindBiggestRange(std::mem_fn(&Layer::IsGas));
 }
 
 Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Layer&)> predicate) const

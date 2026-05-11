@@ -205,6 +205,26 @@ uint8_t ComputeOpacityAtDepth(uint8_t alpha, ZType depth)
     return static_cast<Engine::RGBA::Component>(o * maxAlpha);
 }
 
+
+ZType& Map::SurroundingHeights::operator[](Orientation ori)
+{
+    auto idx = ori.Index();
+    if (idx<0)
+        throw std::range_error("Invalid surrounding height");
+    else 
+        return height[ori.Index()];
+}
+
+ZType Map::SurroundingHeights::operator[](Orientation ori) const
+{
+    auto idx = ori.Index();
+    if (idx<0)
+        return ZType(0.0);
+    else
+        return height[ori.Index()];
+}
+
+
 void Map::GenerateMesh()
 {
     int idx = 0;
@@ -223,16 +243,64 @@ void Map::GenerateMesh()
                 auto color = material.get().color;
                 // todo: should compute each vertex as average of cornered squares for smooth interpolation 
                 color.a = ComputeOpacityAtDepth(color.a, layer.amount); 
-                AddQuadToMesh(Engine::Coordinate(x, y, static_cast<double>(height)), color);                
+                SurroundingHeights heights = CalculateSurroundingHeights({static_cast<int>(x), static_cast<int>(y), height}, slice);
+                AddLayerToMesh(Position(x, y, height), color, heights);                
             }
         }
     }
     assert(mesh.Names().size() == mesh.Triangles().size());
 }
 
-
-void Map::AddQuadToMesh(Engine::Coordinate topleft, Engine::RGBA vertexColor)
+ZType SumAmount(Slice::const_iterator from, Slice::const_iterator to)
 {
+    return std::accumulate(from, to, ZType(0.0),[](ZType sum, const Layer& layer)
+    {
+        return sum + layer.amount;
+    });
+}
+
+Map::SurroundingHeights Map::CalculateSurroundingHeights(Position p, const Slice& centerSlice)
+{
+    SurroundingHeights result;
+    auto [it, amount] = centerSlice.Find(p.Z());
+    const auto& layer = *it;
+    if (it==centerSlice.end())
+        result[Orientation::up] = 0;
+    else if (it->IsTranslucent())
+        result[Orientation::up] = p.Z() - amount;
+    else
+    {
+        result[Orientation::up] = p.Z() - amount + layer.amount + 
+            SumAmount(it+1, std::find_if_not(it+1, centerSlice.end(), std::mem_fn(&Layer::IsOpaque)));
+        assert(result[Orientation::up]>=p.Z());
+    }
+    result[Orientation::down] = amount; // TODO if there's a previous one and it's gas, add a bottom ? 
+    result[Orientation::left] = 0.0;
+    result[Orientation::right] = 0.0;
+    result[Orientation::front] = 0.0;
+    result[Orientation::back] = 0.0;
+    
+    // TODO: first do this slice vertical for up, none and down orientations 
+    // Then the horizontal ones and use the same helpers as can be used for move:
+    //     Slice::FindSolidDownFrom(height) and FindNonSolidUpFrom(height) or FindDownFromHeight(predicate) 
+    //    Might need to iterator Slice::At(height) 
+    //   Add unit tests to all these slices functions at leasts, because these mesh generation functions/helpers are harder to test (and maintain since it's all not as required)
+
+    return result;
+}
+
+void Map::AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const SurroundingHeights& heights)
+{
+    // TODO if neighbourheight +Z > topLeft.Z(), then skip it
+    // if neighbourheid -Z then that's the maximum side height 
+    // height at none is mine in ztype (for accurate compare) so can pass x and y as integer position, for name or just redundant 
+    // else for sided: if they are higher or equal then skip, of lower then have vertical quads on that side up to the maximum of that height and the -Z one 
+
+    Engine::Coordinate topleft(
+        static_cast<double>(pos.X()),
+        static_cast<double>(pos.Y()),
+        static_cast<double>(pos.Z())
+    );
     Engine::Quad quad(
         topleft,
         topleft + Engine::Vector(1,0,0),
@@ -243,7 +311,10 @@ void Map::AddQuadToMesh(Engine::Coordinate topleft, Engine::RGBA vertexColor)
         return;
     quad.SetColor(vertexColor);
     quad.SetName(Index(Engine::Position(topleft.X(), topleft.Y(), topleft.Z())));
-    mesh += quad;
+    if (heights[Orientation::up] <= pos.Z())    // not occluded by layer above
+    {
+        mesh += quad;
+    }
 
     /* TODO sides
     if (topleft.x > 0 )

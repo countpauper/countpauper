@@ -2,6 +2,7 @@
 
 #include "Utility/FixedPoint.h"
 #include "Game/Material.h"
+#include <functional>
 
 namespace Game
 {
@@ -20,6 +21,10 @@ struct Layer
     float Density() const;  
     bool IsGas() const;
     bool IsSolid() const;
+    bool IsOpaque() const;
+    bool IsTranslucent() const;
+
+    using Predicate = std::function<bool(const Layer&)>;
     bool TryMerge(const Layer& rhs);
 };
 

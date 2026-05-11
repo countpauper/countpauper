@@ -2,7 +2,7 @@
 #include "Game/MapItf.h"
 #include "Game/Slice.h"
 #include "Game/Material.h"
-
+#include "Game/Orientation.h"
 #include "Geometry/Size.h"
 #include "Geometry/Mesh.h"
 #include "Geometry/Position.h"
@@ -35,7 +35,15 @@ private:
     Map(std::string_view fileName, const class Engine::Image& data);
     unsigned Index(Engine::Position pos) const;
     void Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl, float temperature=300.0f);
-    void AddQuadToMesh(Engine::Coordinate topleft, Engine::RGBA vertexColor);
+    struct SurroundingHeights 
+    {
+        ZType& operator[](Orientation ori);
+        ZType operator[](Orientation ori) const;
+    private:
+        ZType height[6];
+    };
+    SurroundingHeights CalculateSurroundingHeights(Position p, const Slice& centerSlice);
+    void AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const SurroundingHeights& neighbourHeight);
 
     unsigned SliceIdx(int x, int y) const;
 

@@ -126,6 +126,7 @@ Physics and Magics
 = Map 
 - Render water 
 - Render sides 
+- name sides and tops with layer number, click on layers
 - Partially invalidate and update map mesh 
 
 = Create water (later can ignite=start fire)
