@@ -4,6 +4,7 @@
 #include <cstdint>
 #include "UI/Scenery.h"
 #include "UI/Camera.h"
+#include "Rendering/Light.h"
 
 namespace Engine
 {
@@ -12,7 +13,7 @@ class Mesh;
 class Scene
 {
 public:
-    Scene() = default;
+    Scene();
     Scenery& Add(Scenery& prop);
     void Render() const;
     Camera& GetCamera();
@@ -20,7 +21,7 @@ public:
     std::pair<Scenery*, std::uint32_t> Hit(const Line& line) const;
 private:
     TrackingCamera camera;
-    // TODO: lights
+    Light sun;
     std::vector<Scenery*> scenery;
 };
 

@@ -6,6 +6,11 @@
 namespace Engine
 {
 
+Scene::Scene()
+{
+    sun.Move(Coordinate(0,0,20.0));
+}
+
 Scenery& Scene::Add(Scenery& prop)
 {
     scenery.emplace_back(&prop);
@@ -46,6 +51,8 @@ std::pair<Scenery*, std::uint32_t> Scene::Hit(const Line& line) const
 void Scene::Render() const
 {
     camera.Render();
+
+    sun.Render();
     for(const auto& obj: scenery)
     {
         obj->Render();

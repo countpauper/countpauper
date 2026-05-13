@@ -30,7 +30,6 @@ void Window::Init(void)
     //select clearing (background) color
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
-    //glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     GLboolean writeMask = false;
     glGetBooleanv(GL_DEPTH_WRITEMASK, &writeMask);
@@ -38,10 +37,7 @@ void Window::Init(void)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
-    //glEnable(GL_BLEND);    // TODO: first render non alpha tiles, then alpha tiles with depth test
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // Lighting makes it nice but dark
-    //glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
@@ -107,11 +103,13 @@ void Window::Render()
     glutUseLayer(GLUT_NORMAL);
     //Clear all pixels
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_LIGHTING);
 
     CurrentWindow()->GetScene().Render();
     glEnable(GL_BLEND);
     CurrentWindow()->GetScene().Render();
     glDisable(GL_BLEND);
+    glDisable(GL_LIGHTING);
     CurrentWindow()->GetHUD().Render();
     glFlush();
 }

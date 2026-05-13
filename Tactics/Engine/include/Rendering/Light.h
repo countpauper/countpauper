@@ -10,12 +10,16 @@ namespace Engine
     {
     public:
         Light();
-        void Render() const override;
         void On();
+        void Render() const override;
         void Off();
         void Move(const Coordinate& newPosition);
     private:
-        bool on;
+
+        unsigned id;
+
+        float power;            // base power. 0.0 if off
+        float directional;      // how parallel are the rays. 0.0 (sun) is totally parallel
         Coordinate position;
         float diffusePower;
         RGBA diffuse;
@@ -24,5 +28,7 @@ namespace Engine
         float specularPower;
         RGBA specular;
     };
+
+
 
 }   // ::Engine
