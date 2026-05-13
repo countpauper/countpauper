@@ -191,8 +191,8 @@ TEST(Orientation, Vector)
 
 TEST(Orientation, Index)
 {
-    EXPECT_EQ(Orientation().Index(), -1);
-    int expectedIndex = 0;
+    EXPECT_EQ(Orientation().Index(), 0);
+    int expectedIndex = 1;
 	for (auto ori : Orientations::all)
 	{
         EXPECT_EQ(ori.Index(), expectedIndex) << ori;

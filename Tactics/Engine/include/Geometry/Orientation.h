@@ -47,7 +47,7 @@ public:
 	Orientation Turn(RightAngle turn, Orientation axis=up) const;
     std::string_view Description() const;
 
-    int Index() const;     // Index into Orientations::all, None = -1
+    int Index() const;     // Index into Orientations::all, None = 0
 
     bool IsNone() const;    // operator bool leads to implicit conversion confusion with operator==
     bool operator==(Orientation other) const;

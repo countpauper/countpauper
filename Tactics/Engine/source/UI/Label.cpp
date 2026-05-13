@@ -53,6 +53,7 @@ void Label::RenderOutline(const Style& style) const
 
 void Label::RenderText(const Style& style) const
 {
+    style.textColor.Render();
     glText(text.c_str(), style.font, horizontal_align, vertical_align);
 }
 

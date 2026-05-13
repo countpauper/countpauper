@@ -40,7 +40,7 @@ private:
         ZType& operator[](Orientation ori);
         ZType operator[](Orientation ori) const;
     private:
-        ZType height[6];
+        ZType height[7];
     };
     NeighbourHeights CalculateNeighbourHeights(Position p, const Slice& centerSlice);
     void AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const NeighbourHeights& neighbourHeight);

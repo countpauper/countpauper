@@ -20,13 +20,13 @@ Orientation::Orientation(Orientation::Value value) :
 }
 
 Orientation::Orientation(int index) :
-    Orientation(Value(index > 2 ? (2 - index) : index + 1))
+    Orientation(Value(index > 3 ? (3 - index) : index))
 {
 }
 
 int Orientation::Index() const
 {
-    return value < 0 ? 2 - static_cast<int>(value) : static_cast<int>(value - 1);
+    return value < 0 ? 3 - static_cast<int>(value) : static_cast<int>(value);
 }
 
 
@@ -198,7 +198,7 @@ Engine::Position Orientation::GetVector() const
         Position(-1, 0, 0), // Left
         Position()          // Invalid
     };
-    auto idx = Index()+1;
+    auto idx = Index();
     return oriVector[idx];
 }
 
@@ -284,16 +284,13 @@ Orientation Orientation::Perpendicular(Orientation other) const
 {
     auto axis = Axis();
     auto otherAxis = other.Axis();
-    if (!axis)
-        return axis;
-    if (!otherAxis)
-        return otherAxis;
     static constexpr Orientation::Value perpendicular[4][4]=
     {
-        // Z                  Y                   X
-        { Orientation::None,  Orientation::XAxis, Orientation::YAxis }, // Z
-        { Orientation::XAxis, Orientation::None,  Orientation::ZAxis }, // Y
-        { Orientation::YAxis, Orientation::ZAxis, Orientation::None  }  // X
+        // None               Z                  Y                   X
+        { Orientation::None,  Orientation::None,  Orientation::None,  Orientation::None  }, // None
+        { Orientation::None,  Orientation::None,  Orientation::XAxis, Orientation::YAxis }, // Z
+        { Orientation::None,  Orientation::XAxis, Orientation::None,  Orientation::ZAxis }, // Y
+        { Orientation::None,  Orientation::YAxis, Orientation::ZAxis, Orientation::None  }  // X
     };
     return Orientation(perpendicular[axis.Index()][otherAxis.Index()]);
 }
@@ -404,7 +401,7 @@ std::string_view Orientation::Description() const
     };
 
 
-    return description[Index() + 1];
+    return description[Index()];
 }
 
 bool Orientation::IsNone() const
@@ -518,7 +515,7 @@ Orientations::Orientations(const Engine::Position& v) :
 
 Orientations& Orientations::operator|=(Orientation dir)
 {
-    flags |= 1 << (dir.Index()+1);
+    flags |= 1 << (dir.Index());
     return *this;
 }
 
@@ -529,7 +526,7 @@ bool Orientations::operator==(Orientations other) const
 
 bool Orientations::operator[](Orientation dir) const
 {
-    return (flags & (1 << (dir.Index()+1))) != 0;
+    return (flags & (1 << (dir.Index()))) != 0;
 }
 
 bool Orientations::empty() const
@@ -582,7 +579,7 @@ bool Orientations::iterator::operator!=(const Orientations::iterator& other) con
 
 Orientations::iterator::value_type Orientations::iterator::operator*() const
 {
-    return Orientation(bit-1);
+    return Orientation(bit);
 }
 
 Orientations::iterator Orientations::begin() const

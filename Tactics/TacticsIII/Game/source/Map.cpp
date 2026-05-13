@@ -209,20 +209,12 @@ uint8_t ComputeOpacityAtDepth(uint8_t alpha, ZType depth)
 
 ZType& Map::NeighbourHeights::operator[](Orientation ori)
 {
-    auto idx = ori.Index();
-    if (idx<0)
-        throw std::range_error("Invalid surrounding height");
-    else 
-        return height[ori.Index()];
+    return height[ori.Index()];
 }
 
 ZType Map::NeighbourHeights::operator[](Orientation ori) const
 {
-    auto idx = ori.Index();
-    if (idx<0)
-        return ZType(0.0);
-    else
-        return height[ori.Index()];
+    return height[ori.Index()];
 }
 
 
@@ -335,8 +327,9 @@ void Map::AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const Neighbour
         top.SetName(name);        
         mesh += top;
     }
-    static const unsigned topVertexIndex[6][2] = // indexed by Orientation index
+    static const unsigned topVertexIndex[7][2] = // indexed by Orientation index
     {
+        { 0, 0 },    // None (unused)
         { 0, 0 },    // +Z   (unused)
         { 3, 2 },    // +Y   aka front: front left,  front right (inverted direction from ccw top )  
         { 2, 1 },    // +X   aka right: front right, back right, 

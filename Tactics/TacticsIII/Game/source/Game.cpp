@@ -117,7 +117,7 @@ void Game::OnMessage(const Engine::Message& message)
         }
         else
         {
-             Focus(Engine::Position(map.GetBounds().x.Middle(), map.GetBounds().y.Middle(), 0));
+            Focus(Engine::Position(map.GetBounds().x.Middle(), map.GetBounds().y.Middle(), 0));
         }
         Changed();
     }

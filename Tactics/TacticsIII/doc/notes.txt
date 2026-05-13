@@ -124,11 +124,12 @@ Physics and Magics
 * Fix that reach thing again [how did it ever work?]
 
 = Map 
-- Render water 
-- Render sides 
-- Enable lighting because with the sides it's a blob
-- Change orientation Index() to 0 being none and more constexpr
+* Render water 
+* Render sides 
+* Enable lighting because with the sides it's a blob
+* Change orientation Index() to 0 being none and more constexpr
 * name sides and tops with layer number, click on layers
+- Start water flowing from the bump with unit tests. 
 - Partially invalidate and update map mesh 
 
 = Create water (later can ignite=start fire)
