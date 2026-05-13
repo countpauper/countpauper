@@ -428,7 +428,6 @@ void Mesh::GenerateIndexBuffer() const
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-
 Quad::Quad(Coordinate a, Coordinate b, Coordinate c, Coordinate d)
 {
     Vector normal = Plane(a, b, c).Normalized().normal;
@@ -439,6 +438,11 @@ Quad::Quad(Coordinate a, Coordinate b, Coordinate c, Coordinate d)
 
     triangles.emplace_back(Triangle{0, 1, 2});
     triangles.emplace_back(Triangle{0, 2, 3});
+}
+
+Quad::Quad(Coordinate c[4]) :
+    Quad(c[0], c[1], c[2], c[3])
+{
 }
 
 Box::Box(const Vector& size)
@@ -460,10 +464,10 @@ Box::Box()
 {
     Coordinate a(0,0,0), b(0,0,1), c(0,1,1), d(0,1,0),
         e(1,0,0), f(1,0,1), g(1,1,1), h(1,1,0);
-    (*this) += Quad(a, b, c, d); // x = 0
-    (*this) += Quad(h, g, f, e); // x = 1
-    (*this) += Quad(a, e, f, b); // y = 0
-    (*this) += Quad(c, g, h, d); // y = 1
+    (*this) += Quad(a, b, c, d);    // x = 0
+    (*this) += Quad(h, g, f, e);    // x = 1
+    (*this) += Quad(a, e, f, b);    // y = 0
+    (*this) += Quad(c, g, h, d);    // y = 1
     (*this) += Quad(a, d, h, e);    // z = 0
     (*this) += Quad(b, f, g, c);    // z = 1
 }

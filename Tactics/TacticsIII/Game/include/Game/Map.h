@@ -33,17 +33,17 @@ public:
     const Slice& SliceAt(int x, int y) const override; 
 private:
     Map(std::string_view fileName, const class Engine::Image& data);
-    unsigned Index(Engine::Position pos) const;
+    unsigned Index(Position pos) const;
     void Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl, float temperature=300.0f);
-    struct SurroundingHeights 
+    struct NeighbourHeights 
     {
         ZType& operator[](Orientation ori);
         ZType operator[](Orientation ori) const;
     private:
         ZType height[6];
     };
-    SurroundingHeights CalculateSurroundingHeights(Position p, const Slice& centerSlice);
-    void AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const SurroundingHeights& neighbourHeight);
+    NeighbourHeights CalculateNeighbourHeights(Position p, const Slice& centerSlice);
+    void AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const NeighbourHeights& neighbourHeight);
 
     unsigned SliceIdx(int x, int y) const;
 

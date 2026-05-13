@@ -126,7 +126,9 @@ Physics and Magics
 = Map 
 - Render water 
 - Render sides 
-- name sides and tops with layer number, click on layers
+- Enable lighting because with the sides it's a blob
+- Change orientation Index() to 0 being none and more constexpr
+* name sides and tops with layer number, click on layers
 - Partially invalidate and update map mesh 
 
 = Create water (later can ignite=start fire)

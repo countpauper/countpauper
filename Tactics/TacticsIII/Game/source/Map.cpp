@@ -106,11 +106,11 @@ Engine::Mesh& Map::GetMesh()
     return mesh;
 }
 
-uint32_t Map::Index(Engine::Position pos) const
+uint32_t Map::Index(Position pos) const
 {
     return pos.x +
         pos.y * size.x +
-        pos.z * size.x * size.y;
+        pos.z.RawValue() * size.x * size.y;
 }
 
 
@@ -146,16 +146,15 @@ Position Map::IdToPosition(uint32_t id) const
     return Position{
         static_cast<int>((id                                      ) % bounds.x.Size()),
         static_cast<int>((id /  bounds.x.Size()                   ) % bounds.y.Size()),
-        static_cast<int>((id / (bounds.x.Size() * bounds.y.Size())) % bounds.z.Size())
+        ZType::FromRaw(static_cast<int>(id / (bounds.x.Size() * bounds.y.Size())))
     } + Position(bounds.Start());
 }
-
 
 void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl, float temperature)
 {
     auto mapHeight  = Z();
     auto& slice = slices.at(SliceIdx(x,y));
-    static const ZType maxVeg(0.1);
+    static const ZType maxVeg(0.25);
     static const ZType maxEarth(2.0);
     ZType stoneLevel=0.0;
     ZType earthLevel=0.0;
@@ -198,6 +197,8 @@ void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, 
 
 uint8_t ComputeOpacityAtDepth(uint8_t alpha, ZType depth)
 {
+     // todo: should compute each vertex as average of cornered squares for smooth interpolation 
+
     static constexpr float maxAlpha = 255.0f;
     float o1 = alpha / maxAlpha;    // Alpha channel of material is defined as opacity at 1 meter
     float m = float(depth);
@@ -206,7 +207,7 @@ uint8_t ComputeOpacityAtDepth(uint8_t alpha, ZType depth)
 }
 
 
-ZType& Map::SurroundingHeights::operator[](Orientation ori)
+ZType& Map::NeighbourHeights::operator[](Orientation ori)
 {
     auto idx = ori.Index();
     if (idx<0)
@@ -215,7 +216,7 @@ ZType& Map::SurroundingHeights::operator[](Orientation ori)
         return height[ori.Index()];
 }
 
-ZType Map::SurroundingHeights::operator[](Orientation ori) const
+ZType Map::NeighbourHeights::operator[](Orientation ori) const
 {
     auto idx = ori.Index();
     if (idx<0)
@@ -241,9 +242,9 @@ void Map::GenerateMesh()
                 height += layer.amount;
                 const auto& material= layer.material;
                 auto color = material.get().color;
-                // todo: should compute each vertex as average of cornered squares for smooth interpolation 
+               
                 color.a = ComputeOpacityAtDepth(color.a, layer.amount); 
-                SurroundingHeights heights = CalculateSurroundingHeights({static_cast<int>(x), static_cast<int>(y), height}, slice);
+                NeighbourHeights heights = CalculateNeighbourHeights({static_cast<int>(x), static_cast<int>(y), height}, slice);
                 AddLayerToMesh(Position(x, y, height), color, heights);                
             }
         }
@@ -259,91 +260,115 @@ ZType SumAmount(Slice::const_iterator from, Slice::const_iterator to)
     });
 }
 
-Map::SurroundingHeights Map::CalculateSurroundingHeights(Position p, const Slice& centerSlice)
+ZType SumAmount(Slice::const_reverse_iterator from, Slice::const_reverse_iterator to)
 {
-    SurroundingHeights result;
+    return std::accumulate(from, to, ZType(0.0),[](ZType sum, const Layer& layer)
+    {
+        return sum + layer.amount;
+    });
+}
+
+
+Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& centerSlice)
+{
+    NeighbourHeights result;
     auto [it, amount] = centerSlice.Find(p.Z());
     const auto& layer = *it;
-    if (it==centerSlice.end())
-        result[Orientation::up] = 0;
-    else if (it->IsTranslucent())
-        result[Orientation::up] = p.Z() - amount;
-    else
-    {
-        result[Orientation::up] = p.Z() - amount + layer.amount + 
-            SumAmount(it+1, std::find_if_not(it+1, centerSlice.end(), std::mem_fn(&Layer::IsOpaque)));
-        assert(result[Orientation::up]>=p.Z());
-    }
-    result[Orientation::down] = amount; // TODO if there's a previous one and it's gas, add a bottom ? 
-    result[Orientation::left] = 0.0;
-    result[Orientation::right] = 0.0;
-    result[Orientation::front] = 0.0;
-    result[Orientation::back] = 0.0;
-    
-    // TODO: first do this slice vertical for up, none and down orientations 
-    // Then the horizontal ones and use the same helpers as can be used for move:
-    //     Slice::FindSolidDownFrom(height) and FindNonSolidUpFrom(height) or FindDownFromHeight(predicate) 
-    //    Might need to iterator Slice::At(height) 
-    //   Add unit tests to all these slices functions at leasts, because these mesh generation functions/helpers are harder to test (and maintain since it's all not as required)
 
+    result[Orientation::up] = p.Z() - amount+ 
+        SumAmount(it, std::find_if_not(it, centerSlice.end(), std::mem_fn(&Layer::IsOpaque)));
+
+    ZType bottom(0.0);
+    if (it!=centerSlice.begin())
+        bottom = p.Z()-amount - (it-1)->amount;
+    result[Orientation::down] = bottom;
+    auto box = GetBounds();
+    for(auto ori : Orientations::horizontal)
+    {
+        auto nx = p.X() + ori.X();
+        auto ny = p.Y() + ori.Y();
+        if (!box.x[nx] || !box.y[ny])
+            result[ori] = bottom;
+        else 
+        {
+            ZType height(0.0);
+            const auto& neighbour = SliceAt(nx, ny);
+            auto [it, amount] = neighbour.Find(p.Z());
+            if (it==neighbour.end())
+                height = 0;
+            else if (it->IsTranslucent())
+                height = p.Z()-amount + 
+                        SumAmount(std::reverse_iterator(it-1), std::find_if_not(std::reverse_iterator(it-1), neighbour.rend(), std::mem_fn(&Layer::IsTranslucent)));
+            else 
+                height  = p.Z() -amount + 
+                     SumAmount(it, std::find_if_not(it, centerSlice.end(), std::mem_fn(&Layer::IsOpaque)));
+
+            height = std::max(bottom, height);
+            result[ori] = height;
+        }
+    }   
     return result;
 }
 
-void Map::AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const SurroundingHeights& heights)
+void Map::AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const NeighbourHeights& neighbours)
 {
-    // TODO if neighbourheight +Z > topLeft.Z(), then skip it
-    // if neighbourheid -Z then that's the maximum side height 
-    // height at none is mine in ztype (for accurate compare) so can pass x and y as integer position, for name or just redundant 
-    // else for sided: if they are higher or equal then skip, of lower then have vertical quads on that side up to the maximum of that height and the -Z one 
-
-    Engine::Coordinate topleft(
+    Engine::Coordinate backLeft(
         static_cast<double>(pos.X()),
         static_cast<double>(pos.Y()),
         static_cast<double>(pos.Z())
     );
-    Engine::Quad quad(
-        topleft,
-        topleft + Engine::Vector(1,0,0),
-        topleft + Engine::Vector(1,1,0),
-        topleft + Engine::Vector(0,1,0)
-    );
-    if (!vertexColor)
-        return;
-    quad.SetColor(vertexColor);
-    quad.SetName(Index(Engine::Position(topleft.X(), topleft.Y(), topleft.Z())));
-    if (heights[Orientation::up] <= pos.Z())    // not occluded by layer above
+
+    Engine::Coordinate topVertexCoord[4]={
+        backLeft,
+        backLeft + Engine::Vector(1,0,0),   // back right
+        backLeft + Engine::Vector(1,1,0),   // front right
+        backLeft + Engine::Vector(0,1,0)    // front left
+    };
+
+    auto name = Index(pos);
+    if (neighbours[Orientation::up] <= pos.Z())    // not occluded by layer above
     {
-        mesh += quad;
+        Engine::Quad top(topVertexCoord);
+        if (!vertexColor)
+            return;
+        top.SetColor(vertexColor);
+        top.SetName(name);        
+        mesh += top;
+    }
+    static const unsigned topVertexIndex[6][2] = // indexed by Orientation index
+    {
+        { 0, 0 },    // +Z   (unused)
+        { 3, 2 },    // +Y   aka front: front left,  front right (inverted direction from ccw top )  
+        { 2, 1 },    // +X   aka right: front right, back right, 
+        { 0, 0 },    // -Z   (unused)
+        { 1, 0 },    // -Y   aka back   : back right, back left,  
+        { 0, 3 }     // -X   aka left: back left, front left,  
+    };
+    
+    for(auto ori: Orientations::horizontal)
+    {
+        ZType height = pos.Z() - neighbours[ori];
+        if (height < 0.0)   // up, let it be drawn by neighbour, for whom it is down, but it's their material and name
+            continue; 
+
+        unsigned idx = ori.Index();
+        unsigned c0 = topVertexIndex[idx][0],
+                c1 =  topVertexIndex[idx][1];
+        Engine::Coordinate bottomVertexCoord[2]={
+            topVertexCoord[c0] - Engine::Vector(0,0, static_cast<double>(height)),
+            topVertexCoord[c1] - Engine::Vector(0,0, static_cast<double>(height)),
+        };
+        Engine::Quad flank(
+            topVertexCoord[c0],
+            topVertexCoord[c1],
+            bottomVertexCoord[1],
+            bottomVertexCoord[0]
+        );
+        flank.SetColor(vertexColor);
+        flank.SetName(name);      
+        mesh += flank;      
     }
 
-    /* TODO sides
-    if (topleft.x > 0 )
-    {
-        Grid& neighbourGrid = grids[idx-1];
-        if (neighbourGrid.level != grid.level)
-        {
-            // TODO add as a quad here too with its own normal and texture coordinates when adding light,
-            //  then fake lighting can be removed as that's the complication now to recompute
-            unsigned neighbourVertexIdx = vertidx - 4;
-            mesh.triangles.push_back({vertidx, vertidx+3, neighbourVertexIdx +1});
-            mesh.names.push_back(idx);
-            mesh.triangles.push_back({vertidx+3, neighbourVertexIdx +2, neighbourVertexIdx +1});
-            mesh.names.push_back(idx);
-        }
-    }
-    if ( topleft.y >0 )
-    {
-        Grid& neighbourGrid = grids[idx - size.x];
-        if (neighbourGrid.level != grid.level)
-        {
-            unsigned neighbourVertexIdx = vertidx - (4 * size.x);
-            mesh.triangles.push_back({vertidx+1, vertidx+0, neighbourVertexIdx +3});
-            mesh.names.push_back(idx);
-            mesh.triangles.push_back({vertidx+1, neighbourVertexIdx+3, neighbourVertexIdx +2});
-            mesh.names.push_back(idx);
-        }
-    }
-        */
 }
 
 }

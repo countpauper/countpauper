@@ -87,6 +87,7 @@ class Quad : public Mesh
 {
 public:
     Quad(Coordinate a, Coordinate b, Coordinate c, Coordinate d);
+    explicit Quad(Coordinate c[4]);
 };
 
 class Box: public Mesh

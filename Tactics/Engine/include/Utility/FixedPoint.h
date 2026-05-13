@@ -92,6 +92,13 @@ public:
         return v;
     }
 
+    static FPT FromRaw(T v)
+    {
+        FPT result;
+        result.v = v;
+        return result;
+    }
+
     FPT operator-() const
     {
         return FromRaw(-v);
@@ -198,12 +205,6 @@ private:
         return FractionDivisor()-1;
     }
 
-    static FPT FromRaw(T v)
-    {
-        FPT result;
-        result.v = v;
-        return result;
-    }
 
     template<unsigned OB, std::integral OT>
     friend class FixedPoint;
