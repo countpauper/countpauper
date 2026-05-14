@@ -12,6 +12,7 @@ class MapItf
 public:
     virtual Engine::IntBox GetBounds() const = 0;
     virtual const Slice& SliceAt(int x, int y) const = 0;
+    inline const Slice& operator[](int x, int y) const { return SliceAt(x,y); };
     Slice GetSlice(Position pos, ZType height) const;
 
     ZType GroundHeight(Position pos) const;

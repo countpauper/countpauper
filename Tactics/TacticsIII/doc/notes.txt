@@ -129,6 +129,11 @@ Physics and Magics
 * Enable lighting because with the sides it's a blob
 * Change orientation Index() to 0 being none and more constexpr
 * name sides and tops with layer number, click on layers
+
+Physics 
+- Gravity 
+- Pressure 
+- Barrier 
 - Start water flowing from the bump with unit tests. 
 - Partially invalidate and update map mesh 
 

@@ -27,16 +27,20 @@ public:
     std::string_view Name() const override;
     std::string_view FileName() const;
     Engine::Mesh& GetMesh();
-    Position IdToPosition(uint32_t id) const;
+    Position NameToPosition(uint32_t name) const;
 
     Slice::iterator Fill(Position at, ZType height, const Material& mat, Layer::Temperature temperature=300.0);
     // Map Itf
     Engine::IntBox GetBounds() const override;
     const Slice& SliceAt(int x, int y) const override; 
+    Slice& SliceAt(int x, int y);
 private:
     Map(std::string_view fileName, const class Engine::Image& data);
-    unsigned Index(Position pos) const;
+    unsigned Name(Position pos) const;
+    unsigned SliceIdx(int x, int y) const;
     void Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl, float temperature=300.0f);
+ 
+    // TODO Split off to a map mesh generator helper 
     struct NeighbourHeights 
     {
         ZType& operator[](Orientation ori);
@@ -46,15 +50,9 @@ private:
     };
     NeighbourHeights CalculateNeighbourHeights(Position p, const Slice& centerSlice);
     void AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const NeighbourHeights& neighbourHeight);
-
-    unsigned SliceIdx(int x, int y) const;
-
     void GenerateMesh();
 
-    ZType LevelToHeight(int level) const;
-    int HeightToLevel(ZType height) const;
 
-    static constexpr int subheight = 16;
     std::string filename;
     Engine::Size size;
     std::vector<Slice> slices;

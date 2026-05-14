@@ -97,7 +97,7 @@ protected:
             {
                 if (targets.template ExpectNext<Position>())
                 {
-                    Position destination = map->IdToPosition(clickOn->sub);
+                    Position destination = map->NameToPosition(clickOn->sub);
                     targets.push_back(destination);
                 }
                 // else warning? Or if target, target that is standing exactly at that position ?                 

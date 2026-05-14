@@ -69,10 +69,18 @@ Map::Map(std::string_view filename) :
 {
 }
 
+
+ZType PixelLevelToHeight(int level)
+{
+    static constexpr int subheight = 16;
+    return ZType(level) / subheight;
+}
+
+
 Map::Map(std::string_view filename, const Engine::Image& data) :
     Scenery(mesh),
     filename(filename),
-    size{int(data.Width()), int(data.Height()/4), (int)LevelToHeight(256)},
+    size{int(data.Width()), int(data.Height()/4), (int)PixelLevelToHeight(256)},
     slices(size.x * size.y)
 {
     for(unsigned y=0; y<size.y; ++y)
@@ -85,8 +93,8 @@ Map::Map(std::string_view filename, const Engine::Image& data) :
             Engine::HSVA gasPixel(data[Engine::Position(x, y+ 3*size.y)]);
 
             const auto& liquidMaterial = levelPixel.b > levelPixel.r ? Material::water : Material::air; //FindMaterial(Engine::HSVA(liquidPixel));
-            ZType solidHeight = LevelToHeight(levelPixel.r);
-            ZType liquidHeight = LevelToHeight(levelPixel.b);
+            ZType solidHeight = PixelLevelToHeight(levelPixel.r);
+            ZType liquidHeight = PixelLevelToHeight(levelPixel.b);
             const Material* mat = FindMaterial(materialPixel); 
             assert(mat);
             Column(x,y, *mat , solidHeight, liquidMaterial, liquidHeight);
@@ -110,24 +118,12 @@ Engine::Mesh& Map::GetMesh()
     return mesh;
 }
 
-uint32_t Map::Index(Position pos) const
+uint32_t Map::Name(Position pos) const
 {
     return pos.x +
         pos.y * size.x +
         pos.z.RawValue() * size.x * size.y;
 }
-
-
-ZType Map::LevelToHeight(int level) const
-{
-    return ZType(level) / subheight;
-}
-
-int Map::HeightToLevel(ZType height) const
-{
-    return static_cast<int>(height * subheight);
-}
-
 
 Engine::IntBox Map::GetBounds() const
 {
@@ -136,6 +132,8 @@ Engine::IntBox Map::GetBounds() const
 
 unsigned Map::SliceIdx(int x, int y) const
 {
+    if (!GetBounds().x[x] || !GetBounds().y[y])
+        throw std::range_error("Map position out of bounds");
     return y*size.x + x;
 }
 
@@ -144,13 +142,18 @@ const Slice& Map::SliceAt(int x, int y) const
     return slices.at(SliceIdx(x, y));
 }
 
-Position Map::IdToPosition(uint32_t id) const
+Slice& Map::SliceAt(int x, int y)
+{
+    return slices.at(SliceIdx(x, y));
+}
+
+Position Map::NameToPosition(uint32_t name) const
 {
     auto bounds = GetBounds();
     return Position{
-        static_cast<int>((id                                      ) % bounds.x.Size()),
-        static_cast<int>((id /  bounds.x.Size()                   ) % bounds.y.Size()),
-        ZType::FromRaw(static_cast<int>(id / (bounds.x.Size() * bounds.y.Size())))
+        static_cast<int>((name                                      ) % bounds.x.Size()),
+        static_cast<int>((name /  bounds.x.Size()                   ) % bounds.y.Size()),
+        ZType::FromRaw(static_cast<int>(name / (bounds.x.Size() * bounds.y.Size())))
     } + Position(bounds.Start());
 }
 
@@ -244,16 +247,16 @@ void Map::GenerateMesh()
         for(unsigned x=0; x<size.x; ++x)
         {
             const auto& slice = SliceAt(x, y);
-            ZType height = 0.0;
+            ZType top = 0.0;
             for(auto layer : slice) 
             {
-                height += layer.height;
+                top += layer.height;
                 const auto& material= layer.material;
                 auto color = material.get().color;
                
                 color.a = ComputeOpacityAtDepth(color.a, layer.height); 
-                NeighbourHeights heights = CalculateNeighbourHeights({static_cast<int>(x), static_cast<int>(y), height}, slice);
-                AddLayerToMesh(Position(x, y, height), color, heights);                
+                NeighbourHeights heights = CalculateNeighbourHeights({static_cast<int>(x), static_cast<int>(y), top}, slice);
+                AddLayerToMesh(Position(x, y, top), color, heights);                
             }
         }
     }
@@ -316,7 +319,7 @@ void Map::AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const Neighbour
         backLeft + Engine::Vector(0,1,0)    // front left
     };
 
-    auto name = Index(pos);
+    auto name = Name(pos);
     if (neighbours[Orientation::up] <= pos.Z())    // not occluded by layer above
     {
         Engine::Quad top(topVertexCoord);

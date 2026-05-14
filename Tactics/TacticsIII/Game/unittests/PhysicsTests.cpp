@@ -35,13 +35,18 @@ using namespace ::testing;
 // Surfaces: Thin layers dissolve to puddles and big surfaces turn to layers 
 // Clouds: liquids evaporate and condense, move with the flow 
 // Charge: Lighting and charge moves and spreads 
-
+TEST(Physics, Gravity)
+{
+    Map map(Engine::Size(2,1,1), {{Material::stone, 0.5}});
+    
+}
 
 TEST(Physiscs, Flow)
 {
-    Map map(Engine::Size{2,1,1});
-    // TODO fill with water and air and watch the water flow. This can be done with Column. 
-    // this would be because the pressure in the water (by its own weight) causing flow 
+    Map map(Engine::Size{2,1,1}, {{Material::water, 1.0}, {Material::stone,0.0}});
+
+    // TODO Make water flow to the right.
+    // this would be because the pressure different in the water (by its own weight) causing  
     // Then the flow moves material 
 
 }

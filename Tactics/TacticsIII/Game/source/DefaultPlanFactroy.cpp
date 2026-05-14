@@ -46,7 +46,7 @@ void DefaultPlanFactory::OnMessage(const Engine::Message& message)
         }
         if (const auto* map = dynamic_cast<const Map*>(clickOn->object))
         {
-            Position destination = map->IdToPosition(clickOn->sub);
+            Position destination = map->NameToPosition(clickOn->sub);
             target = destination;
             Engine::Application::Get().bus.Post(Complete(*this));      
         }    
