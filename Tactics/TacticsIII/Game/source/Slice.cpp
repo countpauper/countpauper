@@ -31,16 +31,23 @@ void Slice::emplace_back(const Material& material, Layer::Amount amt, Layer::Tem
 }
 
 
-std::pair<Slice::const_iterator, Layer::Amount> Slice::Find(ZType at) const
+std::pair<Slice::const_iterator, Layer::Amount> Slice::Find(ZType height) const
 {
     Layer::Amount progress{0.0};
     for(auto it = begin(); it!=end(); ++it)
     {
-        if (progress + it->amount > at)
-            return std::make_pair(it, at - progress);
+        if (progress + it->amount > height)
+            return std::make_pair(it, height - progress);
         progress += it->amount;
     }
     return std::make_pair(end(), Layer::Amount());
+}
+
+std::pair<Slice::iterator, Layer::Amount> Slice::Find(ZType height)
+{   // avoid duplicating Find algorithm by "const casting" the iterator 
+    auto[cit, amount] = const_cast<const Slice*>(this)->Find(height);
+    unsigned idx = cit - const_cast<const Slice*>(this)->begin();
+    return std::make_pair(layers.begin() + idx, amount);
 }
 
 Slice& Slice::operator=(const Slice& rhs)
@@ -187,5 +194,40 @@ Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Layer&)> p
 
 }
 
+Slice::iterator Slice::Fill(Engine::Range<ZType> height, const Material& material, Layer::Temperature temperature)
+{
+    auto[it, amount] = Find(height.begin);
+    Layer::Amount displaced = 0.0;    // the volume removed to make room for the height
+    Layer::Amount level = SumAmount(std::ranges::subrange(begin(), it));
+    if (it!=layers.end() && amount!=0.0)
+    {
+        displaced += it->amount - amount;
+        level += it->amount;
+        it->amount = amount;
+        if (displaced > height.Size())
+        {   // split this overlapping layer 
+            it = layers.emplace(it+1, it->material, displaced - height.Size(), it->temperature);
+            return layers.emplace(it, material, height.Size(), temperature);
+        }
+        ++it;
+        // TODO: later (as an option?) increase pressure by keeping the mass in a reduced volume 
+    }
+    auto replaceStart = it;
+    while(it!= layers.end() && level + it->amount <= height.end)
+    {
+        level+=it->amount;
+        displaced += it->amount;
+        ++it;
+    }
+    // TODO: what to do with the mass of the replaced? Compress it into the layer above in some balance?
+    it = layers.erase(replaceStart, it);
+    if (it!=layers.end())
+    {
+        it->amount -= height.Size() - displaced;
+        // TODO increase pressure 
+    }
+    return layers.emplace(it, material, height.Size(), temperature);
+
+}
 
 }

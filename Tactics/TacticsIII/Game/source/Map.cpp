@@ -10,6 +10,7 @@
 #include "Utility/Assert.h"
 #include <span>
 #include <cmath>
+#include <ranges>
 
 
 namespace Game
@@ -26,7 +27,10 @@ Map::Map(Engine::Size size, std::initializer_list<std::pair<const Material&, ZTy
         for(unsigned x=0;x<size.x; ++x)
         {
             if (it==map.end())
-                break;
+            {
+                Column(x,y, Material::stone, 0, Material::air, size.z);
+                continue;
+            }
             if (it->first == Material::water)
                 Column(x, y, Material::stone, it->second, it->first, 0);
             else
@@ -150,6 +154,14 @@ Position Map::IdToPosition(uint32_t id) const
     } + Position(bounds.Start());
 }
 
+
+Slice::iterator Map::Fill(Position at, ZType height, const Material& mat, Layer::Temperature temperature)
+{
+    auto& slice = slices.at(SliceIdx(at.X(), at.Y()));
+    return slice.Fill(Engine::Range<ZType>(at.Z(), at.Z()+height), mat, temperature);
+}
+
+
 void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl, float temperature)
 {
     auto mapHeight  = Z();
@@ -159,6 +171,7 @@ void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, 
     ZType stoneLevel=0.0;
     ZType earthLevel=0.0;
     ZType vegLevel=0.0;
+    ZType airLvl=0.0;
     if (solidLvl >= mapHeight.begin)
     {
         solidLvl -= mapHeight.begin;
@@ -183,15 +196,18 @@ void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, 
             slice.emplace_back(Material::earth, earthLevel, temperature);
         if (vegLevel)
             slice.emplace_back(solid, vegLevel, temperature);
+        airLvl = solidLvl;
     }
+
     if (liquidLvl > solidLvl)
     {
         slice.emplace_back(liquid, liquidLvl - solidLvl, temperature);
-        slice.emplace_back(Material::air, mapHeight.end - liquidLvl, temperature);
+        airLvl = liquidLvl;
     }
-    else 
+    
+    if (airLvl<mapHeight.end)
     {
-        slice.emplace_back(Material::air, mapHeight.end - solidLvl, temperature);
+        slice.emplace_back(Material::air, mapHeight.end - airLvl, temperature);
     }
 }
 
@@ -244,23 +260,6 @@ void Map::GenerateMesh()
     assert(mesh.Names().size() == mesh.Triangles().size());
 }
 
-ZType SumAmount(Slice::const_iterator from, Slice::const_iterator to)
-{
-    return std::accumulate(from, to, ZType(0.0),[](ZType sum, const Layer& layer)
-    {
-        return sum + layer.amount;
-    });
-}
-
-ZType SumAmount(Slice::const_reverse_iterator from, Slice::const_reverse_iterator to)
-{
-    return std::accumulate(from, to, ZType(0.0),[](ZType sum, const Layer& layer)
-    {
-        return sum + layer.amount;
-    });
-}
-
-
 Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& centerSlice)
 {
     NeighbourHeights result;
@@ -268,7 +267,7 @@ Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& ce
     const auto& layer = *it;
 
     result[Orientation::up] = p.Z() - amount+ 
-        SumAmount(it, std::find_if_not(it, centerSlice.end(), std::mem_fn(&Layer::IsOpaque)));
+        SumAmount(std::ranges::subrange(it, std::find_if_not(it, centerSlice.end(), std::mem_fn(&Layer::IsOpaque))));
 
     ZType bottom(0.0);
     if (it!=centerSlice.begin())
@@ -290,10 +289,12 @@ Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& ce
                 height = 0;
             else if (it->IsTranslucent())
                 height = p.Z()-amount + 
-                        SumAmount(std::reverse_iterator(it-1), std::find_if_not(std::reverse_iterator(it-1), neighbour.rend(), std::mem_fn(&Layer::IsTranslucent)));
+                        SumAmount(std::ranges::subrange(std::reverse_iterator(it-1), 
+                            std::find_if_not(std::reverse_iterator(it-1), neighbour.rend(), std::mem_fn(&Layer::IsTranslucent))));
             else 
                 height  = p.Z() -amount + 
-                     SumAmount(it, std::find_if_not(it, centerSlice.end(), std::mem_fn(&Layer::IsOpaque)));
+                     SumAmount(std::ranges::subrange(it, 
+                        std::find_if_not(it, centerSlice.end(), std::mem_fn(&Layer::IsOpaque))));
 
             height = std::max(bottom, height);
             result[ori] = height;

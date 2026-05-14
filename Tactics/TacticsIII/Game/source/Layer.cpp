@@ -1,4 +1,5 @@
 #include "Game/Layer.h"
+#include <numeric> 
 
 namespace Game 
 {
@@ -61,5 +62,6 @@ std::ostream& operator<<(std::ostream& os, const Layer& layer)
     os << layer.material.get().name << " " << int(static_cast<float>(layer.amount)*1000.0f) << "L@" << layer.temperature << "K";
     return os;
 }
+
 
 }

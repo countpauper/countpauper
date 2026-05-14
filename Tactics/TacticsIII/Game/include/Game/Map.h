@@ -28,6 +28,8 @@ public:
     std::string_view FileName() const;
     Engine::Mesh& GetMesh();
     Position IdToPosition(uint32_t id) const;
+
+    Slice::iterator Fill(Position at, ZType height, const Material& mat, Layer::Temperature temperature=300.0);
     // Map Itf
     Engine::IntBox GetBounds() const override;
     const Slice& SliceAt(int x, int y) const override; 

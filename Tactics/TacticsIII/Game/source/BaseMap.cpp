@@ -13,7 +13,7 @@ Engine::Coordinate MapItf::GroundCoord(Engine::Position pos) const
 Engine::Range<ZType> MapItf::Z() const
 {
     auto bounds = GetBounds();
-    return Engine::Range<ZType>(bounds.z);
+    return Engine::Range<ZType>(bounds.z.begin, bounds.z.end+1);
 }
 
 ZType MapItf::GroundHeight(Position pos) const
