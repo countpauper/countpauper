@@ -14,11 +14,11 @@ namespace Game
 
 struct Layer 
 {
-    using Amount = Engine::FixedPoint<8, uint16_t>;   
+    using Height = Engine::FixedPoint<8, uint16_t>;   
     using Temperature = Engine::FixedPoint<3,uint16_t>;        
 
     std::reference_wrapper<const Material> material;
-    Amount amount; 
+    Height height; 
     Temperature temperature; 
     
     bool operator==(const Layer& rhs) const;
@@ -36,12 +36,11 @@ struct Layer
 template<typename R>
 concept RangeOfLayer = RangeOf<R, Layer>;
 
-//Layer::Amount SumAmount(RangeOfLayer auto&& range);
-Layer::Amount SumAmount(RangeOfLayer auto&& range)
+Layer::Height SumHeight(RangeOfLayer auto&& range)
 {
-    return std::accumulate(std::ranges::begin(range), std::ranges::end(range), Layer::Amount(0.0),[](Layer::Amount sum, const Layer& layer)
+    return std::accumulate(std::ranges::begin(range), std::ranges::end(range), Layer::Height(0.0),[](Layer::Height sum, const Layer& layer)
     {
-        return sum + layer.amount;
+        return sum + layer.height;
     });
 }
 

@@ -7,6 +7,7 @@
 #include <vector>
 #include <span>
 #include <initializer_list>
+#include <iterator>
 
 namespace Game
 {
@@ -19,10 +20,10 @@ public:
     Slice() = default;
     Slice(const Slice& other);
     Slice& operator=(const Slice& other);
-    Slice(const Material& material, Layer::Amount amt=1.0, Layer::Temperature temp=300.0);
+    Slice(const Material& material, Layer::Height height=1.0, Layer::Temperature temp=300.0);
     Slice(std::initializer_list<Layer> layers);
 
-    void emplace_back(const Material& material, Layer::Amount amt, Layer::Temperature temp);
+    void emplace_back(const Material& material, Layer::Height height, Layer::Temperature temp);
     Layer pop_front();
 
     using Layers = std::vector<Layer>;
@@ -39,8 +40,8 @@ public:
     inline const_reverse_iterator rbegin() const { return layers.rbegin(); }
     inline const_reverse_iterator rend() const { return layers.rend(); } 
     // Return the iterator of the layer at 'height'  and the amount that height is above the bottom of that layer
-    std::pair<const_iterator, Layer::Amount> Find(ZType height) const;
-    std::pair<iterator,Layer::Amount> Find(ZType height);
+    std::pair<const_iterator, Layer::Height> Find(ZType height) const;
+    std::pair<iterator,Layer::Height> Find(ZType height);
     inline const Layer& operator[](unsigned idx) const { return layers.at(idx); }
 
     
@@ -52,6 +53,17 @@ public:
     Engine::Range<ZType> FindBiggestNonSolidOpening() const;
     Engine::Range<ZType> FindBiggestRange(Layer::Predicate predicate) const;
 
+    auto Find(const_iterator from, Layer::Predicate to) const 
+    {
+        return std::ranges::subrange(from, std::find_if(from, layers.end(), to));
+    }
+
+    auto FindBackwards(const_iterator from, Layer::Predicate to) const 
+    {
+        auto backward_range = layers | std::views::reverse | std::views::take(std::distance(layers.begin(), from));
+        auto found = std::find_if(backward_range.begin(), backward_range.end(), to);
+        return std::ranges::subrange(std::reverse_iterator(from), found);
+    }
     iterator Fill(Engine::Range<ZType> height, const Material& material, Layer::Temperature temperature);
 private:
     Layers layers;

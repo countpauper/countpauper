@@ -32,53 +32,46 @@ std::set<Position> Approach(const World& world,  Actor& actor, Position center, 
     return result;
 }
 
+auto backward_from(auto it) {
+    return std::views::reverse | std::views::take(std::distance(it.base(), it));
+}
+
 Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, Engine::Range<ZType> heightDifference, ZType space)
 {
     const auto& slice = map.SliceAt(at.X(), at.Y());
     auto [it, offset] = slice.Find(at.Z());
     if (it->IsSolid())
     {
-        auto delta = it->amount - offset;  
+        auto delta = it->height - offset;  
         auto next = it+1;
         for(; next != slice.end(); ++next)
         {
             if(!next->IsSolid())
                 break;
-            delta += next->amount;
+            delta += next->height;
         }
         if (delta > heightDifference.end)
             return Engine::Range<ZType>::empty();
 
-        //TODO: refactor this to finding a range of space helper, in slice ? 
-        Game::Layer::Amount totalSpace = 0.0; 
-        for(;next!=slice.end(); ++next)
-        {
-            if (next->IsSolid())
-                break;
-            totalSpace += next->amount;
-        }
-        if (totalSpace < space)   
+        Game::Layer::Height totalHeight = SumHeight(slice.Find(next, std::mem_fn(&Layer::IsSolid)));
+        if (totalHeight < space)   
             return Engine::Range<ZType>::empty();
-        return { at.Z() + delta, at.Z() + delta + totalSpace };
+        return { at.Z() + delta, at.Z() + delta + totalHeight };
     }
     else 
     {   
         if (it == slice.begin())
             return Engine::Range<ZType>::empty();
-        auto delta = offset;
-        auto totalSpace = it->amount;   // TODO there could be more space above as well
-        for(auto next = it-1; next!=slice.begin(); --next)
-        {
-            if (next->IsSolid())
-                break;
-            delta += next->amount;
-            totalSpace += next->amount;
-        }
+
+        auto non_solid_range = slice.FindBackwards(it, std::mem_fn(&Layer::IsSolid));
+        auto stepDown = SumHeight(non_solid_range | std::views::drop(1));
+        auto delta = offset + stepDown;
         if (delta > -heightDifference.begin)
-            return Engine::Range<ZType>::empty();
+           return Engine::Range<ZType>::empty();
+        auto totalSpace = it->height + stepDown;   // TODO there could be more space above as well
         if (totalSpace < space)
             return Engine::Range<ZType>::empty();
-        return { at.Z() - offset, at.Z() - delta + it->amount };    
+        return { at.Z() - offset, at.Z() - delta + it->height };    
     }
 }
 

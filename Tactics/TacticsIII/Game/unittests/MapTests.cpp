@@ -70,10 +70,18 @@ MATCHER_P(LayerEq, epsilon, "")
                          << actual.material.get().name << " vs expected: " << expected.material.get().name << ")";
         return false;
     }
-    if (expected.amount != actual.amount)
-        return false; // TODO explain or remove the whole thing 
+    if (expected.height != actual.height)
+    {
+        *result_listener << "where the height didn't match (actual: " 
+                         << actual.height << "m vs expected: " << expected.height << "m)";
+        return false;
+    }
     if (expected.temperature != actual.temperature)
-        return false;   // TODO explain or just get rid of the LayerEq
+    {
+        *result_listener << "where the temperature didn't match (actual: " 
+                         << actual.height << "K vs expected: " << expected.height << "K)";
+        return false;   
+    }
     return true;
 }
 
@@ -107,7 +115,7 @@ TEST(Map, Fill)
     const auto& slice = map.SliceAt(0,0);
     ASSERT_EQ(slice.size(), 1);
     EXPECT_EQ(slice[0].material.get(), Material::water);
-    EXPECT_EQ(slice[0].amount, 1.0);
+    EXPECT_EQ(slice[0].height, 1.0);
     EXPECT_EQ(slice[0].temperature, 300.0);
     EXPECT_EQ(it, map.SliceAt(0,0).begin());
 
@@ -115,35 +123,35 @@ TEST(Map, Fill)
     it = map.Fill({0,0,0.6}, 0.4, Material::air);
     ASSERT_EQ(slice.size(), 2);
     EXPECT_EQ(slice[0].material.get(), Material::water);
-    EXPECT_EQ(slice[0].amount, 0.6);
+    EXPECT_EQ(slice[0].height, 0.6);
     EXPECT_EQ(slice[1].material.get(), Material::air);
-    EXPECT_EQ(slice[1].amount, 0.4);
+    EXPECT_EQ(slice[1].height, 0.4);
     EXPECT_EQ(it, map.SliceAt(0,0).begin() + 1);
 
     // Shrink a layer and replace the bottom and overlap a part of the top 
     map.Fill({0,0,0.5}, 0.125, Material::vegetation);
     ASSERT_EQ(slice.size(), 3);
-    EXPECT_EQ(slice[0].amount, 0.5);
+    EXPECT_EQ(slice[0].height, 0.5);
     EXPECT_EQ(slice[1].material.get(), Material::vegetation);
-    EXPECT_EQ(slice[1].amount, 0.125);
-    EXPECT_EQ(slice[2].amount, 0.375);
+    EXPECT_EQ(slice[1].height, 0.125);
+    EXPECT_EQ(slice[2].height, 0.375);
 
     // Replace a whole layer 
     map.Fill({0,0,0.375}, 0.5, Material::water);
     ASSERT_EQ(slice.size(), 3);
-    EXPECT_EQ(slice[0].amount, 0.375);
+    EXPECT_EQ(slice[0].height, 0.375);
     EXPECT_EQ(slice[1].material.get(), Material::water);
-    EXPECT_EQ(slice[1].amount, 0.5);
+    EXPECT_EQ(slice[1].height, 0.5);
 
     // Split a layer 
     map.Fill({0,0,0.5}, 0.25, Material::earth);
     ASSERT_EQ(slice.size(), 5);
     EXPECT_EQ(slice[1].material.get(), Material::water);
-    EXPECT_EQ(slice[1].amount, 0.125);
+    EXPECT_EQ(slice[1].height, 0.125);
     EXPECT_EQ(slice[2].material.get(), Material::earth);
-    EXPECT_EQ(slice[2].amount, 0.25);
+    EXPECT_EQ(slice[2].height, 0.25);
     EXPECT_EQ(slice[3].material.get(), Material::water);
-    EXPECT_EQ(slice[3].amount, 0.125);
+    EXPECT_EQ(slice[3].height, 0.125);
 }
 
 }

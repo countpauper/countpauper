@@ -10,13 +10,40 @@ namespace Game::Test
 {
 using namespace ::testing;
 
+
+// TODO: 
+// Gravity: Layer flow increase downwards (if nothing around)
+// Friction: layer flow (downwards?) is reduced (to 0) if neighbouring materials (especially solids) and low granulartity (of both) (so earth still falls mostly) (also water over riverbed later)
+// Presure: Layers trying to flow downwards increase pressure in layers below and inside themselves if they can't flow down (air on water water on rock)
+// Equilibrium: water layers pressure is set on creation depending on depth (so it flows sideways) but doesn't flow up in an equilibrium. (Perhaps water layers should be at most 1-2 meters?) 
+// Falling pressure: rock falling down in air creates very high pressure mini layer to a limit that offsets the gravity, until it escapes (minimum size 1?)
+// Sink: rock/earth falling in water (or high pressure air) creates pressure that slows sinking
+// Pressure flow: differences in pressure between neighbouring layers creates sideways flow 
+// Expand: High pressure layers flow up (or down) into lower pressure vertical neighbours until they even out. THis is like flowing up and immediately fusing 
+// Merge: Vertical layers that (have landed/flowed) unto similar neighbours are merged, averaging temperature, pressure and flow (if within limits)   
+// Viscosity: More viscous materials reduce the flow as internal friction
+// Flow: If after computing and evening out gravity, friction and pressure, there is still flow, materials are exchanged between layers of the same material 
+// Leak: Material leaks into neighbouring layers with less pressure but different material, creating new layers 
+// Shore: Flow is stopped by neighbours with surface hardness (this may already be needed sooner for falling pressure?)
+// Edge: Neighbouring layers are extended outside map edge for determining friction and flow (what about pressure?)
+// Source: Edge source can flow material into layer (to create river/wind/clouds) 
+
+// Later more advanced (bigger) topics, yet to be broken down 
+// Collision: layers moving hard into each other can cause granular break down + clouds and surfaces (non elastic) or even flow reversal? (can flow be that fast? runge kutta gravity and velocity over time)
+// Temperature: Increases pressure, diffuses, spreads with flow, state changes: ice Friction is lower, hardness higher etc  
+// Erosion: Flow over low granular material can create clouds
+// Surfaces: Thin layers dissolve to puddles and big surfaces turn to layers 
+// Clouds: liquids evaporate and condense, move with the flow 
+// Charge: Lighting and charge moves and spreads 
+
+
 TEST(Physiscs, Flow)
 {
     Map map(Engine::Size{2,1,1});
-    // TODO fill with water and air and watch the water flow
+    // TODO fill with water and air and watch the water flow. This can be done with Column. 
     // this would be because the pressure in the water (by its own weight) causing flow 
     // Then the flow moves material 
-    
+
 }
 
 }

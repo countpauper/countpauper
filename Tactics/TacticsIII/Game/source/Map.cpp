@@ -247,11 +247,11 @@ void Map::GenerateMesh()
             ZType height = 0.0;
             for(auto layer : slice) 
             {
-                height += layer.amount;
+                height += layer.height;
                 const auto& material= layer.material;
                 auto color = material.get().color;
                
-                color.a = ComputeOpacityAtDepth(color.a, layer.amount); 
+                color.a = ComputeOpacityAtDepth(color.a, layer.height); 
                 NeighbourHeights heights = CalculateNeighbourHeights({static_cast<int>(x), static_cast<int>(y), height}, slice);
                 AddLayerToMesh(Position(x, y, height), color, heights);                
             }
@@ -267,11 +267,11 @@ Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& ce
     const auto& layer = *it;
 
     result[Orientation::up] = p.Z() - amount+ 
-        SumAmount(std::ranges::subrange(it, std::find_if_not(it, centerSlice.end(), std::mem_fn(&Layer::IsOpaque))));
+        SumHeight(centerSlice.Find(it, std::mem_fn(&Layer::IsTranslucent)));
 
     ZType bottom(0.0);
     if (it!=centerSlice.begin())
-        bottom = p.Z()-amount - (it-1)->amount;
+        bottom = p.Z()-amount - (it-1)->height;
     result[Orientation::down] = bottom;
     auto box = GetBounds();
     for(auto ori : Orientations::horizontal)
@@ -289,12 +289,10 @@ Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& ce
                 height = 0;
             else if (it->IsTranslucent())
                 height = p.Z()-amount + 
-                        SumAmount(std::ranges::subrange(std::reverse_iterator(it-1), 
-                            std::find_if_not(std::reverse_iterator(it-1), neighbour.rend(), std::mem_fn(&Layer::IsTranslucent))));
+                        SumHeight(neighbour.FindBackwards(it, std::mem_fn(&Layer::IsOpaque))) - it->height;
             else 
                 height  = p.Z() -amount + 
-                     SumAmount(std::ranges::subrange(it, 
-                        std::find_if_not(it, centerSlice.end(), std::mem_fn(&Layer::IsOpaque))));
+                     SumHeight(neighbour.Find(it, std::mem_fn(&Layer::IsTranslucent)));
 
             height = std::max(bottom, height);
             result[ori] = height;

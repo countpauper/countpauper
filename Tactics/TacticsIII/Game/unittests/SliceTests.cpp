@@ -42,7 +42,7 @@ TEST(Slice, StackSameSlice)
 {
     auto slice = Slice(Material::stone) + Slice(Material::stone);
     EXPECT_EQ(slice.size(), 1);
-    EXPECT_EQ(slice[0].amount, 2.0);
+    EXPECT_EQ(slice[0].height, 2.0);
 }
 
 TEST(Slice, HomogeneousCut)
@@ -50,7 +50,7 @@ TEST(Slice, HomogeneousCut)
     Engine::Range<ZType> range(0.2f, 0.5f);
     auto cut = Slice(Material::stone) & range;
     ASSERT_EQ(cut.size(), 1);
-    EXPECT_EQ(cut[0].amount, range.Size());
+    EXPECT_EQ(cut[0].height, range.Size());
 }
 
 TEST(Slice, HeteroGeneousCut)
