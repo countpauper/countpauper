@@ -34,6 +34,7 @@ public:
     Engine::IntBox GetBounds() const override;
     const Slice& SliceAt(int x, int y) const override; 
     Slice& SliceAt(int x, int y);
+    inline Slice& operator[](int x, int y) { return SliceAt(x,y); };
 private:
     Map(std::string_view fileName, const class Engine::Image& data);
     unsigned Name(Position pos) const;

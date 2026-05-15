@@ -13,14 +13,6 @@ namespace Game
 class Actor;
 class World;
 
-
-// TODO 
-// or even better than that, fuse it into its Action class Attack { static PlanFactory<Attack> factory; } (circular dependency?)
-// and maybe then fuse it further by using CRTP class Attack : public Fabricatable<Attack> { }  
-// or even better than that, make a generic factory utility then that takes the constructor parameters.
-// Also split the target queue into a generic modifiable tuple in engine with the queue interface on top. 
-
-
 class PlanFactoryIF
 {
 public:

@@ -38,7 +38,7 @@ auto backward_from(auto it) {
 
 Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, Engine::Range<ZType> heightDifference, ZType space)
 {
-    const auto& slice = map.SliceAt(at.X(), at.Y());
+    const auto& slice = map[at.X(), at.Y()];
     auto [it, offset] = slice.Find(at.Z());
     if (it->IsSolid())
     {
@@ -102,7 +102,6 @@ Move::Move(World& world, Actor& actor, Position destination, unsigned distance) 
             if (ground.Size() < actorHeight || ground.begin == ZType(0))
                 continue;   // no ground to stand on
             to.z = ground.begin; 
-            // TODO check size its under ceiling
             if (world.ObstacleAt(GameBounds(to, actor.GetSize()), &actor))
                 continue;
             result.push_back(to);

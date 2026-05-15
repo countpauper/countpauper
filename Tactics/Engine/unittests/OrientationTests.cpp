@@ -261,6 +261,13 @@ TEST(Orientations, Operation)
 {   // The Orientations::all contains all orientations except none
     EXPECT_TRUE((Orientations() | Orientation::front)[Orientation::front]);
     EXPECT_TRUE((Orientation::front | Orientation::back)[Orientation::back] );
+}
+
+TEST(Orientations, Iterators)
+{
+    static_assert(std::input_iterator<Orientations::iterator>);
+    EXPECT_NE(Orientations::all.begin(), Orientations::all.end());
+    EXPECT_EQ(Orientations().begin(), Orientations().end());
 
 }
 }  // Game::Test

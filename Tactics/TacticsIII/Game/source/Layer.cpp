@@ -46,6 +46,38 @@ bool Layer::IsTranslucent() const
 }
 
 
+void Layer::AddFlow(Orientation dir, Flow df)
+{
+    if (dir.IsNegative())
+    {
+        df=-df;
+        dir=dir.Axis();
+    }
+    unsigned index = dir.Index()-1;
+    if (df>0.0 && std::numeric_limits<Flow>::max() - df > flow[index])
+    {   // TODO check negative as well 
+        assert(false);  // flow overflow hurhur 
+        flow[index] = std::numeric_limits<Flow>::max();
+    }
+    else if (df<0.0 && std::numeric_limits<Flow>::min() - df > flow[index])
+    {
+        assert(false); // flow underflow 
+        flow[index] = std::numeric_limits<Flow>::max();
+    }
+    else 
+    {
+        flow[dir.Index()-1] += df;
+    }
+}
+
+Layer::Flow Layer::GetFlow(Orientation dir) const
+{
+    if (dir.IsNegative())
+        return -flow[dir.Axis().Index()-1];
+    else 
+        return flow[dir.Index()-1];
+
+}
 bool Layer::TryMerge(const Layer& rhs) 
 {
     if (material.get() != rhs.material.get())

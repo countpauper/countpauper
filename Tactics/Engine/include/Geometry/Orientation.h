@@ -135,8 +135,12 @@ public:
     class iterator
     {
     public:
+        iterator() = default;
+        iterator(const iterator& o);
         iterator(const uint16_t& flags, int bit);
+        iterator& operator=(const iterator& o);
         iterator& operator++();
+        iterator operator++(int);
         //iterator operator++(int);
         bool operator==(const iterator& other) const;
         bool operator!=(const iterator& other) const;
@@ -150,10 +154,11 @@ public:
         using reference = Orientation; // BS, but needed to use Orientations in std::algorithms
 
         int bit;
-        const uint16_t& flags;
+        const uint16_t* flags = nullptr;
     };
     iterator begin() const;
     iterator end() const;
+    using value_type = Orientation;
 
 private:
     uint16_t flags;

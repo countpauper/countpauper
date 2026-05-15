@@ -1,4 +1,5 @@
 #include "Game/Map.h"
+#include "Game/Physics.h"
 #include "Game/Mock/MockMap.h"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -38,12 +39,20 @@ using namespace ::testing;
 TEST(Physics, Gravity)
 {
     Map map(Engine::Size(2,1,1), {{Material::stone, 0.5}});
-    
+    Gravity gravity(9.80665f);
+    auto& slice = map[0,0];
+    gravity(1.0, slice);
+    ASSERT_EQ(slice[1].material, Material::air);
+    EXPECT_GE(slice[1].GetFlow(Orientation::down), 0.5);
+    EXPECT_TRUE(std::ranges::all_of(Orientations::horizontal, [&slice](Engine::Orientation ori) { return slice[1].GetFlow(ori) == 0.0  ; }));
+
+    ASSERT_EQ(slice[0].material, Material::stone);
+    EXPECT_GE(slice[1].GetFlow(Orientation::down), 0.0);
 }
 
 TEST(Physiscs, Flow)
 {
-    Map map(Engine::Size{2,1,1}, {{Material::water, 1.0}, {Material::stone,0.0}});
+    Map map(Engine::Size{2,1,1}, {{Material::water, 1.0}, {Material::stone, 0.0}});
 
     // TODO Make water flow to the right.
     // this would be because the pressure different in the water (by its own weight) causing  

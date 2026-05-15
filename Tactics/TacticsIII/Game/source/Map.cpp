@@ -291,12 +291,15 @@ Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& ce
             if (it==neighbour.end())
                 height = 0;
             else if (it->IsTranslucent())
-                height = p.Z()-amount + 
-                        SumHeight(neighbour.FindBackwards(it, std::mem_fn(&Layer::IsOpaque))) - it->height;
-            else 
-                height  = p.Z() -amount + 
-                     SumHeight(neighbour.Find(it, std::mem_fn(&Layer::IsTranslucent)));
-
+            {
+                auto translucentDown = neighbour.FindBackwards(it, std::mem_fn(&Layer::IsOpaque));
+                height = p.Z()-amount + SumHeight(translucentDown) - it->height;
+            }
+            else
+            { 
+                auto opaqueUp = neighbour.Find(it, std::mem_fn(&Layer::IsTranslucent));
+                height  = p.Z() -amount + SumHeight(opaqueUp);
+            }
             height = std::max(bottom, height);
             result[ori] = height;
         }

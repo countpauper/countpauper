@@ -2,6 +2,7 @@
 
 #include "Utility/FixedPoint.h"
 #include "Game/Material.h"
+#include "Game/Orientation.h"
 #include "Utility/Concepts.h"
 #include <functional>
 #include <numeric>
@@ -16,11 +17,13 @@ struct Layer
 {
     using Height = Engine::FixedPoint<8, uint16_t>;   
     using Temperature = Engine::FixedPoint<3,uint16_t>;        
-
+    using Flow = Engine::FixedPoint<10,short>;
     std::reference_wrapper<const Material> material;
-    Height height; 
-    Temperature temperature; 
     
+    Height height;                            // meter 
+    Temperature temperature;                  // kelvin
+    std::array<Flow,3> flow = {0.0, 0.0, 0.0};// meter/second (or liter/sec/m2) per Orientation axis index-1
+
     bool operator==(const Layer& rhs) const;
     float Volume() const;
     float Density() const;  
@@ -28,7 +31,8 @@ struct Layer
     bool IsSolid() const;
     bool IsOpaque() const;
     bool IsTranslucent() const;
-
+    void AddFlow(Orientation dir, Flow df);
+    Flow GetFlow(Orientation dir) const;
     using Predicate = std::function<bool(const Layer&)>;
     bool TryMerge(const Layer& rhs);
 };

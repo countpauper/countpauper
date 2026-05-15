@@ -60,9 +60,16 @@ public:
 
     auto FindBackwards(const_iterator from, Layer::Predicate to) const 
     {
-        auto backward_range = layers | std::views::reverse | std::views::take(std::distance(layers.begin(), from));
-        auto found = std::find_if(backward_range.begin(), backward_range.end(), to);
-        return std::ranges::subrange(std::reverse_iterator(from), found);
+        
+        if (from == layers.end())
+            return std::ranges::subrange(layers.end(), layers.end());
+        auto it = from;
+        for(; to(*it); --it)
+        {
+            if (it==layers.begin())
+                return std::ranges::subrange(it, from+1);                
+        }
+        return  std::ranges::subrange(it+1, from+1);
     }
     iterator Fill(Engine::Range<ZType> height, const Material& material, Layer::Temperature temperature);
 private:

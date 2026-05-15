@@ -552,20 +552,43 @@ Orientations::operator bool() const
 
 Orientations::iterator::iterator(const uint16_t& flags, int start) :
     bit(start -1),
-    flags(flags)
+    flags(&flags)
 {
     operator++();
 }
+
+Orientations::iterator::iterator(const iterator& o) :
+    bit(o.bit),
+    flags(o.flags)
+{
+}
+
+
+Orientations::iterator& Orientations::iterator::operator=(const Orientations::iterator& o)
+{
+    bit = o.bit;
+    flags = o.flags;
+    return *this;
+}
+
 
 Orientations::iterator& Orientations::iterator::operator++()
 {
     while (++bit < sizeof(flags) * 8)
     {
-        if (flags & (1<<bit))
+        if (*flags & (1<<bit))
             return *this;
     }
     return *this;
 }
+
+Orientations::iterator Orientations::iterator::operator++(int)
+{
+    Orientations::iterator copy = *this;
+    copy++;
+    return copy;
+}
+
 
 bool Orientations::iterator::operator==(const Orientations::iterator& other) const
 {

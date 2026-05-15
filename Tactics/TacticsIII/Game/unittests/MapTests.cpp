@@ -56,7 +56,7 @@ TEST(Map, HeightMap)
 TEST(Map, EmptyMapIsAir)
 {
     Map map(Engine::Size(1,1,3));
-    EXPECT_EQ(map.SliceAt(0,0)[0].material.get(), Material::air);
+    EXPECT_EQ((map[0,0][0]).material.get(), Material::air);
 }
 
 MATCHER_P(LayerEq, epsilon, "") 
@@ -112,12 +112,12 @@ TEST(Map, Fill)
 
     // Replace a (all) layer 
     auto it = map.Fill({0,0,0}, 1, Material::water);
-    const auto& slice = map.SliceAt(0,0);
+    const auto& slice = map[0,0];
     ASSERT_EQ(slice.size(), 1);
     EXPECT_EQ(slice[0].material.get(), Material::water);
     EXPECT_EQ(slice[0].height, 1.0);
     EXPECT_EQ(slice[0].temperature, 300.0);
-    EXPECT_EQ(it, map.SliceAt(0,0).begin());
+    EXPECT_EQ(it, slice.begin());
 
     // Shrink a layer and replace the top 
     it = map.Fill({0,0,0.6}, 0.4, Material::air);
