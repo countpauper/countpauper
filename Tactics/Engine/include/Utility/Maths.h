@@ -40,7 +40,6 @@ namespace Engine
         return Lerp(a, b, (x - av) / (bv - av));
     }
 
-
     template<class T>
     T BilinearInterpolation(const T d[4], double x, double y)
     {   // d is column major, ie (d[0,0], d[0,1], d[1,0], d[1,1])

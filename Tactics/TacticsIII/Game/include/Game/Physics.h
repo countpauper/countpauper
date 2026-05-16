@@ -18,4 +18,11 @@ private:
     float gravity;
 };
 
+class Viscosity : public Physics 
+{
+public:
+    Viscosity();
+    void operator()(float dt, Slice& slice) const;
+};
+
 }
