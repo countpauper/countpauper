@@ -12,7 +12,7 @@ class Physics
 class Gravity : public Physics 
 {
 public:
-    Gravity(float gravity);
+    explicit Gravity(float gravity=9.80665f);
     void operator()(float dt, Slice& slice) const;
 private:
     float gravity;

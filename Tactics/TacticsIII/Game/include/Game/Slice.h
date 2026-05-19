@@ -43,13 +43,14 @@ public:
     std::pair<const_iterator, Layer::Height> Find(ZType height) const;
     std::pair<iterator,Layer::Height> Find(ZType height);
     inline const Layer& operator[](unsigned idx) const { return layers.at(idx); }
+    inline Layer& operator[](unsigned idx) { return layers.at(idx); }
 
     
     Slice& operator+=(const Slice&);
     Slice& operator&=(Engine::Range<ZType> heigh);
     Slice& operator*=(float scale);
 
-    Engine::Range<ZType> FindBiggestGasOpening() const;
+    Engine::Range<ZType> FindBiggestOpening() const;
     Engine::Range<ZType> FindBiggestNonSolidOpening() const;
     Engine::Range<ZType> FindBiggestRange(Layer::Predicate predicate) const;
 

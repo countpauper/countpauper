@@ -75,7 +75,7 @@ Engine::Range<ZType> ScanAimWindow(const World& world, const ProjectilePath& pat
         triangle.begin = lerp(origin.Z(), aimHeight.begin, progress);
         triangle.end = lerp(origin.Z(), aimHeight.end, progress);
         Slice slice = world.GetMap().GetSlice(Position(it->first.X(), it->first.Y(), triangle.begin), triangle.Size());
-        auto opening = slice.FindBiggestGasOpening();
+        auto opening = slice.FindBiggestOpening();
         if (opening.IsEmpty())
             opening = slice.FindBiggestNonSolidOpening();
         if (opening.IsEmpty())

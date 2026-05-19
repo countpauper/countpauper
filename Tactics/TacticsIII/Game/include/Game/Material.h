@@ -16,15 +16,18 @@ struct Material
     float solidDensity;         // kg/m3 constant if solid  
     float liquidDensity;        // kg/m3 at just below boiling, linear interpolate between solid density 
     float molarmass;            // g/mole
+    float enthalpy;             // J/mol 
     float liquidViscosity;        
     float gaseousViscosity;
-
+    
     float PhaseFactor(float temperature) const; // <=0 = solid >=1 gas, 0...1 liquid
     float Density(float temperature, float pressure = atmosphericPressure) const;
+    float Pressure(float temperature, float density) const;
+
     bool IsSolid(float temperature) const;
+    bool IsLiquid(float temperature) const;
     bool IsGas(float temperature) const;
     float Viscosity(float temperature) const;
-
     bool operator==(const Material& other) const;
 
     static const Material air;

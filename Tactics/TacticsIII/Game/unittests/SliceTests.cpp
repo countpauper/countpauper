@@ -102,7 +102,7 @@ TEST(Slice, Scale)
 TEST(Slice, Find)
 {
     EXPECT_FALSE(Slice(Material::stone).FindBiggestNonSolidOpening());
-    EXPECT_EQ(Slice(Material::air).FindBiggestGasOpening().Size(), 1.0);
+    EXPECT_EQ(Slice(Material::air).FindBiggestOpening().Size(), 1.0);
     EXPECT_RANGE_NEAR(Slice(
         {{Material::stone, 0.7, 300.0}, 
          {Material::air, 0.3, 300.0}, 

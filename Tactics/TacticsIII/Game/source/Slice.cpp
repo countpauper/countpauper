@@ -152,11 +152,11 @@ Slice operator*(const Slice& lhs, float scale)
 }
 
 
-Engine::Range<ZType> Slice::FindBiggestGasOpening() const
+Engine::Range<ZType> Slice::FindBiggestOpening() const
 {
     return FindBiggestRange([](const Layer& l)
     {
-        return l.IsGas();
+        return l.IsCompressible();
     });
 }
 

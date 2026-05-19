@@ -3,15 +3,13 @@
 #include "Utility/FixedPoint.h"
 #include "Game/Material.h"
 #include "Game/Orientation.h"
+#include "Game/Position.h"  // just for ZType
 #include "Utility/Concepts.h"
 #include <functional>
 #include <numeric>
 
 namespace Game
 {
-
-
-
 
 struct Layer 
 {
@@ -32,8 +30,11 @@ struct Layer
     float Mass() const;
     float Viscosity() const;
     Flow GetFlow(Orientation dir) const;
+    float GetPressure(ZType height) const;
 
     bool IsGas() const;
+    bool IsCompressible() const;
+    bool IsLiquid() const;
     bool IsSolid() const;
     bool IsOpaque() const;
     bool IsTranslucent() const;

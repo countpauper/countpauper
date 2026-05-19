@@ -3,9 +3,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-
-
-
 namespace Game::Test
 {
 using namespace ::testing;

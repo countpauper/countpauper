@@ -3,13 +3,29 @@
 
 namespace Game 
 {
+static const float earthGravity = 9.80665f;          // m/sec, TODO needs to come or match with Physics.gravity 
 
+float StaticPressure(float density, float depth, float gravity=earthGravity)
+{
+    return density * depth * gravity;
+}
+
+float AdjustPressureLevel(const Material& material, float temperature, float desiredPressure, float height)
+{
+    if (material.IsSolid(temperature))
+        return desiredPressure; 
+    else if (material.IsLiquid(temperature))
+        return desiredPressure + StaticPressure(material.liquidDensity, height/2);
+    else 
+        return desiredPressure - StaticPressure(material.Density(temperature, desiredPressure), height/2);
+}
 
 Layer::Layer(const Material& material, Height height, Temperature temperature, float pressure) :
     material(material),
     height(height),
     temperature(temperature),
-    density(material.Density(static_cast<float>(this->temperature), pressure))
+    density(material.Density(static_cast<float>(this->temperature), 
+        AdjustPressureLevel(material, static_cast<float>(temperature), pressure, static_cast<float>(height))))
 {
 }
 
@@ -49,6 +65,16 @@ float Layer::Mass() const
 bool Layer::IsGas() const
 {
     return material.get().IsGas(static_cast<float>(temperature));
+}
+
+bool Layer::IsCompressible() const 
+{
+    return IsGas() || !material.get().solidDensity; 
+}
+
+bool Layer::IsLiquid() const
+{
+    return material.get().IsLiquid(static_cast<float>(temperature));
 }
 
 bool Layer::IsSolid() const
@@ -97,8 +123,14 @@ Layer::Flow Layer::GetFlow(Orientation dir) const
         return -flow[dir.Axis().Index()-1];
     else 
         return flow[dir.Index()-1];
-
 }
+
+float Layer::GetPressure(ZType atHeight) const
+{
+    auto averagePressure = material.get().Pressure(static_cast<float>(temperature), static_cast<float>(density));
+    return averagePressure + StaticPressure(static_cast<float>(density), static_cast<float>(height)/2 - static_cast<float>(atHeight)); 
+}
+
 bool Layer::TryMerge(const Layer& rhs) 
 {
     if (material.get() != rhs.material.get())

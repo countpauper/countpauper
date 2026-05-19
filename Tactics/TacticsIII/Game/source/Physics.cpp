@@ -12,10 +12,13 @@ Gravity::Gravity(float gravity) :
 void Gravity::operator()(float dt, Slice& slice) const
 {
     float dv = dt * gravity; // meter per second
+    bool previousCompressible = true;
     for(auto& layer: slice)
     {
-        // TODO these should ne no negative flow. Instead negative axes flow should be applied to the neighbour as an influx
-        layer.AddFlow(Orientation::down, dv);        
+        if (previousCompressible)
+            // TODO these should not be negative flow. Instead negative axes flow should be applied to the neighbour as an influx
+            layer.AddFlow(Orientation::down, dv);
+        previousCompressible = layer.IsCompressible();          
     }
 }
 
@@ -41,6 +44,8 @@ void Viscosity::operator()(float dt, Slice& slice) const
         // It could also be possible to look one cell (C) further even and take that flow to handle clashing flows [A] -> [B] <- [C] but bounderies become painful  
         // Internal dampening with the exponent below can be kept to acocunt for internal friction 
         // Perhaps shear stress should be a separate physics function because it needs the neighbours. 
+        if (layer.IsSolid())
+            continue;       // solid layers don't "flow" but they still move
         auto mu = layer.Viscosity();
         float dampening = std::exp(-mu * dt / static_cast<float>(layer.density));
         for(auto& flow : layer.flow)

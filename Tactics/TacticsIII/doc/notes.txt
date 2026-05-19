@@ -131,8 +131,9 @@ Physics and Magics
 * name sides and tops with layer number, click on layers
 
 Physics 
-- Gravity 
-- Pressure 
+* Gravity 
+- Pressure
+- Rename Layer to Cell  
 - Barrier 
 - Start water flowing from the bump with unit tests. 
 - Partially invalidate and update map mesh 

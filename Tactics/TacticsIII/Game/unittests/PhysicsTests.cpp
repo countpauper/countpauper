@@ -14,9 +14,9 @@ using namespace ::testing;
 
 // TODO: 
 // [done] Gravity: Layer flow increase downwards (if nothing around)
-// [done] Dampening: internal viscosity slows down flows and sets it to 0 for solids (TODO they can still fall if there's nothing below?)
+// [done] Dampening: internal viscosity slows down flows of gas and liquids (not solids)
 // Obstruction: layer flow (downwards?) is reduced (to 0) if neighbouring materials (especially solids) and low granulartity (of both) (so earth still falls mostly) (also water over riverbed later)
-// Presure: Layers trying to flow downwards increase pressure in layers below and inside themselves if they can't flow down (air on water water on rock)
+// Weight(Support): Layers trying to flow downwards increase pressure in layers below and inside themselves if they can't flow down (air on water water on rock)
 // Relaxation: the weight of a cell creates "pressure" on the neighbour below. If it is compressible its volume decreases. If the layer itself is compressible its volume increases
 // Falling: If the weight of a layer compresses a layer below, but it's incompressible, then it falls. Instead the neighbour above grows and so on. 
 // (Hydro)static pressure: If the . (always for non solids) it causes a pressure gradient (P=pgh that is applied horizontally depending on touching area height range. 
@@ -36,6 +36,7 @@ using namespace ::testing;
 
 // Later more advanced (bigger) topics, yet to be broken down 
 // Friction: dampen flow along neighbouring solids with a mu_friction, which could also be used for gameplay. 
+// Fast movement: speeds above 1m/s are resolved in smaller steps (maximum speed is tracked/per section) 
 // Shear stress: friction with liquids/gas,  see viscotiy): 
 // Partial obstruction: Flowing into multiple neighbours: one deformable and the other hard, will redirect the flow into the deformable one but at a greater speed? 
 // Collision: layers moving hard into each other can cause granular break down + clouds and surfaces (non elastic) or even flow reversal? (can flow be that fast? runge kutta gravity and velocity over time)
@@ -44,33 +45,41 @@ using namespace ::testing;
 // Surfaces: Thin layers dissolve to puddles and big surfaces turn to layers 
 // Clouds: liquids evaporate and condense, move with the flow 
 // Charge: Lighting and charge moves and spreads 
+
 TEST(Physics, Gravity)
 {
-    Map map(Engine::Size(1,1,1), {{Material::stone, 0.5}});
-    Gravity gravity(9.80665f);
+    Map map(Engine::Size(1,1,1), {{Material::stone, 0.1}});
+    map.Fill({0,0,0.5}, 0.5, Material::water);
     auto& slice = map[0,0];
+    Gravity gravity(9.80665f);
     gravity(1.0f, slice);
+    ASSERT_EQ(slice[2].material, Material::water);
+    EXPECT_GE(slice[2].GetFlow(Orientation::down), 9.8);    // gravity affects layers above a compressible layer
     ASSERT_EQ(slice[1].material, Material::air);
-    EXPECT_GE(slice[1].GetFlow(Orientation::down), 0.5);
-    EXPECT_TRUE(std::ranges::all_of(Orientations::horizontal, [&slice](Engine::Orientation ori) { return slice[1].GetFlow(ori) == 0.0  ; }));
+    EXPECT_GE(slice[1].GetFlow(Orientation::down), 0.0);    // gravity doesn't affect layers above non-compressible layers  
+    ASSERT_EQ(slice[0].material, Material::stone);
+    EXPECT_GE(slice[0].GetFlow(Orientation::down), 0.0);    // gravity doesn't affect layers above the bottom of the map  
+    // Gravity is only down 
+    EXPECT_TRUE(std::ranges::all_of(Orientations::horizontal, [&slice](Engine::Orientation ori) { return slice[2].GetFlow(ori) == 0.0  ; }));
 }
 
 
 TEST(Physics, Viscosity)
 {
     Map map(Engine::Size(1,1,1), {{Material::stone, 0.5}});
-    Gravity gravity(9.80665f);
-    Viscosity viscosity;
-    auto& slice = map[0,0];
-    gravity(1.0f, slice);
+    Slice& slice = map[0,0];
+    slice[0].AddFlow(Orientation::down, 1.0);
+    slice[1].AddFlow(Orientation::down, 1.0);
     ASSERT_EQ(slice[1].material, Material::air);
     
-    auto gravityFlow = slice[1].GetFlow(Orientation::down);
+    // Gaseous flow is slowed (a little, like 0.1%) by viscosity 
+    Viscosity viscosity;
     viscosity(1.0f, slice);
-    EXPECT_LT(slice[1].GetFlow(Orientation::down), gravityFlow);
+    EXPECT_LT(slice[1].GetFlow(Orientation::down), 1.0);
 
+    // solid movement doesn't flow because of viscosity
     ASSERT_EQ(slice[0].material, Material::stone);
-    EXPECT_EQ(slice[0].GetFlow(Orientation::down), 0.0);
+    EXPECT_EQ(slice[0].GetFlow(Orientation::down), 1.0);    
 }
 
 
