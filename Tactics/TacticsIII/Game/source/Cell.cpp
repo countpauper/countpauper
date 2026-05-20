@@ -1,16 +1,16 @@
-#include "Game/Layer.h"
+#include "Game/Cell.h"
 #include <numeric> 
 
 namespace Game 
 {
 static const float earthGravity = 9.80665f;          // m/sec, TODO needs to come or match with Physics.gravity 
 
-Layer::Pressure StaticPressure(float density, float depth, float gravity=earthGravity)
+Cell::Pressure StaticPressure(float density, float depth, float gravity=earthGravity)
 {
     return density * depth * gravity;
 }
 
-Layer::Pressure AdjustPressure(const Material& material, Layer::Pressure desiredPressure, float depth, float temperature)
+Cell::Pressure AdjustPressure(const Material& material, Cell::Pressure desiredPressure, float depth, float temperature)
 {
     if (material.IsSolid(temperature, desiredPressure))
         return desiredPressure; 
@@ -21,7 +21,7 @@ Layer::Pressure AdjustPressure(const Material& material, Layer::Pressure desired
         return desiredPressure + StaticPressure(material.Density(temperature, desiredPressure), depth * 0.5);
 }
 
-Layer::Layer(const Material& material, Height height, Temperature temperature, Pressure pressure) :
+Cell::Cell(const Material& material, Height height, Temperature temperature, Pressure pressure) :
     material(material),
     height(height),
     temperature(temperature),
@@ -29,7 +29,7 @@ Layer::Layer(const Material& material, Height height, Temperature temperature, P
 {
 }
 
-bool Layer::operator==(const Layer& rhs) const
+bool Cell::operator==(const Cell& rhs) const
 {
     if (material.get() != rhs.material.get())
         return false;
@@ -45,60 +45,60 @@ bool Layer::operator==(const Layer& rhs) const
     return true;
 }
 
-float Layer::Volume() const
+float Cell::Volume() const
 {
     return static_cast<float>(height);   // horizontal surface is 1m2
 }
 
-float Layer::Viscosity() const
+float Cell::Viscosity() const
 {
     // TODO: assumes all materials are newtonian. Lava is not 
     // Lava is also more temperature dependent than the rest. (a factor 100 over 200 Kelvin)
     return material.get().Viscosity(static_cast<float>(temperature), static_cast<float>(pressure));
 } 
 
-float Layer::Mass() const
+float Cell::Mass() const
 {
     return Volume() * Density();
 }
 
-float Layer::Density() const
+float Cell::Density() const
 {
     return material.get().Density(static_cast<float>(temperature), static_cast<float>(pressure));
 }
 
-bool Layer::IsGas() const
+bool Cell::IsGas() const
 {
     return material.get().IsGas(static_cast<float>(temperature), static_cast<float>(pressure));
 }
 
-bool Layer::IsCompressible() const 
+bool Cell::IsCompressible() const 
 {
     return IsGas() || !material.get().solidDensity; 
 }
 
-bool Layer::IsLiquid() const
+bool Cell::IsLiquid() const
 {
     return material.get().IsLiquid(static_cast<float>(temperature), static_cast<float>(pressure));
 }
 
-bool Layer::IsSolid() const
+bool Cell::IsSolid() const
 {
     return material.get().IsSolid(static_cast<float>(temperature), static_cast<float>(pressure));
 }
 
-bool Layer::IsOpaque() const
+bool Cell::IsOpaque() const
 {
     return material.get().color.IsOpaque();
 }
 
-bool Layer::IsTranslucent() const
+bool Cell::IsTranslucent() const
 {
     return !material.get().color.IsOpaque();
 }
 
 
-void Layer::AddFlow(Orientation dir, Flow df)
+void Cell::AddFlow(Orientation dir, Flow df)
 {
     if (dir.IsNegative())
     {
@@ -123,23 +123,23 @@ void Layer::AddFlow(Orientation dir, Flow df)
 }
 
 
-void Layer::Heat(float degrees)
+void Cell::Heat(float degrees)
 {
     float density = Density();
     if (degrees>0)
         if (std::numeric_limits<Temperature>::max() - degrees > temperature)
-            temperature += Layer::Temperature(degrees);
+            temperature += Cell::Temperature(degrees);
         else
             temperature = std::numeric_limits<Temperature>::max();
     if (degrees<0)
         if (temperature>degrees)
-            temperature -= Layer::Temperature(-degrees);
+            temperature -= Cell::Temperature(-degrees);
         else
             temperature = 0.0;
     pressure = material.get().Pressure(static_cast<float>(temperature), density);
 }
 
-Layer::Flow Layer::GetFlow(Orientation dir) const
+Cell::Flow Cell::GetFlow(Orientation dir) const
 {
     if (dir.IsNegative())
         return -flow[dir.Axis().Index()-1];
@@ -147,7 +147,7 @@ Layer::Flow Layer::GetFlow(Orientation dir) const
         return flow[dir.Index()-1];
 }
 
-float Layer::GetPressure(Layer::Height atHeight) const
+float Cell::GetPressure(Cell::Height atHeight) const
 {
     const auto& mat = material.get();
     if (atHeight > height)
@@ -161,7 +161,7 @@ float Layer::GetPressure(Layer::Height atHeight) const
     return averagePressure + StaticPressure(Density(), static_cast<float>(height)/2 - static_cast<float>(atHeight)); 
 }
 
-bool Layer::TryMerge(const Layer& rhs) 
+bool Cell::TryMerge(const Cell& rhs) 
 {
     if (material.get() != rhs.material.get())
         return false;
@@ -175,9 +175,9 @@ bool Layer::TryMerge(const Layer& rhs)
 }
 
 
-std::ostream& operator<<(std::ostream& os, const Layer& layer)
+std::ostream& operator<<(std::ostream& os, const Cell& cell)
 {
-    os << layer.material.get().name << " " << int(static_cast<float>(layer.height)*1000.0f) << "L@" << layer.temperature << "K";
+    os << cell.material.get().name << " " << int(static_cast<float>(cell.height)*1000.0f) << "L@" << cell.temperature << "K";
     return os;
 }
 

@@ -61,8 +61,8 @@ TEST(Slice, HeteroGeneousCut)
     //            0 .2 .4 .6 .8 1.0
     auto cut = Slice{{Material::stone, 0.4, 300.0}, {Material::air, 0.6, 300.0}} & range;
     ASSERT_EQ(cut.size(), 2);
-    EXPECT_EQ(cut[0], (Layer{Material::stone, 0.2, 300.0f}));
-    EXPECT_EQ(cut[1], (Layer{Material::air, 0.5, 300.0f, static_cast<Layer::Pressure>(cut[1].GetPressure(0.0))}));
+    EXPECT_EQ(cut[0], (Cell{Material::stone, 0.2, 300.0f}));
+    EXPECT_EQ(cut[1], (Cell{Material::air, 0.5, 300.0f, static_cast<Cell::Pressure>(cut[1].GetPressure(0.0))}));
 }
 
 TEST(Slice, ZeroCut)
@@ -70,7 +70,7 @@ TEST(Slice, ZeroCut)
     Engine::Range<ZType> range(0.2f, 0.2f);
     auto cut = Slice(Material::water) & range;
     ASSERT_EQ(cut.size(), 1);
-    EXPECT_EQ(cut[0], (Layer{Material::water, 0.0, 300.0f, static_cast<Layer::Pressure>(cut[0].GetPressure(0.0))}));
+    EXPECT_EQ(cut[0], (Cell{Material::water, 0.0, 300.0f, static_cast<Cell::Pressure>(cut[0].GetPressure(0.0))}));
 }
 
 TEST(Slice, EmptyCut)
@@ -86,17 +86,17 @@ TEST(Slice, OverSizedCut)
     Engine::Range<ZType> range(-0.5, 1.75);
     auto cut = Slice({{Material::air, 1.0, 0.0f}}) & range;
     ASSERT_EQ(cut.size(), 3);
-    EXPECT_EQ(cut[0], (Layer{Material::vacuum, 0.5, 0.0f}));
-    EXPECT_EQ(cut[1], (Layer{Material::air, 1.0, 0.0f}));
-    EXPECT_EQ(cut[2], (Layer{Material::vacuum, 0.75, 0.0f}));
+    EXPECT_EQ(cut[0], (Cell{Material::vacuum, 0.5, 0.0f}));
+    EXPECT_EQ(cut[1], (Cell{Material::air, 1.0, 0.0f}));
+    EXPECT_EQ(cut[2], (Cell{Material::vacuum, 0.75, 0.0f}));
 }
 
 TEST(Slice, Scale)
 {
     auto halfSlice = Slice{{Material::stone, 0.4, 300.0}, {Material::air, 0.6, 300.0}} * 0.5f;
     ASSERT_EQ(halfSlice.size(), 2);
-    EXPECT_EQ(halfSlice[0], (Layer{Material::stone, 0.2, 300.0f}));
-    EXPECT_EQ(halfSlice[1], (Layer{Material::air, 0.3, 300.0f, static_cast<Layer::Pressure>(halfSlice[1].GetPressure(0.0))}));
+    EXPECT_EQ(halfSlice[0], (Cell{Material::stone, 0.2, 300.0f}));
+    EXPECT_EQ(halfSlice[1], (Cell{Material::air, 0.3, 300.0f, static_cast<Cell::Pressure>(halfSlice[1].GetPressure(0.0))}));
 }
 
 TEST(Slice, Find)

@@ -29,7 +29,7 @@ public:
     Engine::Mesh& GetMesh();
     Position NameToPosition(uint32_t name) const;
 
-    Slice::iterator Fill(Position at, ZType height, const Material& mat, Layer::Temperature temperature=300.0);
+    Slice::iterator Fill(Position at, ZType height, const Material& mat, Cell::Temperature temperature=300.0);
     // Map Itf
     Engine::IntBox GetBounds() const override;
     const Slice& SliceAt(int x, int y) const override; 
@@ -50,7 +50,7 @@ private:
         ZType height[7];
     };
     NeighbourHeights CalculateNeighbourHeights(Position p, const Slice& centerSlice);
-    void AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const NeighbourHeights& neighbourHeight);
+    void AddCellToMesh(Position pos, Engine::RGBA vertexColor, const NeighbourHeights& neighbourHeight);
     void GenerateMesh();
 
 

@@ -2,7 +2,7 @@
 
 #include "Utility/Range.h"
 #include "Game/Position.h"
-#include "Game/Layer.h"
+#include "Game/Cell.h"
 
 #include <vector>
 #include <span>
@@ -20,30 +20,30 @@ public:
     Slice() = default;
     Slice(const Slice& other);
     Slice& operator=(const Slice& other);
-    Slice(const Material& material, Layer::Height height=1.0, Layer::Temperature temp=300.0);
-    Slice(std::initializer_list<Layer> layers);
+    Slice(const Material& material, Cell::Height height=1.0, Cell::Temperature temp=300.0);
+    Slice(std::initializer_list<Cell> cells);
 
-    void emplace_back(const Material& material, Layer::Height height, Layer::Temperature temp);
-    Layer pop_front();
+    void emplace_back(const Material& material, Cell::Height height, Cell::Temperature temp);
+    Cell pop_front();
 
-    using Layers = std::vector<Layer>;
-    using const_iterator =Layers::const_iterator; 
-    using const_reverse_iterator = Layers::const_reverse_iterator;
-    using iterator = Layers::iterator;
-    using value_type = Layer; 
+    using Cells = std::vector<Cell>;
+    using const_iterator =Cells::const_iterator; 
+    using const_reverse_iterator = Cells::const_reverse_iterator;
+    using iterator = Cells::iterator;
+    using value_type = Cell; 
     
-    inline std::size_t size() const { return layers.size(); }
-    inline const_iterator begin() const { return layers.begin(); }
-    inline const_iterator end() const { return layers.end(); }
-    inline iterator begin() { return layers.begin(); }
-    inline iterator end() { return layers.end(); }    
-    inline const_reverse_iterator rbegin() const { return layers.rbegin(); }
-    inline const_reverse_iterator rend() const { return layers.rend(); } 
-    // Return the iterator of the layer at 'height'  and the amount that height is above the bottom of that layer
-    std::pair<const_iterator, Layer::Height> Find(ZType height) const;
-    std::pair<iterator,Layer::Height> Find(ZType height);
-    inline const Layer& operator[](unsigned idx) const { return layers.at(idx); }
-    inline Layer& operator[](unsigned idx) { return layers.at(idx); }
+    inline std::size_t size() const { return cells.size(); }
+    inline const_iterator begin() const { return cells.begin(); }
+    inline const_iterator end() const { return cells.end(); }
+    inline iterator begin() { return cells.begin(); }
+    inline iterator end() { return cells.end(); }    
+    inline const_reverse_iterator rbegin() const { return cells.rbegin(); }
+    inline const_reverse_iterator rend() const { return cells.rend(); } 
+    // Return the iterator of the cell at 'height'  and the amount that height is above the bottom of that cell
+    std::pair<const_iterator, Cell::Height> Find(ZType height) const;
+    std::pair<iterator,Cell::Height> Find(ZType height);
+    inline const Cell& operator[](unsigned idx) const { return cells.at(idx); }
+    inline Cell& operator[](unsigned idx) { return cells.at(idx); }
 
     
     Slice& operator+=(const Slice&);
@@ -52,29 +52,29 @@ public:
 
     Engine::Range<ZType> FindBiggestOpening() const;
     Engine::Range<ZType> FindBiggestNonSolidOpening() const;
-    Engine::Range<ZType> FindBiggestRange(Layer::Predicate predicate) const;
+    Engine::Range<ZType> FindBiggestRange(Cell::Predicate predicate) const;
 
-    auto Find(const_iterator from, Layer::Predicate to) const 
+    auto Find(const_iterator from, Cell::Predicate to) const 
     {
-        return std::ranges::subrange(from, std::find_if(from, layers.end(), to));
+        return std::ranges::subrange(from, std::find_if(from, cells.end(), to));
     }
 
-    auto FindBackwards(const_iterator from, Layer::Predicate to) const 
+    auto FindBackwards(const_iterator from, Cell::Predicate to) const 
     {
         
-        if (from == layers.end())
-            return std::ranges::subrange(layers.end(), layers.end());
+        if (from == cells.end())
+            return std::ranges::subrange(cells.end(), cells.end());
         auto it = from;
         for(; to(*it); --it)
         {
-            if (it==layers.begin())
+            if (it==cells.begin())
                 return std::ranges::subrange(it, from+1);                
         }
         return  std::ranges::subrange(it+1, from+1);
     }
-    iterator Fill(Engine::Range<ZType> height, const Material& material, Layer::Temperature temperature);
+    iterator Fill(Engine::Range<ZType> height, const Material& material, Cell::Temperature temperature);
 private:
-    Layers layers;
+    Cells cells;
 };
 
 Slice operator+(const Slice& lhs, const Slice& rhs);

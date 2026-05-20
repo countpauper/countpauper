@@ -158,7 +158,7 @@ Position Map::NameToPosition(uint32_t name) const
 }
 
 
-Slice::iterator Map::Fill(Position at, ZType height, const Material& mat, Layer::Temperature temperature)
+Slice::iterator Map::Fill(Position at, ZType height, const Material& mat, Cell::Temperature temperature)
 {
     auto& slice = slices.at(SliceIdx(at.X(), at.Y()));
     return slice.Fill(Engine::Range<ZType>(at.Z(), at.Z()+height), mat, temperature);
@@ -248,15 +248,15 @@ void Map::GenerateMesh()
         {
             const auto& slice = SliceAt(x, y);
             ZType top = 0.0;
-            for(auto layer : slice) 
+            for(auto cell : slice) 
             {
-                top += layer.height;
-                const auto& material= layer.material;
+                top += cell.height;
+                const auto& material= cell.material;
                 auto color = material.get().color;
                
-                color.a = ComputeOpacityAtDepth(color.a, layer.height); 
+                color.a = ComputeOpacityAtDepth(color.a, cell.height); 
                 NeighbourHeights heights = CalculateNeighbourHeights({static_cast<int>(x), static_cast<int>(y), top}, slice);
-                AddLayerToMesh(Position(x, y, top), color, heights);                
+                AddCellToMesh(Position(x, y, top), color, heights);                
             }
         }
     }
@@ -267,10 +267,10 @@ Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& ce
 {
     NeighbourHeights result;
     auto [it, amount] = centerSlice.Find(p.Z());
-    const auto& layer = *it;
+    const auto& cell = *it;
 
     result[Orientation::up] = p.Z() - amount+ 
-        SumHeight(centerSlice.Find(it, std::mem_fn(&Layer::IsTranslucent)));
+        SumHeight(centerSlice.Find(it, std::mem_fn(&Cell::IsTranslucent)));
 
     ZType bottom(0.0);
     if (it!=centerSlice.begin())
@@ -292,12 +292,12 @@ Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& ce
                 height = 0;
             else if (it->IsTranslucent())
             {
-                auto translucentDown = neighbour.FindBackwards(it, std::mem_fn(&Layer::IsOpaque));
+                auto translucentDown = neighbour.FindBackwards(it, std::mem_fn(&Cell::IsOpaque));
                 height = p.Z()-amount + SumHeight(translucentDown) - it->height;
             }
             else
             { 
-                auto opaqueUp = neighbour.Find(it, std::mem_fn(&Layer::IsTranslucent));
+                auto opaqueUp = neighbour.Find(it, std::mem_fn(&Cell::IsTranslucent));
                 height  = p.Z() -amount + SumHeight(opaqueUp);
             }
             height = std::max(bottom, height);
@@ -307,7 +307,7 @@ Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& ce
     return result;
 }
 
-void Map::AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const NeighbourHeights& neighbours)
+void Map::AddCellToMesh(Position pos, Engine::RGBA vertexColor, const NeighbourHeights& neighbours)
 {
     Engine::Coordinate backLeft(
         static_cast<double>(pos.X()),
@@ -323,7 +323,7 @@ void Map::AddLayerToMesh(Position pos, Engine::RGBA vertexColor, const Neighbour
     };
 
     auto name = Name(pos);
-    if (neighbours[Orientation::up] <= pos.Z())    // not occluded by layer above
+    if (neighbours[Orientation::up] <= pos.Z())    // not occluded by cell above
     {
         Engine::Quad top(topVertexCoord);
         if (!vertexColor)

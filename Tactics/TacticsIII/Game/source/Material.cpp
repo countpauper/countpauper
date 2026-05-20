@@ -78,7 +78,7 @@ float Material::BoilingPoint(float pressure) const
     // TODO: Since this is called a lot and heavy, consider a lookup table and/or
     // split materials in phases with their own properties and make it a state change for layers. 
     float denom = (1.0f / boilingPoint) - (gasConstant/enthalpy) * std::log(pressure / atmosphericPressure);
-    denom = std::max(denom, 2e-4f); // clip boiling point to 5000K (since Layer::Temperature goes to 8k and this approximation can go to infinity)
+    denom = std::max(denom, 2e-4f); // clip boiling point to 5000K (since Cell::Temperature goes to 8k and this approximation can go to infinity)
     return 1.0f / denom;
 }
 

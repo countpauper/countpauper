@@ -53,7 +53,7 @@ Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, Engine::Ran
         if (delta > heightDifference.end)
             return Engine::Range<ZType>::empty();
 
-        Game::Layer::Height totalHeight = SumHeight(slice.Find(next, std::mem_fn(&Layer::IsSolid)));
+        Game::Cell::Height totalHeight = SumHeight(slice.Find(next, std::mem_fn(&Cell::IsSolid)));
         if (totalHeight < space)   
             return Engine::Range<ZType>::empty();
         return { at.Z() + delta, at.Z() + delta + totalHeight };
@@ -63,7 +63,7 @@ Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, Engine::Ran
         if (it == slice.begin())
             return Engine::Range<ZType>::empty();
 
-        auto non_solid_range = slice.FindBackwards(it, std::mem_fn(&Layer::IsSolid));
+        auto non_solid_range = slice.FindBackwards(it, std::mem_fn(&Cell::IsSolid));
         auto stepDown = SumHeight(non_solid_range | std::views::drop(1));
         auto delta = offset + stepDown;
         if (delta > -heightDifference.begin)

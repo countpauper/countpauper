@@ -5,71 +5,71 @@ namespace Game
 {
 
 Slice::Slice(const Slice& other) 
-    : layers(other.layers)
+    : cells(other.cells)
 {
 }
 
-Slice::Slice(const Material& mat, Layer::Height height, Layer::Temperature temp) :
+Slice::Slice(const Material& mat, Cell::Height height, Cell::Temperature temp) :
     Slice{{{mat, height, temp}}}
 {
 }
 
-Slice::Slice(std::initializer_list<Layer> layers) : 
-    layers(layers)
+Slice::Slice(std::initializer_list<Cell> cells) : 
+    cells(cells)
 {
 }
 
 
-void Slice::emplace_back(const Material& material, Layer::Height height, Layer::Temperature temp)
+void Slice::emplace_back(const Material& material, Cell::Height height, Cell::Temperature temp)
 {
-    if (!layers.empty())
+    if (!cells.empty())
     {
-        if (layers.back().TryMerge(Layer{material, height, temp}))
+        if (cells.back().TryMerge(Cell{material, height, temp}))
             return;
     }
-    layers.emplace_back(material, height, temp);
+    cells.emplace_back(material, height, temp);
 }
 
 
-std::pair<Slice::const_iterator, Layer::Height> Slice::Find(ZType height) const
+std::pair<Slice::const_iterator, Cell::Height> Slice::Find(ZType height) const
 {
-    Layer::Height progress{0.0};
+    Cell::Height progress{0.0};
     for(auto it = begin(); it!=end(); ++it)
     {
         if (progress + it->height > height)
             return std::make_pair(it, height - progress);
         progress += it->height;
     }
-    return std::make_pair(end(), Layer::Height());
+    return std::make_pair(end(), Cell::Height());
 }
 
-std::pair<Slice::iterator, Layer::Height> Slice::Find(ZType height)
+std::pair<Slice::iterator, Cell::Height> Slice::Find(ZType height)
 {   // avoid duplicating Find algorithm by "const casting" the iterator 
     auto[cit, amount] = const_cast<const Slice*>(this)->Find(height);
     unsigned idx = cit - const_cast<const Slice*>(this)->begin();
-    return std::make_pair(layers.begin() + idx, amount);
+    return std::make_pair(cells.begin() + idx, amount);
 }
 
 Slice& Slice::operator=(const Slice& rhs)
 {
-    layers = rhs.layers;
+    cells = rhs.cells;
     return *this;
 }
  
 Slice& Slice::operator+=(const Slice& rhs)
 {
-    if (layers.empty()) 
+    if (cells.empty()) 
     {
-        layers = rhs.layers;
+        cells = rhs.cells;
         return *this;
     }
-    auto start = rhs.layers.begin();
-    while (start!= rhs.layers.end() && 
-            layers.back().TryMerge(*start))
+    auto start = rhs.cells.begin();
+    while (start!= rhs.cells.end() && 
+            cells.back().TryMerge(*start))
     {
         ++start;
     }   
-    layers.insert(layers.end(), start, rhs.layers.end());
+    cells.insert(cells.end(), start, rhs.cells.end());
     return *this;
 }
 
@@ -82,19 +82,19 @@ Slice operator+(const Slice& lhs, const Slice& rhs)
 Slice& Slice::operator&=(Engine::Range<ZType> height)
 {
     if (height.begin > height.end) {
-        layers.clear();
+        cells.clear();
         return *this;
     }
-    auto cutIt = layers.begin();
+    auto cutIt = cells.begin();
     if (height.begin < ZType(0))
     {
-        cutIt = layers.insert(cutIt, {Material::vacuum, -height.begin, 0.0});
+        cutIt = cells.insert(cutIt, {Material::vacuum, -height.begin, 0.0});
         ++cutIt;
         height.begin = ZType(0);
     }
-    Layer::Height progress { static_cast<Layer::Height::IntegerType>(0) };
+    Cell::Height progress { static_cast<Cell::Height::IntegerType>(0) };
     auto cutBegin = cutIt;
-    while(cutIt!=layers.end())
+    while(cutIt!=cells.end())
     {
         if (progress + cutIt->height >= height.begin) 
         {
@@ -104,11 +104,11 @@ Slice& Slice::operator&=(Engine::Range<ZType> height)
             break;
         }
         progress += cutIt->height;
-        cutIt = layers.erase(cutIt);
+        cutIt = cells.erase(cutIt);
     }
 
     auto cutEnd = cutIt;
-    while(cutIt!=layers.end()) 
+    while(cutIt!=cells.end()) 
     {
         if (progress + cutIt->height >= height.end)
         {
@@ -116,7 +116,7 @@ Slice& Slice::operator&=(Engine::Range<ZType> height)
             cutIt->height = cutProgress;
             progress += cutProgress;
             cutEnd = ++cutIt;
-            cutIt = layers.erase(cutEnd, layers.end());
+            cutIt = cells.erase(cutEnd, cells.end());
             break;
         }
         progress += cutIt->height;
@@ -138,9 +138,9 @@ Slice operator&(const Slice& lhs, Engine::Range<ZType> rng)
 
 Slice& Slice::operator*=(float scale)
 {
-    for(auto& layer: layers)
+    for(auto& cell: cells)
     {
-        layer.height *= scale;
+        cell.height *= scale;
     }
     return *this;
 }
@@ -154,7 +154,7 @@ Slice operator*(const Slice& lhs, float scale)
 
 Engine::Range<ZType> Slice::FindBiggestOpening() const
 {
-    return FindBiggestRange([](const Layer& l)
+    return FindBiggestRange([](const Cell& l)
     {
         return l.IsCompressible();
     });
@@ -162,28 +162,28 @@ Engine::Range<ZType> Slice::FindBiggestOpening() const
 
 Engine::Range<ZType> Slice::FindBiggestNonSolidOpening() const
 {
-    return FindBiggestRange(std::mem_fn(&Layer::IsGas));
+    return FindBiggestRange(std::mem_fn(&Cell::IsGas));
 }
 
-Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Layer&)> predicate) const
+Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Cell&)> predicate) const
 {
     auto result = Engine::Range<ZType>::empty();
     ZType progress = 0;
     Engine::Range<ZType> current = result;
-    for(const auto& layer : layers)
+    for(const auto& cell : cells)
     {
-        if (predicate(layer))
+        if (predicate(cell))
         {
             current.begin = std::min(progress, current.begin);
         }
-        else if (!predicate(layer))
+        else if (!predicate(cell))
         {
             current.end = progress; 
             if (current.Size() > result.Size())
                 result = current;
             current = Engine::Range<ZType>::empty();
         }
-        progress += layer.height;
+        progress += cell.height;
     }
     current.end = progress; 
 
@@ -194,39 +194,39 @@ Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Layer&)> p
 
 }
 
-Slice::iterator Slice::Fill(Engine::Range<ZType> height, const Material& material, Layer::Temperature temperature)
+Slice::iterator Slice::Fill(Engine::Range<ZType> height, const Material& material, Cell::Temperature temperature)
 {
     auto[it, offset] = Find(height.begin);
-    Layer::Height displaced = 0.0;    // the volume removed to make room for the height
-    Layer::Height level = SumHeight(std::ranges::subrange(begin(), it));
-    if (it!=layers.end() && offset!=0.0)
+    Cell::Height displaced = 0.0;    // the volume removed to make room for the height
+    Cell::Height level = SumHeight(std::ranges::subrange(begin(), it));
+    if (it!=cells.end() && offset!=0.0)
     {
         displaced += it->height - offset;
         level += it->height;
         it->height = offset;
         if (displaced > height.Size())
-        {   // split this overlapping layer 
-            it = layers.emplace(it+1, it->material, displaced - height.Size(), it->temperature);
-            return layers.emplace(it, material, height.Size(), temperature);
+        {   // split this overlapping cell 
+            it = cells.emplace(it+1, it->material, displaced - height.Size(), it->temperature);
+            return cells.emplace(it, material, height.Size(), temperature);
         }
         ++it;
         // TODO: later (as an option?) increase pressure by keeping the mass in a reduced volume 
     }
     auto replaceStart = it;
-    while(it!= layers.end() && level + it->height <= height.end)
+    while(it!= cells.end() && level + it->height <= height.end)
     {
         level+=it->height;
         displaced += it->height;
         ++it;
     }
-    // TODO: what to do with the mass of the replaced? Compress it into the layer above in some balance?
-    it = layers.erase(replaceStart, it);
-    if (it!=layers.end())
+    // TODO: what to do with the mass of the replaced? Compress it into the cell above in some balance?
+    it = cells.erase(replaceStart, it);
+    if (it!=cells.end())
     {
         it->height -= height.Size() - displaced;
         // TODO increase pressure 
     }
-    return layers.emplace(it, material, height.Size(), temperature);
+    return cells.emplace(it, material, height.Size(), temperature);
 
 }
 

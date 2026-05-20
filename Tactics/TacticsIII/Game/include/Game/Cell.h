@@ -11,7 +11,7 @@
 namespace Game
 {
 
-struct Layer 
+struct Cell 
 {
     using Height = Engine::FixedPoint<8, uint16_t>;     // Range 256m, resolution about 3.906mm
     using Temperature = Engine::FixedPoint<3,uint16_t>; // range 8192K, resolution 125mK        
@@ -22,9 +22,9 @@ struct Layer
     Temperature temperature;                        // kelvin 
     std::array<Flow,3> flow = {0.0, 0.0, 0.0};      // meter/second (or liter/sec/m2) per Orientation axis index-1
     Pressure pressure;                              // Pascal
-    Layer(const Material& material=Material::vacuum, Height height=1.0, Temperature temperature = 300.0, Pressure pressure=atmosphericPressure);
+    Cell(const Material& material=Material::vacuum, Height height=1.0, Temperature temperature = 300.0, Pressure pressure=atmosphericPressure);
 
-    bool operator==(const Layer& rhs) const;
+    bool operator==(const Cell& rhs) const;
     float Volume() const;
     float Mass() const;
     float Density() const;
@@ -42,21 +42,21 @@ struct Layer
     void AddFlow(Orientation dir, Flow df);
     void Heat(float degrees);
 
-    using Predicate = std::function<bool(const Layer&)>;
-    bool TryMerge(const Layer& rhs);
+    using Predicate = std::function<bool(const Cell&)>;
+    bool TryMerge(const Cell& rhs);
 };
 
 template<typename R>
-concept RangeOfLayer = RangeOf<R, Layer>;
+concept RangeOfCell = RangeOf<R, Cell>;
 
-Layer::Height SumHeight(RangeOfLayer auto&& range)
+Cell::Height SumHeight(RangeOfCell auto&& range)
 {
-    return std::accumulate(std::ranges::begin(range), std::ranges::end(range), Layer::Height(0.0),[](Layer::Height sum, const Layer& layer)
+    return std::accumulate(std::ranges::begin(range), std::ranges::end(range), Cell::Height(0.0),[](Cell::Height sum, const Cell& cell)
     {
-        return sum + layer.height;
+        return sum + cell.height;
     });
 }
 
-std::ostream& operator<<(std::ostream& os, const Layer& layer);
+std::ostream& operator<<(std::ostream& os, const Cell& cell);
 
 }

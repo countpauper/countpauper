@@ -13,16 +13,16 @@ using namespace ::testing;
 
 
 // TODO: 
-// [done] Gravity: Layer flow increase downwards (if nothing around)
+// [done] Gravity: Cell flow increase downwards (if nothing around)
 // [done] Dampening: internal viscosity slows down flows of gas and liquids (not solids)
-// Obstruction: layer flow (downwards?) is reduced (to 0) if neighbouring materials (especially solids) and low granulartity (of both) (so earth still falls mostly) (also water over riverbed later)
-// Weight(Support): Layers trying to flow downwards increase pressure in layers below and inside themselves if they can't flow down (air on water water on rock)
-// Relaxation: the weight of a cell creates "pressure" on the neighbour below. If it is compressible its volume decreases. If the layer itself is compressible its volume increases
-// Falling: If the weight of a layer compresses a layer below, but it's incompressible, then it falls. Instead the neighbour above grows and so on. 
+// Obstruction: cell flow (downwards?) is reduced (to 0) if neighbouring materials (especially solids) and low granulartity (of both) (so earth still falls mostly) (also water over riverbed later)
+// Weight(Support): Cells trying to flow downwards increase pressure in layers below and inside themselves if they can't flow down (air on water water on rock)
+// Relaxation: the weight of a cell creates "pressure" on the neighbour below. If it is compressible its volume decreases. If the cell itself is compressible its volume increases
+// Falling: If the weight of a cell compresses a cell below, but it's incompressible, then it falls. Instead the neighbour above grows and so on. 
 // (Hydro)static pressure: If the . (always for non solids) it causes a pressure gradient (P=pgh that is applied horizontally depending on touching area height range. 
 // Surface tension (diminish pressure difference between neighbours that are liquid, set to 0 at solids)
 // Equilibrium: water layers pressure is set on creation depending on depth (so it flows sideways) but doesn't flow up in an equilibrium. (Perhaps water layers should be at most 1-2 meters?) 
-// Falling pressure: rock falling down in air creates very high pressure mini layer to a limit that offsets the gravity, until it escapes (minimum size 1?)
+// Falling pressure: rock falling down in air creates very high pressure mini cell to a limit that offsets the gravity, until it escapes (minimum size 1?)
 // Sink: rock/earth falling in water (or high pressure air) creates pressure that slows sinking
 // Pressure flow: differences in pressure between neighbouring layers creates sideways flow 
 // Expand: High pressure layers flow up (or down) into lower pressure vertical neighbours until they even out. THis is like flowing up and immediately fusing 
@@ -32,7 +32,7 @@ using namespace ::testing;
 // Leak: Material leaks into neighbouring layers with less pressure but different material, creating new layers 
 // Shore: Flow is stopped by neighbours with surface hardness (this may already be needed sooner for falling pressure?)
 // Edge: Neighbouring layers are extended outside map edge for determining friction and flow (what about pressure?)
-// Source: Edge source can flow material into layer (to create river/wind/clouds) 
+// Source: Edge source can flow material into cell (to create river/wind/clouds) 
 
 // Later more advanced (bigger) topics, yet to be broken down 
 // Friction: dampen flow along neighbouring solids with a mu_friction, which could also be used for gameplay. 
@@ -54,7 +54,7 @@ TEST(Physics, Gravity)
     Gravity gravity(9.80665f);
     gravity(1.0f, slice);
     ASSERT_EQ(slice[2].material, Material::water);
-    EXPECT_GE(slice[2].GetFlow(Orientation::down), 9.8);    // gravity affects layers above a compressible layer
+    EXPECT_GE(slice[2].GetFlow(Orientation::down), 9.8);    // gravity affects layers above a compressible cell
     ASSERT_EQ(slice[1].material, Material::air);
     EXPECT_GE(slice[1].GetFlow(Orientation::down), 0.0);    // gravity doesn't affect layers above non-compressible layers  
     ASSERT_EQ(slice[0].material, Material::stone);

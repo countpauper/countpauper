@@ -107,7 +107,7 @@ TEST(Map, Fill)
 {
     Map map(Engine::Size{1,1,1});
 
-    // Replace a (all) layer 
+    // Replace a (all) cell 
     auto it = map.Fill({0,0,0}, 1, Material::water);
     const auto& slice = map[0,0];
     ASSERT_EQ(slice.size(), 1);
@@ -116,7 +116,7 @@ TEST(Map, Fill)
     EXPECT_EQ(slice[0].temperature, 300.0);
     EXPECT_EQ(it, slice.begin());
 
-    // Shrink a layer and replace the top 
+    // Shrink a cell and replace the top 
     it = map.Fill({0,0,0.6}, 0.4, Material::air);
     ASSERT_EQ(slice.size(), 2);
     EXPECT_EQ(slice[0].material.get(), Material::water);
@@ -125,7 +125,7 @@ TEST(Map, Fill)
     EXPECT_EQ(slice[1].height, 0.4);
     EXPECT_EQ(it, map.SliceAt(0,0).begin() + 1);
 
-    // Shrink a layer and replace the bottom and overlap a part of the top 
+    // Shrink a cell and replace the bottom and overlap a part of the top 
     map.Fill({0,0,0.5}, 0.125, Material::vegetation);
     ASSERT_EQ(slice.size(), 3);
     EXPECT_EQ(slice[0].height, 0.5);
@@ -133,14 +133,14 @@ TEST(Map, Fill)
     EXPECT_EQ(slice[1].height, 0.125);
     EXPECT_EQ(slice[2].height, 0.375);
 
-    // Replace a whole layer 
+    // Replace a whole cell 
     map.Fill({0,0,0.375}, 0.5, Material::water);
     ASSERT_EQ(slice.size(), 3);
     EXPECT_EQ(slice[0].height, 0.375);
     EXPECT_EQ(slice[1].material.get(), Material::water);
     EXPECT_EQ(slice[1].height, 0.5);
 
-    // Split a layer 
+    // Split a cell 
     map.Fill({0,0,0.5}, 0.25, Material::earth);
     ASSERT_EQ(slice.size(), 5);
     EXPECT_EQ(slice[1].material.get(), Material::water);
