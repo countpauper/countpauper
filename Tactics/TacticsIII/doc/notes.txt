@@ -133,6 +133,7 @@ Physics and Magics
 Physics 
 * Gravity 
 - Pressure
+- Add asserts to FixedPoint for float input being nan or inf or out of range, use assert that really breaks
 - Rename Layer to Cell  
 - Barrier 
 - Start water flowing from the bump with unit tests. 

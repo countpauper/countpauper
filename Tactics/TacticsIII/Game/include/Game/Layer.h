@@ -16,21 +16,21 @@ struct Layer
     using Height = Engine::FixedPoint<8, uint16_t>;     // Range 256m, resolution about 3.906mm
     using Temperature = Engine::FixedPoint<3,uint16_t>; // range 8192K, resolution 125mK        
     using Flow = Engine::FixedPoint<8,short>;           // range +/- 128m/sec, resulution about 4mm/sec 
-    using Density = Engine::FixedPoint<18,uint32_t>;    // range 16384 @ resolution about 7.6 mg/m3
-
+    using Pressure = uint32_t;                          // range 4.29 GPa @ resolution about 1 Pa
     std::reference_wrapper<const Material> material;
     Height height;                                  // meter 
     Temperature temperature;                        // kelvin 
-    Density density;                                // kg/m3 
     std::array<Flow,3> flow = {0.0, 0.0, 0.0};      // meter/second (or liter/sec/m2) per Orientation axis index-1
-    Layer(const Material& material=Material::vacuum, Height height=1.0, Temperature temperature = 300.0, float pressure=atmosphericPressure);
+    Pressure pressure;                              // Pascal
+    Layer(const Material& material=Material::vacuum, Height height=1.0, Temperature temperature = 300.0, Pressure pressure=atmosphericPressure);
 
     bool operator==(const Layer& rhs) const;
     float Volume() const;
     float Mass() const;
+    float Density() const;
     float Viscosity() const;
     Flow GetFlow(Orientation dir) const;
-    float GetPressure(ZType height) const;
+    float GetPressure(Height height) const;
 
     bool IsGas() const;
     bool IsCompressible() const;
@@ -40,6 +40,7 @@ struct Layer
     bool IsTranslucent() const;
 
     void AddFlow(Orientation dir, Flow df);
+    void Heat(float degrees);
 
     using Predicate = std::function<bool(const Layer&)>;
     bool TryMerge(const Layer& rhs);

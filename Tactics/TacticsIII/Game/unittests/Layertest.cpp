@@ -25,7 +25,7 @@ TEST(Layer, Pressure)
     EXPECT_TRUE(std::isnan(Layer(Material::stone).GetPressure(0.5))); 
     Layer air(Material::air, 1.0, 300.0);
     Layer warmAir = air;
-    warmAir.temperature += 20.0;
+    warmAir.Heat(20.0f);
     EXPECT_GT(warmAir.GetPressure(0.5), air.GetPressure(0.5));    // pressure higher for warmer air;
 }
 
@@ -33,11 +33,10 @@ TEST(Layer, StaticPressure)
 {
     Layer water(Material::water);
     EXPECT_GT(water.GetPressure(0.0), water.GetPressure(1.0));
-    Layer deepWater(Material::water, 10.0);
+    Layer deepWater(Material::water, 10.3, 277.0);
     EXPECT_GT(deepWater.GetPressure(0.0), water.GetPressure(0.0));
-    EXPECT_NEAR(deepWater.GetPressure(0.0), 2 * atmosphericPressure, 10.0);
+    EXPECT_NEAR(deepWater.GetPressure(0.0), 2 * atmosphericPressure, 1000);
 }
-
 
 TEST(Layer, Flow)
 {

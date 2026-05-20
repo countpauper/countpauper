@@ -47,7 +47,7 @@ void Viscosity::operator()(float dt, Slice& slice) const
         if (layer.IsSolid())
             continue;       // solid layers don't "flow" but they still move
         auto mu = layer.Viscosity();
-        float dampening = std::exp(-mu * dt / static_cast<float>(layer.density));
+        float dampening = std::exp(-mu * dt / static_cast<float>(layer.Density()));
         for(auto& flow : layer.flow)
         {
             flow *= dampening;

@@ -11,8 +11,8 @@ struct Material
 {
     std::string name;
     Engine::RGBA color;
-    float freezingPoint;        // K
-    float boilingPoint;         // K
+    float freezingPoint;        // K at 1 atmosphere
+    float boilingPoint;         // K at 1 atmosphere
     float solidDensity;         // kg/m3 constant if solid  
     float liquidDensity;        // kg/m3 at just below boiling, linear interpolate between solid density 
     float molarmass;            // g/mole
@@ -20,14 +20,16 @@ struct Material
     float liquidViscosity;        
     float gaseousViscosity;
     
-    float PhaseFactor(float temperature) const; // <=0 = solid >=1 gas, 0...1 liquid
+    float PhaseFactor(float temperature, float pressure) const; // <=0 = solid >=1 gas, 0...1 liquid
     float Density(float temperature, float pressure = atmosphericPressure) const;
     float Pressure(float temperature, float density) const;
 
-    bool IsSolid(float temperature) const;
-    bool IsLiquid(float temperature) const;
-    bool IsGas(float temperature) const;
-    float Viscosity(float temperature) const;
+    bool IsSolid(float temperature, float pressure) const;
+    bool IsLiquid(float temperature, float pressure) const;
+    bool IsGas(float temperature, float pressure) const;
+    float Viscosity(float temperature, float pressure) const;
+    float FreezingPoint(float pressure) const;
+    float BoilingPoint(float pressure) const;
     bool operator==(const Material& other) const;
 
     static const Material air;
@@ -37,6 +39,9 @@ struct Material
     static const Material vegetation;
     static const Material vacuum;
     static const Material* all[5];
+
+private:
+    float PhaseFactorSimple(float temperature) const;
 };
 
 

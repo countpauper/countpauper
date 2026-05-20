@@ -5,27 +5,27 @@ namespace Game
 {
 static const float earthGravity = 9.80665f;          // m/sec, TODO needs to come or match with Physics.gravity 
 
-float StaticPressure(float density, float depth, float gravity=earthGravity)
+Layer::Pressure StaticPressure(float density, float depth, float gravity=earthGravity)
 {
     return density * depth * gravity;
 }
 
-float AdjustPressureLevel(const Material& material, float temperature, float desiredPressure, float height)
+Layer::Pressure AdjustPressure(const Material& material, Layer::Pressure desiredPressure, float depth, float temperature)
 {
-    if (material.IsSolid(temperature))
+    if (material.IsSolid(temperature, desiredPressure))
         return desiredPressure; 
-    else if (material.IsLiquid(temperature))
-        return desiredPressure + StaticPressure(material.liquidDensity, height/2);
     else 
-        return desiredPressure - StaticPressure(material.Density(temperature, desiredPressure), height/2);
+    if (material.IsGas(temperature, desiredPressure))
+        return desiredPressure - StaticPressure(material.Density(temperature, desiredPressure), depth * 0.5);
+    else 
+        return desiredPressure + StaticPressure(material.Density(temperature, desiredPressure), depth * 0.5);
 }
 
-Layer::Layer(const Material& material, Height height, Temperature temperature, float pressure) :
+Layer::Layer(const Material& material, Height height, Temperature temperature, Pressure pressure) :
     material(material),
     height(height),
     temperature(temperature),
-    density(material.Density(static_cast<float>(this->temperature), 
-        AdjustPressureLevel(material, static_cast<float>(temperature), pressure, static_cast<float>(height))))
+    pressure(AdjustPressure(material, pressure, static_cast<float>(height), static_cast<float>(temperature)))
 {
 }
 
@@ -37,7 +37,7 @@ bool Layer::operator==(const Layer& rhs) const
         return false;
     if (temperature != rhs.temperature)
         return false;
-    if (density != rhs.density)
+    if (pressure != rhs.pressure)
         return false;
     for(unsigned idx = 0; idx<flow.size(); ++idx)
         if (flow[idx]!=rhs.flow[idx])
@@ -54,17 +54,22 @@ float Layer::Viscosity() const
 {
     // TODO: assumes all materials are newtonian. Lava is not 
     // Lava is also more temperature dependent than the rest. (a factor 100 over 200 Kelvin)
-    return material.get().Viscosity(static_cast<float>(temperature));
+    return material.get().Viscosity(static_cast<float>(temperature), static_cast<float>(pressure));
 } 
 
 float Layer::Mass() const
 {
-    return Volume() * static_cast<float>(density);
+    return Volume() * Density();
+}
+
+float Layer::Density() const
+{
+    return material.get().Density(static_cast<float>(temperature), static_cast<float>(pressure));
 }
 
 bool Layer::IsGas() const
 {
-    return material.get().IsGas(static_cast<float>(temperature));
+    return material.get().IsGas(static_cast<float>(temperature), static_cast<float>(pressure));
 }
 
 bool Layer::IsCompressible() const 
@@ -74,12 +79,12 @@ bool Layer::IsCompressible() const
 
 bool Layer::IsLiquid() const
 {
-    return material.get().IsLiquid(static_cast<float>(temperature));
+    return material.get().IsLiquid(static_cast<float>(temperature), static_cast<float>(pressure));
 }
 
 bool Layer::IsSolid() const
 {
-    return material.get().IsSolid(static_cast<float>(temperature));
+    return material.get().IsSolid(static_cast<float>(temperature), static_cast<float>(pressure));
 }
 
 bool Layer::IsOpaque() const
@@ -117,6 +122,23 @@ void Layer::AddFlow(Orientation dir, Flow df)
     }
 }
 
+
+void Layer::Heat(float degrees)
+{
+    float density = Density();
+    if (degrees>0)
+        if (std::numeric_limits<Temperature>::max() - degrees > temperature)
+            temperature += Layer::Temperature(degrees);
+        else
+            temperature = std::numeric_limits<Temperature>::max();
+    if (degrees<0)
+        if (temperature>degrees)
+            temperature -= Layer::Temperature(-degrees);
+        else
+            temperature = 0.0;
+    pressure = material.get().Pressure(static_cast<float>(temperature), density);
+}
+
 Layer::Flow Layer::GetFlow(Orientation dir) const
 {
     if (dir.IsNegative())
@@ -125,10 +147,18 @@ Layer::Flow Layer::GetFlow(Orientation dir) const
         return flow[dir.Index()-1];
 }
 
-float Layer::GetPressure(ZType atHeight) const
+float Layer::GetPressure(Layer::Height atHeight) const
 {
-    auto averagePressure = material.get().Pressure(static_cast<float>(temperature), static_cast<float>(density));
-    return averagePressure + StaticPressure(static_cast<float>(density), static_cast<float>(height)/2 - static_cast<float>(atHeight)); 
+    const auto& mat = material.get();
+    if (atHeight > height)
+        throw std::invalid_argument("Height outside of layers");
+    
+    if (mat.molarmass == 0.0)
+        return 0.0;
+    if (material.get().IsSolid(static_cast<float>(temperature), static_cast<float>(pressure)))
+        return std::numeric_limits<float>::quiet_NaN();
+    auto averagePressure = pressure;
+    return averagePressure + StaticPressure(Density(), static_cast<float>(height)/2 - static_cast<float>(atHeight)); 
 }
 
 bool Layer::TryMerge(const Layer& rhs) 
@@ -137,9 +167,8 @@ bool Layer::TryMerge(const Layer& rhs)
         return false;
     if (this->temperature != rhs.temperature) 
         return false;   // Maybe is close enough (like less than 1 celsius) still mix
-    float totalMass = Mass() + rhs.Mass(); 
+    pressure = (pressure * Volume() + rhs.pressure * rhs.Volume()) / (Volume() + rhs.Volume());
     height += rhs.height;
-    density = totalMass / Volume();
 
     // TODO merge flows, mostly by averaging I suppose
     return true;
