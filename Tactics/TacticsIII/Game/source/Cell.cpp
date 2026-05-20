@@ -108,12 +108,12 @@ void Cell::AddFlow(Orientation dir, Flow df)
     unsigned index = dir.Index()-1;
     if (df>0.0 && std::numeric_limits<Flow>::max() - df > flow[index])
     {   // TODO check negative as well 
-        assert(false);  // flow overflow hurhur 
+        ASSERT(false);  // flow overflow hurhur 
         flow[index] = std::numeric_limits<Flow>::max();
     }
     else if (df<0.0 && std::numeric_limits<Flow>::min() - df > flow[index])
     {
-        assert(false); // flow underflow 
+        ASSERT(false); // flow underflow 
         flow[index] = std::numeric_limits<Flow>::max();
     }
     else 

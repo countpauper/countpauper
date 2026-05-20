@@ -126,7 +126,7 @@ void Creature::OnCount(Stat::Id stat, unsigned remaining)
 
 const Equipment& Creature::Equip(const Equipment& equipment)
 {
-    assert(equipment.CanEquip(*this));
+    ASSERT(equipment.CanEquip(*this));
     return Equipments::Equip(equipment);
 }
 

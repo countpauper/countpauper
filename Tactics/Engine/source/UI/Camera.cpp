@@ -53,7 +53,7 @@ namespace Engine
             }
             else
             {
-                assert(!vertical.X());
+                ASSERT(!vertical.X());
                 rotation = Coordinate(pitch, yaw, yaw);
             }
             Logging::Log<UiLogging, Logging::Debug>("Face ({:3f}, {:3f}, {:3f}) yaw={}, pitch={}, distance {}",

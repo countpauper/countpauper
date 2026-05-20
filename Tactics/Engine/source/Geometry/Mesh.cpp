@@ -58,7 +58,7 @@ template<typename T, typename U> constexpr size_t offsetOf(U T::*member)
 
 void Mesh::SetupVertexPointers()
 {
-    assert(3 * sizeof(GLdouble) == sizeof(Vertex::c));
+    ASSERT(3 * sizeof(GLdouble) == sizeof(Vertex::c));
     glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::c));
     glTexCoordPointer(3, GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::t));
     glNormalPointer(GL_DOUBLE, sizeof(Vertex), (void*)offsetOf(&Vertex::n));
@@ -83,7 +83,7 @@ void Mesh::RenderOpaque() const
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
-    assert(3 * sizeof(GLdouble) == sizeof(Vertex::c));
+    ASSERT(3 * sizeof(GLdouble) == sizeof(Vertex::c));
     glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), &vertices.front().c);
     if (glIsEnabled(GL_TEXTURE_3D))
     {
@@ -150,7 +150,7 @@ void Mesh::RenderTranslucent() const
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
-    assert(3 * sizeof(GLdouble) == sizeof(Vertex::c));
+    ASSERT(3 * sizeof(GLdouble) == sizeof(Vertex::c));
     glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), &vertices.front().c);
     glTexCoordPointer(2, GL_DOUBLE, sizeof(Vertex), &vertices.front().t);
     glNormalPointer(GL_DOUBLE, sizeof(Vertex), &vertices.front().n);
@@ -164,7 +164,7 @@ void Mesh::RenderSelection() const
     glPushName(0);
     for (auto t : triangles)
     {
-        assert(names.empty());  // unused
+        ASSERT(names.empty());  // unused
         glBegin(GL_TRIANGLES);
         for (int i = 0; i < 3; ++i)
         {
@@ -287,10 +287,10 @@ double Mesh::Volume() const
 Mesh& Mesh::operator+=(const Mesh& addition)
 {
     Invalidate();
-    assert(vertices.size() < std::numeric_limits<uint32_t>::max());
+    ASSERT(vertices.size() < std::numeric_limits<uint32_t>::max());
     uint32_t vertexOffset = uint32_t(vertices.size());
     vertices.insert(vertices.end(), addition.vertices.begin(), addition.vertices.end());
-    assert(triangles.empty() || IsNamed() == addition.IsNamed()); // no functionality to add unnamed to named
+    ASSERT(triangles.empty() || IsNamed() == addition.IsNamed()); // no functionality to add unnamed to named
     names.insert(names.end(), addition.names.begin(), addition.names.end());
     for (const auto& t : addition.triangles)
     {
@@ -382,11 +382,11 @@ void Mesh::GenerateIndexBuffer() const
 {
     if (opaqueTriangleBuffer)
     {
-        assert(translucentTriangleBuffer != 0);
+        ASSERT(translucentTriangleBuffer != 0);
         return;
     }
 
-    assert(translucentTriangleBuffer == 0);
+    ASSERT(translucentTriangleBuffer == 0);
 
     std::vector<Triangle> opaqueTriangles;
     std::vector<Triangle> translucentTriangles;

@@ -534,10 +534,15 @@ bool Orientations::empty() const
     return flags == 0;
 }
 
+std::size_t Orientations::capacity() const
+{
+    return  sizeof(flags) * 8;
+}
+
 size_t Orientations::size() const
 {
     size_t count = 0;
-    for (int bit = 0; bit < sizeof(flags) * 8; ++bit)
+    for (int bit = 0; bit < capacity(); ++bit)
     {
         if (flags&(1 << bit))
             ++count;
@@ -550,11 +555,12 @@ Orientations::operator bool() const
     return !empty();
 }
 
-Orientations::iterator::iterator(const uint16_t& flags, int start) :
-    bit(start -1),
-    flags(&flags)
+Orientations::iterator::iterator(const uint16_t& set, int start) :
+    bit(start),
+    flags(&set)
 {
-    operator++();
+    if (bit < capacity() && !(set & (1<<bit)))
+        operator++();
 }
 
 Orientations::iterator::iterator(const iterator& o) :
@@ -571,11 +577,16 @@ Orientations::iterator& Orientations::iterator::operator=(const Orientations::it
     return *this;
 }
 
+std::size_t Orientations::iterator::capacity() const
+{
+    return sizeof(*flags) * 8;
+}
 
 Orientations::iterator& Orientations::iterator::operator++()
 {
-    while (++bit < sizeof(flags) * 8)
+    while (bit < capacity())
     {
+        ++bit;
         if (*flags & (1<<bit))
             return *this;
     }
@@ -612,7 +623,7 @@ Orientations::iterator Orientations::begin() const
 
 Orientations::iterator Orientations::end() const
 {
-    return iterator(flags, sizeof(flags) * 8);
+    return iterator(flags, capacity());
 }
 
 Orientations& Orientations::operator&=(Orientations dirs)

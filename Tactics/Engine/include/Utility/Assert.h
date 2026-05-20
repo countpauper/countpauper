@@ -17,8 +17,7 @@ inline void _assert_handler(const char *expr, const char *file, int line)
     std::abort();
 }
 
-#undef assert
-#define assert(expr) \
+#define ASSERT(expr) \
     if (!(expr)) { \
         _assert_handler(#expr, __FILE__, __LINE__); \
     }

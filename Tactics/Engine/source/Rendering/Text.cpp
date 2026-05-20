@@ -15,7 +15,7 @@ namespace Engine
 
 void glStrokeText(std::string_view text, const Font& font, Align horizontal_align, Align vertical_align)
 {
-    assert(horizontal_align == Align::left);  // only supported
+    ASSERT(horizontal_align == Align::left);  // only supported
     // Stroke fonts: render in model space using the current matrix
     float yorigin = 0.0;
     float lineshift = -1;

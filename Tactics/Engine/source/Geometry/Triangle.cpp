@@ -105,7 +105,7 @@ double Triangle::Distance(const Coordinate& p) const
     }
     else
     {   // All>0, all should be <=1.0 too
-        assert(barycentric.X() <= 1.0 && barycentric.Y() <= 1.0 && barycentric.Z() <= 1.0);
+        ASSERT(barycentric.X() <= 1.0 && barycentric.Y() <= 1.0 && barycentric.Z() <= 1.0);
         // If it projects into the triangle a negative value is returned if the point is behind the triangle
         // this allows at least convex meshes to determine if the point is inside the mesh when all distance<=0
         return sign * (pp - p).Length();

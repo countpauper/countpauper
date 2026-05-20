@@ -18,7 +18,7 @@ unsigned Bus::Subscribe(Passenger& passenger, const std::set<Message::Type>& mes
     auto [it, inserted] = subscriptions.insert(std::make_pair(&passenger, messages));
     if (inserted)
     {
-        assert(!passenger.bus); // resubscription or multiple subscription not supported yet
+        ASSERT(!passenger.bus); // resubscription or multiple subscription not supported yet
         passenger.bus = this;
         return messages.size();
     }

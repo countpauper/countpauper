@@ -155,12 +155,15 @@ public:
 
         int bit;
         const uint16_t* flags = nullptr;
+    private:
+        std::size_t capacity() const;
     };
     iterator begin() const;
     iterator end() const;
     using value_type = Orientation;
 
 private:
+    std::size_t capacity() const;
     uint16_t flags;
 };
 

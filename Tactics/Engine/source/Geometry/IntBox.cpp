@@ -131,13 +131,13 @@ IntBox::Iterator IntBox::Iterator::operator--(int)
 
 bool IntBox::Iterator::operator==(const IntBox::Iterator& rhs) const
 {
-    assert(&box == &rhs.box);
+    ASSERT(&box == &rhs.box);
     return index == rhs.index;
 }
 
 bool IntBox::Iterator::operator!=(const IntBox::Iterator& rhs) const
 {
-    assert(&box == &rhs.box);
+    ASSERT(&box == &rhs.box);
     return index != rhs.index;
 }
 
@@ -154,7 +154,7 @@ Position IntBox::Iterator::operator*() const
 
 std::ptrdiff_t IntBox::Iterator::operator-(const IntBox::Iterator& rhs)
 {
-    assert(&box == &rhs.box);
+    ASSERT(&box == &rhs.box);
     return index - rhs.index;
 }
 

@@ -20,7 +20,7 @@ void StatDefinition::Parse(const json& parsed)
         auto name = it.key();
         auto id = Stat::Identify(name);
         auto stat_place = emplace(id, Stat(name, stat, *this));
-        assert(stat_place.second);  // duplicate state id
+        ASSERT(stat_place.second);  // duplicate state id
         if (auto counterDefinition = Engine::try_get<json>(stat, "counter"))
         {
                 counters.emplace_back(id, *counterDefinition, name);
@@ -77,7 +77,7 @@ Computation StatDefinition::GetPrimaryStat(Stat::Id id) const
 std::map<Stat::Id, int> StatDefinition::Deserialize(const json& data) const
 {
     std::map<Stat::Id, int> result;
-    assert(!empty() || data.empty());
+    ASSERT(!empty() || data.empty());
     for(const auto& statDefinition: *this)
     {
         const auto value = Engine::try_get<int>(data, Stat::Name(statDefinition.first));

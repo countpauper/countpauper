@@ -94,8 +94,8 @@ Matrix Quaternion::AsMatrix() const
 
 Quaternion Quaternion::Shortest(const Vector& a, const Vector& b)
 {
-    assert(a.IsNormalized());
-    assert(b.IsNormalized());
+    ASSERT(a.IsNormalized());
+    ASSERT(b.IsNormalized());
     auto dot = a.Dot(b);
     if (dot >= 1.0 - std::numeric_limits<double>::epsilon())
         return Quaternion::Identity;

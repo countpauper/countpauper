@@ -267,7 +267,8 @@ TEST(Orientations, Iterators)
 {
     static_assert(std::input_iterator<Orientations::iterator>);
     EXPECT_NE(Orientations::all.begin(), Orientations::all.end());
-    EXPECT_EQ(Orientations().begin(), Orientations().end());
-
+    Orientations none;
+    EXPECT_EQ(none.begin(), none.end());
+    EXPECT_NE(none.begin(), Orientations().begin());
 }
 }  // Game::Test

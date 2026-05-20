@@ -3,6 +3,7 @@
 #include "Game/StatDefinition.h"
 #include "Game/Counter.h"
 #include "Utility/String.h"
+#include "Utility/Assert.h"
 #include <nlohmann/json.hpp>
 #include <optional>
 
@@ -79,7 +80,7 @@ Stat::Stat(std::string_view name, const json& j, const StatDefinition& dependenc
         }
         else if (mulOperand->is_string())
         {
-            assert(operand == Stat::none);  // already used by add?
+            ASSERT(operand == Stat::none);  // already used by add?
             operand = Stat::Identify(mulOperand->template get<std::string>());
             multiplier = 1;
             op = Operator::multiply;

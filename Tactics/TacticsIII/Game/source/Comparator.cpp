@@ -27,7 +27,7 @@ Comparator Comparator::Opposite() const
     case greater_equal:
         return Comparator(less);
     default:
-        assert(false); // unimplemented
+        ASSERT(false); // unimplemented
         return *this;
     }
 }
@@ -49,7 +49,7 @@ bool Comparator::operator()(int actual, int required) const
         case greater_equal:
             return actual >= required;
         default:
-            assert(false); // unimplemented
+            ASSERT(false); // unimplemented
             return false;
     }
 }
@@ -76,7 +76,7 @@ Comparator::operator std::string() const
         case greater_equal:
             return "is not less than";
         default:
-            assert(false); // unimplemented
+            ASSERT(false); // unimplemented
             return "";
     }
 }

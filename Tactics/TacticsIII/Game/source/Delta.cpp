@@ -94,7 +94,7 @@ Position Delta::GetPosition() const
 
 Position Delta::GetSize() const
 {
-    assert(false); // TODO: local storage that overrides when shape changing
+    ASSERT(false); // TODO: local storage that overrides when shape changing
     return parent->GetSize();
 }
 
@@ -110,7 +110,7 @@ const Statted& Delta::GetStats() const
 
 Computation Delta::Get(Stat::Id id, const class Boni* boni, const Restrictions& restricted) const
 {
-    assert(false); // TODO: local storage that overrides ... when leveling?
+    ASSERT(false); // TODO: local storage that overrides ... when leveling?
     return parent->GetStats().Get(id, boni, restricted);
 }
 
@@ -121,7 +121,7 @@ const class StatDefinition& Delta::Definition() const
 
 void Delta::Level(Stat::Id stat, int amount)
 {
-    assert(false); // TODO: raise
+    ASSERT(false); // TODO: raise
 }
 
 Counted& Delta::GetCounts()
@@ -155,7 +155,7 @@ unsigned Delta::Cost(Stat::Id counter, unsigned cost, bool truncate)
 
 void Delta::Reset(Counter::Reset at)
 {
-    assert(false); // TODO determine which counter deltas need to be removed as delta
+    ASSERT(false); // TODO determine which counter deltas need to be removed as delta
 }
 
 const Equipped& Delta::GetEquipment() const
@@ -170,25 +170,25 @@ class Equipped& Delta::GetEquipment()
 
 const Equipment& Delta::Equip(const Equipment& equipment)
 {
-    assert(false); // TODO: keep a list of new equipment
+    ASSERT(false); // TODO: keep a list of new equipment
     return equipment;
 }
 
 bool Delta::Unequip(const Equipment& item)
 {
-    assert(false); // TODO: keep a list of old equipment
+    ASSERT(false); // TODO: keep a list of old equipment
     return false;
 }
 
 unsigned Delta::Unequip(const Restrictions filter)
 {
-    assert(false); // TODO
+    ASSERT(false); // TODO
     return 0;
 }
 
 std::vector<const Equipment*> Delta::GetEquipped(const Restrictions& filter) const
 {
-    assert(false); // TODO
+    ASSERT(false); // TODO
     return {};
 }
 
@@ -226,7 +226,7 @@ void Delta::ApplyConditions(Range conditions)
 
 Computation Delta::ConditionalBonus(Stat::Id id) const
 {
-    assert(false); // TODO: compute from overriddn conditions
+    ASSERT(false); // TODO: compute from overriddn conditions
     // but then (the hard part) from the non-overridden conditions in the parent
     return 0;
 }

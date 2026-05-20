@@ -96,7 +96,7 @@ Map::Map(std::string_view filename, const Engine::Image& data) :
             ZType solidHeight = PixelLevelToHeight(levelPixel.r);
             ZType liquidHeight = PixelLevelToHeight(levelPixel.b);
             const Material* mat = FindMaterial(materialPixel); 
-            assert(mat);
+            ASSERT(mat);
             Column(x,y, *mat , solidHeight, liquidMaterial, liquidHeight);
         }
     }
@@ -260,7 +260,7 @@ void Map::GenerateMesh()
             }
         }
     }
-    assert(mesh.Names().size() == mesh.Triangles().size());
+    ASSERT(mesh.Names().size() == mesh.Triangles().size());
 }
 
 Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& centerSlice)

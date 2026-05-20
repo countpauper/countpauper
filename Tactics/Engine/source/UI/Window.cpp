@@ -33,7 +33,7 @@ void Window::Init(void)
     glEnable(GL_DEPTH_TEST);
     GLboolean writeMask = false;
     glGetBooleanv(GL_DEPTH_WRITEMASK, &writeMask);
-    assert(writeMask);
+    ASSERT(writeMask);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);

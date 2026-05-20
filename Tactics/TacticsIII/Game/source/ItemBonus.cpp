@@ -1,6 +1,7 @@
 #include "Game/ItemBonus.h"
 #include "Game/Item.h"
 #include "File/Json.h"
+#include "Utility/Assert.h"
 
 namespace Game
 {
@@ -37,12 +38,12 @@ const std::string_view ItemBonus::Name() const
     // only implemented for item boni that stick to the postfix XOR prefix convention
     if (prefix.empty())
     {
-        assert(!postfix.empty());
+        ASSERT(!postfix.empty());
         return postfix;
     }
     else
     {
-        assert(postfix.empty());
+        ASSERT(postfix.empty());
         return prefix;
     }
 }

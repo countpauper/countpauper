@@ -336,7 +336,7 @@ Matrix& Matrix::SetTranslation(const Vector& translation)
 Matrix Matrix::Projection()
 {
     Matrix matrix;
-    assert(sizeof(double) == sizeof(GLdouble));
+    ASSERT(sizeof(double) == sizeof(GLdouble));
     glGetDoublev(GL_PROJECTION_MATRIX, &matrix[0][0]);
     return matrix;
 }
@@ -344,7 +344,7 @@ Matrix Matrix::Projection()
 Matrix Matrix::ModelView()
 {
     Matrix matrix;
-    assert(sizeof(double) == sizeof(GLdouble));
+    ASSERT(sizeof(double) == sizeof(GLdouble));
     glGetDoublev(GL_MODELVIEW_MATRIX, &matrix[0][0]);
     return matrix;
 }

@@ -1,5 +1,6 @@
 #include "Game/Condition.h"
 #include "Utility/Singleton.h"
+#include "Utility/Assert.h"
 
 namespace Game
 {
@@ -51,7 +52,7 @@ std::unique_ptr<Condition> Condition::Deserialize(std::string_view name, const j
     }
     else
     {
-        assert(false); // unimplemented subtype
+        ASSERT(false); // unimplemented subtype
         return std::make_unique<Condition>(name, data);
     }
 

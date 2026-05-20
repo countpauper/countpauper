@@ -76,7 +76,7 @@ float Font::Width(std::string_view text) const
     {
         return std::accumulate(text.begin(), text.end(), 0.0f, [this](float sum, char c)
         {
-            assert(c!='\n');    // TODO: split lines and compute maximum
+            ASSERT(c!='\n');    // TODO: split lines and compute maximum
             float charWidth = glutStrokeWidth(font->ptr, c);
             return sum + charWidth;
         }) * scale / strokeFontHeight;
@@ -85,7 +85,7 @@ float Font::Width(std::string_view text) const
     {
         return std::accumulate(text.begin(), text.end(), 0, [this](unsigned sum, char c)
         {
-            assert(c!='\n');    // TODO: split lines and compute maximum
+            ASSERT(c!='\n');    // TODO: split lines and compute maximum
             return sum + glutBitmapWidth(font->ptr, c);
         });
     }

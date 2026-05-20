@@ -1,6 +1,7 @@
 #include "Game/Restriction.h"
 #include "File/Json.h"
 #include "Utility/from_string.h"
+#include "Utility/Assert.h"
 
 namespace Game
 {
@@ -32,7 +33,7 @@ static std::map<std::string_view, Restriction> restrictionMapping {
 
 unsigned Category(Restriction restriction)
 {
-    assert((unsigned(restriction)>>8) < sizeof(unsigned)*8);
+    ASSERT((unsigned(restriction)>>8) < sizeof(unsigned)*8);
     return 1<<(unsigned(restriction)>>8);
 }
 

@@ -5,6 +5,7 @@
 #include "Utility/String.h"
 #include "Geometry/Position.h"
 #include "Utility/from_string.h"
+#include "Utility/Assert.h"
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image.h>
@@ -138,7 +139,7 @@ RGBA Image::operator[](const Position& position) const
     case 4:
         return RGBA(data[offset], data[offset+1], data[offset+2], data[offset+3]); // RGBA
     default:
-        assert(false); // unimplemented channel to RGBA conversion
+        ASSERT(false); // unimplemented channel to RGBA conversion
         return RGBA::transparent;
     }
 }

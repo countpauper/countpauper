@@ -23,7 +23,7 @@ public:
         v(std::round(input * FractionDivisor()))
     {
         static_assert(Bits < std::log2(std::numeric_limits<T>::max()));
-
+        ASSERT(!std::isnan(input));
         if (input * FractionDivisor() > std::numeric_limits<T>::max())
             throw std::range_error("Floating point is too large for fixed point");
         if (input * FractionDivisor() < std::numeric_limits<T>::lowest())
@@ -32,6 +32,7 @@ public:
     constexpr FixedPoint(double input) :
         v(std::round(input * FractionDivisor()))
     {
+        ASSERT(!std::isnan(input));
         if (input * FractionDivisor() > std::numeric_limits<T>::max())
             throw std::range_error("Double precision floating point is too large for fixed point");
         if (input * FractionDivisor() < std::numeric_limits<T>::lowest())
@@ -118,7 +119,7 @@ public:
 
     FPT& operator*=(FPT rhs)
     {
-        assert(sizeof(T) <= sizeof(uint64_t)/2);  // requires a type with double the size of the original for intermediate result. For now 64 bits is used
+        static_assert(sizeof(T) <= sizeof(uint64_t)/2);  // requires a type with double the size of the original for intermediate result. For now 64 bits is used
         if (std::is_signed<T>())
             v = static_cast<T>((static_cast<int64_t>(v)*rhs.v) >> Bits);
         else
@@ -129,12 +130,14 @@ public:
     template<std::floating_point RHT>
     FPT& operator*=(RHT rhs)
     {
-        return *this =  FPT::FromRaw( v * rhs);
+        ASSERT(!std::isnan(rhs));
+        ASSERT(!std::isinf(rhs));
+        return *this = FPT::FromRaw(v * rhs);
     }
 
     FPT& operator/=(FPT rhs)
     {
-        assert(sizeof(T) <= sizeof(uint64_t)/2);  // requires a type with double the size of the original  for intermediate result. For now 64 bits is used.
+        ASSERT(sizeof(T) <= sizeof(uint64_t)/2);  // requires a type with double the size of the original  for intermediate result. For now 64 bits is used.
         if (std::is_signed<T>())
             v = static_cast<T>((static_cast<int64_t>(v) << Bits) / rhs.v);
         else
@@ -145,6 +148,9 @@ public:
     template<std::floating_point RHT>
     FPT& operator/=(RHT rhs)
     {
+        ASSERT(!std::isnan(rhs));
+        ASSERT(!std::isinf(rhs));
+
         return *this = FPT::FromRaw( v / rhs);
     }
 

@@ -132,9 +132,11 @@ Physics and Magics
 
 Physics 
 * Gravity 
-- Pressure
+* Pressure
 - Add asserts to FixedPoint for float input being nan or inf or out of range, use assert that really breaks
-- Rename Layer to Cell  
+* Rename Layer to Cell  
+- Pressure relaxation of vertical neigbours (due to flow) first homegeneous then hetero
+- Rename Game::Slice to Stack ? or Pile ? 
 - Barrier 
 - Start water flowing from the bump with unit tests. 
 - Partially invalidate and update map mesh 

@@ -21,7 +21,7 @@ double Point::Distance(const Coordinate& p) const
 
 Range<double> Point::Intersection(const Line& line) const
 {
-    assert(false); // TODO
+    ASSERT(false); // TODO
     // Probably just check if the point is colinear with the line
     // between a and b and then the distance from a
     // but it needs a unit test
@@ -47,7 +47,7 @@ double Sphere::Volume() const
 
 Range<double> Sphere::Intersection(const Line& line) const
 {
-    assert(false); // TODO
+    ASSERT(false); // TODO
     return Range<double>::empty();
 }
 
@@ -158,7 +158,7 @@ double Cylinder::Volume() const
 
 Range<double> Cylinder::Intersection(const Line& line) const
 {
-    assert(false); // TODO
+    ASSERT(false); // TODO
     return Range<double>::empty();
 }
 

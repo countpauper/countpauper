@@ -131,7 +131,7 @@ Operation Computation::AsValue(Operator op) const
 {
     if (empty())
     {
-        assert(false); // should avoid this. It's not clear what this means
+        ASSERT(false); // should avoid this. It's not clear what this means
         return Operation{"", op, 0};
     }
     else if ((operations.size() == 1) && (operations.back().op == Operator::add))
