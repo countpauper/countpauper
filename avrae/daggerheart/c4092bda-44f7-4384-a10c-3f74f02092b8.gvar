@@ -1,0 +1,83 @@
+## Documentation: https://github.com/countpauper/countpauper/tree/master/avrae/daggerheart/daggerheart_lib.md
+
+### For unit testing, import dependencies
+try:
+    from avrae import * 
+except "FeatureNotAvailable":
+    pass
+
+def parse_arg(arg):
+    if not arg:
+        return None 
+    if arg[0]=='+':
+        return arg[1:]
+    return arg
+
+# Parse discord arguments to a summation of dice and bonuses 
+# args: a list of strings 
+# returns: a list of operand strings split by + and - 
+def parse(args):
+    # TODO split operators for now just support spaces 
+    return [parse_arg(arg) for arg in args]
+
+# Return dice, die if s is of the format [<dice>=1]<separator><die>
+# return empty tuple otherwise 
+def parse_dice(s, separator='d'):
+    parts = s.split(separator, maxsplit=1)
+    if len(parts)==1:
+        return tuple()
+    try:
+        die = int(parts[1])
+        if die < 0:
+            return tuple()
+        if not parts[0]:
+            return 1, die
+        else:
+            return int(parts[0]), die
+    except ValueError:
+        return tuple()
+
+def parse_hope(s):
+    return parse_dice(s, 'h')
+
+def parse_fear(s):
+    return parse_dice(s, 'f')
+
+
+# Sort operands into hope rolls, fear rolls and bonus rolls
+## and return the result as a dictionary with hope, fear and bonus list
+## Experiences and traits are replaced with strings
+def duality(sheet, operands):
+    hope_dice = "1d12[hope]"
+    fear_dice = "1d12[fear]"
+    bonus_dice = []
+    for operand in operands: 
+        if dice:= parse_hope(operand):
+            hope_dice=f'{dice[0]}d{dice[1]}[hope]'
+        elif dice:=parse_fear(operand):
+            fear_dice=f'{dice[0]}d{dice[1]}[fear]'
+        elif dice:=parse_dice( operand):
+            bonus_dice.append(f'{dice[0]}d{dice[1]}')    
+    return dict(hope=hope_dice, fear=fear_dice, bonus=bonus_dice)   
+
+# vroll each part and return individually
+# bonus is assumed to be a list
+def roll_em(hope, fear, bonus=[]):
+    result = dict(hope=vroll(hope), fear=vroll(fear))
+    if bonus:
+        result['bonus']=vroll('+'.join(bonus))
+    return result
+
+# Return <total>,<type> where type is hope, fear, critical and total is all dice added together
+def interpret(hope, fear, bonus=None):
+    total = hope.total + fear.total
+    if (bonus):
+        total += bonus.total 
+    if hope.total == fear.total:
+            return total, "critical"
+    elif hope.total > fear.total:
+        return total, "hope"
+    else: 
+        return total, "fear"
+
+# TODO

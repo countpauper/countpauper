@@ -28,7 +28,7 @@ if not pargs.last('with') and ('save' in db_spell or 'attack' in db_spell):
 	if not cs:
 		cs = [s for s in ['int','wis','cha','con'] if s in desc.split()]
 	if not cs:
-		return f'echo Unknown spell casting modifier. Use `-with int|cha|wis` or add the spell casting modifier in the *description* of `{cc.name}` using `!cc create "{cc.name}" -min {cc.min} -max {cc.max} {f"-type bubble" if cc.display_type else ""} -desc "Cast with intelligence|wisdom|charisma. {desc}"`'
+		cs = ['int', 'wis', 'cha'] 			# default to any casting stat 
 	if len(cs)==1:
 		cs=cs[0]
 	else:	 # auto pick highest

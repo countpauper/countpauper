@@ -1,0 +1,87 @@
+`!dhclass <class> <sub> [<multi>]` Partial match of course
+
+Look at the current character (!import does not import class) and export the missing class data, creating a Daggerheart character sheet. 
+This should set the the appropriate: 
+ Stress counter 
+
+
+- Hope counter (create with 2)
+- Set empty experiences in cvar sheet Use !dhexperience to fill them in 
+- Armor counter : how does this alias know the armor type? This is not `!import`ed
+
+It chould also check and warn about mistakes at character creation (none imported).  
+- AC is evasion, should match character class?  
+- HP at character creation
+- Check casting stat matching subclass 
+
+`!dhexp [-]"<exp>" [...]` 
+name experiences in order. It shows what scores were imported from the sheet and are now assigned. 
+If [-] then the experience is deleted. TODO decide if the others shift over or a gap is left to keep the previous score 
+
+
+`!dhlevel` Chose what bonuses to update in sheet (including +1 thresholds)
+Also updates/checks the current sheet level (only updates if it's changed) ? An 
+For stats updated in sheet, verify (eg proficiecnt)
+For stats updates in var, change them
+
+`!dhrest` chose what to recover of counters. Long or short rest. 
+
+`!duality [<dice>=1h12+1f12] [<trait>] ["<experience>"]... [<dice>]... [adv/+] [dis/-]...`
+
+Roll duality dice, by default roll 12 sides hope and fear. Override with `1h20` or `2f12`
+where `h` indicates hope dice and `f` fear dice. Then add bonuses `1h20+1d4`
+Trait (or 3 letter synonym) bonus is added. 
+experiences are checked in the sheet and their bonus added 
+one or more advantages or disadvantages are counted and added as `+<N>d6kh1` where <N> is the number of adv or disadvantages
+TODO: there may be other rare but not one of rules where advantage becomes a d8 or prayer tokens are used. Check for snippets 
+
+This basically preparses a "duality dice" string. This string is split in hope, fear and bonuses. 
+The bonuses are replaced with vroll strings (with description eg +2[KNW] +1d6[ADV] 
+Adv and dis are first subtracted
+
+Hope is automatically increased and listed what the new counter is. In critical a stress is also automatically removed and shown.
+
+
+`!dhatk <weapon> [+<experience>][+<dice>][a[dv]]... [d[is]]... [-av <avoidance>] [-th <major> <sever>|]` 
+
+Attack with duality dice and the same bonuses. The weapon is taken from the sheet and its damage dice and types are used.
+The damage dice are multiplied with the proficiency. If threshold is given it says how many hitpoints 
+TODO it might end up looking funny but the alias needs to know the trait to use and attack bonus is not used. 
+The smart sheet could select from attacks. Otherwise the player has to fill the right trait bonus in 
+
+
+
+TODO: in initiative perhaps hitpoints can be applied on target by checking their avoidance, but need to find a way to 
+get Daggerheart monster stats in bestiary, especially the thresholds (ac is avoidance and hp is hp holds).
+Maybe through STR and DEX saves ... it's lame, but being able to use avrea initiative is not.
+This doesn't work for player sheets however. They can only select save proficiency. 
+Perhaps somehow reserve survival, stealth (and sleight of hand) skill for that and mess up the sheet to take that from the selected armor ? 
+NB: 1 is the fixed implicit damage threshold for 1 wound 
+
+`!dhcast` is like duality except the spell cast trait is automatically selected 
+
+`!dhcard <card>` find the partial card name in a gvar (SRD could be made available)
+If that includes a duality dice then roll that. instead of trait it could be SPELL to pick the spell cast trait automatically
+Then (based on the result) it might describe what happens. No further automation for now. Check if the cards is known ? 
+
+`!dhreact <trait>[+"exp"][+<dice>]...[+adv]...[+dis]... [<difficulty>]` Same but instead of hope and fear it's just 2d12 
+any 2nd argument is the difficulty it will say success or fail. Crit is still success
+
+
+Spells/cards are in the spellbook. with a gvar they can at least be looked up 
+
+`!dhdeath` Make death move 
+TBD 
+
+`!dhstress [<amount>=1]` Mark a stress, become vulnerable if maxed out and reduce hp if over 
+
+`!dhear [+/-[<n>]]` add or remove fear or just show it. Use a (configurable in svar/uvar?) evil smiley  
+
+
+
+
+
+
+
+
+
