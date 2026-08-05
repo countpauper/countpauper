@@ -2,18 +2,29 @@
 using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 
 args = &ARGS&
-sheet = None # TODO, load sheet with experiences and other bonuses 
-
 summation = dh.parse(args)
+
+sheet = dh.sheet()
 duality_dice = dh.duality(sheet, summation)
+
 duality_roll = dh.roll_em(**duality_dice)
+
 total, quality = dh.interpret(**duality_roll)
+
 hope = duality_roll.get('hope')
 fear = duality_roll.get('fear')
 bonus = duality_roll.get('bonus')
-if bonus:
-    return f"echo {hope.dice} + {fear.dice} + {bonus.dice}: **{total}** *with {quality}*"
+
+duality_desc = f'{hope.dice} + {fear.dice}'
+result_desc = f'**{total}** *with {quality}*'
+bonus_desc = str(bonus.dice) if bonus else None
+
+if bonus_desc:
+    if bonus_desc[0] in '+-':
+        return f'echo {duality_desc} {bonus_desc}: {result_desc}'
+    else: 
+        return f'echo {duality_desc} + {bonus_desc}: {result_desc}'
 else:
-    return f"echo {hope.dice} + {fear.dice}: **{total}** *with {quality}*"
+    return f'echo {duality_desc}: {result_desc}'
 
 </drac2>

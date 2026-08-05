@@ -6,6 +6,15 @@ try:
 except "FeatureNotAvailable":
     pass
 
+
+def sheet(var_name=None):
+    c=character()
+    if var_name:
+        sheet = c.get_cvar(var_name) or get_uvar(var_name)
+    else:
+        sheet = c.get_cvar('dh_sheet') or get_uvar(c.name)
+    return load_yaml(sheet) if sheet else None
+
 def parse_arg(arg):
     if not arg:
         return None 
@@ -34,7 +43,7 @@ def parse_dice(s, separator='d'):
             return 1, die
         else:
             return int(parts[0]), die
-    except ValueError:
+    except 'ValueError':
         return tuple()
 
 def parse_hope(s):
@@ -43,27 +52,95 @@ def parse_hope(s):
 def parse_fear(s):
     return parse_dice(s, 'f')
 
+def agility(c=character()):
+    return c.stats.dexterity
 
+def strength(c=character()):
+    return c.stats.strength
+
+def finesse(c=character()):
+    return c.stats.constitution
+
+def instinct(c=character()):
+    return c.stats.wisdom 
+
+def presence(c=character()):
+    return c.stats.charisma 
+
+def knowledge(c=character()):
+    return c.stats.intelligence 
+
+def trait(name):
+    if len(name)<3:
+        return None
+    name=name.lower()
+    if "strength".startswith(name):
+        return strength()
+    elif "agility".startswith(name):
+        return agility()
+    elif "finesse".startswith(name):
+        return finesse()
+    elif "instinct".startswith(name):
+        return instinct()
+    elif "presence".startswith(name):
+        return presence()
+    elif "knowledge".startswith(name):
+        return knowledge()
+    else:
+        return None
+
+def experience(sheet, name):
+    if not sheet:
+       return None
+    exp = sheet.get('experience', dict())
+    options=[(k,v) for k,v in exp.items() if name.lower() in k.lower()]+[None]
+    name, val = options[0]
+    if dnd_skill := character().skills[val]:
+        return name, dnd_skill.value
+    else:
+        return name, val
+        
 # Sort operands into hope rolls, fear rolls and bonus rolls
 ## and return the result as a dictionary with hope, fear and bonus list
 ## Experiences and traits are replaced with strings
 def duality(sheet, operands):
-    hope_dice = "1d12[hope]"
-    fear_dice = "1d12[fear]"
+    hope_dice = []
+    fear_dice = []
     bonus_dice = []
+    advantage = 0
+    disadvantage = 0
     for operand in operands: 
         if dice:= parse_hope(operand):
-            hope_dice=f'{dice[0]}d{dice[1]}[hope]'
+            hope_dice.append(f'{dice[0]}d{dice[1]}')
         elif dice:=parse_fear(operand):
-            fear_dice=f'{dice[0]}d{dice[1]}[fear]'
+            fear_dice.append(f'{dice[0]}d{dice[1]}')
         elif dice:=parse_dice( operand):
-            bonus_dice.append(f'{dice[0]}d{dice[1]}')    
-    return dict(hope=hope_dice, fear=fear_dice, bonus=bonus_dice)   
+            bonus_dice.append(f'{dice[0]}d{dice[1]}')
+        elif (trait_bonus:=trait(operand)) is not None:
+            bonus_dice.append(f'{trait_bonus}[{operand.lower()[0:3]}]')
+        elif (exp_bonus:=experience(sheet, operand)) is not None:
+            bonus_dice.append(f'{exp_bonus[1]}[{exp_bonus[0]}]')
+        elif 'advantage'.startswith(operand.lower()):
+            advantage += 1
+        elif 'disadvantage'.startswith(operand.lower()):
+            disadvantage += 1
+        else:
+            bonus_dice.append(operand)
+        
+    if advantage > disadvantage: 
+        bonus_dice.append('1d6[adv]')
+    elif disadvantage > advantage:
+        bonus_dice.append('-1d6[dis]')
+    return dict(hope=hope_dice or ['1d12'], fear=fear_dice or ['1d12'], bonus=bonus_dice)   
 
 # vroll each part and return individually
-# bonus is assumed to be a list
+# All dice are supposed to be a list. Hope can nnot be empty 
 def roll_em(hope, fear, bonus=[]):
-    result = dict(hope=vroll(hope), fear=vroll(fear))
+    result = dict()
+    if hope:
+        result['hope'] = vroll('+'.join(hope)+'[hope]')
+    if fear:
+        result['fear']=vroll('+'.join(fear)+'[fear]')
     if bonus:
         result['bonus']=vroll('+'.join(bonus))
     return result
@@ -80,4 +157,3 @@ def interpret(hope, fear, bonus=None):
     else: 
         return total, "fear"
 
-# TODO

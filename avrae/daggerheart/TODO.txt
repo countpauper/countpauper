@@ -2,10 +2,8 @@
 
 Look at the current character (!import does not import class) and export the missing class data, creating a Daggerheart character sheet. 
 This should set the the appropriate: 
- Stress counter 
-
-
-- Hope counter (create with 2)
+- Stress counter 
+-  Hope counter (create with 2)
 - Set empty experiences in cvar sheet Use !dhexperience to fill them in 
 - Armor counter : how does this alias know the armor type? This is not `!import`ed
 
@@ -13,6 +11,9 @@ It chould also check and warn about mistakes at character creation (none importe
 - AC is evasion, should match character class?  
 - HP at character creation
 - Check casting stat matching subclass 
+
+The sheet will contain a json: 
+class: <name>, subclass: <name>: experiences: { "name":"dnd name" }
 
 `!dhexp [-]"<exp>" [...]` 
 name experiences in order. It shows what scores were imported from the sheet and are now assigned. 
@@ -28,19 +29,21 @@ For stats updates in var, change them
 
 `!duality [<dice>=1h12+1f12] [<trait>] ["<experience>"]... [<dice>]... [adv/+] [dis/-]...`
 
-Roll duality dice, by default roll 12 sides hope and fear. Override with `1h20` or `2f12`
-where `h` indicates hope dice and `f` fear dice. Then add bonuses `1h20+1d4`
-Trait (or 3 letter synonym) bonus is added. 
-experiences are checked in the sheet and their bonus added 
-one or more advantages or disadvantages are counted and added as `+<N>d6kh1` where <N> is the number of adv or disadvantages
-TODO: there may be other rare but not one of rules where advantage becomes a d8 or prayer tokens are used. Check for snippets 
+[done] Roll duality dice, by default roll 12 sides hope and fear. Override with `1h20` or `2f12` where `h` indicates hope dice and `f` fear dice. Then add bonuses `1h20+1d4`
+[done] Trait (or 3 letter synonym) bonus is added. 
+[done] experiences are checked in the sheet and their bonus added 
+[done] one or more advantages or disadvantages are counted and added
+[done] Add multiple fear and hope dice together 
+TODO: Hope is automatically increased and listed what the new counter is. In critical a stress is also automatically removed and shown.
+[done, its both] experience should not be a number but a reference to a skill name 
+TODO: Now arguments separates by spaces are summed. The whole argument string could also be one big summation (subtraction)
+This basically preparses the library for a "duality dice" string. This string is split in hope, fear and generic bonuses. 
 
-This basically preparses a "duality dice" string. This string is split in hope, fear and bonuses. 
-The bonuses are replaced with vroll strings (with description eg +2[KNW] +1d6[ADV] 
-Adv and dis are first subtracted
+TODO: +1f4 should add 1d4 to the basic 1d12 fear, not add it, but what is this syntax. Currently + are by default trunced off 
 
-Hope is automatically increased and listed what the new counter is. In critical a stress is also automatically removed and shown.
 
+`!dhdm [<dice>] [<adv>]` Roll dm dice 
+Implementation: use 1d20 for the hope and fear None, that way there is no hope/fear because there's no comparison. 20 still crits.
 
 `!dhatk <weapon> [+<experience>][+<dice>][a[dv]]... [d[is]]... [-av <avoidance>] [-th <major> <sever>|]` 
 
@@ -58,12 +61,14 @@ This doesn't work for player sheets however. They can only select save proficien
 Perhaps somehow reserve survival, stealth (and sleight of hand) skill for that and mess up the sheet to take that from the selected armor ? 
 NB: 1 is the fixed implicit damage threshold for 1 wound 
 
-`!dhcast` is like duality except the spell cast trait is automatically selected 
+`!dhcast` is like duality except the spell cast trait is automatically selected by checking the subclass 
 
 `!dhcard <card>` find the partial card name in a gvar (SRD could be made available)
+If there are any resources like hope or stress or armor, use them (if the counter is sufficient)
 If that includes a duality dice then roll that. instead of trait it could be SPELL to pick the spell cast trait automatically
-Then (based on the result) it might describe what happens. No further automation for now. Check if the cards is known ? 
+Then (based on the result/difficukty) it might describe what happens. No further automation for now. Check if the cards is known ? 
 
+card dictionary: domain:s, level:n, [hope:n], [stress:n], [armor:n], [roll:str], 
 `!dhreact <trait>[+"exp"][+<dice>]...[+adv]...[+dis]... [<difficulty>]` Same but instead of hope and fear it's just 2d12 
 any 2nd argument is the difficulty it will say success or fail. Crit is still success
 
