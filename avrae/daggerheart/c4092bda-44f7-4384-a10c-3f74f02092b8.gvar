@@ -18,7 +18,7 @@ def sheet(var_name=None):
 def parse_arg(arg):
     if not arg:
         return None 
-    if arg[0]=='+':
+    if arg[0] == '+':
         return arg[1:]
     return arg
 
@@ -26,7 +26,7 @@ def parse_arg(arg):
 # args: a list of strings 
 # returns: a list of operand strings split by + and - 
 def parse(args):
-    # TODO split operators for now just support spaces 
+    # TODO split operators. For now just support spaces 
     return [parse_arg(arg) for arg in args]
 
 # Return dice, die if s is of the format [<dice>=1]<separator><die>
@@ -35,10 +35,10 @@ def parse_dice(s, separator='d'):
     parts = s.split(separator, maxsplit=1)
     if len(parts)==1:
         return tuple()
+    if not parts[1][0].isnumeric():
+        return tuple()
     try:
-        die = int(parts[1])
-        if die < 0:
-            return tuple()
+        die = parts[1]
         if not parts[0]:
             return 1, die
         else:
@@ -70,22 +70,29 @@ def presence(c=character()):
 def knowledge(c=character()):
     return c.stats.intelligence 
 
+str_name="strength"
+agi_name="agility"
+fin_name="finesse"
+ins_name="instinct"
+pres_name="presence"
+know_name="knowledge"
+
 def trait(name):
     if len(name)<3:
         return None
     name=name.lower()
-    if "strength".startswith(name):
-        return strength()
-    elif "agility".startswith(name):
-        return agility()
-    elif "finesse".startswith(name):
-        return finesse()
-    elif "instinct".startswith(name):
-        return instinct()
-    elif "presence".startswith(name):
-        return presence()
-    elif "knowledge".startswith(name):
-        return knowledge()
+    if str_name.startswith(name):
+        return str_name, strength()
+    elif agi_name.startswith(name):
+        return agi_name, agility()
+    elif fin_name.startswith(name):
+        return fin_name, finesse()
+    elif ins_name.startswith(name):
+        return ins_name, instinct()
+    elif pres_name.startswith(name):
+        return pres_name, presence()
+    elif know_name.startswith(name):
+        return know_name, knowledge()
     else:
         return None
 
@@ -93,7 +100,9 @@ def experience(sheet, name):
     if not sheet:
        return None
     exp = sheet.get('experience', dict())
-    options=[(k,v) for k,v in exp.items() if name.lower() in k.lower()]+[None]
+    options=[(k,v) for k,v in exp.items() if name.lower() in k.lower()]
+    if not options:
+        return None
     name, val = options[0]
     if dnd_skill := character().skills[val]:
         return name, dnd_skill.value
@@ -117,7 +126,7 @@ def duality(sheet, operands):
         elif dice:=parse_dice( operand):
             bonus_dice.append(f'{dice[0]}d{dice[1]}')
         elif (trait_bonus:=trait(operand)) is not None:
-            bonus_dice.append(f'{trait_bonus}[{operand.lower()[0:3]}]')
+            bonus_dice.append(f'{trait_bonus[1]}[{trait_bonus[0]}]')
         elif (exp_bonus:=experience(sheet, operand)) is not None:
             bonus_dice.append(f'{exp_bonus[1]}[{exp_bonus[0]}]')
         elif 'advantage'.startswith(operand.lower()):
@@ -128,9 +137,9 @@ def duality(sheet, operands):
             bonus_dice.append(operand)
         
     if advantage > disadvantage: 
-        bonus_dice.append('1d6[adv]')
+        bonus_dice.append('1d6[advantage]')
     elif disadvantage > advantage:
-        bonus_dice.append('-1d6[dis]')
+        bonus_dice.append('-1d6[disadvantage]')
     return dict(hope=hope_dice or ['1d12'], fear=fear_dice or ['1d12'], bonus=bonus_dice)   
 
 # vroll each part and return individually
@@ -156,4 +165,3 @@ def interpret(hope, fear, bonus=None):
         return total, "hope"
     else: 
         return total, "fear"
-
