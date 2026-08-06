@@ -11,6 +11,13 @@ duality_roll = dh.roll_em(**duality_dice)
 
 total, quality = dh.interpret(**duality_roll)
 
+effects=[]
+if quality=='hope':
+    effects.append(dh.hope())
+elif quality=='critical':
+    effects.append(dh.hope())
+    effects.append(dh.stress(-1))
+
 hope = duality_roll.get('hope')
 fear = duality_roll.get('fear')
 bonus = duality_roll.get('bonus')
@@ -18,13 +25,15 @@ bonus = duality_roll.get('bonus')
 duality_desc = f'{hope.dice} + {fear.dice}'
 result_desc = f'**{total}** *with {quality}*'
 bonus_desc = str(bonus.dice) if bonus else None
+nl='\n'
+effect_desc = (nl + nl.join(effect for effect in effects if effect is not None)) if effects else ""
 
 if bonus_desc:
     if bonus_desc[0] in '+-':
-        return f'echo {duality_desc} {bonus_desc}: {result_desc}'
+        return f'echo {duality_desc} {bonus_desc}: {result_desc}{effect_desc}'
     else: 
-        return f'echo {duality_desc} + {bonus_desc}: {result_desc}'
+        return f'echo {duality_desc} + {bonus_desc}: {result_desc}{effect_desc}'
 else:
-    return f'echo {duality_desc}: {result_desc}'
+    return f'echo {duality_desc}: {result_desc}{effect_desc}'
 
 </drac2>

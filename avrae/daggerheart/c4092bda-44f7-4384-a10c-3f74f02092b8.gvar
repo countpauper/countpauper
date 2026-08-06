@@ -142,26 +142,78 @@ def duality(sheet, operands):
         bonus_dice.append('-1d6[disadvantage]')
     return dict(hope=hope_dice or ['1d12'], fear=fear_dice or ['1d12'], bonus=bonus_dice)   
 
+def bonuses(operands):
+    bonus_dice = []
+    advantage = 0
+    disadvantage = 0
+    for operand in operands: 
+        if 'advantage'.startswith(operand.lower()):
+            advantage += 1
+        elif 'disadvantage'.startswith(operand.lower()):
+            disadvantage += 1
+        else:
+            bonus_dice.append(operand)
+        
+    if advantage > disadvantage: 
+        bonus_dice.append('1d6[advantage]')
+    elif disadvantage > advantage:
+        bonus_dice.append('-1d6[disadvantage]')
+    return bonus_dice   
+
 # vroll each part and return individually
-# All dice are supposed to be a list. Hope can nnot be empty 
-def roll_em(hope, fear, bonus=[]):
+# All dice are supposed to be a list. 
+# If hope is empty, fear is the DM die 
+# If fear is empty hope is the reaction die (2d12)
+def roll_em(hope=None, fear=None, bonus=[]):
     result = dict()
-    if hope:
+    if hope and fear:
         result['hope'] = vroll('+'.join(hope)+'[hope]')
-    if fear:
-        result['fear']=vroll('+'.join(fear)+'[fear]')
+        result['fear'] = vroll('+'.join(fear)+'[fear]')
+    elif hope:
+        result['hope'] = vroll('+'.join(hope))
+    elif fear: 
+        result['fear'] = vroll('+'.join(fear))
+    
     if bonus:
-        result['bonus']=vroll('+'.join(bonus))
+        result['bonus'] = vroll('+'.join(bonus))
     return result
 
 # Return <total>,<type> where type is hope, fear, critical and total is all dice added together
-def interpret(hope, fear, bonus=None):
-    total = hope.total + fear.total
-    if (bonus):
-        total += bonus.total 
-    if hope.total == fear.total:
-            return total, "critical"
-    elif hope.total > fear.total:
-        return total, "hope"
-    else: 
-        return total, "fear"
+def interpret(hope=None, fear=None, bonus=None):
+    total = bonus.total if bonus else 0 
+    if hope and fear:
+        total += hope.total + fear.total
+        if hope.total == fear.total:
+                return total, "critical"
+        elif hope.total > fear.total:
+            return total, "hope"
+        else: 
+            return total, "fear"
+    elif hope:
+        return total + hope.total
+    elif fear:
+        total += fear.total
+        if fear.result.crit == 1:
+            return total, True
+        else:
+            return total, False
+
+
+def try_mod_cc(name, amt):
+    try:
+        cc=character().cc(name)
+        diff = cc.value
+        diff = cc.mod(amt) - diff
+        return f"{cc.full_str(True)} {'+' if diff>=0 else ''}{diff}"
+    except 'ConsumableException':
+        return None
+
+# Increase (or descrease) hope counter
+# returns a string description of the new stress and modifier
+def hope(amt=1):
+    return try_mod_cc('Hope', amt)
+
+# Increase (or decrease) stress counter
+# returns a string description of the new stress and modifier
+def stress(amt=1):
+    return try_mod_cc('Stress', amt)

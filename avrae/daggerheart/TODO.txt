@@ -1,4 +1,4 @@
-`!dhclass <class> <sub> [<multi>]` Partial match of course
+`!dhclass [<class> <sub>] [<mastery level>] [<multi>]` Partial match of course
 
 Look at the current character (!import does not import class) and export the missing class data, creating a Daggerheart character sheet. 
 This should set the the appropriate: 
@@ -14,6 +14,10 @@ It chould also check and warn about mistakes at character creation (none importe
 
 The sheet will contain a json: 
 class: <name>, subclass: <name>: experiences: { "name":"dnd name" }
+
+If class and sub are specified a new sheet is made. 
+Otherwise if a sheet exists the mastery level/multi class are modifed 
+If nothing specified and no sheet exists it just gives a short help and the name of the class. 
 
 `!dhexp [-]"<exp>" [...]` 
 name experiences in order. It shows what scores were imported from the sheet and are now assigned. 
@@ -34,16 +38,19 @@ For stats updates in var, change them
 [done] experiences are checked in the sheet and their bonus added 
 [done] one or more advantages or disadvantages are counted and added
 [done] Add multiple fear and hope dice together 
-TODO: Hope is automatically increased and listed what the new counter is. In critical a stress is also automatically removed and shown.
+[done] Hope is automatically increased and listed what the new counter is. In critical a stress is also automatically removed and shown.
 [done, its both] experience should not be a number but a reference to a skill name 
 TODO: Now arguments separates by spaces are summed. The whole argument string could also be one big summation (subtraction)
 This basically preparses the library for a "duality dice" string. This string is split in hope, fear and generic bonuses. 
-
 TODO: +1f4 should add 1d4 to the basic 1d12 fear, not add it, but what is this syntax. Currently + are by default trunced off 
 
 
-`!dhdm [<dice>] [<adv>]` Roll dm dice 
+[DOne] `!dh_gm [<dice>] [<adv>] [<dis>]` Roll dm dice 
 Implementation: use 1d20 for the hope and fear None, that way there is no hope/fear because there's no comparison. 20 still crits.
+
+`!react [<dice>]` 
+`!react <trait>[+"exp"][+<dice>]...[+adv]...[+dis]... [<difficulty>]` Same but instead of hope and fear it's just 2d12 
+any 2nd argument is the difficulty it will say success or fail. Crit is still success
 
 `!dhatk <weapon> [+<experience>][+<dice>][a[dv]]... [d[is]]... [-av <avoidance>] [-th <major> <sever>|]` 
 
@@ -62,6 +69,8 @@ Perhaps somehow reserve survival, stealth (and sleight of hand) skill for that a
 NB: 1 is the fixed implicit damage threshold for 1 wound 
 
 `!dhcast` is like duality except the spell cast trait is automatically selected by checking the subclass 
+Subsclass information goes in a gvar (with extensisiblity) and it may have cards in the same form as `!dhcard` that can be used 
+The subclass mastery and specialization need to be flagged in the `!cvar dh_sheet`
 
 `!dhcard <card>` find the partial card name in a gvar (SRD could be made available)
 If there are any resources like hope or stress or armor, use them (if the counter is sufficient)
@@ -69,8 +78,7 @@ If that includes a duality dice then roll that. instead of trait it could be SPE
 Then (based on the result/difficukty) it might describe what happens. No further automation for now. Check if the cards is known ? 
 
 card dictionary: domain:s, level:n, [hope:n], [stress:n], [armor:n], [roll:str], 
-`!dhreact <trait>[+"exp"][+<dice>]...[+adv]...[+dis]... [<difficulty>]` Same but instead of hope and fear it's just 2d12 
-any 2nd argument is the difficulty it will say success or fail. Crit is still success
+
 
 
 Spells/cards are in the spellbook. with a gvar they can at least be looked up 
@@ -82,6 +90,11 @@ TBD
 
 `!dhear [+/-[<n>]]` add or remove fear or just show it. Use a (configurable in svar/uvar?) evil smiley  
 
+TODO: 
+configuration svar:
+Extreme damage threshold. A formula somehow based on other thresholds? Or get from skills ? 
+Stack advantage and disadvantage keep highest one 
+Change stress and hope modifier from crits? 
 
 
 

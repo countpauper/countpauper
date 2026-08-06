@@ -1,0 +1,27 @@
+<drac2> 
+using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
+
+args = &ARGS&
+summation = dh.parse(args)
+bonuses = dh.bonuses(summation)
+dm_roll = dh.roll_em(fear=['1d20'], bonus=bonuses)
+total, crit = dh.interpret(**dm_roll)
+
+dm = dm_roll.get('fear')
+bonus = dm_roll.get('bonus')
+
+if crit:
+    result_desc = f'**{total}** *critical*'
+else:
+    result_desc = f'**{total}**'
+
+bonus_desc = str(bonus.dice) if bonus else None
+
+if bonus_desc:
+    if bonus_desc[0] in '+-':
+        return f'echo {dm.dice} {bonus_desc}: {result_desc}'
+    else: 
+        return f'echo {dm.dice} + {bonus_desc}: {result_desc}'
+else:
+    return f'echo {dm.dice}: {result_desc}'
+</drac2>
