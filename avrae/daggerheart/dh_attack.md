@@ -1,6 +1,6 @@
 `!dh_attack <weapon> ["<experience>"] [<dice>] [adv]… [dis]… [=<difficulty>]… `
 
-**Make an attack in Daggerheart**
+**Make an attack in Daggerheart.**
 
 The alias has the `dh_` prefix to prevent name clashes. If you only play Daggerheart you can rename it 
 with `!servalias rename dh_react react`.

@@ -9,7 +9,7 @@ Increases `Hope` counter on hope. On critical it also  reduces the `Stress` coun
 `fear` - Change the fear die by using an `f` to separate the number of dice aand the size of the die.
 `trait` - Use the name or part of a name of a trait to use the score from your character sheet. 
 `experience` - Add an experience from your character sheet that contains this description. 
-`dice` - Add additional dice with `<n>d<size>` or just a bonus 
+`dice` - Add additional dice with `<n>d<size>` or just a float bonus. 
 `adv` - Add advantage, which will add a 1d6 if the number of advantages is larger than disadvantages.
 `dis` - Add a disadvantage, whill will subtract a 1d6 if the number of disadvantages is larger than advantages.
 `target` - This is a target value. It can be dice. If given the result will show if the target is met. 

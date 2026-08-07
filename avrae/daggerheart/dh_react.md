@@ -13,7 +13,7 @@ with `!servalias rename dh_react react`.
 `target` - This is a target value. It can be dice. If given the result will show if the target is met. 
 `difficulty` - predefined target values: `trivial`=0, `very_easy`=5, `easy`=10, `average`=15, `hard`=20, `very_hard`=25, `nearly_impossible`=30
 
-
+    
 **Examples**
 
 `!dh_react 1d4` - Add a d4 bonus: `1h12 + 1f12 + 1d4`.

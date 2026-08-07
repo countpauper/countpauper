@@ -83,6 +83,9 @@ def parse_goal(s):
         return [f"{value}[{match.replace('_',' ')}"]
     return [s]
 
+def proficiency(c=character()):
+    return c.stats.prof_bonus
+        
 def agility(c=character()):
     return c.stats.dexterity
 
@@ -250,16 +253,56 @@ def hope(amt=1):
 def stress(amt=1):
     return try_mod_cc('Stress', amt)
 
-def roll_damage(dice, success):
+digits = "0123456789"
+# find the index in the string s of the first character not in allowed
+# return -1 if it is not found 
+def find_first_not_of(s, allowed):
+    for i, c in enumerate(s):
+        if c not in allowed:
+            return i
+    return -1
+
+# Split <dicestr>"["<label>"]" label into dicestr,label or dicestr,None if none  
+def split_dice_label(dice_str):
+    label_start = dice_str.find('[')
+    if label_start<0:
+        return dice_str, None
+    label_end = dice_str.find(']', label_start);
+    if label_end < 0:
+        label_end=len(dice_str) # Just cut to the end if not closed
+    return dice_str[0:label_start], dice_str[label_start+1:label_end]
+
+# split dice XdY+/-Z[L] into X:int,Y:int,Z:dice,N:str  
+def split_dice(dice_str, separator='d'):
+    dice_str, label = split_dice_label(dice_str)
+    dice_str = dice_str.replace(' ','') 
+    dice_parts = dice_str.split(separator,maxsplit=1)
+    if len(dice_parts)==1:  # no separator so it's just Z[L]
+        return 0, 0, dice_str, label
+    dice_count = int(dice_parts[0]) if dice_parts[0] else 1
+    die_end = find_first_not_of(dice_parts[1], digits)
+    if (die_end<0): # form is 1d4[label], there's no bonus 
+        return dice_count, int(dice_parts[1]), None, label
+    # end of die size found before end of label 
+    die_size=int(dice_parts[1][0:die_end])
+    die_bonus=dice_parts[1][die_end:]
+    return dice_count, die_size, die_bonus, label
+
+def roll_damage(dice, proficiency, success):
     if not success:
         return None # miss
-    elif success==1:
-        return vroll(dice)
-    else:
-        return vroll(dice)  # TODO crit damage
+    dice, die, bonus, label = split_dice(dice)
+    dice *= proficiency 
+    crit_bonus = f'+{dice*die}' if success>1 else ''
+    roll_str=f'{dice}d{die}{crit_bonus}'
+    if bonus is not None:
+        roll_str+=bonus
+    if label is not None:
+        roll_str+=f'[{label}]'
+    return vroll(roll_str)
 
-def damage_targets(targets, damage_dice):
-    return {target:roll_damage(success, damage_dice) for target, success in targets.items()}
+def damage_targets(targets, proficiency, damage_dice):
+    return {target:roll_damage(damage_dice, proficiency, success) for target, success in targets.items()}
 
 degrees=['Failure', 'Success', 'Critical']
 def format_goals(goals, separator='\n'):

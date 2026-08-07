@@ -1,18 +1,19 @@
 <drac2>
 using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 
-def find_attack(name):
-    c=character()
+def find_attack(c, name):
     attacks = {a.name:a for a in c.attacks}
-    return attacks.get(dh.fuzzy(name, attacks.keys()))
+    return attacks.get(dh.fuzzy_match(name, attacks.keys()))
 
 args = &ARGS&
 if not args: 
     return f'help {ctx.alias} -here'
 
-weapon = find_attack(args[0])
+c=character() 
+
+weapon = find_attack(c, args[0])
 if not weapon:
-    return f'echo Weapon {arg[0]} is not listed on your sheet.\n{character().attacks}'
+    return f"echo Weapon `{args[0]}` is not listed on {c.name}'s sheet.\n{character().attacks}"
 attack_bonus, damage_dice = dh.parse_attack(weapon.raw)
 if attack_bonus is None:
     return f'echo Action {arg[0]} is not a weapon attack.'
@@ -26,6 +27,7 @@ duality_dice['bonus'] = [f'{attack_bonus}[{weapon.name}]'] +  duality_dice.get('
 duality_roll = dh.roll_em(**duality_dice)
 
 total, quality, goals = dh.interpret(**duality_roll)
+damage = dh.damage_targets(goals, dh.proficiency(c), damage_dice)   # TODO get proficiency
 
 effects=[]
 if quality=='hope':
@@ -42,8 +44,8 @@ duality_desc = f'{hope.dice} + {fear.dice}'
 result_desc = f'**{total}** *with {quality.capitalize()}*'
 
 nl='\n'
-if goals:
-    result_desc += nl + dh.format_goals(goals)
+if damage:
+    result_desc += nl + dh.format_damage(damage)
 
 effect_desc = nl + dh.format_effects(effects) if effects else ""
 
