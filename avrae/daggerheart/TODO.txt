@@ -24,6 +24,17 @@ name experiences in order. It shows what scores were imported from the sheet and
 If [-] then the experience is deleted. TODO decide if the others shift over or a gap is left to keep the previous score 
 
 
+`!dh_sheet`
+Show the daggerhear sheet 
+Should show name and level
+Class and subclass
+Evasion and health 
+Hope, stress and armor
+Experiences
+Damage thresholds in a fancy way
+Attacks
+Domain cards
+
 `!dhlevel` Chose what bonuses to update in sheet (including +1 thresholds)
 Also updates/checks the current sheet level (only updates if it's changed) ? An 
 For stats updated in sheet, verify (eg proficiecnt)
@@ -73,7 +84,9 @@ The damage dice are multiplied with the proficiency. If threshold is given it sa
 TODO it might end up looking funny but the alias needs to know the trait to use and attack bonus is not used. 
 The smart sheet could select from attacks. Otherwise the player has to fill the right trait bonus in 
 * Target
-
+* Critical 
+* Override hope and fear with h12 f12 (no dice count is single value instead of 1 die) 
+* Force critical 
 
 TODO: in initiative perhaps hitpoints can be applied on target by checking their avoidance, but need to find a way to 
 get Daggerheart monster stats in bestiary, especially the thresholds (ac is avoidance and hp is hp holds).

@@ -250,9 +250,24 @@ def hope(amt=1):
 def stress(amt=1):
     return try_mod_cc('Stress', amt)
 
+def roll_damage(dice, success):
+    if not success:
+        return None # miss
+    elif success==1:
+        return vroll(dice)
+    else:
+        return vroll(dice)  # TODO crit damage
+
+def damage_targets(targets, damage_dice):
+    return {target:roll_damage(success, damage_dice) for target, success in targets.items()}
+
 degrees=['Failure', 'Success', 'Critical']
 def format_goals(goals, separator='\n'):
     return separator.join(f"VS {goal} **{degrees[success]}!**" for goal, success in goals.items())
+
+def format_damage(damages, separator='\n'):
+    return separator.join(f"VS {target} **{damage or 'miss'}**" for target, damage in damages.items())
+
 
 def format_bonus(bonus):
     if not bonus:
@@ -269,11 +284,10 @@ def format_effects(effects, separator='\n'):
 def parse_attack(attack_raw):
     if automation:= attack_raw.get('automation'):
         for auto in automation:
-            effects = auto.get('effect')
-            for effect in effects: 
+            for effect in auto.get('effects',[]): 
                 if effect.get('type') == 'attack':
                     for hit in effect.get('hit',[]):
                         if hit.get('type') == 'damage':
                             return effect.get('attackBonus'), hit.get('damage')
 
-    return None
+    return None, None
