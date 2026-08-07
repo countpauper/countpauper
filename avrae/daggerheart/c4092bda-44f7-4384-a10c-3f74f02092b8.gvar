@@ -68,9 +68,9 @@ def parse_goal(s):
         return None 
     s=s[1:]
     if not s:
-        return "0"
+        return []
     possible_goals=[f"{v}[{k.replace('_',' ')}]" for k,v in difficulties.items() if k.startswith(s.lower())] + [s]
-    return possible_goals[0]
+    return [possible_goals[0]]
 
 def agility(c=character()):
     return c.stats.dexterity
@@ -130,7 +130,7 @@ def experience(sheet, name):
         return name, val
 
 
-def sum_dice(dice):
+def sum_dice(*dice):
     return '+'.join(die for die in dice if die!='0')
 
 # Sort operands into hope rolls, fear rolls and bonus rolls
@@ -148,10 +148,13 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
             hope_dice.append(f'{dice[0]}d{dice[1]}')
         elif dice:=parse_fear(operand):
             fear_dice.append(f'{dice[0]}d{dice[1]}')
-        elif goal:=parse_goal(operand):
+        elif (goal:=parse_goal(operand)) is not None:
             goals.append(goal)   # from here on bonuses are for the last goal
         elif sheet and (dice:=parse_dice( operand)):
-            bonus_dice.append(f'{dice[0]}d{dice[1]}')
+            if goals:
+                goals[-1].append(operand) 
+            else:
+                bonus_dice.append(f'{dice[0]}d{dice[1]}')
         elif sheet and (trait_bonus:=trait(operand)) is not None:
             bonus_dice.append(f'{trait_bonus[1]}[{trait_bonus[0]}]')
         elif sheet and (exp_bonus:=experience(sheet, operand)) is not None:
@@ -161,7 +164,7 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
         elif 'disadvantage'.startswith(operand.lower()):
             disadvantage += 1
         elif goals: 
-            goals[-1] = sum_dice([goals[-1]]+[operand]) 
+            goals[-1].append(operand) 
         else:
             bonus_dice.append(operand)
         
@@ -178,17 +181,17 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
 def roll_em(hope=None, fear=None, bonus=[], goals=[]):
     result = dict()
     if hope and fear:
-        result['hope'] = vroll(sum_dice(hope)+'[hope]')
-        result['fear'] = vroll(sum_dice(fear)+'[fear]')
+        result['hope'] = vroll(sum_dice(*hope)+'[hope]')
+        result['fear'] = vroll(sum_dice(*fear)+'[fear]')
     elif hope:
-        result['hope'] = vroll(sum_dice(hope))
+        result['hope'] = vroll(sum_dice(*hope))
     elif fear: 
-        result['fear'] = vroll(sum_dice(fear))
+        result['fear'] = vroll(sum_dice(*fear))
     
     if bonus:
-        result['bonus'] = vroll('+'.join(bonus))
+        result['bonus'] = vroll(sum_dice(*bonus))
 
-    result['goals'] = [vroll(g) for g in goals]
+    result['goals'] = [vroll(sum_dice(*g)) for g in goals]
     return result
 
 def all_goals(goals):

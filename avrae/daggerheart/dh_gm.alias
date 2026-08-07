@@ -11,12 +11,14 @@ gm = gm_roll.get('fear')
 bonus = gm_roll.get('bonus')
 
 nl='\n'
+result_desc = ""
 if goals:
     result_desc += nl + dh.format_goals(goals)
 
+
 if bonus_desc := dh.format_bonus(bonus):
-    return f'echo {gm.dice} {bonus_desc}: {result_desc}'
+    return f'echo {gm.dice} {bonus_desc}{result_desc}'
 else:
-    return f'echo {gm.dice}: {result_desc}'
+    return f'echo {gm.dice}{result_desc}'
 
 </drac2>

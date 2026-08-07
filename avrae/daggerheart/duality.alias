@@ -28,8 +28,8 @@ result_desc = f'**{total}** *with {quality}*'
 nl='\n'
 if goals:
     result_desc += nl + dh.format_goals(goals)
-    
-effect_desc = nl + dh.fomat_effect(effects) if effects else ""
+
+effect_desc = nl + dh.format_effects(effects) if effects else ""
 
 if bonus_desc := dh.format_bonus(bonus):
     return f'echo {duality_desc} {bonus_desc}: {result_desc}{effect_desc}'

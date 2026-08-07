@@ -51,7 +51,7 @@ project: Progress a project by 1. If it has a counter with the name it is increa
 [done] Add multiple fear and hope dice together 
 [done] Hope is automatically increased and listed what the new counter is. In critical a stress is also automatically removed and shown.
 [done, its both] experience should not be a number but a reference to a skill name 
-* Target
+[done] Target
 * Now arguments separates by spaces are summed. The whole argument string could also be one big summation (subtraction)
  This basically preparses the library for a "duality dice" string. This string is split in hope, fear and generic bonuses. 
 * +1f4 should add 1d4 to the basic 1d12 fear, not add it, but what is this syntax. Currently + are by default trunced off 
@@ -59,15 +59,14 @@ project: Progress a project by 1. If it has a counter with the name it is increa
 
 
 [done] `!dh_gm [<dice>] [<adv>] [<dis>]` Roll dm dice 
-Implementation: use 1d20 for the hope and fear None, that way there is no hope/fear because there's no comparison. 20 still crits.
+[done] Implementation: use 1d20 for the fear and hope None, that way there is no hope/fear because there's no comparison. 20 still crits.
 
-`!react [<dice>]` 
-`!react <trait>[+"exp"][+<dice>]...[+adv]...[+dis]... [<difficulty>] [=<target>]` Same but instead of hope and fear it's just 2d12 
-any 2nd argument is the difficulty it will say success or fail. Crit is still success
-target is difficulty, can use string as well =easy, will say if made it 
-TODO: reactions can still critical, meaning all goals are made. 15% chance to make an impossible reaction, really? 
+[done] `!react <trait>[+"exp"][+<dice>]...[+adv]...[+dis]... [<difficulty>] [=<target>]` Same but instead of hope and fear it's just 2d12 
+[done but use = syntax] any 2nd argument is the difficulty it will say success or fail. Crit is still success
+[done] target is difficulty, can use string as well =easy, will say if made it 
+[done] reactions can still critical, meaning all goals are made. 15% chance to make an impossible reaction, really? 
 
-`!dhatk <weapon> [+<experience>][+<dice>][a[dv]]... [d[is]]... [=<avoidance>] [-av <avoidance>] [-th <major> <sever>|] ` 
+`!dhatk <weapon> [+<experience>] [+<dice>] [a[dv]]... [d[is]]... [=<avoidance>] [-th <major> <severe>] ` 
 
 Attack with duality dice and the same bonuses. The weapon is taken from the sheet and its damage dice and types are used.
 The damage dice are multiplied with the proficiency. If threshold is given it says how many hitpoints 
