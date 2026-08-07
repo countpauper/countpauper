@@ -52,6 +52,26 @@ def parse_hope(s):
 def parse_fear(s):
     return parse_dice(s, 'f')
 
+difficulties=dict(
+    trivial=0,
+    very_easy=5,
+    easy=10,
+    average=15,
+    hard=20,
+    very_hard=25,
+    nearly_impossible=30,
+    impossible=35
+)
+
+def parse_goal(s):
+    if s[0] != '=':
+        return None 
+    s=s[1:]
+    if not s:
+        return "0"
+    possible_goals=[f"{v}[{k.replace('_',' ')}]" for k,v in difficulties.items() if k.startswith(s.lower())] + [s]
+    return possible_goals[0]
+
 def agility(c=character()):
     return c.stats.dexterity
 
@@ -108,14 +128,19 @@ def experience(sheet, name):
         return name, dnd_skill.value
     else:
         return name, val
-        
+
+
+def sum_dice(dice):
+    return '+'.join(die for die in dice if die!='0')
+
 # Sort operands into hope rolls, fear rolls and bonus rolls
 ## and return the result as a dictionary with hope, fear and bonus list
 ## Experiences and traits are replaced with strings
-def duality(sheet, operands):
+def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
     hope_dice = []
     fear_dice = []
     bonus_dice = []
+    goals = []
     advantage = 0
     disadvantage = 0
     for operand in operands: 
@@ -123,16 +148,20 @@ def duality(sheet, operands):
             hope_dice.append(f'{dice[0]}d{dice[1]}')
         elif dice:=parse_fear(operand):
             fear_dice.append(f'{dice[0]}d{dice[1]}')
-        elif dice:=parse_dice( operand):
+        elif goal:=parse_goal(operand):
+            goals.append(goal)   # from here on bonuses are for the last goal
+        elif sheet and (dice:=parse_dice( operand)):
             bonus_dice.append(f'{dice[0]}d{dice[1]}')
-        elif (trait_bonus:=trait(operand)) is not None:
+        elif sheet and (trait_bonus:=trait(operand)) is not None:
             bonus_dice.append(f'{trait_bonus[1]}[{trait_bonus[0]}]')
-        elif (exp_bonus:=experience(sheet, operand)) is not None:
+        elif sheet and (exp_bonus:=experience(sheet, operand)) is not None:
             bonus_dice.append(f'{exp_bonus[1]}[{exp_bonus[0]}]')
         elif 'advantage'.startswith(operand.lower()):
             advantage += 1
         elif 'disadvantage'.startswith(operand.lower()):
             disadvantage += 1
+        elif goals: 
+            goals[-1] = sum_dice([goals[-1]]+[operand]) 
         else:
             bonus_dice.append(operand)
         
@@ -140,63 +169,52 @@ def duality(sheet, operands):
         bonus_dice.append('1d6[advantage]')
     elif disadvantage > advantage:
         bonus_dice.append('-1d6[disadvantage]')
-    return dict(hope=hope_dice or ['1d12'], fear=fear_dice or ['1d12'], bonus=bonus_dice)   
-
-def bonuses(operands):
-    bonus_dice = []
-    advantage = 0
-    disadvantage = 0
-    for operand in operands: 
-        if 'advantage'.startswith(operand.lower()):
-            advantage += 1
-        elif 'disadvantage'.startswith(operand.lower()):
-            disadvantage += 1
-        else:
-            bonus_dice.append(operand)
-        
-    if advantage > disadvantage: 
-        bonus_dice.append('1d6[advantage]')
-    elif disadvantage > advantage:
-        bonus_dice.append('-1d6[disadvantage]')
-    return bonus_dice   
+    return dict(hope=hope_dice or hope, fear=fear_dice or fear, bonus=bonus_dice, goals=goals)   
 
 # vroll each part and return individually
 # All dice are supposed to be a list. 
 # If hope is empty, fear is the DM die 
 # If fear is empty hope is the reaction die (2d12)
-def roll_em(hope=None, fear=None, bonus=[]):
+def roll_em(hope=None, fear=None, bonus=[], goals=[]):
     result = dict()
     if hope and fear:
-        result['hope'] = vroll('+'.join(hope)+'[hope]')
-        result['fear'] = vroll('+'.join(fear)+'[fear]')
+        result['hope'] = vroll(sum_dice(hope)+'[hope]')
+        result['fear'] = vroll(sum_dice(fear)+'[fear]')
     elif hope:
-        result['hope'] = vroll('+'.join(hope))
+        result['hope'] = vroll(sum_dice(hope))
     elif fear: 
-        result['fear'] = vroll('+'.join(fear))
+        result['fear'] = vroll(sum_dice(fear))
     
     if bonus:
         result['bonus'] = vroll('+'.join(bonus))
+
+    result['goals'] = [vroll(g) for g in goals]
     return result
 
+def all_goals(goals):
+    return {goal_roll:2 for goal_roll in goals}
+
+def interpret_goals(total, goals):
+    return {goal_roll:total >= goal_roll.total for goal_roll in goals}
+
+
 # Return <total>,<type> where type is hope, fear, critical and total is all dice added together
-def interpret(hope=None, fear=None, bonus=None):
+def interpret(hope=None, fear=None, bonus=None, goals=[]):
     total = bonus.total if bonus else 0 
     if hope and fear:
         total += hope.total + fear.total
         if hope.total == fear.total:
-                return total, "critical"
+                return total, "critical", all_goals(goals)
         elif hope.total > fear.total:
-            return total, "hope"
+            return total, "hope", interpret_goals(total, goals)
         else: 
-            return total, "fear"
-    elif hope:
-        return total + hope.total
-    elif fear:
+            return total, "fear", interpret_goals(total, goals)
+    elif fear:      # GM dice, only fear 
         total += fear.total
         if fear.result.crit == 1:
-            return total, True
+            return total, True, all_goals(goals)
         else:
-            return total, False
+            return total, False, interpret_goals(total, goals)
 
 
 def try_mod_cc(name, amt):
@@ -217,3 +235,19 @@ def hope(amt=1):
 # returns a string description of the new stress and modifier
 def stress(amt=1):
     return try_mod_cc('Stress', amt)
+
+degrees=['Failure', 'Success', 'Critical']
+def format_goals(goals, separator='\n'):
+    return separator.join(f"VS {goal} **{degrees[success]}!**" for goal, success in goals.items())
+
+def format_bonus(bonus):
+    if not bonus:
+            return None
+    desc = str(bonus.dice)
+    if desc[0] in '+-':
+        return desc
+    else:
+        return '+ '+desc
+
+def format_effects(effects, separator='\n'):
+    return separator.join(effect for effect in effects if effect is not None)
