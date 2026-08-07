@@ -6,6 +6,15 @@ try:
 except "FeatureNotAvailable":
     pass
 
+def fuzzy_match(input, list):
+    input = input.lower()
+    if match := [m for m in list if input==m.lower()]:
+        return match[0]
+    if match := [m for m in list if m.lower().startswith(input)]:
+        return match[0]
+    if match := [m for m in list if input in m.lower()]:
+        return match[0]
+    return None 
 
 def sheet(var_name=None):
     c=character()
@@ -31,7 +40,7 @@ def parse(args):
 
 # Return dice, die if s is of the format [<dice>=1]<separator><die>
 # return empty tuple otherwise 
-def parse_dice(s, separator='d'):
+def parse_die(s, separator='d'):
     parts = s.split(separator, maxsplit=1)
     if len(parts)==1:
         return tuple()
@@ -47,10 +56,10 @@ def parse_dice(s, separator='d'):
         return tuple()
 
 def parse_hope(s):
-    return parse_dice(s, 'h')
+    return parse_die(s, 'h')
 
 def parse_fear(s):
-    return parse_dice(s, 'f')
+    return parse_die(s, 'f')
 
 difficulties=dict(
     trivial=0,
@@ -69,8 +78,10 @@ def parse_goal(s):
     s=s[1:]
     if not s:
         return []
-    possible_goals=[f"{v}[{k.replace('_',' ')}]" for k,v in difficulties.items() if k.startswith(s.lower())] + [s]
-    return [possible_goals[0]]
+    if match:=fuzzy_match(s, difficulties.keys()):
+        value = difficulties.get(match)
+        return [f"{value}[{match.replace('_',' ')}"]
+    return [s]
 
 def agility(c=character()):
     return c.stats.dexterity
@@ -150,7 +161,7 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
             fear_dice.append(f'{dice[0]}d{dice[1]}')
         elif (goal:=parse_goal(operand)) is not None:
             goals.append(goal)   # from here on bonuses are for the last goal
-        elif sheet and (dice:=parse_dice( operand)):
+        elif sheet and (dice:=parse_die( operand)):
             if goals:
                 goals[-1].append(operand) 
             else:
@@ -254,3 +265,15 @@ def format_bonus(bonus):
 
 def format_effects(effects, separator='\n'):
     return separator.join(effect for effect in effects if effect is not None)
+
+def parse_attack(attack_raw):
+    if automation:= attack_raw.get('automation'):
+        for auto in automation:
+            effects = auto.get('effect')
+            for effect in effects: 
+                if effect.get('type') == 'attack':
+                    for hit in effect.get('hit',[]):
+                        if hit.get('type') == 'damage':
+                            return effect.get('attackBonus'), hit.get('damage')
+
+    return None

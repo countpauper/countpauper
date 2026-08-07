@@ -1,12 +1,28 @@
 <drac2>
 using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 
-args = &ARGS&
-summation = dh.parse(args)
+def find_attack(name):
+    c=character()
+    attacks = {a.name:a for a in c.attacks}
+    return attacks.get(dh.fuzzy(name, attacks.keys()))
 
+args = &ARGS&
+if not args: 
+    return f'help {ctx.alias} -here'
+
+weapon = find_attack(args[0])
+if not weapon:
+    return f'echo Weapon {arg[0]} is not listed on your sheet.\n{character().attacks}'
+attack_bonus, damage_dice = dh.parse_attack(weapon.raw)
+if attack_bonus is None:
+    return f'echo Action {arg[0]} is not a weapon attack.'
+
+args = args[1:]
+
+summation = dh.parse(args)
 sheet = dh.sheet()
 duality_dice = dh.duality(sheet, summation)
-
+duality_dice['bonus'] = [f'{attack_bonus}[{weapon.name}]'] +  duality_dice.get('bonus',[])
 duality_roll = dh.roll_em(**duality_dice)
 
 total, quality, goals = dh.interpret(**duality_roll)
