@@ -1,5 +1,5 @@
 #include "Game/MapItf.h"
-#include "Game/Slice.h"
+#include "Game/Stack.h"
 #include <cmath>
 
 namespace Game
@@ -18,19 +18,19 @@ Engine::Range<ZType> MapItf::Z() const
 
 ZType MapItf::GroundHeight(Position pos) const
 {
-    const auto& slice = SliceAt(pos.X(), pos.Y());
-    auto hole = slice.FindBiggestNonSolidOpening();
+    const auto& stack = StackAt(pos.X(), pos.Y());
+    auto hole = stack.FindBiggestNonSolidOpening();
     if (hole.IsEmpty())
         return pos.Z();
     else
         return hole.begin;
 }
 
-Slice MapItf::GetSlice(Position pos, ZType height) const
+Stack MapItf::GetStack(Position pos, ZType height) const
 {
-    const auto& slice = SliceAt(pos.X(), pos.Y());
+    const auto& stack = StackAt(pos.X(), pos.Y());
     Engine::Range<ZType> heightRange(pos.Z(), pos.Z() + height);
-    return slice & heightRange;
+    return stack & heightRange;
 }
 
 }

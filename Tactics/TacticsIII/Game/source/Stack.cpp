@@ -1,26 +1,26 @@
-#include "Game/Slice.h"
+#include "Game/Stack.h"
 #include "Utility/Assert.h"
 
 namespace Game
 {
 
-Slice::Slice(const Slice& other) 
+Stack::Stack(const Stack& other) 
     : cells(other.cells)
 {
 }
 
-Slice::Slice(const Material& mat, Cell::Height height, Cell::Temperature temp) :
-    Slice{{{mat, height, temp}}}
+Stack::Stack(const Material& mat, Cell::Height height, Cell::Temperature temp) :
+    Stack{{{mat, height, temp}}}
 {
 }
 
-Slice::Slice(std::initializer_list<Cell> cells) : 
+Stack::Stack(std::initializer_list<Cell> cells) : 
     cells(cells)
 {
 }
 
 
-void Slice::emplace_back(const Material& material, Cell::Height height, Cell::Temperature temp)
+void Stack::emplace_back(const Material& material, Cell::Height height, Cell::Temperature temp)
 {
     if (!cells.empty())
     {
@@ -31,7 +31,7 @@ void Slice::emplace_back(const Material& material, Cell::Height height, Cell::Te
 }
 
 
-std::pair<Slice::const_iterator, Cell::Height> Slice::Find(ZType height) const
+std::pair<Stack::const_iterator, Cell::Height> Stack::Find(ZType height) const
 {
     Cell::Height progress{0.0};
     for(auto it = begin(); it!=end(); ++it)
@@ -43,20 +43,20 @@ std::pair<Slice::const_iterator, Cell::Height> Slice::Find(ZType height) const
     return std::make_pair(end(), Cell::Height());
 }
 
-std::pair<Slice::iterator, Cell::Height> Slice::Find(ZType height)
+std::pair<Stack::iterator, Cell::Height> Stack::Find(ZType height)
 {   // avoid duplicating Find algorithm by "const casting" the iterator 
-    auto[cit, amount] = const_cast<const Slice*>(this)->Find(height);
-    unsigned idx = cit - const_cast<const Slice*>(this)->begin();
+    auto[cit, amount] = const_cast<const Stack*>(this)->Find(height);
+    unsigned idx = cit - const_cast<const Stack*>(this)->begin();
     return std::make_pair(cells.begin() + idx, amount);
 }
 
-Slice& Slice::operator=(const Slice& rhs)
+Stack& Stack::operator=(const Stack& rhs)
 {
     cells = rhs.cells;
     return *this;
 }
  
-Slice& Slice::operator+=(const Slice& rhs)
+Stack& Stack::operator+=(const Stack& rhs)
 {
     if (cells.empty()) 
     {
@@ -73,13 +73,13 @@ Slice& Slice::operator+=(const Slice& rhs)
     return *this;
 }
 
-Slice operator+(const Slice& lhs, const Slice& rhs)
+Stack operator+(const Stack& lhs, const Stack& rhs)
 {
-    Slice result(lhs);
+    Stack result(lhs);
     return result += rhs;
 }
 
-Slice& Slice::operator&=(Engine::Range<ZType> height)
+Stack& Stack::operator&=(Engine::Range<ZType> height)
 {
     if (height.begin > height.end) {
         cells.clear();
@@ -124,19 +124,19 @@ Slice& Slice::operator&=(Engine::Range<ZType> height)
     }
     if (progress < height.end)
     {
-        (*this)+=Slice({Material::vacuum, height.end - progress, 0.0});
+        (*this)+=Stack({Material::vacuum, height.end - progress, 0.0});
     }
     return *this;
 }
 
-Slice operator&(const Slice& lhs, Engine::Range<ZType> rng)
+Stack operator&(const Stack& lhs, Engine::Range<ZType> rng)
 {
-    Slice result(lhs);
+    Stack result(lhs);
     return result &= rng;
 }
 
 
-Slice& Slice::operator*=(float scale)
+Stack& Stack::operator*=(float scale)
 {
     for(auto& cell: cells)
     {
@@ -145,14 +145,14 @@ Slice& Slice::operator*=(float scale)
     return *this;
 }
 
-Slice operator*(const Slice& lhs, float scale)
+Stack operator*(const Stack& lhs, float scale)
 {
-    Slice result(lhs);
+    Stack result(lhs);
     return result *= scale;
 }
 
 
-Engine::Range<ZType> Slice::FindBiggestOpening() const
+Engine::Range<ZType> Stack::FindBiggestOpening() const
 {
     return FindBiggestRange([](const Cell& l)
     {
@@ -160,12 +160,12 @@ Engine::Range<ZType> Slice::FindBiggestOpening() const
     });
 }
 
-Engine::Range<ZType> Slice::FindBiggestNonSolidOpening() const
+Engine::Range<ZType> Stack::FindBiggestNonSolidOpening() const
 {
     return FindBiggestRange(std::mem_fn(&Cell::IsGas));
 }
 
-Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Cell&)> predicate) const
+Engine::Range<ZType> Stack::FindBiggestRange(std::function<bool(const Cell&)> predicate) const
 {
     auto result = Engine::Range<ZType>::empty();
     ZType progress = 0;
@@ -194,7 +194,7 @@ Engine::Range<ZType> Slice::FindBiggestRange(std::function<bool(const Cell&)> pr
 
 }
 
-Slice::iterator Slice::Fill(Engine::Range<ZType> height, const Material& material, Cell::Temperature temperature)
+Stack::iterator Stack::Fill(Engine::Range<ZType> height, const Material& material, Cell::Temperature temperature)
 {
     auto[it, offset] = Find(height.begin);
     Cell::Height displaced = 0.0;    // the volume removed to make room for the height

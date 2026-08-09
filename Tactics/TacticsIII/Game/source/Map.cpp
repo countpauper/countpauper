@@ -19,7 +19,7 @@ namespace Game
 Map::Map(Engine::Size size, std::initializer_list<std::pair<const Material&, ZType>> map) :
     Scenery(mesh),
     size(size),
-    slices(size.x * size.y)
+    stacks(size.x * size.y)
 {
     auto it = map.begin();
     for(unsigned y=0; y<size.y; ++y)
@@ -81,7 +81,7 @@ Map::Map(std::string_view filename, const Engine::Image& data) :
     Scenery(mesh),
     filename(filename),
     size{int(data.Width()), int(data.Height()/4), (int)PixelLevelToHeight(256)},
-    slices(size.x * size.y)
+    stacks(size.x * size.y)
 {
     for(unsigned y=0; y<size.y; ++y)
     {
@@ -130,21 +130,21 @@ Engine::IntBox Map::GetBounds() const
     return Engine::IntBox(size);
 }
 
-unsigned Map::SliceIdx(int x, int y) const
+unsigned Map::StackIdx(int x, int y) const
 {
     if (!GetBounds().x[x] || !GetBounds().y[y])
         throw std::range_error("Map position out of bounds");
     return y*size.x + x;
 }
 
-const Slice& Map::SliceAt(int x, int y) const
+const Stack& Map::StackAt(int x, int y) const
 {
-    return slices.at(SliceIdx(x, y));
+    return stacks.at(StackIdx(x, y));
 }
 
-Slice& Map::SliceAt(int x, int y)
+Stack& Map::StackAt(int x, int y)
 {
-    return slices.at(SliceIdx(x, y));
+    return stacks.at(StackIdx(x, y));
 }
 
 Position Map::NameToPosition(uint32_t name) const
@@ -158,17 +158,17 @@ Position Map::NameToPosition(uint32_t name) const
 }
 
 
-Slice::iterator Map::Fill(Position at, ZType height, const Material& mat, Cell::Temperature temperature)
+Stack::iterator Map::Fill(Position at, ZType height, const Material& mat, Cell::Temperature temperature)
 {
-    auto& slice = slices.at(SliceIdx(at.X(), at.Y()));
-    return slice.Fill(Engine::Range<ZType>(at.Z(), at.Z()+height), mat, temperature);
+    auto& Stack = stacks.at(StackIdx(at.X(), at.Y()));
+    return Stack.Fill(Engine::Range<ZType>(at.Z(), at.Z()+height), mat, temperature);
 }
 
 
 void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, const Material& liquid, ZType liquidLvl, float temperature)
 {
     auto mapHeight  = Z();
-    auto& slice = slices.at(SliceIdx(x,y));
+    auto& Stack = stacks.at(StackIdx(x,y));
     static const ZType maxVeg(0.25);
     static const ZType maxEarth(2.0);
     ZType stoneLevel=0.0;
@@ -194,23 +194,23 @@ void Map::Column(unsigned x, unsigned y, const Material& solid, ZType solidLvl, 
             stoneLevel = solidLvl;
         } 
         if (stoneLevel)
-            slice.emplace_back(Material::stone, stoneLevel, temperature);
+            Stack.emplace_back(Material::stone, stoneLevel, temperature);
         if (earthLevel)
-            slice.emplace_back(Material::earth, earthLevel, temperature);
+            Stack.emplace_back(Material::earth, earthLevel, temperature);
         if (vegLevel)
-            slice.emplace_back(solid, vegLevel, temperature);
+            Stack.emplace_back(solid, vegLevel, temperature);
         airLvl = solidLvl;
     }
 
     if (liquidLvl > solidLvl)
     {
-        slice.emplace_back(liquid, liquidLvl - solidLvl, temperature);
+        Stack.emplace_back(liquid, liquidLvl - solidLvl, temperature);
         airLvl = liquidLvl;
     }
     
     if (airLvl<mapHeight.end)
     {
-        slice.emplace_back(Material::air, mapHeight.end - airLvl, temperature);
+        Stack.emplace_back(Material::air, mapHeight.end - airLvl, temperature);
     }
 }
 
@@ -246,16 +246,16 @@ void Map::GenerateMesh()
     {
         for(unsigned x=0; x<size.x; ++x)
         {
-            const auto& slice = SliceAt(x, y);
+            const auto& Stack = StackAt(x, y);
             ZType top = 0.0;
-            for(auto cell : slice) 
+            for(auto cell : Stack) 
             {
                 top += cell.height;
                 const auto& material= cell.material;
                 auto color = material.get().color;
                
                 color.a = ComputeOpacityAtDepth(color.a, cell.height); 
-                NeighbourHeights heights = CalculateNeighbourHeights({static_cast<int>(x), static_cast<int>(y), top}, slice);
+                NeighbourHeights heights = CalculateNeighbourHeights({static_cast<int>(x), static_cast<int>(y), top}, Stack);
                 AddCellToMesh(Position(x, y, top), color, heights);                
             }
         }
@@ -263,17 +263,17 @@ void Map::GenerateMesh()
     ASSERT(mesh.Names().size() == mesh.Triangles().size());
 }
 
-Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& centerSlice)
+Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Stack& centerStack)
 {
     NeighbourHeights result;
-    auto [it, amount] = centerSlice.Find(p.Z());
+    auto [it, amount] = centerStack.Find(p.Z());
     const auto& cell = *it;
 
     result[Orientation::up] = p.Z() - amount+ 
-        SumHeight(centerSlice.Find(it, std::mem_fn(&Cell::IsTranslucent)));
+        SumHeight(centerStack.Find(it, std::mem_fn(&Cell::IsTranslucent)));
 
     ZType bottom(0.0);
-    if (it!=centerSlice.begin())
+    if (it!=centerStack.begin())
         bottom = p.Z()-amount - (it-1)->height;
     result[Orientation::down] = bottom;
     auto box = GetBounds();
@@ -286,7 +286,7 @@ Map::NeighbourHeights Map::CalculateNeighbourHeights(Position p, const Slice& ce
         else 
         {
             ZType height(0.0);
-            const auto& neighbour = SliceAt(nx, ny);
+            const auto& neighbour = StackAt(nx, ny);
             auto [it, amount] = neighbour.Find(p.Z());
             if (it==neighbour.end())
                 height = 0;

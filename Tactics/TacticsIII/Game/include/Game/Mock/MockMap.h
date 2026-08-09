@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 #include "Game/MapItf.h"
-#include "Game/Slice.h"
+#include "Game/Stack.h"
 
 namespace Game::Test
 {
@@ -21,10 +21,10 @@ class MockMap : public MapItf
 public:
     MockMap()
     {
-        Slice slice;
-        ON_CALL(*this, SliceAt(_,_)).WillByDefault([slice](int, int) -> const Slice&
+        Stack stack;
+        ON_CALL(*this, StackAt(_,_)).WillByDefault([stack](int, int) -> const Stack&
         {
-            return slice;
+            return stack;
         });
     }
 
@@ -37,7 +37,7 @@ public:
     {
         SetSize(size);
 
-        std::vector<Slice> slices;
+        std::vector<Stack> slices;
         slices.clear();
         unsigned heightIndex=0;
         ZType mapHeight {size.z};
@@ -47,18 +47,18 @@ public:
             for (int x=0;x<size.x; ++x)
             {
                 auto heightIt = heights.begin()+(heightIndex % heights.size());
-                slices.push_back(Slice({{Material::stone, *heightIt, 300.0f}, 
+                slices.push_back(Stack({{Material::stone, *heightIt, 300.0f}, 
                             {Material::air, mapHeight - *heightIt, 300.0f}}));
                 ++heightIndex;
             }
         }
-        ON_CALL(*this, SliceAt(_,_)).WillByDefault([slices, size](int x, int y) -> const Slice&
+        ON_CALL(*this, StackAt(_,_)).WillByDefault([slices, size](int x, int y) -> const Stack&
         {
             return slices.at(x + y * size.y);
         });
     }
     MOCK_METHOD(Engine::IntBox, GetBounds, (), (const override));
-    MOCK_METHOD(const Slice&, SliceAt, (int,int), (const override));
+    MOCK_METHOD(const Stack&, StackAt, (int,int), (const override));
 private:
 
 };

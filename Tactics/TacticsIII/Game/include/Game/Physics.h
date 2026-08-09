@@ -2,27 +2,31 @@
 
 namespace Game 
 {
-class Slice;
-
+class Stack;
+class Cell;
 
 class Physics 
 {   // Place holder base class, later can be used as computation agent in multi threaded setup 
-};
 
-class Gravity : public Physics 
-{
-public:
-    explicit Gravity(float gravity=9.80665f);
-    void operator()(float dt, Slice& slice) const;
+protected:
+    float PressureForce(Cell& up, Cell& down, float area, Orientation axis, float dt) const;
 private:
     float gravity;
+};
+
+class Vertical : public Physics 
+{
+public:
+    explicit Vertical(float gravity=9.80665f);
+    void operator()(float dt, Stack& Stack) const;
+
 };
 
 class Viscosity : public Physics 
 {
 public:
     Viscosity();
-    void operator()(float dt, Slice& slice) const;
+    void operator()(float dt, Stack& Stack) const;
 };
 
 }

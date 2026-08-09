@@ -17,7 +17,7 @@ A list is computed with grid coordinates and the range of the line that goes thr
 This is done with a configurable epsilon so diagonal lines don't clip every tiny corner. They are a bit rounded for hitting terrain.
 For every transition then the height is computed.
 Then for each grid the height range in and out is computed and matched to the materials at those levels.
-Each grid will get a getter to get a slice of materials (in order), with material, density, perhaps temperature.
+Each grid will get a getter to get a stack of materials (in order), with material, density, perhaps temperature.
 
 Along the line the remaining damage of the attack is computed depending on the density and whether fire or poison is picked up.
 Also obstacles/creatures are checked and the damage applied.
@@ -47,7 +47,7 @@ So: TODO:
 [done] Check if the intersection coordinate is also within both perpendicular plane ranges.
 [was alreadt done: Section] Create a function that creates a subsection line with that range, to get the height range over the Z
 [done] unit test it of course
-[done] Create a function to get a slice of materials from a grid, something
+[done] Create a function to get a stack of materials from a grid, something
 [done Apply the material section to the projectile
 Apply the projectile to the obstacles for that grid
 Orientation and origin surface adjustment (remove -1 on range)
@@ -67,7 +67,7 @@ TODO:
 [done] Instead of tracing a straight line and assuming perfect aim, a target height should be traced from the target to the origin
 [done]This range is higher or smaller depending on the size of the character 
 and what is aimed for (eg hamstring, headshot)
-[done] Tracing through grids a slice can still be returned, but the height range is reduced by solid material (perhaps to 0)
+[done] Tracing through grids a stack can still be returned, but the height range is reduced by solid material (perhaps to 0)
 [done] Then the algorithm will be: Trace two lines (bottom and top range) from aim target to source and keep the range of "clear" material
 The hit chance is computed from the height of this range. THis could still be 0 so penetrating shots can be attempted
 This also takes obstacles and their height into account
@@ -89,13 +89,13 @@ movement vector compressed into how many liters would flow up/or down, left or r
 [done] Fix last attack tests
 [done] Implement fixed point 
 [done] Change Game::Position with const fixed point bits, (does it have tests) and make length/distance etc still work. fraction float can go, it's just intepretation. 
-[done] Slice with fixed point and Fixed point aim height and Move with fixed point height  
+[done] Stack with fixed point and Fixed point aim height and Move with fixed point height  
 [done] Update path planning to not use any blocks anymore, but use slices and vertical holes 
 [done] Change the map to not store blocks but slices 
-[done] Remove block altogether and rename BlockMap file, NB some slice tests still use blocks
+[done] Remove block altogether and rename BlockMap file, NB some stack tests still use blocks
 [done] Make cell amount and temperature a fixed point/word
 Slices for generating vertical mesh quads:
-    - SLice::find(height): iterator to loop what's next to the surface. 
+    - Stack::find(height): iterator to loop what's next to the surface. 
     - During Map::GenerateMesh() scan +X and +Y (-X and -Y are done by those opposites) for what is besides. 
     - If surface is stone and next is stone or veg and veg, or water+water make a side quad of the same to the height of that cell (add a function to compute the height up to it) 
     - If the surface is stone and next is veg then make a side of stone or the other way around 
@@ -133,10 +133,12 @@ Physics and Magics
 Physics 
 * Gravity 
 * Pressure
-- Add asserts to FixedPoint for float input being nan or inf or out of range, use assert that really breaks
+* Add asserts to FixedPoint for float input being nan or inf or out of range, use assert that really breaks
 * Rename Layer to Cell  
+- Pressure causes flow vertical, then (first time) horizontal
 - Pressure relaxation of vertical neigbours (due to flow) first homegeneous then hetero
-- Rename Game::Slice to Stack ? or Pile ? 
+* Rename Game::Slice to Stack ? or Pile ? 
+- Put boundary in map (but don't render or pathplan onto)
 - Barrier 
 - Start water flowing from the bump with unit tests. 
 - Partially invalidate and update map mesh 

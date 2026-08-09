@@ -2,7 +2,7 @@
 #include "Game/Actor.h"
 #include "Game/World.h"
 #include "Game/MapItf.h"
-#include "Game/Slice.h"
+#include "Game/Stack.h"
 #include "Geometry/Line.h"
 
 namespace Game
@@ -74,10 +74,10 @@ Engine::Range<ZType> ScanAimWindow(const World& world, const ProjectilePath& pat
 
         triangle.begin = lerp(origin.Z(), aimHeight.begin, progress);
         triangle.end = lerp(origin.Z(), aimHeight.end, progress);
-        Slice slice = world.GetMap().GetSlice(Position(it->first.X(), it->first.Y(), triangle.begin), triangle.Size());
-        auto opening = slice.FindBiggestOpening();
+        Stack stack = world.GetMap().GetStack(Position(it->first.X(), it->first.Y(), triangle.begin), triangle.Size());
+        auto opening = stack.FindBiggestOpening();
         if (opening.IsEmpty())
-            opening = slice.FindBiggestNonSolidOpening();
+            opening = stack.FindBiggestNonSolidOpening();
         if (opening.IsEmpty())
             return Engine::Range<ZType>::empty();
 

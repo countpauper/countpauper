@@ -5,15 +5,15 @@
 namespace Game
 {
 
-class Slice;
+class Stack;
 
 class MapItf
 {
 public:
     virtual Engine::IntBox GetBounds() const = 0;
-    virtual const Slice& SliceAt(int x, int y) const = 0;
-    inline const Slice& operator[](int x, int y) const { return SliceAt(x,y); };
-    Slice GetSlice(Position pos, ZType height) const;
+    virtual const Stack& StackAt(int x, int y) const = 0;
+    inline const Stack& operator[](int x, int y) const { return StackAt(x,y); };
+    Stack GetStack(Position pos, ZType height) const;
 
     ZType GroundHeight(Position pos) const;
     Engine::Range<ZType> Z() const;

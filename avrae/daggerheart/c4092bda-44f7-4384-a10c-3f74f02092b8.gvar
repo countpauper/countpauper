@@ -17,12 +17,74 @@ def fuzzy_match(input, list):
     return None 
 
 def sheet(var_name=None):
-    c=character()
+    C=character()
     if var_name:
-        sheet = c.get_cvar(var_name) or get_uvar(var_name)
+        sheet = C.get_cvar(var_name) or get_uvar(var_name)
     else:
-        sheet = c.get_cvar('dh_sheet') or get_uvar(c.name)
+        sheet = C.get_cvar('dh_sheet') or get_uvar(C.name)
     return load_yaml(sheet) if sheet else None
+
+def get_class(C=character()):
+    # only support one level line
+    for cls, lvl in C.levels:
+        clsinfo = cls.lower().split(' ',maxsplit=2)
+        # format of class is expected to be [<sub>] <class> [<multi>] each of which must be one word
+        if len(clsinfo)==3:
+            return clsinfo
+        elif len(clsinfo)==2:
+            return clsinfo[0], clsinfo[1], None
+        else:
+            return None, cls, None
+    return None, None, None
+
+# Colaboration with !pronouns alias that gets cvars they them their theirs cvars for easy use in f-strings
+def pronouns(C=character()):
+    return C.get_cvar('they','they'), C.get_cvar('them','them'), C.get_cvar('their','their')
+
+skills_map = (
+    "acrobatics", 
+    "animalHandling",
+    "arcana",
+    "athletics",
+    "deception",
+    "history",
+    "insight",
+    "intimidation",
+    "investigation",
+    "medicine",
+    "nature",
+    "perception",
+    "performance",
+    "persuasion",
+    "religion",
+    "sleightOfHand",
+    "stealth",
+    "survival")
+
+def get_mapped_score(C, skill):
+    return C.skills[skill].value 
+
+# Get damage thresholds, Index is amount of wounds if damage>=treshold 
+def thresholds(C=character()):
+    thresholds = [
+        -2147483648, 1,
+        get_mapped_score(C, skills_map[-1]),
+        get_mapped_score(C, skills_map[-2])]
+    if massive := get_mapped_score(C, skills_map[-3]):  # common homebrew supported 0
+        thresholds.append(massive)
+    # TODO deadly not yet supported, less common homebrew
+    return thresholds
+
+def max_armor(C=character()):
+    return get_mapped_score(C, 'initiative')
+
+def armor(C=character()):
+    cc_name='Armor'
+    armor_cc_desc="When you take damage, you can mark one Armor Slot to reduce the severity of the damage by one threshold."
+    try:
+        return C.cc(cc_name)
+    except 'ConsumableException':
+        return C.create_cc(cc_name, minVal=0, maxVal=max_armor(C), dispType='hex', desc=armor_cc_desc)
 
 def parse_arg(arg):
     if not arg:
@@ -38,7 +100,7 @@ def parse(args):
     # TODO split operators. For now just support spaces 
     return [parse_arg(arg) for arg in args]
 
-# Return dice, die if s is of the format [<dice>=1]<separator><die>
+# Return dice, die if s is of the format [<dice>=None]<separator><die>
 # return empty tuple otherwise 
 def parse_die(s, separator='d'):
     parts = s.split(separator, maxsplit=1)
@@ -49,7 +111,7 @@ def parse_die(s, separator='d'):
     try:
         die = parts[1]
         if not parts[0]:
-            return 1, die
+            return None, die
         else:
             return int(parts[0]), die
     except 'ValueError':
@@ -132,7 +194,7 @@ def trait(name):
 
 def experience(sheet, name):
     if not sheet:
-       return None
+        return None
     exp = sheet.get('experience', dict())
     options=[(k,v) for k,v in exp.items() if name.lower() in k.lower()]
     if not options:
@@ -159,9 +221,9 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
     disadvantage = 0
     for operand in operands: 
         if dice:= parse_hope(operand):
-            hope_dice.append(f'{dice[0]}d{dice[1]}')
+            hope_dice.append(f'{dice[0]}d{dice[1]}' if dice[0] is not None else str(dice[1])) 
         elif dice:=parse_fear(operand):
-            fear_dice.append(f'{dice[0]}d{dice[1]}')
+            fear_dice.append(f'{dice[0]}d{dice[1]}' if dice[0] is not None else str(dice[1]))
         elif (goal:=parse_goal(operand)) is not None:
             goals.append(goal)   # from here on bonuses are for the last goal
         elif sheet and (dice:=parse_die( operand)):
@@ -234,24 +296,29 @@ def interpret(hope=None, fear=None, bonus=None, goals=[]):
             return total, False, interpret_goals(total, goals)
 
 
-def try_mod_cc(name, amt):
+def try_mod_cc(C, name, amt):
     try:
-        cc=character().cc(name)
-        diff = cc.value
-        diff = cc.mod(amt) - diff
-        return f"{cc.full_str(True)} {'+' if diff>=0 else ''}{diff}"
+        cc=C.cc(name)
+        if amt:
+            diff = cc.value
+            diff = cc.mod(amt) - diff
+            return f"{cc} {'+' if diff>=0 else ''}{diff}"
+        else:
+            return cc
     except 'ConsumableException':
         return None
 
 # Increase (or descrease) hope counter
 # returns a string description of the new stress and modifier
-def hope(amt=1):
-    return try_mod_cc('Hope', amt)
-
+def hope(amt=0):
+    C=character()
+    return try_mod_cc(C, 'Hope', amt)
+    
 # Increase (or decrease) stress counter
 # returns a string description of the new stress and modifier
-def stress(amt=1):
-    return try_mod_cc('Stress', amt)
+def stress(amt=0):
+    C=character()
+    return try_mod_cc(C, 'Stress', amt)
 
 digits = "0123456789"
 # find the index in the string s of the first character not in allowed

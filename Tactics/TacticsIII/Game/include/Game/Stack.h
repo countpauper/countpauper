@@ -14,14 +14,14 @@ namespace Game
 
 class Material;
 
-class Slice 
+class Stack 
 {
 public:
-    Slice() = default;
-    Slice(const Slice& other);
-    Slice& operator=(const Slice& other);
-    Slice(const Material& material, Cell::Height height=1.0, Cell::Temperature temp=300.0);
-    Slice(std::initializer_list<Cell> cells);
+    Stack() = default;
+    Stack(const Stack& other);
+    Stack& operator=(const Stack& other);
+    Stack(const Material& material, Cell::Height height=1.0, Cell::Temperature temp=300.0);
+    Stack(std::initializer_list<Cell> cells);
 
     void emplace_back(const Material& material, Cell::Height height, Cell::Temperature temp);
     Cell pop_front();
@@ -46,9 +46,9 @@ public:
     inline Cell& operator[](unsigned idx) { return cells.at(idx); }
 
     
-    Slice& operator+=(const Slice&);
-    Slice& operator&=(Engine::Range<ZType> heigh);
-    Slice& operator*=(float scale);
+    Stack& operator+=(const Stack&);
+    Stack& operator&=(Engine::Range<ZType> heigh);
+    Stack& operator*=(float scale);
 
     Engine::Range<ZType> FindBiggestOpening() const;
     Engine::Range<ZType> FindBiggestNonSolidOpening() const;
@@ -77,9 +77,9 @@ private:
     Cells cells;
 };
 
-Slice operator+(const Slice& lhs, const Slice& rhs);
-Slice operator&(const Slice& lhs, Engine::Range<ZType> rng);
-Slice operator*(const Slice& lhs, float scale);
+Stack operator+(const Stack& lhs, const Stack& rhs);
+Stack operator&(const Stack& lhs, Engine::Range<ZType> rng);
+Stack operator*(const Stack& lhs, float scale);
 
 
 

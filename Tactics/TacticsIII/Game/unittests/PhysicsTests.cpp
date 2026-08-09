@@ -50,36 +50,36 @@ TEST(Physics, Gravity)
 {
     Map map(Engine::Size(1,1,1), {{Material::stone, 0.1}});
     map.Fill({0,0,0.5}, 0.5, Material::water);
-    auto& slice = map[0,0];
+    auto& stack = map[0,0];
     Gravity gravity(9.80665f);
-    gravity(1.0f, slice);
-    ASSERT_EQ(slice[2].material, Material::water);
-    EXPECT_GE(slice[2].GetFlow(Orientation::down), 9.8);    // gravity affects layers above a compressible cell
-    ASSERT_EQ(slice[1].material, Material::air);
-    EXPECT_GE(slice[1].GetFlow(Orientation::down), 0.0);    // gravity doesn't affect layers above non-compressible layers  
-    ASSERT_EQ(slice[0].material, Material::stone);
-    EXPECT_GE(slice[0].GetFlow(Orientation::down), 0.0);    // gravity doesn't affect layers above the bottom of the map  
+    gravity(1.0f, stack);
+    ASSERT_EQ(stack[2].material, Material::water);
+    EXPECT_GE(stack[2].GetFlow(Orientation::down), 9.8);    // gravity affects layers above a compressible cell
+    ASSERT_EQ(stack[1].material, Material::air);
+    EXPECT_GE(stack[1].GetFlow(Orientation::down), 0.0);    // gravity doesn't affect layers above non-compressible layers  
+    ASSERT_EQ(stack[0].material, Material::stone);
+    EXPECT_GE(stack[0].GetFlow(Orientation::down), 0.0);    // gravity doesn't affect layers above the bottom of the map  
     // Gravity is only down 
-    EXPECT_TRUE(std::ranges::all_of(Orientations::horizontal, [&slice](Engine::Orientation ori) { return slice[2].GetFlow(ori) == 0.0  ; }));
+    EXPECT_TRUE(std::ranges::all_of(Orientations::horizontal, [&stack](Engine::Orientation ori) { return stack[2].GetFlow(ori) == 0.0  ; }));
 }
 
 
 TEST(Physics, Viscosity)
 {
     Map map(Engine::Size(1,1,1), {{Material::stone, 0.5}});
-    Slice& slice = map[0,0];
-    slice[0].AddFlow(Orientation::down, 1.0);
-    slice[1].AddFlow(Orientation::down, 1.0);
-    ASSERT_EQ(slice[1].material, Material::air);
+    Stack& stack = map[0,0];
+    stack[0].AccelerateFlow(Orientation::down, 1.0);
+    stack[1].AccelerateFlow(Orientation::down, 1.0);
+    ASSERT_EQ(stack[1].material, Material::air);
     
     // Gaseous flow is slowed (a little, like 0.1%) by viscosity 
     Viscosity viscosity;
-    viscosity(1.0f, slice);
-    EXPECT_LT(slice[1].GetFlow(Orientation::down), 1.0);
+    viscosity(1.0f, stack);
+    EXPECT_LT(stack[1].GetFlow(Orientation::down), 1.0);
 
     // solid movement doesn't flow because of viscosity
-    ASSERT_EQ(slice[0].material, Material::stone);
-    EXPECT_EQ(slice[0].GetFlow(Orientation::down), 1.0);    
+    ASSERT_EQ(stack[0].material, Material::stone);
+    EXPECT_EQ(stack[0].GetFlow(Orientation::down), 1.0);    
 }
 
 

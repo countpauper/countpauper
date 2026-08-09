@@ -3,7 +3,7 @@
 #include "Game/Stat.h"
 #include "Game/Actor.h"
 #include "Game/MapItf.h"
-#include "Game/Slice.h"
+#include "Game/Stack.h"
 #include "Game/Orientation.h"
 #include "AI/Astar.h"
 #include "Geometry/Line.h"
@@ -38,13 +38,13 @@ auto backward_from(auto it) {
 
 Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, Engine::Range<ZType> heightDifference, ZType space)
 {
-    const auto& slice = map[at.X(), at.Y()];
-    auto [it, offset] = slice.Find(at.Z());
+    const auto& stack = map[at.X(), at.Y()];
+    auto [it, offset] = stack.Find(at.Z());
     if (it->IsSolid())
     {
         auto delta = it->height - offset;  
         auto next = it+1;
-        for(; next != slice.end(); ++next)
+        for(; next != stack.end(); ++next)
         {
             if(!next->IsSolid())
                 break;
@@ -53,17 +53,17 @@ Engine::Range<ZType> FindMoveOpening(const MapItf& map, Position at, Engine::Ran
         if (delta > heightDifference.end)
             return Engine::Range<ZType>::empty();
 
-        Game::Cell::Height totalHeight = SumHeight(slice.Find(next, std::mem_fn(&Cell::IsSolid)));
+        Game::Cell::Height totalHeight = SumHeight(stack.Find(next, std::mem_fn(&Cell::IsSolid)));
         if (totalHeight < space)   
             return Engine::Range<ZType>::empty();
         return { at.Z() + delta, at.Z() + delta + totalHeight };
     }
     else 
     {   
-        if (it == slice.begin())
+        if (it == stack.begin())
             return Engine::Range<ZType>::empty();
 
-        auto non_solid_range = slice.FindBackwards(it, std::mem_fn(&Cell::IsSolid));
+        auto non_solid_range = stack.FindBackwards(it, std::mem_fn(&Cell::IsSolid));
         auto stepDown = SumHeight(non_solid_range | std::views::drop(1));
         auto delta = offset + stepDown;
         if (delta > -heightDifference.begin)

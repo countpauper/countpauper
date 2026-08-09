@@ -1,37 +1,87 @@
 #include "Game/Physics.h"
-#include "Game/Slice.h"
-
+#include "Game/Stack.h"
+#include <ranges>
 namespace Game 
 {
 
-Gravity::Gravity(float gravity) :
+Physics::Physics(float gravity) :
     gravity(gravity)
 {
 }
 
-void Gravity::operator()(float dt, Slice& slice) const
+void Physics::Pressure(Cell& first, Cell::Height firstHeight, Cell& second, Cell::Height secondHeight, float area, Orientation axis, float dt) const
+{
+    // gravity is taken into account in the static pressure gradient of each cell 
+    auto firstPressure =  first.GetPressure(firstHeight, gravity);
+    auto secondPressure = second.GetPressure(secondHeight, gravity);
+    // TODO gravity is already taken into account in the static pressure for non solids 
+    // This means a difference of no pressure means no force. 
+    // If there is a force, then multiply with the mass of the cell that it is towards to increase that pressure 
+    // if the desination is compressible it should shrink to achieve this. else what ? Solids may crack. Liquids will just push on 
+    auto deltaPressure =  firstPressure - secondPressure;   // Pa * 1m2
+    // TODO the distance depends on the type of interface. It may be a lot less with 
+    // 1) surface tension 
+    // 2) incompressible target
+    // 3) differene that is not because of hydrostatic pressure, but sharper interface due to temperature or density
+    float distance = 1.0; 
+    if (axis.IsHorizontal())
+    {
+        distance = static_cast<float>((first.height + seocnd.height) / 2);
+    }
+
+    if (deltaPressure > 0) 
+    {
+        // TODO: the distance is not the same for all types of interfaces. This (cell to cell center) is basically the case for the same gas fully advecting
+        // Instead compute opposing forces: 
+        // 1) density increase from incompressible 
+        // 2) surface tension (may be insignificant). This reduces the amount of mass that is lost by spraying (as the tension)
+        // 3) dynamic viscostiy already 
+        // 4) inellastic transfer of the force through or into a solid (if there is no transfer then crack )
+        // At the same time this should still result in internal acceleration (up to the interface) which moves objects 
+        float acceleration = deltaPressure / (first.Density() * distance); // N/m2 / kg/m3 = N/m2 / Nm2s2 =  
+        if (second.IsCompressible())
+        {
+            first.AccelerateFlow(axis, acceleration * dt);
+    }
+    else 
+    {
+        float acceleration = deltaPressure / (second.Density() * distance); // kg/m3 * N/m2 = N/m3 = kg/m2/s2
+        if (first.IsCompressible())
+        {
+            first.AccelerateFlow(axis, acceleration * dt);
+        }
+    }
+
+}
+
+Vertical::Vertical(float gravity) :
+    Physics(gravity)
+{
+}
+void Gravity::operator()(float dt, Stack& stack) const
 {
     float dv = dt * gravity; // meter per second
-    bool previousCompressible = true;
-    for(auto& cell: slice)
+    static Cell bottom(Material::bedrock, 255.95, 273.0);
+    static Cell top(Material::air, 255.95, 273.0, 101000.0);    // TODO if rock (cave) then top is also rock to prevent dropping? 
+    Cell& previous = top;  
+    for(auto& cell: std::ranges::reverse_view(stack))
     {
-        if (previousCompressible)
-            // TODO these should not be negative flow. Instead negative axes flow should be applied to the neighbour as an influx
-            cell.AddFlow(Orientation::down, dv);
-        previousCompressible = cell.IsCompressible();          
+        Pressure(cell, 0, previous, previous.height, 1.0, dt);
+        previous = cell;
     }
+    Pressure(previous, bottom, dt);
 }
 
 Viscosity::Viscosity() = default;
 
-void Viscosity::operator()(float dt, Slice& slice) const 
+void Viscosity::operator()(float dt, Stack& stack) const 
 {
-    for(auto& cell: slice)
+    for(auto& cell: stack)
     {
         // TODO: this is a simplified/optimized viscosity model with simply exponential dampening
         // for a more accurate model compute the "shear stress" as a Friction Force and decelerate a = F/m 
         // This shear stress is caused by relative velocity with another material, which would be the neihgbours. 
-        // These could be stationay if solid or the flow along the same axis of the cell flowing into and/or along.
+        // These could be stationary if solid or the flow along the same axis of the cell flowing into and/or along.
         // Since this is based on velocity and then affects velocity, RungeKutta could be needed to improve accuracy 
         // It also needs the two neighbours along the positive axes (assuming the negative axes neigbours handle the flows in their direction).
         // (Supposedly) the computation would be: d

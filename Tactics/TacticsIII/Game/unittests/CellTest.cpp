@@ -20,22 +20,22 @@ TEST(Cell, Vacuum)
 
 TEST(Cell, Pressure)
 {
-    EXPECT_EQ(Cell(Material::vacuum).GetPressure(0.5), 0.0f);              // vacuum sucks
-    EXPECT_NEAR(Cell(Material::air, 1.0, 305.15).GetPressure(0.0), atmosphericPressure, 0.5); // 1 atmosphere at 32 degrees
-    EXPECT_TRUE(std::isnan(Cell(Material::stone).GetPressure(0.5))); 
+    EXPECT_EQ(Cell(Material::vacuum).GetPressure(0.5, earthGravity), 0.0f);              // vacuum sucks
+    EXPECT_NEAR(Cell(Material::air, 1.0, 305.15).GetPressure(0.0, earthGravity), atmosphericPressure, 0.5); // 1 atmosphere at 32 degrees
+    EXPECT_TRUE(std::isnan(Cell(Material::stone).GetPressure(0.5, earthGravity))); 
     Cell air(Material::air, 1.0, 300.0);
     Cell warmAir = air;
     warmAir.Heat(20.0f);
-    EXPECT_GT(warmAir.GetPressure(0.5), air.GetPressure(0.5));    // pressure higher for warmer air;
+    EXPECT_GT(warmAir.GetPressure(0.5, earthGravity), air.GetPressure(0.5, earthGravity));    // pressure higher for warmer air;
 }
 
 TEST(Cell, StaticPressure)
 {
     Cell water(Material::water);
-    EXPECT_GT(water.GetPressure(0.0), water.GetPressure(1.0));
+    EXPECT_GT(water.GetPressure(0.0, earthGravity), water.GetPressure(1.0, earthGravity));
     Cell deepWater(Material::water, 10.3, 277.0);
-    EXPECT_GT(deepWater.GetPressure(0.0), water.GetPressure(0.0));
-    EXPECT_NEAR(deepWater.GetPressure(0.0), 2 * atmosphericPressure, 1000);
+    EXPECT_GT(deepWater.GetPressure(0.0, earthGravity), water.GetPressure(0.0, earthGravity));
+    EXPECT_NEAR(deepWater.GetPressure(0.0, earthGravity), 2 * atmosphericPressure, 1000);
 }
 
 TEST(Cell, Flow)

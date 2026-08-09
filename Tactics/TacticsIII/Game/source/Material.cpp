@@ -5,21 +5,21 @@
 namespace Game
 {
 
-
 bool Material::operator==(const Material& other) const
 {
     return this == &other;
 }
 static constexpr float NaN = std::numeric_limits<float>::quiet_NaN();
 
-/// @brief                          Name            Color, alpha = opacity(/255) per meter      freeze     boil(K)   Density  Density(@boil)   molemass    Enthalpy  liq visc,  gas visc
-//                                                                                                 (K)       (K)     (kg/m3)            (kg/mol)      (J/mol)    (Pa*s)   (Pa*s)
-const Material Material::air    {   "air",          Engine::RGBA(0x40, 0x40, 0xF0, 0x0  ),        63.0f,    83.0f,   1026.0f,  870.0f,  28.695e-3f,   11570,    1e-4,    18e-6 };
-const Material Material::water  {   "water",        Engine::RGBA(0x70, 0x90, 0xc0, 0xC0 ),       273.15f,  373.15f,  1000.0f,  990.0f,   18.020e-3f,   40660,    1e-3,    12e-6 };
-const Material Material::earth  {   "dirt",         Engine::RGBA(0x80, 0x40, 0x20       ),       800.0f,  1100.0f,   1600.0f,  2200.0f, 112.0e-3f,    168000,    1e+5,    20e-6 };
-const Material Material::stone  {   "stone",        Engine::RGBA(0x60, 0x60, 0x60       ),      1250.0f,  3000.0f,   2700.0f,  2500.0f,  81.585e-3f,   49000,    1e+3,    20e-6 };
-const Material Material::vegetation {"vegetation",  Engine::RGBA( 0x0, 0xA0,  0x0       ),       250.0f,   400.0f,   1100.0f,  1000.0f, 300.0e-3f,     72000,    1.0,     10e6 };
-const Material Material::vacuum {   "vacuum",       Engine::RGBA( 0x0,  0x0,  0x0, 0x0  ),          NaN,      NaN,   0.0f,     0.0f,      0.0e-3f,       NaN,    0.0,     0.0 };
+/// @brief                          Name            Color, alpha = opacity(/255) per meter      freeze     boil(K)   Density  LiqDensity   molemass    Enthalpy  liq visc,  gas visc
+//                                                                                                 (K)       (K)  (kg/m3@freeze) (kg/m3@boil)(kg/mol)  (J/mol)    (Pa*s)   (Pa*s)
+const Material Material::air    {   "air",          Engine::RGBA(0x40, 0x40, 0xF0, 0x0  ),        63.0f,    83.0f,   1026.0f,  870.0f,     28.695e-3f,   11570,    1e-4,    18e-6 };
+const Material Material::water  {   "water",        Engine::RGBA(0x70, 0x90, 0xc0, 0xC0 ),       273.15f,  373.15f,  1000.0f,  990.0f,     18.020e-3f,   40660,    1e-3,    12e-6 };
+const Material Material::earth  {   "dirt",         Engine::RGBA(0x80, 0x40, 0x20       ),       800.0f,  1100.0f,   1600.0f,  2200.0f,   112.0e-3f,    168000,    1e+5,    20e-6 };
+const Material Material::stone  {   "stone",        Engine::RGBA(0x60, 0x60, 0x60       ),      1250.0f,  3000.0f,   2700.0f,  2500.0f,    81.585e-3f,   49000,    1e+3,    20e-6 };
+const Material Material::vegetation {"vegetation",  Engine::RGBA( 0x0, 0xA0,  0x0       ),       250.0f,   400.0f,   1100.0f,  1000.0f,   300.0e-3f,     72000,    1.0,     10e6  };
+const Material Material::vacuum {   "vacuum",       Engine::RGBA( 0x0,  0x0,  0x0, 0x0  ),          NaN,      NaN,   0.0f,     0.0f,        0.0e-3f,       NaN,    0.0,     0.0   };
+const Material Material::bedrock  {  "bedrock",      Engine::RGBA(0x20, 0x20, 0x20       ),     8192.0f,  8192.0f,  10000.0f, 10000.0f,   100.0e-3f,    100000,    1e+6,    1e-3  };
 const Material* Material::all[] = { &air, &water, &earth, &stone, &vegetation };
 
 // NB dirt behaves like rhyoitic lava when melted in visosity and enthalpy

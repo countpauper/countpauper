@@ -6,7 +6,7 @@ namespace Game
 
 static const float gasConstant = 8.31446261815324;  // J /(mol·K) 
 static const float atmosphericPressure = 101325;    // Pa/Atm
-
+static const float earthGravity =  9.80665;         // m/s^2
 struct Material
 {
     std::string name;
@@ -38,6 +38,7 @@ struct Material
     static const Material stone;
     static const Material vegetation;
     static const Material vacuum;
+    static const Material bedrock;
     static const Material* all[5];
 
 private:

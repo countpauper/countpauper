@@ -3,29 +3,28 @@
 
 namespace Game 
 {
-static const float earthGravity = 9.80665f;          // m/sec, TODO needs to come or match with Physics.gravity 
 
-Cell::Pressure StaticPressure(float density, float depth, float gravity=earthGravity)
+Cell::Pressure StaticPressure(float density, float depth, float gravity)
 {
     return density * depth * gravity;
 }
 
-Cell::Pressure AdjustPressure(const Material& material, Cell::Pressure desiredPressure, float depth, float temperature)
+Cell::Pressure AdjustPressure(const Material& material, Cell::Pressure desiredPressure, float depth, float temperature, float gravity)
 {
     if (material.IsSolid(temperature, desiredPressure))
         return desiredPressure; 
     else 
     if (material.IsGas(temperature, desiredPressure))
-        return desiredPressure - StaticPressure(material.Density(temperature, desiredPressure), depth * 0.5);
+        return desiredPressure - StaticPressure(material.Density(temperature, desiredPressure), depth * 0.5, gravity);
     else 
-        return desiredPressure + StaticPressure(material.Density(temperature, desiredPressure), depth * 0.5);
+        return desiredPressure + StaticPressure(material.Density(temperature, desiredPressure), depth * 0.5, gravity);
 }
 
 Cell::Cell(const Material& material, Height height, Temperature temperature, Pressure pressure) :
     material(material),
     height(height),
     temperature(temperature),
-    pressure(AdjustPressure(material, pressure, static_cast<float>(height), static_cast<float>(temperature)))
+    pressure(AdjustPressure(material, pressure, static_cast<float>(height), static_cast<float>(temperature), earthGravity))
 {
 }
 
@@ -98,7 +97,7 @@ bool Cell::IsTranslucent() const
 }
 
 
-void Cell::AddFlow(Orientation dir, Flow df)
+void Cell::AccelerateFlow(Orientation dir, Flow df)
 {
     if (dir.IsNegative())
     {
@@ -147,7 +146,7 @@ Cell::Flow Cell::GetFlow(Orientation dir) const
         return flow[dir.Index()-1];
 }
 
-float Cell::GetPressure(Cell::Height atHeight) const
+float Cell::GetPressure(Cell::Height atHeight, float gravity) const
 {
     const auto& mat = material.get();
     if (atHeight > height)
@@ -158,7 +157,7 @@ float Cell::GetPressure(Cell::Height atHeight) const
     if (material.get().IsSolid(static_cast<float>(temperature), static_cast<float>(pressure)))
         return std::numeric_limits<float>::quiet_NaN();
     auto averagePressure = pressure;
-    return averagePressure + StaticPressure(Density(), static_cast<float>(height)/2 - static_cast<float>(atHeight)); 
+    return averagePressure + StaticPressure(Density(), static_cast<float>(height)/2 - static_cast<float>(atHeight), gravity); 
 }
 
 bool Cell::TryMerge(const Cell& rhs) 

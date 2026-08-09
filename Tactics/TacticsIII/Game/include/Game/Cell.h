@@ -30,7 +30,7 @@ struct Cell
     float Density() const;
     float Viscosity() const;
     Flow GetFlow(Orientation dir) const;
-    float GetPressure(Height height) const;
+    float GetPressure(Height height, float gravity) const;
 
     bool IsGas() const;
     bool IsCompressible() const;
@@ -39,7 +39,7 @@ struct Cell
     bool IsOpaque() const;
     bool IsTranslucent() const;
 
-    void AddFlow(Orientation dir, Flow df);
+    void AccelerateFlow(Orientation dir, Flow df);
     void Heat(float degrees);
 
     using Predicate = std::function<bool(const Cell&)>;
