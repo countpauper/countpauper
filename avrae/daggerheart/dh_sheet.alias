@@ -1,0 +1,59 @@
+<drac2>
+C=character()
+using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
+S=dh.sheet() or dict()
+
+name = C.name
+img = C.image or "https://upload.wikimedia.org/wikipedia/en/0/08/Daggerheart_logo_2024.png"
+
+lines = []
+fields = dict()
+
+heritage = C.race.split(' ')
+if len(heritage)==1:
+    community = "unborne" 
+    ancestry = heritage[0]
+else:
+    community, ancestry = heritage 
+
+lines.append(f'**Heritage:** {community.capitalize()} {ancestry.capitalize()}')
+
+lines.append(f"**Pronouns:** {'/'.join(dh.pronouns())}")
+
+lvl = C.levels.total_level
+lines.append(f"**Level:** {lvl}")
+
+sub, cls, multi = dh.get_class(C)
+if multi:
+    lines.append(f"**Class:** {sub.capitalize()} {cls.capitalize()}/{multi.capitalize()}")
+elif sub:
+    lines.append(f"**Class:** {sub.capitalize()} {cls.capitalize()}")
+elif cls:
+    lines.append(f"**Class:** {cls.capitalize()}")
+else:
+    lines.append("**Class:** set in Additional sheet at C69")
+
+lines.append(f"**Agility:** {dh.agility()} **Strength:** {dh.strength()} **Finesse:** {dh.finesse()}")
+lines.append(f"**Instinct:** {dh.instinct()} **Presence:** {dh.presence()} **Knowledge:** {dh.knowledge()}")
+
+
+lines.append(f"**Evasion:** {C.ac}")
+
+threshold = dh.thresholds()[2:]
+lines.append(f"**Thresholds:** Minor(1) **[**` {threshold[0]} `**>** Major(2) **[**` {threshold[1]} `**>** Severe(3)" +(\
+    f"**[**` {threshold[2]} `**>** Massive(4)" if len(threshold)>2 else ""))
+
+hp = C.hp
+missing_hp = C.max_hp - C.hp
+fields['HP'] = f"{'▣' * hp}{'🞎' * missing_hp} {C.hp_str()}" ## ♡♥
+
+fields['Stress'] = dh.stress()
+fields['Hope'] = dh.hope()
+fields['Armor'] = dh.armor()
+
+fieldstr = ' '.join(f'-f {title}|{desc}|inline' for title,desc in fields.items())
+
+nl='\n'
+desc = nl.join(lines)
+return f"""embed -title "{name}" -desc "{desc}" -thumb "{img}" {fieldstr} """
+</drac2>

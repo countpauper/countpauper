@@ -1,4 +1,4 @@
-`!dh_attack <weapon> ["<experience>"] [<dice>] [adv]… [dis]… [=<difficulty>]… `
+`!dh_attack <weapon> [<hope>=1h12]… [<fear>=1f12]… ["<experience>"] [<dice>] [adv]… [dis]… [=<difficulty>]… `
 
 **Make an attack in Daggerheart.**
 
@@ -15,8 +15,8 @@ with `!servalias rename dh_react react`.
 `difficultyevasion` - This is each target's difficulty or evasion.  If given damage will be rolled if the attack hits.
 
 **Examples**
-
 `!dh_attack mace` - Attack with a mace with a +2 Strength bonus on the sheet. It will deal `<proficiency>d8+1` damage, 
 `!dh_attack longbow sharp` - Add your "Sharpshooter" experience to the roll,  if that is in your `!cvar dh_sheet`.
+`!dh_attack sword h12` - Attack with a sword and force the hope die to roll 12.
 `!dh_attack broad adv` - Attack with your broadsword with advantage: `1d12 + 1d12 + 3 + 1d6`.
 `!dh_attack dagger = "14[petty noble]"` - Attack a Petty Noble with difficulty. If hit, the `1d8+1 will also be rolled`

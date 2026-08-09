@@ -31,10 +31,10 @@ damage = dh.damage_targets(goals, dh.proficiency(c), damage_dice)   # TODO get p
 
 effects=[]
 if quality=='hope':
-    effects.append(dh.hope())
+    effects.append(f'**Hope:** {dh.hope(+1)}')
 elif quality=='critical':
-    effects.append(dh.hope())
-    effects.append(dh.stress(-1))
+    effects.append(f'**Hope:** {dh.hope(+1)}')
+    effects.append(f'**Stress:** {dh.stress(-1)}')
 
 hope = duality_roll.get('hope')
 fear = duality_roll.get('fear')
