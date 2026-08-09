@@ -1,3 +1,4 @@
+## Daggerheart Utility Library
 ## Documentation: https://github.com/countpauper/countpauper/tree/master/avrae/daggerheart/daggerheart_lib.md
 
 ### For unit testing, import dependencies
@@ -192,18 +193,19 @@ def trait(name):
     else:
         return None
 
-def experience(sheet, name):
+
+def experiences(sheet, C):
     if not sheet:
         return None
     exp = sheet.get('experience', dict())
-    options=[(k,v) for k,v in exp.items() if name.lower() in k.lower()]
-    if not options:
+    return {exp: (dnd_skill.value if (dnd_skill:=C.skills[val]) else val) for exp, val in exp.items() }
+
+def experience(sheet, name, C=character()):
+    if not sheet:
         return None
-    name, val = options[0]
-    if dnd_skill := character().skills[val]:
-        return name, dnd_skill.value
-    else:
-        return name, val
+    exp = experiences(sheet, C)
+    options=[(k,v) for k,v in exp.items() if name.lower() in k.lower()]+[None]
+    return options[0]
 
 
 def sum_dice(*dice):
@@ -302,7 +304,7 @@ def try_mod_cc(C, name, amt):
         if amt:
             diff = cc.value
             diff = cc.mod(amt) - diff
-            return f"{cc} {'+' if diff>=0 else ''}{diff}"
+            return f"{cc.full_str(True)} {'+' if diff>=0 else ''}{diff}"
         else:
             return cc
     except 'ConsumableException':
@@ -319,6 +321,25 @@ def hope(amt=0):
 def stress(amt=0):
     C=character()
     return try_mod_cc(C, 'Stress', amt)
+
+# return gold dict with total in float handful 
+def gold(C=character()):
+    purse = C.coinpurse
+    gold = dict(
+        handful=purse['ep'],
+        bags=purse['sp'],
+        chest=purse['gp']
+        # NB: p unused. available for hidden Daggerheart imported number
+    )
+
+    total =  gold['handful'] + gold['bags'] * 10 + gold['chest'] * 100
+    if coins:=purse['cp']: # reasonable popular homebrew, single coins
+        # If not set it is not mentioned in the dict and the total remains integer
+        gold['coins'] = coins
+        total += 0.1 * coins
+
+    gold['total'] = total
+    return gold
 
 digits = "0123456789"
 # find the index in the string s of the first character not in allowed

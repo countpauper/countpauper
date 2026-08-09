@@ -43,15 +43,20 @@ threshold = dh.thresholds()[2:]
 lines.append(f"**Thresholds:** Minor(1) **[**` {threshold[0]} `**>** Major(2) **[**` {threshold[1]} `**>** Severe(3)" +(\
     f"**[**` {threshold[2]} `**>** Massive(4)" if len(threshold)>2 else ""))
 
+lines.append('**Experience:**')
+experiences = dh.experiences(S, C)
+for exp, score in experiences.items():
+    lines.append(f'{exp}: `{score}`')
+
 hp = C.hp
 missing_hp = C.max_hp - C.hp
 fields['HP'] = f"{'▣' * hp}{'🞎' * missing_hp} {C.hp_str()}" ## ♡♥
-
 fields['Stress'] = dh.stress()
 fields['Hope'] = dh.hope()
 fields['Armor'] = dh.armor()
+fields['Gold'] = dh.gold().get('total')
 
-fieldstr = ' '.join(f'-f {title}|{desc}|inline' for title,desc in fields.items())
+fieldstr = ' '.join(f'-f "{title}|{desc}|inline"' for title,desc in fields.items())
 
 nl='\n'
 desc = nl.join(lines)
