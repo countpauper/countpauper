@@ -207,7 +207,6 @@ def experience(sheet, name, C=character()):
     options=[(k,v) for k,v in exp.items() if name.lower() in k.lower()]+[None]
     return options[0]
 
-
 def sum_dice(*dice):
     return '+'.join(die for die in dice if die!='0')
 
@@ -304,7 +303,7 @@ def try_mod_cc(C, name, amt):
         if amt:
             diff = cc.value
             diff = cc.mod(amt) - diff
-            return f"{cc.full_str(True)} {'+' if diff>=0 else ''}{diff}"
+            return f"{cc} {'+' if diff>=0 else ''}{diff}"
         else:
             return cc
     except 'ConsumableException':
@@ -412,13 +411,27 @@ def format_bonus(bonus):
 def format_effects(effects, separator='\n'):
     return separator.join(effect for effect in effects if effect is not None)
 
-def parse_attack(attack_raw):
+def parse_attack_raw(attack_raw):
+    result = dict()
     if automation:= attack_raw.get('automation'):
         for auto in automation:
-            for effect in auto.get('effects',[]): 
-                if effect.get('type') == 'attack':
-                    for hit in effect.get('hit',[]):
-                        if hit.get('type') == 'damage':
-                            return effect.get('attackBonus'), hit.get('damage')
+            if auto.get('type') == 'target':
+                for effect in auto.get('effects',[]): 
+                    if effect.get('type') == 'attack':
+                        result['bonus'] = effect.get('attackBonus')
+                        for hit in effect.get('hit',[]):
+                            if hit.get('type') == 'damage':
+                                result['damage'] = hit.get('damage')
+                                break
+            elif auto.get('type') == 'text':
+                result['feature'] = auto.get('text')
+    return result
 
-    return None, None
+def parse_attack(atk):
+    result = dict(name = atk.name)
+    result.update(parse_attack_raw(atk.raw))
+    return result
+
+def weapons(C):
+    return [parse_attack(atk) for atk in C.attacks]
+

@@ -14,8 +14,10 @@ c=character()
 weapon = find_attack(c, args[0])
 if not weapon:
     return f"echo Weapon `{args[0]}` is not listed on {c.name}'s sheet.\n{character().attacks}"
-attack_bonus, damage_dice = dh.parse_attack(weapon.raw)
-if attack_bonus is None:
+atk = dh.parse_attack(weapon)
+damage_dice = atk.get('damage')
+attack_bonus = atk.get('bonus')
+if attack_bonus is None or damage_dice is None:
     return f'echo Action {arg[0]} is not a weapon attack.'
 
 args = args[1:]
@@ -30,6 +32,8 @@ total, quality, goals = dh.interpret(**duality_roll)
 damage = dh.damage_targets(goals, dh.proficiency(c), damage_dice)   # TODO get proficiency
 
 effects=[]
+if feature := atk.get('feature'):
+    effects.append(f'**{weapon.name}:** {feature}')
 if quality=='hope':
     effects.append(f'**Hope:** {dh.hope(+1)}')
 elif quality=='critical':

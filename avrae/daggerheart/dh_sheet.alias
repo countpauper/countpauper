@@ -48,6 +48,11 @@ experiences = dh.experiences(S, C)
 for exp, score in experiences.items():
     lines.append(f'{exp}: `{score}`')
 
+lines.append(f'**Weapons:** ')
+for weapon in dh.weapons(C):
+    # TODO Only way to weapon.get('range') seems to be from a gvar and avrae gsheet forces attack to be an integer, while !attack add, can support strings for traits
+    lines.append(f"**{weapon.get('name')}** Bonus: `{weapon.get('bonus')}` Damage:`{weapon.get('damage')}` " + weapon.get('feature',''))
+
 hp = C.hp
 missing_hp = C.max_hp - C.hp
 fields['HP'] = f"{'▣' * hp}{'🞎' * missing_hp} {C.hp_str()}" ## ♡♥
