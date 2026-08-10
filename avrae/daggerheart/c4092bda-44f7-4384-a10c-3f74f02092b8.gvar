@@ -435,3 +435,8 @@ def parse_attack(atk):
 def weapons(C):
     return [parse_attack(atk) for atk in C.attacks]
 
+def loadout(C):
+    return [spell.name for spell in C.spellbook.spells if spell.prepared]
+
+def vault(C):
+    return [spell.name for spell in C.spellbook.spells if not spell.prepared]
