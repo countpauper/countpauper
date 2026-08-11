@@ -1,0 +1,15 @@
+<drac2>
+using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
+C=character()
+sheet = dh.sheet()
+hope=6
+stress=dh.max_stress(C)
+armor=dh.max_armor(C)
+
+hope_update = dh.update_cc(C, 'Hope', 6)
+stress_update = dh.update_cc(C, 'Stress', stress)
+armor_update = dh.update_cc(C, 'Armor', armor)
+
+nl='\n'
+return f"echo {nl.join(str(u) for u in [hope_update, stress_update, armor_update])}"
+</drac2>

@@ -85,7 +85,10 @@ def armor(C=character()):
     try:
         return C.cc(cc_name)
     except 'ConsumableException':
-        return C.create_cc(cc_name, minVal=0, maxVal=max_armor(C), dispType='hex', desc=armor_cc_desc)
+        return None
+
+def max_stress(C=character()):
+    return get_mapped_score(C,'persuasion')
 
 def parse_arg(arg):
     if not arg:
@@ -296,7 +299,53 @@ def interpret(hope=None, fear=None, bonus=None, goals=[]):
         else:
             return total, False, interpret_goals(total, goals)
 
+cc_definition=dict(
+    Hope=dict(
+        dispType='star',
+        desc='Players can use hope to help an ally, utilize an experience, tag team, or active a hope feature.',
+        initial_value=2,
+        reset_to=0
+    ),
+    Stress=dict(
+        dispType ='bubble',
+        desc="""Stress represents how much mental physical and emotional strain a character can endure.
+        Some special abilities or effects require the character activating them to mark Stress and the GM can require a PC to mark Stress as a GM move or to represent the consequence of an action roll.
+        When a character marks their last Stress, they become Vulnerable until they clear at least 1 Stress.
+        When a character must mark or more Stress but can’t they mark HP instead.""",
+        initial_value=0,
+        reset_to=0
+    ), 
+    Armor=dict(
+        dispType='hex',
+        desc="""When you take damage you can mark one Armor Slot to reduce the severity of the damage by one threshold.""",
+    )
+)
 
+def update_cc(C, name, newmax, **kwargs):
+    oldmax = 0
+    try:
+        cc = C.cc(name)
+        delta = newmax - cc.max 
+        if not delta:
+            return cc, delta
+        definition=dict(
+            initial_value=cc.value if cc.reset_to else cc.value + delta,
+            desc=cc.desc,
+            dispType=cc.display_type,
+            reset_to=cc.reset_to,
+            reset_by=cc.reset_by,
+            reset=cc.reset_on
+        )
+        C.delete_cc(name)
+    except 'ConsumableException':
+        definition=dict()
+        definition.update(cc_definition.get(name,dict()))
+        delta = None
+    definition['minVal'] = '0'
+    definition['maxVal'] = f'{newmax}'
+    definition.update(kwargs)
+    return C.create_cc(name, **definition), delta
+    
 def try_mod_cc(C, name, amt):
     try:
         cc=C.cc(name)
