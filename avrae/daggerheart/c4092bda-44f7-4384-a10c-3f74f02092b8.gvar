@@ -17,13 +17,25 @@ def fuzzy_match(input, list):
         return match[0]
     return None 
 
-def sheet(var_name=None):
-    C=character()
+def sheet(C=character(), var_name=None):
     if var_name:
         sheet = C.get_cvar(var_name) or get_uvar(var_name)
     else:
         sheet = C.get_cvar('dh_sheet') or get_uvar(C.name)
     return load_yaml(sheet) if sheet else None
+
+def save(sheet, C=character(), var_name=None):
+    sheet_str = dump_json(sheet)
+    if var_name:
+        if C:
+            sheet = C.set_cvar(var_name, sheet_str)
+        else:
+            set_uvar(var_name, sheet_str)
+    else:
+        if C:
+            sheet = C.set_cvar('dh_sheet', sheet_str)
+        else:
+            set_uvar('dh_sheet', sheet_str)
 
 def get_class(C=character()):
     # only support one level line
@@ -210,6 +222,19 @@ def experience(sheet, name, C=character()):
     options=[(k,v) for k,v in exp.items() if name.lower() in k.lower()]+[None]
     return options[0]
 
+max_experiences=9
+
+def add_experience(sheet, name, C):
+    if not sheet:
+        sheet=dict()
+    exp = sheet.get('experience', dict())
+    if len(exp) >= max_experiences:
+        return None, 0
+    map=skills_map[len(exp)]
+    exp[name] = map
+    sheet['experience'].update(exp)
+    return name, experience(sheet, name, C)
+    
 def sum_dice(*dice):
     return '+'.join(die for die in dice if die!='0')
 

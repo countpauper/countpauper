@@ -1,15 +1,42 @@
 <drac2>
 using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
+argstr="""&*&"""
+args=argparse(argstr,parse_ephem=False)
 C=character()
-sheet = dh.sheet()
+sheet = dh.sheet(C)
 hope=6
 stress=dh.max_stress(C)
 armor=dh.max_armor(C)
 
-hope_update = dh.update_cc(C, 'Hope', 6)
-stress_update = dh.update_cc(C, 'Stress', stress)
-armor_update = dh.update_cc(C, 'Armor', armor)
+cc_updates=[]
+cc_updates.append(dh.update_cc(C, 'Hope', 6))
+cc_updates.append(dh.update_cc(C, 'Stress', stress))
+cc_updates.append(dh.update_cc(C, 'Armor', armor))
 
-nl='\n'
-return f"echo {nl.join(str(u) for u in [hope_update, stress_update, armor_update])}"
+def format_delta(d):
+    if d<0:
+        return str(d)
+    else:
+        return f'+{d}'
+
+updates=list()
+for cc_update in cc_updates:
+    if cc_update[1] is None:
+        updates.append(f'**{cc_update[0].name}:** {cc_update[0]} created.')
+    elif cc_update[1]!=0:
+        updates.append(f'**{cc_update[0].name}:** {cc_update[0]} `{format_delta(cc_update[1])}`.')
+
+experiences = dh.experiences(sheet, C)
+for new_experience in args.get('exp'):
+    exp_update = dh.add_experience(sheet, new_experience, C)
+    updates.append(f'**{exp_update[0]}** `{exp_update[1]}`')
+
+# TODO: exp<n> dh.max_experiences
+dh.save(sheet, C)
+
+if not updates:
+    return 'echo Everything is already up to date.'
+else:
+    nl='\n'
+    return f"echo {nl.join(str(u) for u in updates)}"
 </drac2>
