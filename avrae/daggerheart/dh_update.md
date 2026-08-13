@@ -18,4 +18,3 @@ To disable an experience, set the name to "". This will not change the assignmen
 **Examples**
 `!dh_update -exp "Dance in the moonlight" -exp "Loves animals"` - Adds two experiences which will use the first 2 scores in the sheet
 `!dh_update -exp2 "Loves cute animals"` - Rename one of the experiences. 
-`!dh_update -exp2 "Loves animals=3"` -Set the score of Loves animals to 3 instead of mapping it to the 2nd score in the sheet.  

@@ -29,12 +29,18 @@ for cc_update in cc_updates:
 experiences = dh.experiences(sheet, C)
 for new_experience in args.get('exp'):
     exp_update = dh.add_experience(sheet, new_experience, C)
-    updates.append(f'**{exp_update[0]}** (new) `{exp_update[1]}`')
+    if typeof(exp_update[1])=="str":
+        updates.append(f'**{exp_update[0]}** failed: {exp_update[1]}')
+    else:
+        updates.append(f'**{exp_update[0]}** (new) `{exp_update[1]}`')
 
 for n in dh.experience_nrs:
     for changed_experience in args.get(f'exp{n}'):
         exp_update = dh.change_experience(sheet, n-min(dh.experience_nrs), changed_experience, C)
-        updates.append(f'**{exp_update[0]}** (redefined) `{exp_update[1]}`')
+        if typeof(exp_update[1])=="str":
+            updates.append(f'**{exp_update[0]}** failed: {exp_update[1]}')
+        else:
+            updates.append(f'**{exp_update[0]}** (redefined) `{exp_update[1]}`')
  
 dh.save(sheet, C)
 
