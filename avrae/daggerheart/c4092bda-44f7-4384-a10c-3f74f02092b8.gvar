@@ -41,7 +41,7 @@ def gather_gvars(svar_name, uvar_name):
     return load_yaml(get_uvar(uvar_name,'[]')) +  load_yaml(get_svar(svar_name,'[]'))
 
 def load_feats():
-    gvars = ['7a5a3d45-7ad0-4db9-9c9a-dc37294a216e']
+    gvars = ['7a5a3d45-7ad0-4db9-9c9a-dc37294a216e', '1eeba3a1-1fd9-4b72-8713-d6475ccfc204']
     gvars += gather_gvars('dh_features', 'dh_features')
     feats = dict()
     for gvar in gvars: 
@@ -260,12 +260,14 @@ def sum_dice(*dice):
 
 # Sort operands into hope rolls, fear rolls and bonus rolls
 ## and return the result as a dictionary with hope, fear and bonus list
+## Also add a dictionary with counter costs
 ## Experiences and traits are replaced with strings
 def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
     hope_dice = []
     fear_dice = []
     bonus_dice = []
     goals = []
+    cost = dict()
     advantage = 0
     disadvantage = 0
     for operand in operands: 
@@ -284,6 +286,7 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
             bonus_dice.append(f'{trait_bonus[1]}[{trait_bonus[0]}]')
         elif sheet and (exp_bonus:=experience(sheet, operand)) is not None:
             bonus_dice.append(f'{exp_bonus[1]}[{exp_bonus[0]}]')
+            cost['Hope'] = cost.get('Hope', 0) - 1
         elif 'advantage'.startswith(operand.lower()):
             advantage += 1
         elif 'disadvantage'.startswith(operand.lower()):
@@ -297,8 +300,8 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
         bonus_dice.append('1d6[advantage]')
     elif disadvantage > advantage:
         bonus_dice.append('-1d6[disadvantage]')
-    return dict(hope=hope_dice or hope, fear=fear_dice or fear, bonus=bonus_dice, goals=goals)   
-
+    return dict(hope=hope_dice or hope, fear=fear_dice or fear, bonus=bonus_dice, goals=goals), cost   
+ 
 # vroll each part and return individually
 # All dice are supposed to be a list. 
 # If hope is empty, fear is the DM die 
@@ -318,6 +321,20 @@ def roll_em(hope=None, fear=None, bonus=[], goals=[]):
 
     result['goals'] = [vroll(sum_dice(*g)) for g in goals]
     return result
+
+
+def format_dice(hope=None, fear=None, bonus=[], goals=[]):
+    summation=[]
+    if hope and fear:
+        summation += [sum_dice(*hope)+'[hope]', sum_dice(*fear)+'[fear]']
+    elif hope:
+        summation += hope
+    elif fear: 
+        summation += fear 
+   
+    if bonus:
+        summation+=bonus
+    return sum_dice(*summation)
 
 def all_goals(goals):
     return {goal_roll:2 for goal_roll in goals}
@@ -390,7 +407,7 @@ def update_cc(C, name, newmax, **kwargs):
     definition['maxVal'] = f'{newmax}'
     definition.update(kwargs)
     return C.create_cc(name, **definition), delta
-    
+
 def try_mod_cc(C, name, amt):
     try:
         cc=C.cc(name)
@@ -414,6 +431,17 @@ def hope(amt=0):
 def stress(amt=0):
     C=character()
     return try_mod_cc(C, 'Stress', amt)
+
+# Try to pay all the costs and return the list of result (for format_result) or a failure string
+def pay_em(costs, C=character()):
+    for cc_name, amt in costs.items():
+        try: 
+            has = C.get_cc(cc_name)
+        except 'ConsumableException':
+            return f"No `{cc_name}`"
+        if has<-amt:
+            return f"Not enough `{cc_name}` : {has}/{-amt}"
+    return [f"**{cc_name}:** {try_mod_cc(C, cc_name, amt)}" for cc_name, amt in costs.items()]
 
 # return gold dict with total in float handful 
 def gold(C=character()):

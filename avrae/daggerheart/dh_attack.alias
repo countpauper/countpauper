@@ -24,14 +24,19 @@ args = args[1:]
 
 summation = dh.parse(args)
 sheet = dh.sheet()
-duality_dice = dh.duality(sheet, summation)
+duality_dice, costs = dh.duality(sheet, summation)
 duality_dice['bonus'] = [f'{attack_bonus}[{weapon.name}]'] +  duality_dice.get('bonus',[])
+
+effects = dh.pay_em(costs)
+if typeof(effects)!='SafeList':
+    return f"echo Can't attack with {weapon} `{dh.format_dice(**duality_dice)}` : {effects}"
+
+
 duality_roll = dh.roll_em(**duality_dice)
 
 total, quality, goals = dh.interpret(**duality_roll)
 damage = dh.damage_targets(goals, dh.proficiency(c), damage_dice)   # TODO get proficiency
 
-effects=[]
 if feature := atk.get('feature'):
     effects.append(f'**{weapon.name}:** {feature}')
 if quality=='hope':

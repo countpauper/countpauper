@@ -3,7 +3,7 @@ using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 
 args = &ARGS&
 summation = dh.parse(args)
-gm_dice = dh.duality(None, summation, hope=None, fear=["1d20"])
+gm_dice, cost = dh.duality(None, summation, hope=None, fear=["1d20"])
 gm_roll = dh.roll_em(**gm_dice)
 total, crit, goals = dh.interpret(**gm_roll)
 

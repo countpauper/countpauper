@@ -5,13 +5,17 @@ args = &ARGS&
 summation = dh.parse(args)
 
 sheet = dh.sheet()
-duality_dice = dh.duality(sheet, summation)
+duality_dice, costs = dh.duality(sheet, summation)
+
+effects = dh.pay_em(costs)
+if typeof(effects)!='SafeList':
+    return f"echo Can't roll `{dh.format_dice(**duality_dice)}` : {effects}"
 
 duality_roll = dh.roll_em(**duality_dice)
 
 total, quality, goals = dh.interpret(**duality_roll)
 
-effects=[]
+
 if quality=='hope':
     effects.append(f'**Hope:** {dh.hope(+1)}')
 elif quality=='critical':
