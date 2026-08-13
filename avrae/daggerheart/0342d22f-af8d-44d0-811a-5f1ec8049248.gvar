@@ -1,0 +1,64 @@
+{
+    "template": {
+        "evasion": 0,
+        "hp": 0,
+        "domains": ["one", "two"],
+        "hope": ["feature"],
+        "subs": {
+            "first": {
+                "cast": "none",
+                "foundation": [""], 
+                "specialization": [""], 
+                "mastery": [""]
+            }, 
+            "second": {
+                "cast": "none",
+                "foundation": [""], 
+                "specialization": [""], 
+                "mastery": [""]
+            }
+        }
+    },
+    "bard":{
+        "evasion": 10,
+        "hp": 5,
+        "domains": ["codex", "grace"],
+        "hope": ["Make a Scene"],
+        "subs": {
+            "troubadour": {
+                "cast": "pre",
+                "foundation": ["Gifted Performer"], 
+                "specialization": ["Maestro"], 
+                "mastery": ["Virtuoso"]
+            }, 
+            "wordsmith": 
+            {
+                "cast": "pre",
+                "foundation": ["Rousing Speech", "Heart of a Poet"],
+                "specialization": ["Eloquent"], 
+                "mastery": ["Epic Poetry"]
+            }
+        }
+    },
+    "rogue":{
+        "evasion": 12,
+        "hp": 6,
+        "domains": ["midnight", "grace"],
+        "hope": ["Rogue’s Dodge"],
+        "subs": {
+            "nightwalker": {
+                "cast": "fin",
+                "foundation": ["Shadow Stepper"], 
+                "specialization": ["Dark Cloud", "Adrenaline"], 
+                "mastery": ["Fleeting Shadow", "Vanishing Act"]
+            }, 
+            "syndicate": {
+                "cast": "fin",
+                "foundation": ["Well-Connected"], 
+                "specialization": ["Contacts Everywhere"], 
+                "mastery": ["Reliable Backup"]
+            }
+        }
+    }
+
+}
