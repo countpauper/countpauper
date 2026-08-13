@@ -1,4 +1,4 @@
-`!dh_update [-exp[<n>] "Experience[=<score>]"]…`
+`!dh_update [-exp[<n>] "Experience"]…`
 
 **Synchronize your Daggerheart sheet with your imported aheet** 
 
@@ -12,8 +12,8 @@ It creates counters that don't exist or updates them if they do:
 
 Experience descriptions are not imported, so they must be described with this alias. These descriptions can be used when rolling `!duality`, `!dh_attack` or `!dh_react`.  
 - `-exp "<Experience>"` Add an <Experience>. These will be added to your list of experience by order in your sheet. You can add two after character creation and one every tier. 
-- `-exp<n> "<Experience>"` - Name or rename a specific experience by index (starting at 1) in your character sheet. 
-To disable an experience, set the name to "". This will not change the assignment or score of any other experiences. 
+- `-exp<n> "<Experience>"` - Rename an experience by index (starting at 1) in your character sheet. 
+To disable an experience, set the name to "". This will not change the assignment or score of any other experiences. It will just prevent it from being used in the future. 
 
 **Examples**
 `!dh_update -exp "Dance in the moonlight" -exp "Loves animals"` - Adds two experiences which will use the first 2 scores in the sheet

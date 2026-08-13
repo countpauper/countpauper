@@ -25,7 +25,7 @@ def sheet(C=character(), var_name=None):
     return load_yaml(sheet) if sheet else None
 
 def save(sheet, C=character(), var_name=None):
-    sheet_str = dump_json(sheet)
+    sheet_str = dump_yaml(sheet)
     if var_name:
         if C:
             sheet = C.set_cvar(var_name, sheet_str)
@@ -213,28 +213,37 @@ def experiences(sheet, C):
     if not sheet:
         return None
     exp = sheet.get('experience', dict())
-    return {exp: (dnd_skill.value if (dnd_skill:=C.skills[val]) else val) for exp, val in exp.items() }
+    return {exp: (dnd_skill.value if (dnd_skill:=C.skills[val]) else val) for exp, val in exp.items() if exp}
 
 def experience(sheet, name, C=character()):
     if not sheet:
         return None
     exp = experiences(sheet, C)
-    options=[(k,v) for k,v in exp.items() if name.lower() in k.lower()]+[None]
+    options=[(k,v) for k,v in exp.items() if k and name.lower() in k.lower()]+[None]
     return options[0]
 
-max_experiences=9
+experience_nrs=range(1,10)
 
 def add_experience(sheet, name, C):
     if not sheet:
         sheet=dict()
     exp = sheet.get('experience', dict())
-    if len(exp) >= max_experiences:
-        return None, 0
+    if len(exp) >= len(experience_nrs):
+        return name, f"Maximum number of experiences `{len(experience_nrs)}` reached" 
     map=skills_map[len(exp)]
-    exp[name] = map
-    sheet['experience'].update(exp)
-    return name, experience(sheet, name, C)
-    
+    sheet['experience'].update({name:map})
+    return experience(sheet, name, C)
+
+def change_experience(sheet, idx, name, C):
+    if not sheet:
+        sheet=dict()
+    exp = sheet.get('experience', dict())
+    if idx >= len(exp): 
+        return name, f"Experience `#{idx+min(experience_nrs)}` does not exist."
+    exp = {(name if i==idx else old_name):v for i, (old_name,v) in enumerate(exp.items()) }
+    sheet['experience'] = exp
+    return experience(sheet, name, C)
+
 def sum_dice(*dice):
     return '+'.join(die for die in dice if die!='0')
 
