@@ -1,6 +1,10 @@
 import csv
 import json
 
+def escape(s):
+    if not s:
+        return s
+    return ''.join('\\"' if c == '"' else c for c in s)
 
 def parse_feature(feature):
     if not feature:
@@ -13,7 +17,7 @@ def convert_generic(input, category ):
     for row in input:
         name, desc = parse_feature(row['Feature'])
         data[name] = { k.lower():v for k,v in row.items() if k!='Feature' and v}
-        data[name].update(dict(description=desc,category=category))
+        data[name].update(dict(description=escape(desc),category=category))
     return data
 
 def convert_subclass(input):
@@ -25,15 +29,15 @@ def convert_subclass(input):
 
         name, desc = parse_feature(row['Foundation'])
         if name is not None:
-            data[name] = {'description':desc, 'category':'foundation', 'class':cls, 'subclass':sub}
+            data[name] = {'description':escape(desc), 'category':'foundation', 'class':cls, 'subclass':sub, 'level':1}
 
         name, desc = parse_feature(row['Specialization'])
         if name is not None:
-            data[name] = {'description':desc, 'category':'specialization', 'class':cls, 'subclass':sub}
+            data[name] = {'description':escape(desc), 'category':'specialization', 'class':cls, 'subclass':sub, 'level':5}
 
         name, desc = parse_feature(row['Mastery'])
         if name is not None:
-            data[name] = {'description':desc, 'category':'mastery', 'class':cls, 'subclass':sub}
+            data[name] = {'description':escape(desc), 'category':'mastery', 'class':cls, 'subclass':sub, 'level':8}
     return data
 
 def parse_cost(cost):
@@ -59,8 +63,8 @@ def convert_cards(input):
     data = dict()
     for row in input:
         row_str='\n'.join(row)
-        name, domain, cost, description = row_str.split('\n',maxsplit=3)
-        card = dict(description=description,category='domain')
+        name, domain, cost, desc = row_str.split('\n',maxsplit=3)
+        card = dict(description=escape(desc),category='domain')
         card.update(parse_cost(cost))
         card.update(parse_domain(domain))
         data[name.lower()] = card
@@ -72,6 +76,10 @@ if __name__ == "__main__":
         reader = csv.reader(csvfile)
         data.update(convert_cards(reader))
 
+    with open('daggerheart/7a5a3d45-7ad0-4db9-9c9a-dc37294a216e.gvar',mode='w',newline='') as jsonFile:
+        jsonFile.write(json.dumps(data, indent='\t'))
+
+    data = dict()    # split in two gvars because it's too muc
     with open('daggerheart/class features.csv', newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         data.update(convert_generic(reader, 'class'))
@@ -88,5 +96,6 @@ if __name__ == "__main__":
         reader = csv.DictReader(csvfile)
         data.update(convert_generic(reader, 'community'))
 
-    with open('.\\domain_cards.json',mode='w',newline='') as jsonFile:
+    with open('daggerheart/1eeba3a1-1fd9-4b72-8713-d6475ccfc204.gvar',mode='w',newline='') as jsonFile:
         jsonFile.write(json.dumps(data, indent='\t'))
+

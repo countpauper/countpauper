@@ -37,6 +37,17 @@ def save(sheet, C=character(), var_name=None):
         else:
             set_uvar('dh_sheet', sheet_str)
 
+def gather_gvars(svar_name, uvar_name):
+    return load_yaml(get_uvar(uvar_name,'[]')) +  load_yaml(get_svar(svar_name,'[]'))
+
+def load_feats():
+    gvars = ['7a5a3d45-7ad0-4db9-9c9a-dc37294a216e']
+    gvars += gather_gvars('dh_features', 'dh_features')
+    feats = dict()
+    for gvar in gvars: 
+        feats.update(load_json(get_gvar(gvar) or '{}'))
+    return feats
+
 def get_class(C=character()):
     # only support one level line
     for cls, lvl in C.levels:

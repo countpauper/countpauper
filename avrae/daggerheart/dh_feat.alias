@@ -1,0 +1,21 @@
+<drac2> 
+using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
+
+args=&ARGS&
+if not args:
+    return f'help {ctx.alias} -here'
+
+feats = dh.load_feats()
+
+
+feat_name = args[0]
+if feat:=feats.get(feat_name.lower()):
+    pass
+else:
+    if feat_name:=dh.fuzzy_match(feat_name, feats.keys()):
+        feat = feats.get(feat_name)
+    else:
+        return f'echo Unknown feature: `{args[0]}`' 
+return f"""embed -title "{feat_name.title()}" -desc "{feat.get('description')}" """
+
+</drac2>
