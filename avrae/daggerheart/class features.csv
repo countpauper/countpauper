@@ -1,0 +1,39 @@
+Class,Feature,Hope
+Bard,"MAKE A SCENE: Spend 3 Hope to temporarily Distract a target within Close range, giving them a -2 penalty to their Difficulty.",-3
+Druid,"EVOLUTION: Spend 3 Hope to transform into a Beastform without marking a Stress. When you do, choose one trait to raise by +1 until you drop out of that Beastform.",-3
+Guardian,FRONTLINE TANK: Spend 3 Hope to clear 2 Armor Slots.,-3
+Ranger,HOLD THEM OFF: Spend 3 Hope when you succeed on an attack with a weapon to use that same roll against two additional adversaries wtihin range of the attack.,-3
+Rogue,ROGUE'S DODGE: Spend 3 Hope to gain a +2 bonus to your Evasion until the next time an attack succeeds against you. This bonus lasts until your next rest.,-3
+Seraph,LIFE SUPPORT: Spend 3 Hope to clear a Hit Point on an ally within Close Range.,-3
+Sorcerer,VOLATILE MAGIC: Spend 3 Hope to reroll any number of your damage dice on an attack that deals magic damage.,-3
+Warrior,NO MERCY: Spend 3 Hope to gain a +1 bonus to your attack rolls until your next rest.,-3
+Wizard,NOT THIS TIME: Spend 3 Hope to force an adversary within Far range to reroll an attack or damage roll.,-3
+Bard,"RALLY: Once per session, describe how you rally the party and give yourself and each of your allies a Rally Die. At level 1, your Rally Die is a d6. A PC can spend their Rally Die to roll it, adding the result to their action roll, reaction roll, damage roll, or to clear a number of Stress equal to the result. At the end of each session, clear all unspent Rally Dice.
+
+At level 5, your Rally Die increases to a d8.",
+Druid,"BEASTFORM: Mark a Stress to magically transform into a creature of your tier or lower from the Beastform list. You can drop out of this form at any time. While transformed, you can't use weapons or cast spells from domain cards, but you can still use other features abilities you have access to. Spells you cast before you transform stay active and last for their normal duration, and you can talk and communicate as normal. Additionally, you gain the Beastform's features, add their Evasion bonus to your Evasion, and use the trait specified in thier statistics for your attack. While you're in Beastform, your armor becomes part of your body and you mark Armor Slots as usual; when you drop out of a Beastform, those marked Armor Slots remain marked. If you mark your last Hit Point, you automatically drop out of this form.",
+Druid,"WILDTOUCH: You can perform harmless, subtle effects that involve nature - such as causing a flower to rapidly grow, summoning a slight gust of wind, or starting a campfire - at will.",
+Guardian,"UNSTOPPABLE: Once per long rest, you can become Unstoppable. You gain an Unstoppable Die. At level 1, your Unstoppable Die is a d4. Place it on your character sheet in the space provided, starting with the 1 value facing up. After you make a damage roll that deals 1 or more Hit Points to a target, increase the Unstoppable Die value by one. When the die's value would exceed its maximum value or when the scene ends, remove the die and drop out of Unstoppable. At level 5, your Unstoppable Die increases to a d6.
+While Unstoppable, you gain the following benefits:
+* You reduce the severity of physical damage by one threshold (Severe to Major, Major to Minor, Minor to None).
+* You add the current value of the Unstoppable Die to your damage roll.
+* You can't be Restrained or Vulnerable.",
+Ranger,"RANGER'S FOCUS: Spend a Hope and make an attack against a target. One a success, deal your attack's normal damage and temporarily make the attack's target your Focus. Until this feature ends or you make a different creature your Focus, you gaint he following benefits against your Focus:
+* You know precisely what direction they are in.
+* When you deal damage to them, they must mark a Stress.
+* When you fail an attack against them, you can end your Ranger's Focus feature to reroll your Duality Dice.",
+Rogue,"CLOAKED: Any time you would be Hidden, you are instead Cloaked. In addition to the benefits of the Hidden condition, while Cloaked you remain unseen if you are stationary when an adversary moves to where they would normally see you. When you move into or within an adversary's line of sight or make an attack, you are no longer Cloaked,",
+Rogue,"SNEAK ATTACK: When you succeed on an attack while Cloaked or while an ally is within Melee range of your target, add a number of d6s equal to your tier to your damage roll. Level 1 --> Tier 1, Level 2-4 --> Tier 2, Levels 5-7 --> Tier 3, Levels 8-10 --> Tier 4.",
+Seraph,"PRAYER DICE: At the beginning of each session, roll a number of d4s equal to your subclass's Spellcast trait and place them on your character sheet in the space provided. These are your Prayer Dice. You can spend any number of Prayer Dice to aid yourself or an ally within Far range. You can use a spent die's value to reduce incoming damage, add to a roll's result after the roll is made, or gain Hope equal to the result. At the end of each session, clear all unspent Prayer Dice.",
+Sorcerer,ARCANE SENSE: You can sense the presence of magical people and objects within Close range.,
+Sorcerer,"MINOR ILLUSION: Make a Spellcast Roll (10). On a success, you create a minor visual illusion no larger than yourself within Close range. This illusion is convincing to anyone at Close range or farther.",
+Sorcerer,"CHANNEL RAW POWER: Once per long rest, you can place a domain card from your loadout into your vault and choose to either:
+* Gain Hope equal to the level of the card.
+* Enhance a spell that deals damage, gaining a bonus to your damage roll equal to twice the level of the card.",
+Warrior,"COMBAT TRAINING: You ignore burden when equipping weapons. When you deal physical damage, you gain a bonus to your damage roll equal to your level.",
+Warrior,"ATTACK OF OPPORTUNITY: If an adversary within Melee range attempts to leave that range, make a reaction roll using a trait of your choice against their Difficulty. Choose one effect on a success, or two if you critically succeed:
+* They can't move from where they are.
+* You deal damage to them equal to your primary weapon's damage.
+* You move with them.",
+Wizard,"PRESTIDIGITATION: You can perform harmless, subtle magical effects at will. For example, you can change an object's color, create a smell, light a candle, cause a tiny object to float, illuminate a room, or repair a small object.",
+Wizard,"STRANGE PATTERNS: Choose a number between 1 and 12. When you roll that number on a Duality Die, gain a Hope or clear a Stress. You can change this number when you take a long rest.",

@@ -3,7 +3,7 @@
         "evasion": 0,
         "hp": 0,
         "domains": ["one", "two"],
-        "hope": ["feature"],
+        "features": ["feature"],
         "subs": {
             "first": {
                 "cast": "none",
@@ -23,7 +23,7 @@
         "evasion": 10,
         "hp": 5,
         "domains": ["codex", "grace"],
-        "hope": ["Make a Scene"],
+        "features": ["Make a Scene", "Rally"],
         "subs": {
             "troubadour": {
                 "cast": "pre",
@@ -44,7 +44,7 @@
         "evasion": 12,
         "hp": 6,
         "domains": ["midnight", "grace"],
-        "hope": ["Rogue’s Dodge"],
+        "features": ["Rogue’s Dodge", "Cloaked"],
         "subs": {
             "nightwalker": {
                 "cast": "fin",
@@ -60,5 +60,5 @@
             }
         }
     }
-
+=
 }
