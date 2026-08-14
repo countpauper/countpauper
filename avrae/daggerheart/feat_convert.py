@@ -29,15 +29,15 @@ def convert_subclass(input):
 
         name, desc = parse_feature(row['Foundation'])
         if name is not None:
-            data[name] = {'description':escape(desc), 'category':'foundation', 'class':cls, 'subclass':sub, 'level':1}
+            data[name] = {'description':escape(desc), 'category':'subclass', 'mastery':1, 'class':cls, 'subclass':sub, 'level':1}
 
         name, desc = parse_feature(row['Specialization'])
         if name is not None:
-            data[name] = {'description':escape(desc), 'category':'specialization', 'class':cls, 'subclass':sub, 'level':5}
+            data[name] = {'description':escape(desc), 'category':'subclass', 'mastery':2, 'class':cls, 'subclass':sub, 'level':5}
 
         name, desc = parse_feature(row['Mastery'])
         if name is not None:
-            data[name] = {'description':escape(desc), 'category':'mastery', 'class':cls, 'subclass':sub, 'level':8}
+            data[name] = {'description':escape(desc), 'category':'subclass', 'mastery':3, 'class':cls, 'subclass':sub, 'level':8}
     return data
 
 def parse_cost(cost):

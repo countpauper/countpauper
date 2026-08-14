@@ -16,6 +16,7 @@ Your character must first be imported from ghseet with `!import <url>`. Use `!he
 - Loadout and vault
 - Weapons 
 - Spellcasting stat
+- Gold 
 
 After importing or updating your character with `!update`, you can use `!dh_level` to automatically update Hope, Stress and Armor counters. 
 

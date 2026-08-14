@@ -8,8 +8,8 @@
 [done] Damage thresholds in a fancy way
 [done] Attacks
 [done] Domain cards
-class gvar should be created by feat_convert.py and also generate classes with their domains, class features, sub classes and sub class features. 
-!dh_sheet should show alls class feature names automatically. They don't need to be read from the ghseet.
+[instead just found from sheet] class gvar should be created by feat_convert.py and also generate classes with their domains, class features, sub classes and sub class features. 
+[done including heritage] !dh_sheet should show alls class feature names automatically. They don't need to be read from the ghseet.
 
 
 [done] `!dh_update` Partial match of course
@@ -22,7 +22,7 @@ This should set the the appropriate:
 [done] Armor counter : (from initiative bonus) 
 [one sheet] All these should be increased while maintaining used counters
 
-It chould also check and warn about mistakes at character creation/in the sheet (none imported).  
+It could also check and warn about mistakes at character creation/in the sheet (none imported).  
 - AC is evasion, should match character class? But there are cards and items that increase it   
 - HP at character creation
 - Check casting stat matching subclass 
@@ -30,19 +30,34 @@ It chould also check and warn about mistakes at character creation/in the sheet 
 The sheet will contain a json: 
 [done] experiences: { "name":"dnd name" }
 [on the sheet] levels: [] with increases to hope and stress that don't go in the 
-If class and sub are specified a new sheet is made. 
-Otherwise if a sheet exists the mastery level/multi class are modifed 
-If nothing specified and no sheet exists it just gives a short help and the name of the class. 
+[on sheet]If class and sub are specified a new sheet is made. 
+[on shet] Otherwise if a sheet exists the mastery level/multi class are modifed 
+[x] If nothing specified and no sheet exists it just gives a short help and the name of the class. 
 
 [done in !dh_update ]`!dhexp [-]"<exp>" [...]` 
 [done] name experiences in order. It shows what scores were imported from the sheet and are now assigned. 
 [done but set to ""] If [-] then the experience is deleted. TODO decide if the others shift over or a gap is left to keep the previous score 
-If possible combine with `!dh_level` and expect two experiences at level 1, then at future levels +exp chooses an experience at score 2 and/or increases existing ones.
+[done] If possible combine with `!dh_level` and expect two experiences at level 1, then at future levels +exp chooses an experience at score 2 and/or increases existing ones.
 
 [canceled, use sheet]`!dhlevel` Chose what bonuses to update in sheet (including +1 thresholds)
 Also updates/checks the current sheet level (only updates if it's changed) ? An 
-For stats updated in sheet, verify (eg proficiecnt)
+[done] For stats updated in sheet, verify (eg proficiecnt)
 For stats updates in var, change them
+
+
+Google sheet: 
+- Swap thresholds closer to armor and experiences starting below. fix up edges
+- D&D Logo replace, also above spell casting 
+- Edit ? sheet, add information and give credits to original 
+- Coins rename (pictures), hide PP (or add homebrew hoard) and fix total computation
+- HP and armor ticks (not imported) determined by HP and stress max 
+- Hide stress ticks based on max stress 
+- Rename flaws and traits with daggerheart background/relation information 
+- Hide passive perception 
+- Rebrand/reshape proficiencies, tools features and traits sections 
+- Armor selection
+- Fix multi class as a separate class in the list with sub class and (optionally) select domain so "stalwart guardian valor"
+- Make the class level a drop down that has a (hidden?) foundation, specialization, mastery, perhaps shorten the class list 
 
 `!dh_short [armor [<ally>]] [stress] [heal [<ally>]] [hope[s]]`
 `!dh_long  [armor [<ally>]] [stress] [heal [<ally>]] [hope[s]] [project <name>]`
@@ -88,7 +103,7 @@ project: Progress a project by 1. If it has a counter with the name it is increa
 [done] Target
 [done] Critical 
 [done] The damage dice are multiplied with the proficiency. 
-* Using an experience should cost a Hope 
+[done] Using an experience should cost a Hope 
 [done] Override hope and fear with h12 f12 (no dice count is single value instead of 1 die) 
 * Force critical with crit argument (also duality and react and gm ) (for now can just do h1 f1)
 * If threshold is given it says how many hitpoints (this interface would be weird)
@@ -101,15 +116,18 @@ This doesn't work for player sheets however. They can only select save proficien
 Perhaps somehow reserve survival, stealth (and sleight of hand) skill for that and mess up the sheet to take that from the selected armor ? 
 NB: 1 is the fixed implicit damage threshold for 1 wound 
 
-`!dhcast` is like duality except the spell cast trait is automatically selected by checking the subclass 
-Subsclass information goes in a gvar (with extensisiblity) and it may have cards in the same form as `!dhcard` that can be used 
-The subclass mastery and specialization need to be flagged in the `!cvar dh_sheet`
+[done] Subsclass information goes in a gvar (with extensisiblity) and it may have cards in the same form as `!dhcard` that can be used 
+[done in Additional sheet] The subclass mastery and specialization need to be flagged in the `!cvar dh_sheet`
 
 [done ]`!dh_feat <card>` find the partial card name in a gvar (SRD could be made available)
+Show type, level, restrictions.
+Split dh_card for domain cards? (which is a separate gvar), but share the lookup and execution functions
+Some features need sub action `!dh_feat <card> [<option>] options like elemental druid or bard song choie 
 If there are any resources like hope or stress or armor, use them (if the counter is sufficient)
 If that includes a duality dice then roll that. instead of trait it could be SPELL to pick the spell cast trait automatically
+Allow roll modifiers like duality (bonus. experience and advantage)
 Then (based on the result/difficulty) it might describe what happens. No further automation for now. Check if the cards is known ? 
-Some features need sub `!dh_feat <card> [<option>] options like elemental druid or bard song choie 
+Option to only lookup or make `!dh_lookup` that does not execute the action and can also look up (sub) classes, heritage, rules (with partial matching)
 
 [done] card dictionary: domain:s, level:n, [hope:n], 
   [stress:n], 
@@ -118,14 +136,15 @@ Some features need sub `!dh_feat <card> [<option>] options like elemental druid 
 
 
 
+`!dh_stress [<amount>=1]` Mark (or heal with -1 or few with 0) stress, become vulnerable if maxed out and reduce hp if over, card stress use (all pay(...))  should also apply this 
+`!dh_hope` perhaps just alias for `cc Hope` 
+`!dhfear [+/-[<n>]]` add or remove fear or just show it. Use a (configurable in svar/uvar?) evil smiley  
+Also use fear on gm rolls with experience (how to specify experience? )
+
 Spells/cards are in the spellbook. with a gvar they can at least be looked up 
 
 `!dhdeath` Make death move 
 TBD 
-
-`!dh_stress [<amount>=1]` Mark (or heal with -1 or few with 0) stress, become vulnerable if maxed out and reduce hp if over, card stress use should also apply this 
-`!dh_hope` perhaps just alias for `cc Hope` 
-`!dhfear [+/-[<n>]]` add or remove fear or just show it. Use a (configurable in svar/uvar?) evil smiley  
 
 TODO: 
 configuration svar:

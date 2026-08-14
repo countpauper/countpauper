@@ -48,18 +48,26 @@ def load_feats():
         feats.update(load_json(get_gvar(gvar) or '{}'))
     return feats
 
+mastery_description=["foundation", "specialist", "master"]
+def describe_mastery(mastery):
+    if mastery<=0:
+        return "" 
+    return mastery_description[mastery-1]
+
+# List (of 0 1 or 2 normally) of tuple subclass, class in lower case 
 def get_class(C=character()):
     # only support one level line
-    for cls, lvl in C.levels:
-        clsinfo = cls.lower().split(' ',maxsplit=2)
-        # format of class is expected to be [<sub>] <class> [<multi>] each of which must be one word
-        if len(clsinfo)==3:
-            return clsinfo
-        elif len(clsinfo)==2:
-            return clsinfo[0], clsinfo[1], None
+    classes = []
+    for cls, mastery in C.levels:
+        if not cls:
+            continue
+        clsinfo = cls.lower().rsplit(' ',maxsplit=1)
+        # format of class is expected to be [<sub class>] <class> Class must be one word
+        if len(clsinfo)==2:
+            classes.append(tuple(clsinfo+[mastery]))
         else:
-            return None, cls, None
-    return None, None, None
+            classes.append( ("", clsinfo[0], mastery) )
+    return classes
 
 # Colaboration with !pronouns alias that gets cvars they them their theirs cvars for easy use in f-strings
 def pronouns(C=character()):
@@ -219,7 +227,6 @@ def trait(name):
     else:
         return None
 
-
 def experiences(sheet, C):
     if not sheet:
         return None
@@ -254,6 +261,22 @@ def change_experience(sheet, idx, name, C):
     exp = {(name if i==idx else old_name):v for i, (old_name,v) in enumerate(exp.items()) }
     sheet['experience'] = exp
     return experience(sheet, name, C)
+
+
+
+def class_features(sub, cls, mastery, features):
+    result = []
+    for name, feat in features.items(): 
+        if feat.get('class')==cls:
+            if feat_sub:=feat.get('subclass'):
+                if feat_sub==sub and feat.get('mastery') <= mastery:
+                    result.append(name)
+            else:
+                result.append(name)
+    return result
+         
+def heritage_features(community, ancestry, features):
+    return [name for name,feat in features.items() if feat.get('ancestry')==ancestry or feat.get('community')==community] 
 
 def sum_dice(*dice):
     return '+'.join(die for die in dice if die!='0')
