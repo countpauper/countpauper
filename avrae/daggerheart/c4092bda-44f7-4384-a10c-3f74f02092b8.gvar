@@ -302,6 +302,12 @@ def get_domains(class_info, class_name):
     else:
         return []
 
+def all_domains(class_info, classes):
+    domains=set()
+    for cls in classes:
+        domains |= set(get_domains(class_info, cls))
+    return domains
+
 def sum_dice(*dice):
     return '+'.join(die for die in dice if die!='0')
 
@@ -494,7 +500,7 @@ def is_allowed(name, feat, C):
     reasons = dict()
     classes = get_class(C)
     if req_level:=feat.get('level'):
-        if req_level < C.levels.total_level:
+        if req_level > C.levels.total_level:
             reasons['level'] = f"level {req_level}"
 
     if req_mastery:=feat.get('mastery'):
@@ -510,16 +516,22 @@ def is_allowed(name, feat, C):
     community, ancestry = get_heritage(C) 
     if req_community:=feat.get('community'):
         if req_community != community:
-            reasons['community'] = req_community
+            reasons['community'] = f'{req_community} community'
     if req_ancestry:=feat.get('ancestry'):
         if req_ancestry != ancestry:
-            reasons['ancestry'] = req_ancestry
-    # TODO: could find if the class even has access to the domain, but need class gvar 
+            reasons['ancestry'] = f'{req_ancestry} ancestry'
+
+    if req_domain:=feat.get('domain'):
+        class_info = load_classes()
+        domains = all_domains(class_info, [cls[1] for cls in classes])
+        if req_domain not in domains:
+            reasons['domain'] = f'{req_domain} domain'
+
     if feat.get('category', 'domain'):
         if name in [c.lower() for c in vault(C)]:
             reasons['card'] = f"{name} card in loadout"
         elif name not in [c.lower() for c in loadout(C)]:
-            reasons['card'] = f"{name} card acquired"
+            reasons['card'] = f"{name} card"
     return reasons or True
     
 # return gold dict with total in float handful 

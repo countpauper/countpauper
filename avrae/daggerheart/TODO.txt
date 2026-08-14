@@ -122,8 +122,8 @@ NB: 1 is the fixed implicit damage threshold for 1 wound
 [done] `!dh_feat <card>` find the partial card name in a gvar (SRD could be made available)
 [done] Show type, level, restrictions.
 [done] Check if the player has this card prepared or feature available
-Check for domain, add domains to class, show in !dh_sheet
- 
+[done] Check for domain, add domains to class, show in !dh_sheet
+
 If there are any resources like hope or stress or armor, use them (if the counter is sufficient)
 If that includes duality dice then roll that. instead of trait it could be SPELL to pick the spell cast trait automatically
 Allow roll modifiers like duality (bonus. experience and advantage / trait spell in theory but rarely according to the rules)

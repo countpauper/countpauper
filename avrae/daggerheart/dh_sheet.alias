@@ -52,10 +52,7 @@ if features:
     lines.append(f"**Features:** {', '.join(feat.capitalize() for feat in features)}")
 
 class_info = dh.load_classes()
-domains=set()
-for cls in classes:
-    domains |= set(dh.get_domains(class_info, cls[1]))
-if domains:
+if domains:=dh.all_domains(class_info, [cls[1] for cls in classes]):
     lines.append(f"**Domains:** {', '.join(domain.capitalize() for domain in domains)}")
 
 lines.append(f"**Loadout:** {', '.join(dh.loadout(C))}")

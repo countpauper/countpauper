@@ -41,7 +41,7 @@ if costs:={k:v for k,v in feat.items() if k in cost_keys and v < 0}:
 
 allowed = dh.is_allowed(feat_name, feat, C)
 if allowed is not True: 
-    lines.append(f"**Requires:** {' '.join(a.capitalize() for a in allowed.values())}")
+    lines.append(f"**Requires:** {', '.join(a.capitalize() for a in allowed.values())}")
 
 #description 
 lines.append(feat.get('description',''))
