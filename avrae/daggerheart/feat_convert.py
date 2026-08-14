@@ -12,12 +12,26 @@ def parse_feature(feature):
     name, description = feature.split(':', maxsplit=1)
     return name.lower().strip(), description.strip()
 
+integer_keys = 'hope', 'stress', 'armor', 'recall', 'level', 'mastery'
+def generic_convert(key, value):
+    if value is None:
+        return None
+    if key == "Feature":
+        return None # This is split 
+    elif key.lower() in integer_keys:
+        if not value:
+            return None 
+        else:
+            return int(value)
+    else:
+        return str(value)
+
 def convert_generic(input, category ):
     data = dict()
     for row in input:
         name, desc = parse_feature(row['Feature'])
-        data[name] = { k.lower():v for k,v in row.items() if k!='Feature' and v}
-        data[name].update(dict(description=escape(desc),category=category))
+        data[name] = dict(description=escape(desc), category=category, type='feature', source='SRD')
+        data[name].update({ k.lower():cv for k, v in row.items() if (cv:=generic_convert(k, v)) is not None})
     return data
 
 def convert_subclass(input):
@@ -29,22 +43,22 @@ def convert_subclass(input):
 
         name, desc = parse_feature(row['Foundation'])
         if name is not None:
-            data[name] = {'description':escape(desc), 'category':'subclass', 'mastery':1, 'class':cls, 'subclass':sub, 'level':1}
+            data[name] = {'description':escape(desc), 'category':'subclass', 'mastery':1, 'class':cls, 'subclass':sub, 'type':'feature', 'source':'SRD'}
 
         name, desc = parse_feature(row['Specialization'])
         if name is not None:
-            data[name] = {'description':escape(desc), 'category':'subclass', 'mastery':2, 'class':cls, 'subclass':sub, 'level':5}
+            data[name] = {'description':escape(desc), 'category':'subclass', 'mastery':2, 'class':cls, 'subclass':sub, 'type':'feature', 'source':'SRD'}
 
         name, desc = parse_feature(row['Mastery'])
         if name is not None:
-            data[name] = {'description':escape(desc), 'category':'subclass', 'mastery':3, 'class':cls, 'subclass':sub, 'level':8}
+            data[name] = {'description':escape(desc), 'category':'subclass', 'mastery':3, 'class':cls, 'subclass':sub, 'type':'feature', 'source':'SRD'}
     return data
 
 def parse_cost(cost):
     result=dict()
     recall_header = "recall cost:"
     if cost.lower().startswith(recall_header):
-        result['recall'] = int(cost[len(recall_header):])
+        result['recall'] = -int(cost[len(recall_header):])
     else:
         raise NotImplementedError(f"Unsupported card cost format: '{cost}'")
     return result 
@@ -64,7 +78,7 @@ def convert_cards(input):
     for row in input:
         row_str='\n'.join(row)
         name, domain, cost, desc = row_str.split('\n',maxsplit=3)
-        card = dict(description=escape(desc),category='domain')
+        card = dict(description=escape(desc),category='domain', source='SRD')
         card.update(parse_cost(cost))
         card.update(parse_domain(domain))
         data[name.lower()] = card

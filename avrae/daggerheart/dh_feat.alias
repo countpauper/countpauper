@@ -16,6 +16,40 @@ else:
         feat = feats.get(feat_name)
     else:
         return f'echo Unknown feature: `{args[0]}`' 
-return f"""embed -title "{feat_name.title()}" -desc "{feat.get('description')}" """
+
+nl='\n'
+
+lines=[]
+if feat.get('category')=='domain':
+    lines.append(f"**Level {feat.get('level')} {feat.get('domain','').capitalize()} {feat.get('type','').capitalize()}**")
+else:
+    assignment_keys='community','ancestry','subclass','class' 
+    assignment=[]
+    if level:=feat.get('level'):
+        assignment.append(f"Level: {level}")
+    if mastery:=feat.get('mastery'):
+        assignment.append(dh.describe_mastery(mastery).capitalize())
+    assignment+= [v.capitalize() for k,v in feat.items() if k in assignment_keys]
+    lines.append(f"** {' '.join(assignment)} {feat.get('type', '')}**")
+
+cost_keys='recall', 'hope', 'stress', 'armor'
+# TODO for sub feats combine main feat costs and sub feat costs 
+if costs:={k:v for k,v in feat.items() if k in cost_keys and v < 0}:
+    lines.append(' '.join(f"**{k.capitalize()} cost: {-v}**" for k,v in costs.items()))
+
+#description 
+lines.append(feat.get('description',''))
+
+if source:=feat.get('source'):
+    footer = f""" -footer "Source: {source}" """
+else:
+    footer = f""" -footer "Source: Unknown" """
+
+if img:=feat.get('thumb'):
+    thumb = f""" -thumb {img}"""
+else:
+    thumb = ""
+
+return f"""embed -title "{feat_name.title()}" -desc "{nl.join(lines)}"{footer}{thumb}"""
 
 </drac2>

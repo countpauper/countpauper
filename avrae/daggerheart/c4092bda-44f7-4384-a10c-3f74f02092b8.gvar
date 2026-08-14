@@ -7,6 +7,8 @@ try:
 except "FeatureNotAvailable":
     pass
 
+logo = "https://upload.wikimedia.org/wikipedia/en/0/08/Daggerheart_logo_2024.png"
+
 def fuzzy_match(input, list):
     input = input.lower()
     if match := [m for m in list if input==m.lower()]:

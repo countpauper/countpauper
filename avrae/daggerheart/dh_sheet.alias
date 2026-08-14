@@ -4,7 +4,7 @@ using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 S=dh.sheet(C) or dict()
 
 name = C.name
-img = C.image or "https://upload.wikimedia.org/wikipedia/en/0/08/Daggerheart_logo_2024.png"
+img = C.image or dh.logo 
 
 lines = []
 fields = dict()

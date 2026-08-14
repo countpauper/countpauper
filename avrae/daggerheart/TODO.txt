@@ -119,15 +119,16 @@ NB: 1 is the fixed implicit damage threshold for 1 wound
 [done] Subsclass information goes in a gvar (with extensisiblity) and it may have cards in the same form as `!dhcard` that can be used 
 [done in Additional sheet] The subclass mastery and specialization need to be flagged in the `!cvar dh_sheet`
 
-[done ]`!dh_feat <card>` find the partial card name in a gvar (SRD could be made available)
-Show type, level, restrictions.
+[done] `!dh_feat <card>` find the partial card name in a gvar (SRD could be made available)
+[done] Show type, level, restrictions.
 Split dh_card for domain cards? (which is a separate gvar), but share the lookup and execution functions
 Some features need sub action `!dh_feat <card> [<option>] options like elemental druid or bard song choie 
 If there are any resources like hope or stress or armor, use them (if the counter is sufficient)
-If that includes a duality dice then roll that. instead of trait it could be SPELL to pick the spell cast trait automatically
-Allow roll modifiers like duality (bonus. experience and advantage)
+If that includes duality dice then roll that. instead of trait it could be SPELL to pick the spell cast trait automatically
+Allow roll modifiers like duality (bonus. experience and advantage / trait spell in theory but rarely according to the rules)
 Then (based on the result/difficulty) it might describe what happens. No further automation for now. Check if the cards is known ? 
 Option to only lookup or make `!dh_lookup` that does not execute the action and can also look up (sub) classes, heritage, rules (with partial matching)
+Split the feature/card formating function for reuse.
 
 [done] card dictionary: domain:s, level:n, [hope:n], 
   [stress:n], 
