@@ -84,6 +84,23 @@ def convert_cards(input):
         data[name.lower()] = card
     return data
 
+max_sub_classes=2
+def convert_classes(input):
+    result = dict()
+    for row in input:
+        name=row.get('class').lower()
+        result[name]=dict(domains=[row.get('primary domain').lower(), row.get('secondary domain').lower()], evasion = row.get('evasion',0), hp=row.get('hp',0))
+        subs=dict()
+        for n in range(0,max_sub_classes):
+            if subname:=row.get(f'sub{n}'):
+                subname = subname
+                subdata=dict()
+                if trait:=row.get(f'trait{n}'):
+                    subdata['cast']=trait.lower()
+                subs[subname.lower()]=subdata
+        result[name]['subclasses'] = subs
+    return result
+
 if __name__ == "__main__":
     data = dict()
     with open('daggerheart/domain cards.csv', newline='') as csvfile:
@@ -112,4 +129,11 @@ if __name__ == "__main__":
 
     with open('daggerheart/1eeba3a1-1fd9-4b72-8713-d6475ccfc204.gvar',mode='w',newline='') as jsonFile:
         jsonFile.write(json.dumps(data, indent='\t'))
+
+    with open('daggerheart/class info.csv', newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        class_info = convert_classes(reader)
+
+    with open('daggerheart/0342d22f-af8d-44d0-811a-5f1ec8049248.gvar',mode='w',newline='') as jsonFile:
+        jsonFile.write(json.dumps(class_info, indent='\t'))
 

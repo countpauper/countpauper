@@ -9,23 +9,18 @@ img = C.image or dh.logo
 lines = []
 fields = dict()
 
-heritage = C.race.lower().split(' ')
-if len(heritage)==1:
-    community = "unborne" 
-    ancestry = heritage[0]
-else:
-    community, ancestry = heritage 
+community, ancestry = dh.get_heritage(C)
 
 lines.append(f'**Heritage:** {community.capitalize()} {ancestry.capitalize()}')
 
-lines.append(f"**Pronouns:** {'/'.join(dh.pronouns())}")
+lines.append(f"**Pronouns:** {' / '.join(dh.pronouns())}")
 
 lvl = C.levels.total_level
 lines.append(f"**Level:** {lvl}")
 
 classes = dh.get_class(C)
 if classes:
-    class_desc = '/'.join(f"{dh.describe_mastery(mastery).capitalize()} {sub.capitalize()} {cls.capitalize()}" for sub, cls, mastery in classes)
+    class_desc = ' / '.join(f"{dh.describe_mastery(mastery).capitalize()} {sub.capitalize()} {cls.capitalize()}" for sub, cls, mastery in classes)
     lines.append(f"**Class:** {class_desc}")
 else:
     lines.append("**Class:** set in Additional sheet at C69, multiclass in C70")
@@ -40,22 +35,29 @@ threshold = dh.thresholds()[2:]
 lines.append(f"**Thresholds:** Minor(1) **[**` {threshold[0]} `**>** Major(2) **[**` {threshold[1]} `**>** Severe(3)" +(\
     f"**[**` {threshold[2]} `**>** Massive(4)" if len(threshold)>2 else ""))
 
-lines.append('**Experience:**')
-experiences = dh.experiences(S, C)
-for exp, score in experiences.items():
-    lines.append(f'{exp}: `{score}`')
+if experiences := dh.experiences(S, C):
+    lines.append(f"**Experience:** {', '.join(f'{exp}: `{score}`' for exp, score in experiences.items())}")
 
 lines.append(f'**Weapons:**')
 for weapon in dh.weapons(C):
     # TODO Only way to weapon.get('range') seems to be from a gvar and avrae gsheet forces attack to be an integer, while !attack add, can support strings for traits
     lines.append(f"**{weapon.get('name')}** Bonus: `{weapon.get('bonus')}` Damage:`{weapon.get('damage')}` " + weapon.get('feature',''))
 
+
 all_features =  dh.load_feats()
 features=dh.heritage_features(community, ancestry, all_features)
 for cls in classes:
     features += dh.class_features(*cls, all_features)
+if features:
+    lines.append(f"**Features:** {', '.join(feat.capitalize() for feat in features)}")
 
-lines.append(f"**Features:** {', '.join(feat.capitalize() for feat in features)}")
+class_info = dh.load_classes()
+domains=set()
+for cls in classes:
+    domains |= set(dh.get_domains(class_info, cls[1]))
+if domains:
+    lines.append(f"**Domains:** {', '.join(domain.capitalize() for domain in domains)}")
+
 lines.append(f"**Loadout:** {', '.join(dh.loadout(C))}")
 
 lines.append(f"**Vault:** {', '.join(dh.vault(C))}")

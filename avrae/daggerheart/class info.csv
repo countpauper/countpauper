@@ -1,0 +1,10 @@
+class,primary domain,secondary domain,evasion,hp,sub0,trait0,sub1,trait1
+Bard,Grace,Codex,10,5,Troubadour ,Presence,Wordsmith ,Presence
+Druid,Sage,Arcana,10,6,Warden of the Elements ,Instinct ,Warden of Renewal ,Instinct 
+Guardian,Valor,Blade,9,7,Stalwart ,,Vengeance ,
+Ranger,Bone,Sage,12,6,Beastbound ,Agility ,Wayfinder ,Agility 
+Rogue,Midnight,Grace,12,6,Nightwalker ,Finesse ,Syndicate ,Finesse 
+Seraph,Splendor,Valor,9,7,Divine Wielder ,Strength ,Winged Sentinel ,Strength 
+Sorcerer,Arcana,Midnight,10,6,Elemental Origin ,Instinct ,Primal Origin ,Instinct 
+Warrior,Blade,Bone,11,6,Call of the Brave ,,Call of the Slayer ,
+Wizard,Codex,Splendor,11,5,School of Knowledge ,Knowledge ,School of War ,Knowledge 

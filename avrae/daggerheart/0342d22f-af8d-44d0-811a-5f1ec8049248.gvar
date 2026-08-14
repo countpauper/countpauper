@@ -1,64 +1,138 @@
 {
-    "template": {
-        "evasion": 0,
-        "hp": 0,
-        "domains": ["one", "two"],
-        "features": ["feature"],
-        "subs": {
-            "first": {
-                "cast": "none",
-                "foundation": [""], 
-                "specialization": [""], 
-                "mastery": [""]
-            }, 
-            "second": {
-                "cast": "none",
-                "foundation": [""], 
-                "specialization": [""], 
-                "mastery": [""]
-            }
-        }
-    },
-    "bard":{
-        "evasion": 10,
-        "hp": 5,
-        "domains": ["codex", "grace"],
-        "features": ["Make a Scene", "Rally"],
-        "subs": {
-            "troubadour": {
-                "cast": "pre",
-                "foundation": ["Gifted Performer"], 
-                "specialization": ["Maestro"], 
-                "mastery": ["Virtuoso"]
-            }, 
-            "wordsmith": 
-            {
-                "cast": "pre",
-                "foundation": ["Rousing Speech", "Heart of a Poet"],
-                "specialization": ["Eloquent"], 
-                "mastery": ["Epic Poetry"]
-            }
-        }
-    },
-    "rogue":{
-        "evasion": 12,
-        "hp": 6,
-        "domains": ["midnight", "grace"],
-        "features": ["Rogue’s Dodge", "Cloaked"],
-        "subs": {
-            "nightwalker": {
-                "cast": "fin",
-                "foundation": ["Shadow Stepper"], 
-                "specialization": ["Dark Cloud", "Adrenaline"], 
-                "mastery": ["Fleeting Shadow", "Vanishing Act"]
-            }, 
-            "syndicate": {
-                "cast": "fin",
-                "foundation": ["Well-Connected"], 
-                "specialization": ["Contacts Everywhere"], 
-                "mastery": ["Reliable Backup"]
-            }
-        }
-    }
-=
+	"bard": {
+		"domains": [
+			"grace",
+			"codex"
+		],
+		"evasion": "10",
+		"hp": "5",
+		"subclasses": {
+			"troubadour ": {
+				"cast": "presence"
+			},
+			"wordsmith ": {
+				"cast": "presence"
+			}
+		}
+	},
+	"druid": {
+		"domains": [
+			"sage",
+			"arcana"
+		],
+		"evasion": "10",
+		"hp": "6",
+		"subclasses": {
+			"warden of the elements ": {
+				"cast": "instinct "
+			},
+			"warden of renewal ": {
+				"cast": "instinct "
+			}
+		}
+	},
+	"guardian": {
+		"domains": [
+			"valor",
+			"blade"
+		],
+		"evasion": "9",
+		"hp": "7",
+		"subclasses": {
+			"stalwart ": {},
+			"vengeance ": {}
+		}
+	},
+	"ranger": {
+		"domains": [
+			"bone",
+			"sage"
+		],
+		"evasion": "12",
+		"hp": "6",
+		"subclasses": {
+			"beastbound ": {
+				"cast": "agility "
+			},
+			"wayfinder ": {
+				"cast": "agility "
+			}
+		}
+	},
+	"rogue": {
+		"domains": [
+			"midnight",
+			"grace"
+		],
+		"evasion": "12",
+		"hp": "6",
+		"subclasses": {
+			"nightwalker ": {
+				"cast": "finesse "
+			},
+			"syndicate ": {
+				"cast": "finesse "
+			}
+		}
+	},
+	"seraph": {
+		"domains": [
+			"splendor",
+			"valor"
+		],
+		"evasion": "9",
+		"hp": "7",
+		"subclasses": {
+			"divine wielder ": {
+				"cast": "strength "
+			},
+			"winged sentinel ": {
+				"cast": "strength "
+			}
+		}
+	},
+	"sorcerer": {
+		"domains": [
+			"arcana",
+			"midnight"
+		],
+		"evasion": "10",
+		"hp": "6",
+		"subclasses": {
+			"elemental origin ": {
+				"cast": "instinct "
+			},
+			"primal origin ": {
+				"cast": "instinct "
+			}
+		}
+	},
+	"warrior": {
+		"domains": [
+			"blade",
+			"bone"
+		],
+		"evasion": "11",
+		"hp": "6",
+		"subclasses": {
+			"call of the brave ": {},
+			"call of the slayer ": {}
+		}
+	},
+	"wizard": {
+		"domains": [
+			"codex",
+			"splendor"
+		],
+		"evasion": "11",
+		"hp": "5",
+		"subclasses": {
+			"school of knowledge ": {
+				"cast": "knowledge "
+			},
+			"school of war ": {
+				"cast": "knowledge "
+			}
+		}
+	}
 }

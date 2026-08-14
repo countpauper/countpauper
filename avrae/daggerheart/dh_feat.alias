@@ -6,9 +6,11 @@ if not args:
     return f'help {ctx.alias} -here'
 
 feats = dh.load_feats()
-
+C=character()
 
 feat_name = args[0]
+args=args[1:]
+
 if feat:=feats.get(feat_name.lower()):
     pass
 else:
@@ -37,8 +39,18 @@ cost_keys='recall', 'hope', 'stress', 'armor'
 if costs:={k:v for k,v in feat.items() if k in cost_keys and v < 0}:
     lines.append(' '.join(f"**{k.capitalize()} cost: {-v}**" for k,v in costs.items()))
 
+allowed = dh.is_allowed(feat_name, feat, C)
+if allowed is not True: 
+    lines.append(f"**Requires:** {' '.join(a.capitalize() for a in allowed.values())}")
+
 #description 
 lines.append(feat.get('description',''))
+
+# execute 
+# TODO, 
+# 1 prevent if not available (with override 'allow')
+# 2 deduct cost (with override 'free')
+# 3 roll (with bonuses)
 
 if source:=feat.get('source'):
     footer = f""" -footer "Source: {source}" """

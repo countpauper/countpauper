@@ -50,13 +50,21 @@ def load_feats():
         feats.update(load_json(get_gvar(gvar) or '{}'))
     return feats
 
+def load_classes():
+    gvars=['0342d22f-af8d-44d0-811a-5f1ec8049248']
+    gvars += gather_gvars('dh_classes', 'dh_classes')
+    classes = dict()
+    for gvar in gvars: 
+        classes.update(load_json(get_gvar(gvar) or '{}'))
+    return classes
+
 mastery_description=["foundation", "specialist", "master"]
 def describe_mastery(mastery):
     if mastery<=0:
         return "" 
     return mastery_description[mastery-1]
 
-# List (of 0 1 or 2 normally) of tuple subclass, class in lower case 
+# List (of 0 1 or 2 normally) of tuple(subclass, class, mastery)  
 def get_class(C=character()):
     # only support one level line
     classes = []
@@ -70,6 +78,14 @@ def get_class(C=character()):
         else:
             classes.append( ("", clsinfo[0], mastery) )
     return classes
+
+# return community, ancestry in lower case 
+def get_heritage(C=character()):
+    heritage = C.race.lower().split(' ')
+    if len(heritage)==1:
+        return "unborne", heritage[0]
+    else:
+        return tuple(heritage) 
 
 # Colaboration with !pronouns alias that gets cvars they them their theirs cvars for easy use in f-strings
 def pronouns(C=character()):
@@ -276,9 +292,15 @@ def class_features(sub, cls, mastery, features):
             else:
                 result.append(name)
     return result
-         
+        
 def heritage_features(community, ancestry, features):
     return [name for name,feat in features.items() if feat.get('ancestry')==ancestry or feat.get('community')==community] 
+
+def get_domains(class_info, class_name):
+    if cls:=class_info.get(class_name.lower()):
+        return cls.get('domains', [])
+    else:
+        return []
 
 def sum_dice(*dice):
     return '+'.join(die for die in dice if die!='0')
@@ -326,7 +348,7 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
     elif disadvantage > advantage:
         bonus_dice.append('-1d6[disadvantage]')
     return dict(hope=hope_dice or hope, fear=fear_dice or fear, bonus=bonus_dice, goals=goals), cost   
- 
+
 # vroll each part and return individually
 # All dice are supposed to be a list. 
 # If hope is empty, fear is the DM die 
@@ -356,7 +378,7 @@ def format_dice(hope=None, fear=None, bonus=[], goals=[]):
         summation += hope
     elif fear: 
         summation += fear 
-   
+
     if bonus:
         summation+=bonus
     return sum_dice(*summation)
@@ -468,6 +490,38 @@ def pay_em(costs, C=character()):
             return f"Not enough `{cc_name}` : {has}/{-amt}"
     return [f"**{cc_name}:** {try_mod_cc(C, cc_name, amt)}" for cc_name, amt in costs.items()]
 
+def is_allowed(name, feat, C):
+    reasons = dict()
+    classes = get_class(C)
+    if req_level:=feat.get('level'):
+        if req_level < C.levels.total_level:
+            reasons['level'] = f"level {req_level}"
+
+    if req_mastery:=feat.get('mastery'):
+        if not any(cls[2] < req_mastery for cls in classes):
+            reasons['mastery'] = describe_mastery(req_mastery)
+    if req_sub:=feat.get('subclass'):
+        if not any(cls[0] == req_sub for cls in classes):
+            reasons['subclass'] = req_sub
+    if req_cls:=feat.get('class'):
+        if not any(cls[1] == req_cls for cls in classes):
+            reasons['class'] = req_cls
+
+    community, ancestry = get_heritage(C) 
+    if req_community:=feat.get('community'):
+        if req_community != community:
+            reasons['community'] = req_community
+    if req_ancestry:=feat.get('ancestry'):
+        if req_ancestry != ancestry:
+            reasons['ancestry'] = req_ancestry
+    # TODO: could find if the class even has access to the domain, but need class gvar 
+    if feat.get('category', 'domain'):
+        if name in [c.lower() for c in vault(C)]:
+            reasons['card'] = f"{name} card in loadout"
+        elif name not in [c.lower() for c in loadout(C)]:
+            reasons['card'] = f"{name} card acquired"
+    return reasons or True
+    
 # return gold dict with total in float handful 
 def gold(C=character()):
     purse = C.coinpurse
@@ -475,7 +529,7 @@ def gold(C=character()):
         handful=purse['ep'],
         bags=purse['sp'],
         chest=purse['gp']
-        # NB: p unused. available for hidden Daggerheart imported number
+        # NB: pp unused. available for hidden Daggerheart imported number
     )
 
     total =  gold['handful'] + gold['bags'] * 10 + gold['chest'] * 100
@@ -487,7 +541,6 @@ def gold(C=character()):
     gold['total'] = total
     return gold
 
-digits = "0123456789"
 # find the index in the string s of the first character not in allowed
 # return -1 if it is not found 
 def find_first_not_of(s, allowed):
@@ -506,6 +559,7 @@ def split_dice_label(dice_str):
         label_end=len(dice_str) # Just cut to the end if not closed
     return dice_str[0:label_start], dice_str[label_start+1:label_end]
 
+digits = "0123456789"
 # split dice XdY+/-Z[L] into X:int,Y:int,Z:dice,N:str  
 def split_dice(dice_str, separator='d'):
     dice_str, label = split_dice_label(dice_str)
