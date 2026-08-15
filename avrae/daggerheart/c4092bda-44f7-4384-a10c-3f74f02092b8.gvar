@@ -36,6 +36,14 @@ def find_first_not_of(s, allowed):
             return i
     return -1
 
+def reset(rests, C=character()):
+    result=[]
+    for cc in C.consumables:
+        if cc.reset_on in rests:
+            new, old, target, delta = cc.reset()
+            result.append(f"**{cc.name}:** {cc} ({format_delta(delta)})")
+    return result
+
 ############################# Game Data ############################################
 # Game data not tied to a character sheet 
 def load_cards():
@@ -184,32 +192,32 @@ def max_stress(C=character()):
     return _get_mapped_score(C,'persuasion')
 
 
-def proficiency(c=character()):
-    return c.stats.prof_bonus
+def proficiency(C=character()):
+    return C.stats.prof_bonus
 
 
-def agility(c=character()):
-    return c.stats.dexterity
+def agility(C=character()):
+    return C.stats.dexterity
 
 
-def strength(c=character()):
-    return c.stats.strength
+def strength(C=character()):
+    return C.stats.strength
 
 
-def finesse(c=character()):
-    return c.stats.constitution
+def finesse(C=character()):
+    return C.stats.constitution
 
 
-def instinct(c=character()):
-    return c.stats.wisdom 
+def instinct(C=character()):
+    return C.stats.wisdom 
 
 
-def presence(c=character()):
-    return c.stats.charisma 
+def presence(C=character()):
+    return C.stats.charisma 
 
 
-def knowledge(c=character()):
-    return c.stats.intelligence 
+def knowledge(C=character()):
+    return C.stats.intelligence 
 
 str_name="strength"
 agi_name="agility"
@@ -458,7 +466,7 @@ def try_mod_cc(C, name, amt):
     if amt:
         diff = cc.value
         diff = cc.mod(amt, strict=_is_cc_loss(cc, amt)) - diff
-        return f"{cc} {'+' if diff>=0 else ''}{diff}"
+        return f"{cc} ({format_delta(diff)})"
     else:
         return cc
 
@@ -472,8 +480,9 @@ def armor(amt=0, C=character()):
 
 def hitpoints(amt=0, C=character()):
     if amt:
-        C.set_hp(C.hp + amt)
-        return f"{format_hp(C)} {amt}"
+        hp = C.hp
+        C.set_hp(min(C.max_hp, hp + amt))
+        return f"{format_hp(C)} ({format_delta(C.hp - hp)})"
     else:
         return format_hp(C)
         
@@ -716,14 +725,17 @@ def format_damage(damages, separator='\n'):
     return separator.join(f"VS {target} **{damage or 'miss'}**" for target, damage in damages.items())
 
 
+def format_delta(d):
+    d=str(d)
+    if d[0] in '+-':
+        return d
+    else:
+        return '+ '+ d
+
 def format_bonus(bonus):
     if not bonus:
-            return None
-    desc = str(bonus.dice)
-    if desc[0] in '+-':
-        return desc
-    else:
-        return '+ '+desc
+        return None
+    return format_delta(str(bonus.dice))
 
 def format_effects(effects, separator='\n'):
     return separator.join(effect for effect in effects if effect is not None)
