@@ -20,7 +20,7 @@ lines.append(f"**Level:** {lvl}")
 
 classes = dh.get_class(C)
 if classes:
-    class_desc = ' / '.join(f"{dh.describe_mastery(mastery).capitalize()} {sub.capitalize()} {cls.capitalize()}" for sub, cls, mastery in classes)
+    class_desc = ' / '.join(f"{dh.format_mastery(mastery).capitalize()} {sub.capitalize()} {cls.capitalize()}" for sub, cls, mastery in classes)
     lines.append(f"**Class:** {class_desc}")
 else:
     lines.append("**Class:** set in Additional sheet at C69, multiclass in C70")

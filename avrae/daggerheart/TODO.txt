@@ -124,14 +124,14 @@ NB: 1 is the fixed implicit damage threshold for 1 wound
 [done] Check if the player has this card prepared or feature available
 [done] Check for domain, add domains to class, show in !dh_sheet
 
-SPlit dh_feat to dh_lookup and make new dh_use 
+Split dh_feat to dh_lookup and make new dh_use, generalize description formating. Perhaps put footer in last line
 
 If there are any resources like hope or stress or armor, use them (if the counter is sufficient)
 If that includes duality dice then roll that. instead of trait it could be SPELL to pick the spell cast trait automatically
 Allow roll modifiers like duality (bonus. experience and advantage / trait spell in theory but rarely according to the rules)
 
-Split dh_card for domain cards? (which is a separate gvar), but share the lookup and execution functions
-Some features need sub action `!dh_feat <card> [<option>] options like elemental druid or bard song choie 
+[?] Split dh_card from dh_use for domain cards? (which is a separate gvar), but share the lookup and execution functions
+Some features need sub action `!dh_feat <card> [<option>] options like elemental druid or bard song choice 
 Then (based on the result/difficulty) it might describe what happens. No further automation for now. Check if the cards is known ? 
 Option to only lookup or make `!dh_lookup` that does not execute the action and can also look up (sub) classes, heritage, rules (with partial matching)
 Split the feature/card formating function for reuse.
@@ -141,7 +141,10 @@ Split the feature/card formating function for reuse.
   [armor:n], 
   [roll:str], 
 
-
+!dh_lookup for ancestry and community, but all I got is their feature. Perhaps at a blurb gvar for lookup that has the basic description copy pasted from the SRD and the category for furter/faster fuzzy lookup
+!dh_lookup class by name, show hp, evasion, domains, subclasses and class features 
+!dh_lookup for sub class, sub class features at levels and main class 
+!dh_lookup for domain, show all cards in the domain 
 
 `!dh_stress [<amount>=1]` Mark (or heal with -1 or few with 0) stress, become vulnerable if maxed out and reduce hp if over, card stress use (all pay(...))  should also apply this 
 `!dh_hope` perhaps just alias for `cc Hope` 

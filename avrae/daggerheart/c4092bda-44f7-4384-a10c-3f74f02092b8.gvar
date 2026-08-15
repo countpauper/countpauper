@@ -7,6 +7,10 @@ try:
 except "FeatureNotAvailable":
     pass
 
+
+
+########################### Generic utilties #################################
+# Not Daggerheart specific, but avrae alias helpers 
 logo = "https://upload.wikimedia.org/wikipedia/en/0/08/Daggerheart_logo_2024.png"
 
 def fuzzy_match(input, list):
@@ -18,6 +22,78 @@ def fuzzy_match(input, list):
     if match := [m for m in list if input in m.lower()]:
         return match[0]
     return None 
+
+
+def gather_gvars(svar_name, uvar_name):
+    return load_yaml(get_uvar(uvar_name,'[]')) +  load_yaml(get_svar(svar_name,'[]'))
+
+
+# find the index in the string s of the first character not in allowed
+# return -1 if it is not found 
+def find_first_not_of(s, allowed):
+    for i, c in enumerate(s):
+        if c not in allowed:
+            return i
+    return -1
+
+############################# Game Data ############################################
+# Game data not tied to a character sheet 
+def load_cards():
+    gvars = ['7a5a3d45-7ad0-4db9-9c9a-dc37294a216e', '1eeba3a1-1fd9-4b72-8713-d6475ccfc204']
+    gvars += gather_gvars('dh_cards', 'dh_cards')
+    feats = dict()
+    for gvar in gvars: 
+        feats.update(load_json(get_gvar(gvar) or '{}'))
+    return feats
+
+def load_classes():
+    gvars=['0342d22f-af8d-44d0-811a-5f1ec8049248']
+    gvars += gather_gvars('dh_classes', 'dh_classes')
+    classes = dict()
+    for gvar in gvars: 
+        classes.update(load_json(get_gvar(gvar) or '{}'))
+    return classes
+
+difficulties=dict(
+    trivial=0,
+    very_easy=5,
+    easy=10,
+    average=15,
+    hard=20,
+    very_hard=25,
+    nearly_impossible=30,
+    impossible=35
+)
+
+def class_features(sub, cls, mastery, features):
+    result = []
+    for name, card in features.items(): 
+        if card.get('class')==cls:
+            if feat_sub:=card.get('subclass'):
+                if feat_sub==sub and card.get('mastery') <= mastery:
+                    result.append(name)
+            else:
+                result.append(name)
+    return result
+        
+def heritage_features(community, ancestry, features):
+    return [name for name,card in features.items() if card.get('ancestry')==ancestry or card.get('community')==community] 
+
+def get_domains(class_info, class_name):
+    if cls:=class_info.get(class_name.lower()):
+        return cls.get('domains', [])
+    else:
+        return []
+
+def all_domains(class_info, classes):
+    domains=set()
+    for cls in classes:
+        domains |= set(get_domains(class_info, cls))
+    return domains
+
+####################### Character functions ############################
+# These functions convert avrae character sheet to Daggerheart sheet
+# Parse an avrae attack to get Daggerheart weapon statistics
 
 def sheet(C=character(), var_name=None):
     if var_name:
@@ -38,31 +114,6 @@ def save(sheet, C=character(), var_name=None):
             sheet = C.set_cvar('dh_sheet', sheet_str)
         else:
             set_uvar('dh_sheet', sheet_str)
-
-def gather_gvars(svar_name, uvar_name):
-    return load_yaml(get_uvar(uvar_name,'[]')) +  load_yaml(get_svar(svar_name,'[]'))
-
-def load_cards():
-    gvars = ['7a5a3d45-7ad0-4db9-9c9a-dc37294a216e', '1eeba3a1-1fd9-4b72-8713-d6475ccfc204']
-    gvars += gather_gvars('dh_cards', 'dh_cards')
-    feats = dict()
-    for gvar in gvars: 
-        feats.update(load_json(get_gvar(gvar) or '{}'))
-    return feats
-
-def load_classes():
-    gvars=['0342d22f-af8d-44d0-811a-5f1ec8049248']
-    gvars += gather_gvars('dh_classes', 'dh_classes')
-    classes = dict()
-    for gvar in gvars: 
-        classes.update(load_json(get_gvar(gvar) or '{}'))
-    return classes
-
-mastery_description=["foundation", "specialist", "master"]
-def describe_mastery(mastery):
-    if mastery<=0:
-        return "" 
-    return mastery_description[mastery-1]
 
 # List (of 0 1 or 2 normally) of tuple(subclass, class, mastery)  
 def get_class(C=character()):
@@ -111,22 +162,22 @@ skills_map = (
     "stealth",
     "survival")
 
-def get_mapped_score(C, skill):
+def _get_mapped_score(C, skill):
     return C.skills[skill].value 
 
 # Get damage thresholds, Index is amount of wounds if damage>=treshold 
 def thresholds(C=character()):
     thresholds = [
         -2147483648, 1,
-        get_mapped_score(C, skills_map[-1]),
-        get_mapped_score(C, skills_map[-2])]
-    if massive := get_mapped_score(C, skills_map[-3]):  # common homebrew supported 0
+        _get_mapped_score(C, skills_map[-1]),
+        _get_mapped_score(C, skills_map[-2])]
+    if massive := _get_mapped_score(C, skills_map[-3]):  # common homebrew supported 0
         thresholds.append(massive)
     # TODO deadly not yet supported, less common homebrew
     return thresholds
 
 def max_armor(C=character()):
-    return get_mapped_score(C, 'initiative')
+    return _get_mapped_score(C, 'initiative')
 
 def armor(C=character()):
     cc_name='Armor'
@@ -137,84 +188,32 @@ def armor(C=character()):
         return None
 
 def max_stress(C=character()):
-    return get_mapped_score(C,'persuasion')
+    return _get_mapped_score(C,'persuasion')
 
-def parse_arg(arg):
-    if not arg:
-        return None 
-    if arg[0] == '+':
-        return arg[1:]
-    return arg
-
-# Parse discord arguments to a summation of dice and bonuses 
-# args: a list of strings 
-# returns: a list of operand strings split by + and - 
-def parse(args):
-    # TODO split operators. For now just support spaces 
-    return [parse_arg(arg) for arg in args]
-
-# Return dice, die if s is of the format [<dice>=None]<separator><die>
-# return empty tuple otherwise 
-def parse_die(s, separator='d'):
-    parts = s.split(separator, maxsplit=1)
-    if len(parts)==1:
-        return tuple()
-    if not parts[1][0].isnumeric():
-        return tuple()
-    try:
-        die = parts[1]
-        if not parts[0]:
-            return None, die
-        else:
-            return int(parts[0]), die
-    except 'ValueError':
-        return tuple()
-
-def parse_hope(s):
-    return parse_die(s, 'h')
-
-def parse_fear(s):
-    return parse_die(s, 'f')
-
-difficulties=dict(
-    trivial=0,
-    very_easy=5,
-    easy=10,
-    average=15,
-    hard=20,
-    very_hard=25,
-    nearly_impossible=30,
-    impossible=35
-)
-
-def parse_goal(s):
-    if s[0] != '=':
-        return None 
-    s=s[1:]
-    if not s:
-        return []
-    if match:=fuzzy_match(s, difficulties.keys()):
-        value = difficulties.get(match)
-        return [f"{value}[{match.replace('_',' ')}"]
-    return [s]
 
 def proficiency(c=character()):
     return c.stats.prof_bonus
-        
+
+
 def agility(c=character()):
     return c.stats.dexterity
+
 
 def strength(c=character()):
     return c.stats.strength
 
+
 def finesse(c=character()):
     return c.stats.constitution
+
 
 def instinct(c=character()):
     return c.stats.wisdom 
 
+
 def presence(c=character()):
     return c.stats.charisma 
+
 
 def knowledge(c=character()):
     return c.stats.intelligence 
@@ -245,11 +244,13 @@ def trait(name):
     else:
         return None
 
+
 def experiences(sheet, C):
     if not sheet:
         return None
     exp = sheet.get('experience', dict())
     return {exp: (dnd_skill.value if (dnd_skill:=C.skills[val]) else val) for exp, val in exp.items() if exp}
+
 
 def experience(sheet, name, C=character()):
     if not sheet:
@@ -259,7 +260,6 @@ def experience(sheet, name, C=character()):
     return options[0]
 
 experience_nrs=range(1,10)
-
 def add_experience(sheet, name, C):
     if not sheet:
         sheet=dict()
@@ -269,6 +269,7 @@ def add_experience(sheet, name, C):
     map=skills_map[len(exp)]
     sheet['experience'].update({name:map})
     return experience(sheet, name, C)
+
 
 def change_experience(sheet, idx, name, C):
     if not sheet:
@@ -280,139 +281,107 @@ def change_experience(sheet, idx, name, C):
     sheet['experience'] = exp
     return experience(sheet, name, C)
 
+def is_allowed(name, card, C):
+    reasons = dict()
+    classes = get_class(C)
+    if req_level:=card.get('level'):
+        if req_level > C.levels.total_level:
+            reasons['level'] = f"level {req_level}"
 
+    if req_mastery:=card.get('mastery'):
+        if not any(cls[2] < req_mastery for cls in classes):
+            reasons['mastery'] = format_mastery(req_mastery)
+    if req_sub:=card.get('subclass'):
+        if not any(cls[0] == req_sub for cls in classes):
+            reasons['subclass'] = req_sub
+    if req_cls:=card.get('class'):
+        if not any(cls[1] == req_cls for cls in classes):
+            reasons['class'] = req_cls
 
-def class_features(sub, cls, mastery, features):
-    result = []
-    for name, card in features.items(): 
-        if card.get('class')==cls:
-            if feat_sub:=card.get('subclass'):
-                if feat_sub==sub and card.get('mastery') <= mastery:
-                    result.append(name)
-            else:
-                result.append(name)
-    return result
-        
-def heritage_features(community, ancestry, features):
-    return [name for name,card in features.items() if card.get('ancestry')==ancestry or card.get('community')==community] 
+    community, ancestry = get_heritage(C) 
+    if req_community:=card.get('community'):
+        if req_community != community:
+            reasons['community'] = f'{req_community} community'
+    if req_ancestry:=card.get('ancestry'):
+        if req_ancestry != ancestry:
+            reasons['ancestry'] = f'{req_ancestry} ancestry'
 
-def get_domains(class_info, class_name):
-    if cls:=class_info.get(class_name.lower()):
-        return cls.get('domains', [])
-    else:
-        return []
+    if req_domain:=card.get('domain'):
+        class_info = load_classes()
+        domains = all_domains(class_info, [cls[1] for cls in classes])
+        if req_domain not in domains:
+            reasons['domain'] = f'{req_domain} domain'
 
-def all_domains(class_info, classes):
-    domains=set()
-    for cls in classes:
-        domains |= set(get_domains(class_info, cls))
-    return domains
-
-def sum_dice(*dice):
-    return '+'.join(die for die in dice if die!='0')
-
-# Sort operands into hope rolls, fear rolls and bonus rolls
-## and return the result as a dictionary with hope, fear and bonus list
-## Also add a dictionary with counter costs
-## Experiences and traits are replaced with strings
-def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
-    hope_dice = []
-    fear_dice = []
-    bonus_dice = []
-    goals = []
-    cost = dict()
-    advantage = 0
-    disadvantage = 0
-    for operand in operands: 
-        if dice:= parse_hope(operand):
-            hope_dice.append(f'{dice[0]}d{dice[1]}' if dice[0] is not None else str(dice[1])) 
-        elif dice:=parse_fear(operand):
-            fear_dice.append(f'{dice[0]}d{dice[1]}' if dice[0] is not None else str(dice[1]))
-        elif (goal:=parse_goal(operand)) is not None:
-            goals.append(goal)   # from here on bonuses are for the last goal
-        elif sheet and (dice:=parse_die( operand)):
-            if goals:
-                goals[-1].append(operand) 
-            else:
-                bonus_dice.append(f'{dice[0]}d{dice[1]}')
-        elif sheet and (trait_bonus:=trait(operand)) is not None:
-            bonus_dice.append(f'{trait_bonus[1]}[{trait_bonus[0]}]')
-        elif sheet and (exp_bonus:=experience(sheet, operand)) is not None:
-            bonus_dice.append(f'{exp_bonus[1]}[{exp_bonus[0]}]')
-            cost['Hope'] = cost.get('Hope', 0) - 1
-        elif 'advantage'.startswith(operand.lower()):
-            advantage += 1
-        elif 'disadvantage'.startswith(operand.lower()):
-            disadvantage += 1
-        elif goals: 
-            goals[-1].append(operand) 
-        else:
-            bonus_dice.append(operand)
-        
-    if advantage > disadvantage: 
-        bonus_dice.append('1d6[advantage]')
-    elif disadvantage > advantage:
-        bonus_dice.append('-1d6[disadvantage]')
-    return dict(hope=hope_dice or hope, fear=fear_dice or fear, bonus=bonus_dice, goals=goals), cost   
-
-# vroll each part and return individually
-# All dice are supposed to be a list. 
-# If hope is empty, fear is the DM die 
-# If fear is empty hope is the reaction die (2d12)
-def roll_em(hope=None, fear=None, bonus=[], goals=[]):
-    result = dict()
-    if hope and fear:
-        result['hope'] = vroll(sum_dice(*hope)+'[hope]')
-        result['fear'] = vroll(sum_dice(*fear)+'[fear]')
-    elif hope:
-        result['hope'] = vroll(sum_dice(*hope))
-    elif fear: 
-        result['fear'] = vroll(sum_dice(*fear))
+    if card.get('category')=='domain':
+        if name in [c.lower() for c in vault(C)]:
+            reasons['card'] = f"{name} card in loadout"
+        elif name not in [c.lower() for c in loadout(C)]:
+            reasons['card'] = f"{name} card"
+    return reasons or True
     
-    if bonus:
-        result['bonus'] = vroll(sum_dice(*bonus))
 
-    result['goals'] = [vroll(sum_dice(*g)) for g in goals]
+
+# Helper for parse_attack
+# Parse avrae automation to get Daggerheart weapon statistics: 
+# dict(bonus=attackBonus, damage=damage, feature=text)
+# If it's not an attack imported from the sheet or made with `!a add`, results are undefined
+def _parse_attack_raw(attack_raw):
+    result = dict()
+    if automation:= attack_raw.get('automation'):
+        for auto in automation:
+            if auto.get('type') == 'target':
+                for effect in auto.get('effects',[]): 
+                    if effect.get('type') == 'attack':
+                        result['bonus'] = effect.get('attackBonus')
+                        for hit in effect.get('hit',[]):
+                            if hit.get('type') == 'damage':
+                                result['damage'] = hit.get('damage')
+                                break
+            elif auto.get('type') == 'text':
+                result['feature'] = auto.get('text')
     return result
 
 
-def format_dice(hope=None, fear=None, bonus=[], goals=[]):
-    summation=[]
-    if hope and fear:
-        summation += [sum_dice(*hope)+'[hope]', sum_dice(*fear)+'[fear]']
-    elif hope:
-        summation += hope
-    elif fear: 
-        summation += fear 
-
-    if bonus:
-        summation+=bonus
-    return sum_dice(*summation)
-
-def all_goals(goals):
-    return {goal_roll:2 for goal_roll in goals}
-
-def interpret_goals(total, goals):
-    return {goal_roll:total >= goal_roll.total for goal_roll in goals}
+def parse_attack(atk):
+    result = dict(name = atk.name)
+    result.update(_parse_attack_raw(atk.raw))
+    return result
 
 
-# Return <total>,<type> where type is hope, fear, critical and total is all dice added together
-def interpret(hope=None, fear=None, bonus=None, goals=[]):
-    total = bonus.total if bonus else 0 
-    if hope and fear:
-        total += hope.total + fear.total
-        if hope.total == fear.total:
-                return total, "critical", all_goals(goals)
-        elif hope.total > fear.total:
-            return total, "hope", interpret_goals(total, goals)
-        else: 
-            return total, "fear", interpret_goals(total, goals)
-    elif fear:      # GM dice, only fear 
-        total += fear.total
-        if fear.result.crit == 1:
-            return total, True, all_goals(goals)
-        else:
-            return total, False, interpret_goals(total, goals)
+# Get all the weapons of character C 
+def weapons(C):
+    return [parse_attack(atk) for atk in C.attacks]
+
+
+# Get the card loadout of character C, which are the avrae spell names that are flagged as prepared
+def loadout(C):
+    return [spell.name for spell in C.spellbook.spells if spell.prepared]
+
+
+# Get the card vault of character C, which are the avrae spell names that are not prepared
+def vault(C):
+    return [spell.name for spell in C.spellbook.spells if not spell.prepared]
+
+
+# return gold dict with total in float handful 
+def gold(C=character()):
+    purse = C.coinpurse
+    gold = dict(
+        handful=purse['ep'],
+        bags=purse['sp'],
+        chest=purse['gp']
+        # NB: pp unused. available for hidden Daggerheart imported number
+    )
+
+    total =  gold['handful'] + gold['bags'] * 10 + gold['chest'] * 100
+    if coins:=purse['cp']: # reasonable popular homebrew, single coins
+        # If not set it is not mentioned in the dict and the total remains integer
+        gold['coins'] = coins
+        total += 0.1 * coins
+
+    gold['total'] = total
+    return gold
+
 
 cc_definition=dict(
     Hope=dict(
@@ -485,6 +454,153 @@ def stress(amt=0):
     C=character()
     return try_mod_cc(C, 'Stress', amt)
 
+
+####################### Dice functions ##############################################
+# 1) Parse alias arguments and card automation to vroll dice instructions
+# 2) Execute the rolls and interpret the results like costs and gains
+# 3) Apply the results to the character 
+def sum_dice(*dice):
+    return '+'.join(die for die in dice if die!='0')
+
+
+def _parse_goal(s):
+    if s[0] != '=':
+        return None 
+    s=s[1:]
+    if not s:
+        return []
+    if match:=fuzzy_match(s, difficulties.keys()):
+        value = difficulties.get(match)
+        return [f"{value}[{match.replace('_',' ')}"]
+    return [s]
+
+def _parse_arg(arg):
+    if not arg:
+        return None 
+    if arg[0] == '+':
+        return arg[1:]
+    return arg
+
+
+# Parse discord arguments to a summation of dice and bonuses 
+# args: a list of strings 
+# returns: a list of operand strings split by + and - 
+def parse(args):
+    # TODO split operators. For now just support spaces 
+    return [_parse_arg(arg) for arg in args]
+
+# Return dice, die if s is of the format [<dice>=None]<separator><die>
+# return empty tuple otherwise 
+def _parse_die(s, separator='d'):
+    parts = s.split(separator, maxsplit=1)
+    if len(parts)==1:
+        return tuple()
+    if not parts[1][0].isnumeric():
+        return tuple()
+    try:
+        die = parts[1]
+        if not parts[0]:
+            return None, die
+        else:
+            return int(parts[0]), die
+    except 'ValueError':
+        return tuple()
+
+def _parse_hope(s):
+    return _parse_die(s, 'h')
+
+def _parse_fear(s):
+    return _parse_die(s, 'f')
+
+# Sort operands into hope rolls, fear rolls and bonus rolls
+## and return the result as a dictionary with hope, fear and bonus list
+## Also add a dictionary with counter costs
+## Experiences and traits are replaced with strings
+def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
+    hope_dice = []
+    fear_dice = []
+    bonus_dice = []
+    goals = []
+    cost = dict()
+    advantage = 0
+    disadvantage = 0
+    for operand in operands: 
+        if dice:= _parse_hope(operand):
+            hope_dice.append(f'{dice[0]}d{dice[1]}' if dice[0] is not None else str(dice[1])) 
+        elif dice:=_parse_fear(operand):
+            fear_dice.append(f'{dice[0]}d{dice[1]}' if dice[0] is not None else str(dice[1]))
+        elif (goal:=_parse_goal(operand)) is not None:
+            goals.append(goal)   # from here on bonuses are for the last goal
+        elif sheet and (dice:=_parse_die( operand)):
+            if goals:
+                goals[-1].append(operand) 
+            else:
+                bonus_dice.append(f'{dice[0]}d{dice[1]}')
+        elif sheet and (trait_bonus:=trait(operand)) is not None:
+            bonus_dice.append(f'{trait_bonus[1]}[{trait_bonus[0]}]')
+        elif sheet and (exp_bonus:=experience(sheet, operand)) is not None:
+            bonus_dice.append(f'{exp_bonus[1]}[{exp_bonus[0]}]')
+            cost['Hope'] = cost.get('Hope', 0) - 1
+        elif 'advantage'.startswith(operand.lower()):
+            advantage += 1
+        elif 'disadvantage'.startswith(operand.lower()):
+            disadvantage += 1
+        elif goals: 
+            goals[-1].append(operand) 
+        else:
+            bonus_dice.append(operand)
+        
+    if advantage > disadvantage: 
+        bonus_dice.append('1d6[advantage]')
+    elif disadvantage > advantage:
+        bonus_dice.append('-1d6[disadvantage]')
+    return dict(hope=hope_dice or hope, fear=fear_dice or fear, bonus=bonus_dice, goals=goals), cost   
+
+# vroll each part and return individually
+# All dice are supposed to be a list. 
+# If hope is empty, fear is the DM die 
+# If fear is empty hope is the reaction die (2d12)
+def roll_em(hope=None, fear=None, bonus=[], goals=[]):
+    result = dict()
+    if hope and fear:
+        result['hope'] = vroll(sum_dice(*hope)+'[hope]')
+        result['fear'] = vroll(sum_dice(*fear)+'[fear]')
+    elif hope:
+        result['hope'] = vroll(sum_dice(*hope))
+    elif fear: 
+        result['fear'] = vroll(sum_dice(*fear))
+    
+    if bonus:
+        result['bonus'] = vroll(sum_dice(*bonus))
+
+    result['goals'] = [vroll(sum_dice(*g)) for g in goals]
+    return result
+
+
+def interpret_goals(total, goals):
+    return {goal_roll:total >= goal_roll.total for goal_roll in goals}
+
+def all_goals(goals):
+    return {goal_roll:2 for goal_roll in goals}
+
+# Return <total>,<type> where type is hope, fear, critical and total is all dice added together
+def interpret(hope=None, fear=None, bonus=None, goals=[]):
+    total = bonus.total if bonus else 0 
+    if hope and fear:
+        total += hope.total + fear.total
+        if hope.total == fear.total:
+                return total, "critical", all_goals(goals)
+        elif hope.total > fear.total:
+            return total, "hope", interpret_goals(total, goals)
+        else: 
+            return total, "fear", interpret_goals(total, goals)
+    elif fear:      # GM dice, only fear 
+        total += fear.total
+        if fear.result.crit == 1:
+            return total, True, all_goals(goals)
+        else:
+            return total, False, interpret_goals(total, goals)
+
 # Try to pay all the costs and return the list of result (for format_result) or a failure string
 def pay_em(costs, C=character()):
     for cc_name, amt in costs.items():
@@ -496,70 +612,6 @@ def pay_em(costs, C=character()):
             return f"Not enough `{cc_name}` : {has}/{-amt}"
     return [f"**{cc_name}:** {try_mod_cc(C, cc_name, amt)}" for cc_name, amt in costs.items()]
 
-def is_allowed(name, card, C):
-    reasons = dict()
-    classes = get_class(C)
-    if req_level:=card.get('level'):
-        if req_level > C.levels.total_level:
-            reasons['level'] = f"level {req_level}"
-
-    if req_mastery:=card.get('mastery'):
-        if not any(cls[2] < req_mastery for cls in classes):
-            reasons['mastery'] = describe_mastery(req_mastery)
-    if req_sub:=card.get('subclass'):
-        if not any(cls[0] == req_sub for cls in classes):
-            reasons['subclass'] = req_sub
-    if req_cls:=card.get('class'):
-        if not any(cls[1] == req_cls for cls in classes):
-            reasons['class'] = req_cls
-
-    community, ancestry = get_heritage(C) 
-    if req_community:=card.get('community'):
-        if req_community != community:
-            reasons['community'] = f'{req_community} community'
-    if req_ancestry:=card.get('ancestry'):
-        if req_ancestry != ancestry:
-            reasons['ancestry'] = f'{req_ancestry} ancestry'
-
-    if req_domain:=card.get('domain'):
-        class_info = load_classes()
-        domains = all_domains(class_info, [cls[1] for cls in classes])
-        if req_domain not in domains:
-            reasons['domain'] = f'{req_domain} domain'
-
-    if card.get('category')=='domain':
-        if name in [c.lower() for c in vault(C)]:
-            reasons['card'] = f"{name} card in loadout"
-        elif name not in [c.lower() for c in loadout(C)]:
-            reasons['card'] = f"{name} card"
-    return reasons or True
-    
-# return gold dict with total in float handful 
-def gold(C=character()):
-    purse = C.coinpurse
-    gold = dict(
-        handful=purse['ep'],
-        bags=purse['sp'],
-        chest=purse['gp']
-        # NB: pp unused. available for hidden Daggerheart imported number
-    )
-
-    total =  gold['handful'] + gold['bags'] * 10 + gold['chest'] * 100
-    if coins:=purse['cp']: # reasonable popular homebrew, single coins
-        # If not set it is not mentioned in the dict and the total remains integer
-        gold['coins'] = coins
-        total += 0.1 * coins
-
-    gold['total'] = total
-    return gold
-
-# find the index in the string s of the first character not in allowed
-# return -1 if it is not found 
-def find_first_not_of(s, allowed):
-    for i, c in enumerate(s):
-        if c not in allowed:
-            return i
-    return -1
 
 # Split <dicestr>"["<label>"]" label into dicestr,label or dicestr,None if none  
 def split_dice_label(dice_str):
@@ -604,6 +656,11 @@ def roll_damage(dice, proficiency, success):
 def damage_targets(targets, proficiency, damage_dice):
     return {target:roll_damage(damage_dice, proficiency, success) for target, success in targets.items()}
 
+
+
+#################### Fromating functions ##################
+# These convert Daggerheart structures to user facing text
+
 degrees=['Failure', 'Success', 'Critical']
 def format_goals(goals, separator='\n'):
     return separator.join(f"VS {goal} **{degrees[success]}!**" for goal, success in goals.items())
@@ -624,35 +681,6 @@ def format_bonus(bonus):
 def format_effects(effects, separator='\n'):
     return separator.join(effect for effect in effects if effect is not None)
 
-def parse_attack_raw(attack_raw):
-    result = dict()
-    if automation:= attack_raw.get('automation'):
-        for auto in automation:
-            if auto.get('type') == 'target':
-                for effect in auto.get('effects',[]): 
-                    if effect.get('type') == 'attack':
-                        result['bonus'] = effect.get('attackBonus')
-                        for hit in effect.get('hit',[]):
-                            if hit.get('type') == 'damage':
-                                result['damage'] = hit.get('damage')
-                                break
-            elif auto.get('type') == 'text':
-                result['feature'] = auto.get('text')
-    return result
-
-def parse_attack(atk):
-    result = dict(name = atk.name)
-    result.update(parse_attack_raw(atk.raw))
-    return result
-
-def weapons(C):
-    return [parse_attack(atk) for atk in C.attacks]
-
-def loadout(C):
-    return [spell.name for spell in C.spellbook.spells if spell.prepared]
-
-def vault(C):
-    return [spell.name for spell in C.spellbook.spells if not spell.prepared]
 
 # Convery a card dict structure to lines of strings to display in an embed
 # The last line is the source and can be used as embed footer
@@ -666,7 +694,7 @@ def format_card(card_name, card, C):
         if level:=card.get('level'):
             assignment.append(f"Level: {level}")
         if mastery:=card.get('mastery'):
-            assignment.append(describe_mastery(mastery).capitalize())
+            assignment.append(format_mastery(mastery).capitalize())
         assignment+= [v.capitalize() for k,v in card.items() if k in assignment_keys]
         lines.append(f"** {' '.join(assignment)} {card.get('type', '')}**")
 
@@ -687,3 +715,23 @@ def format_card(card_name, card, C):
     else:
         lines.append("Source: Unknown")
     return lines
+
+def format_dice(hope=None, fear=None, bonus=[], goals=[]):
+    summation=[]
+    if hope and fear:
+        summation += [sum_dice(*hope)+'[hope]', sum_dice(*fear)+'[fear]']
+    elif hope:
+        summation += hope
+    elif fear: 
+        summation += fear 
+
+    if bonus:
+        summation+=bonus
+    return sum_dice(*summation)
+
+mastery_description=["foundation", "specialist", "master"]
+def format_mastery(mastery):
+    if mastery<=0:
+        return "" 
+    return mastery_description[mastery-1]
+

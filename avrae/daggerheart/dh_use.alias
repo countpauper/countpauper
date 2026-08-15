@@ -1,4 +1,13 @@
 <drac2>
+args=&ARGS&
+if not args:
+    return f'help {ctx.alias} -here'
+
+cards = dh.load_cards()
+C=character()
+
+card_name = args[0]
+
 # Display like dh_lookup
 # execute 
 # 1 prevent if not available (with override 'allow')
