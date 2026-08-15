@@ -59,9 +59,7 @@ lines.append(f"**Loadout:** {', '.join(dh.loadout(C))}")
 
 lines.append(f"**Vault:** {', '.join(dh.vault(C))}")
 
-hp = C.hp
-missing_hp = C.max_hp - C.hp
-fields['HP'] = f"{'▣' * hp}{'🞎' * missing_hp} {C.hp_str()}" ## ♡♥
+fields['HP'] = dh.format_hp(C)
 fields['Stress'] = dh.stress()
 fields['Hope'] = dh.hope()
 fields['Armor'] = dh.armor()

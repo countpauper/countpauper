@@ -1,0 +1,15 @@
+<drac2>
+using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
+
+def describe_vulnerable(C):
+    return " *Vulnerable!*" if dh.is_stressed_out(C) else "" 
+
+args="""&*&"""
+C=character()
+
+
+if not args: 
+    return f"echo **Stress** {dh.stress(0, C)}{describe_vulnerable(C)}"
+else:
+    return f"echo **Stress** {dh.stress(int(args), C)}{describe_vulnerable(C)}"
+</drac2>

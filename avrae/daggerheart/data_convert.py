@@ -58,7 +58,7 @@ def parse_cost(cost):
     result=dict()
     recall_header = "recall cost:"
     if cost.lower().startswith(recall_header):
-        result['recall'] = -int(cost[len(recall_header):])
+        result['recall'] = int(cost[len(recall_header):])
     else:
         raise NotImplementedError(f"Unsupported card cost format: '{cost}'")
     return result 

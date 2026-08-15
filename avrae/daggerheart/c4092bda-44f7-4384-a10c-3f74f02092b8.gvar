@@ -179,13 +179,6 @@ def thresholds(C=character()):
 def max_armor(C=character()):
     return _get_mapped_score(C, 'initiative')
 
-def armor(C=character()):
-    cc_name='Armor'
-    armor_cc_desc="When you take damage, you can mark one Armor Slot to reduce the severity of the damage by one threshold."
-    try:
-        return C.cc(cc_name)
-    except 'ConsumableException':
-        return None
 
 def max_stress(C=character()):
     return _get_mapped_score(C,'persuasion')
@@ -430,30 +423,83 @@ def update_cc(C, name, newmax, **kwargs):
     definition.update(kwargs)
     return C.create_cc(name, **definition), delta
 
+
+# counter/resource names that run out at maximum instead of at 0
+increasing_costs=('stress', 'recall')
+def _is_cc_loss(cc, amt):
+    if typeof(cc)=='str':
+        if cc.lower() in increasing_costs:
+            return amt>0
+        else:
+            return amt<0
+    else:   # AliasCustomCounter
+        if cc.reset_to is None: # Reset to maximum (eg hope, armor). Trying to decrease is a loss
+            return amt<0
+        elif cc.reset_to==0:     # Reset to 0 (ie stress), increasing is a loss
+            return amt>0
+
+def _is_cc_gain(cc, amt):
+    if typeof(cc)=='str':
+        if cc.lower() in increasing_costs:
+            return amt<0
+        else:
+            return amt>0
+    else:
+        if cc.reset_to is None: # Reset to maximum (eg hope, armor). Positive amount is gain
+            return amt>0
+        elif cc.reset_to==0: # Reset to 0 (ie stress), negative amount is recovery
+            return amt<0
+    
 def try_mod_cc(C, name, amt):
     try:
         cc=C.cc(name)
-        if amt:
-            diff = cc.value
-            diff = cc.mod(amt) - diff
-            return f"{cc} {'+' if diff>=0 else ''}{diff}"
-        else:
-            return cc
     except 'ConsumableException':
         return None
+    if amt:
+        diff = cc.value
+        diff = cc.mod(amt, strict=_is_cc_loss(cc, amt)) - diff
+        return f"{cc} {'+' if diff>=0 else ''}{diff}"
+    else:
+        return cc
 
 # Increase (or descrease) hope counter
 # returns a string description of the new stress and modifier
-def hope(amt=0):
-    C=character()
+def hope(amt=0, C=character()):
     return try_mod_cc(C, 'Hope', amt)
-    
+
+def armor(amt=0, C=character()):
+    return try_mod_cc(C, 'Armor', amt)
+
+def hitpoints(amt=0, C=character()):
+    if amt:
+        C.set_hp(C.hp + amt)
+        return f"{format_hp(C)} {amt}"
+    else:
+        return format_hp(C)
+        
 # Increase (or decrease) stress counter
 # returns a string description of the new stress and modifier
-def stress(amt=0):
-    C=character()
-    return try_mod_cc(C, 'Stress', amt)
+def stress(amt=0, C=character()):
+    if amt<=0:
+        return try_mod_cc(C, 'Stress', amt)
+    try:
+        cc = C.cc('Stress')
+        if cc.value + amt <= cc.max:
+            return try_mod_cc(C, 'Stress', amt)
+        cc_amt = cc.max-cc.value
+        hp_amt = amt-cc_amt
+        return f"{try_mod_cc(C, 'Stress', cc_amt)} {hitpoints(-hp_amt)}"
+    except 'ConsumableException':
+        return None
 
+
+# Return True if the character's Stress is at maximum, which would mean they are vulnerable
+def is_stressed_out(C):
+    try:
+        cc = C.cc('Stress')
+        return cc.value == cc.max
+    except 'ConsumableException':
+        return False
 
 ####################### Dice functions ##############################################
 # 1) Parse alias arguments and card automation to vroll dice instructions
@@ -603,11 +649,12 @@ def interpret(hope=None, fear=None, bonus=None, goals=[]):
 
 # Try to pay all the costs and return the list of result (for format_result) or a failure string
 def pay_em(costs, C=character()):
+    # Check costs ahead of time, to prevent partial costs failure.
     for cc_name, amt in costs.items():
         try: 
             has = C.get_cc(cc_name)
         except 'ConsumableException':
-            return f"No `{cc_name}`"
+            return f"No `{cc_name}`"    # TODO: support playing without sheet/counters
         if has<-amt:
             return f"Not enough `{cc_name}` : {has}/{-amt}"
     return [f"**{cc_name}:** {try_mod_cc(C, cc_name, amt)}" for cc_name, amt in costs.items()]
@@ -700,8 +747,8 @@ def format_card(card_name, card, C):
 
     cost_keys='recall', 'hope', 'stress', 'armor'
     # TODO for sub feats combine main card costs and sub card costs 
-    if costs:={k:v for k,v in card.items() if k in cost_keys and v < 0}:
-        lines.append(' '.join(f"**{k.capitalize()} cost: {-v}**" for k,v in costs.items()))
+    if costs:={k:v for k,v in card.items() if k in cost_keys and _is_cc_loss(k, v)}:
+        lines.append(' '.join(f"**{k.capitalize()} cost: {abs(v)}**" for k,v in costs.items()))
 
     allowed = is_allowed(card_name, card, C)
     if allowed is not True: 
@@ -734,4 +781,10 @@ def format_mastery(mastery):
     if mastery<=0:
         return "" 
     return mastery_description[mastery-1]
+
+
+def format_hp(C=character()):
+    hp = C.hp
+    missing_hp = C.max_hp - C.hp
+    return f"{'♥' * hp}{'♡' * missing_hp}"
 

@@ -9,11 +9,11 @@ args = &ARGS&
 if not args: 
     return f'help {ctx.alias} -here'
 
-c=character() 
+C=character() 
 
-weapon = find_attack(c, args[0])
+weapon = find_attack(C, args[0])
 if not weapon:
-    return f"echo Weapon `{args[0]}` is not listed on {c.name}'s sheet.\n{character().attacks}"
+    return f"echo Weapon `{args[0]}` is not listed on {C.name}'s sheet.\n{character().attacks}"
 atk = dh.parse_attack(weapon)
 damage_dice = atk.get('damage')
 attack_bonus = atk.get('bonus')
@@ -35,15 +35,15 @@ if typeof(effects)!='SafeList':
 duality_roll = dh.roll_em(**duality_dice)
 
 total, quality, goals = dh.interpret(**duality_roll)
-damage = dh.damage_targets(goals, dh.proficiency(c), damage_dice)   # TODO get proficiency
+damage = dh.damage_targets(goals, dh.proficiency(C), damage_dice)   # TODO get proficiency
 
 if feature := atk.get('feature'):
     effects.append(f'**{weapon.name}:** {feature}')
 if quality=='hope':
-    effects.append(f'**Hope:** {dh.hope(+1)}')
+    effects.append(f'**Hope:** {dh.hope(+1, C)}')
 elif quality=='critical':
-    effects.append(f'**Hope:** {dh.hope(+1)}')
-    effects.append(f'**Stress:** {dh.stress(-1)}')
+    effects.append(f'**Hope:** {dh.hope(+1, C)}')
+    effects.append(f'**Stress:** {dh.stress(-1, C)}')
 
 hope = duality_roll.get('hope')
 fear = duality_roll.get('fear')
