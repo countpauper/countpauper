@@ -42,9 +42,9 @@ def save(sheet, C=character(), var_name=None):
 def gather_gvars(svar_name, uvar_name):
     return load_yaml(get_uvar(uvar_name,'[]')) +  load_yaml(get_svar(svar_name,'[]'))
 
-def load_feats():
+def load_cards():
     gvars = ['7a5a3d45-7ad0-4db9-9c9a-dc37294a216e', '1eeba3a1-1fd9-4b72-8713-d6475ccfc204']
-    gvars += gather_gvars('dh_features', 'dh_features')
+    gvars += gather_gvars('dh_cards', 'dh_cards')
     feats = dict()
     for gvar in gvars: 
         feats.update(load_json(get_gvar(gvar) or '{}'))
@@ -284,17 +284,17 @@ def change_experience(sheet, idx, name, C):
 
 def class_features(sub, cls, mastery, features):
     result = []
-    for name, feat in features.items(): 
-        if feat.get('class')==cls:
-            if feat_sub:=feat.get('subclass'):
-                if feat_sub==sub and feat.get('mastery') <= mastery:
+    for name, card in features.items(): 
+        if card.get('class')==cls:
+            if feat_sub:=card.get('subclass'):
+                if feat_sub==sub and card.get('mastery') <= mastery:
                     result.append(name)
             else:
                 result.append(name)
     return result
         
 def heritage_features(community, ancestry, features):
-    return [name for name,feat in features.items() if feat.get('ancestry')==ancestry or feat.get('community')==community] 
+    return [name for name,card in features.items() if card.get('ancestry')==ancestry or card.get('community')==community] 
 
 def get_domains(class_info, class_name):
     if cls:=class_info.get(class_name.lower()):
@@ -496,38 +496,38 @@ def pay_em(costs, C=character()):
             return f"Not enough `{cc_name}` : {has}/{-amt}"
     return [f"**{cc_name}:** {try_mod_cc(C, cc_name, amt)}" for cc_name, amt in costs.items()]
 
-def is_allowed(name, feat, C):
+def is_allowed(name, card, C):
     reasons = dict()
     classes = get_class(C)
-    if req_level:=feat.get('level'):
+    if req_level:=card.get('level'):
         if req_level > C.levels.total_level:
             reasons['level'] = f"level {req_level}"
 
-    if req_mastery:=feat.get('mastery'):
+    if req_mastery:=card.get('mastery'):
         if not any(cls[2] < req_mastery for cls in classes):
             reasons['mastery'] = describe_mastery(req_mastery)
-    if req_sub:=feat.get('subclass'):
+    if req_sub:=card.get('subclass'):
         if not any(cls[0] == req_sub for cls in classes):
             reasons['subclass'] = req_sub
-    if req_cls:=feat.get('class'):
+    if req_cls:=card.get('class'):
         if not any(cls[1] == req_cls for cls in classes):
             reasons['class'] = req_cls
 
     community, ancestry = get_heritage(C) 
-    if req_community:=feat.get('community'):
+    if req_community:=card.get('community'):
         if req_community != community:
             reasons['community'] = f'{req_community} community'
-    if req_ancestry:=feat.get('ancestry'):
+    if req_ancestry:=card.get('ancestry'):
         if req_ancestry != ancestry:
             reasons['ancestry'] = f'{req_ancestry} ancestry'
 
-    if req_domain:=feat.get('domain'):
+    if req_domain:=card.get('domain'):
         class_info = load_classes()
         domains = all_domains(class_info, [cls[1] for cls in classes])
         if req_domain not in domains:
             reasons['domain'] = f'{req_domain} domain'
 
-    if feat.get('category', 'domain'):
+    if card.get('category')=='domain':
         if name in [c.lower() for c in vault(C)]:
             reasons['card'] = f"{name} card in loadout"
         elif name not in [c.lower() for c in loadout(C)]:
@@ -653,3 +653,37 @@ def loadout(C):
 
 def vault(C):
     return [spell.name for spell in C.spellbook.spells if not spell.prepared]
+
+# Convery a card dict structure to lines of strings to display in an embed
+# The last line is the source and can be used as embed footer
+def format_card(card_name, card, C):
+    lines=[]
+    if card.get('category')=='domain':
+        lines.append(f"**Level {card.get('level')} {card.get('domain','').capitalize()} {card.get('type','').capitalize()}**")
+    else:
+        assignment_keys='community','ancestry','subclass','class' 
+        assignment=[]
+        if level:=card.get('level'):
+            assignment.append(f"Level: {level}")
+        if mastery:=card.get('mastery'):
+            assignment.append(describe_mastery(mastery).capitalize())
+        assignment+= [v.capitalize() for k,v in card.items() if k in assignment_keys]
+        lines.append(f"** {' '.join(assignment)} {card.get('type', '')}**")
+
+    cost_keys='recall', 'hope', 'stress', 'armor'
+    # TODO for sub feats combine main card costs and sub card costs 
+    if costs:={k:v for k,v in card.items() if k in cost_keys and v < 0}:
+        lines.append(' '.join(f"**{k.capitalize()} cost: {-v}**" for k,v in costs.items()))
+
+    allowed = is_allowed(card_name, card, C)
+    if allowed is not True: 
+        lines.append(f"**Requires:** {', '.join(a.capitalize() for a in allowed.values())}")
+
+    #description 
+    lines.append(card.get('description',''))
+
+    if source:=card.get('source'):
+        lines.append(f"Source: {source}")
+    else:
+        lines.append("Source: Unknown")
+    return lines

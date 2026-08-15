@@ -1,0 +1,29 @@
+<drac2> 
+using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
+
+C=character()
+args="""&*&"""
+cards = dh.load_cards()
+
+card_name=args.lower()
+if card:=cards.get(card_name):
+    pass
+else:
+    if card_name:=dh.fuzzy_match(card_name, cards.keys()):
+        card = cards.get(card_name)
+    else:
+        return f'echo Search term not found: `{args}`' 
+
+lines=dh.format_card(card_name, card, C)
+footer=f""" -footer "{lines[-1]}" """
+lines=lines[0:-1]
+
+nl='\n'
+if img:=card.get('thumb'):
+    thumb = f""" -thumb {img}"""
+else:
+    thumb = ""
+
+return f"""embed -title "{card_name.title()}" -desc "{nl.join(lines)}"{footer}{thumb}"""
+
+</drac2>

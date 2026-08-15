@@ -44,7 +44,7 @@ for weapon in dh.weapons(C):
     lines.append(f"**{weapon.get('name')}** Bonus: `{weapon.get('bonus')}` Damage:`{weapon.get('damage')}` " + weapon.get('feature',''))
 
 
-all_features =  dh.load_feats()
+all_features =  dh.load_cards()
 features=dh.heritage_features(community, ancestry, all_features)
 for cls in classes:
     features += dh.class_features(*cls, all_features)

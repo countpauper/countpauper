@@ -1,0 +1,8 @@
+<drac2>
+# Display like dh_lookup
+# execute 
+# 1 prevent if not available (with override 'allow')
+# 2 deduct cost (with override 'free')
+# 3 roll (with bonuses)
+# Display results (counters, rolls) partially in fields 
+</drac2>
