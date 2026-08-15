@@ -59,17 +59,19 @@ Google sheet:
 - Fix multi class as a separate class in the list with sub class and (optionally) select domain so "stalwart guardian valor"
 - Make the class level a drop down that has a (hidden?) foundation, specialization, mastery, perhaps shorten the class list 
 
-`!dh_short [armor [<ally>]] [stress] [heal [<ally>]] [hope[s]]`
-`!dh_long  [armor [<ally>]] [stress] [heal [<ally>]] [hope[s]] [project <name>]`
+[done] `!dh_short [armor [<ally>]] [stress] [heal [<ally>]] [hope[s]]`
+[done] `!dh_long  [armor [<ally>]] [stress] [heal [<ally>]] [hope[s]] [project <name>]`
 
-armor: Repair 1d4+proficiency armor slots on short rest and all on long 
-stress: Clear 1d4+proficiency stress on short rest and all on long 
-health: Tend to 1d4+proficiency wounds on a short rest or all on long.
-heal: Tend to 1d4+proficiency of an allies' wounds on a short rest or all on a long rest. 
+[done] armor: Repair 1d4+proficiency armor slots on short rest and all on long 
+
+TODO: repair an ally's armor! maybe just like heal check the next argument? bleh lame 
+[done] stress: Clear 1d4+proficiency stress on short rest and all on long 
+[done] health: Tend to 1d4+proficiency wounds on a short rest or all on long.
+[done] heal: Tend to 1d4+proficiency of an allies' wounds on a short rest or all on a long rest. 
 TODO: this will give the `!g hp +<n>`  
-hope: gain 1 hope by preparing.
-hopes: gain 2 hopes by preparing with a friend.
-project: Progress a project by 1. If it has a counter with the name it is increased
+[done] hope: gain 1 hope by preparing.
+[done] hopes: gain 2 hopes by preparing with a friend.
+[done] project: Progress a project by 1. If it has a counter with the name it is increased
 
 
 [mostly done]`!duality [<dice>=1h12+1f12] [<trait>] ["<experience>"]... [<dice>]... [adv/+] [dis/-]... [=<target>]
@@ -146,7 +148,7 @@ Split the feature/card formating function for reuse.
 !dh_lookup for sub class, sub class features at levels and main class 
 !dh_lookup for domain, show all cards in the domain 
 
-`!dh_stress [<amount>=1]` Mark (or heal with -1 or few with 0) stress, become vulnerable if maxed out and reduce hp if over, card stress use (all pay(...))  should also apply this 
+[done] !dh_stress [<amount>=1]` Mark (or heal with -1 or few with 0) stress, become vulnerable if maxed out and reduce hp if over, card stress use (all pay(...))  should also apply this 
 `!dh_hope` perhaps just alias for `cc Hope` 
 `!dhfear [+/-[<n>]]` add or remove fear or just show it. Use a (configurable in svar/uvar?) evil smiley  
 Also use fear on gm rolls with experience (how to specify experience? )

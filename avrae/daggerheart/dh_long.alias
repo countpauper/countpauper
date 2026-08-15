@@ -1,0 +1,38 @@
+<drac2> 
+using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
+
+args=&ARGS& 
+C=character()
+lines=[]
+unknown=[]
+for arg in args: 
+    arg=arg.lower()
+
+    if arg=='heal':
+        lines.append(f"**Tend to all of an ally's wounds**")
+    elif arg=='health' or arg=='hp':
+        lines.append(f"**Tend to wounds:** {dh.hitpoints(C.max_hp - C.hp)}")
+    elif 'armor'.startswith(arg):
+        lines.append(f"**Repair armor:** {dh.armor(65535)}")
+    elif 'stress'.startswith(arg):
+        lines.append(f"**Clear stress:** {dh.stress(-65535)}")
+    elif arg=='hope':
+        lines.append(f"**Prepare: Hope** {dh.hope(+1)}")
+    elif arg=='hopes':
+        lines.append(f"**Prepare together: Hope** {dh.hope(+2)}")
+    else:
+        if C.cc_exists(arg):
+            cc = C.cc(arg)
+            cc.mod(+1)
+            lines.append(f"**Work on a project: {cc.name}** {cc} (+1)")
+        else:
+            lines.append(f"**Unrecognized action:** `{arg}`")
+
+for counter in dh.reset(['short', 'long'], C):
+    lines.append(str(counter))
+
+nl='\n'
+
+return f"""embed -title "{C.name} takes a short rest." -desc "{nl.join(lines)}" """
+</drac2>
+
