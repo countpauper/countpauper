@@ -10,13 +10,16 @@ for arg in args:
     roll_str = f'1d4+{dh.proficiency(C)}'
     if arg=='heal':
         heal_roll=vroll(roll_str)
-        lines.append(f"**Tend to ally's wounds:** {heal_roll}")
+        lines.append(f"**Tend to ally's wounds:** {heal_roll} (`!g hp +{heal_roll.total}`)")
     elif arg=='health' or arg=='hp':
         heal_roll=vroll(f'1d4+{dh.proficiency(C)}')
         lines.append(f"**Tend to wounds:** {heal_roll} {dh.hitpoints(heal_roll.total)}")
     elif 'armor'.startswith(arg):
         armor_roll = vroll(roll_str)
         lines.append(f"**Repair armor:** {armor_roll} {dh.armor(armor_roll.total)}")
+    elif 'fix' == arg:
+        armor_roll = vroll(roll_str)
+        lines.append(f"**Fix an ally's armor:** {armor_roll} (`!cc Armor +{armor_roll.total}`)")
     elif 'stress'.startswith(arg):
         stress_roll = vroll(roll_str)
         lines.append(f"**Clear stress:** {stress_roll} {dh.stress(-stress_roll.total)}")
@@ -25,7 +28,7 @@ for arg in args:
     elif arg=='hopes':
         lines.append(f"**Prepare together: Hope** {dh.hope(+2)}")
     else:
-        lines.append(f"**Unrecognized action:** `{arg}`")
+        lines.append(f"**Custom activity:** `{arg}`")
 
 for counter in dh.reset(['short'], C):
     lines.append(str(counter))

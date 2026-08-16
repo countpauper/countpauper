@@ -7,6 +7,7 @@ Benefit from a short rest and specify what to spend the time on.
 - `heal`: Tend to all of an allies' wounds.
 - `health`: Tend to all your own wounds.
 - `armor`: Repair all armor slots.
+- `fix` : Fix all armor slots of an ally.
 - `stress`: Clear alls stress. 
 - `hope`: Gain 1 hope by preparing.
 - `hopes`: Gain 2 hopes by preparing with a friend.

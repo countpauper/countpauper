@@ -9,11 +9,13 @@ for arg in args:
     arg=arg.lower()
 
     if arg=='heal':
-        lines.append(f"**Tend to all of an ally's wounds**")
+        lines.append(f"**Tend to all of an ally's wounds** (`!g hp max`)" )
     elif arg=='health' or arg=='hp':
         lines.append(f"**Tend to wounds:** {dh.hitpoints(C.max_hp - C.hp)}")
     elif 'armor'.startswith(arg):
         lines.append(f"**Repair armor:** {dh.armor(65535)}")
+    elif 'fix'==arg:
+        lines.append(f"**Repair an ally's armor** (`!cc reset Armor`)")
     elif 'stress'.startswith(arg):
         lines.append(f"**Clear stress:** {dh.stress(-65535)}")
     elif arg=='hope':
@@ -26,7 +28,7 @@ for arg in args:
             cc.mod(+1)
             lines.append(f"**Work on a project: {cc.name}** {cc} (+1)")
         else:
-            lines.append(f"**Unrecognized action:** `{arg}`")
+            lines.append(f"**Custom activity:** `{arg}`")
 
 for counter in dh.reset(['short', 'long'], C):
     lines.append(str(counter))
