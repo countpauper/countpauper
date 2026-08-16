@@ -3,7 +3,7 @@ using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 argstr="""&*&"""
 args=argparse(argstr,parse_ephem=False)
 C=character()
-sheet = dh.sheet(C)
+sheet = dh.sheet(C) or dict()
 hope=6
 stress=dh.max_stress(C)
 armor=dh.max_armor(C)
@@ -48,5 +48,5 @@ if not updates:
     return 'echo Everything is already up to date.'
 else:
     nl='\n'
-    return f"echo {nl.join(str(u) for u in updates)}"
+    return f"echo "**Updated sheet of {C.name}:**:\n{nl.join(str(u) for u in updates)}"
 </drac2>

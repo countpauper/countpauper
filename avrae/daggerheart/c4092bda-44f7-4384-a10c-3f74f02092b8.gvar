@@ -150,12 +150,16 @@ def get_heritage(C=character()):
 def pronouns(C=character()):
     return C.get_cvar('they','they'), C.get_cvar('them','them'), C.get_cvar('their','their')
 
-skills_map = (
+thresholds_map=(
     "acrobatics", 
     "animalHandling",
     "arcana",
-    "athletics",
-    "deception",
+    "athletics"
+)
+
+stress_map="deception"
+
+experience_map = (
     "history",
     "insight",
     "intimidation",
@@ -164,8 +168,10 @@ skills_map = (
     "nature",
     "perception",
     "performance",
-    "persuasion",
-    "religion",
+    "persuasion")
+
+reserved_skills = (
+    "religion", # hidden 
     "sleightOfHand",
     "stealth",
     "survival")
@@ -177,9 +183,9 @@ def _get_mapped_score(C, skill):
 def thresholds(C=character()):
     thresholds = [
         -2147483648, 1,
-        _get_mapped_score(C, skills_map[-1]),
-        _get_mapped_score(C, skills_map[-2])]
-    if massive := _get_mapped_score(C, skills_map[-3]):  # common homebrew supported 0
+        _get_mapped_score(C, thresholds_map[0]),
+        _get_mapped_score(C, thresholds_map[1])]
+    if massive := _get_mapped_score(C, thresholds_map[2]):  # common homebrew supported 0
         thresholds.append(massive)
     # TODO deadly not yet supported, less common homebrew
     return thresholds
@@ -189,7 +195,7 @@ def max_armor(C=character()):
 
 
 def max_stress(C=character()):
-    return _get_mapped_score(C,'persuasion')
+    return _get_mapped_score(C,stress_map)
 
 
 def proficiency(C=character()):
@@ -262,19 +268,21 @@ def experience(sheet, name, C=character()):
 
 experience_nrs=range(1,10)
 def add_experience(sheet, name, C):
-    if not sheet:
-        sheet=dict()
+    if sheet is None:
+        return f"No sheet to add experience {name} to"
     exp = sheet.get('experience', dict())
     if len(exp) >= len(experience_nrs):
         return name, f"Maximum number of experiences `{len(experience_nrs)}` reached" 
-    map=skills_map[len(exp)]
-    sheet['experience'].update({name:map})
-    return experience(sheet, name, C)
+    map=experience_map[len(exp)]
+    current_exp = sheet.get('experience',dict())
+    current_exp.update({name:map})
+    sheet['experience'] = current_exp
+    return experience(sheet, name, C) 
 
 
 def change_experience(sheet, idx, name, C):
-    if not sheet:
-        sheet=dict()
+    if sheet is None:
+        return f"No sheet to change experience #{idx}"
     exp = sheet.get('experience', dict())
     if idx >= len(exp): 
         return name, f"Experience `#{idx+min(experience_nrs)}` does not exist."
