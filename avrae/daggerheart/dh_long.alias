@@ -35,6 +35,6 @@ for counter in dh.reset(['short', 'long'], C):
 
 nl='\n'
 
-return f"""embed -title "{C.name} takes a short rest." -desc "{nl.join(lines)}" """
+return f"""embed -title "{C.name} takes a long rest." -desc "{nl.join(lines)}" """
 </drac2>
 

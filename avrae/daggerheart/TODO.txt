@@ -48,17 +48,21 @@ For stats updates in var, change them
 Google sheet: 
 [done] Swap thresholds closer to armor and experiences starting below. fix up edges
 [done] D&D Logo replace, also above spell casting 
-- Edit ? sheet, add information and give credits to original 
-- Coins rename (pictures), hide PP (or add homebrew hoard) and fix total computation
-- HP and armor ticks (not imported) visibility determined by HP, armor max 
-- Hide stress ticks based on max stress 
+[done] Edit ? sheet, add information and give credits to original 
+- Add help to sheet
+[done] Coins rename (pictures), hide PP (or add homebrew hoard) and fix total computation
+[done] HP and armor ticks (not imported) visibility determined by HP, armor max 
+[done]- Hide stress ticks based on max stress 
 - Rename flaws and traits with daggerheart background/relation information 
 - Hide passive perception 
+- Move stress to wisdomsave or something 
+- Hide saves
 - Rebrand/reshape proficiencies, tools features and traits sections 
 - Armor selection
-- Hide spell level headers/replace with domain names (from class?)
+[done] Hide spell level headers/replace with domain names (from class?)
 - Fix multi class as a separate class in the list with sub class and (optionally) select domain so "stalwart guardian valor"
-- Make the class level a drop down that has a (hidden?) foundation, specialization, mastery, perhaps shorten the class list 
+- Make the class level a drop down that has a (hidden?) foundation, specialization, mastery, this requires multiple columns and vlookup for the imported value in column N
+-  perhaps shorten the class list
 
 [done] `!dh_short [armor [<ally>]] [stress] [heal [<ally>]] [hope[s]]`
 [done] `!dh_long  [armor [<ally>]] [stress] [heal [<ally>]] [hope[s]] [project <name>]`

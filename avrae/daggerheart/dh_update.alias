@@ -48,5 +48,5 @@ if not updates:
     return 'echo Everything is already up to date.'
 else:
     nl='\n'
-    return f"echo "**Updated sheet of {C.name}:**:\n{nl.join(str(u) for u in updates)}"
+    return f"echo **Updated sheet of {C.name}:**{nl}{nl.join(str(u) for u in updates)}"
 </drac2>

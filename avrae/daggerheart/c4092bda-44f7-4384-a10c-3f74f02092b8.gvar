@@ -151,15 +151,20 @@ def pronouns(C=character()):
     return C.get_cvar('they','they'), C.get_cvar('them','them'), C.get_cvar('their','their')
 
 thresholds_map=(
+    "strength",
+    "dexterity",
+    "constitution",
+    "intelligence"
+)
+
+stress_map = "wisdom"
+# charisma reserved     
+experience_map = (
     "acrobatics", 
     "animalHandling",
     "arcana",
-    "athletics"
-)
-
-stress_map="deception"
-
-experience_map = (
+    "athletics",
+    "deception",
     "history",
     "insight",
     "intimidation",
@@ -177,25 +182,23 @@ reserved_skills = (
     "survival")
 
 def _get_mapped_score(C, skill):
-    return C.skills[skill].value 
+    skill_rec = C.skills[skill] 
+    return skill_rec.value  # No prof check as proficiency isn't imported for initiative
+
+def _get_mapped_save(C, save):
+    save_rec = C.saves.get(save)
+    return save_rec.value if save_rec.prof else None 
+
 
 # Get damage thresholds, Index is amount of wounds if damage>=treshold 
 def thresholds(C=character()):
-    thresholds = [
-        -2147483648, 1,
-        _get_mapped_score(C, thresholds_map[0]),
-        _get_mapped_score(C, thresholds_map[1])]
-    if massive := _get_mapped_score(C, thresholds_map[2]):  # common homebrew supported 0
-        thresholds.append(massive)
-    # TODO deadly not yet supported, less common homebrew
-    return thresholds
+    return [-2147483648, 1] + [v for threshold in thresholds_map if (v:=_get_mapped_save(C, threshold)) is not None]
 
 def max_armor(C=character()):
     return _get_mapped_score(C, 'initiative')
 
-
 def max_stress(C=character()):
-    return _get_mapped_score(C,stress_map)
+    return _get_mapped_save(C,stress_map)
 
 
 def proficiency(C=character()):

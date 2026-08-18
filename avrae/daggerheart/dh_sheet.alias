@@ -31,9 +31,9 @@ lines.append(f"**Instinct:** {dh.instinct()} **Presence:** {dh.presence()} **Kno
 
 lines.append(f"**Evasion:** {C.ac}")
 
+threshold_names=('Major','Severe','Massive','Deadly')
 threshold = dh.thresholds()[2:]
-lines.append(f"**Thresholds:** Minor(1) **[**` {threshold[0]} `**>** Major(2) **[**` {threshold[1]} `**>** Severe(3)" +(\
-    f"**[**` {threshold[2]} `**>** Massive(4)" if len(threshold)>2 else ""))
+lines.append("**Thresholds:** Minor (1) "+' '.join(f"**[**` {threshold} `**>** {threshold_names[idx]} ({idx+2})" for idx, threshold in enumerate(threshold)))
 
 if experiences := dh.experiences(S, C):
     lines.append(f"**Experience:** {', '.join(f'{exp}: `{score}`' for exp, score in experiences.items())}")
