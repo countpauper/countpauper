@@ -1,4 +1,4 @@
-`!duality [<hope>=1h12]… [<fear>=1f12]… [<trait>] ["<experience>"]… [<dice>] [adv]… [dis]… [=<target>/<difficulty>]…`
+`!duality [<hope>=1h12]… [<fear>=1f12]… [<trait>] [spell] ["<experience>"]… [<dice>] [adv]… [dis]… [=<target>/<difficulty>]…`
 
 **Roll duality dice**
 Increases `Hope` counter on hope. On critical it also  reduces the `Stress` counter.
@@ -7,7 +7,8 @@ Increases `Hope` counter on hope. On critical it also  reduces the `Stress` coun
 
 `hope` - Change the hope die by using an `h` to separate the number of the dice and the size of the die. 
 `fear` - Change the fear die by using an `f` to separate the number of dice aand the size of the die.
-`trait` - Use the name or part of a name of a trait to use the score from your character sheet. 
+`<trait>` - Use the name or part of a name of a trait to use the score from your character sheet. 
+`spell` - Roll a spell check using the spell trait bonus from your sheet.
 `experience` - Add an experience from your character sheet that contains this description. 
 `dice` - Add additional dice with `<n>d<size>` or just a float bonus. 
 `adv` - Add advantage, which will add a 1d6 if the number of advantages is larger than disadvantages.

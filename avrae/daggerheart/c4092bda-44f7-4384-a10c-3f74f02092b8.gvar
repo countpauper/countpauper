@@ -158,7 +158,8 @@ thresholds_map=(
 )
 
 stress_map = "wisdom"
-# charisma reserved     
+hope_map = "charisma"
+
 experience_map = (
     "acrobatics", 
     "animalHandling",
@@ -200,7 +201,10 @@ def max_armor(C=character()):
 def max_stress(C=character()):
     return _get_mapped_save(C,stress_map)
 
-
+def max_hope(C=character()):
+    save_hope = _get_mapped_save(C,hope_map)
+    return 6 if save_hope is None else save_hope
+    
 def proficiency(C=character()):
     return C.stats.prof_bonus
 
@@ -235,25 +239,27 @@ ins_name="instinct"
 pres_name="presence"
 know_name="knowledge"
 
-def trait(name):
+def trait(name, C=character()):
     if len(name)<3:
         return None
     name=name.lower()
     if str_name.startswith(name):
-        return str_name, strength()
+        return str_name, strength(C)
     elif agi_name.startswith(name):
-        return agi_name, agility()
+        return agi_name, agility(C)
     elif fin_name.startswith(name):
-        return fin_name, finesse()
+        return fin_name, finesse(C)
     elif ins_name.startswith(name):
-        return ins_name, instinct()
+        return ins_name, instinct(C)
     elif pres_name.startswith(name):
-        return pres_name, presence()
+        return pres_name, presence(C)
     elif know_name.startswith(name):
-        return know_name, knowledge()
+        return know_name, knowledge(C)
     else:
         return None
 
+def spell_bonus(C=character()):
+    return C.spellbook.sab
 
 def experiences(sheet, C):
     if not sheet:
@@ -425,7 +431,7 @@ def update_cc(C, name, newmax, **kwargs):
         if not delta:
             return cc, delta
         definition=dict(
-            initial_value=cc.value if cc.reset_to else cc.value + delta,
+            initial_value=cc.value if cc.reset_to==0 else max(cc.value, cc.value + delta),
             desc=cc.desc,
             dispType=cc.display_type,
             reset_to=cc.reset_to,
@@ -607,6 +613,8 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
         elif sheet and (exp_bonus:=experience(sheet, operand)) is not None:
             bonus_dice.append(f'{exp_bonus[1]}[{exp_bonus[0]}]')
             cost['Hope'] = cost.get('Hope', 0) - 1
+        elif 'spell'==operand:
+            bonus_dice.append(f'{spell_bonus()}[spell]')
         elif 'advantage'.startswith(operand.lower()):
             advantage += 1
         elif 'disadvantage'.startswith(operand.lower()):

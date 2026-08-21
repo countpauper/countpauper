@@ -25,8 +25,8 @@ if classes:
 else:
     lines.append("**Class:** set in Additional sheet at C69, multiclass in C70")
 
-lines.append(f"**Agility:** {dh.agility()} **Strength:** {dh.strength()} **Finesse:** {dh.finesse()}")
-lines.append(f"**Instinct:** {dh.instinct()} **Presence:** {dh.presence()} **Knowledge:** {dh.knowledge()}")
+lines.append(f"**Agility:** {dh.agility(C)} **Strength:** {dh.strength(C)} **Finesse:** {dh.finesse(C)}")
+lines.append(f"**Instinct:** {dh.instinct(C)} **Presence:** {dh.presence(C)} **Knowledge:** {dh.knowledge(C)}")
 
 
 lines.append(f"**Evasion:** {C.ac}")

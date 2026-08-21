@@ -4,12 +4,12 @@ argstr="""&*&"""
 args=argparse(argstr,parse_ephem=False)
 C=character()
 sheet = dh.sheet(C) or dict()
-hope=6
+hope=dh.max_hope(C)
 stress=dh.max_stress(C)
 armor=dh.max_armor(C)
 
 cc_updates=[]
-cc_updates.append(dh.update_cc(C, 'Hope', 6))
+cc_updates.append(dh.update_cc(C, 'Hope', hope))
 cc_updates.append(dh.update_cc(C, 'Stress', stress))
 cc_updates.append(dh.update_cc(C, 'Armor', armor))
 

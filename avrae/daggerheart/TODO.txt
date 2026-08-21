@@ -53,27 +53,33 @@ Google sheet:
 [done] Coins rename (pictures), hide PP (or add homebrew hoard) and fix total computation
 [done] HP and armor ticks (not imported) visibility determined by HP, armor max 
 [done]- Hide stress ticks based on max stress 
-- Rename flaws and traits with daggerheart background/relation information 
-- Hide passive perception 
-- Move stress to wisdomsave or something 
-- Hide saves
-- Rebrand/reshape proficiencies, tools features and traits sections 
+[done] Rename flaws and traits with daggerheart background/relation information 
+[done] Hide passive perception 
+[done] Move stress to wisdomsave or something 
+[done] Use check boxes to import experiences and thresholds
+
+[done] Hide saves
+[done] Rebrand/reshape proficiencies, tools features and traits sections 
 - Armor selection
 [done] Hide spell level headers/replace with domain names (from class?)
 - Fix multi class as a separate class in the list with sub class and (optionally) select domain so "stalwart guardian valor"
 - Make the class level a drop down that has a (hidden?) foundation, specialization, mastery, this requires multiple columns and vlookup for the imported value in column N
 -  perhaps shorten the class list
+[done] Split weapon bonuses/penalties to finesse, evaion, armor and stuff in table, apply them 
+- Class table to automatically set initial (base) hitpoints and evasion 
+- Subclass table to automatically set casting stat
+- Ancestries so simiah can have bonus evasion 
 
 [done] `!dh_short [armor [<ally>]] [stress] [heal [<ally>]] [hope[s]]`
 [done] `!dh_long  [armor [<ally>]] [stress] [heal [<ally>]] [hope[s]] [project <name>]`
 
 [done] armor: Repair 1d4+proficiency armor slots on short rest and all on long 
 
-TODO: repair an ally's armor! maybe just like heal check the next argument? bleh lame 
+[done] repair an ally's armor! maybe just like heal check the next argument? bleh lame 
 [done] stress: Clear 1d4+proficiency stress on short rest and all on long 
 [done] health: Tend to 1d4+proficiency wounds on a short rest or all on long.
 [done] heal: Tend to 1d4+proficiency of an allies' wounds on a short rest or all on a long rest. 
-TODO: this will give the `!g hp +<n>`  
+[done] this will give the `!g hp +<n>`  
 [done] hope: gain 1 hope by preparing.
 [done] hopes: gain 2 hopes by preparing with a friend.
 [done] project: Progress a project by 1. If it has a counter with the name it is increased
@@ -90,6 +96,7 @@ TODO: this will give the `!g hp +<n>`
 [done, its both] experience should not be a number but a reference to a skill name 
 [done] Target
 [done] Using an experience should cost a Hope 
+* Add spell for spellbook.sb (spell attack bonus)
 * Now arguments separates by spaces are summed. The whole argument string could also be one big summation (subtraction)
  This basically preparses the library for a "duality dice" string. This string is split in hope, fear and generic bonuses. 
 * +1f4 should add 1d4 to the basic 1d12 fear, not add it, but what is this syntax. Currently + are by default trunced off 
@@ -105,22 +112,20 @@ TODO: this will give the `!g hp +<n>`
 [done] reactions can still critical, meaning all goals are made. 15% chance to make an impossible reaction, really? 
 
 `!dhatk <weapon> [+<experience>] [+<dice>] [a[dv]]... [d[is]]... [=<avoidance>] [-th <major> <severe>] ` 
-
-[dpne] Attack with duality dice and the same bonuses. The weapon is taken from the sheet and its damage dice and types are used.
+\
+[done] Attack with duality dice and the same bonuses. The weapon is taken from the sheet and its damage dice and types are used.
 [done] Target
 [done] Critical 
 [done] The damage dice are multiplied with the proficiency. 
 [done] Using an experience should cost a Hope 
 [done] Override hope and fear with h12 f12 (no dice count is single value instead of 1 die) 
+* Add damage bonuses (after =<avoidance>? ) 
 * Force critical with crit argument (also duality and react and gm ) (for now can just do h1 f1)
 * If threshold is given it says how many hitpoints (this interface would be weird)
 * The smart google sheet could select from attack list. 
 
 TODO: in initiative perhaps hitpoints can be applied on target by checking their avoidance, but need to find a way to 
-get Daggerheart monster stats in bestiary, especially the thresholds (ac is avoidance and hp is hp holds).
-Maybe through STR and DEX saves ... it's lame, but being able to use avrea initiative is not.
-This doesn't work for player sheets however. They can only select save proficiency. 
-Perhaps somehow reserve survival, stealth (and sleight of hand) skill for that and mess up the sheet to take that from the selected armor ? 
+get Daggerheart monster stats in bestiary, especially the thresholds (ac is avoidance and hp is hp hold, saves are thresholds) 
 NB: 1 is the fixed implicit damage threshold for 1 wound 
 
 [done] Subsclass information goes in a gvar (with extensisiblity) and it may have cards in the same form as `!dhcard` that can be used 
@@ -131,8 +136,8 @@ NB: 1 is the fixed implicit damage threshold for 1 wound
 [done] Check if the player has this card prepared or feature available
 [done] Check for domain, add domains to class, show in !dh_sheet
 
-Split dh_feat to dh_lookup and make new dh_use, generalize description formating. Perhaps put footer in last line
-
+[done] Split dh_feat to dh_lookup 
+make new dh_use, generalize description formating. Perhaps put footer in last line, 
 If there are any resources like hope or stress or armor, use them (if the counter is sufficient)
 If that includes duality dice then roll that. instead of trait it could be SPELL to pick the spell cast trait automatically
 Allow roll modifiers like duality (bonus. experience and advantage / trait spell in theory but rarely according to the rules)
@@ -160,19 +165,17 @@ Also use fear on gm rolls with experience (how to specify experience? )
 
 Spells/cards are in the spellbook. with a gvar they can at least be looked up 
 
-`!dhdeath` Make death move 
-TBD 
+
+!dh_coins for handfuls and such. g coins is very misleading. It should auto convert all the time though
+
+`!dhdeath` Make death move. Not very interesting. Just some rolls and then the player has to edit the sheet or make a new one. 
 
 TODO: 
 configuration svar:
 [done, but in sheet] Extreme damage threshold. A formula somehow based on other thresholds? Or get from skills ? 
 Stack advantage and disadvantage keep highest one 
 Change stress and hope modifier from crits? 
-
-
-
-
-
-
-
+Appearance: set rolls to embed or echo 
+Appearance: icons for hope, fear, critical 
+Appearance:  Counter type overrides for !dh_update
 
