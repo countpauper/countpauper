@@ -4,17 +4,18 @@ using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 args = &ARGS&
 summation = dh.parse(args)
 
-sheet = dh.sheet()
+C=character()
+sheet = dh.sheet(C)
+
 duality_dice, costs = dh.duality(sheet, summation)
 
 effects = dh.pay_em(costs)
 if typeof(effects)!='SafeList':
-    return f"echo Can't roll `{dh.format_dice(**duality_dice)}` : {effects}"
+    return f"echo {C.name} can't roll `{dh.format_dice(**duality_dice)}` : {effects}"
 
 duality_roll = dh.roll_em(**duality_dice)
 
 total, quality, goals = dh.interpret(**duality_roll)
-
 
 if quality=='hope':
     effects.append(f'**Hope:** {dh.hope(+1)}')
@@ -29,15 +30,7 @@ bonus = duality_roll.get('bonus')
 duality_desc = f'{hope.dice} + {fear.dice}'
 result_desc = f'**{total}** *with {quality.capitalize()}*'
 
-nl='\n'
-if goals:
-    result_desc += nl + dh.format_goals(goals)
-
-effect_desc = nl + dh.format_effects(effects) if effects else ""
-
-if bonus_desc := dh.format_bonus(bonus):
-    return f'echo {duality_desc} {bonus_desc}: {result_desc}{effect_desc}'
-else:
-    return f'echo {duality_desc}: {result_desc}{effect_desc}'
+title_desc=f"{C.name} rolls for an action."
+return dh.echo(title_desc, duality_desc, dh.format_bonus(bonus), result_desc, effects, dh.format_goals(goals))
 
 </drac2>

@@ -52,15 +52,7 @@ bonus = duality_roll.get('bonus')
 duality_desc = f'{hope.dice} + {fear.dice}'
 result_desc = f'**{total}** *with {quality.capitalize()}*'
 
-nl='\n'
-if damage:
-    result_desc += nl + dh.format_damage(damage)
-
-effect_desc = nl + dh.format_effects(effects) if effects else ""
-
-if bonus_desc := dh.format_bonus(bonus):
-    return f'echo {duality_desc} {bonus_desc}: {result_desc}{effect_desc}'
-else:
-    return f'echo {duality_desc}: {result_desc}{effect_desc}'
+title_desc=f"{C.name} attacks with {dh.indefinite_article(weapon.name)}."
+return dh.echo(title_desc, duality_desc, dh.format_bonus(bonus), result_desc,  effects, dh.format_damage(damage))
 
 </drac2>

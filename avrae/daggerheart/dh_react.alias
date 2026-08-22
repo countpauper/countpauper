@@ -3,12 +3,13 @@ using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 
 args = &ARGS&
 summation = dh.parse(args)
+C=character() 
+sheet = dh.sheet(C)
 
-sheet = dh.sheet()
 duality_dice, costs = dh.duality(sheet, summation)
 effects = dh.pay_em(costs)
 if typeof(effects)!='SafeList':
-    return f"echo Can't react `{dh.format_dice(**duality_dice)}` : {effects}"
+    return f"echo {C.name} can't react `{dh.format_dice(**duality_dice)}` : {effects}"
 
 duality_roll = dh.roll_em(**duality_dice)
 
@@ -20,14 +21,7 @@ bonus = duality_roll.get('bonus')
 
 duality_desc = f'{hope.dice} + {fear.dice}'
 result_desc = f'**{total}**'
-nl='\n'
-if goals:
-    result_desc += nl + dh.format_goals(goals)
 
-
-if bonus_desc := dh.format_bonus(bonus):
-    return f'echo {duality_desc} {bonus_desc}: {result_desc}'
-else:
-    return f'echo {duality_desc}: {result_desc}'
-
+title_desc=f"{C.name} rolls for a reaction."
+return dh.echo(title_desc, duality_desc, dh.format_bonus(bonus), result_desc, dh.format_goals(goals))
 </drac2>

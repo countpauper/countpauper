@@ -490,10 +490,16 @@ def try_mod_cc(C, name, amt):
 # Increase (or descrease) hope counter
 # returns a string description of the new stress and modifier
 def hope(amt=0, C=character()):
-    return try_mod_cc(C, 'Hope', amt)
-
+    try:
+        return try_mod_cc(C, 'Hope', amt)
+    except 'CounterOutOfBounds':
+        return f"{try_mod_cc(C, 'Hope', 0)} (+0)"
+    
 def armor(amt=0, C=character()):
-    return try_mod_cc(C, 'Armor', amt)
+    try:
+        return try_mod_cc(C, 'Armor', amt)
+    except 'CounterOutOfBounds':
+        return f"{try_mod_cc(C, 'Armor', 0)} (+0)"
 
 def hitpoints(amt=0, C=character()):
     if amt:
@@ -517,6 +523,8 @@ def stress(amt=0, C=character()):
         return f"{try_mod_cc(C, 'Stress', cc_amt)} {hitpoints(-hp_amt)}"
     except 'ConsumableException':
         return None
+    except 'CounterOutOfBounds':
+        return f"{try_mod_cc(C, 'Stress', 0)} (+0)"
 
 
 # Return True if the character's Stress is at maximum, which would mean they are vulnerable
@@ -736,12 +744,13 @@ def damage_targets(targets, proficiency, damage_dice):
 #################### Fromating functions ##################
 # These convert Daggerheart structures to user facing text
 
+nl='\n'
 degrees=['Failure', 'Success', 'Critical']
-def format_goals(goals, separator='\n'):
-    return separator.join(f"VS {goal} **{degrees[success]}!**" for goal, success in goals.items())
+def format_goals(goals):
+    return [f"VS {goal} **{degrees[success]}!**" for goal, success in goals.items()]
 
 def format_damage(damages, separator='\n'):
-    return separator.join(f"VS {target} **{damage or 'miss'}**" for target, damage in damages.items())
+    return [f"VS {target} **{damage or 'miss'}**" for target, damage in damages.items()]
 
 
 def format_delta(d):
@@ -755,10 +764,6 @@ def format_bonus(bonus):
     if not bonus:
         return None
     return format_delta(str(bonus.dice))
-
-def format_effects(effects, separator='\n'):
-    return separator.join(effect for effect in effects if effect is not None)
-
 
 # Convery a card dict structure to lines of strings to display in an embed
 # The last line is the source and can be used as embed footer
@@ -819,3 +824,26 @@ def format_hp(C=character()):
     missing_hp = C.max_hp - C.hp
     return f"{'♥' * hp}{'♡' * missing_hp}"
 
+# a noun or an noun. It's not 100% but the exceptions (e.g. hour and eulogy) are not likely to occur in a game context
+def indefinite_article(noun):
+    noun = str(noun).lower()
+    if noun[0] in "aeiou":
+        return f"an {noun}"
+    else:
+        return f"a {noun}"
+    
+# output with a simple echo
+# Each input should be user facing string as from the various format_x(...) functions 
+# or convertable to a huamn readable string
+# effects and targets are lists of such strings
+def echo(title, dice, bonus, result, effects=[], targets=[]):
+    out =  f"echo {title}{nl}{dice}"
+    if bonus:
+        out+=" "+bonus
+    if result:
+        out+= ": " + result
+    if effects:
+        out += nl + nl.join(effect for effect in effects if effect)
+    if targets:
+        out += nl + nl.join(target for target in targets if target)
+    return out

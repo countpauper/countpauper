@@ -4,21 +4,14 @@ using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 args = &ARGS&
 summation = dh.parse(args)
 gm_dice, cost = dh.duality(None, summation, hope=None, fear=["1d20"])
+
 gm_roll = dh.roll_em(**gm_dice)
 total, crit, goals = dh.interpret(**gm_roll)
 
 gm = gm_roll.get('fear')
 bonus = gm_roll.get('bonus')
 
-nl='\n'
 result_desc = ""
-if goals:
-    result_desc += nl + dh.format_goals(goals)
-
-
-if bonus_desc := dh.format_bonus(bonus):
-    return f'echo {gm.dice} {bonus_desc}{result_desc}'
-else:
-    return f'echo {gm.dice}{result_desc}'
+return dh.echo("The GM rolls", gm.dice, dh.format_bonus(bonus), result_desc, dh.format_goals(goals))
 
 </drac2>
