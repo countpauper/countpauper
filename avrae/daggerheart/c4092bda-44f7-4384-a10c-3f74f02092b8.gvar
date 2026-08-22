@@ -730,21 +730,22 @@ def split_dice(dice_str, separator='d'):
     die_bonus=dice_parts[1][die_end:]
     return dice_count, die_size, die_bonus, label
 
-def roll_damage(dice, proficiency, success):
+def roll_damage(dice, success):
     if not success:
         return None # miss
     dice, die, bonus, label = split_dice(dice)
-    dice *= proficiency 
-    crit_bonus = f'+{dice*die}' if success>1 else ''
-    roll_str=f'{dice}d{die}{crit_bonus}'
+    roll_str=f'{dice}d{die}'
+    if success>1:
+        roll_str = (f'{dice}*{die}[crit] + ' if dice>1 else f'{die}[crit] +') + roll_str
+
     if bonus is not None:
         roll_str+=bonus
     if label is not None:
         roll_str+=f'[{label}]'
     return vroll(roll_str)
 
-def damage_targets(targets, proficiency, damage_dice):
-    return {target:roll_damage(damage_dice, proficiency, success) for target, success in targets.items()}
+def damage_targets(targets, damage_dice):
+    return {target:roll_damage(damage_dice, success) for target, success in targets.items()}
 
 
 

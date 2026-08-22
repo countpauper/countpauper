@@ -35,7 +35,7 @@ if typeof(effects)!='SafeList':
 duality_roll = dh.roll_em(**duality_dice)
 
 total, quality, goals = dh.interpret(**duality_roll)
-damage = dh.damage_targets(goals, dh.proficiency(C), damage_dice)   # TODO get proficiency
+damage = dh.damage_targets(goals, damage_dice)
 
 effects += dh.earn_em(quality, C)
 
