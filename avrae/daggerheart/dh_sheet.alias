@@ -13,7 +13,7 @@ community, ancestry = dh.get_heritage(C)
 
 lines.append(f'**Heritage:** {community.capitalize()} {ancestry.capitalize()}')
 
-lines.append(f"**Pronouns:** {' / '.join(dh.pronouns())}")
+lines.append(f"**Pronouns:** {' / '.join(dh.pronouns().values())}")
 
 lvl = C.levels.total_level
 lines.append(f"**Level:** {lvl}")
@@ -60,7 +60,7 @@ lines.append(f"**Loadout:** {', '.join(dh.loadout(C))}")
 lines.append(f"**Vault:** {', '.join(dh.vault(C))}")
 
 fields['HP'] = dh.format_hp(C)
-fields['Stress'] = dh.stress()
+fields['Stress'] = dh.stress()[0][1]
 fields['Hope'] = dh.hope()
 fields['Armor'] = dh.armor()
 fields['Gold'] = dh.gold().get('total')

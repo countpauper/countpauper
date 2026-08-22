@@ -1,4 +1,4 @@
-`!dh_lookup <term to find> 
+`!dh_lookup <term to find>`
 
 **Use or show a feature**
 

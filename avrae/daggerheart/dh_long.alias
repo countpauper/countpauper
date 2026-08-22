@@ -17,7 +17,7 @@ for arg in args:
     elif 'fix'==arg:
         lines.append(f"**Repair an ally's armor** (`!cc reset Armor`)")
     elif 'stress'.startswith(arg):
-        lines.append(f"**Clear stress:** {dh.stress(-65535)}")
+        lines.append(f"**Clear stress:** {dh.stress(-65535)[0][-1]}")
     elif arg=='hope':
         lines.append(f"**Prepare: Hope** {dh.hope(+1)}")
     elif arg=='hopes':

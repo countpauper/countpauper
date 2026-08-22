@@ -22,7 +22,7 @@ for arg in args:
         lines.append(f"**Fix an ally's armor:** {armor_roll} (`!cc Armor +{armor_roll.total}`)")
     elif 'stress'.startswith(arg):
         stress_roll = vroll(roll_str)
-        lines.append(f"**Clear stress:** {stress_roll} {dh.stress(-stress_roll.total)}")
+        lines.append(f"**Clear stress:** {stress_roll} {dh.stress(-stress_roll.total)[0][-1]}")
     elif arg=='hope':
         lines.append(f"**Prepare: Hope** {dh.hope(+1)}")
     elif arg=='hopes':

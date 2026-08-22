@@ -1,15 +1,26 @@
 <drac2>
 using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 
-def describe_vulnerable(C):
-    return " *Vulnerable!*" if dh.is_stressed_out(C) else "" 
-
 args="""&*&"""
 C=character()
 
-
-if not args: 
-    return f"echo **Stress** {dh.stress(0, C)}{describe_vulnerable(C)}"
+effects=[]
+if not args:
+    effects+= dh.stress(0, C)
+    result=""
+    title_desc=f"{C.name} checks {dh.pronoun('their')} stress levels."
 else:
-    return f"echo **Stress** {dh.stress(int(args), C)}{describe_vulnerable(C)}"
+    try:
+        effects += dh.stress(int(args), C)
+        result=""
+    except 'ValueError':
+        result=vroll(args)
+        effects += dh.stress(result.total, C)
+
+    title_desc=f"{C.name} is stressed."
+if dh.is_stressed_out(C):
+    effects.append(("Vulnerable!",""))
+
+
+return dh.embed(title_desc, C.image, result, "", "", effects)
 </drac2>

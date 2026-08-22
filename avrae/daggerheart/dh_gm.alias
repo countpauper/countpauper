@@ -12,6 +12,5 @@ gm = gm_roll.get('fear')
 bonus = gm_roll.get('bonus')
 
 result_desc = ""
-return dh.echo("The GM rolls", gm.dice, dh.format_bonus(bonus), result_desc, [], dh.format_goals(goals))
-
+return dh.embed("The GM rolls.",  None,  gm.dice, dh.format_bonus(bonus), result_desc, [], dh.format_goals(goals))
 </drac2>

@@ -148,7 +148,10 @@ def get_heritage(C=character()):
 
 # Colaboration with !pronouns alias that gets cvars they them their theirs cvars for easy use in f-strings
 def pronouns(C=character()):
-    return C.get_cvar('they','they'), C.get_cvar('them','them'), C.get_cvar('their','their')
+    return {form:pronoun(form) for form in ['they','them','their']}
+
+def pronoun(form, C=character()):
+    return C.get_cvar(form, form)
 
 thresholds_map=(
     "strength",
@@ -510,21 +513,21 @@ def hitpoints(amt=0, C=character()):
         return format_hp(C)
         
 # Increase (or decrease) stress counter
-# returns a string description of the new stress and modifier
+# returns a list of header,effect tuples of the new stress and modifier and hitpoints
 def stress(amt=0, C=character()):
     if amt<=0:
-        return try_mod_cc(C, 'Stress', amt)
+        return [('stress', try_mod_cc(C, 'Stress', amt))]
     try:
         cc = C.cc('Stress')
         if cc.value + amt <= cc.max:
-            return try_mod_cc(C, 'Stress', amt)
+            return [('stress', try_mod_cc(C, 'Stress', amt))]
         cc_amt = cc.max-cc.value
         hp_amt = amt-cc_amt
-        return f"{try_mod_cc(C, 'Stress', cc_amt)} {hitpoints(-hp_amt)}"
+        return [("stress", try_mod_cc(C, 'Stress', cc_amt)), ("hitpoints", hitpoints(-hp_amt))]
     except 'ConsumableException':
         return None
     except 'CounterOutOfBounds':
-        return f"{try_mod_cc(C, 'Stress', 0)} (+0)"
+        return [("stress", f"{try_mod_cc(C, 'Stress', 0)} (+0)")]
 
 
 # Return True if the character's Stress is at maximum, which would mean they are vulnerable
@@ -638,6 +641,7 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
         bonus_dice.append('-1d6[disadvantage]')
     return dict(hope=hope_dice or hope, fear=fear_dice or fear, bonus=bonus_dice, goals=goals), cost   
 
+
 # vroll each part and return individually
 # All dice are supposed to be a list. 
 # If hope is empty, fear is the DM die 
@@ -697,9 +701,9 @@ def pay_em(costs, C=character()):
 
 def earn_em(quality, C):
     if quality=='hope':
-        return [("Hope", hope(+1, C))]
+        return [("hope", hope(+1, C))]
     elif quality=='critical':
-        return [("Hope", hope(+1, C)), ("Stress", stress(-1, C)) ]
+        return [("hope", hope(+1, C))] + stress(-1, C)
     else:
         return []
 
@@ -747,18 +751,23 @@ def roll_damage(dice, success):
 def damage_targets(targets, damage_dice):
     return {target:roll_damage(damage_dice, success) for target, success in targets.items()}
 
-
-
 #################### Fromating functions ##################
 # These convert Daggerheart structures to user facing text
+
+# Format roll without dice as simple totals
+def format_roll(roll):
+    if roll.dice.isdigit():
+        return roll.consolidated()
+    else:
+        return str(roll)
 
 nl='\n'
 degrees=['Failure', 'Success', 'Critical']
 def format_goals(goals):
-    return [(f"VS {goal}",f"{degrees[success]}!") for goal, success in goals.items()]
+    return [(f"VS {format_roll(goal)}",f"{degrees[success]}!") for goal, success in goals.items()]
 
 def format_damage(damages, separator='\n'):
-    return [(f"VS {target}", f"{damage or 'miss'}") for target, damage in damages.items()]
+    return [(f"VS {format_roll(target)}", f"{damage or 'miss'}") for target, damage in damages.items()]
 
 
 def format_delta(d):
@@ -845,15 +854,15 @@ def indefinite_article(noun):
 # or convertable to a huamn readable string
 # effects and targets are lists of tuples (head, body) of user facing strings
 def echo(title, dice, bonus, result, effects=[], targets=[]):
-    out =  f"echo {title}{nl}{dice}"
+    out =  f"echo __{title}__{nl}{dice}"
     if bonus:
         out+=" "+bonus
     if result:
         out+= ": " + result
     if effects:
-        out += nl + nl.join(f"**{head}:** {body}" for head, body in effects)
+        out += nl + nl.join(f"**{head.capitalize()}:** {body}" for head, body in effects)
     if targets:
-        out += nl + nl.join(f"**{head}:** {body}" for head, body in targets)
+        out += nl + nl.join(f"**{head.capitalize()}:** {body}" for head, body in targets)
     return out
 
 def embed(title, thumb, dice, bonus, result, effects=[], targets=[]):
@@ -862,7 +871,7 @@ def embed(title, thumb, dice, bonus, result, effects=[], targets=[]):
         desc+=" "+bonus
     if result:
         desc+= ": " + result
-    image = "-thumb {thumb}" if thumb else ""
-    fields=[f"""-f "{head}|{body}" """ for head, body in targets]
-    fields+=[f"""-f "{head}|{body}|inline" """ for head, body in effects]
-    return f"""embed -title "{title} -desc {desc} {image} {''.join(fields)}"""
+    image = f"-thumb {thumb}" if thumb else ""
+    fields=[f"""-f "{head.capitalize()}|{body}" """ for head, body in targets]
+    fields+=[f"""-f "{head.capitalize()}|{body}|inline" """ for head, body in effects]
+    return f"""embed -title "{title}" -desc "{desc}" {image} {''.join(fields)}"""

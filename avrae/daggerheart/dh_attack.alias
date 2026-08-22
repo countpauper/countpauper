@@ -51,6 +51,5 @@ results = dh.format_damage(damage)
 if feature := atk.get('feature'):
     results.append((weapon.name, feature) )
 
-return dh.echo(title_desc, duality_desc, dh.format_bonus(bonus), result_desc,  effects, results)
-
+return dh.embed(title_desc, C.image, duality_desc, dh.format_bonus(bonus), result_desc,  effects, results)
 </drac2>

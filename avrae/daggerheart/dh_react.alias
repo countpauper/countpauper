@@ -23,5 +23,5 @@ duality_desc = f'{hope.dice} + {fear.dice}'
 result_desc = f'**{total}**'
 
 title_desc=f"{C.name} rolls for a reaction."
-return dh.echo(title_desc, duality_desc, dh.format_bonus(bonus), result_desc, effects, dh.format_goals(goals))
+return dh.embed(title_desc, C.image,  duality_desc, dh.format_bonus(bonus), result_desc, effects, dh.format_goals(goals))
 </drac2>
