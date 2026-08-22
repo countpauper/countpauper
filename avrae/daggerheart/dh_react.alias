@@ -7,7 +7,7 @@ C=character()
 sheet = dh.sheet(C)
 
 duality_dice, costs = dh.duality(sheet, summation)
-effects = dh.pay_em(costs)
+effects = dh.pay_em(costs, C)
 if typeof(effects)!='SafeList':
     return f"echo {C.name} can't react `{dh.format_dice(**duality_dice)}` : {effects}"
 
@@ -23,5 +23,5 @@ duality_desc = f'{hope.dice} + {fear.dice}'
 result_desc = f'**{total}**'
 
 title_desc=f"{C.name} rolls for a reaction."
-return dh.echo(title_desc, duality_desc, dh.format_bonus(bonus), result_desc, dh.format_goals(goals))
+return dh.echo(title_desc, duality_desc, dh.format_bonus(bonus), result_desc, effects, dh.format_goals(goals))
 </drac2>

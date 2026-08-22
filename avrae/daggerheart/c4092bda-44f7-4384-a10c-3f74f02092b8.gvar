@@ -693,8 +693,15 @@ def pay_em(costs, C=character()):
             return f"No `{cc_name}`"    # TODO: support playing without sheet/counters
         if has<-amt:
             return f"Not enough `{cc_name}` : {has}/{-amt}"
-    return [f"**{cc_name}:** {try_mod_cc(C, cc_name, amt)}" for cc_name, amt in costs.items()]
+    return [(cc_name, try_mod_cc(C, cc_name, amt)) for cc_name, amt in costs.items()]
 
+def earn_em(quality, C):
+    if quality=='hope':
+        return [("Hope", hope(+1, C))]
+    elif quality=='critical':
+        return [("Hope", hope(+1, C)), ("Stress", stress(-1, C)) ]
+    else:
+        return []
 
 # Split <dicestr>"["<label>"]" label into dicestr,label or dicestr,None if none  
 def split_dice_label(dice_str):
@@ -747,10 +754,10 @@ def damage_targets(targets, proficiency, damage_dice):
 nl='\n'
 degrees=['Failure', 'Success', 'Critical']
 def format_goals(goals):
-    return [f"VS {goal} **{degrees[success]}!**" for goal, success in goals.items()]
+    return [(f"VS {goal}",f"{degrees[success]}!") for goal, success in goals.items()]
 
 def format_damage(damages, separator='\n'):
-    return [f"VS {target} **{damage or 'miss'}**" for target, damage in damages.items()]
+    return [(f"VS {target}", f"{damage or 'miss'}") for target, damage in damages.items()]
 
 
 def format_delta(d):
@@ -833,9 +840,9 @@ def indefinite_article(noun):
         return f"a {noun}"
     
 # output with a simple echo
-# Each input should be user facing string as from the various format_x(...) functions 
+# title, dice, bonus and result should be user facing string as from the various format_x(...) functions 
 # or convertable to a huamn readable string
-# effects and targets are lists of such strings
+# effects and targets are lists of tuples (head, body) of user facing strings
 def echo(title, dice, bonus, result, effects=[], targets=[]):
     out =  f"echo {title}{nl}{dice}"
     if bonus:
@@ -843,7 +850,18 @@ def echo(title, dice, bonus, result, effects=[], targets=[]):
     if result:
         out+= ": " + result
     if effects:
-        out += nl + nl.join(effect for effect in effects if effect)
+        out += nl + nl.join(f"**{head}:** {body}" for head, body in effects)
     if targets:
-        out += nl + nl.join(target for target in targets if target)
+        out += nl + nl.join(f"**{head}:** {body}" for head, body in targets)
     return out
+
+def embed(title, thumb, dice, bonus, result, effects=[], targets=[]):
+    desc = str(dice)
+    if bonus:
+        desc+=" "+bonus
+    if result:
+        desc+= ": " + result
+    image = "-thumb {thumb}" if thumb else ""
+    fields=[f"""-f "{head}|{body}" """ for head, body in targets]
+    fields+=[f"""-f "{head}|{body}|inline" """ for head, body in effects]
+    return f"""embed -title "{title} -desc {desc} {image} {''.join(fields)}"""
