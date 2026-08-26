@@ -10,7 +10,8 @@ def parse_feature(feature):
     if not feature:
         return None, None
     name, description = feature.split(':', maxsplit=1)
-    return name.lower().strip(), description.strip()
+    name = name.replace("’","'").lower().strip()
+    return name, description.strip()
 
 integer_keys = 'hope', 'stress', 'armor', 'recall', 'level', 'mastery'
 def generic_convert(key, value):
@@ -24,7 +25,7 @@ def generic_convert(key, value):
         else:
             return int(value)
     else:
-        return str(value)
+        return str(value).strip()
 
 def convert_generic(input, category ):
     data = dict()
@@ -75,35 +76,36 @@ def parse_domain(domain):
 
 def convert_cards(input):
     data = dict()
-    for row in input:
+    for line, row in enumerate(input):
         row_str='\n'.join(row)
         name, domain, cost, desc = row_str.split('\n',maxsplit=3)
         card = dict(description=escape(desc),category='domain', source='SRD')
         card.update(parse_cost(cost))
         card.update(parse_domain(domain))
         data[name.lower()] = card
+        # print(f"Complete {line} {name}")
     return data
 
 max_sub_classes=2
 def convert_classes(input):
     result = dict()
     for row in input:
-        name=row.get('class').lower()
-        result[name]=dict(domains=[row.get('primary domain').lower(), row.get('secondary domain').lower()], evasion = row.get('evasion',0), hp=row.get('hp',0))
+        name=row.get('class').lower().strip()
+        result[name]=dict(domains=[row.get('primary domain').lower().strip(), row.get('secondary domain').lower().strip()], evasion = int(row.get('evasion',0)), hp=int(row.get('hp',0)))
         subs=dict()
         for n in range(0,max_sub_classes):
             if subname:=row.get(f'sub{n}'):
-                subname = subname
+                subname = subname.strip()
                 subdata=dict()
                 if trait:=row.get(f'trait{n}'):
-                    subdata['cast']=trait.lower()
+                    subdata['cast']=trait.lower().strip()
                 subs[subname.lower()]=subdata
         result[name]['subclasses'] = subs
     return result
 
 if __name__ == "__main__":
     data = dict()
-    with open('daggerheart/domain cards.csv', newline='') as csvfile:
+    with open('daggerheart/domain cards.csv', newline='', encoding='utf-8-sig', errors='replace') as csvfile:
         reader = csv.reader(csvfile)
         data.update(convert_cards(reader))
 
@@ -111,23 +113,27 @@ if __name__ == "__main__":
         jsonFile.write(json.dumps(data, indent='\t'))
 
     data = dict()    # split in two gvars because it's too muc
-    with open('daggerheart/class features.csv', newline='') as csvfile:
+    with open('daggerheart/class features.csv', newline='', encoding='utf-8-sig', errors='replace') as csvfile:
         reader = csv.DictReader(csvfile)
         data.update(convert_generic(reader, 'class'))
 
-    with open('daggerheart/subclass features.csv', newline='') as csvfile:
+    with open('daggerheart/subclass features.csv', newline='', encoding='utf-8-sig', errors='replace') as csvfile:
         reader = csv.DictReader(csvfile)
         data.update(convert_subclass(reader))
 
-    with open('daggerheart/ancestry features.csv', newline='') as csvfile:
+    with open('daggerheart/ancestry features.csv', newline='', encoding='utf-8-sig', errors='replace') as csvfile:
         reader = csv.DictReader(csvfile)
         data.update(convert_generic(reader, 'ancestry'))
 
-    with open('daggerheart/community features.csv', newline='') as csvfile:
+    with open('daggerheart/community features.csv', newline='', encoding='utf-8-sig', errors='replace') as csvfile:
         reader = csv.DictReader(csvfile)
         data.update(convert_generic(reader, 'community'))
 
-    with open('daggerheart/1eeba3a1-1fd9-4b72-8713-d6475ccfc204.gvar',mode='w',newline='') as jsonFile:
+    with open('daggerheart/transformation features.csv', newline='', encoding='utf-8-sig', errors='replace') as csvfile:
+        reader = csv.DictReader(csvfile)
+        data.update(convert_generic(reader, 'transformation'))
+
+    with open('daggerheart/1eeba3a1-1fd9-4b72-8713-d6475ccfc204.gvar',mode='w',newline='', encoding='utf-8-sig', errors='replace') as jsonFile:
         jsonFile.write(json.dumps(data, indent='\t'))
 
     with open('daggerheart/class info.csv', newline='') as csvfile:

@@ -1,10 +1,15 @@
-class,primary domain,secondary domain,evasion,hp,sub0,trait0,sub1,trait1
-Bard,Grace,Codex,10,5,Troubadour ,Presence,Wordsmith ,Presence
-Druid,Sage,Arcana,10,6,Warden of the Elements ,Instinct ,Warden of Renewal ,Instinct 
-Guardian,Valor,Blade,9,7,Stalwart ,,Vengeance ,
-Ranger,Bone,Sage,12,6,Beastbound ,Agility ,Wayfinder ,Agility 
-Rogue,Midnight,Grace,12,6,Nightwalker ,Finesse ,Syndicate ,Finesse 
-Seraph,Splendor,Valor,9,7,Divine Wielder ,Strength ,Winged Sentinel ,Strength 
-Sorcerer,Arcana,Midnight,10,6,Elemental Origin ,Instinct ,Primal Origin ,Instinct 
-Warrior,Blade,Bone,11,6,Call of the Brave ,,Call of the Slayer ,
-Wizard,Codex,Splendor,11,5,School of Knowledge ,Knowledge ,School of War ,Knowledge 
+class,primary domain,secondary domain,evasion,hp,sub0,trait0,sub1,trait1,sub2,trait2
+Template,Primary,Secondary,0,1,First,Strength ,Second,,,
+Assassin,Blade,Midnight,12,5,Executioner's Guild,Agility ,Poisoner's Guild,Knowledge ,,
+Bard,Grace,Codex,10,5,Troubadour ,Presence,Wordsmith ,Presence,,
+Brawler,Valor,Bone,10,6,Juggernaut,,Martial Artist,,,
+Druid,Sage,Arcana,10,6,Warden of the Elements ,Instinct ,Warden of Renewal ,Instinct ,,
+Guardian,Valor,Blade,9,7,Stalwart ,,Vengeance ,,,
+Ranger,Bone,Sage,12,6,Beastbound ,Agility ,Wayfinder ,Agility ,,
+Rogue,Midnight,Grace,12,6,Nightwalker ,Finesse ,Syndicate ,Finesse ,,
+Seraph,Splendor,Valor,9,7,Divine Wielder ,Strength ,Winged Sentinel ,Strength ,,
+Sorcerer,Arcana,Midnight,10,6,Elemental Origin ,Instinct ,Primal Origin ,Instinct ,,
+Warlock,Dread,Grace,11,5,Pact of the Endless,Presence,Pact of the Wrathful,Presence,,
+Warrior,Blade,Bone,11,6,Call of the Brave ,,Call of the Slayer ,,,
+Witch,Sage,Dread,10,6,Hedge,Knowledge,Moon,Instinct ,,
+Wizard,Codex,Splendor,11,5,School of Knowledge ,Knowledge ,School of War ,Knowledge ,,

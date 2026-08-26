@@ -833,7 +833,10 @@ mastery_description=["foundation", "specialist", "master"]
 def format_mastery(mastery):
     if mastery<=0:
         return "" 
-    return mastery_description[mastery-1]
+    if mastery>len(mastery_description):
+        return f"Mastery {mastery}"
+    else:
+        return mastery_description[mastery-1]
 
 
 def format_hp(C=character()):

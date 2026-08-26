@@ -179,3 +179,21 @@ Appearance: set rolls to embed or echo
 Appearance: icons for hope, fear, critical 
 Appearance:  Counter type overrides for !dh_update
 
+
+
+
+Hope and feat todo: 
+Features: 
+[done csv] Classes: Assassin, brawler, warlock, witch 
+[done csv] Ancestries: Aetheris, Gnome, Elemental Kin (x4) 
+[done csv] Communities: Duneborne, Freeborne, Frostborne, Hearthborne, Reborne, Warborne
+[done] Transformations: All the way new 
+[done] Domain cards: Dread
+
+In sheet:
+Armors: A lot
+Weapons: Katana, twisted dagger, Bladed fan, offhand brass knuckles, Rune shield, wheelchairs
+Weapons changed: Spear not cumbersome and damage, longsword damage, Glowing ring damage, Tier 3 magic weapons 
+
+HP limited to max 12 and stress 
+

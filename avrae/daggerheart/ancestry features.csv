@@ -1,37 +1,50 @@
-Ancestry,Feature
-clank,"PURPOSEFUL DESIGN: Decide who made you and for what purpose. At character creation, choose one of your Experiences that best aligns with this purpose and gain a permanent +1 bonus to it."
-drakona,"SCALES: Your scales act as a natural protection. when you would take Severe damage, you can mark a Stress to mark 1 fewer Hit Points."
-dwarf,"THICK SKIN: When you take Minor damage, you can mark 2 Stress instead of marking a Hit Point."
-elf,QUICK REACTIONS: Mark a Stress to gain advantage on a reaction roll.
-faerie,"LUCKBENDER: Once per session, after you or a willing ally within Close range makes an action, you can spend 3 Hope to reroll the Duality Dice."
-faun,"CAPRINE LEAP: You can leap anywhere within Close range as though you were using normal movement, allowing you to vault obstacles, jump across gaps, or scale barriers with ease."
-firbolg,"CHARGE: When you succeed on an Agility Roll to move from Far Very Far range into Melee range with one or more targets, you can mark a Stress to deal 1d12 physical damage to all targets within Melee range."
-fungril,"FUNGRIL NETWORK: Make an Instinct Roll (12) to use your mycelial array to speak with others of your ancestry. On a success, you can communicate across any distance."
-galapa,SHELL: Gain a bonus to your damge thresholds equal to your Proficiency.
-giant,ENDURANCE: Gain an additional Hit Point slot at character creation.
-goblin,SUREFOOTED: You ignore disadvantage on Agility Rolls.
-halfling,"LUCKBRINGER: At the start of each session, everyone in your part gains a Hope."
-human,HIGH STAMINA: Gain an additonal Stress slot at character creation.
-infernis,"FEARLESS: When you roll with Fear, you can mark 2 Stress to change it into a roll with Hope instead."
-katari,"FELINE INSTINCTS: When you make an Agility Roll, you can spend 2 Hope to reroll your Hope Die."
-orc,"STURDY: When you have 1 Hit Point remaining, attacks against you have disadvantage."
-ribbet,AMPHIBIOUS: You can breathe and move naturally underwater.
-simiah,NATURAL CLIMBER: You have advantage on Agility Rolls that involve balancing and climbing.
-clank,"EFFICIENT: When you take a short rest, you can choose a long rest move instead of a short rest move."
-drakona,"ELEMENTAL BREATH: Choose an element for your breath (such as electricity, fire, or ice). You can use this breath against a target or group of targets within Very Close range, treating it as an Instinct weapon that deals d8 magic damage using your Proficiency."
-dwarf,INCREASED FORTITUDE: Spend 3 Hope to halve incoming physical damage.
-elf,"CELESTIAL TRANCE: During a rest, you can drop into a trance to choose an additional downtime move."
-faerie,"WINGS: You can fly. While flying, you can mark a Stress after an adversary makes an attack against you to gain a +2 bonus to your Evasion against that attack."
-faun,"KICK: When you succeed on an attack against a target within Melee range, you can mark a Stress to kick yourself off them, dealing an extra 2d6 damage and knocking back either yourself or the target to Very Close range."
-firbolg,"UNSHAKABLE: When you would mark a Stress, roll a d6. On a result of 6, don't mark it."
-fungril,"DEATH CONNECTION: While touching a corpse that died recently, you can mark a Stress to extract one memory from the corpse related to a specific emotion or sensation of your choice."
-galapa,"RETRACT: Mark a Stress to retract into your shell. While in your shell, you have resistance to physical damage, you have disadvantage on action rolls, and you can't move."
-giant,"REACH: Treat any weapon, ability, spell, or other feature that has a Melee range as though it has a Very Close range instead."
-goblin,"DANGER SENSE: Once per rest, mark a Stress to force an adversary to reroll an attack against you or an ally within Very Close range."
-halfling,"INTERNAL COMPASS: When you roll a 1 on your Hope Die, you can reroll it."
-human,"ADAPTABILITY: When you fail a roll that utilized one of your Experiences, you can mark a Stress to reroll it."
-infernis,DREAD VISAGE: You have advantage on rolls to intimidate hostile creatures.
-katari,"RETRACTING CLAWS: Make an Agility Roll to scratch a target wtihin Melee range. On a success, they become temporarily Vulnerable."
-orc,"TUSKS: When you succeed on an attack against a target within Melee range, you can spend a Hope to gore the target with your tusks, dealing an extra 1d6 damage."
-ribbet,LONG TONGUE: You can use your long tongue to grab onto things within Close range. Mark a Stress to use your tongue as a Finesse Close weapon that deals d12 physical damage using your Proficiency.
-simiah,NIMBLE: Gain a permanent +1 bonus to your Evasion at character creation.
+Ancestry,Feature,Hope,Stress
+Aetheris,"Hallowed Aura: Once per long rest when an ally within Close range rolls with Fear, you can change it into a roll with Hope instead.",,
+Clank,"PURPOSEFUL DESIGN: Decide who made you and for what purpose. At character creation, choose one of your Experiences that best aligns with this purpose and gain a permanent +1 bonus to it.",,
+Drakona,"SCALES: Your scales act as a natural protection. when you would take Severe damage, you can mark a Stress to mark 1 fewer Hit Points.",,
+Dwarf,"THICK SKIN: When you take Minor damage, you can mark 2 Stress instead of marking a Hit Point.",,-2
+Earthkin,Stoneskin: Gain a permanent +1 bonus to your Armor Score and damage thresholds at character creation.,,
+Emberkin,Fireproof: You are immune to damage from magical or mundane flame.,,
+Skykin,"Gale Force: Mark a Stress to conjure a gust of wind that carries you or a Very Close ally up to Very Far range.
+Additionally, you can always control the speed at which you fall.",,-1
+Tidekin,Amphibious: You can breathe and move naturally underwater.,,
+Elf,QUICK REACTIONS: Mark a Stress to gain advantage on a reaction roll.,,-1
+Faerie,"LUCKBENDER: Once per session, after you or a willing ally within Close range makes an action, you can spend 3 Hope to reroll the Duality Dice.",-3,
+Faun,"CAPRINE LEAP: You can leap anywhere within Close range as though you were using normal movement, allowing you to vault obstacles, jump across gaps, or scale barriers with ease.",,
+Firbolg,"CHARGE: When you succeed on an Agility Roll to move from Far Very Far range into Melee range with one or more targets, you can mark a Stress to deal 1d12 physical damage to all targets within Melee range.",,-1
+Fungril,"FUNGRIL NETWORK: Make an Instinct Roll (12) to use your mycelial array to speak with others of your ancestry. On a success, you can communicate across any distance.",,
+Galapa,SHELL: Gain a bonus to your damage thresholds equal to your Proficiency.,,
+Giant,ENDURANCE: Gain an additional Hit Point slot at character creation.,,
+Gnome,"Nimble Fingers: When you make a Finesse Roll, you can spend 2 Hope to reroll your Hope Die.",,-2
+Goblin,SUREFOOTED: You ignore disadvantage on Agility Rolls.,,
+Halfling,"LUCKBRINGER: At the start of each session, everyone in your part gains a Hope.",,
+Human,HIGH STAMINA: Gain an additional Stress slot at character creation.,,
+Infernis,"FEARLESS: When you roll with Fear, you can mark 2 Stress to change it into a roll with Hope instead.",,-2
+Katari,"FELINE INSTINCTS: When you make an Agility Roll, you can spend 2 Hope to reroll your Hope Die.",-2,
+Orc,"STURDY: When you have 1 Hit Point remaining, attacks against you have disadvantage.",,
+Ribbet,AMPHIBIOUS: You can breathe and move naturally underwater.,,
+Simiah,NATURAL CLIMBER: You have advantage on Agility Rolls that involve balancing and climbing.,,
+Aetheris,"Celestial Wings: You have wings that allow you to fly. Once per scene while flying, you can spend a Hope instead of marking an Armor Slot.",,
+Clank,"EFFICIENT: When you take a short rest, you can choose a long rest move instead of a short rest move.",,
+Drakona,"ELEMENTAL BREATH: Choose an element for your breath (such as electricity, fire, or ice). You can use this breath against a target or group of targets within Very Close range, treating it as an Instinct weapon that deals d8 magic damage using your Proficiency.",,
+Dwarf,INCREASED FORTITUDE: Spend 3 Hope to halve incoming physical damage.,-3,
+Earthkin,"Immovable: While you’re touching the ground, you can’t be lifted or moved against your will.",,
+Emberkin,"Ignition: Mark a Stress to wreathe your primary weapon in flame until the end of the scene. While the weapon is ablaze, it gives off a bright light, and you gain a 1d6 bonus to damage rolls with that weapon.",,-1
+Skykin,Eye of the Storm: Spend 2 Hope to grant you or an ally within Melee range a +1 bonus to Evasion until you take Severe damage or you use this feature again.,-2,
+Tidekin,"Lifespring: Once per rest when you have access to a small amount of water, you can mark a Stress to clear a Hit Point on yourself or an ally within Very Close range.",,-1
+Elf,"CELESTIAL TRANCE: During a rest, you can drop into a trance to choose an additional downtime move.",,
+Faerie,"WINGS: You can fly. While flying, you can mark a Stress after an adversary makes an attack against you to gain a +2 bonus to your Evasion against that attack.",,-1
+Faun,"KICK: When you succeed on an attack against a target within Melee range, you can mark a Stress to kick yourself off them, dealing an extra 2d6 damage and knocking back either yourself or the target to Very Close range.",,
+Firbolg,"UNSHAKABLE: When you would mark a Stress, roll a d6. On a result of 6, don't mark it.",,
+Fungril,"DEATH CONNECTION: While touching a corpse that died recently, you can mark a Stress to extract one memory from the corpse related to a specific emotion or sensation of your choice.",,-1
+Galapa,"RETRACT: Mark a Stress to retract into your shell. While in your shell, you have resistance to physical damage, you have disadvantage on action rolls, and you can't move.",,-1
+Giant,"REACH: Treat any weapon, ability, spell, or other feature that has a Melee range as though it has a Very Close range instead.",,
+Gnome,"Flicker Step: Once per scene, you can teleport to another point you can see within Far range.",,
+Goblin,"DANGER SENSE: Once per rest, mark a Stress to force an adversary to reroll an attack against you or an ally within Very Close range.",,-1
+Halfling,"INTERNAL COMPASS: When you roll a 1 on your Hope Die, you can reroll it.",,
+Human,"ADAPTABILITY: When you fail a roll that utilized one of your Experiences, you can mark a Stress to reroll it.",,-1
+Infernis,DREAD VISAGE: You have advantage on rolls to intimidate hostile creatures.,,
+Katari,"RETRACTING CLAWS: Make an Agility Roll to scratch a target within Melee range. On a success, they become temporarily Vulnerable.",,
+Orc,"TUSKS: When you succeed on an attack against a target within Melee range, you can spend a Hope to gore the target with your tusks, dealing an extra 1d6 damage.",-1,
+Ribbet,LONG TONGUE: You can use your long tongue to grab onto things within Close range. Mark a Stress to use your tongue as a Finesse Close weapon that deals d12 physical damage using your Proficiency.,,-1
+Simiah,NIMBLE: Gain a permanent +1 bonus to your Evasion at character creation.,,

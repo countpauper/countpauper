@@ -1,10 +1,26 @@
-{
+﻿{
+	"marked for death": {
+		"description": "On a successful weapon attack, you can mark a Stress to make the target Marked for Death. When you deal damage to a target you\u2019ve Marked for Death, add a number of d4s equal to your tier to the damage roll. You can have only one adversary Marked for Death at a time. This condition lasts until you take a rest, the current adversary Marked for Death is defeated, or the GM spends a number of Fear equal to your tier to clear it.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Assassin",
+		"hope": -3
+	},
 	"make a scene": {
 		"description": "Spend 3 Hope to temporarily Distract a target within Close range, giving them a -2 penalty to their Difficulty.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "bard",
+		"class": "Bard",
+		"hope": -3
+	},
+	"square up": {
+		"description": "Spend 3 Hope to intimidate a target within Close range, making them temporarily Vulnerable.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Brawler",
 		"hope": -3
 	},
 	"evolution": {
@@ -12,7 +28,7 @@
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "druid",
+		"class": "Druid",
 		"hope": -3
 	},
 	"frontline tank": {
@@ -20,7 +36,7 @@
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "guardian",
+		"class": "Guardian",
 		"hope": -3
 	},
 	"hold them off": {
@@ -28,7 +44,7 @@
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "ranger",
+		"class": "Ranger",
 		"hope": -3
 	},
 	"rogue's dodge": {
@@ -36,7 +52,7 @@
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "rogue",
+		"class": "Rogue",
 		"hope": -3
 	},
 	"life support": {
@@ -44,7 +60,7 @@
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "seraph",
+		"class": "Seraph",
 		"hope": -3
 	},
 	"volatile magic": {
@@ -52,7 +68,15 @@
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "sorcerer",
+		"class": "Sorcerer",
+		"hope": -3
+	},
+	"patron's boon": {
+		"description": "When you fail a roll, you can spend 3 Hope to reroll with advantage.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Warlock",
 		"hope": -3
 	},
 	"no mercy": {
@@ -60,7 +84,15 @@
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "warrior",
+		"class": "Warrior",
+		"hope": -3
+	},
+	"witch's charm": {
+		"description": "When you or an ally within Far range fails an action roll, you can spend 3 Hope to change it into a success with Fear instead.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Witch",
 		"hope": -3
 	},
 	"not this time": {
@@ -68,116 +100,269 @@
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "wizard",
+		"class": "Wizard",
 		"hope": -3
 	},
-	"rally": {
-		"description": "Once per session, describe how you rally the party and give yourself and each of your allies a Rally Die. At level 1, your Rally Die is a d6. A PC can spend their Rally Die to roll it, adding the result to their action roll, reaction roll, damage roll, or to clear a number of Stress equal to the result. At the end of each session, clear all unspent Rally Dice.\r\n\r\nAt level 5, your Rally Die increases to a d8.",
+	"get in & get out": {
+		"description": "Spend a Hope to ask the GM for a quick or inconspicuous way into or out of a place you can see. The next roll you make that acts on this information has Advantage.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "bard"
+		"class": "Assassin",
+		"hope": -1
+	},
+	"rally": {
+		"description": "Once per session, describe how you rally the party and give yourself and each of your allies a Rally Die. At level 1, your Rally Die is a d6. A PC can spend their Rally Die to roll it, adding the result to their action roll, reaction roll, damage roll, or to clear a number of Stress equal to the result. At the end of each session, clear all unspent Rally Dice.\n\nAt level 5, your Rally Die increases to a d8.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Bard"
+	},
+	"i am the weapon": {
+		"description": "Your barehanded attacks are as strong as any blade. You have a primary weapon called Brawler\u2019s Strike equipped while you have no other Active Weapons. It uses a trait of your choice, has Melee range, and deals d8+d6 physical damage using your Proficiency (both the d8 and d6 scale off your Proficiency). While this weapon is active, you gain a +1 bonus to your Evasion.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Brawler"
+	},
+	"combo strike": {
+		"description": "After rolling damage on a successful attack with a Melee weapon, you can mark a Stress to start a combo strike. When you do, roll your Combo Die and note the result, then continue rolling your Combo Die until the result of your latest roll is lower than the roll that preceded it. You deal extra damage equal to the total of all rolled Combo Die results on this attack. The results can\u2019t be modified by any means.\nYour Combo Die starts as a d4. Once per tier, you can increase your Combo Die by one step as a level advancement option.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Brawler",
+		"stress": -1
 	},
 	"beastform": {
 		"description": "Mark a Stress to magically transform into a creature of your tier or lower from the Beastform list. You can drop out of this form at any time. While transformed, you can't use weapons or cast spells from domain cards, but you can still use other features abilities you have access to. Spells you cast before you transform stay active and last for their normal duration, and you can talk and communicate as normal. Additionally, you gain the Beastform's features, add their Evasion bonus to your Evasion, and use the trait specified in thier statistics for your attack. While you're in Beastform, your armor becomes part of your body and you mark Armor Slots as usual; when you drop out of a Beastform, those marked Armor Slots remain marked. If you mark your last Hit Point, you automatically drop out of this form.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "druid"
+		"class": "Druid",
+		"stress": -1
 	},
 	"wildtouch": {
 		"description": "You can perform harmless, subtle effects that involve nature - such as causing a flower to rapidly grow, summoning a slight gust of wind, or starting a campfire - at will.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "druid"
+		"class": "Druid"
 	},
 	"unstoppable": {
-		"description": "Once per long rest, you can become Unstoppable. You gain an Unstoppable Die. At level 1, your Unstoppable Die is a d4. Place it on your character sheet in the space provided, starting with the 1 value facing up. After you make a damage roll that deals 1 or more Hit Points to a target, increase the Unstoppable Die value by one. When the die's value would exceed its maximum value or when the scene ends, remove the die and drop out of Unstoppable. At level 5, your Unstoppable Die increases to a d6.\r\nWhile Unstoppable, you gain the following benefits:\r\n* You reduce the severity of physical damage by one threshold (Severe to Major, Major to Minor, Minor to None).\r\n* You add the current value of the Unstoppable Die to your damage roll.\r\n* You can't be Restrained or Vulnerable.",
+		"description": "Once per long rest, you can become Unstoppable. You gain an Unstoppable Die. At level 1, your Unstoppable Die is a d4. Place it on your character sheet in the space provided, starting with the 1 value facing up. After you make a damage roll that deals 1 or more Hit Points to a target, increase the Unstoppable Die value by one. When the die's value would exceed its maximum value or when the scene ends, remove the die and drop out of Unstoppable. At level 5, your Unstoppable Die increases to a d6.\nWhile Unstoppable, you gain the following benefits:\n\u25e6 You reduce the severity of physical damage by one threshold (Severe to Major, Major to Minor, Minor to None).\n\u25e6 You add the current value of the Unstoppable Die to your damage roll.\n\u25e6 You can't be Restrained or Vulnerable.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "guardian"
+		"class": "Guardian"
 	},
 	"ranger's focus": {
-		"description": "Spend a Hope and make an attack against a target. One a success, deal your attack's normal damage and temporarily make the attack's target your Focus. Until this feature ends or you make a different creature your Focus, you gaint he following benefits against your Focus:\r\n* You know precisely what direction they are in.\r\n* When you deal damage to them, they must mark a Stress.\r\n* When you fail an attack against them, you can end your Ranger's Focus feature to reroll your Duality Dice.",
+		"description": "Spend a Hope and make an attack against a target. One a success, deal your attack's normal damage and temporarily make the attack's target your Focus. Until this feature ends or you make a different creature your Focus, you gaint he following benefits against your Focus:\n\u25e6 You know precisely what direction they are in.\n\u25e6 When you deal damage to them, they must mark a Stress.\n\u25e6 When you fail an attack against them, you can end your Ranger's Focus feature to reroll your Duality Dice.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "ranger"
+		"class": "Ranger",
+		"hope": -1
 	},
 	"cloaked": {
 		"description": "Any time you would be Hidden, you are instead Cloaked. In addition to the benefits of the Hidden condition, while Cloaked you remain unseen if you are stationary when an adversary moves to where they would normally see you. When you move into or within an adversary's line of sight or make an attack, you are no longer Cloaked,",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "rogue"
+		"class": "Rogue"
 	},
 	"sneak attack": {
 		"description": "When you succeed on an attack while Cloaked or while an ally is within Melee range of your target, add a number of d6s equal to your tier to your damage roll. Level 1 --> Tier 1, Level 2-4 --> Tier 2, Levels 5-7 --> Tier 3, Levels 8-10 --> Tier 4.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "rogue"
+		"class": "Rogue"
 	},
 	"prayer dice": {
 		"description": "At the beginning of each session, roll a number of d4s equal to your subclass's Spellcast trait and place them on your character sheet in the space provided. These are your Prayer Dice. You can spend any number of Prayer Dice to aid yourself or an ally within Far range. You can use a spent die's value to reduce incoming damage, add to a roll's result after the roll is made, or gain Hope equal to the result. At the end of each session, clear all unspent Prayer Dice.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "seraph"
+		"class": "Seraph"
 	},
 	"arcane sense": {
 		"description": "You can sense the presence of magical people and objects within Close range.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "sorcerer"
+		"class": "Sorcerer"
 	},
 	"minor illusion": {
 		"description": "Make a Spellcast Roll (10). On a success, you create a minor visual illusion no larger than yourself within Close range. This illusion is convincing to anyone at Close range or farther.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "sorcerer"
+		"class": "Sorcerer"
 	},
 	"channel raw power": {
-		"description": "Once per long rest, you can place a domain card from your loadout into your vault and choose to either:\r\n* Gain Hope equal to the level of the card.\r\n* Enhance a spell that deals damage, gaining a bonus to your damage roll equal to twice the level of the card.",
+		"description": "Once per long rest, you can place a domain card from your loadout into your vault and choose to either:\n\u25e6 Gain Hope equal to the level of the card.\n\u25e6 Enhance a spell that deals damage, gaining a bonus to your damage roll equal to twice the level of the card.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "sorcerer"
+		"class": "Sorcerer"
+	},
+	"patron's pact": {
+		"description": "You have committed yourself to a supernatural entity\u2014such as a god, fae, or demon\u2014in exchange for power. Write their name on your character sheet, then work with your GM to determine their sphere of influence (such as Nature, Chaos, Wisdom, Mischief, Love, War, Justice, or Death). Before making an action roll that relates to your patron\u2019s sphere of influence, you can spend\na Favor to call upon their aid, rolling your Patron Die and adding its result to the total. Your Patron Die starts at a d6 and increases to a d8 at level 5.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Warlock"
+	},
+	"favor": {
+		"description": "You start with 3 Favor. You can use a downtime move to show tribute to your patron. Describe how and gain Favor equal to your Spellcast trait. Additionally, when you succeed on an action roll with Hope, you can choose to gain a Favor instead of a Hope.\nNote: The maximum Favor you can hold at one time is 6.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Warlock"
 	},
 	"combat training": {
 		"description": "You ignore burden when equipping weapons. When you deal physical damage, you gain a bonus to your damage roll equal to your level.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "warrior"
+		"class": "Warrior"
 	},
 	"attack of opportunity": {
-		"description": "If an adversary within Melee range attempts to leave that range, make a reaction roll using a trait of your choice against their Difficulty. Choose one effect on a success, or two if you critically succeed:\r\n* They can't move from where they are.\r\n* You deal damage to them equal to your primary weapon's damage.\r\n* You move with them.",
+		"description": "If an adversary within Melee range attempts to leave that range, make a reaction roll using a trait of your choice against their Difficulty. Choose one effect on a success, or two if you critically succeed:\n\u25e6 They can't move from where they are.\n\u25e6 You deal damage to them equal to your primary weapon's damage.\n\u25e6 You move with them.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "warrior"
+		"class": "Warrior"
+	},
+	"hex": {
+		"description": "Mark a Stress to temporarily Hex a target within Far range. While Hexed, the target gains a penalty to their damage rolls and Difficulty equal to your tier. The maximum number of creatures you can Hex at one time is equal to your Spellcast trait.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Witch",
+		"stress": -1
+	},
+	"commune": {
+		"description": "Once per long rest during a moment of calm, you can commune with an ancestor, a deity, a spirit, or an otherworldly being. Ask them a question, then roll a number of d6s equal to your Spellcast trait. Choose one of the results and reference the chart below for the effect.\n1\u20133 : You taste a flavor, smell a scent, or feel a sensation relevant to the answer.\n4\u20135 : You hear sounds or see a vision relevant to the answer.\n6 : You psychically experience a scene relevant to the answer as if you were there.",
+		"category": "class",
+		"type": "feature",
+		"source": "SRD",
+		"class": "Witch"
 	},
 	"prestidigitation": {
 		"description": "You can perform harmless, subtle magical effects at will. For example, you can change an object's color, create a smell, light a candle, cause a tiny object to float, illuminate a room, or repair a small object.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "wizard"
+		"class": "Wizard"
 	},
 	"strange patterns": {
 		"description": "Choose a number between 1 and 12. When you roll that number on a Duality Die, gain a Hope or clear a Stress. You can change this number when you take a long rest.",
 		"category": "class",
 		"type": "feature",
 		"source": "SRD",
-		"class": "wizard"
+		"class": "Wizard"
+	},
+	"first strike": {
+		"description": "The first time in a scene you succeed on an attack, you deal double damage.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "assassin",
+		"subclass": "executioner's guild",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"death strike": {
+		"description": "When you deal Severe damage to a creature, you can mark a Stress to force them to mark an additional Hit Point.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "assassin",
+		"subclass": "executioner's guild",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"true strike": {
+		"description": "Once per long rest when you fail an attack, you can spend a Hope to make it a success instead.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "assassin",
+		"subclass": "executioner's guild",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"ambush": {
+		"description": "Your \u201cMarked for Death\u201d feature uses d6s instead of d4s.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "assassin",
+		"subclass": "executioner's guild",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"scorpion's poise": {
+		"description": "You gain a +2 bonus to your Evasion against attacks made by a creature you've Marked for Death.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "assassin",
+		"subclass": "executioner's guild",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"backstab": {
+		"description": "Your \u201cMarked for Death\u201d feature uses d8s instead of d6s.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "assassin",
+		"subclass": "executioner's guild",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"toxic concoctions": {
+		"description": "Mark a Stress to place 1d4+1 tokens on this card. When you make a successful weapon attack, you can spend a token to afflict the target with a poison. You know these poisons:\n\u25e6 Ghost Petal: The target becomes temporarily Vulnerable.\n\u25e6 Grave Spore: The target must also mark a Stress.\n\u25e6 Leech Weed: You deal an extra 1d6 damage on this attack.\nWhen you take a long rest, clear all unspent tokens",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "assassin",
+		"subclass": "poisoner's guild",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"poison compendium": {
+		"description": "You also know these poisons:\n\u25e6 Midnight Vine: The target has disadvantage on attack rolls until it marks a Stress to clear this condition.\n\u25e6 Gorgon Root: The target becomes temporarily Restrained.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "assassin",
+		"subclass": "poisoner's guild",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"venomancer": {
+		"description": "You also know these poisons:\n\u25e6 Blight Seed: The target gains a \u22123 penalty to their damage thresholds until the end of the scene. This effect can\u2019t stack.\n\u25e6 Fear Leaf: You deal extra damage equal to the result of your Fear Die on this attack.\n\u25e6 Corpse Thorn: The target gains disadvantage on reaction rolls until the end of the scene.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "assassin",
+		"subclass": "poisoner's guild",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"twin fang": {
+		"description": "When you afflict a target Marked for Death with a poison you know, you can spend an additional token to also inflict the effect of a second poison you know.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "assassin",
+		"subclass": "poisoner's guild",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"adder's blessing": {
+		"description": "You are immune to poisons and other\nToxins.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "assassin",
+		"subclass": "poisoner's guild",
+		"type": "feature",
+		"source": "SRD"
 	},
 	"gifted performer": {
-		"description": "Describe how you perform for others. You can play each song once per long rest:\n* RELAXING SONG: You and all allies within Close range clear a Hit Point.\n* EPIC SONG: Make a target within Close range temporarily Vulnerable.\n* HEARTBREAKING SONG: You and all allies within Close range gain a Hope.",
+		"description": "Describe how you perform for others. You can play each song once per long rest:\n\u25e6 RELAXING SONG: You and all allies within Close range clear a Hit Point.\n\u25e6 EPIC SONG: Make a target within Close range temporarily Vulnerable.\n\u25e6 HEARTBREAKING SONG: You and all allies within Close range gain a Hope.",
 		"category": "subclass",
 		"mastery": 1,
 		"class": "bard",
@@ -222,7 +407,7 @@
 		"source": "SRD"
 	},
 	"eloquent": {
-		"description": "Your moving words boost morale. Once per session, when you encourage an ally, you can do one of the following:\n* Allow them to find a mundane object or tool they need.\n* Help an Ally without spending Hope.\n* Give them an additional downtime move during their next rest.",
+		"description": "Your moving words boost morale. Once per session, when you encourage an ally, you can do one of the following:\n\u25e6 Allow them to find a mundane object or tool they need.\n\u25e6 Help an Ally without spending Hope.\n\u25e6 Give them an additional downtime move during their next rest.",
 		"category": "subclass",
 		"mastery": 2,
 		"class": "bard",
@@ -239,8 +424,107 @@
 		"type": "feature",
 		"source": "SRD"
 	},
+	"rugged": {
+		"description": "Gain a permanent +3 bonus to your Severe damage threshold.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "brawler",
+		"subclass": "juggernaut",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"surrounded": {
+		"description": "When you make an attack with a Melee weapon, you can spend any number of Hope to target an equal number of additional creatures within Melee range.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "brawler",
+		"subclass": "juggernaut",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"pummeljoy": {
+		"description": "When you critically succeed on a Melee weapon attack, you gain an additional Hope, clear an additional Stress, and gain a +1 bonus to your Proficiency for that attack.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "brawler",
+		"subclass": "juggernaut",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"overwhelm": {
+		"description": "When you succeed on an attack against a target, you can spend a Hope to throw the target within Close range or to force them to mark a Stress.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "brawler",
+		"subclass": "juggernaut",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"eye for an eye": {
+		"description": "Once per rest when an adversary within Melee range forces you to mark any number of Hit Points, you can mark a Stress to force them to mark the same number of Hit Points.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "brawler",
+		"subclass": "juggernaut",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"not done yet": {
+		"description": "When you take Severe damage, you can gain a Hope or clear a Stress.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "brawler",
+		"subclass": "juggernaut",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"stance fighter": {
+		"description": "You can channel your inner resolve to shift into martial stances that grant you special benefits in combat.\nTake the Martial Stances sheet and choose two martial stances from Tier 1. Each time you level up your character, choose an additional stance from your tier or lower.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "brawler",
+		"subclass": "martial artist",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"keen defenses": {
+		"description": "When you\u2019re targeted by an attack, you can spend a Focus to gain a bonus to your Evasion equal to your tier against the attack.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "brawler",
+		"subclass": "martial artist",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"limit breaker": {
+		"description": "Once per rest, you can perform an unbelievable feat of athletic prowess, such as running across water, leaping between distant rooftops, or scaling a building without needing to roll. When you do, gain a Hope and clear a Stress.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "brawler",
+		"subclass": "martial artist",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"focus cannon": {
+		"description": "Spend a Focus to make an Instinct Roll against an adversary within Far range. On a success, deal d20+3 magic damage using your Proficiency.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "brawler",
+		"subclass": "martial artist",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"flow state": {
+		"description": "You can mark a Stress instead of spending a Focus to shift into a different stance. Additionally, you can spend a Focus instead of marking a Stress to start a combo strike.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "brawler",
+		"subclass": "martial artist",
+		"type": "feature",
+		"source": "SRD"
+	},
 	"elemental incarnation": {
-		"description": "Mark a Stress to Channel one of the following elements until you take Severe damage or until your next rest:\n* FIRE: When an adversary within Melee range deals damage to you, they take 1d10 magic damage.\n* EARTH: Gain a bonus to your damage thresholds equal to your Proficiency.\n* WATER: When you deal damage to an adversary within Melee range, all other adversaries within Very Close range must mark a Stress.\n* AIR: You can hover, gaining advantage on Agility Rolls.",
+		"description": "Mark a Stress to Channel one of the following elements until you take Severe damage or until your next rest:\n\u25e6 FIRE: When an adversary within Melee range deals damage to you, they take 1d10 magic damage.\n\u25e6 EARTH: Gain a bonus to your damage thresholds equal to your Proficiency.\n\u25e6 WATER: When you deal damage to an adversary within Melee range, all other adversaries within Very Close range must mark a Stress.\n\u25e6 AIR: You can hover, gaining advantage on Agility Rolls.",
 		"category": "subclass",
 		"mastery": 1,
 		"class": "druid",
@@ -249,7 +533,7 @@
 		"source": "SRD"
 	},
 	"elemental aura": {
-		"description": "Once per rest while Channeling, you can assume an aura matching your element. The aura affects targets within Close ragne until your Channeling ends.\n* FIRE: When an adversary marks 1 or more Hit Points, they must also mark a Stress.\n* EARTH: Your allies gain a +1 bonus to Strength.\n* WATER: When an adversary deals damage to you, you can mark a Stress to move them anywhere within Very Close range of where they are.\n* AIR: When you or an ally takes damage from an attack beyond Melee range, reduce the damage by 1d8.",
+		"description": "Once per rest while Channeling, you can assume an aura matching your element. The aura affects targets within Close ragne until your Channeling ends.\n\u25e6 FIRE: When an adversary marks 1 or more Hit Points, they must also mark a Stress.\n\u25e6 EARTH: Your allies gain a +1 bonus to Strength.\n\u25e6 WATER: When an adversary deals damage to you, you can mark a Stress to move them anywhere within Very Close range of where they are.\n\u25e6 AIR: When you or an ally takes damage from an attack beyond Melee range, reduce the damage by 1d8.",
 		"category": "subclass",
 		"mastery": 2,
 		"class": "druid",
@@ -258,7 +542,7 @@
 		"source": "SRD"
 	},
 	"elemental dominion": {
-		"description": "You further embody your element. while Channeling, you gain the following benefit:\n* FIRE: You gain a +1 bonus to your Proficiency for attacks and spells that deal damage.\n* EARTH: When you would mark Hit Points, roll a d6 per Hit Point marked. For each result of 6, reduce the number of Hit Points you mark by 1.\n* WATER: When an attack against you succeeds, you can mark a Stress to make the attacker temporarily Vulnerable.\n* AIR: You gain a +1 bonus to your Evasion and can fly.",
+		"description": "You further embody your element. while Channeling, you gain the following benefit:\n\u25e6 FIRE: You gain a +1 bonus to your Proficiency for attacks and spells that deal damage.\n\u25e6 EARTH: When you would mark Hit Points, roll a d6 per Hit Point marked. For each result of 6, reduce the number of Hit Points you mark by 1.\n\u25e6 WATER: When an attack against you succeeds, you can mark a Stress to make the attacker temporarily Vulnerable.\n\u25e6 AIR: You gain a +1 bonus to your Evasion and can fly.",
 		"category": "subclass",
 		"mastery": 3,
 		"class": "druid",
@@ -501,7 +785,7 @@
 		"source": "SRD"
 	},
 	"well-connected": {
-		"description": "When you arrive in a prominent town or environment, you know somebody who calls this place home. Give them a name, note how you think they could be useful, and choose one fact from the following list:\n* They owe me a favor, but they'll be hard to find.\n* They're going to ask for something in exchange.\n* They're always in a great deal of trouble.\n* We used to be together. It's a long story.\n* We didn't part on great terms.",
+		"description": "When you arrive in a prominent town or environment, you know somebody who calls this place home. Give them a name, note how you think they could be useful, and choose one fact from the following list:\n\u25e6 They owe me a favor, but they'll be hard to find.\n\u25e6 They're going to ask for something in exchange.\n\u25e6 They're always in a great deal of trouble.\n\u25e6 We used to be together. It's a long story.\n\u25e6 We didn't part on great terms.",
 		"category": "subclass",
 		"mastery": 1,
 		"class": "rogue",
@@ -510,7 +794,7 @@
 		"source": "SRD"
 	},
 	"contacts everywhere": {
-		"description": "Once per session, you can briefly call on a shady contact. Choose one of the following benefits and describe what brought them here to help you in this moment:\n* They provide 1 handful of gold, a unique tool, or a mundane object that the situation requires.\n* On your next action roll, their help provides a +3 bonus to the result of your Hope or Fear Die.\n* The next time you deal damage, they snipe from the shadows, adding 2d8 to your damage rolls.",
+		"description": "Once per session, you can briefly call on a shady contact. Choose one of the following benefits and describe what brought them here to help you in this moment:\n\u25e6 They provide 1 handful of gold, a unique tool, or a mundane object that the situation requires.\n\u25e6 On your next action roll, their help provides a +3 bonus to the result of your Hope or Fear Die.\n\u25e6 The next time you deal damage, they snipe from the shadows, adding 2d8 to your damage rolls.",
 		"category": "subclass",
 		"mastery": 2,
 		"class": "rogue",
@@ -519,7 +803,7 @@
 		"source": "SRD"
 	},
 	"reliable backup": {
-		"description": "You can use your \\\"Contacts Everywhere\\\" feature three times per session. The following options are added to the list of benefits you can choose from when you use that feature:\n* When you mark 1 or more Hit Points, they can rush out to shield you, reducing Hit Points marked by 1.\n* When you make a Presence Roll in conversation, they back you up. You can roll a d20 as your Hope Die.",
+		"description": "You can use your \\\"Contacts Everywhere\\\" feature three times per session. The following options are added to the list of benefits you can choose from when you use that feature:\n\u25e6 When you mark 1 or more Hit Points, they can rush out to shield you, reducing Hit Points marked by 1.\n\u25e6 When you make a Presence Roll in conversation, they back you up. You can roll a d20 as your Hope Die.",
 		"category": "subclass",
 		"mastery": 3,
 		"class": "rogue",
@@ -564,7 +848,7 @@
 		"source": "SRD"
 	},
 	"wings of light": {
-		"description": "You can fly. While flying, you can do the following:\n* Mark a Stress to pick up and carry another willing creature approximately your size or smaller.\n* Spend a Hope to deal an extra 1d8 damage on a successful attack.",
+		"description": "You can fly. While flying, you can do the following:\n\u25e6 Mark a Stress to pick up and carry another willing creature approximately your size or smaller.\n\u25e6 Spend a Hope to deal an extra 1d8 damage on a successful attack.",
 		"category": "subclass",
 		"mastery": 1,
 		"class": "seraph",
@@ -618,7 +902,7 @@
 		"source": "SRD"
 	},
 	"transcendence": {
-		"description": "Once per long rest, you can transform into a physical manifestation of your element. When you do, describe your transformation and choose two of the following benefits to gain until your next rest:\n* +4 bonus to your Severe threshold\n* +1 bonus to a character trait of your choice\n* +1 bonus to your Proficiency\n* +2 bonus to your Evasion",
+		"description": "Once per long rest, you can transform into a physical manifestation of your element. When you do, describe your transformation and choose two of the following benefits to gain until your next rest:\n\u25e6 +4 bonus to your Severe threshold\n\u25e6 +1 bonus to a character trait of your choice\n\u25e6 +1 bonus to your Proficiency\n\u25e6 +2 bonus to your Evasion",
 		"category": "subclass",
 		"mastery": 3,
 		"class": "sorcerer",
@@ -627,7 +911,7 @@
 		"source": "SRD"
 	},
 	"manipulate magic": {
-		"description": "Your primal origin allows you to modify the essence of magic itself. After you cast a spell or make an attack using a weapon that deals magic damage, you can mark a Stress to do one of the following:\n* Extend the spell or attack's reach by one range\n* Gain a +2 bonus to the action roll's result\n* Double a damage die of your choice\n* Hit an additional target within range",
+		"description": "Your primal origin allows you to modify the essence of magic itself. After you cast a spell or make an attack using a weapon that deals magic damage, you can mark a Stress to do one of the following:\n\u25e6 Extend the spell or attack's reach by one range\n\u25e6 Gain a +2 bonus to the action roll's result\n\u25e6 Double a damage die of your choice\n\u25e6 Hit an additional target within range",
 		"category": "subclass",
 		"mastery": 1,
 		"class": "sorcerer",
@@ -650,6 +934,114 @@
 		"mastery": 3,
 		"class": "sorcerer",
 		"subclass": "primal origin",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"patron's mantle": {
+		"description": "Spend a Favor to cloak yourself in a terrifying aspect of your Patron that lasts until you take Severe damage or the scene ends. While this effect is active, you gain a bonus to your damage thresholds equal to your tier and have advantage on action rolls to intimidate a target.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "warlock",
+		"subclass": "pact of the endless",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"harrowing invocation": {
+		"description": "When an adversary targets you or an ally within Very Close range with an attack, you can spend a Favor to give them disadvantage on the roll. If the adversary fails the roll, they must also mark a Stress.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "warlock",
+		"subclass": "pact of the endless",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"dark aegis": {
+		"description": "Once per long rest when you would take damage, you can spend a Favor instead of marking Hit Points.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "warlock",
+		"subclass": "pact of the endless",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"deathless embrace": {
+		"description": "Once per rest, spend any number of Favor to roll an equal number of Patron Dice. For each result of 4 or higher, clear a Hit Point.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "warlock",
+		"subclass": "pact of the endless",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"damage sink": {
+		"description": "Once per rest, you can spend a Favor to halve incoming damage.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "warlock",
+		"subclass": "pact of the endless",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"draining bane": {
+		"description": "When an adversary targets you or an ally within Very Close range with an attack, you can spend a Favor to Drain them. When you do, they must mark a Stress, and you can clear a Stress. While Drained, the target uses a d12 instead of a d20 for attack rolls (including for advantage or disadvantage) until they fail a roll.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "warlock",
+		"subclass": "pact of the endless",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"patron's fury": {
+		"description": "Spend a Favor to imbue your attacks with your Patron\u2019s power until you deal Severe damage or the scene ends. When you roll damage while this effect is active, you also roll a number of Patron Dice equal to your tier and add their total to the damage dealt.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "warlock",
+		"subclass": "pact of the wrathful",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"menacing reach": {
+		"description": "Spend a Favor to increase the range of your primary weapon by one step (such as Melee to Very Close or Very Close to Close) to a maximum of Very Far range. This effect ends when you make a successful attack with that weapon.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "warlock",
+		"subclass": "pact of the wrathful",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"fearsome attack": {
+		"description": "Spend a Favor to reroll any number of your damage dice. You can continue spending Favor to use this feature on the same damage roll.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "warlock",
+		"subclass": "pact of the wrathful",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"deadly vengeance": {
+		"description": "When you mark any number of Hit Points from an attack, you can spend a Favor to roll an equal number of Patron Dice. For each result of 4 or higher, the attacker marks a Hit Point.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "warlock",
+		"subclass": "pact of the wrathful",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"diminish my foes": {
+		"description": "When you succeed with Hope on an action roll against a target, you can spend any number of Favor to force the target to mark an equal number of Stress",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "warlock",
+		"subclass": "pact of the wrathful",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"otherworldly ire": {
+		"description": "Once per rest when you take damage, you can spend any number of Favor to roll that many Patron Dice and target a number of creatures within Close range equal to the highest result. Each target must mark a Hit Point.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "warlock",
+		"subclass": "pact of the wrathful",
 		"type": "feature",
 		"source": "SRD"
 	},
@@ -713,6 +1105,87 @@
 		"mastery": 3,
 		"class": "warrior",
 		"subclass": "call of the slayer",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"herbal remedies": {
+		"description": "When you or an ally in the scene clears 1 or more Hit Points or Stress as the result of using a consumable, increase the number cleared by 1.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "witch",
+		"subclass": "hedge",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"walk between worlds": {
+		"description": "During a moment of calm, make a Spellcast Roll (13). Once per rest on a success, you can mark a Stress to step beyond the veil of death and converse with any nearby spirits. Place a number of tokens equal to your Spellcast trait on this card and remove one each time a spirit answers a question. When the last token is removed or at the end of the scene, you return to the Mortal Realm in the same spot you left it",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "witch",
+		"subclass": "hedge",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"circle of power": {
+		"description": "Once per rest, mark a circle on the ground outlining a Very Close area around you, and place a number of tokens equal to your Spellcast trait on this card. While within this circle, you and your allies gain a +2 bonus to damage thresholds, attack rolls, and Evasion. Remove a token each time you or an ally within the circle makes an action roll or evades an attack. This spell lasts until the last token is removed or you exit the circle.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "witch",
+		"subclass": "hedge",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"enchanted talisman": {
+		"description": "Once per rest, you can imbue a small item with your protective essence. Spend any number of Hope to place an equal number of tokens on this card.\nWhen the person holding the talisman takes damage, spend a token to reduce the number of Hit Points they mark by one. Clear all tokens from this card when you take a rest.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "witch",
+		"subclass": "hedge",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"vexing malison": {
+		"description": "You have advantage on attacks against Hexed creatures.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "witch",
+		"subclass": "hedge",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"night's glamour": {
+		"description": "Make a Spellcast Roll (13) to Glamour yourself in a bewitching facade. While Glamoured, you have advantage on rolls that leverage your illusory appearance. \nAdditionally, adversaries within Close range must mark a Stress to attack you. \nUnless you mark a Stress to maintain your Glamour, it drops when you mark a Hit Point or deal damage.",
+		"category": "subclass",
+		"mastery": 1,
+		"class": "witch",
+		"subclass": "moon",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"moonbeam": {
+		"description": "Once per session, you can conjure a column of moonlight that illuminates the area within Close range until the end of the scene. While bathed in this moonlight, you and your allies gain a +1 bonus to Spellcast Rolls and can see through illusions.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "witch",
+		"subclass": "moon",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"lunar phases": {
+		"description": "At the beginning of each session, roll a d6 and place it on this card. You gain the matching effect until the end of session.\n1 [New] : Spend a Hope to negate Minor damage.\n2-3 [Waxing] : +2 to damage rolls\n4 [Full] : +3 to damage thresholds\n5-6 [Waning] : +1 to Evasion\nOnce per rest, you can spend a Hope to increase the value of this die by one. If you increase the value of a 6, it becomes a 1.",
+		"category": "subclass",
+		"mastery": 3,
+		"class": "witch",
+		"subclass": "moon",
+		"type": "feature",
+		"source": "SRD"
+	},
+	"ire of pale light": {
+		"description": "When a Hexed creature within Very Far range fails an attack, they must mark a Stress.",
+		"category": "subclass",
+		"mastery": 2,
+		"class": "witch",
+		"subclass": "moon",
 		"type": "feature",
 		"source": "SRD"
 	},
@@ -824,319 +1297,545 @@
 		"type": "feature",
 		"source": "SRD"
 	},
+	"hallowed aura": {
+		"description": "Once per long rest when an ally within Close range rolls with Fear, you can change it into a roll with Hope instead.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Aetheris"
+	},
 	"purposeful design": {
 		"description": "Decide who made you and for what purpose. At character creation, choose one of your Experiences that best aligns with this purpose and gain a permanent +1 bonus to it.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "clank"
+		"ancestry": "Clank"
 	},
 	"scales": {
 		"description": "Your scales act as a natural protection. when you would take Severe damage, you can mark a Stress to mark 1 fewer Hit Points.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "drakona"
+		"ancestry": "Drakona"
 	},
 	"thick skin": {
 		"description": "When you take Minor damage, you can mark 2 Stress instead of marking a Hit Point.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "dwarf"
+		"ancestry": "Dwarf",
+		"stress": -2
 	},
-	"quick reactions": {
-		"description": "Mark a Stress to gain advantage on a reaction roll.",
+	"stoneskin": {
+		"description": "Gain a permanent +1 bonus to your Armor Score and damage thresholds at character creation.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "elf"
+		"ancestry": "Earthkin"
 	},
-	"luckbender": {
-		"description": "Once per session, after you or a willing ally within Close range makes an action, you can spend 3 Hope to reroll the Duality Dice.",
+	"fireproof": {
+		"description": "You are immune to damage from magical or mundane flame.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "faerie"
+		"ancestry": "Emberkin"
 	},
-	"caprine leap": {
-		"description": "You can leap anywhere within Close range as though you were using normal movement, allowing you to vault obstacles, jump across gaps, or scale barriers with ease.",
+	"gale force": {
+		"description": "Mark a Stress to conjure a gust of wind that carries you or a Very Close ally up to Very Far range.\nAdditionally, you can always control the speed at which you fall.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "faun"
-	},
-	"charge": {
-		"description": "When you succeed on an Agility Roll to move from Far Very Far range into Melee range with one or more targets, you can mark a Stress to deal 1d12 physical damage to all targets within Melee range.",
-		"category": "ancestry",
-		"type": "feature",
-		"source": "SRD",
-		"ancestry": "firbolg"
-	},
-	"fungril network": {
-		"description": "Make an Instinct Roll (12) to use your mycelial array to speak with others of your ancestry. On a success, you can communicate across any distance.",
-		"category": "ancestry",
-		"type": "feature",
-		"source": "SRD",
-		"ancestry": "fungril"
-	},
-	"shell": {
-		"description": "Gain a bonus to your damge thresholds equal to your Proficiency.",
-		"category": "ancestry",
-		"type": "feature",
-		"source": "SRD",
-		"ancestry": "galapa"
-	},
-	"endurance": {
-		"description": "Gain an additional Hit Point slot at character creation.",
-		"category": "ancestry",
-		"type": "feature",
-		"source": "SRD",
-		"ancestry": "giant"
-	},
-	"surefooted": {
-		"description": "You ignore disadvantage on Agility Rolls.",
-		"category": "ancestry",
-		"type": "feature",
-		"source": "SRD",
-		"ancestry": "goblin"
-	},
-	"luckbringer": {
-		"description": "At the start of each session, everyone in your part gains a Hope.",
-		"category": "ancestry",
-		"type": "feature",
-		"source": "SRD",
-		"ancestry": "halfling"
-	},
-	"high stamina": {
-		"description": "Gain an additonal Stress slot at character creation.",
-		"category": "ancestry",
-		"type": "feature",
-		"source": "SRD",
-		"ancestry": "human"
-	},
-	"fearless": {
-		"description": "When you roll with Fear, you can mark 2 Stress to change it into a roll with Hope instead.",
-		"category": "ancestry",
-		"type": "feature",
-		"source": "SRD",
-		"ancestry": "infernis"
-	},
-	"feline instincts": {
-		"description": "When you make an Agility Roll, you can spend 2 Hope to reroll your Hope Die.",
-		"category": "ancestry",
-		"type": "feature",
-		"source": "SRD",
-		"ancestry": "katari"
-	},
-	"sturdy": {
-		"description": "When you have 1 Hit Point remaining, attacks against you have disadvantage.",
-		"category": "ancestry",
-		"type": "feature",
-		"source": "SRD",
-		"ancestry": "orc"
+		"ancestry": "Skykin",
+		"stress": -1
 	},
 	"amphibious": {
 		"description": "You can breathe and move naturally underwater.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "ribbet"
+		"ancestry": "Ribbet"
+	},
+	"quick reactions": {
+		"description": "Mark a Stress to gain advantage on a reaction roll.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Elf",
+		"stress": -1
+	},
+	"luckbender": {
+		"description": "Once per session, after you or a willing ally within Close range makes an action, you can spend 3 Hope to reroll the Duality Dice.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Faerie",
+		"hope": -3
+	},
+	"caprine leap": {
+		"description": "You can leap anywhere within Close range as though you were using normal movement, allowing you to vault obstacles, jump across gaps, or scale barriers with ease.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Faun"
+	},
+	"charge": {
+		"description": "When you succeed on an Agility Roll to move from Far Very Far range into Melee range with one or more targets, you can mark a Stress to deal 1d12 physical damage to all targets within Melee range.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Firbolg",
+		"stress": -1
+	},
+	"fungril network": {
+		"description": "Make an Instinct Roll (12) to use your mycelial array to speak with others of your ancestry. On a success, you can communicate across any distance.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Fungril"
+	},
+	"shell": {
+		"description": "Gain a bonus to your damage thresholds equal to your Proficiency.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Galapa"
+	},
+	"endurance": {
+		"description": "Gain an additional Hit Point slot at character creation.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Giant"
+	},
+	"nimble fingers": {
+		"description": "When you make a Finesse Roll, you can spend 2 Hope to reroll your Hope Die.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Gnome",
+		"stress": -2
+	},
+	"surefooted": {
+		"description": "You ignore disadvantage on Agility Rolls.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Goblin"
+	},
+	"luckbringer": {
+		"description": "At the start of each session, everyone in your part gains a Hope.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Halfling"
+	},
+	"high stamina": {
+		"description": "Gain an additional Stress slot at character creation.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Human"
+	},
+	"fearless": {
+		"description": "When you roll with Fear, you can mark 2 Stress to change it into a roll with Hope instead.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Infernis",
+		"stress": -2
+	},
+	"feline instincts": {
+		"description": "When you make an Agility Roll, you can spend 2 Hope to reroll your Hope Die.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Katari",
+		"hope": -2
+	},
+	"sturdy": {
+		"description": "When you have 1 Hit Point remaining, attacks against you have disadvantage.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Orc"
 	},
 	"natural climber": {
 		"description": "You have advantage on Agility Rolls that involve balancing and climbing.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "simiah"
+		"ancestry": "Simiah"
+	},
+	"celestial wings": {
+		"description": "You have wings that allow you to fly. Once per scene while flying, you can spend a Hope instead of marking an Armor Slot.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Aetheris"
 	},
 	"efficient": {
 		"description": "When you take a short rest, you can choose a long rest move instead of a short rest move.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "clank"
+		"ancestry": "Clank"
 	},
 	"elemental breath": {
 		"description": "Choose an element for your breath (such as electricity, fire, or ice). You can use this breath against a target or group of targets within Very Close range, treating it as an Instinct weapon that deals d8 magic damage using your Proficiency.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "drakona"
+		"ancestry": "Drakona"
 	},
 	"increased fortitude": {
 		"description": "Spend 3 Hope to halve incoming physical damage.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "dwarf"
+		"ancestry": "Dwarf",
+		"hope": -3
+	},
+	"immovable": {
+		"description": "While you\u2019re touching the ground, you can\u2019t be lifted or moved against your will.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Earthkin"
+	},
+	"ignition": {
+		"description": "Mark a Stress to wreathe your primary weapon in flame until the end of the scene. While the weapon is ablaze, it gives off a bright light, and you gain a 1d6 bonus to damage rolls with that weapon.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Emberkin",
+		"stress": -1
+	},
+	"eye of the storm": {
+		"description": "Spend 2 Hope to grant you or an ally within Melee range a +1 bonus to Evasion until you take Severe damage or you use this feature again.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Skykin",
+		"hope": -2
+	},
+	"lifespring": {
+		"description": "Once per rest when you have access to a small amount of water, you can mark a Stress to clear a Hit Point on yourself or an ally within Very Close range.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Tidekin",
+		"stress": -1
 	},
 	"celestial trance": {
 		"description": "During a rest, you can drop into a trance to choose an additional downtime move.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "elf"
+		"ancestry": "Elf"
 	},
 	"wings": {
 		"description": "You can fly. While flying, you can mark a Stress after an adversary makes an attack against you to gain a +2 bonus to your Evasion against that attack.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "faerie"
+		"ancestry": "Faerie",
+		"stress": -1
 	},
 	"kick": {
 		"description": "When you succeed on an attack against a target within Melee range, you can mark a Stress to kick yourself off them, dealing an extra 2d6 damage and knocking back either yourself or the target to Very Close range.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "faun"
+		"ancestry": "Faun"
 	},
 	"unshakable": {
 		"description": "When you would mark a Stress, roll a d6. On a result of 6, don't mark it.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "firbolg"
+		"ancestry": "Firbolg"
 	},
 	"death connection": {
 		"description": "While touching a corpse that died recently, you can mark a Stress to extract one memory from the corpse related to a specific emotion or sensation of your choice.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "fungril"
+		"ancestry": "Fungril",
+		"stress": -1
 	},
 	"retract": {
 		"description": "Mark a Stress to retract into your shell. While in your shell, you have resistance to physical damage, you have disadvantage on action rolls, and you can't move.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "galapa"
+		"ancestry": "Galapa",
+		"stress": -1
 	},
 	"reach": {
 		"description": "Treat any weapon, ability, spell, or other feature that has a Melee range as though it has a Very Close range instead.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "giant"
+		"ancestry": "Giant"
+	},
+	"flicker step": {
+		"description": "Once per scene, you can teleport to another point you can see within Far range.",
+		"category": "ancestry",
+		"type": "feature",
+		"source": "SRD",
+		"ancestry": "Gnome"
 	},
 	"danger sense": {
 		"description": "Once per rest, mark a Stress to force an adversary to reroll an attack against you or an ally within Very Close range.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "goblin"
+		"ancestry": "Goblin",
+		"stress": -1
 	},
 	"internal compass": {
 		"description": "When you roll a 1 on your Hope Die, you can reroll it.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "halfling"
+		"ancestry": "Halfling"
 	},
 	"adaptability": {
 		"description": "When you fail a roll that utilized one of your Experiences, you can mark a Stress to reroll it.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "human"
+		"ancestry": "Human",
+		"stress": -1
 	},
 	"dread visage": {
 		"description": "You have advantage on rolls to intimidate hostile creatures.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "infernis"
+		"ancestry": "Infernis"
 	},
 	"retracting claws": {
-		"description": "Make an Agility Roll to scratch a target wtihin Melee range. On a success, they become temporarily Vulnerable.",
+		"description": "Make an Agility Roll to scratch a target within Melee range. On a success, they become temporarily Vulnerable.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "katari"
+		"ancestry": "Katari"
 	},
 	"tusks": {
 		"description": "When you succeed on an attack against a target within Melee range, you can spend a Hope to gore the target with your tusks, dealing an extra 1d6 damage.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "orc"
+		"ancestry": "Orc",
+		"hope": -1
 	},
 	"long tongue": {
 		"description": "You can use your long tongue to grab onto things within Close range. Mark a Stress to use your tongue as a Finesse Close weapon that deals d12 physical damage using your Proficiency.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "ribbet"
+		"ancestry": "Ribbet",
+		"stress": -1
 	},
 	"nimble": {
 		"description": "Gain a permanent +1 bonus to your Evasion at character creation.",
 		"category": "ancestry",
 		"type": "feature",
 		"source": "SRD",
-		"ancestry": "simiah"
+		"ancestry": "Simiah"
+	},
+	"oasis": {
+		"description": "During a short rest, you or an ally can reroll a die used for a downtime move and take the higher result.",
+		"category": "community",
+		"type": "feature",
+		"source": "SRD",
+		"community": "Duneborne"
+	},
+	"unbound": {
+		"description": "Once per session when you roll with Fear, you can change it into a roll with Hope instead.",
+		"category": "community",
+		"type": "feature",
+		"source": "SRD",
+		"community": "Freeborne"
+	},
+	"hardy": {
+		"description": "When you take a rest, you clear a Hit Point.",
+		"category": "community",
+		"type": "feature",
+		"source": "SRD",
+		"community": "Frostborne"
+	},
+	"close-knit": {
+		"description": "Once per long rest, you can spend any number of Hope to grant an ally within Far range an equal number of Hope",
+		"category": "community",
+		"type": "feature",
+		"source": "SRD",
+		"community": "Hearthborne"
 	},
 	"privilege": {
 		"description": "You have advantage on rolls to consort with nobles, negotiate prices, or leverage your reputation to get what you want.",
 		"category": "community",
 		"type": "feature",
 		"source": "SRD",
-		"community": "highborne"
+		"community": "Highborne"
 	},
 	"well-read": {
 		"description": "You have advantage on rolls that invoke the history, culture, or politics of a prominent person or place.",
 		"category": "community",
 		"type": "feature",
 		"source": "SRD",
-		"community": "loreborne"
+		"community": "Loreborne"
 	},
 	"dedicated": {
 		"description": "Record three sayings or values your upbringing instilled in you. Once per rest, when you describe how you're embodying one of these principles through your current action, you can roll a d20 as your Hope Die.",
 		"category": "community",
 		"type": "feature",
 		"source": "SRD",
-		"community": "orderborne"
+		"community": "Orderborne"
+	},
+	"found family": {
+		"description": "Once per rest, you can spend a Hope to use an ally\u2019s Experience as if it were your own. When you do so,\ndescribe how your time with that ally prepared you for this moment.\nWhen you join a new community or rediscover your old one, you can permanently trade this card for that one instead.",
+		"category": "community",
+		"type": "feature",
+		"source": "SRD",
+		"community": "Reborne"
 	},
 	"steady": {
 		"description": "You have advantage on rolls to traverse dangerous cliffs and ledges, navigate harsh environments, and use your survival knowledge.",
 		"category": "community",
 		"type": "feature",
 		"source": "SRD",
-		"community": "ridgeborne"
+		"community": "Ridgeborne"
 	},
 	"know the tide": {
 		"description": "You can sense the ebb and flow of life. When you roll with Fear, place a token on your community card. You can hold a number of tokens equal to your level. Before you make an action roll, you can spend any number of these tokens to gain a +1 bonus to the roll for each token spent. At the end of each session, clear all unspent tokens.",
 		"category": "community",
 		"type": "feature",
 		"source": "SRD",
-		"community": "seaborne"
+		"community": "Seaborne"
 	},
 	"scoundrel": {
 		"description": "You have advantage on rolls to negotiate with criminals, detect lies, or find a safe place to hide.",
 		"category": "community",
 		"type": "feature",
 		"source": "SRD",
-		"community": "slyborne"
+		"community": "Slyborne"
 	},
 	"low-light living": {
 		"description": "When you're in an area with low light or heavy shadow, you have advantage on rolls to hide, investigate, or perceive details in that area.",
 		"category": "community",
 		"type": "feature",
 		"source": "SRD",
-		"community": "underborne"
+		"community": "Underborne"
 	},
 	"nomadic pack": {
 		"description": "Add a Nomadic Pack to your inventory. Once per session, you can spend a Hope to reach into this pack and pull out a mundane item that's useful to your situation. Work with the GM to figure out what item you take out.",
 		"category": "community",
 		"type": "feature",
 		"source": "SRD",
-		"community": "wanderborne"
+		"community": "Wanderborne"
+	},
+	"brave face": {
+		"description": "Once per session when you would be forced to mark a Stress, you can spend a Hope instead.",
+		"category": "community",
+		"type": "feature",
+		"source": "SRD",
+		"community": "Warborne"
 	},
 	"lightfoot": {
 		"description": "Your movement is naturally silent. You have advantage on rolls to move without being heard.",
 		"category": "community",
 		"type": "feature",
 		"source": "SRD",
-		"community": "wildborne"
+		"community": "Wildborne"
+	},
+	"gifted": {
+		"description": "You gain a +1 bonus to action, reaction, and damage Rolls.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Demigod"
+	},
+	"weight of divinity": {
+		"description": "When you fail a roll, you must mark a Stress or the GM gains a Fear.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Demigod",
+		"stress": -1
+	},
+	"unfinished business": {
+		"description": "Work with your GM to decide what purpose or desire keeps you  bound to the Mortal Realm. When you fulfill it, you cross through the veil of death.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Ghost"
+	},
+	"ephemeral": {
+		"description": "Your body wavers in and out of being corporeal.\nYou are resistant to physical damage, take double magic damage, and can mark 2 Stress to momentarily pass through a solid object.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Ghost",
+		"stress": -2
+	},
+	"corpse": {
+		"description": "During a rest, you can clear Hit Points only if you have access to remains from a recently deceased creature. Describe how you use these materials to maintain your corpse.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Reanimated"
+	},
+	"won't stay dead": {
+		"description": "When you choose the Risk It All death move and fail, you can permanently mark a Hit Point to succeed instead. When you do, you still use the Hope Die\u2019s value to clear Hit Points and Stress. When you permanently mark your last Hit Point, you pass through the veil of death.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Reanimated"
+	},
+	"change shape": {
+		"description": "During a rest, you can use a downtime move to swap your current ancestry with another. When you do, describe how your appearance changes.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Shapeshifter"
+	},
+	"only skin deep": {
+		"description": "You gain the benefit of only one of your chosen ancestry\u2019s features, which you select when you choose the ancestry. You can use a downtime move to choose a different feature from that ancestry.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Shapeshifter"
+	},
+	"fangs": {
+		"description": "Make an attack using a trait of your choice to bite a target within Melee range. On a success, deal d6 physical damage using your Proficiency.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Vampire"
+	},
+	"feed": {
+		"description": "On a successful \u201cFangs\u201d attack against a creature that can bleed, you can mark a Stress to feed. Place a number of tokens on this card equal to the number of Hit Points the target marks. You can hold up to 6 tokens at a time. Before you make an action roll, you can spend a token to make your Fear Die a d20. When you take a long rest, remove a token.\nWhile there are no tokens on this card, you make action and reaction rolls with disadvantage.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Vampire",
+		"stress": -1
+	},
+	"wolf form": {
+		"description": "When you mark 1 or more Hit Points, you can mark a Stress to enter your Wolf Form. While in this form, you gain a 1d10 bonus to attack and damage rolls. When you roll with Hope while in Wolf Form, you must mark a Stress. Your Wolf Form lasts until you go into your \u201cHowling Rampage\u201d or take a rest.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Werewolf",
+		"stress": -1
+	},
+	"howling rampage": {
+		"description": "When you mark your last Stress while in Wolf Form, you go into a rampage. Roll a number of d20s equal to your tier and deal that much physical damage to all creatures within Very Close range, then drop out of Wolf Form.",
+		"category": "transformation",
+		"type": "feature",
+		"source": "SRD",
+		"transformation": "Werewolf"
 	}
 }

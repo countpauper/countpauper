@@ -1,18 +1,60 @@
 {
+	"template": {
+		"domains": [
+			"primary",
+			"secondary"
+		],
+		"evasion": 0,
+		"hp": 1,
+		"subclasses": {
+			"first": {
+				"cast": "strength"
+			},
+			"second": {}
+		}
+	},
+	"assassin": {
+		"domains": [
+			"blade",
+			"midnight"
+		],
+		"evasion": 12,
+		"hp": 5,
+		"subclasses": {
+			"executioner's guild": {
+				"cast": "agility"
+			},
+			"poisoner's guild": {
+				"cast": "knowledge"
+			}
+		}
+	},
 	"bard": {
 		"domains": [
 			"grace",
 			"codex"
 		],
-		"evasion": "10",
-		"hp": "5",
+		"evasion": 10,
+		"hp": 5,
 		"subclasses": {
-			"troubadour ": {
+			"troubadour": {
 				"cast": "presence"
 			},
-			"wordsmith ": {
+			"wordsmith": {
 				"cast": "presence"
 			}
+		}
+	},
+	"brawler": {
+		"domains": [
+			"valor",
+			"bone"
+		],
+		"evasion": 10,
+		"hp": 6,
+		"subclasses": {
+			"juggernaut": {},
+			"martial artist": {}
 		}
 	},
 	"druid": {
@@ -20,14 +62,14 @@
 			"sage",
 			"arcana"
 		],
-		"evasion": "10",
-		"hp": "6",
+		"evasion": 10,
+		"hp": 6,
 		"subclasses": {
-			"warden of the elements ": {
-				"cast": "instinct "
+			"warden of the elements": {
+				"cast": "instinct"
 			},
-			"warden of renewal ": {
-				"cast": "instinct "
+			"warden of renewal": {
+				"cast": "instinct"
 			}
 		}
 	},
@@ -36,11 +78,11 @@
 			"valor",
 			"blade"
 		],
-		"evasion": "9",
-		"hp": "7",
+		"evasion": 9,
+		"hp": 7,
 		"subclasses": {
-			"stalwart ": {},
-			"vengeance ": {}
+			"stalwart": {},
+			"vengeance": {}
 		}
 	},
 	"ranger": {
@@ -48,14 +90,14 @@
 			"bone",
 			"sage"
 		],
-		"evasion": "12",
-		"hp": "6",
+		"evasion": 12,
+		"hp": 6,
 		"subclasses": {
-			"beastbound ": {
-				"cast": "agility "
+			"beastbound": {
+				"cast": "agility"
 			},
-			"wayfinder ": {
-				"cast": "agility "
+			"wayfinder": {
+				"cast": "agility"
 			}
 		}
 	},
@@ -64,14 +106,14 @@
 			"midnight",
 			"grace"
 		],
-		"evasion": "12",
-		"hp": "6",
+		"evasion": 12,
+		"hp": 6,
 		"subclasses": {
-			"nightwalker ": {
-				"cast": "finesse "
+			"nightwalker": {
+				"cast": "finesse"
 			},
-			"syndicate ": {
-				"cast": "finesse "
+			"syndicate": {
+				"cast": "finesse"
 			}
 		}
 	},
@@ -80,14 +122,14 @@
 			"splendor",
 			"valor"
 		],
-		"evasion": "9",
-		"hp": "7",
+		"evasion": 9,
+		"hp": 7,
 		"subclasses": {
-			"divine wielder ": {
-				"cast": "strength "
+			"divine wielder": {
+				"cast": "strength"
 			},
-			"winged sentinel ": {
-				"cast": "strength "
+			"winged sentinel": {
+				"cast": "strength"
 			}
 		}
 	},
@@ -96,14 +138,30 @@
 			"arcana",
 			"midnight"
 		],
-		"evasion": "10",
-		"hp": "6",
+		"evasion": 10,
+		"hp": 6,
 		"subclasses": {
-			"elemental origin ": {
-				"cast": "instinct "
+			"elemental origin": {
+				"cast": "instinct"
 			},
-			"primal origin ": {
-				"cast": "instinct "
+			"primal origin": {
+				"cast": "instinct"
+			}
+		}
+	},
+	"warlock": {
+		"domains": [
+			"dread",
+			"grace"
+		],
+		"evasion": 11,
+		"hp": 5,
+		"subclasses": {
+			"pact of the endless": {
+				"cast": "presence"
+			},
+			"pact of the wrathful": {
+				"cast": "presence"
 			}
 		}
 	},
@@ -112,11 +170,27 @@
 			"blade",
 			"bone"
 		],
-		"evasion": "11",
-		"hp": "6",
+		"evasion": 11,
+		"hp": 6,
 		"subclasses": {
-			"call of the brave ": {},
-			"call of the slayer ": {}
+			"call of the brave": {},
+			"call of the slayer": {}
+		}
+	},
+	"witch": {
+		"domains": [
+			"sage",
+			"dread"
+		],
+		"evasion": 10,
+		"hp": 6,
+		"subclasses": {
+			"hedge": {
+				"cast": "knowledge"
+			},
+			"moon": {
+				"cast": "instinct"
+			}
 		}
 	},
 	"wizard": {
@@ -124,14 +198,14 @@
 			"codex",
 			"splendor"
 		],
-		"evasion": "11",
-		"hp": "5",
+		"evasion": 11,
+		"hp": 5,
 		"subclasses": {
-			"school of knowledge ": {
-				"cast": "knowledge "
+			"school of knowledge": {
+				"cast": "knowledge"
 			},
-			"school of war ": {
-				"cast": "knowledge "
+			"school of war": {
+				"cast": "knowledge"
 			}
 		}
 	}

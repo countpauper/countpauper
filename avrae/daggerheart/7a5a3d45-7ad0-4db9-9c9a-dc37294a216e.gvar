@@ -117,7 +117,7 @@
 		"type": "spell"
 	},
 	"arcana-touched": {
-		"description": "When 4 or more of the domain cards in your loadout are from the Arcana domain, gain the following benefits:\n - +1 bonus to your Spellcast Rolls\n -  Once per rest, you can switch the results of your Hope and Fear Dice.",
+		"description": "When 4 or more of the domain cards in your loadout are from the Arcana domain, gain the following benefits:\n * +1 bonus to your Spellcast Rolls\n * Once per rest, you can switch the results of your Hope and Fear Dice.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -270,7 +270,7 @@
 		"type": "ability"
 	},
 	"champion's edge": {
-		"description": "When you critically succeed on an attack, you can spend up to 3 Hope and choose one of the following options for each Hope spent:\n - You clear a Hit Point.\n - You clear an Armor Slot.\n - The target must mark an additional Hit Point.\nYou can't choose the same option more than once.",
+		"description": "When you critically succeed on an attack, you can spend up to 3 Hope and choose one of the following options for each Hope spent:\n\u25e6 You clear a Hit Point.\n\u25e6 You clear an Armor Slot.\n\u25e6 The target must mark an additional Hit Point.\nYou can't choose the same option more than once.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 1,
@@ -279,7 +279,7 @@
 		"type": "ability"
 	},
 	"vitality": {
-		"description": "When you choose this card, permanently gain two of the following benefits:\n - One Stress slot\n - One Hit Point slot\n - +2 bonus to your damage thresholds\nThen place this card in your vault permanently.",
+		"description": "When you choose this card, permanently gain two of the following benefits:\n\u25e6 One Stress slot\n\u25e6 One Hit Point slot\n\u25e6 +2 bonus to your damage thresholds\nThen place this card in your vault permanently.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 0,
@@ -306,7 +306,7 @@
 		"type": "ability"
 	},
 	"blade-touched": {
-		"description": "When 4 or more of the domain cards in your loadout are from the Blade domain, gain the following benefits:\n- +2 bonus to your attack rolls\n- +4 bonus to your Severe damage threshold",
+		"description": "When 4 or more of the domain cards in your loadout are from the Blade domain, gain the following benefits:\n\u25e6 +2 bonus to your attack rolls\n\u25e6 +4 bonus to your Severe damage threshold",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 1,
@@ -414,7 +414,7 @@
 		"type": "ability"
 	},
 	"strategic approach": {
-		"description": "After a long rest, place a number of tokens equal to your Knowledge on this card (minimum 1). The first time you move within Close range of an adversary and make an attack against them, you can spend one token to choose one of the following options:\n- You make the attack with advantage.\n- You clear a Stress on an ally within Melee range of the adversary.\n- You add a d8 to your damage roll.\nWhen you take a long rest, clear all unspent tokens.",
+		"description": "After a long rest, place a number of tokens equal to your Knowledge on this card (minimum 1). The first time you move within Close range of an adversary and make an attack against them, you can spend one token to choose one of the following options:\n\u25e6 You make the attack with advantage.\n\u25e6 You clear a Stress on an ally within Melee range of the adversary.\n\u25e6 You add a d8 to your damage roll.\nWhen you take a long rest, clear all unspent tokens.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 1,
@@ -459,7 +459,7 @@
 		"type": "ability"
 	},
 	"know thy enemy": {
-		"description": "When observing a creature, you can make an Instinct Roll against them. On a success, spend a Hope and ask the GM for one set of information about the target from the following options:\n - Their unmarked Hit Points and Stress.\n - Their Difficulty and damage thresholds.\n - Their tactics and standard attack damage dice.\n Their features and Experiences.\nAdditionally on a success, you can mark a Stress to remove a Fear from the GM's Fear Pool.",
+		"description": "When observing a creature, you can make an Instinct Roll against them. On a success, spend a Hope and ask the GM for one set of information about the target from the following options:\n\u25e6 Their unmarked Hit Points and Stress.\n\u25e6 Their Difficulty and damage thresholds.\n\u25e6 Their tactics and standard attack damage dice.\n\u25e6 Their features and Experiences.\nAdditionally on a success, you can mark a Stress to remove a Fear from the GM's Fear Pool.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 1,
@@ -495,7 +495,7 @@
 		"type": "ability"
 	},
 	"bone-touched": {
-		"description": "When 4 or more of the domain cards in your loadout are from the Bone domain, gain the following benefits:\n - +1 bonus to Agility\n - Once per rest, you can spend 3 Hope to cause an attack that succeeded against you to fail instead.",
+		"description": "When 4 or more of the domain cards in your loadout are from the Bone domain, gain the following benefits:\n\u25e6 +1 bonus to Agility\n-Once per rest, you can spend 3 Hope to cause an attack that succeeded against you to fail instead.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -657,7 +657,7 @@
 		"type": "spell"
 	},
 	"teleport": {
-		"description": "Once per long rest, you can instantly teleport yourself and any number of willing targets within Close range to a place you've been before. Choose one of the following options, then make a Spellcast Roll (16):\n- If you know the place very well, gain a +3 bonus.\n- If you've visited the place frequently, gain a +1 bonus.\n- If you've visited the place infrequently, gain no modifier. If you've only been there once, gain a -2 penalty.\nOn a success, you appear where you were intending to go. On a failure, you appear off course, with the range of failure determining how far off course.",
+		"description": "Once per long rest, you can instantly teleport yourself and any number of willing targets within Close range to a place you've been before. Choose one of the following options, then make a Spellcast Roll (16):\n\u25e6 If you know the place very well, gain a +3 bonus.\n\u25e6 If you\u2019ve visited the place frequently, gain a +1 bonus.\n\u25e6 If you\u2019ve visited the place infrequently, gain no modifier. \u25e6 If you've only been there once, gain a -2 penalty.\nOn a success, you appear where you were intending to go. On a failure, you appear off course, with the range of failure determining how far off course.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -693,7 +693,7 @@
 		"type": "grimoire"
 	},
 	"codex-touched": {
-		"description": "When 4 or more of the domain cards in your loadout are from the Codex domain, gain the following benefits:\n- You can mark a Stress to add your Proficiency to a Spellcast Roll.\n- Once per rest, replace this card with any card from your vault without paying its Recall Cost.",
+		"description": "When 4 or more of the domain cards in your loadout are from the Codex domain, gain the following benefits:\n\u25e6 You can mark a Stress to add your Proficiency to a Spellcast Roll.\n\u25e6 Once per rest, replace this card with any card from your vault without paying its Recall Cost.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -774,7 +774,7 @@
 		"type": "spell"
 	},
 	"inspirational words": {
-		"description": "Your speech is imbued with power. After a long rest, place a number of tokens on this card equal to your Presence. When you speak with an ally, you can spend a token from this card to give them one benefit from the following options:\n - Your ally clears a Stress.\n - Your ally clears a Hit Point.\n - Your ally gains a Hope.\nWhen you take a long rest, clear all unspent tokens.",
+		"description": "Your speech is imbued with power. After a long rest, place a number of tokens on this card equal to your Presence. When you speak with an ally, you can spend a token from this card to give them one benefit from the following options:\n\u25e6 Your ally clears a Stress.\n\u25e6 Your ally clears a Hit Point.\n\u25e6 Your ally gains a Hope.\nWhen you take a long rest, clear all unspent tokens.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 1,
@@ -882,7 +882,7 @@
 		"type": "ability"
 	},
 	"grace-touched": {
-		"description": "When 4 or more of the domain cards in your loadout are from the Grace domain, gain the following benefits:\n- You can mark an Armor Slot instead of marking a Stress.\n- When you would force a target to mark a number of Hit Points, you can choose instead to force them to mark that number of Stress.",
+		"description": "When 4 or more of the domain cards in your loadout are from the Grace domain, gain the following benefits:\n\u25e6 You can mark an Armor Slot instead of marking a Stress.\n\u25e6 When you would force a target to mark a number of Hit Points, you can choose instead to force them to mark that number of Stress.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -1044,7 +1044,7 @@
 		"type": "spell"
 	},
 	"dark whispers": {
-		"description": "You can speak into the mind of any person with whom you've made physical contact. Once you've opened a channel with them, they can speak back into your mind. Additionally, you can mark a Stress to make a Spellcast Roll against them. On a success, you can ask the GM one of the following questions and receive an answer:\n - Where are they?\n - What are they doing?\n - What are they afraid of?\n - What do they cherish most in the world?",
+		"description": "You can speak into the mind of any person with whom you've made physical contact. Once you've opened a channel with them, they can speak back into your mind. Additionally, you can mark a Stress to make a Spellcast Roll against them. On a success, you can ask the GM one of the following questions and receive an answer:\n\u25e6 Where are they?\n\u25e6 What are they doing?\n\u25e6 What are they afraid of?\n\u25e6 What do they cherish most in the world?",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 0,
@@ -1062,7 +1062,7 @@
 		"type": "spell"
 	},
 	"midnight-touched": {
-		"description": "When 4 or more of the domain cards in your loadout are from the Midnight domain, gain the following benefits:\n- Once per rest, when you have 0 Hope and the GM would gain a Fear, you can gain a Hope instead.\n- When you make a successful attack, you can mark a Stress to add the result of your Fear Die to your damage roll.",
+		"description": "When 4 or more of the domain cards in your loadout are from the Midnight domain, gain the following benefits:\n\u25e6 Once per rest, when you have 0 Hope and the GM would gain a Fear, you can gain a Hope instead.\n\u25e6 When you make a successful attack, you can mark a Stress to add the result of your Fear Die to your damage roll.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -1134,7 +1134,7 @@
 		"type": "spell"
 	},
 	"gifted tracker": {
-		"description": "When you're tracking a specific creature or group of creatures based\non signs of their passage, you can spend any number of Hope and ask the GM that many questions from the following list.\n - What direction did they go?\n - How long ago did they pass through?\n - What were they doing in this location?\n - How many of them were here?\nWhen you encounter creatures you've tracked in this way, gain a +1 bonus to your Evasion against them.",
+		"description": "When you're tracking a specific creature or group of creatures based\non signs of their passage, you can spend any number of Hope and ask the GM that many questions from the following list.\n\u25e6 What direction did they go?\n\u25e6 How long ago did they pass through?\n\u25e6 What were they doing in this location?\n\u25e6 How many of them were here?\nWhen you encounter creatures you've tracked in this way, gain a +1 bonus to your Evasion against them.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 0,
@@ -1197,7 +1197,7 @@
 		"type": "spell"
 	},
 	"death grip": {
-		"description": "Make a Spellcast Roll against a target within Close range and choose one of the following options:\n - You pull the target into Melee range or pull yourself into Melee range of them.\n - You constrict the target and force them to mark 2 Stress.\n - All adversaries between you and the target must succeed on a Reaction Roll (13) or be hit by vines, taking 3d6+2\nphysical damage.\nOn a success, vines reach out from your hands, causing the\nchosen effect and temporarily Restraining the target.",
+		"description": "Make a Spellcast Roll against a target within Close range and choose one of the following options:\n\u25e6 You pull the target into Melee range or pull yourself into Melee range of them.\n\u25e6 You constrict the target and force them to mark 2 Stress.\n\u25e6 All adversaries between you and the target must succeed on a Reaction Roll (13) or be hit by vines, taking 3d6+2\nphysical damage.\nOn a success, vines reach out from your hands, causing the\nchosen effect and temporarily Restraining the target.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 1,
@@ -1224,7 +1224,7 @@
 		"type": "spell"
 	},
 	"wild fortress": {
-		"description": "Make a Spellcast Roll (13). On a success, spend 2 Hope to grow a natural barricade in the shape of a dome that you\nand one ally can take cover within. While inside the dome, a creature can't be targeted by attacks and can't make attacks. Attacks made against the dome automatically succeed. The dome has the following damage thresholds and lasts until it marks 3 Hit Points. Place tokens on this card to represent marking Hit Points.\nThresholds: 15/30",
+		"description": "Make a Spellcast Roll (13). On a success, spend 2 Hope to grow a natural barricade in the shape of a dome that you\nand one ally can take cover within. While inside the dome, a creature can\u2019t be targeted by attacks and can't make attacks. Attacks made against the dome automatically succeed. The dome has the following damage thresholds and lasts until it marks 3 Hit Points. Place tokens on this card to represent marking Hit Points.\nThresholds: 15/30",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 1,
@@ -1251,7 +1251,7 @@
 		"type": "ability"
 	},
 	"sage-touched": {
-		"description": "When 4 or more of the domain cards in your loadout are from the Sage domain, gain the following benefits:\n- While you're in a natural environment, you gain a +2 bonus to your Spellcast Rolls.\n- Once per rest, you can double your Agility or Instinct when making a roll that uses that trait. You must choose to do this before you roll.",
+		"description": "When 4 or more of the domain cards in your loadout are from the Sage domain, gain the following benefits:\n\u25e6 While you're in a natural environment, you gain a +2 bonus to your Spellcast Rolls.\n\u25e6 Once per rest, you can double your Agility or Instinct when making a roll that uses that trait. You must choose to do this before you roll.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -1269,7 +1269,7 @@
 		"type": "spell"
 	},
 	"forest sprites": {
-		"description": "Make a Spellcast Roll (13). On a success, spend any number of Hope to create an equal number of small forest sprites who appear at points you choose within Far range, providing the following benefits:\n - Your allies gain a +3 bonus to attack rolls against adversaries within Melee range of a sprite.\n - An ally who marks an Armor Slot while within Melee range of a sprite can mark an additional Armor Slot.\nA sprite vanishes after granting a benefit or taking any damage.",
+		"description": "Make a Spellcast Roll (13). On a success, spend any number of Hope to create an equal number of small forest sprites who appear at points you choose within Far range, providing the following benefits:\n\u25e6 Your allies gain a +3 bonus to attack rolls against adversaries within Melee range of a sprite.\n\u25e6 An ally who marks an Armor Slot while within Melee range of a sprite can mark an additional Armor Slot.\nA sprite vanishes after granting a benefit or taking any damage.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -1305,7 +1305,7 @@
 		"type": "spell"
 	},
 	"force of nature": {
-		"description": "Mark a Stress to transform into a hulking nature spirit, gaining the following benefits:\n - When you succeed on an attack or Spellcast Roll, gain a +10 bonus to the damage roll.\n - When you deal enough damage to defeat a creature within Close range, you absorb them and clear an Armor Slot.\n - You can't be Restrained.\nBefore you make an action roll, you must spend a Hope. If you can't, you revert to your normal form.",
+		"description": "Mark a Stress to transform into a hulking nature spirit, gaining the following benefits:\n\u25e6 When you succeed on an attack or Spellcast Roll, gain a +10 bonus to the damage roll.\n\u25e6 When you deal enough damage to defeat a creature within Close range, you absorb them and clear an Armor Slot.\n\u25e6 You can't be Restrained.\nBefore you make an action roll, you must spend a Hope. If you can't, you revert to your normal form.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -1314,7 +1314,7 @@
 		"type": "spell"
 	},
 	"tempest": {
-		"description": "Choose one of the following tempests and make a Spellcast Roll against all targets within Far range. Targets you succeed against experience its effects until the GM spends a Fear on their turn to end this spell.\n - Blizzard: Deal 2d20+8 magic damage and targets are temporararily Vulnerable.\n - Hurricane: Deal 3d10+10 magic damage and choose a direction the wind is blowing. Targets can't move against the wind.\n - Sandstorm: Deal 5d6+9 magic damage. Attacks made from beyond Melee range have disadvantage.",
+		"description": "Choose one of the following tempests and make a Spellcast Roll against all targets within Far range. Targets you succeed against experience its effects until the GM spends a Fear on their turn to end this spell.\n\u25e6 Blizzard: Deal 2d20+8 magic damage and targets are temporararily Vulnerable.\n\u25e6 Hurricane: Deal 3d10+10 magic damage and choose a direction the wind is blowing. Targets can't move against the wind.\n\u25e6 Sandstorm: Deal 5d6+9 magic damage. Attacks made from beyond Melee range have disadvantage.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -1386,7 +1386,7 @@
 		"type": "ability"
 	},
 	"divination": {
-		"description": "Once per long rest, spend 3 Hope to reach out to the forces beyond and ask one `yes or no` question about an event, person, place, or situation in the near future. For a moment, the present falls away and you see the answer before you.",
+		"description": "Once per long rest, spend 3 Hope to reach out to the forces beyond and ask one \u00e2\u0080\u009cyes or no\u00e2\u0080\u009d question about an event, person, place, or situation in the near future. For a moment, the present falls away and you see the answer before you.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 1,
@@ -1449,7 +1449,7 @@
 		"type": "spell"
 	},
 	"splendor-touched": {
-		"description": "When 4 or more of the domain cards in your loadout are from the Splendor domain, gain the following benefits:\n - +3 bonus to your Severe damage threshold\n - Once per long rest, when incoming damage would require you to mark a number of Hit Points, you can choose to mark that much Stress or spend that much Hope instead.",
+		"description": "When 4 or more of the domain cards in your loadout are from the Splendor domain, gain the following benefits:\n\u25e6 +3 bonus to your Severe damage threshold\n\u25e6 Once per long rest, when incoming damage would require you to mark a number of Hit Points, you can choose to mark that much Stress or spend that much Hope instead.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 2,
@@ -1512,7 +1512,7 @@
 		"type": "spell"
 	},
 	"bare bones": {
-		"description": "When you choose not to equip armor, you have a base Armor Score of 3 + your Strength and use the following as your base damage thresholds:\n - Tier1:9/19\n - Tier2:11/24\n - Tier3:13/31\n - Tier4:15/38",
+		"description": "When you choose not to equip armor, you have a base Armor Score of 3 + your Strength and use the following as your base damage thresholds:\n\u25e6 Tier1:9/19\n\u25e6 Tier2:11/24\n\u25e6 Tier3:13/31\n\u25e6 Tier4:15/38",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 0,
@@ -1638,7 +1638,7 @@
 		"type": "ability"
 	},
 	"valor-touched": {
-		"description": "When 4 or more of the domain cards in your loadout are from the Valor domain, gain the following benefits:\n- +1 bonus to your Armor Score\n- When you mark 1 or more Hit Points without marking an Armor Slot, clear an Armor Slot.",
+		"description": "When 4 or more of the domain cards in your loadout are from the Valor domain, gain the following benefits:\n\u25e6 +1 bonus to your Armor Score\n\u25e6 When you mark 1 or more Hit Points without marking an Armor Slot, clear an Armor Slot.",
 		"category": "domain",
 		"source": "SRD",
 		"recall": 1,
@@ -1698,6 +1698,195 @@
 		"recall": 1,
 		"level": 10,
 		"domain": "valor",
+		"type": "ability"
+	},
+	"blighting strike": {
+		"description": "Make a Spellcast Roll against a target within Far range. On a success:\n\u25e6 On a roll with Hope, deal d6+1 magic damage using your Proficiency. On a roll with Fear, deal d10+1 magic damage using your Proficiency.\n\u25e6 The target\u2019s next successful attack deals half damage. \nOn a failure, you must spend a Hope or mark a Stress.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 1,
+		"level": 1,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"umbral veil": {
+		"description": "Once per rest, you can mark a Stress to encase yourself in shadowy energy. When you do, place a number of tokens on this card equal to the number of Fear in the GM\u2019s pool. After an attack roll is made against you, you can spend any number of tokens to give the result a \u22121 penalty per token spent.\nAt the end of the scene, clear all unspent tokens.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 1,
+		"level": 1,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"voice of dread": {
+		"description": "You can magically speak to a creature you can see, tormenting them with your words. Make a Spellcast Roll against them. On a success, they must mark a Stress and are frozen with terror, making them temporarily Restrained.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 0,
+		"level": 1,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"hideous retribution": {
+		"description": "When an ally within Close range takes damage from a target you can see, you can make a reaction roll against the target using your Spellcast trait. On a success, mark a Stress to deal d6 magic damage using your Proficiency.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 2,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"siphon essence": {
+		"description": "Make a Spellcast Roll against a target within Very Close range. Once per long rest on a success, the target takes d12+4 magic damage using your Proficiency. On a success with Fear, you gain a +1 bonus to your Proficiency for this attack.\nYou clear a number of Hit Points equal to the number of Hit Points the target marked from this attack.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 1,
+		"level": 2,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"shared trauma": {
+		"description": "You can transfer suffering from one creature to another. Once per rest, mark any number of Hit Points on a willing creature within Melee range to clear an equal number of Hit Points on another willing creature within Melee range.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 1,
+		"level": 3,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"terrify": {
+		"description": "Make a Spellcast Roll against a target within Close range. On a success, the target marks 1d4 Stress, and you can make the target flee one range away from you (such as Very Close to Close or Close to Far). On a success with Fear, the target also becomes temporarily Vulnerable.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 1,
+		"level": 3,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"chains of affliction": {
+		"description": "Mark 2 Stress to temporarily Chain a target within Close range. When a Chained creature deals damage, the target of their attack marks one fewer Hit Point than they normally would. You can\u2019t have more than one creature Chained at a Time.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 4,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"summon horror": {
+		"description": "Once per scene, mark a Stress to summon an otherworldly creature that deals d8+1 magic damage using your Spellcast trait to a target within Far range. If the target marks any Hit Points from this attack, they must succeed on a Reaction Roll (12) to steel themselves against the horror or mark an equal number of Stress.\nAfter making the attack, the creature dissipates.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 4,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"dire strike": {
+		"description": "When a target marks any number of Hit Points from an attack you make, you can spend a Hope to drain power from them.\nThe GM loses a Fear.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 5,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"spectral mist": {
+		"description": "Spend 2 Hope to conjure an eerie mist that turns you and allies of your choice within Close range momentarily incorporeal.\nWhile a creature is incorporeal, they can move through solid objects and are immune to physical damage. They become corporeal again after they pass through a solid object or make an action roll. Otherwise, this effect lasts until the end of the scene.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 0,
+		"level": 5,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"darkfire": {
+		"description": "Once per scene, spend any number of Hope to target an equal number of adversaries within Close range. Each target makes a Reaction Roll (15). Targets who fail take d8+6 magic damage using your Spellcast trait as they are engulfed in dark fire.\nTargets who succeed take half damage.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 6,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"jump scare": {
+		"description": "When you deal magic damage to a target, you can mark a Stress to teleport into Melee range with them. When you do, they are Vulnerable until they mark 1 or more Hit Points.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 1,
+		"level": 6,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"dread-touched": {
+		"description": "When 4 or more of the domain cards in your loadout are from the Dread domain, gain the following benefits:\n\u25e6 When you succeed with Fear, you can mark 2 Stress to prevent the GM from gaining a Fear.\n\u25e6 Once per rest when making an action roll, you can gain a bonus to the roll equal to the number of Fear in the GM\u2019s pool.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 7,
+		"domain": "dread",
+		"type": "ability"
+	},
+	"wall of hunger": {
+		"description": "Make a Spellcast Roll (10). On a success, you can spend a Hope to create a visible wall of writhing necrotic energy between two points within Far range. The wall lasts until you mark a Hit Point or cast this spell again. A creature inside the\nwall when it appears or that passes through it must mark 2 Stress.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 7,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"dark army": {
+		"description": "Make a Spellcast Roll (14). Once per long rest on a success, you can summon fiends that surround and move with you. \nPlace 8 tokens on this card. When you deal damage to a target within Very Close range, you can spend any number of tokens to add 1d8 for each token spent to your damage roll. Additionally, when you take damage, you can spend any\nnumber of tokens to reduce the damage by 1d8 for each token spent. Each time you spend a token, a fiend acts on your behalf, then disappears.\nWhen you take a rest, clear all unspent tokens.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 8,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"eldritch flesh": {
+		"description": "Gain a +1 bonus to your damage thresholds for each Stress you have marked.\nAdditionally, when you roll with Fear, you can spend 2 Hope to clear an Armor Slot.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 1,
+		"level": 8,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"damnation": {
+		"description": "Make a Spellcast Roll against a target within Far range. On a success, mark any number of Stress to roll an equal number of d20s, dealing magic damage equal to the total result. If this attack defeats the target, all adversaries within Far range of the target must mark a Stress.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 9,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"savor the anguish": {
+		"description": "When an adversary within Close range takes Severe damage, you can clear a Stress.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 1,
+		"level": 9,
+		"domain": "dread",
+		"type": "ability"
+	},
+	"avatar of terror": {
+		"description": "Mark a Stress to transform into a creature fueled by fear.\nWhile in this form, you gain a 1d6 bonus to your damage rolls for each Fear in the GM\u2019s pool. Additionally, you gain a Hope when the GM spends a Fear to spotlight an adversary within Very Close range.\nBefore you make an action roll, you must spend a Hope. If you can\u2019t, you revert to your normal form.",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 10,
+		"domain": "dread",
+		"type": "spell"
+	},
+	"invoke torment": {
+		"description": "You deal double damage to targets that have all their Stress marked.\nAdditionally, when an adversary within Close range is defeated with all its Stress marked, you gain a Hope..",
+		"category": "domain",
+		"source": "SRD",
+		"recall": 2,
+		"level": 10,
+		"domain": "dread",
 		"type": "ability"
 	}
 }

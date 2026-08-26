@@ -1,0 +1,15 @@
+Transformation,Feature,Hope,Stress
+Demigod,"Gifted: You gain a +1 bonus to action, reaction, and damage Rolls.",,
+Demigod,"Weight of Divinity: When you fail a roll, you must mark a Stress or the GM gains a Fear.",,-1
+Ghost,"Unfinished Business: Work with your GM to decide what purpose or desire keeps you  bound to the Mortal Realm. When you fulfill it, you cross through the veil of death.",,
+Ghost,"Ephemeral: Your body wavers in and out of being corporeal.
+You are resistant to physical damage, take double magic damage, and can mark 2 Stress to momentarily pass through a solid object.",,-2
+Reanimated,"Corpse: During a rest, you can clear Hit Points only if you have access to remains from a recently deceased creature. Describe how you use these materials to maintain your corpse.",,
+Reanimated,"Won’t Stay Dead: When you choose the Risk It All death move and fail, you can permanently mark a Hit Point to succeed instead. When you do, you still use the Hope Die’s value to clear Hit Points and Stress. When you permanently mark your last Hit Point, you pass through the veil of death.",,
+Shapeshifter,"Change Shape: During a rest, you can use a downtime move to swap your current ancestry with another. When you do, describe how your appearance changes.",,
+Shapeshifter,"Only Skin Deep: You gain the benefit of only one of your chosen ancestry’s features, which you select when you choose the ancestry. You can use a downtime move to choose a different feature from that ancestry.",,
+Vampire,"Fangs: Make an attack using a trait of your choice to bite a target within Melee range. On a success, deal d6 physical damage using your Proficiency.",,
+Vampire,"Feed: On a successful “Fangs” attack against a creature that can bleed, you can mark a Stress to feed. Place a number of tokens on this card equal to the number of Hit Points the target marks. You can hold up to 6 tokens at a time. Before you make an action roll, you can spend a token to make your Fear Die a d20. When you take a long rest, remove a token.
+While there are no tokens on this card, you make action and reaction rolls with disadvantage.",,-1
+Werewolf,"Wolf Form: When you mark 1 or more Hit Points, you can mark a Stress to enter your Wolf Form. While in this form, you gain a 1d10 bonus to attack and damage rolls. When you roll with Hope while in Wolf Form, you must mark a Stress. Your Wolf Form lasts until you go into your “Howling Rampage” or take a rest.",,-1
+Werewolf,"Howling Rampage: When you mark your last Stress while in Wolf Form, you go into a rampage. Roll a number of d20s equal to your tier and deal that much physical damage to all creatures within Very Close range, then drop out of Wolf Form.",,
