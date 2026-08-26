@@ -436,8 +436,7 @@ Images:
 Looks like the imgbox alias images are broken (currently)
 See if the originals can be found. They should have been in git 
 Bladesinger: https://images2.imgbox.com/2d/0e/BgEQebBE_o.jpg
-Inventory tools: https://images2.imgbox.com/69/c2/Fe3klotA_o.png
-DMI: https://images2.imgbox.com/c0/cb/5LRVoiAY_o.png
 Downtime (unlisted): https://images2.imgbox.com/83/9a/XRYtgpU7_o.jpg
 
 For now I rmeoved the links because broken seems more broken 
+But at least !qb uses it also as thumbnail! fix that at least. 

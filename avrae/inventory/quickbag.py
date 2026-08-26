@@ -569,5 +569,5 @@ if debug_break:
 
 # Format the output
 possessive=f'{name}\'' if name[-1]=='s' else f'{name}\'s'
-return f'embed -title "{possessive} bags" -thumb https://images2.imgbox.com/69/c2/Fe3klotA_o.png {fields} {footer} -color {color}'
+return f'embed -title "{possessive} bags" -thumb https://i.ibb.co/70zqHHY/bag.png {fields} {footer} -color {color}'
 </drac2>
