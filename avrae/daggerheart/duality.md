@@ -1,4 +1,4 @@
-`!duality [<hope>=1h12]… [<fear>=1f12]… [<trait>] [spell] ["<experience>"]… [<dice>] [adv]… [dis]… [=<target>/<difficulty>]…`
+`!duality [<hope>=1h12]… [<fear>=1f12]… [<trait>] [spell] ["<experience>"]… [<dice>] [adv]… [help|ally]… [dis]… [=<target>/<difficulty>]…`
 
 **Roll duality dice**
 Increases `Hope` counter on hope. On critical it also  reduces the `Stress` counter.
@@ -9,12 +9,13 @@ Increases `Hope` counter on hope. On critical it also  reduces the `Stress` coun
 `fear` - Change the fear die by using an `f` to separate the number of dice aand the size of the die.
 `<trait>` - Use the name or part of a name of a trait to use the score from your character sheet. 
 `spell` - Roll a spell check using the spell trait bonus from your sheet.
-`experience` - Add an experience from your character sheet that contains this description. 
-`dice` - Add additional dice with `<n>d<size>` or just a float bonus. 
+`<experience>` - Add an experience from your character sheet that contains this description. 
+`<dice>` - Add additional dice with `<n>d<size>` or just a float bonus. 
 `adv` - Add advantage, which will add a 1d6 if the number of advantages is larger than disadvantages.
+`help` or `ally` - Add one ally helping, which can be repeated for more alliies. This together with the advantage is combined and the largest bonus used. 
 `dis` - Add a disadvantage, whill will subtract a 1d6 if the number of disadvantages is larger than advantages.
-`target` - This is a target value. It can be dice. If given the result will show if the target is met. 
-`difficulty` - predefined target values: `trivial`=0, `very_easy`=5, `easy`=10, `average`=15, `hard`=20, `very_hard`=25, `nearly_impossible`=30
+`<target>` - This is a target value. It can be dice. If given the result will show if the target is met. 
+`<difficulty>` - predefined target values: `trivial`=0, `very_easy`=5, `easy`=10, `average`=15, `hard`=20, `very_hard`=25, `nearly_impossible`=30
 
 **Examples**
 
@@ -23,6 +24,7 @@ Increases `Hope` counter on hope. On critical it also  reduces the `Stress` coun
 `!duality know` - Add your knowledge trait to the roll. eg `1h12+1f12-1`.
 `!duality giant` - Add your "Giant Slayer" experience to the roll, if that is in your `!cvar dh_sheet`.
 `!duality adv` - Roll with advantage: `1h12 + 1f12 + 1d6`.
+`!duality adv help` - With advantage and an ally's help: `1h12 + 1f12 +2d6kh1`
 `!duality adv dis` - Advantage and disadvantage cancel each other out, so this is just `1h12+1f12`.
 `!duality =average` - Roll the duality dice and show if they beat average difficulty .
 `!duality = 2d12+2` - Roll the duality dice and shof if they meet the reaction roll of some adversary with +2 trait bonus. 

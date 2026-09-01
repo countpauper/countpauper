@@ -198,6 +198,10 @@ def _get_mapped_save(C, save):
 def thresholds(C=character()):
     return [-2147483648, 1] + [v for threshold in thresholds_map if (v:=_get_mapped_save(C, threshold)) is not None]
 
+def injury(damage, C):
+    injuries = [hp for hp, threshold in enumerate(thresholds(C)) if damage>=threshold]
+    return injuries[-1]
+
 def max_armor(C=character()):
     return _get_mapped_score(C, 'initiative')
 
@@ -499,10 +503,13 @@ def hope(amt=0, C=character()):
         return f"{try_mod_cc(C, 'Hope', 0)} (+0)"
     
 def armor(amt=0, C=character()):
-    try:
+    if amt>=0:
+        try:
+            return try_mod_cc(C, 'Armor', amt)
+        except 'CounterOutOfBounds':
+            return f"{try_mod_cc(C, 'Armor', 0)} (+0)"
+    else:
         return try_mod_cc(C, 'Armor', amt)
-    except 'CounterOutOfBounds':
-        return f"{try_mod_cc(C, 'Armor', 0)} (+0)"
 
 def hitpoints(amt=0, C=character()):
     if amt:
@@ -606,6 +613,7 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
     goals = []
     cost = dict()
     advantage = 0
+    help = 0
     disadvantage = 0
     for operand in operands: 
         if dice:= _parse_hope(operand):
@@ -630,15 +638,30 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
             advantage += 1
         elif 'disadvantage'.startswith(operand.lower()):
             disadvantage += 1
+        elif operand.lower() in ('help','ally'):
+            help += 1
         elif goals: 
             goals[-1].append(operand) 
         else:
             bonus_dice.append(operand)
-        
-    if advantage > disadvantage: 
-        bonus_dice.append('1d6[advantage]')
+
+    if help: 
+        if help>1:
+            help_dice=f"{help}d6kh{help-1}[help]"
+        else:
+            help_dice=f"1d6[help]"
+    else:
+        help_dice=None
+    if advantage > disadvantage:
+        if help: 
+            bonus_dice.append(f"{help+1}d6kh{help}[advantage with help]")
+            help_dice=None  # help combined into advantage 
+        else:
+            bonus_dice.append('1d6[advantage]')
     elif disadvantage > advantage:
         bonus_dice.append('-1d6[disadvantage]')
+    if help_dice:
+        bonus_dice.append(help_dice)
     return dict(hope=hope_dice or hope, fear=fear_dice or fear, bonus=bonus_dice, goals=goals), cost   
 
 
@@ -757,7 +780,7 @@ def damage_targets(targets, damage_dice):
 # Format roll without dice as simple totals
 def format_roll(roll):
     if roll.dice.isdigit():
-        return roll.consolidated()
+        return f"`{roll.consolidated()}`"
     else:
         return str(roll)
 
@@ -842,7 +865,18 @@ def format_mastery(mastery):
 def format_hp(C=character()):
     hp = C.hp
     missing_hp = C.max_hp - C.hp
-    return f"{'♥' * hp}{'♡' * missing_hp}"
+    return f"{'♥' * hp}{('♡' if c.hp else '☠') * missing_hp}" 
+
+injury_names="none","minor","major","severe","massive","deadly"
+
+def format_injury(injury):
+    if injury<len(injury_names):
+        return f"{injury_names[injury]} ({injury})"
+    else:
+        return str(injury)
+
+def format_thresholds(thresholds):
+    return ' '.join(f"**[**` {threshold} `**>** {format_injury(idx+1).capitalize()}" for idx, threshold in enumerate(thresholds[1:]))[15:]
 
 # a noun or an noun. It's not 100% but the exceptions (e.g. hour and eulogy) are not likely to occur in a game context
 def indefinite_article(noun):

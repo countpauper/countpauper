@@ -3,6 +3,7 @@ using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
 
 args = &ARGS&
 summation = dh.parse(args)
+summation = [s for s in summation if s.lower() not in ('ally','help')]
 C=character() 
 sheet = dh.sheet(C)
 

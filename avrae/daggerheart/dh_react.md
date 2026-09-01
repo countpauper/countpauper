@@ -1,17 +1,18 @@
-`!dh_react [<trait>] ["<experience>"] [<dice>] [adv]… [dis]… [=<target>/<difficulty>]… `
+`!dh_react [<trait>|spell] ["<experience>"] [<dice>] [adv]… [dis]… [=<target>/<difficulty>]… `
 
 **Roll a reaction for Daggerheart with 2d12.**
 
 The alias has the `dh_` prefix to prevent name clashes. If you only play Daggerheart you can rename it 
 with `!servalias rename dh_react react`.
 
-`trait` - Use the name or part of a name of a trait to use the score from your character sheet. 
-`experience` - Add an experience from your character sheet that contains this description. 
-`dice` - Add additional dice with `<n>d<size>` or just a bonus 
+`<trait>` - Use the name or part of a name of a trait to use the score from your character sheet.
+`spell` - React with your spellcasting trait. 
+`<experience>` - Add an experience from your character sheet that contains this description. 
+`<dice>` - Add additional dice with `<n>d<size>` or just a bonus 
 `adv` - Add advantage, which will add a 1d6 if the number of advantages is larger than disadvantages.
 `dis` - Add a disadvantage, whill will subtract a 1d6 if the number of disadvantages is larger than advantages.
-`target` - This is a target value. It can be dice. If given the result will show if the target is met. 
-`difficulty` - predefined target values: `trivial`=0, `very_easy`=5, `easy`=10, `average`=15, `hard`=20, `very_hard`=25, `nearly_impossible`=30
+`<target>` - This is a target value. It can be dice. If given the result will show if the target is met. 
+`<difficulty>` - predefined target values: `trivial`=0, `very_easy`=5, `easy`=10, `average`=15, `hard`=20, `very_hard`=25, `nearly_impossible`=30
 
     
 **Examples**

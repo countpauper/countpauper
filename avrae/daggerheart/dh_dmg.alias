@@ -1,0 +1,28 @@
+<drac2>
+using(dh="c4092bda-44f7-4384-a10c-3f74f02092b8")
+
+args=&ARGS&
+C=character()
+if not args: 
+    return f"help {ctx.alias} -here"
+dmg=vroll(args[0])
+args=args[1:]
+costs=dict()
+
+injury = dh.injury(dmg.total, C)
+armor = len([arg for arg in args if arg.lower()=='armor'])
+armor=min(armor, injury)
+if armor:
+    costs=dict(Armor=-armor)
+effects = dh.pay_em(costs, C)
+if typeof(effects)!='SafeList':
+    effects = [("Armor", effects)]
+else:
+    injury-=armor
+
+effects.append( ('hitpoints', dh.hitpoints(-injury, C)))
+
+desc = f"{dh.format_roll(dmg)} ⤇ {dh.format_thresholds(dh.thresholds(C))}"
+title_desc=f"{C.name} takes {dh.format_injury(injury)} damage."
+return dh.embed(title_desc, C.image, desc, None, None, effects)
+</drac2>

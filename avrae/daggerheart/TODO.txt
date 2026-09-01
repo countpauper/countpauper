@@ -96,12 +96,24 @@ Google sheet:
 [done, its both] experience should not be a number but a reference to a skill name 
 [done] Target
 [done] Using an experience should cost a Hope 
+[done] advantages stack as kh1 and disadvantages ? 
+* Lower action counter by one (as suggested)
 * Add spell for spellbook.sb (spell attack bonus)
 * Now arguments separates by spaces are summed. The whole argument string could also be one big summation (subtraction)
  This basically preparses the library for a "duality dice" string. This string is split in hope, fear and generic bonuses. 
 * +1f4 should add 1d4 to the basic 1d12 fear, not add it, but what is this syntax. Currently + are by default trunced off 
 * If Seaborne/know the tide CC increase it on fear roll automatically. Then allow `tide` times to be added to add a +1 for each while reducing CC 
 
+
+* !dh_fear for the GM to track and show fear counter (simple, perhaps just `!cc fear`) 
+ [+/-[<n>]]` add or remove fear or just show it. Use a (configurable in svar/uvar?) evil smiley  
+
+[done] !dh_dmg (value or roll) [armor]. Take the damage, compare to thresholds, reduce by armor if specified (and available) (and reduce armor) and then the rest to hitpoints 
+[done]  name the type of damage 
+[done] Say when dead
+* Target a creature in initiative and check their thresholds. They can't use armor however. 
+
+!dh_stress overflow is at most 1 
 
 [done] `!dh_gm [<dice>] [<adv>] [<dis>]` Roll dm dice 
 [done] Implementation: use 1d20 for the fear and hope None, that way there is no hope/fear because there's no comparison. 20 still crits.
@@ -139,6 +151,7 @@ NB: 1 is the fixed implicit damage threshold for 1 wound
 [done] Split dh_feat to dh_lookup 
 make new dh_use, generalize description formating. Perhaps put footer in last line, 
 If there are any resources like hope or stress or armor, use them (if the counter is sufficient)
+NB: Features that consume a stress to use simply can't be used if there is no stress left (can't use hp instead) see page 92
 If that includes duality dice then roll that. instead of trait it could be SPELL to pick the spell cast trait automatically
 Allow roll modifiers like duality (bonus. experience and advantage / trait spell in theory but rarely according to the rules)
 
@@ -153,14 +166,15 @@ Split the feature/card formating function for reuse.
   [armor:n], 
   [roll:str], 
 
+
 !dh_lookup for ancestry and community, but all I got is their feature. Perhaps at a blurb gvar for lookup that has the basic description copy pasted from the SRD and the category for furter/faster fuzzy lookup
 !dh_lookup class by name, show hp, evasion, domains, subclasses and class features 
 !dh_lookup for sub class, sub class features at levels and main class 
 !dh_lookup for domain, show all cards in the domain 
+!dh_lookup for conditions (including cloaked)
 
 [done] !dh_stress [<amount>=1]` Mark (or heal with -1 or few with 0) stress, become vulnerable if maxed out and reduce hp if over, card stress use (all pay(...))  should also apply this 
 `!dh_hope` perhaps just alias for `cc Hope` 
-`!dhfear [+/-[<n>]]` add or remove fear or just show it. Use a (configurable in svar/uvar?) evil smiley  
 Also use fear on gm rolls with experience (how to specify experience? )
 
 Spells/cards are in the spellbook. with a gvar they can at least be looked up 
@@ -191,9 +205,10 @@ Features:
 [done] Domain cards: Dread
 
 In sheet:
-Armors: A lot
+[done] Armors: A lot
 Weapons: Katana, twisted dagger, Bladed fan, offhand brass knuckles, Rune shield, wheelchairs
-Weapons changed: Spear not cumbersome and damage, longsword damage, Glowing ring damage, Tier 3 magic weapons 
+[mostly done] Weapons changed: Spear not cumbersome and damage, longsword damage, Glowing ring damage
+Tier 3 magic weapons like ... crystal spear?  
 
 HP limited to max 12 and stress 
 

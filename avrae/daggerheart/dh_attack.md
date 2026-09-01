@@ -1,4 +1,4 @@
-`!dh_attack <weapon> [<hope>=1h12]… [<fear>=1f12]… ["<experience>"] [<dice>] [adv]… [dis]… [=<difficulty>]… `
+`!dh_attack <weapon> [<hope>=1h12]… [<fear>=1f12]… ["<experience>"] [<dice>] [adv]…  [help|ally]… [dis]… [=<difficulty>]… `
 
 **Make an attack in Daggerheart.**
 
@@ -11,6 +11,7 @@ with `!servalias rename dh_react react`.
 `experience` - Add an experience from your character sheet that contains this description. 
 `dice` - Add additional dice with `<n>d<size>` or just a flat bonus. 
 `adv` - Add advantage, which will add a 1d6 if the number of advantages is larger than disadvantages.
+`help` or `ally` - Add one ally helping, which can be repeated for more alliies. This together with the advantage is combined and the largest bonus used. 
 `dis` - Add a disadvantage, whill will subtract a 1d6 if the number of disadvantages is larger than advantages.
 `difficultyevasion` - This is each target's difficulty or evasion.  If given damage will be rolled if the attack hits.
 
