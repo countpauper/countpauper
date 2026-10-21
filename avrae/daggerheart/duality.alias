@@ -15,6 +15,7 @@ if typeof(effects)!='SafeList':
 
 duality_roll = dh.roll_em(**duality_dice)
 
+
 total, quality, goals = dh.interpret(**duality_roll)
 effects += dh.earn_em(quality, C)
 

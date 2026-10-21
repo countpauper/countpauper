@@ -622,12 +622,12 @@ def duality(sheet, operands, hope=['1d12'], fear=['1d12']):
             fear_dice.append(f'{dice[0]}d{dice[1]}' if dice[0] is not None else str(dice[1]))
         elif (goal:=_parse_goal(operand)) is not None:
             goals.append(goal)   # from here on bonuses are for the last goal
-        elif sheet and (dice:=_parse_die( operand)):
+        elif dice:=_parse_die( operand):
             if goals:
                 goals[-1].append(operand) 
             else:
                 bonus_dice.append(f'{dice[0]}d{dice[1]}')
-        elif sheet and (trait_bonus:=trait(operand)) is not None:
+        elif trait_bonus:=trait(operand):
             bonus_dice.append(f'{trait_bonus[1]}[{trait_bonus[0]}]')
         elif sheet and (exp_bonus:=experience(sheet, operand)) is not None:
             bonus_dice.append(f'{exp_bonus[1]}[{exp_bonus[0]}]')
@@ -865,7 +865,7 @@ def format_mastery(mastery):
 def format_hp(C=character()):
     hp = C.hp
     missing_hp = C.max_hp - C.hp
-    return f"{'♥' * hp}{('♡' if c.hp else '☠') * missing_hp}" 
+    return f"{'♥' * hp}{('♡' if C.hp else '☠') * missing_hp}" 
 
 injury_names="none","minor","major","severe","massive","deadly"
 

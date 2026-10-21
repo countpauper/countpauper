@@ -1,0 +1,16 @@
+<drac2>
+args="""&*&"""
+
+if args=='-':
+    args='-1'
+elif args=='+':
+    args='+1'
+
+if not args:
+    fear = dh.fear()
+    
+else:
+    r=vroll(args)
+    fear = dh.fear(r.total)
+
+</drac2>

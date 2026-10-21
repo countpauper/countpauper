@@ -107,6 +107,7 @@ Google sheet:
 
 * !dh_fear for the GM to track and show fear counter (simple, perhaps just `!cc fear`) 
  [+/-[<n>]]` add or remove fear or just show it. Use a (configurable in svar/uvar?) evil smiley  
+Store the fear in a gvar identified by svar as an option and if so players could try to increase fear 
 
 [done] !dh_dmg (value or roll) [armor]. Take the damage, compare to thresholds, reduce by armor if specified (and available) (and reduce armor) and then the rest to hitpoints 
 [done]  name the type of damage 
